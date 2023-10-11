@@ -549,7 +549,7 @@
               class:menu-opt-not-available={item == 'result' && competitionObject?.data?.status == 'canceled'}
               class:color-grey={item == 'result' && competitionObject?.data?.status == 'canceled'}
 
-              class:pending={(item == 'prize_won' && isViewMobile && compStatus == 'C')}
+              class:pending={(item == 'prize_won' && isViewMobile && compStatus == 'P')}
 
               class:color-green={item == 'prize_won' && competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group == competitionUserForecast}
               class:color-red-bright-v2={item == 'prize_won' && competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group != competitionUserForecast}
@@ -564,14 +564,10 @@
                 ${competitionObject?.data?.entry_fee ?? '-'}
 
               {:else if item == 'total_prize'}
-                ${competitionObject?.data?.total_prize ?? '-'}
+                ${toDecimalFix((competitionObject?.data?.total_prize - competitionObject?.data?.betarena_commission), 2, true) ?? ''}
 
               {:else if item == 'potential_win'}
-                {#if competitionUserForecast == 'yes'}
-                  ${toDecimalFix((competitionObject?.data?.prize_group_win_pool?.yes ?? (competitionObject?.data?.participants?.yes?.length ?? 0) * competitionObject?.data?.entry_fee), 2, true) ?? '-'}
-                {:else}
-                  ${toDecimalFix((competitionObject?.data?.prize_group_win_pool?.no ?? ((competitionObject?.data?.participants?.no?.length ?? 0) * competitionObject?.data?.entry_fee)), 2, true) ?? '-'}
-                {/if}
+                ${toDecimalFix(competitionPotentialUserWin, 2, true) ?? '-'}
 
               {:else if item == 'forecast'}
                 {competitionUserForecast ?? '-'}
@@ -669,6 +665,7 @@
     /* 🎨 style */
     color: var(--dark-theme);
   }
+  tr td p.comp-status-pill,
   tr p.comp-status-pill
   {
     /* 🛝 layout */
@@ -677,18 +674,21 @@
     padding: 4px 12px;
     border-radius: 32px;
   }
+  tr td p.comp-status-pill.completed,
   tr p.comp-status-pill.completed
   {
     /* 🎨 style */
     color: var(--status-green, #59C65D) !important;
     background: rgba(89, 198, 93, 0.10);
   }
-  tr td p.comp-status-pill.pending
+  tr td p.comp-status-pill.pending,
+  tr p.comp-status-pill.pending
   {
     /* 🎨 style */
     color: var(--status-yellow, #FFB904) !important;
     background: rgba(255, 185, 4, 0.10);
   }
+  tr td p.comp-status-pill.failed,
   tr p.comp-status-pill.failed
   {
     /* 🎨 style */

@@ -32,6 +32,8 @@ export type Auth_Type =
  * Interface for 'authenticated' users.
  */
 export interface BetarenaUser
+extends
+Pick < User_Setting, "userguide_id_opt_out" >
 {
   /**
    * @description
@@ -75,6 +77,8 @@ export interface User_Setting
 	user:               Scores_User;
   /** Voted fixtures */
   voted_fixtures:     Voted_Fixture[];
+  /** @description userguides opt-out */
+  userguide_id_opt_out: number[];
 }
 
 /**
@@ -174,6 +178,9 @@ export interface Platform_Session
 
   // TODO: DOC:
   withdrawModal: boolean,
+
+  showUserguide1: boolean,
+  showUserguide1Conf: boolean,
 
   // -----
   // NOTE: SPORTBOOK DATA;

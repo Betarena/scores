@@ -4,7 +4,7 @@ import sessionStore from '$lib/store/session.js';
 import userBetarenaSettings from '$lib/store/user-settings.js';
 import { dlog } from '$lib/utils/debug.js';
 import { onValue, ref, type Unsubscribe } from "firebase/database";
-import { doc, DocumentReference, DocumentSnapshot, getDoc, onSnapshot, updateDoc, type DocumentData } from "firebase/firestore";
+import { arrayRemove, arrayUnion, doc, DocumentReference, DocumentSnapshot, getDoc, onSnapshot, updateDoc, type DocumentData } from "firebase/firestore";
 import { getTargetRealDbData } from "./firebase.actions.js";
 import { db_firestore, db_real } from "./init";
 
@@ -80,6 +80,52 @@ export async function userUpdateBalance
 
   return;
 
+}
+
+/**
+ * @summary
+ *  🟥 MAIN | 🔹 HELPER
+ * @description
+ *  📌 Toggles target for Betarena `user` of their `userguide` **opt-out**.
+ * @returns { Promise < void > }
+ */
+export async function userToggleUserguideOptOut
+(
+  uid: string,
+  userguideId: number,
+  currentOptOuts: number[]
+): Promise < void >
+{
+
+  const userRef: DocumentReference < DocumentData > = doc
+  (
+    db_firestore,
+    'betarena_users',
+    uid
+  );
+
+  if (currentOptOuts.includes(userguideId))
+  {
+    await updateDoc
+    (
+      userRef,
+      {
+        userguide_id_opt_out: arrayRemove(userguideId)
+      }
+    );
+
+    return;
+  }
+
+  await updateDoc
+  (
+    userRef,
+    {
+      userguide_id_opt_out: arrayUnion(userguideId)
+    }
+  );
+
+  return;
 }
 
 /**

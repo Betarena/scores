@@ -1,19 +1,16 @@
 // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 // ### 📝 DESCRIPTION                                                         ◼️
-// ### Application Server Endpoint for Featured Bet-Site Data Fetch + Handle  ◼️
+// ### Application Server Endpoint for UserGuide Data Fetch + Handle          ◼️
 // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
 // #region ➤ 📦 Package Imports
 
 import { json } from '@sveltejs/kit';
 
-import { HFEATB_HP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.home.feat-betsite.js';
-import { FEATB_C_T_A } from '@betarena/scores-lib/dist/redis/config.js';
+import { USRG_M_ENTRY } from '@betarena/scores-lib/dist/functions/func.misc.userguide.js';
 import dotenv from 'dotenv';
-import LZString from 'lz-string';
-import { get_target_hset_cache_data } from '../../../../../lib/redis/std_main';
 
-import type { B_FEATB_T } from '@betarena/scores-lib/types/feat-betsite.js';
+import type { B_USRG_D } from '@betarena/scores-lib/types/types.misc.userguide.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -31,74 +28,65 @@ dotenv.config();
 
 export async function GET
 (
-  req
+  req: any
 ): Promise < unknown >
 {
   try
   {
     // ### NOTE:
     // ### handle url-query data
+    const userguideId: string = req?.url?.searchParams?.get('userguideId');
     const lang: string = req?.url?.searchParams?.get('lang');
     const hasura: string = req?.url?.searchParams?.get('hasura');
 
-    let data: unknown;
-    let loadType: string = "⚡️ Redis (cache)";
-
     // ### NOTE:
-    // ### gathers Leagues Table widget main data.
+    // ### gathers League List Widget SEO data.
     // ### NOTE:
-    // ### contains 🟦 Hasura (PostgreSQL) fallback.
+    // ### contains [HASURA] Fallback.
     const if_M_0: boolean =
-      lang != undefined
+      userguideId != null
+      && lang != null
     ;
     if (if_M_0)
     {
+      let data: unknown;
+      let loadType: string = "cache";
+
       // ### CHECK | IMPORTANT
       // ### for existance in cache.
-      if (!hasura)
-      {
-        data = await get_target_hset_cache_data
-        (
-          FEATB_C_T_A,
-          lang
-        );
-      }
+      // if (!hasura)
+      // {
+      //   data = await get_target_hset_cache_data
+      //   (
+      //     LEGL_C_T_A_V3,
+      //     lang
+      //   );
+      // }
 
       // ### CHECK | IMPORTANT
       // ### for default in Hasura.
       if (!data || hasura)
       {
-        data = await fallbackMainData
+        data = await fallbackMainData_0
         (
+          parseInt(userguideId),
           lang
         );
-        loadType = '🟦 Hasura (SQL)';
+        loadType = 'HASURA'
       }
 
       // ### [🐞]
-      // console.log(`📌 loaded [FPROB] with: ${loadType}`);
+      console.log(`📌 loaded [FPROB] with: ${loadType}`)
 
       if (data != null)
-      {
-        const compressed: string = LZString.compress(JSON.stringify(data));
-
-        // ### [🐞]
-        // console.log(JSON.parse(LZString.decompress(compressed)));
-
-        return json
-        (
-          {
-            data: compressed,
-            loadType
-          }
-        );
-      }
+        return json(data);
+      ;
     }
 
     // ### IMPORTANT
     return json
     (
-      null
+      {}
     );
   }
   catch (ex)
@@ -129,27 +117,26 @@ export async function GET
  * @summary
  *  🟥 MAIN | 🔹 HELPER
  * @description
- *  📌 Fallback logic for **Featured Betting Site** Translation Data.
+ *  📌 Fallback logic for **User-Guide** Data.
  * @param { string } lang
  *  Target `language`.
- * @returns { Promise < B_FEATB_T > }
+ * @returns { Promise < B_FEATM_T > }
  */
-async function fallbackMainData
+async function fallbackMainData_0
 (
-  lang: string
-): Promise < B_FEATB_T >
+  userguideId: number,
+  lang: string,
+): Promise < B_USRG_D >
 {
-  const dataRes0: [ Map < string, B_FEATB_T >, string[] ] = await HFEATB_HP_ENTRY_1
-  (
-    null,
-    [lang]
-  );
+  const dataRes0: [ Map < string, B_USRG_D >, string[] ] = await USRG_M_ENTRY();
 
   if (dataRes0?.[0]?.size == 0)
     return null;
   ;
 
-	return dataRes0?.[0]?.get(lang);
+  const key = `${userguideId}_${lang}`;
+
+	return dataRes0?.[0]?.get(key);
 }
 
 // #endregion ➤ 🛠️ METHODS

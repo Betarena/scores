@@ -1,76 +1,135 @@
-<!-- ===============
-COMPONENT JS (w/ TS)
-==================== -->
+<!--
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+### COMPONENT JS (w/ TS)                                                               ◼️
+### NOTE:                                                                              ◼️
+### access custom Betarena Scores JS VScode Snippets by typing 'script...'             ◼️
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+-->
 
 <script lang="ts">
 
   // #region ➤ 📦 Package Imports
 
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'imports' that are required  ◼️
+  // ### by 'this' .svelte file is ran.                                   ◼️
+  // ### IMPORTANT                                                        ◼️
+  // ### Please, structure the imports as follows:                        ◼️
+  // ### 1. svelte/sveltekit imports                                      ◼️
+  // ### 2. project-internal files and logic                              ◼️
+  // ### 3. component import(s)                                           ◼️
+  // ### 4. assets import(s)                                              ◼️
+  // ### 5. type(s) imports(s)                                            ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+
 	import { onMount } from 'svelte';
-	
+
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { viewport_change } from '$lib/utils/platform-functions';
 
 	import close_white from './assets/close-white.svg';
 	import close from './assets/close.svg';
 
-	import NoResults from './_NoResults.svelte';
+	import WidgetTitle from '$lib/components/Widget-Title.svelte';
 	import Africa from './assets/_Africa.svelte';
 	import Asia from './assets/_Asia.svelte';
+	import NoResults from './assets/_NoResults.svelte';
 	import NorthCentralAmerica from './assets/_North_Central_America.svelte';
 	import SouthAmerica from './assets/_South_America.svelte';
 	import World from './assets/_World.svelte';
 
-	import WidgetTitle from '$lib/components/Widget-Title.svelte';
-	import type { B_LEGL_D, B_LEGL_T } from '@betarena/scores-lib/types/league-list.js';
+	import type { B_LEGL_D, B_LEGL_League_Main, B_LEGL_T } from '@betarena/scores-lib/types/types.home.league-list.js';
 
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
 
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'variables' that are to be   ◼️
+  // ### and are expected to be used by 'this' .svelte file / component.  ◼️
+  // ### IMPORTANT                                                        ◼️
+  // ### Please, structure the imports as follows:                        ◼️
+  // ### 1. export const / let [..]                                       ◼️
+  // ### 2. const [..]                                                    ◼️
+  // ### 3. let [..]                                                      ◼️
+  // ### 4. $: [..]                                                       ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+
 	export let
+    /** @description __ */
     B_LEGL_T: B_LEGL_T,
+    /** @description __ */
     B_LEGL_D: B_LEGL_D
   ;
 
   const
-    // ◼️ IMPORTANT
+    /** @description */
     VIEWPORT_MOBILE_INIT = 767,
+    /** @description */
     VIEWPORT_TABLET_INIT = 1160,
-    // ◼️ IMPORTANT
-    LEAGUES_CUSTOM_ICON_IDS: string[] =
+    /** @description */
+    LEAGUES_CUSTOM_ICON_IDS: number[] =
     [
-      '147',
-      '11240938',
-      '24143344',
-      '11555657',
-      '99474'
+      147,
+      11240938,
+      24143344,
+      11555657,
+      99474
 	  ]
   ;
 
   let
-    // ◼️ IMPORTANT
+    /** IMPORTANT @description 📱 MOBILE */
     isViewMobile: boolean = true,
+    /** IMPORTANT @description 💻 TABLET */
     isViewTablet: boolean = true,
-    // ◼️ IMPORTANT
+    /** @description */
     leagueSearch: string = undefined,
+    /** @description */
     selectedCountryLeagueId: number = undefined,
+    /** @description */
     showFullLeagueList: boolean = false,
+    /** @description */
     fullLeagueListDisplayNum: number = 4,
+    /** @description */
     showFullCountryList: boolean = false,
+    /** @description */
     fullCountryListDisplayNum: number = 4,
+    /** @description */
     leagueSearchData = [],
-	  countrySearchData = []
+    /** @description */
+	  countrySearchData = [],
+    /** @description official **League List** data map. */
+    leagueListMap: Map < number, B_LEGL_League_Main[] > = new Map(B_LEGL_D?.league_list),
+    /** @description official **League List** country map. */
+    leagueListCountryMap = new Map(B_LEGL_D?.country_list)
   ;
 
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
 
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'methods' that are to be     ◼️
+  // ### and are expected to be used by 'this' .svelte file / component.  ◼️
+  // ### IMPORTANT                                                        ◼️
+  // ### Please, structure the imports as follows:                        ◼️
+  // ### 1. function (..)                                                 ◼️
+  // ### 2. async function (..)                                           ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+
   /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🔹 HELPER
    * @description
    * TODO: DOC:
    * @param targetCountry
+   * @returns { void }
    */
 	function selectCountryLeague
   (
@@ -86,34 +145,53 @@ COMPONENT JS (w/ TS)
 	}
 
   /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🔹 HELPER
    * @description
    * TODO: DOC:
+   * @returns { void }
    */
 	function toggleFullLeagueList
   (
   ) : void
   {
 		showFullLeagueList = !showFullLeagueList;
-		if (fullLeagueListDisplayNum == 4) fullLeagueListDisplayNum = 1000;
-    else fullLeagueListDisplayNum = 4;
+		if (fullLeagueListDisplayNum == 4)
+      fullLeagueListDisplayNum = 1000;
+    else
+      fullLeagueListDisplayNum = 4;
 	}
 
   /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🔹 HELPER
    * @description
-   * TODO: DOC:
+   *  TODO: DOC:
+   * @returns { void }
    */
 	function toggleFullCountryList
   (
   ): void
   {
 		showFullCountryList = !showFullCountryList;
-		if (fullCountryListDisplayNum == 4) fullCountryListDisplayNum = 1000;
-    else fullCountryListDisplayNum = 4;
+		if (fullCountryListDisplayNum == 4)
+      fullCountryListDisplayNum = 1000;
+    else
+      fullCountryListDisplayNum = 4;
 	}
 
   /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🔹 HELPER
    * @description
-   * TODO: DOC:
+   *  TODO: DOC:
+   * @returns { void }
    */
   function searchCountryLeagues
   (
@@ -128,25 +206,28 @@ COMPONENT JS (w/ TS)
 
 		// ### CHECK
     // ### matching 'leagues' / 'country'.
-		for (const item of B_LEGL_D.all_leagues_list)
+		for (const [countryId, countryLeagues] of leagueListMap)
     {
-      const if_M_0: boolean =
-        item.league_name?.toLowerCase().includes(_searchTarget)
-        || item.country_name?.toLowerCase().includes(_searchTarget)
-      ;
+      for (const league of countryLeagues)
+      {
+        const if_M_0: boolean =
+          league.league_name?.toLowerCase().includes(_searchTarget)
+          || leagueListCountryMap.get(countryId).country_name?.toLowerCase().includes(_searchTarget)
+        ;
 
-			if (if_M_0) leagueSearchData.push(item);
+        if (if_M_0) leagueSearchData.push(league);
+      }
 		}
 
 		// ### CHECK
 		// ### matching 'country'.
-		for (const item of B_LEGL_T.unique_county_list)
+		for (const [countryId, countryData] of leagueListCountryMap)
     {
       const if_M_0: boolean =
-        item.country_name?.toLowerCase().includes(_searchTarget)
+        countryData.country_name?.toLowerCase().includes(_searchTarget)
       ;
 
-			if (if_M_0) countrySearchData.push(item);
+			if (if_M_0) countrySearchData.push(countryData);
 		}
 
   }
@@ -155,17 +236,37 @@ COMPONENT JS (w/ TS)
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
 
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'logic' that should run      ◼️
+  // ### immediately and/or reactively for 'this' .svelte file is ran.    ◼️
+  // ### WARNING:                                                         ◼️
+  // ### ❗️ Can go out of control.                                        ◼️
+  // ### (a.k.a cause infinite loops and/or cause bottlenecks).           ◼️
+  // ### Please keep very close attention to these methods and            ◼️
+  // ### use them carefully.                                              ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+
+  /**
+   * @description TODO: DOC:
+   */
   $: if_R_0 =
     leagueSearch != undefined
     && leagueSearchData.length === 0
     && countrySearchData.length === 0
   ;
 
+  /**
+   * @description TODO: DOC:
+   */
   $: if_R_1 =
     leagueSearch != undefined
     && (leagueSearchData.length !== 0 || countrySearchData.length !== 0)
   ;
 
+  /**
+   * @description TODO: DOC:
+   */
   $: if (leagueSearch === '') leagueSearch = undefined;
 
   /**
@@ -188,7 +289,8 @@ COMPONENT JS (w/ TS)
 
 	onMount
   (
-    async () =>
+    async (
+    ): Promise < void > =>
     {
       [
         isViewTablet,
@@ -198,6 +300,7 @@ COMPONENT JS (w/ TS)
         VIEWPORT_TABLET_INIT,
         VIEWPORT_MOBILE_INIT
       );
+
       window.addEventListener
       (
         'resize',
@@ -221,15 +324,16 @@ COMPONENT JS (w/ TS)
 
 </script>
 
-<!-- ===============
-COMPONENT HTML
-NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
-=================-->
-
 <!--
-LEAGUE LIST WIDGET
-🖥️ LAPTOP
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+### COMPONENT HTML                                                                     ◼️
+### NOTE:                                                                              ◼️
+### use 'CTRL+SPACE' to autocomplete global class=styles                               ◼️
+### NOTE:                                                                              ◼️
+### access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.         ◼️
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 -->
+
 {#if !isViewTablet}
 
   <div>
@@ -239,7 +343,7 @@ LEAGUE LIST WIDGET
     />
 
     <!--
-    LEAGUE LIST COMPONENT
+    LEAGUE LIST ➤ MAIN COMPONENT
     -->
     <div
       id="league-list"
@@ -247,7 +351,7 @@ LEAGUE LIST WIDGET
     >
 
       <!--
-      SEARCH BOX
+      LEAGUE LIST ➤ SEARCH BOX
       -->
       <div
         id="search-container"
@@ -262,12 +366,15 @@ LEAGUE LIST WIDGET
           "
           m-b-20
           "
-          style="margin: 0 20px 20px 20px;"
+          style=
+          "
+          margin: 0 20px 20px 20px;
+          "
           bind:value={leagueSearch}
         />
 
         <!--
-        ERASE INPUT SEARCH
+        ERASE INPUT ACTION
         -->
         {#if leagueSearch != undefined}
 
@@ -289,7 +396,7 @@ LEAGUE LIST WIDGET
       </div>
 
       <!--
-      NO SEARCH INPUT MADE
+      LEAGUE LIST ➤ NO SEARCH INPUT MADE
       -->
       <div
         id="defualt-league-list"
@@ -297,7 +404,7 @@ LEAGUE LIST WIDGET
       >
 
         <!--
-        TOP 7 LEAGUES [GEO-BASED]
+        TOP 7 LEAGUES [GEO-BASED] TITLE
         -->
         <p
           class=
@@ -308,11 +415,11 @@ LEAGUE LIST WIDGET
           "
           style="padding: 0 20px;"
         >
-          {B_LEGL_T?.translations?.top_leagues}
+          {B_LEGL_T?.translations?.top_leagues ?? ''}
         </p>
 
         <!--
-        LEAGUE LIST GRID
+        TOP 7 LEAGUES [GEO-BASED] ROWS
         -->
         <div
           id="popular-list-container"
@@ -322,10 +429,10 @@ LEAGUE LIST WIDGET
           "
         >
 
-          {#each B_LEGL_D?.top_geo_leagues ?? [] as item}
+          {#each (B_LEGL_D?.top_geo_leagues ?? []) as item}
 
             <a
-              href={item.urls[B_LEGL_T.lang]}
+              href={item?.urls?.[B_LEGL_T?.lang]}
             >
 
               <div
@@ -356,7 +463,7 @@ LEAGUE LIST WIDGET
                   color-black
                   "
                 >
-                  {item.league_name}
+                  {item.league_name ?? ''}
                 </p>
 
               </div>
@@ -368,7 +475,7 @@ LEAGUE LIST WIDGET
         </div>
 
         <!--
-        LIST of ALL COUNTRIES
+        LIST ALL COUNTRIES TITLE
         -->
         <p
           class=
@@ -379,24 +486,24 @@ LEAGUE LIST WIDGET
           "
           style="padding: 0 20px;"
         >
-          {B_LEGL_T?.translations?.leagues_by_country}
+          {B_LEGL_T?.translations?.leagues_by_country ?? ""}
         </p>
 
         <!--
-        LIST GRID
+        LIST ALL COUNTRIES ROWS
         -->
         <div
           id="countires-list-container"
         >
 
-          {#each B_LEGL_T?.unique_county_list ?? [] as item}
+          {#each ([...leagueListMap.entries()] ?? []) as [countryId, countryLeagues]}
 
             <div
               class=
               "
               main-country-container
               "
-              class:selectedCountry={selectedCountryLeagueId === item?.country_id}
+              class:selectedCountry={selectedCountryLeagueId == countryId}
             >
 
               <!--
@@ -408,12 +515,14 @@ LEAGUE LIST WIDGET
                 country-league-container
                 row-space-start
                 "
-                on:click={() => selectCountryLeague(item.country_id)}
+                on:click={() => selectCountryLeague(countryId)}
               >
+
                 <!--
-                CHECK CUSTOM CONTINENT ICONS
+                CHECK
+                CUSTOM CONTINENT ICONS
                 -->
-                {#if LEAGUES_CUSTOM_ICON_IDS.includes(item.country_id.toString())}
+                {#if LEAGUES_CUSTOM_ICON_IDS.includes(countryId)}
 
                   <div
                     class=
@@ -423,15 +532,15 @@ LEAGUE LIST WIDGET
                     width-auto
                     "
                   >
-                    {#if item.country_id.toString() === '147'}
+                    {#if countryId === 147}
                       <Africa />
-                    {:else if item.country_id.toString() === '11240938'}
+                    {:else if countryId === 11240938}
                       <Asia />
-                    {:else if item.country_id.toString() === '24143344'}
+                    {:else if countryId === 24143344}
                       <NorthCentralAmerica />
-                    {:else if item.country_id.toString() === '11555657'}
+                    {:else if countryId === 11555657}
                       <SouthAmerica />
-                    {:else if item.country_id.toString() === '99474'}
+                    {:else if countryId === 99474}
                       <World />
                     {/if}
                   </div>
@@ -439,10 +548,10 @@ LEAGUE LIST WIDGET
                 {:else}
 
                   <img
-                    src={item.image_path}
+                    src={leagueListCountryMap.get(countryId)?.image_path ?? ''}
                     loading="lazy"
                     alt="default alt text"
-                    title={item.country_name + '-image'}
+                    title={(leagueListCountryMap.get(countryId)?.country_name ?? '') + '-image'}
                     width=20
                     height=20
                     class=
@@ -464,24 +573,20 @@ LEAGUE LIST WIDGET
                   color-black
                   "
                 >
-                  {item.country_name}
+                  {leagueListCountryMap.get(countryId)?.country_name ?? ''}
                 </p>
 
               </div>
 
               <!--
-              SUB-CATEGORY
+              COUNTRY LEAGUES ROW(s)
               -->
-              {#each B_LEGL_D?.all_leagues_list ?? [] as league}
+              {#if countryId == selectedCountryLeagueId}
 
-                {#if league.country_id
-                  .toString()
-                  .toLowerCase() === item.country_id
-                    .toString()
-                    .toLowerCase() && selectedCountryLeagueId === item.country_id}
+                {#each (countryLeagues ?? []) as league}
 
                   <a
-                    href={league.urls[B_LEGL_T?.lang]}
+                    href={league?.urls?.[B_LEGL_T?.lang]}
                   >
 
                     <div
@@ -500,16 +605,16 @@ LEAGUE LIST WIDGET
                         color-black
                         "
                       >
-                        {league.league_name}
+                        {league?.league_name ?? ''}
                       </p>
 
                     </div>
 
                   </a>
 
-                {/if}
+                {/each}
 
-              {/each}
+              {/if}
 
             </div>
 
@@ -520,7 +625,7 @@ LEAGUE LIST WIDGET
       </div>
 
       <!--
-      NO RESULT SHOW
+      LEAGUE LIST ➤ NO RESULT SHOW
       -->
       {#if if_R_0}
 
@@ -541,7 +646,7 @@ LEAGUE LIST WIDGET
             color-grey
             "
           >
-            {B_LEGL_T?.translations?.no_results}
+            {B_LEGL_T?.translations?.no_results ?? ''}
           </p>
 
         </div>
@@ -560,9 +665,12 @@ LEAGUE LIST WIDGET
           s-14
           m-b-5
           "
-          style="padding: 0 20px;"
+          style=
+          "
+          padding: 0 20px;
+          "
         >
-          {B_LEGL_T?.translations?.competitions_results}
+          {B_LEGL_T?.translations?.competitions_results ?? ''}
         </p>
 
         <!--
@@ -576,10 +684,10 @@ LEAGUE LIST WIDGET
           "
         >
 
-          {#each leagueSearchData.slice(0, fullLeagueListDisplayNum) ?? [] as item}
+          {#each leagueSearchData?.slice(0, fullLeagueListDisplayNum) ?? [] as item}
 
             <a
-              href={item.urls[B_LEGL_T?.lang]}
+              href={item.urls?.[B_LEGL_T?.lang]}
             >
 
               <div
@@ -650,7 +758,10 @@ LEAGUE LIST WIDGET
             m-b-20
             "
             on:click={() => toggleFullLeagueList()}
-            style="padding: 0 20px;"
+            style=
+            "
+            padding: 0 20px;
+            "
           >
             {!showFullLeagueList ? B_LEGL_T?.translations?.full_list : B_LEGL_T ?.translations?.hide}
           </p>
@@ -669,9 +780,12 @@ LEAGUE LIST WIDGET
           s-14
           m-b-5
           "
-          style="padding: 0 20px;"
+          style=
+          "
+          padding: 0 20px;
+          "
         >
-          {B_LEGL_T?.translations?.countries_results}
+          {B_LEGL_T?.translations?.countries_results ?? ''}
         </p>
 
         <!--
@@ -681,7 +795,7 @@ LEAGUE LIST WIDGET
           id="countires-list-container"
         >
 
-          {#each countrySearchData.slice(0, fullCountryListDisplayNum) ?? [] as item}
+          {#each countrySearchData?.slice(0, fullCountryListDisplayNum) ?? [] as item}
 
             <div
               class=
@@ -732,16 +846,11 @@ LEAGUE LIST WIDGET
               <!--
               SUB-CATEGORY
               -->
-              {#each B_LEGL_D?.all_leagues_list ?? [] as league}
+              {#if selectedCountryLeagueId != null}
 
-                {#if league.country_id
-                  .toString()
-                  .toLowerCase() === item.country_id
-                    .toString()
-                    .toLowerCase() && selectedCountryLeagueId === item.country_id}
-
+                {#each leagueListMap.get(selectedCountryLeagueId) as league}
                   <a
-                    href={league.urls[B_LEGL_T.lang]}
+                    href={league?.urls?.[B_LEGL_T.lang]}
                   >
 
                     <div
@@ -766,10 +875,9 @@ LEAGUE LIST WIDGET
                     </div>
 
                   </a>
+                {/each}
 
-                {/if}
-
-              {/each}
+              {/if}
 
             </div>
 
@@ -792,7 +900,10 @@ LEAGUE LIST WIDGET
             m-b-20
             "
             on:click={() => toggleFullCountryList()}
-            style="padding: 0 20px;"
+            style=
+            "
+            padding: 0 20px;
+            "
           >
             {!showFullCountryList ? B_LEGL_T?.translations?.full_list : B_LEGL_T?.translations?.hide}
           </p>
@@ -807,10 +918,15 @@ LEAGUE LIST WIDGET
 
 {/if}
 
-<!-- ===============
-COMPONENT STYLE
-NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
-=================-->
+<!--
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+### COMPONENT STYLE                                                                    ◼️
+### NOTE:                                                                              ◼️
+### auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE      ◼️
+### NOTE:                                                                              ◼️
+### access custom Betarena Scores CSS VScode Snippets by typing 'style...'             ◼️
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+-->
 
 <style>
 
@@ -898,38 +1014,46 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 	#defualt-league-list
   {
+    /* 📌 position */
 		display: block;
 	}
 	#defualt-league-list.league-list-hide
   {
+    /* 📌 position */
 		display: none;
 	}
 
 	div#popular-list-container .top-league-container
   {
+    /* 🎨 style */
 		padding: 12.5px 20px;
 	}
 	div#popular-list-container .top-league-container:hover
   {
+    /* 🎨 style */
 		cursor: pointer;
 	}
 	div#popular-list-container .top-league-container:hover p
   {
+    /* 🎨 style */
 		color: #f5620f !important;
 	}
 
 	div#popular-list-container .top-league-container img,
 	div#countires-list-container .country-league-container img
   {
+    /* 🎨 style */
 		object-fit: cover;
 	}
 	div#countires-list-container .country-league-container img
   {
+    /* 🎨 style */
 		border-radius: 50%;
 	}
 
 	div.selectedCountry
   {
+    /* 🎨 style */
 		background: #f2f2f2;
 		border-radius: 8px;
 		position: relative;
@@ -939,45 +1063,53 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 	div#countires-list-container .main-country-container
   {
+    /* 🎨 style */
 		margin: 0 10px;
 	}
 	div#countires-list-container .country-league-container
   {
+    /* 🎨 style */
 		padding: 12px 10px;
 	}
 	div#countires-list-container .selectedCountry .country-league-container
   {
+    /* 🎨 style */
 		padding: 11px 9px;
 	}
 	div#countires-list-container .country-league-sub-container
   {
+    /* 🎨 style */
 		padding: 9px 10px 10px 10px;
 		background-color: white;
 	}
 	div#countires-list-container .country-league-sub-container:last-child
   {
+    /* 🎨 style */
 		border-radius: 0 0 8px 8px;
 	}
 	div#countires-list-container .country-league-container:hover p,
 	div#countires-list-container .country-league-sub-container:hover p
   {
+    /* 🎨 style */
 		color: #f5620f !important;
 	}
 
 	div#countires-list-container .main-country-container:hover
   {
+    /* 🎨 style */
 		cursor: pointer;
 	}
 
 	div#no-results-container
   {
+    /* 🎨 style */
 		padding: 28px 0;
 	}
 
   /*
-  =============
-  ⚡️ RESPONSIVNESS
-  =============
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  ◼️ ⚡️ RESPONSIVNESS      ◼️
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   */
 
 	@media screen
@@ -985,34 +1117,39 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   {
 		input#league-list-search
     {
+      /* 🎨 style */
 			padding: 12px 28px 12px 35px;
 			background-position: 8px 50%;
 		}
 
 		img#close-btn-search
     {
+      /* 🎨 style */
 			right: 28px;
 		}
 	}
 
-	/*
-  =============
-  🌒 DARK-THEME
-  =============
+  /*
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  ◼️ 🌒 DARK-THEME         ◼️
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   */
 
 	.dark-background-1 input#league-list-search
   {
+    /* 🎨 style */
 		background-color: #4b4b4b !important;
 		border: 1px solid #616161;
 		color: white;
 	}
 	.dark-background-1 input#league-list-search:hover
   {
+    /* 🎨 style */
 		border: 1px solid #737373;
 	}
 	.dark-background-1 input#league-list-search:focus
   {
+    /* 🎨 style */
 		border: 1px solid #cccccc;
 		background-image: url('/assets/svg/league_list/search-white.svg');
 	}
@@ -1022,21 +1159,25 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 	.dark-background-1 div#countires-list-container	.country-league-container p,
 	.dark-background-1 div#countires-list-container	.country-league-sub-container p
   {
+    /* 🎨 style */
 		color: white;
 	}
 
 	.dark-background-1 div.selectedCountry
   {
+    /* 🎨 style */
 		background: #616161 !important;
 	}
 
 	.dark-background-1 div#countires-list-container	.country-league-sub-container
   {
+    /* 🎨 style */
 		background-color: #4b4b4b;
 	}
 
 	.dark-background-1 p.search-title
   {
+    /* 🎨 style */
 		color: white;
 	}
 

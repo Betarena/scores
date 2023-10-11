@@ -1,21 +1,37 @@
-<!-- ===============
-### COMPONENT JS (w/ TS)
-### NOTE:
-### access custom Betarena Scores JS VScode Snippets by typing 'script...'
-================= -->
+<!--
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+### COMPONENT JS (w/ TS)                                                               ◼️
+### NOTE:                                                                              ◼️
+### access custom Betarena Scores JS VScode Snippets by typing 'script...'             ◼️
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+-->
 
 <script lang="ts">
 
   // #region ➤ 📦 Package Imports
+
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'imports' that are required  ◼️
+  // ### by 'this' .svelte file is ran.                                   ◼️
+  // ### IMPORTANT                                                        ◼️
+  // ### Please, structure the imports as follows:                        ◼️
+  // ### 1. svelte/sveltekit imports                                      ◼️
+  // ### 2. project-internal files and logic                              ◼️
+  // ### 3. component import(s)                                           ◼️
+  // ### 4. assets import(s)                                              ◼️
+  // ### 5. type(s) imports(s)                                            ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
   import { get } from '$lib/api/utils.js';
+  import sessionStore from "$lib/store/session.js";
   import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { translationObject } from '$lib/utils/translation.js';
   import { IN_W_F_STY, IN_W_F_TAG, IN_W_F_TOG, dlog } from '$lib/utils/debug.js';
+  import { translationObject } from '$lib/utils/translation.js';
 
 	import SeoBox from '$lib/components/SEO-Box.svelte';
 	import LeaguesTableLoader from './Leagues-Table-Loader.svelte';
@@ -26,42 +42,65 @@
 
   // #region ➤ 📌 VARIABLES
 
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'variables' that are to be   ◼️
+  // ### and are expected to be used by 'this' .svelte file / component.  ◼️
+  // ### IMPORTANT                                                        ◼️
+  // ### Please, structure the imports as follows:                        ◼️
+  // ### 1. export const / let [..]                                       ◼️
+  // ### 2. const [..]                                                    ◼️
+  // ### 3. let [..]                                                      ◼️
+  // ### 4. $: [..]                                                       ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+
   const
-    /** Dynamic import variable condition */
+    /** @description (widget) dynamic import variable condition */
     useDynamicImport: boolean = true
   ;
 
   let
-    /** Main widget Translations data */
-    WIDGET_T_DATA: B_LEGT_T = $page.data?.B_LEGT_T,
-    /** Main widget data */
-    WIDGET_DATA: B_LEGT_D,
-    /** Wether widget has or no data */
-    NO_WIDGET_DATA: boolean = true,
-    /** Dynamic import variable for svelte component */
-    LeaguesTableMainDynamic: any
+    /** @description (widget) translations data */
+    widgetDataTranslation: B_LEGT_T = $page.data?.B_LEGT_T,
+    /** @description (widget) main data */
+    widgetDataMain: B_LEGT_D,
+    /** @description (widget) wether widget has or no data */
+    widgetNoData: boolean = true,
+    /** @description (widget) dynamic import variable for svelte component [1] */
+    LeaguesTableMainDynamic: any,
+    /** @description (listen) value for change comparison of client bookmaker change */
+    currentBookmaker: string = $sessionStore?.serverLang
   ;
 
-  $: WIDGET_T_DATA = $page.data?.B_LEGT_T;
-  $: WIDGET_TITLE = WIDGET_T_DATA?.translations?.title ?? translationObject?.leagues_table_title;
+  $: widgetDataTranslation = $page.data?.B_LEGT_T;
+  $: WIDGET_TITLE = widgetDataTranslation?.translations?.title ?? translationObject?.leagues_table_title;
+
+  $: deepReactListenBookmakerChng = $userBetarenaSettings?.country_bookmaker;
 
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
 
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'methods' that are to be     ◼️
+  // ### and are expected to be used by 'this' .svelte file / component.  ◼️
+  // ### IMPORTANT                                                        ◼️
+  // ### Please, structure the imports as follows:                        ◼️
+  // ### 1. function (..)                                                 ◼️
+  // ### 2. async function (..)                                           ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+
   /**
+   * @author
+   *  @migbash
    * @summary
-   * 🟩 MAIN
-   *
+   *  🟩 MAIN
    * @description
-   * 📌 main widget data loader
-   *
-   * ⚡️ (and) try..catch (error) handler
-   *
-   * ⚡️ (and) placeholder handler
-   *
-   * @returns
-   * Target `widget` data for client, but at times not used.
+   *  📌 main widget data loader
+   *  - ⚡️ (and) try..catch (error) handler
+   *  - ⚡️ (and) placeholder handler
+   * @returns { Promise < void > }
    */
   async function widgetInit
   (
@@ -73,13 +112,18 @@
 
     const response: B_LEGT_D = await get
     (
-			`api/data/home/league-table?geoPos=${$userBetarenaSettings.country_bookmaker}`
+			`api/data/home/league-table?geoPos=${$userBetarenaSettings.country_bookmaker}`,
+      null,
+      true,
+      true
 		);
 
-    WIDGET_DATA = response;
+    widgetDataMain = response;
 
+    // ### CHECK
+    // ### for conditions when 'this' widget should not be shown.
     const if_M_0: boolean =
-      WIDGET_DATA == undefined
+      widgetDataMain == undefined
     ;
 		if (if_M_0)
     {
@@ -91,24 +135,64 @@
         IN_W_F_STY
       );
 
-			NO_WIDGET_DATA = true;
+			widgetNoData = true;
 
 			return;
 		}
 
-    NO_WIDGET_DATA = false;
+    widgetNoData = false;
 
-    return WIDGET_DATA
+    return widgetDataMain
   }
 
   // #endregion ➤ 🛠️ METHODS
 
-  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'logic' that should run      ◼️
+  // ### immediately and/or reactively for 'this' .svelte file is ran.    ◼️
+  // ### WARNING:                                                         ◼️
+  // ### ❗️ Can go out of control.                                        ◼️
+  // ### (a.k.a cause infinite loops and/or cause bottlenecks).           ◼️
+  // ### Please keep very close attention to these methods and            ◼️
+  // ### use them carefully.                                              ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
   /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🔥 REACTIVITY
    * @description
-   * TODO: DOC:
-  */
+   *  📌 Listens to cases when, the:
+   *  - (1) _initial platform language_ has changed.
+   * @description
+   *  **WARNING:**
+   *  **triggered by changes in:**
+   *  - `deepReactListenWebLang`- **kicker** (via deepListen)
+   */
+   $: if_R_0 =
+    browser
+  ;
+  $: if (if_R_0 && deepReactListenBookmakerChng != currentBookmaker)
+  {
+    widgetInit();
+    currentBookmaker = deepReactListenBookmakerChng;
+  }
+
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
+
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'logic' that should run      ◼️
+  // ### immediately and as part of the 'lifecycle' of svelteJs,          ◼️
+  // ### as soon as 'this' .svelte file is ran.                           ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+
   onMount
   (
     async (
@@ -128,18 +212,20 @@
 
 </script>
 
-<!-- ===============
-### COMPONENT HTML
-### NOTE:
-### use 'CTRL+SPACE' to autocomplete global class="" styles
-### NOTE:
-### access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.
-================= -->
+<!--
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+### COMPONENT HTML                                                                     ◼️
+### NOTE:                                                                              ◼️
+### use 'CTRL+SPACE' to autocomplete global class=styles                               ◼️
+### NOTE:                                                                              ◼️
+### access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.         ◼️
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+-->
 
 <SeoBox>
-  <h2>{WIDGET_T_DATA?.translations?.title}</h2>
+  <h2>{widgetDataTranslation?.translations?.title}</h2>
 
-  {#each WIDGET_T_DATA?.top_leagues_table_data ?? [] as item}
+  {#each widgetDataTranslation?.top_leagues_table_data ?? [] as item}
     <p>{item?.season_league_name}</p>
 
     {#each item?.season_league_teams ?? [] as itemL}
@@ -158,13 +244,14 @@
   ### promise is pending
   -->
   <LeaguesTableLoader />
+
 {:then data}
   <!--
   ### NOTE:
   ### promise was fulfilled
   -->
 
-  {#if !NO_WIDGET_DATA}
+  {#if !widgetNoData}
 
     <!--
     ### NOTE:
@@ -174,20 +261,13 @@
     -->
     <svelte:component
       this={LeaguesTableMainDynamic}
-      B_LEGT_T={WIDGET_T_DATA}
-      B_LEGT_D={WIDGET_DATA}
+      B_LEGT_T={widgetDataTranslation}
+      B_LEGT_D={widgetDataMain}
     />
-
-    <!--
-    ### NOTE:
-    ### Standard Svelte Component Import
-    ### WARNING:
-    ### Disable, if Dynamic Import is Enabled.
-    -->
     <!--
       <LeaguesTableMain
-        B_LEGT_T={WIDGET_T_DATA}
-        B_LEGT_D={WIDGET_DATA}
+        B_LEGT_T={widgetDataTranslation}
+        B_LEGT_D={widgetDataMain}
       />
     -->
 
@@ -198,4 +278,5 @@
   ### NOTE:
   ### promise was rejected
   -->
+
 {/await}

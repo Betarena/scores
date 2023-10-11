@@ -1,3 +1,8 @@
+// ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+// ### 📝 DESCRIPTION                                                         ◼️
+// ### Server Endpoint for Competition Page (Prefetch) Data Load              ◼️
+// ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+
 // #region ➤ 📦 Package Imports
 
 import { ERROR_CODE_PRELOAD, LAYOUT_1_LANG_PAGE_ERROR_MSG, dlog } from '$lib/utils/debug';
@@ -37,9 +42,9 @@ export async function load
       : params.lang
   ;
 
-  // **************************************
-  //  📌 VALIDATE URL                     *
-  // **************************************
+  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  //  📌 VALIDATE URL                     ◼️
+  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
   const validUrlCheck: boolean = await promiseValidUrlCheck
   (
@@ -62,9 +67,9 @@ export async function load
     );
   }
 
-  // **************************************
-  //  📌 PREFETCH DATA                    *
-  // **************************************
+  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  //  📌 PREFETCH DATA                    ◼️
+  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
   const
   [
@@ -128,8 +133,12 @@ export async function load
 // #region ➤ 🛠️ METHODS
 
 /**
+ * @author
+ *  @migbash
+ * @summary
+ *  🔹 INTERFACE
  * @description
- * TODO: DOC:
+ *  📌 Target `types` for `_this_` page required at preload.
  */
 type PP_PROMISE_0 =
 [
@@ -143,16 +152,22 @@ type PP_PROMISE_0 =
 ];
 
 /**
+ * @author
+ *  @migbash
  * @summary
- * 🔹 HELPER
- *
+ *  🔹 HELPER
  * @description
- * TODO: DOC:
+ *  📌 Fetches target data for `_this_` page.
+ * @param { any } fetch
+ *  Target instance of `fetch` object.
+ * @param { string } _lang
+ *  Target `language`.
+ * @returns { Promise < PP_PROMISE_0 > }
  */
 async function fetchData
 (
   fetch: any,
-  _lang: string
+  _lang: string,
 ): Promise < PP_PROMISE_0 >
 {
 
@@ -164,11 +179,11 @@ async function fetchData
 
   const urls_0: string[] =
   [
-    `/api/data/main/seo-pages?lang=${_lang}&page=competitions`,
-    `/api/data/main/seo-pages?term=competitions`,
-    `/api/data/main/seo-pages?term=football`,
-    `/api/data/main/seo-pages?term=team`,
-    `/api/data/main/seo-pages?countries=true`,
+    `/api/data/main/seo-pages?lang=${_lang}&page=competitions&decompress`,
+    `/api/data/main/seo-pages?term=competitions&decompress`,
+    `/api/data/main/seo-pages?term=football&decompress`,
+    `/api/data/main/seo-pages?term=team&decompress`,
+    `/api/data/main/seo-pages?countries=true&decompress`,
     `/api/data/lobby/highlights?seo=true&lang=${_lang}`,
     `/api/data/lobby/highlights?lang=${_lang}`,
   ];

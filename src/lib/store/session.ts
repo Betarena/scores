@@ -4,9 +4,9 @@ import { clientTimezoneDate, targetDate } from '$lib/utils/dates.js';
 import { writable } from 'svelte/store';
 
 import type { Platform_Session } from '$lib/types/types.scores.js';
+import type { B_H_COMP_DATA } from '@betarena/scores-lib/types/_HASURA_.js';
 import type { FIREBASE_livescores_now, FIREBASE_odds, FIRE_LNNS } from '@betarena/scores-lib/types/firebase.js';
 import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
-import type { B_H_COMP_DATA } from '@betarena/scores-lib/types/_HASURA_.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -28,6 +28,8 @@ const sessionStoreObj: Platform_Session =
 	fixture_select_view: 'overview',
   navBtnHover: undefined,
   withdrawModal: false,
+  showUserguide1: false,
+  showUserguide1Conf: false,
   // ### NOTE:
   // ### variables for language handle.
   lang_intent: undefined,
@@ -99,15 +101,14 @@ function createLocalStore
   {
 
     /**
+     * @author
+     *  @migbash
      * @summary
-     * 🔹 HELPER
-     *
+     *  🔹 HELPER
      * @description
-     *
-     * 📌 Update and store `server language` in session object.
-     *
-     * @param
-     * { string } lang - Target language server is currently in.
+     *  📌 Update and store `server language` in session object.
+     * @param { string } lang
+     *  Target `language` server is currently in.
      */
     updateServerLang:
     (
@@ -122,15 +123,14 @@ function createLocalStore
     },
 
     /**
+     * @author
+     *  @migbash
      * @summary
-     * 🔹 HELPER
-     *
+     *  🔹 HELPER
      * @description
-     *
-     * 📌 Update and store `live` **fixture odds** data for a **single fixture** in session object.
-     *
-     * @param
-     * { FIREBASE_odds[] } data - Target fixture odds list.
+     *  📌 Update and store `live` **fixture odds** data for a **single fixture** in session object.
+     * @param { FIREBASE_odds[] } data
+     *  Target fixture odds list.
      */
     updateLiveOdds:
     (
@@ -145,18 +145,16 @@ function createLocalStore
     },
 
     /**
+     * @author
+     *  @migbash
      * @summary
-     * 🔹 HELPER
-     *
+     *  🔹 HELPER
      * @description
-     *
-     * 📌 Update and store `live` **fixture odds** data in session object.
-     *
-     * @param
-     * { number } key - Target `fixtureId`
-     *
-     * @param
-     * { FIREBASE_odds[] } data - Target `fixtureId` respective **odds** data.
+     *  📌 Update and store `live` **fixture odds** data in session object.
+     * @param { number } key
+     *  Target `fixtureId`
+     * @param { FIREBASE_odds[] } data
+     *  Target `fixtureId` respective **odds** data.
      */
     updateLiveOddsMap:
     (
@@ -176,17 +174,15 @@ function createLocalStore
     },
 
     /**
+     * @author
+     *  @migbash
      * @deprecated
-     *
      * @summary
-     * 🔹 HELPER
-     *
+     *  🔹 HELPER
      * @description
-     *
-     * 📌 Update and store **all** `live` fixtures data in session object.
-     *
-     * @param
-     * { Map < number, FIREBASE_livescores_now > } data - Target `fixture` data to store in session object.
+     *  📌 Update and store **all** `live` fixtures data in session object.
+     * @param { Map < number, FIREBASE_livescores_now > } data
+     *  Target `fixture` data to store in session object.
      */
     updateLivescores:
     (
@@ -201,15 +197,14 @@ function createLocalStore
     },
 
     /**
+     * @author
+     *  @migbash
      * @summary
-     * 🔹 HELPER
-     *
+     *  🔹 HELPER
      * @description
-     *
-     * 📌 Update and stores `live` target fixture scores data in session object.
-     *
-     * @param
-     * { FIREBASE_livescores_now } data - Target `fixture` data to store in session object.
+     *  📌 Update and stores `live` target fixture scores data in session object.
+     * @param { FIREBASE_livescores_now } data
+     *  Target `fixture` data to store in session object.
      */
     updateLivescoresTarget:
     (
@@ -224,14 +219,14 @@ function createLocalStore
     },
 
     /**
+     * @author
+     *  @migbash
      * @summary
-     * 🔹 HELPER
-     *
+     *  🔹 HELPER
      * @description
-     * 📌 Update and stores `live` target fixture scoreboard (V2) data in session object.
-     *
-     * @param
-     * { Map < number, FIRE_LNNS > } data - Target `fixture` data to store in session object.
+     *  📌 Update and stores `live` target fixture scoreboard (V2) data in session object.
+     * @param { Map < number, FIRE_LNNS > } data
+     *  Target `fixture` data to store in session object.
      */
     updateLivescoreScoreboard:
     (
@@ -246,15 +241,14 @@ function createLocalStore
     },
 
     /**
+     * @author
+     *  @migbash
      * @summary
-     * 🔹 HELPER
-     *
+     *  🔹 HELPER
      * @description
-     *
-     * 📌 Update and stores `live` target fixture scoreboard (V2) data in session object.
-     *
-     * @param
-     * { number } data - Target Livescore Player Id.
+     *  📌 Update and stores `live` target fixture scoreboard (V2) data in session object.
+     * @param { number } data
+     *  Target Livescore Player Id.
      */
     updateLivescorePlayerId:
     (
@@ -269,15 +263,14 @@ function createLocalStore
     },
 
     /**
+     * @author
+     *  @migbash
      * @summary
-     * 🔹 HELPER
-     *
+     *  🔹 HELPER
      * @description
-     *
-     * 📌 Update and stores `live` target fixture scoreboard (V2) data in session object;
-     *
-     * @param
-     * { number[] } data - Target Livescore Fixture Id's
+     *  📌 Update and stores `live` target fixture scoreboard (V2) data in session object;
+     * @param { number[] } data
+     *  Target Livescore Fixture Id's
      */
     updateLivescoreFixtureIds:
     (
@@ -384,15 +377,11 @@ function createLocalStore
     /**
      * @summary
      * 🔹 HELPER | IMPORTANT
-     *
      * @description
-     * 📌 Update and store **latest competitions data** in user's session object.
-     *
-     * @param
-     * { Map < number, B_H_COMP_DATA > } data - Target new latest **competition data**.
-     *
-     * @returns
-     * `void`
+     *  📌 Update and store **latest competitions data** in user's session object.
+     * @param { Map < number, B_H_COMP_DATA > } data
+     *  Target new latest **competition data**.
+     * @returns { void }
      */
     updateCompetitionsLatestMap:
     (
@@ -408,16 +397,14 @@ function createLocalStore
 
     /**
      * @summary
-     * 🔹 HELPER | IMPORTANT
-     *
+     *  🔹 HELPER | IMPORTANT
      * @description
-     * 📌 Update and store **amount of competitions available** in user's session object.
-     *
-     * @param
-     * { number } data - Target amount of **competition data**.
-     *
-     * @returns
-     * `void`
+     *  📌 Update and store **amount of competitions available** in user's session object.
+     * @param { number } amountTotal
+     *  Target amount of **competition data**.
+     * @param { number } amountOpen
+     *  Target amount of **competition data**.
+     * @returns { void }
      */
     updateCompetitionsAllNum:
     (

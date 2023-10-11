@@ -1,5 +1,17 @@
 <!--
 ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+### This is a boilerplate example for a .svelte component, used by Betarena | Scores.  ◼️
+### It acts as a guidance on internal development standards and code style used        ◼️
+### throughout this project.                                                           ◼️
+### NOTE:                                                                              ◼️
+### <COPY-THIS-FILE-INTO-YOUR-NEXT-COMPONENT>                                          ◼️
+### NOTE:                                                                              ◼️
+### <❗️ REMOVE (THIS) COMMENT IN PRODUCTION>                                           ◼️
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+-->
+
+<!--
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 ### COMPONENT JS (w/ TS)                                                               ◼️
 ### NOTE:                                                                              ◼️
 ### access custom Betarena Scores JS VScode Snippets by typing 'script...'             ◼️
@@ -7,6 +19,9 @@
 -->
 
 <script lang="ts">
+
+  // IMPORTANT
+  // @ts-nocheck
 
   // #region ➤ 📦 Package Imports
 
@@ -27,18 +42,15 @@
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
-	import { get } from '$lib/api/utils.js';
-	import sessionStore from "$lib/store/session.js";
-	import userBetarenaSettings from '$lib/store/user-settings.js';
+  // import { <custom/node-modules> } from [..]
 
-	import SeoBox from '$lib/components/SEO-Box.svelte';
-	import TopGoalScorersLoader from './TopGoalScorers-Loader.svelte';
+  // import <component> [..]
 
-	import type { B_TGOL_D, B_TGOL_S, B_TGOL_T } from '@betarena/scores-lib/types/top-goalscorers.js';
+	// import type [..];
 
-  // ### WARNING:
+  // ### NOTE: || WARNING:
   // ### Disable, if Dynamic Import is Enabled.
-  // import TopGoalScorersMain from './TopGoalScorers-Main.svelte';
+  // import FeatBetSiteMain from './FeatBetSite-Main.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -63,24 +75,20 @@
 
   let
     /** @description (widget) translations data */
-    WIDGET_T_DATA: B_TGOL_T = $page.data?.B_TGOL_T,
+    widgetDataTranslation: B_COMP_MAIN_T,
     /** @description (widget) translations (SEO) data */
-    WIDGET_S_DATA: B_TGOL_S = $page.data?.B_TGOL_S,
+    widgetDataSeo: B_COMP_MAIN_S,
     /** @description (widget) main data */
-    widgetDataMain: B_TGOL_D,
+    widgetDataMain: B_COMP_HIGH_D,
     /** @description (widget) wether widget has or no data */
     widgetNoData: boolean = true,
     /** @description (widget) dynamic import variable for svelte component [1] */
-    TopGoalScorersMainDynamic: any,
-    /** @description (listen) value for change comparison of client bookmaker change */
-    currentBookmaker: string = $sessionStore?.serverLang
+    MainMainAsDynamic: any
   ;
 
-  $: WIDGET_S_DATA = $page.data?.B_TGOL_S;
-  $: WIDGET_T_DATA = $page.data?.B_TGOL_T;
-  $: WIDGET_TITLE = WIDGET_T_DATA?.widget_translations?.best_goal_scorers ?? 'Best Goalscorers';
-
-  $: deepReactListenBookmakerChng = $userBetarenaSettings?.country_bookmaker;
+  // $: widgetDataTranslation = $page.data?.B_COMP_MAIN_T;
+  // $: widgetDataSeo = $page.data?.B_COMP_MAIN_S;
+  // $: WIDGET_TITLE = widgetDataTranslation?.translations?.widget_title ?? translationObject?.featured_bet_site;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -111,77 +119,40 @@
   (
   ): Promise < void >
   {
-    if (!browser) return;
+    // ### IMPORTANT
+		if (!browser) return;
 
+    // ### NOTE:
+    // ### sometimes, the data/component is loaded too fast,
+    // ### so a buffer is added to slow down the pace and show the
+    // ### preloader to the user.
 		// await sleep(3000);
 
-    const response: B_TGOL_D = await get
+    const response = await get
     (
-			`/api/data/home/top-goalscorers?geoPos=${$userBetarenaSettings.country_bookmaker}`,
-      null,
-      true,
-      true
-		);
+      `<-target-data-endpoint-goes-here->`
+    ) as '<-add-custom-type-here->';
 
     widgetDataMain = response;
 
     // ### CHECK
     // ### for conditions when 'this' widget should not be shown.
     const if_M_0: boolean =
-      widgetDataMain == undefined
+      widgetDataMain == null
     ;
 		if (if_M_0)
     {
-      // dlog(`${IN_W_F_TAG} ❌ no data available!`, IN_W_F_TOG, IN_W_F_STY);
+      // dlog(`${LV2_W_H_TAG[0]} ❌ no data available!`);
 			widgetNoData = true;
-
 			return;
 		}
 
     widgetNoData = false;
 
     return;
-
   }
 
   // #endregion ➤ 🛠️ METHODS
-
-  // #region ➤ 🔥 REACTIVIY [SVELTE]
-
-  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-  // ### NOTE:                                                            ◼️
-  // ### Please add inside 'this' region the 'logic' that should run      ◼️
-  // ### immediately and/or reactively for 'this' .svelte file is ran.    ◼️
-  // ### WARNING:                                                         ◼️
-  // ### ❗️ Can go out of control.                                        ◼️
-  // ### (a.k.a cause infinite loops and/or cause bottlenecks).           ◼️
-  // ### Please keep very close attention to these methods and            ◼️
-  // ### use them carefully.                                              ◼️
-  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-
-  /**
-   * @author
-   *  @migbash
-   * @summary
-   *  🔥 REACTIVITY
-   * @description
-   *  📌 Listens to cases when, the:
-   *  - (1) _initial platform language_ has changed.
-   * @description
-   *  **WARNING:**
-   *  **triggered by changes in:**
-   *  - `deepReactListenWebLang`- **kicker** (via deepListen)
-   */
-   $: if_R_0 =
-    browser
-  ;
-  $: if (if_R_0 && deepReactListenBookmakerChng != currentBookmaker)
-  {
-    widgetInit();
-    currentBookmaker = deepReactListenBookmakerChng;
-  }
-
-  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
@@ -198,9 +169,11 @@
     ): Promise < void > =>
     {
 
+      // ### CHECK
+      // ### for loading widget dynamically.
       if (useDynamicImport)
       {
-        TopGoalScorersMainDynamic = (await import('./TopGoalScorers-Main.svelte')).default;
+        // MainMainAsDynamic = (await import('./Main-Main.svelte')).default;
       }
 
 	  }
@@ -214,37 +187,29 @@
 ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 ### COMPONENT HTML                                                                     ◼️
 ### NOTE:                                                                              ◼️
-### use 'CTRL+SPACE' to autocomplete global class=styles                               ◼️
+### use 'CTRL+SPACE' to autocomplete global class="" styles                            ◼️
 ### NOTE:                                                                              ◼️
 ### access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.         ◼️
 ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 -->
 
 <SeoBox>
-  <h2>{WIDGET_TITLE}</h2>
-  <p>{WIDGET_T_DATA?.widget_translations?.goals}</p>
-  <p>{WIDGET_T_DATA?.widget_translations?.odds}</p>
-  <p>{WIDGET_T_DATA?.widget_translations?.player}</p>
-  <p>{WIDGET_T_DATA?.widget_translations?.show_more_players}</p>
   <!--
-  LIST PLAYERS
+  SEO CONTENT GOES HERE
   -->
-  {#each WIDGET_S_DATA?.players ?? [] as player}
-    <a href={player?.url}>
-      <p>{player?.common_name}</p>
-    </a>
-  {/each}
 </SeoBox>
 
-<!-- [🐞] -->
-<!-- <TopGoalScorersLoader /> -->
+<!--
+[🐞]
+-->
+<!-- <MainLoader /> -->
 
 {#await widgetInit()}
   <!--
   ### NOTE:
   ### promise is pending
   -->
-  <TopGoalScorersLoader />
+  <MainLoader />
 
 {:then data}
   <!--
@@ -254,19 +219,17 @@
 
   <!--
   ### NOTE:
-  ### Dynamic Svelte Component Import
+  ### Dynamic Svelte Component Import [optional]
   ### WARNING:
-  ### Disable, if Standard Import is Enabled.
+  ### Disable (this), if Standard (below) Import is Enabled.
   -->
   <svelte:component
-    this={TopGoalScorersMainDynamic}
-    B_TGOL_D={widgetDataMain}
-    B_TGOL_T={WIDGET_T_DATA}
+    this={MainMainAsDynamic}
+    WIDGET_DATA={widgetDataMain}
   />
   <!--
-    <TopGoalScorersMain
-      B_TGOL_D={widgetDataMain}
-      B_TGOL_T={WIDGET_T_DATA}
+    <FeatBetSiteMain
+      B_FEATB_T={widgetDataTranslation}
     />
   -->
 

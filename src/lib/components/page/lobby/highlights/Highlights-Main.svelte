@@ -29,7 +29,7 @@
 
 	import sessionStore from "$lib/store/session.js";
 	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { dlog } from '$lib/utils/debug.js';
+	import { COMP_HIGH_DEBUG, dlog } from '$lib/utils/debug.js';
 	import { iso2CountryLogo, toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
 	import { translationObject } from '$lib/utils/translation.js';
 	import { Competition } from '@betarena/scores-lib/dist/classes/class.competition.js';
@@ -236,6 +236,9 @@
    *
    * WARNING:
    * triggered by changes in:
+   * - FIXME: `B_COMP_HIGH_D`
+   * - FIXME: `B_COMP_HIGH_D?.competition`
+   * - FIXME: `B_COMP_HIGH_D?.competition?.data`
    * - `?.prediction` - **kicker**
    */
   $: if_R_1 =
@@ -246,7 +249,7 @@
     // ### [🐞]
     dlog
     (
-      `🚏 checkpoint [R] ➤ debugTagOrVarName ${if_R_1}`,
+      `🚏 checkpoint [R] ➤ ${COMP_HIGH_DEBUG[0]} if_R_1`,
       true
     );
 
@@ -276,7 +279,7 @@
     // ### [🐞]
     dlog
     (
-      `🚏 checkpoint [R] ➤ debugTagOrVarName ${if_R_2}`,
+      `🚏 checkpoint [R] ➤ ${COMP_HIGH_DEBUG[0]} if_R_2`,
       true
     );
 

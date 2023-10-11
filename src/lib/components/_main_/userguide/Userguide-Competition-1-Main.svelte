@@ -24,31 +24,19 @@
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
 	import { browser } from '$app/environment';
-	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
+	import { fade, fly } from 'svelte/transition';
 
-	import { post } from '$lib/api/utils.js';
+	import { userToggleUserguideOptOut } from '$lib/firebase/common.js';
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { dlog, initSentry } from '$lib/utils/debug';
-	import { initSportbookData, platfrom_lang_ssr, setUserGeoLocation } from '$lib/utils/platform-functions.js';
+	import { dlogv2 } from '$lib/utils/debug.js';
+	import { viewport_change } from '$lib/utils/platform-functions.js';
 
-	import Footer from '$lib/components/_main_/footer/Footer.svelte';
-	import Header from '$lib/components/_main_/header/Header.svelte';
+  import icon_close from './assets/icon-close-btn.svg';
+  import icon_close_dark from './assets/icon-close-dark-btn.svg';
 
-	import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
-
-  // import SplashScreen from '$lib/components/Splash-Screen.svelte';
-
-  // ### WARNING:
-  // ### Disable, if Dynamic Import is Enabled.
-	// import OfflineAlert from '$lib/components/Offline-Alert.svelte';
-	// import PlatformAlert from '$lib/components/Platform-Alert.svelte';
-	// import EmailSubscribe from '$lib/components/Email-Subscribe.svelte';
-
-  // ### NOTE:
-  // ### moved to static/
-	// import '../app.css';
+	import type { B_USRG_D } from '@betarena/scores-lib/types/types.misc.userguide.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -66,42 +54,31 @@
   // ### 4. $: [..]                                                       ◼️
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
+	export let
+    B_USRG_D: B_USRG_D
+  ;
+
   const
-    /** Dynamic import variable condition */
-    useDynamicImport: boolean = true
+    /** @description 📌 `this` component **main** `id` and `data-testid` prefix. */
+    CNAME = 'global⮕w⮕userguide⮕comp-1⮕main',
+    /** @description TODO: DOC: */
+    VIEWPORT_TABLET_INIT = 821,
+    /** @description TODO: DOC: */
+    VIEWPORT_MOBILE_INIT = 581
   ;
 
-	let
+  let
     /** @description TODO: DOC: */
-    B_NAV_T: B_NAV_T,
+    isViewMobile: boolean = true,
     /** @description TODO: DOC: */
-	  offlineMode: boolean = false,
+    isViewTablet: boolean = true,
     /** @description TODO: DOC: */
-    OfflineAlertDynamic: any,
+    noWidgetData: unknown = false,
     /** @description TODO: DOC: */
-    PlatformAlertDynamic: any,
+    showModal: boolean = false,
     /** @description TODO: DOC: */
-    EmailSubscribeDynamic: any,
-    /** @description TODO: DOC: */
-    deepReactListenIsRouteCompetitions: boolean,
-    /** @description (listen) value for change comparison of client bookmaker change */
-    currentBookmaker: string = $sessionStore?.serverLang
+    showExpectedVideo: boolean = false
   ;
-
-	$: B_NAV_T = $page.data?.B_NAV_T ?? { };
-  $: deepReactListenServerSideLang = platfrom_lang_ssr
-  (
-		$page?.route?.id,
-		$page?.error,
-		$page?.params?.lang
-	);
-  $: deepReactListenIsRouteCompetitions = $page?.route?.id.includes('/[[lang=lang]]/[competitions=competitions]');
-  $: deepReactListenIsProfilePage = $page?.route?.id == '/u/[view]/[lang=lang]';
-  $: deepReactListenBookmakerChng = $userBetarenaSettings?.country_bookmaker;
-
-  $sessionStore.deviceType = $page.data?.deviceType;
-  // @ts-ignore
-  $sessionStore.fixturesTodayNum = parseInt(B_NAV_T?.scores_header_fixtures_information?.football)
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -123,78 +100,99 @@
    * @summary
    *  🔹 HELPER
    * @description
-   *  📌 method to `toggle` internet connection state.
+   *  📌 Toggle `user` opt-out.
+   * @returns { void }
    */
-	function toggleOfflineAlert
+  function toggleUserguideOptOut
   (
   ): void
   {
-		offlineMode = !offlineMode;
-    // [🐞]
-		dlog
-    (
-			'🔴 your internet connection has changed!',
-			true
-		);
-	}
+    if ($userBetarenaSettings.user != null)
+    {
+      userToggleUserguideOptOut
+      (
+        $userBetarenaSettings.user.firebase_user_data.uid,
+        1,
+        $userBetarenaSettings?.userguide_id_opt_out
+      );
+    }
 
-  /**
-   * @description
-   * TODO: DOC:
-  */
-  async function updateFirestoreAndCrisp
-  (
-  ): Promise < void >
-  {
-    if (!browser || $userBetarenaSettings?.user == undefined) return;
-
-    await post
+    userBetarenaSettings.updateToggleUserGuideOpt
     (
-      `${import.meta.env.VITE_FIREBASE_FUNCTIONS_ORIGIN}${import.meta.env.VITE_FIREBASE_FUNCTIONS_F_1}`,
-      {
-        user_uids: [$userBetarenaSettings?.user?.firebase_user_data?.uid]
-      }
+      1
     );
   }
 
   /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🔹 HELPER
    * @description
-   * TODO: DOC:
+   *  📌 Logic for modal transition logic for mobile devices only.
+   * @param { any } node
+   *  Target node to apply transition to.
+   * @param { any } options
+   *  Target transition options.
+   * @returns { any }
    */
-  function kickstartEventListen
+  function customAnimation
+  (
+    node: any,
+    options: any
+  ): any
+  {
+		if (isViewTablet)
+			return options.fn(node, { y: 1500, duration: 500 });
+    else
+			return options.fn(node, { x: 850, duration: 750 });
+	}
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🔹 HELPER | IMPORTANT
+   * @description
+   *  📌 Triggers viewport changes.
+   * @returns { void }
+   */
+  function resizeAction
+  (
+  ): void
+  {
+    [
+      isViewTablet,
+      isViewMobile
+    ] =	viewport_change
+    (
+      VIEWPORT_TABLET_INIT,
+      VIEWPORT_MOBILE_INIT
+    );
+  }
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🔹 HELPER | IMPORTANT
+   * @description
+   *  📌 Local component wrapper
+   * (⚡️) `window` (resize-change) listener.
+   * @returns { void }
+   */
+  function addEventListeners
   (
   ): void
   {
     // ### NOTE:
-    // ### listen to changes in 'window.offline'.
+    // ### listen to 'resize'.
     window.addEventListener
     (
-      'offline',
-      toggleOfflineAlert
-    );
-
-    // ### NOTE:
-    // ### listen to changes in 'window.online'.
-    window.addEventListener
-    (
-      'online',
-      toggleOfflineAlert
-    );
-
-    // ### NOTE:
-    // ### listen to changes in 'document.visibility'.
-    document.addEventListener
-    (
-      'visibilitychange',
-      async function
-      (
-      ): Promise < void >
+      'resize',
+      function ()
       {
-        if (!document.hidden)
-        {
-          dlog('🔵 user is active', true)
-          updateFirestoreAndCrisp();
-        }
+        resizeAction();
       }
     );
   }
@@ -215,124 +213,58 @@
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
   /**
-   * @author
-   *  @migbash
-   * @summary
-   *  🔥 REACTIVITY
-   * @description
-   *  📌 Listens to cases when, the:
-   *  - (1) _initial platform load_ has changed top `client`.
-   * @description
-   *  **WARNING:**
-   *  **triggered by changes in:**
-   *  - `browser`- **kicker**
+   *
    */
-	$: if (browser)
-  {
-    // ### [🐞]
-    dlog
-    (
-      `🚏 checkpoint ➤ layout.svelte if_COD_1`,
-      true
-    );
-
-		userBetarenaSettings.useLocalStorage();
-
-    setUserGeoLocation
-    (
-      B_NAV_T
-    );
-
-    kickstartEventListen();
-	}
-
-  /**
-   * @author
-   *  @migbash
-   * @summary
-   *  🔥 REACTIVITY
-   * @description
-   *  📌 Listens to cases when, the:
-   *  - (1) _initial platform language_ has changed.
-   * @description
-   *  **WARNING:**
-   *  **triggered by changes in:**
-   *  - `deepReactListenServerSideLang`- **kicker** (via deepListen)
-   */
-  $: if (deepReactListenServerSideLang)
-  {
-    // ### [🐞]
-    dlog
-    (
-      `🚏 checkpoint ➤ layout.svelte if_COD_2`,
-      true
-    );
-
-    sessionStore.updateServerLang
-    (
-      deepReactListenServerSideLang
-    );
-  }
-
-  /**
-   * @author
-   *  @migbash
-   * @summary
-   *  🔥 REACTIVITY
-   * @description
-   *  📌 Listens to cases when, the:
-   *  - (1) _platform bookmaker_ changes.
-   * @description
-   *  **WARNING:**
-   *  **triggered by changes in:**
-   *  - `deepReactListenServerSideLang`- **kicker** (via deepListen)
-   */
-  $: if_COD_3 =
-    browser
+  $: if_R_0_1 =
+    $userBetarenaSettings?.userguide_id_opt_out.includes(B_USRG_D.id)
   ;
-  $: if (if_COD_3 && deepReactListenBookmakerChng != currentBookmaker)
+  $: if (!if_R_0_1)
   {
     // ### [🐞]
-    dlog
+    dlogv2
     (
-      `🚏 checkpoint ➤ layout.svelte if_COD_3`,
+      `🚏 checkpoint [R] ➤ USRGUIDE if_R_0_1`,
+      [
+        '📝 INFO: Action click detected! Processing logic...',
+        '❗️ WARNING: Non re-occuring logic, (once per load), should not be seen again until action trigger taken.'
+      ],
       true
     );
 
-    initSportbookData
+    setUserShowGuide1();
+
+    /**
+     * @description
+     *  📌 **self-explanatory**
+     */
+    function setUserShowGuide1
     (
-      $userBetarenaSettings?.country_bookmaker
-    );
+    ): void
+    {
+      $sessionStore.showUserguide1 = true;
+    }
   }
 
   /**
-   * @author
-   *  @migbash
-   * @summary
-   *  🔥 REACTIVITY
-   * @description
-   *  📌 Listens to cases when, the:
-   *  - (1) _route / endpoint_ changes.
-   * @description
-   *  **WARNING:**
-   *  **triggered by changes in:**
-   *  - `browser`- **kicker**
-   *  - `deepReactListenIsRouteCompetitions`- **kicker** (via deepListen)
-   *  - `deepReactListenIsProfilePage`- **kicker** (via deepListen)
+   *
    */
-  $: if (browser && (deepReactListenIsRouteCompetitions || deepReactListenIsProfilePage))
+  $: if_R_0_2 =
+    browser
+    && showModal
+  ;
+  $: if (if_R_0_2 && $sessionStore?.showUserguide1)
   {
-    const helpdesk: HTMLElement = document?.getElementsByClassName('crisp-client')?.[0] as unknown as HTMLElement;
-    if (helpdesk != undefined)
-      helpdesk.style.display = "unset";
-    ;
+    document.body.classList.add
+    (
+      'disable-scroll'
+    );
   }
-  else if (browser && !deepReactListenIsRouteCompetitions && !deepReactListenIsProfilePage)
+  else
   {
-    const helpdesk: HTMLElement = document?.getElementsByClassName('crisp-client')?.[0] as unknown as HTMLElement;
-    if (helpdesk != undefined)
-      helpdesk.style.display = "none";
-    ;
+    document.body.classList.remove
+    (
+      'disable-scroll'
+    );
   }
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
@@ -348,50 +280,26 @@
 
   onMount
   (
-    async (
-    ): Promise < void > =>
+    () =>
     {
-      initSentry();
+      // ### IMPORTANT
+      resizeAction();
+      addEventListeners();
 
-      if (useDynamicImport)
-      {
-        OfflineAlertDynamic = (await import('$lib/components/Offline-Alert.svelte')).default;
-        PlatformAlertDynamic = (await import('$lib/components/Platform-Alert.svelte')).default;
-        EmailSubscribeDynamic = (await import('$lib/components/Email-Subscribe.svelte')).default;
-      }
-	  }
+      setTimeout
+      (
+        () =>
+        {
+          showModal = true;
+        },
+        1500
+      );
+    }
   );
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
 </script>
-
-<!--
-◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-### SVELTE INJECTION TAGS                                                              ◼️
-◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
--->
-
-<svelte:head>
-  <!--
-  HELPDESK PLUGIN
-  -->
-  {#if deepReactListenIsRouteCompetitions || deepReactListenIsProfilePage}
-    <script type="text/javascript">
-      window.$crisp=[];
-      window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
-      (function()
-      {
-        d=document;
-        s=d.createElement("script");
-        s.src="https://client.crisp.chat/l.js";
-        s.async=1;
-        d.getElementsByTagName("head")[0].appendChild(s);
-      }
-      )();
-    </script>
-  {/if}
-</svelte:head>
 
 <!--
 ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
@@ -403,57 +311,241 @@
 ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 -->
 
-<!-- <SplashScreen /> -->
-
-{#if offlineMode}
+<!--
+MAIN WIDGET COMPONENT
+-->
+{#if showModal && $sessionStore?.showUserguide1}
 
   <!--
-  ### NOTE:
-  ### Dynamic Svelte Component Import
-  ### WARNING:
-  ### Disable, if Standard Import is Enabled.
+  BACKGROUND BLUR
   -->
-  <svelte:component
-    this={OfflineAlertDynamic}
+  <div
+    id='background-modal-blur'
+    in:fade
+    on:click={() => $sessionStore.showUserguide1 = false}
   />
-	<!-- <OfflineAlert /> -->
+
+  <!--
+  USERGUIDE ➤ MAIN COMPONENT
+  -->
+  <div
+    id="{CNAME}"
+    class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+    in:customAnimation={{ fn: fly }}
+    out:customAnimation={{ fn: fly }}
+  >
+
+    <!--
+    USERGUIDE ➤ MAIN SCROLLABLE BOX
+    -->
+    <div
+      id="{CNAME}⮕inner"
+    >
+
+      <!--
+      USERGUIDE ➤ CLOSE ICON
+      -->
+      <img
+        id='close-vector'
+        class=
+        '
+        cursor-pointer
+        '
+        style=
+        '
+        {isViewTablet ? 'top: 16px; right: 16px;' : ''}
+        '
+        src={$userBetarenaSettings.theme == 'Dark' ? icon_close : icon_close_dark}
+        alt='close-svg'
+        on:click={() => $sessionStore.showUserguide1 = false}
+        width=18
+        height=18
+      />
+
+      <!--
+      USERGUIDE ➤ TITLE
+      -->
+      <div
+        id="{CNAME}⮕title"
+        class=
+        "
+        {!isViewTablet ? 'm-b-35 global s-32 lh-125' : ''}
+        {isViewTablet ? 'global s-28 lh-128 text-center m-b-24' : ''}
+        "
+      >
+        {@html B_USRG_D?.content?.title1}
+        <!-- {@html B_USRG_D?.content?.title2} -->
+      </div>
+
+      <!--
+      USERGUIDE ➤ DESCRIPTION
+      -->
+      <div
+        id="{CNAME}⮕description"
+        class=
+        "
+        s-20
+        {isViewTablet ? 'global s-16 text-center' : ''}
+        "
+      >
+        {@html B_USRG_D.content.description}
+      </div>
+
+      <!--
+      USERGUIDE ➤ VIDEO
+      (alt) https://www.youtube.com/embed/watch?v=lrmAAadPVQI?enablejsapi=1
+      -->
+      <div
+        id="{CNAME}⮕video"
+        class=
+        "
+        {!isViewTablet ? 'm-t-45 m-b-50' : ''}
+        {isViewTablet ? 'm-t-35 m-b-35' : ''}
+        "
+      >
+        <iframe
+          src="{B_USRG_D?.content?.video_link?.replace("watch?v=", "embed/") ?? 'https://www.youtube.com/watch?v=lrmAAadPVQI'}"
+          frameborder=0
+        />
+      </div>
+
+      <!--
+      USERGUIDE ➤ STEP-BY-STEP
+      -->
+      <div
+        id="{CNAME}⮕step-by-step-box"
+      >
+        {#each (B_USRG_D?.content?.tutorial_steps ?? []) as step}
+
+          <div
+            class=
+            "
+            {!isViewMobile ? 'global s-20 m-b-35' : ''}
+            {isViewMobile ? 'global s-16 m-b-24' : ''}
+            "
+          >
+            {@html step.title ?? ''}
+          </div>
+
+          {#each (step?.steps ?? []) as [stepId, stepTxt]}
+
+            <div
+              class=
+              "
+              row-space-start
+              m-b-8
+              step-by-step-row
+              "
+              style=
+              "
+              {isViewMobile ? "align-items: flex-start;" : ""}
+              "
+            >
+
+              <div
+                class=
+                "
+                text-center
+                step-box
+                "
+                class:m-r-20={isViewMobile}
+                class:m-r-24={!isViewMobile}
+              >
+                <p
+                  class=
+                  "
+                  s-16
+                  color-black-2
+                  w-500
+                  "
+                >
+                  {stepId}
+                </p>
+              </div>
+
+              <p
+                class=
+                "
+                s-16
+                color-black-2
+                m-t-5
+                "
+              >
+                {stepTxt}
+              </p>
+            </div>
+
+          {/each}
+
+        {/each}
+      </div>
+
+      <!--
+      USERGUIDE ➤ DIVIDER
+      -->
+      <div
+        id="divider"
+        class=
+        "
+        {!isViewTablet ? 'm-t-45 m-b-50' : ''}
+        {isViewTablet ? 'm-t-35 m-b-35' : ''}
+        "
+      />
+
+      <!--
+      USERGUIDE ➤ FOOTER DATA
+      -->
+      <div
+        id="{CNAME}⮕footer"
+        class=
+        "
+        s-20
+        {isViewTablet ? 'global s-16' : ''}
+        "
+      >
+        {@html B_USRG_D.content.footer1}
+        <!-- {@html B_USRG_D.content.footer2} -->
+      </div>
+
+    </div>
+
+    <!--
+    USERGUIDE ➤ DON'T SHOW ANYMORE
+    -->
+    <div
+      id="{CNAME}⮕bottom"
+      class=
+      "
+      row-space-start
+      "
+    >
+      <input
+        id=""
+        type="checkbox"
+        name=""
+        class=
+        "
+        m-r-16
+        v-1
+        "
+        bind:checked={if_R_0_1}
+        on:click={() => toggleUserguideOptOut()}
+      >
+      <p
+        class=
+        "
+        color-black-2
+        {!isViewMobile ? 's-18' : ''}
+        {isViewMobile ? 's-16' : ''}
+        "
+      >
+        {B_USRG_D?.content?.extra?.do_not_show}
+      </p>
+    </div>
+
+  </div>
 
 {/if}
-
-<!--
-### NOTE:
-### Dynamic Svelte Component Import
-### WARNING:
-### Disable, if Standard Import is Enabled.
--->
-<svelte:component
-  this={PlatformAlertDynamic}
-/>
-<!-- <PlatformAlert /> -->
-
-<!--
-### NOTE:
-### Dynamic Svelte Component Import
-### WARNING:
-### Disable, if Standard Import is Enabled.
--->
-<svelte:component
-  this={EmailSubscribeDynamic}
-/>
-<!-- <EmailSubscribe /> -->
-
-<Header />
-
-<main
-	class:dark-background={$userBetarenaSettings.theme == 'Dark'}
-  class:before-display-none={deepReactListenIsRouteCompetitions}
->
-
-	<slot />
-
-	<Footer />
-
-</main>
 
 <!--
 ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
@@ -467,36 +559,147 @@
 
 <style>
 
-	main
+  div#background-modal-blur
   {
     /* 📌 position */
-		position: relative;
-		z-index: 0;
-		margin: 0 auto;
+		position: fixed;
+		top: 0;
+		right: 0;
+		left: 0;
+		z-index: 4000;
     /* 🎨 style */
+		height: 100%;
 		width: 100%;
+		background: rgba(0, 0, 0, 0.5);
 	}
-	main::before
+
+	div#global⮕w⮕userguide⮕comp-1⮕main
+  {
+    /* 📌 position */
+    top: 7.5%;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    margin: auto;
+    position: fixed;
+    z-index: 100000;
+    /* 🎨 style */
+    background: #ffffff;
+		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
+		border-radius: 12px 12px 0 0;
+    width: 100%;
+    overflow: hidden;
+    padding: 24px;
+	}
+
+  img#close-vector
   {
     /* 📌 position */
 		position: absolute;
-		z-index: -1;
-		top: -5px;
-    /* 🎨 style */
-		content: '';
-		display: inline-block;
-		width: 100%;
-		height: 435px;
-		background-image: url('/assets/svg/header-background.svg');
-		background-repeat: no-repeat;
-		background-size: cover;
-		background-origin: border-box;
-		background-position: top;
+		top: 24px;
+		right: 24px;
+		z-index: 400000002;
 	}
-  main.before-display-none::before
+
+	div#global⮕w⮕userguide⮕comp-1⮕main⮕inner
   {
     /* 🎨 style */
-    display: none;
+    display: grid;
+    overflow-x: hidden;
+    max-height: 100%;
+    overflow-y: scroll;
+    padding-bottom: 85px;
+    /* 💠 scrollbar */
+    /* IE and Edge */ -ms-overflow-style: none !important;
+		/* Firefox */ scrollbar-width: none !important;
+  }
+  div#global⮕w⮕userguide⮕comp-1⮕main⮕inner::-webkit-scrollbar
+  {
+		display: none !important;
+  }
+
+  div#global⮕w⮕userguide⮕comp-1⮕main⮕scroll-box
+  {
+    /* 🎨 style */
+    overflow-y: scroll;
+  }
+
+  div#global⮕w⮕userguide⮕comp-1⮕main⮕description
+  {
+    /* 🎨 style */
+  }
+
+	:global(
+    div#global⮕w⮕userguide⮕comp-1⮕main h1,
+    div#global⮕w⮕userguide⮕comp-1⮕main h2,
+    div#global⮕w⮕userguide⮕comp-1⮕main h3
+  )
+  {
+    /* 🎨 style */
+		margin-top: 0;
+    margin-bottom: 0;
+	}
+
+	:global(
+    div#global⮕w⮕userguide⮕comp-1⮕main a
+  )
+  {
+    /* 🎨 style */
+		color: #f5620f !important;
+		width: fit-content !important;
+		margin: 0;
+		display: initial;
+	}
+
+  div#global⮕w⮕userguide⮕comp-1⮕main⮕video
+  {
+    /* 📌 position */
+    position: relative;
+    /* 🎨 style */
+    width: 100%;
+    height: 396px;
+  }
+  iframe
+  {
+    /* 📌 position */
+    position: absolute;
+    /* 🎨 style */
+    width: inherit;
+    height: inherit;
+  }
+
+  div#divider
+  {
+    /* 🎨 style */
+    height: 1px;
+    color: var(--grey-color);;
+    background-color: var(--grey-color);
+    border: none;
+  }
+
+  div.step-box
+  {
+    /* 🎨 style */
+    padding: 4px 0;
+    min-width: 32px;
+    min-height: 32px;
+    border-radius: 4px;
+    background: var(--colors-gray-6, #F7F7F7);
+  }
+
+  div#global⮕w⮕userguide⮕comp-1⮕main⮕bottom
+  {
+    /* 📌 position */
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    /* 🎨 style */
+    width: 100%;
+    padding: 24px;
+    background: var(--white);
+    box-shadow: 0px -4px 12px 0px rgba(0, 0, 0, 0.08);
+    height: 68px;
   }
 
 	/*
@@ -505,31 +708,90 @@
   ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   */
 
-	@media screen
-  and (min-width: 768px)
+  @media only screen
+  and (min-width: 581px)
   {
-		main::before
+    div#global⮕w⮕userguide⮕comp-1⮕main
     {
       /* 🎨 style */
-			height: 495px;
-		}
-	}
-
-	@media screen
-  and (min-width: 1024px)
-  {
-    main
-    {
-      overflow: hidden;
+      padding: 48px;
     }
-		main::before
+    div#global⮕w⮕userguide⮕comp-1⮕main⮕bottom
+    {
+      /* 🎨 style */
+      padding: 32px 48px;
+      height: 84px;
+    }
+  }
+
+	@media only screen
+  and (min-width: 821px)
+  {
+    div#global⮕w⮕userguide⮕comp-1⮕main
     {
       /* 📌 position */
-			top: calc(100vw / -5.5) !important;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      left: unset;
+      margin: unset;
       /* 🎨 style */
-			height: 100%;
-			background-size: contain !important;
-		}
+      width: 45vw;
+      overflow: hidden;
+      border-radius: 0;
+    }
+  }
+
+	/*
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  ◼️ 🌒 DARK-THEME         ◼️
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  */
+
+  div#global⮕w⮕userguide⮕comp-1⮕main.dark-background-1
+  {
+    /* 🎨 style */
+		background-color: var(--dark-theme) !important;
+  }
+
+	:global(
+    div#global⮕w⮕userguide⮕comp-1⮕main.dark-background-1 h1,
+    div#global⮕w⮕userguide⮕comp-1⮕main.dark-background-1 h2,
+    div#global⮕w⮕userguide⮕comp-1⮕main.dark-background-1 h3
+  )
+  {
+    /* 🎨 style */
+		color: var(--white);
 	}
+
+	:global(
+    div#global⮕w⮕userguide⮕comp-1⮕main.dark-background-1 p
+  )
+  {
+    /* 🎨 style */
+		color: var(--white);
+	}
+
+  div#global⮕w⮕userguide⮕comp-1⮕main.dark-background-1 div.step-box
+  {
+    /* 🎨 style */
+    padding: 4px 0;
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  div#global⮕w⮕userguide⮕comp-1⮕main.dark-background-1 div#divider
+  {
+    /* 🎨 style */
+    height: 1px;
+    border: 0;
+    background-color: var(--dark-theme-1) !important;
+  }
+
+  div#global⮕w⮕userguide⮕comp-1⮕main.dark-background-1 div#global⮕w⮕userguide⮕comp-1⮕main⮕bottom
+  {
+    /* 🎨 style */
+    background: #1F1F1F;
+    box-shadow: 0px -4px 12px 0px rgba(0, 0, 0, 0.12);
+  }
 
 </style>

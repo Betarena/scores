@@ -1,70 +1,81 @@
-// #region ➤ Package Imports
+// ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+// ### 📝 DESCRIPTION                                                         ◼️
+// ### Application Server Endpoint for League List Data Fetch + Handle        ◼️
+// ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+
+// #region ➤ 📦 Package Imports
 
 import { json } from '@sveltejs/kit';
 
-import { initGrapQLClient } from '$lib/graphql/init';
-import { HLL_HP_ENTRY, HLL_HP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.home.league-list.js';
-import { LEGL_C_D_A, LEGL_C_T_A } from '@betarena/scores-lib/dist/redis/config.js';
+import { HLL_HP_ENTRY, HLL_HP_ENTRY_1, HLL_HP_ENTRY_2 } from '@betarena/scores-lib/dist/functions/func.home.league-list.js';
+import { LEGL_C_D_A_V3, LEGL_C_S_A_V3, LEGL_C_T_A_V3 } from '@betarena/scores-lib/dist/redis/config.js';
+import dotenv from 'dotenv';
+import LZString from 'lz-string';
 import { get_target_hset_cache_data } from '../../../../../lib/redis/std_main';
 
-import type { B_LEGL_D, B_LEGL_T } from '@betarena/scores-lib/types/league-list.js';
+import type { B_LEGL_D, B_LEGL_S, B_LEGL_T } from '@betarena/scores-lib/types/types.home.league-list.js';
 
-// #endregion ➤ Package Imports
+// #endregion ➤ 📦 Package Imports
 
-// #region ➤ [VARIABLES] Imports
+// #region ➤ 📌 VARIABLES
 
-const graphQlInstance = initGrapQLClient()
+dotenv.config();
 
-// #endregion ➤ [VARIABLES] Imports
+// #endregion ➤ 📌 VARIABLES
 
-// #region ➤ [METHODS]
+// #region ➤ 🛠️ METHODS
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-//  [MAIN] ENDPOINT METHOD
-// ~~~~~~~~~~~~~~~~~~~~~~~~
+// ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+// ENDPOINT ENTRY                               ◼️
+// ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
 export async function GET
 (
-  req
+  req: any
 ): Promise < unknown >
 {
   try
   {
-    // NOTE: Handle url-query data;
+    // ### NOTE:
+    // ### handle url-query data
     const lang: string = req?.url?.searchParams?.get('lang');
     const geoPos: string = req?.url?.searchParams?.get('geoPos');
+    const seo: string = req?.url?.searchParams?.get('seo');
     const hasura: string = req?.url?.searchParams?.get('hasura');
 
-    // ACTION:
-    // ➨ Get Featured Match (WIDGET) MAIN data;
-    // ➨ NOTE: Contains [HASURA] Fallback;
+    // ### NOTE:
+    // ### gathers League List Widget Main data.
+    // ### NOTE:
+    // ### contains [HASURA] Fallback.
     const if_M_0: boolean =
-      geoPos != undefined
+      geoPos != null
     ;
     if (if_M_0)
     {
       let data: unknown;
-      let loadType = "cache";
+      let loadType: string = "cache";
 
-      // IMPORTANT Check in cache;
+      // ### CHECK | IMPORTANT
+      // ### for existance in cache.
       if (!hasura)
       {
         data = await get_target_hset_cache_data
         (
-          LEGL_C_D_A,
+          LEGL_C_D_A_V3,
           geoPos
         );
         if (data == undefined)
         {
           data = await get_target_hset_cache_data
           (
-            LEGL_C_D_A,
+            LEGL_C_D_A_V3,
             'en'
           );
         }
       }
 
-      // IMPORTANT Default to Hasura;
+      // ### CHECK | IMPORTANT
+      // ### for default in Hasura.
       if (!data || hasura)
       {
         data = await fallbackMainData
@@ -74,33 +85,52 @@ export async function GET
         loadType = 'HASURA'
       }
 
-      console.log(`📌 loaded [FPROB] with: ${loadType}`)
+      // ### [🐞]
+      // console.log(`📌 loaded [LL] with: ${loadType}`)
 
-      if (data != undefined) return json(data);
+      if (data != null)
+      {
+        const compressed: string = LZString.compress(JSON.stringify(data));
+
+        // ### [🐞]
+        // console.log(JSON.parse(LZString.decompress(compressed)));
+
+        return json
+        (
+          {
+            data: compressed,
+            loadType
+          }
+        );
+      };
     }
 
-    // ACTION:
-    // ➨ Get Featured Match (TRANSLATION) MAIN data;
-    // ➨ NOTE: Contains [HASURA] Fallback;
+    // ### NOTE:
+    // ### gathers League List Widget Translation data.
+    // ### NOTE:
+    // ### contains [HASURA] Fallback.
     const if_M_1: boolean =
-      lang != undefined
+      lang != null
+      && seo == null
     ;
     if (if_M_1)
     {
       let data: unknown;
-      let loadType = "cache";
+      let loadType: string = "cache";
 
-      // IMPORTANT Check in cache;
+      // ### CHECK | IMPORTANT
+      // ### for existance in cache.
       if (!hasura)
       {
         data = await get_target_hset_cache_data
         (
-          LEGL_C_T_A,
+          LEGL_C_T_A_V3,
           lang
         );
       }
 
-      // IMPORTANT Default to Hasura;
+      // ### CHECK | IMPORTANT
+      // ### for default in Hasura.
       if (!data || hasura)
       {
         data = await fallbackMainData_1
@@ -110,12 +140,82 @@ export async function GET
         loadType = 'HASURA'
       }
 
-      console.log(`📌 loaded [FPROB] with: ${loadType}`)
+      // ### [🐞]
+      // console.log(`📌 loaded [LL] with: ${loadType}`)
 
-      if (data != undefined) return json(data);
+      if (data != null)
+      {
+        const compressed: string = LZString.compress(JSON.stringify(data));
+
+        // ### [🐞]
+        // console.log(JSON.parse(LZString.decompress(compressed)));
+
+        return json
+        (
+          {
+            data: compressed,
+            loadType
+          }
+        );
+      };
     }
 
-    // IMPORTANT Fallback to NULL
+    // ### NOTE:
+    // ### gathers League List Widget SEO data.
+    // ### NOTE:
+    // ### contains [HASURA] Fallback.
+    const if_M_2: boolean =
+      seo != null
+      && lang != null
+    ;
+    if (if_M_2)
+    {
+      let data: unknown;
+      let loadType: string = "cache";
+
+      // ### CHECK | IMPORTANT
+      // ### for existance in cache.
+      if (!hasura)
+      {
+        data = await get_target_hset_cache_data
+        (
+          LEGL_C_S_A_V3,
+          lang
+        );
+      }
+
+      // ### CHECK | IMPORTANT
+      // ### for default in Hasura.
+      if (!data || hasura)
+      {
+        data = await fallbackMainData_3
+        (
+          lang
+        );
+        loadType = 'HASURA'
+      }
+
+      // ### [🐞]
+      // console.log(`📌 loaded [LL] with: ${loadType}`)
+
+      if (data != null)
+      {
+        const compressed: string = LZString.compress(JSON.stringify(data));
+
+        // ### [🐞]
+        // console.log(JSON.parse(LZString.decompress(compressed)));
+
+        return json
+        (
+          {
+            data: compressed,
+            loadType
+          }
+        );
+      };
+    }
+
+    // ### IMPORTANT
     return json
     (
       null
@@ -139,73 +239,90 @@ export async function GET
   }
 }
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-//  [MAIN] METHOD
-// ~~~~~~~~~~~~~~~~~~~~~~~~
+// ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+// METHOD(s)                                    ◼️
+// ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
 /**
+ * @author
+ *  @migbash
  * @summary
- * [MAIN]
- * [FALLBACK]
+ *  🟥 MAIN | 🔹 HELPER
  * @description
- * ➨ league list (widget) hasura DATA fetch;
- * @param
- * {string} geoPos
- * @returns
- * Promise < B_LEGL_D >
+ *  📌 Fallback logic for **League List** Main Data.
+ * @param { string } geoPos
+ *  Target `geo-location`.
+ * @returns { Promise < B_FEATM_T > }
  */
 async function fallbackMainData
 (
   geoPos: string
 ): Promise < B_LEGL_D >
 {
-  const dataRes0 = await HLL_HP_ENTRY
-  (
-    graphQlInstance
-  );
+  const dataRes0: [ Map < string, B_LEGL_D >, string[] ] = await HLL_HP_ENTRY();
 
-  // console.log(dataRes0?.[1]);
+  if (dataRes0?.[0]?.size == 0)
+    return null;
+  ;
 
-  if (dataRes0?.[0].size == 0)
-  {
-    return null
-  }
-
-	return dataRes0?.[0].get(geoPos);
+	return dataRes0?.[0]?.get(geoPos);
 }
 
 /**
+ * @author
+ *  @migbash
  * @summary
- * [MAIN]
- * [FALLBACK]
+ *  🟥 MAIN | 🔹 HELPER
  * @description
- * ➨ league list (widget) hasura TRANSLATION fetch;
- * @param
- * {string} lang
- * @returns
- * Promise < B_FEATM_T >
+ *  📌 Fallback logic for **League List** Translation Data.
+ * @param { string } lang
+ *  Target `language`.
+ * @returns { Promise < B_FEATM_T > }
  */
 async function fallbackMainData_1
 (
   lang: string
 ): Promise < B_LEGL_T >
 {
-  const dataRes0 = await HLL_HP_ENTRY_1
+  const dataRes0: [ Map < string, B_LEGL_T >, string[] ] = await HLL_HP_ENTRY_1
   (
-    graphQlInstance,
     [lang]
   );
 
-  if (dataRes0?.[0].size == 0)
-  {
-    return null
-  }
+  if (dataRes0?.[0]?.size == 0)
+    return null;
+  ;
 
-	return dataRes0?.[0].get(lang);
+	return dataRes0?.[0]?.get(lang);
 }
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-//  [HELPER] OTHER METHODS
-// ~~~~~~~~~~~~~~~~~~~~~~~~
+/**
+ * @author
+ *  @migbash
+ * @summary
+ *  🟥 MAIN | 🔹 HELPER
+ * @description
+ *  📌 Fallback logic for **League List** SEO Data.
+ * @param { string } lang
+ *  Target `language`.
+ * @returns { Promise < B_FEATM_T > }
+ */
+async function fallbackMainData_3
+(
+  lang: string
+): Promise < B_LEGL_S >
+{
+  const dataRes0: [ Map < string, B_LEGL_S >, string[] ] = await HLL_HP_ENTRY_2
+  (
+    [lang],
+    null
+  );
 
-// #endregion ➤ [METHODS]
+  if (dataRes0?.[0]?.size == 0)
+    return null;
+  ;
+
+	return dataRes0?.[0]?.get(lang);
+}
+
+// #endregion ➤ 🛠️ METHODS

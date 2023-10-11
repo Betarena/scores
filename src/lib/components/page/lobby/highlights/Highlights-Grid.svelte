@@ -35,6 +35,8 @@
 
   import HighlightsNoCompetitions from './Highlights-No-Competitions.svelte';
 
+  import icon_question_mark from './assets/icon-question-mark.svg';
+
 	import type { BetarenaUser } from '$lib/types/types.scores.js';
 	import type { B_H_COMP_DATA } from '@betarena/scores-lib/types/_HASURA_.js';
 	import type { FIRE_LNNS } from '@betarena/scores-lib/types/firebase.js';
@@ -405,7 +407,10 @@
 
       const data_0 = await get
       (
-        `/api/data/home/livescores-v2?fixtureIds=${fixtureOrphanId?.toString()}`
+        `/api/data/home/livescores-v2?fixtureIds=${fixtureOrphanId?.toString()}`,
+        null,
+        true,
+        true
       ) as unknown;
 
       const _fixtureMap = new Map
@@ -561,17 +566,67 @@
   OPEN COMPETITIONS
   -->
   {#if openCompetitions?.length > 0}
-    <h2
+    <div
       class=
       "
-      color-black-2
-      s-24
-      w-600
-      inter-font
+      row-space-out
       "
     >
-      {B_SAP_CP_T?.general?.data?.open ?? 'Open'}
-    </h2>
+
+      <h2
+        class=
+        "
+        color-black-2
+        s-24
+        w-600
+        inter-font
+        "
+      >
+        {B_SAP_CP_T?.general?.data?.open ?? 'Open'}
+      </h2>
+
+      <!--
+      HOW TO PLAY
+      -->
+      {#if $sessionStore?.showUserguide1Conf}
+
+        <div
+          class=
+          "
+          row-space-start
+          width-auto
+          "
+          on:click={() => $sessionStore.showUserguide1 = true}
+        >
+
+          <p
+            class=
+            "
+            s-14
+            w-500
+            underline
+            m-r-6
+            hover-color-primary
+            color-black-2
+            cursor-pointer
+            "
+          >
+            {B_SAP_CP_T?.general?.data?.title_userguide ?? 'How to play'}
+          </p>
+
+          <img
+            id=''
+            src={icon_question_mark}
+            alt='question-mark'
+            title='How to play ?'
+            loading='lazy'
+          />
+
+        </div>
+
+      {/if}
+
+    </div>
   {/if}
 
   <!--
@@ -585,13 +640,6 @@
     competitionList={openCompetitions}
     {participantsMap}
   />
-
-  <!--
-  ### NOTE:
-  ### Standard Svelte Component Import
-  ### WARNING:
-  ### Disable, if Dynamic Import is Enabled.
-  -->
   <!--
     <FeatBetSiteMain
       B_FEATB_T={WIDGET_T_DATA}
@@ -626,13 +674,6 @@
     competitionList={activeCompetitions}
     {participantsMap}
   />
-
-  <!--
-  ### NOTE:
-  ### Standard Svelte Component Import
-  ### WARNING:
-  ### Disable, if Dynamic Import is Enabled.
-  -->
   <!--
     <FeatBetSiteMain
       B_FEATB_T={WIDGET_T_DATA}
@@ -667,13 +708,6 @@
     competitionList={finishedCompetitions}
     {participantsMap}
   />
-
-  <!--
-  ### NOTE:
-  ### Standard Svelte Component Import
-  ### WARNING:
-  ### Disable, if Dynamic Import is Enabled.
-  -->
   <!--
     <FeatBetSiteMain
       B_FEATB_T={WIDGET_T_DATA}

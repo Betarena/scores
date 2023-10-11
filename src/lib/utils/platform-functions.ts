@@ -16,6 +16,7 @@ import { get } from "$lib/api/utils.js";
 import { getUserLocation, getUserLocationFromIP } from "$lib/geo-js/init.js";
 import sessionStore from "$lib/store/session.js";
 import userBetarenaSettings from '$lib/store/user-settings.js';
+import LZString from 'lz-string';
 import { NB_W_TAG, PAGE_INVALID_MSG, dlog, dlogv2 } from "./debug";
 import { removeDiacritics } from "./languages.js";
 import { ROUTE_ID_PROFILE } from "./user.js";
@@ -558,50 +559,52 @@ export function PRELOAD_redirectPage
 
 /**
  * @summary
- * 🔹 HELPER | IMPORTANT
- *
+ *  🔹 HELPER | IMPORTANT
  * @description
- * 📌 `fetch` data from target list of `urls`, and returns results.
- *
- * @param
- * { string[] } endpoints - List of target urls to fetch.
- *
- * @param
- * { fetch } fetch - Target `fetch` object to use.
- *
+ *  📌 `fetch` data from target list of `urls`, and returns results.
+ * @param { string[] } endpoints
+ *  List of target urls to fetch.
+ * @param { fetch } fetch
+ *  Target `fetch` object to use.
  * @returns
- * A listof type `Promise<any[]>`.
+ *  A listof type `Promise<any[]>`.
  */
 export async function promiseUrlsPreload
 (
   endpoints: string[],
-  fetch: any
+  fetch: any,
 ): Promise < any[] >
 {
 
-  const promises: any[] = endpoints
-  ?.map
+	const data: any[] = await Promise.all
   (
+    endpoints
+    ?.map
     (
-      _url
-    ) =>
-		fetch(_url)
-    .then
-    (
-      (
-        response
-      ) =>
-			response.json()
-		)
-	);
+      async (
+        _url: string
+      ): Promise < any > =>
+      {
 
-	const data: any[] = await Promise.all(promises);
+        const response: Response = await fetch(_url);
+        const resJson: any = await response.json()
+
+        // ### NOTE: | IMPORTANT
+        // ### step necessary to 'decompress' lz-string encoded payload.
+        if (_url.includes('decompress'))
+          return JSON.parse(LZString.decompress(resJson?.data));
+        ;
+
+        return resJson;
+      }
+    )
+  );
 
   // ### [🐞]
   PRELOAD_invalid_data
   (
     data,
-    endpoints
+    endpoints,
   );
 
   return data;
@@ -609,34 +612,30 @@ export async function promiseUrlsPreload
 
 /**
  * @summary
- * 🔹 HELPER | IMPORTANT
- *
+ *  🔹 HELPER | IMPORTANT
  * @description
- * 📌 checks for target `url` to be a `valid` or not.
- *
- * @param
- * { fetch } fetch - Target `fetch(..)` method, supplied by `sveltekit`.
- *
- * @param
- * { string } langUrl - Target `lang` part of `url`.
- *
- * @param
- * { string } sportUrl - Target `sport` part of `url`.
- *
- * @param
- * { string } countryUrl - Target `country` part of `url`.
- *
- * @param
- * { string } leagueUrl - Target `league` part of `url`.
- *
- * @param
- * { string } fixtureUrl - Target `fixture` part of `url`.
- *
- * @param
- * { string } playerUrl - Target `player` part of `url`.
- *
- * @returns
- * A `boolean`.
+ *  📌 checks for target `url` to be a `valid` or not.
+ * @param { fetch } fetch
+ *  Target `fetch(..)` method, supplied by `sveltekit`.
+ * @param { Object } opts
+ *  Target method `options`.
+ * @param { string } opts.langUrl
+ *  Target `lang` part of `url`.
+ * @param { string } opts.sportUrl
+ *  Target `sport` part of `url`.
+ * @param { string } opts.countryUrl
+ *  Target `country` part of `url`.
+ * @param { string } opts.leagueUrl
+ *  Target `league` part of `url`.
+ * @param { string } opts.fixtureUrl
+ *  Target `fixture` part of `url`.
+ * @param { string } opts.playerUrl
+ *  Target `player` part of `url`.
+ * @param { string } opts.competitionMainUrl
+ *  Target `competition (lobby)` part of `url`.
+ * @param { string } opts.competitionUrl
+ *  Target `competition (target)` part of `url`.
+ * @returns { boolean }
  */
 export async function promiseValidUrlCheck
 (
@@ -652,7 +651,7 @@ export async function promiseValidUrlCheck
     competitionMainUrl?: string,
     competitionUrl?: string
   }
-  ): Promise < boolean >
+): Promise < boolean >
 {
 
   // ### CHECK
@@ -722,28 +721,33 @@ export async function promiseValidUrlCheck
 
   const response: any = await get
   (
-    `/api/data/main/seo-pages${queryStr}`,
-    fetch
+    `/api/data/main/seo-pages${queryStr}&decompress`,
+    fetch,
+    true,
+    true
   );
+
+  console.log('🎟️', response)
 
   return response;
 }
 
 /**
+ * @author
+ *  @migbash
  * @summary
- * 🔹 HELPER | IMPORTANT
- *
+ *  🔹 HELPER | IMPORTANT
  * @description
- * 📌 `fetch` target sportbook data,
- * based on `client` geo-location.
- *
- * ⚡️ Data gathered at page-level and set to svelte-stores.
+ *  📌 `fetch` target sportbook data, based on `client` geo-location.
+ *  (⚡️) Data gathered at page-level and set to svelte-stores.
  *
  * NOTE: (*) best approach
  * TODO: (alt) can be moved to a layout-level [?]
  * TODO: (alt) can be moved to a header-level [?]
  * TODO: (alt) can be moved to a +server-level [⚠️]
- * @returns {Promise<void>} void
+ * @param { string } geoPos
+ *  Target `geo-location`.
+ * @returns { Promise < void > }
  */
 export async function initSportbookData
 (
@@ -752,7 +756,10 @@ export async function initSportbookData
 {
   const dataRes0 = await get
   (
-    `/api/data/main/sportbook?geoPos=${geoPos}`
+    `/api/data/main/sportbook?geoPos=${geoPos}`,
+    null,
+    true,
+    true
   ) as B_SPT_D;
 
   sessionStore.updateSportbookMain
@@ -762,13 +769,18 @@ export async function initSportbookData
 
   const dataRes1 = await get
   (
-    `/api/data/main/sportbook?all=true&geoPos=${geoPos}`
+    `/api/data/main/sportbook?all=true&geoPos=${geoPos}`,
+    null,
+    true,
+    true
   ) as B_SPT_D[];
 
   sessionStore.updateSportbookList
   (
     dataRes1
   );
+
+  return;
 }
 
 /**
@@ -809,18 +821,16 @@ export function cssVarChange
 
 /**
  * @summary
- * 🔹 HELPER | IMPORTANT
- *
+ *  🔹 HELPER | IMPORTANT
  * @description
- * 📌 Converts target value to a float based value string.
- *
- * @param
- * { number } value - Target value to mutate.
- *
- * @param
- * { number } d_places - Target number of decimal places.
- *
- * @returns
+ *  📌 Converts target value to a float based value string.
+ * @param { number } value
+ *  Target value to mutate.
+ * @param { number } [d_places=2]
+ *  Target number of decimal places to return.
+ *  * @param { boolean } [noRoundUp=false]
+ *  Wether to perform a `round-up` or not.
+ * @returns { string }
  */
 export function toDecimalFix
 (
@@ -892,22 +902,15 @@ export function spliceBalanceDoubleZero
 
 /**
  * @summary
- * 📌 MAIN | IMPORTANT
- *
+ *  📌 MAIN | IMPORTANT
  * @description
- * 📌 Updates `user` language platform selection.
- *
- * ⚡️ Manages platform main navigation,
- * for some of the section routes.
- *
- * @param
- * { string } lang - Target new `selected` language.
- *
- * @param
- * { Page<Record<string, string>, string> } page - Target page sveltekit object.
- *
- * @returns
- * An Asynchronous Void.
+ *  📌 Updates `user` language platform selection.
+ *  ⚡️ Manages platform main navigation, for some of the section routes.
+ * @param { string } lang
+ *  Target new `selected` language.
+ * @param { Page<Record<string, string>, string> } page
+ *  Target page sveltekit object.
+ * @returns { Promise < void > }
  */
 export async function selectLanguage
 (
@@ -915,13 +918,7 @@ export async function selectLanguage
   page: Page < Record < string, string >, string >
 ): Promise < void >
 {
-  // [🐞]
-  dlog
-  (
-    `🚏 checkpoint ➤ selectLanguage`,
-    true
-  );
-
+  // ### CHECK
   if (sessionStore?.getServerLang() == lang) return;
 
   // ### NOTE:
@@ -937,10 +934,10 @@ export async function selectLanguage
     lang
   );
 
-  // [🐞]
+  // ### [🐞]
   dlogv2
   (
-    `🚏 checkpoint ➤ selectLanguage (group)`,
+    `🚏 checkpoint ➤ selectLanguage(..)`,
     [
       `🔹 [var] ➤ $userBetarenaSettings.lang: ${userBetarenaSettings.getUserLang()}`,
       `🔹 [var] ➤ $sessionStore?.serverLang: ${sessionStore?.getServerLang()}`,
@@ -1175,16 +1172,13 @@ export async function selectLanguage
 
 /**
  * @summary
- * 🟥 MAIN | 🔹 HELPER
- *
+ *  🟥 MAIN | 🔹 HELPER
  * @description
- * 📌 Cleans a target `url` to be used for internal app routing.
- *
- * @param
- * { string } url - Target **url** to clean for internal platform use.
- *
- * @returns
- * A target string `URL`, ready for internal routing.
+ *  📌 Cleans a target `url` to be used for internal app routing.
+ * @param { string } url
+ *  Target **url** to clean for internal platform use.
+ * @returns { string }
+ *  Target string `URL`, ready for internal routing.
  */
 export function cleanUrl
 (
@@ -1204,19 +1198,15 @@ export function cleanUrl
 
 /**
  * @summary
- * 🟥 MAIN | 🔹 HELPER
- *
+ *  🟥 MAIN | 🔹 HELPER
  * @description
- * 📌 Generates a target `newUrl` for when a `translation` switch occurs.
- *
- * @param
- * { string } lang - Target **current** platform language.
- *
- * @param
- * { B_SAP_D3 } data - Target **translations** for the term "_competitions_".
- *
- * @returns
- * A target string, of the new `URL`.
+ *  📌 Generates a target `newUrl` for when a `translation` switch occurs.
+ * @param { string } lang
+ *  Target **current** platform language.
+ * @param { B_SAP_D3 } data
+ *  Target **translations** for the term "_competitions_".
+ * @returns { string }
+ *  Target string, of the new `URL`.
  */
 export function generateUrlCompetitions
 (
@@ -1259,20 +1249,15 @@ export function generateUrlCompetitions
 
 /**
  * @summary
- * 🟥 MAIN | 🔹 HELPER
- *
+ *  🟥 MAIN | 🔹 HELPER
  * @description
- * 📌 Generates a target `newUrl` for when a `translation` switch occurs.
- *
- * @param
- * { string } lang - Target **current** platform language.
- *
- *
- * @param
- * { B_SAP_CTP_D } competitionData - Target **competition data**.
- *
- * @returns
- * A target string, of the new `URL`.
+ *  📌 Generates a target `newUrl` for when a `translation` switch occurs.
+ * @param { string } lang
+ *  Target **current** platform language.
+ * @param { B_SAP_CTP_D } competitionData
+ *  Target **competition data**.
+ * @returns { string }
+ *  Target string, of the new `URL`.
  */
 export function generateUrlCompetition
 (
@@ -1303,14 +1288,11 @@ export function generateUrlCompetition
 /**
  * @summary
  * 🔹 HELPER | IMPORTANT
- *
  * @description
- * 📌 Lambda `arrow-function` TryCatch` wrapper.
- *
- * @param
- * { any } action - Target function / method execution.
- *
- * @returns
+ *  📌 Lambda `arrow-function` TryCatch` wrapper.
+ * @param { any } action
+ *  Target function / method execution.
+ * @returns { unknown }
  * An unknown return.
  */
 export const tryCatch = (action: any): unknown =>

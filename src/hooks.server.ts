@@ -14,16 +14,13 @@ import type { Handle, RequestEvent } from '@sveltejs/kit';
 
 /**
  * @summary
- * 🔹 HELPER
- *
+ *  🔹 HELPER
  * @description
- * 📌 obtains the current translation as a `hook.server.ts` method/function.
- *
- * @param
- * { RequestEvent < Partial < Record < string, string > > > } event
- *
- * @returns
- * { string } language
+ *  📌 obtains the current translation as a `hook.server.ts` method/function.
+ * @param { RequestEvent < Partial < Record < string, string > > > } event
+ *  Target `Event`.
+ * @returns { string }
+ *  Target `language`.
  */
 function getLang
 (

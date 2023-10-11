@@ -24,21 +24,16 @@
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
 	import { browser } from '$app/environment';
-	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
 	import { get } from '$lib/api/utils.js';
 	import sessionStore from "$lib/store/session.js";
-	import userBetarenaSettings from '$lib/store/user-settings.js';
 
-	import SeoBox from '$lib/components/SEO-Box.svelte';
-	import TopGoalScorersLoader from './TopGoalScorers-Loader.svelte';
+	import type { B_USRG_D } from '@betarena/scores-lib/types/types.misc.userguide.js';
 
-	import type { B_TGOL_D, B_TGOL_S, B_TGOL_T } from '@betarena/scores-lib/types/top-goalscorers.js';
-
-  // ### WARNING:
+  // ### NOTE: || WARNING:
   // ### Disable, if Dynamic Import is Enabled.
-  // import TopGoalScorersMain from './TopGoalScorers-Main.svelte';
+  // import UserguideCompetition1Main.svelte from './Userguide-Competition-1-Main.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -62,25 +57,17 @@
   ;
 
   let
-    /** @description (widget) translations data */
-    WIDGET_T_DATA: B_TGOL_T = $page.data?.B_TGOL_T,
-    /** @description (widget) translations (SEO) data */
-    WIDGET_S_DATA: B_TGOL_S = $page.data?.B_TGOL_S,
-    /** @description (widget) main data */
-    widgetDataMain: B_TGOL_D,
+    /** @description (widget) main data (*mixed with translations) */
+    widgetDataMain: B_USRG_D,
     /** @description (widget) wether widget has or no data */
     widgetNoData: boolean = true,
     /** @description (widget) dynamic import variable for svelte component [1] */
-    TopGoalScorersMainDynamic: any,
-    /** @description (listen) value for change comparison of client bookmaker change */
-    currentBookmaker: string = $sessionStore?.serverLang
+    MainMainAsDynamic: any,
+    /** @description (listen) value for change comparison of client language change */
+    currentLang: string = $sessionStore?.serverLang
   ;
 
-  $: WIDGET_S_DATA = $page.data?.B_TGOL_S;
-  $: WIDGET_T_DATA = $page.data?.B_TGOL_T;
-  $: WIDGET_TITLE = WIDGET_T_DATA?.widget_translations?.best_goal_scorers ?? 'Best Goalscorers';
-
-  $: deepReactListenBookmakerChng = $userBetarenaSettings?.country_bookmaker;
+  $: deepReactListenWebLang = $sessionStore?.serverLang;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -111,37 +98,46 @@
   (
   ): Promise < void >
   {
-    if (!browser) return;
+    // ### IMPORTANT
+		if (!browser) return;
 
+    // ### NOTE:
+    // ### sometimes, the data/component is loaded too fast,
+    // ### so a buffer is added to slow down the pace and show the
+    // ### preloader to the user.
 		// await sleep(3000);
 
-    const response: B_TGOL_D = await get
+    const response = await get
     (
-			`/api/data/home/top-goalscorers?geoPos=${$userBetarenaSettings.country_bookmaker}`,
-      null,
-      true,
-      true
-		);
+      `/api/data/main/userguide?userguideId=1&lang=${$sessionStore?.serverLang}`,
+    ) as B_USRG_D;
 
     widgetDataMain = response;
 
     // ### CHECK
     // ### for conditions when 'this' widget should not be shown.
     const if_M_0: boolean =
-      widgetDataMain == undefined
+      widgetDataMain == null
+      || Object.keys(widgetDataMain)?.length == 0
     ;
 		if (if_M_0)
     {
-      // dlog(`${IN_W_F_TAG} ❌ no data available!`, IN_W_F_TOG, IN_W_F_STY);
-			widgetNoData = true;
+      // ### [🐞]
+      // dlog(`${LV2_W_H_TAG[0]} ❌ no data available!`);
 
-			return;
+			widgetNoData = true;
+      $sessionStore.showUserguide1Conf = false;
+
+      return;
 		}
 
     widgetNoData = false;
+    $sessionStore.showUserguide1Conf = true;
+
+    // ### [🐞]
+    // alert('🎟️');
 
     return;
-
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -172,13 +168,13 @@
    *  **triggered by changes in:**
    *  - `deepReactListenWebLang`- **kicker** (via deepListen)
    */
-   $: if_R_0 =
+  $: if_R_0 =
     browser
   ;
-  $: if (if_R_0 && deepReactListenBookmakerChng != currentBookmaker)
+  $: if (if_R_0 && deepReactListenWebLang != currentLang)
   {
     widgetInit();
-    currentBookmaker = deepReactListenBookmakerChng;
+    currentLang = deepReactListenWebLang;
   }
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
@@ -198,9 +194,11 @@
     ): Promise < void > =>
     {
 
+      // ### CHECK
+      // ### for loading widget dynamically.
       if (useDynamicImport)
       {
-        TopGoalScorersMainDynamic = (await import('./TopGoalScorers-Main.svelte')).default;
+        MainMainAsDynamic = (await import('./Userguide-Competition-1-Main.svelte')).default;
       }
 
 	  }
@@ -214,37 +212,18 @@
 ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 ### COMPONENT HTML                                                                     ◼️
 ### NOTE:                                                                              ◼️
-### use 'CTRL+SPACE' to autocomplete global class=styles                               ◼️
+### use 'CTRL+SPACE' to autocomplete global class="" styles                            ◼️
 ### NOTE:                                                                              ◼️
 ### access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.         ◼️
 ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 -->
-
-<SeoBox>
-  <h2>{WIDGET_TITLE}</h2>
-  <p>{WIDGET_T_DATA?.widget_translations?.goals}</p>
-  <p>{WIDGET_T_DATA?.widget_translations?.odds}</p>
-  <p>{WIDGET_T_DATA?.widget_translations?.player}</p>
-  <p>{WIDGET_T_DATA?.widget_translations?.show_more_players}</p>
-  <!--
-  LIST PLAYERS
-  -->
-  {#each WIDGET_S_DATA?.players ?? [] as player}
-    <a href={player?.url}>
-      <p>{player?.common_name}</p>
-    </a>
-  {/each}
-</SeoBox>
-
-<!-- [🐞] -->
-<!-- <TopGoalScorersLoader /> -->
 
 {#await widgetInit()}
   <!--
   ### NOTE:
   ### promise is pending
   -->
-  <TopGoalScorersLoader />
+  <!-- <MainLoader /> -->
 
 {:then data}
   <!--
@@ -252,23 +231,25 @@
   ### promise was fulfilled
   -->
 
-  <!--
-  ### NOTE:
-  ### Dynamic Svelte Component Import
-  ### WARNING:
-  ### Disable, if Standard Import is Enabled.
-  -->
-  <svelte:component
-    this={TopGoalScorersMainDynamic}
-    B_TGOL_D={widgetDataMain}
-    B_TGOL_T={WIDGET_T_DATA}
-  />
-  <!--
-    <TopGoalScorersMain
-      B_TGOL_D={widgetDataMain}
-      B_TGOL_T={WIDGET_T_DATA}
+  {#if !widgetNoData}
+
+    <!--
+    ### NOTE:
+    ### Dynamic Svelte Component Import [optional]
+    ### WARNING:
+    ### Disable (this), if Standard (below) Import is Enabled.
+    -->
+    <svelte:component
+      this={MainMainAsDynamic}
+      B_USRG_D={widgetDataMain}
     />
-  -->
+    <!--
+      <FeatBetSiteMain
+        B_FEATB_T={widgetDataTranslation}
+      />
+    -->
+
+  {/if}
 
 {:catch error}
   <!--

@@ -1,51 +1,60 @@
-// #region ➤ Package Imports
+// ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+// ### 📝 DESCRIPTION                                                         ◼️
+// ### Application Server Endpoint for SEO Block Data Fetch + Handle          ◼️
+// ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+
+// #region ➤ 📦 Package Imports
 
 import { json } from '@sveltejs/kit';
 
-import { initGrapQLClient } from '$lib/graphql/init';
 import { HSEOB_HP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.home.seo-block.js';
 import { SEB_C_D_A } from '@betarena/scores-lib/dist/redis/config.js';
+import dotenv from 'dotenv';
+import LZString from 'lz-string';
 import { get_target_hset_cache_data } from '../../../../../lib/redis/std_main';
 
 import type { B_SEB_DT } from '@betarena/scores-lib/types/seo-block.js';
 
-// #endregion ➤ Package Imports
+// #endregion ➤ 📦 Package Imports
 
-// #region ➤ [VARIABLES] Imports
+// #region ➤ 📌 VARIABLES
 
-const graphQlInstance = initGrapQLClient()
+dotenv.config();
 
-// #endregion ➤ [VARIABLES] Imports
+// #endregion ➤ 📌 VARIABLES
 
-// #region ➤ [METHODS]
+// #region ➤ 🛠️ METHODS
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-//  [MAIN] ENDPOINT METHOD
-// ~~~~~~~~~~~~~~~~~~~~~~~~
+// ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+// ENDPOINT ENTRY                               ◼️
+// ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
 export async function GET
 (
-  req
+  req: any
 ): Promise < unknown >
 {
   try
   {
-    // NOTE: Handle url-query data;
+    // ### NOTE:
+    // ### handle url-query data
     const lang: string = req?.url?.searchParams?.get('lang');
     const hasura: string = req?.url?.searchParams?.get('hasura');
 
-    // ACTION:
-    // ➨ Get Footer (WIDGET) MAIN data;
-    // ➨ NOTE: Contains [HASURA] Fallback;
+    let data: unknown;
+    let loadType: string = "⚡️ Redis (cache)";
+
+    // ### NOTE:
+    // ### gathers SEO Block Widget Main data.
+    // ### NOTE:
+    // ### contains 🟦 Hasura (PostgreSQL) fallback.
     const if_M_0: boolean =
       lang != undefined
     ;
     if (if_M_0)
     {
-      let data: unknown;
-      let loadType = "cache";
-
-      // IMPORTANT Check in cache;
+      // ### CHECK | IMPORTANT
+      // ### for existance in cache.
       if (!hasura)
       {
         data = await get_target_hset_cache_data
@@ -55,22 +64,38 @@ export async function GET
         );
       }
 
-      // IMPORTANT Default to Hasura;
+      // ### CHECK | IMPORTANT
+      // ### for default in Hasura.
       if (!data || hasura)
       {
         data = await fallbackMainData
         (
           lang
         );
-        loadType = 'HASURA'
+        loadType = '🟦 Hasura (SQL)';
       }
 
-      console.log(`📌 loaded [FPROB] with: ${loadType}`)
+      // ### [🐞]
+      // console.log(`📌 loaded [FPROB] with: ${loadType}`)
 
-      if (data != undefined) return json(data);
+      if (data != null)
+      {
+        const compressed: string = LZString.compress(JSON.stringify(data));
+
+        // ### [🐞]
+        // console.log(JSON.parse(LZString.decompress(compressed)));
+
+        return json
+        (
+          {
+            data: compressed,
+            loadType
+          }
+        );
+      }
     }
 
-    // IMPORTANT Fallback to NULL
+    // ### IMPORTANT
     return json
     (
       null
@@ -94,20 +119,20 @@ export async function GET
   }
 }
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-//  [MAIN] METHOD
-// ~~~~~~~~~~~~~~~~~~~~~~~~
+// ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+// METHOD(s)                                    ◼️
+// ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
 /**
+ * @author
+ *  @migbash
  * @summary
- * [MAIN]
- * [FALLBACK]
+ *  🟥 MAIN | 🔹 HELPER
  * @description
- * ➨ seo-block (widget) hasura TRANSLATION fetch;
- * @param
- * {string} lang
- * @returns
- * Promise < B_SEB_DT >
+ *  📌 Fallback logic for **SEO Block Table** Main Data.
+ * @param { string } lang
+ *  Target `language`.
+ * @returns { Promise < B_SEB_DT > }
  */
 async function fallbackMainData
 (
@@ -116,20 +141,15 @@ async function fallbackMainData
 {
   const dataRes0 = await HSEOB_HP_ENTRY_1
   (
-    graphQlInstance,
+    null,
     [lang]
   );
 
-  if (dataRes0?.[0].size == 0)
-  {
-    return null
-  }
+  if (dataRes0?.[0]?.size == 0)
+    return null;
+  ;
 
-	return dataRes0?.[0].get(lang);
+	return dataRes0?.[0]?.get(lang);
 }
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-//  [HELPER] OTHER METHODS
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-
-// #endregion ➤ [METHODS]
+// #endregion ➤ 🛠️ METHODS

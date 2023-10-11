@@ -31,7 +31,7 @@
 	import { db_firestore } from '$lib/firebase/init';
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { NB_W_TAG, dlog } from '$lib/utils/debug';
+	import { NB_W_TAG, dlog, dlogv2 } from '$lib/utils/debug';
 	import { generateUrlCompetitions, selectLanguage, spliceBalanceDoubleZero, toDecimalFix, viewport_change } from '$lib/utils/platform-functions';
 	import { translationObject } from '$lib/utils/translation.js';
 	import { initUser, logoutUser } from '$lib/utils/user.js';
@@ -57,6 +57,12 @@
   // ### NOTE:                                                            ◼️
   // ### Please add inside 'this' region the 'variables' that are to be   ◼️
   // ### and are expected to be used by 'this' .svelte file / component.  ◼️
+  // ### IMPORTANT                                                        ◼️
+  // ### Please, structure the imports as follows:                        ◼️
+  // ### 1. export const / let [..]                                       ◼️
+  // ### 2. const [..]                                                    ◼️
+  // ### 3. let [..]                                                      ◼️
+  // ### 4. $: [..]                                                       ◼️
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
   const
@@ -116,13 +122,13 @@
     /** @description TODO: DOC: */
     width: number = 0,
     /** @description TODO: DOC: */
-    userUid: string = $userBetarenaSettings?.user?.firebase_user_data?.uid ?? undefined;
+    deepReactListenUserUid: string = $userBetarenaSettings?.user?.firebase_user_data?.uid ?? undefined,
+    /** @description TODO: DOC: */
+    zIndexNeedsUpdate: boolean = false
   ;
 
   $: B_NAV_T = $page.data.B_NAV_T;
   $: B_SAP_D3_CP_H = $page.data.B_SAP_D3_CP_H;
-  $: userUid = $userBetarenaSettings?.user?.firebase_user_data?.uid;
-  $: userLang = $userBetarenaSettings?.lang;
   $: isRouteCompetitions = $page?.route?.id.includes('/[[lang=lang]]/[competitions=competitions]');
   $: isRouteProfile = $page?.route?.id == '/u/[view]/[lang=lang]';
 
@@ -143,19 +149,36 @@
       : $page.url.origin
   ;
 
+  $: deepReactListenUserUid = $userBetarenaSettings?.user?.firebase_user_data?.uid;
+  $: deepReactListenUserLang = $userBetarenaSettings?.lang;
+  $: deepReactListenWebLang = $sessionStore?.serverLang;
+  $: deepReactListenUser = JSON.stringify($userBetarenaSettings?.user);
+  $: deepReactListenNavBtnHover = JSON.stringify($sessionStore?.navBtnHover);
+
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
 
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'methods' that are to be     ◼️
+  // ### and are expected to be used by 'this' .svelte file / component.  ◼️
+  // ### IMPORTANT                                                        ◼️
+  // ### Please, structure the imports as follows:                        ◼️
+  // ### 1. function (..)                                                 ◼️
+  // ### 2. async function [..]                                           ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+
 	/**
+   * @author
+   *  @migbash
+   * @summary
+   *  🔹 HELPER
    * @summary
    * 🔹 HELPER
-   *
 	 * @description
-   * 📌 Closes all possible dropdowns open on the widget.
-   *
-   * @returns
-   * `void`
+   * 📌 Closes all possible dropdowns opened on `this` widget.
+   * @returns { void }
 	 */
 	function closeAllDropdowns
   (
@@ -167,14 +190,13 @@
 	}
 
 	/**
+   * @author
+   *  @migbash
    * @summary
-   * 🔹 HELPER
-   *
+   *  🔹 HELPER
 	 * @description
-   * 📌 Reloads current page.
-   *
-   * @returns
-   * A Void
+   *  📌 Reloads current page.
+   * @returns { void }
 	 */
 	function reloadPage
   (
@@ -188,8 +210,14 @@
 	}
 
   /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🔹 HELPER
    * @description
-   * TODO: DOC:
+   *  📌 Calculate navigation triangle position.
+   * @param { string } [mainActive]
+   * @returns { void }
    */
   function calcNavTrianglePos
   (
@@ -199,6 +227,8 @@
     const parentElem: HTMLElement = document.getElementById('navBox')
     const childElem: HTMLElement = document.getElementById($sessionStore.navBtnHover || mainActive);
 
+    // ### CHECK
+    // ### for missing DOM elements.
     const if_M_0: boolean =
       parentElem == undefined
       || childElem == undefined
@@ -220,14 +250,13 @@
   }
 
   /**
+   * @author
+   *  @migbash
    * @summary
-   * 🔹 HELPER
-   *
+   *  🔹 HELPER
 	 * @description
-   * 📌 updates user's platform language preferrences, firebase services.
-   *
-   * @returns
-   * a Promise of type `void`.
+   *  📌 updates user's platform language preferrences, firebase services.
+   * @returns { Promise < void > }
 	 */
   async function update_select_lang
   (
@@ -280,34 +309,40 @@
   // ### NOTE:                                                            ◼️
   // ### Please add inside 'this' region the 'logic' that should run      ◼️
   // ### immediately and/or reactively for 'this' .svelte file is ran.    ◼️
+  // ### WARNING:                                                         ◼️
+  // ### ❗️ Can go out of control.                                        ◼️
+  // ### (a.k.a cause infinite loops and/or cause bottlenecks).           ◼️
+  // ### Please keep very close attention to these methods and            ◼️
+  // ### use them carefully.                                              ◼️
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
   /**
+   * @author
+   *  @migbash
    * @summary
-   * 🔥 REACTIVITY
-   *
-   * WARNING:
-   * can go out of control
-   *
+   *  🔥 REACTIVITY
    * @description
-   * 📌 Listens to cases when, the:
-   * - _initial platform language_ has not been set,
-   * - `user` is **not** authenticated and/or is `anonymous`.
-   *
-   * WARNING:
-   * triggered by changes in:
-   * - `$userBetarenaSettings`
-   * - `$userBetarenaSettings.user` - **kicker**
+   *  📌 Listens to cases when, the:
+   *  - (1) _initial platform language_ has not been set,
+   *  - (and) (2) `user` is **not** authenticated and/or is `anonymous`.
+   * @abstract
+   *  **WARNING:**
+   *  **triggered by changes in:**
+   *  - `$userBetarenaSettings.user`- **kicker** (via deepListen)
    */
   $: if_R_0 =
     browser
   ;
-  $: if (if_R_0 && $userBetarenaSettings?.user == undefined)
+  $: if (if_R_0 && deepReactListenUser == undefined)
   {
     // ### [🐞]
-    dlog
+    dlogv2
     (
-      `🚏 checkpoint [R] ➤ NAVBAR if_R_0`,
+      `🚏 checkpoint [R] ➤ ${NB_W_TAG[0]} if_R_0`,
+      [
+        '📝 INFO: Non-authenticated user detected! Processing logic...',
+        '❗️ WARNING: Non re-occuring logic, (once per load), should not be seen again.'
+      ],
       true
     );
 
@@ -318,70 +353,68 @@
 	}
 
   /**
+   * @author
+   *  @migbash
    * @summary
-   * 🔥 REACTIVITY
-   *
-   * WARNING:
-   * can go out of control
-   *
+   *  🔥 REACTIVITY
    * @description
-   * 📌 Listens to cases when, the:
-   * - _initial platform language_ has not been set,
-   * - `user` **is** authenticated.
-   *
-   * WARNING:
-   * triggered by changes in:
-   * - `$userBetarenaSettings`
-   * - `$userBetarenaSettings.user` - **kicker**
-   * - `$userBetarenaSettings.user.scores_user_data.lang`
-   * - `userlang`
-   * - `$page`
+   *  📌 Listens to cases when, the:
+   *  - (1) _initial platform language_ has not been set,
+   *  - (and) (2) `user` **is** authenticated.
+   * @abstract
+   *  **WARNING:**
+   *  **triggered by changes in:**
+   *  - `$userBetarenaSettings.user`- **kicker** (via deepListen)
    */
   $: if_R_1 =
     browser
     && !isRouteProfile
   ;
-  $: if (if_R_1 && $userBetarenaSettings?.user != undefined)
+  $: if (if_R_1 && deepReactListenUser != undefined)
   {
-    let userlang: string = $userBetarenaSettings.user?.scores_user_data?.lang;
-
     // ### [🐞]
-    dlog
+    dlogv2
     (
-      `🚏 checkpoint [R] ➤ NAVBAR if_R_1`,
+      `🚏 checkpoint [R] ➤ ${NB_W_TAG[0]} if_R_1`,
+      [
+        '📝 INFO: Authenticated user detected! Processing logic...',
+        '❗️ WARNING: Non re-occuring logic, (once per load), should not be seen again.'
+      ],
       true
     );
 
-    // ### [🐞]
-    dlog
-    (
-      `${NB_W_TAG[0]} 🔵 User Detected! Setting Auth language! ${userlang}`
-    );
+    if_R_1_Func();
 
-    selectLanguage
+    // ### NOTE:
+    // ### Nested block method.
+    function if_R_1_Func
     (
-      userlang,
-      $page
-    );
+    ): void
+    {
+      let userlang: string = $userBetarenaSettings.user?.scores_user_data?.lang;
+      selectLanguage
+      (
+        userlang,
+        $page
+      );
+    }
   }
 
   /**
+   * @author
+   *  @migbash
    * @summary
-   * 🔥 REACTIVITY
-   *
-   * WARNING:
-   * can go out of control
-   *
+   *  🔥 REACTIVITY
    * @description
-   * 📌 Listens to **first** case when, the:
-   * - `user` **is** authenticated.
-   * and kickstarts setup for user privileges.
-   *
-   * WARNING:
-   * triggered by changes in:
-   * - `$userBetarenaSettings`
-   * - `$userBetarenaSettings.user` - **kicker**
-   * - `userUid`
+   *  📌 Listens to **first** case when, the:
+   *  - (1) `user` **is** authenticated.
+   *  - ⚡️ Kickstarts setup for user privileges.
+   * @description
+   *  **WARNING:**
+   *  **triggered by changes in:**
+   *  - `$userBetarenaSettings`
+   *  - `$userBetarenaSettings.user` - **kicker**
+   *  - `deepReactListenUserUid`
    */
   $: if_R_2 =
     browser
@@ -392,43 +425,41 @@
     // ### [🐞]
     dlog
     (
-      `🚏 checkpoint [R] ➤ NAVBAR if_R_2`,
+      `🚏 checkpoint [R] ➤ ${NB_W_TAG[0]} if_R_2`,
       true
     );
 
     initUser
     (
-      userUid
+      deepReactListenUserUid
     );
   }
 
   /**
+   * @author
+   *  @migbash
    * @summary
-   * 🔥 REACTIVITY
-   *
-   * WARNING:
-   * can go out of control
-   *
+   *  🔥 REACTIVITY
    * @description
-   * 📌 Listens to cases when, the:
-   * - `user` changes selected platform language,
-   * and updates preferences.
-   *
-   * WARNING:
-   * triggered by changes in:
-   * - `userLang` - **kicker**
+   *  📌 Listens to cases when, the:
+   *  - `user` changes selected platform language,
+   *  and updates preferences.
+   * @description
+   *  **WARNING:**
+   *  **triggered by changes in:**
+   *  - `deepReactListenUserLang` - **kicker** (via deepListen)
    */
   $: if_R_3 =
     !$page.error
     && $page.route.id
     && $userBetarenaSettings?.user != undefined
   ;
-  $: if (if_R_3 && userLang != undefined)
+  $: if (if_R_3 && deepReactListenUserLang != undefined)
   {
     // ### [🐞]
     dlog
     (
-      `🚏 checkpoint [R] ➤ NAVBAR if_R_3`,
+      `🚏 checkpoint [R] ➤ ${NB_W_TAG[0]} if_R_3`,
       true
     );
 
@@ -439,41 +470,70 @@
   $: if_R_4 =
     ($sessionStore.livescoreShowCalendar && isViewMobile)
     || $sessionStore.withdrawModal
+    || $sessionStore.showUserguide1
   ;
+  $: if (if_R_4)
+  {
+    zIndexNeedsUpdate = true
+  }
+  else if (!if_R_4 && zIndexNeedsUpdate)
+  {
+    setTimeout
+    (
+      () =>
+      {
+        zIndexNeedsUpdate = false
+      },
+      750
+    );
+  }
 
   /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🔥 REACTIVITY
    * @description
-   * TODO: DOC:
+   *  📌 Listens to cases when, the:
+   *  - navigation button hover changes.
+   * @description
+   *  **WARNING:**
+   *  **triggered by changes in:**
+   *  - `deepReactListenNavBtnHover` - **kicker** (via deepListen)
+   *  - `deepReactListenWebLang` - **kicker** (via deepListen)
    */
-  $: if (browser && $sessionStore.navBtnHover)
+  $: if (browser && deepReactListenNavBtnHover != undefined && deepReactListenWebLang)
   {
     // ### [🐞]
     dlog
     (
-      `🚏 checkpoint [R] ➤ NAVBAR if_R_5`,
+      `🚏 checkpoint [R] ➤ ${NB_W_TAG[0]} if_R_5 ${deepReactListenWebLang}`,
       true
     );
 
     calcNavTrianglePos();
   }
-  else if (browser && $sessionStore.navBtnHover == undefined)
+  else if (browser && deepReactListenNavBtnHover == undefined && deepReactListenWebLang)
   {
     // ### [🐞]
     dlog
     (
-      `🚏 checkpoint [R] ➤ NAVBAR if_R_6`,
+      `🚏 checkpoint [R] ➤ ${NB_W_TAG[0]} if_R_6 ${deepReactListenWebLang}`,
       true
     );
 
-    if (isRouteCompetitions)
-    {
-      calcNavTrianglePos('competitions');
-    }
-    else
-    {
-      calcNavTrianglePos('scores');
-    }
-
+    setTimeout
+    (
+      () =>
+      {
+        if (isRouteCompetitions)
+          calcNavTrianglePos('competitions');
+        else
+          calcNavTrianglePos('scores');
+        ;
+      },
+      250
+    );
   }
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
@@ -614,7 +674,7 @@ NAVBAR MAIN
   column-space-center
   "
   class:user-active={isRouteProfile}
-  class:update-z-index={if_R_4}
+  class:update-z-index={zIndexNeedsUpdate}
 >
 
 	<!--
@@ -1698,7 +1758,7 @@ NAVBAR MAIN
     /* 📌 position */
     position: absolute;
     /* 🎨 style */
-    width: 100vw;
+    width: 100%;
     border: 0.5px solid var(--dark-theme-1);
   }
   header div#header\/border\/top-box
@@ -1831,9 +1891,9 @@ NAVBAR MAIN
 	}
 
 	/*
-  =============
-  ⚡️ RESPONSIVNESS
-  =============
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  ◼️ ⚡️ RESPONSIVNESS      ◼️
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   */
 
   @media screen

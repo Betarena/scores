@@ -1,32 +1,63 @@
-<!-- ===============
-COMPONENT JS (w/ TS)
-=================-->
+<!--
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+### COMPONENT JS (w/ TS)                                                               ◼️
+### NOTE:                                                                              ◼️
+### access custom Betarena Scores JS VScode Snippets by typing 'script...'             ◼️
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+-->
 
 <script lang="ts">
 
-  //#region ➤ [MAIN] Package Imports
+  // #region ➤ 📦 Package Imports
+
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'imports' that are required  ◼️
+  // ### by 'this' .svelte file is ran.                                   ◼️
+  // ### IMPORTANT                                                        ◼️
+  // ### Please, structure the imports as follows:                        ◼️
+  // ### 1. svelte/sveltekit imports                                      ◼️
+  // ### 2. project-internal files and logic                              ◼️
+  // ### 3. component import(s)                                           ◼️
+  // ### 4. assets import(s)                                              ◼️
+  // ### 5. type(s) imports(s)                                            ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
 	import sessionStore from "$lib/store/session.js";
 
-	import type { Urls } from "@betarena/scores-lib/types/hasura.js";
+	import type { Urls } from "@betarena/scores-lib/types/_HASURA_.js";
 
-  //#endregion ➤ [MAIN] Package Imports
+  // #endregion ➤ 📦 Package Imports
 
-  //#endregion ➤ [MAIN] Package Imports
+  // #region ➤ 📌 VARIABLES
 
-  //#region ➤ [VARIABLES]
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'variables' that are to be   ◼️
+  // ### and are expected to be used by 'this' .svelte file / component.  ◼️
+  // ### IMPORTANT                                                        ◼️
+  // ### Please, structure the imports as follows:                        ◼️
+  // ### 1. export const / let [..]                                       ◼️
+  // ### 2. const [..]                                                    ◼️
+  // ### 3. let [..]                                                      ◼️
+  // ### 4. $: [..]                                                       ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
-  export let rating: number;
-  export let img: string;
-  export let name: string;
-  export let appear: number;
-  export let assists: number;
-  export let goals: number;
-  export let urls: Urls;
-  export let viewportDesktop: boolean;
+  export let
+    rating: number,
+    img: string,
+    name: string,
+    appear: number,
+    assists: number,
+    goals: number,
+    urls: Urls,
+    viewportDesktop: boolean
+  ;
 
-	let ratingColorCode: string;
-  let url: string;
+	let
+    ratingColorCode: string,
+    url: string
+  ;
 
   $: url =
     urls?.[$sessionStore?.serverLang] == undefined
@@ -34,17 +65,20 @@ COMPONENT JS (w/ TS)
       : `/${urls?.[$sessionStore?.serverLang]}`
   ;
 
-  //#endregion ➤ [VARIABLES]
+  // #endregion ➤ 📌 VARIABLES
 
-  // #region ➤ [MAIN-METHODS]
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
 
-  // #endregion ➤ [MAIN-METHODS]
-
-  // #region ➤ [ONE-OFF] [METHODS] [HELPER] [IF]
-
-  // #endregion ➤ [ONE-OFF] [METHODS] [IF]
-
-  // #region ➤ [REACTIVIY] [METHODS]
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'logic' that should run      ◼️
+  // ### immediately and/or reactively for 'this' .svelte file is ran.    ◼️
+  // ### WARNING:                                                         ◼️
+  // ### ❗️ Can go out of control.                                        ◼️
+  // ### (a.k.a cause infinite loops and/or cause bottlenecks).           ◼️
+  // ### Please keep very close attention to these methods and            ◼️
+  // ### use them carefully.                                              ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
   /**
    * @summary
@@ -66,32 +100,37 @@ COMPONENT JS (w/ TS)
 		ratingColorCode = undefined;
 	}
 
-  // #endregion ➤ [REACTIVIY] [METHODS]
-
-  // #region ➤ SvelteJS/SvelteKit [LIFECYCLE]
-
-  // #endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
 </script>
 
-<!-- ===============
-COMPONENT HTML
-NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
-=================-->
+<!--
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+### COMPONENT HTML                                                                     ◼️
+### NOTE:                                                                              ◼️
+### use 'CTRL+SPACE' to autocomplete global class=tyles                                ◼️
+### NOTE:                                                                              ◼️
+### access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.         ◼️
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+-->
 
 <tr>
 
   <td>
     <div
-      class="rating-box"
+      class=
+      "
+      rating-box
+      "
       class:bronze={ratingColorCode === 'T'}
       class:silver={ratingColorCode === 'Y'}
       class:golden={ratingColorCode === 'G'}
     >
       <p
-        class="
-          w-500
-          medium
+        class=
+        "
+        w-500
+        medium
         ">
         {rating || ''}
       </p>
@@ -103,14 +142,20 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       href={url}
       class=
       "
-        cursor-pointer
+      cursor-pointer
       "
       class:disable-anchor={url == undefined}
       class:enabeld-anchor={url != undefined}
-      style="display: block;"
+      style=
+      "
+      display: block;
+      "
     >
       <div
-        class="row-space-start"
+        class=
+        "
+        row-space-start
+        "
       >
         <img
           loading="lazy"
@@ -118,16 +163,19 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           alt="default alt text"
           width=32
           height=32
-          class="player-img"
+          class=
+          "
+          player-img
+          "
         />
         <p
           id="featm-player-name"
           class=
           "
-            w-500
-            small
-            desktop-small
-            color-black-2
+          w-500
+          small
+          desktop-small
+          color-black-2
           "
         >
           {name}
@@ -145,10 +193,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       <p
         class=
         "
-          w-500
-          medium
-          boxed-rating-matches
-          color-black-2
+        w-500
+        medium
+        boxed-rating-matches
+        color-black-2
         "
       >
         {appear}
@@ -159,10 +207,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       <p
         class=
         "
-          w-500
-          medium
-          boxed-rating-assits
-          color-black-2
+        w-500
+        medium
+        boxed-rating-assits
+        color-black-2
         "
       >
         {assists}
@@ -173,10 +221,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       <p
         class=
         "
-          w-500
-          medium
-          boxed-rating-goals
-          color-black-2
+        w-500
+        medium
+        boxed-rating-goals
+        color-black-2
         "
       >
         {goals}
@@ -187,10 +235,15 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
 </tr>
 
-<!-- ===============
-COMPONENT STYLE
-NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
-=================-->
+<!--
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+### COMPONENT STYLE                                                                    ◼️
+### NOTE:                                                                              ◼️
+### auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE      ◼️
+### NOTE:                                                                              ◼️
+### access custom Betarena Scores CSS VScode Snippets by typing 'style...'             ◼️
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+-->
 
 <style>
 

@@ -225,11 +225,11 @@ async function fetchData
 
   const urls_0: string[] =
   [
-    `/api/data/main/seo-pages?lang=${_lang}&page=competition`,
-    `/api/data/main/seo-pages?competition_id=${_competitionId}&page=competition`,
-    `/api/data/main/seo-pages?term=competitions`,
-    `/api/data/main/seo-pages?term=football`,
-    `/api/data/main/seo-pages?term=team`,
+    `/api/data/main/seo-pages?lang=${_lang}&page=competition&decompress`,
+    `/api/data/main/seo-pages?competition_id=${_competitionId}&page=competition&decompress`,
+    `/api/data/main/seo-pages?term=competitions&decompress`,
+    `/api/data/main/seo-pages?term=football&decompress`,
+    `/api/data/main/seo-pages?term=team&decompress`,
     `/api/data/competition/main?lang=${_lang}`,
     `/api/data/competition/main?seo=true&lang=${_lang}&competition_id=${_competitionId}`,
     `/api/data/competition/rules?lang=${_lang}`,
@@ -243,7 +243,7 @@ async function fetchData
 
   const urls_1: string[] =
   [
-    `/api/data/main/seo-pages?country_id=${data_0?.[6]?.data?.country_id}`
+    `/api/data/main/seo-pages?country_id=${data_0?.[6]?.data?.country_id}&decompress`
   ];
 
   const data_1: PP_PROMISE_1 = await promiseUrlsPreload

@@ -84,7 +84,7 @@ export async function load
 
   const urls_0 =
   [
-    `/api/data/main/seo-pages?player_id=${player_id}&page=player`
+    `/api/data/main/seo-pages?player_id=${player_id}&page=player&decompress`
   ];
 
   const data_0: PP_PROMISE_0 = await promiseUrlsPreload
@@ -133,9 +133,9 @@ export async function load
   // NOTE: WARNING: TODO: remove for a cache solution
   const urls: string[] =
   [
-    `/api/data/main/seo-pages?lang=${_lang}&page=player`,
-    `/api/data/main/seo-pages?country_id=${country_id}`,
-    `/api/data/main/seo-pages?months=true&lang=${_lang}`,
+    `/api/data/main/seo-pages?lang=${_lang}&page=player&decompress`,
+    `/api/data/main/seo-pages?country_id=${country_id}&decompress`,
+    `/api/data/main/seo-pages?months=true&lang=${_lang}&decompress`,
     `/api/data/players/profile?lang=${_lang}`,
     `/api/data/players/fixtures?lang=${_lang}`,
     `/api/data/players/fixtures?player_id=${player_id}&limit=10&offset=0`,
