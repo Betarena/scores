@@ -181,7 +181,7 @@ async function fetchData
 
   const urls_0: string[] =
   [
-		`/api/data/main/seo-pages?lang=${_lang}&page=homepage`,
+		`/api/data/main/seo-pages?lang=${_lang}&page=homepage&decompress`,
 		`/api/data/home/feat-match?lang=${_lang}&decompress`,
 		`/api/data/home/feat-match?lang=${_lang}&seo=true&decompress`,
 		`/api/data/home/feat-betsite?lang=${_lang}&decompress`,

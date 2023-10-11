@@ -1,53 +1,62 @@
-// #region ➤ Package Imports
+// ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+// ### 📝 DESCRIPTION                                                         ◼️
+// ### Application Server Endpoint for Sportbook Data Fetch + Handle          ◼️
+// ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+
+// #region ➤ 📦 Package Imports
 
 import { json } from '@sveltejs/kit';
 
-import { initGrapQLClient } from '$lib/graphql/init';
 import { LSPT_L_ENTRY } from '@betarena/scores-lib/dist/functions/func.main.sportbook.js';
 import { SPD_C_D_A, SPD_C_D_A1 } from '@betarena/scores-lib/dist/redis/config.js';
+import dotenv from 'dotenv';
+import LZString from 'lz-string';
 import { get_target_hset_cache_data } from '../../../../../lib/redis/std_main';
 
 import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 
-// #endregion ➤ Package Imports
+// #endregion ➤ 📦 Package Imports
 
-// #region ➤ [VARIABLES] Imports
+// #region ➤ 📌 VARIABLES
 
-const graphQlInstance = initGrapQLClient()
+dotenv.config();
 
-// #endregion ➤ [VARIABLES] Imports
+// #endregion ➤ 📌 VARIABLES
 
-// #region ➤ [METHODS]
+// #region ➤ 🛠️ METHODS
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-//  [MAIN] ENDPOINT METHOD
-// ~~~~~~~~~~~~~~~~~~~~~~~~
+// ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+// ENDPOINT ENTRY                               ◼️
+// ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
 export async function GET
 (
-  req
+  req: any
 ): Promise < unknown >
 {
   try
   {
-    // NOTE: Handle url-query data;
+    // ### NOTE:
+    // ### handle url-query data
     const geoPos: string = req?.url?.searchParams?.get('geoPos');
     const all: string =	req?.url?.searchParams?.get('all');
     const hasura: string = req?.url?.searchParams?.get('hasura');
 
-    // ACTION:
-    // ➨ Get Sportbook ALL (WIDGET) MAIN data;
-    // ➨ NOTE: Contains [HASURA] Fallback;
+    let data: unknown;
+    let loadType: string = "⚡️ Redis (cache)";
+
+    // ### NOTE:
+    // ### gathers Sportbook (Main) widget main data.
+    // ### NOTE:
+    // ### contains 🟦 Hasura (PostgreSQL) fallback.
     const if_M_0: boolean =
-      all != undefined
-      && geoPos != undefined
+      all != null
+      && geoPos != null
     ;
     if (if_M_0)
     {
-      let data: unknown;
-      let loadType = "cache";
-
-      // IMPORTANT Check in cache;
+      // ### CHECK | IMPORTANT
+      // ### for existance in cache.
       if (!hasura)
       {
         data = await get_target_hset_cache_data
@@ -65,34 +74,49 @@ export async function GET
         }
       }
 
-      // IMPORTANT Default to Hasura;
+      // ### CHECK | IMPORTANT
+      // ### for default in Hasura.
       if (!data || hasura)
       {
         data = await fallbackMainData
         (
           geoPos
         );
-        loadType = 'HASURA'
+        loadType = '🟦 Hasura (SQL)';
       }
 
-      console.log(`📌 loaded [FPROB] with: ${loadType}`)
+      // ### [🐞]
+      // console.log(`📌 loaded [FPROB] with: ${loadType}`);
 
-      if (data != undefined) return json(data);
+      if (data != null)
+      {
+        const compressed: string = LZString.compress(JSON.stringify(data));
+
+        // ### [🐞]
+        // console.log(JSON.parse(LZString.decompress(compressed)));
+
+        return json
+        (
+          {
+            data: compressed,
+            loadType: loadType
+          }
+        );
+      }
     }
 
-    // ACTION:
-    // ➨ Get Sportbook ALL (WIDGET) MAIN data;
-    // ➨ NOTE: Contains [HASURA] Fallback;
+    // ### NOTE:
+    // ### gathers Sportbook (All) widget main data.
+    // ### NOTE:
+    // ### contains 🟦 Hasura (PostgreSQL) fallback.
     const if_M_1: boolean =
-      all == undefined
-      && geoPos != undefined
+      all == null
+      && geoPos != null
     ;
     if (if_M_1)
     {
-      let data: unknown;
-      let loadType = "cache";
-
-      // IMPORTANT Check in cache;
+      // ### CHECK | IMPORTANT
+      // ### for existance in cache.
       if (!hasura)
       {
         data = await get_target_hset_cache_data
@@ -110,22 +134,38 @@ export async function GET
         }
       }
 
-      // IMPORTANT Default to Hasura;
+      // ### CHECK | IMPORTANT
+      // ### for default in Hasura.
       if (!data || hasura)
       {
         data = await fallbackMainData_1
         (
           geoPos
         );
-        loadType = 'HASURA'
+        loadType = '🟦 Hasura (SQL)';
       }
 
-      console.log(`📌 loaded [FPROB] with: ${loadType}`)
+      // ### [🐞]
+      // console.log(`📌 loaded [FPROB] with: ${loadType}`)
 
-      if (data != undefined) return json(data);
+      if (data != null)
+      {
+        const compressed: string = LZString.compress(JSON.stringify(data));
+
+        // ### [🐞]
+        // console.log(JSON.parse(LZString.decompress(compressed)));
+
+        return json
+        (
+          {
+            data: compressed,
+            loadType: loadType
+          }
+        );
+      }
     }
 
-    // IMPORTANT Fallback to NULL
+    // ### IMPORTANT
     return json
     (
       null
@@ -149,70 +189,64 @@ export async function GET
   }
 }
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-//  [MAIN] METHOD
-// ~~~~~~~~~~~~~~~~~~~~~~~~
+// ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+// METHOD(s)                                    ◼️
+// ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
 /**
+ * @author
+ *  @migbash
  * @summary
- * [MAIN]
- * [FALLBACK]
+ *  🟥 MAIN | 🔹 HELPER
  * @description
- * ➨ sportbook (data) hasura TRANSLATION fetch;
- * @param
- * {string} geoPos
- * @returns
- * Promise < B_SPT_D >
+ *  📌 Fallback logic for **Sportbook** Main Data.
+ * @param { string } geoPos
+ *  Target `geo-location`.
+ * @returns { Promise < B_FEATB_T > }
  */
 async function fallbackMainData
 (
   geoPos: string
 ): Promise < B_SPT_D[] >
 {
-  const dataRes0 = await LSPT_L_ENTRY
+  const dataRes0: [ Map < string, B_SPT_D >, Map < string, B_SPT_D[] >, string[] ] = await LSPT_L_ENTRY
   (
-    graphQlInstance
+    null
   );
 
-  if (dataRes0?.[1].size == 0)
-  {
-    return null
-  }
+  if (dataRes0?.[1]?.size == 0)
+    return null;
+  ;
 
-	return dataRes0?.[1].get(geoPos);
+	return dataRes0?.[1]?.get(geoPos);
 }
 
 /**
+ * @author
+ *  @migbash
  * @summary
- * [MAIN]
- * [FALLBACK]
+ *  🟥 MAIN | 🔹 HELPER
  * @description
- * ➨ sportbook (data) hasura TRANSLATION fetch;
- * @param
- * {string} geoPos
- * @returns
- * Promise < B_SPT_D >
+ *  📌 Fallback logic for **Sportbook** Main (all) Data.
+ * @param { string } geoPos
+ *  Target `geo-location`.
+ * @returns { Promise < B_FEATB_T > }
  */
 async function fallbackMainData_1
 (
   geoPos: string
 ): Promise < B_SPT_D >
 {
-  const dataRes0 = await LSPT_L_ENTRY
+  const dataRes0: [ Map < string, B_SPT_D >, Map < string, B_SPT_D[] >, string[] ] = await LSPT_L_ENTRY
   (
-    graphQlInstance
+    null
   );
 
   if (dataRes0?.[0].size == 0)
-  {
-    return null
-  }
+    return null;
+  ;
 
-	return dataRes0?.[0].get(geoPos);
+	return dataRes0?.[0]?.get(geoPos);
 }
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-//  [HELPER] OTHER METHODS
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-
-// #endregion ➤ [METHODS]
+// #endregion ➤ 🛠️ METHODS

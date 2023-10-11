@@ -96,7 +96,7 @@ export async function load
 
   const data_0: PP_PROMISE_0 = await promiseUrlsPreload
   (
-    [`/api/data/main/seo-pages?url=${url.pathname}&page=tournaments`],
+    [`/api/data/main/seo-pages?url=${url.pathname}&page=tournaments&decompress`],
     fetch
   ) as PP_PROMISE_0;
 
@@ -124,7 +124,7 @@ export async function load
 
   const urls: string[] =
   [
-    `/api/data/main/seo-pages?lang=${urlLang}&page=tournaments`,
+    `/api/data/main/seo-pages?lang=${urlLang}&page=tournaments&decompress`,
     `/api/data/league/info?url=${url.pathname}`,
     `/api/data/league/standings?lang=${urlLang}`,
     `/api/data/league/standings?league_id=${league_id}`,
