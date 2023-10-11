@@ -374,7 +374,7 @@ MAIN WIDGET COMPONENT
         "
       >
         {@html B_USRG_D?.content?.title1}
-        {@html B_USRG_D?.content?.title2}
+        <!-- {@html B_USRG_D?.content?.title2} -->
       </div>
 
       <!--
@@ -504,7 +504,7 @@ MAIN WIDGET COMPONENT
         "
       >
         {@html B_USRG_D.content.footer1}
-        {@html B_USRG_D.content.footer2}
+        <!-- {@html B_USRG_D.content.footer2} -->
       </div>
 
     </div>
@@ -629,14 +629,6 @@ MAIN WIDGET COMPONENT
     /* 🎨 style */
   }
 
-  :global(
-    div#global⮕w⮕userguide⮕comp-1⮕main⮕title > h1
-  )
-  {
-    /* 🎨 style */
-    display: inline;
-  }
-
 	:global(
     div#global⮕w⮕userguide⮕comp-1⮕main h1,
     div#global⮕w⮕userguide⮕comp-1⮕main h2,
@@ -645,6 +637,7 @@ MAIN WIDGET COMPONENT
   {
     /* 🎨 style */
 		margin-top: 0;
+    margin-bottom: 0;
 	}
 
 	:global(
@@ -657,14 +650,6 @@ MAIN WIDGET COMPONENT
 		margin: 0;
 		display: initial;
 	}
-
-  :global(
-    div#global⮕w⮕userguide⮕comp-1⮕main⮕footer > p
-  )
-  {
-    /* 🎨 style */
-    display: inline;
-  }
 
   div#global⮕w⮕userguide⮕comp-1⮕main⮕video
   {
