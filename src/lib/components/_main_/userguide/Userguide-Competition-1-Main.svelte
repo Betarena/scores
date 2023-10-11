@@ -23,6 +23,7 @@
   // ### 5. type(s) imports(s)                                            ◼️
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
+	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
 	import { fade, fly } from 'svelte/transition';
 
@@ -239,6 +240,28 @@
     {
       $sessionStore.showUserguide1 = true;
     }
+  }
+
+  /**
+   *
+   */
+  $: if_R_0_2 =
+    browser
+    && showModal
+  ;
+  $: if (if_R_0_2 && $sessionStore?.showUserguide1)
+  {
+    document.body.classList.add
+    (
+      'disable-scroll'
+    );
+  }
+  else
+  {
+    document.body.classList.remove
+    (
+      'disable-scroll'
+    );
   }
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]

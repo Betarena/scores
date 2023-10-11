@@ -43,6 +43,12 @@ body {
     SAFARI */
 	-webkit-text-size-adjust: none;
 }
+body.disable-scroll
+{
+  /* 🎨 style */
+  overflow: hidden;
+  height: 100%;
+}
 
 * {
 	box-sizing: border-box;
