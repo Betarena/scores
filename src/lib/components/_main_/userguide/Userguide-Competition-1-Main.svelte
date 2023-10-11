@@ -143,10 +143,10 @@
     options: any
   ): any
   {
-		if (isViewMobile)
-			return options.fn(node, { y: 1500, duration: 250 });
+		if (isViewTablet)
+			return options.fn(node, { y: 1500, duration: 500 });
     else
-			return options.fn(node, { x: 1500, duration: 250 });
+			return options.fn(node, { x: 850, duration: 750 });
 	}
 
   /**
@@ -308,7 +308,8 @@ MAIN WIDGET COMPONENT
   <div
     id="{CNAME}"
     class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
-    transition:customAnimation={{ fn: fly }}
+    in:customAnimation={{ fn: fly }}
+    out:customAnimation={{ fn: fly }}
   >
 
     <!--
