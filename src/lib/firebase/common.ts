@@ -106,7 +106,6 @@ export async function userToggleUserguideOptOut
 
   if (currentOptOuts.includes(userguideId))
   {
-    console.log('🔥')
     await updateDoc
     (
       userRef,

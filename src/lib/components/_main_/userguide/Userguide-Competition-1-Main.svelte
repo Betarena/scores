@@ -373,8 +373,8 @@ MAIN WIDGET COMPONENT
         "
       >
         <iframe
-          src="{B_USRG_D?.content?.video_link ?? 'https://www.youtube.com/watch?v=lrmAAadPVQI'}"
-          allow='autoplay'
+          src="{B_USRG_D?.content?.video_link?.replace("watch?v=", "embed/") ?? 'https://www.youtube.com/watch?v=lrmAAadPVQI'}"
+          frameborder=0
         />
       </div>
 
