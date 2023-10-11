@@ -120,8 +120,6 @@
     (
       1
     );
-
-    $sessionStore.showUserguide1 = false;
   }
 
   /**
@@ -215,7 +213,6 @@
 
   $: if_R_0_1 =
     $userBetarenaSettings?.userguide_id_opt_out.includes(B_USRG_D.id)
-    || $userBetarenaSettings?.user?.scores_user_data?.userguide_id_opt_out?.includes(B_USRG_D.id)
   ;
   $: if (!if_R_0_1)
   {
