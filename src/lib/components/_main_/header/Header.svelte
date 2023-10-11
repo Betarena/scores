@@ -122,7 +122,9 @@
     /** @description TODO: DOC: */
     width: number = 0,
     /** @description TODO: DOC: */
-    deepReactListenUserUid: string = $userBetarenaSettings?.user?.firebase_user_data?.uid ?? undefined;
+    deepReactListenUserUid: string = $userBetarenaSettings?.user?.firebase_user_data?.uid ?? undefined,
+    /** @description TODO: DOC: */
+    zIndexNeedsUpdate: boolean = false
   ;
 
   $: B_NAV_T = $page.data.B_NAV_T;
@@ -470,6 +472,21 @@
     || $sessionStore.withdrawModal
     || $sessionStore.showUserguide1
   ;
+  $: if (if_R_4)
+  {
+    zIndexNeedsUpdate = true
+  }
+  else
+  {
+    setTimeout
+    (
+      () =>
+      {
+        zIndexNeedsUpdate = false
+      },
+      750
+    );
+  }
 
   /**
    * @author
@@ -657,7 +674,7 @@ NAVBAR MAIN
   column-space-center
   "
   class:user-active={isRouteProfile}
-  class:update-z-index={if_R_4}
+  class:update-z-index={zIndexNeedsUpdate}
 >
 
 	<!--
