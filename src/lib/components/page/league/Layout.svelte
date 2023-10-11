@@ -12,7 +12,6 @@
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
-	import { get } from '$lib/api/utils.js';
 	import { listenRealTimeScoreboardAll, onceRealTimeLiveScoreboard } from '$lib/firebase/common.js';
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
@@ -29,8 +28,7 @@
 	import Breadcrumb from './Breadcrumb.svelte';
 	import FixtureOddsWidget from './fixture-odds/FixtureOdds-Widget.svelte';
 
-  import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
-
+  
   // #endregion ➤ [MAIN] Package Imports
 
   // #region ➤ [VARIABLES]
@@ -54,41 +52,6 @@
 	// [ℹ] listen to change in LANG SELECT of `$userBetarenaSettings.lang`
 	let current_lang: string = $sessionStore?.serverLang;
 	$: refresh_lang = $userBetarenaSettings.lang;
-
-  /**
-   * @description obtains the target sportbook data
-   * information based on users geo-location;
-   * data gathered at page-level and set to svelte-stores
-   * to be used by (this) page components;
-   * NOTE: (*) best approach
-   * TODO: can be moved to a layout-level [?]
-   * TODO: can be moved to a header-level [?]
-   * TODO: can be moved to a +server-level [⚠️]
-   * @returns {Promise<void>} void
-   */
-  async function sportbookIdentify
-  (
-  ): Promise < void >
-  {
-    if (!$userBetarenaSettings.country_bookmaker) return;
-    const userGeo = $userBetarenaSettings?.country_bookmaker.toLowerCase()
-    $sessionStore.sportbook_main = await get(`/api/data/main/sportbook?geoPos=${userGeo}`) as B_SPT_D;
-    $sessionStore.sportbook_list = await get(`/api/data/main/sportbook?all=true&geoPos=${userGeo}`) as B_SPT_D[];
-    $sessionStore.sportbook_list = $sessionStore.sportbook_list
-    .sort
-    (
-			(
-        a,
-        b
-      ) =>
-      parseInt(a.position) - parseInt(b.position)
-		);
-  }
-
-  $: if ($userBetarenaSettings.country_bookmaker)
-  {
-    sportbookIdentify()
-  }
 
   // #endregion ➤ [VARIABLES]
 
@@ -149,7 +112,6 @@
 
       let connectionRef = listenRealTimeScoreboardAll()
       // FIREBASE_CONNECTIONS_SET.add(connectionRef)
-      sportbookIdentify()
 
       document.addEventListener
       (
