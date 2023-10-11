@@ -28,6 +28,7 @@
 	import { onMount } from 'svelte';
 
   import { get } from '$lib/api/utils.js';
+  import sessionStore from "$lib/store/session.js";
   import userBetarenaSettings from '$lib/store/user-settings.js';
   import { IN_W_F_STY, IN_W_F_TAG, IN_W_F_TOG, dlog } from '$lib/utils/debug.js';
   import { translationObject } from '$lib/utils/translation.js';
@@ -72,12 +73,16 @@
     /** @description (widget) wether widget has or no data */
     widgetNoData: boolean = true,
     /** @description (widget) dynamic import variable for svelte component [1] */
-    FeatMatchMainDynamic: any
+    FeatMatchMainDynamic: any,
+    /** @description (listen) value for change comparison of client bookmaker change */
+    currentBookmaker: string = $sessionStore?.serverLang
   ;
 
   $: widgetDataSeo = $page.data?.B_FEATM_S;
   $: widgetDataTranslation = $page.data?.B_FEATM_T;
   $: WIDGET_TITLE =  widgetDataTranslation?.matches ?? translationObject?.featured_match_title;
+
+  $: deepReactListenBookmakerChng = $userBetarenaSettings?.country_bookmaker;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -149,6 +154,43 @@
   }
 
   // #endregion ➤ 🛠️ METHODS
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'logic' that should run      ◼️
+  // ### immediately and/or reactively for 'this' .svelte file is ran.    ◼️
+  // ### WARNING:                                                         ◼️
+  // ### ❗️ Can go out of control.                                        ◼️
+  // ### (a.k.a cause infinite loops and/or cause bottlenecks).           ◼️
+  // ### Please keep very close attention to these methods and            ◼️
+  // ### use them carefully.                                              ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🔥 REACTIVITY
+   * @description
+   *  📌 Listens to cases when, the:
+   *  - (1) _initial platform language_ has changed.
+   * @description
+   *  **WARNING:**
+   *  **triggered by changes in:**
+   *  - `deepReactListenWebLang`- **kicker** (via deepListen)
+   */
+   $: if_R_0 =
+    browser
+  ;
+  $: if (if_R_0 && deepReactListenBookmakerChng != currentBookmaker)
+  {
+    widgetInit();
+    currentBookmaker = deepReactListenBookmakerChng;
+  }
+
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
