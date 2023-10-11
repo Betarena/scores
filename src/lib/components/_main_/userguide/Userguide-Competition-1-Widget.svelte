@@ -62,8 +62,12 @@
     /** @description (widget) wether widget has or no data */
     widgetNoData: boolean = true,
     /** @description (widget) dynamic import variable for svelte component [1] */
-    MainMainAsDynamic: any
+    MainMainAsDynamic: any,
+    /** @description (listen) value for change comparison of client language change */
+    currentLang: string = $sessionStore?.serverLang
   ;
+
+  $: deepReactListenWebLang = $sessionStore?.serverLang;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -118,19 +122,62 @@
     ;
 		if (if_M_0)
     {
+      // ### [🐞]
       // dlog(`${LV2_W_H_TAG[0]} ❌ no data available!`);
+
 			widgetNoData = true;
       $sessionStore.showUserguide1Conf = false;
-			return;
+
+      return;
 		}
 
     widgetNoData = false;
     $sessionStore.showUserguide1Conf = true;
 
+    // ### [🐞]
+    // alert('🎟️');
+
     return;
   }
 
   // #endregion ➤ 🛠️ METHODS
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'logic' that should run      ◼️
+  // ### immediately and/or reactively for 'this' .svelte file is ran.    ◼️
+  // ### WARNING:                                                         ◼️
+  // ### ❗️ Can go out of control.                                        ◼️
+  // ### (a.k.a cause infinite loops and/or cause bottlenecks).           ◼️
+  // ### Please keep very close attention to these methods and            ◼️
+  // ### use them carefully.                                              ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🔥 REACTIVITY
+   * @description
+   *  📌 Listens to cases when, the:
+   *  - (1) _initial platform language_ has changed.
+   * @description
+   *  **WARNING:**
+   *  **triggered by changes in:**
+   *  - `deepReactListenWebLang`- **kicker** (via deepListen)
+   */
+  $: if_R_0 =
+    browser
+  ;
+  $: if (if_R_0 && deepReactListenWebLang != currentLang)
+  {
+    widgetInit();
+    currentLang = deepReactListenWebLang;
+  }
+
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
