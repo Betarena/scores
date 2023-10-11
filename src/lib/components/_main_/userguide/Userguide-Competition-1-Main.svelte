@@ -212,6 +212,9 @@
   // ### use them carefully.                                              ◼️
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
+  /**
+   *
+   */
   $: if_R_0_1 =
     $userBetarenaSettings?.userguide_id_opt_out.includes(B_USRG_D.id)
   ;
@@ -232,7 +235,7 @@
 
     /**
      * @description
-     *  TODO: DOC:
+     *  📌 **self-explanatory**
      */
     function setUserShowGuide1
     (
@@ -344,7 +347,14 @@ MAIN WIDGET COMPONENT
       -->
       <img
         id='close-vector'
-        class='cursor-pointer'
+        class=
+        '
+        cursor-pointer
+        '
+        style=
+        '
+        {isViewTablet ? 'top: 16px; right: 16px;' : ''}
+        '
         src={$userBetarenaSettings.theme == 'Dark' ? icon_close : icon_close_dark}
         alt='close-svg'
         on:click={() => $sessionStore.showUserguide1 = false}
@@ -359,8 +369,8 @@ MAIN WIDGET COMPONENT
         id="{CNAME}⮕title"
         class=
         "
-        {!isViewTablet ? 'm-b-35' : ''}
-        {isViewTablet ? 'global s-28 text-center m-b-24' : ''}
+        {!isViewTablet ? 'm-b-35 global s-32 lh-125' : ''}
+        {isViewTablet ? 'global s-28 lh-128 text-center m-b-24' : ''}
         "
       >
         {@html B_USRG_D?.content?.title1}
@@ -410,7 +420,7 @@ MAIN WIDGET COMPONENT
           <div
             class=
             "
-            m-b-35
+            {!isViewMobile ? 'global s-20 m-b-35' : ''}
             {isViewMobile ? 'global s-16 m-b-24' : ''}
             "
           >
@@ -439,7 +449,7 @@ MAIN WIDGET COMPONENT
                 step-box
                 "
                 class:m-r-20={isViewMobile}
-                class:m-r-24={!isViewTablet}
+                class:m-r-24={!isViewMobile}
               >
                 <p
                   class=
@@ -524,9 +534,9 @@ MAIN WIDGET COMPONENT
       <p
         class=
         "
-        s-18
         color-black-2
-        {isViewMobile ? 'global s-16' : ''}
+        {!isViewMobile ? 's-18' : ''}
+        {isViewMobile ? 's-16' : ''}
         "
       >
         {B_USRG_D?.content?.extra?.do_not_show}
@@ -579,15 +589,15 @@ MAIN WIDGET COMPONENT
 		border-radius: 12px 12px 0 0;
     width: 100%;
     overflow: hidden;
-    padding: 48px 24px;
+    padding: 24px;
 	}
 
   img#close-vector
   {
     /* 📌 position */
 		position: absolute;
-		top: 25px;
-		right: 25px;
+		top: 24px;
+		right: 24px;
 		z-index: 400000002;
 	}
 
@@ -700,11 +710,11 @@ MAIN WIDGET COMPONENT
     right: 0;
     left: 0;
     /* 🎨 style */
-    height: 84px;
     width: 100%;
-    padding: 32px 48px;
+    padding: 24px;
     background: var(--white);
     box-shadow: 0px -4px 12px 0px rgba(0, 0, 0, 0.08);
+    height: 68px;
   }
 
 	/*
@@ -712,6 +722,22 @@ MAIN WIDGET COMPONENT
   ◼️ ⚡️ RESPONSIVNESS      ◼️
   ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   */
+
+  @media only screen
+  and (min-width: 581px)
+  {
+    div#global⮕w⮕userguide⮕comp-1⮕main
+    {
+      /* 🎨 style */
+      padding: 48px;
+    }
+    div#global⮕w⮕userguide⮕comp-1⮕main⮕bottom
+    {
+      /* 🎨 style */
+      padding: 32px 48px;
+      height: 84px;
+    }
+  }
 
 	@media only screen
   and (min-width: 769px)
@@ -728,7 +754,6 @@ MAIN WIDGET COMPONENT
       width: 45vw;
       overflow: hidden;
       border-radius: 0;
-      padding: 48px;
     }
   }
 
