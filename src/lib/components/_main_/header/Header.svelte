@@ -476,7 +476,7 @@
   {
     zIndexNeedsUpdate = true
   }
-  else
+  else if (!if_R_4 && zIndexNeedsUpdate)
   {
     setTimeout
     (
