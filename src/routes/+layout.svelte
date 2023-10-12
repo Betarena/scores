@@ -130,7 +130,7 @@
   ): void
   {
 		offlineMode = !offlineMode;
-    // [🐞]
+    // ### [🐞]
 		dlog
     (
 			'🔴 your internet connection has changed!',
@@ -139,27 +139,13 @@
 	}
 
   /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🔹 HELPER
    * @description
-   * TODO: DOC:
-  */
-  async function updateFirestoreAndCrisp
-  (
-  ): Promise < void >
-  {
-    if (!browser || $userBetarenaSettings?.user == undefined) return;
-
-    await post
-    (
-      `${import.meta.env.VITE_FIREBASE_FUNCTIONS_ORIGIN}${import.meta.env.VITE_FIREBASE_FUNCTIONS_F_1}`,
-      {
-        user_uids: [$userBetarenaSettings?.user?.firebase_user_data?.uid]
-      }
-    );
-  }
-
-  /**
-   * @description
-   * TODO: DOC:
+   *  📌 Kickstart `_this_` page event listeners.
+   * @returns { void }
    */
   function kickstartEventListen
   (
@@ -199,6 +185,30 @@
     );
   }
 
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🔹 HELPER
+   * @description
+   *  📌 Updates **Betarena User** for their `Firestore` and `CRISP` data.
+   * @returns { Promise < void > }
+  */
+  async function updateFirestoreAndCrisp
+  (
+  ): Promise < void >
+  {
+    if (!browser || $userBetarenaSettings?.user == undefined) return;
+
+    await post
+    (
+      `${import.meta.env.VITE_FIREBASE_FUNCTIONS_ORIGIN}${import.meta.env.VITE_FIREBASE_FUNCTIONS_F_1}`,
+      {
+        user_uids: [$userBetarenaSettings?.user?.firebase_user_data?.uid]
+      }
+    );
+  }
+
   // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -221,7 +231,7 @@
    *  🔥 REACTIVITY
    * @description
    *  📌 Listens to cases when, the:
-   *  - (1) _initial platform load_ has changed top `client`.
+   *  - (1) _initial platform load_ has changed to `client`.
    * @description
    *  **WARNING:**
    *  **triggered by changes in:**
