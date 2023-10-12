@@ -176,7 +176,7 @@ export async function load
     `/api/data/fixture/lineups?lang=${urlLang}`,
     `/api/data/fixture/incidents?fixture_id=${fixture_id}`,
     `/api/data/fixture/incidents?lang=${urlLang}`,
-    `/api/data/home/feat-betsite?lang=${urlLang}`,
+    `/api/data/home/feat-betsite?lang=${urlLang}&decompress`,
     `/api/data/fixture/statistics?fixture_id=${fixture_id}`,
     `/api/data/fixture/statistics?lang=${urlLang}`,
     `/api/data/fixture/content?fixture_id=${fixture_id}&lang=${urlLang}`,
