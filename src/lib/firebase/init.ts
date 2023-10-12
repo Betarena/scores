@@ -11,8 +11,10 @@ import { getStorage, type FirebaseStorage } from 'firebase/storage';
 // #region ➤ 📌 VARIABLES
 
 /**
+ * @author
+ *  @migbash
  * @description
- * 📌 Firebase Config Object
+ *  📌 Firebase Config Object
  */
 const firebaseConfig: FirebaseOptions =
 {
@@ -26,8 +28,10 @@ const firebaseConfig: FirebaseOptions =
 // #region version-1 (init)
 
 /**
+ * @author
+ *  @migbash
  * @description
- * 📌 Initialize Firebase App.
+ *  📌 Initialize Firebase App.
  * @see https://stackoverflow.com/questions/37652328/how-to-check-if-a-firebase-app-is-already-initialized-on-android/41005100#41005100
  */
 export const app: FirebaseApp =
@@ -37,23 +41,31 @@ export const app: FirebaseApp =
 ;
 
 /**
+ * @author
+ *  @migbash
  * @description
- * 📌 Initialize RealTime DB Service.
+ *  📌 Initialize RealTime DB Service.
  */
 export const db_real: Database = getDatabase(app);
 /**
+ * @author
+ *  @migbash
  * @description
- * 📌 Initialize Firebase Authentication.
+ *  📌 Initialize Firebase Authentication.
  */
 export const auth: Auth = getAuth(app);
 /**
+ * @author
+ *  @migbash
  * @description
- * 📌 Initialize Firebase Cloud Storage.
+ *  📌 Initialize Firebase Cloud Storage.
  */
 export const storage: FirebaseStorage = getStorage(app);
 /**
+ * @author
+ *  @migbash
  * @description
- * 📌 Initialize Firebase Cloud Firestore.
+ *  📌 Initialize Firebase Cloud Firestore.
  */
 export const db_firestore: Firestore = getFirestore(app);
 
