@@ -1,13 +1,12 @@
 <!--
-◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-### This is a boilerplate example for a .svelte component, used by Betarena | Scores.  ◼️
-### It acts as a guidance on internal development standards and code style used        ◼️
-### throughout this project.                                                           ◼️
-### NOTE:                                                                              ◼️
-### <COPY-THIS-FILE-INTO-YOUR-NEXT-COMPONENT>                                          ◼️
-### NOTE:                                                                              ◼️
-### <❗️ REMOVE (THIS) COMMENT IN PRODUCTION>                                           ◼️
-◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+### NOTE:
+### This is a boilerplate example for a .svelte component, used by Betarena | Scores.
+### It acts as a guidance on internal development standards and code style used
+### throughout this project.
+### NOTE: | IMPORTANT
+### Use _this_ Boilerplate / Template when creating your next Svelte Component of Type Widget.
+### NOTE: | IMPORTANT
+### ❗️ Please Remove _this_ comment after adding this to a target file.
 -->
 
 <!--
@@ -39,7 +38,6 @@
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
 	import { browser } from '$app/environment';
-	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
   // import { <custom/node-modules> } from [..]
