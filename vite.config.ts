@@ -44,6 +44,15 @@ export default defineConfig
       // ### WARNING:
       // ### overrides 'CSS' imported by 'svelte/+kit'
       // ### requires to be imported a '<link ... >' in the 'src/app.html'
+      // ### IMPORTANT
+      // ### IF (below) code-block is uncommented.
+      // ### Please, follow the following steps (to attain google-hack)
+      // ### [1] Uncomment (below) code-block
+      // ### [2] Run `npm run build` in command-line for '_this_' root project path.
+      // ### [3] Validate new `./static/all-one-css-chunk.css` has been generated.
+      // ### [4] Comment (below) code-block.
+      // ### [5] Copy new `CSS` to `src/app.html > <head> <style> (designated area).
+      // ### [6] Push to `Production`.
       /*
       cssInjectedByJsPlugin
       (
