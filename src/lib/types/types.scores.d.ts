@@ -10,8 +10,8 @@ import type { User } from 'firebase/auth';
  */
 export interface Voted_Fixture
 {
-	fixture_id?:       number;
-	fixture_vote?:     string;
+	fixture_id?: number;
+	fixture_vote?: string;
 	fixture_vote_val?: string;
 }
 
@@ -28,228 +28,282 @@ export type Auth_Type =
 ;
 
 /**
+ * @author
+ *  @migbash
+ * @summary
+ *  🔹 TYPES
  * @description
- * Interface for 'authenticated' users.
+ *  📌 Interface for 'authenticated' users.
  */
 export interface BetarenaUser
 extends
 Pick < User_Setting, "userguide_id_opt_out" >
 {
-  /**
-   * @description
-   */
+  /** @description **User** scores platform language preference */
 	lang?: string;
+  /** @description **User** configured `username` */
 	username?: string;
+  /** @description **User** initial account creation `registration` method i.e: `Google, Github, etc.` */
 	registration_type?: Auth_Type[];
+  /** @description **User** initial account creation `registration` date */
 	register_date?: string;
+  /** @description **User** account profile photo */
 	profile_photo?: string | undefined;
-	web3_wallet_addr?: string | undefined; // [ℹ] Authenticated User [WEB3]
+  /** @description **User** account linked `Web3` wallet address */
+	web3_wallet_addr?: string | undefined;
+  /** @description **User** account `balance` */
   main_balance?: number;
 }
 
 /**
+ * @author
+ *  @migbash
+ * @summary
+ *  🔹 TYPES
  * @description
- * Interface for 'authenticated' users.
+ *  Interface for 'authenticated' users.
  */
 export interface Scores_User
 {
-  /** Authenticated user firestore DB data object */
+  /** @description **User** authenticated user `Firebase | Firestore` DB data object */
 	firebase_user_data: User;
-  /** Authenticated user critical data */
+  /** @description **User** authenticated user critical data */
 	scores_user_data: BetarenaUser;
 }
 
 /**
+ * @author
+ *  @migbash
+ * @summary
+ *  🔹 TYPES
  * @description
- * Interface for 'localstorage' data.
+ *  📌 Interface for 'localstorage' data.
  */
 export interface User_Setting
 {
-  /** User selected lang (overrides serverLang) */
-	lang:               string;
-  /** User selected theme */
-	theme:              'Dark' | 'Light';
-  /** User selected country bookmaker ISO2 */
-	country_bookmaker:  string;
-  /** GeoJs object response data */
-	geoJs:              GeoJsResponse;
-  /** Authenticated user data object */
-	user:               Scores_User;
-  /** Voted fixtures */
-  voted_fixtures:     Voted_Fixture[];
-  /** @description userguides opt-out */
+  /** @description **Client/User** selected lang (overrides serverLang) */
+	lang: string;
+  /** @description **Client/User** selected theme */
+	theme: 'Dark' | 'Light';
+  /** @description **Client/User** selected country bookmaker ISO2 */
+	country_bookmaker: string;
+  /** @description **Client/User** geoJs object response data */
+	geoJs: GeoJsResponse;
+  /** @description **User** authenticated data object */
+	user: Scores_User;
+  /** @description **Client/User** voted fixtures */
+  voted_fixtures: Voted_Fixture[];
+  /** @description **Client/User** userguides opt-out */
   userguide_id_opt_out: number[];
 }
 
 /**
+ * @author
+ *  @migbash
+ * @summary
+ *  🔹 TYPES
  * @description
- * Interface for Platform Session Data
- * 'a.k.a Ephermal' data.
+ *  📌 Interface for Platform Session / State data
+ * `a.k.a Strictly Ephermal` data.
  */
 export interface Platform_Session
 {
+  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // NOTE: MISC                 ◼️
+  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+
   /**
    * @description
-   * 📌 scores platform (global) - used for inter-component events of selected season changed (reactivity).
+   *  📌 `session/state` variable used for
+   *  `inter-component` events of selected season.
    */
 	selectedSeasonID: number;
   /**
    * @description
-   * 📌 scores platform (global) - detecting and pre-loading the data for a TARGET page
-   *                               translation of the current one, programatically.
+   *  📌 `session/state` variable used for
+   *  detecting and pre-loading data for **target** page,
+   *  simulating an `intent`.
    */
   lang_intent: string | undefined;
   /**
    * @description
-   * 📌 scores platform (global) - instant platform page language identification.
+   *  📌 `session/state` variable used for
+   *  instant **Scores Platform** page language identification.
    */
   serverLang: string | undefined;
   /**
    * @description
-   * 📌 scores platform (global) - session data | Livescore Now Selected Date (View).
+   *  📌 `session/state` variable used for
+   *  session data of `Livescore v2` widget of `selected date` (View).
    *
    * IMPORTANT
-   * Must be in ISO/UTC timezone;
+   * Must be in `ISO/UTC` timezone;
   */
-  livescoreNowSelectedDate: Date
+  livescoreNowSelectedDate: Date;
   /**
    * @description
-   * 📌 scores platform (global) - session data on the livescore-now today fixture number.
+   *  📌 `session/state` variable used for
+   *  session data on the today's fixture number.
    */
-  fixturesTodayNum: number,
+  fixturesTodayNum: number;
   /**
    * @description
-   * 📌 scores platform (global) - session data on the competitions **total** number.
+   *  📌 `session/state` variable used for the
+   *  number of **total competitions**.
    */
-  competitionsNum: number,
+  competitionsNum: number;
   /**
    * @description
-   * 📌 scores platform (global) - session data on the competitions `open` number.
+   *  📌 `session/state` variable used for the
+   *  number of **open competitions**.
    */
-  competitionsOpenNum: number,
+  competitionsOpenNum: number;
   /**
    * @description
-   * 📌 scores platform (global) - session data on the device type obtained from `user-agent`.
+   *  📌 `session/state` variable used for the
+   *  device type obtained from `user-agent`.
    */
-  deviceType: 'mobile' | 'tablet' | 'desktop'
+  deviceType: 'mobile' | 'tablet' | 'desktop';
   /**
    * @description
-   * 📌 scores platform (global) - session data on users current date.
+   *  📌 `session/state` variable used for the
+   *  data on users current date.
    *
    * IMPORTANT
-   * Must be in user adjusted (TZ) timezone;
+   * `date` must be adjusted to user (TZ) timezone;
   */
-  userDate: Date,
+  userDate: Date;
 
-  // -----
-  // NOTE: UI;
-  // -----
+  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // NOTE: UI                   ◼️
+  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
   /**
    * @description
-   * Toggle livescore (widget) target view tabs.
+   *  📌 Toggle livescore (widget) target available `view` tabs.
    */
   livescoreFixtureView: 'all' | 'live';
   /**
    * @description
-   * Show/Hide Livescore (widget) pop-up calendar.
+   *  📌 Toggle `visibility` (show/hide) of Livescore (widget) pop-up calendar.
    */
   livescoreShowCalendar: boolean;
   /**
    * @description
-   * Show/Hide Fixture-Page target view tabs.
+   *  📌 Toggle `visibility` (show/hide) of Fixture (page) target `view` tabs.
    */
 	fixture_select_view: 'overview' | 'news';
   /**
    * @description
-   * Show/Hide 'email' (footer) pop-up modal.
+   *  📌 Toggle `visibility` (show/hide) of Email (widget) pop-up modal.
    */
 	newsletterPopUpShow: boolean;
   /**
    * @description
-   * Show/Hide 'authentication' pop-up modal.
+   *  📌 Toggle `visibility` (show/hide) of Authentication (widget) pop-up modal.
    */
 	auth_show: boolean;
   /**
    * @description
-   * Follows 'user' intent for 'hover' language select action.
+   *  📌 Follow 'user' intent for `hover` language select action (intent).
    */
   navBtnHover: string;
+  /**
+   * @description
+   *  📌 Toggle `visibility` (show/hide) of Withdraw (widget) pop-up modal.
+   */
+  withdrawModal: boolean;
+  /**
+   * @description
+   *  📌 Toggle `visibility` (show/hide) of Userguide-1 (widget) pop-up modal.
+   */
+  showUserguide1: boolean;
+  /**
+   * @description
+   *  📌 Toggle `visibility` (show/hide) of Userguide-1 (widget) access.
+   */
+  showUserguide1Conf: boolean;
 
-  // TODO: DOC:
-  withdrawModal: boolean,
-
-  showUserguide1: boolean,
-  showUserguide1Conf: boolean,
-
-  // -----
-  // NOTE: SPORTBOOK DATA;
-  // -----
+  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // NOTE: SPORTBOOK DATA       ◼️
+  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
   /**
    * @description
-   * Target Geo-Position Sportbook (MAIN) Data Object
+   *  📌 Target `geo-position` sportbook (single-main) data object.
    */
   sportbook_main: B_SPT_D;
   /**
    * @description
-   * Target Geo-Position Sportbook (LIST) Data
+   *  📌 Target `geo-position` sportbook (list) data.
    */
   sportbook_list: B_SPT_D[];
 
-  // -----
+  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   // NOTE: LIVESCORE WIDGET STORE DATA;
-  // -----
+  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
   /**
    * @description
-   * Store of 'LIVE' data of 'Firebase Livescore' (V1)
+   *  📌 Store of `live` data of 'Firebase Livescore' (V1)
    * @deprecated
    * in favor of `livescore_now_scoreboard`
    */
   livescore_now: Map < number, FIREBASE_livescores_now >;
   /**
    * @description
-   * Store of 'LIVE' data 'Firebase Livescore' (Scoreboard) (V2)
+   *  📌 Store of `live` data 'Firebase Livescore' (Scoreboard) (V2)
    */
   livescore_now_scoreboard: Map < number, FIRE_LNNS >;
   /**
    * @description
-   * Store 'LIVE' data for Target (SINGLE) fixture 'scores'
+   *  📌 Store `live` data for target (SINGLE) fixture 'scores'.
    */
   livescore_now_fixture_target: FIREBASE_livescores_now;
   /**
    * @description
-   * Store 'LIVE' data for Target (SINGLE) fixture 'odds'
+   *  📌 Store `live` data for target (SINGLE) fixture 'odds'
    */
   live_odds_fixture_target: FIREBASE_odds[];
   /**
    * @description
-   * Store 'LIVE' data on 'Firebase Odds' Target (MULTIPLE) fixtures
+   *  📌 Store `live` data on 'Firebase Odds' target (MULTIPLE) fixtures
    */
   live_odds_fixture_map: Map < number, FIREBASE_odds[] >;
   /**
    * @description
-   * Store 'LIVE' data for ALL players in a game
+   *  📌 Store `live` data for **all** players in a game.
    */
   livescore_now_player_fixture: number | null;
   /**
    * @description
-   * 📌 Store 'LIVE' data for ALL fixtures
+   *  📌 Store `live` data for **all** fixtures.
    */
   livescore_now_fixtures: number[];
   /**
    * @description
-   * 📌 Store data for new 'real-time' (a.k.a) latest competitions data.
+   *  📌 Store data for new 'real-time' (a.k.a) latest competitions data.
    */
   competitions_map: Map < number, B_H_COMP_DATA >;
 
-  // -----
+  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   // NOTE: USER SESSION;
-  // -----
+  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
+  /**
+   * @description
+   *  📌 Toggle `visibility` (show/hide) of Transaction History (sub) Calendar (widget).
+   */
   userTxShowCalendar: boolean;
+  /**
+   * @description
+   *  📌 Selected by **user** date.
+   */
   userTxHistDateSelect: Date;
+  /**
+   * @description
+   *  📌 Selected by **user** date filter range.
+   */
   userTxHistFilterDateRange:
   {
     from?: Date,
