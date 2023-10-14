@@ -32,7 +32,7 @@
       "// ### [🐞]",
       "dlog",
       "(",
-      "\t`${1|🚏,🔹|} ${2|checkpoint,[var],checkpoint [R]|} ➤ ${3:debugTagOrVarName} ${$4}`,",
+      "\t`${1|🚏,🔹|} ${2|checkpoint,checkpoint [R],checkpoint [H],[var]|} ➤ ${3:debugTagOrVarName} ${$4}`,",
       "\t${5|true,false|}",
       ");",
     ],
