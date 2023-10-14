@@ -1,24 +1,19 @@
 import cookie from 'cookie';
 
 /**
- * @summary
- * 🔹 HELPER
- *
  * @author
- * @migbash
- *
+ *  @migbash
+ * @summary
+ *  🔹 HELPER
  * @description
- *
- * 📌 Sets target `cookie` on Scores Platform with specified values.
- *
- * @param
- * { string } cName **[required]** target cookie name.
- *
- * @param
- * { string } cValue **[required]** target cookie associated value.
- *
- * @param
- * { number } expDays **[required]** target cookie days active (TTL).
+ *  📌 Sets target `cookie` on Scores Platform with specified values.
+ * @param { string } cName
+ *  **[required]** target cookie name.
+ * @param { string } cValue
+ *  **[required]** target cookie associated value.
+ * @param { number } expDays
+ *  **[required]** target cookie days active (TTL).
+ * @returns { void }
  */
 export function setCookie
 (
@@ -38,21 +33,16 @@ export function setCookie
 }
 
 /**
- * @summary
- * 🔹 HELPER
- *
  * @author
- * @migbash
- *
+ *  @migbash
+ * @summary
+ *  🔹 HELPER
  * @description
- *
- * 📌 Retrives 'all' cookies present in given 'request' Header.
- *
- * @param
- * { string } cookiesInHeader
- *
- * @returns
- * a `Record < string, string >` of `cookie` values.
+ *  📌 Retrives 'all' cookies present in given 'request' Header.
+ * @param { string } cookiesInHeader
+ *  Target `cookie` string.
+ * @returns { Record < string, string > }
+ *  Target `cookie` parsed.
  */
 export function getCookie
 (
@@ -67,8 +57,13 @@ export function getCookie
 }
 
 /**
+ * @author
+ *  @migbash
+ * @summary
+ *  🔹 HELPER
  * @description
- * TODO: DOC:
+ *  📌 Deletes target `cookie` from `client`.
+ * @returns { void }
  */
 export function delCookie
 (
@@ -77,4 +72,5 @@ export function delCookie
 {
   document.cookie = `${cName}=; Max-Age=0`;
   document.cookie = `${cName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+  return;
 }
