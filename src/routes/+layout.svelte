@@ -242,7 +242,7 @@
     // ### [🐞]
     dlog
     (
-      `🚏 checkpoint ➤ layout.svelte if_COD_1`,
+      `🚏 checkpoint [R] ➤ src/layout.svelte if_COD_1`,
       true
     );
 
@@ -274,7 +274,7 @@
     // ### [🐞]
     dlog
     (
-      `🚏 checkpoint ➤ layout.svelte if_COD_2`,
+      `🚏 checkpoint [R] ➤ src/layout.svelte if_COD_2`,
       true
     );
 
@@ -305,7 +305,7 @@
     // ### [🐞]
     dlog
     (
-      `🚏 checkpoint ➤ layout.svelte if_COD_3`,
+      `🚏 checkpoint [R] ➤ src/layout.svelte if_COD_3`,
       true
     );
 

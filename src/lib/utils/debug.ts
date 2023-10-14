@@ -8,10 +8,10 @@ import { BrowserTracing } from '@sentry/tracing';
 
 // #region ➤ 📌 VARIABLES
 
-// *****************************************
-// ### NOTE:
-// ### page error messages & error codes
-// *****************************************
+// ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+// ### NOTE:                                                         ◼️
+// ### page error messages & error codes                             ◼️
+// ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
 export const PAGE_INVALID_MSG = `Uh-oh! This page does not exist!`;
 export const ERROR_CODE_INVALID = 404;
@@ -20,20 +20,20 @@ export const LAYOUT_1_LANG_PAGE_ERROR_MSG = `Uh-oh! There has been a pre-load er
 export const HOME_LANG_PAGE_ERROR_MSG = `Uh-oh! There has been a pre-load error (/lang)`;
 export const FIXTURE_PAGE_ERROR_MSG = `Uh-oh! There has been a pre-load error (/fixture)`;
 
-// *****************************************
-// NOTE: overrides all individual toggles for show/hide ALL logs;
-// NOTE: (values) true/false | undefined
-// *****************************************
+// ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+// ### NOTE:                                                         ◼️
+// ### log visibility toggles                                        ◼️
+// ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
-const MASTER_DEBUG_TOGGLE = undefined
-
-// *****************************************
-// NOTE: overrides "dev" state and forces logs even in PROD where dev == false;
-// NOTE: (values) true/false | dev
-// NOTE:IMPORTANT for PROD should always be FALSE on PR -> (main)
-// NOTE:IMPORTANT using custom ENV for this
-// *****************************************
-
+/**
+ * @description
+ *  📌 overrides all individual toggles for show/hide ALL logs.
+ */
+const MASTER_DEBUG_TOGGLE: boolean | undefined = undefined
+/**
+ * @description
+ *  📌 overrides (ADMIN) to show logs even in PROD.
+ */
 const LOGS_SHOW_OVERRIDE: boolean =
   import.meta?.env?.VITE_PROD_LOGS == undefined
     ? dev
@@ -182,7 +182,7 @@ export function dlog
 (
 	msg: string | object,
 	show?: boolean,
-	style?: string
+	style?: string,
 ): void
 {
   let targetLog: string = undefined;
@@ -212,9 +212,15 @@ export function dlog
   ;
 
   // ### NOTE: || [🐞]
+  // ### Hooks Logs
+  if (typeof(msg) == 'string' && msg.includes('[H]'))
+    style = 'background: #00bce4; color: black; border-radius: 1.5px; padding: 2.5px 2.5px;';
+  ;
+
+  // ### NOTE: || [🐞]
   // ### Reactiviy Logs
   if (typeof(msg) == 'string' && msg.includes('[R]'))
-    style = 'background: #FF6133; color: black; border-radius: 1.5px; padding: 5px 3.5px;';
+    style = 'background: #FF6133; color: black; border-radius: 1.5px; padding: 2.5px 2.5px;';
   ;
 
   show =
@@ -257,10 +263,12 @@ export function dlog
  *  Target debug tag name.
  * @param { unknown[] } msgs
  *  Debug messages to show
- * @param { boolean } show
+ * @param { boolean } [show]
  *  Wether to show or not the debug log.
- * @param { string } style
- *  `CSS` style applied to logs
+ * @param { string } [style]
+ *  `CSS` style applied to logs.
+ * @param { boolean } [closed=true]
+ *  Wether to keep group console logs.
  * @returns { void }
  */
 export function dlogv2
@@ -268,7 +276,8 @@ export function dlogv2
 	groupName: string,
 	msgs: unknown[],
 	show?: boolean,
-	style?: string
+	style?: string,
+  closed: boolean = true,
 ): void
 {
   let targetLog: string = undefined;
@@ -286,17 +295,25 @@ export function dlogv2
   ;
 
   // ### NOTE: || [🐞]
+  // ### Hooks Logs
+  if (groupName.includes('[H]'))
+    style = 'background: #00bce4; color: black; border-radius: 1.5px; padding: 2.5px 2.5px;';
+  ;
+
+  // ### NOTE: || [🐞]
   // ### Reactiviy Logs
   if (groupName.includes('[R]'))
-    style = 'background: #FF6133; color: black; border-radius: 1.5px; padding: 5px 3.5px;';
+    style = 'background: #FF6133; color: black; border-radius: 1.5px; padding: 2.5px 2.5px;';
   ;
 
   // ### NOTE: || [🐞]
   // ### Fetch Logs
   if (groupName.includes('🏹 FETCH'))
-    style = 'background: #C4FD00; color: #000000; border-radius: 1.5px; padding: 5px 3.5px;';
+    style = 'background: #C4FD00; color: #000000; border-radius: 1.5px; padding: 2.5px 2.5px;';
   ;
 
+  // ### CHECK
+  // ### for showing logs.
   const if_M_0: boolean =
     (LOGS_SHOW_OVERRIDE && show)
     // ### IMPORTANT Force 'authentication' to show in production.
@@ -304,11 +321,20 @@ export function dlogv2
   ;
 	if (if_M_0)
   {
-		console.groupCollapsed
-    (
-			`%c${groupName}`,
-			style
-		);
+    if (closed)
+      console.groupCollapsed
+      (
+        `%c${groupName}`,
+        style
+      );
+    else
+      console.group
+      (
+        `%c${groupName}`,
+        style
+      );
+    ;
+
 		for (const m of msgs)
     {
 			const msg =
@@ -318,58 +344,23 @@ export function dlogv2
       ;
 			console.debug(msg);
 		}
+
 		console.groupEnd();
 	}
+
+  return;
 }
 
 /**
+ * @author
+ *  @migbash
  * @summary
- * ◆ HELPER
+ *  🔹 HELPER
  * @description
- * ➨ debug logging function for displaying target
- * @param
- * {string} groupName
- * @param
- * {unknown[]} msgs
- * @param
- * {boolean} show
- * @param
- * {string} style
- * @returns
- * {void}
- */
-export function dlogv2open
-(
-	groupName: string,
-	msgs: unknown[],
-	show?: boolean,
-	style?: string
-): void
-{
-	// [🐞]
-	if (LOGS_SHOW_OVERRIDE && show) {
-		console.group(
-			`%c${groupName}`,
-			style
-		);
-		for (const m of msgs) {
-			const msg =
-				typeof m == 'string'
-					? m.replace(/\t/g, '')
-					: m;
-			console.debug(msg);
-		}
-		console.groupEnd();
-	}
-}
-
-/**
- * @summary
- * ◆ HELPER
- * @description
- * ➨ error console log platform to easily identify errors;
- * @param
- * {string} msg
+ *  📌 error console log platform to easily identify errors;
+ * @param { string } msg
+ *  Target `message` representing the error.
+ * @returns { void }
  */
 export function errlog
 (
@@ -380,6 +371,7 @@ export function errlog
   (
     `❌ Error: ${msg}`
   );
+  return;
 }
 
 /**

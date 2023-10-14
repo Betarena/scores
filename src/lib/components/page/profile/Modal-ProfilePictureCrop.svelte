@@ -11,7 +11,7 @@ COMPONENT JS (w/ TS)
 	import { fade } from 'svelte/transition';
 
 	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { dlog, dlogv2, dlogv2open, PR_P_STY, PR_P_TAG, PR_P_TOG } from '$lib/utils/debug';
+	import { dlog, dlogv2, PR_P_STY, PR_P_TAG, PR_P_TOG } from '$lib/utils/debug';
 
   import type { B_PROF_T } from '@betarena/scores-lib/types/profile.js';
 
@@ -570,7 +570,7 @@ COMPONENT JS (w/ TS)
         );
 
         // [🐞]
-        dlogv2open
+        dlogv2
         (
           PR_P_TAG + `mousemove_event (resize)`,
           [
