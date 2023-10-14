@@ -1,14 +1,39 @@
+// #region ➤ 📦 Package Imports
+
+import { sentrySvelteKit } from "@sentry/sveltekit";
 import { sveltekit } from '@sveltejs/kit/vite';
+import { defineConfig } from 'vitest/config';
 // import viteCompression from 'vite-plugin-compression';
 // import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
-import { defineConfig } from 'vitest/config';
 // import fs from 'fs';
+import dotenv from 'dotenv';
+
+import { version } from './package.json';
+
+// #endregion ➤ 📦 Package Imports
+
+dotenv.config();
 
 export default defineConfig
 (
   {
     plugins:
     [
+      // ### NOTE: | IMPORTANT
+      // ### needs to be placed 'before' sveltekit compilation.
+      sentrySvelteKit
+      (
+        {
+          sourceMapsUploadOptions:
+          {
+            org: "betarena",
+            project: "scores-platform",
+            release: process.env?.npm_package_version ?? version ?? 'v.0.0.0',
+            uploadSourceMaps: process.env?.SENTRY_UPLOAD_SOURCEMAPS as unknown as string == 'true' ? true : false,
+          },
+          autoUploadSourceMaps: process.env?.SENTRY_UPLOAD_SOURCEMAPS as unknown as string == 'true' ? true : false,
+        }
+      ),
 
       // ### NOTE:
       // ### comes from 'vite-plugin-chunk-split'
@@ -122,7 +147,6 @@ export default defineConfig
         }
       ),
       */
-
     ],
 
     // ### DOC:
