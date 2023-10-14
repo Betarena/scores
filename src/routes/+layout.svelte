@@ -27,11 +27,12 @@
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
-	import { post } from '$lib/api/utils.js';
-	import sessionStore from '$lib/store/session.js';
-	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { dlog, initSentry } from '$lib/utils/debug';
-	import { initSportbookData, platfrom_lang_ssr, setUserGeoLocation } from '$lib/utils/platform-functions.js';
+  import { post } from '$lib/api/utils.js';
+  import sessionStore from '$lib/store/session.js';
+  import userBetarenaSettings from '$lib/store/user-settings.js';
+  import { dlog } from '$lib/utils/debug';
+  import { initSportbookData, platfrom_lang_ssr, setUserGeoLocation } from '$lib/utils/platform-functions.js';
+  import * as Sentry from '@sentry/sveltekit';
 
 	import Footer from '$lib/components/_main_/footer/Footer.svelte';
 	import Header from '$lib/components/_main_/header/Header.svelte';
@@ -345,6 +346,40 @@
     ;
   }
 
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🔥 REACTIVITY
+   * @description
+   *  📌 Listens to cases when, the:
+   *  - (1) _stores_ data changes.
+   * @description
+   *  **WARNING:**
+   *  **triggered by changes in:**
+   *  - `browser`- **kicker**
+   *  - `$userBetarenaSettings`- **kicker**
+   *  - `$sessionStore`- **kicker**
+  */
+  $: if (browser && ($userBetarenaSettings || $sessionStore))
+  {
+    // ### [🐞]
+    dlog
+    (
+      `🚏 checkpoint [R] ➤ src/layout.svelte if_R_CS43`,
+      true
+    );
+
+    // ### [🐞]
+    Sentry.setContext
+    (
+      "📸 Data",
+      {
+        ...userBetarenaSettings.extractUserDataSnapshot()
+      }
+    );
+  }
+
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
@@ -361,7 +396,7 @@
     async (
     ): Promise < void > =>
     {
-      initSentry();
+      // initSentry();
 
       if (useDynamicImport)
       {

@@ -2,7 +2,6 @@
 
 import { dev } from '$app/environment';
 import * as Sentry from '@sentry/browser';
-import { BrowserTracing } from '@sentry/tracing';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -375,10 +374,13 @@ export function errlog
 }
 
 /**
+ * @deprecated
+ * @author
+ *  @migbash
  * @summary
- * ◆ HELPER
+ *  🔹 HELPER
  * @description
- * ➨ initialized Sentry Debug/Logging in PRODUCTION environment;
+ *  📌 initialized Sentry Debug/Logging in PRODUCTION environment;
  */
 export function initSentry
 (
@@ -392,9 +394,10 @@ export function initSentry
         dsn: 'https://847e94f5884c4185809a4cee44769d8b@o1009217.ingest.sentry.io/6275655',
         integrations:
         [
-          new BrowserTracing(),
+          // new BrowserTracing(), // deprecated
           new Sentry.Replay()
         ],
+        // release: "v.2.2.3",
 
         // NOTE: browser-tracing;
 
