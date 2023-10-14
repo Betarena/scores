@@ -74,7 +74,7 @@ export async function logoutUser
     'betarenaCookieLoggedIn'
   );
 
-  const userLang: string = userBetarenaSettings.getUserLang();
+  const userLang: string = userBetarenaSettings.extract('user-lang');
   const redirectLink = `/${userLang == 'en' ? '' : userLang}`
 
   await goto
@@ -85,5 +85,9 @@ export async function logoutUser
     }
   );
 
-  userBetarenaSettings.signOutUser();
+  userBetarenaSettings.updateData
+  (
+    'user-object',
+    undefined
+  );
 }

@@ -204,7 +204,7 @@ COMPONENT JS (w/ TS)
               "
               class:theme-opt-box={!isViewMobile}
               class:country-selected={country[0] === $userBetarenaSettings.country_bookmaker.toUpperCase()}
-              on:click={() => userBetarenaSettings.setCountryBookmaker(country?.[0].toLocaleLowerCase())}
+              on:click={() => userBetarenaSettings.updateData('geo-bookmaker', country?.[0].toLocaleLowerCase())}
             >
               <img
                 loading="lazy"

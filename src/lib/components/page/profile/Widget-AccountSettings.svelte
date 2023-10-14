@@ -173,7 +173,9 @@ COMPONENT JS (w/ TS)
         (
           async (url_) => {
             dlog(url_, true);
-            userBetarenaSettings.updateProfilePicture(
+            userBetarenaSettings.updateData
+            (
+              'user-avatar',
               url_
             );
             // [ℹ] (update) from Firebase - Firestore
@@ -209,7 +211,9 @@ COMPONENT JS (w/ TS)
 		}
 		dlog('🔵 Removing user profile picture...');
 		// [ℹ] remove from localStorage()
-		userBetarenaSettings.updateProfilePicture(
+		userBetarenaSettings.updateData
+    (
+      'user-avatar',
 			undefined
 		);
 		// [ℹ] remove (update) from Firebase - Firestore
@@ -267,8 +271,9 @@ COMPONENT JS (w/ TS)
     usernameErrorMsg = undefined;
 
 		// [ℹ] (update)from localStorage()
-		userBetarenaSettings.updateUsername
+		userBetarenaSettings.updateData
     (
+      'user-name',
 			usernameInput
 		);
 		// [ℹ] (update)from Firebase - Firestore
@@ -404,8 +409,9 @@ COMPONENT JS (w/ TS)
         : event?.detail?.wallet_id
     ;
 
-		userBetarenaSettings.updateWalletAddr
+		userBetarenaSettings.updateData
     (
+      'user-wallet',
 			wallet
 		);
 
@@ -556,7 +562,11 @@ COMPONENT JS (w/ TS)
 				errlog(error);
 			});
 		// [ℹ] from localStorage()
-		userBetarenaSettings.signOutUser();
+		userBetarenaSettings.updateData
+    (
+      'user-object',
+      undefined
+    );
 
     // [🐞]
 		dlog

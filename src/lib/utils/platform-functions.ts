@@ -344,7 +344,7 @@ export async function setUserGeoLocation
 {
 
   const if_M_0: boolean =
-    userBetarenaSettings.getCountryBookmaker() !== undefined
+    userBetarenaSettings.extract('geo-bookmaker') !== undefined
   ;
   if (if_M_0) return;
 
@@ -368,8 +368,9 @@ export async function setUserGeoLocation
     userGeo = geoRes.country_code.toLowerCase();
   }
 
-  userBetarenaSettings.setGeoJs
+  userBetarenaSettings.updateData
   (
+    'geoJs',
     geoRes
   );
 
@@ -392,8 +393,9 @@ export async function setUserGeoLocation
 
   if (data_0 == undefined) userGeo = 'en'
 
-  userBetarenaSettings.setCountryBookmaker
+  userBetarenaSettings.updateData
   (
+    'geo-bookmaker',
     userGeo.toLocaleLowerCase()
   );
 
@@ -929,8 +931,9 @@ export async function selectLanguage
       : `/${sessionStore?.getServerLang()}`
   ;
 
-  userBetarenaSettings.setLang
+  userBetarenaSettings.updateData
   (
+    'lang',
     lang
   );
 
@@ -939,7 +942,7 @@ export async function selectLanguage
   (
     `🚏 checkpoint ➤ selectLanguage(..)`,
     [
-      `🔹 [var] ➤ $userBetarenaSettings.lang: ${userBetarenaSettings.getUserLang()}`,
+      `🔹 [var] ➤ $userBetarenaSettings.lang: ${userBetarenaSettings.extract('user-lang')}`,
       `🔹 [var] ➤ $sessionStore?.serverLang: ${sessionStore?.getServerLang()}`,
       `🔹 [var] ➤ lang: ${lang}`,
       `🔹 [var] ➤ pastLang: ${pastLang}`,

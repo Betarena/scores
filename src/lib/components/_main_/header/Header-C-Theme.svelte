@@ -32,7 +32,7 @@ COMPONENT JS (w/ TS)
     m-r-30
     cursor-pointer
   "
-  on:click={() => userBetarenaSettings.toggleTheme()}
+  on:click={() => userBetarenaSettings.updateData('theme')}
   class:m-r-10={ROUTE_ID_PROFILE == $page.route.id}
   class:row-space-end={$userBetarenaSettings.theme == 'Dark'}
 >
