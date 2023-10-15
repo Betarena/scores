@@ -5,7 +5,7 @@
  */
 import { get } from '$lib/api/utils';
 
-import type { GeoJsResponse } from '$lib/types/types.geojs';
+import type { GeoJsResponse } from '$lib/types/types.geojs.js';
 
 export async function getUserLocation(): Promise<GeoJsResponse> {
 	const response = await get(

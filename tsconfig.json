@@ -19,7 +19,12 @@
       "es5",
       "es6",
       "dom",
-      "dom.iterable"
+      "dom.iterable",
+      // ◼️◼️◼️ NOTE:
+      // ◼️◼️◼️ as per 'vite' recommendation,
+      // ◼️◼️◼️ SEE:
+      // ◼️◼️◼️ https://vitejs.dev/guide/env-and-mode.html
+      "WebWorker"
     ],
 		"target": "es2020",
 		/**

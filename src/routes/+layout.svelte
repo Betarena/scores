@@ -27,11 +27,12 @@
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
-	import { post } from '$lib/api/utils.js';
-	import sessionStore from '$lib/store/session.js';
-	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { dlog, initSentry } from '$lib/utils/debug';
-	import { initSportbookData, platfrom_lang_ssr, setUserGeoLocation } from '$lib/utils/platform-functions.js';
+  import { post } from '$lib/api/utils.js';
+  import sessionStore from '$lib/store/session.js';
+  import userBetarenaSettings from '$lib/store/user-settings.js';
+  import { dlog } from '$lib/utils/debug';
+  import { initSportbookData, platfrom_lang_ssr, setUserGeoLocation } from '$lib/utils/platform-functions.js';
+  import * as Sentry from '@sentry/sveltekit';
 
 	import Footer from '$lib/components/_main_/footer/Footer.svelte';
 	import Header from '$lib/components/_main_/header/Header.svelte';
@@ -130,7 +131,7 @@
   ): void
   {
 		offlineMode = !offlineMode;
-    // [🐞]
+    // ### [🐞]
 		dlog
     (
 			'🔴 your internet connection has changed!',
@@ -139,27 +140,13 @@
 	}
 
   /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🔹 HELPER
    * @description
-   * TODO: DOC:
-  */
-  async function updateFirestoreAndCrisp
-  (
-  ): Promise < void >
-  {
-    if (!browser || $userBetarenaSettings?.user == undefined) return;
-
-    await post
-    (
-      `${import.meta.env.VITE_FIREBASE_FUNCTIONS_ORIGIN}${import.meta.env.VITE_FIREBASE_FUNCTIONS_F_1}`,
-      {
-        user_uids: [$userBetarenaSettings?.user?.firebase_user_data?.uid]
-      }
-    );
-  }
-
-  /**
-   * @description
-   * TODO: DOC:
+   *  📌 Kickstart `_this_` page event listeners.
+   * @returns { void }
    */
   function kickstartEventListen
   (
@@ -199,6 +186,30 @@
     );
   }
 
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🔹 HELPER
+   * @description
+   *  📌 Updates **Betarena User** for their `Firestore` and `CRISP` data.
+   * @returns { Promise < void > }
+  */
+  async function updateFirestoreAndCrisp
+  (
+  ): Promise < void >
+  {
+    if (!browser || $userBetarenaSettings?.user == undefined) return;
+
+    await post
+    (
+      `${import.meta.env.VITE_FIREBASE_FUNCTIONS_ORIGIN}${import.meta.env.VITE_FIREBASE_FUNCTIONS_F_1}`,
+      {
+        user_uids: [$userBetarenaSettings?.user?.firebase_user_data?.uid]
+      }
+    );
+  }
+
   // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -221,7 +232,7 @@
    *  🔥 REACTIVITY
    * @description
    *  📌 Listens to cases when, the:
-   *  - (1) _initial platform load_ has changed top `client`.
+   *  - (1) _initial platform load_ has changed to `client`.
    * @description
    *  **WARNING:**
    *  **triggered by changes in:**
@@ -232,7 +243,7 @@
     // ### [🐞]
     dlog
     (
-      `🚏 checkpoint ➤ layout.svelte if_COD_1`,
+      `🚏 checkpoint [R] ➤ src/layout.svelte if_COD_1`,
       true
     );
 
@@ -264,7 +275,7 @@
     // ### [🐞]
     dlog
     (
-      `🚏 checkpoint ➤ layout.svelte if_COD_2`,
+      `🚏 checkpoint [R] ➤ src/layout.svelte if_COD_2`,
       true
     );
 
@@ -295,7 +306,7 @@
     // ### [🐞]
     dlog
     (
-      `🚏 checkpoint ➤ layout.svelte if_COD_3`,
+      `🚏 checkpoint [R] ➤ src/layout.svelte if_COD_3`,
       true
     );
 
@@ -335,6 +346,40 @@
     ;
   }
 
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🔥 REACTIVITY
+   * @description
+   *  📌 Listens to cases when, the:
+   *  - (1) _stores_ data changes.
+   * @description
+   *  **WARNING:**
+   *  **triggered by changes in:**
+   *  - `browser`- **kicker**
+   *  - `$userBetarenaSettings`- **kicker**
+   *  - `$sessionStore`- **kicker**
+  */
+  $: if (browser && ($userBetarenaSettings || $sessionStore))
+  {
+    // ### [🐞]
+    dlog
+    (
+      `🚏 checkpoint [R] ➤ src/layout.svelte if_R_CS43`,
+      true
+    );
+
+    // ### [🐞]
+    Sentry.setContext
+    (
+      "📸 Data",
+      {
+        ...userBetarenaSettings.extractUserDataSnapshot()
+      }
+    );
+  }
+
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
@@ -351,7 +396,7 @@
     async (
     ): Promise < void > =>
     {
-      initSentry();
+      // initSentry();
 
       if (useDynamicImport)
       {

@@ -6,8 +6,10 @@ node_modules
 /gif
 certs/*
 
-# CRITICAL - do not uncomment
+# ▓▓ CRITICAL
+# ▓▓ never uncomment
 .env
+.env.*
 
 WEBSITE-DEV-README.md
 datalog/

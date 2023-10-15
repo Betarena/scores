@@ -3,8 +3,7 @@
 import { dlog } from '$lib/utils/debug.js';
 import { writable } from 'svelte/store';
 
-import type { GeoJsResponse } from '$lib/types/types.geojs.js';
-import type { BetarenaUser, Scores_User, User_Setting, Voted_Fixture } from '$lib/types/types.scores.js';
+import type { BetarenaUser, User_Setting, Voted_Fixture } from '$lib/types/types.scores.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -26,18 +25,15 @@ const userSettings: User_Setting =
 // #region ➤ 🛠️ METHODS
 
 /**
+ * @author
+ *  @migbash
  * @summary
- * [MAIN]
- *
+ *  🟥 MAIN
  * @description
- *
- * 📌 Initializer of `svelte/stores` method.
- *
- * ⚡️ Uses `localStorage` persistance.
- *
- * @param
- * { string } key
- *
+ *  📌 Initializer of `svelte/stores` method.
+ *  ⚡️ Uses `localStorage` persistance.
+ * @param { string } key
+ *  Target `key` to use for `svelte-stores` / `localStorage`.
  * @returns
  */
 function createLocalStore
@@ -46,8 +42,8 @@ function createLocalStore
 )
 {
 
-  // ◼️ NOTE:
-  // ◼️ Default 'svelte/store' exports.
+  // ◼️◼️◼️ NOTE:
+  // ◼️◼️◼️ Default 'svelte/store' exports.
 	const
   {
     subscribe,
@@ -58,8 +54,8 @@ function createLocalStore
 		userSettings
 	);
 
-  // ### NOTE:
-  // ### complementary `store` added methods.
+  // ◼️◼️◼️ NOTE:
+  // ◼️◼️◼️ complementary `store` added methods.
   const methods =
   {
 
@@ -67,7 +63,7 @@ function createLocalStore
      * @summary
      *  🟥 MAIN | 🔹 HELPER
 		 * @description
-     *  📌 Sets platform `localStorage`.
+     *  📌 Sets platform `localStorage` for target `key`.
      * @returns { void }
 		 */
 		useLocalStorage:
@@ -106,8 +102,9 @@ function createLocalStore
      * @summary
      *  🟥 MAIN | 🔹 HELPER | IMPORTANT
      * @description
-     *  📌 Retrieves target `localStorage`.
+     *  📌 Retrieves target `localStorage` for target `key`.
      * @returns { User_Setting }
+     *  User `object`.
      */
     parseLocalStorage:
     (
@@ -127,7 +124,7 @@ function createLocalStore
      * @summary
      *  🟥 MAIN | 🔹 HELPER | IMPORTANT
      * @description
-     *  📌 Persists to `localStorage` target data.
+     *  📌 Persists to `localStorage` target data for target `key`.
      * @returns { void }
      */
     setLocalStorage:
@@ -149,196 +146,6 @@ function createLocalStore
         data
       );
     },
-
-		/**
-     * @summary
-     *  🟥 MAIN | 🔹 HELPER | IMPORTANT
-		 * @description
-     *  📌 Updates `svelte-stores` and `client's` data in
-     *  `localStorage` for platform `language`.
-		 * @param { string } lang
-		 */
-		setLang:
-    (
-      lang: string
-    ): void =>
-    {
-			const localStore: User_Setting = methods.parseLocalStorage();
-			localStore.lang = lang;
-			methods.setLocalStorage
-      (
-        localStore
-      );
-		},
-
-		/**
-		 * @description sets platform theme;
-		 * and updates the svelte store;
-		 */
-		toggleTheme:
-    (
-    ): void =>
-    {
-			const existing: string = localStorage.getItem(key);
-			const existing_data: User_Setting =	JSON.parse(existing);
-			existing_data.theme =
-        existing_data.theme == 'Dark'
-          ? 'Light'
-          : 'Dark'
-      ;
-			localStorage.setItem
-      (
-				key,
-				JSON.stringify(existing_data)
-			);
-			set(existing_data);
-		},
-
-		/**
-		 * @description sets platform country bookmaker
-		 * and updates the svelte store;
-		 * @param {string} country_bookmaker
-		 */
-		setCountryBookmaker:
-    (
-			countryBookmaker: string
-		): void =>
-    {
-			const localStore: User_Setting = methods.parseLocalStorage();
-			localStore.country_bookmaker = countryBookmaker;
-      methods.setLocalStorage
-      (
-        localStore
-      );
-		},
-
-		/**
-		 * @description sets GeoJs info object data to localStorage
-		 * and updates the svelte store;
-		 * @param {GeoJsResponse} geojs_res
-		 */
-		setGeoJs:
-    (
-      geojs_res: GeoJsResponse
-    ): void =>
-    {
-			const existing: string = localStorage.getItem(key);
-			const existing_data: User_Setting = JSON.parse(existing);
-			existing_data.geoJs = geojs_res;
-			localStorage.setItem
-      (
-				key,
-				JSON.stringify(existing_data)
-			);
-			set(existing_data);
-		},
-
-		/**
-		 * @description adds user to localStorage for user's profile picture
-		 * and updates the svelte store;
-		 * @param {Scores_User} user
-		 */
-		signInUser:
-    (
-      user: Scores_User
-    ): void =>
-    {
-			const existing: string = localStorage.getItem(key);
-			const existing_data: User_Setting =	JSON.parse(existing);
-			existing_data.user = user;
-			localStorage.setItem
-      (
-				key,
-				JSON.stringify(existing_data)
-			);
-			set(existing_data);
-		},
-
-		/**
-		 * @description updates localStorage for
-     * user's profile picture; Updates the svelte store;
-		 * @param {string | undefined} profile_pic
-		 */
-		updateProfilePicture:
-    (
-			profile_pic: string | undefined
-		): void =>
-    {
-			const existing: string = localStorage.getItem(key);
-			const existing_data: User_Setting =	JSON.parse(existing);
-			existing_data.user.scores_user_data.profile_photo = profile_pic;
-			localStorage.setItem
-      (
-				key,
-				JSON.stringify(existing_data)
-			);
-			set(existing_data);
-		},
-
-		/**
-		 * @description updates localStorage for user's username
-		 * and updates the svelte store;
-		 * @param {string} username
-		 */
-		updateUsername:
-    (
-      username: string
-    ): void =>
-    {
-			const existing: string = localStorage.getItem(key);
-			const existing_data: User_Setting =	JSON.parse(existing);
-			existing_data.user.scores_user_data.username = username;
-			localStorage.setItem
-      (
-				key,
-				JSON.stringify(existing_data)
-			);
-			set(existing_data);
-		},
-
-		/**
-		 * @description updates localStorage for user's walletAddress;
-		 * and updates the svelte store;
-		 * @param {string | undefined} wallet
-		 */
-		updateWalletAddr:
-    (
-			wallet: string | undefined
-		): void =>
-    {
-			const existing: string = localStorage.getItem(key);
-			const existing_data: User_Setting =	JSON.parse(existing);
-			existing_data.user.scores_user_data.web3_wallet_addr = wallet;
-			localStorage.setItem
-      (
-				key,
-				JSON.stringify(existing_data)
-			);
-			set(existing_data);
-		},
-
-    /**
-     * @summary
-     *  🔹 HELPER
-		 * @description updates localStorage for user's platform language;
-		 * and updates the svelte store;
-		 * @param {string | undefined} wallet
-		 */
-		updateLang:
-    (
-			lang: string | undefined
-		): void =>
-    {
-			const existing: string = localStorage.getItem(key);
-			const existing_data: User_Setting =	JSON.parse(existing);
-			existing_data.user.scores_user_data.lang = lang;
-			localStorage.setItem
-      (
-				key,
-				JSON.stringify(existing_data)
-			);
-			set(existing_data);
-		},
 
     /**
      * @author
@@ -378,25 +185,6 @@ function createLocalStore
       );
 		},
 
-		/**
-		 * @description removes user data from localStorage;
-		 * and updates the svelte store;
-		 */
-		signOutUser:
-    (
-    ): void =>
-    {
-			const existing: string = localStorage.getItem(key);
-			const existing_data: User_Setting = JSON.parse(existing);
-			existing_data.user = undefined;
-			localStorage.setItem
-      (
-				key,
-				JSON.stringify(existing_data)
-			);
-			set(existing_data);
-		},
-
     /**
      * @description
      * TODO: DOC:
@@ -425,31 +213,6 @@ function createLocalStore
         existing_data
       );
 		},
-
-    /**
-     * @description obtains user GEO from localStorage;
-     * @returns user target country bookmaker (string);
-     */
-    getCountryBookmaker:
-    (
-    ): string =>
-    {
-      const existing: string = localStorage.getItem(key);
-			const existing_data: User_Setting =	JSON.parse(existing);
-      return existing_data?.country_bookmaker;
-    },
-
-    /**
-     * @description
-     * TODO: DOC:
-     */
-    getUserLang:
-    (
-    ): string =>
-    {
-      const localStore: User_Setting = methods.parseLocalStorage();
-      return localStore?.lang;
-    },
 
     /**
      * @description
@@ -550,16 +313,120 @@ function createLocalStore
     },
 
     /**
-     * @description
-     * TODO: DOC:
+     * @author
+     *  @migbash
+     * @summary
+     *  🔹 HELPER | IMPORTANT
+     * @param { 'lang' } dataTarget
+     *  Target data to update.
+     * @param { any } dataPoint
+     *  Target data value to update.
+     * @returns { void }
      */
-    getUserUid:
+    updateData:
     (
-    ): string =>
+      dataTarget: 'lang' | 'lang-user' | 'geo-bookmaker' | 'theme' | 'geoJs' | 'user-avatar' | 'user-name' | 'user-wallet' | 'user-object',
+      dataPoint?: any,
+    ): void =>
     {
       const localStore: User_Setting = methods.parseLocalStorage();
-      return localStore?.user?.firebase_user_data?.uid;
+
+      if (dataTarget == 'lang')
+			  localStore.lang = dataPoint;
+      //
+      if (dataTarget == 'lang-user')
+			  localStore.user.scores_user_data.lang = dataPoint;
+      //
+      if (dataTarget == 'geo-bookmaker')
+			  localStore.country_bookmaker = dataPoint;
+      //
+      if (dataTarget == 'theme')
+        localStore.theme =
+          localStore.theme == 'Dark'
+            ? 'Light'
+            : 'Dark'
+        ;
+      //
+      if (dataTarget == 'geoJs')
+			  localStore.geoJs = dataPoint;
+      //
+      if (dataTarget == 'user-avatar')
+			  localStore.user.scores_user_data.profile_photo = dataPoint;
+      //
+      if (dataTarget == 'user-name')
+			  localStore.user.scores_user_data.username = dataPoint;
+      //
+      if (dataTarget == 'user-wallet')
+			  localStore.user.scores_user_data.web3_wallet_addr = dataPoint;
+      //
+      if (dataTarget == 'user-object')
+			  localStore.user = dataPoint;
+      //
+
+			methods.setLocalStorage
+      (
+        localStore
+      );
+    },
+
+    /**
+     * @author
+     *  @migbash
+     * @summary
+     *  🔹 HELPER | IMPORTANT
+     * @param { 'geo-bookmaker' | 'user-lang' } dataPoint
+     *  Target `data point` to be retrieved.
+     * @returns { any }
+     *  Target requested `data point`.
+     */
+    extract:
+    (
+      dataPoint: 'geo-bookmaker' | 'user-lang'
+    ): any =>
+    {
+			const localStore: User_Setting = methods.parseLocalStorage();
+
+      if (dataPoint == 'geo-bookmaker')
+        return localStore?.country_bookmaker;
+      //
+      if (dataPoint == 'user-lang')
+        return localStore?.lang;
+      //
+
+      return;
+    },
+
+    /**
+     * @author
+     *  @migbash
+     * @summary
+     *  🔹 HELPER | IMPORTANT
+     * @description
+     *  📌 Extracts necessary data in form of an object.
+     * @returns { object }
+     */
+    extractUserDataSnapshot:
+    (
+    ): object =>
+    {
+      const localStore: User_Setting = methods.parseLocalStorage();
+
+      const data: object =
+      {
+        lang: localStore?.lang,
+        geo: localStore?.country_bookmaker,
+        user: undefined
+      };
+
+      if (localStore?.user)
+      {
+        data['user-uid'] = localStore?.user?.firebase_user_data?.uid;
+        data['user-lang'] = localStore?.user?.scores_user_data?.lang;
+      };
+
+      return data;
     }
+
   };
 
 	return {

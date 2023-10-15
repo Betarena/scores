@@ -12,7 +12,7 @@ COMPONENT JS (w/ TS)
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
-	import { get, post } from '$lib/api/utils';
+	import { get } from '$lib/api/utils';
 	import { app, auth, db_firestore } from '$lib/firebase/init';
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
@@ -1067,7 +1067,11 @@ COMPONENT JS (w/ TS)
     }
 
     // ACTION: Update UI/UX;
-		userBetarenaSettings.signInUser(user_obj);
+		userBetarenaSettings.updateData
+    (
+      'user-object',
+      user_obj
+    );
 		$sessionStore.auth_show = false;
 		processing = false;
 		email_input = undefined;

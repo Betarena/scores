@@ -280,7 +280,9 @@
     );
 
     // [ℹ] (update)from localStorage()
-		userBetarenaSettings.updateLang(
+		userBetarenaSettings.updateData
+    (
+      'lang-user',
 			lang
 		);
 		// [ℹ] (update)from Firebase - Firestore
@@ -346,8 +348,9 @@
       true
     );
 
-    userBetarenaSettings.setLang
+    userBetarenaSettings.updateData
     (
+      'lang',
       sessionStore.getServerLang()
     );
 	}
