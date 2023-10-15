@@ -12,6 +12,7 @@ import userBetarenaSettings from '$lib/store/user-settings.js';
 import { dlog } from '$lib/utils/debug.js';
 import * as Sentry from '@sentry/sveltekit';
 import { Replay } from "@sentry/sveltekit";
+import { table } from 'table';
 
 import type { HandleClientError } from '@sveltejs/kit';
 
@@ -65,6 +66,18 @@ dlog
   `🚏 checkpoint [H] ➤ src/hooks.client.ts`,
   true
 );
+// ### [🐞]
+console.debug
+(
+  table
+  (
+    [
+      ['📣 Release Version', import.meta.env.VITE_SCORES_PKG_VERSION],
+      ['📣 @betarena/scores-lib', import.meta.env.VITE_SCORES_LIB_PKG_VERSION],
+      ['📣 Vite Mode', import.meta.env.MODE],
+    ]
+  )
+)
 
 // #endregion ➤ 💠 MISC.
 
