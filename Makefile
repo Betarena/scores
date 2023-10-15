@@ -173,7 +173,7 @@ sentry-sourcemaps-upload:
 		$(END_COLOUR)\n"
 	@VITE_SCORES_PKG_VERSION="v.$(shell npm pkg get version --workspaces=false | tr -d \")" \
 		VITE_SENTRY_UPLOAD_SOURCEMAPS="true" \
-		npm run build
+		vite build
 #
 
 # ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓

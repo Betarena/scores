@@ -322,6 +322,7 @@ jobs:
           echo ${{ secrets.ENV_FILE }} | base64 -d > .env
       - name: 'sentry upload sourcemap'
         run: |
+          npm install
           make sentry-sourcemaps-upload
 
   # -----------------------
