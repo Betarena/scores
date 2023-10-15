@@ -8,8 +8,8 @@ import * as Sentry from '@sentry/browser';
 // #region ➤ 📌 VARIABLES
 
 // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-// ### NOTE:                                                         ◼️
-// ### page error messages & error codes                             ◼️
+// ▓▓ NOTE:                                                         ◼️
+// ▓▓ page error messages & error codes                             ◼️
 // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
 export const PAGE_INVALID_MSG = `Uh-oh! This page does not exist!`;
@@ -20,8 +20,8 @@ export const HOME_LANG_PAGE_ERROR_MSG = `Uh-oh! There has been a pre-load error 
 export const FIXTURE_PAGE_ERROR_MSG = `Uh-oh! There has been a pre-load error (/fixture)`;
 
 // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-// ### NOTE:                                                         ◼️
-// ### log visibility toggles                                        ◼️
+// ▓▓ NOTE:                                                         ◼️
+// ▓▓ log visibility toggles                                        ◼️
 // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
 /**
@@ -57,14 +57,14 @@ const LOGS_SHOW_OVERRIDE: boolean =
 
 type DEBUG = [string, boolean, string]
 
-// ### NOTE:
-// ### MAIN PAGE - DEBUG
+// ▓▓ NOTE:
+// ▓▓ MAIN PAGE - DEBUG
 export const NB_W_TAG: DEBUG = ['Navbar |', false, 'background: purple; color: #FFFFFF; border-radius: 1.5px;'];
 export const FT_W_TAG: DEBUG = ['Footer |', false, 'background: blue; color: #FFFFFF; border-radius: 1.5px;'];
 export const AU_W_TAG: DEBUG = ['Auth |', true, 'background: black; color: yellow; border-radius: 1.5px;'];
 
-// ### NOTE:
-// ### HOME PAGE - DEBUG
+// ▓▓ NOTE:
+// ▓▓ HOME PAGE - DEBUG
 export const BG_W_H_TAG = 'BG [P/T][D] |';
 export const BG_W_H_STY = 'background: blue; color: #FFFFFF';
 export const BG_W_H_TOG = false;
@@ -85,8 +85,8 @@ export const SEO_W_H_STY = 'background: blue; color: #FFFFFF';
 export const SEO_W_H_TOG = false;
 export const LV2_W_H_TAG: DEBUG = ['LV2 [P/H][D] |', false, 'background: #292929; color: white; border-radius: 1.5px;'];
 
-// ### NOTE:
-// ### LEAGUE/TOURNAMENT PAGE - DEBUG
+// ▓▓ NOTE:
+// ▓▓ LEAGUE/TOURNAMENT PAGE - DEBUG
 export const AB_W_T_TAG = 'tournament (about) [DEBUG] |';
 export const AB_W_T_STY = 'background: blue; color: #FFFFFF';
 export const AB_W_T_TOG = false;
@@ -106,14 +106,14 @@ export const TP_W_TAG = 'tournament (top-players) [DEBUG] |';
 export const TP_W_STY = 'background: green; color: #000000';
 export const TP_W_TOG = false;
 
-// ### NOTE:
-// ### FIREBASE - DEBUG
+// ▓▓ NOTE:
+// ▓▓ FIREBASE - DEBUG
 export const FIREBASE_DEBUG_TAG = 'FB(E) [D] |';
 export const FIREBASE_DEBUG_TOGGLE = false;
 export const FIREBASE_DEBUG_STYLE = 'background: black; color: yellow; border-radius: 1.5px;';
 
-// ### NOTE:
-// ### FIXTURE PAGE - DEBUG
+// ▓▓ NOTE:
+// ▓▓ FIXTURE PAGE - DEBUG
 export const F_DEBUG_TAG = 'firebase [DEBUG] |';
 export const F_DEBUG_STYLE = 'background: blue; color: #FFFFFF';
 export const F_DEBUG_TOGGLE = false;
@@ -148,14 +148,14 @@ export const VO_W_F_TAG = 'fixtures (vote) [DEBUG] |';
 export const VO_W_F_STY = 'background: green; color: #000000';
 export const VO_W_F_TOG = false;
 
-// ### NOTE:
-// ### PROFILE PAGE - DEBUG;
+// ▓▓ NOTE:
+// ▓▓ PROFILE PAGE - DEBUG;
 export const PR_P_TAG = 'profile (page) [DEBUG] |';
 export const PR_P_STY = 'background: yellow; color: #000000';
 export const PR_P_TOG =  false;
 
-// ### NOTE: || [🐞]
-// ### COMPETITION PAGE - DEBUG;
+// ▓▓ NOTE: ▓▓ [🐞]
+// ▓▓ COMPETITION PAGE - DEBUG;
 export const COMP_HIGH_DEBUG: DEBUG = ['Highlights (COMP) |', true, 'background: black; color: yellow; border-radius: 1.5px;'];
 
 // #endregion ➤ 📌 VARIABLES
@@ -186,11 +186,11 @@ export function dlog
 {
   let targetLog: string = undefined;
 
-  // ### NOTE:
-  // ### New (v2) debug logs approach.
+  // ▓▓ NOTE:
+  // ▓▓ New (v2) debug logs approach.
 
-  // ### NOTE: || [🐞]
-  // ### Livescores V2 Logs
+  // ▓▓ NOTE: ▓▓ [🐞]
+  // ▓▓ Livescores V2 Logs
   if (typeof(msg) == 'string' && msg.includes(LV2_W_H_TAG[0]))
     style = LV2_W_H_TAG[2];
   ;
@@ -198,8 +198,8 @@ export function dlog
     show = LV2_W_H_TAG[1];
   ;
 
-  // ### NOTE: || [🐞]
-  // ### Authentication Logs
+  // ▓▓ NOTE: ▓▓ [🐞]
+  // ▓▓ Authentication Logs
   if (typeof(msg) == 'string' && msg.includes(AU_W_TAG[0]))
     targetLog = AU_W_TAG[0];
   ;
@@ -210,14 +210,14 @@ export function dlog
     show = AU_W_TAG[1];
   ;
 
-  // ### NOTE: || [🐞]
-  // ### Hooks Logs
+  // ▓▓ NOTE: ▓▓ [🐞]
+  // ▓▓ Hooks Logs
   if (typeof(msg) == 'string' && msg.includes('[H]'))
     style = 'background: #00bce4; color: black; border-radius: 1.5px; padding: 2.5px 2.5px;';
   ;
 
-  // ### NOTE: || [🐞]
-  // ### Reactiviy Logs
+  // ▓▓ NOTE: ▓▓ [🐞]
+  // ▓▓ Reactiviy Logs
   if (typeof(msg) == 'string' && msg.includes('[R]'))
     style = 'background: #FF6133; color: black; border-radius: 1.5px; padding: 2.5px 2.5px;';
   ;
@@ -230,14 +230,12 @@ export function dlog
 
   const if_M_0: boolean =
     (LOGS_SHOW_OVERRIDE && show && style == undefined)
-    // ### NOTE:
-    // ### FORCE AUTHENTICATION LOGS TO SHOW IN PRODUCTION.
+    // ▓▓ IMPORTANT Force 'authentication' to show in production.
     || (targetLog == AU_W_TAG[0] && AU_W_TAG[1] && style == undefined)
   ;
   const if_M_1: boolean =
     (LOGS_SHOW_OVERRIDE && typeof(msg) == 'string' && show && style != undefined)
-    // ### NOTE:
-    // ### FORCE AUTHENTICATION LOGS TO SHOW IN PRODUCTION.
+    // ▓▓ IMPORTANT Force 'authentication' to show in production.
     || (targetLog == AU_W_TAG[0] && AU_W_TAG[1] && typeof(msg) == 'string' && show && style != undefined)
   ;
 
@@ -281,8 +279,8 @@ export function dlogv2
 {
   let targetLog: string = undefined;
 
-  // ### NOTE: || [🐞]
-  // ### Authentication Logs
+  // ▓▓ NOTE: ▓▓ [🐞]
+  // ▓▓ Authentication Logs
   if (groupName.includes(AU_W_TAG[0]))
     targetLog = AU_W_TAG[0];
   ;
@@ -293,29 +291,29 @@ export function dlogv2
     show = AU_W_TAG[1]
   ;
 
-  // ### NOTE: || [🐞]
-  // ### Hooks Logs
+  // ▓▓ NOTE: ▓▓ [🐞]
+  // ▓▓ Hooks Logs
   if (groupName.includes('[H]'))
     style = 'background: #00bce4; color: black; border-radius: 1.5px; padding: 2.5px 2.5px;';
   ;
 
-  // ### NOTE: || [🐞]
-  // ### Reactiviy Logs
+  // ▓▓ NOTE: ▓▓ [🐞]
+  // ▓▓ Reactiviy Logs
   if (groupName.includes('[R]'))
     style = 'background: #FF6133; color: black; border-radius: 1.5px; padding: 2.5px 2.5px;';
   ;
 
-  // ### NOTE: || [🐞]
-  // ### Fetch Logs
+  // ▓▓ NOTE: ▓▓ [🐞]
+  // ▓▓ Fetch Logs
   if (groupName.includes('🏹 FETCH'))
     style = 'background: #C4FD00; color: #000000; border-radius: 1.5px; padding: 2.5px 2.5px;';
   ;
 
-  // ### CHECK
-  // ### for showing logs.
+  // ▓▓ CHECK
+  // ▓▓ for showing logs.
   const if_M_0: boolean =
     (LOGS_SHOW_OVERRIDE && show)
-    // ### IMPORTANT Force 'authentication' to show in production.
+    // ▓▓ IMPORTANT Force 'authentication' to show in production.
     || (targetLog == AU_W_TAG[0] && AU_W_TAG[1])
   ;
 	if (if_M_0)
