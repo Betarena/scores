@@ -145,6 +145,9 @@ jobs:
       - name: '🏗️ Set npm version'
         run: |
           npm install -g npm@8.19.1
+      - name: 'create .env'
+        run: |
+          echo ${{ secrets.ENV_FILE }} | base64 -d > .env
       - name: '🟩 Build npm'
         run: |
           npm ci
