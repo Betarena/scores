@@ -7,12 +7,12 @@ import preprocess from 'svelte-preprocess';
 const config =
 {
 
-	// ### SEE:
-  // ### https://github.com/sveltejs/svelte-preprocess
+	// ▓▓ SEE:
+  // ▓▓ https://github.com/sveltejs/svelte-preprocess
 	preprocess: preprocess(),
 
-  // ### SEE:
-  // ### https://kit.svelte.dev/docs/configuration
+  // ▓▓ SEE:
+  // ▓▓ https://kit.svelte.dev/docs/configuration
 	kit:
   {
     output:
@@ -23,8 +23,9 @@ const config =
 		adapter: node
     (
       {
-        // ### SEE:
-        // ### https://discord.com/channels/457912077277855764/1049973005675143219
+        // ▓▓ SEE:
+        // ▓▓ https://discord.com/channels/457912077277855764/1049973005675143219
+        // ▓▓ https://kit.svelte.dev/docs/adapter-node#options-precompress
         precompress: true
       }
     ),
@@ -248,9 +249,9 @@ const config =
 
   },
 
-  // ### SEE:
-  // ### https://github.com/sveltejs/language-tools/issues/650
-  // ### https://github.com/sveltejs/language-tools/tree/master/packages/svelte-check
+  // ▓▓ SEE:
+  // ▓▓ https://github.com/sveltejs/language-tools/issues/650
+  // ▓▓ https://github.com/sveltejs/language-tools/tree/master/packages/svelte-check
   onwarn:
   (
     warning,
