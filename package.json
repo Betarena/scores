@@ -9,7 +9,7 @@
 	},
 	"scripts": {
 		"start": "node build/index.js",
-		"build": "VITE_SCORES_PKG_VERSION=v.$(npm pkg get version --workspaces=false | tr -d \\\") VITE_SCORES_LIB_PKG_VERSION=v.$(npm info @betarena/scores-lib version | tr -d \\\") vite build",
+		"build": "VITE_SCORES_PKG_VERSION=v.$(npm pkg get version --workspaces=false | tr -d \\\") VITE_SCORES_LIB_PKG_VERSION=v.$(npm info @betarena/scores-lib version | tr -d \\\") VITE_SENTRY_UPLOAD_SOURCEMAPS=true vite build",
 		"build-2": "VITE_SCORES_PKG_VERSION=v.$(npm pkg get version --workspaces=false | tr -d \\\") VITE_SCORES_LIB_PKG_VERSION=v.$(npm info @betarena/scores-lib version | tr -d \\\") VITE_SENTRY_UPLOAD_SOURCEMAPS=true vite build",
 		"test": "npm run test:integration && npm run test:unit",
 		"svelte-check": "svelte-check --tsconfig ./tsconfig.json",
