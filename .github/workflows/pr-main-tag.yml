@@ -309,21 +309,19 @@ jobs:
       - uses: actions/checkout@v3
         with:
           ref: main
-        env:
-          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
       - uses: actions/setup-node@v3
         with:
           node-version: 16.17.0
-      - name: 'setup npm version'
+      - name: '🏗️ Set npm version'
         run: |
           npm install -g npm@8.19.1
       - name: 'create .env'
         run: |
           echo ${{ secrets.ENV_FILE }} | base64 -d > .env
-      - name: 'sentry upload sourcemap'
+      - name: '🟩 Build npm'
         run: |
           npm install
-          make sentry-sourcemaps-upload
+          npm run build-2
 
   # -----------------------
   # NOTE: [STASHED]
