@@ -6,7 +6,8 @@ declare global
     extends
     ImportMetaEnv
     {
-      // NaN
+      /** @description Target `file` of type `.env.*` used */
+      ENV_TARGET?: string | undefined;
     }
   }
 }
