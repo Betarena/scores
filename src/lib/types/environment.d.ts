@@ -7,7 +7,7 @@ declare global
     ImportMetaEnv
     {
       /** @description Target `file` of type `.env.*` used */
-      ENV_TARGET?: string | undefined;
+      VITE_ENV_TARGET?: string | undefined;
     }
   }
 }

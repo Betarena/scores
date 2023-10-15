@@ -80,7 +80,7 @@ heroku-production-deploy:
 		\n◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️\
 		$(END_COLOUR)\n"
 	@VITE_SCORES_PKG_VERSION="v.$(shell npm pkg get version --workspaces=false | tr -d \")" \
-		SENTRY_UPLOAD_SOURCEMAPS="false" \
+		VITE_SENTRY_UPLOAD_SOURCEMAPS="false" \
 		npm run start
 #
 
@@ -101,7 +101,7 @@ heroku-production-secrets-update:
 		\n◼️ 🔑 Heroku-Prod | Updating Secrets        ◼️\
 		\n◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️\
 		$(END_COLOUR)\n"
-	@heroku config:set --remote heroku-prod $$(grep -v '^#' .env | xargs)
+	@heroku config:set --remote heroku-prod $$(grep -v '^#' .env.production | xargs)
 	@echo ""
 #
 
@@ -146,7 +146,7 @@ heroku-development-secrets-update:
 		\n◼️ 🔑 Heroku-Dev | Updating Secrets         ◼️\
 		\n◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️\
 		$(END_COLOUR)\n"
-	@heroku config:set --remote heroku-dev $$(grep -v '^#' .env | xargs)
+	@heroku config:set --remote heroku-dev $$(grep -v '^#' .env.development | xargs)
 	@echo ""
 #
 
@@ -172,7 +172,7 @@ sentry-sourcemaps-upload:
 		\n◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️\
 		$(END_COLOUR)\n"
 	@VITE_SCORES_PKG_VERSION="v.$(shell npm pkg get version --workspaces=false | tr -d \")" \
-		SENTRY_UPLOAD_SOURCEMAPS="true" \
+		VITE_SENTRY_UPLOAD_SOURCEMAPS="true" \
 		npm run build
 #
 
@@ -211,7 +211,7 @@ git-repo-secrets-ci-cd-update:
 		\n◼️ 🚀 Scores | Set Github Secrets             ◼️\
 		\n◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️\
 		$(END_COLOUR)\n"
-	@gh secret set -f .env
+	@gh secret set -f .env.ci-cd
 	@echo ""
 	@gh secret set ENV_FILE --body "$(shell cat .env.ci-cd | base64)"
 	@echo ""

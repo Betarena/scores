@@ -51,8 +51,8 @@ export default defineConfig
       (
         [
           ['📣 ENV Scores Version', process.env?.VITE_SCORES_PKG_VERSION],
-          ['📣 ENV Sentry Upload Sourcemaps', process.env?.SENTRY_UPLOAD_SOURCEMAPS],
-          ['📣 Target .env', process.env?.ENV_TARGET],
+          ['📣 ENV Sentry Upload Sourcemaps', process.env?.VITE_SENTRY_UPLOAD_SOURCEMAPS],
+          ['📣 Target .env', process.env?.VITE_ENV_TARGET],
           ['📣 Vite Mode', mode],
           ['📣 Vite Command', command],
           ['📣 Vite ssrBuild', ssrBuild],
@@ -74,9 +74,9 @@ export default defineConfig
               org: "betarena",
               project: "scores-platform",
               release: process.env?.VITE_SCORES_PKG_VERSION ?? process.env?.npm_package_version ?? version ?? 'v.0.0.0',
-              uploadSourceMaps: process.env?.SENTRY_UPLOAD_SOURCEMAPS as unknown as string == 'true' ? true : false,
+              uploadSourceMaps: process.env?.VITE_SENTRY_UPLOAD_SOURCEMAPS as unknown as string == 'true' ? true : false,
             },
-            autoUploadSourceMaps: process.env?.SENTRY_UPLOAD_SOURCEMAPS as unknown as string == 'true' ? true : false,
+            autoUploadSourceMaps: process.env?.VITE_SENTRY_UPLOAD_SOURCEMAPS as unknown as string == 'true' ? true : false,
           }
         ),
 

@@ -51,7 +51,7 @@ interface ImportMetaEnv
   /** @description Target `Authentication Token` for Sentry Actions */
   readonly SENTRY_AUTH_TOKEN?: string;
   /** @description Target action of `Sourcemap Upload` for Sentry */
-  readonly SENTRY_UPLOAD_SOURCEMAPS?: string;
+  readonly VITE_SENTRY_UPLOAD_SOURCEMAPS?: string;
 }
 
 interface ImportMeta

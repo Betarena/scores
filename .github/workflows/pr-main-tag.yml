@@ -317,7 +317,7 @@ jobs:
       - name: 'create .env'
         run: |
           echo ${{ secrets.ENV_FILE }} | base64 -d > .env
-      - name: sentry upload sourcemap
+      - name: 'sentry upload sourcemap'
         run: |
           make sentry-sourcemaps-upload
 
