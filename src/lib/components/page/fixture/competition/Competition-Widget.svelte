@@ -117,7 +117,10 @@
 
     const response = await get
     (
-      `/api/data/fixture/competition?fixtureId=${miscFixturePageData?.data?.id}&decompress`
+      `/api/data/fixture/competition?fixtureId=${miscFixturePageData?.data?.id}&decompress`,
+      null,
+      true,
+      true,
     ) as B_FIX_COMP_D;
 
     widgetDataMain = response;
@@ -212,6 +215,7 @@
   -->
   <svelte:component
     this={MainMainAsDynamic}
+    WIDGET_DATA={widgetDataMain}
   />
   <!--
     <FeatBetSiteMain
