@@ -1188,6 +1188,8 @@ export function cleanUrl
   url: string
 ): string
 {
+  if (url == null) return '';
+
   url = url.replace
   (
     'https://scores.betarena.com',
