@@ -70,32 +70,34 @@ function createLocalStore
     (
     ): void =>
     {
-			const existing: string = localStorage.getItem(key);
-			const exisitng_data: User_Setting = existing
-				?
-				  JSON.parse(existing)
-				:
-				  {
-						lang: 'en',
-						theme: 'Light',
-						country_bookmaker: undefined,
-						geoJs: undefined,
-						user: undefined,
-            voted_fixtures: [],
-            userguide_id_opt_out: [],
-				  }
+			let localStore: User_Setting = methods.parseLocalStorage();
+
+      // ◼️◼️◼️ CHECK
+      // ◼️◼️◼️ absent localstorage object.
+      if (localStore == null)
+      {
+        localStore =
+        {
+          lang: 'en',
+          theme: 'Dark',
+          country_bookmaker: undefined,
+          geoJs: undefined,
+          user: undefined,
+          voted_fixtures: [],
+          userguide_id_opt_out: [],
+        }
+      }
+
+      // ◼️◼️◼️ NOTE:
+      // ◼️◼️◼️ force users to have '_this_' object data property.
+      if (localStore.userguide_id_opt_out == null)
+        localStore.userguide_id_opt_out = [];
       ;
 
-      if (exisitng_data.userguide_id_opt_out == null)
-        exisitng_data.userguide_id_opt_out = [];
-      ;
-
-			localStorage.setItem
+			methods.setLocalStorage
       (
-				key,
-				JSON.stringify(exisitng_data)
-			);
-			set(exisitng_data);
+        localStore
+      );
 		},
 
     /**
