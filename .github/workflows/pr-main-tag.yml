@@ -295,15 +295,16 @@ jobs:
           prerelease: false
 
   # ▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-  # ▓▓ NOTE:                                                                    ▓▓
+  # ▓▓ NOTE: ▓▓ SKIP                                                            ▓▓
   # ▓▓ ➤ deploys target MAIN                                                    ▓▓
   # ▓▓ ➤ after successfull "bump" & "release";                                  ▓▓
   # ▓▓ ➤ dependent on "create-release"                                          ▓▓
   # ▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
   sentry-sourcemap-deploy:
-    name: Sentry Sourcemap (Artifacts) Upload
+    name: 🟣 Sentry sourcemap (artifacts) upload
     needs: create-release
+    if: false
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
@@ -312,40 +313,44 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16.17.0
-      - name: '🏗️ Set npm version'
+      - name: 'setup npm'
         run: |
           npm install -g npm@8.19.1
       - name: 'create .env'
         run: |
           echo ${{ secrets.ENV_FILE }} | base64 -d > .env
-      - name: '🟩 Build npm'
+      - name: 'build'
+        env:
+          NODE_OPTIONS: "--max_old_space_size=4096"
         run: |
           npm install
           npm run build-2
 
-  # -----------------------
-  # NOTE: [STASHED]
-  # -> deploys target MAIN
-  # -> after successfull "bump" & "release";
-  # -> dependent on "create-release"
-  # -----------------------
-  # deploy:
-  #   name: 🚀 Deployment
-  #   needs: create-release
-  #   runs-on: ubuntu-22.04
-  #   steps:
-  #   - name: executing remote ssh commands using password
-  #     uses: appleboy/ssh-action@v0.1.7
-  #     # [ℹ] declaring ENV variables to be used in the project-CI/CD
-  #     with:
-  #       host: ${{secrets.WEB_SERVER_HOST}}
-  #       username: ${{secrets.WEB_SERVER_USERNAME}}
-  #       key: ${{secrets.WEB_SERVER_KEY}}
-  #       port: ${{secrets.WEB_SERVER_PORT}}
-  #       script: |
-  #         # [ℹ] Navigate to target project directory
-  #         cd web/scores
-  #         # [ℹ] Update the directory with latests changes
-  #         git pull origin main
-  #         # [ℹ] Run target makefile command
-  #         make update-scores-web
+  # ▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+  # ▓▓ NOTE: ▓▓ SKIP                                                            ▓▓
+  # ▓▓ ➤ deploys target MAIN                                                    ▓▓
+  # ▓▓ ➤ after successfull "bump" & "release";                                  ▓▓
+  # ▓▓ ➤ dependent on "create-release"                                          ▓▓
+  # ▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+
+  deploy:
+    name: 🚀 Deployment
+    if: false
+    needs: create-release
+    runs-on: ubuntu-22.04
+    steps:
+    - name: executing remote ssh commands using password
+      uses: appleboy/ssh-action@v0.1.7
+      # [ℹ] declaring ENV variables to be used in the project-CI/CD
+      with:
+        host: ${{secrets.WEB_SERVER_HOST}}
+        username: ${{secrets.WEB_SERVER_USERNAME}}
+        key: ${{secrets.WEB_SERVER_KEY}}
+        port: ${{secrets.WEB_SERVER_PORT}}
+        script: |
+          # [ℹ] Navigate to target project directory
+          cd web/scores
+          # [ℹ] Update the directory with latests changes
+          git pull origin main
+          # [ℹ] Run target makefile command
+          make update-scores-web
