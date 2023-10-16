@@ -29,6 +29,7 @@
 	import SvelteSeo from 'svelte-seo';
 	import FeatBetSiteWidget from '../home/feat-bet-site/FeatBetSite-Widget.svelte';
 	import Breadcrumb from './Breadcrumb.svelte';
+	import CompetitionWidget from './competition/Competition-Widget.svelte';
 	import LineupsWidget from './lineups/Lineups-Widget.svelte';
 	import StandingsWidget from './standings/Standings-Widget.svelte';
 
@@ -406,6 +407,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 		>
 			<div
         class="grid-display-column">
+        <CompetitionWidget />
 				<VoteWidget />
 				<LineupsWidget />
 				<Head_2HeadWidget	/>
