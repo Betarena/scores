@@ -267,7 +267,7 @@
     -->
     <td>
       <p>
-        ${competitionObject?.data?.entry_fee ?? '-'}
+        {competitionObject?.data?.entry_fee ?? '-'} BTA
       </p>
     </td>
 
@@ -283,7 +283,7 @@
     -->
     <td>
       <p>
-        ${toDecimalFix((competitionObject?.data?.total_prize - competitionObject?.data?.betarena_commission), 2, true) ?? ''}
+        {toDecimalFix((competitionObject?.data?.total_prize - competitionObject?.data?.betarena_commission), 2, true) ?? ''} BTA
       </p>
     </td>
 
@@ -292,7 +292,7 @@
     -->
     <td>
       <p>
-        ${toDecimalFix(competitionPotentialUserWin, 2, true) ?? '-'}
+        {toDecimalFix(competitionPotentialUserWin, 2, true) ?? '-'} BTA
       </p>
     </td>
 
@@ -367,7 +367,7 @@
     -->
     <td>
       <p>
-        ${toDecimalFix(competitionPotentialUserWin, 2, true) ?? '-'}
+        {toDecimalFix(competitionPotentialUserWin, 2, true) ?? '-'} BTA
       </p>
       <p
         class=
@@ -561,13 +561,13 @@
                 {translationObject2?.categories?.["1"] ?? '-'}
 
               {:else if item == 'entry_fee'}
-                ${competitionObject?.data?.entry_fee ?? '-'}
+                {competitionObject?.data?.entry_fee ?? '-'} BTA
 
               {:else if item == 'total_prize'}
-                ${toDecimalFix((competitionObject?.data?.total_prize - competitionObject?.data?.betarena_commission), 2, true) ?? ''}
+                {toDecimalFix((competitionObject?.data?.total_prize - competitionObject?.data?.betarena_commission), 2, true) ?? ''} BTA
 
               {:else if item == 'potential_win'}
-                ${toDecimalFix(competitionPotentialUserWin, 2, true) ?? '-'}
+                {toDecimalFix(competitionPotentialUserWin, 2, true) ?? '-'} BTA
 
               {:else if item == 'forecast'}
                 {competitionUserForecast ?? '-'}
