@@ -828,6 +828,10 @@ section {
 /*
 FLEX DISPLAYS
 */
+.flex-start
+{
+  align-items: flex-start;
+}
 .row-space-out {
 	display: flex;
 	align-items: center;
@@ -1336,6 +1340,14 @@ img.google-aspect-ratio
 
 .dark-background .color-black-2.grey-v1,
 .dark-background-1 .color-black-2.grey-v1
+{
+  /* 🔥 override */
+  /* 🎨 style */
+	color: var(--grey-shade) !important;
+}
+
+.dark-background .color-grey.grey-v1,
+.dark-background-1 .color-grey.grey-v1
 {
   /* 🔥 override */
   /* 🎨 style */
