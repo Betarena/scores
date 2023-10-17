@@ -1,46 +1,42 @@
 <!--
-◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-### COMPONENT JS (w/ TS)                                                               ◼️
-### NOTE:                                                                              ◼️
-### access custom Betarena Scores JS VScode Snippets by typing 'script...'             ◼️
-◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+▓▓ COMPONENT JS (w/ TS)                                                                 ▓▓
+▓▓ NOTE:                                                                                ▓▓
+▓▓ access custom Betarena Scores JS VScode Snippets by typing 'script...'               ▓▓
+▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 -->
 
 <script lang="ts">
 
   // #region ➤ 📦 Package Imports
 
-  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-  // ### NOTE:                                                            ◼️
-  // ### Please add inside 'this' region the 'imports' that are required  ◼️
-  // ### by 'this' .svelte file is ran.                                   ◼️
-  // ### IMPORTANT                                                        ◼️
-  // ### Please, structure the imports as follows:                        ◼️
-  // ### 1. svelte/sveltekit imports                                      ◼️
-  // ### 2. project-internal files and logic                              ◼️
-  // ### 3. component import(s)                                           ◼️
-  // ### 4. assets import(s)                                              ◼️
-  // ### 5. type(s) imports(s)                                            ◼️
-  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+  // ▓▓ NOTE:                                                           ▓▓
+  // ▓▓ Please add inside 'this' region the 'imports' that are required ▓▓
+  // ▓▓ by 'this' .svelte file is ran.                                  ▓▓
+  // ▓▓ IMPORTANT                                                       ▓▓
+  // ▓▓ Please, structure the imports as follows:                       ▓▓
+  // ▓▓ 1. svelte/sveltekit imports                                     ▓▓
+  // ▓▓ 2. project-internal files and logic                             ▓▓
+  // ▓▓ 3. component import(s)                                          ▓▓
+  // ▓▓ 4. assets import(s)                                             ▓▓
+  // ▓▓ 5. type(s) imports(s)                                           ▓▓
+  // ▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
-	import { onDestroy, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 
 	import { get } from '$lib/api/utils.js';
 	import { userUpdateBalance } from '$lib/firebase/common.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { dlog } from '$lib/utils/debug.js';
 	import { checkNull, toDecimalFix } from '$lib/utils/platform-functions.js';
 	import { translationObject } from '$lib/utils/translation.js';
 
-	import MainModalMultiple from '../../../shared/COMP-Modal-Multiple.svelte';
+	import CompModalMultiple from '../../../shared/COMP-Modal-Multiple.svelte';
 
-  import icon_win from './assets/icon-green-thumbs-up.svg';
-  import icon_loose from './assets/icon-grey-thumbs-down.svg';
-  import icon_loose_active from './assets/icon-orange-thumbs-down.svg';
-  import icon_win_active from './assets/icon-orange-thumbs-up.svg';
-  import icon_profile_avatar from './assets/icon-profile-avatar.svg';
+  import icon_thumbs_down_white from './assets/icon-thumbs-down-white.svg';
+  import icon_thumbs_up_white from './assets/icon-thumbs-up-white.svg';
   import icon_trophy from './assets/icon-trophy.svg';
 
 	import type { BetarenaUser } from '@betarena/scores-lib/types/_FIREBASE_.js';
@@ -51,32 +47,34 @@
 
   // #region ➤ 📌 VARIABLES
 
-  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-  // ### NOTE:                                                            ◼️
-  // ### Please add inside 'this' region the 'variables' that are to be   ◼️
-  // ### and are expected to be used by 'this' .svelte file / component.  ◼️
-  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+  // ▓▓ NOTE:                                                           ▓▓
+  // ▓▓ Please add inside 'this' region the 'variables' that are to be  ▓▓
+  // ▓▓ and are expected to be used by 'this' .svelte file / component. ▓▓
+  // ▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
   export let
-    /** @description TODO: DOC: */
+    /** @description 📱 MOBILE */
     isViewMobile: boolean,
-    /** @description TODO: DOC: */
+    /** @description 💻 TABLET */
     isViewTablet: boolean,
-    /** @description competition (main) - participants target view type */
+    /** @description competition target id */
+    competitionId: number,
+    /** @description competition (main) | participants target view type */
     viewType: 'yes' | 'no',
-    /** @description competition (main) - participants target view list */
+    /** @description competition (main) | participants target view list */
     participantList: string[],
-    /** @description competition (main) - participants detailed data `Map` */
+    /** @description competition (main) | participants detailed data `Map` */
     participantsMap: Map < string, BetarenaUser >,
-    /** @description competition (main) - competition total prize amount */
+    /** @description competition (main) | total prize amount */
     totalPrize: number,
-    /** @description competition (main) - competition entry fee amount */
+    /** @description competition (main) | entry fee amount */
     entryFee: number,
-    /** @description competition (main) - competition winner group */
+    /** @description competition (main) | winner group */
     winnerGroup: B_C_COMP_DATA_Prediction_Group,
-    /** @description competition (main) - competition geo-location restriction */
+    /** @description competition (main) | imposed geo-location restriction */
     geoLocationRestrictions: string[],
-    /** @description competition (main) - competition `native` status */
+    /** @description competition (main) | `native` status */
     competitionStatus: B_C_COMP_DATA_Status
   ;
 
@@ -86,13 +84,13 @@
   ;
 
   let
-    /** @description TODO: DOC: */
+    /** @augments B_COMP_MAIN_T */
     WIDGET_T_DATA: B_COMP_MAIN_T,
-    /** @description competition (main) - show / hide main modal information */
+    /** @description competition (main) | show / hide main modal information */
     showModal: boolean = false,
-    /** @description competition (main) - view type */
+    /** @description competition (main) | view type */
     modalViewType: 'confirm' | 'insufficient' | 'geo-restriction' | 'not-authenticated' = 'confirm',
-    /** @description competition (main) - disabled buttons */
+    /** @description competition (main) | disabled buttons */
     disabledJoinBtn: boolean = true
   ;
 
@@ -113,9 +111,24 @@
 
   // #region ➤ 🛠️ METHODS
 
+  // ▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+  // ▓▓ NOTE:                                                           ▓▓
+  // ▓▓ Please add inside 'this' region the 'methods' that are to be    ▓▓
+  // ▓▓ and are expected to be used by 'this' .svelte file / component. ▓▓
+  // ▓▓ IMPORTANT                                                       ▓▓
+  // ▓▓ Please, structure the imports as follows:                       ▓▓
+  // ▓▓ 1. function (..)                                                ▓▓
+  // ▓▓ 2. async function (..)                                          ▓▓
+  // ▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+
   /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🔹 HELPER
    * @description
-   * TODO: DOC:
+   *  📌 Logic for participant joining a competition.
+   * @returns { Promise < void > }
    */
   async function joinCompetition
   (
@@ -125,12 +138,21 @@
 
     showModal = false
 
-    // ### [🐞]
+    // ▓▓ [🐞]
     // alert('Joining Competition');
+
+    // ▓▓ CHECK
+    // ▓▓ for valid data points
+    if (competitionId == null)
+      return;
+    //
 
     await get
     (
-      `/api/data/competition/main?competition_id=${$page.data?.COMPETITION_ID}&participantUid=${$userBetarenaSettings?.user?.firebase_user_data?.uid}&predictionChoice=${viewType}`
+      `/api/data/competition/main?competition_id=${competitionId}&participantUid=${$userBetarenaSettings?.user?.firebase_user_data?.uid}&predictionChoice=${viewType}`,
+      null,
+      true,
+      false
     );
 
     let newBalance: number = ($userBetarenaSettings?.user?.scores_user_data?.main_balance - entryFee) ?? 0;
@@ -145,80 +167,25 @@
     return;
   }
 
-  /**
-   * @description
-   * TODO: DOC:
-   */
-  function adjustParticipantListUser
-  (
-  ): void
-  {
-    participantList = participantList
-    ?.filter
-    (
-      item =>
-      {
-        return item != $userBetarenaSettings?.user?.firebase_user_data?.uid
-      }
-    );
-
-    participantList =
-    [
-      $userBetarenaSettings?.user?.firebase_user_data?.uid,
-      ...participantList
-    ];
-  }
-
   // #endregion ➤ 🛠️ METHODS
-
-  // #region ➤ 🔥 REACTIVIY [SVELTE]
-
-  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-  // ### NOTE:                                                            ◼️
-  // ### Please add inside 'this' region the 'logic' that should run      ◼️
-  // ### immediately and/or reactively for 'this' .svelte file is ran.    ◼️
-  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-
-  /**
-   * @summary
-   *  🔥 REACTIVITY
-   * @description
-   *  📌 Listens to change in participants and user joined. Acts accordingly.
-   * WARNING:
-   * triggered by changes in:
-   * - `participantList` - **kicker**
-   * - `isJoinedThis` - **kicker**
-   */
-  $: if (participantList && isJoinedThis)
-  {
-    // ### [🐞]
-    dlog
-    (
-      `🚏 checkpoint [R] ➤ (participantList && isJoinedThis)`,
-      true
-    );
-
-    adjustParticipantListUser();
-  }
-
-  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
-  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-  // ### NOTE:                                                            ◼️
-  // ### Please add inside 'this' region the 'logic' that should run      ◼️
-  // ### immediately and as part of the 'lifecycle' of svelteJs,          ◼️
-  // ### as soon as 'this' .svelte file is ran.                           ◼️
-  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+  // ▓▓ NOTE:                                                           ▓▓
+  // ▓▓ Please add inside 'this' region the 'logic' that should run     ▓▓
+  // ▓▓ immediately and as part of the 'lifecycle' of svelteJs,         ▓▓
+  // ▓▓ as soon as 'this' .svelte file is ran.                          ▓▓
+  // ▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
   onMount
   (
     () =>
     {
 
-      // ### NOTE:
-      // ### hacky solution (not ideal) for disabling action 'join' for X milliseconds.
+      // ▓▓ NOTE:
+      // ▓▓ hacky solution (not ideal) for disabling action
+      // ▓▓ 'join' for X milliseconds.
       setTimeout
       (
         () =>
@@ -231,44 +198,37 @@
     }
   );
 
-  onDestroy
-  (
-    () =>
-    {
-      // do something
-    }
-  );
-
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
 </script>
 
 <!--
-◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-### COMPONENT HTML                                                                     ◼️
-### NOTE:                                                                              ◼️
-### use 'CTRL+SPACE' to autocomplete global class="" styles                            ◼️
-### NOTE:                                                                              ◼️
-### access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.         ◼️
-◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+▓▓ COMPONENT HTML                                                                    ▓▓
+▓▓ NOTE:                                                                             ▓▓
+▓▓ use 'CTRL+SPACE' to autocomplete global class=styles                              ▓▓
+▓▓ NOTE:                                                                             ▓▓
+▓▓ access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.        ▓▓
+▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 -->
 
 <!--
 MORE INFORMATION / ALERT MODAL
 -->
 {#if showModal}
-  <MainModalMultiple
+  <CompModalMultiple
     {isViewMobile}
     {isViewTablet}
     viewType={modalViewType}
     balanceDeductAmount={entryFee}
+    {geoLocationRestrictions}
     on:closeModal={() => showModal = false}
     on:confirmEntry={() => joinCompetition()}
   />
 {/if}
 
 <!--
-PARTICIPANTS VOTE LIST
+POOL SELECTION ➡ MAIN
 -->
 <div
   id="{CNAME}⮕main"
@@ -280,21 +240,24 @@ PARTICIPANTS VOTE LIST
   -->
   <div
     id="{CNAME}⮕top-row"
+    class=
+    "
+    row-space-out
+    "
   >
 
     <!--
-    PARTICIPANT ACTION BUTTON
+    ▓▓ POOL SELECTION ➡ PARTICIPANT ACTION BUTTON
     -->
     <div
       class=
       "
       width-auto
-      participant-action
       "
     >
 
       <!--
-      JOIN COMPETITION
+      BUTTON ➡ JOIN COMPETITION
       -->
       {#if
         (!isJoinedThis || isJoinedNotThis)
@@ -313,11 +276,22 @@ PARTICIPANTS VOTE LIST
           class:color-grey={isJoinedNotThis || competitionStatus != 'pending' || disabledJoinBtn}
           disabled={isJoinedNotThis || competitionStatus != 'pending' || disabledJoinBtn}
         >
-          {viewType == 'yes' ? (WIDGET_T_DATA?.title_join_yes ?? 'Yes') : (WIDGET_T_DATA?.title_join_no ?? 'No')}
+          <img
+            id=''
+            src='{viewType == 'yes' ? icon_thumbs_up_white : icon_thumbs_down_white}'
+            alt=''
+            title=''
+            loading='lazy'
+            class=
+            "
+            m-r-8
+            "
+          />
+          Join {viewType == 'yes' ? (WIDGET_T_DATA?.title_join_yes ?? 'Yes') : (WIDGET_T_DATA?.title_join_no ?? 'No')}
         </button>
 
       <!--
-      STATUS (MANY) PILL
+      BOX ➡ STATUS (MANY-CONDITIONS) PILL
       -->
       {:else}
 
@@ -393,27 +367,31 @@ PARTICIPANTS VOTE LIST
 
     </div>
 
-
     <!--
-    TOTAL PRIZE FOR 'THIS' VOTE
+    ▓▓ POOL SELECTION ➡ TOTAL PRIZE FOR 'THIS' VOTE
     -->
     <div
       class=
       "
-      m-r-40
-      total-prize
+      width-auto
+      total-prize-box
       "
-      class:column-space-start={!isViewTablet}
-      class:row-space-out={isViewTablet}
+      class:column-space-start={isViewTablet}
+      class:row-space-out={!isViewTablet}
+      style=
+      "
+      {isViewTablet ? 'align-items: flex-start;' : ''}
+      "
     >
 
       <p
         class=
         "
         s-12
-        color-black-2
-        grey-v1
+        no-wrap
+        color-grey grey-v1
         "
+        class:m-r-12={!isViewTablet}
       >
         {WIDGET_T_DATA?.title_pool_prize ?? translationObject?.pool_prize}
       </p>
@@ -424,7 +402,6 @@ PARTICIPANTS VOTE LIST
         s-16
         color-black-2
         w-500
-        m-t-5
         "
       >
         {toDecimalFix(totalPrize, 2, true)} BTA
@@ -447,60 +424,35 @@ PARTICIPANTS VOTE LIST
 </div>
 
 <!--
-◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-### COMPONENT STYLE                                                                    ◼️
-### NOTE:                                                                              ◼️
-### auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE      ◼️
-### NOTE:                                                                              ◼️
-### access custom Betarena Scores CSS VScode Snippets by typing 'style...'             ◼️
-◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+▓▓ COMPONENT STYLE                                                                   ▓▓
+▓▓ NOTE:                                                                             ▓▓
+▓▓ auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE     ▓▓
+▓▓ NOTE:                                                                             ▓▓
+▓▓ access custom Betarena Scores CSS VScode Snippets by typing 'style...'            ▓▓
+▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 -->
 
 <style>
 
-  div#competition⮕w⮕participant-list⮕main
+  div#fixture⮕competition⮕w⮕pool-selection⮕main
   {
     /* 📌 position */
     position: relative;
     /* 🎨 style */
     width: 100%;
-    background: var(--white);
+    background: var(--whitev2);
 		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
-		/* border-radius: 12px; */
+		border-radius: 8px;
     overflow: hidden;
   }
 
-  div#competition⮕w⮕participant-list⮕top-row
+  div#fixture⮕competition⮕w⮕pool-selection⮕top-row
   {
     /* 🎨 style */
-    background: var(--white);
-    box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
-    min-height: 113px;
-    max-height: 113px;
-    padding: 14px 24px;
-    /* 🛝 layout */
-    display: grid;
-    gap: 20px 0;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-  }
-  div#competition⮕w⮕participant-list⮕top-row div.participants-preview
-  {
-    /* 🎨 style */
-    grid-row: 1;
-    grid-column: 1;
-  }
-  div#competition⮕w⮕participant-list⮕top-row div.participants-preview div.participant-list img.participant-main-img
-  {
-    /* 🎨 style */
-    margin-right: -15px;
-    border-radius: 32px;
-    border: 2px solid var(--whitev2);
-  }
-  div#competition⮕w⮕participant-list⮕top-row div.participants-preview div.participant-list img.participant-main-img:last-child
-  {
-    /* 🎨 style */
-    margin-right: 0;
+    min-height: 74px;
+    max-height: 74px;
+    padding: 16px 20px;
   }
   .disabled
   {
@@ -520,106 +472,16 @@ PARTICIPANTS VOTE LIST
     /* 🎨 style */
     background: #4DA025;
   }
-  div.total-prize
+  div.total-prize-box
   {
     /* 🎨 style */
-    grid-row: 2;
-    grid-column: 1 / 3;
-  }
-  div.participant-action
-  {
-    /* 🎨 style */
-    grid-row: 1;
-    grid-column: 2;
-    /* 🛝 layout */
-    justify-self: right;
-  }
-
-  div#competition⮕w⮕participant-list⮕list
-  {
-    /* 📌 position */
-    position: relative;
-    /* 🎨 style */
-    min-height: 326px;
-    max-height: 326px;
-    overflow-x: hidden;
-    overflow-y: scroll;
-  }
-	div#competition⮕w⮕participant-list⮕list::-webkit-scrollbar
-  {
-    /* 🎨 style */
-		/* width: 3px; */
-	}
-	div#competition⮕w⮕participant-list⮕list::-webkit-scrollbar-track
-  {
-    /* 🎨 style */
-		/* background: transparent;
-		margin-top: 60px; */
-	}
-	div#competition⮕w⮕participant-list⮕list::-webkit-scrollbar-thumb
-  {
-    /* 🎨 style */
-		/* background: #292929;
-    max-height: 90px; */
-	}
-
-  div#competition⮕w⮕participant-list⮕no-participant
-  {
-    /* 📌 position */
-    position: absolute;
-    margin: auto;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    /* 🎨 style */
-    width: fit-content;
-    max-width: 280px;
-    height: fit-content;
-  }
-
-  div#competition⮕w⮕participant-list⮕list-head
-  {
-    /* 🎨 style */
-    padding: 16px 47px 16px 24px;
-  }
-
-  div#competition⮕w⮕participant-list⮕list div.participant-row
-  {
-    /* 🎨 style */
-    padding: 8px 34px 8px 24px;
-  }
-  div#competition⮕w⮕participant-list⮕list div.participant-row img.participant-img
-  {
-    /* 🎨 style */
-    border-radius: 50%;
-  }
-  div#competition⮕w⮕participant-list⮕list div.participant-row:nth-child(even)
-  {
-    /* 🎨 style */
-    background-color: var(--whitev2);
-  }
-  div#competition⮕w⮕participant-list⮕list div.participant-row.target-user
-  {
-    /* 🎨 style */
-    background-color: rgba(245, 98, 15, 0.2);
-  }
-
-  div#competition⮕w⮕participant-list⮕bottom-fade
-  {
-    /* 📌 position */
-    position: absolute;
-    bottom: 0;
-    /* 🎨 style */
-    width: 100%;
-    height: 64px;
-    background: linear-gradient(0, #FFF 0%, rgba(255, 255, 255, 0.00) 100%);
+    /* min-width: 120px; */
   }
 
   /*
-  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-  ◼️ ⚡️ RESPONSIVNESS      ◼️
-  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+  ▓▓ ⚡️ RESPONSIVNESS     ▓▓
+  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
   */
 
   @media only screen
@@ -628,7 +490,7 @@ PARTICIPANTS VOTE LIST
   and (min-width: 658px)
   {
 
-    div#competition⮕w⮕participant-list⮕list
+    div#fixture⮕competition⮕w⮕pool-selection⮕list
     {
       /* 🎨 style */
       min-height: 582px;
@@ -642,96 +504,31 @@ PARTICIPANTS VOTE LIST
   /* ◼️◼️◼️ NOTE: dictated by parent */
   and (min-width: 780px)
   {
-
-    div#competition⮕w⮕participant-list⮕top-row
-    {
-      /* 🎨 style */
-      min-height: 88px;
-      max-height: 88px;
-      padding: 24px 32px;
-      /* 🛝 layout */
-      gap: unset;
-      /* grid-template-columns: 1fr 1fr 1fr 1fr; */
-      grid-template-rows: 1fr;
-    }
-    div#competition⮕w⮕participant-list⮕top-row div.participants-preview
-    {
-      /* 🎨 style */
-      grid-row: 1;
-      grid-column: 1;
-    }
-    div#competition⮕w⮕participant-list⮕top-row div.total-prize
-    {
-      /* 🎨 style */
-      grid-row: 1;
-      grid-column: 3;
-      /* 🛝 layout */
-      align-items: flex-start;
-    }
-    div#competition⮕w⮕participant-list⮕top-row div.participant-action
-    {
-      /* 🎨 style */
-      grid-row: 1;
-      grid-column: 4;
-    }
-
-    div#competition⮕w⮕participant-list⮕list-head
-    {
-      /* 🎨 style */
-      padding: 16px 70px 16px 32px;
-    }
-
-    div#competition⮕w⮕participant-list⮕list div.participant-row
-    {
-      /* 🎨 style */
-      padding: 8px 42px 8px 32px;
-    }
-
+    /* NaN */
   }
 
   /*
-  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-  ◼️ 🌒 DARK-THEME         ◼️
-  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+  ▓▓ 🌒 DARK-THEME       ▓▓
+  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
   */
 
-  div#competition⮕w⮕participant-list⮕main.dark-background-1
+  div#fixture⮕competition⮕w⮕pool-selection⮕main.dark-background-1
   {
     /* 🎨 style */
     background-color: var(--dark-theme-1-4-shade) !important;
   }
 
-  .dark-background-1 div#competition⮕w⮕participant-list⮕top-row
+  .dark-background-1 div#fixture⮕competition⮕w⮕pool-selection⮕top-row
   {
     /* 🎨 style */
-    background-color: var(--dark-theme-1-4-shade) !important;
+    background-color: var(--dark-theme-1) !important;
   }
-  .dark-background-1 div#competition⮕w⮕participant-list⮕top-row div.participants-preview div.participant-list img.participant-main-img
-  {
-    /* 🎨 style */
-    border: 2px solid var(--dark-theme-1-4-shade);
-  }
+
   .dark-background-1 .disabled
   {
     /* 🎨 style */
     background-color: var(--dark-theme-1);
-  }
-
-  .dark-background-1 div#competition⮕w⮕participant-list⮕list div.participant-row:nth-child(even)
-  {
-    /* 🎨 style */
-    background-color: var(--dark-theme-1-5-shade-o-0-2) !important;
-  }
-  .dark-background-1 div#competition⮕w⮕participant-list⮕list div.participant-row.target-user
-  {
-    /* 🎨 style */
-    background-color: rgba(245, 98, 15, 0.2) !important;
-  }
-
-  .dark-background-1 div#competition⮕w⮕participant-list⮕bottom-fade
-  {
-    /* 🎨 style */
-    background: linear-gradient(0, #383838 -38.28%, rgba(56, 56, 56, 0.80) -38.26%, rgba(56, 56, 56, 0.00) 175%);
   }
 
 </style>
