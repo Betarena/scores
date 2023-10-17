@@ -1,4 +1,4 @@
-<!-- Based on template :: Svelte-Boilerplate.v6.Widget.svelte -->
+<!-- Based on template :: Svelte-Boilerplate.v7.Widget.svelte -->
 
 <!--
 ▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
@@ -34,11 +34,19 @@
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlog } from '$lib/utils/debug.js';
 	import { toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
+	import { translationObject } from '$lib/utils/translation.js';
 	import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.betarena-user.js';
 	import { Competition } from '@betarena/scores-lib/dist/classes/class.competition.js';
 
+	import WidgetTitle from '$lib/components/Widget-Title.svelte';
+	import CompCountdownStatus from '$lib/components/shared/COMP-Countdown-+-Status.svelte';
+	import CompetitionPoolSelection from './Competition-Pool-Selection.svelte';
+
   import icon_win from './assets/icon-green-thumbs-up.svg';
   import icon_draw from './assets/icon-grey-draw.svg';
+  import icon_probability_green from './assets/icon-probability-green.svg';
+  import icon_probability_red from './assets/icon-probability-red.svg';
+  import icon_profile_avatar from './assets/icon-profile-avatar.svg';
   import icon_loose from './assets/icon-red-thumbs-down.svg';
 
 	import type { BetarenaUser } from '@betarena/scores-lib/types/_FIREBASE_.js';
@@ -75,7 +83,7 @@
     /** @description TODO: DOC: */
     VIEWPORT_MOBILE_INIT = 581,
     /** @description 📌 `this` component **main** `id` and `data-testid` prefix. */
-    CNAME = 'competition⮕w⮕main'
+    CNAME = 'fixture⮕competition⮕w⮕main'
   ;
 
   let
@@ -98,7 +106,13 @@
     /** @description TODO: DOC: */
     participantsMap: Map < string, BetarenaUser > = new Map(),
     /** @description TODO: DOC: */
-    competitionWasLive: boolean = false
+    competitionWasLive: boolean = false,
+    /** @description TODO: DOC: */
+    counterTotalPrize: number = 0,
+    /** @description TODO: DOC: */
+    counterTotalAnimated: boolean = true,
+    /** @description mirror value for simplicity of probability */
+    mirrorProbability: number
   ;
 
   $: WIDGET_T_DATA = $page.data?.B_COMP_MAIN_T;
@@ -408,6 +422,50 @@
     };
   }
 
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🔹 HELPER | IMPORTANT
+   * @description
+   *  📌 A countdown animation for `total prize` value.
+   * @returns { void }
+   */
+  function countAnimation
+  (
+  ): void
+  {
+    let counts: NodeJS.Timeout = setInterval(updated);
+    let totalCount: number = WIDGET_DATA?.competition?.data?.total_prize - WIDGET_DATA?.competition?.data?.betarena_commission;
+
+    function updated(): void
+    {
+      ++counterTotalPrize;
+      if (counterTotalPrize >= totalCount)
+      {
+        clearInterval(counts);
+        counterTotalAnimated = false;
+      }
+    }
+  }
+
+  /**
+   * @description
+   */
+  function mirrorValues
+  (
+  ): void
+  {
+    if (WIDGET_DATA?.competition?.data?.prediction == '1')
+      mirrorProbability = WIDGET_DATA?.fixture?.probabilities?.home;
+    else if (WIDGET_DATA?.competition?.data?.prediction == '2')
+      mirrorProbability = WIDGET_DATA?.fixture?.probabilities?.away;
+    else
+      mirrorProbability = WIDGET_DATA?.fixture?.probabilities?.draw;
+      toDecimalFix(WIDGET_DATA?.fixture?.probabilities?.draw, 0);
+    ;
+  }
+
   // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -421,16 +479,13 @@
   /**
    * @summary
    * 🔥 REACTIVITY
-   *
    * WARNING:
    * can go out of control
-   *
    * @description
-   * 📌 Listens to changes in competition data.
-   *
+   *  📌 Listens to changes in competition data.
    * WARNING:
    * triggered by changes in:
-   * - `competitionMapDataChng` - **kicker**
+   * - `competitionMapDataChng` - **kicker** (via deepListen)
    */
   $: if (competitionMapDataChng)
   {
@@ -446,24 +501,21 @@
 
   /**
    * @summary
-   * 🔥 REACTIVITY
-   *
+   *  🔥 REACTIVITY
    * WARNING:
    * can go out of control
-   *
    * @description
-   * 📌 Listens to changes in competition data.
-   *
+   *  📌 Listens to changes in competition data.
    * WARNING:
    * triggered by changes in:
-   * - `competitionMapDataChng` - **kicker**
+   * - `competitionMapDataChng` - **kicker**  (via deepListen)
    */
   $: if (livescoreNowScoreboardChng)
   {
     // ▓▓ [🐞]
     dlog
     (
-      `🚏 checkpoint [R] ➤ competitionMapDataChng`,
+      `🚏 checkpoint [R] ➤ livescoreNowScoreboardChng`,
       true
     );
 
@@ -489,8 +541,10 @@
       resizeAction();
       addEventListeners();
 
-      determinePrediction()
+      determinePrediction();
       getParticipantData();
+      countAnimation();
+      mirrorValues();
     }
   );
 
@@ -508,187 +562,631 @@
 ▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 -->
 
-<!--
-COMPETITION MAIN
--->
-<div
-  id="{CNAME}⮕box"
-  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
->
+<div>
+
+  <WidgetTitle
+    WIDGET_TITLE={'Competition'}
+  />
 
   <!--
-  🎆 FIXTURE COMPETITION ➤ MAIN
+  ▓▓ WIDGET MAIN
   -->
-  <div>
+  <div
+    id="{CNAME}⮕box"
+    class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+  >
 
+    <!--
+    ▓▓ FIXTURE COMPETITION ➤ MAIN
+    -->
     <div
       id="{CNAME}⮕profile"
-      class=
-      "
-      row-space-out
-      "
+      class:predict-to-win={WIDGET_DATA?.competition?.data?.target_team_prediction_term == 'win'}
+      class:predict-to-lose={WIDGET_DATA?.competition?.data?.target_team_prediction_term == 'lose'}
+      class:column-space-start={isViewMobile}
+      class:row-space-out={!isViewTablet || (isViewTablet && !isViewMobile)}
     >
 
       <!--
-      1st COLUMN - COMPETITION PREDICTION INFO
-      -->
-      <div>
-
-        <div
-          class=
-          "
-          row-space-start
-          "
-        >
-
-          <h1
-            class=
-            "
-            w-500
-            color-grey-v2
-            grey-v1
-            m-r-12
-            m-0
-            capitalize
-            "
-            class:s-16={isViewTablet}
-            class:s-32={!isViewTablet}
-          >
-            {B_SAP_D3_TEAM_M?.[$sessionStore?.serverLang]}
-          </h1>
-
-          <img
-            id=''
-            src={WIDGET_DATA?.team_logo}
-            alt='competition-team-logo'
-            title={WIDGET_DATA?.team_name}
-            loading='lazy'
-            width={isViewTablet ? 15 : 32}
-            height={isViewTablet ? 15 : 32}
-            class=
-            "
-            m-r-12
-            google-aspect-ratio
-            "
-          />
-
-          <h1
-            class=
-            "
-            color-black-2
-            w-500
-            m-0
-            "
-            class:s-16={isViewTablet}
-            class:s-32={!isViewTablet}
-          >
-            {WIDGET_DATA?.team_name ?? ''}
-          </h1>
-
-        </div>
-
-        <h1
-          class=
-          "
-          color-grey-v2
-          grey-v1
-          w-500
-          m-0
-          "
-          class:s-12={isViewTablet}
-          class:s-22={!isViewTablet}
-        >
-          {WIDGET_T_DATA?.term_is_going_to_a ?? 'is going to'}
-        </h1>
-
-      </div>
-
-      <!--
-      2nd COLUMN - COMPETITION PREDICTION INFO
+      ▓▓ COMPETITION ➤ PROFILE INFO ➤ 1st COLUMN
       -->
       <div
         class=
         "
-        width-auto
-        text-right
+        row-space-out
         "
-        class:row-space-end={!isViewMobile}
+        class:m-b-24={isViewMobile}
       >
 
+        <!--
+        ▓▓ COMPETITION ➤ BOX
+        -->
+        <div
+        >
+
+          <!--
+          ▓▓ COMPETITION ➤ INFO BOX [1]
+          -->
+          <div
+            class=
+            "
+            row-space-start
+            "
+          >
+
+            <h1
+              class=
+              "
+              w-500
+              color-grey-v2
+              grey-v1
+              m-r-12
+              m-0
+              capitalize
+              "
+              class:s-16={isViewTablet}
+              class:s-20={!isViewTablet}
+            >
+              {B_SAP_D3_TEAM_M?.[$sessionStore?.serverLang]}
+            </h1>
+
+            <img
+              id=''
+              src={WIDGET_DATA?.team_logo}
+              alt='competition-team-logo'
+              title={WIDGET_DATA?.team_name}
+              loading='lazy'
+              width={isViewTablet ? 15 : 32}
+              height={isViewTablet ? 15 : 32}
+              class=
+              "
+              m-r-12
+              google-aspect-ratio
+              "
+            />
+
+            <h1
+              class=
+              "
+              color-black-2
+              w-500
+              m-0
+              "
+              class:s-16={isViewTablet}
+              class:s-20={!isViewTablet}
+            >
+              {WIDGET_DATA?.team_name ?? ''}
+            </h1>
+
+          </div>
+
+          <!--
+          ▓▓ COMPETITION ➤ INFO BOX [2]
+          -->
+          <div
+            class=
+            "
+            row-space-start
+            "
+            class:m-b-16={WIDGET_DATA?.competition?.data?.status != 'pending' && !isViewMobile}
+          >
+
+            <!--
+            ▓▓ COMPETITION ➤ TERM [3]
+            -->
+            <h1
+              class=
+              "
+              color-grey-v2
+              grey-v1
+              w-500
+              m-0
+              no-wrap
+              m-r-8
+              "
+              class:s-12={isViewTablet}
+              class:s-16={!isViewTablet}
+            >
+              {WIDGET_T_DATA?.term_is_going_to_a ?? 'is going to'}
+            </h1>
+
+            <!--
+            ▓▓ COMPETITION ➤ PREDICTION
+            -->
+            <div
+              class=
+              "
+              row-space-end
+              m-r-16
+              "
+            >
+
+              <img
+                id=''
+                src={icon_prediction}
+                alt='prediction-icon'
+                title='CompetitionWin'
+                loading='lazy'
+                width={isViewTablet ? 16 : 20}
+                height={isViewTablet ? 16 : 20}
+                class=
+                "
+                m-r-5
+                "
+              />
+
+              <p
+                class=
+                "
+                s-16
+                w-500
+                dark-white-v3
+                "
+                class:s-22={!isViewTablet}
+                class:color-green={prediction_type == 'win'}
+                class:color-red-bright-v2={prediction_type == 'loose'}
+                class:color-grey={prediction_type == 'draw'}
+              >
+                {#if prediction_type == 'win'}
+                  {WIDGET_T_DATA?.prediction?.[1] ?? 'Win'}
+                {:else if prediction_type == 'loose'}
+                  {WIDGET_T_DATA?.prediction?.[2] ?? 'Lose'}
+                {:else}
+                  {WIDGET_T_DATA?.prediction?.x ?? 'Draw'}
+                {/if}
+              </p>
+
+            </div>
+
+          </div>
+
+          <!--
+          ▓▓ COMPETITION ➤ INFO BOX STATUS [3]
+          -->
+          {#if WIDGET_DATA?.competition?.data?.status != 'pending' && !isViewMobile}
+            <CompCountdownStatus
+              {isViewMobile}
+              {isViewTablet}
+              forceView={false}
+              B_COMP_HIGH_D={WIDGET_DATA}
+              WIDGET_T_DATA={WIDGET_T_DATA}
+              designView={'2'}
+            />
+          {/if}
+
+        </div>
+
+        <!--
+        ▓▓ 📱 MOBILE
+        -->
+        {#if isViewMobile}
+
+          <!--
+          ▓▓ COMPETITION ➤ PROBABILITY
+          -->
+          <div
+            class=
+            "
+            text-left
+            "
+          >
+
+            <p
+              class=
+              "
+              s-12
+              no-wrap
+              color-grey grey-v1
+              "
+            >
+              {WIDGET_T_DATA?.title_prob ?? 'Probability'}
+            </p>
+
+            <div
+              class=
+              "
+              row-space-start
+              "
+            >
+              <p
+                class=
+                "
+                s-16
+                color-black-2
+                w-500
+                capitalize
+                m-r-6
+                "
+              >
+                {toDecimalFix(mirrorProbability, 0)}%
+              </p>
+
+              <img
+                id=''
+                src={mirrorProbability > 50 ? icon_probability_green : icon_probability_red}
+                alt='probability_icon'
+                title='Probability'
+                loading='lazy'
+              />
+            </div>
+
+          </div>
+
+        {/if}
+
+      </div>
+
+      <!--
+      ▓▓ COMPETITION ➤ PROFILE INFO ➤ 2nd COLUMN
+      -->
+      <div
+        id="stats"
+        class=
+        "
+        text-right
+        {isViewMobile ? 'row-space-start' : 'width-auto'}
+        "
+        class:row-space-end={!isViewMobile}
+        class:m-b-16={WIDGET_DATA?.competition?.data?.status != 'pending' && isViewMobile}
+      >
+
+        <!--
+        ▓▓ 💻 TABLET + 🖥️ LAPTOP
+        -->
+        {#if !isViewMobile}
+
+          <!--
+          ▓▓ COMPETITION ➤ PROBABILITY
+          -->
+          <div
+            class=
+            "
+            text-left
+            "
+          >
+
+            <p
+              class=
+              "
+              s-12
+              no-wrap
+              color-grey grey-v1
+              "
+            >
+              {WIDGET_T_DATA?.title_prob ?? 'Probability'}
+            </p>
+
+            <div
+              class=
+              "
+              row-space-start
+              "
+            >
+              <p
+                class=
+                "
+                s-16
+                color-black-2
+                w-500
+                capitalize
+                m-r-6
+                "
+              >
+                {toDecimalFix(mirrorProbability, 0)}%
+              </p>
+
+              <img
+                id=''
+                src={mirrorProbability > 50 ? icon_probability_green : icon_probability_red}
+                alt='probability_icon'
+                title='Probability'
+                loading='lazy'
+              />
+            </div>
+
+          </div>
+
+        {/if}
+
+        <!--
+        ▓▓ COMPETITION ➤ ENTRY FEE
+        -->
         <div
           class=
           "
-          row-space-end
-          m-r-16
+          text-left
           "
         >
 
-          <img
-            id=''
-            src={icon_prediction}
-            alt='prediction-icon'
-            title='CompetitionWin'
-            loading='lazy'
-            width={isViewTablet ? 18 : 32}
-            height={isViewTablet ? 18 : 32}
+          <p
             class=
             "
-            m-r-5
+            s-12
+            no-wrap
+            color-grey grey-v1
             "
-          />
+          >
+            {WIDGET_T_DATA?.title_entry_fee ?? 'Entry Fee'}
+          </p>
+
+          <p
+            class=
+            "
+            s-16
+            color-black-2
+            w-500
+            capitalize
+            "
+          >
+            {WIDGET_DATA?.competition?.data?.entry_fee ?? ''} BTA
+            <span
+              class=
+              "
+              color-grey-v2
+              grey-v1
+              s-14
+              "
+            >
+              (${WIDGET_DATA?.competition?.data?.entry_fee ?? ''})
+            </span>
+          </p>
+
+        </div>
+
+        <!--
+        ▓▓ COMPETITION ➤ TOTAL PRIZE
+        -->
+        <div
+          class=
+          "
+          text-left
+          "
+        >
+
+          <p
+            class=
+            "
+            s-12
+            no-wrap
+            color-grey grey-v1
+            "
+          >
+            {WIDGET_T_DATA?.title_total_prize ?? 'Total prize'}
+          </p>
 
           <p
             class=
             "
             s-16
             w-500
-            dark-white-v3
+            color-black-2
+            capitalize
             "
-            class:s-22={!isViewTablet}
-            class:color-green={prediction_type == 'win'}
-            class:color-red-bright-v2={prediction_type == 'loose'}
-            class:color-grey={prediction_type == 'draw'}
           >
-            {#if prediction_type == 'win'}
-              {WIDGET_T_DATA?.prediction?.[1] ?? 'Win'}
-            {:else if prediction_type == 'loose'}
-              {WIDGET_T_DATA?.prediction?.[2] ?? 'Lose'}
+
+            {#if !counterTotalAnimated}
+              {toDecimalFix((WIDGET_DATA?.competition?.data?.total_prize - WIDGET_DATA?.competition?.data?.betarena_commission), 2, true) ?? ''} BTA
             {:else}
-              {WIDGET_T_DATA?.prediction?.x ?? 'Draw'}
+              {toDecimalFix(counterTotalPrize, 2, true)} BTA
             {/if}
+
+            <span
+              class=
+              "
+              color-grey-v2
+              grey-v1
+              s-14
+              "
+            >
+              {#if !counterTotalAnimated}
+                (${toDecimalFix((WIDGET_DATA?.competition?.data?.total_prize - WIDGET_DATA?.competition?.data?.betarena_commission), 2, true) ?? ''})
+              {:else}
+                (${toDecimalFix(counterTotalPrize, 2, true)})
+              {/if}
+            </span>
+
           </p>
 
         </div>
 
-        <p
+      </div>
+
+      <!--
+      ▓▓ COMPETITION ➤ INFO BOX STATUS [3]
+      -->
+      {#if WIDGET_DATA?.competition?.data?.status != 'pending' && isViewMobile}
+        <CompCountdownStatus
+          {isViewMobile}
+          {isViewTablet}
+          forceView={false}
+          B_COMP_HIGH_D={WIDGET_DATA}
+          WIDGET_T_DATA={WIDGET_T_DATA}
+          designView={'2'}
+        />
+      {/if}
+
+    </div>
+
+    <!--
+    ▓▓ FIXTURE COMPETITION ➤ MAIN BOX
+    -->
+    <div
+      id="{CNAME}⮕inner-box"
+    >
+
+      <!--
+      ▓▓ FIXTURE COMPETITION ➤ POOL PRIZES / SECTIONS
+      -->
+      <div
+        id="{CNAME}⮕participants"
+        class=
+        "
+        m-b-24
+        "
+      >
+
+        <!--
+        ▓▓ YES VOTE
+        -->
+        <CompetitionPoolSelection
+          {isViewMobile}
+          {isViewTablet}
+          competitionId={WIDGET_DATA?.competition?.id}
+          competitionStatus={WIDGET_DATA?.competition?.data?.status}
+          geoLocationRestrictions={WIDGET_DATA?.competition?.data?.blacklist}
+          entryFee={WIDGET_DATA?.competition?.data?.entry_fee}
+          totalPrize=
+          {
+            (
+              WIDGET_DATA?.competition?.data?.participants?.no?.length > 0
+              ? ((WIDGET_DATA?.competition?.data?.participants?.no?.length * WIDGET_DATA?.competition?.data?.entry_fee) - (WIDGET_DATA?.competition?.data?.betarena_commission))
+              : 0
+            ) ?? 0
+          }
+          winnerGroup={WIDGET_DATA?.competition?.data?.winner_group}
+          viewType={'yes'}
+          participantList={WIDGET_DATA?.competition?.data?.participants?.yes}
+          {participantsMap}
+        />
+
+        <!--
+        ▓▓ NO VOTE
+        -->
+        <CompetitionPoolSelection
+          {isViewMobile}
+          {isViewTablet}
+          competitionId={WIDGET_DATA?.competition?.id}
+          competitionStatus={WIDGET_DATA?.competition?.data?.status}
+          geoLocationRestrictions={WIDGET_DATA?.competition?.data?.blacklist}
+          entryFee={WIDGET_DATA?.competition?.data?.entry_fee}
+          totalPrize=
+          {
+            (
+              WIDGET_DATA?.competition?.data?.participants?.yes?.length > 0
+              ? ((WIDGET_DATA?.competition?.data?.participants?.yes?.length * WIDGET_DATA?.competition?.data?.entry_fee) - (WIDGET_DATA?.competition?.data?.betarena_commission))
+              : 0
+            ) ?? 0
+          }
+          winnerGroup={WIDGET_DATA?.competition?.data?.winner_group}
+          viewType={'no'}
+          participantList={WIDGET_DATA?.competition?.data?.participants?.no}
+          {participantsMap}
+        />
+
+      </div>
+
+      <!--
+      ▓▓ FIXTURE COMPETITION ➤ FOOTER INFORMATION
+      -->
+      <div
+        class=
+        "
+        row-space-out
+        "
+      >
+
+        <!--
+        ▓▓ FIXTURE COMPETITION ➤ TYPE
+        -->
+        <div
           class=
           "
-          s-10
-          color-black-2
-          no-wrap
+          width-auto
+          row-space-start
           "
-          class:s-16={!isViewTablet}
         >
-          {#if WIDGET_DATA?.competition?.data?.prediction == '1'}
-            {toDecimalFix(WIDGET_DATA?.fixture?.probabilities?.home, 0)}%
-          {:else if WIDGET_DATA?.competition?.data?.prediction == '2'}
-            {toDecimalFix(WIDGET_DATA?.fixture?.probabilities?.away, 0)}%
-          {:else}
-            {toDecimalFix(WIDGET_DATA?.fixture?.probabilities?.draw, 0)}%
+
+          <p
+            class=
+            "
+            s-12
+            color-grey
+            m-r-12
+            "
+          >
+            Type
+          </p>
+
+          <p
+            class=
+            "
+            s-14
+            color-black-2
+            w-600
+            "
+          >
+            <!-- {WIDGET_DATA?.competition?.data?.type_id} -->
+            Single Predictor
+          </p>
+
+        </div>
+
+        <!--
+        ▓▓ FIXTURE COMPETITION ➤ PARTICIPANT PREVIEW (LAST-5)
+        -->
+        <div
+          class=
+          "
+          width-auto
+          participants-preview
+          {isViewMobile ? 'column-space-start flex-start' : ''}
+          "
+          class:row-space-start={!isViewMobile}
+        >
+
+          <p
+            class=
+            "
+            s-14
+            color-black-2
+            w-600
+            no-wrap
+            "
+          >
+            {WIDGET_DATA?.competition?.data?.participants?.yes?.length ?? 0}
+            {WIDGET_T_DATA?.title_participants ?? translationObject?.participants}
+          </p>
+
+          {#if WIDGET_DATA?.competition?.data?.participants?.yes?.length > 0}
+
+            <div
+              class=
+              "
+              width-auto
+              row-space-start
+              participant-list
+              "
+              class:m-l-10={!isViewMobile}
+              class:m-t-5={isViewMobile}
+            >
+
+              {#each WIDGET_DATA?.competition?.data?.participants?.yes?.slice(0, (isViewTablet ? 3 : 5)) ?? [] as uid}
+
+                <img
+                  id=''
+                  class=
+                  "
+                  participant-main-img
+                  "
+                  src={participantsMap?.get(uid)?.profile_photo ?? icon_profile_avatar}
+                  alt='participant_1'
+                  title='Partitipant_1'
+                  loading='lazy'
+                  width={isViewMobile ? 18 : 24}
+                  height={isViewMobile ? 18 : 24}
+                />
+
+              {/each}
+
+            </div>
+
           {/if}
-          {WIDGET_T_DATA?.title_prob ?? 'probability'}
-        </p>
+
+        </div>
 
       </div>
 
     </div>
-
-  </div>
-
-  <!--
-  🎆 FIXTURE COMPETITION ➤ POOL PRIZES / SECTIONS
-  -->
-  <div>
 
   </div>
 
@@ -706,121 +1204,64 @@ COMPETITION MAIN
 
 <style>
 
-  div#competition⮕w⮕main⮕box
+  div#fixture⮕competition⮕w⮕main⮕box
   {
     /* 🎨 style */
     border-radius: 12px;
     overflow: hidden;
     /* 🛝 layout */
     display: grid;
-    gap: 8px;
     grid-template-columns: 1fr;
   }
 
-  /* div#competition⮕w⮕main⮕top-row
-  {
-  } */
-  div#competition⮕w⮕main⮕profile
+  div#fixture⮕competition⮕w⮕main⮕profile
   {
     /* 📌 position */
     position: relative;
     /* 🎨 style */
-    min-height: 64px;
-    max-height: 64px;
+    min-height: 138px;
+    border-radius: 8px 8px 0px 0px;
     background: var(--white);
 		box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
-    padding: 16px 24px;
+    padding: 20px;
   }
-  div#competition⮕w⮕main⮕status-social
+  div#fixture⮕competition⮕w⮕main⮕profile.predict-to-win
   {
     /* 🎨 style */
-    background: var(--white);
-    padding: 16px 32px;
+    background: linear-gradient(297deg, transparent 32.98%, #B5E5B7 212.06%);
   }
-  div#competition⮕w⮕main⮕social-box
+  div#fixture⮕competition⮕w⮕main⮕profile.predict-to-lose
   {
     /* 🎨 style */
-    min-height: 40px;
-    max-height: 40px;
-    border-radius: 8px;
-    background: var(--whitev2);
-    padding: 4px 4px 4px 12px;
+    background: linear-gradient(311deg, transparent 61.18%, #EFC3C3 161.11%);
   }
-  div.social
+  div#fixture⮕competition⮕w⮕main⮕profile div#stats
   {
-    /* 🎨 style */
-    padding: 8px;
-    border-radius: 8px;
-    max-height: 32px;
-  }
-  div.social:hover
-  {
-    /* 🎨 style */
-    background-color: var(--grey-color);
-  }
-
-  h2.league-name
-  {
-    /* 🎨 style */
-    max-width: 185px;
-		overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  img.country-img
-  {
-    /* 🎨 style */
-    border-radius: 16px;
-    object-fit: cover;
-  }
-
-  div#competition⮕w⮕main⮕grid-section
-  {
-    /* 🎨 style */
-    background-color: var(--white);
-    margin-top: -8px;
-    padding: 24px;
     /* 🛝 layout */
     display: grid;
-    grid-template-columns: 1fr;
-    /* ◼️◼️◼️ NOTE: disabled, but can be enabled with proper 'auto-fill' */
-    /* grid-template-rows: 1fr 1fr 1fr; */
-    gap: 24px;
-  }
-  div#competition⮕w⮕main⮕grid-section a#league-box
-  {
-    /* 🛝 layout */
-    grid-column: 1;
-    grid-row: 1;
-  }
-  div#competition⮕w⮕main⮕grid-section div#competition-extra-box
-  {
-    /* 🛝 layout */
-    grid-column: 1;
-    grid-row: 4;
+    gap: 32px;
+    grid-auto-flow: column;
   }
 
-  div#competition⮕w⮕main⮕details
+  div#fixture⮕competition⮕w⮕main⮕inner-box
   {
     /* 🎨 style */
+    padding: 20px 16px;
     background: var(--white);
-		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
-    padding: 24px 32px;
-    min-height: 130px;
-    max-height: 130px;
   }
 
-  div#competition⮕w⮕main⮕participants
+  div#fixture⮕competition⮕w⮕main⮕participants
   {
     /* 🛝 layout */
     display: grid;
     grid-template-columns: 1fr;
-    gap: 8px;
+    gap: 12px;
   }
 
   /*
-  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-  ◼️ ⚡️ RESPONSIVNESS      ◼️
-  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+  ▓▓ ⚡️ RESPONSIVNESS     ▓▓
+  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
   */
 
   @media only screen
@@ -828,29 +1269,12 @@ COMPETITION MAIN
   /* ◼️◼️◼️ NOTE: independent media query widget */
   and (min-width: 658px)
   {
-
-    div#competition⮕w⮕main⮕grid-section
+    div#fixture⮕competition⮕w⮕main⮕profile
     {
       /* 🎨 style */
-      margin-top: unset;
-      padding: 22px 32px;
-      /* 🛝 layout */
-      /* ◼️◼️◼️ NOTE: disabled, but can be enabled with proper 'auto-fill' */
-      /* grid-template-rows: 1fr 1fr 1fr; */
+      min-height: 88px;
+      max-height: 88px;
     }
-    div#competition⮕w⮕main⮕grid-section a#league-box
-    {
-      /* 🎨 style */
-      grid-column: 1;
-      grid-row: 1;
-    }
-    div#competition⮕w⮕main⮕grid-section div#competition-extra-box
-    {
-      /* 🎨 style */
-      grid-column: 1 / 3;
-      grid-row: 3;
-    }
-
 	}
 
 	@media only screen
@@ -859,9 +1283,10 @@ COMPETITION MAIN
   and (min-width: 768px)
   {
 
-    div#competition⮕w⮕main⮕participants
+    div#fixture⮕competition⮕w⮕main⮕participants
     {
       /* 🛝 layout */
+      gap: 12px;
       grid-template-columns: 1fr 1fr;
     }
 
@@ -872,62 +1297,40 @@ COMPETITION MAIN
   /* ◼️◼️◼️ NOTE: independent media query widget */
   and (min-width: 1200px)
   {
-
-    div#competition⮕w⮕main⮕profile
-    {
-      /* 🎨 style */
-      min-height: 112px;
-      max-height: 112px;
-      padding: 24px 32px;
-    }
-
-    div#competition⮕w⮕main⮕grid-section
-    {
-      /* 🛝 layout */
-      align-items: center;
-      gap: unset;
-      grid-template-rows: 1fr;
-      grid-template-columns: 1fr 1fr 1fr;
-    }
-    div#competition⮕w⮕main⮕grid-section a#league-box
-    {
-      /* 🛝 layout */
-      grid-column: 1;
-      grid-row: 1;
-    }
-    div#competition⮕w⮕main⮕grid-section div#competition-extra-box
-    {
-      /* 🛝 layout */
-      grid-column: 2;
-      grid-row: 1;
-    }
-
+    /* NaN */
 	}
 
 	/*
-  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-  ◼️ 🌒 DARK-THEME         ◼️
-  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+  ▓▓ 🌒 DARK-THEME       ▓▓
+  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
   */
 
-  div#competition⮕w⮕main⮕box.dark-background-1
+  div#fixture⮕competition⮕w⮕main⮕box.dark-background-1
   {
     /* 🎨 style */
     background-color: unset !important;
   }
 
-  .dark-background-1 div#competition⮕w⮕main⮕profile,
-  .dark-background-1 div#competition⮕w⮕main⮕social-box
+  .dark-background-1 div#fixture⮕competition⮕w⮕main⮕profile
   {
     /* 🎨 style */
     background-color: var(--dark-theme-1);
   }
-
-  .dark-background-1 div#competition⮕w⮕main⮕status-social,
-  .dark-background-1 div#competition⮕w⮕main⮕grid-section
+  .dark-background-1 div#fixture⮕competition⮕w⮕main⮕profile.predict-to-win
   {
     /* 🎨 style */
-    background-color: var(--dark-theme-1-4-shade) !important;
+    background: linear-gradient(297deg, transparent 32.98%, #3F7B41 212.06%);
+  }
+  .dark-background-1 div#fixture⮕competition⮕w⮕main⮕profile.predict-to-lose
+  {
+    /* 🎨 style */
+    background: linear-gradient(311deg, transparent 32.98%, #9F4949 212.06%);
+  }
+  .dark-background-1 div#fixture⮕competition⮕w⮕main⮕inner-box
+  {
+    /* 🎨 style */
+    background: var(--dark-theme-1-4-shade);
   }
 
 </style>
