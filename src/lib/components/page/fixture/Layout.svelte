@@ -12,6 +12,7 @@
 	import { onMount } from 'svelte';
 
 	import { createFixtureOddsPath, onceTargetLivescoreNowFixtureGet, targetLivescoreNowFixtureListen, targetLivescoreNowFixtureOddsListen } from '$lib/firebase/common.js';
+	import { subscribeCompetitionsAllListen } from '$lib/graphql/graphql.common.js';
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlog } from '$lib/utils/debug';
@@ -278,6 +279,9 @@
     {
       await kickstartLivescore();
       await kickstartLiveOdds();
+
+      subscribeCompetitionsAllListen();
+
       resizeAction();
       addEventListeners();
     }
@@ -373,6 +377,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 				class="grid-display-column"
 				class:display-none={$sessionStore.fixture_select_view == 'news'}
 			>
+        <CompetitionWidget />
 				<VoteWidget />
 				<IncidentsWidget />
 				<FeatBetSiteWidget />
