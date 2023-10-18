@@ -24,6 +24,7 @@
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
 	import { browser } from '$app/environment';
+	import { beforeNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
@@ -405,6 +406,16 @@
         EmailSubscribeDynamic = (await import('$lib/components/Email-Subscribe.svelte')).default;
       }
 	  }
+  );
+
+  beforeNavigate
+  (
+    async (
+    ): Promise < void > =>
+    {
+      // ▓▓ IMPORTANT
+      $sessionStore.live_odds_fixture_target = null;
+    }
   );
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
