@@ -1112,7 +1112,7 @@
             "
             s-14
             color-black-2
-            w-600
+            w-500
             "
           >
             <!-- {WIDGET_DATA?.competition?.data?.type_id} -->
@@ -1139,7 +1139,7 @@
             "
             s-14
             color-black-2
-            w-600
+            w-500
             no-wrap
             "
           >
