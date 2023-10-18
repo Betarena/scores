@@ -86,12 +86,12 @@
   (
   ): void
   {
-    dateDiff = toCorrectDate(B_COMP_HIGH_D?.fixture?.time, false).getTime() - new Date().getTime();
+    dateDiff = toCorrectDate(B_COMP_HIGH_D?.fixture?.time, false)?.getTime() - new Date().getTime();
     setInterval
     (
       () =>
       {
-        dateDiff = toCorrectDate(B_COMP_HIGH_D?.fixture?.time, false).getTime() - new Date().getTime();
+        dateDiff = toCorrectDate(B_COMP_HIGH_D?.fixture?.time, false)?.getTime() - new Date().getTime();
       },
       1000
     );
