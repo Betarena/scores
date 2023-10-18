@@ -1,11 +1,14 @@
 // #region ➤ 📦 Package Imports
 
 import { dlogv2 } from '$lib/utils/debug.js';
+import { tryCatch } from '$lib/utils/platform-functions.js';
 import LZString from 'lz-string';
 
 // #endregion ➤ 📦 Package Imports
 
 /**
+ * @author
+ *  @migbash
  * @summary
  *  🔹 HELPER | IMPORTANT
  * @description
@@ -41,13 +44,19 @@ export async function get
       }
     );
 
-    const resJson: any = await res.json();
+    let resJson: any = await res.json();
 
     if (!res?.ok)
       throw new Error
       (
         'Network response was not ok'
       );
+    ;
+
+    // ### NOTE: | IMPORTANT
+    // ### step necessary to 'decompress' lz-string encoded payload.
+    if (decompress)
+      resJson = tryCatch(() => JSON.parse(LZString.decompress(resJson?.data)));
     ;
 
     // ### [🐞]
@@ -59,17 +68,12 @@ export async function get
         `🏹 FETCH (GET) ${endpoint}`,
         [
           `⏱️ ${((t1 - t0) / 1000).toFixed(2)} sec`,
-          `📝 Loaded via :: ${resJson?.loadType}`
+          `📝 Loaded via :: ${resJson?.loadType}`,
+          resJson
         ],
         true
       )
     };
-
-    // ### NOTE: | IMPORTANT
-    // ### step necessary to 'decompress' lz-string encoded payload.
-    if (decompress)
-      return JSON.parse(LZString.decompress(resJson?.data));
-    ;
 
 		return resJson;
   }
@@ -81,6 +85,8 @@ export async function get
 }
 
 /**
+ * @author
+ *  @migbash
  * @summary
  *  🔹 HELPER | IMPORTANT
  * @description

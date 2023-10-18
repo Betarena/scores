@@ -10,9 +10,8 @@ certs/*
 # ▓▓ never uncomment
 .env
 .env.*
+.sentryclirc
 
+# ▓▓ 💠 MISC
 WEBSITE-DEV-README.md
 datalog/
-
-# [PERSONAL]
-# .vscode/
