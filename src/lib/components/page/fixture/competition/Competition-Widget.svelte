@@ -207,21 +207,23 @@
   ▓▓ promise was fulfilled
   -->
 
-  <!--
-  ▓▓ NOTE:
-  ▓▓ Dynamic Svelte Component Import [optional]
-  ▓▓ WARNING:
-  ▓▓ Disable (this), if Standard (below) Import is Enabled.
-  -->
-  <svelte:component
-    this={MainMainAsDynamic}
-    WIDGET_DATA={widgetDataMain}
-  />
-  <!--
-    <FeatBetSiteMain
-      B_FEATB_T={widgetDataTranslation}
+  {#if !widgetNoData}
+    <!--
+    ▓▓ NOTE:
+    ▓▓ Dynamic Svelte Component Import [optional]
+    ▓▓ WARNING:
+    ▓▓ Disable (this), if Standard (below) Import is Enabled.
+    -->
+    <svelte:component
+      this={MainMainAsDynamic}
+      WIDGET_DATA={widgetDataMain}
     />
-  -->
+    <!--
+      <FeatBetSiteMain
+        B_FEATB_T={widgetDataTranslation}
+      />
+    -->
+  {/if}
 
 {:catch error}
   <!--
