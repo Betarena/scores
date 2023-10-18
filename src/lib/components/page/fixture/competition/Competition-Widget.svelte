@@ -30,6 +30,7 @@
 	import { onMount } from 'svelte';
 
 	import { get } from '$lib/api/utils.js';
+  import sessionStore from '$lib/store/session.js';
 
   import SeoBox from '$lib/components/SEO-Box.svelte';
 
@@ -134,10 +135,12 @@
     {
       // dlog(`${LV2_W_H_TAG[0]} ❌ no data available!`);
 			widgetNoData = true;
+      $sessionStore.showFixtureCompetition = false;
 			return;
 		}
 
     widgetNoData = false;
+    $sessionStore.showFixtureCompetition = true;
 
     return;
   }

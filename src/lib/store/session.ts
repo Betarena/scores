@@ -30,6 +30,7 @@ const sessionStoreObj: Platform_Session =
   withdrawModal: false,
   showUserguide1: false,
   showUserguide1Conf: false,
+  showFixtureCompetition: false,
   // ### NOTE:
   // ### variables for language handle.
   lang_intent: undefined,
