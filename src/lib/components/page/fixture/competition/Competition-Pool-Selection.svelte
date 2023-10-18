@@ -219,7 +219,6 @@ MORE INFORMATION / ALERT MODAL
   <CompModalMultiple
     {isViewMobile}
     {isViewTablet}
-    viewType={modalViewType}
     balanceDeductAmount={entryFee}
     {geoLocationRestrictions}
     on:closeModal={() => showModal = false}

@@ -44,8 +44,6 @@
     isViewMobile: boolean,
     /** @description 💻 TABLET */
     isViewTablet: boolean,
-    /** @description competition (main) | view type */
-    viewType: 'confirm' | 'insufficient' | 'geo-restriction' | 'not-authenticated',
     /** @description competition (main) | amount entry fee */
     balanceDeductAmount: number,
     /** @description competition (main) | imposed geo-location restriction */
@@ -207,7 +205,7 @@ MODAL - DYNAMIC
   <!--
   MODAL | COMPETITION CONFIRM
   -->
-  {#if viewType == 'confirm'}
+  {#if modalViewType == 'confirm'}
 
     <!--
     MODAL ENTRY TEXT
@@ -265,7 +263,7 @@ MODAL - DYNAMIC
   <!--
   MODAL | COMPETITION NOT ENOUGH FUNDS
   -->
-  {#if viewType == 'insufficient'}
+  {#if modalViewType == 'insufficient'}
 
     <!--
     MODAL TEXT
@@ -351,7 +349,7 @@ MODAL - DYNAMIC
   <!--
   MODAL | COMPETITION NOT GEO AVAILABLE
   -->
-  {#if viewType == 'geo-restriction'}
+  {#if modalViewType == 'geo-restriction'}
 
     <!--
     MODAL TEXT
@@ -423,7 +421,7 @@ MODAL - DYNAMIC
   <!--
   MODAL | NOT AUTHENTICATED / SIGNED IN
   -->
-  {#if viewType == 'not-authenticated'}
+  {#if modalViewType == 'not-authenticated'}
 
     <!--
     MODAL TEXT
