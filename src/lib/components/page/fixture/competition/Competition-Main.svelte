@@ -579,187 +579,362 @@
     <!--
     ▓▓ Main (top) competition data.
     -->
-    <div
-      id="{CNAME}⮕profile"
-      class:predict-to-win={WIDGET_DATA?.competition?.data?.target_team_prediction_term == 'win'}
-      class:predict-to-lose={WIDGET_DATA?.competition?.data?.target_team_prediction_term == 'lose'}
-      class:column-space-start={isViewMobile}
-      class:row-space-out={!isViewTablet || (isViewTablet && !isViewMobile)}
-      class:stauts-component-adjust={WIDGET_DATA?.competition?.data?.status != 'pending'}
+    <a
+      href={`/${WIDGET_DATA?.competition?.urls?.[$sessionStore?.serverLang]}`}
     >
-
-      <!--
-      ▓▓ Target competition target main info (1st box)
-      -->
       <div
-        id="competition-info"
-        class=
-        "
-        row-space-out
-        "
+        id="{CNAME}⮕profile"
+        class:predict-to-win={WIDGET_DATA?.competition?.data?.target_team_prediction_term == 'win'}
+        class:predict-to-lose={WIDGET_DATA?.competition?.data?.target_team_prediction_term == 'lose'}
+        class:column-space-start={isViewMobile}
+        class:row-space-out={!isViewTablet || (isViewTablet && !isViewMobile)}
+        class:stauts-component-adjust={WIDGET_DATA?.competition?.data?.status != 'pending'}
       >
 
         <!--
-        ▓▓ Main prelimnary competition data
+        ▓▓ Target competition target main info (1st box)
         -->
         <div
+          id="competition-info"
           class=
           "
-          row-space-start
-          flex-start
+          row-space-out
           "
         >
 
           <!--
-          ▓▓ First column of competition Data
+          ▓▓ Main prelimnary competition data
           -->
           <div
+            class=
+            "
+            row-space-start
+            flex-start
+            "
           >
 
             <!--
-            ▓▓ Team (term) and team image
+            ▓▓ First column of competition Data
             -->
             <div
-              class=
-              "
-              row-space-start
-              "
             >
 
+              <!--
+              ▓▓ Team (term) and team image
+              -->
+              <div
+                class=
+                "
+                row-space-start
+                "
+              >
+
+                <h1
+                  class=
+                  "
+                  w-500
+                  color-grey-v2
+                  grey-v1
+                  m-r-5
+                  m-0
+                  capitalize
+                  "
+                  class:s-16={isViewTablet}
+                  class:s-20={!isViewTablet}
+                >
+                  {B_SAP_D3_TEAM_M?.[$sessionStore?.serverLang]}
+                </h1>
+
+                <img
+                  id=''
+                  src={WIDGET_DATA?.team_logo}
+                  alt='competition-team-logo'
+                  title={WIDGET_DATA?.team_name}
+                  loading='lazy'
+                  width={isViewTablet ? 16 : 24}
+                  height={isViewTablet ? 16 : 24}
+                  class=
+                  "
+                  m-r-5
+                  google-aspect-ratio
+                  "
+                />
+
+              </div>
+
+              <!--
+              ▓▓ Is-Going-To (term)
+              -->
               <h1
                 class=
                 "
-                w-500
                 color-grey-v2
                 grey-v1
-                m-r-5
+                w-500
                 m-0
-                capitalize
+                no-wrap
+                m-r-8
+                "
+                class:s-12={isViewTablet}
+                class:s-16={!isViewTablet}
+              >
+                {WIDGET_T_DATA?.term_is_going_to_a ?? 'is going to'}
+              </h1>
+
+            </div>
+
+            <!--
+            ▓▓ Second column of competition Data
+            -->
+            <div
+            >
+
+              <!--
+              ▓▓ Team name
+              -->
+              <h1
+                class=
+                "
+                color-black-2
+                w-500
+                m-0
                 "
                 class:s-16={isViewTablet}
                 class:s-20={!isViewTablet}
               >
-                {B_SAP_D3_TEAM_M?.[$sessionStore?.serverLang]}
+                {WIDGET_DATA?.team_name ?? ''}
               </h1>
 
-              <img
-                id=''
-                src={WIDGET_DATA?.team_logo}
-                alt='competition-team-logo'
-                title={WIDGET_DATA?.team_name}
-                loading='lazy'
-                width={isViewTablet ? 16 : 24}
-                height={isViewTablet ? 16 : 24}
+              <!--
+              ▓▓ Target competition type.
+              -->
+              <div
                 class=
                 "
-                m-r-5
-                google-aspect-ratio
+                row-space-start
                 "
-              />
+              >
+
+                <img
+                  id=''
+                  src={icon_prediction}
+                  alt='prediction-icon'
+                  title='CompetitionWin'
+                  loading='lazy'
+                  width={isViewTablet ? 16 : 20}
+                  height={isViewTablet ? 16 : 20}
+                  class=
+                  "
+                  m-r-5
+                  "
+                />
+
+                <p
+                  class=
+                  "
+                  w-500
+                  dark-white-v3
+                  "
+                  class:s-12={isViewTablet}
+                  class:s-16={!isViewTablet}
+                  class:color-green={prediction_type == 'win'}
+                  class:color-red-bright-v2={prediction_type == 'loose'}
+                  class:color-grey={prediction_type == 'draw'}
+                >
+                  {#if prediction_type == 'win'}
+                    {WIDGET_T_DATA?.prediction?.[1] ?? 'Win'}
+                  {:else if prediction_type == 'loose'}
+                    {WIDGET_T_DATA?.prediction?.[2] ?? 'Lose'}
+                  {:else}
+                    {WIDGET_T_DATA?.prediction?.x ?? 'Draw'}
+                  {/if}
+                </p>
+
+              </div>
 
             </div>
-
-            <!--
-            ▓▓ Is-Going-To (term)
-            -->
-            <h1
-              class=
-              "
-              color-grey-v2
-              grey-v1
-              w-500
-              m-0
-              no-wrap
-              m-r-8
-              "
-              class:s-12={isViewTablet}
-              class:s-16={!isViewTablet}
-            >
-              {WIDGET_T_DATA?.term_is_going_to_a ?? 'is going to'}
-            </h1>
 
           </div>
 
           <!--
-          ▓▓ Second column of competition Data
+          ▓▓ 📱 MOBILE
           -->
-          <div
-          >
+          {#if isViewMobile}
 
             <!--
-            ▓▓ Team name
+            ▓▓ Target competition probability
             -->
-            <h1
+            <div
               class=
               "
+              text-left
+              "
+            >
+
+              <p
+                class=
+                "
+                s-12
+                no-wrap
+                color-grey grey-v1
+                "
+              >
+                {WIDGET_T_DATA?.title_prob ?? 'Probability'}
+              </p>
+
+              <div
+                class=
+                "
+                row-space-start
+                "
+              >
+                <p
+                  class=
+                  "
+                  s-16
+                  color-black-2
+                  w-500
+                  capitalize
+                  m-r-6
+                  "
+                >
+                  {toDecimalFix(mirrorProbability, 0)}%
+                </p>
+
+                <img
+                  id=''
+                  src={mirrorProbability > 50 ? icon_probability_green : icon_probability_red}
+                  alt='probability_icon'
+                  title='Probability'
+                  loading='lazy'
+                />
+              </div>
+
+            </div>
+
+          {/if}
+
+        </div>
+
+        <!--
+        ▓▓ Target competition target main info (2nd box)
+        -->
+        <div
+          id="stats"
+          class=
+          "
+          text-right
+          {isViewMobile ? 'row-space-start' : 'width-auto'}
+          "
+          class:row-space-end={!isViewMobile}
+        >
+
+          <!--
+          ▓▓ 💻 TABLET + 🖥️ LAPTOP
+          -->
+          {#if !isViewMobile}
+
+            <!--
+            ▓▓ COMPETITION ➤ PROBABILITY
+            -->
+            <div
+              class=
+              "
+              text-left
+              "
+            >
+
+              <p
+                class=
+                "
+                s-12
+                no-wrap
+                color-grey grey-v1
+                "
+              >
+                {WIDGET_T_DATA?.title_prob ?? 'Probability'}
+              </p>
+
+              <div
+                class=
+                "
+                row-space-start
+                "
+              >
+                <p
+                  class=
+                  "
+                  s-16
+                  color-black-2
+                  w-500
+                  capitalize
+                  m-r-6
+                  "
+                >
+                  {toDecimalFix(mirrorProbability, 0)}%
+                </p>
+
+                <img
+                  id=''
+                  src={mirrorProbability > 50 ? icon_probability_green : icon_probability_red}
+                  alt='probability_icon'
+                  title='Probability'
+                  loading='lazy'
+                />
+              </div>
+
+            </div>
+
+          {/if}
+
+          <!--
+          ▓▓ Target competition entry-fee.
+          -->
+          <div
+            class=
+            "
+            text-left
+            "
+          >
+
+            <p
+              class=
+              "
+              s-12
+              no-wrap
+              color-grey grey-v1
+              "
+            >
+              {WIDGET_T_DATA?.title_entry_fee ?? 'Entry Fee'}
+            </p>
+
+            <p
+              class=
+              "
+              s-16
               color-black-2
               w-500
-              m-0
-              "
-              class:s-16={isViewTablet}
-              class:s-20={!isViewTablet}
-            >
-              {WIDGET_DATA?.team_name ?? ''}
-            </h1>
-
-            <!--
-            ▓▓ Target competition type.
-            -->
-            <div
-              class=
-              "
-              row-space-start
+              capitalize
+              no-wrap
               "
             >
-
-              <img
-                id=''
-                src={icon_prediction}
-                alt='prediction-icon'
-                title='CompetitionWin'
-                loading='lazy'
-                width={isViewTablet ? 16 : 20}
-                height={isViewTablet ? 16 : 20}
+              {WIDGET_DATA?.competition?.data?.entry_fee ?? ''} BTA
+              <span
                 class=
                 "
-                m-r-5
+                color-grey-v2
+                grey-v1
+                s-14
                 "
-              />
-
-              <p
-                class=
-                "
-                w-500
-                dark-white-v3
-                "
-                class:s-12={isViewTablet}
-                class:s-16={!isViewTablet}
-                class:color-green={prediction_type == 'win'}
-                class:color-red-bright-v2={prediction_type == 'loose'}
-                class:color-grey={prediction_type == 'draw'}
               >
-                {#if prediction_type == 'win'}
-                  {WIDGET_T_DATA?.prediction?.[1] ?? 'Win'}
-                {:else if prediction_type == 'loose'}
-                  {WIDGET_T_DATA?.prediction?.[2] ?? 'Lose'}
-                {:else}
-                  {WIDGET_T_DATA?.prediction?.x ?? 'Draw'}
-                {/if}
-              </p>
-
-            </div>
+                (${WIDGET_DATA?.competition?.data?.entry_fee ?? ''})
+              </span>
+            </p>
 
           </div>
 
-        </div>
-
-        <!--
-        ▓▓ 📱 MOBILE
-        -->
-        {#if isViewMobile}
-
           <!--
-          ▓▓ Target competition probability
+          ▓▓ Target competition total-prize.
           -->
           <div
             class=
@@ -776,242 +951,71 @@
               color-grey grey-v1
               "
             >
-              {WIDGET_T_DATA?.title_prob ?? 'Probability'}
+              {WIDGET_T_DATA?.title_total_prize ?? 'Total prize'}
             </p>
-
-            <div
-              class=
-              "
-              row-space-start
-              "
-            >
-              <p
-                class=
-                "
-                s-16
-                color-black-2
-                w-500
-                capitalize
-                m-r-6
-                "
-              >
-                {toDecimalFix(mirrorProbability, 0)}%
-              </p>
-
-              <img
-                id=''
-                src={mirrorProbability > 50 ? icon_probability_green : icon_probability_red}
-                alt='probability_icon'
-                title='Probability'
-                loading='lazy'
-              />
-            </div>
-
-          </div>
-
-        {/if}
-
-      </div>
-
-      <!--
-      ▓▓ Target competition target main info (2nd box)
-      -->
-      <div
-        id="stats"
-        class=
-        "
-        text-right
-        {isViewMobile ? 'row-space-start' : 'width-auto'}
-        "
-        class:row-space-end={!isViewMobile}
-      >
-
-        <!--
-        ▓▓ 💻 TABLET + 🖥️ LAPTOP
-        -->
-        {#if !isViewMobile}
-
-          <!--
-          ▓▓ COMPETITION ➤ PROBABILITY
-          -->
-          <div
-            class=
-            "
-            text-left
-            "
-          >
 
             <p
               class=
               "
-              s-12
+              s-16
+              w-500
+              color-black-2
+              capitalize
               no-wrap
-              color-grey grey-v1
               "
             >
-              {WIDGET_T_DATA?.title_prob ?? 'Probability'}
-            </p>
 
-            <div
-              class=
-              "
-              row-space-start
-              "
-            >
-              <p
-                class=
-                "
-                s-16
-                color-black-2
-                w-500
-                capitalize
-                m-r-6
-                "
-              >
-                {toDecimalFix(mirrorProbability, 0)}%
-              </p>
-
-              <img
-                id=''
-                src={mirrorProbability > 50 ? icon_probability_green : icon_probability_red}
-                alt='probability_icon'
-                title='Probability'
-                loading='lazy'
-              />
-            </div>
-
-          </div>
-
-        {/if}
-
-        <!--
-        ▓▓ Target competition entry-fee.
-        -->
-        <div
-          class=
-          "
-          text-left
-          "
-        >
-
-          <p
-            class=
-            "
-            s-12
-            no-wrap
-            color-grey grey-v1
-            "
-          >
-            {WIDGET_T_DATA?.title_entry_fee ?? 'Entry Fee'}
-          </p>
-
-          <p
-            class=
-            "
-            s-16
-            color-black-2
-            w-500
-            capitalize
-            no-wrap
-            "
-          >
-            {WIDGET_DATA?.competition?.data?.entry_fee ?? ''} BTA
-            <span
-              class=
-              "
-              color-grey-v2
-              grey-v1
-              s-14
-              "
-            >
-              (${WIDGET_DATA?.competition?.data?.entry_fee ?? ''})
-            </span>
-          </p>
-
-        </div>
-
-        <!--
-        ▓▓ Target competition total-prize.
-        -->
-        <div
-          class=
-          "
-          text-left
-          "
-        >
-
-          <p
-            class=
-            "
-            s-12
-            no-wrap
-            color-grey grey-v1
-            "
-          >
-            {WIDGET_T_DATA?.title_total_prize ?? 'Total prize'}
-          </p>
-
-          <p
-            class=
-            "
-            s-16
-            w-500
-            color-black-2
-            capitalize
-            no-wrap
-            "
-          >
-
-            {#if !counterTotalAnimated}
-              {toDecimalFix((WIDGET_DATA?.competition?.data?.total_prize - WIDGET_DATA?.competition?.data?.betarena_commission), 2, true) ?? ''} BTA
-            {:else}
-              {toDecimalFix(counterTotalPrize, 2, true)} BTA
-            {/if}
-
-            <span
-              class=
-              "
-              color-grey-v2
-              grey-v1
-              s-14
-              "
-            >
               {#if !counterTotalAnimated}
-                (${toDecimalFix((WIDGET_DATA?.competition?.data?.total_prize - WIDGET_DATA?.competition?.data?.betarena_commission), 2, true) ?? ''})
+                {toDecimalFix((WIDGET_DATA?.competition?.data?.total_prize - WIDGET_DATA?.competition?.data?.betarena_commission), 2, true) ?? ''} BTA
               {:else}
-                (${toDecimalFix(counterTotalPrize, 2, true)})
+                {toDecimalFix(counterTotalPrize, 2, true)} BTA
               {/if}
-            </span>
 
-          </p>
+              <span
+                class=
+                "
+                color-grey-v2
+                grey-v1
+                s-14
+                "
+              >
+                {#if !counterTotalAnimated}
+                  (${toDecimalFix((WIDGET_DATA?.competition?.data?.total_prize - WIDGET_DATA?.competition?.data?.betarena_commission), 2, true) ?? ''})
+                {:else}
+                  (${toDecimalFix(counterTotalPrize, 2, true)})
+                {/if}
+              </span>
+
+            </p>
+
+          </div>
 
         </div>
+
+        <!--
+        ▓▓ Target competition countdown / status (component).
+        -->
+        {#if WIDGET_DATA?.competition?.data?.status != 'pending'}
+          <div
+            id="countdown-box"
+            class=
+            "
+            width-fit-content
+            "
+          >
+            <CompCountdownStatus
+              {isViewMobile}
+              {isViewTablet}
+              forceView={false}
+              B_COMP_HIGH_D={WIDGET_DATA}
+              WIDGET_T_DATA={WIDGET_T_DATA}
+              designView={'2'}
+            />
+          </div>
+        {/if}
 
       </div>
-
-      <!--
-      ▓▓ Target competition countdown / status (component).
-      -->
-      {#if WIDGET_DATA?.competition?.data?.status != 'pending'}
-        <div
-          id="countdown-box"
-          class=
-          "
-          width-fit-content
-          "
-        >
-          <CompCountdownStatus
-            {isViewMobile}
-            {isViewTablet}
-            forceView={false}
-            B_COMP_HIGH_D={WIDGET_DATA}
-            WIDGET_T_DATA={WIDGET_T_DATA}
-            designView={'2'}
-          />
-        </div>
-      {/if}
-
-    </div>
+    </a>
 
     <!--
     ▓▓ Inner box of further competition data.
