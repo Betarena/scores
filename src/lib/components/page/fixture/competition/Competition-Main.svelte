@@ -118,6 +118,7 @@
   $: WIDGET_T_DATA = $page.data?.B_FIX_COMP_T;
 	$: B_SAP_D3_TEAM_M = $page.data?.B_SAP_D3_TEAM_M;
 	$: B_SAP_D3_CP_M = $page.data?.B_SAP_D3_CP_M;
+  $: participantNumber = WIDGET_DATA?.competition?.data?.participants?.yes?.length + WIDGET_DATA?.competition?.data?.participants?.no?.length
 
   // ▓▓ IMPORTANT
   // ▓▓ Reactivity deep-value listen(s).
@@ -1166,12 +1167,14 @@
               no-wrap
               "
             >
-              {WIDGET_DATA?.competition?.data?.participants?.yes?.length ?? 0}
+              {participantNumber ?? 0}
               {WIDGET_T_DATA?.title_participants ?? translationObject?.participants}
             </p>
           {/if}
 
-          {#if WIDGET_DATA?.competition?.data?.participants?.yes?.length > 0}
+          {#if participantNumber > 0}
+
+            {@const participantMerger = [ ...WIDGET_DATA?.competition?.data?.participants?.yes, ...WIDGET_DATA?.competition?.data?.participants?.no]}
 
             <div
               class=
@@ -1184,7 +1187,7 @@
               class:m-l-10={!isViewMobile}
             >
 
-              {#each WIDGET_DATA?.competition?.data?.participants?.yes?.slice(0, (isViewTablet ? 3 : 5)) ?? [] as uid}
+              {#each participantMerger?.slice(0, (isViewTablet ? 3 : 5)) ?? [] as uid}
 
                 <img
                   class=
