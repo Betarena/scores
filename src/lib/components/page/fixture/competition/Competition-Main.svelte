@@ -1329,7 +1329,7 @@
   div#fixture⮕competition⮕w⮕main⮕participants img.participant-main-img
   {
     /* 🎨 style */
-    margin-right: -15px;
+    margin-right: -9px;
     border-radius: 32px;
     border: 2px solid var(--whitev2);
   }
