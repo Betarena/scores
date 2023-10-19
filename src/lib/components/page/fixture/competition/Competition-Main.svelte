@@ -33,7 +33,7 @@
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlog } from '$lib/utils/debug.js';
-	import { toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
+	import { langPrefix, toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
 	import { translationObject } from '$lib/utils/translation.js';
 	import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.betarena-user.js';
 	import { Competition } from '@betarena/scores-lib/dist/classes/class.competition.js';
@@ -53,8 +53,8 @@
 	import type { B_H_COMP_DATA } from '@betarena/scores-lib/types/_HASURA_.js';
 	import type { FIRE_LNNS } from '@betarena/scores-lib/types/firebase.js';
 	import type { LS2_C_Fixture } from '@betarena/scores-lib/types/livescores-v2.js';
-	import type { B_SAP_D1, B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
-	import type { B_FIX_COMP_D, B_FIX_COMP_TS } from '@betarena/scores-lib/types/types.fixture.competition.js';
+	import type { B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
+	import type { B_FIX_COMP_D, B_FIX_COMP_T } from '@betarena/scores-lib/types/types.fixture.competition.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -87,12 +87,12 @@
   ;
 
   let
-    /** @augments B_FIX_COMP_TS */
-    WIDGET_T_DATA: B_FIX_COMP_TS,
-    /** @augments B_SAP_D1 */
-    B_SAP_D1: B_SAP_D1,
-    /** @augments B_SAP_D3 */
+    /** @augments B_FIX_COMP_T */
+    WIDGET_T_DATA: B_FIX_COMP_T,
+    /** @augments B_SAP_D3 - teams */
     B_SAP_D3_TEAM_M: B_SAP_D3,
+    /** @augments B_SAP_D3 - competitions */
+    B_SAP_D3_CP_M: B_SAP_D3,
     /** @description TODO: DOC: */
     isViewMobile: boolean = true,
     /** @description TODO: DOC: */
@@ -115,9 +115,9 @@
     mirrorProbability: number
   ;
 
-  $: WIDGET_T_DATA = $page.data?.B_COMP_MAIN_T;
-  $: B_SAP_D1 = $page.data?.B_SAP_D1;
+  $: WIDGET_T_DATA = $page.data?.B_FIX_COMP_T;
 	$: B_SAP_D3_TEAM_M = $page.data?.B_SAP_D3_TEAM_M;
+	$: B_SAP_D3_CP_M = $page.data?.B_SAP_D3_CP_M;
 
   // ▓▓ IMPORTANT
   // ▓▓ Reactivity deep-value listen(s).
@@ -850,6 +850,7 @@
                 s-12
                 no-wrap
                 color-grey grey-v1
+                capitalize
                 "
               >
                 {WIDGET_T_DATA?.title_prob ?? 'Probability'}
@@ -1098,39 +1099,45 @@
         <!--
         ▓▓ Competition type (format)
         -->
-        <div
-          class=
-          "
-          width-auto
-          "
-          class:row-space-start={!isViewMobile}
+        <a
+          href={`${langPrefix()}${B_SAP_D3_CP_M?.[$sessionStore?.serverLang]}`}
         >
 
-          <p
+          <div
             class=
             "
-            s-12
-            color-grey
+            width-auto
             "
-            class:m-b-5={isViewMobile}
-            class:m-r-12={!isViewMobile}
+            class:row-space-start={!isViewMobile}
           >
-            Type
-          </p>
 
-          <p
-            class=
-            "
-            s-14
-            color-black-2
-            w-500
-            "
-          >
-            <!-- {WIDGET_DATA?.competition?.data?.type_id} -->
-            Single Predictor
-          </p>
+            <p
+              class=
+              "
+              s-12
+              color-grey
+              "
+              class:m-b-5={isViewMobile}
+              class:m-r-12={!isViewMobile}
+            >
+              Type
+            </p>
 
-        </div>
+            <p
+              class=
+              "
+              s-14
+              color-black-2
+              w-500
+              "
+            >
+              <!-- {WIDGET_DATA?.competition?.data?.type_id} -->
+              Single Predictor
+            </p>
+
+          </div>
+
+        </a>
 
         <!--
         ▓▓ Last 5 participants (preview) avatars.

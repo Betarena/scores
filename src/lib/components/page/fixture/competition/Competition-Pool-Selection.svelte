@@ -29,10 +29,10 @@
 
 	import { get } from '$lib/api/utils.js';
 	import { userUpdateBalance } from '$lib/firebase/common.js';
+	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { checkNull, toDecimalFix } from '$lib/utils/platform-functions.js';
 	import { translationObject } from '$lib/utils/translation.js';
-	import sessionStore from '$lib/store/session.js';
 
 	import CompModalMultiple from '../../../shared/COMP-Modal-Multiple.svelte';
 
@@ -44,7 +44,7 @@
 
 	import type { BetarenaUser } from '@betarena/scores-lib/types/_FIREBASE_.js';
 	import type { B_C_COMP_DATA_Prediction_Group, B_C_COMP_DATA_Status } from '@betarena/scores-lib/types/_HASURA_.js';
-	import type { B_COMP_MAIN_T } from '@betarena/scores-lib/types/types.competition.main.js';
+	import type { B_FIX_COMP_T } from '@betarena/scores-lib/types/types.fixture.competition.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -87,13 +87,13 @@
   ;
 
   let
-    /** @augments B_COMP_MAIN_T */
-    WIDGET_T_DATA: B_COMP_MAIN_T,
+    /** @augments B_FIX_COMP_T */
+    WIDGET_T_DATA: B_FIX_COMP_T,
     /** @description competition (main) | disabled buttons */
     disabledJoinBtn: boolean = true
   ;
 
-  $: WIDGET_T_DATA = $page.data?.B_COMP_MAIN_T;
+  $: WIDGET_T_DATA = $page.data?.B_FIX_COMP_T;
 
   $: isJoinedThis =
     !checkNull($userBetarenaSettings?.user)

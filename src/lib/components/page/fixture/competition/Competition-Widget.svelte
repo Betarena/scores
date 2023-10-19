@@ -30,12 +30,13 @@
 	import { onMount } from 'svelte';
 
 	import { get } from '$lib/api/utils.js';
-  import sessionStore from '$lib/store/session.js';
+	import sessionStore from '$lib/store/session.js';
+	import { langPrefix } from '$lib/utils/platform-functions.js';
 
   import SeoBox from '$lib/components/SEO-Box.svelte';
 
-	import type { B_SAP_FP_D } from '@betarena/scores-lib/types/seo-pages.js';
-	import type { B_FIX_COMP_D, B_FIX_COMP_TS } from '@betarena/scores-lib/types/types.fixture.competition.js';
+	import type { B_SAP_D3, B_SAP_FP_D } from '@betarena/scores-lib/types/seo-pages.js';
+	import type { B_FIX_COMP_D, B_FIX_COMP_S, B_FIX_COMP_T } from '@betarena/scores-lib/types/types.fixture.competition.js';
 
   // ▓▓ NOTE: ▓▓ WARNING:
   // ▓▓ Disable, if Dynamic Import is Enabled.
@@ -64,7 +65,9 @@
 
   let
     /** @description (widget) translations (+SEO) data */
-    widgetDataTranslation: B_FIX_COMP_TS,
+    widgetDataTranslation: B_FIX_COMP_T,
+    /** @description (widget) SEO data */
+    widgetDataSeo: B_FIX_COMP_S,
     /** @description (widget) main data */
     widgetDataMain: B_FIX_COMP_D,
     /** @description (widget) wether widget has or no data */
@@ -72,10 +75,13 @@
     /** @description (widget) dynamic import variable for svelte component [1] */
     MainMainAsDynamic: any,
     /** @description (misc) available global page data */
-    miscFixturePageData: B_SAP_FP_D = $page.data.FIXTURE_INFO
+    miscFixturePageData0: B_SAP_FP_D = $page.data?.FIXTURE_INFO,
+    /** @description (misc) page data for `competition` term(s) translations */
+    miscFixturePageData1: B_SAP_D3 = $page.data?.B_SAP_D3_CP_M
   ;
 
-  $: widgetDataTranslation = $page.data?.B_FIX_COMP_TS;
+  $: widgetDataSeo = $page.data?.B_FIX_COMP_S;
+  $: widgetDataTranslation = $page.data?.B_FIX_COMP_T;
   // $: WIDGET_TITLE = widgetDataTranslation?.translations?.widget_title ?? translationObject?.featured_bet_site;
 
   // #endregion ➤ 📌 VARIABLES
@@ -118,7 +124,7 @@
 
     const response = await get
     (
-      `/api/data/fixture/competition?fixtureId=${miscFixturePageData?.data?.id}&decompress`,
+      `/api/data/fixture/competition?fixtureId=${miscFixturePageData0?.data?.id}&decompress`,
       null,
       true,
       true,
@@ -187,9 +193,24 @@
 -->
 
 <SeoBox>
+
   <!--
-  SEO CONTENT GOES HERE
+  ▓▓ Competition Lobby Url
   -->
+  <a
+    href={`${langPrefix()}${miscFixturePageData1?.[$sessionStore?.serverLang]}`}
+  >
+    {`${langPrefix()}${miscFixturePageData1?.[$sessionStore?.serverLang]}`}
+  </a>
+
+  <!--
+  ▓▓ Competition URL
+  -->
+  <a
+    href={widgetDataSeo?.data?.competition_url}
+  >
+    {widgetDataSeo?.data?.competition_url}
+  </a>
 </SeoBox>
 
 <!--
