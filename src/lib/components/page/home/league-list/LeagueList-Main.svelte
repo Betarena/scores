@@ -39,7 +39,7 @@
 	import SouthAmerica from './assets/_South_America.svelte';
 	import World from './assets/_World.svelte';
 
-	import type { B_LEGL_D, B_LEGL_League_Main, B_LEGL_T } from '@betarena/scores-lib/types/types.home.league-list.js';
+	import type { B_LEGL_D, B_LEGL_League_Country, B_LEGL_League_Main, B_LEGL_T } from '@betarena/scores-lib/types/types.home.league-list.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -98,13 +98,13 @@
     /** @description */
     fullCountryListDisplayNum: number = 4,
     /** @description */
-    leagueSearchData = [],
+    leagueSearchData: B_LEGL_League_Main[] = [],
     /** @description */
-	  countrySearchData = [],
+	  countrySearchData: B_LEGL_League_Country[]= [],
     /** @description official **League List** data map. */
     leagueListMap: Map < number, B_LEGL_League_Main[] > = new Map(B_LEGL_D?.league_list),
     /** @description official **League List** country map. */
-    leagueListCountryMap = new Map(B_LEGL_D?.country_list)
+    leagueListCountryMap: Map < number, B_LEGL_League_Country > = new Map(B_LEGL_D?.country_list)
   ;
 
   // #endregion ➤ 📌 VARIABLES
@@ -719,7 +719,7 @@
                     color-grey
                     "
                   >
-                    {item?.country_name}
+                    {leagueListCountryMap.get(item?.country_id)?.country_name ?? ''}
                   </p>
 
                   <p
@@ -730,7 +730,7 @@
                     color-black
                     "
                   >
-                    {item?.league_name}
+                    {item?.league_name ?? ''}
                   </p>
 
                 </div>
@@ -838,7 +838,7 @@
                   color-black
                   "
                 >
-                  {item.country_name}
+                  {item?.country_name ?? ''}
                 </p>
 
               </div>
