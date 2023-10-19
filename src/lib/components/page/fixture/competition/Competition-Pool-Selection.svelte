@@ -545,7 +545,7 @@
   .dark-background-1 .disabled
   {
     /* 🎨 style */
-    background-color: var(--dark-theme-1-7-shade) !important;
+    background-color: rgba(49, 49, 49, 0.5) !important;
   }
 
 </style>
