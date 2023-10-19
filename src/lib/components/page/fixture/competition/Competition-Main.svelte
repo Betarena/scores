@@ -42,12 +42,12 @@
 	import CompCountdownStatus from '$lib/components/shared/COMP-Countdown-+-Status.svelte';
 	import CompetitionPoolSelection from './Competition-Pool-Selection.svelte';
 
-  import icon_win from './assets/icon-green-thumbs-up.svg';
   import icon_draw from './assets/icon-grey-draw.svg';
   import icon_probability_green from './assets/icon-probability-green.svg';
   import icon_probability_red from './assets/icon-probability-red.svg';
   import icon_profile_avatar from './assets/icon-profile-avatar.svg';
-  import icon_loose from './assets/icon-red-thumbs-down.svg';
+  import icon_loose from './assets/icon-thumbs-down-red.svg';
+  import icon_win from './assets/icon-thumbs-up-green.svg';
 
 	import type { BetarenaUser } from '@betarena/scores-lib/types/_FIREBASE_.js';
 	import type { B_H_COMP_DATA } from '@betarena/scores-lib/types/_HASURA_.js';
@@ -78,10 +78,10 @@
   ;
 
   const
-    /** @description TODO: DOC: */
-    VIEWPORT_TABLET_INIT = 1200,
-    /** @description TODO: DOC: */
+    /** @description 📱 MOBILE */
     VIEWPORT_MOBILE_INIT = 581,
+    /** @description 💻 TABLET */
+    VIEWPORT_TABLET_INIT = 658,
     /** @description 📌 `this` component **main** `id` and `data-testid` prefix. */
     CNAME = 'fixture⮕competition⮕w⮕main'
   ;
@@ -569,7 +569,7 @@
   />
 
   <!--
-  ▓▓ WIDGET MAIN
+  ▓▓ Main widget
   -->
   <div
     id="{CNAME}⮕box"
@@ -577,7 +577,7 @@
   >
 
     <!--
-    ▓▓ FIXTURE COMPETITION ➤ MAIN
+    ▓▓ Main (top) competition data.
     -->
     <div
       id="{CNAME}⮕profile"
@@ -585,94 +585,82 @@
       class:predict-to-lose={WIDGET_DATA?.competition?.data?.target_team_prediction_term == 'lose'}
       class:column-space-start={isViewMobile}
       class:row-space-out={!isViewTablet || (isViewTablet && !isViewMobile)}
+      class:stauts-component-adjust={WIDGET_DATA?.competition?.data?.status != 'pending'}
     >
 
       <!--
-      ▓▓ COMPETITION ➤ PROFILE INFO ➤ 1st COLUMN
+      ▓▓ Target competition target main info (1st box)
       -->
       <div
+        id="competition-info"
         class=
         "
         row-space-out
         "
-        class:m-b-24={isViewMobile}
       >
 
         <!--
-        ▓▓ COMPETITION ➤ BOX
+        ▓▓ Main prelimnary competition data
         -->
         <div
+          class=
+          "
+          row-space-start
+          flex-start
+          "
         >
 
           <!--
-          ▓▓ COMPETITION ➤ INFO BOX [1]
+          ▓▓ First column of competition Data
           -->
           <div
-            class=
-            "
-            row-space-start
-            "
-          >
-
-            <h1
-              class=
-              "
-              w-500
-              color-grey-v2
-              grey-v1
-              m-r-12
-              m-0
-              capitalize
-              "
-              class:s-16={isViewTablet}
-              class:s-20={!isViewTablet}
-            >
-              {B_SAP_D3_TEAM_M?.[$sessionStore?.serverLang]}
-            </h1>
-
-            <img
-              id=''
-              src={WIDGET_DATA?.team_logo}
-              alt='competition-team-logo'
-              title={WIDGET_DATA?.team_name}
-              loading='lazy'
-              width={isViewTablet ? 15 : 32}
-              height={isViewTablet ? 15 : 32}
-              class=
-              "
-              m-r-12
-              google-aspect-ratio
-              "
-            />
-
-            <h1
-              class=
-              "
-              color-black-2
-              w-500
-              m-0
-              "
-              class:s-16={isViewTablet}
-              class:s-20={!isViewTablet}
-            >
-              {WIDGET_DATA?.team_name ?? ''}
-            </h1>
-
-          </div>
-
-          <!--
-          ▓▓ COMPETITION ➤ INFO BOX [2]
-          -->
-          <div
-            class=
-            "
-            row-space-start
-            "
-            class:m-b-16={WIDGET_DATA?.competition?.data?.status != 'pending' && !isViewMobile}
           >
 
             <!--
-            ▓▓ COMPETITION ➤ TERM [3]
+            ▓▓ Team (term) and team image
+            -->
+            <div
+              class=
+              "
+              row-space-start
+              "
+            >
+
+              <h1
+                class=
+                "
+                w-500
+                color-grey-v2
+                grey-v1
+                m-r-5
+                m-0
+                capitalize
+                "
+                class:s-16={isViewTablet}
+                class:s-20={!isViewTablet}
+              >
+                {B_SAP_D3_TEAM_M?.[$sessionStore?.serverLang]}
+              </h1>
+
+              <img
+                id=''
+                src={WIDGET_DATA?.team_logo}
+                alt='competition-team-logo'
+                title={WIDGET_DATA?.team_name}
+                loading='lazy'
+                width={isViewTablet ? 16 : 24}
+                height={isViewTablet ? 16 : 24}
+                class=
+                "
+                m-r-5
+                google-aspect-ratio
+                "
+              />
+
+            </div>
+
+            <!--
+            ▓▓ Is-Going-To (term)
             -->
             <h1
               class=
@@ -690,14 +678,37 @@
               {WIDGET_T_DATA?.term_is_going_to_a ?? 'is going to'}
             </h1>
 
+          </div>
+
+          <!--
+          ▓▓ Second column of competition Data
+          -->
+          <div
+          >
+
             <!--
-            ▓▓ COMPETITION ➤ PREDICTION
+            ▓▓ Team name
+            -->
+            <h1
+              class=
+              "
+              color-black-2
+              w-500
+              m-0
+              "
+              class:s-16={isViewTablet}
+              class:s-20={!isViewTablet}
+            >
+              {WIDGET_DATA?.team_name ?? ''}
+            </h1>
+
+            <!--
+            ▓▓ Target competition type.
             -->
             <div
               class=
               "
-              row-space-end
-              m-r-16
+              row-space-start
               "
             >
 
@@ -718,11 +729,11 @@
               <p
                 class=
                 "
-                s-16
                 w-500
                 dark-white-v3
                 "
-                class:s-22={!isViewTablet}
+                class:s-12={isViewTablet}
+                class:s-16={!isViewTablet}
                 class:color-green={prediction_type == 'win'}
                 class:color-red-bright-v2={prediction_type == 'loose'}
                 class:color-grey={prediction_type == 'draw'}
@@ -740,20 +751,6 @@
 
           </div>
 
-          <!--
-          ▓▓ COMPETITION ➤ INFO BOX STATUS [3]
-          -->
-          {#if WIDGET_DATA?.competition?.data?.status != 'pending' && !isViewMobile}
-            <CompCountdownStatus
-              {isViewMobile}
-              {isViewTablet}
-              forceView={false}
-              B_COMP_HIGH_D={WIDGET_DATA}
-              WIDGET_T_DATA={WIDGET_T_DATA}
-              designView={'2'}
-            />
-          {/if}
-
         </div>
 
         <!--
@@ -762,7 +759,7 @@
         {#if isViewMobile}
 
           <!--
-          ▓▓ COMPETITION ➤ PROBABILITY
+          ▓▓ Target competition probability
           -->
           <div
             class=
@@ -817,7 +814,7 @@
       </div>
 
       <!--
-      ▓▓ COMPETITION ➤ PROFILE INFO ➤ 2nd COLUMN
+      ▓▓ Target competition target main info (2nd box)
       -->
       <div
         id="stats"
@@ -827,7 +824,6 @@
         {isViewMobile ? 'row-space-start' : 'width-auto'}
         "
         class:row-space-end={!isViewMobile}
-        class:m-b-16={WIDGET_DATA?.competition?.data?.status != 'pending' && isViewMobile}
       >
 
         <!--
@@ -889,7 +885,7 @@
         {/if}
 
         <!--
-        ▓▓ COMPETITION ➤ ENTRY FEE
+        ▓▓ Target competition entry-fee.
         -->
         <div
           class=
@@ -916,6 +912,7 @@
             color-black-2
             w-500
             capitalize
+            no-wrap
             "
           >
             {WIDGET_DATA?.competition?.data?.entry_fee ?? ''} BTA
@@ -934,7 +931,7 @@
         </div>
 
         <!--
-        ▓▓ COMPETITION ➤ TOTAL PRIZE
+        ▓▓ Target competition total-prize.
         -->
         <div
           class=
@@ -961,6 +958,7 @@
             w-500
             color-black-2
             capitalize
+            no-wrap
             "
           >
 
@@ -992,33 +990,41 @@
       </div>
 
       <!--
-      ▓▓ COMPETITION ➤ INFO BOX STATUS [3]
+      ▓▓ Target competition countdown / status (component).
       -->
-      {#if WIDGET_DATA?.competition?.data?.status != 'pending' && isViewMobile}
-        <CompCountdownStatus
-          {isViewMobile}
-          {isViewTablet}
-          forceView={false}
-          B_COMP_HIGH_D={WIDGET_DATA}
-          WIDGET_T_DATA={WIDGET_T_DATA}
-          designView={'2'}
-        />
+      {#if WIDGET_DATA?.competition?.data?.status != 'pending'}
+        <div
+          id="countdown-box"
+          class=
+          "
+          width-fit-content
+          "
+        >
+          <CompCountdownStatus
+            {isViewMobile}
+            {isViewTablet}
+            forceView={false}
+            B_COMP_HIGH_D={WIDGET_DATA}
+            WIDGET_T_DATA={WIDGET_T_DATA}
+            designView={'2'}
+          />
+        </div>
       {/if}
 
     </div>
 
     <!--
-    ▓▓ FIXTURE COMPETITION ➤ MAIN BOX
+    ▓▓ Inner box of further competition data.
     -->
     <div
       id="{CNAME}⮕inner-box"
     >
 
       <!--
-      ▓▓ FIXTURE COMPETITION ➤ POOL PRIZES / SECTIONS
+      ▓▓ Pool prizes / sections.
       -->
       <div
-        id="{CNAME}⮕participants"
+        id="{CNAME}⮕join-box"
         class=
         "
         m-b-24
@@ -1076,7 +1082,7 @@
       </div>
 
       <!--
-      ▓▓ FIXTURE COMPETITION ➤ FOOTER INFORMATION
+      ▓▓ Competition footer.
       -->
       <div
         class=
@@ -1086,14 +1092,14 @@
       >
 
         <!--
-        ▓▓ FIXTURE COMPETITION ➤ TYPE
+        ▓▓ Competition type (format)
         -->
         <div
           class=
           "
           width-auto
-          row-space-start
           "
+          class:row-space-start={!isViewMobile}
         >
 
           <p
@@ -1101,8 +1107,9 @@
             "
             s-12
             color-grey
-            m-r-12
             "
+            class:m-b-5={isViewMobile}
+            class:m-r-12={!isViewMobile}
           >
             Type
           </p>
@@ -1122,30 +1129,36 @@
         </div>
 
         <!--
-        ▓▓ FIXTURE COMPETITION ➤ PARTICIPANT PREVIEW (LAST-5)
+        ▓▓ Last 5 participants (preview) avatars.
         -->
         <div
+          id="{CNAME}⮕participants"
           class=
           "
           width-auto
-          participants-preview
           {isViewMobile ? 'column-space-start flex-start' : ''}
           "
           class:row-space-start={!isViewMobile}
         >
 
-          <p
-            class=
-            "
-            s-14
-            color-black-2
-            w-500
-            no-wrap
-            "
-          >
-            {WIDGET_DATA?.competition?.data?.participants?.yes?.length ?? 0}
-            {WIDGET_T_DATA?.title_participants ?? translationObject?.participants}
-          </p>
+          <!--
+          ▓▓ 💻 TABLET ▓▓ 🖥️ LAPTOP
+          ▓▓ Participant(s) title
+          -->
+          {#if !isViewMobile}
+            <p
+              class=
+              "
+              s-14
+              color-black-2
+              w-500
+              no-wrap
+              "
+            >
+              {WIDGET_DATA?.competition?.data?.participants?.yes?.length ?? 0}
+              {WIDGET_T_DATA?.title_participants ?? translationObject?.participants}
+            </p>
+          {/if}
 
           {#if WIDGET_DATA?.competition?.data?.participants?.yes?.length > 0}
 
@@ -1156,14 +1169,13 @@
               row-space-start
               participant-list
               "
+              class:m-b-5={isViewMobile}
               class:m-l-10={!isViewMobile}
-              class:m-t-5={isViewMobile}
             >
 
               {#each WIDGET_DATA?.competition?.data?.participants?.yes?.slice(0, (isViewTablet ? 3 : 5)) ?? [] as uid}
 
                 <img
-                  id=''
                   class=
                   "
                   participant-main-img
@@ -1180,6 +1192,25 @@
 
             </div>
 
+          {/if}
+
+          <!--
+          ▓▓ 📱 MOBILE
+          ▓▓ Participant(s) title
+          -->
+          {#if isViewMobile}
+            <p
+              class=
+              "
+              s-14
+              color-black-2
+              w-500
+              no-wrap
+              "
+            >
+              {WIDGET_DATA?.competition?.data?.participants?.yes?.length ?? 0}
+              {WIDGET_T_DATA?.title_participants ?? translationObject?.participants}
+            </p>
           {/if}
 
         </div>
@@ -1221,26 +1252,49 @@
     /* 🎨 style */
     min-height: 138px;
     border-radius: 8px 8px 0px 0px;
-    background: var(--white);
+    background-color: var(--white);
 		box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
     padding: 20px;
+    display: grid;
+		grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  div#fixture⮕competition⮕w⮕main⮕profile.stauts-component-adjust
+  {
+    /* 🛝 layout */
+    grid-template-rows: auto auto auto;
   }
   div#fixture⮕competition⮕w⮕main⮕profile.predict-to-win
   {
     /* 🎨 style */
-    background: linear-gradient(297deg, transparent 32.98%, #B5E5B7 212.06%);
+    background: linear-gradient(297deg, var(--white) 32.98%, #B5E5B7 212.06%, #B5E5B7 212.06%);
   }
   div#fixture⮕competition⮕w⮕main⮕profile.predict-to-lose
   {
     /* 🎨 style */
-    background: linear-gradient(311deg, transparent 61.18%, #EFC3C3 161.11%);
+    background: linear-gradient(311deg, var(--white) 61.18%, #EFC3C3 161.11%);
+  }
+  div#fixture⮕competition⮕w⮕main⮕profile div#competition-info
+  {
+    /* 📌 position */
+    grid-row: 1;
+		grid-column: 1/3;
   }
   div#fixture⮕competition⮕w⮕main⮕profile div#stats
   {
+    /* 📌 position */
+    grid-row: 2;
+		grid-column: 1/3;
     /* 🛝 layout */
     display: grid;
     gap: 32px;
     grid-auto-flow: column;
+  }
+  div#fixture⮕competition⮕w⮕main⮕profile div#countdown-box
+  {
+    /* 📌 position */
+    grid-row: 3;
+		grid-column: 1/3;
   }
 
   div#fixture⮕competition⮕w⮕main⮕inner-box
@@ -1250,12 +1304,25 @@
     background: var(--white);
   }
 
-  div#fixture⮕competition⮕w⮕main⮕participants
+  div#fixture⮕competition⮕w⮕main⮕join-box
   {
     /* 🛝 layout */
     display: grid;
     grid-template-columns: 1fr;
     gap: 12px;
+  }
+
+  div#fixture⮕competition⮕w⮕main⮕participants img.participant-main-img
+  {
+    /* 🎨 style */
+    margin-right: -15px;
+    border-radius: 32px;
+    border: 2px solid var(--whitev2);
+  }
+  div#fixture⮕competition⮕w⮕main⮕participants img.participant-main-img:last-child
+  {
+    /* 🎨 style */
+    margin-right: 0;
   }
 
   /*
@@ -1265,36 +1332,62 @@
   */
 
   @media only screen
-  /* ◼️◼️◼️ NOTE: 💻 TABLET */
-  /* ◼️◼️◼️ NOTE: independent media query widget */
+  /* ▓▓ NOTE: 💻 TABLET */
+  /* ▓▓ NOTE: independent media query widget */
   and (min-width: 658px)
   {
     div#fixture⮕competition⮕w⮕main⮕profile
     {
       /* 🎨 style */
       min-height: 88px;
-      max-height: 88px;
     }
-	}
+    div#fixture⮕competition⮕w⮕main⮕profile.stauts-component-adjust
+    {
+      /* 🛝 layout */
+      grid-template-rows: auto auto;
+    }
+    div#fixture⮕competition⮕w⮕main⮕profile div#competition-info
+    {
+      /* 📌 position */
+      grid-row: 1;
+      grid-column: 1/2;
+    }
+    div#fixture⮕competition⮕w⮕main⮕profile div#stats
+    {
+      /* 📌 position */
+      grid-row: 1;
+      grid-column: 2/4;
+      /* 🛝 layout */
+      display: grid;
+      gap: 32px;
+      grid-auto-flow: column;
+    }
+    div#fixture⮕competition⮕w⮕main⮕profile div#countdown-box
+    {
+      /* 📌 position */
+      grid-row: 2;
+      grid-column: 1/3;
+    }
 
-	@media only screen
-  /* ◼️◼️◼️ NOTE: 💻 TABLET */
-  /* ◼️◼️◼️ NOTE: independent media query widget */
-  and (min-width: 768px)
-  {
-
-    div#fixture⮕competition⮕w⮕main⮕participants
+    div#fixture⮕competition⮕w⮕main⮕join-box
     {
       /* 🛝 layout */
       gap: 12px;
       grid-template-columns: 1fr 1fr;
     }
-
 	}
 
 	@media only screen
-  /* ◼️◼️◼️ NOTE: 🖥️ LAPTOP */
-  /* ◼️◼️◼️ NOTE: independent media query widget */
+  /* ▓▓ NOTE: 💻 TABLET */
+  /* ▓▓ NOTE: independent media query widget */
+  and (min-width: 768px)
+  {
+    /* NaN */
+	}
+
+	@media only screen
+  /* ▓▓ NOTE: 🖥️ LAPTOP */
+  /* ▓▓ NOTE: independent media query widget */
   and (min-width: 1200px)
   {
     /* NaN */
@@ -1320,17 +1413,23 @@
   .dark-background-1 div#fixture⮕competition⮕w⮕main⮕profile.predict-to-win
   {
     /* 🎨 style */
-    background: linear-gradient(297deg, transparent 32.98%, #3F7B41 212.06%);
+    background: linear-gradient(291deg, var(--dark-theme-1) 36.28%, #3F7B41 172.84%);
   }
   .dark-background-1 div#fixture⮕competition⮕w⮕main⮕profile.predict-to-lose
   {
     /* 🎨 style */
-    background: linear-gradient(311deg, transparent 32.98%, #9F4949 212.06%);
+    background: linear-gradient(297deg, var(--dark-theme-1) 33.23%, #9F4949 171.99%);
   }
   .dark-background-1 div#fixture⮕competition⮕w⮕main⮕inner-box
   {
     /* 🎨 style */
     background: var(--dark-theme-1-4-shade);
+  }
+
+  .dark-background-1 div#fixture⮕competition⮕w⮕main⮕participants img.participant-main-img
+  {
+    /* 🎨 style */
+    border: 2px solid var(--dark-theme-1-4-shade);
   }
 
 </style>

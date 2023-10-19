@@ -35,7 +35,9 @@
 
 	import CompModalMultiple from '../../../shared/COMP-Modal-Multiple.svelte';
 
+  import icon_thumbs_down_grey from './assets/icon-thumbs-down-grey.svg';
   import icon_thumbs_down_white from './assets/icon-thumbs-down-white.svg';
+  import icon_thumbs_up_grey from './assets/icon-thumbs-up-grey.svg';
   import icon_thumbs_up_white from './assets/icon-thumbs-up-white.svg';
   import icon_trophy from './assets/icon-trophy.svg';
 
@@ -88,8 +90,6 @@
     WIDGET_T_DATA: B_COMP_MAIN_T,
     /** @description competition (main) | show / hide main modal information */
     showModal: boolean = false,
-    /** @description competition (main) | view type */
-    modalViewType: 'confirm' | 'insufficient' | 'geo-restriction' | 'not-authenticated' = 'confirm',
     /** @description competition (main) | disabled buttons */
     disabledJoinBtn: boolean = true
   ;
@@ -213,7 +213,7 @@
 -->
 
 <!--
-MORE INFORMATION / ALERT MODAL
+▓▓ Cast vote modal
 -->
 {#if showModal}
   <CompModalMultiple
@@ -227,7 +227,7 @@ MORE INFORMATION / ALERT MODAL
 {/if}
 
 <!--
-POOL SELECTION ➡ MAIN
+▓▓ Pool Main Component
 -->
 <div
   id="{CNAME}⮕main"
@@ -235,7 +235,7 @@ POOL SELECTION ➡ MAIN
 >
 
   <!--
-  MORE INFO & VOTE ACTION
+  ▓▓ Further pool info and vote cast.
   -->
   <div
     id="{CNAME}⮕top-row"
@@ -246,7 +246,7 @@ POOL SELECTION ➡ MAIN
   >
 
     <!--
-    ▓▓ POOL SELECTION ➡ PARTICIPANT ACTION BUTTON
+    ▓▓ Participant join and pool prize data.
     -->
     <div
       class=
@@ -256,7 +256,7 @@ POOL SELECTION ➡ MAIN
     >
 
       <!--
-      BUTTON ➡ JOIN COMPETITION
+      ▓▓ Status Button for competition join.
       -->
       {#if
         (!isJoinedThis || isJoinedNotThis)
@@ -277,7 +277,7 @@ POOL SELECTION ➡ MAIN
         >
           <img
             id=''
-            src='{viewType == 'yes' ? icon_thumbs_up_white : icon_thumbs_down_white}'
+            src='{viewType == 'yes' ? (!isJoinedNotThis ? icon_thumbs_up_white : icon_thumbs_up_grey) : (!isJoinedNotThis ? icon_thumbs_down_white : icon_thumbs_down_grey)}'
             alt=''
             title=''
             loading='lazy'
@@ -290,7 +290,7 @@ POOL SELECTION ➡ MAIN
         </button>
 
       <!--
-      BOX ➡ STATUS (MANY-CONDITIONS) PILL
+      ▓▓ Status (many) pill state.
       -->
       {:else}
 
@@ -302,18 +302,18 @@ POOL SELECTION ➡ MAIN
           "
           class:green=
           {
-            isJoinedThis && !['canceled', 'finished'].includes(competitionStatus)
-            || competitionStatus == 'finished' && winnerGroup == viewType
+            (isJoinedThis && !['canceled', 'finished'].includes(competitionStatus))
+            || (competitionStatus == 'finished' && winnerGroup == viewType)
           }
           class:disabled=
           {
             competitionStatus == 'canceled'
-            || competitionStatus == 'finished' && winnerGroup != viewType
+            || (competitionStatus == 'finished' && winnerGroup != viewType)
           }
         >
 
           <!--
-          WON TROPHY ICON
+          ▓▓ Winner group trophy.
           -->
           {#if competitionStatus == 'finished' && winnerGroup == viewType}
             <img
@@ -332,7 +332,24 @@ POOL SELECTION ➡ MAIN
           {/if}
 
           <!--
-          STATUS TEXT
+          ▓▓ Target joined vote thumbs.
+          -->
+          {#if isJoinedThis && !['canceled', 'finished'].includes(competitionStatus)}
+            <img
+              id=''
+              src='{viewType == 'yes' ? icon_thumbs_up_white : icon_thumbs_down_white}'
+              alt=''
+              title=''
+              loading='lazy'
+              class=
+              "
+              m-r-8
+              "
+            />
+          {/if}
+
+          <!--
+          ▓▓ Target joined status.
           -->
           <p
             class=
@@ -367,7 +384,7 @@ POOL SELECTION ➡ MAIN
     </div>
 
     <!--
-    ▓▓ POOL SELECTION ➡ TOTAL PRIZE FOR 'THIS' VOTE
+    ▓▓ Total pool prize.
     -->
     <div
       class=
@@ -441,7 +458,6 @@ POOL SELECTION ➡ MAIN
     /* 🎨 style */
     width: 100%;
     background: var(--whitev2);
-		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
 		border-radius: 8px;
     overflow: hidden;
   }
@@ -456,8 +472,7 @@ POOL SELECTION ➡ MAIN
   .disabled
   {
     /* 🎨 style */
-    background-color: var(--whitev2);
-    opacity: 0.5;
+    background-color: var(--grey-shade);
   }
   div.status-pill
   {
@@ -527,7 +542,7 @@ POOL SELECTION ➡ MAIN
   .dark-background-1 .disabled
   {
     /* 🎨 style */
-    background-color: var(--dark-theme-1);
+    background-color: var(--dark-theme-1-7-shade) !important;
   }
 
 </style>
