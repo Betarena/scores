@@ -22,7 +22,7 @@ import type { B_FS_D, B_FS_T } from '@betarena/scores-lib/types/scoreboard.js';
 import type { B_SAP_D1, B_SAP_D3, B_SAP_FP_D, B_SAP_FP_T } from '@betarena/scores-lib/types/seo-pages.js';
 import type { B_STA_D, B_STA_T } from '@betarena/scores-lib/types/standings.js';
 import type { B_ST_D, B_ST_T } from '@betarena/scores-lib/types/statistics.js';
-import type { B_FIX_COMP_TS } from '@betarena/scores-lib/types/types.fixture.competition.js';
+import type { B_FIX_COMP_S, B_FIX_COMP_T } from '@betarena/scores-lib/types/types.fixture.competition.js';
 import type { B_VOT_D, B_VOT_T } from '@betarena/scores-lib/types/votes.js';
 import type { PageLoad } from './$types';
 
@@ -116,7 +116,9 @@ export async function load
     FIXTURE_H2H_TRANSLATION,
     STANDINGS_T,
     STANDINGS_DATA,
-    B_FIX_COMP_TS,
+    B_FIX_COMP_T,
+    B_FIX_COMP_S,
+    B_SAP_D3_CP_M,
     B_SAP_D3_TEAM_M
   ] = await fetchData
   (
@@ -174,7 +176,9 @@ export async function load
     FIXTURES_ODDS_T,
     STANDINGS_T,
     STANDINGS_DATA,
-    B_FIX_COMP_TS,
+    B_FIX_COMP_T,
+    B_FIX_COMP_S,
+    B_SAP_D3_CP_M,
     B_SAP_D3_TEAM_M
   };
 
@@ -243,7 +247,9 @@ type PP_PROMISE_2 =
   B_H2H_T | undefined,
   B_STA_T | undefined,
   B_STA_D | undefined,
-  B_FIX_COMP_TS | undefined,
+  B_FIX_COMP_T | undefined,
+  B_FIX_COMP_S | undefined,
+  B_SAP_D3 | undefined,
   B_SAP_D3 | undefined,
 ];
 
@@ -344,7 +350,9 @@ async function fetchData
     `/api/data/fixture/h2h?lang=${_lang}`,
     `/api/data/league/standings?lang=${_lang}`,
     `/api/data/league/standings?league_id=${leagueId}`,
-    `/api/data/fixture/competition?lang=${_fixtureId}&decompress`,
+    `/api/data/fixture/competition?lang=${_lang}&decompress`,
+    `/api/data/fixture/competition?lang=${_lang}&seo=true&fixtureId=${_fixtureId}&decompress`,
+    `/api/data/main/seo-pages?term=competitions&decompress`,
     `/api/data/main/seo-pages?term=team&decompress`,
   ];
 
