@@ -31,6 +31,7 @@ const sessionStoreObj: Platform_Session =
   showUserguide1: false,
   showUserguide1Conf: false,
   showFixtureCompetition: false,
+  isShowFixtureCompetitionJoinModal: false,
   // ### NOTE:
   // ### variables for language handle.
   lang_intent: undefined,

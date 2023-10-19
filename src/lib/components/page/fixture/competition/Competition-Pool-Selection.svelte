@@ -32,6 +32,7 @@
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { checkNull, toDecimalFix } from '$lib/utils/platform-functions.js';
 	import { translationObject } from '$lib/utils/translation.js';
+	import sessionStore from '$lib/store/session.js';
 
 	import CompModalMultiple from '../../../shared/COMP-Modal-Multiple.svelte';
 
@@ -88,8 +89,6 @@
   let
     /** @augments B_COMP_MAIN_T */
     WIDGET_T_DATA: B_COMP_MAIN_T,
-    /** @description competition (main) | show / hide main modal information */
-    showModal: boolean = false,
     /** @description competition (main) | disabled buttons */
     disabledJoinBtn: boolean = true
   ;
@@ -136,7 +135,7 @@
   {
     if (!browser) return;
 
-    showModal = false
+    $sessionStore.isShowFixtureCompetitionJoinModal = false;
 
     // ▓▓ [🐞]
     // alert('Joining Competition');
@@ -215,13 +214,13 @@
 <!--
 ▓▓ Cast vote modal
 -->
-{#if showModal}
+{#if $sessionStore.isShowFixtureCompetitionJoinModal}
   <CompModalMultiple
     {isViewMobile}
     {isViewTablet}
     balanceDeductAmount={entryFee}
     {geoLocationRestrictions}
-    on:closeModal={() => showModal = false}
+    on:closeModal={() => $sessionStore.isShowFixtureCompetitionJoinModal = false}
     on:confirmEntry={() => joinCompetition()}
   />
 {/if}
@@ -270,7 +269,7 @@
           w-500
           btn-primary-v2
           "
-          on:click={() => showModal = true}
+          on:click={() => $sessionStore.isShowFixtureCompetitionJoinModal = true}
           class:disabled={isJoinedNotThis || competitionStatus != 'pending' || disabledJoinBtn}
           class:color-grey={isJoinedNotThis || competitionStatus != 'pending' || disabledJoinBtn}
           disabled={isJoinedNotThis || competitionStatus != 'pending' || disabledJoinBtn}
