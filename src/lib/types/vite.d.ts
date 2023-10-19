@@ -45,9 +45,9 @@ interface ImportMetaEnv
   /** @description Target Sentry `url`. */
   readonly VITE_SENTRY_URL?: string | undefined;
   /** @description Target `Environment` for Sentry (duplicate) */
-  readonly VITE_SENTRY_ENVIRONMENT?: string | undefined;
+  readonly VITE_SENTRY_ENVIRONMENT?: 'production' | 'development' | 'local';
   /** @description Target `Environment` for Sentry */
-  readonly SENTRY_ENVIRONMENT?: string | undefined;
+  readonly SENTRY_ENVIRONMENT?: 'production' | 'development' | 'local';
   /** @description Target `Authentication Token` for Sentry Actions */
   readonly SENTRY_AUTH_TOKEN?: string;
   /** @description Target action of `Sourcemap Upload` for Sentry */

@@ -20,23 +20,28 @@ import type { Handle, HandleServerError, RequestEvent } from '@sveltejs/kit';
 
 // #region ➤ 💠 MISC.
 
-// ### [🐞]
-Sentry.init
-(
-  {
-    dsn: process.env.VITE_SENTRY_URL,
-    tracesSampleRate: 1,
-    release: `v.${process.env?.npm_package_version}`,
-    environment: process.env.SENTRY_ENVIRONMENT,
-  }
-);
-// ### [🐞]
-Sentry.setTags
-(
-  {
-    location: 'server'
-  }
-);
+// ▓▓ CHECK
+// ▓▓ for disabling of Sentry on localhost
+if (process.env.VITE_SENTRY_ENVIRONMENT != 'local')
+{
+  // ### [🐞]
+  Sentry.init
+  (
+    {
+      dsn: process.env.VITE_SENTRY_URL,
+      tracesSampleRate: 1,
+      release: `v.${process.env?.npm_package_version}`,
+      environment: process.env.SENTRY_ENVIRONMENT,
+    }
+  );
+  // ### [🐞]
+  Sentry.setTags
+  (
+    {
+      location: 'server'
+    }
+  );
+}
 
 // ### [🐞]
 dlog
