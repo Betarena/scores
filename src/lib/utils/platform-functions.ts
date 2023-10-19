@@ -587,15 +587,25 @@ export async function promiseUrlsPreload
         _url: string
       ): Promise < any > =>
       {
+        // ### [🐞]
+        const t0: number = performance.now();
 
         const response: Response = await fetch(_url);
         const resJson: any = await response.json();
 
+        // ### [🐞]
+        const t1: number = performance.now();
+
         // ▓▓ [🐞]
-        dlog
+        dlogv2
         (
-          `🏹 FETCH (GET) ${_url}`,
-          true
+          `🏹 FETCH (GET) (preload) ${_url} `,
+          [
+            `⏱️ ${((t1 - t0) / 1000).toFixed(2)} sec`,
+          ],
+          true,
+          null,
+          false
         );
 
         // ▓▓ NOTE: ▓▓ IMPORTANT
