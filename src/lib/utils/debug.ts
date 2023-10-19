@@ -308,6 +308,9 @@ export function dlogv2
   if (groupName.includes('🏹 FETCH'))
     style = 'background: #C4FD00; color: #000000; border-radius: 1.5px; padding: 2.5px 2.5px;';
   ;
+  if (groupName.includes('(preload)'))
+    style = 'background: #004B2B; color: #00CF77; border-radius: 1.5px; padding: 2.5px 2.5px;';
+  ;
 
   // ▓▓ CHECK
   // ▓▓ for showing logs.
