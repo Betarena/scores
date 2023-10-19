@@ -97,7 +97,7 @@ export async function GET
   ;
 	if (if_M_0)
   {
-    data = validUrlCheck
+    return await validUrlCheck
     (
       langUrl,
       sportUrl,
@@ -107,19 +107,6 @@ export async function GET
       playerUrl,
       competitionMainUrl,
       competitionUrl
-    );
-
-    const compressed: string = LZString.compress(JSON.stringify(data));
-
-    // ### [🐞]
-    // console.log(JSON.parse(LZString.decompress(compressed)));
-
-    return json
-    (
-      {
-        data: compressed,
-        loadType
-      }
     );
 	}
 
@@ -643,16 +630,28 @@ export async function GET
 // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
 /**
+ * @author
+ *  @migbash
+ * @summary
+ *  🟥 MAIN | 🔹 HELPER
  * @description
- *  📌
+ *  📌 Validates for target `URL` validity.
  * @param { stiring } langUrl
+ *  Target `language` value.
  * @param { stiring } sportUrl
+ *  Target `sport` value.
  * @param { stiring } countryUrl
+ *  Target `country` value.
  * @param { stiring } leagueUrl
+ *  Target `league` value.
  * @param { stiring } fixtureUrl
+ *  Target `fixture` value.
  * @param { stiring } playerUrl
+ *  Target `player` value.
  * @param { stiring } competitionMainUrl
+ *  Target `competition (lobby)` value.
  * @param { stiring } competitionUrl
+ *  Target `competition (target)` value.
  * @returns { Promise < Response > }
  */
 async function validUrlCheck

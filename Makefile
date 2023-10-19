@@ -94,6 +94,17 @@ heroku-production-deploy-branch-current:
 	@git push heroku-prod $$(git branch --show-current):main -f
 #
 
+heroku-production-deploy-STOP:
+	@echo \
+		"$(COLOUR_R)\
+		\n◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️\
+		\n◼️ ❌ Heroku-Prod | Stopping Builds         ◼️\
+		\n◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️\
+		$(END_COLOUR)\n"
+	@heroku builds:cancel --remote heroku-prod
+	@echo ""
+#
+
 heroku-production-secrets-update:
 	@echo \
 		"$(COLOUR_R)\

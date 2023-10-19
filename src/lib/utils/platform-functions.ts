@@ -589,12 +589,19 @@ export async function promiseUrlsPreload
       {
 
         const response: Response = await fetch(_url);
-        const resJson: any = await response.json()
+        const resJson: any = await response.json();
 
-        // ### NOTE: | IMPORTANT
-        // ### step necessary to 'decompress' lz-string encoded payload.
+        // ▓▓ [🐞]
+        dlog
+        (
+          `🏹 FETCH (GET) ${_url}`,
+          true
+        );
+
+        // ▓▓ NOTE: ▓▓ IMPORTANT
+        // ▓▓ step necessary to 'decompress' lz-string encoded payload.
         if (_url.includes('decompress'))
-          return JSON.parse(LZString.decompress(resJson?.data));
+          return tryCatch(() => JSON.parse(LZString.decompress(resJson?.data)));
         ;
 
         return resJson;
@@ -723,10 +730,10 @@ export async function promiseValidUrlCheck
 
   const response: any = await get
   (
-    `/api/data/main/seo-pages${queryStr}&decompress`,
+    `/api/data/main/seo-pages${queryStr}`,
     fetch,
     true,
-    true
+    false
   );
 
   console.log('🎟️', response)

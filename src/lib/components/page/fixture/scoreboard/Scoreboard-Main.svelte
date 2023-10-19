@@ -100,6 +100,7 @@
   (
   ): Promise < void >
   {
+    FIXTURE_SCOREBOARD._1x2 = null;
 
 		let count = 0;
 
