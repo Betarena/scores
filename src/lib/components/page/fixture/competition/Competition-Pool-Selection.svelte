@@ -78,7 +78,9 @@
     /** @description competition (main) | imposed geo-location restriction */
     geoLocationRestrictions: string[],
     /** @description competition (main) | `native` status */
-    competitionStatus: B_C_COMP_DATA_Status
+    competitionStatus: B_C_COMP_DATA_Status,
+    /** @description competition showModal */
+    showModal: boolean = false
   ;
 
   const
@@ -136,6 +138,7 @@
     if (!browser) return;
 
     $sessionStore.isShowFixtureCompetitionJoinModal = false;
+    showModal = false;
 
     // ▓▓ [🐞]
     // alert('Joining Competition');
@@ -214,13 +217,14 @@
 <!--
 ▓▓ Cast vote modal
 -->
-{#if $sessionStore.isShowFixtureCompetitionJoinModal}
+{#if $sessionStore.isShowFixtureCompetitionJoinModal && showModal}
   <CompModalMultiple
     {isViewMobile}
     {isViewTablet}
     balanceDeductAmount={entryFee}
+    targetVote={viewType}
     {geoLocationRestrictions}
-    on:closeModal={() => $sessionStore.isShowFixtureCompetitionJoinModal = false}
+    on:closeModal={() => { $sessionStore.isShowFixtureCompetitionJoinModal = false; showModal = false; }}
     on:confirmEntry={() => joinCompetition()}
   />
 {/if}
@@ -269,7 +273,7 @@
           w-500
           btn-primary-v2
           "
-          on:click={() => $sessionStore.isShowFixtureCompetitionJoinModal = true}
+          on:click={() => { $sessionStore.isShowFixtureCompetitionJoinModal = true; showModal = true; }}
           class:disabled={isJoinedNotThis || competitionStatus != 'pending' || disabledJoinBtn}
           class:color-grey={isJoinedNotThis || competitionStatus != 'pending' || disabledJoinBtn}
           disabled={isJoinedNotThis || competitionStatus != 'pending' || disabledJoinBtn}

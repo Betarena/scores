@@ -29,6 +29,8 @@
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 
+	import type { B_C_COMP_DATA_Prediction_Group } from '@betarena/scores-lib/types/_HASURA_.js';
+
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -47,7 +49,9 @@
     /** @description competition (main) | amount entry fee */
     balanceDeductAmount: number,
     /** @description competition (main) | imposed geo-location restriction */
-    geoLocationRestrictions: string[]
+    geoLocationRestrictions: string[],
+    /** @description target casted vote on competition by user */
+    targetVote: B_C_COMP_DATA_Prediction_Group
   ;
 
 	const
@@ -219,7 +223,7 @@ MODAL - DYNAMIC
       color-black-2
       "
     >
-      Confirm that you wish to Join Yes and be charged for
+      Confirm that you wish to Join <span class="capitalize">{targetVote}</span> and be charged for
       <span class="color-primary">{balanceDeductAmount} BTA</span> from your current balance.
     </p>
 
