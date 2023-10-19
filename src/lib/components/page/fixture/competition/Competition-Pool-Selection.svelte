@@ -285,7 +285,7 @@
             m-r-8
             "
           />
-          Join {viewType == 'yes' ? (WIDGET_T_DATA?.title_join_yes ?? 'Yes') : (WIDGET_T_DATA?.title_join_no ?? 'No')}
+            {viewType == 'yes' ? (WIDGET_T_DATA?.title_join_yes ?? 'Yes') : (WIDGET_T_DATA?.title_join_no ?? 'No')}
         </button>
 
       <!--
