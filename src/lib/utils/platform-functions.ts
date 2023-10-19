@@ -730,10 +730,10 @@ export async function promiseValidUrlCheck
 
   const response: any = await get
   (
-    `/api/data/main/seo-pages${queryStr}&decompress`,
+    `/api/data/main/seo-pages${queryStr}`,
     fetch,
     true,
-    true
+    false
   );
 
   console.log('🎟️', response)
