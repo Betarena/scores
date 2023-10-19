@@ -123,7 +123,10 @@ heroku-development-deploy-branch-current:
 		\n◼️ 🚀 Pushing current branch to Heroku-Dev ◼️\
 		\n◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️\
 		$(END_COLOUR)\n"
+	@heroku releases --remote heroku-dev
+	@echo ""
 	@git push heroku-dev $$(git branch --show-current):main -f
+	@echo ""
 #
 
 heroku-development-maintenance-OFF:
