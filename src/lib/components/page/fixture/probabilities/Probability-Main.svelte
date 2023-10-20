@@ -136,7 +136,7 @@
             {
               home: firebaseSportbook?.markets?.['1X2FT']?.data?.[0]?.value?.toFixed(2),
               draw: firebaseSportbook?.markets?.['1X2FT']?.data?.[1]?.value?.toFixed(2),
-              away: firebaseSportbook?.markets?.['1X2FT']?.data?.[3]?.value?.toFixed(2)
+              away: firebaseSportbook?.markets?.['1X2FT']?.data?.[2]?.value?.toFixed(2)
             },
             btts: firebaseSportbook?.markets?.['BTSC']?.data?.[0]?.value?.toFixed(2),
             over_2_5: firebaseSportbook?.markets?.['HCTG3']?.data?.[0]?.value?.toFixed(2)
