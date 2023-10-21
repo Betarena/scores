@@ -112,6 +112,7 @@
 				const firebase_sportbook_title = firebaseSportbook?.sportbook;
         const if_M_0 =
           m_sportBookTitle.toLowerCase() ==	firebase_sportbook_title.toLowerCase()
+          && FIXTURE_SCOREBOARD?.id == firebaseSportbook?.gameid
           && firebaseSportbook.markets != null
           && firebaseSportbook.markets['1X2FT'] !=	null
           && firebaseSportbook.markets['1X2FT'].data[0].value != null

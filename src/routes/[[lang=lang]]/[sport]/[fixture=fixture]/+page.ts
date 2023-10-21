@@ -306,6 +306,15 @@ async function fetchData
     fetch
   ) as PP_PROMISE_0;
 
+  if (FIXTURE_INFO == null)
+    PRELOAD_exitPage
+    (
+      performance.now(),
+      'fixture',
+      400,
+      FIXTURE_PAGE_ERROR_MSG
+    );
+
 	const leagueId: number = FIXTURE_INFO?.league_id;
   const teamIds: string = FIXTURE_INFO?.data?.team_ids;
 

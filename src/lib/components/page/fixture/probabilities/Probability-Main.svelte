@@ -13,7 +13,7 @@
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { getImageBgColor } from '$lib/utils/color_thief';
 	import { googleActionsStr } from '$lib/utils/google.js';
-	import { googleEventLog, viewport_change } from '$lib/utils/platform-functions.js';
+	import { checkNull, googleEventLog, viewport_change } from '$lib/utils/platform-functions.js';
 
 	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
 	import WidgetTitle from '$lib/components/Widget-Title.svelte';
@@ -107,6 +107,8 @@
   (
   )
   {
+    FIXTURE_PROB_DATA.odds = null;
+
 		let count = 0;
 
 		for (const m_sportBook of $sessionStore?.sportbook_list || [])
@@ -117,6 +119,7 @@
 				const firebase_sportbook_title = firebaseSportbook?.sportbook;
         const if_M_0 =
           m_sportBookTitle.toLowerCase() ==	firebase_sportbook_title.toLowerCase()
+          && FIXTURE_PROB_DATA?.id == firebaseSportbook?.gameid
           && firebaseSportbook?.markets != null
           && firebaseSportbook?.markets?.['1X2FT'] !=	null
           && firebaseSportbook?.markets?.['1X2FT']?.data[0]?.value != null
@@ -133,7 +136,7 @@
             {
               home: firebaseSportbook?.markets?.['1X2FT']?.data?.[0]?.value?.toFixed(2),
               draw: firebaseSportbook?.markets?.['1X2FT']?.data?.[1]?.value?.toFixed(2),
-              away: firebaseSportbook?.markets?.['1X2FT']?.data?.[3]?.value?.toFixed(2)
+              away: firebaseSportbook?.markets?.['1X2FT']?.data?.[2]?.value?.toFixed(2)
             },
             btts: firebaseSportbook?.markets?.['BTSC']?.data?.[0]?.value?.toFixed(2),
             over_2_5: firebaseSportbook?.markets?.['HCTG3']?.data?.[0]?.value?.toFixed(2)
@@ -141,10 +144,9 @@
 
 					SPORTBOOK_INFO = m_sportBook;
 
-					const imageURL: string = SPORTBOOK_INFO?.image;
 					getImageBgColor
           (
-            imageURL,
+            SPORTBOOK_INFO?.image,
             imageVar
           );
 
@@ -152,6 +154,19 @@
 				}
 			}
 		}
+
+    // ▓▓ CHECK
+    // ▓▓ missing assigned sportbooks, due to missing fixture odds.
+    // ▓▓ assign default geo-location main betting-site.
+    if (checkNull(SPORTBOOK_INFO))
+    {
+      SPORTBOOK_INFO = $sessionStore?.sportbook_main;
+      getImageBgColor
+      (
+        SPORTBOOK_INFO?.image,
+        imageVar
+      );
+    }
 
 		FIXTURE_PROB_DATA = FIXTURE_PROB_DATA;
   }

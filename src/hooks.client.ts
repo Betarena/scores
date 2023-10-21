@@ -101,17 +101,22 @@ console.debug
  *  kept as an example.
  * @param param0
  *  `_inherited_types_`
- * @returns
+ * @returns { HandleClientError }
  */
 const customErrorHandler: HandleClientError = async (
     {
       error,
       event
     }
-  ) =>
+  ): Promise < App.Error > =>
   {
-    console.error("❌ An error occurred on the client side:", error, event);
-    return;
+    // ▓▓ [🐞]
+    console.error("❌ An error occurred on the client side:", error);
+
+    return {
+      message: 'Whoops! Client error found!',
+      errorId: '404'
+    }
   }
 ;
 
@@ -119,10 +124,10 @@ const customErrorHandler: HandleClientError = async (
 
 // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
-// ◼️◼️◼️ NOTE:
-// ◼️◼️◼️ using Sentry with Custom Error Handler.
-// export const handleError: HandleClientError = Sentry.handleErrorWithSentry(customErrorHandler);
-// ◼️◼️◼️ or, alternatively,
-export const handleError: HandleClientError = Sentry.handleErrorWithSentry();
+// ▓▓ NOTE:
+// ▓▓ using Sentry with Custom Error Handler.
+export const handleError: HandleClientError = Sentry.handleErrorWithSentry(customErrorHandler);
+// ▓▓ or, alternatively,
+// export const handleError: HandleClientError = Sentry.handleErrorWithSentry();
 
 // #endregion ➤ 🔄 LIFECYCLE [SVELTE]

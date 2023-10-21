@@ -129,7 +129,7 @@
 
   $: B_NAV_T = $page.data.B_NAV_T;
   $: B_SAP_D3_CP_H = $page.data.B_SAP_D3_CP_H;
-  $: isRouteCompetitions = $page?.route?.id.includes('/[[lang=lang]]/[competitions=competitions]');
+  $: isRouteCompetitions = $page?.route?.id?.includes('/[[lang=lang]]/[competitions=competitions]');
   $: isRouteProfile = $page?.route?.id == '/u/[view]/[lang=lang]';
 
   $: dropDownArea =
