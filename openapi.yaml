@@ -1083,6 +1083,51 @@ paths:
           description:
             Target fixture H2H widget data
 
+  # ▓▓ ➤ FP Competition (widget)
+  /api/data/fixture/competition:
+    get:
+      summary:
+        Fixture ➤ Competition Widget
+
+      parameters:
+        - name: filter
+          in: query
+          description:
+            Fetch target fixture competition widget data.
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?seo=[...]
+              seo:
+                type: boolean
+                example: true
+              # ▓▓ ?fixtureId=[...]
+              fixtureId:
+                type: string
+                example: 18946409
+              # ▓▓ ?lang=[...]
+              lang:
+                type: string
+                example: es
+            additionalProperties: false
+            oneOf:
+              # ▓▓ translation
+              - required: [lang]
+              - required: [lang, hasura]
+              # ▓▓ SEO
+              - required: [seo, lang, fixtureId]
+              - required: [seo, lang, fixtureId, hasura]
+              # ▓▓ data (main)
+              - required: [fixtureId]
+
+      responses:
+        200:
+          description:
+            Success
+
   # ===================
   # 🤾 PLAYER PAGE
   # ===================

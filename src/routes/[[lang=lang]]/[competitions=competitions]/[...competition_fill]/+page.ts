@@ -5,9 +5,9 @@ import { PRELOAD_exitPage, promiseUrlsPreload, promiseValidUrlCheck } from '$lib
 
 import type { B_SAP_CTP_D, B_SAP_CTP_T, B_SAP_D1, B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
 import type { B_COMP_MAIN_S, B_COMP_MAIN_T } from '@betarena/scores-lib/types/types.competition.main.js';
+import type { B_COMP_RULES_T } from '@betarena/scores-lib/types/types.competition.rules.js';
 import type { ServerLoadEvent } from '@sveltejs/kit';
 import type { PageLoad } from '../$types.js';
-import type { B_COMP_RULES_T } from '@betarena/scores-lib/types/types.competition.rules.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -70,8 +70,6 @@ export async function load
     }
   );
 
-  console.log('🟩', validUrlCheck);
-
   // ### CHECK
   // ### for exit.
   if (!validUrlCheck)
@@ -83,8 +81,6 @@ export async function load
       ERROR_CODE_INVALID
     );
   }
-
-  console.log('🟥');
 
   let
   [
@@ -262,19 +258,17 @@ async function fetchData
 }
 
 /**
+ * @author
+ *  @migbash
  * @summary
- * 🔹 HELPER | IMPORTANT
- *
- * @param
- * { B_SAP_CTP_T } data - competition (page) target - `seo` / `translations` data.
- *
- * @param
- * { B_SAP_CTP_D } data2 - competition (page) target - critical data.
- *
- * @param
- * { string } pathname - competition (page) target current pathname.
- *
- * @returns
+ *  🔹 HELPER | IMPORTANT
+ * @param { B_SAP_CTP_T } data
+ *  competition (page) target - `seo` / `translations` data.
+ * @param { B_SAP_CTP_D } data2
+ *  competition (page) target - critical data.
+ * @param { string } pathname
+ *  competition (page) target current pathname.
+ * @returns { B_SAP_CTP_T }
  * a mutated data `object`.
  */
 function mutateSeoData
