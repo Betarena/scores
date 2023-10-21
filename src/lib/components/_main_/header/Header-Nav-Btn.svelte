@@ -68,7 +68,7 @@
     isRouteCompetitions: boolean
   ;
 
-  $: isRouteCompetitions = $page?.route?.id.includes('/[[lang=lang]]/[competitions=competitions]');
+  $: isRouteCompetitions = $page?.route?.id?.includes('/[[lang=lang]]/[competitions=competitions]');
   $: isProfilePage = $page?.route?.id == '/u/[view]/[lang=lang]';
 
   // #endregion ➤ 📌 VARIABLES
