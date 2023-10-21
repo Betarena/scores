@@ -1121,7 +1121,7 @@
               class:m-b-5={isViewMobile}
               class:m-r-12={!isViewMobile}
             >
-              Type
+              {WIDGET_T_DATA?.title_type ?? 'Type'}
             </p>
 
             <p
