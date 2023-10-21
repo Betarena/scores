@@ -399,6 +399,7 @@
       class:row-space-out={!isViewTablet}
       style=
       "
+      {isViewMobile ? 'width: 50%;' : ''}
       {isViewTablet ? 'align-items: flex-start;' : ''}
       "
     >

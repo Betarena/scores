@@ -1331,7 +1331,7 @@
     /* 🎨 style */
     margin-right: -9px;
     border-radius: 32px;
-    border: 2px solid var(--whitev2);
+    border: 1px solid var(--whitev2);
   }
   div#fixture⮕competition⮕w⮕main⮕participants img.participant-main-img:last-child
   {
@@ -1443,7 +1443,7 @@
   .dark-background-1 div#fixture⮕competition⮕w⮕main⮕participants img.participant-main-img
   {
     /* 🎨 style */
-    border: 2px solid var(--dark-theme-1-4-shade);
+    border: 1px solid var(--dark-theme-1-4-shade);
   }
 
 </style>
