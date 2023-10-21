@@ -11,7 +11,7 @@ import * as Sentry from '@sentry/sveltekit';
 import { sequence } from '@sveltejs/kit/hooks';
 import cookie from 'cookie';
 
-import { dlog, dlogv2 } from '$lib/utils/debug';
+import { ERROR_CODE_INVALID, PAGE_INVALID_MSG, dlog, dlogv2 } from '$lib/utils/debug';
 import { platfrom_lang_ssr } from '$lib/utils/platform-functions';
 
 import type { Handle, HandleServerError, RequestEvent } from '@sveltejs/kit';
@@ -102,17 +102,31 @@ function getLang
  *  kept as an example.
  * @param param0
  *  `_inherited_types_`
- * @returns
+ * @returns { HandleServerError }
  */
 const customErrorHandler: HandleServerError = async (
   {
     error,
     event
   }
-  ) =>
+  ): Promise < App.Error > =>
   {
+    // ▓▓ [🐞]
     console.error("❌ An error occurred on the server side:", error, event);
-    return;
+
+    let errorMsg: string;
+    let errorCode: number;
+
+    if (event?.route?.id == null)
+    {
+      errorMsg = PAGE_INVALID_MSG;
+      errorCode = ERROR_CODE_INVALID;
+    }
+
+    return {
+      message: errorMsg,
+      errorId: errorCode?.toString()
+    }
   }
 ;
 
@@ -261,10 +275,10 @@ export const handle: Handle = sequence
   }
 );
 
-// ◼️◼️◼️ NOTE:
-// ◼️◼️◼️ using Sentry with Custom Error Handler.
-// export const handleError: HandleServerError = Sentry.handleErrorWithSentry(customErrorHandler);
-// ◼️◼️◼️ or, alternatively,
-export const handleError: HandleServerError = Sentry.handleErrorWithSentry();
+// ▓▓ NOTE:
+// ▓▓ using Sentry with Custom Error Handler.
+export const handleError: HandleServerError = Sentry.handleErrorWithSentry(customErrorHandler);
+// ▓▓ or, alternatively,
+// export const handleError: HandleServerError = Sentry.handleErrorWithSentry();
 
 // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
