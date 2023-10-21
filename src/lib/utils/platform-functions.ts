@@ -1382,6 +1382,20 @@ export const iso2CountryLogo = (value: string): string =>
 }
 
 /**
+ * @description
+ * TODO: DOC:
+ */
+export function langPrefix
+(
+): string
+{
+  return sessionStore?.getServerLang() == 'en'
+      ? `/`
+      : `/${sessionStore?.getServerLang()}/`
+  ;
+}
+
+/**
  * @summary
  * 🔹 HELPER
  *

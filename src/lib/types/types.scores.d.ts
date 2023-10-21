@@ -223,6 +223,16 @@ export interface Platform_Session
    *  📌 Toggle `visibility` (show/hide) of Userguide-1 (widget) access.
    */
   showUserguide1Conf: boolean;
+  /**
+   * @description
+   *  📌 Toggle `visibility` (show/hide) of Fixture Competition (widget) access.
+   */
+  showFixtureCompetition?: boolean;
+  /**
+   * @description
+   *  📌 Toggle `visibility` (show/hide) of Fixture Competition (widget) Modal View.
+   */
+  isShowFixtureCompetitionJoinModal?: boolean;
 
   // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   // NOTE: SPORTBOOK DATA       ◼️

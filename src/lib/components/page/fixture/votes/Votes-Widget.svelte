@@ -138,7 +138,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   <!--
   promise was fulfilled
   -->
-  {#if !NO_WIDGET_DATA}
+  {#if !NO_WIDGET_DATA && !$sessionStore.showFixtureCompetition}
     <VotesMain
       {FIXTURE_INFO}
       FIXTURE_VOTES_DATA={WIDGET_DATA}
