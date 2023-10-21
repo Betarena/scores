@@ -114,18 +114,18 @@ const customErrorHandler: HandleServerError = async (
     // ▓▓ [🐞]
     console.error("❌ An error occurred on the server side:", error, event);
 
-    let errorMsg: string;
-    let errorCode: number;
+    let errorMsg: string = 'Whoops!';
+    let errorCode: string;
 
     if (event?.route?.id == null)
     {
       errorMsg = PAGE_INVALID_MSG;
-      errorCode = ERROR_CODE_INVALID;
+      errorCode = ERROR_CODE_INVALID?.toString();
     }
 
     return {
       message: errorMsg,
-      errorId: errorCode?.toString()
+      errorId: errorCode,
     }
   }
 ;
