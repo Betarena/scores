@@ -97,7 +97,7 @@
 		$page?.error,
 		$page?.params?.lang
 	);
-  $: deepReactListenIsRouteCompetitions = $page?.route?.id.includes('/[[lang=lang]]/[competitions=competitions]');
+  $: deepReactListenIsRouteCompetitions = $page?.route?.id?.includes('/[[lang=lang]]/[competitions=competitions]');
   $: deepReactListenIsProfilePage = $page?.route?.id == '/u/[view]/[lang=lang]';
   $: deepReactListenBookmakerChng = $userBetarenaSettings?.country_bookmaker;
 
