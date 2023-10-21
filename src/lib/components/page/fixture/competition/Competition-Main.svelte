@@ -81,7 +81,7 @@
     /** @description 📱 MOBILE */
     VIEWPORT_MOBILE_INIT = 581,
     /** @description 💻 TABLET */
-    VIEWPORT_TABLET_INIT = 658,
+    VIEWPORT_TABLET_INIT = 820,
     /** @description 📌 `this` component **main** `id` and `data-testid` prefix. */
     CNAME = 'fixture⮕competition⮕w⮕main'
   ;
