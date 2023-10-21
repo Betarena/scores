@@ -985,8 +985,7 @@ export async function selectLanguage
   // ### CHECK
   // ### on error', navigate back to homepage;
   const if_M_0: boolean =
-    page.error
-    && !dev
+    !checkNull(page.error)
   ;
   if (if_M_0)
   {
@@ -1002,6 +1001,8 @@ export async function selectLanguage
       `${NB_W_TAG} -> ${lang}`,
       true,
     );
+
+    if (dev) return;
 
     await goto
     (
