@@ -3,7 +3,7 @@
 import { error } from '@sveltejs/kit';
 
 import { ERROR_CODE_INVALID, FIXTURE_PAGE_ERROR_MSG, dlog } from '$lib/utils/debug';
-import { PRELOAD_invalid_data, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/platform-functions.js';
+import { PRELOAD_exitPage, PRELOAD_invalid_data, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/platform-functions.js';
 
 import type { B_ABT_D, B_ABT_T } from '@betarena/scores-lib/types/about.js';
 import type { B_CONT_D, B_CONT_T } from '@betarena/scores-lib/types/content.js';
@@ -110,6 +110,16 @@ export async function load
 	const venue_city = FIXTURE_INFO?.data?.venue_city;
   const teamIds: string = FIXTURE_INFO?.data?.team_ids;
 
+  if (FIXTURE_INFO == null)
+    PRELOAD_exitPage
+    (
+      t0,
+      PAGE_LOG,
+      400,
+      FIXTURE_PAGE_ERROR_MSG
+    );
+  //
+
   // [2] FIXTURE (CRITICAL) page data;
 
   type PP_PROMISE_1 =
@@ -128,7 +138,7 @@ export async function load
 		COUNTRY_TRANSLATION
 	] = data_1;
 
-	const country = COUNTRY_TRANSLATION?.translations[urlLang];
+	const country = COUNTRY_TRANSLATION?.translations?.[urlLang];
 
 	FIXTURE_INFO.data.country = country;
 	FIXTURE_INFO.data.sport = 'football';
