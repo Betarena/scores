@@ -68,22 +68,18 @@ export function platfrom_lang_ssr
     ]
   );
 
-	// ### NOTE:
-  // ### default to 'EN'.
-	let server_side_language: string = 'en';
-
   // ### CHECK
   // ### for cases of 'EN' default.
 	const if_M_0: boolean =
 		page_route_id == null
     && page_error != null
   ;
-	if (if_M_0) return server_side_language;
+	if (if_M_0) return 'en';
 
   // ### CHECK
   // ### for cases of [[lang=lang]] page.
-	server_side_language =
-    (page_route_id.includes('[[lang=lang]]') || page_route_id.includes('[lang=lang]'))
+	const server_side_language: string =
+    (page_route_id?.includes('[[lang=lang]]') || page_route_id?.includes('[lang=lang]'))
     && page_params_lang != undefined
       ? page_params_lang
       : 'en'
