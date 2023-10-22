@@ -31,6 +31,10 @@ export async function get
 
   (_fetch ??= fetch)
 
+  endpoint = endpoint?.replaceAll(' ', '');
+  endpoint = endpoint?.replaceAll('\n', '');
+  // console.log('endpoint',endpoint)
+
   try
   {
     // ### [🐞]
