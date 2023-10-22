@@ -127,8 +127,6 @@
     miscDataMap.set('active', data_0?.[1]?.limit ?? 0);
     miscDataMap.set('finished', data_0?.[2]?.limit ?? 0);
 
-    console.log('miscDataMap', miscDataMap)
-
     WIDGET_DATA =
     [
       ...data_0?.[0]?.data ?? [],
