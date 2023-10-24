@@ -1174,7 +1174,7 @@
 
           {#if participantNumber > 0}
 
-            {@const participantMerger = [ ...WIDGET_DATA?.competition?.data?.participants?.yes, ...WIDGET_DATA?.competition?.data?.participants?.no]}
+            <!-- {@const participantMerger = [ ...WIDGET_DATA?.competition?.data?.participants?.yes, ...WIDGET_DATA?.competition?.data?.participants?.no]} -->
 
             <div
               class=
@@ -1187,7 +1187,7 @@
               class:m-l-10={!isViewMobile}
             >
 
-              {#each participantMerger?.slice(0, (isViewTablet ? 3 : 5)) ?? [] as uid}
+              {#each [ ...WIDGET_DATA?.competition?.data?.participants?.yes, ...WIDGET_DATA?.competition?.data?.participants?.no]?.slice(0, (isViewTablet ? 3 : 5)) ?? [] as uid}
 
                 <img
                   class=
@@ -1222,7 +1222,7 @@
               no-wrap
               "
             >
-              {WIDGET_DATA?.competition?.data?.participants?.yes?.length ?? 0}
+              {[ ...WIDGET_DATA?.competition?.data?.participants?.yes, ...WIDGET_DATA?.competition?.data?.participants?.no]?.length ?? 0}
               {WIDGET_T_DATA?.title_participants ?? translationObject?.participants}
             </p>
           {/if}
