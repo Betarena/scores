@@ -36,6 +36,7 @@ export async function GET
     const lang: string = req?.url?.searchParams?.get('lang');
     const seo: string = req?.url?.searchParams?.get('seo');
     const offset: string = req?.url?.searchParams?.get('offset');
+    const limit: string = req?.url?.searchParams?.get('limit');
     const targetStatus: string = req?.url?.searchParams?.get('targetStatus');
 	  const competitionIds: string = req?.url?.searchParams?.get('competitionIds');
     const hasura: string = req?.url?.searchParams?.get('hasura');
@@ -75,6 +76,7 @@ export async function GET
         data = await fallbackMainData
         (
           parseInt(offset),
+          parseInt(limit),
           targetStatus
         );
         loadType = '💿 HASURA';
@@ -196,6 +198,7 @@ export async function GET
 async function fallbackMainData
 (
   offset: number,
+  limit: number,
   targetStatus: string
 ): Promise < B_COMP_HIGH_D_RES >
 {
@@ -203,6 +206,7 @@ async function fallbackMainData
   (
     [],
     targetStatus,
+    limit,
     offset,
   );
 
