@@ -102,10 +102,10 @@
   {
 		let count = 0;
 
-		for (const m_sportBook of $sessionStore?.sportbook_list || [])
+		for (const m_sportBook of $sessionStore?.sportbook_list ?? [])
     {
 			const m_sportBookTitle =	m_sportBook?.title;
-			for (const firebaseSportbook of $sessionStore?.live_odds_fixture_target || [])
+			for (const firebaseSportbook of $sessionStore?.live_odds_fixture_target ?? [])
       {
 				const firebase_sportbook_title = firebaseSportbook?.sportbook;
         const if_M_0 =
@@ -136,8 +136,11 @@
       FIXTURE_SCOREBOARD._1x2 = null;
     if ($sessionStore?.live_odds_fixture_target?.length == 0)
       FIXTURE_SCOREBOARD._1x2 = null;
-    if ($sessionStore?.live_odds_fixture_target?.[0]?.gameid != FIXTURE_SCOREBOARD?.id)
-      FIXTURE_SCOREBOARD._1x2 = null;
+    // ### NOTE:
+    // ### does not work well, as in the case of fixtureId: 18988224
+    // ### the [0]?.gameId == null.
+    // if ($sessionStore?.live_odds_fixture_target?.[0]?.gameid != FIXTURE_SCOREBOARD?.id)
+      // FIXTURE_SCOREBOARD._1x2 = null;
     //
 
 		FIXTURE_SCOREBOARD = FIXTURE_SCOREBOARD;
