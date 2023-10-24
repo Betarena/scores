@@ -30,6 +30,7 @@
 	import { onMount } from 'svelte';
 
 	import { get } from '$lib/api/utils.js';
+	import { subscribeCompetitionsTargetListen } from '$lib/graphql/graphql.common.js';
 	import sessionStore from '$lib/store/session.js';
 	import { langPrefix } from '$lib/utils/platform-functions.js';
 
@@ -147,6 +148,11 @@
 
     widgetNoData = false;
     $sessionStore.showFixtureCompetition = true;
+
+    subscribeCompetitionsTargetListen
+    (
+      widgetDataMain?.competition?.id
+    );
 
     return;
   }

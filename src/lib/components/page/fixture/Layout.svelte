@@ -12,7 +12,6 @@
 	import { onMount } from 'svelte';
 
 	import { createFixtureOddsPath, onceTargetLivescoreNowFixtureGet, targetLivescoreNowFixtureListen, targetLivescoreNowFixtureOddsListen } from '$lib/firebase/common.js';
-	import { subscribeCompetitionsAllListen } from '$lib/graphql/graphql.common.js';
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlog } from '$lib/utils/debug';
@@ -279,8 +278,6 @@
     {
       await kickstartLivescore();
       await kickstartLiveOdds();
-
-      subscribeCompetitionsAllListen();
 
       resizeAction();
       addEventListeners();
