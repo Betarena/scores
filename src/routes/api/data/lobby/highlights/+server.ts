@@ -6,7 +6,7 @@ import dotenv from 'dotenv';
 import { checkNull } from '$lib/utils/platform-functions.js';
 import { CHIGH_CP_ENTRY, CHIGH_CP_ENTRY_1, CHIGH_CP_ENTRY_2 } from '@betarena/scores-lib/dist/functions/func.competition.lobby.highlights.js';
 
-import type { B_COMP_HIGH_S, B_COMP_HIGH_T } from '@betarena/scores-lib/types/types.competition.highlights.js';
+import type { B_COMP_HIGH_D, B_COMP_HIGH_D_RES, B_COMP_HIGH_S, B_COMP_HIGH_T } from '@betarena/scores-lib/types/types.competition.highlights.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -35,7 +35,9 @@ export async function GET
     // ### Handle url-query data.
     const lang: string = req?.url?.searchParams?.get('lang');
     const seo: string = req?.url?.searchParams?.get('seo');
-	  const competition_id: string = req?.url?.searchParams?.get('competition_id');
+    const offset: string = req?.url?.searchParams?.get('offset');
+    const targetStatus: string = req?.url?.searchParams?.get('targetStatus');
+	  const competitionIds: string = req?.url?.searchParams?.get('competitionIds');
     const hasura: string = req?.url?.searchParams?.get('hasura');
 
     // ### CHECK
@@ -43,12 +45,14 @@ export async function GET
     // ### NOTE:
     // ### cache & hasura (fallback) solution.
     const if_M_0: boolean =
-      checkNull(lang)
+      !checkNull(offset)
+      && !checkNull(targetStatus)
+      && checkNull(competitionIds)
+      && checkNull(lang)
       && checkNull(seo)
     ;
     if (if_M_0)
     {
-      const _competition_id = parseInt(competition_id)
       let data: unknown;
       let loadType: string = '⚡️ CACHE';
 
@@ -70,7 +74,8 @@ export async function GET
       {
         data = await fallbackMainData
         (
-          _competition_id
+          parseInt(offset),
+          targetStatus
         );
         loadType = '💿 HASURA';
       }
@@ -112,6 +117,36 @@ export async function GET
       const data =	await fallbackMainData_2
       (
         lang
+      );
+      if (data != undefined) return json(data);
+    }
+
+    // ### CHECK
+    // ### complementary data
+    const if_M_3: boolean =
+      !checkNull(competitionIds)
+    ;
+    if (if_M_3)
+    {
+      // TODO: LIN_C_T_A
+
+      const fixtureIdsList = competitionIds
+      ?.split
+      (
+        ','
+      )
+      ?.map
+      (
+        x =>
+        parseInt
+        (
+          x
+        )
+      );
+
+      const data =	await fallbackMainData_3
+      (
+        fixtureIdsList
       );
       if (data != undefined) return json(data);
     }
@@ -160,14 +195,23 @@ export async function GET
  */
 async function fallbackMainData
 (
-  fixtureId: number
-)
+  offset: number,
+  targetStatus: string
+): Promise < B_COMP_HIGH_D_RES >
 {
-  const dataRes0 = await CHIGH_CP_ENTRY();
+  const dataRes0: [ Map < number, B_COMP_HIGH_D >, number, string[] ] = await CHIGH_CP_ENTRY
+  (
+    [],
+    targetStatus,
+    offset,
+  );
 
   if (dataRes0?.[0]?.size == 0) return null;
 
-	return [...dataRes0?.[0].entries()];
+	return {
+    data: [...dataRes0?.[0].entries()],
+    limit: dataRes0?.[1]
+  };
 }
 
 /**
@@ -214,9 +258,9 @@ async function fallbackMainData_1
 async function fallbackMainData_2
 (
   lang: string
-): Promise < B_COMP_HIGH_S[] >
+): Promise < B_COMP_HIGH_S >
 {
-  const dataRes0: [ Map < string, B_COMP_HIGH_S[] >, string[] ] = await CHIGH_CP_ENTRY_2
+  const dataRes0: [ Map < string, B_COMP_HIGH_S >, string[] ] = await CHIGH_CP_ENTRY_2
   (
     [lang]
   );
@@ -224,6 +268,39 @@ async function fallbackMainData_2
   if (dataRes0?.[0]?.size == 0) return null;
 
 	return dataRes0?.[0]?.get(lang);
+}
+
+/**
+ * @summary
+ * [MAIN] [FALLBACK] [#0]
+ *
+ * @description
+ * ➨ fixture (lineup) widget main data (hasura) fallback;
+ *
+ * @param
+ * {number} competitionId - Target
+ *
+ * @returns
+ * An `asynchronous` data in the form of `[number, B_COMP_HIGH_D][]`.
+ */
+async function fallbackMainData_3
+(
+  competitionIds: number[],
+): Promise < B_COMP_HIGH_D_RES >
+{
+  const dataRes0: [ Map < number, B_COMP_HIGH_D >, number, string[] ] = await CHIGH_CP_ENTRY
+  (
+    competitionIds
+  );
+
+  console.log(dataRes0)
+
+  if (dataRes0?.[0]?.size == 0) return null;
+
+	return {
+    data: [...dataRes0?.[0].entries()],
+    limit: dataRes0?.[1]
+  };
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~

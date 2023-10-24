@@ -1363,10 +1363,18 @@ paths:
           schema:
             type: object
             properties:
-              # ?fixture_id=[...]
-              competition_id:
+              # ?competitionIds=[...]
+              competitionIds:
+                type: string
+                example: 175,190
+              # ?offset=[...]
+              offset:
                 type: number
-                example: 23
+                example: 5
+              # ?offset=[...]
+              targetStatus:
+                type: string
+                example: "finished"
               # ?seo=[...]
               seo:
                 type: boolean
