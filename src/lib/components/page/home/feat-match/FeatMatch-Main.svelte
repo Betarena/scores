@@ -24,6 +24,7 @@
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
   import { browser } from '$app/environment';
+  import { beforeNavigate } from '$app/navigation';
   import { onMount } from 'svelte';
   import { fade } from 'svelte/transition';
 
@@ -44,6 +45,7 @@
 	import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 	import type { B_FEATM_D, B_FEATM_T } from '@betarena/scores-lib/types/types.home.feat-match.js';
 	import type { B_H_VOT_M } from '@betarena/scores-lib/types/votes.js';
+	import type { Unsubscribe } from 'firebase/database';
 
   //#endregion ➤ 📦 Package Imports
 
@@ -90,7 +92,8 @@
 	  showBetSite: boolean = false,
 	  isVoteCasted: boolean = false,
     showCountdown: boolean = true,
-    placeholderData: any | object = { }
+    placeholderData: any | object = { },
+    connectionRef: Unsubscribe
   ;
 
   $: countDownSec = toZeroPrefixDateStr(Math.floor((dateDiff / 1000) % 60).toString());
@@ -132,7 +135,7 @@
   (
   ): Promise < void >
   {
-    let connectionRef = targetLivescoreNowFixtureOddsListen
+    connectionRef = targetLivescoreNowFixtureOddsListen
     (
       livesOddsPath
     );
@@ -399,6 +402,14 @@
       await kickstartLiveOdds()
       resizeAction();
       addEventListeners();
+    }
+  );
+
+  beforeNavigate
+  (
+    (): void =>
+    {
+      connectionRef();
     }
   );
 

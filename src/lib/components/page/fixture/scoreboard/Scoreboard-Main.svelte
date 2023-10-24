@@ -100,8 +100,6 @@
   (
   ): Promise < void >
   {
-    FIXTURE_SCOREBOARD._1x2 = null;
-
 		let count = 0;
 
 		for (const m_sportBook of $sessionStore?.sportbook_list || [])
@@ -133,6 +131,14 @@
 				}
 			}
 		}
+
+    if ($sessionStore?.sportbook_list?.length == 0)
+      FIXTURE_SCOREBOARD._1x2 = null;
+    if ($sessionStore?.live_odds_fixture_target?.length == 0)
+      FIXTURE_SCOREBOARD._1x2 = null;
+    if ($sessionStore?.live_odds_fixture_target?.[0]?.gameid != FIXTURE_SCOREBOARD?.id)
+      FIXTURE_SCOREBOARD._1x2 = null;
+    //
 
 		FIXTURE_SCOREBOARD = FIXTURE_SCOREBOARD;
   }
