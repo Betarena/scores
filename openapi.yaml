@@ -1371,6 +1371,10 @@ paths:
               offset:
                 type: number
                 example: 5
+              # ?limit=[...]
+              limit:
+                type: number
+                example: 5
               # ?offset=[...]
               targetStatus:
                 type: string
