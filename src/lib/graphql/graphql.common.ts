@@ -62,12 +62,12 @@ export async function subscribeCompetitionsAllListen
   // ### NOTE:
   // ### per-authors-documentation:
   // ### make the actual request.
-  client.request
-  (
-    {
-      query
-    }
-  );
+  // client.request
+  // (
+  //   {
+  //     query
+  //   }
+  // );
 
   // ### NOTE:
   // ### per-authors-documentation:
@@ -139,6 +139,8 @@ export async function subscribeCompetitionsAllListen
       },
     }
   );
+
+  sessionStore?.updateGraphQlSubscriptions(subscription?.unsubscribe);
 }
 
 /**
@@ -193,12 +195,12 @@ export async function subscribeCompetitionsTargetListen
   // ### NOTE:
   // ### per-authors-documentation:
   // ### make the actual request.
-  client.request
-  (
-    {
-      query
-    }
-  );
+  // client.request
+  // (
+  //   {
+  //     query
+  //   }
+  // );
 
   // ### NOTE:
   // ### per-authors-documentation:
@@ -261,6 +263,10 @@ export async function subscribeCompetitionsTargetListen
       },
     }
   );
+
+  sessionStore?.updateGraphQlSubscriptions(subscription?.unsubscribe);
+
+  return;
 }
 
 // #endregion ➤ 🛠️ METHODS
