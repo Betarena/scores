@@ -5,7 +5,9 @@ import dotenv from 'dotenv';
 
 import { checkNull } from '$lib/utils/platform-functions.js';
 import { CHIGH_CP_ENTRY, CHIGH_CP_ENTRY_1, CHIGH_CP_ENTRY_2 } from '@betarena/scores-lib/dist/functions/func.competition.lobby.highlights.js';
+import * as RedisKeys from '@betarena/scores-lib/dist/redis/config.js';
 
+import { get_target_hset_cache_data } from '$lib/redis/std_main.js';
 import type { B_COMP_HIGH_D, B_COMP_HIGH_D_RES, B_COMP_HIGH_S, B_COMP_HIGH_T } from '@betarena/scores-lib/types/types.competition.highlights.js';
 
 // #endregion ➤ 📦 Package Imports
@@ -41,6 +43,9 @@ export async function GET
 	  const competitionIds: string = req?.url?.searchParams?.get('competitionIds');
     const hasura: string = req?.url?.searchParams?.get('hasura');
 
+    let data: unknown;
+    let loadType: string = '⚡️ CACHE';
+
     // ### CHECK
     // for target data competition - highlights (widget) MAIN DATA.
     // ### NOTE:
@@ -54,8 +59,6 @@ export async function GET
     ;
     if (if_M_0)
     {
-      let data: unknown;
-      let loadType: string = '⚡️ CACHE';
 
       // NOTE: check CACHE;
       // if (!hasura)
@@ -63,7 +66,7 @@ export async function GET
       //   data =
       //     await get_target_hset_cache_data
       //     (
-      //       RedisKeys.LIN_C_D_A,
+      //       RedisKeys.PLOBBY_C_T_A,
       //       fixture_id
       //     )
       //   ;
@@ -79,10 +82,10 @@ export async function GET
           parseInt(limit),
           targetStatus
         );
-        loadType = '💿 HASURA';
+        loadType = '🟦 Hasura (SQL)';
       }
 
-      console.log(`📌 loaded [FSCR] with: ${loadType}`);
+      console.log(`📌 loaded [LOBBY-DATA] with: ${loadType}`);
 
       if (data != undefined) return json(data);
     }
@@ -97,11 +100,31 @@ export async function GET
     ;
     if (if_M_1)
     {
-      // TODO: LIN_C_T_A
-      const data =	await fallbackMainData_1
-      (
-        lang
-      );
+      // NOTE: check CACHE;
+      if (!hasura)
+      {
+        data =
+          await get_target_hset_cache_data
+          (
+            RedisKeys.PLOBBY_C_T_A,
+            lang
+          )
+        ;
+      }
+
+      // ### NOTE:
+      // ### (default) HASURA fallback.
+      if (!data || hasura)
+      {
+        data =	await fallbackMainData_1
+        (
+          lang
+        );
+        loadType = '🟦 Hasura (SQL)';
+      }
+
+      console.log(`📌 loaded [LOBBY-TRANS] with: ${loadType}`);
+
       if (data != undefined) return json(data);
     }
 
@@ -115,11 +138,32 @@ export async function GET
     ;
     if (if_M_2)
     {
-      // TODO: LIN_C_T_A
-      const data =	await fallbackMainData_2
-      (
-        lang
-      );
+
+      // NOTE: check CACHE;
+      if (!hasura)
+      {
+        data =
+          await get_target_hset_cache_data
+          (
+            RedisKeys.PLOBBY_C_S_A,
+            lang
+          )
+        ;
+      }
+
+      // ### NOTE:
+      // ### (default) HASURA fallback.
+      if (!data || hasura)
+      {
+        data = await fallbackMainData_2
+        (
+          lang
+        );
+        loadType = '🟦 Hasura (SQL)';
+      }
+
+      console.log(`📌 loaded [LOBBY-SEO] with: ${loadType}`);
+
       if (data != undefined) return json(data);
     }
 
@@ -132,7 +176,7 @@ export async function GET
     {
       // TODO: LIN_C_T_A
 
-      const fixtureIdsList = competitionIds
+      const fixtureIdsList: number[] = competitionIds
       ?.split
       (
         ','
