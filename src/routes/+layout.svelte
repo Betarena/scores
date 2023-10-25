@@ -39,7 +39,6 @@
 	import Header from '$lib/components/_main_/header/Header.svelte';
 
 	import DevInfoBox from '$lib/components/misc/Dev-Info-Box.svelte';
-	import { firebaseAppDelete } from '$lib/firebase/init.js';
 	import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
 
   // import SplashScreen from '$lib/components/Splash-Screen.svelte';
@@ -420,17 +419,17 @@
       // ▓▓ IMPORTANT
       $sessionStore.live_odds_fixture_target = null;
 
-      await firebaseAppDelete();
+      // await firebaseAppDelete();
 
-      for (const iterator of $sessionStore?.firebaseListeners ?? [])
-        iterator();
-      //
-      $sessionStore.firebaseListeners = []
+      // for (const iterator of $sessionStore?.firebaseListeners ?? [])
+      //   iterator();
+      // //
+      // $sessionStore.firebaseListeners = []
 
-      for (const iterator of $sessionStore?.grapqhQlWebSockets ?? [])
-        iterator();
-      //
-      $sessionStore.grapqhQlWebSockets = []
+      // for (const iterator of $sessionStore?.grapqhQlWebSockets ?? [])
+      //   iterator();
+      // //
+      // $sessionStore.grapqhQlWebSockets = []
     }
   );
 
