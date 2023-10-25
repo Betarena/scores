@@ -597,6 +597,9 @@
     injectLivescoresData();
   }
 
+  getParticipantData();
+  splitCompetitionsByStatus();
+
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
@@ -617,15 +620,10 @@
     async (
     ): Promise < void > =>
     {
-
       if (useDynamicImport)
       {
         HighlightsGridRowAsDynamic = (await import('./Highlights-Grid-Row.svelte')).default;
       }
-
-      getParticipantData();
-      splitCompetitionsByStatus();
-
 	  }
   );
 
