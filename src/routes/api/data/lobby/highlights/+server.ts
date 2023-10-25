@@ -61,16 +61,16 @@ export async function GET
     {
 
       // NOTE: check CACHE;
-      // if (!hasura)
-      // {
-      //   data =
-      //     await get_target_hset_cache_data
-      //     (
-      //       RedisKeys.PLOBBY_C_T_A,
-      //       fixture_id
-      //     )
-      //   ;
-      // }
+      if (!hasura)
+      {
+        data =
+          await get_target_hset_cache_data
+          (
+            RedisKeys.PLOBBY_C_D_A_2,
+            targetStatus
+          )
+        ;
+      }
 
       // ### NOTE:
       // ### (default) HASURA fallback.
