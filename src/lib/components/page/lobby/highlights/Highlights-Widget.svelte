@@ -101,6 +101,8 @@
 
 		// await sleep(3000);
 
+    console.log('STARTED!', performance.now());
+
     type PP_PROMISE_0 =
     [
       B_COMP_HIGH_D_RES | undefined,
@@ -146,6 +148,8 @@
 			return;
 		}
     NO_WIDGET_DATA = false;
+
+    console.log('DONE!', performance.now());
 
     return;
   }
