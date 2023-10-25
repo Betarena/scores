@@ -3,7 +3,7 @@
 import sessionStore from '$lib/store/session.js';
 import userBetarenaSettings from '$lib/store/user-settings.js';
 import { dlog } from '$lib/utils/debug.js';
-import { onValue, ref, type Unsubscribe } from "firebase/database";
+import { onValue, ref, type DatabaseReference, type Unsubscribe, DataSnapshot } from "firebase/database";
 import { arrayRemove, arrayUnion, doc, DocumentReference, DocumentSnapshot, getDoc, onSnapshot, updateDoc, type DocumentData } from "firebase/firestore";
 import { getTargetRealDbData } from "./firebase.actions.js";
 import { db_firestore, db_real } from "./init";
@@ -209,18 +209,18 @@ export function targetPlayerIdsListen
   path: string
 ): Unsubscribe
 {
-  const dbRef = ref
+  const dbRef: DatabaseReference = ref
   (
     db_real,
     path
   );
 
-  const listenEventRef = onValue
+  const listenEventRef: Unsubscribe = onValue
   (
     dbRef,
     (
-      snapshot
-    ) =>
+      snapshot: DataSnapshot
+    ): void =>
     {
       const firebaseData: FIRE_LNPI = snapshot.val();
       sessionStore.updateLivescorePlayerId
@@ -229,6 +229,8 @@ export function targetPlayerIdsListen
       );
     }
   );
+
+  sessionStore?.updateFirebaseListener([listenEventRef]);
 
   return listenEventRef
 }
@@ -276,18 +278,18 @@ export function targetLivescoreNowFixtureOddsListen
   path: string
 ): Unsubscribe
 {
-  const dbRef = ref
+  const dbRef: DatabaseReference = ref
   (
     db_real,
     path
   );
 
-  const listenEventRef = onValue
+  const listenEventRef: Unsubscribe = onValue
   (
     dbRef,
     (
-      snapshot
-    ) =>
+      snapshot: DataSnapshot
+    ): void =>
     {
       const sportbookArray: FIREBASE_odds[] = []
 
@@ -310,6 +312,8 @@ export function targetLivescoreNowFixtureOddsListen
     }
   );
 
+  sessionStore?.updateFirebaseListener([listenEventRef]);
+
   return listenEventRef
 }
 
@@ -330,18 +334,18 @@ export function targetLivescoreNowFixtureOddsListenMulti
 
   for (const path of paths)
   {
-    const dbRef = ref
+    const dbRef: DatabaseReference = ref
     (
       db_real,
       path
     );
 
-    const listenEventRef = onValue
+    const listenEventRef: Unsubscribe = onValue
     (
       dbRef,
       (
-        snapshot
-      ) =>
+        snapshot: DataSnapshot
+      ): void =>
       {
         const data: [string, FIREBASE_odds][] =
           snapshot.exists()
@@ -370,6 +374,8 @@ export function targetLivescoreNowFixtureOddsListenMulti
       listenEventRef
     );
   }
+
+  sessionStore?.updateFirebaseListener(listenEventRefsList);
 
   return listenEventRefsList
 }
@@ -444,18 +450,18 @@ export function listenRealTimeLivescoresNowChange
 (
 ): Unsubscribe
 {
-  const dataRef = ref
+  const dataRef: DatabaseReference = ref
   (
     db_real,
     'livescores_now/'
   );
 
-  const listenEventRef = onValue
+  const listenEventRef: Unsubscribe = onValue
   (
     dataRef,
     (
-      snapshot
-    ) =>
+      snapshot: DataSnapshot
+    ): void =>
     {
       if (snapshot.val() != null)
       {
@@ -467,6 +473,8 @@ export function listenRealTimeLivescoresNowChange
       }
     }
   );
+
+  sessionStore?.updateFirebaseListener([listenEventRef]);
 
   return listenEventRef
 }
@@ -484,18 +492,18 @@ export function targetLivescoreNowFixtureListen
   path: string
 ): Unsubscribe
 {
-  const dbRef = ref
+  const dbRef: DatabaseReference = ref
   (
     db_real,
     path
   );
 
-  const listenEventRef = onValue
+  const listenEventRef: Unsubscribe = onValue
   (
     dbRef,
     (
-      snapshot
-    ) =>
+      snapshot: DataSnapshot
+    ): void =>
     {
       const firebaseData: FIREBASE_livescores_now = snapshot.val();
       sessionStore.updateLivescoresTarget
@@ -504,6 +512,8 @@ export function targetLivescoreNowFixtureListen
       );
     }
   );
+
+  sessionStore?.updateFirebaseListener([listenEventRef]);
 
   return listenEventRef
 }
@@ -614,18 +624,18 @@ export function listenRealTimeScoreboardAll
 (
 ): Unsubscribe
 {
-  const dbRef = ref
+  const dbRef: DatabaseReference = ref
   (
     db_real,
     'livescores_now_scoreboard'
   );
 
-  const listenEventRef = onValue
+  const listenEventRef: Unsubscribe = onValue
   (
     dbRef,
     (
-      snapshot
-    ) =>
+      snapshot:DataSnapshot
+    ): void =>
     {
       if (snapshot.val() != null)
       {
@@ -638,6 +648,8 @@ export function listenRealTimeScoreboardAll
       }
     }
   );
+
+  sessionStore?.updateFirebaseListener([listenEventRef]);
 
   return listenEventRef
 }

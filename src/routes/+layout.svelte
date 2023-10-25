@@ -38,6 +38,8 @@
 	import Footer from '$lib/components/_main_/footer/Footer.svelte';
 	import Header from '$lib/components/_main_/header/Header.svelte';
 
+	import DevInfoBox from '$lib/components/misc/Dev-Info-Box.svelte';
+	import { firebaseAppDelete } from '$lib/firebase/init.js';
 	import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
 
   // import SplashScreen from '$lib/components/Splash-Screen.svelte';
@@ -70,7 +72,9 @@
 
   const
     /** Dynamic import variable condition */
-    useDynamicImport: boolean = true
+    useDynamicImport: boolean = true,
+    /** @description */
+    targetAppEnv: string = import.meta.env?.VITE_ENV_TARGET
   ;
 
 	let
@@ -415,6 +419,18 @@
     {
       // ▓▓ IMPORTANT
       $sessionStore.live_odds_fixture_target = null;
+
+      await firebaseAppDelete();
+
+      for (const iterator of $sessionStore?.firebaseListeners ?? [])
+        iterator();
+      //
+      $sessionStore.firebaseListeners = []
+
+      for (const iterator of $sessionStore?.grapqhQlWebSockets ?? [])
+        iterator();
+      //
+      $sessionStore.grapqhQlWebSockets = []
     }
   );
 
@@ -460,6 +476,10 @@
 -->
 
 <!-- <SplashScreen /> -->
+
+{#if targetAppEnv == '.env.local'}
+  <DevInfoBox />
+{/if}
 
 {#if offlineMode}
 
