@@ -23,7 +23,7 @@
   // ### 5. type(s) imports(s)                                            ◼️
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
-	import { onMount } from 'svelte';
+	import { createEventDispatcher, onMount, type EventDispatcher } from 'svelte';
 	import { fade } from 'svelte/transition';
 
 	import userBetarenaSettings from '$lib/store/user-settings.js';
@@ -33,7 +33,7 @@
   import icon_slider_right from './assets/icon-slider-right.svg';
 
 	import type { BetarenaUser } from '@betarena/scores-lib/types/_FIREBASE_.js';
-	import type { B_COMP_HIGH_D } from '@betarena/scores-lib/types/types.competition.highlights.js';
+	import type { B_COMP_HIGH_D, B_COMP_HIGH_D_EXTRA } from '@betarena/scores-lib/types/types.competition.highlights.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -49,7 +49,11 @@
     /** @description TODO: DOC: */
     competitionList: B_COMP_HIGH_D[] = [],
     /** @description competition (main) - participants detailed data `Map` */
-    participantsMap: Map < string, BetarenaUser >
+    participantsMap: Map < string, BetarenaUser >,
+    /** @description TODO: DOC: */
+    LIMITS: Map<B_COMP_HIGH_D_EXTRA, number>,
+    /** @description TODO: DOC: */
+    competitionType: 'pending' | 'active' | 'finished'
   ;
 
   const
@@ -58,7 +62,8 @@
     /** @description TODO: DOC: */
     VIEWPORT_MOBILE_INIT = 581,
     /** @description 📌 `this` component **main** `id` and `data-testid` prefix. */
-    CNAME = 'competition⮕w⮕highlights-grid'
+    CNAME = 'competition⮕w⮕highlights-grid',
+    dispatch: EventDispatcher<any> = createEventDispatcher()
   ;
 
   let
@@ -257,7 +262,7 @@
     // ### for limit reach for list data in slider.
     const if_M_0: boolean =
       (currentSlidePositionNumber + change < 0)
-      || (currentSlidePositionNumber + change + (change * incrementBy) > competitionList?.length)
+      || (currentSlidePositionNumber + change + (change * incrementBy) > LIMITS?.get(competitionType))
     ;
     if (if_M_0) return;
 
@@ -276,13 +281,21 @@
     const element: HTMLElement = gridChildElement;
     element.style.transform = `translateX(${(-parentBox.offsetWidth * currentSlidePositionNumber) - (currentSlidePositionNumber * 20)}px)`;
 
+    dispatch
+    (
+      'load-more',
+      {
+        targetStatus: 'pending'
+      }
+    );
+
     // ### CHECK
     // ### for slider to be in a ±2 distance (middle)
     const if_M_1: boolean =
       carouselDotsElement
       && isOverLimitUI
       && ((currentSlidePositionNumber * incrementBy) - 2) > 0
-      && ((currentSlidePositionNumber * incrementBy) + 2) < competitionList?.length
+      && ((currentSlidePositionNumber * incrementBy) + 2) < LIMITS?.get(competitionType)
     ;
     if (if_M_1)
     {
@@ -335,7 +348,7 @@
   // ### complex svelte-reactivity block.
   $:
   {
-    sliderCount = Math.ceil(competitionList?.length / incrementBy);
+    sliderCount = Math.ceil(LIMITS?.get(competitionType) / incrementBy);
     if (!isViewTablet && sliderCount > 1)
     {
       sliderCount = 5 + 2;

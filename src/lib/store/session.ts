@@ -7,6 +7,7 @@ import type { Platform_Session } from '$lib/types/types.scores.js';
 import type { B_H_COMP_DATA } from '@betarena/scores-lib/types/_HASURA_.js';
 import type { FIREBASE_livescores_now, FIREBASE_odds, FIRE_LNNS } from '@betarena/scores-lib/types/firebase.js';
 import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
+import type { Unsubscribe } from 'firebase/firestore';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -30,6 +31,8 @@ const sessionStoreObj: Platform_Session =
   withdrawModal: false,
   showUserguide1: false,
   showUserguide1Conf: false,
+  showFixtureCompetition: false,
+  isShowFixtureCompetitionJoinModal: false,
   // ### NOTE:
   // ### variables for language handle.
   lang_intent: undefined,
@@ -40,6 +43,8 @@ const sessionStoreObj: Platform_Session =
   competitionsNum: 0,
   competitionsOpenNum: 0,
   deviceType: undefined,
+  firebaseListeners: [],
+  grapqhQlWebSockets: [],
   // ### NOTE:
   // ### variables for date handle.
   userDate: clientTimezoneDate(),
@@ -414,6 +419,46 @@ function createLocalStore
     {
       sessionStoreObj.competitionsNum = amountTotal;
       sessionStoreObj.competitionsOpenNum = amountOpen;
+      set
+      (
+        sessionStoreObj
+      );
+    },
+
+    /**
+     * @author
+     *  @migbash
+     * @summary
+     *  🔹 HELPER | IMPORTANT
+     * @description
+     *  📌 Update and store **amount of firebase listeners active** in user's session object.
+     * @param { Unsubscribe[] } listener
+     *  Target list of firebase event listeners.
+     * @returns { void }
+     */
+    updateFirebaseListener:
+    (
+      listener: Unsubscribe[]
+    ): void =>
+    {
+      sessionStoreObj.firebaseListeners.push(...listener);
+      set
+      (
+        sessionStoreObj
+      );
+    },
+
+    /**
+     * @author
+     *  @migbash
+     * @param wsConneection
+     */
+    updateGraphQlSubscriptions:
+    (
+      wsConneection: () => void
+    ): void =>
+    {
+      sessionStoreObj.grapqhQlWebSockets.push(wsConneection);
       set
       (
         sessionStoreObj

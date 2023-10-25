@@ -27,14 +27,13 @@
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
-	import { get } from '$lib/api/utils.js';
 	import sessionStore from '$lib/store/session.js';
-	import { initialDevice } from '$lib/utils/platform-functions.js';
+	import { initialDevice, promiseUrlsPreload } from '$lib/utils/platform-functions.js';
 
 	import HighlightsLoader from './Highlights-Loader.svelte';
 
 	import SeoBox from '$lib/components/SEO-Box.svelte';
-	import type { B_COMP_HIGH_D, B_COMP_HIGH_S, B_COMP_HIGH_T } from '@betarena/scores-lib/types/types.competition.highlights.js';
+	import type { B_COMP_HIGH_D, B_COMP_HIGH_D_EXTRA, B_COMP_HIGH_D_RES, B_COMP_HIGH_S, B_COMP_HIGH_T } from '@betarena/scores-lib/types/types.competition.highlights.js';
 
   // ### WARNING:
   // ### Disable, if Dynamic Import is Enabled.
@@ -69,7 +68,8 @@
     /** @description wether widget has or no data */
     NO_WIDGET_DATA: boolean = true,
     /** @description dynamic import variable for svelte component */
-    HighlightsGridDynamic: any
+    HighlightsGridDynamic: any,
+    miscDataMap: Map < B_COMP_HIGH_D_EXTRA, number > = new Map()
   ;
 
   $: WIDGET_T_DATA = $page.data?.B_COMP_HIGH_T;
@@ -101,12 +101,40 @@
 
 		// await sleep(3000);
 
-    const response = await get
-    (
-      `/api/data/lobby/highlights`
-    ) as [number, B_COMP_HIGH_D][];
+    console.log('STARTED!', performance.now());
 
-    WIDGET_DATA = response;
+    type PP_PROMISE_0 =
+    [
+      B_COMP_HIGH_D_RES | undefined,
+      B_COMP_HIGH_D_RES | undefined,
+      B_COMP_HIGH_D_RES | undefined,
+    ];
+
+    const urls_0: string[] =
+    [
+      `/api/data/lobby/highlights?targetStatus=pending&offset=0&limit=50`,
+      `/api/data/lobby/highlights?targetStatus=active&offset=0`,
+      `/api/data/lobby/highlights?targetStatus=finished&offset=0`,
+    ];
+
+    const data_0: PP_PROMISE_0 = await promiseUrlsPreload
+    (
+      urls_0,
+      fetch
+    ) as PP_PROMISE_0;
+
+    // TODO: limits of each competitions avaialble
+
+    miscDataMap.set('pending', data_0?.[0]?.limit ?? 0);
+    miscDataMap.set('active', data_0?.[1]?.limit ?? 0);
+    miscDataMap.set('finished', data_0?.[2]?.limit ?? 0);
+
+    WIDGET_DATA =
+    [
+      ...data_0?.[0]?.data ?? [],
+      ...data_0?.[1]?.data ?? [],
+      ...data_0?.[2]?.data ?? [],
+    ];
 
     // ### CHECK
     // ### for conditions when 'this' widget should not be shown.
@@ -120,6 +148,8 @@
 			return;
 		}
     NO_WIDGET_DATA = false;
+
+    console.log('DONE!', performance.now());
 
     return;
   }
@@ -246,6 +276,7 @@
   <svelte:component
     this={HighlightsGridDynamic}
     WIDGET_DATA={new Map(WIDGET_DATA)}
+    LIMITS={miscDataMap}
   />
 
   <!--

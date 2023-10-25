@@ -42,7 +42,7 @@
 	import type { FIRE_LNNS } from '@betarena/scores-lib/types/firebase.js';
 	import type { LS2_C_Fixture } from '@betarena/scores-lib/types/livescores-v2.js';
 	import type { B_SAP_CP_T } from '@betarena/scores-lib/types/seo-pages.js';
-	import type { B_COMP_HIGH_D } from '@betarena/scores-lib/types/types.competition.highlights.js';
+	import type { B_COMP_HIGH_D, B_COMP_HIGH_D_EXTRA, B_COMP_HIGH_D_RES } from '@betarena/scores-lib/types/types.competition.highlights.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -56,7 +56,8 @@
 
   export let
     /** @description TODO: DOC: */
-    WIDGET_DATA: Map < number, B_COMP_HIGH_D >
+    WIDGET_DATA: Map < number, B_COMP_HIGH_D >,
+    LIMITS: Map < B_COMP_HIGH_D_EXTRA, number >
   ;
 
   const
@@ -93,7 +94,9 @@
     /** @description competitions (lobby) highlights (widget) - no competitions available */
     isNoCompetitions: boolean = false,
     /** @description competitions (lobby) highlights (widget) - all participants map */
-    participantsMap: Map < string, BetarenaUser > = new Map()
+    participantsMap: Map < string, BetarenaUser > = new Map(),
+    /** @description TODO: DOC: */
+    competitionMapSnap: Map < number, B_H_COMP_DATA > = new Map()
   ;
 
   $: B_SAP_CP_T = $page.data?.B_SAP_CP_T;
@@ -228,6 +231,8 @@
     if (!browser) return;
 
     const competitionMap: Map < number, B_H_COMP_DATA > = $sessionStore?.competitions_map;
+    competitionMapSnap = JSON.parse(JSON.stringify([...$sessionStore?.competitions_map?.entries()]));
+    const competitionIdsMissingUpdated: number[] = [];
 
     // ### CHECK
     // ### for valid competitions map data.
@@ -237,12 +242,42 @@
     if (if_M_0) return;
 
     // ### NOTE:
-    // ### update 'this' competition data with new data.
+    // ### inject 'competitions' that recieved a status 'update', but are not present in the overall data list
 
-    for (const [key, value] of WIDGET_DATA)
+    for (const [compId, compObj] of competitionMapSnap ?? [])
     {
       // ### CHECK
-      // ### for valid competitions map data.
+      // ### for changes in competition 'status'
+      if (competitionMap?.get(compId)?.data?.status != compObj?.data?.status && !WIDGET_DATA?.has(compId))
+        competitionIdsMissingUpdated.push(compId);
+    }
+
+    // ### NOTE:
+    // ### fetch update competitions, missing from the `list`.
+
+    if (competitionIdsMissingUpdated?.length > 0)
+    {
+      const response = await get
+      (
+        `/api/data/lobby/highlights
+          ?competitionIds=${competitionIdsMissingUpdated?.toString()}`,
+        null,
+        true,
+        false,
+      ) as B_COMP_HIGH_D_RES;
+
+      const newMap = new Map(response?.data);
+
+      WIDGET_DATA = new Map([...WIDGET_DATA, ...newMap]);
+    }
+
+    // ### NOTE:
+    // ### update 'this' competition data with new data.
+
+    for (const [key, value] of WIDGET_DATA ?? [])
+    {
+      // ### CHECK
+      // ### for competition to exist in 'live' data.
       const if_M_0: boolean =
         !competitionMap?.has(key)
       ;
@@ -258,6 +293,58 @@
       // B_COMP_HIGH_D = B_COMP_HIGH_D;
 
     }
+
+    getParticipantData();
+    splitCompetitionsByStatus();
+
+    return;
+  }
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟥 MAIN | 🔹 HELPER
+   * @description
+   *  📌 Logic for pagination of competitions.
+   * @param targetStatus
+   *  Target competition status to be searched for.
+   * @returns { Promise < void > }
+   */
+  async function getMoreTargetStatusCompetitions
+  (
+    targetStatus: string,
+  ): Promise < void >
+  {
+
+    let offset: number = 0;
+    if (targetStatus == 'pending')
+      offset = openCompetitions?.length;
+    //
+    if (targetStatus == 'active')
+      offset = activeCompetitions?.length;
+    //
+    if (targetStatus == 'finished')
+      offset = finishedCompetitions?.length;
+    //
+
+    (offset ??= 0)
+
+    // alert('HERE!')
+
+    const response = await get
+    (
+      `/api/data/lobby/highlights
+        ?targetStatus=${targetStatus}
+        &offset=${offset}`,
+      null,
+      true,
+      false,
+    ) as B_COMP_HIGH_D_RES;
+
+    const newMap = new Map(response?.data);
+
+    WIDGET_DATA = new Map([...WIDGET_DATA, ...newMap]);
 
     getParticipantData();
     splitCompetitionsByStatus();
@@ -510,6 +597,9 @@
     injectLivescoresData();
   }
 
+  getParticipantData();
+  splitCompetitionsByStatus();
+
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
@@ -530,15 +620,10 @@
     async (
     ): Promise < void > =>
     {
-
       if (useDynamicImport)
       {
         HighlightsGridRowAsDynamic = (await import('./Highlights-Grid-Row.svelte')).default;
       }
-
-      getParticipantData();
-      splitCompetitionsByStatus();
-
 	  }
   );
 
@@ -637,8 +722,11 @@
   -->
   <svelte:component
     this={HighlightsGridRowAsDynamic}
+    competitionType={'pending'}
     competitionList={openCompetitions}
     {participantsMap}
+    {LIMITS}
+    on:load-more={(event) => getMoreTargetStatusCompetitions('pending')}
   />
   <!--
     <FeatBetSiteMain
@@ -671,8 +759,11 @@
   -->
   <svelte:component
     this={HighlightsGridRowAsDynamic}
+    competitionType={'active'}
     competitionList={activeCompetitions}
     {participantsMap}
+    {LIMITS}
+    on:load-more={(event) => getMoreTargetStatusCompetitions('active')}
   />
   <!--
     <FeatBetSiteMain
@@ -705,8 +796,11 @@
   -->
   <svelte:component
     this={HighlightsGridRowAsDynamic}
+    competitionType={'finished'}
     competitionList={finishedCompetitions}
     {participantsMap}
+    {LIMITS}
+    on:load-more={(event) => getMoreTargetStatusCompetitions('finished')}
   />
   <!--
     <FeatBetSiteMain

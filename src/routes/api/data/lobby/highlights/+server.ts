@@ -5,8 +5,10 @@ import dotenv from 'dotenv';
 
 import { checkNull } from '$lib/utils/platform-functions.js';
 import { CHIGH_CP_ENTRY, CHIGH_CP_ENTRY_1, CHIGH_CP_ENTRY_2 } from '@betarena/scores-lib/dist/functions/func.competition.lobby.highlights.js';
+import * as RedisKeys from '@betarena/scores-lib/dist/redis/config.js';
 
-import type { B_COMP_HIGH_S, B_COMP_HIGH_T } from '@betarena/scores-lib/types/types.competition.highlights.js';
+import { get_target_hset_cache_data } from '$lib/redis/std_main.js';
+import type { B_COMP_HIGH_D, B_COMP_HIGH_D_RES, B_COMP_HIGH_S, B_COMP_HIGH_T } from '@betarena/scores-lib/types/types.competition.highlights.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -35,34 +37,40 @@ export async function GET
     // ### Handle url-query data.
     const lang: string = req?.url?.searchParams?.get('lang');
     const seo: string = req?.url?.searchParams?.get('seo');
-	  const competition_id: string = req?.url?.searchParams?.get('competition_id');
+    const offset: string = req?.url?.searchParams?.get('offset');
+    const limit: string = req?.url?.searchParams?.get('limit');
+    const targetStatus: string = req?.url?.searchParams?.get('targetStatus');
+	  const competitionIds: string = req?.url?.searchParams?.get('competitionIds');
     const hasura: string = req?.url?.searchParams?.get('hasura');
+
+    let data: unknown;
+    let loadType: string = '⚡️ CACHE';
 
     // ### CHECK
     // for target data competition - highlights (widget) MAIN DATA.
     // ### NOTE:
     // ### cache & hasura (fallback) solution.
     const if_M_0: boolean =
-      checkNull(lang)
+      !checkNull(offset)
+      && !checkNull(targetStatus)
+      && checkNull(competitionIds)
+      && checkNull(lang)
       && checkNull(seo)
     ;
     if (if_M_0)
     {
-      const _competition_id = parseInt(competition_id)
-      let data: unknown;
-      let loadType: string = '⚡️ CACHE';
 
       // NOTE: check CACHE;
-      // if (!hasura)
-      // {
-      //   data =
-      //     await get_target_hset_cache_data
-      //     (
-      //       RedisKeys.LIN_C_D_A,
-      //       fixture_id
-      //     )
-      //   ;
-      // }
+      if (!hasura)
+      {
+        data =
+          await get_target_hset_cache_data
+          (
+            RedisKeys.PLOBBY_C_D_A_2,
+            targetStatus
+          )
+        ;
+      }
 
       // ### NOTE:
       // ### (default) HASURA fallback.
@@ -70,12 +78,14 @@ export async function GET
       {
         data = await fallbackMainData
         (
-          _competition_id
+          parseInt(offset),
+          parseInt(limit),
+          targetStatus
         );
-        loadType = '💿 HASURA';
+        loadType = '🟦 Hasura (SQL)';
       }
 
-      console.log(`📌 loaded [FSCR] with: ${loadType}`);
+      console.log(`📌 loaded [LOBBY-DATA] with: ${loadType}`);
 
       if (data != undefined) return json(data);
     }
@@ -90,11 +100,31 @@ export async function GET
     ;
     if (if_M_1)
     {
-      // TODO: LIN_C_T_A
-      const data =	await fallbackMainData_1
-      (
-        lang
-      );
+      // NOTE: check CACHE;
+      if (!hasura)
+      {
+        data =
+          await get_target_hset_cache_data
+          (
+            RedisKeys.PLOBBY_C_T_A,
+            lang
+          )
+        ;
+      }
+
+      // ### NOTE:
+      // ### (default) HASURA fallback.
+      if (!data || hasura)
+      {
+        data =	await fallbackMainData_1
+        (
+          lang
+        );
+        loadType = '🟦 Hasura (SQL)';
+      }
+
+      console.log(`📌 loaded [LOBBY-TRANS] with: ${loadType}`);
+
       if (data != undefined) return json(data);
     }
 
@@ -108,10 +138,61 @@ export async function GET
     ;
     if (if_M_2)
     {
+
+      // NOTE: check CACHE;
+      if (!hasura)
+      {
+        data =
+          await get_target_hset_cache_data
+          (
+            RedisKeys.PLOBBY_C_S_A,
+            lang
+          )
+        ;
+      }
+
+      // ### NOTE:
+      // ### (default) HASURA fallback.
+      if (!data || hasura)
+      {
+        data = await fallbackMainData_2
+        (
+          lang
+        );
+        loadType = '🟦 Hasura (SQL)';
+      }
+
+      console.log(`📌 loaded [LOBBY-SEO] with: ${loadType}`);
+
+      if (data != undefined) return json(data);
+    }
+
+    // ### CHECK
+    // ### complementary data
+    const if_M_3: boolean =
+      !checkNull(competitionIds)
+    ;
+    if (if_M_3)
+    {
       // TODO: LIN_C_T_A
-      const data =	await fallbackMainData_2
+
+      const fixtureIdsList: number[] = competitionIds
+      ?.split
       (
-        lang
+        ','
+      )
+      ?.map
+      (
+        x =>
+        parseInt
+        (
+          x
+        )
+      );
+
+      const data =	await fallbackMainData_3
+      (
+        fixtureIdsList
       );
       if (data != undefined) return json(data);
     }
@@ -160,14 +241,25 @@ export async function GET
  */
 async function fallbackMainData
 (
-  fixtureId: number
-)
+  offset: number,
+  limit: number,
+  targetStatus: string
+): Promise < B_COMP_HIGH_D_RES >
 {
-  const dataRes0 = await CHIGH_CP_ENTRY();
+  const dataRes0: [ Map < number, B_COMP_HIGH_D >, number, string[] ] = await CHIGH_CP_ENTRY
+  (
+    [],
+    targetStatus,
+    limit,
+    offset,
+  );
 
   if (dataRes0?.[0]?.size == 0) return null;
 
-	return [...dataRes0?.[0].entries()];
+	return {
+    data: [...dataRes0?.[0].entries()],
+    limit: dataRes0?.[1]
+  };
 }
 
 /**
@@ -214,9 +306,9 @@ async function fallbackMainData_1
 async function fallbackMainData_2
 (
   lang: string
-): Promise < B_COMP_HIGH_S[] >
+): Promise < B_COMP_HIGH_S >
 {
-  const dataRes0: [ Map < string, B_COMP_HIGH_S[] >, string[] ] = await CHIGH_CP_ENTRY_2
+  const dataRes0: [ Map < string, B_COMP_HIGH_S >, string[] ] = await CHIGH_CP_ENTRY_2
   (
     [lang]
   );
@@ -224,6 +316,39 @@ async function fallbackMainData_2
   if (dataRes0?.[0]?.size == 0) return null;
 
 	return dataRes0?.[0]?.get(lang);
+}
+
+/**
+ * @summary
+ * [MAIN] [FALLBACK] [#0]
+ *
+ * @description
+ * ➨ fixture (lineup) widget main data (hasura) fallback;
+ *
+ * @param
+ * {number} competitionId - Target
+ *
+ * @returns
+ * An `asynchronous` data in the form of `[number, B_COMP_HIGH_D][]`.
+ */
+async function fallbackMainData_3
+(
+  competitionIds: number[],
+): Promise < B_COMP_HIGH_D_RES >
+{
+  const dataRes0: [ Map < number, B_COMP_HIGH_D >, number, string[] ] = await CHIGH_CP_ENTRY
+  (
+    competitionIds
+  );
+
+  console.log(dataRes0)
+
+  if (dataRes0?.[0]?.size == 0) return null;
+
+	return {
+    data: [...dataRes0?.[0].entries()],
+    limit: dataRes0?.[1]
+  };
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~

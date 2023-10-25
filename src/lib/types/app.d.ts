@@ -9,6 +9,12 @@ declare global
 		// interface PageData {}
 		// interface Platform {}
 
+    interface Error
+    {
+			message: string;
+			errorId: string;
+		}
+
     interface Locals
     {
 			user: any;

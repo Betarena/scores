@@ -3,6 +3,7 @@ import type { B_H_COMP_DATA } from '@betarena/scores-lib/types/_HASURA_.js';
 import type { FIREBASE_livescores_now, FIREBASE_odds, FIRE_LNNS } from '@betarena/scores-lib/types/firebase.js';
 import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 import type { User } from 'firebase/auth';
+import type { Unsubscribe } from 'firebase/firestore';
 
 /**
  * @description
@@ -173,6 +174,18 @@ export interface Platform_Session
    * `date` must be adjusted to user (TZ) timezone;
   */
   userDate: Date;
+  /**
+   * @description
+   *  📌 `session/state` variable used for the
+   *  keeping a record of active listeners on the frontend.
+   */
+  firebaseListeners: Unsubscribe[] = [];
+  /**
+   * @description
+   *  📌 `session/state` variable used for the
+   *  keeping a record of active listeners on the frontend.
+   */
+  grapqhQlWebSockets: Array< () => void > = [];
 
   // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   // NOTE: UI                   ◼️
@@ -223,6 +236,16 @@ export interface Platform_Session
    *  📌 Toggle `visibility` (show/hide) of Userguide-1 (widget) access.
    */
   showUserguide1Conf: boolean;
+  /**
+   * @description
+   *  📌 Toggle `visibility` (show/hide) of Fixture Competition (widget) access.
+   */
+  showFixtureCompetition?: boolean;
+  /**
+   * @description
+   *  📌 Toggle `visibility` (show/hide) of Fixture Competition (widget) Modal View.
+   */
+  isShowFixtureCompetitionJoinModal?: boolean;
 
   // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   // NOTE: SPORTBOOK DATA       ◼️

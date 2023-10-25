@@ -68,22 +68,18 @@ export function platfrom_lang_ssr
     ]
   );
 
-	// ### NOTE:
-  // ### default to 'EN'.
-	let server_side_language: string = 'en';
-
   // ### CHECK
   // ### for cases of 'EN' default.
 	const if_M_0: boolean =
 		page_route_id == null
     && page_error != null
   ;
-	if (if_M_0) return server_side_language;
+	if (if_M_0) return 'en';
 
   // ### CHECK
   // ### for cases of [[lang=lang]] page.
-	server_side_language =
-    (page_route_id.includes('[[lang=lang]]') || page_route_id.includes('[lang=lang]'))
+	const server_side_language: string =
+    (page_route_id?.includes('[[lang=lang]]') || page_route_id?.includes('[lang=lang]'))
     && page_params_lang != undefined
       ? page_params_lang
       : 'en'
@@ -587,15 +583,25 @@ export async function promiseUrlsPreload
         _url: string
       ): Promise < any > =>
       {
+        // ### [🐞]
+        const t0: number = performance.now();
 
         const response: Response = await fetch(_url);
         const resJson: any = await response.json();
 
+        // ### [🐞]
+        const t1: number = performance.now();
+
         // ▓▓ [🐞]
-        dlog
+        dlogv2
         (
-          `🏹 FETCH (GET) ${_url}`,
-          true
+          `🏹 FETCH (GET) (preload) ${_url} `,
+          [
+            `⏱️ ${((t1 - t0) / 1000).toFixed(2)} sec`,
+          ],
+          true,
+          null,
+          false
         );
 
         // ▓▓ NOTE: ▓▓ IMPORTANT
@@ -975,8 +981,7 @@ export async function selectLanguage
   // ### CHECK
   // ### on error', navigate back to homepage;
   const if_M_0: boolean =
-    page.error
-    && !dev
+    !checkNull(page.error)
   ;
   if (if_M_0)
   {
@@ -992,6 +997,8 @@ export async function selectLanguage
       `${NB_W_TAG} -> ${lang}`,
       true,
     );
+
+    if (dev) return;
 
     await goto
     (
@@ -1368,6 +1375,20 @@ export const iso2CountryLogo = (value: string): string =>
   return value != undefined
     ? `https://betarena.com/images/flags/${value}.svg`
     : `https://www.betarena.com/images/flags/EN.svg`
+  ;
+}
+
+/**
+ * @description
+ * TODO: DOC:
+ */
+export function langPrefix
+(
+): string
+{
+  return sessionStore?.getServerLang() == 'en'
+      ? `/`
+      : `/${sessionStore?.getServerLang()}/`
   ;
 }
 
