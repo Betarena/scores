@@ -565,6 +565,29 @@ COMPONENT JS (w/ TS)
     fixturesGroupByDateLeagueMap = fixturesGroupByDateLeagueMap
   }
 
+  /**
+   * TODO: DOC:
+   * @param { number } leagueId
+   * @returns { string }
+   */
+  function correctFlagGenerate
+  (
+    leagueId: number
+  ): string
+  {
+    let targetLeagueFlag: string;
+
+    if (leagueId == 5 || leagueId == 2)
+      targetLeagueFlag = `https://betarena.com/images/flags/EU.svg`;
+    else if (leagueMap.has(leagueId))
+      targetLeagueFlag = `https://betarena.com/images/flags/${leagueMap.get(leagueId)?.iso2}.svg`;
+    else
+      targetLeagueFlag = `https://betarena.com/images/flags/EN.svg`;
+    ;
+
+    return targetLeagueFlag;
+  }
+
   // ~~~~~~~~~~~~~~~~~~~~~
   // VIEWPORT CHANGES
   // ~~~~~~~~~~~~~~~~~~~~~
@@ -752,7 +775,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 ">
                 <img
                   loading="lazy"
-                  src="{leagueMap.get(leagueId)?.iso2 ? `https://betarena.com/images/flags/${leagueMap.get(leagueId)?.iso2}.svg` : `https://www.betarena.com/images/flags/EN.svg`}"
+                  src={correctFlagGenerate(leagueId)}
                   on:error={(e) => (e.currentTarget.src = 'https://www.betarena.com/images/flags/EN.svg')}
                   alt="default alt text"
                   class="m-r-15"
@@ -807,7 +830,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               ">
               <img
                 loading="lazy"
-                src="{leagueMap.get(leagueId)?.iso2 ? `https://betarena.com/images/flags/${leagueMap.get(leagueId)?.iso2}.svg` : `https://www.betarena.com/images/flags/EN.svg`}"
+                src={correctFlagGenerate(leagueId)}
                 on:error={(e) => (e.currentTarget.src = 'https://www.betarena.com/images/flags/EN.svg')}
                 alt="default alt text"
                 class="m-r-15"
