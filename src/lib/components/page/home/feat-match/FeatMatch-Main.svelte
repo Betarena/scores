@@ -93,7 +93,8 @@
 	  isVoteCasted: boolean = false,
     showCountdown: boolean = true,
     placeholderData: any | object = { },
-    connectionRef: Unsubscribe
+    connectionRef: Unsubscribe,
+    dataTargetCountryImgLink: string
   ;
 
   $: countDownSec = toZeroPrefixDateStr(Math.floor((dateDiff / 1000) % 60).toString());
@@ -383,6 +384,18 @@
     injectLiveOddsData()
   }
 
+  /**
+   * TODO: DOC:
+  */
+  $: if (browser)
+  {
+    if (B_FEATM_D?.league_id == 2 || B_FEATM_D?.league_id == 5)
+      dataTargetCountryImgLink = 'https://betarena.com/images/flags/EU.svg';
+    else
+      dataTargetCountryImgLink = B_FEATM_D?.country_flag;
+    ;
+  }
+
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
@@ -473,7 +486,7 @@
           -->
           <img
             loading="lazy"
-            src={B_FEATM_D?.country_flag}
+            src={dataTargetCountryImgLink}
             alt="default alt text"
             class=
             "
