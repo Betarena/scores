@@ -113,8 +113,8 @@
     const urls_0: string[] =
     [
       `/api/data/lobby/highlights?targetStatus=pending&offset=0&limit=50`,
-      `/api/data/lobby/highlights?targetStatus=active&offset=0`,
-      `/api/data/lobby/highlights?targetStatus=finished&offset=0`,
+      `/api/data/lobby/highlights?targetStatus=active&offset=0&limit=4`,
+      `/api/data/lobby/highlights?targetStatus=finished&offset=0&limit=4`,
     ];
 
     const data_0: PP_PROMISE_0 = await promiseUrlsPreload

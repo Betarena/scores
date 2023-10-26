@@ -320,23 +320,23 @@
     let offset: number = 0;
     if (targetStatus == 'pending')
       offset = openCompetitions?.length;
-    //
+    ;
     if (targetStatus == 'active')
       offset = activeCompetitions?.length;
-    //
+    ;
     if (targetStatus == 'finished')
       offset = finishedCompetitions?.length;
-    //
+    ;
 
     (offset ??= 0)
-
-    // alert('HERE!')
 
     const response = await get
     (
       `/api/data/lobby/highlights
         ?targetStatus=${targetStatus}
-        &offset=${offset}`,
+        &offset=${offset}
+        &limit=4
+        &hasura=true`,
       null,
       true,
       false,
