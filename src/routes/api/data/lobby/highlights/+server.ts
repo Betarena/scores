@@ -1,55 +1,61 @@
+// ▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+// ▓▓ 📝 DESCRIPTION                                                        ▓▓
+// ▓▓ Application Server Endpoint for Competiton Highlights                 ▓▓
+// ▓▓ Data Fetch + Handle                                                   ▓▓
+// ▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+
 // #region ➤ 📦 Package Imports
 
 import { json } from '@sveltejs/kit';
 import dotenv from 'dotenv';
 
+import { get_target_hset_cache_data } from '$lib/redis/std_main.js';
 import { checkNull } from '$lib/utils/platform-functions.js';
 import { CHIGH_CP_ENTRY, CHIGH_CP_ENTRY_1, CHIGH_CP_ENTRY_2 } from '@betarena/scores-lib/dist/functions/func.competition.lobby.highlights.js';
 import * as RedisKeys from '@betarena/scores-lib/dist/redis/config.js';
 
-import { get_target_hset_cache_data } from '$lib/redis/std_main.js';
-import type { B_COMP_HIGH_D, B_COMP_HIGH_D_RES, B_COMP_HIGH_S, B_COMP_HIGH_T } from '@betarena/scores-lib/types/types.competition.highlights.js';
+import type { B_COMP_HIGH_D, B_COMP_HIGH_D_EXTRA, B_COMP_HIGH_D_RES, B_COMP_HIGH_S, B_COMP_HIGH_T } from '@betarena/scores-lib/types/types.competition.highlights.js';
 
 // #endregion ➤ 📦 Package Imports
 
 // #region ➤ 📌 VARIABLES
 
-// ### IMPORTANT
-// ### allows for 'NodeJs' to access secrets for '@scores/lib'.
+// ▓▓ IMPORTANT
+// ▓▓ allows for 'NodeJs' to access secrets for '@scores/lib'.
 dotenv.config();
 
 // #endregion ➤ 📌 VARIABLES
 
 // #region ➤ 🛠️ METHODS
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-//  [MAIN] ENDPOINT METHOD
-// ~~~~~~~~~~~~~~~~~~~~~~~~
+// ▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+// ▓▓ ENDPOINT ENTRY                              ▓▓
+// ▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 export async function GET
 (
-  req
+  req: any
 ): Promise < unknown >
 {
   try
   {
-    // ### IMPORTANT
-    // ### Handle url-query data.
+    // ▓▓ NOTE:
+    // ▓▓ handle url-query data
     const lang: string = req?.url?.searchParams?.get('lang');
     const seo: string = req?.url?.searchParams?.get('seo');
     const offset: string = req?.url?.searchParams?.get('offset');
     const limit: string = req?.url?.searchParams?.get('limit');
-    const targetStatus: string = req?.url?.searchParams?.get('targetStatus');
+    const targetStatus: B_COMP_HIGH_D_EXTRA = req?.url?.searchParams?.get('targetStatus') as B_COMP_HIGH_D_EXTRA;
 	  const competitionIds: string = req?.url?.searchParams?.get('competitionIds');
     const hasura: string = req?.url?.searchParams?.get('hasura');
 
     let data: unknown;
     let loadType: string = '⚡️ CACHE';
 
-    // ### CHECK
-    // for target data competition - highlights (widget) MAIN DATA.
-    // ### NOTE:
-    // ### cache & hasura (fallback) solution.
+    // ▓▓ CHECK
+    // ▓▓ for target data competition - highlights (widget) MAIN DATA.
+    // ▓▓ NOTE:
+    // ▓▓ cache & hasura (fallback) solution.
     const if_M_0: boolean =
       !checkNull(offset)
       && !checkNull(targetStatus)
@@ -72,8 +78,8 @@ export async function GET
         ;
       }
 
-      // ### NOTE:
-      // ### (default) HASURA fallback.
+      // ▓▓ NOTE:
+      // ▓▓ (default) HASURA fallback.
       if (!data || hasura)
       {
         data = await fallbackMainData
@@ -85,15 +91,15 @@ export async function GET
         loadType = '🟦 Hasura (SQL)';
       }
 
-      console.log(`📌 loaded [LOBBY-DATA] with: ${loadType}`);
+      // console.log(`📌 loaded [LOBBY-DATA] with: ${loadType}`);
 
       if (data != undefined) return json(data);
     }
 
-    // ### CHECK
-    // ### for target data competition - highlights (widget) TRANSLATIONS DATA.
-    // ### NOTE:
-    // ### cache & hasura (fallback) solution.
+    // ▓▓ CHECK
+    // ▓▓ for target data competition - highlights (widget) TRANSLATIONS DATA.
+    // ▓▓ NOTE:
+    // ▓▓ cache & hasura (fallback) solution.
     const if_M_1: boolean =
       !checkNull(lang)
       && checkNull(seo)
@@ -112,8 +118,8 @@ export async function GET
         ;
       }
 
-      // ### NOTE:
-      // ### (default) HASURA fallback.
+      // ▓▓ NOTE:
+      // ▓▓ (default) HASURA fallback.
       if (!data || hasura)
       {
         data =	await fallbackMainData_1
@@ -128,10 +134,10 @@ export async function GET
       if (data != undefined) return json(data);
     }
 
-    // ### CHECK
-    // ### for target data competition - highlights (widget) SEO DATA.
-    // ### NOTE:
-    // ### cache & hasura (fallback) solution.
+    // ▓▓ CHECK
+    // ▓▓ for target data competition - highlights (widget) SEO DATA.
+    // ▓▓ NOTE:
+    // ▓▓ cache & hasura (fallback) solution.
     const if_M_2: boolean =
       !checkNull(lang)
       && !checkNull(seo)
@@ -151,8 +157,8 @@ export async function GET
         ;
       }
 
-      // ### NOTE:
-      // ### (default) HASURA fallback.
+      // ▓▓ NOTE:
+      // ▓▓ (default) HASURA fallback.
       if (!data || hasura)
       {
         data = await fallbackMainData_2
@@ -162,20 +168,18 @@ export async function GET
         loadType = '🟦 Hasura (SQL)';
       }
 
-      console.log(`📌 loaded [LOBBY-SEO] with: ${loadType}`);
+      // console.log(`📌 loaded [LOBBY-SEO] with: ${loadType}`);
 
       if (data != undefined) return json(data);
     }
 
-    // ### CHECK
-    // ### complementary data
+    // ▓▓ CHECK
+    // ▓▓ complementary data
     const if_M_3: boolean =
       !checkNull(competitionIds)
     ;
     if (if_M_3)
     {
-      // TODO: LIN_C_T_A
-
       const fixtureIdsList: number[] = competitionIds
       ?.split
       (
@@ -190,15 +194,15 @@ export async function GET
         )
       );
 
-      const data =	await fallbackMainData_3
+      const data: B_COMP_HIGH_D_RES =	await fallbackMainData_3
       (
         fixtureIdsList
       );
       if (data != undefined) return json(data);
     }
 
-    // ### IMPORTANT
-    // ### fallback to NULL.
+    // ▓▓ IMPORTANT
+    // ▓▓ fallback to NULL.
     return json
     (
       null
@@ -222,39 +226,45 @@ export async function GET
   }
 }
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-//  [MAIN] METHOD
-// ~~~~~~~~~~~~~~~~~~~~~~~~
+// ▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+// ▓▓ METHOD(s)                                   ▓▓
+// ▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 /**
+ * @author
+ *  @migbash
  * @summary
- * [MAIN] [FALLBACK] [#0]
- *
+ *  🟥 MAIN | 🔹 HELPER
  * @description
- * ➨ fixture (lineup) widget main data (hasura) fallback;
- *
- * @param
- * {number} competitionId - Target
- *
- * @returns
- * An `asynchronous` data in the form of `[number, B_COMP_HIGH_D][]`.
+ *  📌 Fallback logic for **Competitions Highlights** Main Data.
+ * @param { number } offset
+ *  Target `offset` for competition.
+ * @param { number } limit
+ *  Target `limit` for competition.
+ * @param { B_COMP_HIGH_D_EXTRA } targetStatus
+ *  Target `status` for competition.
+ * @returns { Promise < B_COMP_HIGH_D_RES > }
+ *  Target response for expected options on `competitions - highlights` data.
  */
 async function fallbackMainData
 (
   offset: number,
   limit: number,
-  targetStatus: string
+  targetStatus: B_COMP_HIGH_D_EXTRA
 ): Promise < B_COMP_HIGH_D_RES >
 {
   const dataRes0: [ Map < number, B_COMP_HIGH_D >, number, string[] ] = await CHIGH_CP_ENTRY
   (
-    [],
-    targetStatus,
-    limit,
-    offset,
+    {
+      targetStatus,
+      limit,
+      offset
+    }
   );
 
-  if (dataRes0?.[0]?.size == 0) return null;
+  if (dataRes0?.[0]?.size == 0)
+    return null;
+  ;
 
 	return {
     data: [...dataRes0?.[0].entries()],
@@ -263,17 +273,16 @@ async function fallbackMainData
 }
 
 /**
+ * @author
+ *  @migbash
  * @summary
- * 🔹 HELPER | IMPORTANT
- *
- * @version
- * 1.0 - past versions: []
- *
- * @param
- * { string } lang - Target language to retrieve data for.
- *
- * @returns
- * Target language TRANSLATIONS for competitions highligths (widget).
+ *  🟥 MAIN | 🔹 HELPER
+ * @description
+ *  📌 Fallback logic for **Competition** Translation Data.
+ * @param { string } lang
+ *  Target `language`.
+ * @returns { Promise < B_COMP_HIGH_T > }
+ *  Target response for expected options on `competitions - highlights` translations data.
  */
 async function fallbackMainData_1
 (
@@ -285,23 +294,24 @@ async function fallbackMainData_1
     [lang]
   );
 
-  if (dataRes0?.[0]?.size == 0) return null;
+  if (dataRes0?.[0]?.size == 0)
+    return null;
+  ;
 
 	return dataRes0?.[0]?.get(lang);
 }
 
 /**
+ * @author
+ *  @migbash
  * @summary
- * 🔹 HELPER | IMPORTANT
- *
+ *  🟥 MAIN | 🔹 HELPER
  * @description
- * TODO: DOC:
- *
- * @param
- * { string } lang - Target SEO language to retrieve data for.
- *
- * @returns
- * Target language SEO for competitions highligths (widget).
+ *  📌 Fallback logic for **Competition** SEO Data.
+ * @param { string } lang
+ *  Target SEO language to retrieve data for.
+ * @returns { Promise < B_COMP_HIGH_S > }
+ *  Target response for expected options on `competitions - highlights` SEO data.
  */
 async function fallbackMainData_2
 (
@@ -313,23 +323,24 @@ async function fallbackMainData_2
     [lang]
   );
 
-  if (dataRes0?.[0]?.size == 0) return null;
+  if (dataRes0?.[0]?.size == 0)
+    return null;
+  ;
 
 	return dataRes0?.[0]?.get(lang);
 }
 
 /**
+ * @author
+ *  @migbash
  * @summary
- * [MAIN] [FALLBACK] [#0]
- *
+ *  🟥 MAIN | 🔹 HELPER
  * @description
- * ➨ fixture (lineup) widget main data (hasura) fallback;
- *
- * @param
- * {number} competitionId - Target
- *
- * @returns
- * An `asynchronous` data in the form of `[number, B_COMP_HIGH_D][]`.
+ *  📌 Fallback logic for **Competition** Complementary Data.
+ * @param { number[] } competitionIds
+ *  Target competition generated data for `competition - highlights` data.
+ * @returns { Promise < B_COMP_HIGH_D_RES > }
+ *  Target response for expected options on `competitions - highlights` complementary data.
  */
 async function fallbackMainData_3
 (
@@ -338,21 +349,19 @@ async function fallbackMainData_3
 {
   const dataRes0: [ Map < number, B_COMP_HIGH_D >, number, string[] ] = await CHIGH_CP_ENTRY
   (
-    competitionIds
+    {
+      competitionIds
+    }
   );
 
-  console.log(dataRes0)
-
-  if (dataRes0?.[0]?.size == 0) return null;
+  if (dataRes0?.[0]?.size == 0)
+    return null;
+  ;
 
 	return {
     data: [...dataRes0?.[0].entries()],
     limit: dataRes0?.[1]
   };
 }
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-//  [HELPER] OTHER METHODS
-// ~~~~~~~~~~~~~~~~~~~~~~~~
 
 // #endregion ➤ 🛠️ METHODS
