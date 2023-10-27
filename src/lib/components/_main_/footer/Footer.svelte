@@ -53,6 +53,8 @@ COMPONENT JS (w/ TS)
       : $page.url.origin
   ;
 
+  $: B_FOT_T: B_FOT_T = $page.data?.B_FOT_T,
+
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
