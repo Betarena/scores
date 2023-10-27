@@ -36,6 +36,9 @@ COMPONENT JS (w/ TS)
   $: WIDGET_T_DATA = $page.data?.FIXTURE_STATISTICS_TRANSLATION
   $: WIDGET_TITLE = WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.title || 'Statistics' : 'Statistics'
 
+  $: deepReactListenPageChange = JSON.stringify($page?.url?.pathname);
+  $: deepReactListenLangChng = JSON.stringify($sessionStore?.serverLang);
+
   //#endregion ➤ [VARIABLES]
 
   //#region ➤ [MAIN-METHODS]
@@ -86,9 +89,8 @@ COMPONENT JS (w/ TS)
   */
   $: if_R_0 =
     browser
-    && $sessionStore?.serverLang != undefined
   ;
-  $: if (if_R_0)
+  $: if (if_R_0 && (deepReactListenLangChng || deepReactListenPageChange))
   {
     widgetInit()
   }
