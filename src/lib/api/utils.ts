@@ -31,9 +31,9 @@ export async function get
 
   (_fetch ??= fetch)
 
-  endpoint = endpoint?.replaceAll(' ', '');
-  endpoint = endpoint?.replaceAll('\n', '');
-  // console.log('endpoint',endpoint)
+  console.log('endpoint',endpoint)
+  endpoint = tryCatch(() => endpoint?.replaceAll(' ', '')) as string;
+  endpoint = tryCatch(() => endpoint?.replaceAll('\n', '')) as string;
 
   try
   {

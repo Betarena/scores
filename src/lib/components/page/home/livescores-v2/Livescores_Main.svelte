@@ -579,7 +579,7 @@ COMPONENT JS (w/ TS)
 
     if (leagueId == 5 || leagueId == 2)
       targetLeagueFlag = `https://betarena.com/images/flags/EU.svg`;
-    else if (leagueMap.has(leagueId))
+    else if (leagueMap.get(leagueId)?.iso2 != null)
       targetLeagueFlag = `https://betarena.com/images/flags/${leagueMap.get(leagueId)?.iso2}.svg`;
     else
       targetLeagueFlag = `https://betarena.com/images/flags/EN.svg`;

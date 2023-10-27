@@ -34,6 +34,9 @@ COMPONENT JS (w/ TS)
   $: WIDGET_S_DATA = $page.data?.FIXTURE_PROB_DATA;
   $: WIDGET_T_DATA = $page.data?.FIXTURE_PROBS_TRANSLATION;
 
+  $: deepReactListenPageChange = JSON.stringify($page?.url?.pathname);
+  $: deepReactListenLangChng = JSON.stringify($sessionStore?.serverLang);
+
   //#endregion ➤ [VARIABLES]
 
   //#region ➤ [MAIN-METHODS]
@@ -85,9 +88,8 @@ COMPONENT JS (w/ TS)
   */
   $: if_R_0 =
     browser
-    && $sessionStore?.serverLang != undefined
   ;
-  $: if (if_R_0)
+  $: if (if_R_0 && (deepReactListenLangChng || deepReactListenPageChange))
   {
     widgetInit()
   }

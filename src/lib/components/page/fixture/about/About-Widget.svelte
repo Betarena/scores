@@ -19,6 +19,7 @@ COMPONENT JS (w/ TS)
 	import type { B_ABT_D, B_ABT_T } from '@betarena/scores-lib/types/about.js';
 	import type { B_INC_D } from '@betarena/scores-lib/types/incidents.js';
 	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
+	import { browser } from '$app/environment';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -34,6 +35,9 @@ COMPONENT JS (w/ TS)
   $: WIDGET_S_DATA = $page.data?.FIXTURE_ABOUT
   $: WIDGET_T_DATA = $page.data?.FIXTURE_ABOUT_TRANSLATION
   $: WIDGET_TITLE = WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.title || 'Statistics' : 'Statistics'
+
+  $: deepReactListenPageChange = JSON.stringify($page?.url?.pathname);
+  $: deepReactListenLangChng = JSON.stringify($sessionStore?.serverLang);
 
   //#endregion ➤ [VARIABLES]
 
@@ -85,9 +89,9 @@ COMPONENT JS (w/ TS)
    * listens to target "language" change;
   */
   $: if_R_0 =
-    $sessionStore?.serverLang
+    browser
   ;
-  $: if (if_R_0)
+  $: if (if_R_0 && (deepReactListenLangChng || deepReactListenPageChange))
   {
     widgetInit()
   }

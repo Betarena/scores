@@ -41,6 +41,9 @@ COMPONENT JS (w/ TS)
   $: FIXTURE_CONTENT = $page.data?.FIXTURE_CONTENT
   $: FIXTURES_ODDS_T = $page.data?.FIXTURES_ODDS_T
 
+  $: deepReactListenPageChange = JSON.stringify($page?.url?.pathname);
+  $: deepReactListenLangChng = JSON.stringify($sessionStore?.serverLang);
+
   //#endregion ➤ [VARIABLES]
 
   //#region ➤ [MAIN-METHODS]
@@ -77,10 +80,6 @@ COMPONENT JS (w/ TS)
 
   //#endregion ➤ [METHODS]
 
-  //#region ➤ [ONE-OFF] [METHODS] [HELPER] [IF]
-
-  //#endregion ➤ [ONE-OFF] [METHODS] [IF]
-
   //#region ➤ [REACTIVIY] [METHODS]
 
   /**
@@ -91,9 +90,8 @@ COMPONENT JS (w/ TS)
   */
   $: if_R_0 =
     browser
-    && $sessionStore?.serverLang != undefined
   ;
-  $: if (if_R_0)
+  $: if (if_R_0 && (deepReactListenLangChng || deepReactListenPageChange))
   {
     widgetInit()
   }
