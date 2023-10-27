@@ -87,6 +87,8 @@
 
   $: deepReactListenPageChange = JSON.stringify($page?.url?.pathname);
   $: deepReactListenLangChng = JSON.stringify($sessionStore?.serverLang);
+  $: miscFixturePageData0 = $page.data?.FIXTURE_INFO;
+  $: miscFixturePageData1 = $page.data?.B_SAP_D3_CP_M;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -133,6 +135,8 @@
       true,
       true,
     ) as B_FIX_COMP_D;
+
+    console.log('response', response);
 
     widgetDataMain = response;
 
