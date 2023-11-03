@@ -6,6 +6,7 @@
 
   //#region ➤ [MAIN] Package Imports
 
+	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
 
 	import sessionStore from '$lib/store/session.js';
@@ -169,8 +170,11 @@
    * @description
    * ➨ listens to target "fixture" in "odds" data;
   */
-  $: if ($sessionStore?.live_odds_fixture_target)
+  $: if (browser || $sessionStore?.live_odds_fixture_target)
   {
+    // NOTE:
+    // Identified issue of issue #1819,
+    // does not appear to execute in the first load of the website
     injectLiveOddsData()
   }
 
