@@ -8,12 +8,12 @@
 import { json } from '@sveltejs/kit';
 
 import { LFOOT_L_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.main.footer.js';
-import { FOT_C_T_A } from '@betarena/scores-lib/dist/redis/config.js';
+import { FOT_C_T_A1 } from '@betarena/scores-lib/dist/redis/config.js';
 import dotenv from 'dotenv';
 import LZString from 'lz-string';
 import { get_target_hset_cache_data } from '../../../../../lib/redis/std_main';
 
-import type { B_FOT_T } from '@betarena/scores-lib/types/footer.js';
+import type { B_FOT_T } from '@betarena/scores-lib/types/types.main.footer.js';
 
 // #endregion ➤ Package Imports
 
@@ -59,7 +59,7 @@ export async function GET
       {
         data = await get_target_hset_cache_data
         (
-          FOT_C_T_A,
+          FOT_C_T_A1,
           lang
         );
       }
@@ -141,7 +141,6 @@ async function fallbackMainData
 {
   const dataRes0: [ Map < string, B_FOT_T >, string[] ] = await LFOOT_L_ENTRY_1
   (
-    null,
     [lang]
   );
 
