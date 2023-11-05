@@ -376,14 +376,14 @@
 
     window.intercomSettings =
     {
-      api_base: "https://api-iam.intercom.io",
-      app_id: "yz9qn6p3",
-      name: $userBetarenaSettings?.user?.scores_user_data?.username,
-      email: $userBetarenaSettings?.user?.firebase_user_data?.email,
-      uid: $userBetarenaSettings?.user?.firebase_user_data?.uid,
-      lang: $userBetarenaSettings?.user?.scores_user_data?.lang,
-      // created_at: new Date().getTime()?.toString(),
-      competition_number: $userBetarenaSettings?.user?.scores_user_data?.competition_number
+      api_base: "https://api-iam.intercom.io"
+      , app_id: "yz9qn6p3"
+      , name: $userBetarenaSettings?.user?.scores_user_data?.username
+      , email: $userBetarenaSettings?.user?.firebase_user_data?.email ?? `${$userBetarenaSettings?.user?.firebase_user_data?.uid}-unkown@gmail.com`
+      , uid: $userBetarenaSettings?.user?.firebase_user_data?.uid
+      , lang: $userBetarenaSettings?.user?.scores_user_data?.lang
+      // , created_at: new Date().getTime()?.toString()
+      , competition_number: $userBetarenaSettings?.user?.scores_user_data?.competition_number
     };
 
     // ### [🐞]
