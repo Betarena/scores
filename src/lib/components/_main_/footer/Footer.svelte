@@ -177,7 +177,7 @@
       icon_linkedin = (await import('./assets/icon/linkedin.svg')).default;
       icon_medium = (await import('./assets/icon/medium.svg')).default;
       icon_telegram = (await import('./assets/icon/telegram.svg')).default;
-      icon_x = (await import('./assets/icon/twitter.svg')).default;
+      icon_x = (await import('./assets/icon/x.svg')).default;
       icon_github = (await import('./assets/icon/github.svg')).default;
 
       [
