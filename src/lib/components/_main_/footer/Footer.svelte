@@ -31,6 +31,7 @@
 
   import SeoBox from '$lib/components/SEO-Box.svelte';
 
+	import type { B_H_SFOOTD_Social_Network } from '@betarena/scores-lib/types/_HASURA_.js';
 	import type { B_FOT_T } from '@betarena/scores-lib/types/types.main.footer.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -66,7 +67,22 @@
     logoLink: string,
     begambleawareorg: string,
     logo_full: string,
-    legal18icon: string
+    legal18icon: string,
+    icon_discord: string,
+    icon_linkedin: string,
+    icon_medium: string,
+    icon_telegram: string,
+    icon_x: string,
+    icon_github: string,
+    socialNetworkOrder: B_H_SFOOTD_Social_Network[] =
+    [
+      'discord',
+      'telegram',
+      'x',
+      'medium',
+      'linkedin',
+      'github'
+    ]
   ;
 
   $: homepageURL =
@@ -108,6 +124,37 @@
 		}
 	}
 
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🔹 HELPER
+   * @description
+   *  📌 Obtain target `social` icon, depending on `target`.
+   * @param { B_H_SFOOTD_Social_Network } name
+   *  Target `social media` name.
+   * @returns
+   *  Target `social media` icon.
+   */
+  function getSocialIcon
+  (
+    name: B_H_SFOOTD_Social_Network
+  ): string
+  {
+    if (name == 'discord')
+      return icon_discord;
+    else if (name == 'linkedin')
+      return icon_linkedin;
+    else if (name == 'github')
+      return icon_github;
+    else if (name == 'x')
+      return icon_x;
+    else if (name == 'telegram')
+      return icon_telegram;
+    else if (name == 'medium')
+      return icon_medium;
+  }
+
   // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
@@ -126,6 +173,12 @@
       begambleawareorg = (await import('./assets/begambleawareorg_black.png')).default;
       logo_full = (await import('./assets/betarena-logo-full.svg')).default;
       legal18icon = (await import('./assets/legal-18-action-bet.png')).default;
+      icon_discord = (await import('./assets/icon/discord.svg')).default;
+      icon_linkedin = (await import('./assets/icon/linkedin.svg')).default;
+      icon_medium = (await import('./assets/icon/medium.svg')).default;
+      icon_telegram = (await import('./assets/icon/telegram.svg')).default;
+      icon_x = (await import('./assets/icon/twitter.svg')).default;
+      icon_github = (await import('./assets/icon/github.svg')).default;
 
       [
         isViewTablet,
@@ -300,7 +353,7 @@ FOOTER | Main Component
         <!--
         LIST OF SOCIAL MEDIA ICONS
         -->
-        {#each Object.keys(B_FOT_T?.links?.social_networks) ?? [] as key}
+        {#each socialNetworkOrder ?? [] as key}
 
           <!--
           SOCIAL LINK
@@ -309,14 +362,16 @@ FOOTER | Main Component
             rel="external"
             href={B_FOT_T?.links?.social_networks?.[key]}
           >
-            <img
-              loading="lazy"
-              src="/assets/svg/footer/icon/{key?.toLowerCase()}.svg"
-              alt="{key?.toLowerCase()}-icon"
-              title="{key?.toLowerCase()}-icon"
-              width=32
-              height=32
-            />
+            {#if icon_github}
+              <img
+                loading="lazy"
+                src={getSocialIcon(key)}
+                alt="{key?.toLowerCase()}-icon"
+                title="{key?.toLowerCase()}-icon"
+                width=32
+                height=32
+              />
+            {/if}
           </a>
 
         {/each}
@@ -355,7 +410,7 @@ FOOTER | Main Component
         id="newsletter-subscribe-btn"
         class=
         "
-        btn-primary
+        btn-primary-v2
         "
         on:click={() => $sessionStore.newsletterPopUpShow = true}
       >
@@ -403,6 +458,7 @@ FOOTER | Main Component
               color-white
               s-14
               w-normal
+              hover-color-primary
               "
             >
               {B_FOT_T?.terms?.latest_news}
@@ -445,6 +501,7 @@ FOOTER | Main Component
               color-white
               s-14
               w-normal
+              hover-color-primary
               "
             >
               {B_FOT_T?.terms?.about_us}
@@ -487,6 +544,7 @@ FOOTER | Main Component
               color-white
               s-14
               w-normal
+              hover-color-primary
               "
             >
               {B_FOT_T?.terms?.terms}
@@ -533,6 +591,7 @@ FOOTER | Main Component
               color-white
               s-14
               w-normal
+              hover-color-primary
               "
             >
               {B_FOT_T?.terms?.privacy}
@@ -575,6 +634,7 @@ FOOTER | Main Component
               color-white
               s-14
               w-normal
+              hover-color-primary
               "
             >
               {B_FOT_T?.terms?.status}
@@ -617,6 +677,7 @@ FOOTER | Main Component
               color-white
               s-14
               w-normal
+              hover-color-primary
               "
             >
               {B_FOT_T?.terms?.changelog}
@@ -674,21 +735,29 @@ FOOTER | Main Component
         "
       >
         Second Act
-      </p>
 
-      <p
-        class=
-        "
-        s-14
-        w-400
-        color-grey
-        "
-      >
-        18 Boulevard Montmartre Paris 75009
+        <!--
+        🖥️ LAPTOP
+        -->
+        {#if !isViewTablet || isViewMobile}
+          <br/>
+        {/if}
+
+        <span
+          class=
+          "
+          s-14
+          w-400
+          color-grey
+          "
+          class:m-l-10={isViewTablet}
+        >
+          18 Boulevard Montmartre Paris 75009
+        </span>
       </p>
 
       <!--
-      📱 MOBILE
+      📱 MOBILE + 💻 TABLET
       -->
       {#if isViewTablet}
         <p
@@ -697,6 +766,7 @@ FOOTER | Main Component
           s-14
           w-400
           color-grey
+          m-t-8
           "
         >
           © 2021 Betarena All rights reserved
@@ -783,9 +853,6 @@ FOOTER | Main Component
     /* 🎨 style */
 		height: 44px;
 		width: 100%;
-		background: #f5620f;
-		box-shadow: 0px 3px 8px rgba(212, 84, 12, 0.32);
-		border-radius: 8px;
 	}
 
   div#global⮕footer⮕w⮕main⮕menu-list
@@ -876,7 +943,7 @@ FOOTER | Main Component
       grid-column: 2;
       grid-row: 2;
       /* 🎨 style */
-			width: 340px;
+			width: 250px;
       height: fit-content;
 		}
 
@@ -904,7 +971,7 @@ FOOTER | Main Component
       grid-column: 2;
       grid-row: 4;
       /* 🎨 style */
-      justify-self: left;
+      justify-self: right;
     }
 
 	}
@@ -996,6 +1063,8 @@ FOOTER | Main Component
       /* 📌 position */
       grid-column: 3;
       grid-row: 2;
+      /* 🎨 style */
+      justify-self: left;
     }
 
 	}
