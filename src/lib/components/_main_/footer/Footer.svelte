@@ -360,6 +360,7 @@ FOOTER | Main Component
           -->
           <a
             rel="external"
+            target="_blank"
             href={B_FOT_T?.links?.social_networks?.[key]}
           >
             {#if icon_github}
