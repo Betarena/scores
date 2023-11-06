@@ -1,9 +1,14 @@
+// #region ➤ 📦 Package Imports
+
 import type { GeoJsResponse } from '$lib/types/types.geojs';
+import type { IBetarenaUser } from '@betarena/scores-lib/types/_FIREBASE_.js';
 import type { B_H_COMP_DATA } from '@betarena/scores-lib/types/_HASURA_.js';
 import type { FIREBASE_livescores_now, FIREBASE_odds, FIRE_LNNS } from '@betarena/scores-lib/types/firebase.js';
 import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 import type { User } from 'firebase/auth';
 import type { Unsubscribe } from 'firebase/firestore';
+
+// #endregion ➤ 📦 Package Imports
 
 /**
  * @description
@@ -17,18 +22,6 @@ export interface Voted_Fixture
 }
 
 /**
- * @description
- * TODO: DOC:
- */
-export type Auth_Type =
-	| 'discord'
-	| 'email'
-	| 'wallet'
-	| 'google'
-	| 'github'
-;
-
-/**
  * @author
  *  @migbash
  * @summary
@@ -38,22 +31,10 @@ export type Auth_Type =
  */
 export interface BetarenaUser
 extends
+IBetarenaUser,
 Pick < User_Setting, "userguide_id_opt_out" >
 {
-  /** @description **User** scores platform language preference */
-	lang?: string;
-  /** @description **User** configured `username` */
-	username?: string;
-  /** @description **User** initial account creation `registration` method i.e: `Google, Github, etc.` */
-	registration_type?: Auth_Type[];
-  /** @description **User** initial account creation `registration` date */
-	register_date?: string;
-  /** @description **User** account profile photo */
-	profile_photo?: string | undefined;
-  /** @description **User** account linked `Web3` wallet address */
-	web3_wallet_addr?: string | undefined;
-  /** @description **User** account `balance` */
-  main_balance?: number;
+  // NaN
 }
 
 /**

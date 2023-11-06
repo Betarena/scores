@@ -337,16 +337,16 @@
    */
   $: if (browser && (deepReactListenIsRouteCompetitions || deepReactListenIsProfilePage))
   {
-    const helpdesk: HTMLElement = document?.getElementsByClassName('crisp-client')?.[0] as unknown as HTMLElement;
-    if (helpdesk != undefined)
-      helpdesk.style.display = "unset";
+    const intercom: HTMLElement = document?.getElementsByClassName('intercom-lightweight-app')?.[0] as unknown as HTMLElement;
+    if (intercom != undefined)
+      intercom.style.display = "unset";
     ;
   }
   else if (browser && !deepReactListenIsRouteCompetitions && !deepReactListenIsProfilePage)
   {
-    const helpdesk: HTMLElement = document?.getElementsByClassName('crisp-client')?.[0] as unknown as HTMLElement;
-    if (helpdesk != undefined)
-      helpdesk.style.display = "none";
+    const intercom: HTMLElement = document?.getElementsByClassName('intercom-lightweight-app')?.[0] as unknown as HTMLElement;
+    if (intercom != undefined)
+      intercom.style.display = "none";
     ;
   }
 
@@ -373,6 +373,18 @@
       `🚏 checkpoint [R] ➤ src/layout.svelte if_R_CS43`,
       true
     );
+
+    window.intercomSettings =
+    {
+      api_base: "https://api-iam.intercom.io"
+      , app_id: "yz9qn6p3"
+      , name: $userBetarenaSettings?.user?.scores_user_data?.username
+      , email: $userBetarenaSettings?.user?.firebase_user_data?.email ?? `${$userBetarenaSettings?.user?.firebase_user_data?.uid}-unkown@gmail.com`
+      , uid: $userBetarenaSettings?.user?.firebase_user_data?.uid
+      , lang: $userBetarenaSettings?.user?.scores_user_data?.lang
+      // , created_at: new Date().getTime()?.toString()
+      , competition_number: $userBetarenaSettings?.user?.scores_user_data?.competition_number
+    };
 
     // ### [🐞]
     Sentry.setContext
@@ -448,7 +460,7 @@
   HELPDESK PLUGIN
   -->
   {#if deepReactListenIsRouteCompetitions || deepReactListenIsProfilePage}
-    <script type="text/javascript">
+    <!-- <script type="text/javascript">
       window.$crisp=[];
       window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
       (function()
@@ -459,6 +471,56 @@
         s.async=1;
         d.getElementsByTagName("head")[0].appendChild(s);
       }
+      )();
+    </script> -->
+    <script>
+      // We pre-filled your app ID in the widget URL: 'https://widget.intercom.io/widget/yz9qn6p3'
+      (
+        function()
+        {
+          var w=window;
+          var ic=w.Intercom;
+          if (typeof ic==="function")
+          {
+            ic('reattach_activator');
+            ic('update',w.intercomSettings);
+          }
+          else
+          {
+            var d=document;
+            var i=function()
+            {
+              i.c(arguments);
+            };
+            i.q=[];
+            i.c=function(args)
+            {
+              i.q.push(args);
+            };
+            w.Intercom=i;
+            var l=function()
+            {
+              var s=d.createElement('script');
+              s.type='text/javascript';
+              s.async=true;
+              s.src='https://widget.intercom.io/widget/yz9qn6p3';
+              var x=d.getElementsByTagName('script')[0];
+              x.parentNode.insertBefore(s,x);
+            };
+            if (document.readyState==='complete')
+            {
+              l();
+            }
+            else if ( w.attachEvent )
+            {
+              w.attachEvent('onload',l);
+            }
+            else
+            {
+              w.addEventListener('load',l,false);
+            }
+          }
+        }
       )();
     </script>
   {/if}

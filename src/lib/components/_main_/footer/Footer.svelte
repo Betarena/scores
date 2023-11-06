@@ -1,44 +1,88 @@
-<!-- ===============
-COMPONENT JS (w/ TS)
-=================-->
+<!--
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+### COMPONENT JS (w/ TS)                                                               ◼️
+### NOTE:                                                                              ◼️
+### access custom Betarena Scores JS VScode Snippets by typing 'script...'             ◼️
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+-->
 
 <script lang="ts">
 
   // #region ➤ 📦 Package Imports
 
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'imports' that are required  ◼️
+  // ### by 'this' .svelte file is ran.                                   ◼️
+  // ### IMPORTANT                                                        ◼️
+  // ### Please, structure the imports as follows:                        ◼️
+  // ### 1. svelte/sveltekit imports                                      ◼️
+  // ### 2. project-internal files and logic                              ◼️
+  // ### 3. component import(s)                                           ◼️
+  // ### 4. assets import(s)                                              ◼️
+  // ### 5. type(s) imports(s)                                            ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
-	import SeoBox from '$lib/components/SEO-Box.svelte';
-
 	import sessionStore from '$lib/store/session.js';
-
-	import { dlog, FT_W_TAG } from '$lib/utils/debug';
 	import { viewport_change } from '$lib/utils/platform-functions';
 
-	import type { B_FOT_T } from '@betarena/scores-lib/types/footer.js';
+  import SeoBox from '$lib/components/SEO-Box.svelte';
+
+	import type { B_H_SFOOTD_Social_Network } from '@betarena/scores-lib/types/_HASURA_.js';
+	import type { B_FOT_T } from '@betarena/scores-lib/types/types.main.footer.js';
 
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
 
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'variables' that are to be   ◼️
+  // ### and are expected to be used by 'this' .svelte file / component.  ◼️
+  // ### IMPORTANT                                                        ◼️
+  // ### Please, structure the imports as follows:                        ◼️
+  // ### 1. export const / let [..]                                       ◼️
+  // ### 2. const [..]                                                    ◼️
+  // ### 3. let [..]                                                      ◼️
+  // ### 4. $: [..]                                                       ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+
   const
+    /** @description 📌 `this` component **main** `id` and `data-testid` prefix. */
+    CNAME = 'global⮕footer⮕w⮕main',
+    /** @description 📱 MOBILE */
     VIEWPORT_MOBILE_INIT = 710,
+    /** @description 💻 TABLET */
     VIEWPORT_TABLET_INIT = 1160
   ;
 
   let
-    // ◼️ IMPORTANT
     isViewMobile: boolean = true,
     isViewTablet: boolean = true,
-    // ◼️ IMPORTANT
     B_FOT_T: B_FOT_T = $page.data?.B_FOT_T,
-    // ◼️ IMPORTANT
     homepageURL: string,
     logoLink: string,
     begambleawareorg: string,
     logo_full: string,
-    legal18icon: string
+    legal18icon: string,
+    icon_discord: string,
+    icon_linkedin: string,
+    icon_medium: string,
+    icon_telegram: string,
+    icon_x: string,
+    icon_github: string,
+    socialNetworkOrder: B_H_SFOOTD_Social_Network[] =
+    [
+      'discord',
+      'telegram',
+      'x',
+      'medium',
+      'linkedin',
+      'github'
+    ]
   ;
 
   $: homepageURL =
@@ -46,35 +90,26 @@ COMPONENT JS (w/ TS)
       ? `/${$page.params.lang}`
       : `/`
   ;
-
   $: logoLink =
     $sessionStore?.serverLang != 'en'
       ? `${$page.url.origin}/${$sessionStore?.serverLang}`
       : $page.url.origin
   ;
-
-  $: B_FOT_T: B_FOT_T = $page.data?.B_FOT_T,
+  $: B_FOT_T: B_FOT_T = $page.data?.B_FOT_T;
 
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
 
-  /**
-   * @description form SUBMIT method to
-   * register user on the BETARENA EMAIL LIST
-  */
-	async function submitEmail
-  (
-  ): Promise < void >
-  {
-    // [🐞]
-    dlog
-    (
-      `${FT_W_TAG[0]} subscribing to email newsletter!`
-    );
-
-		$sessionStore.newsletterPopUpShow = true;
-	}
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'methods' that are to be     ◼️
+  // ### and are expected to be used by 'this' .svelte file / component.  ◼️
+  // ### IMPORTANT                                                        ◼️
+  // ### Please, structure the imports as follows:                        ◼️
+  // ### 1. function (..)                                                 ◼️
+  // ### 2. async function (..)                                           ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
 	/**
 	 * @description reload current page;
@@ -89,9 +124,47 @@ COMPONENT JS (w/ TS)
 		}
 	}
 
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🔹 HELPER
+   * @description
+   *  📌 Obtain target `social` icon, depending on `target`.
+   * @param { B_H_SFOOTD_Social_Network } name
+   *  Target `social media` name.
+   * @returns
+   *  Target `social media` icon.
+   */
+  function getSocialIcon
+  (
+    name: B_H_SFOOTD_Social_Network
+  ): string
+  {
+    if (name == 'discord')
+      return icon_discord;
+    else if (name == 'linkedin')
+      return icon_linkedin;
+    else if (name == 'github')
+      return icon_github;
+    else if (name == 'x')
+      return icon_x;
+    else if (name == 'telegram')
+      return icon_telegram;
+    else if (name == 'medium')
+      return icon_medium;
+  }
+
   // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'logic' that should run      ◼️
+  // ### immediately and as part of the 'lifecycle' of svelteJs,          ◼️
+  // ### as soon as 'this' .svelte file is ran.                           ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
   onMount
   (
@@ -100,6 +173,12 @@ COMPONENT JS (w/ TS)
       begambleawareorg = (await import('./assets/begambleawareorg_black.png')).default;
       logo_full = (await import('./assets/betarena-logo-full.svg')).default;
       legal18icon = (await import('./assets/legal-18-action-bet.png')).default;
+      icon_discord = (await import('./assets/icon/discord.svg')).default;
+      icon_linkedin = (await import('./assets/icon/linkedin.svg')).default;
+      icon_medium = (await import('./assets/icon/medium.svg')).default;
+      icon_telegram = (await import('./assets/icon/telegram.svg')).default;
+      icon_x = (await import('./assets/icon/x.svg')).default;
+      icon_github = (await import('./assets/icon/github.svg')).default;
 
       [
         isViewTablet,
@@ -132,13 +211,18 @@ COMPONENT JS (w/ TS)
 
 </script>
 
-<!-- ===============
-COMPONENT HTML
-NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
-=================-->
+<!--
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+### COMPONENT HTML                                                                     ◼️
+### NOTE:                                                                              ◼️
+### use 'CTRL+SPACE' to autocomplete global class=styles                               ◼️
+### NOTE:                                                                              ◼️
+### access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.         ◼️
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+-->
 
 <!--
-FOOTER SEO
+FOOTER | SEO
 -->
 <SeoBox>
 
@@ -148,49 +232,56 @@ FOOTER SEO
   SOCIAL LINKS
   -->
   <p>
-    {B_FOT_T?.scores_footer_links?.latest_news}
+    {B_FOT_T?.links?.latest_news}
   </p>
   <p>
-    {B_FOT_T?.scores_footer_links?.about_us}
+    {B_FOT_T?.links?.about_us}
   </p>
   <p>
-    {B_FOT_T?.scores_footer_links?.betting_tips}
+    {B_FOT_T?.links?.betting_tips}
   </p>
   <p>
-    {B_FOT_T?.scores_footer_links?.privacy}
+    {B_FOT_T?.links?.privacy}
   </p>
   <p>
-    {B_FOT_T?.scores_footer_links?.social_networks}
+    {B_FOT_T?.links?.social_networks}
   </p>
   <p>
-    {B_FOT_T?.scores_footer_links?.terms}
+    {B_FOT_T?.links?.terms}
   </p>
+  <p>
+    {B_FOT_T?.links?.status}
+  </p>
+  <p>
+    {B_FOT_T?.links?.changelog}
+  </p>
+
 
   <!--
   SOCIAL LINKS - 2
   -->
-  {#each B_FOT_T?.scores_footer_links?.social_networks ?? [] as social_network}
+  {#each Object.keys(B_FOT_T?.links?.social_networks) ?? [] as key}
     <p>
-      {social_network[1]}
+      {B_FOT_T?.links?.social_networks?.[key]}
     </p>
   {/each}
 
 </SeoBox>
 
 <!--
-FOOTER COMPONENT
+FOOTER | Main Component
 -->
 <footer>
 
   <div
-    id="inner-footer"
+    id="{CNAME}⮕inner"
   >
 
     <!--
     BETARENA BRAND
     -->
     <div
-      id="brand"
+      id="{CNAME}⮕brand"
       on:click={() => reloadPage()}
       on:keypress={(e) => { if (e.key === 'Enter') reloadPage() }}
     >
@@ -230,9 +321,12 @@ FOOTER COMPONENT
     FOLLOW SOCIAL MEDIA LINKS
     -->
     <div
-      id="social-box"
+      id="{CNAME}⮕social-box"
     >
 
+      <!--
+      FOLLOW US (text)
+      -->
       <p
         class=
         "
@@ -242,14 +336,14 @@ FOOTER COMPONENT
         m-b-20
         "
       >
-        {B_FOT_T?.scores_footer_translations?.follow}
+        {B_FOT_T?.terms?.follow ?? 'Follow us'}
       </p>
 
       <!--
       SOCIAL MEDIA FOLLOWS
       -->
       <div
-        id="social-media-box"
+        id="{CNAME}⮕social-media-box"
         class=
         "
         column-start-grid
@@ -259,23 +353,26 @@ FOOTER COMPONENT
         <!--
         LIST OF SOCIAL MEDIA ICONS
         -->
-        {#each B_FOT_T?.scores_footer_links?.social_networks ?? [] as social_network}
+        {#each socialNetworkOrder ?? [] as key}
 
           <!--
           SOCIAL LINK
           -->
           <a
             rel="external"
-            href={social_network[1]}
+            target="_blank"
+            href={B_FOT_T?.links?.social_networks?.[key]}
           >
-            <img
-              loading="lazy"
-              src="/assets/svg/footer/icon/{social_network[0].toString().toLocaleLowerCase()}.svg"
-              alt="{social_network[0].toString().toLocaleLowerCase()}-icon"
-              title="{social_network[0].toString().toLocaleLowerCase()}-icon"
-              width=32
-              height=32
-            />
+            {#if icon_github}
+              <img
+                loading="lazy"
+                src={getSocialIcon(key)}
+                alt="{key?.toLowerCase()}-icon"
+                title="{key?.toLowerCase()}-icon"
+                width=32
+                height=32
+              />
+            {/if}
           </a>
 
         {/each}
@@ -288,7 +385,7 @@ FOOTER COMPONENT
     SUBSCRIBE TO NEWSLETTER
     -->
     <div
-      id="newsletter-box"
+      id="{CNAME}⮕newsletter-box"
     >
 
       <!--
@@ -301,62 +398,34 @@ FOOTER COMPONENT
         s-14
         w-normal
         m-b-8
-        text-left
+        {isViewMobile ? 'text-center' : 'text-left'}
         "
       >
-        {B_FOT_T?.scores_footer_translations?.subscribe_newsletter}
+        {B_FOT_T?.terms?.subscribe_newsletter ?? 'Subscribe to newsletter'}
       </p>
 
       <!--
-      FORM START
+      SUMIT BUTTON
       -->
-      <form
-        on:submit|preventDefault={() =>	submitEmail()}
-        class:row-space-out={!isViewTablet}
+      <button
+        id="newsletter-subscribe-btn"
+        class=
+        "
+        btn-primary-v2
+        "
+        on:click={() => $sessionStore.newsletterPopUpShow = true}
       >
-
-        <!--
-        INPUT FIELD EMAIL
-        -->
-        <input
-          id=""
-          type="email"
-          name="type_email"
-          placeholder={B_FOT_T?.scores_footer_translations?.type_email}
+        <p
           class=
           "
+          color-white
           s-14
-          w-400
-          color-grey
+          w-500
           "
-          class:m-b-12={isViewTablet}
-          class:m-r-20={!isViewTablet}
-        />
-
-        <!--
-        SUMIT BUTTON
-        -->
-        <button
-          id="newsletter-subscribe-btn"
-          class=
-          "
-          btn-primary
-          "
-          type="submit"
         >
-          <p
-            class=
-            "
-            color-white
-            s-14
-            w-500
-            "
-          >
-            {B_FOT_T?.scores_footer_translations?.subscribe_cta}
-          </p>
-        </button>
-
-      </form>
+          {B_FOT_T?.terms?.subscribe_cta}
+        </p>
+      </button>
 
     </div>
 
@@ -364,9 +433,8 @@ FOOTER COMPONENT
     MENU LIST
     -->
     <div
-      id="menu-list"
+      id="{CNAME}⮕menu-list"
       class:row-space-start={!isViewMobile}
-      class:m-t-45={!isViewMobile && isViewTablet}
     >
 
       <ul>
@@ -383,7 +451,7 @@ FOOTER COMPONENT
         >
           <a
             rel="external"
-            href={B_FOT_T?.scores_footer_links?.latest_news}
+            href={B_FOT_T?.links?.latest_news}
           >
             <p
               class=
@@ -391,51 +459,10 @@ FOOTER COMPONENT
               color-white
               s-14
               w-normal
+              hover-color-primary
               "
             >
-              {B_FOT_T?.scores_footer_translations?.latest_news}
-            </p>
-          </a>
-        </li>
-
-        <!--
-        SEPARATOR
-        -->
-        <li
-          class=
-          "
-          m-r-10
-          "
-          class:m-b-16={isViewMobile}
-        >
-          <div
-            class="menu-separator"
-          />
-        </li>
-
-        <!--
-        BETTING TIPS
-        -->
-        <li
-          class=
-          "
-          m-r-10
-          "
-          class:m-b-16={isViewMobile}
-        >
-          <a
-            rel="external"
-            href={B_FOT_T?.scores_footer_links?.betting_tips}
-          >
-            <p
-              class=
-              "
-              color-white
-              s-14
-              w-normal
-              "
-            >
-              {B_FOT_T?.scores_footer_translations?.betting_tips}
+              {B_FOT_T?.terms?.latest_news}
             </p>
           </a>
         </li>
@@ -467,7 +494,7 @@ FOOTER COMPONENT
         >
           <a
             rel="external"
-            href={B_FOT_T?.scores_footer_links?.about_us}
+            href={B_FOT_T?.links?.about_us}
           >
             <p
               class=
@@ -475,16 +502,13 @@ FOOTER COMPONENT
               color-white
               s-14
               w-normal
+              hover-color-primary
               "
             >
-              {B_FOT_T?.scores_footer_translations?.about_us}
+              {B_FOT_T?.terms?.about_us}
             </p>
           </a>
         </li>
-
-      </ul>
-
-      <ul>
 
         <!--
         SEPARATOR
@@ -513,7 +537,7 @@ FOOTER COMPONENT
         >
           <a
             rel="external"
-            href={B_FOT_T?.scores_footer_links?.terms}
+            href={B_FOT_T?.links?.terms}
           >
             <p
               class=
@@ -521,12 +545,17 @@ FOOTER COMPONENT
               color-white
               s-14
               w-normal
+              hover-color-primary
               "
             >
-              {B_FOT_T?.scores_footer_translations?.terms}
+              {B_FOT_T?.terms?.terms}
             </p>
           </a>
         </li>
+
+      </ul>
+
+      <ul>
 
         <!--
         SEPARATOR
@@ -555,7 +584,7 @@ FOOTER COMPONENT
         >
           <a
             rel="external"
-            href={B_FOT_T?.scores_footer_links?.privacy}
+            href={B_FOT_T?.links?.privacy}
           >
             <p
               class=
@@ -563,9 +592,96 @@ FOOTER COMPONENT
               color-white
               s-14
               w-normal
+              hover-color-primary
               "
             >
-              {B_FOT_T?.scores_footer_translations?.privacy}
+              {B_FOT_T?.terms?.privacy}
+            </p>
+          </a>
+        </li>
+
+        <!--
+        SEPARATOR
+        -->
+        <li
+          class=
+          "
+          m-r-10
+          "
+          class:m-b-16={isViewMobile}
+        >
+          <div
+            class="menu-separator"
+          />
+        </li>
+
+        <!--
+        STATUS
+        -->
+        <li
+          class=
+          "
+          m-r-10
+          "
+          class:m-b-16={isViewMobile}
+        >
+          <a
+            rel="external"
+            href={B_FOT_T?.links?.status}
+          >
+            <p
+              class=
+              "
+              color-white
+              s-14
+              w-normal
+              hover-color-primary
+              "
+            >
+              {B_FOT_T?.terms?.status}
+            </p>
+          </a>
+        </li>
+
+        <!--
+        SEPARATOR
+        -->
+        <li
+          class=
+          "
+          m-r-10
+          "
+          class:m-b-16={isViewMobile}
+        >
+          <div
+            class="menu-separator"
+          />
+        </li>
+
+        <!--
+        CHANGELOG
+        -->
+        <li
+          class=
+          "
+          m-r-10
+          "
+          class:m-b-16={isViewMobile}
+        >
+          <a
+            rel="external"
+            href={B_FOT_T?.links?.changelog}
+          >
+            <p
+              class=
+              "
+              color-white
+              s-14
+              w-normal
+              hover-color-primary
+              "
+            >
+              {B_FOT_T?.terms?.changelog}
             </p>
           </a>
         </li>
@@ -578,12 +694,12 @@ FOOTER COMPONENT
     LEGAL BETTING ICON
     -->
     <div
-      id="legal-bet-box"
+      id="{CNAME}⮕legal-bet-box"
       class=
       "
       row-space-start
+      width-auto
       "
-      style="width: auto;"
     >
       <img
         loading="lazy"
@@ -608,7 +724,7 @@ FOOTER COMPONENT
     COMPANY DETAILS
     -->
     <div
-      id="company-box"
+      id="{CNAME}⮕company-box"
     >
 
       <p
@@ -620,21 +736,29 @@ FOOTER COMPONENT
         "
       >
         Second Act
-      </p>
 
-      <p
-        class=
-        "
-        s-14
-        w-400
-        color-grey
-        "
-      >
-        18 Boulevard Montmartre Paris 75009
+        <!--
+        🖥️ LAPTOP
+        -->
+        {#if !isViewTablet || isViewMobile}
+          <br/>
+        {/if}
+
+        <span
+          class=
+          "
+          s-14
+          w-400
+          color-grey
+          "
+          class:m-l-10={isViewTablet}
+        >
+          18 Boulevard Montmartre Paris 75009
+        </span>
       </p>
 
       <!--
-      📱 MOBILE
+      📱 MOBILE + 💻 TABLET
       -->
       {#if isViewTablet}
         <p
@@ -643,6 +767,7 @@ FOOTER COMPONENT
           s-14
           w-400
           color-grey
+          m-t-8
           "
         >
           © 2021 Betarena All rights reserved
@@ -655,10 +780,15 @@ FOOTER COMPONENT
 
 </footer>
 
-<!-- ===============
-COMPONENT STYLE
-NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
-=================-->
+<!--
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+### COMPONENT STYLE                                                                    ◼️
+### NOTE:                                                                              ◼️
+### auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE      ◼️
+### NOTE:                                                                              ◼️
+### access custom Betarena Scores CSS VScode Snippets by typing 'style...'             ◼️
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+-->
 
 <style>
 
@@ -666,17 +796,16 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   {
     /* 🎨 style */
 		background: #292929;
-		height: 645px;
 		width: -webkit-fill-available;
 		padding: 48px 18px;
 		box-shadow: inset 0px 1px 0px #616161;
 	}
 
-	footer #inner-footer
+	div#global⮕footer⮕w⮕main⮕inner
   {
     /* 📌 position */
 		display: grid;
-    gap: 17px 85px;
+    gap: 32px 85px;
     grid-template-columns: 1fr;
     align-items: start;
 		justify-items: stretch;
@@ -685,7 +814,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		text-align: center;
 	}
 
-  div#brand
+  div#global⮕footer⮕w⮕main⮕brand
   {
     /* 📌 position */
     grid-column: 1;
@@ -693,20 +822,20 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     /* 🎨 style */
     justify-self: center;
   }
-	div#brand img
+	div#global⮕footer⮕w⮕main⮕brand img
   {
     /* 🎨 style */
 		height: 32px;
 		width: 151px;
 	}
 
-  div#social-box
+  div#global⮕footer⮕w⮕main⮕social-box
   {
     /* 📌 position */
     grid-column: 1;
     grid-row: 2;
   }
-  div#social-media-box
+  div#global⮕footer⮕w⮕main⮕social-media-box
   {
     /* 🎨 style */
 		gap: 16px;
@@ -714,48 +843,36 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		width: 100%;
 	}
 
-  div#newsletter-box
+  div#global⮕footer⮕w⮕main⮕newsletter-box
   {
     /* 📌 position */
     grid-column: 1;
     grid-row: 3;
   }
-	div#newsletter-box input
-  {
-    /* 🎨 style */
-		background: #4b4b4b;
-		border-radius: 8px;
-		padding: 12px 20px;
-		width: 100%;
-	}
-	div#newsletter-box button#newsletter-subscribe-btn
+	div#global⮕footer⮕w⮕main⮕newsletter-box button#newsletter-subscribe-btn
   {
     /* 🎨 style */
 		height: 44px;
 		width: 100%;
-		background: #f5620f;
-		box-shadow: 0px 3px 8px rgba(212, 84, 12, 0.32);
-		border-radius: 8px;
 	}
 
-  div#menu-list
+  div#global⮕footer⮕w⮕main⮕menu-list
   {
     /* 📌 position */
     grid-column: 1;
     grid-row: 4;
   }
-  div#menu-list ul
+  div#global⮕footer⮕w⮕main⮕menu-list ul
   {
     /* 📌 position */
 		display: flex;
     /* 🎨 style */
 		list-style-type: none;
-		/* flex-wrap: wrap; */
 		padding: 0;
 		margin: 0;
 		place-content: center;
 	}
-	div#menu-list div.menu-separator
+	div#global⮕footer⮕w⮕main⮕menu-list div.menu-separator
   {
     /* 🎨 style */
 		width: 1px;
@@ -763,7 +880,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		background-color: #4b4b4b;
 	}
 
-  div#legal-bet-box
+  div#global⮕footer⮕w⮕main⮕legal-bet-box
   {
     /* 📌 position */
     grid-column: 1;
@@ -772,7 +889,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     justify-content: center;
   }
 
-  div#company-box
+  div#global⮕footer⮕w⮕main⮕company-box
   {
     /* 📌 position */
     grid-column: 1;
@@ -780,9 +897,9 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   }
 
   /*
-  =============
-  ⚡️ RESPONSIVNESS
-  =============
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  ◼️ ⚡️ RESPONSIVNESS      ◼️
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   */
 
 	@media screen
@@ -795,10 +912,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 			padding: 68px 34px;
 		}
 
-    footer #inner-footer
+    div#global⮕footer⮕w⮕main⮕inner
     {
       /* 📌 position */
       display: grid;
+      gap: 32px 85px;
       grid-template-columns: repeat(2, auto);
       grid-template-rows: repeat(4, auto);
       justify-items: start;
@@ -807,47 +925,48 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
       justify-content: space-between;
 		}
 
-    div#brand
+    div#global⮕footer⮕w⮕main⮕brand
     {
       /* 🎨 style */
       justify-self: unset;
     }
 
-    div#social-box
+    div#global⮕footer⮕w⮕main⮕social-box
     {
       /* 📌 position */
       grid-column: 1;
       grid-row: 2;
     }
 
-		div#newsletter-box
+		div#global⮕footer⮕w⮕main⮕newsletter-box
     {
       /* 📌 position */
       grid-column: 2;
-      grid-row: 1 / 3;
+      grid-row: 2;
       /* 🎨 style */
-			width: 340px;
+			width: 250px;
+      height: fit-content;
 		}
 
-    div#menu-list
+    div#global⮕footer⮕w⮕main⮕menu-list
     {
       /* 📌 position */
       grid-column: 1 / 3;
       grid-row: 3;
     }
-		div#menu-list ul
+		div#global⮕footer⮕w⮕main⮕menu-list ul
     {
 			place-content: unset;
 		}
 
-    div#company-box
+    div#global⮕footer⮕w⮕main⮕company-box
     {
       /* 📌 position */
       grid-column: 1;
       grid-row: 4;
     }
 
-    div#legal-bet-box
+    div#global⮕footer⮕w⮕main⮕legal-bet-box
     {
       /* 📌 position */
       grid-column: 2;
@@ -872,10 +991,13 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 			text-align: -moz-center;
 		}
 
-		footer #inner-footer
+		/*
+    ▓▓ inner container */
+    div#global⮕footer⮕w⮕main⮕inner
     {
       /* 📌 position */
 			display: grid;
+      gap: 17px 85px;
       grid-template-columns: repeat(3, auto);
       grid-template-rows: repeat(2, auto);
 			justify-content: space-between;
@@ -883,41 +1005,41 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
       align-items: end;
 		}
 
-    div#menu-list
+    /*
+    ▓▓ platform menu list */
+    div#global⮕footer⮕w⮕main⮕menu-list
     {
       /* 📌 position */
       grid-column: 2;
       grid-row: 2;
     }
 
-    div#newsletter-box
-    {
-      /* 📌 position */
-      grid-column: 2;
-      grid-row: 1;
-      /* 🎨 style */
-			width: 100%;
-		}
-		div#newsletter-box input
-    {
-      /* 🎨 style */
-			width: 100%;
-			min-width: 430px;
-		}
-		div#newsletter-box button#newsletter-subscribe-btn
-    {
-      /* 🎨 style */
-			padding: 11.5px 23.5px;
-			width: fit-content;
-		}
-
-    div#social-box
+    /*
+    ▓▓ newsletter box */
+    div#global⮕footer⮕w⮕main⮕newsletter-box
     {
       /* 📌 position */
       grid-column: 3;
       grid-row: 1;
+      /* 🎨 style */
+			width: 100%;
+		}
+		div#global⮕footer⮕w⮕main⮕newsletter-box button#newsletter-subscribe-btn
+    {
+      /* 🎨 style */
+			padding: 11.5px 23.5px;
+      min-width: 328px;
+		}
+
+    /*
+    ▓▓ social box */
+    div#global⮕footer⮕w⮕main⮕social-box
+    {
+      /* 📌 position */
+      grid-column: 2;
+      grid-row: 1;
     }
-    div#social-media-box
+    div#global⮕footer⮕w⮕main⮕social-media-box
     {
       /* 🎨 style */
 			justify-content: left;
@@ -926,18 +1048,24 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
       width: 100%;
     }
 
-    div#company-box
+    /*
+    ▓▓ company box */
+    div#global⮕footer⮕w⮕main⮕company-box
     {
       /* 📌 position */
       grid-column: 1;
       grid-row: 2;
     }
 
-    div#legal-bet-box
+    /*
+    ▓▓ legal bet box */
+    div#global⮕footer⮕w⮕main⮕legal-bet-box
     {
       /* 📌 position */
       grid-column: 3;
       grid-row: 2;
+      /* 🎨 style */
+      justify-self: left;
     }
 
 	}
