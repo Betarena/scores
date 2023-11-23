@@ -6,68 +6,49 @@
 > This project uses 2 separate `live` versions hosted and connected to `Heroku`.
 > - [betarena-scores-platform.herokuapp.com](https://betarena-scores-platform.herokuapp.com/)
 
-### Dev Environment
+### 🛠️ Scores Development (Local) Environment
 
-> There are a few ways in which you can start working with development, all of which are listed below:
+There are a few ways in which you can start working with development, all of which are listed below:
 
-1. ⭐️ [Preferred]
+#### 1. Via `Local Dev`
 
-Using `GitHub | Codespaces`. To get started simply launch the
-`dev` branch and once the `codespace` has successfully loaded
-check for `node` and `npm` to match those in the `package.json > engines`.
-If versions do not match, run the following commands:
+> **Warning**
+> It is expected that you have `node`, `npm` and `make` installed on your machine.
 
-```
-npm install -g npm@8.19.1
-npm install
-```
+##### 2.a Install Dependencies
 
----
-
-2. `Local Dev`
-
-Clone the latest `main` branch and begin development:
+In order to get started with `local` development, please do the following steps:
 
 ```bash
-npm install (or `pnpm install` or `yarn`)
+npm install # (or `pnpm install` or `yarn`)
 ```
 
-and start the development server:
+##### 2.b Configure DotEnv (secrets)
+
+We are using `dotenv` to obtain the latest and most up-to-date secrets.
 
 ```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+make dotenv-secrets-setup
 ```
 
----
+> **Note**
+> If this is your first time setup with `dotenv-vault` (you can check this by seeing if you have the `.env.me` and/or `.env.vault`
+> in the project `(root)`, please follow the command-line for
+> prompts provided by `dotenv` on the next steps. In the end, you should have a `.env.me` and
+> a `.env.vault` in your project `(root)`.
 
-3. `Docker DEV`
+##### 2.c Run Project
 
-If you do not have the supported/defined `node` and `npm` versions
-installed on your local machine, you can opt to use the configured `Docker`
-DEV environment.
-
-For this you will need:
-  - `Docker Desktop` downloaded on your local machine,
-  - `Makefile` (or `Node`)
+If everything went well in the previous steps, you should now be able to access the deployed project on your `localhost`.
 
 ```bash
-make dev-docker-start
-
-# OR if no Make installed
-npm run docker-dev-up
+make dev-local-deploy
 ```
 
-`NOTE:` 🔥 Hot-reload enabled for `Docker DEV`
+##### 2.c Run Project (Altetnative)
 
-### Production Environment
-
-Before creating a production version of your app, install an [adapter](https://kit.svelte.dev/docs#adapters) for your target environment. Then:
+Alternatively, if you are developing against `@betarena/scores-lib`, located somewhere on your local machine, then you can run:
 
 ```bash
-npm run build
+make dev-local-dev-1-click-spin
 ```
-
-> You can preview the built app with `npm run preview`, regardless of whether you installed an adapter. This should _not_ be used to serve your app in production.
