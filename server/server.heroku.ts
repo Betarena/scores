@@ -6,7 +6,7 @@
 import compression from 'compression';
 import express from 'express';
 import * as sslify from 'express-sslify';
-import { handler } from './build/handler.js';
+import { handler } from '../build/handler.js';
 // import sslRedirect from 'heroku-ssl-redirect';
 // import requestIp from 'request-ip';
 
@@ -22,17 +22,17 @@ const app = express();
 /*
   app.get
   (
-    '/getClientIP', 
+    '/getClientIP',
     (
-      req, 
+      req,
       res
-    ) => 
+    ) =>
     {
       const ip = req?.headers['x-forwarded-for']
-        || req?.socket?.remoteAddress 
+        || req?.socket?.remoteAddress
         || null;
       const ip2 = req?.ip
-      const ip3 = requestIp.getClientIp(req); 
+      const ip3 = requestIp.getClientIp(req);
 
       let ipAddr = req.headers["x-forwarded-for"];
       if (ipAddr) {
@@ -65,10 +65,10 @@ const app = express();
 app.use
 (
   (
-    req, 
-    res, 
+    req,
+    res,
     next
-  ) => 
+  ) =>
   {
     if (req.header('x-forwarded-proto') !== 'https')
       res.redirect(`https://${req.header('host')}${req.url}`);
@@ -83,7 +83,7 @@ app.use
 (
   sslify.HTTPS
   (
-  { 
+  {
     trustProtoHeader: true
     }
   )
@@ -95,14 +95,14 @@ app.use
   compression()
 );
 
-// let SvelteKit handle everything else, 
+// let SvelteKit handle everything else,
 app.use(handler);
 
 // initialize app;
-// DOC: https://stackoverflow.com/questions/15693192/heroku-node-js-error-web-process-failed-to-bind-to-port-within-60-seconds-o 
+// DOC: https://stackoverflow.com/questions/15693192/heroku-node-js-error-web-process-failed-to-bind-to-port-within-60-seconds-o
 app.listen
 (
-  process.env.PORT || 5000, () => 
+  process.env.PORT || 5000, () =>
   {
     console.log(`listening on port ${process.env.PORT || 5000}`);
   }
