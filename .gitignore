@@ -1,4 +1,5 @@
-.DS_Store
+# ▓ NOTE:
+# ▓ > 📌 Project
 node_modules
 /build
 /.svelte-kit
@@ -6,12 +7,23 @@ node_modules
 /gif
 certs/*
 
-# ▓▓ CRITICAL
-# ▓▓ never uncomment
+# ▓ CRITICAL
+# ▓ > project secrets (never uncomment)
 .env
+.env*
 .env.*
 .sentryclirc
+!.env.project
+!.env.vault
+.flaskenv*
 
-# ▓▓ 💠 MISC
+# ▓ NOTE:
+# ▓ > miscellenous
 WEBSITE-DEV-README.md
 datalog/
+
+# ▓ NOTE:
+# ▓ > MacOS
+.DS_Store
+# ▓ @see :> https://apple.stackexchange.com/questions/14980/why-are-dot-underscore-files-created-and-how-can-i-avoid-them
+._*
