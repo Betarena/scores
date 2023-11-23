@@ -74,5 +74,15 @@
     "profile": "Layout",
     "tablet": "Mobile",
     "loaders": "Theme"
-  }
+  },
+  // "eslint.enable": true,
+  // "eslint.validate": ["javascript", "javascriptreact", "svelte"]
+  "eslint.codeActionsOnSave": false,
+  "eslint.validate": [
+      "javascript",
+        "javascriptreact",
+       "svelte"
+    ],
+    "eslint.enable": true
+
 }
