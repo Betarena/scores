@@ -3,15 +3,17 @@
 	"description": "Betarena Official Scores Platform (PWA)",
 	"version": "2.4.5",
 	"type": "module",
-	"engines": {
+	"engines":
+  {
 		"npm": "8.19.1",
 		"node": "16.17.0"
 	},
+  "engineStrict": true,
 	"scripts": {
 		"prepare": "is-ci || husky install",
-		"start": "node build/index.js",
-		"build": "cross-env NODE_OPTIONS=--max_old_space_size=4096 VITE_SCORES_PKG_VERSION=v.$(npm pkg get version --workspaces=false | tr -d \\\") VITE_SCORES_LIB_PKG_VERSION=v.$(npm info @betarena/scores-lib version | tr -d \\\") VITE_SENTRY_UPLOAD_SOURCEMAPS=true vite build",
-		"build-2": "cross-env NODE_OPTIONS=--max_old_space_size=4096 VITE_SCORES_PKG_VERSION=v.$(npm pkg get version --workspaces=false | tr -d \\\") VITE_SCORES_LIB_PKG_VERSION=v.$(npm info @betarena/scores-lib version | tr -d \\\") VITE_SENTRY_UPLOAD_SOURCEMAPS=true vite build",
+		"start": "cross-env NODE_OPTIONS='-r dotenv/config' node build/index.js",
+		"build": "cross-env NODE_OPTIONS='-r dotenv/config --max_old_space_size=4096' VITE_SCORES_PKG_VERSION=v.$(npm pkg get version --workspaces=false | tr -d \\\") VITE_SCORES_LIB_PKG_VERSION=v.$(npm info @betarena/scores-lib version | tr -d \\\") VITE_SENTRY_UPLOAD_SOURCEMAPS=true vite build",
+		"build-2": "cross-env NODE_OPTIONS='-r dotenv/config --max_old_space_size=4096' VITE_SCORES_PKG_VERSION=v.$(npm pkg get version --workspaces=false | tr -d \\\") VITE_SCORES_LIB_PKG_VERSION=v.$(npm info @betarena/scores-lib version | tr -d \\\") VITE_SENTRY_UPLOAD_SOURCEMAPS=true vite build",
 		"test": "npm run test:integration && npm run test:unit",
 		"svelte-check": "svelte-check --tsconfig ./tsconfig.json",
 		"svelte-check::watch": "svelte-check --tsconfig ./tsconfig.json --watch",
@@ -21,7 +23,7 @@
 		"sveltekit::debug": "cross-env NODE_OPTIONS='--inspect' vite dev --host --port 3050",
 		"sveltekit::debug::bull": "cross-env NODE_DEBUG='bull' vite preview --host --port 5000",
 		"sveltekit::debug::preview": "cross-env NODE_OPTIONS='--inspect' vite preview --host --port 4173",
-		"sveltekit::dev": "vite dev --host --port 3050 --force",
+		"sveltekit::dev": "cross-env NODE_OPTIONS='-r dotenv/config' vite dev --host --port 3050 --force",
 		"sveltekit::dev::1-click::spin": "make dev-1-click-spin",
 		"sveltekit::dev::docker": "vite dev --host --port 5055",
 		"sveltekit::dev::docker:up": "docker-compose -f docker-compose.dev.yml up",
