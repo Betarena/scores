@@ -173,9 +173,8 @@ heroku-production-deploy-branch-current:
 		\n▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\
 		$(END_COLOUR)\n"
 
-	@heroku\
-		--remote heroku-dev\
-		releases
+	@heroku releases\
+		--remote heroku-prod
 
 	@git push heroku-prod $$(git branch --show-current):main -f
 
@@ -196,9 +195,8 @@ heroku-production-deploy-STOP:
 		\n▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\
 		$(END_COLOUR)\n"
 
-	@heroku\
-		--remote heroku-prod\
-		builds:cancel
+	@heroku builds:cancel\
+		--remote heroku-prod
 
 	@ $(MAKE) misc-end-target
 #
@@ -255,9 +253,8 @@ heroku-development-deploy-branch-current:
 		\n▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\
 		$(END_COLOUR)\n"
 
-	@heroku\
-		--remote heroku-dev\
-		releases
+	@heroku releases\
+		--remote heroku-dev
 
 	@git push heroku-dev $$(git branch --show-current):main -f
 
@@ -280,8 +277,8 @@ heroku-development-maintenance-OFF:
 
 	@ # @see :> https://devcenter.heroku.com/articles/maintenance-mode
 	@heroku\
-		--remote heroku-dev\
-		maintenance:off
+		maintenance:off\
+		--remote heroku-dev
 
 	@ $(MAKE) misc-end-target
 #
@@ -302,8 +299,8 @@ heroku-development-maintenance-ON:
 
 	@ # @see :> https://devcenter.heroku.com/articles/maintenance-mode
 	@heroku\
-		--remote heroku-dev\
-		maintenance:on
+		maintenance:on\
+		--remote heroku-dev
 
 	@ $(MAKE) misc-end-target
 #
@@ -341,7 +338,7 @@ heroku-development-secrets-update:
 	@heroku\
 		config:set\
 		--remote heroku-dev\
-		DOTENV_KEY=$$(npx dotenv-vault@1.25.0 keys production)
+		DOTENV_KEY=$$(npx dotenv-vault@1.25.0 keys development)
 
 	@ $(MAKE) misc-end-target
 #
@@ -354,8 +351,8 @@ heroku-development-bash:
 	@echo ""
 
 	@heroku\
-		--remote heroku-dev\
-		run bash
+		run bash\
+		--remote heroku-dev
 
 	@ $(MAKE) misc-end-target
 #
