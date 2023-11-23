@@ -1,13 +1,34 @@
-<h1 align="center">
-  <a href="https://github.com/dec0dOS/amazing-github-template">
-    <img src="https://user-images.githubusercontent.com/20924663/148760091-dea6a851-1aa9-4dbb-ac29-59f2ce2ad493.png" alt="Logo">
+<!--
+▓▓ Betarena Branding
+-->
+
+<h1
+  align="left"
+>
+  <a
+    href="https://github.com/dec0dOS/amazing-github-template"
+  >
+    <img
+      src="https://user-images.githubusercontent.com/20924663/148760091-dea6a851-1aa9-4dbb-ac29-59f2ce2ad493.png" alt="Logo"
+    />
   </a>
 </h1>
 
-![example workflow](https://github.com/Betarena/scores/actions/workflows/docker-image.yml/badge.svg)
-![example workflow](https://github.com/Betarena/scores/actions/workflows/deploy.yml/badge.svg)
+<!--
+▓▓ Repository badge(s)
+-->
+
+![ESLint](https://img.shields.io/badge/ESLint-4B3263?style=for-the-badge&logo=eslint&logoColor=white)
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
+![Svelte](https://img.shields.io/badge/svelte-%23f1413d.svg?style=for-the-badge&logo=svelte&logoColor=white)
+![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)
+
+![Firebase](https://img.shields.io/badge/Firebase-039BE5?style=for-the-badge&logo=Firebase&logoColor=white)
+
 [![DeepSource](https://deepsource.io/gh/Betarena/scores.svg/?label=active+issues&token=fz7n_ybCLUD7T9tvU2qY6yoU)](https://deepsource.io/gh/Betarena/scores/?ref=repository-badge)
-[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
+![GitHub Actions](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white)
+
+---
 
 <details open="open">
 <summary>Table of Contents</summary>
@@ -24,7 +45,6 @@
 - [🛠 Contributing](#-contributing)
 - [💗 Support](#-support)
 - [📌 License](#-license)
-
 </details>
 
 ## Betarena Scores Platform
