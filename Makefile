@@ -53,7 +53,8 @@ misc-end-target:
 #
 
 # ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-# ▓▓ 🐳 DOCKER | 🚀 PRODUCTION                                      ▓▓
+# ▓ 🐳 DOCKER                                                        ▓
+# ▓ 👇 contains custom `docker` commands and interaction with Docker ▓
 # ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 docker-start:
@@ -76,11 +77,7 @@ docker-update-scores-web:
 	docker-compose -f docker-compose.yml up -d --build
 #
 
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-# ▓▓ 🛠️ DEVELOPEMNT                                                 ▓▓
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-
-dev-docker-start:
+docker-local-start:
 	echo 'Starting DEV - Docker Environment'
 	echo 'Removing Old DEV Logs'
 	-rm -r ./datalog/*
@@ -88,21 +85,49 @@ dev-docker-start:
 	echo 'DEV Ready!'
 #
 
-dev-local-clear-build-quick:
-	-rm -r ./.svelte-kit/
-#
+# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+# ▓ 🛠️ DEVELOPEMNT                                                   ▓
+# ▓ 👇 contains custom `development` flow commands 									 ▓
+# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 dev-local-deploy:
-	@VITE_SCORES_PKG_VERSION="v.$(shell npm pkg get version --workspaces=false | tr -d \")" \
-		VITE_SCORES_LIB_PKG_VERSION="v.$(shell npm info @betarena/scores-lib version | tr -d \")" \
+	@echo ""
+	# ▓ DESCRIPTION
+	# ▓ > custom use of `development` command.
+	# ▓ > for spin-up of local environment.
+	@echo ""
+
+	$(MAKE) mac-os
+	-rm -r ./.svelte-kit/
+
+	@VITE_SCORES_PKG_VERSION="v.$(shell npm pkg get version --workspaces=false | tr -d \")"\
+		VITE_SCORES_LIB_PKG_VERSION="v.$(shell npm info @betarena/scores-lib version | tr -d \")"\
+		DOTENV_KEY=$(shell npx dotenv-vault@1.25.0 keys devlopment)\
 		npm run sveltekit::dev
 #
 
 dev-local-scores-lib-link:
-	npm run pkg::@betarena/scores-lib::link
+	@echo ""
+	# ▓ DESCRIPTION
+	# ▓ > custom use of `development` command.
+	# ▓ > for spin-up of local connection to @betarena/scores-lib
+	@echo ""
+
+	@npm run pkg::@betarena/scores-lib::link
+
+	@npm ls --link --global
 #
 
-dev-local-dev-1-click-spin: ; ${MAKE} -j2 dev-local-clear-build-quick dev-local-deploy dev-local-scores-lib-link
+dev-local-dev-1-click-spin:
+	@echo ""
+	# ▓ DESCRIPTION
+	# ▓ > custom use of `development` command.
+	# ▓ > for spin-up of local environment.
+	@echo ""
+
+	${MAKE} -j3\
+		dev-local-deploy\
+		dev-local-scores-lib-link
 #
 
 dev-local-preview-1-click-spin:
@@ -179,14 +204,41 @@ heroku-production-deploy-STOP:
 #
 
 heroku-production-secrets-update:
-	@echo \
-		"$(COLOUR_R)\
-		\n◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️\
-		\n◼️ 🔑 Heroku-Prod | Updating Secrets        ◼️\
-		\n◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️\
-		$(END_COLOUR)\n"
-	@heroku config:set --remote heroku-prod $$(grep -v '^#' .env.production | xargs)
 	@echo ""
+	# ▓ DESCRIPTION
+	# ▓ > custom use of `heroku` command.
+	# ▓ > for setting/pushing secrets for heroku.
+	@echo ""
+
+	@echo\
+		"$(COLOUR_G)\
+		\n▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\
+		\n▓ 🔑 heroku-prod | setting secrets         ▓\
+		\n▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\
+		$(END_COLOUR)\n"
+
+	@ # ▓ TODO:
+	@ # ▓ > add support for 'unesetting ALL target .env.* file secrets'
+	@ # @heroku\
+		config:unset\
+		--remote heroku-prod\
+		🟩 SENTRY_AUTH_TOKEN SENTRY_ENVIRONMENT etc.
+		❌ grep -v '^#' .env.production | xargs | grep -e '/(?:^|\s)([^=]*)/g'
+
+	@ # ▓ NOTE:
+	@ # ▓ > ❌ deprecated
+	@ # ▓ > please use the command below (following).
+	@ # @heroku\
+		config:set\
+		--remote heroku-prod\
+		$$(grep -v '^#' .env.production | xargs)
+
+	@heroku\
+		config:set\
+		--remote heroku-prod\
+		DOTENV_KEY=$$(npx dotenv-vault@1.25.0 keys production)
+
+	@ $(MAKE) misc-end-target
 #
 
 heroku-development-deploy-branch-current:
@@ -313,29 +365,65 @@ heroku-development-bash:
 # ▓ 👇 contains custom `heroku` commands and interaction with Heroku ▓
 # ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
-dotenv-secrets-pull:
+dotenv-secrets-setup:
 	@echo ""
 	# ▓ DESCRIPTION
 	# ▓ > custom use of `dotenv` command.
-	# ▓ > for importing/pulling secrets.
+	# ▓ > for setting up the secrets.
 	# ▓ > use the `dotenv-vault help` for more information.
 	@echo ""
 
 	@echo \
 		"$(COLOUR_G)\
 		\n▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\
-		\n▓ 🔑 dotenv | importing secrets            ▓\
+		\n▓ 🔑 dotenv | setting up secrets           ▓\
 		\n▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\
 		$(END_COLOUR)\n"
 
-	@npx dotenv-vault@1.25.0 pull
+	@npx dotenv-vault@1.25.0 new vlt_f5f4745903d586ce993a0f1afde6b47cd6f8781e2af24fd73430331af5633ede
 #
 
-dotnev-secrets-keys:
+dotnev-secrets-pull-development:
 	@echo ""
 	# ▓ DESCRIPTION
 	# ▓ > custom use of `dotenv` command.
-	# ▓ > for importing/pulling secrets.
+	# ▓ > for importing/pulling secrets into a target `.env` file.
+	# ▓ > use the `dotenv-vault help` for more information.
+	@echo ""
+
+	@echo \
+		"$(COLOUR_G)\
+		\n▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\
+		\n▓ 🔑 dotenv | importing secrets (development)  ▓\
+		\n▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\
+		$(END_COLOUR)\n"
+
+	@npx dotenv-vault@1.25.0 pull development .env.development
+#
+
+dotnev-secrets-pull-production:
+	@echo ""
+	# ▓ DESCRIPTION
+	# ▓ > custom use of `dotenv` command.
+	# ▓ > for importing/pulling secrets into a target `.env` file.
+	# ▓ > use the `dotenv-vault help` for more information.
+	@echo ""
+
+	@echo \
+		"$(COLOUR_G)\
+		\n▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\
+		\n▓ 🔑 dotenv | importing secrets (production)   ▓\
+		\n▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\
+		$(END_COLOUR)\n"
+
+	@npx dotenv-vault@1.25.0 pull production .env.production
+#
+
+dotnev-secrets-build:
+	@echo ""
+	# ▓ DESCRIPTION
+	# ▓ > custom use of `dotenv` command.
+	# ▓ > for importing/pulling secrets and updating the `.env.vault`.
 	# ▓ > use the `dotenv-vault help` for more information.
 	@echo ""
 
@@ -347,12 +435,11 @@ dotnev-secrets-keys:
 		$(END_COLOUR)\n"
 
 	@npx dotenv-vault@1.25.0 build
-
-	@npx dotenv-vault@1.25.0 keys
 #
 
 # ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-# ▓▓ 🟣 SENTRY                                                      ▓▓
+# ▓ 🟣 SENTRY                                                        ▓
+# ▓ 👇 contains custom `sentry` commands and interaction with Sentry ▓
 # ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 sentry-sourcemaps-upload:
