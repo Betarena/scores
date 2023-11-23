@@ -1,2 +1,18 @@
+# ▓ NOTE:
+# ▓ > 📌 Project
 node_modules/
 npm-debug.log
+.github
+.devcontainer
+.vscode
+.eslintrc.yaml
+.gitignore
+.deepsource.toml
+.sentryclirc
+Procfile
+README.md
+
+.env*
+.flaskenv*
+!.env.project
+!.env.vault
