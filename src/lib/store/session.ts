@@ -31,6 +31,7 @@ const sessionStoreObj: Platform_Session =
   withdrawModal: false,
   showUserguide1: false,
   showUserguide1Conf: false,
+  showTermsAndConditions: false,
   showFixtureCompetition: false,
   isShowFixtureCompetitionJoinModal: false,
   // ### NOTE:

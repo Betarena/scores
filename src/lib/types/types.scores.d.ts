@@ -219,6 +219,11 @@ export interface Platform_Session
   showUserguide1Conf: boolean;
   /**
    * @description
+   *  📣 toogle `visibility` (show/hide) of Terms-And-Conditions modal.
+   */
+  showTermsAndConditions: boolean;
+  /**
+   * @description
    *  📌 Toggle `visibility` (show/hide) of Fixture Competition (widget) access.
    */
   showFixtureCompetition?: boolean;
@@ -322,6 +327,7 @@ export interface Platform_Session
 export type PROFILE_OPT =
   | 'Dashboard'
   | 'Account Settings'
+  | 'Investor'
   | 'Deposit'
   | 'Withdraw'
   | 'Transaction History'
