@@ -724,6 +724,7 @@
       ▓ > Connect Wallet.
       -->
       <button
+        type="button"
         class=
         "
         btn-dark
@@ -790,6 +791,7 @@
       ▓ > Crypto Deposit OPTION.
       -->
       <button
+        type="button"
         class=
         "
         btn-hollow
@@ -816,6 +818,7 @@
         "
       >
         <button
+          type="button"
           class=
           "
           btn-hollow
