@@ -338,7 +338,9 @@
 
     triggerInvestBox = true;
 
-    await connectWallet();
+    if (!deepReactListenSignerChange)
+      await connectWallet();
+    ;
 
     return;
   }
@@ -517,6 +519,8 @@
       '/api/data/profile',
       txDepositData
     );
+
+    triggerInvestBox = false;
 
     return;
   }
