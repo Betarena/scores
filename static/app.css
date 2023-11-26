@@ -1080,6 +1080,14 @@ button:disabled
 	color: var(--white) !important;
 }
 
+.btn-dark
+{
+  /* 🎨 style */
+  padding: 10px 17px;
+  border-radius: 12px;
+  background-color: var(--grey-color);
+}
+
 .btn-right-icon
 {
   /* 🎨 style */
@@ -1429,6 +1437,13 @@ img.google-aspect-ratio
 {
   /* 🎨 style */
 	border: 1px solid var(--dark-theme-1) !important;
+}
+
+.dark-background .btn-dark,
+.dark-background-1 .btn-dark
+{
+  /* 🎨 style */
+  background-color: var(--dark-theme-1-4-shade);
 }
 
 /* #endregion ➤ [MAIN] [DARK MODE (OVERRIDES) STYLES] Website Layout */
