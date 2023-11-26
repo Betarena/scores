@@ -19,6 +19,7 @@ COMPONENT JS (w/ TS)
 	import WidgetDeposit from '$lib/components/page/profile/deposit/Widget-Deposit.svelte';
 	import WidgetTxHist from '$lib/components/page/profile/tx-history/Widget-Tx-Hist.svelte';
 	import WidgetWithdraw from '$lib/components/page/profile/withdraw/Widget-Withdraw.svelte';
+	import WidgetInvestor from './investor/Widget-Investor.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -82,6 +83,8 @@ SVELTE INJECT TAGS
 				<AccountSettingsBoard	/>
 			{:else if $page?.url?.pathname.includes('dashboard')}
 				<DashboardWidget />
+      {:else if $page?.url?.pathname.includes('investor')}
+				<WidgetInvestor />
       {:else if $page?.url?.pathname.includes('deposit')}
         <WidgetDeposit />
       {:else if $page?.url?.pathname.includes('transaction-history')}

@@ -22,6 +22,8 @@ COMPONENT JS (w/ TS)
 	import icon_edit from './assets/menu-opt/edit.svg';
 	import icon_home_select from './assets/menu-opt/home-select.svg';
 	import icon_home from './assets/menu-opt/home.svg';
+	import icon_investor_select from './assets/menu-opt/investor-select.svg';
+	import icon_investor from './assets/menu-opt/investor.svg';
 	import icon_settings_select from './assets/menu-opt/settings-select.svg';
 	import icon_settings from './assets/menu-opt/settings.svg';
 	import icon_tx_hist_select from './assets/menu-opt/tx-hist-selected.svg';
@@ -100,7 +102,8 @@ COMPONENT JS (w/ TS)
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
 
-  $: if (MENU_OPT == 'Dashboard')
+  $:
+  if (MENU_OPT == 'Dashboard')
   {
     hoverMenuOptIconAlt = icon_home_select;
     selectedMenuOptIcon =
@@ -109,8 +112,7 @@ COMPONENT JS (w/ TS)
         : icon_home
     ;
   }
-
-	$: if (MENU_OPT == 'Account Settings')
+	else if (MENU_OPT == 'Account Settings')
   {
     hoverMenuOptIconAlt = icon_settings_select;
     selectedMenuOptIcon =
@@ -119,8 +121,16 @@ COMPONENT JS (w/ TS)
         : icon_settings
     ;
   }
-
-  $: if (MENU_OPT == 'Deposit')
+  else if (MENU_OPT == 'Investor')
+  {
+    hoverMenuOptIconAlt = icon_investor_select;
+    selectedMenuOptIcon =
+      SELECTED_OPT == MENU_OPT
+        ? icon_investor_select
+        : icon_investor
+    ;
+  }
+  else if (MENU_OPT == 'Deposit')
   {
     hoverMenuOptIconAlt = icon_deposit_select;
     selectedMenuOptIcon =
@@ -129,8 +139,7 @@ COMPONENT JS (w/ TS)
         : icon_deposit
     ;
   }
-
-  $: if (MENU_OPT == 'Withdraw')
+  else if (MENU_OPT == 'Withdraw')
   {
     hoverMenuOptIconAlt = icon_withdraw_select;
     selectedMenuOptIcon =
@@ -139,8 +148,7 @@ COMPONENT JS (w/ TS)
         : icon_withdraw
     ;
   }
-
-  $: if (MENU_OPT == 'Transaction History')
+  else if (MENU_OPT == 'Transaction History')
   {
     hoverMenuOptIconAlt = icon_tx_hist_select;
     selectedMenuOptIcon =
@@ -149,8 +157,7 @@ COMPONENT JS (w/ TS)
         : icon_tx_hist
     ;
   }
-
-  $: if (MENU_OPT == 'Competitions History')
+  else if (MENU_OPT == 'Competitions History')
   {
     hoverMenuOptIconAlt = icon_competition_select;
     selectedMenuOptIcon =
@@ -159,9 +166,11 @@ COMPONENT JS (w/ TS)
         : icon_competition
     ;
   }
-
-	$: if (MENU_OPT == 'Scores') selectedMenuOptIcon = icon_calendar;
-	$: if (MENU_OPT == 'Author') selectedMenuOptIcon = icon_edit;
+  else if (MENU_OPT == 'Scores')
+    selectedMenuOptIcon = icon_calendar;
+  else if (MENU_OPT == 'Author')
+    selectedMenuOptIcon = icon_edit;
+  //
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
@@ -220,6 +229,8 @@ VIEW DESIGN - 1
           {RESPONSE_PROFILE_DATA?.profile?.acc_settings ?? 'Account Settings'}
         {:else if MENU_OPT == 'Dashboard' ?? 'Dashboard'}
           {RESPONSE_PROFILE_DATA?.profile?.dashboard}
+        {:else if MENU_OPT == 'Investor'}
+          {'Investor'}
         {:else if MENU_OPT == 'Author'}
           {RESPONSE_PROFILE_DATA?.profile?.author ?? 'Author'}
         {:else if MENU_OPT == 'Scores'}
@@ -353,6 +364,8 @@ VIEW DESIGN - 2
           {RESPONSE_PROFILE_DATA?.profile?.dashboard ?? 'Dashboard'}
         {:else if MENU_OPT == 'Author'}
           {RESPONSE_PROFILE_DATA?.profile?.author ?? 'Author'}
+        {:else if MENU_OPT == 'Investor'}
+          {'Investor'}
         {:else if MENU_OPT == 'Scores'}
           {RESPONSE_PROFILE_DATA?.profile?.scores ?? 'Scores'}
         {:else if MENU_OPT == 'Withdraw'}
