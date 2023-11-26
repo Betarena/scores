@@ -3,12 +3,11 @@
 	"description": "Betarena Official Scores Platform (PWA)",
 	"version": "2.4.5",
 	"type": "module",
-	"engines":
-  {
+	"engines": {
 		"npm": "8.19.1",
 		"node": "16.17.0"
 	},
-  "engineStrict": true,
+	"engineStrict": true,
 	"scripts": {
 		"prepare": "is-ci || husky install",
 		"start": "cross-env NODE_OPTIONS='-r dotenv/config' node build/index.js",
@@ -42,7 +41,7 @@
 		"coverage": "vitest run --coverage"
 	},
 	"dependencies": {
-		"@betarena/scores-lib": "^1.9.10",
+		"@betarena/scores-lib": "^1.9.11",
 		"@lukeed/uuid": "^2.0.1",
 		"@metamask/sdk": "^0.1.0",
 		"@moralisweb3/client-firebase-auth-utils": "^2.18.4",
@@ -94,13 +93,13 @@
 		"@typescript-eslint/parser": "^5.59.1",
 		"conventional-changelog-cli": "^4.1.0",
 		"cross-env": "^7.0.3",
-		"husky": "^8.0.3",
 		"cypress": "^12.17.1",
 		"cz-conventional-changelog": "^3.3.0",
-		"is-ci": "^3.0.1",
 		"eslint": "^8.51.0",
 		"eslint-config-prettier": "^8.8.0",
 		"eslint-plugin-svelte": "^2.34.0",
+		"husky": "^8.0.3",
+		"is-ci": "^3.0.1",
 		"jsdom": "^22.1.0",
 		"node-fetch": "^3.3.1",
 		"prettier": "^2.8.8",
