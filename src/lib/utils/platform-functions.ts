@@ -1422,4 +1422,40 @@ export function recordToKeyValueArray
   return jsonObj;
 }
 
+/**
+ * @author
+ *  @migbash
+ * @summary
+ *  🟦 HELPER
+ * @description
+ *  📣 Shortens a target wallet address.
+ * @example
+ *  0xA43B84b58aC6a21A03391971Bd274fe7Eec378Eb => 0xA43...378Eb
+ * @returns { string }
+ *  Target `wallet address` string.
+ */
+export function shortenWeb3WalletAddress
+(
+  walletAddress: string | null
+): string
+{
+  if (!walletAddress) return null;
+  return `${
+      walletAddress?.slice
+      (
+        0,
+        5
+      )
+    }
+    ...
+    ${
+      walletAddress?.slice
+      (
+        -5
+      )
+    }
+  `
+  .replaceAll('\t', '');
+}
+
 // #endregion ➤ 🛠️ METHODS
