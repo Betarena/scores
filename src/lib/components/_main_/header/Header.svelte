@@ -474,6 +474,7 @@
     ($sessionStore.livescoreShowCalendar && isViewMobile)
     || $sessionStore.withdrawModal
     || $sessionStore.showUserguide1
+    || $sessionStore?.showTermsAndConditions
     || $sessionStore.isShowFixtureCompetitionJoinModal
   ;
   $: if (if_R_4)
