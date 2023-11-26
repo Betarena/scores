@@ -56,7 +56,7 @@
   // @see :> https://api-testnet.polygonscan.com/api?module=contract&action=getabi&address=0x38eb8b22df3ae7fb21e92881151b365df14ba967&format=raw
   import usdcContractAddressABI from './web3/UsdcABI.json';
   // @see :> https://mumbai.polygonscan.com/token/0x3813e82e6f7098b9583fc0f33a962d02018b6803#code
-  import usdtContractAddressABI from './web3/UsdcABI.json';
+  import usdtContractAddressABI from './web3/UsdtABI.json';
 
   import type { B_H_TH } from '@betarena/scores-lib/types/_HASURA_.js';
   import type { ICoinMarketCapDataMain } from '@betarena/scores-lib/types/_WEB3_.js';
