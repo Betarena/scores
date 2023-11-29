@@ -36,7 +36,7 @@
 
   import { get, post } from '$lib/api/utils.js';
   import { dlogv2 } from '$lib/utils/debug.js';
-  import { shortenWeb3WalletAddress, viewport_change } from '$lib/utils/platform-functions.js';
+  import { shortenWeb3WalletAddress, toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
   import { passByValue } from '@betarena/scores-lib/dist/functions/func.common.js';
   import { tryCatchAsync } from '@betarena/scores-lib/dist/util/util.common.js';
 
@@ -640,7 +640,10 @@
     {
       cryptoPrices = await get
       (
-        'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=USDT,USDC&CMC_PRO_API_KEY=af3ceee8-f47b-4dba-80f1-242f5aa1156c'
+        `/api/coinmarketcap?tickers=USDT,USDC`,
+        null,
+        true,
+        true
       ) as ICoinMarketCapDataMain;
 
       [
@@ -1031,7 +1034,7 @@
             m-t-5
             "
           >
-            {depositAmount} {cryptoDepositOptionSelect?.name} ≈ {cryptoPrices?.data?.['USDC']?.quote?.USD?.price}$
+            {depositAmount} {cryptoDepositOptionSelect?.name} ≈ {toDecimalFix(cryptoPrices?.data?.['USDC']?.quote?.USD?.price) ?? '-'} $
           </p>
 
         </div>
