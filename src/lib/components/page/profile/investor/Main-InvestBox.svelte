@@ -25,7 +25,7 @@
 
   import { browser } from '$app/environment';
   import { page } from '$app/stores';
-  import { onMount } from 'svelte';
+  import { onDestroy, onMount } from 'svelte';
   import { fade, fly } from 'svelte/transition';
 
 	import sessionStore from '$lib/store/session.js';
@@ -181,6 +181,8 @@
     , triggerInvestBox: boolean = false
     /** @description prices of supported tokens. */
     , cryptoPrices: ICoinMarketCapDataMain
+    /** @description target token price. */
+    , cryptoPrice: number
     /** @description amount user wishes to `deposit`. */
     , depositAmount: number = 2500
     /** @description amount user wishes to `recieve`. */
@@ -219,6 +221,8 @@
     , walletAddress: string
     /** @description search text for target token */
     , tokenSearch: string
+    /** @description interval for CoinMarketCap fetching */
+    , interval1: NodeJS.Timer
   ;
 
   $: B_PROF_T = $page.data?.RESPONSE_PROFILE_DATA;
@@ -605,7 +609,7 @@
   {
     // ▓ NOTE:
     // ▓ > relation between deposit and recieve.
-    recieveAmount = depositAmount;
+    recieveAmount = parseFloat(toDecimalFix(depositAmount * cryptoPrice, 2));
   }
 
   /**
@@ -644,7 +648,6 @@
   onMount
   (
     async (
-
     ) =>
     {
       cryptoPrices = await get
@@ -654,6 +657,27 @@
         true,
         true
       ) as ICoinMarketCapDataMain;
+
+      cryptoPrice = parseFloat(toDecimalFix(cryptoPrices?.data?.[cryptoDepositOptionSelect?.name]?.quote?.USD?.price, 3, true, false)) ?? 0;
+
+      interval1 = setInterval
+      (
+        async (
+        ): Promise < void > =>
+        {
+          cryptoPrices = await get
+          (
+            `/api/coinmarketcap?tickers=USDT,USDC`,
+            null,
+            true,
+            true
+          ) as ICoinMarketCapDataMain;
+
+          cryptoPrice = parseFloat(toDecimalFix(cryptoPrices?.data?.[cryptoDepositOptionSelect?.name]?.quote?.USD?.price, 3, true, false)) ?? 0;
+        }
+        ,
+        30000
+      );
 
       [
         isViewTablet,
@@ -681,6 +705,15 @@
         }
       );
 
+    }
+  );
+
+  onDestroy
+  (
+    () =>
+    {
+      // @ts-expect-error
+      clearInterval(interval1);
     }
   );
 
@@ -1065,7 +1098,9 @@
             m-t-5
             "
           >
-            {depositAmount} {cryptoDepositOptionSelect?.name} ≈ {toDecimalFix(cryptoPrices?.data?.['USDC']?.quote?.USD?.price) ?? '-'} $
+            <!-- ▓ [🐞] -->
+            <!-- {console.log(cryptoPrices?.data?.['USDC']?.quote?.USD?.price)} -->
+            {depositAmount} {cryptoDepositOptionSelect?.name} ≈ {cryptoPrice ?? '-'} $
           </p>
 
         </div>
