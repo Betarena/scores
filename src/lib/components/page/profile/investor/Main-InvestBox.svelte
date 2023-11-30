@@ -32,7 +32,7 @@
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { createWeb3Modal, defaultConfig } from '@web3modal/ethers5';
 	import { BigNumber, ethers, type ContractInterface, type Transaction } from 'ethers';
-// https://www.npmjs.com/package/web3modal
+  // read-more :|: https://www.npmjs.com/package/web3modal
 
   import { get, post } from '$lib/api/utils.js';
   import { dlogv2 } from '$lib/utils/debug.js';
@@ -44,6 +44,8 @@
   import icon_arrow_down from '../assets/common/arrow-down.svg';
   import icon_arrow_right_dark from '../assets/common/arrow-right-dark.svg';
   import icon_arrow_right from '../assets/common/arrow-right.svg';
+  import icon_close_dark from '../assets/icon-close-dark.svg';
+  import icon_close from '../assets/icon-close.svg';
   import icon_bronze from '../assets/price-tier/icon-bta-bronze.svg';
   import icon_gold from '../assets/price-tier/icon-bta-gold.svg';
   import icon_platinum from '../assets/price-tier/icon-bta-platinum.svg';
@@ -52,17 +54,18 @@
   import icon_usdc from '../assets/price-tier/icon-usdc.png';
   import icon_usdt from '../assets/price-tier/icon-usdt.png';
   import betarenaBankContractABI from './web3/BetarenaBankABI.json';
-// @see :> https://mumbai.polygonscan.com/address/0x38eb8b22df3ae7fb21e92881151b365df14ba967#code
-  // @see :> https://api-testnet.polygonscan.com/api?module=contract&action=getabi&address=0x38eb8b22df3ae7fb21e92881151b365df14ba967&format=raw
+  // read-more :|: https://mumbai.polygonscan.com/address/0x38eb8b22df3ae7fb21e92881151b365df14ba967#code
+  // read-more :|: https://api-testnet.polygonscan.com/api?module=contract&action=getabi&address=0x38eb8b22df3ae7fb21e92881151b365df14ba967&format=raw
   import usdcContractAddressABI from './web3/UsdcABI.json';
-  // @see :> https://mumbai.polygonscan.com/token/0x3813e82e6f7098b9583fc0f33a962d02018b6803#code
+  // read-more :|: https://mumbai.polygonscan.com/token/0x3813e82e6f7098b9583fc0f33a962d02018b6803#code
   import usdtContractAddressABI from './web3/UsdtABI.json';
+
+  import ModalTermsAndConditions from './Modal-TermsAndConditions.svelte';
 
   import type { B_H_TH } from '@betarena/scores-lib/types/_HASURA_.js';
   import type { ICoinMarketCapDataMain } from '@betarena/scores-lib/types/_WEB3_.js';
   import type { B_PROF_T } from '@betarena/scores-lib/types/profile.js';
   import type { Web3Modal } from '@web3modal/ethers5/dist/types/src/client.js';
-  import ModalTermsAndConditions from './Modal-TermsAndConditions.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -80,8 +83,8 @@
   // ### 4. $: [..]                                                       ◼️
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
-  // ### @see :> https://stackoverflow.com/questions/72230897/how-to-call-a-smart-contract-function-with-walletconnect-react-js-node-js
-  // ### @see :> https://wiki.polygon.technology/docs/tools/wallets/walletconnect/
+  // ### @see :|: https://stackoverflow.com/questions/72230897/how-to-call-a-smart-contract-function-with-walletconnect-react-js-node-js
+  // ### @see :|: https://wiki.polygon.technology/docs/tools/wallets/walletconnect/
 
   interface ITierDiscount
   {
@@ -149,13 +152,13 @@
         )
         , chains:
         [
-          {
-            chainId: 1,
-            name: 'Ethereum',
-            currency: 'ETH',
-            explorerUrl: 'https://etherscan.io',
-            rpcUrl: 'https://cloudflare-eth.com'
-          },
+          // {
+          //   chainId: 1,
+          //   name: 'Ethereum',
+          //   currency: 'ETH',
+          //   explorerUrl: 'https://etherscan.io',
+          //   rpcUrl: 'https://cloudflare-eth.com'
+          // },
           {
             chainId: 80001,
             name: 'Mumbai Testnet',
@@ -283,6 +286,8 @@
     // ▓ > for matching token names.
 		for (const item of cryptoDepositOptions ?? [])
     {
+      // ▓ NOTE:
+      // ▓ > search by: (1) shortname, (2) fullname, (3) contract-address;
       const if_M_0: boolean =
         item?.name?.toLowerCase().includes(_searchTarget)
         || item?.full_name?.toLowerCase().includes(_searchTarget)
@@ -301,7 +306,7 @@
    * @summary
    *  🟦 HELPER
    * @description
-   *  📣 Initialize wallet connection.
+   *  📣 Toggle (connect/disconnect) `web3` wallet connection.
    * @returns { Promise < void > }
    */
   async function connectWallet
@@ -310,6 +315,10 @@
   {
     if (!browser) return;
 
+    // ▓ CHECK
+    // ▓ > for (1) existing signer + (2) not a 'Buy BTA' action;
+    // ▓ NOTE:
+    // ▓ > web3 disconnect + exit;
     if (deepReactListenSignerChange && !triggerInvestBox)
     {
       await modal.disconnect();
@@ -327,7 +336,7 @@
    * @summary
    *  🟦 HELPER
    * @description
-   *  📣 Initialize depsoit action.
+   *  📣 Initialize deposit action.
    * @returns { Promise < void > }
    */
   async function executeDeposit
@@ -351,7 +360,7 @@
    * @summary
    *  🟦 HELPER
    * @description
-   *  📣 Interact with `deployed` contract.
+   *  📣 Interact with `deployed` contract and perform `deposit` logic.
    * @returns { Promise < void > }
   */
   async function executeContract
@@ -716,10 +725,15 @@
       "
     >
 
+      <!--
+      ▓ NOTE:
+      ▓ > widget title
+      -->
       <p
         class=
         "
         s-24
+        w-500
         color-black-2
         "
       >
@@ -735,6 +749,7 @@
         class=
         "
         btn-dark
+        w-500
         row-space-start
         width-auto
         "
@@ -774,7 +789,8 @@
       class=
       "
       s-14
-      color-black-2
+      color-grey
+      dark-white-v3
       m-t-15
       "
     >
@@ -802,9 +818,13 @@
         class=
         "
         btn-hollow
+          v4
+          v3d
         width-100
         color-black-2
         m-r-12
+        w-500
+        s-14
         "
         class:btn-active={selectDepositOption == 'crypto'}
         on:click={() => selectDepositOption = 'crypto'}
@@ -829,8 +849,12 @@
           class=
           "
           btn-hollow
+            v4
+            v3d
           width-100
           color-black-2
+          w-500
+          s-14
           "
           class:btn-active={selectDepositOption == 'fiat'}
           on:click={() => selectDepositOption = 'fiat'}
@@ -865,6 +889,7 @@
         "
         v-1
         m-r-12
+        cursor-pointer
         "
         required
         bind:value={agreeTermsAndConditions}
@@ -878,7 +903,8 @@
         class=
         "
         s-16
-        color-black-2
+        color-grey
+          grey-v1
         "
         on:click={() => $sessionStore.showTermsAndConditions = true}
       >
@@ -888,7 +914,9 @@
           class=
           "
           w-500
+          color-black-2
           underline
+          cursor-pointer
           "
           on:click={() => alert('clicked terms and conditions')}
         >
@@ -899,7 +927,9 @@
           class=
           "
           w-500
+          color-black-2
           underline
+          cursor-pointer
           "
           on:click={() => alert('clicked terms and conditions')}
         >
@@ -931,7 +961,7 @@
       "
     >
 
-     <!--
+      <!--
       ▓ NOTE:
       ▓ > Deposit Amount BOX
       -->
@@ -968,7 +998,7 @@
           <span
             class=
             "
-            color-white
+            color-black-2
             w-500
             "
           >
@@ -978,7 +1008,7 @@
           <span
             class=
             "
-            color-white
+            color-black-2
             w-500
             "
           >
@@ -1017,6 +1047,7 @@
             s-20
             color-black-2
             amount-input
+            w-500
             "
             required
             bind:value={depositAmount}
@@ -1078,7 +1109,7 @@
           <p
             class=
             "
-            s-14
+            s-15
             w-500
             color-black-2
             m-r-6
@@ -1160,6 +1191,7 @@
             s-20
             amount-input
             color-black-2
+            w-500
             "
             required
             bind:value={recieveAmount}
@@ -1218,7 +1250,7 @@
           <p
             class=
             "
-            s-14
+            s-15
             w-500
             color-black-2
             "
@@ -1310,7 +1342,8 @@
           <p
             class=
             "
-            s-14
+            s-16
+            w-500
             color-black-2
             "
           >
@@ -1326,7 +1359,8 @@
         <p
           class=
           "
-          s-14
+          s-15
+          w-500
           color-black-2
           "
         >
@@ -1349,6 +1383,8 @@
       btn-primary-v2
       width-100
       m-t-15
+      w-500
+      s-14
       "
     >
       Buy BTA
@@ -1412,10 +1448,15 @@
         -->
         <img
           id="close-vector"
-          class="cursor-pointer"
-          src="/assets/svg/close.svg"
+          src={$userBetarenaSettings.theme == 'Dark' ? icon_close_dark : icon_close}
           alt="close-svg"
+          class=
+          "
+          cursor-pointer
+          "
           on:click={() => modalSelectCryptoOption = false}
+          width=14
+          height=14
         />
 
         <!--
@@ -1426,6 +1467,11 @@
           id="token-search"
           placeholder="Search"
           type="text"
+          class=
+          "
+          s-14
+          color-black-2
+          "
           required
           bind:value={tokenSearch}
         />
@@ -1450,7 +1496,12 @@
             "
             row-space-start
             cursor-pointer
+            ▓
             token-row
+            "
+            style=
+            "
+            align-items: flex-start;
             "
             on:click={() => cryptoDepositOptionSelect = item}
             on:click={() => modalSelectCryptoOption = false}
@@ -1483,6 +1534,9 @@
               "
               s-14
               color-black-2
+              no-wrap
+              ▓
+              token-text
               "
             >
               {item?.name ?? ''}
@@ -1494,6 +1548,8 @@
                 "
                 s-12
                 color-grey
+                  grey-v1
+                no-wrap
                 "
               >
                 {item?.full_name ?? ''}
@@ -1534,26 +1590,38 @@
 
   div#profile⮕w⮕investbox⮕main⮕top-row
   {
+    /* 📌 position */
+    position: relative;
     /* 🎨 style */
     padding: 20px;
+    padding-top: 24px;
     background: var(--white);
     box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
+    /* z-index: 10; */
   }
 
-  button.btn-active
+  button.btn-hollow.btn-active
   {
     /* 🎨 style */
     border: 1px solid var(--primary) !important;
     background: rgba(245, 98, 15, 0.08);
   }
 
+  input[type=checkbox]
+  {
+    /* 🎨 style */
+    border: none;
+    border-radius: 50px;
+  }
+
   div#profile⮕w⮕investbox⮕main⮕middle-row
   {
     /* 🎨 style */
     padding: 20px;
+    padding-bottom: 32px;
     background: var(--white);
     display: grid;
-    gap: 20px;
+    gap: 12px;
   }
 
   div#profile⮕w⮕investbox⮕main⮕tier-box
@@ -1595,11 +1663,18 @@
     max-width: 150px;
     height: fit-content;
   }
+  /* Chrome, Safari, Edge, Opera */
   input[type=number].amount-input::-webkit-inner-spin-button,
   input[type=number].amount-input::-webkit-outer-spin-button
   {
     -webkit-appearance: none;
     margin: 0;
+  }
+  /* Firefox */
+  input[type=number].amount-input
+  {
+    appearance: textfield;
+    -moz-appearance: textfield;
   }
 
   div#select-cryptocurrency
@@ -1620,6 +1695,7 @@
   {
     /* 🎨 style */
     padding: 20px;
+    padding-bottom: 12px;
   }
 
   img#close-vector
@@ -1631,40 +1707,19 @@
 		z-index: 400000002;
 	}
 
-  div#select-cryptocurrency div#token-list
-  {
-    /* 🎨 style */
-    display: grid;
-  }
-  div#select-cryptocurrency div#token-list div.token-row
-  {
-    /* 🎨 style */
-    padding: 10px 20px;
-    min-height: 53px;
-    max-height: 53px;
-  }
-  div#select-cryptocurrency div#token-list div.token-row:hover
-  {
-    /* 🎨 style */
-    background-color: var(--grey-shade-4);
-  }
-
+  /*
+  token search input
+  */
   div#select-cryptocurrency input#token-search
   {
     /* 🎨 style */
-		background: #ffffff;
-		border: 1px solid #cccccc;
-		box-sizing: border-box;
-		border-radius: 8px;
-		padding: 12px 52px 12px 52px;
-		background-image: url('/assets/svg/league_list/search.svg');
+    background-image: url('/assets/svg/league_list/search.svg');
 		background-repeat: no-repeat;
-		background-position: 20px 50%;
+		background-position: 15px 50%;
 		background-size: 20px 20px;
-		width: -webkit-fill-available;
-		height: 44px;
-		outline: none;
-		font-size: 14px;
+		padding: 12px 52px 12px 40px;
+    background-color: var(--white-3);
+		border: 1px solid transparent;
 	}
 	div#select-cryptocurrency input#token-search:hover
   {
@@ -1683,6 +1738,38 @@
 		white-space: nowrap;
 		text-overflow: ellipsis;
 	}
+
+  /*
+  token list
+  */
+  div#select-cryptocurrency div#token-list
+  {
+    /* 🎨 style */
+    display: grid;
+  }
+  div#select-cryptocurrency div#token-list div.token-row
+  {
+    /* 🎨 style */
+    padding: 8px 20px;
+    min-height: 53px;
+    max-height: 53px;
+  }
+  div#select-cryptocurrency div#token-list div.token-row:hover
+  {
+    /* 🎨 style */
+
+    background-color: var(--white-3);
+  }
+  div#select-cryptocurrency div#token-list div.token-row p.token-text
+  {
+    /* 🎨 style */
+    position: relative;
+  }
+  div#select-cryptocurrency div#token-list div.token-row p.token-text span
+  {
+    /* 🎨 style */
+    position: absolute;
+  }
 
   div#profile⮕w⮕investbox⮕main⮕modal-bg-blur
   {
@@ -1756,29 +1843,31 @@
     background: var(--dark-theme-1-4-shade) !important;
   }
 
-  #profile⮕w⮕investbox⮕main.dark-background-1 div#token-list div.token-row:hover
-  {
-    /* 🎨 style */
-    background-color: var(--dark-theme-1);
-  }
-
+  /* token search input */
   #profile⮕w⮕investbox⮕main.dark-background-1 div#select-cryptocurrency input#token-search
   {
     /* 🎨 style */
-		background-color: #4b4b4b !important;
-		border: 1px solid #616161;
+		background-color: var(--dark-theme-1) !important;
+		border: 1px solid transparent;
 		color: white;
 	}
 	#profile⮕w⮕investbox⮕main.dark-background-1 div#select-cryptocurrency input#token-search:hover
   {
     /* 🎨 style */
-		border: 1px solid #737373;
+		border: 1px solid var(--dark-theme-1-2-shade);
 	}
 	#profile⮕w⮕investbox⮕main.dark-background-1 div#select-cryptocurrency input#token-search:focus
   {
     /* 🎨 style */
-		border: 1px solid #cccccc;
+		border: 1px solid var(--grey-shade);
 		background-image: url('/assets/svg/league_list/search-white.svg');
 	}
+
+  /* token row */
+  #profile⮕w⮕investbox⮕main.dark-background-1 div#token-list div.token-row:hover
+  {
+    /* 🎨 style */
+    background-color: var(--dark-theme-1);
+  }
 
 </style>
