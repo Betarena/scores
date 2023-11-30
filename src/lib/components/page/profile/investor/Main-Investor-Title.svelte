@@ -138,7 +138,8 @@
         class=
         "
         s-16
-        color-grey
+        color-grey-shade
+        opacity-0-4
         no-wrap
         "
       >
@@ -171,7 +172,8 @@
       class=
       "
       s-32
-      color-black-2
+      color-white
+      w-500
       m-b-16
       "
     >
@@ -183,22 +185,14 @@
     ▓ > Launchpad description.
     -->
     <p
+      id="launchpad-description"
       class=
       "
       s-16
-      color-grey
+      color-grey-shade
       "
     >
-      {B_PROF_T?.investor?.tab?.description_launchpad ?? ''}
-      <!-- <span
-        class=
-        "
-        w-500
-        color-black-2
-        "
-      > -->
-        <!-- Betarena Tokens (BTA) -->
-      <!-- </span> -->
+      {@html B_PROF_T?.investor?.tab?.description_launchpad ?? ''}
     </p>
 
   </div>
@@ -221,6 +215,8 @@
   {
     /* 📌 position */
     position: relative;
+    /* 🎨 style */
+    margin-top: 12px;
   }
 
   div#launchpad-view-box
@@ -237,11 +233,11 @@
   {
     /* 📌 position */
     position: absolute;
-    top: 37px;
+    top: 38px;
     right: 0;
     left: 0;
     /* 🎨 style */
-    background-color: var(--grey);
+    background-color: var(--dark-theme-1);
     height: 1px;
     width: 100%;
   }
@@ -263,5 +259,38 @@
     /* 🎨 style */
     border-color: #f5620f;
   }
+
+  :global(
+    span#id_1
+  )
+  {
+    /* 🎨 style */
+    font-weight: 500;
+    color: var(--white);
+  }
+
+  /*
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  ◼️ ⚡️ RESPONSIVNESS      ◼️
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  */
+
+	@media only screen
+  and (min-width: 769px)
+  {
+
+		div#profile⮕w⮕investor-title⮕main
+    {
+      /* 🎨 style */
+		  margin-top: 0;
+		}
+
+    p#launchpad-description
+    {
+      /* 🎨 style */
+      max-width: 393px;
+    }
+
+	}
 
 </style>

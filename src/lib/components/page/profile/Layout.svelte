@@ -136,7 +136,7 @@ SVELTE INJECT TAGS
   */
 
 	@media only screen
-  and (min-width: 768px)
+  and (min-width: 769px)
   {
 
     section#profile-page
@@ -146,7 +146,7 @@ SVELTE INJECT TAGS
 		/* page widget layout */
 		div#widget-grid-display
     {
-		  margin-top: 24px;
+		  margin-top: 40px;
 		}
 
 	}

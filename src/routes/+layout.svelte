@@ -584,6 +584,7 @@
 <main
 	class:dark-background={$userBetarenaSettings.theme == 'Dark'}
   class:before-display-none={deepReactListenIsRouteCompetitions}
+  class:profile-page={deepReactListenIsProfilePage}
 >
 
 	<slot />
@@ -635,6 +636,11 @@
     /* 🎨 style */
     display: none;
   }
+  main.profile-page::before
+  {
+    /* 🎨 style */
+		height: 611px;
+  }
 
 	/*
   ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
@@ -649,7 +655,13 @@
     {
       /* 🎨 style */
 			height: 495px;
-		}
+    }
+
+    main.profile-page::before
+    {
+      /* 🎨 style */
+			height: 611px;
+    }
 	}
 
 	@media screen
@@ -664,9 +676,16 @@
       /* 📌 position */
 			top: calc(100vw / -5.5) !important;
       /* 🎨 style */
-			height: 100%;
-			background-size: contain !important;
+      height: 100%;
+      background-size: contain !important;
 		}
+    main.profile-page::before
+    {
+      /* 🎨 style */
+      top: 0 !important;
+      height: 35%; /*  939px :: 25% */
+      background-size: cover !important;
+    }
 	}
 
 </style>
