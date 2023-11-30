@@ -477,6 +477,10 @@ ON HOVER COLORS
 {
 	font-size: 14px;
 }
+.s-15
+{
+	font-size: 15px;
+}
 .s-16,
 .global.s-16,
 .global.s-16 > *
@@ -734,6 +738,10 @@ p.s_small {
 .m-b-30
 {
 	margin-bottom: 30px;
+}
+.m-b-32
+{
+	margin-bottom: 32px;
 }
 .m-b-35
 {
@@ -1058,7 +1066,7 @@ button:disabled
 	color: var(--primary);
 }
 /*
-  Variant (2)
+Variant (2)
 */
 .btn-hollow.danger
 {
@@ -1066,7 +1074,7 @@ button:disabled
 	border: 1px solid var(--red) !important;
 }
 /*
-  Variant (3)
+Variant (3)
 */
 .btn-hollow.cta
 {
@@ -1079,6 +1087,15 @@ button:disabled
   background-color: var(--primary);
 	color: var(--white) !important;
 }
+/*
+Variant (4)
+*/
+.btn-hollow.v4:hover
+{
+  /* 🎨 style */
+  border: 1px solid var(--grey-shade) !important;
+  color: initial;
+}
 
 .btn-dark
 {
@@ -1086,6 +1103,11 @@ button:disabled
   padding: 10px 17px;
   border-radius: 12px;
   background-color: var(--grey-color);
+}
+.btn-dark:hover
+{
+  /* 🎨 style */
+  background-color: var(--white-3);
 }
 
 .btn-right-icon
@@ -1439,11 +1461,30 @@ img.google-aspect-ratio
 	border: 1px solid var(--dark-theme-1) !important;
 }
 
+.dark-background .btn-hollow.v3d,
+.dark-background-1 .btn-hollow.v3d
+{
+  /* 🎨 style */
+	border: 1px solid var(--grey) !important;
+}
+.dark-background .btn-hollow.v3d:hover,
+.dark-background-1 .btn-hollow.v3d:hover
+{
+  /* 🎨 style */
+	border: 1px solid var(--grey-shade) !important;
+}
+
 .dark-background .btn-dark,
 .dark-background-1 .btn-dark
 {
   /* 🎨 style */
   background-color: var(--dark-theme-1-4-shade);
+}
+.dark-background .btn-dark:hover,
+.dark-background-1 .btn-dark:hover
+{
+  /* 🎨 style */
+  background-color: var(--dark-theme);
 }
 
 /* #endregion ➤ [MAIN] [DARK MODE (OVERRIDES) STYLES] Website Layout */
