@@ -843,8 +843,10 @@ export function cssVarChange
  *  Target value to mutate.
  * @param { number } [d_places=2]
  *  Target number of decimal places to return.
- *  * @param { boolean } [noRoundUp=false]
+ * @param { boolean } [noRoundUp=false]
  *  Wether to perform a `round-up` or not.
+ * @param { boolean } [removeDot00=true]
+ *  Wether to perform a `.00` removal from number (clean).
  * @returns { string }
  */
 export function toDecimalFix
@@ -852,6 +854,7 @@ export function toDecimalFix
   value: number
   , d_places: number = 2
   , noRoundUp: boolean = false
+  , removeDot00: boolean = true
 ): string
 {
   // ### [🐞]
@@ -876,11 +879,12 @@ export function toDecimalFix
 
   _value = parseFloat(_value)?.toFixed(d_places);
 
-  _value = _value.replace
-  (
-    '.00',
-    ''
-  );
+  if (removeDot00)
+    _value = _value.replace
+    (
+      '.00',
+      ''
+    );
 
   return _value;
 }
