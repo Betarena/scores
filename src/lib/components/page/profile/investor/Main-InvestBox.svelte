@@ -1078,6 +1078,7 @@
           -->
           <input
             type="number"
+            step="any"
             placeholder=0
             class=
             "
@@ -1224,6 +1225,7 @@
           -->
           <input
             type="number"
+            step="any"
             placeholder=0
             class=
             "
