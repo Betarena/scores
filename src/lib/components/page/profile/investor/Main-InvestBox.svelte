@@ -601,9 +601,11 @@
     tierDiscountObject.icon = icon_bronze;
     tierDiscountObject.discount = 20;
   }
-  else if ([undefined, null, 0].includes(depositAmount))
+  else if (depositAmount < 2500)
   {
-    depositAmount = 0;
+    tierDiscountObject.name = null;
+    tierDiscountObject.icon = null;
+    tierDiscountObject.discount = 0;
   }
 
   /**
@@ -612,8 +614,8 @@
   $:
   {
     // ▓ NOTE:
-    // ▓ > relation between deposit and recieve.
-    recieveAmount = parseFloat(toDecimalFix(depositAmount * cryptoPrice, 2));
+    // ▓ > relation between (1) deposit, (2) exchange price, (3) discount to obtain recieveAmount.
+    recieveAmount = parseFloat(toDecimalFix(depositAmount * cryptoPrice * (1 + (tierDiscountObject.discount / 100)), 2));
   }
 
   /**
@@ -1105,7 +1107,7 @@
           >
             <!-- ▓ [🐞] -->
             <!-- {console.log(cryptoPrices?.data?.['USDC']?.quote?.USD?.price)} -->
-            {depositAmount} {cryptoDepositOptionSelect?.name} ≈ {cryptoPrice ?? '-'} $
+            {depositAmount ?? 0} {cryptoDepositOptionSelect?.name} ≈ {cryptoPrice ?? '-'} $
           </p>
 
         </div>
