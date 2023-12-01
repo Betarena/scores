@@ -1311,108 +1311,112 @@
     ▓ NOTE:
     ▓ > Current Tier Discount
     -->
-    <div
-      id="tier-box"
-      style=
-      "
-      {isViewMobile ? 'justify-content: space-between;' : ''}
-      "
-      class:row-space-out={!isViewMobile}
-      class:column-space-start={isViewMobile}
-    >
-      <!--
-      ▓ NOTE:
-      ▓ > current tier TEXT.
-      -->
-      <p
-        class=
-        "
-        s-16
-        w-500
-        color-black-2
-        no-wrap
-        "
-      >
-        Current Tier Discount
-      </p>
+    {#if tierDiscountObject?.name}
 
-      <!--
-      ▓ NOTE:
-      ▓ > tier SUB-BOX.
-      -->
       <div
-        class=
+        id="tier-box"
+        style=
         "
-        {!isViewMobile ? 'row-space-start width-auto' : 'row-space-out'}
+        {isViewMobile ? 'justify-content: space-between;' : ''}
         "
+        class:row-space-out={!isViewMobile}
+        class:column-space-start={isViewMobile}
       >
-
         <!--
         ▓ NOTE:
-        ▓ > current tier SUB-BOX.
-        -->
-        <div
-          class=
-          "
-          row-space-start
-          width-auto
-          m-r-20
-          "
-        >
-
-          <!--
-          ▓ NOTE:
-          ▓ > current tier discount icon IMG.
-          -->
-          <img
-            id=''
-            src={tierDiscountObject?.icon}
-            alt={tierDiscountObject?.icon}
-            title='Discount Tier Asset'
-            loading='lazy'
-            width=24
-            height=24
-            class=
-            "
-            m-r-8
-            "
-          />
-
-          <!--
-          ▓ NOTE:
-          ▓ > current tier discount name TEXT.
-          -->
-          <p
-            class=
-            "
-            s-16
-            w-500
-            color-black-2
-            "
-          >
-            {tierDiscountObject?.name}
-          </p>
-
-        </div>
-
-        <!--
-        ▓ NOTE:
-        ▓ > current tier discount amount NUMBER.
+        ▓ > current tier TEXT.
         -->
         <p
           class=
           "
-          s-15
+          s-16
           w-500
           color-black-2
+          no-wrap
           "
         >
-          {tierDiscountObject?.discount}%
+          Current Tier Discount
         </p>
+
+        <!--
+        ▓ NOTE:
+        ▓ > tier SUB-BOX.
+        -->
+        <div
+          class=
+          "
+          {!isViewMobile ? 'row-space-start width-auto' : 'row-space-out'}
+          "
+        >
+
+          <!--
+          ▓ NOTE:
+          ▓ > current tier SUB-BOX.
+          -->
+          <div
+            class=
+            "
+            row-space-start
+            width-auto
+            m-r-20
+            "
+          >
+
+            <!--
+            ▓ NOTE:
+            ▓ > current tier discount icon IMG.
+            -->
+            <img
+              id=''
+              src={tierDiscountObject?.icon}
+              alt={tierDiscountObject?.icon}
+              title='Discount Tier Asset'
+              loading='lazy'
+              width=24
+              height=24
+              class=
+              "
+              m-r-8
+              "
+            />
+
+            <!--
+            ▓ NOTE:
+            ▓ > current tier discount name TEXT.
+            -->
+            <p
+              class=
+              "
+              s-16
+              w-500
+              color-black-2
+              "
+            >
+              {tierDiscountObject?.name}
+            </p>
+
+          </div>
+
+          <!--
+          ▓ NOTE:
+          ▓ > current tier discount amount NUMBER.
+          -->
+          <p
+            class=
+            "
+            s-15
+            w-500
+            color-black-2
+            "
+          >
+            {tierDiscountObject?.discount ?? 0}%
+          </p>
+
+        </div>
 
       </div>
 
-    </div>
+    {/if}
 
     <!--
     ▓ NOTE:
