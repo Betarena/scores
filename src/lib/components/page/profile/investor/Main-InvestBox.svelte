@@ -601,6 +601,10 @@
     tierDiscountObject.icon = icon_bronze;
     tierDiscountObject.discount = 20;
   }
+  else if ([undefined, null, 0].includes(depositAmount))
+  {
+    depositAmount = 0;
+  }
 
   /**
    * @description TODO:
@@ -1074,7 +1078,7 @@
           -->
           <input
             type="number"
-            placeholder=2000
+            placeholder=0
             class=
             "
             s-20
@@ -1220,7 +1224,7 @@
           -->
           <input
             type="number"
-            placeholder=2000
+            placeholder=0
             class=
             "
             s-20
