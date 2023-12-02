@@ -230,9 +230,9 @@
 
   modal.subscribeProvider
   (
-    (
+    async (
       newProvider
-    ): void =>
+    ): Promise < void > =>
     {
       // ### [🐞]
       dlogv2
@@ -248,6 +248,7 @@
 
       deepReactListenSignerChange = newProvider?.isConnected;
       walletAddress = modal?.getAddress();
+      await switchUserNetwork();
 
       return;
     }
@@ -300,6 +301,61 @@
 
       if (if_M_0) cryptoDepositOptionsSearch.push(item);
 		}
+
+    return;
+  }
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟦 HELPER
+   * @description
+   *  📣 Promots user `network` switch.
+   * @returns { void }
+   */
+  async function switchUserNetwork
+  (
+  ): Promise < void >
+  {
+    if (!browser) return;
+
+    await tryCatchAsync
+    (
+      async (
+      ) : Promise < void > =>
+      {
+        return await window.ethereum.request
+        (
+          {
+            method: "wallet_addEthereumChain",
+            params:
+            [
+              {
+                chainId: "0x13881",
+                chainName: "Mumbai Testnet",
+                rpcUrls: ["https://polygon-mumbai.g.alchemy.com/v2/0zWtf5I24NBkM826G-VJFiYkkGoC5atJ"],
+                nativeCurrency:
+                {
+                  name: "MATIC",
+                  symbol: "MATIC",
+                  decimals: 18,
+                },
+                blockExplorerUrls: ["https://mumbai.polygonscan.com"],
+              },
+            ],
+          }
+        )
+      }
+      , (
+        ex: unknown
+      ): void =>
+      {
+        console.error(`💀 Unhandled :: ${ex}`);
+
+        return;
+      }
+    );
 
     return;
   }
@@ -378,6 +434,8 @@
     // ▓ [🐞]
     console.log('📣', modal.getIsConnected());
 
+    await switchUserNetwork();
+
     let
       errors: boolean = false
       , targetDecimals: number
@@ -434,6 +492,8 @@
         else if (ex?.toString()?.includes('Error: Internal JSON-RPC error.'))
           // ▓ see :> https://support.metamask.io/hc/en-us/articles/360059289871-Error-Internal-JSON-RPC-error-when-trying-to-interact-with-other-networks
           console.info('❌ Something is not right, please recheck everything again.');
+        else if (ex?.toString()?.includes('code=CALL_EXCEPTION'))
+          console.info('❌ ERR :: Incorrect selected chain by client/user');
         else
           console.error(`💀 Unhandled :: ${ex}`);
 
@@ -484,6 +544,8 @@
         else if (ex?.toString()?.includes('Error: Internal JSON-RPC error.'))
           // ▓ [🐞]
           console.info('❌ Incorrect Network Selected.');
+        else if (ex?.toString()?.includes('code=CALL_EXCEPTION'))
+          console.info('❌ ERR :: Incorrect selected chain by client/user');
         else
           // ▓ [🐞]
           console.error(`💀 Unhandled :: ${ex}`);
