@@ -1,36 +1,149 @@
-# ▓ @see :> https://xdevs.com/guide/color_serial/
-# ▓ @see :> https://en.wikipedia.org/wiki/ANSI_escape_code
+# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+# ▓ 🏗️ DEBUG    																									    ▓
+# ▓ 👇 contains custom `debug/log` commands                          ▓
+# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+
+# ▓ @see :|: https://xdevs.com/guide/color_serial/
+# ▓ @see :|: https://en.wikipedia.org/wiki/ANSI_escape_code
 COLOUR_G=\033[0;32m
 COLOUR_R=\033[0;31m
 COLOUR_B=\033[0;34m
 COLOUR_GREY=\033[0;90m
 END_COLOUR=\033[0m
 
+SET_DESCRIPTION:
+	@echo ""
+
+	@ # ▓ > read-more :|: https://www.npmjs.com/package/boxen-cli
+	@npx --yes\
+		boxen-cli@4.0.0 --width=50 --padding=1 --border-color=yellow --border-style=round "DESCRIPTION: $(desc)"
+
+	# @echo $(desc) | npx chalk-cli@5.0.1 bold cyan
+	@echo ""
+#
+
+LOG_ERROR:
+	@ # ▓ > read-more :|: https://www.npmjs.com/package/boxen-cli
+	@npx --yes\
+		boxen-cli@4.0.0 --width=50 --padding=0.5 --border-color=red --border-style=round "$(desc)"
+#
+
+LOG_INFO:
+	@ # ▓ > read-more :|: https://www.npmjs.com/package/boxen-cli
+	@npx --yes\
+		boxen-cli@4.0.0 --width=50 --padding=0.5 --border-color=blue --border-style=round "$(desc)"
+#
+
 # ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 # ▓ 🏗️ SETUP    																									    ▓
-# ▓ 👇 contains custom `node` commands                               ▓
+# ▓ 👇 contains custom `setup` commands                              ▓
 # ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
+.ONESHELL:
+nvm:
+	@echo ""
+	@# ▓ DESCRIPTION
+	@# ▓ > custom use of `nvm` command implementation.
+	@# ▓ > read-more :|: https://github.com/nvm-sh/nvm/issues/1446#issuecomment-859143778
+	@# ▓ TODO:
+	@# ▓ > allow this to be the 'default' for every 'target' that uses 'nvm'.
+	@echo ""
+
+	. ${NVM_DIR}/nvm.sh
+	nvm use
+
+	@# ▓ NOTE:
+	@# ▓ > check `nvm` is configured.
+	@command -v nvm
+
+	@# ▓ NOTE:
+	@# ▓ > custom use of `nvm` command porting.
+	@nvm $(CMD)
+#
+
+.ONESHELL:
 node-setup:
-	@echo ""
-	# ▓ DESCRIPTION
-	# ▓ > custom use of `nvm` command.
-	# ▓ > for switching between `node` and `npm` versions.
-	# ▓ @see :> https://github.com/nvm-sh/nvm
-	@echo ""
+	@${MAKE}\
+		SET_DESCRIPTION\
+		desc="$$\
+		custom use of nvm command.$$\
+		for switching between node and npm versions.$$\
+		see https://github.com/nvm-sh/nvm"
+	@
 
 	@ # ▓ NOTE:
 	@ # ▓ > install target `node` version if absent
 	@ # ▓ >	from the list of availble `node` versions with `nvm`.
-	@nvm install 16.17.0
+	@ $(MAKE) nvm CMD="install 16.17.0"
 
 	@ # ▓ NOTE:
 	@ # ▓ > change machine `node` version to use that of this project.
-	@nvm use 16.17.0
+	@ $(MAKE) nvm CMD="use 16.17.0"
 
 	@ # ▓ NOTE:
-	@ # ▓ > check machine `architecture` being employed.
-	-@arch
+	@ # ▓ > change machine `npm` version to use that of this project.
+	@ npm install -g npm@8.19.1
+#
+
+.ONESHELL:
+project-check:
+	@ echo ""
+	@ # ▓ DESCRIPTION
+	@ # ▓ > custom use of `nvm` command.
+	@ # ▓ > for switching between `node` and `npm` versions.
+	@ # ▓ > read-more :|: https://github.com/nvm-sh/nvm
+	@ echo ""
+
+	@ # ▓ CHECK
+	@ # ▓ see :|: https://stackoverflow.com/questions/32153034/oneshell-not-working-properly-in-makefile
+	@ # ▓ see :|: https://stackoverflow.com/questions/43175529/updating-make-version-on-mac
+	make --version
+
+	@ # ▓ CHECK
+	@ # ▓ > for `architecture` used by `machine`.
+	@ $(eval SYSTEM_ARCHITECTURE_DETECTED=$(shell arch))
+	@ $(MAKE) LOG_INFO desc="System Architecture: $(SYSTEM_ARCHITECTURE_DETECTED) (built arm64)"
+
+	@ # ▓ CHECK
+	@ # ▓ > for `architecture` used by `node`.
+	@ $(eval NODE_ARCHITECTURE_DETECTED=$(shell node -p "process.arch"))
+	@ $(MAKE) LOG_INFO desc="Node Architecture: $(NODE_ARCHITECTURE_DETECTED) (built arm64)"
+
+	@if [ $(SYSTEM_ARCHITECTURE_DETECTED) != $(NODE_ARCHITECTURE_DETECTED) ]; then\
+		$(MAKE) LOG_ERROR desc="❌ Architectures do not match! Please check.";\
+	fi
+
+	@ # ▓ CHECK
+	@ # ▓ > for `node` version being used.
+	@ $(eval NODE_VERSION=$(shell node -v))
+	@ $(MAKE) LOG_INFO desc="Node Version: $(NODE_VERSION) (built v16.17.0)"
+
+	@if [ $(NODE_VERSION) != "v16.17.0" ]; then\
+		$(MAKE) LOG_ERROR desc="❌ Node version is not correct! Please check.";\
+		$(MAKE) node-setup;\
+	fi
+
+	@ # ▓ CHECK
+	@ # ▓ > for `npm` version being used.
+	@ $(eval NPM_VERSION=$(shell npm -v))
+	@ $(MAKE) LOG_INFO desc="NPM Version: $(NPM_VERSION) (built v8.19.1)"
+
+	@if [ $(NPM_VERSION) != "8.19.1" ]; then\
+		echo "❌ NPM Version is not correct! Please check.";\
+		$(MAKE) node-setup;\
+	fi
+
+	@ # ▓ CHECK
+	@ # ▓ > for `dotenv` is configured.
+	@if [[ ! -f ./.env.vault || ! -f ./.env.me ]]; then\
+		echo "❌ Dotenv :: Missing Key Files.";\
+	fi
+
+	@ # ▓ NOTE:
+	@ # ▓ > check `heroku` is configured.
+	@ $(MAKE) LOG_INFO desc="Make sure to have access to the Heroku Betarena Project (ask the team member)"
+
+	@ $(MAKE) misc-end-target
 #
 
 # ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
@@ -71,44 +184,86 @@ docker-local-start:
 # ▓ 👇 contains custom `development` flow commands 									 ▓
 # ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
+.ONESHELL:
 dev-local-deploy:
 	@echo ""
-	# ▓ DESCRIPTION
-	# ▓ > custom use of `development` command.
-	# ▓ > for spin-up of local environment.
+	@# ▓ DESCRIPTION
+	@# ▓ > custom use of `development` command.
+	@# ▓ > for spin-up of local environment.
 	@echo ""
 
-	$(MAKE) mac-os
+	-@ $(MAKE) mac-os
+
+	. ${NVM_DIR}/nvm.sh
+	nvm use
+
 	-rm -r ./.svelte-kit/
 
 	@VITE_SCORES_PKG_VERSION="v.$(shell npm pkg get version --workspaces=false | tr -d \")"\
 		VITE_SCORES_LIB_PKG_VERSION="v.$(shell npm info @betarena/scores-lib version | tr -d \")"\
-		DOTENV_KEY=$(shell npx dotenv-vault@1.25.0 keys devlopment)\
+		DOTENV_KEY=$(shell npx dotenv-vault@1.25.0 keys development)\
 		npm run sveltekit::dev
+	@
 #
 
+.ONESHELL:
 dev-local-scores-lib-link:
 	@echo ""
-	# ▓ DESCRIPTION
-	# ▓ > custom use of `development` command.
-	# ▓ > for spin-up of local connection to @betarena/scores-lib
+	@# ▓ DESCRIPTION
+	@# ▓ > custom use of `development` command,
+	@# ▓ > for spin-up of local connection to @betarena/scores-lib.
 	@echo ""
+
+	-@ $(MAKE) mac-os
+
+	. ${NVM_DIR}/nvm.sh
+	nvm use
 
 	@npm run pkg::@betarena/scores-lib::link
 
 	@npm ls --link --global
 #
 
+.ONESHELL:
 dev-local-1-click-spin-up:
 	@echo ""
-	# ▓ DESCRIPTION
-	# ▓ > custom use of `development` command.
-	# ▓ > for spin-up of local environment.
+	@# ▓ DESCRIPTION
+	@# ▓ > custom use of `development` command,
+	@# ▓ > for spin-up of local environment.
 	@echo ""
 
-	${MAKE} -j3\
+	-@ $(MAKE) mac-os
+
+	. ${NVM_DIR}/nvm.sh
+	nvm use
+
+	$(MAKE) -j3\
 		dev-local-deploy\
 		dev-local-scores-lib-link
+	@
+#
+
+.ONESHELL:
+build-spin-up:
+	@echo ""
+	@# ▓ DESCRIPTION
+	@# ▓ > custom use of `development` command.
+	@# ▓ > for spin-up of local environment.
+	@echo ""
+
+	-@ $(MAKE) mac-os
+
+	. ${NVM_DIR}/nvm.sh
+	nvm use
+
+	-rm -r ./.svelte-kit/
+	-rm -r ./build/
+
+	@VITE_SCORES_PKG_VERSION="v.$(shell npm pkg get version --workspaces=false | tr -d \")"\
+		VITE_SCORES_LIB_PKG_VERSION="v.$(shell npm info @betarena/scores-lib version | tr -d \")"\
+		DOTENV_KEY=$(shell npx dotenv-vault@1.25.0 keys development)\
+		npm run sveltekit::build
+	@
 #
 
 preview-local-1-click-spin-up:
@@ -511,7 +666,6 @@ misc-end-target:
 	# ▓ DESCRIPTION
 	# ▓ > custom use of `target` command.
 	# ▓ > used by other targets to `signal` completed execution.
-	@echo ""
 
 	@echo\
 		"\n$(COLOUR_GREY)\
