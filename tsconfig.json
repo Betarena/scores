@@ -2,16 +2,10 @@
   "extends": "./.svelte-kit/tsconfig.json",
 	"compilerOptions":
   {
-		"moduleResolution": "node",
-    // "types":
-    // [
-    //   "cypress",
-    //   "node",
-    //   "vitest/globals",
-    //   "svelte"
-    // ],
-		"module": "es2020",
-		"lib":
+		"moduleResolution": "node"
+
+		, "module": "es2020"
+		, "lib":
     [
       "es2020",
       "DOM",
@@ -20,49 +14,71 @@
       "es6",
       "dom",
       "dom.iterable",
-      // ◼️◼️◼️ NOTE:
-      // ◼️◼️◼️ as per 'vite' recommendation,
-      // ◼️◼️◼️ SEE:
-      // ◼️◼️◼️ https://vitejs.dev/guide/env-and-mode.html
+      // ▓ NOTE:
+      // ▓ > as per 'vite' recommendation
+      // ▓ read-more :|: https://vitejs.dev/guide/env-and-mode.html
       "WebWorker"
-    ],
-		"target": "es2020",
+    ]
+    , "target": "es2020"
+    // "types":
+    // [
+    //   "cypress",
+    //   "node",
+    //   "vitest/globals",
+    //   "svelte"
+    // ],
+
 		/**
-		  svelte-preprocess cannot figure out whether you have a value or a type, so tell TypeScript
-			to enforce using \`import type\` instead of \`import\` for Types.
+    NOTE: IMPORTANT
+    placed by Svelte
+    ╭──────────────────────────────────────────────────────────────────╮
+		│ svelte-preprocess cannot figure out whether you have a value or a type, so tell TypeScript
+		│	to enforce using \`import type\` instead of \`import\` for Types.
+    ╰──────────────────────────────────────────────────────────────────╯
     */
-		"importsNotUsedAsValues": "error",
-		"isolatedModules": true,
-		"resolveJsonModule": true,
+		, "importsNotUsedAsValues": "error"
+		, "isolatedModules": true
+		, "resolveJsonModule": true
+
 		/**
-			To have warnings/errors of the Svelte compiler at the correct position,
-			enable source maps by default.
+    NOTE: IMPORTANT
+    placed by Svelte
+    ╭──────────────────────────────────────────────────────────────────╮
+		│	To have warnings/errors of the Svelte compiler at the correct position,
+		│	enable source maps by default.
+    ╰──────────────────────────────────────────────────────────────────╯
     */
-		"sourceMap": true,
-		"esModuleInterop": true,
-		"skipLibCheck": true,
-		"forceConsistentCasingInFileNames": true,
-		"baseUrl": ".",
-		"allowJs": true,
-		"checkJs": true,
-		"paths":
+		, "sourceMap": true
+		, "esModuleInterop": true
+		, "skipLibCheck": true
+		, "forceConsistentCasingInFileNames": true
+		, "baseUrl": "."
+    , "allowJs": true
+		, "checkJs": true
+		, "paths":
     {
-			"$lib": ["src/lib"],
-			"$lib/*": ["src/lib/*"]
+			"$lib": ["src/lib"]
+      , "$lib/*": ["src/lib/*"]
 		}
+
+    /**
+    NOTE:
+    custom compilerOptions
+    */
+    , "strictNullChecks": true
 	},
 	"include":
   [
-    "src/**/*.d.ts",
-    "src/**/*.js",
-    "src/**/*.ts",
-    "src/**/*.svelte",
-    "docker-server.js",
-    "heroku-server.js"
+    "src/**/*.d.ts"
+    , "src/**/*.js"
+    , "src/**/*.ts"
+    , "src/**/*.svelte"
+    , "docker-server.js"
+    , "heroku-server.js"
   ],
   "exclude":
   [
-    "build/**/*",
-    ".svelte-kit/**/*"
+    "build/**/*"
+    , ".svelte-kit/**/*"
   ]
 }
