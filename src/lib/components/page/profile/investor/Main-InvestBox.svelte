@@ -61,6 +61,7 @@
   import usdtContractAddressABI from './web3/UsdtABI.json';
 
   import ModalTermsAndConditions from './Modal-TermsAndConditions.svelte';
+  import ModalTxState from './Modal-Tx-State.svelte';
 
   import type { B_H_TH } from '@betarena/scores-lib/types/_HASURA_.js';
   import type { ICoinMarketCapDataMain } from '@betarena/scores-lib/types/_WEB3_.js';
@@ -109,6 +110,8 @@
     /** @description cryptocurrency ABI */
     abi: unknown;
   }
+
+  type IStateWidget = 'In Progress' | 'Completed' | null;
 
   const
     /** @description 📌 `this` component **main** `id` and `data-testid` prefix. */
@@ -179,6 +182,8 @@
     )
     /** @description wether user has triggered the `invest` action. */
     , triggerInvestBox: boolean = false
+    /** @description wether user has triggered the `invest` action. */
+    , stateWidget: IStateWidget = null
     /** @description prices of supported tokens. */
     , cryptoPrices: ICoinMarketCapDataMain
     /** @description target token price. */
@@ -434,6 +439,8 @@
     // ▓ [🐞]
     console.log('📣', modal.getIsConnected());
 
+    stateWidget = 'In Progress';
+
     await switchUserNetwork();
 
     let
@@ -506,6 +513,7 @@
     if (errors)
     {
       triggerInvestBox = false;
+      stateWidget = null;
       return;
     }
 
@@ -559,6 +567,7 @@
     if (errors)
     {
       triggerInvestBox = false;
+      stateWidget = null;
       return;
     }
 
@@ -596,6 +605,7 @@
     );
 
     triggerInvestBox = false;
+    stateWidget = 'Completed';
 
     return;
   }
@@ -800,6 +810,13 @@
 -->
 
 <ModalTermsAndConditions />
+
+{#if stateWidget}
+  <ModalTxState
+    {stateWidget}
+    on:closeDropdown={() => stateWidget = null}
+  />
+{/if}
 
 <form
   id={CNAME}
