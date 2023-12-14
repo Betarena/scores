@@ -121,10 +121,6 @@
     VIEWPORT_TABLET_INIT = 1160,
     /** @description target `polygon` blockchain `BetarenaBank` polygon mumbai (testnet) */
     betarenaBankContractAddress: string = '0x5BC335e9c9492B8abb07B49a6dbD8269d7419F1D'
-    /** @description target `polygon` blockchain `USDC` polygon mumbai (testnet) */
-    , usdcContractAddress: string = '0x0FA8781a83E46826621b3BC094Ea2A0212e71B23'
-    /** @description target `polygon` blockchain `USDT` polygon mumbai (testnet) */
-    , usdtContractAddress: string = '0x3813e82e6f7098b9583FC0F33a962D02018B6803'
     /** @description TODO: */
     // provider = EthereumProvider.init({ .. })
   ;
@@ -205,15 +201,17 @@
         full_name: 'USD Coin',
         name: 'USDC',
         icon: icon_usdc,
-        contractAddress: usdcContractAddress,
-        abi: usdcContractAddressABI
+        contractAddress: '0x0FA8781a83E46826621b3BC094Ea2A0212e71B23',
+        abi: usdcContractAddressABI,
+        userBalance: null
       },
       {
         full_name: 'Tether',
         name: 'USDT',
         icon: icon_usdt,
-        contractAddress: usdtContractAddress,
-        abi: usdtContractAddressABI
+        contractAddress: '0x3813e82e6f7098b9583FC0F33a962D02018B6803',
+        abi: usdtContractAddressABI,
+        userBalance: null
       }
     ]
     /** @description crypto deposit data object list (search) */
