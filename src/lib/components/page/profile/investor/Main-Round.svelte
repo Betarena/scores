@@ -575,7 +575,8 @@
             w-600
             "
           >
-            ${WIDGET_DATA?.txProgressRaised}
+            <!-- ${WIDGET_DATA?.txProgressRaised} -->
+            ${mapInvestorData?.get('round')?.values?.current_value ?? '-'}
           </span>
         </p>
 
