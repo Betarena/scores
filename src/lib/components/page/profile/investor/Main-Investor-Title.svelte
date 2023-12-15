@@ -143,7 +143,7 @@
         no-wrap
         "
       >
-        {B_PROF_T?.investor?.tab?.tab_1 ?? 'Public Presale (Soon)'}
+        {B_PROF_T?.investor?.tab?.tab_2 ?? 'Public Presale (Soon)'}
       </p>
 
     </div>
