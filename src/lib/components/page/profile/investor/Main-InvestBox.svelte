@@ -1427,7 +1427,7 @@
             color-black-2
             "
           >
-            Balance: {cryptoDepositOptionSelect.userBalance}
+            Balance: {cryptoDepositOptionSelect?.userBalance ?? 0}
           </p>
 
         </div>
