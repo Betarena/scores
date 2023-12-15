@@ -1453,7 +1453,7 @@
             color-black-2
             "
           >
-            Balance: {cryptoDepositOptionSelect?.userBalance ?? 0}
+            Balance: {toDecimalFix(cryptoDepositOptionSelect?.userBalance) ?? 0}
           </p>
 
         </div>
