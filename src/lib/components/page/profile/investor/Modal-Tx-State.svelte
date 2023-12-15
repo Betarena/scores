@@ -211,6 +211,7 @@
 		padding: 20px;
     padding-top: 45px;
 		text-align: -webkit-center;
+		text-align: -moz-center;
 		overflow: hidden;
 	}
 
