@@ -324,28 +324,40 @@
     row-space-out
     "
   >
+
     <!--
     ▓ NOTE:
-    ▓ > round number
+    ▓ > round data
     -->
-    <p
-      class=
-      "
-      s-24
-      color-black-2
-      w-500
-      "
-    >
-      {'Round 1'}
+    <div>
 
+      <!--
+      ▓ NOTE:
+      ▓ > round number
+      -->
+      <p
+        class=
+        "
+        s-24
+        color-black-2
+        w-500
+        "
+      >
+        {'Round 1'}
+      </p>
+
+      <!--
+      ▓ NOTE:
+      ▓ > presale text
+      -->
       {#if ['CountdownWithDefinedDate', 'CountdownToFinish'].includes(widgetState)}
-        <br/>
         <span
           class=
           "
           s-14
           color-grey
           w-400
+          m-t-5
           "
         >
           {#if widgetState == 'CountdownWithDefinedDate'}
@@ -356,7 +368,7 @@
         </span>
       {/if}
 
-    </p>
+    </div>
 
     <!--
     ▓ NOTE:
