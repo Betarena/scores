@@ -277,6 +277,74 @@
    * @author
    *  @migbash
    * @summary
+   *  🟥 COMPONENT MAIN
+   * @description
+   *  📣 Document (visibility-change) event listener;
+   * @returns { void }
+   */
+  function addEventListeners
+  (
+  ): void
+  {
+    // NOTE: (on-visibility-change)
+    document.addEventListener
+    (
+      'visibilitychange',
+      async function
+      (
+      )
+      {
+        if (!document.hidden)
+        {
+          dlog('🔵 user is active', true);
+          getCryptoPrices();
+        }
+        else
+        {
+          dlog('🔴 user is not-active', true);
+          // @ts-expect-error
+          clearInterval(interval1);
+        }
+      }
+    );
+    // NOTE: (on-resize)
+    window.addEventListener
+    (
+      'resize',
+      function ()
+      {
+        resizeAction();
+      }
+    );
+  }
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟥 COMPONENT MAIN
+   * @description
+   *  📣 Update variables for viewport state.
+   * @returns { void }
+   */
+  function resizeAction
+  (
+  ): void
+  {
+    [
+      isViewTablet,
+      isViewMobile
+    ] = viewport_change
+    (
+      VIEWPORT_TABLET_INIT,
+      VIEWPORT_MOBILE_INIT
+    );
+  }
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
    *  🟦 HELPER
    * @description
    *  📣 Search Token.
@@ -668,6 +736,51 @@
     return;
   }
 
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟥 COMPONENT MAIN
+   * @description
+   *  📣 Fetch target cryptocurrency prices.
+   * @returns { Promise < void > }
+   */
+  async function getCryptoPrices
+  (
+  ): Promise < void >
+  {
+    cryptoPrices = await get
+    (
+      `/api/coinmarketcap?tickers=USDT,USDC`,
+      null,
+      true,
+      true
+    ) as ICoinMarketCapDataMain;
+
+    cryptoPrice = parseFloat(toDecimalFix(cryptoPrices?.data?.[cryptoDepositOptionSelect?.name]?.quote?.USD?.price, 3, true, false)) ?? 0;
+
+    interval1 = setInterval
+    (
+      async (
+      ): Promise < void > =>
+      {
+        cryptoPrices = await get
+        (
+          `/api/coinmarketcap?tickers=USDT,USDC`,
+          null,
+          true,
+          true
+        ) as ICoinMarketCapDataMain;
+
+        cryptoPrice = parseFloat(toDecimalFix(cryptoPrices?.data?.[cryptoDepositOptionSelect?.name]?.quote?.USD?.price, 3, true, false)) ?? 0;
+      }
+      ,
+      30000
+    );
+
+    return;
+  }
+
   // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -770,6 +883,8 @@
     cryptoDepositOptionsSearch = passByValue(cryptoDepositOptions);
   }
 
+  $: if (isNaN(cryptoPrice)) cryptoPrice = 1.00;
+
   $:
   if (cryptoDepositOptionSelect || deepReactListenSignerChange)
   {
@@ -810,61 +925,9 @@
     async (
     ) =>
     {
-      cryptoPrices = await get
-      (
-        `/api/coinmarketcap?tickers=USDT,USDC`,
-        null,
-        true,
-        true
-      ) as ICoinMarketCapDataMain;
-
-      cryptoPrice = parseFloat(toDecimalFix(cryptoPrices?.data?.[cryptoDepositOptionSelect?.name]?.quote?.USD?.price, 3, true, false)) ?? 0;
-
-      interval1 = setInterval
-      (
-        async (
-        ): Promise < void > =>
-        {
-          cryptoPrices = await get
-          (
-            `/api/coinmarketcap?tickers=USDT,USDC`,
-            null,
-            true,
-            true
-          ) as ICoinMarketCapDataMain;
-
-          cryptoPrice = parseFloat(toDecimalFix(cryptoPrices?.data?.[cryptoDepositOptionSelect?.name]?.quote?.USD?.price, 3, true, false)) ?? 0;
-        }
-        ,
-        30000
-      );
-
-      [
-        isViewTablet,
-        isViewMobile
-      ] = viewport_change
-      (
-        VIEWPORT_TABLET_INIT,
-        VIEWPORT_MOBILE_INIT
-      );
-
-      window.addEventListener
-      (
-        'resize',
-        function ()
-        {
-          [
-            isViewTablet,
-            isViewMobile
-          ] =
-          viewport_change
-          (
-            VIEWPORT_TABLET_INIT,
-            VIEWPORT_MOBILE_INIT
-          );
-        }
-      );
-
+      getCryptoPrices();
+      addEventListeners();
+      resizeAction();
     }
   );
 
@@ -1268,7 +1331,7 @@
           >
             <!-- ▓ [🐞] -->
             <!-- {console.log(cryptoPrices?.data?.['USDC']?.quote?.USD?.price)} -->
-            {depositAmount ?? 0} {cryptoDepositOptionSelect?.name} ≈ {cryptoPrice ?? '-'} $
+            {depositAmount ?? 0} {cryptoDepositOptionSelect?.name} ≈ {cryptoPrice} $
           </p>
 
         </div>
