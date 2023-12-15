@@ -737,10 +737,11 @@
     /* 📌 position */
     position: relative;
     /* 🎨 style */
-    padding: 17px 20px;
+    padding: 17px 0;
     background: var(--whitev2);
     width: 60px;
     height: 60px;
+    text-align: center;
   }
 
   div#profile⮕w⮕investround⮕main⮕top-row div#round-info-box-parent
@@ -812,7 +813,13 @@
     background-color: var(--dark-theme-1-4-shade);
   }
 
-  div#profile⮕w⮕investround⮕main⮕middle-box div#progress-bar
+  div#profile⮕w⮕investround⮕main.dark-background-1 div#profile⮕w⮕investround⮕main⮕top-row div.countdown-box-child
+  {
+    /* 🎨 style */
+    background: var(--dark-theme-1-4-shade);
+  }
+
+  div#profile⮕w⮕investround⮕main.dark-background-1 div#profile⮕w⮕investround⮕main⮕middle-box div#progress-bar
   {
     /* 🎨 style */
     background-color: var(--dark-theme-1);
