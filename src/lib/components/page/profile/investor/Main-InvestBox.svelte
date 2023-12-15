@@ -109,6 +109,8 @@
     contractAddress: string;
     /** @description cryptocurrency ABI */
     abi: unknown;
+    /** @description cryptocurrency user amount */
+    userBalance: any;
   }
 
   type IStateWidget = 'In Progress' | 'Completed' | null;
@@ -304,6 +306,64 @@
 
       if (if_M_0) cryptoDepositOptionsSearch.push(item);
 		}
+
+    return;
+  }
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟥 COMPONENT MAIN
+   * @description
+   *  📣 Obtains target user target **selected ERC-20 token** balance.
+   * @returns { Promise < void > }
+   */
+  async function getTokenBalance
+  (
+  ): Promise < void >
+  {
+    await tryCatchAsync
+    (
+      async (
+      ): Promise < void > =>
+      {
+        const
+          contract = new ethers.Contract
+          (
+            cryptoDepositOptionSelect?.contractAddress,
+            cryptoDepositOptionSelect?.abi as ContractInterface,
+            modal.getSigner(),
+          )
+        ;
+
+        const numberDecimals = await contract?.decimals();
+        const numberUserBalance = await contract?.balanceOf(modal?.getAddress());
+        cryptoDepositOptionSelect.userBalance = ethers.utils.formatUnits(numberUserBalance?.toString(), numberDecimals);
+
+        // ▓ [🐞]
+        dlogv2
+        (
+          ``
+          , [
+            `numberDecimals ${numberDecimals}`,
+            `numberUserBalance ${numberUserBalance}`,
+            `modal?.getAddress() ${modal?.getAddress()}`,
+          ]
+        );
+
+        return;
+      }
+      ,
+      (
+        ex: unknown
+      ): void =>
+      {
+        console.error(`💀 Unhandled :: ${ex}`);
+
+        return;
+      }
+    );
 
     return;
   }
@@ -708,6 +768,30 @@
   else if (tokenSearch == '' || tokenSearch == undefined)
   {
     cryptoDepositOptionsSearch = passByValue(cryptoDepositOptions);
+  }
+
+  $:
+  if (cryptoDepositOptionSelect || deepReactListenSignerChange)
+  {
+    // ### [🐞]
+    dlog
+    (
+      `🚏 checkpoint [R] ➤ IF_X_212`,
+      true
+    );
+
+    getTokenBalance();
+  }
+  else if (!deepReactListenSignerChange)
+  {
+    // ### [🐞]
+    dlog
+    (
+      `🚏 checkpoint [R] ➤ IF_X_212 [E]`,
+      true
+    );
+
+    cryptoDepositOptionSelect.userBalance = 0;
   }
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
@@ -1191,61 +1275,84 @@
 
         <!--
         ▓ NOTE:
-        ▓ > Token.
+        ▓ > token box (parent)
         -->
-        <div
-          class=
-          "
-          row-space-start
-          width-auto
-          cursor-pointer
-          "
-          on:click={() => modalSelectCryptoOption = true}
-        >
+        <div>
 
           <!--
           ▓ NOTE:
-          ▓ > Token Asset Icon.
+          ▓ > Token.
           -->
-          <img
-            id=''
-            src={cryptoDepositOptionSelect?.icon}
-            alt={cryptoDepositOptionSelect?.name}
-            title={cryptoDepositOptionSelect?.name}
-            loading='lazy'
-            width=20
-            height=20
+          <div
             class=
             "
-            m-r-6
+            row-space-end
+            width-auto
+            cursor-pointer
+            m-b-5
             "
-          />
+            on:click={() => modalSelectCryptoOption = true}
+          >
+
+            <!--
+            ▓ NOTE:
+            ▓ > Token Asset Icon.
+            -->
+            <img
+              id=''
+              src={cryptoDepositOptionSelect?.icon}
+              alt={cryptoDepositOptionSelect?.name}
+              title={cryptoDepositOptionSelect?.name}
+              loading='lazy'
+              width=20
+              height=20
+              class=
+              "
+              m-r-6
+              "
+            />
+
+            <!--
+            ▓ NOTE:
+            ▓ > Token Asset Name.
+            -->
+            <p
+              class=
+              "
+              s-15
+              w-500
+              color-black-2
+              m-r-6
+              "
+            >
+              {cryptoDepositOptionSelect?.name}
+            </p>
+
+            <img
+              id=''
+              src={$userBetarenaSettings.theme == 'Dark' ? icon_arrow_down_dark : icon_arrow_down}
+              alt=''
+              title=''
+              loading='lazy'
+              width=16
+              height=16
+            />
+
+          </div>
 
           <!--
           ▓ NOTE:
-          ▓ > Token Asset Name.
+          ▓ > Token User Balance.
           -->
           <p
             class=
             "
-            s-15
-            w-500
+            s-12
             color-black-2
-            m-r-6
             "
           >
-            {cryptoDepositOptionSelect?.name}
+            Balance: {cryptoDepositOptionSelect.userBalance}
           </p>
-
-          <img
-            id=''
-            src={$userBetarenaSettings.theme == 'Dark' ? icon_arrow_down_dark : icon_arrow_down}
-            alt=''
-            title=''
-            loading='lazy'
-            width=16
-            height=16
-          />
 
         </div>
 
