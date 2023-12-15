@@ -35,7 +35,7 @@
   // read-more :|: https://www.npmjs.com/package/web3modal
 
   import { get, post } from '$lib/api/utils.js';
-  import { dlogv2 } from '$lib/utils/debug.js';
+  import { dlog, dlogv2 } from '$lib/utils/debug.js';
   import { shortenWeb3WalletAddress, toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
   import { passByValue } from '@betarena/scores-lib/dist/functions/func.common.js';
   import { tryCatchAsync } from '@betarena/scores-lib/dist/util/util.common.js';
@@ -1890,6 +1890,7 @@
     /* 🎨 style */
     border-radius: 12px;
     overflow: hidden;
+    height: fit-content;
   }
 
   div#profile⮕w⮕investbox⮕main⮕top-row
