@@ -32,6 +32,7 @@
 	import WidgetTxHistLoader from './../competitions-history/Widget-Comp-Hist-Loader.svelte';
 	import MainInvestBox from './Main-InvestBox.svelte';
 	import MainInvestorTitle from './Main-Investor-Title.svelte';
+	import MainRound from './Main-Round.svelte';
 
 	import type { B_H_COMP_DATA } from '@betarena/scores-lib/types/_HASURA_.js';
 	import type { B_PROF_D, B_PROF_T } from '@betarena/scores-lib/types/profile.js';
@@ -137,6 +138,9 @@
     id="investor-grid-box"
   >
 
+    <MainRound
+      {WIDGET_DATA}
+    />
     <MainInvestBox
       {WIDGET_DATA}
     />
@@ -164,6 +168,7 @@
     /* 🎨 style */
     display: grid;
     grid-template-columns: 1fr;
+    gap: 20px;
   }
 
   /*
@@ -184,6 +189,7 @@
     div#investor-grid-box
     {
       /* 🎨 style */
+      gap: 20px;
       grid-template-columns: 1fr 1fr;
     }
   }
