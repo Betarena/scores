@@ -811,10 +811,22 @@
     background-color: var(--dark-theme-1-4-shade);
   }
 
+  div#profile⮕w⮕investround⮕main⮕middle-box div#progress-bar
+  {
+    /* 🎨 style */
+    background-color: var(--dark-theme-1);
+  }
+
   div#profile⮕w⮕investround⮕main.dark-background-1 div#profile⮕w⮕investround⮕main⮕middle-box div.token-info-box div.token-info-row:nth-child(odd)
   {
     /* 🎨 style */
     background-color: var(--dark-theme-1);
+  }
+
+  div#profile⮕w⮕investround⮕main.dark-background-1 div#profile⮕w⮕investround⮕main⮕top-row div#round-info-box-parent
+  {
+    /* 🎨 style */
+    background-color: var(--dark-theme-1-4-shade);
   }
 
 </style>
