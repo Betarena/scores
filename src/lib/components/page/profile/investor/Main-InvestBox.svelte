@@ -63,9 +63,9 @@
   import ModalTermsAndConditions from './Modal-TermsAndConditions.svelte';
   import ModalTxState from './Modal-Tx-State.svelte';
 
-  import type { B_H_TH } from '@betarena/scores-lib/types/_HASURA_.js';
+  import type { B_H_INVEST_WIDGET_Data, B_H_TH } from '@betarena/scores-lib/types/_HASURA_.js';
   import type { ICoinMarketCapDataMain } from '@betarena/scores-lib/types/_WEB3_.js';
-  import type { B_PROF_T } from '@betarena/scores-lib/types/profile.js';
+  import type { B_PROF_D, B_PROF_T } from '@betarena/scores-lib/types/profile.js';
   import type { Web3Modal } from '@web3modal/ethers5/dist/types/src/client.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -83,6 +83,11 @@
   // ### 3. let [..]                                                      ◼️
   // ### 4. $: [..]                                                       ◼️
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+
+  export let
+    /** @inheritdoc */
+    WIDGET_DATA: B_PROF_D
+  ;
 
   // ### @see :|: https://stackoverflow.com/questions/72230897/how-to-call-a-smart-contract-function-with-walletconnect-react-js-node-js
   // ### @see :|: https://wiki.polygon.technology/docs/tools/wallets/walletconnect/
@@ -178,6 +183,11 @@
         }
       }
     )
+    /** @description 📣 investor data (map) */
+    , mapInvestorData: Map < string, B_H_INVEST_WIDGET_Data > = new Map
+    (
+      WIDGET_DATA?.investor
+    ) as Map < string, B_H_INVEST_WIDGET_Data >
     /** @description wether user has triggered the `invest` action. */
     , triggerInvestBox: boolean = false
     /** @description wether user has triggered the `invest` action. */
@@ -708,7 +718,7 @@
       amount: depositAmount,
       quantity: recieveAmount,
       Gateway: 'cryptocurrency',
-      description: 'BTA Deposit Request',
+      description: mapInvestorData?.get('round')?.values?.current_round,
       type: 'deposit',
       bta_price: 1,
       deposit_wallet_address:

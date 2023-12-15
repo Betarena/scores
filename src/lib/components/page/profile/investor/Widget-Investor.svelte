@@ -23,9 +23,10 @@
   // ### 5. type(s) imports(s)                                            ◼️
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
-	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
+	import { get } from '$lib/api/utils.js';
 
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { sleep } from '$lib/utils/platform-functions.js';
 
 	import WidgetTxHistLoader from './../competitions-history/Widget-Comp-Hist-Loader.svelte';
@@ -81,12 +82,27 @@
   (
   ): Promise < B_PROF_D >
   {
-    // ### IMPORTANT
-    if (!browser) return;
-
 		await sleep(3000);
 
-    return;
+    const response: B_PROF_D = await get
+    (
+			`/api/data/profile?uid=${$userBetarenaSettings?.user?.firebase_user_data?.uid}`
+		);
+
+    WIDGET_DATA = response
+
+    const if_0 =
+      WIDGET_DATA == undefined
+    ;
+		if (if_0)
+    {
+      // dlog(`${IN_W_F_TAG} ❌ no data available!`, IN_W_F_TOG, IN_W_F_STY);
+			NO_WIDGET_DATA = true;
+			return;
+		}
+
+    NO_WIDGET_DATA = false;
+    return WIDGET_DATA
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -121,8 +137,9 @@
     id="investor-grid-box"
   >
 
-    <div/>
-    <MainInvestBox />
+    <MainInvestBox
+      {WIDGET_DATA}
+    />
 
   </div>
 
