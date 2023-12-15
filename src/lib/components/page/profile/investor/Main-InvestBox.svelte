@@ -40,6 +40,7 @@
   import { passByValue } from '@betarena/scores-lib/dist/functions/func.common.js';
   import { tryCatchAsync } from '@betarena/scores-lib/dist/util/util.common.js';
 
+  import icon_checkbox from '../assets/checkbox.svg';
   import icon_arrow_down_dark from '../assets/common/arrow-down-dark.svg';
   import icon_arrow_down from '../assets/common/arrow-down.svg';
   import icon_arrow_right_dark from '../assets/common/arrow-right-dark.svg';
@@ -1153,23 +1154,48 @@
       "
     >
 
+      <!-- [🐞] -->
+      <!-- {agreeTermsAndConditions} -->
+
       <!--
       ▓ NOTE:
       ▓ > Terms & Conditions INPUT.
       -->
-      <input
-        id=""
-        name=""
-        type="checkbox"
-        class=
-        "
-        v-1
-        m-r-12
-        cursor-pointer
-        "
-        required
-        bind:value={agreeTermsAndConditions}
-      />
+      <label
+        class="container"
+      >
+        <input
+          id=""
+          name=""
+          type="checkbox"
+          class=
+          "
+          v-1
+          m-r-12
+          cursor-pointer
+          "
+          required
+          bind:checked={agreeTermsAndConditions}
+        />
+
+        <span
+          class="checkmark"
+        >
+          {#if agreeTermsAndConditions}
+            <img
+              id=''
+              class=
+              "
+              box-center
+              "
+              src={icon_checkbox}
+              alt=''
+              title=''
+              loading='lazy'
+            />
+          {/if}
+        </span>
+      </label>
 
       <!--
       ▓ NOTE:
@@ -1344,7 +1370,7 @@
           >
             <!-- ▓ [🐞] -->
             <!-- {console.log(cryptoPrices?.data?.['USDC']?.quote?.USD?.price)} -->
-            {depositAmount ?? 0} {cryptoDepositOptionSelect?.name} ≈ {cryptoPrice} $
+            {depositAmount ?? 0} {cryptoDepositOptionSelect?.name} ≈ {cryptoPrice} USD
           </p>
 
         </div>
@@ -1512,7 +1538,7 @@
             m-t-5
             "
           >
-            {1 - (tierDiscountObject.discount / 100)} {cryptoDepositOptionSelect?.name} ≈ 1.00 BTA
+            {toDecimalFix(1 - (tierDiscountObject.discount / 100))} {cryptoDepositOptionSelect?.name} ≈ 1.00 BTA
           </p>
 
         </div>

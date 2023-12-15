@@ -1304,6 +1304,64 @@ img.google-aspect-ratio
   transition: all 0.15s ease;
 }
 
+/* The container */
+.container {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 22px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+/* Hide the browser's default checkbox */
+.container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 1px;
+  width: 1px;
+}
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 20px;
+  width: 20px;
+  background-color: transparent;
+  border: 1.5px solid #A9B8AE;
+  border-radius: 3.25px;
+}
+/* On mouse-over */
+/* .container:hover input ~ .checkmark {
+  background-color: #ccc;
+} */
+/* When the checkbox is checked */
+.container input:checked ~ .checkmark {
+  background-color: var(--primary);
+}
+
+/*
+╭──────────────────────────────────────────────────────────────────╮
+│ 📌 POSITIONS                                                     │
+╰──────────────────────────────────────────────────────────────────╯
+*/
+
+.box-center
+{
+  /* 📌 position */
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  margin: auto;
+}
+
 /* #endregion ➤ [MAIN] [OTHER STYLES] Website Layout */
 
 /* #region ➤ [MAIN] [DARK MODE (OVERRIDES) STYLES] Website Layout */
