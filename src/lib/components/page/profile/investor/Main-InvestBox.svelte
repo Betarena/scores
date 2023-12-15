@@ -858,7 +858,7 @@
   {
     // ▓ NOTE:
     // ▓ > relation between (1) deposit, (2) exchange price, (3) discount to obtain recieveAmount.
-    recieveAmount = parseFloat(toDecimalFix(depositAmount / cryptoPrice / (1 - (tierDiscountObject.discount / 100)), 2));
+    recieveAmount = parseFloat(toDecimalFix(depositAmount / (cryptoPrice * (1 - (tierDiscountObject.discount / 100))), 2));
   }
 
   /**
