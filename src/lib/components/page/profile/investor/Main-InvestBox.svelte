@@ -242,6 +242,7 @@
 
   $: B_PROF_T = $page.data?.RESPONSE_PROFILE_DATA;
   $: deepReactListenSignerChange = undefined;
+  $: deepReactListenDepositOptionChange = JSON.stringify(cryptoDepositOptionSelect);
 
   modal.subscribeProvider
   (
@@ -896,7 +897,7 @@
   $: if (isNaN(cryptoPrice)) cryptoPrice = 1.00;
 
   $:
-  if (cryptoDepositOptionSelect || deepReactListenSignerChange)
+  if (deepReactListenDepositOptionChange || deepReactListenSignerChange)
   {
     // ### [🐞]
     dlog
@@ -907,7 +908,9 @@
 
     getTokenBalance();
   }
-  else if (!deepReactListenSignerChange)
+
+  $:
+  if (!deepReactListenSignerChange)
   {
     // ### [🐞]
     dlog
