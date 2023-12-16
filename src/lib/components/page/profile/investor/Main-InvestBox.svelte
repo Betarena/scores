@@ -1714,6 +1714,7 @@
       class=
       "
       btn-primary-v2
+        btn-shadow-1
       width-100
       m-t-15
       w-500
