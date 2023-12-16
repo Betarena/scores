@@ -94,15 +94,15 @@
         [
           {
             row_title: 'Name'
-            , value: mapInvestorData?.get('round')?.values?.name
+            , value: mapInvestorData?.get('round')?.values?.name ?? '-'
           }
           , {
             row_title: 'Symbol'
-            , value: mapInvestorData?.get('round')?.values?.symbol
+            , value: mapInvestorData?.get('round')?.values?.symbol ?? '-'
           }
           , {
             row_title: 'Available'
-            , value: mapInvestorData?.get('round')?.values?.available
+            , value: mapInvestorData?.get('round')?.values?.available ?? '-'
           }
         ]
       }
@@ -112,11 +112,11 @@
         [
           {
             row_title: 'Start Date'
-            , value: mapInvestorData?.get('round')?.values?.start_date
+            , value: mapInvestorData?.get('round')?.values?.start_date ?? '-'
           }
           , {
             row_title: 'End Date'
-            , value: mapInvestorData?.get('round')?.values?.end_date
+            , value: mapInvestorData?.get('round')?.values?.end_date ?? '-'
           }
         ]
       }
@@ -126,19 +126,19 @@
         [
           {
             row_title: 'Minimum Buy Amount'
-            , value: mapInvestorData?.get('round')?.values?.min_buy
+            , value: mapInvestorData?.get('round')?.values?.min_buy ?? '-'
           }
           , {
             row_title: 'Raising Platform'
-            , value: mapInvestorData?.get('round')?.values?.chain
+            , value: mapInvestorData?.get('round')?.values?.chain ?? '-'
           }
           , {
             row_title: 'Type'
-            , value: mapInvestorData?.get('round')?.values?.type
+            , value: mapInvestorData?.get('round')?.values?.type ?? '-'
           }
           , {
             row_title: 'Accepted Currencies'
-            , value: mapInvestorData?.get('round')?.values?.currencies
+            , value: mapInvestorData?.get('round')?.values?.currencies ?? '-'
           }
         ]
       }
@@ -193,10 +193,6 @@
   $: if_R_000 =
     numDateDiffStart == null
     || numDateDiffEnd == null
-  $: if_R_00 =
-    countDownTestHourToStart > 23
-    && numDateDiffStart > 0
-  ;
   $: if_R_0 =
     countDownTestHourToStart <= 23
     && countDownTestHourToStart >= 0
@@ -207,21 +203,13 @@
     && countDownTestHourToEnd >= 0
     && numDateDiffEnd > 0
   ;
-  $: if_R_2 =
-    countDownTestHourToStart < 23
-    && numDateDiffStart < 0
-    && countDownTestHourToEnd > 23
-    && numDateDiffEnd > 0
-  ;
   $: if_R_3=
     countDownTestHourToEnd < 23
     && numDateDiffEnd < 0
   ;
 	$:
   if (if_R_000) widgetState = 'ToBeAnnounced'
-  else if (if_R_00) widgetState = 'Ready State';
 	else if (if_R_0) widgetState = 'CountdownWithDefinedDate';
-  else if (if_R_2) widgetState = 'In Progress';
 	else if (if_R_1) widgetState = 'CountdownToFinish';
   else if (if_R_3) widgetState = 'Ended';
 
@@ -350,7 +338,7 @@
       ▓ NOTE:
       ▓ > presale text
       -->
-      {#if ['CountdownWithDefinedDate', 'CountdownToFinish'].includes(widgetState)}
+      {#if ['ToBeAnnounced', 'CountdownWithDefinedDate', 'CountdownToFinish'].includes(widgetState)}
         <span
           class=
           "
@@ -467,16 +455,13 @@
           s-16
           w-500
           color-grey
+            dark-v1
           "
         >
-          {#if widgetState == 'Ready State'}
-            Ready State
-          {:else if widgetState == 'ToBeAnnounced'}
+          {#if widgetState == 'ToBeAnnounced'}
             Date To Be Announced
           {:else if widgetState == 'InviteOnly'}
             Invite Only
-          {:else if widgetState == 'In Progress'}
-            In Progress
           {:else if widgetState == 'Ended'}
             Ended
           {/if}
@@ -663,7 +648,9 @@
                 class=
                 "
                 s-14
-                color-black-2
+                
+                color-grey
+                  grey-v1
                 "
               >
                 {subItem?.row_title ?? ''}

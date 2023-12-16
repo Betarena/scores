@@ -1451,6 +1451,14 @@ img.google-aspect-ratio
 	color: var(--grey-shade-3) !important;
 }
 
+.dark-background .color-grey.dark-v1,
+.dark-background-1 .color-grey.dark-v1
+{
+  /* 🔥 override */
+  /* 🎨 style */
+	color: var(--grey) !important;
+}
+
 .dark-background .color-primary,
 .dark-background-1 .color-primary
 {
