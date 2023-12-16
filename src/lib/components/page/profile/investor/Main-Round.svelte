@@ -54,7 +54,12 @@
   ;
 
   /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🎪 TYPES | INTERFACE
    * @description
+   *  📣 Type for `round data`.
   */
   interface IRoundData
   {
@@ -66,29 +71,38 @@
     }[]
   }
 
-  type WidgetState = 'InviteOnly' | 'ToBeAnnounced' | 'Ready State' | 'CountdownWithDefinedDate' | 'In Progress' | 'CountdownToFinish' | 'Ended';
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🎪 TYPES | INTERFACE
+   * @description
+   *  📣 Type for possible `_this_` component states.
+   */
+  type IWidgetState = 'InviteOnly' | 'ToBeAnnounced' | 'CountdownWithDefinedDate' | 'CountdownToFinish' | 'Ended';
 
   const
-    /** @description 📌 `this` component **main** `id` and `data-testid` prefix. */
-    /** @description threshold start + state for 📱 MOBILE */
+    /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
+    CNAME: string = 'profile⮕w⮕investround⮕main',
+    /** @description 📣 threshold start + state for 📱 MOBILE */
     VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ],
-    /** @description threshold start + state for 💻 TABLET */
+    /** @description 📣 threshold start + state for 💻 TABLET */
     VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
   let
-    /** @description 📣 investor number difference */
-    widgetState: WidgetState = 'ToBeAnnounced'
-    /** @description 📣 investor number difference */
+    /** @description 📣 current widget state */
+    widgetState: IWidgetState = 'ToBeAnnounced'
+    /** @description 📣 investor number of days difference (from start) */
     , numDateDiffStart: number = 0
-    /** @description 📣 investor number difference */
+    /** @description 📣 investor number of days difference (from end) */
     , numDateDiffEnd: number = 0
     /** @description 📣 investor data (map) */
     , mapInvestorData: Map < string, B_H_INVEST_WIDGET_Data > = new Map
     (
       WIDGET_DATA?.investor
     ) as Map < string, B_H_INVEST_WIDGET_Data >
-    /** @description TODO: */
+    /** @description 📣 investor main information data */
     , roundData: IRoundData[] =
     [
       {
@@ -146,13 +160,23 @@
         ]
       }
     ]
-    /** @description TODO: */
+    /** @description 📣 investor round date percentage progress */
 	  , datePercentageDiff: number = 0
-    /** @description TODO: `mapInvestorData?.get('round')?.values?.start_date` || 12/08/2023 */
+    /**
+     * @description
+     *  📣 invest round date `start`
+     * @CUSTOM_NOTE
+     * `mapInvestorData?.get('round')?.values?.start_date` || 12/08/2023
+     */
     , dateRoundStart = mapInvestorData?.get('round')?.values?.start_date
-    /** @description TODO: `mapInvestorData?.get('round')?.values?.end_date` || 12/08/2023  */
+    /**
+     * @description
+     *  📣 invest round date `start`
+     * @CUSTOM_NOTE
+     * `mapInvestorData?.get('round')?.values?.end_date` || 12/08/2023
+     */
     , dateRoundEnd = mapInvestorData?.get('round')?.values?.end_date
-    /** @description interval for `countdown` */
+    /** @description 📣 interval variable for `countdown` logic */
     , interval1: NodeJS.Timer
   ;
 
@@ -216,8 +240,11 @@
 	else if (if_R_1) widgetState = 'CountdownToFinish';
   else if (if_R_3) widgetState = 'Ended';
 
+  // ▓ [🐞]
   // $: console.log('countDownTestHourToStart', countDownTestHourToStart)
+  // ▓ [🐞]
   // $: console.log('countDownTestHourToEnd', countDownTestHourToEnd)
+  // ▓ [🐞]
   // $: console.log('widgetState', widgetState)
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
