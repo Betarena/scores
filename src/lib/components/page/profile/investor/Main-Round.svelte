@@ -404,9 +404,9 @@
           m-t-5
           "
         >
-          {#if widgetState == 'CountdownWithDefinedDate'}
+          {#if ['ToBeAnnounced', 'CountdownWithDefinedDate'].includes(widgetState)}
             Presale starts in
-          {:else}
+          {:else if widgetState == 'CountdownToFinish'}
             Presale ends in
           {/if}
         </span>
