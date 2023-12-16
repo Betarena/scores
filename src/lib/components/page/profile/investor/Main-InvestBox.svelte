@@ -1162,7 +1162,11 @@
       ▓ > Terms & Conditions INPUT.
       -->
       <label
-        class="container"
+        class=
+        "
+        m-r-12
+        container
+        "
       >
         <input
           id=""
@@ -1171,7 +1175,6 @@
           class=
           "
           v-1
-          m-r-12
           cursor-pointer
           "
           required

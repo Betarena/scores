@@ -14195,8 +14195,7 @@
       .container {
         display: block;
         position: relative;
-        padding-left: 35px;
-        margin-bottom: 12px;
+        padding-left: 20px;
         cursor: pointer;
         font-size: 22px;
         -webkit-user-select: none;
@@ -14215,7 +14214,7 @@
       /* Create a custom checkbox */
       .checkmark {
         position: absolute;
-        top: 0;
+        top: -10px;
         left: 0;
         height: 20px;
         width: 20px;
@@ -14230,6 +14229,7 @@
       /* When the checkbox is checked */
       .container input:checked ~ .checkmark {
         background-color: var(--primary);
+        border: 1.5px solid transparent;
       }
 
       /*
