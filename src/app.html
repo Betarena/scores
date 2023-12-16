@@ -68,6 +68,21 @@
     ◼️◼️◼️ Declare All (styles) 'all-in-one-css-file.css' as hard-coded styles.
     -->
     <style>
+      div#splash-screen.svelte-153p22t {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        z-index: 50000;
+        display: grid;
+        grid-gap: 30px;
+        align-content: center;
+        align-items: center;
+        justify-items: center;
+        background-color: #292929
+      }
+
       div#seo-widget-box.svelte-tc24cj {
         position: fixed;
         z-index: -100000000;
@@ -9590,7 +9605,7 @@
         background: var(--dark-theme-1)
       }
 
-      div#background-modal-blur.svelte-ac1sau {
+      div#background-modal-blur.svelte-1ox3eej {
         position: fixed;
         top: 0;
         right: 0;
@@ -9601,7 +9616,7 @@
         background: rgba(0, 0, 0, .5)
       }
 
-      div#global⮕w⮕termsandcond⮕profile⮕main.svelte-ac1sau {
+      div#global⮕w⮕termsandcond⮕profile⮕main.svelte-1ox3eej {
         top: 7.5%;
         bottom: 0;
         right: 0;
@@ -9617,14 +9632,14 @@
         padding: 24px
       }
 
-      img#close-vector.svelte-ac1sau {
+      img#close-vector.svelte-1ox3eej {
         position: absolute;
         top: 24px;
         right: 24px;
         z-index: 400000002
       }
 
-      div#global⮕w⮕termsandcond⮕profile⮕main⮕inner.svelte-ac1sau {
+      div#global⮕w⮕termsandcond⮕profile⮕main⮕inner.svelte-1ox3eej {
         display: grid;
         overflow-x: hidden;
         max-height: 100%;
@@ -9634,23 +9649,43 @@
         scrollbar-width: none !important
       }
 
-      div#global⮕w⮕termsandcond⮕profile⮕main⮕inner.svelte-ac1sau::-webkit-scrollbar {
+      div#global⮕w⮕termsandcond⮕profile⮕main⮕inner.svelte-1ox3eej::-webkit-scrollbar {
         display: none !important
       }
 
+      div#global⮕w⮕termsandcond⮕profile⮕main h1,
+      div#global⮕w⮕termsandcond⮕profile⮕main h2,
+      div#global⮕w⮕termsandcond⮕profile⮕main h3 {
+        margin-top: 0;
+        margin-bottom: 0;
+        color: #f5620f !important
+      }
+
+      div#global⮕w⮕termsandcond⮕profile⮕main a {
+        color: #f5620f !important;
+        width: fit-content !important;
+        margin: 0;
+        display: initial
+      }
+
+      div#global⮕w⮕termsandcond⮕profile⮕main p {
+        margin-bottom: 24px;
+        color: #8c8c8c
+      }
+
       @media only screen and (min-width: 581px) {
-        div#global⮕w⮕termsandcond⮕profile⮕main.svelte-ac1sau {
+        div#global⮕w⮕termsandcond⮕profile⮕main.svelte-1ox3eej {
           padding: 48px
         }
 
-        div#global⮕w⮕termsandcond⮕profile⮕main⮕bottom.svelte-ac1sau {
+        div#global⮕w⮕termsandcond⮕profile⮕main⮕bottom.svelte-1ox3eej {
           padding: 32px 48px;
           height: 84px
         }
       }
 
       @media only screen and (min-width: 821px) {
-        div#global⮕w⮕termsandcond⮕profile⮕main.svelte-ac1sau {
+        div#global⮕w⮕termsandcond⮕profile⮕main.svelte-1ox3eej {
           top: 0;
           bottom: 0;
           right: 0;
@@ -9662,45 +9697,86 @@
         }
       }
 
-      div#global⮕w⮕termsandcond⮕profile⮕main.dark-background-1.svelte-ac1sau {
+      div#global⮕w⮕termsandcond⮕profile⮕main.dark-background-1.svelte-1ox3eej {
         background-color: var(--dark-theme) !important
       }
 
-      #profile⮕w⮕investbox⮕main.svelte-7860s5.svelte-7860s5 {
-        position: relative;
+      div#background-modal-blur.svelte-15hyc44 {
+        position: fixed;
+        top: 0;
+        right: 0;
+        left: 0;
+        z-index: 4000;
+        height: 100%;
+        width: 100%;
+        background: rgba(0, 0, 0, .5)
+      }
+
+      div#modal-delete-box.svelte-15hyc44 {
+        position: fixed;
+        z-index: 10000;
+        margin: auto;
+        width: fit-content;
+        width: 92%;
+        height: fit-content;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        top: 0;
+        background: #ffffff;
         border-radius: 12px;
+        padding: 45px 20px 20px;
+        text-align: -webkit-center;
+        text-align: -moz-center;
         overflow: hidden
       }
 
-      div#profile⮕w⮕investbox⮕main⮕top-row.svelte-7860s5.svelte-7860s5 {
+      @media only screen and (min-width: 575px) {
+        div#modal-delete-box.svelte-15hyc44 {
+          width: 328px
+        }
+      }
+
+      div#modal-delete-box.dark-background-1.svelte-15hyc44 {
+        background-color: var(--dark-theme) !important
+      }
+
+      #profile⮕w⮕investbox⮕main.svelte-18r67w2.svelte-18r67w2 {
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+        height: fit-content
+      }
+
+      div#profile⮕w⮕investbox⮕main⮕top-row.svelte-18r67w2.svelte-18r67w2 {
         position: relative;
         padding: 24px 20px 20px;
         background: var(--white);
         box-shadow: 0 4px 16px #00000014
       }
 
-      button.btn-hollow.btn-active.svelte-7860s5.svelte-7860s5 {
+      button.btn-hollow.btn-active.svelte-18r67w2.svelte-18r67w2 {
         border: 1px solid var(--primary) !important;
         background: rgba(245, 98, 15, .08)
       }
 
-      input[type=checkbox].svelte-7860s5.svelte-7860s5 {
+      input[type=checkbox].svelte-18r67w2.svelte-18r67w2 {
         border: none;
         border-radius: 50px
       }
 
-      div#profile⮕w⮕investbox⮕main⮕middle-row.svelte-7860s5.svelte-7860s5 {
+      div#profile⮕w⮕investbox⮕main⮕middle-row.svelte-18r67w2.svelte-18r67w2 {
         padding: 20px 20px 32px;
         background: var(--white);
         display: grid;
         gap: 12px
       }
 
-      div#profile⮕w⮕investbox⮕main⮕tier-box.svelte-7860s5.svelte-7860s5 {
+      div#profile⮕w⮕investbox⮕main⮕tier-box.svelte-18r67w2.svelte-18r67w2 {
         border-radius: 12px
       }
 
-      div.input-box.svelte-7860s5.svelte-7860s5 {
+      div.input-box.svelte-18r67w2.svelte-18r67w2 {
         padding: 20px;
         border-radius: 12px;
         background-color: var(--whitev2);
@@ -9710,7 +9786,7 @@
         align-content: space-between
       }
 
-      div#tier-box.svelte-7860s5.svelte-7860s5 {
+      div#tier-box.svelte-18r67w2.svelte-18r67w2 {
         border-radius: 12px;
         min-height: 104px;
         max-height: 104px;
@@ -9718,7 +9794,7 @@
         background-color: var(--whitev2)
       }
 
-      input.amount-input.svelte-7860s5.svelte-7860s5 {
+      input.amount-input.svelte-18r67w2.svelte-18r67w2 {
         padding: 0;
         margin: 0;
         border: none;
@@ -9727,19 +9803,19 @@
         height: fit-content
       }
 
-      input[type=number].amount-input.svelte-7860s5.svelte-7860s5::-webkit-inner-spin-button,
-      input[type=number].amount-input.svelte-7860s5.svelte-7860s5::-webkit-outer-spin-button {
+      input[type=number].amount-input.svelte-18r67w2.svelte-18r67w2::-webkit-inner-spin-button,
+      input[type=number].amount-input.svelte-18r67w2.svelte-18r67w2::-webkit-outer-spin-button {
         -webkit-appearance: none;
         margin: 0
       }
 
-      input[type=number].amount-input.svelte-7860s5.svelte-7860s5 {
+      input[type=number].amount-input.svelte-18r67w2.svelte-18r67w2 {
         -webkit-appearance: textfield;
         appearance: textfield;
         -moz-appearance: textfield
       }
 
-      div#select-cryptocurrency.svelte-7860s5.svelte-7860s5 {
+      div#select-cryptocurrency.svelte-18r67w2.svelte-18r67w2 {
         position: fixed;
         bottom: 0;
         right: 0;
@@ -9750,18 +9826,18 @@
         padding-bottom: 10px
       }
 
-      div#select-cryptocurrency.svelte-7860s5 div#top-box.svelte-7860s5 {
+      div#select-cryptocurrency.svelte-18r67w2 div#top-box.svelte-18r67w2 {
         padding: 20px 20px 12px
       }
 
-      img#close-vector.svelte-7860s5.svelte-7860s5 {
+      img#close-vector.svelte-18r67w2.svelte-18r67w2 {
         position: absolute;
         top: 20px;
         right: 20px;
         z-index: 400000002
       }
 
-      div#select-cryptocurrency.svelte-7860s5 input#token-search.svelte-7860s5 {
+      div#select-cryptocurrency.svelte-18r67w2 input#token-search.svelte-18r67w2 {
         background-image: url(/assets/svg/league_list/search.svg);
         background-repeat: no-repeat;
         background-position: 15px 50%;
@@ -9771,43 +9847,43 @@
         border: 1px solid transparent
       }
 
-      div#select-cryptocurrency.svelte-7860s5 input#token-search.svelte-7860s5:hover {
+      div#select-cryptocurrency.svelte-18r67w2 input#token-search.svelte-18r67w2:hover {
         border: 1px solid #8c8c8c
       }
 
-      div#select-cryptocurrency.svelte-7860s5 input#token-search.svelte-7860s5:focus {
+      div#select-cryptocurrency.svelte-18r67w2 input#token-search.svelte-18r67w2:focus {
         border: 1px solid #4b4b4b
       }
 
-      div#select-cryptocurrency.svelte-7860s5 input#token-search[placeholder].svelte-7860s5 {
+      div#select-cryptocurrency.svelte-18r67w2 input#token-search[placeholder].svelte-18r67w2 {
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis
       }
 
-      div#select-cryptocurrency.svelte-7860s5 div#token-list.svelte-7860s5 {
+      div#select-cryptocurrency.svelte-18r67w2 div#token-list.svelte-18r67w2 {
         display: grid
       }
 
-      div#select-cryptocurrency.svelte-7860s5 div#token-list div.token-row.svelte-7860s5 {
+      div#select-cryptocurrency.svelte-18r67w2 div#token-list div.token-row.svelte-18r67w2 {
         padding: 8px 20px;
         min-height: 53px;
         max-height: 53px
       }
 
-      div#select-cryptocurrency.svelte-7860s5 div#token-list div.token-row.svelte-7860s5:hover {
+      div#select-cryptocurrency.svelte-18r67w2 div#token-list div.token-row.svelte-18r67w2:hover {
         background-color: var(--white-3)
       }
 
-      div#select-cryptocurrency.svelte-7860s5 div#token-list div.token-row p.token-text.svelte-7860s5 {
+      div#select-cryptocurrency.svelte-18r67w2 div#token-list div.token-row p.token-text.svelte-18r67w2 {
         position: relative
       }
 
-      div#select-cryptocurrency.svelte-7860s5 div#token-list div.token-row p.token-text span.svelte-7860s5 {
+      div#select-cryptocurrency.svelte-18r67w2 div#token-list div.token-row p.token-text span.svelte-18r67w2 {
         position: absolute
       }
 
-      div#profile⮕w⮕investbox⮕main⮕modal-bg-blur.svelte-7860s5.svelte-7860s5 {
+      div#profile⮕w⮕investbox⮕main⮕modal-bg-blur.svelte-18r67w2.svelte-18r67w2 {
         position: absolute;
         top: 0;
         right: 0;
@@ -9819,51 +9895,51 @@
       }
 
       @media screen and (min-width: 575px) {
-        div#tier-box.svelte-7860s5.svelte-7860s5 {
+        div#tier-box.svelte-18r67w2.svelte-18r67w2 {
           min-height: 64px;
           max-height: 64px
         }
       }
 
       @media screen and (min-width: 1160px) {
-        div#select-cryptocurrency.svelte-7860s5.svelte-7860s5 {
+        div#select-cryptocurrency.svelte-18r67w2.svelte-18r67w2 {
           position: absolute
         }
       }
 
-      #profile⮕w⮕investbox⮕main.dark-background-1.svelte-7860s5 div#profile⮕w⮕investbox⮕main⮕top-row.svelte-7860s5 {
+      #profile⮕w⮕investbox⮕main.dark-background-1.svelte-18r67w2 div#profile⮕w⮕investbox⮕main⮕top-row.svelte-18r67w2 {
         background-color: var(--dark-theme-1)
       }
 
-      #profile⮕w⮕investbox⮕main.dark-background-1.svelte-7860s5 div#profile⮕w⮕investbox⮕main⮕middle-row.svelte-7860s5 {
+      #profile⮕w⮕investbox⮕main.dark-background-1.svelte-18r67w2 div#profile⮕w⮕investbox⮕main⮕middle-row.svelte-18r67w2 {
         background-color: var(--dark-theme-1-4-shade)
       }
 
-      #profile⮕w⮕investbox⮕main.dark-background-1.svelte-7860s5 div.input-box.svelte-7860s5,
-      #profile⮕w⮕investbox⮕main.dark-background-1.svelte-7860s5 div#tier-box.svelte-7860s5 {
+      #profile⮕w⮕investbox⮕main.dark-background-1.svelte-18r67w2 div.input-box.svelte-18r67w2,
+      #profile⮕w⮕investbox⮕main.dark-background-1.svelte-18r67w2 div#tier-box.svelte-18r67w2 {
         background-color: var(--dark-theme)
       }
 
-      #profile⮕w⮕investbox⮕main.dark-background-1.svelte-7860s5 div#select-cryptocurrency.svelte-7860s5 {
+      #profile⮕w⮕investbox⮕main.dark-background-1.svelte-18r67w2 div#select-cryptocurrency.svelte-18r67w2 {
         background: var(--dark-theme-1-4-shade) !important
       }
 
-      #profile⮕w⮕investbox⮕main.dark-background-1.svelte-7860s5 div#select-cryptocurrency input#token-search.svelte-7860s5 {
+      #profile⮕w⮕investbox⮕main.dark-background-1.svelte-18r67w2 div#select-cryptocurrency input#token-search.svelte-18r67w2 {
         background-color: var(--dark-theme-1) !important;
         border: 1px solid transparent;
         color: #fff
       }
 
-      #profile⮕w⮕investbox⮕main.dark-background-1.svelte-7860s5 div#select-cryptocurrency input#token-search.svelte-7860s5:hover {
+      #profile⮕w⮕investbox⮕main.dark-background-1.svelte-18r67w2 div#select-cryptocurrency input#token-search.svelte-18r67w2:hover {
         border: 1px solid var(--dark-theme-1-2-shade)
       }
 
-      #profile⮕w⮕investbox⮕main.dark-background-1.svelte-7860s5 div#select-cryptocurrency input#token-search.svelte-7860s5:focus {
+      #profile⮕w⮕investbox⮕main.dark-background-1.svelte-18r67w2 div#select-cryptocurrency input#token-search.svelte-18r67w2:focus {
         border: 1px solid var(--grey-shade);
         background-image: url(/assets/svg/league_list/search-white.svg)
       }
 
-      #profile⮕w⮕investbox⮕main.dark-background-1.svelte-7860s5 div#token-list div.token-row.svelte-7860s5:hover {
+      #profile⮕w⮕investbox⮕main.dark-background-1.svelte-18r67w2 div#token-list div.token-row.svelte-18r67w2:hover {
         background-color: var(--dark-theme-1)
       }
 
@@ -9918,13 +9994,111 @@
         }
       }
 
-      div#investor-grid-box.svelte-1vetzcq {
+      div#profile⮕w⮕investround⮕main.svelte-6r6cps.svelte-6r6cps.svelte-6r6cps {
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+        height: fit-content
+      }
+
+      div#profile⮕w⮕investround⮕main⮕top-row.svelte-6r6cps.svelte-6r6cps.svelte-6r6cps {
+        position: relative;
+        padding: 24px 20px 20px;
+        background: var(--white);
+        box-shadow: 0 4px 16px #00000014
+      }
+
+      div#profile⮕w⮕investround⮕main⮕top-row.svelte-6r6cps div#countdown-box-parent.svelte-6r6cps.svelte-6r6cps {
+        position: relative;
+        border-radius: 4px;
+        overflow: hidden;
         display: grid;
-        grid-template-columns: 1fr
+        gap: 2px;
+        grid-auto-flow: column
+      }
+
+      div#profile⮕w⮕investround⮕main⮕top-row.svelte-6r6cps div.countdown-box-child.svelte-6r6cps.svelte-6r6cps {
+        position: relative;
+        padding: 17px 0;
+        background: var(--whitev2);
+        width: 60px;
+        height: 60px;
+        text-align: center
+      }
+
+      div#profile⮕w⮕investround⮕main⮕top-row.svelte-6r6cps div#round-info-box-parent.svelte-6r6cps.svelte-6r6cps {
+        position: relative;
+        padding: 20px;
+        border-radius: 4px;
+        background: var(--whitev2);
+        width: fit-content;
+        height: 60px
+      }
+
+      div#profile⮕w⮕investround⮕main⮕middle-box.svelte-6r6cps.svelte-6r6cps.svelte-6r6cps {
+        padding: 20px;
+        background: var(--white);
+        display: grid;
+        gap: 12px
+      }
+
+      div#profile⮕w⮕investround⮕main⮕middle-box.svelte-6r6cps div#progress-bar.svelte-6r6cps.svelte-6r6cps {
+        height: 6px;
+        border-radius: 12px;
+        width: 100%;
+        background-color: var(--grey-color)
+      }
+
+      div#profile⮕w⮕investround⮕main⮕middle-box.svelte-6r6cps div#progress-bar.svelte-6r6cps>div.svelte-6r6cps {
+        background: var(--green-1);
+        box-shadow: 0 0 12px #4da02552;
+        height: 6px;
+        border-radius: 12px
+      }
+
+      div#profile⮕w⮕investround⮕main⮕middle-box.svelte-6r6cps div.token-info-box div.token-info-row.svelte-6r6cps.svelte-6r6cps {
+        border-radius: 4px;
+        padding: 10px 20px;
+        height: 40px
+      }
+
+      div#profile⮕w⮕investround⮕main⮕middle-box.svelte-6r6cps div.token-info-box div.token-info-row.svelte-6r6cps.svelte-6r6cps:nth-child(odd) {
+        background-color: var(--whitev2)
+      }
+
+      div#profile⮕w⮕investround⮕main.dark-background-1.svelte-6r6cps div#profile⮕w⮕investround⮕main⮕top-row.svelte-6r6cps.svelte-6r6cps {
+        background-color: var(--dark-theme-1)
+      }
+
+      div#profile⮕w⮕investround⮕main.dark-background-1.svelte-6r6cps div#profile⮕w⮕investround⮕main⮕middle-box.svelte-6r6cps.svelte-6r6cps {
+        background-color: var(--dark-theme-1-4-shade)
+      }
+
+      div#profile⮕w⮕investround⮕main.dark-background-1.svelte-6r6cps div#profile⮕w⮕investround⮕main⮕top-row div.countdown-box-child.svelte-6r6cps.svelte-6r6cps {
+        background: var(--dark-theme-1-4-shade)
+      }
+
+      div#profile⮕w⮕investround⮕main.dark-background-1.svelte-6r6cps div#profile⮕w⮕investround⮕main⮕middle-box div#progress-bar.svelte-6r6cps.svelte-6r6cps {
+        background-color: var(--dark-theme-1)
+      }
+
+      div#profile⮕w⮕investround⮕main.dark-background-1.svelte-6r6cps div#profile⮕w⮕investround⮕main⮕middle-box div.token-info-box div.token-info-row.svelte-6r6cps.svelte-6r6cps:nth-child(odd) {
+        background-color: var(--dark-theme-1)
+      }
+
+      div#profile⮕w⮕investround⮕main.dark-background-1.svelte-6r6cps div#profile⮕w⮕investround⮕main⮕top-row div#round-info-box-parent.svelte-6r6cps.svelte-6r6cps {
+        background-color: var(--dark-theme-1-4-shade)
+      }
+
+      div#investor-grid-box.svelte-1lk15y {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px
       }
 
       @media only screen and (min-width: 1160px) {
-        div#investor-grid-box.svelte-1vetzcq {
+        div#investor-grid-box.svelte-1lk15y {
+          gap: 20px;
           grid-template-columns: 1fr 1fr
         }
       }
@@ -12834,6 +13008,7 @@
         --red-error: #ff0000;
         --green-success: #009406;
         --green-color: #59C65D;
+        --green-1: #4DA025;
         --theme-color: #e3e3e3;
         --grey-color: #e6e6e6;
         --grey-shade: #cccccc;
@@ -13028,6 +13203,11 @@
       {
         /* 🎨 style */
         color: var(--green-color) !important;
+      }
+      .color-green-1
+      {
+        /* 🎨 style */
+        color: var(--green-1) !important;
       }
       .color-yellow
       {
@@ -13822,6 +14002,18 @@
         background-repeat: no-repeat;
       }
 
+      /*
+      ╭──────────────────────────────────────────────────────────────────╮
+      │ 📌 EXTRA BUTTON STYLES                                           │
+      ╰──────────────────────────────────────────────────────────────────╯
+      */
+
+      .btn-shadow-1
+      {
+        /* 🎨 style */
+        box-shadow: 0px 3px 8px 0px rgba(212, 84, 12, 0.32);
+      }
+
       /* #endregion ➤ [MAIN] [BUTTONS] Website Layout */
 
       /* #region ➤ [MAIN] [ANIMATIONS] Website Layout */
@@ -13999,6 +14191,64 @@
         transition: all 0.15s ease;
       }
 
+      /* The container */
+      .container {
+        display: block;
+        position: relative;
+        padding-left: 35px;
+        margin-bottom: 12px;
+        cursor: pointer;
+        font-size: 22px;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+      /* Hide the browser's default checkbox */
+      .container input {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+        height: 1px;
+        width: 1px;
+      }
+      /* Create a custom checkbox */
+      .checkmark {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 20px;
+        width: 20px;
+        background-color: transparent;
+        border: 1.5px solid #A9B8AE;
+        border-radius: 3.25px;
+      }
+      /* On mouse-over */
+      /* .container:hover input ~ .checkmark {
+        background-color: #ccc;
+      } */
+      /* When the checkbox is checked */
+      .container input:checked ~ .checkmark {
+        background-color: var(--primary);
+      }
+
+      /*
+      ╭──────────────────────────────────────────────────────────────────╮
+      │ 📌 POSITIONS                                                     │
+      ╰──────────────────────────────────────────────────────────────────╯
+      */
+
+      .box-center
+      {
+        /* 📌 position */
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        margin: auto;
+      }
+
       /* #endregion ➤ [MAIN] [OTHER STYLES] Website Layout */
 
       /* #region ➤ [MAIN] [DARK MODE (OVERRIDES) STYLES] Website Layout */
@@ -14086,6 +14336,14 @@
         /* 🔥 override */
         /* 🎨 style */
         color: var(--grey-shade-3) !important;
+      }
+
+      .dark-background .color-grey.dark-v1,
+      .dark-background-1 .color-grey.dark-v1
+      {
+        /* 🔥 override */
+        /* 🎨 style */
+        color: var(--grey) !important;
       }
 
       .dark-background .color-primary,
