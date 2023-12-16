@@ -26,8 +26,8 @@
   import { createEventDispatcher, type EventDispatcher } from 'svelte';
   import { fade } from "svelte/transition";
 
-  import icon_tx_complete from '../assets/tx-complete.svg';
-  import anim_tx_processing from '../assets/tx-load-anim.svg';
+  import icon_tx_complete from '../assets/tx-loader/tx-complete.svg';
+  import anim_tx_processing from '../assets/tx-loader/tx-load-anim.svg';
 
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 
