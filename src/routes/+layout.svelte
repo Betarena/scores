@@ -35,13 +35,12 @@
   import { initSportbookData, platfrom_lang_ssr, setUserGeoLocation } from '$lib/utils/platform-functions.js';
   import * as Sentry from '@sentry/sveltekit';
 
+	import SplashScreen from '$lib/components/Splash-Screen.svelte';
 	import Footer from '$lib/components/_main_/footer/Footer.svelte';
 	import Header from '$lib/components/_main_/header/Header.svelte';
-
 	import DevInfoBox from '$lib/components/misc/Dev-Info-Box.svelte';
-	import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
 
-  // import SplashScreen from '$lib/components/Splash-Screen.svelte';
+	import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
 
   // ### WARNING:
   // ### Disable, if Dynamic Import is Enabled.
@@ -536,7 +535,7 @@
 ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 -->
 
-<!-- <SplashScreen /> -->
+<SplashScreen />
 
 {#if targetAppEnv == '.env.local'}
   <DevInfoBox />
@@ -586,11 +585,8 @@
   class:before-display-none={deepReactListenIsRouteCompetitions}
   class:profile-page={deepReactListenIsProfilePage}
 >
-
 	<slot />
-
 	<Footer />
-
 </main>
 
 <!--
