@@ -219,7 +219,7 @@ VIEW DESIGN - 1
 			<p
 				class=
         "
-        w-500
+        w-400
         s-16
         color-black-2
         no-wrap

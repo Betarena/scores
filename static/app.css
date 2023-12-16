@@ -139,6 +139,7 @@ p {
   --red-error: #ff0000;
   --green-success: #009406;
   --green-color: #59C65D;
+  --green-1: #4DA025;
 	--theme-color: #e3e3e3;
 	--grey-color: #e6e6e6;
 	--grey-shade: #cccccc;
@@ -333,6 +334,11 @@ h5 {
 {
   /* 🎨 style */
 	color: var(--green-color) !important;
+}
+.color-green-1
+{
+  /* 🎨 style */
+	color: var(--green-1) !important;
 }
 .color-yellow
 {

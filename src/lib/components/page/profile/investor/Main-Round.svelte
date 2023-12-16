@@ -482,7 +482,7 @@
           class=
           "
           s-16
-          w-500
+          w-400
           color-grey
             dark-v1
           "
@@ -550,7 +550,7 @@
           "
           s-20
           w-500
-          color-green
+          color-green-1
           "
         >
           {toDecimalFix(datePercentageDiff) ?? 0}%
@@ -591,13 +591,15 @@
           class=
           "
           s-16
-          color-black-2
+          color-grey
+            grey-v1
           "
         >
           {mapInvestorData?.get('round')?.data?.find(x => x?.lang == 'en')?.current_value_title}
           <span
             class=
             "
+            color-black-2
             w-600
             "
           >
@@ -615,6 +617,7 @@
           "
           s-12
           color-grey
+            grey-v1
           "
         >
           {mapInvestorData?.get('round')?.data?.find(x => x?.lang == 'en')?.max_title ?? 'Unlimited'}
@@ -693,7 +696,7 @@
                 "
                 s-16
                 color-black-2
-                w-500
+                w-600
                 "
               >
                 {subItem?.value ?? ''}
@@ -803,7 +806,8 @@
   div#profile⮕w⮕investround⮕main⮕middle-box div#progress-bar > div
   {
     /* 🎨 style */
-		background-color: var(--green-success);
+    background: var(--green-1);
+    box-shadow: 0px 0px 12px 0px rgba(77, 160, 37, 0.32);
 		/* width: 40%; */ /* Adjusted with JavaScript */
     height: 6px;
     border-radius: 12px;
