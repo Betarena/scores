@@ -27,7 +27,7 @@
 
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { toCorrectDate, toZeroPrefixDateStr } from '$lib/utils/dates.js';
-	import { toDecimalFix } from '$lib/utils/platform-functions.js';
+	import { toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
 
 	import type { B_H_INVEST_WIDGET_Data } from '@betarena/scores-lib/types/_HASURA_.js';
 	import type { B_PROF_D } from '@betarena/scores-lib/types/profile.js';
@@ -70,7 +70,10 @@
 
   const
     /** @description 📌 `this` component **main** `id` and `data-testid` prefix. */
-    CNAME = 'profile⮕w⮕investround⮕main'
+    /** @description threshold start + state for 📱 MOBILE */
+    VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ],
+    /** @description threshold start + state for 💻 TABLET */
+    VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
   let
@@ -269,6 +272,32 @@
         1000
       );
 
+      [
+        VIEWPORT_TABLET_INIT[1],
+        VIEWPORT_MOBILE_INIT[1]
+      ] = viewport_change
+      (
+        VIEWPORT_TABLET_INIT[0],
+        VIEWPORT_MOBILE_INIT[0]
+      );
+
+      window.addEventListener
+      (
+        'resize',
+        function ()
+        {
+          [
+            VIEWPORT_TABLET_INIT[1],
+            VIEWPORT_MOBILE_INIT[1]
+          ] =
+          viewport_change
+          (
+            VIEWPORT_TABLET_INIT[0],
+            VIEWPORT_MOBILE_INIT[0]
+          );
+        }
+      );
+
       return;
     }
   );
@@ -326,7 +355,7 @@
       <p
         class=
         "
-        s-24
+        {VIEWPORT_MOBILE_INIT[1] ? 's-20' : 's-24'}
         color-black-2
         w-500
         "
@@ -647,8 +676,7 @@
               <p
                 class=
                 "
-                s-14
-                
+                {VIEWPORT_MOBILE_INIT[1] ? 's-12' : 's-14'}
                 color-grey
                   grey-v1
                 "
