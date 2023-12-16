@@ -32,7 +32,7 @@
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { viewport_change } from '$lib/utils/platform-functions.js';
 
-	import type { B_PROF_T } from '@betarena/scores-lib/types/profile.js';
+	import type { B_USRG_D } from '@betarena/scores-lib/types/types.misc.userguide.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -65,12 +65,12 @@
     /** @description TODO: DOC: */
     isViewTablet: boolean = true,
     /** @description Profile Translation data. */
-    B_PROF_T: B_PROF_T,
+    B_USRG_D: B_USRG_D,
     /** @description TODO: DOC: */
     showModal: boolean = false
   ;
 
-  $: B_PROF_T = $page.data?.RESPONSE_PROFILE_DATA;
+  $: B_USRG_D = $page.data?.B_USRG_D;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -311,7 +311,7 @@
         {isViewTablet ? 'global s-28 lh-128 text-center m-b-24' : ''}
         "
       >
-        {@html B_PROF_T?.investor?.faq?.title_faq}
+        {@html B_USRG_D?.content?.terms ?? ''}
       </div>
 
     </div>
@@ -390,6 +390,35 @@
   {
 		display: none !important;
   }
+
+  :global(
+    div#global⮕w⮕termsandcond⮕profile⮕main h1,
+    div#global⮕w⮕termsandcond⮕profile⮕main h2,
+    div#global⮕w⮕termsandcond⮕profile⮕main h3
+  )
+  {
+    /* 🎨 style */
+		margin-top: 0;
+    margin-bottom: 0;
+		color: #f5620f !important;
+	}
+
+	:global(
+    div#global⮕w⮕termsandcond⮕profile⮕main a
+  )
+  {
+    /* 🎨 style */
+		color: #f5620f !important;
+		width: fit-content !important;
+		margin: 0;
+		display: initial;
+	}
+
+  :global(div#global⮕w⮕termsandcond⮕profile⮕main p)
+  {
+		margin-bottom: 24px;
+		color: #8c8c8c;
+	}
 
 	/*
   ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
