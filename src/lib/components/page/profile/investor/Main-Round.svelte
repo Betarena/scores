@@ -691,7 +691,7 @@
                 "
                 s-16
                 color-black-2
-                w-600
+                w-400
                 "
               >
                 {subItem?.value ?? ''}
