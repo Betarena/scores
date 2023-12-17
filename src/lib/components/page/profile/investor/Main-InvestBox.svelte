@@ -578,6 +578,7 @@
     console.log('📣', modal.getIsConnected());
 
     stateWidget = 'In Progress';
+    $sessionStore.showDepositModalState = true;
 
     await switchUserNetwork();
 
@@ -652,6 +653,7 @@
     {
       triggerInvestBox = false;
       stateWidget = null;
+      $sessionStore.showDepositModalState = false;
       return;
     }
 
@@ -706,6 +708,7 @@
     {
       triggerInvestBox = false;
       stateWidget = null;
+      $sessionStore.showDepositModalState = false;
       return;
     }
 
@@ -744,6 +747,7 @@
 
     triggerInvestBox = false;
     stateWidget = 'Completed';
+    $sessionStore.showDepositModalState = true;
 
     return;
   }
@@ -974,6 +978,7 @@
   <ModalTxState
     {stateWidget}
     on:closeDropdown={() => stateWidget = null}
+    on:closeDropdown={() => $sessionStore.showDepositModalState = false}
   />
 {/if}
 

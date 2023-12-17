@@ -232,6 +232,11 @@ export interface Platform_Session
    *  📌 Toggle `visibility` (show/hide) of Fixture Competition (widget) Modal View.
    */
   isShowFixtureCompetitionJoinModal?: boolean;
+  /**
+   * @description
+   *  📣 toogle `visibility` (show/hide) of Terms-And-Conditions modal.
+   */
+  showDepositModalState: boolean;
 
   // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   // NOTE: SPORTBOOK DATA       ◼️
