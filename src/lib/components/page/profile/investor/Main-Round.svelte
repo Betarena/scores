@@ -168,14 +168,14 @@
      * @CUSTOM_NOTE
      * `mapInvestorData?.get('round')?.values?.start_date` || 12/08/2023
      */
-    , dateRoundStart = mapInvestorData?.get('round')?.values?.start_date
+    , dateRoundStart: string | undefined = mapInvestorData?.get('round')?.values?.start_date
     /**
      * @description
      *  📣 invest round date `start`
      * @CUSTOM_NOTE
      * `mapInvestorData?.get('round')?.values?.end_date` || 12/08/2023
      */
-    , dateRoundEnd = mapInvestorData?.get('round')?.values?.end_date
+    , dateRoundEnd: string | undefined = mapInvestorData?.get('round')?.values?.end_date
     /** @description 📣 interval variable for `countdown` logic */
     , interval1: NodeJS.Timer
   ;
@@ -183,11 +183,13 @@
   $: countDownSecToStart = toZeroPrefixDateStr(Math.floor((numDateDiffStart / 1000) % 60).toString());
 	$: countDownMinToStart = toZeroPrefixDateStr(Math.floor((numDateDiffStart / 1000 / 60) % 60).toString());
 	$: countDownHourToStart = toZeroPrefixDateStr(Math.floor((numDateDiffStart / (1000 * 60 * 60)) % 24).toString());
+	$: countDownDayToStart = toZeroPrefixDateStr(Math.floor((numDateDiffStart / (1000 * 60 * 60 * 24))).toString());
 	$: countDownTestHourToStart = Math.floor(numDateDiffStart / (1000 * 60 * 60));
 
   $: countDownSecToEnd = toZeroPrefixDateStr(Math.floor((numDateDiffEnd / 1000) % 60).toString());
 	$: countDownMinToEnd = toZeroPrefixDateStr(Math.floor((numDateDiffEnd / 1000 / 60) % 60).toString());
 	$: countDownHourToEnd = toZeroPrefixDateStr(Math.floor((numDateDiffEnd / (1000 * 60 * 60)) % 24).toString());
+	$: countDownDayToEnd = toZeroPrefixDateStr(Math.floor((numDateDiffEnd / (1000 * 60 * 60 * 24))).toString());
 	$: countDownTestHourToEnd = Math.floor(numDateDiffEnd / (1000 * 60 * 60));
 
   // #endregion ➤ 📌 VARIABLES
@@ -217,27 +219,25 @@
    * - `numDateDiffStart`
    * - `countDownTestHourToStart`
    */
-  $: if_R_000 =
+  $: if_R_0 =
     numDateDiffStart == null
     || numDateDiffEnd == null
-  $: if_R_0 =
-    countDownTestHourToStart <= 23
-    && countDownTestHourToStart >= 0
-    && numDateDiffStart > 0
-  ;
   $: if_R_1 =
-    countDownTestHourToEnd <= 23
-    && countDownTestHourToEnd >= 0
-    && numDateDiffEnd > 0
+    countDownTestHourToStart >= 0
+    && numDateDiffStart >= 0
+  ;
+  $: if_R_2 =
+    countDownTestHourToEnd >= 0
+    && numDateDiffEnd >= 0
   ;
   $: if_R_3=
     countDownTestHourToEnd < 23
     && numDateDiffEnd < 0
   ;
 	$:
-  if (if_R_000) widgetState = 'ToBeAnnounced'
-	else if (if_R_0) widgetState = 'CountdownWithDefinedDate';
-	else if (if_R_1) widgetState = 'CountdownToFinish';
+  if (if_R_0) widgetState = 'ToBeAnnounced'
+	else if (if_R_1) widgetState = 'CountdownWithDefinedDate';
+	else if (if_R_2) widgetState = 'CountdownToFinish';
   else if (if_R_3) widgetState = 'Ended';
 
   // ▓ [🐞]
@@ -430,69 +430,37 @@
 
         <!--
         ▓ NOTE:
-        ▓ > countdown (hours)
+        ▓ > countdown [d,h,m,s]
         -->
-        <div
-          class=
-          "
-          countdown-box-child
-          "
-        >
-          <p
-            class=
-            "
-            s-16
-            w-500
-            color-black-2
-            "
-          >
-            {widgetState == 'CountdownWithDefinedDate' ? countDownHourToStart : countDownHourToEnd}h
-          </p>
-        </div>
+        {#each ['d', 'h', 'm', 's'] ?? [] as item}
 
-        <!--
-        ▓ NOTE:
-        ▓ > countdown (minutes)
-        -->
-        <div
-          class=
-          "
-          countdown-box-child
-          "
-        >
-          <p
+          <div
             class=
             "
-            s-16
-            w-500
-            color-black-2
+            countdown-box-child
             "
           >
-            {widgetState == 'CountdownWithDefinedDate' ? countDownMinToStart : countDownMinToEnd}m
-          </p>
-        </div>
+            <p
+              class=
+              "
+              s-16
+              w-500
+              color-black-2
+              "
+            >
+              {#if item == 'd'}
+                {widgetState == 'CountdownWithDefinedDate' ? countDownDayToStart : countDownDayToEnd}d
+              {:else if  item == 'h'}
+                {widgetState == 'CountdownWithDefinedDate' ? countDownHourToStart : countDownHourToEnd}h
+              {:else if  item == 'm'}
+                {widgetState == 'CountdownWithDefinedDate' ? countDownMinToStart : countDownMinToEnd}m
+              {:else if  item == 's'}
+                {widgetState == 'CountdownWithDefinedDate' ? countDownSecToStart : countDownSecToEnd}s
+              {/if}
+            </p>
+          </div>
 
-        <!--
-        ▓ NOTE:
-        ▓ > countdown (seconds)
-        -->
-        <div
-          class=
-          "
-          countdown-box-child
-          "
-        >
-          <p
-            class=
-            "
-            s-16
-            w-500
-            color-black-2
-            "
-          >
-            {widgetState == 'CountdownWithDefinedDate' ? countDownSecToStart : countDownSecToEnd}s
-          </p>
-        </div>
+        {/each}
 
       </div>
 
