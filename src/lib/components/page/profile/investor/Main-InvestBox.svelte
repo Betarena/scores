@@ -1333,6 +1333,7 @@
           "
           s-12
           color-grey
+            dark-v1
           "
         >
           First Minimum Deposit
@@ -1404,6 +1405,7 @@
             "
             s-12
             color-grey
+              dark-v1
             m-t-5
             "
           >
@@ -1574,6 +1576,7 @@
             "
             s-12
             color-grey
+              dark-v1
             m-t-5
             "
           >
