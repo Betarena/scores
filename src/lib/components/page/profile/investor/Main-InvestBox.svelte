@@ -328,6 +328,29 @@
         resizeAction();
       }
     );
+
+    const modalUnsub1 = modal.subscribeEvents
+    (
+      (
+        e
+      ) =>
+      {
+        // ### [🐞]
+        dlogv2
+        (
+          `🚏 checkpoint [R] ➤ if_R_X342`,
+          [
+            `🔹 [var] ➤ e.data.event ${e.data.event}`,
+          ],
+          true
+        );
+
+        if (e.data.event == 'MODAL_OPEN')
+          $sessionStore.showDepositModalState = true;
+        if (e.data.event == 'MODAL_CLOSE')
+          $sessionStore.showDepositModalState = false;
+      }
+    );
   }
 
   /**
