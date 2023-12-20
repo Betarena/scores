@@ -32,7 +32,7 @@
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { createWeb3Modal, defaultConfig } from '@web3modal/ethers5';
 	import { BigNumber, ethers, type ContractInterface, type Transaction } from 'ethers';
-  // read-more :|: https://www.npmjs.com/package/web3modal
+// read-more :|: https://www.npmjs.com/package/web3modal
 
   import { get, post } from '$lib/api/utils.js';
   import { dlog, dlogv2 } from '$lib/utils/debug.js';
@@ -55,7 +55,7 @@
   import icon_usdc from '../assets/price-tier/icon-usdc.png';
   import icon_usdt from '../assets/price-tier/icon-usdt.png';
   import betarenaBankContractABI from './web3/BetarenaBankABI.json';
-  // read-more :|: https://mumbai.polygonscan.com/address/0x38eb8b22df3ae7fb21e92881151b365df14ba967#code
+// read-more :|: https://mumbai.polygonscan.com/address/0x38eb8b22df3ae7fb21e92881151b365df14ba967#code
   // read-more :|: https://api-testnet.polygonscan.com/api?module=contract&action=getabi&address=0x38eb8b22df3ae7fb21e92881151b365df14ba967&format=raw
   import usdcContractAddressABI from './web3/UsdcABI.json';
   // read-more :|: https://mumbai.polygonscan.com/token/0x3813e82e6f7098b9583fc0f33a962d02018b6803#code
@@ -1344,7 +1344,7 @@
             w-500
             "
           >
-            $2500
+            USD 2500
           </span>
           / Max. Deposit
           <span
