@@ -119,7 +119,7 @@
     userBalance: any;
   }
 
-  type IStateWidget = 'In Progress' | 'Completed' | null;
+  type IStateWidget = 'In Progress' | 'Completed' | 'Error' | null;
 
   const
     /** @description 📌 `this` component **main** `id` and `data-testid` prefix. */
@@ -680,7 +680,7 @@
     if (errors)
     {
       triggerInvestBox = false;
-      stateWidget = null;
+      stateWidget = 'Error';
       $sessionStore.showDepositModalState = false;
       return;
     }
@@ -735,7 +735,7 @@
     if (errors)
     {
       triggerInvestBox = false;
-      stateWidget = null;
+      stateWidget = 'Error';
       $sessionStore.showDepositModalState = false;
       return;
     }

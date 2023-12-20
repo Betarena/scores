@@ -27,6 +27,7 @@
   import { fade } from "svelte/transition";
 
   import icon_tx_complete from '../assets/tx-loader/tx-complete.svg';
+  import icon_tx_error from '../assets/tx-loader/tx-error.svg';
   import anim_tx_processing from '../assets/tx-loader/tx-load-anim.svg';
 
 	import userBetarenaSettings from '$lib/store/user-settings.js';
@@ -48,14 +49,19 @@
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
   export let
-    /** */
+    /** @description */
     stateWidget: IStateWidget
   ;
 
-  type IStateWidget = 'In Progress' | 'Completed' | null;
+  type IStateWidget = 'In Progress' | 'Completed' | 'Error' | null;
 
   const
     dispatch: EventDispatcher<any> = createEventDispatcher()
+  ;
+
+  let
+    /** @description */
+    iconState: string
   ;
 
   // #endregion ➤ 📌 VARIABLES
@@ -88,6 +94,30 @@
 
   // #endregion ➤ 🛠️ METHODS
 
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'logic' that should run      ◼️
+  // ### immediately and/or reactively for 'this' .svelte file is ran.    ◼️
+  // ### WARNING:                                                         ◼️
+  // ### ❗️ Can go out of control.                                        ◼️
+  // ### (a.k.a cause infinite loops and/or cause bottlenecks).           ◼️
+  // ### Please keep very close attention to these methods and            ◼️
+  // ### use them carefully.                                              ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+
+  $:
+  if (stateWidget == 'In Progress')
+    iconState = anim_tx_processing
+  else if (stateWidget == 'Completed')
+    iconState = icon_tx_complete
+  else if (stateWidget == 'Error')
+    iconState = icon_tx_error
+  ;
+
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
+
 </script>
 
 <!--
@@ -118,7 +148,7 @@
     id=''
     title=''
     alt=''
-    src={stateWidget == 'In Progress' ? anim_tx_processing : icon_tx_complete}
+    src={iconState}
     loading='lazy'
     width=48
     height=48
@@ -142,6 +172,8 @@
       for confirmation...
     {:else if stateWidget == 'Completed'}
       Transfer is complete
+    {:else if stateWidget == 'Error'}
+      Transfer incomplete.
     {/if}
   </p>
 
@@ -149,7 +181,7 @@
   ▓ NOTE:
   ▓ > modal button
   -->
-  {#if stateWidget == 'Completed'}
+  {#if ['Completed', 'Error']?.includes(stateWidget ?? '')}
 
     <button
       class=
