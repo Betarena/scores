@@ -1344,7 +1344,7 @@
             w-500
             "
           >
-            USD 2500
+            2500 USD
           </span>
           / Max. Deposit
           <span
