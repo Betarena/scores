@@ -239,37 +239,13 @@
     , tokenSearch: string
     /** @description interval for CoinMarketCap fetching */
     , interval1: NodeJS.Timer
+    /** @description 📣 modal unsubsribe events (callback) */
+    , modalUnsubscribe: Array < () => void > = []
   ;
 
   $: B_PROF_T = $page.data?.RESPONSE_PROFILE_DATA;
   $: deepReactListenSignerChange = undefined;
   $: deepReactListenDepositOptionChange = JSON.stringify(cryptoDepositOptionSelect);
-
-  modal.subscribeProvider
-  (
-    async (
-      newProvider
-    ): Promise < void > =>
-    {
-      // ### [🐞]
-      dlogv2
-      (
-        `🚏 checkpoint [R] ➤ if_R_X12`,
-        [
-          newProvider,
-          `🔹 [var] ➤ modal.getSigner() ${modal.getSigner()}`,
-          `🔹 [var] ➤ modal.getAddress() ${modal.getAddress()}`,
-        ],
-        true
-      );
-
-      deepReactListenSignerChange = newProvider?.isConnected;
-      walletAddress = modal?.getAddress();
-      await switchUserNetwork();
-
-      return;
-    }
-  );
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -351,6 +327,35 @@
           $sessionStore.showDepositModalState = false;
       }
     );
+
+    const modalUnsub2 = modal.subscribeProvider
+    (
+      async (
+        newProvider
+      ): Promise < void > =>
+      {
+        // ### [🐞]
+        dlogv2
+        (
+          `🚏 checkpoint [R] ➤ if_R_X12`,
+          [
+            newProvider,
+            `🔹 [var] ➤ modal.getSigner() ${modal.getSigner()}`,
+            `🔹 [var] ➤ modal.getAddress() ${modal.getAddress()}`,
+          ],
+          true
+        );
+
+        deepReactListenSignerChange = newProvider?.isConnected;
+        walletAddress = modal?.getAddress();
+        await switchUserNetwork();
+
+        return;
+      }
+    );
+
+    modalUnsubscribe.push(modalUnsub1);
+    modalUnsubscribe.push(modalUnsub2);
   }
 
   /**
@@ -978,6 +983,9 @@
     {
       // @ts-expect-error
       clearInterval(interval1);
+
+      for (const unsubscribe of modalUnsubscribe)
+        unsubscribe();
     }
   );
 
