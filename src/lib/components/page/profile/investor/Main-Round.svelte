@@ -27,7 +27,7 @@
 
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { toCorrectDate, toZeroPrefixDateStr } from '$lib/utils/dates.js';
-	import { checkNull, toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
+	import { toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
 
 	import type { B_H_INVEST_WIDGET_Data } from '@betarena/scores-lib/types/_HASURA_.js';
 	import type { B_PROF_D } from '@betarena/scores-lib/types/profile.js';
@@ -220,8 +220,10 @@
    * - `countDownTestHourToStart`
    */
   $: if_R_0 =
-    checkNull(numDateDiffStart)
-    || checkNull(numDateDiffEnd)
+    numDateDiffStart == null
+    || numDateDiffEnd == null
+    || numDateDiffStart == 0
+    || numDateDiffEnd == 0
   $: if_R_1 =
     countDownTestHourToStart >= 0
     && numDateDiffStart >= 0

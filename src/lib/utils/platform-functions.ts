@@ -1354,7 +1354,6 @@ export const checkNull = (value: any): boolean =>
   const if_M_0: boolean =
     value == undefined
     || value == null
-    || isNaN(value)
   ;
 
   // [🐞]
