@@ -4,7 +4,7 @@
 
 #### `.husky/`
 
-related `commitlint.config.cjs`.
+related to `commitlint.config.cjs`.
 
 Provides **strict** guidelines for as to _how_ commit messages should be formatted and written.
 
