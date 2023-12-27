@@ -1,4 +1,4 @@
-# ▓ @see https://github.com/sveltejs/eslint-plugin-svelte
+# ▓ > 🔗 read-more :|: https://github.com/sveltejs/eslint-plugin-svelte
 
 root: true
 
@@ -12,15 +12,15 @@ extends:
   - plugin:svelte/recommended
   - plugin:@typescript-eslint/strict
   # ▓ WARNING:
-  # ▓ 👇 all-below :: does not work with svelte.
+  # ▓ > (👇) below :: does not work with svelte.
   # - plugin:import/errors
   # - plugin:import/warnings
   # - plugin:import/typescript
-  # ▓ @see https://www.npmjs.com/package/eslint-config-google
+  # ▓ > (👇) :|: https://www.npmjs.com/package/eslint-config-google
   # - google
   # - prettier
   # ▓ NOTE:
-  # ▓ 👇 already contained within ../strict.
+  # ▓ > (👇) already contained within ../strict.
   # - plugin:@typescript-eslint/recommended
   # - plugin:@typescript-eslint/stylistic
 
@@ -42,6 +42,10 @@ overrides:
     parserOptions:
       parser: '@typescript-eslint/parser'
 
+globals:
+  # ▓ > 🔗 read-more :|: https://github.com/Chatie/eslint-config/issues/45#issuecomment-885507652
+  "NodeJS": true
+
 ignorePatterns:
   - .DS_Store
   - node_modules
@@ -54,17 +58,27 @@ ignorePatterns:
   - pnpm-lock.yaml
   - package-lock.json
   - yarn.lock
+  # ▓ NOTE:
+  # ▓ > gradual eslint introduction in project.
+  - src/lib/api
+  - src/lib/geo-js
+  - src/lib/graphql
+  - src/lib/redis
+  - src/lib/store
+  - src/lib/types
+  - src/params
+  - src/routes
 
 plugins:
   - "@typescript-eslint"
   - svelte
   # ▓ WARNING:
-  # ▓ > 👇 all-below :: does not work with svelte.
+  # ▓ > (👇) all-below :: does not work with svelte.
   # - import
 
 # ▓ IMPORTANT
 # ▓ > Main 'defacto' configuration, do not remove and/or alter heavily.
-# ▓ @see https://eslint.org/docs/latest/rules/
+# ▓ > 🔗 read-more :|: https://eslint.org/docs/latest/rules/
 rules:
 
   # ▓ NOTE:
@@ -82,6 +96,7 @@ rules:
   "@typescript-eslint/no-non-null-asserted-nullish-coalescing": error
 
   'svelte/valid-compile': 0
+  'svelte/no-at-html-tags': 0
 
   curly:
     - error
