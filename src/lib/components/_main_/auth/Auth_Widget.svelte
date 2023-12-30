@@ -69,7 +69,8 @@ COMPONENT JS (w/ TS)
     logo: string,
     logo_dark: string,
     metamask_icon: string,
-    success_icon: string
+    success_icon: string,
+    investDepositIntent: string
   ;
 
   // IMPORTANT
@@ -959,6 +960,7 @@ COMPONENT JS (w/ TS)
     );
 
 		const metmaskAuth: string =	$page.url.searchParams.get('metmaskAuth');
+    investDepositIntent = $page.url.searchParams.get('investDepositIntent');
 		const revert_url = `${$page?.url?.origin}${$page?.url?.pathname}`;
 
 		if (metmaskAuth == 'true')
@@ -997,13 +999,27 @@ COMPONENT JS (w/ TS)
       `${AU_W_TAG[0]} 🟢 Moralis Auth`
     );
 
-    successAuthComplete
+    await successAuthComplete
     (
       moralis_auth?.credentials?.user,
       moralis_auth?.credentials?.user?.displayName,
       auth_service
     );
 
+		if (investDepositIntent == 'true')
+    {
+      const targetUrl = `/u/investor/${$userBetarenaSettings.lang}`;
+
+      await goto
+      (
+        targetUrl,
+        {
+          replaceState: true
+        }
+      );
+    }
+
+    return;
   }
 
   /**

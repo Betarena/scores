@@ -556,6 +556,20 @@
       return;
     }
 
+    // ▓ CHECK
+    // ▓ > for mobile, redirect with 'deep-link' user to MetaMask browser.
+    if (/Mobi/i.test(window.navigator.userAgent))
+    {
+      const dappUrl: string = $page.url.host;
+      const metamaskAppDeepLink = `https://metamask.app.link/dapp/${dappUrl}?metmaskAuth=true&investDepositIntent=true`;
+      window.open
+      (
+        metamaskAppDeepLink
+        ,  "_self"
+      );
+      return;
+    }
+
     await modal.open({ view: 'Connect' });
 
     return;
