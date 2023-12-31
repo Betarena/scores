@@ -23,20 +23,15 @@
   // ### 5. type(s) imports(s)                                            ◼️
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
-	import { page } from '$app/stores';
-	import { get } from '$lib/api/utils.js';
-
 	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { sleep } from '$lib/utils/platform-functions.js';
+	import { toZeroPrefixDateStr } from '$lib/utils/dates.js';
 
-	import WidgetTxHistLoader from './../competitions-history/Widget-Comp-Hist-Loader.svelte';
-	import MainFaq from './FAQ-Main.svelte';
-	import MainInvestBox from './Main-InvestBox.svelte';
-	import MainInvestorTitle from './Main-Investor-Title.svelte';
-	import MainRound from './Main-Round.svelte';
+  import icon_faq_minus_dark from '../assets/investor/icon-faq-minus-dark.svg';
+  import icon_faq_minus from '../assets/investor/icon-faq-minus.svg';
+  import icon_faq_plus_dark from '../assets/investor/icon-faq-plus-dark.svg';
+  import icon_faq_plus from '../assets/investor/icon-faq-plus.svg';
 
-	import type { B_H_COMP_DATA } from '@betarena/scores-lib/types/_HASURA_.js';
-	import type { B_PROF_D, B_PROF_T } from '@betarena/scores-lib/types/profile.js';
+  import type { B_H_INVEST_TRS_Option } from "@betarena/scores-lib/types/_HASURA_.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -46,68 +41,60 @@
   // ### NOTE:                                                            ◼️
   // ### Please add inside 'this' region the 'variables' that are to be   ◼️
   // ### and are expected to be used by 'this' .svelte file / component.  ◼️
+  // ### IMPORTANT                                                        ◼️
+  // ### Please, structure the imports as follows:                        ◼️
+  // ### 1. export const / let [..]                                       ◼️
+  // ### 2. const [..]                                                    ◼️
+  // ### 3. let [..]                                                      ◼️
+  // ### 4. $: [..]                                                       ◼️
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
-  const
-    VIEWPORT_TABLET_INIT = 912,
-    VIEWPORT_MOBILE_INIT = 581,
-    /**
-     * @description
-     * 📌 `this` component **main** `id` and `data-testid` prefix.
-    */
-    CNAME = 'profile⮕w⮕comp-hist'
+  export let
+    /** @inheritdoc */
+    data: B_H_INVEST_TRS_Option
+    /** @description */
+    , position: number
+    /** @description */
+    , iconExpand: string
   ;
 
-	let
-    isViewMobile: boolean = false,
-    isViewTablet: boolean = false,
-    RESPONSE_PROFILE_DATA: B_PROF_T,
-    WIDGET_DATA: B_PROF_D,
-    NO_WIDGET_DATA: boolean,
-    isShowMore: boolean = true,
-    // isShowCalendar: boolean = false,
-    txHistList: B_H_COMP_DATA[] = [],
-    txHistListLimit: number = 10
+  let
+    /** @description */
+    stateIsExpanded: boolean = false
   ;
-
-  $: RESPONSE_PROFILE_DATA = $page.data?.RESPONSE_PROFILE_DATA ?? { };
 
   // #endregion ➤ 📌 VARIABLES
 
-  // #region ➤ 🛠️ METHODS
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
 
-  // ### NOTE:
-  // ### Temporary, deciding where to 'put' widget data loader,
-  // ### Either into the parent (+page.svelte), or make 'this' widget
-  // ### into it's own component, with the V6 structure.
-  async function widgetInit
-  (
-  ): Promise < B_PROF_D >
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'logic' that should run      ◼️
+  // ### immediately and/or reactively for 'this' .svelte file is ran.    ◼️
+  // ### WARNING:                                                         ◼️
+  // ### ❗️ Can go out of control.                                        ◼️
+  // ### (a.k.a cause infinite loops and/or cause bottlenecks).           ◼️
+  // ### Please keep very close attention to these methods and            ◼️
+  // ### use them carefully.                                              ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+
+  $:
+  if ($userBetarenaSettings.theme == 'Dark')
   {
-		await sleep(3000);
-
-    const response: B_PROF_D = await get
-    (
-			`/api/data/profile?uid=${$userBetarenaSettings?.user?.firebase_user_data?.uid}`
-		);
-
-    WIDGET_DATA = response
-
-    const if_0 =
-      WIDGET_DATA == undefined
-    ;
-		if (if_0)
-    {
-      // dlog(`${IN_W_F_TAG} ❌ no data available!`, IN_W_F_TOG, IN_W_F_STY);
-			NO_WIDGET_DATA = true;
-			return;
-		}
-
-    NO_WIDGET_DATA = false;
-    return WIDGET_DATA
+    if (stateIsExpanded)
+      iconExpand = icon_faq_minus_dark
+    else
+      iconExpand = icon_faq_plus_dark
+  }
+  else
+  {
+    if (stateIsExpanded)
+      iconExpand = icon_faq_minus
+    else
+      iconExpand = icon_faq_plus
   }
 
-  // #endregion ➤ 🛠️ METHODS
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
 </script>
 
@@ -115,48 +102,119 @@
 ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 ### COMPONENT HTML                                                                     ◼️
 ### NOTE:                                                                              ◼️
-### use 'CTRL+SPACE' to autocomplete global class="" styles                            ◼️
+### use 'CTRL+SPACE' to autocomplete global class=styles                            ◼️
 ### NOTE:                                                                              ◼️
 ### access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.         ◼️
 ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 -->
 
-<!-- <WidgetTxHistLoader /> -->
-
-{#await widgetInit()}
-
-  <WidgetTxHistLoader />
-
-{:then value}
-
-  <MainInvestorTitle />
+<!--
+▓ NOTE:
+▓ > faq row
+-->
+<div
+  class=
+  "
+  cursor-pointer
+  <!---->
+  faq-row
+  "
+  on:click={() => stateIsExpanded = !stateIsExpanded}
+>
 
   <!--
   ▓ NOTE:
-  ▓ > main grid.
+  ▓ > faq main collapsed row
   -->
   <div
-    id="investor-grid-box"
+    class=
+    "
+    row-space-out
+    "
   >
 
-    <MainRound
-      {WIDGET_DATA}
-    />
-    <MainInvestBox
-      {WIDGET_DATA}
-    />
-
+    <!--
+    ▓ NOTE:
+    ▓ > faq position + title box.
+    -->
     <div
-      id="FAQ"
+      class=
+      "
+      row-space-start
+      "
     >
-      <MainFaq />
+
+      <!--
+      ▓ NOTE:
+      ▓ > faq number
+      -->
+      <p
+        class=
+        "
+        s-16
+        color-grey
+        "
+      >
+        {toZeroPrefixDateStr(position + 1)}
+      </p>
+
+      <!--
+      ▓ NOTE:
+      ▓ > faq question
+      -->
+      <p
+        class=
+        "
+        s-16
+        color-black-2
+        w-500
+        <!---->
+        faq-title
+        "
+      >
+        {data?.title ?? ''}
+      </p>
+
     </div>
+
+    <!--
+    ▓ NOTE:
+    ▓ > faq expand/collapse state icon
+    -->
+    <img
+      id=''
+      src={iconExpand}
+      alt=''
+      title=''
+      loading='lazy'
+      width=24
+      height=24
+    />
 
   </div>
 
-{:catch error}
-  <!-- NaN -->
-{/await}
+  <!--
+  ▓ NOTE:
+  ▓ > faq description (extra)
+  -->
+  {#if stateIsExpanded}
+    <p
+      class=
+      "
+      s-16
+      global
+        color-grey
+          grey-v1
+      m-t-15
+      <!---->
+      faq-description
+      "
+    >
+      {@html data?.description ?? ''}
+    </p>
+  {/if}
+
+</div>
 
 <!--
 ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
@@ -168,53 +226,26 @@
 ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 -->
 
-<style>
+<style lang="scss">
 
-  div#investor-grid-box
+  div.faq-row
   {
     /* 🎨 style */
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
+    margin: 0 20px;
+    padding: 20px 0;
+    border-bottom: solid 1px var(--grey-color);
 
-
-  /*
-  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-  ◼️ ⚡️ RESPONSIVNESS      ◼️
-  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-  */
-
-  @media only screen
-  and (min-width: 581px)
-  {
-    /* NaN */
-  }
-
-  @media only screen
-  and (min-width: 1160px)
-  {
-    div#investor-grid-box
+    p.faq-title
     {
       /* 🎨 style */
-      gap: 20px;
-      grid-template-columns: 1fr 1fr;
+      margin-left: 120px;
     }
 
-    div#FAQ
+    p.faq-description
     {
       /* 🎨 style */
-      width: 100%;
-      /* 📌 position */
-      grid-column: 1 / 3 ;
+      margin-left: 138px;
     }
-
   }
-
-  /*
-  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-  ◼️ 🌒 DARK-THEME         ◼️
-  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-  */
 
 </style>

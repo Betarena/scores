@@ -23,20 +23,13 @@
   // ### 5. type(s) imports(s)                                            ◼️
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
-	import { page } from '$app/stores';
-	import { get } from '$lib/api/utils.js';
+  import { page } from '$app/stores';
 
 	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { sleep } from '$lib/utils/platform-functions.js';
 
-	import WidgetTxHistLoader from './../competitions-history/Widget-Comp-Hist-Loader.svelte';
-	import MainFaq from './FAQ-Main.svelte';
-	import MainInvestBox from './Main-InvestBox.svelte';
-	import MainInvestorTitle from './Main-Investor-Title.svelte';
-	import MainRound from './Main-Round.svelte';
+  import FaqChildRow from './FAQ-Child-Row.svelte';
 
-	import type { B_H_COMP_DATA } from '@betarena/scores-lib/types/_HASURA_.js';
-	import type { B_PROF_D, B_PROF_T } from '@betarena/scores-lib/types/profile.js';
+  import type { B_PROF_T } from '@betarena/scores-lib/types/profile.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -46,68 +39,31 @@
   // ### NOTE:                                                            ◼️
   // ### Please add inside 'this' region the 'variables' that are to be   ◼️
   // ### and are expected to be used by 'this' .svelte file / component.  ◼️
+  // ### IMPORTANT                                                        ◼️
+  // ### Please, structure the imports as follows:                        ◼️
+  // ### 1. export const / let [..]                                       ◼️
+  // ### 2. const [..]                                                    ◼️
+  // ### 3. let [..]                                                      ◼️
+  // ### 4. $: [..]                                                       ◼️
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
   const
-    VIEWPORT_TABLET_INIT = 912,
-    VIEWPORT_MOBILE_INIT = 581,
-    /**
-     * @description
-     * 📌 `this` component **main** `id` and `data-testid` prefix.
-    */
-    CNAME = 'profile⮕w⮕comp-hist'
+    /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
+    CNAME: string = 'profile⮕w⮕investfaq⮕main',
+    /** @description 📣 threshold start + state for 📱 MOBILE */
+    VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ],
+    /** @description 📣 threshold start + state for 💻 TABLET */
+    VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
-	let
-    isViewMobile: boolean = false,
-    isViewTablet: boolean = false,
-    RESPONSE_PROFILE_DATA: B_PROF_T,
-    WIDGET_DATA: B_PROF_D,
-    NO_WIDGET_DATA: boolean,
-    isShowMore: boolean = true,
-    // isShowCalendar: boolean = false,
-    txHistList: B_H_COMP_DATA[] = [],
-    txHistListLimit: number = 10
+  let
+    /** @description Profile Translation data. */
+    B_PROF_T: B_PROF_T
   ;
 
-  $: RESPONSE_PROFILE_DATA = $page.data?.RESPONSE_PROFILE_DATA ?? { };
+  $: B_PROF_T = $page.data?.RESPONSE_PROFILE_DATA;
 
   // #endregion ➤ 📌 VARIABLES
-
-  // #region ➤ 🛠️ METHODS
-
-  // ### NOTE:
-  // ### Temporary, deciding where to 'put' widget data loader,
-  // ### Either into the parent (+page.svelte), or make 'this' widget
-  // ### into it's own component, with the V6 structure.
-  async function widgetInit
-  (
-  ): Promise < B_PROF_D >
-  {
-		await sleep(3000);
-
-    const response: B_PROF_D = await get
-    (
-			`/api/data/profile?uid=${$userBetarenaSettings?.user?.firebase_user_data?.uid}`
-		);
-
-    WIDGET_DATA = response
-
-    const if_0 =
-      WIDGET_DATA == undefined
-    ;
-		if (if_0)
-    {
-      // dlog(`${IN_W_F_TAG} ❌ no data available!`, IN_W_F_TOG, IN_W_F_STY);
-			NO_WIDGET_DATA = true;
-			return;
-		}
-
-    NO_WIDGET_DATA = false;
-    return WIDGET_DATA
-  }
-
-  // #endregion ➤ 🛠️ METHODS
 
 </script>
 
@@ -115,48 +71,146 @@
 ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 ### COMPONENT HTML                                                                     ◼️
 ### NOTE:                                                                              ◼️
-### use 'CTRL+SPACE' to autocomplete global class="" styles                            ◼️
+### use 'CTRL+SPACE' to autocomplete global class=styles                               ◼️
 ### NOTE:                                                                              ◼️
 ### access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.         ◼️
 ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 -->
 
-<!-- <WidgetTxHistLoader /> -->
-
-{#await widgetInit()}
-
-  <WidgetTxHistLoader />
-
-{:then value}
-
-  <MainInvestorTitle />
+<div
+  id={CNAME}
+  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+>
 
   <!--
   ▓ NOTE:
-  ▓ > main grid.
+  ▓ > main title
   -->
   <div
-    id="investor-grid-box"
+    id='{CNAME}⮕faq-title'
   >
 
-    <MainRound
-      {WIDGET_DATA}
-    />
-    <MainInvestBox
-      {WIDGET_DATA}
-    />
-
-    <div
-      id="FAQ"
+    <!--
+    ▓ NOTE:
+    ▓ > title
+    -->
+    <p
+      class=
+      "
+      s-32
+      w-500
+      color-black-2
+      "
     >
-      <MainFaq />
-    </div>
+      Frequently Asked Questions
+    </p>
+
+    <!--
+    ▓  NOTE:
+    ▓ > sub-title
+    -->
+    <p
+      class=
+      "
+      s-16
+      color-grey
+      "
+    >
+      Have questions? Find answers to the most commonly asked
+      questions about the Betarena presale and referral program.
+    </p>
 
   </div>
 
-{:catch error}
-  <!-- NaN -->
-{/await}
+  <!--
+  ▓ NOTE:
+  ▓ > widget box
+  -->
+  <div
+    id='{CNAME}⮕faq-box'
+    class=
+    "
+    m-t-30
+    "
+  >
+
+    {#each B_PROF_T?.investor?.faq?.options ?? [] as item,i}
+
+      <FaqChildRow
+        position={i}
+        data={item}
+      />
+
+    {/each}
+
+  </div>
+
+  <!--
+  ▓ NOTE:
+  ▓ > more information box
+  -->
+  <div
+    class=
+    "
+    row-space-out
+    m-t-30
+    "
+  >
+
+    <!--
+    ▓ NOTE:
+    ▓ > text box
+    -->
+    <div>
+
+      <!--
+      ▓ NOTE:
+      ▓ > title
+      -->
+      <p
+        class=
+        "
+        s-20
+        w-500
+        color-black-2
+        m-b-16
+        "
+      >
+        Need More Information?
+      </p>
+
+      <!--
+      ▓ NOTE:
+      ▓ > sub-title
+      -->
+      <p
+        class=
+        "
+        s-16
+        color-grey
+        "
+      >
+        For a comprehensive understanding of the Betarena presale, please visit our Presale Page.
+      </p>
+
+    </div>
+
+    <!--
+    ▓ NOTE:
+    ▓ > CTA button
+    -->
+    <button
+      class=
+      "
+      btn-primary-v2
+      "
+    >
+      Link to Presale
+    </button>
+
+  </div>
+
+</div>
 
 <!--
 ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
@@ -168,16 +222,25 @@
 ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 -->
 
-<style>
+<style lang="scss">
 
-  div#investor-grid-box
+  div#profile⮕w⮕investfaq⮕main
   {
-    /* 🎨 style */
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
+    &⮕faq-title
+    {
+      /* 🎨 style */
+      padding: 0 20px;
+    }
 
+    &⮕faq-box
+    {
+      /* 🎨 style */
+      background-color: var(--white);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
+    }
+  }
 
   /*
   ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
@@ -188,27 +251,26 @@
   @media only screen
   and (min-width: 581px)
   {
-    /* NaN */
-  }
-
-  @media only screen
-  and (min-width: 1160px)
-  {
-    div#investor-grid-box
+    :global
     {
-      /* 🎨 style */
-      gap: 20px;
-      grid-template-columns: 1fr 1fr;
-    }
+      div#profile⮕w⮕investfaq⮕main
+      {
+        div.faq-row
+        {
+          p.faq-title
+          {
+            /* 🎨 style */
+            margin-left: 24px;
+          }
 
-    div#FAQ
-    {
-      /* 🎨 style */
-      width: 100%;
-      /* 📌 position */
-      grid-column: 1 / 3 ;
+          p.faq-description
+          {
+            /* 🎨 style */
+            margin-left: 42px;
+          }
+        }
+      }
     }
-
   }
 
   /*
@@ -216,5 +278,29 @@
   ◼️ 🌒 DARK-THEME         ◼️
   ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   */
+
+  div#profile⮕w⮕investfaq⮕main
+  {
+    /* 🎨 style */
+    background-color: transparent !important;
+
+    .dark-background-1 &⮕faq-box
+    {
+      /* 🎨 style */
+      background-color: var(--dark-theme-1-4-shade) !important;
+    }
+  }
+
+  :global
+  {
+    div#profile⮕w⮕investfaq⮕main.dark-background-1
+    {
+      div.faq-row
+      {
+        /* 🎨 style */
+        border-bottom: solid 1px var(--dark-theme-1);
+      }
+    }
+  }
 
 </style>
