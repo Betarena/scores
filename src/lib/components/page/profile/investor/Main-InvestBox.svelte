@@ -36,7 +36,7 @@
 
   import { get, post } from '$lib/api/utils.js';
   import { dlog, dlogv2 } from '$lib/utils/debug.js';
-  import { shortenWeb3WalletAddress, toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
+  import { shortenWeb3WalletAddress, sleep, toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
   import { passByValue } from '@betarena/scores-lib/dist/functions/func.common.js';
   import { tryCatchAsync } from '@betarena/scores-lib/dist/util/util.common.js';
 
@@ -150,10 +150,13 @@
           {
             metadata:
             {
-              name: 'My Website',
-              description: 'My Website description',
-              url: 'https://mywebsite.com',
-              icons: ['https://avatars.mywebsite.com/']
+              name: 'Scores Platform'
+              , description: 'Betarena Scores Platform'
+              , url: 'https://betarena-scores-platform.herokuapp.com/'
+              , icons:
+              [
+                'https://betarena-scores-platform.herokuapp.com/_app/immutable/assets/betarena-logo-full.f6af936d.svg'
+              ]
             }
           }
         )
@@ -295,6 +298,7 @@
         }
       }
     );
+
     // NOTE: (on-resize)
     window.addEventListener
     (
@@ -314,7 +318,7 @@
         // ### [🐞]
         dlogv2
         (
-          `🚏 checkpoint [R] ➤ if_R_X342`,
+          `🚏 checkpoint [R] ➤ src/lib/components/page/profile/investor/Main-InvestBox.svelte if_R_X342`,
           [
             `🔹 [var] ➤ e.data.event ${e.data.event}`,
           ],
@@ -337,7 +341,7 @@
         // ### [🐞]
         dlogv2
         (
-          `🚏 checkpoint [R] ➤ if_R_X12`,
+          `🚏 checkpoint [R] ➤ src/lib/components/page/profile/investor/Main-InvestBox.svelte if_R_X12`,
           [
             newProvider,
             `🔹 [var] ➤ modal.getSigner() ${modal.getSigner()}`,
@@ -431,6 +435,8 @@
   (
   ): Promise < void >
   {
+    if (!browser) return;
+
     await tryCatchAsync
     (
       async (
@@ -447,12 +453,13 @@
 
         const numberDecimals = await contract?.decimals();
         const numberUserBalance = await contract?.balanceOf(modal?.getAddress());
+
         cryptoDepositOptionSelect.userBalance = ethers.utils.formatUnits(numberUserBalance?.toString(), numberDecimals);
 
         // ▓ [🐞]
         dlogv2
         (
-          ``
+          `testing`
           , [
             `numberDecimals ${numberDecimals}`,
             `numberUserBalance ${numberUserBalance}`,
@@ -467,7 +474,12 @@
         ex: unknown
       ): void =>
       {
-        console.error(`💀 Unhandled :: ${ex}`);
+        // ▓ [🐞]
+        if (ex?.toString()?.includes(`TypeError: null is not an object (evaluating 'signerOrProvider.call')`))
+          console.info('❗️', '');
+        else
+          console.error(`💀 Unhandled :: ${ex}`);
+        //
 
         return;
       }
@@ -516,13 +528,18 @@
               },
             ],
           }
-        )
+        );
       }
       , (
         ex: unknown
       ): void =>
       {
-        console.error(`💀 Unhandled :: ${ex}`);
+        // ▓ [🐞]
+        if (ex?.toString()?.includes(`TypeError: undefined is not an object (evaluating 'window.ethereum.request')`))
+          console.warn('❗️', 'Ethereum is not available in the global scope (window). Please check that you have MetaMask (or other wallet) installed.');
+        else
+          console.error('💀', `Unhandled :: ${ex}`);
+        //
 
         return;
       }
@@ -537,7 +554,8 @@
    * @summary
    *  🟦 HELPER
    * @description
-   *  📣 Toggle (connect/disconnect) `web3` wallet connection.
+   *  📣 Toggle connect/disconnect `web3` wallet connection.
+   *  Redirects user to `MetaMask` browser to continue with `Invest/Deposit` flow.
    * @returns { Promise < void > }
    */
   async function connectWallet
@@ -558,6 +576,8 @@
 
     // ▓ CHECK
     // ▓ > for mobile, redirect with 'deep-link' user to MetaMask browser.
+    // ▓ NOTE:
+    // ▓ > does not appear to be working for 'localhost' with MetaMask browser.
     if (/Mobi/i.test(window.navigator.userAgent))
     {
       const dappUrl: string = $page.url.host;
@@ -640,6 +660,24 @@
       async (
       ): Promise < void > =>
       {
+
+        // ▓ NOTE:
+        // ▓ > alternative num.1
+        // const walletProvider = modal.getWalletProvider()
+        // console.log(walletProvider)
+        // const ethersProvider =  new ethers.providers.Web3Provider(walletProvider)
+        // const signer = await ethersProvider.getSigner();
+        // const
+        //   contract = new ethers.Contract
+        //   (
+        //     cryptoDepositOptionSelect?.contractAddress,
+        //     cryptoDepositOptionSelect?.abi as ContractInterface,
+        //     signer,
+        //   )
+        // ;
+
+        // ▓ NOTE:
+        // ▓ > alternative num.2
         const
           contract = new ethers.Contract
           (
@@ -688,6 +726,10 @@
         return;
       }
     );
+
+    // NOTE:
+    // > needed due occasional slow network/chain propagation.
+    await sleep(5000);
 
     // ▓ CHECK
     // ▓ > for errors registered.
@@ -743,6 +785,10 @@
         return;
       }
     );
+
+    // NOTE:
+    // > needed due occasional slow network/chain propagation.
+    await sleep(5000);
 
     // ▓ CHECK
     // ▓ > for errors registered.
@@ -863,7 +909,7 @@
     // ### [🐞]
     dlogv2
     (
-      `🚏 checkpoint [R] ➤ if_R_X20`,
+      `🚏 checkpoint [R] ➤ src/lib/components/page/profile/investor/Main-InvestBox.svelte if_R_X20`,
       [
         `🔹 [var] ➤ deepReactListenSignerChange ${deepReactListenSignerChange}`,
         `🔹 [var] ➤ triggerInvestBox ${triggerInvestBox}`,
@@ -944,12 +990,16 @@
   $: if (isNaN(cryptoPrice)) cryptoPrice = 1.00;
 
   $:
-  if (deepReactListenDepositOptionChange || deepReactListenSignerChange)
+  if (deepReactListenDepositOptionChange && deepReactListenSignerChange)
   {
     // ### [🐞]
-    dlog
+    dlogv2
     (
-      `🚏 checkpoint [R] ➤ IF_X_212`,
+      `🚏 checkpoint [R] ➤ src/lib/components/page/profile/investor/Main-InvestBox.svelte IF_X_212`,
+      [
+        `🔹 [var] ➤ deepReactListenDepositOptionChange ${deepReactListenDepositOptionChange}`,
+        `🔹 [var] ➤ deepReactListenSignerChange ${deepReactListenSignerChange}`,
+      ],
       true
     );
 
@@ -960,9 +1010,12 @@
   if (!deepReactListenSignerChange)
   {
     // ### [🐞]
-    dlog
+    dlogv2
     (
-      `🚏 checkpoint [R] ➤ IF_X_212 [E]`,
+      `🚏 checkpoint [R] ➤ src/lib/components/page/profile/investor/Main-InvestBox.svelte IF_X_212 [E]`,
+      [
+        `🔹 [var] ➤ deepReactListenSignerChange ${deepReactListenSignerChange}`,
+      ],
       true
     );
 
@@ -1264,7 +1317,6 @@
         on:click={() => $sessionStore.showTermsAndConditions = true}
       >
         I have read the
-
         <span
           class=
           "
@@ -1273,7 +1325,6 @@
           underline
           cursor-pointer
           "
-          on:click={() => alert('clicked terms and conditions')}
         >
           terms
         </span>
@@ -1286,7 +1337,6 @@
           underline
           cursor-pointer
           "
-          on:click={() => alert('clicked terms and conditions')}
         >
           disclaimers.
         </span>
