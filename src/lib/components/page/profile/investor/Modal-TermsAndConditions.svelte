@@ -330,7 +330,9 @@
 ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 -->
 
-<style>
+<style lang="scss">
+
+  @import '../../../../../../static/app.scss';
 
   div#background-modal-blur
   {
@@ -357,67 +359,69 @@
     position: fixed;
     z-index: 100000;
     /* 🎨 style */
-    background: #ffffff;
+    background: var(--white);
 		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
 		border-radius: 12px 12px 0 0;
     width: 100%;
-    overflow: hidden;
-    padding: 24px;
-	}
-
-  img#close-vector
-  {
-    /* 📌 position */
-		position: absolute;
-		top: 24px;
-		right: 24px;
-		z-index: 400000002;
-	}
-
-	div#global⮕w⮕termsandcond⮕profile⮕main⮕inner
-  {
-    /* 🎨 style */
-    display: grid;
+    overflow: scroll;
     overflow-x: hidden;
-    max-height: 100%;
-    overflow-y: scroll;
-    padding-bottom: 85px;
-    /* 💠 scrollbar */
-    /* IE and Edge */ -ms-overflow-style: none !important;
-		/* Firefox */ scrollbar-width: none !important;
-  }
-  div#global⮕w⮕termsandcond⮕profile⮕main⮕inner::-webkit-scrollbar
-  {
-		display: none !important;
-  }
+    padding: 48px 24px;
 
-  :global(
-    div#global⮕w⮕termsandcond⮕profile⮕main h1,
-    div#global⮕w⮕termsandcond⮕profile⮕main h2,
-    div#global⮕w⮕termsandcond⮕profile⮕main h3
-  )
-  {
-    /* 🎨 style */
-		margin-top: 0;
-    margin-bottom: 0;
-		color: #f5620f !important;
+    &::-webkit-scrollbar
+    {
+      display: none !important;
+    }
+
+    img#close-vector
+    {
+      /* 📌 position */
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      z-index: 400000002;
+    }
+
+    &⮕inner
+    {
+      /* 🎨 style */
+      display: grid;
+      overflow-x: hidden;
+    }
 	}
 
-	:global(
-    div#global⮕w⮕termsandcond⮕profile⮕main a
-  )
+  :global
   {
-    /* 🎨 style */
-		color: #f5620f !important;
-		width: fit-content !important;
-		margin: 0;
-		display: initial;
-	}
+    div#global⮕w⮕termsandcond⮕profile⮕main
+    {
+      h1,h2,h3
+      {
+        /* 🎨 style */
+        @extend .s-32 !optional;
+        @extend .color-black-2 !optional;
+        @extend .text-left !optional;
+        margin-top: 0;
+        margin-bottom: 0;
+      }
 
-  :global(div#global⮕w⮕termsandcond⮕profile⮕main p)
-  {
-		margin-bottom: 24px;
-		color: #8c8c8c;
+      a
+      {
+        /* 🎨 style */
+        color: #f5620f !important;
+        width: fit-content !important;
+        margin: 0;
+        display: initial;
+      }
+
+      p
+      {
+        /* 🎨 style */
+        @extend .s-20 !optional;
+        @extend .m-t-30 !optional;
+        @extend .m-b-24 !optional;
+        @extend .color-black-2 !optional;
+        @extend .text-left !optional;
+      }
+    }
 	}
 
 	/*
@@ -433,12 +437,13 @@
     {
       /* 🎨 style */
       padding: 48px;
-    }
-    div#global⮕w⮕termsandcond⮕profile⮕main⮕bottom
-    {
-      /* 🎨 style */
-      padding: 32px 48px;
-      height: 84px;
+
+      &⮕bottom
+      {
+        /* 🎨 style */
+        padding: 32px 48px;
+        height: 84px;
+      }
     }
   }
 
@@ -455,7 +460,6 @@
       margin: unset;
       /* 🎨 style */
       width: 45vw;
-      overflow: hidden;
       border-radius: 0;
     }
   }
@@ -469,7 +473,25 @@
   div#global⮕w⮕termsandcond⮕profile⮕main.dark-background-1
   {
     /* 🎨 style */
-		background-color: var(--dark-theme) !important;
+    background-color: var(--dark-theme) !important;
+  }
+
+  :global
+  {
+    div#global⮕w⮕termsandcond⮕profile⮕main.dark-background-1
+    {
+      h1,h2,h3
+      {
+        /* 🎨 style */
+        @extend .color-white !optional;
+      }
+
+      p
+      {
+        /* 🎨 style */
+        @extend .color-white !optional;
+      }
+    }
   }
 
 </style>
