@@ -175,7 +175,7 @@
     /* 🎨 style */
     display: grid;
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 64px 20px;
   }
 
 
@@ -197,7 +197,7 @@
     div#investor-grid-box
     {
       /* 🎨 style */
-      gap: 20px;
+      gap: 80px 20px;
       grid-template-columns: 1fr 1fr;
     }
 
