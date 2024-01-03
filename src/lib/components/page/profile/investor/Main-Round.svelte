@@ -1,27 +1,27 @@
 <!--
-◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-### COMPONENT JS (w/ TS)                                                               ◼️
-### NOTE:                                                                              ◼️
-### access custom Betarena Scores JS VScode Snippets by typing 'script...'             ◼️
-◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ Svelte Component JS/TS                                                           │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ - access custom Betarena Scores JS VScode Snippets by typing 'script...'         │
+╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <script lang="ts">
 
   // #region ➤ 📦 Package Imports
 
-  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-  // ### NOTE:                                                            ◼️
-  // ### Please add inside 'this' region the 'imports' that are required  ◼️
-  // ### by 'this' .svelte file is ran.                                   ◼️
-  // ### IMPORTANT                                                        ◼️
-  // ### Please, structure the imports as follows:                        ◼️
-  // ### 1. svelte/sveltekit imports                                      ◼️
-  // ### 2. project-internal files and logic                              ◼️
-  // ### 3. component import(s)                                           ◼️
-  // ### 4. assets import(s)                                              ◼️
-  // ### 5. type(s) imports(s)                                            ◼️
-  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { onDestroy, onMount } from 'svelte';
 
@@ -36,21 +36,21 @@
 
   // #region ➤ 📌 VARIABLES
 
-  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-  // ### NOTE:                                                            ◼️
-  // ### Please add inside 'this' region the 'variables' that are to be   ◼️
-  // ### and are expected to be used by 'this' .svelte file / component.  ◼️
-  // ### IMPORTANT                                                        ◼️
-  // ### Please, structure the imports as follows:                        ◼️
-  // ### 1. export const / let [..]                                       ◼️
-  // ### 2. const [..]                                                    ◼️
-  // ### 3. let [..]                                                      ◼️
-  // ### 4. $: [..]                                                       ◼️
-  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let
     /** @inheritdoc */
-    WIDGET_DATA: B_PROF_D
+    WIDGET_DATA: B_PROF_D | null
   ;
 
   /**
@@ -83,11 +83,11 @@
 
   const
     /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
-    CNAME: string = 'profile⮕w⮕investround⮕main',
+    CNAME: string = 'profile⮕w⮕investround⮕main'
     /** @description 📣 threshold start + state for 📱 MOBILE */
-    VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ],
+    ,VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
     /** @description 📣 threshold start + state for 💻 TABLET */
-    VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
+    ,VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
   let
@@ -103,23 +103,23 @@
       WIDGET_DATA?.investor
     ) as Map < string, B_H_INVEST_WIDGET_Data >
     /** @description 📣 investor main information data */
-    , roundData: IRoundData[] =
-    [
+    , roundData: IRoundData[]
+    = [
       {
         title: 'Token Information'
         , data:
         [
           {
             row_title: 'Name'
-            , value: mapInvestorData?.get('round')?.values?.name ?? '-'
+            , value: mapInvestorData.get('round')?.values.name ?? '-'
           }
           , {
             row_title: 'Symbol'
-            , value: mapInvestorData?.get('round')?.values?.symbol ?? '-'
+            , value: mapInvestorData.get('round')?.values.symbol ?? '-'
           }
           , {
             row_title: 'Available'
-            , value: mapInvestorData?.get('round')?.values?.available ?? '-'
+            , value: mapInvestorData.get('round')?.values.available ?? '-'
           }
         ]
       }
@@ -129,11 +129,11 @@
         [
           {
             row_title: 'Start Date'
-            , value: mapInvestorData?.get('round')?.values?.start_date ?? '-'
+            , value: mapInvestorData.get('round')?.values.start_date ?? '-'
           }
           , {
             row_title: 'End Date'
-            , value: mapInvestorData?.get('round')?.values?.end_date ?? '-'
+            , value: mapInvestorData.get('round')?.values.end_date ?? '-'
           }
         ]
       }
@@ -143,39 +143,39 @@
         [
           {
             row_title: 'Minimum Buy Amount'
-            , value: mapInvestorData?.get('round')?.values?.min_buy ?? '-'
+            , value: mapInvestorData.get('round')?.values.min_buy ?? '-'
           }
           , {
             row_title: 'Raising Platform'
-            , value: mapInvestorData?.get('round')?.values?.chain ?? '-'
+            , value: mapInvestorData.get('round')?.values.chain ?? '-'
           }
           , {
             row_title: 'Type'
-            , value: mapInvestorData?.get('round')?.values?.type ?? '-'
+            , value: mapInvestorData.get('round')?.values.type ?? '-'
           }
           , {
             row_title: 'Accepted Currencies'
-            , value: mapInvestorData?.get('round')?.values?.currencies ?? '-'
+            , value: mapInvestorData.get('round')?.values.currencies ?? '-'
           }
         ]
       }
     ]
     /** @description 📣 investor round date percentage progress */
-	  , datePercentageDiff: number = 0
+    , datePercentageDiff: number = 0
     /**
      * @description
      *  📣 invest round date `start`
      * @CUSTOM_NOTE
      * `mapInvestorData?.get('round')?.values?.start_date` || 12/08/2023
      */
-    , dateRoundStart: string | undefined = mapInvestorData?.get('round')?.values?.start_date
+    , dateRoundStart: string | undefined = mapInvestorData.get('round')?.values.start_date
     /**
      * @description
      *  📣 invest round date `start`
      * @CUSTOM_NOTE
      * `mapInvestorData?.get('round')?.values?.end_date` || 12/08/2023
      */
-    , dateRoundEnd: string | undefined = mapInvestorData?.get('round')?.values?.end_date
+    , dateRoundEnd: string | undefined = mapInvestorData.get('round')?.values.end_date
     /** @description 📣 interval variable for `countdown` logic */
     , interval1: NodeJS.Timer
   ;
@@ -196,16 +196,16 @@
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
 
-  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-  // ### NOTE:                                                            ◼️
-  // ### Please add inside 'this' region the 'logic' that should run      ◼️
-  // ### immediately and/or reactively for 'this' .svelte file is ran.    ◼️
-  // ### WARNING:                                                         ◼️
-  // ### ❗️ Can go out of control.                                        ◼️
-  // ### (a.k.a cause infinite loops and/or cause bottlenecks).           ◼️
-  // ### Please keep very close attention to these methods and            ◼️
-  // ### use them carefully.                                              ◼️
-  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
   /**
    * @summary
@@ -219,27 +219,27 @@
    * - `numDateDiffStart`
    * - `countDownTestHourToStart`
    */
-  $: if_R_0 =
-    numDateDiffStart == null
+  $: if_R_0
+    = numDateDiffStart == null
     || numDateDiffEnd == null
     || numDateDiffStart == 0
     || numDateDiffEnd == 0
-  $: if_R_1 =
-    countDownTestHourToStart >= 0
+  $: if_R_1
+    = countDownTestHourToStart >= 0
     && numDateDiffStart >= 0
   ;
-  $: if_R_2 =
-    countDownTestHourToEnd >= 0
+  $: if_R_2
+    = countDownTestHourToEnd >= 0
     && numDateDiffEnd >= 0
   ;
-  $: if_R_3=
-    countDownTestHourToEnd < 23
+  $: if_R_3
+    =countDownTestHourToEnd < 23
     && numDateDiffEnd < 0
   ;
 	$:
   if (if_R_0) widgetState = 'ToBeAnnounced'
-	else if (if_R_1) widgetState = 'CountdownWithDefinedDate';
-	else if (if_R_2) widgetState = 'CountdownToFinish';
+  else if (if_R_1) widgetState = 'CountdownWithDefinedDate';
+  else if (if_R_2) widgetState = 'CountdownToFinish';
   else if (if_R_3) widgetState = 'Ended';
 
   // ▓ [🐞]
@@ -253,12 +253,12 @@
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
-  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-  // ### NOTE:                                                            ◼️
-  // ### Please add inside 'this' region the 'logic' that should run      ◼️
-  // ### immediately and as part of the 'lifecycle' of svelteJs,          ◼️
-  // ### as soon as 'this' .svelte file is ran.                           ◼️
-  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
   onMount
   (
@@ -266,13 +266,13 @@
     ): Promise < void > =>
     {
       // NOTE: accepts '12/9/2023' <=> MM/dd/YYYY
-      numDateDiffStart = toCorrectDate(dateRoundStart, false).getTime() - new Date().getTime();
-      numDateDiffEnd = toCorrectDate(dateRoundEnd, false).getTime() - new Date().getTime();
+      numDateDiffStart = toCorrectDate(dateRoundStart as string | Date, false).getTime() - new Date().getTime();
+      numDateDiffEnd = toCorrectDate(dateRoundEnd as string | Date, false).getTime() - new Date().getTime();
 
       const
-        // @ts-ignore
+        // @ts-expect-error
         dateRoundDiff = Math.floor((toCorrectDate(dateRoundEnd, false).getTime() - toCorrectDate(dateRoundStart, false).getTime()) / 86400000)
-        // @ts-ignore
+        // @ts-expect-error
         , dateDeltaDiffDays = Math.floor((toCorrectDate(dateRoundEnd, false).getTime() - new Date().getTime()) / 86400000)
       ;
 
@@ -284,13 +284,13 @@
       (
         () =>
         {
-          numDateDiffStart = toCorrectDate(dateRoundStart, false).getTime() - new Date().getTime();
-          numDateDiffEnd = toCorrectDate(dateRoundEnd, false).getTime() - new Date().getTime();
+          numDateDiffStart = toCorrectDate(dateRoundStart as string | Date, false).getTime() - new Date().getTime();
+          numDateDiffEnd = toCorrectDate(dateRoundEnd as string | Date, false).getTime() - new Date().getTime();
 
           const
-            // @ts-ignore
+            // @ts-expect-error
             dateRoundDiff = Math.floor((toCorrectDate(dateRoundEnd, false).getTime() - toCorrectDate(dateRoundStart, false).getTime()) / 86400000)
-            // @ts-ignore
+            // @ts-expect-error
             , dateDeltaDiffDays = Math.floor((toCorrectDate(dateRoundEnd, false).getTime() - new Date().getTime()) / 86400000)
           ;
 
@@ -318,12 +318,12 @@
           [
             VIEWPORT_TABLET_INIT[1],
             VIEWPORT_MOBILE_INIT[1]
-          ] =
-          viewport_change
-          (
-            VIEWPORT_TABLET_INIT[0],
-            VIEWPORT_MOBILE_INIT[0]
-          );
+          ]
+          = viewport_change
+            (
+              VIEWPORT_TABLET_INIT[0],
+              VIEWPORT_MOBILE_INIT[0]
+            );
         }
       );
 
@@ -345,17 +345,16 @@
 </script>
 
 <!--
-◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-### COMPONENT HTML                                                                     ◼️
-### NOTE:                                                                              ◼️
-### use 'CTRL+SPACE' to autocomplete global class=styles                               ◼️
-### NOTE:                                                                              ◼️
-### access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.         ◼️
-◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ Svelte Component HTML                                                            │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ - use 'Ctrl+Space' to autocomplete global class=styles                           │
+│ - access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.     │
+╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <div
-  id="{CNAME}"
+  id={CNAME}
   class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
 >
 
@@ -592,7 +591,7 @@
             grey-v1
           "
         >
-          {mapInvestorData?.get('round')?.data?.find(x => x?.lang == 'en')?.current_value_title}
+          {mapInvestorData.get('round')?.data.find(x => {return x.lang == 'en'})?.current_value_title}
           <span
             class=
             "
@@ -601,7 +600,7 @@
             "
           >
             <!-- ${WIDGET_DATA?.txProgressRaised} -->
-            ${mapInvestorData?.get('round')?.values?.current_value ?? '-'}
+            ${mapInvestorData.get('round')?.values.current_value ?? '-'}
           </span>
         </p>
 
@@ -617,7 +616,7 @@
             grey-v1
           "
         >
-          {mapInvestorData?.get('round')?.data?.find(x => x?.lang == 'en')?.max_title ?? 'Unlimited'}
+          {mapInvestorData.get('round')?.data.find(x => {return x.lang == 'en'})?.max_title ?? 'Unlimited'}
         </p>
       </div>
 
@@ -645,7 +644,7 @@
           m-b-8
           "
         >
-          {item?.title}
+          {item.title}
         </p>
 
         <!--
@@ -659,7 +658,7 @@
           "
         >
 
-          {#each item?.data ?? [] as subItem}
+          {#each item.data ?? [] as subItem}
 
             <div
               class=
@@ -681,7 +680,7 @@
                   grey-v1
                 "
               >
-                {subItem?.row_title ?? ''}
+                {subItem.row_title ?? ''}
               </p>
 
               <!--
@@ -696,7 +695,7 @@
                 w-400
                 "
               >
-                {subItem?.value ?? ''}
+                {subItem.value ?? ''}
               </p>
 
             </div>
@@ -714,16 +713,15 @@
 </div>
 
 <!--
-◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-### COMPONENT STYLE                                                                    ◼️
-### NOTE:                                                                              ◼️
-### auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE      ◼️
-### NOTE:                                                                              ◼️
-### access custom Betarena Scores CSS VScode Snippets by typing 'style...'             ◼️
-◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ Svelte Component CSS/SCSS                                                        │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ - auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE  │
+│ - access custom Betarena Scores CSS VScode Snippets by typing 'style...'         │
+╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<style>
+<style lang="scss">
 
   div#profile⮕w⮕investround⮕main
   {
@@ -733,136 +731,144 @@
     border-radius: 12px;
     overflow: hidden;
     height: fit-content;
-  }
 
-  div#profile⮕w⮕investround⮕main⮕top-row
-  {
-    /* 📌 position */
-    position: relative;
-    /* 🎨 style */
-    padding: 20px;
-    padding-top: 24px;
-    background: var(--white);
-    box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
-    /* z-index: 10; */
-  }
+    &⮕top-row
+    {
+      /* 📌 position */
+      position: relative;
+      /* 🎨 style */
+      padding: 20px;
+      padding-top: 24px;
+      background: var(--white);
+      box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
+      /* z-index: 10; */
 
-  div#profile⮕w⮕investround⮕main⮕top-row div#countdown-box-parent
-  {
-    /* 📌 position */
-    position: relative;
-    /* 🎨 style */
-    border-radius: 4px;
-    overflow: hidden;
-    /* 🛝 layout */
-    display: grid;
-    gap: 2px;
-    grid-auto-flow: column;
-  }
-  div#profile⮕w⮕investround⮕main⮕top-row div.countdown-box-child
-  {
-    /* 📌 position */
-    position: relative;
-    /* 🎨 style */
-    padding: 17px 0;
-    background: var(--whitev2);
-    width: 60px;
-    height: 60px;
-    text-align: center;
-  }
+      div#countdown-box-parent
+      {
+        /* 📌 position */
+        position: relative;
+        /* 🎨 style */
+        border-radius: 4px;
+        overflow: hidden;
+        /* 🛝 layout */
+        display: grid;
+        gap: 2px;
+        grid-auto-flow: column;
+      }
 
-  div#profile⮕w⮕investround⮕main⮕top-row div#round-info-box-parent
-  {
-    /* 📌 position */
-    position: relative;
-    /* 🎨 style */
-    padding: 20px;
-    border-radius: 4px;
-    background: var(--whitev2);
-    width: fit-content;
-    height: 60px;
-  }
+      div.countdown-box-child
+      {
+        /* 📌 position */
+        position: relative;
+        /* 🎨 style */
+        padding: 17px 0;
+        background: var(--whitev2);
+        width: 60px;
+        height: 60px;
+        text-align: center;
+      }
 
-  div#profile⮕w⮕investround⮕main⮕middle-box
-  {
-    /* 🎨 style */
-    padding: 20px;
-    background: var(--white);
-    display: grid;
-    gap: 12px;
-  }
+      div#round-info-box-parent
+      {
+        /* 📌 position */
+        position: relative;
+        /* 🎨 style */
+        padding: 20px;
+        border-radius: 4px;
+        background: var(--whitev2);
+        width: fit-content;
+        height: 60px;
+      }
+    }
 
-  div#profile⮕w⮕investround⮕main⮕middle-box div#progress-bar
-  {
-    /* 🎨 style */
-    height: 6px;
-    border-radius: 12px;
-    width: 100%;
-    background-color: var(--grey-color);
-  }
-  div#profile⮕w⮕investround⮕main⮕middle-box div#progress-bar > div
-  {
-    /* 🎨 style */
-    background: var(--green-1);
-    box-shadow: 0px 0px 12px 0px rgba(77, 160, 37, 0.32);
-		/* width: 40%; */ /* Adjusted with JavaScript */
-    height: 6px;
-    border-radius: 12px;
-	}
+    &⮕middle-box
+    {
+      /* 🎨 style */
+      padding: 20px;
+      background: var(--white);
+      display: grid;
+      gap: 12px;
 
-  div#profile⮕w⮕investround⮕main⮕middle-box div.token-info-box div.token-info-row
-  {
-    /* 🎨 style */
-    border-radius: 4px;
-    padding: 10px 20px;
-    height: 40px;
-  }
-  div#profile⮕w⮕investround⮕main⮕middle-box div.token-info-box div.token-info-row:nth-child(odd)
-  {
-    /* 🎨 style */
-    background-color: var(--whitev2);
+      div#progress-bar
+      {
+        /* 🎨 style */
+        height: 6px;
+        border-radius: 12px;
+        width: 100%;
+        background-color: var(--grey-color);
+
+        > div
+        {
+          /* 🎨 style */
+          background: var(--green-1);
+          box-shadow: 0px 0px 12px 0px rgba(77, 160, 37, 0.32);
+          /* width: 40%; */ /* Adjusted with JavaScript */
+          height: 6px;
+          border-radius: 12px;
+        }
+      }
+
+      div.token-info-box div.token-info-row
+      {
+        /* 🎨 style */
+        border-radius: 4px;
+        padding: 10px 20px;
+        height: 40px;
+
+        &:nth-child(odd)
+        {
+          /* 🎨 style */
+          background-color: var(--whitev2);
+        }
+      }
+    }
   }
 
   /*
-  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-  ◼️ 🌒 DARK-THEME         ◼️
-  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  ╭──────────────────────────────────────────────────────────────────────────────╮
+  │ 🌒 DARK-THEME                                                                │
+  ╰──────────────────────────────────────────────────────────────────────────────╯
   */
 
-  div#profile⮕w⮕investround⮕main.dark-background-1 div#profile⮕w⮕investround⮕main⮕top-row
+  div#profile⮕w⮕investround⮕main
   {
-    /* 🎨 style */
-    background-color: var(--dark-theme-1);
-  }
 
-  div#profile⮕w⮕investround⮕main.dark-background-1 div#profile⮕w⮕investround⮕main⮕middle-box
-  {
-    /* 🎨 style */
-    background-color: var(--dark-theme-1-4-shade);
-  }
+    &.dark-background-1 &⮕top-row
+    {
+      /* 🎨 style */
+      background-color: var(--dark-theme-1);
 
-  div#profile⮕w⮕investround⮕main.dark-background-1 div#profile⮕w⮕investround⮕main⮕top-row div.countdown-box-child
-  {
-    /* 🎨 style */
-    background: var(--dark-theme-1-4-shade);
-  }
+      div.countdown-box-child
+      {
+        /* 🎨 style */
+        background: var(--dark-theme-1-4-shade);
+      }
 
-  div#profile⮕w⮕investround⮕main.dark-background-1 div#profile⮕w⮕investround⮕main⮕middle-box div#progress-bar
-  {
-    /* 🎨 style */
-    background-color: var(--dark-theme-1);
-  }
+      div#round-info-box-parent
+      {
+        /* 🎨 style */
+        background-color: var(--dark-theme-1-4-shade);
+      }
+    }
 
-  div#profile⮕w⮕investround⮕main.dark-background-1 div#profile⮕w⮕investround⮕main⮕middle-box div.token-info-box div.token-info-row:nth-child(odd)
-  {
-    /* 🎨 style */
-    background-color: var(--dark-theme-1);
-  }
+    &.dark-background-1 &⮕middle-box
+    {
+      /* 🎨 style */
+      background-color: var(--dark-theme-1-4-shade);
 
-  div#profile⮕w⮕investround⮕main.dark-background-1 div#profile⮕w⮕investround⮕main⮕top-row div#round-info-box-parent
-  {
-    /* 🎨 style */
-    background-color: var(--dark-theme-1-4-shade);
+      div#progress-bar
+      {
+        /* 🎨 style */
+        background-color: var(--dark-theme-1);
+      }
+
+      div.token-info-box div.token-info-row:nth-child(odd)
+      {
+        /* 🎨 style */
+        background-color: var(--dark-theme-1);
+      }
+    }
+
   }
 
 </style>
