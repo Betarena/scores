@@ -244,7 +244,7 @@
 		bottom: 0;
 		top: 0;
 		/* 🎨 style */
-		background: #ffffff;
+    background-color: var(--dark-theme) !important;
 		border-radius: 12px;
 		padding: 20px;
     padding-top: 45px;
@@ -265,7 +265,7 @@
 		div#modal-delete-box
     {
 			width: 328px;
-}
+    }
 	}
 
   /*
