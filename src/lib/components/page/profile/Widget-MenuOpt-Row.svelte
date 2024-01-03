@@ -230,7 +230,7 @@ VIEW DESIGN - 1
         {:else if MENU_OPT == 'Dashboard' ?? 'Dashboard'}
           {RESPONSE_PROFILE_DATA?.profile?.dashboard}
         {:else if MENU_OPT == 'Investor'}
-          {'Investor'}
+          {RESPONSE_PROFILE_DATA?.profile?.investor ?? 'Investor'}
         {:else if MENU_OPT == 'Author'}
           {RESPONSE_PROFILE_DATA?.profile?.author ?? 'Author'}
         {:else if MENU_OPT == 'Scores'}
@@ -365,7 +365,7 @@ VIEW DESIGN - 2
         {:else if MENU_OPT == 'Author'}
           {RESPONSE_PROFILE_DATA?.profile?.author ?? 'Author'}
         {:else if MENU_OPT == 'Investor'}
-          {'Investor'}
+          {RESPONSE_PROFILE_DATA?.profile?.investor ?? 'Investor'}
         {:else if MENU_OPT == 'Scores'}
           {RESPONSE_PROFILE_DATA?.profile?.scores ?? 'Scores'}
         {:else if MENU_OPT == 'Withdraw'}
