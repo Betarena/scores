@@ -24,8 +24,10 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { page } from '$app/stores';
+  import { onMount } from 'svelte';
 
 	import userBetarenaSettings from '$lib/store/user-settings.js';
+	import { viewport_change } from '$lib/utils/platform-functions.js';
 
   import FaqChildRow from './FAQ-Child-Row.svelte';
 
@@ -67,6 +69,47 @@
 
   // #endregion ➤ 📌 VARIABLES
 
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  onMount
+  (
+    () =>
+    {
+      [
+        VIEWPORT_TABLET_INIT[1],
+        VIEWPORT_MOBILE_INIT[1]
+      ] = viewport_change
+      (
+        VIEWPORT_TABLET_INIT[0],
+        VIEWPORT_MOBILE_INIT[0]
+      );
+      window.addEventListener
+      (
+        'resize',
+        function ()
+        {
+          [
+            VIEWPORT_TABLET_INIT[1],
+            VIEWPORT_MOBILE_INIT[1]
+          ] = viewport_change
+          (
+            VIEWPORT_TABLET_INIT[0],
+            VIEWPORT_MOBILE_INIT[0]
+          );
+        }
+      );
+    }
+  );
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
+
 </script>
 
 <!--
@@ -99,7 +142,7 @@
     <p
       class=
       "
-      s-32
+      {VIEWPORT_MOBILE_INIT[1] ? 's-24' : 's-32'}
       w-500
       color-black-2
       "
@@ -159,8 +202,12 @@
   <div
     class=
     "
-    row-space-out
+    {VIEWPORT_MOBILE_INIT[1] ? 'column-space-start' : 'row-space-out'}
     m-t-30
+    "
+    style=
+    "
+    {VIEWPORT_MOBILE_INIT[1] ? '' : 'align-items: flex-end;'}
     "
   >
 
@@ -168,7 +215,12 @@
     ▓ NOTE:
     ▓ > text box
     -->
-    <div>
+    <div
+      class=
+      "
+      {VIEWPORT_MOBILE_INIT[1] ? 'm-b-24' : ''}
+      "
+    >
 
       <!--
       ▓ NOTE:
@@ -201,7 +253,7 @@
         "
         style=
         "
-        max-width: 65%;
+        {VIEWPORT_MOBILE_INIT[1] ? '' : 'max-width: 65%;'}
         "
       >
         {
@@ -218,6 +270,7 @@
     -->
     <a
       href="https://about.betarena.com/presale"
+      target="_blank"
     >
       <button
         class=
@@ -275,11 +328,11 @@
   @media only screen
   and (min-width: 581px)
   {
-    :global
+    div#profile⮕w⮕investfaq⮕main
     {
-      div#profile⮕w⮕investfaq⮕main
+      :global
       {
-        div.faq-row
+        div.profile⮕w⮕investfaq⮕child⮕row
         {
           p.faq-title
           {
@@ -291,6 +344,7 @@
           {
             /* 🎨 style */
             margin-left: 138px;
+            max-width: none;
           }
         }
       }
