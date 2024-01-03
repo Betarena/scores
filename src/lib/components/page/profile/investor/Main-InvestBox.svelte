@@ -1417,12 +1417,8 @@
           "
         >
           {
-            mapInvestorData.get('invest_box')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.deposit_box?.title
-            ?? 'Deposit Amount'
-          }
-          {
             mapInvestorData.get('invest_box')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.deposit_box?.subtitle_1
-            ?? 'Deposit Amount'
+            ?? 'First Minimum Deposit'
           }
           <span
             class=
@@ -1439,7 +1435,7 @@
           /
           {
             mapInvestorData.get('invest_box')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.deposit_box?.subtitle_2
-            ?? 'Deposit Amount'
+            ?? 'Deposit'
           }
           <span
             class=
