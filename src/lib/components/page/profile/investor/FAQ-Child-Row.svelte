@@ -25,6 +25,7 @@
 
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { toZeroPrefixDateStr } from '$lib/utils/dates.js';
+	import { fade } from 'svelte/transition';
 
   import icon_faq_minus_dark from '../assets/investor/icon-faq-minus-dark.svg';
   import icon_faq_minus from '../assets/investor/icon-faq-minus.svg';
@@ -48,6 +49,12 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
+  export let
+    /** @augments B_H_INVEST_TRS_Option */
+    data: B_H_INVEST_TRS_Option
+    /** @description 📣 target position of `this` row component */
+    , position: number
+  ;
 
   const
     /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
@@ -59,13 +66,6 @@
     /** @description 📣 threshold start + state for 💻 TABLET */
     // eslint-disable-next-line no-unused-vars
     , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
-  ;
-
-  export let
-    /** @augments B_H_INVEST_TRS_Option */
-    data: B_H_INVEST_TRS_Option
-    /** @description 📣 target position of `this` row component */
-    , position: number
   ;
 
   let
@@ -221,6 +221,7 @@
       <!---->
       faq-description
       "
+      in:fade
     >
       {@html data.description}
     </p>
@@ -257,6 +258,7 @@
     {
       /* 🎨 style */
       margin-left: 42px;
+      max-width: 65%;
     }
   }
 

@@ -191,6 +191,10 @@
         s-16
         color-grey
         "
+        style=
+        "
+        max-width: 65%;
+        "
       >
         For a comprehensive understanding of the Betarena presale, please visit our Presale Page.
       </p>
@@ -201,14 +205,18 @@
     ▓ NOTE:
     ▓ > CTA button
     -->
-    <button
-      class=
-      "
-      btn-primary-v2
-      "
+    <a
+      href="https://about.betarena.com/presale"
     >
-      Link to Presale
-    </button>
+      <button
+        class=
+        "
+        btn-primary-v2
+        "
+      >
+        Link to Presale
+      </button>
+    </a>
 
   </div>
 
