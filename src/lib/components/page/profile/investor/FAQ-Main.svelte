@@ -104,7 +104,10 @@
       color-black-2
       "
     >
-      Frequently Asked Questions
+      {
+        B_PROF_T?.investor?.faq?.title
+        ?? 'Frequently Asked Questions'
+      }
     </p>
 
     <!--
@@ -118,8 +121,10 @@
       color-grey
       "
     >
-      Have questions? Find answers to the most commonly asked
-      questions about the Betarena presale and referral program.
+      {
+        B_PROF_T?.investor?.faq?.sub_title
+        ?? 'Have questions? Find answers to the most commonly asked questions about the Betarena presale and referral program.'
+      }
     </p>
 
   </div>
@@ -178,7 +183,10 @@
         m-b-16
         "
       >
-        Need More Information?
+        {
+          B_PROF_T?.investor?.presale?.title_information
+          ?? 'Need More Information?'
+        }
       </p>
 
       <!--
@@ -196,7 +204,10 @@
         max-width: 65%;
         "
       >
-        For a comprehensive understanding of the Betarena presale, please visit our Presale Page.
+        {
+          B_PROF_T?.investor?.presale?.description_information
+          ?? 'For a comprehensive understanding of the Betarena presale, please visit our Presale Page.'
+        }
       </p>
 
     </div>
@@ -214,7 +225,10 @@
         btn-primary-v2
         "
       >
-        Link to Presale
+        {
+          B_PROF_T?.investor?.presale?.cta_presale
+          ?? 'Link to Presale'
+        }
       </button>
     </a>
 
