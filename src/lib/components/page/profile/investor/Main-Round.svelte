@@ -25,6 +25,7 @@
 
   import { onDestroy, onMount } from 'svelte';
 
+	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { toCorrectDate, toZeroPrefixDateStr } from '$lib/utils/dates.js';
 	import { toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
@@ -106,55 +107,103 @@
     , roundData: IRoundData[]
     = [
       {
-        title: 'Token Information'
+        title:
+        (
+          mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.details?.token_info_title
+          ?? 'Token Information'
+        )
         , data:
         [
           {
-            row_title: 'Name'
+            row_title:
+            (
+              mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.details?.name_title
+              ?? 'Name'
+            )
             , value: mapInvestorData.get('round')?.values.name ?? '-'
           }
           , {
-            row_title: 'Symbol'
+            row_title:
+            (
+              mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.details?.symbol_title
+              ?? 'Symbol'
+            )
             , value: mapInvestorData.get('round')?.values.symbol ?? '-'
           }
           , {
-            row_title: 'Available'
+            row_title:
+            (
+              mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.details?.available_title
+              ?? 'Available'
+            )
             , value: mapInvestorData.get('round')?.values.available ?? '-'
           }
         ]
       }
       , {
-        title: 'Pre-sale'
+        title:
+        (
+          mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.details?.presale_title
+          ?? 'Pre-sale'
+        )
         , data:
         [
           {
-            row_title: 'Start Date'
+            row_title:
+            (
+              mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.details?.start_date_title
+              ?? 'Start Date'
+            )
             , value: mapInvestorData.get('round')?.values.start_date ?? '-'
           }
           , {
-            row_title: 'End Date'
+            row_title:
+            (
+              mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.details?.end_date_title
+              ?? 'End Date'
+            )
             , value: mapInvestorData.get('round')?.values.end_date ?? '-'
           }
         ]
       }
       , {
-        title: 'Investment Details'
+        title:
+        (
+          mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.details?.investment_title
+          ?? 'Investment Details'
+        )
         , data:
         [
           {
-            row_title: 'Minimum Buy Amount'
+            row_title:
+            (
+              mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.details?.min_buy_title
+              ?? 'Minimum Buy Amount'
+            )
             , value: mapInvestorData.get('round')?.values.min_buy ?? '-'
           }
           , {
-            row_title: 'Raising Platform'
+            row_title:
+            (
+              mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.details?.chain_title
+              ?? 'Raising Platform'
+            )
             , value: mapInvestorData.get('round')?.values.chain ?? '-'
           }
           , {
-            row_title: 'Type'
+            row_title:
+            (
+              mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.details?.type_title
+              ?? 'Type'
+            )
             , value: mapInvestorData.get('round')?.values.type ?? '-'
           }
           , {
-            row_title: 'Accepted Currencies'
+            row_title:
+            (
+              mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.details?.currencies_title
+              ?? 'Accepted Currencies'
+            )
             , value: mapInvestorData.get('round')?.values.currencies ?? '-'
           }
         ]
@@ -388,7 +437,10 @@
         w-500
         "
       >
-        {'Round 1'}
+        {
+          mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.round_title
+          ?? 'Round 1'
+        }
       </p>
 
       <!--
@@ -406,7 +458,10 @@
           "
         >
           {#if ['ToBeAnnounced', 'CountdownWithDefinedDate'].includes(widgetState)}
-            Presale starts in
+            {
+              mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.round_description
+              ?? 'Presale starts in'
+            }
           {:else if widgetState == 'CountdownToFinish'}
             Presale ends in
           {/if}
@@ -534,7 +589,10 @@
           m-b-16
           "
         >
-          Progress
+          {
+            mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.progress_title
+            ?? 'Progress'
+          }
         </p>
 
         <!--
@@ -591,7 +649,10 @@
             grey-v1
           "
         >
-          {mapInvestorData.get('round')?.data.find(x => {return x.lang == 'en'})?.current_value_title}
+          {
+            mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.current_value_title
+            ?? 'Raised'
+          }
           <span
             class=
             "
@@ -616,7 +677,10 @@
             grey-v1
           "
         >
-          {mapInvestorData.get('round')?.data.find(x => {return x.lang == 'en'})?.max_title ?? 'Unlimited'}
+          {
+            mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.max_title
+            ?? 'Unlimited'
+          }
         </p>
       </div>
 
