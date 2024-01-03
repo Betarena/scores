@@ -227,7 +227,7 @@
     <p
       class=
       "
-      {VIEWPORT_TABLET_INIT[1] ? 's-32' : 's-24'}
+      {VIEWPORT_MOBILE_INIT[1] ? 's-24' : 's-32'}
       color-white
       w-500
       m-b-16
