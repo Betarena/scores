@@ -1,278 +1,344 @@
-<!-- ===============
-COMPONENT JS (w/ TS)
-=================-->
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ Svelte Component JS/TS                                                           │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ - access custom Betarena Scores JS VScode Snippets by typing 'script...'         │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
 
 <script lang="ts">
 
-  // #region Package Imports
+  // #region ➤ 📦 Package Imports
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  // ▓ NOTE:
+  // ▓ > package firebase version, should be same as the project global version
+  // ▓ > @metamask/sdk/dist/browser/es/metamask-sdk; // ✅ works
+  // ▓ > @metamask/sdk/dist/browser/umd/metamask-sdk'; // ❌ not working
 
 	import { browser, dev } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
 	import { get } from '$lib/api/utils';
 	import { app, auth, db_firestore } from '$lib/firebase/init';
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
+	import { toZeroPrefixDateStr } from '$lib/utils/dates.js';
 	import { AU_W_TAG, dlog, dlogv2, errlog } from '$lib/utils/debug';
 	import { viewport_change } from '$lib/utils/platform-functions';
+	import { tryCatchAsync } from '@betarena/scores-lib/dist/util/util.common.js';
 	import { getMoralisAuth, type MoralisAuth } from '@moralisweb3/client-firebase-auth-utils';
-	import { fetchSignInMethodsForEmail, GithubAuthProvider, GoogleAuthProvider, isSignInWithEmailLink, sendSignInLinkToEmail, signInWithCustomToken, signInWithEmailLink, signInWithPopup, type User } from 'firebase/auth';
+	import { signInWithMoralis, type SignInWithMoralisResponse } from '@moralisweb3/client-firebase-evm-auth';
+	import
+	  {
+	    GithubAuthProvider, GoogleAuthProvider, fetchSignInMethodsForEmail,
+	    isSignInWithEmailLink, sendSignInLinkToEmail, signInWithCustomToken, signInWithEmailLink,
+	    signInWithPopup, type ActionCodeSettings, type User, type UserCredential
+	  } from 'firebase/auth';
 	import { doc, getDoc, setDoc } from 'firebase/firestore';
 	import { generateUsername } from 'unique-username-generator';
-/**
-   * NOTE: pacakge firebase should be same as project global
-   * @metamask/sdk/dist/browser/es/metamask-sdk; // ✅ works
-   * @metamask/sdk/dist/browser/umd/metamask-sdk'; // ❌ not working
-  */
 
-  import { signInWithMoralis, type SignInWithMoralisResponse } from "@moralisweb3/client-firebase-evm-auth";
+	import type { BetarenaUser, IScoreUser } from '$lib/types/types.scores.js';
+	import type { IAuthType } from '@betarena/scores-lib/types/_FIREBASE_.js';
+	import type { IAuthTrs } from '@betarena/scores-lib/types/auth.js';
 
-	import type { Auth_Type, BetarenaUser, Scores_User } from '$lib/types/types.scores.js';
-	import type { REDIS_CACHE_SINGLE_auth_translation } from '@betarena/scores-lib/types/auth.js';
+  // #endregion ➤ 📦 Package Imports
 
-  //#endregion Package Imports
+  // #region ➤ 📌 VARIABLES
 
-  // #region ➤ [VARIABLES]
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
   const
-    TABLET_VIEW = 1160,
-    MOBILE_VIEW = 725
+    /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
+    // eslint-disable-next-line no-unused-vars
+    CNAME = 'global⮕w⮕auth⮕main'
+    /** @description 📣 threshold start + state for 📱 MOBILE */
+    // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 725, true ]
+    /** @description 📣 threshold start + state for 💻 TABLET */
+    // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
-	let
-    mobileExclusive: boolean = false,
-    tabletExclusive: boolean = false,
-	  email_input: string,
-	  processing: boolean = false,
-	  email_verify_process: boolean = false,
-	  email_sent_process: boolean = false,
-	  allow_resend: boolean = false,
-	  sent_email_date: Date = undefined,
-	  dateObjDif: number,
-	  auth_view: boolean = true,
-	  auth_type: 'login' | 'register' = 'login',
-	  auth_service: Auth_Type,
-	  success_auth: boolean = false,
-	  error_auth: boolean = false,
-	  email_error_format: boolean = false,
-	  email_already_in_use: boolean = false,
-    discord_icon: string,
-    email_verify: string,
-    error_icon: string,
-    github_dark_icon: string,
-    github_icon: string,
-    google_icon: string,
-    loader_animation: string,
-    logo: string,
-    logo_dark: string,
-    metamask_icon: string,
-    success_icon: string,
-    investDepositIntent: string
+  let
+    /** @description 📣 email `input` */
+    inputEmail: string | undefined
+    /** @description 📣 widget state for toggle UI of `authentication` in progress */
+    , processing: boolean = false
+    /** @description 📣 widget state for toggle UI of `email` verification state */
+    , emailVerifyInProgress: boolean = false
+    /** @description 📣 widget state for toggle UI of `email` verification sent confirmation state */
+    , emailVerificationSent: boolean = false
+    /** @description 📣 widget state for toggle UI of `email` verification re-sent ability state */
+    , allowResend: boolean = false
+    /** @description 📣 widget state for toggle UI of `email` verification last sent verification date */
+    , sentEmailDate: Date | undefined = undefined
+    /** @description 📣 widget state for toggle UI of `email` verification last sent verification date difference */
+    , dateObjDif: number
+    /** @description 📣 widget state for toggle UI of `authentication` state */
+    , authView: boolean = true
+    /** @description 📣 widget state for `authentication` selection */
+    , authTypeSelect: 'login' | 'register' = 'login'
+    /** @augments IAuthType */
+    , authServiceUsed: IAuthType
+    /** @description 📣 widget state for toggle UI of success `alert` in authentication */
+    , successAuth: boolean = false
+    /** @description 📣 widget state for toggle UI of error `alert` in authentication */
+    , errorAuth: boolean = false
+    /** @description 📣 widget state for toggle UI of error in `email` input */
+    , errorAuthEmailFormat: boolean = false
+    /** @description 📣 widget state for toggle UI of error in `email` already in use */
+    , emailAlreadyInUse: boolean = false
+    /** @description 📣 widget `dynamic loaded` assets */
+    , iconList: string[]
+    /** @description 📣 widget `deeplink` url parameter */
+    , investDepositIntent: string | null
+    /** @augments ActionCodeSettings */
+    , actionCodeSettings: ActionCodeSettings
+    = {
+      // ▓ NOTE:
+      // ▓ > URL / DOMAIN you want to redirect back to.
+      // ▓ > URL must be in the authorized domains list in the Firebase Console.
+      url: `${$page.url.origin}${$page.url.pathname}?authTypeSelect=${authTypeSelect}`
+      // ▓ NOTE:
+      // ▓ > must be set true
+      , handleCodeInApp: true
+      // , dynamicLinkDomain: 'http://localhost:3050/auth'
+      // , iOS:
+      // {
+      //   bundleId: 'com.example.ios'
+      // },
+      // android:
+      // {
+      //   packageName: 'com.example.android',
+      //   installApp: true,
+      //   minimumVersion: '12'
+      // },
+    }
+    /** @description interval value */
+    , interval1: NodeJS.Timer
   ;
 
-  // IMPORTANT
-  let actionCodeSettings =
-  {
-		// [ℹ] URL / DOMAIN you want to redirect back to.
-		// [ℹ] URL must be in the authorized domains list in the Firebase Console.
-		url: `${$page.url?.origin}${$page.url?.pathname}?auth_type=${auth_type}`,
-		handleCodeInApp: true // [ℹ] This must be set true
-		// dynamicLinkDomain: 'http://localhost:3050/auth'
-		// iOS: {
-		//   bundleId: 'com.example.ios'
-		// },
-		// android: {
-		//   packageName: 'com.example.android',
-		//   installApp: true,
-		//   minimumVersion: '12'
-		// },
-	};
+	$: actionCodeSettings.url = `${$page.url.origin}${$page.url.pathname}?authTypeSelect=${authTypeSelect}`;
+  $: countD_sec = Math.floor((dateObjDif / 1000) % 60).toString();
+	$: countD_min = Math.floor((dateObjDif / 1000 / 60) % 60).toString();
 
-	$: actionCodeSettings.url = `${$page.url?.origin}${$page.url?.pathname}?auth_type=${auth_type}`;
+  // ▓ [🐞]
+	if (dev) inputEmail = 'migbashdev@gmail.com';
 
-  // [🐞]
-	if (dev) email_input = 'migbashdev@gmail.com';
+  // #endregion ➤ 📌 VARIABLES
 
-  // #endregion ➤ [VARIABLES]
+  // #region ➤ 🛠️ METHODS
 
-  // #region ➤ [MAIN-METHODS]
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
   /**
    * @description
    * TODO: move to -Widget, -Main V6 structure;
   */
-	async function widget_init
+  async function widgetInit
   (
-  ): Promise < REDIS_CACHE_SINGLE_auth_translation >
+  ): Promise < IAuthTrs | null >
   {
+    if (!browser) return null;
 
-    if (!browser) return;
-
-		const dataRes0: REDIS_CACHE_SINGLE_auth_translation = await get
+    const dataRes0 = await get
     (
-      `/api/hasura/_main_/auth?lang=${$sessionStore?.serverLang}`
-    );
+      `/api/hasura/_main_/auth?lang=${$sessionStore.serverLang}`
+    ) as IAuthTrs;
 
-		return dataRes0;
-
-	}
+    return dataRes0;
+  }
 
   /**
+   * @author
+   *  @migbash
    * @summary
-   * [HELPER]
+   *  🔹 HELPER
    * @description
-   * ➨ singal an email (login) attempt UI/UX change;
-   * @returns
-   * void (NaN)
+   *  📣 Toggle UI of type `ERROR`.
+   * @returns { void }
   */
   function wrongEmailFormatToggle
   (
   ): void
   {
-		email_error_format = true;
-		error_auth = true;
-		setTimeout
+    errorAuthEmailFormat = true;
+    errorAuth = true;
+    setTimeout
     (
-      () =>
+      (
+      ): void =>
       {
-			  error_auth = false;
-		  },
+        errorAuth = false;
+      },
       1500
     );
-	}
+    return;
+  }
 
 	/**
+   * @author
+   *  @migbash
    * @summary
-   * [HELPER]
+   *  🔹 HELPER
    * @description
-   * ➨ validates Web3 wallet extension being used by client/user;
+   *  📣 validates Web3 wallet extension being used by client/user.
    * @see https://stackoverflow.com/questions/69377437/metamask-conflicting-with-coinbase-wallet
    * @see https://stackoverflow.com/questions/72613011/whenever-i-click-on-connect-metamask-button-why-it-connects-the-coinbase-wallet
    * @see https://stackoverflow.com/questions/68023651/how-to-connect-to-either-metamask-or-coinbase-wallet
    * @see https://github.com/MetaMask/metamask-extension/issues/13622
-   * [FIREFOX ISSUE]
+   * @ISSUE_LOG - FIREFOX
    * @see https://github.com/Betarena/scores/issues/1021
    * @see https://github.com/MetaMask/metamask-extension/issues/3133
    * @see https://github.com/MetaMask/metamask-extension/issues/10023
    * @see https://community.metamask.io/t/metamask-cannot-be-detected-on-firefox/24705/8
-	 * @param
-   * a tuple of [isSuccess, walletType | null]
+	 * @param { 'isMetaMask' | 'isCoinbaseWallet' | 'isBraveWallet'} walletType
+   *  **[required]** a tuple of [isSuccess, walletType | null]
+   * @returns { [ boolean, any ] }
 	 */
-	function providerDetect
+  function providerDetect
   (
-		walletType:
-			| 'isMetaMask'
-			| 'isCoinbaseWallet'
-			| 'isBraveWallet'
-	): [ boolean, any ]
+    walletType: 'isMetaMask' | 'isCoinbaseWallet' | 'isBraveWallet'
+  ): [ boolean, any ]
   {
-
-		// CHECK: No Ethereum wallet detected;
-		if (!window?.ethereum)
+    // ▓ CHECK:
+    // ▓ > no ethereum wallet detected.
+    if (!window.ethereum)
     {
-      // [🐞]
+      // ▓ [🐞]
       dlog
       (
-        `${AU_W_TAG[0]} 🛑 - window.ethereum is ${window?.ethereum}`
+        `${AU_W_TAG[0]} 🛑 - window.ethereum is ${window.ethereum}`
       );
 
-			return [
-        false,
-        null
+      // ▓ NOTE:
+      // ▓ > or, throw new Error("No injected ethereum object.");
+      return [
+        false
+        , null
       ];
-      // or,
-			// throw new Error("No injected ethereum object.");
-		}
+    }
 
-		let targetSelectWallet = undefined;
+    let targetSelectWallet = undefined;
 
-    // CHECK: Multiple wallets owned/opened by client/user;
-    const if_M_0: boolean =
-      Array.isArray(window?.ethereum?.providers)
-    ;
-		if (if_M_0)
+    // ▓ CHECK:
+    // ▓ > for multiple wallets owned/visible by client/user.
+    if (Array.isArray(window.ethereum?.providers))
     {
-			if (walletType == 'isMetaMask')
+      if (walletType == 'isMetaMask')
       {
-				targetSelectWallet =	window?.ethereum?.providers
-        ?.find
-        (
+        targetSelectWallet = window.ethereum?.providers
+          ?.find
           (
-            provider
-          ) =>
-          provider?.[walletType]
-          && provider?.isBraveWallet == undefined
-        );
-			}
+            (
+              provider
+            ) =>
+            {
+              return provider?.[walletType] && provider?.isBraveWallet == undefined
+            }
+          )
+        ;
+      }
 
-      // [🐞]
+      // ▓ [🐞]
       dlogv2
       (
         AU_W_TAG[0],
         [
-          `🟦 Multiple wallet providers identified: ${window?.ethereum?.providers?.length}`,
-          `🟦 var: targetSelectWallet ${targetSelectWallet}`,
-          `🟦 var: window.ethereum.providers ${window?.ethereum?.providers}`
+          `🟦 Multiple wallet providers identified: ${window.ethereum?.providers?.length}`
+          ,`🟦 var: targetSelectWallet ${targetSelectWallet}`
+          ,`🟦 var: window.ethereum.providers ${window.ethereum?.providers}`
         ]
       );
-
-		}
-    if (!if_M_0)
+    }
+    else
     {
-
-      const if_M_0: boolean =
-        walletType == 'isMetaMask'
-        && window?.ethereum?.isBraveWallet == undefined
-        && window?.ethereum?.isMetaMask != undefined
-        && window?.ethereum?.isMetaMask
+      const if_M_0: boolean
+        = walletType == 'isMetaMask'
+        && window.ethereum?.isBraveWallet == undefined
+        && window.ethereum?.isMetaMask != undefined
+        && window.ethereum?.isMetaMask
       ;
-			if (if_M_0) targetSelectWallet =	window?.ethereum?.[walletType];
+      if (if_M_0) targetSelectWallet = window.ethereum?.[walletType];
 
-      // [🐞]
+      // ▓ [🐞]
       dlogv2
       (
         `${AU_W_TAG[0]}`,
         [
-          `🟦 Single provider identified! ${window?.ethereum}`,
-          `🟦 var: targetSelectWallet ${targetSelectWallet}`,
-          `🟦 var: window.ethereum ${window?.ethereum}`
+          `🟦 Single provider identified! ${window.ethereum}`
+          ,`🟦 var: targetSelectWallet ${targetSelectWallet}`
+          ,`🟦 var: window.ethereum ${window.ethereum}`
         ]
       );
+    }
 
-		}
-
-    // EXIT;
-		if (targetSelectWallet == undefined)
+    // ▓ CHECK:
+    // ▓ > for absent selected wallet.
+    if (targetSelectWallet == undefined)
     {
-
-      // [🐞]
+      // ▓ [🐞]
       dlog
       (
         `${AU_W_TAG[0]} 🔴 no target wallet (${walletType}) identified`
       );
 
       return [
-        false,
-        null
+        false
+        , null
       ];
-
     }
 
-    // [🐞]
+    // ▓ [🐞]
     dlog
     (
       `${AU_W_TAG[0]} 🟢 ${walletType} identified`
     );
 
-    // NOTE: IMPORTANT
-    // Conflicting use of CoinBaseWallet and MetaMask on client/users browser.
-    // -> Setting MetaMask as main wallet!
-    // WARNING: Causes issues with FireFox!
+    // ▓ NOTE: ▓ IMPORTANT:
+    // ▓ > conflicting use of CoinBaseWallet and MetaMask on client/users browser.
+    // ▓ > Setting MetaMask as main wallet.
+
+    // ▓ WARNING:
+    // ▓ > (👇) causes issues with FireFox
     // targetSelectWallet.request({ method: 'eth_requestAccounts' });
-    // NOTE: Not working
+
+    // ▓ NOTE:
+    // ▓ > (👇) Not working
     // window.ethereum.setSelectedProvider(targetSelectWallet);
     // window.ethereum.request
     // ({
@@ -281,391 +347,572 @@ COMPONENT JS (w/ TS)
     // });
 
     return [
-      true,
-      targetSelectWallet
+      true
+      , targetSelectWallet
     ];
-	}
+  }
 
   /**
+   * @author
+   *  @migbash
    * @summary
-   * [MAIN]
+   *  🟥 MAIN
    * @description
-   * ➨ sign-in/up user using Google OAuth2
+   *  📣 sign-in/sign-up user using Google OAuth2.
    * @see https://firebase.google.com/docs/auth/web/google-signin
-   * @returns
-   * Promise < void >
+   * @returns { Promise < void > }
   */
-	async function loginGoogle
+  async function authWithGoogle
   (
   ): Promise < void >
   {
-		try
-    {
+    if (!browser) return;
 
-      // [🐞]
-      dlog
-      (
-        `${AU_W_TAG[0]} 🔵 Google Auth Init`
-      );
-
-			processing = true;
-			auth_service = 'google';
-			const provider = new GoogleAuthProvider();
-			await signInWithPopup(auth, provider)
-			?.then
-      (
-        (
-          result
-        ) =>
-        {
-          // [🐞]
-          dlog
-          (
-            `${AU_W_TAG[0]} 🟢 Google Auth Success`
-          );
-
-					const user = result?.user;
-					successAuthComplete
-          (
-						user,
-						null,
-						auth_service
-					);
-				}
-      )
-      .catch
-      (
-        (
-          error
-        ) =>
-        {
-          processing = false;
-          // TODO: Error Authetication Handle
-          // [ℹ] handle errors
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          const email = error.customData.email; // The email of the user's account used.
-          // [ℹ] AuthCredential used
-          // const credential = GoogleAuthProvider.credentialFromError(error);
-          errlog(errorCode);
-          errlog(errorMessage);
-        }
-      );
-
-		}
-    catch (error)
-    {
-			processing = false;
-      errlog(`❌ Google auth error: ${error}`)
-		}
-	}
-
-  /**
-   * @summary
-   * [MAIN]
-   * @description
-   * ➨ sign-in/up user using GitHub OAuth2
-   * @see https://firebase.google.com/docs/auth/web/github-auth
-   * @returns
-  */
-	async function loginGitHub
-  (
-  ): Promise < void >
-  {
-		try
-    {
-
-      // [🐞]
-      dlog
-      (
-        `${AU_W_TAG[0]} 🔵 GitHub Auth Init`
-      );
-
-			auth_service = 'github';
-			processing = true;
-			const provider = new GithubAuthProvider();
-
-			await signInWithPopup(auth, provider)
-      ?.then
-      (
-        (
-          result
-        ) =>
-        {
-          // [🐞]
-          dlog
-          (
-            `${AU_W_TAG[0]} 🟢 GitHub Auth Success`
-          );
-
-					const user = result.user;
-					successAuthComplete
-          (
-						user,
-						null,
-						auth_service
-					);
-
-				}
-      )
-      .catch
-      (
-        (
-          error
-        ) =>
-        {
-          processing = false;
-          // [ℹ] handle errors
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          errlog(errorCode);
-          errlog(errorMessage);
-          // [ℹ] the email used
-          const email = error.customData.email;
-          // [ℹ] AuthCredential used
-          const credential = GithubAuthProvider.credentialFromError
-          (
-            error
-          );
-
-          // [🐞]
-          dlog
-          (
-            `${AU_W_TAG[0]} credential: ${credential}; email: ${email}`
-          );
-
-          // TODO: error user-sign in
-          // signInWithCredential(auth, credential)
-          // .then(user => {
-          //   // You can now link the pending credential from the first
-          //   // error.
-          //   linkWithCredential(error.credential)
-          // })
-          // .catch(error => log(error))
-        }
-      );
-
-		}
-    catch (e)
-    {
-      errlog(`❌ GitHub Auth error: ${e}`)
-		}
-	}
-
-  /**
-   * @summary
-   * [MAIN]
-   * @description
-   * ➨ sign-in/up user using Email Magic Link.
-   * ➨ initiates a "deep-link" listen for user.
-   * @see https://firebase.google.com/docs/auth/web/email-link-auth?hl=en&authuser=0
-   * @returns
-   *Promise < void >
-  */
-	async function loginEmailLink
-  (
-  ): Promise < void >
-  {
-		try
-    {
-      // [🐞]
-      dlog
-      (
-        `${AU_W_TAG[0]} email_input: ${email_input}`
-      );
-
-			email_error_format = false;
-			processing = true;
-
-			await fetchSignInMethodsForEmail
-      (
-				auth,
-				email_input
-			)
-      ?.then
-      (
-        (
-          signInMethods
-        ) =>
-        {
-          if (signInMethods.length)
-          {
-            // [ℹ] The email already exists in the Auth database. You can check the
-            // [ℹ] sign-in methods associated with it by checking signInMethods array.
-            // [ℹ] Show the option to sign in with that sign-in method.
-            email_already_in_use = true;
-          }
-          else
-          {
-            // [ℹ] User does not exist. Ask user to sign up.
-            email_already_in_use = false;
-          }
-        }
-      )
-      .catch
-      (
-        (
-          error
-        ) =>
-        {
-          // FIXME:
-          // Some error occurred.
-        }
-      );
-
-			// [ℹ] validation
-			// if (email_already_in_use) {
-			//   if (dev) console.log('🟠 Exit MagicLink')
-			//   processing = false
-			//   error_auth = true
-			//   setTimeout(() => {
-			//     error_auth = false
-			//   }, 1500)
-			//   return
-			// }
-
-			// cont. send email
-			await sendSignInLinkToEmail
-      (
-				auth,
-				email_input,
-				actionCodeSettings
-			)
-      ?.then
-      (
-        () =>
-        {
-					// [ℹ] The link was successfully sent - (custom) UI update
-					processing = false;
-					auth_view = false;
-					if (email_already_in_use)
-          {
-						email_sent_process = true;
-						sent_email_date = new Date();
-						sent_email_date.setMinutes
-            (
-							sent_email_date.getMinutes() + 5
-						); // [ℹ] add 5 min.
-					}
-          else
-          {
-						email_verify_process = true;
-					}
-					// [ℹ] store target email in localStroage() for retrival on same device
-					window.localStorage.setItem
-          (
-						'emailForSignIn',
-						email_input
-					);
-					// NOTE: listen for email deep link continued
-				}
-      )
-      ?.catch
-      (
-        (
-          error
-        ) =>
-        {
-          // TODO: Error Authetication Handle
-          const errorCode = error.code;
-          const errorMessage = error.message;
-        }
-      );
-
-		}
-    catch (e)
-    {
-			errlog(`❌ Email (MagicLink) Auth error: ${e}`)
-		}
-	}
-
-  // TODO: DOC:
-  async function checkEmailDeepLink
-  (
-  ): Promise < void >
-  {
-
-    // [🐞]
+    // ▓ [🐞]
     dlog
     (
-      `${AU_W_TAG[0]} 🟠 Checking for EmailLink DeepLink`
+      `${AU_W_TAG[0]} 🔵 Google Auth Init`
     );
 
-    const if_M_0: boolean =
-      isSignInWithEmailLink
-      (
-				auth,
-				window?.location?.href
-			)
-    ;
-    if (!if_M_0) return;
-
-    auth_service = 'email';
-
-    // [🐞]
-    dlog
+    await tryCatchAsync
     (
-      `${AU_W_TAG[0]} 🔵 EmailLink OAuth2`
-    );
-
-    // NOTE: apiKey, oobCode, mode, lang query param(s) passed in URL query params
-    // NOTE: Additional state parameters can also be passed via URL.
-    // NOTE: This can be used to continue the user's intended action before triggering
-    // NOTE: the sign-in operation.
-    // NOTE: Get the email if available. This should be available if the user completes
-    // NOTE: the flow on the same device where they started it.
-
-    let email: string = window?.localStorage?.getItem
-    (
-      'emailForSignIn'
-    );
-
-    // [🐞]
-    dlog
-    (
-      `${AU_W_TAG[0]} email: ${email}`
-    );
-
-    // CHECK: User opened deep-link on different device, from the created on-intent;
-    if (!email)
-    {
-      email = window.prompt
-      (
-        'Please provide your email for confirmation'
-      );
-    }
-
-    // [ℹ] Client SDK to parse the code from the link for you.
-    signInWithEmailLink
-    (
-      auth,
-      email,
-      window.location.href
-    )
-		?.then
-    (
-      (
-        result
-      ) =>
+      async (
+      ): Promise < void > =>
       {
+        processing = true;
 
-        auth_type = $page?.url?.searchParams
-        ?.get
+        const
+          provider = new GoogleAuthProvider()
+          , result: UserCredential = await signInWithPopup(auth, provider)
+          , user = result.user
+        ;
+
+        // ▓ [🐞]
+        dlog
         (
-          'auth_type'
-        )
-        ?.toString() as 'login' | 'register';
+          `${AU_W_TAG[0]} 🟢 Google Auth Success`
+        );
 
-        const revert_url = `${$page?.url?.origin}${$page?.url?.pathname}`;
+        await successAuthComplete
+        (
+          user
+          , undefined
+          , 'google'
+        );
 
-        // [🐞]
+        return;
+      }
+      , (
+        ex: unknown | any
+      ): void =>
+      {
+        processing = false;
+
+        // ▓ NOTE:
+        // ▓ > also available 'ex?.code', 'ex?.message', 'ex?.customData?.email'
+        // ▓ NOTE:
+        // ▓ > more info of AuthCredential used.
+        // const credential = GoogleAuthProvider.credentialFromError(ex);
+
+        // ▓ [🐞]
+        errlog(`❌ Google auth error: ${ex}`);
+
+        // ex :: FirebaseError: Firebase: Error (auth/account-exists-with-different-credential).
+
+        return;
+      }
+    );
+
+    return;
+  }
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟥 MAIN
+   * @description
+   *  📣 sign-in/sign-up user using GitHub OAuth2.
+   * @see https://firebase.google.com/docs/auth/web/github-auth
+   * @returns { Promise < void > }
+  */
+  async function authWithGitHub
+  (
+  ): Promise < void >
+  {
+    if (!browser) return;
+
+    // ▓ [🐞]
+    dlog
+    (
+      `${AU_W_TAG[0]} 🔵 GitHub Auth Init`
+    );
+
+    await tryCatchAsync
+    (
+      async (
+      ): Promise < void > =>
+      {
+        processing = true;
+
+        const
+          provider = new GithubAuthProvider()
+          , result: UserCredential = await signInWithPopup(auth, provider)
+          , user = result.user
+        ;
+
+        // ▓ [🐞]
+        dlog
+        (
+          `${AU_W_TAG[0]} 🟢 GitHub Auth Success`
+        );
+
+        await successAuthComplete
+        (
+          user
+          , undefined
+          , 'github'
+        );
+
+        return;
+      }
+      , (
+        ex: unknown | any
+      ): void =>
+      {
+        processing = false;
+
+        // ▓ NOTE:
+        // ▓ > also available 'ex?.code', 'ex?.message', 'ex?.customData?.email'
+        // ▓ NOTE:
+        // ▓ > more info of AuthCredential used.
+        // const credential = GoogleAuthProvider.credentialFromError(ex);
+
+        // ▓ [🐞]
+        errlog(`❌ GitHub auth error: ${ex}`);
+
+        // ex :: FirebaseError: Firebase: Error (auth/account-exists-with-different-credential).
+
+        return;
+      }
+    );
+
+    return;
+  }
+
+  /**
+   * @CUSTOM_STATE
+   *  ⭐️ v8
+   * @author
+   *  @migbash
+   * @summary
+   *  🟥 MAIN
+   * @description
+   *  - 📣 sign-in/sign-up user using **Email Magic Link**.
+   *  - 📣 initiates `magic link` event listen for user.
+   * @see https://firebase.google.com/docs/auth/web/email-link-auth?hl=en&authuser=0
+   * @returns { Promise < void > }
+  */
+  async function authWithEmailMagicLink
+  (
+  ): Promise < void >
+  {
+    if (!browser) return;
+
+    await tryCatchAsync
+    (
+      async (
+      ): Promise < void > =>
+      {
+        // ▓ [🐞]
+        dlog
+        (
+          `${AU_W_TAG[0]} inputEmail: ${inputEmail}`
+        );
+
+        processing = true;
+        errorAuthEmailFormat = false;
+
+        const signInMethods = await fetchSignInMethodsForEmail
+        (
+          auth
+          , inputEmail!
+        );
+
+        // ▓ CHECK:
+        // ▓ > for existance of target email in Auth Database.
+        if (signInMethods.length)
+          emailAlreadyInUse = true;
+        else
+          emailAlreadyInUse = false;
+        //
+
+        // ▓ CHECK:
+        // ▓ > for existance of email error.
+        /*
+          if (emailAlreadyInUse)
+          {
+            if (dev) console.log('🟠 Exit MagicLink')
+            processing = false;
+            errorAuth = true;
+            setTimeout(() =>
+            {
+              errorAuth = false;
+            }, 1500);
+            return;
+          }
+        */
+
+        await sendSignInLinkToEmail
+        (
+          auth
+          , inputEmail!
+          , actionCodeSettings
+        );
+
+        // ▓ NOTE:
+        // ▓ > successfully sent email with 'magic link' UI state.
+        processing = false;
+        authView = false;
+
+        if (emailAlreadyInUse)
+        {
+          emailVerificationSent = true;
+          sentEmailDate = new Date();
+          // ▓ NOTE:
+          // ▓ > add 5 min.
+          sentEmailDate.setMinutes
+          (
+            sentEmailDate.getMinutes() + 5
+          );
+        }
+        else
+          emailVerifyInProgress = true;
+        //
+
+        // ▓ NOTE:
+        // ▓ > store target email in localStroage()
+        // ▓ > for retrival on same device.
+        window.localStorage.setItem
+        (
+          'emailForSignIn'
+          , inputEmail!
+        );
+
+        return;
+      }
+      , (
+        ex: unknown
+      ): void =>
+      {
+        processing = false;
+
+        // ▓ [🐞]
+        errlog(`❌ Email (MagicLink) Auth error: ${ex}`)
+
+        return;
+      }
+    );
+
+    return;
+  }
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟥 MAIN
+   * @description
+   *  - 📣 sign-in/up user using Discrod Link.
+   *  - 📣 initiates `deep link` event listen for user.
+   * @returns { Promise < void > }
+  */
+  async function authWithDiscord
+  (
+  ): Promise < void >
+  {
+    if (!browser) return;
+
+    await tryCatchAsync
+    (
+      async (
+      ): Promise < void > =>
+      {
+        processing = true;
+
+        const
+          /** @description Target `callback` url */
+          callbackAuthUrl: string = $page.url.origin
+          /** @description Target `discord` url for `OAuth2.0` */
+          , discordOAuthUrl = import.meta.env.VITE_DISCORD_OAUTH_URL
+          /** @description Target `url` navigation */
+          , finalUrlNav = `${discordOAuthUrl}?redirect_url=${callbackAuthUrl}`
+        ;
+
+        // ▓ [🐞]
+        dlog
+        (
+          `${AU_W_TAG[0]} callbackAuthUrl: ${callbackAuthUrl}`
+        );
+
+        // ▓ NOTE:
+        // ▓ > initiate discord OAuth2
+        await goto(finalUrlNav);
+
+        return;
+      }
+      , (
+        ex: unknown
+      ): void =>
+      {
+        processing = false;
+
+        // ▓ [🐞]
+        errlog(ex as string);
+
+        return;
+      }
+    );
+
+    return;
+  }
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟥 MAIN
+   * @description
+   *  - 📣 sign-in/up user using Web3 MetaMask (using MoralisAPI).
+   *  - 📣 NOTE: only MetaMask extension exlcusive.
+   * @see https://firebase.google.com/docs/auth/web/email-link-auth?hl=en&authuser=0
+   * @returns { Promise < void > }
+  */
+  async function authWithMetamask
+  (
+  ): Promise < void >
+  {
+    if (!browser) return;
+
+    await tryCatchAsync
+    (
+      async (
+      ): Promise < void > =>
+      {
+        processing = true;
+
+        // ▓ CHECK:
+        // ▓ > mobile device.
+        const if_M_0: boolean
+          // typeof screen.orientation !== 'undefined' // unreliable
+          // navigator?.userAgentData?.mobile // unreliable
+          = /Mobi/i.test(window.navigator.userAgent)
+          && window.ethereum == null
+        ;
+        if (if_M_0)
+        {
+          // ▓ NOTE:
+          // ▓ > navigate to MetaMask in-app browser.
+          // await goto('https://metamask.app.link/dapp/scores.betarena.com/?dappLogin=true') // ✅ works
+          // await goto('https://metamask.app.link/dapp/http://192.168.0.28:3050/') // ❌ does not work
+          // await goto('https://metamask.app.link/dapp/192.168.0.28:3050/?dappLogin=true') // ❌ does not work
+          const
+            dappUrl = $page.url.host
+            , metamaskAppDeepLink = `https://metamask.app.link/dapp/${dappUrl}?metmaskAuth=true`
+          ;
+          window.open(metamaskAppDeepLink, '_self');
+          processing = false;
+          return;
+        }
+
+        // ▓ CHECK:
+        // ▓ > metaMask is NOT present, exit.
+        const if_M_1: boolean
+          = !providerDetect('isMetaMask')[0]
+        ;
+        if (if_M_1)
+        {
+          // ▓ [🐞]
+          dlog
+          (
+            `${AU_W_TAG[0]} 🔴 Moralis Auth not found!`
+          );
+
+          // ▓ [🐞]
+          alert
+          (
+            'Please install the MetaMask Wallet Extension!'
+          );
+
+          processing = false
+          return;
+        }
+
+        const
+          moralisAuth: MoralisAuth = getMoralisAuth(app)
+          , moralisAuthInstance: SignInWithMoralisResponse = await signInWithMoralis(moralisAuth)
+        ;
+
+        // #region ❌ [V2] - Moralis Auth [TEST]
+
+        // FIXME: Create WalletConnect Provider
+        // FIXME: ❌ Not Working
+        // FIXME: WalletConnectProvider error DOC: REF: [10]
+        // const provider = new WalletConnectProvider({
+        //   infuraId: "a523c408585b0f7c88a7df7a9d70dfe6",
+        // });
+        // await provider.enable();
+        // const moralisAuthInstance = await signInWithMoralis(moralisAuth, {
+        //   provider: new Web3Provider(provider)
+        // });
+
+        // #endregion ❌ [V2] - Moralis Auth [TEST]
+
+        // #region MetaMask SDK - working [DISABLED]
+
+        // const MMSDK = new MetaMaskSDK({
+        //   // useDeeplink: false,
+        //   // communicationLayerPreference: "socket",
+        //   // enableDebug: true,
+        //   // shouldShimWeb3: false,
+        //   // showQRCode: true,
+        // })
+        // const ethereum = MMSDK.getProvider() // You can also access via window.ethereum
+        // await ethereum.request({ method: 'eth_requestAccounts', params: [] })
+        // // .then(r => console.log(r));
+        // .then(r => alert(r));
+        // - needs to be redirected back to the APP for 2nd SIGN MESSAGE...
+
+        // #endregion MetaMask SDK - working [DISABLED]
+
+        // ▓ [🐞]
+        dlog
+        (
+          `${AU_W_TAG[0]} 🟢 Moralis Auth`
+        );
+
+        await successAuthComplete
+        (
+          moralisAuthInstance.credentials.user
+          , moralisAuthInstance.credentials.user.displayName!
+          , 'wallet'
+        );
+
+        return;
+      }
+      , (
+        ex: unknown
+      ): void =>
+      {
+        processing = false;
+
+        // ▓ [🐞]
+        errlog(`Moralis Auth error: ${ex}`);
+
+        return;
+      }
+    );
+
+    return;
+  }
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟥 MAIN
+   * @description
+   *  📣 Validates for `Email Magic Link` presence.
+   * @returns { Promise < void > }
+   */
+  async function checkEmailMagicLink
+  (
+  ): Promise < void >
+  {
+    if (!browser) return;
+
+    await tryCatchAsync
+    (
+      async (
+      ): Promise < void > =>
+      {
+        // ▓ [🐞]
+        dlog
+        (
+          `${AU_W_TAG[0]} 🟠 Checking for EmailLink DeepLink`
+        );
+
+        const if_M_0: boolean = isSignInWithEmailLink
+        (
+          auth
+          , window.location.href
+        );
+        if (!if_M_0) return;
+
+        // ▓ [🐞]
+        dlog
+        (
+          `${AU_W_TAG[0]} 🔵 EmailLink OAuth2`
+        );
+
+        // ▓ NOTE:
+        // ▓ > apiKey, oobCode, mode, lang query param(s) passed in URL query params
+        // ▓ > Additional state parameters can also be passed via URL.
+        // ▓ > This can be used to continue the user's intended action before triggering
+        // ▓ > the sign-in operation.
+        // ▓ > Get the email if available. This should be available if the user completes
+        // ▓ > the flow on the same device where they started it.
+
+        let email = window.localStorage.getItem
+        (
+          'emailForSignIn'
+        );
+
+        // ▓ [🐞]
+        dlog
+        (
+          `${AU_W_TAG[0]} email: ${email}`
+        );
+
+        // ▓ CHECK:
+        // ▓ > User opened deep-link on different device
+        // ▓ > from the created on-intent.
+        if (!email)
+        {
+          email = window.prompt
+          (
+            'Please provide your email for confirmation'
+          );
+        }
+
+        const
+          // ▓ NOTE:
+          // ▓ > client SDK to parse the code from the link for you.
+          result = await signInWithEmailLink
+          (
+            auth
+            , email!
+            , window.location.href
+          )
+          , revertUrl = `${$page.url.origin}${$page.url.pathname}`
+        ;
+
+        authTypeSelect = $page.url.searchParams
+          .get
+          (
+            'authTypeSelect'
+          )
+          ?.toString() as 'login' | 'register'
+        ;
+
+        // ▓ [🐞]
         dlogv2
         (
           AU_W_TAG[0],
           [
-            `🟢 EmailLink Auth`,
-            `🟦 var: result?.user?.displayName ${result?.user?.displayName}`,
-            `🟦 var: result?.user?.email ${result?.user?.email}`
+            '🟢 EmailLink Auth'
+            ,`🟦 var: result?.user?.displayName ${result.user.displayName}`
+            ,`🟦 var: result?.user?.email ${result.user.email}`
           ]
         );
 
@@ -674,214 +921,210 @@ COMPONENT JS (w/ TS)
           'emailForSignIn'
         );
 
-        // NOTE: You can access the new user via result.user
-        // NOTE: Additional user info profile not available via:
-        // => result.additionalUserInfo.profile == null
-        // NOTE: You can check if the user is new or existing:
-        // => result.additionalUserInfo.isNewUser
+        // ▓ NOTE:
+        // ▓ > You can access the new user via result.user
+        // ▓ NOTE:
+        // ▓ > Additional user info profile not available via: `result.additionalUserInfo.profile == null`
+        // ▓ NOTE:
+        // ▓ > You can check if the user is new or existing: `result.additionalUserInfo.isNewUser`
 
-        successAuthComplete
+        await successAuthComplete
         (
-          result?.user,
-          null,
-          auth_service
+          result.user
+          , undefined
+          , 'email'
         );
 
-        goto
+        await goto
         (
-          revert_url,
+          revertUrl,
           {
             replaceState: true
           }
         );
 
+        return;
       }
-    )
-    .catch
-    (
-      (
-        error
-
-      ) =>
+      , (
+        ex: unknown
+      ): void =>
       {
-        // Some error occurred, you can inspect the code: error.code
-        // Common errors could be invalid email and invalid or expired OTPs.
-        errlog(`❌ Email (MagicLink) Auth error: ${error}`)
+        // ▓ [🐞]
+        errlog(`❌ Email (MagicLink) Auth error: ${ex}`)
+
+        return;
       }
     );
+
+    return;
   }
 
   /**
+   * @author
+   *  @migbash
    * @summary
-   * [MAIN]
+   *  🟥 MAIN
    * @description
-   * ➨ sign-in/up user using Discrod Link.
-   * ➨ initiates a "deep-link" listen for user.
-   * @see https://firebase.google.com/docs/auth/web/email-link-auth?hl=en&authuser=0
-   * @returns
-   * Promise < void >
-  */
-	async function loginDiscord
-  (
-  ): Promise < void >
-  {
-    // DOC: REF: [4]
-		try
-    {
-			processing = true;
-			const callback_auth_url = $page?.url?.origin;
-
-      // [🐞]
-      dlog
-      (
-        `${AU_W_TAG[0]} callback_auth_url: ${callback_auth_url}`
-      );
-
-			const discord_outh_url = import.meta.env?.VITE_DISCORD_OAUTH_URL;
-			const final_url_nav = `${discord_outh_url}?redirect_url=${callback_auth_url}`;
-
-			// [ℹ] initiate discord OAuth2
-			goto(final_url_nav);
-
-		}
-    catch (error)
-    {
-			errlog(error);
-			processing = false;
-		}
-	}
-
-  // TODO: DOC:
+   *  📣 Validates for `Discord Deep Link` presence.
+   * @returns { Promise < void > }
+   */
   async function checkDiscordDeepLink
   (
   ): Promise < void >
   {
-    // [🐞]
-    dlog
+    if (!browser) return;
+
+    await tryCatchAsync
     (
-      `${AU_W_TAG[0]} 🟠 Checking for Discord DeepLink`
+      async (
+      ): Promise < void > =>
+      {
+        // ▓ [🐞]
+        dlog
+        (
+          `${AU_W_TAG[0]} 🟠 Checking for Discord DeepLink`
+        );
+
+        const
+          fUid = $page.url.searchParams.get('f_uid')
+          , oauth2 = $page.url.searchParams.get('oauth2')
+          , revertUrl = `${$page.url.origin}${$page.url.pathname}`
+        ;
+
+        // ▓ CHECK
+        // ▓ > validate user is attempting Discord OAuth2.
+        if (oauth2 != 'discord' || fUid == null) return;
+
+        // ▓ [🐞]
+        dlog
+        (
+          `${AU_W_TAG[0]} 🔵 Discord OAuth2`
+        );
+
+        // ▓ NOTE:
+        // ▓ > clean up `url` from deeplink `queries` and `authentication bloat`.
+        goto
+        (
+          revertUrl,
+          {
+            replaceState: true
+          }
+        );
+
+        const userCredential = await signInWithCustomToken
+        (
+          auth
+          , fUid
+        );
+
+        // ▓ [🐞]
+        dlog
+        (
+          `${AU_W_TAG[0]} 🟢 Success! Discord OAuth2'`
+        );
+
+        await successAuthComplete
+        (
+          userCredential.user
+          , undefined
+          , 'discord'
+        );
+
+        return;
+      }
+      , (
+        ex: unknown | any
+      ): void =>
+      {
+        const
+          errorCode = ex.code
+          , errorMessage = ex.message
+        ;
+
+        // ▓ [🐞]
+        errlog(errorCode);
+        errlog(errorMessage);
+        console.error('💀 Unhandled :: ex');
+
+        return;
+      }
     );
 
-		const f_uid: string = $page.url.searchParams.get('f_uid');
-		const oauth2: string = $page.url.searchParams.get('oauth2');
-		const revert_url = `${$page?.url?.origin}${$page?.url?.pathname}`;
-
-		// [ℹ] validate user is attempting Discord OAuth2
-		if (oauth2 == 'discord' && f_uid != null)
-    {
-
-      // [🐞]
-      dlog
-      (
-        `${AU_W_TAG[0]} 🔵 Discord OAuth2`
-      );
-
-			// ACTION: Clean up url from queries/auth-bloat;
-			goto
-      (
-        revert_url,
-        {
-          replaceState: true
-        }
-      );
-
-			// [ℹ] firebase sign-in
-			signInWithCustomToken
-      (
-        auth,
-        f_uid
-      )
-      ?.then
-      (
-        (
-          userCredential
-        ) =>
-        {
-					auth_service = 'discord';
-
-          // [🐞]
-          dlog
-          (
-            `${AU_W_TAG[0]} 🟢 Success! Discord OAuth2'`
-          );
-
-					const user = userCredential?.user;
-
-					successAuthComplete
-          (
-						user,
-						null,
-						auth_service
-					);
-
-				}
-      )
-      .catch
-      (
-        (
-          error
-        ) =>
-        {
-          // TODO: complete authetication error handle
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          errlog(errorCode);
-          errlog(errorMessage);
-        }
-      );
-		}
+    return;
   }
 
   /**
+   * @author
+   *  @migbash
    * @summary
-   * IMPORTANT
-   * [MAIN]
+   *  🟥 MAIN
    * @description
-   * ➨ sign-in/up user using Web3 MetaMask (using MoralisAPI).
-   * NOTE: only MetaMask extension exlcusive.
-   * @see https://firebase.google.com/docs/auth/web/email-link-auth?hl=en&authuser=0
-   * @returns
-   * Promise < void >
-  */
-	async function loginMetamask
+   *  📣 Validates for `MetaMask Deep Link` presence.
+   * @returns { Promise < void > }
+   */
+  async function checkMetaMaskDeepLink
   (
   ): Promise < void >
   {
-    // DOC: REF: [1]
-		try
-    {
-			processing = true;
-			auth_service = 'wallet';
+    if (!browser) return;
 
-      // CHECK: Mobile Device;
-      const if_M_0: boolean =
-        // typeof screen.orientation !== 'undefined' // ureliable;
-        // navigator?.userAgentData?.mobile // ureliable;
-        /Mobi/i.test(window?.navigator?.userAgent)
-        && window?.ethereum == null
-      ;
-      if (if_M_0)
+    await tryCatchAsync
+    (
+      async (
+      ): Promise < void > =>
       {
-        // [ℹ] navigate to MetaMask in-app browser
-        // await goto('https://metamask.app.link/dapp/scores.betarena.com/?dappLogin=true') // ✅ works
-        // await goto('https://metamask.app.link/dapp/http://192.168.0.28:3050/') // does not work
-        // await goto('https://metamask.app.link/dapp/192.168.0.28:3050/?dappLogin=true') // does not work
-        const dappUrl = $page.url.host
-        const metamaskAppDeepLink = `https://metamask.app.link/dapp/${dappUrl}?metmaskAuth=true`;
-        window.open(metamaskAppDeepLink, "_self");
-        processing = false;
+        // ▓ [🐞]
+        dlog
+        (
+          `${AU_W_TAG[0]} 🟠 Checking for MetaMask DeepLink!`
+        );
+
+        const
+          metmaskAuth =	$page.url.searchParams.get('metmaskAuth')
+          , revertUrl = `${$page.url.origin}${$page.url.pathname}`
+        ;
+
+        investDepositIntent = $page.url.searchParams.get('investDepositIntent');
+
+        // ▓ [🐞]
+        // alert($page.url);
+        // alert('investDepositIntent', investDepositIntent);
+
+        if (metmaskAuth != 'true') return;
+
+        // ▓ [🐞]
+        dlog
+        (
+          `${AU_W_TAG[0]} 🔵 MetaMask OAuth2`
+        );
+
+        // ▓ NOTE:
+        // ▓ > clean up url from queries/auth-bloat.
+        goto
+        (
+          revertUrl,
+          {
+            replaceState: true
+          }
+        );
+
+        authWithMoralis();
+
         return;
       }
-
-      // CHECK: MetaMask is present; EXIT;
-      const if_M_1: boolean =
-        !providerDetect('isMetaMask')?.[0]
-      ;
-			if (if_M_1)
+      , (
+        ex: unknown
+      ): void =>
       {
+        // ▓ [🐞]
+        console.error(`💀 Unhandled :: ${ex}`);
 
-        // [🐞]
-			  dlog
+        return;
+      }
+    );
+
+    return;
+  }
         (
           `${AU_W_TAG[0]} 🔴 Moralis Auth not found!`
         );
@@ -891,473 +1134,516 @@ COMPONENT JS (w/ TS)
           'Please install the MetaMask Wallet Extension!'
         );
 
-			  processing = false
-			  return;
-			}
-
-			const moralisAuth: MoralisAuth = getMoralisAuth(app);
-
-      // #region ❌ [V2] - Moralis Auth [TEST]
-      // FIXME: Create WalletConnect Provider
-			// FIXME: ❌ Not Working
-      // FIXME: WalletConnectProvider error DOC: REF: [10]
-			// const provider = new WalletConnectProvider({
-			//   infuraId: "a523c408585b0f7c88a7df7a9d70dfe6",
-			// });
-			// await provider.enable();
-			// const moralis_auth = await signInWithMoralis(moralisAuth, {
-			//   provider: new Web3Provider(provider)
-			// });
-      // #endregion ❌ [V2] - Moralis Auth [TEST]
-
-      // #region MetaMask SDK - working [DISABLED]
-      // const MMSDK = new MetaMaskSDK({
-      //   // useDeeplink: false,
-      //   // communicationLayerPreference: "socket",
-      //   // enableDebug: true,
-      //   // shouldShimWeb3: false,
-      //   // showQRCode: true,
-      // })
-      // const ethereum = MMSDK.getProvider() // You can also access via window.ethereum
-      // await ethereum.request({ method: 'eth_requestAccounts', params: [] })
-      // // .then(r => console.log(r));
-      // .then(r => alert(r));
-      // - needs to be redirected back to the APP for 2nd SIGN MESSAGE...
-      // #endregion MetaMask SDK - working [DISABLED]
-
-			const moralis_auth: SignInWithMoralisResponse = await signInWithMoralis(moralisAuth);
-
-      // [🐞]
-			dlog
-      (
-        `${AU_W_TAG[0]} 🟢 Moralis Auth`
-      );
-
-			successAuthComplete
-      (
-			  moralis_auth?.credentials?.user,
-			  moralis_auth?.credentials?.user?.displayName,
-			  auth_service
-			);
-
-		}
-    catch (error)
-    {
-			errlog(`Moralis Auth error: ${error}`);
-			processing = false;
-		}
-	}
-
-  // TODO: DOC:
-  async function checkMetaMaskDeepLink
-  (
-  ): Promise < void >
-  {
-    // [🐞]
-    dlog
-    (
-      `${AU_W_TAG[0]} 🟠 Checking for MetaMask DeepLink!`
-    );
-
-		const metmaskAuth: string =	$page.url.searchParams.get('metmaskAuth');
-    investDepositIntent = $page.url.searchParams.get('investDepositIntent');
-		const revert_url = `${$page?.url?.origin}${$page?.url?.pathname}`;
-
-		if (metmaskAuth == 'true')
-    {
-      // [🐞]
-      dlog
-      (
-        `${AU_W_TAG[0]} 🔵 MetaMask OAuth2`
-      );
-
-			// ACTION: Clean up url from queries/auth-bloat;
-			goto
-      (
-        revert_url,
-        {
-          replaceState: true
-        }
-      );
-
-			moralis_auth();
-		}
-  }
-
-  // TODO: DOC:
-  async function moralis_auth
-  (
-  ): Promise < void >
-  {
-
-    const moralisAuth: MoralisAuth = getMoralisAuth(app);
-    const moralis_auth: SignInWithMoralisResponse = await signInWithMoralis(moralisAuth);
-
-    // [🐞]
-    dlog
-    (
-      `${AU_W_TAG[0]} 🟢 Moralis Auth`
-    );
-
-    await successAuthComplete
-    (
-      moralis_auth?.credentials?.user,
-      moralis_auth?.credentials?.user?.displayName,
-      auth_service
-    );
-
-		if (investDepositIntent == 'true')
-    {
-      const targetUrl = `/u/investor/${$userBetarenaSettings.lang}`;
-
-      await goto
-      (
-        targetUrl,
-        {
-          replaceState: true
-        }
-      );
-    }
-
-    return;
-  }
 
   /**
+   * @author
+   *  @migbash
    * @summary
-   * IMPORTANT
-   * [MAIN]
+   *  🔹 HELPER | IMPORTANT
    * @description
-   * ➨ final auth stop, updating stores + localStoreage() + UI/UX;
-   * @param
-   * {User} firebase_user
-   * @param
-   * {string} web3_wallet_addr
-   * @param
-   * {Auth_Type} auth_provider_type
-   * @returns
-   * Promise < void >
-  */
-	async function successAuthComplete
-  (
-		firebase_user?: User,
-		web3_wallet_addr?: string,
-		auth_provider_type?: Auth_Type
-  ): Promise < void >
-  {
-
-    // [🐞]
-    dlogv2
-    (
-      AU_W_TAG[0],
-      [
-        `🟦 Executing successAuthComplete`,
-        firebase_user,
-        web3_wallet_addr,
-        auth_provider_type
-      ]
-    );
-
-    // ACTION: Create / retrieve target BetarenaUser
-    const
-    [
-      BETARENA_USER,
-      EXISTS
-    ] = await userFirestore
-    (
-      firebase_user?.uid,
-      firebase_user,
-      web3_wallet_addr,
-      auth_provider_type
-    );
-
-		let user_obj: Scores_User =
-    {
-			firebase_user_data: firebase_user,
-			scores_user_data: BETARENA_USER
-		};
-
-		// ACTION: Populate user data to firestore (DB)
-    if (!EXISTS)
-    {
-      await createFirestoreUser(user_obj)
-    }
-
-    // ACTION: Update UI/UX;
-		userBetarenaSettings.updateData
-    (
-      'user-object',
-      user_obj
-    );
-		$sessionStore.auth_show = false;
-		processing = false;
-		email_input = undefined;
-		success_auth = true;
-
-		setTimeout
-    (
-      () =>
-      {
-        success_auth = false;
-        auth_type = 'login';
-		  },
-      1500
-    );
-
-    return;
-	}
-
-  /**
-   * @summary
-   * [MAIN]
-   * @description
-   * ➨ get user info (firestore);
-   * ➨ if exists - return target user.
-   * ➨ else, create a new instance of user for Firestore.
-   * @returns
-   * {Promise<[BetarenaUser, boolean]>} [BetarenaUser, boolean]
-  */
-  async function userFirestore
-  (
-    uid: string,
-    firebase_user: User,
-    web3_wallet_addr: string,
-    auth_provider_type: Auth_Type
-  ): Promise< [ BetarenaUser, boolean ]>
-  {
-    try
-    {
-      const docRef = doc
-      (
-        db_firestore,
-        "betarena_users",
-        uid
-      );
-      const docSnap = await getDoc(docRef);
-
-      if (docSnap.exists())
-      {
-        // [🐞]
-        dlogv2
-        (
-          AU_W_TAG[0],
-          [
-            `🟢 Target UID exists`,
-            `🟦 var: docSnap ${docSnap.data()}`
-          ]
-        );
-
-        // return existing firestore user-instance;
-        return [docSnap.data() as BetarenaUser, true]
-      }
-      else
-      {
-
-        // [🐞]
-        dlogv2
-        (
-          AU_W_TAG[0],
-          [
-            `🔴 Target UID does not exists`,
-            `🔵 Creating new BetarenaUser instance`
-          ]
-        );
-
-        // create new user-instance;
-        const scores_user_data: BetarenaUser =
-        {
-          lang: $sessionStore?.serverLang,
-          registration_type: [auth_provider_type],
-          // NOTE: max. length - no separator - no random digits
-          username: generateUsername('', 0, 10),
-          // [ℹ] can be null (when using web3)
-          register_date: firebase_user?.metadata?.creationTime,
-           // [ℹ] can be null (when using web3)
-          profile_photo: firebase_user?.photoURL,
-          web3_wallet_addr: web3_wallet_addr || undefined
-        }
-
-        return [scores_user_data, false]
-      }
-    }
-    catch (e)
-    {
-      errlog(`❌ Error adding document: ${e}`)
-    }
-  }
-
-  /**
-   * @summary
-   * [MAIN]
-   * [HELPER]
-   * @description
-   * ➨ stores target (NEW) user in firestore DB;
-   * @returns
-   * Promise<void>
-  */
-  async function createFirestoreUser
-  (
-    user: Scores_User
-  ): Promise < void >
-  {
-    try
-    {
-
-      // [🐞]
-      dlog
-      (
-        `${AU_W_TAG[0]} 🔵 Persisting New User ${user?.firebase_user_data?.uid} to Firestore`
-      );
-
-      await setDoc
-      (
-        doc
-        (
-          db_firestore,
-          'betarena_users',
-          user?.firebase_user_data?.uid
-        ),
-        JSON.parse(JSON.stringify(user.scores_user_data))
-      );
-
-    }
-    catch (e)
-    {
-      errlog(`❌ Error adding document: ${e}`)
-    }
-  }
-
-  /**
-   * @summary
-   * 🔹 HELPER | IMPORTANT
-   *
-   * @description
-   * 📌 Validates for an `opened` state of the `login/register` form upon page open.
-   *
-   * @returns
-   * An asynchronous void.
+   *  📣 Validates for an `opened` state of the `login/register` form upon page open.
+   * @returns { Promise < void > }
   */
   async function checkOpenAuth
   (
   ): Promise < void >
   {
-    // ### [🐞]
-    dlog
+    if (!browser) return;
+
+    await tryCatchAsync
     (
-      `🚏 checkpoint ➤ checkOpenAuth`,
-      true
-    );
+      async (
+      ): Promise < void > =>
+      {
+        // ▓ [🐞]
+        dlog
+        (
+          '🚏 checkpoint ➤ checkOpenAuth',
+          true
+        );
 
-		const isAuthForm: string =	$page.url.searchParams.get('authForm');
-		const revertUrl = `${$page?.url?.origin}${$page?.url?.pathname}`;
+        const
+          isAuthForm = $page.url.searchParams.get('authForm')
+          , revertUrl = `${$page.url.origin}${$page.url.pathname}`
+        ;
 
-    // ### CHECK
-    // ### for have authetication form (modal) open instantly for users.
-		if (isAuthForm == 'true')
-    {
-      // ### [🐞]
-      dlog
-      (
-        `🚏 checkpoint ➤ isAuthForm == 'true'`,
-        true
-      );
-
-			// ### NOTE:
-      // ### Clean up url from queries/auth-bloat;
-			goto
-      (
-        revertUrl,
+        // ▓ CHECK
+        // ▓ > for have authetication form (modal) open instantly for users.
+        if (isAuthForm == 'true')
         {
-          replaceState: true
-        }
-      );
+          // ▓ [🐞]
+          dlog
+          (
+            '🚏 checkpoint ➤ isAuthForm == \'true\'',
+            true
+          );
 
-      $sessionStore.auth_show = true;
-		}
+          // ▓ NOTE:
+          // ▓ > clean up url from queries/auth-bloat.
+          goto
+          (
+            revertUrl,
+            {
+              replaceState: true
+            }
+          );
+
+          $sessionStore.auth_show = true;
+        }
+
+        return;
+      }
+      , (
+        ex: unknown
+      ): void =>
+      {
+        // ▓ [🐞]
+        console.error('💀 Unhandled :: ex');
+
+        return;
+      }
+    );
 
     return;
   }
 
-  // #endregion ➤ [METHODS]
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟥 MAIN
+   * @description
+   *  📣 Authenticates user with `Moralis Auth`.
+   * @returns { Promise < void > }
+   */
+  async function authWithMoralis
+  (
+  ): Promise < void >
+  {
+    if (!browser) return;
 
-  // #region ➤ [ONE-OFF] [METHODS] [HELPER] [IF]
+    await tryCatchAsync
+    (
+      async (
+      ): Promise < void > =>
+      {
+        const
+          moralisAuth: MoralisAuth = getMoralisAuth(app)
+          , moralisAuthInstance: SignInWithMoralisResponse = await signInWithMoralis(moralisAuth)
+        ;
 
-  // #endregion ➤ [ONE-OFF] [METHODS] [IF]
+        // ▓ [🐞]
+        dlog
+        (
+          `${AU_W_TAG[0]} 🟢 Moralis Auth`
+        );
 
-  // #region ➤ [REACTIVIY] [METHODS]
+        await successAuthComplete
+        (
+          moralisAuthInstance.credentials.user
+          , moralisAuthInstance.credentials.user.displayName!
+          , authServiceUsed
+        );
+
+        // ▓ CHECK
+        // > for 'deep link' of invest box.
+        if (investDepositIntent == 'true')
+        {
+          // ▓ [🐞]
+          // alert('mavigating to invest-box');
+
+          const targetUrl = `/u/investor/${$userBetarenaSettings.lang}`;
+
+          // ▓ [🐞]
+          console.log('targetUrl', targetUrl);
+
+          await goto
+          (
+            targetUrl,
+            {
+              replaceState: true
+            }
+          );
+        }
+
+        return;
+      }
+      , (
+        ex: unknown
+      ): void =>
+      {
+        // ▓ [🐞]
+        if (ex?.toString()?.includes('TypeError: null is not an object (evaluating \'signerOrProvider.call\')'))
+          console.info('❗️', '');
+        else
+          console.error('💀 Unhandled :: ex');
+        //
+        return;
+      }
+    );
+
+    return;
+  }
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟥 MAIN
+   * @description
+   *  - 📣 Final `authentication` step.
+   *  - 📣 Updates `stores`, `localStoreage` and `UI`.
+   * @param { User } firebaseUser
+   *  **[required]** Target user.
+   * @param { string } web3WalletAddress
+   *  **[required]** Target user web3 wallet address.
+   * @param { IAuthType } authProviderType
+   *  **[required]** Target user authetication option used.
+   * @returns { Promise < void > }
+  */
+  async function successAuthComplete
+  (
+    firebaseUser?: User
+    , web3WalletAddress?: string
+    , authProviderType?: IAuthType
+  ): Promise < void >
+  {
+    if (!browser) return;
+
+    await tryCatchAsync
+    (
+      async (
+      ): Promise < void > =>
+      {
+        // ▓ [🐞]
+        dlogv2
+        (
+          AU_W_TAG[0],
+          [
+            '🟦 Executing successAuthComplete'
+            , firebaseUser
+            , web3WalletAddress
+            , authProviderType
+          ]
+        );
+
+        // ▓ NOTE:
+        // ▓ > create/retrieve target BetarenaUser.
+        const
+          [
+            BETARENA_USER,
+            EXISTS
+          ] = await userFirestore
+          (
+            firebaseUser?.uid!
+            , firebaseUser!
+            , web3WalletAddress!
+            , authProviderType!
+          )
+        ;
+
+        let userObject: IScoreUser
+        = {
+          firebase_user_data: firebaseUser
+          , scores_user_data: BETARENA_USER
+        };
+
+        // ▓ NOTE:
+        // ▓ > populate user data to firestore (DB)
+        if (!EXISTS)
+          await createFirestoreUser(userObject)
+        //
+
+        // ▓ NOTE:
+        // ▓ > update UI/UX.
+        userBetarenaSettings.updateData
+        (
+          'user-object'
+          , userObject
+        );
+
+        $sessionStore.auth_show = false;
+        processing = false;
+        inputEmail = undefined;
+        successAuth = true;
+
+        setTimeout
+        (
+          () =>
+          {
+            successAuth = false;
+            authTypeSelect = 'login';
+          },
+          1500
+        );
+
+        return;
+      }
+      , (
+        ex: unknown
+      ): void =>
+      {
+        // ▓ [🐞]
+        if (ex?.toString()?.includes('TypeError: null is not an object (evaluating \'signerOrProvider.call\')'))
+          console.info('❗️', '');
+        else
+          console.error('💀 Unhandled :: ex');
+        //
+        return;
+      }
+    );
+
+    return;
+  }
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟥 MAIN
+   * @CUSTOM_TRY_CATCH
+   * @description
+   * - 📣 get user info (firestore);
+   * - 📣 (if exists) return target user.
+   * - 📣 (else) create a new instance of user for Firestore.
+   * @returns { Promise < [ BetarenaUser, boolean ] > }
+  */
+  async function userFirestore
+  (
+    uid: string
+    , firebaseUser: User
+    , web3WalletAddress: string
+    , authProviderType: IAuthType
+  ): Promise < [ BetarenaUser, boolean ] | [] >
+  {
+    if (!browser) return [];
+
+    return await tryCatchAsync
+    (
+      async (
+      ): Promise < [ BetarenaUser, boolean ] > =>
+      {
+        const
+          docRef = doc
+          (
+            db_firestore,
+            'betarena_users',
+            uid!
+          )
+          , docSnap = await getDoc(docRef)
+        ;
+
+        // ▓ CHECK:
+        // ▓ > for existing document (user).
+        if (docSnap.exists())
+        {
+          // ▓ [🐞]
+          dlogv2
+          (
+            AU_W_TAG[0],
+            [
+              '🟢 Target UID exists'
+              ,`🟦 var: docSnap ${docSnap.data()}`
+            ]
+          );
+
+          return [docSnap.data() as BetarenaUser, true]
+        }
+
+        // ▓ [🐞]
+        dlogv2
+        (
+          AU_W_TAG[0],
+          [
+            '🔴 Target UID does not exists'
+            ,'🔵 Creating new BetarenaUser instance'
+          ]
+        );
+
+        // ▓ NOTE:
+        // ▓ > create new user-instance.
+        const scoresUserData: BetarenaUser
+        = {
+          lang: $sessionStore.serverLang
+          , registration_type: [authProviderType]
+          , username: generateUsername('', 0, 10)
+          , register_date: firebaseUser.metadata.creationTime
+          , profile_photo: firebaseUser.photoURL
+          , web3_wallet_addr: web3WalletAddress || undefined
+        }
+
+        return [
+          scoresUserData
+          , false
+        ];
+      }
+      , (
+        ex: unknown
+      ): void =>
+      {
+        errlog(`❌ Error adding document: ${ex}`)
+
+        // ▓ [🐞]
+        if (ex?.toString()?.includes('TypeError: null is not an object (evaluating \'signerOrProvider.call\')'))
+          console.info('❗️', '');
+        else
+          console.error('💀 Unhandled :: ex');
+        //
+        return;
+      }
+    ) as [ BetarenaUser, boolean ] | [];
+  }
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟥 MAIN
+   * @description
+   *  📣 Stores target (NEW) user in Firebase Firestore Database.
+   * @returns { Promise < void > }
+  */
+  async function createFirestoreUser
+  (
+    user: IScoreUser
+  ): Promise < void >
+  {
+    if (!browser) return;
+
+    return await tryCatchAsync
+    (
+      async (
+      ): Promise < void > =>
+      {
+        // ▓ [🐞]
+        dlog
+        (
+          `${AU_W_TAG[0]} 🔵 Persisting New User ${user.firebase_user_data?.uid} to Firestore`
+        );
+
+        await setDoc
+        (
+          doc
+          (
+            db_firestore
+            , 'betarena_users'
+            , user.firebase_user_data?.uid!
+          )
+          , JSON.parse(JSON.stringify(user.scores_user_data))
+        );
+
+        return;
+      }
+      , (
+        ex: unknown
+      ): void =>
+      {
+        // ▓ [🐞]
+        errlog(`❌ Error adding document: ${ex}`)
+
+        return;
+      }
+    ) as void;
+  }
+
+  // #endregion ➤ 🛠️ METHODS
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
   /**
    * @description
    * ➨ listens to incoming auth. deep-links;
   */
-	$: if (browser)
+  $:
+  if (browser)
   {
-    checkEmailDeepLink();
+    checkEmailMagicLink();
     checkDiscordDeepLink();
     checkMetaMaskDeepLink();
     checkOpenAuth();
 	}
 
   /**
+   * @summary
+   * 🔥 REACTIVITY
+   *
+   * WARNING:
+   * can go out of control
+   *
    * @description
-   * ➨ listens to changes in auth. show/hide modal;
-  */
-  $: if (!$sessionStore.auth_show)
+   *  📣 listens to changes in auth. show/hide modal;
+   *
+   * WARNING:
+   * triggered by changes in:
+   * - `` - **kicker**
+   */
+  $:
+  if (!$sessionStore.auth_show)
   {
-		auth_view = true;
-		email_input = undefined;
-		email_verify_process = false;
-		email_sent_process = false;
-		email_already_in_use = false;
-		email_error_format = false;
-	}
+    authView = true;
+    inputEmail = undefined;
+    emailVerifyInProgress = false;
+    emailVerificationSent = false;
+    emailAlreadyInUse = false;
+    errorAuthEmailFormat = false;
+  }
 
-  // TODO: DOC:
-  ////// CLOCKDOWN TIMER EMAIL CHECk
+  $:
+  if (sentEmailDate != undefined)
+  {
+    dateObjDif = sentEmailDate.getTime() - Date.parse(new Date().toString());
+    interval1 = setInterval
+    (
+      (
+      ) =>
+      {
+        dateObjDif = (sentEmailDate!).getTime() - Date.parse(new Date().toString());
+      },
+      1000
+    );
+  }
 
-	$: if (sent_email_date != undefined) {
-		dateObjDif =
-			sent_email_date.getTime() -
-			Date.parse(new Date().toString());
-		setInterval(() => {
-			dateObjDif =
-				sent_email_date.getTime() -
-				Date.parse(new Date().toString());
-		}, 1000);
-	}
-	$: countD_sec = Math.floor(
-		(dateObjDif / 1000) % 60
-	).toString();
-	$: if (parseInt(countD_sec) < 10) {
-		countD_sec = '0' + countD_sec;
-	}
-	$: countD_min = Math.floor(
-		(dateObjDif / 1000 / 60) % 60
-	).toString();
-	$: if (parseInt(countD_min) < 10) {
-		countD_min = '0' + countD_min;
-	}
-	$: if (countD_sec.includes('-')) {
-		// sent_email_date = undefined
-		allow_resend = true;
-	} else {
-		allow_resend = false;
-	}
+  $:
+  if (countD_sec.includes('-'))
+    allowResend = true;
+  else
+    allowResend = false;
+  //
 
-  // #endregion ➤ [REACTIVIY] [METHODS]
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
-  // #region ➤ SvelteJS/SvelteKit [LIFECYCLE]
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
-	onMount
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  onMount
   (
-    async () =>
+    async (
+    ) =>
     {
       [
-        tabletExclusive,
-        mobileExclusive
+        VIEWPORT_TABLET_INIT[1],
+        VIEWPORT_MOBILE_INIT[1]
       ] = viewport_change
       (
-        TABLET_VIEW,
-        MOBILE_VIEW
+        VIEWPORT_TABLET_INIT[0],
+        VIEWPORT_MOBILE_INIT[0]
       );
       window.addEventListener
       (
@@ -1365,87 +1651,115 @@ COMPONENT JS (w/ TS)
         function ()
         {
           [
-            tabletExclusive,
-            mobileExclusive
-          ] =
-          viewport_change
+            VIEWPORT_TABLET_INIT[1],
+            VIEWPORT_MOBILE_INIT[1]
+          ] = viewport_change
           (
-            TABLET_VIEW,
-            MOBILE_VIEW
+            VIEWPORT_TABLET_INIT[0],
+            VIEWPORT_MOBILE_INIT[0]
           );
         }
       );
-	  }
-  );
 
-  onMount
-  (
-    async () =>
-    {
-      discord_icon = (await import('./assets/discord.svg')).default;
-      email_verify = (await import('./assets/email-verify.svg')).default;
-      error_icon = (await import('./assets/error-alert.svg')).default;
-      github_dark_icon = (await import('./assets/github-dark.svg')).default;
-      github_icon = (await import('./assets/github.svg')).default;
-      google_icon = (await import('./assets/google.svg')).default;
-      loader_animation = (await import('./assets/lodaer-anim-2.svg')).default;
-      logo = (await import('./assets/logo-auth.svg')).default;
-      logo_dark = (await import('./assets/logo-dark.svg')).default;
-      metamask_icon = (await import('./assets/metamask.svg')).default;
-      success_icon = (await import('./assets/success-alert.svg')).default;
+      iconList
+      = [
+          (await import('./assets/discord.svg')).default // [0] discord_icon
+          , (await import('./assets/email-verify.svg')).default // [1] email_verify
+          , (await import('./assets/error-alert.svg')).default // [2] error_icon
+          , (await import('./assets/github-dark.svg')).default // [3] github_dark_icon
+          , (await import('./assets/github.svg')).default // [4] github_icon
+          , (await import('./assets/google.svg')).default // [5] google_icon
+          , (await import('./assets/lodaer-anim-2.svg')).default // [6] loader_animation
+          , (await import('./assets/logo-auth.svg')).default // [7] logo
+          , (await import('./assets/logo-dark.svg')).default // [8] logo_dark
+          , (await import('./assets/metamask.svg')).default // [9] metamask_icon
+          , (await import('./assets/success-alert.svg')).default // [10] success_icon
+        ]
+      ;
     }
   );
 
-  // #endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
+  onDestroy
+  (
+    () =>
+    {
+      // @ts-expect-error
+      clearInterval(interval1);
+    }
+  );
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
 </script>
 
-<!-- ===============
-COMPONENT HTML
-NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
-=================-->
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ Svelte Component HTML                                                            │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ - use 'Ctrl+Space' to autocomplete global class="(cursor)" styles                │
+│ - access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.     │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
 
-{#await widget_init()}
+{#await widgetInit()}
   <!--
-  ### NOTE:
-  ### promise is pending
+  ╭────────────────────────────────────────────────────────────────────────╮
+  │ NOTE :|: promise is pending                                            │
+  ╰────────────────────────────────────────────────────────────────────────╯
   -->
-{:then WIDGET_LAZY_LOAD_DATA}
+
+{:then authData}
+  <!--
+  ╭────────────────────────────────────────────────────────────────────────╮
+  │ NOTE :|: promise is fulfilled                                          │
+  ╰────────────────────────────────────────────────────────────────────────╯
+  -->
 
   <!--
-  BACKGROUND BACKDROP FADE
+  ▓ NOTE:
+  ▓ > background backdrop-fade
   -->
-  {#if $sessionStore?.auth_show}
+  {#if $sessionStore.auth_show}
+
     <div
       id="background-modal-blur"
-      on:click={() =>	($sessionStore.auth_show = false)}
+      on:click={() =>	{return ($sessionStore.auth_show = false)}}
       in:fade
     />
+
   {/if}
 
   <!--
-  AUTH MESSAGE [SUCCESS]
+  ▓ NOTE:
+  ▓ > authentication message (success)
   -->
-  {#if success_auth}
+  {#if successAuth}
 
     <div
       id="auth-alert-box"
-      class="row-space-start"
+      class=
+      "
+      row-space-start
+      "
       transition:fade
     >
 
       <img
-        src={success_icon}
+        src={iconList[10]}
         alt="Success Icon"
         title="Success Icon"
       />
 
       <p
-        class="w-500">
-        {#if auth_type == 'login'}
-          {WIDGET_LAZY_LOAD_DATA?.success_msg?.[0]}
+        class=
+        "
+        w-500
+        "
+      >
+        {#if authTypeSelect == 'login'}
+          {authData?.success_msg?.[0]}
         {:else}
-          {WIDGET_LAZY_LOAD_DATA?.success_msg?.[1]}
+          {authData?.success_msg?.[1]}
         {/if}
       </p>
 
@@ -1454,26 +1768,33 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   {/if}
 
   <!--
-  AUTH MESSAGE [ERROR]
+  ▓ NOTE:
+  ▓ > authentication message (error)
   -->
-  {#if error_auth}
+  {#if errorAuth}
 
     <div
       id="auth-alert-box"
-      class="row-space-start"
+      class=
+      "
+      row-space-start
+      "
       transition:fade
     >
 
       <img
-        src={error_icon}
+        src={iconList[2]}
         alt="Error Icon"
         title="Error Icon"
       />
 
       <p
-        class="w-500"
+        class=
+        "
+        w-500
+        "
       >
-        {WIDGET_LAZY_LOAD_DATA?.err_msg[0]}
+        {authData?.err_msg?.[0]}
       </p>
 
     </div>
@@ -1481,18 +1802,20 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   {/if}
 
   <!--
-  AUTH WIDGET
+  ▓ NOTE:
+  ▓ > authentication main
   -->
-  {#if $sessionStore?.auth_show}
+  {#if $sessionStore.auth_show}
 
     <div
-      id="widget-outer"
+      id={CNAME}
       class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
       in:fade
     >
 
       <!--
-      PROCESSING STATE
+      ▓ NOTE:
+      ▓ > processing (UI-state)
       -->
       {#if processing}
 
@@ -1504,7 +1827,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           >
 
             <img
-              src={loader_animation}
+              src={iconList[6]}
               alt="Loader Vector"
               title="Processing..."
             />
@@ -1523,110 +1846,133 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       {/if}
 
       <!--
-      EMAIL VERIFICATION STATE
+      ▓ NOTE:
+      ▓ > email verification (UI-state)
       -->
-      {#if email_verify_process}
+      {#if emailVerifyInProgress}
 
         <div
           id="email-auth-verify-box"
         >
 
           <!--
-          CLOSE ICON
+          ▓ NOTE:
+          ▓ > close icon
           -->
           <img
             id="close-vector"
-            class="cursor-pointer"
+            class=
+            "
+            cursor-pointer
+            "
             src="/assets/svg/close.svg"
             alt="close-svg"
-            on:click={() => ($sessionStore.auth_show = false)}
+            on:click={() => {return ($sessionStore.auth_show = false)}}
           />
 
           <!--
-          VERIFY TEXT
+          ▓ NOTE:
+          ▓ > verify text
           -->
           <p
             class=
             "
-              w-500
-              color-black-2
+            s-20
+            w-500
+            color-black-2
             "
-            style="font-size: 20px;"
           >
-            {WIDGET_LAZY_LOAD_DATA?.verification}
+            {authData?.verification}
           </p>
 
           <!--
-          VERIFY EMAIL
+          ▓ NOTE:
+          ▓ > verify email
           -->
           <p
-            class="color-grey"
+            class=
+            "
+            color-grey
+            "
           >
-            {WIDGET_LAZY_LOAD_DATA?.verify_email}
+            {authData?.verify_email}
           </p>
 
           <!--
-          VERIFY EMAIL ICON
+          ▓ NOTE:
+          ▓ > verify email icon
           -->
           <img
             id="email-verify-icon"
-            src={email_verify}
+            src={iconList[1]}
             alt="Email Vector"
             title="Email Vector"
           />
 
           <!--
-          VERIFY EMAIL TEXT
-          -->
-          <p
-            class="color-grey"
-          >
-            {WIDGET_LAZY_LOAD_DATA?.email_verify_sent?.[0]}
-            <br />
-
-            <span
-              class="color-black-2"
-            >
-              {email_input}
-            </span>
-
-            <br />
-
-            {WIDGET_LAZY_LOAD_DATA?.email_verify_sent?.[1]}
-          </p>
-
-          <!--
-          VERIFY EMAIL BOX
+          ▓ NOTE:
+          ▓ > verify email text
           -->
           <p
             class=
             "
-              color-primary
-              cursor-pointer
+            color-grey
             "
-            style="margin-top: 8px;"
-            on:click={() => window.open('mailto:')}
           >
-            {WIDGET_LAZY_LOAD_DATA?.inbox}
-          </p>
+            {authData?.email_verify_sent?.[0]}
+            <br />
 
-          <!--
-          VEIRFY NO EMAIL
-          -->
-          <p
-            class="color-grey"
-            style="margin-top: 24px;"
-          >
-            {WIDGET_LAZY_LOAD_DATA?.no_email_verify?.[0]}
             <span
               class=
               "
-                color-primary
-                cursor-pointer
+              color-black-2
               "
-              on:click={() => loginEmailLink()}
             >
-              {WIDGET_LAZY_LOAD_DATA?.no_email_verify?.[1]}
+              {inputEmail}
+            </span>
+
+            <br />
+
+            {authData?.email_verify_sent?.[1]}
+          </p>
+
+          <!--
+          ▓ NOTE:
+          ▓ > verify email box
+          -->
+          <p
+            class=
+            "
+            m-t-8
+            color-primary
+            cursor-pointer
+            "
+            on:click={() => {return window.open('mailto:')}}
+          >
+            {authData?.inbox}
+          </p>
+
+          <!--
+          ▓ NOTE:
+          ▓ > verify no email box
+          -->
+          <p
+            class=
+            "
+            color-grey
+            m-t-25
+            "
+          >
+            {authData?.no_email_verify?.[0]}
+            <span
+              class=
+              "
+              color-primary
+              cursor-pointer
+              "
+              on:click={() => {return authWithEmailMagicLink()}}
+            >
+              {authData?.no_email_verify?.[1]}
             </span>
           </p>
 
@@ -1635,72 +1981,90 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       {/if}
 
       <!--
-      EMAIL SENT STATE
+      ▓ NOTE:
+      ▓ > email sent (UI-state)
       -->
-      {#if email_sent_process}
+      {#if emailVerificationSent}
 
         <div
           id="email-auth-verify-box"
         >
 
           <!--
-          CLOSE ICON LOGO
+          ▓ NOTE:
+          ▓ > close icon
           -->
           <img
             id="close-vector"
-            class="cursor-pointer"
+            class=
+            "
+            cursor-pointer
+            "
             src="/assets/svg/close.svg"
             alt="close-svg"
-            on:click={() =>	($sessionStore.auth_show = false)}
+            on:click={() =>	{return ($sessionStore.auth_show = false)}}
           />
 
           <!--
-          VERIFY TEXT
+          ▓ NOTE:
+          ▓ > verify email text
           -->
           <p
             class=
             "
-              w-500
-              color-black-2
+            s-20
+            w-500
+            color-black-2
             "
-            style="font-size: 20px;"
           >
             Check your email
           </p>
 
           <!--
-          VERIFY EMAIL
+          ▓ NOTE:
+          ▓ > verify email
           -->
           <p
-            class="color-grey"
+            class=
+            "
+            color-grey
+            "
           >
             Please follow the link in your email
           </p>
 
           <!--
-          VERIFY EMAIL ICON
+          ▓ NOTE:
+          ▓ > verify email icon
           -->
           <img
             id="email-verify-icon"
-            src={email_verify}
+            src={iconList[1]}
             alt="Email Vector"
             title="Email Vector"
           />
 
           <!--
-          VERIFY EMAIL TEXT
+          ▓ NOTE:
+          ▓ > verify email text
           -->
           <p
-            class="color-grey"
+            class=
+            "
+            color-grey
+            "
           >
             An email has been sent to
 
             <br />
 
             <span
-              class="color-black-2"
+              class=
+              "
+              color-black-2
+              "
             >
-              {email_input}
+              {inputEmail}
             </span>
 
             <br />
@@ -1709,37 +2073,42 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           </p>
 
           <!--
-          VERIFY EMAIL INBOX
+          ▓ NOTE:
+          ▓ > verify email inbox
           -->
           <p
             class=
             "
-              color-primary
-              cursor-pointer
+            m-t-8
+            color-primary
+            cursor-pointer
             "
-            style="margin-top: 8px;"
-            on:click={() => window.open('mailto:')}
+            on:click={() => {return window.open('mailto:')}}
           >
             Go to my inbox
           </p>
 
           <!--
-          VERIFY EMAIL TEXT
+          ▓ NOTE:
+          ▓ > verify email text
           -->
-          {#if allow_resend}
+          {#if allowResend}
 
             <p
-              class="color-grey"
-              style="margin-top: 24px;"
+              class=
+              "
+              m-t-25
+              color-grey
+              "
             >
               Did not get the email?
               <span
                 class=
                 "
-                  color-primary
-                  cursor-pointer
+                color-primary
+                cursor-pointer
                 "
-                on:click={() => loginEmailLink()}
+                on:click={() => {return authWithEmailMagicLink()}}
               >
                 Resend email
               </span>
@@ -1748,10 +2117,13 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           {:else}
 
             <p
-              class="color-grey"
-              style="margin-top: 24px;"
+              class=
+              "
+              m-t-25
+              color-grey
+              "
             >
-              {countD_min}:{countD_sec} to resend option
+              {toZeroPrefixDateStr(countD_min)}:{toZeroPrefixDateStr(countD_sec)} to resend option
             </p>
 
           {/if}
@@ -1761,100 +2133,116 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       {/if}
 
       <!--
-      AUTHETICATION VIEW
+      ▓ NOTE:
+      ▓ > authentication (UI-state)
       -->
-      {#if auth_view}
+      {#if authView}
 
         <!--
-        CLOSE ICON
+        ▓ NOTE:
+        ▓ > close icon
         -->
         <img
           id="close-vector"
-          class="cursor-pointer"
+          class=
+          "
+          cursor-pointer
+          "
           src="/assets/svg/close.svg"
           alt="close-svg"
-          on:click={() => ($sessionStore.auth_show = false)}
+          on:click={() => {return ($sessionStore.auth_show = false)}}
         />
 
         <!--
-        AUTH LOGO BETARENA
+        ▓ NOTE:
+        ▓ > authentication logo Betarena
         -->
         <img
           id="auth-logo"
-          src={$userBetarenaSettings.theme == 'Dark' ? logo_dark : logo}
+          src={$userBetarenaSettings.theme == 'Dark' ? iconList[8] : iconList[7]}
           alt="Betarena Logo"
           title="Betarena Logo"
           aria-label="Betarena Logo"
         />
 
         <!--
-        LOGIN/SIGN-UP TEXT
+        ▓ NOTE:
+        ▓ > login/sign-up text
         -->
         <p
           id="auth-head"
           class=
           "
-            color-black-2
-            w-500
+          color-black-2
+          w-500
           "
         >
-          {#if auth_type == 'login'}
-            {WIDGET_LAZY_LOAD_DATA?.login}
+          {#if authTypeSelect == 'login'}
+            {authData?.login}
           {:else}
-            {WIDGET_LAZY_LOAD_DATA?.sign_up}
+            {authData?.sign_up}
           {/if}
         </p>
 
         <!--
-        LOGIN/SIGN-UP TEXT WITH EMAIL
+        ▓ NOTE:
+        ▓ > login/sign-up text email
         -->
         <p
           class=
           "
-            color-grey
+          color-grey
           "
         >
-          {#if auth_type == 'login'}
-            {WIDGET_LAZY_LOAD_DATA?.email_msg?.[0]}
+          {#if authTypeSelect == 'login'}
+            {authData?.email_msg?.[0]}
           {:else}
-            {WIDGET_LAZY_LOAD_DATA?.email_msg?.[1]}
+            {authData?.email_msg?.[1]}
           {/if}
         </p>
 
+        <!--
+        ▓ NOTE:
+        ▓ > authentication form
+        -->
         <form
-          on:submit|preventDefault={() => loginEmailLink()}
+          on:submit|preventDefault={() => {return authWithEmailMagicLink()}}
         >
           <!--
-          [ℹ] input email
-          class:error-email={email_error_format || email_already_in_use}
+          ▓ NOTE:
+          ▓ > input email
           -->
-
           <input
             id="email"
             type="email"
             placeholder="email@gmail.com"
-            bind:value={email_input}
-            on:invalid={() => wrongEmailFormatToggle()}
             autocomplete="off"
-            class:error-email={email_error_format}
+            class:error-email={errorAuthEmailFormat}
             required
+            bind:value={inputEmail}
+            on:invalid={() => {return wrongEmailFormatToggle()}}
           />
 
           <!--
-          ERROR EMAIL VALIDATION
+          ▓ NOTE:
+          ▓ > error email
           -->
-          {#if email_error_format}
+          {#if errorAuthEmailFormat}
             <p
-              class="color-error"
-              style="margin-top: 10px;"
+              class=
+              "
+              m-t-10
+              color-error
+              "
             >
-              {WIDGET_LAZY_LOAD_DATA?.err_msg?.[1]}
+              {authData?.err_msg?.[1]}
             </p>
           {/if}
 
           <!--
-          [ℹ] error email validation exists
-          {#if email_already_in_use}
+          ▓ NOTE:
+          ▓ > error email validation exists
+          {#if emailAlreadyInUse}
             <p
               class="color-error"
               style="margin-top: 10px;">
@@ -1864,34 +2252,39 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           -->
 
           <!--
-          SUBMIT EMAIL BUTTON
+          ▓ NOTE:
+          ▓ > submit email button
           -->
           <button
             id="email-btn"
             class=
             "
-              btn-primary
+            btn-primary
             "
             type="submit"
           >
             <p
               class=
               "
-                w-500
+              w-500
               "
             >
-              {WIDGET_LAZY_LOAD_DATA?.email_continue}
+              {authData?.email_continue}
             </p>
           </button>
 
         </form>
 
         <!--
-        AUTH LOGIN/SIGN-UP 0Auth2
+        ▓ NOTE:
+        ▓ > authentication login/sign-up OAuth2
         -->
         <div
           id="other-oauth-divider-box"
-          class="row-space-out"
+          class=
+          "
+          row-space-out
+          "
         >
 
           <div class="hr-box" />
@@ -1899,19 +2292,26 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           <p
             class=
             "
-              color-grey
+            color-grey
             "
           >
-            {WIDGET_LAZY_LOAD_DATA?.or}
+            {authData?.or}
           </p>
 
           <div class="hr-box" />
 
         </div>
 
+        <!--
+        ▓ NOTE:
+        ▓ > authentication box
+        -->
         <div
           id="oauth-box"
-          class="row-space-out"
+          class=
+          "
+          row-space-out
+          "
         >
 
           <!--
@@ -1919,10 +2319,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           -->
           <button
             class="btn-auth-opt"
-            on:click={() => loginGoogle()}
+            on:click={() => {return authWithGoogle()}}
           >
             <img
-              src={google_icon}
+              src={iconList[5]}
               alt="Google Icon"
               title="Google Icon"
             />
@@ -1933,10 +2333,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           -->
           <button
             class="btn-auth-opt"
-            on:click={() => loginDiscord()}
+            on:click={() => {return authWithDiscord()}}
           >
             <img
-              src={discord_icon}
+              src={iconList[0]}
               alt="Discord Icon"
               title="Discord Icon"
             />
@@ -1947,10 +2347,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           -->
           <button
             class="btn-auth-opt"
-            on:click={() => loginGitHub()}
+            on:click={() => {return authWithGitHub()}}
           >
             <img
-              src={$userBetarenaSettings.theme ==	'Dark' ? github_dark_icon : github_icon}
+              src={$userBetarenaSettings.theme ==	'Dark' ? iconList[3] : iconList[4]}
               alt="Github Icon"
               title="Github Icon"
             />
@@ -1959,7 +2359,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         </div>
 
         <!--
-        AUTH LOGIN/SIGN-UP WEB-3
+        ▓ NOTE:
+        ▓ > authentication web3 box
         -->
         <div
           id="web3-divider-box"
@@ -1969,14 +2370,15 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           <div class="hr-box" />
 
           <p
-            class="
-              color-grey
+            class=
+            "
+            color-grey
             "
           >
-            {#if auth_type == 'login'}
-              {WIDGET_LAZY_LOAD_DATA?.or_web3_login}
+            {#if authTypeSelect == 'login'}
+              {authData?.or_web3_login}
             {:else}
-              {WIDGET_LAZY_LOAD_DATA?.or_web3_signup}
+              {authData?.or_web3_signup}
             {/if}
           </p>
 
@@ -1984,6 +2386,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
         </div>
 
+        <!--
+        ▓ NOTE:
+        ▓ > authentication web3 box
+        -->
         <button
           id="metamask"
           class=
@@ -1991,18 +2397,18 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             row-space-center
             btn-auth-opt
           "
-          on:click={() => loginMetamask()}
+          on:click={() => {return authWithMetamask()}}
         >
           <img
-            src={metamask_icon}
+            src={iconList[9]}
             alt="Metamask Icon"
             title="Metamask Icon"
           />
           <p
             class=
             "
-              w-500
-              color-black-2
+            w-500
+            color-black-2
             "
           >
             MetaMask
@@ -2010,42 +2416,43 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         </button>
 
         <!--
-        AUTH LOGIN/SIGN-UP TEXT-PROMPT ACCOUNT
+        ▓ NOTE:
+        ▓ > authentication text-prompt account box
         -->
         <p
           id="account-onboard-text"
           class=
           "
-            color-grey
+          color-grey
           "
         >
 
-          {#if auth_type == 'login'}
+          {#if authTypeSelect == 'login'}
 
-            {WIDGET_LAZY_LOAD_DATA?.no_account}
+            {authData?.no_account}
             <span
               class=
               "
-                color-primary
-                cursor-pointer
+              color-primary
+              cursor-pointer
               "
-              on:click={() => (auth_type = 'register')}
+              on:click={() => {return (authTypeSelect = 'register')}}
             >
-              {WIDGET_LAZY_LOAD_DATA?.register}
+              {authData?.register}
             </span>
 
           {:else}
 
-            {WIDGET_LAZY_LOAD_DATA?.account_exists}
+            {authData?.account_exists}
             <span
               class=
               "
-                color-primary
-                cursor-pointer
+              color-primary
+              cursor-pointer
               "
-              on:click={() => (auth_type = 'login')}
+              on:click={() => {return (authTypeSelect = 'login')}}
             >
-              {WIDGET_LAZY_LOAD_DATA?.login}
+              {authData?.login}
             </span>
 
           {/if}
@@ -2058,32 +2465,36 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
   {/if}
 
-  <!-- promise was fulfilled -->
 {:catch error}
   <!--
-  ### NOTE:
-  ### promise was rejected
+  ╭────────────────────────────────────────────────────────────────────────╮
+  │ NOTE :|: promise is rejected                                           │
+  ╰────────────────────────────────────────────────────────────────────────╯
   -->
+
+  {error}
 {/await}
 
-<!-- ===============
-COMPONENT STYLE
-NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
-=================-->
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ Svelte Component CSS/SCSS                                                        │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ - auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE  │
+│ - access custom Betarena Scores CSS VScode Snippets by typing 'style...'         │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
 
-<style>
-
-	/*
-  other styles
-  */
+<style lang="scss">
 
 	div#background-modal-blur
   {
+    /* 📌 position */
 		position: fixed;
 		top: 0;
 		right: 0;
 		left: 0;
 		z-index: 4000;
+    /* 🎨 style */
 		height: 100%;
 		width: 100%;
 		background: rgba(0, 0, 0, 0.5);
@@ -2091,6 +2502,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 	div#auth-alert-box
   {
+    /* 📌 position */
 		position: fixed;
 		bottom: 20px;
 		width: fit-content;
@@ -2098,336 +2510,318 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		left: 0;
 		right: 0;
 		margin: auto;
+    /* 🎨 style */
 		background: rgba(0, 0, 0, 0.8);
 		backdrop-filter: blur(4px);
 		-webkit-backdrop-filter: blur(4px);
 		padding: 14px 18px;
 		border-radius: 6px;
-	}
-	div#auth-alert-box p
-  {
-		color: #ffffff;
-		margin-left: 10px;
+
+    p
+    {
+      color: #ffffff;
+      margin-left: 10px;
+    }
 	}
 
-	/*
-  widget-outer-box
-  */
-	#widget-outer
+	div#global⮕w⮕auth⮕main
   {
-		/* position */
+		/* 📌 position */
 		position: fixed;
 		z-index: 10000;
 		margin: auto;
 		width: fit-content;
-		width: 92%;
 		right: 0;
 		left: 0;
 		bottom: 0;
 		top: 0;
 		height: fit-content;
-		/* style */
+		/* 🎨 style */
 		background: #ffffff;
 		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
 		border-radius: 12px;
 		padding: 20px;
 		text-align: -webkit-center;
 		overflow: hidden;
-	}
+
+    div#processing-auth-box
+    {
+      position: absolute;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      width: 100%;
+      height: 100%;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      margin: auto;
+      background: rgba(255, 255, 255, 0.8);
+
+      div#inner-processing-box
+      {
+        position: absolute;
+        right: 0;
+        left: 0;
+        margin: auto;
+        width: fit-content;
+        height: fit-content;
+        top: 0;
+        bottom: 0;
+
+        img
+        {
+          width: 48px;
+          height: 48px;
+        }
+      }
+    }
+
+    div#email-auth-verify-box img#email-verify-icon
+    {
+      margin: 30px 0;
+    }
+
+    img#auth-logo
+    {
+      margin-bottom: 12px;
+    }
+
+    img#close-vector
+    {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 400000002;
+    }
+
+    p#auth-head
+    {
+      font-size: 20px;
+      margin-bottom: 5px;
+    }
+
+    input#email
+    {
+      background: var(--white);
+      border: 1px solid #cccccc;
+      box-sizing: border-box;
+      border-radius: 8px;
+      padding: 12px;
+      width: -webkit-fill-available;
+      width: -moz-available;
+      height: 44px;
+      outline: none;
+      font-size: 14px;
+      margin-top: 12px;
+      color: #000000;
+
+      &:hover
+      {
+        border: 1px solid #8c8c8c;
+      }
+      &:focus
+      {
+        border: 1px solid #4b4b4b;
+      }
+      &[placeholder]
+      {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+      &::placeholder
+      {
+        color: #cccccc;
+      }
+      &.error-email
+      {
+        border: 1px solid #ff3c3c !important;
+      }
+    }
+
+    button#email-btn
+    {
+      height: 40px;
+      width: 100%;
+      background-color: #f5620f;
+      box-shadow: 0px 3px 8px
+        rgba(212, 84, 12, 0.32);
+      border-radius: 8px;
+      padding: 10px 24px;
+      margin-top: 12px;
+
+      &:hover
+      {
+        background: #f77c42;
+      }
+
+      p
+      {
+        color: #ffffff;
+        font-size: 14px;
+      }
+    }
+
+    div#other-oauth-divider-box
+    {
+      margin: 16px 0;
+
+      p
+      {
+        margin: 0 12px;
+      }
+      div.hr-box
+      {
+        height: 1px;
+        width: 100%;
+        background: #cccccc;
+      }
+    }
+
+    div#oauth-box
+    {
+      button.btn-auth-opt
+      {
+        padding: 12px 32px;
+        background: #ffffff;
+        border: 1px solid #e6e6e6 !important;
+        border-radius: 60px;
+        margin-right: 12px;
+      }
+      button.btn-auth-opt:hover
+      {
+        border: 1px solid #f5620f !important;
+      }
+      button.btn-auth-opt:last-child
+      {
+        margin-right: unset;
+      }
+    }
+
+    div#web3-divider-box
+    {
+      margin: 16px 0;
+
+      div.hr-box
+      {
+        height: 1px;
+        width: 100%;
+        background: #cccccc;
+      }
+      p
+      {
+        margin: 0 12px;
+        white-space: nowrap;
+      }
+    }
+
+    button#metamask.btn-auth-opt
+    {
+      padding: 12px 32px;
+      background: #ffffff;
+      border: 1px solid #e6e6e6 !important;
+      border-radius: 60px;
+      margin-right: 12px;
+
+      &:hover
+      {
+        border: 1px solid #f5620f !important;
+      }
+      p
+      {
+        margin-left: 12px;
+        font-size: 14px;
+      }
+    }
+
+    p#account-onboard-text
+    {
+      margin-top: 16px;
+    }
+  }
 
 	/*
-  widget processing loading style
-  */
-	div#processing-auth-box
-  {
-		position: absolute;
-		backdrop-filter: blur(6px);
-		-webkit-backdrop-filter: blur(6px);
-		width: 100%;
-		height: 100%;
-		top: 0;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		margin: auto;
-		background: rgba(255, 255, 255, 0.8);
-	}
-	div#processing-auth-box	div#inner-processing-box
-  {
-		position: absolute;
-		right: 0;
-		left: 0;
-		margin: auto;
-		width: fit-content;
-		height: fit-content;
-		top: 0;
-		bottom: 0;
-	}
-	div#processing-auth-box	div#inner-processing-box img
-  {
-		width: 48px;
-		height: 48px;
-	}
-
-	/*
-  div#email-auth-verify-box
-  {
-	}
-  */
-	div#email-auth-verify-box img#email-verify-icon
-  {
-		margin: 30px 0;
-	}
-
-	img#auth-logo
-  {
-		margin-bottom: 12px;
-	}
-
-	img#close-vector
-  {
-		position: absolute;
-		top: 20px;
-		right: 20px;
-		z-index: 400000002;
-	}
-
-	p#auth-head
-  {
-		font-size: 20px;
-		margin-bottom: 5px;
-	}
-
-	/*
-  main email auth style box
-  */
-	input#email
-  {
-		/* white theme/white */
-		background: #ffffff;
-		/* white theme/gray */
-		border: 1px solid #cccccc;
-		box-sizing: border-box;
-		border-radius: 8px;
-		padding: 12px;
-		width: -webkit-fill-available;
-		width: -moz-available;
-		height: 44px;
-		outline: none;
-		font-size: 14px;
-		margin-top: 12px;
-		color: #000000;
-	}
-	input#email:hover
-  {
-		border: 1px solid #8c8c8c;
-	}
-	input#email:focus
-  {
-		border: 1px solid #4b4b4b;
-	}
-	input#email[placeholder]
-  {
-		overflow: hidden;
-		white-space: nowrap;
-		text-overflow: ellipsis;
-	}
-	input#email::placeholder
-  {
-		color: #cccccc;
-	}
-	input#email.error-email
-  {
-		border: 1px solid #ff3c3c !important;
-	}
-	button#email-btn
-  {
-		height: 40px;
-		width: 100%;
-		background-color: #f5620f;
-		box-shadow: 0px 3px 8px
-			rgba(212, 84, 12, 0.32);
-		border-radius: 8px;
-		padding: 10px 24px;
-		margin-top: 12px;
-	}
-	button#email-btn p
-  {
-		color: #ffffff;
-		font-size: 14px;
-	}
-	button#email-btn:hover
-  {
-		background: #f77c42;
-	}
-
-	/*
-  alternative OAuth2 style box
-  */
-	div#other-oauth-divider-box
-  {
-		margin: 16px 0;
-	}
-	div#other-oauth-divider-box div.hr-box
-  {
-		height: 1px;
-		width: 100%;
-		background: #cccccc;
-	}
-	div#other-oauth-divider-box p
-  {
-		margin: 0 12px;
-	}
-	div#oauth-box button.btn-auth-opt
-  {
-		padding: 12px 32px;
-		background: #ffffff;
-		border: 1px solid #e6e6e6 !important;
-		border-radius: 60px;
-		margin-right: 12px;
-	}
-	div#oauth-box button.btn-auth-opt:hover
-  {
-		border: 1px solid #f5620f !important;
-	}
-	div#oauth-box button.btn-auth-opt:last-child
-  {
-		margin-right: unset;
-	}
-
-	/*
-  alternative Web3 style box
-  */
-	div#web3-divider-box
-  {
-		margin: 16px 0;
-	}
-	div#web3-divider-box div.hr-box
-  {
-		height: 1px;
-		width: 100%;
-		background: #cccccc;
-	}
-	div#web3-divider-box p
-  {
-		margin: 0 12px;
-		white-space: nowrap;
-	}
-	button#metamask.btn-auth-opt
-  {
-		padding: 12px 32px;
-		background: #ffffff;
-		border: 1px solid #e6e6e6 !important;
-		border-radius: 60px;
-		margin-right: 12px;
-	}
-	button#metamask.btn-auth-opt:hover
-  {
-		border: 1px solid #f5620f !important;
-	}
-	button#metamask p
-  {
-		margin-left: 12px;
-		font-size: 14px;
-	}
-
-	/*
-  switch login/sign-up options style text
-  */
-	p#account-onboard-text
-  {
-		margin-top: 16px;
-	}
-
-	/*
-  =============
-  RESPONSIVNESS
-  =============
+  ╭──────────────────────────────────────────────────────────────────────────────╮
+  │ ⚡️ RESPONSIVNESS                                                              │
+  ╰──────────────────────────────────────────────────────────────────────────────╯
   */
 
 	@media only screen
   and (min-width: 726px)
-  and (max-width: 1160px)
   {
-		/* empty */
-	}
-
-	@media only screen
-  and (min-width: 726px)
-  {
-		#widget-outer
+		#global⮕w⮕auth⮕main
     {
 			width: 340px;
 		}
 	}
 
 	@media only screen
-  and (min-width: 726px)
-  and (max-width: 865px)
-  {
-		/* empty */
-	}
-
-	@media only screen
   and (min-width: 1160px)
   {
-		#widget-outer
+		#global⮕w⮕auth⮕main
     {
 			width: 328px;
 		}
 	}
 
 	/*
-  =============
-  DARK-THEME
-  =============
+  ╭──────────────────────────────────────────────────────────────────────────────╮
+  │ 🌒 DARK-THEME                                                                │
+  ╰──────────────────────────────────────────────────────────────────────────────╯
   */
 
-	div#widget-outer.dark-background-1
+	div#global⮕w⮕auth⮕main.dark-background-1
   {
-		background: #4b4b4b;
-	}
+    /* 🎨 style */
+		background: var(--dark-theme-1);
 
-	div#widget-outer.dark-background-1 div#processing-auth-box
-  {
-		background: rgba(41, 41, 41, 0.8);
-	}
+    div#processing-auth-box
+    {
+      /* 🎨 style */
+      background: rgba(41, 41, 41, 0.8);
+    }
 
-	div#widget-outer.dark-background-1 input#email
-  {
-		background: #4b4b4b;
-		border: 1px solid #737373;
-	}
-	div#widget-outer.dark-background-1 input#email
-  {
-		color: #ffffff;
-	}
-	div#widget-outer.dark-background-1 input#email::placeholder
-  {
-		color: #737373;
-	}
-	div#widget-outer.dark-background-1 input#email:hover
-  {
-		border: 1px solid #8c8c8c;
-	}
+    input#email
+    {
+      /* 🎨 style */
+      background: var(--dark-theme-1);
+      border: 1px solid var(--dark-theme-1-2-shade);
+      color: var(--white);
 
-	div#widget-outer.dark-background-1 div#other-oauth-divider-box div.hr-box,
-	div#widget-outer.dark-background-1 div#web3-divider-box	div.hr-box
-  {
-		background: #737373;
-	}
+      &::placeholder
+      {
+        /* 🎨 style */
+        color: var(--dark-theme-1-2-shade);
+      }
+      &:hover
+      {
+        /* 🎨 style */
+        border: 1px solid var(--grey);
+      }
+    }
 
-	div#widget-outer.dark-background-1 div#oauth-box button.btn-auth-opt,
-	div#widget-outer.dark-background-1 button#metamask.btn-auth-opt
-  {
-		border: 1px solid #737373 !important;
-		background: #4b4b4b;
-	}
+    div#other-oauth-divider-box div.hr-box
+    , div#web3-divider-box div.hr-box
+    {
+      /* 🎨 style */
+      background: var(--dark-theme-1-2-shade);
+    }
 
-	div#widget-outer.dark-background-1 div#oauth-box button.btn-auth-opt:hover,
-	div#widget-outer.dark-background-1 button#metamask.btn-auth-opt:hover
-  {
-		border: 1px solid #f5620f !important;
+    div#oauth-box button.btn-auth-opt
+    , button#metamask.btn-auth-opt
+    {
+      /* 🎨 style */
+      border: 1px solid var(--dark-theme-1-2-shade) !important;
+      background: var(--dark-theme-1)
+    }
+
+    div#oauth-box button.btn-auth-opt:hover
+    , button#metamask.btn-auth-opt:hover
+    {
+      /* 🎨 style */
+      border: 1px solid var(--primary) !important;
+    }
 	}
 
 </style>
