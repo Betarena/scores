@@ -34,8 +34,9 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
-	import { get } from '$lib/api/utils';
+	import { get, post } from '$lib/api/utils';
 	import { app, auth, db_firestore } from '$lib/firebase/init';
+	import { getCookie, setCookie } from '$lib/store/cookie.js';
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { toZeroPrefixDateStr } from '$lib/utils/dates.js';
@@ -1125,15 +1126,71 @@
 
     return;
   }
+
+  /**
+   *
+   */
+  async function checkReferralLink
+  (
+  ): Promise < void >
+  {
+    if (!browser) return;
+
+    await tryCatchAsync
+    (
+      async (
+      ): Promise < void > =>
+      {
+        const
+          referralId = $page.url.searchParams.get('referralId')
+          , revertUrl = `${$page.url.origin}${$page.url.pathname}`
+        ;
+
+        // ▓ [🐞]
+        dlog
         (
-          `${AU_W_TAG[0]} 🔴 Moralis Auth not found!`
+          `${AU_W_TAG[0]} 🔵 ReferralId ${referralId}`
         );
 
-			  alert
+        // ▓ NOTE:
+        // ▓ > clean up `url` from deeplink `queries` and `authentication bloat`.
+        goto
         (
-          'Please install the MetaMask Wallet Extension!'
+          revertUrl,
+          {
+            replaceState: true
+          }
         );
 
+        if (!referralId) return;
+
+        // ▓ NOTE:
+        // ▓ > store 'referralId' in cookie for 30 days.
+        setCookie
+        (
+          'betarenaScoresCookieReferralCode'
+          , referralId
+          , 30
+        );
+
+        return;
+      }
+      , (
+        ex: unknown
+      ): void =>
+      {
+        // ▓ [🐞]
+        if (ex?.toString()?.includes('TypeError: null is not an object (evaluating \'signerOrProvider.call\')'))
+          console.info('❗️', '');
+        else
+          console.error('💀 Unhandled :: ex');
+        //
+        return;
+      }
+    );
+
+    return;
+  }
 
   /**
    * @author
@@ -1521,6 +1578,38 @@
           `${AU_W_TAG[0]} 🔵 Persisting New User ${user.firebase_user_data?.uid} to Firestore`
         );
 
+        const
+          cookie = getCookie
+          (
+            document.cookie
+          )
+          , cookieValue = cookie.betarenaScoresCookieReferralCode
+        ;
+
+        // ▓ CHECK:
+        // ▓ > for referral cookie presence on new users.
+        if (cookieValue)
+        {
+          user!.scores_user_data!.referredBy = cookieValue;
+
+          // ▓ [🐞]
+          console.log('📣', user!.scores_user_data!.referredBy);
+
+          // ▓ NOTE:
+          // ▓ > update referral creator with generated referral via firebase/functions.
+          await post
+          (
+            `${import.meta.env.VITE_FIREBASE_FUNCTIONS_ORIGIN}/users/data/update/referral-success`
+            // 'http://127.0.0.1:5001/betarena-ios/us-central1/api/users/data/update/referral-success'
+            , {
+              referralId: cookieValue
+              , referredNewUserUid: user.firebase_user_data?.uid
+            }
+          );
+        }
+
+        user!.scores_user_data!.referralID = `REF${Math.random().toString().slice(2, 7)}`;
+
         await setDoc
         (
           doc
@@ -1572,6 +1661,7 @@
     checkDiscordDeepLink();
     checkMetaMaskDeepLink();
     checkOpenAuth();
+    checkReferralLink();
 	}
 
   /**
