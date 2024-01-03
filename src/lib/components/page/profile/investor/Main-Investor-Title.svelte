@@ -139,7 +139,6 @@
     id="launchpad-view-box"
     class=
     "
-    m-b-30
     width-fit-content
     "
   >
@@ -161,7 +160,6 @@
         "
         s-16
         color-white
-        no-wrap
         "
         class:color-white={true}
         class:w-500={true}
@@ -193,7 +191,6 @@
         s-16
         color-grey-shade
         opacity-0-4
-        no-wrap
         "
       >
         {
@@ -212,6 +209,10 @@
   -->
   <div
     id="launchpad-bottom-box"
+    class=
+    "
+    m-b-30
+    "
   />
 
   <!--
@@ -293,11 +294,6 @@
 
     div#launchpad-bottom-box
     {
-      /* 📌 position */
-      position: absolute;
-      top: 38px;
-      right: 0;
-      left: 0;
       /* 🎨 style */
       background-color: var(--dark-theme-1);
       height: 1px;
@@ -309,7 +305,6 @@
       /* 🎨 style */
       border-bottom: solid 2.5px transparent;
       width: 100%;
-      text-align: center;
 
       &.activeOpt
       {
