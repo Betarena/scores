@@ -1086,6 +1086,7 @@
         ;
 
         investDepositIntent = $page.url.searchParams.get('investDepositIntent');
+        $sessionStore.investDepositAmountMobileWeb3 = $page.url.searchParams.get('investDepositAmount');
 
         // ▓ [🐞]
         // alert($page.url);
@@ -1662,7 +1663,7 @@
     checkMetaMaskDeepLink();
     checkOpenAuth();
     checkReferralLink();
-	}
+  }
 
   /**
    * @summary

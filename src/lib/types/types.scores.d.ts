@@ -323,6 +323,11 @@ export interface Platform_Session
     from?: Date,
     to?: Date
   };
+  /**
+   * @description
+   *  📌 Amount `deeplink` to `web3` selected by **user** for mobile.
+   */
+  investDepositAmountMobileWeb3: number;
 }
 
 /**

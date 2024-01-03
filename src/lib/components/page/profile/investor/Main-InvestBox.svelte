@@ -201,7 +201,7 @@
     /** @description target token price. */
     , cryptoPrice: number
     /** @description amount user wishes to `deposit`. */
-    , depositAmount: number = 2500
+    , depositAmount: number = $sessionStore.investDepositAmountMobileWeb3 ?? 2500
     /** @description amount user wishes to `recieve`. */
     , recieveAmount: number = 2500
     /** @description target selected option by user. */
@@ -578,10 +578,23 @@
     // ▓ > for mobile, redirect with 'deep-link' user to MetaMask browser.
     // ▓ NOTE:
     // ▓ > does not appear to be working for 'localhost' with MetaMask browser.
-    if (/Mobi/i.test(window.navigator.userAgent))
+    const if_M_0: boolean
+      // typeof screen.orientation !== 'undefined' // ❌ unreliable
+      // navigator?.userAgentData?.mobile // ❌ unreliable
+      = /Mobi/i.test(window.navigator.userAgent)
+      && window.ethereum == null
+    ;
+    if (if_M_0)
     {
-      const dappUrl: string = $page.url.host;
-      const metamaskAppDeepLink = `https://metamask.app.link/dapp/${dappUrl}?metmaskAuth=true&investDepositIntent=true`;
+      const
+        dappUrl: string = $page.url.host
+        , metamaskAppDeepLink = `
+            https://metamask.app.link/dapp/${dappUrl}
+              ?metmaskAuth=true
+              &investDepositIntent=true
+              &investDepositAmount=${depositAmount}
+          `
+      ;
       window.open
       (
         metamaskAppDeepLink
