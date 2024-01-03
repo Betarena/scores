@@ -1133,7 +1133,10 @@
         color-black-2
         "
       >
-        Invest Box
+        {
+          mapInvestorData.get('invest_box')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.widget_title
+          ?? 'Invest Box'
+        }
       </p>
 
       <!--
@@ -1159,7 +1162,13 @@
           m-r-6
           "
         >
-          {shortenWeb3WalletAddress(walletAddress ?? '') ?? 'Connect your wallet'}
+          {
+            shortenWeb3WalletAddress(walletAddress ?? '')
+            ?? (
+              mapInvestorData.get('invest_box')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.connect_wallet
+              ?? 'Connect your wallet'
+            )
+          }
         </p>
 
         {#if !walletAddress}
@@ -1190,7 +1199,10 @@
       m-t-15
       "
     >
-      Investment options
+      {
+        mapInvestorData.get('invest_box')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.options?.title
+        ?? 'Investment options'
+      }
     </p>
 
     <!--
@@ -1225,7 +1237,10 @@
         class:btn-active={selectDepositOption == 'crypto'}
         on:click={() => {return selectDepositOption = 'crypto'}}
       >
-        Crypto
+        {
+          mapInvestorData.get('invest_box')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.options?.option_1
+          ?? 'Crypto'
+        }
       </button>
 
       <!--
@@ -1255,7 +1270,10 @@
           class:btn-active={selectDepositOption == 'fiat'}
           on:click={() => {return selectDepositOption = 'fiat'}}
         >
-          Fiat
+          {
+            mapInvestorData.get('invest_box')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.options?.option_2
+            ?? 'Fiat'
+          }
         </button>
       </a>
 
@@ -1332,31 +1350,10 @@
         "
         on:click={() => {return $sessionStore.showTermsAndConditions = true}}
       >
-        I have read the
-        <span
-          class=
-          "
-          w-500
-          color-black-2
-          underline
-          cursor-pointer
-          "
-        >
-          terms
-        </span>
-        and
-        <span
-          class=
-          "
-          w-500
-          color-black-2
-          underline
-          cursor-pointer
-          "
-        >
-          disclaimers.
-        </span>
-
+        {
+          @html mapInvestorData.get('invest_box')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.terms
+          ?? 'I have read the terms and disclaimers.'
+        }
       </p>
 
     </div>
@@ -1401,7 +1398,10 @@
           m-b-5
           "
         >
-          Deposit Amount
+          {
+            mapInvestorData.get('invest_box')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.deposit_box?.title
+            ?? 'Deposit Amount'
+          }
         </p>
 
         <!--
@@ -1416,7 +1416,14 @@
             dark-v1
           "
         >
-          First Minimum Deposit
+          {
+            mapInvestorData.get('invest_box')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.deposit_box?.title
+            ?? 'Deposit Amount'
+          }
+          {
+            mapInvestorData.get('invest_box')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.deposit_box?.subtitle_1
+            ?? 'Deposit Amount'
+          }
           <span
             class=
             "
@@ -1424,9 +1431,16 @@
             w-500
             "
           >
-            2500 USD
+            {
+              mapInvestorData.get('invest_box')?.values.min
+              ?? '∞'
+            } USD
           </span>
-          / Max. Deposit
+          /
+          {
+            mapInvestorData.get('invest_box')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.deposit_box?.subtitle_2
+            ?? 'Deposit Amount'
+          }
           <span
             class=
             "
@@ -1434,7 +1448,10 @@
             w-500
             "
           >
-            ∞
+            {
+              mapInvestorData.get('invest_box')?.values.max
+              ?? '∞'
+            }
           </span>
         </p>
 
@@ -1574,7 +1591,15 @@
             color-black-2
             "
           >
-            Balance: {toDecimalFix(cryptoDepositOptionSelect.userBalance) ?? 0}
+            {
+              mapInvestorData.get('invest_box')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.deposit_box?.subtitle_1
+              ?? 'Balance'
+            }
+            :
+            {
+              toDecimalFix(cryptoDepositOptionSelect.userBalance)
+              ?? 0
+            }
           </p>
 
         </div>
@@ -1607,7 +1632,10 @@
         m-b-5
         "
       >
-        You will recieve
+        {
+          mapInvestorData.get('invest_box')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.receive_box?.title
+          ?? 'You will recieve'
+        }
       </p>
 
       <!--
@@ -1745,7 +1773,10 @@
           width-100
           "
         >
-          Current Tier Discount
+          {
+            mapInvestorData.get('invest_box')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.tier_title
+            ?? 'Current Tier Discount'
+          }
         </p>
 
         <!--
@@ -1845,7 +1876,10 @@
       s-14
       "
     >
-      Buy BTA
+      {
+        mapInvestorData.get('invest_box')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.cta
+        ?? 'Buy BTA'
+      }
     </button>
 
   </div>
@@ -2036,6 +2070,8 @@
 
 <style lang="scss">
 
+  @import '../../../../../../static/app.scss';
+
   #profile⮕w⮕investbox⮕main
   {
     /* 📌 position */
@@ -2055,6 +2091,18 @@
       background: var(--white);
       box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
       /* z-index: 10; */
+
+      :global
+      {
+        span.x0001
+        {
+          /* 🎨 style */
+          @extend .w-500 !optional;
+          @extend .color-black-2 !optional;
+          @extend .underline !optional;
+          @extend .cursor-pointer !optional;
+        }
+      }
     }
 
     button.btn-hollow.btn-active
