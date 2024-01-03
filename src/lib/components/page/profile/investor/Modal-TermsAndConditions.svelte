@@ -409,7 +409,7 @@
       p
       {
         /* 🎨 style */
-        @extend .s-20 !optional;
+        @extend .s-16 !optional;
         @extend .m-t-30 !optional;
         @extend .m-b-24 !optional;
         @extend .color-black-2 !optional;
