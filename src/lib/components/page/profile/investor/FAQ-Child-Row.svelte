@@ -250,13 +250,13 @@
     p.faq-title
     {
       /* 🎨 style */
-      margin-left: 120px;
+      margin-left: 24px;
     }
 
     p.faq-description
     {
       /* 🎨 style */
-      margin-left: 138px;
+      margin-left: 42px;
     }
   }
 

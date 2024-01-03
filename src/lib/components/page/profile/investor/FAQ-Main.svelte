@@ -262,13 +262,13 @@
           p.faq-title
           {
             /* 🎨 style */
-            margin-left: 24px;
+            margin-left: 120px;
           }
 
           p.faq-description
           {
             /* 🎨 style */
-            margin-left: 42px;
+            margin-left: 138px;
           }
         }
       }
