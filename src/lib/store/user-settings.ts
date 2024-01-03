@@ -3,13 +3,13 @@
 import { dlog } from '$lib/utils/debug.js';
 import { writable } from 'svelte/store';
 
-import type { BetarenaUser, User_Setting, Voted_Fixture } from '$lib/types/types.scores.js';
+import type { BetarenaUser, IUserSetting, Voted_Fixture } from '$lib/types/types.scores.js';
 
 // #endregion ➤ 📦 Package Imports
 
 // #region ➤ 📌 VARIABLES
 
-const userSettings: User_Setting =
+const userSettings: IUserSetting =
 {
 	lang: undefined,
 	theme: undefined,
@@ -70,7 +70,7 @@ function createLocalStore
     (
     ): void =>
     {
-			let localStore: User_Setting = methods.parseLocalStorage();
+			let localStore: IUserSetting = methods.parseLocalStorage();
 
       // ◼️◼️◼️ CHECK
       // ◼️◼️◼️ absent localstorage object.
@@ -105,14 +105,14 @@ function createLocalStore
      *  🟥 MAIN | 🔹 HELPER | IMPORTANT
      * @description
      *  📌 Retrieves target `localStorage` for target `key`.
-     * @returns { User_Setting }
+     * @returns { IUserSetting }
      *  User `object`.
      */
     parseLocalStorage:
     (
-    ): User_Setting =>
+    ): IUserSetting =>
     {
-      const localStore: User_Setting = JSON.parse
+      const localStore: IUserSetting = JSON.parse
       (
         localStorage.getItem
         (
@@ -131,7 +131,7 @@ function createLocalStore
      */
     setLocalStorage:
     (
-      data: User_Setting
+      data: IUserSetting
     ): void =>
     {
       localStorage.setItem
@@ -166,7 +166,7 @@ function createLocalStore
 			id: number
 		): void =>
     {
-      const localStore: User_Setting = methods.parseLocalStorage();
+      const localStore: IUserSetting = methods.parseLocalStorage();
 
       if (localStore?.userguide_id_opt_out?.includes(id))
       {
@@ -197,7 +197,7 @@ function createLocalStore
     ): void =>
     {
 			const existing: string = localStorage.getItem(key);
-			const existing_data: User_Setting = JSON.parse(existing);
+			const existing_data: IUserSetting = JSON.parse(existing);
       if (existing_data.voted_fixtures == undefined)
         existing_data.voted_fixtures = [];
       ;
@@ -225,7 +225,7 @@ function createLocalStore
       newBalance: number
     ): void =>
     {
-      const localStore: User_Setting = methods.parseLocalStorage();
+      const localStore: IUserSetting = methods.parseLocalStorage();
 
       // ### CHECK
       // ### for invalid balance type.
@@ -275,7 +275,7 @@ function createLocalStore
       data: BetarenaUser
     ): void =>
     {
-      const localStore: User_Setting = methods.parseLocalStorage();
+      const localStore: IUserSetting = methods.parseLocalStorage();
 
 			localStore.user.scores_user_data = data;
 
@@ -331,7 +331,7 @@ function createLocalStore
       dataPoint?: any,
     ): void =>
     {
-      const localStore: User_Setting = methods.parseLocalStorage();
+      const localStore: IUserSetting = methods.parseLocalStorage();
 
       if (dataTarget == 'lang')
 			  localStore.lang = dataPoint;
@@ -386,7 +386,7 @@ function createLocalStore
       dataPoint: 'geo-bookmaker' | 'user-lang'
     ): any =>
     {
-			const localStore: User_Setting = methods.parseLocalStorage();
+			const localStore: IUserSetting = methods.parseLocalStorage();
 
       if (dataPoint == 'geo-bookmaker')
         return localStore?.country_bookmaker;
@@ -411,7 +411,7 @@ function createLocalStore
     (
     ): object =>
     {
-      const localStore: User_Setting = methods.parseLocalStorage();
+      const localStore: IUserSetting = methods.parseLocalStorage();
 
       const data: object =
       {
