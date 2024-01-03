@@ -24,6 +24,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { onDestroy, onMount } from 'svelte';
+	import { browser } from '$app/environment';
 
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
@@ -104,8 +105,104 @@
       WIDGET_DATA?.investor
     ) as Map < string, B_H_INVEST_WIDGET_Data >
     /** @description 📣 investor main information data */
-    , roundData: IRoundData[]
-    = [
+    , roundData: IRoundData[] = []
+    /** @description 📣 investor round date percentage progress */
+    , datePercentageDiff: number = 0
+    /**
+     * @description
+     *  📣 invest round date `start`
+     * @CUSTOM_NOTE
+     * `mapInvestorData?.get('round')?.values?.start_date` || 12/08/2023
+     */
+    , dateRoundStart: string | undefined = mapInvestorData.get('round')?.values.start_date
+    /**
+     * @description
+     *  📣 invest round date `start`
+     * @CUSTOM_NOTE
+     * `mapInvestorData?.get('round')?.values?.end_date` || 12/08/2023
+     */
+    , dateRoundEnd: string | undefined = mapInvestorData.get('round')?.values.end_date
+    /** @description 📣 interval variable for `countdown` logic */
+    , interval1: NodeJS.Timer
+  ;
+
+  $: countDownSecToStart = toZeroPrefixDateStr(Math.floor((numDateDiffStart / 1000) % 60).toString());
+	$: countDownMinToStart = toZeroPrefixDateStr(Math.floor((numDateDiffStart / 1000 / 60) % 60).toString());
+	$: countDownHourToStart = toZeroPrefixDateStr(Math.floor((numDateDiffStart / (1000 * 60 * 60)) % 24).toString());
+	$: countDownDayToStart = toZeroPrefixDateStr(Math.floor((numDateDiffStart / (1000 * 60 * 60 * 24))).toString());
+	$: countDownTestHourToStart = Math.floor(numDateDiffStart / (1000 * 60 * 60));
+
+  $: countDownSecToEnd = toZeroPrefixDateStr(Math.floor((numDateDiffEnd / 1000) % 60).toString());
+	$: countDownMinToEnd = toZeroPrefixDateStr(Math.floor((numDateDiffEnd / 1000 / 60) % 60).toString());
+	$: countDownHourToEnd = toZeroPrefixDateStr(Math.floor((numDateDiffEnd / (1000 * 60 * 60)) % 24).toString());
+	$: countDownDayToEnd = toZeroPrefixDateStr(Math.floor((numDateDiffEnd / (1000 * 60 * 60 * 24))).toString());
+	$: countDownTestHourToEnd = Math.floor(numDateDiffEnd / (1000 * 60 * 60));
+
+  // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  /**
+   * @summary
+   * 🔥 REACTIVITY
+   *
+   * @description
+   *  📣 looming `start-date` check
+   *
+   * WARNING:
+   * triggered by changes in:
+   * - `numDateDiffStart`
+   * - `countDownTestHourToStart`
+   */
+  $: if_R_0
+    = numDateDiffStart == null
+    || numDateDiffEnd == null
+    || numDateDiffStart == 0
+    || numDateDiffEnd == 0
+  $: if_R_1
+    = countDownTestHourToStart >= 0
+    && numDateDiffStart >= 0
+  ;
+  $: if_R_2
+    = countDownTestHourToEnd >= 0
+    && numDateDiffEnd >= 0
+  ;
+  $: if_R_3
+    =countDownTestHourToEnd < 23
+    && numDateDiffEnd < 0
+  ;
+	$:
+  if (if_R_0) widgetState = 'ToBeAnnounced'
+  else if (if_R_1) widgetState = 'CountdownWithDefinedDate';
+  else if (if_R_2) widgetState = 'CountdownToFinish';
+  else if (if_R_3) widgetState = 'Ended';
+
+  // ▓ [🐞]
+  // $: console.log('countDownTestHourToStart', countDownTestHourToStart)
+  // ▓ [🐞]
+  // $: console.log('countDownTestHourToEnd', countDownTestHourToEnd)
+  // ▓ [🐞]
+  // $: console.log('numDateDiffStart', numDateDiffStart)
+  // ▓ [🐞]
+  // $: console.log('numDateDiffEnd', numDateDiffEnd)
+  // ▓ [🐞]
+  // $: console.log('widgetState', widgetState)
+
+  $:
+  if (browser || $sessionStore.serverLang)
+  {
+    roundData = [
       {
         title:
         (
@@ -209,94 +306,7 @@
         ]
       }
     ]
-    /** @description 📣 investor round date percentage progress */
-    , datePercentageDiff: number = 0
-    /**
-     * @description
-     *  📣 invest round date `start`
-     * @CUSTOM_NOTE
-     * `mapInvestorData?.get('round')?.values?.start_date` || 12/08/2023
-     */
-    , dateRoundStart: string | undefined = mapInvestorData.get('round')?.values.start_date
-    /**
-     * @description
-     *  📣 invest round date `start`
-     * @CUSTOM_NOTE
-     * `mapInvestorData?.get('round')?.values?.end_date` || 12/08/2023
-     */
-    , dateRoundEnd: string | undefined = mapInvestorData.get('round')?.values.end_date
-    /** @description 📣 interval variable for `countdown` logic */
-    , interval1: NodeJS.Timer
-  ;
-
-  $: countDownSecToStart = toZeroPrefixDateStr(Math.floor((numDateDiffStart / 1000) % 60).toString());
-	$: countDownMinToStart = toZeroPrefixDateStr(Math.floor((numDateDiffStart / 1000 / 60) % 60).toString());
-	$: countDownHourToStart = toZeroPrefixDateStr(Math.floor((numDateDiffStart / (1000 * 60 * 60)) % 24).toString());
-	$: countDownDayToStart = toZeroPrefixDateStr(Math.floor((numDateDiffStart / (1000 * 60 * 60 * 24))).toString());
-	$: countDownTestHourToStart = Math.floor(numDateDiffStart / (1000 * 60 * 60));
-
-  $: countDownSecToEnd = toZeroPrefixDateStr(Math.floor((numDateDiffEnd / 1000) % 60).toString());
-	$: countDownMinToEnd = toZeroPrefixDateStr(Math.floor((numDateDiffEnd / 1000 / 60) % 60).toString());
-	$: countDownHourToEnd = toZeroPrefixDateStr(Math.floor((numDateDiffEnd / (1000 * 60 * 60)) % 24).toString());
-	$: countDownDayToEnd = toZeroPrefixDateStr(Math.floor((numDateDiffEnd / (1000 * 60 * 60 * 24))).toString());
-	$: countDownTestHourToEnd = Math.floor(numDateDiffEnd / (1000 * 60 * 60));
-
-  // #endregion ➤ 📌 VARIABLES
-
-  // #region ➤ 🔥 REACTIVIY [SVELTE]
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'logic' that should run            │
-  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
-  // │ WARNING:                                                               │
-  // │ ❗️ Can go out of control.                                              │
-  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
-  // │ Please keep very close attention to these methods and                  │
-  // │ use them carefully.                                                    │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  /**
-   * @summary
-   * 🔥 REACTIVITY
-   *
-   * @description
-   *  📣 looming `start-date` check
-   *
-   * WARNING:
-   * triggered by changes in:
-   * - `numDateDiffStart`
-   * - `countDownTestHourToStart`
-   */
-  $: if_R_0
-    = numDateDiffStart == null
-    || numDateDiffEnd == null
-    || numDateDiffStart == 0
-    || numDateDiffEnd == 0
-  $: if_R_1
-    = countDownTestHourToStart >= 0
-    && numDateDiffStart >= 0
-  ;
-  $: if_R_2
-    = countDownTestHourToEnd >= 0
-    && numDateDiffEnd >= 0
-  ;
-  $: if_R_3
-    =countDownTestHourToEnd < 23
-    && numDateDiffEnd < 0
-  ;
-	$:
-  if (if_R_0) widgetState = 'ToBeAnnounced'
-  else if (if_R_1) widgetState = 'CountdownWithDefinedDate';
-  else if (if_R_2) widgetState = 'CountdownToFinish';
-  else if (if_R_3) widgetState = 'Ended';
-
-  // ▓ [🐞]
-  // $: console.log('countDownTestHourToStart', countDownTestHourToStart)
-  // ▓ [🐞]
-  // $: console.log('countDownTestHourToEnd', countDownTestHourToEnd)
-  // ▓ [🐞]
-  // $: console.log('widgetState', widgetState)
+  }
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
