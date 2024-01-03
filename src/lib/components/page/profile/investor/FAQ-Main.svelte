@@ -145,10 +145,11 @@
       {VIEWPORT_MOBILE_INIT[1] ? 's-24' : 's-32'}
       w-500
       color-black-2
+      m-b-16
       "
     >
       {
-        B_PROF_T?.investor?.faq?.title
+        B_PROF_T.investor?.faq?.title
         ?? 'Frequently Asked Questions'
       }
     </p>
@@ -165,7 +166,7 @@
       "
     >
       {
-        B_PROF_T?.investor?.faq?.sub_title
+        B_PROF_T.investor?.faq?.sub_title
         ?? 'Have questions? Find answers to the most commonly asked questions about the Betarena presale and referral program.'
       }
     </p>
@@ -207,7 +208,7 @@
     "
     style=
     "
-    {VIEWPORT_MOBILE_INIT[1] ? '' : 'align-items: flex-end;'}
+    {VIEWPORT_MOBILE_INIT[1] ? 'align-items: flex-start;' : 'align-items: flex-end;'}
     "
   >
 
@@ -236,7 +237,7 @@
         "
       >
         {
-          B_PROF_T?.investor?.presale?.title_information
+          B_PROF_T.investor?.presale?.title_information
           ?? 'Need More Information?'
         }
       </p>
@@ -257,7 +258,7 @@
         "
       >
         {
-          B_PROF_T?.investor?.presale?.description_information
+          B_PROF_T.investor?.presale?.description_information
           ?? 'For a comprehensive understanding of the Betarena presale, please visit our Presale Page.'
         }
       </p>
@@ -279,7 +280,7 @@
         "
       >
         {
-          B_PROF_T?.investor?.presale?.cta_presale
+          B_PROF_T.investor?.presale?.cta_presale
           ?? 'Link to Presale'
         }
       </button>
@@ -303,12 +304,6 @@
 
   div#profile⮕w⮕investfaq⮕main
   {
-    &⮕faq-title
-    {
-      /* 🎨 style */
-      padding: 0 20px;
-    }
-
     &⮕faq-box
     {
       /* 🎨 style */
@@ -347,6 +342,19 @@
             max-width: none;
           }
         }
+      }
+    }
+  }
+
+  @media only screen
+  and (min-width: 1160px)
+  {
+    div#profile⮕w⮕investfaq⮕main
+    {
+      &⮕faq-title
+      {
+        /* 🎨 style */
+        padding: 0 20px;
       }
     }
   }
