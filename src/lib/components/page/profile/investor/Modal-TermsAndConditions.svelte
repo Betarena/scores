@@ -32,6 +32,9 @@
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { viewport_change } from '$lib/utils/platform-functions.js';
 
+  import icon_close from '../assets/investor/icon-close-btn.svg';
+  import icon_close_dark from '../assets/investor/icon-close-dark-btn.svg';
+
 	import type { B_USRG_D } from '@betarena/scores-lib/types/types.misc.userguide.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -290,7 +293,7 @@
         '
         {VIEWPORT_TABLET_INIT[1] ? 'top: 16px; right: 16px;' : ''}
         '
-        src="/assets/svg/close.svg"
+        src={$userBetarenaSettings.theme == 'Dark' ? icon_close : icon_close_dark}
         alt='close-svg'
         on:click={() => {return $sessionStore.showTermsAndConditions = false}}
         width=18
@@ -383,6 +386,17 @@
       /* 🎨 style */
       display: grid;
       overflow-x: hidden;
+      max-height: 100%;
+      overflow-y: scroll;
+      padding-bottom: 85px;
+      /* 💠 scrollbar */
+      /* IE and Edge */ -ms-overflow-style: none !important;
+      /* Firefox */ scrollbar-width: none !important;
+
+      &::-webkit-scrollbar
+      {
+        display: none !important;
+      }
     }
 
     :global
