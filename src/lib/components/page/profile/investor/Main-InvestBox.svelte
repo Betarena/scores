@@ -756,7 +756,6 @@
     {
       triggerInvestBox = false;
       stateWidget = 'Error';
-      $sessionStore.showDepositModalState = false;
       return;
     }
 
@@ -815,7 +814,6 @@
     {
       triggerInvestBox = false;
       stateWidget = 'Error';
-      $sessionStore.showDepositModalState = false;
       return;
     }
 
@@ -854,7 +852,6 @@
 
     triggerInvestBox = false;
     stateWidget = 'Completed';
-    $sessionStore.showDepositModalState = true;
 
     return;
   }
