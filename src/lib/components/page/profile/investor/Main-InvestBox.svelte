@@ -1585,7 +1585,7 @@
             "
           >
             {
-              mapInvestorData.get('invest_box')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.deposit_box?.subtitle_1
+              mapInvestorData.get('invest_box')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.balance
               ?? 'Balance'
             }
             :
