@@ -1,0 +1,139 @@
+# ▓▓ @see https://github.com/sveltejs/eslint-plugin-svelte
+
+root: true
+
+env:
+  es2017: true
+  node: true
+  browser: true
+
+extends:
+  - plugin:svelte/recommended
+  - eslint:recommended
+  - plugin:@typescript-eslint/strict
+  # ▓▓ WARNING:
+  # ▓▓ 👇 all-below :: does not work with svelte.
+  # - plugin:import/errors
+  # - plugin:import/warnings
+  # - plugin:import/typescript
+  # ▓▓ @see https://www.npmjs.com/package/eslint-config-google
+  # - google
+  # - prettier
+  # ▓▓ NOTE:
+  # ▓▓ 👇 already contained within ../strict.
+  # - plugin:@typescript-eslint/recommended
+  # - plugin:@typescript-eslint/stylistic
+
+parser:
+  "@typescript-eslint/parser"
+
+parserOptions:
+  project:
+    - tsconfig.json
+  sourceType: module
+  ecmaVersion: 2020
+  extraFileExtensions:
+    - '.svelte'
+
+overrides:
+  - files:
+    - '*.svelte'
+    parser: 'svelte-eslint-parser'
+    parserOptions:
+      parser: '@typescript-eslint/parser'
+
+ignorePatterns:
+  - .DS_Store
+  - node_modules
+  - /build
+  - /.svelte-kit
+  - /package
+  - .env
+  - .env.*
+  - '!.env.example'
+  - pnpm-lock.yaml
+  - package-lock.json
+  - yarn.lock
+
+plugins:
+  - "@typescript-eslint"
+  - svelte
+  # ▓▓ WARNING:
+  # ▓▓ 👇 all-below :: does not work with svelte.
+  # - import
+
+# ▓▓ IMPORTANT
+# ▓▓ Main 'defacto' configuration, do not remove and/or alter heavily.
+# ▓▓ @see https://eslint.org/docs/latest/rules/
+rules:
+
+  # ▓▓ NOTE:
+  # ▓▓ has been depreceted.
+  # "valid-jsdoc": [..]
+  no-unexpected-multiline: 0
+  import/no-unresolved: 0
+  # ▓▓ NOTE:
+  # ▓▓ Ideal, but doesn't work as expected :: [ "error", "always", {  "allowNewlines": true } ]
+  # ▓▓ as it requires a space after function declaration, 'always'.
+  func-call-spacing: 0
+
+  "@typescript-eslint/no-inferrable-types": 0
+  "@typescript-eslint/prefer-for-of": error
+  "@typescript-eslint/no-non-null-asserted-nullish-coalescing": error
+
+  curly:
+    - error
+    - multi-or-nest
+  max-len:
+    - error
+    - code: 150
+  quotes:
+    - error
+    - single
+  object-curly-spacing:
+    - error
+    - always
+  brace-style:
+    - error
+    - allman
+    - allowSingleLine: true
+  indent:
+    - error
+    - 2
+  space-before-function-paren:
+    - error
+    - anonymous: always
+      named: always
+      asyncArrow: always
+  padded-blocks:
+    - error
+    - blocks: never
+  comma-dangle:
+    - error
+    - only-multiline
+  comma-style:
+    - error
+    - first
+  operator-linebreak:
+    - error
+    - before
+  new-cap:
+    - error
+    - capIsNewExceptionPattern: "^express\\.."
+  camelcase:
+    - error
+    - ignoreImports: true
+      ignoreDestructuring: true
+      properties: never
+      allow:
+        - "^if_M_"
+        - "^B_H_"
+  eol-last:
+    - error
+    - always
+  arrow-body-style:
+    - error
+    - always
+  one-var:
+    - error
+    - initialized: "consecutive"

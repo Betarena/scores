@@ -9,9 +9,9 @@ import * as sslify from 'express-sslify';
 import fs from 'fs';
 import http from 'http';
 import https from 'https';
-import { handler } from './build/handler.js';
+import { handler } from '../build/handler.js';
 
-const options = 
+const options =
 {
   key: fs.readFileSync('./certs/privkey.pem'),
   cert: fs.readFileSync('./certs/cert.pem'),
@@ -25,7 +25,7 @@ app.use
 (
   sslify.HTTPS
   (
-  { 
+  {
     trustProtoHeader: true
     }
   )
@@ -37,7 +37,7 @@ app.use
   compression()
 );
 
-// let SvelteKit handle everything else, 
+// let SvelteKit handle everything else,
 app.use(handler);
 
 // ~~~~~~~~~~~~~~~~~~~~~~
@@ -51,8 +51,8 @@ http
   )
   .listen
   (
-    80, 
-    () => 
+    80,
+    () =>
     {
       console.log(`[HTTP | Server]: Server is running on port: ${80}`);
     }
@@ -62,13 +62,13 @@ http
 https
   .createServer
   (
-    options, 
+    options,
     app
   )
   .listen
   (
-    443, 
-    () => 
+    443,
+    () =>
     {
       console.log(`[HTTPS | Server]: Server is running on port: ${443}`);
     }

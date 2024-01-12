@@ -7,8 +7,10 @@
 	import { page } from "$app/stores";
 
 	import type { REDIS_CACHE_SINGLE_fixtures_page_info_response } from "$lib/models/_main_/pages_and_seo/types";
+    import type {B_NAV_T} from "@betarena/scores-lib/types/navbar";
 
   export let FIXTURE_INFO: REDIS_CACHE_SINGLE_fixtures_page_info_response;
+  export let B_NAV_T_2:B_NAV_T;
   export let country_link: string;
   export let league_name_link: string;
 
@@ -47,7 +49,7 @@
         no-wrap
       "
     >
-      {FIXTURE_INFO?.data?.sport}
+      {$page.data?.B_NAV_T?.scores_header_translations?.sports_v2?.[FIXTURE_INFO?.data?.sport]}
     </p>
   </a>
 
