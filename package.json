@@ -1,14 +1,13 @@
 {
 	"name": "betarena-scores-platform",
 	"description": "Betarena Official Scores Platform (PWA)",
-	"version": "2.4.5",
+	"version": "2.4.6",
 	"type": "module",
-	"engines":
-  {
+	"engines": {
 		"npm": "8.19.1",
 		"node": "16.17.0"
 	},
-  "engineStrict": true,
+	"engineStrict": true,
 	"scripts": {
 		"prepare": "is-ci || husky install",
 		"start": "cross-env NODE_OPTIONS='-r dotenv/config' node build/index.js",
