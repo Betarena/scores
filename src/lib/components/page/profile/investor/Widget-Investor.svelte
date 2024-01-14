@@ -35,6 +35,7 @@
 	import TgeMain from './Investment.TGE.Main.svelte';
 	import MainWalletsInvestor from './Investment.Wallets.Main.svelte';
 	import TierPricing from './Launchpad.TierPricing.Main.svelte';
+	import MainVestingPeriods from './Investment.VestingPeriods.Main.svelte';
 	import MainInvestBox from './Main-InvestBox.svelte';
 	import MainInvestorTitle from './Main-Investor-Title.svelte';
 	import MainRound from './Main-Round.svelte';
@@ -191,6 +192,11 @@
         VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
       />
 
+      <MainVestingPeriods
+        profileData={data}
+        VIEWPORT_MOBILE_INIT_PARENT={VIEWPORT_MOBILE_INIT}
+        VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
+      />
       <ReferralsSteps
         profileData={data}
       />
