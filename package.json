@@ -41,7 +41,7 @@
 		"coverage": "vitest run --coverage"
 	},
 	"dependencies": {
-		"@betarena/scores-lib": "^1.9.12",
+		"@betarena/scores-lib": "^1.10.0-alpha.0",
 		"@lukeed/uuid": "^2.0.1",
 		"@metamask/sdk": "^0.1.0",
 		"@moralisweb3/client-firebase-auth-utils": "^2.18.4",
@@ -121,15 +121,12 @@
 			"path": "./node_modules/cz-conventional-changelog"
 		}
 	},
-	"commitlint":
-  {
-		"extends":
-    [
+	"commitlint": {
+		"extends": [
 			"@commitlint/config-conventional"
 		]
 	},
-	"validate-branch-name":
-  {
+	"validate-branch-name": {
 		"pattern": "^(master|main|develop|dev){1}$|^(feature|fix|hotfix|release|refractor).+$",
 		"errorMsg": "❌ Uh-oh! Please check package.json > validate-branch-name for allowed branch names!"
 	}
