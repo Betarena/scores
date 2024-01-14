@@ -23,24 +23,14 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-	import { page } from '$app/stores';
-	import { get } from '$lib/api/utils.js';
+  import { page } from '$app/stores';
 
-	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { sleep } from '$lib/utils/platform-functions.js';
+  import userBetarenaSettings from '$lib/store/user-settings.js';
+  import { toZeroPrefixDateStr } from '$lib/utils/dates.js';
+  import { Misc } from '@betarena/scores-lib/dist/classes/class.misc.js';
 
-	import WidgetTxHistLoader from './../competitions-history/Widget-Comp-Hist-Loader.svelte';
-	import MainFaq from './FAQ-Main.svelte';
-	import MainInvestmentDetail from './Investment.History.Main.svelte';
-	import TgeMain from './Investment.TGE.Main.svelte';
-	import MainWalletsInvestor from './Investment.Wallets.Main.svelte';
-	import TierPricing from './Launchpad.TierPricing.Main.svelte';
-	import MainInvestBox from './Main-InvestBox.svelte';
-	import MainInvestorTitle from './Main-Investor-Title.svelte';
-	import MainRound from './Main-Round.svelte';
-	import ReferralsBonusSummary from './Referrals.BonusSummary.Main.svelte';
-	import ReferralsInfo from './Referrals.Info.Main.svelte';
-	import ReferralsSteps from './Referrals.Steps.Main.svelte';
+  import type { B_H_INVEST_WIDGET_Data, B_H_KEYP, B_H_KEYP_Tier } from '@betarena/scores-lib/types/_HASURA_.js';
+  import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -58,84 +48,51 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  export let
+    /**
+     * @augments IProfileData
+    */
+    profileData: IProfileData | null
+  ;
+
   const
     /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
     // eslint-disable-next-line no-unused-vars
-    CNAME: string = 'profile⮕w⮕comp-hist'
+    CNAME: string = 'profile⮕w⮕referral-step⮕main'
     /** @description 📣 threshold start + state for 📱 MOBILE */
     // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 581, true ]
+    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
     /** @description 📣 threshold start + state for 💻 TABLET */
     // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 912, true ]
+    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
   let
-    /** @description 📣 (widget) translations data */
-    widgetDataTranslation: IProfileTrs
-    /** @description 📣 (widget) translations (SEO) data */
-    // , widgetDataSeo: B_COMP_MAIN_S
-    /** @description 📣 (widget) main data */
-    , widgetDataMain: B_PROF_D
-    /** @description 📣 (widget) wether widget has or no data */
-    // eslint-disable-next-line no-unused-vars
-    , widgetNoData: boolean = true
-    /** @description 📣 (widget) dynamic import variable for svelte component [1] */
-    // , MainMainAsDynamic: any
+    /**
+     * @description
+     *  📣
+    */
+    dataMap: Map < B_H_KEYP_Tier, B_H_KEYP > = new Misc().convertToMapKEYPINVSTTIER
+    (
+      (profileData?.investorTierPricing ?? [])
+    )
+    /**
+     * @description
+     *  📣 investor data (map)
+    */
+    , mapInvestorData: Map < string, B_H_INVEST_WIDGET_Data > = new Map
+    (
+      profileData?.investor
+    ) as Map < string, B_H_INVEST_WIDGET_Data >
+    /**
+     * @augments IProfileTrs
+    */
+    , profileTrs: IProfileTrs
   ;
 
-  // eslint-disable-next-line no-unused-vars
-  $: widgetDataTranslation = $page.data.RESPONSE_PROFILE_DATA ?? { };
-  // $: widgetDataTranslation = $page.data?.B_COMP_MAIN_T;
-  // $: widgetDataSeo = $page.data?.B_COMP_MAIN_S;
-  // $: WIDGET_TITLE = widgetDataTranslation?.translations?.widget_title ?? translationObject?.featured_bet_site;
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA;
 
   // #endregion ➤ 📌 VARIABLES
-
-  // #region ➤ 🛠️ METHODS
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'methods' that are to be           │
-  // │ and are expected to be used by 'this' .svelte file / component.        │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. function (..)                                                       │
-  // │ 2. async function (..)                                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  // ### NOTE:
-  // ### Temporary, deciding where to 'put' widget data loader,
-  // ### Either into the parent (+page.svelte), or make 'this' widget
-  // ### into it's own component, with the V6 structure.
-  async function widgetInit
-  (
-  ): Promise < B_PROF_D | null >
-  {
-    await sleep(3000);
-
-    const response: B_PROF_D = await get
-    (
-      `/api/data/profile?uid=${$userBetarenaSettings.user.firebase_user_data?.uid}`
-    ) as B_PROF_D;
-
-    widgetDataMain = response
-
-    const if_M_0
-      = widgetDataMain == undefined
-    ;
-    if (if_M_0)
-    {
-      // dlog(`${IN_W_F_TAG} ❌ no data available!`, IN_W_F_TOG, IN_W_F_STY);
-      widgetNoData = true;
-      return null;
-    }
-
-    widgetNoData = false;
-    return widgetDataMain;
-  }
-
-  // #endregion ➤ 🛠️ METHODS
 
 </script>
 
@@ -148,67 +105,126 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<!-- <WidgetTxHistLoader /> -->
-
-{#await widgetInit()}
-
-  <WidgetTxHistLoader />
-
-{:then data}
-
-  <MainInvestorTitle />
+<div
+  id={CNAME}
+  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+>
 
   <!--
   ▓ NOTE:
-  ▓ > main grid.
+  ▓ > main title
   -->
   <div
-    id="investor-grid-box"
+    id='{CNAME}⮕faq-title'
+    class=
+    "
+    m-b-50
+    "
   >
 
-    <MainRound
-      WIDGET_DATA={data}
-    />
-    <MainInvestBox
-      WIDGET_DATA={data}
-    />
-      <TierPricing
-        profileData={data}
-      />
-      <TgeMain
-        VIEWPORT_MOBILE_INIT_PARENT={VIEWPORT_MOBILE_INIT}
-        VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
-      />
-
-      <MainInvestmentDetail
-        profileData={data}
-      />
-
-      <MainWalletsInvestor
-        profileData={data}
-        VIEWPORT_MOBILE_INIT_PARENT={VIEWPORT_MOBILE_INIT}
-        VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
-      />
-
-      <ReferralsSteps
-        profileData={data}
-      />
-      <ReferralsInfo
-        profileData={data}
-        VIEWPORT_MOBILE_INIT_PARENT={VIEWPORT_MOBILE_INIT}
-        VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
-      />
-      <ReferralsBonusSummary
-        profileData={data}
-      />
-    <div
-      id="FAQ"
+    <!--
+    ▓ NOTE:
+    ▓ > title
+    -->
+    <p
+      class=
+      "
+      {VIEWPORT_MOBILE_INIT[1] ? 's-24' : 's-32'}
+      w-500
+      color-black-2
+      m-b-16
+      "
     >
-      <MainFaq />
-    </div>
+      {
+        'Refer Investors. Earn Tokens Together.'
+      }
+    </p>
+
+    <!--
+    ▓  NOTE:
+    ▓ > sub-title
+    -->
+    <p
+      class=
+      "
+      s-16
+      color-grey
+        grey-v1
+      "
+    >
+      {
+        'Earn up to 10% bonus on every investor in the Betarena presale.'
+      }
+    </p>
 
   </div>
-{/await}
+
+  <!--
+  ▓ NOTE:
+  ▓ > (box) referral steps title
+  -->
+  <div>
+
+    <p
+      class=
+      "
+      s-20
+      w-500
+      color-black-2
+      "
+    >
+      Steps to Get Referral Bonus
+    </p>
+
+    {#each profileTrs.investor?.steps?.steps ?? [] as item,i}
+      <hr>
+
+      <div
+        class=
+        "
+        row-space-out-top
+        "
+      >
+        <p
+          class=
+          "
+          s-12
+          color-grey
+          m-r-40
+          w-600
+          "
+        >
+          {toZeroPrefixDateStr(i+1)}.
+        </p>
+
+        <div>
+          <p
+            class=
+            "
+            s-16
+            color-black-2
+            m-b-12
+            "
+          >
+            {item.title}
+          </p>
+          <p
+            class=
+            "
+            s-14
+            color-grey
+              grey-v1
+            "
+          >
+            {item.description}
+          </p>
+        </div>
+      </div>
+    {/each}
+
+  </div>
+
+</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -221,38 +237,45 @@
 
 <style lang="scss">
 
-  div#investor-grid-box
+  /*
+  ╭──────────────────────────────────────────────────────────────────────────────╮
+  │ 📲 MOBILE-FIRST                                                              │
+  ╰──────────────────────────────────────────────────────────────────────────────╯
+  */
+
+  div#profile⮕w⮕referral-step⮕main
   {
-    /* 🎨 style */
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 64px 20px;
+    hr
+    {
+      /* 🎨 style */
+      margin: 24px 0;
+      border: none;
+      height: 0.5px;
+      /* Set the hr color */
+      color: #E6E6E6;  /* old IE */
+      background-color: #E6E6E6;  /* Modern Browsers */
+    }
   }
 
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
-  │ ⚡️ RESPONSIVNESS                                                              │
+  │ 🌒 DARK-THEME                                                                │
   ╰──────────────────────────────────────────────────────────────────────────────╯
   */
 
-  @media only screen
-  and (min-width: 1160px)
+  div#profile⮕w⮕referral-step⮕main
   {
-    div#investor-grid-box
+    &.dark-background-1
     {
       /* 🎨 style */
-      gap: 80px 20px;
-      grid-template-columns: 1fr 1fr;
+      background-color: transparent !important;
     }
 
-    div#FAQ
+    hr
     {
-      /* 🎨 style */
-      width: 100%;
-      /* 📌 position */
-      grid-column: 1 / 3 ;
+      color: #4B4B4B;  /* old IE */
+      background-color: #4B4B4B;  /* Modern Browsers */
     }
-
   }
 
 </style>
