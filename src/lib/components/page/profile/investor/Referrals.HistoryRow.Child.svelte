@@ -23,25 +23,12 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-	import { page } from '$app/stores';
-	import { get } from '$lib/api/utils.js';
+  import { ddMMyyFormat } from '$lib/utils/dates.js';
 
-	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { sleep } from '$lib/utils/platform-functions.js';
+  import icon_arrow_down from '../assets/arrow-down.svg';
+  import icon_arrow_up from '../assets/arrow-up.svg';
 
-	import WidgetTxHistLoader from './../competitions-history/Widget-Comp-Hist-Loader.svelte';
-	import MainFaq from './FAQ-Main.svelte';
-	import MainInvestmentDetail from './Investment.History.Main.svelte';
-	import TgeMain from './Investment.TGE.Main.svelte';
-	import MainWalletsInvestor from './Investment.Wallets.Main.svelte';
-	import TierPricing from './Launchpad.TierPricing.Main.svelte';
-	import MainInvestBox from './Main-InvestBox.svelte';
-	import MainInvestorTitle from './Main-Investor-Title.svelte';
-	import MainRound from './Main-Round.svelte';
-	import ReferralsBonusSummary from './Referrals.BonusSummary.Main.svelte';
-	import ReferralsHistory from './Referrals.History.Main.svelte';
-	import ReferralsInfo from './Referrals.Info.Main.svelte';
-	import ReferralsSteps from './Referrals.Steps.Main.svelte';
+	import type { B_H_INVESTOR_REF_HIST } from '@betarena/scores-lib/types/_HASURA_.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -59,84 +46,49 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  export let
+    /**
+     * @augments B_H_INVESTOR_REF_HIST
+     */
+    data: B_H_INVESTOR_REF_HIST
+    /**
+     * @description
+     *  📣
+    */
+    , VIEWPORT_MOBILE_INIT_PARENT: [ number, boolean ]
+    /**
+     * @description
+     *  📣
+    */
+    , VIEWPORT_TABLET_INIT_PARENT: [ number, boolean ]
+  ;
+
   const
     /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
     // eslint-disable-next-line no-unused-vars
-    CNAME: string = 'profile⮕w⮕comp-hist'
+    CNAME: string = 'profile⮕w⮕investfaq⮕main'
     /** @description 📣 threshold start + state for 📱 MOBILE */
     // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 581, true ]
+    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
     /** @description 📣 threshold start + state for 💻 TABLET */
     // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 912, true ]
+    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
   let
-    /** @description 📣 (widget) translations data */
-    widgetDataTranslation: IProfileTrs
-    /** @description 📣 (widget) translations (SEO) data */
-    // , widgetDataSeo: B_COMP_MAIN_S
-    /** @description 📣 (widget) main data */
-    , widgetDataMain: B_PROF_D
-    /** @description 📣 (widget) wether widget has or no data */
-    // eslint-disable-next-line no-unused-vars
-    , widgetNoData: boolean = true
-    /** @description 📣 (widget) dynamic import variable for svelte component [1] */
-    // , MainMainAsDynamic: any
+    /**
+     * @description
+     *  📣 Wether extra information is toggled (mobile only).
+    */
+    isTxExtraInfo: boolean = false
+    /**
+     * @description
+     *  📣 Properties to be shown in mobile view.
+    */
+    , mobileProps: string[] = [ 'Date' ]
   ;
 
-  // eslint-disable-next-line no-unused-vars
-  $: widgetDataTranslation = $page.data.RESPONSE_PROFILE_DATA ?? { };
-  // $: widgetDataTranslation = $page.data?.B_COMP_MAIN_T;
-  // $: widgetDataSeo = $page.data?.B_COMP_MAIN_S;
-  // $: WIDGET_TITLE = widgetDataTranslation?.translations?.widget_title ?? translationObject?.featured_bet_site;
-
   // #endregion ➤ 📌 VARIABLES
-
-  // #region ➤ 🛠️ METHODS
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'methods' that are to be           │
-  // │ and are expected to be used by 'this' .svelte file / component.        │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. function (..)                                                       │
-  // │ 2. async function (..)                                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  // ### NOTE:
-  // ### Temporary, deciding where to 'put' widget data loader,
-  // ### Either into the parent (+page.svelte), or make 'this' widget
-  // ### into it's own component, with the V6 structure.
-  async function widgetInit
-  (
-  ): Promise < B_PROF_D | null >
-  {
-    await sleep(3000);
-
-    const response: B_PROF_D = await get
-    (
-      `/api/data/profile?uid=${$userBetarenaSettings.user.firebase_user_data?.uid}`
-    ) as B_PROF_D;
-
-    widgetDataMain = response
-
-    const if_M_0
-      = widgetDataMain == undefined
-    ;
-    if (if_M_0)
-    {
-      // dlog(`${IN_W_F_TAG} ❌ no data available!`, IN_W_F_TOG, IN_W_F_STY);
-      widgetNoData = true;
-      return null;
-    }
-
-    widgetNoData = false;
-    return widgetDataMain;
-  }
-
-  // #endregion ➤ 🛠️ METHODS
 
 </script>
 
@@ -149,70 +101,161 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<!-- <WidgetTxHistLoader /> -->
-
-{#await widgetInit()}
-
-  <WidgetTxHistLoader />
-
-{:then data}
-
-  <MainInvestorTitle />
+<tr
+  class:extra-info={isTxExtraInfo && VIEWPORT_MOBILE_INIT_PARENT[1]}
+  on:click={() => {return isTxExtraInfo = !isTxExtraInfo}}
+>
 
   <!--
   ▓ NOTE:
-  ▓ > main grid.
+  ▓ > vesting period 'id'
   -->
-  <div
-    id="investor-grid-box"
-  >
+  <td>
+    <p>
+      {data.id ?? '-'}
+    </p>
+  </td>
 
-    <MainRound
-      WIDGET_DATA={data}
-    />
-    <MainInvestBox
-      WIDGET_DATA={data}
-    />
-      <TierPricing
-        profileData={data}
-      />
-      <TgeMain
-        VIEWPORT_MOBILE_INIT_PARENT={VIEWPORT_MOBILE_INIT}
-        VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
-      />
+  <!--
+  ▓ NOTE:
+  ▓ > referral history 'bonus (%)'.
+  -->
+  <td>
+    <p>
+      {data.bonus_percentage ?? '-'}%
+    </p>
+  </td>
 
-      <MainInvestmentDetail
-        profileData={data}
-      />
+  <!--
+  ▓ NOTE:
+  ▓ > referral history 'bonus (BTA)'.
+  -->
+  <td>
+    <p>
+      {data.bonus_bta ?? '-'}
+    </p>
+  </td>
 
-      <MainWalletsInvestor
-        profileData={data}
-        VIEWPORT_MOBILE_INIT_PARENT={VIEWPORT_MOBILE_INIT}
-        VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
-      />
+  <!--
+  ▓ NOTE: ▓ 💻 TABLET
+  ▓ > target columns.
+  -->
+  {#if !VIEWPORT_MOBILE_INIT_PARENT[1]}
 
-      <ReferralsSteps
-        profileData={data}
+    <!--
+    ▓ NOTE:
+    ▓ > referral history 'bonus (BTA)'.
+    -->
+    <td>
+      <p>
+        {
+          data.date
+            ? ddMMyyFormat
+            (
+              data.date
+            )
+            : '-'
+        }
+      </p>
+    </td>
+
+  {/if}
+
+  <!--
+  ▓ NOTE:
+  ▓ > 📱 MOBILE
+  -->
+  {#if VIEWPORT_MOBILE_INIT_PARENT[1]}
+    <td>
+      <img
+        src={isTxExtraInfo ? icon_arrow_up : icon_arrow_down}
+        alt={isTxExtraInfo ? 'icon_arrow_up' : 'icon_arrow_down'}
+        class=
+        "
+        cursor-pointer
+        m-l-8
+        "
+        style=
+        "
+        float: right;
+        "
       />
-      <ReferralsInfo
-        profileData={data}
-        VIEWPORT_MOBILE_INIT_PARENT={VIEWPORT_MOBILE_INIT}
-        VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
-      />
-      <ReferralsBonusSummary
-        profileData={data}
-      />
-      <ReferralsHistory
-        profileData={data}
-      />
+    </td>
+  {/if}
+
+  <!--
+  ▓ NOTE:
+  ▓ > extra hidden data 📱 MOBILE layout
+  -->
+  {#if isTxExtraInfo && VIEWPORT_MOBILE_INIT_PARENT[1]}
+
     <div
-      id="FAQ"
+      class=
+      "
+      extra-information
+      "
     >
-      <MainFaq />
+      {#each mobileProps as item}
+
+        <!--
+        ▓ NOTE:
+        ▓ > target transaction further data row.
+        -->
+        <div
+          class=
+          "
+          m-b-8
+          row-space-out
+          "
+        >
+
+          <!--
+          ▓ NOTE:
+          ▓ > target transaction property title.
+          -->
+          <p
+            class=
+            "
+            s-12
+            color-grey
+            "
+          >
+            {#if item == 'Date'}
+              Date
+            {/if}
+          </p>
+
+          <!--
+          ▓ NOTE:
+          ▓ > target transaction property value.
+          -->
+          <p
+            class=
+            "
+            s-14
+            color-black-2
+            "
+          >
+            {#if item == 'Date'}
+              {
+                data.date
+                  ? ddMMyyFormat
+                  (
+                    data.date
+                  )
+                  : '-'
+              }
+            {/if}
+          </p>
+
+        </div>
+
+      {/each}
     </div>
 
-  </div>
-{/await}
+  {/if}
+
+</tr>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -225,38 +268,7 @@
 
 <style lang="scss">
 
-  div#investor-grid-box
-  {
-    /* 🎨 style */
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 64px 20px;
-  }
-
-  /*
-  ╭──────────────────────────────────────────────────────────────────────────────╮
-  │ ⚡️ RESPONSIVNESS                                                              │
-  ╰──────────────────────────────────────────────────────────────────────────────╯
-  */
-
-  @media only screen
-  and (min-width: 1160px)
-  {
-    div#investor-grid-box
-    {
-      /* 🎨 style */
-      gap: 80px 20px;
-      grid-template-columns: 1fr 1fr;
-    }
-
-    div#FAQ
-    {
-      /* 🎨 style */
-      width: 100%;
-      /* 📌 position */
-      grid-column: 1 / 3 ;
-    }
-
-  }
+  // ▓ IMPORTANT
+  // ▓ > Controlled By Parent
 
 </style>
