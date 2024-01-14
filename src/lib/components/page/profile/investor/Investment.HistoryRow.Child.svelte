@@ -8,7 +8,7 @@
 
 <script lang="ts">
 
-  // #region ➤ 📦 Package Imports
+// #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -23,20 +23,17 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-	import { page } from '$app/stores';
-	import { get } from '$lib/api/utils.js';
+  import { toZeroPrefixDateStr } from '$lib/utils/dates.js';
+  import { toDecimalFix } from '$lib/utils/platform-functions';
 
-	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { sleep } from '$lib/utils/platform-functions.js';
+  import icon_arrow_down from '../assets/arrow-down.svg';
+  import icon_arrow_up from '../assets/arrow-up.svg';
+  import icon_bronze from '../assets/price-tier/icon-bta-bronze.svg';
+  import icon_gold from '../assets/price-tier/icon-bta-gold.svg';
+  import icon_platinum from '../assets/price-tier/icon-bta-platinum.svg';
+  import icon_silver from '../assets/price-tier/icon-bta-silver.svg';
 
-	import WidgetTxHistLoader from './../competitions-history/Widget-Comp-Hist-Loader.svelte';
-	import MainFaq from './FAQ-Main.svelte';
-	import MainInvestmentDetail from './Investment.History.Main.svelte';
-	import MainInvestBox from './Main-InvestBox.svelte';
-	import MainInvestorTitle from './Main-Investor-Title.svelte';
-	import MainRound from './Main-Round.svelte';
-
-	import type { B_PROF_D, IProfileTrs } from '@betarena/scores-lib/types/profile.js';
+	import type { B_H_KEYP, B_H_KEYP_Tier, B_H_TH } from '@betarena/scores-lib/types/_HASURA_.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -54,39 +51,59 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  export let
+    /**
+     * @augments B_H_TH
+    */
+    data: B_H_TH
+    /**
+     * @description
+     *  📣
+    */
+    , tierDataMap: Map < B_H_KEYP_Tier, B_H_KEYP >
+    /**
+     * @description
+     *  📣
+    */
+    , VIEWPORT_MOBILE_INIT_PARENT: [ number, boolean ]
+    /**
+     * @description
+     *  📣
+    */
+    , VIEWPORT_TABLET_INIT_PARENT: [ number, boolean ]
+  ;
+
   const
     /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
     // eslint-disable-next-line no-unused-vars
-    CNAME: string = 'profile⮕w⮕comp-hist'
+    CNAME: string = 'profile⮕w⮕investfaq⮕main'
     /** @description 📣 threshold start + state for 📱 MOBILE */
     // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 581, true ]
+    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
     /** @description 📣 threshold start + state for 💻 TABLET */
     // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 912, true ]
+    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
+
+  // type K1 = keyof B_H_TH;
 
   let
-    /** @description 📣 (widget) translations data */
-    widgetDataTranslation: IProfileTrs
-    /** @description 📣 (widget) translations (SEO) data */
-    // , widgetDataSeo: B_COMP_MAIN_S
-    /** @description 📣 (widget) main data */
-    , widgetDataMain: B_PROF_D
-    /** @description 📣 (widget) wether widget has or no data */
-    // eslint-disable-next-line no-unused-vars
-    , widgetNoData: boolean = true
-    /** @description 📣 (widget) dynamic import variable for svelte component [1] */
-    // , MainMainAsDynamic: any
+    /**
+     * @description
+     *  📣 Wether extra information is toggled (mobile only).
+    */
+    isTxExtraInfo: boolean = false
+    /**
+     * @description
+     *  📣 Properties to be shown in mobile view.
+    */
+    , mobileProps: string[] = ['discount', 'investment', 'tokens', 'price']
+    /**
+     * @description
+     *  📣 Target `icon` asset for _this_ transaction.
+    */
+    , targetTxTierIcon: string = selectIcon(data.tier ?? 'NaN')
   ;
-
-  // eslint-disable-next-line no-unused-vars
-  $: widgetDataTranslation = $page.data.RESPONSE_PROFILE_DATA ?? { };
-  // $: widgetDataTranslation = $page.data?.B_COMP_MAIN_T;
-  // $: widgetDataSeo = $page.data?.B_COMP_MAIN_S;
-  // $: WIDGET_TITLE = widgetDataTranslation?.translations?.widget_title ?? translationObject?.featured_bet_site;
-
-  // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
 
@@ -100,35 +117,33 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  // ### NOTE:
-  // ### Temporary, deciding where to 'put' widget data loader,
-  // ### Either into the parent (+page.svelte), or make 'this' widget
-  // ### into it's own component, with the V6 structure.
-  async function widgetInit
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟦 HELPER
+   * @description
+   *  📣 Assign target icon for target visible option.
+   * @param { string } target
+   *  💠 Target `tier` selected.
+   * @return { string }
+   *  📤 Target `tier icon`.
+   */
+  function selectIcon
   (
-  ): Promise < B_PROF_D | null >
+    target: B_H_KEYP_Tier
+  ): string
   {
-		await sleep(3000);
-
-    const response: B_PROF_D = await get
-    (
-      `/api/data/profile?uid=${$userBetarenaSettings.user.firebase_user_data?.uid}`
-    ) as B_PROF_D;
-
-    widgetDataMain = response
-
-    const if_M_0
-      = widgetDataMain == undefined
-    ;
-    if (if_M_0)
-    {
-      // dlog(`${IN_W_F_TAG} ❌ no data available!`, IN_W_F_TOG, IN_W_F_STY);
-      widgetNoData = true;
-      return null;
-    }
-
-    widgetNoData = false;
-    return widgetDataMain;
+    if (target == 'bronze')
+      return icon_bronze;
+    else if (target == 'silver')
+      return icon_silver;
+    else if (target == 'gold')
+      return icon_gold;
+    else if (target == 'platinum')
+      return icon_platinum;
+    else
+      return '';
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -144,42 +159,246 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<!-- <WidgetTxHistLoader /> -->
-
-{#await widgetInit()}
-
-  <WidgetTxHistLoader />
-
-{:then data}
-
-  <MainInvestorTitle />
+<tr
+  class:extra-info={isTxExtraInfo && VIEWPORT_MOBILE_INIT_PARENT[1]}
+  on:click={() => {return isTxExtraInfo = !isTxExtraInfo}}
+>
 
   <!--
   ▓ NOTE:
-  ▓ > main grid.
+  ▓ > transaction execution date.
   -->
-  <div
-    id="investor-grid-box"
-  >
+  <td>
+    <p>
+      {
+        new Date(data.date ?? '').getDate()
+        + '/'
+        + toZeroPrefixDateStr(new Date(data.date ?? '').getMonth() + 1)
+        + '/'
+        + (new Date(data.date ?? '').getFullYear()).toString().substr(-2)
+      }
+    </p>
+  </td>
 
-    <MainRound
-      WIDGET_DATA={data}
-    />
-    <MainInvestBox
-      WIDGET_DATA={data}
-    />
+  <!--
+  ▓ NOTE:
+  ▓ > transaction execution type.
+  -->
+  <td>
+    <p>
+      {data.type}
+    </p>
+  </td>
 
-      <MainInvestmentDetail
-        profileData={data}
-      />
+  <!--
+  ▓ NOTE:
+  ▓ > transaction execution tier.
+  -->
+  <td>
     <div
-      id="FAQ"
+      class=
+      "
+      row-space-start
+      "
     >
-      <MainFaq />
+      <!--
+      ▓ NOTE:
+      ▓ > transaction tier icon.
+      -->
+      <img
+        id=''
+        src='{targetTxTierIcon}'
+        alt=''
+        title=''
+        loading='lazy'
+        width=24
+        height=24
+        class=
+        "
+        m-r-8
+        "
+      />
+
+      <!--
+      ▓ NOTE:
+      ▓ > transaction tier name tag.
+      -->
+      <p
+        class=
+        "
+        capitalize
+        "
+      >
+        {data.tier ?? 'NaN'}
+      </p>
+
+    </div>
+  </td>
+
+  <!--
+  ▓ NOTE:
+  ▓ > 💻 TABLET 🖥️ LAPTOP
+  -->
+  {#if !VIEWPORT_MOBILE_INIT_PARENT[1]}
+
+    <!--
+    ▓ NOTE:
+    ▓ > discount
+    -->
+    <td>
+      <p>
+        {tierDataMap.get(data.tier ?? 'NaN')?.data?.discount_percentage}%
+      </p>
+    </td>
+
+    <!--
+    ▓ NOTE:
+    ▓ > investment amount
+    -->
+    <td>
+      <p>
+        ${data.amount}
+      </p>
+    </td>
+
+    <!--
+    ▓ NOTE:
+    ▓ > investment tokens amount
+    -->
+    <td>
+      <p>
+        {data.quantity}
+      </p>
+    </td>
+
+    <!--
+    ▓ NOTE:
+    ▓ > investment BTA price
+    -->
+    <td>
+      <p>
+        ${
+          toDecimalFix
+          (
+            tierDataMap.get(data.tier ?? 'NaN')?.data?.token_price ?? 0
+            , 2
+            , false
+            , false
+          )
+        }
+      </p>
+    </td>
+
+  {/if}
+
+  <!--
+  ▓ NOTE:
+  ▓ > 📱 MOBILE
+  -->
+  {#if VIEWPORT_MOBILE_INIT_PARENT[1]}
+    <td>
+      <img
+        src={isTxExtraInfo ? icon_arrow_up : icon_arrow_down}
+        alt={isTxExtraInfo ? 'icon_arrow_up' : 'icon_arrow_down'}
+        class=
+        "
+        cursor-pointer
+        m-l-8
+        "
+        style=
+        "
+        float: right;
+        "
+      />
+    </td>
+  {/if}
+
+  <!--
+  ▓ NOTE:
+  ▓ > transaction 📱 MOBILE layout
+  -->
+  {#if isTxExtraInfo && VIEWPORT_MOBILE_INIT_PARENT[1]}
+
+    <div
+      class=
+      "
+      extra-information
+      "
+    >
+      {#each mobileProps as item}
+
+        <!--
+        ▓ NOTE:
+        ▓ > target transaction further data row.
+        -->
+        <div
+          class=
+          "
+          m-b-8
+          row-space-out
+          "
+        >
+
+          <!--
+          ▓ NOTE:
+          ▓ > target transaction property title.
+          -->
+          <p
+            class=
+            "
+            s-12
+            color-grey
+            "
+          >
+            {#if item == 'discount'}
+              Discount
+            {:else if item == 'investment'}
+              Investment
+            {:else if item == 'tokens'}
+              Tokens
+            {:else if item == 'price'}
+              Price
+            {/if}
+          </p>
+
+          <!--
+          ▓ NOTE:
+          ▓ > target transaction property value.
+          -->
+          <p
+            class=
+            "
+            s-14
+            color-black-2
+            "
+          >
+            {#if item == 'discount'}
+              {tierDataMap.get(data.tier ?? 'NaN')?.data?.discount_percentage}%
+            {:else if item == 'investment'}
+              ${data.amount}
+            {:else if item == 'tokens'}
+              {data.quantity}
+            {:else if item == 'price'}
+              ${
+                toDecimalFix
+                (
+                  tierDataMap.get(data.tier ?? 'NaN')?.data?.token_price ?? 0
+                  , 2
+                  , false
+                  , false
+                )
+              }
+            {/if}
+          </p>
+
+        </div>
+
+      {/each}
     </div>
 
-  </div>
-{/await}
+  {/if}
+
+</tr>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -192,38 +411,7 @@
 
 <style lang="scss">
 
-  div#investor-grid-box
-  {
-    /* 🎨 style */
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 64px 20px;
-  }
-
-  /*
-  ╭──────────────────────────────────────────────────────────────────────────────╮
-  │ ⚡️ RESPONSIVNESS                                                              │
-  ╰──────────────────────────────────────────────────────────────────────────────╯
-  */
-
-  @media only screen
-  and (min-width: 1160px)
-  {
-    div#investor-grid-box
-    {
-      /* 🎨 style */
-      gap: 80px 20px;
-      grid-template-columns: 1fr 1fr;
-    }
-
-    div#FAQ
-    {
-      /* 🎨 style */
-      width: 100%;
-      /* 📌 position */
-      grid-column: 1 / 3 ;
-    }
-
-  }
+  // ▓ IMPORTANT
+  // ▓ > Controlled By Parent
 
 </style>
