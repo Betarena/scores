@@ -35,8 +35,7 @@
 	import MainInvestBox from './Main-InvestBox.svelte';
 	import MainInvestorTitle from './Main-Investor-Title.svelte';
 	import MainRound from './Main-Round.svelte';
-
-	import type { B_PROF_D, IProfileTrs } from '@betarena/scores-lib/types/profile.js';
+	import TierPricing from './Launchpad.TierPricing.Main.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -168,6 +167,9 @@
     <MainInvestBox
       WIDGET_DATA={data}
     />
+      <TierPricing
+        profileData={data}
+      />
 
       <MainInvestmentDetail
         profileData={data}
