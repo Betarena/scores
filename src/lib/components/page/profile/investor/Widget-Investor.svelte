@@ -32,12 +32,13 @@
 	import WidgetTxHistLoader from './../competitions-history/Widget-Comp-Hist-Loader.svelte';
 	import MainFaq from './FAQ-Main.svelte';
 	import MainInvestmentDetail from './Investment.History.Main.svelte';
+	import TgeMain from './Investment.TGE.Main.svelte';
+	import MainWalletsInvestor from './Investment.Wallets.Main.svelte';
+	import TierPricing from './Launchpad.TierPricing.Main.svelte';
 	import MainInvestBox from './Main-InvestBox.svelte';
 	import MainInvestorTitle from './Main-Investor-Title.svelte';
 	import MainRound from './Main-Round.svelte';
-	import TgeMain from './Investment.TGE.Main.svelte';
-	import TierPricing from './Launchpad.TierPricing.Main.svelte';
-	import MainWalletsInvestor from './Investment.Wallets.Main.svelte';
+	import ReferralsInfo from './Referrals.Info.Main.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -109,7 +110,7 @@
   (
   ): Promise < B_PROF_D | null >
   {
-		await sleep(3000);
+    await sleep(3000);
 
     const response: B_PROF_D = await get
     (
@@ -187,6 +188,11 @@
         VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
       />
 
+      <ReferralsInfo
+        profileData={data}
+        VIEWPORT_MOBILE_INIT_PARENT={VIEWPORT_MOBILE_INIT}
+        VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
+      />
     <div
       id="FAQ"
     >

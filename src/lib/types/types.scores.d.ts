@@ -239,6 +239,11 @@ export interface Platform_Session
   showDepositModalState: boolean;
   /**
    * @description
+   *  📣 toogle `visibility` (show/hide) of Referral Invitations modal.
+   */
+  showReferralInviteModal: boolean;
+  /**
+   * @description
    *  📣 toogle `visibility` (show/hide) of Investment Wallets modal.
    */
   showInvstementWallets: boolean;
