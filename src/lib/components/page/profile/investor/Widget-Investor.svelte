@@ -25,6 +25,8 @@
 
 	import { page } from '$app/stores';
 	import { get } from '$lib/api/utils.js';
+	import { viewport_change } from '$lib/utils/platform-functions';
+	import { onMount } from 'svelte';
 
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { sleep } from '$lib/utils/platform-functions.js';
@@ -43,6 +45,8 @@
 	import ReferralsHistory from './Referrals.History.Main.svelte';
 	import ReferralsInfo from './Referrals.Info.Main.svelte';
 	import ReferralsSteps from './Referrals.Steps.Main.svelte';
+
+	import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -78,7 +82,7 @@
     /** @description 📣 (widget) translations (SEO) data */
     // , widgetDataSeo: B_COMP_MAIN_S
     /** @description 📣 (widget) main data */
-    , widgetDataMain: B_PROF_D
+    , widgetDataMain: IProfileData
     /** @description 📣 (widget) wether widget has or no data */
     // eslint-disable-next-line no-unused-vars
     , widgetNoData: boolean = true
@@ -106,20 +110,51 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  // ### NOTE:
-  // ### Temporary, deciding where to 'put' widget data loader,
-  // ### Either into the parent (+page.svelte), or make 'this' widget
-  // ### into it's own component, with the V6 structure.
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟥 COMPONENT MAIN
+   * @description
+   *  📣 Update variables for viewport state.
+   * @return { void }
+   */
+  function resizeCustom
+  (
+  ): void
+  {
+    [
+      VIEWPORT_TABLET_INIT[1],
+      VIEWPORT_MOBILE_INIT[1]
+    ] = viewport_change
+    (
+      VIEWPORT_TABLET_INIT[0],
+      VIEWPORT_MOBILE_INIT[0]
+    );
+    return;
+  }
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟩 MAIN
+   * @description
+   *  📌 main widget data loader
+   *  - ⚡️ (and) try..catch (error) handler
+   *  - ⚡️ (and) placeholder handler
+   * @returns { Promise < IProfileData | null > }
+   */
   async function widgetInit
   (
-  ): Promise < B_PROF_D | null >
+  ): Promise < IProfileData | null >
   {
     await sleep(3000);
 
-    const response: B_PROF_D = await get
+    const response: IProfileData = await get
     (
       `/api/data/profile?uid=${$userBetarenaSettings.user.firebase_user_data?.uid}`
-    ) as B_PROF_D;
+    ) as IProfileData;
 
     widgetDataMain = response
 
@@ -139,7 +174,35 @@
 
   // #endregion ➤ 🛠️ METHODS
 
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  onMount
+  (
+    async (
+    ) =>
+    {
+      resizeCustom();
+      return;
+    }
+  );
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
+
 </script>
+
+<svelte:window
+  on:resize=
+  {
+    () => {return resizeCustom()}
+  }
+/>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -150,6 +213,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
+<!-- [🐞] -->
 <!-- <WidgetTxHistLoader /> -->
 
 {#await widgetInit()}
@@ -158,22 +222,25 @@
 
 {:then data}
 
-  <MainInvestorTitle />
-
-  <!--
-  ▓ NOTE:
-  ▓ > main grid.
-  -->
   <div
     id="investor-grid-box"
   >
 
-    <MainRound
-      WIDGET_DATA={data}
-    />
-    <MainInvestBox
-      WIDGET_DATA={data}
-    />
+    <!--
+    ▓ NOTE:
+    ▓ > Launchpad Information Section
+    -->
+    <div
+      id="launchpad-grid-box"
+    >
+      <MainInvestorTitle />
+
+      <MainRound
+        WIDGET_DATA={data}
+      />
+      <MainInvestBox
+        WIDGET_DATA={data}
+      />
 
       <iframe
         width="560"
@@ -188,6 +255,61 @@
       <TierPricing
         profileData={data}
       />
+    </div>
+
+    <!--
+    ▓ NOTE:
+    ▓ > Investment Information Section
+    -->
+    <div
+      id="section-investing"
+    >
+
+      <!--
+      ▓ NOTE:
+      ▓ > main title
+      -->
+      <div
+        id='profile⮕w⮕investtge⮕main⮕title'
+      >
+
+        <!--
+        ▓ NOTE:
+        ▓ > title
+        -->
+        <p
+          class=
+          "
+          {VIEWPORT_MOBILE_INIT[1] ? 's-24' : 's-32'}
+          w-500
+          color-black-2
+          m-b-16
+          "
+        >
+          {
+            'Investment Information'
+          }
+        </p>
+
+        <!--
+        ▓  NOTE:
+        ▓ > sub-title
+        -->
+        <p
+          class=
+          "
+          s-16
+          color-grey
+            grey-v1
+          "
+        >
+          {
+            'This section provides a comprehensive overview of your investment in Betarena tokens ($BTA). '
+          }
+        </p>
+
+      </div>
+
       <TgeMain
         VIEWPORT_MOBILE_INIT_PARENT={VIEWPORT_MOBILE_INIT}
         VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
@@ -208,6 +330,15 @@
         VIEWPORT_MOBILE_INIT_PARENT={VIEWPORT_MOBILE_INIT}
         VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
       />
+    </div>
+
+    <!--
+    ▓ NOTE:
+    ▓ > Referral Information Section
+    -->
+    <div
+      id="section-referral"
+    >
       <ReferralsSteps
         profileData={data}
       />
@@ -222,13 +353,20 @@
       <ReferralsHistory
         profileData={data}
       />
+    </div>
+
+    <!--
+    ▓ NOTE:
+    ▓ > FAQ Information Section
+    -->
     <div
-      id="FAQ"
+      id="section-FAQ"
     >
       <MainFaq />
     </div>
 
   </div>
+
 {/await}
 
 <!--
@@ -242,12 +380,45 @@
 
 <style lang="scss">
 
+  /*
+  ╭──────────────────────────────────────────────────────────────────────────────╮
+  │ 📲 MOBILE-FIRST                                                              │
+  ╰──────────────────────────────────────────────────────────────────────────────╯
+  */
+
   div#investor-grid-box
   {
     /* 🎨 style */
     display: grid;
     grid-template-columns: 1fr;
     gap: 64px 20px;
+
+    div#launchpad-grid-box
+    {
+      /* 🎨 style */
+      display: grid;
+      gap: 20px;
+
+      iframe
+      {
+        /* 🎨 style */
+        width: -webkit-fill-available;
+      }
+    }
+
+    div#section-investing
+    {
+      /* 🎨 style */
+      display: grid;
+      gap: 20px;
+    }
+
+    div#section-referral
+    {
+      /* 🎨 style */
+      display: grid;
+      gap: 20px;
+    }
   }
 
   /*
@@ -257,23 +428,117 @@
   */
 
   @media only screen
+  and (min-width: 560px)
+  {
+    div#investor-grid-box
+    {
+      div#section-investing
+      {
+        /* 🎨 style */
+        gap: 20px;
+        // grid-template-columns: 1fr 1fr 1fr 1fr;
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+
+  @media only screen
   and (min-width: 1160px)
   {
     div#investor-grid-box
     {
       /* 🎨 style */
       gap: 80px 20px;
-      grid-template-columns: 1fr 1fr;
-    }
 
-    div#FAQ
-    {
-      /* 🎨 style */
-      width: 100%;
-      /* 📌 position */
-      grid-column: 1 / 3 ;
-    }
+      div#launchpad-grid-box
+      {
+        /* 🎨 style */
+        gap: 20px;
+        grid-template-columns: 1fr 1fr;
 
+        :global
+        {
+          div#profile⮕w⮕investor-title⮕main
+          {
+            /* 🎨 style */
+            grid-column: 1 / 3;
+          }
+          div#profile⮕w⮕investTierPricing⮕main
+          {
+            /* 🎨 style */
+            grid-column: 1 / 3;
+          }
+        }
+      }
+
+      div#section-investing
+      {
+        /* 🎨 style */
+        // grid-template-columns: 1fr 1fr 1fr 1fr;
+        grid-template-columns: 282px 1fr;
+
+        :global
+        {
+          div#profile⮕w⮕investtge⮕main⮕title
+          {
+            /* 🎨 style */
+            grid-column: 1 / 5;
+          }
+          div#profile⮕w⮕investtge⮕main
+          {
+            /* 🎨 style */
+            grid-column: 1 / 2;
+          }
+          div#profile⮕w⮕investment-detail⮕main
+          {
+            /* 🎨 style */
+            grid-column: 2 / 5;
+          }
+          div#profile⮕w⮕investment-wallets⮕main
+          {
+            /* 🎨 style */
+            grid-column: 1 / 5;
+          }
+          div#profile⮕w⮕vesting-period⮕main
+          {
+            /* 🎨 style */
+            grid-column: 1 / 5;
+          }
+        }
+      }
+
+      div#section-referral
+      {
+        /* 🎨 style */
+        gap: 20px 45px;
+        grid-template-columns: 1fr 1fr;
+
+        :global
+        {
+          div#profile⮕w⮕referral-step⮕main
+          {
+            /* 🎨 style */
+            grid-column: 1 / 2;
+            grid-row: 1 / 4;
+          }
+          div#profile⮕w⮕referral-info⮕main
+          {
+            /* 🎨 style */
+            grid-column: 2;
+          }
+          div#profile⮕w⮕referral-bonus⮕main
+          {
+            /* 🎨 style */
+            grid-column: 2;
+          }
+          div#profile⮕w⮕referral-history⮕main
+          {
+            /* 🎨 style */
+            grid-column: 2;
+          }
+        }
+      }
+    }
   }
 
 </style>
