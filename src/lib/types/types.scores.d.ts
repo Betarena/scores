@@ -237,6 +237,11 @@ export interface Platform_Session
    *  📣 toogle `visibility` (show/hide) of Terms-And-Conditions modal.
    */
   showDepositModalState: boolean;
+  /**
+   * @description
+   *  📣 toogle `visibility` (show/hide) of Investment Wallets modal.
+   */
+  showInvstementWallets: boolean;
 
   // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   // NOTE: SPORTBOOK DATA       ◼️

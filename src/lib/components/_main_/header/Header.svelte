@@ -477,6 +477,7 @@
     || $sessionStore?.showTermsAndConditions
     || $sessionStore.isShowFixtureCompetitionJoinModal
     || $sessionStore.showDepositModalState
+    || $sessionStore.showInvstementWallets
   ;
   $: if (if_R_4)
   {

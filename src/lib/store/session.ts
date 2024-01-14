@@ -34,6 +34,7 @@ const sessionStoreObj: Platform_Session =
   showTermsAndConditions: false,
   showFixtureCompetition: false,
   isShowFixtureCompetitionJoinModal: false,
+  showInvstementWallets: false,
   // ### NOTE:
   // ### variables for language handle.
   lang_intent: undefined,

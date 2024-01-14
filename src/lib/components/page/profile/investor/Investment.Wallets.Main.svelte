@@ -23,20 +23,13 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-	import { page } from '$app/stores';
-	import { get } from '$lib/api/utils.js';
-
+	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { sleep } from '$lib/utils/platform-functions.js';
+	import { copyToClipboard } from '$lib/utils/platform-functions.js';
 
-	import WidgetTxHistLoader from './../competitions-history/Widget-Comp-Hist-Loader.svelte';
-	import MainFaq from './FAQ-Main.svelte';
-	import MainInvestmentDetail from './Investment.History.Main.svelte';
-	import MainInvestBox from './Main-InvestBox.svelte';
-	import MainInvestorTitle from './Main-Investor-Title.svelte';
-	import MainRound from './Main-Round.svelte';
-	import TierPricing from './Launchpad.TierPricing.Main.svelte';
-	import MainWalletsInvestor from './Investment.Wallets.Main.svelte';
+  import WalletsModal from './Investment.Wallets.Modal.svelte';
+
+  import type { IProfileData } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -54,84 +47,49 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  export let
+    /**
+     * @augments IProfileData
+     */
+    profileData: IProfileData | null
+    /**
+     * @description
+     *  📣
+    */
+    , VIEWPORT_MOBILE_INIT_PARENT: [ number, boolean ]
+    /**
+     * @description
+     *  📣
+    */
+    , VIEWPORT_TABLET_INIT_PARENT: [ number, boolean ]
+  ;
+
   const
     /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
     // eslint-disable-next-line no-unused-vars
-    CNAME: string = 'profile⮕w⮕comp-hist'
+    CNAME: string = 'profile⮕w⮕investment-wallets⮕main'
     /** @description 📣 threshold start + state for 📱 MOBILE */
     // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 581, true ]
+    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = VIEWPORT_MOBILE_INIT_PARENT
     /** @description 📣 threshold start + state for 💻 TABLET */
     // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 912, true ]
+    , VIEWPORT_TABLET_INIT: [ number, boolean ] = VIEWPORT_TABLET_INIT_PARENT
   ;
 
   let
-    /** @description 📣 (widget) translations data */
-    widgetDataTranslation: IProfileTrs
-    /** @description 📣 (widget) translations (SEO) data */
-    // , widgetDataSeo: B_COMP_MAIN_S
-    /** @description 📣 (widget) main data */
-    , widgetDataMain: B_PROF_D
-    /** @description 📣 (widget) wether widget has or no data */
-    // eslint-disable-next-line no-unused-vars
-    , widgetNoData: boolean = true
-    /** @description 📣 (widget) dynamic import variable for svelte component [1] */
-    // , MainMainAsDynamic: any
+    /**
+     * @description
+     *  📣 Target **unique** wallets used in `investments` by _this_ user.
+    */
+    userWallets = new Set
+    (
+      profileData?.tx_hist
+        ?.filter(x => {return x.type == 'vesting' && x.wallet_address_erc20 != null})
+        ?.map(x => {return x.wallet_address_erc20 ?? ''})!
+    )
   ;
 
-  // eslint-disable-next-line no-unused-vars
-  $: widgetDataTranslation = $page.data.RESPONSE_PROFILE_DATA ?? { };
-  // $: widgetDataTranslation = $page.data?.B_COMP_MAIN_T;
-  // $: widgetDataSeo = $page.data?.B_COMP_MAIN_S;
-  // $: WIDGET_TITLE = widgetDataTranslation?.translations?.widget_title ?? translationObject?.featured_bet_site;
-
   // #endregion ➤ 📌 VARIABLES
-
-  // #region ➤ 🛠️ METHODS
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'methods' that are to be           │
-  // │ and are expected to be used by 'this' .svelte file / component.        │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. function (..)                                                       │
-  // │ 2. async function (..)                                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  // ### NOTE:
-  // ### Temporary, deciding where to 'put' widget data loader,
-  // ### Either into the parent (+page.svelte), or make 'this' widget
-  // ### into it's own component, with the V6 structure.
-  async function widgetInit
-  (
-  ): Promise < B_PROF_D | null >
-  {
-		await sleep(3000);
-
-    const response: B_PROF_D = await get
-    (
-      `/api/data/profile?uid=${$userBetarenaSettings.user.firebase_user_data?.uid}`
-    ) as B_PROF_D;
-
-    widgetDataMain = response
-
-    const if_M_0
-      = widgetDataMain == undefined
-    ;
-    if (if_M_0)
-    {
-      // dlog(`${IN_W_F_TAG} ❌ no data available!`, IN_W_F_TOG, IN_W_F_STY);
-      widgetNoData = true;
-      return null;
-    }
-
-    widgetNoData = false;
-    return widgetDataMain;
-  }
-
-  // #endregion ➤ 🛠️ METHODS
 
 </script>
 
@@ -144,52 +102,115 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<!-- <WidgetTxHistLoader /> -->
+<div
+  id={CNAME}
+  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+  class:row-space-out={!VIEWPORT_MOBILE_INIT_PARENT[1]}
+  class:column-space-center={VIEWPORT_MOBILE_INIT_PARENT[1]}
+>
+  <!--
+  ▓ NOTE:
+  ▓ > (text) 1st column.
+  -->
+  <div
+    class=
+    "
+    {VIEWPORT_MOBILE_INIT_PARENT[1] ? 'row-space-out m-b-20' : 'row-space-start'}
+    "
+  >
 
-{#await widgetInit()}
+    <!--
+    ▓ NOTE:
+    ▓ > (text) widget title.
+    -->
+    <p
+      class=
+      "
+      s-14
+      color-black-2
+      m-r-20
+      "
+    >
+      Investor Wallet Address
+    </p>
 
-  <WidgetTxHistLoader />
+    <!--
+    ▓ NOTE:
+    ▓ > (text) view all.
+    -->
+    <p
+      class=
+      "
+      s-14
+      color-black-2
+      underline
+      bold
+      cursor-pointer
+      "
+      on:click={() => {return $sessionStore.showInvstementWallets = true}}
+    >
+      View All
+    </p>
 
-{:then data}
-
-  <MainInvestorTitle />
+  </div>
 
   <!--
   ▓ NOTE:
-  ▓ > main grid.
+  ▓ > (text) 2nd column.
   -->
   <div
-    id="investor-grid-box"
+    class=
+    "
+    {VIEWPORT_MOBILE_INIT_PARENT[1] ? 'row-space-out' : 'row-space-end'}
+    "
   >
 
-    <MainRound
-      WIDGET_DATA={data}
-    />
-    <MainInvestBox
-      WIDGET_DATA={data}
-    />
-      <TierPricing
-        profileData={data}
-      />
-
-      <MainInvestmentDetail
-        profileData={data}
-      />
-
-      <MainWalletsInvestor
-        profileData={data}
-        VIEWPORT_MOBILE_INIT_PARENT={VIEWPORT_MOBILE_INIT}
-        VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
-      />
-
-    <div
-      id="FAQ"
+    <!--
+    ▓ NOTE:
+    ▓ > (text) last wallet address used.
+    -->
+    <p
+      class=
+      "
+      s-14
+      color-grey
+      m-r-40
+      "
     >
-      <MainFaq />
-    </div>
+      {userWallets[0] ?? '-'}
+    </p>
+
+    <!--
+    ▓ NOTE:
+    ▓ > (text) copy.
+    -->
+    <p
+      class=
+      "
+      s-14
+      color-black-2
+      underline
+      bold
+      cursor-pointer
+      "
+      on:click={() => { copyToClipboard(userWallets[0]); return; }}
+    >
+      Copy
+    </p>
 
   </div>
-{/await}
+
+  <!--
+  ▓ NOTE:
+  ▓ > investment detail wallet modal.
+  -->
+  {#if $sessionStore.showInvstementWallets}
+    <WalletsModal
+      walletAddressList={userWallets}
+    />
+  {/if}
+
+</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -202,38 +223,35 @@
 
 <style lang="scss">
 
-  div#investor-grid-box
+  /*
+  ╭──────────────────────────────────────────────────────────────────────────────╮
+  │ 📲 MOBILE-FIRST                                                              │
+  ╰──────────────────────────────────────────────────────────────────────────────╯
+  */
+
+  div#profile⮕w⮕investment-wallets⮕main
   {
     /* 🎨 style */
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 64px 20px;
+    background-color: var(--white);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
+    padding: 20px;
   }
 
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
-  │ ⚡️ RESPONSIVNESS                                                              │
+  │ 🌒 DARK-THEME                                                                │
   ╰──────────────────────────────────────────────────────────────────────────────╯
   */
 
-  @media only screen
-  and (min-width: 1160px)
+  div#profile⮕w⮕investment-wallets⮕main
   {
-    div#investor-grid-box
+    &.dark-background-1
     {
       /* 🎨 style */
-      gap: 80px 20px;
-      grid-template-columns: 1fr 1fr;
+      background-color: var(--dark-theme-1-4-shade) !important;
     }
-
-    div#FAQ
-    {
-      /* 🎨 style */
-      width: 100%;
-      /* 📌 position */
-      grid-column: 1 / 3 ;
-    }
-
   }
 
 </style>

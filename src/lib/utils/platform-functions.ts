@@ -1462,4 +1462,32 @@ export function shortenWeb3WalletAddress
   .replaceAll('\t', '');
 }
 
+/**
+ * @author
+ *  @migbash
+ * @summary
+ *  🟦 HELPER
+ * @description
+ *  📣 Copy target `text` to client `clipboard`.
+ * @NOTE
+ *  📌 On `dev` only will work on an `SSL/TLS` address, or `localhost`.
+ * @param { string } copyText
+ *  💠 Target `text` to copy.
+ * @return { Promise < void > }
+ *
+*/
+export async function copyToClipboard
+(
+  copyText: string
+): Promise < void >
+{
+  /* Copy the text inside the text field */
+  await navigator.clipboard.writeText(copyText);
+
+  /* Alert the copied text */
+  alert('Copied: ' + copyText);
+
+  return;
+}
+
 // #endregion ➤ 🛠️ METHODS
