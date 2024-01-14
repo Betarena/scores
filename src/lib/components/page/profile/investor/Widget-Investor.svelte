@@ -35,6 +35,7 @@
 	import MainInvestBox from './Main-InvestBox.svelte';
 	import MainInvestorTitle from './Main-Investor-Title.svelte';
 	import MainRound from './Main-Round.svelte';
+	import TgeMain from './Investment.TGE.Main.svelte';
 	import TierPricing from './Launchpad.TierPricing.Main.svelte';
 	import MainWalletsInvestor from './Investment.Wallets.Main.svelte';
 
@@ -170,6 +171,10 @@
     />
       <TierPricing
         profileData={data}
+      />
+      <TgeMain
+        VIEWPORT_MOBILE_INIT_PARENT={VIEWPORT_MOBILE_INIT}
+        VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
       />
 
       <MainInvestmentDetail
