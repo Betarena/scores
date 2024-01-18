@@ -818,7 +818,7 @@
     // ▓ > send data for completed user transaction to DB.
     const txDepositData: B_H_TH
     = {
-      uid: $userBetarenaSettings.user.firebase_user_data?.uid!
+      uid: $userBetarenaSettings.user.firebase_user_data?.uid as string
       // date: new Date().toISOString(),
       , wallet_address_erc20: walletAddress
       , asset: cryptoDepositOptionSelect.name
