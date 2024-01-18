@@ -166,6 +166,7 @@ p {
   --dark-theme-1-5-shade: #161616;
   --dark-theme-1-6-shade: #4D4D4D;
   --dark-theme-1-5-shade-o-0-2: rgba(22, 22, 22, 0.2);
+  --dark-theme-1-5-shade-o-0-5: rgba(75, 75, 75, 0.5);
 	/*
   ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   ◼️ ### breakpoints
@@ -262,6 +263,11 @@ h5 {
 {
   /* 🎨 style */
 	color: var(--dark-theme);
+}
+.color-black-3
+{
+  /* 🎨 style */
+	color: var(--dark-theme-1);
 }
 .color-secondary
 {
@@ -530,6 +536,10 @@ ON HOVER COLORS
 {
 	font-size: 32px;
 }
+.s-40
+{
+	font-size: 40px;
+}
 .s-42
 {
 	font-size: 42px;
@@ -690,6 +700,10 @@ p.s_small {
 .m-r-40
 {
 	margin-right: 40px;
+}
+.m-r-50
+{
+	margin-right: 50px;
 }
 .m-r-64
 {
@@ -1440,7 +1454,9 @@ img.google-aspect-ratio
 }
 
 .dark-background .color-black-2,
-.dark-background-1 .color-black-2
+.dark-background-1 .color-black-2,
+.dark-background .color-black-3,
+.dark-background-1 .color-black-3
 {
   /* 🎨 style */
 	color: var(--white) !important;

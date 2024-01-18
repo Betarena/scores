@@ -23,11 +23,12 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import userBetarenaSettings from '$lib/store/user-settings.js';
-  import { Misc } from '@betarena/scores-lib/dist/classes/class.misc.js';
+  import { page } from '$app/stores';
 
-  import type { B_H_KEYP, B_H_KEYP_Tier } from '@betarena/scores-lib/types/_HASURA_.js';
-  import type { IProfileData } from '@betarena/scores-lib/types/types.profile.js';
+  import userBetarenaSettings from '$lib/store/user-settings.js';
+  import type { PUBLIC__INVESTOR_IBonus } from '@betarena/scores-lib/types/_HASURA_.js';
+
+  import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -46,9 +47,13 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let
-    /** @augments IProfileData */
+    /**
+     * @augments IProfileData
+    */
     profileData: IProfileData | null
   ;
+
+  type IDataLayout = keyof PUBLIC__INVESTOR_IBonus | '' ;
 
   const
     /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
@@ -65,12 +70,18 @@
   let
     /**
      * @description
+     *  📣 Target `table` row order.
     */
-    dataMap: Map < B_H_KEYP_Tier, B_H_KEYP > = new Misc().convertToMapKEYPINVSTTIER
-    (
-      (profileData?.investorTierPricing ?? [])
-    )
+    dataLayout: IDataLayout[]
+    = [
+      'referral_bonus'
+      , 'referrals_number'
+      , 'referred_bonus'
+      , 'total_bonus'
+    ]
   ;
+
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -103,7 +114,10 @@
     m-b-20
     "
   >
-    Bonus Summary
+    {
+      profileTrs.investor?.referral.bonus.title
+      ?? 'Bonus Summary'
+    }
   </p>
 
   <!--
@@ -113,7 +127,7 @@
   <div
     id="referral-bonus-box"
   >
-    {#each Object.entries(profileData?.investorData?.data?.bonus_summary ?? {}) as item}
+    {#each dataLayout as item}
       <div
         class=
         "
@@ -128,9 +142,30 @@
           "
           s-14
           color-grey
+            grey-v1
           "
         >
-          {item[0]}:
+          {#if item == 'referral_bonus'}
+            {
+              profileTrs.investor?.referral.bonus.referral_bonus
+              ?? 'Referral Bonus'
+            }
+          {:else if item == 'referrals_number'}
+            {
+              profileTrs.investor?.referral.bonus.ref_number
+              ?? 'Referrals Number'
+            }
+          {:else if item == 'referred_bonus'}
+            {
+              profileTrs.investor?.referral.bonus.referred_bonus
+              ?? 'Referred Bonus'
+            }
+          {:else if item == 'total_bonus'}
+            {
+              profileTrs.investor?.referral.bonus.total
+              ?? 'Total Bonus'
+            }
+          {/if}
         </p>
 
         <p
@@ -140,8 +175,9 @@
           color-black-2
           "
         >
-          {item[1]} BTA
+          {profileData?.investorData?.data?.bonus_summary[item] ?? 0} BTA
         </p>
+
       </div>
     {/each}
   </div>
@@ -173,6 +209,9 @@
     overflow: hidden;
     box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
     padding: 20px;
+    height: 242px;
+    min-height: 242px;
+    max-height: 242px;
 
     div#referral-bonus-box
     {
@@ -214,7 +253,7 @@
         &:nth-child(odd)
         {
           /* 🎨 style */
-          background-color: var(--dark-theme-1) !important;
+          background-color: rgba(75, 75, 75, 0.50) !important;
         }
       }
     }

@@ -23,12 +23,15 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+	import { page } from '$app/stores';
 	import { onDestroy, onMount } from 'svelte';
 
   import userBetarenaSettings from '$lib/store/user-settings.js';
   import { toCorrectDate, toZeroPrefixDateStr } from '$lib/utils/dates.js';
 
   import icon_bta_token from '../assets/price-tier/icon-bta-token.svg';
+
+  import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -48,10 +51,14 @@
 
   export let
     /**
+     * @augments IProfileData
+    */
+    profileData: IProfileData | null
+    /**
      * @description
      *  📣
     */
-    VIEWPORT_MOBILE_INIT_PARENT: [ number, boolean ]
+    , VIEWPORT_MOBILE_INIT_PARENT: [ number, boolean ]
     /**
      * @description
      *  📣
@@ -74,19 +81,9 @@
   let
     /**
      * @description
-     *  📣 Wether **TGE** date is officially set, and valid.
-    */
-    isReleaseDateSetAndValid: boolean = true
-    /**
-     * @description
-     *  📣 **TGE** tokens **claim** action has been executed.
-    */
-    , isTGETokensClaimed: boolean = false
-    /**
-     * @description
      *  📣 investor number of days difference (from end)
     */
-    , dateDiff: number = 0
+    dateDiff: number = 0
     /**
      * @description
      *  📣 interval variable for `countdown` logic
@@ -99,10 +96,16 @@
     , targetDate: Date = new Date()
   ;
 
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
+
   $: countDownSecToEnd = toZeroPrefixDateStr(Math.floor((dateDiff / 1000) % 60).toString());
 	$: countDownMinToEnd = toZeroPrefixDateStr(Math.floor((dateDiff / 1000 / 60) % 60).toString());
 	$: countDownHourToEnd = toZeroPrefixDateStr(Math.floor((dateDiff / (1000 * 60 * 60)) % 24).toString());
 	$: countDownDayToEnd = toZeroPrefixDateStr(Math.floor((dateDiff / (1000 * 60 * 60 * 24))).toString());
+
+  // [🐞]
+  // profileData!.presaleData.data!.end_date = '';
+  // profileData!.investorData!.data!.tge!.status = 'Claimed';
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -169,16 +172,20 @@
   <!-- {VIEWPORT_TABLET_INIT_PARENT[1]} -->
 
   <!--
-  ▓ NOTE:
-  ▓ > information/action(s) box.
+  ╭──────────────────────────────────────────────────────────────────────╮
+  │ NOTE:                                                                │
+  │ TGE Tokens information/action(s) box.                                │
+  ╰──────────────────────────────────────────────────────────────────────╯
   -->
+
   <div>
 
     <!--
     ▓ NOTE:
-    ▓ > Tokens available hint text.
+    ▓ > tokens available hint text.
     -->
     <p
+      id="hint"
       class=
       "
       s-14
@@ -187,8 +194,16 @@
       "
       class:m-b-24={VIEWPORT_TABLET_INIT_PARENT[1] && !VIEWPORT_MOBILE_INIT_PARENT[1]}
       class:m-b-12={!VIEWPORT_TABLET_INIT_PARENT[1] || VIEWPORT_MOBILE_INIT_PARENT[1]}
+      style=
+      "
+      line-height: 20px; /* 142.857% */
+      width: 170px;
+      "
     >
-      Tokens available on launch date (TGE)
+      {
+        profileTrs.investor?.tge.info
+        ?? 'Tokens available on launch date (TGE)'
+      }
     </p>
 
     <!--
@@ -213,8 +228,12 @@
         color-black-2
         m-r-6
         "
-        class:s-42={!VIEWPORT_MOBILE_INIT_PARENT[1]}
+        class:s-40={!VIEWPORT_MOBILE_INIT_PARENT[1]}
         class:s-32={VIEWPORT_MOBILE_INIT_PARENT[1]}
+        style=
+        "
+        line-height: 100%; /* 40px */
+        "
       >
         {
           $userBetarenaSettings.user.scores_user_data?.investor_balance
@@ -249,14 +268,17 @@
   </div>
 
   <!--
-  ▓ NOTE:
-  ▓ > TGE Tokens information/action(s) box.
+  ╭──────────────────────────────────────────────────────────────────────╮
+  │ NOTE:                                                                │
+  │ TGE Tokens information/action(s) box.                                │
+  ╰──────────────────────────────────────────────────────────────────────╯
   -->
-  {#if isReleaseDateSetAndValid}
-    <!--
-    ▓ NOTE:
-    ▓ > Tokens release date.
-    -->
+
+  <!--
+  ▓ NOTE:
+  ▓ > token release date view.
+  -->
+  {#if profileData?.investorData?.data?.tge.status == null}
     <div>
 
       <!--
@@ -266,117 +288,140 @@
       <p
         class=
         "
-        s-12
+        s-14
         color-grey
           grey-v1
         m-b-12
         "
+        style=
+        "
+        line-height: 20px; /* 142.857% */
+        "
       >
-        Release date
+        {
+          profileTrs.investor?.tge.date_title
+          ?? 'Release date'
+        }
       </p>
 
       <!--
       ▓ NOTE:
-      ▓ > Release date countdown box.
+      ▓ > token release date not set.
       -->
-      <div
-        id="countdown-row"
-      >
+      {#if !profileData?.presaleData.data?.end_date}
         <div
-          class=
-          "
-          countdown-box
-          "
+          id="round-info-box-parent"
         >
           <p
             class=
             "
-            s-16
-            w-500
-            color-black-2
+            s-14
+            color-grey
+              dark-v1
             "
           >
-            {countDownDayToEnd}d
+            Date to be announced soon
           </p>
         </div>
 
+      <!--
+      ▓ NOTE:
+      ▓ > token release date.
+      -->
+      {:else}
         <div
-          class=
-          "
-          countdown-box
-          "
+          id="countdown-row"
         >
-          <p
+          <div
             class=
             "
-            s-16
-            w-500
-            color-black-2
+            countdown-box
             "
           >
-            {countDownHourToEnd}h
-          </p>
+            <p>
+              {countDownDayToEnd}d
+            </p>
+          </div>
+
+          <div
+            class=
+            "
+            countdown-box
+            "
+          >
+            <p>
+              {countDownHourToEnd}h
+            </p>
+          </div>
+
+          <div
+            class=
+            "
+            countdown-box
+            "
+          >
+            <p>
+              {countDownMinToEnd}m
+            </p>
+          </div>
+
+          <div
+            class=
+            "
+            countdown-box
+            "
+          >
+            <p>
+              {countDownSecToEnd}s
+            </p>
+          </div>
         </div>
 
-        <div
-          class=
-          "
-          countdown-box
-          "
-        >
-          <p
-            class=
-            "
-            s-16
-            w-500
-            color-black-2
-            "
-          >
-          {countDownMinToEnd}m
-          </p>
-        </div>
+      {/if}
 
-        <div
-          class=
-          "
-          countdown-box
-          "
-        >
-          <p
-            class=
-            "
-            s-16
-            w-500
-            color-black-2
-            "
-          >
-            {countDownSecToEnd}s
-          </p>
-        </div>
-      </div>
     </div>
-  {:else if isTGETokensClaimed}
-    <!--
-    ▓ NOTE:
-    ▓ > Token claim 'TGE'
-    -->
+
+  <!--
+  ▓ NOTE:
+  ▓ > token ready to claim.
+  -->
+  {:else if profileData?.investorData?.data?.tge.status == 'Pending'}
     <button
       class=
       "
       btn-primary-v2
       "
+      on:click={() => {return alert('Initiate Process for Claim!')}}
     >
-      Claim now!
-      <!-- Claimed -->
+      {
+        profileTrs.investor?.tge.cta_title
+        ?? 'Claim now!'
+      }
     </button>
-  {:else }
-    <!--
-    ▓ NOTE:
-    ▓ > Tokens have been claimed
-    -->
-    <button>
-      Claimed
-    </button>
+
+  <!--
+  ▓ NOTE:
+  ▓ > tokens have been claimed.
+  -->
+  {:else if profileData?.investorData?.data?.tge.status == 'Claimed'}
+    <div
+      id="claimed"
+    >
+      <p
+        class=
+        "
+        s-14
+        w-500
+        color-white
+        "
+      >
+      {
+        profileTrs.investor?.tge.cta_title_2
+        ?? 'Claimed'
+      }
+      </p>
+    </div>
+
   {/if}
 
 </div>
@@ -392,6 +437,8 @@
 
 <style lang="scss">
 
+  @import '../../../../../../static/app.scss';
+
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
   │ 📲 MOBILE-FIRST                                                              │
@@ -406,6 +453,28 @@
     overflow: hidden;
     box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
     padding: 20px;
+    height: 229px;
+    min-height: 229px;
+    max-height: 229px;
+
+    p#hint
+    {
+      /* 🎨 style */
+      line-height: 20px; /* 142.857% */
+      width: unset;
+    }
+
+    div#round-info-box-parent
+    {
+      /* 📌 position */
+      position: relative;
+      /* 🎨 style */
+      padding: 20px;
+      border-radius: 4px;
+      background: var(--whitev2);
+      width: fit-content;
+      height: 60px;
+    }
 
     div#countdown-row
     {
@@ -436,6 +505,67 @@
           /* 🎨 style */
           border-radius: 0px 4px 4px 0px;
         }
+
+        p
+        {
+          /* 🎨 style */
+          @extend .s-16;
+          @extend .w-500;
+          @extend .color-black-2;
+        }
+      }
+    }
+
+    button.btn-primary-v2
+    {
+      /* 🎨 style */
+      width: 96px;
+      height: 36px;
+    }
+
+    div#claimed
+    {
+      /* 🎨 style */
+      background-color: var(--grey-shade);
+      height: 44px;
+      padding: 12px 24px 11px 24px;
+      border-radius: 8px;
+      width: fit-content;
+    }
+  }
+
+  /*
+  ╭──────────────────────────────────────────────────────────────────────────────╮
+  │ ⚡️ RESPONSIVNESS                                                              │
+  ╰──────────────────────────────────────────────────────────────────────────────╯
+  */
+
+  @media only screen
+  and (min-width: 560px)
+  {
+    div#profile⮕w⮕investtge⮕main
+    {
+      /* 🎨 style */
+      height: auto;
+      min-height: auto;
+      max-height: auto;
+    }
+  }
+
+  @media only screen
+  and (min-width: 1160px)
+  {
+    div#profile⮕w⮕investtge⮕main
+    {
+      /* 🎨 style */
+      height: 333px;
+      min-height: 333px;
+      max-height: 333px;
+
+      p#hint
+      {
+        /* 🎨 style */
+        width: 170px;
       }
     }
   }
@@ -454,6 +584,12 @@
       background-color: var(--dark-theme-1-4-shade) !important;
     }
 
+    &.dark-background-1 div#round-info-box-parent
+    {
+      /* 🎨 style */
+      background-color: var(--dark-theme-1-7-shade);
+    }
+
     &.dark-background-1 div#countdown-row
     {
       div.countdown-box
@@ -461,6 +597,12 @@
         /* 🎨 style */
         background-color: var(--dark-theme-1-7-shade);
       }
+    }
+
+    &.dark-background-1 div#claimed
+    {
+      /* 🎨 style */
+      background-color: var(--dark-theme-1);
     }
   }
 

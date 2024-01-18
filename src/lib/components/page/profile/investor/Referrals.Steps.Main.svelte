@@ -27,9 +27,7 @@
 
   import userBetarenaSettings from '$lib/store/user-settings.js';
   import { toZeroPrefixDateStr } from '$lib/utils/dates.js';
-  import { Misc } from '@betarena/scores-lib/dist/classes/class.misc.js';
 
-  import type { B_H_INVEST_WIDGET_Data, B_H_KEYP, B_H_KEYP_Tier } from '@betarena/scores-lib/types/_HASURA_.js';
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -67,30 +65,7 @@
     , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
-  let
-    /**
-     * @description
-     *  📣
-    */
-    dataMap: Map < B_H_KEYP_Tier, B_H_KEYP > = new Misc().convertToMapKEYPINVSTTIER
-    (
-      (profileData?.investorTierPricing ?? [])
-    )
-    /**
-     * @description
-     *  📣 investor data (map)
-    */
-    , mapInvestorData: Map < string, B_H_INVEST_WIDGET_Data > = new Map
-    (
-      profileData?.investor
-    ) as Map < string, B_H_INVEST_WIDGET_Data >
-    /**
-     * @augments IProfileTrs
-    */
-    , profileTrs: IProfileTrs
-  ;
-
-  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA;
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -115,7 +90,7 @@
   ▓ > main title
   -->
   <div
-    id='{CNAME}⮕faq-title'
+    id='title-box'
     class=
     "
     m-b-50
@@ -126,7 +101,8 @@
     ▓ NOTE:
     ▓ > title
     -->
-    <p
+    <div
+      id="title"
       class=
       "
       {VIEWPORT_MOBILE_INIT[1] ? 's-24' : 's-32'}
@@ -136,26 +112,23 @@
       "
     >
       {
-        'Refer Investors. Earn Tokens Together.'
+        @html profileTrs.investor?.referral.details.title
+        ?? 'Refer Investors. Earn Tokens Together.'
       }
-    </p>
+    </div>
 
     <!--
     ▓  NOTE:
     ▓ > sub-title
     -->
-    <p
-      class=
-      "
-      s-16
-      color-grey
-        grey-v1
-      "
+    <div
+      id="steps-description"
     >
       {
-        'Earn up to 10% bonus on every investor in the Betarena presale.'
+        @html profileTrs.investor?.referral.details.description
+        ?? 'Earn up to 10% bonus on every investor in the Betarena presale.'
       }
-    </p>
+    </div>
 
   </div>
 
@@ -173,11 +146,20 @@
       color-black-2
       "
     >
-      Steps to Get Referral Bonus
+      {
+        @html profileTrs.investor?.referral.details.steps_title
+        ?? 'Steps to Get Referral Bonus'
+      }
     </p>
 
-    {#each profileTrs.investor?.steps?.steps ?? [] as item,i}
-      <hr>
+    {#each profileTrs.investor?.steps.steps ?? [] as item,i}
+
+      <div
+        class=
+        "
+        divider
+        "
+      />
 
       <div
         class=
@@ -190,8 +172,12 @@
           "
           s-12
           color-grey
-          m-r-40
+            dark-v1
           w-600
+          "
+          style=
+          "
+          margin-right: 50px;
           "
         >
           {toZeroPrefixDateStr(i+1)}.
@@ -203,6 +189,7 @@
             "
             s-16
             color-black-2
+              dark-white-v3
             m-b-12
             "
           >
@@ -237,6 +224,8 @@
 
 <style lang="scss">
 
+  @import '../../../../../../static/app.scss';
+
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
   │ 📲 MOBILE-FIRST                                                              │
@@ -245,15 +234,51 @@
 
   div#profile⮕w⮕referral-step⮕main
   {
-    hr
+    div.divider
     {
       /* 🎨 style */
       margin: 24px 0;
       border: none;
-      height: 0.5px;
+      height: 1px;
       /* Set the hr color */
-      color: #E6E6E6;  /* old IE */
-      background-color: #E6E6E6;  /* Modern Browsers */
+      color: var(--grey-color);  /* old IE */
+      background-color: var(--grey-color);  /* Modern Browsers */
+    }
+
+    div#steps-description
+    {
+      // IMPORTANT
+      :global
+      {
+        p
+        {
+          @extend .s-16;
+          @extend .color-grey;
+          @extend .grey-v1;
+
+          strong
+          {
+            @extend .w-500;
+            @extend .color-black-2;
+          }
+        }
+      }
+    }
+  }
+
+  /*
+  ╭──────────────────────────────────────────────────────────────────────────────╮
+  │ ⚡️ RESPONSIVNESS                                                              │
+  ╰──────────────────────────────────────────────────────────────────────────────╯
+  */
+
+  @media only screen
+  and (min-width: 1160px)
+  {
+    div#title-box
+    {
+      /* 🎨 style */
+      padding: 0 20px;
     }
   }
 
@@ -263,19 +288,18 @@
   ╰──────────────────────────────────────────────────────────────────────────────╯
   */
 
-  div#profile⮕w⮕referral-step⮕main
+  div#profile⮕w⮕referral-step⮕main.dark-background-1
   {
-    &.dark-background-1
+    /* 🎨 style */
+    background-color: transparent !important;
+
+    div.divider
     {
       /* 🎨 style */
-      background-color: transparent !important;
+      color: var(--dark-theme-1);  /* old IE */
+      background-color: var(--dark-theme-1);  /* Modern Browsers */
     }
 
-    hr
-    {
-      color: #4B4B4B;  /* old IE */
-      background-color: #4B4B4B;  /* Modern Browsers */
-    }
   }
 
 </style>

@@ -41,7 +41,7 @@
 		"coverage": "vitest run --coverage"
 	},
 	"dependencies": {
-		"@betarena/scores-lib": "^1.10.0-alpha.0",
+		"@betarena/scores-lib": "^1.11.0-alpha.1",
 		"@lukeed/uuid": "^2.0.1",
 		"@metamask/sdk": "^0.1.0",
 		"@moralisweb3/client-firebase-auth-utils": "^2.18.4",

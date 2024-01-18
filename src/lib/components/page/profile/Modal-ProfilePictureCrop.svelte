@@ -13,7 +13,6 @@ COMPONENT JS (w/ TS)
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlog, dlogv2, PR_P_STY, PR_P_TAG, PR_P_TOG } from '$lib/utils/debug';
 
-  import type { B_PROF_T } from '@betarena/scores-lib/types/profile.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -21,20 +20,20 @@ COMPONENT JS (w/ TS)
 
 	const dispatch = createEventDispatcher();
 
-	export let modal_pic_crop_show: boolean = false;
+	export let
+	  modal_pic_crop_show: boolean = false
+  ;
 
-  let RESPONSE_PROFILE_DATA: B_PROF_T;
-
-  $: RESPONSE_PROFILE_DATA = $page.data.RESPONSE_PROFILE_DATA;
-
-	let crop_selected: boolean = false;
-	let offset: [number, number] = [0, 0];
+	let crop_selected: boolean = false
+	 ,offset: [number, number] = [0, 0];
 	let new_img_crop: string;
-	let reset_crop: boolean = false;
-  let resize_selected: boolean = false;
-  let reset_resize: boolean = false;
+	let reset_crop: boolean = false
+	  ,resize_selected: boolean = false
+	  ,reset_resize: boolean = false;
   let selected_corner: 't-right' | 'b-right' | 't-left' | 'b-left';
   let original_touch: any = undefined
+
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -57,46 +56,45 @@ COMPONENT JS (w/ TS)
    * NaN { void }
 	 */
 	export function load_picture
-  (
-    file: File
-  ): void
-  {
+	(
+	  file: File
+	): void
+	{
+	  let image: HTMLImageElement = document.getElementById('profile-image') as HTMLImageElement
+	    ,resize_elemnts: HTMLCollectionOf<Element> = document.getElementsByClassName('resize-dot')
+	    ,imageCropBox: HTMLElement = document.getElementById('profile-cricle-img-crop')
+	    ,imageResizeBox: HTMLElement = document.getElementById('profile-cricle-img-crop-resize');
 
-		let image: HTMLImageElement = document.getElementById('profile-image') as HTMLImageElement;
-    let resize_elemnts: HTMLCollectionOf<Element> = document.getElementsByClassName('resize-dot');
-    let imageCropBox: HTMLElement = document.getElementById('profile-cricle-img-crop');
-    let imageResizeBox: HTMLElement = document.getElementById('profile-cricle-img-crop-resize');
+	  image.src = URL.createObjectURL(file);
 
-		image.src = URL.createObjectURL(file);
+	  image.onload = function ()
+	  {
+	    // [ℹ] apply reset-class to selectors
+	    reset_crop = true;
+	    reset_resize = true;
+	    // [ℹ] adjust to image width x height
+	    // [ℹ] if image is of lower dimensions
+	    if (image.width < 150)
+	    {
+	      imageCropBox.style.width = `${image.width/1.5}px`
+	      imageCropBox.style.height = `${image.width/1.5}px`
+	      imageResizeBox.style.width = `${image.width/1.5}px`
+	      imageResizeBox.style.height = `${image.width/1.5}px`
+	    }
+	    // [ℹ] initiate eventListeners, after image loaded
+	    imageCropBox.addEventListener('touchstart', mousedown_event, true);
+	    window.addEventListener('touchend', mouseup_event, true);
+	    window.addEventListener('touchmove', mousemove_event, true);
+	    imageCropBox.addEventListener('mousedown', mousedown_event, true);
+	    window.addEventListener('mouseup', mouseup_event, true);
+	    window.addEventListener('mousemove', mousemove_event, true);
 
-		image.onload = function ()
-    {
-      // [ℹ] apply reset-class to selectors
-      reset_crop = true;
-      reset_resize = true;
-      // [ℹ] adjust to image width x height
-      // [ℹ] if image is of lower dimensions
-      if (image.width < 150)
-      {
-        imageCropBox.style.width = `${image.width/1.5}px`
-        imageCropBox.style.height = `${image.width/1.5}px`
-        imageResizeBox.style.width = `${image.width/1.5}px`
-        imageResizeBox.style.height = `${image.width/1.5}px`
-      }
-      // [ℹ] initiate eventListeners, after image loaded
-      imageCropBox.addEventListener('touchstart', mousedown_event, true);
-      window.addEventListener('touchend', mouseup_event, true);
-      window.addEventListener('touchmove', mousemove_event, true);
-      imageCropBox.addEventListener('mousedown', mousedown_event, true);
-      window.addEventListener('mouseup', mouseup_event, true);
-      window.addEventListener('mousemove', mousemove_event, true);
-
-      for (const element of resize_elemnts)
-      {
-        element.addEventListener('touchstart', mousedown_resize_event, true);
-        element.addEventListener('mousedown', mousedown_resize_event, true);
-      }
-		};
+	    for (const element of resize_elemnts)
+	    {
+	      element.addEventListener('touchstart', mousedown_resize_event, true);
+	      element.addEventListener('mousedown', mousedown_resize_event, true);
+	    }
+	  };
 	}
 
 	/**
@@ -112,18 +110,18 @@ COMPONENT JS (w/ TS)
    * NaN { void }
 	 */
 	function toggle_modal
-  (
-  ): void
-  {
-    clear_event_listeners();
+	(
+	): void
+	{
+	  clear_event_listeners();
 
-    reset_crop = true;
-    reset_resize = true;
+	  reset_crop = true;
+	  reset_resize = true;
 
-		dispatch
-    (
-      'toggle_delete_modal'
-    );
+	  dispatch
+	  (
+	    'toggle_delete_modal'
+	  );
 	}
 
 	/**
@@ -140,19 +138,19 @@ COMPONENT JS (w/ TS)
    * NaN { void }
 	 */
 	function upload_selected_img
-  (
-  ): void
-  {
-		clear_event_listeners()
-		reset_crop = true;
-    reset_resize = true;
-		dispatch
-    (
-      'upload_selected_img',
-      {
+	(
+	): void
+	{
+	  clear_event_listeners()
+	  reset_crop = true;
+	  reset_resize = true;
+	  dispatch
+	  (
+	    'upload_selected_img',
+	    {
 			  img: new_img_crop
 		  }
-    );
+	  );
 	}
 
   /**
@@ -166,28 +164,28 @@ COMPONENT JS (w/ TS)
    * NaN { void }
    */
 	function mousedown_event
-  (
-    event: any
-  ): void
-  {
-		let imageCropBox: HTMLElement = document.getElementById('profile-cricle-img-crop');
-    event.preventDefault();
-    reset_state_position_boxes()
-		crop_selected = true;
-    dlog(`${PR_P_TAG} ℹ imageCropBox.offsetLeft: ${imageCropBox.offsetLeft}`, PR_P_TOG, PR_P_STY)
-    dlog(`${PR_P_TAG} ℹ imageCropBox.offsetTop: ${imageCropBox.offsetTop}`, PR_P_TOG, PR_P_STY)
-		const left_val = imageCropBox.offsetLeft - (event?.clientX || event?.touches[0].clientX);
-		const right_val = imageCropBox.offsetTop - (event?.clientY || event?.touches[0].clientY);
-		dlogv2(
-      PR_P_TAG + `mousedown_event()`,
-      [
-        `left_val: ${left_val}`,
-        `right_val: ${right_val}`
-      ],
-      PR_P_TOG,
-      PR_P_STY
-    );
-		offset = [left_val, right_val];
+	(
+	  event: any
+	): void
+	{
+	  let imageCropBox: HTMLElement = document.getElementById('profile-cricle-img-crop');
+	  event.preventDefault();
+	  reset_state_position_boxes()
+	  crop_selected = true;
+	  dlog(`${PR_P_TAG} ℹ imageCropBox.offsetLeft: ${imageCropBox.offsetLeft}`, PR_P_TOG, PR_P_STY)
+	  dlog(`${PR_P_TAG} ℹ imageCropBox.offsetTop: ${imageCropBox.offsetTop}`, PR_P_TOG, PR_P_STY)
+	  const left_val = imageCropBox.offsetLeft - (event?.clientX || event?.touches[0].clientX)
+		 ,right_val = imageCropBox.offsetTop - (event?.clientY || event?.touches[0].clientY);
+	  dlogv2(
+	    PR_P_TAG + 'mousedown_event()',
+	    [
+	      `left_val: ${left_val}`
+	      ,`right_val: ${right_val}`
+	    ],
+	    PR_P_TOG,
+	    PR_P_STY
+	  );
+	  offset = [left_val, right_val];
 	}
 
   /**
@@ -209,28 +207,28 @@ COMPONENT JS (w/ TS)
     event: any
   ): void
   {
-    let imageCropBox: HTMLElement = document.getElementById('profile-cricle-img-crop');
-    let imageResizeBox: HTMLElement = document.getElementById('profile-cricle-img-crop-resize');
+    let imageCropBox: HTMLElement = document.getElementById('profile-cricle-img-crop')
+      ,imageResizeBox: HTMLElement = document.getElementById('profile-cricle-img-crop-resize');
 
     event.preventDefault(); // [?]
     const className: string = event?.target?.className;
 
     if (className.includes('t-right'))
       selected_corner = 't-right';
-    ;
+
     if (className.includes('b-right'))
       selected_corner = 'b-right';
-    ;
+
     if (className.includes('t-left'))
       selected_corner = 't-left';
-    ;
+
     if (className.includes('b-left'))
       selected_corner = 'b-left';
-    ;
+
 
     reset_state_position_boxes();
 
-		resize_selected = true;
+    resize_selected = true;
     original_touch = event;
 
     // ### NOTE:
@@ -238,25 +236,25 @@ COMPONENT JS (w/ TS)
     document.documentElement.classList.add('no-touch');
     document.body.classList.add('no-touch');
 
-		const left_val = imageCropBox.offsetLeft - (event?.clientX || event?.touches[0].clientX);
-		const right_val = imageCropBox.offsetTop - (event?.clientY || event?.touches[0].clientY);
+    const left_val = imageCropBox.offsetLeft - (event?.clientX || event?.touches[0].clientX)
+		 ,right_val = imageCropBox.offsetTop - (event?.clientY || event?.touches[0].clientY);
 
     // [🐞]
-		dlogv2
+    dlogv2
     (
-      PR_P_TAG + `mousedown_resize_event()`,
+      PR_P_TAG + 'mousedown_resize_event()',
       [
-        'touchedby:',
-        event,
-        `selected_corner: ${selected_corner}`,
-        `left_val: ${left_val}`,
-        `right_val: ${right_val}`,
+        'touchedby:'
+        ,event
+        ,`selected_corner: ${selected_corner}`
+        ,`left_val: ${left_val}`
+        ,`right_val: ${right_val}`
       ],
       PR_P_TOG,
       PR_P_STY
     );
 
-		offset = [left_val, right_val];
+    offset = [left_val, right_val];
   }
 
   $: dlog(`${PR_P_TAG} 🔵 reset_resize: ${reset_resize}`, PR_P_TOG, PR_P_STY)
@@ -277,8 +275,8 @@ COMPONENT JS (w/ TS)
   (
   ): void
   {
-    let imageCropBox: HTMLElement = document.getElementById('profile-cricle-img-crop');
-    let imageResizeBox: HTMLElement = document.getElementById('profile-cricle-img-crop-resize');
+    let imageCropBox: HTMLElement = document.getElementById('profile-cricle-img-crop')
+      ,imageResizeBox: HTMLElement = document.getElementById('profile-cricle-img-crop-resize');
 
     // ### NOTE:
     // ### Instant 'assign' USER position of 'down' event of 'ResizeBox' (mask).
@@ -299,10 +297,10 @@ COMPONENT JS (w/ TS)
         number,
         number
       ] = [
-        imageResizeBox.offsetLeft,
-        imageResizeBox.offsetTop,
-        imageResizeBox.offsetWidth,
-        imageResizeBox.offsetHeight
+        imageResizeBox.offsetLeft
+        ,imageResizeBox.offsetTop
+        ,imageResizeBox.offsetWidth
+        ,imageResizeBox.offsetHeight
       ];
 
 		  reset_resize = false;
@@ -334,10 +332,10 @@ COMPONENT JS (w/ TS)
         number,
         number
       ] = [
-        imageCropBox.offsetLeft,
-        imageCropBox.offsetTop,
-        imageCropBox.offsetWidth,
-        imageCropBox.offsetHeight
+        imageCropBox.offsetLeft
+        ,imageCropBox.offsetTop
+        ,imageCropBox.offsetWidth
+        ,imageCropBox.offsetHeight
       ];
 
       reset_crop = false;
@@ -368,336 +366,334 @@ COMPONENT JS (w/ TS)
    * { void }
    */
 	function mousemove_event
-  (
-    event: any
-  ): void
-  {
-		let image: HTMLImageElement = document.getElementById('profile-image') as HTMLImageElement;
-		let imageCropBox: HTMLElement = document.getElementById('profile-cricle-img-crop');
-    let imageResizeBox: HTMLElement = document.getElementById('profile-cricle-img-crop-resize');
+	(
+	  event: any
+	): void
+	{
+	  let image: HTMLImageElement = document.getElementById('profile-image') as HTMLImageElement
+		 ,imageCropBox: HTMLElement = document.getElementById('profile-cricle-img-crop')
+	    ,imageResizeBox: HTMLElement = document.getElementById('profile-cricle-img-crop-resize');
 
-    // ### CHECK:
-    // ### For change in 'crop' and/or 'resize' values.
-		if (crop_selected || resize_selected)
-    {
-			event.preventDefault() // [?]
+	  // ### CHECK:
+	  // ### For change in 'crop' and/or 'resize' values.
+	  if (crop_selected || resize_selected)
+	  {
+	    event.preventDefault() // [?]
 
-      if (crop_selected) dlog('selector (move)!', true);
-      if (resize_selected) dlog('selector (resize)!', true);
+	    if (crop_selected) dlog('selector (move)!', true);
+	    if (resize_selected) dlog('selector (resize)!', true);
 
-			let mousePosition =
-      {
-				x: event?.clientX || event?.touches[0].clientX,
-				y: event?.clientY || event?.touches[0].clientY
-			};
+	    let mousePosition
+      = {
+        x: event?.clientX || event?.touches[0].clientX
+        ,y: event?.clientY || event?.touches[0].clientY
+      };
 
-			const image_left = mousePosition.x + offset[0];
-			const image_top = mousePosition.y + offset[1];
+	    const image_left = mousePosition.x + offset[0]
+			 ,image_top = mousePosition.y + offset[1];
 
-			let original_image_dimensions:
+	    let original_image_dimensions:
       [
         number,
         number
       ] = [
-        image?.offsetWidth,
-        image?.offsetHeight
+        image.offsetWidth
+        ,image.offsetHeight
       ];
 
-      const crop_resize_box_wh:
+	    const crop_resize_box_wh:
       [
         number,
         number,
         number,
         number
       ] = [
-        imageResizeBox.offsetLeft,
-        imageResizeBox.offsetTop,
-        imageResizeBox.offsetWidth,
-        imageResizeBox.offsetHeight
+        imageResizeBox.offsetLeft
+        ,imageResizeBox.offsetTop
+        ,imageResizeBox.offsetWidth
+        ,imageResizeBox.offsetHeight
       ];
 
-			let crop_width_a: number = imageCropBox.offsetWidth;
-			let crop_height_a: number = imageCropBox.offsetHeight;
+	    let crop_width_a: number = imageCropBox.offsetWidth
+			 ,crop_height_a: number = imageCropBox.offsetHeight;
 
-      // ### Validation [2] [main]
-      // ### prevent from going beyound image dimensions
-      const if_M_0: boolean =
-        image_left <= 0
+	    // ### Validation [2] [main]
+	    // ### prevent from going beyound image dimensions
+	    const if_M_0: boolean
+        = image_left <= 0
 				|| image_top <= 0
 				|| (image_left + imageCropBox.offsetWidth) >= original_image_dimensions[0]
 				|| (image_top + imageCropBox.offsetHeight) >= original_image_dimensions[1]
       ;
-			if (if_M_0)
-      {
-        // [🐞]
-        dlogv2
-        (
-          PR_P_TAG + '🔴 Image has reached its bounds...',
-          [
-            `image_left: ${image_left}`,
-            `image_top: ${image_top}`,
-            original_image_dimensions,
-            crop_resize_box_wh,
-            mousePosition,
-            `imageCropBox.offsetWidth: ${imageCropBox.offsetWidth}`,
-            `imageCropBox.offsetHeight: ${imageCropBox.offsetHeight}`
-          ],
-          PR_P_TOG,
-          PR_P_STY
-        );
+	    if (if_M_0)
+	    {
+	      // [🐞]
+	      dlogv2
+	      (
+	        PR_P_TAG + '🔴 Image has reached its bounds...',
+	        [
+	          `image_left: ${image_left}`
+	          ,`image_top: ${image_top}`
+	          ,original_image_dimensions
+	          ,crop_resize_box_wh
+	          ,mousePosition
+	          ,`imageCropBox.offsetWidth: ${imageCropBox.offsetWidth}`
+	          ,`imageCropBox.offsetHeight: ${imageCropBox.offsetHeight}`
+	        ],
+	        PR_P_TOG,
+	        PR_P_STY
+	      );
 
-        return;
-			}
+	      return;
+	    }
 
-      // ### NOTE:
-      // ### User 'resizing' action.
-      if (resize_selected)
-      {
+	    // ### NOTE:
+	    // ### User 'resizing' action.
+	    if (resize_selected)
+	    {
+	      // ### NOTE:
+	      // ### Adjusting 'width', 'height' & 'position'.
+	      let width: number;
+	      let height: number;
 
-        // ### NOTE:
-        // ### Adjusting 'width', 'height' & 'position'.
-        let width: number;
-        let height: number;
-
-        let touchMovementX: number =
-          original_touch != undefined
+	      let touchMovementX: number
+          = original_touch != undefined
           && original_touch?.touches != undefined
             ? (event?.touches?.[0]?.clientX - original_touch?.touches?.[0]?.clientX)
             : undefined
-        ;
-        let touchMovementY: number =
-          original_touch != undefined
+	        ,touchMovementY: number
+          = original_touch != undefined
           && original_touch?.touches != undefined
             ? (event?.touches[0]?.clientY - original_touch?.touches[0]?.clientY)
             : undefined
         ;
 
-        if (selected_corner == 't-right')
-        {
-          width = imageCropBox.offsetWidth + (event?.movementX || touchMovementX);
-          height = imageCropBox.offsetHeight - (event?.movementY || touchMovementY);
+	      if (selected_corner == 't-right')
+	      {
+	        width = imageCropBox.offsetWidth + (event?.movementX || touchMovementX);
+	        height = imageCropBox.offsetHeight - (event?.movementY || touchMovementY);
 
-          const if_M_0: boolean = valid_image_dimensions
-          (
-            width,
-            height
-          );
-          if (!if_M_0) return;
+	        const if_M_0: boolean = valid_image_dimensions
+	        (
+	          width,
+	          height
+	        );
+	        if (!if_M_0) return;
 
-          imageCropBox.style.top = `${image_top}px`;
-          imageResizeBox.style.top = `${image_top}px`;
-        }
-        if (selected_corner == 'b-right')
-        {
-          width = imageCropBox.offsetWidth + (event?.movementX || touchMovementX);
-          height = imageCropBox.offsetHeight + (event?.movementY || touchMovementY);
+	        imageCropBox.style.top = `${image_top}px`;
+	        imageResizeBox.style.top = `${image_top}px`;
+	      }
+	      if (selected_corner == 'b-right')
+	      {
+	        width = imageCropBox.offsetWidth + (event?.movementX || touchMovementX);
+	        height = imageCropBox.offsetHeight + (event?.movementY || touchMovementY);
 
-          const if_M_0: boolean = valid_image_dimensions
-          (
-            width,
-            height
-          );
-          if (!if_M_0) return;
-        }
-        if (selected_corner == 't-left')
-        {
-          width = imageCropBox.offsetWidth - (event?.movementX || touchMovementX);
-          height = imageCropBox.offsetHeight - (event?.movementY || touchMovementY);
+	        const if_M_0: boolean = valid_image_dimensions
+	        (
+	          width,
+	          height
+	        );
+	        if (!if_M_0) return;
+	      }
+	      if (selected_corner == 't-left')
+	      {
+	        width = imageCropBox.offsetWidth - (event?.movementX || touchMovementX);
+	        height = imageCropBox.offsetHeight - (event?.movementY || touchMovementY);
 
-          const if_M_0: boolean = valid_image_dimensions
-          (
-            width,
-            height
-          );
-          if (!if_M_0) return;
+	        const if_M_0: boolean = valid_image_dimensions
+	        (
+	          width,
+	          height
+	        );
+	        if (!if_M_0) return;
 
-          imageCropBox.style.top = `${image_top}px`;
-          imageCropBox.style.left = `${image_left}px`;
-          imageResizeBox.style.top = `${image_top}px`;
-          imageResizeBox.style.left = `${image_left}px`;
-        }
-        if (selected_corner == 'b-left')
-        {
-          width = imageCropBox.offsetWidth - (event?.movementX || touchMovementX);
-          height = imageCropBox.offsetHeight + (event?.movementY || touchMovementY);
+	        imageCropBox.style.top = `${image_top}px`;
+	        imageCropBox.style.left = `${image_left}px`;
+	        imageResizeBox.style.top = `${image_top}px`;
+	        imageResizeBox.style.left = `${image_left}px`;
+	      }
+	      if (selected_corner == 'b-left')
+	      {
+	        width = imageCropBox.offsetWidth - (event?.movementX || touchMovementX);
+	        height = imageCropBox.offsetHeight + (event?.movementY || touchMovementY);
 
-          const if_M_0 = valid_image_dimensions
-          (
-            width,
-            height
-          );
-          if (!if_M_0) return;
+	        const if_M_0 = valid_image_dimensions
+	        (
+	          width,
+	          height
+	        );
+	        if (!if_M_0) return;
 
-          imageCropBox.style.left = `${image_left}px`;
-          imageResizeBox.style.left = `${image_left}px`;
-        }
+	        imageCropBox.style.left = `${image_left}px`;
+	        imageResizeBox.style.left = `${image_left}px`;
+	      }
 
-        // ### NOTE:
-        // ### Keep dimensions 'equal' for both 'height' & 'width'.
-        imageCropBox.style.height = imageCropBox.style.width = `${width}px`;
-        imageCropBox.style.width = imageCropBox.style.height = `${height}px`;
-        imageResizeBox.style.height = imageResizeBox.style.width = `${width}px`;
-        imageResizeBox.style.width = imageResizeBox.style.height = `${height}px`;
+	      // ### NOTE:
+	      // ### Keep dimensions 'equal' for both 'height' & 'width'.
+	      imageCropBox.style.height = imageCropBox.style.width = `${width}px`;
+	      imageCropBox.style.width = imageCropBox.style.height = `${height}px`;
+	      imageResizeBox.style.height = imageResizeBox.style.width = `${width}px`;
+	      imageResizeBox.style.width = imageResizeBox.style.height = `${height}px`;
 
-        const doc: HTMLElement = document.documentElement;
+	      const doc: HTMLElement = document.documentElement;
 
-        doc.style.setProperty
-        (
-          '--imageCropBox-mask-width',
-          `${width}px`
-        );
+	      doc.style.setProperty
+	      (
+	        '--imageCropBox-mask-width',
+	        `${width}px`
+	      );
 			  doc.style.setProperty
-        (
-          '--imageCropBox-mask-height',
-          `${height}px`
-        );
+	      (
+	        '--imageCropBox-mask-height',
+	        `${height}px`
+	      );
 
-        // ### NOTE:
-        // ### Calculate Mask 'position' & 'dimensions'.
+	      // ### NOTE:
+	      // ### Calculate Mask 'position' & 'dimensions'.
 
-        const mask_left: number = (imageCropBox.offsetLeft + width/2) + 5;
-        const mask_top: number = (imageCropBox.offsetTop + height/2) + 5;
+	      const mask_left: number = (imageCropBox.offsetLeft + width/2) + 5
+	        ,mask_top: number = (imageCropBox.offsetTop + height/2) + 5;
 
-        doc.style.setProperty
-        (
-          '--imageCropBox-mask-left',
-          `${mask_left}px`
-        );
-        doc.style.setProperty
-        (
-          '--imageCropBox-mask-top',
-          `${mask_top}px`
-        );
+	      doc.style.setProperty
+	      (
+	        '--imageCropBox-mask-left',
+	        `${mask_left}px`
+	      );
+	      doc.style.setProperty
+	      (
+	        '--imageCropBox-mask-top',
+	        `${mask_top}px`
+	      );
 
-        // [🐞]
-        dlogv2
-        (
-          PR_P_TAG + `mousemove_event (resize)`,
-          [
-            event,
-            `selected_corner: ${selected_corner}`,
-            `movementX: ${event?.movementX} | movementY: ${event?.movementY}`,
-            `image_left: ${image_left} | image_top: ${image_top}`,
-            `mousePosition.x: ${mousePosition.x} | mousePosition.y: ${mousePosition.y}`,
-            `touchMovementX: ${touchMovementX} | touchMovementY: ${touchMovementY}`
-          ],
-          PR_P_TOG,
-          PR_P_STY
-        );
-      }
+	      // [🐞]
+	      dlogv2
+	      (
+	        PR_P_TAG + 'mousemove_event (resize)',
+	        [
+	          event
+	          ,`selected_corner: ${selected_corner}`
+	          ,`movementX: ${event?.movementX} | movementY: ${event?.movementY}`
+	          ,`image_left: ${image_left} | image_top: ${image_top}`
+	          ,`mousePosition.x: ${mousePosition.x} | mousePosition.y: ${mousePosition.y}`
+	          ,`touchMovementX: ${touchMovementX} | touchMovementY: ${touchMovementY}`
+	        ],
+	        PR_P_TOG,
+	        PR_P_STY
+	      );
+	    }
 
-      // ### NOTE:
-      // ### User 'cropping' action.
-      if (crop_selected)
-      {
-        imageCropBox.style.left = `${image_left}px`;
-        imageCropBox.style.top = `${image_top}px`;
-        imageResizeBox.style.left = `${image_left}px`;
-        imageResizeBox.style.top = `${image_top}px`;
+	    // ### NOTE:
+	    // ### User 'cropping' action.
+	    if (crop_selected)
+	    {
+	      imageCropBox.style.left = `${image_left}px`;
+	      imageCropBox.style.top = `${image_top}px`;
+	      imageResizeBox.style.left = `${image_left}px`;
+	      imageResizeBox.style.top = `${image_top}px`;
 
-        // ### NOTE:
-        // ### Use 'pre-set' (initial) dimension of circle,
-        // ### and 'half-it' (add top/left) from circle select,
-        // ### to get the actual Mask position on targe container.
-        const doc: HTMLElement = document.documentElement;
-        const width: string = imageCropBox.style.height;
-        const height: string = imageCropBox.style.width;
+	      // ### NOTE:
+	      // ### Use 'pre-set' (initial) dimension of circle,
+	      // ### and 'half-it' (add top/left) from circle select,
+	      // ### to get the actual Mask position on targe container.
+	      const doc: HTMLElement = document.documentElement
+	        ,width: string = imageCropBox.style.height
+	        ,height: string = imageCropBox.style.width;
 
-        doc.style.setProperty
-        (
-          '--imageCropBox-mask-width',
-          `${width}`
-        );
+	      doc.style.setProperty
+	      (
+	        '--imageCropBox-mask-width',
+	        `${width}`
+	      );
 			  doc.style.setProperty
-        (
-          '--imageCropBox-mask-height',
-          `${height}`
-        );
+	      (
+	        '--imageCropBox-mask-height',
+	        `${height}`
+	      );
 
-        const mask_left: number = (image_left + crop_width_a / 2) + 5;
-        const mask_top: number = (image_top + crop_height_a / 2) + 5;
+	      const mask_left: number = (image_left + crop_width_a / 2) + 5
+	        ,mask_top: number = (image_top + crop_height_a / 2) + 5;
 
-        doc.style.setProperty
-        (
-          '--imageCropBox-mask-left',
-          `${mask_left}px`
-        );
+	      doc.style.setProperty
+	      (
+	        '--imageCropBox-mask-left',
+	        `${mask_left}px`
+	      );
 			  doc.style.setProperty
-        (
-          '--imageCropBox-mask-top',
-          `${mask_top}px`
-        );
-      }
+	      (
+	        '--imageCropBox-mask-top',
+	        `${mask_top}px`
+	      );
+	    }
 
-      // [🐞]
-			// dlog(image, false);
+	    // [🐞]
+	    // dlog(image, false);
 
-			// ### NOTE:
-      // ### Draw image to canvas, and get image data.
-			// ### DOC: https://stackoverflow.com/questions/28538913/crop-an-image-displayed-in-a-canvas
-			// ### DOC: https://stackoverflow.com/questions/4200374/copy-and-crop-images-in-javascript
+	    // ### NOTE:
+	    // ### Draw image to canvas, and get image data.
+	    // ### DOC: https://stackoverflow.com/questions/28538913/crop-an-image-displayed-in-a-canvas
+	    // ### DOC: https://stackoverflow.com/questions/4200374/copy-and-crop-images-in-javascript
 
-			var canvas: HTMLCanvasElement = document.createElement('canvas');
-			canvas.width = image.width // image.width; // initial_image_dimensions[0] - requires multiplication of image_left by Diff
-			canvas.height = image.height // image.height; // initial_image_dimensions[1] - requires multiplication of image_left by Diff
-			var ctx: CanvasRenderingContext2D = canvas.getContext('2d');
+	    var canvas: HTMLCanvasElement = document.createElement('canvas');
+	    canvas.width = image.width // image.width; // initial_image_dimensions[0] - requires multiplication of image_left by Diff
+	    canvas.height = image.height // image.height; // initial_image_dimensions[1] - requires multiplication of image_left by Diff
+	    var ctx: CanvasRenderingContext2D = canvas.getContext('2d');
 
-      // ### NOTE:
-      // ### Draw target image on our canvas (dx, dy, dw, dh).
-			ctx.drawImage
-      (
-        image,
-        0,
-        0,
-        image.width,
-        image.height
-      );
+	    // ### NOTE:
+	    // ### Draw target image on our canvas (dx, dy, dw, dh).
+	    ctx.drawImage
+	    (
+	      image,
+	      0,
+	      0,
+	      image.width,
+	      image.height
+	    );
 
-      // ### NOTE:
-      // ### Get canvas image information: sx / sy / sw / sh
-			var imageData: ImageData = ctx.getImageData
-      (
-        image_left,
-        image_top,
-        crop_width_a,
-        crop_height_a
-      );
+	    // ### NOTE:
+	    // ### Get canvas image information: sx / sy / sw / sh
+	    var imageData: ImageData = ctx.getImageData
+	    (
+	      image_left,
+	      image_top,
+	      crop_width_a,
+	      crop_height_a
+	    )
 
-			// ### NOTE:
-      // ### Create destiantion canvas.
-			var canvas1: HTMLCanvasElement = document.createElement('canvas');
+	      // ### NOTE:
+	      // ### Create destiantion canvas.
+			 ,canvas1: HTMLCanvasElement = document.createElement('canvas');
 
-			canvas1.width = crop_width_a;
-			canvas1.height = crop_height_a;
+	    canvas1.width = crop_width_a;
+	    canvas1.height = crop_height_a;
 
-			var ctx1: CanvasRenderingContext2D = canvas1.getContext('2d');
-			ctx1.rect
-      (
-        0,
-        0,
-        crop_width_a,
-        crop_height_a
-      );
-			ctx1.fillStyle = 'white';
-			ctx1.fill();
-			ctx1.putImageData
-      (
-        imageData,
-        0,
-        0
-      );
+	    var ctx1: CanvasRenderingContext2D = canvas1.getContext('2d');
+	    ctx1.rect
+	    (
+	      0,
+	      0,
+	      crop_width_a,
+	      crop_height_a
+	    );
+	    ctx1.fillStyle = 'white';
+	    ctx1.fill();
+	    ctx1.putImageData
+	    (
+	      imageData,
+	      0,
+	      0
+	    );
 
-      // [🐞]
-			dlog
-      (
-        canvas1.toDataURL('image/png'),
-        false
-      );
+	    // [🐞]
+	    dlog
+	    (
+	      canvas1.toDataURL('image/png'),
+	      false
+	    );
 
-      // ### NOTE:
-      // ### Save 'base64' url of NEW 'image' selection.
-			new_img_crop = canvas1.toDataURL('image/png');
-		}
+	    // ### NOTE:
+	    // ### Save 'base64' url of NEW 'image' selection.
+	    new_img_crop = canvas1.toDataURL('image/png');
+	  }
 	}
 
   /**
@@ -716,17 +712,17 @@ COMPONENT JS (w/ TS)
   ): void
   {
     // [🐞]
-		dlog
+    dlog
     (
       PR_P_TAG + 'ℹ️ mouse is up!',
       PR_P_TOG,
       PR_P_STY
     );
 
-		crop_selected = false;
-		resize_selected = false;
+    crop_selected = false;
+    resize_selected = false;
     original_touch = undefined;
-	}
+  }
 
   /**
    * @summary
@@ -747,8 +743,8 @@ COMPONENT JS (w/ TS)
     height: number
   ): boolean
   {
-    const if_M_0: boolean =
-      width <= 100
+    const if_M_0: boolean
+      = width <= 100
       || height <= 100
     ;
     if (if_M_0)
@@ -782,8 +778,8 @@ COMPONENT JS (w/ TS)
     document.documentElement.classList.remove('no-touch');
     document.body.classList.remove('no-touch');
 
-		let imageCropBox: HTMLElement = document.getElementById('profile-cricle-img-crop');
-    let resize_elemnts: HTMLCollectionOf<Element> = document.getElementsByClassName('resize-dot');
+    let imageCropBox: HTMLElement = document.getElementById('profile-cricle-img-crop')
+      ,resize_elemnts: HTMLCollectionOf<Element> = document.getElementsByClassName('resize-dot');
 
     imageCropBox.removeEventListener
     (
@@ -855,7 +851,7 @@ MAIN WIDGET BACKGROUND - MODAL
 <div
   id="background-modal-blur"
   class:display-none={!modal_pic_crop_show}
-  on:click={() => toggle_modal()} in:fade
+  on:click={() => {return toggle_modal()}} in:fade
 />
 
 <!--
@@ -885,7 +881,7 @@ MAIN WIDGET - MODAL
         color-black-2
       "
 		>
-			{RESPONSE_PROFILE_DATA?.profile?.profile_photo}
+			{profileTrs?.profile?.profile_photo}
 		</p>
 
 		<!--
@@ -896,7 +892,7 @@ MAIN WIDGET - MODAL
 			class="cursor-pointer"
 			src="/assets/svg/close.svg"
 			alt="close-svg"
-			on:click={() => toggle_modal()}
+			on:click={() => {return toggle_modal()}}
 		/>
 
 	</div>
@@ -947,9 +943,9 @@ MAIN WIDGET - MODAL
         m-r-16
         color-black-2
       "
-			on:click={() => toggle_modal()}
+			on:click={() => {return toggle_modal()}}
 		>
-			{RESPONSE_PROFILE_DATA?.profile?.cancel_expression}
+			{profileTrs?.profile?.cancel_expression}
 		</button>
 
 		<!--
@@ -961,9 +957,9 @@ MAIN WIDGET - MODAL
         s-14
         w-500
       "
-			on:click={() => upload_selected_img()}
+			on:click={() => {return upload_selected_img()}}
 		>
-			{RESPONSE_PROFILE_DATA?.profile?.save_photo}
+			{profileTrs?.profile?.save_photo}
 		</button>
 
 	</div>

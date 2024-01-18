@@ -23,22 +23,21 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  import { browser } from '$app/environment';
+  import { page } from '$app/stores';
   import { onMount } from 'svelte';
-  import { fly } from 'svelte/transition';
 
   import userBetarenaSettings from '$lib/store/user-settings.js';
   import { toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
   import { Misc } from '@betarena/scores-lib/dist/classes/class.misc.js';
 
-  import icon_investment_checkpoint_2 from '../assets/investor/icon-investment-checkpoint-2.svg';
-  import icon_investment_checkpoint from '../assets/investor/icon-investment-checkpoint.svg';
   import icon_bronze from '../assets/price-tier/icon-bta-bronze.svg';
   import icon_gold from '../assets/price-tier/icon-bta-gold.svg';
   import icon_platinum from '../assets/price-tier/icon-bta-platinum.svg';
   import icon_silver from '../assets/price-tier/icon-bta-silver.svg';
 
   import type { B_H_KEYP, B_H_KEYP_Tier } from '@betarena/scores-lib/types/_HASURA_.js';
-  import type { IProfileData } from '@betarena/scores-lib/types/types.profile.js';
+  import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -57,9 +56,13 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let
-    /** @augments IProfileData */
+    /**
+     * @augments IProfileData
+    */
     profileData: IProfileData | null
   ;
+
+  type IRowLayout = 'token-price' | 'minimum-investment' | 'discount' | 'initial-token-release' | 'vesting-period' | 'progress';
 
   const
     /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
@@ -71,12 +74,17 @@
     /** @description 📣 threshold start + state for 💻 TABLET */
     // eslint-disable-next-line no-unused-vars
     , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
+    /**
+     * @description
+     *  📣 Target row structure layout title.
+    */
+    , rowLayout: IRowLayout[] = ['token-price', 'minimum-investment', 'discount', 'initial-token-release', 'vesting-period', 'progress']
   ;
 
   let
     /**
      * @description
-     *  📣
+     *  📣 Data Map for target investor pricing data.
     */
     dataMap: Map < B_H_KEYP_Tier, B_H_KEYP > = new Misc().convertToMapKEYPINVSTTIER
     (
@@ -91,7 +99,7 @@
      * @description
      *  📣 Current `tier` of _this_ user.
     */
-    , currentAccumulatedAmountProgress: number = -1
+    , currentAccumulatedAmountProgress: B_H_KEYP_Tier = 'NaN'
     /**
      * @description
      *  📣
@@ -102,10 +110,14 @@
      *  📣
     */
     , colspanSet = ( newValue: number ) => { colspan1Value = newValue; return; }
+    , show: boolean = false
   ;
 
-  // [🐞]
-  $userBetarenaSettings.user.scores_user_data.investor_balance = 10000;
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
+  $: deepReactListenInvestorBalanceChng = $userBetarenaSettings.user.scores_user_data?.investor_balance;
+
+  // ▓ [🐞]
+  $userBetarenaSettings.user.scores_user_data.investor_balance = 100000;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -186,10 +198,24 @@
    */
   function setLargestCurrentTier
   (
-    tierNumber: number
   ): void
   {
-    currentAccumulatedAmountProgress = tierNumber;
+    const investorBalance: number = $userBetarenaSettings.user.scores_user_data?.investor_balance ?? 0;
+    currentAccumulatedAmountProgress = 'NaN';
+
+    // ▓ NOTE:
+    // ▓ > loop over each tier data.
+    for (const [key, data] of dataMap)
+    {
+      if
+      (
+        investorBalance >= (data.data?.invest_min ?? 0)
+        && (investorBalance <= (data.data?.invest_max ?? 0)
+          || (data.data?.invest_max ?? 0) == -1)
+      )
+        currentAccumulatedAmountProgress = key;
+    }
+
     return;
   }
 
@@ -241,11 +267,44 @@
     ) =>
     {
       resizeCustom();
+      setTimeout(() => {return show = true}, 50)
       return;
     }
   );
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🔥 REACTIVITY
+   * @description
+   *  📌 Listens to cases when, the:
+   *  - (1) _initial platform language_ has not been set,
+   *  - (and) (2) `user` is **not** authenticated and/or is `anonymous`.
+   * @WARNING
+   *  **reactivity triggered by:**
+   *  - `$userBetarenaSettings.user`- **kicker** (via deepListen)
+   */
+  $: if (deepReactListenInvestorBalanceChng)
+    setLargestCurrentTier();
+  //
+
+    // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
 </script>
 
@@ -270,56 +329,80 @@
   class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
 >
 
-  <!-- [🐞]-->
-  <!-- {VIEWPORT_TABLET_INIT[1]} -->
-  <!-- [🐞]-->
-  <!-- {VIEWPORT_MOBILE_INIT[1]} -->
-
   <!--
   ▓ NOTE:
-  ▓ > widget title.
+  ▓ > (header) widget title 📱 MOBILE
   -->
-  <h1
-    id="widget-title"
-    class=
-    "
-    s-20
-    w-500
-    color-black-2
-    "
-  >
-    Tier Pricing
-  </h1>
+  {#if VIEWPORT_MOBILE_INIT[1]}
+    <h1
+      id="widget-title"
+      class=
+      "
+      s-20
+      w-500
+      color-black-2
+      m-0
+      "
+    >
+      {
+        profileTrs.investor?.tiers.title
+        ?? 'Tier Pricing '
+      }
+    </h1>
+  {/if}
 
   <!--
   ▓ NOTE:
   ▓ > tier pricing table.
   -->
-  {#each tableLayout as layout}
+  {#each tableLayout as layout,tableNum}
 
     <table
-      class=
-      "
-      m-b-25
-      "
     >
 
       <!--
       ▓ NOTE:
-      ▓ > (header-row) tier pricing table.
+      ▓ > (row) tier pricing table header/columns.
       -->
       <thead>
-
         <tr>
 
-          {#if !VIEWPORT_MOBILE_INIT[1]}
+          <!--
+          ▓ NOTE:
+          ▓ > (header) widget title.
+          -->
+          {#if !VIEWPORT_MOBILE_INIT[1] && tableNum == 0}
+            <th>
+              <h1
+                id="widget-title"
+                class=
+                "
+                s-20
+                w-500
+                color-black-2
+                m-0
+                "
+              >
+                {
+                  profileTrs.investor?.tiers.title
+                  ?? 'Tier Pricing'
+                }
+              </h1>
+            </th>
+          <!--
+          ▓ NOTE:
+          ▓ > (header) empty column.
+          -->
+          {:else if !VIEWPORT_MOBILE_INIT[1]}
             <th/>
           {/if}
 
+          <!--
+          ▓ NOTE:
+          ▓ > (header) available table columns.
+          -->
           {#each layout as key}
-
             {#if key != 'NaN'}
-
               <th>
                 <div
                   class=
@@ -347,28 +430,26 @@
                     w-500
                     color-black-2
                     capitalize
+                    <!---->
+                    header-column
                     "
                   >
                     {dataMap.get(key)?.tier}
                   </p>
                 </div>
               </th>
-
             {/if}
-
           {/each}
-        </tr>
 
+        </tr>
       </thead>
 
       <!--
       ▓ NOTE:
-      ▓ > (row) tier pricing table.
+      ▓ > (row) tier pricing table data.
       -->
       <tbody>
-
-        {#each ['token-price', 'MINIMUM INVESTMENT', 'Discount', 'Initial Token Release', 'Vesting Period', 'progress'] ?? [] as item}
-
+        {#each rowLayout as item}
           <tr
             class:row-progress={item == 'progress'}
           >
@@ -377,7 +458,6 @@
             ▓ NOTE:
             ▓ > row title.
             -->
-
             {#if item == 'progress' && VIEWPORT_MOBILE_INIT[1]}
               <!--  -->
             {:else}
@@ -394,7 +474,32 @@
                       grey-v1
                     "
                   >
-                    {item}
+                    {#if item == 'token-price'}
+                      {
+                        profileTrs.investor?.tiers.tiers_pricing.title
+                        ?? 'Tier Pricing'
+                      }
+                    {:else if item == 'minimum-investment'}
+                      {
+                        profileTrs.investor?.tiers.tiers_investment.title
+                        ?? 'Minimum Investment'
+                      }
+                    {:else if item == 'discount'}
+                      {
+                        profileTrs.investor?.tiers.tiers_discount.title
+                        ?? 'Discount'
+                      }
+                    {:else if item == 'initial-token-release'}
+                      {
+                        profileTrs.investor?.tiers.tiers_tge.title
+                        ?? 'Initial token release'
+                      }
+                    {:else if item == 'vesting-period'}
+                      {
+                        profileTrs.investor?.tiers.tiers_vesting.title
+                        ?? 'Vesting period'
+                      }
+                    {/if}
                   </p>
 
                 {:else if !VIEWPORT_MOBILE_INIT[1]}
@@ -416,7 +521,14 @@
                       "
                     >
                       <div
-                        class:reached-tier={currentAccumulatedAmountProgress != -1}
+                        class:reached-tier=
+                        {
+                          currentAccumulatedAmountProgress != 'NaN'
+                          && (
+                            layout.includes(currentAccumulatedAmountProgress)
+                            || (VIEWPORT_TABLET_INIT[1] && tableLayout[1].includes(currentAccumulatedAmountProgress))
+                          )
+                        }
                       />
                     </div>
                   </div>
@@ -427,20 +539,26 @@
 
             {/if}
 
+            <!-- [🐞] -->
             <!-- {colspan1Value} -->
 
             <!--
             ▓ NOTE:
             ▓ > row target tiers data, per column.
             -->
-            {#each layout as key}
+            {#each layout as key,i}
 
               {#if key != 'NaN'}
 
                 <td
                   colspan={colspan1Value}
                 >
+                  <!--
+                  ▓ NOTE:
+                  ▓ > standard values.
+                  -->
                   {#if item != 'progress'}
+
                     <p
                       class=
                       "
@@ -458,7 +576,7 @@
                             , false
                           )
                         }
-                      {:else if item == 'MINIMUM INVESTMENT'}
+                      {:else if item == 'minimum-investment'}
                         ${
                           dataMap.get(key)?.data?.invest_min
                           ?? ''
@@ -468,17 +586,17 @@
                             ? 'or more'
                             : `- $${dataMap.get(key)?.data?.invest_max ?? ''}`
                         }
-                      {:else if item == 'Discount'}
+                      {:else if item == 'discount'}
                         {
                           dataMap.get(key)?.data?.discount_percentage
                           ?? ''
                         }%
-                      {:else if item == 'Initial Token Release'}
+                      {:else if item == 'initial-token-release'}
                         {
                           dataMap.get(key)?.data?.initial_token_release_percentage
                           ?? ''
                         }% at (TGE)
-                      {:else if item == 'Vesting Period'}
+                      {:else if item == 'vesting-period'}
                         {
                           dataMap.get(key)?.data?.vesting_months
                           ?? ''
@@ -486,42 +604,42 @@
                       {/if}
                     </p>
 
+                  <!--
+                  ▓ NOTE:
+                  ▓ > user 'cumulative sum' investment(s) progress.
+                  -->
                   {:else}
 
-                    <!--
-                    ▓ NOTE:
-                    ▓ > user 'cumulative sum' investment(s) progress.
-                    -->
                     <div
                       class=
                       "
                       investment-tier-progress
                       "
                     >
-                      <!-- [🐞]-->
+                      <!--
+                      [🐞]
+                      -->
                       <!-- {currentAccumulatedAmountProgress} -->
 
                       <!--
                       ▓ NOTE:
                       ▓ > (asset) tier checkpoint.
                       -->
-                      <img
-                        id=''
+                      <div
                         class=
                         "
                         checkpoint
                         "
-                        src=
+                        style=
+                        "
+                        transition-delay: {(i + 1) * ((tableNum + 1) * 0.5)}s;
+                        "
+                        class:reached=
                         {
-                          currentAccumulatedAmountProgress >= (dataMap.get(key)?.data?.position ?? 0)
-                            ? icon_investment_checkpoint
-                            : icon_investment_checkpoint_2
+                          browser
+                          && show
+                          && (dataMap.get(currentAccumulatedAmountProgress)?.data?.position ?? 0) >= (dataMap.get(key)?.data?.position ?? 0)
                         }
-                        alt='icon_invest_progress_checkpoint'
-                        title='{dataMap.get(key)?.tier} checkpoint'
-                        loading='lazy'
-                        width=auto
-                        height=auto
                       />
 
                       <!--
@@ -535,8 +653,18 @@
                         "
                       >
                         <div
-                          class:reached-tier={currentAccumulatedAmountProgress > (dataMap.get(key)?.data?.position ?? 0)}
-                          class:current-tier={currentAccumulatedAmountProgress == (dataMap.get(key)?.data?.position ?? 0)}
+                          class:reached-tier=
+                          {
+                            (dataMap.get(currentAccumulatedAmountProgress)?.data?.position ?? 0) > (dataMap.get(key)?.data?.position ?? 0)
+                          }
+                          class:current-tier=
+                          {
+                            (dataMap.get(currentAccumulatedAmountProgress)?.data?.position ?? 0) == (dataMap.get(key)?.data?.position ?? 0)
+                          }
+                          style=
+                          "
+                          animation-delay: {(i + 1) * ((tableNum + 1) * 0.5)}s ;
+                          "
                         />
                       </div>
 
@@ -544,18 +672,14 @@
                       ▓ CHECK
                       ▓ > wether 'this' tier is the one user belongs to.
                       -->
-                      {#if
-                        ($userBetarenaSettings.user.scores_user_data?.investor_balance ?? 0) >= (dataMap.get(key)?.data?.invest_min ?? 0)
-                        && (
-                          ($userBetarenaSettings.user.scores_user_data?.investor_balance ?? 0) <= (dataMap.get(key)?.data?.invest_max ?? 0)
-                          || (dataMap.get(key)?.data?.invest_max ?? 0) == -1)
-                      }
+                      {#if (dataMap.get(currentAccumulatedAmountProgress)?.data?.position ?? 0) == (dataMap.get(key)?.data?.position ?? 0)}
 
                         <!--
-                        ▓ IMPORTANT
-                        ▓ > dynamic update user tier, from within HTML trigger.
+                        ▓ WARNING:
+                        ▓ > does not work, specifically in a table > tr sections.
+                        ▓ > https://github.com/sveltejs/svelte/issues/4948
+                        transition:fly={{ x: -100, duration: 500, delay: i*2000 }}
                         -->
-                        {setLargestCurrentTier(dataMap.get(key)?.data?.position ?? 0) ?? ''}
 
                         <!--
                         ▓ NOTE:
@@ -567,7 +691,10 @@
                           "
                           text-center
                           "
-                          transition:fly={{ x: -200, duration: 500 }}
+                          style=
+                          "
+                          animation-delay: {(i + 1) * ((tableNum + 1) * 0.5)}s;
+                          "
                         >
                           <!--
                           ▓ NOTE:
@@ -580,7 +707,8 @@
                             s-16
                             w-500
                             color-white
-                            m-b-12
+                            {!VIEWPORT_TABLET_INIT[1] ? 'm-b-12' : 'm-b-8'}
+                            no-wrap
                             "
                           >
                             {$userBetarenaSettings.user.scores_user_data?.investor_balance ?? 0} BTA
@@ -595,9 +723,13 @@
                             "
                             s-12
                             color-grey
+                              grey-v1
                             "
                           >
-                            Your staked ammount
+                            {
+                              profileTrs.investor?.tiers.general_stake
+                              ?? 'Your staked ammount'
+                            }
                           </p>
                         </div>
 
@@ -613,9 +745,7 @@
             {/each}
 
           </tr>
-
         {/each}
-
       </tbody>
 
     </table>
@@ -643,20 +773,22 @@
 
   div#profile⮕w⮕investTierPricing⮕main
   {
+    /* 📌 position */
+    position: relative;
     /* 🎨 style */
     background-color: var(--white);
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
-    position: relative;
-    padding: 20px;
+    padding-bottom: 20px;
+    /* 🛝 layout */
+    display: grid;
+    gap: 20px;
 
     h1#widget-title
     {
       /* 🎨 style */
-      position: relative;
-      margin: 0;
-      margin-bottom: 20px;
+      padding: 20px 20px 0 20px;
     }
 
     div.line
@@ -680,17 +812,21 @@
         /* width: 40%; */ /* Adjusted with JavaScript */
         height: 1px;
         width: 0%;
+        animation-duration: 1s;
+        animation-delay: 0.5s;
+        animation-fill-mode: forwards;
+        -webkit-animation-fill-mode: forwards;
 
         &.current-tier
         {
-          /* 🎨 style */
-          width: 50%;
+          /* 🎡 animation */
+          animation-name: slidein1;
         }
 
         &.reached-tier
         {
-          /* 🎨 style */
-          width: 100%;
+          /* 🎡 animation */
+          animation-name: slidein2;
         }
       }
     }
@@ -703,31 +839,39 @@
       width: -webkit-fill-available;
       width: -moz-available;
 
+      &:has(div#cumulative-sum-slider-box)
+      {
+        /* 🎨 style */
+        margin-bottom: 20px;
+      }
+
       thead
       {
         tr
         {
           th
           {
+            /* 📌 position */
+            position: relative;
             /* 🛝 layout */
             width: fit-content;
             /* 🎨 style */
             white-space: nowrap;
-            padding: 8px 0 20px 0;
-            padding-right: 12px;
+            padding: 0 0 20px 0;
+            padding-right: 78px;
 
             &:first-child
             {
               /* 🎨 style */
               padding-left: 20px;
-              border-radius: 2px 0 0 2px;
+              min-width: 210px;
+              max-width: 210px;
             }
 
             &:last-child
             {
               /* 🎨 style */
               padding-right: 20px;
-              border-radius: 0 2px 2px 0;
             }
           }
         }
@@ -737,9 +881,10 @@
       {
         tr
         {
-          /* 🎨 style */
+          /* 📌 position */
           position: relative;
           position: -webkit-sticky;
+          /* 🎨 style */
           max-height: 40px;
           height: 40px;
           min-height: 40px;
@@ -750,26 +895,102 @@
             {
               /* 🎨 style */
               padding: 25px 0 8px 0;
+
+              &:first-child
+              {
+                /* 🎨 style */
+                padding-left: 20px !important;
+              }
+              &:last-of-type
+              {
+                /* 🎨 style */
+                padding-right: 20px !important;
+              }
+
+              div.investment-tier-progress
+              {
+                /* 📌 position */
+                position: relative;
+
+                div.checkpoint
+                {
+                  /* 📌 position */
+                  position: absolute;
+                  top: 0;
+                  bottom: 0;
+                  margin: auto;
+                  left: 0;
+                  z-index: 1;
+                  /* 🎨 style */
+                  width: 20px;
+                  height: 20px;
+                  background-image: url('../assets/investor/icon-investment-checkpoint-2.svg');
+                  background-position: center;
+                  background-repeat: no-repeat;
+                  background-size: 20px 20px;
+                  transition-duration: 0.25s;
+
+                  &.reached
+                  {
+                    /* 🎨 style */
+                    background-image: url('../assets/investor/icon-investment-checkpoint.svg');
+                    background-size: inherit;
+                  }
+                }
+
+                div#cumulative-sum-slider-box
+                {
+                  /* 📌 position */
+                  position: absolute;
+                  top: 15px;
+                  margin: auto;
+                  bottom: 0;
+                  /* 🎨 style */
+                  opacity: 0;
+                  height: fit-content;
+                  width: fit-content;
+                  /* 🎡 animation */
+                  animation-duration: 0.5s;
+                  animation-name: slidein;
+                  animation-fill-mode: forwards;
+                  -webkit-animation-fill-mode: forwards;
+
+                  p#staked-amount
+                  {
+                    /* 🎨 style */
+                    padding: 0 8px;
+                    background-color: var(--primary);
+                    border-radius: 32px;
+                    height: 24px;
+                    max-height: 24px;
+                    max-width: fit-content;
+                  }
+                }
+              }
             }
           }
 
           td
           {
             /* 🎨 style */
-            padding: 8px 0 8px 0;
+            padding: 4px 0 4px 0;
             // padding-right: 12px;
 
             &:first-child
             {
               /* 🎨 style */
               padding-left: 20px !important;
-              border-radius: 4px 0 0 4px;
             }
             &:last-of-type
             {
               /* 🎨 style */
               padding-right: 20px !important;
-              border-radius: 0 4px 4px 0;
+
+              p
+              {
+                /* 🎨 style */
+                text-align: end;
+              }
             }
           }
 
@@ -778,56 +999,9 @@
             /* 🎨 style */
             background-color: var(--whitev2)
           }
-
-          &:nth-child(even)
-          {
-            /* 🎨 style */
-            background-color: var(--white);
-          }
         }
       }
     }
-
-    div.investment-tier-progress
-    {
-      /* 📌 position */
-      position: relative;
-
-      img.checkpoint
-      {
-        /* 📌 position */
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        margin: auto;
-        left: 0;
-        z-index: 1;
-      }
-
-      div#cumulative-sum-slider-box
-      {
-        /* 📌 position */
-        position: absolute;
-        top: 15px;
-        right: 0;
-        left: 0;
-        margin: auto;
-        bottom: 0;
-        height: fit-content;
-
-        p#staked-amount
-        {
-          /* 🎨 style */
-          padding: 0 8px;
-          background-color: var(--primary);
-          border-radius: 32px;
-          height: 24px;
-          max-height: 24px;
-          max-width: 100px;
-        }
-      }
-    }
-
   }
 
   /*
@@ -841,12 +1015,128 @@
   {
     div#profile⮕w⮕investTierPricing⮕main
     {
-      h1#widget-title
+      /* 🎨 style */
+      // min-height: 716px;
+      // height: 716px;
+      // max-height: 716px;
+      padding-bottom: 43px;
+      padding: 20px;
+      /* 🛝 layout */
+      gap: 40;
+
+      table
       {
-        /* 🎨 style */
-        position: absolute;
-        top: 10px;
-        left: 20px;
+        h1#widget-title
+        {
+          /* 🎨 style */
+          padding: 0;
+          margin-right: 10px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        thead
+        {
+          tr
+          {
+            th
+            {
+              &:first-child
+              {
+                /* 🎨 style */
+                padding-left: 0;
+              }
+
+              &:last-child
+              {
+                /* 🎨 style */
+                padding-right: 20px;
+              }
+
+              p.header-column
+              {
+                /* 🎨 style */
+                position: absolute;
+                left: 50px;
+              }
+            }
+          }
+        }
+
+        tbody
+        {
+          tr
+          {
+            &.row-progress
+            {
+              td
+              {
+                &:first-child
+                {
+                  /* 🎨 style */
+                  padding-left: 0px !important;
+                }
+                &:last-of-type
+                {
+                  /* 🎨 style */
+                  padding-right: 0px !important;
+                }
+              }
+            }
+
+            td
+            {
+              /* 🎨 style */
+              padding: 8px 0 8px 0;
+
+              &:first-child
+              {
+                /* 🎨 style */
+                padding-left: 20px !important;
+                border-radius: 4px 0 0 4px;
+              }
+              &:last-of-type
+              {
+                /* 🎨 style */
+                padding-right: 20px !important;
+                border-radius: 0 4px 4px 0;
+
+                p
+                {
+                  /* 🎨 style */
+                  text-align: start;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  @media only screen
+  and (min-width: 1160px)
+  {
+    div#profile⮕w⮕investTierPricing⮕main
+    {
+      /* 🎨 style */
+      height: 376px;
+      min-height: 376px;
+      max-height: 376px;
+
+      table
+      {
+        &:has(div#cumulative-sum-slider-box)
+        {
+          /* 🎨 style */
+          margin-bottom: none;
+        }
+
+        h1#widget-title
+        {
+          /* 🎨 style */
+          max-width: 150px;
+        }
       }
     }
   }
@@ -869,15 +1159,34 @@
     {
       tbody
       {
-        tr:nth-child(odd)
+        tr
         {
-          /* 🎨 style */
-          background-color: var(--dark-theme-1);
-        }
-        tr:nth-child(even)
-        {
-          /* 🎨 style */
-          background-color: transparent;
+          &.row-progress
+          {
+            td
+            {
+              div.investment-tier-progress
+              {
+                div.checkpoint
+                {
+                  /* 🎨 style */
+                  background-image: url('../assets/investor/icon-investment-checkpoint-2-dark.svg');
+
+                  &.reached
+                  {
+                    /* 🎨 style */
+                    background-image: url('../assets/investor/icon-investment-checkpoint.svg');
+                  }
+                }
+              }
+            }
+          }
+
+          &:nth-child(odd)
+          {
+            /* 🎨 style */
+            background-color: var(--dark-theme-1-5-shade-o-0-5);
+          }
         }
       }
     }
@@ -886,6 +1195,50 @@
     {
       /* 🎨 style */
       background-color: var(--dark-theme-1-6-shade);
+    }
+  }
+
+  /*
+  ╭──────────────────────────────────────────────────────────────────────────────╮
+  │ 🎡 ANIMATION                                                                 │
+  ╰──────────────────────────────────────────────────────────────────────────────╯
+  */
+
+  @keyframes slidein
+  {
+    0%
+    {
+      opacity: 1;
+      left: 0%;
+    }
+    100%
+    {
+      opacity: 1;
+      left: 25%;
+    }
+  }
+
+  @keyframes slidein1
+  {
+    0%
+    {
+      width: 0%;
+    }
+    100%
+    {
+      width: 35%;
+    }
+  }
+
+  @keyframes slidein2
+  {
+    0%
+    {
+      width: 0%;
+    }
+    100%
+    {
+      width: 100%;
     }
   }
 

@@ -23,6 +23,7 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  import { page } from '$app/stores';
   import { fade, fly } from 'svelte/transition';
 
 	import sessionStore from '$lib/store/session.js';
@@ -53,6 +54,8 @@
   import icon_social_whatsapp_dark from '../assets/investor/icon-social-whatsapp-dark.svg';
   import icon_social_whatsapp_hover from '../assets/investor/icon-social-whatsapp-hover.svg';
   import icon_social_whatsapp from '../assets/investor/icon-social-whatsapp.svg';
+
+  import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -128,6 +131,8 @@
     ]
   ;
 
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
+
   // #endregion ➤ 📌 VARIABLES
 
 </script>
@@ -176,7 +181,10 @@
       color-black-2
       "
     >
-      Invite Investors
+      {
+        profileTrs.investor?.referral.links.cta_title
+        ?? 'Invite Investors'
+      }
     </p>
 
     <!--
@@ -240,7 +248,10 @@
         line-height: 120%; /* 35.7px */
         "
       >
-        Looking to be part of the future of sports content?
+        {
+          profileTrs.investor?.referral.ref_pop.title_1
+          ?? 'Looking to be part of the future of sports content?'
+        }
       </p>
 
       <!--
@@ -272,9 +283,10 @@
         text-left
         "
       >
-        Join the Betarena Presale and
-        Be Part of the Future of Sports Content.
-        Join Now for Exclusive Rewards!
+        {
+          profileTrs.investor?.referral.ref_pop.description
+          ?? 'Join the Betarena Presale and Be Part of the Future of Sports Content. Join Now for Exclusive Rewards!'
+        }
       </p>
     </div>
 

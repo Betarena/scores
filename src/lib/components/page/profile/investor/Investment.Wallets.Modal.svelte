@@ -23,13 +23,17 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import sessionStore from '$lib/store/session.js';
+  import { page } from '$app/stores';
   import { fade, fly } from 'svelte/transition';
+
+  import sessionStore from '$lib/store/session.js';
+  import userBetarenaSettings from '$lib/store/user-settings.js';
+  import { copyToClipboard } from '$lib/utils/platform-functions.js';
 
   import icon_close from '../assets/investor/icon-close-btn.svg';
   import icon_close_dark from '../assets/investor/icon-close-dark-btn.svg';
 
-  import userBetarenaSettings from '$lib/store/user-settings.js';
+  import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -48,6 +52,10 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let
+    /**
+     * @description
+     *  📣 List of wallets to be displayed.
+    */
     walletAddressList: string[]
   ;
 
@@ -62,6 +70,8 @@
     // eslint-disable-next-line no-unused-vars
     , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
+
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -111,7 +121,10 @@
       color-black-2
       "
     >
-      Investor Wallet Address
+      {
+        profileTrs.investor?.wallets.title
+        ?? 'Investor Wallet Address'
+      }
     </p>
 
     <!--
@@ -146,13 +159,21 @@
   >
 
     {#each walletAddressList as item}
+
+      <!--
+      ▓ NOTE:
+      ▓ > (box) wallet address row
+      -->
       <div
         class=
         "
         wallet-row
         "
       >
-
+        <!--
+        ▓ NOTE:
+        ▓ > (text) wallet address (translation)
+        -->
         <p
           class=
           "
@@ -163,15 +184,26 @@
           text-left
           "
         >
-          Wallet ID
+          {
+            profileTrs.investor?.wallets.id
+            ?? 'Wallet ID'
+          }
         </p>
 
+        <!--
+        ▓ NOTE:
+        ▓ > (box) wallet + copy
+        -->
         <div
           class=
           "
           row-space-out
           "
         >
+          <!--
+          ▓ NOTE:
+          ▓ > (text) wallet address
+          -->
           <p
             class=
             "
@@ -182,6 +214,10 @@
             {item}
           </p>
 
+          <!--
+          ▓ NOTE:
+          ▓ > (text) copy
+          -->
           <p
             class=
             "
@@ -191,8 +227,12 @@
             color-black-2
             cursor-pointer
             "
+            on:click={() => { copyToClipboard(item); return; }}
           >
-            Copy
+            {
+              profileTrs.investor?.wallets.copy
+              ?? 'Copy'
+            }
           </p>
         </div>
 

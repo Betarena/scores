@@ -28,7 +28,7 @@
   import icon_arrow_down from '../assets/arrow-down.svg';
   import icon_arrow_up from '../assets/arrow-up.svg';
 
-	import type { B_H_INVESTOR_REF_HIST } from '@betarena/scores-lib/types/_HASURA_.js';
+	import type { PUBLIC__INVESTOR_IReferralHistory } from '@betarena/scores-lib/types/_HASURA_.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -48,9 +48,9 @@
 
   export let
     /**
-     * @augments B_H_INVESTOR_REF_HIST
+     * @augments PUBLIC__INVESTOR_IReferralHistory
      */
-    data: B_H_INVESTOR_REF_HIST
+    data: PUBLIC__INVESTOR_IReferralHistory
     /**
      * @description
      *  📣

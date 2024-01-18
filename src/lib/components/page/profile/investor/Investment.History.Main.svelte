@@ -23,6 +23,7 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  import { page } from '$app/stores';
   import { onMount } from 'svelte';
 
   import userBetarenaSettings from '$lib/store/user-settings.js';
@@ -32,7 +33,7 @@
   import InvestmentHistoryRowChild from './Investment.HistoryRow.Child.svelte';
 
   import type { B_H_KEYP, B_H_KEYP_Tier } from '@betarena/scores-lib/types/_HASURA_.js';
-  import type { IProfileData } from '@betarena/scores-lib/types/types.profile.js';
+  import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -54,6 +55,8 @@
     /** @augments IProfileData */
     profileData: IProfileData | null
   ;
+
+  type IRowLayout = 'date' | 'type' | 'tier' | 'discount' | 'investment' | 'tokens' | 'price' | '';
 
   const
     /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
@@ -80,7 +83,7 @@
      * @description
      *  📣 Target `table` header order.
     */
-    , tableHeader: string[]
+    , tableHeader: IRowLayout[]
     = [
       'date'
       , 'type'
@@ -91,6 +94,8 @@
       , 'price'
     ]
   ;
+
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
 
     // #endregion ➤ 📌 VARIABLES
 
@@ -208,9 +213,13 @@
     s-20
     w-500
     color-black-2
+    m-b-20
     "
   >
-    Investment Details
+    <!-- TODO: Missing Translation -->
+    {
+      'Investment Details'
+    }
   </p>
 
   <!--
@@ -235,10 +244,46 @@
                 "
                 s-12
                 color-grey
+                  dark-v1
                 capitalize
                 "
               >
-                {item}
+                {#if item == 'date'}
+                  {
+                    profileTrs.investor?.investment_details.date
+                    ?? 'Date'
+                  }
+                {:else if item == 'type'}
+                  {
+                    profileTrs.investor?.investment_details.type
+                    ?? 'Available'
+                  }
+                {:else if item == 'tier'}
+                  {
+                    profileTrs.investor?.investment_details.tier
+                    ?? 'Tier'
+                  }
+                {:else if item == 'discount'}
+                  {
+                    profileTrs.investor?.investment_details.discount
+                    ?? 'Discount'
+                  }
+                {:else if item == 'investment'}
+                  {
+                    profileTrs.investor?.investment_details.investment
+                    ?? 'Investment'
+                  }
+                {:else if item == 'tokens'}
+                  {
+                    profileTrs.investor?.investment_details.tokens
+                    ?? 'Tokens'
+                  }
+                {:else if item == 'price'}
+                  {
+                    profileTrs.investor?.investment_details.price
+                    ?? 'Price'
+                  }
+                {/if}
               </p>
             </th>
           {/each}
@@ -251,7 +296,7 @@
       -->
       <tbody>
 
-        {#each profileData?.tx_hist ?? [] as item}
+        {#each [...profileData?.tx_hist?? [], ...profileData?.tx_hist ?? []] ?? [] as item}
           {#if item.type == 'investment'}
             <InvestmentHistoryRowChild
               data={item}
@@ -261,15 +306,23 @@
             />
           {/if}
         {:else}
-          <p
-            class=
-            "
-            s-20
-            color-black-2
-            "
+          <div
+            id="no-widget-data"
           >
-            Uh-oh! No Investments have been found.
-          </p>
+            <p
+              class=
+              "
+              s-16
+              color-black-3
+              "
+              style=
+              "
+              line-height: 24px; /* 150% */
+              "
+            >
+              Uh-oh! No Investments have been found.
+            </p>
+          </div>
         {/each}
 
       </tbody>
@@ -305,6 +358,9 @@
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
+    height: 469px;
+    min-height: 469px;
+    max-height: 469px;
 
     p#widget-title
     {
@@ -316,10 +372,10 @@
     {
       /* 🎨 style */
       position: relative;
-      min-height: 258px;
-      max-height: 258px;
+      min-height: 379px;
+      max-height: 379px;
       overflow-y: scroll;
-      padding-top: 20px;
+      padding-top: 0 !important;
 
       &::-webkit-scrollbar
       {
@@ -345,6 +401,10 @@
         {
           tr
           {
+            /* 📌 position */
+            position: sticky;
+            top: 0;
+            z-index: 10;
             /* 🎨 style */
             background-color: var(--whitev2);
             max-height: 24px;
@@ -449,6 +509,31 @@
               }
             }
           }
+
+          div#no-widget-data
+          {
+            /* 📌 position */
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin: auto;
+            z-index: 10;
+            /* 🎨 style */
+            background-color: var(--white);
+            text-align: center;
+
+            p
+            {
+              /* 📌 position */
+              position: relative;
+              top: 50%;
+              -webkit-transform: translateY(-50%);
+              -ms-transform: translateY(-50%);
+              transform: translateY(-50%);
+            }
+          }
         }
       }
     }
@@ -465,10 +550,17 @@
   {
     div#profile⮕w⮕investment-detail⮕main
     {
+      /* 🎨 style */
+      height: 333px;
+      min-height: 333px;
+      max-height: 333px;
+
       div#table-box
       {
         /* 🎨 style */
         padding: 20px;
+        min-height: 243px;
+        max-height: 243px;
       }
     }
   }
@@ -487,27 +579,39 @@
       background-color: var(--dark-theme-1-4-shade) !important;
     }
 
-    &.dark-background-1 thead
+    &.dark-background-1 table
     {
-      tr
-      {
-        /* 🎨 style */
-        background-color: rgba(75, 75, 75, 0.50) !important;
-      }
-    }
 
-    &.dark-background-1 tbody
-    {
-      // IMPORTANT
-      :global
+      thead
       {
         tr
         {
-          &:nth-child(even)
+          /* 🎨 style */
+          // background-color: rgba(75, 75, 75, 0.50) !important; // NOTE: alternative #4b4b4b80
+          background-color: var(--dark-theme-1) !important;
+
+        }
+      }
+
+      tbody
+      {
+        // IMPORTANT
+        :global
+        {
+          tr
           {
-            /* 🎨 style */
-            background-color: rgba(75, 75, 75, 0.50) !important;
+            &:nth-child(even)
+            {
+              /* 🎨 style */
+              background-color: rgba(75, 75, 75, 0.50) !important;
+            }
           }
+        }
+
+        div#no-widget-data
+        {
+          /* 🎨 style */
+          background-color: var(--dark-theme-1-4-shade) !important;
         }
       }
     }

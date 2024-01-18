@@ -23,6 +23,8 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  import { page } from '$app/stores';
+
   import { toZeroPrefixDateStr } from '$lib/utils/dates.js';
   import { toDecimalFix } from '$lib/utils/platform-functions';
 
@@ -34,6 +36,7 @@
   import icon_silver from '../assets/price-tier/icon-bta-silver.svg';
 
 	import type { B_H_KEYP, B_H_KEYP_Tier, B_H_TH } from '@betarena/scores-lib/types/_HASURA_.js';
+	import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -104,6 +107,8 @@
     */
     , targetTxTierIcon: string = selectIcon(data.tier ?? 'NaN')
   ;
+
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
 
   // #region ➤ 🛠️ METHODS
 

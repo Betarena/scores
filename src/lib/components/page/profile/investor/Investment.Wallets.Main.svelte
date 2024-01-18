@@ -23,13 +23,15 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  import { page } from '$app/stores';
+
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { copyToClipboard } from '$lib/utils/platform-functions.js';
 
   import WalletsModal from './Investment.Wallets.Modal.svelte';
 
-  import type { IProfileData } from '@betarena/scores-lib/types/types.profile.js';
+  import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -81,13 +83,18 @@
      * @description
      *  📣 Target **unique** wallets used in `investments` by _this_ user.
     */
-    userWallets = new Set
-    (
-      profileData?.tx_hist
-        ?.filter(x => {return x.type == 'vesting' && x.wallet_address_erc20 != null})
-        ?.map(x => {return x.wallet_address_erc20 ?? ''})!
-    )
+    userWallets
+    = [
+      ...new Set
+      (
+        profileData?.tx_hist
+          ?.filter(x => {return x.type == 'vesting' && x.wallet_address_erc20 != null})
+          ?.map(x => {return x.wallet_address_erc20 ?? ''})!
+      )
+    ]
   ;
+
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -131,7 +138,10 @@
       m-r-20
       "
     >
-      Investor Wallet Address
+      {
+        profileTrs.investor?.wallets.title
+        ?? 'Investor Wallet Address'
+      }
     </p>
 
     <!--
@@ -144,12 +154,16 @@
       s-14
       color-black-2
       underline
-      bold
+      w-500
       cursor-pointer
+      hover-color-primary
       "
       on:click={() => {return $sessionStore.showInvstementWallets = true}}
     >
-      View All
+      {
+        profileTrs.investor?.wallets.view
+        ?? 'View All'
+      }
     </p>
 
   </div>
@@ -174,6 +188,7 @@
       "
       s-14
       color-grey
+        dark-white-v1
       m-r-40
       "
     >
@@ -190,12 +205,16 @@
       s-14
       color-black-2
       underline
-      bold
+      w-500
       cursor-pointer
+      hover-color-primary
       "
       on:click={() => { copyToClipboard(userWallets[0]); return; }}
     >
-      Copy
+      {
+        profileTrs.investor?.wallets.copy
+        ?? 'Copy'
+      }
     </p>
 
   </div>

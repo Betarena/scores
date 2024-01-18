@@ -35,9 +35,9 @@
 	import MainFaq from './FAQ-Main.svelte';
 	import MainInvestmentDetail from './Investment.History.Main.svelte';
 	import TgeMain from './Investment.TGE.Main.svelte';
+	import MainVestingPeriods from './Investment.VestingPeriods.Main.svelte';
 	import MainWalletsInvestor from './Investment.Wallets.Main.svelte';
 	import TierPricing from './Launchpad.TierPricing.Main.svelte';
-	import MainVestingPeriods from './Investment.VestingPeriods.Main.svelte';
 	import MainInvestBox from './Main-InvestBox.svelte';
 	import MainInvestorTitle from './Main-Investor-Title.svelte';
 	import MainRound from './Main-Round.svelte';
@@ -245,7 +245,7 @@
       <iframe
         width="560"
         height="315"
-        src="https://www.youtube.com/embed/AGIXX306u-Y?si=E0siOfU9wRJk0oql&amp;controls=0"
+        src="https://www.youtube.com/embed/AGIXX306u-Y?controls=1&rel=0"
         title="YouTube video player"
         frameborder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -278,6 +278,7 @@
         ▓ > title
         -->
         <p
+          id="title"
           class=
           "
           {VIEWPORT_MOBILE_INIT[1] ? 's-24' : 's-32'}
@@ -285,9 +286,14 @@
           color-black-2
           m-b-16
           "
+          style=
+          "
+          line-height: 100%; /* 32px */
+          "
         >
           {
-            'Investment Information'
+            widgetDataTranslation.investor?.tab.title_investment
+            ?? 'Investment Information'
           }
         </p>
 
@@ -296,21 +302,18 @@
         ▓ > sub-title
         -->
         <p
-          class=
-          "
-          s-16
-          color-grey
-            grey-v1
-          "
+          id="sub-title"
         >
           {
-            'This section provides a comprehensive overview of your investment in Betarena tokens ($BTA). '
+            @html widgetDataTranslation.investor?.tab.description_investment
+            ?? 'This section provides a comprehensive overview of your investment in Betarena tokens ($BTA). '
           }
         </p>
 
       </div>
 
       <TgeMain
+        profileData={data}
         VIEWPORT_MOBILE_INIT_PARENT={VIEWPORT_MOBILE_INIT}
         VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
       />
@@ -352,6 +355,8 @@
       />
       <ReferralsHistory
         profileData={data}
+        VIEWPORT_MOBILE_INIT_PARENT={VIEWPORT_MOBILE_INIT}
+        VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
       />
     </div>
 
@@ -380,6 +385,8 @@
 
 <style lang="scss">
 
+  @import '../../../../../../static/app.scss';
+
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
   │ 📲 MOBILE-FIRST                                                              │
@@ -403,6 +410,8 @@
       {
         /* 🎨 style */
         width: -webkit-fill-available;
+        width: -moz-available;
+        border-radius: 12px;
       }
     }
 
@@ -411,6 +420,32 @@
       /* 🎨 style */
       display: grid;
       gap: 20px;
+
+      div#profile⮕w⮕investtge⮕main⮕title
+      {
+        // IMPORTANT
+        :global
+        {
+          p#title
+          {
+            @extend .s-32;
+            @extend .color-black-2;
+          }
+
+          p#sub-title
+          {
+            @extend .s-16;
+            @extend .color-grey;
+            @extend .grey-v1;
+
+            span#x3123
+            {
+              @extend .w-500;
+              @extend .color-black-2;
+            }
+          }
+        }
+      }
     }
 
     div#section-referral
@@ -438,6 +473,12 @@
         gap: 20px;
         // grid-template-columns: 1fr 1fr 1fr 1fr;
         grid-template-columns: 1fr;
+
+        div#profile⮕w⮕investtge⮕main⮕title
+        {
+          /* 🎨 style */
+          padding: 0 20px;
+        }
       }
     }
   }
@@ -445,6 +486,19 @@
   @media only screen
   and (min-width: 1160px)
   {
+    // ▓ IMPORTANT
+    // ▓ > require for parent mutation to have CSS for 'this' section work.
+    // ▓ > WARNING:
+    // ▓ > will not work, as post navigation away from 'this' section, will keep 'this' style, CSS.
+    // :global
+    // {
+    //   main
+    //   {
+    //     /* 🎨 style */
+    //     overflow: visible !important;
+    //   }
+    // }
+
     div#investor-grid-box
     {
       /* 🎨 style */
@@ -462,6 +516,19 @@
           {
             /* 🎨 style */
             grid-column: 1 / 3;
+          }
+          div#profile⮕w⮕investbox⮕main
+          {
+            /* 🎨 style */
+            grid-row: 2 / 4;
+            grid-column: 2;
+
+            form
+            {
+              /* 📌 position */
+              position: sticky;
+              top: 0;
+            }
           }
           div#profile⮕w⮕investTierPricing⮕main
           {

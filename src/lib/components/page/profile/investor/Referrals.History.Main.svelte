@@ -23,13 +23,13 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  import { page } from '$app/stores';
+
   import userBetarenaSettings from '$lib/store/user-settings.js';
-  import { Misc } from '@betarena/scores-lib/dist/classes/class.misc.js';
 
   import ReferralsHistoryRowChild from './Referrals.HistoryRow.Child.svelte';
 
-  import type { B_H_KEYP, B_H_KEYP_Tier } from '@betarena/scores-lib/types/_HASURA_.js';
-  import type { IProfileData } from '@betarena/scores-lib/types/types.profile.js';
+  import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -64,6 +64,8 @@
     , VIEWPORT_TABLET_INIT_PARENT: [ number, boolean ]
   ;
 
+  type IRowLayout = 'id' | 'referral_bonus_percentage' | 'referral_bonus_bta' | 'date' | '';
+
   const
     /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
     // eslint-disable-next-line no-unused-vars
@@ -79,23 +81,18 @@
   let
     /**
      * @description
-    */
-    dataMap: Map < B_H_KEYP_Tier, B_H_KEYP > = new Misc().convertToMapKEYPINVSTTIER
-    (
-      (profileData?.investorTierPricing ?? [])
-    )
-    /**
-     * @description
      *  📣 Target `table` header order.
     */
-    , tableHeader: string[]
+    tableHeader: IRowLayout[]
     = [
-      'ID'
-      , 'Referral Bonus %'
-      , 'Referral Bonus BTA'
-      , 'Date'
+      'id'
+      , 'referral_bonus_percentage'
+      , 'referral_bonus_bta'
+      , 'date'
     ]
   ;
+
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -125,9 +122,9 @@
   ): void
   {
     if (VIEWPORT_MOBILE_INIT_PARENT[1])
-      tableHeader = [ 'ID', 'Referral Bonus %', 'Referral Bonus BTA', '' ];
+      tableHeader = [ 'id' , 'referral_bonus_percentage' , 'referral_bonus_bta' , '' ];
     else
-      tableHeader = [ 'ID', 'Referral Bonus %', 'Referral Bonus BTA', 'Date' ];
+      tableHeader = [ 'id' , 'referral_bonus_percentage' , 'referral_bonus_bta' , 'date' ];
     return;
   }
 
@@ -181,7 +178,10 @@
     m-b-20
     "
   >
-    Referral History
+    {
+      profileTrs.investor?.referral.ref_history.title
+      ?? 'Referral History'
+    }
   </p>
 
   <!--
@@ -206,9 +206,31 @@
                 "
                 s-12
                 color-grey
+                  dark-v1
+                capitalize
                 "
               >
-                {item}
+                {#if item == 'id'}
+                  {
+                    profileTrs.investor?.referral.ref_history.id
+                    ?? 'Id'
+                  }
+                {:else if item == 'referral_bonus_percentage'}
+                  {
+                    profileTrs.investor?.referral.ref_history.bonus
+                    ?? 'Bonus %'
+                  }
+                {:else if item == 'referral_bonus_bta'}
+                  {
+                    profileTrs.investor?.referral.ref_history.ref_bonus_bta
+                    ?? 'Referral Bonus BTA'
+                  }
+                {:else if item == 'date'}
+                  {
+                    profileTrs.investor?.referral.ref_history.date
+                    ?? 'Date'
+                  }
+                {/if}
               </p>
             </th>
           {/each}
@@ -220,22 +242,31 @@
       ▓ > (row) tier pricing table.
       -->
       <tbody>
-        {#each profileData?.investorData?.data?.referral_history ?? [] as item}
+        <!-- {#each [...profileData?.investorData?.data?.referral_history ?? [], ...profileData?.investorData?.data?.referral_history ?? [], ...profileData?.investorData?.data?.referral_history ?? [], ...profileData?.investorData?.data?.referral_history ?? []] as item} -->
+        {#each [...profileData?.investorData?.data?.referral_history ?? []] as item}
           <ReferralsHistoryRowChild
             data={item}
             {VIEWPORT_MOBILE_INIT_PARENT}
             {VIEWPORT_TABLET_INIT_PARENT}
           />
         {:else}
-          <p
-            class=
-            "
-            s-20
-            color-black-2
-            "
+          <div
+            id="no-widget-data"
           >
-            Uh-oh! No Referral History have been found.
-          </p>
+            <p
+              class=
+              "
+              s-16
+              color-black-3
+              "
+              style=
+              "
+              line-height: 24px; /* 150% */
+              "
+            >
+              Uh-oh! No Vestings have been found.
+            </p>
+          </div>
         {/each}
       </tbody>
 
@@ -270,6 +301,9 @@
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
+    height: 321px;
+    min-height: 321px;
+    max-height: 321px;
 
     p#widget-title
     {
@@ -281,9 +315,10 @@
     {
       /* 🎨 style */
       position: relative;
-      min-height: 200px;
-      max-height: 200px;
+      min-height: 231px;
+      max-height: 231px;
       overflow-y: scroll;
+      padding-top: 0 !important;
 
       &::-webkit-scrollbar
       {
@@ -309,6 +344,10 @@
         {
           tr
           {
+            /* 📌 position */
+            position: sticky;
+            top: 0;
+            z-index: 10;
             /* 🎨 style */
             background-color: var(--whitev2);
             max-height: 24px;
@@ -420,6 +459,31 @@
               }
             }
           }
+
+          div#no-widget-data
+          {
+            /* 📌 position */
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin: auto;
+            z-index: 10;
+            /* 🎨 style */
+            background-color: var(--white);
+            text-align: center;
+
+            p
+            {
+              /* 📌 position */
+              position: relative;
+              top: 50%;
+              -webkit-transform: translateY(-50%);
+              -ms-transform: translateY(-50%);
+              transform: translateY(-50%);
+            }
+          }
         }
       }
     }
@@ -436,10 +500,17 @@
   {
     div#profile⮕w⮕referral-history⮕main
     {
+      /* 🎨 style */
+      height: 274px;
+      min-height: 274px;
+      max-height: 274px;
+
       div#table-box
       {
         /* 🎨 style */
         padding: 20px;
+        min-height: 184px;
+        max-height: 184px;
       }
     }
   }
@@ -458,27 +529,37 @@
       background-color: var(--dark-theme-1-4-shade) !important;
     }
 
-    &.dark-background-1 thead
+    &.dark-background-1 table
     {
-      tr
-      {
-        /* 🎨 style */
-        background-color: rgba(75, 75, 75, 0.50) !important;
-      }
-    }
-
-    &.dark-background-1 tbody
-    {
-      // IMPORTANT
-      :global
+      thead
       {
         tr
         {
-          &:nth-child(even)
+          /* 🎨 style */
+          // background-color: rgba(75, 75, 75, 0.50) !important; // NOTE: alternative #4b4b4b80
+          background-color: var(--dark-theme-1) !important;
+        }
+      }
+
+      tbody
+      {
+        // IMPORTANT
+        :global
+        {
+          tr
           {
-            /* 🎨 style */
-            background-color: rgba(75, 75, 75, 0.50) !important;
+            &:nth-child(even)
+            {
+              /* 🎨 style */
+              background-color: rgba(75, 75, 75, 0.50) !important;
+            }
           }
+        }
+
+        div#no-widget-data
+        {
+          /* 🎨 style */
+          background-color: var(--dark-theme-1-4-shade) !important;
         }
       }
     }

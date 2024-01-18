@@ -31,7 +31,7 @@
 
   import FaqChildRow from './FAQ-Child-Row.svelte';
 
-  import type { IProfileTrs } from '@betarena/scores-lib/types/profile.js';
+  import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -60,12 +60,7 @@
     , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
-  let
-    /** @augments IProfileTrs */
-    B_PROF_T: IProfileTrs
-  ;
-
-  $: B_PROF_T = $page.data.RESPONSE_PROFILE_DATA;
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -149,7 +144,7 @@
       "
     >
       {
-        B_PROF_T.investor?.faq?.title
+        profileTrs.investor?.faq.title
         ?? 'Frequently Asked Questions'
       }
     </p>
@@ -166,7 +161,7 @@
       "
     >
       {
-        B_PROF_T.investor?.faq?.sub_title
+        profileTrs.investor?.faq.sub_title
         ?? 'Have questions? Find answers to the most commonly asked questions about the Betarena presale and referral program.'
       }
     </p>
@@ -185,7 +180,7 @@
     "
   >
 
-    {#each B_PROF_T.investor?.faq?.options ?? [] as item,i}
+    {#each profileTrs.investor?.faq.options ?? [] as item,i}
 
       <FaqChildRow
         position={i}
@@ -237,7 +232,7 @@
         "
       >
         {
-          B_PROF_T.investor?.presale?.title_information
+          profileTrs.investor?.presale.title_information
           ?? 'Need More Information?'
         }
       </p>
@@ -258,7 +253,7 @@
         "
       >
         {
-          B_PROF_T.investor?.presale?.description_information
+          profileTrs.investor?.presale.description_information
           ?? 'For a comprehensive understanding of the Betarena presale, please visit our Presale Page.'
         }
       </p>
@@ -280,7 +275,7 @@
         "
       >
         {
-          B_PROF_T.investor?.presale?.cta_presale
+          profileTrs.investor?.presale.cta_presale
           ?? 'Link to Presale'
         }
       </button>
@@ -339,7 +334,6 @@
           {
             /* 🎨 style */
             margin-left: 138px;
-            max-width: none;
           }
         }
       }
@@ -355,6 +349,18 @@
       {
         /* 🎨 style */
         padding: 0 20px;
+      }
+
+      :global
+      {
+        div.profile⮕w⮕investfaq⮕child⮕row
+        {
+          p.faq-description
+          {
+            /* 🎨 style */
+            max-width: 65%;
+          }
+        }
       }
     }
   }

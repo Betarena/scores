@@ -32,33 +32,71 @@ COMPONENT JS (w/ TS)
 	import icon_withdraw from './assets/menu-opt/withdraw.svg';
 
 	import type { PROFILE_OPT } from '$lib/types/types.scores.js';
-	import type { B_PROF_T } from '@betarena/scores-lib/types/profile.js';
+	import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
 
-	const dispatch: EventDispatcher < any > = createEventDispatcher();
 
   export let
-    VIEW_OPT: 1 | 2,
-    MENU_OPT: PROFILE_OPT,
-    SELECTED_OPT: PROFILE_OPT,
-    mobileExclusive: boolean,
-    tabletExclusive: boolean,
-    showDropdown: boolean = false
+    /**
+     * @description
+     *  📣
+    */
+    VIEW_OPT: 1 | 2
+    /**
+     * @description
+     *  📣
+    */
+    , MENU_OPT: PROFILE_OPT
+    /**
+     * @description
+     *  📣
+    */
+    , SELECTED_OPT: PROFILE_OPT
+    /**
+     * @description
+     *  📣
+    */
+    , mobileExclusive: boolean
+    /**
+     * @description
+     *  📣
+    */
+    , tabletExclusive: boolean
+    /**
+     * @description
+     *  📣
+    */
+    , showDropdown: boolean = false
+  ;
+
+	const
+	  dispatch: EventDispatcher < any > = createEventDispatcher()
   ;
 
   let
-    RESPONSE_PROFILE_DATA: B_PROF_T,
-    selectedMenuOptIcon: string = undefined,
-    isHoverMenuOptItem: boolean = false,
-    hoverMenuOptIconAlt: string = undefined
+    /**
+     * @description
+     *  📣
+    */
+    selectedMenuOptIcon: string = undefined
+    /**
+     * @description
+     *  📣
+    */
+    , isHoverMenuOptItem: boolean = false
+    /**
+     * @description
+     *  📣
+    */
+    , hoverMenuOptIconAlt: string = undefined
   ;
 
   $: tabletExclusive = tabletExclusive;
 	$: mobileExclusive = mobileExclusive;
-  $: RESPONSE_PROFILE_DATA = $page.data.RESPONSE_PROFILE_DATA;
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -70,21 +108,21 @@ COMPONENT JS (w/ TS)
    * Omits for non-valid menu-opt
 	 */
 	function update_selected_opt
-  (
-  ): void
-  {
-    const if_M_0: boolean =
-      ['Scores', 'Author'].includes(MENU_OPT)
+	(
+	): void
+	{
+	  const if_M_0: boolean
+      = ['Scores', 'Author'].includes(MENU_OPT)
     ;
-		if (if_M_0) return;
+	  if (if_M_0) return;
 
-		dispatch
-    (
-      'select_opt_trigger',
-      {
-        opt: MENU_OPT
-      }
-    );
+	  dispatch
+	  (
+	    'select_opt_trigger',
+	    {
+	      opt: MENU_OPT
+	    }
+	  );
 	}
 
 	/**
@@ -92,10 +130,10 @@ COMPONENT JS (w/ TS)
    * bubbles up to parent event to show dropdown.
 	 */
 	function toggle_dropdown
-  (
-  ): void
-  {
-		dispatch('toggle_dropdown');
+	(
+	): void
+	{
+	  dispatch('toggle_dropdown');
 	}
 
   // #endregion ➤ 🛠️ METHODS
@@ -106,17 +144,17 @@ COMPONENT JS (w/ TS)
   if (MENU_OPT == 'Dashboard')
   {
     hoverMenuOptIconAlt = icon_home_select;
-    selectedMenuOptIcon =
-      SELECTED_OPT == MENU_OPT
+    selectedMenuOptIcon
+      = SELECTED_OPT == MENU_OPT
         ? icon_home_select
         : icon_home
     ;
   }
-	else if (MENU_OPT == 'Account Settings')
+  else if (MENU_OPT == 'Account Settings')
   {
     hoverMenuOptIconAlt = icon_settings_select;
-    selectedMenuOptIcon =
-      SELECTED_OPT == MENU_OPT
+    selectedMenuOptIcon
+      = SELECTED_OPT == MENU_OPT
         ? icon_settings_select
         : icon_settings
     ;
@@ -124,8 +162,8 @@ COMPONENT JS (w/ TS)
   else if (MENU_OPT == 'Investor')
   {
     hoverMenuOptIconAlt = icon_investor_select;
-    selectedMenuOptIcon =
-      SELECTED_OPT == MENU_OPT
+    selectedMenuOptIcon
+      = SELECTED_OPT == MENU_OPT
         ? icon_investor_select
         : icon_investor
     ;
@@ -133,8 +171,8 @@ COMPONENT JS (w/ TS)
   else if (MENU_OPT == 'Deposit')
   {
     hoverMenuOptIconAlt = icon_deposit_select;
-    selectedMenuOptIcon =
-      SELECTED_OPT == MENU_OPT
+    selectedMenuOptIcon
+      = SELECTED_OPT == MENU_OPT
         ? icon_deposit_select
         : icon_deposit
     ;
@@ -142,8 +180,8 @@ COMPONENT JS (w/ TS)
   else if (MENU_OPT == 'Withdraw')
   {
     hoverMenuOptIconAlt = icon_withdraw_select;
-    selectedMenuOptIcon =
-      SELECTED_OPT == MENU_OPT
+    selectedMenuOptIcon
+      = SELECTED_OPT == MENU_OPT
         ? icon_withdraw_select
         : icon_withdraw
     ;
@@ -151,8 +189,8 @@ COMPONENT JS (w/ TS)
   else if (MENU_OPT == 'Transaction History')
   {
     hoverMenuOptIconAlt = icon_tx_hist_select;
-    selectedMenuOptIcon =
-      SELECTED_OPT == MENU_OPT
+    selectedMenuOptIcon
+      = SELECTED_OPT == MENU_OPT
         ? icon_tx_hist_select
         : icon_tx_hist
     ;
@@ -160,8 +198,8 @@ COMPONENT JS (w/ TS)
   else if (MENU_OPT == 'Competitions History')
   {
     hoverMenuOptIconAlt = icon_competition_select;
-    selectedMenuOptIcon =
-      SELECTED_OPT == MENU_OPT
+    selectedMenuOptIcon
+      = SELECTED_OPT == MENU_OPT
         ? icon_competition_select
         : icon_competition
     ;
@@ -194,7 +232,7 @@ VIEW DESIGN - 1
     mobile-select-menu-opt-box
     cursor-pointer
     "
-		on:click={() => toggle_dropdown()}
+		on:click={() => {return toggle_dropdown()}}
 	>
 
 		<div
@@ -226,23 +264,23 @@ VIEW DESIGN - 1
         "
 			>
         {#if MENU_OPT == 'Account Settings'}
-          {RESPONSE_PROFILE_DATA?.profile?.acc_settings ?? 'Account Settings'}
+          {profileTrs.profile?.acc_settings ?? 'Account Settings'}
         {:else if MENU_OPT == 'Dashboard' ?? 'Dashboard'}
-          {RESPONSE_PROFILE_DATA?.profile?.dashboard}
+          {profileTrs.profile?.dashboard}
         {:else if MENU_OPT == 'Investor'}
-          {RESPONSE_PROFILE_DATA?.profile?.investor ?? 'Investor'}
+          {profileTrs.profile?.investor ?? 'Investor'}
         {:else if MENU_OPT == 'Author'}
-          {RESPONSE_PROFILE_DATA?.profile?.author ?? 'Author'}
+          {profileTrs.profile?.author ?? 'Author'}
         {:else if MENU_OPT == 'Scores'}
-          {RESPONSE_PROFILE_DATA?.profile?.scores ?? 'Scores'}
+          {profileTrs.profile?.scores ?? 'Scores'}
         {:else if MENU_OPT == 'Withdraw'}
-          {RESPONSE_PROFILE_DATA?.profile?.withdraw ?? 'Withdraw'}
+          {profileTrs.profile?.withdraw ?? 'Withdraw'}
         {:else if MENU_OPT == 'Deposit'}
-          {RESPONSE_PROFILE_DATA?.profile?.deposit ?? 'Deposit'}
+          {profileTrs.profile?.deposit ?? 'Deposit'}
         {:else if MENU_OPT == 'Transaction History'}
-          {RESPONSE_PROFILE_DATA?.profile?.transact_history ?? 'Transaction History'}
+          {profileTrs.profile?.transact_history ?? 'Transaction History'}
         {:else if MENU_OPT == 'Competitions History'}
-          {RESPONSE_PROFILE_DATA?.profile?.competitions_history ?? 'Competitions History'}
+          {profileTrs.profile?.competitions_history ?? 'Competitions History'}
         {/if}
 			</p>
 
@@ -271,27 +309,27 @@ VIEW DESIGN - 2
     row-space-out
     profile-menu-opt
     "
-		on:click={() => update_selected_opt()}
+		on:click={() => {return update_selected_opt()}}
 		class:selected-opt-active={SELECTED_OPT == MENU_OPT && !tabletExclusive}
 		class:cursor-pointer=
     {
       !
       [
-        'Scores',
-        'Author'
+        'Scores'
+        ,'Author'
       ]
-      .includes(MENU_OPT)
+        .includes(MENU_OPT)
     }
 		class:cursor-not-allowed=
     {
       [
-        'Scores',
-        'Author'
+        'Scores'
+        ,'Author'
       ]
-      .includes(MENU_OPT)
+        .includes(MENU_OPT)
     }
-		on:mouseenter={() => (isHoverMenuOptItem = true)}
-		on:mouseleave={() => (isHoverMenuOptItem = false)}
+		on:mouseenter={() => {return (isHoverMenuOptItem = true)}}
+		on:mouseleave={() => {return (isHoverMenuOptItem = false)}}
     class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
   >
 
@@ -345,37 +383,37 @@ VIEW DESIGN - 2
 				class:color-grey-shade=
         {
           [
-            'Scores',
-            'Author'
+            'Scores'
+            ,'Author'
 				  ].includes(MENU_OPT)
         }
 				class:menu-opt-text=
         {
           !
           [
-            'Scores',
-            'Author'
+            'Scores'
+            ,'Author'
           ].includes(MENU_OPT)
         }
 			>
         {#if MENU_OPT == 'Account Settings'}
-          {RESPONSE_PROFILE_DATA?.profile?.acc_settings ?? 'Account Settings'}
+          {profileTrs.profile?.acc_settings ?? 'Account Settings'}
         {:else if MENU_OPT == 'Dashboard'}
-          {RESPONSE_PROFILE_DATA?.profile?.dashboard ?? 'Dashboard'}
+          {profileTrs.profile?.dashboard ?? 'Dashboard'}
         {:else if MENU_OPT == 'Author'}
-          {RESPONSE_PROFILE_DATA?.profile?.author ?? 'Author'}
+          {profileTrs.profile?.author ?? 'Author'}
         {:else if MENU_OPT == 'Investor'}
-          {RESPONSE_PROFILE_DATA?.profile?.investor ?? 'Investor'}
+          {profileTrs.profile?.investor ?? 'Investor'}
         {:else if MENU_OPT == 'Scores'}
-          {RESPONSE_PROFILE_DATA?.profile?.scores ?? 'Scores'}
+          {profileTrs.profile?.scores ?? 'Scores'}
         {:else if MENU_OPT == 'Withdraw'}
-          {RESPONSE_PROFILE_DATA?.profile?.withdraw ?? 'Withdraw'}
+          {profileTrs.profile?.withdraw ?? 'Withdraw'}
         {:else if MENU_OPT == 'Deposit'}
-          {RESPONSE_PROFILE_DATA?.profile?.deposit ?? 'Deposit'}
+          {profileTrs.profile?.deposit ?? 'Deposit'}
         {:else if MENU_OPT == 'Transaction History'}
-          {RESPONSE_PROFILE_DATA?.profile?.transact_history ?? 'Transaction History'}
+          {profileTrs.profile?.transact_history ?? 'Transaction History'}
         {:else if MENU_OPT == 'Competitions History'}
-          {RESPONSE_PROFILE_DATA?.profile?.competitions_history ?? 'Competitions History'}
+          {profileTrs.profile?.competitions_history ?? 'Competitions History'}
         {/if}
 			</p>
 
@@ -407,7 +445,7 @@ VIEW DESIGN - 2
         s-12
         "
 			>
-				{RESPONSE_PROFILE_DATA?.profile?.soon ?? 'Soon'}
+				{profileTrs.profile?.soon ?? 'Soon'}
 			</p>
 		{/if}
 

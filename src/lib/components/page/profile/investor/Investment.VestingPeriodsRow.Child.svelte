@@ -28,7 +28,7 @@
   import icon_arrow_down from '../assets/arrow-down.svg';
   import icon_arrow_up from '../assets/arrow-up.svg';
 
-	import type { B_H_INVESTOR_VEST } from '@betarena/scores-lib/types/_HASURA_.js';
+	import type { PUBLIC__INVESTOR_IVesting } from '@betarena/scores-lib/types/_HASURA_.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -48,9 +48,9 @@
 
   export let
     /**
-     * @augments B_H_INVESTOR_VEST
+     * @augments PUBLIC__INVESTOR_IVesting
      */
-    data: B_H_INVESTOR_VEST
+    data: PUBLIC__INVESTOR_IVesting
     /**
      * @description
      *  📣
@@ -87,6 +87,8 @@
     */
     , mobileProps: string[] = [ 'Tokens', 'Status', 'Wallet', 'Distribution', 'Claim' ]
   ;
+
+  // $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
 
   // #endregion ➤ 📌 VARIABLES
 

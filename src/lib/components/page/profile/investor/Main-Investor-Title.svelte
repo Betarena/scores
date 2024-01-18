@@ -28,7 +28,7 @@
 
   import { viewport_change } from '$lib/utils/platform-functions.js';
 
-  import type { IProfileTrs } from '@betarena/scores-lib/types/profile.js';
+  import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -58,12 +58,7 @@
     , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
-  let
-    /** @augments IProfileTrs */
-    B_PROF_T: IProfileTrs
-  ;
-
-  $: B_PROF_T = $page.data.RESPONSE_PROFILE_DATA;
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -163,9 +158,10 @@
         "
         class:color-white={true}
         class:w-500={true}
+        class:text-center={VIEWPORT_MOBILE_INIT[1]}
       >
         {
-          B_PROF_T.investor?.tab?.tab_1
+          profileTrs.investor?.tab?.tab_1
           ?? 'Private Presale'
         }
       </p>
@@ -191,10 +187,11 @@
         s-16
         color-grey-shade
         opacity-0-4
+        class:text-center={VIEWPORT_MOBILE_INIT[1]}
         "
       >
         {
-          B_PROF_T.investor?.tab?.tab_2
+          profileTrs.investor?.tab?.tab_2
           ?? 'Public Presale (Soon)'
         }
       </p>
@@ -235,7 +232,7 @@
       "
     >
       {
-        B_PROF_T.investor?.tab?.title_launchpad
+        profileTrs.investor?.tab?.title_launchpad
         ?? 'Launchpad'
       }
     </p>
@@ -253,7 +250,7 @@
       "
     >
       {
-        @html B_PROF_T.investor?.tab?.description_launchpad
+        @html profileTrs.investor?.tab?.description_launchpad
         ?? ''
       }
     </p>
@@ -286,10 +283,11 @@
     {
       /* 📌 position */
       position: relative;
-      /* 🎨 style */
+      /* 🛝 layout */
       display: grid;
       gap: 25px;
       grid-auto-flow: column;
+      grid-template-columns: 1fr 1fr;
     }
 
     div#launchpad-bottom-box
@@ -343,6 +341,12 @@
     {
       /* 🎨 style */
       margin-top: 0;
+
+      div#launchpad-view-box
+      {
+        /* 🛝 layout */
+        grid-template-columns: auto auto;
+      }
 
       p#launchpad-description
       {

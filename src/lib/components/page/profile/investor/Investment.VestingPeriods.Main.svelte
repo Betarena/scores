@@ -23,11 +23,13 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  import { page } from '$app/stores';
+
   import userBetarenaSettings from '$lib/store/user-settings.js';
 
   import InvestmentVestingPeriodsRowChild from './Investment.VestingPeriodsRow.Child.svelte';
 
-  import type { IProfileData } from '@betarena/scores-lib/types/types.profile.js';
+  import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -62,6 +64,8 @@
     , VIEWPORT_TABLET_INIT_PARENT: [ number, boolean ]
   ;
 
+  type IRowLayout = 'period' | 'available' | 'tokens' | 'status' | 'wallet' | 'distribution' | 'claim' | '';
+
   const
     /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
     // eslint-disable-next-line no-unused-vars
@@ -79,7 +83,7 @@
      * @description
      *  📣 Target `table` header order.
     */
-    tableHeader: string[]
+    tableHeader: IRowLayout[]
     = [
       'period'
       , 'available'
@@ -90,6 +94,8 @@
       , 'claim'
     ]
   ;
+
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -174,9 +180,13 @@
     s-20
     w-500
     color-black-2
+    m-b-20
     "
   >
-    Vesting Periods
+    {
+      profileTrs.investor?.vesting.title
+      ?? 'Vesting Periods'
+    }
   </p>
 
   <!--
@@ -206,9 +216,46 @@
                 "
                 s-12
                 color-grey
+                  dark-v1
+                capitalize
                 "
               >
-                {item}
+                {#if item == 'period'}
+                  {
+                    profileTrs.investor?.vesting.period
+                    ?? 'period'
+                  }
+                {:else if item == 'available'}
+                  {
+                    profileTrs.investor?.vesting.available
+                    ?? 'available'
+                  }
+                {:else if item == 'tokens'}
+                  {
+                    profileTrs.investor?.vesting.tokens
+                    ?? 'tokens'
+                  }
+                {:else if item == 'status'}
+                  {
+                    profileTrs.investor?.vesting.status
+                    ?? 'status'
+                  }
+                {:else if item == 'wallet'}
+                  {
+                    profileTrs.investor?.vesting.wallet
+                    ?? 'wallet'
+                  }
+                {:else if item == 'distribution'}
+                  {
+                    profileTrs.investor?.vesting.distribution
+                    ?? 'distribution'
+                  }
+                {:else if item == 'claim'}
+                  {
+                    profileTrs.investor?.vesting.claim
+                    ?? 'claim'
+                  }
+                {/if}
               </p>
             </th>
           {/each}
@@ -227,15 +274,23 @@
             {VIEWPORT_TABLET_INIT_PARENT}
           />
         {:else}
-          <p
-            class=
-            "
-            s-20
-            color-black-2
-            "
+          <div
+            id="no-widget-data"
           >
-            Uh-oh! No Vesting Periods have been found.
-          </p>
+            <p
+              class=
+              "
+              s-16
+              color-black-3
+              "
+              style=
+              "
+              line-height: 24px; /* 150% */
+              "
+            >
+              Uh-oh! No Vestings have been found.
+            </p>
+          </div>
         {/each}
       </tbody>
 
@@ -271,6 +326,9 @@
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
+    height: 500px;
+    min-height: 500px;
+    max-height: 500px;
 
     p#widget-title
     {
@@ -282,10 +340,10 @@
     {
       /* 🎨 style */
       position: relative;
-      min-height: 258px;
-      max-height: 258px;
+      min-height: 410px;
+      max-height: 410px;
       overflow-y: scroll;
-      padding-top: 20px;
+      padding-top: 0 !important;
 
       &::-webkit-scrollbar
       {
@@ -311,6 +369,10 @@
         {
           tr
           {
+            /* 📌 position */
+            position: sticky;
+            top: 0;
+            z-index: 10;
             /* 🎨 style */
             background-color: var(--whitev2);
             max-height: 24px;
@@ -456,7 +518,78 @@
               }
             }
           }
+
+          div#no-widget-data
+          {
+            /* 📌 position */
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin: auto;
+            z-index: 10;
+            /* 🎨 style */
+            background-color: var(--white);
+            text-align: center;
+
+            p
+            {
+              /* 📌 position */
+              position: relative;
+              top: 50%;
+              -webkit-transform: translateY(-50%);
+              -ms-transform: translateY(-50%);
+              transform: translateY(-50%);
+            }
+          }
         }
+      }
+    }
+  }
+
+  /*
+  ╭──────────────────────────────────────────────────────────────────────────────╮
+  │ ⚡️ RESPONSIVNESS                                                              │
+  ╰──────────────────────────────────────────────────────────────────────────────╯
+  */
+
+  @media only screen
+  and (min-width: 560px)
+  {
+    div#profile⮕w⮕vesting-period⮕main
+    {
+      /* 🎨 style */
+      height: 413px;
+      min-height: 413px;
+      max-height: 413px;
+
+      div#table-box
+      {
+        /* 🎨 style */
+        padding: 20px;
+        min-height: 323px;
+        max-height: 323px;
+      }
+    }
+  }
+
+  @media only screen
+  and (min-width: 1160px)
+  {
+    div#profile⮕w⮕vesting-period⮕main
+    {
+      /* 🎨 style */
+      height: 333px;
+      min-height: 333px;
+      max-height: 333px;
+
+      div#table-box
+      {
+        /* 🎨 style */
+        padding: 20px;
+        min-height: 243px;
+        max-height: 243px;
       }
     }
   }
@@ -475,36 +608,47 @@
       background-color: var(--dark-theme-1-4-shade) !important;
     }
 
-    &.dark-background-1 thead
+    &.dark-background-1 table
     {
-      tr
-      {
-        /* 🎨 style */
-        background-color: rgba(75, 75, 75, 0.50) !important;
-      }
-    }
-
-    &.dark-background-1 tbody
-    {
-      // IMPORTANT
-      :global
+      thead
       {
         tr
         {
-          &:nth-child(even):not(.extra-info-row)
-          {
-            /* 🎨 style */
-            background-color: rgba(75, 75, 75, 0.50) !important;
+          /* 🎨 style */
+          // background-color: rgba(75, 75, 75, 0.50) !important; // NOTE: alternative #4b4b4b80
+          background-color: var(--dark-theme-1) !important;
+        }
+      }
 
-            ~ tr.extra-info-row
+      tbody
+      {
+        // IMPORTANT
+        :global
+        {
+          tr
+          {
+            &:nth-child(even):not(.extra-info-row)
             {
               /* 🎨 style */
               background-color: rgba(75, 75, 75, 0.50) !important;
+
+              ~ tr.extra-info-row
+              {
+                /* 🎨 style */
+                background-color: rgba(75, 75, 75, 0.50) !important;
+              }
             }
           }
         }
+
+        div#no-widget-data
+        {
+          /* 🎨 style */
+          background-color: var(--dark-theme-1-4-shade) !important;
+        }
       }
     }
+
   }
 
 </style>

@@ -23,6 +23,8 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  import { page } from '$app/stores';
+
   import sessionStore from '$lib/store/session.js';
   import userBetarenaSettings from '$lib/store/user-settings.js';
   import { copyToClipboard } from '$lib/utils/platform-functions.js';
@@ -40,7 +42,7 @@
   import icon_silver from '../assets/price-tier/icon-bta-silver.svg';
 
   import type { B_H_KEYP, B_H_KEYP_Tier } from '@betarena/scores-lib/types/_HASURA_.js';
-  import type { IProfileData } from '@betarena/scores-lib/types/types.profile.js';
+  import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -102,6 +104,8 @@
     */
     , isExtraInfo: boolean = false
   ;
+
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -187,41 +191,49 @@
       color-black-2
       "
     >
-      Referral Tiers & Bonus
+      {
+        profileTrs.investor?.referral.tiers.title
+        ?? 'Referral Tiers & Bonus'
+      }
     </p>
 
     <!--
     ▓ NOTE:
     ▓ > referral status pill.
     -->
-    <div
-      id="active"
-      class=
-      "
-      row-space-start
-      "
-    >
-      <img
-        id=''
-        src='{icon_green_dot}'
-        alt=''
-        title=''
-        loading='lazy'
+    {#if profileData?.investorData?.tier}
+      <div
+        id="active"
         class=
         "
-        m-r-6
-        "
-      />
-      <p
-        class=
-        "
-        s-14
-        color-black-2
+        row-space-start
         "
       >
-        Active
-      </p>
-    </div>
+        <img
+          id=''
+          src='{icon_green_dot}'
+          alt=''
+          title=''
+          loading='lazy'
+          class=
+          "
+          m-r-6
+          "
+        />
+        <p
+          class=
+          "
+          s-14
+          color-black-2
+          "
+        >
+          {
+            profileTrs.investor?.referral.tiers.status
+            ?? 'Active'
+          }
+        </p>
+      </div>
+    {/if}
   </div>
 
   <!--
@@ -263,7 +275,7 @@
           height=24px
           class=
           "
-          m-r-6
+          m-r-8
           "
         />
 
@@ -279,7 +291,11 @@
           color-black-2
           "
         >
-          Tier {dataMap.get('bronze')?.data?.position}
+          {
+            profileTrs.investor?.investment_details.tier
+            ?? 'Tier'
+          }
+          {dataMap.get('bronze')?.data?.position}
 
           {#if dataMap.get('bronze')?.data?.invest_max == -1}
             (${dataMap.get('bronze')?.data?.invest_min} or more)
@@ -299,9 +315,12 @@
         s-14
         color-black-2
         no-wrap
+        m-l-24
         "
       >
-        You receive:
+        {
+          'You receive:'
+        }
         <span
           class=
           "
@@ -311,7 +330,10 @@
         >
           {dataMap.get('bronze')?.data?.referral?.owner_percentage}%
         </span>
-        / Referred:
+        /
+        {
+          'Referred:'
+        }
         <span
           class=
           "
@@ -346,7 +368,10 @@
         color-black-2
         "
       >
-        See more tiers
+        {
+          profileTrs.investor?.tiers.more_tiers
+          ?? 'See more tiers'
+        }
       </p>
 
       <img
@@ -407,7 +432,7 @@
                 height=24px
                 class=
                 "
-                m-r-6
+                m-r-8
                 "
               />
 
@@ -423,7 +448,11 @@
                 color-black-2
                 "
               >
-                Tier {data.data?.position}
+                {
+                  profileTrs.investor?.investment_details.tier
+                  ?? 'Tier'
+                }
+                {data.data?.position}
 
                 {#if data.data?.invest_max == -1}
                   (${data.data.invest_min} or more)
@@ -443,6 +472,7 @@
               s-14
               color-black-2
               no-wrap
+              m-l-24
               "
             >
               You receive:
@@ -481,7 +511,7 @@
   <div
     class=
     "
-    m-t-35
+    m-t-25
     {VIEWPORT_MOBILE_INIT_PARENT[1] ? 'column-space-center' : 'row-space-out'}
     "
   >
@@ -492,7 +522,7 @@
     <div
       class=
       "
-      {VIEWPORT_MOBILE_INIT_PARENT[1] ? 'm-b-20' : 'm-r-20'}
+      {VIEWPORT_MOBILE_INIT_PARENT[1] ? 'm-b-12' : 'm-r-20'}
       <!---->
       referral-code-box
       "
@@ -509,7 +539,10 @@
         color-black-2
         "
       >
-        Referral ID
+        {
+          profileTrs.investor?.referral.links.ref_id
+          ?? 'Referral ID'
+        }
       </p>
 
       <!--
@@ -519,7 +552,7 @@
       <div
         class=
         "
-        row-space-start
+        row-space-out
         "
       >
         <p
@@ -540,10 +573,15 @@
           w-500
           underline
           color-black-2
+          hover-color-primary
+          cursor-pointer
           "
           on:click={() => { copyToClipboard($userBetarenaSettings.user.scores_user_data?.referralID ?? ''); return; }}
         >
-          Copy
+          {
+            profileTrs.investor?.referral.links.copy
+            ?? 'Copy'
+          }
         </p>
       </div>
     </div>
@@ -570,7 +608,10 @@
         color-black-2
         "
       >
-        Referral Link
+        {
+          profileTrs.investor?.referral.links.ref_link
+          ?? 'Referral Link'
+        }
       </p>
 
       <!--
@@ -584,7 +625,10 @@
         color-grey
         "
       >
-        Available after investment
+        {
+          profileTrs.investor?.referral.links.message
+          ?? 'Available after investment'
+        }
       </p>
     </div>
   </div>
@@ -596,9 +640,9 @@
   <button
     class=
     "
-    width-100
-    m-t-35
     btn-primary-v2
+    width-100
+    {VIEWPORT_MOBILE_INIT_PARENT[1] ? 'm-t-30' : 'm-t-25'}
     "
     on:click={() => {return $sessionStore.showReferralInviteModal = true}}
   >
@@ -615,7 +659,10 @@
       m-r-12
       "
     />
-    Invite Investors
+    {
+      profileTrs.investor?.referral.links.cta_title
+      ?? 'Invite Investors'
+    }
   </button>
 
 </div>
@@ -670,6 +717,7 @@
         /* 🎨 style */
         padding: 8px;
         border-radius: 4px;
+        align-items: flex-start;
 
         &:nth-child(odd)
         {

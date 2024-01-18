@@ -675,6 +675,11 @@
       height: 100%;
       background-size: contain !important;
 		}
+    main.profile-page
+    {
+      /* 🎨 style */
+      overflow: visible;
+    }
     main.profile-page::before
     {
       /* 🎨 style */

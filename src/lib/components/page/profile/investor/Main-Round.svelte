@@ -23,16 +23,16 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { onDestroy, onMount } from 'svelte';
 	import { browser } from '$app/environment';
+	import { page } from '$app/stores';
+	import { onDestroy, onMount } from 'svelte';
 
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { toCorrectDate, toZeroPrefixDateStr } from '$lib/utils/dates.js';
 	import { toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
 
-	import type { B_H_INVEST_WIDGET_Data } from '@betarena/scores-lib/types/_HASURA_.js';
-	import type { B_PROF_D } from '@betarena/scores-lib/types/profile.js';
+	import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -51,8 +51,10 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let
-    /** @inheritdoc */
-    WIDGET_DATA: B_PROF_D | null
+    /**
+     * @augments IProfileData
+     */
+    WIDGET_DATA: IProfileData | null
   ;
 
   /**
@@ -99,11 +101,6 @@
     , numDateDiffStart: number = 0
     /** @description 📣 investor number of days difference (from end) */
     , numDateDiffEnd: number = 0
-    /** @description 📣 investor data (map) */
-    , mapInvestorData: Map < string, B_H_INVEST_WIDGET_Data > = new Map
-    (
-      WIDGET_DATA?.investor
-    ) as Map < string, B_H_INVEST_WIDGET_Data >
     /** @description 📣 investor main information data */
     , roundData: IRoundData[] = []
     /** @description 📣 investor round date percentage progress */
@@ -114,17 +111,19 @@
      * @CUSTOM_NOTE
      * `mapInvestorData?.get('round')?.values?.start_date` || 12/08/2023
      */
-    , dateRoundStart: string | undefined = mapInvestorData.get('round')?.values.start_date
+    , dateRoundStart: string | undefined = WIDGET_DATA?.presaleData.data?.start_date
     /**
      * @description
      *  📣 invest round date `start`
      * @CUSTOM_NOTE
      * `mapInvestorData?.get('round')?.values?.end_date` || 12/08/2023
      */
-    , dateRoundEnd: string | undefined = mapInvestorData.get('round')?.values.end_date
+    , dateRoundEnd: string | undefined = WIDGET_DATA?.presaleData.data?.end_date
     /** @description 📣 interval variable for `countdown` logic */
     , interval1: NodeJS.Timer
   ;
+
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
 
   $: countDownSecToStart = toZeroPrefixDateStr(Math.floor((numDateDiffStart / 1000) % 60).toString());
 	$: countDownMinToStart = toZeroPrefixDateStr(Math.floor((numDateDiffStart / 1000 / 60) % 60).toString());
@@ -206,7 +205,7 @@
       {
         title:
         (
-          mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.details?.token_info_title
+          profileTrs.investor?.round.details.token_info_title
           ?? 'Token Information'
         )
         , data:
@@ -214,33 +213,33 @@
           {
             row_title:
             (
-              mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.details?.name_title
+              profileTrs.investor?.round.details.name_title
               ?? 'Name'
             )
-            , value: mapInvestorData.get('round')?.values.name ?? '-'
+            , value: WIDGET_DATA?.presaleData.data?.name ?? '-'
           }
           , {
             row_title:
             (
-              mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.details?.symbol_title
+              profileTrs.investor?.round.details.symbol_title
               ?? 'Symbol'
             )
-            , value: mapInvestorData.get('round')?.values.symbol ?? '-'
+            , value: WIDGET_DATA?.presaleData.data?.symbol ?? '-'
           }
           , {
             row_title:
             (
-              mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.details?.available_title
+              profileTrs.investor?.round.details.available_title
               ?? 'Available'
             )
-            , value: mapInvestorData.get('round')?.values.available ?? '-'
+            , value: WIDGET_DATA?.presaleData.data?.available ?? '-'
           }
         ]
       }
       , {
         title:
         (
-          mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.details?.presale_title
+          profileTrs.investor?.round.details.presale_title
           ?? 'Pre-sale'
         )
         , data:
@@ -248,25 +247,25 @@
           {
             row_title:
             (
-              mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.details?.start_date_title
+              profileTrs.investor?.round.details.start_date_title
               ?? 'Start Date'
             )
-            , value: mapInvestorData.get('round')?.values.start_date ?? '-'
+            , value: WIDGET_DATA?.presaleData.data?.start_date ?? '-'
           }
           , {
             row_title:
             (
-              mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.details?.end_date_title
+              profileTrs.investor?.round.details.end_date_title
               ?? 'End Date'
             )
-            , value: mapInvestorData.get('round')?.values.end_date ?? '-'
+            , value: WIDGET_DATA?.presaleData.data?.end_date ?? '-'
           }
         ]
       }
       , {
         title:
         (
-          mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.details?.investment_title
+          profileTrs.investor?.round.details.investment_title
           ?? 'Investment Details'
         )
         , data:
@@ -274,34 +273,34 @@
           {
             row_title:
             (
-              mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.details?.min_buy_title
+              profileTrs.investor?.round.details.min_buy_title
               ?? 'Minimum Buy Amount'
             )
-            , value: mapInvestorData.get('round')?.values.min_buy ?? '-'
+            , value: WIDGET_DATA?.presaleData.data?.min_buy ?? '-'
           }
           , {
             row_title:
             (
-              mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.details?.chain_title
+              profileTrs.investor?.round.details.chain_title
               ?? 'Raising Platform'
             )
-            , value: mapInvestorData.get('round')?.values.chain ?? '-'
+            , value: WIDGET_DATA?.presaleData.data?.chain ?? '-'
           }
           , {
             row_title:
             (
-              mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.details?.type_title
+              profileTrs.investor?.round.details.type_title
               ?? 'Type'
             )
-            , value: mapInvestorData.get('round')?.values.type ?? '-'
+            , value: WIDGET_DATA?.presaleData.data?.type ?? '-'
           }
           , {
             row_title:
             (
-              mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.details?.currencies_title
+              profileTrs.investor?.round.details.currencies_title
               ?? 'Accepted Currencies'
             )
-            , value: mapInvestorData.get('round')?.values.currencies ?? '-'
+            , value: WIDGET_DATA?.presaleData.data?.currencies ?? '-'
           }
         ]
       }
@@ -448,7 +447,7 @@
         "
       >
         {
-          mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.round_title
+         profileTrs.investor?.round.round_title
           ?? 'Round 1'
         }
       </p>
@@ -469,11 +468,14 @@
         >
           {#if ['ToBeAnnounced', 'CountdownWithDefinedDate'].includes(widgetState)}
             {
-              mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.round_description
+             profileTrs.investor?.round.round_description
               ?? 'Presale starts in'
             }
           {:else if widgetState == 'CountdownToFinish'}
-            Presale ends in
+            {
+              mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.progress_title
+              ?? 'Presale ends in'
+            }
           {/if}
         </span>
       {/if}
@@ -549,11 +551,20 @@
           "
         >
           {#if widgetState == 'ToBeAnnounced'}
-            Date To Be Announced
+            {
+              mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.round_description
+              ?? 'Date To Be Announced'
+            }
           {:else if widgetState == 'InviteOnly'}
-            Invite Only
+            {
+              mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.date_message
+              ?? 'Invite Only'
+            }
           {:else if widgetState == 'Ended'}
-            Ended
+            {
+              mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.current_value_title
+              ?? 'Raised'
+            }
           {/if}
         </p>
       </div>
@@ -600,7 +611,7 @@
           "
         >
           {
-            mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.progress_title
+           profileTrs.investor?.round.progress_title
             ?? 'Progress'
           }
         </p>
@@ -660,7 +671,7 @@
           "
         >
           {
-            mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.current_value_title
+           profileTrs.investor?.round.current_value_title
             ?? 'Raised'
           }
           <span
@@ -671,7 +682,7 @@
             "
           >
             <!-- ${WIDGET_DATA?.txProgressRaised} -->
-            ${mapInvestorData.get('round')?.values.current_value ?? '-'}
+            ${WIDGET_DATA?.presaleData.data?.current_value ?? '-'}
           </span>
         </p>
 
@@ -688,7 +699,7 @@
           "
         >
           {
-            mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.max_title
+           profileTrs.investor?.round.max_title
             ?? 'Unlimited'
           }
         </p>

@@ -258,7 +258,7 @@
     {
       /* 🎨 style */
       margin-left: 42px;
-      max-width: 65%;
+      max-width: none;
     }
   }
 
