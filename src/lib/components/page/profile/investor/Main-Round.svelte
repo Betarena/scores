@@ -468,12 +468,12 @@
         >
           {#if ['ToBeAnnounced', 'CountdownWithDefinedDate'].includes(widgetState)}
             {
-             profileTrs.investor?.round.round_description
+              profileTrs.investor?.round.round_description
               ?? 'Presale starts in'
             }
           {:else if widgetState == 'CountdownToFinish'}
             {
-              mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.progress_title
+              profileTrs.investor?.round.progress_title
               ?? 'Presale ends in'
             }
           {/if}
@@ -552,17 +552,17 @@
         >
           {#if widgetState == 'ToBeAnnounced'}
             {
-              mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.round_description
+              profileTrs.investor?.round.round_description
               ?? 'Date To Be Announced'
             }
           {:else if widgetState == 'InviteOnly'}
             {
-              mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.date_message
+              profileTrs.investor?.round.date_message
               ?? 'Invite Only'
             }
           {:else if widgetState == 'Ended'}
             {
-              mapInvestorData.get('round')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.current_value_title
+              profileTrs.investor?.round.current_value_title
               ?? 'Raised'
             }
           {/if}
