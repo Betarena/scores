@@ -818,7 +818,7 @@
     // ▓ > send data for completed user transaction to DB.
     const txDepositData: B_H_TH
     = {
-      uid: $userBetarenaSettings.user.firebase_user_data?.uid as string
+      uid: $userBetarenaSettings.user.firebase_user_data?.uid!
       // date: new Date().toISOString(),
       , wallet_address_erc20: walletAddress
       , asset: cryptoDepositOptionSelect.name
@@ -1090,109 +1090,41 @@
   />
 {/if}
 
-<div
+<form
   id={CNAME}
   class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+  on:submit|preventDefault={() => {return executeDeposit()}}
 >
-  <form
-    on:submit|preventDefault={() => {return executeDeposit()}}
+
+  <!--
+  ▓ NOTE:
+  ▓ > Top Box (Outer)
+  -->
+  <div
+    id="{CNAME}⮕top-row"
   >
 
     <!--
     ▓ NOTE:
-    ▓ > Top Box (Outer)
+    ▓ > Top Row
     -->
     <div
-      id="top-row"
+      class=
+      "
+      row-space-out
+      "
     >
 
       <!--
       ▓ NOTE:
-      ▓ > Top Row
-      -->
-      <div
-        class=
-        "
-        row-space-out
-        "
-      >
-
-        <!--
-        ▓ NOTE:
-        ▓ > widget title
-        -->
-        <p
-          class=
-          "
-          {VIEWPORT_MOBILE_INIT[1] ? 's-20' : 's-24'}
-          w-500
-          color-black-2
-          "
-        >
-          {
-            mapInvestorData.get('invest_box')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.widget_title
-            ?? 'Invest Box'
-          }
-        </p>
-
-        <!--
-        ▓ NOTE:
-        ▓ > Connect Wallet.
-        -->
-        <button
-          type="button"
-          class=
-          "
-          btn-dark
-          w-500
-          row-space-start
-          width-auto
-          "
-          on:click={() => {return connectWallet()}}
-        >
-          <p
-            class=
-            "
-            s-14
-            color-black-2
-            m-r-6
-            "
-          >
-            {
-              shortenWeb3WalletAddress(walletAddress ?? '')
-              ?? (
-                mapInvestorData.get('invest_box')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.connect_wallet
-                ?? 'Connect your wallet'
-              )
-            }
-          </p>
-
-          {#if !walletAddress}
-            <img
-              id=''
-              src={$userBetarenaSettings.theme == 'Dark' ? icon_arrow_right_dark : icon_arrow_right}
-              alt=''
-              title=''
-              loading='lazy'
-              width=16
-              height=16
-            />
-          {/if}
-        </button>
-
-      </div>
-
-      <!--
-      ▓ NOTE:
-      ▓ > Investment Options TEXT.
+      ▓ > widget title
       -->
       <p
         class=
         "
-        s-14
-        color-grey
-        dark-white-v3
-        m-t-15
+        {VIEWPORT_MOBILE_INIT[1] ? 's-20' : 's-24'}
+        w-500
+        color-black-2
         "
       >
         {
@@ -1203,9 +1135,10 @@
 
       <!--
       ▓ NOTE:
-      ▓ > Deposit Method.
+      ▓ > Connect Wallet.
       -->
-      <div
+      <button
+        type="button"
         class=
         "
         btn-dark
@@ -1316,11 +1249,6 @@
         width-100
         "
       >
-
-        <!--
-        ▓ NOTE:
-        ▓ > Crypto Deposit OPTION.
-        -->
         <button
           type="button"
           class=
@@ -1330,12 +1258,11 @@
             v3d
           width-100
           color-black-2
-          m-r-12
           w-500
           s-14
           "
-          class:btn-active={selectDepositOption == 'crypto'}
-          on:click={() => {return selectDepositOption = 'crypto'}}
+          class:btn-active={selectDepositOption == 'fiat'}
+          on:click={() => {return selectDepositOption = 'fiat'}}
         >
           {
             profileTrs.investor?.invest_box.options.option_2
@@ -1454,379 +1381,7 @@
 
         <!--
         ▓ NOTE:
-        ▓ > Fiat Deposit OPTION.
-        -->
-        <a
-          href="https://buy.stripe.com/7sIeWc72V8Hw33WbIM?client_reference_id=${$userBetarenaSettings.user.firebase_user_data?.uid}"
-          target="_blank"
-          class=
-          "
-          width-100
-          "
-        >
-          <button
-            type="button"
-            class=
-            "
-            btn-hollow
-              v4
-              v3d
-            width-100
-            color-black-2
-            w-500
-            s-14
-            "
-            class:btn-active={selectDepositOption == 'fiat'}
-            on:click={() => {return selectDepositOption = 'fiat'}}
-          >
-            {
-              mapInvestorData.get('invest_box')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.options?.option_2
-              ?? 'Fiat'
-            }
-          </button>
-        </a>
-
-      </div>
-
-      <!--
-      ▓ NOTE:
-      ▓ > Terms & Conditions BOX.
-      -->
-      <div
-        class=
-        "
-        m-t-20
-        row-space-start
-        "
-      >
-
-        <!-- [🐞] -->
-        <!-- {agreeTermsAndConditions} -->
-
-        <!--
-        ▓ NOTE:
-        ▓ > Terms & Conditions INPUT.
-        -->
-        <label
-          class=
-          "
-          m-r-12
-          container
-          "
-        >
-          <input
-            id=""
-            name=""
-            type="checkbox"
-            class=
-            "
-            v-1
-            cursor-pointer
-            "
-            required
-            bind:checked={agreeTermsAndConditions}
-          />
-
-          <span
-            class="checkmark"
-          >
-            {#if agreeTermsAndConditions}
-              <img
-                id=''
-                class=
-                "
-                box-center
-                "
-                src={icon_checkbox}
-                alt=''
-                title=''
-                loading='lazy'
-              />
-            {/if}
-          </span>
-        </label>
-
-        <!--
-        ▓ NOTE:
-        ▓ > Terms & Conditions TEXT.
-        -->
-        <p
-          class=
-          "
-          s-16
-          color-grey
-            grey-v1
-          "
-          on:click={() => {return $sessionStore.showTermsAndConditions = true}}
-        >
-          {
-            @html mapInvestorData.get('invest_box')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.terms
-            ?? 'I have read the terms and disclaimers.'
-          }
-        </p>
-
-      </div>
-
-    </div>
-
-    <!--
-    ▓ NOTE:
-    ▓ > Middle Box (Outer)
-    -->
-    <div
-      id="middle-row"
-    >
-
-      <!--
-      ▓ NOTE:
-      ▓ > Deposit Amount
-      -->
-      <div
-        class=
-        "
-        input-box
-        "
-      >
-
-        <!--
-        ▓ NOTE:
-        ▓ > Deposit Amount BOX
-        -->
-        <div>
-
-          <!--
-          ▓ NOTE:
-          ▓ > Deposit amount TITLE.
-          -->
-          <p
-            class=
-            "
-            s-16
-            w-500
-            color-black-2
-            m-b-5
-            "
-          >
-            {
-              mapInvestorData.get('invest_box')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.deposit_box?.title
-              ?? 'Deposit Amount'
-            }
-          </p>
-
-          <!--
-          ▓ NOTE:
-          ▓ > Deposit amount initial.
-          -->
-          <p
-            class=
-            "
-            s-12
-            color-grey
-              dark-v1
-            "
-          >
-            {
-              mapInvestorData.get('invest_box')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.deposit_box?.subtitle_1
-              ?? 'First Minimum Deposit'
-            }
-            <span
-              class=
-              "
-              color-black-2
-              w-500
-              "
-            >
-              {
-                mapInvestorData.get('invest_box')?.values.min
-                ?? '∞'
-              } USD
-            </span>
-            /
-            {
-              mapInvestorData.get('invest_box')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.deposit_box?.subtitle_2
-              ?? 'Deposit'
-            }
-            <span
-              class=
-              "
-              color-black-2
-              w-500
-              "
-            >
-              {
-                mapInvestorData.get('invest_box')?.values.max
-                ?? '∞'
-              }
-            </span>
-          </p>
-
-        </div>
-
-        <!--
-        ▓ NOTE:
-        ▓ > Deposit Box.
-        -->
-        <div
-          class=
-          "
-          row-space-out
-          "
-        >
-
-          <!--
-          ▓ NOTE:
-          ▓ > Deposit Box.
-          -->
-          <div>
-
-            <!--
-            ▓ NOTE:
-            ▓ > Deposit amount INPUT.
-            -->
-            <input
-              type="number"
-              step="0.01"
-              placeholder=0
-              class=
-              "
-              s-20
-              color-black-2
-              amount-input
-              w-500
-              "
-              required
-              bind:value={depositAmount}
-            />
-
-            <!--
-            ▓ NOTE:
-            ▓ > Conversion Rate.
-            -->
-            <p
-              class=
-              "
-              s-12
-              color-grey
-                dark-v1
-              m-t-5
-              "
-            >
-              <!-- ▓ [🐞] -->
-              <!-- {console.log(cryptoPrices?.data?.['USDC']?.quote?.USD?.price)} -->
-              {depositAmount ?? 0} {cryptoDepositOptionSelect.name} ≈ {cryptoPrice} USD
-            </p>
-
-          </div>
-
-          <!--
-          ▓ NOTE:
-          ▓ > token box (parent)
-          -->
-          <div>
-
-            <!--
-            ▓ NOTE:
-            ▓ > Token.
-            -->
-            <div
-              class=
-              "
-              row-space-end
-              width-auto
-              cursor-pointer
-              m-b-5
-              "
-              on:click={() => {return modalSelectCryptoOption = true}}
-            >
-
-              <!--
-              ▓ NOTE:
-              ▓ > Token Asset Icon.
-              -->
-              <img
-                id=''
-                src={cryptoDepositOptionSelect.icon}
-                alt={cryptoDepositOptionSelect.name}
-                title={cryptoDepositOptionSelect.name}
-                loading='lazy'
-                width=20
-                height=20
-                class=
-                "
-                m-r-6
-                "
-              />
-
-              <!--
-              ▓ NOTE:
-              ▓ > Token Asset Name.
-              -->
-              <p
-                class=
-                "
-                s-15
-                w-500
-                color-black-2
-                m-r-6
-                "
-              >
-                {cryptoDepositOptionSelect.name}
-              </p>
-
-              <img
-                id=''
-                src={$userBetarenaSettings.theme == 'Dark' ? icon_arrow_down_dark : icon_arrow_down}
-                alt=''
-                title=''
-                loading='lazy'
-                width=16
-                height=16
-              />
-
-            </div>
-
-            <!--
-            ▓ NOTE:
-            ▓ > Token User Balance.
-            -->
-            <p
-              class=
-              "
-              s-12
-              color-black-2
-              "
-            >
-              {
-                mapInvestorData.get('invest_box')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.balance
-                ?? 'Balance'
-              }
-              :
-              {
-                toDecimalFix(cryptoDepositOptionSelect.userBalance)
-                ?? 0
-              }
-            </p>
-
-          </div>
-
-        </div>
-
-      </div>
-
-      <!--
-      ▓ NOTE:
-      ▓ > Recieve Amount
-      -->
-      <div
-        class=
-        "
-        input-box
-        "
-      >
-
-        <!--
-        ▓ NOTE:
-        ▓ > Recieve amount TITLE.
+        ▓ > Deposit amount TITLE.
         -->
         <p
           class=
@@ -1845,12 +1400,14 @@
 
         <!--
         ▓ NOTE:
-        ▓ > Recieve Box.
+        ▓ > Deposit amount initial.
         -->
-        <div
+        <p
           class=
           "
-          row-space-out
+          s-12
+          color-grey
+            dark-v1
           "
         >
           {
@@ -1909,68 +1466,73 @@
 
           <!--
           ▓ NOTE:
-          ▓ > Recieve amount BOX.
+          ▓ > Deposit amount INPUT.
           -->
-          <div
-          >
-
-            <!--
-            ▓ NOTE:
-            ▓ > Recieve amount INPUT.
-            -->
-            <input
-              type="number"
-              step="any"
-              placeholder=0
-              class=
-              "
-              s-20
-              amount-input
-              color-black-2
-              w-500
-              "
-              required
-              bind:value={recieveAmount}
-            />
-
-            <!--
-            ▓ NOTE:
-            ▓ > Conversion Rate.
-            -->
-            <p
-              class=
-              "
-              s-12
-              color-grey
-                dark-v1
-              m-t-5
-              "
-            >
-              {toDecimalFix(1 - (tierDiscountObject.discount / 100))} {cryptoDepositOptionSelect.name} ≈ 1.00 BTA
-            </p>
-
-          </div>
+          <input
+            type="number"
+            step="0.01"
+            placeholder=0
+            class=
+            "
+            s-20
+            color-black-2
+            amount-input
+            w-500
+            "
+            required
+            bind:value={depositAmount}
+          />
 
           <!--
           ▓ NOTE:
-          ▓ > BTA Token.
+          ▓ > Conversion Rate.
+          -->
+          <p
+            class=
+            "
+            s-12
+            color-grey
+              dark-v1
+            m-t-5
+            "
+          >
+            <!-- ▓ [🐞] -->
+            <!-- {console.log(cryptoPrices?.data?.['USDC']?.quote?.USD?.price)} -->
+            {depositAmount ?? 0} {cryptoDepositOptionSelect.name} ≈ {cryptoPrice} USD
+          </p>
+
+        </div>
+
+        <!--
+        ▓ NOTE:
+        ▓ > token box (parent)
+        -->
+        <div>
+
+          <!--
+          ▓ NOTE:
+          ▓ > Token.
           -->
           <div
             class=
             "
-            row-space-start
+            row-space-end
             width-auto
+            cursor-pointer
+            m-b-5
             "
+            on:click={() => {return modalSelectCryptoOption = true}}
           >
+
             <!--
             ▓ NOTE:
-            ▓ > BTA Asset.
+            ▓ > Token Asset Icon.
             -->
             <img
               id=''
-              src={icon_bta_token}
-              alt=''
-              title=''
+              src={cryptoDepositOptionSelect.icon}
+              alt={cryptoDepositOptionSelect.name}
+              title={cryptoDepositOptionSelect.name}
               loading='lazy'
               width=20
               height=20
@@ -1982,7 +1544,7 @@
 
             <!--
             ▓ NOTE:
-            ▓ > BTA Token NAME.
+            ▓ > Token Asset Name.
             -->
             <p
               class=
@@ -1990,10 +1552,21 @@
               s-15
               w-500
               color-black-2
+              m-r-6
               "
             >
-              BTA
+              {cryptoDepositOptionSelect.name}
             </p>
+
+            <img
+              id=''
+              src={$userBetarenaSettings.theme == 'Dark' ? icon_arrow_down_dark : icon_arrow_down}
+              alt=''
+              title=''
+              loading='lazy'
+              width=16
+              height=16
+            />
 
           </div>
 
@@ -2024,9 +1597,22 @@
 
       </div>
 
+    </div>
+
+    <!--
+    ▓ NOTE:
+    ▓ > Recieve Amount
+    -->
+    <div
+      class=
+      "
+      input-box
+      "
+    >
+
       <!--
       ▓ NOTE:
-      ▓ > Current Tier Discount
+      ▓ > Recieve amount TITLE.
       -->
       <p
         class=
@@ -2043,34 +1629,103 @@
         }
       </p>
 
+      <!--
+      ▓ NOTE:
+      ▓ > Recieve Box.
+      -->
+      <div
+        class=
+        "
+        row-space-out
+        "
+      >
+
+        <!--
+        ▓ NOTE:
+        ▓ > Recieve amount BOX.
+        -->
         <div
-          id="tier-box"
-          style=
-          "
-          {VIEWPORT_MOBILE_INIT[1] ? 'justify-content: space-between;' : ''}
-          "
-          class:row-space-out={!VIEWPORT_MOBILE_INIT[1]}
-          class:column-space-start={VIEWPORT_MOBILE_INIT[1]}
         >
+
           <!--
           ▓ NOTE:
-          ▓ > current tier TEXT.
+          ▓ > Recieve amount INPUT.
+          -->
+          <input
+            type="number"
+            step="any"
+            placeholder=0
+            class=
+            "
+            s-20
+            amount-input
+            color-black-2
+            w-500
+            "
+            required
+            bind:value={recieveAmount}
+          />
+
+          <!--
+          ▓ NOTE:
+          ▓ > Conversion Rate.
           -->
           <p
             class=
             "
-            s-16
-            w-500
-            color-black-2
-            no-wrap
-            text-left
-            width-100
+            s-12
+            color-grey
+              dark-v1
+            m-t-5
             "
           >
-            {
-              mapInvestorData.get('invest_box')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.tier_title
-              ?? 'Current Tier Discount'
-            }
+            {toDecimalFix(1 - (tierDiscountObject.discount / 100))} {cryptoDepositOptionSelect.name} ≈ 1.00 BTA
+          </p>
+
+        </div>
+
+        <!--
+        ▓ NOTE:
+        ▓ > BTA Token.
+        -->
+        <div
+          class=
+          "
+          row-space-start
+          width-auto
+          "
+        >
+          <!--
+          ▓ NOTE:
+          ▓ > BTA Asset.
+          -->
+          <img
+            id=''
+            src={icon_bta_token}
+            alt=''
+            title=''
+            loading='lazy'
+            width=20
+            height=20
+            class=
+            "
+            m-r-6
+            "
+          />
+
+          <!--
+          ▓ NOTE:
+          ▓ > BTA Token NAME.
+          -->
+          <p
+            class=
+            "
+            s-15
+            w-500
+            color-black-2
+            "
+          >
+            BTA
           </p>
 
         </div>
@@ -2128,79 +1783,66 @@
 
           <!--
           ▓ NOTE:
-          ▓ > tier SUB-BOX.
+          ▓ > current tier SUB-BOX.
           -->
           <div
             class=
             "
-            {!VIEWPORT_MOBILE_INIT[1] ? 'row-space-start width-auto' : 'row-space-out'}
+            row-space-start
+            width-auto
+            m-r-20
             "
           >
 
             <!--
             ▓ NOTE:
-            ▓ > current tier SUB-BOX.
+            ▓ > current tier discount icon IMG.
             -->
-            <div
+            <img
+              id=''
+              src={tierDiscountObject.icon}
+              alt={tierDiscountObject.icon}
+              title='Discount Tier Asset'
+              loading='lazy'
+              width=24
+              height=24
               class=
               "
-              row-space-start
-              width-auto
-              m-r-20
+              m-r-8
               "
-            >
-
-              <!--
-              ▓ NOTE:
-              ▓ > current tier discount icon IMG.
-              -->
-              <img
-                id=''
-                src={tierDiscountObject.icon}
-                alt={tierDiscountObject.icon}
-                title='Discount Tier Asset'
-                loading='lazy'
-                width=24
-                height=24
-                class=
-                "
-                m-r-8
-                "
-              />
-
-              <!--
-              ▓ NOTE:
-              ▓ > current tier discount name TEXT.
-              -->
-              <p
-                class=
-                "
-                s-16
-                w-500
-                color-black-2
-                "
-              >
-                {tierDiscountObject.name}
-              </p>
-
-            </div>
+            />
 
             <!--
             ▓ NOTE:
-            ▓ > current tier discount amount NUMBER.
+            ▓ > current tier discount name TEXT.
             -->
             <p
               class=
               "
-              s-15
+              s-16
               w-500
               color-black-2
               "
             >
-              {tierDiscountObject.discount ?? 0}%
+              {tierDiscountObject.name}
             </p>
 
           </div>
+
+          <!--
+          ▓ NOTE:
+          ▓ > current tier discount amount NUMBER.
+          -->
+          <p
+            class=
+            "
+            s-15
+            w-500
+            color-black-2
+            "
+          >
+            {tierDiscountObject.discount ?? 0}%
+          </p>
 
         </div>
 
@@ -2261,204 +1903,152 @@
 
       <!--
       ▓ NOTE:
-      ▓ > Execute Deposit Button
-      -->
-      <button
-        type="submit"
-        form="{CNAME}"
-        class=
-        "
-        btn-primary-v2
-          btn-shadow-1
-        width-100
-        m-t-15
-        w-500
-        s-14
-        "
-      >
-        {
-          mapInvestorData.get('invest_box')?.data.find(x => {return x.lang == $sessionStore.serverLang})?.cta
-          ?? 'Buy BTA'
-        }
-      </button>
-
-    </div>
-
-    <!--
-    ▓ NOTE:
-    ▓ > Cryptocurrency Deposit Option Select (Outer)
-    -->
-    {#if modalSelectCryptoOption}
-
-      <!--
-      ▓ NOTE:
-      ▓ > Cryptocurrency Background
+      ▓ > Select token TITLE.
       -->
       <div
-        id="modal-bg-blur"
-        in:fade
-        on:click={() => {return modalSelectCryptoOption = false}}
-      />
-
-      <!--
-      ▓ NOTE:
-      ▓ > Cryptocurrency Select
-      -->
-      <div
-        id="select-crypto"
-        in:fly={{ y: 500, duration: 500 }}
-        out:fly={{ y: 500, duration: 500 }}
+        id="top-box"
       >
 
         <!--
         ▓ NOTE:
         ▓ > Select token TITLE.
         -->
-        <div
-          id="top-box"
+        <p
+          class=
+          "
+          s-20
+          w-500
+          color-black-2
+          m-b-20
+          "
         >
-
-          <!--
-          ▓ NOTE:
-          ▓ > Select token TITLE.
-          -->
-          <p
-            class=
-            "
-            s-20
-            w-500
-            color-black-2
-            m-b-20
-            "
-          >
-            {'Select Crypto Currency'}
-          </p>
-
-          <!--
-          ▓ NOTE:
-          ▓ > Close vector.
-          -->
-          <img
-            id="close-vector"
-            src={$userBetarenaSettings.theme == 'Dark' ? icon_close_dark : icon_close}
-            alt="close-svg"
-            class=
-            "
-            cursor-pointer
-            "
-            on:click={() => {return modalSelectCryptoOption = false}}
-            width=14
-            height=14
-          />
-
-          <!--
-          ▓ NOTE:
-          ▓ > Execute Deposit Button
-          -->
-          <input
-            id="token-search"
-            placeholder="Search"
-            type="text"
-            class=
-            "
-            s-14
-            color-black-2
-            "
-            required
-            bind:value={tokenSearch}
-          />
-
-        </div>
+          {'Select Crypto Currency'}
+        </p>
 
         <!--
         ▓ NOTE:
-        ▓ > Available ERC-20 options.
+        ▓ > Close vector.
         -->
-        <div
-          id="token-list"
-        >
-          {#each cryptoDepositOptionsSearch ?? [] as item}
+        <img
+          id="close-vector"
+          src={$userBetarenaSettings.theme == 'Dark' ? icon_close_dark : icon_close}
+          alt="close-svg"
+          class=
+          "
+          cursor-pointer
+          "
+          on:click={() => {return modalSelectCryptoOption = false}}
+          width=14
+          height=14
+        />
 
-            <!--
-            ▓ NOTE:
-            ▓ > Token Row BOX.
-            -->
-            <div
-              class=
-              "
-              row-space-start
-              cursor-pointer
-              ▓
-              token-row
-              "
-              style=
-              "
-              align-items: flex-start;
-              "
-              on:click={() => {return cryptoDepositOptionSelect = item}}
-              on:click={() => {return modalSelectCryptoOption = false}}
-            >
-
-              <!--
-              ▓ NOTE:
-              ▓ > Token Icon.
-              -->
-              <img
-                id=''
-                src={item.icon}
-                alt=''
-                title=''
-                loading='lazy'
-                width=24
-                height=24
-                class=
-                "
-                m-r-12
-                "
-              />
-
-              <!--
-              ▓ NOTE:
-              ▓ > Token Icon.
-              -->
-              <p
-                class=
-                "
-                s-14
-                color-black-2
-                no-wrap
-                ▓
-                token-text
-                "
-              >
-                {item.name ?? ''}
-
-                <br/>
-
-                <span
-                  class=
-                  "
-                  s-12
-                  color-grey
-                    grey-v1
-                  no-wrap
-                  "
-                >
-                  {item.full_name ?? ''}
-                </span>
-              </p>
-
-            </div>
-
-          {/each}
-        </div>
+        <!--
+        ▓ NOTE:
+        ▓ > Execute Deposit Button
+        -->
+        <input
+          id="token-search"
+          placeholder="Search"
+          type="text"
+          class=
+          "
+          s-14
+          color-black-2
+          "
+          required
+          bind:value={tokenSearch}
+        />
 
       </div>
 
-    {/if}
+      <!--
+      ▓ NOTE:
+      ▓ > Available ERC-20 options.
+      -->
+      <div
+        id="token-list"
+      >
+        {#each cryptoDepositOptionsSearch ?? [] as item}
 
-  </form>
-</div>
+          <!--
+          ▓ NOTE:
+          ▓ > Token Row BOX.
+          -->
+          <div
+            class=
+            "
+            row-space-start
+            cursor-pointer
+            ▓
+            token-row
+            "
+            style=
+            "
+            align-items: flex-start;
+            "
+            on:click={() => {return cryptoDepositOptionSelect = item}}
+            on:click={() => {return modalSelectCryptoOption = false}}
+          >
+
+            <!--
+            ▓ NOTE:
+            ▓ > Token Icon.
+            -->
+            <img
+              id=''
+              src={item.icon}
+              alt=''
+              title=''
+              loading='lazy'
+              width=24
+              height=24
+              class=
+              "
+              m-r-12
+              "
+            />
+
+            <!--
+            ▓ NOTE:
+            ▓ > Token Icon.
+            -->
+            <p
+              class=
+              "
+              s-14
+              color-black-2
+              no-wrap
+              ▓
+              token-text
+              "
+            >
+              {item.name ?? ''}
+
+              <br/>
+
+              <span
+                class=
+                "
+                s-12
+                color-grey
+                  grey-v1
+                no-wrap
+                "
+              >
+                {item.full_name ?? ''}
+              </span>
+            </p>
+
+          </div>
+
+        {/each}
+      </div>
+
+    </div>
+
+  {/if}
+
+</form>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -2473,214 +2063,210 @@
 
   @import '../../../../../../static/app.scss';
 
-  div#profile⮕w⮕investbox⮕main
+  #profile⮕w⮕investbox⮕main
   {
     /* 📌 position */
     position: relative;
+    /* 🎨 style */
+    border-radius: 12px;
+    overflow: hidden;
+    height: fit-content;
 
-    form
+    &⮕top-row
+    {
+      /* 📌 position */
+      position: relative;
+      /* 🎨 style */
+      padding: 20px;
+      padding-top: 24px;
+      background: var(--white);
+      box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
+      /* z-index: 10; */
+
+      :global
+      {
+        span.x0001
+        {
+          /* 🎨 style */
+          @extend .w-500 !optional;
+          @extend .color-black-2 !optional;
+          @extend .underline !optional;
+          @extend .cursor-pointer !optional;
+        }
+      }
+    }
+
+    button.btn-hollow.btn-active
     {
       /* 🎨 style */
-      border-radius: 12px;
-      overflow: hidden;
-      height: fit-content;
+      border: 1px solid var(--primary) !important;
+      background: rgba(245, 98, 15, 0.08);
+    }
 
-      div#top-row
-      {
-        /* 📌 position */
-        position: relative;
-        /* 🎨 style */
-        padding: 20px;
-        padding-top: 24px;
-        background: var(--white);
-        box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
-        /* z-index: 10; */
+    input[type=checkbox]
+    {
+      /* 🎨 style */
+      border: none;
+      border-radius: 50px;
+    }
 
-        :global
-        {
-          span.x0001
-          {
-            /* 🎨 style */
-            @extend .w-500 !optional;
-            @extend .color-black-2 !optional;
-            @extend .underline !optional;
-            @extend .cursor-pointer !optional;
-          }
-        }
-      }
+    &⮕middle-row
+    {
+      /* 🎨 style */
+      padding: 20px;
+      padding-bottom: 32px;
+      background: var(--white);
+      display: grid;
+      gap: 12px;
 
-      button.btn-hollow.btn-active
-      {
-        /* 🎨 style */
-        border: 1px solid var(--primary) !important;
-        background: rgba(245, 98, 15, 0.08);
-      }
-
-      input[type=checkbox]
-      {
-        /* 🎨 style */
-        border: none;
-        border-radius: 50px;
-      }
-
-      div#middle-row
+      div.input-box
       {
         /* 🎨 style */
         padding: 20px;
-        padding-bottom: 32px;
-        background: var(--white);
+        border-radius: 12px;
+        background-color: var(--whitev2);
+        min-height: 154px;
+        max-height: 154px;
         display: grid;
-        gap: 12px;
-
-        div.input-box
-        {
-          /* 🎨 style */
-          padding: 20px;
-          border-radius: 12px;
-          background-color: var(--whitev2);
-          min-height: 154px;
-          max-height: 154px;
-          display: grid;
-          align-content: space-between;
-        }
-
-        div#tier-box
-        {
-          /* 🎨 style */
-          border-radius: 12px;
-          min-height: 104px;
-          max-height: 104px;
-          padding: 20px;
-          background-color: var(--whitev2);
-        }
-
-        input[type=number]
-        {
-          &.amount-input
-          {
-            /* 🎨 style */
-            padding: 0;
-            margin: 0;
-            border: none;
-            width: fit-content;
-            max-width: 150px;
-            height: fit-content;
-            /* 🤖 compatability */
-            appearance: textfield;
-            -moz-appearance: textfield;
-
-            /* Chrome, Safari, Edge, Opera */
-            &::-webkit-inner-spin-button,
-            &::-webkit-outer-spin-button
-            {
-              -webkit-appearance: none;
-              margin: 0;
-            }
-          }
-        }
+        align-content: space-between;
       }
 
-      img#close-vector
+      div#tier-box
       {
-        /* 📌 position */
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        z-index: 400000002;
-      }
-
-      div#modal-bg-blur
-      {
-        /* 📌 position */
-        position: absolute;
-        top: 0;
-        right: 0;
-        left: 0;
-        z-index: 0;
-        /* 🎨 style */
-        height: 100%;
-        width: 100%;
-        background: rgba(0, 0, 0, 0.5);
-      }
-
-      div#select-crypto
-      {
-        /* 📌 position */
-        position: fixed;
-        bottom: 0;
-        right: 0;
-        left: 0;
         /* 🎨 style */
         border-radius: 12px;
-        background: var(--white);
-        box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
-        padding-bottom: 10px;
+        min-height: 104px;
+        max-height: 104px;
+        padding: 20px;
+        background-color: var(--whitev2);
+      }
 
-        div#top-box
+      input[type=number]
+      {
+        &.amount-input
         {
           /* 🎨 style */
-          padding: 20px;
-          padding-bottom: 12px;
+          padding: 0;
+          margin: 0;
+          border: none;
+          width: fit-content;
+          max-width: 150px;
+          height: fit-content;
+          /* 🤖 compatability */
+          appearance: textfield;
+          -moz-appearance: textfield;
+
+          /* Chrome, Safari, Edge, Opera */
+          &::-webkit-inner-spin-button,
+          &::-webkit-outer-spin-button
+          {
+            -webkit-appearance: none;
+            margin: 0;
+          }
         }
+      }
+    }
 
-        input#token-search
+    img#close-vector
+    {
+      /* 📌 position */
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 400000002;
+    }
+
+    &⮕modal-bg-blur
+    {
+      /* 📌 position */
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      z-index: 0;
+      /* 🎨 style */
+      height: 100%;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    &⮕select-crypto
+    {
+      /* 📌 position */
+      position: fixed;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      /* 🎨 style */
+      border-radius: 12px;
+      background: var(--white);
+      box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
+      padding-bottom: 10px;
+
+      div#top-box
+      {
+        /* 🎨 style */
+        padding: 20px;
+        padding-bottom: 12px;
+      }
+
+      input#token-search
+      {
+        /* 🎨 style */
+        background-image: url('/assets/svg/league_list/search.svg');
+        background-repeat: no-repeat;
+        background-position: 15px 50%;
+        background-size: 20px 20px;
+        padding: 12px 52px 12px 40px;
+        background-color: var(--white-3);
+        border: 1px solid transparent;
+
+        &:hover
         {
           /* 🎨 style */
-          background-image: url('/assets/svg/league_list/search.svg');
-          background-repeat: no-repeat;
-          background-position: 15px 50%;
-          background-size: 20px 20px;
-          padding: 12px 52px 12px 40px;
-          background-color: var(--white-3);
-          border: 1px solid transparent;
+          border: 1px solid #8c8c8c;
+        }
+        &:focus
+        {
+          /* 🎨 style */
+          border: 1px solid #4b4b4b;
+        }
+        &[placeholder]
+        {
+          /* 🎨 style */
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
+      }
+
+      div#token-list
+      {
+        /* 🎨 style */
+        display: grid;
+
+        div.token-row
+        {
+          /* 🎨 style */
+          padding: 8px 20px;
+          min-height: 53px;
+          max-height: 53px;
 
           &:hover
           {
             /* 🎨 style */
-            border: 1px solid #8c8c8c;
+
+            background-color: var(--white-3);
           }
-          &:focus
+          p.token-text
           {
             /* 🎨 style */
-            border: 1px solid #4b4b4b;
+            position: relative;
           }
-          &[placeholder]
+          p.token-text span
           {
             /* 🎨 style */
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-          }
-        }
-
-        div#token-list
-        {
-          /* 🎨 style */
-          display: grid;
-
-          div.token-row
-          {
-            /* 🎨 style */
-            padding: 8px 20px;
-            min-height: 53px;
-            max-height: 53px;
-
-            &:hover
-            {
-              /* 🎨 style */
-
-              background-color: var(--white-3);
-            }
-            p.token-text
-            {
-              /* 🎨 style */
-              position: relative;
-            }
-            p.token-text span
-            {
-              /* 🎨 style */
-              position: absolute;
-            }
+            position: absolute;
           }
         }
       }
@@ -2688,9 +2274,9 @@
   }
 
   /*
-  ╭──────────────────────────────────────────────────────────────────────────────╮
-  │ ⚡️ RESPONSIVNESS                                                              │
-  ╰──────────────────────────────────────────────────────────────────────────────╯
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  ◼️ ⚡️ RESPONSIVNESS       ◼️
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   */
 
   @media screen
@@ -2707,34 +2293,31 @@
   @media screen
   and (min-width: 1160px)
   {
-    div#profile⮕w⮕investbox⮕main
+    #profile⮕w⮕investbox⮕main
     {
-      form
+      &⮕select-crypto
       {
-        div#select-crypto
-        {
-          /* 📌 position */
-          position: absolute;
-        }
+        /* 📌 position */
+        position: absolute;
       }
     }
   }
 
   /*
-  ╭──────────────────────────────────────────────────────────────────────────────╮
-  │ 🌒 DARK-THEME                                                                │
-  ╰──────────────────────────────────────────────────────────────────────────────╯
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  ◼️ 🌒 DARK-THEME         ◼️
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   */
 
-  div#profile⮕w⮕investbox⮕main
+  #profile⮕w⮕investbox⮕main
   {
-    &.dark-background-1 div#top-row
+    &.dark-background-1 &⮕top-row
     {
       /* 🎨 style */
       background-color: var(--dark-theme-1);
     }
 
-    &.dark-background-1 div#middle-row
+    &.dark-background-1 &⮕middle-row
     {
       /* 🎨 style */
       background-color: var(--dark-theme-1-4-shade);
@@ -2749,7 +2332,7 @@
 
     }
 
-    &.dark-background-1 div#select-crypto
+    &.dark-background-1 &⮕select-crypto
     {
       /* 🎨 style */
       background: var(--dark-theme-1-4-shade) !important;
