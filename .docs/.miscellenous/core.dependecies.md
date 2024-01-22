@@ -1,4 +1,4 @@
-## About
+# 📦 Dependencies
 
 **This section** explores the dependencies and technologies used in the project. In addition, further explanaition into the reasons behind the chosen technologies used and why potential alternatives did not work/were taken into account.
 

@@ -1,13 +1,13 @@
-## About
+# ⚜️ Code Style
 
-`_this_` markdown contains the outlined guidelines as to how the code should be `styled` and `commented`.
+_This_ markdown contains the outlined guidelines as to how the code should be `styled` and `commented`.
 
-> **Important ::**
-> Code structure and/or format are not discussed in this `markdown` as they are enforced already with `EsLint` and will/should be enforced as standard `Intellisense`.
+> [!IMPORTANT]
+> Code structure and/or format are not discussed in this `markdown` as they are enforced already with `EsLint` / `.eslintrc.yaml` and will/should be enforced as standard `Intellisense`.
 
-### 📝 Documentation
+## 📝 Documentation
 
-For `_this_` project, the following `documentation` can be found, and should be followed:
+For _this_ project, the following `documentation` can be found, and should be followed:
 
 ### 📌 Comments/Notes/Remarks
 
@@ -30,16 +30,21 @@ Should be followed **across all files in the project**:
 // ▓ CHECK:
 // ▓ > used to describe a check/validation step.
 // ▓ > that follows suit, or ralted to a target section.
+// if (some-logic-here)
+// {
+//
+// }
 
 // ▓ > read-more :|: http://some-link-for-reference-on-below-topic
 // const targetValue2 = [..]
 
 // ▓ [🐞]
+// console.log('checking');
 ```
 
-#### JavaScript/TypeScript
+### 🔹 JavaScript/TypeScript
 
-> **Important ::** <br/>
+> [!IMPORTANT]
 > Code structure and/or format are not discussed *in depth* in this `markdown` as they are
 > enforced already with `EsLint (.eslint.yaml)` and will/should be enforced as standard `Intellisense` by
 > your preferred `code editor`.
@@ -79,31 +84,36 @@ function doSomething
 }
 ```
 
-#### SvelteJs/SvelteKit
+### 🟧 SvelteJs/SvelteKit
 
-Take a look at `./.github/CONTRIBUTING_TEMPLATES/Svelte-Boilerplate.v<-latest->.svelte` to understand the structure that should be implied in the `.svelte` files.
+Take a look at `./.docs/core.code-style.md/*` to understand the structure/format that should be implied in the `.svelte` files, and other complementary `svelte`/`svelte-kit` common file types.
 
-In addition, take a look at the other files provided in `.github/CONTRIBUTING_TEMPLATES` folder/directory to better understand different types of possible `.svelte` structures that should be employed in different situations.
+#### 📝 Nomaculture
 
-#### Makefile
+Target `.svelte` files should **always** follow the naming scheme: `<SampleName-FurtherName-<Main|Child|Row|Table|PopUp|etc.>.svelte`.
+
+### ⚙️ Makefile
 
 ```makefile
 make-target-command-example:
-  @# ▓ DESCRIPTION
-  @# ▓ > add _this_ target description purpose here.
-  @# ▓ > can be multi-line description.
+  @# ╭──────────────────────────────────────────────────────────────────╮
+  @# │ ▓ NOTE: ▓ DESCRIPTION                                            │
+  @# │ > add _this_ target description purpose here.                    │
+  @# │ > can be multi-line description.                                 │
+  @# ╰──────────────────────────────────────────────────────────────────╯
 
-  @echo\
-    "$(COLOUR_G)\
-    \n▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\
-    \n▓ 🚀 target execute running                ▓\
-    \n▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\
+  @echo \
+    "$(COLOUR_B)\
+    \n╭──────────────────────────────────────────────────────────────────╮\
+    \n│ 🚀 target execute running                                        │\
+    \n╰──────────────────────────────────────────────────────────────────╯\
     $(END_COLOUR)\n"
+  @
 
   @your-command-goes-here\
     preferrably-multi-line-flags-explained-per-line\
     command-flag-1\
     command-flag-2
-  @#
+  @
 #
 ```
