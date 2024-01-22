@@ -1,0 +1,40 @@
+$prefixes: ('moz', 'webkit', 'ms', 'o');
+
+@mixin prefix
+(
+  $property
+  , $value
+)
+{
+  @each $prefix in $prefixes
+  {
+    -#{$prefix}-#{$property}: $value;
+  }
+  #{$property}: $value;
+}
+
+@mixin keyframes
+(
+  $name
+)
+{
+  @keyframes #{$name}
+  {
+    @content;
+  }
+
+  @-webkit-keyframes #{$name}
+  {
+    @content;
+  }
+
+  @-moz-keyframes #{$name}
+  {
+    @content;
+  }
+
+  @-o-keyframes #{$name}
+  {
+    @content;
+  }
+}

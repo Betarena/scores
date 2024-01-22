@@ -1,0 +1,181 @@
+hr
+{
+  /* 🎨 style */
+  width: 100%;
+  margin: 16.17px 0;
+  opacity: 0.25;
+  border: 1.46983px solid #ff5555;
+  background-color: #ff5555;
+}
+
+form
+{
+  fieldset
+  {
+    /* 🎨 style */
+    outline: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  input
+  , select
+  {
+    /* 🎨 style */
+    outline: none;
+    border: none;
+    opacity: 1;
+    cursor: text;
+    align-items: center;
+    text-align: start;
+    display: flex;
+    transition: all 0.15s ease;
+    /* background: #ffffff; */
+    /* border: 0.5px solid #37474f; */
+    box-sizing: border-box;
+    border-radius: 7.34914px;
+    padding: 7px;
+    background-color: transparent;
+    border: 1px solid var(--gray-day, #CCC);
+  }
+
+  input
+  {
+    /* 🎨 style */
+    height: 44px;
+    width: -webkit-fill-available;
+    width: -moz-available;
+    border: 1px solid var(--grey-shade);
+    box-sizing: border-box;
+    border-radius: 8px;
+    padding: 20px 12px;
+    outline: none;
+    font-size: 14px;
+    background-color: transparent;
+
+    &:hover
+    {
+      /* 🎨 style */
+      border: 1px solid var(--grey);
+    }
+
+    &:focus
+    {
+      /* 🎨 style */
+      border: 1px solid var(--dark-theme-1);
+    }
+
+    &[placeholder]
+    {
+      /* 🎨 style */
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    &.v-1
+    {
+      /* 🎨 style */
+      width: 20px;
+      height: 20px;
+      border: 1px solid #CCCCCC;
+      accent-color: var(--primary);
+    }
+
+    .dark-background-1 &
+    {
+      border: 1px solid var(--dark-theme-1-2-shade);
+
+      &:hover
+      {
+        /* 🎨 style */
+        border: 1px solid var(--dark-theme-1-3-shade);
+      }
+
+      &:focus
+      {
+        /* 🎨 style */
+        border: 1px solid var(--dark-theme-1-3-shade);
+      }
+    }
+  }
+}
+
+.width-auto
+{
+  width: auto;
+}
+
+.width-fit-content
+{
+  width: fit-content;
+}
+
+.width-100
+{
+  width: 100%;
+}
+
+// IMPORTANT
+img.google-aspect-ratio
+{
+  /* 🎨 style */
+  /* width: auto; */
+  /* max-height: 100%; */
+  object-fit: contain;
+}
+
+.checkmark
+{
+  position: absolute;
+  top: -10px;
+  left: 0;
+  height: 20px;
+  width: 20px;
+  background-color: transparent;
+  border: 1.5px solid #A9B8AE;
+  border-radius: 3.25px;
+}
+
+/*
+╭──────────────────────────────────────────────────────────────────╮
+│ 📌 POSITIONS                                                     │
+╰──────────────────────────────────────────────────────────────────╯
+*/
+
+.box-center {
+  /* 📌 position */
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  margin: auto;
+}
+
+/*
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+◼️ DARK-THEME :: GENERAL                                                                ◼️
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+*/
+.dark-background {
+  /* 🎨 style */
+  background-color: var(--dark-theme) !important;
+}
+
+.dark-background-1 {
+  /* 🎨 style */
+  background-color: var(--dark-theme-1) !important;
+}
+
+/*
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+◼️ DARK-THEME :: OTHER                                                                  ◼️
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+*/
+.dark-background .hover-color-primary:hover,
+.dark-background-1 .hover-color-primary:hover {
+  /* 🎨 style */
+  color: var(--primary) !important;
+}

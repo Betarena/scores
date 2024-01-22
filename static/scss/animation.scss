@@ -1,0 +1,36 @@
+@import 'common';
+
+/* #region ➤ [MAIN] [ANIMATIONS] Website Layout */
+
+.hover\/transition\/v-1
+, .hover-transition-v-1
+{
+  /* 🎨 style */
+  transition: all 0.15s ease;
+}
+
+@include keyframes
+(
+  flickerAnimation
+)
+{
+  0%
+  {
+    opacity: 1;
+  }
+  50%
+  {
+    opacity: 0.25;
+  }
+  100%
+  {
+    opacity: 1;
+  }
+}
+
+.animation-target
+{
+  @include prefix(animation, flickerAnimation 1.5s infinite)
+}
+
+/* #endregion ➤ [MAIN] [ANIMATIONS] Website Layout */
