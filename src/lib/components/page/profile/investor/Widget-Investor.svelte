@@ -47,6 +47,7 @@
 	import ReferralsSteps from './Referrals.Steps.Main.svelte';
 
 	import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
+	import LaunchpadWallets from './Launchpad-Wallets.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -312,6 +313,12 @@
 
       </div>
 
+      <LaunchpadWallets
+        profileData={data}
+        VIEWPORT_MOBILE_INIT_PARENT={VIEWPORT_MOBILE_INIT}
+        VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
+      />
+
       <TgeMain
         profileData={data}
         VIEWPORT_MOBILE_INIT_PARENT={VIEWPORT_MOBILE_INIT}
@@ -547,6 +554,11 @@
         :global
         {
           div#profile⮕w⮕investtge⮕main⮕title
+          {
+            /* 🎨 style */
+            grid-column: 1 / 5;
+          }
+          div#profile⮕w⮕launchpad-wallets⮕main
           {
             /* 🎨 style */
             grid-column: 1 / 5;

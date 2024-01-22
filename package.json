@@ -38,7 +38,8 @@
 		"test::integration": "playwright test",
 		"test::integration-ui": "playwright test --ui",
 		"test::unit": "vitest",
-		"coverage": "vitest run --coverage"
+		"coverage": "vitest run --coverage",
+    "sass-watch": "sass --watch static/app.scss static/app.css"
 	},
 	"dependencies": {
 		"@betarena/scores-lib": "^1.11.0-alpha.1",
@@ -53,6 +54,7 @@
 		"@types/node": "^20.8.5",
 		"@walletconnect/web3-provider": "^1.8.0",
 		"@web3modal/ethers5": "^3.3.2",
+		"chart.js": "^4.4.1",
 		"colorthief": "^2.4.0",
 		"compression": "^1.7.4",
 		"cookie": "^0.5.0",
