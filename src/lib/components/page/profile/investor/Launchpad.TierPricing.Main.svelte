@@ -28,7 +28,7 @@
   import { onMount } from 'svelte';
 
   import userBetarenaSettings from '$lib/store/user-settings.js';
-  import { toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
+  import { formatNumberWithCommas, toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
   import { Misc } from '@betarena/scores-lib/dist/classes/class.misc.js';
 
   import icon_bronze from '../assets/price-tier/icon-bta-bronze.svg';
@@ -658,13 +658,12 @@
                         }
                       {:else if item == 'minimum-investment'}
                         ${
-                          dataMap.get(key)?.data?.invest_min
-                          ?? ''
+                          formatNumberWithCommas(dataMap.get(key)?.data?.invest_min)
                         }
                         {
                           dataMap.get(key)?.data?.invest_max == -1
                             ? 'or more'
-                            : `- $${dataMap.get(key)?.data?.invest_max ?? ''}`
+                            : `- $${formatNumberWithCommas(dataMap.get(key)?.data?.invest_max)}`
                         }
                       {:else if item == 'discount'}
                         {
@@ -675,7 +674,7 @@
                         {
                           dataMap.get(key)?.data?.initial_token_release_percentage
                           ?? ''
-                        }% at (TGE)
+                        }% (TGE)
                       {:else if item == 'vesting-period'}
                         {
                           dataMap.get(key)?.data?.vesting_months

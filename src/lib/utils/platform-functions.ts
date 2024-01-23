@@ -1490,4 +1490,36 @@ export async function copyToClipboard
   return;
 }
 
+/**
+ * @author
+ *  @migbash
+ * @summary
+ *  🟦 HELPER
+ * @description
+ *  📣 Converts target `number` into a **number with commas** for _thousandths_ separator.
+ * @param { number } x
+ *  💠 Target `number` to format.
+ * @handles
+ *  ⭕️ Takes care of `null` / `undefined` cases.
+ * @example
+ * - null => ''
+ * - undefined => ''
+ * - 1000 => 1,000
+ * - 1000000 => 1,000,000
+ * - 5000 => 5,000
+ * @return { string }
+ *  📤 Formatted `number` (as `string`) for _thousnads_.
+ */
+export function formatNumberWithCommas
+(
+  x: number | null | undefined
+): string
+{
+  return x
+    ?.toString()
+    ?.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    ?? ''
+  ;
+}
+
 // #endregion ➤ 🛠️ METHODS
