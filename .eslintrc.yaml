@@ -95,6 +95,8 @@ rules:
   "@typescript-eslint/prefer-for-of": error
   "@typescript-eslint/no-non-null-asserted-nullish-coalescing": error
 
+  # ▓ NOTE:
+  # ▓ > (👇) for svelte/sveltekit project only!
   'svelte/valid-compile': 0
   'svelte/no-at-html-tags': 0
 

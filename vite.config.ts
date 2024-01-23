@@ -50,6 +50,7 @@ export default defineConfig
       (
         [
           ['💮 betarena scores version', process.env?.VITE_SCORES_PKG_VERSION]
+          , ['📣 @betarena/scores-lib', process.env?.VITE_SCORES_LIB_PKG_VERSION]
           , ['📣 uploaded sentry sourcemap', process.env?.VITE_SENTRY_UPLOAD_SOURCEMAPS]
           , ['📣 target .env', process.env?.VITE_ENV_TARGET]
           , ['📣 vite mode', mode]

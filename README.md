@@ -1,5 +1,5 @@
 <!--
-▓▓ Betarena Branding
+▓ Betarena Branding
 -->
 
 <h1
@@ -15,7 +15,7 @@
 </h1>
 
 <!--
-▓▓ Repository badge(s)
+▓ Repository badge(s)
 -->
 
 ![ESLint](https://img.shields.io/badge/ESLint-4B3263?style=for-the-badge&logo=eslint&logoColor=white)
@@ -34,7 +34,7 @@
 
 - [About](#about)
   - [Betarena Scores Platform](#betarena-scores-platform)
-- [⚙ Development](#-development)
+- [⚙ Development / Project](#-development--project)
 - [🚦 Roadmap](#-roadmap)
 - [🛠 Contributing](#-contributing)
 - [💗 Support](#-support)
@@ -47,9 +47,9 @@
 
 We are building the first open-source live results and statistics platform with community involvement features for data insertion. The project includes a blockchain component that will allow participants to receive rewards based on their participation and also to stake the future Token of the platform.
 
-## ⚙ Development
+## ⚙ Development / Project
 
-See the `docs/` directory for more information about the project, it's quirks, code-style and more.
+See the `.docs/` directory for more (1) information about the project, (2) it's quirks, (3) `code-style`, (4) how to setup development, and more.
 
 ## 🚦 Roadmap
 

@@ -1,0 +1,345 @@
+@use '_root';
+
+/*
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 📌 FONT WEIGHT                                                                   │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+*/
+
+$fontWeight: (400, 500, 600, 700, 'normal');
+
+//
+// Generate possible Font Weights
+//
+
+@each $w in $fontWeight
+{
+  .w-#{$w}
+  {
+    font-weight: $w;
+  }
+}
+
+/*
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 📌 FONT SIZE                                                                     │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+*/
+
+$fontSize: (10, 12, 14, 15, 16, 18, 19, 20, 22, 24, 28, 32, 40, 42);
+
+//
+// Generate possible Font Sizes
+//
+
+@each $w in $fontSize
+{
+  .s-#{$w},
+  .global.s-#{$w},
+  .global.s-#{$w} > *
+  {
+    font-size: #{$w}px;
+  }
+}
+
+/*
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 📌 LEGACY                                                                        │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+*/
+
+.x-large,
+p.x-large,
+span.x-large
+{
+  font-size: 18px;
+}
+
+.large,
+p.large,
+span.large
+{
+  font-size: 16px;
+}
+
+.medium,
+p.medium,
+span.medium
+{
+  font-size: 14px;
+}
+
+.small,
+p.small
+{
+  font-size: 12px;
+}
+
+.s_small,
+p.s_small
+{
+  font-size: 12px;
+}
+
+@media only screen and (min-width: 768px)
+{
+  .s-t-16
+  {
+    font-size: 16px;
+  }
+  .large,
+  p.large,
+  span.large
+  {
+    font-size: 18px;
+  }
+}
+
+/*
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 📌 HEADINGS                                                                      │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+*/
+
+@mixin defaultHeader
+{
+  /* 🎨 style */
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+@for $i from 1 through 6
+{
+  h#{$i}
+  {
+    @include defaultHeader;
+    font-weight: 700;
+    font-size: 32px;
+    line-height: 140%;
+  }
+}
+
+.global.lh-125 > *
+{
+  /* 🎨 style */
+  line-height: 125%;
+}
+
+.global.lh-128 > *
+{
+  /* 🎨 style */
+  line-height: 128.571%;
+}
+
+/*
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 📌 FONT COLORS                                                                   │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+*/
+
+@each $key, $data in $root-color-map
+{
+  .#{map-get($data, "class-name")}
+  {
+    /* 🎨 style */
+    color: var(#{map-get($data, "root-name")}) !important;
+  }
+}
+
+.color-blue-green-gradient
+{
+  /* 🎨 style */
+  background: -webkit-linear-gradient rgb(0, 255, 117), rgb(0, 163, 255);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hover-color-primary:hover
+{
+  /* 🎨 style */
+  color: var(--primary) !important;
+}
+
+/*
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 📌 FONT EXTRA STYLES                                                             │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+*/
+
+.no-wrap
+{
+  white-space: nowrap;
+}
+
+.underline
+{
+  text-decoration: underline !important;
+}
+
+.bold
+{
+  font-style: normal;
+  font-weight: bold;
+}
+
+.not-bold
+{
+  font-weight: normal;
+}
+
+.lowercase
+{
+  text-transform: lowercase;
+}
+
+.uppercase
+{
+  text-transform: uppercase;
+}
+
+.capitalize
+{
+  text-transform: capitalize;
+}
+
+.text-center
+{
+  text-align: center;
+  text-align: -webkit-center;
+  text-align: -moz-center;
+}
+
+.text-left
+{
+  text-align: left;
+  text-align: -webkit-left;
+  text-align: -moz-left;
+}
+
+.text-right
+{
+  text-align: right;
+  text-align: -webkit-right;
+  text-align: -moz-right;
+}
+
+.place-center
+{
+  place-self: center;
+}
+
+.cursor-pointer
+{
+  cursor: pointer;
+}
+
+.cursor-not-allowed
+{
+  cursor: not-allowed !important;
+}
+
+.display-none
+{
+  display: none !important;
+}
+
+.display-unset
+{
+  display: unset !important;
+}
+
+.visibility-none
+{
+  visibility: hidden;
+}
+
+.opacity-0-4
+{
+  opacity: 0.4;
+}
+
+/*
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+◼️ DARK-THEME :: FONT COLOURS                                                           ◼️
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+*/
+.dark-background .color-primary-fade-2.dark-v0,
+.dark-background-1 .color-primary-fade-2.dark-v0 {
+  /* 🔥 override */
+  /* 🎨 style */
+  color: var(--primary-fade-2) !important;
+}
+
+.dark-background .color-grey,
+.dark-background-1 .color-grey {
+  /* 🎨 style */
+  color: var(--grey-shade-2) !important;
+}
+
+.dark-background .color-grey.dark-white-v1,
+.dark-background-1 .color-grey.dark-white-v1 {
+  /* 🔥 override */
+  /* 🎨 style */
+  color: var(--white) !important;
+}
+
+.dark-background .color-grey.dark-white-v3,
+.dark-background-1 .color-grey.dark-white-v3 {
+  /* 🔥 override */
+  /* 🎨 style */
+  color: var(--white-3) !important;
+}
+
+.dark-background .color-black-2,
+.dark-background-1 .color-black-2,
+.dark-background .color-black-3,
+.dark-background-1 .color-black-3 {
+  /* 🎨 style */
+  color: var(--white) !important;
+}
+
+.dark-background .color-black-2.grey-v1,
+.dark-background-1 .color-black-2.grey-v1 {
+  /* 🔥 override */
+  /* 🎨 style */
+  color: var(--grey-shade) !important;
+}
+
+.dark-background .global.color-grey.grey-v1 > *,
+.dark-background-1 .global.color-grey.grey-v1 > *,
+.dark-background .color-grey.grey-v1,
+.dark-background-1 .color-grey.grey-v1 {
+  /* 🔥 override */
+  /* 🎨 style */
+  color: var(--grey-shade) !important;
+}
+
+.dark-background .color-grey-v2.grey-v1,
+.dark-background-1 .color-grey-v2.grey-v1 {
+  /* 🔥 override */
+  /* 🎨 style */
+  color: var(--grey-shade-3) !important;
+}
+
+.dark-background .color-grey.dark-v1,
+.dark-background-1 .color-grey.dark-v1 {
+  /* 🔥 override */
+  /* 🎨 style */
+  color: var(--grey) !important;
+}
+
+.dark-background .color-primary,
+.dark-background-1 .color-primary {
+  /* 🎨 style */
+  color: var(--primary) !important;
+}
+
+.dark-background .color-green.dark-v0,
+.dark-background-1 .color-green.dark-v0 {
+  /* 🔥 override */
+  /* 🎨 style */
+  color: var(--green-color) !important;
+}
