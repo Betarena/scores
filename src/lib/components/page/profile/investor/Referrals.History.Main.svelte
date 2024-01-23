@@ -258,13 +258,17 @@
               "
               s-16
               color-black-3
+                dark-v1
               "
               style=
               "
               line-height: 24px; /* 150% */
               "
             >
-              Uh-oh! No Vestings have been found.
+              {
+                profileTrs.investor?.general.no_information
+                ?? 'Uh-oh! No Investments have been found.'
+              }
             </p>
           </div>
         {/each}
@@ -477,11 +481,16 @@
             p
             {
               /* 📌 position */
-              position: relative;
-              top: 50%;
-              -webkit-transform: translateY(-50%);
+              position: absolute;
+              top: 0;
+              bottom: 0;
+              right: 0;
+              left: 0;
+              margin: auto;
+              /* 🎨 style */
+              height: fit-content;
               -ms-transform: translateY(-50%);
-              transform: translateY(-50%);
+              width: 176px;
             }
           }
         }
