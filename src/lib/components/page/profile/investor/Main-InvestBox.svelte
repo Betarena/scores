@@ -2068,6 +2068,7 @@
   {
     /* 📌 position */
     position: relative;
+    border-radius: 12px;
 
     form
     {
@@ -2319,6 +2320,12 @@
 
   div#profile⮕w⮕investbox⮕main
   {
+    &.dark-background-1
+    {
+      /* 🎨 style */
+      background-color: transparent !important;
+    }
+
     &.dark-background-1 div#top-row
     {
       /* 🎨 style */
@@ -2336,8 +2343,6 @@
         /* 🎨 style */
         background-color: var(--dark-theme);
       }
-
-
     }
 
     &.dark-background-1 div#select-crypto

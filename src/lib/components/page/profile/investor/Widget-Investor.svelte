@@ -535,7 +535,7 @@
             {
               /* 📌 position */
               position: sticky;
-              top: 0;
+              top: 75px;
             }
           }
           div#profile⮕w⮕investTierPricing⮕main
