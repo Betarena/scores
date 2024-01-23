@@ -88,13 +88,17 @@
       ...new Set
       (
         profileData?.tx_hist
-          ?.filter(x => {return x.type == 'vesting' && x.wallet_address_erc20 != null})
-          ?.map(x => {return x.wallet_address_erc20 ?? ''})!
+          ?.filter(x => { return x.type == 'vesting' && x.wallet_address_erc20 != null })
+          ?.map(x => { return x.wallet_address_erc20 ?? '' })!
       )
     ]
   ;
 
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
+
+  // ▓ [🐞]
+  // ▓ > validate for missing user not having any associated investment wallets.
+  // userWallets = [];
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -160,10 +164,12 @@
       "
       on:click={() => {return $sessionStore.showInvstementWallets = true}}
     >
-      {
-        profileTrs.investor?.wallets.view
-        ?? 'View All'
-      }
+      {#if userWallets.length > 0}
+        {
+          profileTrs.investor?.wallets.view
+          ?? 'View All'
+        }
+      {/if}
     </p>
 
   </div>
@@ -223,7 +229,7 @@
   ▓ NOTE:
   ▓ > investment detail wallet modal.
   -->
-  {#if $sessionStore.showInvstementWallets}
+  {#if $sessionStore.showInvstementWallets && userWallets.length > 0}
     <WalletsModal
       walletAddressList={userWallets}
     />
