@@ -110,7 +110,43 @@
      *  📣
     */
     , colspanSet = ( newValue: number ) => { colspan1Value = newValue; return; }
+    /**
+     * @description
+     *  📣 toggle state for `div` applied for `delay` purposes.
+    */
     , show: boolean = false
+    /**
+     * @description
+     *  📣 component target.
+    */
+    , componentTarget: HTMLElement
+    /**
+     * @description
+     *  📣 state object for custom logic.
+    */
+    , stateObject:
+    {
+      /**
+       * @description
+       *  📣 component initial `distance` target.
+      */
+      initialDivDistance: number;
+      /**
+       * @description
+       *  📣 component `state` check.
+      */
+      isExecuted: boolean;
+      /**
+       * @description
+       *  📣 component `show` animation component.
+      */
+      show: boolean;
+    }
+    = {
+      initialDivDistance: 0
+      , isExecuted: false
+      , show: false
+    }
   ;
 
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
@@ -250,6 +286,45 @@
     return;
   }
 
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟦 HELPER
+   * @description
+   *  📣 Kickstart `animation` for widget.
+   * @return { void }
+   */
+  function scrollCustom
+  (
+  ): void
+  {
+    // ▓ CHECK
+    // ▓ > first time call of THIS method.
+    if (!stateObject.isExecuted)
+    {
+      stateObject.initialDivDistance = componentTarget.getBoundingClientRect().bottom + window.scrollY;
+      stateObject.isExecuted = true;
+    }
+
+    let
+      /**
+       * @description
+       *  📣 Target distance of THIS widget from the top.
+      */
+      distanceTopFromDiv = componentTarget.getBoundingClientRect().top
+    ;
+
+    // ▓ [🐞]
+    // console.log('distanceTopFromDiv', distanceTopFromDiv);
+
+    // ▓ CHECK
+    // ▓ > client has scrolled into view THIS widget component
+    if (distanceTopFromDiv <= 300) stateObject.show = true;
+
+    return;
+  }
+
   // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
@@ -311,7 +386,11 @@
 <svelte:window
   on:resize=
   {
-    () => {return resizeCustom()}
+    () => { return resizeCustom() }
+  }
+  on:scroll=
+  {
+    () => { return scrollCustom() }
   }
 />
 
@@ -326,6 +405,7 @@
 
 <div
   id={CNAME}
+  bind:this={componentTarget}
   class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
 >
 
@@ -502,7 +582,7 @@
                     {/if}
                   </p>
 
-                {:else if !VIEWPORT_MOBILE_INIT[1]}
+                {:else if !VIEWPORT_MOBILE_INIT[1] && stateObject.isExecuted && stateObject.show}
 
                   <div
                     style=
@@ -610,132 +690,134 @@
                   -->
                   {:else}
 
-                    <div
-                      class=
-                      "
-                      investment-tier-progress
-                      "
-                    >
-                      <!--
-                      [🐞]
-                      -->
-                      <!-- {currentAccumulatedAmountProgress} -->
-
-                      <!--
-                      ▓ NOTE:
-                      ▓ > (asset) tier checkpoint.
-                      -->
+                    {#if stateObject.isExecuted && stateObject.show}
                       <div
                         class=
                         "
-                        checkpoint
-                        "
-                        style=
-                        "
-                        transition-delay: {(i + 1) * ((tableNum + 1) * 0.5)}s;
-                        "
-                        class:reached=
-                        {
-                          browser
-                          && show
-                          && (dataMap.get(currentAccumulatedAmountProgress)?.data?.position ?? 0) >= (dataMap.get(key)?.data?.position ?? 0)
-                        }
-                      />
-
-                      <!--
-                      ▓ NOTE:
-                      ▓ > (box) tier progress bar.
-                      -->
-                      <div
-                        class=
-                        "
-                        line
+                        investment-tier-progress
                         "
                       >
-                        <div
-                          class:reached-tier=
-                          {
-                            (dataMap.get(currentAccumulatedAmountProgress)?.data?.position ?? 0) > (dataMap.get(key)?.data?.position ?? 0)
-                          }
-                          class:current-tier=
-                          {
-                            (dataMap.get(currentAccumulatedAmountProgress)?.data?.position ?? 0) == (dataMap.get(key)?.data?.position ?? 0)
-                          }
-                          style=
-                          "
-                          animation-delay: {(i + 1) * ((tableNum + 1) * 0.5)}s ;
-                          "
-                        />
-                      </div>
-
-                      <!--
-                      ▓ CHECK
-                      ▓ > wether 'this' tier is the one user belongs to.
-                      -->
-                      {#if (dataMap.get(currentAccumulatedAmountProgress)?.data?.position ?? 0) == (dataMap.get(key)?.data?.position ?? 0)}
-
                         <!--
-                        ▓ WARNING:
-                        ▓ > does not work, specifically in a table > tr sections.
-                        ▓ > https://github.com/sveltejs/svelte/issues/4948
-                        transition:fly={{ x: -100, duration: 500, delay: i*2000 }}
+                        [🐞]
                         -->
+                        <!-- {currentAccumulatedAmountProgress} -->
 
                         <!--
                         ▓ NOTE:
-                        ▓ > staked amount box.
+                        ▓ > (asset) tier checkpoint.
                         -->
                         <div
-                          id="cumulative-sum-slider-box"
                           class=
                           "
-                          text-center
+                          checkpoint
                           "
                           style=
                           "
-                          animation-delay: {(i + 1) * ((tableNum + 1) * 0.5)}s;
+                          transition-delay: {(i + 1) * ((tableNum + 1) * 0.5)}s;
+                          "
+                          class:reached=
+                          {
+                            browser
+                            && show
+                            && (dataMap.get(currentAccumulatedAmountProgress)?.data?.position ?? 0) >= (dataMap.get(key)?.data?.position ?? 0)
+                          }
+                        />
+
+                        <!--
+                        ▓ NOTE:
+                        ▓ > (box) tier progress bar.
+                        -->
+                        <div
+                          class=
+                          "
+                          line
                           "
                         >
-                          <!--
-                          ▓ NOTE:
-                          ▓ > staked amount.
-                          -->
-                          <p
-                            id="staked-amount"
-                            class=
-                            "
-                            s-16
-                            w-500
-                            color-white
-                            {!VIEWPORT_TABLET_INIT[1] ? 'm-b-12' : 'm-b-8'}
-                            no-wrap
-                            "
-                          >
-                            {$userBetarenaSettings.user.scores_user_data?.investor_balance ?? 0} BTA
-                          </p>
-
-                          <!--
-                          ▓ NOTE:
-                          ▓ > staked amount hint text.
-                          -->
-                          <p
-                            class=
-                            "
-                            s-12
-                            color-grey
-                              grey-v1
-                            "
-                          >
+                          <div
+                            class:reached-tier=
                             {
-                              profileTrs.investor?.tiers.general_stake
-                              ?? 'Your staked ammount'
+                              (dataMap.get(currentAccumulatedAmountProgress)?.data?.position ?? 0) > (dataMap.get(key)?.data?.position ?? 0)
                             }
-                          </p>
+                            class:current-tier=
+                            {
+                              (dataMap.get(currentAccumulatedAmountProgress)?.data?.position ?? 0) == (dataMap.get(key)?.data?.position ?? 0)
+                            }
+                            style=
+                            "
+                            animation-delay: {(i + 1) * ((tableNum + 1) * 0.5)}s ;
+                            "
+                          />
                         </div>
 
-                      {/if}
+                        <!--
+                        ▓ CHECK
+                        ▓ > wether 'this' tier is the one user belongs to.
+                        -->
+                        {#if (dataMap.get(currentAccumulatedAmountProgress)?.data?.position ?? 0) == (dataMap.get(key)?.data?.position ?? 0)}
 
-                    </div>
+                          <!--
+                          ▓ WARNING:
+                          ▓ > does not work, specifically in a table > tr sections.
+                          ▓ > https://github.com/sveltejs/svelte/issues/4948
+                          transition:fly={{ x: -100, duration: 500, delay: i*2000 }}
+                          -->
+
+                          <!--
+                          ▓ NOTE:
+                          ▓ > staked amount box.
+                          -->
+                          <div
+                            id="cumulative-sum-slider-box"
+                            class=
+                            "
+                            text-center
+                            "
+                            style=
+                            "
+                            animation-delay: {(i + 1) * ((tableNum + 1) * 0.5)}s;
+                            "
+                          >
+                            <!--
+                            ▓ NOTE:
+                            ▓ > staked amount.
+                            -->
+                            <p
+                              id="staked-amount"
+                              class=
+                              "
+                              s-16
+                              w-500
+                              color-white
+                              {!VIEWPORT_TABLET_INIT[1] ? 'm-b-12' : 'm-b-8'}
+                              no-wrap
+                              "
+                            >
+                              {$userBetarenaSettings.user.scores_user_data?.investor_balance ?? 0} BTA
+                            </p>
+
+                            <!--
+                            ▓ NOTE:
+                            ▓ > staked amount hint text.
+                            -->
+                            <p
+                              class=
+                              "
+                              s-12
+                              color-grey
+                                grey-v1
+                              "
+                            >
+                              {
+                                profileTrs.investor?.tiers.general_stake
+                                ?? 'Your staked ammount'
+                              }
+                            </p>
+                          </div>
+
+                        {/if}
+
+                      </div>
+                    {/if}
 
                   {/if}
                 </td>
