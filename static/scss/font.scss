@@ -145,6 +145,20 @@ p.s_small
   {
     /* 🎨 style */
     color: var(#{map-get($data, "root-name")}) !important;
+
+    @each $key-dark, $data-dark in map-get($data, "dark-mirror")
+    {
+      .dark-background &
+      , .dark-background-1 &
+      {
+        &#{map-get($data-dark, "class-name")}
+        {
+          /* 🔥 override */
+          /* 🎨 style */
+          color: var(#{map-get($data-dark, "root-name")}) !important;
+        }
+      }
+    }
   }
 }
 
@@ -259,87 +273,4 @@ p.s_small
 .opacity-0-4
 {
   opacity: 0.4;
-}
-
-/*
-◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-◼️ DARK-THEME :: FONT COLOURS                                                           ◼️
-◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-*/
-.dark-background .color-primary-fade-2.dark-v0,
-.dark-background-1 .color-primary-fade-2.dark-v0 {
-  /* 🔥 override */
-  /* 🎨 style */
-  color: var(--primary-fade-2) !important;
-}
-
-.dark-background .color-grey,
-.dark-background-1 .color-grey {
-  /* 🎨 style */
-  color: var(--grey-shade-2) !important;
-}
-
-.dark-background .color-grey.dark-white-v1,
-.dark-background-1 .color-grey.dark-white-v1 {
-  /* 🔥 override */
-  /* 🎨 style */
-  color: var(--white) !important;
-}
-
-.dark-background .color-grey.dark-white-v3,
-.dark-background-1 .color-grey.dark-white-v3 {
-  /* 🔥 override */
-  /* 🎨 style */
-  color: var(--white-3) !important;
-}
-
-.dark-background .color-black-2,
-.dark-background-1 .color-black-2,
-.dark-background .color-black-3,
-.dark-background-1 .color-black-3 {
-  /* 🎨 style */
-  color: var(--white) !important;
-}
-
-.dark-background .color-black-2.grey-v1,
-.dark-background-1 .color-black-2.grey-v1 {
-  /* 🔥 override */
-  /* 🎨 style */
-  color: var(--grey-shade) !important;
-}
-
-.dark-background .global.color-grey.grey-v1 > *,
-.dark-background-1 .global.color-grey.grey-v1 > *,
-.dark-background .color-grey.grey-v1,
-.dark-background-1 .color-grey.grey-v1 {
-  /* 🔥 override */
-  /* 🎨 style */
-  color: var(--grey-shade) !important;
-}
-
-.dark-background .color-grey-v2.grey-v1,
-.dark-background-1 .color-grey-v2.grey-v1 {
-  /* 🔥 override */
-  /* 🎨 style */
-  color: var(--grey-shade-3) !important;
-}
-
-.dark-background .color-grey.dark-v1,
-.dark-background-1 .color-grey.dark-v1 {
-  /* 🔥 override */
-  /* 🎨 style */
-  color: var(--grey) !important;
-}
-
-.dark-background .color-primary,
-.dark-background-1 .color-primary {
-  /* 🎨 style */
-  color: var(--primary) !important;
-}
-
-.dark-background .color-green.dark-v0,
-.dark-background-1 .color-green.dark-v0 {
-  /* 🔥 override */
-  /* 🎨 style */
-  color: var(--green-color) !important;
 }
