@@ -26,8 +26,8 @@
   import { page } from '$app/stores';
 
   import userBetarenaSettings from '$lib/store/user-settings.js';
-  import type { PUBLIC__INVESTOR_IBonus } from '@betarena/scores-lib/types/_HASURA_.js';
 
+  import type { PUBLIC__INVESTOR_IBonus } from '@betarena/scores-lib/types/_HASURA_.js';
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -75,8 +75,8 @@
     dataLayout: IDataLayout[]
     = [
       'referral_bonus'
-      , 'referrals_number'
       , 'referred_bonus'
+      , 'referrals_number'
       , 'total_bonus'
     ]
   ;

@@ -29,7 +29,14 @@ $root-color-map:
     "root-name": "--white-3",
     "class-name": "color-white-3",
     "value": "#F7F7F7",
-    "dark-mirror": ()
+    "dark-mirror":
+    (
+      "1":
+      (
+        "class-name": ".dark-v3",
+        "root-name": "--grey-shade"
+      )
+    )
   ),
   "white-4":
   (
@@ -169,7 +176,14 @@ $root-color-map:
     "root-name": "--grey-shade",
     "class-name": "color-grey-shade",
     "value": "#cccccc",
-    "dark-mirror": ()
+    "dark-mirror":
+    (
+      "1":
+      (
+        "class-name": ".dark-v1",
+        "root-name": "--grey"
+      )
+    )
   ),
   "grey-shade-2":
   (

@@ -27,7 +27,7 @@
 
   import sessionStore from '$lib/store/session.js';
   import userBetarenaSettings from '$lib/store/user-settings.js';
-  import { copyToClipboard } from '$lib/utils/platform-functions.js';
+  import { copyToClipboard, formatNumberWithCommas } from '$lib/utils/platform-functions.js';
   import { Misc } from '@betarena/scores-lib/dist/classes/class.misc.js';
 
   import ReferralsInviteModal from './Referrals.Invite.Modal.svelte';
@@ -298,9 +298,9 @@
           {dataMap.get('bronze')?.data?.position}
 
           {#if dataMap.get('bronze')?.data?.invest_max == -1}
-            (${dataMap.get('bronze')?.data?.invest_min} or more)
+            (${formatNumberWithCommas(dataMap.get('bronze')?.data?.invest_min)} or more)
           {:else}
-            (${dataMap.get('bronze')?.data?.invest_min} - ${dataMap.get('bronze')?.data?.invest_max})
+            (${formatNumberWithCommas(dataMap.get('bronze')?.data?.invest_min)} - ${formatNumberWithCommas(dataMap.get('bronze')?.data?.invest_max)})
           {/if}
         </p>
       </div>
@@ -455,9 +455,9 @@
                 {data.data?.position}
 
                 {#if data.data?.invest_max == -1}
-                  (${data.data.invest_min} or more)
+                  (${formatNumberWithCommas(data.data.invest_min)} or more)
                 {:else}
-                  (${data.data?.invest_min} - ${data.data?.invest_max})
+                  (${formatNumberWithCommas(data.data?.invest_min)} - ${formatNumberWithCommas(data.data?.invest_max)})
                 {/if}
               </p>
             </div>

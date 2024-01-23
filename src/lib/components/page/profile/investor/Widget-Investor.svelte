@@ -350,7 +350,8 @@
       id="section-referral"
     >
       <ReferralsSteps
-        profileData={data}
+        VIEWPORT_MOBILE_INIT_PARENT={VIEWPORT_MOBILE_INIT}
+        VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
       />
       <ReferralsInfo
         profileData={data}

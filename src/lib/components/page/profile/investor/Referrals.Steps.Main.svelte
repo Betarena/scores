@@ -28,7 +28,7 @@
   import userBetarenaSettings from '$lib/store/user-settings.js';
   import { toZeroPrefixDateStr } from '$lib/utils/dates.js';
 
-  import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
+  import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -48,9 +48,15 @@
 
   export let
     /**
-     * @augments IProfileData
+     * @description
+     *  📣
     */
-    profileData: IProfileData | null
+    VIEWPORT_MOBILE_INIT_PARENT: [ number, boolean ]
+    /**
+     * @description
+     *  📣
+    */
+    , VIEWPORT_TABLET_INIT_PARENT: [ number, boolean ]
   ;
 
   const
@@ -59,10 +65,10 @@
     CNAME: string = 'profile⮕w⮕referral-step⮕main'
     /** @description 📣 threshold start + state for 📱 MOBILE */
     // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
+    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = VIEWPORT_MOBILE_INIT_PARENT
     /** @description 📣 threshold start + state for 💻 TABLET */
     // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
+    , VIEWPORT_TABLET_INIT: [ number, boolean ] = VIEWPORT_TABLET_INIT_PARENT
   ;
 
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
@@ -103,18 +109,25 @@
     -->
     <div
       id="title"
-      class=
-      "
-      {VIEWPORT_MOBILE_INIT[1] ? 's-24' : 's-32'}
-      w-500
-      color-black-2
-      m-b-16
-      "
     >
-      {
-        @html profileTrs.investor?.referral.details.title
-        ?? 'Refer Investors. Earn Tokens Together.'
-      }
+      <p
+        class=
+        "
+        {VIEWPORT_MOBILE_INIT_PARENT[1] ? 's-24' : 's-32'}
+        w-500
+        color-black-2
+        m-b-16
+        "
+        style=
+        "
+        line-height: 40px; /* 125% */
+        "
+      >
+        {
+          @html profileTrs.investor?.referral.details.title
+          ?? 'Refer Investors. Earn Tokens Together.'
+        }
+      </p>
     </div>
 
     <!--
@@ -142,8 +155,11 @@
       class=
       "
       s-20
-      w-500
       color-black-2
+      "
+      style=
+      "
+      line-height: 150%; /* 30px */
       "
     >
       {
@@ -171,7 +187,7 @@
           class=
           "
           s-12
-          color-grey
+          color-grey-shade
             dark-v1
           w-600
           "
@@ -189,7 +205,7 @@
             "
             s-16
             color-black-2
-              dark-white-v3
+              grey-v1
             m-b-12
             "
           >
