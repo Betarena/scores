@@ -153,7 +153,7 @@
   $: deepReactListenInvestorBalanceChng = $userBetarenaSettings.user.scores_user_data?.investor_balance;
 
   // ▓ [🐞]
-  $userBetarenaSettings.user.scores_user_data.investor_balance = 100000;
+  // $userBetarenaSettings.user.scores_user_data.investor_balance = 100000;
 
   // #endregion ➤ 📌 VARIABLES
 

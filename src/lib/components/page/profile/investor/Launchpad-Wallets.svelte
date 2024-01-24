@@ -32,7 +32,11 @@
 
   import icon_bta_token from '../assets/price-tier/icon-bta-token.svg';
 
-  import type { B_H_TH } from '@betarena/scores-lib/types/_HASURA_.js';
+  import { browser } from '$app/environment';
+  import { dlog } from '$lib/utils/debug.js';
+  import { passByValue } from '@betarena/scores-lib/dist/functions/func.common.js';
+  import { tryCatchAsync } from '@betarena/scores-lib/dist/util/util.common.js';
+  import type { B_H_TH, PUBLIC__INVESTOR_DeleteInvestorByPkElement } from '@betarena/scores-lib/types/_HASURA_.js';
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -85,10 +89,12 @@
   let
     /**
      * @description
+     *  📣
     */
     today: Date = new Date()
     /**
      * @description
+     *  📣
     */
     , targetMonths = () =>
     {
@@ -112,12 +118,29 @@
     (
       targetMonths()
       , profileData?.tx_hist ?? []
+      , profileData?.investorData
     )
+    /**
+     * @description
+     *  📣 stores target `state` used within widget.
+    */
+    , stateObject:
+    {
+      /**
+       * @description
+       *  📣 stores target `chart` instance.
+      */
+      chartInstance: Chart | null
+    } = {
+      chartInstance: null
+    }
   ;
 
-  console.log('targetMonths', targetMonths())
+  // ▓ [🐞]
+  // console.log('targetMonths', targetMonths())
 
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
+  $: deepReactListen1 = passByValue($userBetarenaSettings.theme);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -153,14 +176,20 @@
   (
     dateList: Date[]
     , investorTxList: B_H_TH[]
+    , investorData: PUBLIC__INVESTOR_DeleteInvestorByPkElement | null
   ): Map < string, number >
   {
     const
       /**
        * @description
-       *  📣 Temporary `map` holding `transaction-history` data grouped by `month_year` data.
+       *  📣 Temporary `map` for `transaction-history` data sum grouped by `month_year` data.
       */
       mapTemp = new Map < string, number >()
+      /**
+       * @description
+       *  📣 Temporary `map` for `referral-history` data sum grouped by `month_year` data.
+      */
+      , mapTemp2 = new Map < string, number >()
       /**
        * @description
        *  📣 Main `map` holding past year (12-months) data, merged with `mapTemp` data.
@@ -172,12 +201,29 @@
     // ▓ > loop over each transaction and group them by monthly+year.
     for (const iterator of investorTxList)
     {
-      const txMonthYear = `${new Date(iterator.date).getMonth()}_${new Date(iterator.date).getFullYear()}`;
+      const
+        txMonthYear = `${new Date(iterator.date).getMonth()}_${new Date(iterator.date).getFullYear()}`
+      ;
+
+      if (
+        !['pending', 'completed'].includes(iterator.status)
+        || !['investment', 'vesting'].includes(iterator.type)
+      )
+        continue;
+      //
+
+      let deltaAmount: number = 0;
+
+      if (iterator.type == 'investment')
+        deltaAmount = iterator.amount ?? 0;
+      else if (iterator.type == 'vesting')
+        deltaAmount = -(iterator.amount ?? 0);
+      //
 
       if (mapTemp.has(txMonthYear))
       {
         let existingAmount = mapTemp.get(txMonthYear) ?? 0;
-        existingAmount += iterator.amount ?? 0;
+        existingAmount += deltaAmount;
         mapTemp.set(txMonthYear, existingAmount);
         continue;
       }
@@ -186,7 +232,35 @@
     }
 
     // ▓ [🐞]
-    // console.log('mapTemp', mapTemp);
+    console.log('mapTemp', mapTemp);
+
+    // ▓ NOTE:
+    // ▓ > loop over each referral and group them by monthly+year;
+    for (const iterator of investorData?.data?.referral_history ?? [])
+    {
+      const txMonthYear = `${new Date(iterator.date).getMonth()}_${new Date(iterator.date).getFullYear()}`;
+
+      if (mapTemp2.has(txMonthYear))
+      {
+        let existingAmount = mapTemp2.get(txMonthYear) ?? 0;
+        existingAmount += iterator.bonus_bta;
+        mapTemp2.set(txMonthYear, existingAmount);
+        continue;
+      }
+
+      mapTemp2.set(txMonthYear, iterator.bonus_bta);
+    }
+
+    // ▓ [🐞]
+    console.log('mapTemp2', mapTemp2);
+
+    let
+      /**
+       * @description
+       *  📣 **cumulative sum** for month-on-month amount.
+      */
+      cummulativeSum: number = 0
+    ;
 
     // ▓ NOTE:
     // ▓ > loop over each group monthly+year.
@@ -196,15 +270,26 @@
 
       if (mapTemp.has(txMonthYear))
       {
-        mapMain.set(txMonthYear, mapTemp.get(txMonthYear)!)
-        continue;
+        let existingAmount = mapTemp.get(txMonthYear)!;
+        cummulativeSum += existingAmount;
+        mapMain.set(txMonthYear, cummulativeSum)
       }
+      if (mapTemp2.has(txMonthYear))
+      {
+        let existingAmount = mapTemp2.get(txMonthYear)!;
+        cummulativeSum += existingAmount;
+        mapMain.set(txMonthYear, cummulativeSum)
+      }
+
+      if (mapMain.has(txMonthYear))
+        continue;
+      //
 
       mapMain.set(txMonthYear, 0);
     }
 
     // ▓ [🐞]
-    // console.log('mapMain', mapMain);
+    console.log('mapMain', mapMain);
 
     return mapMain;
   }
@@ -221,75 +306,119 @@
   (
   ): void
   {
-    const ctx = document.getElementById('myChart')
-
-    // ▓ [🐞]
-    // console.log('mapInvestAmountDeltaPerMonth', mapInvestAmountDeltaPerMonth)
-
-    Chart.defaults.font.size = 14;
-    Chart.defaults.color = '#8C8C8C';
-
-    new Chart
+    tryCatchAsync
     (
-      ctx as ChartItem,
+      async (
+      ): Promise < void > =>
       {
-        type: 'line'
-        , data:
-        {
-          labels: [...mapInvestAmountDeltaPerMonth.keys()].map(x => {return MONTH_NAMES_ABBRV[x.split('_')[0]]})
-          , datasets: [
-            {
-              data: [...mapInvestAmountDeltaPerMonth.values()]
-              , borderWidth: 1
-              , borderColor: '#F5620F'
-              , backgroundColor: 'rgba(245, 98, 15, 0.24)'
-              , fill: true
-            }
-          ]
-        }
-        , options:
-        {
-          plugins:
+        const
+          canvas = document.getElementById('myChart') as HTMLCanvasElement
+          , ctx = canvas.getContext('2d')!
+        ;
+        var gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, 'rgba(245, 98, 15, 0.24)');
+        gradient.addColorStop(0.75, 'rgba(0,0,0,0)');
+
+        // ▓ read-more :|: https://stackoverflow.com/questions/40056555/destroy-chart-js-bar-graph-to-redraw-other-graph-in-same-canvas
+        if (stateObject.chartInstance)
+          stateObject.chartInstance.destroy();
+        //
+
+        // ▓ [🐞]
+        // console.log('mapInvestAmountDeltaPerMonth', mapInvestAmountDeltaPerMonth)
+
+        Chart.defaults.font.size = 14;
+        Chart.defaults.color = '#8C8C8C';
+
+        const gridLineColor: string
+          = $userBetarenaSettings.theme == 'Dark'
+            ? '#4B4B4B'
+            : '#E6E6E6'
+        ;
+
+        stateObject.chartInstance = new Chart
+        (
+          canvas as ChartItem,
           {
-            legend:
+            type: 'line'
+            , data:
             {
-              display: false
+              labels: [...mapInvestAmountDeltaPerMonth.keys()].map(x => {return MONTH_NAMES_ABBRV[x.split('_')[0]]})
+              , datasets: [
+                {
+                  data: [...mapInvestAmountDeltaPerMonth.values()]
+                  , borderWidth: 3
+                  , borderColor: '#F5620F'
+                  // , backgroundColor: 'rgba(245, 98, 15, 0.24)'
+                  , fill: true
+                  , backgroundColor: gradient // Put the gradient here as a fill color
+                }
+              ]
+            }
+            , options:
+            {
+              plugins:
+              {
+                legend:
+                {
+                  display: false
+                }
+              }
+              , elements:
+              {
+                point:
+                {
+                  pointStyle: false
+                }
+              }
+              , scales:
+              {
+                y:
+                {
+                  beginAtZero: true
+                  , grid:
+                  {
+                    color: gridLineColor
+                    , lineWidth: 2
+                  }
+                  , border:
+                  {
+                    dash: [5,5]
+                  }
+                }
+                , x:
+                {
+                  grid:
+                  {
+                    color: gridLineColor
+                    , lineWidth: 2
+                  }
+                  , border:
+                  {
+                    dash: [5,5]
+                  }
+                }
+              }
             }
           }
-          , elements:
-          {
-            point:
-            {
-              pointStyle: false
-            }
-          }
-          , scales:
-          {
-            y:
-            {
-              beginAtZero: true
-              , grid:
-              {
-                color: '#4B4B4B'
-              }
-              , border:
-              {
-                dash: [5,5]
-              }
-            }
-            , x:
-            {
-              grid:
-              {
-                color: '#4B4B4B'
-              }
-              , border:
-              {
-                dash: [5,5]
-              }
-            }
-          }
-        }
+        );
+
+        return;
+      }
+      , (
+        ex: unknown
+      ): void =>
+      {
+        // ▓ [🐞]
+        // if (ex?.toString()?.includes('TypeError: null is not an object (evaluating /'signerOrProvider.call/')'))
+        //   console.info('❗️', '');
+        // else
+        //   console.error('💀 Unhandled :: ex');
+
+        // ▓ [🐞]
+        console.error(`💀 Unhandled :: ${ex}`);
+
+        return;
       }
     );
 
@@ -318,6 +447,34 @@
   );
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  $:
+  if (browser && deepReactListen1)
+  {
+    // ▓ [🐞]
+    dlog
+    (
+      '🚏 checkpoint [R] ➤ Launchpad-Wallets.svelte if_R_3',
+      true
+    );
+
+    generateTargetChart();
+  }
+
+    // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
 </script>
 
