@@ -218,7 +218,8 @@
   >
     <!-- TODO: Missing Translation -->
     {
-      'Investment Details'
+      profileTrs.investor?.investment_details.widget_title
+      ?? 'Investment Details'
     }
   </p>
 
