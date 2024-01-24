@@ -146,7 +146,7 @@
     (
       {
         // ▓ @see :> get projectId at https://cloud.walletconnect.com
-        projectId: 'a523c408585b0f7c88a7df7a9d70dfe6'
+        projectId: import.meta.env.VITE_WALLETCONNECT_ID
         , ethersConfig: defaultConfig
         (
           {
