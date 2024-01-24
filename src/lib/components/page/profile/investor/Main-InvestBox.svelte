@@ -135,7 +135,7 @@
     // eslint-disable-next-line no-unused-vars
     , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
     /** @description target `polygon` blockchain `BetarenaBank` polygon mumbai (testnet) */
-    , betarenaBankContractAddress: string = '0x5BC335e9c9492B8abb07B49a6dbD8269d7419F1D'
+    , betarenaBankContractAddress: string = '0x8d03D84965a0e10a08E814CF19fe4207a34bFd4c' // '0x5BC335e9c9492B8abb07B49a6dbD8269d7419F1D'
   ;
 
   let
