@@ -291,10 +291,10 @@
   @media only screen
   and (min-width: 1160px)
   {
-    div#title-box
+    div#profile⮕w⮕referral-step⮕main
     {
-      /* 🎨 style */
-      padding: 0 20px;
+      /* 🛝 layout */
+      margin-left: 20px;
     }
   }
 
