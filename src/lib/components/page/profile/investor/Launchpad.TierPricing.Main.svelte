@@ -320,7 +320,11 @@
 
     // ▓ CHECK
     // ▓ > client has scrolled into view THIS widget component
-    if (distanceTopFromDiv <= 300) stateObject.show = true;
+    if (distanceTopFromDiv <= 300)
+    {
+      stateObject.show = true;
+      setTimeout(() => { return show = true }, 50);
+    }
 
     return;
   }
@@ -342,7 +346,6 @@
     ) =>
     {
       resizeCustom();
-      setTimeout(() => {return show = true}, 50)
       return;
     }
   );
