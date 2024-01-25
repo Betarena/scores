@@ -1093,6 +1093,7 @@
   class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
 >
   <form
+    id='invest-form'
     on:submit|preventDefault={() => {return executeDeposit()}}
   >
 
@@ -1856,7 +1857,7 @@
       -->
       <button
         type="submit"
-        form="{CNAME}"
+        form="invest-form"
         class=
         "
         btn-primary-v2
