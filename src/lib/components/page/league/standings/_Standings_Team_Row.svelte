@@ -20,7 +20,7 @@
 	$: recent_form =
 		TEAM_DATA.rf == null
 			? ['', '', '', '', '']
-			: Array.from(TEAM_DATA.rf);
+			: Array.from(TEAM_DATA.rf).reverse();
 
 	let position;
 	let points;

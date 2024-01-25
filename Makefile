@@ -192,6 +192,8 @@ dev-local-deploy:
 	@# ▓ > for spin-up of local environment.
 	@echo ""
 
+	-@ $(MAKE) mac-os
+
 	. ${NVM_DIR}/nvm.sh
 	nvm use
 
@@ -199,7 +201,7 @@ dev-local-deploy:
 
 	@VITE_SCORES_PKG_VERSION="v.$(shell npm pkg get version --workspaces=false | tr -d \")"\
 		VITE_SCORES_LIB_PKG_VERSION="v.$(shell npm info @betarena/scores-lib version | tr -d \")"\
-		DOTENV_KEY=$(shell npx --yes dotenv-vault@1.25.0 keys development)\
+		DOTENV_KEY=$(shell npx dotenv-vault@1.25.0 keys development)\
 		npm run sveltekit::dev
 	@
 #
@@ -656,6 +658,7 @@ mac-os:
 	@ # ▓ NOTE:
 	@ # ▓ > required for MacOS removal of `._*` files.
 	@ # ▓ > @see :> https://apple.stackexchange.com/questions/14980/why-are-dot-underscore-files-created-and-how-can-i-avoid-them
+	-@dot_clean .
 #
 
 misc-end-target:
