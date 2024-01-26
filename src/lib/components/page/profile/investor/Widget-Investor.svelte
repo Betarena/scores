@@ -240,7 +240,7 @@
         WIDGET_DATA={data}
       />
       <MainInvestBox
-        WIDGET_DATA={data}
+        profileData={data}
       />
 
       <iframe
