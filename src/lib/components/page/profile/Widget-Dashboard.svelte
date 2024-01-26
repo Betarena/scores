@@ -20,15 +20,13 @@ COMPONENT JS (w/ TS)
 	import stats_row_img from './assets/dashboard/total-volume.png';
 	import home from './assets/menu-opt/home-select.svg';
 
-  import type { B_PROF_T } from '@betarena/scores-lib/types/profile.js';
+  import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
 
-  let RESPONSE_PROFILE_DATA: B_PROF_T
-
-  $: RESPONSE_PROFILE_DATA = $page.data.RESPONSE_PROFILE_DATA;
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -68,7 +66,7 @@ COMPONENT JS (w/ TS)
           s-14
         "
 			>
-				{RESPONSE_PROFILE_DATA?.dashboard_title || 'Dashboard content will be available soon'}
+				{profileTrs.dashboard_title || 'Dashboard content will be available soon'}
 			</p>
 		</div>
 	</div>
@@ -82,7 +80,7 @@ COMPONENT JS (w/ TS)
       s-20
     "
 	>
-    {RESPONSE_PROFILE_DATA?.dashboard || 'Dashboard content will be available soon'}
+    {profileTrs.dashboard || 'Dashboard content will be available soon'}
 	</h2>
 	<!--
   [ℹ] dashboard stats info

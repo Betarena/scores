@@ -31,6 +31,7 @@ COMPONENT JS (w/ TS)
     [
       'Dashboard',
       'Account Settings',
+      'Investor',
       'Deposit',
       'Withdraw',
       'Transaction History',
@@ -71,8 +72,11 @@ COMPONENT JS (w/ TS)
 		if (selectedMenuOpt == 'Dashboard')
       targetUrl = `/u/dashboard/${$userBetarenaSettings.lang}`
     ;
-		if (selectedMenuOpt == 'Account Settings')
+    if (selectedMenuOpt == 'Account Settings')
       targetUrl = `/u/settings/${$userBetarenaSettings.lang}`
+    ;
+		if (selectedMenuOpt == 'Investor')
+      targetUrl = `/u/investor/${$userBetarenaSettings.lang}`
     ;
     if (selectedMenuOpt == 'Deposit')
       targetUrl = `/u/deposit/${$userBetarenaSettings.lang}`
@@ -122,6 +126,9 @@ COMPONENT JS (w/ TS)
     ;
 		if ($page?.url?.pathname.includes('settings'))
 			selectedMenuOpt = 'Account Settings';
+    ;
+    if ($page?.url?.pathname.includes('investor'))
+			selectedMenuOpt = 'Investor';
     ;
     if ($page?.url?.pathname.includes('deposit'))
 			selectedMenuOpt = 'Deposit';

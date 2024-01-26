@@ -408,3 +408,28 @@ export function daysDiffNum
   const dateDiff: number = (_timeDiff / (1000 * 3600 * 24));
   return dateDiff < 0 ? -dateDiff : dateDiff;
 }
+
+/**
+ * @author
+ *  @migbash
+ * @summary
+ *  🟦 HELPER
+ * @description
+ *  📣 Conversion of **target** date to specific `dd/MM/yy` format.
+ * @param { string } date
+ *  💠 Target `date` to be formated to.
+ * @return { string }
+ *  📤 Target formatted date.
+ */
+export function ddMMyyFormat
+(
+  date: string
+): string
+{
+  return toZeroPrefixDateStr(new Date(date).getDate())
+    + '/'
+    + toZeroPrefixDateStr(new Date(date).getMonth() + 1)
+    + '/'
+    + (new Date(date).getFullYear()).toString().substr(-2)
+  ;
+}

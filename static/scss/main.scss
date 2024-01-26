@@ -1,0 +1,91 @@
+/* #region ➤ [MAIN] Website Layout */
+
+*
+{
+  box-sizing: border-box;
+}
+
+body,
+html
+{
+  margin: 0 !important;
+  background-color: var(--white);
+  scroll-behavior: smooth !important;
+}
+
+body
+{
+  color: var(--black);
+  background-color: var(--whitev2);
+  margin: 0 !important;
+  font-family: Roboto;
+  font-size: 14px;
+  line-height: 1.5;
+  /*
+     MOBILE
+     disable pinchin & user zooming on */
+  /* touch-action: pan-x pan-y; */
+  /*
+  SAFARI */
+  -webkit-text-size-adjust: none;
+
+  &.disable-scroll
+  {
+    /* 🎨 style */
+    overflow: hidden;
+    height: 100%;
+  }
+}
+
+a
+{
+  text-decoration: none !important;
+  color: inherit;
+  display: flex;
+
+  &.disable-anchor
+  {
+    pointer-events: none;
+  }
+}
+
+.inter-font
+{
+  font-family: Inter;
+}
+
+p
+{
+  font-style: normal;
+  font-weight: 400; /* 400 / 500 */
+  line-height: 150%;
+  margin: 0;
+  color: var(--dark-theme);
+}
+
+/* MOBILE VIEW OVERFLOW HIDDEN */
+@media only screen and (max-width: 375px)
+{
+  html,
+  body
+  {
+    overflow-x: hidden;
+  }
+}
+
+/*
+### NOTE:
+### zoom-out-mobiles-input-form
+### SEE:
+### https://stackoverflow.com/questions/2989263/disable-auto-zoom-in-input-text-tag-safari-on-iphone
+*/
+@supports (-webkit-overflow-scrolling: touch)
+{
+  form input:active,
+  input:active
+  {
+    font-size: 16px !important;
+  }
+}
+
+/* #endregion ➤ [MAIN] Website Layout */

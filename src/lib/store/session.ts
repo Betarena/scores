@@ -31,8 +31,11 @@ const sessionStoreObj: Platform_Session =
   withdrawModal: false,
   showUserguide1: false,
   showUserguide1Conf: false,
+  showTermsAndConditions: false,
   showFixtureCompetition: false,
   isShowFixtureCompetitionJoinModal: false,
+  showInvstementWallets: false,
+  showReferralInviteModal: false,
   // ### NOTE:
   // ### variables for language handle.
   lang_intent: undefined,
@@ -72,7 +75,8 @@ const sessionStoreObj: Platform_Session =
   live_odds_fixture_map: new Map(),
   livescore_now_player_fixture: undefined,
   livescore_now_fixtures: [],
-  competitions_map: new Map()
+  competitions_map: new Map(),
+  investDepositAmountMobileWeb3: undefined
 };
 
 // #endregion ➤ 📌 VARIABLES

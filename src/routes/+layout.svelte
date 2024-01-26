@@ -35,13 +35,12 @@
   import { initSportbookData, platfrom_lang_ssr, setUserGeoLocation } from '$lib/utils/platform-functions.js';
   import * as Sentry from '@sentry/sveltekit';
 
+	import SplashScreen from '$lib/components/Splash-Screen.svelte';
 	import Footer from '$lib/components/_main_/footer/Footer.svelte';
 	import Header from '$lib/components/_main_/header/Header.svelte';
-
 	import DevInfoBox from '$lib/components/misc/Dev-Info-Box.svelte';
-	import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
 
-  // import SplashScreen from '$lib/components/Splash-Screen.svelte';
+	import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
 
   // ### WARNING:
   // ### Disable, if Dynamic Import is Enabled.
@@ -536,7 +535,7 @@
 ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 -->
 
-<!-- <SplashScreen /> -->
+<SplashScreen />
 
 {#if targetAppEnv == '.env.local'}
   <DevInfoBox />
@@ -584,12 +583,10 @@
 <main
 	class:dark-background={$userBetarenaSettings.theme == 'Dark'}
   class:before-display-none={deepReactListenIsRouteCompetitions}
+  class:profile-page={deepReactListenIsProfilePage}
 >
-
 	<slot />
-
 	<Footer />
-
 </main>
 
 <!--
@@ -635,6 +632,11 @@
     /* 🎨 style */
     display: none;
   }
+  main.profile-page::before
+  {
+    /* 🎨 style */
+		height: 611px;
+  }
 
 	/*
   ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
@@ -649,7 +651,13 @@
     {
       /* 🎨 style */
 			height: 495px;
-		}
+    }
+
+    main.profile-page::before
+    {
+      /* 🎨 style */
+			height: 611px;
+    }
 	}
 
 	@media screen
@@ -664,9 +672,21 @@
       /* 📌 position */
 			top: calc(100vw / -5.5) !important;
       /* 🎨 style */
-			height: 100%;
-			background-size: contain !important;
+      height: 100%;
+      background-size: contain !important;
 		}
+    main.profile-page
+    {
+      /* 🎨 style */
+      overflow: visible;
+    }
+    main.profile-page::before
+    {
+      /* 🎨 style */
+      top: 0 !important;
+      height: 35%; /*  939px :: 25% */
+      background-size: cover !important;
+    }
 	}
 
 </style>

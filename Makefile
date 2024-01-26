@@ -1,198 +1,213 @@
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-# ▓ 🏗️ DEBUG    																									    ▓
-# ▓ 👇 contains custom `debug/log` commands                          ▓
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+# ╭──────────────────────────────────────────────────────────────────────────────────╮
+# │ 🐞 :|: DEBUG    																									    					 │
+# ┣──────────────────────────────────────────────────────────────────────────────────┫
+# │ 👇 :|: contains custom `debug/log` commands [IGNORE]                             │
+# ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-# ▓ @see :|: https://xdevs.com/guide/color_serial/
-# ▓ @see :|: https://en.wikipedia.org/wiki/ANSI_escape_code
+# ▓ read-more :|: https://xdevs.com/guide/color_serial/
+# ▓ read-more :|: https://en.wikipedia.org/wiki/ANSI_escape_code
 COLOUR_G=\033[0;32m
 COLOUR_R=\033[0;31m
 COLOUR_B=\033[0;34m
 COLOUR_GREY=\033[0;90m
 END_COLOUR=\033[0m
 
-SET_DESCRIPTION:
+log-end:
 	@echo ""
+	# ▓ DESCRIPTION
+	# ▓ > custom use of `target` command.
+	# ▓ > used by other targets to `signal` completed execution.
 
-	@ # ▓ > read-more :|: https://www.npmjs.com/package/boxen-cli
-	@npx --yes\
-		boxen-cli@4.0.0 --width=50 --padding=1 --border-color=yellow --border-style=round "DESCRIPTION: $(desc)"
-
-	# @echo $(desc) | npx chalk-cli@5.0.1 bold cyan
-	@echo ""
+	@echo\
+		"\n$(COLOUR_GREY)\
+		\n▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\
+		\n▓                                          ▓\
+		\n▓ 🟩 Done!                                 ▓\
+		\n▓                                          ▓\
+		\n▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\
+		$(END_COLOUR)\n"
 #
 
-LOG_ERROR:
-	@ # ▓ > read-more :|: https://www.npmjs.com/package/boxen-cli
-	@npx --yes\
-		boxen-cli@4.0.0 --width=50 --padding=0.5 --border-color=red --border-style=round "$(desc)"
-#
-
-LOG_INFO:
-	@ # ▓ > read-more :|: https://www.npmjs.com/package/boxen-cli
-	@npx --yes\
-		boxen-cli@4.0.0 --width=50 --padding=0.5 --border-color=blue --border-style=round "$(desc)"
-#
-
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-# ▓ 🏗️ SETUP    																									    ▓
-# ▓ 👇 contains custom `setup` commands                              ▓
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+# ╭──────────────────────────────────────────────────────────────────────────────────╮
+# │ 🏗️ :|: SETUP                                                                     │
+# ┣──────────────────────────────────────────────────────────────────────────────────┫
+# │ 👇 :|: contains custom `setup` commands. Used for first time project config      │
+# ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 .ONESHELL:
-nvm:
-	@echo ""
-	@# ▓ DESCRIPTION
-	@# ▓ > custom use of `nvm` command implementation.
-	@# ▓ > read-more :|: https://github.com/nvm-sh/nvm/issues/1446#issuecomment-859143778
-	@# ▓ TODO:
-	@# ▓ > allow this to be the 'default' for every 'target' that uses 'nvm'.
-	@echo ""
+setup-git:
+	@# ╭──────────────────────────────────────────────────────────────────╮
+	@# │ NOTE: ▓ DESCRIPTION																						  │
+	@# │ > custom setup for GIT target executable.                        │
+	@# │ > 🔗 read-more :|: https://github.com/nvm-sh/nvm							    │
+	@# ╰──────────────────────────────────────────────────────────────────╯
 
-	. ${NVM_DIR}/nvm.sh
-	nvm use
+	# ▓ @see :|: https://stackoverflow.com/questions/1257592/how-do-i-remove-files-saying-old-mode-100755-new-mode-100644-from-unstaged-cha
+	@git config core.filemode false
+
+	@git config\
+		--list\
+		--show-origin
+#
+
+.ONESHELL:
+setup-node:
+	@# ╭──────────────────────────────────────────────────────────────────╮
+	@# │ NOTE: ▓ DESCRIPTION																						  │
+	@# │ > setup of project Node/NPM via NVM                              │
+	@# │ > 🔗 read-more :|: https://github.com/nvm-sh/nvm							    │
+	@# ╰──────────────────────────────────────────────────────────────────╯
+
+	-@. ${NVM_DIR}/nvm.sh
+	-@nvm use
 
 	@# ▓ NOTE:
-	@# ▓ > check `nvm` is configured.
-	@command -v nvm
+	@# ▓ > installs target 'node' version, if absent.
+	@nvm install 16.17.0
 
-	@# ▓ NOTE:
-	@# ▓ > custom use of `nvm` command porting.
-	@nvm $(CMD)
-#
+	@# nvm use 16.17.0
 
-.ONESHELL:
-node-setup:
-	@${MAKE}\
-		SET_DESCRIPTION\
-		desc="$$\
-		custom use of nvm command.$$\
-		for switching between node and npm versions.$$\
-		see https://github.com/nvm-sh/nvm"
-	@
+	@npm install -g npm@8.19.1
 
-	@ # ▓ NOTE:
-	@ # ▓ > install target `node` version if absent
-	@ # ▓ >	from the list of availble `node` versions with `nvm`.
-	@ $(MAKE) nvm CMD="install 16.17.0"
-
-	@ # ▓ NOTE:
-	@ # ▓ > change machine `node` version to use that of this project.
-	@ $(MAKE) nvm CMD="use 16.17.0"
-
-	@ # ▓ NOTE:
-	@ # ▓ > change machine `npm` version to use that of this project.
-	@ npm install -g npm@8.19.1
-#
-
-.ONESHELL:
-project-check:
-	@ echo ""
-	@ # ▓ DESCRIPTION
-	@ # ▓ > custom use of `nvm` command.
-	@ # ▓ > for switching between `node` and `npm` versions.
-	@ # ▓ > read-more :|: https://github.com/nvm-sh/nvm
-	@ echo ""
-
-	@ # ▓ CHECK
-	@ # ▓ see :|: https://stackoverflow.com/questions/32153034/oneshell-not-working-properly-in-makefile
-	@ # ▓ see :|: https://stackoverflow.com/questions/43175529/updating-make-version-on-mac
-	make --version
-
-	@ # ▓ CHECK
-	@ # ▓ > for `architecture` used by `machine`.
-	@ $(eval SYSTEM_ARCHITECTURE_DETECTED=$(shell arch))
-	@ $(MAKE) LOG_INFO desc="System Architecture: $(SYSTEM_ARCHITECTURE_DETECTED) (built arm64)"
-
-	@ # ▓ CHECK
-	@ # ▓ > for `architecture` used by `node`.
-	@ $(eval NODE_ARCHITECTURE_DETECTED=$(shell node -p "process.arch"))
-	@ $(MAKE) LOG_INFO desc="Node Architecture: $(NODE_ARCHITECTURE_DETECTED) (built arm64)"
-
-	@if [ $(SYSTEM_ARCHITECTURE_DETECTED) != $(NODE_ARCHITECTURE_DETECTED) ]; then\
-		$(MAKE) LOG_ERROR desc="❌ Architectures do not match! Please check.";\
-	fi
-
-	@ # ▓ CHECK
-	@ # ▓ > for `node` version being used.
-	@ $(eval NODE_VERSION=$(shell node -v))
-	@ $(MAKE) LOG_INFO desc="Node Version: $(NODE_VERSION) (built v16.17.0)"
-
-	@if [ $(NODE_VERSION) != "v16.17.0" ]; then\
-		$(MAKE) LOG_ERROR desc="❌ Node version is not correct! Please check.";\
-		$(MAKE) node-setup;\
-	fi
-
-	@ # ▓ CHECK
-	@ # ▓ > for `npm` version being used.
-	@ $(eval NPM_VERSION=$(shell npm -v))
-	@ $(MAKE) LOG_INFO desc="NPM Version: $(NPM_VERSION) (built v8.19.1)"
-
-	@if [ $(NPM_VERSION) != "8.19.1" ]; then\
-		echo "❌ NPM Version is not correct! Please check.";\
-		$(MAKE) node-setup;\
-	fi
-
-	@ # ▓ CHECK
-	@ # ▓ > for `dotenv` is configured.
-	@if [[ ! -f ./.env.vault || ! -f ./.env.me ]]; then\
-		echo "❌ Dotenv :: Missing Key Files.";\
-	fi
-
-	@ # ▓ NOTE:
-	@ # ▓ > check `heroku` is configured.
-	@ $(MAKE) LOG_INFO desc="Make sure to have access to the Heroku Betarena Project (ask the team member)"
+	@npm i
 
 	@ $(MAKE) misc-end-target
 #
 
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-# ▓ 🐳 DOCKER                                                        ▓
-# ▓ 👇 contains custom `docker` commands and interaction with Docker ▓
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+.ONESHELL:
+setup-main-check:
+	@# ╭──────────────────────────────────────────────────────────────────╮
+	@# │ NOTE: ▓ DESCRIPTION																						  │
+	@# │ > setup of project and validation of correct packages/           │
+	@# │ > requirements.				  																		    │
+	@# ╰──────────────────────────────────────────────────────────────────╯
 
-docker-start:
-	echo 'Starting PROD container'
-	docker-compose -f docker-compose.yml up -d
+	@ $(eval SYSTEM_ARCHITECTURE_DETECTED=$(shell arch))
+	echo -e "\xF0\x9F\x93\xA3 System Architecture: $(SYSTEM_ARCHITECTURE_DETECTED)";
+
+	@ $(eval NODE_ARCHITECTURE_DETECTED=$(shell node -p "process.arch"))
+	echo -e "\xF0\x9F\x93\xA3 Node Architecture: $(NODE_ARCHITECTURE_DETECTED)";
+
+	@# ╭──────────────────────────────────────────────────────────────────╮
+	@# │ CHECK    																							          │
+	@# │ for 'make' version used.																				  │
+	@# ╰──────────────────────────────────────────────────────────────────╯
+	@# ▓ see :|: https://stackoverflow.com/questions/32153034/oneshell-not-working-properly-in-makefile
+	@# ▓ see :|: https://stackoverflow.com/questions/43175529/updating-make-version-on-mac
+
+	@$(eval MAKE_VERSION=$(shell make --version | head -1 | cut -d" " -f3))
+	@if [ $(MAKE_VERSION) == "4.4.1" ]; then\
+		echo -e "\xE2\x9C\x85 $(COLOUR_G)Make version: $(MAKE_VERSION)$(END_COLOUR)";\
+	else\
+		echo -e "\xE2\x9D\x8C $(COLOUR_R)Make === 4.4.1 is required. Install via (MacOS) https://formulae.brew.sh/formula/make | (windows) https://community.chocolatey.org/packages/make $(END_COLOUR)";\
+	fi
+
+	@$(eval MAKE_ARCHITECTURE=$(shell make --version | head -2 | tail -1 | cut -d" " -f3))
+	echo -e "\xF0\x9F\x93\xA3 Make Architecture: $(MAKE_ARCHITECTURE)";
+
+	@# ╭─────────────────────────────────────────────────────────────────────────╮
+	@# │ CHECK    																							                 │
+	@# │ for 'node', 'npm'. 'nvm' version used.                                  │
+	@# ╰─────────────────────────────────────────────────────────────────────────╯
+
+	@$(eval NVM_VERSION=$(shell nvm --version))
+	@if [ $(NVM_VERSION) ]; then\
+		echo -e "\xE2\x9C\x85 $(COLOUR_G)NVM installed with version: $(NVM_VERSION)$(END_COLOUR)";\
+	else\
+		echo -e "\xE2\x9D\x8C $(COLOUR_R)NVM (any version) is required. Install via https://github.com/nvm-sh/nvm. $(END_COLOUR)";\
+	fi
+
+	@$(eval NODE_VERSION=$(shell node -v))
+	@if [ $(NODE_VERSION) == "v16.17.0" ]; then\
+		echo -e "\xE2\x9C\x85 $(COLOUR_G)NodeJs version: $(NODE_VERSION)$(END_COLOUR)";\
+	else\
+		echo -e "\xE2\x9D\x8C $(COLOUR_R)NodeJs === v16.17.0 is required. Performing an auto-install via NVM. $(END_COLOUR)";\
+		$(MAKE) --no-print-directory setup-node;\
+	fi
+
+	@$(eval NPM_VERSION=$(shell npm -v))
+	@if [ $(NPM_VERSION) == "8.19.1" ]; then\
+		echo -e "\xE2\x9C\x85 $(COLOUR_G)NPM version: $(NPM_VERSION)$(END_COLOUR)";\
+	else\
+		echo -e "\xE2\x9D\x8C $(COLOUR_R)NPM === 8.19.1 is required. Performing an auto-install via NVM. $(END_COLOUR)";\
+		$(MAKE) --no-print-directory setup-node;\
+	fi
+
+	@if [[ $(NODE_VERSION) == "v16.17.0" && $(NPM_VERSION) == "8.19.1" && ! "$(NVM_VERSION)" && -f ./node_modules ]]; then\
+		echo -e "\xE2\x9D\x8C $(COLOUR_R)node_modules/** not found. Performing an auto-install. $(END_COLOUR)";\
+	else\
+		echo -e "\xE2\x9C\x85 $(COLOUR_G)node_modules/** found.$(END_COLOUR)";\
+	fi
+
+	@# ╭──────────────────────────────────────────────────────────────────╮
+	@# │ CHECK    																							          │
+	@# │ for 'dotenv' version used.			  				      								  │
+	@# ╰──────────────────────────────────────────────────────────────────╯
+
+	@if [[ ! -f ./.env.vault || ! -f ./.env.me ]]; then\
+		echo -e "\xE2\x9D\x8C $(COLOUR_R)DotEnv missing key files to run project. Performing an auto-install. $(END_COLOUR)";\
+		$(MAKE) --no-print-directory dotenv-vault-setup;\
+	else\
+		echo -e "\xE2\x9C\x85 $(COLOUR_G)Dotenv key files present. $(END_COLOUR)";\
+	fi
+	echo -e " \xF0\x9F\x93\xA3 DotEnvVault access needs to be requested, please ask a Betarena Team Member for access."
+
+	@# ╭──────────────────────────────────────────────────────────────────╮
+	@# │ CHECK    																							          │
+	@# │ for 'heroku' version used.			  				      								  │
+	@# ╰──────────────────────────────────────────────────────────────────╯
+
+	@$(eval HEROKU_VERSION=$(shell heroku -v))
+	@if [ "$(HEROKU_VERSION)" ]; then\
+		echo -e "\xE2\x9C\x85$(COLOUR_G)Heroku installed with version: $(HEROKU_VERSION) $(END_COLOUR)";\
+	else\
+		echo -e "\xE2\x9D\x8C $(COLOUR_R)Heroku not found, please install via: https://devcenter.heroku.com/articles/heroku-cli $(END_COLOUR)";\
+	fi
+	echo -e " \xF0\x9F\x93\xA3 Access to Heroku needs to be requested, aside from installing the Heroku-CLI."
+
+	@# ╭──────────────────────────────────────────────────────────────────╮
+	@# │ CHECK    																							          │
+	@# │ for 'git' version used.			  				      								    │
+	@# ╰──────────────────────────────────────────────────────────────────╯
+
+	@$(eval GIT_VERSION=$(shell git -v))
+	@if [ "$(GIT_VERSION)" ]; then\
+		echo -e "\xE2\x9C\x85 $(COLOUR_G)Git installed with version: $(GIT_VERSION) $(END_COLOUR)";\
+		git remote add heroku-dev https://git.heroku.com/betarena-scores-platform.git ;\
+		git remote add heroku-prod https://git.heroku.com/betarena-prod.git ;\
+	else\
+		echo -e "\xE2\x9D\x8C $(COLOUR_R)Git not found, please install. $(END_COLOUR)";\
+	fi
+
+	@ $(MAKE) --no-print-directory misc-end-target
 #
 
-docker-log-listen:
-	echo 'Starting PROD container'
-	docker-compose -f docker-compose.yml up
-#
+# ╭──────────────────────────────────────────────────────────────────────────────────╮
+# │ 🛠️ :|: DEVELOPEMNT                                                               │
+# ┣──────────────────────────────────────────────────────────────────────────────────┫
+# │ 👇 :|: contains custom `development` flow commands 									             │
+# ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-docker-update-scores-web:
-	echo 'Updating PROD Scores Web container...'
-	git pull origin main
-	# -docker rm $$(docker stop $$(docker ps -a -q --filter="name=scores_scores_web_1" --format="{{.ID}}"))
-	# -docker rmi $$(docker images -q scores_web)
-	# -docker rmi $$(docker images --filter "dangling=true" -q --no-trunc)
-	# docker-compose -f docker-compose.yml up -d
-	docker-compose -f docker-compose.yml up -d --build
-#
+.ONESHELL:
+dev-local-watch-sass:
+	@# ╭──────────────────────────────────────────────────────────────────╮
+	@# │ NOTE: ▓ DESCRIPTION																						  │
+	@# │ > custom use of `development` command. for spin-up of 						│
+	@# │ > local environment.								                              │
+	@# ╰──────────────────────────────────────────────────────────────────╯
 
-docker-local-start:
-	echo 'Starting DEV - Docker Environment'
-	echo 'Removing Old DEV Logs'
-	-rm -r ./datalog/*
-	docker-compose -f docker-compose.dev.yml up
-	echo 'DEV Ready!'
+	@npm run sass-watch
 #
-
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-# ▓ 🛠️ DEVELOPEMNT                                                   ▓
-# ▓ 👇 contains custom `development` flow commands 									 ▓
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 .ONESHELL:
 dev-local-deploy:
-	@echo ""
-	@# ▓ DESCRIPTION
-	@# ▓ > custom use of `development` command.
-	@# ▓ > for spin-up of local environment.
-	@echo ""
+	@# ╭──────────────────────────────────────────────────────────────────╮
+	@# │ NOTE: ▓ DESCRIPTION																						  │
+	@# │ > custom use of `development` command. for spin-up of 						│
+	@# │ > local environment.								                              │
+	@# ╰──────────────────────────────────────────────────────────────────╯
 
-	-@ $(MAKE) mac-os
+	-@ $(MAKE) --no-print-directory mac-os
 
 	. ${NVM_DIR}/nvm.sh
 	nvm use
@@ -201,20 +216,20 @@ dev-local-deploy:
 
 	@VITE_SCORES_PKG_VERSION="v.$(shell npm pkg get version --workspaces=false | tr -d \")"\
 		VITE_SCORES_LIB_PKG_VERSION="v.$(shell npm info @betarena/scores-lib version | tr -d \")"\
-		DOTENV_KEY=$(shell npx dotenv-vault@1.25.0 keys development)\
+		DOTENV_KEY=$(shell npx --yes dotenv-vault@1.25.0 keys development)\
 		npm run sveltekit::dev
 	@
 #
 
 .ONESHELL:
-dev-local-scores-lib-link:
-	@echo ""
-	@# ▓ DESCRIPTION
-	@# ▓ > custom use of `development` command,
-	@# ▓ > for spin-up of local connection to @betarena/scores-lib.
-	@echo ""
+dev-local-scores-lib-establish-link:
+	@# ╭──────────────────────────────────────────────────────────────────╮
+	@# │ NOTE: ▓ DESCRIPTION																						  │
+	@# │ > custom use of `development` command. for spin-up of 						│
+	@# │ > local connection to @betarena/scores-lib.                      │
+	@# ╰──────────────────────────────────────────────────────────────────╯
 
-	-@ $(MAKE) mac-os
+	-@ $(MAKE) --no-print-directory mac-os
 
 	. ${NVM_DIR}/nvm.sh
 	nvm use
@@ -225,31 +240,32 @@ dev-local-scores-lib-link:
 #
 
 .ONESHELL:
-dev-local-1-click-spin-up:
-	@echo ""
-	@# ▓ DESCRIPTION
-	@# ▓ > custom use of `development` command,
-	@# ▓ > for spin-up of local environment.
-	@echo ""
+dev-local-1-click-start:
+	@# ╭──────────────────────────────────────────────────────────────────╮
+	@# │ NOTE: ▓ DESCRIPTION																						  │
+	@# │ > custom (bundle) use of `development` command. for spin-up of 	│
+	@# │ > local environment.								                              │
+	@# ╰──────────────────────────────────────────────────────────────────╯
 
-	-@ $(MAKE) mac-os
+	-@ $(MAKE) --no-print-directory mac-os
 
 	. ${NVM_DIR}/nvm.sh
 	nvm use
 
 	$(MAKE) -j3\
 		dev-local-deploy\
-		dev-local-scores-lib-link
+		dev-local-scores-lib-establish-link\
+		dev-local-watch-sass
 	@
 #
 
 .ONESHELL:
-build-spin-up:
-	@echo ""
-	@# ▓ DESCRIPTION
-	@# ▓ > custom use of `development` command.
-	@# ▓ > for spin-up of local environment.
-	@echo ""
+build:
+	@# ╭──────────────────────────────────────────────────────────────────╮
+	@# │ NOTE: ▓ DESCRIPTION																						  │
+	@# │ > custom use of `development` command. for spin-up of 	          │
+	@# │ > local environment.								                              │
+	@# ╰──────────────────────────────────────────────────────────────────╯
 
 	-@ $(MAKE) mac-os
 
@@ -261,12 +277,13 @@ build-spin-up:
 
 	@VITE_SCORES_PKG_VERSION="v.$(shell npm pkg get version --workspaces=false | tr -d \")"\
 		VITE_SCORES_LIB_PKG_VERSION="v.$(shell npm info @betarena/scores-lib version | tr -d \")"\
-		DOTENV_KEY=$(shell npx dotenv-vault@1.25.0 keys development)\
+		DOTENV_KEY=$(shell npx --yes dotenv-vault@1.25.0 keys development)\
 		npm run sveltekit::build
 	@
 #
 
-preview-local-1-click-spin-up:
+.ONESHELL:
+preview-1-click-spin-up:
 	@echo \
 		"$(COLOUR_B)\
 		\n◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️\
@@ -278,41 +295,91 @@ preview-local-1-click-spin-up:
 	npm run preview
 #
 
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-# ▓ 🟪 HEROKU                                                        ▓
-# ▓ 👇 contains custom `heroku` commands and interaction with Heroku ▓
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+# ╭──────────────────────────────────────────────────────────────────────────────────╮
+# │ 🔑 :|: DOTENV SECRETS                                                            │
+# ┣──────────────────────────────────────────────────────────────────────────────────┫
+# │ 👇 :|: contains custom `dotenv` commands and interaction with Dotenv             │
+# ╰──────────────────────────────────────────────────────────────────────────────────╯
+
+.ONESHELL:
+dotenv-secrets-setup:
+	@# ╭──────────────────────────────────────────────────────────────────╮
+	@# │ NOTE: ▓ DESCRIPTION																						  │
+	@# │ > custom use of `dotenv` command. For setting up the secrets.  	│
+	@# │ > Use the `dotenv-vault help` for more information.			        │
+	@# ╰──────────────────────────────────────────────────────────────────╯
+
+	@npx --yes dotenv-vault@1.25.0 new vlt_f5f4745903d586ce993a0f1afde6b47cd6f8781e2af24fd73430331af5633ede
+	@npx --yes dotenv-vault@1.25.0 pull
+#
+
+.ONESHELL:
+dotnev-secrets-pull-target:
+	@# ╭──────────────────────────────────────────────────────────────────╮
+	@# │ NOTE: ▓ DESCRIPTION																						  │
+	@# │ > custom use of `dotenv` command.                               	│
+	@# │ > for importing/pulling secrets into a target `.env` file.       │
+	@# │ > Use the `dotenv-vault help` for more information.			        │
+	@# │ WARNING:																												  │
+	@# │ > accepts the following parameters:
+	@# │ > env :: target environment to be toggled [ 'development' | 'production' ]
+	@# ╰──────────────────────────────────────────────────────────────────╯
+
+	@npx --yes dotenv-vault@1.25.0 pull $(env) .env.$(env)
+	@npx --yes dotenv-vault@1.25.0 keys $(env)
+#
+
+.ONESHELL:
+dotnev-secrets-build:
+	@# ╭──────────────────────────────────────────────────────────────────╮
+	@# │ NOTE: ▓ DESCRIPTION																						  │
+	@# │ > custom use of `dotenv` command.                               	│
+	@# │ > for importing/pulling secrets into a target `.env` file.       │
+	@# │ > Use the `dotenv-vault help` for more information.			        │
+	@# ╰──────────────────────────────────────────────────────────────────╯
+
+	@npx --yes dotenv-vault@1.25.0 build
+#
+
+# ╭──────────────────────────────────────────────────────────────────────────────────╮
+# │ 🟪 :|: HEROKU                                                                    │
+# ┣──────────────────────────────────────────────────────────────────────────────────┫
+# │ 👇 :|: contains custom `heroku` commands and interaction with Heroku             │
+# ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 heroku-deploy:
-	@echo ""
-	# ▓ DESCRIPTION
-	# ▓ > custom use of `heroku` command.
-	# ▓ > for deploying a custom deployment sequence.
-	@echo ""
+	@# ╭──────────────────────────────────────────────────────────────────╮
+	@# │ NOTE: ▓ DESCRIPTION																						  │
+	@# │ > custom use of `heroku` command. for spin-up of 	              │
+	@# │ > for deploying a custom deployment sequence.							      │
+	@# ╰──────────────────────────────────────────────────────────────────╯
 
 	@echo \
 		"$(COLOUR_R)\
-		\n◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️\
-		\n◼️ 🔑 Heroku-Prod | Deploying               ◼️\
-		\n◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️\
+		\n╭──────────────────────────────────────────────────────────────────╮\
+		\n│ 🔑 Heroku | Deployment (Worflow)                                 │\
+		\n╰──────────────────────────────────────────────────────────────────╯\
 		$(END_COLOUR)\n"
+	@
 
 	@VITE_SCORES_PKG_VERSION="v.$(shell npm pkg get version --workspaces=false | tr -d \")" \
 		VITE_SENTRY_UPLOAD_SOURCEMAPS="false" \
 		npm run start
+	@
 
-	@ $(MAKE) misc-end-target
+	@$(MAKE) --no-print-directory misc-end-target
 #
 
 heroku-target-deploy-branch-current:
-	@echo ""
-	# ▓ DESCRIPTION
-	# ▓ > custom use of `heroku` command.
-	# ▓ > for deploying currently active branch.
-	# ▓ > WARNING:
-	# ▓ > accepts the following parameters:
-	# ▓ > env :: target environment to be toggled [ 'dev' | 'prod' ]
-	@echo ""
+	@# ╭──────────────────────────────────────────────────────────────────╮
+	@# │ NOTE: ▓ DESCRIPTION																						  │
+	@# │ > custom use of `heroku` command.                               	│
+	@# │ > for deploying currently active branch.										      │
+	@# │ > Use the `dotenv-vault help` for more information.			        │
+	@# │ WARNING:																												  │
+	@# │ > accepts the following parameters:															│
+	@# │ > env :: target environment to be toggled [ 'dev' | 'prod' ]			│
+	@# ╰──────────────────────────────────────────────────────────────────╯
 
 	@if [ ! $(env) ]; then\
 		echo "Please set a target environment via env=";\
@@ -322,31 +389,32 @@ heroku-target-deploy-branch-current:
 
 	@echo\
 		"$(COLOUR_G)\
-		\n▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\
-		\n▓                                          ▓\
-		\n▓ 🚀 Heroku | deploy current branch        ▓\
-		\n▓ env = $(env)                             ▓\
-		\n▓                                          ▓\
-		\n▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\
+		\n╭──────────────────────────────────────────────────────────────────╮\
+		\n│ 🚀 Heroku | deploy current (active) branch        		        	 │\
+		\n│ env = $(env)                             												 │\
+		\n╰──────────────────────────────────────────────────────────────────╯\
 		$(END_COLOUR)\n"
+	@
 
 	@heroku releases\
 		--remote heroku-$(env)
+	@
 
 	@git push heroku-$(env) $$(git branch --show-current):main -f
 
-	@ $(MAKE) misc-end-target
+	@$(MAKE) --no-print-directory misc-end-target
 #
 
 heroku-target-deploy-STOP:
-	@echo ""
-	# ▓ DESCRIPTION
-	# ▓ > custom use of `heroku` command.
-	# ▓ > for stopping currently active build (a.k.a obliterating).
-	# ▓ > WARNING:
-	# ▓ > accepts the following parameters:
-	# ▓ > env 	:: target environment to be toggled [ 'dev' | 'prod' ]
-	@echo ""
+	@# ╭──────────────────────────────────────────────────────────────────╮
+	@# │ NOTE: ▓ DESCRIPTION																						  │
+	@# │ > custom use of `heroku` command.                               	│
+	@# │ > for stopping currently active build (a.k.a obliterating).      │
+	@# │ > Use the `dotenv-vault help` for more information.			        │
+	@# │ WARNING:																												  │
+	@# │ > accepts the following parameters:															│
+	@# │ > env 	:: target environment to be toggled [ 'dev' | 'prod' ]    │
+	@# ╰──────────────────────────────────────────────────────────────────╯
 
 	@if [ ! $(env) ]; then\
 		echo "Please set a target environment via env=";\
@@ -356,30 +424,73 @@ heroku-target-deploy-STOP:
 
 	@echo\
 		"$(COLOUR_G)\
-		\n▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\
-		\n▓                                          ▓\
-		\n▓ 🛠️ Heroku | stop active build            ▓\
-		\n▓ env = $(env)                             ▓\
-		\n▓                                          ▓\
-		\n▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\
+		\n╭──────────────────────────────────────────────────────────────────╮\
+		\n│ 🚀 Heroku | stop active build                     		        	 │\
+		\n│ env = $(env)                             												 │\
+		\n╰──────────────────────────────────────────────────────────────────╯\
 		$(END_COLOUR)\n"
+	@
 
 	@heroku builds:cancel\
 		--remote heroku-$(env)
+	@
 
-	@ $(MAKE) misc-end-target
+	@$(MAKE) --no-print-directory misc-end-target
+#
+
+heroku-target-deploy-version-set:
+	@# ╭──────────────────────────────────────────────────────────────────╮
+	@# │ NOTE: ▓ DESCRIPTION																						  │
+	@# │ > custom use of `heroku` command.                               	│
+	@# │ > for rolling back heroku versions (a.k.a revert).               │
+	@# │ WARNING:																												  │
+	@# │ > accepts the following parameters:															│
+	@# │ > env																														│
+	@# │ > | target environment to be toggled [ 'dev' | 'prod' ]			    │
+	@# │ > version																											  │
+	@# │ > | target environment to be toggled 'vX'												│
+	@# ╰──────────────────────────────────────────────────────────────────╯
+
+	@if [ ! $(env) ]; then\
+		echo "Please set a target environment via env=";\
+		exit 1;\
+		echo "";\
+	fi
+
+	@if [ ! $(version) ]; then\
+		echo "Please set a target version via version=";\
+		exit 1;\
+		echo "";\
+	fi
+
+	@echo\
+		"$(COLOUR_G)\
+		\n╭──────────────────────────────────────────────────────────────────╮\
+		\n│ 🚀 Heroku | rollback version                      		        	 │\
+		\n│ env = $(env)                             												 │\
+		\n│ version = $(version)                             								 │\
+		\n╰──────────────────────────────────────────────────────────────────╯\
+		$(END_COLOUR)\n"
+	@
+
+	@heroku rollback $(version)\
+		--remote heroku-$(env)
+	@
+
+	@$(MAKE) --no-print-directory misc-end-target
 #
 
 heroku-target-maintenance-set:
-	@echo ""
-	# ▓ DESCRIPTION
-	# ▓ > custom use of `heroku` command.
-	# ▓ > for setting project `maintenance mode` to ON/OFF (a.k.a enabled/disabled)
-	# ▓ > WARNING:
-	# ▓ > accepts the following parameters:
-	# ▓ > env 	:: target environment to be toggled [ 'dev' | 'prod' ]
-	# ▓ > mode 	:: target mode for maintenance to be set [ 'on' | 'off' ]
-	@echo ""
+	@# ╭──────────────────────────────────────────────────────────────────╮
+	@# │ NOTE: ▓ DESCRIPTION																						  │
+	@# │ > custom use of `heroku` command.                               	│
+	@# │ > for setting project `maintenance mode` 											  │
+	@# │ > to ON/OFF (a.k.a enabled/disabled)														  │
+	@# │ WARNING:																												  │
+	@# │ > accepts the following parameters:															│
+	@# │ >  env 	:: target environment to be toggled [ 'dev' | 'prod' ]
+	@# │ >  mode 	:: target mode for maintenance to be set [ 'on' | 'off' ]
+	@# ╰──────────────────────────────────────────────────────────────────╯
 
 	@if [ ! $(env) ]; then\
 		echo "Please set a target environment via env=";\
@@ -389,21 +500,21 @@ heroku-target-maintenance-set:
 
 	@echo\
 		"$(COLOUR_G)\
-		\n▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\
-		\n▓                                          ▓\
-		\n▓ 🛠️ Heroku | maintenance toggle           ▓\
-		\n▓ env = $(env)                             ▓\
-		\n▓ mode = $(mode)                           ▓\
-		\n▓                                          ▓\
-		\n▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\
+		\n╭──────────────────────────────────────────────────────────────────╮\
+		\n│ 🛠️ Heroku | maintenance toggle                    		        	  │\
+		\n│ env = $(env)                             												 │\
+		\n│ mode = $(mode)                           												 │\
+		\n╰──────────────────────────────────────────────────────────────────╯\
 		$(END_COLOUR)\n"
+	@
 
-	@ # @see :> https://devcenter.heroku.com/articles/maintenance-mode
+	@ # @see :|: https://devcenter.heroku.com/articles/maintenance-mode
 	@ heroku maintenance:$(mode) --remote heroku-$(env)
 
-	@ $(MAKE) misc-end-target
+	@$(MAKE) --no-print-directory misc-end-target
 #
 
+#: deprecated/archive
 heroku-target-secrets-set:
 	@echo ""
 	# ▓ DESCRIPTION
@@ -454,20 +565,21 @@ heroku-target-secrets-set:
 
 	@heroku config:set\
 		--remote heroku-$(env)\
-		DOTENV_KEY=$$(npx dotenv-vault@1.25.0 keys $(env_2))
+		DOTENV_KEY=$$(npx --yes dotenv-vault@1.25.0 keys $(env_2))
 
 	@ $(MAKE) misc-end-target
 #
 
 heroku-target-bash:
-	@echo ""
-	# ▓ DESCRIPTION
-	# ▓ > custom use of `heroku` command.
-	# ▓ > used to access target `heroku remote bash` console.
-	# ▓ > WARNING:
-	# ▓ > accepts the following parameters:
-	# ▓ > env :: target environment to be toggled [ 'dev' | 'prod' ]
-	@echo ""
+	@# ╭──────────────────────────────────────────────────────────────────╮
+	@# │ NOTE: ▓ DESCRIPTION																						  │
+	@# │ > custom use of `heroku` command.                               	│
+	@# │ > used to access target `heroku remote bash` console.            │
+	@# │ WARNING:																												  │
+	@# │ > accepts the following parameters:															│
+	@# │ > env																														│
+	@# │ > | target environment to be toggled [ 'dev' | 'prod' ]			    │
+	@# ╰──────────────────────────────────────────────────────────────────╯
 
 	@if [ ! $(env) ]; then\
 		echo "Please set a target environment via env=";\
@@ -477,85 +589,57 @@ heroku-target-bash:
 
 	@echo\
 		"$(COLOUR_G)\
-		\n▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\
-		\n▓                                          ▓\
-		\n▓ Heroku | 🖥️ connecting to remote         ▓\
-		\n▓ env = $(env)                             ▓\
-		\n▓                                          ▓\
-		\n▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\
+		\n╭──────────────────────────────────────────────────────────────────╮\
+		\n│ 🚀 Heroku | 🖥️ connecting to remote               		        	  │\
+		\n│ env = $(env)                             												 │\
+		\n╰──────────────────────────────────────────────────────────────────╯\
 		$(END_COLOUR)\n"
+	@
 
 	heroku run bash --remote heroku-$(env);\
 
-	@ $(MAKE) misc-end-target
+	@$(MAKE) --no-print-directory misc-end-target
 #
 
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-# ▓ 🔑 DOTENV SECRETS                                                ▓
-# ▓ 👇 contains custom `dotenv` commands and interaction with Dotenv ▓
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+# ╭──────────────────────────────────────────────────────────────────────────────────╮
+# │ 🐳 :|: DOCKER                                                                    │
+# ┣──────────────────────────────────────────────────────────────────────────────────┫
+# │ 👇 :|: contains custom `docker` commands and interaction with Docker             │
+# ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-dotenv-secrets-setup:
-	@echo ""
-	# ▓ DESCRIPTION
-	# ▓ > custom use of `dotenv` command.
-	# ▓ > for setting up the secrets.
-	# ▓ > use the `dotenv-vault help` for more information.
-	@echo ""
-
-	@echo \
-		"$(COLOUR_G)\
-		\n▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\
-		\n▓ 🔑 dotenv | setting up secrets           ▓\
-		\n▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\
-		$(END_COLOUR)\n"
-
-	@npx dotenv-vault@1.25.0 new vlt_f5f4745903d586ce993a0f1afde6b47cd6f8781e2af24fd73430331af5633ede
+docker-start:
+	echo 'Starting PROD container'
+	docker-compose -f docker-compose.yml up -d
 #
 
-dotnev-secrets-pull-target:
-	@echo ""
-	# ▓ DESCRIPTION
-	# ▓ > custom use of `dotenv` command.
-	# ▓ > for importing/pulling secrets into a target `.env` file.
-	# ▓ > use the `dotenv-vault help` for more information.
-	# ▓ > WARNING:
-	# ▓ > accepts the following parameters:
-	# ▓ > env :: target environment to be toggled [ 'development' | 'production' ]
-	@echo ""
-
-	@echo \
-		"$(COLOUR_G)\
-		\n▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\
-		\n▓ 🔑 dotenv | importing secrets $(env)         ▓\
-		\n▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\
-		$(END_COLOUR)\n"
-
-	@npx dotenv-vault@1.25.0 pull $(env) .env.$(env)
+docker-log-listen:
+	echo 'Starting PROD container'
+	docker-compose -f docker-compose.yml up
 #
 
-dotnev-secrets-build:
-	@echo ""
-	# ▓ DESCRIPTION
-	# ▓ > custom use of `dotenv` command.
-	# ▓ > for importing/pulling secrets and updating the `.env.vault`.
-	# ▓ > use the `dotenv-vault help` for more information.
-	@echo ""
-
-	@echo \
-		"$(COLOUR_G)\
-		\n▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\
-		\n▓ 🔑 dotenv | generate encrypted secrets   ▓\
-		\n▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\
-		$(END_COLOUR)\n"
-
-	@npx dotenv-vault@1.25.0 build
+docker-update-scores-web:
+	echo 'Updating PROD Scores Web container...'
+	git pull origin main
+	# -docker rm $$(docker stop $$(docker ps -a -q --filter="name=scores_scores_web_1" --format="{{.ID}}"))
+	# -docker rmi $$(docker images -q scores_web)
+	# -docker rmi $$(docker images --filter "dangling=true" -q --no-trunc)
+	# docker-compose -f docker-compose.yml up -d
+	docker-compose -f docker-compose.yml up -d --build
 #
 
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-# ▓ 🟣 SENTRY                                                        ▓
-# ▓ 👇 contains custom `sentry` commands and interaction with Sentry ▓
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+docker-local-start:
+	echo 'Starting DEV - Docker Environment'
+	echo 'Removing Old DEV Logs'
+	-rm -r ./datalog/*
+	docker-compose -f docker-compose.dev.yml up
+	echo 'DEV Ready!'
+#
+
+# ╭──────────────────────────────────────────────────────────────────────────────────╮
+# │ 🟣 :|: SENTRY                                                                    │
+# ┣──────────────────────────────────────────────────────────────────────────────────┫
+# │ 👇 :|: contains custom `sentry` commands and interaction with Sentry             │
+# ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 sentry-sourcemaps-upload:
 	@echo \
@@ -569,33 +653,19 @@ sentry-sourcemaps-upload:
 		npm run build
 #
 
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-# ▓ 🐙 GIT      																									   ▓
-# ▓ 👇 contains custom `git` commands                                ▓
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-
-git-setup:
-	@echo ""
-	# ▓ DESCRIPTION
-	# ▓ > custom setup for GIT target executable.
-	@echo ""
-
-	# ▓ @see :> https://stackoverflow.com/questions/1257592/how-do-i-remove-files-saying-old-mode-100755-new-mode-100644-from-unstaged-cha
-	@git config core.filemode false
-
-	@git config\
-		--list\
-		--show-origin
-#
+# ╭──────────────────────────────────────────────────────────────────────────────────╮
+# │ 🔑 :|: GIT                                                                       │
+# ┣──────────────────────────────────────────────────────────────────────────────────┫
+# │ 👇 :|: contains custom `git` commands                                            │
+# ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 git-commit:
-	@echo ""
-	# ▓ DESCRIPTION
-	# ▓ > custom GIT commit target executable.
-	# ▓ > used for:
-	# ▓ > 1. MacOS system file clean, and
-	# ▓ > 2. enforce husky use
-	@echo ""
+	@# ╭──────────────────────────────────────────────────────────────────╮
+	@# │ NOTE: ▓ DESCRIPTION																						  │
+	@# │ > custom GIT commit target executable, used for: 	              │
+	@# │ > 1. MacOS system file clean, and            							      │
+	@# │ > 2. enforce husky use                       							      │
+	@# ╰──────────────────────────────────────────────────────────────────╯
 
 	$(MAKE) mac-os
 
@@ -607,18 +677,21 @@ git-commit:
 #
 
 git-pr-close-clean:
-	@echo ""
-	# ▓ DESCRIPTION ▓ NOTE: ▓ IMPORTANT
-	# ▓ > please run '_this_' target AFTER each successull `closed`
-	# ▓ > pull-request to (main) to get (local) dev in pair with (main).
-	@echo ""
+	@# ╭──────────────────────────────────────────────────────────────────╮
+	@# │  ▓ DESCRIPTION ▓ NOTE: ▓ IMPORTANT															  │
+	@# │ > please run '_this_' target AFTER each successull `closed`			│
+	@# │ > pull-request to (main) to get (local) dev in pair with (main). │
+	@# │ > 1. MacOS system file clean, and            							      │
+	@# │ > 2. enforce husky use                       							      │
+	@# ╰──────────────────────────────────────────────────────────────────╯
 
-	@echo \
+	@echo\
 		"$(COLOUR_B)\
-		\n◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️\
-		\n◼️ ⚙️ POST origin/main PR clean              ◼️\
-		\n◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️\
+		\n╭──────────────────────────────────────────────────────────────────╮\
+		\n│ ⚙️ POST origin/main PR clean                      		        	  │\
+		\n╰──────────────────────────────────────────────────────────────────╯\
 		$(END_COLOUR)\n"
+	@
 
 	@git checkout main
 	@git pull origin main
@@ -636,6 +709,7 @@ git-del-branches-w-origin:
 	# git branch --merged | grep -v "*" | grep -v "main" | xargs git branch -d
 #
 
+#: deprecated/archive
 git-repo-secrets-ci-cd-update:
 	@echo \
 		"$(COLOR_G)\
@@ -649,32 +723,47 @@ git-repo-secrets-ci-cd-update:
 	@echo ""
 #
 
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-# ▓ 💠 MISCELLANOUS                                                  ▓
-# ▓ 👇 contains custom `miscellaneous` commands                      ▓
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+# ╭──────────────────────────────────────────────────────────────────────────────────╮
+# │ 💠 :|: MISCELLANOUS                                                              │
+# ┣──────────────────────────────────────────────────────────────────────────────────┫
+# │ 👇 :|: contains custom `miscellaneous` commands                                  │
+# ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-mac-os:
-	@ # ▓ NOTE:
-	@ # ▓ > required for MacOS removal of `._*` files.
-	@ # ▓ > @see :> https://apple.stackexchange.com/questions/14980/why-are-dot-underscore-files-created-and-how-can-i-avoid-them
-	-@dot_clean .
+help:
+	@echo "\nTARGETS:\n"
+	@make -qpRr | egrep -e '^[a-z].*:$$' | sed -e 's~:~~g' | sort
+	@echo ""
 #
 
-misc-end-target:
-	@echo ""
-	# ▓ DESCRIPTION
-	# ▓ > custom use of `target` command.
-	# ▓ > used by other targets to `signal` completed execution.
-
-	@echo\
-		"\n$(COLOUR_GREY)\
-		\n▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\
-		\n▓                                          ▓\
-		\n▓ 🟩 Done!                                 ▓\
-		\n▓                                          ▓\
-		\n▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\
+test:
+	@echo \
+		"$(COLOUR_R)\
+		\n╭──────────────────────────────────────────────────────────────────╮\
+		\n│ 🔑 Heroku | Deployment (Worflow)                                 │\
+		\n╰──────────────────────────────────────────────────────────────────╯\
 		$(END_COLOUR)\n"
+	@
+#
+
+mac-os:
+	@# ╭──────────────────────────────────────────────────────────────────╮
+	@# │ NOTE: ▓ DESCRIPTION																						  │
+	@# │ > required for MacOS removal of `._*` files.     	              │
+	@# │ > for deploying a custom deployment sequence.							      │
+	@# ╰──────────────────────────────────────────────────────────────────╯
+	@# ▓ > @see :|: https://apple.stackexchange.com/questions/14980/why-are-dot-underscore-files-created-and-how-can-i-avoid-them
+
+	@$(eval UNAME_S=$(shell uname -s))
+	@if [ "$(UNAME_S)" == "Darwin" ]; then\
+		echo \
+			"$(COLOUR_B)\
+			\n╭──────────────────────────────────────────────────────────────────╮\
+			\n│ Misc (clean)                                                     │\
+			\n╰──────────────────────────────────────────────────────────────────╯\
+			$(END_COLOUR)\n";
+
+		dot_clean .;\
+	fi
 #
 
 changelog-init:
@@ -685,7 +774,23 @@ changelog-init:
 	# ▓ > use the `conventional-changelog --help` for more information.
 	@echo ""
 
-	@npx conventional-changelog-cli -p angular -i CHANGELOG.md -s -r 0
+	@npx --yes conventional-changelog-cli -p angular -i CHANGELOG.md -s -r 0
 
 	$(MAKE) misc-end-target
+#
+
+node-modules-snapshot:
+	# pwd
+	# cd /Volumes/1TB WD Blue/projects/betarena/_dump_/scores
+	# pwd
+	npx --yes \
+		bestzip destination.zip node_modules/
+#
+
+node-modules-factory-reset:
+	# ▓ DESCRIPTION
+	# ▓ > custom GIT commit target executable.
+
+	rm -rf node_modules
+	npm i
 #

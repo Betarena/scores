@@ -52,6 +52,9 @@ interface ImportMetaEnv
   readonly SENTRY_AUTH_TOKEN?: string;
   /** @description Target action of `Sourcemap Upload` for Sentry */
   readonly VITE_SENTRY_UPLOAD_SOURCEMAPS?: string;
+
+  /** @description Target `walletconnect` project env */
+  readonly VITE_WALLETCONNECT_ID?: string
 }
 
 interface ImportMeta
