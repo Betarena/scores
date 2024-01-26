@@ -1,5 +1,9 @@
 <!--
+<<<<<<< HEAD
 ▓ Betarena Branding
+=======
+▓▓ Betarena Branding
+>>>>>>> dev
 -->
 
 <h1
@@ -15,7 +19,11 @@
 </h1>
 
 <!--
+<<<<<<< HEAD
 ▓ Repository badge(s)
+=======
+▓▓ Repository badge(s)
+>>>>>>> dev
 -->
 
 ![ESLint](https://img.shields.io/badge/ESLint-4B3263?style=for-the-badge&logo=eslint&logoColor=white)
@@ -34,7 +42,11 @@
 
 - [About](#about)
   - [Betarena Scores Platform](#betarena-scores-platform)
+<<<<<<< HEAD
 - [⚙ Development / Project](#-development--project)
+=======
+- [⚙ Development](#-development)
+>>>>>>> dev
 - [🚦 Roadmap](#-roadmap)
 - [🛠 Contributing](#-contributing)
 - [💗 Support](#-support)
@@ -49,7 +61,11 @@ We are building the first open-source live results and statistics platform with 
 
 ## ⚙ Development / Project
 
+<<<<<<< HEAD
 See the `.docs/` directory for more (1) information about the project, (2) it's quirks, (3) `code-style`, (4) how to setup development, and more.
+=======
+See the `docs/` directory for more information about the project, it's quirks, code-style and more.
+>>>>>>> dev
 
 ## 🚦 Roadmap
 
@@ -89,3 +105,4 @@ The email which is located in GitHub profile - [add-email]
 This project is licensed under the MIT license. Feel free to edit and distribute this template as you like.
 
 See [LICENSE](LICENSE) for more information.
+ 
