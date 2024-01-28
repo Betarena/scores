@@ -52,7 +52,9 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let
-    /** @augments IProfileData */
+    /**
+     * @augments IProfileData
+    */
     profileData: IProfileData | null
   ;
 
@@ -297,7 +299,10 @@
       -->
       <tbody>
 
-        {#each [...profileData?.tx_hist?? [], ...profileData?.tx_hist ?? []] ?? [] as item}
+        <!-- [🐞] -->
+        <!-- {console.log(profileData?.tx_hist?.length)} -->
+
+        {#each profileData?.tx_hist?.filter(x => {return x.type == 'investment'}) ?? [] as item}
           {#if item.type == 'investment'}
             <InvestmentHistoryRowChild
               data={item}
