@@ -1427,7 +1427,7 @@
               {
                 profileData?.presaleData.data?.min_buy
                 ?? 1
-              } USD
+              }
             </span>
             /
             {
