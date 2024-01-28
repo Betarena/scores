@@ -10,6 +10,14 @@ When working on the project, your aim should be the following:
 2. Commit messages should be clear and concise, with a simple glance conveying the nature of the commit and what it entails.
 3. The `Git History` should be linear and easily followed.
 
+<img
+  src='.assets/git-workflow.png'
+  width=600
+  alt='Git Workflow Asset Snapshot'
+/>
+
+:|: https://whimsical.com/workflow-git-example-TU7LHYkBRZ3zTZWS3THGwh@7YNFXnKbYoFVcGsfz9djL
+
 ### 🐶 Husky (enforcer)
 
 Following the conventions of standard code development :|: [link](https://www.conventionalcommits.org/en/v1.0.0/#specification).
@@ -19,28 +27,29 @@ This project uses `Husky` to better describe changes and commits in a structured
 - Correct format of commit messages written.
 - Correct branch names used and created.
 
-Although `Husky` enforces by default the prevously mentioned validations, you can find out more below about these exact conventions below and follow some examples.
+Although `Husky` enforces by default the previously mentioned validations, you can find out more about these exact conventions below and see some examples.
 
 ### 🪵 Branch Convention
 
 https://dev.to/varbsan/a-simplified-convention-for-naming-branches-and-commits-in-git-il4
 
+> [!TIP]
+> Please take a look at `package.json > validate-branch-name` for valid branch names accepted.
+
+> [!IMPORTANT]
+> - Branch names **should contain** the term `/draft/X`, where `X` is a number, in cases when you start working on a new `feature` or anything else. This is required.
+> - Branch names **should not** contain the term `/draft/X`, only if the target `branch` has been perfected from a respective `/draft/X` branch.
+
 ### ⭕️ Commit Convention
 
 Following :|: https://www.conventionalcommits.org/en/v1.0.0/
 
-<img
-  src='git-workflow.png'
-  width=600
-  alt='Git Workflow Asset Snapshot'
-/>
-
-#### [1] 🚀 Standard change
+#### [1] 🚀 Standard Git-Workflow
 
 In general, as previously mentioned and can be explored in the overview chart above:
 
 > [!TIP]
-> `1 Commit` *should* equate to `1 Issue` being tackled.
+> `1 Commit` *should* equate to `1 Issue` being tackled. This is always true for a `perfection` branch, but not necessarily true for a `/draft/X` branch, hence the _should_.
 
 So, for example, when working on an implementation of a single widget with a related issue number `#1345`. This issue should have **only a single commit associated to it** when checked on the `git` history.
 
@@ -50,7 +59,7 @@ To achieve this, follow the recommended workflow for standard development:
 > Always start working on a new task by creating a new branch from `origin/dev` (in its most latest state).
 
 1. Select a new issue to work on, for example: `#1345: Implementation of Investor Section`.
-2. Create a new branch from `origin/dev`, (using the convetional branching naming convention) and calling it `feature/investor-section`.
+2. Create a new branch from `origin/dev`, (using the convetional branching naming convention) and calling it `feature/investor-section/draft/0`.
 3. Start working on the implementation of the said **investor section** and create the necessary widgets/components.
 4. Once you are happy with your work, create commits to keep track of your work and its progress.
 
@@ -86,7 +95,7 @@ However, in the case that the changes where made a while back, you can do the fo
 > [!NOTE]
 > When working with new widget and/or respective `server-side` logic implementation via endpoint(s), please be sure to update the respective `.docs/openapi.yaml` documentation. It is recommended to implement the logic of the `openapi.yaml` first, prior to development and implementation to avoid forgetting, as well as, it makes for an overall faster implementation when a respective endpoint has been clearly documented and defiend.
 
-#### [2] 🤔 Unrelated feature/fix/documentation change
+#### [2] 🤔 Unrelated feature/fix/documentation/refactor/chore change
 
 If you find yourself working on a `fix/feature` (or something else), and you happen to make a critical change that is urgent/necessary going forward, but is rather unrelated to the currently being worked on task, do the following:
 

@@ -5,6 +5,10 @@ _This_ markdown contains the outlined guidelines as to how the code should be `s
 > [!IMPORTANT]
 > Code structure and/or format are not discussed in this `markdown` as they are enforced already with `EsLint` / `.eslintrc.yaml` and will/should be enforced as standard `Intellisense`.
 
+> [!TIP]
+> If you're using `VsCode`, be sure to take a look at available `snippets` (located in `.vscode/snippets.code-snippsts`)
+> to auto-complete with boilerplate code/snippets certain file extensions when doing development.
+
 ## 📝 Documentation
 
 For _this_ project, the following `documentation` can be found, and should be followed:
@@ -88,9 +92,39 @@ function doSomething
 
 Take a look at `./.docs/core.code-style.md/*` to understand the structure/format that should be implied in the `.svelte` files, and other complementary `svelte`/`svelte-kit` common file types.
 
-#### 📝 Nomaculture
+#### 📝 File Nomaculture
 
-Target `.svelte` files should **always** follow the naming scheme: `<SampleName-FurtherName-<Main|Child|Row|Table|PopUp|etc.>.svelte`.
+Target `.svelte` files should **always** follow the naming scheme: `<SampleName-FurtherName-<Main|Widget|Loader|Child|Row|Table|PopUp|etc.>.svelte`.
+
+#### `<script> [..] </script>`
+
+> [!IMPORTANT]
+> Inherits directly from [🔹 JavaScript/TypeScript](#-🔹-JavaScript/TypeScript) style guide.
+
+#### `HTML`
+
+```html
+<!--
+▓ NOTE:
+▓ > vesting period list table.
+-->
+<div
+  id="table-box"
+>
+  <!--
+  ▓ NOTE:
+  ▓ > vesting periods.
+  -->
+  <table>
+
+  </table>
+</div>
+```
+
+#### `CSS`
+
+> [!NOTE]
+> Use `SCSS` is **required** to keep the `styles` maintainable and correctly defined.
 
 ### ⚙️ Makefile
 

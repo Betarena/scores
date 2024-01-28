@@ -1,9 +1,5 @@
 <!--
-<<<<<<< HEAD
 ▓ Betarena Branding
-=======
-▓▓ Betarena Branding
->>>>>>> dev
 -->
 
 <h1
@@ -19,17 +15,14 @@
 </h1>
 
 <!--
-<<<<<<< HEAD
 ▓ Repository badge(s)
-=======
-▓▓ Repository badge(s)
->>>>>>> dev
 -->
 
 ![ESLint](https://img.shields.io/badge/ESLint-4B3263?style=for-the-badge&logo=eslint&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
 ![Svelte](https://img.shields.io/badge/svelte-%23f1413d.svg?style=for-the-badge&logo=svelte&logoColor=white)
 ![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)
+![SASS](https://img.shields.io/badge/SASS-hotpink.svg?style=for-the-badge&logo=SASS&logoColor=white)
 ![Firebase](https://img.shields.io/badge/Firebase-039BE5?style=for-the-badge&logo=Firebase&logoColor=white)
 ![GitHub Actions](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white)
 
@@ -42,11 +35,7 @@
 
 - [About](#about)
   - [Betarena Scores Platform](#betarena-scores-platform)
-<<<<<<< HEAD
 - [⚙ Development / Project](#-development--project)
-=======
-- [⚙ Development](#-development)
->>>>>>> dev
 - [🚦 Roadmap](#-roadmap)
 - [🛠 Contributing](#-contributing)
 - [💗 Support](#-support)
@@ -61,11 +50,7 @@ We are building the first open-source live results and statistics platform with 
 
 ## ⚙ Development / Project
 
-<<<<<<< HEAD
-See the `.docs/` directory for more (1) information about the project, (2) it's quirks, (3) `code-style`, (4) how to setup development, and more.
-=======
-See the `docs/` directory for more information about the project, it's quirks, code-style and more.
->>>>>>> dev
+See the `.docs/` directory for more (1) information about the project, (2) it's quirks, (3) code-style, (4) how to setup development, and more.
 
 ## 🚦 Roadmap
 
@@ -105,4 +90,4 @@ The email which is located in GitHub profile - [add-email]
 This project is licensed under the MIT license. Feel free to edit and distribute this template as you like.
 
 See [LICENSE](LICENSE) for more information.
- 
+
