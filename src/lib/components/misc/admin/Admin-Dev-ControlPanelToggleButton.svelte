@@ -2,7 +2,8 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - access custom Betarena Scores JS VScode Snippets by typing 'script...'         │
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -23,7 +24,11 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+	import { dev } from '$app/environment';
 	import { createEventDispatcher, type EventDispatcher } from 'svelte';
+
+	import sessionStore from '$lib/store/session.js';
+	import { dlog } from '$lib/utils/debug.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -40,6 +45,19 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
+
+  export let
+    /**
+     * @description
+     *  📣 Target `admin` control title.
+    */
+    title: string
+    /**
+     * @description
+     *  📣 Wether target **parent** `widget` has underwent **admin mutation**.
+    */
+    , mutated: boolean = false
+  ;
 
   const
     /**
@@ -75,7 +93,37 @@
     isSelected: boolean = false
   ;
 
+  $: deepReactListen0 = $sessionStore?.currentAdminToggle;
+
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  $: if (deepReactListen0 != title)
+  {
+    // ▓ [🐞]
+    // ### [🐞]
+    dlog
+    (
+      `🚏 checkpoint [R] ➤ CASD123 ${deepReactListen0} ${title}`,
+      true
+    );
+
+    isSelected = false;
+  }
+
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
 </script>
 
@@ -83,8 +131,10 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component HTML                                                            │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - use 'Ctrl+Space' to autocomplete global class=styles                           │
-│ - access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.     │
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -92,34 +142,115 @@
 ▓ NOTE:
 ▓ > admin development toggle component.
 -->
-<div
-  id="developer-button"
-  on:click=
-  {
-    () =>
-    {
-      dispatch('clicked');
-      isSelected = !isSelected;
-      return;
-    }
-  }
-  class:isSelected={isSelected}
->
-  <img
-    id=''
-    src='/assets/svg/icon-dev-toggle.svg'
-    alt='dev-toggle-icon'
-    title='Widget Dev States Toggle'
-    loading='lazy'
-  />
-</div>
+{#if dev}
+  <div
+    class=
+    "
+    row-space-end
+    <!---->
+    developer-action-box
+    "
+  >
+
+    {#if mutated}
+      <!--
+      ▓ NOTE:
+      ▓ > toggle mutated widget factory reset.
+      -->
+      <div
+        class=
+        "
+        cursor-pointer
+        <!---->
+        developer-factory-reset-widget
+        "
+        on:click=
+        {
+          () =>
+          {
+            dispatch('reset');
+            return;
+          }
+        }
+      >
+        <p
+          class=
+          "
+          s-14
+          color-black
+          bold
+          "
+        >
+          X
+        </p>
+      </div>
+
+      <!--
+      ▓ NOTE:
+      ▓ > mutated widget badge.
+      -->
+      <div
+        class=
+        "
+        developer-widget-mutation-badge
+        "
+      >
+        <p
+          class=
+          "
+          s-14
+          color-white
+          bold
+          "
+        >
+          M
+        </p>
+      </div>
+    {/if}
+
+    <!--
+    ▓ NOTE:
+    ▓ > toggle development control-panel.
+    -->
+    <div
+      class=
+      "
+      cursor-pointer
+      <!---->
+      developer-button
+      "
+      on:click=
+      {
+        () =>
+        {
+          isSelected = !isSelected;
+          if (isSelected)
+            $sessionStore.currentAdminToggle = title;
+          else
+            $sessionStore.currentAdminToggle = null;
+          return;
+        }
+      }
+      class:isSelected={isSelected && $sessionStore.currentAdminToggle == title}
+    >
+      <img
+        id=''
+        src='/assets/svg/icon-dev-toggle.svg'
+        alt='dev-toggle-icon'
+        title='Widget Dev States Toggle'
+        loading='lazy'
+      />
+    </div>
+  </div>
+{/if}
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component CSS/SCSS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE  │
-│ - access custom Betarena Scores CSS VScode Snippets by typing 'style...'         │
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -131,24 +262,60 @@
   ╰──────────────────────────────────────────────────────────────────────────────╯
   */
 
-  div#developer-button
+  div.developer-action-box
   {
     /* 📌 position */
     position: absolute;
     top: 0px;
     right: 0px;
-    /* 🎨 style */
-    border-radius: 2.5px;
-    background-color: #EBFF00;
-    padding: 5px;
-    width: 26px;
-    height: 26px;
+    /* 🛝 layout */
 
-    &.isSelected
+    div.developer-factory-reset-widget
     {
       /* 🎨 style */
-      background-color: #1C88EC;
-      box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.43) inset;
+      background-color: #FFFFFF;
+      padding: 2.5px 0;
+      text-align: center;
+      width: 26px;
+      height: 26px;
+    }
+
+    div.developer-widget-mutation-badge
+    {
+      /* 🎨 style */
+      background-color: #FF0000;
+      padding: 2.5px 0;
+      text-align: center;
+      width: 26px;
+      height: 26px;
+    }
+
+    div.developer-button
+    {
+      /* 🎨 style */
+      background-color: #EBFF00;
+      padding: 5px;
+      width: 26px;
+      height: 26px;
+
+      &.isSelected
+      {
+        /* 🎨 style */
+        background-color: #1C88EC;
+        box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.43) inset;
+      }
+    }
+
+    & div:first-child
+    {
+      /* 🎨 style */
+      border-radius: 2.5px 0 0 2.5px;
+    }
+
+    & div:last-child
+    {
+      /* 🎨 style */
+      border-radius: 0 2.5px 2.5px 0;
     }
   }
 
