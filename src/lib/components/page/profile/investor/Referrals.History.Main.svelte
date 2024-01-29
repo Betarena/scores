@@ -112,9 +112,10 @@
     (
     ): void
     {
-      (profileData?.investorData ??= { data: { referral_history: [] } })
+      (profileData?.investorData ??= { data: { referral_history: [] } });
+      (profileData?.investorData?.data ??= { referral_history: [] });
 
-      profileData?.investorData?.data?.referral_history.push
+      profileData?.investorData?.data?.referral_history?.push
       (
         ...this.sampleData
       );

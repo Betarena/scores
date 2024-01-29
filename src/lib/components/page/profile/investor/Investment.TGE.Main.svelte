@@ -656,53 +656,6 @@
     </select>
   </div>
 
-  <!--
-  ▓ NOTE:
-  ▓ > (data) input.
-  -->
-  <div
-    class=
-    "
-    row-space-out
-    "
-  >
-    <!--
-    ▓ NOTE:
-    ▓ > (no data state) text.
-    -->
-    <p
-      class=
-      "
-      s-14
-      color-black
-      "
-    >
-      <b>[2]</b> Add <b>Sample Data</b>
-    </p>
-
-    <!--
-    ▓ NOTE:
-    ▓ > (no data state) button.
-    -->
-    <button
-      class=
-      "
-      dev-toggle
-      "
-      on:click=
-      {
-        () =>
-        {
-          newDevInstance.addSampleData();
-          newDevInstance.mutated = true;
-          return;
-        }
-      }
-    >
-      TOGGLE
-    </button>
-  </div>
-
 </AdminDevControlPanel>
 
 <!--

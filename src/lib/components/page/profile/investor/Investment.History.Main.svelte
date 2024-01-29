@@ -122,6 +122,8 @@
     (
     ): void
     {
+      (profileData?.tx_hist ??= []);
+
       profileData?.tx_hist?.push
       (
         ...this.sampleData

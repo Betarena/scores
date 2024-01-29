@@ -102,7 +102,16 @@
             }
           }
         }
-      )
+      );
+      (
+        profileData?.investorData?.data?.bonus_summary ??=
+        {
+          referral_bonus: 50
+          , referrals_number: 10
+          , referred_bonus: 100
+          , total_bonus: 500
+        }
+      );
 
       profileData = profileData;
 

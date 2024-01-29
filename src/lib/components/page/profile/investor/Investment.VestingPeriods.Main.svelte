@@ -116,9 +116,10 @@
     (
     ): void
     {
-      (profileData?.investorData ??= { data: { vesting_periods: [] } })
+      (profileData?.investorData ??= { data: { vesting_periods: [] } });
+      (profileData?.investorData?.data?.vesting_periods ??= []);
 
-      profileData?.investorData?.data?.vesting_periods.push
+      profileData?.investorData?.data?.vesting_periods?.push
       (
         ...this.sampleData
       );
