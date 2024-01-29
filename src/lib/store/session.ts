@@ -48,6 +48,7 @@ const sessionStoreObj: Platform_Session =
   deviceType: undefined,
   firebaseListeners: [],
   grapqhQlWebSockets: [],
+  currentAdminToggle: null,
   // ### NOTE:
   // ### variables for date handle.
   userDate: clientTimezoneDate(),
