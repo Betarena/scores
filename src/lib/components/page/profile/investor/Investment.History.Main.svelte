@@ -2,7 +2,8 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - access custom Betarena Scores JS VScode Snippets by typing 'script...'         │
+│ ➤ HINT: | Access snippets for '<script> [..] </script>' those found in           │
+|         | '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -30,10 +31,10 @@
   import { viewport_change } from '$lib/utils/platform-functions.js';
   import { Misc } from '@betarena/scores-lib/dist/classes/class.misc.js';
 
-  import InvestmentHistoryRowChild from './Investment.HistoryRow.Child.svelte';
-
   import AdminDevControlPanel from '$lib/components/misc/admin/Admin-Dev-ControlPanel.svelte';
   import AdminDevControlPanelToggleButton from '$lib/components/misc/admin/Admin-Dev-ControlPanelToggleButton.svelte';
+  import InvestmentHistoryRowChild from './Investment.HistoryRow.Child.svelte';
+
   import type { B_H_KEYP, B_H_KEYP_Tier, B_H_TH } from '@betarena/scores-lib/types/_HASURA_.js';
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
@@ -60,6 +61,10 @@
     profileData: IProfileData | null
   ;
 
+  /**
+   * @description
+   *  📣 available data points.
+   */
   type IRowLayout = 'date' | 'type' | 'tier' | 'discount' | 'investment' | 'tokens' | 'price' | '';
 
   class Dev
@@ -129,13 +134,22 @@
   }
 
   const
-    /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
+    /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+    */
     // eslint-disable-next-line no-unused-vars
     CNAME: string = 'profile⮕w⮕investment-detail⮕main'
-    /** @description 📣 threshold start + state for 📱 MOBILE */
+    /**
+     * @description
+     *  📣 threshold start + state for 📱 MOBILE
+    */
     // eslint-disable-next-line no-unused-vars
     , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
-    /** @description 📣 threshold start + state for 💻 TABLET */
+    /**
+     * @description
+     *  📣 threshold start + state for 💻 TABLET
+    */
     // eslint-disable-next-line no-unused-vars
     , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
@@ -170,6 +184,10 @@
     , newDevInstance = new Dev()
   ;
 
+  /**
+   * @description
+   *  📣 Available `translations`.
+   */
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
 
   // #endregion ➤ 📌 VARIABLES
@@ -245,7 +263,7 @@
   onMount
   (
     async (
-    ) =>
+    ): Promise < void > =>
     {
       resizeCustom();
       return;
@@ -259,7 +277,7 @@
 <svelte:window
   on:resize=
   {
-    () => {return resizeCustom()}
+    () => { return resizeCustom() }
   }
 />
 
@@ -267,8 +285,10 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component HTML                                                            │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - use 'Ctrl+Space' to autocomplete global class=styles                           │
-│ - access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.     │
+│ ➤ HINT: | Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    |
+│         │ imported from './static/app.css'                                       |
+│ ➤ HINT: | access custom Betarena Scores VScode Snippets by typing emmet-like     |
+|         | abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -431,7 +451,7 @@
 
 <!--
 ▓ NOTE:
-▓ > (dev) development admin state UI change control panel.
+▓ > (widget) admin development state UI change control panel.
 -->
 {#if newDevInstance.enabled}
 
@@ -441,7 +461,7 @@
 
     <!--
     ▓ NOTE:
-    ▓ > investor history (no-data-state).
+    ▓ > (no data) widget state.
     -->
     <div
       class=
@@ -492,7 +512,7 @@
 
     <!--
     ▓ NOTE:
-    ▓ > investor history (add sample data).
+    ▓ > (add sample data) widget.
     -->
     <div
       class=
@@ -543,8 +563,9 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component CSS/SCSS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE  │
-│ - access custom Betarena Scores CSS VScode Snippets by typing 'style...'         │
+│ ➤ HINT: | auto-fill/auto-complete iniside <style> for var()                      │
+|         | values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: | access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
