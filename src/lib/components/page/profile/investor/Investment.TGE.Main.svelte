@@ -24,6 +24,7 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+	import { dev } from '$app/environment';
 	import { page } from '$app/stores';
 	import { onDestroy, onMount } from 'svelte';
 
@@ -36,7 +37,6 @@
   import AdminDevControlPanel from '$lib/components/misc/admin/Admin-Dev-ControlPanel.svelte';
   import AdminDevControlPanelToggleButton from '$lib/components/misc/admin/Admin-Dev-ControlPanelToggleButton.svelte';
 
-  import { dev } from '$app/environment';
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
