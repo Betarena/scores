@@ -2,7 +2,8 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - access custom Betarena Scores JS VScode Snippets by typing 'script...'         │
+│ ➤ HINT: | Access snippets for '<script> [..] </script>' those found in           │
+|         | '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -24,6 +25,8 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { page } from '$app/stores';
+  import AdminDevControlPanel from '$lib/components/misc/admin/Admin-Dev-ControlPanel.svelte';
+  import AdminDevControlPanelToggleButton from '$lib/components/misc/admin/Admin-Dev-ControlPanelToggleButton.svelte';
 
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
@@ -56,24 +59,49 @@
     profileData: IProfileData | null
     /**
      * @description
-     *  📣
+     *  📣 makes use of parent 📱 MOBILE viewport state.
     */
     , VIEWPORT_MOBILE_INIT_PARENT: [ number, boolean ]
     /**
      * @description
-     *  📣
+     *  📣 makes use of parent 💻 TABLET viewport state.
     */
     , VIEWPORT_TABLET_INIT_PARENT: [ number, boolean ]
   ;
 
+  class Dev
+  {
+    enabled: boolean = false;
+    toggleProfileInvestorInvestmentHistoryNoData: boolean = false;
+
+    /**
+     * @description
+     */
+    toggleNoData
+    (
+    ): void
+    {
+      return;
+    }
+  }
+
   const
-    /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
+    /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+    */
     // eslint-disable-next-line no-unused-vars
     CNAME: string = 'profile⮕w⮕investment-wallets⮕main'
-    /** @description 📣 threshold start + state for 📱 MOBILE */
+    /**
+     * @description
+     *  📣 threshold start + state for 📱 MOBILE
+    */
     // eslint-disable-next-line no-unused-vars
     , VIEWPORT_MOBILE_INIT: [ number, boolean ] = VIEWPORT_MOBILE_INIT_PARENT
-    /** @description 📣 threshold start + state for 💻 TABLET */
+    /**
+     * @description
+     *  📣 threshold start + state for 💻 TABLET
+    */
     // eslint-disable-next-line no-unused-vars
     , VIEWPORT_TABLET_INIT: [ number, boolean ] = VIEWPORT_TABLET_INIT_PARENT
   ;
@@ -83,7 +111,7 @@
      * @description
      *  📣 Target **unique** wallets used in `investments` by _this_ user.
     */
-    userWallets
+    userWallets: string[]
     = [
       ...new Set
       (
@@ -92,8 +120,17 @@
           ?.map(x => { return x.wallet_address_erc20 ?? '' })!
       )
     ]
+    /**
+     * @description
+     *  📣 target `DEV` class instance.
+    */
+    , newDevInstance = new Dev()
   ;
 
+  /**
+   * @description
+   *  📣 Available `translations`.
+   */
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
 
   // ▓ [🐞]
@@ -108,17 +145,27 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component HTML                                                            │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - use 'Ctrl+Space' to autocomplete global class=styles                           │
-│ - access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.     │
+│ ➤ HINT: | Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    |
+│         │ imported from './static/app.css'                                       |
+│ ➤ HINT: | access custom Betarena Scores VScode Snippets by typing emmet-like     |
+|         | abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
+<!--
+▓ NOTE:
+▓ > (widget) main
+-->
 <div
   id={CNAME}
   class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
   class:row-space-out={!VIEWPORT_MOBILE_INIT_PARENT[1]}
   class:column-space-center={VIEWPORT_MOBILE_INIT_PARENT[1]}
 >
+  <AdminDevControlPanelToggleButton
+    on:clicked={() => { newDevInstance.enabled = !newDevInstance.enabled }}
+  />
+
   <!--
   ▓ NOTE:
   ▓ > (text) 1st column.
@@ -164,7 +211,10 @@
       "
       on:click={() => {return $sessionStore.showInvstementWallets = true}}
     >
-      {#if userWallets.length > 0}
+      {#if
+        userWallets.length > 0
+        && !newDevInstance.toggleProfileInvestorInvestmentHistoryNoData
+      }
         {
           profileTrs.investor?.wallets.view
           ?? 'View All'
@@ -229,7 +279,10 @@
   ▓ NOTE:
   ▓ > investment detail wallet modal.
   -->
-  {#if $sessionStore.showInvstementWallets && userWallets.length > 0}
+  {#if
+    $sessionStore.showInvstementWallets && userWallets.length > 0
+    && !newDevInstance.toggleProfileInvestorInvestmentHistoryNoData
+  }
     <WalletsModal
       walletAddressList={userWallets}
     />
@@ -238,11 +291,122 @@
 </div>
 
 <!--
+▓ NOTE:
+▓ > (widget) admin development state UI change control panel.
+-->
+{#if newDevInstance.enabled}
+
+  <AdminDevControlPanel
+    title='Investment Details'
+  >
+
+    <!--
+    ▓ NOTE:
+    ▓ > (no data) widget state.
+    -->
+    <div
+      class=
+      "
+      row-space-out
+      "
+    >
+      <!--
+      ▓ NOTE:
+      ▓ > (no data state) text.
+      -->
+      <p
+        class=
+        "
+        s-14
+        color-black
+        "
+      >
+        <b>[1]</b> Toggle <b>No Data State</b>
+      </p>
+
+      <!--
+      ▓ NOTE:
+      ▓ > (no data state) button.
+      -->
+      <button
+        class=
+        "
+        dev-toggle
+        "
+        on:click=
+        {
+          () =>
+          {
+            return newDevInstance.toggleProfileInvestorInvestmentHistoryNoData = !newDevInstance.toggleProfileInvestorInvestmentHistoryNoData
+          }
+        }
+        class:on={newDevInstance.toggleProfileInvestorInvestmentHistoryNoData}
+        class:off={!newDevInstance.toggleProfileInvestorInvestmentHistoryNoData}
+      >
+        {#if newDevInstance.toggleProfileInvestorInvestmentHistoryNoData}
+          ON
+        {:else}
+          OFF
+        {/if}
+      </button>
+    </div>
+
+    <!--
+    ▓ NOTE:
+    ▓ > (add sample data) widget.
+    -->
+    <div
+      class=
+      "
+      row-space-out
+      "
+    >
+      <!--
+      ▓ NOTE:
+      ▓ > (no data state) text.
+      -->
+      <p
+        class=
+        "
+        s-14
+        color-black
+        "
+      >
+        <b>[2]</b> Add <b>Sample Data</b>
+      </p>
+
+      <!--
+      ▓ NOTE:
+      ▓ > (no data state) button.
+      -->
+      <button
+        class=
+        "
+        dev-toggle
+        "
+        on:click=
+        {
+          () =>
+          {
+            return newDevInstance.addSampleData()
+          }
+        }
+      >
+        TOGGLE
+      </button>
+    </div>
+
+  </AdminDevControlPanel>
+
+{/if}
+
+<!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component CSS/SCSS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE  │
-│ - access custom Betarena Scores CSS VScode Snippets by typing 'style...'         │
+│ ➤ HINT: | auto-fill/auto-complete iniside <style> for var()                      │
+|         | values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: | access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -256,6 +420,8 @@
 
   div#profile⮕w⮕investment-wallets⮕main
   {
+    /* 📌 position */
+    position: relative;
     /* 🎨 style */
     background-color: var(--white);
     border-radius: 12px;
