@@ -153,7 +153,7 @@
   $: deepReactListenInvestorBalanceChng = $userBetarenaSettings.user.scores_user_data?.investor_balance;
 
   // ▓ [🐞]
-  // $userBetarenaSettings.user.scores_user_data.investor_balance = 100000;
+  $userBetarenaSettings.user.scores_user_data.investor_balance = 100000;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -303,24 +303,29 @@
     // ▓ > first time call of THIS method.
     if (!stateObject.isExecuted)
     {
-      stateObject.initialDivDistance = componentTarget.getBoundingClientRect().bottom + window.scrollY;
+      // stateObject.initialDivDistance = componentTarget.getBoundingClientRect().bottom + window.scrollY;
       stateObject.isExecuted = true;
     }
 
     let
       /**
        * @description
-       *  📣 Target distance of THIS widget from the top.
+       *  📣 Target dimensions of THIS widget from the respective points of interest.
       */
-      distanceTopFromDiv = componentTarget.getBoundingClientRect().top
+      elementBoundVal = componentTarget.getBoundingClientRect()
     ;
 
     // ▓ [🐞]
-    // console.log('distanceTopFromDiv', distanceTopFromDiv);
+    // console.log('elementBoundVal', elementBoundVal);
+    // console.log('window.innerHeight', window.innerHeight);
 
     // ▓ CHECK
     // ▓ > client has scrolled into view THIS widget component
-    if (distanceTopFromDiv <= 300)
+    if
+    (
+      ((elementBoundVal.top >= 0) && (elementBoundVal.bottom <= window.innerHeight))
+      || ((elementBoundVal.top <= 0) && (elementBoundVal.height >= window.innerHeight))
+    )
     {
       stateObject.show = true;
       setTimeout(() => { return show = true }, 50);
@@ -922,6 +927,7 @@
       border-collapse: collapse;
       width: -webkit-fill-available;
       width: -moz-available;
+      overflow: hidden;
 
       &:has(div#cumulative-sum-slider-box)
       {
@@ -933,6 +939,11 @@
       {
         tr
         {
+          /* 🎨 style */
+          height: 40px;
+          min-height: 40px;
+          max-height: 40px;
+
           th
           {
             /* 📌 position */
@@ -941,7 +952,7 @@
             width: fit-content;
             /* 🎨 style */
             white-space: nowrap;
-            padding: 0 0 20px 0;
+            padding: 0 0 8px 0;
             padding-right: 78px;
 
             &:first-child
@@ -1080,8 +1091,11 @@
 
           &:nth-child(odd)
           {
-            /* 🎨 style */
-            background-color: var(--whitev2)
+            td
+            {
+              /* 🎨 style */
+              background-color: var(--whitev2);
+            }
           }
         }
       }
@@ -1125,6 +1139,9 @@
           {
             th
             {
+              /* 🎨 style */
+              padding-bottom: 20px;
+
               &:first-child
               {
                 /* 🎨 style */
@@ -1268,8 +1285,11 @@
 
           &:nth-child(odd)
           {
-            /* 🎨 style */
-            background-color: var(--dark-theme-1-5-shade-o-0-5);
+            td
+            {
+              /* 🎨 style */
+              background-color: var(--dark-theme-1-5-shade-o-0-5);
+            }
           }
         }
       }

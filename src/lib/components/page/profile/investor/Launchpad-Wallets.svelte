@@ -24,7 +24,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { page } from '$app/stores';
-  import { onMount } from 'svelte';
+  import { onDestroy, onMount } from 'svelte';
 
   import userBetarenaSettings from '$lib/store/user-settings.js';
   import { MONTH_NAMES_ABBRV } from '$lib/utils/dates.js';
@@ -102,7 +102,7 @@
 
       today.setFullYear(today.getFullYear() - 1);
 
-      for (let index = 0; index < 12; index++)
+      for (let index = 0; index < 24; index++)
       {
         today.setMonth(today.getMonth() + 1);
         dateList.push(new Date(today));
@@ -128,12 +128,29 @@
     {
       /**
        * @description
-       *  📣 stores target `chart` instance.
+       *  📣 stores target `chart` instance (1).
       */
-      chartInstance: Chart | null
+      chartInstance: Chart | null;
+      /**
+       * @description
+       *  📣 stores target `chart` instance (2).
+      */
+     chartInstance2: Chart | null;
+      /**
+       * @description
+       *  📣 stores target `chart` scroll action (lock).
+      */
+      chartIsBeingScrolled: boolean;
     } = {
       chartInstance: null
+      , chartInstance2: null
+      , chartIsBeingScrolled: false
     }
+    /**
+     * @description
+     *  📣 Target `start` scroll value.
+    */
+    , startScroll: number = 0
   ;
 
   // ▓ [🐞]
@@ -155,6 +172,160 @@
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟦 HELPER
+   * @description
+   *  📣 Instantiate `eventListeners` needed for _this_ widget.
+   * @return { void }
+   */
+  function addEventListeners
+  (
+  ): void
+  {
+    const
+      /**
+       * @description
+       *  📣 target container to `listen` changes to.
+      */
+      container = document.getElementById('chartParent')!
+    ;
+
+    // ▓ NOTE:
+    // ▓ > 📱 MOBILE.
+    container.addEventListener('touchstart', mouseDownEvent, true);
+    window.addEventListener('touchend', mouseUpEvent, true);
+    window.addEventListener('touchmove', mouseMoveEvent, true);
+
+    // ▓ NOTE:
+    // ▓ > 💻 TABLET + 🖥️ LAPTOP.
+    container.addEventListener('mousedown', mouseDownEvent, true);
+    window.addEventListener('mouseup', mouseUpEvent, true);
+    window.addEventListener('mousemove', mouseMoveEvent, true);
+
+    return;
+  }
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟦 HELPER
+   * @description
+   *  📣 Trigger event on `mouseDown` (or similar) action.
+   * @param { any } event
+   *  💠 Target `event` passed to `function`.
+   * @return { void }
+   */
+  function mouseDownEvent
+  (
+    event: any
+  ): void
+  {
+    if (stateObject.chartIsBeingScrolled) return;
+
+    let
+      container = document.getElementById('chartParent')!
+    ;
+    event.preventDefault();
+
+    const
+      leftVal = container.offsetLeft - (event?.clientX || event?.touches[0].clientX)
+    ;
+
+    startScroll = leftVal;
+
+    stateObject.chartIsBeingScrolled = true;
+
+    return;
+  }
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟦 HELPER
+   * @description
+   *  📣 Trigger event on `mouseMove` (or similar) action.
+   * @param { any } event
+   *  💠 Target `event` passed to `function`.
+   * @return { void }
+   */
+  function mouseMoveEvent
+  (
+    event: any
+  ): void
+  {
+    if (!stateObject.chartIsBeingScrolled) return;
+
+    let
+      container = document.getElementById('chartParent')!
+      , scrollBox = document.getElementById('chartMain')!
+    ;
+    event.preventDefault();
+
+    const
+      leftVal = container.offsetLeft - (event?.clientX || event?.touches[0].clientX)
+    ;
+
+    scrollBox.scroll({ 'behavior': 'smooth', left: (scrollBox.scrollLeft + (leftVal - startScroll)) });
+
+    return;
+  }
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟦 HELPER
+   * @description
+   *  📣 Trigger event on `mouseUp` (or similar) action.
+   * @param { any } event
+   *  💠 Target `event` passed to `function`.
+   * @return { void }
+   */
+  function mouseUpEvent
+  (
+  ): void
+  {
+    stateObject.chartIsBeingScrolled = false;
+
+    return;
+  }
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟦 HELPER
+   * @description
+   *  📣 removes `eventListeners` no longer needed for _this_ widget.
+   * @return { void }
+   */
+  function removeEventListeners
+  (
+  ): void
+  {
+    const
+      /**
+       * @description
+       *  📣 target container to `listen` changes to.
+      */
+      container = document.getElementById('chartParent')!
+    ;
+
+    container.removeEventListener('touchstart', mouseDownEvent, true);
+    container.removeEventListener('mousedown', mouseDownEvent, true);
+    window.removeEventListener('touchend', mouseUpEvent, true);
+    window.removeEventListener('touchmove', mouseMoveEvent, true);
+    window.removeEventListener('mouseup', mouseUpEvent, true);
+    window.removeEventListener('mousemove', mouseMoveEvent, true);
+
+    return;
+  }
 
   /**
    * @author
@@ -232,7 +403,7 @@
     }
 
     // ▓ [🐞]
-    console.log('mapTemp', mapTemp);
+    // console.log('mapTemp', mapTemp);
 
     // ▓ NOTE:
     // ▓ > loop over each referral and group them by monthly+year;
@@ -252,7 +423,7 @@
     }
 
     // ▓ [🐞]
-    console.log('mapTemp2', mapTemp2);
+    // console.log('mapTemp2', mapTemp2);
 
     let
       /**
@@ -289,7 +460,7 @@
     }
 
     // ▓ [🐞]
-    console.log('mapMain', mapMain);
+    // console.log('mapMain', mapMain);
 
     return mapMain;
   }
@@ -312,7 +483,8 @@
       ): Promise < void > =>
       {
         const
-          canvas = document.getElementById('myChart') as HTMLCanvasElement
+          canvas = document.getElementById('valueChart') as HTMLCanvasElement
+          , canvasHover = document.getElementById('constChart') as HTMLCanvasElement
           , ctx = canvas.getContext('2d')!
         ;
         var gradient = ctx.createLinearGradient(0, 0, 0, 400);
@@ -322,6 +494,9 @@
         // ▓ read-more :|: https://stackoverflow.com/questions/40056555/destroy-chart-js-bar-graph-to-redraw-other-graph-in-same-canvas
         if (stateObject.chartInstance)
           stateObject.chartInstance.destroy();
+        //
+        if (stateObject.chartInstance2)
+          stateObject.chartInstance2.destroy();
         //
 
         // ▓ [🐞]
@@ -357,7 +532,15 @@
             }
             , options:
             {
-              plugins:
+              maintainAspectRatio: false
+              , layout:
+              {
+                padding:
+                {
+                  top: 12
+                }
+              }
+              , plugins:
               {
                 legend:
                 {
@@ -376,14 +559,20 @@
                 y:
                 {
                   beginAtZero: true
+                  , min: 100
                   , grid:
                   {
                     color: gridLineColor
                     , lineWidth: 2
+                    , drawTicks: false
                   }
                   , border:
                   {
                     dash: [5,5]
+                  }
+                  , ticks:
+                  {
+                    display: false
                   }
                 }
                 , x:
@@ -396,6 +585,82 @@
                   , border:
                   {
                     dash: [5,5]
+                  }
+                }
+              }
+            }
+          }
+        );
+
+        stateObject.chartInstance2 = new Chart
+        (
+          canvasHover as ChartItem,
+          {
+            type: 'line'
+            , data:
+            {
+              labels: [...mapInvestAmountDeltaPerMonth.keys()].map(x => {return MONTH_NAMES_ABBRV[x.split('_')[0]]})
+              , datasets: [
+                {
+                  data: [...mapInvestAmountDeltaPerMonth.values()]
+                  , borderColor: gridLineColor
+                }
+              ]
+            }
+            , options:
+            {
+              maintainAspectRatio: false
+              , layout:
+              {
+                padding:
+                {
+                  bottom: 5
+                  , left: 0
+                }
+              }
+              , plugins:
+              {
+                legend:
+                {
+                  display: false
+                }
+              }
+              , elements:
+              {
+                point:
+                {
+                  pointStyle: false
+                }
+              }
+              , scales:
+              {
+                y:
+                {
+                  beginAtZero: true
+                  , min: 100
+                  , afterFit: (ctx) =>
+                  {
+                    ctx.width = 60;
+                  }
+                  , grid:
+                  {
+                    color: '#FFFFF'
+                    , lineWidth: 0
+                  }
+                  , border:
+                  {
+                    dash: [5,5]
+                  }
+                }
+                , x:
+                {
+                  ticks:
+                  {
+                    display: false
+                  }
+                  , grid:
+                  {
+                    drawTicks: false
                   }
                 }
               }
@@ -441,7 +706,19 @@
     async (
     ): Promise < void > =>
     {
+      addEventListeners();
       generateTargetChart();
+      return;
+    }
+  );
+
+  onDestroy
+  (
+    async (
+
+    ): Promise < void > =>
+    {
+      removeEventListeners();
       return;
     }
   );
@@ -585,11 +862,39 @@
   ▓ NOTE:
   ▓ > Investor Wallets Graph Data.
   -->
-  <div>
-    <canvas
-      id="myChart"
+  <div
+    id="chartParent"
+  >
+
+    <!--
+    ▓ NOTE:
+    ▓ > Investor Chart Data 1.
+    -->
+    <div
+      id="chartHover"
     >
-    </canvas>
+      <canvas
+        id="constChart"
+      >
+      </canvas>
+    </div>
+
+    <!--
+    ▓ NOTE:
+    ▓ > Investor Chart Data 2.
+    -->
+    <div
+      id="chartMain"
+    >
+      <div
+        id="scrollBox"
+      >
+        <canvas
+          id="valueChart"
+        >
+        </canvas>
+      </div>
+    </div>
   </div>
 
 </div>
@@ -628,13 +933,59 @@
       padding: 20px 20px 0 20px;
     }
 
-    div
+    div#chartParent
     {
-      > canvas
+      /* 🎨 style */
+      display: flex;
+      padding: 0 20px;
+      // width: 500px;
+
+      div#chartHover
       {
         /* 🎨 style */
-        max-height: 190px;
-        padding: 0 20px;
+        max-width: 60px;
+        position: absolute;
+        min-height: 170px;
+        max-height: 170px;
+        background-color: var(--white);
+
+        canvas#constChart
+        {
+          /* 🎨 style */
+        }
+      }
+
+      div#chartMain
+      {
+        /* 🎨 style */
+        // max-width: 500px;
+        min-width: auto;
+        overflow-x: scroll;
+        margin-left: 47px;
+
+        &::-webkit-scrollbar
+        {
+          /* Hide scrollbar for Chrome, Safari and Opera */
+          display: none;
+          /* Hide scrollbar for IE, Edge and Firefox */
+          -ms-overflow-style: none; /* IE and Edge */
+          scrollbar-width: none; /* Firefox */
+          width: 4px;
+        }
+
+        div#scrollBox
+        {
+          /* 🎨 style */
+          // max-width: 100%;
+          width: 2000px;
+
+          canvas#valueChart
+          {
+            /* 🎨 style */
+            min-height: 190px;
+            max-height: 190px;
+          }
+        }
       }
     }
   }
@@ -651,6 +1002,15 @@
     {
       /* 🎨 style */
       background-color: var(--dark-theme-1-4-shade) !important;
+
+      div#chartParent
+      {
+        div#chartHover
+        {
+          /* 🎨 style */
+          background-color: var(--dark-theme-1-4-shade);
+        }
+      }
     }
   }
 

@@ -68,7 +68,7 @@
 
   import type { B_H_TH } from '@betarena/scores-lib/types/_HASURA_.js';
   import type { ICoinMarketCapDataMain } from '@betarena/scores-lib/types/_WEB3_.js';
-  import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
+  import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
   import type { Web3Modal } from '@web3modal/ethers5/dist/types/src/client.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -89,8 +89,10 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let
-    /** @augments B_PROF_D */
-    WIDGET_DATA: B_PROF_D | null
+    /**
+     * @augments IProfileData
+    */
+    profileData: IProfileData | null
   ;
 
   // 🔗 read-more :|: https://stackoverflow.com/questions/72230897/how-to-call-a-smart-contract-function-with-walletconnect-react-js-node-js
@@ -1422,10 +1424,10 @@
               w-500
               "
             >
-              <!-- {
-              profileTrs.investor?.invest_box.values.min
-                ?? '∞'
-              } USD -->
+              {
+                profileData?.presaleData.data?.min_buy
+                ?? 1
+              }
             </span>
             /
             {
@@ -1439,10 +1441,10 @@
               w-500
               "
             >
-              <!-- {
-                mapInvestorData.get('invest_box')?.values.max
-                ?? '∞'
-              } -->
+              {
+                profileData?.presaleData.data?.max
+                ?? 2500
+              } USD
             </span>
           </p>
 

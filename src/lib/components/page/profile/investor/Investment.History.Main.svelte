@@ -57,7 +57,7 @@
   export let
     /**
      * @augments IProfileData
-     */
+    */
     profileData: IProfileData | null
   ;
 
@@ -733,8 +733,11 @@
 
               &:nth-child(even)
               {
-                /* 🎨 style */
-                background-color: var(--white);
+                td
+                {
+                  /* 🎨 style */
+                  background-color: var(--whitev2);
+                }
               }
 
               div.extra-information
@@ -859,8 +862,11 @@
           {
             &:nth-child(even)
             {
-              /* 🎨 style */
-              background-color: rgba(75, 75, 75, 0.50) !important;
+              td
+              {
+                /* 🎨 style */
+                background-color: rgba(75, 75, 75, 0.50) !important;
+              }
             }
           }
         }

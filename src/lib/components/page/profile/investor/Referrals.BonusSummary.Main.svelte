@@ -25,6 +25,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { page } from '$app/stores';
+  import { onMount } from 'svelte';
 
   import userBetarenaSettings from '$lib/store/user-settings.js';
 
@@ -113,6 +114,11 @@
      *  📣 target `DEV` class instance.
     */
     , newDevInstance = new Dev()
+    /**
+     * @description
+     *  📣 Wether `widget` contains `NoData` state.
+    */
+    , isNoData: boolean = false
   ;
 
   /**
@@ -122,6 +128,75 @@
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
 
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟦 HELPER
+   * @description
+   *  📣 Validates data widget for respective `state`.
+   * @return { void }
+   */
+  function checkNoData
+  (
+  ): void
+  {
+    isNoData = false;
+
+    let
+      /**
+       * @description
+       *  📣 counter of amount of invalid data points in data.
+      */
+      noDataCount: number = 0
+    ;
+
+    for (const item of dataLayout)
+    {
+      if ([null, undefined, 0].includes(profileData?.investorData?.data?.bonus_summary[item]))
+        noDataCount++;
+    }
+
+    if (noDataCount == dataLayout.length) isNoData = true;
+
+    return;
+  }
+
+  // #endregion ➤ 🛠️ METHODS
+
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  onMount
+  (
+    async (
+    ) =>
+    {
+      checkNoData();
+      return;
+    }
+  );
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
 </script>
 
@@ -186,59 +261,92 @@
   <div
     id="referral-bonus-box"
   >
-    {#each dataLayout as item}
+    {#if !isNoData}
+
+      {#each dataLayout as item}
+
+        <div
+          class=
+          "
+          row-space-out
+          <!---->
+          bonus-row
+          "
+        >
+
+          <p
+            class=
+            "
+            s-14
+            color-grey
+              grey-v1
+            "
+          >
+            {#if item == 'referral_bonus'}
+              {
+                profileTrs.investor?.referral.bonus.referral_bonus
+                ?? 'Referral Bonus'
+              }
+            {:else if item == 'referrals_number'}
+              {
+                profileTrs.investor?.referral.bonus.ref_number
+                ?? 'Referrals Number'
+              }
+            {:else if item == 'referred_bonus'}
+              {
+                profileTrs.investor?.referral.bonus.referred_bonus
+                ?? 'Referred Bonus'
+              }
+            {:else if item == 'total_bonus'}
+              {
+                profileTrs.investor?.referral.bonus.total
+                ?? 'Total Bonus'
+              }
+            {/if}
+          </p>
+
+          <p
+            class=
+            "
+            s-14
+            color-black-2
+            "
+          >
+            {profileData?.investorData?.data?.bonus_summary[item] ?? 0}
+            {#if item != 'referrals_number'}
+              BTA
+            {/if}
+          </p>
+
+        </div>
+
+      {/each}
+
+    {:else}
+
       <div
-        class=
-        "
-        row-space-out
-        <!---->
-        bonus-row
-        "
+        id="no-widget-data"
       >
-
         <p
           class=
           "
-          s-14
-          color-grey
-            grey-v1
+          s-16
+          color-black-3
+            dark-v1
+          "
+          style=
+          "
+          line-height: 24px; /* 150% */
           "
         >
-          {#if item == 'referral_bonus'}
-            {
-              profileTrs.investor?.referral.bonus.referral_bonus
-              ?? 'Referral Bonus'
-            }
-          {:else if item == 'referrals_number'}
-            {
-              profileTrs.investor?.referral.bonus.ref_number
-              ?? 'Referrals Number'
-            }
-          {:else if item == 'referred_bonus'}
-            {
-              profileTrs.investor?.referral.bonus.referred_bonus
-              ?? 'Referred Bonus'
-            }
-          {:else if item == 'total_bonus'}
-            {
-              profileTrs.investor?.referral.bonus.total
-              ?? 'Total Bonus'
-            }
-          {/if}
+          {
+            profileTrs.investor?.general.no_information
+            ?? 'Uh-oh! No Investments have been found.'
+          }
         </p>
-
-        <p
-          class=
-          "
-          s-14
-          color-black-2
-          "
-        >
-          {profileData?.investorData?.data?.bonus_summary[item] ?? 0} BTA
-        </p>
-
       </div>
-    {/each}
+
+    {/if}
   </div>
 
 </div>
@@ -387,6 +495,13 @@
 
     div#referral-bonus-box
     {
+      /* 📌 position */
+      position: relative;
+      /* 🎨 style */
+      height: 160px;
+      min-height: 160px;
+      max-height: 160px;
+
       div.bonus-row
       {
         /* 🎨 style */
@@ -399,6 +514,36 @@
         {
           /* 🎨 style */
           background-color: var(--whitev2);
+        }
+      }
+
+      div#no-widget-data
+      {
+        /* 📌 position */
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+        z-index: 10;
+        /* 🎨 style */
+        background-color: var(--white);
+        text-align: center;
+
+        p
+        {
+          /* 📌 position */
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          right: 0;
+          left: 0;
+          margin: auto;
+          /* 🎨 style */
+          height: fit-content;
+          -ms-transform: translateY(-50%);
+          width: 176px;
         }
       }
     }
@@ -427,6 +572,12 @@
           /* 🎨 style */
           background-color: rgba(75, 75, 75, 0.50) !important;
         }
+      }
+
+      div#no-widget-data
+      {
+        /* 🎨 style */
+        background-color: var(--dark-theme-1-4-shade) !important;
       }
     }
   }
