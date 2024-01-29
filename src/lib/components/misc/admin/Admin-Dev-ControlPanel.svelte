@@ -71,6 +71,11 @@
     */
     // eslint-disable-next-line no-unused-vars
     , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
+    /**
+     * @description
+     *  📣 target environment being used.
+    */
+    , targetAppEnv: string = import.meta.env?.VITE_ENV_TARGET
   ;
 
   // #endregion ➤ 📌 VARIABLES
@@ -88,7 +93,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-{#if dev && $sessionStore.currentAdminToggle == title}
+{#if (targetAppEnv == '.env.development' || dev) && $sessionStore.currentAdminToggle == title}
   <div
     class={CNAME}
   >

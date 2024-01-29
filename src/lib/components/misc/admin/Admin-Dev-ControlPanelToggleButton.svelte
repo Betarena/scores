@@ -83,6 +83,11 @@
      *  📣
     */
     , dispatch: EventDispatcher<any> = createEventDispatcher()
+      /**
+     * @description
+     *  📣 target environment being used.
+    */
+    , targetAppEnv: string = import.meta.env?.VITE_ENV_TARGET
   ;
 
   let
@@ -142,7 +147,7 @@
 ▓ NOTE:
 ▓ > admin development toggle component.
 -->
-{#if dev}
+{#if (targetAppEnv == '.env.development' || dev)}
   <div
     class=
     "
