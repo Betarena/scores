@@ -32,7 +32,9 @@
 
   import InvestmentHistoryRowChild from './Investment.HistoryRow.Child.svelte';
 
-  import type { B_H_KEYP, B_H_KEYP_Tier } from '@betarena/scores-lib/types/_HASURA_.js';
+  import AdminDevControlPanel from '$lib/components/misc/admin/Admin-Dev-ControlPanel.svelte';
+  import AdminDevControlPanelToggleButton from '$lib/components/misc/admin/Admin-Dev-ControlPanelToggleButton.svelte';
+  import type { B_H_KEYP, B_H_KEYP_Tier, B_H_TH } from '@betarena/scores-lib/types/_HASURA_.js';
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -52,11 +54,79 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let
-    /** @augments IProfileData */
+    /**
+     * @augments IProfileData
+     */
     profileData: IProfileData | null
   ;
 
   type IRowLayout = 'date' | 'type' | 'tier' | 'discount' | 'investment' | 'tokens' | 'price' | '';
+
+  class Dev
+  {
+    enabled: boolean = false;
+    toggleProfileInvestorInvestmentHistoryNoData: boolean = false;
+    sampleData: B_H_TH[] = [
+      {
+        Gateway: null
+        , amount: 1800
+        , asset: 'BTA'
+        , bic_swift: null
+        , bta_price: null
+        , date: '2024-01-11T02:17:33.735582+00:00'
+        , deposit_wallet_address: null
+        , description: 'Vesting Period Claim'
+        , extra: { vestingId: 1 }
+        , first_name: null
+        , iban: null
+        , id: 130
+        , last_name: null
+        , payment_email: null
+        , payment_processor_fee: null
+        , platform_fee: null
+        , quantity: 2500
+        , referral: null
+        , status: 'pending'
+        , tier: 'bronze'
+        , type: 'investment'
+        , uid: 'n65vqAoIH3b7lsU4zroxjHk0SSp2'
+        , wallet_address_erc20: null
+        , withdraw_wallet_address: null
+      }
+      , {
+        status: 'pending'
+        , type: 'investment'
+        , amount: 50
+      }
+    ];
+
+    /**
+     * @description
+     */
+    toggleNoData
+    (
+    ): void
+    {
+      return;
+    }
+
+    /**
+     * @description
+    */
+    addSampleData
+    (
+    ): void
+    {
+      profileData?.tx_hist?.push
+      (
+        ...this.sampleData
+      );
+
+      profileData = profileData;
+
+      return;
+    }
+  }
 
   const
     /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
@@ -73,7 +143,7 @@
   let
     /**
      * @description
-     *  📣
+     *  📣 convert target `data` to respective `map`.
     */
     dataMap: Map < B_H_KEYP_Tier, B_H_KEYP > = new Misc().convertToMapKEYPINVSTTIER
     (
@@ -93,11 +163,16 @@
       , 'tokens'
       , 'price'
     ]
+    /**
+     * @description
+     *  📣
+    */
+    , newDevInstance = new Dev()
   ;
 
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
 
-    // #endregion ➤ 📌 VARIABLES
+  // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
 
@@ -197,10 +272,17 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
+<!--
+▓ NOTE:
+▓ > (widget) main
+-->
 <div
   id={CNAME}
   class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
 >
+  <AdminDevControlPanelToggleButton
+    on:clicked={() => { return newDevInstance.enabled = !newDevInstance.enabled }}
+  />
 
   <!--
   ▓ NOTE:
@@ -216,7 +298,6 @@
     m-b-20
     "
   >
-    <!-- TODO: Missing Translation -->
     {
       profileTrs.investor?.investment_details.widget_title
       ?? 'Investment Details'
@@ -297,15 +378,26 @@
       -->
       <tbody>
 
-        {#each [...profileData?.tx_hist?? [], ...profileData?.tx_hist ?? []] ?? [] as item}
-          {#if item.type == 'investment'}
+        <!-- ▓ [🐞] -->
+        <!-- {#each [...profileData?.tx_hist ?? [], ...profileData?.tx_hist ?? []] ?? [] as item} -->
+        <!-- {#each [] as item} -->
+
+        {#if
+          profileData?.tx_hist?.filter(x => {return x.type == 'investment'}).length > 0
+          && !newDevInstance.toggleProfileInvestorInvestmentHistoryNoData
+        }
+          {#each profileData?.tx_hist?.filter(x => {return x.type == 'investment'}) ?? [] as item}
+
+            <!-- ▓ [🐞] -->
+            <!-- {console.log('item', item)} -->
+
             <InvestmentHistoryRowChild
               data={item}
               tierDataMap={dataMap}
               VIEWPORT_MOBILE_INIT_PARENT={VIEWPORT_MOBILE_INIT}
               VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
             />
-          {/if}
+          {/each}
         {:else}
           <div
             id="no-widget-data"
@@ -328,7 +420,7 @@
               }
             </p>
           </div>
-        {/each}
+        {/if}
 
       </tbody>
 
@@ -336,6 +428,116 @@
   </div>
 
 </div>
+
+<!--
+▓ NOTE:
+▓ > (dev) development admin state UI change control panel.
+-->
+{#if newDevInstance.enabled}
+
+  <AdminDevControlPanel
+    title='Investment Details'
+  >
+
+    <!--
+    ▓ NOTE:
+    ▓ > investor history (no-data-state).
+    -->
+    <div
+      class=
+      "
+      row-space-out
+      "
+    >
+      <!--
+      ▓ NOTE:
+      ▓ > (no data state) text.
+      -->
+      <p
+        class=
+        "
+        s-14
+        color-black
+        "
+      >
+        <b>[1]</b> Toggle <b>No Data State</b>
+      </p>
+
+      <!--
+      ▓ NOTE:
+      ▓ > (no data state) button.
+      -->
+      <button
+        class=
+        "
+        dev-toggle
+        "
+        on:click=
+        {
+          () =>
+          {
+            return newDevInstance.toggleProfileInvestorInvestmentHistoryNoData = !newDevInstance.toggleProfileInvestorInvestmentHistoryNoData
+          }
+        }
+        class:on={newDevInstance.toggleProfileInvestorInvestmentHistoryNoData}
+        class:off={!newDevInstance.toggleProfileInvestorInvestmentHistoryNoData}
+      >
+        {#if newDevInstance.toggleProfileInvestorInvestmentHistoryNoData}
+          ON
+        {:else}
+          OFF
+        {/if}
+      </button>
+    </div>
+
+    <!--
+    ▓ NOTE:
+    ▓ > investor history (add sample data).
+    -->
+    <div
+      class=
+      "
+      row-space-out
+      "
+    >
+      <!--
+      ▓ NOTE:
+      ▓ > (no data state) text.
+      -->
+      <p
+        class=
+        "
+        s-14
+        color-black
+        "
+      >
+        <b>[2]</b> Add <b>Sample Data</b>
+      </p>
+
+      <!--
+      ▓ NOTE:
+      ▓ > (no data state) button.
+      -->
+      <button
+        class=
+        "
+        dev-toggle
+        "
+        on:click=
+        {
+          () =>
+          {
+            return newDevInstance.addSampleData()
+          }
+        }
+      >
+        TOGGLE
+      </button>
+    </div>
+
+  </AdminDevControlPanel>
+
+{/if}
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -358,6 +560,8 @@
 
   div#profile⮕w⮕investment-detail⮕main
   {
+    /* 📌 position */
+    position: relative;
     /* 🎨 style */
     background-color: var(--white);
     border-radius: 12px;
@@ -564,6 +768,17 @@
       height: 333px;
       min-height: 333px;
       max-height: 333px;
+
+      div#developer-box
+      {
+        /* 📌 position */
+        position: absolute;
+        right: 0;
+        /* 🎨 style */
+        background-color: yellow;
+        height: 100%;
+        width: 20px;
+      }
 
       div#table-box
       {
