@@ -2,8 +2,8 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ HINT: | Access snippets for '<script> [..] </script>' those found in           │
-|         | '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -29,9 +29,10 @@
   import userBetarenaSettings from '$lib/store/user-settings.js';
 
   import AdminDevControlPanel from '$lib/components/misc/admin/Admin-Dev-ControlPanel.svelte';
+  import AdminDevControlPanelToggleButton from '$lib/components/misc/admin/Admin-Dev-ControlPanelToggleButton.svelte';
   import ReferralsHistoryRowChild from './Referrals.HistoryRow.Child.svelte';
 
-  import AdminDevControlPanelToggleButton from '$lib/components/misc/admin/Admin-Dev-ControlPanelToggleButton.svelte';
+  import type { PUBLIC__INVESTOR_IReferralHistory } from '@betarena/scores-lib/types/_HASURA_.js';
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -71,8 +72,22 @@
 
   class Dev
   {
-    enabled: boolean = false;
-    toggleProfileInvestorInvestmentHistoryNoData: boolean = false;
+    mutated: boolean = false;
+    noData: boolean = false;
+    sampleData: PUBLIC__INVESTOR_IReferralHistory[] = [
+      {
+        id: 1,
+        date: "12/12/24",
+        bonus_bta: 50,
+        bonus_percentage: 20
+      },
+      {
+        id: 2,
+        date: "12/12/24",
+        bonus_bta: 50,
+        bonus_percentage: 0
+      },
+    ];
 
     /**
      * @description
@@ -83,16 +98,64 @@
     {
       return;
     }
+
+    /**
+     * @author
+     *  @migbash
+     * @summary
+     *  🟦 HELPER
+     * @description
+     *  📣 Infinite inject sample data to widget for testing.
+     * @return { void }
+    */
+    addSampleData
+    (
+    ): void
+    {
+      (profileData?.investorData ??= { data: { referral_history: [] } })
+
+      profileData?.investorData?.data?.referral_history.push
+      (
+        ...this.sampleData
+      );
+
+      profileData = profileData;
+
+      return;
+    }
+
+    /**
+     * @description
+     */
+    resetState
+    (
+    ): void
+    {
+      alert('resetting');
+
+      this.mutated = false;
+      this.noData = false;
+      return;
+    }
   }
 
   const
-    /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
+    /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+    */
     // eslint-disable-next-line no-unused-vars
     CNAME: string = 'profile⮕w⮕referral-history⮕main'
-    /** @description 📣 threshold start + state for 📱 MOBILE */
+    /**
+     * @description
+     *  📣 threshold start + state for 📱 MOBILE
+    */
     // eslint-disable-next-line no-unused-vars
     , VIEWPORT_MOBILE_INIT: [ number, boolean ] = VIEWPORT_MOBILE_INIT_PARENT
-    /** @description 📣 threshold start + state for 💻 TABLET */
+    /**
+     * @description
+     *  📣 threshold start + state for 💻 TABLET
+    */
     // eslint-disable-next-line no-unused-vars
     , VIEWPORT_TABLET_INIT: [ number, boolean ] = VIEWPORT_TABLET_INIT_PARENT
   ;
@@ -182,10 +245,10 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component HTML                                                            │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ HINT: | Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    |
-│         │ imported from './static/app.css'                                       |
-│ ➤ HINT: | access custom Betarena Scores VScode Snippets by typing emmet-like     |
-|         | abbrev.                                                                │
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -196,10 +259,21 @@
 <div
   id={CNAME}
   class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+  class:mutated={newDevInstance.mutated}
 >
 
   <AdminDevControlPanelToggleButton
-    on:clicked={() => { newDevInstance.enabled = !newDevInstance.enabled }}
+    title='Referral History'
+    mutated={newDevInstance.mutated}
+    on:reset=
+    {
+      () =>
+      {
+        newDevInstance.mutated = false;
+        newDevInstance.noData = false;
+        return;
+      }
+    }
   />
 
   <!--
@@ -288,7 +362,7 @@
 
         {#if
           profileData?.investorData?.data?.referral_history.length > 0
-          && !newDevInstance.toggleProfileInvestorInvestmentHistoryNoData
+          && !newDevInstance.noData
         }
           {#each [...profileData?.investorData?.data?.referral_history ?? []] as item}
             <ReferralsHistoryRowChild
@@ -332,119 +406,119 @@
 ▓ NOTE:
 ▓ > (widget) admin development state UI change control panel.
 -->
-{#if newDevInstance.enabled}
+<AdminDevControlPanel
+  title='Referral History'
+>
 
-  <AdminDevControlPanel
-    title='Referral History'
+  <!--
+  ▓ NOTE:
+  ▓ > (no data) widget state.
+  -->
+  <div
+    class=
+    "
+    row-space-out
+    "
   >
+    <!--
+    ▓ NOTE:
+    ▓ > (no data state) text.
+    -->
+    <p
+      class=
+      "
+      s-14
+      color-black
+      "
+    >
+      <b>[1]</b> Toggle <b>No Data State</b>
+    </p>
 
     <!--
     ▓ NOTE:
-    ▓ > (no data) widget state.
+    ▓ > (no data state) button.
     -->
-    <div
+    <button
       class=
       "
-      row-space-out
+      dev-toggle
+      "
+      on:click=
+      {
+        () =>
+        {
+          newDevInstance.noData = !newDevInstance.noData;
+          newDevInstance.mutated = true;
+          return;
+        }
+      }
+      class:on={newDevInstance.noData}
+      class:off={!newDevInstance.noData}
+    >
+      {#if newDevInstance.noData}
+        ON
+      {:else}
+        OFF
+      {/if}
+    </button>
+  </div>
+
+  <!--
+  ▓ NOTE:
+  ▓ > (add sample data) widget.
+  -->
+  <div
+    class=
+    "
+    row-space-out
+    "
+  >
+    <!--
+    ▓ NOTE:
+    ▓ > (no data state) text.
+    -->
+    <p
+      class=
+      "
+      s-14
+      color-black
       "
     >
-      <!--
-      ▓ NOTE:
-      ▓ > (no data state) text.
-      -->
-      <p
-        class=
-        "
-        s-14
-        color-black
-        "
-      >
-        <b>[1]</b> Toggle <b>No Data State</b>
-      </p>
-
-      <!--
-      ▓ NOTE:
-      ▓ > (no data state) button.
-      -->
-      <button
-        class=
-        "
-        dev-toggle
-        "
-        on:click=
-        {
-          () =>
-          {
-            return newDevInstance.toggleProfileInvestorInvestmentHistoryNoData = !newDevInstance.toggleProfileInvestorInvestmentHistoryNoData
-          }
-        }
-        class:on={newDevInstance.toggleProfileInvestorInvestmentHistoryNoData}
-        class:off={!newDevInstance.toggleProfileInvestorInvestmentHistoryNoData}
-      >
-        {#if newDevInstance.toggleProfileInvestorInvestmentHistoryNoData}
-          ON
-        {:else}
-          OFF
-        {/if}
-      </button>
-    </div>
+      <b>[2]</b> Add <b>Sample Data</b>
+    </p>
 
     <!--
     ▓ NOTE:
-    ▓ > (add sample data) widget.
+    ▓ > (no data state) button.
     -->
-    <div
+    <button
       class=
       "
-      row-space-out
+      dev-toggle
       "
-    >
-      <!--
-      ▓ NOTE:
-      ▓ > (no data state) text.
-      -->
-      <p
-        class=
-        "
-        s-14
-        color-black
-        "
-      >
-        <b>[2]</b> Add <b>Sample Data</b>
-      </p>
-
-      <!--
-      ▓ NOTE:
-      ▓ > (no data state) button.
-      -->
-      <button
-        class=
-        "
-        dev-toggle
-        "
-        on:click=
+      on:click=
+      {
+        () =>
         {
-          () =>
-          {
-            return newDevInstance.addSampleData()
-          }
+          newDevInstance.addSampleData();
+          newDevInstance.mutated = true;
+          return;
         }
-      >
-        TOGGLE
-      </button>
-    </div>
+      }
+    >
+      TOGGLE
+    </button>
+  </div>
 
-  </AdminDevControlPanel>
-
-{/if}
+</AdminDevControlPanel>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component CSS/SCSS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ HINT: | auto-fill/auto-complete iniside <style> for var()                      │
-|         | values by typing/CTRL+SPACE                                            │
-│ ➤ HINT: | access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 

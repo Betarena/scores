@@ -25,13 +25,13 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { page } from '$app/stores';
-  import AdminDevControlPanel from '$lib/components/misc/admin/Admin-Dev-ControlPanel.svelte';
-  import AdminDevControlPanelToggleButton from '$lib/components/misc/admin/Admin-Dev-ControlPanelToggleButton.svelte';
 
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { copyToClipboard } from '$lib/utils/platform-functions.js';
 
+  import AdminDevControlPanel from '$lib/components/misc/admin/Admin-Dev-ControlPanel.svelte';
+  import AdminDevControlPanelToggleButton from '$lib/components/misc/admin/Admin-Dev-ControlPanelToggleButton.svelte';
   import WalletsModal from './Investment.Wallets.Modal.svelte';
 
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
@@ -71,8 +71,14 @@
 
   class Dev
   {
-    enabled: boolean = false;
-    toggleProfileInvestorInvestmentHistoryNoData: boolean = false;
+    mutated: boolean = false;
+    noData: boolean = false;
+    sampleData: string[] = [
+      '0xb794f5ea0ba39494ce839613fffba74279579268'
+      , '0xb12134f5ea0ba39494ce839613fffba742795792'
+      , '0xb42310ba39494ce839613fffba74279579264234'
+      , '0xb42342523423423529613fffba74279579124125'
+    ];
 
     /**
      * @description
@@ -81,6 +87,29 @@
     (
     ): void
     {
+      return;
+    }
+
+    /**
+     * @author
+     *  @migbash
+     * @summary
+     *  🟦 HELPER
+     * @description
+     *  📣 Infinite inject sample data to widget for testing.
+     * @return { void }
+    */
+    addSampleData
+    (
+    ): void
+    {
+      userWallets.push
+      (
+        ...this.sampleData
+      );
+
+      userWallets = userWallets;
+
       return;
     }
   }
@@ -161,9 +190,20 @@
   class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
   class:row-space-out={!VIEWPORT_MOBILE_INIT_PARENT[1]}
   class:column-space-center={VIEWPORT_MOBILE_INIT_PARENT[1]}
+  class:mutated={newDevInstance.mutated}
 >
   <AdminDevControlPanelToggleButton
-    on:clicked={() => { newDevInstance.enabled = !newDevInstance.enabled }}
+    title='Investor Wallet Address'
+    mutated={newDevInstance.mutated}
+    on:reset=
+    {
+      () =>
+      {
+        newDevInstance.mutated = false;
+        newDevInstance.noData = false;
+        return;
+      }
+    }
   />
 
   <!--
@@ -213,7 +253,7 @@
     >
       {#if
         userWallets.length > 0
-        && !newDevInstance.toggleProfileInvestorInvestmentHistoryNoData
+        && !newDevInstance.noData
       }
         {
           profileTrs.investor?.wallets.view
@@ -281,7 +321,7 @@
   -->
   {#if
     $sessionStore.showInvstementWallets && userWallets.length > 0
-    && !newDevInstance.toggleProfileInvestorInvestmentHistoryNoData
+    && !newDevInstance.noData
   }
     <WalletsModal
       walletAddressList={userWallets}
@@ -294,111 +334,111 @@
 ▓ NOTE:
 ▓ > (widget) admin development state UI change control panel.
 -->
-{#if newDevInstance.enabled}
+<AdminDevControlPanel
+  title='Investor Wallet Address'
+>
 
-  <AdminDevControlPanel
-    title='Investment Details'
+  <!--
+  ▓ NOTE:
+  ▓ > (no data) widget state.
+  -->
+  <div
+    class=
+    "
+    row-space-out
+    "
   >
+    <!--
+    ▓ NOTE:
+    ▓ > (no data state) text.
+    -->
+    <p
+      class=
+      "
+      s-14
+      color-black
+      "
+    >
+      <b>[1]</b> Toggle <b>No Data State</b>
+    </p>
 
     <!--
     ▓ NOTE:
-    ▓ > (no data) widget state.
+    ▓ > (no data state) button.
     -->
-    <div
+    <button
       class=
       "
-      row-space-out
+      dev-toggle
+      "
+      on:click=
+      {
+        () =>
+        {
+          newDevInstance.noData = !newDevInstance.noData
+          newDevInstance.mutated = true;
+          return;
+        }
+      }
+      class:on={newDevInstance.noData}
+      class:off={!newDevInstance.noData}
+    >
+      {#if newDevInstance.noData}
+        ON
+      {:else}
+        OFF
+      {/if}
+    </button>
+  </div>
+
+  <!--
+  ▓ NOTE:
+  ▓ > (add sample data) widget.
+  -->
+  <div
+    class=
+    "
+    row-space-out
+    "
+  >
+    <!--
+    ▓ NOTE:
+    ▓ > (no data state) text.
+    -->
+    <p
+      class=
+      "
+      s-14
+      color-black
       "
     >
-      <!--
-      ▓ NOTE:
-      ▓ > (no data state) text.
-      -->
-      <p
-        class=
-        "
-        s-14
-        color-black
-        "
-      >
-        <b>[1]</b> Toggle <b>No Data State</b>
-      </p>
-
-      <!--
-      ▓ NOTE:
-      ▓ > (no data state) button.
-      -->
-      <button
-        class=
-        "
-        dev-toggle
-        "
-        on:click=
-        {
-          () =>
-          {
-            return newDevInstance.toggleProfileInvestorInvestmentHistoryNoData = !newDevInstance.toggleProfileInvestorInvestmentHistoryNoData
-          }
-        }
-        class:on={newDevInstance.toggleProfileInvestorInvestmentHistoryNoData}
-        class:off={!newDevInstance.toggleProfileInvestorInvestmentHistoryNoData}
-      >
-        {#if newDevInstance.toggleProfileInvestorInvestmentHistoryNoData}
-          ON
-        {:else}
-          OFF
-        {/if}
-      </button>
-    </div>
+      <b>[2]</b> Add <b>Sample Data</b>
+    </p>
 
     <!--
     ▓ NOTE:
-    ▓ > (add sample data) widget.
+    ▓ > (no data state) button.
     -->
-    <div
+    <button
       class=
       "
-      row-space-out
+      dev-toggle
       "
-    >
-      <!--
-      ▓ NOTE:
-      ▓ > (no data state) text.
-      -->
-      <p
-        class=
-        "
-        s-14
-        color-black
-        "
-      >
-        <b>[2]</b> Add <b>Sample Data</b>
-      </p>
-
-      <!--
-      ▓ NOTE:
-      ▓ > (no data state) button.
-      -->
-      <button
-        class=
-        "
-        dev-toggle
-        "
-        on:click=
+      on:click=
+      {
+        () =>
         {
-          () =>
-          {
-            return newDevInstance.addSampleData()
-          }
+          newDevInstance.addSampleData();
+          newDevInstance.mutated = true;
+          return;
         }
-      >
-        TOGGLE
-      </button>
-    </div>
+      }
+    >
+      TOGGLE
+    </button>
+  </div>
 
-  </AdminDevControlPanel>
-
-{/if}
+</AdminDevControlPanel>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮

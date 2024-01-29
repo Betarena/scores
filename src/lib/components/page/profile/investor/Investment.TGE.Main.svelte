@@ -24,7 +24,6 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-	import { dev } from '$app/environment';
 	import { page } from '$app/stores';
 	import { onDestroy, onMount } from 'svelte';
 
@@ -80,8 +79,8 @@
 
   class Dev
   {
-    enabled: boolean = false;
-    toggleProfileInvestorInvestmentHistoryNoData: boolean = false;
+    mutated: boolean = false;
+    noData: boolean = false;
     adminDevSelected: WidgetState;
 
     /**
@@ -327,12 +326,23 @@
   "
   {!VIEWPORT_TABLET_INIT_PARENT[1] || VIEWPORT_MOBILE_INIT_PARENT[1] ? 'justify-content: space-between;' : ''}
   "
+  class:mutated={newDevInstance.mutated}
 >
   <!-- [🐞] -->
   <!-- {VIEWPORT_TABLET_INIT_PARENT[1]} -->
 
   <AdminDevControlPanelToggleButton
-    on:clicked={() => { newDevInstance.enabled = !newDevInstance.enabled }}
+    title='Tokens available on launch date (TGE)'
+    mutated={newDevInstance.mutated}
+    on:reset=
+    {
+      () =>
+      {
+        newDevInstance.mutated = false;
+        newDevInstance.noData = false;
+        return;
+      }
+    }
   />
 
   <!--
@@ -594,100 +604,106 @@
 ▓ NOTE:
 ▓ > (widget) admin development state UI change control panel.
 -->
-{#if newDevInstance.enabled && dev}
+<AdminDevControlPanel
+  title='Tokens available on launch date (TGE)'
+>
 
-  <AdminDevControlPanel
-    title='Tokens available on launch date (TGE)'
+  <!--
+  ▓ NOTE:
+  ▓ > (select) widget state.
+  -->
+  <div
+    class=
+    "
+    row-space-out
+    "
   >
+    <!--
+    ▓ NOTE:
+    ▓ > (text) target action.
+    -->
+    <p
+      class=
+      "
+      s-14
+      color-black
+      "
+    >
+      <b>[1]</b> Choose <b>Widget State</b>
+    </p>
 
     <!--
     ▓ NOTE:
-    ▓ > (select) widget state.
+    ▓ > (action) target select.
     -->
-    <div
-      class=
-      "
-      row-space-out
-      "
-    >
-      <!--
-      ▓ NOTE:
-      ▓ > (text) target action.
-      -->
-      <p
-        class=
-        "
-        s-14
-        color-black
-        "
-      >
-        <b>[1]</b> Choose <b>Widget State</b>
-      </p>
-
-      <!--
-      ▓ NOTE:
-      ▓ > (action) target select.
-      -->
-      <select
-        id="cars"
-        name="cars"
-        bind:value={widgetState}
-      >
-        <option value="NoDefinedDate">Release date not defined</option>
-        <option value="DateDefined">Release date defined</option>
-        <option value="ClaimAvailable">Ready to claim</option>
-        <option value="Claimed">Claimed</option>
-      </select>
-    </div>
-
-    <!--
-    ▓ NOTE:
-    ▓ > (data) input.
-    -->
-    <div
-      class=
-      "
-      row-space-out
-      "
-    >
-      <!--
-      ▓ NOTE:
-      ▓ > (no data state) text.
-      -->
-      <p
-        class=
-        "
-        s-14
-        color-black
-        "
-      >
-        <b>[2]</b> Add <b>Sample Data</b>
-      </p>
-
-      <!--
-      ▓ NOTE:
-      ▓ > (no data state) button.
-      -->
-      <button
-        class=
-        "
-        dev-toggle
-        "
-        on:click=
+    <select
+      id="cars"
+      name="cars"
+      bind:value={widgetState}
+      on:change=
+      {
+        () =>
         {
-          () =>
-          {
-            return newDevInstance.addSampleData()
-          }
+          newDevInstance.mutated = true;
+          return;
         }
-      >
-        TOGGLE
-      </button>
-    </div>
+      }
+    >
+      <option value="NoDefinedDate">Release date not defined</option>
+      <option value="DateDefined">Release date defined</option>
+      <option value="ClaimAvailable">Ready to claim</option>
+      <option value="Claimed">Claimed</option>
+    </select>
+  </div>
 
-  </AdminDevControlPanel>
+  <!--
+  ▓ NOTE:
+  ▓ > (data) input.
+  -->
+  <div
+    class=
+    "
+    row-space-out
+    "
+  >
+    <!--
+    ▓ NOTE:
+    ▓ > (no data state) text.
+    -->
+    <p
+      class=
+      "
+      s-14
+      color-black
+      "
+    >
+      <b>[2]</b> Add <b>Sample Data</b>
+    </p>
 
-{/if}
+    <!--
+    ▓ NOTE:
+    ▓ > (no data state) button.
+    -->
+    <button
+      class=
+      "
+      dev-toggle
+      "
+      on:click=
+      {
+        () =>
+        {
+          newDevInstance.addSampleData();
+          newDevInstance.mutated = true;
+          return;
+        }
+      }
+    >
+      TOGGLE
+    </button>
+  </div>
+
+</AdminDevControlPanel>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮

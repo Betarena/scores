@@ -69,8 +69,8 @@
 
   class Dev
   {
-    enabled: boolean = false;
-    toggleProfileInvestorInvestmentHistoryNoData: boolean = false;
+    mutated: boolean = false;
+    noData: boolean = false;
     sampleData: B_H_TH[] = [
       {
         Gateway: null
@@ -299,9 +299,20 @@
 <div
   id={CNAME}
   class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+  class:mutated={newDevInstance.mutated}
 >
   <AdminDevControlPanelToggleButton
-    on:clicked={() => { return newDevInstance.enabled = !newDevInstance.enabled }}
+    title='Investment Details'
+    mutated={newDevInstance.mutated}
+    on:reset=
+    {
+      () =>
+      {
+        newDevInstance.mutated = false;
+        newDevInstance.noData = false;
+        return;
+      }
+    }
   />
 
   <!--
@@ -404,7 +415,7 @@
 
         {#if
           profileData?.tx_hist?.filter(x => {return x.type == 'investment'}).length > 0
-          && !newDevInstance.toggleProfileInvestorInvestmentHistoryNoData
+          && !newDevInstance.noData
         }
           {#each profileData?.tx_hist?.filter(x => {return x.type == 'investment'}) ?? [] as item}
 
@@ -453,111 +464,111 @@
 ▓ NOTE:
 ▓ > (widget) admin development state UI change control panel.
 -->
-{#if newDevInstance.enabled}
+<AdminDevControlPanel
+  title='Investment Details'
+>
 
-  <AdminDevControlPanel
-    title='Investment Details'
+  <!--
+  ▓ NOTE:
+  ▓ > (no data) widget state.
+  -->
+  <div
+    class=
+    "
+    row-space-out
+    "
   >
+    <!--
+    ▓ NOTE:
+    ▓ > (no data state) text.
+    -->
+    <p
+      class=
+      "
+      s-14
+      color-black
+      "
+    >
+      <b>[1]</b> Toggle <b>No Data State</b>
+    </p>
 
     <!--
     ▓ NOTE:
-    ▓ > (no data) widget state.
+    ▓ > (no data state) button.
     -->
-    <div
+    <button
       class=
       "
-      row-space-out
+      dev-toggle
+      "
+      on:click=
+      {
+        () =>
+        {
+          newDevInstance.noData = !newDevInstance.noData;
+          newDevInstance.mutated = true;
+          return;
+        }
+      }
+      class:on={newDevInstance.noData}
+      class:off={!newDevInstance.noData}
+    >
+      {#if newDevInstance.noData}
+        ON
+      {:else}
+        OFF
+      {/if}
+    </button>
+  </div>
+
+  <!--
+  ▓ NOTE:
+  ▓ > (add sample data) widget.
+  -->
+  <div
+    class=
+    "
+    row-space-out
+    "
+  >
+    <!--
+    ▓ NOTE:
+    ▓ > (no data state) text.
+    -->
+    <p
+      class=
+      "
+      s-14
+      color-black
       "
     >
-      <!--
-      ▓ NOTE:
-      ▓ > (no data state) text.
-      -->
-      <p
-        class=
-        "
-        s-14
-        color-black
-        "
-      >
-        <b>[1]</b> Toggle <b>No Data State</b>
-      </p>
-
-      <!--
-      ▓ NOTE:
-      ▓ > (no data state) button.
-      -->
-      <button
-        class=
-        "
-        dev-toggle
-        "
-        on:click=
-        {
-          () =>
-          {
-            return newDevInstance.toggleProfileInvestorInvestmentHistoryNoData = !newDevInstance.toggleProfileInvestorInvestmentHistoryNoData
-          }
-        }
-        class:on={newDevInstance.toggleProfileInvestorInvestmentHistoryNoData}
-        class:off={!newDevInstance.toggleProfileInvestorInvestmentHistoryNoData}
-      >
-        {#if newDevInstance.toggleProfileInvestorInvestmentHistoryNoData}
-          ON
-        {:else}
-          OFF
-        {/if}
-      </button>
-    </div>
+      <b>[2]</b> Add <b>Sample Data</b>
+    </p>
 
     <!--
     ▓ NOTE:
-    ▓ > (add sample data) widget.
+    ▓ > (no data state) button.
     -->
-    <div
+    <button
       class=
       "
-      row-space-out
+      dev-toggle
       "
-    >
-      <!--
-      ▓ NOTE:
-      ▓ > (no data state) text.
-      -->
-      <p
-        class=
-        "
-        s-14
-        color-black
-        "
-      >
-        <b>[2]</b> Add <b>Sample Data</b>
-      </p>
-
-      <!--
-      ▓ NOTE:
-      ▓ > (no data state) button.
-      -->
-      <button
-        class=
-        "
-        dev-toggle
-        "
-        on:click=
+      on:click=
+      {
+        () =>
         {
-          () =>
-          {
-            return newDevInstance.addSampleData()
-          }
+          newDevInstance.addSampleData();
+          newDevInstance.mutated = true;
+          return;
         }
-      >
-        TOGGLE
-      </button>
-    </div>
+      }
+    >
+      TOGGLE
+    </button>
+  </div>
 
-  </AdminDevControlPanel>
-
-{/if}
+</AdminDevControlPanel>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮

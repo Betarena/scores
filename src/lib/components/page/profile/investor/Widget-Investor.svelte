@@ -37,6 +37,7 @@
 	import TgeMain from './Investment.TGE.Main.svelte';
 	import MainVestingPeriods from './Investment.VestingPeriods.Main.svelte';
 	import MainWalletsInvestor from './Investment.Wallets.Main.svelte';
+	import LaunchpadWallets from './Launchpad-Wallets.svelte';
 	import TierPricing from './Launchpad.TierPricing.Main.svelte';
 	import MainInvestBox from './Main-InvestBox.svelte';
 	import MainInvestorTitle from './Main-Investor-Title.svelte';
@@ -47,7 +48,6 @@
 	import ReferralsSteps from './Referrals.Steps.Main.svelte';
 
 	import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
-	import LaunchpadWallets from './Launchpad-Wallets.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -155,6 +155,8 @@
     const response: IProfileData = await get
     (
       `/api/data/profile?uid=${$userBetarenaSettings.user.firebase_user_data?.uid}`
+      // `/api/data/profile?uid=0x1510ea733e1e81f9bcfcc4eabb5a2226d1a9f9ea18da9aea119ba28b8ed6be81`
+      //  '/api/data/profile?uid=Z4ebLuAuDqdOu4Wt6z6EfVn35js2'
     ) as IProfileData;
 
     widgetDataMain = response
