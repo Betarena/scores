@@ -2,7 +2,8 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - access custom Betarena Scores JS VScode Snippets by typing 'script...'         │
+│ ➤ HINT: | Access snippets for '<script> [..] </script>' those found in           │
+|         | '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -28,9 +29,14 @@
 
   import userBetarenaSettings from '$lib/store/user-settings.js';
   import { toCorrectDate, toZeroPrefixDateStr } from '$lib/utils/dates.js';
+  import { dlog } from '$lib/utils/debug.js';
 
   import icon_bta_token from '../assets/price-tier/icon-bta-token.svg';
 
+  import AdminDevControlPanel from '$lib/components/misc/admin/Admin-Dev-ControlPanel.svelte';
+  import AdminDevControlPanelToggleButton from '$lib/components/misc/admin/Admin-Dev-ControlPanelToggleButton.svelte';
+
+  import { dev } from '$app/environment';
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -56,24 +62,56 @@
     profileData: IProfileData | null
     /**
      * @description
-     *  📣
+     *  📣 makes use of parent 📱 MOBILE viewport state.
     */
     , VIEWPORT_MOBILE_INIT_PARENT: [ number, boolean ]
     /**
      * @description
-     *  📣
+     *  📣 makes use of parent 💻 TABLET viewport state.
     */
     , VIEWPORT_TABLET_INIT_PARENT: [ number, boolean ]
   ;
 
+  /**
+   * @description
+   *  📣 available widget states.
+   */
+  type WidgetState = 'NoDefinedDate' | 'DateDefined' | 'ClaimAvailable' | 'Claimed';
+
+  class Dev
+  {
+    enabled: boolean = false;
+    toggleProfileInvestorInvestmentHistoryNoData: boolean = false;
+    adminDevSelected: WidgetState;
+
+    /**
+     * @description
+     */
+    toggleNoData
+    (
+    ): void
+    {
+      return;
+    }
+  }
+
   const
-    /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
+    /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+    */
     // eslint-disable-next-line no-unused-vars
     CNAME: string = 'profile⮕w⮕investtge⮕main'
-    /** @description 📣 threshold start + state for 📱 MOBILE */
+    /**
+     * @description
+     *  📣 threshold start + state for 📱 MOBILE
+    */
     // eslint-disable-next-line no-unused-vars
     , VIEWPORT_MOBILE_INIT: [ number, boolean ] = VIEWPORT_MOBILE_INIT_PARENT
-    /** @description 📣 threshold start + state for 💻 TABLET */
+    /**
+     * @description
+     *  📣 threshold start + state for 💻 TABLET
+    */
     // eslint-disable-next-line no-unused-vars
     , VIEWPORT_TABLET_INIT: [ number, boolean ] = VIEWPORT_TABLET_INIT_PARENT
   ;
@@ -94,20 +132,141 @@
      *  📣 target date of relase of tokens.
     */
     , targetDate: Date = new Date()
+    /**
+     * @description
+     *  📣 target `DEV` class instance.
+    */
+    , newDevInstance = new Dev()
+    /**
+     * @description
+     *  📣 target `state` update.
+    */
+    , updateWidgetState = (state?: WidgetState) =>
+    {
+      if (state)
+      {
+        // ▓ [🐞]
+        console.log('state', state);
+        widgetState = state;
+        return;
+      }
+
+      if (profileData?.investorData?.data?.tge.status == null)
+      {
+        if (!profileData?.presaleData.data?.end_date)
+          widgetState = 'NoDefinedDate';
+        else
+          widgetState = 'DateDefined';
+      }
+      else if (profileData.investorData.data.tge.status == 'Pending')
+        widgetState = 'ClaimAvailable'
+      else
+        widgetState = 'Claimed'
+      //
+
+      return;
+    }
+    /**
+     * @description
+     *  📣 target `state` value.
+    */
+    , widgetState: WidgetState = 'NoDefinedDate'
   ;
 
+  /**
+   * @description
+   *  📣 Available `translations`.
+   */
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
-
+  /**
+   * @description
+   *  📣 Number of `seconds` from target release date.
+   */
   $: countDownSecToEnd = toZeroPrefixDateStr(Math.floor((dateDiff / 1000) % 60).toString());
+  /**
+   * @description
+   *  📣 Number of `minutes` from target release date.
+   */
 	$: countDownMinToEnd = toZeroPrefixDateStr(Math.floor((dateDiff / 1000 / 60) % 60).toString());
+  /**
+   * @description
+   *  📣 Number of `hours` from target release date.
+   */
 	$: countDownHourToEnd = toZeroPrefixDateStr(Math.floor((dateDiff / (1000 * 60 * 60)) % 24).toString());
+  /**
+   * @description
+   *  📣 Number of `days` from target release date.
+   */
 	$: countDownDayToEnd = toZeroPrefixDateStr(Math.floor((dateDiff / (1000 * 60 * 60 * 24))).toString());
 
-  // [🐞]
+  // ▓ [🐞]
   // profileData!.presaleData.data!.end_date = '';
   // profileData!.investorData!.data!.tge!.status = 'Claimed';
 
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  /**
+   * @description
+   *  📣
+   */
+  function initializeCountdown
+  (
+  ): void
+  {
+    targetDate.setDate(targetDate.getDate() + 1);
+    dateDiff = toCorrectDate(targetDate, false).getTime() - new Date().getTime();
+    setInterval
+    (
+      () =>
+      {
+        dateDiff = toCorrectDate(targetDate, false).getTime() - new Date().getTime();
+      },
+      1000
+    );
+
+    return;
+  }
+
+  // #endregion ➤ 🛠️ METHODS
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  $: if (countDownSecToEnd < 0 && dateDiff <= 0)
+  {
+    // ▓ [🐞]
+    dlog
+    (
+      '🚏 checkpoint [R] ➤ AX123',
+      true
+    );
+
+    widgetState = 'ClaimAvailable';
+  }
+
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
@@ -123,25 +282,20 @@
     async (
     ): Promise < void > =>
     {
-      targetDate.setDate(targetDate.getDate() + 1);
-      dateDiff = toCorrectDate(targetDate, false).getTime() - new Date().getTime();
-      setInterval
-      (
-        () =>
-        {
-          dateDiff = toCorrectDate(targetDate, false).getTime() - new Date().getTime();
-        },
-        1000
-      );
+      updateWidgetState();
+      initializeCountdown();
+      return;
     }
   );
 
   onDestroy
   (
-    () =>
+    (
+    ) =>
     {
       // @ts-expect-error
       clearInterval(interval1);
+      return;
     }
   );
 
@@ -153,11 +307,17 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component HTML                                                            │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - use 'Ctrl+Space' to autocomplete global class=styles                           │
-│ - access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.     │
+│ ➤ HINT: | Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    |
+│         │ imported from './static/app.css'                                       |
+│ ➤ HINT: | access custom Betarena Scores VScode Snippets by typing emmet-like     |
+|         | abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
+<!--
+▓ NOTE:
+▓ > (widget) main
+-->
 <div
   id={CNAME}
   class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
@@ -170,6 +330,10 @@
 >
   <!-- [🐞] -->
   <!-- {VIEWPORT_TABLET_INIT_PARENT[1]} -->
+
+  <AdminDevControlPanelToggleButton
+    on:clicked={() => { newDevInstance.enabled = !newDevInstance.enabled }}
+  />
 
   <!--
   ╭──────────────────────────────────────────────────────────────────────╮
@@ -278,7 +442,7 @@
   ▓ NOTE:
   ▓ > token release date view.
   -->
-  {#if profileData?.investorData?.data?.tge.status == null}
+  {#if ['DateDefined', 'NoDefinedDate'].includes(widgetState)}
     <div>
 
       <!--
@@ -308,7 +472,7 @@
       ▓ NOTE:
       ▓ > token release date not set.
       -->
-      {#if !profileData?.presaleData.data?.end_date}
+      {#if widgetState == 'NoDefinedDate'}
         <div
           id="round-info-box-parent"
         >
@@ -385,7 +549,7 @@
   ▓ NOTE:
   ▓ > token ready to claim.
   -->
-  {:else if profileData?.investorData?.data?.tge.status == 'Pending'}
+  {:else if widgetState == 'ClaimAvailable'}
     <button
       class=
       "
@@ -403,7 +567,7 @@
   ▓ NOTE:
   ▓ > tokens have been claimed.
   -->
-  {:else if profileData?.investorData?.data?.tge.status == 'Claimed'}
+  {:else if widgetState == 'Claimed'}
     <div
       id="claimed"
     >
@@ -427,11 +591,111 @@
 </div>
 
 <!--
+▓ NOTE:
+▓ > (widget) admin development state UI change control panel.
+-->
+{#if newDevInstance.enabled && dev}
+
+  <AdminDevControlPanel
+    title='Tokens available on launch date (TGE)'
+  >
+
+    <!--
+    ▓ NOTE:
+    ▓ > (select) widget state.
+    -->
+    <div
+      class=
+      "
+      row-space-out
+      "
+    >
+      <!--
+      ▓ NOTE:
+      ▓ > (text) target action.
+      -->
+      <p
+        class=
+        "
+        s-14
+        color-black
+        "
+      >
+        <b>[1]</b> Choose <b>Widget State</b>
+      </p>
+
+      <!--
+      ▓ NOTE:
+      ▓ > (action) target select.
+      -->
+      <select
+        id="cars"
+        name="cars"
+        bind:value={widgetState}
+      >
+        <option value="NoDefinedDate">Release date not defined</option>
+        <option value="DateDefined">Release date defined</option>
+        <option value="ClaimAvailable">Ready to claim</option>
+        <option value="Claimed">Claimed</option>
+      </select>
+    </div>
+
+    <!--
+    ▓ NOTE:
+    ▓ > (data) input.
+    -->
+    <div
+      class=
+      "
+      row-space-out
+      "
+    >
+      <!--
+      ▓ NOTE:
+      ▓ > (no data state) text.
+      -->
+      <p
+        class=
+        "
+        s-14
+        color-black
+        "
+      >
+        <b>[2]</b> Add <b>Sample Data</b>
+      </p>
+
+      <!--
+      ▓ NOTE:
+      ▓ > (no data state) button.
+      -->
+      <button
+        class=
+        "
+        dev-toggle
+        "
+        on:click=
+        {
+          () =>
+          {
+            return newDevInstance.addSampleData()
+          }
+        }
+      >
+        TOGGLE
+      </button>
+    </div>
+
+  </AdminDevControlPanel>
+
+{/if}
+
+<!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component CSS/SCSS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE  │
-│ - access custom Betarena Scores CSS VScode Snippets by typing 'style...'         │
+│ ➤ HINT: | auto-fill/auto-complete iniside <style> for var()                      │
+|         | values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: | access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -447,6 +711,8 @@
 
   div#profile⮕w⮕investtge⮕main
   {
+    /* 📌 position */
+    position: relative;
     /* 🎨 style */
     background-color: var(--white);
     border-radius: 12px;
