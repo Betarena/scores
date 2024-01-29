@@ -361,7 +361,7 @@
         -->
 
         {#if
-          profileData?.investorData?.data?.referral_history.length > 0
+          profileData?.investorData?.data?.referral_history?.length > 0
           && !newDevInstance.noData
         }
           {#each [...profileData?.investorData?.data?.referral_history ?? []] as item}

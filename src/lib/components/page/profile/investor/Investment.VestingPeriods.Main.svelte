@@ -372,7 +372,7 @@
       <tbody>
 
         {#if
-          profileData?.investorData?.data?.vesting_periods.length > 0
+          profileData?.investorData?.data?.vesting_periods?.length > 0
           && !newDevInstance.noData
         }
           {#each profileData?.investorData?.data?.vesting_periods ?? [] as item}

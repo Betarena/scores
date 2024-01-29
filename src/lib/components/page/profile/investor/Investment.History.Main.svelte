@@ -414,7 +414,7 @@
         <!-- {#each [] as item} -->
 
         {#if
-          profileData?.tx_hist?.filter(x => {return x.type == 'investment'}).length > 0
+          profileData?.tx_hist?.filter(x => {return x.type == 'investment'})?.length > 0
           && !newDevInstance.noData
         }
           {#each profileData?.tx_hist?.filter(x => {return x.type == 'investment'}) ?? [] as item}

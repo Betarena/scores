@@ -74,6 +74,42 @@
     {
       return;
     }
+
+    /**
+     * @author
+     *  @migbash
+     * @summary
+     *  🟦 HELPER
+     * @description
+     *  📣 Infinite inject sample data to widget for testing.
+     * @return { void }
+    */
+    addSampleData
+    (
+    ): void
+    {
+      (
+        profileData.investorData ??=
+        {
+          data:
+          {
+            bonus_summary:
+            {
+              referral_bonus: 50
+              , referrals_number: 10
+              , referred_bonus: 100
+              , total_bonus: 500
+            }
+          }
+        }
+      )
+
+      profileData = profileData;
+
+      checkNoData();
+
+      return;
+    }
   }
 
   const
@@ -261,7 +297,7 @@
   <div
     id="referral-bonus-box"
   >
-    {#if !isNoData}
+    {#if !isNoData && !newDevInstance.noData}
 
       {#each dataLayout as item}
 
@@ -449,7 +485,7 @@
       {
         () =>
         {
-          // newDevInstance.addSampleData();
+          newDevInstance.addSampleData();
           newDevInstance.mutated = true;
           return;
         }
