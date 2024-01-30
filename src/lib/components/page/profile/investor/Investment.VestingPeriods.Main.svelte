@@ -76,20 +76,27 @@
     noData: boolean = false;
     sampleData: PUBLIC__INVESTOR_IVesting[] = [
       {
-        'id': 1
-        ,'status': null
-        ,'tokens': 2500
-        ,'claim_date': '30/01/24'
-        ,'available_date': '01/01/24'
-        ,'distribution_date': '2024-01-11T02:35:09.614Z'
+        id: 1
+        , status: null
+        , tokens: 2500
+        , claim_date: '30/01/24'
+        ,available_date: '01/01/24'
+        , distribution_date: '2024-01-11T02:35:09.614Z'
       }
-      ,{
-        'id': 2
-        ,'status': 'Pending'
-        ,'tokens': 2500
-        ,'claim_date': '30/01/24'
-        ,'available_date': '01/01/24'
-        ,'distribution_date': '2024-01-11T02:35:09.614Z'
+      , {
+        id: 2
+        , status: 'Distributed'
+        , tokens: 2500
+        , claim_date: '30/01/24'
+        , available_date: '01/01/24'
+        , distribution_date: '2024-01-11T02:35:09.614Z'
+      } , {
+        id: 3
+        , status: 'Pending'
+        , tokens: 2500
+        , claim_date: '30/01/24'
+        , available_date: '01/01/24'
+        , distribution_date: '2024-01-11T02:35:09.614Z'
       }
     ];
 
@@ -683,38 +690,10 @@
                   border-radius: 0 4px 4px 0;
                 }
 
-                p
+                p:not(.pending)
                 {
                   @extend .s-14;
                   @extend .color-black-2;
-                }
-
-                p.status-pill
-                {
-                  /* 🛝 layout */
-                  width: fit-content;
-                  /* 🎨 style */
-                  padding: 4px 12px;
-                  border-radius: 32px;
-
-                  .completed
-                  {
-                    /* 🎨 style */
-                    color: var(--status-green, #59C65D) !important;
-                    background: rgba(89, 198, 93, 0.10);
-                  }
-                  .pending
-                  {
-                    /* 🎨 style */
-                    color: var(--status-yellow, #FFB904) !important;
-                    background: rgba(255, 185, 4, 0.10);
-                  }
-                  .failed
-                  {
-                    /* 🎨 style */
-                    color: var(--status-red-night, #FF5959) !important;
-                    background: rgba(255, 89, 89, 0.10);
-                  }
                 }
 
                 button.btn-primary-v2

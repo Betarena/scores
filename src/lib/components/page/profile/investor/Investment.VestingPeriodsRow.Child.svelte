@@ -27,6 +27,7 @@
 
   import icon_arrow_down from '../assets/arrow-down.svg';
   import icon_arrow_up from '../assets/arrow-up.svg';
+  import icon_green_dot from '../assets/investor/icon-green-dot.svg';
 
 	import type { PUBLIC__INVESTOR_IVesting } from '@betarena/scores-lib/types/_HASURA_.js';
 
@@ -159,10 +160,23 @@
         "
         tx-status-pill
         "
-        class:completed={data.status == 'Distributed'}
-        class:pending={data.status == 'Pending'}
         class:available={new Date(data.available_date ?? '').getTime() > new Date().getTime()}
+        class:pending={data.status == 'Pending'}
+        class:completed={data.status == 'Distributed'}
       >
+        {#if new Date(data.available_date ?? '').getTime() > new Date().getTime()}
+          <img
+            id=''
+            src={icon_green_dot}
+            alt='green-dot'
+            title='green-dot'
+            loading='lazy'
+            class=
+            "
+            m-r-6
+            "
+          />
+        {/if}
         {data.status ?? '-'}
       </p>
     </td>
@@ -424,6 +438,82 @@
 <style lang="scss">
 
   // ▓ IMPORTANT
-  // ▓ > Controlled By Parent
+  // ▓ > Major Control By Parent
+
+  tr
+  {
+    td
+    {
+      p
+      {
+        /* 🛝 layout */
+        width: fit-content;
+        white-space: nowrap;
+        /* 🎨 style */
+        color: var(--dark-theme);
+
+        &.tx-status-pill
+        {
+          /* 🛝 layout */
+          width: fit-content;
+          /* 🎨 style */
+          padding: 4px 12px;
+          border-radius: 32px;
+
+          &.available
+          {
+            /* 🎨 style */
+            background-color: rgba(89, 198, 93, 0.10);
+          }
+
+          &.pending
+          {
+            /* 🎨 style */
+            color: var(--yellow-gold) !important;
+            background-color: rgba(255, 185, 4, 0.10);
+          }
+
+          &.completed
+          {
+            /* 🎨 style */
+            background-color: var(--white-3);
+          }
+        }
+      }
+    }
+  }
+
+  /*
+  ╭──────────────────────────────────────────────────────────────────────────────╮
+  │ 🌒 DARK-THEME                                                                │
+  ╰──────────────────────────────────────────────────────────────────────────────╯
+  */
+
+  .dark-background-1
+  {
+    tr
+    {
+      td
+      {
+        p
+        {
+          &.tx-status-pill
+          {
+            &.pending
+            {
+              /* 🎨 style */
+              color: var(--yellow-gold) !important;
+            }
+
+            &.completed
+            {
+              /* 🎨 style */
+              background-color: rgba(204, 204, 204, 0.10);
+            }
+          }
+        }
+      }
+    }
+  }
 
 </style>
