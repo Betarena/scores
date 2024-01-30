@@ -684,7 +684,7 @@
     {
       /* 🎨 style */
       top: 0 !important;
-      height: 35%; /*  939px :: 25% */
+      height: 10%; /*  939px :: 25% */
       background-size: cover !important;
     }
 	}
