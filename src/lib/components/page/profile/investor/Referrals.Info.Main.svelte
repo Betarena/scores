@@ -641,6 +641,7 @@
     class=
     "
     btn-primary-v2
+      btn-shadow-1
     width-100
     {VIEWPORT_MOBILE_INIT_PARENT[1] ? 'm-t-30' : 'm-t-25'}
     "

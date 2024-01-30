@@ -451,7 +451,6 @@
             span#x3123
             {
               @extend .w-500;
-              @extend .color-black-2;
             }
           }
         }

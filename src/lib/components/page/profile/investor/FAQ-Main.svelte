@@ -272,6 +272,7 @@
         class=
         "
         btn-primary-v2
+          btn-shadow-1
         "
       >
         {

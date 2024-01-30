@@ -927,7 +927,7 @@
       border-collapse: collapse;
       width: -webkit-fill-available;
       width: -moz-available;
-      overflow: hidden;
+      // overflow: hidden;
 
       &:has(div#cumulative-sum-slider-box)
       {
@@ -1037,9 +1037,8 @@
                 {
                   /* 📌 position */
                   position: absolute;
-                  top: 15px;
+                  top: -13px;
                   margin: auto;
-                  bottom: 0;
                   /* 🎨 style */
                   opacity: 0;
                   height: fit-content;
