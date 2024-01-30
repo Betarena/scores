@@ -24,6 +24,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { page } from '$app/stores';
+  import { onDestroy, onMount } from 'svelte';
   import { fade, fly } from 'svelte/transition';
 
 	import sessionStore from '$lib/store/session.js';
@@ -134,6 +135,41 @@
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
 
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  onMount
+  (
+    () =>
+    {
+      document.body.classList.add
+      (
+        'disable-scroll'
+      );
+      return;
+    }
+  );
+
+  onDestroy
+  (
+    () =>
+    {
+      document.body.classList.remove
+      (
+        'disable-scroll'
+      );
+      return;
+    }
+  );
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
 </script>
 
@@ -556,7 +592,9 @@
       margin: auto;
       width: fit-content;
       width: 92%;
-      height: fit-content;
+      height: 520px;
+      max-height: 520px;
+      min-height: 520px;
       right: 0;
       left: 0;
       bottom: 0;
