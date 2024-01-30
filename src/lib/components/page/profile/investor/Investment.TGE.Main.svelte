@@ -439,6 +439,33 @@
 
     </div>
 
+     <!--
+    ▓ NOTE:
+    ▓ > token ready to claim.
+    -->
+    {#if widgetState == 'DateDefined' || widgetState == 'ClaimAvailable'}
+      <button
+        class=
+        "
+        m-t-20
+        btn-primary-v2
+        "
+        on:click=
+        {
+          () =>
+          {
+            alert('Initiate Process for Claim!');
+            return;
+          }
+        }
+      >
+        {
+          profileTrs.investor?.tge.cta_title
+          ?? 'Claim now!'
+        }
+      </button>
+    {/if}
+
   </div>
 
   <!--
@@ -452,7 +479,7 @@
   ▓ NOTE:
   ▓ > token release date view.
   -->
-  {#if ['DateDefined', 'NoDefinedDate'].includes(widgetState)}
+  {#if widgetState != 'Claimed'}
     <div>
 
       <!--
@@ -482,7 +509,7 @@
       ▓ NOTE:
       ▓ > token release date not set.
       -->
-      {#if widgetState == 'NoDefinedDate'}
+      {#if widgetState == 'NoDefinedDate' || widgetState == 'ClaimAvailable'}
         <div
           id="round-info-box-parent"
         >
@@ -494,13 +521,21 @@
               dark-v1
             "
           >
-            Date to be announced soon
+            {#if widgetState == 'NoDefinedDate'}
+              {
+                'Date to be announced soon'
+              }
+            {:else}
+              {
+                profileData?.presaleData.data?.end_date
+              }
+            {/if}
           </p>
         </div>
 
       <!--
       ▓ NOTE:
-      ▓ > token release date.
+      ▓ > token release date set (countdown).
       -->
       {:else}
         <div
@@ -557,27 +592,9 @@
 
   <!--
   ▓ NOTE:
-  ▓ > token ready to claim.
-  -->
-  {:else if widgetState == 'ClaimAvailable'}
-    <button
-      class=
-      "
-      btn-primary-v2
-      "
-      on:click={() => {return alert('Initiate Process for Claim!')}}
-    >
-      {
-        profileTrs.investor?.tge.cta_title
-        ?? 'Claim now!'
-      }
-    </button>
-
-  <!--
-  ▓ NOTE:
   ▓ > tokens have been claimed.
   -->
-  {:else if widgetState == 'Claimed'}
+  {:else}
     <div
       id="claimed"
     >
