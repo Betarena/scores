@@ -502,7 +502,7 @@
             "
             w-500
             large
-            color-dark
+            color-black-2
             m-r-8
             "
           >
@@ -764,7 +764,7 @@
                   "
                 >
                   <span
-                    class="color-dark"
+                    class="color-black-2"
                   >
                     {B_FEATM_D?.match_votes?.vote_win_local == 0 ? 0 : ((B_FEATM_D?.match_votes.vote_win_local / totalVoteCount) * 100).toFixed(0)}%
                   </span>
@@ -852,7 +852,7 @@
               {:else if B_FEATM_D.match_votes != undefined}
 
                 <p class="w-500 large">
-                  <span class="color-dark">
+                  <span class="color-black-2">
                     {B_FEATM_D?.match_votes?.vote_draw_x == 0 ? 0 : ((B_FEATM_D?.match_votes.vote_draw_x / totalVoteCount) * 100).toFixed(0)}%
                   </span>
                   <span class="color-grey">
@@ -938,7 +938,7 @@
                     large
                   "
                 >
-                  <span class="color-dark">
+                  <span class="color-black-2">
                     {B_FEATM_D?.match_votes?.vote_win_visitor == 0 ? 0 : ((B_FEATM_D?.match_votes.vote_win_visitor / totalVoteCount) * 100).toFixed(0)}%
                   </span>
                   <span class="color-grey">
@@ -1569,7 +1569,7 @@
                     class="
                       w-500
                       medium
-                      color-dark
+                      color-black-2
                     "
                   >
                     {B_FEATB_T?.market_name}
@@ -1591,7 +1591,7 @@
                     class="
                       w-500
                       medium
-                      color-dark
+                      color-black-2
                     "
                   >
                     {B_FEATM_D?.valuebets?.bet}
@@ -1615,7 +1615,7 @@
                     href={B_FEATM_D?.valuebets?.link}
                   >
                     <p
-                      class="w-500 medium color-dark"
+                      class="w-500 medium color-black-2"
                       style="background: #FFFFFF;
                         border-radius: 4px;
                         padding: 4px 6px;"
@@ -1643,7 +1643,7 @@
                     href={B_FEATM_D?.valuebets?.link}
                   >
                     <p
-                      class="w-500 medium color-dark"
+                      class="w-500 medium color-black-2"
                       style="background: #FFFFFF;
                         border-radius: 4px;
                         padding: 4px 6px;"
