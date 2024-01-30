@@ -901,7 +901,7 @@
         /* width: 40%; */ /* Adjusted with JavaScript */
         height: 1px;
         width: 0%;
-        animation-duration: 1s;
+        animation-duration: 0.5s;
         animation-delay: 0.5s;
         animation-fill-mode: forwards;
         -webkit-animation-fill-mode: forwards;
@@ -1045,7 +1045,7 @@
                   height: fit-content;
                   width: fit-content;
                   /* 🎡 animation */
-                  animation-duration: 0.5s;
+                  animation-duration: 0.25s;
                   animation-name: slidein;
                   animation-fill-mode: forwards;
                   -webkit-animation-fill-mode: forwards;
