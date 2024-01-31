@@ -80,6 +80,9 @@ are generally used throughout the project in a consistant and repetetive manner.
   */
   --oragne-pale-bg: rgba(247, 124, 66, 0.2);
   --header-is-mobile: false;
+
+  --font-family: Roboto;
+
 }
 
 /* #endregion ➤ [MAIN] [ROOT] Layout */

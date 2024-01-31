@@ -467,8 +467,22 @@ function createLocalStore
       (
         sessionStoreObj
       );
-    }
+    },
 
+    /**
+     * @author
+     *  @ihardz
+     * @summary
+     *  🔹 HELPER | IMPORTANT
+     * @description
+     *  📌 Toggles Auth Show.
+     * @returns { void }
+     */
+    toggleAuthShow(): void
+    {
+      sessionStoreObj.auth_show = !sessionStoreObj.auth_show;
+      set(sessionStoreObj);
+    }
   }
 
 	return {

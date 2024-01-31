@@ -1689,7 +1689,7 @@ NAVBAR MAIN
     left: 0;
     /* 🎨 style */
     height: 100%;
-    width: 100%;
+  width: 100%;
     z-index: 1000;
   }
 

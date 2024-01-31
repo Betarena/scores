@@ -7,6 +7,7 @@ import type { FIREBASE_livescores_now, FIREBASE_odds, FIRE_LNNS } from '@betaren
 import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 import type { User } from 'firebase/auth';
 import type { Unsubscribe } from 'firebase/firestore';
+import type { ThemeName } from '$lib/constants/theme';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -66,7 +67,7 @@ export interface IUserSetting
   /** @description **Client/User** selected lang (overrides serverLang) */
 	lang: string;
   /** @description **Client/User** selected theme */
-	theme: 'Dark' | 'Light';
+	theme: ThemeName;
   /** @description **Client/User** selected country bookmaker ISO2 */
 	country_bookmaker: string;
   /** @description **Client/User** geoJs object response data */
