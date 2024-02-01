@@ -1,6 +1,6 @@
 <script lang="ts">
   import AuthorArticleContent from "$lib/components/content-section/AuthorArticleContent.svelte";
-  import AuthorArticleDetails from "$lib/components/content-section/AuthorArticleDetails.svelte";
+  import AuthorArticleDetails from "$lib/components/content-section/AuthorArticleDetails/AuthorArticleDetails.svelte";
   import AuthorArticleTags from "$lib/components/content-section/AuthorArticleTags.svelte";
   import { getDarkThemeContext } from "$lib/context/dark-theme-context";
 
@@ -10,17 +10,11 @@
   export let data: PageServerData;
 
   $: ({ serverParams, content } = data);
-  let deviceType = getDeviceTypeContext();
 
   let isDark = getDarkThemeContext();
 </script>
 
 <div class="author-article-page" class:dark={$isDark}>
-  <div>
-    authors_articles serverParams: {serverParams} ; Device Type: {$deviceType}
-  </div>
-  <br />
-  <br />
   <h1>
     Wolverhampton Wanderers vs Burnley betting tip 2023/2024 – Picks and
     Predictions for the Premier League match on December 05th, 2023
