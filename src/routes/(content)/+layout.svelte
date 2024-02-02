@@ -69,17 +69,10 @@
       width: 100%;
     }
     .content {
-      flex-grow: 1;
-      // mobile
-      padding: 48px 24px;
-      // tablet and desktop
-      @media only screen and (min-width: 768px) {
-        padding: 48px 80px;
-      }
-      
+      flex-grow: 1;      
       main {
-        max-width: 676px;
         margin: auto;
+        max-width: 836px;
       }
     }
   }

@@ -8,6 +8,7 @@
   let location = "Chicago, IL";
   let readTime = "11 mins";
   let duration = "2 days ago";
+  let ai = true;
 </script>
 
 <div class="author-article-details-component">
@@ -19,6 +20,7 @@
       {location}
       {readTime}
       {duration}
+      {ai}
     />
   </div>
   <div class="tablet">
@@ -29,6 +31,7 @@
       {location}
       {readTime}
       {duration}
+      {ai}
     />
   </div>
   <div class="desktop description">

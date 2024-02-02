@@ -2,9 +2,10 @@
   export let src: string | undefined = undefined;
   export let alt: string | undefined = undefined;
   export let dark: boolean = true;
+  export let opacity: number | undefined = 1;
 </script>
 
-<button class="button-svg-circle-component" class:theme-dark={dark} on:click>
+<button class="button-svg-circle-component" class:theme-dark={dark} on:click style:opacity>
   {#if src}
     <img {src} {alt} />
   {/if}

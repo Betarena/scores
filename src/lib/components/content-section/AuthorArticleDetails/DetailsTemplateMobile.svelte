@@ -11,12 +11,13 @@
   export let readTime: string;
   export let duration: string;
   export let ai: boolean = false;
+  const effect = true;
 </script>
 
 <div class="details-template-mobile-component">
   <div class="wrap">
     <div class="avatar">
-      <ProfileAvatar imageSrc={avatar} imageAlt={authorName} />
+      <ProfileAvatar imageSrc={avatar} imageAlt={authorName} {effect} />
     </div>
     <div class="details">
       <div class="about">
