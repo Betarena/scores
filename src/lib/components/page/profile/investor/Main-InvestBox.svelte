@@ -34,16 +34,17 @@
   import { onDestroy, onMount } from 'svelte';
   import { fade, fly } from 'svelte/transition';
 
+	import { get, post } from '$lib/api/utils.js';
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
+	import { dlog, dlogv2 } from '$lib/utils/debug.js';
+	import { shortenWeb3WalletAddress, sleep, toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
+	import { chainObject, chainObjectWalletConnect } from '$lib/utils/web3.js';
+	import { passByValue } from '@betarena/scores-lib/dist/functions/func.common.js';
+	import { tryCatchAsync } from '@betarena/scores-lib/dist/util/util.common.js';
+
 	import { createWeb3Modal, defaultConfig } from '@web3modal/ethers5';
 	import { BigNumber, ethers, type ContractInterface, type Transaction } from 'ethers';
-
-  import { get, post } from '$lib/api/utils.js';
-  import { dlog, dlogv2 } from '$lib/utils/debug.js';
-  import { shortenWeb3WalletAddress, sleep, toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
-  import { passByValue } from '@betarena/scores-lib/dist/functions/func.common.js';
-  import { tryCatchAsync } from '@betarena/scores-lib/dist/util/util.common.js';
 
   import icon_checkbox from '../assets/checkbox.svg';
   import icon_arrow_down_dark from '../assets/common/arrow-down-dark.svg';
@@ -143,11 +144,13 @@
   let
     /** @augments IProfileTrs */
     // DProfTrs: IProfileTrs
-    /** @description Creating a Web3Modal with `WalletConnect`. */
+    /**
+     * @description
+     *  📣 Creating a Web3Modal with `WalletConnect` configuration.
+    */
     modal: Web3Modal = createWeb3Modal
     (
       {
-        // ▓ @see :> get projectId at https://cloud.walletconnect.com
         projectId: import.meta.env.VITE_WALLETCONNECT_ID
         , ethersConfig: defaultConfig
         (
@@ -162,54 +165,96 @@
                 'https://betarena-scores-platform.herokuapp.com/_app/immutable/assets/betarena-logo-full.f6af936d.svg'
               ]
             }
+            , defaultChainId: 80001
+            , enableCoinbase: true
           }
         )
         , chains:
         [
-          // {
-          //   chainId: 1,
-          //   name: 'Ethereum',
-          //   currency: 'ETH',
-          //   explorerUrl: 'https://etherscan.io',
-          //   rpcUrl: 'https://cloudflare-eth.com'
-          // },
-          {
-            chainId: 80001
-            ,name: 'Mumbai Testnet'
-            ,currency: 'MATIC'
-            ,explorerUrl: 'https://mumbai.polygonscan.com'
-            ,rpcUrl: 'https://polygon-mumbai.g.alchemy.com/v2/0zWtf5I24NBkM826G-VJFiYkkGoC5atJ'
-          }
+          chainObjectWalletConnect.ethereum
+          , chainObjectWalletConnect.polygon_mumbai
         ]
-        , defaultChain:
-        {
-          chainId: 80001
-          ,name: 'Mumbai Testnet'
-          ,currency: 'MATIC'
-          ,explorerUrl: 'https://mumbai.polygonscan.com'
-          ,rpcUrl: 'https://polygon-mumbai.g.alchemy.com/v2/0zWtf5I24NBkM826G-VJFiYkkGoC5atJ'
-        }
+        , defaultChain: chainObjectWalletConnect.polygon_mumbai
+        , featuredWalletIds:
+        [
+          // ▓ NOTE:
+          // ▓ > MetaMask Wallet
+          'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96'
+          // ▓ NOTE:
+          // ▓ > Trust Wallet
+          , '4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0'
+          // ▓ NOTE:
+          // ▓ > CoinBase Wallet
+          // , 'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa'
+        ]
+        , includeWalletIds:
+        [
+          // ▓ NOTE:
+          // ▓ > MetaMask Wallet
+          'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96'
+          // ▓ NOTE:
+          // ▓ > Trust Wallet
+          , '4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0'
+          // ▓ NOTE:
+          // ▓ > CoinBase Wallet
+          // , 'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa'
+        ]
+        // , excludeWalletIds:
+        // [
+        // ]
+        // , privacyPolicyUrl: ''
+        // , termsConditionsUrl: ''
       }
     )
-    /** @description 📣 wether user has triggered the `invest` action. */
+    /**
+     * @description
+     *  📣 wether user has triggered the `invest` action.
+    */
     , triggerInvestBox: boolean = false
-    /** @description 📣 wether user has triggered the `invest` action. */
+    /**
+     * @description
+     *  📣 wether user has triggered the `invest` action.
+    */
     , stateWidget: IStateWidget = null
-    /** @description 📣 prices of supported tokens. */
+    /**
+     * @description
+     *  📣 prices of supported tokens.
+    */
     , cryptoPrices: ICoinMarketCapDataMain
-    /** @description 📣 target token price. */
+    /**
+     * @description
+     *  📣 target token price.
+    */
     , cryptoPrice: number
-    /** @description 📣 amount user wishes to `deposit`. */
+    /**
+     * @description
+     *  📣 amount user wishes to `deposit`.
+    */
     , depositAmount: number = $sessionStore.investDepositAmountMobileWeb3 ?? 2500
-    /** @description 📣 amount user wishes to `recieve`. */
+    /**
+     * @description
+     *  📣 amount user wishes to `recieve`.
+    */
     , recieveAmount: number = 2500
-    /** @description 📣 target selected option by user. */
+    /**
+     * @description
+     *  📣 target selected option by user.
+    */
     , selectDepositOption: 'crypto' | 'fiat' = 'crypto'
-    /** @description 📣 tier discount data object */
+    /**
+     * @description
+     *  📣 tier discount data object
+    */
     , tierDiscountObject: ITierDiscount = { }
-    /** @description 📣 terms&conditions checkbox */
+    /**
+     * @description
+     *  📣 terms&conditions checkbox
+    */
     , agreeTermsAndConditions: boolean = false
-    /** @description 📣 crypto deposit data object list */
+    /**
+     * @description
+     *  📣 crypto deposit data object list
+    */
     , cryptoDepositOptions: ICryptoDesposit[]
     = [
       {
@@ -229,21 +274,45 @@
         ,userBalance: null
       }
     ]
-    /** @description 📣 crypto deposit data object list (search) */
+    /**
+     * @description
+     *  📣 crypto deposit data object list (search)
+    */
     , cryptoDepositOptionsSearch: ICryptoDesposit[] = passByValue(cryptoDepositOptions)
-    /** @description 📣 crypto deposit object selected */
+    /**
+     * @description
+     *  📣 crypto deposit object selected
+    */
     , cryptoDepositOptionSelect: ICryptoDesposit = cryptoDepositOptions[0]
-    /** @description 📣 modal open select cryptocurrency option */
+    /**
+     * @description
+     *  📣 modal open select cryptocurrency option
+    */
     , modalSelectCryptoOption: boolean = false
-    /** @description 📣 modal open select cryptocurrency option */
+    /**
+     * @description
+     *  📣 modal open select cryptocurrency option
+    */
     , walletAddress: `0x${string}` | undefined
-    /** @description 📣 search text for target token */
+    /**
+     * @description
+     *  📣 search text for target token
+    */
     , tokenSearch: string
-    /** @description 📣 interval for CoinMarketCap fetching */
+    /**
+     * @description
+     *  📣 interval for CoinMarketCap fetching
+    */
     , interval1: NodeJS.Timer
-    /** @description 📣 modal unsubsribe events (callback) */
+    /**
+     * @description
+     *  📣 modal unsubsribe events (callback)
+    */
     , modalUnsubscribe: (() => void)[] = []
-    /** @description 📣 TODO: */
+    /**
+     * @description
+     *  📣 TODO:
+    */
     , deepReactListenSignerChange: unknown
   ;
 
@@ -343,7 +412,7 @@
             '🚏 checkpoint [R] ➤ src/lib/components/page/profile/investor/Main-InvestBox.svelte if_R_X12',
             [
               newProvider
-              ,`🔹 [var] ➤ modal.getSigner() ${modal.getSigner()}`
+              // ,`🔹 [var] ➤ modal.getSigner() ${modal.getSigner()}`
               ,`🔹 [var] ➤ modal.getAddress() ${modal.getAddress()}`
             ],
             true
@@ -351,7 +420,7 @@
 
           deepReactListenSignerChange = newProvider.isConnected;
           walletAddress = modal.getAddress();
-          await switchUserNetwork();
+          // await switchUserNetwork();
 
           return;
         }
@@ -443,11 +512,13 @@
       ): Promise < void > =>
       {
         const
-          contract = new ethers.Contract
+          ethersProvider = new ethers.providers.Web3Provider(modal.getWalletProvider())
+          , signer = await ethersProvider.getSigner()
+          , contract = new ethers.Contract
           (
             cryptoDepositOptionSelect.contractAddress,
-            cryptoDepositOptionSelect.abi as ContractInterface,
-            modal.getSigner(),
+              cryptoDepositOptionSelect.abi as ContractInterface,
+              signer
           )
           , numberDecimals = await contract.decimals()
           , numberUserBalance = await contract.balanceOf(modal.getAddress())
@@ -507,25 +578,14 @@
       async (
       ) : Promise < void > =>
       {
-        return await window.ethereum.request
+        return await modal.getWalletProvider()?.request
         (
           {
             method: 'wallet_addEthereumChain'
-            ,params:
+            , params:
             [
-              {
-                chainId: '0x13881'
-                ,chainName: 'Mumbai Testnet'
-                ,rpcUrls: ['https://polygon-mumbai.g.alchemy.com/v2/0zWtf5I24NBkM826G-VJFiYkkGoC5atJ']
-                ,nativeCurrency:
-                {
-                  name: 'MATIC'
-                  ,symbol: 'MATIC'
-                  ,decimals: 18,
-                }
-                ,blockExplorerUrls: ['https://mumbai.polygonscan.com'],
-              }
-            ],
+              chainObject .polygon_mumbai
+            ]
           }
         );
       }
@@ -582,30 +642,30 @@
     // ▓ > for mobile, redirect with 'deep-link' user to MetaMask browser.
     // ▓ NOTE:
     // ▓ > does not appear to be working for 'localhost' with MetaMask browser.
-    const if_M_0: boolean
-      // typeof screen.orientation !== 'undefined' // ❌ unreliable
-      // navigator?.userAgentData?.mobile // ❌ unreliable
-      = /Mobi/i.test(window.navigator.userAgent)
-      && window.ethereum == null
-    ;
-    if (if_M_0)
-    {
-      const
-        dappUrl: string = $page.url.host
-        , metamaskAppDeepLink = `
-            https://metamask.app.link/dapp/${dappUrl}
-              ?metmaskAuth=true
-              &investDepositIntent=true
-              &investDepositAmount=${depositAmount}
-          `.replace(/\s/g, '')
-      ;
-      window.open
-      (
-        metamaskAppDeepLink
-        ,  '_self'
-      );
-      return;
-    }
+    // const if_M_0: boolean
+    //   // typeof screen.orientation !== 'undefined' // ❌ unreliable
+    //   // navigator?.userAgentData?.mobile // ❌ unreliable
+    //   = /Mobi/i.test(window.navigator.userAgent)
+    //   && window.ethereum == null
+    // ;
+    // if (if_M_0)
+    // {
+    //   const
+    //     dappUrl: string = $page.url.host
+    //     , metamaskAppDeepLink = `
+    //         https://metamask.app.link/dapp/${dappUrl}
+    //           ?metmaskAuth=true
+    //           &investDepositIntent=true
+    //           &investDepositAmount=${depositAmount}
+    //       `.replace(/\s/g, '')
+    //   ;
+    //   window.open
+    //   (
+    //     metamaskAppDeepLink
+    //     ,  '_self'
+    //   );
+    //   return;
+    // }
 
     await modal.open({ view: 'Connect' });
 
@@ -651,7 +711,7 @@
     if (!browser) return;
 
     // ▓ [🐞]
-    console.log('📣', modal.getSigner());
+    // console.log('📣', modal.getSigner());
     // ▓ [🐞]
     console.log('📣', modal.getIsConnected());
 
@@ -664,6 +724,8 @@
       errors: boolean = false
       , targetDecimals: number
       , targetAmount: BigNumber
+      , ethersProvider = new ethers.providers.Web3Provider(modal.getWalletProvider())
+      , signer = await ethersProvider.getSigner()
     ;
 
     // @see :> https://docs.alchemy.com/reference/error-reference
@@ -676,6 +738,9 @@
       async (
       ): Promise < void > =>
       {
+        // ▓ [🐞]
+        console.log('executing approve()...');
+
         // ▓ NOTE:
         // ▓ > alternative num.1
         // const walletProvider = modal.getWalletProvider()
@@ -698,7 +763,7 @@
           (
             cryptoDepositOptionSelect.contractAddress,
             cryptoDepositOptionSelect.abi as ContractInterface,
-            modal.getSigner(),
+            signer
           )
         ;
 
@@ -743,9 +808,9 @@
       }
     );
 
-    // NOTE:
-    // > needed due occasional slow network/chain propagation.
-    await sleep(5000);
+    // ▓ NOTE:
+    // ▓ > needed due occasional slow network/chain propagation.
+    await sleep(3000);
 
     // ▓ CHECK
     // ▓ > for errors registered.
@@ -763,15 +828,18 @@
       async (
       ): Promise < void > =>
       {
+        // ▓ [🐞]
+        console.log('executing depositTokens()...');
+
         const
           contract = new ethers.Contract
           (
             betarenaBankContractAddress,
             betarenaBankContractABI,
-            modal.getSigner()
+            signer
           )
-          , transactionResponse: Transaction = await contract.depositToken(cryptoDepositOptionSelect.contractAddress, targetAmount);
-
+          , transactionResponse: Transaction = await contract.depositToken(cryptoDepositOptionSelect.contractAddress, targetAmount)
+        ;
 
         // ▓ [🐞]
         console.log('transactionResponse', transactionResponse);
@@ -801,9 +869,9 @@
       }
     );
 
-    // NOTE:
-    // > needed due occasional slow network/chain propagation.
-    await sleep(5000);
+    // ▓ NOTE:
+    // ▓ > needed due occasional slow network/chain propagation.
+    await sleep(3000);
 
     // ▓ CHECK
     // ▓ > for errors registered.
@@ -1052,6 +1120,7 @@
       getCryptoPrices();
       addEventListeners();
       resizeAction();
+      return;
     }
   );
 
@@ -1064,6 +1133,8 @@
 
       for (const unsubscribe of modalUnsubscribe)
         unsubscribe();
+
+      return;
     }
   );
 
