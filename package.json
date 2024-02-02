@@ -4,8 +4,8 @@
 	"version": "2.4.7",
 	"type": "module",
 	"engines": {
-		"npm": "8.19.1",
-		"node": "16.17.0"
+		"npm": "10.2.3",
+		"node": "18.19.0"
 	},
 	"engineStrict": true,
 	"scripts": {

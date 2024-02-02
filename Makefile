@@ -68,10 +68,10 @@ setup-node:
 
 	# ▓ NOTE:
 	# ▓ > installs target 'node' version, if absent.
-	nvm install 16.17.0
-	# nvm use 16.17.0
+	nvm install 18.19.0
+	# nvm use 18.19.0
 
-	npm install -g npm@8.19.1
+	npm install -g npm@10.2.3
 
 	npm i
 
