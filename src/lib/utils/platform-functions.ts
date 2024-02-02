@@ -220,7 +220,10 @@ export async function sleep
   ms: number
 ): Promise < void >
 {
-  new Promise
+  // ▓ [🐞]
+  console.log('sleeping...');
+
+  return new Promise
   (
     (
       r
@@ -228,8 +231,8 @@ export async function sleep
     {
       return setTimeout
       (
-        r,
-        ms
+        r
+        , ms
       )
     }
   );
