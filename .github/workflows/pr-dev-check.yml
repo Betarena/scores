@@ -46,9 +46,8 @@ jobs:
         run: |
           echo ${{ secrets.ENV_FILE }} | base64 -d > .env
       - name: '🟩 Build npm'
-        env:
-          NODE_OPTIONS: "--max_old_space_size=4096"
         run: |
+          export NODE_OPTIONS="--max_old_space_size=4096"
           npm ci
           npm run build
 
