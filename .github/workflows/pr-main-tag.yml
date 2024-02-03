@@ -1,14 +1,14 @@
-# ▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-# ▓▓ NOTE:
-# ▓▓ This Github Action is used to:
-# ▓▓ - Increase (Bump) NPM project version (0.0.1 -> 0.0.2)
-# ▓▓ - Reset origin/dev branch to be in-line with main after PR
-# ▓▓ - Create a Release of new TAG
-# ▓▓ TODO:
-# ▓▓ - https://stackoverflow.com/questions/39206082/npm-version-to-add-alpha-postfix
-# ▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+# ╭──────────────────────────────────────────────────────────────────╮
+# │ 🐙 GITHUB ACIONS CI/CD WORKFLOW                                  │
+# ┣──────────────────────────────────────────────────────────────────┫
+# │ Responsible for:                                                 │
+# │ ➤ [1] auto-bump of project version.                              │
+# │ ➤ [2] auto-reset dev (branch) to main state.                     │
+# │ ➤ [3] auto-create release + tag of project.                      │
+# │ ➤ [4] auto-deploy project to target server.                      │
+# ╰──────────────────────────────────────────────────────────────────╯
 
-name: NPM - Bump, publish, reset, release
+name: '⚡️ Bump│Publish│Reset│Release'
 
 env:
   # MINOR_ARRAY: '["Minor", "MINOR"]' # TEST with arrays
@@ -126,156 +126,97 @@ jobs:
     # NOTE: -> ✅ works!, but does not update package.json of dev/main (target PR) only origin branch
     # NOTE: -> ❌ limited in variables (custom-fork) - not what is needed;
 
-  # ▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-  # ▓▓ NOTE:                                                                    ▓▓
-  # ▓▓ ➤ test for correct project compile                                       ▓▓
-  # ▓▓ ➤ checking for possible deployment build errors                          ▓▓
-  # ▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-
-  npm-build-check:
-    name: NPM Build Check
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: main
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16.17.0
-      - name: '🏗️ Set npm version'
-        run: |
-          npm install -g npm@8.19.1
-      - name: 'create .env'
-        run: |
-          echo ${{ secrets.ENV_FILE }} | base64 -d > .env
-      - name: '🟩 Build npm'
-        run: |
-          npm ci
-          npm install
-          npm run build
-
-  # ▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-  # ▓▓ NOTE:                                                                    ▓▓
-  # ▓▓ ➤ (on valid) bumps npm version                                           ▓▓
-  # ▓▓ ➤ of (this) repository to                                                ▓▓
-  # ▓▓ ➤ a specified target;                                                    ▓▓
-  # ▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+  # ╭──────────────────────────────────────────────────────────────────╮
+  # │ NOTE:                                                            │
+  # │ ➤ [1] auto-bump of project version.                              │
+  # ╰──────────────────────────────────────────────────────────────────╯
 
   npm-version-bump:
     name: NPM Version Bump
-    needs: npm-build-check
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-22.04
-    # ▓▓ NOTE:
-    # ▓▓ map a step output to a job output
-    # ▓▓ SEE:
-    # ▓▓ https://docs.github.com/en/actions/using-jobs/defining-outputs-for-jobs
+    # ▓ NOTE:
+    # ▓ > map a step output to a job output.
+    # ▓ > 🔗 read-more :|: https://docs.github.com/en/actions/using-jobs/defining-outputs-for-jobs
     outputs:
       output1: ${{ steps.step1.outputs.bump_version_bool }}
       output2: ${{ steps.set-version.outputs.release_tag }}
     steps:
-      - name: checkout source code
-        uses: actions/checkout@v3
-        env:
-          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-      - name: node config
+
+      - name: "STEP :|: checkout source code"
+        uses: actions/checkout@v4
+        with:
+          token: '${{ secrets.GH_TOKEN }}'
+          fetch-depth: 0
+          fetch-tags: true
+          ref: main
+
+      - name: "STEP :|: git config"
+        run: |
+          git config --local user.email "${{ secrets.GH_ORG_EMAIL }}"
+          git config --local user.name "${{ secrets.GH_ORG_NAME }}"
+
+      - name: "STEP :|: node config"
         uses: actions/setup-node@v3
         with:
-          node-version: 16.17.0
-      - name: '🏗️ Set npm version'
+          node-version: 18.19.0
+
+      - name: "STEP :|: npm config"
         run: |
-          npm install -g npm@8.19.1
-      - name: git config
+          npm install -g npm@10.2.3
+
+      - name: "STEP :|: check semver:patch"
+        if: contains(github.event.pull_request.labels.*.name, 'semver:patch')
+        # if: '${{ contains(env.PATCH_WORDING, github.event.pull_request.title) }}'
         run: |
-          git config --global user.email "${{ secrets.GH_ORG_EMAIL }}"
-          git config --global user.name "${{ secrets.GH_ORG_NAME }}"
-      - name: PATCH - check
-        # if: contains(github.event.pull_request.labels.*.name, 'patch')
-        if: '${{ contains(env.PATCH_WORDING, github.event.pull_request.title) }}'
-        run: |
-          echo "Patch Bump Detected"
           npm version patch
-      - name: MINOR - check
-        # if: contains(github.event.pull_request.labels.*.name, 'minor')
-        if: '${{ contains(env.MINOR_WORDING, github.event.pull_request.title) }}'
+
+      - name: "STEP :|: check semver:minor"
+        if: contains(github.event.pull_request.labels.*.name, 'semver:minor')
+        # if: '${{ contains(env.MINOR_WORDING, github.event.pull_request.title) }}'
         run: |
-          echo "Minor Bump Detected"
           npm version minor
-      - name: MAJOR - check
-        # if: contains(github.event.pull_request.labels.*.name, 'major')
-        if: '${{ contains(env.MAJOR_WORDING, github.event.pull_request.title) }}'
+
+      - name: "STEP :|: check semver:major"
+        if: contains(github.event.pull_request.labels.*.name, 'semver:major')
+        # if: '${{ contains(env.MAJOR_WORDING, github.event.pull_request.title) }}'
         run: |
-          echo "Major Bump Detected"
           npm version major
-      - id: step1
-        name: BUMP - check
+
+      - name: "STEP :|: check version bump"
+        id: step1
         # if: contains(github.event.pull_request.labels.*.name, 'major')
-        if: '${{
-            contains(env.PATCH_WORDING, github.event.pull_request.title)
-            || contains(env.MINOR_WORDING, github.event.pull_request.title)
-            || contains(env.MAJOR_WORDING, github.event.pull_request.title)
-          }}'
-        # see: https://michaelcurrin.github.io/dev-cheatsheets/cheatsheets/ci-cd/github-actions/persist.html
-        # see: https://stackoverflow.com/questions/58177786/get-the-current-pushed-tag-in-github-actions
+        if: ${{
+            contains(github.event.pull_request.labels.*.name, 'semver:patch')
+            || contains(github.event.pull_request.labels.*.name, 'semver:minor')
+            || contains(github.event.pull_request.labels.*.name, 'semver:major')
+          }}
+        # ▓ > 🔗 read-more :|: https://michaelcurrin.github.io/dev-cheatsheets/cheatsheets/ci-cd/github-actions/persist.html
+        # ▓ > 🔗 read-more :|: https://stackoverflow.com/questions/58177786/get-the-current-pushed-tag-in-github-actions
         run: |
           echo "bump_version_bool=true" >> "$GITHUB_OUTPUT"
-      - name: git push version bump
-        env:
-          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-        run: git push origin main --follow-tags --force
-      - id: set-version
-        name: output/set version change
+
+      - name: "STEP :|: persist version bump"
+        run: |
+          git push origin main --follow-tags --force
+
+      - name: "STEP :|: set new version"
+        id: set-version
         run: |
           npm pkg get version
           echo "release_tag=$(npm pkg get version --workspaces=false | tr -d \") ">> $GITHUB_OUTPUT
-      - name: check output/set version
+
+      - name: "STEP :|: check output/set version"
         env:
           RELEASE_VERSION: ${{ steps.set-version.outputs.release_tag }}
         run: |
           echo $RELEASE_VERSION
           echo ${{ steps.set-version.outputs.release_tag }}
 
-  # ▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-  # ▓▓ NOTE:                                                                    ▓▓
-  # ▓▓ ➤ "hard" reset of origin/main repository                                 ▓▓
-  # ▓▓ ➤ after successfull PR to (->) main;                                     ▓▓
-  # ▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-
-  dev-branch-reset:
-    name: Git Reset Dev
-    needs: npm-version-bump
-    runs-on: ubuntu-22.04
-    steps:
-      - name: checkout source code
-        uses: actions/checkout@v3
-        env:
-          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-      - name: node config
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-      - name: git config
-        run: |
-          git config --global user.email "${{ secrets.GH_ORG_EMAIL }}"
-          git config --global user.name "${{ secrets.GH_ORG_NAME }}"
-      - name: git reset origin/dev branch
-        env:
-          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-        run: |
-          # ▓▓ IMPORTANT
-          git fetch
-          git checkout main
-          git pull origin main
-          git checkout dev
-          git reset --hard main
-          git push --force origin dev
-
-  # ▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-  # ▓▓ NOTE:                                                                    ▓▓
-  # ▓▓ ➤ creates a release for (this) repository                                ▓▓
-  # ▓▓ ➤ after successfull bump;                                                ▓▓
-  # ▓▓ ➤ dependent on "npm-version-bump"                                        ▓▓
-  # ▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+  # ╭──────────────────────────────────────────────────────────────────╮
+  # │ NOTE:                                                            │
+  # │ ➤ [2] auto-create release + tag of project.                      │
+  # ╰──────────────────────────────────────────────────────────────────╯
 
   create-release:
     name: Git Create Release
@@ -294,12 +235,44 @@ jobs:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
 
-  # ▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-  # ▓▓ NOTE: ▓▓ SKIP                                                            ▓▓
-  # ▓▓ ➤ deploys target MAIN                                                    ▓▓
-  # ▓▓ ➤ after successfull "bump" & "release";                                  ▓▓
-  # ▓▓ ➤ dependent on "create-release"                                          ▓▓
-  # ▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+  # ╭──────────────────────────────────────────────────────────────────╮
+  # │ NOTE:                                                            │
+  # │ ➤ [3] auto-reset dev (branch) to main state.                     │
+  # ╰──────────────────────────────────────────────────────────────────╯
+
+  dev-branch-reset:
+    name: Git Reset Dev
+    needs: create-release
+    runs-on: ubuntu-22.04
+    steps:
+
+      - name: "STEP :|: checkout source code"
+        uses: actions/checkout@v4
+        with:
+          token: '${{ secrets.GH_TOKEN }}'
+          fetch-depth: 0
+          fetch-tags: true
+          ref: main
+
+      - name: "STEP :|: git config"
+        run: |
+          git config --local user.email "${{ secrets.GH_ORG_EMAIL }}"
+          git config --local user.name "${{ secrets.GH_ORG_NAME }}"
+
+      - name: "STEP :|: reset origin/dev branch"
+        run: |
+          # ▓ NOTE: ▓ IMPORTANT
+          git fetch
+          git checkout main
+          git pull origin main
+          git checkout dev
+          git reset --hard main
+          git push --force origin dev
+
+  # ╭──────────────────────────────────────────────────────────────────╮
+  # │ NOTE:                                                            │
+  # │ ➤ [4] sentry JS sourcemap upload                                 │
+  # ╰──────────────────────────────────────────────────────────────────╯
 
   sentry-sourcemap-deploy:
     name: 🟣 Sentry sourcemap (artifacts) upload
@@ -312,10 +285,10 @@ jobs:
           ref: main
       - uses: actions/setup-node@v3
         with:
-          node-version: 16.17.0
+          node-version: 18.19.0
       - name: 'setup npm'
         run: |
-          npm install -g npm@8.19.1
+          npm install -g npm@10.2.3
       - name: 'create .env'
         run: |
           echo ${{ secrets.ENV_FILE }} | base64 -d > .env
@@ -326,12 +299,10 @@ jobs:
           npm install
           npm run build-2
 
-  # ▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-  # ▓▓ NOTE: ▓▓ SKIP                                                            ▓▓
-  # ▓▓ ➤ deploys target MAIN                                                    ▓▓
-  # ▓▓ ➤ after successfull "bump" & "release";                                  ▓▓
-  # ▓▓ ➤ dependent on "create-release"                                          ▓▓
-  # ▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+  # ╭──────────────────────────────────────────────────────────────────╮
+  # │ NOTE:                                                            │
+  # │ ➤ [5] auto-deploy project to target server.                      │
+  # ╰──────────────────────────────────────────────────────────────────╯
 
   deploy:
     name: 🚀 Deployment
