@@ -6,12 +6,12 @@
 # │ ➤ [2] build check of project as a Check PR Label                 │
 # ╰──────────────────────────────────────────────────────────────────╯
 
-name: '🔍 Pull-Request Check [main]'
+name: '🔍 Pull-Request Check [dev]'
 
 on:
   pull_request:
     branches:
-      - main
+      - dev
     types:
       - opened
       - reopened
@@ -61,23 +61,3 @@ jobs:
   #     - name: Build docker image
   #       run: |
   #         docker build . --file ./docker/prod.Dockerfile --tag ${{ env.DOCKER_IMAGE }}:$(date +%s)
-
-  # ╭──────────────────────────────────────────────────────────────────╮
-  # │ NOTE:                                                            │
-  # │ ➤ [2] check for correct PR Label                                 │
-  # ╰──────────────────────────────────────────────────────────────────╯
-
-  check-labels:
-    name: 'Check PR Labels'
-    runs-on: ubuntu-22.04
-    steps:
-
-      - uses: actions/checkout@v3
-
-      - uses: mheap/github-action-required-labels@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          mode: exactly
-          count: 1
-          labels: 'semver:major, semver:minor, semver:patch'
