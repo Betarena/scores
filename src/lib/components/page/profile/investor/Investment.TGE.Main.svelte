@@ -443,7 +443,7 @@
     ▓ NOTE:
     ▓ > token ready to claim.
     -->
-    {#if widgetState == 'DateDefined' || widgetState == 'ClaimAvailable'}
+    {#if widgetState == 'ClaimAvailable'}
       <button
         class=
         "
