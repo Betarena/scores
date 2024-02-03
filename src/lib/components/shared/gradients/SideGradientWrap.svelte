@@ -1,13 +1,16 @@
 <script lang="ts">
   export let dark: boolean = false;
+
+  export let direction: "top" | "right" | "bottom" | "left";
+  export let distance: string; // TODO
 </script>
 
-<div class="end-gradient-wrap-component" class:dark>
+<div class="side-gradient-wrap-component {direction}" class:dark>
   <slot />
 </div>
 
 <style lang="scss">
-  .end-gradient-wrap-component {
+  .side-gradient-wrap-component {
     position: relative;
     &::after {
       content: '';

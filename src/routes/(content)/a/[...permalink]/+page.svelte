@@ -1,43 +1,74 @@
 <script lang="ts">
-  import AuthorArticleContent from "$lib/components/content-section/AuthorArticleContent.svelte";
-  import AuthorArticleDetails from "$lib/components/content-section/AuthorArticleDetails/AuthorArticleDetails.svelte";
-  import AuthorBadges from "$lib/components/content-section/AuthorBadges.svelte";
-  import ContentSectionRow from "$lib/components/content-section/ContentSectionRow.svelte";
-  import EndGradientWrap from "$lib/components/content-section/EndGradientWrap.svelte";
-  import { getDarkThemeContext } from "$lib/context/dark-theme-context";
+  import AuthorArticleHeading from "$lib/components/content-section/AuthorArticleHeading.svelte";
+  import AuthorArticleHeadingLoader from "$lib/components/content-section/loaders/AuthorArticleHeadingLoader.svelte";
 
+  import AuthorArticleDetails from "$lib/components/content-section/AuthorArticleDetails/AuthorArticleDetails.svelte";
+  import AuthorArticleDetailsLoader from "$lib/components/content-section/loaders/AuthorArticleDetailsLoader.svelte";
+
+  import AuthorBadges from "$lib/components/content-section/AuthorBadges.svelte";
+  import AuthorBadgesLoader from "$lib/components/content-section/loaders/AuthorBadgesLoader.svelte";
+
+  import AuthorArticleImageLoader from "$lib/components/content-section/loaders/AuthorArticleImageLoader.svelte";
+
+  import AuthorArticleContent from "$lib/components/content-section/AuthorArticleContent.svelte";
+  import AuthorArticleContentLoader from "$lib/components/content-section/loaders/AuthorArticleContentLoader.svelte";
+
+  import ContentSectionRow from "$lib/components/content-section/ContentSectionRow.svelte";
+  import SideGradientWrap from "$lib/components/content-section/SideGradientWrap.svelte";
+
+  import { getDarkThemeContext } from "$lib/context/dark-theme-context";
   import type { PageServerData } from "./$types";
 
   export let data: PageServerData;
 
   $: ({ serverParams, content } = data);
 
+  const heading =
+    "Wolverhampton Wanderers vs Burnley betting tip 2023/2024 – Picks and Predictions for the Premier League match on December 05th, 2023";
   let dark = getDarkThemeContext();
+  let loading = true;
 </script>
 
 <div class="author-article-page" class:dark={$dark}>
   <ContentSectionRow>
-    <h1>
-      Wolverhampton Wanderers vs Burnley betting tip 2023/2024 – Picks and
-      Predictions for the Premier League match on December 05th, 2023
-    </h1>
+    {#if loading}
+      <AuthorArticleHeadingLoader dark={$dark} />
+    {:else}
+      <AuthorArticleHeading {heading} />
+    {/if}
   </ContentSectionRow>
 
   <ContentSectionRow --mobile-padding-right="0">
-    <EndGradientWrap dark={$dark}>
-      <AuthorBadges dark={$dark} />
-    </EndGradientWrap>
+    <SideGradientWrap dark={$dark}>
+      {#if loading}
+        <AuthorBadgesLoader dark={$dark} />
+      {:else}
+        <AuthorBadges dark={$dark} />
+      {/if}
+    </SideGradientWrap>
   </ContentSectionRow>
 
   <div class="mobile-order-first">
     <ContentSectionRow>
-      <AuthorArticleDetails />
+      {#if loading}
+        <AuthorArticleDetailsLoader />
+      {:else}
+        <AuthorArticleDetails />
+      {/if}
     </ContentSectionRow>
   </div>
+
+  <ContentSectionRow --mobile-padding-right="0" --mobile-padding-left="0">
+    <AuthorArticleImageLoader />
+  </ContentSectionRow>
   
 
   <ContentSectionRow>
-    <AuthorArticleContent {content} />
+    {#if loading}
+      <AuthorArticleContentLoader />
+    {:else}
+      <AuthorArticleContent {content} />
+    {/if}
   </ContentSectionRow>
 </div>
 
@@ -47,14 +78,14 @@
     &.dark {
       color: var(--white);
     }
-    
+
     display: flex;
     flex-direction: column;
-    
+
     // mobile
     padding: 16px 0 40px 0;
     gap: 24px;
-    .mobile-order-first { 
+    .mobile-order-first {
       order: -1;
     }
     // tablet and desktop
@@ -63,26 +94,6 @@
       gap: 32px;
       .mobile-order-first {
         order: unset;
-      }
-    }
-
-    h1 {
-      color: inherit;
-      margin: 0;
-      font-weight: 600;
-
-      // mobile
-      font-size: 24px;
-      line-height: 36px;
-      // tablet
-      @media only screen and (min-width: 768px) {
-        font-size: 36px;
-        line-height: 54px;
-      }
-      // desktop
-      @media only screen and (min-width: 1440px) {
-        font-size: 38px;
-        line-height: 54px;
       }
     }
   }
