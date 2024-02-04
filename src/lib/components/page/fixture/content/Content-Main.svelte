@@ -9,7 +9,7 @@
   import { onMount } from 'svelte';
 
 	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { MONTH_NAMES_ABBRV } from '$lib/utils/dates.js';
+	import { monthNames } from '$lib/utils/dates.js';
 	import { viewport_change } from '$lib/utils/platform-functions.js';
 
 	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';

@@ -87,7 +87,7 @@
   {
 		if (!browser) return;
 
-		await sleep(3000);
+		// await sleep(3000);
 
     // ### CHECK
     // ### for conditions when 'this' widget should not be shown.
