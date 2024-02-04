@@ -24,6 +24,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { ddMMyyFormat } from '$lib/utils/dates.js';
+  import { createEventDispatcher, type EventDispatcher } from 'svelte';
 
   import icon_arrow_down from '../assets/arrow-down.svg';
   import icon_arrow_up from '../assets/arrow-up.svg';
@@ -74,6 +75,7 @@
     /** @description 📣 threshold start + state for 💻 TABLET */
     // eslint-disable-next-line no-unused-vars
     , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
+    , dispatch: EventDispatcher < any > = createEventDispatcher()
   ;
 
   let
@@ -244,6 +246,14 @@
         "
         btn-primary-v2
         "
+        on:click=
+        {
+          () =>
+          {
+            dispatch('claimTrigger')
+            return;
+          }
+        }
       >
         Claim
       </button>

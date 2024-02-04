@@ -27,6 +27,7 @@
 	import { page } from '$app/stores';
 	import { onDestroy, onMount } from 'svelte';
 
+  import sessionStore from '$lib/store/session.js';
   import userBetarenaSettings from '$lib/store/user-settings.js';
   import { toCorrectDate, toZeroPrefixDateStr } from '$lib/utils/dates.js';
   import { dlog } from '$lib/utils/debug.js';
@@ -35,6 +36,7 @@
 
   import AdminDevControlPanel from '$lib/components/misc/admin/Admin-Dev-ControlPanel.svelte';
   import AdminDevControlPanelToggleButton from '$lib/components/misc/admin/Admin-Dev-ControlPanelToggleButton.svelte';
+  import MainClaimModal from './Main-Claim-Modal.svelte';
 
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
@@ -81,17 +83,6 @@
   {
     mutated: boolean = false;
     noData: boolean = false;
-    adminDevSelected: WidgetState;
-
-    /**
-     * @description
-     */
-    toggleNoData
-    (
-    ): void
-    {
-      return;
-    }
   }
 
   const
@@ -315,6 +306,25 @@
 
 <!--
 ▓ NOTE:
+▓ > (child-component) claim modal
+-->
+{#if $sessionStore.currentActiveModal == 'ProfileInvestor_ClaimTGE_Modal'}
+  <MainClaimModal
+    VIEWPORT_MOBILE_INIT_PARENT={VIEWPORT_MOBILE_INIT}
+    VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
+    on:confirmEntry=
+    {
+      () =>
+      {
+        alert('Executing TGE Claim!');
+        return;
+      }
+    }
+  />
+{/if}
+
+<!--
+▓ NOTE:
 ▓ > (widget) main
 -->
 <div
@@ -454,7 +464,8 @@
         {
           () =>
           {
-            alert('Initiate Process for Claim!');
+            // alert('Initiate Process for Claim!');
+            $sessionStore.currentActiveModal = 'ProfileInvestor_ClaimTGE_Modal';
             return;
           }
         }

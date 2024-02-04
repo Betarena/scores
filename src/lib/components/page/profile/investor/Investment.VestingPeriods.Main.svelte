@@ -26,11 +26,13 @@
 
   import { page } from '$app/stores';
 
+  import sessionStore from '$lib/store/session.js';
   import userBetarenaSettings from '$lib/store/user-settings.js';
 
   import AdminDevControlPanel from '$lib/components/misc/admin/Admin-Dev-ControlPanel.svelte';
   import AdminDevControlPanelToggleButton from '$lib/components/misc/admin/Admin-Dev-ControlPanelToggleButton.svelte';
   import InvestmentVestingPeriodsRowChild from './Investment.VestingPeriodsRow.Child.svelte';
+  import MainClaimModal from './Main-Claim-Modal.svelte';
 
   import type { PUBLIC__INVESTOR_IVesting } from '@betarena/scores-lib/types/_HASURA_.js';
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
@@ -126,7 +128,7 @@
       (profileData?.investorData ??= { data: { vesting_periods: [] } });
       (profileData?.investorData?.data?.vesting_periods ??= []);
 
-      profileData?.investorData?.data?.vesting_periods?.push
+      profileData?.investorData?.data?.vesting_periods.push
       (
         ...this.sampleData
       );
@@ -178,6 +180,11 @@
      *  📣 target `DEV` class instance.
     */
     , newDevInstance = new Dev()
+    /**
+     * @description
+     *  📣 target `vesting` selected by user.
+    */
+    , targetVestingSelected: PUBLIC__INVESTOR_IVesting
   ;
 
   /**
@@ -255,6 +262,26 @@
 |         | abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
+
+<!--
+▓ NOTE:
+▓ > (child-component) claim modal
+-->
+{#if $sessionStore.currentActiveModal == 'ProfileInvestor_ClaimVesting_Modal'}
+  <MainClaimModal
+    VIEWPORT_MOBILE_INIT_PARENT={VIEWPORT_MOBILE_INIT}
+    VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
+    amount={targetVestingSelected.tokens}
+    on:confirmEntry=
+    {
+      () =>
+      {
+        alert('Executing Vesting Claim!');
+        return;
+      }
+    }
+  />
+{/if}
 
 <!--
 ▓ NOTE:
@@ -380,7 +407,7 @@
       <tbody>
 
         {#if
-          profileData?.investorData?.data?.vesting_periods?.length > 0
+          profileData?.investorData?.data?.vesting_periods.length > 0
           && !newDevInstance.noData
         }
           {#each profileData?.investorData?.data?.vesting_periods ?? [] as item}
@@ -392,6 +419,15 @@
               data={item}
               {VIEWPORT_MOBILE_INIT_PARENT}
               {VIEWPORT_TABLET_INIT_PARENT}
+              on:claimTrigger=
+              {
+                () =>
+                {
+                  $sessionStore.currentActiveModal = 'ProfileInvestor_ClaimVesting_Modal';
+                  targetVestingSelected = item;
+                  return;
+                }
+              }
             />
           {/each}
         {:else}
