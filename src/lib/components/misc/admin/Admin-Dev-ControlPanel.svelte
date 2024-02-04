@@ -75,7 +75,7 @@
      * @description
      *  📣 target environment being used.
     */
-    , targetAppEnv: string = import.meta.env?.VITE_ENV_TARGET
+    , targetAppEnv: string = import.meta.env.VITE_ENV_TARGET
   ;
 
   // #endregion ➤ 📌 VARIABLES
@@ -143,7 +143,7 @@
     bottom: 0;
     right: 0;
     left: 0;
-    z-index: 1000;
+    z-index: 100000000000;
     /* 🎨 style */
     background-color: #EBFF00;
     padding: 20px;

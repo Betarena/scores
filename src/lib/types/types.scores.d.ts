@@ -219,11 +219,6 @@ export interface Platform_Session
   showUserguide1Conf: boolean;
   /**
    * @description
-   *  📣 toogle `visibility` (show/hide) of Terms-And-Conditions modal.
-   */
-  showTermsAndConditions: boolean;
-  /**
-   * @description
    *  📌 Toggle `visibility` (show/hide) of Fixture Competition (widget) access.
    */
   showFixtureCompetition?: boolean;
@@ -234,19 +229,18 @@ export interface Platform_Session
   isShowFixtureCompetitionJoinModal?: boolean;
   /**
    * @description
-   *  📣 toogle `visibility` (show/hide) of Terms-And-Conditions modal.
+   *  📣 Currently **active** modal being shown on platform.
    */
-  showDepositModalState: boolean;
-  /**
-   * @description
-   *  📣 toogle `visibility` (show/hide) of Referral Invitations modal.
-   */
-  showReferralInviteModal: boolean;
-  /**
-   * @description
-   *  📣 toogle `visibility` (show/hide) of Investment Wallets modal.
-   */
-  showInvstementWallets: boolean;
+  currentActiveModal:
+    | null
+    | 'ProfileInvestor_ReferralInfo_Modal'
+    | 'ProfileInvestor_Wallets_Modal'
+    | 'ProfileInvestor_Terms&Cond_Modal'
+    | 'ProfileInvestor_WalletConnect_Modal'
+    | 'ProfileInvestor_ClaimTGE_Modal'
+    | 'ProfileInvestor_ClaimVesting_Modal'
+    | 'ProfileInvestor_TxState_Modal'
+  ;
 
   // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   // NOTE: SPORTBOOK DATA       ◼️

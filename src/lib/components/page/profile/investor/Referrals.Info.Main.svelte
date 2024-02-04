@@ -645,7 +645,14 @@
     width-100
     {VIEWPORT_MOBILE_INIT_PARENT[1] ? 'm-t-30' : 'm-t-25'}
     "
-    on:click={() => {return $sessionStore.showReferralInviteModal = true}}
+    on:click=
+    {
+      () =>
+      {
+        $sessionStore.currentActiveModal = 'ProfileInvestor_ReferralInfo_Modal';
+        return;
+      }
+    }
   >
     <img
       id=''
@@ -672,7 +679,7 @@
 ▓ NOTE:
 ▓ > referral invitation information modal
 -->
-{#if $sessionStore.showReferralInviteModal}
+{#if $sessionStore.currentActiveModal == 'ProfileInvestor_ReferralInfo_Modal'}
   <ReferralsInviteModal />
 {/if}
 

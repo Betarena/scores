@@ -24,14 +24,8 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-	import sessionStore from '$lib/store/session.js';
-	import userBetarenaSettings from '$lib/store/user-settings.js';
-
-  import icon_tx_complete from '../assets/tx-loader/tx-complete.svg';
-  import icon_tx_error from '../assets/tx-loader/tx-error.svg';
-  import icon_tx_processing from '../assets/tx-loader/tx-load-anim.svg';
-
-  import ModalBackdrop from '$lib/components/misc/Modal-Backdrop.svelte';
+  import { createEventDispatcher, onDestroy, onMount, type EventDispatcher } from 'svelte';
+  import { fade } from 'svelte/transition';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -49,20 +43,13 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let
-    /** @augments IStateWidget */
-    stateWidget: IStateWidget
-  ;
-
-  type IStateWidget = 'In Progress' | 'Completed' | 'Error' | null;
-
   const
     /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
     */
     // eslint-disable-next-line no-unused-vars
-    CNAME: string = 'profile⮕w⮕modal-tx-state'
+    CNAME: string = 'general⮕g⮕background-modal-blur'
     /**
      * @description
      *  📣 threshold start + state for 📱 MOBILE
@@ -75,37 +62,46 @@
     */
     // eslint-disable-next-line no-unused-vars
     , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
-  ;
-
-  let
-    /** @description */
-    iconState: string
+    /** @description 📣 */
+    , dispatch: EventDispatcher < any > = createEventDispatcher()
   ;
 
   // #endregion ➤ 📌 VARIABLES
 
-  // #region ➤ 🔥 REACTIVIY [SVELTE]
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'logic' that should run            │
-  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
-  // │ WARNING:                                                               │
-  // │ ❗️ Can go out of control.                                              │
-  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
-  // │ Please keep very close attention to these methods and                  │
-  // │ use them carefully.                                                    │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  $:
-  if (stateWidget == 'In Progress')
-    iconState = icon_tx_processing
-  else if (stateWidget == 'Completed')
-    iconState = icon_tx_complete
-  else if (stateWidget == 'Error')
-    iconState = icon_tx_error;
+  onMount
+  (
+    () =>
+    {
+      document.body.classList.add
+      (
+        'disable-scroll'
+      );
+      return;
+    }
+  );
 
-  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
+  onDestroy
+  (
+    () =>
+    {
+      document.body.classList.remove
+      (
+        'disable-scroll'
+      );
+      return;
+    }
+  );
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
 </script>
 
@@ -120,77 +116,25 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<ModalBackdrop />
-
+<!--
+▓ NOTE:
+▓ > vesting period list table.
+-->
 <div
-  id={CNAME}
-  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
->
-
-  <!--
-  ▓ NOTE:
-  ▓ > modal image
-  -->
-  <img
-    id=''
-    title=''
-    alt=''
-    src={iconState}
-    loading='lazy'
-    width=48
-    height=48
-  />
-
-  <!--
-  ▓ NOTE:
-  ▓ > modal text
-  -->
-  <p
-    class=
-    "
-    s-16
-    color-white
-    w-500
-    m-t-20
-    "
-  >
-    {#if stateWidget == 'In Progress'}
-      Transfer is processign wait
-      for confirmation...
-    {:else if stateWidget == 'Completed'}
-      Transfer is complete
-    {:else if stateWidget == 'Error'}
-      Transfer incomplete.
-    {/if}
-  </p>
-
-  <!--
-  ▓ NOTE:
-  ▓ > modal button
-  -->
-  {#if ['Completed', 'Error'].includes(stateWidget ?? '')}
-
-    <button
-      class=
-      "
-      btn-primary-v2
-      m-t-25
-      "
-      on:click=
-      {
-        () =>
-        {
-          $sessionStore.currentActiveModal = null;
-          return;
-        }
-      }
-    >
-      Ok
-    </button>
-
-  {/if}
-
-</div>
+	in:fade
+	class=
+  "
+  {CNAME}
+  "
+	on:click=
+  {
+    () =>
+    {
+      dispatch('closeModal');
+      return;
+    }
+  }
+/>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -210,57 +154,18 @@
   ╰──────────────────────────────────────────────────────────────────────────────╯
   */
 
-	div#profile⮕w⮕modal-tx-state
+  div.general⮕g⮕background-modal-blur
   {
-		/* 📌 position */
-		position: fixed;
-		z-index: 10000;
-		margin: auto;
-		width: fit-content;
-		width: 92%;
-		height: fit-content;
-		right: 0;
-		left: 0;
-		bottom: 0;
-		top: 0;
-		/* 🎨 style */
-    background-color: var(--dark-theme) !important;
-		border-radius: 12px;
-		padding: 20px;
-    padding-top: 45px;
-		text-align: -webkit-center;
-		text-align: -moz-center;
-		overflow: hidden;
-	}
-
-  /*
-  ╭──────────────────────────────────────────────────────────────────────────────╮
-  │ ⚡️ RESPONSIVNESS                                                              │
-  ╰──────────────────────────────────────────────────────────────────────────────╯
-  */
-
-	@media only screen
-  and (min-width: 575px)
-  {
-		div#profile⮕w⮕modal-tx-state
-    {
-			width: 328px;
-    }
-	}
-
-  /*
-  ╭──────────────────────────────────────────────────────────────────────────────╮
-  │ 🌒 DARK-THEME                                                                │
-  ╰──────────────────────────────────────────────────────────────────────────────╯
-  */
-
-  div#profile⮕w⮕modal-tx-state
-  {
-    &.dark-background-1
-    {
-      /* 🎨 style */
-      background-color: var(--dark-theme) !important;
-		}
-	}
+    /* 📌 position */
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 4000;
+    /* 🎨 style */
+    height: 100%;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.5);
+  }
 
 </style>

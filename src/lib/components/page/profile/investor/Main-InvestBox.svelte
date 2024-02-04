@@ -395,9 +395,9 @@
           );
 
           if (e.data.event == 'MODAL_OPEN')
-            $sessionStore.showDepositModalState = true;
+            $sessionStore.currentActiveModal = 'ProfileInvestor_WalletConnect_Modal';
           if (e.data.event == 'MODAL_CLOSE')
-            $sessionStore.showDepositModalState = false;
+            $sessionStore.currentActiveModal = null;
         }
       )
       , modalUnsub2 = modal.subscribeProvider
@@ -716,7 +716,7 @@
     console.log('📣', modal.getIsConnected());
 
     stateWidget = 'In Progress';
-    $sessionStore.showDepositModalState = true;
+    $sessionStore.currentActiveModal = 'ProfileInvestor_WalletConnect_Modal';
 
     await switchUserNetwork();
 
@@ -818,6 +818,7 @@
     {
       triggerInvestBox = false;
       stateWidget = 'Error';
+      $sessionStore.currentActiveModal = null;
       return;
     }
 
@@ -879,6 +880,7 @@
     {
       triggerInvestBox = false;
       stateWidget = 'Error';
+      $sessionStore.currentActiveModal = null;
       return;
     }
 
@@ -916,6 +918,7 @@
     );
 
     triggerInvestBox = false;
+    $sessionStore.currentActiveModal = null;
     stateWidget = 'Completed';
 
     return;
@@ -1151,13 +1154,22 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<ModalTermsAndConditions />
+{#if $sessionStore.currentActiveModal == 'ProfileInvestor_Terms&Cond_Modal'}
+  <ModalTermsAndConditions />
+{/if}
 
 {#if stateWidget}
   <ModalTxState
     {stateWidget}
-    on:closeDropdown={() => {return stateWidget = null}}
-    on:closeDropdown={() => {return $sessionStore.showDepositModalState = false}}
+    on:closeDropdown=
+    {
+      () =>
+      {
+        $sessionStore.currentActiveModal = null;
+        stateWidget = null
+        return;
+      }
+    }
   />
 {/if}
 
@@ -1416,7 +1428,14 @@
           color-grey
             grey-v1
           "
-          on:click={() => {return $sessionStore.showTermsAndConditions = true}}
+          on:click=
+          {
+            () =>
+            {
+              $sessionStore.currentActiveModal = 'ProfileInvestor_Terms&Cond_Modal';
+              return;
+            }
+          }
         >
           {
             @html profileTrs.investor?.invest_box.terms

@@ -55,6 +55,7 @@
   import icon_social_whatsapp_dark from '../assets/investor/icon-social-whatsapp-dark.svg';
   import icon_social_whatsapp_hover from '../assets/investor/icon-social-whatsapp-hover.svg';
   import icon_social_whatsapp from '../assets/investor/icon-social-whatsapp.svg';
+  import ModalBackdrop from '$lib/components/misc/Modal-Backdrop.svelte';
 
   import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
@@ -182,6 +183,17 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
+<ModalBackdrop
+  on:closeModal=
+  {
+    () =>
+    {
+      $sessionStore.currentActiveModal = null;
+      return;
+    }
+  }
+/>
+
 <!--
 ▓ NOTE:
 ▓ > (box) main modal
@@ -239,7 +251,14 @@
       '
       src={$userBetarenaSettings.theme == 'Dark' ? icon_close : icon_close_dark}
       alt='close-svg'
-      on:click={() => {return $sessionStore.showReferralInviteModal = false}}
+      on:click=
+      {
+        () =>
+        {
+          $sessionStore.currentActiveModal = null;
+          return;
+        }
+      }
       width=18
       height=18
     />
@@ -558,20 +577,6 @@
         grid-auto-flow: column;
         gap: 8px;
       }
-    }
-
-    &⮕blur
-    {
-      /* 📌 position */
-      position: fixed;
-      top: 0;
-      right: 0;
-      left: 0;
-      z-index: 4000;
-      /* 🎨 style */
-      height: 100%;
-      width: 100%;
-      background: rgba(0, 0, 0, 0.5);
     }
 	}
 

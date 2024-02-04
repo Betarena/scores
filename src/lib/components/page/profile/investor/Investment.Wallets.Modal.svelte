@@ -24,8 +24,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { page } from '$app/stores';
-  import { onDestroy, onMount } from 'svelte';
-  import { fade, fly } from 'svelte/transition';
+  import { fly } from 'svelte/transition';
 
   import sessionStore from '$lib/store/session.js';
   import userBetarenaSettings from '$lib/store/user-settings.js';
@@ -33,6 +32,8 @@
 
   import icon_close from '../assets/investor/icon-close-btn.svg';
   import icon_close_dark from '../assets/investor/icon-close-dark-btn.svg';
+
+  import ModalBackdrop from '$lib/components/misc/Modal-Backdrop.svelte';
 
   import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
@@ -76,41 +77,6 @@
 
   // #endregion ➤ 📌 VARIABLES
 
-  // #region ➤ 🔄 LIFECYCLE [SVELTE]
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'logic' that should run            │
-  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
-  // │ as soon as 'this' .svelte file is ran.                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  onMount
-  (
-    () =>
-    {
-      document.body.classList.add
-      (
-        'disable-scroll'
-      );
-      return;
-    }
-  );
-
-  onDestroy
-  (
-    () =>
-    {
-      document.body.classList.remove
-      (
-        'disable-scroll'
-      );
-      return;
-    }
-  );
-
-  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
-
 </script>
 
 <!--
@@ -121,6 +87,17 @@
 │ - access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.     │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
+
+<ModalBackdrop
+  on:closeModal=
+  {
+    () =>
+    {
+      $sessionStore.currentActiveModal = null;
+      return;
+    }
+  }
+/>
 
 <!--
 ▓ NOTE:
@@ -178,7 +155,14 @@
       {VIEWPORT_TABLET_INIT[1] ? 'top: 16px; right: 16px;' : ''}
       '
       src={$userBetarenaSettings.theme == 'Dark' ? icon_close : icon_close_dark}
-      on:click={() => {return $sessionStore.showInvstementWallets = false}}
+      on:click=
+      {
+        () =>
+        {
+          $sessionStore.currentActiveModal = null;
+          return;
+        }
+      }
       alt='close-svg'
       width=18
       height=18
@@ -290,16 +274,6 @@
 </div>
 
 <!--
-▓ NOTE:
-▓ > (box) modal background filter
--->
-<div
-  id='{CNAME}⮕blur'
-  in:fade
-  on:click={() => {return $sessionStore.showInvstementWallets = false}}
-/>
-
-<!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component CSS/SCSS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
@@ -368,20 +342,6 @@
         /* 🎨 style */
         padding: 12px 20px;
       }
-    }
-
-    &⮕blur
-    {
-      /* 📌 position */
-      position: fixed;
-      top: 0;
-      right: 0;
-      left: 0;
-      z-index: 4000;
-      /* 🎨 style */
-      height: 100%;
-      width: 100%;
-      background: rgba(0, 0, 0, 0.5);
     }
   }
 

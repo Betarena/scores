@@ -249,7 +249,14 @@
       cursor-pointer
       hover-color-primary
       "
-      on:click={() => {return $sessionStore.showInvstementWallets = true}}
+      on:click=
+      {
+        () =>
+        {
+          $sessionStore.currentActiveModal = 'ProfileInvestor_Wallets_Modal';
+          return;
+        }
+      }
     >
       {#if
         userWallets.length > 0
@@ -320,7 +327,8 @@
   ▓ > investment detail wallet modal.
   -->
   {#if
-    $sessionStore.showInvstementWallets && userWallets.length > 0
+    $sessionStore.currentActiveModal == 'ProfileInvestor_Wallets_Modal'
+    && userWallets.length > 0
     && !newDevInstance.noData
   }
     <WalletsModal

@@ -2,7 +2,8 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - access custom Betarena Scores JS VScode Snippets by typing 'script...'         │
+│ ➤ HINT: | Access snippets for '<script> [..] </script>' those found in           │
+|         | '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -23,10 +24,9 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
-	import { fade, fly } from 'svelte/transition';
+	import { fly } from 'svelte/transition';
 
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
@@ -35,6 +35,8 @@
   import icon_close from '../assets/investor/icon-close-btn.svg';
   import icon_close_dark from '../assets/investor/icon-close-dark-btn.svg';
 
+	import ModalBackdrop from '$lib/components/misc/Modal-Backdrop.svelte';
+  
 	import type { B_USRG_D } from '@betarena/scores-lib/types/types.misc.userguide.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -54,22 +56,31 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   const
-    /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
+    /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+    */
     // eslint-disable-next-line no-unused-vars
     CNAME: string = 'global⮕w⮕termsandcond⮕profile⮕main'
-    /** @description 📣 threshold start + state for 📱 MOBILE */
+    /**
+     * @description
+     *  📣 threshold start + state for 📱 MOBILE
+    */
     // eslint-disable-next-line no-unused-vars
     , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 581, true ]
-    /** @description 📣 threshold start + state for 💻 TABLET */
+    /**
+     * @description
+     *  📣 threshold start + state for 💻 TABLET
+    */
     // eslint-disable-next-line no-unused-vars
     , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 821, true ]
   ;
 
   let
-    /** @augments B_USRG_D */
+    /**
+     * @augments B_USRG_D
+    */
     DUserData: B_USRG_D
-    /** @description TODO: DOC: */
-    ,showModal: boolean = false
   ;
 
   $: DUserData = $page.data.B_USRG_D;
@@ -164,45 +175,6 @@
 
   // #endregion ➤ 🛠️ METHODS
 
-  // #region ➤ 🔥 REACTIVIY [SVELTE]
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'logic' that should run            │
-  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
-  // │ WARNING:                                                               │
-  // │ ❗️ Can go out of control.                                              │
-  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
-  // │ Please keep very close attention to these methods and                  │
-  // │ use them carefully.                                                    │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  /**
-   * @description
-   */
-  $:
-  if_R_0_2
-    = browser
-    && showModal
-  ;
-  $:
-  if (if_R_0_2 && $sessionStore.showTermsAndConditions)
-  {
-    document.body.classList.add
-    (
-      'disable-scroll'
-    );
-  }
-  else
-  {
-    document.body.classList.remove
-    (
-      'disable-scroll'
-    );
-  }
-
-  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
-
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -219,15 +191,6 @@
       // ### IMPORTANT
       resizeAction();
       addEventListeners();
-
-      setTimeout
-      (
-        () =>
-        {
-          showModal = true;
-        },
-        1500
-      );
     }
   );
 
@@ -239,94 +202,97 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component HTML                                                            │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - use 'Ctrl+Space' to autocomplete global class=styles                           │
-│ - access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.     │
+│ ➤ HINT: | Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    |
+│         │ imported from './static/app.css'                                       |
+│ ➤ HINT: | access custom Betarena Scores VScode Snippets by typing emmet-like     |
+|         | abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
+<ModalBackdrop
+  on:closeModal=
+  {
+    () =>
+    {
+      $sessionStore.currentActiveModal = null;
+      return;
+    }
+  }
+/>
+
 <!--
 ▓ NOTE:
-▓ > terms and conditions (main) parent
+▓ > terms and conditions (main) component
 -->
-{#if showModal && $sessionStore.showTermsAndConditions}
+<div
+  id={CNAME}
+  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+  in:customAnimation={{ fn: fly }}
+  out:customAnimation={{ fn: fly }}
+>
 
   <!--
   ▓ NOTE:
-  ▓ > background blur
+  ▓ > main scrollable box.
   -->
   <div
-    id='background-modal-blur'
-    in:fade
-    on:click={() => {return $sessionStore.showTermsAndConditions = false}}
-  />
-
-  <!--
-  ▓ NOTE:
-  ▓ > terms and conditions (main) component
-  -->
-  <div
-    id={CNAME}
-    class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
-    in:customAnimation={{ fn: fly }}
-    out:customAnimation={{ fn: fly }}
+    id="{CNAME}⮕inner"
   >
 
     <!--
     ▓ NOTE:
-    ▓ > main scrollable box.
+    ▓ > close icon.
+    -->
+    <img
+      id='close-vector'
+      class=
+      '
+      cursor-pointer
+      '
+      style=
+      '
+      {VIEWPORT_TABLET_INIT[1] ? 'top: 16px; right: 16px;' : ''}
+      '
+      src={$userBetarenaSettings.theme == 'Dark' ? icon_close : icon_close_dark}
+      alt='close-svg'
+      on:click=
+      {
+        () =>
+        {
+          $sessionStore.currentActiveModal = null;
+          return;
+        }
+      }
+      width=18
+      height=18
+    />
+
+    <!--
+    ▓ NOTE:
+    ▓ > title
     -->
     <div
-      id="{CNAME}⮕inner"
+      id="{CNAME}⮕title"
+      class=
+      "
+      {!VIEWPORT_TABLET_INIT[1] ? 'm-b-35 global s-32 lh-125' : ''}
+      {VIEWPORT_TABLET_INIT[1] ? 'global s-28 lh-128 text-center m-b-24' : ''}
+      "
     >
-
-      <!--
-      ▓ NOTE:
-      ▓ > close icon.
-      -->
-      <img
-        id='close-vector'
-        class=
-        '
-        cursor-pointer
-        '
-        style=
-        '
-        {VIEWPORT_TABLET_INIT[1] ? 'top: 16px; right: 16px;' : ''}
-        '
-        src={$userBetarenaSettings.theme == 'Dark' ? icon_close : icon_close_dark}
-        alt='close-svg'
-        on:click={() => {return $sessionStore.showTermsAndConditions = false}}
-        width=18
-        height=18
-      />
-
-      <!--
-      ▓ NOTE:
-      ▓ > title
-      -->
-      <div
-        id="{CNAME}⮕title"
-        class=
-        "
-        {!VIEWPORT_TABLET_INIT[1] ? 'm-b-35 global s-32 lh-125' : ''}
-        {VIEWPORT_TABLET_INIT[1] ? 'global s-28 lh-128 text-center m-b-24' : ''}
-        "
-      >
-        {@html DUserData.content.terms ?? ''}
-      </div>
-
+      {@html DUserData.content.terms ?? ''}
     </div>
 
   </div>
 
-{/if}
+</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component CSS/SCSS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE  │
-│ - access custom Betarena Scores CSS VScode Snippets by typing 'style...'         │
+│ ➤ HINT: | auto-fill/auto-complete iniside <style> for var()                      │
+|         | values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: | access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -334,19 +300,11 @@
 
   @import '../../../../../../static/app.scss';
 
-  div#background-modal-blur
-  {
-    /* 📌 position */
-		position: fixed;
-		top: 0;
-		right: 0;
-		left: 0;
-		z-index: 4000;
-    /* 🎨 style */
-		height: 100%;
-		width: 100%;
-		background: rgba(0, 0, 0, 0.5);
-	}
+  /*
+  ╭──────────────────────────────────────────────────────────────────────────────╮
+  │ 📲 MOBILE-FIRST                                                              │
+  ╰──────────────────────────────────────────────────────────────────────────────╯
+  */
 
 	div#global⮕w⮕termsandcond⮕profile⮕main
   {
