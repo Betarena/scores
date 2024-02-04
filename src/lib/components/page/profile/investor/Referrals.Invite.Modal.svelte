@@ -24,14 +24,16 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { page } from '$app/stores';
-  import { onDestroy, onMount } from 'svelte';
-  import { fade, fly } from 'svelte/transition';
+  import { onMount } from 'svelte';
+  import { fly } from 'svelte/transition';
 
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
+	import { copyToClipboard } from '$lib/utils/platform-functions.js';
 
   import asset_invite_investor from '../assets/investor/asset-invite-investor.png';
   import icon_betarena_brand from '../assets/investor/icon-betarena-brand.svg';
+  import asset_invite_share from '../assets/investor/share_referral_betarena_qrcode.png';
 // import icon_social_download_hover from '../assets/investor/icon-social-download-hover.svg';
   import icon_social_download_dark from '../assets/investor/icon-social-download-dark.svg';
   import icon_social_download from '../assets/investor/icon-social-download.svg';
@@ -55,6 +57,9 @@
   import icon_social_whatsapp_dark from '../assets/investor/icon-social-whatsapp-dark.svg';
   import icon_social_whatsapp_hover from '../assets/investor/icon-social-whatsapp-hover.svg';
   import icon_social_whatsapp from '../assets/investor/icon-social-whatsapp.svg';
+
+  import AdminDevControlPanel from '$lib/components/misc/admin/Admin-Dev-ControlPanel.svelte';
+  import AdminDevControlPanelToggleButton from '$lib/components/misc/admin/Admin-Dev-ControlPanelToggleButton.svelte';
   import ModalBackdrop from '$lib/components/misc/Modal-Backdrop.svelte';
 
   import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
@@ -74,6 +79,26 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
+
+  export let
+    /**
+     * @description
+     *  📣 number of investments made by user.
+    */
+    investmentCount: number = 0
+  ;
+
+  /**
+   * @description
+   *  📣 available widget states.
+   */
+  type WidgetState = 'NoInvestmentMade' | 'FirstInvestmentMade';
+
+  class Dev
+  {
+    mutated: boolean = false;
+    noData: boolean = false;
+  }
 
   const
     /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
@@ -131,6 +156,38 @@
         , asset_dark: icon_social_whatsapp_dark
       }
     ]
+    /**
+     * @description
+     *  📣
+    */
+    , newDevInstance = new Dev()
+    /**
+     * @description
+     *  📣 target `state` update.
+    */
+    , updateWidgetState = (state?: WidgetState) =>
+    {
+      if (state)
+      {
+        // ▓ [🐞]
+        console.log('state', state);
+        widgetState = state;
+        return;
+      }
+
+      if (investmentCount == 0)
+        widgetState = 'NoInvestmentMade'
+      else
+        widgetState = 'FirstInvestmentMade'
+      //
+
+      return;
+    }
+    /**
+     * @description
+     *  📣 target `state` value.
+    */
+    , widgetState: WidgetState = 'NoInvestmentMade'
   ;
 
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
@@ -148,24 +205,10 @@
 
   onMount
   (
-    () =>
+    async (
+    ): Promise < void > =>
     {
-      document.body.classList.add
-      (
-        'disable-scroll'
-      );
-      return;
-    }
-  );
-
-  onDestroy
-  (
-    () =>
-    {
-      document.body.classList.remove
-      (
-        'disable-scroll'
-      );
+      updateWidgetState();
       return;
     }
   );
@@ -203,7 +246,21 @@
   class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
   in:fly={{ y: 500, duration: 500 }}
   out:fly={{ y: 500, duration: 500 }}
+  class:mutated={newDevInstance.mutated}
 >
+  <AdminDevControlPanelToggleButton
+    title='Referral Info Main (Pop-Up)'
+    mutated={newDevInstance.mutated}
+    on:reset=
+    {
+      () =>
+      {
+        newDevInstance.mutated = false;
+        newDevInstance.noData = false;
+        return;
+      }
+    }
+  />
 
   <!--
   ▓ NOTE:
@@ -413,50 +470,78 @@
     ▓ NOTE:
     ▓ > 2nd social box
     -->
-    <div
-      class=
-      "
-      row-space-start
-      width-auto
-      "
-    >
-
+    {#if widgetState == 'FirstInvestmentMade'}
       <div
         class=
         "
-        m-r-10
-        <!---->
-        cursor-pointer
-        social-btn
+        row-space-start
+        width-auto
         "
       >
-        <img
-          id=''
-          src={$userBetarenaSettings.theme == 'Dark' ? icon_social_download_dark : icon_social_download}
-          alt=''
-          title=''
-          loading='lazy'
-        />
-      </div>
 
-      <div
-        class=
-        "
-        <!---->
-        social-btn
-        cursor-pointer
-        "
-      >
-        <img
-          id=''
-          src={$userBetarenaSettings.theme == 'Dark' ? icon_social_link_dark : icon_social_link}
-          alt=''
-          title=''
-          loading='lazy'
-        />
-      </div>
+        {#if false}
+          <!--
+          ▓ NOTE:
+          ▓ > (action) download invitation asset
+          -->
+          <a
+            href={asset_invite_share}
+            download="BetarenaShareInvite.png"
+          >
+            <div
+              class=
+              "
+              m-r-10
+              <!---->
+              cursor-pointer
+              social-btn
+              "
+            >
+              <img
+                id=''
+                src={$userBetarenaSettings.theme == 'Dark' ? icon_social_download_dark : icon_social_download}
+                alt=''
+                title=''
+                loading='lazy'
+              />
+            </div>
+          </a>
+        {/if}
 
-    </div>
+        <!--
+        ▓ NOTE:
+        ▓ > (action) copy referral link
+        -->
+        <div
+          class=
+          "
+          <!---->
+          social-btn
+          cursor-pointer
+          "
+          on:click=
+          {
+            () =>
+            {
+              copyToClipboard
+              (
+                `${$page.url.origin}?referralId=${$userBetarenaSettings.user.scores_user_data?.referralID ?? ''}`
+              );
+              return;
+            }
+          }
+        >
+          <img
+            id=''
+            src={$userBetarenaSettings.theme == 'Dark' ? icon_social_link_dark : icon_social_link}
+            alt=''
+            title=''
+            loading='lazy'
+          />
+        </div>
+
+      </div>
+    {/if}
 
   </div>
 
@@ -464,13 +549,59 @@
 
 <!--
 ▓ NOTE:
-▓ > (box) modal background filter
+▓ > (widget) admin development state UI change control panel.
 -->
-<div
-  id='{CNAME}⮕blur'
-	in:fade
-  on:click={() => {return $sessionStore.showReferralInviteModal = false}}
-/>
+<AdminDevControlPanel
+  title='Referral Info Main (Pop-Up)'
+>
+
+  <!--
+  ▓ NOTE:
+  ▓ > (select) widget state.
+  -->
+  <div
+    class=
+    "
+    row-space-out
+    "
+  >
+    <!--
+    ▓ NOTE:
+    ▓ > (text) target action.
+    -->
+    <p
+      class=
+      "
+      s-14
+      color-black
+      "
+    >
+      <b>[1]</b> Choose <b>Widget State</b>
+    </p>
+
+    <!--
+    ▓ NOTE:
+    ▓ > (action) target select.
+    -->
+    <select
+      id="widgetState"
+      name="widgetState"
+      bind:value={widgetState}
+      on:change=
+      {
+        () =>
+        {
+          newDevInstance.mutated = true;
+          return;
+        }
+      }
+    >
+      <option value="NoInvestmentMade">No Investment Made</option>
+      <option value="FirstInvestmentMade">First Investment Made</option>
+    </select>
+  </div>
+
+</AdminDevControlPanel>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -482,6 +613,12 @@
 -->
 
 <style lang="scss">
+
+  /*
+  ╭──────────────────────────────────────────────────────────────────────────────╮
+  │ 📲 MOBILE-FIRST                                                              │
+  ╰──────────────────────────────────────────────────────────────────────────────╯
+  */
 
 	div#profile⮕w⮕referral-invite-modal⮕main
   {
