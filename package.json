@@ -11,8 +11,8 @@
 	"scripts": {
 		"prepare": "is-ci || husky install",
 		"start": "cross-env NODE_OPTIONS='-r dotenv/config' node build/index.js",
-		"build": "cross-env NODE_OPTIONS='-r dotenv/config --max_old_space_size=4096' VITE_SCORES_PKG_VERSION=v.$(npm pkg get version --workspaces=false | tr -d \\\") VITE_SCORES_LIB_PKG_VERSION=v.$(npm info @betarena/scores-lib version | tr -d \\\") VITE_SENTRY_UPLOAD_SOURCEMAPS=true vite build",
-		"build-2": "cross-env NODE_OPTIONS='-r dotenv/config --max_old_space_size=4096' VITE_SCORES_PKG_VERSION=v.$(npm pkg get version --workspaces=false | tr -d \\\") VITE_SCORES_LIB_PKG_VERSION=v.$(npm info @betarena/scores-lib version | tr -d \\\") VITE_SENTRY_UPLOAD_SOURCEMAPS=true vite build",
+		"build": "cross-env NODE_OPTIONS='-r dotenv/config --max-old-space-size=8192' VITE_SCORES_PKG_VERSION=v.$(npm pkg get version --workspaces=false | tr -d \\\") VITE_SCORES_LIB_PKG_VERSION=v.$(npm info @betarena/scores-lib version | tr -d \\\") VITE_SENTRY_UPLOAD_SOURCEMAPS=true vite build",
+		"build-2": "cross-env NODE_OPTIONS='-r dotenv/config --max-old-space-size=8192' VITE_SCORES_PKG_VERSION=v.$(npm pkg get version --workspaces=false | tr -d \\\") VITE_SCORES_LIB_PKG_VERSION=v.$(npm info @betarena/scores-lib version | tr -d \\\") VITE_SENTRY_UPLOAD_SOURCEMAPS=true vite build",
 		"test": "npm run test:integration && npm run test:unit",
 		"svelte-check": "svelte-check --tsconfig ./tsconfig.json",
 		"svelte-check::watch": "svelte-check --tsconfig ./tsconfig.json --watch",
