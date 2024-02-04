@@ -14,10 +14,12 @@
   import AuthorArticleContentLoader from "$lib/components/content-section/loaders/AuthorArticleContentLoader.svelte";
 
   import ContentSectionRow from "$lib/components/content-section/ContentSectionRow.svelte";
-  import SideGradientWrap from "$lib/components/content-section/SideGradientWrap.svelte";
+  import SideGradientWrap from "$lib/components/shared/gradients/SideGradientWrap.svelte";
 
   import { getDarkThemeContext } from "$lib/context/dark-theme-context";
   import type { PageServerData } from "./$types";
+  import { DeviceType } from "$lib/context/device-type-context";
+  import { onMount } from "svelte";
 
   export let data: PageServerData;
 
@@ -27,50 +29,61 @@
     "Wolverhampton Wanderers vs Burnley betting tip 2023/2024 – Picks and Predictions for the Premier League match on December 05th, 2023";
   let dark = getDarkThemeContext();
   let loading = true;
+
+  onMount(() => {
+    setTimeout(() => loading = false, 5000);
+  })
+
 </script>
 
-<div class="author-article-page" class:dark={$dark}>
-  <ContentSectionRow>
-    {#if loading}
-      <AuthorArticleHeadingLoader dark={$dark} />
-    {:else}
-      <AuthorArticleHeading {heading} />
-    {/if}
-  </ContentSectionRow>
-
-  <ContentSectionRow --mobile-padding-right="0">
-    <SideGradientWrap dark={$dark}>
-      {#if loading}
-        <AuthorBadgesLoader dark={$dark} />
-      {:else}
-        <AuthorBadges dark={$dark} />
-      {/if}
-    </SideGradientWrap>
-  </ContentSectionRow>
-
-  <div class="mobile-order-first">
+<SideGradientWrap dark={$dark} height="30%" side="bottom" hideOn={loading ? [] : [DeviceType.Mobile, DeviceType.Tablet, DeviceType.Desktop]}>
+  <div class="author-article-page" class:dark={$dark}>
     <ContentSectionRow>
       {#if loading}
-        <AuthorArticleDetailsLoader />
+        <AuthorArticleHeadingLoader dark={$dark} />
       {:else}
-        <AuthorArticleDetails />
+        <AuthorArticleHeading {heading} />
+      {/if}
+    </ContentSectionRow>
+
+    <ContentSectionRow --mobile-padding-right="0">
+      <SideGradientWrap
+        dark={$dark}
+        width="53px"
+        side="right"
+        hideOn={[DeviceType.Tablet, DeviceType.Desktop]}
+      >
+        {#if loading}
+          <AuthorBadgesLoader dark={$dark} />
+        {:else}
+          <AuthorBadges dark={$dark} />
+        {/if}
+      </SideGradientWrap>
+    </ContentSectionRow>
+
+    <div class="mobile-order-first">
+      <ContentSectionRow>
+        {#if loading}
+          <AuthorArticleDetailsLoader dark={$dark} />
+        {:else}
+          <AuthorArticleDetails />
+        {/if}
+      </ContentSectionRow>
+    </div>
+
+    <ContentSectionRow --mobile-padding-right="0" --mobile-padding-left="0">
+      <AuthorArticleImageLoader dark={$dark} />
+    </ContentSectionRow>
+
+    <ContentSectionRow>
+      {#if loading}
+        <AuthorArticleContentLoader dark={$dark}/>
+      {:else}
+        <AuthorArticleContent {content} />
       {/if}
     </ContentSectionRow>
   </div>
-
-  <ContentSectionRow --mobile-padding-right="0" --mobile-padding-left="0">
-    <AuthorArticleImageLoader />
-  </ContentSectionRow>
-  
-
-  <ContentSectionRow>
-    {#if loading}
-      <AuthorArticleContentLoader />
-    {:else}
-      <AuthorArticleContent {content} />
-    {/if}
-  </ContentSectionRow>
-</div>
+</SideGradientWrap>
 
 <style lang="scss">
   .author-article-page {
