@@ -1621,6 +1621,10 @@ p {
 │ 📌 LEGACY                                                                        │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 */
+.global.color-grey > * {
+  color: var(--grey) !important;
+}
+
 .x-large,
 p.x-large,
 span.x-large {
@@ -1671,8 +1675,8 @@ h1 {
   font-weight: 400;
   line-height: 1.2;
   font-weight: 700;
-  font-size: 32px;
   line-height: 140%;
+  font-size: 32px;
 }
 
 h2 {
@@ -1682,8 +1686,8 @@ h2 {
   font-weight: 400;
   line-height: 1.2;
   font-weight: 700;
-  font-size: 32px;
   line-height: 140%;
+  font-size: 20px;
 }
 
 h3 {
@@ -1693,8 +1697,8 @@ h3 {
   font-weight: 400;
   line-height: 1.2;
   font-weight: 700;
-  font-size: 32px;
   line-height: 140%;
+  font-size: 18px;
 }
 
 h4 {
@@ -1704,8 +1708,8 @@ h4 {
   font-weight: 400;
   line-height: 1.2;
   font-weight: 700;
-  font-size: 32px;
   line-height: 140%;
+  font-size: 14px;
 }
 
 h5 {
@@ -1715,7 +1719,6 @@ h5 {
   font-weight: 400;
   line-height: 1.2;
   font-weight: 700;
-  font-size: 32px;
   line-height: 140%;
 }
 
@@ -1726,7 +1729,6 @@ h6 {
   font-weight: 400;
   line-height: 1.2;
   font-weight: 700;
-  font-size: 32px;
   line-height: 140%;
 }
 

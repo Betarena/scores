@@ -48,6 +48,11 @@ $fontSize: (10, 12, 14, 15, 16, 18, 19, 20, 22, 24, 28, 32, 40, 42);
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 */
 
+.global.color-grey > *
+{
+  color: var(--grey) !important;
+}
+
 .x-large,
 p.x-large,
 span.x-large
@@ -116,8 +121,24 @@ p.s_small
   {
     @include defaultHeader;
     font-weight: 700;
-    font-size: 32px;
     line-height: 140%;
+
+    @if $i == 1
+    {
+      font-size: 32px;
+    }
+    @else if $i == 2
+    {
+      font-size: 20px;
+    }
+    @else if $i == 3
+    {
+      font-size: 18px;
+    }
+    @else if $i == 4
+    {
+      font-size: 14px;
+    }
   }
 }
 

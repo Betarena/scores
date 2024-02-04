@@ -196,7 +196,7 @@ FEATURED BETTING SITES WIDGET
             <!-- [ℹ] Featured Image Details
             -->
             <p
-              class="x-large color-black site-name"
+              class="x-large color-black-2 site-name"
               class:color-white={$userBetarenaSettings.theme == 'Dark'}
             >
               {$sessionStore?.sportbook_list?.[1]?.title}
@@ -229,7 +229,7 @@ FEATURED BETTING SITES WIDGET
             <p
               class="
                 x-large
-                color-black
+                color-black-2
                 site-name
               "
               class:color-white={$userBetarenaSettings.theme == 'Dark'}
@@ -268,7 +268,7 @@ FEATURED BETTING SITES WIDGET
             <p
               class="
                 x-large
-                color-black
+                color-black-2
                 site-name
               "
               class:color-white={$userBetarenaSettings.theme ==	'Dark'}
