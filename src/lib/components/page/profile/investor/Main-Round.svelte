@@ -139,6 +139,59 @@
 
   // #endregion ➤ 📌 VARIABLES
 
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟦 HELPER
+   * @description
+   *  📣 Countdown initializer used within the component.
+   * @return { void }
+   */
+  function initializeCountdown
+  (
+  ): void
+  {
+    // NOTE: accepts '12/9/2023' <=> MM/dd/YYYY
+    numDateDiffStart = toCorrectDate(dateRoundStart as string | Date, false).getTime() - new Date().getTime();
+    numDateDiffEnd = toCorrectDate(dateRoundEnd as string | Date, false).getTime() - new Date().getTime();
+
+    const
+      /**
+       * @description
+       *  📣 Number of `days` difference between `2 target dates` of presale.
+      */
+      // @ts-expect-error
+      dateRoundDiff = Math.floor((toCorrectDate(dateRoundEnd, false).getTime() - toCorrectDate(dateRoundStart, false).getTime()))
+      /**
+       * @description
+       *  📣 Number of `days` difference between `2 target dates` of **current date** and **presale end**, a.k.a time remaining.
+      */
+      // @ts-expect-error
+      , dateDeltaDiffDays = Math.floor((toCorrectDate(dateRoundEnd, false).getTime() - new Date().getTime()))
+    ;
+
+    datePercentageDiff = 100 - (dateDeltaDiffDays / dateRoundDiff) * 100;
+    if (datePercentageDiff > 100) datePercentageDiff = 100;
+    if (isNaN(datePercentageDiff)) datePercentageDiff = 0;
+
+    return;
+  }
+
+  // #endregion ➤ 🛠️ METHODS
+
   // #region ➤ 🔥 REACTIVIY [SVELTE]
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -323,38 +376,13 @@
     async (
     ): Promise < void > =>
     {
-      // NOTE: accepts '12/9/2023' <=> MM/dd/YYYY
-      numDateDiffStart = toCorrectDate(dateRoundStart as string | Date, false).getTime() - new Date().getTime();
-      numDateDiffEnd = toCorrectDate(dateRoundEnd as string | Date, false).getTime() - new Date().getTime();
-
-      const
-        // @ts-expect-error
-        dateRoundDiff = Math.floor((toCorrectDate(dateRoundEnd, false).getTime() - toCorrectDate(dateRoundStart, false).getTime()) / 86400000)
-        // @ts-expect-error
-        , dateDeltaDiffDays = Math.floor((toCorrectDate(dateRoundEnd, false).getTime() - new Date().getTime()) / 86400000)
-      ;
-
-      datePercentageDiff = 100 - (dateDeltaDiffDays / dateRoundDiff) * 100;
-      if (datePercentageDiff > 100) datePercentageDiff = 100;
-      if (isNaN(datePercentageDiff)) datePercentageDiff = 0;
+      initializeCountdown();
 
       interval1 = setInterval
       (
         () =>
         {
-          numDateDiffStart = toCorrectDate(dateRoundStart as string | Date, false).getTime() - new Date().getTime();
-          numDateDiffEnd = toCorrectDate(dateRoundEnd as string | Date, false).getTime() - new Date().getTime();
-
-          const
-            // @ts-expect-error
-            dateRoundDiff = Math.floor((toCorrectDate(dateRoundEnd, false).getTime() - toCorrectDate(dateRoundStart, false).getTime()) / 86400000)
-            // @ts-expect-error
-            , dateDeltaDiffDays = Math.floor((toCorrectDate(dateRoundEnd, false).getTime() - new Date().getTime()) / 86400000)
-          ;
-
-          datePercentageDiff = 100 - (dateDeltaDiffDays / dateRoundDiff) * 100;
-          if (datePercentageDiff > 100) datePercentageDiff = 100
-          if (isNaN(datePercentageDiff)) datePercentageDiff = 0;
+          initializeCountdown();
         },
         1000
       );
@@ -822,8 +850,10 @@
       /* 📌 position */
       position: relative;
       /* 🎨 style */
-      padding: 20px;
-      padding-top: 24px;
+      padding: 15px 20px;
+      height: 92px;
+      max-height: 92px;
+      min-height: 92px;
       background: var(--white);
       box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
       /* z-index: 10; */

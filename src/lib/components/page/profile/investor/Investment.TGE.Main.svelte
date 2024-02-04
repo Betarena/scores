@@ -38,6 +38,7 @@
   import AdminDevControlPanelToggleButton from '$lib/components/misc/admin/Admin-Dev-ControlPanelToggleButton.svelte';
   import MainClaimModal from './Main-Claim-Modal.svelte';
 
+  import { formatNumberWithCommas } from '$lib/utils/platform-functions.js';
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -381,7 +382,7 @@
       style=
       "
       line-height: 20px; /* 142.857% */
-      width: 170px;
+      {!VIEWPORT_MOBILE_INIT_PARENT[1] ? 'width: 170px;' : ''}
       "
     >
       {
@@ -420,8 +421,7 @@
         "
       >
         {
-          $userBetarenaSettings.user.scores_user_data?.investor_balance
-          ?? 0
+          formatNumberWithCommas($userBetarenaSettings.user.scores_user_data?.investor_balance)
         }
         <span
           class=
@@ -491,7 +491,12 @@
   ▓ > token release date view.
   -->
   {#if widgetState != 'Claimed'}
-    <div>
+    <div
+      class=
+      "
+      {VIEWPORT_MOBILE_INIT_PARENT[1] ? 'm-t-32' : ''}
+      "
+    >
 
       <!--
       ▓ NOTE:
@@ -716,9 +721,7 @@
     overflow: hidden;
     box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
     padding: 20px;
-    height: 229px;
     min-height: 229px;
-    max-height: 229px;
 
     p#hint
     {

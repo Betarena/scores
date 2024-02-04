@@ -246,8 +246,6 @@
       />
 
       <iframe
-        width="560"
-        height="315"
         src="https://www.youtube.com/embed/AGIXX306u-Y?controls=1&rel=0"
         title="YouTube video player"
         frameborder="0"
@@ -307,10 +305,17 @@
         <p
           id="sub-title"
         >
-          {
-            @html widgetDataTranslation.investor?.tab.description_investment
-            ?? 'This section provides a comprehensive overview of your investment in Betarena tokens ($BTA). '
-          }
+          {#if VIEWPORT_MOBILE_INIT[1]}
+            {
+              @html widgetDataTranslation.investor?.tab.description_investment.replace('<br/>', '')
+              ?? 'This section provides a comprehensive overview of your investment in Betarena tokens ($BTA). '
+            }
+          {:else}
+            {
+              @html widgetDataTranslation.investor?.tab.description_investment
+              ?? 'This section provides a comprehensive overview of your investment in Betarena tokens ($BTA). '
+            }
+          {/if}
         </p>
 
       </div>
@@ -395,8 +400,6 @@
 
 <style lang="scss">
 
-  @import '../../../../../../static/app.scss';
-
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
   │ 📲 MOBILE-FIRST                                                              │
@@ -422,6 +425,8 @@
         width: -webkit-fill-available;
         width: -moz-available;
         border-radius: 12px;
+        height: 216px;
+        grid-row: 3;
       }
     }
 
@@ -433,15 +438,11 @@
 
       div#profile⮕w⮕investtge⮕main⮕title
       {
+        @import '../../../../../../static/app.scss';
+
         // IMPORTANT
         :global
         {
-          p#title
-          {
-            @extend .s-32;
-            @extend .color-black-2;
-          }
-
           p#sub-title
           {
             @extend .s-16;
@@ -451,6 +452,8 @@
             span#x3123
             {
               @extend .w-500;
+              @extend .color-grey;
+              @extend .dark-white-v1;
             }
           }
         }
@@ -476,6 +479,15 @@
   {
     div#investor-grid-box
     {
+      div#launchpad-grid-box
+      {
+        iframe
+        {
+          /* 🎨 style */
+          height: 372px;
+        }
+      }
+
       div#section-investing
       {
         /* 🎨 style */
@@ -518,6 +530,12 @@
         /* 🎨 style */
         gap: 20px;
         grid-template-columns: 1fr 1fr;
+
+        iframe
+        {
+          /* 🎨 style */
+          height: 259px;
+        }
 
         :global
         {

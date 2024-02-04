@@ -36,6 +36,8 @@
   import { dlog } from '$lib/utils/debug.js';
   import { passByValue } from '@betarena/scores-lib/dist/functions/func.common.js';
   import { tryCatchAsync } from '@betarena/scores-lib/dist/util/util.common.js';
+
+  import { formatNumberWithCommas } from '$lib/utils/platform-functions.js';
   import type { B_H_TH, PUBLIC__INVESTOR_DeleteInvestorByPkElement } from '@betarena/scores-lib/types/_HASURA_.js';
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
@@ -827,8 +829,7 @@
         "
       >
         {
-          $userBetarenaSettings.user.scores_user_data?.investor_balance
-          ?? 0
+          formatNumberWithCommas($userBetarenaSettings.user.scores_user_data?.investor_balance)
         }
         <span
           class=
@@ -870,14 +871,16 @@
     ▓ NOTE:
     ▓ > Investor Chart Data 1.
     -->
-    <div
-      id="chartHover"
-    >
-      <canvas
-        id="constChart"
+    {#if !VIEWPORT_MOBILE_INIT_PARENT[1]}
+      <div
+        id="chartHover"
       >
-      </canvas>
-    </div>
+        <canvas
+          id="constChart"
+        >
+        </canvas>
+      </div>
+    {/if}
 
     <!--
     ▓ NOTE:
@@ -885,6 +888,10 @@
     -->
     <div
       id="chartMain"
+      style=
+      "
+      {!VIEWPORT_MOBILE_INIT_PARENT[1] ? 'margin-left: 47px;' : ''}
+      "
     >
       <div
         id="scrollBox"
@@ -961,7 +968,6 @@
         // max-width: 500px;
         min-width: auto;
         overflow-x: scroll;
-        margin-left: 47px;
 
         &::-webkit-scrollbar
         {

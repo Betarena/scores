@@ -1199,6 +1199,10 @@
         "
         row-space-out
         "
+        style=
+        "
+        align-items: flex-start
+        "
       >
 
         <!--
@@ -1290,10 +1294,10 @@
       ▓ > Deposit Method.
       -->
       <div
+        id="deposit-method"
         class=
         "
         m-t-20
-        row-space-out
         "
       >
 
@@ -1955,7 +1959,6 @@
         btn-primary-v2
           btn-shadow-1
         width-100
-        m-t-15
         w-500
         s-14
         "
@@ -2155,7 +2158,7 @@
 
 <style lang="scss">
 
-  @import '../../../../../../static/app.scss';
+  // @import '../../../../../../static/app.scss';
 
   div#profile⮕w⮕investbox⮕main
   {
@@ -2180,6 +2183,14 @@
         background: var(--white);
         box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
         /* z-index: 10; */
+
+        div#deposit-method
+        {
+          /* 🎨 style */
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 12px;
+        }
 
         :global
         {
@@ -2212,7 +2223,7 @@
       {
         /* 🎨 style */
         padding: 20px;
-        padding-bottom: 32px;
+        padding-bottom: 20px;
         background: var(--white);
         display: grid;
         gap: 12px;
@@ -2237,6 +2248,7 @@
           max-height: 104px;
           padding: 20px;
           background-color: var(--whitev2);
+          margin-bottom: 12px;
         }
 
         input[type=number]
@@ -2396,11 +2408,21 @@
   @media screen
   and (min-width: 575px)
   {
-    div#tier-box
+    div#profile⮕w⮕investbox⮕main
     {
-      /* 🎨 style */
-      min-height: 64px !important;
-      max-height: 64px !important;
+      div#middle-row
+      {
+        /* 🎨 style */
+        padding-bottom: 32px;
+
+        div#tier-box
+        {
+          /* 🎨 style */
+          min-height: 64px !important;
+          max-height: 64px !important;
+          margin-bottom: 22px;
+        }
+      }
     }
   }
 

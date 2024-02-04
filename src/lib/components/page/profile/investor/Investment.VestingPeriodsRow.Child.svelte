@@ -26,8 +26,12 @@
   import { ddMMyyFormat } from '$lib/utils/dates.js';
   import { createEventDispatcher, type EventDispatcher } from 'svelte';
 
+  import userBetarenaSettings from '$lib/store/user-settings.js';
+
   import icon_arrow_down from '../assets/arrow-down.svg';
   import icon_arrow_up from '../assets/arrow-up.svg';
+  import icon_arrow_down_dark from '../assets/investor/arrow-down-dark.svg';
+  import icon_arrow_up_dark from '../assets/investor/arrow-up-dark.svg';
   import icon_green_dot from '../assets/investor/icon-green-dot.svg';
 
 	import type { PUBLIC__INVESTOR_IVesting } from '@betarena/scores-lib/types/_HASURA_.js';
@@ -264,7 +268,12 @@
       -->
       {#if VIEWPORT_TABLET_INIT_PARENT[1] || VIEWPORT_MOBILE_INIT_PARENT[1]}
         <img
-          src={isTxExtraInfo ? icon_arrow_up : icon_arrow_down}
+          src=
+          {
+            isTxExtraInfo
+              ? ($userBetarenaSettings.theme == 'Dark') ? icon_arrow_down_dark : icon_arrow_down
+              : ($userBetarenaSettings.theme == 'Dark') ? icon_arrow_up_dark : icon_arrow_up
+          }
           alt={isTxExtraInfo ? 'icon_arrow_up' : 'icon_arrow_down'}
           class=
           "
@@ -337,6 +346,16 @@
             s-14
             color-black-2
             "
+            class:tx-status-pill=
+            {
+              (new Date(data.available_date ?? '').getTime() > new Date().getTime()
+              || data.status == 'Pending'
+              || data.status == 'Distributed')
+              && item == 'Status'
+            }
+            class:available={new Date(data.available_date ?? '').getTime() > new Date().getTime()}
+            class:pending={data.status == 'Pending'}
+            class:completed={data.status == 'Distributed'}
           >
             {#if item == 'Tokens'}
               {data.tokens ?? '-'}
@@ -453,6 +472,7 @@
   tr
   {
     td
+    , div.extra-information
     {
       p
       {
@@ -504,6 +524,7 @@
     tr
     {
       td
+      , div.extra-information
       {
         p
         {

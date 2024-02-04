@@ -34,6 +34,8 @@
 
   import icon_arrow_down from '../assets/arrow-down.svg';
   import icon_arrow_up from '../assets/arrow-up.svg';
+  import icon_arrow_down_dark from '../assets/investor/arrow-down-dark.svg';
+  import icon_arrow_up_dark from '../assets/investor/arrow-up-dark.svg';
   import icon_green_dot from '../assets/investor/icon-green-dot.svg';
   import icon_invite_investor from '../assets/investor/icon-invite-investor.svg';
   import icon_bronze from '../assets/price-tier/icon-bta-bronze.svg';
@@ -249,6 +251,10 @@
       <!---->
       tier-row
       "
+      style=
+      "
+      align-items: flex-start;
+      "
     >
 
       <!--
@@ -375,7 +381,12 @@
       </p>
 
       <img
-        src={isExtraInfo ? icon_arrow_up : icon_arrow_down}
+        src=
+        {
+          isExtraInfo
+            ? ($userBetarenaSettings.theme == 'Dark') ? icon_arrow_down_dark : icon_arrow_down
+            : ($userBetarenaSettings.theme == 'Dark') ? icon_arrow_up_dark : icon_arrow_up
+        }
         alt={isExtraInfo ? 'icon_arrow_up' : 'icon_arrow_down'}
         class=
         "
@@ -472,7 +483,7 @@
               s-14
               color-black-2
               no-wrap
-              m-l-24
+              m-l-33
               "
             >
               You receive:

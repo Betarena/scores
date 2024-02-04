@@ -287,6 +287,7 @@
     ▓ > (text) last wallet address used.
     -->
     <p
+      id="first-wallet"
       class=
       "
       s-14
@@ -476,6 +477,15 @@
     overflow: hidden;
     box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
     padding: 20px;
+
+    p#first-wallet
+    {
+      /* 🎨 style */
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      max-width: 85%;
+    }
   }
 
   /*

@@ -23,10 +23,13 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  import userBetarenaSettings from '$lib/store/user-settings.js';
   import { ddMMyyFormat } from '$lib/utils/dates.js';
 
   import icon_arrow_down from '../assets/arrow-down.svg';
   import icon_arrow_up from '../assets/arrow-up.svg';
+  import icon_arrow_down_dark from '../assets/investor/arrow-down-dark.svg';
+  import icon_arrow_up_dark from '../assets/investor/arrow-up-dark.svg';
 
 	import type { PUBLIC__INVESTOR_IReferralHistory } from '@betarena/scores-lib/types/_HASURA_.js';
 
@@ -168,7 +171,12 @@
   {#if VIEWPORT_MOBILE_INIT_PARENT[1]}
     <td>
       <img
-        src={isTxExtraInfo ? icon_arrow_up : icon_arrow_down}
+        src=
+        {
+          isTxExtraInfo
+            ? ($userBetarenaSettings.theme == 'Dark') ? icon_arrow_down_dark : icon_arrow_down
+            : ($userBetarenaSettings.theme == 'Dark') ? icon_arrow_up_dark : icon_arrow_up
+        }
         alt={isTxExtraInfo ? 'icon_arrow_up' : 'icon_arrow_down'}
         class=
         "

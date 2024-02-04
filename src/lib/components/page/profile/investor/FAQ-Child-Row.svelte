@@ -259,7 +259,7 @@
     div.faq-description
     {
       /* 🎨 style */
-      margin-left: 138px;
+      margin-left: 41px;
       max-width: none;
 
       :global

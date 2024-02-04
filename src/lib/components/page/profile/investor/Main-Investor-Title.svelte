@@ -120,10 +120,6 @@
 -->
 <div
   id={CNAME}
-  class=
-  "
-  m-b-30
-  "
 >
 
   <!--
@@ -161,7 +157,7 @@
         class:text-center={VIEWPORT_MOBILE_INIT[1]}
       >
         {
-          profileTrs.investor?.tab?.tab_1
+          profileTrs.investor?.tab.tab_1
           ?? 'Private Presale'
         }
       </p>
@@ -191,7 +187,7 @@
         "
       >
         {
-          profileTrs.investor?.tab?.tab_2
+          profileTrs.investor?.tab.tab_2
           ?? 'Public Presale (Soon)'
         }
       </p>
@@ -232,7 +228,7 @@
       "
     >
       {
-        profileTrs.investor?.tab?.title_launchpad
+        profileTrs.investor?.tab.title_launchpad
         ?? 'Launchpad'
       }
     </p>
@@ -250,7 +246,7 @@
       "
     >
       {
-        @html profileTrs.investor?.tab?.description_launchpad
+        @html profileTrs.investor?.tab.description_launchpad
         ?? ''
       }
     </p>

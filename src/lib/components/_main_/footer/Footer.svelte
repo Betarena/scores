@@ -798,7 +798,6 @@ FOOTER | Main Component
 		background: #292929;
 		width: -webkit-fill-available;
 		padding: 48px 18px;
-		box-shadow: inset 0px 1px 0px #616161;
 	}
 
 	div#global⮕footer⮕w⮕main⮕inner
