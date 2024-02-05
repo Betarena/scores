@@ -34,9 +34,11 @@
     setTimeout(() => loading = false, 5000);
   })
 
+  $: hidePageGradientOn = loading ? [] : [DeviceType.Mobile, DeviceType.Tablet, DeviceType.Desktop];
+
 </script>
 
-<SideGradientWrap dark={$dark} height="30%" side="bottom" hideOn={loading ? [] : [DeviceType.Mobile, DeviceType.Tablet, DeviceType.Desktop]}>
+<SideGradientWrap dark={$dark} height="30%" side="bottom" hideOn={hidePageGradientOn}>
   <div class="author-article-page" class:dark={$dark}>
     <ContentSectionRow>
       {#if loading}

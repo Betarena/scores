@@ -9,15 +9,15 @@
   
   export let hideOn: DeviceType[] = [];
 
-  const resolveAfterContent = (deviceType: DeviceType) =>
+  const resolveAfterContent = (hideOn: DeviceType[], deviceType: DeviceType) =>
     hideOn.includes(deviceType) ? "unset" : "\"\"";
 
   $: style = `
       --after-width: ${width};
       --after-height: ${height};
-      --after-content-mobile: ${resolveAfterContent(DeviceType.Mobile)};
-      --after-content-tablet: ${resolveAfterContent(DeviceType.Tablet)};
-      --after-content-desktop: ${resolveAfterContent(DeviceType.Desktop)};
+      --after-content-mobile: ${resolveAfterContent(hideOn, DeviceType.Mobile)};
+      --after-content-tablet: ${resolveAfterContent(hideOn, DeviceType.Tablet)};
+      --after-content-desktop: ${resolveAfterContent(hideOn, DeviceType.Desktop)};
       --gradient-color: ${dark ? "var(--dark-theme)": "var(--white)"};
   `;
 </script>
