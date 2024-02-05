@@ -17,11 +17,11 @@
   $: deviceType = setDeviceTypeContext(windowInnerWidth);
 
   let isDark = getDarkThemeContext();
-  $: isThemeDark = $isDark;
   $: displayFooter = $deviceType && $deviceType > DeviceType.Tablet;
   $: displayHeaderContent = $deviceType && $deviceType > DeviceType.Mobile;
 
   let mobileHeaderReservedHeight = 48;
+  $: mobileHeaderReservedHeightPx = mobileHeaderReservedHeight + 'px';
 </script>
 
 <svelte:window
@@ -30,7 +30,7 @@
 />
 <div
   class="content-layout-component"
-  class:theme-dark={isThemeDark}
+  class:theme-dark={$isDark}
   style:min-height={layoutHeight}
 >
   {#if displayHeaderContent}
@@ -38,7 +38,7 @@
   {:else}
     <div
       class="sticky-header-reserved"
-      style:height={mobileHeaderReservedHeight + 'px'}
+      style:height={mobileHeaderReservedHeightPx}
     />
     <div class="sticky-header" bind:clientHeight={mobileHeaderReservedHeight}>
       <HeaderContentMobile dark={$isDark} />
