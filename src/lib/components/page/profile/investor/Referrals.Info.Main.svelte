@@ -254,6 +254,7 @@
       style=
       "
       align-items: flex-start;
+      padding: 0 8px;
       "
     >
 
@@ -321,7 +322,7 @@
         s-14
         color-black-2
         no-wrap
-        m-l-24
+        m-l-33
         "
       >
         {

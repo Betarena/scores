@@ -2158,7 +2158,7 @@
 
 <style lang="scss">
 
-  // @import '../../../../../../static/app.scss';
+  @import '../../../../../../static/app.scss';
 
   div#profile⮕w⮕investbox⮕main
   {

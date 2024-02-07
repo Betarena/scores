@@ -103,11 +103,12 @@
       const dateList: Date[] = [];
 
       today.setFullYear(today.getFullYear() - 1);
+      today.setMonth(1);
 
       for (let index = 0; index < 24; index++)
       {
-        today.setMonth(today.getMonth() + 1);
         dateList.push(new Date(today));
+        today.setMonth(today.getMonth() + 1);
       }
 
       return dateList;

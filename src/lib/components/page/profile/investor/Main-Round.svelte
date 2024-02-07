@@ -25,11 +25,11 @@
 
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
-	import { onDestroy, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { toCorrectDate, toZeroPrefixDateStr } from '$lib/utils/dates.js';
+	import { toZeroPrefixDateStr } from '$lib/utils/dates.js';
 	import { toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
 
 	import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
@@ -104,23 +104,7 @@
     /** @description 📣 investor main information data */
     , roundData: IRoundData[] = []
     /** @description 📣 investor round date percentage progress */
-    , datePercentageDiff: number = 0
-    /**
-     * @description
-     *  📣 invest round date `start`
-     * @CUSTOM_NOTE
-     * `mapInvestorData?.get('round')?.values?.start_date` || 12/08/2023
-     */
-    , dateRoundStart: string | undefined = WIDGET_DATA?.presaleData.data?.start_date
-    /**
-     * @description
-     *  📣 invest round date `start`
-     * @CUSTOM_NOTE
-     * `mapInvestorData?.get('round')?.values?.end_date` || 12/08/2023
-     */
-    , dateRoundEnd: string | undefined = WIDGET_DATA?.presaleData.data?.end_date
-    /** @description 📣 interval variable for `countdown` logic */
-    , interval1: NodeJS.Timer
+    , progressPercentage: number = 0
   ;
 
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
@@ -138,59 +122,6 @@
 	$: countDownTestHourToEnd = Math.floor(numDateDiffEnd / (1000 * 60 * 60));
 
   // #endregion ➤ 📌 VARIABLES
-
-  // #region ➤ 🛠️ METHODS
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'methods' that are to be           │
-  // │ and are expected to be used by 'this' .svelte file / component.        │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. function (..)                                                       │
-  // │ 2. async function (..)                                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  /**
-   * @author
-   *  @migbash
-   * @summary
-   *  🟦 HELPER
-   * @description
-   *  📣 Countdown initializer used within the component.
-   * @return { void }
-   */
-  function initializeCountdown
-  (
-  ): void
-  {
-    // NOTE: accepts '12/9/2023' <=> MM/dd/YYYY
-    numDateDiffStart = toCorrectDate(dateRoundStart as string | Date, false).getTime() - new Date().getTime();
-    numDateDiffEnd = toCorrectDate(dateRoundEnd as string | Date, false).getTime() - new Date().getTime();
-
-    const
-      /**
-       * @description
-       *  📣 Number of `days` difference between `2 target dates` of presale.
-      */
-      // @ts-expect-error
-      dateRoundDiff = Math.floor((toCorrectDate(dateRoundEnd, false).getTime() - toCorrectDate(dateRoundStart, false).getTime()))
-      /**
-       * @description
-       *  📣 Number of `days` difference between `2 target dates` of **current date** and **presale end**, a.k.a time remaining.
-      */
-      // @ts-expect-error
-      , dateDeltaDiffDays = Math.floor((toCorrectDate(dateRoundEnd, false).getTime() - new Date().getTime()))
-    ;
-
-    datePercentageDiff = 100 - (dateDeltaDiffDays / dateRoundDiff) * 100;
-    if (datePercentageDiff > 100) datePercentageDiff = 100;
-    if (isNaN(datePercentageDiff)) datePercentageDiff = 0;
-
-    return;
-  }
-
-  // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
 
@@ -376,16 +307,8 @@
     async (
     ): Promise < void > =>
     {
-      initializeCountdown();
-
-      interval1 = setInterval
-      (
-        () =>
-        {
-          initializeCountdown();
-        },
-        1000
-      );
+      progressPercentage = (parseInt(WIDGET_DATA?.presaleData.data?.current_value ?? '') / parseInt(WIDGET_DATA?.presaleData.data?.available ?? '')) * 100;
+      if (progressPercentage > 100) progressPercentage = 100;
 
       [
         VIEWPORT_TABLET_INIT[1],
@@ -414,15 +337,6 @@
       );
 
       return;
-    }
-  );
-
-  onDestroy
-  (
-    () =>
-    {
-      // @ts-expect-error
-      clearInterval(interval1);
     }
   );
 
@@ -656,7 +570,7 @@
           color-green-1
           "
         >
-          {toDecimalFix(datePercentageDiff) ?? 0}%
+          {toDecimalFix(progressPercentage)}%
         </p>
       </div>
 
@@ -672,7 +586,7 @@
         "
       >
         <div
-          style="width: {datePercentageDiff ?? 0}%;"
+          style="width: {progressPercentage}%;"
         />
       </div>
 
