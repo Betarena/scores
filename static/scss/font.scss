@@ -26,7 +26,7 @@ $fontWeight: (400, 500, 600, 700, 'normal');
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 */
 
-$fontSize: (10, 12, 14, 15, 16, 18, 19, 20, 22, 24, 28, 32, 40, 42);
+$fontSize: (10, 12, 14, 15, 16, 18, 19, 20, 22, 24, 28, 32, 38, 40, 42);
 
 //
 // Generate possible Font Sizes
@@ -150,6 +150,7 @@ p.s_small
     {
       .dark-background &
       , .dark-background-1 &
+      , .dark-mode &
       {
         &#{map-get($data-dark, "class-name")}
         {

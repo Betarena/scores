@@ -1500,6 +1500,45 @@ paths:
         200:
           description: Target competition HIGHLIGHTS widget data
 
+  # ╭──────────────────────────────────────────────────────────────────────────────────╮
+  # │ 🎟️ AUTHORS SECTION                                                               │
+  # ╰──────────────────────────────────────────────────────────────────────────────────╯
+
+  /api/data/author:
+    get:
+      summary:
+        Returns a targets' competition (id) main Scoreboard widget (data).
+      #
+      parameters:
+        - name: filter
+          in: query
+          description: Target fixture (main) SCOREBOARD widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?hasura=[...]
+              hasura:
+                type: boolean
+                example: true
+              # ?permalink=[...]
+              permalink:
+                type: string
+                example: "betarena-tennis-it/australian-open-men-singles-ryan-peniston-vs-elias-ymer-2023-2024-pronostici-probabili-formazioni-e-consigli-per-le-scommesse-8yomojf34kyzq0j1707239136"
+            additionalProperties: false
+            oneOf:
+              # translation
+              - required: [permalink]
+              - required: [permalink, hasura]
+      #
+      responses:
+        200:
+          description: Target competition HIGHLIGHTS widget data
+    #
+  #
+
 components:
 
   schemas:

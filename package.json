@@ -42,7 +42,7 @@
 		"sass-watch": "sass --watch static/app.scss static/app.css"
 	},
 	"dependencies": {
-		"@betarena/scores-lib": "^1.11.0-alpha.2",
+		"@betarena/scores-lib": "1.11.0-alpha.5",
 		"@lukeed/uuid": "2.0.1",
 		"@metamask/sdk": "0.1.0",
 		"@moralisweb3/client-firebase-auth-utils": "2.18.4",

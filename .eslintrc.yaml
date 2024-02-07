@@ -34,6 +34,7 @@ parserOptions:
   ecmaVersion: 2020
   extraFileExtensions:
     - '.svelte'
+    - '.ts'
 
 overrides:
   - files:
@@ -60,14 +61,12 @@ ignorePatterns:
   - yarn.lock
   # ▓ NOTE:
   # ▓ > gradual eslint introduction in project.
-  - src/lib/api
   - src/lib/geo-js
   - src/lib/graphql
   - src/lib/redis
   - src/lib/store
   - src/lib/types
   - src/params
-  - src/routes
 
 plugins:
   - "@typescript-eslint"

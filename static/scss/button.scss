@@ -152,8 +152,16 @@ button
       color: initial;
     }
 
+    &.v5
+    {
+      /* 🎨 style */
+      background-color: var(--dark-theme) !important;
+      color: var(--white) !important;
+    }
+
     .dark-background &
     , .dark-background-1 &
+    , .dark-mode &
     {
       &.v2
       {
@@ -171,6 +179,12 @@ button
           /* 🎨 style */
           border: 1px solid var(--grey-shade) !important;
         }
+      }
+
+      &.v5
+      {
+        /* 🎨 style */
+        background-color: var(--white);
       }
     }
   }
@@ -190,6 +204,7 @@ button
 
     .dark-background &
     , .dark-background-1 &
+    , .dark-mode &
     {
       /* 🎨 style */
       background-color: var(--dark-theme-1-4-shade);
