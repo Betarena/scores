@@ -331,7 +331,7 @@
             margin-left: 120px;
           }
 
-          p.faq-description
+          div.faq-description
           {
             /* 🎨 style */
             margin-left: 138px;
@@ -356,7 +356,7 @@
       {
         div.profile⮕w⮕investfaq⮕child⮕row
         {
-          p.faq-description
+          div.faq-description
           {
             /* 🎨 style */
             max-width: 65%;
