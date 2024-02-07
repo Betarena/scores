@@ -37,9 +37,6 @@
 // import icon_social_download_hover from '../assets/investor/icon-social-download-hover.svg';
   import icon_social_download_dark from '../assets/investor/icon-social-download-dark.svg';
   import icon_social_download from '../assets/investor/icon-social-download.svg';
-  import icon_social_facebook_dark from '../assets/investor/icon-social-facebook-dark.svg';
-  import icon_social_facebook_hover from '../assets/investor/icon-social-facebook-hover.svg';
-  import icon_social_facebook from '../assets/investor/icon-social-facebook.svg';
 // import icon_social_link_hover from '../assets/investor/icon-social-link-hover.svg';
   import icon_close from '../assets/investor/icon-close-btn.svg';
   import icon_close_dark from '../assets/investor/icon-close-dark-btn.svg';
@@ -94,6 +91,19 @@
    */
   type WidgetState = 'NoInvestmentMade' | 'FirstInvestmentMade';
 
+  /**
+   * @description
+   *  📣
+  */
+  interface AssetObject
+  {
+    name: 'twitter' | 'reddit' | 'facebook' | 'telegram' | 'whatsapp';
+    asset: string;
+    asset_hover: string;
+    asset_dark: string;
+    social_link: string;
+  }
+
   class Dev
   {
     mutated: boolean = false;
@@ -117,43 +127,42 @@
      * @description
      *  📣 Dynamic list of **social assets** used by widget.
     */
-    assetList:
-    {
-      name: string
-      , asset: string
-      , asset_hover: string
-      , asset_dark: string
-    }[]
+    assetList: AssetObject[]
     = [
       {
         name: 'twitter'
         , asset: icon_social_twitter
         , asset_hover: icon_social_twitter_hover
         , asset_dark: icon_social_twitter_dark
+        , social_link: `https://twitter.com/intent/tweet?text={text}&url=scores.betarena.com?referralId=${$page.url.origin}?referralId=${$userBetarenaSettings.user.scores_user_data?.referralID ?? ''}`
       }
       , {
         name: 'reddit'
         , asset: icon_social_reddit
         , asset_hover: icon_social_reddit_hover
         , asset_dark: icon_social_reddit_dark
+        , social_link: `https://www.reddit.com/submit?title={title}&selftext=true&text={text}&url=scores.betarena.com?referralId=${$page.url.origin}?referralId=${$userBetarenaSettings.user.scores_user_data?.referralID ?? ''}`
       }
-      , {
-        name: 'facebook'
-        , asset: icon_social_facebook
-        , asset_hover: icon_social_facebook_hover
-        , asset_dark: icon_social_facebook_dark
-      }
+      // , {
+      //   name: 'facebook'
+      //   , asset: icon_social_facebook
+      //   , asset_hover: icon_social_facebook_hover
+      //   , asset_dark: icon_social_facebook_dark
+      //   , social_link: ''
+      // }
       , {
         name: 'telegram'
         , asset: icon_social_telegram
         , asset_hover: icon_social_telegram_hover
         , asset_dark: icon_social_telegram_dark
+        , social_link: `https://t.me/share/url?url=scores.betarena.com?referralId=${$page.url.origin}?referralId=${$userBetarenaSettings.user.scores_user_data?.referralID ?? ''}&text={text}`
       }
       , {
         name: 'whatsapp'
         , asset: icon_social_whatsapp
         , asset_hover: icon_social_whatsapp_hover
         , asset_dark: icon_social_whatsapp_dark
+        , social_link: `https://wa.me?text={text}&url=scores.betarena.com?referralId=${$page.url.origin}?referralId=${$userBetarenaSettings.user.scores_user_data?.referralID ?? ''}`
       }
     ]
     /**
@@ -188,6 +197,32 @@
      *  📣 target `state` value.
     */
     , widgetState: WidgetState = 'NoInvestmentMade'
+    /**
+     * @description
+     *  📣 build social link url.
+    */
+    , mutateUrl = (assetItem: AssetObject): string =>
+    {
+      let text: string;
+
+      if (assetItem.name == 'twitter')
+        text = profileTrs.investor?.referral.ref_pop.twitter!;
+      else if (assetItem.name == 'facebook')
+        text = profileTrs.investor?.referral.ref_pop.facebook!;
+      else if (assetItem.name == 'whatsapp')
+        text = profileTrs.investor?.referral.ref_pop.whatsapp!;
+      else if (assetItem.name == 'telegram')
+        text = profileTrs.investor?.referral.ref_pop.telegram!;
+      else (assetItem.name == 'reddit')
+      text = profileTrs.investor?.referral.ref_pop.description!;
+
+      const newUrl: string = assetItem.social_link
+        .replace('{text}', text)
+        .replace('{title}', profileTrs.investor?.referral.ref_pop.title_1!)
+      ;
+
+      return newUrl;
+    }
   ;
 
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
@@ -444,24 +479,29 @@
     >
 
       {#each assetList as item}
-        <div
-          class=
-          "
-          cursor-pointer
-          <!---->
-          social-btn
-          "
-          on:mouseover={(e) => {return e.currentTarget.children[0].src = item.asset_hover}}
-          on:mouseleave={(e) => {return e.currentTarget.children[0].src = ($userBetarenaSettings.theme == 'Dark' ? item.asset_dark : item.asset)}}
+        <a
+          href={mutateUrl(item)}
+          target="_blank"
         >
-          <img
-            id=''
-            src={$userBetarenaSettings.theme == 'Dark' ? item.asset_dark : item.asset}
-            alt=''
-            title=''
-            loading='lazy'
-          />
-        </div>
+          <div
+            class=
+            "
+            cursor-pointer
+            <!---->
+            social-btn
+            "
+            on:mouseover={(e) => {return e.currentTarget.children[0].src = item.asset_hover}}
+            on:mouseleave={(e) => {return e.currentTarget.children[0].src = ($userBetarenaSettings.theme == 'Dark' ? item.asset_dark : item.asset)}}
+          >
+            <img
+              id=''
+              src={$userBetarenaSettings.theme == 'Dark' ? item.asset_dark : item.asset}
+              alt=''
+              title=''
+              loading='lazy'
+            />
+          </div>
+        </a>
       {/each}
 
     </div>
