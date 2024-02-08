@@ -537,6 +537,7 @@
         class=
         "
         row-space-out
+        m-b-16
         "
       >
         <!--
@@ -549,7 +550,6 @@
           s-20
           w-500
           color-black-2
-          m-b-16
           "
         >
           {
