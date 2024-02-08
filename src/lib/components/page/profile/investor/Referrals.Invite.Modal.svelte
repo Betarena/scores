@@ -134,14 +134,25 @@
         , asset: icon_social_twitter
         , asset_hover: icon_social_twitter_hover
         , asset_dark: icon_social_twitter_dark
-        , social_link: `https://twitter.com/intent/tweet?text={text}&url=scores.betarena.com?referralId=${$page.url.origin}?referralId=${$userBetarenaSettings.user.scores_user_data?.referralID ?? ''}`
+        , social_link: `
+          https://twitter.com/intent/tweet
+            ?text={text}
+            &url=${$page.url.origin}?referralId=${$userBetarenaSettings.user.scores_user_data?.referralID ?? ''}
+          `
+          .replace(/\s/g, '')
       }
       , {
         name: 'reddit'
         , asset: icon_social_reddit
         , asset_hover: icon_social_reddit_hover
         , asset_dark: icon_social_reddit_dark
-        , social_link: `https://www.reddit.com/submit?title={title}&selftext=true&text={text}&url=scores.betarena.com?referralId=${$page.url.origin}?referralId=${$userBetarenaSettings.user.scores_user_data?.referralID ?? ''}`
+        , social_link: `
+          https://www.reddit.com/submit
+            ?title={title}
+            &selftext=true
+            &text={text}
+          `
+          .replace(/\s/g, '')
       }
       // , {
       //   name: 'facebook'
@@ -155,14 +166,23 @@
         , asset: icon_social_telegram
         , asset_hover: icon_social_telegram_hover
         , asset_dark: icon_social_telegram_dark
-        , social_link: `https://t.me/share/url?url=scores.betarena.com?referralId=${$page.url.origin}?referralId=${$userBetarenaSettings.user.scores_user_data?.referralID ?? ''}&text={text}`
+        , social_link: `
+          https://t.me/share/url
+            ?url=${$page.url.origin}?referralId=${$userBetarenaSettings.user.scores_user_data?.referralID ?? ''}
+            &text={text}
+          `
+          .replace(/\s/g, '')
       }
       , {
         name: 'whatsapp'
         , asset: icon_social_whatsapp
         , asset_hover: icon_social_whatsapp_hover
         , asset_dark: icon_social_whatsapp_dark
-        , social_link: `https://wa.me?text={text}&url=scores.betarena.com?referralId=${$page.url.origin}?referralId=${$userBetarenaSettings.user.scores_user_data?.referralID ?? ''}`
+        , social_link: `
+          https://wa.me
+            ?text={text}
+          `
+          .replace(/\s/g, '')
       }
     ]
     /**
@@ -210,11 +230,17 @@
       else if (assetItem.name == 'facebook')
         text = profileTrs.investor?.referral.ref_pop.facebook!;
       else if (assetItem.name == 'whatsapp')
+      {
         text = profileTrs.investor?.referral.ref_pop.whatsapp!;
+        text = profileTrs.investor?.referral.ref_pop.description!;
+      }
       else if (assetItem.name == 'telegram')
         text = profileTrs.investor?.referral.ref_pop.telegram!;
-      else (assetItem.name == 'reddit')
-      text = profileTrs.investor?.referral.ref_pop.description!;
+      else
+      {
+        text = profileTrs.investor?.referral.ref_pop.description!;
+        text += ` ${$page.url.origin}?referralId=${$userBetarenaSettings.user.scores_user_data?.referralID ?? ''}`
+      }
 
       const newUrl: string = assetItem.social_link
         .replace('{text}', text)
