@@ -1595,7 +1595,7 @@
             >
               <!-- ▓ [🐞] -->
               <!-- {console.log(cryptoPrices?.data?.['USDC']?.quote?.USD?.price)} -->
-              {depositAmount ?? 0} {cryptoDepositOptionSelect.name} ≈ {cryptoPrice} USD
+              1 {cryptoDepositOptionSelect.name} ≈ {cryptoPrice} USD
             </p>
 
           </div>
