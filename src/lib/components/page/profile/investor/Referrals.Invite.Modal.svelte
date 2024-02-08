@@ -168,8 +168,7 @@
         , asset_dark: icon_social_telegram_dark
         , social_link: `
           https://t.me/share/url
-            ?url=${$page.url.origin}?referralId=${$userBetarenaSettings.user.scores_user_data?.referralID ?? ''}
-            &text={text}
+            ?text={text}
           `
           .replace(/\s/g, '')
       }
@@ -232,7 +231,7 @@
       else if (assetItem.name == 'whatsapp')
       {
         text = profileTrs.investor?.referral.ref_pop.whatsapp!;
-        text = profileTrs.investor?.referral.ref_pop.description!;
+        text += ` ${$page.url.origin}?referralId=${$userBetarenaSettings.user.scores_user_data?.referralID ?? ''}`
       }
       else if (assetItem.name == 'telegram')
         text = profileTrs.investor?.referral.ref_pop.telegram!;
