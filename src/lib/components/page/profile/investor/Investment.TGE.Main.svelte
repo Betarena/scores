@@ -62,17 +62,17 @@
   export let
     /**
      * @augments IProfileData
-    */
+     */
     profileData: IProfileData | null
     /**
      * @description
      *  📣 makes use of parent 📱 MOBILE viewport state.
-    */
+     */
     , VIEWPORT_MOBILE_INIT_PARENT: [ number, boolean ]
     /**
      * @description
      *  📣 makes use of parent 💻 TABLET viewport state.
-    */
+     */
     , VIEWPORT_TABLET_INIT_PARENT: [ number, boolean ]
   ;
 
@@ -92,19 +92,19 @@
     /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
-    */
+     */
     // eslint-disable-next-line no-unused-vars
     CNAME: string = 'profile⮕w⮕investtge⮕main'
     /**
      * @description
      *  📣 threshold start + state for 📱 MOBILE
-    */
+     */
     // eslint-disable-next-line no-unused-vars
     , VIEWPORT_MOBILE_INIT: [ number, boolean ] = VIEWPORT_MOBILE_INIT_PARENT
     /**
      * @description
      *  📣 threshold start + state for 💻 TABLET
-    */
+     */
     // eslint-disable-next-line no-unused-vars
     , VIEWPORT_TABLET_INIT: [ number, boolean ] = VIEWPORT_TABLET_INIT_PARENT
   ;
@@ -113,56 +113,57 @@
     /**
      * @description
      *  📣 investor number of days difference (from end)
-    */
+     */
     dateDiff: number = 0
     /**
      * @description
      *  📣 interval variable for `countdown` logic
-    */
+     */
     , interval1: NodeJS.Timer
     /**
      * @description
      *  📣 target date of relase of tokens.
-    */
-    , targetDate: Date = profileData?.presaleData.data?.end_date // [🐞] new Date()
+     */
+    , targetDate: Date = new Date(profileData?.presaleData.data?.end_date ?? '') // [🐞] new Date()
     /**
      * @description
      *  📣 target `DEV` class instance.
-    */
+     */
     , newDevInstance = new Dev()
     /**
      * @description
      *  📣 target `state` update.
-    */
-    , updateWidgetState = (state?: WidgetState) =>
-    {
-      if (state)
+     */
+    , updateWidgetState
+      = (state?: WidgetState) =>
       {
-        // ▓ [🐞]
-        console.log('state', state);
-        widgetState = state;
+        if (state)
+        {
+          // ▓ [🐞]
+          console.log('state', state);
+          widgetState = state;
+          return;
+        }
+
+        if (profileData?.investorData?.data?.tge.status == null)
+        {
+          if (!profileData?.presaleData.data?.end_date || profileData.presaleData.presale == 'private')
+            widgetState = 'NoDefinedDate';
+          else
+            widgetState = 'DateDefined';
+        }
+        else if (profileData.investorData.data.tge.status == 'Pending')
+          widgetState = 'ClaimAvailable'
+        else
+          widgetState = 'Claimed'
+        //
+
         return;
       }
-
-      if (profileData?.investorData?.data?.tge.status == null)
-      {
-        if (!profileData?.presaleData.data?.end_date || profileData.presaleData.data.name == 'private')
-          widgetState = 'NoDefinedDate';
-        else
-          widgetState = 'DateDefined';
-      }
-      else if (profileData.investorData.data.tge.status == 'Pending')
-        widgetState = 'ClaimAvailable'
-      else
-        widgetState = 'Claimed'
-      //
-
-      return;
-    }
     /**
      * @description
      *  📣 target `state` value.
-    */
+     */
     , widgetState: WidgetState = 'NoDefinedDate'
   ;
 
@@ -218,9 +219,12 @@
   (
   ): void
   {
-    targetDate.setDate(targetDate.getDate() + 1);
+    // [🐞]
+    // targetDate.setDate(targetDate.getDate() + 1);
+
     dateDiff = toCorrectDate(targetDate, false).getTime() - new Date().getTime();
-    setInterval
+
+    interval1 = setInterval
     (
       () =>
       {
@@ -300,7 +304,8 @@
       true
     );
 
-    widgetState = 'ClaimAvailable';
+    if (profileData.presaleData.presale != 'private')
+      widgetState = 'ClaimAvailable';
   }
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]

@@ -25,11 +25,11 @@
 
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { toZeroPrefixDateStr } from '$lib/utils/dates.js';
+	import { toCorrectDate, toZeroPrefixDateStr } from '$lib/utils/dates.js';
 	import { toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
 
 	import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
@@ -89,21 +89,50 @@
     /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
     CNAME: string = 'profile⮕w⮕investround⮕main'
     /** @description 📣 threshold start + state for 📱 MOBILE */
-    ,VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
+    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
     /** @description 📣 threshold start + state for 💻 TABLET */
-    ,VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
+    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
   let
-    /** @description 📣 current widget state */
+    /**
+     * @description 📣 current widget state
+     */
     widgetState: IWidgetState = 'ToBeAnnounced'
-    /** @description 📣 investor number of days difference (from start) */
+    /**
+     * @description
+     *  📣 interval variable for `countdown` logic
+     */
+    , interval1: NodeJS.Timer
+    /**
+     * @description
+     *  📣 target date of 'start' of tokens.
+     */
+    , targetDateStart: Date = new Date(WIDGET_DATA?.presaleData.data?.start_date ?? '') // [🐞] new Date()
+    /**
+     * @description
+     *  📣 target date of 'end' of tokens.
+     */
+    , targetDateEnd: Date = new Date(WIDGET_DATA?.presaleData.data?.end_date ?? '') // [🐞] new Date()
+    /**
+     * @description
+     *  📣 investor number of days difference (from start)
+     */
     , numDateDiffStart: number = 0
-    /** @description 📣 investor number of days difference (from end) */
+    /**
+     * @description
+     *  📣 investor number of days difference (from end)
+     */
     , numDateDiffEnd: number = 0
-    /** @description 📣 investor main information data */
+    /**
+     * @description
+     *  📣 investor main information data
+     */
     , roundData: IRoundData[] = []
-    /** @description 📣 investor round date percentage progress */
+    /**
+     * @description
+     *  📣 investor round date percentage progress
+     */
     , progressPercentage: number = 0
   ;
 
@@ -122,6 +151,51 @@
 	$: countDownTestHourToEnd = Math.floor(numDateDiffEnd / (1000 * 60 * 60));
 
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  /**
+   * @description
+   *  📣
+   */
+  function initializeCountdown
+  (
+  ): void
+  {
+    // [🐞]
+    // targetDate.setDate(targetDate.getDate() + 1);
+
+    numDateDiffStart = toCorrectDate(targetDateStart, false).getTime() - new Date().getTime();
+    numDateDiffEnd = toCorrectDate(targetDateEnd, false).getTime() - new Date().getTime();
+
+    // [🐞]
+    console.log(targetDateStart, targetDateEnd);
+    console.log(numDateDiffStart, numDateDiffEnd);
+
+    interval1 = setInterval
+    (
+      () =>
+      {
+        numDateDiffStart = toCorrectDate(targetDateStart, false).getTime() - new Date().getTime();
+        numDateDiffEnd = toCorrectDate(targetDateEnd, false).getTime() - new Date().getTime();
+      },
+      1000
+    );
+
+    return;
+  }
+
+  // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
 
@@ -162,7 +236,7 @@
     && numDateDiffEnd >= 0
   ;
   $: if_R_3
-    =countDownTestHourToEnd < 23
+    = countDownTestHourToEnd < 23
     && numDateDiffEnd < 0
   ;
 	$:
@@ -310,6 +384,8 @@
       progressPercentage = (parseInt(WIDGET_DATA?.presaleData.data?.current_value ?? '') / parseInt(WIDGET_DATA?.presaleData.data?.available ?? '')) * 100;
       if (progressPercentage > 100) progressPercentage = 100;
 
+      initializeCountdown();
+
       [
         VIEWPORT_TABLET_INIT[1],
         VIEWPORT_MOBILE_INIT[1]
@@ -335,6 +411,17 @@
             );
         }
       );
+
+      return;
+    }
+  );
+
+  onDestroy
+  (
+    () =>
+    {
+      // @ts-expect-error
+      clearInterval(interval1);
 
       return;
     }

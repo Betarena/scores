@@ -1,79 +1,79 @@
-import { dlog } from "./debug.js";
+import { dlog } from './debug.js';
 
-export const MONTH_NAMES_ABBRV: string[] =
-[
-	'Jan',
-	'Feb',
-	'Mar',
-	'Apr',
-	'May',
-	'Jun',
-	'Jul',
-	'Aug',
-	'Sep',
-	'Oct',
-	'Nov',
-	'Dec'
+export const MONTH_NAMES_ABBRV: string[]
+= [
+  'Jan'
+  ,'Feb'
+  ,'Mar'
+  ,'Apr'
+  ,'May'
+  ,'Jun'
+  ,'Jul'
+  ,'Aug'
+  ,'Sep'
+  ,'Oct'
+  ,'Nov'
+  ,'Dec'
 ];
 
-export const WEEK_DAYS_ABBRV: string[] =
-[
-  'Sun',
-  'Mon',
-  'Tue',
-  'Wed',
-  'Thu',
-  'Fri',
-  'Sat'
-];
-
-export const WEEK_DAYS_ABBRV_1: string[] =
-[
-  'Sun',
-  'Mon',
-  'Tue',
-  'Wed',
-  'Thur',
-  'Fri',
-  'Sat'
-];
-
-export const WEEK_DAYS_ABBRV_2: string[] =
-[
-  'Mon',
-  'Tue',
-  'Wed',
-  'Thur',
-  'Fri',
-  'Sat',
+export const WEEK_DAYS_ABBRV: string[]
+= [
   'Sun'
+  ,'Mon'
+  ,'Tue'
+  ,'Wed'
+  ,'Thu'
+  ,'Fri'
+  ,'Sat'
 ];
 
-export const monthNames: string[] =
-[
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December'
+export const WEEK_DAYS_ABBRV_1: string[]
+= [
+  'Sun'
+  ,'Mon'
+  ,'Tue'
+  ,'Wed'
+  ,'Thur'
+  ,'Fri'
+  ,'Sat'
 ];
 
-export const weekDays: string[] =
-[
-  'sunday',
-  'monday',
-  'tuesday',
-  'wednesday',
-  'thursday',
-  'friday',
-  'saturday'
+export const WEEK_DAYS_ABBRV_2: string[]
+= [
+  'Mon'
+  ,'Tue'
+  ,'Wed'
+  ,'Thur'
+  ,'Fri'
+  ,'Sat'
+  ,'Sun'
+];
+
+export const monthNames: string[]
+= [
+  'January'
+  ,'February'
+  ,'March'
+  ,'April'
+  ,'May'
+  ,'June'
+  ,'July'
+  ,'August'
+  ,'September'
+  ,'October'
+  ,'November'
+  ,'December'
+];
+
+export const weekDays: string[]
+= [
+  'sunday'
+  ,'monday'
+  ,'tuesday'
+  ,'wednesday'
+  ,'thursday'
+  ,'friday'
+  ,'saturday'
 ];
 
 /**
@@ -84,8 +84,8 @@ export const weekDays: string[] =
  * @returns
  * a date string with an ordinal suffix value;
  */
-export const getOrdinalNum =
-(
+export const getOrdinalNum
+= (
   num: number
 ): string =>
 {
@@ -166,11 +166,10 @@ export function toISOMod
   showConversion: boolean = false
 ): string
 {
-
   // [🐞]
   if (showConversion)
-    console.log("CONVERSION [FROM]: ", date)
-  ;
+    console.log('CONVERSION [FROM]: ', date)
+    ;
 
   // ### NOTE: CHECK
   // ### Check for date of typeof 'string'
@@ -180,8 +179,8 @@ export function toISOMod
     // ### Check for 'T00:00:00'
     // ### without the 'Z'
     // ### without the '+'
-    const if_M_0 =
-      date.includes('T')
+    const if_M_0
+      = date.includes('T')
       && !date.includes('Z')
       && !date.includes('+')
     ;
@@ -190,16 +189,16 @@ export function toISOMod
 
     // [🐞]
     if (showConversion)
-      console.log("CONVERSION [STR]: ", date)
-    ;
+      console.log('CONVERSION [STR]: ', date)
+      ;
 
     date = new Date(date)
   }
 
   // [🐞]
   if (showConversion)
-    console.log("CONVERSION [TO]: ", date)
-  ;
+    console.log('CONVERSION [TO]: ', date)
+    ;
 
   let formattedDate: string;
 
@@ -222,16 +221,16 @@ export function toISOMod
   // NOTE:WARNING: when converting a T00:00:00Z string to BRAZIL new Date()
   if (adjustClientTZ)
   {
-    const year: number = date.getFullYear();
-    const month: string = toZeroPrefixDateStr(date.getMonth() + 1);
-    const day: string = toZeroPrefixDateStr(date.getDate());
+    const year: number = date.getFullYear()
+      ,month: string = toZeroPrefixDateStr(date.getMonth() + 1)
+      ,day: string = toZeroPrefixDateStr(date.getDate());
     formattedDate = `${year}-${month}-${day}`;
   }
 
   // [🐞]
   if (showConversion)
-    console.log("CONVERSION [ISO]: ", formattedDate)
-  ;
+    console.log('CONVERSION [ISO]: ', formattedDate)
+    ;
 
   // IMPORTANT yyyy-MM-dd
   return formattedDate;
@@ -277,21 +276,21 @@ export function toCorrectDate
   showConversion: boolean = false
 ): Date
 {
-  if (showConversion) console.log("CONVERSION toCorrectDate [FROM]: ", date)
+  if (showConversion) console.log('CONVERSION toCorrectDate [FROM]: ', date)
 
   if (typeof(date) == 'string')
   {
     // check for 'TXX:YY:SS'
-    const if_M0 =
-      date.includes('T')
+    const if_M0
+      = date.includes('T')
       && !date.includes('Z')
       && !date.includes('+')
     ;
     // add, if necessary the Z
     if (if_M0)
-    {
+
       date = `${date}Z`
-    }
+
     date = new Date(date)
   }
 
@@ -305,7 +304,7 @@ export function toCorrectDate
     date.setHours(date.getHours() - timeOffsetInHours)
   }
 
-  if (showConversion) console.log("CONVERSION toCorrectDate [TO]: ", date)
+  if (showConversion) console.log('CONVERSION toCorrectDate [TO]: ', date)
 
   return date;
 }
@@ -330,8 +329,9 @@ export function toZeroPrefixDateStr
   dateStr: string | number
 ): string
 {
-  dateStr = `0${dateStr}`
-  return dateStr
+  const newDateStr = `0${dateStr}`;
+  if (newDateStr.length > 2) return `${dateStr}`;
+  return newDateStr
     .slice(-2)
     .split(' ')
     .join('')
@@ -366,7 +366,7 @@ export function targetDate
 
   if (offsetDays != 0)
     newDate.setDate(newDate.getDate() + offsetDays);
-  ;
+
 
   return newDate;
 }
@@ -404,8 +404,8 @@ export function daysDiffNum
   date2: Date
 ): number
 {
-  const _timeDiff: number = date2.getTime() - date1.getTime();
-  const dateDiff: number = (_timeDiff / (1000 * 3600 * 24));
+  const _timeDiff: number = date2.getTime() - date1.getTime()
+    ,dateDiff: number = (_timeDiff / (1000 * 3600 * 24));
   return dateDiff < 0 ? -dateDiff : dateDiff;
 }
 

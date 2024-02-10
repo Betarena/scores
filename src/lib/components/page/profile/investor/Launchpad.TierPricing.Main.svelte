@@ -150,7 +150,7 @@
   ;
 
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
-  $: deepReactListenInvestorBalanceChng = $userBetarenaSettings.user.scores_user_data?.investor_balance;
+  $: deepReactListenInvestorBalanceChng = $userBetarenaSettings.user.scores_user_data?.investor_balance.grand_total ?? 0;
 
   // ▓ [🐞]
   // $userBetarenaSettings.user.scores_user_data.investor_balance = 100000;
@@ -236,7 +236,7 @@
   (
   ): void
   {
-    const investorBalance: number = $userBetarenaSettings.user.scores_user_data?.investor_balance?.grand_total ?? 0;
+    const investorBalance: number = ($userBetarenaSettings.user.scores_user_data?.investor_balance?.grand_total ?? 0);
     currentAccumulatedAmountProgress = 'NaN';
 
     // ▓ NOTE:
