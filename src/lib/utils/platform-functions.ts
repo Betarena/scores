@@ -1516,6 +1516,7 @@ export function formatNumberWithCommas
   x: number | null | undefined
 ): string
 {
+  if (x?.toString().includes('.')) return x.toString();
   return x
     ?.toString()
     ?.replace(/\B(?=(\d{3})+(?!\d))/g, '.')

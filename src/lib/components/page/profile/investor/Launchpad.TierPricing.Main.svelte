@@ -153,7 +153,7 @@
   $: deepReactListenInvestorBalanceChng = $userBetarenaSettings.user.scores_user_data?.investor_balance;
 
   // ▓ [🐞]
-  $userBetarenaSettings.user.scores_user_data.investor_balance = 100000;
+  // $userBetarenaSettings.user.scores_user_data.investor_balance = 100000;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -236,7 +236,7 @@
   (
   ): void
   {
-    const investorBalance: number = $userBetarenaSettings.user.scores_user_data?.investor_balance ?? 0;
+    const investorBalance: number = $userBetarenaSettings.user.scores_user_data?.investor_balance?.grand_total ?? 0;
     currentAccumulatedAmountProgress = 'NaN';
 
     // ▓ NOTE:
@@ -799,7 +799,7 @@
                               no-wrap
                               "
                             >
-                              {$userBetarenaSettings.user.scores_user_data?.investor_balance ?? 0} BTA
+                              {$userBetarenaSettings.user.scores_user_data?.investor_balance?.grand_total ?? 0} BTA
                             </p>
 
                             <!--

@@ -26,6 +26,8 @@
 
   import { page } from '$app/stores';
 
+  import { post } from '$lib/api/utils.js';
+  import { userUpdateInvestorBalance } from '$lib/firebase/common.js';
   import sessionStore from '$lib/store/session.js';
   import userBetarenaSettings from '$lib/store/user-settings.js';
 
@@ -229,6 +231,50 @@
     return;
   }
 
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟦 HELPER
+   * @description
+   *  📣 Create new **vesting request** for target user vesting period.
+   * @return { void }
+   */
+  async function createVestingRequest
+  (
+  ): void
+  {
+    await post
+    (
+      `${import.meta.env.VITE_FIREBASE_FUNCTIONS_ORIGIN}/transaction/update/investment/claim/create`
+      // 'http://127.0.0.1:5001/betarena-ios/us-central1/api/transaction/update/investment/claim/create'
+      , {
+        uid: $userBetarenaSettings.user.firebase_user_data?.uid
+        , vestingId: targetVestingSelected.id
+        , isTge: false
+      }
+    );
+
+    let
+      /**
+       * @description
+       *  📣 Target amount to change balance by.
+      */
+      deltaBalance: number = (-targetVestingSelected.tokens)
+    ;
+
+    await userUpdateInvestorBalance
+    (
+      {
+        uid: $userBetarenaSettings.user.firebase_user_data?.uid
+        , deltaBalance
+        , type: 'total'
+      }
+    );
+
+    return;
+  }
+
   // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -276,7 +322,8 @@
     {
       () =>
       {
-        alert('Executing Vesting Claim!');
+        // alert('Executing Vesting Claim!');
+        createVestingRequest();
         return;
       }
     }

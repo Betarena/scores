@@ -830,7 +830,7 @@
         "
       >
         {
-          formatNumberWithCommas($userBetarenaSettings.user.scores_user_data?.investor_balance)
+          formatNumberWithCommas($userBetarenaSettings.user.scores_user_data?.investor_balance?.grand_total ?? 0)
         }
         <span
           class=

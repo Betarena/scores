@@ -27,10 +27,13 @@
 	import { page } from '$app/stores';
 	import { onDestroy, onMount } from 'svelte';
 
+  import { post } from '$lib/api/utils.js';
+  import { userUpdateInvestorBalance } from '$lib/firebase/common.js';
   import sessionStore from '$lib/store/session.js';
   import userBetarenaSettings from '$lib/store/user-settings.js';
   import { toCorrectDate, toZeroPrefixDateStr } from '$lib/utils/dates.js';
   import { dlog } from '$lib/utils/debug.js';
+  import { formatNumberWithCommas } from '$lib/utils/platform-functions.js';
 
   import icon_bta_token from '../assets/price-tier/icon-bta-token.svg';
 
@@ -38,7 +41,6 @@
   import AdminDevControlPanelToggleButton from '$lib/components/misc/admin/Admin-Dev-ControlPanelToggleButton.svelte';
   import MainClaimModal from './Main-Claim-Modal.svelte';
 
-  import { formatNumberWithCommas } from '$lib/utils/platform-functions.js';
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -122,7 +124,7 @@
      * @description
      *  📣 target date of relase of tokens.
     */
-    , targetDate: Date = new Date()
+    , targetDate: Date = profileData?.presaleData.data?.end_date // [🐞] new Date()
     /**
      * @description
      *  📣 target `DEV` class instance.
@@ -144,7 +146,7 @@
 
       if (profileData?.investorData?.data?.tge.status == null)
       {
-        if (!profileData?.presaleData.data?.end_date)
+        if (!profileData?.presaleData.data?.end_date || profileData.presaleData.data.name == 'private')
           widgetState = 'NoDefinedDate';
         else
           widgetState = 'DateDefined';
@@ -225,6 +227,50 @@
         dateDiff = toCorrectDate(targetDate, false).getTime() - new Date().getTime();
       },
       1000
+    );
+
+    return;
+  }
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟦 HELPER
+   * @description
+   *  📣 Create new **TGE request** for target user amount.
+   * @return { void }
+   */
+  async function createTgeClaimRequest
+  (
+  ): void
+  {
+    await post
+    (
+      `${import.meta.env.VITE_FIREBASE_FUNCTIONS_ORIGIN}/transaction/update/investment/claim/create`
+      // 'http://127.0.0.1:5001/betarena-ios/us-central1/api/transaction/update/investment/claim/create'
+      , {
+        uid: $userBetarenaSettings.user.firebase_user_data?.uid
+        , vestingId: null
+        , isTge: true
+      }
+    );
+
+    let
+      /**
+       * @description
+       *  📣 Target amount to change balance by.
+      */
+      deltaBalance: number = (-profileData.investorData.data.tge.tokens)
+    ;
+
+    await userUpdateInvestorBalance
+    (
+      {
+        uid: $userBetarenaSettings.user.firebase_user_data?.uid
+        , deltaBalance
+        , type: 'tge'
+      }
     );
 
     return;
@@ -313,11 +359,13 @@
   <MainClaimModal
     VIEWPORT_MOBILE_INIT_PARENT={VIEWPORT_MOBILE_INIT}
     VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
+    amount={profileData.investorData.data.tge.tokens ?? 0}
     on:confirmEntry=
     {
       () =>
       {
-        alert('Executing TGE Claim!');
+        // alert('Executing TGE Claim!');
+        createTgeClaimRequest();
         return;
       }
     }
@@ -421,7 +469,7 @@
         "
       >
         {
-          formatNumberWithCommas($userBetarenaSettings.user.scores_user_data?.investor_balance)
+          formatNumberWithCommas($userBetarenaSettings.user.scores_user_data?.investor_balance?.tge_to_claim ?? 0)
         }
         <span
           class=

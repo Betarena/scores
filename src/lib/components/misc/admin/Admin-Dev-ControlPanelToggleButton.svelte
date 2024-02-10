@@ -83,11 +83,11 @@
      *  📣
     */
     , dispatch: EventDispatcher<any> = createEventDispatcher()
-      /**
+    /**
      * @description
      *  📣 target environment being used.
     */
-    , targetAppEnv: string = import.meta.env?.VITE_ENV_TARGET
+    , targetAppEnv: string = import.meta.env.VITE_ENV_TARGET
   ;
 
   let
@@ -98,7 +98,7 @@
     isSelected: boolean = false
   ;
 
-  $: deepReactListen0 = $sessionStore?.currentAdminToggle;
+  $: deepReactListen0 = $sessionStore.currentAdminToggle;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -147,7 +147,7 @@
 ▓ NOTE:
 ▓ > admin development toggle component.
 -->
-{#if (targetAppEnv == '.env.development' || dev)}
+{#if (dev)}
   <div
     class=
     "

@@ -93,7 +93,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-{#if (targetAppEnv == '.env.development' || dev) && $sessionStore.currentAdminToggle == title}
+{#if (dev) && $sessionStore.currentAdminToggle == title}
   <div
     class={CNAME}
   >
