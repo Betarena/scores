@@ -172,7 +172,6 @@
       class=
       "
       view-opt-box
-      m-r-24
       "
       class:activeOpt={false}
     >
