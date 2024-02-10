@@ -895,9 +895,9 @@
       , amount: depositAmount
       , quantity: recieveAmount
       , Gateway: 'cryptocurrency'
-      , description: 'Private Presale' // mapInvestorData.get('round')?.values.current_round
-      , type: 'deposit'
-      , bta_price: 1
+      , description: 'Presale' // mapInvestorData.get('round')?.values.current_round
+      , type: 'investment'
+      , bta_price: tierDiscountObject.discount ?? 1
       , deposit_wallet_address:
       {
         type: 'Polygon'
