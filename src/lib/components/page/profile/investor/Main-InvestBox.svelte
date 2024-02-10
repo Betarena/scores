@@ -1567,6 +1567,7 @@
             -->
             <input
               type="number"
+              inputmode="decimal"
               step="0.01"
               placeholder=0
               class=
@@ -1750,7 +1751,6 @@
             -->
             <input
               type="number"
-              step="any"
               placeholder=0
               class=
               "
