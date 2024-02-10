@@ -818,7 +818,7 @@
     {
       triggerInvestBox = false;
       stateWidget = 'Error';
-      $sessionStore.currentActiveModal = null;
+      $sessionStore.currentActiveModal = 'ProfileInvestor_TxState_Modal';
       return;
     }
 
@@ -880,7 +880,7 @@
     {
       triggerInvestBox = false;
       stateWidget = 'Error';
-      $sessionStore.currentActiveModal = null;
+      $sessionStore.currentActiveModal = 'ProfileInvestor_TxState_Modal';
       return;
     }
 
@@ -918,8 +918,8 @@
     );
 
     triggerInvestBox = false;
-    $sessionStore.currentActiveModal = null;
     stateWidget = 'Completed';
+    $sessionStore.currentActiveModal = 'ProfileInvestor_TxState_Modal';
 
     return;
   }
@@ -1158,7 +1158,7 @@
   <ModalTermsAndConditions />
 {/if}
 
-{#if stateWidget}
+{#if $sessionStore.currentActiveModal == 'ProfileInvestor_TxState_Modal'}
   <ModalTxState
     {stateWidget}
     on:closeDropdown=
@@ -1166,7 +1166,7 @@
       () =>
       {
         $sessionStore.currentActiveModal = null;
-        stateWidget = null
+        stateWidget = null;
         return;
       }
     }
