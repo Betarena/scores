@@ -1319,7 +1319,14 @@
           s-14
           "
           class:btn-active={selectDepositOption == 'crypto'}
-          on:click={() => {return selectDepositOption = 'crypto'}}
+          on:click=
+          {
+            () =>
+            {
+              selectDepositOption = 'crypto'
+              return;
+            }
+          }
         >
           {
             profileTrs.investor?.invest_box.options.option_1
@@ -1352,7 +1359,6 @@
             s-14
             "
             class:btn-active={selectDepositOption == 'fiat'}
-            on:click={() => {return selectDepositOption = 'fiat'}}
           >
             {
               profileTrs.investor?.invest_box.options.option_2
