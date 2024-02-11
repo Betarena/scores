@@ -99,33 +99,85 @@
   // 🔗 read-more :|: https://stackoverflow.com/questions/72230897/how-to-call-a-smart-contract-function-with-walletconnect-react-js-node-js
   // 🔗 read-more :|: https://wiki.polygon.technology/docs/tools/wallets/walletconnect/
 
+  /**
+   * @description
+   *  📣 Component interface.
+   */
   interface ITierDiscount
   {
-    /** @description tier discount name */
-    name?: string,
-    /** @description tier discount icon. */
-    icon?: string,
-    /** @description tier discount number. */
-    discount?: number,
+    /**
+     * @description
+     *  📣 Tier discount name.
+     * @example
+     *  'Bronze' | 'Silver' | 'Gold' | 'Platinum'
+     */
+    name?: string;
+    /**
+     * @description
+     *  📣 Tier discount icon.
+     */
+    icon?: string;
+    /**
+     * @description
+     *  📣 tier discount number.
+     */
+    discount?: number;
+    /**
+     * @description
+     *  📣 tier **BTA** price.
+     */
+    btaPrice?: number;
   }
 
+  /**
+   * @description
+   *  📣 Component interface.
+   */
   interface ICryptoDesposit
   {
-    /** @description cryptocurrency full name */
+    /**
+     * @description
+     *  📣 cryptocurrency full name
+     */
     full_name: string;
-    /** @description cryptocurrency symbol */
+    /**
+     * @description
+     *  📣 cryptocurrency symbol
+     */
     name: string;
-    /** @description cryptocurrency icon */
+    /**
+     * @description
+     *  📣 cryptocurrency icon
+     */
     icon: string;
-    /** @description cryptocurrency address */
+    /**
+     * @description
+     *  📣 cryptocurrency address
+     */
     contractAddress: string;
-    /** @description cryptocurrency ABI */
+    /**
+     * @description
+     *  📣 cryptocurrency ABI
+     */
     abi: unknown;
-    /** @description cryptocurrency user amount */
+    /**
+     * @description
+     *  📣 cryptocurrency user amount
+     */
     userBalance: any;
   }
 
-  type IStateWidget = 'In Progress' | 'Completed' | 'Error' | 'ErrorBalance' | null
+  /**
+   * @description
+   *  📣 Component interface.
+   */
+  type IStateWidget =
+    'In Progress'
+    | 'Completed'
+    | 'Error'
+    | 'ErrorBalance'
+    | null
+  ;
 
   const
     /** @description 📌 `this` component **main** `id` and `data-testid` prefix. */
@@ -488,6 +540,76 @@
     }
 
     return;
+  }
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟦 HELPER
+   * @description
+   *  📣 Calculate target `tier`.
+   * @return { void }
+   */
+  function calculateTier
+  (
+  ): void
+  {
+    if (depositAmount >= 100000)
+    {
+      tierDiscountObject
+        = {
+          name: 'platinum'
+          , icon: icon_platinum
+          , discount: 50
+          , btaPrice: 0.50
+        }
+      ;
+    }
+    else if (depositAmount >= 50000)
+    {
+      tierDiscountObject
+        = {
+          name: 'gold'
+          , icon: icon_gold
+          , discount: 40
+          , btaPrice: 0.60
+        }
+      ;
+    }
+    else if (depositAmount >= 20000)
+    {
+      tierDiscountObject
+        = {
+          name: 'silver'
+          , icon: icon_silver
+          , discount: 30
+          , btaPrice: 0.70
+        }
+      ;
+    }
+    else if (depositAmount >= 2500)
+    {
+      tierDiscountObject
+        = {
+          name: 'bronze'
+          , icon: icon_bronze
+          , discount: 20
+          , btaPrice: 0.80
+        }
+      ;
+    }
+    else if (depositAmount < 2500)
+    {
+      tierDiscountObject
+        = {
+          name: undefined
+          , icon: undefined
+          , discount: 0
+          , btaPrice: 1.00
+        }
+      ;
+    }
   }
 
   /**
@@ -894,26 +1016,29 @@
       return;
     }
 
-    // ▓ NOTE:
-    // ▓ > send data for completed user transaction to DB.
-    const txDepositData: B_H_TH
-    = {
-      uid: $userBetarenaSettings.user.firebase_user_data?.uid!
-      // date: new Date().toISOString(),
-      , wallet_address_erc20: walletAddress
-      , asset: cryptoDepositOptionSelect.name
-      , amount: depositAmount
-      , quantity: recieveAmount
-      , Gateway: 'cryptocurrency'
-      , description: 'Presale' // mapInvestorData.get('round')?.values.current_round
-      , type: 'investment'
-      , bta_price: tierDiscountObject.discount ?? 1
-      , deposit_wallet_address:
-      {
-        type: 'Polygon'
-        , address: walletAddress
-      }
-    };
+    const
+      /**
+       * @description
+       *  📣 send data for completed user transaction to DB.
+      */
+      txDepositData: B_H_TH
+        = {
+          uid: $userBetarenaSettings.user.firebase_user_data?.uid!
+          , asset: cryptoDepositOptionSelect.name
+          , amount: recieveAmount
+          , quantity: depositAmount
+          , Gateway: 'cryptocurrency'
+          , description: `${profileData?.presaleData.presale} presale`
+          , type: 'investment'
+          , bta_price: tierDiscountObject.btaPrice
+          , tier: tierDiscountObject.name
+          , deposit_wallet_address:
+          {
+            type: 'Polygon'
+            , address: walletAddress
+          }
+        }
+    ;
 
     // ▓ [🐞]
     console.debug
@@ -923,8 +1048,8 @@
 
     await post
     (
-      '/api/data/profile',
-      txDepositData
+      '/api/data/profile'
+      , txDepositData
     );
 
     triggerInvestBox = false;
@@ -994,40 +1119,7 @@
     executeContract();
   }
 
-  /**
-   * @description TODO:
-  */
-  $:
-  if (depositAmount >= 100000)
-  {
-    tierDiscountObject.name = 'Platinum';
-    tierDiscountObject.icon = icon_platinum;
-    tierDiscountObject.discount = 50;
-  }
-  else if (depositAmount >= 50000)
-  {
-    tierDiscountObject.name = 'Gold';
-    tierDiscountObject.icon = icon_gold;
-    tierDiscountObject.discount = 40;
-  }
-  else if (depositAmount >= 20000)
-  {
-    tierDiscountObject.name = 'Silver';
-    tierDiscountObject.icon = icon_silver;
-    tierDiscountObject.discount = 30;
-  }
-  else if (depositAmount >= 2500)
-  {
-    tierDiscountObject.name = 'Bronze';
-    tierDiscountObject.icon = icon_bronze;
-    tierDiscountObject.discount = 20;
-  }
-  else if (depositAmount < 2500)
-  {
-    tierDiscountObject.name = undefined;
-    tierDiscountObject.icon = undefined;
-    tierDiscountObject.discount = 0;
-  }
+  $: if (depositAmount) calculateTier();
 
   /**
    * @description TODO:
@@ -1945,6 +2037,7 @@
                 s-16
                 w-500
                 color-black-2
+                capitalize
                 "
               >
                 {tierDiscountObject.name}
