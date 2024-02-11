@@ -1357,7 +1357,12 @@
         ▓ > Fiat Deposit OPTION.
         -->
         <a
-          href="https://buy.stripe.com/7sIeWc72V8Hw33WbIM?client_reference_id=${$userBetarenaSettings.user.firebase_user_data?.uid}"
+          href=
+          {
+            !agreeTermsAndConditions
+              ? ''
+              : `https://buy.stripe.com/7sIeWc72V8Hw33WbIM?client_reference_id=${$userBetarenaSettings.user.firebase_user_data?.uid}`
+          }
           target="_blank"
           class=
           "
@@ -1365,7 +1370,13 @@
           "
         >
           <button
-            type="button"
+            id="fiat"
+            type=
+            {
+              !agreeTermsAndConditions
+                ? 'submit'
+                : 'button'
+            }
             class=
             "
             btn-hollow
