@@ -24,6 +24,8 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+	import { page } from '$app/stores';
+  
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 
@@ -32,6 +34,8 @@
   import icon_tx_processing from '../assets/tx-loader/tx-load-anim.svg';
 
   import ModalBackdrop from '$lib/components/misc/Modal-Backdrop.svelte';
+
+  import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -52,9 +56,14 @@
   export let
     /** @augments IStateWidget */
     stateWidget: IStateWidget
+    /**
+     * @description
+     *  📣 Target deposit amount.
+     */
+    , depositAmount: number
   ;
 
-  type IStateWidget = 'In Progress' | 'Completed' | 'Error' | null;
+  type IStateWidget = 'In Progress' | 'Completed' | 'Error' | 'ErrorBalance' | null;
 
   const
     /**
@@ -82,6 +91,8 @@
     iconState: string
   ;
 
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
+
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -102,8 +113,9 @@
     iconState = icon_tx_processing
   else if (stateWidget == 'Completed')
     iconState = icon_tx_complete
-  else if (stateWidget == 'Error')
+  else if (stateWidget == 'Error' || stateWidget == 'ErrorBalance')
     iconState = icon_tx_error;
+  //
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
@@ -161,6 +173,12 @@
       Transfer is complete
     {:else if stateWidget == 'Error'}
       Transfer incomplete.
+    {:else if stateWidget == 'ErrorBalance'}
+      {
+        profileTrs.investor?.invest_box.minimum_amount_request
+          .replace('XXX', depositAmount.toString())
+        ?? 'To participate in the private presale of BTA, you need to make a minimum investment of 2500 USD.'
+      }
     {/if}
   </p>
 
@@ -168,7 +186,7 @@
   ▓ NOTE:
   ▓ > modal button
   -->
-  {#if ['Completed', 'Error'].includes(stateWidget ?? '')}
+  {#if ['Completed', 'Error', 'ErrorBalance'].includes(stateWidget ?? '')}
 
     <button
       class=

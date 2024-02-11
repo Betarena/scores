@@ -92,7 +92,7 @@
   export let
     /**
      * @augments IProfileData
-    */
+     */
     profileData: IProfileData | null
   ;
 
@@ -125,7 +125,7 @@
     userBalance: any;
   }
 
-  type IStateWidget = 'In Progress' | 'Completed' | 'Error' | null;
+  type IStateWidget = 'In Progress' | 'Completed' | 'Error' | 'ErrorBalance' | null
 
   const
     /** @description 📌 `this` component **main** `id` and `data-testid` prefix. */
@@ -147,7 +147,7 @@
     /**
      * @description
      *  📣 Creating a Web3Modal with `WalletConnect` configuration.
-    */
+     */
     modal: Web3Modal = createWeb3Modal
     (
       {
@@ -209,52 +209,52 @@
     /**
      * @description
      *  📣 wether user has triggered the `invest` action.
-    */
+     */
     , triggerInvestBox: boolean = false
     /**
      * @description
      *  📣 wether user has triggered the `invest` action.
-    */
+     */
     , stateWidget: IStateWidget = null
     /**
      * @description
      *  📣 prices of supported tokens.
-    */
+     */
     , cryptoPrices: ICoinMarketCapDataMain
     /**
      * @description
      *  📣 target token price.
-    */
+     */
     , cryptoPrice: number
     /**
      * @description
      *  📣 amount user wishes to `deposit`.
-    */
+     */
     , depositAmount: number = $sessionStore.investDepositAmountMobileWeb3 ?? 2500
     /**
      * @description
      *  📣 amount user wishes to `recieve`.
-    */
+     */
     , recieveAmount: number = 2500
     /**
      * @description
      *  📣 target selected option by user.
-    */
+     */
     , selectDepositOption: 'crypto' | 'fiat' = 'crypto'
     /**
      * @description
      *  📣 tier discount data object
-    */
+     */
     , tierDiscountObject: ITierDiscount = { }
     /**
      * @description
      *  📣 terms&conditions checkbox
-    */
+     */
     , agreeTermsAndConditions: boolean = false
     /**
      * @description
      *  📣 crypto deposit data object list
-    */
+     */
     , cryptoDepositOptions: ICryptoDesposit[]
     = [
       {
@@ -277,42 +277,42 @@
     /**
      * @description
      *  📣 crypto deposit data object list (search)
-    */
+     */
     , cryptoDepositOptionsSearch: ICryptoDesposit[] = passByValue(cryptoDepositOptions)
     /**
      * @description
      *  📣 crypto deposit object selected
-    */
+     */
     , cryptoDepositOptionSelect: ICryptoDesposit = cryptoDepositOptions[0]
     /**
      * @description
      *  📣 modal open select cryptocurrency option
-    */
+     */
     , modalSelectCryptoOption: boolean = false
     /**
      * @description
      *  📣 modal open select cryptocurrency option
-    */
+     */
     , walletAddress: `0x${string}` | undefined
     /**
      * @description
      *  📣 search text for target token
-    */
+     */
     , tokenSearch: string
     /**
      * @description
      *  📣 interval for CoinMarketCap fetching
-    */
+     */
     , interval1: NodeJS.Timer
     /**
      * @description
      *  📣 modal unsubsribe events (callback)
-    */
+     */
     , modalUnsubscribe: (() => void)[] = []
     /**
      * @description
      *  📣 TODO:
-    */
+     */
     , deepReactListenSignerChange: unknown
   ;
 
@@ -713,10 +713,23 @@
     // ▓ [🐞]
     // console.log('📣', modal.getSigner());
     // ▓ [🐞]
-    console.log('📣', modal.getIsConnected());
+    // console.log('📣', modal.getIsConnected());
+
+    $sessionStore.currentActiveModal = 'ProfileInvestor_TxState_Modal';
+
+    if
+    (
+      ($userBetarenaSettings.user.scores_user_data?.investor_balance?.grand_total == undefined
+      || $userBetarenaSettings.user.scores_user_data.investor_balance.grand_total < (profileData?.presaleData.data?.min_buy ?? 2500))
+      && depositAmount < (profileData?.presaleData.data?.min_buy ?? 2500)
+    )
+    {
+      triggerInvestBox = false;
+      stateWidget = 'ErrorBalance';
+      return;
+    }
 
     stateWidget = 'In Progress';
-    $sessionStore.currentActiveModal = 'ProfileInvestor_WalletConnect_Modal';
 
     await switchUserNetwork();
 
@@ -818,7 +831,6 @@
     {
       triggerInvestBox = false;
       stateWidget = 'Error';
-      $sessionStore.currentActiveModal = 'ProfileInvestor_TxState_Modal';
       return;
     }
 
@@ -880,7 +892,6 @@
     {
       triggerInvestBox = false;
       stateWidget = 'Error';
-      $sessionStore.currentActiveModal = 'ProfileInvestor_TxState_Modal';
       return;
     }
 
@@ -919,7 +930,6 @@
 
     triggerInvestBox = false;
     stateWidget = 'Completed';
-    $sessionStore.currentActiveModal = 'ProfileInvestor_TxState_Modal';
 
     return;
   }
@@ -1161,6 +1171,7 @@
 {#if $sessionStore.currentActiveModal == 'ProfileInvestor_TxState_Modal'}
   <ModalTxState
     {stateWidget}
+    {depositAmount}
     on:closeDropdown=
     {
       () =>
@@ -1179,7 +1190,14 @@
 >
   <form
     id='invest-form'
-    on:submit|preventDefault={() => {return executeDeposit()}}
+    on:submit|preventDefault=
+    {
+      () =>
+      {
+        executeDeposit();
+        return;
+      }
+    }
   >
 
     <!--
@@ -1757,6 +1775,7 @@
             -->
             <input
               type="number"
+              step="any"
               placeholder=0
               class=
               "
