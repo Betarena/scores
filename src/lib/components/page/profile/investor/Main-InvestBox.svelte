@@ -142,70 +142,69 @@
   ;
 
   let
-    /** @augments IProfileTrs */
-    // DProfTrs: IProfileTrs
     /**
      * @description
      *  📣 Creating a Web3Modal with `WalletConnect` configuration.
      */
-    modal: Web3Modal = createWeb3Modal
-    (
-      {
-        projectId: import.meta.env.VITE_WALLETCONNECT_ID
-        , ethersConfig: defaultConfig
-        (
-          {
-            metadata:
+    modal: Web3Modal
+      = createWeb3Modal
+      (
+        {
+          projectId: import.meta.env.VITE_WALLETCONNECT_ID
+          , ethersConfig: defaultConfig
+          (
             {
-              name: 'Scores Platform'
-              , description: 'Betarena Scores Platform'
-              , url: 'https://betarena-scores-platform.herokuapp.com/'
-              , icons:
-              [
-                'https://betarena-scores-platform.herokuapp.com/_app/immutable/assets/betarena-logo-full.f6af936d.svg'
-              ]
+              metadata:
+              {
+                name: 'Scores Platform'
+                , description: 'Betarena Scores Platform'
+                , url: 'https://betarena-scores-platform.herokuapp.com/'
+                , icons:
+                [
+                  'https://betarena-scores-platform.herokuapp.com/_app/immutable/assets/betarena-logo-full.f6af936d.svg'
+                ]
+              }
+              , defaultChainId: 80001
+              , enableCoinbase: true
             }
-            , defaultChainId: 80001
-            , enableCoinbase: true
-          }
-        )
-        , chains:
-        [
-          chainObjectWalletConnect.ethereum
-          , chainObjectWalletConnect.polygon_mumbai
-        ]
-        , defaultChain: chainObjectWalletConnect.polygon_mumbai
-        // , featuredWalletIds:
-        // [
-        //   // ▓ NOTE:
-        //   // ▓ > MetaMask Wallet
-        //   // 'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96'
-        //   // ▓ NOTE:
-        //   // ▓ > Trust Wallet
-        //   // , '4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0'
-        //   // ▓ NOTE:
-        //   // ▓ > CoinBase Wallet
-        //   // , 'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa'
-        // ]
-        // , includeWalletIds:
-        // [
-        //   // ▓ NOTE:
-        //   // ▓ > MetaMask Wallet
-        //   // 'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96'
-        //   // ▓ NOTE:
-        //   // ▓ > Trust Wallet
-        //   // , '4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0'
-        //   // ▓ NOTE:
-        //   // ▓ > CoinBase Wallet
-        //   // , 'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa'
-        // ]
-        // , excludeWalletIds:
-        // [
-        // ]
-        // , privacyPolicyUrl: ''
-        // , termsConditionsUrl: ''
-      }
-    )
+          )
+          , chains:
+          [
+            chainObjectWalletConnect.ethereum
+            , chainObjectWalletConnect.polygon_mumbai
+          ]
+          , defaultChain: chainObjectWalletConnect.polygon_mumbai
+          // , featuredWalletIds:
+          // [
+          //   // ▓ NOTE:
+          //   // ▓ > MetaMask Wallet
+          //   // 'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96'
+          //   // ▓ NOTE:
+          //   // ▓ > Trust Wallet
+          //   // , '4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0'
+          //   // ▓ NOTE:
+          //   // ▓ > CoinBase Wallet
+          //   // , 'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa'
+          // ]
+          // , includeWalletIds:
+          // [
+          //   // ▓ NOTE:
+          //   // ▓ > MetaMask Wallet
+          //   // 'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96'
+          //   // ▓ NOTE:
+          //   // ▓ > Trust Wallet
+          //   // , '4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0'
+          //   // ▓ NOTE:
+          //   // ▓ > CoinBase Wallet
+          //   // , 'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa'
+          // ]
+          // , excludeWalletIds:
+          // [
+          // ]
+          // , privacyPolicyUrl: ''
+          // , termsConditionsUrl: ''
+        }
+      )
     /**
      * @description
      *  📣 wether user has triggered the `invest` action.
@@ -220,7 +219,7 @@
      * @description
      *  📣 prices of supported tokens.
      */
-    , cryptoPrices: ICoinMarketCapDataMain
+    , cryptoPrices:  null | undefined | ICoinMarketCapDataMain
     /**
      * @description
      *  📣 target token price.
@@ -256,24 +255,24 @@
      *  📣 crypto deposit data object list
      */
     , cryptoDepositOptions: ICryptoDesposit[]
-    = [
-      {
-        full_name: 'USD Coin'
-        ,name: 'USDC'
-        ,icon: icon_usdc
-        ,contractAddress: '0x0FA8781a83E46826621b3BC094Ea2A0212e71B23'
-        ,abi: usdcContractAddressABI
-        ,userBalance: null
-      }
-      ,{
-        full_name: 'Tether'
-        ,name: 'USDT'
-        ,icon: icon_usdt
-        ,contractAddress: '0x3813e82e6f7098b9583FC0F33a962D02018B6803'
-        ,abi: usdtContractAddressABI
-        ,userBalance: null
-      }
-    ]
+      = [
+        {
+          full_name: 'USD Coin'
+          ,name: 'USDC'
+          ,icon: icon_usdc
+          ,contractAddress: '0x0FA8781a83E46826621b3BC094Ea2A0212e71B23'
+          ,abi: usdcContractAddressABI
+          ,userBalance: null
+        }
+        ,{
+          full_name: 'Tether'
+          ,name: 'USDT'
+          ,icon: icon_usdt
+          ,contractAddress: '0x3813e82e6f7098b9583FC0F33a962D02018B6803'
+          ,abi: usdtContractAddressABI
+          ,userBalance: null
+        }
+      ]
     /**
      * @description
      *  📣 crypto deposit data object list (search)
@@ -316,7 +315,7 @@
     , deepReactListenSignerChange: unknown
   ;
 
-  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
   $: deepReactListenSignerChange = undefined;
   $: deepReactListenDepositOptionChange = JSON.stringify(cryptoDepositOptionSelect);
 
@@ -953,28 +952,9 @@
       null,
       true,
       true
-    ) as ICoinMarketCapDataMain;
-
-    cryptoPrice = parseFloat(toDecimalFix(cryptoPrices.data[cryptoDepositOptionSelect.name].quote.USD.price, 3, true, false)) ?? 0;
-
-    interval1 = setInterval
-    (
-      async (
-      ): Promise < void > =>
-      {
-        cryptoPrices = await get
-        (
-          '/api/coinmarketcap?tickers=USDT,USDC',
-          null,
-          true,
-          true
-        ) as ICoinMarketCapDataMain;
-
-        cryptoPrice = parseFloat(toDecimalFix(cryptoPrices.data[cryptoDepositOptionSelect.name].quote.USD.price, 3, true, false)) ?? 0;
-      }
-      ,
-      30000
     );
+
+    cryptoPrice = parseFloat(toDecimalFix(cryptoPrices?.data[cryptoDepositOptionSelect.name].quote.USD.price, 3, true, false));
 
     return;
   }
@@ -1131,6 +1111,16 @@
     ) =>
     {
       getCryptoPrices();
+      interval1 = setInterval
+      (
+        async (
+        ): Promise < void > =>
+        {
+          getCryptoPrices();
+        }
+        ,
+        30000
+      );
       addEventListeners();
       resizeAction();
       return;
