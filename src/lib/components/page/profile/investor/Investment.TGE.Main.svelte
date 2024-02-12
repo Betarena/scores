@@ -312,7 +312,7 @@
         "
       >
         {
-          formatNumberWithCommas($userBetarenaSettings.user.scores_user_data?.investor_balance.tge_to_claim ?? 0)
+          formatNumberWithCommas($userBetarenaSettings.user.scores_user_data?.investor_balance?.tge_to_claim ?? 0)
         }
         <span
           class=
