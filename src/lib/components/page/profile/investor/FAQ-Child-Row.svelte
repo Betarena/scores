@@ -1,9 +1,10 @@
 <!--
-╭──────────────────────────────────────────────────────────────────────────────╮
-│ COMPONENT JS (w/ TS)                                                         │
-│ NOTE:                                                                        │
-│ access custom Betarena Scores JS VScode Snippets by typing 'script...'       │
-╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ Svelte Component JS/TS                                                           │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
+╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <script lang="ts">
@@ -23,9 +24,10 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+	import { fade } from 'svelte/transition';
+
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { toZeroPrefixDateStr } from '$lib/utils/dates.js';
-	import { fade } from 'svelte/transition';
 
   import icon_faq_minus_dark from '../assets/investor/icon-faq-minus-dark.svg';
   import icon_faq_minus from '../assets/investor/icon-faq-minus.svg';
@@ -49,29 +51,47 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
+
   export let
-    /** @augments B_H_INVEST_TRS_Option */
+    /**
+     * @augments B_H_INVEST_TRS_Option
+     */
     data: B_H_INVEST_TRS_Option
-    /** @description 📣 target position of `this` row component */
+    /**
+     * @description
+     *  📣 target position of `this` row component
+     */
     , position: number
   ;
 
   const
-    /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
-    // eslint-disable-next-line no-unused-vars
+    /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */ // eslint-disable-next-line no-unused-vars
     CNAME = 'profile⮕w⮕investfaq⮕child⮕row'
-    /** @description 📣 threshold start + state for 📱 MOBILE */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
-    /** @description 📣 threshold start + state for 💻 TABLET */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
   let
-    /** @description 📣 wether `this` component is in an **show more** state */
-    stateIsExpanded: boolean = false
-    /** @description 📣 type `.svg` icon element */
+    /**
+     * @description
+     *  📣 threshold start + state for 📱 MOBILE
+     */ // eslint-disable-next-line no-unused-vars
+    VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
+    /**
+     * @description
+     *  📣 threshold start + state for 💻 TABLET
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
+    /**
+     * @description
+     *  📣 wether `this` component is in an **show more** state
+     */
+    , stateIsExpanded: boolean = false
+    /**
+     * @description
+     *  📣 type `.svg` icon element
+     */
     , iconExpand: string
   ;
 
@@ -92,32 +112,24 @@
 
   $:
   if ($userBetarenaSettings.theme == 'Dark')
-  {
-    if (stateIsExpanded)
-      iconExpand = icon_faq_minus_dark
-    else
-      iconExpand = icon_faq_plus_dark
-  }
+    iconExpand = stateIsExpanded ? icon_faq_minus_dark : icon_faq_plus_dark
   else
-  {
-    if (stateIsExpanded)
-      iconExpand = icon_faq_minus
-    else
-      iconExpand = icon_faq_plus
-  }
+    iconExpand = stateIsExpanded ? icon_faq_minus : icon_faq_plus;
+  // ────────────────────────────────────────────────────────────────────────
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
 </script>
 
 <!--
-╭──────────────────────────────────────────────────────────────────────────────╮
-│ COMPONENT HTML                                                               │
-│ NOTE:                                                                        │
-│ use 'CTRL+SPACE' to autocomplete global class="" styles                      │
-│ NOTE:                                                                        │
-│ access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.   │
-╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ Svelte Component HTML                                                            │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <!--
@@ -131,7 +143,14 @@
   <!---->
   {CNAME}
   "
-  on:click={() => {return stateIsExpanded = !stateIsExpanded}}
+  on:click=
+  {
+    () =>
+    {
+      stateIsExpanded = !stateIsExpanded;
+      return;
+    }
+  }
 >
 
   <!--
@@ -226,13 +245,13 @@
 </div>
 
 <!--
-╭──────────────────────────────────────────────────────────────────────────────╮
-│ COMPONENT STYLE                                                              │
-│ NOTE:                                                                        │
-│ auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE│
-│ NOTE:                                                                        │
-│ access custom Betarena Scores CSS VScode Snippets by typing 'style...'       │
-╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ Svelte Component CSS/SCSS                                                        │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
+╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <style lang="scss">

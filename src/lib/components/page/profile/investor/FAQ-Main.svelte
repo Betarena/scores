@@ -1,9 +1,10 @@
 <!--
-╭──────────────────────────────────────────────────────────────────────────────╮
-│ COMPONENT JS (w/ TS)                                                         │
-│ NOTE:                                                                        │
-│ access custom Betarena Scores JS VScode Snippets by typing 'script...'       │
-╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ Svelte Component JS/TS                                                           │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
+╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <script lang="ts">
@@ -24,7 +25,6 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { page } from '$app/stores';
-  import { onMount } from 'svelte';
 
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { viewport_change } from '$lib/utils/platform-functions.js';
@@ -50,71 +50,60 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   const
-    /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
+    /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */ // eslint-disable-next-line no-unused-vars
     CNAME: string = 'profile⮕w⮕investfaq⮕main'
-    /** @description 📣 threshold start + state for 📱 MOBILE */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
-    /** @description 📣 threshold start + state for 💻 TABLET */
-    // eslint-disable-next-line no-unused-vars
+  ;
+
+  let
+    /**
+     * @description
+     *  📣 threshold start + state for 📱 MOBILE
+     */ // eslint-disable-next-line no-unused-vars
+    VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
+    /**
+     * @description
+     *  📣 threshold start + state for 💻 TABLET
+     */ // eslint-disable-next-line no-unused-vars
     , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
-  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
 
   // #endregion ➤ 📌 VARIABLES
 
-  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+</script>
 
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'logic' that should run            │
-  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
-  // │ as soon as 'this' .svelte file is ran.                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  onMount
-  (
+<svelte:window
+  on:resize=
+  {
     () =>
     {
       [
         VIEWPORT_TABLET_INIT[1],
         VIEWPORT_MOBILE_INIT[1]
-      ] = viewport_change
-      (
-        VIEWPORT_TABLET_INIT[0],
-        VIEWPORT_MOBILE_INIT[0]
-      );
-      window.addEventListener
-      (
-        'resize',
-        function ()
-        {
-          [
-            VIEWPORT_TABLET_INIT[1],
-            VIEWPORT_MOBILE_INIT[1]
-          ] = viewport_change
-          (
-            VIEWPORT_TABLET_INIT[0],
-            VIEWPORT_MOBILE_INIT[0]
-          );
-        }
-      );
+      ]
+      = viewport_change
+        (
+          VIEWPORT_TABLET_INIT[0],
+          VIEWPORT_MOBILE_INIT[0]
+        );
+      return;
     }
-  );
-
-  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
-
-</script>
+  }
+/>
 
 <!--
-╭──────────────────────────────────────────────────────────────────────────────╮
-│ COMPONENT HTML                                                               │
-│ NOTE:                                                                        │
-│ use 'CTRL+SPACE' to autocomplete global class="" styles                      │
-│ NOTE:                                                                        │
-│ access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.   │
-╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ Svelte Component HTML                                                            │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <div
@@ -143,8 +132,9 @@
       m-b-16
       "
     >
+      <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
       {
-        profileTrs.investor?.faq.title
+        profileTrs?.investor?.faq.title
         ?? 'Frequently Asked Questions'
       }
     </p>
@@ -160,8 +150,9 @@
       color-grey
       "
     >
+      <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
       {
-        profileTrs.investor?.faq.sub_title
+        profileTrs?.investor?.faq.sub_title
         ?? 'Have questions? Find answers to the most commonly asked questions about the Betarena presale and referral program.'
       }
     </p>
@@ -180,7 +171,7 @@
     "
   >
 
-    {#each profileTrs.investor?.faq.options ?? [] as item,i}
+    {#each profileTrs?.investor?.faq.options ?? [] as item,i}
 
       <FaqChildRow
         position={i}
@@ -231,8 +222,9 @@
         m-b-16
         "
       >
+        <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
         {
-          profileTrs.investor?.presale.title_information
+          profileTrs?.investor?.presale.title_information
           ?? 'Need More Information?'
         }
       </p>
@@ -252,8 +244,9 @@
         {VIEWPORT_MOBILE_INIT[1] ? '' : 'max-width: 65%;'}
         "
       >
+        <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
         {
-          profileTrs.investor?.presale.description_information
+          profileTrs?.investor?.presale.description_information
           ?? 'For a comprehensive understanding of the Betarena presale, please visit our Presale Page.'
         }
       </p>
@@ -275,8 +268,9 @@
           btn-shadow-1
         "
       >
+        <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
         {
-          profileTrs.investor?.presale.cta_presale
+          profileTrs?.investor?.presale.cta_presale
           ?? 'Link to Presale'
         }
       </button>
@@ -287,13 +281,13 @@
 </div>
 
 <!--
-╭──────────────────────────────────────────────────────────────────────────────╮
-│ COMPONENT STYLE                                                              │
-│ NOTE:                                                                        │
-│ auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE│
-│ NOTE:                                                                        │
-│ access custom Betarena Scores CSS VScode Snippets by typing 'style...'       │
-╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ Svelte Component CSS/SCSS                                                        │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
+╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <style lang="scss">
