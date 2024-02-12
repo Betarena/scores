@@ -28,8 +28,8 @@
 	import { viewport_change } from '$lib/utils/platform-functions';
 	import { onMount } from 'svelte';
 
-	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { sleep } from '$lib/utils/platform-functions.js';
+  import userBetarenaSettings from '$lib/store/user-settings.js';
+  import { scoresProfileInvestorStore } from './_store.js';
 
 	import WidgetTxHistLoader from './../competitions-history/Widget-Comp-Hist-Loader.svelte';
 	import MainFaq from './FAQ-Main.svelte';
@@ -150,12 +150,10 @@
   (
   ): Promise < IProfileData | null >
   {
-    // await sleep(3000);
-
-    const response: IProfileData = await get
+    const response = await get
     (
       `/api/data/profile?uid=${$userBetarenaSettings.user.firebase_user_data?.uid}`
-      // `/api/data/profile?uid=0x1510ea733e1e81f9bcfcc4eabb5a2226d1a9f9ea18da9aea119ba28b8ed6be81`
+      // '/api/data/profile?uid=0x1510ea733e1e81f9bcfcc4eabb5a2226d1a9f9ea18da9aea119ba28b8ed6be81'
       //  '/api/data/profile?uid=Z4ebLuAuDqdOu4Wt6z6EfVn35js2'
     ) as IProfileData;
 
@@ -172,6 +170,21 @@
     }
 
     widgetNoData = false;
+
+    // IMPORTANT
+    scoresProfileInvestorStore.assignMainSectionState
+    (
+      {
+        investmentCount: $userBetarenaSettings.user.scores_user_data?.investor_balance?.grand_total
+        , presaleName: widgetDataMain.presaleData.presale
+        , activePresaleStartDate: widgetDataMain.presaleData.data?.start_date
+        , activePresaleEndDate: widgetDataMain.presaleData.data?.end_date
+        , publicEndDate: widgetDataMain.presaleData.data?.end_date
+        , tgeAvailableDate: widgetDataMain.investorData?.data?.tge.available_date
+        , tgeStatus: widgetDataMain.investorData?.data?.tge.status
+      }
+    );
+
     return widgetDataMain;
   }
 
@@ -328,8 +341,8 @@
 
       <TgeMain
         profileData={data}
-        VIEWPORT_MOBILE_INIT_PARENT={VIEWPORT_MOBILE_INIT}
-        VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
+        {VIEWPORT_MOBILE_INIT}
+        {VIEWPORT_TABLET_INIT}
       />
 
       <MainInvestmentDetail
@@ -344,8 +357,8 @@
 
       <MainVestingPeriods
         profileData={data}
-        VIEWPORT_MOBILE_INIT_PARENT={VIEWPORT_MOBILE_INIT}
-        VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
+        {VIEWPORT_MOBILE_INIT}
+        {VIEWPORT_TABLET_INIT}
       />
     </div>
 

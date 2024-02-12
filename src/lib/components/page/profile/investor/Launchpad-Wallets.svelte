@@ -23,22 +23,22 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  import { browser } from '$app/environment';
   import { page } from '$app/stores';
   import { onDestroy, onMount } from 'svelte';
 
   import userBetarenaSettings from '$lib/store/user-settings.js';
   import { MONTH_NAMES_ABBRV } from '$lib/utils/dates.js';
+  import { dlog } from '$lib/utils/debug.js';
+  import { formatNumberWithCommas } from '$lib/utils/platform-functions.js';
+  import { passByValue } from '@betarena/scores-lib/dist/functions/func.common.js';
+  import { tryCatchAsync } from '@betarena/scores-lib/dist/util/util.common.js';
   import { Chart, registerables, type ChartItem } from 'chart.js';
 
   import icon_bta_token from '../assets/price-tier/icon-bta-token.svg';
 
-  import { browser } from '$app/environment';
-  import { dlog } from '$lib/utils/debug.js';
-  import { passByValue } from '@betarena/scores-lib/dist/functions/func.common.js';
-  import { tryCatchAsync } from '@betarena/scores-lib/dist/util/util.common.js';
-
-  import { formatNumberWithCommas } from '$lib/utils/platform-functions.js';
   import type { B_H_TH, PUBLIC__INVESTOR_DeleteInvestorByPkElement } from '@betarena/scores-lib/types/_HASURA_.js';
+  import type { B_SAP_D2 } from '@betarena/scores-lib/types/seo-pages.js';
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -62,28 +62,37 @@
   export let
     /**
      * @augments IProfileData
-    */
+     */
     profileData: IProfileData | null
     /**
      * @description
      *  📣
-    */
+     */
     , VIEWPORT_MOBILE_INIT_PARENT: [ number, boolean ]
     /**
      * @description
      *  📣
-    */
+     */
     , VIEWPORT_TABLET_INIT_PARENT: [ number, boolean ]
   ;
 
   const
-    /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
+    /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */
     // eslint-disable-next-line no-unused-vars
     CNAME: string = 'profile⮕w⮕launchpad-wallets⮕main'
-    /** @description 📣 threshold start + state for 📱 MOBILE */
+    /**
+     * @description
+     *  📣 threshold start + state for 📱 MOBILE
+     */
     // eslint-disable-next-line no-unused-vars
     , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
-    /** @description 📣 threshold start + state for 💻 TABLET */
+    /**
+     * @description
+     *  📣 threshold start + state for 💻 TABLET
+     */
     // eslint-disable-next-line no-unused-vars
     , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
@@ -92,74 +101,77 @@
     /**
      * @description
      *  📣
-    */
+     */
     today: Date = new Date()
     /**
      * @description
      *  📣
-    */
-    , targetMonths = () =>
-    {
-      const dateList: Date[] = [];
-
-      today.setFullYear(today.getFullYear() - 1);
-      today.setMonth(1);
-
-      for (let index = 0; index < 24; index++)
+     */
+    , targetMonths
+      = () =>
       {
-        dateList.push(new Date(today));
-        today.setMonth(today.getMonth() + 1);
-      }
+        const dateList: Date[] = [];
 
-      return dateList;
-    }
+        today.setFullYear(2024);
+        today.setMonth(1);
+
+        for (let index = 0; index < 24; index++)
+        {
+          dateList.push(new Date(today));
+          today.setMonth(today.getMonth() + 1);
+        }
+
+        return dateList;
+      }
     /**
      * @description
      *  📣 Invesmtnet `map` showing investment change per calendar month.
-    */
-    , mapInvestAmountDeltaPerMonth = generateInvestmentMonthlyMap
-    (
-      targetMonths()
-      , profileData?.tx_hist ?? []
-      , profileData?.investorData
-    )
+     */
+    , mapInvestAmountDeltaPerMonth
+      = generateInvestmentMonthlyMap
+      (
+        targetMonths()
+        , profileData?.tx_hist ?? []
+        , profileData?.investorData
+      )
     /**
      * @description
      *  📣 stores target `state` used within widget.
-    */
+     */
     , stateObject:
-    {
-      /**
-       * @description
-       *  📣 stores target `chart` instance (1).
-      */
-      chartInstance: Chart | null;
-      /**
-       * @description
-       *  📣 stores target `chart` instance (2).
-      */
-     chartInstance2: Chart | null;
-      /**
-       * @description
-       *  📣 stores target `chart` scroll action (lock).
-      */
-      chartIsBeingScrolled: boolean;
-    } = {
-      chartInstance: null
-      , chartInstance2: null
-      , chartIsBeingScrolled: false
-    }
+      {
+        /**
+         * @description
+         *  📣 stores target `chart` instance (1).
+        */
+        chartInstance: Chart | null;
+        /**
+         * @description
+         *  📣 stores target `chart` instance (2).
+        */
+      chartInstance2: Chart | null;
+        /**
+         * @description
+         *  📣 stores target `chart` scroll action (lock).
+        */
+        chartIsBeingScrolled: boolean;
+      } = {
+        chartInstance: null
+        , chartInstance2: null
+        , chartIsBeingScrolled: false
+      }
     /**
      * @description
      *  📣 Target `start` scroll value.
-    */
+     */
     , startScroll: number = 0
   ;
 
   // ▓ [🐞]
   // console.log('targetMonths', targetMonths())
 
-  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
+  $: monthsTrs = $page.data.B_SAP_D2 as B_SAP_D2 | null | undefined;
   $: deepReactListen1 = passByValue($userBetarenaSettings.theme);
 
   // #endregion ➤ 📌 VARIABLES
@@ -357,17 +369,17 @@
       /**
        * @description
        *  📣 Temporary `map` for `transaction-history` data sum grouped by `month_year` data.
-      */
+       */
       mapTemp = new Map < string, number >()
       /**
        * @description
        *  📣 Temporary `map` for `referral-history` data sum grouped by `month_year` data.
-      */
+       */
       , mapTemp2 = new Map < string, number >()
       /**
        * @description
        *  📣 Main `map` holding past year (12-months) data, merged with `mapTemp` data.
-      */
+       */
       , mapMain = new Map < string, number >()
     ;
 
@@ -389,9 +401,9 @@
       let deltaAmount: number = 0;
 
       if (iterator.type == 'investment')
-        deltaAmount = iterator.amount ?? 0;
-      else if (iterator.type == 'vesting')
-        deltaAmount = -(iterator.amount ?? 0);
+        deltaAmount = iterator.quantity ?? 0;
+      else if (iterator.type == 'vesting' || iterator.type == 'tge')
+        deltaAmount = -(iterator.quantity ?? 0);
       //
 
       if (mapTemp.has(txMonthYear))
@@ -402,17 +414,19 @@
         continue;
       }
 
-      mapTemp.set(txMonthYear, iterator.amount ?? 0);
+      mapTemp.set(txMonthYear, iterator.quantity ?? 0);
     }
 
     // ▓ [🐞]
-    // console.log('mapTemp', mapTemp);
+    console.log('mapTemp', mapTemp);
 
     // ▓ NOTE:
     // ▓ > loop over each referral and group them by monthly+year;
     for (const iterator of investorData?.data?.referral_history ?? [])
     {
-      const txMonthYear = `${new Date(iterator.date).getMonth()}_${new Date(iterator.date).getFullYear()}`;
+      const
+        txMonthYear = `${new Date(iterator.date).getMonth()}_${new Date(iterator.date).getFullYear()}`
+      ;
 
       if (mapTemp2.has(txMonthYear))
       {
@@ -426,13 +440,13 @@
     }
 
     // ▓ [🐞]
-    // console.log('mapTemp2', mapTemp2);
+    console.log('mapTemp2', mapTemp2);
 
     let
       /**
        * @description
        *  📣 **cumulative sum** for month-on-month amount.
-      */
+       */
       cummulativeSum: number = 0
     ;
 
@@ -440,7 +454,9 @@
     // ▓ > loop over each group monthly+year.
     for (const date of dateList)
     {
-      const txMonthYear = `${new Date(date).getMonth()}_${new Date(date).getFullYear()}`;
+      const
+        txMonthYear = `${new Date(date).getMonth()}_${new Date(date).getFullYear()}`
+      ;
 
       if (mapTemp.has(txMonthYear))
       {
@@ -463,7 +479,7 @@
     }
 
     // ▓ [🐞]
-    // console.log('mapMain', mapMain);
+    console.log('mapMain', mapMain);
 
     return mapMain;
   }
@@ -521,7 +537,14 @@
             type: 'line'
             , data:
             {
-              labels: [...mapInvestAmountDeltaPerMonth.keys()].map(x => {return MONTH_NAMES_ABBRV[x.split('_')[0]]})
+              labels: [...mapInvestAmountDeltaPerMonth.keys()]
+                .map
+                (
+                  x =>
+                  {
+                    return monthsTrs?.months_abbreviation?.[MONTH_NAMES_ABBRV[x.split('_')[0]]]
+                  }
+                )
               , datasets: [
                 {
                   data: [...mapInvestAmountDeltaPerMonth.values()]
@@ -562,6 +585,7 @@
                 y:
                 {
                   beginAtZero: true
+                  // , suggestedMin: 100
                   , min: 100
                   , grid:
                   {
@@ -602,7 +626,14 @@
             type: 'line'
             , data:
             {
-              labels: [...mapInvestAmountDeltaPerMonth.keys()].map(x => {return MONTH_NAMES_ABBRV[x.split('_')[0]]})
+              labels: [...mapInvestAmountDeltaPerMonth.keys()]
+                .map
+                (
+                  x =>
+                  {
+                    return monthsTrs?.months_abbreviation?.[MONTH_NAMES_ABBRV[x.split('_')[0]]]
+                  }
+                )
               , datasets: [
                 {
                   data: [...mapInvestAmountDeltaPerMonth.values()]
@@ -640,6 +671,7 @@
                 y:
                 {
                   beginAtZero: true
+                  // , suggestedMin: 100
                   , min: 100
                   , afterFit: (ctx) =>
                   {
@@ -794,9 +826,9 @@
       m-b-12
       "
     >
-
       {
-        'Investor Wallets'
+        profileTrs?.investor?.general.title_wallet
+        ?? 'Investor Wallets'
       }
     </p>
 

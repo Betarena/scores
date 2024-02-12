@@ -60,7 +60,6 @@ ignorePatterns:
   - yarn.lock
   # ▓ NOTE:
   # ▓ > gradual eslint introduction in project.
-  - src/lib/api
   - src/lib/geo-js
   - src/lib/graphql
   - src/lib/redis
@@ -102,10 +101,11 @@ rules:
 
   curly:
     - error
-    - multi-or-nest
+    - multi
+    - consistent
   max-len:
     - error
-    - code: 150
+    - code: 250
   quotes:
     - error
     - single

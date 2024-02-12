@@ -60,12 +60,12 @@
     /**
      * @description
      *  📣 makes use of parent 📱 MOBILE viewport state.
-    */
+     */
     , VIEWPORT_MOBILE_INIT_PARENT: [ number, boolean ]
     /**
      * @description
      *  📣 makes use of parent 💻 TABLET viewport state.
-    */
+     */
     , VIEWPORT_TABLET_INIT_PARENT: [ number, boolean ]
   ;
 
@@ -118,19 +118,19 @@
     /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
-    */
+     */
     // eslint-disable-next-line no-unused-vars
     CNAME: string = 'profile⮕w⮕investment-wallets⮕main'
     /**
      * @description
      *  📣 threshold start + state for 📱 MOBILE
-    */
+     */
     // eslint-disable-next-line no-unused-vars
     , VIEWPORT_MOBILE_INIT: [ number, boolean ] = VIEWPORT_MOBILE_INIT_PARENT
     /**
      * @description
      *  📣 threshold start + state for 💻 TABLET
-    */
+     */
     // eslint-disable-next-line no-unused-vars
     , VIEWPORT_TABLET_INIT: [ number, boolean ] = VIEWPORT_TABLET_INIT_PARENT
   ;
@@ -139,28 +139,16 @@
     /**
      * @description
      *  📣 Target **unique** wallets used in `investments` by _this_ user.
-    */
-    userWallets: string[]
-    = [
-      ...new Set
-      (
-        profileData?.tx_hist
-          ?.filter(x => { return x.type == 'vesting' && x.wallet_address_erc20 != null })
-          ?.map(x => { return x.wallet_address_erc20 ?? '' })!
-      )
-    ]
+     */
+    userWallets: string[] = profileData?.investorData?.data?.investor_wallets ?? []
     /**
      * @description
      *  📣 target `DEV` class instance.
-    */
+     */
     , newDevInstance = new Dev()
   ;
 
-  /**
-   * @description
-   *  📣 Available `translations`.
-   */
-  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
 
   // ▓ [🐞]
   // ▓ > validate for missing user not having any associated investment wallets.
@@ -230,7 +218,7 @@
       "
     >
       {
-        profileTrs.investor?.wallets.title
+        profileTrs?.investor?.wallets.title
         ?? 'Investor Wallet Address'
       }
     </p>
@@ -263,7 +251,7 @@
         && !newDevInstance.noData
       }
         {
-          profileTrs.investor?.wallets.view
+          profileTrs?.investor?.wallets.view
           ?? 'View All'
         }
       {/if}
@@ -316,7 +304,7 @@
       on:click={() => { copyToClipboard(userWallets[0]); return; }}
     >
       {
-        profileTrs.investor?.wallets.copy
+        profileTrs?.investor?.wallets.copy
         ?? 'Copy'
       }
     </p>

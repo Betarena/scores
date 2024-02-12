@@ -2,8 +2,8 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
-│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
+│ ➤ HINT: | Access snippets for '<script> [..] </script>' those found in           │
+|         | '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -24,19 +24,12 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { page } from '$app/stores';
-  import { fly } from 'svelte/transition';
+	import sessionStore from '$lib/store/session.js';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 
-  import sessionStore from '$lib/store/session.js';
-  import userBetarenaSettings from '$lib/store/user-settings.js';
-  import { copyToClipboard } from '$lib/utils/platform-functions.js';
-
-  import icon_close from '../assets/investor/icon-close-btn.svg';
-  import icon_close_dark from '../assets/investor/icon-close-dark-btn.svg';
+  import icon_tx_error from './assets/icon-error.svg';
 
   import ModalBackdrop from '$lib/components/misc/Modal-Backdrop.svelte';
-
-  import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -56,10 +49,17 @@
 
   export let
     /**
-     * @description
-     *  📣 List of wallets to be displayed.
-    */
-    walletAddressList: string[]
+     * @augments IStateWidget
+     */
+    stateWidget: IStateWidget
+  ;
+
+  /**
+   * @description
+   *  📣
+   */
+  type IStateWidget =
+    'Error'
   ;
 
   const
@@ -68,7 +68,7 @@
      *  📣 `this` component **main** `id` and `data-testid` prefix.
      */
     // eslint-disable-next-line no-unused-vars
-    CNAME: string = 'profile⮕w⮕wallets-modal⮕main'
+    CNAME: string = 'general⮕w⮕modal-error'
     /**
      * @description
      *  📣 threshold start + state for 📱 MOBILE
@@ -83,9 +83,31 @@
     , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
-  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
+  let
+    /** @description */
+    iconState: string
+  ;
 
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  $: if (stateWidget == 'Error')
+    iconState = icon_tx_error;
+  //
+
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
 </script>
 
@@ -93,80 +115,64 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component HTML                                                            │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
-│         │ imported from './static/app.css'                                       │
-│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
-│         │ abbrev.                                                                │
+│ ➤ HINT: | Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    |
+│         │ imported from './static/app.css'                                       |
+│ ➤ HINT: | access custom Betarena Scores VScode Snippets by typing emmet-like     |
+|         | abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<ModalBackdrop
-  on:closeModal=
-  {
-    () =>
-    {
-      $sessionStore.currentActiveModal = null;
-      return;
-    }
-  }
-/>
+<ModalBackdrop />
 
-<!--
-▓ NOTE:
-▓ > (box) main modal
--->
 <div
   id={CNAME}
   class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
-  in:fly={{ y: 500, duration: 500 }}
-  out:fly={{ y: 500, duration: 500 }}
 >
 
   <!--
   ▓ NOTE:
-  ▓ > (box) modal top row
+  ▓ > modal image
   -->
-  <div
-    id="top-row"
+  <img
+    id=''
+    title=''
+    alt=''
+    src={iconState}
+    loading='lazy'
+    width=48
+    height=48
+  />
+
+  <!--
+  ▓ NOTE:
+  ▓ > modal text
+  -->
+  <p
     class=
     "
-    row-space-out
+    s-16
+    color-white
+    w-500
+    m-t-20
     "
   >
+    {#if stateWidget == 'Error'}
+      Uh-oh! An error occurred.
+    {/if}
+  </p>
 
-    <!--
-    ▓ NOTE:
-    ▓ > (text) modal
-    -->
-    <p
+  <!--
+  ▓ NOTE:
+  ▓ > modal button
+  -->
+  {#if 'Error' == stateWidget}
+
+    <button
       class=
       "
-      s-20
-      w-500
-      color-black-2
+      btn-primary-v2
+      m-t-25
       "
-    >
-      {
-        profileTrs?.investor?.wallets.title
-        ?? 'Investor Wallet Address'
-      }
-    </p>
-
-    <!--
-    ▓ NOTE:
-    ▓ > (asset) close icon.
-    -->
-    <img
-      id='close-vector'
-      class=
-      '
-      cursor-pointer
-      '
-      style=
-      '
-      {VIEWPORT_TABLET_INIT[1] ? 'top: 16px; right: 16px;' : ''}
-      '
-      src={$userBetarenaSettings.theme == 'Dark' ? icon_close : icon_close_dark}
       on:click=
       {
         () =>
@@ -175,113 +181,11 @@
           return;
         }
       }
-      alt='close-svg'
-      width=18
-      height=18
-    />
+    >
+      Ok
+    </button>
 
-  </div>
-
-  <!--
-  ▓ NOTE:
-  ▓ > (box) modal middle section
-  -->
-  <div
-    id="middle-box"
-  >
-
-    {#each walletAddressList as item}
-
-      <!--
-      ▓ NOTE:
-      ▓ > (box) wallet address row
-      -->
-      <div
-        class=
-        "
-        wallet-row
-        "
-      >
-        <!--
-        ▓ NOTE:
-        ▓ > (text) wallet address (translation)
-        -->
-        <p
-          class=
-          "
-          s-14
-          w-500
-          color-black-2
-          m-b-3
-          text-left
-          "
-        >
-          {
-            profileTrs?.investor?.wallets.id
-            ?? 'Wallet ID'
-          }
-        </p>
-
-        <!--
-        ▓ NOTE:
-        ▓ > (box) wallet + copy
-        -->
-        <div
-          class=
-          "
-          row-space-out
-          "
-        >
-          <!--
-          ▓ NOTE:
-          ▓ > (text) wallet address
-          -->
-          <p
-            class=
-            "
-            s-12
-            color-grey
-            "
-          >
-            {item}
-          </p>
-
-          <!--
-          ▓ NOTE:
-          ▓ > (text) copy
-          -->
-          <p
-            class=
-            "
-            s-12
-            w-500
-            underline
-            color-black-2
-            cursor-pointer
-            "
-            on:click={() => { copyToClipboard(item); return; }}
-          >
-            {
-              profileTrs?.investor?.wallets.copy
-              ?? 'Copy'
-            }
-          </p>
-        </div>
-
-      </div>
-    {:else}
-      <p
-        class=
-        "
-        s-20
-        color-black-2
-        "
-      >
-        Uh-oh! No investment wallets have been found.
-      </p>
-    {/each}
-
-  </div>
+  {/if}
 
 </div>
 
@@ -289,9 +193,9 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component CSS/SCSS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
-│         │ values by typing/CTRL+SPACE                                            │
-│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
+│ ➤ HINT: | auto-fill/auto-complete iniside <style> for var()                      │
+|         | values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: | access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -303,60 +207,28 @@
   ╰──────────────────────────────────────────────────────────────────────────────╯
   */
 
-  div#profile⮕w⮕wallets-modal⮕main
+	div#general⮕w⮕modal-error
   {
-    /* 📌 position */
+		/* 📌 position */
 		position: fixed;
-    z-index: 10000;
-    height: fit-content;
-    right: 0;
-    left: 0;
-    bottom: 0;
-    width: 100%;
+		z-index: 10000;
+		margin: auto;
+		width: fit-content;
+		width: 92%;
+		height: fit-content;
+		right: 0;
+		left: 0;
+		bottom: 0;
+		top: 0;
 		/* 🎨 style */
-    background-color: var(--white) !important;
-		border-radius: 12px 12px 0 0;
+    background-color: var(--dark-theme) !important;
+		border-radius: 12px;
+		padding: 20px;
+    padding-top: 45px;
 		text-align: -webkit-center;
 		text-align: -moz-center;
 		overflow: hidden;
-
-    div#top-row
-    {
-      /* 🎨 style */
-      padding: 12px 20px;
-      box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
-      height: 70px;
-    }
-
-    div#middle-box
-    {
-      /* 📌 position */
-      position: relative;
-      /* 🎨 style */
-      height: 402px;
-      overflow-y: scroll;
-      overflow-x: hidden;
-      padding-top: 12px;
-
-      &::-webkit-scrollbar
-      {
-        /* Hide scrollbar for Chrome, Safari and Opera */
-        display: none;
-      }
-      &::-webkit-scrollbar
-      {
-        /* Hide scrollbar for IE, Edge and Firefox */
-        -ms-overflow-style: none; /* IE and Edge */
-        scrollbar-width: none; /* Firefox */
-      }
-
-      div.wallet-row
-      {
-        /* 🎨 style */
-        padding: 12px 20px;
-      }
-    }
-  }
+	}
 
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
@@ -364,29 +236,14 @@
   ╰──────────────────────────────────────────────────────────────────────────────╯
   */
 
-  @media only screen
+	@media only screen
   and (min-width: 575px)
   {
-    div#profile⮕w⮕wallets-modal⮕main
+	  div#general⮕w⮕modal-error
     {
-      /* 📌 position */
-      position: fixed;
-      z-index: 10000;
-      margin: auto;
-      width: fit-content;
-      width: 92%;
-      height: 340px;
-      min-height: 340px;
-      max-height: 340px;
-      right: 0;
-      left: 0;
-      bottom: 0;
-      top: 0;
-      /* 🎨 style */
-      width: 502px;
-      border-radius: 12px;
+			width: 328px;
     }
-  }
+	}
 
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
@@ -394,19 +251,13 @@
   ╰──────────────────────────────────────────────────────────────────────────────╯
   */
 
-  div#profile⮕w⮕wallets-modal⮕main
+  div#general⮕w⮕modal-error
   {
     &.dark-background-1
     {
       /* 🎨 style */
-      background-color: var(--dark-theme-1) !important;
-    }
-
-    &.dark-background-1 div#middle-box
-    {
-      /* 🎨 style */
-      background-color: var(--dark-theme-1-4-shade) !important;
-    }
-  }
+      background-color: var(--dark-theme) !important;
+		}
+	}
 
 </style>

@@ -40,6 +40,7 @@
 	import Header from '$lib/components/_main_/header/Header.svelte';
 	import DevInfoBox from '$lib/components/misc/Dev-Info-Box.svelte';
 
+	import ModalError from '$lib/components/misc/modal/Modal-Error.svelte';
 	import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
 
   // ### WARNING:
@@ -554,6 +555,20 @@
   />
 	<!-- <OfflineAlert /> -->
 
+{/if}
+
+{#if $sessionStore.currentActiveModal == 'GeneralPlatform_Error'}
+  <ModalError
+    stateWidget='Error'
+    on:closeDropdown=
+    {
+      () =>
+      {
+        $sessionStore.currentActiveModal = null;
+        return;
+      }
+    }
+  />
 {/if}
 
 <!--

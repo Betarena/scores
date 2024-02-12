@@ -2,8 +2,8 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ HINT: | Access snippets for '<script> [..] </script>' those found in           │
-|         | '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -25,15 +25,13 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
 	import { page } from '$app/stores';
-	import { onDestroy, onMount } from 'svelte';
 
-  import { post } from '$lib/api/utils.js';
+  import { postv2 } from '$lib/api/utils.js';
   import { userUpdateInvestorBalance } from '$lib/firebase/common.js';
   import sessionStore from '$lib/store/session.js';
   import userBetarenaSettings from '$lib/store/user-settings.js';
-  import { toCorrectDate, toZeroPrefixDateStr } from '$lib/utils/dates.js';
-  import { dlog } from '$lib/utils/debug.js';
   import { formatNumberWithCommas } from '$lib/utils/platform-functions.js';
+  import { scoresProfileInvestorStore } from './_store.js';
 
   import icon_bta_token from '../assets/price-tier/icon-bta-token.svg';
 
@@ -66,21 +64,15 @@
     profileData: IProfileData | null
     /**
      * @description
-     *  📣 makes use of parent 📱 MOBILE viewport state.
-     */
-    , VIEWPORT_MOBILE_INIT_PARENT: [ number, boolean ]
+     *  📣 threshold start + state for 📱 MOBILE
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
     /**
      * @description
-     *  📣 makes use of parent 💻 TABLET viewport state.
-     */
-    , VIEWPORT_TABLET_INIT_PARENT: [ number, boolean ]
+     *  📣 threshold start + state for 💻 TABLET
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
-
-  /**
-   * @description
-   *  📣 available widget states.
-   */
-  type WidgetState = 'NoDefinedDate' | 'DateDefined' | 'ClaimAvailable' | 'Claimed';
 
   class Dev
   {
@@ -95,103 +87,17 @@
      */
     // eslint-disable-next-line no-unused-vars
     CNAME: string = 'profile⮕w⮕investtge⮕main'
-    /**
-     * @description
-     *  📣 threshold start + state for 📱 MOBILE
-     */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = VIEWPORT_MOBILE_INIT_PARENT
-    /**
-     * @description
-     *  📣 threshold start + state for 💻 TABLET
-     */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = VIEWPORT_TABLET_INIT_PARENT
   ;
 
   let
     /**
      * @description
-     *  📣 investor number of days difference (from end)
-     */
-    dateDiff: number = 0
-    /**
-     * @description
-     *  📣 interval variable for `countdown` logic
-     */
-    , interval1: NodeJS.Timer
-    /**
-     * @description
-     *  📣 target date of relase of tokens.
-     */
-    , targetDate: Date = new Date(profileData?.presaleData.data?.end_date ?? '') // [🐞] new Date()
-    /**
-     * @description
      *  📣 target `DEV` class instance.
      */
-    , newDevInstance = new Dev()
-    /**
-     * @description
-     *  📣 target `state` update.
-     */
-    , updateWidgetState
-      = (state?: WidgetState) =>
-      {
-        if (state)
-        {
-          // ▓ [🐞]
-          console.log('state', state);
-          widgetState = state;
-          return;
-        }
-
-        if (profileData?.investorData?.data?.tge.status == null)
-        {
-          if (!profileData?.presaleData.data?.end_date || profileData.presaleData.presale == 'private')
-            widgetState = 'NoDefinedDate';
-          else
-            widgetState = 'DateDefined';
-        }
-        else if (profileData.investorData.data.tge.status == 'Pending')
-          widgetState = 'ClaimAvailable'
-        else
-          widgetState = 'Claimed'
-        //
-
-        return;
-      }
-    /**
-     * @description
-     *  📣 target `state` value.
-     */
-    , widgetState: WidgetState = 'NoDefinedDate'
+    newDevInstance = new Dev()
   ;
 
-  /**
-   * @description
-   *  📣 Available `translations`.
-   */
-  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
-  /**
-   * @description
-   *  📣 Number of `seconds` from target release date.
-   */
-  $: countDownSecToEnd = toZeroPrefixDateStr(Math.floor((dateDiff / 1000) % 60).toString());
-  /**
-   * @description
-   *  📣 Number of `minutes` from target release date.
-   */
-	$: countDownMinToEnd = toZeroPrefixDateStr(Math.floor((dateDiff / 1000 / 60) % 60).toString());
-  /**
-   * @description
-   *  📣 Number of `hours` from target release date.
-   */
-	$: countDownHourToEnd = toZeroPrefixDateStr(Math.floor((dateDiff / (1000 * 60 * 60)) % 24).toString());
-  /**
-   * @description
-   *  📣 Number of `days` from target release date.
-   */
-	$: countDownDayToEnd = toZeroPrefixDateStr(Math.floor((dateDiff / (1000 * 60 * 60 * 24))).toString());
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
 
   // ▓ [🐞]
   // profileData!.presaleData.data!.end_date = '';
@@ -212,61 +118,51 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   /**
-   * @description
-   *  📣
-   */
-  function initializeCountdown
-  (
-  ): void
-  {
-    // [🐞]
-    // targetDate.setDate(targetDate.getDate() + 1);
-
-    dateDiff = toCorrectDate(targetDate, false).getTime() - new Date().getTime();
-
-    interval1 = setInterval
-    (
-      () =>
-      {
-        dateDiff = toCorrectDate(targetDate, false).getTime() - new Date().getTime();
-      },
-      1000
-    );
-
-    return;
-  }
-
-  /**
    * @author
    *  @migbash
    * @summary
    *  🟦 HELPER
    * @description
-   *  📣 Create new **TGE request** for target user amount.
-   * @return { void }
+   *  📣 Create new **TGE request** for target user of said amount.
+   * @return { Promise < void > }
    */
   async function createTgeClaimRequest
   (
-  ): void
+  ): Promise < void >
   {
-    await post
-    (
-      `${import.meta.env.VITE_FIREBASE_FUNCTIONS_ORIGIN}/transaction/update/investment/claim/create`
-      // 'http://127.0.0.1:5001/betarena-ios/us-central1/api/transaction/update/investment/claim/create'
-      , {
-        uid: $userBetarenaSettings.user.firebase_user_data?.uid
-        , vestingId: null
-        , isTge: true
-      }
-    );
-
-    let
+    const
       /**
        * @description
-       *  📣 Target amount to change balance by.
+       *  📣 Response from `endpoint`.
+       */
+      result = await postv2
+      (
+        `${import.meta.env.VITE_FIREBASE_FUNCTIONS_ORIGIN}/transaction/update/investment/claim/create`
+        // 'http://127.0.0.1:5001/betarena-ios/us-central1/api/transaction/update/investment/claim/create'
+        , {
+          uid: $userBetarenaSettings.user.firebase_user_data?.uid
+          , vestingId: null
+          , isTge: true
+        }
+      )
+    ;
+
+    if (result.error)
+    {
+      $sessionStore.currentActiveModal = 'GeneralPlatform_Error';
+      return;
+    }
+
+    const
+      /**
+       * @description
+       *  📣 Target amount to change balance by **(a.k.a delta)**.
       */
       deltaBalance: number = (-profileData.investorData.data.tge.tokens)
     ;
+
+    // TODO:
+    // can be offloaded to server (backend).
 
     await userUpdateInvestorBalance
     (
@@ -277,71 +173,12 @@
       }
     );
 
+    $scoresProfileInvestorStore.tgeStateWidget = 'Tge_Claimed';
+
     return;
   }
 
   // #endregion ➤ 🛠️ METHODS
-
-  // #region ➤ 🔥 REACTIVIY [SVELTE]
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'logic' that should run            │
-  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
-  // │ WARNING:                                                               │
-  // │ ❗️ Can go out of control.                                              │
-  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
-  // │ Please keep very close attention to these methods and                  │
-  // │ use them carefully.                                                    │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  $: if (countDownSecToEnd < 0 && dateDiff <= 0)
-  {
-    // ▓ [🐞]
-    dlog
-    (
-      '🚏 checkpoint [R] ➤ AX123',
-      true
-    );
-
-    if (profileData.presaleData.presale != 'private')
-      widgetState = 'ClaimAvailable';
-  }
-
-  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
-
-  // #region ➤ 🔄 LIFECYCLE [SVELTE]
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'logic' that should run            │
-  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
-  // │ as soon as 'this' .svelte file is ran.                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  onMount
-  (
-    async (
-    ): Promise < void > =>
-    {
-      updateWidgetState();
-      initializeCountdown();
-      return;
-    }
-  );
-
-  onDestroy
-  (
-    (
-    ) =>
-    {
-      // @ts-expect-error
-      clearInterval(interval1);
-      return;
-    }
-  );
-
-  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
 </script>
 
@@ -349,10 +186,10 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component HTML                                                            │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ HINT: | Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    |
-│         │ imported from './static/app.css'                                       |
-│ ➤ HINT: | access custom Betarena Scores VScode Snippets by typing emmet-like     |
-|         | abbrev.                                                                │
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -362,9 +199,9 @@
 -->
 {#if $sessionStore.currentActiveModal == 'ProfileInvestor_ClaimTGE_Modal'}
   <MainClaimModal
-    VIEWPORT_MOBILE_INIT_PARENT={VIEWPORT_MOBILE_INIT}
-    VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
-    amount={profileData.investorData.data.tge.tokens ?? 0}
+    VIEWPORT_MOBILE_INIT={VIEWPORT_MOBILE_INIT}
+    VIEWPORT_TABLET_INIT={VIEWPORT_TABLET_INIT}
+    amount={profileData?.investorData?.data?.tge.tokens ?? 0}
     on:confirmEntry=
     {
       () =>
@@ -384,16 +221,16 @@
 <div
   id={CNAME}
   class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
-  class:column-space-stretch={!VIEWPORT_TABLET_INIT_PARENT[1] || VIEWPORT_MOBILE_INIT_PARENT[1]}
-  class:row-space-out={VIEWPORT_TABLET_INIT_PARENT[1] && !VIEWPORT_MOBILE_INIT_PARENT[1]}
+  class:column-space-stretch={!VIEWPORT_TABLET_INIT[1] || VIEWPORT_MOBILE_INIT[1]}
+  class:row-space-out={VIEWPORT_TABLET_INIT[1] && !VIEWPORT_MOBILE_INIT[1]}
   style=
   "
-  {!VIEWPORT_TABLET_INIT_PARENT[1] || VIEWPORT_MOBILE_INIT_PARENT[1] ? 'justify-content: space-between;' : ''}
+  {!VIEWPORT_TABLET_INIT[1] || VIEWPORT_MOBILE_INIT[1] ? 'justify-content: space-between;' : ''}
   "
   class:mutated={newDevInstance.mutated}
 >
   <!-- [🐞] -->
-  <!-- {VIEWPORT_TABLET_INIT_PARENT[1]} -->
+  <!-- {VIEWPORT_TABLET_INIT[1]} -->
 
   <AdminDevControlPanelToggleButton
     title='Tokens available on launch date (TGE)'
@@ -430,16 +267,17 @@
       color-grey
         grey-v1
       "
-      class:m-b-24={VIEWPORT_TABLET_INIT_PARENT[1] && !VIEWPORT_MOBILE_INIT_PARENT[1]}
-      class:m-b-12={!VIEWPORT_TABLET_INIT_PARENT[1] || VIEWPORT_MOBILE_INIT_PARENT[1]}
+      class:m-b-24={VIEWPORT_TABLET_INIT[1] && !VIEWPORT_MOBILE_INIT[1]}
+      class:m-b-12={!VIEWPORT_TABLET_INIT[1] || VIEWPORT_MOBILE_INIT[1]}
       style=
       "
       line-height: 20px; /* 142.857% */
-      {!VIEWPORT_MOBILE_INIT_PARENT[1] ? 'width: 170px;' : ''}
+      {!VIEWPORT_MOBILE_INIT[1] ? 'width: 170px;' : ''}
       "
     >
+      <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
       {
-        profileTrs.investor?.tge.info
+        profileTrs?.investor?.tge.info
         ?? 'Tokens available on launch date (TGE)'
       }
     </p>
@@ -466,15 +304,15 @@
         color-black-2
         m-r-6
         "
-        class:s-40={!VIEWPORT_MOBILE_INIT_PARENT[1]}
-        class:s-32={VIEWPORT_MOBILE_INIT_PARENT[1]}
+        class:s-40={!VIEWPORT_MOBILE_INIT[1]}
+        class:s-32={VIEWPORT_MOBILE_INIT[1]}
         style=
         "
         line-height: 100%; /* 40px */
         "
       >
         {
-          formatNumberWithCommas($userBetarenaSettings.user.scores_user_data?.investor_balance?.tge_to_claim ?? 0)
+          formatNumberWithCommas($userBetarenaSettings.user.scores_user_data?.investor_balance.tge_to_claim ?? 0)
         }
         <span
           class=
@@ -506,7 +344,7 @@
     ▓ NOTE:
     ▓ > token ready to claim.
     -->
-    {#if widgetState == 'ClaimAvailable'}
+    {#if $scoresProfileInvestorStore.tgeStateWidget == 'Tge_ClaimAvailable'}
       <button
         class=
         "
@@ -523,8 +361,9 @@
           }
         }
       >
+        <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
         {
-          profileTrs.investor?.tge.cta_title
+          profileTrs?.investor?.tge.cta_title
           ?? 'Claim now!'
         }
       </button>
@@ -543,11 +382,11 @@
   ▓ NOTE:
   ▓ > token release date view.
   -->
-  {#if widgetState != 'Claimed'}
+  {#if $scoresProfileInvestorStore.tgeStateWidget != 'Tge_Claimed'}
     <div
       class=
       "
-      {VIEWPORT_MOBILE_INIT_PARENT[1] ? 'm-t-32' : ''}
+      {VIEWPORT_MOBILE_INIT[1] ? 'm-t-32' : ''}
       "
     >
 
@@ -568,8 +407,9 @@
         line-height: 20px; /* 142.857% */
         "
       >
+        <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
         {
-          profileTrs.investor?.tge.date_title
+          profileTrs?.investor?.tge.date_title
           ?? 'Release date'
         }
       </p>
@@ -578,7 +418,8 @@
       ▓ NOTE:
       ▓ > token release date not set.
       -->
-      {#if widgetState == 'NoDefinedDate' || widgetState == 'ClaimAvailable'}
+      {#if $scoresProfileInvestorStore.tgeStateWidget == 'Tge_NoDefinedDate' || $scoresProfileInvestorStore.tgeStateWidget == 'Tge_ClaimAvailable'}
+
         <div
           id="round-info-box-parent"
         >
@@ -590,13 +431,16 @@
               dark-v1
             "
           >
-            {#if widgetState == 'NoDefinedDate'}
+            {#if $scoresProfileInvestorStore.tgeStateWidget == 'Tge_NoDefinedDate'}
+              <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
               {
-                'Date to be announced soon'
+                profileTrs?.investor?.tge.date_title_2
+                ?? 'Date to be announced soon'
               }
             {:else}
               {
                 profileData?.presaleData.data?.end_date
+                ?? '-'
               }
             {/if}
           </p>
@@ -607,52 +451,23 @@
       ▓ > token release date set (countdown).
       -->
       {:else}
+
         <div
           id="countdown-row"
         >
-          <div
-            class=
-            "
-            countdown-box
-            "
-          >
-            <p>
-              {countDownDayToEnd}d
-            </p>
-          </div>
-
-          <div
-            class=
-            "
-            countdown-box
-            "
-          >
-            <p>
-              {countDownHourToEnd}h
-            </p>
-          </div>
-
-          <div
-            class=
-            "
-            countdown-box
-            "
-          >
-            <p>
-              {countDownMinToEnd}m
-            </p>
-          </div>
-
-          <div
-            class=
-            "
-            countdown-box
-            "
-          >
-            <p>
-              {countDownSecToEnd}s
-            </p>
-          </div>
+          {#each { length: 4 } as _,i}
+            <div
+              class=
+              "
+              <!---->
+              countdown-box
+              "
+            >
+              <p>
+                {$scoresProfileInvestorStore.globalTgeReleaseClock?.[i] ?? '00'}d
+              </p>
+            </div>
+          {/each}
         </div>
 
       {/if}
@@ -675,8 +490,9 @@
         color-white
         "
       >
+      <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
       {
-        profileTrs.investor?.tge.cta_title_2
+        profileTrs?.investor?.tge.cta_title_2
         ?? 'Claimed'
       }
       </p>
@@ -725,7 +541,7 @@
     <select
       id="cars"
       name="cars"
-      bind:value={widgetState}
+      bind:value={$scoresProfileInvestorStore.tgeStateWidget}
       on:change=
       {
         () =>
@@ -735,10 +551,10 @@
         }
       }
     >
-      <option value="NoDefinedDate">Release date not defined</option>
-      <option value="DateDefined">Release date defined</option>
-      <option value="ClaimAvailable">Ready to claim</option>
-      <option value="Claimed">Claimed</option>
+      <option value="Tge_NoDefinedDate">Release date not defined</option>
+      <option value="Tge_DateDefined">Release date defined</option>
+      <option value="Tge_ClaimAvailable">Ready to claim</option>
+      <option value="Tge_Claimed">Claimed</option>
     </select>
   </div>
 
@@ -748,9 +564,9 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component CSS/SCSS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ HINT: | auto-fill/auto-complete iniside <style> for var()                      │
-|         | values by typing/CTRL+SPACE                                            │
-│ ➤ HINT: | access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 

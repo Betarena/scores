@@ -2,7 +2,8 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - access custom Betarena Scores JS VScode Snippets by typing 'script...'         │
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -32,7 +33,7 @@
   import { browser } from '$app/environment';
   import { page } from '$app/stores';
   import { onDestroy, onMount } from 'svelte';
-  import { fade, fly } from 'svelte/transition';
+  import { fly } from 'svelte/transition';
 
 	import { get, post } from '$lib/api/utils.js';
 	import sessionStore from '$lib/store/session.js';
@@ -67,6 +68,7 @@
   import ModalTermsAndConditions from './Modal-TermsAndConditions.svelte';
   import ModalTxState from './Modal-Tx-State.svelte';
 
+  import ModalBackdrop from '$lib/components/misc/Modal-Backdrop.svelte';
   import type { B_H_TH } from '@betarena/scores-lib/types/_HASURA_.js';
   import type { ICoinMarketCapDataMain } from '@betarena/scores-lib/types/_WEB3_.js';
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
@@ -179,17 +181,38 @@
     | null
   ;
 
+  /**
+   * @description
+   *  📣 Component interface.
+   */
+  type IStateWidgetFormError =
+    | 'First_Minimum_Deposit_Not_Reached'
+    | 'Transaction_Error'
+  ;
+
   const
-    /** @description 📌 `this` component **main** `id` and `data-testid` prefix. */
+    /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */
     // eslint-disable-next-line no-unused-vars
     CNAME = 'profile⮕w⮕investbox⮕main'
-    /** @description 📣 threshold start + state for 📱 MOBILE */
+    /**
+     * @description
+     *  📣 threshold start + state for 📱 MOBILE
+     */
     // eslint-disable-next-line no-unused-vars
     , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
-    /** @description 📣 threshold start + state for 💻 TABLET */
+    /**
+     * @description
+     *  📣 threshold start + state for 💻 TABLET
+     */
     // eslint-disable-next-line no-unused-vars
     , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
-    /** @description target `polygon` blockchain `BetarenaBank` polygon mumbai (testnet) */
+    /**
+     * @description
+     *  📣 target `polygon` blockchain `BetarenaBank` polygon mumbai (testnet)
+     */
     , betarenaBankContractAddress: string = '0x8d03D84965a0e10a08E814CF19fe4207a34bFd4c' // '0x5BC335e9c9492B8abb07B49a6dbD8269d7419F1D'
   ;
 
@@ -339,11 +362,6 @@
      * @description
      *  📣 modal open select cryptocurrency option
      */
-    , modalSelectCryptoOption: boolean = false
-    /**
-     * @description
-     *  📣 modal open select cryptocurrency option
-     */
     , walletAddress: `0x${string}` | undefined
     /**
      * @description
@@ -362,14 +380,16 @@
     , modalUnsubscribe: (() => void)[] = []
     /**
      * @description
-     *  📣 TODO:
+     *  📣 Target `errors` encountered in form fill out.
      */
-    , deepReactListenSignerChange: unknown
+    , formErrorState = new Set<IStateWidgetFormError>()
   ;
 
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
-  $: deepReactListenSignerChange = undefined;
-  $: deepReactListenDepositOptionChange = JSON.stringify(cryptoDepositOptionSelect);
+  $: deepReactListenSignerChange = undefined as unknown;
+  $: deepReactListenDepositOptionChange = JSON.stringify(cryptoDepositOptionSelect) as string;
+  $: deepReactListenInvestTotal = $userBetarenaSettings.user.scores_user_data?.investor_balance?.grand_total;
+  $: recieveAmount = parseFloat(toDecimalFix(depositAmount / (cryptoPrice * tierDiscountObject.btaPrice!), 3));
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -556,7 +576,7 @@
   ): void
   {
     if (depositAmount >= 100000)
-    {
+
       tierDiscountObject
         = {
           name: 'platinum'
@@ -565,9 +585,9 @@
           , btaPrice: 0.50
         }
       ;
-    }
+
     else if (depositAmount >= 50000)
-    {
+
       tierDiscountObject
         = {
           name: 'gold'
@@ -576,9 +596,9 @@
           , btaPrice: 0.60
         }
       ;
-    }
+
     else if (depositAmount >= 20000)
-    {
+
       tierDiscountObject
         = {
           name: 'silver'
@@ -587,9 +607,9 @@
           , btaPrice: 0.70
         }
       ;
-    }
+
     else if (depositAmount >= 2500)
-    {
+
       tierDiscountObject
         = {
           name: 'bronze'
@@ -598,9 +618,9 @@
           , btaPrice: 0.80
         }
       ;
-    }
+
     else if (depositAmount < 2500)
-    {
+
       tierDiscountObject
         = {
           name: undefined
@@ -609,7 +629,6 @@
           , btaPrice: 1.00
         }
       ;
-    }
   }
 
   /**
@@ -716,12 +735,12 @@
       {
         // ▓ [🐞]
         if (ex?.toString()?.includes('TypeError: undefined is not an object (evaluating \'window.ethereum.request\')'))
-        {
+
           console.warn
           (
             '❗️', 'Ethereum is not available in the global scope (window). Please check that you have MetaMask (or other wallet) installed.'
           );
-        }
+
         else
           console.error('💀', `Unhandled :: ${ex}`);
         //
@@ -838,12 +857,7 @@
 
     $sessionStore.currentActiveModal = 'ProfileInvestor_TxState_Modal';
 
-    if
-    (
-      ($userBetarenaSettings.user.scores_user_data?.investor_balance?.grand_total == undefined
-      || $userBetarenaSettings.user.scores_user_data.investor_balance.grand_total < (profileData?.presaleData.data?.min_buy ?? 2500))
-      && depositAmount < (profileData?.presaleData.data?.min_buy ?? 2500)
-    )
+    if (formErrorState.has('First_Minimum_Deposit_Not_Reached'))
     {
       triggerInvestBox = false;
       stateWidget = 'ErrorBalance';
@@ -855,8 +869,7 @@
     await switchUserNetwork();
 
     let
-      errors: boolean = false
-      , targetDecimals: number
+      targetDecimals: number
       , targetAmount: BigNumber
       , ethersProvider = new ethers.providers.Web3Provider(modal.getWalletProvider())
       , signer = await ethersProvider.getSigner()
@@ -924,7 +937,7 @@
         ex: unknown
       ): void =>
       {
-        errors = true;
+        formErrorState.add('Transaction_Error');
 
         // ▓ [🐞]
         if (ex?.toString()?.includes('ACTION_REJECTED'))
@@ -948,10 +961,11 @@
 
     // ▓ CHECK
     // ▓ > for errors registered.
-    if (errors)
+    if (formErrorState.has('Transaction_Error'))
     {
       triggerInvestBox = false;
       stateWidget = 'Error';
+      formErrorState = new Set();
       return;
     }
 
@@ -985,7 +999,7 @@
         ex: unknown
       ): void =>
       {
-        errors = true;
+        formErrorState.add('Transaction_Error');
 
         if (ex?.toString()?.includes('ERC20: transfer amount exceeds allowance'))
           // ▓ [🐞]
@@ -1009,10 +1023,11 @@
 
     // ▓ CHECK
     // ▓ > for errors registered.
-    if (errors)
+    if (formErrorState.has('Transaction_Error'))
     {
       triggerInvestBox = false;
       stateWidget = 'Error';
+      formErrorState = new Set();
       return;
     }
 
@@ -1020,7 +1035,7 @@
       /**
        * @description
        *  📣 send data for completed user transaction to DB.
-      */
+       */
       txDepositData: B_H_TH
         = {
           uid: $userBetarenaSettings.user.firebase_user_data?.uid!
@@ -1030,7 +1045,7 @@
           , Gateway: 'cryptocurrency'
           , description: `${profileData?.presaleData.presale} presale`
           , type: 'investment'
-          , bta_price: tierDiscountObject.btaPrice
+          , bta_price: toDecimalFix(cryptoPrice * tierDiscountObject.btaPrice, 3)
           , tier: tierDiscountObject.name
           , deposit_wallet_address:
           {
@@ -1071,15 +1086,30 @@
   (
   ): Promise < void >
   {
-    cryptoPrices = await get
-    (
-      '/api/coinmarketcap?tickers=USDT,USDC',
-      null,
-      true,
-      true
-    );
+    cryptoPrices
+      = await get
+      (
+        '/api/coinmarketcap?tickers=USDT,USDC',
+        null,
+        true,
+        true
+      )
+    ;
 
-    cryptoPrice = parseFloat(toDecimalFix(cryptoPrices?.data[cryptoDepositOptionSelect.name].quote.USD.price, 3, true, false));
+    cryptoPrice
+      = parseFloat
+      (
+        toDecimalFix
+        (
+          cryptoPrices?.data[cryptoDepositOptionSelect.name].quote.USD.price
+          , 3
+          , true
+          , false
+        )
+      )
+    ;
+    // [🐞]
+    cryptoPrice = 0.999
 
     return;
   }
@@ -1099,9 +1129,6 @@
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  /**
-   * @description TODO:
-  */
   $:
   if (browser && deepReactListenSignerChange && triggerInvestBox)
   {
@@ -1120,16 +1147,20 @@
   }
 
   $: if (depositAmount) calculateTier();
+  // ────────────────────────────────────────────────────────────────────────
 
-  /**
-   * @description TODO:
-  */
   $:
+  if ((depositAmount * cryptoPrice) < (profileData?.presaleData.data?.min_buy ?? 2500) && deepReactListenInvestTotal == undefined)
   {
-    // ▓ NOTE:
-    // ▓ > relation between (1) deposit, (2) exchange price, (3) discount to obtain recieveAmount.
-    recieveAmount = parseFloat(toDecimalFix(depositAmount / (cryptoPrice * (1 - (tierDiscountObject.discount / 100))), 2));
+    formErrorState.add('First_Minimum_Deposit_Not_Reached');
+    formErrorState = formErrorState;
   }
+  else
+  {
+    formErrorState.delete('First_Minimum_Deposit_Not_Reached');
+    formErrorState = formErrorState;
+  }
+  // ────────────────────────────────────────────────────────────────────────
 
   /**
    * @description TODO:
@@ -1149,7 +1180,7 @@
     searchToken();
   }
   else if (tokenSearch == '' || tokenSearch == undefined)
-    cryptoDepositOptionsSearch = passByValue(cryptoDepositOptions);
+  {cryptoDepositOptionsSearch = passByValue(cryptoDepositOptions);}
 
   $: if (isNaN(cryptoPrice)) cryptoPrice = 1.00;
 
@@ -1241,8 +1272,10 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component HTML                                                            │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - use 'Ctrl+Space' to autocomplete global class=styles                           │
-│ - access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.     │
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -1706,14 +1739,17 @@
               class=
               "
               s-12
-              color-grey
-                dark-v1
+              {
+                formErrorState.has('First_Minimum_Deposit_Not_Reached')
+                  ? 'color-red-bright'
+                  : 'color-grey dark-v1'
+              }
               m-t-5
               "
             >
               <!-- ▓ [🐞] -->
               <!-- {console.log(cryptoPrices?.data?.['USDC']?.quote?.USD?.price)} -->
-              1 {cryptoDepositOptionSelect.name} ≈ {cryptoPrice} USD
+              {depositAmount} {cryptoDepositOptionSelect.name} ≈ {depositAmount * cryptoPrice} USD
             </p>
 
           </div>
@@ -1736,7 +1772,14 @@
               cursor-pointer
               m-b-5
               "
-              on:click={() => {return modalSelectCryptoOption = true}}
+              on:click=
+              {
+                () =>
+                {
+                  $sessionStore.currentActiveModal = 'ProfileInvestor_SelectCrypto_Modal';
+                  return;
+                }
+              }
             >
 
               <!--
@@ -1894,7 +1937,7 @@
               m-t-5
               "
             >
-              {toDecimalFix(1 - (tierDiscountObject.discount / 100))} {cryptoDepositOptionSelect.name} ≈ 1.00 BTA
+              {toDecimalFix(cryptoPrice * tierDiscountObject.btaPrice, 3)} {cryptoDepositOptionSelect.name} ≈ 1.00 BTA
             </p>
 
           </div>
@@ -2094,16 +2137,21 @@
     ▓ NOTE:
     ▓ > Cryptocurrency Deposit Option Select (Outer)
     -->
-    {#if modalSelectCryptoOption}
+    {#if $sessionStore.currentActiveModal == 'ProfileInvestor_SelectCrypto_Modal'}
 
       <!--
       ▓ NOTE:
-      ▓ > Cryptocurrency Background
+      ▓ > Generic Modal Background
       -->
-      <div
-        id="modal-bg-blur"
-        in:fade
-        on:click={() => {return modalSelectCryptoOption = false}}
+      <ModalBackdrop
+        on:closeModal=
+        {
+          () =>
+          {
+            $sessionStore.currentActiveModal = null;
+            return;
+          }
+        }
       />
 
       <!--
@@ -2137,7 +2185,11 @@
             m-b-20
             "
           >
-            {'Select Crypto Currency'}
+            <!-- TRS -->
+            {
+              profileTrs.investor?.invest_box.crypto_selection
+              ?? 'Fiat'
+            }
           </p>
 
           <!--
@@ -2152,7 +2204,14 @@
             "
             cursor-pointer
             "
-            on:click={() => {return modalSelectCryptoOption = false}}
+            on:click=
+            {
+              () =>
+              {
+                $sessionStore.currentActiveModal = null;
+                return;
+              }
+            }
             width=14
             height=14
           />
@@ -2161,18 +2220,20 @@
           ▓ NOTE:
           ▓ > Execute Deposit Button
           -->
-          <input
-            id="token-search"
-            placeholder="Search"
-            type="text"
-            class=
-            "
-            s-14
-            color-black-2
-            "
-            required
-            bind:value={tokenSearch}
-          />
+          {#if false}
+            <input
+              id="token-search"
+              placeholder="Search"
+              type="text"
+              class=
+              "
+              s-14
+              color-black-2
+              "
+              required
+              bind:value={tokenSearch}
+            />
+          {/if}
 
         </div>
 
@@ -2202,7 +2263,14 @@
               align-items: flex-start;
               "
               on:click={() => {return cryptoDepositOptionSelect = item}}
-              on:click={() => {return modalSelectCryptoOption = false}}
+              on:click=
+              {
+                () =>
+                {
+                  $sessionStore.currentActiveModal = null;
+                  return;
+                }
+              }
             >
 
               <!--
@@ -2270,8 +2338,9 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component CSS/SCSS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE  │
-│ - access custom Betarena Scores CSS VScode Snippets by typing 'style...'         │
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -2426,6 +2495,7 @@
         bottom: 0;
         right: 0;
         left: 0;
+        z-index: 100000;
         /* 🎨 style */
         border-radius: 12px;
         background: var(--white);

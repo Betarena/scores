@@ -47,19 +47,19 @@
     /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
-    */
+     */
     // eslint-disable-next-line no-unused-vars
     CNAME: string = 'general⮕g⮕background-modal-blur'
     /**
      * @description
      *  📣 threshold start + state for 📱 MOBILE
-    */
+     */
     // eslint-disable-next-line no-unused-vars
     , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
     /**
      * @description
      *  📣 threshold start + state for 💻 TABLET
-    */
+     */
     // eslint-disable-next-line no-unused-vars
     , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
     /** @description 📣 */

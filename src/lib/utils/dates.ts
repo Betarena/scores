@@ -423,9 +423,11 @@ export function daysDiffNum
  */
 export function ddMMyyFormat
 (
-  date: string
+  date: string | null
 ): string
 {
+  if (date == null || date == '') return '-';
+
   return toZeroPrefixDateStr(new Date(date).getDate())
     + '/'
     + toZeroPrefixDateStr(new Date(date).getMonth() + 1)

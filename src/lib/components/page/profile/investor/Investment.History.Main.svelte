@@ -36,6 +36,7 @@
 
   import type { B_H_KEYP, B_H_KEYP_Tier, B_H_TH } from '@betarena/scores-lib/types/_HASURA_.js';
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
+  import { onMount } from 'svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -252,6 +253,36 @@
   }
 
   // #endregion ➤ 🛠️ METHODS
+
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  onMount
+  (
+    () =>
+    {
+      [
+        VIEWPORT_TABLET_INIT[1],
+        VIEWPORT_MOBILE_INIT[1]
+      ]
+      = viewport_change
+        (
+          VIEWPORT_TABLET_INIT[0],
+          VIEWPORT_MOBILE_INIT[0]
+        )
+      ;
+      updateTableLayout();
+      return;
+    }
+  );
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
 </script>
 

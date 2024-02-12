@@ -2,8 +2,8 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ HINT: | Access snippets for '<script> [..] </script>' those found in           │
-|         | '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -26,7 +26,6 @@
 
   import { page } from '$app/stores';
 
-  import { post } from '$lib/api/utils.js';
   import { userUpdateInvestorBalance } from '$lib/firebase/common.js';
   import sessionStore from '$lib/store/session.js';
   import userBetarenaSettings from '$lib/store/user-settings.js';
@@ -36,6 +35,7 @@
   import InvestmentVestingPeriodsRowChild from './Investment.VestingPeriodsRow.Child.svelte';
   import MainClaimModal from './Main-Claim-Modal.svelte';
 
+  import { postv2 } from '$lib/api/utils.js';
   import type { PUBLIC__INVESTOR_IVesting } from '@betarena/scores-lib/types/_HASURA_.js';
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
@@ -62,17 +62,29 @@
     profileData: IProfileData | null
     /**
      * @description
-     *  📣 makes use of parent 📱 MOBILE viewport state.
-    */
-    , VIEWPORT_MOBILE_INIT_PARENT: [ number, boolean ]
+     *  📣 threshold start + state for 📱 MOBILE
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
     /**
      * @description
-     *  📣 makes use of parent 💻 TABLET viewport state.
-    */
-    , VIEWPORT_TABLET_INIT_PARENT: [ number, boolean ]
+     *  📣 threshold start + state for 💻 TABLET
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
-  type IRowLayout = 'period' | 'available' | 'tokens' | 'status' | 'wallet' | 'distribution' | 'claim' | '';
+  /**
+   * @description
+   *  📣 Component interface.
+   */
+  type IRowLayout =
+    'period'
+    | 'available'
+    | 'tokens'
+    | 'status'
+    | 'distribution'
+    | 'claim'
+    | ''
+  ;
 
   class Dev
   {
@@ -145,55 +157,42 @@
     /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
-    */
+     */
     // eslint-disable-next-line no-unused-vars
     CNAME: string = 'profile⮕w⮕vesting-period⮕main'
-    /**
-     * @description
-     *  📣 threshold start + state for 📱 MOBILE
-    */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = VIEWPORT_MOBILE_INIT_PARENT
-    /**
-     * @description
-     *  📣 threshold start + state for 💻 TABLET
-    */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = VIEWPORT_TABLET_INIT_PARENT
   ;
 
   let
     /**
      * @description
      *  📣 Target `table` header order.
-    */
+     */
     tableHeader: IRowLayout[]
-    = [
-      'period'
-      , 'available'
-      , 'tokens'
-      , 'status'
-      , 'wallet'
-      , 'distribution'
-      , 'claim'
-    ]
+      = [
+        'period'
+        , 'available'
+        , 'tokens'
+        , 'status'
+        , 'distribution'
+        , 'claim'
+      ]
     /**
      * @description
      *  📣 target `DEV` class instance.
-    */
+     */
     , newDevInstance = new Dev()
     /**
-     * @description
-     *  📣 target `vesting` selected by user.
-    */
+     * @augments PUBLIC__INVESTOR_IVesting
+     */
     , targetVestingSelected: PUBLIC__INVESTOR_IVesting
+    /**
+     * @description
+     *  📣 Target `vesting periods` that have been claimed.
+     */
+    , vestingPeriodsClaimed: number[] = []
   ;
 
-  /**
-   * @description
-   *  📣 Available `translations`.
-   */
-  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -222,12 +221,12 @@
   (
   ): void
   {
-    if (VIEWPORT_MOBILE_INIT_PARENT[1])
+    if (VIEWPORT_MOBILE_INIT[1])
       tableHeader = [ 'period', 'available', '' ];
-    else if (VIEWPORT_TABLET_INIT_PARENT[1])
-      tableHeader = [ 'period' , 'available' , 'tokens' , 'status' , 'wallet', '' ];
+    else if (VIEWPORT_TABLET_INIT[1])
+      tableHeader = [ 'period' , 'available' , 'tokens' , 'status' , '' ];
     else
-      tableHeader = [ 'period' , 'available' , 'tokens' , 'status' , 'wallet' , 'distribution' , 'claim', '' ];
+      tableHeader = [ 'period' , 'available' , 'tokens' , 'status' , 'distribution' , 'claim', '' ];
     return;
   }
 
@@ -244,16 +243,28 @@
   (
   ): void
   {
-    await post
-    (
-      `${import.meta.env.VITE_FIREBASE_FUNCTIONS_ORIGIN}/transaction/update/investment/claim/create`
-      // 'http://127.0.0.1:5001/betarena-ios/us-central1/api/transaction/update/investment/claim/create'
-      , {
-        uid: $userBetarenaSettings.user.firebase_user_data?.uid
-        , vestingId: targetVestingSelected.id
-        , isTge: false
-      }
-    );
+    const
+      /**
+       * @description
+       *  📣 Response from `endpoint`.
+       */
+      result = await postv2
+      (
+        `${import.meta.env.VITE_FIREBASE_FUNCTIONS_ORIGIN}/transaction/update/investment/claim/create`
+        // 'http://127.0.0.1:5001/betarena-ios/us-central1/api/transaction/update/investment/claim/create'
+        , {
+          uid: $userBetarenaSettings.user.firebase_user_data?.uid
+          , vestingId: targetVestingSelected.id
+          , isTge: false
+        }
+      )
+    ;
+
+    if (result.error)
+    {
+      $sessionStore.currentActiveModal = 'GeneralPlatform_Error';
+      return;
+    }
 
     let
       /**
@@ -263,6 +274,9 @@
       deltaBalance: number = (-targetVestingSelected.tokens)
     ;
 
+    // TODO:
+    // can be offloaded to server (backend).
+
     await userUpdateInvestorBalance
     (
       {
@@ -271,6 +285,8 @@
         , type: 'total'
       }
     );
+
+    vestingPeriodsClaimed.push(targetVestingSelected.id);
 
     return;
   }
@@ -290,9 +306,9 @@
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  $: if (VIEWPORT_MOBILE_INIT_PARENT || VIEWPORT_TABLET_INIT_PARENT)
-    updateTableLayout()
-    //
+  $: if (VIEWPORT_MOBILE_INIT || VIEWPORT_TABLET_INIT)
+    updateTableLayout();
+  // ────────────────────────────────────────────────────────────────────────
 
     // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
@@ -302,10 +318,10 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component HTML                                                            │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ HINT: | Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    |
-│         │ imported from './static/app.css'                                       |
-│ ➤ HINT: | access custom Betarena Scores VScode Snippets by typing emmet-like     |
-|         | abbrev.                                                                │
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -315,8 +331,8 @@
 -->
 {#if $sessionStore.currentActiveModal == 'ProfileInvestor_ClaimVesting_Modal'}
   <MainClaimModal
-    VIEWPORT_MOBILE_INIT_PARENT={VIEWPORT_MOBILE_INIT}
-    VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
+    VIEWPORT_MOBILE_INIT={VIEWPORT_MOBILE_INIT}
+    VIEWPORT_TABLET_INIT={VIEWPORT_TABLET_INIT}
     amount={targetVestingSelected.tokens}
     on:confirmEntry=
     {
@@ -368,8 +384,9 @@
     m-b-20
     "
   >
+    <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
     {
-      profileTrs.investor?.vesting.title
+      profileTrs?.investor?.vesting.title
       ?? 'Vesting Periods'
     }
   </p>
@@ -406,38 +423,45 @@
                 "
               >
                 {#if item == 'period'}
+                  <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
                   {
-                    profileTrs.investor?.vesting.period
+                    profileTrs?.investor?.vesting.period
                     ?? 'period'
                   }
                 {:else if item == 'available'}
+                  <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
                   {
-                    profileTrs.investor?.vesting.available
+                    profileTrs?.investor?.vesting.available
                     ?? 'available'
                   }
                 {:else if item == 'tokens'}
+                  <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
                   {
-                    profileTrs.investor?.vesting.tokens
+                    profileTrs?.investor?.vesting.tokens
                     ?? 'tokens'
                   }
                 {:else if item == 'status'}
+                  <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
                   {
-                    profileTrs.investor?.vesting.status
+                    profileTrs?.investor?.vesting.status
                     ?? 'status'
                   }
-                {:else if item == 'wallet'}
-                  {
-                    profileTrs.investor?.vesting.wallet
+                <!-- {:else if item == 'wallet'} -->
+                  <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
+                  <!-- {
+                    profileTrs?.investor?.vesting.wallet
                     ?? 'wallet'
-                  }
+                  } -->
                 {:else if item == 'distribution'}
+                  <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
                   {
-                    profileTrs.investor?.vesting.distribution
+                    profileTrs?.investor?.vesting.distribution
                     ?? 'distribution'
                   }
                 {:else if item == 'claim'}
+                  <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
                   {
-                    profileTrs.investor?.vesting.claim
+                    profileTrs?.investor?.vesting.claim
                     ?? 'claim'
                   }
                 {/if}
@@ -464,8 +488,9 @@
 
             <InvestmentVestingPeriodsRowChild
               data={item}
-              {VIEWPORT_MOBILE_INIT_PARENT}
-              {VIEWPORT_TABLET_INIT_PARENT}
+              {VIEWPORT_MOBILE_INIT}
+              {VIEWPORT_TABLET_INIT}
+              {vestingPeriodsClaimed}
               on:claimTrigger=
               {
                 () =>
@@ -493,8 +518,9 @@
               line-height: 24px; /* 150% */
               "
             >
+              <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
               {
-                profileTrs.investor?.general.no_information
+                profileTrs?.investor?.general.no_information
                 ?? 'Uh-oh! No Investments have been found.'
               }
             </p>
@@ -623,9 +649,9 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component CSS/SCSS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ HINT: | auto-fill/auto-complete iniside <style> for var()                      │
-|         | values by typing/CTRL+SPACE                                            │
-│ ➤ HINT: | access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 

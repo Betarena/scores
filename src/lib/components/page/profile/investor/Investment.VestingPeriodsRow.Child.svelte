@@ -2,7 +2,8 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - access custom Betarena Scores JS VScode Snippets by typing 'script...'         │
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -23,10 +24,13 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  import { page } from '$app/stores';
+
   import { ddMMyyFormat } from '$lib/utils/dates.js';
   import { createEventDispatcher, type EventDispatcher } from 'svelte';
 
   import userBetarenaSettings from '$lib/store/user-settings.js';
+  import { scoresProfileInvestorStore } from './_store.js';
 
   import icon_arrow_down from '../assets/arrow-down.svg';
   import icon_arrow_up from '../assets/arrow-up.svg';
@@ -35,6 +39,7 @@
   import icon_green_dot from '../assets/investor/icon-green-dot.svg';
 
 	import type { PUBLIC__INVESTOR_IVesting } from '@betarena/scores-lib/types/_HASURA_.js';
+	import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -59,26 +64,42 @@
     data: PUBLIC__INVESTOR_IVesting
     /**
      * @description
-     *  📣
-    */
-    , VIEWPORT_MOBILE_INIT_PARENT: [ number, boolean ]
+     *  📣 threshold start + state for 📱 MOBILE
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
     /**
      * @description
-     *  📣
+     *  📣 threshold start + state for 💻 TABLET
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
+    /**
+     * @description
+     *  📣 Target `vesting periods` claimed (ethermal storage).
     */
-    , VIEWPORT_TABLET_INIT_PARENT: [ number, boolean ]
+    , vestingPeriodsClaimed: number[]
+  ;
+
+  /**
+   * @description
+   *  📣 Component interface.
+   */
+  type IRowState =
+    'NoVestingClaimAvailable'
+    | 'VestingClaimAvailable'
+    | 'VestingClaimPending'
+    | 'VestingClaimed'
   ;
 
   const
-    /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
+    /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */
     // eslint-disable-next-line no-unused-vars
     CNAME: string = 'profile⮕w⮕investfaq⮕main'
-    /** @description 📣 threshold start + state for 📱 MOBILE */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
-    /** @description 📣 threshold start + state for 💻 TABLET */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
+    /**
+     * @augments EventDispatcher
+    */
     , dispatch: EventDispatcher < any > = createEventDispatcher()
   ;
 
@@ -86,18 +107,60 @@
     /**
      * @description
      *  📣 Wether extra information is toggled (mobile only).
-    */
+     */
     isTxExtraInfo: boolean = false
     /**
      * @description
      *  📣 Properties to be shown in mobile view.
-    */
-    , mobileProps: string[] = [ 'Tokens', 'Status', 'Wallet', 'Distribution', 'Claim' ]
+     */
+    , mobileProps: string[] = [ 'Tokens', 'Status', 'Distribution', 'Claim' ]
+    /**
+     * @description
+     *  📣 Target component `state.
+     */
+    , componentState: IRowState = 'NoVestingClaimAvailable'
+    /**
+     * @description
+     *  📣 Logic for updating component state.
+     */
+    , updateComponentState
+      = () =>
+      {
+        if (data.status == 'Distributed')
+          componentState = 'VestingClaimed';
+        else if (data.status == 'Pending' || vestingPeriodsClaimed.includes(data.id))
+          componentState = 'VestingClaimPending';
+        else if (new Date().getTime() > new Date(data.available_date ?? '').getTime())
+          componentState = 'VestingClaimAvailable';
+        else
+          componentState = 'NoVestingClaimAvailable';
+        //
+        return;
+      }
   ;
 
-  // $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
+  $: deepReactListenInternalClock = $scoresProfileInvestorStore.globalInternalClock;
 
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  $: if (vestingPeriodsClaimed) updateComponentState();
+  $: if (deepReactListenInternalClock) updateComponentState();
+
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
 </script>
 
@@ -105,13 +168,15 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component HTML                                                            │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - use 'Ctrl+Space' to autocomplete global class=styles                           │
-│ - access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.     │
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <tr
-  class:extra-info={isTxExtraInfo && VIEWPORT_MOBILE_INIT_PARENT[1]}
+  class:extra-info={isTxExtraInfo && VIEWPORT_MOBILE_INIT[1]}
   on:click={() => {return isTxExtraInfo = !isTxExtraInfo}}
 >
 
@@ -144,7 +209,7 @@
   ▓ NOTE: ▓ 💻 TABLET
   ▓ > target columns.
   -->
-  {#if !VIEWPORT_MOBILE_INIT_PARENT[1]}
+  {#if !VIEWPORT_MOBILE_INIT[1]}
 
     <!--
     ▓ NOTE:
@@ -166,11 +231,13 @@
         "
         tx-status-pill
         "
-        class:available={new Date(data.available_date ?? '').getTime() > new Date().getTime()}
-        class:pending={data.status == 'Pending'}
-        class:completed={data.status == 'Distributed'}
+        class:available={componentState == 'VestingClaimAvailable'}
+        class:pending={componentState == 'VestingClaimPending'}
+        class:completed={componentState == 'VestingClaimed'}
       >
-        {#if new Date(data.available_date ?? '').getTime() > new Date().getTime()}
+        {#if componentState == 'NoVestingClaimAvailable'}
+          -
+        {:else if componentState == 'VestingClaimAvailable'}
           <img
             id=''
             src={icon_green_dot}
@@ -182,8 +249,21 @@
             m-r-6
             "
           />
+          {
+            profileTrs?.investor?.vesting.status_1
+            ?? 'Available'
+          }
+        {:else if componentState == 'VestingClaimPending'}
+          {
+            profileTrs?.investor?.vesting.status_2
+            ?? 'Pending'
+          }
+        {:else if componentState == 'VestingClaimed'}
+          {
+            profileTrs?.investor?.vesting.status_3
+            ?? 'Distributed'
+          }
         {/if}
-        {data.status ?? '-'}
       </p>
     </td>
 
@@ -191,11 +271,11 @@
     ▓ NOTE:
     ▓ > vesting period 'wallet' used.
     -->
-    <td>
+    <!-- <td>
       <p>
         {data.wallet ?? '-'}
       </p>
-    </td>
+    </td> -->
 
   {/if}
 
@@ -203,7 +283,7 @@
   ▓ NOTE: ▓ 🖥️ LAPTOP
   ▓ > target columns.
   -->
-  {#if !VIEWPORT_TABLET_INIT_PARENT[1]}
+  {#if !VIEWPORT_TABLET_INIT[1]}
 
     <!--
     ▓ NOTE:
@@ -214,7 +294,7 @@
         {
           ddMMyyFormat
           (
-            data.distribution_date ?? ''
+            data.distribution_date
           )
         }
     </p>
@@ -229,7 +309,7 @@
         {
           ddMMyyFormat
           (
-            data.claim_date ?? ''
+            data.claim_date
           )
         }
       </p>
@@ -244,29 +324,51 @@
       row-space-end
       "
     >
-
-      <button
-        class=
-        "
-        btn-primary-v2
-        "
-        on:click=
-        {
-          () =>
+      {#if componentState == 'NoVestingClaimAvailable' || componentState == 'VestingClaimPending'}
+        <p>
+          -
+        </p>
+      {:else if componentState == 'VestingClaimAvailable'}
+        <button
+          class=
+          "
+          btn-primary-v2
+          "
+          on:click=
           {
-            dispatch('claimTrigger')
-            return;
+            () =>
+            {
+              dispatch('claimTrigger');
+              return;
+            }
           }
-        }
-      >
-        Claim
-      </button>
+        >
+          <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
+          {
+            profileTrs?.investor?.vesting.cta_claim
+            ?? 'Claim'
+          }
+        </button>
+      {:else if componentState == 'VestingClaimed'}
+        <button
+          class=
+          "
+          btn-hollow
+          "
+        >
+          <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
+          {
+            profileTrs?.investor?.vesting.cta_claimed
+            ?? 'Claimed'
+          }
+        </button>
+      {/if}
 
       <!--
       ▓ NOTE: ▓ 💻 TABLET 📱 MOBILE
       ▓ > collapse/expand asset.
       -->
-      {#if VIEWPORT_TABLET_INIT_PARENT[1] || VIEWPORT_MOBILE_INIT_PARENT[1]}
+      {#if VIEWPORT_TABLET_INIT[1] || VIEWPORT_MOBILE_INIT[1]}
         <img
           src=
           {
@@ -281,7 +383,6 @@
           "
         />
       {/if}
-
     </div>
 
   </td>
@@ -290,7 +391,7 @@
   ▓ NOTE:
   ▓ > extra hidden data 📱 MOBILE layout
   -->
-  {#if isTxExtraInfo && VIEWPORT_MOBILE_INIT_PARENT[1]}
+  {#if isTxExtraInfo && VIEWPORT_MOBILE_INIT[1]}
 
     <div
       class=
@@ -324,15 +425,31 @@
             "
           >
             {#if item == 'Tokens'}
-              Tokens
+              <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
+              {
+                profileTrs?.investor?.vesting.tokens
+                ?? 'Tokens'
+              }
             {:else if item == 'Status'}
-              Status
-            {:else if item == 'Wallet'}
-              Wallet
+              <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
+              {
+                profileTrs?.investor?.vesting.status
+                ?? 'Status'
+              }
+            <!-- {:else if item == 'Wallet'}
+              Wallet -->
             {:else if item == 'Distribution'}
-              Distribution
+              <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
+              {
+                profileTrs?.investor?.vesting.distribution
+                ?? 'Distribution'
+              }
             {:else if item == 'Claim'}
-              Claim
+              <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
+              {
+                profileTrs?.investor?.vesting.claim
+                ?? 'Claim'
+              }
             {/if}
           </p>
 
@@ -346,38 +463,30 @@
             s-14
             color-black-2
             "
-            class:tx-status-pill=
-            {
-              (new Date(data.available_date ?? '').getTime() > new Date().getTime()
-              || data.status == 'Pending'
-              || data.status == 'Distributed')
-              && item == 'Status'
-            }
-            class:available={new Date(data.available_date ?? '').getTime() > new Date().getTime()}
-            class:pending={data.status == 'Pending'}
-            class:completed={data.status == 'Distributed'}
+            class:tx-status-pill={componentState != 'NoVestingClaimAvailable' && item == 'Status'}
+            class:available={componentState != 'VestingClaimAvailable'}
+            class:pending={componentState != 'VestingClaimPending'}
+            class:completed={componentState != 'VestingClaimed'}
           >
             {#if item == 'Tokens'}
               {data.tokens ?? '-'}
             {:else if item == 'Status'}
               {data.status ?? '-'}
-            {:else if item == 'Wallet'}
-              {data.wallet ?? '-'}
+            <!-- {:else if item == 'Wallet'}
+              {data.wallet ?? '-'} -->
             {:else if item == 'Distribution'}
               {
                 ddMMyyFormat
                 (
-                  data.distribution_date ?? ''
+                  data.distribution_date
                 )
               }
             {:else if item == 'Claim'}
               {
-                data.claim_date
-                  ? ddMMyyFormat
-                  (
-                    data.claim_date
-                  )
-                  : '-'
+                ddMMyyFormat
+                (
+                  data.claim_date
+                )
               }
             {/if}
           </p>
@@ -395,7 +504,7 @@
 ▓ NOTE:
 ▓ > extra hidden data 💻 TABLET layout
 -->
-{#if isTxExtraInfo && VIEWPORT_TABLET_INIT_PARENT[1] && !VIEWPORT_MOBILE_INIT_PARENT[1]}
+{#if isTxExtraInfo && VIEWPORT_TABLET_INIT[1] && !VIEWPORT_MOBILE_INIT[1]}
   <tr
     class=
     "
@@ -421,7 +530,7 @@
         {
           ddMMyyFormat
           (
-            data.distribution_date ?? ''
+            data.distribution_date
           )
         }
       </p>
@@ -444,7 +553,7 @@
         {
           ddMMyyFormat
           (
-            data.claim_date ?? ''
+            data.claim_date
           )
         }
       </p>
@@ -459,8 +568,9 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component CSS/SCSS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE  │
-│ - access custom Betarena Scores CSS VScode Snippets by typing 'style...'         │
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 

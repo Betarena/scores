@@ -149,7 +149,7 @@
     }
   ;
 
-  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
   $: deepReactListenInvestorBalanceChng = $userBetarenaSettings.user.scores_user_data?.investor_balance?.grand_total ?? 0;
 
   // ▓ [🐞]
@@ -242,7 +242,7 @@
     // ▓ NOTE:
     // ▓ > loop over each tier data.
     for (const [key, data] of dataMap)
-    {
+
       if
       (
         investorBalance >= (data.data?.invest_min ?? 0)
@@ -250,7 +250,7 @@
           || (data.data?.invest_max ?? 0) == -1)
       )
         currentAccumulatedAmountProgress = key;
-    }
+
 
     return;
   }
@@ -302,10 +302,10 @@
     // ▓ CHECK
     // ▓ > first time call of THIS method.
     if (!stateObject.isExecuted)
-    {
+
       // stateObject.initialDivDistance = componentTarget.getBoundingClientRect().bottom + window.scrollY;
       stateObject.isExecuted = true;
-    }
+
 
     let
       /**
@@ -433,8 +433,8 @@
       "
     >
       {
-        profileTrs.investor?.tiers.title
-        ?? 'Tier Pricing '
+        profileTrs?.investor?.tiers.title
+        ?? 'Tier Pricing'
       }
     </h1>
   {/if}
@@ -472,7 +472,7 @@
                 "
               >
                 {
-                  profileTrs.investor?.tiers.title
+                  profileTrs?.investor?.tiers.title
                   ?? 'Tier Pricing'
                 }
               </h1>
@@ -564,27 +564,27 @@
                   >
                     {#if item == 'token-price'}
                       {
-                        profileTrs.investor?.tiers.tiers_pricing.title
+                        profileTrs?.investor?.tiers.tiers_pricing.title
                         ?? 'Tier Pricing'
                       }
                     {:else if item == 'minimum-investment'}
                       {
-                        profileTrs.investor?.tiers.tiers_investment.title
+                        profileTrs?.investor?.tiers.tiers_investment.title
                         ?? 'Minimum Investment'
                       }
                     {:else if item == 'discount'}
                       {
-                        profileTrs.investor?.tiers.tiers_discount.title
+                        profileTrs?.investor?.tiers.tiers_discount.title
                         ?? 'Discount'
                       }
                     {:else if item == 'initial-token-release'}
                       {
-                        profileTrs.investor?.tiers.tiers_tge.title
+                        profileTrs?.investor?.tiers.tiers_tge.title
                         ?? 'Initial token release'
                       }
                     {:else if item == 'vesting-period'}
                       {
-                        profileTrs.investor?.tiers.tiers_vesting.title
+                        profileTrs?.investor?.tiers.tiers_vesting.title
                         ?? 'Vesting period'
                       }
                     {/if}
@@ -652,6 +652,7 @@
                       "
                       s-16
                       color-black-2
+                      no-wrap
                       "
                     >
                       {#if item == 'token-price'}
@@ -687,7 +688,11 @@
                         {
                           dataMap.get(key)?.data?.vesting_months
                           ?? ''
-                        } months
+                        }
+                        {
+                          profileTrs?.investor?.tiers.tiers.months
+                          ?? 'months'
+                        }
                       {/if}
                     </p>
 
@@ -815,7 +820,7 @@
                               "
                             >
                               {
-                                profileTrs.investor?.tiers.general_stake
+                                profileTrs?.investor?.tiers.general_stake
                                 ?? 'Your staked ammount'
                               }
                             </p>

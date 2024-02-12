@@ -240,6 +240,8 @@ export interface Platform_Session
     | 'ProfileInvestor_ClaimTGE_Modal'
     | 'ProfileInvestor_ClaimVesting_Modal'
     | 'ProfileInvestor_TxState_Modal'
+    | 'ProfileInvestor_SelectCrypto_Modal'
+    | 'GeneralPlatform_Error'
   ;
 
   // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️

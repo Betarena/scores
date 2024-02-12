@@ -76,17 +76,17 @@
     noData: boolean = false;
     sampleData: PUBLIC__INVESTOR_IReferralHistory[] = [
       {
-        id: 1,
-        date: "12/12/24",
-        bonus_bta: 50,
-        bonus_percentage: 20
-      },
-      {
-        id: 2,
-        date: "12/12/24",
-        bonus_bta: 50,
-        bonus_percentage: 0
-      },
+        id: 1
+        ,date: '12/12/24'
+        ,bonus_bta: 50
+        ,bonus_percentage: 20
+      }
+      ,{
+        id: 2
+        ,date: '12/12/24'
+        ,bonus_bta: 50
+        ,bonus_percentage: 0
+      }
     ];
 
     /**
@@ -115,7 +115,7 @@
       (profileData?.investorData ??= { data: { referral_history: [] } });
       (profileData?.investorData?.data?.referral_history ??= [] );
 
-      profileData?.investorData?.data?.referral_history?.push
+      profileData?.investorData?.data?.referral_history.push
       (
         ...this.sampleData
       );
@@ -362,7 +362,7 @@
         -->
 
         {#if
-          profileData?.investorData?.data?.referral_history?.length > 0
+          profileData?.investorData?.data?.referral_history.length > 0
           && !newDevInstance.noData
         }
           {#each [...profileData?.investorData?.data?.referral_history ?? []] as item}

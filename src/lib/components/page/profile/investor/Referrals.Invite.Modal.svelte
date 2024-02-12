@@ -24,7 +24,6 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { page } from '$app/stores';
-  import { onMount } from 'svelte';
   import { fly } from 'svelte/transition';
 
 	import sessionStore from '$lib/store/session.js';
@@ -55,11 +54,10 @@
   import icon_social_whatsapp_hover from '../assets/investor/icon-social-whatsapp-hover.svg';
   import icon_social_whatsapp from '../assets/investor/icon-social-whatsapp.svg';
 
-  import AdminDevControlPanel from '$lib/components/misc/admin/Admin-Dev-ControlPanel.svelte';
-  import AdminDevControlPanelToggleButton from '$lib/components/misc/admin/Admin-Dev-ControlPanelToggleButton.svelte';
   import ModalBackdrop from '$lib/components/misc/Modal-Backdrop.svelte';
 
   import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
+  import { scoresProfileInvestorStore } from './_store.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -77,24 +75,10 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let
-    /**
-     * @description
-     *  📣 number of investments made by user.
-    */
-    investmentCount: number = 0
-  ;
-
-  /**
-   * @description
-   *  📣 available widget states.
-   */
-  type WidgetState = 'NoInvestmentMade' | 'FirstInvestmentMade';
-
   /**
    * @description
    *  📣
-  */
+   */
   interface AssetObject
   {
     name: 'twitter' | 'reddit' | 'facebook' | 'telegram' | 'whatsapp';
@@ -102,12 +86,6 @@
     asset_hover: string;
     asset_dark: string;
     social_link: string;
-  }
-
-  class Dev
-  {
-    mutated: boolean = false;
-    noData: boolean = false;
   }
 
   const
@@ -126,154 +104,102 @@
     /**
      * @description
      *  📣 Dynamic list of **social assets** used by widget.
-    */
+     */
     assetList: AssetObject[]
-    = [
-      {
-        name: 'twitter'
-        , asset: icon_social_twitter
-        , asset_hover: icon_social_twitter_hover
-        , asset_dark: icon_social_twitter_dark
-        , social_link: `
-          https://twitter.com/intent/tweet
-            ?text={text}
-            &url=${$page.url.origin}?referralId=${$userBetarenaSettings.user.scores_user_data?.referralID ?? ''}
-          `
-          .replace(/\s/g, '')
-      }
-      , {
-        name: 'reddit'
-        , asset: icon_social_reddit
-        , asset_hover: icon_social_reddit_hover
-        , asset_dark: icon_social_reddit_dark
-        , social_link: `
-          https://www.reddit.com/submit
-            ?title={title}
-            &selftext=true
-            &text={text}
-          `
-          .replace(/\s/g, '')
-      }
-      // , {
-      //   name: 'facebook'
-      //   , asset: icon_social_facebook
-      //   , asset_hover: icon_social_facebook_hover
-      //   , asset_dark: icon_social_facebook_dark
-      //   , social_link: ''
-      // }
-      , {
-        name: 'telegram'
-        , asset: icon_social_telegram
-        , asset_hover: icon_social_telegram_hover
-        , asset_dark: icon_social_telegram_dark
-        , social_link: `
-          https://t.me/share/url
-            ?text={text}
-          `
-          .replace(/\s/g, '')
-      }
-      , {
-        name: 'whatsapp'
-        , asset: icon_social_whatsapp
-        , asset_hover: icon_social_whatsapp_hover
-        , asset_dark: icon_social_whatsapp_dark
-        , social_link: `
-          https://wa.me
-            ?text={text}
-          `
-          .replace(/\s/g, '')
-      }
-    ]
-    /**
-     * @description
-     *  📣
-    */
-    , newDevInstance = new Dev()
-    /**
-     * @description
-     *  📣 target `state` update.
-    */
-    , updateWidgetState = (state?: WidgetState) =>
-    {
-      if (state)
-      {
-        // ▓ [🐞]
-        console.log('state', state);
-        widgetState = state;
-        return;
-      }
-
-      if (investmentCount == 0)
-        widgetState = 'NoInvestmentMade'
-      else
-        widgetState = 'FirstInvestmentMade'
-      //
-
-      return;
-    }
-    /**
-     * @description
-     *  📣 target `state` value.
-    */
-    , widgetState: WidgetState = 'NoInvestmentMade'
+      = [
+        {
+          name: 'twitter'
+          , asset: icon_social_twitter
+          , asset_hover: icon_social_twitter_hover
+          , asset_dark: icon_social_twitter_dark
+          , social_link: `
+            https://twitter.com/intent/tweet
+              ?text={text}
+              &url=${$page.url.origin}?referralId=${$userBetarenaSettings.user.scores_user_data?.referralID ?? ''}
+            `
+            .replace(/\s/g, '')
+        }
+        , {
+          name: 'reddit'
+          , asset: icon_social_reddit
+          , asset_hover: icon_social_reddit_hover
+          , asset_dark: icon_social_reddit_dark
+          , social_link: `
+            https://www.reddit.com/submit
+              ?title={title}
+              &selftext=true
+              &text={text}
+            `
+            .replace(/\s/g, '')
+        }
+        // , {
+        //   name: 'facebook'
+        //   , asset: icon_social_facebook
+        //   , asset_hover: icon_social_facebook_hover
+        //   , asset_dark: icon_social_facebook_dark
+        //   , social_link: ''
+        // }
+        , {
+          name: 'telegram'
+          , asset: icon_social_telegram
+          , asset_hover: icon_social_telegram_hover
+          , asset_dark: icon_social_telegram_dark
+          , social_link: `
+            https://t.me/share/url
+              ?text={text}
+            `
+            .replace(/\s/g, '')
+        }
+        , {
+          name: 'whatsapp'
+          , asset: icon_social_whatsapp
+          , asset_hover: icon_social_whatsapp_hover
+          , asset_dark: icon_social_whatsapp_dark
+          , social_link: `
+            https://wa.me
+              ?text={text}
+            `
+            .replace(/\s/g, '')
+        }
+      ]
     /**
      * @description
      *  📣 build social link url.
-    */
-    , mutateUrl = (assetItem: AssetObject): string =>
-    {
-      let text: string;
-
-      if (assetItem.name == 'twitter')
-        text = profileTrs.investor?.referral.ref_pop.twitter!;
-      else if (assetItem.name == 'facebook')
-        text = profileTrs.investor?.referral.ref_pop.facebook!;
-      else if (assetItem.name == 'whatsapp')
+     */
+    , mutateUrl
+      = (assetItem: AssetObject): string =>
       {
-        text = profileTrs.investor?.referral.ref_pop.whatsapp!;
-        text += ` ${$page.url.origin}?referralId=${$userBetarenaSettings.user.scores_user_data?.referralID ?? ''}`
-      }
-      else if (assetItem.name == 'telegram')
-        text = profileTrs.investor?.referral.ref_pop.telegram!;
-      else
-      {
-        text = profileTrs.investor?.referral.ref_pop.description!;
-        text += ` ${$page.url.origin}?referralId=${$userBetarenaSettings.user.scores_user_data?.referralID ?? ''}`
-      }
+        let text: string;
 
-      const newUrl: string = assetItem.social_link
-        .replace('{text}', text)
-        .replace('{title}', profileTrs.investor?.referral.ref_pop.title_1!)
-      ;
+        if (assetItem.name == 'twitter')
+          text = profileTrs.investor?.referral.ref_pop.twitter!;
+        else if (assetItem.name == 'facebook')
+          text = profileTrs.investor?.referral.ref_pop.facebook!;
+        else if (assetItem.name == 'whatsapp')
+        {
+          text = profileTrs.investor?.referral.ref_pop.whatsapp!;
+          text += ` ${$page.url.origin}?referralId=${$userBetarenaSettings.user.scores_user_data?.referralID ?? ''}`
+        }
+        else if (assetItem.name == 'telegram')
+          text = profileTrs.investor?.referral.ref_pop.telegram!;
+        else
+        {
+          text = profileTrs.investor?.referral.ref_pop.description!;
+          text += ` ${$page.url.origin}?referralId=${$userBetarenaSettings.user.scores_user_data?.referralID ?? ''}`
+        }
 
-      return newUrl;
-    }
+        const newUrl: string = assetItem.social_link
+          .replace('{text}', text)
+          .replace('{title}', profileTrs.investor?.referral.ref_pop.title_1!)
+        ;
+
+        return newUrl;
+      }
   ;
 
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
 
   // #endregion ➤ 📌 VARIABLES
-
-  // #region ➤ 🔄 LIFECYCLE [SVELTE]
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'logic' that should run            │
-  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
-  // │ as soon as 'this' .svelte file is ran.                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  onMount
-  (
-    async (
-    ): Promise < void > =>
-    {
-      updateWidgetState();
-      return;
-    }
-  );
-
-  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
 </script>
 
@@ -306,21 +232,7 @@
   class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
   in:fly={{ y: 500, duration: 500 }}
   out:fly={{ y: 500, duration: 500 }}
-  class:mutated={newDevInstance.mutated}
 >
-  <AdminDevControlPanelToggleButton
-    title='Referral Info Main (Pop-Up)'
-    mutated={newDevInstance.mutated}
-    on:reset=
-    {
-      () =>
-      {
-        newDevInstance.mutated = false;
-        newDevInstance.noData = false;
-        return;
-      }
-    }
-  />
 
   <!--
   ▓ NOTE:
@@ -535,7 +447,7 @@
     ▓ NOTE:
     ▓ > 2nd social box
     -->
-    {#if widgetState == 'FirstInvestmentMade'}
+    {#if $scoresProfileInvestorStore.referralInviteStateWidget == 'FirstInvestmentMade'}
       <div
         class=
         "
@@ -611,62 +523,6 @@
   </div>
 
 </div>
-
-<!--
-▓ NOTE:
-▓ > (widget) admin development state UI change control panel.
--->
-<AdminDevControlPanel
-  title='Referral Info Main (Pop-Up)'
->
-
-  <!--
-  ▓ NOTE:
-  ▓ > (select) widget state.
-  -->
-  <div
-    class=
-    "
-    row-space-out
-    "
-  >
-    <!--
-    ▓ NOTE:
-    ▓ > (text) target action.
-    -->
-    <p
-      class=
-      "
-      s-14
-      color-black
-      "
-    >
-      <b>[1]</b> Choose <b>Widget State</b>
-    </p>
-
-    <!--
-    ▓ NOTE:
-    ▓ > (action) target select.
-    -->
-    <select
-      id="widgetState"
-      name="widgetState"
-      bind:value={widgetState}
-      on:change=
-      {
-        () =>
-        {
-          newDevInstance.mutated = true;
-          return;
-        }
-      }
-    >
-      <option value="NoInvestmentMade">No Investment Made</option>
-      <option value="FirstInvestmentMade">First Investment Made</option>
-    </select>
-  </div>
-
-</AdminDevControlPanel>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
