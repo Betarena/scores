@@ -2,8 +2,8 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ HINT: | Access snippets for '<script> [..] </script>' those found in           │
-|         | '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -25,7 +25,6 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { page } from '$app/stores';
-  import { onMount } from 'svelte';
 
   import userBetarenaSettings from '$lib/store/user-settings.js';
   import { viewport_change } from '$lib/utils/platform-functions.js';
@@ -65,7 +64,16 @@
    * @description
    *  📣 available data points.
    */
-  type IRowLayout = 'date' | 'type' | 'tier' | 'discount' | 'investment' | 'tokens' | 'price' | '';
+  type IRowLayout =
+    'date'
+    | 'type'
+    | 'tier'
+    | 'discount'
+    | 'investment'
+    | 'tokens'
+    | 'price'
+    | ''
+  ;
 
   class Dev
   {
@@ -90,6 +98,7 @@
         , payment_processor_fee: null
         , platform_fee: null
         , quantity: 2500
+        // @ts-expect-error
         , referral: null
         , status: 'pending'
         , tier: 'bronze'
@@ -99,9 +108,31 @@
         , withdraw_wallet_address: null
       }
       , {
-        status: 'pending'
+        Gateway: null
+        , amount: 1800
+        , asset: 'BTA'
+        , bic_swift: null
+        , bta_price: null
+        , date: '2024-01-11T02:17:33.735582+00:00'
+        , deposit_wallet_address: null
+        , description: 'Vesting Period Claim'
+        , extra: { vestingId: 1 }
+        , first_name: null
+        , iban: null
+        , id: 130
+        , last_name: null
+        , payment_email: null
+        , payment_processor_fee: null
+        , platform_fee: null
+        , quantity: 2500
+        // @ts-expect-error
+        , referral: null
+        , status: 'pending'
+        , tier: 'bronze'
         , type: 'investment'
-        , amount: 50
+        , uid: 'n65vqAoIH3b7lsU4zroxjHk0SSp2'
+        , wallet_address_erc20: null
+        , withdraw_wallet_address: null
       }
     ];
 
@@ -139,58 +170,52 @@
     /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
-    */
-    // eslint-disable-next-line no-unused-vars
+     */ // eslint-disable-next-line no-unused-vars
     CNAME: string = 'profile⮕w⮕investment-detail⮕main'
-    /**
-     * @description
-     *  📣 threshold start + state for 📱 MOBILE
-    */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
-    /**
-     * @description
-     *  📣 threshold start + state for 💻 TABLET
-    */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
   let
     /**
      * @description
+     *  📣 threshold start + state for 📱 MOBILE
+     */ // eslint-disable-next-line no-unused-vars
+    VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
+    /**
+     * @description
+     *  📣 threshold start + state for 💻 TABLET
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
+    /**
+     * @description
      *  📣 convert target `data` to respective `map`.
-    */
-    dataMap: Map < B_H_KEYP_Tier, B_H_KEYP > = new Misc().convertToMapKEYPINVSTTIER
-    (
-      (profileData?.investorTierPricing?.sort((a, b) => {return b.data?.position - a.data?.position}) ?? [])
-    )
+     */
+    , dataMap: Map < B_H_KEYP_Tier, B_H_KEYP >
+      = new Misc().convertToMapKEYPINVSTTIER
+      (
+        (profileData?.investorTierPricing?.sort((a, b) => {return b.data?.position - a.data?.position}) ?? [])
+      )
     /**
      * @description
      *  📣 Target `table` header order.
-    */
+     */
     , tableHeader: IRowLayout[]
-    = [
-      'date'
-      , 'type'
-      , 'tier'
-      , 'discount'
-      , 'investment'
-      , 'tokens'
-      , 'price'
-    ]
+      = [
+        'date'
+        , 'type'
+        , 'tier'
+        , 'discount'
+        , 'investment'
+        , 'tokens'
+        , 'price'
+      ]
     /**
      * @description
      *  📣
-    */
+     */
     , newDevInstance = new Dev()
   ;
 
-  /**
-   * @description
-   *  📣 Available `translations`.
-   */
-  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -205,31 +230,6 @@
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
-  /**
-   * @author
-   *  @migbash
-   * @summary
-   *  🟥 COMPONENT MAIN
-   * @description
-   *  📣 Update variables for viewport state.
-   * @return { void }
-   */
-  function resizeCustom
-  (
-  ): void
-  {
-    [
-      VIEWPORT_TABLET_INIT[1],
-      VIEWPORT_MOBILE_INIT[1]
-    ] = viewport_change
-    (
-      VIEWPORT_TABLET_INIT[0],
-      VIEWPORT_MOBILE_INIT[0]
-    );
-    updateTableLayout();
-    return;
-  }
 
   /**
    * @author
@@ -253,33 +253,26 @@
 
   // #endregion ➤ 🛠️ METHODS
 
-  // #region ➤ 🔄 LIFECYCLE [SVELTE]
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'logic' that should run            │
-  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
-  // │ as soon as 'this' .svelte file is ran.                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  onMount
-  (
-    async (
-    ): Promise < void > =>
-    {
-      resizeCustom();
-      return;
-    }
-  );
-
-  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
-
 </script>
 
 <svelte:window
   on:resize=
   {
-    () => { return resizeCustom() }
+    () =>
+    {
+      [
+        VIEWPORT_TABLET_INIT[1],
+        VIEWPORT_MOBILE_INIT[1]
+      ]
+      = viewport_change
+        (
+          VIEWPORT_TABLET_INIT[0],
+          VIEWPORT_MOBILE_INIT[0]
+        )
+      ;
+      updateTableLayout();
+      return;
+    }
   }
 />
 
@@ -287,10 +280,10 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component HTML                                                            │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ HINT: | Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    |
-│         │ imported from './static/app.css'                                       |
-│ ➤ HINT: | access custom Betarena Scores VScode Snippets by typing emmet-like     |
-|         | abbrev.                                                                │
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -331,8 +324,9 @@
     m-b-20
     "
   >
+    <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
     {
-      profileTrs.investor?.investment_details.widget_title
+      profileTrs?.investor?.investment_details.widget_title
       ?? 'Investment Details'
     }
   </p>
@@ -364,38 +358,45 @@
                 "
               >
                 {#if item == 'date'}
+                  <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
                   {
-                    profileTrs.investor?.investment_details.date
+                    profileTrs?.investor?.investment_details.date
                     ?? 'Date'
                   }
                 {:else if item == 'type'}
+                  <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
                   {
-                    profileTrs.investor?.investment_details.type
+                    profileTrs?.investor?.investment_details.type
                     ?? 'Available'
                   }
                 {:else if item == 'tier'}
+                  <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
                   {
-                    profileTrs.investor?.investment_details.tier
+                    profileTrs?.investor?.investment_details.tier
                     ?? 'Tier'
                   }
                 {:else if item == 'discount'}
+                  <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
                   {
-                    profileTrs.investor?.investment_details.discount
+                    profileTrs?.investor?.investment_details.discount
                     ?? 'Discount'
                   }
                 {:else if item == 'investment'}
+                  <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
                   {
-                    profileTrs.investor?.investment_details.investment
+                    profileTrs?.investor?.investment_details.investment
                     ?? 'Investment'
                   }
                 {:else if item == 'tokens'}
+                  <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
                   {
-                    profileTrs.investor?.investment_details.tokens
+                    profileTrs?.investor?.investment_details.tokens
                     ?? 'Tokens'
                   }
                 {:else if item == 'price'}
+                  <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
                   {
-                    profileTrs.investor?.investment_details.price
+                    profileTrs?.investor?.investment_details.price
                     ?? 'Price'
                   }
                 {/if}
@@ -416,7 +417,7 @@
         <!-- {#each [] as item} -->
 
         {#if
-          profileData?.tx_hist?.filter(x => {return x.type == 'investment'})?.length > 0
+          (profileData?.tx_hist?.filter(x => {return x.type == 'investment'})?.length ?? 0) > 0
           && !newDevInstance.noData
         }
           {#each profileData?.tx_hist?.filter(x => {return x.type == 'investment'}) ?? [] as item}
@@ -427,8 +428,8 @@
             <InvestmentHistoryRowChild
               data={item}
               tierDataMap={dataMap}
-              VIEWPORT_MOBILE_INIT_PARENT={VIEWPORT_MOBILE_INIT}
-              VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
+              {VIEWPORT_MOBILE_INIT}
+              {VIEWPORT_TABLET_INIT}
             />
           {/each}
         {:else}
@@ -447,8 +448,9 @@
               line-height: 24px; /* 150% */
               "
             >
+              <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
               {
-                profileTrs.investor?.general.no_information
+                profileTrs?.investor?.general.no_information
                 ?? 'Uh-oh! No Investments have been found.'
               }
             </p>
@@ -576,9 +578,9 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component CSS/SCSS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ HINT: | auto-fill/auto-complete iniside <style> for var()                      │
-|         | values by typing/CTRL+SPACE                                            │
-│ ➤ HINT: | access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
