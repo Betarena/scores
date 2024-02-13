@@ -623,7 +623,16 @@
       ;
     //
 
-    recieveAmount = parseFloat(toDecimalFix(depositAmount / (cryptoPrice * tierDiscountObject.btaPrice!), 3));
+    recieveAmount
+      = parseFloat
+      (
+        toDecimalFix
+        (
+          cryptoPrice * (depositAmount / tierDiscountObject.btaPrice!)
+          , 3
+        )
+      )
+    ;
 
     return;
   }
