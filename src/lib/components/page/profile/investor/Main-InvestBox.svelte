@@ -389,7 +389,6 @@
   $: deepReactListenSignerChange = undefined as unknown;
   $: deepReactListenDepositOptionChange = JSON.stringify(cryptoDepositOptionSelect) as string;
   $: deepReactListenInvestTotal = $userBetarenaSettings.user.scores_user_data?.investor_balance?.grand_total;
-  $: recieveAmount = parseFloat(toDecimalFix(depositAmount / (cryptoPrice * tierDiscountObject.btaPrice!), 3));
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -571,12 +570,13 @@
    *  📣 Calculate target `tier`.
    * @return { void }
    */
-  function calculateTier
+  function recalculateReceive
   (
+    depositAmount: number
+    , cryptoPrice: number
   ): void
   {
-    if (depositAmount >= 100000)
-
+    if ((depositAmount * cryptoPrice) >= 100000)
       tierDiscountObject
         = {
           name: 'platinum'
@@ -585,9 +585,7 @@
           , btaPrice: 0.50
         }
       ;
-
-    else if (depositAmount >= 50000)
-
+    else if ((depositAmount * cryptoPrice) >= 50000)
       tierDiscountObject
         = {
           name: 'gold'
@@ -596,9 +594,7 @@
           , btaPrice: 0.60
         }
       ;
-
-    else if (depositAmount >= 20000)
-
+    else if ((depositAmount * cryptoPrice) >= 20000)
       tierDiscountObject
         = {
           name: 'silver'
@@ -607,9 +603,7 @@
           , btaPrice: 0.70
         }
       ;
-
-    else if (depositAmount >= 2500)
-
+    else if ((depositAmount * cryptoPrice) >= 2500)
       tierDiscountObject
         = {
           name: 'bronze'
@@ -618,9 +612,7 @@
           , btaPrice: 0.80
         }
       ;
-
-    else if (depositAmount < 2500)
-
+    else if ((depositAmount * cryptoPrice) < 2500)
       tierDiscountObject
         = {
           name: undefined
@@ -629,6 +621,73 @@
           , btaPrice: 1.00
         }
       ;
+    //
+
+    recieveAmount = parseFloat(toDecimalFix(depositAmount / (cryptoPrice * tierDiscountObject.btaPrice!), 3));
+
+    return;
+  }
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  [🐞]
+   * @description
+   *  📣 Debug Helper
+   * @param reactDebug
+   */
+  function _DEBUG_
+  (
+    reactDebug: 'Option1' | 'Option2' | 'Option3' | 'Option4'
+  ): void
+  {
+    const
+      prefix: string = '🚏 checkpoint [R] ➤ src/lib/components/page/profile/investor/Main-InvestBox.svelte'
+    ;
+
+    // ▓ [🐞]
+    if (reactDebug == 'Option1')
+      dlogv2
+      (
+        `${prefix} if_R_X20`,
+        [
+          `🔹 [var] ➤ deepReactListenSignerChange ${deepReactListenSignerChange}`
+          , `🔹 [var] ➤ triggerInvestBox ${triggerInvestBox}`
+        ],
+        true
+      );
+    else if (reactDebug == 'Option2')
+      dlogv2
+      (
+        '🚏 checkpoint [R] ➤ if_R_X2234',
+        [
+          `🔹 [var] ➤ tokenSearch ${tokenSearch}`
+        ],
+        true
+      );
+    else if (reactDebug == 'Option3')
+      dlogv2
+      (
+        '🚏 checkpoint [R] ➤ src/lib/components/page/profile/investor/Main-InvestBox.svelte IF_X_212',
+        [
+          `🔹 [var] ➤ deepReactListenDepositOptionChange ${deepReactListenDepositOptionChange}`
+          ,`🔹 [var] ➤ deepReactListenSignerChange ${deepReactListenSignerChange}`
+        ],
+        true
+      );
+    else if (reactDebug == 'Option4')
+      dlogv2
+      (
+        '🚏 checkpoint [R] ➤ src/lib/components/page/profile/investor/Main-InvestBox.svelte IF_X_212 [E]',
+        [
+          `🔹 [var] ➤ deepReactListenSignerChange ${deepReactListenSignerChange}`
+        ],
+        true
+      );
+    //
+
+    return;
   }
 
   /**
@@ -724,7 +783,7 @@
             method: 'wallet_addEthereumChain'
             , params:
             [
-              chainObject .polygon_mumbai
+              chainObject.polygon_mumbai
             ]
           }
         );
@@ -1129,25 +1188,13 @@
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  $:
-  if (browser && deepReactListenSignerChange && triggerInvestBox)
+  $: if (browser && deepReactListenSignerChange && triggerInvestBox)
   {
-    // ### [🐞]
-    dlogv2
-    (
-      '🚏 checkpoint [R] ➤ src/lib/components/page/profile/investor/Main-InvestBox.svelte if_R_X20',
-      [
-        `🔹 [var] ➤ deepReactListenSignerChange ${deepReactListenSignerChange}`
-        , `🔹 [var] ➤ triggerInvestBox ${triggerInvestBox}`
-      ],
-      true
-    );
-
+    _DEBUG_('Option1');
     executeContract();
   }
 
-  $: if (depositAmount) calculateTier();
-  // ────────────────────────────────────────────────────────────────────────
+  $: recalculateReceive(depositAmount, cryptoPrice);
 
   $:
   if ((depositAmount * cryptoPrice) < (profileData?.presaleData.data?.min_buy ?? 2500) && deepReactListenInvestTotal == undefined)
@@ -1160,60 +1207,31 @@
     formErrorState.delete('First_Minimum_Deposit_Not_Reached');
     formErrorState = formErrorState;
   }
-  // ────────────────────────────────────────────────────────────────────────
 
-  /**
-   * @description TODO:
-  */
   $: if (tokenSearch)
   {
-    // ### [🐞]
-    dlogv2
-    (
-      '🚏 checkpoint [R] ➤ if_R_X2234',
-      [
-        `🔹 [var] ➤ tokenSearch ${tokenSearch}`
-      ],
-      true
-    );
-
+    _DEBUG_('Option2');
     searchToken();
   }
   else if (tokenSearch == '' || tokenSearch == undefined)
-  {cryptoDepositOptionsSearch = passByValue(cryptoDepositOptions);}
+  {
+    _DEBUG_('Option2');
+    cryptoDepositOptionsSearch = passByValue(cryptoDepositOptions);
+  }
 
   $: if (isNaN(cryptoPrice)) cryptoPrice = 1.00;
 
   $:
   if (deepReactListenDepositOptionChange && deepReactListenSignerChange)
   {
-    // ### [🐞]
-    dlogv2
-    (
-      '🚏 checkpoint [R] ➤ src/lib/components/page/profile/investor/Main-InvestBox.svelte IF_X_212',
-      [
-        `🔹 [var] ➤ deepReactListenDepositOptionChange ${deepReactListenDepositOptionChange}`
-        ,`🔹 [var] ➤ deepReactListenSignerChange ${deepReactListenSignerChange}`
-      ],
-      true
-    );
-
+    _DEBUG_('Option3');
     getTokenBalance();
   }
 
   $:
   if (!deepReactListenSignerChange)
   {
-    // ### [🐞]
-    dlogv2
-    (
-      '🚏 checkpoint [R] ➤ src/lib/components/page/profile/investor/Main-InvestBox.svelte IF_X_212 [E]',
-      [
-        `🔹 [var] ➤ deepReactListenSignerChange ${deepReactListenSignerChange}`
-      ],
-      true
-    );
-
+    _DEBUG_('Option3');
     cryptoDepositOptionSelect.userBalance = 0;
   }
 
