@@ -32,6 +32,9 @@
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
 
+	import TranslationText from '$lib/components/misc/Translation-Text.svelte';
+	import AdminDevControlPanel from '$lib/components/misc/admin/Admin-Dev-ControlPanel.svelte';
+	import AdminDevControlPanelToggleButton from '$lib/components/misc/admin/Admin-Dev-ControlPanelToggleButton.svelte';
 	import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 	import { scoresProfileInvestorStore } from './_store.js';
 
@@ -112,9 +115,8 @@
     , countdownLayout: number[] = [3, 2, 1]
   ;
 
-  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
-  $: deepReactListenRoundStateWidget = $scoresProfileInvestorStore.roundStateWidget;
-  $: deepReactListenGlobalActivePresaleStartClock = $scoresProfileInvestorStore.globalActivePresaleStartClock;
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
+  $: ({ globalActivePresaleStartClock, globalActivePresaleEndClock, roundStateWidget, adminOverrides } = $scoresProfileInvestorStore);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -132,10 +134,12 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   $:
-  if (deepReactListenRoundStateWidget == 'Round_CountdownWithDefinedDate' && (deepReactListenGlobalActivePresaleStartClock?.[4] ?? 1) < 23)
+  if (roundStateWidget == 'Round_CountdownWithDefinedDate' && (globalActivePresaleStartClock?.[4] || 0) < 23)
     countdownLayout = [2, 1, 0]
-  else if (deepReactListenRoundStateWidget == 'Round_CountdownToFinish' && (deepReactListenGlobalActivePresaleStartClock?.[4] ?? 1) < 23)
+  else if (roundStateWidget == 'Round_CountdownToFinish' && (globalActivePresaleEndClock?.[4] || 0) < 23)
     countdownLayout = [2, 1, 0]
+  else
+    countdownLayout = [3, 2, 1]
   // ──────────────────────────────────────────────────────────────────────────────────
 
   $:
@@ -144,7 +148,7 @@
       {
         title:
         (
-          profileTrs.investor?.round.details.token_info_title
+          profileTrs?.investor?.round.details.token_info_title
           ?? 'Token Information'
         )
         , data:
@@ -152,7 +156,7 @@
           {
             row_title:
             (
-              profileTrs.investor?.round.details.name_title
+              profileTrs?.investor?.round.details.name_title
               ?? 'Name'
             )
             , value: WIDGET_DATA?.presaleData.data?.name ?? '-'
@@ -160,7 +164,7 @@
           , {
             row_title:
             (
-              profileTrs.investor?.round.details.symbol_title
+              profileTrs?.investor?.round.details.symbol_title
               ?? 'Symbol'
             )
             , value: WIDGET_DATA?.presaleData.data?.symbol ?? '-'
@@ -168,7 +172,7 @@
           , {
             row_title:
             (
-              profileTrs.investor?.round.details.available_title
+              profileTrs?.investor?.round.details.available_title
               ?? 'Available'
             )
             , value: WIDGET_DATA?.presaleData.data?.available ?? '-'
@@ -178,7 +182,7 @@
       , {
         title:
         (
-          profileTrs.investor?.round.details.presale_title
+          profileTrs?.investor?.round.details.presale_title
           ?? 'Pre-sale'
         )
         , data:
@@ -186,7 +190,7 @@
           {
             row_title:
             (
-              profileTrs.investor?.round.details.start_date_title
+              profileTrs?.investor?.round.details.start_date_title
               ?? 'Start Date'
             )
             , value: WIDGET_DATA?.presaleData.data?.start_date ?? '-'
@@ -194,7 +198,7 @@
           , {
             row_title:
             (
-              profileTrs.investor?.round.details.end_date_title
+              profileTrs?.investor?.round.details.end_date_title
               ?? 'End Date'
             )
             , value: WIDGET_DATA?.presaleData.data?.end_date ?? '-'
@@ -204,7 +208,7 @@
       , {
         title:
         (
-          profileTrs.investor?.round.details.investment_title
+          profileTrs?.investor?.round.details.investment_title
           ?? 'Investment Details'
         )
         , data:
@@ -212,7 +216,7 @@
           {
             row_title:
             (
-              profileTrs.investor?.round.details.min_buy_title
+              profileTrs?.investor?.round.details.min_buy_title
               ?? 'Minimum Buy Amount'
             )
             , value: WIDGET_DATA?.presaleData.data?.min_buy ?? '-'
@@ -220,7 +224,7 @@
           , {
             row_title:
             (
-              profileTrs.investor?.round.details.chain_title
+              profileTrs?.investor?.round.details.chain_title
               ?? 'Raising Platform'
             )
             , value: WIDGET_DATA?.presaleData.data?.chain ?? '-'
@@ -228,7 +232,7 @@
           , {
             row_title:
             (
-              profileTrs.investor?.round.details.type_title
+              profileTrs?.investor?.round.details.type_title
               ?? 'Type'
             )
             , value: WIDGET_DATA?.presaleData.data?.type ?? '-'
@@ -236,7 +240,7 @@
           , {
             row_title:
             (
-              profileTrs.investor?.round.details.currencies_title
+              profileTrs?.investor?.round.details.currencies_title
               ?? 'Accepted Currencies'
             )
             , value: WIDGET_DATA?.presaleData.data?.currencies ?? '-'
@@ -308,6 +312,23 @@
   class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
 >
 
+  <AdminDevControlPanelToggleButton
+    title='Rounds'
+    mutated={adminOverrides.has('Rounds')}
+    on:reset=
+    {
+      () =>
+      {
+        scoresProfileInvestorStore.updateAdminMutatedWidgets
+        (
+          'Rounds'
+          , 'remove'
+        );
+        return;
+      }
+    }
+  />
+
   <!--
   ▓ NOTE:
   ▓ > top box (parent)
@@ -338,17 +359,18 @@
         w-500
         "
       >
-        {
-         profileTrs.investor?.round.round_title
-          ?? 'Round 1'
-        }
+        <TranslationText
+          key={'profile/investor/round-title'}
+          text={profileTrs?.investor?.round.round_title}
+          fallback={'Round 1'}
+        />
       </p>
 
       <!--
       ▓ NOTE:
       ▓ > presale text
       -->
-      {#if ['Round_ToBeAnnounced', 'Round_CountdownWithDefinedDate', 'Round_CountdownToFinish'].includes($scoresProfileInvestorStore.roundStateWidget)}
+      {#if ['Round_ToBeAnnounced', 'Round_CountdownWithDefinedDate', 'Round_CountdownToFinish'].includes(roundStateWidget)}
         <span
           class=
           "
@@ -358,16 +380,18 @@
           m-t-5
           "
         >
-          {#if ['Round_ToBeAnnounced', 'Round_CountdownWithDefinedDate'].includes($scoresProfileInvestorStore.roundStateWidget)}
-            {
-              profileTrs.investor?.round.round_description
-              ?? 'Presale starts in'
-            }
-          {:else if $scoresProfileInvestorStore.roundStateWidget == 'Round_CountdownToFinish'}
-            {
-              profileTrs.investor?.round.progress_title
-              ?? 'Presale ends in'
-            }
+          {#if ['Round_ToBeAnnounced', 'Round_CountdownWithDefinedDate'].includes(roundStateWidget)}
+            <TranslationText
+              key={'profile/investor/round-title'}
+              text={profileTrs?.investor?.round.round_description}
+              fallback={'Presale starts in'}
+            />
+          {:else if roundStateWidget == 'Round_CountdownToFinish'}
+            <TranslationText
+              key={'profile/investor/round-title'}
+              text={profileTrs?.investor?.round.progress_title}
+              fallback={'Presale ends in'}
+            />
           {/if}
         </span>
       {/if}
@@ -378,7 +402,7 @@
     ▓ NOTE:
     ▓ > countdown (parent)
     -->
-    {#if ['Round_CountdownWithDefinedDate', 'Round_CountdownToFinish'].includes($scoresProfileInvestorStore.roundStateWidget)}
+    {#if ['Round_CountdownWithDefinedDate', 'Round_CountdownToFinish'].includes(roundStateWidget)}
 
       <!--
       ▓ NOTE:
@@ -409,9 +433,9 @@
               "
             >
               {
-                $scoresProfileInvestorStore.roundStateWidget == 'Round_CountdownWithDefinedDate'
-                  ? $scoresProfileInvestorStore.globalActivePresaleStartClock?.[item]
-                  : $scoresProfileInvestorStore.globalActivePresaleEndClock?.[item]
+                roundStateWidget == 'Round_CountdownWithDefinedDate'
+                  ? globalActivePresaleStartClock?.[item]
+                  : globalActivePresaleEndClock?.[item]
               }
               {#if item == 3}
                 d
@@ -447,21 +471,24 @@
             dark-v1
           "
         >
-          {#if $scoresProfileInvestorStore.roundStateWidget == 'Round_ToBeAnnounced'}
-            {
-              profileTrs.investor?.round.round_description
-              ?? 'Date To Be Announced'
-            }
-          {:else if $scoresProfileInvestorStore.roundStateWidget == 'Round_InviteOnly'}
-            {
-              profileTrs.investor?.round.date_message
-              ?? 'Invite Only'
-            }
-          {:else if $scoresProfileInvestorStore.roundStateWidget == 'Round_Ended'}
-            {
-              profileTrs.investor?.round.current_value_title
-              ?? 'Raised'
-            }
+          {#if roundStateWidget == 'Round_ToBeAnnounced'}
+            <TranslationText
+              key={'profile/investor/round-title'}
+              text={profileTrs?.investor?.round.round_description}
+              fallback={'Date To Be Announced'}
+            />
+          {:else if roundStateWidget == 'Round_InviteOnly'}
+            <TranslationText
+              key={'profile/investor/round-title'}
+              text={profileTrs?.investor?.round.date_message}
+              fallback={'Invite Only'}
+            />
+          {:else if roundStateWidget == 'Round_Ended'}
+            <TranslationText
+              key={'profile/investor/round-title'}
+              text={profileTrs?.investor?.round.details.end_message}
+              fallback={'Raised'}
+            />
           {/if}
         </p>
       </div>
@@ -507,10 +534,11 @@
           color-black-2
           "
         >
-          {
-           profileTrs.investor?.round.progress_title
-            ?? 'Progress'
-          }
+          <TranslationText
+            key={'profile/investor/round-title'}
+            text={profileTrs?.investor?.round.progress_title}
+            fallback={'Progress'}
+          />
         </p>
 
         <!--
@@ -567,10 +595,11 @@
             grey-v1
           "
         >
-          {
-           profileTrs.investor?.round.current_value_title
-            ?? 'Raised'
-          }
+          <TranslationText
+            key={'profile/investor/round-title'}
+            text={profileTrs?.investor?.round.current_value_title}
+            fallback={'Raised'}
+          />
           <span
             class=
             "
@@ -595,10 +624,11 @@
             grey-v1
           "
         >
-          {
-           profileTrs.investor?.round.max_title
-            ?? 'Unlimited'
-          }
+          <TranslationText
+            key={'profile/investor/round-title'}
+            text={profileTrs?.investor?.round.max_title}
+            fallback={'Unlimited'}
+          />
         </p>
       </div>
 
@@ -693,6 +723,69 @@
   </div>
 
 </div>
+
+<!--
+▓ NOTE:
+▓ > (widget) admin development state UI change control panel.
+-->
+<AdminDevControlPanel
+  title='Rounds'
+>
+
+  <!--
+  ▓ NOTE:
+  ▓ > (select) widget state.
+  -->
+  <div
+    class=
+    "
+    row-space-out
+    "
+  >
+    <!--
+    ▓ NOTE:
+    ▓ > (text) target action.
+    -->
+    <p
+      class=
+      "
+      s-14
+      color-black
+      "
+    >
+      <b>[1]</b> Choose <b>Widget State</b>
+    </p>
+
+    <!--
+    ▓ NOTE:
+    ▓ > (action) target select.
+    -->
+    <select
+      id="cars"
+      name="cars"
+      bind:value={$scoresProfileInvestorStore.roundStateWidget}
+      on:change=
+      {
+        () =>
+        {
+          scoresProfileInvestorStore.updateAdminMutatedWidgets
+          (
+            'Rounds'
+            , 'set'
+          );
+          return;
+        }
+      }
+    >
+      <option value="Round_InviteOnly">Invite Only</option>
+      <option value="Round_ToBeAnnounced">To Be Announced</option>
+      <option value="Round_CountdownWithDefinedDate">Countdown With Defined Date</option>
+      <option value="Round_CountdownToFinish">Countdown To Finish</option>
+      <option value="Round_Ended">Round Ended</option>
+    </select>
+  </div>
+
+</AdminDevControlPanel>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮

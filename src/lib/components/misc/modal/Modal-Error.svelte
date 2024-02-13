@@ -29,7 +29,7 @@
 
   import icon_tx_error from './assets/icon-error.svg';
 
-  import ModalBackdrop from '$lib/components/misc/Modal-Backdrop.svelte';
+  import ModalBackdrop from '$lib/components/misc/modal/Modal-Backdrop.svelte';
 
   // #endregion ➤ 📦 Package Imports
 

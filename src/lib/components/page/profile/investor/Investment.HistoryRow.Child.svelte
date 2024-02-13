@@ -25,9 +25,10 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { page } from '$app/stores';
+  import TxStatusPill from '$lib/components/shared/Tx-Status-Pill.svelte';
 
   import { toZeroPrefixDateStr } from '$lib/utils/dates.js';
-  import { toDecimalFix } from '$lib/utils/platform-functions';
+  import type { PublicTransactionHistoryMain } from '@betarena/scores-lib/types/_AUTO-HASURA-2_.js';
 
   import icon_arrow_down from '../assets/arrow-down.svg';
   import icon_arrow_up from '../assets/arrow-up.svg';
@@ -36,7 +37,7 @@
   import icon_platinum from '../assets/price-tier/icon-bta-platinum.svg';
   import icon_silver from '../assets/price-tier/icon-bta-silver.svg';
 
-	import type { B_H_KEYP, B_H_KEYP_Tier, B_H_TH } from '@betarena/scores-lib/types/_HASURA_.js';
+	import type { B_H_KEYP, B_H_KEYP_Tier } from '@betarena/scores-lib/types/_HASURA_.js';
 	import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -57,9 +58,9 @@
 
   export let
     /**
-     * @augments B_H_TH
+     * @augments PublicTransactionHistoryMain
      */
-    data: B_H_TH
+    data: PublicTransactionHistoryMain
     /**
      * @description
      *  📣 Target `tier` data represented as `map`.
@@ -193,9 +194,25 @@
   ▓ > transaction execution type.
   -->
   <td>
-    <p>
-      {data.type}
-    </p>
+    <div
+      class=
+      "
+      column-start-grid-start
+      "
+    >
+      <p>
+        {data.type ?? '-'}
+      </p>
+      <span
+        class=
+        "
+        s-12
+        color-grey
+        "
+      >
+        {data.description ?? '-'}
+      </span>
+    </div>
   </td>
 
   <!--
@@ -271,7 +288,7 @@
     -->
     <td>
       <p>
-        ${data.amount ?? '-'}
+        ${data.quantity ?? '-'}
       </p>
     </td>
 
@@ -281,7 +298,7 @@
     -->
     <td>
       <p>
-        {data.quantity ?? '-'}
+        {data.amount ?? '-'}
       </p>
     </td>
 
@@ -299,25 +316,38 @@
 
   <!--
   ▓ NOTE:
-  ▓ > 📱 MOBILE
+  ▓ > investment status + dropdown for 📱 MOBILE
   -->
-  {#if VIEWPORT_MOBILE_INIT[1]}
-    <td>
-      <img
-        src={isTxExtraInfo ? icon_arrow_up : icon_arrow_down}
-        alt={isTxExtraInfo ? 'icon_arrow_up' : 'icon_arrow_down'}
-        class=
-        "
-        cursor-pointer
-        m-l-8
-        "
-        style=
-        "
-        float: right;
-        "
+  <td>
+    <div
+      class=
+      "
+      row-space-end
+      "
+    >
+      <TxStatusPill
+        txStatus={data.status}
+        trsStatusTerms={profileTrs?.tx?.status}
       />
-    </td>
-  {/if}
+
+      {#if VIEWPORT_MOBILE_INIT[1]}
+        <img
+          src={isTxExtraInfo ? icon_arrow_up : icon_arrow_down}
+          alt={isTxExtraInfo ? 'icon_arrow_up' : 'icon_arrow_down'}
+          class=
+          "
+          cursor-pointer
+          m-l-8
+          "
+          style=
+          "
+          float: right;
+          "
+        />
+      {/if}
+
+    </div>
+  </td>
 
   <!--
   ▓ NOTE:
@@ -397,19 +427,11 @@
             {#if item == 'discount'}
               {tierDataMap.get(data.tier ?? 'NaN')?.data?.discount_percentage}%
             {:else if item == 'investment'}
-              ${data.amount}
+              ${data.quantity}
             {:else if item == 'tokens'}
-              {data.quantity}
+              {data.amount}
             {:else if item == 'price'}
-              ${
-                toDecimalFix
-                (
-                  tierDataMap.get(data.tier ?? 'NaN')?.data?.token_price ?? 0
-                  , 2
-                  , false
-                  , false
-                )
-              }
+              ${data.bta_price ?? '-'}
             {/if}
           </p>
 

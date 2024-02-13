@@ -54,7 +54,7 @@
   import icon_social_whatsapp_hover from '../assets/investor/icon-social-whatsapp-hover.svg';
   import icon_social_whatsapp from '../assets/investor/icon-social-whatsapp.svg';
 
-  import ModalBackdrop from '$lib/components/misc/Modal-Backdrop.svelte';
+  import ModalBackdrop from '$lib/components/misc/modal/Modal-Backdrop.svelte';
 
   import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
   import { scoresProfileInvestorStore } from './_store.js';

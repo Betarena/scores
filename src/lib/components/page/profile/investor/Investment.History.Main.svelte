@@ -71,6 +71,7 @@
     | 'tier'
     | 'discount'
     | 'investment'
+    | 'status'
     | 'tokens'
     | 'price'
     | ''
@@ -208,6 +209,7 @@
         , 'investment'
         , 'tokens'
         , 'price'
+        , 'status'
       ]
     /**
      * @description
@@ -246,9 +248,9 @@
   ): void
   {
     if (VIEWPORT_MOBILE_INIT[1])
-      tableHeader = [ 'date', 'type', 'tier', '' ]
+      tableHeader = [ 'date', 'type', 'tier', 'status' ]
     else
-      tableHeader = [ 'date', 'type', 'tier', 'discount', 'investment', 'tokens', 'price' ]
+      tableHeader = [ 'date', 'type', 'tier', 'discount', 'investment', 'tokens', 'price', 'status' ]
     return;
   }
 
@@ -429,6 +431,11 @@
                   {
                     profileTrs?.investor?.investment_details.price
                     ?? 'Price'
+                  }
+                {:else if item == 'status'}
+                  <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
+                  {
+                    'Status'
                   }
                 {/if}
               </p>
@@ -708,6 +715,7 @@
                 /* 🎨 style */
                 padding-right: 20px;
                 border-radius: 0 2px 2px 0;
+                text-align: -webkit-right;
               }
             }
           }
@@ -780,7 +788,7 @@
                 /* 🎨 style */
                 padding: 0 20px;
                 position: absolute;
-                top: 56px;
+                top: 68px;
                 right: 0;
                 left: 0;
                 /*  */

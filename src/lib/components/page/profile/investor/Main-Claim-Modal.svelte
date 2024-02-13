@@ -31,7 +31,7 @@
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 
-	import ModalBackdrop from '$lib/components/misc/Modal-Backdrop.svelte';
+	import ModalBackdrop from '$lib/components/misc/modal/Modal-Backdrop.svelte';
 
 	import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 

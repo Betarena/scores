@@ -21,6 +21,7 @@ const
     , referralInviteStateWidget: 'FirstInvestmentNotMade'
     , tgeStateWidget: 'Tge_NoDefinedDate'
     , roundStateWidget: 'Round_ToBeAnnounced'
+    , adminOverrides: new Set()
   }
 ;
 
@@ -218,17 +219,42 @@ function createLocalStore
           storeObject.tgeStateWidget = 'Tge_ClaimAvailable';
         // ──────────────────────────────────────────────────────────────────────────────────
 
-        if ((storeObject.globalActivePresaleStartClock?.[0] ?? 1) >= 0 && (storeObject.globalActivePresaleStartClock?.[4] ?? 1) >= 0)
-          storeObject.roundStateWidget = 'Round_CountdownWithDefinedDate';
-        else if ((storeObject.globalActivePresaleEndClock?.[0] ?? 1) >= 0 && (storeObject.globalActivePresaleEndClock?.[4] ?? 1) >= 0)
-          storeObject.roundStateWidget = 'Round_CountdownToFinish';
-        else if ((storeObject.globalActivePresaleEndClock?.[0] ?? 1) > 0 && (storeObject.globalActivePresaleEndClock?.[4] ?? 1) < 23)
-          storeObject.roundStateWidget = 'Round_Ended';
-        else
-          storeObject.roundStateWidget = 'Round_ToBeAnnounced';
+        if (!storeObject.adminOverrides.has('Rounds'))
+          if ((storeObject.globalActivePresaleStartClock?.[0] ?? 1) >= 0 && (storeObject.globalActivePresaleStartClock?.[4] ?? 1) >= 0)
+            storeObject.roundStateWidget = 'Round_CountdownWithDefinedDate';
+          else if ((storeObject.globalActivePresaleEndClock?.[0] ?? 1) >= 0 && (storeObject.globalActivePresaleEndClock?.[4] ?? 1) >= 0)
+            storeObject.roundStateWidget = 'Round_CountdownToFinish';
+          else if ((storeObject.globalActivePresaleEndClock?.[0] ?? 1) <= 0 && (storeObject.globalActivePresaleEndClock?.[4] ?? 1) <= 23)
+            storeObject.roundStateWidget = 'Round_Ended';
+        // else
+        //   storeObject.roundStateWidget = 'Round_ToBeAnnounced';
         // ──────────────────────────────────────────────────────────────────────────────────
 
         set(storeObject);
+      }
+
+      /**
+       * @author
+       *  @migbash
+       * @summary
+       *  🟦 HELPER
+       * @description
+       *  📣 Updates existing `admin` list of actively mutated widgets.
+       * @return { void }
+       */
+      , updateAdminMutatedWidgets:
+      (
+        widgetName: IProfileAdminWidgets
+        , action: 'set' | 'remove'
+      ): void =>
+      {
+        if (action == 'set')
+          storeObject.adminOverrides.add(widgetName);
+        else
+          storeObject.adminOverrides.delete(widgetName);
+        //
+        set(storeObject);
+        return;
       }
 
     }

@@ -9,7 +9,7 @@
 
 <script lang="ts">
 
-  // #region ➤ 📦 Package Imports
+  // #region ➤ 📦 Package Imports1
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -26,6 +26,7 @@
 
   import { page } from '$app/stores';
 
+  import { postv2 } from '$lib/api/utils.js';
   import { userUpdateInvestorBalance } from '$lib/firebase/common.js';
   import sessionStore from '$lib/store/session.js';
   import userBetarenaSettings from '$lib/store/user-settings.js';
@@ -35,7 +36,6 @@
   import InvestmentVestingPeriodsRowChild from './Investment.VestingPeriodsRow.Child.svelte';
   import MainClaimModal from './Main-Claim-Modal.svelte';
 
-  import { postv2 } from '$lib/api/utils.js';
   import type { PUBLIC__INVESTOR_IVesting } from '@betarena/scores-lib/types/_HASURA_.js';
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 

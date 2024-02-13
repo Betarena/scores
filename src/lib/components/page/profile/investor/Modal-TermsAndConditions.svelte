@@ -35,8 +35,8 @@
   import icon_close from '../assets/investor/icon-close-btn.svg';
   import icon_close_dark from '../assets/investor/icon-close-dark-btn.svg';
 
-	import ModalBackdrop from '$lib/components/misc/Modal-Backdrop.svelte';
-  
+	import ModalBackdrop from '$lib/components/misc/modal/Modal-Backdrop.svelte';
+
 	import type { B_USRG_D } from '@betarena/scores-lib/types/types.misc.userguide.js';
 
   // #endregion ➤ 📦 Package Imports

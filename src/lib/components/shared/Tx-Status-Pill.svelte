@@ -24,12 +24,10 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-	import { dev } from '$app/environment';
-	import { createEventDispatcher, type EventDispatcher } from 'svelte';
+  import TranslationText from '../misc/Translation-Text.svelte';
 
-	import { scoresAdminStore } from '$lib/store/admin.js';
-	import sessionStore from '$lib/store/session.js';
-	import { dlog } from '$lib/utils/debug.js';
+  import type { TranslationsTransactionsDataStatus } from '@betarena/scores-lib/types/_AUTO-HASURA-2_.js';
+  import type { ITransactionStatus } from '@betarena/scores-lib/types/_ENUMS_.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -50,86 +48,25 @@
   export let
     /**
      * @description
-     *  📣 Target `admin` control title.
+     *  📣 Target `status` for _this_ transaction.
     */
-    title: string
+    txStatus: ITransactionStatus | undefined
     /**
      * @description
-     *  📣 Wether target **parent** `widget` has underwent **admin mutation**.
+     *  📣 Target incoming translation term(s).
     */
-    , mutated: boolean = false
+    , trsStatusTerms: TranslationsTransactionsDataStatus | undefined
   ;
+
+  console.log('trsStatusTerms', trsStatusTerms)
 
   const
-    /**
-     * @description
-     *  📣 `this` component **main** `id` and `data-testid` prefix.
-    */
+    /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
     // eslint-disable-next-line no-unused-vars
     CNAME: string = 'profile⮕w⮕investfaq⮕main'
-    /**
-     * @description
-     *  📣 threshold start + state for 📱 MOBILE
-    */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
-    /**
-     * @description
-     *  📣 threshold start + state for 💻 TABLET
-    */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
-    /**
-     * @description
-     *  📣
-    */
-    , dispatch: EventDispatcher<any> = createEventDispatcher()
-    /**
-     * @description
-     *  📣 target environment being used.
-    */
-    , targetAppEnv: string = import.meta.env.VITE_ENV_TARGET
   ;
-
-  let
-    /**
-     * @description
-     *  📣 State for `selected`.
-    */
-    isSelected: boolean = false
-  ;
-
-  $: deepReactListen0 = $sessionStore.currentAdminToggle;
 
   // #endregion ➤ 📌 VARIABLES
-
-  // #region ➤ 🔥 REACTIVIY [SVELTE]
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'logic' that should run            │
-  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
-  // │ WARNING:                                                               │
-  // │ ❗️ Can go out of control.                                              │
-  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
-  // │ Please keep very close attention to these methods and                  │
-  // │ use them carefully.                                                    │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  $: if (deepReactListen0 != title)
-  {
-    // ▓ [🐞]
-    // ### [🐞]
-    dlog
-    (
-      `🚏 checkpoint [R] ➤ CASD123 ${deepReactListen0} ${title}`,
-      true
-    );
-
-    isSelected = false;
-  }
-
-  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
 </script>
 
@@ -144,111 +81,23 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<!--
-▓ NOTE:
-▓ > admin development toggle component.
--->
-{#if (dev) && $scoresAdminStore.admin}
-  <div
-    class=
-    "
-    row-space-end
-    <!---->
-    developer-action-box
-    "
-  >
-
-    {#if mutated}
-      <!--
-      ▓ NOTE:
-      ▓ > toggle mutated widget factory reset.
-      -->
-      <div
-        class=
-        "
-        cursor-pointer
-        <!---->
-        developer-factory-reset-widget
-        "
-        on:click=
-        {
-          () =>
-          {
-            dispatch('reset');
-            return;
-          }
-        }
-      >
-        <p
-          class=
-          "
-          s-14
-          color-black
-          bold
-          "
-        >
-          X
-        </p>
-      </div>
-
-      <!--
-      ▓ NOTE:
-      ▓ > mutated widget badge.
-      -->
-      <div
-        class=
-        "
-        developer-widget-mutation-badge
-        "
-      >
-        <p
-          class=
-          "
-          s-14
-          color-white
-          bold
-          "
-        >
-          M
-        </p>
-      </div>
-    {/if}
-
-    <!--
-    ▓ NOTE:
-    ▓ > toggle development control-panel.
-    -->
-    <div
-      class=
-      "
-      cursor-pointer
-      <!---->
-      developer-button
-      "
-      on:click=
-      {
-        () =>
-        {
-          isSelected = !isSelected;
-          if (isSelected)
-            $sessionStore.currentAdminToggle = title;
-          else
-            $sessionStore.currentAdminToggle = null;
-          return;
-        }
-      }
-      class:isSelected={isSelected && $sessionStore.currentAdminToggle == title}
-    >
-      <img
-        id=''
-        src='/assets/svg/icon-dev-toggle.svg'
-        alt='dev-toggle-icon'
-        title='Widget Dev States Toggle'
-        loading='lazy'
-      />
-    </div>
-  </div>
-{/if}
+<p
+  class=
+  "
+  tx-status-pill
+  "
+  class:completed={txStatus == 'completed'}
+  class:pending={txStatus == 'pending'}
+  class:failed={txStatus == 'failed'}
+>
+  {#if txStatus == 'completed'}
+    <TranslationText key={'shared/tx-pill'} text={trsStatusTerms?.complete} />
+  {:else if txStatus == 'pending'}
+    <TranslationText key={'shared/tx-pill'} text={trsStatusTerms?.pending} />
+  {:else if txStatus == 'failed'}
+    <TranslationText key={'shared/tx-pill'} text={trsStatusTerms?.failed} />
+  {/if}
+</p>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -262,66 +111,31 @@
 
 <style lang="scss">
 
-  /*
-  ╭──────────────────────────────────────────────────────────────────────────────╮
-  │ 📲 MOBILE-FIRST                                                              │
-  ╰──────────────────────────────────────────────────────────────────────────────╯
-  */
-
-  div.developer-action-box
+  p.tx-status-pill
   {
-    /* 📌 position */
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    z-index: 10000000;
+    /* 🛝 layout */
+    width: fit-content;
+    /* 🎨 style */
+    padding: 4px 12px;
+    border-radius: 32px;
 
-    div.developer-factory-reset-widget
+    &.completed
     {
       /* 🎨 style */
-      background-color: #FFFFFF;
-      padding: 2.5px 0;
-      text-align: center;
-      width: 26px;
-      height: 26px;
+      color: var(--status-green, #59C65D) !important;
+      background: rgba(89, 198, 93, 0.10);
     }
-
-    div.developer-widget-mutation-badge
+    &.pending
     {
       /* 🎨 style */
-      background-color: #FF0000;
-      padding: 2.5px 0;
-      text-align: center;
-      width: 26px;
-      height: 26px;
+      color: var(--status-yellow, #FFB904) !important;
+      background: rgba(255, 185, 4, 0.10);
     }
-
-    div.developer-button
+    &.failed
     {
       /* 🎨 style */
-      background-color: #EBFF00;
-      padding: 5px;
-      width: 26px;
-      height: 26px;
-
-      &.isSelected
-      {
-        /* 🎨 style */
-        background-color: #1C88EC;
-        box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.43) inset;
-      }
-    }
-
-    & div:first-child
-    {
-      /* 🎨 style */
-      border-radius: 2.5px 0 0 2.5px;
-    }
-
-    & div:last-child
-    {
-      /* 🎨 style */
-      border-radius: 0 2.5px 2.5px 0;
+      color: var(--status-red-night, #FF5959) !important;
+      background: rgba(255, 89, 89, 0.10);
     }
   }
 

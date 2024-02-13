@@ -13,7 +13,7 @@ COMPONENT JS (w/ TS)
 	import icon_deposit from '../assets/tx-hist/deposit.svg';
 	import icon_withdraw from '../assets/tx-hist/withdraw.svg';
 
-	import type { B_H_TH, B_H_TT_Field, B_H_TT_Status } from "@betarena/scores-lib/types/_HASURA_.js";
+	import type { B_H_TH, B_H_TH_Type, B_H_TT_Field, B_H_TT_Status } from "@betarena/scores-lib/types/_HASURA_.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -82,8 +82,8 @@ COMPONENT JS (w/ TS)
    */
   $: if (tx_data?.type)
   {
-		if (tx_data?.type?.toLowerCase() == 'deposit') txTypeIcon = icon_deposit;
-		if (tx_data?.type?.toLowerCase() == 'withdraw') txTypeIcon = icon_withdraw;
+		if ((['deposit', 'investment'] as B_H_TH_Type[]).includes(tx_data?.type)) txTypeIcon = icon_deposit;
+		if ((['Withdraw', 'tge', 'vesting'] as B_H_TH_Type[]).includes(tx_data?.type)) txTypeIcon = icon_withdraw;
   }
 
   /**

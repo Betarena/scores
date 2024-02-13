@@ -18,6 +18,10 @@ type IProfileInvestorRoundWidgetState =
   | 'Round_Ended'
 ;
 
+type IProfileAdminWidgets =
+  | 'Rounds'
+;
+
 /**
  * @description
  *  📣 Scores Platfrom | Profile > Investor Section Interface.
@@ -69,4 +73,9 @@ interface IProfileInvestorSection
    *  📣 Target widget `store` state for `(page) profile > (tab) investor > (widget) round`.
    */
   roundStateWidget: IProfileInvestorRoundWidgetState;
+  /**
+   * @description
+   *  📣 Target widgets being overriden by admin.
+   */
+  adminOverrides: Set < IProfileAdminWidgets >;
 }

@@ -8,6 +8,7 @@
 -->
 
 <script lang="ts">
+  import { scoresAdminStore } from '$lib/store/admin.js';
 
   // #region ➤ 📦 Package Imports
 
@@ -24,62 +25,9 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { dev } from '$app/environment';
-
-  import { scoresAdminStore } from '$lib/store/admin.js';
 	import sessionStore from '$lib/store/session.js';
 
   // #endregion ➤ 📦 Package Imports
-
-  // #region ➤ 📌 VARIABLES
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'variables' that are to be         │
-  // │ and are expected to be used by 'this' .svelte file / component.        │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. export const / let [..]                                             │
-  // │ 2. const [..]                                                          │
-  // │ 3. let [..]                                                            │
-  // │ 4. $: [..]                                                             │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  export let
-    /**
-     * @description
-     *  📣 Target `admin` control title.
-    */
-    title: string
-  ;
-
-  const
-    /**
-     * @description
-     *  📣 `this` component **main** `id` and `data-testid` prefix.
-    */
-    // eslint-disable-next-line no-unused-vars
-    CNAME: string = 'developer-admin-control'
-    /**
-     * @description
-     *  📣 threshold start + state for 📱 MOBILE
-    */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
-    /**
-     * @description
-     *  📣 threshold start + state for 💻 TABLET
-    */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
-    /**
-     * @description
-     *  📣 target environment being used.
-    */
-    , targetAppEnv: string = import.meta.env.VITE_ENV_TARGET
-  ;
-
-  // #endregion ➤ 📌 VARIABLES
 
 </script>
 
@@ -94,30 +42,55 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-{#if (dev) && $sessionStore.currentAdminToggle == title && $scoresAdminStore.admin}
-  <div
-    class={CNAME}
+<div
+  class=
+  "
+  competition-modal
+  "
+>
+  <!--
+  NOTE:
+  > Information on Firebase Listeners
+  -->
+  <p
+    class=
+    "
+    color-white
+    "
   >
-    <!--
-    ▓ NOTE:
-    ▓ > (text) widget title.
-    -->
-    <p
-      class=
-      "
-      s-20
-      color-black
-      bold
-      "
-    >
-      🛠️ Admin Control Panel | {title}
-    </p>
+    Active Firebase Event Listeners:
+    {$sessionStore.firebaseListeners.length ?? 0}
+  </p>
 
-    <slot>
-      No Actions Provided
-    </slot>
-  </div>
-{/if}
+  <!--
+  NOTE:
+  > GraphQL WebSockets Connection
+  -->
+  <p
+    class=
+    "
+    color-white
+    "
+  >
+    Active GraphQl WebSocket Listeners:
+    {$sessionStore.grapqhQlWebSockets.length ?? 0}
+  </p>
+
+  <!--
+  NOTE:
+  > Items that do not have a translation
+  -->
+  <p
+    class=
+    "
+    color-white
+    "
+  >
+    Text(s) with no translation:
+    {$scoresAdminStore.termsWithoutTranslation.size}
+  </p>
+
+</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -131,64 +104,16 @@
 
 <style lang="scss">
 
-  /*
-  ╭──────────────────────────────────────────────────────────────────────────────╮
-  │ 📲 MOBILE-FIRST                                                              │
-  ╰──────────────────────────────────────────────────────────────────────────────╯
-  */
-
-  div.developer-admin-control
+  div.competition-modal
   {
     /* 🎨 style */
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    left: 0;
-    z-index: 100000000000;
-    /* 🎨 style */
-    background-color: #EBFF00;
-    padding: 20px;
+		width: 100%;
+		background: blue;
+		padding: 20px;
+		overflow: hidden;
     /* 🛝 layout */
     display: grid;
-    gap: 15px;
-
-    :global
-    {
-      button
-      {
-        &.dev-toggle
-        {
-          /* 🎨 style */
-          height: 26px;
-          width: 91px;
-          border-radius: 2.5px;
-          box-shadow: 0px 0px 5px 0px #000 inset;
-
-          &.on
-          {
-            /* 🎨 style */
-            color: #000;
-            background-color: #00FF85;
-          }
-
-          &.off
-          {
-            /* 🎨 style */
-            color: #FFF;
-            background-color: #F00;
-          }
-        }
-      }
-
-      select
-      {
-        /* 🎨 style */
-        padding: 5px;
-        outline: none;
-        border: #CCCCCC;
-        border-radius: 5px;
-      }
-    }
+    align-content: space-between;
   }
 
 </style>

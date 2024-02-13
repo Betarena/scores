@@ -25,7 +25,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
 	import { page } from '$app/stores';
-  
+
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 
@@ -33,7 +33,7 @@
   import icon_tx_error from '../assets/tx-loader/tx-error.svg';
   import icon_tx_processing from '../assets/tx-loader/tx-load-anim.svg';
 
-  import ModalBackdrop from '$lib/components/misc/Modal-Backdrop.svelte';
+  import ModalBackdrop from '$lib/components/misc/modal/Modal-Backdrop.svelte';
 
   import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 

@@ -2,7 +2,8 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - access custom Betarena Scores JS VScode Snippets by typing 'script...'         │
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -164,7 +165,7 @@
      * @description
      *  📣 Target `start` scroll value.
      */
-    , startScroll: number = 0
+    , startScroll: [number, number] = [0, 0]
   ;
 
   // ▓ [🐞]
@@ -173,6 +174,7 @@
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
   $: monthsTrs = $page.data.B_SAP_D2 as B_SAP_D2 | null | undefined;
   $: deepReactListen1 = passByValue($userBetarenaSettings.theme);
+  $: deepReactListenLang = passByValue($userBetarenaSettings.lang);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -244,14 +246,20 @@
 
     let
       container = document.getElementById('chartParent')!
+      , scrollBox = document.getElementById('scrollBox')!
     ;
     event.preventDefault();
 
     const
       leftVal = container.offsetLeft - (event?.clientX || event?.touches[0].clientX)
+      , currentElementBoundClientLeft = scrollBox.getBoundingClientRect().left
     ;
 
-    startScroll = leftVal;
+    startScroll[0] = leftVal;
+    startScroll[1] = -currentElementBoundClientLeft;
+
+    // console.log(scrollBox.clientLeft, scrollBox.offsetLeft, scrollBox.scrollLeft);
+    // console.log(scrollBox.getBoundingClientRect());
 
     stateObject.chartIsBeingScrolled = true;
 
@@ -271,22 +279,25 @@
    */
   function mouseMoveEvent
   (
-    event: any
+    event: MouseEvent
   ): void
   {
     if (!stateObject.chartIsBeingScrolled) return;
 
     let
       container = document.getElementById('chartParent')!
-      , scrollBox = document.getElementById('chartMain')!
+      , scrollBox = document.getElementById('scrollBox')!
     ;
     event.preventDefault();
 
     const
-      leftVal = container.offsetLeft - (event?.clientX || event?.touches[0].clientX)
+      leftVal = container.offsetLeft - (event.clientX || event.touches[0].clientX)
     ;
 
-    scrollBox.scroll({ 'behavior': 'smooth', left: (scrollBox.scrollLeft + (leftVal - startScroll)) });
+    if ((startScroll[1] + (leftVal - startScroll[0])) > 0) return;
+    if (scrollBox.offsetLeft > 0) return;
+
+    scrollBox.style.right = `${startScroll[1] + (leftVal - startScroll[0])}px`;
 
     return;
   }
@@ -383,8 +394,11 @@
       , mapMain = new Map < string, number >()
     ;
 
-    // ▓ NOTE:
-    // ▓ > loop over each transaction and group them by monthly+year.
+    // ╭────────────────────────────────────────────────────────────────────────╮
+    // │ NOTE:                                                                  │
+    // │ loop over each transaction and group them by monthly+year.             │
+    // ╰────────────────────────────────────────────────────────────────────────╯
+
     for (const iterator of investorTxList)
     {
       const
@@ -396,15 +410,15 @@
         || !['investment', 'vesting'].includes(iterator.type)
       )
         continue;
-      //
+      // ────────────────────────────────────────────────────────────────────────
 
       let deltaAmount: number = 0;
 
-      if (iterator.type == 'investment')
+      if (iterator.type == 'investment' && iterator.status == 'completed')
         deltaAmount = iterator.quantity ?? 0;
-      else if (iterator.type == 'vesting' || iterator.type == 'tge')
+      else if ((iterator.type == 'vesting' || iterator.type == 'tge') && iterator.status == 'completed')
         deltaAmount = -(iterator.quantity ?? 0);
-      //
+      // ────────────────────────────────────────────────────────────────────────
 
       if (mapTemp.has(txMonthYear))
       {
@@ -420,8 +434,11 @@
     // ▓ [🐞]
     console.log('mapTemp', mapTemp);
 
-    // ▓ NOTE:
-    // ▓ > loop over each referral and group them by monthly+year;
+    // ╭────────────────────────────────────────────────────────────────────────╮
+    // │ NOTE:                                                                  │
+    // │ loop over each referral and group them by monthly+year;                │
+    // ╰────────────────────────────────────────────────────────────────────────╯
+
     for (const iterator of investorData?.data?.referral_history ?? [])
     {
       const
@@ -442,6 +459,11 @@
     // ▓ [🐞]
     console.log('mapTemp2', mapTemp2);
 
+    // ╭────────────────────────────────────────────────────────────────────────╮
+    // │ NOTE:                                                                  │
+    // │ loop over each group monthly+year, and combine transaction + referrals │
+    // ╰────────────────────────────────────────────────────────────────────────╯
+
     let
       /**
        * @description
@@ -450,8 +472,6 @@
       cummulativeSum: number = 0
     ;
 
-    // ▓ NOTE:
-    // ▓ > loop over each group monthly+year.
     for (const date of dateList)
     {
       const
@@ -475,7 +495,7 @@
         continue;
       //
 
-      mapMain.set(txMonthYear, 0);
+      mapMain.set(txMonthYear, cummulativeSum);
     }
 
     // ▓ [🐞]
@@ -545,7 +565,8 @@
                     return monthsTrs?.months_abbreviation?.[MONTH_NAMES_ABBRV[x.split('_')[0]]]
                   }
                 )
-              , datasets: [
+              , datasets:
+              [
                 {
                   data: [...mapInvestAmountDeltaPerMonth.values()]
                   , borderWidth: 3
@@ -634,7 +655,8 @@
                     return monthsTrs?.months_abbreviation?.[MONTH_NAMES_ABBRV[x.split('_')[0]]]
                   }
                 )
-              , datasets: [
+              , datasets:
+              [
                 {
                   data: [...mapInvestAmountDeltaPerMonth.values()]
                   , borderColor: gridLineColor
@@ -774,7 +796,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   $:
-  if (browser && deepReactListen1)
+  if (browser && (deepReactListen1 || deepReactListenLang))
   {
     // ▓ [🐞]
     dlog
@@ -786,7 +808,7 @@
     generateTargetChart();
   }
 
-    // #endregion ➤ 🔥 REACTIVIY [SVELTE]
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
 </script>
 
@@ -794,8 +816,10 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component HTML                                                            │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - use 'Ctrl+Space' to autocomplete global class=styles                           │
-│ - access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.     │
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -943,8 +967,9 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component CSS/SCSS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE  │
-│ - access custom Betarena Scores CSS VScode Snippets by typing 'style...'         │
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -978,7 +1003,9 @@
       /* 🎨 style */
       display: flex;
       padding: 0 20px;
+      width: auto;
       // width: 500px;
+      height: 185px;
 
       div#chartHover
       {
@@ -1001,6 +1028,8 @@
         // max-width: 500px;
         min-width: auto;
         overflow-x: scroll;
+        width: -webkit-fill-available;
+        position: relative;
 
         &::-webkit-scrollbar
         {
@@ -1017,6 +1046,8 @@
           /* 🎨 style */
           // max-width: 100%;
           width: 2000px;
+          position: absolute;
+          right: 0;
 
           canvas#valueChart
           {
