@@ -2165,7 +2165,7 @@
         w-500
         s-14
         "
-        disabled={roundStateWidget != 'Round_Ended'}
+        disabled={roundStateWidget == 'Round_Ended'}
       >
         {#if roundStateWidget != 'Round_Ended'}
           <TranslationText
