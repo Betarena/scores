@@ -1,5 +1,13 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: | Access snippets for '<script> [..] </script>' those found in           │
@@ -34,6 +42,7 @@
   import icon_tx_processing from '../assets/tx-loader/tx-load-anim.svg';
 
   import ModalBackdrop from '$lib/components/misc/modal/Modal-Backdrop.svelte';
+  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
 
   import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
@@ -54,7 +63,9 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let
-    /** @augments IStateWidget */
+    /**
+     * @augments IStateWidget
+     */
     stateWidget: IStateWidget
     /**
      * @description
@@ -63,35 +74,31 @@
     , depositAmount: number
   ;
 
-  type IStateWidget = 'In Progress' | 'Completed' | 'Error' | 'ErrorBalance' | null;
+  type IStateWidget =
+    'In Progress'
+    | 'Completed'
+    | 'Error'
+    | 'ErrorBalance'
+    | null
+  ;
 
   const
     /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
-    */
-    // eslint-disable-next-line no-unused-vars
+    */ // eslint-disable-next-line no-unused-vars
     CNAME: string = 'profile⮕w⮕modal-tx-state'
-    /**
-     * @description
-     *  📣 threshold start + state for 📱 MOBILE
-    */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
-    /**
-     * @description
-     *  📣 threshold start + state for 💻 TABLET
-    */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
   let
-    /** @description */
+    /**
+     * @description
+     *  📣 Target `icon` element.
+     */
     iconState: string
   ;
 
-  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -167,18 +174,37 @@
     "
   >
     {#if stateWidget == 'In Progress'}
-      Transfer is processign wait
-      for confirmation...
+      <TranslationText
+        key={'profile/investor/invest-box/tx-modal/in-progress'}
+        text={profileTrs?.investor?.popup_transfer.message_1}
+        fallback={'Transfer is processign wait for confirmation...'}
+      />
     {:else if stateWidget == 'Completed'}
-      Transfer is complete
+      <TranslationText
+        key={'profile/investor/invest-box/tx-modal/completed'}
+        text={profileTrs?.investor?.popup_transfer.message_2}
+        fallback={'Transfer is complete'}
+      />
     {:else if stateWidget == 'Error'}
-      Transfer incomplete.
+      <TranslationText
+        key={'profile/investor/invest-box/tx-modal/error'}
+        text={profileTrs?.investor?.popup_transfer.message_3}
+        fallback={'Transfer incomplete.'}
+      />
     {:else if stateWidget == 'ErrorBalance'}
-      {
-        profileTrs.investor?.invest_box.minimum_amount_request
-          .replace('XXX', depositAmount.toString())
-        ?? 'To participate in the private presale of BTA, you need to make a minimum investment of 2500 USD.'
-      }
+      <TranslationText
+        key={'profile/investor/invest-box/tx-modal/error-balance'}
+        text=
+        {
+          profileTrs?.investor?.invest_box.minimum_amount_request
+            .replace('XXX', depositAmount.toString())
+        }
+        fallback=
+        {
+          'To participate in the private presale of BTA, you need to make a minimum investment of XXX USD.'
+            .replace('XXX', depositAmount.toString())
+        }
+      />
     {/if}
   </p>
 
@@ -199,11 +225,17 @@
         () =>
         {
           $sessionStore.currentActiveModal = null;
+          if (stateWidget == 'Completed')
+            window.location.reload();
           return;
         }
       }
     >
-      Ok
+      <TranslationText
+        key={'profile/investor/invest-box/tx-modal/ok'}
+        text={null}
+        fallback={'Ok'}
+      />
     </button>
 
   {/if}

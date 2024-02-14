@@ -1,5 +1,13 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: | Access snippets for '<script> [..] </script>' those found in           │
@@ -47,67 +55,23 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let
-    /**
-     * @augments IStateWidget
-     */
-    stateWidget: IStateWidget
-  ;
-
-  /**
-   * @description
-   *  📣
-   */
-  type IStateWidget =
-    'Error'
-  ;
-
   const
     /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
-     */
-    // eslint-disable-next-line no-unused-vars
+     */ // eslint-disable-next-line no-unused-vars
     CNAME: string = 'general⮕w⮕modal-error'
-    /**
-     * @description
-     *  📣 threshold start + state for 📱 MOBILE
-     */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
-    /**
-     * @description
-     *  📣 threshold start + state for 💻 TABLET
-     */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
   let
-    /** @description */
-    iconState: string
+    /**
+     * @description
+     *  📣 Icon states.
+     */
+    iconState: string = icon_tx_error
   ;
 
   // #endregion ➤ 📌 VARIABLES
-
-  // #region ➤ 🔥 REACTIVIY [SVELTE]
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'logic' that should run            │
-  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
-  // │ WARNING:                                                               │
-  // │ ❗️ Can go out of control.                                              │
-  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
-  // │ Please keep very close attention to these methods and                  │
-  // │ use them carefully.                                                    │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  $: if (stateWidget == 'Error')
-    iconState = icon_tx_error;
-  //
-
-  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
 </script>
 
@@ -156,36 +120,26 @@
     m-t-20
     "
   >
-    {#if stateWidget == 'Error'}
-      Uh-oh! An error occurred.
-    {/if}
+    Uh-oh! An error occurred.
   </p>
 
-  <!--
-  ▓ NOTE:
-  ▓ > modal button
-  -->
-  {#if 'Error' == stateWidget}
-
-    <button
-      class=
-      "
-      btn-primary-v2
-      m-t-25
-      "
-      on:click=
+  <button
+    class=
+    "
+    btn-primary-v2
+    m-t-25
+    "
+    on:click=
+    {
+      () =>
       {
-        () =>
-        {
-          $sessionStore.currentActiveModal = null;
-          return;
-        }
+        $sessionStore.currentActiveModal = null;
+        return;
       }
-    >
-      Ok
-    </button>
-
-  {/if}
+    }
+  >
+    Ok
+  </button>
 
 </div>
 
@@ -239,9 +193,9 @@
 	@media only screen
   and (min-width: 575px)
   {
-	  div#general⮕w⮕modal-error
+    div#general⮕w⮕modal-error
     {
-			width: 328px;
+      width: 328px;
     }
 	}
 
@@ -257,7 +211,7 @@
     {
       /* 🎨 style */
       background-color: var(--dark-theme) !important;
-		}
+    }
 	}
 
 </style>

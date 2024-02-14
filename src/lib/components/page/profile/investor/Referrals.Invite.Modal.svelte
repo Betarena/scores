@@ -29,6 +29,7 @@
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { copyToClipboard } from '$lib/utils/platform-functions.js';
+	import { scoresProfileInvestorStore } from './_store.js';
 
   import asset_invite_investor from '../assets/investor/asset-invite-investor.png';
   import icon_betarena_brand from '../assets/investor/icon-betarena-brand.svg';
@@ -57,7 +58,6 @@
   import ModalBackdrop from '$lib/components/misc/modal/Modal-Backdrop.svelte';
 
   import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
-  import { scoresProfileInvestorStore } from './_store.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -75,6 +75,19 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  export let
+    /**
+     * @description
+     *  📣
+    */
+    VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
+    /**
+     * @description
+     *  📣
+    */
+    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
+  ;
+
   /**
    * @description
    *  📣
@@ -89,15 +102,11 @@
   }
 
   const
-    /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
-    // eslint-disable-next-line no-unused-vars
+    /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */ // eslint-disable-next-line no-unused-vars
     CNAME: string = 'profile⮕w⮕referral-invite-modal⮕main'
-    /** @description 📣 threshold start + state for 📱 MOBILE */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
-    /** @description 📣 threshold start + state for 💻 TABLET */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
   let
@@ -172,16 +181,16 @@
         let text: string;
 
         if (assetItem.name == 'twitter')
-          text = profileTrs.investor?.referral.ref_pop.twitter!;
+        {text = profileTrs.investor?.referral.ref_pop.twitter!;}
         else if (assetItem.name == 'facebook')
-          text = profileTrs.investor?.referral.ref_pop.facebook!;
+        {text = profileTrs.investor?.referral.ref_pop.facebook!;}
         else if (assetItem.name == 'whatsapp')
         {
           text = profileTrs.investor?.referral.ref_pop.whatsapp!;
           text += ` ${$page.url.origin}?referralId=${$userBetarenaSettings.user.scores_user_data?.referralID ?? ''}`
         }
         else if (assetItem.name == 'telegram')
-          text = profileTrs.investor?.referral.ref_pop.telegram!;
+        {text = profileTrs.investor?.referral.ref_pop.telegram!;}
         else
         {
           text = profileTrs.investor?.referral.ref_pop.description!;
@@ -496,6 +505,7 @@
           social-btn
           cursor-pointer
           "
+          class:m-r-65={VIEWPORT_MOBILE_INIT[1]}
           on:click=
           {
             () =>

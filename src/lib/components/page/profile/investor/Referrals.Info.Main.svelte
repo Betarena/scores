@@ -75,12 +75,12 @@
      * @description
      *  📣
     */
-    , VIEWPORT_MOBILE_INIT_PARENT: [ number, boolean ]
+    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
     /**
      * @description
      *  📣
     */
-    , VIEWPORT_TABLET_INIT_PARENT: [ number, boolean ]
+    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
   class Dev
@@ -90,15 +90,11 @@
   }
 
   const
-    /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
-    // eslint-disable-next-line no-unused-vars
+    /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */ // eslint-disable-next-line no-unused-vars
     CNAME: string = 'profile⮕w⮕referral-info⮕main'
-    /** @description 📣 threshold start + state for 📱 MOBILE */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = VIEWPORT_MOBILE_INIT_PARENT
-    /** @description 📣 threshold start + state for 💻 TABLET */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = VIEWPORT_TABLET_INIT_PARENT
   ;
 
   let
@@ -273,7 +269,7 @@
   ▓ NOTE: ▓ 📱 MOBILE
   ▓ > referral tiers + bonus data.
   -->
-  {#if VIEWPORT_MOBILE_INIT_PARENT[1]}
+  {#if VIEWPORT_MOBILE_INIT[1]}
 
     <div
       class=
@@ -336,7 +332,7 @@
           {dataMap.get('bronze')?.data?.position}
 
           {#if dataMap.get('bronze')?.data?.invest_max == -1}
-            (${formatNumberWithCommas(dataMap.get('bronze')?.data?.invest_min)} or more)
+            (+${formatNumberWithCommas(dataMap.get('bronze')?.data?.invest_min)})
           {:else}
             (${formatNumberWithCommas(dataMap.get('bronze')?.data?.invest_min)} - ${formatNumberWithCommas(dataMap.get('bronze')?.data?.invest_max)})
           {/if}
@@ -435,19 +431,19 @@
   ▓ NOTE: ▓ 💻 TABLET 🖥️ LAPTOP 📱 MOBILE
   ▓ > referral tiers + bonus data.
   -->
-  {#if !VIEWPORT_MOBILE_INIT_PARENT[1] || isExtraInfo}
+  {#if !VIEWPORT_MOBILE_INIT[1] || isExtraInfo}
 
     <div
       id="tier-box"
     >
       {#each [...dataMap.entries()].reverse() as [key, data]}
-        {#if !['NaN', 'bronze'].includes(key) && VIEWPORT_MOBILE_INIT_PARENT[1]
-          || !['NaN'].includes(key) && !VIEWPORT_MOBILE_INIT_PARENT[1]
+        {#if !['NaN', 'bronze'].includes(key) && VIEWPORT_MOBILE_INIT[1]
+          || !['NaN'].includes(key) && !VIEWPORT_MOBILE_INIT[1]
         }
           <div
             class=
             "
-            {VIEWPORT_MOBILE_INIT_PARENT[1] ? 'column-space-center' : 'row-space-out'}
+            {VIEWPORT_MOBILE_INIT[1] ? 'column-space-center' : 'row-space-out'}
             <!---->
             tier-row
             "
@@ -500,7 +496,7 @@
                 {data.data?.position}
 
                 {#if data.data?.invest_max == -1}
-                  (${formatNumberWithCommas(data.data.invest_min)} or more)
+                  (+${formatNumberWithCommas(data.data.invest_min)})
                 {:else}
                   (${formatNumberWithCommas(data.data?.invest_min)} - ${formatNumberWithCommas(data.data?.invest_max)})
                 {/if}
@@ -564,7 +560,7 @@
     class=
     "
     m-t-25
-    {VIEWPORT_MOBILE_INIT_PARENT[1] ? 'column-space-center' : 'row-space-out'}
+    {VIEWPORT_MOBILE_INIT[1] ? 'column-space-center' : 'row-space-out'}
     "
   >
     <!--
@@ -574,7 +570,7 @@
     <div
       class=
       "
-      {VIEWPORT_MOBILE_INIT_PARENT[1] ? 'm-b-12' : 'm-r-20'}
+      {VIEWPORT_MOBILE_INIT[1] ? 'm-b-12' : 'm-r-20'}
       <!---->
       referral-code-box
       "
@@ -738,7 +734,7 @@
     btn-primary-v2
       btn-shadow-1
     width-100
-    {VIEWPORT_MOBILE_INIT_PARENT[1] ? 'm-t-30' : 'm-t-25'}
+    {VIEWPORT_MOBILE_INIT[1] ? 'm-t-30' : 'm-t-25'}
     "
     on:click=
     {
@@ -775,7 +771,10 @@
 ▓ > referral invitation information modal
 -->
 {#if $sessionStore.currentActiveModal == 'ProfileInvestor_ReferralInfo_Modal'}
-  <ReferralsInviteModal />
+  <ReferralsInviteModal
+    {VIEWPORT_MOBILE_INIT}
+    {VIEWPORT_TABLET_INIT}
+  />
 {/if}
 
 <!--

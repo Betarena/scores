@@ -1,5 +1,13 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
@@ -8,7 +16,6 @@
 -->
 
 <script lang="ts">
-  import { scoresAdminStore } from '$lib/store/admin.js';
 
   // #region ➤ 📦 Package Imports
 
@@ -25,9 +32,34 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+	import { scoresAdminStore } from '$lib/store/admin.js';
 	import sessionStore from '$lib/store/session.js';
 
   // #endregion ➤ 📦 Package Imports
+
+  // #region ➤ 📌 VARIABLES
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  const
+    /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */ // eslint-disable-next-line no-unused-vars
+    CNAME: string = 'developer-admin-infobox'
+  ;
+
+  // #endregion ➤ 📌 VARIABLES
 
 </script>
 
@@ -43,14 +75,11 @@
 -->
 
 <div
-  class=
-  "
-  competition-modal
-  "
+  id={CNAME}
 >
   <!--
-  NOTE:
-  > Information on Firebase Listeners
+  ▓ NOTE:
+  ▓ > Information on Firebase Listeners
   -->
   <p
     class=
@@ -59,12 +88,12 @@
     "
   >
     Active Firebase Event Listeners:
-    {$sessionStore.firebaseListeners.length ?? 0}
+    {$sessionStore.firebaseListeners.length}
   </p>
 
   <!--
-  NOTE:
-  > GraphQL WebSockets Connection
+  ▓ NOTE:
+  ▓ > GraphQL WebSockets Connection
   -->
   <p
     class=
@@ -73,23 +102,35 @@
     "
   >
     Active GraphQl WebSocket Listeners:
-    {$sessionStore.grapqhQlWebSockets.length ?? 0}
+    {$sessionStore.grapqhQlWebSockets.length}
   </p>
 
   <!--
-  NOTE:
-  > Items that do not have a translation
+  ▓ NOTE:
+  ▓ > Items that do not have a translation
   -->
-  <p
-    class=
-    "
-    color-white
-    "
-  >
-    Text(s) with no translation:
-    {$scoresAdminStore.termsWithoutTranslation.size}
-  </p>
+  <div>
+    <p
+      class=
+      "
+      color-white
+      "
+    >
+      Text(s) with no translation:
+      {$scoresAdminStore.termsWithoutTranslation.size}
+    </p>
 
+    {#each [...$scoresAdminStore.termsWithoutTranslation] as item}
+      <p
+        class=
+        "
+        color-white
+        "
+      >
+        - {item}
+      </p>
+    {/each}
+  </div>
 </div>
 
 <!--
@@ -104,7 +145,7 @@
 
 <style lang="scss">
 
-  div.competition-modal
+  div#developer-admin-infobox
   {
     /* 🎨 style */
 		width: 100%;

@@ -31,12 +31,14 @@
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
+	import { toZeroPrefixDateStr } from '$lib/utils/dates.js';
+	import { scoresProfileInvestorStore } from './_store.js';
 
 	import TranslationText from '$lib/components/misc/Translation-Text.svelte';
 	import AdminDevControlPanel from '$lib/components/misc/admin/Admin-Dev-ControlPanel.svelte';
 	import AdminDevControlPanelToggleButton from '$lib/components/misc/admin/Admin-Dev-ControlPanelToggleButton.svelte';
+
 	import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
-	import { scoresProfileInvestorStore } from './_store.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -433,19 +435,17 @@
               "
             >
               {
-                roundStateWidget == 'Round_CountdownWithDefinedDate'
-                  ? globalActivePresaleStartClock?.[item]
-                  : globalActivePresaleEndClock?.[item]
+                toZeroPrefixDateStr
+                (
+                  roundStateWidget == 'Round_CountdownWithDefinedDate'
+                    ? (globalActivePresaleStartClock?.[item] ?? 0)
+                    : (globalActivePresaleEndClock?.[item] ?? 0)
+                )
+                + `${item == 3 ? 'd' : ''}`
+                + `${item == 2 ? 'h' : ''}`
+                + `${item == 1 ? 'm' : ''}`
+                + `${item == 0 ? 's' : ''}`
               }
-              {#if item == 3}
-                d
-              {:else if item == 2}
-                h
-              {:else if item == 1}
-                m
-              {:else if item == 0}
-                s
-              {/if}
             </p>
           </div>
 

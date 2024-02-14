@@ -1,5 +1,13 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
@@ -24,12 +32,10 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-	import { dev } from '$app/environment';
 	import { createEventDispatcher, type EventDispatcher } from 'svelte';
 
 	import { scoresAdminStore } from '$lib/store/admin.js';
 	import sessionStore from '$lib/store/session.js';
-	import { dlog } from '$lib/utils/debug.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -64,30 +70,16 @@
     /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
-    */
-    // eslint-disable-next-line no-unused-vars
+    */ // eslint-disable-next-line no-unused-vars
     CNAME: string = 'profile⮕w⮕investfaq⮕main'
     /**
-     * @description
-     *  📣 threshold start + state for 📱 MOBILE
-    */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
-    /**
-     * @description
-     *  📣 threshold start + state for 💻 TABLET
-    */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
-    /**
-     * @description
-     *  📣
+     * @augments EventDispatcher
     */
     , dispatch: EventDispatcher<any> = createEventDispatcher()
     /**
      * @description
      *  📣 target environment being used.
-    */
+    */ // eslint-disable-next-line no-unused-vars
     , targetAppEnv: string = import.meta.env.VITE_ENV_TARGET
   ;
 
@@ -99,7 +91,8 @@
     isSelected: boolean = false
   ;
 
-  $: deepReactListen0 = $sessionStore.currentAdminToggle;
+  $: ({ admin } = $scoresAdminStore);
+  $: ({ currentAdminToggle } = $sessionStore);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -116,18 +109,7 @@
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  $: if (deepReactListen0 != title)
-  {
-    // ▓ [🐞]
-    // ### [🐞]
-    dlog
-    (
-      `🚏 checkpoint [R] ➤ CASD123 ${deepReactListen0} ${title}`,
-      true
-    );
-
-    isSelected = false;
-  }
+  $: if (currentAdminToggle != title) isSelected = false;
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
@@ -148,7 +130,7 @@
 ▓ NOTE:
 ▓ > admin development toggle component.
 -->
-{#if (dev) && $scoresAdminStore.admin}
+{#if admin}
   <div
     class=
     "
@@ -237,7 +219,7 @@
           return;
         }
       }
-      class:isSelected={isSelected && $sessionStore.currentAdminToggle == title}
+      class:isSelected={isSelected && currentAdminToggle == title}
     >
       <img
         id=''

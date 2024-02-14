@@ -1,5 +1,13 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
@@ -29,16 +37,18 @@
   import { onDestroy, onMount } from 'svelte';
 
   import userBetarenaSettings from '$lib/store/user-settings.js';
-  import { MONTH_NAMES_ABBRV } from '$lib/utils/dates.js';
   import { dlog } from '$lib/utils/debug.js';
   import { formatNumberWithCommas } from '$lib/utils/platform-functions.js';
-  import { passByValue } from '@betarena/scores-lib/dist/functions/func.common.js';
   import { tryCatchAsync } from '@betarena/scores-lib/dist/util/util.common.js';
   import { Chart, registerables, type ChartItem } from 'chart.js';
 
   import icon_bta_token from '../assets/price-tier/icon-bta-token.svg';
 
-  import type { B_H_TH, PUBLIC__INVESTOR_DeleteInvestorByPkElement } from '@betarena/scores-lib/types/_HASURA_.js';
+  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
+  import { MONTH_NAMES_ABBRV } from '$lib/utils/dates.js';
+  import { passByValue } from '@betarena/scores-lib/dist/functions/func.common.js';
+  import type { PublicInvestorMain, PublicTransactionHistoryMain } from '@betarena/scores-lib/types/_AUTO-HASURA-2_.js';
+  import type { B_H_TH } from '@betarena/scores-lib/types/_HASURA_.js';
   import type { B_SAP_D2 } from '@betarena/scores-lib/types/seo-pages.js';
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
@@ -113,10 +123,9 @@
       {
         const dateList: Date[] = [];
 
-        today.setFullYear(2024);
-        today.setMonth(1);
+        today.setFullYear(today.getFullYear() - 2);
 
-        for (let index = 0; index < 24; index++)
+        for (let index = 0; index < 25; index++)
         {
           dateList.push(new Date(today));
           today.setMonth(today.getMonth() + 1);
@@ -165,16 +174,13 @@
      * @description
      *  📣 Target `start` scroll value.
      */
-    , startScroll: [number, number] = [0, 0]
+    , startScroll: [number, number, number] = [0, 0, 0]
   ;
-
-  // ▓ [🐞]
-  // console.log('targetMonths', targetMonths())
 
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
   $: monthsTrs = $page.data.B_SAP_D2 as B_SAP_D2 | null | undefined;
-  $: deepReactListen1 = passByValue($userBetarenaSettings.theme);
-  $: deepReactListenLang = passByValue($userBetarenaSettings.lang);
+  $: ({ theme, lang } = $userBetarenaSettings);
+  $: ({ grand_total } = $userBetarenaSettings.user.scores_user_data?.investor_balance ?? { grand_total: 0 });
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -239,7 +245,7 @@
    */
   function mouseDownEvent
   (
-    event: any
+    event: MouseEvent
   ): void
   {
     if (stateObject.chartIsBeingScrolled) return;
@@ -251,15 +257,14 @@
     event.preventDefault();
 
     const
-      leftVal = container.offsetLeft - (event?.clientX || event?.touches[0].clientX)
-      , currentElementBoundClientLeft = scrollBox.getBoundingClientRect().left
+      leftVal = container.offsetLeft - (event.clientX || event.touches[0].clientX)
+      , currentRight = parseInt(scrollBox.style.right.replace('px', ''))
+      , currentLeft = scrollBox.offsetLeft
     ;
 
     startScroll[0] = leftVal;
-    startScroll[1] = -currentElementBoundClientLeft;
-
-    // console.log(scrollBox.clientLeft, scrollBox.offsetLeft, scrollBox.scrollLeft);
-    // console.log(scrollBox.getBoundingClientRect());
+    startScroll[1] = isNaN(currentRight) ? 0 : currentRight;
+    startScroll[2] = currentLeft;
 
     stateObject.chartIsBeingScrolled = true;
 
@@ -295,7 +300,7 @@
     ;
 
     if ((startScroll[1] + (leftVal - startScroll[0])) > 0) return;
-    if (scrollBox.offsetLeft > 0) return;
+    if (startScroll[2] - (leftVal - startScroll[0]) > 0) return;
 
     scrollBox.style.right = `${startScroll[1] + (leftVal - startScroll[0])}px`;
 
@@ -372,8 +377,8 @@
   function generateInvestmentMonthlyMap
   (
     dateList: Date[]
-    , investorTxList: B_H_TH[]
-    , investorData: PUBLIC__INVESTOR_DeleteInvestorByPkElement | null
+    , investorTxList: PublicTransactionHistoryMain[]
+    , investorData: PublicInvestorMain | undefined
   ): Map < string, number >
   {
     const
@@ -402,12 +407,12 @@
     for (const iterator of investorTxList)
     {
       const
-        txMonthYear = `${new Date(iterator.date).getMonth()}_${new Date(iterator.date).getFullYear()}`
+        txMonthYear = `${new Date(iterator.date ?? '').getMonth()}/${new Date(iterator.date ?? '').getFullYear()}`
       ;
 
       if (
-        !['pending', 'completed'].includes(iterator.status)
-        || !['investment', 'vesting'].includes(iterator.type)
+        !['completed'].includes(iterator.status!)
+        || !['investment', 'vesting', 'tge'].includes(iterator.type!)
       )
         continue;
       // ────────────────────────────────────────────────────────────────────────
@@ -415,9 +420,9 @@
       let deltaAmount: number = 0;
 
       if (iterator.type == 'investment' && iterator.status == 'completed')
-        deltaAmount = iterator.quantity ?? 0;
+        deltaAmount = iterator.amount ?? 0;
       else if ((iterator.type == 'vesting' || iterator.type == 'tge') && iterator.status == 'completed')
-        deltaAmount = -(iterator.quantity ?? 0);
+        deltaAmount = -(iterator.amount ?? 0);
       // ────────────────────────────────────────────────────────────────────────
 
       if (mapTemp.has(txMonthYear))
@@ -428,7 +433,7 @@
         continue;
       }
 
-      mapTemp.set(txMonthYear, iterator.quantity ?? 0);
+      mapTemp.set(txMonthYear, iterator.amount ?? 0);
     }
 
     // ▓ [🐞]
@@ -442,7 +447,7 @@
     for (const iterator of investorData?.data?.referral_history ?? [])
     {
       const
-        txMonthYear = `${new Date(iterator.date).getMonth()}_${new Date(iterator.date).getFullYear()}`
+        txMonthYear = `${new Date(iterator.date).getMonth()}/${new Date(iterator.date).getFullYear()}`
       ;
 
       if (mapTemp2.has(txMonthYear))
@@ -470,30 +475,45 @@
        *  📣 **cumulative sum** for month-on-month amount.
        */
       cummulativeSum: number = 0
+      /**
+       * @description
+       *  📣 Tracking of last `month-year`.
+       */
+      , lastMonthYear: string = ''
     ;
 
     for (const date of dateList)
     {
       const
-        txMonthYear = `${new Date(date).getMonth()}_${new Date(date).getFullYear()}`
+        txMonthYear = `${new Date(date).getMonth()}/${new Date(date).getFullYear()}`
       ;
 
       if (mapTemp.has(txMonthYear))
       {
         let existingAmount = mapTemp.get(txMonthYear)!;
         cummulativeSum += existingAmount;
-        mapMain.set(txMonthYear, cummulativeSum)
+        mapTemp.delete(txMonthYear);
       }
       if (mapTemp2.has(txMonthYear))
       {
         let existingAmount = mapTemp2.get(txMonthYear)!;
         cummulativeSum += existingAmount;
-        mapMain.set(txMonthYear, cummulativeSum)
+        mapTemp2.delete(txMonthYear);
       }
 
       if (mapMain.has(txMonthYear))
+      {
         continue;
-      //
+      }
+      else if (mapMain.size == 0 && cummulativeSum == 0)
+      {
+        lastMonthYear = passByValue(txMonthYear);
+        continue;
+      }
+      else if (mapMain.size == 0 && cummulativeSum > 0)
+      {
+        mapMain.set(lastMonthYear, 0);
+      }
 
       mapMain.set(txMonthYear, cummulativeSum);
     }
@@ -501,7 +521,66 @@
     // ▓ [🐞]
     console.log('mapMain', mapMain);
 
-    return mapMain;
+    if (mapTemp.size > 0 || mapTemp2.size > 0)
+    {
+      const
+        /**
+         * @description
+         *  📣 Past sum of all > 2 years sum history.
+        */
+        pastHistSum = [...mapTemp.values()]
+          .reduce((a, b) => { return a + b }, 0)
+        /**
+         * @description
+         *  📣 Past sum of all > 2 years sum history.
+        */
+        , pastHistSum2 = [...mapTemp2.values()]
+          .reduce((a, b) => { return a + b }, 0)
+        /**
+         * @description
+         *  📣 First recorded MonthYear, to be mutated.
+         */
+        , firstMonthYear = mapMain.keys().next().value
+      ;
+
+      fillPastDataLoop: for (const date of dateList)
+      {
+        const
+          txMonthYear = `${new Date(date).getMonth()}/${new Date(date).getFullYear()}`
+        ;
+
+        mapMain.set(txMonthYear, (pastHistSum + pastHistSum2));
+
+        if (txMonthYear == firstMonthYear) break fillPastDataLoop;
+      }
+    }
+
+    const
+      finalMap = new Map([...mapMain.entries()]
+        .sort
+        (
+          (
+            a,
+            b
+          ) =>
+          {
+            let
+              dateASplit = `${a[0]}`.split('/')
+              , dateBSplit = `${b[0]}`.split('/')
+              , dateA = new Date(`${parseInt(dateASplit[0]) + 1}/01/${dateASplit[1]}`).getTime()
+              , dateB = new Date(`${parseInt(dateBSplit[0]) + 1}/01/${dateBSplit[1]}`).getTime()
+            ;
+
+            return dateA - dateB;
+          }
+        )
+      )
+    ;
+
+    // ▓ [🐞]
+    console.log('finalMap', finalMap);
+
+    return finalMap;
   }
 
   /**
@@ -545,7 +624,7 @@
         Chart.defaults.color = '#8C8C8C';
 
         const gridLineColor: string
-          = $userBetarenaSettings.theme == 'Dark'
+          = theme == 'Dark'
             ? '#4B4B4B'
             : '#E6E6E6'
         ;
@@ -562,7 +641,7 @@
                 (
                   x =>
                   {
-                    return monthsTrs?.months_abbreviation?.[MONTH_NAMES_ABBRV[x.split('_')[0]]]
+                    return monthsTrs?.months_abbreviation?.[MONTH_NAMES_ABBRV[x.split('/')[0]]]
                   }
                 )
               , datasets:
@@ -652,7 +731,7 @@
                 (
                   x =>
                   {
-                    return monthsTrs?.months_abbreviation?.[MONTH_NAMES_ABBRV[x.split('_')[0]]]
+                    return monthsTrs?.months_abbreviation?.[MONTH_NAMES_ABBRV[x.split('/')[0]]]
                   }
                 )
               , datasets:
@@ -796,7 +875,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   $:
-  if (browser && (deepReactListen1 || deepReactListenLang))
+  if (browser && (theme || lang))
   {
     // ▓ [🐞]
     dlog
@@ -825,7 +904,7 @@
 
 <div
   id={CNAME}
-  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+  class:dark-background-1={theme == 'Dark'}
 >
 
   <div
@@ -850,10 +929,11 @@
       m-b-12
       "
     >
-      {
-        profileTrs?.investor?.general.title_wallet
-        ?? 'Investor Wallets'
-      }
+      <TranslationText
+        key={'profile/investor/portofilo/title'}
+        text={profileTrs?.investor?.general.title_wallet}
+        fallback={'Investor Wallets'}
+      />
     </p>
 
     <!--
@@ -886,7 +966,7 @@
         "
       >
         {
-          formatNumberWithCommas($userBetarenaSettings.user.scores_user_data?.investor_balance?.grand_total ?? 0)
+          formatNumberWithCommas(grand_total)
         }
         <span
           class=
@@ -920,46 +1000,76 @@
   ▓ NOTE:
   ▓ > Investor Wallets Graph Data.
   -->
-  <div
-    id="chartParent"
-  >
-
-    <!--
-    ▓ NOTE:
-    ▓ > Investor Chart Data 1.
-    -->
-    {#if !VIEWPORT_MOBILE_INIT_PARENT[1]}
-      <div
-        id="chartHover"
-      >
-        <canvas
-          id="constChart"
-        >
-        </canvas>
-      </div>
-    {/if}
-
-    <!--
-    ▓ NOTE:
-    ▓ > Investor Chart Data 2.
-    -->
+  {#if mapInvestAmountDeltaPerMonth.size > 0}
     <div
-      id="chartMain"
-      style=
-      "
-      {!VIEWPORT_MOBILE_INIT_PARENT[1] ? 'margin-left: 47px;' : ''}
-      "
+      id="chartParent"
     >
-      <div
-        id="scrollBox"
-      >
-        <canvas
-          id="valueChart"
+
+      <!--
+      ▓ NOTE:
+      ▓ > Investor Chart Data 1.
+      -->
+      {#if !VIEWPORT_MOBILE_INIT_PARENT[1]}
+        <div
+          id="chartHover"
         >
-        </canvas>
+          <canvas
+            id="constChart"
+          >
+          </canvas>
+        </div>
+      {/if}
+
+      <!--
+      ▓ NOTE:
+      ▓ > Investor Chart Data 2.
+      -->
+      <div
+        id="chartMain"
+        style=
+        "
+        {!VIEWPORT_MOBILE_INIT_PARENT[1] ? 'margin-left: 47px;' : ''}
+        "
+      >
+        <div
+          id="scrollBox"
+          class:limit-width={mapInvestAmountDeltaPerMonth.size <= 4}
+          style=
+          "
+          {mapInvestAmountDeltaPerMonth.size > 4 ? `width: ${mapInvestAmountDeltaPerMonth.size * 85}px;` : 0}
+          "
+        >
+          <canvas
+            id="valueChart"
+          >
+          </canvas>
+        </div>
       </div>
     </div>
-  </div>
+  {:else}
+    <div
+      id="no-widget-data"
+    >
+      <p
+        class=
+        "
+        s-16
+        color-black-3
+          dark-v1
+        "
+        style=
+        "
+        line-height: 24px; /* 150% */
+        "
+      >
+        <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
+        {
+          profileTrs?.investor?.general.no_information
+          ?? 'Uh-oh! No Investments have been found.'
+        }
+      </p>
+    </div>
+  {/if}
 
 </div>
 
@@ -991,6 +1101,7 @@
     height: 334px;
     min-height: 334px;
     max-height: 334px;
+    position: relative;
 
     div#top-row
     {
@@ -1045,9 +1156,13 @@
         {
           /* 🎨 style */
           // max-width: 100%;
-          width: 2000px;
           position: absolute;
           right: 0;
+
+          &.limit-width
+          {
+            width: -webkit-fill-available;
+          }
 
           canvas#valueChart
           {
@@ -1056,6 +1171,37 @@
             max-height: 190px;
           }
         }
+      }
+    }
+
+    div#no-widget-data
+    {
+      /* 📌 position */
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      margin: auto;
+      z-index: 10;
+      /* 🎨 style */
+      background-color: var(--white);
+      text-align: center;
+      height: fit-content;
+
+      p
+      {
+        /* 📌 position */
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        margin: auto;
+        /* 🎨 style */
+        height: fit-content;
+        -ms-transform: translateY(-50%);
+        width: 176px;
       }
     }
   }

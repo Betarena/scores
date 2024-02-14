@@ -744,7 +744,7 @@
                 {
                   /* 🎨 style */
                   // padding-top: 8px;
-                  padding-bottom: 150px;
+                  padding-bottom: 165px;
                 }
               }
 
@@ -788,7 +788,7 @@
                 /* 🎨 style */
                 padding: 0 20px;
                 position: absolute;
-                top: 68px;
+                top: 56px;
                 right: 0;
                 left: 0;
                 /*  */

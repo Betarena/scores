@@ -28,7 +28,6 @@
   import TxStatusPill from '$lib/components/shared/Tx-Status-Pill.svelte';
 
   import { toZeroPrefixDateStr } from '$lib/utils/dates.js';
-  import type { PublicTransactionHistoryMain } from '@betarena/scores-lib/types/_AUTO-HASURA-2_.js';
 
   import icon_arrow_down from '../assets/arrow-down.svg';
   import icon_arrow_up from '../assets/arrow-up.svg';
@@ -37,6 +36,9 @@
   import icon_platinum from '../assets/price-tier/icon-bta-platinum.svg';
   import icon_silver from '../assets/price-tier/icon-bta-silver.svg';
 
+	import TranslationText from '$lib/components/misc/Translation-Text.svelte';
+
+	import type { PublicTransactionHistoryMain } from '@betarena/scores-lib/types/_AUTO-HASURA-2_.js';
 	import type { B_H_KEYP, B_H_KEYP_Tier } from '@betarena/scores-lib/types/_HASURA_.js';
 	import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
@@ -96,7 +98,7 @@
      * @description
      *  📣 Properties to be shown in mobile view.
      */
-    , mobileProps: string[] = ['discount', 'investment', 'tokens', 'price']
+    , mobileProps: string[] = ['discount', 'investment', 'tokens', 'price', 'description']
     /**
      * @description
      *  📣 Target `icon` asset for _this_ transaction.
@@ -203,15 +205,17 @@
       <p>
         {data.type ?? '-'}
       </p>
-      <span
-        class=
-        "
-        s-12
-        color-grey
-        "
-      >
-        {data.description ?? '-'}
-      </span>
+      {#if !VIEWPORT_MOBILE_INIT[1]}
+        <span
+          class=
+          "
+          s-12
+          color-grey
+          "
+        >
+          {data.description ?? '-'}
+        </span>
+      {/if}
     </div>
   </td>
 
@@ -387,29 +391,35 @@
             "
           >
             {#if item == 'discount'}
-              <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-              {
-                profileTrs?.investor?.investment_details.discount
-                ?? 'Discount'
-              }
+              <TranslationText
+                key={'profile/investor/invest-history/row/discount'}
+                text={profileTrs?.investor?.investment_details.discount}
+                fallback={'Discount'}
+              />
             {:else if item == 'investment'}
-              <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-              {
-                profileTrs?.investor?.investment_details.investment
-                ?? 'Investment'
-              }
+              <TranslationText
+                key={'profile/investor/invest-history/row/investment'}
+                text={profileTrs?.investor?.investment_details.investment}
+                fallback={'Investment'}
+              />
             {:else if item == 'tokens'}
-              <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-              {
-                profileTrs?.investor?.investment_details.tokens
-                ?? 'Tokens'
-              }
+              <TranslationText
+                key={'profile/investor/invest-history/row/tokens'}
+                text={profileTrs?.investor?.investment_details.tokens}
+                fallback={'Tokens'}
+              />
             {:else if item == 'price'}
-              <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-              {
-                profileTrs?.investor?.investment_details.price
-                ?? 'Price'
-              }
+              <TranslationText
+                key={'profile/investor/invest-history/row/price'}
+                text={profileTrs?.investor?.investment_details.price}
+                fallback={'Price'}
+              />
+            {:else if item == 'description'}
+              <TranslationText
+                key={'profile/investor/invest-history/row/description'}
+                text={null}
+                fallback={'Description'}
+              />
             {/if}
           </p>
 
@@ -427,11 +437,13 @@
             {#if item == 'discount'}
               {tierDataMap.get(data.tier ?? 'NaN')?.data?.discount_percentage}%
             {:else if item == 'investment'}
-              ${data.quantity}
+              ${data.quantity ?? '-'}
             {:else if item == 'tokens'}
-              {data.amount}
+              {data.amount ?? '-'}
             {:else if item == 'price'}
               ${data.bta_price ?? '-'}
+            {:else if item == 'description'}
+              {data.description ?? '-'}
             {/if}
           </p>
 

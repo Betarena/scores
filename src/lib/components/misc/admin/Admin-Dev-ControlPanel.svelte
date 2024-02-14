@@ -24,10 +24,8 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { dev } from '$app/environment';
-
   import { scoresAdminStore } from '$lib/store/admin.js';
-	import sessionStore from '$lib/store/session.js';
+  import sessionStore from '$lib/store/session.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -94,7 +92,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-{#if (dev) && $sessionStore.currentAdminToggle == title && $scoresAdminStore.admin}
+{#if $sessionStore.currentAdminToggle == title && $scoresAdminStore.admin}
   <div
     class={CNAME}
   >

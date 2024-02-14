@@ -35,7 +35,7 @@
   import { onDestroy, onMount } from 'svelte';
   import { fly } from 'svelte/transition';
 
-	import { get, post } from '$lib/api/utils.js';
+	import { get, postv2 } from '$lib/api/utils.js';
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlog, dlogv2 } from '$lib/utils/debug.js';
@@ -390,7 +390,8 @@
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
   $: deepReactListenSignerChange = undefined as unknown;
   $: deepReactListenDepositOptionChange = JSON.stringify(cryptoDepositOptionSelect) as string;
-  $: deepReactListenInvestTotal = $userBetarenaSettings.user.scores_user_data?.investor_balance?.grand_total;
+  $: ({ uid } = $userBetarenaSettings.user.firebase_user_data);
+  $: ({ grand_total } = $userBetarenaSettings.user.scores_user_data?.investor_balance ?? 0);
   $: ({ roundStateWidget } = $scoresProfileInvestorStore);
 
   // #endregion ➤ 📌 VARIABLES
@@ -638,6 +639,35 @@
     ;
 
     return;
+  }
+
+  /**
+   * @description
+   */
+  function setupFormRequiredListener
+  (
+  ): any[]
+  {
+    const
+      requiredInputs = document.querySelectorAll('[required]')
+      , emptyInputs = Array.prototype.slice.call(requiredInputs)
+        .filter
+        (
+          item =>
+          {
+            return (!item.checked && item.required)
+          }
+        )
+    ;
+
+    // [🐞]
+    console.log('requiredInputs', Array.prototype.slice.call(requiredInputs), 'emptyInputs', emptyInputs);
+
+    if (emptyInputs.length > 0)
+      emptyInputs[0].scrollIntoView();
+    //
+
+    return emptyInputs;
   }
 
   /**
@@ -1109,7 +1139,7 @@
        */
       txDepositData: B_H_TH
         = {
-          uid: $userBetarenaSettings.user.firebase_user_data?.uid!
+          uid: uid
           , asset: cryptoDepositOptionSelect.name
           , amount: recieveAmount
           , quantity: depositAmount
@@ -1132,11 +1162,24 @@
       `🔹 [var] txDepositData ${JSON.stringify(txDepositData)}`
     );
 
-    await post
-    (
-      '/api/data/profile'
-      , txDepositData
-    );
+    const
+      /**
+       * @description
+       *  📣 Response from `endpoint`.
+       */
+      result
+        = await postv2
+        (
+          '/api/data/profile'
+          , txDepositData
+        )
+    ;
+
+    if (result?.error)
+    {
+      $sessionStore.currentActiveModal = 'GeneralPlatform_Error';
+      return;
+    }
 
     triggerInvestBox = false;
     stateWidget = 'Completed';
@@ -1209,7 +1252,7 @@
   $: recalculateReceive(depositAmount, cryptoPrice);
 
   $:
-  if ((depositAmount * cryptoPrice) < (profileData?.presaleData.data?.min_buy ?? 2500) && deepReactListenInvestTotal == undefined)
+  if ((depositAmount * cryptoPrice) < (profileData?.presaleData.data?.min_buy ?? 2500) && grand_total == undefined)
   {
     formErrorState.add('First_Minimum_Deposit_Not_Reached');
     formErrorState = formErrorState;
@@ -1317,15 +1360,6 @@
   <ModalTxState
     {stateWidget}
     depositAmount={(depositAmount ?? 0)}
-    on:closeDropdown=
-    {
-      () =>
-      {
-        $sessionStore.currentActiveModal = null;
-        stateWidget = null;
-        return;
-      }
-    }
   />
 {/if}
 
@@ -2166,6 +2200,7 @@
         s-14
         "
         disabled={roundStateWidget == 'Round_Ended'}
+        on:click={() => { return setupFormRequiredListener() }}
       >
         {#if roundStateWidget != 'Round_Ended'}
           <TranslationText
