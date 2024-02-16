@@ -679,6 +679,8 @@
   {
     &.dark-background-1
     {
+      background-color: transparent !important;
+
       div#profile⮕w⮕investtge⮕main⮕title
       {
         // IMPORTANT

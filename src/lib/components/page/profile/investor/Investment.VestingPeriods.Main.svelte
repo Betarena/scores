@@ -929,7 +929,7 @@
               p:not(.pending)
               {
                 /* 🎨 style */
-                color: var(--white);
+                color: var(--white) !important;
               }
             }
           }
