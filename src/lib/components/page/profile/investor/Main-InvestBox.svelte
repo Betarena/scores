@@ -399,11 +399,10 @@
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
   $: deepReactListenSignerChange = undefined as unknown;
   $: deepReactListenDepositOptionChange = JSON.stringify(cryptoDepositOptionSelect) as string;
-  $: ({ uid } = $userBetarenaSettings.user.firebase_user_data ?? { uid: null });
-  $: ({ grand_total } = $userBetarenaSettings.user.scores_user_data?.investor_balance ?? { grand_total: 0 });
-  $: ({ roundStateWidget } = $scoresProfileInvestorStore);
-  $: ({ currentActiveModal } = $sessionStore);
   $: ({ theme } = $userBetarenaSettings);
+  $: ({ grand_total } = $userBetarenaSettings.user.scores_user_data?.investor_balance ?? { grand_total: 0 });
+  $: ({ uid } = $userBetarenaSettings.user.firebase_user_data ?? { uid: null });
+  $: ({ roundStateWidget } = $scoresProfileInvestorStore);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -643,16 +642,20 @@
       ;
     //
 
-    recieveAmount
-      = parseFloat
-      (
-        toDecimalFix
+    if (depositAmount == 0)
+      recieveAmount = 0;
+    else
+      recieveAmount
+        = parseFloat
         (
-          cryptoPrice * (depositAmount / tierDiscountObject.btaPrice!)
-          , 3
+          toDecimalFix
+          (
+            cryptoPrice * (depositAmount / tierDiscountObject.btaPrice!)
+            , 3
+          )
         )
-      )
-    ;
+      ;
+    //
 
     if (depositCalculated < (profileData?.presaleData.data?.min_buy ?? 2500))
     {
@@ -1301,7 +1304,7 @@
     executeContract();
   }
 
-  $: recalculateReceive((depositAmount ?? 1), cryptoPrice);
+  $: recalculateReceive((depositAmount ?? 0), cryptoPrice);
 
 
   $: if (tokenSearch)
@@ -1330,6 +1333,8 @@
     _DEBUG_('Option3');
     cryptoDepositOptionSelect.userBalance = 0;
   }
+
+  $: ({ currentActiveModal } = $sessionStore);
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
