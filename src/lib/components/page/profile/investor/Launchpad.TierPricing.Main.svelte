@@ -1,5 +1,13 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
@@ -26,10 +34,9 @@
 
   import { browser } from '$app/environment';
   import { page } from '$app/stores';
-  import { onMount } from 'svelte';
 
   import userBetarenaSettings from '$lib/store/user-settings.js';
-  import { formatNumberWithCommas, toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
+  import { formatNumberWithCommas, toDecimalFix } from '$lib/utils/platform-functions.js';
   import { Misc } from '@betarena/scores-lib/dist/classes/class.misc.js';
 
   import icon_bronze from '../assets/price-tier/icon-bta-bronze.svg';
@@ -37,7 +44,11 @@
   import icon_platinum from '../assets/price-tier/icon-bta-platinum.svg';
   import icon_silver from '../assets/price-tier/icon-bta-silver.svg';
 
-  import type { B_H_KEYP, B_H_KEYP_Tier } from '@betarena/scores-lib/types/_HASURA_.js';
+  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
+
+  import type { KeypairInvestorPresaleMain } from '@betarena/scores-lib/types/_AUTO-HASURA-2_.js';
+  import type { IPresaleTier } from '@betarena/scores-lib/types/_ENUMS_.js';
+  import type { B_H_KEYP_Tier } from '@betarena/scores-lib/types/_HASURA_.js';
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -59,88 +70,125 @@
   export let
     /**
      * @augments IProfileData
-    */
+     */
     profileData: IProfileData | null
+    /**
+     * @description
+     *  📣 threshold start + state for 📱 MOBILE
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
+    /**
+     * @description
+     *  📣 threshold start + state for 💻 TABLET
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
-  type IRowLayout = 'token-price' | 'minimum-investment' | 'discount' | 'initial-token-release' | 'vesting-period' | 'progress';
+  /**
+   * @description
+   *  📣 Component interface.
+   */
+  type IRowLayout =
+    | 'token-price'
+    | 'minimum-investment'
+    | 'discount'
+    | 'initial-token-release'
+    | 'vesting-period'
+    | 'progress'
+  ;
 
   const
-    /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
-    // eslint-disable-next-line no-unused-vars
+    /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */ // eslint-disable-next-line no-unused-vars
     CNAME: string = 'profile⮕w⮕investTierPricing⮕main'
-    /** @description 📣 threshold start + state for 📱 MOBILE */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
-    /** @description 📣 threshold start + state for 💻 TABLET */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
     /**
      * @description
      *  📣 Target row structure layout title.
     */
-    , rowLayout: IRowLayout[] = ['token-price', 'minimum-investment', 'discount', 'initial-token-release', 'vesting-period', 'progress']
+    , rowLayout: IRowLayout[]
+      = [
+        'token-price'
+        , 'minimum-investment'
+        , 'discount'
+        , 'initial-token-release'
+        , 'vesting-period'
+        , 'progress'
+      ]
   ;
 
   let
     /**
      * @description
-     *  📣 Data Map for target investor pricing data.
-    */
-    dataMap: Map < B_H_KEYP_Tier, B_H_KEYP > = new Misc().convertToMapKEYPINVSTTIER
-    (
-      (profileData?.investorTierPricing?.sort((a, b) => {return b.data?.position - a.data?.position}) ?? [])
-    )
+     *  📣 convert target `data` to respective `map`.
+     */
+    dataMap: Map < IPresaleTier, KeypairInvestorPresaleMain >
+      = new Misc().convertToMapKEYPINVSTTIER
+      (
+        (
+          profileData?.investorTierPricing
+            ?.sort
+            (
+              (
+                a,
+                b
+              ) =>
+              {
+                return (b.data?.position ?? 0) - (a.data?.position ?? 0)
+              }
+            ) ?? [])
+      )
     /**
      * @description
      *  📣 Dynamic **table layout**.
-    */
+     */
     , tableLayout : B_H_KEYP_Tier[][] = [[]]
     /**
      * @description
      *  📣 Current `tier` of _this_ user.
-    */
+     */
     , currentAccumulatedAmountProgress: B_H_KEYP_Tier = 'NaN'
     /**
      * @description
      *  📣
-    */
+     */
     , colspan1Value: number = 1
     /**
      * @description
      *  📣
-    */
+     */
     , colspanSet = ( newValue: number ) => { colspan1Value = newValue; return; }
     /**
      * @description
      *  📣 toggle state for `div` applied for `delay` purposes.
-    */
+     */
     , show: boolean = false
     /**
      * @description
      *  📣 component target.
-    */
+     */
     , componentTarget: HTMLElement
     /**
      * @description
      *  📣 state object for custom logic.
-    */
+     */
     , stateObject:
     {
       /**
        * @description
        *  📣 component initial `distance` target.
-      */
+       */
       initialDivDistance: number;
       /**
        * @description
        *  📣 component `state` check.
-      */
+       */
       isExecuted: boolean;
       /**
        * @description
        *  📣 component `show` animation component.
-      */
+       */
       show: boolean;
     }
     = {
@@ -151,7 +199,7 @@
   ;
 
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
-  $: deepReactListenInvestorBalanceChng = $userBetarenaSettings.user.scores_user_data?.investor_balance?.grand_total ?? 0;
+  $: ({ grand_total } = $userBetarenaSettings.user.scores_user_data?.investor_balance ?? { grand_total: 0 });
 
   // ▓ [🐞]
   // $userBetarenaSettings.user.scores_user_data.investor_balance = 100000;
@@ -169,31 +217,6 @@
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
-  /**
-   * @author
-   *  @migbash
-   * @summary
-   *  🟥 COMPONENT MAIN
-   * @description
-   *  📣 Update variables for viewport state.
-   * @return { void }
-   */
-  function resizeCustom
-  (
-  ): void
-  {
-    [
-      VIEWPORT_TABLET_INIT[1],
-      VIEWPORT_MOBILE_INIT[1]
-    ] = viewport_change
-    (
-      VIEWPORT_TABLET_INIT[0],
-      VIEWPORT_MOBILE_INIT[0]
-    );
-    updateTierPricingLayout();
-    return;
-  }
 
   /**
    * @author
@@ -237,7 +260,7 @@
   (
   ): void
   {
-    const investorBalance: number = ($userBetarenaSettings.user.scores_user_data?.investor_balance?.grand_total ?? 0);
+    const investorBalance: number = grand_total!;
     currentAccumulatedAmountProgress = 'NaN';
 
     // ▓ NOTE:
@@ -303,10 +326,9 @@
     // ▓ CHECK
     // ▓ > first time call of THIS method.
     if (!stateObject.isExecuted)
-
       // stateObject.initialDivDistance = componentTarget.getBoundingClientRect().bottom + window.scrollY;
       stateObject.isExecuted = true;
-
+    //
 
     let
       /**
@@ -337,27 +359,6 @@
 
   // #endregion ➤ 🛠️ METHODS
 
-  // #region ➤ 🔄 LIFECYCLE [SVELTE]
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'logic' that should run            │
-  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
-  // │ as soon as 'this' .svelte file is ran.                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  onMount
-  (
-    async (
-    ) =>
-    {
-      resizeCustom();
-      return;
-    }
-  );
-
-  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
-
   // #region ➤ 🔥 REACTIVIY [SVELTE]
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -384,19 +385,15 @@
    *  **reactivity triggered by:**
    *  - `$userBetarenaSettings.user`- **kicker** (via deepListen)
    */
-  $: if (deepReactListenInvestorBalanceChng)
-    setLargestCurrentTier();
-  //
+  $: if (grand_total) setLargestCurrentTier();
 
-    // #endregion ➤ 🔥 REACTIVIY [SVELTE]
+  $: if (VIEWPORT_MOBILE_INIT || VIEWPORT_TABLET_INIT) updateTierPricingLayout();
+
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
 </script>
 
 <svelte:window
-  on:resize=
-  {
-    () => { return resizeCustom() }
-  }
   on:scroll=
   {
     () => { return scrollCustom() }
@@ -435,10 +432,11 @@
       m-0
       "
     >
-      {
-        profileTrs?.investor?.tiers.title
-        ?? 'Tier Pricing'
-      }
+      <TranslationText
+        key={`${CNAME}/table/header/discount`}
+        text={profileTrs?.investor?.tiers.title}
+        fallback={'Tier Pricing'}
+      />
     </h1>
   {/if}
 
@@ -474,10 +472,11 @@
                 m-0
                 "
               >
-                {
-                  profileTrs?.investor?.tiers.title
-                  ?? 'Tier Pricing'
-                }
+                <TranslationText
+                  key={`${CNAME}/table/header/discount`}
+                  text={profileTrs?.investor?.tiers.title}
+                  fallback={'Tier Pricing'}
+                />
               </h1>
             </th>
           <!--
@@ -566,30 +565,35 @@
                     "
                   >
                     {#if item == 'token-price'}
-                      {
-                        profileTrs?.investor?.tiers.tiers_pricing.title
-                        ?? 'Tier Pricing'
-                      }
+                      <TranslationText
+                        key={`${CNAME}/table/header/token-price`}
+                        text={profileTrs?.investor?.tiers.tiers_pricing.title}
+                        fallback={'Tier Pricing'}
+                      />
                     {:else if item == 'minimum-investment'}
-                      {
-                        profileTrs?.investor?.tiers.tiers_investment.title
-                        ?? 'Minimum Investment'
-                      }
+                      <TranslationText
+                        key={`${CNAME}/table/header/minimum-investment`}
+                        text={profileTrs?.investor?.tiers.tiers_investment.title}
+                        fallback={'Minimum Investment'}
+                      />
                     {:else if item == 'discount'}
-                      {
-                        profileTrs?.investor?.tiers.tiers_discount.title
-                        ?? 'Discount'
-                      }
+                      <TranslationText
+                        key={`${CNAME}/table/header/discount`}
+                        text={profileTrs?.investor?.tiers.tiers_discount.title}
+                        fallback={'Discount'}
+                      />
                     {:else if item == 'initial-token-release'}
-                      {
-                        profileTrs?.investor?.tiers.tiers_tge.title
-                        ?? 'Initial token release'
-                      }
+                      <TranslationText
+                        key={`${CNAME}/table/header/initial-token-release`}
+                        text={profileTrs?.investor?.tiers.tiers_tge.title}
+                        fallback={'Initial token release'}
+                      />
                     {:else if item == 'vesting-period'}
-                      {
-                        profileTrs?.investor?.tiers.tiers_vesting.title
-                        ?? 'Vesting period'
-                      }
+                      <TranslationText
+                        key={`${CNAME}/table/header/vesting-period`}
+                        text={profileTrs?.investor?.tiers.tiers_vesting.title}
+                        fallback={'Vesting period'}
+                      />
                     {/if}
                   </p>
 
@@ -669,14 +673,14 @@
                           )
                         }
                       {:else if item == 'minimum-investment'}
-                        ${
-                          formatNumberWithCommas(dataMap.get(key)?.data?.invest_min)
-                        }
                         {
-                          dataMap.get(key)?.data?.invest_max == -1
-                            ? 'or more'
-                            : `- $${formatNumberWithCommas(dataMap.get(key)?.data?.invest_max)}`
+                          (dataMap.get(key)?.data?.invest_max == -1 ? '+' : '')
+                          + '$'
+                          + formatNumberWithCommas(dataMap.get(key)?.data?.invest_min)
                         }
+                        {#if dataMap.get(key)?.data?.invest_max != -1}
+                          {`- $${formatNumberWithCommas(dataMap.get(key)?.data?.invest_max)}`}
+                        {/if}
                       {:else if item == 'discount'}
                         {
                           dataMap.get(key)?.data?.discount_percentage
@@ -692,10 +696,11 @@
                           dataMap.get(key)?.data?.vesting_months
                           ?? ''
                         }
-                        {
-                          profileTrs?.investor?.tiers.tiers.months
-                          ?? 'months'
-                        }
+                        <TranslationText
+                          key={`${CNAME}/table/header/vesting-period`}
+                          text={profileTrs?.investor?.tiers.tiers.months}
+                          fallback={'months'}
+                        />
                       {/if}
                     </p>
 
@@ -807,7 +812,7 @@
                               no-wrap
                               "
                             >
-                              {$userBetarenaSettings.user.scores_user_data?.investor_balance?.grand_total ?? 0} BTA
+                              {grand_total} BTA
                             </p>
 
                             <!--
@@ -822,10 +827,11 @@
                                 grey-v1
                               "
                             >
-                              {
-                                profileTrs?.investor?.tiers.general_stake
-                                ?? 'Your staked ammount'
-                              }
+                              <TranslationText
+                                key={`${CNAME}/table/header/vesting-period`}
+                                text={profileTrs?.investor?.tiers.general_stake}
+                                fallback={'Your staked ammount'}
+                              />
                             </p>
                           </div>
 

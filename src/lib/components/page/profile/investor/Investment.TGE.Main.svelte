@@ -1,5 +1,13 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
@@ -35,6 +43,7 @@
 
   import icon_bta_token from '../assets/price-tier/icon-bta-token.svg';
 
+  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
   import AdminDevControlPanel from '$lib/components/misc/admin/Admin-Dev-ControlPanel.svelte';
   import AdminDevControlPanelToggleButton from '$lib/components/misc/admin/Admin-Dev-ControlPanelToggleButton.svelte';
   import MainClaimModal from './Main-Claim-Modal.svelte';
@@ -74,34 +83,18 @@
     , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
-  class Dev
-  {
-    mutated: boolean = false;
-    noData: boolean = false;
-  }
-
   const
     /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
-     */
-    // eslint-disable-next-line no-unused-vars
+     */ // eslint-disable-next-line no-unused-vars
     CNAME: string = 'profile⮕w⮕investtge⮕main'
   ;
 
-  let
-    /**
-     * @description
-     *  📣 target `DEV` class instance.
-     */
-    newDevInstance = new Dev()
-  ;
-
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
-
-  // ▓ [🐞]
-  // profileData!.presaleData.data!.end_date = '';
-  // profileData!.investorData!.data!.tge!.status = 'Claimed';
+  $: ({ adminOverrides } = $scoresProfileInvestorStore);
+  // @ts-expect-error
+  $: ({ uid } = $userBetarenaSettings.user.firebase_user_data);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -137,16 +130,17 @@
        */
       result = await postv2
       (
-        `${import.meta.env.VITE_FIREBASE_FUNCTIONS_ORIGIN}/transaction/update/investment/claim/create`
-        // 'http://127.0.0.1:5001/betarena-ios/us-central1/api/transaction/update/investment/claim/create'
+        // `${import.meta.env.VITE_FIREBASE_FUNCTIONS_ORIGIN}/transaction/update/investment/claim/create`
+        'http://127.0.0.1:5001/betarena-ios/us-central1/api/transaction/update/investment/claim/create'
         , {
-          uid: $userBetarenaSettings.user.firebase_user_data?.uid
+          uid
           , vestingId: null
           , isTge: true
         }
       )
     ;
 
+    // @ts-expect-error
     if (result.error)
     {
       $sessionStore.currentActiveModal = 'GeneralPlatform_Error';
@@ -158,7 +152,7 @@
        * @description
        *  📣 Target amount to change balance by **(a.k.a delta)**.
       */
-      deltaBalance: number = (-profileData.investorData.data.tge.tokens)
+      deltaBalance: number = (-(profileData?.investorData?.data?.tge.tokens ?? 0))
     ;
 
     // TODO:
@@ -167,7 +161,7 @@
     await userUpdateInvestorBalance
     (
       {
-        uid: $userBetarenaSettings.user.firebase_user_data?.uid
+        uid
         , deltaBalance
         , type: 'tge'
       }
@@ -199,8 +193,8 @@
 -->
 {#if $sessionStore.currentActiveModal == 'ProfileInvestor_ClaimTGE_Modal'}
   <MainClaimModal
-    VIEWPORT_MOBILE_INIT={VIEWPORT_MOBILE_INIT}
-    VIEWPORT_TABLET_INIT={VIEWPORT_TABLET_INIT}
+    {VIEWPORT_MOBILE_INIT}
+    {VIEWPORT_TABLET_INIT}
     amount={profileData?.investorData?.data?.tge.tokens ?? 0}
     on:confirmEntry=
     {
@@ -227,20 +221,23 @@
   "
   {!VIEWPORT_TABLET_INIT[1] || VIEWPORT_MOBILE_INIT[1] ? 'justify-content: space-between;' : ''}
   "
-  class:mutated={newDevInstance.mutated}
+  class:mutated={adminOverrides.has('Tge')}
 >
   <!-- [🐞] -->
   <!-- {VIEWPORT_TABLET_INIT[1]} -->
 
   <AdminDevControlPanelToggleButton
     title='Tokens available on launch date (TGE)'
-    mutated={newDevInstance.mutated}
+    mutated={adminOverrides.has('Tge')}
     on:reset=
     {
       () =>
       {
-        newDevInstance.mutated = false;
-        newDevInstance.noData = false;
+        scoresProfileInvestorStore.updateAdminMutatedWidgets
+        (
+          'Tge'
+          , 'remove'
+        );
         return;
       }
     }
@@ -275,11 +272,11 @@
       {!VIEWPORT_MOBILE_INIT[1] ? 'width: 170px;' : ''}
       "
     >
-      <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-      {
-        profileTrs?.investor?.tge.info
-        ?? 'Tokens available on launch date (TGE)'
-      }
+      <TranslationText
+        key={`${CNAME}`}
+        text={profileTrs?.investor?.tge.info}
+        fallback={'Tokens available on launch date (TGE)'}
+      />
     </p>
 
     <!--
@@ -361,11 +358,11 @@
           }
         }
       >
-        <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-        {
-          profileTrs?.investor?.tge.cta_title
-          ?? 'Claim now!'
-        }
+        <TranslationText
+          key={`${CNAME}`}
+          text={profileTrs?.investor?.tge.cta_title}
+          fallback={'Claim now!'}
+        />
       </button>
     {/if}
 
@@ -407,11 +404,11 @@
         line-height: 20px; /* 142.857% */
         "
       >
-        <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-        {
-          profileTrs?.investor?.tge.date_title
-          ?? 'Release date'
-        }
+        <TranslationText
+          key={`${CNAME}`}
+          text={profileTrs?.investor?.tge.date_title}
+          fallback={'Release date'}
+        />
       </p>
 
       <!--
@@ -432,16 +429,17 @@
             "
           >
             {#if $scoresProfileInvestorStore.tgeStateWidget == 'Tge_NoDefinedDate'}
-              <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-              {
-                profileTrs?.investor?.tge.date_title_2
-                ?? 'Date to be announced soon'
-              }
+              <TranslationText
+                key={`${CNAME}`}
+                text={profileTrs?.investor?.tge.date_title_2}
+                fallback={'Date to be announced soon'}
+              />
             {:else}
-              {
-                profileData?.presaleData.data?.end_date
-                ?? '-'
-              }
+              <TranslationText
+                key={`${CNAME}`}
+                text={profileData?.presaleData.data?.end_date}
+                fallback={'-'}
+              />
             {/if}
           </p>
         </div>
@@ -455,6 +453,7 @@
         <div
           id="countdown-row"
         >
+          <!-- eslint-disable-next-line no-unused-vars -->
           {#each { length: 4 } as _,i}
             <div
               class=
@@ -490,11 +489,11 @@
         color-white
         "
       >
-      <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-      {
-        profileTrs?.investor?.tge.cta_title_2
-        ?? 'Claimed'
-      }
+        <TranslationText
+          key={`${CNAME}`}
+          text={profileTrs?.investor?.tge.cta_title_2}
+          fallback={'Claimed'}
+        />
       </p>
     </div>
 
@@ -546,7 +545,11 @@
       {
         () =>
         {
-          newDevInstance.mutated = true;
+          scoresProfileInvestorStore.updateAdminMutatedWidgets
+          (
+            'Tge'
+            , 'set'
+          );
           return;
         }
       }
@@ -571,8 +574,6 @@
 -->
 
 <style lang="scss">
-
-  @import '../../../../../../static/app.scss';
 
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
@@ -644,9 +645,9 @@
         p
         {
           /* 🎨 style */
-          @extend .s-16;
-          @extend .w-500;
-          @extend .color-black-2;
+          font-size: 16px;
+          font-weight: 500;
+          color: var(--dark-theme);
         }
       }
     }
@@ -731,6 +732,12 @@
       {
         /* 🎨 style */
         background-color: var(--dark-theme-1-7-shade);
+
+        p
+        {
+          /* 🎨 style */
+          color: var(--white);
+        }
       }
     }
 

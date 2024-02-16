@@ -1,5 +1,13 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
@@ -27,16 +35,18 @@
   import { page } from '$app/stores';
 
   import userBetarenaSettings from '$lib/store/user-settings.js';
-  import { viewport_change } from '$lib/utils/platform-functions.js';
   import { Misc } from '@betarena/scores-lib/dist/classes/class.misc.js';
+  import { investHistorySampleData } from './_sample.js';
+  import { scoresProfileInvestorStore } from './_store.js';
 
+  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
   import AdminDevControlPanel from '$lib/components/misc/admin/Admin-Dev-ControlPanel.svelte';
   import AdminDevControlPanelToggleButton from '$lib/components/misc/admin/Admin-Dev-ControlPanelToggleButton.svelte';
   import InvestmentHistoryRowChild from './Investment.HistoryRow.Child.svelte';
 
-  import type { B_H_KEYP, B_H_KEYP_Tier, B_H_TH } from '@betarena/scores-lib/types/_HASURA_.js';
+  import type { KeypairInvestorPresaleMain } from '@betarena/scores-lib/types/_AUTO-HASURA-2_.js';
+  import type { IPresaleTier } from '@betarena/scores-lib/types/_ENUMS_.js';
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
-  import { onMount } from 'svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -59,6 +69,16 @@
      * @augments IProfileData
     */
     profileData: IProfileData | null
+    /**
+     * @description
+     *  📣 threshold start + state for 📱 MOBILE
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
+    /**
+     * @description
+     *  📣 threshold start + state for 💻 TABLET
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
   /**
@@ -66,7 +86,7 @@
    *  📣 available data points.
    */
   type IRowLayout =
-    'date'
+    | 'date'
     | 'type'
     | 'tier'
     | 'discount'
@@ -76,97 +96,6 @@
     | 'price'
     | ''
   ;
-
-  class Dev
-  {
-    mutated: boolean = false;
-    noData: boolean = false;
-    sampleData: B_H_TH[] = [
-      {
-        Gateway: null
-        , amount: 1800
-        , asset: 'BTA'
-        , bic_swift: null
-        , bta_price: null
-        , date: '2024-01-11T02:17:33.735582+00:00'
-        , deposit_wallet_address: null
-        , description: 'Vesting Period Claim'
-        , extra: { vestingId: 1 }
-        , first_name: null
-        , iban: null
-        , id: 130
-        , last_name: null
-        , payment_email: null
-        , payment_processor_fee: null
-        , platform_fee: null
-        , quantity: 2500
-        // @ts-expect-error
-        , referral: null
-        , status: 'pending'
-        , tier: 'bronze'
-        , type: 'investment'
-        , uid: 'n65vqAoIH3b7lsU4zroxjHk0SSp2'
-        , wallet_address_erc20: null
-        , withdraw_wallet_address: null
-      }
-      , {
-        Gateway: null
-        , amount: 1800
-        , asset: 'BTA'
-        , bic_swift: null
-        , bta_price: null
-        , date: '2024-01-11T02:17:33.735582+00:00'
-        , deposit_wallet_address: null
-        , description: 'Vesting Period Claim'
-        , extra: { vestingId: 1 }
-        , first_name: null
-        , iban: null
-        , id: 130
-        , last_name: null
-        , payment_email: null
-        , payment_processor_fee: null
-        , platform_fee: null
-        , quantity: 2500
-        // @ts-expect-error
-        , referral: null
-        , status: 'pending'
-        , tier: 'bronze'
-        , type: 'investment'
-        , uid: 'n65vqAoIH3b7lsU4zroxjHk0SSp2'
-        , wallet_address_erc20: null
-        , withdraw_wallet_address: null
-      }
-    ];
-
-    /**
-     * @description
-     */
-    toggleNoData
-    (
-    ): void
-    {
-      return;
-    }
-
-    /**
-     * @description
-    */
-    addSampleData
-    (
-    ): void
-    {
-      (profileData?.tx_hist ??= []);
-
-      profileData?.tx_hist?.push
-      (
-        ...this.sampleData
-      );
-
-      profileData = profileData;
-
-      return;
-    }
-  }
 
   const
     /**
@@ -179,22 +108,23 @@
   let
     /**
      * @description
-     *  📣 threshold start + state for 📱 MOBILE
-     */ // eslint-disable-next-line no-unused-vars
-    VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
-    /**
-     * @description
-     *  📣 threshold start + state for 💻 TABLET
-     */ // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
-    /**
-     * @description
      *  📣 convert target `data` to respective `map`.
      */
-    , dataMap: Map < B_H_KEYP_Tier, B_H_KEYP >
+    dataMap: Map < IPresaleTier, KeypairInvestorPresaleMain >
       = new Misc().convertToMapKEYPINVSTTIER
       (
-        (profileData?.investorTierPricing?.sort((a, b) => {return b.data?.position - a.data?.position}) ?? [])
+        (
+          profileData?.investorTierPricing
+            ?.sort
+            (
+              (
+                a,
+                b
+              ) =>
+              {
+                return (b.data?.position ?? 0) - (a.data?.position ?? 0)
+              }
+            ) ?? [])
       )
     /**
      * @description
@@ -211,14 +141,11 @@
         , 'price'
         , 'status'
       ]
-    /**
-     * @description
-     *  📣
-     */
-    , newDevInstance = new Dev()
   ;
 
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
+  $: ({ adminOverrides, investHistoryStateWidget } = $scoresProfileInvestorStore);
+  $: ({ theme } = $userBetarenaSettings);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -248,7 +175,7 @@
   ): void
   {
     if (VIEWPORT_MOBILE_INIT[1])
-      tableHeader = [ 'date', 'type', 'tier', 'status' ]
+      tableHeader = [ 'date', 'type', 'status' ]
     else
       tableHeader = [ 'date', 'type', 'tier', 'discount', 'investment', 'tokens', 'price', 'status' ]
     return;
@@ -256,58 +183,24 @@
 
   // #endregion ➤ 🛠️ METHODS
 
-  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'logic' that should run            │
-  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
-  // │ as soon as 'this' .svelte file is ran.                                 │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  onMount
-  (
-    () =>
-    {
-      [
-        VIEWPORT_TABLET_INIT[1],
-        VIEWPORT_MOBILE_INIT[1]
-      ]
-      = viewport_change
-        (
-          VIEWPORT_TABLET_INIT[0],
-          VIEWPORT_MOBILE_INIT[0]
-        )
-      ;
-      updateTableLayout();
-      return;
-    }
-  );
+  $: if (VIEWPORT_MOBILE_INIT || VIEWPORT_TABLET_INIT) updateTableLayout();
 
-  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
 </script>
-
-<svelte:window
-  on:resize=
-  {
-    () =>
-    {
-      [
-        VIEWPORT_TABLET_INIT[1],
-        VIEWPORT_MOBILE_INIT[1]
-      ]
-      = viewport_change
-        (
-          VIEWPORT_TABLET_INIT[0],
-          VIEWPORT_MOBILE_INIT[0]
-        )
-      ;
-      updateTableLayout();
-      return;
-    }
-  }
-/>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -326,18 +219,22 @@
 -->
 <div
   id={CNAME}
-  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
-  class:mutated={newDevInstance.mutated}
+  class:dark-background-1={theme == 'Dark'}
+  class:mutated={adminOverrides.has('InvestmentHistory')}
 >
+
   <AdminDevControlPanelToggleButton
     title='Investment Details'
-    mutated={newDevInstance.mutated}
+    mutated={adminOverrides.has('InvestmentHistory')}
     on:reset=
     {
       () =>
       {
-        newDevInstance.mutated = false;
-        newDevInstance.noData = false;
+        scoresProfileInvestorStore.updateAdminMutatedWidgets
+        (
+          'InvestmentHistory'
+          , 'remove'
+        );
         return;
       }
     }
@@ -357,11 +254,11 @@
     m-b-20
     "
   >
-    <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-    {
-      profileTrs?.investor?.investment_details.widget_title
-      ?? 'Investment Details'
-    }
+    <TranslationText
+      key={`${CNAME}/title`}
+      text={profileTrs?.investor?.investment_details.widget_title}
+      fallback={'Investment Details'}
+    />
   </p>
 
   <!--
@@ -391,52 +288,53 @@
                 "
               >
                 {#if item == 'date'}
-                  <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-                  {
-                    profileTrs?.investor?.investment_details.date
-                    ?? 'Date'
-                  }
+                  <TranslationText
+                    key={`${CNAME}/table/header/date`}
+                    text={profileTrs?.investor?.investment_details.date}
+                    fallback={'Date'}
+                  />
                 {:else if item == 'type'}
-                  <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-                  {
-                    profileTrs?.investor?.investment_details.type
-                    ?? 'Available'
-                  }
+                  <TranslationText
+                    key={`${CNAME}/table/header/type`}
+                    text={profileTrs?.investor?.investment_details.type}
+                    fallback={'Available'}
+                  />
                 {:else if item == 'tier'}
-                  <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-                  {
-                    profileTrs?.investor?.investment_details.tier
-                    ?? 'Tier'
-                  }
+                  <TranslationText
+                    key={`${CNAME}/table/header/tier`}
+                    text={profileTrs?.investor?.investment_details.tier}
+                    fallback={'Tier'}
+                  />
                 {:else if item == 'discount'}
-                  <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-                  {
-                    profileTrs?.investor?.investment_details.discount
-                    ?? 'Discount'
-                  }
+                  <TranslationText
+                    key={`${CNAME}/table/header/discount`}
+                    text={profileTrs?.investor?.investment_details.discount}
+                    fallback={'Discount'}
+                  />
                 {:else if item == 'investment'}
-                  <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-                  {
-                    profileTrs?.investor?.investment_details.investment
-                    ?? 'Investment'
-                  }
+                  <TranslationText
+                    key={`${CNAME}/table/header/discount`}
+                    text={profileTrs?.investor?.investment_details.investment}
+                    fallback={'Investment'}
+                  />
                 {:else if item == 'tokens'}
-                  <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-                  {
-                    profileTrs?.investor?.investment_details.tokens
-                    ?? 'Tokens'
-                  }
+                  <TranslationText
+                    key={`${CNAME}/table/header/discount`}
+                    text={profileTrs?.investor?.investment_details.tokens}
+                    fallback={'Tokens'}
+                  />
                 {:else if item == 'price'}
-                  <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-                  {
-                    profileTrs?.investor?.investment_details.price
-                    ?? 'Price'
-                  }
+                  <TranslationText
+                    key={`${CNAME}/table/header/price`}
+                    text={profileTrs?.investor?.investment_details.price}
+                    fallback={'Price'}
+                  />
                 {:else if item == 'status'}
-                  <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-                  {
-                    'Status'
-                  }
+                  <TranslationText
+                    key={`${CNAME}/table/header/status`}
+                    text={null}
+                    fallback={'Status'}
+                  />
                 {/if}
               </p>
             </th>
@@ -456,7 +354,7 @@
 
         {#if
           (profileData?.tx_hist?.filter(x => {return x.type == 'investment'})?.length ?? 0) > 0
-          && !newDevInstance.noData
+          && investHistoryStateWidget != 'NoData'
         }
           {#each profileData?.tx_hist?.filter(x => {return x.type == 'investment'}) ?? [] as item}
 
@@ -467,7 +365,6 @@
               data={item}
               tierDataMap={dataMap}
               {VIEWPORT_MOBILE_INIT}
-              {VIEWPORT_TABLET_INIT}
             />
           {/each}
         {:else}
@@ -486,11 +383,11 @@
               line-height: 24px; /* 150% */
               "
             >
-              <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-              {
-                profileTrs?.investor?.general.no_information
-                ?? 'Uh-oh! No Investments have been found.'
-              }
+              <TranslationText
+                key={`${CNAME}/table/header/type`}
+                text={profileTrs?.investor?.general.no_information}
+                fallback={'Uh-oh! No Investments have been found.'}
+              />
             </p>
           </div>
         {/if}
@@ -547,15 +444,19 @@
       {
         () =>
         {
-          newDevInstance.noData = !newDevInstance.noData;
-          newDevInstance.mutated = true;
+          scoresProfileInvestorStore.updateAdminMutatedWidgets
+          (
+            'InvestmentHistory'
+            , 'set'
+          );
+          $scoresProfileInvestorStore.investHistoryStateWidget = 'NoData';
           return;
         }
       }
-      class:on={newDevInstance.noData}
-      class:off={!newDevInstance.noData}
+      class:on={investHistoryStateWidget == 'NoData'}
+      class:off={investHistoryStateWidget != 'NoData'}
     >
-      {#if newDevInstance.noData}
+      {#if investHistoryStateWidget == 'NoData'}
         ON
       {:else}
         OFF
@@ -600,8 +501,23 @@
       {
         () =>
         {
-          newDevInstance.addSampleData();
-          newDevInstance.mutated = true;
+          if (!profileData) return;
+
+          (profileData.tx_hist ??= []);
+
+          profileData.tx_hist.push
+          (
+            ...investHistorySampleData
+          );
+
+          profileData = profileData;
+
+          scoresProfileInvestorStore.updateAdminMutatedWidgets
+          (
+            'InvestmentHistory'
+            , 'set'
+          );
+
           return;
         }
       }
@@ -623,8 +539,6 @@
 -->
 
 <style lang="scss">
-
-  @import '../../../../../../static/app.scss';
 
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
@@ -744,7 +658,7 @@
                 {
                   /* 🎨 style */
                   // padding-top: 8px;
-                  padding-bottom: 165px;
+                  padding-bottom: 190px;
                 }
               }
 
@@ -766,6 +680,8 @@
                   padding-right: 20px !important;
                   border-radius: 0 4px 4px 0;
                 }
+
+                @import '../../../../../../static/app.scss';
 
                 p
                 {
@@ -846,17 +762,6 @@
       height: 333px;
       min-height: 333px;
       max-height: 333px;
-
-      div#developer-box
-      {
-        /* 📌 position */
-        position: absolute;
-        right: 0;
-        /* 🎨 style */
-        background-color: yellow;
-        height: 100%;
-        width: 20px;
-      }
 
       div#table-box
       {

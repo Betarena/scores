@@ -1,5 +1,13 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
@@ -30,13 +38,16 @@
   import { userUpdateInvestorBalance } from '$lib/firebase/common.js';
   import sessionStore from '$lib/store/session.js';
   import userBetarenaSettings from '$lib/store/user-settings.js';
+  import { investVestingSampleData } from './_sample.js';
+  import { scoresProfileInvestorStore } from './_store.js';
 
+  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
   import AdminDevControlPanel from '$lib/components/misc/admin/Admin-Dev-ControlPanel.svelte';
   import AdminDevControlPanelToggleButton from '$lib/components/misc/admin/Admin-Dev-ControlPanelToggleButton.svelte';
   import InvestmentVestingPeriodsRowChild from './Investment.VestingPeriodsRow.Child.svelte';
   import MainClaimModal from './Main-Claim-Modal.svelte';
 
-  import type { PUBLIC__INVESTOR_IVesting } from '@betarena/scores-lib/types/_HASURA_.js';
+  import type { PublicInvestorDataIVesting } from '@betarena/scores-lib/types/_AUTO-HASURA-2_.js';
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -86,79 +97,11 @@
     | ''
   ;
 
-  class Dev
-  {
-    mutated: boolean = false;
-    noData: boolean = false;
-    sampleData: PUBLIC__INVESTOR_IVesting[] = [
-      {
-        id: 1
-        , status: null
-        , tokens: 2500
-        , claim_date: '30/01/24'
-        ,available_date: '01/01/24'
-        , distribution_date: '2024-01-11T02:35:09.614Z'
-      }
-      , {
-        id: 2
-        , status: 'Distributed'
-        , tokens: 2500
-        , claim_date: '30/01/24'
-        , available_date: '01/01/24'
-        , distribution_date: '2024-01-11T02:35:09.614Z'
-      } , {
-        id: 3
-        , status: 'Pending'
-        , tokens: 2500
-        , claim_date: '30/01/24'
-        , available_date: '01/01/24'
-        , distribution_date: '2024-01-11T02:35:09.614Z'
-      }
-    ];
-
-    /**
-     * @description
-     */
-    toggleNoData
-    (
-    ): void
-    {
-      return;
-    }
-
-    /**
-     * @author
-     *  @migbash
-     * @summary
-     *  🟦 HELPER
-     * @description
-     *  📣 Infinite inject sample data to widget for testing.
-     * @return { void }
-    */
-    addSampleData
-    (
-    ): void
-    {
-      (profileData?.investorData ??= { data: { vesting_periods: [] } });
-      (profileData?.investorData?.data?.vesting_periods ??= []);
-
-      profileData?.investorData?.data?.vesting_periods.push
-      (
-        ...this.sampleData
-      );
-
-      profileData = profileData;
-
-      return;
-    }
-  }
-
   const
     /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
-     */
-    // eslint-disable-next-line no-unused-vars
+     */ // eslint-disable-next-line no-unused-vars
     CNAME: string = 'profile⮕w⮕vesting-period⮕main'
   ;
 
@@ -177,14 +120,9 @@
         , 'claim'
       ]
     /**
-     * @description
-     *  📣 target `DEV` class instance.
-     */
-    , newDevInstance = new Dev()
-    /**
      * @augments PUBLIC__INVESTOR_IVesting
      */
-    , targetVestingSelected: PUBLIC__INVESTOR_IVesting
+    , targetVestingSelected: PublicInvestorDataIVesting
     /**
      * @description
      *  📣 Target `vesting periods` that have been claimed.
@@ -193,6 +131,9 @@
   ;
 
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
+  $: ({ adminOverrides, vestingHistoryStateWidget } = $scoresProfileInvestorStore);
+  // @ts-expect-error
+  $: ({ uid } = $userBetarenaSettings.user.firebase_user_data);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -241,7 +182,7 @@
    */
   async function createVestingRequest
   (
-  ): void
+  ): Promise < void >
   {
     const
       /**
@@ -253,13 +194,14 @@
         `${import.meta.env.VITE_FIREBASE_FUNCTIONS_ORIGIN}/transaction/update/investment/claim/create`
         // 'http://127.0.0.1:5001/betarena-ios/us-central1/api/transaction/update/investment/claim/create'
         , {
-          uid: $userBetarenaSettings.user.firebase_user_data?.uid
+          uid
           , vestingId: targetVestingSelected.id
           , isTge: false
         }
       )
     ;
 
+    // @ts-expect-error
     if (result.error)
     {
       $sessionStore.currentActiveModal = 'GeneralPlatform_Error';
@@ -280,7 +222,7 @@
     await userUpdateInvestorBalance
     (
       {
-        uid: $userBetarenaSettings.user.firebase_user_data?.uid
+        uid
         , deltaBalance
         , type: 'total'
       }
@@ -331,8 +273,8 @@
 -->
 {#if $sessionStore.currentActiveModal == 'ProfileInvestor_ClaimVesting_Modal'}
   <MainClaimModal
-    VIEWPORT_MOBILE_INIT={VIEWPORT_MOBILE_INIT}
-    VIEWPORT_TABLET_INIT={VIEWPORT_TABLET_INIT}
+    {VIEWPORT_MOBILE_INIT}
+    {VIEWPORT_TABLET_INIT}
     amount={targetVestingSelected.tokens}
     on:confirmEntry=
     {
@@ -353,18 +295,21 @@
 <div
   id={CNAME}
   class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
-  class:mutated={newDevInstance.mutated}
+  class:mutated={adminOverrides.has('Vesting')}
 >
 
   <AdminDevControlPanelToggleButton
     title='Vesting Periods'
-    mutated={newDevInstance.mutated}
+    mutated={adminOverrides.has('Vesting')}
     on:reset=
     {
       () =>
       {
-        newDevInstance.mutated = false;
-        newDevInstance.noData = false;
+        scoresProfileInvestorStore.updateAdminMutatedWidgets
+        (
+          'Vesting'
+          , 'remove'
+        );
         return;
       }
     }
@@ -384,11 +329,11 @@
     m-b-20
     "
   >
-    <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-    {
-      profileTrs?.investor?.vesting.title
-      ?? 'Vesting Periods'
-    }
+    <TranslationText
+      key={'vesting-period-title'}
+      text={profileTrs?.investor?.vesting.title}
+      fallback={'Vesting Periods'}
+    />
   </p>
 
   <!--
@@ -423,47 +368,41 @@
                 "
               >
                 {#if item == 'period'}
-                  <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-                  {
-                    profileTrs?.investor?.vesting.period
-                    ?? 'period'
-                  }
+                  <TranslationText
+                    key={`${CNAME}/table/header/period`}
+                    text={profileTrs?.investor?.vesting.period}
+                    fallback={'period'}
+                  />
                 {:else if item == 'available'}
-                  <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-                  {
-                    profileTrs?.investor?.vesting.available
-                    ?? 'available'
-                  }
+                  <TranslationText
+                    key={`${CNAME}/table/header/available`}
+                    text={profileTrs?.investor?.vesting.available}
+                    fallback={'available'}
+                  />
                 {:else if item == 'tokens'}
-                  <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-                  {
-                    profileTrs?.investor?.vesting.tokens
-                    ?? 'tokens'
-                  }
+                  <TranslationText
+                    key={`${CNAME}/table/header/tokens`}
+                    text={profileTrs?.investor?.vesting.tokens}
+                    fallback={'tokens'}
+                  />
                 {:else if item == 'status'}
-                  <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-                  {
-                    profileTrs?.investor?.vesting.status
-                    ?? 'status'
-                  }
-                <!-- {:else if item == 'wallet'} -->
-                  <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-                  <!-- {
-                    profileTrs?.investor?.vesting.wallet
-                    ?? 'wallet'
-                  } -->
+                  <TranslationText
+                    key={`${CNAME}/table/header/status`}
+                    text={profileTrs?.investor?.vesting.status}
+                    fallback={'status'}
+                  />
                 {:else if item == 'distribution'}
-                  <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-                  {
-                    profileTrs?.investor?.vesting.distribution
-                    ?? 'distribution'
-                  }
+                  <TranslationText
+                    key={`${CNAME}/table/header/distribution`}
+                    text={profileTrs?.investor?.vesting.distribution}
+                    fallback={'distribution'}
+                  />
                 {:else if item == 'claim'}
-                  <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-                  {
-                    profileTrs?.investor?.vesting.claim
-                    ?? 'claim'
-                  }
+                  <TranslationText
+                    key={`${CNAME}/table/header/claim`}
+                    text={profileTrs?.investor?.vesting.claim}
+                    fallback={'claim'}
+                  />
                 {/if}
               </p>
             </th>
@@ -478,8 +417,8 @@
       <tbody>
 
         {#if
-          profileData?.investorData?.data?.vesting_periods.length > 0
-          && !newDevInstance.noData
+          (profileData?.investorData?.data?.vesting_periods.length ?? 0) > 0
+          && vestingHistoryStateWidget != 'NoData'
         }
           {#each profileData?.investorData?.data?.vesting_periods ?? [] as item}
 
@@ -518,11 +457,11 @@
               line-height: 24px; /* 150% */
               "
             >
-              <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-              {
-                profileTrs?.investor?.general.no_information
-                ?? 'Uh-oh! No Investments have been found.'
-              }
+              <TranslationText
+                key={'vesting-no-data'}
+                text={profileTrs?.investor?.general.no_information}
+                fallback={'Uh-oh! No Investments have been found.'}
+              />
             </p>
           </div>
         {/if}
@@ -580,15 +519,19 @@
       {
         () =>
         {
-          newDevInstance.noData = !newDevInstance.noData;
-          newDevInstance.mutated = true;
+          scoresProfileInvestorStore.updateAdminMutatedWidgets
+          (
+            'InvestmentHistory'
+            , 'set'
+          );
+          $scoresProfileInvestorStore.vestingHistoryStateWidget = 'NoData';
           return;
         }
       }
-      class:on={newDevInstance.noData}
-      class:off={!newDevInstance.noData}
+      class:on={vestingHistoryStateWidget == 'NoData'}
+      class:off={vestingHistoryStateWidget != 'NoData'}
     >
-      {#if newDevInstance.noData}
+      {#if vestingHistoryStateWidget == 'NoData'}
         ON
       {:else}
         OFF
@@ -633,8 +576,26 @@
       {
         () =>
         {
-          newDevInstance.addSampleData();
-          newDevInstance.mutated = true;
+          if (!profileData) return;
+
+          // @ts-expect-error
+          (profileData.investorData ??= { data: { vesting_periods: [] } });
+          // @ts-expect-error
+          (profileData.investorData.data.vesting_periods ??= []);
+
+          profileData.investorData?.data?.vesting_periods.push
+          (
+            ...investVestingSampleData
+          );
+
+          profileData = profileData;
+
+          scoresProfileInvestorStore.updateAdminMutatedWidgets
+          (
+            'Vesting'
+            , 'set'
+          );
+
           return;
         }
       }
@@ -656,8 +617,6 @@
 -->
 
 <style lang="scss">
-
-  @import '../../../../../../static/app.scss';
 
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
@@ -801,8 +760,9 @@
 
                 p:not(.pending)
                 {
-                  @extend .s-14;
-                  @extend .color-black-2;
+                  /* 🎨 style */
+                  font-size: 14px;
+                  color: var(--dark-theme);
                 }
 
                 button.btn-primary-v2
@@ -961,6 +921,15 @@
               {
                 /* 🎨 style */
                 background-color: rgba(75, 75, 75, 0.50) !important;
+              }
+            }
+
+            td
+            {
+              p:not(.pending)
+              {
+                /* 🎨 style */
+                color: var(--white);
               }
             }
           }

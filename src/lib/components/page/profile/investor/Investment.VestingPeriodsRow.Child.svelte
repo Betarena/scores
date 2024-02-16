@@ -1,5 +1,13 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
@@ -38,7 +46,8 @@
   import icon_arrow_up_dark from '../assets/investor/arrow-up-dark.svg';
   import icon_green_dot from '../assets/investor/icon-green-dot.svg';
 
-	import type { PUBLIC__INVESTOR_IVesting } from '@betarena/scores-lib/types/_HASURA_.js';
+	import TranslationText from '$lib/components/misc/Translation-Text.svelte';
+	import type { PublicInvestorDataIVesting } from '@betarena/scores-lib/types/_AUTO-HASURA-2_.js';
 	import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -59,9 +68,9 @@
 
   export let
     /**
-     * @augments PUBLIC__INVESTOR_IVesting
+     * @augments PublicInvestorDataIVesting
      */
-    data: PUBLIC__INVESTOR_IVesting
+    data: PublicInvestorDataIVesting
     /**
      * @description
      *  📣 threshold start + state for 📱 MOBILE
@@ -75,7 +84,7 @@
     /**
      * @description
      *  📣 Target `vesting periods` claimed (ethermal storage).
-    */
+     */
     , vestingPeriodsClaimed: number[]
   ;
 
@@ -84,7 +93,7 @@
    *  📣 Component interface.
    */
   type IRowState =
-    'NoVestingClaimAvailable'
+    | 'NoVestingClaimAvailable'
     | 'VestingClaimAvailable'
     | 'VestingClaimPending'
     | 'VestingClaimed'
@@ -94,12 +103,11 @@
     /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
-     */
-    // eslint-disable-next-line no-unused-vars
+     */ // eslint-disable-next-line no-unused-vars
     CNAME: string = 'profile⮕w⮕investfaq⮕main'
     /**
      * @augments EventDispatcher
-    */
+     */
     , dispatch: EventDispatcher < any > = createEventDispatcher()
   ;
 
@@ -130,7 +138,7 @@
           componentState = 'VestingClaimed';
         else if (data.status == 'Pending' || vestingPeriodsClaimed.includes(data.id))
           componentState = 'VestingClaimPending';
-        else if (new Date().getTime() > new Date(data.available_date ?? '').getTime())
+        else if (new Date().getTime() > new Date(data.available_date).getTime())
           componentState = 'VestingClaimAvailable';
         else
           componentState = 'NoVestingClaimAvailable';
@@ -140,7 +148,7 @@
   ;
 
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
-  $: deepReactListenInternalClock = $scoresProfileInvestorStore.globalInternalClock;
+  $: ({ globalInternalClock } = $scoresProfileInvestorStore);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -158,7 +166,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   $: if (vestingPeriodsClaimed) updateComponentState();
-  $: if (deepReactListenInternalClock) updateComponentState();
+  $: if (globalInternalClock) updateComponentState();
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
@@ -177,7 +185,14 @@
 
 <tr
   class:extra-info={isTxExtraInfo && VIEWPORT_MOBILE_INIT[1]}
-  on:click={() => {return isTxExtraInfo = !isTxExtraInfo}}
+  on:click=
+  {
+    () =>
+    {
+      isTxExtraInfo = !isTxExtraInfo;
+      return;
+    }
+  }
 >
 
   <!--
@@ -249,33 +264,26 @@
             m-r-6
             "
           />
-          {
-            profileTrs?.investor?.vesting.status_1
-            ?? 'Available'
-          }
+          <TranslationText
+            key={'vesting-period-available'}
+            text={profileTrs?.investor?.vesting.status_1}
+            fallback={'Available'}
+          />
         {:else if componentState == 'VestingClaimPending'}
-          {
-            profileTrs?.investor?.vesting.status_2
-            ?? 'Pending'
-          }
+          <TranslationText
+            key={'vesting-period-pending'}
+            text={profileTrs?.investor?.vesting.status_2}
+            fallback={'Pending'}
+          />
         {:else if componentState == 'VestingClaimed'}
-          {
-            profileTrs?.investor?.vesting.status_3
-            ?? 'Distributed'
-          }
+          <TranslationText
+            key={'vesting-period-distribuited'}
+            text={profileTrs?.investor?.vesting.status_3}
+            fallback={'Distributed'}
+          />
         {/if}
       </p>
     </td>
-
-    <!--
-    ▓ NOTE:
-    ▓ > vesting period 'wallet' used.
-    -->
-    <!-- <td>
-      <p>
-        {data.wallet ?? '-'}
-      </p>
-    </td> -->
 
   {/if}
 
@@ -294,7 +302,7 @@
         {
           ddMMyyFormat
           (
-            data.distribution_date
+            data.distribution_date ?? ''
           )
         }
     </p>
@@ -309,7 +317,7 @@
         {
           ddMMyyFormat
           (
-            data.claim_date
+            data.claim_date ?? ''
           )
         }
       </p>
@@ -343,11 +351,11 @@
             }
           }
         >
-          <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-          {
-            profileTrs?.investor?.vesting.cta_claim
-            ?? 'Claim'
-          }
+          <TranslationText
+            key={'vesting-period-distribuited'}
+            text={profileTrs?.investor?.vesting.cta_claim}
+            fallback={'Claim'}
+          />
         </button>
       {:else if componentState == 'VestingClaimed'}
         <button
@@ -356,11 +364,11 @@
           btn-hollow
           "
         >
-          <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-          {
-            profileTrs?.investor?.vesting.cta_claimed
-            ?? 'Claimed'
-          }
+          <TranslationText
+            key={'vesting-period-distribuited'}
+            text={profileTrs?.investor?.vesting.cta_claimed}
+            fallback={'Claimed'}
+          />
         </button>
       {/if}
 
@@ -425,31 +433,29 @@
             "
           >
             {#if item == 'Tokens'}
-              <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-              {
-                profileTrs?.investor?.vesting.tokens
-                ?? 'Tokens'
-              }
+              <TranslationText
+                key={'vesting-period-tokens'}
+                text={profileTrs?.investor?.vesting.tokens}
+                fallback={'Tokens'}
+              />
             {:else if item == 'Status'}
-              <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-              {
-                profileTrs?.investor?.vesting.status
-                ?? 'Status'
-              }
-            <!-- {:else if item == 'Wallet'}
-              Wallet -->
+              <TranslationText
+                key={'vesting-period-status'}
+                text={profileTrs?.investor?.vesting.status}
+                fallback={'Status'}
+              />
             {:else if item == 'Distribution'}
-              <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-              {
-                profileTrs?.investor?.vesting.distribution
-                ?? 'Distribution'
-              }
+              <TranslationText
+                key={'vesting-period-distribution'}
+                text={profileTrs?.investor?.vesting.distribution}
+                fallback={'Distribution'}
+              />
             {:else if item == 'Claim'}
-              <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-              {
-                profileTrs?.investor?.vesting.claim
-                ?? 'Claim'
-              }
+              <TranslationText
+                key={'vesting-period-claim'}
+                text={profileTrs?.investor?.vesting.claim}
+                fallback={'Claim'}
+              />
             {/if}
           </p>
 
@@ -472,20 +478,18 @@
               {data.tokens ?? '-'}
             {:else if item == 'Status'}
               {data.status ?? '-'}
-            <!-- {:else if item == 'Wallet'}
-              {data.wallet ?? '-'} -->
             {:else if item == 'Distribution'}
               {
                 ddMMyyFormat
                 (
-                  data.distribution_date
+                  data.distribution_date ?? ''
                 )
               }
             {:else if item == 'Claim'}
               {
                 ddMMyyFormat
                 (
-                  data.claim_date
+                  data.claim_date ?? ''
                 )
               }
             {/if}
@@ -530,7 +534,7 @@
         {
           ddMMyyFormat
           (
-            data.distribution_date
+            data.distribution_date ?? ''
           )
         }
       </p>
@@ -553,7 +557,7 @@
         {
           ddMMyyFormat
           (
-            data.claim_date
+            data.claim_date ?? ''
           )
         }
       </p>

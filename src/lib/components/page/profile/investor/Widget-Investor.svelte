@@ -97,6 +97,8 @@
   // $: widgetDataSeo = $page.data?.B_COMP_MAIN_S;
   // $: WIDGET_TITLE = widgetDataTranslation?.translations?.widget_title ?? translationObject?.featured_bet_site;
 
+  $: ({ theme } = $userBetarenaSettings);
+
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -154,7 +156,7 @@
     (
       `/api/data/profile?uid=${$userBetarenaSettings.user.firebase_user_data?.uid}`
       // '/api/data/profile?uid=0x1510ea733e1e81f9bcfcc4eabb5a2226d1a9f9ea18da9aea119ba28b8ed6be81'
-      //  '/api/data/profile?uid=Z4ebLuAuDqdOu4Wt6z6EfVn35js2'
+      // '/api/data/profile?uid=Z4ebLuAuDqdOu4Wt6z6EfVn35js2'
     ) as IProfileData;
 
     widgetDataMain = response
@@ -175,13 +177,13 @@
     scoresProfileInvestorStore.assignMainSectionState
     (
       {
-        investmentCount: $userBetarenaSettings.user.scores_user_data?.investor_balance?.grand_total
-        , presaleName: widgetDataMain.presaleData.presale
-        , activePresaleStartDate: widgetDataMain.presaleData.data?.start_date
-        , activePresaleEndDate: widgetDataMain.presaleData.data?.end_date
-        , publicEndDate: widgetDataMain.presaleData.data?.end_date
-        , tgeAvailableDate: widgetDataMain.investorData?.data?.tge.available_date
-        , tgeStatus: widgetDataMain.investorData?.data?.tge.status
+        investmentCount: $userBetarenaSettings.user.scores_user_data?.investor_balance?.grand_total ?? 0
+        , presaleName: widgetDataMain.presaleData.presale ?? ''
+        , activePresaleStartDate: widgetDataMain.presaleData.data?.start_date ?? ''
+        , activePresaleEndDate: widgetDataMain.presaleData.data?.end_date ?? ''
+        , publicEndDate: widgetDataMain.presaleData.data?.end_date ?? ''
+        , tgeAvailableDate: widgetDataMain.investorData?.data?.tge.available_date ?? ''
+        , tgeStatus: widgetDataMain.investorData?.data?.tge.status ?? ''
       }
     );
 
@@ -216,7 +218,10 @@
 <svelte:window
   on:resize=
   {
-    () => {return resizeCustom()}
+    () =>
+    {
+      return resizeCustom();
+    }
   }
 />
 
@@ -240,6 +245,7 @@
 
   <div
     id="investor-grid-box"
+    class:dark-background-1={theme == 'Dark'}
   >
 
     <!--
@@ -253,7 +259,10 @@
 
       <MainRound
         WIDGET_DATA={data}
+        {VIEWPORT_MOBILE_INIT}
+        {VIEWPORT_TABLET_INIT}
       />
+
       <MainInvestBox
         profileData={data}
       />
@@ -268,6 +277,8 @@
 
       <TierPricing
         profileData={data}
+        {VIEWPORT_MOBILE_INIT}
+        {VIEWPORT_TABLET_INIT}
       />
     </div>
 
@@ -335,8 +346,8 @@
 
       <LaunchpadWallets
         profileData={data}
-        VIEWPORT_MOBILE_INIT_PARENT={VIEWPORT_MOBILE_INIT}
-        VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
+        {VIEWPORT_MOBILE_INIT}
+        {VIEWPORT_TABLET_INIT}
       />
 
       <TgeMain
@@ -347,12 +358,14 @@
 
       <MainInvestmentDetail
         profileData={data}
+        {VIEWPORT_MOBILE_INIT}
+        {VIEWPORT_TABLET_INIT}
       />
 
       <MainWalletsInvestor
         profileData={data}
-        VIEWPORT_MOBILE_INIT_PARENT={VIEWPORT_MOBILE_INIT}
-        VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
+        {VIEWPORT_MOBILE_INIT}
+        {VIEWPORT_TABLET_INIT}
       />
 
       <MainVestingPeriods
@@ -370,8 +383,8 @@
       id="section-referral"
     >
       <ReferralsSteps
-        VIEWPORT_MOBILE_INIT_PARENT={VIEWPORT_MOBILE_INIT}
-        VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
+        {VIEWPORT_MOBILE_INIT}
+        {VIEWPORT_TABLET_INIT}
       />
       <ReferralsInfo
         profileData={data}
@@ -380,11 +393,13 @@
       />
       <ReferralsBonusSummary
         profileData={data}
+        {VIEWPORT_MOBILE_INIT}
+        {VIEWPORT_TABLET_INIT}
       />
       <ReferralsHistory
         profileData={data}
-        VIEWPORT_MOBILE_INIT_PARENT={VIEWPORT_MOBILE_INIT}
-        VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
+        {VIEWPORT_MOBILE_INIT}
+        {VIEWPORT_TABLET_INIT}
       />
     </div>
 
@@ -395,7 +410,10 @@
     <div
       id="section-FAQ"
     >
-      <MainFaq />
+      <MainFaq
+        {VIEWPORT_MOBILE_INIT}
+        {VIEWPORT_TABLET_INIT}
+      />
     </div>
 
   </div>
@@ -451,22 +469,20 @@
 
       div#profile⮕w⮕investtge⮕main⮕title
       {
-        @import '../../../../../../static/app.scss';
-
         // IMPORTANT
         :global
         {
           p#sub-title
           {
-            @extend .s-16;
-            @extend .color-grey;
-            @extend .grey-v1;
+            /* 🎨 style */
+            font-size: 16px;
+            color: var(--grey);
 
             span#x3123
             {
-              @extend .w-500;
-              @extend .color-grey;
-              @extend .dark-white-v1;
+              /* 🎨 style */
+              font-weight: 500;
+              color: var(--grey);
             }
           }
         }
@@ -647,6 +663,37 @@
           {
             /* 🎨 style */
             grid-column: 2;
+          }
+        }
+      }
+    }
+  }
+
+  /*
+  ╭──────────────────────────────────────────────────────────────────────────────╮
+  │ 🌒 DARK-THEME                                                                │
+  ╰──────────────────────────────────────────────────────────────────────────────╯
+  */
+
+  div#investor-grid-box
+  {
+    &.dark-background-1
+    {
+      div#profile⮕w⮕investtge⮕main⮕title
+      {
+        // IMPORTANT
+        :global
+        {
+          p#sub-title
+          {
+            /* 🎨 style */
+            color: var(--grey-shade-3);
+
+            span#x3123
+            {
+              /* 🎨 style */
+              color: var(--white);
+            }
           }
         }
       }

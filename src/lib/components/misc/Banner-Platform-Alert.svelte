@@ -1,76 +1,159 @@
-<!-- ===============
-### COMPONENT JS (w/ TS)
-### NOTE:
-### access custom Betarena Scores JS VScode Snippets by typing 'script...'
-================= -->
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ Svelte Component JS/TS                                                           │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
 
 <script lang="ts">
 
   // #region ➤ 📦 Package Imports
 
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  import { page } from '$app/stores';
   import { onMount } from 'svelte';
-	import { page } from '$app/stores';
 
 	import sessionStore from '$lib/store/session.js';
 	import { viewport_change } from '$lib/utils/platform-functions';
-
-	import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
 
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
 
-	let
-    // ◼️ IMPORTANT
-    B_NAV_T: B_NAV_T = $page.data?.B_NAV_T,
-    // ◼️ IMPORTANT
-    /** */
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  export let
+    /**
+     * @description
+     *  📣 threshold start + state for 📱 MOBILE
+     */ // eslint-disable-next-line no-unused-vars
+    VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
+    /**
+     * @description
+     *  📣 threshold start + state for 💻 TABLET
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
+  ;
+
+  const
+    /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */ // eslint-disable-next-line no-unused-vars
+    CNAME: string = 'global⮕w⮕platform-alert-container⮕main'
+  ;
+
+  let
+    /**
+     * @description
+     *  📣 Wether banner has been toggled or not.
+     */
     show: boolean = true
   ;
 
-  $: B_NAV_T = $page.data?.B_NAV_T;
+  $: B_NAV_T = $page.data.B_NAV_T;
 
   // #endregion ➤ 📌 VARIABLES
 
-	const TABLET_VIEW = 1160;
-	const MOBILE_VIEW = 560;
-	let mobileExclusive, tabletExclusive: boolean = false;
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
-	onMount(async () => {
-		[tabletExclusive, mobileExclusive] =
-			viewport_change(TABLET_VIEW, MOBILE_VIEW);
-		window.addEventListener(
-			'resize',
-			function () {
-				[tabletExclusive, mobileExclusive] =
-					viewport_change(
-						TABLET_VIEW,
-						MOBILE_VIEW
-					);
-			}
-		);
-	});
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
-  $: if_R_1 =
-    ($sessionStore.livescoreShowCalendar && mobileExclusive)
-    || $sessionStore.withdrawModal
-  ;
+  onMount
+  (
+    () =>
+    {
+      [
+        VIEWPORT_TABLET_INIT[1],
+        VIEWPORT_MOBILE_INIT[1]
+      ]
+      = viewport_change
+        (
+          VIEWPORT_TABLET_INIT[0],
+          VIEWPORT_MOBILE_INIT[0]
+        )
+      ;
+      return;
+    }
+  );
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
 </script>
 
-<!-- ===============
-### COMPONENT HTML
-### NOTE:
-### use 'CTRL+SPACE' to autocomplete global class="" styles
-### NOTE:
-### access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.
-================= -->
+<svelte:window
+  on:resize=
+  {
+    () =>
+    {
+      [
+        VIEWPORT_TABLET_INIT[1],
+        VIEWPORT_MOBILE_INIT[1]
+      ]
+      = viewport_change
+        (
+          VIEWPORT_TABLET_INIT[0],
+          VIEWPORT_MOBILE_INIT[0]
+        )
+      ;
+      return;
+    }
+  }
+/>
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ Svelte Component HTML                                                            │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
 
 {#if B_NAV_T?.scores_top_bar_messages?.status && show}
 
   <div
-    id="platform-alert-container"
-    class:update-z-index={$sessionStore.livescoreShowCalendar && mobileExclusive}>
+    id={CNAME}
+    class:update-z-index={$sessionStore.livescoreShowCalendar && VIEWPORT_MOBILE_INIT[1]}>
 
     <p
       class=
@@ -91,7 +174,7 @@
       alt="close-vector"
       width=14
       height=14
-      on:click={() => (show = false)}
+      on:click={() => {return (show = false)}}
       on:keypress={(e) => { if (e.key === 'Enter') (show = false) }}
     />
 
@@ -99,17 +182,19 @@
 
 {/if}
 
-<!-- ===============
-### COMPONENT STYLE
-### NOTE:
-### auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE
-### NOTE:
-### access custom Betarena Scores CSS VScode Snippets by typing 'style...'
-================= -->
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ Svelte Component CSS/SCSS                                                        │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
 
-<style>
+<style lang="scss">
 
-	#platform-alert-container
+	div#global⮕w⮕platform-alert-container⮕main
   {
     /* 📌 position */
 		position: relative;
@@ -119,22 +204,22 @@
 		padding: 8px 27px;
 		background: #8c8c8c;
 		text-align: center;
-	}
 
-  .update-z-index
-  {
-    /* 📌 position */
-		z-index: unset !important;
-  }
+    &.update-z-index
+    {
+      /* 📌 position */
+      z-index: unset !important;
+    }
 
-	img#close-platform-alert-img
-  {
-    /* 📌 position */
-		position: absolute;
-		top: 50%;
-		right: 16px;
-    /* 🎨 style */
-		transform: translate(-50%, -50%);
+    img#close-platform-alert-img
+    {
+      /* 📌 position */
+      position: absolute;
+      top: 50%;
+      right: 16px;
+      /* 🎨 style */
+      transform: translate(-50%, -50%);
+    }
 	}
 
 </style>

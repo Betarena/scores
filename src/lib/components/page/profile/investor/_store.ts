@@ -21,6 +21,11 @@ const
     , referralInviteStateWidget: 'FirstInvestmentNotMade'
     , tgeStateWidget: 'Tge_NoDefinedDate'
     , roundStateWidget: 'Round_ToBeAnnounced'
+    , investHistoryStateWidget: 'Standard'
+    , vestingHistoryStateWidget: 'Standard'
+    , walletsStateWidget: 'Standard'
+    , bonusSummaryStateWidget: 'Standard'
+    , referralHistoryStateWidget: 'Standard'
     , adminOverrides: new Set()
   }
 ;

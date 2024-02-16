@@ -1,5 +1,13 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: | Access snippets for '<script> [..] </script>' those found in           │
@@ -32,6 +40,7 @@
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 
 	import ModalBackdrop from '$lib/components/misc/modal/Modal-Backdrop.svelte';
+	import TranslationText from '$lib/components/misc/Translation-Text.svelte';
 
 	import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
@@ -56,12 +65,12 @@
      * @description
      *  📣 makes use of parent 📱 MOBILE viewport state.
     */
-    VIEWPORT_MOBILE_INIT_PARENT: [ number, boolean ]
+    VIEWPORT_MOBILE_INIT: [ number, boolean ]
     /**
      * @description
      *  📣 makes use of parent 💻 TABLET viewport state.
     */
-    , VIEWPORT_TABLET_INIT_PARENT: [ number, boolean ]
+    , VIEWPORT_TABLET_INIT: [ number, boolean ]
     /**
      * @description
      *  📣 target amount to be claimed to be displayed on `modal`.
@@ -73,47 +82,34 @@
     /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
-    */
-    // eslint-disable-next-line no-unused-vars
+     */ // eslint-disable-next-line no-unused-vars
     CNAME: string = 'profile⮕w⮕investor-modal-claim⮕main'
     /**
-     * @description
-     *  📣 threshold start + state for 📱 MOBILE
-    */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = VIEWPORT_MOBILE_INIT_PARENT
-    /**
-     * @description
-     *  📣 threshold start + state for 💻 TABLET
-    */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = VIEWPORT_TABLET_INIT_PARENT
-    /**
-     * @description
-     *  📣
-    */
+     * @augments EventDispatcher
+     */
     , dispatch: EventDispatcher < any > = createEventDispatcher()
   ;
 
-  /**
-   * @description
-   *  📣 Available `translations`.
-  */
-  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
+  $: ({ theme } = $userBetarenaSettings);
 
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
 
   /**
+   * @author
+   *  @migbash
    * @summary
    * 🔹 HELPER
    * @description
-   * 📌 Logic for modal transition logic for mobile devices only.
-   * @param
-   * { any } node - Target node to apply transition to.
-   * @param
-   * { any } options - Target transition options.
+   *  📣 Logic for modal transition logic for mobile devices only.
+   * @param { any } node
+   *  💠 Target node to apply transition to.
+   * @param { any } options
+   *  💠 Target transition options.
+   * @return { any }
+   *  📤 Unknown custom `fly-in`.
    */
   function customFlyIn
   (
@@ -160,7 +156,7 @@
   "
   {CNAME}
   "
-  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+  class:dark-background-1={theme == 'Dark'}
   in:customFlyIn={{ fn: fly, duration: 500, y: 200 }}
   out:customFlyIn={{ fn: fly, duration: 500, y: 200 }}
 >
@@ -180,12 +176,16 @@
     amount-text
     "
   >
-    {
-      @html
-      profileTrs.investor?.presale.claim_confirmation.message
-        .replace('$$$', `<span> ${amount.toString()} BTA </span>`)
-      ?? `Confirm that you wish to claim your ${amount.toString()} BTA and transfer them to your main wallet.`
-    }
+    <TranslationText
+      key={'modal-claim-modal'}
+      text=
+      {
+        profileTrs?.investor?.presale.claim_confirmation.message
+          .replace('$$$', `<span> ${amount.toString()} BTA </span>`)
+      }
+      isHtmlBlock={true}
+      fallback={`Confirm that you wish to claim your ${amount.toString()} BTA and transfer them to your main wallet.`}
+    />
   </p>
 
   <!--
@@ -222,10 +222,11 @@
         }
       }
     >
-      {
-        profileTrs.investor?.presale.claim_confirmation.option_2
-        ?? 'Cancel'
-      }
+      <TranslationText
+        key={'main-claim-modal'}
+        text={profileTrs?.investor?.presale.claim_confirmation.option_2}
+        fallback={'Cancel'}
+      />
     </button>
 
     <!--
@@ -247,10 +248,11 @@
         }
       }
     >
-      {
-        profileTrs.investor?.presale.claim_confirmation.option_1
-        ?? 'Confirm'
-      }
+      <TranslationText
+        key={'main-claim-modal'}
+        text={profileTrs?.investor?.presale.claim_confirmation.option_1}
+        fallback={'Confirm'}
+      />
     </button>
 
   </div>
@@ -305,8 +307,11 @@
       {
         span
         {
-          /* 🎨 style */
-          color: var(--primary);
+          span
+          {
+            /* 🎨 style */
+            color: var(--primary);
+          }
         }
       }
     }

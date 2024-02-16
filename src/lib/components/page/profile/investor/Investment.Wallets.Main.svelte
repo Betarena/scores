@@ -1,5 +1,13 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: | Access snippets for '<script> [..] </script>' those found in           │
@@ -29,7 +37,10 @@
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { copyToClipboard } from '$lib/utils/platform-functions.js';
+	import { investWalletSampleData } from './_sample.js';
+	import { scoresProfileInvestorStore } from './_store.js';
 
+  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
   import AdminDevControlPanel from '$lib/components/misc/admin/Admin-Dev-ControlPanel.svelte';
   import AdminDevControlPanelToggleButton from '$lib/components/misc/admin/Admin-Dev-ControlPanelToggleButton.svelte';
   import WalletsModal from './Investment.Wallets.Modal.svelte';
@@ -59,80 +70,22 @@
     profileData: IProfileData | null
     /**
      * @description
-     *  📣 makes use of parent 📱 MOBILE viewport state.
-     */
-    , VIEWPORT_MOBILE_INIT_PARENT: [ number, boolean ]
+     *  📣 threshold start + state for 📱 MOBILE
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
     /**
      * @description
-     *  📣 makes use of parent 💻 TABLET viewport state.
-     */
-    , VIEWPORT_TABLET_INIT_PARENT: [ number, boolean ]
+     *  📣 threshold start + state for 💻 TABLET
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
-
-  class Dev
-  {
-    mutated: boolean = false;
-    noData: boolean = false;
-    sampleData: string[] = [
-      '0xb794f5ea0ba39494ce839613fffba74279579268'
-      , '0xb12134f5ea0ba39494ce839613fffba742795792'
-      , '0xb42310ba39494ce839613fffba74279579264234'
-      , '0xb42342523423423529613fffba74279579124125'
-    ];
-
-    /**
-     * @description
-     */
-    toggleNoData
-    (
-    ): void
-    {
-      return;
-    }
-
-    /**
-     * @author
-     *  @migbash
-     * @summary
-     *  🟦 HELPER
-     * @description
-     *  📣 Infinite inject sample data to widget for testing.
-     * @return { void }
-    */
-    addSampleData
-    (
-    ): void
-    {
-      userWallets.push
-      (
-        ...this.sampleData
-      );
-
-      userWallets = userWallets;
-
-      return;
-    }
-  }
 
   const
     /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
-     */
-    // eslint-disable-next-line no-unused-vars
+     */ // eslint-disable-next-line no-unused-vars
     CNAME: string = 'profile⮕w⮕investment-wallets⮕main'
-    /**
-     * @description
-     *  📣 threshold start + state for 📱 MOBILE
-     */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = VIEWPORT_MOBILE_INIT_PARENT
-    /**
-     * @description
-     *  📣 threshold start + state for 💻 TABLET
-     */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = VIEWPORT_TABLET_INIT_PARENT
   ;
 
   let
@@ -141,18 +94,10 @@
      *  📣 Target **unique** wallets used in `investments` by _this_ user.
      */
     userWallets: string[] = profileData?.investorData?.data?.investor_wallets ?? []
-    /**
-     * @description
-     *  📣 target `DEV` class instance.
-     */
-    , newDevInstance = new Dev()
   ;
 
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
-
-  // ▓ [🐞]
-  // ▓ > validate for missing user not having any associated investment wallets.
-  // userWallets = [];
+  $: ({ adminOverrides, walletsStateWidget } = $scoresProfileInvestorStore);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -176,19 +121,22 @@
 <div
   id={CNAME}
   class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
-  class:row-space-out={!VIEWPORT_MOBILE_INIT_PARENT[1]}
-  class:column-space-center={VIEWPORT_MOBILE_INIT_PARENT[1]}
-  class:mutated={newDevInstance.mutated}
+  class:row-space-out={!VIEWPORT_MOBILE_INIT[1]}
+  class:column-space-center={VIEWPORT_MOBILE_INIT[1]}
+  class:mutated={adminOverrides.has('Wallets')}
 >
   <AdminDevControlPanelToggleButton
     title='Investor Wallet Address'
-    mutated={newDevInstance.mutated}
+    mutated={adminOverrides.has('Wallets')}
     on:reset=
     {
       () =>
       {
-        newDevInstance.mutated = false;
-        newDevInstance.noData = false;
+        scoresProfileInvestorStore.updateAdminMutatedWidgets
+        (
+          'Wallets'
+          , 'remove'
+        );
         return;
       }
     }
@@ -201,7 +149,7 @@
   <div
     class=
     "
-    {VIEWPORT_MOBILE_INIT_PARENT[1] ? 'row-space-out m-b-20' : 'row-space-start'}
+    {VIEWPORT_MOBILE_INIT[1] ? 'row-space-out m-b-20' : 'row-space-start'}
     "
   >
 
@@ -217,10 +165,11 @@
       m-r-20
       "
     >
-      {
-        profileTrs?.investor?.wallets.title
-        ?? 'Investor Wallet Address'
-      }
+      <TranslationText
+        key={`${CNAME}/title`}
+        text={profileTrs?.investor?.wallets.title}
+        fallback={'Investor Wallet Address'}
+      />
     </p>
 
     <!--
@@ -248,12 +197,13 @@
     >
       {#if
         userWallets.length > 0
-        && !newDevInstance.noData
+        && walletsStateWidget != 'NoData'
       }
-        {
-          profileTrs?.investor?.wallets.view
-          ?? 'View All'
-        }
+        <TranslationText
+          key={`${CNAME}/title`}
+          text={profileTrs?.investor?.wallets.view}
+          fallback={'View All'}
+        />
       {/if}
     </p>
 
@@ -266,7 +216,7 @@
   <div
     class=
     "
-    {VIEWPORT_MOBILE_INIT_PARENT[1] ? 'row-space-out' : 'row-space-end'}
+    {VIEWPORT_MOBILE_INIT[1] ? 'row-space-out' : 'row-space-end'}
     "
   >
 
@@ -303,10 +253,11 @@
       "
       on:click={() => { copyToClipboard(userWallets[0]); return; }}
     >
-      {
-        profileTrs?.investor?.wallets.copy
-        ?? 'Copy'
-      }
+      <TranslationText
+        key={`${CNAME}/title`}
+        text={profileTrs?.investor?.wallets.copy}
+        fallback={'Copy'}
+      />
     </p>
 
   </div>
@@ -318,7 +269,7 @@
   {#if
     $sessionStore.currentActiveModal == 'ProfileInvestor_Wallets_Modal'
     && userWallets.length > 0
-    && !newDevInstance.noData
+    && walletsStateWidget != 'NoData'
   }
     <WalletsModal
       walletAddressList={userWallets}
@@ -372,15 +323,22 @@
       {
         () =>
         {
-          newDevInstance.noData = !newDevInstance.noData
-          newDevInstance.mutated = true;
+          scoresProfileInvestorStore.updateAdminMutatedWidgets
+          (
+            'Wallets'
+            , 'set'
+          );
+          if (walletsStateWidget == 'NoData')
+            $scoresProfileInvestorStore.walletsStateWidget = 'NoData';
+          else
+            $scoresProfileInvestorStore.walletsStateWidget = 'Standard';
           return;
         }
       }
-      class:on={newDevInstance.noData}
-      class:off={!newDevInstance.noData}
+      class:on={walletsStateWidget == 'NoData'}
+      class:off={walletsStateWidget != 'NoData'}
     >
-      {#if newDevInstance.noData}
+      {#if walletsStateWidget == 'NoData'}
         ON
       {:else}
         OFF
@@ -425,8 +383,19 @@
       {
         () =>
         {
-          newDevInstance.addSampleData();
-          newDevInstance.mutated = true;
+          userWallets.push
+          (
+            ...investWalletSampleData
+          );
+
+          userWallets = userWallets;
+
+          scoresProfileInvestorStore.updateAdminMutatedWidgets
+          (
+            'InvestmentHistory'
+            , 'set'
+          );
+
           return;
         }
       }

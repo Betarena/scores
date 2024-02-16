@@ -242,6 +242,7 @@ export interface Platform_Session
     | 'ProfileInvestor_TxState_Modal'
     | 'ProfileInvestor_SelectCrypto_Modal'
     | 'GeneralPlatform_Error'
+    | 'Footer_Newsletter_Modal'
   ;
 
   // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️

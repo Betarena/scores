@@ -1,5 +1,13 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
@@ -47,7 +55,10 @@
   import icon_platinum from '../assets/price-tier/icon-bta-platinum.svg';
   import icon_silver from '../assets/price-tier/icon-bta-silver.svg';
 
-  import type { B_H_KEYP, B_H_KEYP_Tier } from '@betarena/scores-lib/types/_HASURA_.js';
+  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
+  import type { KeypairInvestorPresaleMain } from '@betarena/scores-lib/types/_AUTO-HASURA-2_.js';
+  import type { IPresaleTier } from '@betarena/scores-lib/types/_ENUMS_.js';
+  import type { B_H_KEYP_Tier } from '@betarena/scores-lib/types/_HASURA_.js';
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -69,25 +80,19 @@
   export let
     /**
      * @augments IProfileData
-    */
+     */
     profileData: IProfileData | null
     /**
      * @description
-     *  📣
-    */
+     *  📣 threshold start + state for 📱 MOBILE
+     */ // eslint-disable-next-line no-unused-vars
     , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
     /**
      * @description
-     *  📣
-    */
+     *  📣 threshold start + state for 💻 TABLET
+     */ // eslint-disable-next-line no-unused-vars
     , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
-
-  class Dev
-  {
-    mutated: boolean = false;
-    noData: boolean = false;
-  }
 
   const
     /**
@@ -100,25 +105,34 @@
   let
     /**
      * @description
-     *  📣 `Map` of **tier** data.
+     *  📣 convert target `data` to respective `map`.
      */
-    dataMap: Map < B_H_KEYP_Tier, B_H_KEYP > = new Misc().convertToMapKEYPINVSTTIER
-    (
-      (profileData?.investorTierPricing ?? [])
-    )
+    dataMap: Map < IPresaleTier, KeypairInvestorPresaleMain >
+      = new Misc().convertToMapKEYPINVSTTIER
+      (
+        (
+          profileData?.investorTierPricing
+            ?.sort
+            (
+              (
+                a,
+                b
+              ) =>
+              {
+                return (b.data?.position ?? 0) - (a.data?.position ?? 0)
+              }
+            ) ?? [])
+      )
     /**
      * @description
      *  📣 Wether target `extra info` should be shown for `more tiers`.
      */
     , isExtraInfo: boolean = false
-    /**
-     * @description
-     *  📣
-     */
-    , newDevInstance = new Dev()
   ;
 
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
+  $: ({ adminOverrides, referralInviteStateWidget } = $scoresProfileInvestorStore);
+  $: ({ theme } = $userBetarenaSettings);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -184,18 +198,22 @@
 -->
 <div
   id={CNAME}
-  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+  class:dark-background-1={theme == 'Dark'}
+  class:mutated={adminOverrides.has('ReferralInvite')}
 >
 
   <AdminDevControlPanelToggleButton
     title='Referral Info Main (Pop-Up)'
-    mutated={newDevInstance.mutated}
+    mutated={adminOverrides.has('ReferralInvite')}
     on:reset=
     {
       () =>
       {
-        newDevInstance.mutated = false;
-        newDevInstance.noData = false;
+        scoresProfileInvestorStore.updateAdminMutatedWidgets
+        (
+          'ReferralInvite'
+          , 'remove'
+        );
         return;
       }
     }
@@ -220,10 +238,11 @@
       color-black-2
       "
     >
-      {
-        profileTrs?.investor?.referral.tiers.title
-        ?? 'Referral Tiers & Bonus'
-      }
+      <TranslationText
+        key={`${CNAME}/title`}
+        text={profileTrs?.investor?.referral.tiers.title}
+        fallback={'Referral Tiers & Bonus'}
+      />
     </p>
 
     <!--
@@ -256,10 +275,11 @@
           color-black-2
           "
         >
-          {
-            profileTrs?.investor?.referral.tiers.status
-            ?? 'Active'
-          }
+          <TranslationText
+            key={`${CNAME}/title`}
+            text={profileTrs?.investor?.referral.tiers.status}
+            fallback={'Active'}
+          />
         </p>
       </div>
     {/if}
@@ -325,10 +345,11 @@
           color-black-2
           "
         >
-          {
-            profileTrs?.investor?.investment_details.tier
-            ?? 'Tier'
-          }
+          <TranslationText
+            key={`${CNAME}/title`}
+            text={profileTrs?.investor?.investment_details.tier}
+            fallback={'Tier'}
+          />
           {dataMap.get('bronze')?.data?.position}
 
           {#if dataMap.get('bronze')?.data?.invest_max == -1}
@@ -352,10 +373,11 @@
         m-l-33
         "
       >
-        {
-          profileTrs?.investor?.referral.tiers.receive
-          ?? 'You receive:'
-        }
+        <TranslationText
+          key={`${CNAME}/title`}
+          text={profileTrs?.investor?.referral.tiers.receive}
+          fallback={'You receive:'}
+        />
         <span
           class=
           "
@@ -366,10 +388,11 @@
           {dataMap.get('bronze')?.data?.referral?.owner_percentage}%
         </span>
         /
-        {
-          profileTrs?.investor?.referral.tiers.referred
-          ?? 'Referred:'
-        }
+        <TranslationText
+          key={`${CNAME}/title`}
+          text={profileTrs?.investor?.referral.tiers.referred}
+          fallback={'Referred:'}
+        />
         <span
           class=
           "
@@ -404,10 +427,11 @@
         color-black-2
         "
       >
-        {
-          profileTrs?.investor?.tiers.more_tiers
-          ?? 'See more tiers'
-        }
+        <TranslationText
+          key={`${CNAME}/title`}
+          text={profileTrs?.investor?.tiers.more_tiers}
+          fallback={'See more tiers'}
+        />
       </p>
 
       <img
@@ -489,10 +513,11 @@
                 color-black-2
                 "
               >
-                {
-                  profileTrs?.investor?.investment_details.tier
-                  ?? 'Tier'
-                }
+                <TranslationText
+                  key={`${CNAME}/title`}
+                  text={profileTrs?.investor?.investment_details.tier}
+                  fallback={'Tier'}
+                />
                 {data.data?.position}
 
                 {#if data.data?.invest_max == -1}
@@ -516,10 +541,11 @@
               m-l-33
               "
             >
-              {
-                profileTrs?.investor?.referral.tiers.receive
-                ?? 'You receive:'
-              }
+              <TranslationText
+                key={`${CNAME}/title`}
+                text={profileTrs?.investor?.referral.tiers.receive}
+                fallback={'You receive:'}
+              />
               <span
                 class=
                 "
@@ -530,10 +556,11 @@
                 {data.data?.referral?.owner_percentage}%
               </span>
               /
-              {
-                profileTrs?.investor?.referral.tiers.referred
-                ?? 'Referred:'
-              }
+              <TranslationText
+                key={`${CNAME}/title`}
+                text={profileTrs?.investor?.referral.tiers.referred}
+                fallback={'Referred:'}
+              />
               <span
                 class=
                 "
@@ -587,10 +614,11 @@
         color-black-2
         "
       >
-        {
-          profileTrs?.investor?.referral.links.ref_id
-          ?? 'Referral ID'
-        }
+        <TranslationText
+          key={`${CNAME}/title`}
+          text={profileTrs?.investor?.referral.links.ref_id}
+          fallback={'Referral ID'}
+        />
       </p>
 
       <!--
@@ -626,10 +654,11 @@
           "
           on:click={() => { copyToClipboard($userBetarenaSettings.user.scores_user_data?.referralID ?? ''); return; }}
         >
-          {
-            profileTrs?.investor?.referral.links.copy
-            ?? 'Copy'
-          }
+          <TranslationText
+            key={`${CNAME}/title`}
+            text={profileTrs?.investor?.referral.links.copy}
+            fallback={'Copy'}
+          />
         </p>
       </div>
     </div>
@@ -657,10 +686,11 @@
         color-black-2
         "
       >
-        {
-          profileTrs?.investor?.referral.links.ref_link
-          ?? 'Referral Link'
-        }
+        <TranslationText
+          key={`${CNAME}/title`}
+          text={profileTrs?.investor?.referral.links.ref_link}
+          fallback={'Referral Link'}
+        />
       </p>
 
       <!--
@@ -679,13 +709,14 @@
           s-14
           color-grey
           "
-          class:add-ellipsis={$scoresProfileInvestorStore.referralInviteStateWidget == 'FirstInvestmentMade'}
+          class:add-ellipsis={referralInviteStateWidget == 'FirstInvestmentMade'}
         >
-          {#if $scoresProfileInvestorStore.referralInviteStateWidget == 'FirstInvestmentNotMade'}
-            {
-              profileTrs?.investor?.referral.links.message
-              ?? 'Available after investment'
-            }
+          {#if referralInviteStateWidget == 'FirstInvestmentNotMade'}
+            <TranslationText
+              key={`${CNAME}/title`}
+              text={profileTrs?.investor?.referral.links.message}
+              fallback={'Available after investment'}
+            />
           {:else}
             {
               `${$page.url.origin}?referralId=${$userBetarenaSettings.user.scores_user_data?.referralID ?? ''}`
@@ -693,7 +724,7 @@
           {/if}
         </p>
 
-        {#if $scoresProfileInvestorStore.referralInviteStateWidget == 'FirstInvestmentMade'}
+        {#if referralInviteStateWidget == 'FirstInvestmentMade'}
           <p
             class=
             "
@@ -713,10 +744,11 @@
               }
             }
           >
-            {
-              profileTrs?.investor?.referral.links.copy
-              ?? 'Copy'
-            }
+            <TranslationText
+              key={`${CNAME}/title`}
+              text={profileTrs?.investor?.referral.links.copy}
+              fallback={'Copy'}
+            />
           </p>
         {/if}
       </div>
@@ -758,10 +790,11 @@
       m-r-12
       "
     />
-    {
-      profileTrs?.investor?.referral.links.cta_title
-      ?? 'Invite Investors'
-    }
+      <TranslationText
+        key={`${CNAME}/title`}
+        text={profileTrs?.investor?.referral.links.cta_title}
+        fallback={'Invite Investors'}
+      />
   </button>
 
 </div>
@@ -821,7 +854,11 @@
       {
         () =>
         {
-          newDevInstance.mutated = true;
+          scoresProfileInvestorStore.updateAdminMutatedWidgets
+          (
+            'ReferralInvite'
+            , 'set'
+          );
           return;
         }
       }

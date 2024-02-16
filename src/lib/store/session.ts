@@ -21,7 +21,6 @@ const sessionStoreObj: Platform_Session =
 {
   // ### NOTE:
   // ### variables for show/hide.
-	newsletterPopUpShow: false,
 	auth_show: false,
   livescoreShowCalendar: false,
 	selectedSeasonID: undefined,

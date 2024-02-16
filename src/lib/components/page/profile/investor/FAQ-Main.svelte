@@ -1,5 +1,13 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
@@ -27,8 +35,8 @@
   import { page } from '$app/stores';
 
 	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { viewport_change } from '$lib/utils/platform-functions.js';
 
+  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
   import FaqChildRow from './FAQ-Child-Row.svelte';
 
   import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
@@ -49,15 +57,7 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  const
-    /**
-     * @description
-     *  📣 `this` component **main** `id` and `data-testid` prefix.
-     */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = 'profile⮕w⮕investfaq⮕main'
-  ;
-
-  let
+  export let
     /**
      * @description
      *  📣 threshold start + state for 📱 MOBILE
@@ -70,30 +70,20 @@
     , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
+  const
+    /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */ // eslint-disable-next-line no-unused-vars
+    CNAME: string = 'profile⮕w⮕investfaq⮕main'
+  ;
+
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
+  $: ({ theme } = $userBetarenaSettings);
 
   // #endregion ➤ 📌 VARIABLES
 
 </script>
-
-<svelte:window
-  on:resize=
-  {
-    () =>
-    {
-      [
-        VIEWPORT_TABLET_INIT[1],
-        VIEWPORT_MOBILE_INIT[1]
-      ]
-      = viewport_change
-        (
-          VIEWPORT_TABLET_INIT[0],
-          VIEWPORT_MOBILE_INIT[0]
-        );
-      return;
-    }
-  }
-/>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -108,7 +98,7 @@
 
 <div
   id={CNAME}
-  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+  class:dark-background-1={theme == 'Dark'}
 >
 
   <!--
@@ -132,11 +122,11 @@
       m-b-16
       "
     >
-      <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-      {
-        profileTrs?.investor?.faq.title
-        ?? 'Frequently Asked Questions'
-      }
+      <TranslationText
+        key={`${CNAME}/title`}
+        text={profileTrs?.investor?.faq.title}
+        fallback={'Frequently Asked Questions'}
+      />
     </p>
 
     <!--
@@ -150,11 +140,11 @@
       color-grey
       "
     >
-      <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-      {
-        profileTrs?.investor?.faq.sub_title
-        ?? 'Have questions? Find answers to the most commonly asked questions about the Betarena presale and referral program.'
-      }
+      <TranslationText
+        key={`${CNAME}/title`}
+        text={profileTrs?.investor?.faq.sub_title}
+        fallback={'Have questions? Find answers to the most commonly asked questions about the Betarena presale and referral program.'}
+      />
     </p>
 
   </div>
@@ -222,11 +212,11 @@
         m-b-16
         "
       >
-        <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-        {
-          profileTrs?.investor?.presale.title_information
-          ?? 'Need More Information?'
-        }
+        <TranslationText
+          key={`${CNAME}/title`}
+          text={profileTrs?.investor?.presale.title_information}
+          fallback={'Need More Information?'}
+        />
       </p>
 
       <!--
@@ -244,11 +234,11 @@
         {VIEWPORT_MOBILE_INIT[1] ? '' : 'max-width: 65%;'}
         "
       >
-        <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-        {
-          profileTrs?.investor?.presale.description_information
-          ?? 'For a comprehensive understanding of the Betarena presale, please visit our Presale Page.'
-        }
+        <TranslationText
+          key={`${CNAME}/sub-title`}
+          text={profileTrs?.investor?.presale.description_information}
+          fallback={'For a comprehensive understanding of the Betarena presale, please visit our Presale Page.'}
+        />
       </p>
 
     </div>
@@ -268,11 +258,11 @@
           btn-shadow-1
         "
       >
-        <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
-        {
-          profileTrs?.investor?.presale.cta_presale
-          ?? 'Link to Presale'
-        }
+        <TranslationText
+          key={`${CNAME}/sub-title`}
+          text={profileTrs?.investor?.presale.cta_presale}
+          fallback={'Link to Presale'}
+        />
       </button>
     </a>
 

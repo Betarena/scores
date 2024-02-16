@@ -1,5 +1,13 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: | Access snippets for '<script> [..] </script>' those found in           │
@@ -28,11 +36,13 @@
   import { onMount } from 'svelte';
 
   import userBetarenaSettings from '$lib/store/user-settings.js';
+  import { scoresProfileInvestorStore } from './_store.js';
 
   import AdminDevControlPanel from '$lib/components/misc/admin/Admin-Dev-ControlPanel.svelte';
   import AdminDevControlPanelToggleButton from '$lib/components/misc/admin/Admin-Dev-ControlPanelToggleButton.svelte';
+  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
 
-  import type { PUBLIC__INVESTOR_IBonus } from '@betarena/scores-lib/types/_HASURA_.js';
+  import type { PublicInvestorDataIBonus } from '@betarena/scores-lib/types/_AUTO-HASURA-2_.js';
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -54,99 +64,35 @@
   export let
     /**
      * @augments IProfileData
-    */
+     */
     profileData: IProfileData | null
+    /**
+     * @description
+     *  📣 threshold start + state for 📱 MOBILE
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
+    /**
+     * @description
+     *  📣 threshold start + state for 💻 TABLET
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
-  type IDataLayout = keyof PUBLIC__INVESTOR_IBonus | '' ;
-
-  class Dev
-  {
-    mutated: boolean = false;
-    noData: boolean = false;
-
-    /**
-     * @description
-     */
-    toggleNoData
-    (
-    ): void
-    {
-      return;
-    }
-
-    /**
-     * @author
-     *  @migbash
-     * @summary
-     *  🟦 HELPER
-     * @description
-     *  📣 Infinite inject sample data to widget for testing.
-     * @return { void }
-    */
-    addSampleData
-    (
-    ): void
-    {
-      (
-        profileData.investorData ??=
-        {
-          data:
-          {
-            bonus_summary:
-            {
-              referral_bonus: 50
-              , referrals_number: 10
-              , referred_bonus: 100
-              , total_bonus: 500
-            }
-          }
-        }
-      );
-      (
-        profileData?.investorData?.data?.bonus_summary ??=
-        {
-          referral_bonus: 50
-          , referrals_number: 10
-          , referred_bonus: 100
-          , total_bonus: 500
-        }
-      );
-
-      profileData = profileData;
-
-      checkNoData();
-
-      return;
-    }
-  }
+  type IDataLayout = keyof PublicInvestorDataIBonus | '' ;
 
   const
     /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
-    */
-    // eslint-disable-next-line no-unused-vars
+    */ // eslint-disable-next-line no-unused-vars
     CNAME: string = 'profile⮕w⮕referral-bonus⮕main'
-    /**
-     * @description
-     *  📣 threshold start + state for 📱 MOBILE
-    */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
-    /**
-     * @description
-     *  📣 threshold start + state for 💻 TABLET
-    */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
   let
     /**
      * @description
      *  📣 Target `table` row order.
-    */
+     */
     dataLayout: IDataLayout[]
     = [
       'referral_bonus'
@@ -154,23 +100,11 @@
       , 'referrals_number'
       , 'total_bonus'
     ]
-    /**
-     * @description
-     *  📣 target `DEV` class instance.
-    */
-    , newDevInstance = new Dev()
-    /**
-     * @description
-     *  📣 Wether `widget` contains `NoData` state.
-    */
-    , isNoData: boolean = false
   ;
 
-  /**
-   * @description
-   *  📣 Available `translations`.
-   */
-  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
+  $: ({ theme } = $userBetarenaSettings);
+  $: ({ adminOverrides, bonusSummaryStateWidget } = $scoresProfileInvestorStore);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -199,7 +133,7 @@
   (
   ): void
   {
-    isNoData = false;
+    $scoresProfileInvestorStore.bonusSummaryStateWidget = 'Standard';
 
     let
       /**
@@ -210,12 +144,12 @@
     ;
 
     for (const item of dataLayout)
-    {
+
       if ([null, undefined, 0].includes(profileData?.investorData?.data?.bonus_summary[item]))
         noDataCount++;
-    }
 
-    if (noDataCount == dataLayout.length) isNoData = true;
+
+    if (noDataCount == dataLayout.length) $scoresProfileInvestorStore.bonusSummaryStateWidget = 'NoData';
 
     return;
   }
@@ -262,19 +196,22 @@
 -->
 <div
   id={CNAME}
-  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
-  class:mutated={newDevInstance.mutated}
+  class:dark-background-1={theme == 'Dark'}
+  class:mutated={adminOverrides.has('BonusSummary')}
 >
 
   <AdminDevControlPanelToggleButton
     title='Bonus Summary'
-    mutated={newDevInstance.mutated}
+    mutated={adminOverrides.has('BonusSummary')}
     on:reset=
     {
       () =>
       {
-        newDevInstance.mutated = false;
-        newDevInstance.noData = false;
+        scoresProfileInvestorStore.updateAdminMutatedWidgets
+        (
+          'BonusSummary'
+          , 'remove'
+        );
         return;
       }
     }
@@ -293,10 +230,11 @@
     m-b-20
     "
   >
-    {
-      profileTrs.investor?.referral.bonus.title
-      ?? 'Bonus Summary'
-    }
+    <TranslationText
+      key={`${CNAME}/title`}
+      text={profileTrs?.investor?.referral.bonus.title}
+      fallback={'Bonus Summary'}
+    />
   </p>
 
   <!--
@@ -306,7 +244,7 @@
   <div
     id="referral-bonus-box"
   >
-    {#if !isNoData && !newDevInstance.noData}
+    {#if bonusSummaryStateWidget != 'NoData'}
 
       {#each dataLayout as item}
 
@@ -328,25 +266,29 @@
             "
           >
             {#if item == 'referral_bonus'}
-              {
-                profileTrs.investor?.referral.bonus.referral_bonus
-                ?? 'Referral Bonus'
-              }
+              <TranslationText
+                key={`${CNAME}/referral_bonus`}
+                text={profileTrs?.investor?.referral.bonus.referral_bonus}
+                fallback={'Referral Bonus'}
+              />
             {:else if item == 'referrals_number'}
-              {
-                profileTrs.investor?.referral.bonus.ref_number
-                ?? 'Referrals Number'
-              }
+              <TranslationText
+                key={`${CNAME}/referrals_number`}
+                text={profileTrs?.investor?.referral.bonus.ref_number}
+                fallback={'Referrals Number'}
+              />
             {:else if item == 'referred_bonus'}
-              {
-                profileTrs.investor?.referral.bonus.referred_bonus
-                ?? 'Referred Bonus'
-              }
+              <TranslationText
+                key={`${CNAME}/referrals_number`}
+                text={profileTrs?.investor?.referral.bonus.referred_bonus}
+                fallback={'Referred Bonus'}
+              />
             {:else if item == 'total_bonus'}
-              {
-                profileTrs.investor?.referral.bonus.total
-                ?? 'Total Bonus'
-              }
+              <TranslationText
+                key={`${CNAME}/total_bonus`}
+                text={profileTrs?.investor?.referral.bonus.total}
+                fallback={'Total Bonus'}
+              />
             {/if}
           </p>
 
@@ -384,10 +326,11 @@
           line-height: 24px; /* 150% */
           "
         >
-          {
-            profileTrs.investor?.general.no_information
-            ?? 'Uh-oh! No Investments have been found.'
-          }
+          <TranslationText
+            key={`${CNAME}/no_data`}
+            text={profileTrs?.investor?.general.no_information}
+            fallback={'Uh-oh! No Investments have been found.'}
+          />
         </p>
       </div>
 
@@ -441,15 +384,22 @@
       {
         () =>
         {
-          newDevInstance.noData = !newDevInstance.noData;
-          newDevInstance.mutated = true;
+          scoresProfileInvestorStore.updateAdminMutatedWidgets
+          (
+            'BonusSummary'
+            , 'set'
+          );
+          if (bonusSummaryStateWidget == 'NoData')
+            $scoresProfileInvestorStore.bonusSummaryStateWidget = 'NoData';
+          else
+            $scoresProfileInvestorStore.bonusSummaryStateWidget = 'Standard';
           return;
         }
       }
-      class:on={newDevInstance.noData}
-      class:off={!newDevInstance.noData}
+      class:on={bonusSummaryStateWidget == 'NoData'}
+      class:off={bonusSummaryStateWidget != 'NoData'}
     >
-      {#if newDevInstance.noData}
+      {#if bonusSummaryStateWidget == 'NoData'}
         ON
       {:else}
         OFF
@@ -494,8 +444,40 @@
       {
         () =>
         {
-          newDevInstance.addSampleData();
-          newDevInstance.mutated = true;
+          // @ts-expect-error
+          (profileData.investorData ??= {
+            // @ts-expect-error
+            data:
+              {
+                bonus_summary:
+                {
+                  referral_bonus: 50
+                  , referrals_number: 10
+                  , referred_bonus: 100
+                  , total_bonus: 500
+                }
+              }
+          }
+          );
+          // @ts-expect-error
+          (profileData.investorData.data.bonus_summary ??= {
+            referral_bonus: 50
+            , referrals_number: 10
+            , referred_bonus: 100
+            , total_bonus: 500
+          }
+          );
+
+          profileData = profileData;
+
+          checkNoData();
+
+          scoresProfileInvestorStore.updateAdminMutatedWidgets
+          (
+            'BonusSummary'
+            , 'set'
+          );
+
           return;
         }
       }

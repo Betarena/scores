@@ -115,7 +115,7 @@
 
 <!--
 ▓ NOTE:
-▓ > vesting period list table.
+▓ > general modal backdrop.
 -->
 <div
 	in:fade

@@ -38,6 +38,7 @@
   import icon_tx_error from './assets/icon-error.svg';
 
   import ModalBackdrop from '$lib/components/misc/modal/Modal-Backdrop.svelte';
+  import TranslationText from '../Translation-Text.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -120,7 +121,11 @@
     m-t-20
     "
   >
-    Uh-oh! An error occurred.
+    <TranslationText
+      key={`${CNAME}/modal-error`}
+      text={null}
+      fallback={'Uh-oh! An error occurred.'}
+    />
   </p>
 
   <button
@@ -138,7 +143,11 @@
       }
     }
   >
-    Ok
+    <TranslationText
+      key={`${CNAME}/modal-error`}
+      text={null}
+      fallback={'Ok'}
+    />
   </button>
 
 </div>

@@ -1,5 +1,13 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
@@ -32,8 +40,9 @@
   import AdminDevControlPanelToggleButton from '$lib/components/misc/admin/Admin-Dev-ControlPanelToggleButton.svelte';
   import ReferralsHistoryRowChild from './Referrals.HistoryRow.Child.svelte';
 
-  import type { PUBLIC__INVESTOR_IReferralHistory } from '@betarena/scores-lib/types/_HASURA_.js';
+  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
+  import { scoresProfileInvestorStore } from './_store.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -54,111 +63,34 @@
   export let
     /**
      * @augments IProfileData
-    */
+     */
     profileData: IProfileData | null
     /**
      * @description
-     *  📣 makes use of parent 📱 MOBILE viewport state.
-    */
-    , VIEWPORT_MOBILE_INIT_PARENT: [ number, boolean ]
+     *  📣 threshold start + state for 📱 MOBILE
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
     /**
      * @description
-     *  📣 makes use of parent 💻 TABLET viewport state.
-    */
-    , VIEWPORT_TABLET_INIT_PARENT: [ number, boolean ]
+     *  📣 threshold start + state for 💻 TABLET
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
-  type IRowLayout = 'id' | 'referral_bonus_percentage' | 'referral_bonus_bta' | 'date' | '';
-
-  class Dev
-  {
-    mutated: boolean = false;
-    noData: boolean = false;
-    sampleData: PUBLIC__INVESTOR_IReferralHistory[] = [
-      {
-        id: 1
-        ,date: '12/12/24'
-        ,bonus_bta: 50
-        ,bonus_percentage: 20
-      }
-      ,{
-        id: 2
-        ,date: '12/12/24'
-        ,bonus_bta: 50
-        ,bonus_percentage: 0
-      }
-    ];
-
-    /**
-     * @description
-     */
-    toggleNoData
-    (
-    ): void
-    {
-      return;
-    }
-
-    /**
-     * @author
-     *  @migbash
-     * @summary
-     *  🟦 HELPER
-     * @description
-     *  📣 Infinite inject sample data to widget for testing.
-     * @return { void }
-    */
-    addSampleData
-    (
-    ): void
-    {
-      (profileData?.investorData ??= { data: { referral_history: [] } });
-      (profileData?.investorData?.data?.referral_history ??= [] );
-
-      profileData?.investorData?.data?.referral_history.push
-      (
-        ...this.sampleData
-      );
-
-      profileData = profileData;
-
-      return;
-    }
-
-    /**
-     * @description
-     */
-    resetState
-    (
-    ): void
-    {
-      alert('resetting');
-
-      this.mutated = false;
-      this.noData = false;
-      return;
-    }
-  }
+  type IRowLayout =
+    | 'id'
+    | 'referral_bonus_percentage'
+    | 'referral_bonus_bta'
+    | 'date'
+    | ''
+  ;
 
   const
     /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
-    */
-    // eslint-disable-next-line no-unused-vars
+    */ // eslint-disable-next-line no-unused-vars
     CNAME: string = 'profile⮕w⮕referral-history⮕main'
-    /**
-     * @description
-     *  📣 threshold start + state for 📱 MOBILE
-    */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = VIEWPORT_MOBILE_INIT_PARENT
-    /**
-     * @description
-     *  📣 threshold start + state for 💻 TABLET
-    */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = VIEWPORT_TABLET_INIT_PARENT
   ;
 
   let
@@ -173,18 +105,11 @@
       , 'referral_bonus_bta'
       , 'date'
     ]
-    /**
-     * @description
-     *  📣 target `DEV` class instance.
-    */
-    , newDevInstance = new Dev()
   ;
 
-  /**
-   * @description
-   *  📣 Available `translations`.
-   */
-  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
+  $: ({ theme } = $userBetarenaSettings);
+  $: ({ adminOverrides, referralHistoryStateWidget } = $scoresProfileInvestorStore);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -213,7 +138,7 @@
   (
   ): void
   {
-    if (VIEWPORT_MOBILE_INIT_PARENT[1])
+    if (VIEWPORT_MOBILE_INIT[1])
       tableHeader = [ 'id' , 'referral_bonus_percentage' , 'referral_bonus_bta' , '' ];
     else
       tableHeader = [ 'id' , 'referral_bonus_percentage' , 'referral_bonus_bta' , 'date' ];
@@ -235,7 +160,7 @@
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  $: if (VIEWPORT_MOBILE_INIT_PARENT || VIEWPORT_TABLET_INIT_PARENT)
+  $: if (VIEWPORT_MOBILE_INIT || VIEWPORT_TABLET_INIT)
     updateTableLayout()
 
     // #endregion ➤ 🔥 REACTIVIY [SVELTE]
@@ -259,19 +184,22 @@
 -->
 <div
   id={CNAME}
-  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
-  class:mutated={newDevInstance.mutated}
+  class:dark-background-1={theme == 'Dark'}
+  class:mutated={adminOverrides.has('ReferralHistory')}
 >
 
   <AdminDevControlPanelToggleButton
     title='Referral History'
-    mutated={newDevInstance.mutated}
+    mutated={adminOverrides.has('ReferralHistory')}
     on:reset=
     {
       () =>
       {
-        newDevInstance.mutated = false;
-        newDevInstance.noData = false;
+        scoresProfileInvestorStore.updateAdminMutatedWidgets
+        (
+          'ReferralHistory'
+          , 'remove'
+        );
         return;
       }
     }
@@ -291,10 +219,11 @@
     m-b-20
     "
   >
-    {
-      profileTrs.investor?.referral.ref_history.title
-      ?? 'Referral History'
-    }
+    <TranslationText
+      key={`${CNAME}/title`}
+      text={profileTrs?.investor?.referral.ref_history.title}
+      fallback={'Referral History'}
+    />
   </p>
 
   <!--
@@ -324,25 +253,29 @@
                 "
               >
                 {#if item == 'id'}
-                  {
-                    profileTrs.investor?.referral.ref_history.id
-                    ?? 'Id'
-                  }
+                  <TranslationText
+                    key={`${CNAME}/title`}
+                    text={profileTrs?.investor?.referral.ref_history.id}
+                    fallback={'Id'}
+                  />
                 {:else if item == 'referral_bonus_percentage'}
-                  {
-                    profileTrs.investor?.referral.ref_history.bonus
-                    ?? 'Bonus %'
-                  }
+                  <TranslationText
+                    key={`${CNAME}/title`}
+                    text={profileTrs?.investor?.referral.ref_history.bonus}
+                    fallback={'Bonus %'}
+                  />
                 {:else if item == 'referral_bonus_bta'}
-                  {
-                    profileTrs.investor?.referral.ref_history.ref_bonus_bta
-                    ?? 'Referral Bonus BTA'
-                  }
+                  <TranslationText
+                    key={`${CNAME}/title`}
+                    text={profileTrs?.investor?.referral.ref_history.ref_bonus_bta}
+                    fallback={'Referral Bonus BTA'}
+                  />
                 {:else if item == 'date'}
-                  {
-                    profileTrs.investor?.referral.ref_history.date
-                    ?? 'Date'
-                  }
+                  <TranslationText
+                    key={`${CNAME}/title`}
+                    text={profileTrs?.investor?.referral.ref_history.date}
+                    fallback={'Date'}
+                  />
                 {/if}
               </p>
             </th>
@@ -362,14 +295,14 @@
         -->
 
         {#if
-          profileData?.investorData?.data?.referral_history.length > 0
-          && !newDevInstance.noData
+          (profileData?.investorData?.data?.referral_history.length ?? 0) > 0
+          && referralHistoryStateWidget != 'NoData'
         }
           {#each [...profileData?.investorData?.data?.referral_history ?? []] as item}
             <ReferralsHistoryRowChild
               data={item}
-              {VIEWPORT_MOBILE_INIT_PARENT}
-              {VIEWPORT_TABLET_INIT_PARENT}
+              {VIEWPORT_MOBILE_INIT}
+              {VIEWPORT_TABLET_INIT}
             />
           {/each}
         {:else}
@@ -388,10 +321,11 @@
               line-height: 24px; /* 150% */
               "
             >
-              {
-                profileTrs.investor?.general.no_information
-                ?? 'Uh-oh! No Investments have been found.'
-              }
+              <TranslationText
+                key={`${CNAME}/title`}
+                text={profileTrs?.investor?.general.no_information}
+                fallback={'Uh-oh! No Investments have been found.'}
+              />
             </p>
           </div>
         {/if}
@@ -448,15 +382,19 @@
       {
         () =>
         {
-          newDevInstance.noData = !newDevInstance.noData;
-          newDevInstance.mutated = true;
+          scoresProfileInvestorStore.updateAdminMutatedWidgets
+          (
+            'ReferralHistory'
+            , 'set'
+          );
+          $scoresProfileInvestorStore.referralHistoryStateWidget = 'NoData';
           return;
         }
       }
-      class:on={newDevInstance.noData}
-      class:off={!newDevInstance.noData}
+      class:on={referralHistoryStateWidget == 'NoData'}
+      class:off={referralHistoryStateWidget != 'NoData'}
     >
-      {#if newDevInstance.noData}
+      {#if referralHistoryStateWidget == 'NoData'}
         ON
       {:else}
         OFF
@@ -501,8 +439,24 @@
       {
         () =>
         {
-          newDevInstance.addSampleData();
-          newDevInstance.mutated = true;
+          // @ts-expect-error
+          (profileData.investorData ??= { data: { referral_history: [] } });
+          // @ts-expect-error
+          (profileData.investorData.data.referral_history ??= [] );
+
+          profileData?.investorData?.data?.referral_history.push
+          (
+            ...this.sampleData
+          );
+
+          profileData = profileData;
+
+          scoresProfileInvestorStore.updateAdminMutatedWidgets
+          (
+            'ReferralHistory'
+            , 'set'
+          );
+
           return;
         }
       }
@@ -524,8 +478,6 @@
 -->
 
 <style lang="scss">
-
-  @import '../../../../../../static/app.scss';
 
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
@@ -620,8 +572,9 @@
 
               p
               {
-                @extend .s-12;
-                @extend .color-grey;
+                /* 🎨 style */
+                font-size: 12px;
+                color: var(--grey-shade);
               }
             }
           }
@@ -676,8 +629,8 @@
                 p
                 {
                   /* 🎨 style */
-                  @extend .s-14;
-                  @extend .color-black-2;
+                  font-size: 14px;
+                  color: var(--dark-theme-1);
                 }
               }
 

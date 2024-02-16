@@ -1,5 +1,13 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ - access custom Betarena Scores JS VScode Snippets by typing 'script...'         │
@@ -24,9 +32,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { page } from '$app/stores';
-  import { onMount } from 'svelte';
-
-  import { viewport_change } from '$lib/utils/platform-functions.js';
+  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
 
   import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
@@ -46,62 +52,30 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  const
-    /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
-    // eslint-disable-next-line no-unused-vars
-    CNAME: string = 'profile⮕w⮕investor-title⮕main'
-    /** @description 📣 threshold start + state for 📱 MOBILE */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
-    /** @description 📣 threshold start + state for 💻 TABLET */
-    // eslint-disable-next-line no-unused-vars
+  export let
+    /**
+     * @description
+     *  📣 threshold start + state for 📱 MOBILE
+     */ // eslint-disable-next-line no-unused-vars
+    VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
+    /**
+     * @description
+     *  📣 threshold start + state for 💻 TABLET
+     */ // eslint-disable-next-line no-unused-vars
     , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
-  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
+  const
+    /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */ // eslint-disable-next-line no-unused-vars
+    CNAME: string = 'profile⮕w⮕investor-title⮕main'
+  ;
+
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | undefined | null;
 
   // #endregion ➤ 📌 VARIABLES
-
-  // #region ➤ 🔄 LIFECYCLE [SVELTE]
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'logic' that should run            │
-  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
-  // │ as soon as 'this' .svelte file is ran.                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  onMount
-  (
-    () =>
-    {
-      [
-        VIEWPORT_TABLET_INIT[1],
-        VIEWPORT_MOBILE_INIT[1]
-      ] = viewport_change
-      (
-        VIEWPORT_TABLET_INIT[0],
-        VIEWPORT_MOBILE_INIT[0]
-      );
-      window.addEventListener
-      (
-        'resize',
-        function ()
-        {
-          [
-            VIEWPORT_TABLET_INIT[1],
-            VIEWPORT_MOBILE_INIT[1]
-          ] = viewport_change
-          (
-            VIEWPORT_TABLET_INIT[0],
-            VIEWPORT_MOBILE_INIT[0]
-          );
-        }
-      );
-    }
-  );
-
-  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
 </script>
 
@@ -156,10 +130,11 @@
         class:w-500={true}
         class:text-center={VIEWPORT_MOBILE_INIT[1]}
       >
-        {
-          profileTrs.investor?.tab.tab_1
-          ?? 'Private Presale'
-        }
+        <TranslationText
+          key={`${CNAME}/title`}
+          text={profileTrs?.investor?.tab.tab_1}
+          fallback={'Private Presale'}
+        />
       </p>
 
     </div>
@@ -185,10 +160,11 @@
         class:text-center={VIEWPORT_MOBILE_INIT[1]}
         "
       >
-        {
-          profileTrs.investor?.tab.tab_2
-          ?? 'Public Presale (Soon)'
-        }
+        <TranslationText
+          key={`${CNAME}/title`}
+          text={profileTrs?.investor?.tab.tab_2}
+          fallback={'Public Presale (Soon)'}
+        />
       </p>
 
     </div>
@@ -226,10 +202,11 @@
       m-b-16
       "
     >
-      {
-        profileTrs.investor?.tab.title_launchpad
-        ?? 'Launchpad'
-      }
+      <TranslationText
+        key={`${CNAME}/title`}
+        text={profileTrs?.investor?.tab.title_launchpad}
+        fallback={'Launchpad'}
+      />
     </p>
 
     <!--
@@ -244,10 +221,12 @@
       color-grey-shade
       "
     >
-      {
-        @html profileTrs.investor?.tab.description_launchpad
-        ?? ''
-      }
+      <TranslationText
+        key={`${CNAME}/title`}
+        text={profileTrs?.investor?.tab.description_launchpad}
+        isHtmlBlock={true}
+        fallback={''}
+      />
     </p>
 
   </div>

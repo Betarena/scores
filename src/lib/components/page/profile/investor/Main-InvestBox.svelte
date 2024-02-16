@@ -1,5 +1,13 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
@@ -43,6 +51,7 @@
 	import { chainObject, chainObjectWalletConnect } from '$lib/utils/web3.js';
 	import { passByValue } from '@betarena/scores-lib/dist/functions/func.common.js';
 	import { tryCatchAsync } from '@betarena/scores-lib/dist/util/util.common.js';
+	import { scoresProfileInvestorStore } from './_store.js';
 
 	import { createWeb3Modal, defaultConfig } from '@web3modal/ethers5';
 	import { BigNumber, ethers, type ContractInterface, type Transaction } from 'ethers';
@@ -70,11 +79,11 @@
 
   import TranslationText from '$lib/components/misc/Translation-Text.svelte';
   import ModalBackdrop from '$lib/components/misc/modal/Modal-Backdrop.svelte';
-  import type { B_H_TH } from '@betarena/scores-lib/types/_HASURA_.js';
+  import { getCookie } from '$lib/store/cookie.js';
+  import type { PublicTransactionHistoryMain } from '@betarena/scores-lib/types/_AUTO-HASURA-2_.js';
   import type { ICoinMarketCapDataMain } from '@betarena/scores-lib/types/_WEB3_.js';
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
   import type { Web3Modal } from '@web3modal/ethers5/dist/types/src/client.js';
-  import { scoresProfileInvestorStore } from './_store.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -227,7 +236,7 @@
       = createWeb3Modal
       (
         {
-          projectId: import.meta.env.VITE_WALLETCONNECT_ID
+          projectId: import.meta.env.VITE_WALLETCONNECT_ID!
           , ethersConfig: defaultConfig
           (
             {
@@ -390,9 +399,11 @@
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
   $: deepReactListenSignerChange = undefined as unknown;
   $: deepReactListenDepositOptionChange = JSON.stringify(cryptoDepositOptionSelect) as string;
-  $: ({ uid } = $userBetarenaSettings.user.firebase_user_data);
-  $: ({ grand_total } = $userBetarenaSettings.user.scores_user_data?.investor_balance ?? 0);
+  $: ({ uid } = $userBetarenaSettings.user.firebase_user_data ?? { uid: null });
+  $: ({ grand_total } = $userBetarenaSettings.user.scores_user_data?.investor_balance ?? { grand_total: 0 });
   $: ({ roundStateWidget } = $scoresProfileInvestorStore);
+  $: ({ currentActiveModal } = $sessionStore);
+  $: ({ theme } = $userBetarenaSettings);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -493,6 +504,7 @@
           );
 
           deepReactListenSignerChange = newProvider.isConnected;
+          // @ts-expect-error
           walletAddress = modal.getAddress();
           // await switchUserNetwork();
 
@@ -580,7 +592,11 @@
     , cryptoPrice: number
   ): void
   {
-    if ((depositAmount * cryptoPrice) >= 100000)
+    const
+      depositCalculated = (depositAmount * cryptoPrice) + grand_total!
+    ;
+
+    if (depositCalculated >= 100000)
       tierDiscountObject
         = {
           name: 'platinum'
@@ -589,7 +605,7 @@
           , btaPrice: 0.50
         }
       ;
-    else if ((depositAmount * cryptoPrice) >= 50000)
+    else if (depositCalculated >= 50000)
       tierDiscountObject
         = {
           name: 'gold'
@@ -598,7 +614,7 @@
           , btaPrice: 0.60
         }
       ;
-    else if ((depositAmount * cryptoPrice) >= 20000)
+    else if (depositCalculated >= 20000)
       tierDiscountObject
         = {
           name: 'silver'
@@ -607,7 +623,7 @@
           , btaPrice: 0.70
         }
       ;
-    else if ((depositAmount * cryptoPrice) >= 2500)
+    else if (depositCalculated >= 2500)
       tierDiscountObject
         = {
           name: 'bronze'
@@ -616,7 +632,7 @@
           , btaPrice: 0.80
         }
       ;
-    else if ((depositAmount * cryptoPrice) < 2500)
+    else if (depositCalculated < 2500)
       tierDiscountObject
         = {
           name: undefined
@@ -638,6 +654,17 @@
       )
     ;
 
+    if (depositCalculated < (profileData?.presaleData.data?.min_buy ?? 2500))
+    {
+      formErrorState.add('First_Minimum_Deposit_Not_Reached');
+      formErrorState = formErrorState;
+    }
+    else
+    {
+      formErrorState.delete('First_Minimum_Deposit_Not_Reached');
+      formErrorState = formErrorState;
+    }
+
     return;
   }
 
@@ -655,7 +682,7 @@
         (
           item =>
           {
-            return (!item.checked && item.required)
+            return (!item.checked && item.required && item.type === 'checkbox' && VIEWPORT_MOBILE_INIT[1])
           }
         )
     ;
@@ -753,6 +780,7 @@
       ): Promise < void > =>
       {
         const
+          // @ts-expect-error
           ethersProvider = new ethers.providers.Web3Provider(modal.getWalletProvider())
           , signer = await ethersProvider.getSigner()
           , contract = new ethers.Contract
@@ -825,6 +853,7 @@
             method: 'wallet_addEthereumChain'
             , params:
             [
+              // @ts-expect-error
               chainObject.polygon_mumbai
             ]
           }
@@ -972,6 +1001,7 @@
     let
       targetDecimals: number
       , targetAmount: BigNumber
+      // @ts-expect-error
       , ethersProvider = new ethers.providers.Web3Provider(modal.getWalletProvider())
       , signer = await ethersProvider.getSigner()
     ;
@@ -1016,7 +1046,7 @@
         ;
 
         targetDecimals = await contract.decimals();
-        targetAmount = ethers.utils.parseUnits(depositAmount.toString(), targetDecimals);
+        targetAmount = ethers.utils.parseUnits((depositAmount ?? 0).toString(), targetDecimals);
 
         const transactionResponse: Transaction = await contract.approve(betarenaBankContractAddress, targetAmount);
 
@@ -1132,27 +1162,46 @@
       return;
     }
 
+    if (!uid) return;
+
     const
+      /**
+       * @description
+       *  📣 Target cookie.
+       */
+      cookie
+        = getCookie
+        (
+          document.cookie
+        )
+      /**
+       * @description
+       *  📣 Target cookie value.
+       */
+      , cookieValue = cookie.betarenaScoresCookieReferralCode
       /**
        * @description
        *  📣 send data for completed user transaction to DB.
        */
-      txDepositData: B_H_TH
+      , txDepositData: PublicTransactionHistoryMain
         = {
-          uid: uid
+          uid
           , asset: cryptoDepositOptionSelect.name
           , amount: recieveAmount
-          , quantity: depositAmount
+          , quantity: (depositAmount ?? 0)
           , Gateway: 'cryptocurrency'
           , description: `${profileData?.presaleData.presale} presale`
           , type: 'investment'
-          , bta_price: toDecimalFix(cryptoPrice * tierDiscountObject.btaPrice, 3)
+          // @ts-expect-error
+          , bta_price: toDecimalFix(cryptoPrice * tierDiscountObject.btaPrice!, 3)
+          // @ts-expect-error
           , tier: tierDiscountObject.name
           , deposit_wallet_address:
           {
             type: 'Polygon'
             , address: walletAddress
           }
+          , referral: cookieValue
         }
     ;
 
@@ -1175,6 +1224,7 @@
         )
     ;
 
+    // @ts-expect-error
     if (result?.error)
     {
       $sessionStore.currentActiveModal = 'GeneralPlatform_Error';
@@ -1200,6 +1250,7 @@
   (
   ): Promise < void >
   {
+    // @ts-expect-error
     cryptoPrices
       = await get
       (
@@ -1215,6 +1266,7 @@
       (
         toDecimalFix
         (
+          // @ts-expect-error
           cryptoPrices?.data[cryptoDepositOptionSelect.name].quote.USD.price
           , 3
           , true
@@ -1249,19 +1301,8 @@
     executeContract();
   }
 
-  $: recalculateReceive(depositAmount, cryptoPrice);
+  $: recalculateReceive((depositAmount ?? 1), cryptoPrice);
 
-  $:
-  if ((depositAmount * cryptoPrice) < (profileData?.presaleData.data?.min_buy ?? 2500) && grand_total == undefined)
-  {
-    formErrorState.add('First_Minimum_Deposit_Not_Reached');
-    formErrorState = formErrorState;
-  }
-  else
-  {
-    formErrorState.delete('First_Minimum_Deposit_Not_Reached');
-    formErrorState = formErrorState;
-  }
 
   $: if (tokenSearch)
   {
@@ -1352,11 +1393,11 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-{#if $sessionStore.currentActiveModal == 'ProfileInvestor_Terms&Cond_Modal'}
+{#if currentActiveModal == 'ProfileInvestor_Terms&Cond_Modal'}
   <ModalTermsAndConditions />
 {/if}
 
-{#if $sessionStore.currentActiveModal == 'ProfileInvestor_TxState_Modal'}
+{#if currentActiveModal == 'ProfileInvestor_TxState_Modal'}
   <ModalTxState
     {stateWidget}
     depositAmount={(depositAmount ?? 0)}
@@ -1365,7 +1406,7 @@
 
 <div
   id={CNAME}
-  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+  class:dark-background-1={theme == 'Dark'}
 >
   <form
     id='invest-form'
@@ -1457,7 +1498,7 @@
             {#if !walletAddress}
               <img
                 id=''
-                src={$userBetarenaSettings.theme == 'Dark' ? icon_arrow_right_dark : icon_arrow_right}
+                src={theme == 'Dark' ? icon_arrow_right_dark : icon_arrow_right}
                 alt=''
                 title=''
                 loading='lazy'
@@ -1891,7 +1932,7 @@
 
                 <img
                   id=''
-                  src={$userBetarenaSettings.theme == 'Dark' ? icon_arrow_down_dark : icon_arrow_down}
+                  src={theme == 'Dark' ? icon_arrow_down_dark : icon_arrow_down}
                   alt=''
                   title=''
                   loading='lazy'
@@ -2010,7 +2051,7 @@
                 m-t-5
                 "
               >
-                {toDecimalFix(cryptoPrice * tierDiscountObject.btaPrice, 3)} {cryptoDepositOptionSelect.name} ≈ 1.00 BTA
+                {toDecimalFix(cryptoPrice * (tierDiscountObject.btaPrice ?? 1), 3)} {cryptoDepositOptionSelect.name} ≈ 1.00 BTA
               </p>
 
             </div>
@@ -2223,7 +2264,7 @@
     ▓ NOTE:
     ▓ > Cryptocurrency Deposit Option Select (Outer)
     -->
-    {#if $sessionStore.currentActiveModal == 'ProfileInvestor_SelectCrypto_Modal'}
+    {#if currentActiveModal == 'ProfileInvestor_SelectCrypto_Modal'}
 
       <!--
       ▓ NOTE:
@@ -2432,8 +2473,6 @@
 
 <style lang="scss">
 
-  @import '../../../../../../static/app.scss';
-
   div#profile⮕w⮕investbox⮕main
   {
     /* 📌 position */
@@ -2471,10 +2510,10 @@
           span.x0001
           {
             /* 🎨 style */
-            @extend .w-500 !optional;
-            @extend .color-black-2 !optional;
-            @extend .underline !optional;
-            @extend .cursor-pointer !optional;
+            font-weight: 500;
+            text-decoration: underline;
+            cursor: pointer;
+            color: var(--dark-theme);
           }
         }
       }
@@ -2558,20 +2597,6 @@
         top: 20px;
         right: 20px;
         z-index: 400000002;
-      }
-
-      div#modal-bg-blur
-      {
-        /* 📌 position */
-        position: absolute;
-        top: 0;
-        right: 0;
-        left: 0;
-        z-index: 0;
-        /* 🎨 style */
-        height: 100%;
-        width: 100%;
-        background: rgba(0, 0, 0, 0.5);
       }
 
       div#select-crypto
@@ -2735,6 +2760,15 @@
     {
       /* 🎨 style */
       background-color: var(--dark-theme-1);
+
+      :global
+      {
+        span.x0001
+        {
+          /* 🎨 style */
+          color: var(--white);
+        }
+      }
     }
 
     &.dark-background-1 div#middle-row

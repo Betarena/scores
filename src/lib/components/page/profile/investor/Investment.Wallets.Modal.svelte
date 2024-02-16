@@ -1,5 +1,13 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
@@ -35,6 +43,7 @@
   import icon_close_dark from '../assets/investor/icon-close-dark-btn.svg';
 
   import ModalBackdrop from '$lib/components/misc/modal/Modal-Backdrop.svelte';
+  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
 
   import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
@@ -58,29 +67,27 @@
     /**
      * @description
      *  📣 List of wallets to be displayed.
-    */
+     */
     walletAddressList: string[]
+    /**
+     * @description
+     *  📣 threshold start + state for 📱 MOBILE
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
+    /**
+     * @description
+     *  📣 threshold start + state for 💻 TABLET
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
   const
     /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
-     */
-    // eslint-disable-next-line no-unused-vars
+     */ // eslint-disable-next-line no-unused-vars
     CNAME: string = 'profile⮕w⮕wallets-modal⮕main'
-    /**
-     * @description
-     *  📣 threshold start + state for 📱 MOBILE
-     */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
-    /**
-     * @description
-     *  📣 threshold start + state for 💻 TABLET
-     */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
+
   ;
 
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
@@ -146,10 +153,11 @@
       color-black-2
       "
     >
-      {
-        profileTrs?.investor?.wallets.title
-        ?? 'Investor Wallet Address'
-      }
+      <TranslationText
+        key={`${CNAME}/table/header/discount`}
+        text={profileTrs?.investor?.wallets.title}
+        fallback={'Investor Wallet Address'}
+      />
     </p>
 
     <!--
@@ -216,10 +224,11 @@
           text-left
           "
         >
-          {
-            profileTrs?.investor?.wallets.id
-            ?? 'Wallet ID'
-          }
+          <TranslationText
+            key={`${CNAME}/table/header/discount`}
+            text={profileTrs?.investor?.wallets.id}
+            fallback={'Wallet ID'}
+          />
         </p>
 
         <!--
@@ -261,10 +270,11 @@
             "
             on:click={() => { copyToClipboard(item); return; }}
           >
-            {
-              profileTrs?.investor?.wallets.copy
-              ?? 'Copy'
-            }
+            <TranslationText
+              key={`${CNAME}/table/header/discount`}
+              text={profileTrs?.investor?.wallets.copy}
+              fallback={'Copy'}
+            />
           </p>
         </div>
 
@@ -277,7 +287,11 @@
         color-black-2
         "
       >
-        Uh-oh! No investment wallets have been found.
+        <TranslationText
+          key={`${CNAME}/table/header/discount`}
+          text={null}
+          fallback={'Uh-oh! No investment wallets have been found.'}
+        />
       </p>
     {/each}
 

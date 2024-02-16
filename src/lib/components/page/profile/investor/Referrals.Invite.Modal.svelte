@@ -1,5 +1,13 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ - access custom Betarena Scores JS VScode Snippets by typing 'script...'         │
@@ -30,10 +38,11 @@
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { copyToClipboard } from '$lib/utils/platform-functions.js';
 	import { scoresProfileInvestorStore } from './_store.js';
-
-  import asset_invite_investor from '../assets/investor/asset-invite-investor.png';
+// eslint-disable-next-line camelcase
+  import assetInviteInvestor from '../assets/investor/asset-invite-investor.png';
   import icon_betarena_brand from '../assets/investor/icon-betarena-brand.svg';
-  import asset_invite_share from '../assets/investor/share_referral_betarena_qrcode.png';
+// eslint-disable-next-line camelcase
+  import assetInviteShare from '../assets/investor/share_referral_betarena_qrcode.png';
 // import icon_social_download_hover from '../assets/investor/icon-social-download-hover.svg';
   import icon_social_download_dark from '../assets/investor/icon-social-download-dark.svg';
   import icon_social_download from '../assets/investor/icon-social-download.svg';
@@ -56,6 +65,7 @@
   import icon_social_whatsapp from '../assets/investor/icon-social-whatsapp.svg';
 
   import ModalBackdrop from '$lib/components/misc/modal/Modal-Backdrop.svelte';
+  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
 
   import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
@@ -181,32 +191,37 @@
         let text: string;
 
         if (assetItem.name == 'twitter')
-        {text = profileTrs.investor?.referral.ref_pop.twitter!;}
+        {
+          text = profileTrs?.investor?.referral.ref_pop.twitter!;
+        }
         else if (assetItem.name == 'facebook')
-        {text = profileTrs.investor?.referral.ref_pop.facebook!;}
+        {
+          text = profileTrs?.investor?.referral.ref_pop.facebook!;
+        }
         else if (assetItem.name == 'whatsapp')
         {
-          text = profileTrs.investor?.referral.ref_pop.whatsapp!;
+          text = profileTrs?.investor?.referral.ref_pop.whatsapp!;
           text += ` ${$page.url.origin}?referralId=${$userBetarenaSettings.user.scores_user_data?.referralID ?? ''}`
         }
         else if (assetItem.name == 'telegram')
-        {text = profileTrs.investor?.referral.ref_pop.telegram!;}
+        {text = profileTrs?.investor?.referral.ref_pop.telegram!;}
         else
         {
-          text = profileTrs.investor?.referral.ref_pop.description!;
+          text = profileTrs?.investor?.referral.ref_pop.description!;
           text += ` ${$page.url.origin}?referralId=${$userBetarenaSettings.user.scores_user_data?.referralID ?? ''}`
         }
 
         const newUrl: string = assetItem.social_link
           .replace('{text}', text)
-          .replace('{title}', profileTrs.investor?.referral.ref_pop.title_1!)
+          .replace('{title}', profileTrs?.investor?.referral.ref_pop.title_1!)
         ;
 
         return newUrl;
       }
   ;
 
-  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
+  $: ({ theme } = $userBetarenaSettings);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -238,7 +253,7 @@
 -->
 <div
   id={CNAME}
-  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+  class:dark-background-1={theme == 'Dark'}
   in:fly={{ y: 500, duration: 500 }}
   out:fly={{ y: 500, duration: 500 }}
 >
@@ -267,10 +282,11 @@
       color-black-2
       "
     >
-      {
-        profileTrs.investor?.referral.links.cta_title
-        ?? 'Invite Investors'
-      }
+      <TranslationText
+        key={`${CNAME}/title`}
+        text={profileTrs?.investor?.referral.links.cta_title}
+        fallback={'Invite Investors'}
+      />
     </p>
 
     <!--
@@ -287,7 +303,7 @@
       '
       {VIEWPORT_TABLET_INIT[1] ? 'top: 16px; right: 16px;' : ''}
       '
-      src={$userBetarenaSettings.theme == 'Dark' ? icon_close : icon_close_dark}
+      src={theme == 'Dark' ? icon_close : icon_close_dark}
       alt='close-svg'
       on:click=
       {
@@ -341,10 +357,11 @@
         line-height: 120%; /* 35.7px */
         "
       >
-        {
-          profileTrs.investor?.referral.ref_pop.title_1
-          ?? 'Looking to be part of the future of sports content?'
-        }
+        <TranslationText
+          key={`${CNAME}/title`}
+          text={profileTrs?.investor?.referral.ref_pop.title_1}
+          fallback={'Looking to be part of the future of sports content?'}
+        />
       </p>
 
       <!--
@@ -376,10 +393,11 @@
         text-left
         "
       >
-        {
-          profileTrs.investor?.referral.ref_pop.description
-          ?? 'Join the Betarena Presale and Be Part of the Future of Sports Content. Join Now for Exclusive Rewards!'
-        }
+        <TranslationText
+          key={`${CNAME}/title`}
+          text={profileTrs?.investor?.referral.ref_pop.description}
+          fallback={'Join the Betarena Presale and Be Part of the Future of Sports Content. Join Now for Exclusive Rewards!'}
+        />
       </p>
     </div>
 
@@ -391,7 +409,7 @@
       id='background-asset'
       title=''
       alt=''
-      src={asset_invite_investor}
+      src={assetInviteInvestor}
       loading='lazy'
       width=48
       height=48
@@ -436,12 +454,26 @@
             <!---->
             social-btn
             "
-            on:mouseover={(e) => {return e.currentTarget.children[0].src = item.asset_hover}}
-            on:mouseleave={(e) => {return e.currentTarget.children[0].src = ($userBetarenaSettings.theme == 'Dark' ? item.asset_dark : item.asset)}}
+            on:mouseover=
+            {
+              (e) =>
+              {
+                // @ts-expect-error
+                return e.currentTarget.children[0].src = item.asset_hover
+              }
+            }
+            on:mouseleave=
+            {
+              (e) =>
+              {
+                // @ts-expect-error
+                return e.currentTarget.children[0].src = (theme == 'Dark' ? item.asset_dark : item.asset)
+              }
+            }
           >
             <img
               id=''
-              src={$userBetarenaSettings.theme == 'Dark' ? item.asset_dark : item.asset}
+              src={theme == 'Dark' ? item.asset_dark : item.asset}
               alt=''
               title=''
               loading='lazy'
@@ -471,7 +503,7 @@
           ▓ > (action) download invitation asset
           -->
           <a
-            href={asset_invite_share}
+            href={assetInviteShare}
             download="BetarenaShareInvite.png"
           >
             <div
@@ -485,7 +517,7 @@
             >
               <img
                 id=''
-                src={$userBetarenaSettings.theme == 'Dark' ? icon_social_download_dark : icon_social_download}
+                src={theme == 'Dark' ? icon_social_download_dark : icon_social_download}
                 alt=''
                 title=''
                 loading='lazy'
@@ -520,7 +552,7 @@
         >
           <img
             id=''
-            src={$userBetarenaSettings.theme == 'Dark' ? icon_social_link_dark : icon_social_link}
+            src={theme == 'Dark' ? icon_social_link_dark : icon_social_link}
             alt=''
             title=''
             loading='lazy'

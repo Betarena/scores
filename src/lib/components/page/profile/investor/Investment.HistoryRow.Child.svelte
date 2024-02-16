@@ -1,5 +1,13 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
@@ -38,8 +46,9 @@
 
 	import TranslationText from '$lib/components/misc/Translation-Text.svelte';
 
-	import type { PublicTransactionHistoryMain } from '@betarena/scores-lib/types/_AUTO-HASURA-2_.js';
-	import type { B_H_KEYP, B_H_KEYP_Tier } from '@betarena/scores-lib/types/_HASURA_.js';
+	import type { KeypairInvestorPresaleMain, PublicTransactionHistoryMain } from '@betarena/scores-lib/types/_AUTO-HASURA-2_.js';
+	import type { IPresaleTier } from '@betarena/scores-lib/types/_ENUMS_.js';
+	import type { B_H_KEYP_Tier } from '@betarena/scores-lib/types/_HASURA_.js';
 	import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -67,17 +76,12 @@
      * @description
      *  📣 Target `tier` data represented as `map`.
      */
-    , tierDataMap: Map < B_H_KEYP_Tier, B_H_KEYP >
+    , tierDataMap: Map < IPresaleTier, KeypairInvestorPresaleMain >
     /**
      * @description
      *  📣 threshold start + state for 📱 MOBILE
      */ // eslint-disable-next-line no-unused-vars
     , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
-    /**
-     * @description
-     *  📣 threshold start + state for 💻 TABLET
-     */ // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
   const
@@ -98,7 +102,15 @@
      * @description
      *  📣 Properties to be shown in mobile view.
      */
-    , mobileProps: string[] = ['discount', 'investment', 'tokens', 'price', 'description']
+    , mobileProps: string[]
+      = [
+        'discount'
+        , 'investment'
+        , 'tokens'
+        , 'price'
+        , 'description'
+        , 'tier'
+      ]
     /**
      * @description
      *  📣 Target `icon` asset for _this_ transaction.
@@ -221,60 +233,60 @@
 
   <!--
   ▓ NOTE:
-  ▓ > transaction execution tier.
-  -->
-  <td>
-    {#if data.tier != null && data.tier != 'NaN'}
-      <div
-        class=
-        "
-        row-space-start
-        "
-      >
-        <!--
-        ▓ NOTE:
-        ▓ > transaction tier icon.
-        -->
-        <img
-          id=''
-          src='{targetTxTierIcon}'
-          alt=''
-          title=''
-          loading='lazy'
-          width=24
-          height=24
-          class=
-          "
-          m-r-8
-          "
-        />
-
-        <!--
-        ▓ NOTE:
-        ▓ > transaction tier name tag.
-        -->
-        <p
-          class=
-          "
-          capitalize
-          "
-        >
-          {data.tier ?? 'NaN'}
-        </p>
-
-      </div>
-    {:else}
-      <p>
-        -
-      </p>
-    {/if}
-  </td>
-
-  <!--
-  ▓ NOTE:
   ▓ > 💻 TABLET 🖥️ LAPTOP
   -->
   {#if !VIEWPORT_MOBILE_INIT[1]}
+
+    <!--
+    ▓ NOTE:
+    ▓ > transaction execution tier.
+    -->
+    <td>
+      {#if data.tier != null && data.tier != 'NaN'}
+        <div
+          class=
+          "
+          row-space-start
+          "
+        >
+          <!--
+          ▓ NOTE:
+          ▓ > transaction tier icon.
+          -->
+          <img
+            id=''
+            src='{targetTxTierIcon}'
+            alt=''
+            title=''
+            loading='lazy'
+            width=24
+            height=24
+            class=
+            "
+            m-r-8
+            "
+          />
+
+          <!--
+          ▓ NOTE:
+          ▓ > transaction tier name tag.
+          -->
+          <p
+            class=
+            "
+            capitalize
+            "
+          >
+            {data.tier}
+          </p>
+
+        </div>
+      {:else}
+        <p>
+          -
+        </p>
+      {/if}
+    </td>
 
     <!--
     ▓ NOTE:
@@ -420,6 +432,12 @@
                 text={null}
                 fallback={'Description'}
               />
+            {:else if item == 'tier'}
+              <TranslationText
+                key={'profile/investor/invest-history/row/tire'}
+                text={profileTrs?.investor?.investment_details.tier}
+                fallback={'Tier'}
+              />
             {/if}
           </p>
 
@@ -444,6 +462,51 @@
               ${data.bta_price ?? '-'}
             {:else if item == 'description'}
               {data.description ?? '-'}
+            {:else if item == 'tier'}
+              {#if data.tier != null && data.tier != 'NaN'}
+                <div
+                  class=
+                  "
+                  row-space-start
+                  "
+                >
+                  <!--
+                  ▓ NOTE:
+                  ▓ > transaction tier icon.
+                  -->
+                  <img
+                    id=''
+                    src='{targetTxTierIcon}'
+                    alt=''
+                    title=''
+                    loading='lazy'
+                    width=24
+                    height=24
+                    class=
+                    "
+                    m-r-8
+                    "
+                  />
+
+                  <!--
+                  ▓ NOTE:
+                  ▓ > transaction tier name tag.
+                  -->
+                  <p
+                    class=
+                    "
+                    capitalize
+                    "
+                  >
+                    {data.tier}
+                  </p>
+
+                </div>
+              {:else}
+                <p>
+                  -
+                </p>
+              {/if}
             {/if}
           </p>
 

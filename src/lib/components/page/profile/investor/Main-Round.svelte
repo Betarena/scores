@@ -1,5 +1,13 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
@@ -30,8 +38,8 @@
 
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
 	import { toZeroPrefixDateStr } from '$lib/utils/dates.js';
+	import { toDecimalFix } from '$lib/utils/platform-functions.js';
 	import { scoresProfileInvestorStore } from './_store.js';
 
 	import TranslationText from '$lib/components/misc/Translation-Text.svelte';
@@ -61,6 +69,16 @@
      * @augments IProfileData
      */
     WIDGET_DATA: IProfileData | null
+    /**
+     * @description
+     * 📣 threshold start + state for 📱 MOBILE
+     */
+    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
+    /**
+     * @description
+     * 📣 threshold start + state for 💻 TABLET
+     */
+    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
   /**
@@ -77,7 +95,7 @@
     data:
     {
       row_title: string;
-      value: string;
+      value: string | number;
     }[]
   }
 
@@ -92,19 +110,9 @@
   let
     /**
      * @description
-     * 📣 threshold start + state for 📱 MOBILE
-     */
-    VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
-    /**
-     * @description
-     * 📣 threshold start + state for 💻 TABLET
-     */
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
-    /**
-     * @description
      *  📣 investor main information data
      */
-    , roundData: IRoundData[] = []
+    roundData: IRoundData[] = []
     /**
      * @description
      *  📣 investor round date percentage progress
@@ -268,7 +276,7 @@
     async (
     ): Promise < void > =>
     {
-      progressPercentage = (parseInt(WIDGET_DATA?.presaleData.data?.current_value ?? '') / parseInt(WIDGET_DATA?.presaleData.data?.available ?? '')) * 100;
+      progressPercentage = ((WIDGET_DATA?.presaleData.data?.current_value ?? 0) / (WIDGET_DATA?.presaleData.data?.available ?? 0)) * 100;
       if (progressPercentage > 100) progressPercentage = 100;
 
       return;
@@ -278,25 +286,6 @@
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
 </script>
-
-<svelte:window
-  on:resize=
-  {
-    () =>
-    {
-      [
-        VIEWPORT_TABLET_INIT[1],
-        VIEWPORT_MOBILE_INIT[1]
-      ]
-      = viewport_change
-        (
-          VIEWPORT_TABLET_INIT[0],
-          VIEWPORT_MOBILE_INIT[0]
-        );
-      return;
-    }
-  }
-/>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮

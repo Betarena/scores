@@ -33,6 +33,7 @@
 
 	import type { B_H_SFOOTD_Social_Network } from '@betarena/scores-lib/types/_HASURA_.js';
 	import type { B_FOT_T } from '@betarena/scores-lib/types/types.main.footer.js';
+  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -401,7 +402,11 @@ FOOTER | Main Component
         {isViewMobile ? 'text-center' : 'text-left'}
         "
       >
-        {B_FOT_T?.terms?.subscribe_newsletter ?? 'Subscribe to newsletter'}
+        <TranslationText
+          key={`${CNAME}/newsletter-box`}
+          text={B_FOT_T?.terms?.subscribe_newsletter}
+          fallback={'Subscribe to newsletter'}
+        />
       </p>
 
       <!--
@@ -413,7 +418,14 @@ FOOTER | Main Component
         "
         btn-primary-v2
         "
-        on:click={() => $sessionStore.newsletterPopUpShow = true}
+        on:click=
+        {
+          () =>
+          {
+            $sessionStore.currentActiveModal = null;
+            return;
+          }
+        }
       >
         <p
           class=
@@ -781,16 +793,16 @@ FOOTER | Main Component
 </footer>
 
 <!--
-◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-### COMPONENT STYLE                                                                    ◼️
-### NOTE:                                                                              ◼️
-### auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE      ◼️
-### NOTE:                                                                              ◼️
-### access custom Betarena Scores CSS VScode Snippets by typing 'style...'             ◼️
-◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ Svelte Component CSS/SCSS                                                        │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
+╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<style>
+<style lang="scss">
 
 	footer
   {
@@ -798,101 +810,101 @@ FOOTER | Main Component
 		background: #292929;
 		width: -webkit-fill-available;
 		padding: 48px 18px;
-	}
 
-	div#global⮕footer⮕w⮕main⮕inner
-  {
-    /* 📌 position */
-		display: grid;
-    gap: 32px 85px;
-    grid-template-columns: 1fr;
-    align-items: start;
-		justify-items: stretch;
-    /* 🎨 style */
-		max-width: 1378px;
-		text-align: center;
-	}
+	  div#global⮕footer⮕w⮕main⮕inner
+    {
+      /* 📌 position */
+      display: grid;
+      gap: 32px 85px;
+      grid-template-columns: 1fr;
+      align-items: start;
+      justify-items: stretch;
+      /* 🎨 style */
+      max-width: 1378px;
+      text-align: center;
+    }
 
-  div#global⮕footer⮕w⮕main⮕brand
-  {
-    /* 📌 position */
-    grid-column: 1;
-    grid-row: 1;
-    /* 🎨 style */
-    justify-self: center;
-  }
-	div#global⮕footer⮕w⮕main⮕brand img
-  {
-    /* 🎨 style */
-		height: 32px;
-		width: 151px;
-	}
+    div#global⮕footer⮕w⮕main⮕brand
+    {
+      /* 📌 position */
+      grid-column: 1;
+      grid-row: 1;
+      /* 🎨 style */
+      justify-self: center;
+    }
+    div#global⮕footer⮕w⮕main⮕brand img
+    {
+      /* 🎨 style */
+      height: 32px;
+      width: 151px;
+    }
 
-  div#global⮕footer⮕w⮕main⮕social-box
-  {
-    /* 📌 position */
-    grid-column: 1;
-    grid-row: 2;
-  }
-  div#global⮕footer⮕w⮕main⮕social-media-box
-  {
-    /* 🎨 style */
-		gap: 16px;
-		grid-auto-flow: column;
-		width: 100%;
-	}
+    div#global⮕footer⮕w⮕main⮕social-box
+    {
+      /* 📌 position */
+      grid-column: 1;
+      grid-row: 2;
+    }
+    div#global⮕footer⮕w⮕main⮕social-media-box
+    {
+      /* 🎨 style */
+      gap: 16px;
+      grid-auto-flow: column;
+      width: 100%;
+    }
 
-  div#global⮕footer⮕w⮕main⮕newsletter-box
-  {
-    /* 📌 position */
-    grid-column: 1;
-    grid-row: 3;
-  }
-	div#global⮕footer⮕w⮕main⮕newsletter-box button#newsletter-subscribe-btn
-  {
-    /* 🎨 style */
-		height: 44px;
-		width: 100%;
-	}
+    div#global⮕footer⮕w⮕main⮕newsletter-box
+    {
+      /* 📌 position */
+      grid-column: 1;
+      grid-row: 3;
+    }
+    div#global⮕footer⮕w⮕main⮕newsletter-box button#newsletter-subscribe-btn
+    {
+      /* 🎨 style */
+      height: 44px;
+      width: 100%;
+    }
 
-  div#global⮕footer⮕w⮕main⮕menu-list
-  {
-    /* 📌 position */
-    grid-column: 1;
-    grid-row: 4;
-  }
-  div#global⮕footer⮕w⮕main⮕menu-list ul
-  {
-    /* 📌 position */
-		display: flex;
-    /* 🎨 style */
-		list-style-type: none;
-		padding: 0;
-		margin: 0;
-		place-content: center;
-	}
-	div#global⮕footer⮕w⮕main⮕menu-list div.menu-separator
-  {
-    /* 🎨 style */
-		width: 1px;
-		height: 16px;
-		background-color: #4b4b4b;
-	}
+    div#global⮕footer⮕w⮕main⮕menu-list
+    {
+      /* 📌 position */
+      grid-column: 1;
+      grid-row: 4;
+    }
+    div#global⮕footer⮕w⮕main⮕menu-list ul
+    {
+      /* 📌 position */
+      display: flex;
+      /* 🎨 style */
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+      place-content: center;
+    }
+    div#global⮕footer⮕w⮕main⮕menu-list div.menu-separator
+    {
+      /* 🎨 style */
+      width: 1px;
+      height: 16px;
+      background-color: #4b4b4b;
+    }
 
-  div#global⮕footer⮕w⮕main⮕legal-bet-box
-  {
-    /* 📌 position */
-    grid-column: 1;
-    grid-row: 5;
-    /* 🎨 style */
-    justify-content: center;
-  }
+    div#global⮕footer⮕w⮕main⮕legal-bet-box
+    {
+      /* 📌 position */
+      grid-column: 1;
+      grid-row: 5;
+      /* 🎨 style */
+      justify-content: center;
+    }
 
-  div#global⮕footer⮕w⮕main⮕company-box
-  {
-    /* 📌 position */
-    grid-column: 1;
-    grid-row: 6;
+    div#global⮕footer⮕w⮕main⮕company-box
+    {
+      /* 📌 position */
+      grid-column: 1;
+      grid-row: 6;
+    }
   }
 
   /*

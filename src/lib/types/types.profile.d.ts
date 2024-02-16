@@ -8,6 +8,7 @@ type IProfileInvestorTgeWidgetState =
   | 'Tge_DateDefined'
   | 'Tge_ClaimAvailable'
   | 'Tge_Claimed'
+  | IProfileGeneralNoData
 ;
 
 type IProfileInvestorRoundWidgetState =
@@ -20,6 +21,42 @@ type IProfileInvestorRoundWidgetState =
 
 type IProfileAdminWidgets =
   | 'Rounds'
+  | 'InvestmentHistory'
+  | 'Tge'
+  | 'Vesting'
+  | 'Wallets'
+  | 'BonusSummary'
+  | 'ReferralHistory'
+  | 'ReferralInvite'
+;
+
+type IProfileInvestorHistoryWidget =
+  | 'Standard'
+  | IProfileGeneralNoData
+;
+
+type IProfileInvestorVestingWidget =
+  | 'Standard'
+  | IProfileGeneralNoData
+;
+
+type IProfileInvestorWalletsWidget =
+  | 'Standard'
+  | IProfileGeneralNoData
+;
+
+type IProfileInvestorBonusSummaryWidget =
+  | 'Standard'
+  | IProfileGeneralNoData
+;
+
+type IProfileInvestorReferralHistoryWidget =
+  | 'Standard'
+  | IProfileGeneralNoData
+;
+
+type IProfileGeneralNoData =
+  | 'NoData'
 ;
 
 /**
@@ -73,6 +110,31 @@ interface IProfileInvestorSection
    *  📣 Target widget `store` state for `(page) profile > (tab) investor > (widget) round`.
    */
   roundStateWidget: IProfileInvestorRoundWidgetState;
+  /**
+   * @description
+   *  📣 Target widget `store` state for `(page) profile > (tab) investor > (widget) investment history`.
+   */
+  investHistoryStateWidget: IProfileInvestorHistoryWidget;
+  /**
+   * @description
+   *  📣 Target widget `store` state for `(page) profile > (tab) investor > (widget) vesting`.
+   */
+  vestingHistoryStateWidget: IProfileInvestorVestingWidget;
+  /**
+   * @description
+   *  📣 Target widget `store` state for `(page) profile > (tab) investor > (widget) wallets`.
+   */
+  walletsStateWidget: IProfileInvestorWalletsWidget;
+  /**
+   * @description
+   *  📣 Target widget `store` state for `(page) profile > (tab) investor > (widget) bonus summary`.
+   */
+  bonusSummaryStateWidget: IProfileInvestorBonusSummaryWidget;
+  /**
+   * @description
+   *  📣 Target widget `store` state for `(page) profile > (tab) investor > (widget) referral history`.
+   */
+  referralHistoryStateWidget: IProfileInvestorReferralHistoryWidget;
   /**
    * @description
    *  📣 Target widgets being overriden by admin.

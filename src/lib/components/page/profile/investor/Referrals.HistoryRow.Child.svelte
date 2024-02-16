@@ -1,5 +1,13 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ - access custom Betarena Scores JS VScode Snippets by typing 'script...'         │
@@ -31,7 +39,9 @@
   import icon_arrow_down_dark from '../assets/investor/arrow-down-dark.svg';
   import icon_arrow_up_dark from '../assets/investor/arrow-up-dark.svg';
 
-	import type { PUBLIC__INVESTOR_IReferralHistory } from '@betarena/scores-lib/types/_HASURA_.js';
+  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
+
+  import type { PublicInvestorDataIReferralHistory } from '@betarena/scores-lib/types/_AUTO-HASURA-2_.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -51,43 +61,39 @@
 
   export let
     /**
-     * @augments PUBLIC__INVESTOR_IReferralHistory
+     * @augments PublicInvestorDataIReferralHistory
      */
-    data: PUBLIC__INVESTOR_IReferralHistory
+    data: PublicInvestorDataIReferralHistory
     /**
      * @description
-     *  📣
-    */
-    , VIEWPORT_MOBILE_INIT_PARENT: [ number, boolean ]
+     *  📣 threshold start + state for 📱 MOBILE
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
     /**
      * @description
-     *  📣
-    */
-    , VIEWPORT_TABLET_INIT_PARENT: [ number, boolean ]
+     *  📣 threshold start + state for 💻 TABLET
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
   const
-    /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
-    // eslint-disable-next-line no-unused-vars
+    /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */ // eslint-disable-next-line no-unused-vars
     CNAME: string = 'profile⮕w⮕investfaq⮕main'
-    /** @description 📣 threshold start + state for 📱 MOBILE */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
-    /** @description 📣 threshold start + state for 💻 TABLET */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
   let
     /**
      * @description
      *  📣 Wether extra information is toggled (mobile only).
-    */
+     */
     isTxExtraInfo: boolean = false
     /**
      * @description
      *  📣 Properties to be shown in mobile view.
-    */
+     */
     , mobileProps: string[] = [ 'Date' ]
   ;
 
@@ -105,7 +111,7 @@
 -->
 
 <tr
-  class:extra-info={isTxExtraInfo && VIEWPORT_MOBILE_INIT_PARENT[1]}
+  class:extra-info={isTxExtraInfo && VIEWPORT_MOBILE_INIT[1]}
   on:click={() => {return isTxExtraInfo = !isTxExtraInfo}}
 >
 
@@ -143,7 +149,7 @@
   ▓ NOTE: ▓ 💻 TABLET
   ▓ > target columns.
   -->
-  {#if !VIEWPORT_MOBILE_INIT_PARENT[1]}
+  {#if !VIEWPORT_MOBILE_INIT[1]}
 
     <!--
     ▓ NOTE:
@@ -168,7 +174,7 @@
   ▓ NOTE:
   ▓ > 📱 MOBILE
   -->
-  {#if VIEWPORT_MOBILE_INIT_PARENT[1]}
+  {#if VIEWPORT_MOBILE_INIT[1]}
     <td>
       <img
         src=
@@ -195,7 +201,7 @@
   ▓ NOTE:
   ▓ > extra hidden data 📱 MOBILE layout
   -->
-  {#if isTxExtraInfo && VIEWPORT_MOBILE_INIT_PARENT[1]}
+  {#if isTxExtraInfo && VIEWPORT_MOBILE_INIT[1]}
 
     <div
       class=
@@ -229,7 +235,11 @@
             "
           >
             {#if item == 'Date'}
-              Date
+              <TranslationText
+                key={`${CNAME}/date`}
+                text={null}
+                fallback={'Date'}
+              />
             {/if}
           </p>
 

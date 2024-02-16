@@ -1,5 +1,13 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
@@ -34,8 +42,8 @@
   import icon_faq_plus_dark from '../assets/investor/icon-faq-plus-dark.svg';
   import icon_faq_plus from '../assets/investor/icon-faq-plus.svg';
 
-  import type { B_H_INVEST_TRS_Option } from '@betarena/scores-lib/types/_HASURA_.js';
-
+  import type { InvestorsTranslationNewDataOption } from '@betarena/scores-lib/types/_AUTO-HASURA_.js';
+  
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -54,9 +62,9 @@
 
   export let
     /**
-     * @augments B_H_INVEST_TRS_Option
+     * @augments InvestorsTranslationNewDataOption
      */
-    data: B_H_INVEST_TRS_Option
+    data: InvestorsTranslationNewDataOption
     /**
      * @description
      *  📣 target position of `this` row component
@@ -75,19 +83,9 @@
   let
     /**
      * @description
-     *  📣 threshold start + state for 📱 MOBILE
-     */ // eslint-disable-next-line no-unused-vars
-    VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
-    /**
-     * @description
-     *  📣 threshold start + state for 💻 TABLET
-     */ // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
-    /**
-     * @description
      *  📣 wether `this` component is in an **show more** state
      */
-    , stateIsExpanded: boolean = false
+    stateIsExpanded: boolean = false
     /**
      * @description
      *  📣 type `.svg` icon element

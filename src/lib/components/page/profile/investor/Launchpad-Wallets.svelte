@@ -48,7 +48,6 @@
   import { MONTH_NAMES_ABBRV } from '$lib/utils/dates.js';
   import { passByValue } from '@betarena/scores-lib/dist/functions/func.common.js';
   import type { PublicInvestorMain, PublicTransactionHistoryMain } from '@betarena/scores-lib/types/_AUTO-HASURA-2_.js';
-  import type { B_H_TH } from '@betarena/scores-lib/types/_HASURA_.js';
   import type { B_SAP_D2 } from '@betarena/scores-lib/types/seo-pages.js';
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
@@ -77,35 +76,22 @@
     profileData: IProfileData | null
     /**
      * @description
-     *  📣
-     */
-    , VIEWPORT_MOBILE_INIT_PARENT: [ number, boolean ]
+     *  📣 threshold start + state for 📱 MOBILE
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
     /**
      * @description
-     *  📣
-     */
-    , VIEWPORT_TABLET_INIT_PARENT: [ number, boolean ]
+     *  📣 threshold start + state for 💻 TABLET
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
   const
     /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
-     */
-    // eslint-disable-next-line no-unused-vars
+     */ // eslint-disable-next-line no-unused-vars
     CNAME: string = 'profile⮕w⮕launchpad-wallets⮕main'
-    /**
-     * @description
-     *  📣 threshold start + state for 📱 MOBILE
-     */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
-    /**
-     * @description
-     *  📣 threshold start + state for 💻 TABLET
-     */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
   let
@@ -257,6 +243,7 @@
     event.preventDefault();
 
     const
+      // @ts-expect-error
       leftVal = container.offsetLeft - (event.clientX || event.touches[0].clientX)
       , currentRight = parseInt(scrollBox.style.right.replace('px', ''))
       , currentLeft = scrollBox.offsetLeft
@@ -296,6 +283,7 @@
     event.preventDefault();
 
     const
+      // @ts-expect-error
       leftVal = container.offsetLeft - (event.clientX || event.touches[0].clientX)
     ;
 
@@ -367,7 +355,7 @@
    *  📣 Generates target `user` investment monthly graph data.
    * @param { Date[] } dateList
    *  💠 Target dates list.
-   * @param { B_H_TH[] } dateList
+   * @param { PublicTransactionHistoryMain[] } dateList
    *  💠 Target investor transaction list.
    * @return { Map < string, number > }
    *  📤 A `Map` of change (delta) in investor wallet amount, where:
@@ -958,8 +946,8 @@
         color-black-2
         m-r-6
         "
-        class:s-40={!VIEWPORT_MOBILE_INIT_PARENT[1]}
-        class:s-32={VIEWPORT_MOBILE_INIT_PARENT[1]}
+        class:s-40={!VIEWPORT_MOBILE_INIT[1]}
+        class:s-32={VIEWPORT_MOBILE_INIT[1]}
         style=
         "
         line-height: 100%; /* 40px */
@@ -1009,7 +997,7 @@
       ▓ NOTE:
       ▓ > Investor Chart Data 1.
       -->
-      {#if !VIEWPORT_MOBILE_INIT_PARENT[1]}
+      {#if !VIEWPORT_MOBILE_INIT[1]}
         <div
           id="chartHover"
         >
@@ -1028,7 +1016,7 @@
         id="chartMain"
         style=
         "
-        {!VIEWPORT_MOBILE_INIT_PARENT[1] ? 'margin-left: 47px;' : ''}
+        {!VIEWPORT_MOBILE_INIT[1] ? 'margin-left: 47px;' : ''}
         "
       >
         <div
@@ -1036,7 +1024,7 @@
           class:limit-width={mapInvestAmountDeltaPerMonth.size <= 4}
           style=
           "
-          {mapInvestAmountDeltaPerMonth.size > 4 ? `width: ${mapInvestAmountDeltaPerMonth.size * 85}px;` : 0}
+          {mapInvestAmountDeltaPerMonth.size > 4 ? `width: ${mapInvestAmountDeltaPerMonth.size * 85}px;` : ''}
           "
         >
           <canvas
@@ -1139,8 +1127,11 @@
         // max-width: 500px;
         min-width: auto;
         overflow-x: scroll;
+        overflow-y: hidden;
         width: -webkit-fill-available;
+        width: -moz-available;
         position: relative;
+        scrollbar-width: none; /* Firefox */
 
         &::-webkit-scrollbar
         {
@@ -1148,7 +1139,6 @@
           display: none;
           /* Hide scrollbar for IE, Edge and Firefox */
           -ms-overflow-style: none; /* IE and Edge */
-          scrollbar-width: none; /* Firefox */
           width: 4px;
         }
 
@@ -1161,7 +1151,9 @@
 
           &.limit-width
           {
+            /* 🎨 style */
             width: -webkit-fill-available;
+            width: -moz-available;
           }
 
           canvas#valueChart

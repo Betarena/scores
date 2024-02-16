@@ -182,13 +182,13 @@
     {:else if stateWidget == 'Completed'}
       <TranslationText
         key={'profile/investor/invest-box/tx-modal/completed'}
-        text={profileTrs?.investor?.popup_transfer.message_2}
+        text={profileTrs?.investor?.popup_transfer.message_3}
         fallback={'Transfer is complete'}
       />
     {:else if stateWidget == 'Error'}
       <TranslationText
         key={'profile/investor/invest-box/tx-modal/error'}
-        text={profileTrs?.investor?.popup_transfer.message_3}
+        text={profileTrs?.investor?.popup_transfer.message_2}
         fallback={'Transfer incomplete.'}
       />
     {:else if stateWidget == 'ErrorBalance'}

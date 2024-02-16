@@ -68,6 +68,11 @@
      *  📣 Target `fallback` text.
     */
     , fallback: string = '-'
+    /**
+     * @description
+     *  📣 Wether target text is to be wrapped in a `@html` injection block.
+    */
+    , isHtmlBlock: boolean = false
   ;
 
   // #endregion ➤ 📌 VARIABLES
@@ -109,7 +114,11 @@
 <span
   class:no-translation={!text}
 >
-  {text ?? fallback}
+  {#if !isHtmlBlock}
+    {text ?? fallback}
+  {:else}
+    {@html (text ?? fallback)}
+  {/if}
 </span>
 
 <!--
