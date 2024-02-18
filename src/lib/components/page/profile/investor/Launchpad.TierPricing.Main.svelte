@@ -812,7 +812,7 @@
                               no-wrap
                               "
                             >
-                              {grand_total} BTA
+                              {toDecimalFix(grand_total ?? 0, 2, false, false)} BTA
                             </p>
 
                             <!--

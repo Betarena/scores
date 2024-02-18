@@ -38,7 +38,7 @@
   import { userUpdateInvestorBalance } from '$lib/firebase/common.js';
   import sessionStore from '$lib/store/session.js';
   import userBetarenaSettings from '$lib/store/user-settings.js';
-  import { formatNumberWithCommas } from '$lib/utils/platform-functions.js';
+  import { toDecimalFix } from '$lib/utils/platform-functions.js';
   import { scoresProfileInvestorStore } from './_store.js';
 
   import icon_bta_token from '../assets/price-tier/icon-bta-token.svg';
@@ -309,7 +309,7 @@
         "
       >
         {
-          formatNumberWithCommas($userBetarenaSettings.user.scores_user_data?.investor_balance?.tge_to_claim ?? 0)
+          toDecimalFix(tge_to_claim ?? 0, 2, false, false)
         }
         <span
           class=

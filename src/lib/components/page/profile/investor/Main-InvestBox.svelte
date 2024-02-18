@@ -652,6 +652,8 @@
           (
             cryptoPrice * (depositAmount / tierDiscountObject.btaPrice!)
             , 3
+            , false
+            , false
           )
         )
       ;
@@ -1002,11 +1004,11 @@
     await switchUserNetwork();
 
     let
-      targetDecimals: number
-      , targetAmount: BigNumber
+      targetDecimals: number,
+      targetAmount: BigNumber,
       // @ts-expect-error
-      , ethersProvider = new ethers.providers.Web3Provider(modal.getWalletProvider())
-      , signer = await ethersProvider.getSigner()
+      ethersProvider = new ethers.providers.Web3Provider(modal.getWalletProvider()),
+      signer = ethersProvider.getSigner()
     ;
 
     // @see :> https://docs.alchemy.com/reference/error-reference
@@ -1089,12 +1091,16 @@
       }
     );
 
-    // ▓ NOTE:
-    // ▓ > needed due occasional slow network/chain propagation.
-    await sleep(3000);
+    // ╭─
+    // │ NOTE:
+    // │ > needed due occasional slow network/chain propagation.
+    // ╰─
+    await sleep(7500);
 
-    // ▓ CHECK
-    // ▓ > for errors registered.
+    // ╭─
+    // │ CHECK
+    // │ > For errors registered.
+    // ╰─
     if (formErrorState.has('Transaction_Error'))
     {
       triggerInvestBox = false;
@@ -1103,8 +1109,14 @@
       return;
     }
 
-    // ▓ NOTE:
-    // ▓ > execute `.depositTokens(..)` on the target `SmartContract`.
+    // @ts-expect-error
+    ethersProvider = new ethers.providers.Web3Provider(modal.getWalletProvider());
+    signer = ethersProvider.getSigner();
+
+    // ╭─
+    // │ NOTE:
+    // │ > execute '.depositTokens(..)' on the target 'SmartContract'.
+    // ╰─
     await tryCatchAsync
     (
       async (
@@ -1277,6 +1289,9 @@
         )
       )
     ;
+
+    if (isNaN(cryptoPrice)) cryptoPrice = 1.00;
+
     // [🐞]
     cryptoPrice = 0.999
 
@@ -1298,16 +1313,18 @@
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  $: if (browser && deepReactListenSignerChange && triggerInvestBox)
+  $:
+  if (browser && deepReactListenSignerChange && triggerInvestBox)
   {
     _DEBUG_('Option1');
     executeContract();
   }
 
-  $: recalculateReceive((depositAmount ?? 0), cryptoPrice);
+  $:
+  recalculateReceive((depositAmount ?? 0), cryptoPrice);
 
-
-  $: if (tokenSearch)
+  $:
+  if (tokenSearch)
   {
     _DEBUG_('Option2');
     searchToken();
@@ -1317,8 +1334,6 @@
     _DEBUG_('Option2');
     cryptoDepositOptionsSearch = passByValue(cryptoDepositOptions);
   }
-
-  $: if (isNaN(cryptoPrice)) cryptoPrice = 1.00;
 
   $:
   if (deepReactListenDepositOptionChange && deepReactListenSignerChange)
@@ -1334,7 +1349,8 @@
     cryptoDepositOptionSelect.userBalance = 0;
   }
 
-  $: ({ currentActiveModal } = $sessionStore);
+  $:
+  ({ currentActiveModal } = $sessionStore);
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
@@ -1406,6 +1422,7 @@
   <ModalTxState
     {stateWidget}
     depositAmount={(depositAmount ?? 0)}
+    minimumAmount={(profileData?.presaleData.data?.min_buy ?? 2500)}
   />
 {/if}
 

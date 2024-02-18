@@ -69,9 +69,9 @@
     stateWidget: IStateWidget
     /**
      * @description
-     *  📣 Target deposit amount.
+     *  📣 Target `minimum amount`.
      */
-    , depositAmount: number
+    minimumAmount: number
   ;
 
   type IStateWidget =
@@ -197,12 +197,12 @@
         text=
         {
           profileTrs?.investor?.invest_box.minimum_amount_request
-            .replace('XXX', depositAmount.toString())
+            .replace('XXX', minimumAmount.toString())
         }
         fallback=
         {
           'To participate in the private presale of BTA, you need to make a minimum investment of XXX USD.'
-            .replace('XXX', depositAmount.toString())
+            .replace('XXX', minimumAmount.toString())
         }
       />
     {/if}
@@ -233,8 +233,8 @@
     >
       <TranslationText
         key={'profile/investor/invest-box/tx-modal/ok'}
-        text={null}
-        fallback={'Ok'}
+        text={'OK'}
+        fallback={'OK'}
       />
     </button>
 

@@ -492,14 +492,14 @@
                   ▓ NOTE:
                   ▓ > transaction tier name tag.
                   -->
-                  <p
+                  <span
                     class=
                     "
                     capitalize
                     "
                   >
                     {data.tier}
-                  </p>
+                  </span>
 
                 </div>
               {:else}
