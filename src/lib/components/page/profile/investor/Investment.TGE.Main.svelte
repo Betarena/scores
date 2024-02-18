@@ -95,6 +95,7 @@
   $: ({ adminOverrides } = $scoresProfileInvestorStore);
   // @ts-expect-error
   $: ({ uid } = $userBetarenaSettings.user.firebase_user_data);
+  $: ({ tge_to_claim } = $userBetarenaSettings.user.scores_user_data?.investor_balance ?? { tge_to_claim: 0 });
 
   // #endregion ➤ 📌 VARIABLES
 
