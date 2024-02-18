@@ -84,7 +84,7 @@
     /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
-    */ // eslint-disable-next-line no-unused-vars
+     */ // eslint-disable-next-line no-unused-vars
     CNAME: string = 'profile⮕w⮕referral-bonus⮕main'
   ;
 
@@ -105,6 +105,7 @@
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
   $: ({ theme } = $userBetarenaSettings);
   $: ({ adminOverrides, bonusSummaryStateWidget } = $scoresProfileInvestorStore);
+  $: ({ referrals } = $userBetarenaSettings.user.scores_user_data ?? { referrals: [] })
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -139,17 +140,14 @@
       /**
        * @description
        *  📣 counter of amount of invalid data points in data.
-      */
+       */
       noDataCount: number = 0
     ;
 
     for (const item of dataLayout)
-
       if ([null, undefined, 0].includes(profileData?.investorData?.data?.bonus_summary[item]))
         noDataCount++;
-
-
-    if (noDataCount == dataLayout.length) $scoresProfileInvestorStore.bonusSummaryStateWidget = 'NoData';
+    if (noDataCount == dataLayout.length && (referrals?.length ?? 0) == 0) $scoresProfileInvestorStore.bonusSummaryStateWidget = 'NoData';
 
     return;
   }
@@ -299,8 +297,10 @@
             color-black-2
             "
           >
-            {profileData?.investorData?.data?.bonus_summary[item] ?? 0}
-            {#if item != 'referrals_number'}
+            {#if item == 'referrals_number'}
+              {(referrals?.length ?? 0)}
+            {:else}
+              {profileData?.investorData?.data?.bonus_summary[item] ?? 0}
               BTA
             {/if}
           </p>

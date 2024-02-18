@@ -38,6 +38,7 @@
   import { createEventDispatcher, type EventDispatcher } from 'svelte';
 
   import userBetarenaSettings from '$lib/store/user-settings.js';
+  import { toDecimalFix } from '$lib/utils/platform-functions.js';
   import { scoresProfileInvestorStore } from './_store.js';
 
   import icon_arrow_down from '../assets/arrow-down.svg';
@@ -47,6 +48,7 @@
   import icon_green_dot from '../assets/investor/icon-green-dot.svg';
 
 	import TranslationText from '$lib/components/misc/Translation-Text.svelte';
+
 	import type { PublicInvestorDataIVesting } from '@betarena/scores-lib/types/_AUTO-HASURA-2_.js';
 	import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
@@ -232,7 +234,7 @@
     -->
     <td>
       <p>
-        {data.tokens ?? '-'}
+        {toDecimalFix(data.tokens ?? 0, 2, false, false)}
       </p>
     </td>
 

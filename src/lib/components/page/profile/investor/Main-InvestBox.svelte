@@ -1004,11 +1004,11 @@
     await switchUserNetwork();
 
     let
-      targetDecimals: number,
-      targetAmount: BigNumber,
+      targetDecimals: number
+      , targetAmount: BigNumber
       // @ts-expect-error
-      ethersProvider = new ethers.providers.Web3Provider(modal.getWalletProvider()),
-      signer = ethersProvider.getSigner()
+      , ethersProvider = new ethers.providers.Web3Provider(modal.getWalletProvider())
+      , signer = ethersProvider.getSigner()
     ;
 
     // @see :> https://docs.alchemy.com/reference/error-reference
@@ -1095,7 +1095,7 @@
     // │ NOTE:
     // │ > needed due occasional slow network/chain propagation.
     // ╰─
-    await sleep(7500);
+    await sleep(12500);
 
     // ╭─
     // │ CHECK
