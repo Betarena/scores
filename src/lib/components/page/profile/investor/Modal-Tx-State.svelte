@@ -71,7 +71,7 @@
      * @description
      *  📣 Target `minimum amount`.
      */
-    minimumAmount: number
+    , minimumAmount: number
   ;
 
   type IStateWidget =

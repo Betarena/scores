@@ -199,9 +199,11 @@
       /**
        * @description
        *  📣 target container to `listen` changes to.
-      */
-      container = document.getElementById('chartParent')!
+       */
+      container = document.getElementById('chartParent')
     ;
+
+    if (!container) return
 
     // ▓ NOTE:
     // ▓ > 📱 MOBILE.
@@ -332,12 +334,16 @@
       /**
        * @description
        *  📣 target container to `listen` changes to.
-      */
-      container = document.getElementById('chartParent')!
+       */
+      container = document.getElementById('chartParent')
     ;
 
-    container.removeEventListener('touchstart', mouseDownEvent, true);
-    container.removeEventListener('mousedown', mouseDownEvent, true);
+    if (container)
+    {
+      container.removeEventListener('touchstart', mouseDownEvent, true);
+      container.removeEventListener('mousedown', mouseDownEvent, true);
+    }
+
     window.removeEventListener('touchend', mouseUpEvent, true);
     window.removeEventListener('touchmove', mouseMoveEvent, true);
     window.removeEventListener('mouseup', mouseUpEvent, true);
