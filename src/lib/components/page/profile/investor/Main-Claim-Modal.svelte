@@ -42,6 +42,7 @@
 	import ModalBackdrop from '$lib/components/misc/modal/Modal-Backdrop.svelte';
 	import TranslationText from '$lib/components/misc/Translation-Text.svelte';
 
+	import { toDecimalFix } from '$lib/utils/platform-functions.js';
 	import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -181,10 +182,10 @@
       text=
       {
         profileTrs?.investor?.presale.claim_confirmation.message
-          .replace('$$$', `<span> ${amount.toString()} BTA </span>`)
+          .replace('$$$', `<span> ${toDecimalFix(amount, 2, false, false)} BTA </span>`)
       }
       isHtmlBlock={true}
-      fallback={`Confirm that you wish to claim your ${amount.toString()} BTA and transfer them to your main wallet.`}
+      fallback={`Confirm that you wish to claim your ${toDecimalFix(amount, 2, false, false)} BTA and transfer them to your main wallet.`}
     />
   </p>
 

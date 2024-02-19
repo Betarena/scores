@@ -427,7 +427,7 @@
         continue;
       }
 
-      mapTemp.set(txMonthYear, iterator.amount ?? 0);
+      mapTemp.set(txMonthYear, deltaAmount);
     }
 
     // ▓ [🐞]

@@ -364,6 +364,11 @@
           class=
           "
           btn-hollow
+            v5d
+          color-black-2
+            white-v1
+          <!---->
+          claimed-pill
           "
         >
           <TranslationText

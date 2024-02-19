@@ -228,7 +228,8 @@
       }
     );
 
-    vestingPeriodsClaimed.push(targetVestingSelected.id);
+    // vestingPeriodsClaimed.push(targetVestingSelected.id);
+    window.location.reload();
 
     return;
   }
@@ -765,11 +766,25 @@
                   color: var(--dark-theme);
                 }
 
-                button.btn-primary-v2
+                button
                 {
                   /* 🎨 style */
-                  height: 36px;
-                  width: 96px;
+                  @mixin default
+                  {
+                    height: 36px;
+                    width: 96px;
+                  }
+
+                  &.btn-primary-v2
+                  {
+                    @include default;
+                  }
+
+                  &.btn-hollow.claimed-pill
+                  {
+                    /* 🎨 style */
+                    @include default;
+                  }
                 }
               }
 

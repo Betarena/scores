@@ -172,6 +172,12 @@ button
           border: 1px solid var(--grey-shade) !important;
         }
       }
+
+      &.v5d
+      {
+        /* 🎨 style */
+        border: 1px solid var(--dark-theme-1-shade) !important;
+      }
     }
   }
 

@@ -48,6 +48,7 @@
   import AdminDevControlPanelToggleButton from '$lib/components/misc/admin/Admin-Dev-ControlPanelToggleButton.svelte';
   import MainClaimModal from './Main-Claim-Modal.svelte';
 
+  import { toISOMod } from '$lib/utils/dates.js';
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -131,8 +132,8 @@
        */
       result = await postv2
       (
-        // `${import.meta.env.VITE_FIREBASE_FUNCTIONS_ORIGIN}/transaction/update/investment/claim/create`
-        'http://127.0.0.1:5001/betarena-ios/us-central1/api/transaction/update/investment/claim/create'
+        `${import.meta.env.VITE_FIREBASE_FUNCTIONS_ORIGIN}/transaction/update/investment/claim/create`
+        // 'http://127.0.0.1:5001/betarena-ios/us-central1/api/transaction/update/investment/claim/create'
         , {
           uid
           , vestingId: null
@@ -168,7 +169,8 @@
       }
     );
 
-    $scoresProfileInvestorStore.tgeStateWidget = 'Tge_Claimed';
+    // $scoresProfileInvestorStore.tgeStateWidget = 'Tge_Claimed';
+    window.location.reload();
 
     return;
   }
@@ -416,7 +418,7 @@
       ▓ NOTE:
       ▓ > token release date not set.
       -->
-      {#if $scoresProfileInvestorStore.tgeStateWidget == 'Tge_NoDefinedDate' || $scoresProfileInvestorStore.tgeStateWidget == 'Tge_ClaimAvailable'}
+      {#if ['Tge_ClaimAvailable', 'Tge_NoDefinedDate'].includes($scoresProfileInvestorStore.tgeStateWidget)}
 
         <div
           id="round-info-box-parent"
@@ -436,11 +438,7 @@
                 fallback={'Date to be announced soon'}
               />
             {:else}
-              <TranslationText
-                key={`${CNAME}`}
-                text={profileData?.presaleData.data?.end_date}
-                fallback={'-'}
-              />
+              {toISOMod(profileData?.investorData?.data?.tge.available_date ?? '')}
             {/if}
           </p>
         </div>

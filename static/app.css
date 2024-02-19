@@ -1951,6 +1951,11 @@ h6 {
   /* 🎨 style */
   color: var(--grey-shade) !important;
 }
+.dark-background .color-black-2.white-v1, .dark-background-1 .color-black-2.white-v1 {
+  /* 🔥 override */
+  /* 🎨 style */
+  color: var(--grey-color) !important;
+}
 
 .color-black-3 {
   /* 🎨 style */
@@ -2235,6 +2240,10 @@ button.btn-hollow.v4:hover {
 .dark-background button.btn-hollow.v3d:hover, .dark-background-1 button.btn-hollow.v3d:hover {
   /* 🎨 style */
   border: 1px solid var(--grey-shade) !important;
+}
+.dark-background button.btn-hollow.v5d, .dark-background-1 button.btn-hollow.v5d {
+  /* 🎨 style */
+  border: 1px solid var(--dark-theme-1-shade) !important;
 }
 button.btn-dark {
   /* 🎨 style */

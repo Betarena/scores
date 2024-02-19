@@ -101,9 +101,9 @@ function createLocalStore
             storeObject.tgeStateWidget = 'Tge_NoDefinedDate';
           else
             storeObject.tgeStateWidget = 'Tge_DateDefined';
-        else if (opts.tgeStatus == 'Pending')
-          storeObject.tgeStateWidget = 'Tge_ClaimAvailable';
-        else if (opts.tgeStatus == 'Distribuited')
+        // else if ((storeObject.globalTgeReleaseClock?.[0] ?? 1) <= 0 && (storeObject.globalTgeReleaseClock?.[3] ?? 1) <= 0)
+        //   storeObject.tgeStateWidget = 'Tge_ClaimAvailable';
+        else if (['Pending', 'Distribuited'].includes(opts.tgeStatus))
           storeObject.tgeStateWidget = 'Tge_Claimed';
         //
 
@@ -220,8 +220,9 @@ function createLocalStore
       (
       ): void =>
       {
-        if ((storeObject.globalTgeReleaseClock?.[0] ?? 1) <= 0 && (storeObject.globalTgeReleaseClock?.[3] ?? 1) <= 0)
-          storeObject.tgeStateWidget = 'Tge_ClaimAvailable';
+        if (!storeObject.adminOverrides.has('Tge'))
+          if ((storeObject.globalTgeReleaseClock?.[0] ?? 1) <= 0 && (storeObject.globalTgeReleaseClock?.[3] ?? 1) <= 0 && storeObject.tgeStateWidget != 'Tge_Claimed')
+            storeObject.tgeStateWidget = 'Tge_ClaimAvailable';
         // ──────────────────────────────────────────────────────────────────────────────────
 
         if (!storeObject.adminOverrides.has('Rounds'))
