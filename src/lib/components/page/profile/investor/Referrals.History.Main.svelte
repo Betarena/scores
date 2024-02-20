@@ -630,7 +630,7 @@
                 {
                   /* 🎨 style */
                   font-size: 14px;
-                  color: var(--dark-theme-1);
+                  color: var(--dark-theme);
                 }
               }
 
@@ -756,6 +756,15 @@
               {
                 /* 🎨 style */
                 background-color: rgba(75, 75, 75, 0.50) !important;
+              }
+            }
+
+            td
+            {
+              p
+              {
+                /* 🎨 style */
+                color: var(--white) !important;
               }
             }
           }

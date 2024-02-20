@@ -42,6 +42,7 @@
   import AdminDevControlPanelToggleButton from '$lib/components/misc/admin/Admin-Dev-ControlPanelToggleButton.svelte';
   import TranslationText from '$lib/components/misc/Translation-Text.svelte';
 
+  import { toDecimalFix } from '$lib/utils/platform-functions.js';
   import type { PublicInvestorDataIBonus } from '@betarena/scores-lib/types/_AUTO-HASURA-2_.js';
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
@@ -300,7 +301,7 @@
             {#if item == 'referrals_number'}
               {(referrals?.length ?? 0)}
             {:else}
-              {profileData?.investorData?.data?.bonus_summary[item] ?? 0}
+              {toDecimalFix((profileData?.investorData?.data?.bonus_summary[item] ?? 0), 2, false, false)}
               BTA
             {/if}
           </p>

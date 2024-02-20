@@ -79,7 +79,6 @@
 
   import TranslationText from '$lib/components/misc/Translation-Text.svelte';
   import ModalBackdrop from '$lib/components/misc/modal/Modal-Backdrop.svelte';
-  import { getCookie } from '$lib/store/cookie.js';
   import type { PublicTransactionHistoryMain } from '@betarena/scores-lib/types/_AUTO-HASURA-2_.js';
   import type { ICoinMarketCapDataMain } from '@betarena/scores-lib/types/_WEB3_.js';
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
@@ -400,6 +399,7 @@
   $: deepReactListenSignerChange = undefined as unknown;
   $: deepReactListenDepositOptionChange = JSON.stringify(cryptoDepositOptionSelect) as string;
   $: ({ theme } = $userBetarenaSettings);
+  $: ({ referredBy } = $userBetarenaSettings.user.scores_user_data ?? { referredBy: null });
   $: ({ grand_total } = $userBetarenaSettings.user.scores_user_data?.investor_balance ?? { grand_total: 0 });
   $: ({ uid } = $userBetarenaSettings.user.firebase_user_data ?? { uid: null });
   $: ({ roundStateWidget } = $scoresProfileInvestorStore);
@@ -1182,23 +1182,9 @@
     const
       /**
        * @description
-       *  📣 Target cookie.
-       */
-      cookie
-        = getCookie
-        (
-          document.cookie
-        )
-      /**
-       * @description
-       *  📣 Target cookie value.
-       */
-      , cookieValue = cookie.betarenaScoresCookieReferralCode
-      /**
-       * @description
        *  📣 send data for completed user transaction to DB.
        */
-      , txDepositData: PublicTransactionHistoryMain
+      txDepositData: PublicTransactionHistoryMain
         = {
           uid
           , asset: cryptoDepositOptionSelect.name
@@ -1216,7 +1202,7 @@
             type: 'Polygon'
             , address: walletAddress
           }
-          , referral: cookieValue
+          , referral: referredBy as string | undefined
         }
     ;
 

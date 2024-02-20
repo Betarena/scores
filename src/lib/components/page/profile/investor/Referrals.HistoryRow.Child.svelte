@@ -42,6 +42,7 @@
   import TranslationText from '$lib/components/misc/Translation-Text.svelte';
 
   import type { PublicInvestorDataIReferralHistory } from '@betarena/scores-lib/types/_AUTO-HASURA-2_.js';
+  import { toDecimalFix } from '$lib/utils/platform-functions.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -141,7 +142,7 @@
   -->
   <td>
     <p>
-      {data.bonus_bta ?? '-'}
+      {toDecimalFix(data.bonus_bta ?? 0, 2, false, false)}
     </p>
   </td>
 
