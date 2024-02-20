@@ -1102,15 +1102,6 @@
               }
             }
           }
-
-          &:nth-child(even):not(.row-progress)
-          {
-            td
-            {
-              /* 🎨 style */
-              background-color: var(--whitev2);
-            }
-          }
         }
       }
     }
@@ -1121,6 +1112,52 @@
   │ ⚡️ RESPONSIVNESS                                                              │
   ╰──────────────────────────────────────────────────────────────────────────────╯
   */
+
+  @media only screen
+  and (max-width: 559px)
+  {
+    div#profile⮕w⮕investTierPricing⮕main
+    {
+      table
+      {
+        tbody
+        {
+          tr
+          {
+            &:nth-child(even):not(.row-progress)
+            {
+              td
+              {
+                /* 🎨 style */
+                background-color: var(--whitev2);
+              }
+            }
+          }
+        }
+      }
+    }
+
+    div#profile⮕w⮕investTierPricing⮕main
+    {
+      &.dark-background-1 table
+      {
+        tbody
+        {
+          tr
+          {
+            &:nth-child(even):not(.row-progress)
+            {
+              td
+              {
+                /* 🎨 style */
+                background-color: var(--dark-theme-1-5-shade-o-0-5);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 
   @media only screen
   and (min-width: 560px)
@@ -1155,12 +1192,14 @@
             {
               /* 🎨 style */
               padding-bottom: 20px;
+              width: 150px;
 
               &:first-child
               {
                 /* 🎨 style */
                 padding-left: 0;
                 min-width: 210px;
+                width: 210px;
               }
 
               &:last-child
@@ -1222,15 +1261,6 @@
                   /* 🎨 style */
                   text-align: start;
                 }
-              }
-            }
-
-            &:nth-child(even):not(.row-progress)
-            {
-              td
-              {
-                /* 🎨 style */
-                background-color: unset;
               }
             }
 
@@ -1316,12 +1346,16 @@
             }
           }
 
-          &:nth-child(odd)
+          @media only screen
+          and (min-width: 560px)
           {
-            td
+            &:nth-child(odd)
             {
-              /* 🎨 style */
-              background-color: var(--dark-theme-1-5-shade-o-0-5);
+              td
+              {
+                /* 🎨 style */
+                background-color: var(--dark-theme-1-5-shade-o-0-5);
+              }
             }
           }
         }
