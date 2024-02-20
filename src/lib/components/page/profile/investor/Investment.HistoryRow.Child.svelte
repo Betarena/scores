@@ -429,7 +429,7 @@
             {:else if item == 'description'}
               <TranslationText
                 key={'profile/investor/invest-history/row/description'}
-                text={null}
+                text={profileTrs?.investor?.investment_details.description}
                 fallback={'Description'}
               />
             {:else if item == 'tier'}

@@ -975,7 +975,6 @@
               /* 🎨 style */
               padding-left: 20px;
               padding-right: 20px;
-              min-width: 210px;
               max-width: 210px;
             }
 
@@ -1104,7 +1103,7 @@
             }
           }
 
-          &:nth-child(odd)
+          &:nth-child(even):not(.row-progress)
           {
             td
             {
@@ -1161,6 +1160,7 @@
               {
                 /* 🎨 style */
                 padding-left: 0;
+                min-width: 210px;
               }
 
               &:last-child
@@ -1222,6 +1222,24 @@
                   /* 🎨 style */
                   text-align: start;
                 }
+              }
+            }
+
+            &:nth-child(even):not(.row-progress)
+            {
+              td
+              {
+                /* 🎨 style */
+                background-color: unset;
+              }
+            }
+
+            &:nth-child(odd)
+            {
+              td
+              {
+                /* 🎨 style */
+                background-color: var(--whitev2);
               }
             }
           }

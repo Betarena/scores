@@ -332,7 +332,7 @@
                 {:else if item == 'status'}
                   <TranslationText
                     key={`${CNAME}/table/header/status`}
-                    text={null}
+                    text={profileTrs?.investor?.investment_details.status}
                     fallback={'Status'}
                   />
                 {/if}
