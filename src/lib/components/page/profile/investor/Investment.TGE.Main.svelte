@@ -290,6 +290,12 @@
       class=
       "
       row-space-start
+      width-fit-content
+      "
+      style=
+      "
+      flex-wrap: wrap;
+      align-items: flex-end;
       "
     >
 
@@ -302,7 +308,7 @@
         "
         w-500
         color-black-2
-        m-r-6
+        m-r-10
         "
         class:s-40={!VIEWPORT_MOBILE_INIT[1]}
         class:s-32={VIEWPORT_MOBILE_INIT[1]}
@@ -314,29 +320,55 @@
         {
           toDecimalFix(tge_to_claim ?? 0, 2, false, false)
         }
-        <span
-          class=
-          "
-          s-24
-          "
-        >
-          BTA
-        </span>
       </p>
 
       <!--
       ▓ NOTE:
-      ▓ > (asset) BTA icon token.
+      ▓ > (text) BTA + Icon
       -->
-      <img
-        id=''
-        src={icon_bta_token}
-        alt=''
-        title=''
-        loading='lazy'
-        width=20
-        height=20
-      />
+      <div
+        class=
+        "
+        row-space-start
+        width-fit-content
+        "
+      >
+
+        <!--
+        ▓ NOTE:
+        ▓ > (text) TGE amount
+        -->
+        <p
+          class=
+          "
+          w-500
+          color-black-2
+          m-r-6
+          "
+          class:s-24={!VIEWPORT_MOBILE_INIT[1]}
+          class:s-20={VIEWPORT_MOBILE_INIT[1]}
+          style=
+          "
+          line-height: 100%; /* 40px */
+          "
+        >
+          BTA
+        </p>
+
+        <!--
+        ▓ NOTE:
+        ▓ > (asset) BTA icon token.
+        -->
+        <img
+          id=''
+          src={icon_bta_token}
+          alt=''
+          title=''
+          loading='lazy'
+          width=20
+          height=20
+        />
+      </div>
 
     </div>
 
