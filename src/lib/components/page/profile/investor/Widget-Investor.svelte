@@ -482,7 +482,7 @@
             {
               /* 🎨 style */
               font-weight: 500;
-              color: var(--grey);
+              color: var(--dark-theme);
             }
           }
         }
@@ -694,7 +694,7 @@
             span#x3123
             {
               /* 🎨 style */
-              color: var(--white);
+              color: var(--white) !important;
             }
           }
         }
