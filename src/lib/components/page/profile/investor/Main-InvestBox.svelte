@@ -1279,7 +1279,7 @@
     if (isNaN(cryptoPrice)) cryptoPrice = 1.00;
 
     // [🐞]
-    cryptoPrice = 0.999
+    // cryptoPrice = 0.999
 
     return;
   }
