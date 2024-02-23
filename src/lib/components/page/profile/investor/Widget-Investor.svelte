@@ -25,7 +25,7 @@
 
 	import { page } from '$app/stores';
 	import { get } from '$lib/api/utils.js';
-	import { viewport_change } from '$lib/utils/platform-functions';
+	import { sleep, viewport_change } from '$lib/utils/platform-functions';
 	import { onMount } from 'svelte';
 
   import userBetarenaSettings from '$lib/store/user-settings.js';
@@ -186,6 +186,8 @@
         , tgeStatus: widgetDataMain.investorData?.data?.tge.status ?? ''
       }
     );
+
+    await sleep(1000);
 
     return widgetDataMain;
   }
