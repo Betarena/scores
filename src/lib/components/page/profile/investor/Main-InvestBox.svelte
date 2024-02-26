@@ -38,7 +38,7 @@
   //                  51b365df14ba967&format=raw
   // 🔗 read-more :|: https://mumbai.polygonscan.com/token/0x3813e82e6f7098b9583fc0f33a962d02018b6803#code
 
-  import { browser } from '$app/environment';
+  import { browser, dev } from '$app/environment';
   import { page } from '$app/stores';
   import { onDestroy, onMount } from 'svelte';
   import { fly } from 'svelte/transition';
@@ -367,7 +367,7 @@
      * @description
      *  📣 crypto deposit object selected
      */
-    , cryptoDepositOptionSelect: ICryptoDesposit = cryptoDepositOptions[0]
+    , cryptoDepositOptionSelect: ICryptoDesposit = cryptoDepositOptions[1]
     /**
      * @description
      *  📣 modal open select cryptocurrency option
@@ -1053,7 +1053,12 @@
         targetDecimals = await contract.decimals();
         targetAmount = ethers.utils.parseUnits((depositAmount ?? 0).toString(), targetDecimals);
 
-        const transactionResponse: Transaction = await contract.approve(betarenaBankContractAddress, targetAmount);
+        // [🐞]
+        // console.log('targetAmount', targetAmount.toNumber());
+
+        const
+          transactionResponse: Transaction = await contract.approve(betarenaBankContractAddress, targetAmount)
+        ;
 
         // ▓ [🐞]
         dlogv2
@@ -1095,7 +1100,125 @@
     // │ NOTE:
     // │ > needed due occasional slow network/chain propagation.
     // ╰─
-    await sleep(12500);
+    // await sleep(12500);
+
+    // ╭─
+    // │ NOTE:
+    // │ > execute `.allowance(..)` logic for `allowance` for `ERC20` tokens.
+    // │ > prior to effectuating a `deposit`/`transfer` of funds.
+    // ╰─
+    let
+      count = 0
+    ;
+    // eslint-disable-next-line no-constant-condition
+    while (true)
+    {
+      const
+        response = await tryCatchAsync
+        (
+          async (
+          ): Promise < boolean > =>
+          {
+            // [🐞]
+            console.log('executing allowance()...');
+
+            const
+              /**
+               * @description
+               *  📣 Target `contract` for interaction.
+               */
+              contract
+                = new ethers.Contract
+                (
+                  cryptoDepositOptionSelect.contractAddress,
+                  cryptoDepositOptionSelect.abi as ContractInterface,
+                  signer
+                )
+              /**
+               * @description
+               *  📣 Target `transaction` return.
+               */
+              , transactionResponse
+                = await contract.allowance(signer.getAddress(), betarenaBankContractAddress) as BigNumber
+              /**
+               * @description
+               *  📣 Target `allowance` amount.
+               */
+              , allowanceAmount = transactionResponse.toNumber()
+              /**
+               * @description
+               *  📣 Target amount number.
+               */
+              , targetAmountNumber = targetAmount!.toNumber()
+            ;
+
+            // [🐞]
+            console.log('allowanceAmount', allowanceAmount);
+            // [🐞]
+            console.log('targetAmountNumber', targetAmountNumber);
+
+            if (allowanceAmount < targetAmountNumber)
+              throw new Error('ERR-X1');
+            //
+
+            // [🐞]
+            dlogv2
+            (
+              'data'
+              , [
+                `transactionResponse ${transactionResponse}`
+              ]
+              , true
+            );
+
+            return true;
+          }
+          , (
+            ex: unknown
+          ): boolean =>
+          {
+            formErrorState.add('Transaction_Error');
+
+            // ▓ [🐞]
+            if (ex?.toString()?.includes('ACTION_REJECTED'))
+              console.info('📣 The user has rejected the transaction.');
+            else if (ex?.toString()?.includes('Error: Internal JSON-RPC error.'))
+              // ▓ see :> https://support.metamask.io/hc/en-us/articles/360059289871-Error-Intern
+              // al-JSON-RPC-error-when-trying-to-interact-with-other-networks
+              console.info('❌ Something is not right, please recheck everything again.');
+            else if (ex?.toString()?.includes('code=CALL_EXCEPTION'))
+              console.info('❌ ERR :: Incorrect selected chain by client/user');
+            else
+              console.error(`💀 Unhandled :: ${ex}`);
+            //
+
+            return false;
+          }
+        ) as boolean
+      ;
+
+      if (response)
+      {
+        // [🐞]
+        // console.log('EXITING!');
+        formErrorState.delete('Transaction_Error');
+        break;
+      }
+
+      await sleep(2500);
+
+      count++;
+
+      if (count > 10)
+      {
+        // [🐞]
+        // console.log('EXITING V2!');
+        formErrorState.add('Transaction_Error');
+        break;
+      }
+
+      continue;
+    }
 
     // ╭─
     // │ CHECK
@@ -1251,32 +1374,36 @@
   (
   ): Promise < void >
   {
-    // @ts-expect-error
-    cryptoPrices
-      = await get
-      (
-        '/api/coinmarketcap?tickers=USDT,USDC',
-        null,
-        true,
-        true
-      )
-    ;
-
-    cryptoPrice
-      = parseFloat
-      (
-        toDecimalFix
+    if (dev)
+    {
+      // @ts-expect-error
+      cryptoPrices
+        = await get
         (
-          // @ts-expect-error
-          cryptoPrices?.data[cryptoDepositOptionSelect.name].quote.USD.price
-          , 3
-          , true
-          , false
+          '/api/coinmarketcap?tickers=USDT,USDC',
+          null,
+          true,
+          true
         )
-      )
-    ;
+      ;
 
-    if (isNaN(cryptoPrice)) cryptoPrice = 1.00;
+      cryptoPrice
+        = parseFloat
+        (
+          toDecimalFix
+          (
+            // @ts-expect-error
+            cryptoPrices?.data[cryptoDepositOptionSelect.name].quote.USD.price
+            , 3
+            , true
+            , false
+          )
+        )
+      ;
+
+      if (isNaN(cryptoPrice)) cryptoPrice = 1.00;
+    }
+
 
     // [🐞]
     // cryptoPrice = 0.999
@@ -1407,7 +1534,6 @@
 {#if currentActiveModal == 'ProfileInvestor_TxState_Modal'}
   <ModalTxState
     {stateWidget}
-    depositAmount={(depositAmount ?? 0)}
     minimumAmount={(profileData?.presaleData.data?.min_buy ?? 2500)}
   />
 {/if}
@@ -1474,7 +1600,7 @@
         ▓ NOTE:
         ▓ > Connect Wallet.
         -->
-        {#if roundStateWidget != 'Round_Ended'}
+        {#if roundStateWidget == 'Round_CountdownToFinish'}
           <button
             type="button"
             class=
@@ -1542,7 +1668,7 @@
       ▓ NOTE:
       ▓ > Deposit Method.
       -->
-      {#if roundStateWidget != 'Round_Ended'}
+      {#if roundStateWidget == 'Round_CountdownToFinish'}
         <div
           id="deposit-method"
           class=
@@ -1729,7 +1855,7 @@
       id="middle-row"
     >
 
-      {#if roundStateWidget != 'Round_Ended'}
+      {#if roundStateWidget == 'Round_CountdownToFinish'}
 
         <!--
         ▓ NOTE:
@@ -2248,10 +2374,10 @@
         w-500
         s-14
         "
-        disabled={roundStateWidget == 'Round_Ended'}
+        disabled={roundStateWidget != 'Round_CountdownToFinish'}
         on:click={() => { return setupFormRequiredListener() }}
       >
-        {#if roundStateWidget != 'Round_Ended'}
+        {#if roundStateWidget == 'Round_CountdownToFinish'}
           <TranslationText
             key={'profile/investor/invest-box'}
             text={profileTrs?.investor?.invest_box.cta}

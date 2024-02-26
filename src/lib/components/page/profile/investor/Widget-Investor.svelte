@@ -455,8 +455,9 @@
       iframe
       {
         /* 🎨 style */
-        width: -webkit-fill-available;
-        width: -moz-available;
+        // width: -webkit-fill-available;
+        // width: -moz-available;
+        width: 100%;
         border-radius: 12px;
         height: 216px;
         grid-row: 3;

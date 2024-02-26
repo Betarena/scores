@@ -405,7 +405,7 @@
       ;
 
       if (
-        !['completed'].includes(iterator.status!)
+        !['completed', 'pending'].includes(iterator.status!)
         || !['investment', 'vesting', 'tge'].includes(iterator.type!)
       )
         continue;
@@ -413,9 +413,9 @@
 
       let deltaAmount: number = 0;
 
-      if (iterator.type == 'investment' && iterator.status == 'completed')
+      if (iterator.type == 'investment')
         deltaAmount = iterator.amount ?? 0;
-      else if ((iterator.type == 'vesting' || iterator.type == 'tge') && iterator.status == 'completed')
+      else if (iterator.type == 'vesting' || iterator.type == 'tge')
         deltaAmount = -(iterator.amount ?? 0);
       // ────────────────────────────────────────────────────────────────────────
 

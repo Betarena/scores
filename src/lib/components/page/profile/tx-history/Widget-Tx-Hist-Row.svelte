@@ -7,6 +7,7 @@ COMPONENT JS (w/ TS)
   // #region ➤ 📦 Package Imports
 
 	import { toISOMod } from '$lib/utils/dates.js';
+  import { toDecimalFix } from '$lib/utils/platform-functions.js';
 
 	import icon_arrow_down from '../assets/arrow-down.svg';
 	import icon_arrow_up from '../assets/arrow-up.svg';
@@ -243,7 +244,7 @@ COMPONENT JS (w/ TS)
     -->
     <td>
       <p>
-        {tx_data?.amount ?? '-'}
+        {toDecimalFix(tx_data?.amount ?? 0, 2, false, false)}
       </p>
     </td>
 
@@ -357,7 +358,7 @@ COMPONENT JS (w/ TS)
           color-grey
           "
         >
-          {tx_data?.amount ?? '-'} BTA
+          {toDecimalFix(tx_data?.amount ?? 0, 2, false, false)} BTA
         </p>
       </div>
     </td>

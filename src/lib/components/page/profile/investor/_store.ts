@@ -103,7 +103,7 @@ function createLocalStore
             storeObject.tgeStateWidget = 'Tge_DateDefined';
         // else if ((storeObject.globalTgeReleaseClock?.[0] ?? 1) <= 0 && (storeObject.globalTgeReleaseClock?.[3] ?? 1) <= 0)
         //   storeObject.tgeStateWidget = 'Tge_ClaimAvailable';
-        else if (['Pending', 'Distribuited'].includes(opts.tgeStatus))
+        else
           storeObject.tgeStateWidget = 'Tge_Claimed';
         //
 
