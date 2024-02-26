@@ -3,6 +3,7 @@
 // #region ➤ 📦 Package Imports
 
 import { toCorrectDate } from '$lib/utils/dates.js';
+import { checkNull } from '$lib/utils/platform-functions.js';
 import { writable } from 'svelte/store';
 
 // #endregion ➤ 📦 Package Imports
@@ -67,13 +68,13 @@ function createLocalStore
       (
         opts:
         {
-          investmentCount: number | null;
-          presaleName: string | null;
-          activePresaleStartDate: string | null;
-          activePresaleEndDate: string | null;
-          publicEndDate: string | null;
-          tgeAvailableDate: string | null;
-          tgeStatus: string | null;
+          investmentCount: number | null | undefined;
+          presaleName: string | null | undefined;
+          activePresaleStartDate: string | null | undefined;
+          activePresaleEndDate: string | null | undefined;
+          publicEndDate: string | null | undefined;
+          tgeAvailableDate: string | null | undefined;
+          tgeStatus: string | null | undefined;
         }
       ): void =>
       {
@@ -96,7 +97,7 @@ function createLocalStore
         // │ 🟦 TGE EXCLUSIVE                                                                 │
         // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-        if (opts.tgeStatus == null)
+        if (checkNull(opts.tgeStatus))
           if (!opts.publicEndDate || !opts.tgeAvailableDate || opts.presaleName == 'private')
             storeObject.tgeStateWidget = 'Tge_NoDefinedDate';
           else

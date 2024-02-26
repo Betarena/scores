@@ -58,6 +58,7 @@
     , trsStatusTerms: TranslationsTransactionsDataStatus | undefined
   ;
 
+  // [🐞]
   console.log('trsStatusTerms', trsStatusTerms)
 
   const
@@ -88,13 +89,13 @@
   "
   class:completed={txStatus == 'completed'}
   class:pending={txStatus == 'pending'}
-  class:failed={txStatus == 'failed'}
+  class:failed={['failed', 'canceled', 'refunded'].includes((txStatus ?? ''))}
 >
   {#if txStatus == 'completed'}
     <TranslationText key={'shared/tx-pill'} text={trsStatusTerms?.complete} />
   {:else if txStatus == 'pending'}
     <TranslationText key={'shared/tx-pill'} text={trsStatusTerms?.pending} />
-  {:else if txStatus == 'failed'}
+  {:else if ['failed', 'canceled', 'refunded'].includes((txStatus ?? ''))}
     <TranslationText key={'shared/tx-pill'} text={trsStatusTerms?.failed} />
   {/if}
 </p>

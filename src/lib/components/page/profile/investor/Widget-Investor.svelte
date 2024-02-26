@@ -178,12 +178,12 @@
     (
       {
         investmentCount: $userBetarenaSettings.user.scores_user_data?.investor_balance?.grand_total ?? 0
-        , presaleName: widgetDataMain.presaleData.presale ?? ''
-        , activePresaleStartDate: widgetDataMain.presaleData.data?.start_date ?? ''
-        , activePresaleEndDate: widgetDataMain.presaleData.data?.end_date ?? ''
-        , publicEndDate: widgetDataMain.presaleData.data?.end_date ?? ''
-        , tgeAvailableDate: widgetDataMain.investorData?.data?.tge.available_date ?? ''
-        , tgeStatus: widgetDataMain.investorData?.data?.tge.status ?? ''
+        , presaleName: widgetDataMain.presaleData.presale
+        , activePresaleStartDate: widgetDataMain.presaleData.data?.start_date
+        , activePresaleEndDate: widgetDataMain.presaleData.data?.end_date
+        , publicEndDate: widgetDataMain.presaleData.data?.end_date
+        , tgeAvailableDate: widgetDataMain.investorData?.data?.tge.available_date
+        , tgeStatus: widgetDataMain.investorData?.data?.tge.status
       }
     );
 

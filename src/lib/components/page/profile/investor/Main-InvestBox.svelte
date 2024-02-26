@@ -592,7 +592,34 @@
   ): void
   {
     const
-      depositCalculated = (depositAmount * cryptoPrice) + grand_total!
+      /**
+       * @description
+       *  📣 Previously (sum) invested amount by user.
+       */
+      previouslyInvestedAmount = profileData?.tx_hist
+        ?.filter
+        (
+          x =>
+          {
+            return x.status == 'completed'
+          }
+        )
+        ?.reduce
+        (
+          (
+            acc
+            , item
+          ) =>
+          {
+            return (acc + (item.quantity ?? 0));
+          },
+          0
+        ) ?? 0
+      /**
+       * @description
+       *  📣 Final deposit calculated, taking into account other variable(s) and values
+       */
+      , depositCalculated = (depositAmount * cryptoPrice) + previouslyInvestedAmount
     ;
 
     if (depositCalculated >= 100000)
