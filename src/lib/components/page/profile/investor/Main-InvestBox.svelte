@@ -601,7 +601,7 @@
         (
           x =>
           {
-            return x.status == 'completed'
+            return x.status == 'completed' && x.type == 'investment'
           }
         )
         ?.reduce

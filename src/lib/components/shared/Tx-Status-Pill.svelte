@@ -92,11 +92,30 @@
   class:failed={['failed', 'canceled', 'refunded'].includes((txStatus ?? ''))}
 >
   {#if txStatus == 'completed'}
-    <TranslationText key={'shared/tx-pill'} text={trsStatusTerms?.complete} />
+    <TranslationText
+      key={'shared/tx-pill'}
+      text={trsStatusTerms?.complete}
+    />
   {:else if txStatus == 'pending'}
-    <TranslationText key={'shared/tx-pill'} text={trsStatusTerms?.pending} />
-  {:else if ['failed', 'canceled', 'refunded'].includes((txStatus ?? ''))}
-    <TranslationText key={'shared/tx-pill'} text={trsStatusTerms?.failed} />
+    <TranslationText
+      key={'shared/tx-pill'}
+      text={trsStatusTerms?.pending}
+    />
+  {:else if txStatus == 'failed'}
+    <TranslationText
+      key={'shared/tx-pill'}
+      text={trsStatusTerms?.failed}
+    />
+  {:else if txStatus == 'canceled'}
+    <TranslationText
+      key={'shared/tx-pill'}
+      text={trsStatusTerms?.canceled}
+    />
+  {:else if txStatus == 'refunded'}
+    <TranslationText
+      key={'shared/tx-pill'}
+      text={trsStatusTerms?.refunded}
+    />
   {/if}
 </p>
 
