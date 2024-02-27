@@ -1,8 +1,8 @@
 import betarenaBankContractABI from './BetarenaBankABI.json';
-import usdcContractAddressABITestNet from './UsdcABI-Polygon-Mumbai.json';
-import usdtContractAddressABITestNet from './UsdtABI-Polygon-Mumbai.json';
 import usdcContractAddressABI from './UsdcABI-Polygon-Mainnet.json';
+import usdcContractAddressABITestNet from './UsdcABI-Polygon-Mumbai.json';
 import usdtContractAddressABI from './UsdtABI-Polygon-Mainnet.json';
+import usdtContractAddressABITestNet from './UsdtABI-Polygon-Mumbai.json';
 
 interface IWeb3AddressData
 {
@@ -83,13 +83,15 @@ export const polygonMainnet: IWeb3AddressData
   , usdtContractAddress:
   {
     abi: usdtContractAddressABI
-    // 🔗 read-more :|: https://polygonscan.com/token/0xc2132d05d31c914a87c6611c10748aeb04b58e8f
+    // 🔗 read-more :|: https://polygonscan.com/token/0xc2132d05d31c914a87c6611c10748aeb04b58e8f [proxy]
+    // 🔗 read-more :|: https://polygonscan.com/address/0x7ffb3d637014488b63fb9858e279385685afc1e2 [delegate-contract]
     , address: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F'
   }
   , usdcContractAddress:
   {
     abi: usdcContractAddressABI
-    // 🔗 read-more :|: https://polygonscan.com/token/0x2791bca1f2de4661ed88a30c99a7a9449aa84174
+    // 🔗 read-more :|: https://polygonscan.com/token/0x2791bca1f2de4661ed88a30c99a7a9449aa84174 [proxy]
+    // 🔗 read-more :|: https://polygonscan.com/address/0xdd9185db084f5c4fff3b4f70e7ba62123b812226 [delegate-contract]
     , address: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174'
   }
 };
