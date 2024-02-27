@@ -400,7 +400,7 @@
   $: ({ referredBy } = $userBetarenaSettings.user.scores_user_data ?? { referredBy: null });
   $: ({ grand_total } = $userBetarenaSettings.user.scores_user_data?.investor_balance ?? { grand_total: 0 });
   $: ({ uid } = $userBetarenaSettings.user.firebase_user_data ?? { uid: null });
-  $: ({ roundStateWidget } = $scoresProfileInvestorStore);
+  $: ({ roundStateWidget, userTotalFiatInvested } = $scoresProfileInvestorStore);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -592,33 +592,12 @@
     const
       /**
        * @description
-       *  📣 Previously (sum) invested amount by user.
-       */
-      previouslyInvestedAmount = profileData?.tx_hist
-        ?.filter
-        (
-          x =>
-          {
-            return x.status == 'completed' && x.type == 'investment'
-          }
-        )
-        ?.reduce
-        (
-          (
-            acc
-            , item
-          ) =>
-          {
-            return (acc + (item.quantity ?? 0));
-          },
-          0
-        ) ?? 0
-      /**
-       * @description
        *  📣 Final deposit calculated, taking into account other variable(s) and values
        */
-      , depositCalculated = (depositAmount * cryptoPrice) + previouslyInvestedAmount
+      depositCalculated = (depositAmount * cryptoPrice) + userTotalFiatInvested
     ;
+
+    console.log('previouslyInvestedAmount', userTotalFiatInvested);
 
     if (depositCalculated >= 100000)
       tierDiscountObject

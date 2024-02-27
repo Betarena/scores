@@ -137,6 +137,11 @@ interface IProfileInvestorSection
   referralHistoryStateWidget: IProfileInvestorReferralHistoryWidget;
   /**
    * @description
+   *  📣 Total amount (sum) of **fiat** invested by target user.
+   */
+  userTotalFiatInvested: number;
+  /**
+   * @description
    *  📣 Target widgets being overriden by admin.
    */
   adminOverrides: Set < IProfileAdminWidgets >;

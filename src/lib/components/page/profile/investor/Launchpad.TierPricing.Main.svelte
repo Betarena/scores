@@ -38,6 +38,7 @@
   import userBetarenaSettings from '$lib/store/user-settings.js';
   import { formatNumberWithCommas, toDecimalFix } from '$lib/utils/platform-functions.js';
   import { Misc } from '@betarena/scores-lib/dist/classes/class.misc.js';
+  import { scoresProfileInvestorStore } from './_store.js';
 
   import icon_bronze from '../assets/price-tier/icon-bta-bronze.svg';
   import icon_gold from '../assets/price-tier/icon-bta-gold.svg';
@@ -199,7 +200,7 @@
   ;
 
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
-  $: ({ grand_total } = $userBetarenaSettings.user.scores_user_data?.investor_balance ?? { grand_total: 0 });
+  $: ({ userTotalFiatInvested } = $scoresProfileInvestorStore);
 
   // ▓ [🐞]
   // $userBetarenaSettings.user.scores_user_data.investor_balance = 100000;
@@ -260,7 +261,6 @@
   (
   ): void
   {
-    const investorBalance: number = grand_total!;
     currentAccumulatedAmountProgress = 'NaN';
 
     // ▓ NOTE:
@@ -269,8 +269,8 @@
 
       if
       (
-        investorBalance >= (data.data?.invest_min ?? 0)
-        && (investorBalance <= (data.data?.invest_max ?? 0)
+        userTotalFiatInvested >= (data.data?.invest_min ?? 0)
+        && (userTotalFiatInvested <= (data.data?.invest_max ?? 0)
           || (data.data?.invest_max ?? 0) == -1)
       )
         currentAccumulatedAmountProgress = key;
@@ -385,7 +385,7 @@
    *  **reactivity triggered by:**
    *  - `$userBetarenaSettings.user`- **kicker** (via deepListen)
    */
-  $: if (grand_total) setLargestCurrentTier();
+  $: if (userTotalFiatInvested) setLargestCurrentTier();
 
   $: if (VIEWPORT_MOBILE_INIT || VIEWPORT_TABLET_INIT) updateTierPricingLayout();
 
@@ -812,7 +812,7 @@
                               no-wrap
                               "
                             >
-                              {toDecimalFix(grand_total ?? 0, 2, false, false)} BTA
+                              {toDecimalFix(userTotalFiatInvested ?? 0, 2, false, false)} USD
                             </p>
 
                             <!--

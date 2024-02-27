@@ -4,6 +4,7 @@
 
 import { toCorrectDate } from '$lib/utils/dates.js';
 import { checkNull } from '$lib/utils/platform-functions.js';
+import type { PublicTransactionHistoryMain } from '@betarena/scores-lib/types/_AUTO-HASURA-2_.js';
 import { writable } from 'svelte/store';
 
 // #endregion ➤ 📦 Package Imports
@@ -27,6 +28,7 @@ const
     , walletsStateWidget: 'Standard'
     , bonusSummaryStateWidget: 'Standard'
     , referralHistoryStateWidget: 'Standard'
+    , userTotalFiatInvested: 0
     , adminOverrides: new Set()
   }
 ;
@@ -75,11 +77,12 @@ function createLocalStore
           publicEndDate: string | null | undefined;
           tgeAvailableDate: string | null | undefined;
           tgeStatus: string | null | undefined;
+          transactionHistory: PublicTransactionHistoryMain[] | null | undefined;
         }
       ): void =>
       {
         // ╭──────────────────────────────────────────────────────────────────────────────────╮
-        // │ 🟦 MAIN EXCLUSIVE                                                                │
+        // │ 🟦 [GENERAL] MAIN EXCLUSIVE                                                      │
         // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
         if (opts.investmentCount != null && opts.investmentCount > 0)
@@ -93,8 +96,29 @@ function createLocalStore
           storeObject.referralInviteStateWidget = 'FirstInvestmentNotMade';
         }
 
+        storeObject.userTotalFiatInvested = opts.transactionHistory
+          ?.filter
+          (
+            x =>
+            {
+              return x.status == 'completed' && x.type == 'investment'
+            }
+          )
+          ?.reduce
+          (
+            (
+              acc
+              , item
+            ) =>
+            {
+              return (acc + (item.quantity ?? 0));
+            },
+            0
+          ) ?? 0
+        ;
+
         // ╭──────────────────────────────────────────────────────────────────────────────────╮
-        // │ 🟦 TGE EXCLUSIVE                                                                 │
+        // │ 🟦 [WIDGET] TGE EXCLUSIVE                                                        │
         // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
         if (checkNull(opts.tgeStatus))
@@ -109,7 +133,7 @@ function createLocalStore
         //
 
         // ╭──────────────────────────────────────────────────────────────────────────────────╮
-        // │ 🟦 ROUNDS EXCLUSIVE                                                              │
+        // │ 🟦 [WIDGET] ROUNDS EXCLUSIVE                                                     │
         // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
         storeObject.roundStateWidget = 'Round_ToBeAnnounced';

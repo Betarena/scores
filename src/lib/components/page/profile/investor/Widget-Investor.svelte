@@ -184,6 +184,7 @@
         , publicEndDate: widgetDataMain.presaleData.data?.end_date
         , tgeAvailableDate: widgetDataMain.investorData?.data?.tge.available_date
         , tgeStatus: widgetDataMain.investorData?.data?.tge.status
+        , transactionHistory: widgetDataMain.tx_hist
       }
     );
 
