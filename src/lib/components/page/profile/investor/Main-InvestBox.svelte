@@ -52,6 +52,7 @@
 	import { passByValue } from '@betarena/scores-lib/dist/functions/func.common.js';
 	import { tryCatchAsync } from '@betarena/scores-lib/dist/util/util.common.js';
 	import { scoresProfileInvestorStore } from './_store.js';
+	import { polygonMainnet } from './web3/_constants.js';
 
 	import { createWeb3Modal, defaultConfig } from '@web3modal/ethers5';
 	import { BigNumber, ethers, type ContractInterface, type Transaction } from 'ethers';
@@ -70,9 +71,6 @@
   import icon_bta_token from '../assets/price-tier/icon-bta-token.svg';
   import icon_usdc from '../assets/price-tier/icon-usdc.png';
   import icon_usdt from '../assets/price-tier/icon-usdt.png';
-  import betarenaBankContractABI from './web3/BetarenaBankABI.json';
-  import usdcContractAddressABI from './web3/UsdcABI.json';
-  import usdtContractAddressABI from './web3/UsdtABI.json';
 
   import ModalTermsAndConditions from './Modal-TermsAndConditions.svelte';
   import ModalTxState from './Modal-Tx-State.svelte';
@@ -223,7 +221,7 @@
      * @description
      *  📣 target `polygon` blockchain `BetarenaBank` polygon mumbai (testnet)
      */
-    , betarenaBankContractAddress: string = '0x4118AF394ba3Fd6Fa6dA6b5c18399F3072e039a2' // '0x5BC335e9c9492B8abb07B49a6dbD8269d7419F1D'
+    , betarenaBankContractAddress: string = polygonMainnet.betarenaBankContractAddress.address
   ;
 
   let
@@ -249,16 +247,16 @@
                   'https://betarena-scores-platform.herokuapp.com/_app/immutable/assets/betarena-logo-full.f6af936d.svg'
                 ]
               }
-              , defaultChainId: 80001
+              , defaultChainId: 137
               , enableCoinbase: true
             }
           )
           , chains:
           [
             chainObjectWalletConnect.ethereum
-            , chainObjectWalletConnect.polygon_mumbai
+            , chainObjectWalletConnect.polygon_mainnet
           ]
-          , defaultChain: chainObjectWalletConnect.polygon_mumbai
+          , defaultChain: chainObjectWalletConnect.polygon_mainnet
           // , featuredWalletIds:
           // [
           //   // ▓ NOTE:
@@ -343,19 +341,19 @@
       = [
         {
           full_name: 'USD Coin'
-          ,name: 'USDC'
-          ,icon: icon_usdc
-          ,contractAddress: '0x0FA8781a83E46826621b3BC094Ea2A0212e71B23'
-          ,abi: usdcContractAddressABI
-          ,userBalance: null
+          , name: 'USDC'
+          , icon: icon_usdc
+          , contractAddress: polygonMainnet.usdcContractAddress.address
+          , abi: polygonMainnet.usdcContractAddress.abi
+          , userBalance: null
         }
-        ,{
+        , {
           full_name: 'Tether'
-          ,name: 'USDT'
-          ,icon: icon_usdt
-          ,contractAddress: '0x3813e82e6f7098b9583FC0F33a962D02018B6803'
-          ,abi: usdtContractAddressABI
-          ,userBalance: null
+          , name: 'USDT'
+          , icon: icon_usdt
+          , contractAddress: polygonMainnet.usdtContractAddress.address
+          , abi: polygonMainnet.usdtContractAddress.abi
+          , userBalance: null
         }
       ]
     /**
@@ -886,7 +884,7 @@
             , params:
             [
               // @ts-expect-error
-              chainObject.polygon_mumbai
+              chainObject.polygon_mainnet
             ]
           }
         );
@@ -1279,7 +1277,7 @@
           contract = new ethers.Contract
           (
             betarenaBankContractAddress,
-            betarenaBankContractABI,
+            polygonMainnet.betarenaBankContractAddress.abi as ContractInterface,
             signer
           )
           , transactionResponse: Transaction = await contract.depositToken(cryptoDepositOptionSelect.contractAddress, targetAmount)

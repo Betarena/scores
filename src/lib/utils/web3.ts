@@ -2,8 +2,8 @@ import type { Chain } from '@web3modal/scaffold-utils/dist/types/src/EthersTypes
 
 /**
  * @description
- * - 📣 Object for target `web3` chains.
- * - 📣 Used in conjuction with `Standard Web3 Method` configuration.
+ *  - 📣 Object for target `web3` chains.
+ *  - 📣 Used in conjuction with `Standard Web3 Method` configuration.
  */
 export const chainObject: unknown
 = {
@@ -45,14 +45,14 @@ export const chainObject: unknown
       'https://polygonscan.com'
     ]
   }
-}
+};
 
 /**
  * @description
- * - 📣 Object for target `web3` chains.
- * - 📣 Used in conjuction with `WalletConnect` configuration.
+ *  - 📣 Object for target `web3` chains.
+ *  - 📣 Used in conjuction with `WalletConnect` configuration.
  */
-export const chainObjectWalletConnect: Record < 'ethereum' | 'polygon_mumbai', Chain >
+export const chainObjectWalletConnect: Record < 'ethereum' | 'polygon_mumbai' | 'polygon_mainnet', Chain >
 = {
   ethereum:
   {
@@ -69,5 +69,13 @@ export const chainObjectWalletConnect: Record < 'ethereum' | 'polygon_mumbai', C
     , currency: 'MATIC'
     , explorerUrl: 'https://mumbai.polygonscan.com'
     , rpcUrl: 'https://polygon-mumbai.g.alchemy.com/v2/0zWtf5I24NBkM826G-VJFiYkkGoC5atJ'
+  }
+  , polygon_mainnet:
+  {
+    chainId: 137
+    , name: 'Polygon'
+    , currency: 'MATIC'
+    , explorerUrl: 'https://polygonscan.com'
+    , rpcUrl: 'https://polygon-rpc.com'
   }
 };
