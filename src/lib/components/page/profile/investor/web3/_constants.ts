@@ -90,8 +90,8 @@ export const polygonMainnet: IWeb3AddressData
   , usdcContractAddress:
   {
     abi: usdcContractAddressABI
-    // 🔗 read-more :|: https://polygonscan.com/token/0x2791bca1f2de4661ed88a30c99a7a9449aa84174 [proxy]
-    // 🔗 read-more :|: https://polygonscan.com/address/0xdd9185db084f5c4fff3b4f70e7ba62123b812226 [delegate-contract]
-    , address: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174'
+    // 🔗 read-more :|: https://polygonscan.com/token/0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359 [proxy]
+    // 🔗 read-more :|: https://polygonscan.com/address/0x235ae97b28466db30469b89a9fe4cff0659f82cb [delegate-contract]
+    , address: '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359'
   }
 };
