@@ -1621,6 +1621,10 @@ p {
 │ 📌 LEGACY                                                                        │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 */
+.global.color-grey > * {
+  color: var(--grey) !important;
+}
+
 .x-large,
 p.x-large,
 span.x-large {
@@ -1671,8 +1675,8 @@ h1 {
   font-weight: 400;
   line-height: 1.2;
   font-weight: 700;
-  font-size: 32px;
   line-height: 140%;
+  font-size: 32px;
 }
 
 h2 {
@@ -1682,8 +1686,8 @@ h2 {
   font-weight: 400;
   line-height: 1.2;
   font-weight: 700;
-  font-size: 32px;
   line-height: 140%;
+  font-size: 20px;
 }
 
 h3 {
@@ -1693,8 +1697,8 @@ h3 {
   font-weight: 400;
   line-height: 1.2;
   font-weight: 700;
-  font-size: 32px;
   line-height: 140%;
+  font-size: 18px;
 }
 
 h4 {
@@ -1704,8 +1708,8 @@ h4 {
   font-weight: 400;
   line-height: 1.2;
   font-weight: 700;
-  font-size: 32px;
   line-height: 140%;
+  font-size: 14px;
 }
 
 h5 {
@@ -1715,7 +1719,6 @@ h5 {
   font-weight: 400;
   line-height: 1.2;
   font-weight: 700;
-  font-size: 32px;
   line-height: 140%;
 }
 
@@ -1726,7 +1729,6 @@ h6 {
   font-weight: 400;
   line-height: 1.2;
   font-weight: 700;
-  font-size: 32px;
   line-height: 140%;
 }
 
@@ -1948,6 +1950,11 @@ h6 {
   /* 🔥 override */
   /* 🎨 style */
   color: var(--grey-shade) !important;
+}
+.dark-background .color-black-2.white-v1, .dark-background-1 .color-black-2.white-v1 {
+  /* 🔥 override */
+  /* 🎨 style */
+  color: var(--grey-color) !important;
 }
 
 .color-black-3 {
@@ -2234,6 +2241,10 @@ button.btn-hollow.v4:hover {
   /* 🎨 style */
   border: 1px solid var(--grey-shade) !important;
 }
+.dark-background button.btn-hollow.v5d, .dark-background-1 button.btn-hollow.v5d {
+  /* 🎨 style */
+  border: 1px solid var(--dark-theme-1-shade) !important;
+}
 button.btn-dark {
   /* 🎨 style */
   padding: 10px 17px;
@@ -2266,7 +2277,7 @@ button.btn-left-icon {
   background-size: 16.17px 16.17px;
   background-repeat: no-repeat;
 }
-button .btn-shadow-1 {
+button.btn-shadow-1 {
   /* 🎨 style */
   box-shadow: 0px 3px 8px 0px rgba(212, 84, 12, 0.32);
 }
@@ -2556,6 +2567,11 @@ img.google-aspect-ratio {
   right: 0;
   left: 0;
   margin: auto;
+}
+
+.mutated {
+  /* 🎨 style */
+  border: 1px solid #F00;
 }
 
 /*

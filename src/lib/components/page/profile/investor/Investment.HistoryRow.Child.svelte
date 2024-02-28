@@ -1,14 +1,23 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - access custom Betarena Scores JS VScode Snippets by typing 'script...'         │
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <script lang="ts">
 
-// #region ➤ 📦 Package Imports
+  // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -24,9 +33,9 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { page } from '$app/stores';
+  import TxStatusPill from '$lib/components/shared/Tx-Status-Pill.svelte';
 
   import { toZeroPrefixDateStr } from '$lib/utils/dates.js';
-  import { toDecimalFix } from '$lib/utils/platform-functions';
 
   import icon_arrow_down from '../assets/arrow-down.svg';
   import icon_arrow_up from '../assets/arrow-up.svg';
@@ -35,7 +44,11 @@
   import icon_platinum from '../assets/price-tier/icon-bta-platinum.svg';
   import icon_silver from '../assets/price-tier/icon-bta-silver.svg';
 
-	import type { B_H_KEYP, B_H_KEYP_Tier, B_H_TH } from '@betarena/scores-lib/types/_HASURA_.js';
+	import TranslationText from '$lib/components/misc/Translation-Text.svelte';
+
+	import type { KeypairInvestorPresaleMain, PublicTransactionHistoryMain } from '@betarena/scores-lib/types/_AUTO-HASURA-2_.js';
+	import type { IPresaleTier } from '@betarena/scores-lib/types/_ENUMS_.js';
+	import type { B_H_KEYP_Tier } from '@betarena/scores-lib/types/_HASURA_.js';
 	import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -56,59 +69,58 @@
 
   export let
     /**
-     * @augments B_H_TH
-    */
-    data: B_H_TH
+     * @augments PublicTransactionHistoryMain
+     */
+    data: PublicTransactionHistoryMain
     /**
      * @description
-     *  📣
-    */
-    , tierDataMap: Map < B_H_KEYP_Tier, B_H_KEYP >
+     *  📣 Target `tier` data represented as `map`.
+     */
+    , tierDataMap: Map < IPresaleTier, KeypairInvestorPresaleMain >
     /**
      * @description
-     *  📣
-    */
-    , VIEWPORT_MOBILE_INIT_PARENT: [ number, boolean ]
-    /**
-     * @description
-     *  📣
-    */
-    , VIEWPORT_TABLET_INIT_PARENT: [ number, boolean ]
+     *  📣 threshold start + state for 📱 MOBILE
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
   ;
 
   const
-    /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
-    // eslint-disable-next-line no-unused-vars
-    CNAME: string = 'profile⮕w⮕investfaq⮕main'
-    /** @description 📣 threshold start + state for 📱 MOBILE */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
-    /** @description 📣 threshold start + state for 💻 TABLET */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
+    /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */ // eslint-disable-next-line no-unused-vars
+    CNAME: string = 'profile⮕w⮕invest-history-row⮕main'
   ;
-
-  // type K1 = keyof B_H_TH;
 
   let
     /**
      * @description
      *  📣 Wether extra information is toggled (mobile only).
-    */
+     */
     isTxExtraInfo: boolean = false
     /**
      * @description
      *  📣 Properties to be shown in mobile view.
-    */
-    , mobileProps: string[] = ['discount', 'investment', 'tokens', 'price']
+     */
+    , mobileProps: string[]
+      = [
+        'discount'
+        , 'investment'
+        , 'tokens'
+        , 'price'
+        , 'description'
+        , 'tier'
+      ]
     /**
      * @description
      *  📣 Target `icon` asset for _this_ transaction.
-    */
+     */
     , targetTxTierIcon: string = selectIcon(data.tier ?? 'NaN')
   ;
 
-  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
+
+  // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
 
@@ -159,13 +171,19 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component HTML                                                            │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - use 'Ctrl+Space' to autocomplete global class=styles                           │
-│ - access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.     │
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <tr
-  class:extra-info={isTxExtraInfo && VIEWPORT_MOBILE_INIT_PARENT[1]}
+  class=
+  "
+  {CNAME}
+  "
+  class:extra-info={isTxExtraInfo && VIEWPORT_MOBILE_INIT[1]}
   on:click={() => {return isTxExtraInfo = !isTxExtraInfo}}
 >
 
@@ -190,53 +208,26 @@
   ▓ > transaction execution type.
   -->
   <td>
-    <p>
-      {data.type}
-    </p>
-  </td>
-
-  <!--
-  ▓ NOTE:
-  ▓ > transaction execution tier.
-  -->
-  <td>
     <div
       class=
       "
-      row-space-start
+      column-start-grid-start
       "
     >
-      <!--
-      ▓ NOTE:
-      ▓ > transaction tier icon.
-      -->
-      <img
-        id=''
-        src='{targetTxTierIcon}'
-        alt=''
-        title=''
-        loading='lazy'
-        width=24
-        height=24
-        class=
-        "
-        m-r-8
-        "
-      />
-
-      <!--
-      ▓ NOTE:
-      ▓ > transaction tier name tag.
-      -->
-      <p
-        class=
-        "
-        capitalize
-        "
-      >
-        {data.tier ?? 'NaN'}
+      <p>
+        {data.type ?? '-'}
       </p>
-
+      {#if !VIEWPORT_MOBILE_INIT[1]}
+        <span
+          class=
+          "
+          s-12
+          color-grey
+          "
+        >
+          {data.description ?? '-'}
+        </span>
+      {/if}
     </div>
   </td>
 
@@ -244,7 +235,58 @@
   ▓ NOTE:
   ▓ > 💻 TABLET 🖥️ LAPTOP
   -->
-  {#if !VIEWPORT_MOBILE_INIT_PARENT[1]}
+  {#if !VIEWPORT_MOBILE_INIT[1]}
+
+    <!--
+    ▓ NOTE:
+    ▓ > transaction execution tier.
+    -->
+    <td>
+      {#if data.tier != null && data.tier != 'NaN'}
+        <div
+          class=
+          "
+          row-space-start
+          "
+        >
+          <!--
+          ▓ NOTE:
+          ▓ > transaction tier icon.
+          -->
+          <img
+            id=''
+            src='{targetTxTierIcon}'
+            alt=''
+            title=''
+            loading='lazy'
+            width=24
+            height=24
+            class=
+            "
+            m-r-8
+            "
+          />
+
+          <!--
+          ▓ NOTE:
+          ▓ > transaction tier name tag.
+          -->
+          <p
+            class=
+            "
+            capitalize
+            "
+          >
+            {data.tier}
+          </p>
+
+        </div>
+      {:else}
+        <p>
+          -
+        </p>
+      {/if}
+    </td>
 
     <!--
     ▓ NOTE:
@@ -262,7 +304,7 @@
     -->
     <td>
       <p>
-        ${data.amount}
+        ${data.quantity ?? '-'}
       </p>
     </td>
 
@@ -272,7 +314,7 @@
     -->
     <td>
       <p>
-        {data.quantity}
+        {data.amount ?? '-'}
       </p>
     </td>
 
@@ -282,15 +324,7 @@
     -->
     <td>
       <p>
-        ${
-          toDecimalFix
-          (
-            tierDataMap.get(data.tier ?? 'NaN')?.data?.token_price ?? 0
-            , 2
-            , false
-            , false
-          )
-        }
+        ${data.bta_price ?? '-'}
       </p>
     </td>
 
@@ -298,31 +332,44 @@
 
   <!--
   ▓ NOTE:
-  ▓ > 📱 MOBILE
+  ▓ > investment status + dropdown for 📱 MOBILE
   -->
-  {#if VIEWPORT_MOBILE_INIT_PARENT[1]}
-    <td>
-      <img
-        src={isTxExtraInfo ? icon_arrow_up : icon_arrow_down}
-        alt={isTxExtraInfo ? 'icon_arrow_up' : 'icon_arrow_down'}
-        class=
-        "
-        cursor-pointer
-        m-l-8
-        "
-        style=
-        "
-        float: right;
-        "
+  <td>
+    <div
+      class=
+      "
+      row-space-end
+      "
+    >
+      <TxStatusPill
+        txStatus={data.status}
+        trsStatusTerms={profileTrs?.tx?.status}
       />
-    </td>
-  {/if}
+
+      {#if VIEWPORT_MOBILE_INIT[1]}
+        <img
+          src={isTxExtraInfo ? icon_arrow_up : icon_arrow_down}
+          alt={isTxExtraInfo ? 'icon_arrow_up' : 'icon_arrow_down'}
+          class=
+          "
+          cursor-pointer
+          m-l-8
+          "
+          style=
+          "
+          float: right;
+          "
+        />
+      {/if}
+
+    </div>
+  </td>
 
   <!--
   ▓ NOTE:
   ▓ > transaction 📱 MOBILE layout
   -->
-  {#if isTxExtraInfo && VIEWPORT_MOBILE_INIT_PARENT[1]}
+  {#if isTxExtraInfo && VIEWPORT_MOBILE_INIT[1]}
 
     <div
       class=
@@ -356,13 +403,41 @@
             "
           >
             {#if item == 'discount'}
-              Discount
+              <TranslationText
+                key={'profile/investor/invest-history/row/discount'}
+                text={profileTrs?.investor?.investment_details.discount}
+                fallback={'Discount'}
+              />
             {:else if item == 'investment'}
-              Investment
+              <TranslationText
+                key={'profile/investor/invest-history/row/investment'}
+                text={profileTrs?.investor?.investment_details.investment}
+                fallback={'Investment'}
+              />
             {:else if item == 'tokens'}
-              Tokens
+              <TranslationText
+                key={'profile/investor/invest-history/row/tokens'}
+                text={profileTrs?.investor?.investment_details.tokens}
+                fallback={'Tokens'}
+              />
             {:else if item == 'price'}
-              Price
+              <TranslationText
+                key={'profile/investor/invest-history/row/price'}
+                text={profileTrs?.investor?.investment_details.price}
+                fallback={'Price'}
+              />
+            {:else if item == 'description'}
+              <TranslationText
+                key={'profile/investor/invest-history/row/description'}
+                text={profileTrs?.investor?.investment_details.description}
+                fallback={'Description'}
+              />
+            {:else if item == 'tier'}
+              <TranslationText
+                key={'profile/investor/invest-history/row/tire'}
+                text={profileTrs?.investor?.investment_details.tier}
+                fallback={'Tier'}
+              />
             {/if}
           </p>
 
@@ -380,19 +455,58 @@
             {#if item == 'discount'}
               {tierDataMap.get(data.tier ?? 'NaN')?.data?.discount_percentage}%
             {:else if item == 'investment'}
-              ${data.amount}
+              ${data.quantity ?? '-'}
             {:else if item == 'tokens'}
-              {data.quantity}
+              {data.amount ?? '-'}
             {:else if item == 'price'}
-              ${
-                toDecimalFix
-                (
-                  tierDataMap.get(data.tier ?? 'NaN')?.data?.token_price ?? 0
-                  , 2
-                  , false
-                  , false
-                )
-              }
+              ${data.bta_price ?? '-'}
+            {:else if item == 'description'}
+              {data.description ?? '-'}
+            {:else if item == 'tier'}
+              {#if data.tier != null && data.tier != 'NaN'}
+                <div
+                  class=
+                  "
+                  row-space-start
+                  "
+                >
+                  <!--
+                  ▓ NOTE:
+                  ▓ > transaction tier icon.
+                  -->
+                  <img
+                    id=''
+                    src='{targetTxTierIcon}'
+                    alt=''
+                    title=''
+                    loading='lazy'
+                    width=24
+                    height=24
+                    class=
+                    "
+                    m-r-8
+                    "
+                  />
+
+                  <!--
+                  ▓ NOTE:
+                  ▓ > transaction tier name tag.
+                  -->
+                  <span
+                    class=
+                    "
+                    capitalize
+                    "
+                  >
+                    {data.tier}
+                  </span>
+
+                </div>
+              {:else}
+                <p>
+                  -
+                </p>
+              {/if}
             {/if}
           </p>
 
@@ -409,8 +523,9 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component CSS/SCSS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE  │
-│ - access custom Betarena Scores CSS VScode Snippets by typing 'style...'         │
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 

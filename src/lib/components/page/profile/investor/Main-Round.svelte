@@ -1,8 +1,17 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - access custom Betarena Scores JS VScode Snippets by typing 'script...'         │
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -25,12 +34,17 @@
 
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
-	import { onDestroy, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { toCorrectDate, toZeroPrefixDateStr } from '$lib/utils/dates.js';
-	import { toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
+	import { toZeroPrefixDateStr } from '$lib/utils/dates.js';
+	import { toDecimalFix } from '$lib/utils/platform-functions.js';
+	import { scoresProfileInvestorStore } from './_store.js';
+
+	import TranslationText from '$lib/components/misc/Translation-Text.svelte';
+	import AdminDevControlPanel from '$lib/components/misc/admin/Admin-Dev-ControlPanel.svelte';
+	import AdminDevControlPanelToggleButton from '$lib/components/misc/admin/Admin-Dev-ControlPanelToggleButton.svelte';
 
 	import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
@@ -55,6 +69,16 @@
      * @augments IProfileData
      */
     WIDGET_DATA: IProfileData | null
+    /**
+     * @description
+     * 📣 threshold start + state for 📱 MOBILE
+     */
+    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
+    /**
+     * @description
+     * 📣 threshold start + state for 💻 TABLET
+     */
+    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
   /**
@@ -64,78 +88,45 @@
    *  🎪 TYPES | INTERFACE
    * @description
    *  📣 Type for `round data`.
-  */
+   */
   interface IRoundData
   {
     title: string;
     data:
     {
       row_title: string;
-      value: string;
+      value: string | number;
     }[]
   }
 
-  /**
-   * @author
-   *  @migbash
-   * @summary
-   *  🎪 TYPES | INTERFACE
-   * @description
-   *  📣 Type for possible `_this_` component states.
-   */
-  type IWidgetState = 'InviteOnly' | 'ToBeAnnounced' | 'CountdownWithDefinedDate' | 'CountdownToFinish' | 'Ended';
-
   const
-    /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
+    /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */
     CNAME: string = 'profile⮕w⮕investround⮕main'
-    /** @description 📣 threshold start + state for 📱 MOBILE */
-    ,VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
-    /** @description 📣 threshold start + state for 💻 TABLET */
-    ,VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
   let
-    /** @description 📣 current widget state */
-    widgetState: IWidgetState = 'ToBeAnnounced'
-    /** @description 📣 investor number of days difference (from start) */
-    , numDateDiffStart: number = 0
-    /** @description 📣 investor number of days difference (from end) */
-    , numDateDiffEnd: number = 0
-    /** @description 📣 investor main information data */
-    , roundData: IRoundData[] = []
-    /** @description 📣 investor round date percentage progress */
-    , datePercentageDiff: number = 0
     /**
      * @description
-     *  📣 invest round date `start`
-     * @CUSTOM_NOTE
-     * `mapInvestorData?.get('round')?.values?.start_date` || 12/08/2023
+     *  📣 investor main information data
      */
-    , dateRoundStart: string | undefined = WIDGET_DATA?.presaleData.data?.start_date
+    roundData: IRoundData[] = []
     /**
      * @description
-     *  📣 invest round date `start`
-     * @CUSTOM_NOTE
-     * `mapInvestorData?.get('round')?.values?.end_date` || 12/08/2023
+     *  📣 investor round date percentage progress
      */
-    , dateRoundEnd: string | undefined = WIDGET_DATA?.presaleData.data?.end_date
-    /** @description 📣 interval variable for `countdown` logic */
-    , interval1: NodeJS.Timer
+    , progressPercentage: number = 0
+    /**
+     * @description
+     *  📣 Target countdown layout format.
+     */
+    , countdownLayout: number[] = [3, 2, 1]
   ;
 
-  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
-
-  $: countDownSecToStart = toZeroPrefixDateStr(Math.floor((numDateDiffStart / 1000) % 60).toString());
-	$: countDownMinToStart = toZeroPrefixDateStr(Math.floor((numDateDiffStart / 1000 / 60) % 60).toString());
-	$: countDownHourToStart = toZeroPrefixDateStr(Math.floor((numDateDiffStart / (1000 * 60 * 60)) % 24).toString());
-	$: countDownDayToStart = toZeroPrefixDateStr(Math.floor((numDateDiffStart / (1000 * 60 * 60 * 24))).toString());
-	$: countDownTestHourToStart = Math.floor(numDateDiffStart / (1000 * 60 * 60));
-
-  $: countDownSecToEnd = toZeroPrefixDateStr(Math.floor((numDateDiffEnd / 1000) % 60).toString());
-	$: countDownMinToEnd = toZeroPrefixDateStr(Math.floor((numDateDiffEnd / 1000 / 60) % 60).toString());
-	$: countDownHourToEnd = toZeroPrefixDateStr(Math.floor((numDateDiffEnd / (1000 * 60 * 60)) % 24).toString());
-	$: countDownDayToEnd = toZeroPrefixDateStr(Math.floor((numDateDiffEnd / (1000 * 60 * 60 * 24))).toString());
-	$: countDownTestHourToEnd = Math.floor(numDateDiffEnd / (1000 * 60 * 60));
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
+  $: ({ globalActivePresaleStartClock, globalActivePresaleEndClock, roundStateWidget, adminOverrides } = $scoresProfileInvestorStore);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -152,60 +143,22 @@
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  /**
-   * @summary
-   * 🔥 REACTIVITY
-   *
-   * @description
-   *  📣 looming `start-date` check
-   *
-   * WARNING:
-   * triggered by changes in:
-   * - `numDateDiffStart`
-   * - `countDownTestHourToStart`
-   */
-  $: if_R_0
-    = numDateDiffStart == null
-    || numDateDiffEnd == null
-    || numDateDiffStart == 0
-    || numDateDiffEnd == 0
-  $: if_R_1
-    = countDownTestHourToStart >= 0
-    && numDateDiffStart >= 0
-  ;
-  $: if_R_2
-    = countDownTestHourToEnd >= 0
-    && numDateDiffEnd >= 0
-  ;
-  $: if_R_3
-    =countDownTestHourToEnd < 23
-    && numDateDiffEnd < 0
-  ;
-	$:
-  if (if_R_0) widgetState = 'ToBeAnnounced'
-  else if (if_R_1) widgetState = 'CountdownWithDefinedDate';
-  else if (if_R_2) widgetState = 'CountdownToFinish';
-  else if (if_R_3) widgetState = 'Ended';
-
-  // ▓ [🐞]
-  // $: console.log('countDownTestHourToStart', countDownTestHourToStart)
-  // ▓ [🐞]
-  // $: console.log('countDownTestHourToEnd', countDownTestHourToEnd)
-  // ▓ [🐞]
-  // $: console.log('numDateDiffStart', numDateDiffStart)
-  // ▓ [🐞]
-  // $: console.log('numDateDiffEnd', numDateDiffEnd)
-  // ▓ [🐞]
-  // $: console.log('widgetState', widgetState)
+  $:
+  if (roundStateWidget == 'Round_CountdownWithDefinedDate' && (globalActivePresaleStartClock?.[4] || 0) < 23)
+    countdownLayout = [2, 1, 0]
+  else if (roundStateWidget == 'Round_CountdownToFinish' && (globalActivePresaleEndClock?.[4] || 0) < 23)
+    countdownLayout = [2, 1, 0]
+  else
+    countdownLayout = [3, 2, 1]
+  // ──────────────────────────────────────────────────────────────────────────────────
 
   $:
   if (browser || $sessionStore.serverLang)
-  {
     roundData = [
       {
         title:
         (
-          profileTrs.investor?.round.details.token_info_title
+          profileTrs?.investor?.round.details.token_info_title
           ?? 'Token Information'
         )
         , data:
@@ -213,7 +166,7 @@
           {
             row_title:
             (
-              profileTrs.investor?.round.details.name_title
+              profileTrs?.investor?.round.details.name_title
               ?? 'Name'
             )
             , value: WIDGET_DATA?.presaleData.data?.name ?? '-'
@@ -221,7 +174,7 @@
           , {
             row_title:
             (
-              profileTrs.investor?.round.details.symbol_title
+              profileTrs?.investor?.round.details.symbol_title
               ?? 'Symbol'
             )
             , value: WIDGET_DATA?.presaleData.data?.symbol ?? '-'
@@ -229,7 +182,7 @@
           , {
             row_title:
             (
-              profileTrs.investor?.round.details.available_title
+              profileTrs?.investor?.round.details.available_title
               ?? 'Available'
             )
             , value: WIDGET_DATA?.presaleData.data?.available ?? '-'
@@ -239,7 +192,7 @@
       , {
         title:
         (
-          profileTrs.investor?.round.details.presale_title
+          profileTrs?.investor?.round.details.presale_title
           ?? 'Pre-sale'
         )
         , data:
@@ -247,7 +200,7 @@
           {
             row_title:
             (
-              profileTrs.investor?.round.details.start_date_title
+              profileTrs?.investor?.round.details.start_date_title
               ?? 'Start Date'
             )
             , value: WIDGET_DATA?.presaleData.data?.start_date ?? '-'
@@ -255,7 +208,7 @@
           , {
             row_title:
             (
-              profileTrs.investor?.round.details.end_date_title
+              profileTrs?.investor?.round.details.end_date_title
               ?? 'End Date'
             )
             , value: WIDGET_DATA?.presaleData.data?.end_date ?? '-'
@@ -265,7 +218,7 @@
       , {
         title:
         (
-          profileTrs.investor?.round.details.investment_title
+          profileTrs?.investor?.round.details.investment_title
           ?? 'Investment Details'
         )
         , data:
@@ -273,7 +226,7 @@
           {
             row_title:
             (
-              profileTrs.investor?.round.details.min_buy_title
+              profileTrs?.investor?.round.details.min_buy_title
               ?? 'Minimum Buy Amount'
             )
             , value: WIDGET_DATA?.presaleData.data?.min_buy ?? '-'
@@ -281,7 +234,7 @@
           , {
             row_title:
             (
-              profileTrs.investor?.round.details.chain_title
+              profileTrs?.investor?.round.details.chain_title
               ?? 'Raising Platform'
             )
             , value: WIDGET_DATA?.presaleData.data?.chain ?? '-'
@@ -289,7 +242,7 @@
           , {
             row_title:
             (
-              profileTrs.investor?.round.details.type_title
+              profileTrs?.investor?.round.details.type_title
               ?? 'Type'
             )
             , value: WIDGET_DATA?.presaleData.data?.type ?? '-'
@@ -297,7 +250,7 @@
           , {
             row_title:
             (
-              profileTrs.investor?.round.details.currencies_title
+              profileTrs?.investor?.round.details.currencies_title
               ?? 'Accepted Currencies'
             )
             , value: WIDGET_DATA?.presaleData.data?.currencies ?? '-'
@@ -305,7 +258,7 @@
         ]
       }
     ]
-  }
+  // ──────────────────────────────────────────────────────────────────────────────────
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
@@ -323,78 +276,10 @@
     async (
     ): Promise < void > =>
     {
-      // NOTE: accepts '12/9/2023' <=> MM/dd/YYYY
-      numDateDiffStart = toCorrectDate(dateRoundStart as string | Date, false).getTime() - new Date().getTime();
-      numDateDiffEnd = toCorrectDate(dateRoundEnd as string | Date, false).getTime() - new Date().getTime();
-
-      const
-        // @ts-expect-error
-        dateRoundDiff = Math.floor((toCorrectDate(dateRoundEnd, false).getTime() - toCorrectDate(dateRoundStart, false).getTime()) / 86400000)
-        // @ts-expect-error
-        , dateDeltaDiffDays = Math.floor((toCorrectDate(dateRoundEnd, false).getTime() - new Date().getTime()) / 86400000)
-      ;
-
-      datePercentageDiff = 100 - (dateDeltaDiffDays / dateRoundDiff) * 100;
-      if (datePercentageDiff > 100) datePercentageDiff = 100;
-      if (isNaN(datePercentageDiff)) datePercentageDiff = 0;
-
-      interval1 = setInterval
-      (
-        () =>
-        {
-          numDateDiffStart = toCorrectDate(dateRoundStart as string | Date, false).getTime() - new Date().getTime();
-          numDateDiffEnd = toCorrectDate(dateRoundEnd as string | Date, false).getTime() - new Date().getTime();
-
-          const
-            // @ts-expect-error
-            dateRoundDiff = Math.floor((toCorrectDate(dateRoundEnd, false).getTime() - toCorrectDate(dateRoundStart, false).getTime()) / 86400000)
-            // @ts-expect-error
-            , dateDeltaDiffDays = Math.floor((toCorrectDate(dateRoundEnd, false).getTime() - new Date().getTime()) / 86400000)
-          ;
-
-          datePercentageDiff = 100 - (dateDeltaDiffDays / dateRoundDiff) * 100;
-          if (datePercentageDiff > 100) datePercentageDiff = 100
-          if (isNaN(datePercentageDiff)) datePercentageDiff = 0;
-        },
-        1000
-      );
-
-      [
-        VIEWPORT_TABLET_INIT[1],
-        VIEWPORT_MOBILE_INIT[1]
-      ] = viewport_change
-      (
-        VIEWPORT_TABLET_INIT[0],
-        VIEWPORT_MOBILE_INIT[0]
-      );
-
-      window.addEventListener
-      (
-        'resize',
-        function ()
-        {
-          [
-            VIEWPORT_TABLET_INIT[1],
-            VIEWPORT_MOBILE_INIT[1]
-          ]
-          = viewport_change
-            (
-              VIEWPORT_TABLET_INIT[0],
-              VIEWPORT_MOBILE_INIT[0]
-            );
-        }
-      );
+      progressPercentage = ((WIDGET_DATA?.presaleData.data?.current_value ?? 0) / (WIDGET_DATA?.presaleData.data?.available ?? 0)) * 100;
+      if (progressPercentage > 100) progressPercentage = 100;
 
       return;
-    }
-  );
-
-  onDestroy
-  (
-    () =>
-    {
-      // @ts-expect-error
-      clearInterval(interval1);
     }
   );
 
@@ -406,8 +291,10 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component HTML                                                            │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - use 'Ctrl+Space' to autocomplete global class=styles                           │
-│ - access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.     │
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -415,6 +302,23 @@
   id={CNAME}
   class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
 >
+
+  <AdminDevControlPanelToggleButton
+    title='Rounds'
+    mutated={adminOverrides.has('Rounds')}
+    on:reset=
+    {
+      () =>
+      {
+        scoresProfileInvestorStore.updateAdminMutatedWidgets
+        (
+          'Rounds'
+          , 'remove'
+        );
+        return;
+      }
+    }
+  />
 
   <!--
   ▓ NOTE:
@@ -446,17 +350,18 @@
         w-500
         "
       >
-        {
-         profileTrs.investor?.round.round_title
-          ?? 'Round 1'
-        }
+        <TranslationText
+          key={'profile/investor/round-title'}
+          text={profileTrs?.investor?.round.round_title}
+          fallback={'Round 1'}
+        />
       </p>
 
       <!--
       ▓ NOTE:
       ▓ > presale text
       -->
-      {#if ['ToBeAnnounced', 'CountdownWithDefinedDate', 'CountdownToFinish'].includes(widgetState)}
+      {#if ['Round_ToBeAnnounced', 'Round_CountdownWithDefinedDate', 'Round_CountdownToFinish'].includes(roundStateWidget)}
         <span
           class=
           "
@@ -466,16 +371,18 @@
           m-t-5
           "
         >
-          {#if ['ToBeAnnounced', 'CountdownWithDefinedDate'].includes(widgetState)}
-            {
-              profileTrs.investor?.round.round_description
-              ?? 'Presale starts in'
-            }
-          {:else if widgetState == 'CountdownToFinish'}
-            {
-              profileTrs.investor?.round.progress_title
-              ?? 'Presale ends in'
-            }
+          {#if ['Round_ToBeAnnounced', 'Round_CountdownWithDefinedDate'].includes(roundStateWidget)}
+            <TranslationText
+              key={'profile/investor/round-title'}
+              text={profileTrs?.investor?.round.round_description}
+              fallback={'Presale starts in'}
+            />
+          {:else if roundStateWidget == 'Round_CountdownToFinish'}
+            <TranslationText
+              key={'profile/investor/round-title'}
+              text={profileTrs?.investor?.round.progress_title}
+              fallback={'Presale ends in'}
+            />
           {/if}
         </span>
       {/if}
@@ -486,7 +393,7 @@
     ▓ NOTE:
     ▓ > countdown (parent)
     -->
-    {#if ['CountdownWithDefinedDate', 'CountdownToFinish'].includes(widgetState)}
+    {#if ['Round_CountdownWithDefinedDate', 'Round_CountdownToFinish'].includes(roundStateWidget)}
 
       <!--
       ▓ NOTE:
@@ -500,7 +407,7 @@
         ▓ NOTE:
         ▓ > countdown [d,h,m,s]
         -->
-        {#each ['d', 'h', 'm', 's'] ?? [] as item}
+        {#each countdownLayout as item}
 
           <div
             class=
@@ -516,15 +423,18 @@
               color-black-2
               "
             >
-              {#if item == 'd'}
-                {widgetState == 'CountdownWithDefinedDate' ? countDownDayToStart : countDownDayToEnd}d
-              {:else if  item == 'h'}
-                {widgetState == 'CountdownWithDefinedDate' ? countDownHourToStart : countDownHourToEnd}h
-              {:else if  item == 'm'}
-                {widgetState == 'CountdownWithDefinedDate' ? countDownMinToStart : countDownMinToEnd}m
-              {:else if  item == 's'}
-                {widgetState == 'CountdownWithDefinedDate' ? countDownSecToStart : countDownSecToEnd}s
-              {/if}
+              {
+                toZeroPrefixDateStr
+                (
+                  roundStateWidget == 'Round_CountdownWithDefinedDate'
+                    ? (globalActivePresaleStartClock?.[item] ?? 0)
+                    : (globalActivePresaleEndClock?.[item] ?? 0)
+                )
+                + `${item == 3 ? 'd' : ''}`
+                + `${item == 2 ? 'h' : ''}`
+                + `${item == 1 ? 'm' : ''}`
+                + `${item == 0 ? 's' : ''}`
+              }
             </p>
           </div>
 
@@ -550,21 +460,24 @@
             dark-v1
           "
         >
-          {#if widgetState == 'ToBeAnnounced'}
-            {
-              profileTrs.investor?.round.round_description
-              ?? 'Date To Be Announced'
-            }
-          {:else if widgetState == 'InviteOnly'}
-            {
-              profileTrs.investor?.round.date_message
-              ?? 'Invite Only'
-            }
-          {:else if widgetState == 'Ended'}
-            {
-              profileTrs.investor?.round.current_value_title
-              ?? 'Raised'
-            }
+          {#if roundStateWidget == 'Round_ToBeAnnounced'}
+            <TranslationText
+              key={'profile/investor/round-title'}
+              text={profileTrs?.investor?.round.round_description}
+              fallback={'Date To Be Announced'}
+            />
+          {:else if roundStateWidget == 'Round_InviteOnly'}
+            <TranslationText
+              key={'profile/investor/round-title'}
+              text={profileTrs?.investor?.round.date_message}
+              fallback={'Invite Only'}
+            />
+          {:else if roundStateWidget == 'Round_Ended'}
+            <TranslationText
+              key={'profile/investor/round-title'}
+              text={profileTrs?.investor?.round.details.end_message}
+              fallback={'Raised'}
+            />
           {/if}
         </p>
       </div>
@@ -595,6 +508,7 @@
         class=
         "
         row-space-out
+        m-b-16
         "
       >
         <!--
@@ -607,13 +521,13 @@
           s-20
           w-500
           color-black-2
-          m-b-16
           "
         >
-          {
-           profileTrs.investor?.round.progress_title
-            ?? 'Progress'
-          }
+          <TranslationText
+            key={'profile/investor/round-title'}
+            text={profileTrs?.investor?.round.progress_title}
+            fallback={'Progress'}
+          />
         </p>
 
         <!--
@@ -628,7 +542,7 @@
           color-green-1
           "
         >
-          {toDecimalFix(datePercentageDiff) ?? 0}%
+          {toDecimalFix(progressPercentage)}%
         </p>
       </div>
 
@@ -644,7 +558,7 @@
         "
       >
         <div
-          style="width: {datePercentageDiff ?? 0}%;"
+          style="width: {progressPercentage}%;"
         />
       </div>
 
@@ -670,10 +584,11 @@
             grey-v1
           "
         >
-          {
-           profileTrs.investor?.round.current_value_title
-            ?? 'Raised'
-          }
+          <TranslationText
+            key={'profile/investor/round-title'}
+            text={profileTrs?.investor?.round.current_value_title}
+            fallback={'Raised'}
+          />
           <span
             class=
             "
@@ -698,10 +613,11 @@
             grey-v1
           "
         >
-          {
-           profileTrs.investor?.round.max_title
-            ?? 'Unlimited'
-          }
+          <TranslationText
+            key={'profile/investor/round-title'}
+            text={profileTrs?.investor?.round.max_title}
+            fallback={'Unlimited'}
+          />
         </p>
       </div>
 
@@ -798,11 +714,75 @@
 </div>
 
 <!--
+▓ NOTE:
+▓ > (widget) admin development state UI change control panel.
+-->
+<AdminDevControlPanel
+  title='Rounds'
+>
+
+  <!--
+  ▓ NOTE:
+  ▓ > (select) widget state.
+  -->
+  <div
+    class=
+    "
+    row-space-out
+    "
+  >
+    <!--
+    ▓ NOTE:
+    ▓ > (text) target action.
+    -->
+    <p
+      class=
+      "
+      s-14
+      color-black
+      "
+    >
+      <b>[1]</b> Choose <b>Widget State</b>
+    </p>
+
+    <!--
+    ▓ NOTE:
+    ▓ > (action) target select.
+    -->
+    <select
+      id="cars"
+      name="cars"
+      bind:value={$scoresProfileInvestorStore.roundStateWidget}
+      on:change=
+      {
+        () =>
+        {
+          scoresProfileInvestorStore.updateAdminMutatedWidgets
+          (
+            'Rounds'
+            , 'set'
+          );
+          return;
+        }
+      }
+    >
+      <option value="Round_InviteOnly">Invite Only</option>
+      <option value="Round_ToBeAnnounced">To Be Announced</option>
+      <option value="Round_CountdownWithDefinedDate">Countdown With Defined Date</option>
+      <option value="Round_CountdownToFinish">Countdown To Finish</option>
+      <option value="Round_Ended">Round Ended</option>
+    </select>
+  </div>
+
+</AdminDevControlPanel>
+
+<!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component CSS/SCSS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE  │
-│ - access custom Betarena Scores CSS VScode Snippets by typing 'style...'         │
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -822,8 +802,10 @@
       /* 📌 position */
       position: relative;
       /* 🎨 style */
-      padding: 20px;
-      padding-top: 24px;
+      padding: 15px 20px;
+      height: 92px;
+      max-height: 92px;
+      min-height: 92px;
       background: var(--white);
       box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
       /* z-index: 10; */

@@ -50,7 +50,7 @@ COMPONENT JS (w/ TS)
   (
   ): Promise < B_CONT_D[] >
   {
-		await sleep(3000);
+		// await sleep(3000);
 
     WIDGET_DATA = WIDGET_S_DATA
 

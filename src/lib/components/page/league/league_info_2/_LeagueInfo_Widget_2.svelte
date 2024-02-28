@@ -43,7 +43,7 @@
 		// [ℹ] get response [lang] [data] [obtained from preload()]
 		const sleep = (ms) =>
 			new Promise((r) => setTimeout(r, ms));
-		await sleep(3000);
+		// await sleep(3000);
 
 		if (LEAGUE_INFO_SEO_DATA == undefined) {
       dlog(`${LI2_W_T_TAG} ❌ no data available!`, LI2_W_T_TOG, LI2_W_T_STY);

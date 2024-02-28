@@ -1389,7 +1389,7 @@
 							{/if}
 						</button>
 
-						<p class="s-14 w-500 color-black">
+						<p class="s-14 w-500 color-black-2">
 							{STANDINGS_T.translations.table}
 							{selectedOptTableMobile}
 						</p>

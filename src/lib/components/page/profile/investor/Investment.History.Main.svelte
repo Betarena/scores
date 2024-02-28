@@ -1,8 +1,17 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - access custom Betarena Scores JS VScode Snippets by typing 'script...'         │
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -24,15 +33,19 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { page } from '$app/stores';
-  import { onMount } from 'svelte';
 
   import userBetarenaSettings from '$lib/store/user-settings.js';
-  import { viewport_change } from '$lib/utils/platform-functions.js';
   import { Misc } from '@betarena/scores-lib/dist/classes/class.misc.js';
+  import { investHistorySampleData } from './_sample.js';
+  import { scoresProfileInvestorStore } from './_store.js';
 
+  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
+  import AdminDevControlPanel from '$lib/components/misc/admin/Admin-Dev-ControlPanel.svelte';
+  import AdminDevControlPanelToggleButton from '$lib/components/misc/admin/Admin-Dev-ControlPanelToggleButton.svelte';
   import InvestmentHistoryRowChild from './Investment.HistoryRow.Child.svelte';
 
-  import type { B_H_KEYP, B_H_KEYP_Tier } from '@betarena/scores-lib/types/_HASURA_.js';
+  import type { KeypairInvestorPresaleMain } from '@betarena/scores-lib/types/_AUTO-HASURA-2_.js';
+  import type { IPresaleTier } from '@betarena/scores-lib/types/_ENUMS_.js';
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -52,52 +65,89 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let
-    /** @augments IProfileData */
+    /**
+     * @augments IProfileData
+    */
     profileData: IProfileData | null
+    /**
+     * @description
+     *  📣 threshold start + state for 📱 MOBILE
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
+    /**
+     * @description
+     *  📣 threshold start + state for 💻 TABLET
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
-  type IRowLayout = 'date' | 'type' | 'tier' | 'discount' | 'investment' | 'tokens' | 'price' | '';
+  /**
+   * @description
+   *  📣 available data points.
+   */
+  type IRowLayout =
+    | 'date'
+    | 'type'
+    | 'tier'
+    | 'discount'
+    | 'investment'
+    | 'status'
+    | 'tokens'
+    | 'price'
+    | ''
+  ;
 
   const
-    /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
-    // eslint-disable-next-line no-unused-vars
+    /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */ // eslint-disable-next-line no-unused-vars
     CNAME: string = 'profile⮕w⮕investment-detail⮕main'
-    /** @description 📣 threshold start + state for 📱 MOBILE */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
-    /** @description 📣 threshold start + state for 💻 TABLET */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
   let
     /**
      * @description
-     *  📣
-    */
-    dataMap: Map < B_H_KEYP_Tier, B_H_KEYP > = new Misc().convertToMapKEYPINVSTTIER
-    (
-      (profileData?.investorTierPricing?.sort((a, b) => {return b.data?.position - a.data?.position}) ?? [])
-    )
+     *  📣 convert target `data` to respective `map`.
+     */
+    dataMap: Map < IPresaleTier, KeypairInvestorPresaleMain >
+      = new Misc().convertToMapKEYPINVSTTIER
+      (
+        (
+          profileData?.investorTierPricing
+            ?.sort
+            (
+              (
+                a,
+                b
+              ) =>
+              {
+                return (b.data?.position ?? 0) - (a.data?.position ?? 0)
+              }
+            ) ?? [])
+      )
     /**
      * @description
      *  📣 Target `table` header order.
-    */
+     */
     , tableHeader: IRowLayout[]
-    = [
-      'date'
-      , 'type'
-      , 'tier'
-      , 'discount'
-      , 'investment'
-      , 'tokens'
-      , 'price'
-    ]
+      = [
+        'date'
+        , 'type'
+        , 'tier'
+        , 'discount'
+        , 'investment'
+        , 'tokens'
+        , 'price'
+        , 'status'
+      ]
   ;
 
-  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
+  $: ({ adminOverrides, investHistoryStateWidget } = $scoresProfileInvestorStore);
+  $: ({ theme } = $userBetarenaSettings);
 
-    // #endregion ➤ 📌 VARIABLES
+  // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
 
@@ -115,31 +165,6 @@
    * @author
    *  @migbash
    * @summary
-   *  🟥 COMPONENT MAIN
-   * @description
-   *  📣 Update variables for viewport state.
-   * @return { void }
-   */
-  function resizeCustom
-  (
-  ): void
-  {
-    [
-      VIEWPORT_TABLET_INIT[1],
-      VIEWPORT_MOBILE_INIT[1]
-    ] = viewport_change
-    (
-      VIEWPORT_TABLET_INIT[0],
-      VIEWPORT_MOBILE_INIT[0]
-    );
-    updateTableLayout();
-    return;
-  }
-
-  /**
-   * @author
-   *  @migbash
-   * @summary
    *  🟦 HELPER
    * @description
    *  📣 Updates layout of tier pricings, dependent on device `resize`.
@@ -150,57 +175,70 @@
   ): void
   {
     if (VIEWPORT_MOBILE_INIT[1])
-      tableHeader = [ 'date', 'type', 'tier', '' ]
+      tableHeader = [ 'date', 'type', 'status' ]
     else
-      tableHeader = [ 'date', 'type', 'tier', 'discount', 'investment', 'tokens', 'price' ]
+      tableHeader = [ 'date', 'type', 'tier', 'discount', 'investment', 'tokens', 'price', 'status' ]
     return;
   }
 
   // #endregion ➤ 🛠️ METHODS
 
-  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'logic' that should run            │
-  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
-  // │ as soon as 'this' .svelte file is ran.                                 │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  onMount
-  (
-    async (
-    ) =>
-    {
-      resizeCustom();
-      return;
-    }
-  );
+  $: if (VIEWPORT_MOBILE_INIT || VIEWPORT_TABLET_INIT) updateTableLayout();
 
-  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
 </script>
-
-<svelte:window
-  on:resize=
-  {
-    () => {return resizeCustom()}
-  }
-/>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component HTML                                                            │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - use 'Ctrl+Space' to autocomplete global class=styles                           │
-│ - access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.     │
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
+<!--
+▓ NOTE:
+▓ > (widget) main
+-->
 <div
   id={CNAME}
-  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+  class:dark-background-1={theme == 'Dark'}
+  class:mutated={adminOverrides.has('InvestmentHistory')}
 >
+
+  <AdminDevControlPanelToggleButton
+    title='Investment Details'
+    mutated={adminOverrides.has('InvestmentHistory')}
+    on:reset=
+    {
+      () =>
+      {
+        scoresProfileInvestorStore.updateAdminMutatedWidgets
+        (
+          'InvestmentHistory'
+          , 'remove'
+        );
+        return;
+      }
+    }
+  />
 
   <!--
   ▓ NOTE:
@@ -216,11 +254,11 @@
     m-b-20
     "
   >
-    <!-- TODO: Missing Translation -->
-    {
-      profileTrs.investor?.investment_details.widget_title
-      ?? 'Investment Details'
-    }
+    <TranslationText
+      key={`${CNAME}/title`}
+      text={profileTrs?.investor?.investment_details.widget_title}
+      fallback={'Investment Details'}
+    />
   </p>
 
   <!--
@@ -250,40 +288,53 @@
                 "
               >
                 {#if item == 'date'}
-                  {
-                    profileTrs.investor?.investment_details.date
-                    ?? 'Date'
-                  }
+                  <TranslationText
+                    key={`${CNAME}/table/header/date`}
+                    text={profileTrs?.investor?.investment_details.date}
+                    fallback={'Date'}
+                  />
                 {:else if item == 'type'}
-                  {
-                    profileTrs.investor?.investment_details.type
-                    ?? 'Available'
-                  }
+                  <TranslationText
+                    key={`${CNAME}/table/header/type`}
+                    text={profileTrs?.investor?.investment_details.type}
+                    fallback={'Available'}
+                  />
                 {:else if item == 'tier'}
-                  {
-                    profileTrs.investor?.investment_details.tier
-                    ?? 'Tier'
-                  }
+                  <TranslationText
+                    key={`${CNAME}/table/header/tier`}
+                    text={profileTrs?.investor?.investment_details.tier}
+                    fallback={'Tier'}
+                  />
                 {:else if item == 'discount'}
-                  {
-                    profileTrs.investor?.investment_details.discount
-                    ?? 'Discount'
-                  }
+                  <TranslationText
+                    key={`${CNAME}/table/header/discount`}
+                    text={profileTrs?.investor?.investment_details.discount}
+                    fallback={'Discount'}
+                  />
                 {:else if item == 'investment'}
-                  {
-                    profileTrs.investor?.investment_details.investment
-                    ?? 'Investment'
-                  }
+                  <TranslationText
+                    key={`${CNAME}/table/header/discount`}
+                    text={profileTrs?.investor?.investment_details.investment}
+                    fallback={'Investment'}
+                  />
                 {:else if item == 'tokens'}
-                  {
-                    profileTrs.investor?.investment_details.tokens
-                    ?? 'Tokens'
-                  }
+                  <TranslationText
+                    key={`${CNAME}/table/header/discount`}
+                    text={profileTrs?.investor?.investment_details.tokens}
+                    fallback={'Tokens'}
+                  />
                 {:else if item == 'price'}
-                  {
-                    profileTrs.investor?.investment_details.price
-                    ?? 'Price'
-                  }
+                  <TranslationText
+                    key={`${CNAME}/table/header/price`}
+                    text={profileTrs?.investor?.investment_details.price}
+                    fallback={'Price'}
+                  />
+                {:else if item == 'status'}
+                  <TranslationText
+                    key={`${CNAME}/table/header/status`}
+                    text={profileTrs?.investor?.investment_details.status}
+                    fallback={'Status'}
+                  />
                 {/if}
               </p>
             </th>
@@ -297,15 +348,25 @@
       -->
       <tbody>
 
-        {#each [...profileData?.tx_hist?? [], ...profileData?.tx_hist ?? []] ?? [] as item}
-          {#if item.type == 'investment'}
+        <!-- ▓ [🐞] -->
+        <!-- {#each [...profileData?.tx_hist ?? [], ...profileData?.tx_hist ?? []] ?? [] as item} -->
+        <!-- {#each [] as item} -->
+
+        {#if
+          (profileData?.tx_hist?.filter(x => {return x.type == 'investment'})?.length ?? 0) > 0
+          && investHistoryStateWidget != 'NoData'
+        }
+          {#each profileData?.tx_hist?.filter(x => {return x.type == 'investment'}) ?? [] as item}
+
+            <!-- ▓ [🐞] -->
+            <!-- {console.log('item', item)} -->
+
             <InvestmentHistoryRowChild
               data={item}
               tierDataMap={dataMap}
-              VIEWPORT_MOBILE_INIT_PARENT={VIEWPORT_MOBILE_INIT}
-              VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
+              {VIEWPORT_MOBILE_INIT}
             />
-          {/if}
+          {/each}
         {:else}
           <div
             id="no-widget-data"
@@ -322,13 +383,14 @@
               line-height: 24px; /* 150% */
               "
             >
-              {
-                profileTrs.investor?.general.no_information
-                ?? 'Uh-oh! No Investments have been found.'
-              }
+              <TranslationText
+                key={`${CNAME}/table/header/type`}
+                text={profileTrs?.investor?.general.no_information}
+                fallback={'Uh-oh! No Investments have been found.'}
+              />
             </p>
           </div>
-        {/each}
+        {/if}
 
       </tbody>
 
@@ -338,17 +400,145 @@
 </div>
 
 <!--
+▓ NOTE:
+▓ > (widget) admin development state UI change control panel.
+-->
+<AdminDevControlPanel
+  title='Investment Details'
+>
+
+  <!--
+  ▓ NOTE:
+  ▓ > (no data) widget state.
+  -->
+  <div
+    class=
+    "
+    row-space-out
+    "
+  >
+    <!--
+    ▓ NOTE:
+    ▓ > (no data state) text.
+    -->
+    <p
+      class=
+      "
+      s-14
+      color-black
+      "
+    >
+      <b>[1]</b> Toggle <b>No Data State</b>
+    </p>
+
+    <!--
+    ▓ NOTE:
+    ▓ > (no data state) button.
+    -->
+    <button
+      class=
+      "
+      dev-toggle
+      "
+      on:click=
+      {
+        () =>
+        {
+          scoresProfileInvestorStore.updateAdminMutatedWidgets
+          (
+            'InvestmentHistory'
+            , 'set'
+          );
+          $scoresProfileInvestorStore.investHistoryStateWidget = 'NoData';
+          return;
+        }
+      }
+      class:on={investHistoryStateWidget == 'NoData'}
+      class:off={investHistoryStateWidget != 'NoData'}
+    >
+      {#if investHistoryStateWidget == 'NoData'}
+        ON
+      {:else}
+        OFF
+      {/if}
+    </button>
+  </div>
+
+  <!--
+  ▓ NOTE:
+  ▓ > (add sample data) widget.
+  -->
+  <div
+    class=
+    "
+    row-space-out
+    "
+  >
+    <!--
+    ▓ NOTE:
+    ▓ > (no data state) text.
+    -->
+    <p
+      class=
+      "
+      s-14
+      color-black
+      "
+    >
+      <b>[2]</b> Add <b>Sample Data</b>
+    </p>
+
+    <!--
+    ▓ NOTE:
+    ▓ > (no data state) button.
+    -->
+    <button
+      class=
+      "
+      dev-toggle
+      "
+      on:click=
+      {
+        () =>
+        {
+          if (!profileData) return;
+
+          (profileData.tx_hist ??= []);
+
+          profileData.tx_hist.push
+          (
+            ...investHistorySampleData
+          );
+
+          profileData = profileData;
+
+          scoresProfileInvestorStore.updateAdminMutatedWidgets
+          (
+            'InvestmentHistory'
+            , 'set'
+          );
+
+          return;
+        }
+      }
+    >
+      TOGGLE
+    </button>
+  </div>
+
+</AdminDevControlPanel>
+
+<!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component CSS/SCSS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE  │
-│ - access custom Betarena Scores CSS VScode Snippets by typing 'style...'         │
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <style lang="scss">
-
-  @import '../../../../../../static/app.scss';
 
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
@@ -358,6 +548,8 @@
 
   div#profile⮕w⮕investment-detail⮕main
   {
+    /* 📌 position */
+    position: relative;
     /* 🎨 style */
     background-color: var(--white);
     border-radius: 12px;
@@ -437,6 +629,7 @@
                 /* 🎨 style */
                 padding-right: 20px;
                 border-radius: 0 2px 2px 0;
+                text-align: -webkit-right;
               }
             }
           }
@@ -465,7 +658,7 @@
                 {
                   /* 🎨 style */
                   // padding-top: 8px;
-                  padding-bottom: 150px;
+                  padding-bottom: 190px;
                 }
               }
 
@@ -488,6 +681,8 @@
                   border-radius: 0 4px 4px 0;
                 }
 
+                @import '../../../../../../static/app.scss';
+
                 p
                 {
                   @extend .s-14;
@@ -497,8 +692,11 @@
 
               &:nth-child(even)
               {
-                /* 🎨 style */
-                background-color: var(--white);
+                td
+                {
+                  /* 🎨 style */
+                  background-color: var(--whitev2);
+                }
               }
 
               div.extra-information
@@ -612,8 +810,11 @@
           {
             &:nth-child(even)
             {
-              /* 🎨 style */
-              background-color: rgba(75, 75, 75, 0.50) !important;
+              td
+              {
+                /* 🎨 style */
+                background-color: rgba(75, 75, 75, 0.50) !important;
+              }
             }
           }
         }

@@ -1,8 +1,17 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - access custom Betarena Scores JS VScode Snippets by typing 'script...'         │
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -24,13 +33,22 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
 	import { page } from '$app/stores';
-	import { onDestroy, onMount } from 'svelte';
 
+  import { postv2 } from '$lib/api/utils.js';
+  import { userUpdateInvestorBalance } from '$lib/firebase/common.js';
+  import sessionStore from '$lib/store/session.js';
   import userBetarenaSettings from '$lib/store/user-settings.js';
-  import { toCorrectDate, toZeroPrefixDateStr } from '$lib/utils/dates.js';
+  import { toDecimalFix } from '$lib/utils/platform-functions.js';
+  import { scoresProfileInvestorStore } from './_store.js';
 
   import icon_bta_token from '../assets/price-tier/icon-bta-token.svg';
 
+  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
+  import AdminDevControlPanel from '$lib/components/misc/admin/Admin-Dev-ControlPanel.svelte';
+  import AdminDevControlPanelToggleButton from '$lib/components/misc/admin/Admin-Dev-ControlPanelToggleButton.svelte';
+  import MainClaimModal from './Main-Claim-Modal.svelte';
+
+  import { toISOMod } from '$lib/utils/dates.js';
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -52,100 +70,112 @@
   export let
     /**
      * @augments IProfileData
-    */
+     */
     profileData: IProfileData | null
     /**
      * @description
-     *  📣
-    */
-    , VIEWPORT_MOBILE_INIT_PARENT: [ number, boolean ]
+     *  📣 threshold start + state for 📱 MOBILE
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
     /**
      * @description
-     *  📣
-    */
-    , VIEWPORT_TABLET_INIT_PARENT: [ number, boolean ]
+     *  📣 threshold start + state for 💻 TABLET
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
   const
-    /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
-    // eslint-disable-next-line no-unused-vars
+    /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */ // eslint-disable-next-line no-unused-vars
     CNAME: string = 'profile⮕w⮕investtge⮕main'
-    /** @description 📣 threshold start + state for 📱 MOBILE */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = VIEWPORT_MOBILE_INIT_PARENT
-    /** @description 📣 threshold start + state for 💻 TABLET */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = VIEWPORT_TABLET_INIT_PARENT
   ;
 
-  let
-    /**
-     * @description
-     *  📣 investor number of days difference (from end)
-    */
-    dateDiff: number = 0
-    /**
-     * @description
-     *  📣 interval variable for `countdown` logic
-    */
-    , interval1: NodeJS.Timer
-    /**
-     * @description
-     *  📣 target date of relase of tokens.
-    */
-    , targetDate: Date = new Date()
-  ;
-
-  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
-
-  $: countDownSecToEnd = toZeroPrefixDateStr(Math.floor((dateDiff / 1000) % 60).toString());
-	$: countDownMinToEnd = toZeroPrefixDateStr(Math.floor((dateDiff / 1000 / 60) % 60).toString());
-	$: countDownHourToEnd = toZeroPrefixDateStr(Math.floor((dateDiff / (1000 * 60 * 60)) % 24).toString());
-	$: countDownDayToEnd = toZeroPrefixDateStr(Math.floor((dateDiff / (1000 * 60 * 60 * 24))).toString());
-
-  // [🐞]
-  // profileData!.presaleData.data!.end_date = '';
-  // profileData!.investorData!.data!.tge!.status = 'Claimed';
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
+  $: ({ adminOverrides } = $scoresProfileInvestorStore);
+  // @ts-expect-error
+  $: ({ uid } = $userBetarenaSettings.user.firebase_user_data);
+  $: ({ tge_to_claim } = $userBetarenaSettings.user.scores_user_data?.investor_balance ?? { tge_to_claim: 0 });
 
   // #endregion ➤ 📌 VARIABLES
 
-  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+  // #region ➤ 🛠️ METHODS
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'logic' that should run            │
-  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
-  // │ as soon as 'this' .svelte file is ran.                                 │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  onMount
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟦 HELPER
+   * @description
+   *  📣 Create new **TGE request** for target user of said amount.
+   * @return { Promise < void > }
+   */
+  async function createTgeClaimRequest
   (
-    async (
-    ): Promise < void > =>
-    {
-      targetDate.setDate(targetDate.getDate() + 1);
-      dateDiff = toCorrectDate(targetDate, false).getTime() - new Date().getTime();
-      setInterval
+  ): Promise < void >
+  {
+    const
+      /**
+       * @description
+       *  📣 Response from `endpoint`.
+       */
+      result = await postv2
       (
-        () =>
-        {
-          dateDiff = toCorrectDate(targetDate, false).getTime() - new Date().getTime();
-        },
-        1000
-      );
-    }
-  );
+        `${import.meta.env.VITE_FIREBASE_FUNCTIONS_ORIGIN}/transaction/update/investment/claim/create`
+        // 'http://127.0.0.1:5001/betarena-ios/us-central1/api/transaction/update/investment/claim/create'
+        , {
+          uid
+          , vestingId: null
+          , isTge: true
+        }
+      )
+    ;
 
-  onDestroy
-  (
-    () =>
+    // @ts-expect-error
+    if (result.error)
     {
-      // @ts-expect-error
-      clearInterval(interval1);
+      $sessionStore.currentActiveModal = 'GeneralPlatform_Error';
+      return;
     }
-  );
 
-  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
+    const
+      /**
+       * @description
+       *  📣 Target amount to change balance by **(a.k.a delta)**.
+      */
+      deltaBalance: number = (-(profileData?.investorData?.data?.tge.tokens ?? 0))
+    ;
+
+    // TODO:
+    // can be offloaded to server (backend).
+
+    await userUpdateInvestorBalance
+    (
+      {
+        uid
+        , deltaBalance
+        , type: 'tge'
+      }
+    );
+
+    // $scoresProfileInvestorStore.tgeStateWidget = 'Tge_Claimed';
+    window.location.reload();
+
+    return;
+  }
+
+  // #endregion ➤ 🛠️ METHODS
 
 </script>
 
@@ -153,23 +183,68 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component HTML                                                            │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - use 'Ctrl+Space' to autocomplete global class=styles                           │
-│ - access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.     │
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
+<!--
+▓ NOTE:
+▓ > (child-component) claim modal
+-->
+{#if $sessionStore.currentActiveModal == 'ProfileInvestor_ClaimTGE_Modal'}
+  <MainClaimModal
+    {VIEWPORT_MOBILE_INIT}
+    {VIEWPORT_TABLET_INIT}
+    amount={profileData?.investorData?.data?.tge.tokens ?? 0}
+    on:confirmEntry=
+    {
+      () =>
+      {
+        // alert('Executing TGE Claim!');
+        createTgeClaimRequest();
+        return;
+      }
+    }
+  />
+{/if}
+
+<!--
+▓ NOTE:
+▓ > (widget) main
+-->
 <div
   id={CNAME}
   class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
-  class:column-space-stretch={!VIEWPORT_TABLET_INIT_PARENT[1] || VIEWPORT_MOBILE_INIT_PARENT[1]}
-  class:row-space-out={VIEWPORT_TABLET_INIT_PARENT[1] && !VIEWPORT_MOBILE_INIT_PARENT[1]}
+  class:column-space-stretch={!VIEWPORT_TABLET_INIT[1] || VIEWPORT_MOBILE_INIT[1]}
+  class:row-space-out={VIEWPORT_TABLET_INIT[1] && !VIEWPORT_MOBILE_INIT[1]}
   style=
   "
-  {!VIEWPORT_TABLET_INIT_PARENT[1] || VIEWPORT_MOBILE_INIT_PARENT[1] ? 'justify-content: space-between;' : ''}
+  {!VIEWPORT_TABLET_INIT[1] || VIEWPORT_MOBILE_INIT[1] ? 'justify-content: space-between;' : ''}
   "
+  class:mutated={adminOverrides.has('Tge')}
 >
   <!-- [🐞] -->
-  <!-- {VIEWPORT_TABLET_INIT_PARENT[1]} -->
+  <!-- {VIEWPORT_TABLET_INIT[1]} -->
+
+  <AdminDevControlPanelToggleButton
+    title='Tokens available on launch date (TGE)'
+    mutated={adminOverrides.has('Tge')}
+    on:reset=
+    {
+      () =>
+      {
+        scoresProfileInvestorStore.updateAdminMutatedWidgets
+        (
+          'Tge'
+          , 'remove'
+        );
+        return;
+      }
+    }
+  />
 
   <!--
   ╭──────────────────────────────────────────────────────────────────────╮
@@ -192,18 +267,19 @@
       color-grey
         grey-v1
       "
-      class:m-b-24={VIEWPORT_TABLET_INIT_PARENT[1] && !VIEWPORT_MOBILE_INIT_PARENT[1]}
-      class:m-b-12={!VIEWPORT_TABLET_INIT_PARENT[1] || VIEWPORT_MOBILE_INIT_PARENT[1]}
+      class:m-b-24={VIEWPORT_TABLET_INIT[1] && !VIEWPORT_MOBILE_INIT[1]}
+      class:m-b-12={!VIEWPORT_TABLET_INIT[1] || VIEWPORT_MOBILE_INIT[1]}
       style=
       "
       line-height: 20px; /* 142.857% */
-      width: 170px;
+      {!VIEWPORT_MOBILE_INIT[1] ? 'width: 170px;' : ''}
       "
     >
-      {
-        profileTrs.investor?.tge.info
-        ?? 'Tokens available on launch date (TGE)'
-      }
+      <TranslationText
+        key={`${CNAME}`}
+        text={profileTrs?.investor?.tge.info}
+        fallback={'Tokens available on launch date (TGE)'}
+      />
     </p>
 
     <!--
@@ -214,6 +290,12 @@
       class=
       "
       row-space-start
+      width-fit-content
+      "
+      style=
+      "
+      flex-wrap: wrap;
+      align-items: flex-end;
       "
     >
 
@@ -226,44 +308,99 @@
         "
         w-500
         color-black-2
-        m-r-6
+        m-r-10
         "
-        class:s-40={!VIEWPORT_MOBILE_INIT_PARENT[1]}
-        class:s-32={VIEWPORT_MOBILE_INIT_PARENT[1]}
+        class:s-40={!VIEWPORT_MOBILE_INIT[1]}
+        class:s-32={VIEWPORT_MOBILE_INIT[1]}
         style=
         "
         line-height: 100%; /* 40px */
         "
       >
         {
-          $userBetarenaSettings.user.scores_user_data?.investor_balance
-          ?? 0
+          toDecimalFix(tge_to_claim ?? 0, 2, false, false)
         }
-        <span
-          class=
-          "
-          s-24
-          "
-        >
-          BTA
-        </span>
       </p>
 
       <!--
       ▓ NOTE:
-      ▓ > (asset) BTA icon token.
+      ▓ > (text) BTA + Icon
       -->
-      <img
-        id=''
-        src={icon_bta_token}
-        alt=''
-        title=''
-        loading='lazy'
-        width=20
-        height=20
-      />
+      <div
+        class=
+        "
+        row-space-start
+        width-fit-content
+        m-b-3
+        "
+      >
+
+        <!--
+        ▓ NOTE:
+        ▓ > (text) TGE amount
+        -->
+        <p
+          class=
+          "
+          w-500
+          color-black-2
+          m-r-6
+          "
+          class:s-24={!VIEWPORT_MOBILE_INIT[1]}
+          class:s-20={VIEWPORT_MOBILE_INIT[1]}
+          style=
+          "
+          line-height: 100%; /* 40px */
+          "
+        >
+          BTA
+        </p>
+
+        <!--
+        ▓ NOTE:
+        ▓ > (asset) BTA icon token.
+        -->
+        <img
+          id=''
+          src={icon_bta_token}
+          alt=''
+          title=''
+          loading='lazy'
+          width=20
+          height=20
+        />
+      </div>
 
     </div>
+
+     <!--
+    ▓ NOTE:
+    ▓ > token ready to claim.
+    -->
+    {#if $scoresProfileInvestorStore.tgeStateWidget == 'Tge_ClaimAvailable'}
+      <button
+        class=
+        "
+        m-t-20
+        btn-primary-v2
+        "
+        on:click=
+        {
+          () =>
+          {
+            // alert('Initiate Process for Claim!');
+            $sessionStore.currentActiveModal = 'ProfileInvestor_ClaimTGE_Modal';
+            return;
+          }
+        }
+      >
+        <TranslationText
+          key={`${CNAME}`}
+          text={profileTrs?.investor?.tge.cta_title}
+          fallback={'Claim now!'}
+        />
+      </button>
+    {/if}
 
   </div>
 
@@ -278,8 +415,13 @@
   ▓ NOTE:
   ▓ > token release date view.
   -->
-  {#if profileData?.investorData?.data?.tge.status == null}
-    <div>
+  {#if $scoresProfileInvestorStore.tgeStateWidget != 'Tge_Claimed'}
+    <div
+      class=
+      "
+      {VIEWPORT_MOBILE_INIT[1] ? 'm-t-32' : ''}
+      "
+    >
 
       <!--
       ▓ NOTE:
@@ -298,17 +440,19 @@
         line-height: 20px; /* 142.857% */
         "
       >
-        {
-          profileTrs.investor?.tge.date_title
-          ?? 'Release date'
-        }
+        <TranslationText
+          key={`${CNAME}`}
+          text={profileTrs?.investor?.tge.date_title}
+          fallback={'Release date'}
+        />
       </p>
 
       <!--
       ▓ NOTE:
       ▓ > token release date not set.
       -->
-      {#if !profileData?.presaleData.data?.end_date}
+      {#if ['Tge_ClaimAvailable', 'Tge_NoDefinedDate'].includes($scoresProfileInvestorStore.tgeStateWidget)}
+
         <div
           id="round-info-box-parent"
         >
@@ -320,61 +464,41 @@
               dark-v1
             "
           >
-            Date to be announced soon
+            {#if $scoresProfileInvestorStore.tgeStateWidget == 'Tge_NoDefinedDate'}
+              <TranslationText
+                key={`${CNAME}`}
+                text={profileTrs?.investor?.tge.date_title_2}
+                fallback={'Date to be announced soon'}
+              />
+            {:else}
+              {toISOMod(profileData?.investorData?.data?.tge.available_date ?? '')}
+            {/if}
           </p>
         </div>
 
       <!--
       ▓ NOTE:
-      ▓ > token release date.
+      ▓ > token release date set (countdown).
       -->
       {:else}
+
         <div
           id="countdown-row"
         >
-          <div
-            class=
-            "
-            countdown-box
-            "
-          >
-            <p>
-              {countDownDayToEnd}d
-            </p>
-          </div>
-
-          <div
-            class=
-            "
-            countdown-box
-            "
-          >
-            <p>
-              {countDownHourToEnd}h
-            </p>
-          </div>
-
-          <div
-            class=
-            "
-            countdown-box
-            "
-          >
-            <p>
-              {countDownMinToEnd}m
-            </p>
-          </div>
-
-          <div
-            class=
-            "
-            countdown-box
-            "
-          >
-            <p>
-              {countDownSecToEnd}s
-            </p>
-          </div>
+          <!-- eslint-disable-next-line no-unused-vars -->
+          {#each { length: 4 } as _,i}
+            <div
+              class=
+              "
+              <!---->
+              countdown-box
+              "
+            >
+              <p>
+                {$scoresProfileInvestorStore.globalTgeReleaseClock?.[i] ?? '00'}d
+              </p>
+            </div>
+          {/each}
         </div>
 
       {/if}
@@ -383,27 +507,9 @@
 
   <!--
   ▓ NOTE:
-  ▓ > token ready to claim.
-  -->
-  {:else if profileData?.investorData?.data?.tge.status == 'Pending'}
-    <button
-      class=
-      "
-      btn-primary-v2
-      "
-      on:click={() => {return alert('Initiate Process for Claim!')}}
-    >
-      {
-        profileTrs.investor?.tge.cta_title
-        ?? 'Claim now!'
-      }
-    </button>
-
-  <!--
-  ▓ NOTE:
   ▓ > tokens have been claimed.
   -->
-  {:else if profileData?.investorData?.data?.tge.status == 'Claimed'}
+  {:else}
     <div
       id="claimed"
     >
@@ -415,10 +521,11 @@
         color-white
         "
       >
-      {
-        profileTrs.investor?.tge.cta_title_2
-        ?? 'Claimed'
-      }
+        <TranslationText
+          key={`${CNAME}`}
+          text={profileTrs?.investor?.tge.cta_title_2}
+          fallback={'Claimed'}
+        />
       </p>
     </div>
 
@@ -427,17 +534,78 @@
 </div>
 
 <!--
+▓ NOTE:
+▓ > (widget) admin development state UI change control panel.
+-->
+<AdminDevControlPanel
+  title='Tokens available on launch date (TGE)'
+>
+
+  <!--
+  ▓ NOTE:
+  ▓ > (select) widget state.
+  -->
+  <div
+    class=
+    "
+    row-space-out
+    "
+  >
+    <!--
+    ▓ NOTE:
+    ▓ > (text) target action.
+    -->
+    <p
+      class=
+      "
+      s-14
+      color-black
+      "
+    >
+      <b>[1]</b> Choose <b>Widget State</b>
+    </p>
+
+    <!--
+    ▓ NOTE:
+    ▓ > (action) target select.
+    -->
+    <select
+      id="cars"
+      name="cars"
+      bind:value={$scoresProfileInvestorStore.tgeStateWidget}
+      on:change=
+      {
+        () =>
+        {
+          scoresProfileInvestorStore.updateAdminMutatedWidgets
+          (
+            'Tge'
+            , 'set'
+          );
+          return;
+        }
+      }
+    >
+      <option value="Tge_NoDefinedDate">Release date not defined</option>
+      <option value="Tge_DateDefined">Release date defined</option>
+      <option value="Tge_ClaimAvailable">Ready to claim</option>
+      <option value="Tge_Claimed">Claimed</option>
+    </select>
+  </div>
+
+</AdminDevControlPanel>
+
+<!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component CSS/SCSS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE  │
-│ - access custom Betarena Scores CSS VScode Snippets by typing 'style...'         │
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <style lang="scss">
-
-  @import '../../../../../../static/app.scss';
 
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
@@ -447,15 +615,15 @@
 
   div#profile⮕w⮕investtge⮕main
   {
+    /* 📌 position */
+    position: relative;
     /* 🎨 style */
     background-color: var(--white);
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
     padding: 20px;
-    height: 229px;
     min-height: 229px;
-    max-height: 229px;
 
     p#hint
     {
@@ -509,9 +677,9 @@
         p
         {
           /* 🎨 style */
-          @extend .s-16;
-          @extend .w-500;
-          @extend .color-black-2;
+          font-size: 16px;
+          font-weight: 500;
+          color: var(--dark-theme);
         }
       }
     }
@@ -596,6 +764,12 @@
       {
         /* 🎨 style */
         background-color: var(--dark-theme-1-7-shade);
+
+        p
+        {
+          /* 🎨 style */
+          color: var(--white);
+        }
       }
     }
 

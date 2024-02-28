@@ -3,13 +3,13 @@
 import sessionStore from '$lib/store/session.js';
 import userBetarenaSettings from '$lib/store/user-settings.js';
 import { dlog } from '$lib/utils/debug.js';
-import { onValue, ref, type DatabaseReference, type Unsubscribe, DataSnapshot } from "firebase/database";
-import { arrayRemove, arrayUnion, doc, DocumentReference, DocumentSnapshot, getDoc, onSnapshot, updateDoc, type DocumentData } from "firebase/firestore";
-import { getTargetRealDbData } from "./firebase.actions.js";
-import { db_firestore, db_real } from "./init";
+import { DataSnapshot, onValue, ref, type DatabaseReference, type Unsubscribe } from 'firebase/database';
+import { arrayRemove, arrayUnion, doc, DocumentReference, DocumentSnapshot, getDoc, increment, onSnapshot, updateDoc } from 'firebase/firestore';
+import { getTargetRealDbData } from './firebase.actions.js';
+import { db_firestore, db_real } from './init';
 
-import type { BetarenaUser } from "$lib/types/types.scores.js";
-import type { FIRE_LNNS, FIRE_LNPI, FIREBASE_livescores_now, FIREBASE_odds } from "@betarena/scores-lib/types/firebase.js";
+import type { BetarenaUser } from '$lib/types/types.scores.js';
+import type { FIRE_LNNS, FIRE_LNPI, FIREBASE_livescores_now, FIREBASE_odds } from '@betarena/scores-lib/types/firebase.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -29,7 +29,6 @@ export function userBalanceListen
   uid: string
 ): void
 {
-
   const _unsubscribe: Unsubscribe = onSnapshot
   (
     doc
@@ -47,9 +46,12 @@ export function userBalanceListen
       (
         data.main_balance
       );
+      userBetarenaSettings.userUpdateBTABalance2
+      (
+        data.investor_balance
+      );
     }
   );
-
 }
 
 /**
@@ -62,8 +64,7 @@ export async function userUpdateBalance
   balanceChng: number
 ): Promise < void >
 {
-
-  const userRef: DocumentReference < DocumentData > = doc
+  const userRef: DocumentReference  = doc
   (
     db_firestore,
     'betarena_users',
@@ -79,7 +80,67 @@ export async function userUpdateBalance
   );
 
   return;
+}
 
+/**
+ * @author
+ *  @migbash
+ * @summary
+ *  🟦 HELPER
+ * @description
+ *  📣 Update target **user** balance for **investor wallet**.
+ * @param { object } opts
+ *  💠 Target method `options`.
+ * @param { string } opts.uid
+ *  💠 Target `user` (uid) to have balance updated.
+ * @param { number } opts.deltaBalance
+ *  💠 Target `new balance` to be set.
+ * @param { 'tge' | 'total' } opts.type
+ *  💠 Target `type` balance being updated.
+ * @returns { Promise < void > }
+ */
+export async function userUpdateInvestorBalance
+(
+  opts:
+  {
+    uid: string
+    , deltaBalance: number
+    , type: 'tge' | 'total'
+  }
+): Promise < void >
+{
+  const
+    userRef: DocumentReference  = doc
+    (
+      db_firestore
+      , 'betarena_users'
+      , opts.uid
+    )
+  ;
+
+  if (opts.type == 'total')
+  {
+    await updateDoc
+    (
+      userRef
+      , {
+        'investor_balance.grand_total': increment(opts.deltaBalance)
+      }
+    );
+  }
+  else
+  {
+    await updateDoc
+    (
+      userRef
+      , {
+        'investor_balance.grand_total': increment(opts.deltaBalance)
+        , 'investor_balance.tge_to_claim': increment(opts.deltaBalance)
+      }
+    );
+  }
+
+  return;
 }
 
 /**
@@ -96,8 +157,7 @@ export async function userToggleUserguideOptOut
   currentOptOuts: number[]
 ): Promise < void >
 {
-
-  const userRef: DocumentReference < DocumentData > = doc
+  const userRef: DocumentReference  = doc
   (
     db_firestore,
     'betarena_users',
@@ -137,25 +197,24 @@ export async function userDataFetch
   uid: string
 ): Promise < void >
 {
-
   // [🐞]
   dlog
   (
-    `🚏 checkpoint ➤ userDataFetch`,
+    '🚏 checkpoint ➤ userDataFetch',
     true
   );
 
-  const docRef: DocumentReference < DocumentData > = doc
+  const docRef: DocumentReference  = doc
   (
     db_firestore,
-    "betarena_users",
+    'betarena_users',
     uid
-  );
+  )
 
-  const docSnap: DocumentSnapshot < DocumentData > = await getDoc
-  (
-    docRef
-  );
+    ,docSnap: DocumentSnapshot  = await getDoc
+    (
+      docRef
+    );
 
   if (!docSnap.exists()) return;
 
@@ -192,7 +251,7 @@ export async function onceTargetPlayerIds
 
   sessionStore.updateLivescorePlayerId
   (
-    firebaseData?.id
+    firebaseData.id
   );
 }
 
@@ -213,24 +272,24 @@ export function targetPlayerIdsListen
   (
     db_real,
     path
-  );
+  )
 
-  const listenEventRef: Unsubscribe = onValue
-  (
-    dbRef,
+    ,listenEventRef: Unsubscribe = onValue
     (
-      snapshot: DataSnapshot
-    ): void =>
-    {
-      const firebaseData: FIRE_LNPI = snapshot.val();
-      sessionStore.updateLivescorePlayerId
+      dbRef,
       (
-        firebaseData?.id
-      );
-    }
-  );
+        snapshot: DataSnapshot
+      ): void =>
+      {
+        const firebaseData: FIRE_LNPI = snapshot.val();
+        sessionStore.updateLivescorePlayerId
+        (
+          firebaseData.id
+        );
+      }
+    );
 
-  sessionStore?.updateFirebaseListener([listenEventRef]);
+  sessionStore.updateFirebaseListener([listenEventRef]);
 
   return listenEventRef
 }
@@ -255,9 +314,8 @@ export function createFixtureOddsPath
   fixtureTime: string
 ): string
 {
-
-  const year_: string = new Date(fixtureTime).getFullYear().toString();
-  const month_: number = new Date(fixtureTime).getMonth();
+  const year_: string = new Date(fixtureTime).getFullYear().toString()
+    ,month_: number = new Date(fixtureTime).getMonth();
   let new_month_ = (month_ + 1).toString();
   new_month_ = `0${new_month_}`.slice(-2);
   let day = new Date(fixtureTime).getDate().toString();
@@ -282,37 +340,37 @@ export function targetLivescoreNowFixtureOddsListen
   (
     db_real,
     path
-  );
+  )
 
-  const listenEventRef: Unsubscribe = onValue
-  (
-    dbRef,
+    ,listenEventRef: Unsubscribe = onValue
     (
-      snapshot: DataSnapshot
-    ): void =>
-    {
-      const sportbookArray: FIREBASE_odds[] = []
+      dbRef,
+      (
+        snapshot: DataSnapshot
+      ): void =>
+      {
+        const sportbookArray: FIREBASE_odds[] = []
 
-      const data: [string, FIREBASE_odds][] =
-        snapshot.exists()
+          ,data: [string, FIREBASE_odds][]
+        = snapshot.exists()
           ? Object.entries(snapshot.val())
           : []
       ;
 
-      for (const sportbook of data)
-      {
-        sportbook[1].sportbook = sportbook[0].toString();
-        sportbookArray.push(sportbook[1]);
+        for (const sportbook of data)
+        {
+          sportbook[1].sportbook = sportbook[0].toString();
+          sportbookArray.push(sportbook[1]);
+        }
+
+        sessionStore.updateLiveOdds
+        (
+          sportbookArray
+        );
       }
+    );
 
-      sessionStore.updateLiveOdds
-      (
-        sportbookArray
-      );
-    }
-  );
-
-  sessionStore?.updateFirebaseListener([listenEventRef]);
+  sessionStore.updateFirebaseListener([listenEventRef]);
 
   return listenEventRef
 }
@@ -338,36 +396,35 @@ export function targetLivescoreNowFixtureOddsListenMulti
     (
       db_real,
       path
-    );
+    )
 
-    const listenEventRef: Unsubscribe = onValue
-    (
-      dbRef,
+      ,listenEventRef: Unsubscribe = onValue
       (
-        snapshot: DataSnapshot
-      ): void =>
-      {
-        const data: [string, FIREBASE_odds][] =
-          snapshot.exists()
+        dbRef,
+        (
+          snapshot: DataSnapshot
+        ): void =>
+        {
+          const data: [string, FIREBASE_odds][]
+          = snapshot.exists()
             ? Object.entries(snapshot.val())
             : []
-        ;
 
-        const sportbookArray: FIREBASE_odds[] = []
+            ,sportbookArray: FIREBASE_odds[] = []
 
-        for (const sportbook of data)
-        {
-          sportbook[1].sportbook = sportbook[0].toString();
-          sportbookArray.push(sportbook[1]);
+          for (const sportbook of data)
+          {
+            sportbook[1].sportbook = sportbook[0].toString();
+            sportbookArray.push(sportbook[1]);
+          }
+
+          sessionStore.updateLiveOddsMap
+          (
+            parseInt(snapshot.key),
+            sportbookArray
+          );
         }
-
-        sessionStore.updateLiveOddsMap
-        (
-          parseInt(snapshot?.key),
-          sportbookArray
-        );
-      }
-    );
+      );
 
     listenEventRefsList.push
     (
@@ -375,7 +432,7 @@ export function targetLivescoreNowFixtureOddsListenMulti
     );
   }
 
-  sessionStore?.updateFirebaseListener(listenEventRefsList);
+  sessionStore.updateFirebaseListener(listenEventRefsList);
 
   return listenEventRefsList
 }
@@ -394,33 +451,30 @@ export async function oneOffOddsDataGet
   paths: string[]
 ): Promise < void >
 {
-
   for (const path of paths)
   {
-
     const firebaseData = await getTargetRealDbData
-    (
-      path
-    );
+      (
+        path
+      )
 
-    const data: [string, FIREBASE_odds][] =
-      firebaseData != null
+      ,data: [string, FIREBASE_odds][]
+      = firebaseData != null
         ? Object.entries(firebaseData)
         : []
-    ;
 
-    const sportbookArray: FIREBASE_odds[] = [];
+      ,sportbookArray: FIREBASE_odds[] = []
 
-    const fixtureId = path.split
-    (
-      '/'
-    )
-    ?.[path.split('/').length - 1];
+      ,fixtureId = path.split
+      (
+        '/'
+      )
+        [path.split('/').length - 1];
 
     for (const sportbook of data)
     {
-      sportbook[1].sportbook = sportbook?.[0]?.toString();
-      sportbookArray.push(sportbook?.[1]);
+      sportbook[1].sportbook = sportbook[0].toString();
+      sportbookArray.push(sportbook[1]);
     }
 
     sessionStore.updateLiveOddsMap
@@ -428,7 +482,6 @@ export async function oneOffOddsDataGet
       parseInt(fixtureId),
       sportbookArray
     );
-
   }
 
   return;
@@ -454,27 +507,27 @@ export function listenRealTimeLivescoresNowChange
   (
     db_real,
     'livescores_now/'
-  );
+  )
 
-  const listenEventRef: Unsubscribe = onValue
-  (
-    dataRef,
+    ,listenEventRef: Unsubscribe = onValue
     (
-      snapshot: DataSnapshot
-    ): void =>
-    {
-      if (snapshot.val() != null)
+      dataRef,
+      (
+        snapshot: DataSnapshot
+      ): void =>
       {
-        const data: [
+        if (snapshot.val() != null)
+        {
+          const data: [
           string,
           FIREBASE_livescores_now
         ][] = Object.entries(snapshot.val());
-        genLiveFixMap(data);
+          genLiveFixMap(data);
+        }
       }
-    }
-  );
+    );
 
-  sessionStore?.updateFirebaseListener([listenEventRef]);
+  sessionStore.updateFirebaseListener([listenEventRef]);
 
   return listenEventRef
 }
@@ -496,24 +549,24 @@ export function targetLivescoreNowFixtureListen
   (
     db_real,
     path
-  );
+  )
 
-  const listenEventRef: Unsubscribe = onValue
-  (
-    dbRef,
+    ,listenEventRef: Unsubscribe = onValue
     (
-      snapshot: DataSnapshot
-    ): void =>
-    {
-      const firebaseData: FIREBASE_livescores_now = snapshot.val();
-      sessionStore.updateLivescoresTarget
+      dbRef,
       (
-        firebaseData
-      );
-    }
-  );
+        snapshot: DataSnapshot
+      ): void =>
+      {
+        const firebaseData: FIREBASE_livescores_now = snapshot.val();
+        sessionStore.updateLivescoresTarget
+        (
+          firebaseData
+        );
+      }
+    );
 
-  sessionStore?.updateFirebaseListener([listenEventRef]);
+  sessionStore.updateFirebaseListener([listenEventRef]);
 
   return listenEventRef
 }
@@ -532,12 +585,12 @@ export async function one_off_livescore_call
 ): Promise < void >
 {
   const firebaseData = await getTargetRealDbData
-  (
-    `livescores_now`
-  );
+    (
+      'livescores_now'
+    )
 
-  const data: [string, FIREBASE_livescores_now][] =
-    firebaseData != null
+    ,data: [string, FIREBASE_livescores_now][]
+    = firebaseData != null
       ? Object.entries(firebaseData)
       : []
   ;
@@ -589,11 +642,11 @@ export async function genLiveFixMap
   for await (const live_fixture of data)
   {
     const fixture_id = parseInt
-    (
-      live_fixture[0].toString()
-    );
+      (
+        live_fixture[0].toString()
+      )
 
-    const fixture_data = live_fixture[1];
+      ,fixture_data = live_fixture[1];
 
     liveFixturesMap.set
     (
@@ -628,28 +681,28 @@ export function listenRealTimeScoreboardAll
   (
     db_real,
     'livescores_now_scoreboard'
-  );
+  )
 
-  const listenEventRef: Unsubscribe = onValue
-  (
-    dbRef,
+    ,listenEventRef: Unsubscribe = onValue
     (
-      snapshot:DataSnapshot
-    ): void =>
-    {
-      if (snapshot.val() != null)
+      dbRef,
+      (
+        snapshot:DataSnapshot
+      ): void =>
       {
-        const data:
+        if (snapshot.val() != null)
+        {
+          const data:
         [
           string,
           FIRE_LNNS
         ][] = Object.entries(snapshot.val());
-        generateLiveScoreboardList(data);
+          generateLiveScoreboardList(data);
+        }
       }
-    }
-  );
+    );
 
-  sessionStore?.updateFirebaseListener([listenEventRef]);
+  sessionStore.updateFirebaseListener([listenEventRef]);
 
   return listenEventRef
 }
@@ -669,12 +722,12 @@ export async function onceRealTimeLiveScoreboard
 ): Promise < void >
 {
   const firebaseData = await getTargetRealDbData
-  (
-    `livescores_now_scoreboard`
-  );
+    (
+      'livescores_now_scoreboard'
+    )
 
-  const data: [string, FIRE_LNNS][] =
-    firebaseData != null
+    ,data: [string, FIRE_LNNS][]
+    = firebaseData != null
       ? Object.entries(firebaseData)
       : []
   ;
@@ -698,11 +751,11 @@ function generateLiveScoreboardList
   for (const liveFixture of data)
   {
     const fixtureId = parseInt
-    (
-      liveFixture[0].toString()
-    );
+      (
+        liveFixture[0].toString()
+      )
 
-    const fixtureData = liveFixture[1];
+      ,fixtureData = liveFixture[1];
 
     liveFixturesMap.set
     (
