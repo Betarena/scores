@@ -90,7 +90,7 @@
     // ### IMPORTANT
     if (!browser) return;
 
-		await sleep(3000);
+		// await sleep(3000);
 
     const response: B_PROF_D = await get
     (

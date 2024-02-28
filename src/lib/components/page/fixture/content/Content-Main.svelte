@@ -9,7 +9,7 @@
   import { onMount } from 'svelte';
 
 	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { MONTH_NAMES_ABBRV } from '$lib/utils/dates.js';
+	import { monthNames } from '$lib/utils/dates.js';
 	import { viewport_change } from '$lib/utils/platform-functions.js';
 
 	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
@@ -264,7 +264,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                       color-grey
                     "
                   >
-                    {FIXTURE_CONTENT_TRANSLATION?.months[MONTH_NAMES_ABBRV[new Date(item?.date).getMonth()]]}
+                    {FIXTURE_CONTENT_TRANSLATION?.months[monthNames[new Date(item?.date).getMonth()]]}
                     {new Date(item?.date.toString()).getDate()},
                     {new Date(item?.date.toString()).getFullYear()}
                   </p>

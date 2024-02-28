@@ -21,7 +21,6 @@ const sessionStoreObj: Platform_Session =
 {
   // ### NOTE:
   // ### variables for show/hide.
-	newsletterPopUpShow: false,
 	auth_show: false,
   livescoreShowCalendar: false,
 	selectedSeasonID: undefined,
@@ -33,6 +32,7 @@ const sessionStoreObj: Platform_Session =
   showUserguide1Conf: false,
   showFixtureCompetition: false,
   isShowFixtureCompetitionJoinModal: false,
+  currentActiveModal: null,
   // ### NOTE:
   // ### variables for language handle.
   lang_intent: undefined,
@@ -45,6 +45,7 @@ const sessionStoreObj: Platform_Session =
   deviceType: undefined,
   firebaseListeners: [],
   grapqhQlWebSockets: [],
+  currentAdminToggle: null,
   // ### NOTE:
   // ### variables for date handle.
   userDate: clientTimezoneDate(),
@@ -72,7 +73,8 @@ const sessionStoreObj: Platform_Session =
   live_odds_fixture_map: new Map(),
   livescore_now_player_fixture: undefined,
   livescore_now_fixtures: [],
-  competitions_map: new Map()
+  competitions_map: new Map(),
+  investDepositAmountMobileWeb3: undefined
 };
 
 // #endregion ➤ 📌 VARIABLES

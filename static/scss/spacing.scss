@@ -1,0 +1,41 @@
+/* #region ➤ [MAIN] [MARGINS] Website Layout */
+
+$marginDirection: ('r','l','t','b');
+$count: 100;
+
+//
+// Generate possible Margins
+//
+
+.m-0
+{
+  margin: 0;
+}
+
+@each $dir in $marginDirection
+{
+  .m-#{$dir}
+  {
+    @for $i from 1 through $count
+    {
+      @if $dir == r
+      {
+        &-#{$i} { margin-right: #{$i}px; }
+      }
+      @else if $dir == l
+      {
+        &-#{$i} { margin-left: #{$i}px; }
+      }
+      @else if $dir == t
+      {
+        &-#{$i} { margin-top: #{$i}px; }
+      }
+      @else if $dir == b
+      {
+        &-#{$i} { margin-bottom: #{$i}px; }
+      }
+    }
+  }
+}
+
+/* #endregion ➤ [MAIN] [MARGINS] Website Layout */

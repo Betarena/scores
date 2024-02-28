@@ -8,23 +8,23 @@
 
 // #region ➤ 📦 Package Imports
 
-import { dev } from "$app/environment";
-import { goto } from "$app/navigation";
-import { error, redirect, type Page } from "@sveltejs/kit";
+import { dev } from '$app/environment';
+import { goto } from '$app/navigation';
+import { error, redirect, type Page } from '@sveltejs/kit';
 
-import { get } from "$lib/api/utils.js";
-import { getUserLocation, getUserLocationFromIP } from "$lib/geo-js/init.js";
-import sessionStore from "$lib/store/session.js";
+import { get } from '$lib/api/utils.js';
+import { getUserLocation, getUserLocationFromIP } from '$lib/geo-js/init.js';
+import sessionStore from '$lib/store/session.js';
 import userBetarenaSettings from '$lib/store/user-settings.js';
 import LZString from 'lz-string';
-import { NB_W_TAG, PAGE_INVALID_MSG, dlog, dlogv2 } from "./debug";
-import { removeDiacritics } from "./languages.js";
-import { ROUTE_ID_PROFILE } from "./user.js";
+import { NB_W_TAG, PAGE_INVALID_MSG, dlog, dlogv2 } from './debug';
+import { removeDiacritics } from './languages.js';
+import { ROUTE_ID_PROFILE } from './user.js';
 
-import type { GeoJsResponse } from "$lib/types/types.geojs.js";
-import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
-import type { B_SAP_CTP_D, B_SAP_D3 } from "@betarena/scores-lib/types/seo-pages.js";
-import type { B_SPT_D } from "@betarena/scores-lib/types/sportbook.js";
+import type { GeoJsResponse } from '$lib/types/types.geojs.js';
+import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
+import type { B_SAP_CTP_D, B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
+import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -51,35 +51,34 @@ import type { B_SPT_D } from "@betarena/scores-lib/types/sportbook.js";
  */
 export function platfrom_lang_ssr
 (
-	page_route_id?: string | undefined,
-	page_error?: unknown | undefined,
-	page_params_lang?: string | undefined
+  page_route_id?: string | undefined,
+  page_error?: unknown | undefined,
+  page_params_lang?: string | undefined
 ): string
 {
-
   // ### [🐞]
   dlogv2
   (
     'platfrom_lang_ssr(..)',
     [
-      `🔹 [var] page_route_id: ${page_route_id}`,
-      `🔹 [var] page_error: ${JSON.stringify(page_error, null, 2)}`,
-      `🔹 [var] page_params_lang: ${page_params_lang}`
+      `🔹 [var] page_route_id: ${page_route_id}`
+      ,`🔹 [var] page_error: ${JSON.stringify(page_error, null, 2)}`
+      ,`🔹 [var] page_params_lang: ${page_params_lang}`
     ]
   );
 
   // ### CHECK
   // ### for cases of 'EN' default.
-	const if_M_0: boolean =
-		page_route_id == null
+  const if_M_0: boolean
+		= page_route_id == null
     && page_error != null
   ;
-	if (if_M_0) return 'en';
+  if (if_M_0) return 'en';
 
   // ### CHECK
   // ### for cases of [[lang=lang]] page.
-	const server_side_language: string =
-    (page_route_id?.includes('[[lang=lang]]') || page_route_id?.includes('[lang=lang]'))
+  const server_side_language: string
+    = (page_route_id?.includes('[[lang=lang]]') || page_route_id?.includes('[lang=lang]'))
     && page_params_lang != undefined
       ? page_params_lang
       : 'en'
@@ -91,7 +90,7 @@ export function platfrom_lang_ssr
     `🔹 [var] ➤ platfrom_lang_ssr(..) server_side_language ➡️ ${server_side_language}`
   );
 
-	return server_side_language;
+  return server_side_language;
 }
 
 /**
@@ -118,21 +117,21 @@ export function platfrom_lang_ssr
  */
 export function viewport_change
 (
-	TABLET_VIEW_INIT: number,
-	MOBILE_VIEW_INIT: number,
+  TABLET_VIEW_INIT: number,
+  MOBILE_VIEW_INIT: number,
   OTHER_VIEW?: number
 ): boolean[]
 {
-	const width: number = document.documentElement.clientWidth;
+  const width: number = document.documentElement.clientWidth
 
-	const isTabletView: boolean = width <= TABLET_VIEW_INIT;
-	const isMobileView: boolean = width <= MOBILE_VIEW_INIT;
-  const isOtherView: boolean = width <= OTHER_VIEW;
+	 ,isTabletView: boolean = width <= TABLET_VIEW_INIT
+	 ,isMobileView: boolean = width <= MOBILE_VIEW_INIT
+    ,isOtherView: boolean = width <= OTHER_VIEW;
 
-	return [
-    isTabletView,
-    isMobileView,
-    isOtherView
+  return [
+    isTabletView
+    ,isMobileView
+    ,isOtherView
   ];
 }
 
@@ -156,8 +155,8 @@ export function initialDevice
 ): boolean[]
 {
   let
-    isMobileView: boolean,
-    isTabletView: boolean
+    isMobileView: boolean
+    ,isTabletView: boolean
   ;
 
   if (deviceType == 'mobile')
@@ -165,7 +164,7 @@ export function initialDevice
     // [🐞]
     dlog
     (
-      `🚏 checkpoint ➤ home/Layout.svelte 📱`,
+      '🚏 checkpoint ➤ home/Layout.svelte 📱',
       true
     );
 
@@ -177,7 +176,7 @@ export function initialDevice
     // [🐞]
     dlog
     (
-      `🚏 checkpoint ➤ home/Layout.svelte 💻`,
+      '🚏 checkpoint ➤ home/Layout.svelte 💻',
       true
     );
 
@@ -189,7 +188,7 @@ export function initialDevice
     // [🐞]
     dlog
     (
-      `🚏 checkpoint ➤ home/Layout.svelte 🖥️`,
+      '🚏 checkpoint ➤ home/Layout.svelte 🖥️',
       true
     );
 
@@ -198,8 +197,8 @@ export function initialDevice
   }
 
   return [
-    isMobileView,
-    isTabletView
+    isMobileView
+    ,isTabletView
   ]
 }
 
@@ -221,16 +220,21 @@ export async function sleep
   ms: number
 ): Promise < void >
 {
-  new Promise
+  // ▓ [🐞]
+  console.log('sleeping...');
+
+  return new Promise
   (
     (
       r
     ) =>
-    setTimeout
-    (
-      r,
-      ms
-    )
+    {
+      return setTimeout
+      (
+        r
+        , ms
+      )
+    }
   );
 }
 
@@ -252,7 +256,6 @@ export function googleEventLog
   action: string
 ): void
 {
-
   const gtagEventObj:
   {
     type: string,
@@ -260,10 +263,10 @@ export function googleEventLog
     event_category?: string,
     event_label?: string,
     value?: string
-  } =
-  {
-    type: 'event',
-    value: 'click'
+  }
+  = {
+    type: 'event'
+    ,value: 'click'
   };
 
   if (action === 'fixture_football_fixtures_probabilities')
@@ -312,15 +315,14 @@ export function googleEventLog
   // ### run target `gtag` event.
   window.gtag
   (
-    gtagEventObj?.type,
-    gtagEventObj?.tag_name,
+    gtagEventObj.type,
+    gtagEventObj.tag_name,
     {
-      event_category: gtagEventObj?.tag_name,
-      event_label: gtagEventObj?.event_label,
-      value: gtagEventObj?.value
+      event_category: gtagEventObj.tag_name
+      ,event_label: gtagEventObj.event_label
+      ,value: gtagEventObj.value
     }
   );
-
 }
 
 /**
@@ -338,22 +340,21 @@ export async function setUserGeoLocation
   data: B_NAV_T
 ): Promise < void >
 {
-
-  const if_M_0: boolean =
-    userBetarenaSettings.extract('geo-bookmaker') !== undefined
+  const if_M_0: boolean
+    = userBetarenaSettings.extract('geo-bookmaker') !== undefined
   ;
   if (if_M_0) return;
 
-  let geoRes: GeoJsResponse = await getUserLocation();
+  let geoRes: GeoJsResponse = await getUserLocation()
 
-  let userGeo: string =
-    geoRes?.country_code === undefined
+    ,userGeo: string
+    = geoRes.country_code === undefined
       ? null
       : geoRes.country_code.toLowerCase()
   ;
 
-  const if_M_1: boolean =
-    userGeo == null
+  const if_M_1: boolean
+    = userGeo == null
   ;
   if (if_M_1)
   {
@@ -373,19 +374,19 @@ export async function setUserGeoLocation
   // ### CHECK
   // ### for existance of GEO available from
   // ### translations/country list.
-  const data_0 =	data?.scores_header_translations?.bookmakers_countries
-  ?.find
-  (
-    function
+  const data_0 =	data.scores_header_translations?.bookmakers_countries
+    ?.find
     (
-      item
-    )
-    {
-      return (
-        item[0].toString().toLowerCase() === userGeo.toString().toLowerCase()
-      );
-    }
-  );
+      function
+      (
+        item
+      )
+      {
+        return (
+          item[0].toString().toLowerCase() === userGeo.toString().toLowerCase()
+        );
+      }
+    );
 
   if (data_0 == undefined) userGeo = 'en'
 
@@ -419,46 +420,49 @@ export function PRELOAD_invalid_data
 {
   try
   {
-    const indexesOf: (arr: any[], item: unknown) => number[] =
-      (
+    const indexesOf: (arr: any[], item: unknown) => number[]
+      = (
         arr: any[],
         item: unknown
       ) =>
-      arr.reduce
-      (
+      {
+        return arr.reduce
         (
-          accumulator,
-          currentVal,
-          currentIndex
-        ) =>
-        (
-          currentVal === item
+          (
+            accumulator,
+            currentVal,
+            currentIndex
+          ) =>
+          {
+            return (
+              currentVal === item
           && accumulator.push(currentIndex),
-          accumulator
-        ),
-        []
-      )
-    ;
+              accumulator
+            )
+          },
+          []
+        )
+      }
 
-    const nullList: number[] = indexesOf
-    (
-      data,
-      null
-    );
+      ,nullList: number[] = indexesOf
+      (
+        data,
+        null
+      );
 
-    if (nullList?.length == 0)
+    if (nullList.length == 0)
     {
       // [🐞]
       dlog
       (
-        `🚏 checkpoint ➤ PRELOAD_invalid_data 🟩`,
+        '🚏 checkpoint ➤ PRELOAD_invalid_data 🟩',
         true
       );
-    };
+    }
 
     // ### CHECK
     // ### for `null` data fetched.
-    if (nullList?.length > 0)
+    if (nullList.length > 0)
     {
       // [🐞]
       dlog
@@ -475,7 +479,7 @@ export function PRELOAD_invalid_data
           `\t🚩 ${urls[i]}`
         );
       }
-    };
+    }
 
     return;
   }
@@ -573,46 +577,45 @@ export async function promiseUrlsPreload
   fetch: any,
 ): Promise < any[] >
 {
-
-	const data: any[] = await Promise.all
+  const data: any[] = await Promise.all
   (
     endpoints
-    ?.map
-    (
-      async (
-        _url: string
-      ): Promise < any > =>
-      {
+      .map
+      (
+        async (
+          _url: string
+        ): Promise < any > =>
+        {
         // ### [🐞]
-        const t0: number = performance.now();
+          const t0: number = performance.now()
 
-        const response: Response = await fetch(_url);
-        const resJson: any = await response.json();
+            ,response: Response = await fetch(_url)
+            ,resJson: any = await response.json()
 
-        // ### [🐞]
-        const t1: number = performance.now();
+            // ### [🐞]
+            ,t1: number = performance.now();
 
-        // ▓▓ [🐞]
-        dlogv2
-        (
-          `🏹 FETCH (GET) (preload) ${_url} `,
-          [
-            `⏱️ ${((t1 - t0) / 1000).toFixed(2)} sec`,
-          ],
-          true,
-          null,
-          false
-        );
+          // ▓▓ [🐞]
+          dlogv2
+          (
+            `🏹 FETCH (GET) (preload) ${_url} `,
+            [
+              `⏱️ ${((t1 - t0) / 1000).toFixed(2)} sec`
+            ],
+            true,
+            null,
+            false
+          );
 
-        // ▓▓ NOTE: ▓▓ IMPORTANT
-        // ▓▓ step necessary to 'decompress' lz-string encoded payload.
-        if (_url.includes('decompress'))
-          return tryCatch(() => JSON.parse(LZString.decompress(resJson?.data)));
-        ;
+          // ▓▓ NOTE: ▓▓ IMPORTANT
+          // ▓▓ step necessary to 'decompress' lz-string encoded payload.
+          if (_url.includes('decompress'))
+            return tryCatch(() => {return JSON.parse(LZString.decompress(resJson?.data))});
 
-        return resJson;
-      }
-    )
+
+          return resJson;
+        }
+      )
   );
 
   // ### [🐞]
@@ -668,40 +671,39 @@ export async function promiseValidUrlCheck
   }
 ): Promise < boolean >
 {
-
   // ### CHECK
   // ### wether supplied `URL` combination is valid.
-  const if_M_0 =
+  const if_M_0
     // ### CHECK
     // ### for `lang`.
-    (opts?.langUrl && !opts?.sportUrl && !opts?.countryUrl && !opts?.leagueUrl && !opts?.fixtureUrl && !opts?.playerUrl && !opts?.competitionMainUrl)
+    = (opts.langUrl && !opts.sportUrl && !opts.countryUrl && !opts.leagueUrl && !opts.fixtureUrl && !opts.playerUrl && !opts.competitionMainUrl)
     // ### CHECK
     // ### for `sport`.
-    || (opts?.langUrl && opts?.sportUrl && !opts?.countryUrl && !opts?.leagueUrl && !opts?.fixtureUrl && !opts?.playerUrl && !opts?.competitionMainUrl)
+    || (opts.langUrl && opts.sportUrl && !opts.countryUrl && !opts.leagueUrl && !opts.fixtureUrl && !opts.playerUrl && !opts.competitionMainUrl)
     // ### CHECK
     // ### for `country`.
-    || (opts?.langUrl && opts?.sportUrl && opts?.countryUrl && !opts?.leagueUrl && !opts?.fixtureUrl && !opts?.playerUrl && !opts?.competitionMainUrl && !opts?.competitionUrl)
+    || (opts.langUrl && opts.sportUrl && opts.countryUrl && !opts.leagueUrl && !opts.fixtureUrl && !opts.playerUrl && !opts.competitionMainUrl && !opts.competitionUrl)
     // ### CHECK
     // ### for `tournament/league`.
-    || (opts?.langUrl && opts?.sportUrl && opts?.countryUrl && opts?.leagueUrl && !opts?.fixtureUrl && !opts?.playerUrl && !opts?.competitionMainUrl && !opts?.competitionUrl)
+    || (opts.langUrl && opts.sportUrl && opts.countryUrl && opts.leagueUrl && !opts.fixtureUrl && !opts.playerUrl && !opts.competitionMainUrl && !opts.competitionUrl)
     // ### CHECK
     // ### for `fixture`.
-    || (opts?.langUrl && opts?.sportUrl && !opts?.countryUrl && !opts?.leagueUrl && opts?.fixtureUrl && !opts?.playerUrl && !opts?.competitionMainUrl && !opts?.competitionUrl)
+    || (opts.langUrl && opts.sportUrl && !opts.countryUrl && !opts.leagueUrl && opts.fixtureUrl && !opts.playerUrl && !opts.competitionMainUrl && !opts.competitionUrl)
     // ### CHECK
     // ### for `player`.
-    || (opts?.langUrl && !opts?.sportUrl && !opts?.countryUrl && !opts?.leagueUrl && !opts?.fixtureUrl && opts?.playerUrl && !opts?.competitionMainUrl && !opts?.competitionUrl)
+    || (opts.langUrl && !opts.sportUrl && !opts.countryUrl && !opts.leagueUrl && !opts.fixtureUrl && opts.playerUrl && !opts.competitionMainUrl && !opts.competitionUrl)
     // ### CHECK
     // ### for `competitions` (lobby).
-    || (opts?.langUrl && !opts?.sportUrl && !opts?.countryUrl && !opts?.leagueUrl && !opts?.fixtureUrl && !opts?.playerUrl && opts?.competitionMainUrl && !opts?.competitionUrl)
+    || (opts.langUrl && !opts.sportUrl && !opts.countryUrl && !opts.leagueUrl && !opts.fixtureUrl && !opts.playerUrl && opts.competitionMainUrl && !opts.competitionUrl)
     // ### CHECK
     // ### for `competition`.
-    || (opts?.langUrl && !opts?.sportUrl && !opts?.countryUrl && !opts?.leagueUrl && !opts?.fixtureUrl && !opts?.playerUrl && opts?.competitionMainUrl && opts?.competitionUrl)
+    || (opts.langUrl && !opts.sportUrl && !opts.countryUrl && !opts.leagueUrl && !opts.fixtureUrl && !opts.playerUrl && opts.competitionMainUrl && opts.competitionUrl)
   ;
 
   // ### [🐞]
   dlog
   (
-    `🚏 checkpoint ➤ promiseValidUrlCheck`,
+    '🚏 checkpoint ➤ promiseValidUrlCheck',
     true
   );
 
@@ -717,15 +719,15 @@ export async function promiseValidUrlCheck
   // ### NOTE:
   // ### append to target string, the parts of url we wish to validate.
 
-  let queryStr: string = "";
-  if (opts?.langUrl) queryStr += `?langUrl=${opts?.langUrl}`;
-  if (opts?.sportUrl) queryStr += `&sportUrl=${opts?.sportUrl}`;
-  if (opts?.countryUrl) queryStr += `&countryUrl=${opts?.countryUrl}`;
-  if (opts?.leagueUrl) queryStr += `&leagueUrl=${opts?.leagueUrl}`;
-  if (opts?.fixtureUrl) queryStr += `&fixtureUrl=${opts?.fixtureUrl}`;
-  if (opts?.playerUrl) queryStr += `&playerUrl=${opts?.playerUrl}`;
-  if (opts?.competitionMainUrl) queryStr += `&competitionMainUrl=${opts?.competitionMainUrl}`;
-  if (opts?.competitionUrl) queryStr += `&competitionUrl=${opts?.competitionUrl}`;
+  let queryStr: string = '';
+  if (opts.langUrl) queryStr += `?langUrl=${opts.langUrl}`;
+  if (opts.sportUrl) queryStr += `&sportUrl=${opts.sportUrl}`;
+  if (opts.countryUrl) queryStr += `&countryUrl=${opts.countryUrl}`;
+  if (opts.leagueUrl) queryStr += `&leagueUrl=${opts.leagueUrl}`;
+  if (opts.fixtureUrl) queryStr += `&fixtureUrl=${opts.fixtureUrl}`;
+  if (opts.playerUrl) queryStr += `&playerUrl=${opts.playerUrl}`;
+  if (opts.competitionMainUrl) queryStr += `&competitionMainUrl=${opts.competitionMainUrl}`;
+  if (opts.competitionUrl) queryStr += `&competitionUrl=${opts.competitionUrl}`;
 
   // ### [🐞]
   dlog
@@ -835,23 +837,39 @@ export function cssVarChange
 }
 
 /**
+ * @author
+ *  @migbash
  * @summary
- *  🔹 HELPER | IMPORTANT
+ *  - 🔹 HELPER
+ *  - ⭐️ IMPORTANT
  * @description
  *  📌 Converts target value to a float based value string.
- * @param { number } value
- *  Target value to mutate.
+ * @example
+ * // returns 20.20
+ * toDecimalFix(20.203453)
+ * // returns 20.2043
+ * toDecimalFix(20.204343, 4)
+ * // returns 20.2043
+ * toDecimalFix(20.204343, 4, true)
+ * // returns 20.2043
+ * toDecimalFix(20.204343, 4, true, false)
+ * @param { number | null } value
+ *  💠 **[required]** Target value to mutate for decimal places.
  * @param { number } [d_places=2]
- *  Target number of decimal places to return.
- *  * @param { boolean } [noRoundUp=false]
- *  Wether to perform a `round-up` or not.
+ *  💠 **[optional]** Target number of decimal places to apply, `deafult = 2`.
+ * @param { boolean } [noRoundUp=false]
+ *  💠 **[optional]** Wether to perform a `round-up` or not, `deafult = false`.
+ * @param { boolean } [removeDot00=true]
+ *  💠 **[optional]** Wether to perform a `.00` removal from number (clean), `deafult = true`.
  * @returns { string }
+ *  📤 Target mutated value, adjusted for decimal places.
  */
 export function toDecimalFix
 (
-  value: number
+  value: number | null
   , d_places: number = 2
   , noRoundUp: boolean = false
+  , removeDot00: boolean = true
 ): string
 {
   // ### [🐞]
@@ -861,26 +879,30 @@ export function toDecimalFix
     false
   );
 
-  if (value == null) return;
+  if (value == null) return '-';
 
-  let _value: string  = value?.toString();
+  let _value: string  = value.toString();
 
   if (noRoundUp)
+  {
     _value = _value
-    .slice
+      .slice
+      (
+        0,
+        (_value.indexOf('.')) + (d_places + 1)
+      );
+  }
+
+  _value = parseFloat(_value).toFixed(d_places);
+
+  if (removeDot00)
+  {
+    _value = _value.replace
     (
-      0,
-      (_value.indexOf(".")) + (d_places + 1)
+      '.00',
+      ''
     );
-  ;
-
-  _value = parseFloat(_value)?.toFixed(d_places);
-
-  _value = _value.replace
-  (
-    '.00',
-    ''
-  );
+  }
 
   return _value;
 }
@@ -909,8 +931,8 @@ export function spliceBalanceDoubleZero
   if (value == null) return;
 
   if (value.includes('.00'))
-    return value?.split('.')?.[0]
-  ;
+    return value.split('.')[0]
+    ;
 
   return value;
 }
@@ -934,14 +956,14 @@ export async function selectLanguage
 ): Promise < void >
 {
   // ### CHECK
-  if (sessionStore?.getServerLang() == lang) return;
+  if (sessionStore.getServerLang() == lang) return;
 
   // ### NOTE:
   // ### Past/previous lang option.
-  const pastLang: string =
-    sessionStore?.getServerLang() == 'en'
+  const pastLang: string
+    = sessionStore.getServerLang() == 'en'
       ? '/'
-      : `/${sessionStore?.getServerLang()}`
+      : `/${sessionStore.getServerLang()}`
   ;
 
   userBetarenaSettings.updateData
@@ -953,13 +975,13 @@ export async function selectLanguage
   // ### [🐞]
   dlogv2
   (
-    `🚏 checkpoint ➤ selectLanguage(..)`,
+    '🚏 checkpoint ➤ selectLanguage(..)',
     [
-      `🔹 [var] ➤ $userBetarenaSettings.lang: ${userBetarenaSettings.extract('user-lang')}`,
-      `🔹 [var] ➤ $sessionStore?.serverLang: ${sessionStore?.getServerLang()}`,
-      `🔹 [var] ➤ lang: ${lang}`,
-      `🔹 [var] ➤ pastLang: ${pastLang}`,
-      `🔹 [var] ➤ $page.route.id: ${page.route.id}`
+      `🔹 [var] ➤ $userBetarenaSettings.lang: ${userBetarenaSettings.extract('user-lang')}`
+      ,`🔹 [var] ➤ $sessionStore?.serverLang: ${sessionStore.getServerLang()}`
+      ,`🔹 [var] ➤ lang: ${lang}`
+      ,`🔹 [var] ➤ pastLang: ${pastLang}`
+      ,`🔹 [var] ➤ $page.route.id: ${page.route.id}`
     ],
     true
   );
@@ -980,14 +1002,14 @@ export async function selectLanguage
 
   // ### CHECK
   // ### on error', navigate back to homepage;
-  const if_M_0: boolean =
-    !checkNull(page.error)
+  const if_M_0: boolean
+    = !checkNull(page.error)
   ;
   if (if_M_0)
   {
-    const targetUrl: string =
-      lang == 'en'
-        ? `/`
+    const targetUrl: string
+      = lang == 'en'
+        ? '/'
         : `/${lang}`
     ;
 
@@ -1011,22 +1033,22 @@ export async function selectLanguage
   // ### CHECK
   // ### Omit 'special' routes cases, as these routes
   // ### manage their own navigation/translation switch.
-  const if_M_1: boolean =
-    [
-      '/[[lang=lang]]/[sport]/[country]/[league_name]',
-      '/[[lang=lang]]/[sport]/[fixture=fixture]',
-      '/[[lang=lang]]/[player=player]/[...player_fill]',
-      '/[[lang=lang]]/[competitions=competitions]',
-      '/[[lang=lang]]/[competitions=competitions]/[...competition_fill]',
+  const if_M_1: boolean
+    = [
+      '/[[lang=lang]]/[sport]/[country]/[league_name]'
+      ,'/[[lang=lang]]/[sport]/[fixture=fixture]'
+      ,'/[[lang=lang]]/[player=player]/[...player_fill]'
+      ,'/[[lang=lang]]/[competitions=competitions]'
+      ,'/[[lang=lang]]/[competitions=competitions]/[...competition_fill]'
     ]
-    .includes(page?.route?.id)
+      .includes(page.route.id)
   ;
   if (if_M_1)
   {
     // [🐞]
     dlog
     (
-      `🚏 checkpoint ➤ selectLanguage if_M_1 page?.route?.id: ${page?.route?.id}`,
+      `🚏 checkpoint ➤ selectLanguage if_M_1 page?.route?.id: ${page.route.id}`,
       true
     );
 
@@ -1035,23 +1057,21 @@ export async function selectLanguage
 
   // ### CHECK
   // ### On profile page route, handle.
-  else if (ROUTE_ID_PROFILE == page?.route?.id)
+  else if (ROUTE_ID_PROFILE == page.route.id)
   {
-
-    const pastLangV2: string =
-      pastLang == `/`
-        ? `/en`
+    const pastLangV2: string
+      = pastLang == '/'
+        ? '/en'
         : pastLang
-    ;
 
-    let tempUrl: string = `${page.url.pathname}/`;
+      ,tempUrl: string = `${page.url.pathname}/`
 
-    const newURL: string = tempUrl
-    ?.replace
-    (
-      `${pastLangV2}/`,
-      `/${lang}`
-    );
+      ,newURL: string = tempUrl
+        .replace
+        (
+          `${pastLangV2}/`,
+          `/${lang}`
+        );
 
     // [🐞]
     dlog
@@ -1068,7 +1088,6 @@ export async function selectLanguage
         replaceState: true
       }
     );
-
   }
 
   // ### NOTE:
@@ -1079,19 +1098,18 @@ export async function selectLanguage
   // ### for 'EN' naviagtion.
   else if (lang == 'en' && pastLang != '/')
   {
-
     // ### NOTE:
     // ### maybe [?]
     // prefetch(`/`);
 
     // ### NOTE:
     // ### count number of slashes URL.
-    var count: number =	page.url.pathname.split('/').length - 1;
+    const count: number =	page.url.pathname.split('/').length - 1
 
-    // ### NOTE:
-    // ### replace path-name accordingly for 'EN', first occurance.
-    const newURL: string =
-      count == 1
+      // ### NOTE:
+      // ### replace path-name accordingly for 'EN', first occurance.
+      ,newURL: string
+      = count == 1
         ? page.url.pathname.replace(pastLang, '/')
         : page.url.pathname.replace(pastLang, '')
     ;
@@ -1122,15 +1140,14 @@ export async function selectLanguage
   // ### for 'incoming (past)' from an 'EN (/)' route.
   else if (lang != 'en' && pastLang == '/')
   {
-
     // ### NOTE:
     // ### count number of slashes URL.
     var countSlash = page.url.pathname.split('/').length - 1;
 
     // ### NOTE:
     // ### replace path-name accordingly for "<lang>" - first occurance.
-    const newURL: string =
-      countSlash > 1
+    const newURL: string
+      = countSlash > 1
         ? page.url.pathname.replace(pastLang, `/${lang}/`)
         : page.url.pathname.replace(pastLang, `/${lang}`)
     ;
@@ -1210,7 +1227,7 @@ export function cleanUrl
     ''
   );
 
-  if (url?.[0] != '/') url = '/'+url;
+  if (!url.startsWith('/')) url = '/'+url;
 
   return url;
 }
@@ -1240,10 +1257,10 @@ export function generateUrlCompetitions
     true
   );
 
-  const competitionTerm: string = removeDiacritics(data?.[lang]);
+  const competitionTerm: string = removeDiacritics(data[lang]);
 
-  let newUrl: string =
-    lang == 'en'
+  let newUrl: string
+    = lang == 'en'
       ? `/${competitionTerm}`
       : `/${lang}/${competitionTerm}`
   ;
@@ -1284,7 +1301,7 @@ export function generateUrlCompetition
   competitionData: B_SAP_CTP_D
 ): string
 {
-  let newUrl: string = `/${competitionData?.alternate_data?.[lang]}`;
+  let newUrl: string = `/${competitionData.alternate_data?.[lang]}`;
 
   newUrl = newUrl.replace
   (
@@ -1347,8 +1364,8 @@ export const tryCatch = (action: any): unknown =>
  */
 export const checkNull = (value: any): boolean =>
 {
-  const if_M_0: boolean =
-    value == undefined
+  const if_M_0: boolean
+    = value == undefined
     || value == null
   ;
 
@@ -1374,7 +1391,7 @@ export const iso2CountryLogo = (value: string): string =>
 {
   return value != undefined
     ? `https://betarena.com/images/flags/${value}.svg`
-    : `https://www.betarena.com/images/flags/EN.svg`
+    : 'https://www.betarena.com/images/flags/EN.svg'
   ;
 }
 
@@ -1386,9 +1403,9 @@ export function langPrefix
 (
 ): string
 {
-  return sessionStore?.getServerLang() == 'en'
-      ? `/`
-      : `/${sessionStore?.getServerLang()}/`
+  return sessionStore.getServerLang() == 'en'
+    ? '/'
+    : `/${sessionStore.getServerLang()}/`
   ;
 }
 
@@ -1411,15 +1428,112 @@ export function recordToKeyValueArray
 ): any[][]
 {
   const jsonObj = Object.keys(record)
-  ?.map
-  (
+    .map
     (
-      key
-    ) =>
-    [key, JSON.parse(record[key])]
-  );
+      (
+        key
+      ) =>
+      {return [key, JSON.parse(record[key])]}
+    );
 
   return jsonObj;
+}
+
+/**
+ * @author
+ *  @migbash
+ * @summary
+ *  🟦 HELPER
+ * @description
+ *  📣 Shortens a target wallet address.
+ * @example
+ *  0xA43B84b58aC6a21A03391971Bd274fe7Eec378Eb => 0xA43...378Eb
+ * @returns { string }
+ *  Target `wallet address` string.
+ */
+export function shortenWeb3WalletAddress
+(
+  walletAddress: string | null
+): string
+{
+  if (!walletAddress) return null;
+  return `${
+    walletAddress.slice
+    (
+      0,
+      5
+    )
+  }
+    ...
+    ${
+  walletAddress.slice
+  (
+    -5
+  )
+}
+  `
+    .replaceAll('\t', '');
+}
+
+/**
+ * @author
+ *  @migbash
+ * @summary
+ *  🟦 HELPER
+ * @description
+ *  📣 Copy target `text` to client `clipboard`.
+ * @NOTE
+ *  📌 On `dev` only will work on an `SSL/TLS` address, or `localhost`.
+ * @param { string } copyText
+ *  💠 Target `text` to copy.
+ * @return { Promise < void > }
+ *
+*/
+export async function copyToClipboard
+(
+  copyText: string
+): Promise < void >
+{
+  /* Copy the text inside the text field */
+  await navigator.clipboard.writeText(copyText);
+
+  /* Alert the copied text */
+  alert('Copied: ' + copyText);
+
+  return;
+}
+
+/**
+ * @author
+ *  @migbash
+ * @summary
+ *  🟦 HELPER
+ * @description
+ *  📣 Converts target `number` into a **number with commas** for _thousandths_ separator.
+ * @param { number } x
+ *  💠 Target `number` to format.
+ * @handles
+ *  ⭕️ Takes care of `null` / `undefined` cases.
+ * @example
+ * - null => ''
+ * - undefined => ''
+ * - 1000 => 1,000
+ * - 1000000 => 1,000,000
+ * - 5000 => 5,000
+ * @return { string }
+ *  📤 Formatted `number` (as `string`) for _thousnads_.
+ */
+export function formatNumberWithCommas
+(
+  x: number | null | undefined
+): string
+{
+  if (x?.toString().includes('.')) return x.toString();
+  return x
+    ?.toString()
+    ?.replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+    ?? ''
+  ;
 }
 
 // #endregion ➤ 🛠️ METHODS

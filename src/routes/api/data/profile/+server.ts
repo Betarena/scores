@@ -3,11 +3,12 @@
 import { json } from '@sveltejs/kit';
 import dotenv from 'dotenv';
 
+import { wrapQuery } from '@betarena/scores-lib/dist/functions/func.common.js';
 import { UPROF_UP_ENTRY_0, UPROF_UP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.profile.js';
-import { PROFU_insertUserTx } from '@betarena/scores-lib/dist/graphql/query.profile.js';
 
+import { profileMutation0, type IProfileMutation0Out, type IProfileMutation0Var } from '@betarena/scores-lib/dist/graphql/query.profile.js';
 import type { B_H_TH } from '@betarena/scores-lib/types/_HASURA_.js';
-import type { B_PROF_D, B_PROF_T } from '@betarena/scores-lib/types/profile.js';
+import type { B_PROF_T, IProfileData } from '@betarena/scores-lib/types/profile.js';
 import type { RequestHandler } from './$types';
 
 // #endregion ➤ 📦 Package Imports
@@ -142,16 +143,23 @@ export const POST =
         `🔹 [var] body ${JSON.stringify(body)}`,
       );
 
-      const data: string[] = await PROFU_insertUserTx
+      const data = await wrapQuery
+        <
+          IProfileMutation0Var
+          , IProfileMutation0Out
+        >
       (
-        jsonBody
+        profileMutation0
+        , {
+          objects: jsonBody
+        }
       );
 
       return json(null);
     }
     catch (error)
     {
-      //
+      console.log(error);
     }
 
   }
@@ -169,14 +177,14 @@ export const POST =
  * @param
  * { string } uid
  * @returns
- * Promise < B_PROF_D >
+ * Promise < IProfileData >
  */
 async function fallbackMainData
 (
   uid: string
-): Promise < B_PROF_D >
+): Promise < IProfileData >
 {
-  const dataRes0: [ B_PROF_D, string[] ] = await UPROF_UP_ENTRY_0
+  const dataRes0: [ IProfileData, string[] ] = await UPROF_UP_ENTRY_0
   (
     uid
   );

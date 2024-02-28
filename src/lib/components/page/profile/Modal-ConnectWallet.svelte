@@ -16,7 +16,7 @@ COMPONENT JS (w/ TS)
 	import metamask_icon from './assets/metamask.svg';
 	import wallet from './assets/wallet.svg';
 
-  import type { B_PROF_T } from '@betarena/scores-lib/types/profile.js';
+  import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -24,9 +24,7 @@ COMPONENT JS (w/ TS)
 
 	const dispatch: EventDispatcher < any > = createEventDispatcher();
 
-  let RESPONSE_PROFILE_DATA: B_PROF_T;
-
-  $: RESPONSE_PROFILE_DATA = $page.data.RESPONSE_PROFILE_DATA;
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -38,10 +36,10 @@ COMPONENT JS (w/ TS)
 	 * to close (this) modal widget
 	 */
 	function toggle_modal
-  (
-  ): void
-  {
-		dispatch('toggle_delete_modal');
+	(
+	): void
+	{
+	  dispatch('toggle_delete_modal');
 	}
 
 	/**
@@ -52,35 +50,37 @@ COMPONENT JS (w/ TS)
    * @returns { Promise<void> }
 	 */
 	async function connect_wallet_action
-  (
-  ): Promise < void >
-  {
-    // NOTE: detect mobile device
-    // if (typeof screen.orientation !== 'undefined') {
-    // if (navigator?.userAgentData?.mobile) {
-      if (/Mobi/i.test(window.navigator.userAgent)) {
-      // [ℹ] navigate to MetaMask in-app browser
-      // await goto('https://metamask.app.link/dapp/scores.betarena.com/?dappLogin=true') // ✅ works
-      // await goto('https://metamask.app.link/dapp/http://192.168.0.28:3050/') // does not work
-      // await goto('https://metamask.app.link/dapp/192.168.0.28:3050/?dappLogin=true') // does not work
-      const dappUrl = $page.url.host
-      const metamaskAppDeepLink = `https://metamask.app.link/dapp/${dappUrl}?metmaskAuth=true`;
-      window.open(metamaskAppDeepLink, "_self");
-      toggle_modal()
-      return
-    }
-    // [ℹ] restrict only to MetaMask (original)
-    if (!providerDetect('isMetaMask')[0]) {
-      dlog("🔴 Moralis Auth not found!")
-      alert('Please install the MetaMask Wallet Extension!')
-      toggle_modal()
-      return
-    }
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    const account = accounts[0];
-		dispatch('connect_wallet_action', {
-      wallet_id: account
-    });
+	(
+	): Promise < void >
+	{
+	  // NOTE: detect mobile device
+	  // if (typeof screen.orientation !== 'undefined') {
+	  // if (navigator?.userAgentData?.mobile) {
+	  if (/Mobi/i.test(window.navigator.userAgent)) 
+	  {
+	    // [ℹ] navigate to MetaMask in-app browser
+	    // await goto('https://metamask.app.link/dapp/scores.betarena.com/?dappLogin=true') // ✅ works
+	    // await goto('https://metamask.app.link/dapp/http://192.168.0.28:3050/') // does not work
+	    // await goto('https://metamask.app.link/dapp/192.168.0.28:3050/?dappLogin=true') // does not work
+	    const dappUrl = $page.url.host
+	      ,metamaskAppDeepLink = `https://metamask.app.link/dapp/${dappUrl}?metmaskAuth=true`;
+	    window.open(metamaskAppDeepLink, '_self');
+	    toggle_modal()
+	    return
+	  }
+	  // [ℹ] restrict only to MetaMask (original)
+	  if (!providerDetect('isMetaMask')[0]) 
+	  {
+	    dlog('🔴 Moralis Auth not found!')
+	    alert('Please install the MetaMask Wallet Extension!')
+	    toggle_modal()
+	    return
+	  }
+	  const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
+	    ,account = accounts[0];
+	  dispatch('connect_wallet_action', {
+	    wallet_id: account
+	  });
 	}
 
   	/**
@@ -89,84 +89,95 @@ COMPONENT JS (w/ TS)
 	 * @param walletType
 	 */
 	function providerDetect
-  (
-		walletType:
+	(
+	  walletType:
 			| 'isMetaMask'
 			| 'isCoinbaseWallet'
 			| 'isBraveWallet'
 	): [boolean, any]
-  {
-		// [ℹ] no ethereum wallet present
-		if (!window.ethereum) {
-			return [false, null];
-			// throw new Error("No injected ethereum object.");
-		}
+	{
+	  // [ℹ] no ethereum wallet present
+	  if (!window.ethereum) 
 
-		// [ℹ] default provider (single) assign
-		let target_wallet = undefined;
+	    return [false, null];
+	  // throw new Error("No injected ethereum object.");
+		
 
-		// [ℹ] multiple provider(s) check true
-		if (
-			Array.isArray(window.ethereum.providers)
-		) {
-			if (walletType == 'isMetaMask') {
-				target_wallet =
-					window.ethereum.providers.find(
-						(provider) =>
-							provider[walletType] &&
-							provider?.isBraveWallet == undefined
-					);
-			}
-			// [ℹ] alternative
-			// else {
-			//   target_wallet = window.ethereum.providers.find((provider) => provider[walletType])
-			// }
-      dlog(`${PR_P_TAG} 🔵 More than 1 provider identified! ${window.ethereum.providers.length}`, PR_P_TOG, PR_P_STY)
-      dlog(`${PR_P_TAG} target_wallet ${target_wallet}`, PR_P_TOG, PR_P_STY)
-      dlog(`${PR_P_TAG} window.ethereum.providers ${window.ethereum.providers}`, PR_P_TOG, PR_P_STY)
-		} else {
-			if (
-				walletType == 'isMetaMask' &&
-				window.ethereum?.isBraveWallet ==
-					undefined &&
-				window.ethereum?.isMetaMask !=
-					undefined &&
-				window.ethereum?.isMetaMask
-			) {
-				target_wallet =
-					window.ethereum[walletType];
-			}
-			// [ℹ] alternative
-			// else {
-			//   target_wallet = window.ethereum[walletType]
-			// }
-      dlog(`${PR_P_TAG} 🔵 1 provider identified! ${window.ethereum}`, PR_P_TOG, PR_P_STY)
-      dlog(`${PR_P_TAG} target_wallet ${target_wallet}`, PR_P_TOG, PR_P_STY)
-      dlog(`${PR_P_TAG} window.ethereum ${window.ethereum}`, PR_P_TOG, PR_P_STY)
-		}
+	  // [ℹ] default provider (single) assign
+	  let target_wallet = undefined;
 
-		// [ℹ] TARGET (THIS) single provider check true
-		if (target_wallet != undefined) {
-      dlog(`${PR_P_TAG} 🟢 ${walletType} identified`, PR_P_TOG, PR_P_STY)
-			// DOC: https://stackoverflow.com/questions/69377437/metamask-conflicting-with-coinbase-wallet
-			// DOC: https://stackoverflow.com/questions/72613011/whenever-i-click-on-connect-metamask-button-why-it-connects-the-coinbase-wallet
-			// DOC: https://stackoverflow.com/questions/68023651/how-to-connect-to-either-metamask-or-coinbase-wallet
-			// DOC: https://github.com/MetaMask/metamask-extension/issues/13622
-			// NOTE: conflicting use of CoinBaseWallet & MetaMask
-			// NOTE: setting MetaMask as main wallet
-			// NOTE: IMPORTANT causes issues with FireFox
-			// target_wallet.request({ method: 'eth_requestAccounts' });
-			// NOTE: Not working
-			// window.ethereum.setSelectedProvider(target_wallet);
-			// window.ethereum.request({
-			//   method: 'wallet_requestPermissions',
-			//   params: [{ eth_accounts: {}}]
-			// });
-			return [true, target_wallet];
-		} else {
-      dlog(`${PR_P_TAG} 🔴 no target wallet (${walletType}) identified`, PR_P_TOG, PR_P_STY)
-			return [false, null];
-		}
+	  // [ℹ] multiple provider(s) check true
+	  if (
+	    Array.isArray(window.ethereum.providers)
+	  ) 
+	  {
+	    if (walletType == 'isMetaMask') 
+	    {
+	      target_wallet
+					= window.ethereum.providers.find(
+					  (provider) =>
+					    {
+	            return provider[walletType]
+							&& provider?.isBraveWallet == undefined
+	          }
+	        );
+	    }
+	    // [ℹ] alternative
+	    // else {
+	    //   target_wallet = window.ethereum.providers.find((provider) => provider[walletType])
+	    // }
+	    dlog(`${PR_P_TAG} 🔵 More than 1 provider identified! ${window.ethereum.providers.length}`, PR_P_TOG, PR_P_STY)
+	    dlog(`${PR_P_TAG} target_wallet ${target_wallet}`, PR_P_TOG, PR_P_STY)
+	    dlog(`${PR_P_TAG} window.ethereum.providers ${window.ethereum.providers}`, PR_P_TOG, PR_P_STY)
+	  }
+	  else 
+	  {
+	    if (
+	      walletType == 'isMetaMask'
+				&& window.ethereum?.isBraveWallet
+					== undefined
+				&& window.ethereum?.isMetaMask
+					!= undefined
+				&& window.ethereum?.isMetaMask
+	    ) 
+	    {
+	      target_wallet
+					= window.ethereum[walletType];
+	    }
+	    // [ℹ] alternative
+	    // else {
+	    //   target_wallet = window.ethereum[walletType]
+	    // }
+	    dlog(`${PR_P_TAG} 🔵 1 provider identified! ${window.ethereum}`, PR_P_TOG, PR_P_STY)
+	    dlog(`${PR_P_TAG} target_wallet ${target_wallet}`, PR_P_TOG, PR_P_STY)
+	    dlog(`${PR_P_TAG} window.ethereum ${window.ethereum}`, PR_P_TOG, PR_P_STY)
+	  }
+
+	  // [ℹ] TARGET (THIS) single provider check true
+	  if (target_wallet != undefined) 
+	  {
+	    dlog(`${PR_P_TAG} 🟢 ${walletType} identified`, PR_P_TOG, PR_P_STY)
+	    // DOC: https://stackoverflow.com/questions/69377437/metamask-conflicting-with-coinbase-wallet
+	    // DOC: https://stackoverflow.com/questions/72613011/whenever-i-click-on-connect-metamask-button-why-it-connects-the-coinbase-wallet
+	    // DOC: https://stackoverflow.com/questions/68023651/how-to-connect-to-either-metamask-or-coinbase-wallet
+	    // DOC: https://github.com/MetaMask/metamask-extension/issues/13622
+	    // NOTE: conflicting use of CoinBaseWallet & MetaMask
+	    // NOTE: setting MetaMask as main wallet
+	    // NOTE: IMPORTANT causes issues with FireFox
+	    // target_wallet.request({ method: 'eth_requestAccounts' });
+	    // NOTE: Not working
+	    // window.ethereum.setSelectedProvider(target_wallet);
+	    // window.ethereum.request({
+	    //   method: 'wallet_requestPermissions',
+	    //   params: [{ eth_accounts: {}}]
+	    // });
+	    return [true, target_wallet];
+	  }
+	  else 
+	  {
+	    dlog(`${PR_P_TAG} 🔴 no target wallet (${walletType}) identified`, PR_P_TOG, PR_P_STY)
+	    return [false, null];
+	  }
 	}
 
   // #endregion ➤ 🛠️ METHODS
@@ -184,7 +195,7 @@ COMPONENT JS (w/ TS)
 -->
 <div
 	id="background-modal-blur"
-	on:click={() => toggle_modal()}
+	on:click={() => {return toggle_modal()}}
 	in:fade
 />
 
@@ -203,7 +214,7 @@ COMPONENT JS (w/ TS)
 		class="cursor-pointer"
 		src="/assets/svg/close.svg"
 		alt="close-svg"
-		on:click={() => toggle_modal()}
+		on:click={() => {return toggle_modal()}}
 	/>
 	<!--
   [ℹ] delete account icon (danger)
@@ -224,7 +235,7 @@ COMPONENT JS (w/ TS)
       color-black-2
     "
 	>
-  {RESPONSE_PROFILE_DATA?.profile?.crypto_title}
+  {profileTrs.profile?.crypto_title}
 	</p>
 	<!--
   [ℹ] delete account desc. info
@@ -236,7 +247,7 @@ COMPONENT JS (w/ TS)
       color-grey
     "
 	>
-    {RESPONSE_PROFILE_DATA?.profile?.crypto_desc}
+    {profileTrs.profile?.crypto_desc}
 	</p>
 	<!--
   [ℹ] connect wallet action (btn)
@@ -249,14 +260,14 @@ COMPONENT JS (w/ TS)
       s-14
       color-black-2
     "
-		on:click={() => connect_wallet_action()}
+		on:click={() => {return connect_wallet_action()}}
 	>
     <img
       src="{metamask_icon}"
       alt="metamask icon"
       class="m-r-16"
     />
-		{RESPONSE_PROFILE_DATA?.profile?.connect_wallet_title} Metamask
+		{profileTrs.profile?.connect_wallet_title} Metamask
 	</button>
 </div>
 

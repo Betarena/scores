@@ -460,7 +460,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             >
               <span
                 class="
-                  color-dark
+                  color-black-2
                   w-500
                 "
               >
@@ -558,7 +558,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               <span
                 class="
                   w-500
-                  color-dark
+                  color-black-2
                 "
               >
                 {[0, undefined].includes(FIXTURE_VOTES_DATA?.match_votes?.vote_draw_x) ? 0 : ((FIXTURE_VOTES_DATA?.match_votes?.vote_draw_x / totalVoteCount) * 100).toFixed(0)}%
@@ -646,7 +646,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             >
               <span
                 class="
-                  color-dark
+                  color-black-2
                   w-500
                 "
               >

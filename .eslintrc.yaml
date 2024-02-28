@@ -1,4 +1,4 @@
-# ▓▓ @see https://github.com/sveltejs/eslint-plugin-svelte
+# ▓ > 🔗 read-more :|: https://github.com/sveltejs/eslint-plugin-svelte
 
 root: true
 
@@ -8,19 +8,19 @@ env:
   browser: true
 
 extends:
-  - plugin:svelte/recommended
   - eslint:recommended
+  - plugin:svelte/recommended
   - plugin:@typescript-eslint/strict
-  # ▓▓ WARNING:
-  # ▓▓ 👇 all-below :: does not work with svelte.
+  # ▓ WARNING:
+  # ▓ > (👇) below :: does not work with svelte.
   # - plugin:import/errors
   # - plugin:import/warnings
   # - plugin:import/typescript
-  # ▓▓ @see https://www.npmjs.com/package/eslint-config-google
+  # ▓ > (👇) :|: https://www.npmjs.com/package/eslint-config-google
   # - google
   # - prettier
-  # ▓▓ NOTE:
-  # ▓▓ 👇 already contained within ../strict.
+  # ▓ NOTE:
+  # ▓ > (👇) already contained within ../strict.
   # - plugin:@typescript-eslint/recommended
   # - plugin:@typescript-eslint/stylistic
 
@@ -42,6 +42,10 @@ overrides:
     parserOptions:
       parser: '@typescript-eslint/parser'
 
+globals:
+  # ▓ > 🔗 read-more :|: https://github.com/Chatie/eslint-config/issues/45#issuecomment-885507652
+  "NodeJS": true
+
 ignorePatterns:
   - .DS_Store
   - node_modules
@@ -54,39 +58,54 @@ ignorePatterns:
   - pnpm-lock.yaml
   - package-lock.json
   - yarn.lock
+  # ▓ NOTE:
+  # ▓ > gradual eslint introduction in project.
+  - src/lib/geo-js
+  - src/lib/graphql
+  - src/lib/redis
+  - src/lib/store
+  - src/lib/types
+  - src/params
+  - src/routes
 
 plugins:
   - "@typescript-eslint"
   - svelte
-  # ▓▓ WARNING:
-  # ▓▓ 👇 all-below :: does not work with svelte.
+  # ▓ WARNING:
+  # ▓ > (👇) all-below :: does not work with svelte.
   # - import
 
-# ▓▓ IMPORTANT
-# ▓▓ Main 'defacto' configuration, do not remove and/or alter heavily.
-# ▓▓ @see https://eslint.org/docs/latest/rules/
+# ▓ IMPORTANT
+# ▓ > Main 'defacto' configuration, do not remove and/or alter heavily.
+# ▓ > 🔗 read-more :|: https://eslint.org/docs/latest/rules/
 rules:
 
-  # ▓▓ NOTE:
-  # ▓▓ has been depreceted.
+  # ▓ NOTE:
+  # ▓ > has been depreceted.
   # "valid-jsdoc": [..]
   no-unexpected-multiline: 0
   import/no-unresolved: 0
-  # ▓▓ NOTE:
-  # ▓▓ Ideal, but doesn't work as expected :: [ "error", "always", {  "allowNewlines": true } ]
-  # ▓▓ as it requires a space after function declaration, 'always'.
+  # ▓ NOTE:
+  # ▓ > Ideal, but doesn't work as expected :: [ "error", "always", {  "allowNewlines": true } ]
+  # ▓ > as it requires a space after function declaration, 'always'.
   func-call-spacing: 0
 
   "@typescript-eslint/no-inferrable-types": 0
   "@typescript-eslint/prefer-for-of": error
   "@typescript-eslint/no-non-null-asserted-nullish-coalescing": error
 
+  # ▓ NOTE:
+  # ▓ > (👇) for svelte/sveltekit project only!
+  'svelte/valid-compile': 0
+  'svelte/no-at-html-tags': 0
+
   curly:
     - error
-    - multi-or-nest
+    - multi
+    - consistent
   max-len:
     - error
-    - code: 150
+    - code: 250
   quotes:
     - error
     - single
@@ -128,6 +147,7 @@ rules:
       allow:
         - "^if_M_"
         - "^B_H_"
+        - "^icon_"
   eol-last:
     - error
     - always

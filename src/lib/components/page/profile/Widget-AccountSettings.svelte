@@ -22,7 +22,7 @@ COMPONENT JS (w/ TS)
 	import ModalDeleteAccount from './Modal-DeleteAccount.svelte';
 	import ModalProfilePictureCrop from './Modal-ProfilePictureCrop.svelte';
 
-  import type { B_PROF_T } from '@betarena/scores-lib/types/profile.js';
+  import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -39,7 +39,7 @@ COMPONENT JS (w/ TS)
   ;
 
   let
-    RESPONSE_PROFILE_DATA: B_PROF_T,
+    profileTrs: B_PROF_T,
     noWidgetData: boolean = true,
     files: HTMLInputElement['files'],
     fileInputElem: HTMLInputElement,
@@ -66,8 +66,7 @@ COMPONENT JS (w/ TS)
         ? false
         : true
   ;
-  $: RESPONSE_PROFILE_DATA = $page.data.RESPONSE_PROFILE_DATA
-  ;
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -347,13 +346,13 @@ COMPONENT JS (w/ TS)
     if (querySnapshot.docs.length > 0)
     {
       valid = false
-      usernameErrorMsg = RESPONSE_PROFILE_DATA?.profile?.userame_update_error_msg?.[0] ?? 'Username is already in use';
+      usernameErrorMsg = profileTrs?.profile?.userame_update_error_msg?.[0] ?? 'Username is already in use';
     }
     // [ℹ] validation [2] - length (min)
     if (usernameInput.length < 3)
     {
       valid = false;
-      usernameErrorMsg = RESPONSE_PROFILE_DATA?.profile?.userame_update_error_msg?.[1] ?? 'Username must be greater than 3 characters';
+      usernameErrorMsg = profileTrs?.profile?.userame_update_error_msg?.[1] ?? 'Username must be greater than 3 characters';
     }
     // [ℹ] validation [3] - length (min)
     if (usernameInput.length > 15)
@@ -365,20 +364,20 @@ COMPONENT JS (w/ TS)
     if (/^\d+$/.test(usernameInput))
     {
       valid = false;
-      usernameErrorMsg = RESPONSE_PROFILE_DATA?.profile?.userame_update_error_msg?.[2] ?? 'Username must not contain only numbers';
+      usernameErrorMsg = profileTrs?.profile?.userame_update_error_msg?.[2] ?? 'Username must not contain only numbers';
     };
     // [ℹ] validation [5] - has a space
     if (/\s/g.test(usernameInput))
     {
       valid = false;
-      usernameErrorMsg = RESPONSE_PROFILE_DATA?.profile?.userame_update_error_msg?.[3] ?? 'Username must not contain spaces';
+      usernameErrorMsg = profileTrs?.profile?.userame_update_error_msg?.[3] ?? 'Username must not contain spaces';
     }
     // [ℹ] validation [6] - has special char
     let format = /[ `!@#$%^&*()+\-=\[\]{};':"\\|,.<>\/?~]/;
     if (format.test(usernameInput))
     {
       valid = false;
-      usernameErrorMsg = RESPONSE_PROFILE_DATA?.profile?.userame_update_error_msg?.[4] ?? 'Username cant have spaces or special characters';
+      usernameErrorMsg = profileTrs?.profile?.userame_update_error_msg?.[4] ?? 'Username cant have spaces or special characters';
     }
 
     return valid;
@@ -599,7 +598,7 @@ COMPONENT JS (w/ TS)
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
 
-  $: if (RESPONSE_PROFILE_DATA != undefined) noWidgetData = false;
+  $: if (profileTrs != undefined) noWidgetData = false;
 
   $: if (files != undefined)
   {
@@ -687,7 +686,7 @@ MAIN SETTINGS WIDGET
       "
       style="margin-top: 0px;"
     >
-      {RESPONSE_PROFILE_DATA?.profile?.acc_settings}
+      {profileTrs?.profile?.acc_settings}
     </h2>
 
     <!--
@@ -722,7 +721,7 @@ MAIN SETTINGS WIDGET
           "
           class:m-b-6={mobileExclusive}
         >
-          {RESPONSE_PROFILE_DATA?.profile?.profile_photo}
+          {profileTrs?.profile?.profile_photo}
         </p>
         <span
           class=
@@ -732,7 +731,7 @@ MAIN SETTINGS WIDGET
             color-grey
           "
         >
-          {RESPONSE_PROFILE_DATA?.profile?.profile_photo_desc}
+          {profileTrs?.profile?.profile_photo_desc}
         </span>
       </div>
 
@@ -749,8 +748,8 @@ MAIN SETTINGS WIDGET
         on:click={() => remove_picture()}
       >
         {!profilePicExists
-          ? RESPONSE_PROFILE_DATA?.profile?.upload
-          : RESPONSE_PROFILE_DATA?.profile?.remove}
+          ? profileTrs?.profile?.upload
+          : profileTrs?.profile?.remove}
       </button>
 
       <!--
@@ -823,7 +822,7 @@ MAIN SETTINGS WIDGET
               color-black-2
             "
             >
-              {RESPONSE_PROFILE_DATA?.profile?.username}
+              {profileTrs?.profile?.username}
             </p>
             <!--
             [ℹ] name "required" text
@@ -834,7 +833,7 @@ MAIN SETTINGS WIDGET
                 s-12
               "
             >
-              {RESPONSE_PROFILE_DATA?.profile?.required_field}
+              {profileTrs?.profile?.required_field}
             </p>
           </div>
           <!--
@@ -846,7 +845,7 @@ MAIN SETTINGS WIDGET
               color-grey
             "
           >
-            {RESPONSE_PROFILE_DATA?.profile?.name_desc}
+            {profileTrs?.profile?.name_desc}
           </span>
         </div>
       </div>
@@ -856,7 +855,7 @@ MAIN SETTINGS WIDGET
       -->
       <input
         type="text"
-        placeholder={RESPONSE_PROFILE_DATA?.profile?.username}
+        placeholder={profileTrs?.profile?.username}
         aria-placeholder="Username input here"
         aria-label="Username input"
         bind:value={usernameInput}
@@ -906,7 +905,7 @@ MAIN SETTINGS WIDGET
           "
           class:m-b-6={mobileExclusive}
         >
-          {RESPONSE_PROFILE_DATA?.profile?.crypto_title}
+          {profileTrs?.profile?.crypto_title}
         </p>
         <span
           class="
@@ -914,7 +913,7 @@ MAIN SETTINGS WIDGET
             color-grey
           "
         >
-          {RESPONSE_PROFILE_DATA?.profile?.crypto_desc}
+          {profileTrs?.profile?.crypto_desc}
         </span>
       </div>
       <!--
@@ -931,8 +930,8 @@ MAIN SETTINGS WIDGET
         on:click={() => connect_wallet()}
       >
         {!profile_wallet_connected
-          ? RESPONSE_PROFILE_DATA?.profile?.connect_wallet_title
-          : RESPONSE_PROFILE_DATA?.profile?.disconnect_wallet_title}
+          ? profileTrs?.profile?.connect_wallet_title
+          : profileTrs?.profile?.disconnect_wallet_title}
       </button>
     </div>
 
@@ -948,7 +947,7 @@ MAIN SETTINGS WIDGET
       "
       on:click={() => save_settings()}
     >
-      {RESPONSE_PROFILE_DATA?.profile?.save}
+      {profileTrs?.profile?.save}
     </button>
 
     <!--
@@ -995,7 +994,7 @@ MAIN SETTINGS WIDGET
           "
           class:m-b-6={mobileExclusive}
         >
-          {RESPONSE_PROFILE_DATA?.profile?.delete_account_title}
+          {profileTrs?.profile?.delete_account_title}
         </p>
 
         <span
@@ -1005,7 +1004,7 @@ MAIN SETTINGS WIDGET
             color-grey
           "
         >
-          {RESPONSE_PROFILE_DATA?.profile?.delete_desc}
+          {profileTrs?.profile?.delete_desc}
         </span>
 
       </div>
@@ -1024,7 +1023,7 @@ MAIN SETTINGS WIDGET
         "
         on:click={() => (showAccountDelModal = true)}
       >
-        {RESPONSE_PROFILE_DATA?.profile?.delete_account_title}
+        {profileTrs?.profile?.delete_account_title}
       </button>
 
     </div>

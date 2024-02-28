@@ -5,6 +5,7 @@ import { PRELOAD_redirectPage, promiseUrlsPreload } from '$lib/utils/platform-fu
 
 import type { B_PROF_T } from '@betarena/scores-lib/types/profile.js';
 import type { B_SAP_D2, B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
+import type { B_USRG_D } from '@betarena/scores-lib/types/types.misc.userguide.js';
 import type { PageServerLoadEvent } from './$types';
 
 // #endregion ➤ 📦 Package Imports
@@ -63,7 +64,8 @@ export async function load
   [
     B_SAP_D2,
     B_SAP_D3_SP_M,
-    RESPONSE_PROFILE_DATA
+    RESPONSE_PROFILE_DATA,
+    B_USRG_D
   ] = await fetchData
   (
     fetch,
@@ -74,7 +76,8 @@ export async function load
     // @ts-expect-error <-error-desc->
     B_SAP_D2,
     B_SAP_D3_SP_M,
-    RESPONSE_PROFILE_DATA
+    RESPONSE_PROFILE_DATA,
+    B_USRG_D
   };
 }
 
@@ -91,6 +94,7 @@ type PP_PROMISE_0 =
   B_PROF_T | undefined,
   B_SAP_D3 | undefined,
   B_SAP_D2 | undefined,
+  B_USRG_D | undefined
 ];
 
 /**
@@ -108,7 +112,8 @@ async function fetchData
   [
     `/api/data/main/seo-pages?months=true&lang=${_lang}&decompress`,
     `/api/data/main/seo-pages?term=football&decompress`,
-    `/api/data/profile?lang=${_lang}`
+    `/api/data/profile?lang=${_lang}`,
+    `/api/data/main/userguide?userguideId=2&lang=${_lang}`,
   ];
 
   const data_0: PP_PROMISE_0 = await promiseUrlsPreload

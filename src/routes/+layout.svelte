@@ -1,27 +1,28 @@
 <!--
-◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-### COMPONENT JS (w/ TS)                                                               ◼️
-### NOTE:                                                                              ◼️
-### access custom Betarena Scores JS VScode Snippets by typing 'script...'             ◼️
-◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ Svelte Component JS/TS                                                           │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
+╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <script lang="ts">
 
   // #region ➤ 📦 Package Imports
 
-  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-  // ### NOTE:                                                            ◼️
-  // ### Please add inside 'this' region the 'imports' that are required  ◼️
-  // ### by 'this' .svelte file is ran.                                   ◼️
-  // ### IMPORTANT                                                        ◼️
-  // ### Please, structure the imports as follows:                        ◼️
-  // ### 1. svelte/sveltekit imports                                      ◼️
-  // ### 2. project-internal files and logic                              ◼️
-  // ### 3. component import(s)                                           ◼️
-  // ### 4. assets import(s)                                              ◼️
-  // ### 5. type(s) imports(s)                                            ◼️
-  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
 	import { browser } from '$app/environment';
 	import { beforeNavigate } from '$app/navigation';
@@ -29,6 +30,7 @@
 	import { onMount } from 'svelte';
 
   import { post } from '$lib/api/utils.js';
+  import { scoresAdminStore } from '$lib/store/admin.js';
   import sessionStore from '$lib/store/session.js';
   import userBetarenaSettings from '$lib/store/user-settings.js';
   import { dlog } from '$lib/utils/debug';
@@ -37,11 +39,11 @@
 
 	import Footer from '$lib/components/_main_/footer/Footer.svelte';
 	import Header from '$lib/components/_main_/header/Header.svelte';
+	import SplashScreen from '$lib/components/misc/Splash-Screen.svelte';
+	import DevInfoBox from '$lib/components/misc/admin/Dev-Info-Box.svelte';
+	import ModalError from '$lib/components/misc/modal/Modal-Error.svelte';
 
-	import DevInfoBox from '$lib/components/misc/Dev-Info-Box.svelte';
 	import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
-
-  // import SplashScreen from '$lib/components/Splash-Screen.svelte';
 
   // ### WARNING:
   // ### Disable, if Dynamic Import is Enabled.
@@ -57,43 +59,44 @@
 
   // #region ➤ 📌 VARIABLES
 
-  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-  // ### NOTE:                                                            ◼️
-  // ### Please add inside 'this' region the 'variables' that are to be   ◼️
-  // ### and are expected to be used by 'this' .svelte file / component.  ◼️
-  // ### IMPORTANT                                                        ◼️
-  // ### Please, structure the imports as follows:                        ◼️
-  // ### 1. export const / let [..]                                       ◼️
-  // ### 2. const [..]                                                    ◼️
-  // ### 3. let [..]                                                      ◼️
-  // ### 4. $: [..]                                                       ◼️
-  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
   const
-    /** Dynamic import variable condition */
-    useDynamicImport: boolean = true,
-    /** @description */
-    targetAppEnv: string = import.meta.env?.VITE_ENV_TARGET
+    /**
+     * @description
+     *  📣 Dynamic import variable condition
+     */
+    useDynamicImport: boolean = true
+    /**
+     * @description
+     */
+    , targetAppEnv: string = import.meta.env?.VITE_ENV_TARGET
   ;
 
 	let
-    /** @description TODO: DOC: */
-    B_NAV_T: B_NAV_T,
-    /** @description TODO: DOC: */
-	  offlineMode: boolean = false,
-    /** @description TODO: DOC: */
-    OfflineAlertDynamic: any,
-    /** @description TODO: DOC: */
-    PlatformAlertDynamic: any,
-    /** @description TODO: DOC: */
-    EmailSubscribeDynamic: any,
-    /** @description TODO: DOC: */
-    deepReactListenIsRouteCompetitions: boolean,
-    /** @description (listen) value for change comparison of client bookmaker change */
-    currentBookmaker: string = $sessionStore?.serverLang
+    /**
+     * @description
+     *  📣 Holds target `component(s)` of dynamic nature.
+     */
+    dynamicComponentMap: Map < 'OfflineAlertDynamic' | 'PlatformAlertDynamic' | 'EmailSubscribeDynamic', any > = new Map()
+    /**
+     * @description
+     *  📣 listen value for change comparison of client bookmaker change
+     */
+    , currentBookmaker = $sessionStore?.serverLang
   ;
 
-	$: B_NAV_T = $page.data?.B_NAV_T ?? { };
+	$: B_NAV_T = ($page.data?.B_NAV_T ?? { }) as B_NAV_T;
   $: deepReactListenServerSideLang = platfrom_lang_ssr
   (
 		$page?.route?.id,
@@ -112,82 +115,62 @@
 
   // #region ➤ 🛠️ METHODS
 
-  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-  // ### NOTE:                                                            ◼️
-  // ### Please add inside 'this' region the 'methods' that are to be     ◼️
-  // ### and are expected to be used by 'this' .svelte file / component.  ◼️
-  // ### IMPORTANT                                                        ◼️
-  // ### Please, structure the imports as follows:                        ◼️
-  // ### 1. function (..)                                                 ◼️
-  // ### 2. async function (..)                                           ◼️
-  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
   /**
    * @author
    *  @migbash
    * @summary
-   *  🔹 HELPER
+   *  [🐞]
    * @description
-   *  📌 method to `toggle` internet connection state.
+   *  📣 Debug Helper
+   * @param reactDebug
    */
-	function toggleOfflineAlert
+  function _DEBUG_
   (
+    reactDebug: 'Option1' | 'Option2' | 'Option3' | 'Option4'
   ): void
   {
-		offlineMode = !offlineMode;
-    // ### [🐞]
-		dlog
-    (
-			'🔴 your internet connection has changed!',
-			true
-		);
-	}
+    const
+      prefix: string = '🚏 checkpoint [R] ➤ src/layout.svelte'
+    ;
 
-  /**
-   * @author
-   *  @migbash
-   * @summary
-   *  🔹 HELPER
-   * @description
-   *  📌 Kickstart `_this_` page event listeners.
-   * @returns { void }
-   */
-  function kickstartEventListen
-  (
-  ): void
-  {
-    // ### NOTE:
-    // ### listen to changes in 'window.offline'.
-    window.addEventListener
-    (
-      'offline',
-      toggleOfflineAlert
-    );
-
-    // ### NOTE:
-    // ### listen to changes in 'window.online'.
-    window.addEventListener
-    (
-      'online',
-      toggleOfflineAlert
-    );
-
-    // ### NOTE:
-    // ### listen to changes in 'document.visibility'.
-    document.addEventListener
-    (
-      'visibilitychange',
-      async function
+    // ▓ [🐞]
+    if (reactDebug == 'Option1')
+      dlog
       (
-      ): Promise < void >
-      {
-        if (!document.hidden)
-        {
-          dlog('🔵 user is active', true)
-          updateFirestoreAndCrisp();
-        }
-      }
-    );
+        `${prefix} if_COD_1`
+        , true
+      );
+    else if (reactDebug == 'Option2')
+      dlog
+      (
+        `${prefix} if_COD_2`
+        , true
+      );
+    else if (reactDebug == 'Option3')
+      dlog
+      (
+        `${prefix} if_COD_3`
+        , true
+      );
+    else if (reactDebug == 'Option4')
+      dlog
+      (
+        `${prefix} if_R_CS43`
+        , true
+      );
+    //
+
+    return;
   }
 
   /**
@@ -198,7 +181,7 @@
    * @description
    *  📌 Updates **Betarena User** for their `Firestore` and `CRISP` data.
    * @returns { Promise < void > }
-  */
+   */
   async function updateFirestoreAndCrisp
   (
   ): Promise < void >
@@ -218,16 +201,16 @@
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
 
-  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-  // ### NOTE:                                                            ◼️
-  // ### Please add inside 'this' region the 'logic' that should run      ◼️
-  // ### immediately and/or reactively for 'this' .svelte file is ran.    ◼️
-  // ### WARNING:                                                         ◼️
-  // ### ❗️ Can go out of control.                                        ◼️
-  // ### (a.k.a cause infinite loops and/or cause bottlenecks).           ◼️
-  // ### Please keep very close attention to these methods and            ◼️
-  // ### use them carefully.                                              ◼️
-  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
   /**
    * @author
@@ -244,21 +227,24 @@
    */
 	$: if (browser)
   {
-    // ### [🐞]
-    dlog
-    (
-      `🚏 checkpoint [R] ➤ src/layout.svelte if_COD_1`,
-      true
-    );
+    _DEBUG_('Option1');
 
 		userBetarenaSettings.useLocalStorage();
+    scoresAdminStore.useLocalStorage();
 
     setUserGeoLocation
     (
       B_NAV_T
     );
 
-    kickstartEventListen();
+    const
+      adminSet = $page.url.searchParams.get('admin')
+    ;
+
+    console.log('adminSet', adminSet)
+
+    if (adminSet)
+      scoresAdminStore.toggleAdminState(adminSet == 'true' ? true : false)
 	}
 
   /**
@@ -267,7 +253,7 @@
    * @summary
    *  🔥 REACTIVITY
    * @description
-   *  📌 Listens to cases when, the:
+   *  📣 Listens to cases when, the:
    *  - (1) _initial platform language_ has changed.
    * @description
    *  **WARNING:**
@@ -276,12 +262,7 @@
    */
   $: if (deepReactListenServerSideLang)
   {
-    // ### [🐞]
-    dlog
-    (
-      `🚏 checkpoint [R] ➤ src/layout.svelte if_COD_2`,
-      true
-    );
+    _DEBUG_('Option2');
 
     sessionStore.updateServerLang
     (
@@ -307,12 +288,7 @@
   ;
   $: if (if_COD_3 && deepReactListenBookmakerChng != currentBookmaker)
   {
-    // ### [🐞]
-    dlog
-    (
-      `🚏 checkpoint [R] ➤ src/layout.svelte if_COD_3`,
-      true
-    );
+    _DEBUG_('Option3');
 
     initSportbookData
     (
@@ -364,15 +340,10 @@
    *  - `browser`- **kicker**
    *  - `$userBetarenaSettings`- **kicker**
    *  - `$sessionStore`- **kicker**
-  */
+   */
   $: if (browser && ($userBetarenaSettings || $sessionStore))
   {
-    // ### [🐞]
-    dlog
-    (
-      `🚏 checkpoint [R] ➤ src/layout.svelte if_R_CS43`,
-      true
-    );
+    _DEBUG_('Option4');
 
     window.intercomSettings =
     {
@@ -400,12 +371,12 @@
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
-  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-  // ### NOTE:                                                            ◼️
-  // ### Please add inside 'this' region the 'logic' that should run      ◼️
-  // ### immediately and as part of the 'lifecycle' of svelteJs,          ◼️
-  // ### as soon as 'this' .svelte file is ran.                           ◼️
-  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
   onMount
   (
@@ -416,9 +387,9 @@
 
       if (useDynamicImport)
       {
-        OfflineAlertDynamic = (await import('$lib/components/Offline-Alert.svelte')).default;
-        PlatformAlertDynamic = (await import('$lib/components/Platform-Alert.svelte')).default;
-        EmailSubscribeDynamic = (await import('$lib/components/Email-Subscribe.svelte')).default;
+        dynamicComponentMap.set('OfflineAlertDynamic', (await import('$lib/components/misc/Banner-Offline-Alert.svelte')).default);
+        dynamicComponentMap.set('PlatformAlertDynamic', (await import('$lib/components/misc/Banner-Platform-Alert.svelte')).default);
+        dynamicComponentMap.set('EmailSubscribeDynamic', (await import('$lib/components/misc/modal/Modal-Email-Subscribe.svelte')).default);
       }
 	  }
   );
@@ -450,9 +421,9 @@
 </script>
 
 <!--
-◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-### SVELTE INJECTION TAGS                                                              ◼️
-◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ Svelte Injection Tags                                                            │
+╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <svelte:head>
@@ -526,83 +497,110 @@
   {/if}
 </svelte:head>
 
+<svelte:document
+  on:visibilitychange=
+  {
+    () =>
+    {
+      if (!document.hidden)
+      {
+        dlog('🔵 user is active', true)
+        updateFirestoreAndCrisp();
+      }
+      return;
+    }
+  }
+/>
+
 <!--
-◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-### COMPONENT HTML                                                                     ◼️
-### NOTE:                                                                              ◼️
-### use 'CTRL+SPACE' to autocomplete global class=styles                               ◼️
-### NOTE:                                                                              ◼️
-### access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.         ◼️
-◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ Svelte Component HTML                                                            │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<!-- <SplashScreen /> -->
+<SplashScreen />
 
-{#if targetAppEnv == '.env.local'}
+{#if $scoresAdminStore.admin}
   <DevInfoBox />
 {/if}
 
-{#if offlineMode}
-
-  <!--
-  ### NOTE:
-  ### Dynamic Svelte Component Import
-  ### WARNING:
-  ### Disable, if Standard Import is Enabled.
-  -->
-  <svelte:component
-    this={OfflineAlertDynamic}
+{#if $sessionStore.currentActiveModal == 'GeneralPlatform_Error'}
+  <ModalError
+    stateWidget='Error'
+    on:closeDropdown=
+    {
+      () =>
+      {
+        $sessionStore.currentActiveModal = null;
+        return;
+      }
+    }
   />
-	<!-- <OfflineAlert /> -->
-
 {/if}
 
-<!--
-### NOTE:
-### Dynamic Svelte Component Import
-### WARNING:
-### Disable, if Standard Import is Enabled.
--->
-<svelte:component
-  this={PlatformAlertDynamic}
-/>
-<!-- <PlatformAlert /> -->
+{#if useDynamicImport}
+  <svelte:component
+    this={dynamicComponentMap.get('OfflineAlertDynamic')}
+  />
+{:else}
+  <!--
+  NOTE:
+  Remember to re-enable top-level import for _this_ component.
+  -->
+  <!-- <OfflineAlert /> -->
+{/if}
 
-<!--
-### NOTE:
-### Dynamic Svelte Component Import
-### WARNING:
-### Disable, if Standard Import is Enabled.
--->
-<svelte:component
-  this={EmailSubscribeDynamic}
-/>
-<!-- <EmailSubscribe /> -->
+{#if useDynamicImport}
+  <svelte:component
+    this={dynamicComponentMap.get('PlatformAlertDynamic')}
+  />
+{:else}
+  <!--
+  NOTE:
+  Remember to re-enable top-level import for _this_ component.
+  -->
+  <!-- <PlatformAlert /> -->
+{/if}
+
+{#if useDynamicImport}
+  <svelte:component
+    this={dynamicComponentMap.get('EmailSubscribeDynamic')}
+  />
+{:else}
+  <!--
+  NOTE:
+  Remember to re-enable top-level import for _this_ component.
+  -->
+  <!-- <EmailSubscribe /> -->
+{/if}
 
 <Header />
 
 <main
 	class:dark-background={$userBetarenaSettings.theme == 'Dark'}
   class:before-display-none={deepReactListenIsRouteCompetitions}
+  class:profile-page={deepReactListenIsProfilePage}
 >
-
 	<slot />
-
 	<Footer />
-
 </main>
 
 <!--
-◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-### COMPONENT STYLE                                                                    ◼️
-### NOTE:                                                                              ◼️
-### auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE      ◼️
-### NOTE:                                                                              ◼️
-### access custom Betarena Scores CSS VScode Snippets by typing 'style...'             ◼️
-◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ Svelte Component CSS/SCSS                                                        │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
+╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<style>
+<style lang="scss">
 
 	main
   {
@@ -612,44 +610,61 @@
 		margin: 0 auto;
     /* 🎨 style */
 		width: 100%;
-	}
-	main::before
-  {
-    /* 📌 position */
-		position: absolute;
-		z-index: -1;
-		top: -5px;
-    /* 🎨 style */
-		content: '';
-		display: inline-block;
-		width: 100%;
-		height: 435px;
-		background-image: url('/assets/svg/header-background.svg');
-		background-repeat: no-repeat;
-		background-size: cover;
-		background-origin: border-box;
-		background-position: top;
-	}
-  main.before-display-none::before
-  {
-    /* 🎨 style */
-    display: none;
+
+    &::before
+    {
+      /* 📌 position */
+      position: absolute;
+      z-index: -1;
+      top: -5px;
+      /* 🎨 style */
+      content: '';
+      display: inline-block;
+      width: 100%;
+      height: 435px;
+      background-image: url('/assets/svg/header-background.svg');
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-origin: border-box;
+      background-position: top;
+    }
+
+    &.before-display-none::before
+    {
+      /* 🎨 style */
+      display: none;
+    }
+
+    &.profile-page::before
+    {
+      /* 🎨 style */
+      height: 611px;
+    }
   }
 
 	/*
-  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-  ◼️ ⚡️ RESPONSIVNESS      ◼️
-  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  ╭──────────────────────────────────────────────────────────────────────────────╮
+  │ ⚡️ RESPONSIVNESS                                                              │
+  ╰──────────────────────────────────────────────────────────────────────────────╯
   */
 
 	@media screen
   and (min-width: 768px)
   {
-		main::before
+    main
     {
-      /* 🎨 style */
-			height: 495px;
-		}
+      &::before
+      {
+        /* 🎨 style */
+        height: 495px;
+      }
+
+      &.profile-page::before
+      {
+        /* 🎨 style */
+        height: 611px;
+      }
+    }
 	}
 
 	@media screen
@@ -658,15 +673,28 @@
     main
     {
       overflow: hidden;
+
+      &::before
+      {
+        /* 📌 position */
+        top: calc(100vw / -5.5) !important;
+        /* 🎨 style */
+        height: 100%;
+        background-size: contain !important;
+      }
+      &.profile-page
+      {
+        /* 🎨 style */
+        overflow: visible;
+      }
+      &.profile-page::before
+      {
+        /* 🎨 style */
+        top: 0 !important;
+        height: 10%; /*  939px :: 25% */
+        background-size: cover !important;
+      }
     }
-		main::before
-    {
-      /* 📌 position */
-			top: calc(100vw / -5.5) !important;
-      /* 🎨 style */
-			height: 100%;
-			background-size: contain !important;
-		}
 	}
 
 </style>

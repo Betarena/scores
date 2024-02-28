@@ -32,7 +32,7 @@ export interface Voted_Fixture
 export interface BetarenaUser
 extends
 IBetarenaUser,
-Pick < User_Setting, "userguide_id_opt_out" >
+Pick < IUserSetting, 'userguide_id_opt_out' >
 {
   // NaN
 }
@@ -43,14 +43,14 @@ Pick < User_Setting, "userguide_id_opt_out" >
  * @summary
  *  🔹 TYPES
  * @description
- *  Interface for 'authenticated' users.
+ *  📣 Interface for 'authenticated' users.
  */
-export interface Scores_User
+export interface IScoreUser
 {
-  /** @description **User** authenticated user `Firebase | Firestore` DB data object */
-	firebase_user_data: User;
-  /** @description **User** authenticated user critical data */
-	scores_user_data: BetarenaUser;
+  /** @description 📣 **User** authenticated user `Firebase | Firestore` DB data object */
+	firebase_user_data?: User;
+  /** @description 📣 **User** authenticated user critical data */
+	scores_user_data?: BetarenaUser;
 }
 
 /**
@@ -59,9 +59,9 @@ export interface Scores_User
  * @summary
  *  🔹 TYPES
  * @description
- *  📌 Interface for 'localstorage' data.
+ *  📣 Interface for 'localstorage' data.
  */
-export interface User_Setting
+export interface IUserSetting
 {
   /** @description **Client/User** selected lang (overrides serverLang) */
 	lang: string;
@@ -72,7 +72,7 @@ export interface User_Setting
   /** @description **Client/User** geoJs object response data */
 	geoJs: GeoJsResponse;
   /** @description **User** authenticated data object */
-	user: Scores_User;
+	user: IScoreUser;
   /** @description **Client/User** voted fixtures */
   voted_fixtures: Voted_Fixture[];
   /** @description **Client/User** userguides opt-out */
@@ -166,7 +166,7 @@ export interface Platform_Session
    *  📌 `session/state` variable used for the
    *  keeping a record of active listeners on the frontend.
    */
-  grapqhQlWebSockets: Array< () => void > = [];
+  grapqhQlWebSockets: (() => void)[] = [];
 
   // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   // NOTE: UI                   ◼️
@@ -227,6 +227,23 @@ export interface Platform_Session
    *  📌 Toggle `visibility` (show/hide) of Fixture Competition (widget) Modal View.
    */
   isShowFixtureCompetitionJoinModal?: boolean;
+  /**
+   * @description
+   *  📣 Currently **active** modal being shown on platform.
+   */
+  currentActiveModal:
+    | null
+    | 'ProfileInvestor_ReferralInfo_Modal'
+    | 'ProfileInvestor_Wallets_Modal'
+    | 'ProfileInvestor_Terms&Cond_Modal'
+    | 'ProfileInvestor_WalletConnect_Modal'
+    | 'ProfileInvestor_ClaimTGE_Modal'
+    | 'ProfileInvestor_ClaimVesting_Modal'
+    | 'ProfileInvestor_TxState_Modal'
+    | 'ProfileInvestor_SelectCrypto_Modal'
+    | 'GeneralPlatform_Error'
+    | 'Footer_Newsletter_Modal'
+  ;
 
   // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   // NOTE: SPORTBOOK DATA       ◼️
@@ -313,6 +330,21 @@ export interface Platform_Session
     from?: Date,
     to?: Date
   };
+  /**
+   * @description
+   *  📌 Amount `deeplink` to `web3` selected by **user** for mobile.
+   */
+  investDepositAmountMobileWeb3: number;
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // | 🛠️ DEVELOPMENT                                                         |
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  /**
+   * @description
+   *  📣 Current name for target **admin** widget under inspection.
+   */
+  currentAdminToggle: string | null;
 }
 
 /**
@@ -322,6 +354,7 @@ export interface Platform_Session
 export type PROFILE_OPT =
   | 'Dashboard'
   | 'Account Settings'
+  | 'Investor'
   | 'Deposit'
   | 'Withdraw'
   | 'Transaction History'

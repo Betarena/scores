@@ -1,0 +1,439 @@
+@use "sass:map";
+
+/* #region ➤ [MAIN] [ROOT] Layout */
+
+$root-color-map:
+(
+  /*
+  ╭──────────────────────────────────────────────────────────────────╮
+  │ 📌 WHITE COLORS                                                  │
+  ╰──────────────────────────────────────────────────────────────────╯
+  */
+
+  "white":
+  (
+    "root-name": "--white",
+    "class-name": "color-white",
+    "value": "#ffffff",
+    "dark-mirror": ()
+  ),
+  "white-2":
+  (
+    "root-name": "--whitev2",
+    "class-name": "color-white-2",
+    "value": "#f2f2f2",
+    "dark-mirror": ()
+  ),
+  "white-3":
+  (
+    "root-name": "--white-3",
+    "class-name": "color-white-3",
+    "value": "#F7F7F7",
+    "dark-mirror":
+    (
+      "1":
+      (
+        "class-name": ".dark-v3",
+        "root-name": "--grey-shade"
+      )
+    )
+  ),
+  "white-4":
+  (
+    "root-name": "--white-4",
+    "class-name": "color-white-4",
+    "value": "#D9D9D9",
+    "dark-mirror": ()
+  ),
+
+  /*
+  ╭──────────────────────────────────────────────────────────────────╮
+  │ 📌 PRIMARY / SECONDARY COLORS                                    │
+  ╰──────────────────────────────────────────────────────────────────╯
+  */
+
+  "primary":
+  (
+    "root-name": "--primary",
+    "class-name": "color-primary",
+    "value": "#f5620f",
+    "dark-mirror":
+    (
+      "1":
+      (
+        "class-name": "",
+        "root-name": "--primary"
+      )
+    )
+  ),
+  "primary-fade":
+  (
+    "root-name": "--primary-fade",
+    "class-name": "color-primary-fade",
+    "value": "#f77c42",
+    "dark-mirror": ()
+  ),
+  "primary-fade-2":
+  (
+    "root-name": "--primary-fade-2",
+    "class-name": "color-primary-fade-2",
+    "value": "#D25E27",
+    "dark-mirror":
+    (
+      "1":
+      (
+        "class-name": ".dark-v0",
+        "root-name": "--primary-fade-2"
+      )
+    )
+  ),
+  "secondary":
+  (
+    "root-name": "--secondary",
+    "class-name": "color-secondary",
+    "value": "#37474f",
+    "dark-mirror": ()
+  ),
+  "blue":
+  (
+    "root-name": "--blue",
+    "class-name": "color-blue",
+    "value": "#0085ff",
+    "dark-mirror": ()
+  ),
+  "red":
+  (
+    "root-name": "--red",
+    "class-name": "color-red",
+    "value": "#c62828",
+    "dark-mirror": ()
+  ),
+  "red-bright":
+  (
+    "root-name": "--red-bright",
+    "class-name": "color-red-bright",
+    "value": "#ff3c3c",
+    "dark-mirror": ()
+  ),
+  "red-bright-v2":
+  (
+    "root-name": "--red-bright-v2",
+    "class-name": "color-red-bright-v2",
+    "value": "#FF5F5F",
+    "dark-mirror": ()
+  ),
+  "red-error":
+  (
+    "root-name": "--red-error",
+    "class-name": "color-error",
+    "value": "#ff0000",
+    "dark-mirror": ()
+  ),
+  "green-success":
+  (
+    "root-name": "--green-success",
+    "class-name": "color-success",
+    "value": "#009406",
+    "dark-mirror": ()
+  ),
+  "green-color":
+  (
+    "root-name": "--green-color",
+    "class-name": "color-green",
+    "value": "#59C65D",
+    "dark-mirror":
+    (
+      "1":
+      (
+        "class-name": ".dark-v0",
+        "root-name": "--green-color"
+      )
+    )
+  ),
+  "green-1":
+  (
+    "root-name": "--green-1",
+    "class-name": "color-green-1",
+    "value": "#4DA025",
+    "dark-mirror": ()
+  ),
+  "theme-color":
+  (
+    "root-name": "--theme-color",
+    "class-name": "color-theme-color",
+    "value": "#e3e3e3",
+    "dark-mirror": ()
+  ),
+  "grey-color":
+  (
+    "root-name": "--grey-color",
+    "class-name": "color-grey-color",
+    "value": "#e6e6e6",
+    "dark-mirror": ()
+  ),
+  "grey-shade":
+  (
+    "root-name": "--grey-shade",
+    "class-name": "color-grey-shade",
+    "value": "#cccccc",
+    "dark-mirror":
+    (
+      "1":
+      (
+        "class-name": ".dark-v1",
+        "root-name": "--grey"
+      )
+    )
+  ),
+  "grey-shade-2":
+  (
+    "root-name": "--grey-shade-2",
+    "class-name": "color-grey-shade-2",
+    "value": "#a8a8a8",
+    "dark-mirror": ()
+  ),
+  "grey-shade-3":
+  (
+    "root-name": "--grey-shade-3",
+    "class-name": "color-grey-shade-3",
+    "value": "#C1C1C1",
+    "dark-mirror": ()
+  ),
+  "grey-shade-4":
+  (
+    "root-name": "--grey-shade-4",
+    "class-name": "color-grey-v2",
+    "value": "#7E7E7E",
+    "dark-mirror":
+    (
+      "1":
+      (
+        "class-name": ".grey-v1",
+        "root-name": "--grey-shade-3"
+      )
+    )
+  ),
+  "yellow-gold":
+  (
+    "root-name": "--yellow-gold",
+    "class-name": "color-yellow",
+    "value": "#FFB904",
+    "dark-mirror": ()
+  ),
+
+  /*
+  ╭──────────────────────────────────────────────────────────────────╮
+  │ 📌 DARK THEME COLORS                                             │
+  ╰──────────────────────────────────────────────────────────────────╯
+  */
+
+  "black":
+  (
+    "root-name": "--black",
+    "class-name": "color-black",
+    "value": "#000000",
+    "dark-mirror": ()
+  ),
+  "dark":
+  (
+    "root-name": "--dark",
+    "class-name": "color-dark",
+    "value": "#121212",
+    "dark-mirror": ()
+  ),
+  "grey":
+  (
+    "root-name": "--grey",
+    "class-name": "color-grey",
+    "value": "#8c8c8c",
+    "dark-mirror":
+    (
+      "1":
+      (
+        "class-name": "",
+        "root-name": "--grey-shade-2"
+      ),
+      "2":
+      (
+        "class-name": ".dark-white-v1",
+        "root-name": "--white"
+      ),
+      "3":
+      (
+        "class-name": ".dark-white-v3",
+        "root-name": "--white-3"
+      ),
+      // .dark-background-1 .global.color-grey.grey-v1 > *,
+      "4":
+      (
+        "class-name": ".grey-v1",
+        "root-name": "--grey-shade"
+      ),
+      "5":
+      (
+        "class-name": ".dark-v1",
+        "root-name": "--grey"
+      )
+    )
+  ),
+  "background-surface":
+  (
+    "root-name": "--background-surface",
+    "class-name": "color-background-surface",
+    "value": "#121212",
+    "dark-mirror": ()
+  ),
+  "dark-theme":
+  (
+    "root-name": "--dark-theme",
+    "class-name": "color-black-2",
+    "value": "#292929",
+    "dark-mirror":
+    (
+      "1":
+      (
+        "class-name": "",
+        "root-name": "--white"
+      ),
+      "2":
+      (
+        "class-name": ".grey-v1",
+        "root-name": "--grey-shade"
+      ),
+      "3":
+      (
+        "class-name": ".white-v1",
+        "root-name": "--grey-color"
+      )
+    )
+  ),
+  "dark-theme-1":
+  (
+    "root-name": "--dark-theme-1",
+    "class-name": "color-black-3",
+    "value": "#4b4b4b",
+    "dark-mirror":
+    (
+      "1":
+      (
+        "class-name": "",
+        "root-name": "--white"
+      ),
+      "2":
+      (
+        "class-name": ".dark-v1",
+        "root-name": "--grey-shade"
+      )
+    )
+  ),
+  "dark-theme-1-shade":
+  (
+    "root-name": "--dark-theme-1-shade",
+    "class-name": "color-dark-theme-1-shade",
+    "value": "#616161",
+    "dark-mirror": ()
+  ),
+  "dark-theme-1-2-shade":
+  (
+    "root-name": "--dark-theme-1-2-shade",
+    "class-name": "color-dark-theme-1-2-shade",
+    "value": "#737373",
+    "dark-mirror": ()
+  ),
+  "dark-theme-1-3-shade":
+  (
+    "root-name": "--dark-theme-1-3-shade",
+    "class-name": "color-dark-theme-1-3-shade",
+    "value": "#999999",
+    "dark-mirror": ()
+  ),
+  "dark-theme-1-4-shade":
+  (
+    "root-name": "--dark-theme-1-4-shade",
+    "class-name": "color-dark-theme-1-4-shade",
+    "value": "#383838",
+    "dark-mirror": ()
+  ),
+  "dark-theme-1-7-shade":
+  (
+    "root-name": "--dark-theme-1-7-shade",
+    "class-name": "color-dark-theme-1-7-shade",
+    "value": "#313131",
+    "dark-mirror": ()
+  ),
+  "dark-theme-1-5-shade":
+  (
+    "root-name": "--dark-theme-1-5-shade",
+    "class-name": "color-dark-theme-1-5-shade",
+    "value": "#161616",
+    "dark-mirror": ()
+  ),
+  "dark-theme-1-6-shade":
+  (
+    "root-name": "--dark-theme-1-6-shade",
+    "class-name": "color-dark-theme-1-6-shade",
+    "value": "#4D4D4D",
+    "dark-mirror": ()
+  ),
+  "dark-theme-1-5-shade-o-0-2":
+  (
+    "root-name": "--dark-theme-1-5-shade-o-0-2",
+    "class-name": "color-dark-theme-1-5-shade-o-0-2",
+    "value": "rgba(22, 22, 22, 0.2)",
+    "dark-mirror": ()
+  ),
+  "dark-theme-1-5-shade-o-0-5":
+  (
+    "root-name": "--dark-theme-1-5-shade-o-0-5",
+    "class-name": "color-dark-theme-1-5-shade-o-0-5",
+    "value": "rgba(75, 75, 75, 0.5)",
+    "dark-mirror": ()
+  ),
+);
+
+/*
+### NOTE:
+### Betarena Scores 'root:' values.
+### SEE:
+### https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties
+*/
+:root
+{
+  /*
+  ╭──────────────────────────────────────────────────────────────────╮
+  │ 📌 DIMENSIONS                                                    │
+  ╰──────────────────────────────────────────────────────────────────╯
+  */
+
+  --app-height: 100%;
+
+  /*
+  ╭──────────────────────────────────────────────────────────────────╮
+  │ 📌 COLORS                                                        │
+  ╰──────────────────────────────────────────────────────────────────╯
+  */
+
+  @each $key, $data in $root-color-map
+  {
+    #{map-get($data, "root-name")}: #{map-get($data, "value")}
+  }
+
+  /*
+  ╭──────────────────────────────────────────────────────────────────╮
+  │ 📌 COMMON BREAKPOINTS                                            │
+  ╰──────────────────────────────────────────────────────────────────╯
+  */
+  --mobile: 375;
+  --tablet: 767;
+  --desktop: 1440;
+
+  /*
+  ╭──────────────────────────────────────────────────────────────────╮
+  │ 📌 MISC.                                                         │
+  ╰──────────────────────────────────────────────────────────────────╯
+  */
+  --oragne-pale-bg: rgba(247, 124, 66, 0.2);
+  --header-is-mobile: false;
+}
+
+/* #endregion ➤ [MAIN] [ROOT] Layout */

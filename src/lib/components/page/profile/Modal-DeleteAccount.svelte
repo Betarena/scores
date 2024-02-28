@@ -14,7 +14,7 @@ COMPONENT JS (w/ TS)
 
 	import danger from './assets/alert.svg';
 
-  import type { B_PROF_T } from '@betarena/scores-lib/types/profile.js';
+  import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -22,9 +22,7 @@ COMPONENT JS (w/ TS)
 
 	const dispatch: EventDispatcher < any > = createEventDispatcher();
 
-  let RESPONSE_PROFILE_DATA: B_PROF_T;
-
-  $: RESPONSE_PROFILE_DATA = $page.data.RESPONSE_PROFILE_DATA;
+  $: profileTrs = $page.data.profileTrs as IProfileTrs;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -36,10 +34,10 @@ COMPONENT JS (w/ TS)
 	 * to close (this) modal widget
 	 */
 	function toggle_modal
-  (
-  ): void
-  {
-		dispatch('toggle_delete_modal');
+	(
+	): void
+	{
+	  dispatch('toggle_delete_modal');
 	}
 
 	/**
@@ -48,10 +46,10 @@ COMPONENT JS (w/ TS)
 	 * to trigger target method
 	 */
 	function continue_delete_account
-  (
-  ): void
-  {
-		dispatch('delete_account');
+	(
+	): void
+	{
+	  dispatch('delete_account');
 	}
 
   // #endregion ➤ 🛠️ METHODS
@@ -69,7 +67,7 @@ COMPONENT JS (w/ TS)
 -->
 <div
 	id="background-modal-blur"
-	on:click={() => toggle_modal()}
+	on:click={() => {return toggle_modal()}}
 	in:fade
 />
 
@@ -88,7 +86,7 @@ MAIN MODAL - WIDGET
 		class="cursor-pointer"
 		src="/assets/svg/close.svg"
 		alt="close-svg"
-		on:click={() => toggle_modal()}
+		on:click={() => {return toggle_modal()}}
 	/>
 	<!--
   [ℹ] delete account icon (danger)
@@ -109,7 +107,7 @@ MAIN MODAL - WIDGET
       color-red-bright
     "
 	>
-    {RESPONSE_PROFILE_DATA?.profile?.delete_account_title} ?
+    {profileTrs.profile?.delete_account_title} ?
 	</p>
 	<!--
   [ℹ] delete account desc. info
@@ -121,7 +119,7 @@ MAIN MODAL - WIDGET
       m-b-24
     "
 	>
-		{RESPONSE_PROFILE_DATA?.profile?.delete_account_desc}
+		{profileTrs.profile?.delete_account_desc}
 	</p>
 	<!--
   [ℹ] main widget action
@@ -142,9 +140,9 @@ MAIN MODAL - WIDGET
         m-r-16
       "
       style="width: 100%"
-			on:click={() => continue_delete_account()}
+			on:click={() => {return continue_delete_account()}}
 		>
-      {RESPONSE_PROFILE_DATA?.profile?.delete_button}
+      {profileTrs.profile?.delete_button}
 		</button>
 		<!--
     [ℹ] cancel action (btn)
@@ -155,9 +153,9 @@ MAIN MODAL - WIDGET
         color-black-2
       "
       style="width: 100%"
-			on:click={() => toggle_modal()}
+			on:click={() => {return toggle_modal()}}
 		>
-      {RESPONSE_PROFILE_DATA?.profile?.cancel_expression}
+      {profileTrs.profile?.cancel_expression}
 		</button>
 	</div>
 </div>

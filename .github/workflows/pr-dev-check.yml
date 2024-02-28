@@ -1,0 +1,62 @@
+# ╭──────────────────────────────────────────────────────────────────╮
+# │ 🐙 GITHUB ACIONS CI/CD WORKFLOW                                  │
+# ┣──────────────────────────────────────────────────────────────────┫
+# │ Responsible for:                                                 │
+# │ ➤ [1] build check of project as a Docker Image                   │
+# │ ➤ [2] build check of project as a Check PR Label                 │
+# ╰──────────────────────────────────────────────────────────────────╯
+
+name: '🔍 Pull-Request Check [dev]'
+
+on:
+  pull_request:
+    branches:
+      - dev
+    types:
+      - opened
+      - reopened
+      - labeled
+      - unlabeled
+      - synchronize
+
+env:
+  DOCKER_IMAGE: 'scores_web'
+
+jobs:
+
+  # ╭──────────────────────────────────────────────────────────────────╮
+  # │ NOTE:                                                            │
+  # │ ➤ [1] check for correct build(s)                                 │
+  # ╰──────────────────────────────────────────────────────────────────╯
+
+  npm-build-check:
+    name: 🪀 NPM Build Check
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18.19.0
+      - name: '🏗️ Set npm version'
+        run: |
+          npm install -g npm@10.2.3
+      - name: 'create .env'
+        run: |
+          echo ${{ secrets.ENV_FILE }} | base64 -d > .env
+      - name: '🟩 Build npm'
+        run: |
+          export NODE_OPTIONS="--max-old-space-size=8192"
+          npm ci
+          npm run build
+
+  # docker-image-build:
+  #   needs: npm-build-check
+  #   name: 🐳 Docker Image Build
+  #   runs-on: ubuntu-22.04
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - name: Build docker image
+  #       run: |
+  #         docker build . --file ./docker/prod.Dockerfile --tag ${{ env.DOCKER_IMAGE }}:$(date +%s)
