@@ -1,36 +1,50 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - access custom Betarena Scores JS VScode Snippets by typing 'script...'         │
+│ ➤ HINT: | Access snippets for '<script> [..] </script>' those found in           │
+|         | '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <script lang="ts">
 
- // #region ➤ 📦 Package Imports
+  // #region ➤ 📦 Package Imports
 
- // ╭────────────────────────────────────────────────────────────────────────╮
- // │ NOTE:                                                                  │
- // │ Please add inside 'this' region the 'imports' that are required        │
- // │ by 'this' .svelte file is ran.                                         │
- // │ IMPORTANT                                                              │
- // │ Please, structure the imports as follows:                              │
- // │ 1. svelte/sveltekit imports                                            │
- // │ 2. project-internal files and logic                                    │
- // │ 3. component import(s)                                                 │
- // │ 4. assets import(s)                                                    │
- // │ 5. type(s) imports(s)                                                  │
- // ╰────────────────────────────────────────────────────────────────────────╯
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { createEventDispatcher, type EventDispatcher } from 'svelte';
-  import { fade } from 'svelte/transition';
+	import { page } from '$app/stores';
+
+	import sessionStore from '$lib/store/session.js';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 
   import icon_tx_complete from '../assets/tx-loader/tx-complete.svg';
   import icon_tx_error from '../assets/tx-loader/tx-error.svg';
   import icon_tx_processing from '../assets/tx-loader/tx-load-anim.svg';
 
-	import userBetarenaSettings from '$lib/store/user-settings.js';
+  import ModalBackdrop from '$lib/components/misc/modal/Modal-Backdrop.svelte';
+  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
+
+  import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -49,59 +63,44 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let
-    /** @augments IStateWidget */
+    /**
+     * @augments IStateWidget
+     */
     stateWidget: IStateWidget
+    /**
+     * @description
+     *  📣 Target `minimum amount`.
+     */
+    , minimumAmount: number
   ;
 
-  type IStateWidget = 'In Progress' | 'Completed' | 'Error' | null;
+  type IStateWidget =
+    'In Progress'
+    | 'Completed'
+    | 'Error'
+    | 'ErrorBalance'
+    | null
+  ;
 
   const
-    /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
-    // eslint-disable-next-line no-unused-vars
-    CNAME: string = 'profile⮕w⮕investfaq⮕main'
-    /** @description 📣 threshold start + state for 📱 MOBILE */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
-    /** @description 📣 threshold start + state for 💻 TABLET */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
-    , dispatch: EventDispatcher<any> = createEventDispatcher()
+    /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+    */ // eslint-disable-next-line no-unused-vars
+    CNAME: string = 'profile⮕w⮕modal-tx-state'
   ;
 
   let
-    /** @description */
+    /**
+     * @description
+     *  📣 Target `icon` element.
+     */
     iconState: string
   ;
 
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
+
   // #endregion ➤ 📌 VARIABLES
-
-  // #region ➤ 🛠️ METHODS
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'methods' that are to be           │
-  // │ and are expected to be used by 'this' .svelte file / component.        │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. function (..)                                                       │
-  // │ 2. async function (..)                                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  /**
-   * @description
-   */
-  function closeModal
-  (
-  ): void
-  {
-    dispatch
-    (
-      'closeDropdown'
-    );
-    return;
-  }
-
-  // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
 
@@ -121,8 +120,9 @@
     iconState = icon_tx_processing
   else if (stateWidget == 'Completed')
     iconState = icon_tx_complete
-  else if (stateWidget == 'Error')
+  else if (stateWidget == 'Error' || stateWidget == 'ErrorBalance')
     iconState = icon_tx_error;
+  //
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
@@ -132,18 +132,17 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component HTML                                                            │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - use 'Ctrl+Space' to autocomplete global class=styles                           │
-│ - access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.     │
+│ ➤ HINT: | Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    |
+│         │ imported from './static/app.css'                                       |
+│ ➤ HINT: | access custom Betarena Scores VScode Snippets by typing emmet-like     |
+|         | abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div
-	id="background-modal-blur"
-	in:fade
-/>
+<ModalBackdrop />
 
 <div
-  id="modal-delete-box"
+  id={CNAME}
   class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
 >
 
@@ -175,12 +174,37 @@
     "
   >
     {#if stateWidget == 'In Progress'}
-      Transfer is processign wait
-      for confirmation...
+      <TranslationText
+        key={'profile/investor/invest-box/tx-modal/in-progress'}
+        text={profileTrs?.investor?.popup_transfer.message_1}
+        fallback={'Transfer is processign wait for confirmation...'}
+      />
     {:else if stateWidget == 'Completed'}
-      Transfer is complete
+      <TranslationText
+        key={'profile/investor/invest-box/tx-modal/completed'}
+        text={profileTrs?.investor?.popup_transfer.message_3}
+        fallback={'Transfer is complete'}
+      />
     {:else if stateWidget == 'Error'}
-      Transfer incomplete.
+      <TranslationText
+        key={'profile/investor/invest-box/tx-modal/error'}
+        text={profileTrs?.investor?.popup_transfer.message_2}
+        fallback={'Transfer incomplete.'}
+      />
+    {:else if stateWidget == 'ErrorBalance'}
+      <TranslationText
+        key={'profile/investor/invest-box/tx-modal/error-balance'}
+        text=
+        {
+          profileTrs?.investor?.invest_box.minimum_amount_request
+            .replace('XXX', minimumAmount.toString())
+        }
+        fallback=
+        {
+          'To participate in the private presale of BTA, you need to make a minimum investment of XXX USD.'
+            .replace('XXX', minimumAmount.toString())
+        }
+      />
     {/if}
   </p>
 
@@ -188,7 +212,7 @@
   ▓ NOTE:
   ▓ > modal button
   -->
-  {#if ['Completed', 'Error'].includes(stateWidget ?? '')}
+  {#if ['Completed', 'Error', 'ErrorBalance'].includes(stateWidget ?? '')}
 
     <button
       class=
@@ -196,9 +220,22 @@
       btn-primary-v2
       m-t-25
       "
-      on:click={() => {return closeModal()}}
+      on:click=
+      {
+        () =>
+        {
+          $sessionStore.currentActiveModal = null;
+          if (stateWidget == 'Completed')
+            window.location.reload();
+          return;
+        }
+      }
     >
-      Ok
+      <TranslationText
+        key={'profile/investor/invest-box/tx-modal/ok'}
+        text={'OK'}
+        fallback={'OK'}
+      />
     </button>
 
   {/if}
@@ -209,28 +246,21 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component CSS/SCSS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE  │
-│ - access custom Betarena Scores CSS VScode Snippets by typing 'style...'         │
+│ ➤ HINT: | auto-fill/auto-complete iniside <style> for var()                      │
+|         | values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: | access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <style lang="scss">
 
-	div#background-modal-blur
-  {
-		/* 📌 position */
-		position: fixed;
-		top: 0;
-		right: 0;
-		left: 0;
-		z-index: 4000;
-		/* 🎨 style */
-		height: 100%;
-		width: 100%;
-		background: rgba(0, 0, 0, 0.5);
-	}
+  /*
+  ╭──────────────────────────────────────────────────────────────────────────────╮
+  │ 📲 MOBILE-FIRST                                                              │
+  ╰──────────────────────────────────────────────────────────────────────────────╯
+  */
 
-	div#modal-delete-box
+	div#profile⮕w⮕modal-tx-state
   {
 		/* 📌 position */
 		position: fixed;
@@ -262,7 +292,7 @@
 	@media only screen
   and (min-width: 575px)
   {
-		div#modal-delete-box
+		div#profile⮕w⮕modal-tx-state
     {
 			width: 328px;
     }
@@ -274,7 +304,7 @@
   ╰──────────────────────────────────────────────────────────────────────────────╯
   */
 
-  div#modal-delete-box
+  div#profile⮕w⮕modal-tx-state
   {
     &.dark-background-1
     {

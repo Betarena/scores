@@ -1,8 +1,17 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - access custom Betarena Scores JS VScode Snippets by typing 'script...'         │
+│ ➤ HINT: | Access snippets for '<script> [..] </script>' those found in           │
+|         | '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -28,7 +37,12 @@
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { copyToClipboard } from '$lib/utils/platform-functions.js';
+	import { investWalletSampleData } from './_sample.js';
+	import { scoresProfileInvestorStore } from './_store.js';
 
+  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
+  import AdminDevControlPanel from '$lib/components/misc/admin/Admin-Dev-ControlPanel.svelte';
+  import AdminDevControlPanelToggleButton from '$lib/components/misc/admin/Admin-Dev-ControlPanelToggleButton.svelte';
   import WalletsModal from './Investment.Wallets.Modal.svelte';
 
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
@@ -56,49 +70,34 @@
     profileData: IProfileData | null
     /**
      * @description
-     *  📣
-    */
-    , VIEWPORT_MOBILE_INIT_PARENT: [ number, boolean ]
+     *  📣 threshold start + state for 📱 MOBILE
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
     /**
      * @description
-     *  📣
-    */
-    , VIEWPORT_TABLET_INIT_PARENT: [ number, boolean ]
+     *  📣 threshold start + state for 💻 TABLET
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
   const
-    /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
-    // eslint-disable-next-line no-unused-vars
+    /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */ // eslint-disable-next-line no-unused-vars
     CNAME: string = 'profile⮕w⮕investment-wallets⮕main'
-    /** @description 📣 threshold start + state for 📱 MOBILE */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = VIEWPORT_MOBILE_INIT_PARENT
-    /** @description 📣 threshold start + state for 💻 TABLET */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = VIEWPORT_TABLET_INIT_PARENT
   ;
 
   let
     /**
      * @description
      *  📣 Target **unique** wallets used in `investments` by _this_ user.
-    */
-    userWallets
-    = [
-      ...new Set
-      (
-        profileData?.tx_hist
-          ?.filter(x => { return x.type == 'vesting' && x.wallet_address_erc20 != null })
-          ?.map(x => { return x.wallet_address_erc20 ?? '' })!
-      )
-    ]
+     */
+    userWallets: string[] = profileData?.investorData?.data?.investor_wallets ?? []
   ;
 
-  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
-
-  // ▓ [🐞]
-  // ▓ > validate for missing user not having any associated investment wallets.
-  // userWallets = [];
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
+  $: ({ adminOverrides, walletsStateWidget } = $scoresProfileInvestorStore);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -108,17 +107,41 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component HTML                                                            │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - use 'Ctrl+Space' to autocomplete global class=styles                           │
-│ - access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.     │
+│ ➤ HINT: | Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    |
+│         │ imported from './static/app.css'                                       |
+│ ➤ HINT: | access custom Betarena Scores VScode Snippets by typing emmet-like     |
+|         | abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
+<!--
+▓ NOTE:
+▓ > (widget) main
+-->
 <div
   id={CNAME}
   class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
-  class:row-space-out={!VIEWPORT_MOBILE_INIT_PARENT[1]}
-  class:column-space-center={VIEWPORT_MOBILE_INIT_PARENT[1]}
+  class:row-space-out={!VIEWPORT_MOBILE_INIT[1]}
+  class:column-space-center={VIEWPORT_MOBILE_INIT[1]}
+  class:mutated={adminOverrides.has('Wallets')}
 >
+  <AdminDevControlPanelToggleButton
+    title='Investor Wallet Address'
+    mutated={adminOverrides.has('Wallets')}
+    on:reset=
+    {
+      () =>
+      {
+        scoresProfileInvestorStore.updateAdminMutatedWidgets
+        (
+          'Wallets'
+          , 'remove'
+        );
+        return;
+      }
+    }
+  />
+
   <!--
   ▓ NOTE:
   ▓ > (text) 1st column.
@@ -126,7 +149,7 @@
   <div
     class=
     "
-    {VIEWPORT_MOBILE_INIT_PARENT[1] ? 'row-space-out m-b-20' : 'row-space-start'}
+    {VIEWPORT_MOBILE_INIT[1] ? 'row-space-out m-b-20' : 'row-space-start'}
     "
   >
 
@@ -142,10 +165,11 @@
       m-r-20
       "
     >
-      {
-        profileTrs.investor?.wallets.title
-        ?? 'Investor Wallet Address'
-      }
+      <TranslationText
+        key={`${CNAME}/title`}
+        text={profileTrs?.investor?.wallets.title}
+        fallback={'Investor Wallet Address'}
+      />
     </p>
 
     <!--
@@ -162,13 +186,24 @@
       cursor-pointer
       hover-color-primary
       "
-      on:click={() => {return $sessionStore.showInvstementWallets = true}}
-    >
-      {#if userWallets.length > 0}
+      on:click=
+      {
+        () =>
         {
-          profileTrs.investor?.wallets.view
-          ?? 'View All'
+          $sessionStore.currentActiveModal = 'ProfileInvestor_Wallets_Modal';
+          return;
         }
+      }
+    >
+      {#if
+        userWallets.length > 0
+        && walletsStateWidget != 'NoData'
+      }
+        <TranslationText
+          key={`${CNAME}/title`}
+          text={profileTrs?.investor?.wallets.view}
+          fallback={'View All'}
+        />
       {/if}
     </p>
 
@@ -181,7 +216,7 @@
   <div
     class=
     "
-    {VIEWPORT_MOBILE_INIT_PARENT[1] ? 'row-space-out' : 'row-space-end'}
+    {VIEWPORT_MOBILE_INIT[1] ? 'row-space-out' : 'row-space-end'}
     "
   >
 
@@ -190,6 +225,7 @@
     ▓ > (text) last wallet address used.
     -->
     <p
+      id="first-wallet"
       class=
       "
       s-14
@@ -217,10 +253,11 @@
       "
       on:click={() => { copyToClipboard(userWallets[0]); return; }}
     >
-      {
-        profileTrs.investor?.wallets.copy
-        ?? 'Copy'
-      }
+      <TranslationText
+        key={`${CNAME}/title`}
+        text={profileTrs?.investor?.wallets.copy}
+        fallback={'Copy'}
+      />
     </p>
 
   </div>
@@ -229,7 +266,11 @@
   ▓ NOTE:
   ▓ > investment detail wallet modal.
   -->
-  {#if $sessionStore.showInvstementWallets && userWallets.length > 0}
+  {#if
+    $sessionStore.currentActiveModal == 'ProfileInvestor_Wallets_Modal'
+    && userWallets.length > 0
+    && walletsStateWidget != 'NoData'
+  }
     <WalletsModal
       walletAddressList={userWallets}
     />
@@ -238,11 +279,140 @@
 </div>
 
 <!--
+▓ NOTE:
+▓ > (widget) admin development state UI change control panel.
+-->
+<AdminDevControlPanel
+  title='Investor Wallet Address'
+>
+
+  <!--
+  ▓ NOTE:
+  ▓ > (no data) widget state.
+  -->
+  <div
+    class=
+    "
+    row-space-out
+    "
+  >
+    <!--
+    ▓ NOTE:
+    ▓ > (no data state) text.
+    -->
+    <p
+      class=
+      "
+      s-14
+      color-black
+      "
+    >
+      <b>[1]</b> Toggle <b>No Data State</b>
+    </p>
+
+    <!--
+    ▓ NOTE:
+    ▓ > (no data state) button.
+    -->
+    <button
+      class=
+      "
+      dev-toggle
+      "
+      on:click=
+      {
+        () =>
+        {
+          scoresProfileInvestorStore.updateAdminMutatedWidgets
+          (
+            'Wallets'
+            , 'set'
+          );
+          if (walletsStateWidget == 'NoData')
+            $scoresProfileInvestorStore.walletsStateWidget = 'NoData';
+          else
+            $scoresProfileInvestorStore.walletsStateWidget = 'Standard';
+          return;
+        }
+      }
+      class:on={walletsStateWidget == 'NoData'}
+      class:off={walletsStateWidget != 'NoData'}
+    >
+      {#if walletsStateWidget == 'NoData'}
+        ON
+      {:else}
+        OFF
+      {/if}
+    </button>
+  </div>
+
+  <!--
+  ▓ NOTE:
+  ▓ > (add sample data) widget.
+  -->
+  <div
+    class=
+    "
+    row-space-out
+    "
+  >
+    <!--
+    ▓ NOTE:
+    ▓ > (no data state) text.
+    -->
+    <p
+      class=
+      "
+      s-14
+      color-black
+      "
+    >
+      <b>[2]</b> Add <b>Sample Data</b>
+    </p>
+
+    <!--
+    ▓ NOTE:
+    ▓ > (no data state) button.
+    -->
+    <button
+      class=
+      "
+      dev-toggle
+      "
+      on:click=
+      {
+        () =>
+        {
+          userWallets.push
+          (
+            ...investWalletSampleData
+          );
+
+          userWallets = userWallets;
+
+          scoresProfileInvestorStore.updateAdminMutatedWidgets
+          (
+            'InvestmentHistory'
+            , 'set'
+          );
+
+          return;
+        }
+      }
+    >
+      TOGGLE
+    </button>
+  </div>
+
+</AdminDevControlPanel>
+
+<!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component CSS/SCSS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE  │
-│ - access custom Betarena Scores CSS VScode Snippets by typing 'style...'         │
+│ ➤ HINT: | auto-fill/auto-complete iniside <style> for var()                      │
+|         | values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: | access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -256,12 +426,23 @@
 
   div#profile⮕w⮕investment-wallets⮕main
   {
+    /* 📌 position */
+    position: relative;
     /* 🎨 style */
     background-color: var(--white);
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
     padding: 20px;
+
+    p#first-wallet
+    {
+      /* 🎨 style */
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      max-width: 85%;
+    }
   }
 
   /*

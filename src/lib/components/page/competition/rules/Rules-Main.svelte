@@ -60,7 +60,7 @@
     WIDGET_T_DATA: B_COMP_MAIN_T
   ;
 
-  $: WIDGET_T_DATA = $page.data?.B_COMP_RULES_T;
+  $: WIDGET_T_DATA = $page.data.B_COMP_RULES_T;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -85,7 +85,7 @@
   class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
 >
 
-  {@html WIDGET_T_DATA?.rules ?? ''}
+  {@html WIDGET_T_DATA.rules ?? ''}
 
 </div>
 
@@ -110,6 +110,8 @@
   :global(div#competition⮕w⮕rules⮕box h3)
   {
     /* 🎨 style */
+    margin: 0;
+    font-size: 20px;
     color: var(--dark-theme);
   }
 
@@ -153,6 +155,12 @@
   ◼️ 🌒 DARK-THEME         ◼️
   ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   */
+
+  div#competition⮕w⮕rules⮕box.dark-background-1
+  {
+    /* 🎨 style */
+    background-color: var(--dark-theme-1-4-shade) !important;
+  }
 
   :global(div#competition⮕w⮕rules⮕box.dark-background-1 h3),
   :global(div#competition⮕w⮕rules⮕box.dark-background-1 p),

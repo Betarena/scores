@@ -1,14 +1,23 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - access custom Betarena Scores JS VScode Snippets by typing 'script...'         │
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <script lang="ts">
 
-  // #region ➤ 📦 Package Imports
+  // #region ➤ 📦 Package Imports1
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -25,10 +34,20 @@
 
   import { page } from '$app/stores';
 
+  import { postv2 } from '$lib/api/utils.js';
+  import { userUpdateInvestorBalance } from '$lib/firebase/common.js';
+  import sessionStore from '$lib/store/session.js';
   import userBetarenaSettings from '$lib/store/user-settings.js';
+  import { investVestingSampleData } from './_sample.js';
+  import { scoresProfileInvestorStore } from './_store.js';
 
+  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
+  import AdminDevControlPanel from '$lib/components/misc/admin/Admin-Dev-ControlPanel.svelte';
+  import AdminDevControlPanelToggleButton from '$lib/components/misc/admin/Admin-Dev-ControlPanelToggleButton.svelte';
   import InvestmentVestingPeriodsRowChild from './Investment.VestingPeriodsRow.Child.svelte';
+  import MainClaimModal from './Main-Claim-Modal.svelte';
 
+  import type { PublicInvestorDataIVesting } from '@betarena/scores-lib/types/_AUTO-HASURA-2_.js';
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -54,48 +73,67 @@
     profileData: IProfileData | null
     /**
      * @description
-     *  📣
-    */
-    , VIEWPORT_MOBILE_INIT_PARENT: [ number, boolean ]
+     *  📣 threshold start + state for  MOBILE
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
     /**
      * @description
-     *  📣
-    */
-    , VIEWPORT_TABLET_INIT_PARENT: [ number, boolean ]
+     *  📣 threshold start + state for 💻 TABLET
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
-  type IRowLayout = 'period' | 'available' | 'tokens' | 'status' | 'wallet' | 'distribution' | 'claim' | '';
+  /**
+   * @description
+   *  📣 Component interface.
+   */
+  type IRowLayout =
+    'period'
+    | 'available'
+    | 'tokens'
+    | 'status'
+    | 'distribution'
+    | 'claim'
+    | ''
+  ;
 
   const
-    /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
-    // eslint-disable-next-line no-unused-vars
+    /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */ // eslint-disable-next-line no-unused-vars
     CNAME: string = 'profile⮕w⮕vesting-period⮕main'
-    /** @description 📣 threshold start + state for 📱 MOBILE */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = VIEWPORT_MOBILE_INIT_PARENT
-    /** @description 📣 threshold start + state for 💻 TABLET */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = VIEWPORT_TABLET_INIT_PARENT
   ;
 
   let
     /**
      * @description
      *  📣 Target `table` header order.
-    */
+     */
     tableHeader: IRowLayout[]
-    = [
-      'period'
-      , 'available'
-      , 'tokens'
-      , 'status'
-      , 'wallet'
-      , 'distribution'
-      , 'claim'
-    ]
+      = [
+        'period'
+        , 'available'
+        , 'tokens'
+        , 'status'
+        , 'distribution'
+        , 'claim'
+      ]
+    /**
+     * @augments PUBLIC__INVESTOR_IVesting
+     */
+    , targetVestingSelected: PublicInvestorDataIVesting
+    /**
+     * @description
+     *  📣 Target `vesting periods` that have been claimed.
+     */
+    , vestingPeriodsClaimed: number[] = []
   ;
 
-  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
+  $: ({ adminOverrides, vestingHistoryStateWidget } = $scoresProfileInvestorStore);
+  // @ts-expect-error
+  $: ({ uid } = $userBetarenaSettings.user.firebase_user_data);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -124,12 +162,75 @@
   (
   ): void
   {
-    if (VIEWPORT_MOBILE_INIT_PARENT[1])
+    if (VIEWPORT_MOBILE_INIT[1])
       tableHeader = [ 'period', 'available', '' ];
-    else if (VIEWPORT_TABLET_INIT_PARENT[1])
-      tableHeader = [ 'period' , 'available' , 'tokens' , 'status' , 'wallet', '' ];
+    else if (VIEWPORT_TABLET_INIT[1])
+      tableHeader = [ 'period' , 'available' , 'tokens' , 'status' , '' ];
     else
-      tableHeader = [ 'period' , 'available' , 'tokens' , 'status' , 'wallet' , 'distribution' , 'claim', '' ];
+      tableHeader = [ 'period' , 'available' , 'tokens' , 'status' , 'distribution' , 'claim', '' ];
+    return;
+  }
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟦 HELPER
+   * @description
+   *  📣 Create new **vesting request** for target user vesting period.
+   * @return { void }
+   */
+  async function createVestingRequest
+  (
+  ): Promise < void >
+  {
+    const
+      /**
+       * @description
+       *  📣 Response from `endpoint`.
+       */
+      result = await postv2
+      (
+        `${import.meta.env.VITE_FIREBASE_FUNCTIONS_ORIGIN}/transaction/update/investment/claim/create`
+        // 'http://127.0.0.1:5001/betarena-ios/us-central1/api/transaction/update/investment/claim/create'
+        , {
+          uid
+          , vestingId: targetVestingSelected.id
+          , isTge: false
+        }
+      )
+    ;
+
+    // @ts-expect-error
+    if (result.error)
+    {
+      $sessionStore.currentActiveModal = 'GeneralPlatform_Error';
+      return;
+    }
+
+    let
+      /**
+       * @description
+       *  📣 Target amount to change balance by.
+      */
+      deltaBalance: number = (-targetVestingSelected.tokens)
+    ;
+
+    // TODO:
+    // can be offloaded to server (backend).
+
+    await userUpdateInvestorBalance
+    (
+      {
+        uid
+        , deltaBalance
+        , type: 'total'
+      }
+    );
+
+    // vestingPeriodsClaimed.push(targetVestingSelected.id);
+    window.location.reload();
+
     return;
   }
 
@@ -148,8 +249,9 @@
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  $: if (VIEWPORT_MOBILE_INIT_PARENT || VIEWPORT_TABLET_INIT_PARENT)
-    updateTableLayout()
+  $: if (VIEWPORT_MOBILE_INIT || VIEWPORT_TABLET_INIT)
+    updateTableLayout();
+  // ────────────────────────────────────────────────────────────────────────
 
     // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
@@ -159,15 +261,60 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component HTML                                                            │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - use 'Ctrl+Space' to autocomplete global class=styles                           │
-│ - access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.     │
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
+<!--
+▓ NOTE:
+▓ > (child-component) claim modal
+-->
+{#if $sessionStore.currentActiveModal == 'ProfileInvestor_ClaimVesting_Modal'}
+  <MainClaimModal
+    {VIEWPORT_MOBILE_INIT}
+    {VIEWPORT_TABLET_INIT}
+    amount={targetVestingSelected.tokens}
+    on:confirmEntry=
+    {
+      () =>
+      {
+        // alert('Executing Vesting Claim!');
+        createVestingRequest();
+        return;
+      }
+    }
+  />
+{/if}
+
+<!--
+▓ NOTE:
+▓ > (widget) main
+-->
 <div
   id={CNAME}
   class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+  class:mutated={adminOverrides.has('Vesting')}
 >
+
+  <AdminDevControlPanelToggleButton
+    title='Vesting Periods'
+    mutated={adminOverrides.has('Vesting')}
+    on:reset=
+    {
+      () =>
+      {
+        scoresProfileInvestorStore.updateAdminMutatedWidgets
+        (
+          'Vesting'
+          , 'remove'
+        );
+        return;
+      }
+    }
+  />
 
   <!--
   ▓ NOTE:
@@ -183,10 +330,11 @@
     m-b-20
     "
   >
-    {
-      profileTrs.investor?.vesting.title
-      ?? 'Vesting Periods'
-    }
+    <TranslationText
+      key={'vesting-period-title'}
+      text={profileTrs?.investor?.vesting.title}
+      fallback={'Vesting Periods'}
+    />
   </p>
 
   <!--
@@ -221,40 +369,41 @@
                 "
               >
                 {#if item == 'period'}
-                  {
-                    profileTrs.investor?.vesting.period
-                    ?? 'period'
-                  }
+                  <TranslationText
+                    key={`${CNAME}/table/header/period`}
+                    text={profileTrs?.investor?.vesting.period}
+                    fallback={'period'}
+                  />
                 {:else if item == 'available'}
-                  {
-                    profileTrs.investor?.vesting.available
-                    ?? 'available'
-                  }
+                  <TranslationText
+                    key={`${CNAME}/table/header/available`}
+                    text={profileTrs?.investor?.vesting.available}
+                    fallback={'available'}
+                  />
                 {:else if item == 'tokens'}
-                  {
-                    profileTrs.investor?.vesting.tokens
-                    ?? 'tokens'
-                  }
+                  <TranslationText
+                    key={`${CNAME}/table/header/tokens`}
+                    text={profileTrs?.investor?.vesting.tokens}
+                    fallback={'tokens'}
+                  />
                 {:else if item == 'status'}
-                  {
-                    profileTrs.investor?.vesting.status
-                    ?? 'status'
-                  }
-                {:else if item == 'wallet'}
-                  {
-                    profileTrs.investor?.vesting.wallet
-                    ?? 'wallet'
-                  }
+                  <TranslationText
+                    key={`${CNAME}/table/header/status`}
+                    text={profileTrs?.investor?.vesting.status}
+                    fallback={'status'}
+                  />
                 {:else if item == 'distribution'}
-                  {
-                    profileTrs.investor?.vesting.distribution
-                    ?? 'distribution'
-                  }
+                  <TranslationText
+                    key={`${CNAME}/table/header/distribution`}
+                    text={profileTrs?.investor?.vesting.distribution}
+                    fallback={'distribution'}
+                  />
                 {:else if item == 'claim'}
-                  {
-                    profileTrs.investor?.vesting.claim
-                    ?? 'claim'
-                  }
+                  <TranslationText
+                    key={`${CNAME}/table/header/claim`}
+                    text={profileTrs?.investor?.vesting.claim}
+                    fallback={'claim'}
+                  />
                 {/if}
               </p>
             </th>
@@ -267,12 +416,32 @@
       ▓ > (row) tier pricing table.
       -->
       <tbody>
-        {#each profileData?.investorData?.data?.vesting_periods ?? [] as item}
-          <InvestmentVestingPeriodsRowChild
-            data={item}
-            {VIEWPORT_MOBILE_INIT_PARENT}
-            {VIEWPORT_TABLET_INIT_PARENT}
-          />
+
+        {#if
+          (profileData?.investorData?.data?.vesting_periods.length ?? 0) > 0
+          && vestingHistoryStateWidget != 'NoData'
+        }
+          {#each profileData?.investorData?.data?.vesting_periods ?? [] as item}
+
+            <!-- ▓ [🐞] -->
+            <!-- {console.log('item', item)} -->
+
+            <InvestmentVestingPeriodsRowChild
+              data={item}
+              {VIEWPORT_MOBILE_INIT}
+              {VIEWPORT_TABLET_INIT}
+              {vestingPeriodsClaimed}
+              on:claimTrigger=
+              {
+                () =>
+                {
+                  $sessionStore.currentActiveModal = 'ProfileInvestor_ClaimVesting_Modal';
+                  targetVestingSelected = item;
+                  return;
+                }
+              }
+            />
+          {/each}
         {:else}
           <div
             id="no-widget-data"
@@ -289,13 +458,15 @@
               line-height: 24px; /* 150% */
               "
             >
-              {
-                profileTrs.investor?.general.no_information
-                ?? 'Uh-oh! No Investments have been found.'
-              }
+              <TranslationText
+                key={'vesting-no-data'}
+                text={profileTrs?.investor?.general.no_information}
+                fallback={'Uh-oh! No Investments have been found.'}
+              />
             </p>
           </div>
-        {/each}
+        {/if}
+
       </tbody>
 
     </table>
@@ -305,17 +476,148 @@
 </div>
 
 <!--
+▓ NOTE:
+▓ > (widget) admin development state UI change control panel.
+-->
+<AdminDevControlPanel
+  title='Vesting Periods'
+>
+
+  <!--
+  ▓ NOTE:
+  ▓ > (no data) widget state.
+  -->
+  <div
+    class=
+    "
+    row-space-out
+    "
+  >
+    <!--
+    ▓ NOTE:
+    ▓ > (no data state) text.
+    -->
+    <p
+      class=
+      "
+      s-14
+      color-black
+      "
+    >
+      <b>[1]</b> Toggle <b>No Data State</b>
+    </p>
+
+    <!--
+    ▓ NOTE:
+    ▓ > (no data state) button.
+    -->
+    <button
+      class=
+      "
+      dev-toggle
+      "
+      on:click=
+      {
+        () =>
+        {
+          scoresProfileInvestorStore.updateAdminMutatedWidgets
+          (
+            'InvestmentHistory'
+            , 'set'
+          );
+          $scoresProfileInvestorStore.vestingHistoryStateWidget = 'NoData';
+          return;
+        }
+      }
+      class:on={vestingHistoryStateWidget == 'NoData'}
+      class:off={vestingHistoryStateWidget != 'NoData'}
+    >
+      {#if vestingHistoryStateWidget == 'NoData'}
+        ON
+      {:else}
+        OFF
+      {/if}
+    </button>
+  </div>
+
+  <!--
+  ▓ NOTE:
+  ▓ > (add sample data) widget.
+  -->
+  <div
+    class=
+    "
+    row-space-out
+    "
+  >
+    <!--
+    ▓ NOTE:
+    ▓ > (no data state) text.
+    -->
+    <p
+      class=
+      "
+      s-14
+      color-black
+      "
+    >
+      <b>[2]</b> Add <b>Sample Data</b>
+    </p>
+
+    <!--
+    ▓ NOTE:
+    ▓ > (no data state) button.
+    -->
+    <button
+      class=
+      "
+      dev-toggle
+      "
+      on:click=
+      {
+        () =>
+        {
+          if (!profileData) return;
+
+          // @ts-expect-error
+          (profileData.investorData ??= { data: { vesting_periods: [] } });
+          // @ts-expect-error
+          (profileData.investorData.data.vesting_periods ??= []);
+
+          profileData.investorData?.data?.vesting_periods.push
+          (
+            ...investVestingSampleData
+          );
+
+          profileData = profileData;
+
+          scoresProfileInvestorStore.updateAdminMutatedWidgets
+          (
+            'Vesting'
+            , 'set'
+          );
+
+          return;
+        }
+      }
+    >
+      TOGGLE
+    </button>
+  </div>
+
+</AdminDevControlPanel>
+
+<!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component CSS/SCSS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE  │
-│ - access custom Betarena Scores CSS VScode Snippets by typing 'style...'         │
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <style lang="scss">
-
-  @import '../../../../../../static/app.scss';
 
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
@@ -325,6 +627,8 @@
 
   div#profile⮕w⮕vesting-period⮕main
   {
+    /* 📌 position */
+    position: relative;
     /* 🎨 style */
     background-color: var(--white);
     border-radius: 12px;
@@ -455,45 +759,32 @@
                   border-radius: 0 4px 4px 0;
                 }
 
-                p
-                {
-                  @extend .s-14;
-                  @extend .color-black-2;
-                }
-
-                p.status-pill
-                {
-                  /* 🛝 layout */
-                  width: fit-content;
-                  /* 🎨 style */
-                  padding: 4px 12px;
-                  border-radius: 32px;
-
-                  .completed
-                  {
-                    /* 🎨 style */
-                    color: var(--status-green, #59C65D) !important;
-                    background: rgba(89, 198, 93, 0.10);
-                  }
-                  .pending
-                  {
-                    /* 🎨 style */
-                    color: var(--status-yellow, #FFB904) !important;
-                    background: rgba(255, 185, 4, 0.10);
-                  }
-                  .failed
-                  {
-                    /* 🎨 style */
-                    color: var(--status-red-night, #FF5959) !important;
-                    background: rgba(255, 89, 89, 0.10);
-                  }
-                }
-
-                button.btn-primary-v2
+                p:not(.pending)
                 {
                   /* 🎨 style */
-                  height: 36px;
-                  width: 96px;
+                  font-size: 14px;
+                  color: var(--dark-theme);
+                }
+
+                button
+                {
+                  /* 🎨 style */
+                  @mixin default
+                  {
+                    height: 36px;
+                    width: 96px;
+                  }
+
+                  &.btn-primary-v2
+                  {
+                    @include default;
+                  }
+
+                  &.btn-hollow.claimed-pill
+                  {
+                    /* 🎨 style */
+                    @include default;
+                  }
                 }
               }
 
@@ -645,6 +936,15 @@
               {
                 /* 🎨 style */
                 background-color: rgba(75, 75, 75, 0.50) !important;
+              }
+            }
+
+            td
+            {
+              p:not(.pending)
+              {
+                /* 🎨 style */
+                color: var(--white) !important;
               }
             }
           }

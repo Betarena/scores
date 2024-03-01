@@ -1,8 +1,17 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - access custom Betarena Scores JS VScode Snippets by typing 'script...'         │
+│ ➤ HINT: | Access snippets for '<script> [..] </script>' those found in           │
+|         | '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -23,17 +32,17 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
-	import { onMount } from 'svelte';
-	import { fade, fly } from 'svelte/transition';
+	import { fly } from 'svelte/transition';
 
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { viewport_change } from '$lib/utils/platform-functions.js';
 
   import icon_close from '../assets/investor/icon-close-btn.svg';
   import icon_close_dark from '../assets/investor/icon-close-dark-btn.svg';
+
+	import ModalBackdrop from '$lib/components/misc/modal/Modal-Backdrop.svelte';
+	import TranslationText from '$lib/components/misc/Translation-Text.svelte';
 
 	import type { B_USRG_D } from '@betarena/scores-lib/types/types.misc.userguide.js';
 
@@ -53,26 +62,28 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  const
-    /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
-    // eslint-disable-next-line no-unused-vars
-    CNAME: string = 'global⮕w⮕termsandcond⮕profile⮕main'
-    /** @description 📣 threshold start + state for 📱 MOBILE */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 581, true ]
-    /** @description 📣 threshold start + state for 💻 TABLET */
-    // eslint-disable-next-line no-unused-vars
+  export let
+    /**
+     * @description
+     *  📣 threshold start + state for 📱 MOBILE
+     */ // eslint-disable-next-line no-unused-vars
+    VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 581, true ]
+    /**
+     * @description
+     *  📣 threshold start + state for 💻 TABLET
+     */ // eslint-disable-next-line no-unused-vars
     , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 821, true ]
   ;
 
-  let
-    /** @augments B_USRG_D */
-    DUserData: B_USRG_D
-    /** @description TODO: DOC: */
-    ,showModal: boolean = false
+  const
+    /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */ // eslint-disable-next-line no-unused-vars
+    CNAME: string = 'global⮕w⮕termsandcond⮕profile⮕main'
   ;
 
-  $: DUserData = $page.data.B_USRG_D;
+  $: DUserData = $page.data.B_USRG_D as B_USRG_D;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -113,240 +124,118 @@
       return options.fn(node, { x: 850, duration: 750 });
   }
 
-  /**
-   * @author
-   *  @migbash
-   * @summary
-   *  🔹 HELPER | IMPORTANT
-   * @description
-   *  📌 Triggers viewport changes.
-   * @returns { void }
-   */
-  function resizeAction
-  (
-  ): void
-  {
-    [
-      VIEWPORT_TABLET_INIT[1],
-      VIEWPORT_MOBILE_INIT[1]
-    ] = viewport_change
-    (
-      VIEWPORT_TABLET_INIT[0],
-      VIEWPORT_MOBILE_INIT[0]
-    );
-  }
-
-  /**
-   * @author
-   *  @migbash
-   * @summary
-   *  🔹 HELPER | IMPORTANT
-   * @description
-   *  📌 Local component wrapper
-   * (⚡️) `window` (resize-change) listener.
-   * @returns { void }
-   */
-  function addEventListeners
-  (
-  ): void
-  {
-    // ### NOTE:
-    // ### listen to 'resize'.
-    window.addEventListener
-    (
-      'resize',
-      function ()
-      {
-        resizeAction();
-      }
-    );
-  }
-
-  // #endregion ➤ 🛠️ METHODS
-
-  // #region ➤ 🔥 REACTIVIY [SVELTE]
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'logic' that should run            │
-  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
-  // │ WARNING:                                                               │
-  // │ ❗️ Can go out of control.                                              │
-  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
-  // │ Please keep very close attention to these methods and                  │
-  // │ use them carefully.                                                    │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  /**
-   * @description
-   */
-  $:
-  if_R_0_2
-    = browser
-    && showModal
-  ;
-  $:
-  if (if_R_0_2 && $sessionStore.showTermsAndConditions)
-  {
-    document.body.classList.add
-    (
-      'disable-scroll'
-    );
-  }
-  else
-  {
-    document.body.classList.remove
-    (
-      'disable-scroll'
-    );
-  }
-
-  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
-
-  // #region ➤ 🔄 LIFECYCLE [SVELTE]
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'logic' that should run            │
-  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
-  // │ as soon as 'this' .svelte file is ran.                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  onMount
-  (
-    () =>
-    {
-      // ### IMPORTANT
-      resizeAction();
-      addEventListeners();
-
-      setTimeout
-      (
-        () =>
-        {
-          showModal = true;
-        },
-        1500
-      );
-    }
-  );
-
-  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
-
 </script>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component HTML                                                            │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - use 'Ctrl+Space' to autocomplete global class=styles                           │
-│ - access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.     │
+│ ➤ HINT: | Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    |
+│         │ imported from './static/app.css'                                       |
+│ ➤ HINT: | access custom Betarena Scores VScode Snippets by typing emmet-like     |
+|         | abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
+<ModalBackdrop
+  on:closeModal=
+  {
+    () =>
+    {
+      $sessionStore.currentActiveModal = null;
+      return;
+    }
+  }
+/>
+
 <!--
 ▓ NOTE:
-▓ > terms and conditions (main) parent
+▓ > terms and conditions (main) component
 -->
-{#if showModal && $sessionStore.showTermsAndConditions}
+<div
+  id={CNAME}
+  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+  in:customAnimation={{ fn: fly }}
+  out:customAnimation={{ fn: fly }}
+>
 
   <!--
   ▓ NOTE:
-  ▓ > background blur
+  ▓ > main scrollable box.
   -->
   <div
-    id='background-modal-blur'
-    in:fade
-    on:click={() => {return $sessionStore.showTermsAndConditions = false}}
-  />
-
-  <!--
-  ▓ NOTE:
-  ▓ > terms and conditions (main) component
-  -->
-  <div
-    id={CNAME}
-    class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
-    in:customAnimation={{ fn: fly }}
-    out:customAnimation={{ fn: fly }}
+    id="{CNAME}⮕inner"
   >
 
     <!--
     ▓ NOTE:
-    ▓ > main scrollable box.
+    ▓ > close icon.
+    -->
+    <img
+      id='close-vector'
+      class=
+      '
+      cursor-pointer
+      '
+      style=
+      '
+      {VIEWPORT_TABLET_INIT[1] ? 'top: 16px; right: 16px;' : ''}
+      '
+      src={$userBetarenaSettings.theme == 'Dark' ? icon_close : icon_close_dark}
+      alt='close-svg'
+      on:click=
+      {
+        () =>
+        {
+          $sessionStore.currentActiveModal = null;
+          return;
+        }
+      }
+      width=18
+      height=18
+    />
+
+    <!--
+    ▓ NOTE:
+    ▓ > title
     -->
     <div
-      id="{CNAME}⮕inner"
+      id="{CNAME}⮕title"
+      class=
+      "
+      {!VIEWPORT_TABLET_INIT[1] ? 'm-b-35 global s-32 lh-125' : ''}
+      {VIEWPORT_TABLET_INIT[1] ? 'global s-28 lh-128 text-center m-b-24' : ''}
+      "
     >
-
-      <!--
-      ▓ NOTE:
-      ▓ > close icon.
-      -->
-      <img
-        id='close-vector'
-        class=
-        '
-        cursor-pointer
-        '
-        style=
-        '
-        {VIEWPORT_TABLET_INIT[1] ? 'top: 16px; right: 16px;' : ''}
-        '
-        src={$userBetarenaSettings.theme == 'Dark' ? icon_close : icon_close_dark}
-        alt='close-svg'
-        on:click={() => {return $sessionStore.showTermsAndConditions = false}}
-        width=18
-        height=18
+      <TranslationText
+        key={`${CNAME}/title`}
+        text={DUserData.content.terms}
+        isHtmlBlock={true}
+        fallback={''}
       />
-
-      <!--
-      ▓ NOTE:
-      ▓ > title
-      -->
-      <div
-        id="{CNAME}⮕title"
-        class=
-        "
-        {!VIEWPORT_TABLET_INIT[1] ? 'm-b-35 global s-32 lh-125' : ''}
-        {VIEWPORT_TABLET_INIT[1] ? 'global s-28 lh-128 text-center m-b-24' : ''}
-        "
-      >
-        {@html DUserData.content.terms ?? ''}
-      </div>
-
     </div>
 
   </div>
 
-{/if}
+</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component CSS/SCSS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE  │
-│ - access custom Betarena Scores CSS VScode Snippets by typing 'style...'         │
+│ ➤ HINT: | auto-fill/auto-complete iniside <style> for var()                      │
+|         | values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: | access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <style lang="scss">
 
-  @import '../../../../../../static/app.scss';
-
-  div#background-modal-blur
-  {
-    /* 📌 position */
-		position: fixed;
-		top: 0;
-		right: 0;
-		left: 0;
-		z-index: 4000;
-    /* 🎨 style */
-		height: 100%;
-		width: 100%;
-		background: rgba(0, 0, 0, 0.5);
-	}
+  /*
+  ╭──────────────────────────────────────────────────────────────────────────────╮
+  │ 📲 MOBILE-FIRST                                                              │
+  ╰──────────────────────────────────────────────────────────────────────────────╯
+  */
 
 	div#global⮕w⮕termsandcond⮕profile⮕main
   {
@@ -404,9 +293,9 @@
       h1,h2,h3
       {
         /* 🎨 style */
-        @extend .s-32 !optional;
-        @extend .color-black-2 !optional;
-        @extend .text-left !optional;
+        font-size: 32px;
+        color: var(--dark-theme);
+        text-align: left;
         margin-top: 0;
         margin-bottom: 0;
       }
@@ -423,11 +312,11 @@
       p
       {
         /* 🎨 style */
-        @extend .s-16 !optional;
-        @extend .m-t-30 !optional;
-        @extend .m-b-24 !optional;
-        @extend .color-black-2 !optional;
-        @extend .text-left !optional;
+        font-size: 16px;
+        margin-top: 30px;
+        margin-bottom: 24px;
+        color: var(--dark-theme);
+        text-align: left;
       }
     }
 	}
@@ -491,13 +380,13 @@
       h1,h2,h3
       {
         /* 🎨 style */
-        @extend .color-white !optional;
+        color: var(--white);
       }
 
       p
       {
         /* 🎨 style */
-        @extend .color-white !optional;
+        color: var(--white);
       }
     }
   }

@@ -1,8 +1,17 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - access custom Betarena Scores JS VScode Snippets by typing 'script...'         │
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -23,20 +32,23 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  import { browser } from '$app/environment';
   import { page } from '$app/stores';
-  import { onMount } from 'svelte';
+  import { onDestroy, onMount } from 'svelte';
 
   import userBetarenaSettings from '$lib/store/user-settings.js';
-  import { MONTH_NAMES_ABBRV } from '$lib/utils/dates.js';
+  import { dlog } from '$lib/utils/debug.js';
+  import { toDecimalFix } from '$lib/utils/platform-functions.js';
+  import { tryCatchAsync } from '@betarena/scores-lib/dist/util/util.common.js';
   import { Chart, registerables, type ChartItem } from 'chart.js';
 
   import icon_bta_token from '../assets/price-tier/icon-bta-token.svg';
 
-  import { browser } from '$app/environment';
-  import { dlog } from '$lib/utils/debug.js';
+  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
+  import { MONTH_NAMES_ABBRV } from '$lib/utils/dates.js';
   import { passByValue } from '@betarena/scores-lib/dist/functions/func.common.js';
-  import { tryCatchAsync } from '@betarena/scores-lib/dist/util/util.common.js';
-  import type { B_H_TH, PUBLIC__INVESTOR_DeleteInvestorByPkElement } from '@betarena/scores-lib/types/_HASURA_.js';
+  import type { PublicInvestorMain, PublicTransactionHistoryMain } from '@betarena/scores-lib/types/_AUTO-HASURA-2_.js';
+  import type { B_SAP_D2 } from '@betarena/scores-lib/types/seo-pages.js';
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -60,87 +72,101 @@
   export let
     /**
      * @augments IProfileData
-    */
+     */
     profileData: IProfileData | null
     /**
      * @description
-     *  📣
-    */
-    , VIEWPORT_MOBILE_INIT_PARENT: [ number, boolean ]
+     *  📣 threshold start + state for 📱 MOBILE
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
     /**
      * @description
-     *  📣
-    */
-    , VIEWPORT_TABLET_INIT_PARENT: [ number, boolean ]
+     *  📣 threshold start + state for 💻 TABLET
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
   const
-    /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
-    // eslint-disable-next-line no-unused-vars
+    /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */ // eslint-disable-next-line no-unused-vars
     CNAME: string = 'profile⮕w⮕launchpad-wallets⮕main'
-    /** @description 📣 threshold start + state for 📱 MOBILE */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
-    /** @description 📣 threshold start + state for 💻 TABLET */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
   let
     /**
      * @description
      *  📣
-    */
+     */
     today: Date = new Date()
     /**
      * @description
      *  📣
-    */
-    , targetMonths = () =>
-    {
-      const dateList: Date[] = [];
-
-      today.setFullYear(today.getFullYear() - 1);
-
-      for (let index = 0; index < 12; index++)
+     */
+    , targetMonths
+      = () =>
       {
-        today.setMonth(today.getMonth() + 1);
-        dateList.push(new Date(today));
-      }
+        const dateList: Date[] = [];
 
-      return dateList;
-    }
+        today.setFullYear(today.getFullYear() - 2);
+
+        for (let index = 0; index < 25; index++)
+        {
+          dateList.push(new Date(today));
+          today.setMonth(today.getMonth() + 1);
+        }
+
+        return dateList;
+      }
     /**
      * @description
      *  📣 Invesmtnet `map` showing investment change per calendar month.
-    */
-    , mapInvestAmountDeltaPerMonth = generateInvestmentMonthlyMap
-    (
-      targetMonths()
-      , profileData?.tx_hist ?? []
-      , profileData?.investorData
-    )
+     */
+    , mapInvestAmountDeltaPerMonth
+      = generateInvestmentMonthlyMap
+      (
+        targetMonths()
+        , profileData?.tx_hist ?? []
+        , profileData?.investorData
+      )
     /**
      * @description
      *  📣 stores target `state` used within widget.
-    */
+     */
     , stateObject:
-    {
-      /**
-       * @description
-       *  📣 stores target `chart` instance.
-      */
-      chartInstance: Chart | null
-    } = {
-      chartInstance: null
-    }
+      {
+        /**
+         * @description
+         *  📣 stores target `chart` instance (1).
+        */
+        chartInstance: Chart | null;
+        /**
+         * @description
+         *  📣 stores target `chart` instance (2).
+        */
+      chartInstance2: Chart | null;
+        /**
+         * @description
+         *  📣 stores target `chart` scroll action (lock).
+        */
+        chartIsBeingScrolled: boolean;
+      } = {
+        chartInstance: null
+        , chartInstance2: null
+        , chartIsBeingScrolled: false
+      }
+    /**
+     * @description
+     *  📣 Target `start` scroll value.
+     */
+    , startScroll: [number, number, number] = [0, 0, 0]
   ;
 
-  // ▓ [🐞]
-  // console.log('targetMonths', targetMonths())
-
-  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
-  $: deepReactListen1 = passByValue($userBetarenaSettings.theme);
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
+  $: monthsTrs = $page.data.B_SAP_D2 as B_SAP_D2 | null | undefined;
+  $: ({ theme, lang } = $userBetarenaSettings);
+  $: ({ grand_total } = $userBetarenaSettings.user.scores_user_data?.investor_balance ?? { grand_total: 0 });
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -162,10 +188,180 @@
    * @summary
    *  🟦 HELPER
    * @description
+   *  📣 Instantiate `eventListeners` needed for _this_ widget.
+   * @return { void }
+   */
+  function addEventListeners
+  (
+  ): void
+  {
+    const
+      /**
+       * @description
+       *  📣 target container to `listen` changes to.
+       */
+      container = document.getElementById('chartParent')
+    ;
+
+    if (!container) return
+
+    // ▓ NOTE:
+    // ▓ > 📱 MOBILE.
+    container.addEventListener('touchstart', mouseDownEvent, true);
+    window.addEventListener('touchend', mouseUpEvent, true);
+    window.addEventListener('touchmove', mouseMoveEvent, true);
+
+    // ▓ NOTE:
+    // ▓ > 💻 TABLET + 🖥️ LAPTOP.
+    container.addEventListener('mousedown', mouseDownEvent, true);
+    window.addEventListener('mouseup', mouseUpEvent, true);
+    window.addEventListener('mousemove', mouseMoveEvent, true);
+
+    return;
+  }
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟦 HELPER
+   * @description
+   *  📣 Trigger event on `mouseDown` (or similar) action.
+   * @param { any } event
+   *  💠 Target `event` passed to `function`.
+   * @return { void }
+   */
+  function mouseDownEvent
+  (
+    event: MouseEvent
+  ): void
+  {
+    if (stateObject.chartIsBeingScrolled) return;
+
+    let
+      container = document.getElementById('chartParent')!
+      , scrollBox = document.getElementById('scrollBox')!
+    ;
+    event.preventDefault();
+
+    const
+      // @ts-expect-error
+      leftVal = container.offsetLeft - (event.clientX || event.touches[0].clientX)
+      , currentRight = parseInt(scrollBox.style.right.replace('px', ''))
+      , currentLeft = scrollBox.offsetLeft
+    ;
+
+    startScroll[0] = leftVal;
+    startScroll[1] = isNaN(currentRight) ? 0 : currentRight;
+    startScroll[2] = currentLeft;
+
+    stateObject.chartIsBeingScrolled = true;
+
+    return;
+  }
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟦 HELPER
+   * @description
+   *  📣 Trigger event on `mouseMove` (or similar) action.
+   * @param { any } event
+   *  💠 Target `event` passed to `function`.
+   * @return { void }
+   */
+  function mouseMoveEvent
+  (
+    event: MouseEvent
+  ): void
+  {
+    if (!stateObject.chartIsBeingScrolled) return;
+
+    let
+      container = document.getElementById('chartParent')!
+      , scrollBox = document.getElementById('scrollBox')!
+    ;
+    event.preventDefault();
+
+    const
+      // @ts-expect-error
+      leftVal = container.offsetLeft - (event.clientX || event.touches[0].clientX)
+    ;
+
+    if ((startScroll[1] + (leftVal - startScroll[0])) > 0) return;
+    if (startScroll[2] - (leftVal - startScroll[0]) > 0) return;
+
+    scrollBox.style.right = `${startScroll[1] + (leftVal - startScroll[0])}px`;
+
+    return;
+  }
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟦 HELPER
+   * @description
+   *  📣 Trigger event on `mouseUp` (or similar) action.
+   * @param { any } event
+   *  💠 Target `event` passed to `function`.
+   * @return { void }
+   */
+  function mouseUpEvent
+  (
+  ): void
+  {
+    stateObject.chartIsBeingScrolled = false;
+
+    return;
+  }
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟦 HELPER
+   * @description
+   *  📣 removes `eventListeners` no longer needed for _this_ widget.
+   * @return { void }
+   */
+  function removeEventListeners
+  (
+  ): void
+  {
+    const
+      /**
+       * @description
+       *  📣 target container to `listen` changes to.
+       */
+      container = document.getElementById('chartParent')
+    ;
+
+    if (container)
+    {
+      container.removeEventListener('touchstart', mouseDownEvent, true);
+      container.removeEventListener('mousedown', mouseDownEvent, true);
+    }
+
+    window.removeEventListener('touchend', mouseUpEvent, true);
+    window.removeEventListener('touchmove', mouseMoveEvent, true);
+    window.removeEventListener('mouseup', mouseUpEvent, true);
+    window.removeEventListener('mousemove', mouseMoveEvent, true);
+
+    return;
+  }
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟦 HELPER
+   * @description
    *  📣 Generates target `user` investment monthly graph data.
    * @param { Date[] } dateList
    *  💠 Target dates list.
-   * @param { B_H_TH[] } dateList
+   * @param { PublicTransactionHistoryMain[] } dateList
    *  💠 Target investor transaction list.
    * @return { Map < string, number > }
    *  📤 A `Map` of change (delta) in investor wallet amount, where:
@@ -175,50 +371,53 @@
   function generateInvestmentMonthlyMap
   (
     dateList: Date[]
-    , investorTxList: B_H_TH[]
-    , investorData: PUBLIC__INVESTOR_DeleteInvestorByPkElement | null
+    , investorTxList: PublicTransactionHistoryMain[]
+    , investorData: PublicInvestorMain | undefined
   ): Map < string, number >
   {
     const
       /**
        * @description
        *  📣 Temporary `map` for `transaction-history` data sum grouped by `month_year` data.
-      */
+       */
       mapTemp = new Map < string, number >()
       /**
        * @description
        *  📣 Temporary `map` for `referral-history` data sum grouped by `month_year` data.
-      */
+       */
       , mapTemp2 = new Map < string, number >()
       /**
        * @description
        *  📣 Main `map` holding past year (12-months) data, merged with `mapTemp` data.
-      */
+       */
       , mapMain = new Map < string, number >()
     ;
 
-    // ▓ NOTE:
-    // ▓ > loop over each transaction and group them by monthly+year.
+    // ╭────────────────────────────────────────────────────────────────────────╮
+    // │ NOTE:                                                                  │
+    // │ loop over each transaction and group them by monthly+year.             │
+    // ╰────────────────────────────────────────────────────────────────────────╯
+
     for (const iterator of investorTxList)
     {
       const
-        txMonthYear = `${new Date(iterator.date).getMonth()}_${new Date(iterator.date).getFullYear()}`
+        txMonthYear = `${new Date(iterator.date ?? '').getMonth()}/${new Date(iterator.date ?? '').getFullYear()}`
       ;
 
       if (
-        !['pending', 'completed'].includes(iterator.status)
-        || !['investment', 'vesting'].includes(iterator.type)
+        !['completed', 'pending'].includes(iterator.status!)
+        || !['investment', 'vesting', 'tge'].includes(iterator.type!)
       )
         continue;
-      //
+      // ────────────────────────────────────────────────────────────────────────
 
       let deltaAmount: number = 0;
 
       if (iterator.type == 'investment')
         deltaAmount = iterator.amount ?? 0;
-      else if (iterator.type == 'vesting')
+      else if (iterator.type == 'vesting' || iterator.type == 'tge')
         deltaAmount = -(iterator.amount ?? 0);
-      //
+      // ────────────────────────────────────────────────────────────────────────
 
       if (mapTemp.has(txMonthYear))
       {
@@ -228,17 +427,22 @@
         continue;
       }
 
-      mapTemp.set(txMonthYear, iterator.amount ?? 0);
+      mapTemp.set(txMonthYear, deltaAmount);
     }
 
     // ▓ [🐞]
     console.log('mapTemp', mapTemp);
 
-    // ▓ NOTE:
-    // ▓ > loop over each referral and group them by monthly+year;
+    // ╭────────────────────────────────────────────────────────────────────────╮
+    // │ NOTE:                                                                  │
+    // │ loop over each referral and group them by monthly+year;                │
+    // ╰────────────────────────────────────────────────────────────────────────╯
+
     for (const iterator of investorData?.data?.referral_history ?? [])
     {
-      const txMonthYear = `${new Date(iterator.date).getMonth()}_${new Date(iterator.date).getFullYear()}`;
+      const
+        txMonthYear = `${new Date(iterator.date).getMonth()}/${new Date(iterator.date).getFullYear()}`
+      ;
 
       if (mapTemp2.has(txMonthYear))
       {
@@ -254,44 +458,123 @@
     // ▓ [🐞]
     console.log('mapTemp2', mapTemp2);
 
+    // ╭────────────────────────────────────────────────────────────────────────╮
+    // │ NOTE:                                                                  │
+    // │ loop over each group monthly+year, and combine transaction + referrals │
+    // ╰────────────────────────────────────────────────────────────────────────╯
+
     let
       /**
        * @description
        *  📣 **cumulative sum** for month-on-month amount.
-      */
+       */
       cummulativeSum: number = 0
+      /**
+       * @description
+       *  📣 Tracking of last `month-year`.
+       */
+      , lastMonthYear: string = ''
     ;
 
-    // ▓ NOTE:
-    // ▓ > loop over each group monthly+year.
     for (const date of dateList)
     {
-      const txMonthYear = `${new Date(date).getMonth()}_${new Date(date).getFullYear()}`;
+      const
+        txMonthYear = `${new Date(date).getMonth()}/${new Date(date).getFullYear()}`
+      ;
 
       if (mapTemp.has(txMonthYear))
       {
         let existingAmount = mapTemp.get(txMonthYear)!;
         cummulativeSum += existingAmount;
-        mapMain.set(txMonthYear, cummulativeSum)
+        mapTemp.delete(txMonthYear);
       }
       if (mapTemp2.has(txMonthYear))
       {
         let existingAmount = mapTemp2.get(txMonthYear)!;
         cummulativeSum += existingAmount;
-        mapMain.set(txMonthYear, cummulativeSum)
+        mapTemp2.delete(txMonthYear);
       }
 
       if (mapMain.has(txMonthYear))
+      {
         continue;
-      //
+      }
+      else if (mapMain.size == 0 && cummulativeSum == 0)
+      {
+        lastMonthYear = passByValue(txMonthYear);
+        continue;
+      }
+      else if (mapMain.size == 0 && cummulativeSum > 0)
+      {
+        mapMain.set(lastMonthYear, 0);
+      }
 
-      mapMain.set(txMonthYear, 0);
+      mapMain.set(txMonthYear, cummulativeSum);
     }
 
     // ▓ [🐞]
     console.log('mapMain', mapMain);
 
-    return mapMain;
+    if (mapTemp.size > 0 || mapTemp2.size > 0)
+    {
+      const
+        /**
+         * @description
+         *  📣 Past sum of all > 2 years sum history.
+        */
+        pastHistSum = [...mapTemp.values()]
+          .reduce((a, b) => { return a + b }, 0)
+        /**
+         * @description
+         *  📣 Past sum of all > 2 years sum history.
+        */
+        , pastHistSum2 = [...mapTemp2.values()]
+          .reduce((a, b) => { return a + b }, 0)
+        /**
+         * @description
+         *  📣 First recorded MonthYear, to be mutated.
+         */
+        , firstMonthYear = mapMain.keys().next().value
+      ;
+
+      fillPastDataLoop: for (const date of dateList)
+      {
+        const
+          txMonthYear = `${new Date(date).getMonth()}/${new Date(date).getFullYear()}`
+        ;
+
+        mapMain.set(txMonthYear, (pastHistSum + pastHistSum2));
+
+        if (txMonthYear == firstMonthYear) break fillPastDataLoop;
+      }
+    }
+
+    const
+      finalMap = new Map([...mapMain.entries()]
+        .sort
+        (
+          (
+            a,
+            b
+          ) =>
+          {
+            let
+              dateASplit = `${a[0]}`.split('/')
+              , dateBSplit = `${b[0]}`.split('/')
+              , dateA = new Date(`${parseInt(dateASplit[0]) + 1}/01/${dateASplit[1]}`).getTime()
+              , dateB = new Date(`${parseInt(dateBSplit[0]) + 1}/01/${dateBSplit[1]}`).getTime()
+            ;
+
+            return dateA - dateB;
+          }
+        )
+      )
+    ;
+
+    // ▓ [🐞]
+    console.log('finalMap', finalMap);
+
+    return finalMap;
   }
 
   /**
@@ -312,7 +595,8 @@
       ): Promise < void > =>
       {
         const
-          canvas = document.getElementById('myChart') as HTMLCanvasElement
+          canvas = document.getElementById('valueChart') as HTMLCanvasElement
+          , canvasHover = document.getElementById('constChart') as HTMLCanvasElement
           , ctx = canvas.getContext('2d')!
         ;
         var gradient = ctx.createLinearGradient(0, 0, 0, 400);
@@ -323,6 +607,9 @@
         if (stateObject.chartInstance)
           stateObject.chartInstance.destroy();
         //
+        if (stateObject.chartInstance2)
+          stateObject.chartInstance2.destroy();
+        //
 
         // ▓ [🐞]
         // console.log('mapInvestAmountDeltaPerMonth', mapInvestAmountDeltaPerMonth)
@@ -331,7 +618,7 @@
         Chart.defaults.color = '#8C8C8C';
 
         const gridLineColor: string
-          = $userBetarenaSettings.theme == 'Dark'
+          = theme == 'Dark'
             ? '#4B4B4B'
             : '#E6E6E6'
         ;
@@ -343,8 +630,16 @@
             type: 'line'
             , data:
             {
-              labels: [...mapInvestAmountDeltaPerMonth.keys()].map(x => {return MONTH_NAMES_ABBRV[x.split('_')[0]]})
-              , datasets: [
+              labels: [...mapInvestAmountDeltaPerMonth.keys()]
+                .map
+                (
+                  x =>
+                  {
+                    return monthsTrs?.months_abbreviation?.[MONTH_NAMES_ABBRV[x.split('/')[0]]]
+                  }
+                )
+              , datasets:
+              [
                 {
                   data: [...mapInvestAmountDeltaPerMonth.values()]
                   , borderWidth: 3
@@ -357,7 +652,15 @@
             }
             , options:
             {
-              plugins:
+              maintainAspectRatio: false
+              , layout:
+              {
+                padding:
+                {
+                  top: 12
+                }
+              }
+              , plugins:
               {
                 legend:
                 {
@@ -376,14 +679,21 @@
                 y:
                 {
                   beginAtZero: true
+                  // , suggestedMin: 100
+                  , min: 100
                   , grid:
                   {
                     color: gridLineColor
                     , lineWidth: 2
+                    , drawTicks: false
                   }
                   , border:
                   {
                     dash: [5,5]
+                  }
+                  , ticks:
+                  {
+                    display: false
                   }
                 }
                 , x:
@@ -396,6 +706,91 @@
                   , border:
                   {
                     dash: [5,5]
+                  }
+                }
+              }
+            }
+          }
+        );
+
+        stateObject.chartInstance2 = new Chart
+        (
+          canvasHover as ChartItem,
+          {
+            type: 'line'
+            , data:
+            {
+              labels: [...mapInvestAmountDeltaPerMonth.keys()]
+                .map
+                (
+                  x =>
+                  {
+                    return monthsTrs?.months_abbreviation?.[MONTH_NAMES_ABBRV[x.split('/')[0]]]
+                  }
+                )
+              , datasets:
+              [
+                {
+                  data: [...mapInvestAmountDeltaPerMonth.values()]
+                  , borderColor: gridLineColor
+                }
+              ]
+            }
+            , options:
+            {
+              maintainAspectRatio: false
+              , layout:
+              {
+                padding:
+                {
+                  bottom: 5
+                  , left: 0
+                }
+              }
+              , plugins:
+              {
+                legend:
+                {
+                  display: false
+                }
+              }
+              , elements:
+              {
+                point:
+                {
+                  pointStyle: false
+                }
+              }
+              , scales:
+              {
+                y:
+                {
+                  beginAtZero: true
+                  // , suggestedMin: 100
+                  , min: 100
+                  , afterFit: (ctx) =>
+                  {
+                    ctx.width = 60;
+                  }
+                  , grid:
+                  {
+                    color: '#FFFFF'
+                    , lineWidth: 0
+                  }
+                  , border:
+                  {
+                    dash: [5,5]
+                  }
+                }
+                , x:
+                {
+                  ticks:
+                  {
+                    display: false
+                  }
+                  , grid:
+                  {
+                    drawTicks: false
                   }
                 }
               }
@@ -441,7 +836,19 @@
     async (
     ): Promise < void > =>
     {
+      addEventListeners();
       generateTargetChart();
+      return;
+    }
+  );
+
+  onDestroy
+  (
+    async (
+
+    ): Promise < void > =>
+    {
+      removeEventListeners();
       return;
     }
   );
@@ -462,7 +869,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   $:
-  if (browser && deepReactListen1)
+  if (browser && (theme || lang))
   {
     // ▓ [🐞]
     dlog
@@ -474,7 +881,7 @@
     generateTargetChart();
   }
 
-    // #endregion ➤ 🔥 REACTIVIY [SVELTE]
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
 </script>
 
@@ -482,14 +889,16 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component HTML                                                            │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - use 'Ctrl+Space' to autocomplete global class=styles                           │
-│ - access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.     │
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <div
   id={CNAME}
-  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+  class:dark-background-1={theme == 'Dark'}
 >
 
   <div
@@ -514,10 +923,11 @@
       m-b-12
       "
     >
-
-      {
-        'Investor Wallets'
-      }
+      <TranslationText
+        key={'profile/investor/portofilo/title'}
+        text={profileTrs?.investor?.general.title_wallet}
+        fallback={'Investor Wallets'}
+      />
     </p>
 
     <!--
@@ -542,16 +952,15 @@
         color-black-2
         m-r-6
         "
-        class:s-40={!VIEWPORT_MOBILE_INIT_PARENT[1]}
-        class:s-32={VIEWPORT_MOBILE_INIT_PARENT[1]}
+        class:s-40={!VIEWPORT_MOBILE_INIT[1]}
+        class:s-32={VIEWPORT_MOBILE_INIT[1]}
         style=
         "
         line-height: 100%; /* 40px */
         "
       >
         {
-          $userBetarenaSettings.user.scores_user_data?.investor_balance
-          ?? 0
+          toDecimalFix(grand_total ?? 0, 2, false, false)
         }
         <span
           class=
@@ -585,12 +994,76 @@
   ▓ NOTE:
   ▓ > Investor Wallets Graph Data.
   -->
-  <div>
-    <canvas
-      id="myChart"
+  {#if mapInvestAmountDeltaPerMonth.size > 0}
+    <div
+      id="chartParent"
     >
-    </canvas>
-  </div>
+
+      <!--
+      ▓ NOTE:
+      ▓ > Investor Chart Data 1.
+      -->
+      {#if !VIEWPORT_MOBILE_INIT[1]}
+        <div
+          id="chartHover"
+        >
+          <canvas
+            id="constChart"
+          >
+          </canvas>
+        </div>
+      {/if}
+
+      <!--
+      ▓ NOTE:
+      ▓ > Investor Chart Data 2.
+      -->
+      <div
+        id="chartMain"
+        style=
+        "
+        {!VIEWPORT_MOBILE_INIT[1] ? 'margin-left: 47px;' : ''}
+        "
+      >
+        <div
+          id="scrollBox"
+          class:limit-width={mapInvestAmountDeltaPerMonth.size <= 4}
+          style=
+          "
+          {mapInvestAmountDeltaPerMonth.size > 4 ? `width: ${mapInvestAmountDeltaPerMonth.size * 85}px;` : ''}
+          "
+        >
+          <canvas
+            id="valueChart"
+          >
+          </canvas>
+        </div>
+      </div>
+    </div>
+  {:else}
+    <div
+      id="no-widget-data"
+    >
+      <p
+        class=
+        "
+        s-16
+        color-black-3
+          dark-v1
+        "
+        style=
+        "
+        line-height: 24px; /* 150% */
+        "
+      >
+        <!-- NOTE: TRANSLATION TERM + (EN) FALLBACK -->
+        {
+          profileTrs?.investor?.general.no_information
+          ?? 'Uh-oh! No Investments have been found.'
+        }
+      </p>
+    </div>
+  {/if}
 
 </div>
 
@@ -598,8 +1071,9 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component CSS/SCSS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE  │
-│ - access custom Betarena Scores CSS VScode Snippets by typing 'style...'         │
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -621,6 +1095,7 @@
     height: 334px;
     min-height: 334px;
     max-height: 334px;
+    position: relative;
 
     div#top-row
     {
@@ -628,13 +1103,103 @@
       padding: 20px 20px 0 20px;
     }
 
-    div
+    div#chartParent
     {
-      > canvas
+      /* 🎨 style */
+      display: flex;
+      padding: 0 20px;
+      width: auto;
+      // width: 500px;
+      height: 185px;
+
+      div#chartHover
       {
         /* 🎨 style */
-        max-height: 190px;
-        padding: 0 20px;
+        max-width: 60px;
+        position: absolute;
+        min-height: 170px;
+        max-height: 170px;
+        background-color: var(--white);
+
+        canvas#constChart
+        {
+          /* 🎨 style */
+        }
+      }
+
+      div#chartMain
+      {
+        /* 🎨 style */
+        // max-width: 500px;
+        min-width: auto;
+        overflow-x: scroll;
+        overflow-y: hidden;
+        width: -webkit-fill-available;
+        width: -moz-available;
+        position: relative;
+        scrollbar-width: none; /* Firefox */
+
+        &::-webkit-scrollbar
+        {
+          /* Hide scrollbar for Chrome, Safari and Opera */
+          display: none;
+          /* Hide scrollbar for IE, Edge and Firefox */
+          -ms-overflow-style: none; /* IE and Edge */
+          width: 4px;
+        }
+
+        div#scrollBox
+        {
+          /* 🎨 style */
+          // max-width: 100%;
+          position: absolute;
+          right: 0;
+
+          &.limit-width
+          {
+            /* 🎨 style */
+            width: -webkit-fill-available;
+            width: -moz-available;
+          }
+
+          canvas#valueChart
+          {
+            /* 🎨 style */
+            min-height: 190px;
+            max-height: 190px;
+          }
+        }
+      }
+    }
+
+    div#no-widget-data
+    {
+      /* 📌 position */
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      margin: auto;
+      z-index: 10;
+      /* 🎨 style */
+      background-color: var(--white);
+      text-align: center;
+      height: fit-content;
+
+      p
+      {
+        /* 📌 position */
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        margin: auto;
+        /* 🎨 style */
+        height: fit-content;
+        -ms-transform: translateY(-50%);
+        width: 176px;
       }
     }
   }
@@ -651,6 +1216,15 @@
     {
       /* 🎨 style */
       background-color: var(--dark-theme-1-4-shade) !important;
+
+      div#chartParent
+      {
+        div#chartHover
+        {
+          /* 🎨 style */
+          background-color: var(--dark-theme-1-4-shade);
+        }
+      }
     }
   }
 

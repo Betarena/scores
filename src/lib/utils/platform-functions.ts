@@ -220,7 +220,10 @@ export async function sleep
   ms: number
 ): Promise < void >
 {
-  new Promise
+  // ▓ [🐞]
+  console.log('sleeping...');
+
+  return new Promise
   (
     (
       r
@@ -228,8 +231,8 @@ export async function sleep
     {
       return setTimeout
       (
-        r,
-        ms
+        r
+        , ms
       )
     }
   );
@@ -834,23 +837,36 @@ export function cssVarChange
 }
 
 /**
+ * @author
+ *  @migbash
  * @summary
- *  🔹 HELPER | IMPORTANT
+ *  - 🔹 HELPER
+ *  - ⭐️ IMPORTANT
  * @description
  *  📌 Converts target value to a float based value string.
- * @param { number } value
- *  Target value to mutate.
+ * @example
+ * // returns 20.20
+ * toDecimalFix(20.203453)
+ * // returns 20.2043
+ * toDecimalFix(20.204343, 4)
+ * // returns 20.2043
+ * toDecimalFix(20.204343, 4, true)
+ * // returns 20.2043
+ * toDecimalFix(20.204343, 4, true, false)
+ * @param { number | null } value
+ *  💠 **[required]** Target value to mutate for decimal places.
  * @param { number } [d_places=2]
- *  Target number of decimal places to return.
+ *  💠 **[optional]** Target number of decimal places to apply, `deafult = 2`.
  * @param { boolean } [noRoundUp=false]
- *  Wether to perform a `round-up` or not.
+ *  💠 **[optional]** Wether to perform a `round-up` or not, `deafult = false`.
  * @param { boolean } [removeDot00=true]
- *  Wether to perform a `.00` removal from number (clean).
+ *  💠 **[optional]** Wether to perform a `.00` removal from number (clean), `deafult = true`.
  * @returns { string }
+ *  📤 Target mutated value, adjusted for decimal places.
  */
 export function toDecimalFix
 (
-  value: number
+  value: number | null
   , d_places: number = 2
   , noRoundUp: boolean = false
   , removeDot00: boolean = true
@@ -863,7 +879,7 @@ export function toDecimalFix
     false
   );
 
-  if (value == null) return;
+  if (value == null) return '-';
 
   let _value: string  = value.toString();
 
@@ -876,7 +892,6 @@ export function toDecimalFix
         (_value.indexOf('.')) + (d_places + 1)
       );
   }
-
 
   _value = parseFloat(_value).toFixed(d_places);
 
@@ -1513,6 +1528,7 @@ export function formatNumberWithCommas
   x: number | null | undefined
 ): string
 {
+  if (x?.toString().includes('.')) return x.toString();
   return x
     ?.toString()
     ?.replace(/\B(?=(\d{3})+(?!\d))/g, '.')

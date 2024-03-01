@@ -21,7 +21,6 @@ const sessionStoreObj: Platform_Session =
 {
   // ### NOTE:
   // ### variables for show/hide.
-	newsletterPopUpShow: false,
 	auth_show: false,
   livescoreShowCalendar: false,
 	selectedSeasonID: undefined,
@@ -34,8 +33,7 @@ const sessionStoreObj: Platform_Session =
   showTermsAndConditions: false,
   showFixtureCompetition: false,
   isShowFixtureCompetitionJoinModal: false,
-  showInvstementWallets: false,
-  showReferralInviteModal: false,
+  currentActiveModal: null,
   // ### NOTE:
   // ### variables for language handle.
   lang_intent: undefined,
@@ -48,6 +46,7 @@ const sessionStoreObj: Platform_Session =
   deviceType: undefined,
   firebaseListeners: [],
   grapqhQlWebSockets: [],
+  currentAdminToggle: null,
   // ### NOTE:
   // ### variables for date handle.
   userDate: clientTimezoneDate(),

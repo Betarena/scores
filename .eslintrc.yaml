@@ -67,6 +67,7 @@ ignorePatterns:
   - src/lib/store
   - src/lib/types
   - src/params
+  - src/routes
 
 plugins:
   - "@typescript-eslint"
@@ -101,10 +102,11 @@ rules:
 
   curly:
     - error
-    - multi-or-nest
+    - multi
+    - consistent
   max-len:
     - error
-    - code: 150
+    - code: 250
   quotes:
     - error
     - single

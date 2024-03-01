@@ -159,7 +159,7 @@ export const POST =
     }
     catch (error)
     {
-      //
+      console.log(error);
     }
 
   }

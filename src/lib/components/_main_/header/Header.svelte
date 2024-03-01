@@ -476,9 +476,7 @@
     || $sessionStore.showUserguide1
     || $sessionStore?.showTermsAndConditions
     || $sessionStore.isShowFixtureCompetitionJoinModal
-    || $sessionStore.showDepositModalState
-    || $sessionStore.showReferralInviteModal
-    || $sessionStore.showInvstementWallets
+    || $sessionStore.currentActiveModal
   ;
   $: if (if_R_4)
   {
@@ -1334,8 +1332,8 @@ NAVBAR MAIN
         -->
         {#if true}
           <a
-            href="/u/deposit/{$userBetarenaSettings.lang}"
-            title='Go to Deposit Page'
+            href="/u/investor/{$userBetarenaSettings.lang}"
+            title='Go to Investor Page'
           >
             <button
               class=

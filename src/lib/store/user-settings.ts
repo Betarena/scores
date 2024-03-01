@@ -4,6 +4,7 @@ import { dlog } from '$lib/utils/debug.js';
 import { writable } from 'svelte/store';
 
 import type { BetarenaUser, IUserSetting, Voted_Fixture } from '$lib/types/types.scores.js';
+import type { InvestorData } from '@betarena/scores-lib/types/_FIREBASE_.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -236,6 +237,48 @@ function createLocalStore
       if (if_M_0) newBalance = 0;
 
 			localStore.user.scores_user_data.main_balance = newBalance;
+
+      // ◾️ NOTE:
+      // ◾️ Approach Num.1
+      // localStorage.setItem
+      // (
+      //   key,
+      //   JSON.stringify
+      //   (
+      //     localStore
+      //   )
+      // );
+      // update
+      // (
+      //   s =>
+      //   (
+      //     {
+      //       ...s,
+      //       user: localStore.user
+      //     }
+      //   )
+      // );
+
+      // ◾️ NOTE:
+      // ◾️ Approach Num.2
+      methods.setLocalStorage
+      (
+        localStore
+      );
+    },
+
+    /**
+     * @description
+     * TODO: DOC:
+     */
+    userUpdateBTABalance2:
+    (
+      data: InvestorData
+    ): void =>
+    {
+      const localStore: IUserSetting = methods.parseLocalStorage();
+
+			localStore.user.scores_user_data!.investor_balance = data;
 
       // ◾️ NOTE:
       // ◾️ Approach Num.1

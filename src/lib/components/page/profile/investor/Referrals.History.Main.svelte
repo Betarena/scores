@@ -1,8 +1,17 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - access custom Betarena Scores JS VScode Snippets by typing 'script...'         │
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -27,9 +36,13 @@
 
   import userBetarenaSettings from '$lib/store/user-settings.js';
 
+  import AdminDevControlPanel from '$lib/components/misc/admin/Admin-Dev-ControlPanel.svelte';
+  import AdminDevControlPanelToggleButton from '$lib/components/misc/admin/Admin-Dev-ControlPanelToggleButton.svelte';
   import ReferralsHistoryRowChild from './Referrals.HistoryRow.Child.svelte';
 
+  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
+  import { scoresProfileInvestorStore } from './_store.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -50,32 +63,34 @@
   export let
     /**
      * @augments IProfileData
-    */
+     */
     profileData: IProfileData | null
     /**
      * @description
-     *  📣
-    */
-    , VIEWPORT_MOBILE_INIT_PARENT: [ number, boolean ]
+     *  📣 threshold start + state for 📱 MOBILE
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
     /**
      * @description
-     *  📣
-    */
-    , VIEWPORT_TABLET_INIT_PARENT: [ number, boolean ]
+     *  📣 threshold start + state for 💻 TABLET
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
-  type IRowLayout = 'id' | 'referral_bonus_percentage' | 'referral_bonus_bta' | 'date' | '';
+  type IRowLayout =
+    | 'id'
+    | 'referral_bonus_percentage'
+    | 'referral_bonus_bta'
+    | 'date'
+    | ''
+  ;
 
   const
-    /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
-    // eslint-disable-next-line no-unused-vars
+    /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+    */ // eslint-disable-next-line no-unused-vars
     CNAME: string = 'profile⮕w⮕referral-history⮕main'
-    /** @description 📣 threshold start + state for 📱 MOBILE */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = VIEWPORT_MOBILE_INIT_PARENT
-    /** @description 📣 threshold start + state for 💻 TABLET */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = VIEWPORT_TABLET_INIT_PARENT
   ;
 
   let
@@ -92,7 +107,9 @@
     ]
   ;
 
-  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
+  $: ({ theme } = $userBetarenaSettings);
+  $: ({ adminOverrides, referralHistoryStateWidget } = $scoresProfileInvestorStore);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -121,7 +138,7 @@
   (
   ): void
   {
-    if (VIEWPORT_MOBILE_INIT_PARENT[1])
+    if (VIEWPORT_MOBILE_INIT[1])
       tableHeader = [ 'id' , 'referral_bonus_percentage' , 'referral_bonus_bta' , '' ];
     else
       tableHeader = [ 'id' , 'referral_bonus_percentage' , 'referral_bonus_bta' , 'date' ];
@@ -143,7 +160,7 @@
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  $: if (VIEWPORT_MOBILE_INIT_PARENT || VIEWPORT_TABLET_INIT_PARENT)
+  $: if (VIEWPORT_MOBILE_INIT || VIEWPORT_TABLET_INIT)
     updateTableLayout()
 
     // #endregion ➤ 🔥 REACTIVIY [SVELTE]
@@ -154,15 +171,39 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component HTML                                                            │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - use 'Ctrl+Space' to autocomplete global class=styles                           │
-│ - access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.     │
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
+<!--
+▓ NOTE:
+▓ > (widget) main
+-->
 <div
   id={CNAME}
-  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+  class:dark-background-1={theme == 'Dark'}
+  class:mutated={adminOverrides.has('ReferralHistory')}
 >
+
+  <AdminDevControlPanelToggleButton
+    title='Referral History'
+    mutated={adminOverrides.has('ReferralHistory')}
+    on:reset=
+    {
+      () =>
+      {
+        scoresProfileInvestorStore.updateAdminMutatedWidgets
+        (
+          'ReferralHistory'
+          , 'remove'
+        );
+        return;
+      }
+    }
+  />
 
   <!--
   ▓ NOTE:
@@ -178,10 +219,11 @@
     m-b-20
     "
   >
-    {
-      profileTrs.investor?.referral.ref_history.title
-      ?? 'Referral History'
-    }
+    <TranslationText
+      key={`${CNAME}/title`}
+      text={profileTrs?.investor?.referral.ref_history.title}
+      fallback={'Referral History'}
+    />
   </p>
 
   <!--
@@ -211,25 +253,29 @@
                 "
               >
                 {#if item == 'id'}
-                  {
-                    profileTrs.investor?.referral.ref_history.id
-                    ?? 'Id'
-                  }
+                  <TranslationText
+                    key={`${CNAME}/title`}
+                    text={profileTrs?.investor?.referral.ref_history.id}
+                    fallback={'Id'}
+                  />
                 {:else if item == 'referral_bonus_percentage'}
-                  {
-                    profileTrs.investor?.referral.ref_history.bonus
-                    ?? 'Bonus %'
-                  }
+                  <TranslationText
+                    key={`${CNAME}/title`}
+                    text={profileTrs?.investor?.referral.ref_history.bonus}
+                    fallback={'Bonus %'}
+                  />
                 {:else if item == 'referral_bonus_bta'}
-                  {
-                    profileTrs.investor?.referral.ref_history.ref_bonus_bta
-                    ?? 'Referral Bonus BTA'
-                  }
+                  <TranslationText
+                    key={`${CNAME}/title`}
+                    text={profileTrs?.investor?.referral.ref_history.ref_bonus_bta}
+                    fallback={'Referral Bonus BTA'}
+                  />
                 {:else if item == 'date'}
-                  {
-                    profileTrs.investor?.referral.ref_history.date
-                    ?? 'Date'
-                  }
+                  <TranslationText
+                    key={`${CNAME}/title`}
+                    text={profileTrs?.investor?.referral.ref_history.date}
+                    fallback={'Date'}
+                  />
                 {/if}
               </p>
             </th>
@@ -242,13 +288,23 @@
       ▓ > (row) tier pricing table.
       -->
       <tbody>
-        <!-- {#each [...profileData?.investorData?.data?.referral_history ?? [], ...profileData?.investorData?.data?.referral_history ?? [], ...profileData?.investorData?.data?.referral_history ?? [], ...profileData?.investorData?.data?.referral_history ?? []] as item} -->
-        {#each [...profileData?.investorData?.data?.referral_history ?? []] as item}
-          <ReferralsHistoryRowChild
-            data={item}
-            {VIEWPORT_MOBILE_INIT_PARENT}
-            {VIEWPORT_TABLET_INIT_PARENT}
-          />
+
+        <!--
+        {#each [...profileData?.investorData?.data?.referral_history ?? [], ...profileData?.investorData?.data?.referral_history ?? []
+          , ...profileData?.investorData?.data?.referral_history ?? [], ...profileData?.investorData?.data?.referral_history ?? []] as item}
+        -->
+
+        {#if
+          (profileData?.investorData?.data?.referral_history.length ?? 0) > 0
+          && referralHistoryStateWidget != 'NoData'
+        }
+          {#each [...profileData?.investorData?.data?.referral_history ?? []] as item}
+            <ReferralsHistoryRowChild
+              data={item}
+              {VIEWPORT_MOBILE_INIT}
+              {VIEWPORT_TABLET_INIT}
+            />
+          {/each}
         {:else}
           <div
             id="no-widget-data"
@@ -265,13 +321,15 @@
               line-height: 24px; /* 150% */
               "
             >
-              {
-                profileTrs.investor?.general.no_information
-                ?? 'Uh-oh! No Investments have been found.'
-              }
+              <TranslationText
+                key={`${CNAME}/title`}
+                text={profileTrs?.investor?.general.no_information}
+                fallback={'Uh-oh! No Investments have been found.'}
+              />
             </p>
           </div>
-        {/each}
+        {/if}
+
       </tbody>
 
     </table>
@@ -280,17 +338,146 @@
 </div>
 
 <!--
+▓ NOTE:
+▓ > (widget) admin development state UI change control panel.
+-->
+<AdminDevControlPanel
+  title='Referral History'
+>
+
+  <!--
+  ▓ NOTE:
+  ▓ > (no data) widget state.
+  -->
+  <div
+    class=
+    "
+    row-space-out
+    "
+  >
+    <!--
+    ▓ NOTE:
+    ▓ > (no data state) text.
+    -->
+    <p
+      class=
+      "
+      s-14
+      color-black
+      "
+    >
+      <b>[1]</b> Toggle <b>No Data State</b>
+    </p>
+
+    <!--
+    ▓ NOTE:
+    ▓ > (no data state) button.
+    -->
+    <button
+      class=
+      "
+      dev-toggle
+      "
+      on:click=
+      {
+        () =>
+        {
+          scoresProfileInvestorStore.updateAdminMutatedWidgets
+          (
+            'ReferralHistory'
+            , 'set'
+          );
+          $scoresProfileInvestorStore.referralHistoryStateWidget = 'NoData';
+          return;
+        }
+      }
+      class:on={referralHistoryStateWidget == 'NoData'}
+      class:off={referralHistoryStateWidget != 'NoData'}
+    >
+      {#if referralHistoryStateWidget == 'NoData'}
+        ON
+      {:else}
+        OFF
+      {/if}
+    </button>
+  </div>
+
+  <!--
+  ▓ NOTE:
+  ▓ > (add sample data) widget.
+  -->
+  <div
+    class=
+    "
+    row-space-out
+    "
+  >
+    <!--
+    ▓ NOTE:
+    ▓ > (no data state) text.
+    -->
+    <p
+      class=
+      "
+      s-14
+      color-black
+      "
+    >
+      <b>[2]</b> Add <b>Sample Data</b>
+    </p>
+
+    <!--
+    ▓ NOTE:
+    ▓ > (no data state) button.
+    -->
+    <button
+      class=
+      "
+      dev-toggle
+      "
+      on:click=
+      {
+        () =>
+        {
+          // @ts-expect-error
+          (profileData.investorData ??= { data: { referral_history: [] } });
+          // @ts-expect-error
+          (profileData.investorData.data.referral_history ??= [] );
+
+          profileData?.investorData?.data?.referral_history.push
+          (
+            ...this.sampleData
+          );
+
+          profileData = profileData;
+
+          scoresProfileInvestorStore.updateAdminMutatedWidgets
+          (
+            'ReferralHistory'
+            , 'set'
+          );
+
+          return;
+        }
+      }
+    >
+      TOGGLE
+    </button>
+  </div>
+
+</AdminDevControlPanel>
+
+<!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component CSS/SCSS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE  │
-│ - access custom Betarena Scores CSS VScode Snippets by typing 'style...'         │
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <style lang="scss">
-
-  @import '../../../../../../static/app.scss';
 
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
@@ -300,6 +487,8 @@
 
   div#profile⮕w⮕referral-history⮕main
   {
+    /* 📌 position */
+    position: relative;
     /* 🎨 style */
     background-color: var(--white);
     border-radius: 12px;
@@ -383,8 +572,9 @@
 
               p
               {
-                @extend .s-12;
-                @extend .color-grey;
+                /* 🎨 style */
+                font-size: 12px;
+                color: var(--grey-shade);
               }
             }
           }
@@ -439,15 +629,18 @@
                 p
                 {
                   /* 🎨 style */
-                  @extend .s-14;
-                  @extend .color-black-2;
+                  font-size: 14px;
+                  color: var(--dark-theme);
                 }
               }
 
               &:nth-child(even)
               {
-                /* 🎨 style */
-                background-color: var(--whitev2);
+                td
+                {
+                  /* 🎨 style */
+                  background-color: var(--whitev2);
+                }
               }
 
               div.extra-information
@@ -559,8 +752,20 @@
           {
             &:nth-child(even)
             {
-              /* 🎨 style */
-              background-color: rgba(75, 75, 75, 0.50) !important;
+              td
+              {
+                /* 🎨 style */
+                background-color: rgba(75, 75, 75, 0.50) !important;
+              }
+            }
+
+            td
+            {
+              p
+              {
+                /* 🎨 style */
+                color: var(--white) !important;
+              }
             }
           }
         }

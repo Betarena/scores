@@ -234,19 +234,21 @@ export interface Platform_Session
   isShowFixtureCompetitionJoinModal?: boolean;
   /**
    * @description
-   *  📣 toogle `visibility` (show/hide) of Terms-And-Conditions modal.
+   *  📣 Currently **active** modal being shown on platform.
    */
-  showDepositModalState: boolean;
-  /**
-   * @description
-   *  📣 toogle `visibility` (show/hide) of Referral Invitations modal.
-   */
-  showReferralInviteModal: boolean;
-  /**
-   * @description
-   *  📣 toogle `visibility` (show/hide) of Investment Wallets modal.
-   */
-  showInvstementWallets: boolean;
+  currentActiveModal:
+    | null
+    | 'ProfileInvestor_ReferralInfo_Modal'
+    | 'ProfileInvestor_Wallets_Modal'
+    | 'ProfileInvestor_Terms&Cond_Modal'
+    | 'ProfileInvestor_WalletConnect_Modal'
+    | 'ProfileInvestor_ClaimTGE_Modal'
+    | 'ProfileInvestor_ClaimVesting_Modal'
+    | 'ProfileInvestor_TxState_Modal'
+    | 'ProfileInvestor_SelectCrypto_Modal'
+    | 'GeneralPlatform_Error'
+    | 'Footer_Newsletter_Modal'
+  ;
 
   // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   // NOTE: SPORTBOOK DATA       ◼️
@@ -338,6 +340,16 @@ export interface Platform_Session
    *  📌 Amount `deeplink` to `web3` selected by **user** for mobile.
    */
   investDepositAmountMobileWeb3: number;
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // | 🛠️ DEVELOPMENT                                                         |
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  /**
+   * @description
+   *  📣 Current name for target **admin** widget under inspection.
+   */
+  currentAdminToggle: string | null;
 }
 
 /**

@@ -1,8 +1,17 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - access custom Betarena Scores JS VScode Snippets by typing 'script...'         │
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -29,21 +38,24 @@
   //                  51b365df14ba967&format=raw
   // 🔗 read-more :|: https://mumbai.polygonscan.com/token/0x3813e82e6f7098b9583fc0f33a962d02018b6803#code
 
-  import { browser } from '$app/environment';
+  import { browser, dev } from '$app/environment';
   import { page } from '$app/stores';
   import { onDestroy, onMount } from 'svelte';
-  import { fade, fly } from 'svelte/transition';
+  import { fly } from 'svelte/transition';
 
+	import { get, postv2 } from '$lib/api/utils.js';
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
+	import { dlog, dlogv2 } from '$lib/utils/debug.js';
+	import { shortenWeb3WalletAddress, sleep, toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
+	import { chainObject, chainObjectWalletConnect } from '$lib/utils/web3.js';
+	import { passByValue } from '@betarena/scores-lib/dist/functions/func.common.js';
+	import { tryCatchAsync } from '@betarena/scores-lib/dist/util/util.common.js';
+	import { scoresProfileInvestorStore } from './_store.js';
+	import { polygonMainnet } from './web3/_constants.js';
+
 	import { createWeb3Modal, defaultConfig } from '@web3modal/ethers5';
 	import { BigNumber, ethers, type ContractInterface, type Transaction } from 'ethers';
-
-  import { get, post } from '$lib/api/utils.js';
-  import { dlog, dlogv2 } from '$lib/utils/debug.js';
-  import { shortenWeb3WalletAddress, sleep, toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
-  import { passByValue } from '@betarena/scores-lib/dist/functions/func.common.js';
-  import { tryCatchAsync } from '@betarena/scores-lib/dist/util/util.common.js';
 
   import icon_checkbox from '../assets/checkbox.svg';
   import icon_arrow_down_dark from '../assets/common/arrow-down-dark.svg';
@@ -59,16 +71,15 @@
   import icon_bta_token from '../assets/price-tier/icon-bta-token.svg';
   import icon_usdc from '../assets/price-tier/icon-usdc.png';
   import icon_usdt from '../assets/price-tier/icon-usdt.png';
-  import betarenaBankContractABI from './web3/BetarenaBankABI.json';
-  import usdcContractAddressABI from './web3/UsdcABI.json';
-  import usdtContractAddressABI from './web3/UsdtABI.json';
 
   import ModalTermsAndConditions from './Modal-TermsAndConditions.svelte';
   import ModalTxState from './Modal-Tx-State.svelte';
 
-  import type { B_H_TH } from '@betarena/scores-lib/types/_HASURA_.js';
+  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
+  import ModalBackdrop from '$lib/components/misc/modal/Modal-Backdrop.svelte';
+  import type { PublicTransactionHistoryMain } from '@betarena/scores-lib/types/_AUTO-HASURA-2_.js';
   import type { ICoinMarketCapDataMain } from '@betarena/scores-lib/types/_WEB3_.js';
-  import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
+  import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
   import type { Web3Modal } from '@web3modal/ethers5/dist/types/src/client.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -89,165 +100,307 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let
-    /** @augments B_PROF_D */
-    WIDGET_DATA: B_PROF_D | null
+    /**
+     * @augments IProfileData
+     */
+    profileData: IProfileData | null
   ;
 
   // 🔗 read-more :|: https://stackoverflow.com/questions/72230897/how-to-call-a-smart-contract-function-with-walletconnect-react-js-node-js
   // 🔗 read-more :|: https://wiki.polygon.technology/docs/tools/wallets/walletconnect/
 
+  /**
+   * @description
+   *  📣 Component interface.
+   */
   interface ITierDiscount
   {
-    /** @description tier discount name */
-    name?: string,
-    /** @description tier discount icon. */
-    icon?: string,
-    /** @description tier discount number. */
-    discount?: number,
+    /**
+     * @description
+     *  📣 Tier discount name.
+     * @example
+     *  'Bronze' | 'Silver' | 'Gold' | 'Platinum'
+     */
+    name?: string;
+    /**
+     * @description
+     *  📣 Tier discount icon.
+     */
+    icon?: string;
+    /**
+     * @description
+     *  📣 tier discount number.
+     */
+    discount?: number;
+    /**
+     * @description
+     *  📣 tier **BTA** price.
+     */
+    btaPrice?: number;
   }
 
+  /**
+   * @description
+   *  📣 Component interface.
+   */
   interface ICryptoDesposit
   {
-    /** @description cryptocurrency full name */
+    /**
+     * @description
+     *  📣 cryptocurrency full name
+     */
     full_name: string;
-    /** @description cryptocurrency symbol */
+    /**
+     * @description
+     *  📣 cryptocurrency symbol
+     */
     name: string;
-    /** @description cryptocurrency icon */
+    /**
+     * @description
+     *  📣 cryptocurrency icon
+     */
     icon: string;
-    /** @description cryptocurrency address */
+    /**
+     * @description
+     *  📣 cryptocurrency address
+     */
     contractAddress: string;
-    /** @description cryptocurrency ABI */
+    /**
+     * @description
+     *  📣 cryptocurrency ABI
+     */
     abi: unknown;
-    /** @description cryptocurrency user amount */
+    /**
+     * @description
+     *  📣 cryptocurrency user amount
+     */
     userBalance: any;
   }
 
-  type IStateWidget = 'In Progress' | 'Completed' | 'Error' | null;
+  /**
+   * @description
+   *  📣 Component interface.
+   */
+  type IStateWidget =
+    'In Progress'
+    | 'Completed'
+    | 'Error'
+    | 'ErrorBalance'
+    | null
+  ;
+
+  /**
+   * @description
+   *  📣 Component interface.
+   */
+  type IStateWidgetFormError =
+    | 'First_Minimum_Deposit_Not_Reached'
+    | 'Transaction_Error'
+  ;
 
   const
-    /** @description 📌 `this` component **main** `id` and `data-testid` prefix. */
+    /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */
     // eslint-disable-next-line no-unused-vars
     CNAME = 'profile⮕w⮕investbox⮕main'
-    /** @description 📣 threshold start + state for 📱 MOBILE */
+    /**
+     * @description
+     *  📣 threshold start + state for 📱 MOBILE
+     */
     // eslint-disable-next-line no-unused-vars
     , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
-    /** @description 📣 threshold start + state for 💻 TABLET */
+    /**
+     * @description
+     *  📣 threshold start + state for 💻 TABLET
+     */
     // eslint-disable-next-line no-unused-vars
     , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
-    /** @description target `polygon` blockchain `BetarenaBank` polygon mumbai (testnet) */
-    , betarenaBankContractAddress: string = '0x8d03D84965a0e10a08E814CF19fe4207a34bFd4c' // '0x5BC335e9c9492B8abb07B49a6dbD8269d7419F1D'
+    /**
+     * @description
+     *  📣 target `polygon` blockchain `BetarenaBank` polygon mumbai (testnet)
+     */
+    , betarenaBankContractAddress: string = polygonMainnet.betarenaBankContractAddress.address
   ;
 
   let
-    /** @augments IProfileTrs */
-    // DProfTrs: IProfileTrs
-    /** @description Creating a Web3Modal with `WalletConnect`. */
-    modal: Web3Modal = createWeb3Modal
-    (
-      {
-        // ▓ @see :> get projectId at https://cloud.walletconnect.com
-        projectId: import.meta.env.VITE_WALLETCONNECT_ID
-        , ethersConfig: defaultConfig
-        (
-          {
-            metadata:
-            {
-              name: 'Scores Platform'
-              , description: 'Betarena Scores Platform'
-              , url: 'https://betarena-scores-platform.herokuapp.com/'
-              , icons:
-              [
-                'https://betarena-scores-platform.herokuapp.com/_app/immutable/assets/betarena-logo-full.f6af936d.svg'
-              ]
-            }
-          }
-        )
-        , chains:
-        [
-          // {
-          //   chainId: 1,
-          //   name: 'Ethereum',
-          //   currency: 'ETH',
-          //   explorerUrl: 'https://etherscan.io',
-          //   rpcUrl: 'https://cloudflare-eth.com'
-          // },
-          {
-            chainId: 80001
-            ,name: 'Mumbai Testnet'
-            ,currency: 'MATIC'
-            ,explorerUrl: 'https://mumbai.polygonscan.com'
-            ,rpcUrl: 'https://polygon-mumbai.g.alchemy.com/v2/0zWtf5I24NBkM826G-VJFiYkkGoC5atJ'
-          }
-        ]
-        , defaultChain:
+    /**
+     * @description
+     *  📣 Creating a Web3Modal with `WalletConnect` configuration.
+     */
+    modal: Web3Modal
+      = createWeb3Modal
+      (
         {
-          chainId: 80001
-          ,name: 'Mumbai Testnet'
-          ,currency: 'MATIC'
-          ,explorerUrl: 'https://mumbai.polygonscan.com'
-          ,rpcUrl: 'https://polygon-mumbai.g.alchemy.com/v2/0zWtf5I24NBkM826G-VJFiYkkGoC5atJ'
+          projectId: import.meta.env.VITE_WALLETCONNECT_ID!
+          , ethersConfig: defaultConfig
+          (
+            {
+              metadata:
+              {
+                name: 'Scores Platform'
+                , description: 'Betarena Scores Platform'
+                , url: 'https://betarena-scores-platform.herokuapp.com/'
+                , icons:
+                [
+                  'https://betarena-scores-platform.herokuapp.com/_app/immutable/assets/betarena-logo-full.f6af936d.svg'
+                ]
+              }
+              , defaultChainId: 137
+              , enableCoinbase: true
+            }
+          )
+          , chains:
+          [
+            chainObjectWalletConnect.ethereum
+            , chainObjectWalletConnect.polygon_mainnet
+          ]
+          , defaultChain: chainObjectWalletConnect.polygon_mainnet
+          // , featuredWalletIds:
+          // [
+          //   // ▓ NOTE:
+          //   // ▓ > MetaMask Wallet
+          //   // 'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96'
+          //   // ▓ NOTE:
+          //   // ▓ > Trust Wallet
+          //   // , '4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0'
+          //   // ▓ NOTE:
+          //   // ▓ > CoinBase Wallet
+          //   // , 'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa'
+          // ]
+          // , includeWalletIds:
+          // [
+          //   // ▓ NOTE:
+          //   // ▓ > MetaMask Wallet
+          //   // 'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96'
+          //   // ▓ NOTE:
+          //   // ▓ > Trust Wallet
+          //   // , '4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0'
+          //   // ▓ NOTE:
+          //   // ▓ > CoinBase Wallet
+          //   // , 'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa'
+          // ]
+          // , excludeWalletIds:
+          // [
+          // ]
+          // , privacyPolicyUrl: ''
+          // , termsConditionsUrl: ''
         }
-      }
-    )
-    /** @description 📣 wether user has triggered the `invest` action. */
+      )
+    /**
+     * @description
+     *  📣 wether user has triggered the `invest` action.
+     */
     , triggerInvestBox: boolean = false
-    /** @description 📣 wether user has triggered the `invest` action. */
+    /**
+     * @description
+     *  📣 wether user has triggered the `invest` action.
+     */
     , stateWidget: IStateWidget = null
-    /** @description 📣 prices of supported tokens. */
-    , cryptoPrices: ICoinMarketCapDataMain
-    /** @description 📣 target token price. */
+    /**
+     * @description
+     *  📣 prices of supported tokens.
+     */
+    , cryptoPrices:  null | undefined | ICoinMarketCapDataMain
+    /**
+     * @description
+     *  📣 target token price.
+     */
     , cryptoPrice: number
-    /** @description 📣 amount user wishes to `deposit`. */
-    , depositAmount: number = $sessionStore.investDepositAmountMobileWeb3 ?? 2500
-    /** @description 📣 amount user wishes to `recieve`. */
-    , recieveAmount: number = 2500
-    /** @description 📣 target selected option by user. */
+    /**
+     * @description
+     *  📣 amount user wishes to `deposit`.
+     */
+    , depositAmount: number | null = $sessionStore.investDepositAmountMobileWeb3 ?? 2600
+    /**
+     * @description
+     *  📣 amount user wishes to `recieve`.
+     */
+    , recieveAmount: number = 2600
+    /**
+     * @description
+     *  📣 target selected option by user.
+     */
     , selectDepositOption: 'crypto' | 'fiat' = 'crypto'
-    /** @description 📣 tier discount data object */
+    /**
+     * @description
+     *  📣 tier discount data object
+     */
     , tierDiscountObject: ITierDiscount = { }
-    /** @description 📣 terms&conditions checkbox */
+    /**
+     * @description
+     *  📣 terms&conditions checkbox
+     */
     , agreeTermsAndConditions: boolean = false
-    /** @description 📣 crypto deposit data object list */
+    /**
+     * @description
+     *  📣 crypto deposit data object list
+     */
     , cryptoDepositOptions: ICryptoDesposit[]
-    = [
-      {
-        full_name: 'USD Coin'
-        ,name: 'USDC'
-        ,icon: icon_usdc
-        ,contractAddress: '0x0FA8781a83E46826621b3BC094Ea2A0212e71B23'
-        ,abi: usdcContractAddressABI
-        ,userBalance: null
-      }
-      ,{
-        full_name: 'Tether'
-        ,name: 'USDT'
-        ,icon: icon_usdt
-        ,contractAddress: '0x3813e82e6f7098b9583FC0F33a962D02018B6803'
-        ,abi: usdtContractAddressABI
-        ,userBalance: null
-      }
-    ]
-    /** @description 📣 crypto deposit data object list (search) */
+      = [
+        {
+          full_name: 'USD Coin'
+          , name: 'USDC'
+          , icon: icon_usdc
+          , contractAddress: polygonMainnet.usdcContractAddress.address
+          , abi: polygonMainnet.usdcContractAddress.abi
+          , userBalance: null
+        }
+        , {
+          full_name: 'Tether'
+          , name: 'USDT'
+          , icon: icon_usdt
+          , contractAddress: polygonMainnet.usdtContractAddress.address
+          , abi: polygonMainnet.usdtContractAddress.abi
+          , userBalance: null
+        }
+      ]
+    /**
+     * @description
+     *  📣 crypto deposit data object list (search)
+     */
     , cryptoDepositOptionsSearch: ICryptoDesposit[] = passByValue(cryptoDepositOptions)
-    /** @description 📣 crypto deposit object selected */
-    , cryptoDepositOptionSelect: ICryptoDesposit = cryptoDepositOptions[0]
-    /** @description 📣 modal open select cryptocurrency option */
-    , modalSelectCryptoOption: boolean = false
-    /** @description 📣 modal open select cryptocurrency option */
+    /**
+     * @description
+     *  📣 crypto deposit object selected
+     */
+    , cryptoDepositOptionSelect: ICryptoDesposit = cryptoDepositOptions[1]
+    /**
+     * @description
+     *  📣 modal open select cryptocurrency option
+     */
     , walletAddress: `0x${string}` | undefined
-    /** @description 📣 search text for target token */
+    /**
+     * @description
+     *  📣 search text for target token
+     */
     , tokenSearch: string
-    /** @description 📣 interval for CoinMarketCap fetching */
+    /**
+     * @description
+     *  📣 interval for CoinMarketCap fetching
+     */
     , interval1: NodeJS.Timer
-    /** @description 📣 modal unsubsribe events (callback) */
+    /**
+     * @description
+     *  📣 modal unsubsribe events (callback)
+     */
     , modalUnsubscribe: (() => void)[] = []
-    /** @description 📣 TODO: */
-    , deepReactListenSignerChange: unknown
+    /**
+     * @description
+     *  📣 Target `errors` encountered in form fill out.
+     */
+    , formErrorState = new Set<IStateWidgetFormError>()
   ;
 
-  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
-  $: deepReactListenSignerChange = undefined;
-  $: deepReactListenDepositOptionChange = JSON.stringify(cryptoDepositOptionSelect);
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
+  $: deepReactListenSignerChange = undefined as unknown;
+  $: deepReactListenDepositOptionChange = JSON.stringify(cryptoDepositOptionSelect) as string;
+  $: ({ theme } = $userBetarenaSettings);
+  $: ({ referredBy } = $userBetarenaSettings.user.scores_user_data ?? { referredBy: null });
+  $: ({ grand_total } = $userBetarenaSettings.user.scores_user_data?.investor_balance ?? { grand_total: 0 });
+  $: ({ uid } = $userBetarenaSettings.user.firebase_user_data ?? { uid: null });
+  $: ({ roundStateWidget, userTotalFiatInvested } = $scoresProfileInvestorStore);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -324,9 +477,9 @@
           );
 
           if (e.data.event == 'MODAL_OPEN')
-            $sessionStore.showDepositModalState = true;
+            $sessionStore.currentActiveModal = 'ProfileInvestor_WalletConnect_Modal';
           if (e.data.event == 'MODAL_CLOSE')
-            $sessionStore.showDepositModalState = false;
+            $sessionStore.currentActiveModal = null;
         }
       )
       , modalUnsub2 = modal.subscribeProvider
@@ -341,15 +494,16 @@
             '🚏 checkpoint [R] ➤ src/lib/components/page/profile/investor/Main-InvestBox.svelte if_R_X12',
             [
               newProvider
-              ,`🔹 [var] ➤ modal.getSigner() ${modal.getSigner()}`
+              // ,`🔹 [var] ➤ modal.getSigner() ${modal.getSigner()}`
               ,`🔹 [var] ➤ modal.getAddress() ${modal.getAddress()}`
             ],
             true
           );
 
           deepReactListenSignerChange = newProvider.isConnected;
+          // @ts-expect-error
           walletAddress = modal.getAddress();
-          await switchUserNetwork();
+          // await switchUserNetwork();
 
           return;
         }
@@ -424,6 +578,200 @@
    * @author
    *  @migbash
    * @summary
+   *  🟦 HELPER
+   * @description
+   *  📣 Calculate target `tier`.
+   * @return { void }
+   */
+  function recalculateReceive
+  (
+    depositAmount: number
+    , cryptoPrice: number
+  ): void
+  {
+    const
+      /**
+       * @description
+       *  📣 Final deposit calculated, taking into account other variable(s) and values
+       */
+      depositCalculated = (depositAmount * cryptoPrice) + userTotalFiatInvested
+    ;
+
+    console.log('previouslyInvestedAmount', userTotalFiatInvested);
+
+    if (depositCalculated >= 100000)
+      tierDiscountObject
+        = {
+          name: 'platinum'
+          , icon: icon_platinum
+          , discount: 50
+          , btaPrice: 0.50
+        }
+      ;
+    else if (depositCalculated >= 50000)
+      tierDiscountObject
+        = {
+          name: 'gold'
+          , icon: icon_gold
+          , discount: 40
+          , btaPrice: 0.60
+        }
+      ;
+    else if (depositCalculated >= 20000)
+      tierDiscountObject
+        = {
+          name: 'silver'
+          , icon: icon_silver
+          , discount: 30
+          , btaPrice: 0.70
+        }
+      ;
+    else if (depositCalculated >= 2500)
+      tierDiscountObject
+        = {
+          name: 'bronze'
+          , icon: icon_bronze
+          , discount: 20
+          , btaPrice: 0.80
+        }
+      ;
+    else if (depositCalculated < 2500)
+      tierDiscountObject
+        = {
+          name: undefined
+          , icon: undefined
+          , discount: 0
+          , btaPrice: 1.00
+        }
+      ;
+    //
+
+    if (depositAmount == 0)
+      recieveAmount = 0;
+    else
+      recieveAmount
+        = parseFloat
+        (
+          toDecimalFix
+          (
+            cryptoPrice * (depositAmount / tierDiscountObject.btaPrice!)
+            , 3
+            , false
+            , false
+          )
+        )
+      ;
+    //
+
+    if (depositCalculated < (profileData?.presaleData.data?.min_buy ?? 2500))
+    {
+      formErrorState.add('First_Minimum_Deposit_Not_Reached');
+      formErrorState = formErrorState;
+    }
+    else
+    {
+      formErrorState.delete('First_Minimum_Deposit_Not_Reached');
+      formErrorState = formErrorState;
+    }
+
+    return;
+  }
+
+  /**
+   * @description
+   */
+  function setupFormRequiredListener
+  (
+  ): any[]
+  {
+    const
+      requiredInputs = document.querySelectorAll('[required]')
+      , emptyInputs = Array.prototype.slice.call(requiredInputs)
+        .filter
+        (
+          item =>
+          {
+            return (!item.checked && item.required && item.type === 'checkbox' && VIEWPORT_MOBILE_INIT[1])
+          }
+        )
+    ;
+
+    // [🐞]
+    console.log('requiredInputs', Array.prototype.slice.call(requiredInputs), 'emptyInputs', emptyInputs);
+
+    if (emptyInputs.length > 0)
+      emptyInputs[0].scrollIntoView();
+    //
+
+    return emptyInputs;
+  }
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  [🐞]
+   * @description
+   *  📣 Debug Helper
+   * @param reactDebug
+   */
+  function _DEBUG_
+  (
+    reactDebug: 'Option1' | 'Option2' | 'Option3' | 'Option4'
+  ): void
+  {
+    const
+      prefix: string = '🚏 checkpoint [R] ➤ src/lib/components/page/profile/investor/Main-InvestBox.svelte'
+    ;
+
+    // ▓ [🐞]
+    if (reactDebug == 'Option1')
+      dlogv2
+      (
+        `${prefix} if_R_X20`,
+        [
+          `🔹 [var] ➤ deepReactListenSignerChange ${deepReactListenSignerChange}`
+          , `🔹 [var] ➤ triggerInvestBox ${triggerInvestBox}`
+        ],
+        true
+      );
+    else if (reactDebug == 'Option2')
+      dlogv2
+      (
+        '🚏 checkpoint [R] ➤ if_R_X2234',
+        [
+          `🔹 [var] ➤ tokenSearch ${tokenSearch}`
+        ],
+        true
+      );
+    else if (reactDebug == 'Option3')
+      dlogv2
+      (
+        '🚏 checkpoint [R] ➤ src/lib/components/page/profile/investor/Main-InvestBox.svelte IF_X_212',
+        [
+          `🔹 [var] ➤ deepReactListenDepositOptionChange ${deepReactListenDepositOptionChange}`
+          ,`🔹 [var] ➤ deepReactListenSignerChange ${deepReactListenSignerChange}`
+        ],
+        true
+      );
+    else if (reactDebug == 'Option4')
+      dlogv2
+      (
+        '🚏 checkpoint [R] ➤ src/lib/components/page/profile/investor/Main-InvestBox.svelte IF_X_212 [E]',
+        [
+          `🔹 [var] ➤ deepReactListenSignerChange ${deepReactListenSignerChange}`
+        ],
+        true
+      );
+    //
+
+    return;
+  }
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
    *  🟥 COMPONENT MAIN
    * @description
    *  📣 Obtains target user target **selected ERC-20 token** balance.
@@ -441,11 +789,14 @@
       ): Promise < void > =>
       {
         const
-          contract = new ethers.Contract
+          // @ts-expect-error
+          ethersProvider = new ethers.providers.Web3Provider(modal.getWalletProvider())
+          , signer = await ethersProvider.getSigner()
+          , contract = new ethers.Contract
           (
             cryptoDepositOptionSelect.contractAddress,
-            cryptoDepositOptionSelect.abi as ContractInterface,
-            modal.getSigner(),
+              cryptoDepositOptionSelect.abi as ContractInterface,
+              signer
           )
           , numberDecimals = await contract.decimals()
           , numberUserBalance = await contract.balanceOf(modal.getAddress())
@@ -505,25 +856,15 @@
       async (
       ) : Promise < void > =>
       {
-        return await window.ethereum.request
+        return await modal.getWalletProvider()?.request
         (
           {
             method: 'wallet_addEthereumChain'
-            ,params:
+            , params:
             [
-              {
-                chainId: '0x13881'
-                ,chainName: 'Mumbai Testnet'
-                ,rpcUrls: ['https://polygon-mumbai.g.alchemy.com/v2/0zWtf5I24NBkM826G-VJFiYkkGoC5atJ']
-                ,nativeCurrency:
-                {
-                  name: 'MATIC'
-                  ,symbol: 'MATIC'
-                  ,decimals: 18,
-                }
-                ,blockExplorerUrls: ['https://mumbai.polygonscan.com'],
-              }
-            ],
+              // @ts-expect-error
+              chainObject.polygon_mainnet
+            ]
           }
         );
       }
@@ -533,12 +874,10 @@
       {
         // ▓ [🐞]
         if (ex?.toString()?.includes('TypeError: undefined is not an object (evaluating \'window.ethereum.request\')'))
-        {
           console.warn
           (
             '❗️', 'Ethereum is not available in the global scope (window). Please check that you have MetaMask (or other wallet) installed.'
           );
-        }
         else
           console.error('💀', `Unhandled :: ${ex}`);
         //
@@ -580,30 +919,30 @@
     // ▓ > for mobile, redirect with 'deep-link' user to MetaMask browser.
     // ▓ NOTE:
     // ▓ > does not appear to be working for 'localhost' with MetaMask browser.
-    const if_M_0: boolean
-      // typeof screen.orientation !== 'undefined' // ❌ unreliable
-      // navigator?.userAgentData?.mobile // ❌ unreliable
-      = /Mobi/i.test(window.navigator.userAgent)
-      && window.ethereum == null
-    ;
-    if (if_M_0)
-    {
-      const
-        dappUrl: string = $page.url.host
-        , metamaskAppDeepLink = `
-            https://metamask.app.link/dapp/${dappUrl}
-              ?metmaskAuth=true
-              &investDepositIntent=true
-              &investDepositAmount=${depositAmount}
-          `.replace(/\s/g, '')
-      ;
-      window.open
-      (
-        metamaskAppDeepLink
-        ,  '_self'
-      );
-      return;
-    }
+    // const if_M_0: boolean
+    //   // typeof screen.orientation !== 'undefined' // ❌ unreliable
+    //   // navigator?.userAgentData?.mobile // ❌ unreliable
+    //   = /Mobi/i.test(window.navigator.userAgent)
+    //   && window.ethereum == null
+    // ;
+    // if (if_M_0)
+    // {
+    //   const
+    //     dappUrl: string = $page.url.host
+    //     , metamaskAppDeepLink = `
+    //         https://metamask.app.link/dapp/${dappUrl}
+    //           ?metmaskAuth=true
+    //           &investDepositIntent=true
+    //           &investDepositAmount=${depositAmount}
+    //       `.replace(/\s/g, '')
+    //   ;
+    //   window.open
+    //   (
+    //     metamaskAppDeepLink
+    //     ,  '_self'
+    //   );
+    //   return;
+    // }
 
     await modal.open({ view: 'Connect' });
 
@@ -649,19 +988,29 @@
     if (!browser) return;
 
     // ▓ [🐞]
-    console.log('📣', modal.getSigner());
+    // console.log('📣', modal.getSigner());
     // ▓ [🐞]
-    console.log('📣', modal.getIsConnected());
+    // console.log('📣', modal.getIsConnected());
+
+    $sessionStore.currentActiveModal = 'ProfileInvestor_TxState_Modal';
+
+    if (formErrorState.has('First_Minimum_Deposit_Not_Reached'))
+    {
+      triggerInvestBox = false;
+      stateWidget = 'ErrorBalance';
+      return;
+    }
 
     stateWidget = 'In Progress';
-    $sessionStore.showDepositModalState = true;
 
     await switchUserNetwork();
 
     let
-      errors: boolean = false
-      , targetDecimals: number
+      targetDecimals: number
       , targetAmount: BigNumber
+      // @ts-expect-error
+      , ethersProvider = new ethers.providers.Web3Provider(modal.getWalletProvider())
+      , signer = ethersProvider.getSigner()
     ;
 
     // @see :> https://docs.alchemy.com/reference/error-reference
@@ -674,6 +1023,9 @@
       async (
       ): Promise < void > =>
       {
+        // ▓ [🐞]
+        console.log('executing approve()...');
+
         // ▓ NOTE:
         // ▓ > alternative num.1
         // const walletProvider = modal.getWalletProvider()
@@ -696,14 +1048,19 @@
           (
             cryptoDepositOptionSelect.contractAddress,
             cryptoDepositOptionSelect.abi as ContractInterface,
-            modal.getSigner(),
+            signer
           )
         ;
 
         targetDecimals = await contract.decimals();
-        targetAmount = ethers.utils.parseUnits(depositAmount.toString(), targetDecimals);
+        targetAmount = ethers.utils.parseUnits((depositAmount ?? 0).toString(), targetDecimals);
 
-        const transactionResponse: Transaction = await contract.approve(betarenaBankContractAddress, targetAmount);
+        // [🐞]
+        // console.log('targetAmount', targetAmount.toNumber());
+
+        const
+          transactionResponse: Transaction = await contract.approve(betarenaBankContractAddress, targetAmount)
+        ;
 
         // ▓ [🐞]
         dlogv2
@@ -723,7 +1080,7 @@
         ex: unknown
       ): void =>
       {
-        errors = true;
+        formErrorState.add('Transaction_Error');
 
         // ▓ [🐞]
         if (ex?.toString()?.includes('ACTION_REJECTED'))
@@ -741,35 +1098,167 @@
       }
     );
 
-    // NOTE:
-    // > needed due occasional slow network/chain propagation.
-    await sleep(5000);
+    // ╭─
+    // │ NOTE:
+    // │ > needed due occasional slow network/chain propagation.
+    // ╰─
+    // await sleep(12500);
 
-    // ▓ CHECK
-    // ▓ > for errors registered.
-    if (errors)
+    // ╭─
+    // │ NOTE:
+    // │ > execute `.allowance(..)` logic for `allowance` for `ERC20` tokens.
+    // │ > prior to effectuating a `deposit`/`transfer` of funds.
+    // ╰─
+    let
+      count = 0
+    ;
+    // eslint-disable-next-line no-constant-condition
+    while (true)
+    {
+      const
+        response = await tryCatchAsync
+        (
+          async (
+          ): Promise < boolean > =>
+          {
+            // [🐞]
+            console.log('executing allowance()...');
+
+            const
+              /**
+               * @description
+               *  📣 Target `contract` for interaction.
+               */
+              contract
+                = new ethers.Contract
+                (
+                  cryptoDepositOptionSelect.contractAddress,
+                  cryptoDepositOptionSelect.abi as ContractInterface,
+                  signer
+                )
+              /**
+               * @description
+               *  📣 Target `transaction` return.
+               */
+              , transactionResponse
+                = await contract.allowance(signer.getAddress(), betarenaBankContractAddress) as BigNumber
+              /**
+               * @description
+               *  📣 Target `allowance` amount.
+               */
+              , allowanceAmount = transactionResponse.toNumber()
+              /**
+               * @description
+               *  📣 Target amount number.
+               */
+              , targetAmountNumber = targetAmount!.toNumber()
+            ;
+
+            // [🐞]
+            console.log('allowanceAmount', allowanceAmount);
+            // [🐞]
+            console.log('targetAmountNumber', targetAmountNumber);
+
+            if (allowanceAmount < targetAmountNumber)
+              throw new Error('ERR-X1');
+            //
+
+            // [🐞]
+            dlogv2
+            (
+              'data'
+              , [
+                `transactionResponse ${transactionResponse}`
+              ]
+              , true
+            );
+
+            return true;
+          }
+          , (
+            ex: unknown
+          ): boolean =>
+          {
+            formErrorState.add('Transaction_Error');
+
+            // ▓ [🐞]
+            if (ex?.toString()?.includes('ACTION_REJECTED'))
+              console.info('📣 The user has rejected the transaction.');
+            else if (ex?.toString()?.includes('Error: Internal JSON-RPC error.'))
+              // ▓ see :> https://support.metamask.io/hc/en-us/articles/360059289871-Error-Intern
+              // al-JSON-RPC-error-when-trying-to-interact-with-other-networks
+              console.info('❌ Something is not right, please recheck everything again.');
+            else if (ex?.toString()?.includes('code=CALL_EXCEPTION'))
+              console.info('❌ ERR :: Incorrect selected chain by client/user');
+            else
+              console.error(`💀 Unhandled :: ${ex}`);
+            //
+
+            return false;
+          }
+        ) as boolean
+      ;
+
+      if (response)
+      {
+        // [🐞]
+        // console.log('EXITING!');
+        formErrorState.delete('Transaction_Error');
+        break;
+      }
+
+      await sleep(2500);
+
+      count++;
+
+      if (count > 10)
+      {
+        // [🐞]
+        // console.log('EXITING V2!');
+        formErrorState.add('Transaction_Error');
+        break;
+      }
+
+      continue;
+    }
+
+    // ╭─
+    // │ CHECK
+    // │ > For errors registered.
+    // ╰─
+    if (formErrorState.has('Transaction_Error'))
     {
       triggerInvestBox = false;
       stateWidget = 'Error';
+      formErrorState = new Set();
       return;
     }
 
-    // ▓ NOTE:
-    // ▓ > execute `.depositTokens(..)` on the target `SmartContract`.
+    // @ts-expect-error
+    ethersProvider = new ethers.providers.Web3Provider(modal.getWalletProvider());
+    signer = ethersProvider.getSigner();
+
+    // ╭─
+    // │ NOTE:
+    // │ > execute '.depositTokens(..)' on the target 'SmartContract'.
+    // ╰─
     await tryCatchAsync
     (
       async (
       ): Promise < void > =>
       {
+        // ▓ [🐞]
+        console.log('executing depositTokens()...');
+
         const
           contract = new ethers.Contract
           (
             betarenaBankContractAddress,
-            betarenaBankContractABI,
-            modal.getSigner()
+            polygonMainnet.betarenaBankContractAddress.abi as ContractInterface,
+            signer
           )
-          , transactionResponse: Transaction = await contract.depositToken(cryptoDepositOptionSelect.contractAddress, targetAmount);
-
+          , transactionResponse: Transaction = await contract.depositToken(cryptoDepositOptionSelect.contractAddress, targetAmount)
+        ;
 
         // ▓ [🐞]
         console.log('transactionResponse', transactionResponse);
@@ -781,7 +1270,7 @@
         ex: unknown
       ): void =>
       {
-        errors = true;
+        formErrorState.add('Transaction_Error');
 
         if (ex?.toString()?.includes('ERC20: transfer amount exceeds allowance'))
           // ▓ [🐞]
@@ -799,39 +1288,48 @@
       }
     );
 
-    // NOTE:
-    // > needed due occasional slow network/chain propagation.
-    await sleep(5000);
+    // ▓ NOTE:
+    // ▓ > needed due occasional slow network/chain propagation.
+    await sleep(3000);
 
     // ▓ CHECK
     // ▓ > for errors registered.
-    if (errors)
+    if (formErrorState.has('Transaction_Error'))
     {
       triggerInvestBox = false;
       stateWidget = 'Error';
+      formErrorState = new Set();
       return;
     }
 
-    // ▓ NOTE:
-    // ▓ > send data for completed user transaction to DB.
-    const txDepositData: B_H_TH
-    = {
-      uid: $userBetarenaSettings.user.firebase_user_data?.uid!
-      // date: new Date().toISOString(),
-      , wallet_address_erc20: walletAddress
-      , asset: cryptoDepositOptionSelect.name
-      , amount: depositAmount
-      , quantity: recieveAmount
-      , Gateway: 'cryptocurrency'
-      , description: 'Private Presale' // mapInvestorData.get('round')?.values.current_round
-      , type: 'deposit'
-      , bta_price: 1
-      , deposit_wallet_address:
-      {
-        type: 'Polygon'
-        , address: walletAddress
-      }
-    };
+    if (!uid) return;
+
+    const
+      /**
+       * @description
+       *  📣 send data for completed user transaction to DB.
+       */
+      txDepositData: PublicTransactionHistoryMain
+        = {
+          uid
+          , asset: cryptoDepositOptionSelect.name
+          , amount: recieveAmount
+          , quantity: (depositAmount ?? 0)
+          , Gateway: 'cryptocurrency'
+          , description: `${profileData?.presaleData.presale} presale`
+          , type: 'investment'
+          // @ts-expect-error
+          , bta_price: toDecimalFix(cryptoPrice * tierDiscountObject.btaPrice!, 3)
+          // @ts-expect-error
+          , tier: tierDiscountObject.name
+          , deposit_wallet_address:
+          {
+            type: 'Polygon'
+            , address: walletAddress
+          }
+          , referral: referredBy as string | undefined
+        }
+    ;
 
     // ▓ [🐞]
     console.debug
@@ -839,11 +1337,25 @@
       `🔹 [var] txDepositData ${JSON.stringify(txDepositData)}`
     );
 
-    await post
-    (
-      '/api/data/profile',
-      txDepositData
-    );
+    const
+      /**
+       * @description
+       *  📣 Response from `endpoint`.
+       */
+      result
+        = await postv2
+        (
+          '/api/data/profile'
+          , txDepositData
+        )
+    ;
+
+    // @ts-expect-error
+    if (result?.error)
+    {
+      $sessionStore.currentActiveModal = 'GeneralPlatform_Error';
+      return;
+    }
 
     triggerInvestBox = false;
     stateWidget = 'Completed';
@@ -864,34 +1376,39 @@
   (
   ): Promise < void >
   {
-    cryptoPrices = await get
-    (
-      '/api/coinmarketcap?tickers=USDT,USDC',
-      null,
-      true,
-      true
-    ) as ICoinMarketCapDataMain;
-
-    cryptoPrice = parseFloat(toDecimalFix(cryptoPrices.data[cryptoDepositOptionSelect.name].quote.USD.price, 3, true, false)) ?? 0;
-
-    interval1 = setInterval
-    (
-      async (
-      ): Promise < void > =>
-      {
-        cryptoPrices = await get
+    if (dev)
+    {
+      // @ts-expect-error
+      cryptoPrices
+        = await get
         (
           '/api/coinmarketcap?tickers=USDT,USDC',
           null,
           true,
           true
-        ) as ICoinMarketCapDataMain;
+        )
+      ;
 
-        cryptoPrice = parseFloat(toDecimalFix(cryptoPrices.data[cryptoDepositOptionSelect.name].quote.USD.price, 3, true, false)) ?? 0;
-      }
-      ,
-      30000
-    );
+      cryptoPrice
+        = parseFloat
+        (
+          toDecimalFix
+          (
+            // @ts-expect-error
+            cryptoPrices?.data[cryptoDepositOptionSelect.name].quote.USD.price
+            , 3
+            , true
+            , false
+          )
+        )
+      ;
+
+      if (isNaN(cryptoPrice)) cryptoPrice = 1.00;
+    }
+
+
+    // [🐞]
+    // cryptoPrice = 0.999
 
     return;
   }
@@ -911,125 +1428,44 @@
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  /**
-   * @description TODO:
-  */
   $:
   if (browser && deepReactListenSignerChange && triggerInvestBox)
   {
-    // ### [🐞]
-    dlogv2
-    (
-      '🚏 checkpoint [R] ➤ src/lib/components/page/profile/investor/Main-InvestBox.svelte if_R_X20',
-      [
-        `🔹 [var] ➤ deepReactListenSignerChange ${deepReactListenSignerChange}`
-        , `🔹 [var] ➤ triggerInvestBox ${triggerInvestBox}`
-      ],
-      true
-    );
-
+    _DEBUG_('Option1');
     executeContract();
   }
 
-  /**
-   * @description TODO:
-  */
   $:
-  if (depositAmount >= 100000)
-  {
-    tierDiscountObject.name = 'Platinum';
-    tierDiscountObject.icon = icon_platinum;
-    tierDiscountObject.discount = 50;
-  }
-  else if (depositAmount >= 50000)
-  {
-    tierDiscountObject.name = 'Gold';
-    tierDiscountObject.icon = icon_gold;
-    tierDiscountObject.discount = 40;
-  }
-  else if (depositAmount >= 20000)
-  {
-    tierDiscountObject.name = 'Silver';
-    tierDiscountObject.icon = icon_silver;
-    tierDiscountObject.discount = 30;
-  }
-  else if (depositAmount >= 2500)
-  {
-    tierDiscountObject.name = 'Bronze';
-    tierDiscountObject.icon = icon_bronze;
-    tierDiscountObject.discount = 20;
-  }
-  else if (depositAmount < 2500)
-  {
-    tierDiscountObject.name = undefined;
-    tierDiscountObject.icon = undefined;
-    tierDiscountObject.discount = 0;
-  }
+  recalculateReceive((depositAmount ?? 0), cryptoPrice);
 
-  /**
-   * @description TODO:
-  */
   $:
+  if (tokenSearch)
   {
-    // ▓ NOTE:
-    // ▓ > relation between (1) deposit, (2) exchange price, (3) discount to obtain recieveAmount.
-    recieveAmount = parseFloat(toDecimalFix(depositAmount / (cryptoPrice * (1 - (tierDiscountObject.discount / 100))), 2));
-  }
-
-  /**
-   * @description TODO:
-  */
-  $: if (tokenSearch)
-  {
-    // ### [🐞]
-    dlogv2
-    (
-      '🚏 checkpoint [R] ➤ if_R_X2234',
-      [
-        `🔹 [var] ➤ tokenSearch ${tokenSearch}`
-      ],
-      true
-    );
-
+    _DEBUG_('Option2');
     searchToken();
   }
   else if (tokenSearch == '' || tokenSearch == undefined)
+  {
+    _DEBUG_('Option2');
     cryptoDepositOptionsSearch = passByValue(cryptoDepositOptions);
-
-  $: if (isNaN(cryptoPrice)) cryptoPrice = 1.00;
+  }
 
   $:
   if (deepReactListenDepositOptionChange && deepReactListenSignerChange)
   {
-    // ### [🐞]
-    dlogv2
-    (
-      '🚏 checkpoint [R] ➤ src/lib/components/page/profile/investor/Main-InvestBox.svelte IF_X_212',
-      [
-        `🔹 [var] ➤ deepReactListenDepositOptionChange ${deepReactListenDepositOptionChange}`
-        ,`🔹 [var] ➤ deepReactListenSignerChange ${deepReactListenSignerChange}`
-      ],
-      true
-    );
-
+    _DEBUG_('Option3');
     getTokenBalance();
   }
 
   $:
   if (!deepReactListenSignerChange)
   {
-    // ### [🐞]
-    dlogv2
-    (
-      '🚏 checkpoint [R] ➤ src/lib/components/page/profile/investor/Main-InvestBox.svelte IF_X_212 [E]',
-      [
-        `🔹 [var] ➤ deepReactListenSignerChange ${deepReactListenSignerChange}`
-      ],
-      true
-    );
-
+    _DEBUG_('Option3');
     cryptoDepositOptionSelect.userBalance = 0;
   }
+
+  $:
+  ({ currentActiveModal } = $sessionStore);
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
@@ -1048,8 +1484,19 @@
     ) =>
     {
       getCryptoPrices();
+      interval1 = setInterval
+      (
+        async (
+        ): Promise < void > =>
+        {
+          getCryptoPrices();
+        }
+        ,
+        30000
+      );
       addEventListeners();
       resizeAction();
+      return;
     }
   );
 
@@ -1062,6 +1509,8 @@
 
       for (const unsubscribe of modalUnsubscribe)
         unsubscribe();
+
+      return;
     }
   );
 
@@ -1073,28 +1522,38 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component HTML                                                            │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - use 'Ctrl+Space' to autocomplete global class=styles                           │
-│ - access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.     │
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<ModalTermsAndConditions />
+{#if currentActiveModal == 'ProfileInvestor_Terms&Cond_Modal'}
+  <ModalTermsAndConditions />
+{/if}
 
-{#if stateWidget}
+{#if currentActiveModal == 'ProfileInvestor_TxState_Modal'}
   <ModalTxState
     {stateWidget}
-    on:closeDropdown={() => {return stateWidget = null}}
-    on:closeDropdown={() => {return $sessionStore.showDepositModalState = false}}
+    minimumAmount={(profileData?.presaleData.data?.min_buy ?? 2500)}
   />
 {/if}
 
 <div
   id={CNAME}
-  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+  class:dark-background-1={theme == 'Dark'}
 >
   <form
     id='invest-form'
-    on:submit|preventDefault={() => {return executeDeposit()}}
+    on:submit|preventDefault=
+    {
+      () =>
+      {
+        executeDeposit();
+        return;
+      }
+    }
   >
 
     <!--
@@ -1114,6 +1573,10 @@
         "
         row-space-out
         "
+        style=
+        "
+        align-items: flex-start
+        "
       >
 
         <!--
@@ -1129,7 +1592,7 @@
           "
         >
           {
-            profileTrs.investor?.invest_box.widget_title
+            profileTrs?.investor?.invest_box.widget_title
             ?? 'Invest Box'
           }
         </p>
@@ -1138,46 +1601,48 @@
         ▓ NOTE:
         ▓ > Connect Wallet.
         -->
-        <button
-          type="button"
-          class=
-          "
-          btn-dark
-          w-500
-          row-space-start
-          width-auto
-          "
-          on:click={() => {return connectWallet()}}
-        >
-          <p
+        {#if roundStateWidget == 'Round_CountdownToFinish'}
+          <button
+            type="button"
             class=
             "
-            s-14
-            color-black-2
-            m-r-6
+            btn-dark
+            w-500
+            row-space-start
+            width-auto
             "
+            on:click={() => {return connectWallet()}}
           >
-            {
-              shortenWeb3WalletAddress(walletAddress ?? '')
-              ?? (
-                profileTrs.investor?.invest_box.connect_wallet
-                ?? 'Connect your wallet'
-              )
-            }
-          </p>
+            <p
+              class=
+              "
+              s-14
+              color-black-2
+              m-r-6
+              "
+            >
+              {
+                shortenWeb3WalletAddress(walletAddress ?? '')
+                ?? (
+                  profileTrs?.investor?.invest_box.connect_wallet
+                  ?? 'Connect your wallet'
+                )
+              }
+            </p>
 
-          {#if !walletAddress}
-            <img
-              id=''
-              src={$userBetarenaSettings.theme == 'Dark' ? icon_arrow_right_dark : icon_arrow_right}
-              alt=''
-              title=''
-              loading='lazy'
-              width=16
-              height=16
-            />
-          {/if}
-        </button>
+            {#if !walletAddress}
+              <img
+                id=''
+                src={theme == 'Dark' ? icon_arrow_right_dark : icon_arrow_right}
+                alt=''
+                title=''
+                loading='lazy'
+                width=16
+                height=16
+              />
+            {/if}
+          </button>
+        {/if}
 
       </div>
 
@@ -1195,7 +1660,7 @@
         "
       >
         {
-          profileTrs.investor?.invest_box.options.title
+          profileTrs?.investor?.invest_box.options.title
           ?? 'Investment options'
         }
       </p>
@@ -1204,52 +1669,19 @@
       ▓ NOTE:
       ▓ > Deposit Method.
       -->
-      <div
-        class=
-        "
-        m-t-20
-        row-space-out
-        "
-      >
-
-        <!--
-        ▓ NOTE:
-        ▓ > Crypto Deposit OPTION.
-        -->
-        <button
-          type="button"
+      {#if roundStateWidget == 'Round_CountdownToFinish'}
+        <div
+          id="deposit-method"
           class=
           "
-          btn-hollow
-            v4
-            v3d
-          width-100
-          color-black-2
-          m-r-12
-          w-500
-          s-14
+          m-t-20
           "
-          class:btn-active={selectDepositOption == 'crypto'}
-          on:click={() => {return selectDepositOption = 'crypto'}}
         >
-          {
-            profileTrs.investor?.invest_box.options.option_1
-            ?? 'Crypto'
-          }
-        </button>
 
-        <!--
-        ▓ NOTE:
-        ▓ > Fiat Deposit OPTION.
-        -->
-        <a
-          href="https://buy.stripe.com/7sIeWc72V8Hw33WbIM?client_reference_id=${$userBetarenaSettings.user.firebase_user_data?.uid}"
-          target="_blank"
-          class=
-          "
-          width-100
-          "
-        >
+          <!--
+          ▓ NOTE:
+          ▓ > Crypto Deposit OPTION.
+          -->
           <button
             type="button"
             class=
@@ -1259,20 +1691,74 @@
               v3d
             width-100
             color-black-2
+            m-r-12
             w-500
             s-14
             "
-            class:btn-active={selectDepositOption == 'fiat'}
-            on:click={() => {return selectDepositOption = 'fiat'}}
-          >
+            class:btn-active={selectDepositOption == 'crypto'}
+            on:click=
             {
-              profileTrs.investor?.invest_box.options.option_2
-              ?? 'Fiat'
+              () =>
+              {
+                selectDepositOption = 'crypto'
+                return;
+              }
             }
+          >
+            <TranslationText
+              key={'profile/investor/invest-box'}
+              text={profileTrs?.investor?.invest_box.options.option_1}
+              fallback={'Crypto'}
+            />
           </button>
-        </a>
 
-      </div>
+          <!--
+          ▓ NOTE:
+          ▓ > Fiat Deposit OPTION.
+          -->
+          <a
+            href=
+            {
+              !agreeTermsAndConditions
+                ? ''
+                : `https://buy.stripe.com/7sIeWc72V8Hw33WbIM?client_reference_id=${$userBetarenaSettings.user.firebase_user_data?.uid}`
+            }
+            target="_blank"
+            class=
+            "
+            width-100
+            "
+          >
+            <button
+              id="fiat"
+              type=
+              {
+                !agreeTermsAndConditions
+                  ? 'submit'
+                  : 'button'
+              }
+              class=
+              "
+              btn-hollow
+                v4
+                v3d
+              width-100
+              color-black-2
+              w-500
+              s-14
+              "
+              class:btn-active={selectDepositOption == 'fiat'}
+            >
+              <TranslationText
+                key={'profile/investor/invest-box'}
+                text={profileTrs?.investor?.invest_box.options.option_2}
+                fallback={'Fiat'}
+              />
+            </button>
+          </a>
+
+        </div>
+      {/if}
 
       <!--
       ▓ NOTE:
@@ -1343,10 +1829,17 @@
           color-grey
             grey-v1
           "
-          on:click={() => {return $sessionStore.showTermsAndConditions = true}}
+          on:click=
+          {
+            () =>
+            {
+              $sessionStore.currentActiveModal = 'ProfileInvestor_Terms&Cond_Modal';
+              return;
+            }
+          }
         >
           {
-            @html profileTrs.investor?.invest_box.terms
+            @html profileTrs?.investor?.invest_box.terms
             ?? 'I have read the terms and disclaimers.'
           }
         </p>
@@ -1363,26 +1856,270 @@
       id="middle-row"
     >
 
-      <!--
-      ▓ NOTE:
-      ▓ > Deposit Amount
-      -->
-      <div
-        class=
-        "
-        input-box
-        "
-      >
+      {#if roundStateWidget == 'Round_CountdownToFinish'}
 
         <!--
         ▓ NOTE:
-        ▓ > Deposit Amount BOX
+        ▓ > Deposit Amount
         -->
-        <div>
+        <div
+          class=
+          "
+          input-box
+          "
+        >
 
           <!--
           ▓ NOTE:
-          ▓ > Deposit amount TITLE.
+          ▓ > Deposit Amount BOX
+          -->
+          <div>
+
+            <!--
+            ▓ NOTE:
+            ▓ > Deposit amount TITLE.
+            -->
+            <p
+              class=
+              "
+              s-16
+              w-500
+              color-black-2
+              m-b-5
+              "
+            >
+              {
+                profileTrs?.investor?.invest_box.deposit_box.title
+                ?? 'Deposit Amount'
+              }
+            </p>
+
+            <!--
+            ▓ NOTE:
+            ▓ > Deposit amount initial.
+            -->
+            <p
+              class=
+              "
+              s-12
+              color-grey
+                dark-v1
+              "
+            >
+              {
+                profileTrs?.investor?.invest_box.deposit_box.subtitle_1
+                ?? 'First Minimum Deposit'
+              }
+              <span
+                class=
+                "
+                color-black-2
+                w-500
+                "
+              >
+                {
+                  profileData?.presaleData.data?.min_buy
+                  ?? 1
+                }
+              </span>
+              /
+              {
+                profileTrs?.investor?.invest_box.deposit_box.subtitle_2
+                ?? 'Deposit'
+              }
+              <span
+                class=
+                "
+                color-black-2
+                w-500
+                "
+              >
+                {
+                  profileData?.presaleData.data?.max
+                  ?? 2500
+                } USD
+              </span>
+            </p>
+
+          </div>
+
+          <!--
+          ▓ NOTE:
+          ▓ > Deposit Box.
+          -->
+          <div
+            class=
+            "
+            row-space-out
+            "
+          >
+
+            <!--
+            ▓ NOTE:
+            ▓ > Deposit Box.
+            -->
+            <div>
+
+              <!--
+              ▓ NOTE:
+              ▓ > Deposit amount INPUT.
+              -->
+              <input
+                type="number"
+                inputmode="decimal"
+                step="0.01"
+                placeholder=0
+                class=
+                "
+                s-20
+                color-black-2
+                amount-input
+                w-500
+                "
+                required
+                bind:value={depositAmount}
+              />
+
+              <!--
+              ▓ NOTE:
+              ▓ > Conversion Rate.
+              -->
+              <p
+                class=
+                "
+                s-12
+                {
+                  formErrorState.has('First_Minimum_Deposit_Not_Reached')
+                    ? 'color-red-bright'
+                    : 'color-grey dark-v1'
+                }
+                m-t-5
+                "
+              >
+                <!-- ▓ [🐞] -->
+                <!-- {console.log(cryptoPrices?.data?.['USDC']?.quote?.USD?.price)} -->
+                {depositAmount ?? 0} {cryptoDepositOptionSelect.name} ≈ {(depositAmount ?? 0) * cryptoPrice} USD
+              </p>
+
+            </div>
+
+            <!--
+            ▓ NOTE:
+            ▓ > token box (parent)
+            -->
+            <div>
+
+              <!--
+              ▓ NOTE:
+              ▓ > Token.
+              -->
+              <div
+                class=
+                "
+                row-space-end
+                width-auto
+                cursor-pointer
+                m-b-5
+                "
+                on:click=
+                {
+                  () =>
+                  {
+                    $sessionStore.currentActiveModal = 'ProfileInvestor_SelectCrypto_Modal';
+                    return;
+                  }
+                }
+              >
+
+                <!--
+                ▓ NOTE:
+                ▓ > Token Asset Icon.
+                -->
+                <img
+                  id=''
+                  src={cryptoDepositOptionSelect.icon}
+                  alt={cryptoDepositOptionSelect.name}
+                  title={cryptoDepositOptionSelect.name}
+                  loading='lazy'
+                  width=20
+                  height=20
+                  class=
+                  "
+                  m-r-6
+                  "
+                />
+
+                <!--
+                ▓ NOTE:
+                ▓ > Token Asset Name.
+                -->
+                <p
+                  class=
+                  "
+                  s-15
+                  w-500
+                  color-black-2
+                  m-r-6
+                  "
+                >
+                  {cryptoDepositOptionSelect.name}
+                </p>
+
+                <img
+                  id=''
+                  src={theme == 'Dark' ? icon_arrow_down_dark : icon_arrow_down}
+                  alt=''
+                  title=''
+                  loading='lazy'
+                  width=16
+                  height=16
+                />
+
+              </div>
+
+              <!--
+              ▓ NOTE:
+              ▓ > Token User Balance.
+              -->
+              <p
+                class=
+                "
+                s-12
+                color-black-2
+                "
+              >
+
+                {
+                  profileTrs?.investor?.invest_box.balance
+                  ?? 'Balance'
+                }
+                :
+                {
+                  toDecimalFix(cryptoDepositOptionSelect.userBalance)
+                  ?? 0
+                }
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <!--
+        ▓ NOTE:
+        ▓ > Recieve Amount
+        -->
+        <div
+          class=
+          "
+          input-box
+          "
+        >
+
+          <!--
+          ▓ NOTE:
+          ▓ > Recieve amount TITLE.
           -->
           <p
             class=
@@ -1394,146 +2131,86 @@
             "
           >
             {
-              profileTrs.investor?.invest_box.deposit_box.title
-              ?? 'Deposit Amount'
+              profileTrs?.investor?.invest_box.receive_box.title
+              ?? 'You will recieve'
             }
           </p>
 
           <!--
           ▓ NOTE:
-          ▓ > Deposit amount initial.
+          ▓ > Recieve Box.
           -->
-          <p
+          <div
             class=
             "
-            s-12
-            color-grey
-              dark-v1
+            row-space-out
             "
           >
-            {
-              profileTrs.investor?.invest_box.deposit_box.subtitle_1
-              ?? 'First Minimum Deposit'
-            }
-            <span
-              class=
-              "
-              color-black-2
-              w-500
-              "
-            >
-              <!-- {
-              profileTrs.investor?.invest_box.values.min
-                ?? '∞'
-              } USD -->
-            </span>
-            /
-            {
-              profileTrs.investor?.invest_box.deposit_box.subtitle_2
-              ?? 'Deposit'
-            }
-            <span
-              class=
-              "
-              color-black-2
-              w-500
-              "
-            >
-              <!-- {
-                mapInvestorData.get('invest_box')?.values.max
-                ?? '∞'
-              } -->
-            </span>
-          </p>
-
-        </div>
-
-        <!--
-        ▓ NOTE:
-        ▓ > Deposit Box.
-        -->
-        <div
-          class=
-          "
-          row-space-out
-          "
-        >
-
-          <!--
-          ▓ NOTE:
-          ▓ > Deposit Box.
-          -->
-          <div>
 
             <!--
             ▓ NOTE:
-            ▓ > Deposit amount INPUT.
-            -->
-            <input
-              type="number"
-              step="0.01"
-              placeholder=0
-              class=
-              "
-              s-20
-              color-black-2
-              amount-input
-              w-500
-              "
-              required
-              bind:value={depositAmount}
-            />
-
-            <!--
-            ▓ NOTE:
-            ▓ > Conversion Rate.
-            -->
-            <p
-              class=
-              "
-              s-12
-              color-grey
-                dark-v1
-              m-t-5
-              "
-            >
-              <!-- ▓ [🐞] -->
-              <!-- {console.log(cryptoPrices?.data?.['USDC']?.quote?.USD?.price)} -->
-              {depositAmount ?? 0} {cryptoDepositOptionSelect.name} ≈ {cryptoPrice} USD
-            </p>
-
-          </div>
-
-          <!--
-          ▓ NOTE:
-          ▓ > token box (parent)
-          -->
-          <div>
-
-            <!--
-            ▓ NOTE:
-            ▓ > Token.
+            ▓ > Recieve amount BOX.
             -->
             <div
-              class=
-              "
-              row-space-end
-              width-auto
-              cursor-pointer
-              m-b-5
-              "
-              on:click={() => {return modalSelectCryptoOption = true}}
             >
 
               <!--
               ▓ NOTE:
-              ▓ > Token Asset Icon.
+              ▓ > Recieve amount INPUT.
+              -->
+              <input
+                type="number"
+                step="any"
+                placeholder=0
+                class=
+                "
+                s-20
+                amount-input
+                color-black-2
+                w-500
+                "
+                required
+                bind:value={recieveAmount}
+              />
+
+              <!--
+              ▓ NOTE:
+              ▓ > Conversion Rate.
+              -->
+              <p
+                class=
+                "
+                s-12
+                color-grey
+                  dark-v1
+                m-t-5
+                "
+              >
+                {toDecimalFix(cryptoPrice * (tierDiscountObject.btaPrice ?? 1), 3)} {cryptoDepositOptionSelect.name} ≈ 1.00 BTA
+              </p>
+
+            </div>
+
+            <!--
+            ▓ NOTE:
+            ▓ > BTA Token.
+            -->
+            <div
+              class=
+              "
+              row-space-start
+              width-auto
+              "
+            >
+              <!--
+              ▓ NOTE:
+              ▓ > BTA Asset.
               -->
               <img
                 id=''
-                src={cryptoDepositOptionSelect.icon}
-                alt={cryptoDepositOptionSelect.name}
-                title={cryptoDepositOptionSelect.name}
+                src={icon_bta_token}
+                alt=''
+                title=''
                 loading='lazy'
                 width=20
                 height=20
@@ -1545,7 +2222,7 @@
 
               <!--
               ▓ NOTE:
-              ▓ > Token Asset Name.
+              ▓ > BTA Token NAME.
               -->
               <p
                 class=
@@ -1553,187 +2230,18 @@
                 s-15
                 w-500
                 color-black-2
-                m-r-6
                 "
               >
-                {cryptoDepositOptionSelect.name}
+                BTA
               </p>
-
-              <img
-                id=''
-                src={$userBetarenaSettings.theme == 'Dark' ? icon_arrow_down_dark : icon_arrow_down}
-                alt=''
-                title=''
-                loading='lazy'
-                width=16
-                height=16
-              />
 
             </div>
 
-            <!--
-            ▓ NOTE:
-            ▓ > Token User Balance.
-            -->
-            <p
-              class=
-              "
-              s-12
-              color-black-2
-              "
-            >
-
-              {
-                profileTrs.investor?.invest_box.balance
-                ?? 'Balance'
-              }
-              :
-              {
-                toDecimalFix(cryptoDepositOptionSelect.userBalance)
-                ?? 0
-              }
-            </p>
-
           </div>
 
         </div>
 
-      </div>
-
-      <!--
-      ▓ NOTE:
-      ▓ > Recieve Amount
-      -->
-      <div
-        class=
-        "
-        input-box
-        "
-      >
-
-        <!--
-        ▓ NOTE:
-        ▓ > Recieve amount TITLE.
-        -->
-        <p
-          class=
-          "
-          s-16
-          w-500
-          color-black-2
-          m-b-5
-          "
-        >
-          {
-            profileTrs.investor?.invest_box.receive_box.title
-            ?? 'You will recieve'
-          }
-        </p>
-
-        <!--
-        ▓ NOTE:
-        ▓ > Recieve Box.
-        -->
-        <div
-          class=
-          "
-          row-space-out
-          "
-        >
-
-          <!--
-          ▓ NOTE:
-          ▓ > Recieve amount BOX.
-          -->
-          <div
-          >
-
-            <!--
-            ▓ NOTE:
-            ▓ > Recieve amount INPUT.
-            -->
-            <input
-              type="number"
-              step="any"
-              placeholder=0
-              class=
-              "
-              s-20
-              amount-input
-              color-black-2
-              w-500
-              "
-              required
-              bind:value={recieveAmount}
-            />
-
-            <!--
-            ▓ NOTE:
-            ▓ > Conversion Rate.
-            -->
-            <p
-              class=
-              "
-              s-12
-              color-grey
-                dark-v1
-              m-t-5
-              "
-            >
-              {toDecimalFix(1 - (tierDiscountObject.discount / 100))} {cryptoDepositOptionSelect.name} ≈ 1.00 BTA
-            </p>
-
-          </div>
-
-          <!--
-          ▓ NOTE:
-          ▓ > BTA Token.
-          -->
-          <div
-            class=
-            "
-            row-space-start
-            width-auto
-            "
-          >
-            <!--
-            ▓ NOTE:
-            ▓ > BTA Asset.
-            -->
-            <img
-              id=''
-              src={icon_bta_token}
-              alt=''
-              title=''
-              loading='lazy'
-              width=20
-              height=20
-              class=
-              "
-              m-r-6
-              "
-            />
-
-            <!--
-            ▓ NOTE:
-            ▓ > BTA Token NAME.
-            -->
-            <p
-              class=
-              "
-              s-15
-              w-500
-              color-black-2
-              "
-            >
-              BTA
-            </p>
-
-          </div>
-
-        </div>
-
-      </div>
+      {/if}
 
       <!--
       ▓ NOTE:
@@ -1766,7 +2274,7 @@
             "
           >
             {
-              profileTrs.investor?.invest_box.tier_title
+              profileTrs?.investor?.invest_box.tier_title
               ?? 'Current Tier Discount'
             }
           </p>
@@ -1823,6 +2331,7 @@
                 s-16
                 w-500
                 color-black-2
+                capitalize
                 "
               >
                 {tierDiscountObject.name}
@@ -1863,15 +2372,25 @@
         btn-primary-v2
           btn-shadow-1
         width-100
-        m-t-15
         w-500
         s-14
         "
+        disabled={roundStateWidget != 'Round_CountdownToFinish'}
+        on:click={() => { return setupFormRequiredListener() }}
       >
-        {
-          profileTrs.investor?.invest_box.cta
-          ?? 'Buy BTA'
-        }
+        {#if roundStateWidget == 'Round_CountdownToFinish'}
+          <TranslationText
+            key={'profile/investor/invest-box'}
+            text={profileTrs?.investor?.invest_box.cta}
+            fallback={'Buy BTA'}
+          />
+        {:else}
+          <TranslationText
+            key={'profile/investor/invest-box'}
+            text={profileTrs?.investor?.round.details.end_message}
+            fallback={'Sale ended'}
+          />
+        {/if}
       </button>
 
     </div>
@@ -1880,16 +2399,21 @@
     ▓ NOTE:
     ▓ > Cryptocurrency Deposit Option Select (Outer)
     -->
-    {#if modalSelectCryptoOption}
+    {#if currentActiveModal == 'ProfileInvestor_SelectCrypto_Modal'}
 
       <!--
       ▓ NOTE:
-      ▓ > Cryptocurrency Background
+      ▓ > Generic Modal Background
       -->
-      <div
-        id="modal-bg-blur"
-        in:fade
-        on:click={() => {return modalSelectCryptoOption = false}}
+      <ModalBackdrop
+        on:closeModal=
+        {
+          () =>
+          {
+            $sessionStore.currentActiveModal = null;
+            return;
+          }
+        }
       />
 
       <!--
@@ -1923,7 +2447,11 @@
             m-b-20
             "
           >
-            {'Select Crypto Currency'}
+            <!-- TRS -->
+            {
+              profileTrs?.investor?.invest_box.crypto_selection
+              ?? 'Fiat'
+            }
           </p>
 
           <!--
@@ -1938,7 +2466,14 @@
             "
             cursor-pointer
             "
-            on:click={() => {return modalSelectCryptoOption = false}}
+            on:click=
+            {
+              () =>
+              {
+                $sessionStore.currentActiveModal = null;
+                return;
+              }
+            }
             width=14
             height=14
           />
@@ -1947,18 +2482,20 @@
           ▓ NOTE:
           ▓ > Execute Deposit Button
           -->
-          <input
-            id="token-search"
-            placeholder="Search"
-            type="text"
-            class=
-            "
-            s-14
-            color-black-2
-            "
-            required
-            bind:value={tokenSearch}
-          />
+          {#if false}
+            <input
+              id="token-search"
+              placeholder="Search"
+              type="text"
+              class=
+              "
+              s-14
+              color-black-2
+              "
+              required
+              bind:value={tokenSearch}
+            />
+          {/if}
 
         </div>
 
@@ -1988,7 +2525,14 @@
               align-items: flex-start;
               "
               on:click={() => {return cryptoDepositOptionSelect = item}}
-              on:click={() => {return modalSelectCryptoOption = false}}
+              on:click=
+              {
+                () =>
+                {
+                  $sessionStore.currentActiveModal = null;
+                  return;
+                }
+              }
             >
 
               <!--
@@ -2056,14 +2600,13 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component CSS/SCSS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE  │
-│ - access custom Betarena Scores CSS VScode Snippets by typing 'style...'         │
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <style lang="scss">
-
-  @import '../../../../../../static/app.scss';
 
   div#profile⮕w⮕investbox⮕main
   {
@@ -2089,15 +2632,23 @@
         box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
         /* z-index: 10; */
 
+        div#deposit-method
+        {
+          /* 🎨 style */
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 12px;
+        }
+
         :global
         {
           span.x0001
           {
             /* 🎨 style */
-            @extend .w-500 !optional;
-            @extend .color-black-2 !optional;
-            @extend .underline !optional;
-            @extend .cursor-pointer !optional;
+            font-weight: 500;
+            text-decoration: underline;
+            cursor: pointer;
+            color: var(--dark-theme);
           }
         }
       }
@@ -2120,7 +2671,7 @@
       {
         /* 🎨 style */
         padding: 20px;
-        padding-bottom: 32px;
+        padding-bottom: 20px;
         background: var(--white);
         display: grid;
         gap: 12px;
@@ -2145,6 +2696,7 @@
           max-height: 104px;
           padding: 20px;
           background-color: var(--whitev2);
+          margin-bottom: 12px;
         }
 
         input[type=number]
@@ -2182,20 +2734,6 @@
         z-index: 400000002;
       }
 
-      div#modal-bg-blur
-      {
-        /* 📌 position */
-        position: absolute;
-        top: 0;
-        right: 0;
-        left: 0;
-        z-index: 0;
-        /* 🎨 style */
-        height: 100%;
-        width: 100%;
-        background: rgba(0, 0, 0, 0.5);
-      }
-
       div#select-crypto
       {
         /* 📌 position */
@@ -2203,6 +2741,7 @@
         bottom: 0;
         right: 0;
         left: 0;
+        z-index: 100000;
         /* 🎨 style */
         border-radius: 12px;
         background: var(--white);
@@ -2280,6 +2819,21 @@
     }
   }
 
+  :global
+  {
+    body:has(w3m-modal)
+    {
+      /* 🎨 style */
+      overflow: unset;
+
+      html &
+      {
+        /* 🎨 style */
+        overflow: unset;
+      }
+    }
+  }
+
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
   │ ⚡️ RESPONSIVNESS                                                              │
@@ -2289,11 +2843,21 @@
   @media screen
   and (min-width: 575px)
   {
-    div#tier-box
+    div#profile⮕w⮕investbox⮕main
     {
-      /* 🎨 style */
-      min-height: 64px !important;
-      max-height: 64px !important;
+      div#middle-row
+      {
+        /* 🎨 style */
+        padding-bottom: 32px;
+
+        div#tier-box
+        {
+          /* 🎨 style */
+          min-height: 64px !important;
+          max-height: 64px !important;
+          margin-bottom: 22px;
+        }
+      }
     }
   }
 
@@ -2331,6 +2895,15 @@
     {
       /* 🎨 style */
       background-color: var(--dark-theme-1);
+
+      :global
+      {
+        span.x0001
+        {
+          /* 🎨 style */
+          color: var(--white);
+        }
+      }
     }
 
     &.dark-background-1 div#middle-row

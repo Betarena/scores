@@ -460,7 +460,7 @@
                   "
                   s-14
                   w-500
-                  color-black
+                  color-black-2
                   "
                 >
                   {item.league_name ?? ''}
@@ -570,7 +570,7 @@
                   "
                   s-14
                   w-500
-                  color-black
+                  color-black-2
                   "
                 >
                   {leagueListCountryMap.get(countryId)?.country_name ?? ''}
@@ -602,7 +602,7 @@
                         "
                         s-14
                         w-500
-                        color-black
+                        color-black-2
                         "
                       >
                         {league?.league_name ?? ''}
@@ -661,7 +661,7 @@
           "
           search-title
           w-500
-          color-black
+          color-black-2
           s-14
           m-b-5
           "
@@ -727,7 +727,7 @@
                     "
                     s-14
                     w-500
-                    color-black
+                    color-black-2
                     "
                   >
                     {item?.league_name ?? ''}
@@ -776,7 +776,7 @@
           "
           search-title
           w-500
-          color-black
+          color-black-2
           s-14
           m-b-5
           "
@@ -835,7 +835,7 @@
                   "
                   s-14
                   w-500
-                  color-black
+                  color-black-2
                   "
                 >
                   {item?.country_name ?? ''}
@@ -866,7 +866,7 @@
                         "
                         s-14
                         w-500
-                        color-black
+                        color-black-2
                         "
                       >
                         {league?.league_name}

@@ -1,9 +1,18 @@
 <!--
-╭──────────────────────────────────────────────────────────────────────────────╮
-│ COMPONENT JS (w/ TS)                                                         │
-│ NOTE:                                                                        │
-│ access custom Betarena Scores JS VScode Snippets by typing 'script...'       │
-╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ Svelte Component JS/TS                                                           │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
+╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <script lang="ts">
@@ -24,11 +33,10 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { page } from '$app/stores';
-  import { onMount } from 'svelte';
 
 	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { viewport_change } from '$lib/utils/platform-functions.js';
 
+  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
   import FaqChildRow from './FAQ-Child-Row.svelte';
 
   import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
@@ -49,77 +57,48 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  const
-    /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
-    CNAME: string = 'profile⮕w⮕investfaq⮕main'
-    /** @description 📣 threshold start + state for 📱 MOBILE */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
-    /** @description 📣 threshold start + state for 💻 TABLET */
-    // eslint-disable-next-line no-unused-vars
+  export let
+    /**
+     * @description
+     *  📣 threshold start + state for 📱 MOBILE
+     */ // eslint-disable-next-line no-unused-vars
+    VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
+    /**
+     * @description
+     *  📣 threshold start + state for 💻 TABLET
+     */ // eslint-disable-next-line no-unused-vars
     , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
-  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
+  const
+    /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */ // eslint-disable-next-line no-unused-vars
+    CNAME: string = 'profile⮕w⮕investfaq⮕main'
+  ;
+
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
+  $: ({ theme } = $userBetarenaSettings);
 
   // #endregion ➤ 📌 VARIABLES
-
-  // #region ➤ 🔄 LIFECYCLE [SVELTE]
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'logic' that should run            │
-  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
-  // │ as soon as 'this' .svelte file is ran.                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  onMount
-  (
-    () =>
-    {
-      [
-        VIEWPORT_TABLET_INIT[1],
-        VIEWPORT_MOBILE_INIT[1]
-      ] = viewport_change
-      (
-        VIEWPORT_TABLET_INIT[0],
-        VIEWPORT_MOBILE_INIT[0]
-      );
-      window.addEventListener
-      (
-        'resize',
-        function ()
-        {
-          [
-            VIEWPORT_TABLET_INIT[1],
-            VIEWPORT_MOBILE_INIT[1]
-          ] = viewport_change
-          (
-            VIEWPORT_TABLET_INIT[0],
-            VIEWPORT_MOBILE_INIT[0]
-          );
-        }
-      );
-    }
-  );
-
-  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
 </script>
 
 <!--
-╭──────────────────────────────────────────────────────────────────────────────╮
-│ COMPONENT HTML                                                               │
-│ NOTE:                                                                        │
-│ use 'CTRL+SPACE' to autocomplete global class="" styles                      │
-│ NOTE:                                                                        │
-│ access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.   │
-╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ Svelte Component HTML                                                            │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <div
   id={CNAME}
-  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+  class:dark-background-1={theme == 'Dark'}
 >
 
   <!--
@@ -143,10 +122,11 @@
       m-b-16
       "
     >
-      {
-        profileTrs.investor?.faq.title
-        ?? 'Frequently Asked Questions'
-      }
+      <TranslationText
+        key={`${CNAME}/title`}
+        text={profileTrs?.investor?.faq.title}
+        fallback={'Frequently Asked Questions'}
+      />
     </p>
 
     <!--
@@ -160,10 +140,11 @@
       color-grey
       "
     >
-      {
-        profileTrs.investor?.faq.sub_title
-        ?? 'Have questions? Find answers to the most commonly asked questions about the Betarena presale and referral program.'
-      }
+      <TranslationText
+        key={`${CNAME}/title`}
+        text={profileTrs?.investor?.faq.sub_title}
+        fallback={'Have questions? Find answers to the most commonly asked questions about the Betarena presale and referral program.'}
+      />
     </p>
 
   </div>
@@ -180,7 +161,7 @@
     "
   >
 
-    {#each profileTrs.investor?.faq.options ?? [] as item,i}
+    {#each profileTrs?.investor?.faq.options ?? [] as item,i}
 
       <FaqChildRow
         position={i}
@@ -231,10 +212,11 @@
         m-b-16
         "
       >
-        {
-          profileTrs.investor?.presale.title_information
-          ?? 'Need More Information?'
-        }
+        <TranslationText
+          key={`${CNAME}/title`}
+          text={profileTrs?.investor?.presale.title_information}
+          fallback={'Need More Information?'}
+        />
       </p>
 
       <!--
@@ -252,10 +234,11 @@
         {VIEWPORT_MOBILE_INIT[1] ? '' : 'max-width: 65%;'}
         "
       >
-        {
-          profileTrs.investor?.presale.description_information
-          ?? 'For a comprehensive understanding of the Betarena presale, please visit our Presale Page.'
-        }
+        <TranslationText
+          key={`${CNAME}/sub-title`}
+          text={profileTrs?.investor?.presale.description_information}
+          fallback={'For a comprehensive understanding of the Betarena presale, please visit our Presale Page.'}
+        />
       </p>
 
     </div>
@@ -272,12 +255,14 @@
         class=
         "
         btn-primary-v2
+          btn-shadow-1
         "
       >
-        {
-          profileTrs.investor?.presale.cta_presale
-          ?? 'Link to Presale'
-        }
+        <TranslationText
+          key={`${CNAME}/sub-title`}
+          text={profileTrs?.investor?.presale.cta_presale}
+          fallback={'Link to Presale'}
+        />
       </button>
     </a>
 
@@ -286,13 +271,13 @@
 </div>
 
 <!--
-╭──────────────────────────────────────────────────────────────────────────────╮
-│ COMPONENT STYLE                                                              │
-│ NOTE:                                                                        │
-│ auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE│
-│ NOTE:                                                                        │
-│ access custom Betarena Scores CSS VScode Snippets by typing 'style...'       │
-╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ Svelte Component CSS/SCSS                                                        │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
+╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <style lang="scss">
@@ -330,7 +315,7 @@
             margin-left: 120px;
           }
 
-          p.faq-description
+          div.faq-description
           {
             /* 🎨 style */
             margin-left: 138px;
@@ -355,7 +340,7 @@
       {
         div.profile⮕w⮕investfaq⮕child⮕row
         {
-          p.faq-description
+          div.faq-description
           {
             /* 🎨 style */
             max-width: 65%;

@@ -54,7 +54,7 @@ export async function GET
 
       const cryptoPrices = await get
       (
-        'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=USDT,USDC&CMC_PRO_API_KEY=af3ceee8-f47b-4dba-80f1-242f5aa1156c'
+        'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=USDT,USDC&CMC_PRO_API_KEY=e30a9340-0e5a-401f-8cc1-4f8c08da6466'
       ) as ICoinMarketCapDataMain;
 
       if (cryptoPrices != null)

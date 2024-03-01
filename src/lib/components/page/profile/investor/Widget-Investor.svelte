@@ -25,11 +25,11 @@
 
 	import { page } from '$app/stores';
 	import { get } from '$lib/api/utils.js';
-	import { viewport_change } from '$lib/utils/platform-functions';
+	import { sleep, viewport_change } from '$lib/utils/platform-functions';
 	import { onMount } from 'svelte';
 
-	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { sleep } from '$lib/utils/platform-functions.js';
+  import userBetarenaSettings from '$lib/store/user-settings.js';
+  import { scoresProfileInvestorStore } from './_store.js';
 
 	import WidgetTxHistLoader from './../competitions-history/Widget-Comp-Hist-Loader.svelte';
 	import MainFaq from './FAQ-Main.svelte';
@@ -37,6 +37,7 @@
 	import TgeMain from './Investment.TGE.Main.svelte';
 	import MainVestingPeriods from './Investment.VestingPeriods.Main.svelte';
 	import MainWalletsInvestor from './Investment.Wallets.Main.svelte';
+	import LaunchpadWallets from './Launchpad-Wallets.svelte';
 	import TierPricing from './Launchpad.TierPricing.Main.svelte';
 	import MainInvestBox from './Main-InvestBox.svelte';
 	import MainInvestorTitle from './Main-Investor-Title.svelte';
@@ -47,7 +48,6 @@
 	import ReferralsSteps from './Referrals.Steps.Main.svelte';
 
 	import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
-	import LaunchpadWallets from './Launchpad-Wallets.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -96,6 +96,8 @@
   // $: widgetDataTranslation = $page.data?.B_COMP_MAIN_T;
   // $: widgetDataSeo = $page.data?.B_COMP_MAIN_S;
   // $: WIDGET_TITLE = widgetDataTranslation?.translations?.widget_title ?? translationObject?.featured_bet_site;
+
+  $: ({ theme } = $userBetarenaSettings);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -150,11 +152,11 @@
   (
   ): Promise < IProfileData | null >
   {
-    await sleep(3000);
-
-    const response: IProfileData = await get
+    const response = await get
     (
       `/api/data/profile?uid=${$userBetarenaSettings.user.firebase_user_data?.uid}`
+      // '/api/data/profile?uid=0x1510ea733e1e81f9bcfcc4eabb5a2226d1a9f9ea18da9aea119ba28b8ed6be81'
+      // '/api/data/profile?uid=Z4ebLuAuDqdOu4Wt6z6EfVn35js2'
     ) as IProfileData;
 
     widgetDataMain = response
@@ -170,6 +172,24 @@
     }
 
     widgetNoData = false;
+
+    // IMPORTANT
+    scoresProfileInvestorStore.assignMainSectionState
+    (
+      {
+        investmentCount: $userBetarenaSettings.user.scores_user_data?.investor_balance?.grand_total ?? 0
+        , presaleName: widgetDataMain.presaleData.presale
+        , activePresaleStartDate: widgetDataMain.presaleData.data?.start_date
+        , activePresaleEndDate: widgetDataMain.presaleData.data?.end_date
+        , publicEndDate: widgetDataMain.presaleData.data?.end_date
+        , tgeAvailableDate: widgetDataMain.investorData?.data?.tge.available_date
+        , tgeStatus: widgetDataMain.investorData?.data?.tge.status
+        , transactionHistory: widgetDataMain.tx_hist
+      }
+    );
+
+    await sleep(1000);
+
     return widgetDataMain;
   }
 
@@ -201,7 +221,10 @@
 <svelte:window
   on:resize=
   {
-    () => {return resizeCustom()}
+    () =>
+    {
+      return resizeCustom();
+    }
   }
 />
 
@@ -225,6 +248,7 @@
 
   <div
     id="investor-grid-box"
+    class:dark-background-1={theme == 'Dark'}
   >
 
     <!--
@@ -238,14 +262,15 @@
 
       <MainRound
         WIDGET_DATA={data}
+        {VIEWPORT_MOBILE_INIT}
+        {VIEWPORT_TABLET_INIT}
       />
+
       <MainInvestBox
-        WIDGET_DATA={data}
+        profileData={data}
       />
 
       <iframe
-        width="560"
-        height="315"
         src="https://www.youtube.com/embed/AGIXX306u-Y?controls=1&rel=0"
         title="YouTube video player"
         frameborder="0"
@@ -255,6 +280,8 @@
 
       <TierPricing
         profileData={data}
+        {VIEWPORT_MOBILE_INIT}
+        {VIEWPORT_TABLET_INIT}
       />
     </div>
 
@@ -305,40 +332,49 @@
         <p
           id="sub-title"
         >
-          {
-            @html widgetDataTranslation.investor?.tab.description_investment
-            ?? 'This section provides a comprehensive overview of your investment in Betarena tokens ($BTA). '
-          }
+          {#if VIEWPORT_MOBILE_INIT[1]}
+            {
+              @html widgetDataTranslation.investor?.tab.description_investment.replace('<br/>', '')
+              ?? 'This section provides a comprehensive overview of your investment in Betarena tokens ($BTA). '
+            }
+          {:else}
+            {
+              @html widgetDataTranslation.investor?.tab.description_investment
+              ?? 'This section provides a comprehensive overview of your investment in Betarena tokens ($BTA). '
+            }
+          {/if}
         </p>
 
       </div>
 
       <LaunchpadWallets
         profileData={data}
-        VIEWPORT_MOBILE_INIT_PARENT={VIEWPORT_MOBILE_INIT}
-        VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
+        {VIEWPORT_MOBILE_INIT}
+        {VIEWPORT_TABLET_INIT}
       />
 
       <TgeMain
         profileData={data}
-        VIEWPORT_MOBILE_INIT_PARENT={VIEWPORT_MOBILE_INIT}
-        VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
+        {VIEWPORT_MOBILE_INIT}
+        {VIEWPORT_TABLET_INIT}
       />
 
       <MainInvestmentDetail
         profileData={data}
+        {VIEWPORT_MOBILE_INIT}
+        {VIEWPORT_TABLET_INIT}
       />
 
       <MainWalletsInvestor
         profileData={data}
-        VIEWPORT_MOBILE_INIT_PARENT={VIEWPORT_MOBILE_INIT}
-        VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
+        {VIEWPORT_MOBILE_INIT}
+        {VIEWPORT_TABLET_INIT}
       />
 
       <MainVestingPeriods
         profileData={data}
-        VIEWPORT_MOBILE_INIT_PARENT={VIEWPORT_MOBILE_INIT}
-        VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
+        {VIEWPORT_MOBILE_INIT}
+        {VIEWPORT_TABLET_INIT}
       />
     </div>
 
@@ -350,21 +386,23 @@
       id="section-referral"
     >
       <ReferralsSteps
-        VIEWPORT_MOBILE_INIT_PARENT={VIEWPORT_MOBILE_INIT}
-        VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
+        {VIEWPORT_MOBILE_INIT}
+        {VIEWPORT_TABLET_INIT}
       />
       <ReferralsInfo
         profileData={data}
-        VIEWPORT_MOBILE_INIT_PARENT={VIEWPORT_MOBILE_INIT}
-        VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
+        {VIEWPORT_MOBILE_INIT}
+        {VIEWPORT_TABLET_INIT}
       />
       <ReferralsBonusSummary
         profileData={data}
+        {VIEWPORT_MOBILE_INIT}
+        {VIEWPORT_TABLET_INIT}
       />
       <ReferralsHistory
         profileData={data}
-        VIEWPORT_MOBILE_INIT_PARENT={VIEWPORT_MOBILE_INIT}
-        VIEWPORT_TABLET_INIT_PARENT={VIEWPORT_TABLET_INIT}
+        {VIEWPORT_MOBILE_INIT}
+        {VIEWPORT_TABLET_INIT}
       />
     </div>
 
@@ -375,7 +413,10 @@
     <div
       id="section-FAQ"
     >
-      <MainFaq />
+      <MainFaq
+        {VIEWPORT_MOBILE_INIT}
+        {VIEWPORT_TABLET_INIT}
+      />
     </div>
 
   </div>
@@ -392,8 +433,6 @@
 -->
 
 <style lang="scss">
-
-  @import '../../../../../../static/app.scss';
 
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
@@ -417,9 +456,12 @@
       iframe
       {
         /* 🎨 style */
-        width: -webkit-fill-available;
-        width: -moz-available;
+        // width: -webkit-fill-available;
+        // width: -moz-available;
+        width: 100%;
         border-radius: 12px;
+        height: 216px;
+        grid-row: 3;
       }
     }
 
@@ -434,22 +476,17 @@
         // IMPORTANT
         :global
         {
-          p#title
-          {
-            @extend .s-32;
-            @extend .color-black-2;
-          }
-
           p#sub-title
           {
-            @extend .s-16;
-            @extend .color-grey;
-            @extend .grey-v1;
+            /* 🎨 style */
+            font-size: 16px;
+            color: var(--grey);
 
             span#x3123
             {
-              @extend .w-500;
-              @extend .color-black-2;
+              /* 🎨 style */
+              font-weight: 500;
+              color: var(--dark-theme);
             }
           }
         }
@@ -475,6 +512,15 @@
   {
     div#investor-grid-box
     {
+      div#launchpad-grid-box
+      {
+        iframe
+        {
+          /* 🎨 style */
+          height: 372px;
+        }
+      }
+
       div#section-investing
       {
         /* 🎨 style */
@@ -517,6 +563,12 @@
         /* 🎨 style */
         gap: 20px;
         grid-template-columns: 1fr 1fr;
+
+        iframe
+        {
+          /* 🎨 style */
+          height: 259px;
+        }
 
         :global
         {
@@ -615,6 +667,39 @@
           {
             /* 🎨 style */
             grid-column: 2;
+          }
+        }
+      }
+    }
+  }
+
+  /*
+  ╭──────────────────────────────────────────────────────────────────────────────╮
+  │ 🌒 DARK-THEME                                                                │
+  ╰──────────────────────────────────────────────────────────────────────────────╯
+  */
+
+  div#investor-grid-box
+  {
+    &.dark-background-1
+    {
+      background-color: transparent !important;
+
+      div#profile⮕w⮕investtge⮕main⮕title
+      {
+        // IMPORTANT
+        :global
+        {
+          p#sub-title
+          {
+            /* 🎨 style */
+            color: var(--grey-shade-3);
+
+            span#x3123
+            {
+              /* 🎨 style */
+              color: var(--white) !important;
+            }
           }
         }
       }

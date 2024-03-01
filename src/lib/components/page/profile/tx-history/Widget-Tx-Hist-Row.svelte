@@ -7,13 +7,14 @@ COMPONENT JS (w/ TS)
   // #region ➤ 📦 Package Imports
 
 	import { toISOMod } from '$lib/utils/dates.js';
+  import { toDecimalFix } from '$lib/utils/platform-functions.js';
 
 	import icon_arrow_down from '../assets/arrow-down.svg';
 	import icon_arrow_up from '../assets/arrow-up.svg';
 	import icon_deposit from '../assets/tx-hist/deposit.svg';
 	import icon_withdraw from '../assets/tx-hist/withdraw.svg';
 
-	import type { B_H_TH, B_H_TT_Field, B_H_TT_Status } from "@betarena/scores-lib/types/_HASURA_.js";
+	import type { B_H_TH, B_H_TH_Type, B_H_TT_Field, B_H_TT_Status } from "@betarena/scores-lib/types/_HASURA_.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -82,8 +83,8 @@ COMPONENT JS (w/ TS)
    */
   $: if (tx_data?.type)
   {
-		if (tx_data?.type?.toLowerCase() == 'deposit') txTypeIcon = icon_deposit;
-		if (tx_data?.type?.toLowerCase() == 'withdraw') txTypeIcon = icon_withdraw;
+		if ((['deposit', 'investment'] as B_H_TH_Type[]).includes(tx_data?.type)) txTypeIcon = icon_deposit;
+		if ((['Withdraw', 'tge', 'vesting'] as B_H_TH_Type[]).includes(tx_data?.type)) txTypeIcon = icon_withdraw;
   }
 
   /**
@@ -243,7 +244,7 @@ COMPONENT JS (w/ TS)
     -->
     <td>
       <p>
-        {tx_data?.amount ?? '-'}
+        {toDecimalFix(tx_data?.amount ?? 0, 2, false, false)}
       </p>
     </td>
 
@@ -357,7 +358,7 @@ COMPONENT JS (w/ TS)
           color-grey
           "
         >
-          {tx_data?.amount ?? '-'} BTA
+          {toDecimalFix(tx_data?.amount ?? 0, 2, false, false)} BTA
         </p>
       </div>
     </td>

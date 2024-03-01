@@ -1,8 +1,17 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - access custom Betarena Scores JS VScode Snippets by typing 'script...'         │
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -24,7 +33,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { page } from '$app/stores';
-  import { fade, fly } from 'svelte/transition';
+  import { fly } from 'svelte/transition';
 
   import sessionStore from '$lib/store/session.js';
   import userBetarenaSettings from '$lib/store/user-settings.js';
@@ -32,6 +41,9 @@
 
   import icon_close from '../assets/investor/icon-close-btn.svg';
   import icon_close_dark from '../assets/investor/icon-close-dark-btn.svg';
+
+  import ModalBackdrop from '$lib/components/misc/modal/Modal-Backdrop.svelte';
+  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
 
   import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
@@ -55,23 +67,30 @@
     /**
      * @description
      *  📣 List of wallets to be displayed.
-    */
+     */
     walletAddressList: string[]
-  ;
-
-  const
-    /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
-    // eslint-disable-next-line no-unused-vars
-    CNAME: string = 'profile⮕w⮕wallets-modal⮕main'
-    /** @description 📣 threshold start + state for 📱 MOBILE */
-    // eslint-disable-next-line no-unused-vars
+    /**
+     * @description
+     *  📣 threshold start + state for 📱 MOBILE
+     */ // eslint-disable-next-line no-unused-vars
     , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
-    /** @description 📣 threshold start + state for 💻 TABLET */
-    // eslint-disable-next-line no-unused-vars
+    /**
+     * @description
+     *  📣 threshold start + state for 💻 TABLET
+     */ // eslint-disable-next-line no-unused-vars
     , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
-  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
+  const
+    /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */ // eslint-disable-next-line no-unused-vars
+    CNAME: string = 'profile⮕w⮕wallets-modal⮕main'
+
+  ;
+
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -81,10 +100,23 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component HTML                                                            │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - use 'Ctrl+Space' to autocomplete global class=styles                           │
-│ - access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.     │
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
+
+<ModalBackdrop
+  on:closeModal=
+  {
+    () =>
+    {
+      $sessionStore.currentActiveModal = null;
+      return;
+    }
+  }
+/>
 
 <!--
 ▓ NOTE:
@@ -121,10 +153,11 @@
       color-black-2
       "
     >
-      {
-        profileTrs.investor?.wallets.title
-        ?? 'Investor Wallet Address'
-      }
+      <TranslationText
+        key={`${CNAME}/table/header/discount`}
+        text={profileTrs?.investor?.wallets.title}
+        fallback={'Investor Wallet Address'}
+      />
     </p>
 
     <!--
@@ -142,7 +175,14 @@
       {VIEWPORT_TABLET_INIT[1] ? 'top: 16px; right: 16px;' : ''}
       '
       src={$userBetarenaSettings.theme == 'Dark' ? icon_close : icon_close_dark}
-      on:click={() => {return $sessionStore.showInvstementWallets = false}}
+      on:click=
+      {
+        () =>
+        {
+          $sessionStore.currentActiveModal = null;
+          return;
+        }
+      }
       alt='close-svg'
       width=18
       height=18
@@ -184,10 +224,11 @@
           text-left
           "
         >
-          {
-            profileTrs.investor?.wallets.id
-            ?? 'Wallet ID'
-          }
+          <TranslationText
+            key={`${CNAME}/table/header/discount`}
+            text={profileTrs?.investor?.wallets.id}
+            fallback={'Wallet ID'}
+          />
         </p>
 
         <!--
@@ -229,10 +270,11 @@
             "
             on:click={() => { copyToClipboard(item); return; }}
           >
-            {
-              profileTrs.investor?.wallets.copy
-              ?? 'Copy'
-            }
+            <TranslationText
+              key={`${CNAME}/table/header/discount`}
+              text={profileTrs?.investor?.wallets.copy}
+              fallback={'Copy'}
+            />
           </p>
         </div>
 
@@ -245,7 +287,11 @@
         color-black-2
         "
       >
-        Uh-oh! No investment wallets have been found.
+        <TranslationText
+          key={`${CNAME}/table/header/discount`}
+          text={null}
+          fallback={'Uh-oh! No investment wallets have been found.'}
+        />
       </p>
     {/each}
 
@@ -254,21 +300,12 @@
 </div>
 
 <!--
-▓ NOTE:
-▓ > (box) modal background filter
--->
-<div
-  id='{CNAME}⮕blur'
-  in:fade
-  on:click={() => {return $sessionStore.showInvstementWallets = false}}
-/>
-
-<!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component CSS/SCSS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE  │
-│ - access custom Betarena Scores CSS VScode Snippets by typing 'style...'         │
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -333,20 +370,6 @@
         padding: 12px 20px;
       }
     }
-
-    &⮕blur
-    {
-      /* 📌 position */
-      position: fixed;
-      top: 0;
-      right: 0;
-      left: 0;
-      z-index: 4000;
-      /* 🎨 style */
-      height: 100%;
-      width: 100%;
-      background: rgba(0, 0, 0, 0.5);
-    }
   }
 
   /*
@@ -366,7 +389,9 @@
       margin: auto;
       width: fit-content;
       width: 92%;
-      height: fit-content;
+      height: 340px;
+      min-height: 340px;
+      max-height: 340px;
       right: 0;
       left: 0;
       bottom: 0;

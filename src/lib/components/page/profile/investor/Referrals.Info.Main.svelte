@@ -1,8 +1,17 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component JS/TS                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - access custom Betarena Scores JS VScode Snippets by typing 'script...'         │
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -29,11 +38,16 @@
   import userBetarenaSettings from '$lib/store/user-settings.js';
   import { copyToClipboard, formatNumberWithCommas } from '$lib/utils/platform-functions.js';
   import { Misc } from '@betarena/scores-lib/dist/classes/class.misc.js';
+  import { scoresProfileInvestorStore } from './_store.js';
 
+  import AdminDevControlPanel from '$lib/components/misc/admin/Admin-Dev-ControlPanel.svelte';
+  import AdminDevControlPanelToggleButton from '$lib/components/misc/admin/Admin-Dev-ControlPanelToggleButton.svelte';
   import ReferralsInviteModal from './Referrals.Invite.Modal.svelte';
 
   import icon_arrow_down from '../assets/arrow-down.svg';
   import icon_arrow_up from '../assets/arrow-up.svg';
+  import icon_arrow_down_dark from '../assets/investor/arrow-down-dark.svg';
+  import icon_arrow_up_dark from '../assets/investor/arrow-up-dark.svg';
   import icon_green_dot from '../assets/investor/icon-green-dot.svg';
   import icon_invite_investor from '../assets/investor/icon-invite-investor.svg';
   import icon_bronze from '../assets/price-tier/icon-bta-bronze.svg';
@@ -41,7 +55,10 @@
   import icon_platinum from '../assets/price-tier/icon-bta-platinum.svg';
   import icon_silver from '../assets/price-tier/icon-bta-silver.svg';
 
-  import type { B_H_KEYP, B_H_KEYP_Tier } from '@betarena/scores-lib/types/_HASURA_.js';
+  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
+  import type { KeypairInvestorPresaleMain } from '@betarena/scores-lib/types/_AUTO-HASURA-2_.js';
+  import type { IPresaleTier } from '@betarena/scores-lib/types/_ENUMS_.js';
+  import type { B_H_KEYP_Tier } from '@betarena/scores-lib/types/_HASURA_.js';
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -63,49 +80,59 @@
   export let
     /**
      * @augments IProfileData
-    */
+     */
     profileData: IProfileData | null
     /**
      * @description
-     *  📣
-    */
-    , VIEWPORT_MOBILE_INIT_PARENT: [ number, boolean ]
+     *  📣 threshold start + state for 📱 MOBILE
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
     /**
      * @description
-     *  📣
-    */
-    , VIEWPORT_TABLET_INIT_PARENT: [ number, boolean ]
+     *  📣 threshold start + state for 💻 TABLET
+     */ // eslint-disable-next-line no-unused-vars
+    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
   const
-    /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
-    // eslint-disable-next-line no-unused-vars
+    /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */ // eslint-disable-next-line no-unused-vars
     CNAME: string = 'profile⮕w⮕referral-info⮕main'
-    /** @description 📣 threshold start + state for 📱 MOBILE */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = VIEWPORT_MOBILE_INIT_PARENT
-    /** @description 📣 threshold start + state for 💻 TABLET */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = VIEWPORT_TABLET_INIT_PARENT
   ;
 
   let
     /**
      * @description
-     *  📣 `Map` of **tier** data.
-    */
-    dataMap: Map < B_H_KEYP_Tier, B_H_KEYP > = new Misc().convertToMapKEYPINVSTTIER
-    (
-      (profileData?.investorTierPricing ?? [])
-    )
+     *  📣 convert target `data` to respective `map`.
+     */
+    dataMap: Map < IPresaleTier, KeypairInvestorPresaleMain >
+      = new Misc().convertToMapKEYPINVSTTIER
+      (
+        (
+          profileData?.investorTierPricing
+            ?.sort
+            (
+              (
+                a,
+                b
+              ) =>
+              {
+                return (b.data?.position ?? 0) - (a.data?.position ?? 0)
+              }
+            ) ?? [])
+      )
     /**
      * @description
      *  📣 Wether target `extra info` should be shown for `more tiers`.
-    */
+     */
     , isExtraInfo: boolean = false
   ;
 
-  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs | null | undefined;
+  $: ({ adminOverrides, referralInviteStateWidget } = $scoresProfileInvestorStore);
+  $: ({ theme } = $userBetarenaSettings);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -158,8 +185,10 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component HTML                                                            │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - use 'Ctrl+Space' to autocomplete global class=styles                           │
-│ - access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.     │
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -169,8 +198,26 @@
 -->
 <div
   id={CNAME}
-  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+  class:dark-background-1={theme == 'Dark'}
+  class:mutated={adminOverrides.has('ReferralInvite')}
 >
+
+  <AdminDevControlPanelToggleButton
+    title='Referral Info Main (Pop-Up)'
+    mutated={adminOverrides.has('ReferralInvite')}
+    on:reset=
+    {
+      () =>
+      {
+        scoresProfileInvestorStore.updateAdminMutatedWidgets
+        (
+          'ReferralInvite'
+          , 'remove'
+        );
+        return;
+      }
+    }
+  />
 
   <div
     class=
@@ -191,10 +238,11 @@
       color-black-2
       "
     >
-      {
-        profileTrs.investor?.referral.tiers.title
-        ?? 'Referral Tiers & Bonus'
-      }
+      <TranslationText
+        key={`${CNAME}/title`}
+        text={profileTrs?.investor?.referral.tiers.title}
+        fallback={'Referral Tiers & Bonus'}
+      />
     </p>
 
     <!--
@@ -227,10 +275,11 @@
           color-black-2
           "
         >
-          {
-            profileTrs.investor?.referral.tiers.status
-            ?? 'Active'
-          }
+          <TranslationText
+            key={`${CNAME}/title`}
+            text={profileTrs?.investor?.referral.tiers.status}
+            fallback={'Active'}
+          />
         </p>
       </div>
     {/if}
@@ -240,7 +289,7 @@
   ▓ NOTE: ▓ 📱 MOBILE
   ▓ > referral tiers + bonus data.
   -->
-  {#if VIEWPORT_MOBILE_INIT_PARENT[1]}
+  {#if VIEWPORT_MOBILE_INIT[1]}
 
     <div
       class=
@@ -248,6 +297,11 @@
       column-space-center
       <!---->
       tier-row
+      "
+      style=
+      "
+      align-items: flex-start;
+      padding: 0 8px;
       "
     >
 
@@ -291,14 +345,15 @@
           color-black-2
           "
         >
-          {
-            profileTrs.investor?.investment_details.tier
-            ?? 'Tier'
-          }
+          <TranslationText
+            key={`${CNAME}/title`}
+            text={profileTrs?.investor?.investment_details.tier}
+            fallback={'Tier'}
+          />
           {dataMap.get('bronze')?.data?.position}
 
           {#if dataMap.get('bronze')?.data?.invest_max == -1}
-            (${formatNumberWithCommas(dataMap.get('bronze')?.data?.invest_min)} or more)
+            (+${formatNumberWithCommas(dataMap.get('bronze')?.data?.invest_min)})
           {:else}
             (${formatNumberWithCommas(dataMap.get('bronze')?.data?.invest_min)} - ${formatNumberWithCommas(dataMap.get('bronze')?.data?.invest_max)})
           {/if}
@@ -315,12 +370,14 @@
         s-14
         color-black-2
         no-wrap
-        m-l-24
+        m-l-33
         "
       >
-        {
-          'You receive:'
-        }
+        <TranslationText
+          key={`${CNAME}/title`}
+          text={profileTrs?.investor?.referral.tiers.receive}
+          fallback={'You receive:'}
+        />
         <span
           class=
           "
@@ -331,9 +388,11 @@
           {dataMap.get('bronze')?.data?.referral?.owner_percentage}%
         </span>
         /
-        {
-          'Referred:'
-        }
+        <TranslationText
+          key={`${CNAME}/title`}
+          text={profileTrs?.investor?.referral.tiers.referred}
+          fallback={'Referred:'}
+        />
         <span
           class=
           "
@@ -368,14 +427,20 @@
         color-black-2
         "
       >
-        {
-          profileTrs.investor?.tiers.more_tiers
-          ?? 'See more tiers'
-        }
+        <TranslationText
+          key={`${CNAME}/title`}
+          text={profileTrs?.investor?.tiers.more_tiers}
+          fallback={'See more tiers'}
+        />
       </p>
 
       <img
-        src={isExtraInfo ? icon_arrow_up : icon_arrow_down}
+        src=
+        {
+          isExtraInfo
+            ? ($userBetarenaSettings.theme == 'Dark') ? icon_arrow_down_dark : icon_arrow_down
+            : ($userBetarenaSettings.theme == 'Dark') ? icon_arrow_up_dark : icon_arrow_up
+        }
         alt={isExtraInfo ? 'icon_arrow_up' : 'icon_arrow_down'}
         class=
         "
@@ -390,19 +455,19 @@
   ▓ NOTE: ▓ 💻 TABLET 🖥️ LAPTOP 📱 MOBILE
   ▓ > referral tiers + bonus data.
   -->
-  {#if !VIEWPORT_MOBILE_INIT_PARENT[1] || isExtraInfo}
+  {#if !VIEWPORT_MOBILE_INIT[1] || isExtraInfo}
 
     <div
       id="tier-box"
     >
       {#each [...dataMap.entries()].reverse() as [key, data]}
-        {#if !['NaN', 'bronze'].includes(key) && VIEWPORT_MOBILE_INIT_PARENT[1]
-          || !['NaN'].includes(key) && !VIEWPORT_MOBILE_INIT_PARENT[1]
+        {#if !['NaN', 'bronze'].includes(key) && VIEWPORT_MOBILE_INIT[1]
+          || !['NaN'].includes(key) && !VIEWPORT_MOBILE_INIT[1]
         }
           <div
             class=
             "
-            {VIEWPORT_MOBILE_INIT_PARENT[1] ? 'column-space-center' : 'row-space-out'}
+            {VIEWPORT_MOBILE_INIT[1] ? 'column-space-center' : 'row-space-out'}
             <!---->
             tier-row
             "
@@ -448,14 +513,15 @@
                 color-black-2
                 "
               >
-                {
-                  profileTrs.investor?.investment_details.tier
-                  ?? 'Tier'
-                }
+                <TranslationText
+                  key={`${CNAME}/title`}
+                  text={profileTrs?.investor?.investment_details.tier}
+                  fallback={'Tier'}
+                />
                 {data.data?.position}
 
                 {#if data.data?.invest_max == -1}
-                  (${formatNumberWithCommas(data.data.invest_min)} or more)
+                  (+${formatNumberWithCommas(data.data.invest_min)})
                 {:else}
                   (${formatNumberWithCommas(data.data?.invest_min)} - ${formatNumberWithCommas(data.data?.invest_max)})
                 {/if}
@@ -472,10 +538,14 @@
               s-14
               color-black-2
               no-wrap
-              m-l-24
+              m-l-33
               "
             >
-              You receive:
+              <TranslationText
+                key={`${CNAME}/title`}
+                text={profileTrs?.investor?.referral.tiers.receive}
+                fallback={'You receive:'}
+              />
               <span
                 class=
                 "
@@ -485,7 +555,12 @@
               >
                 {data.data?.referral?.owner_percentage}%
               </span>
-              / Referred:
+              /
+              <TranslationText
+                key={`${CNAME}/title`}
+                text={profileTrs?.investor?.referral.tiers.referred}
+                fallback={'Referred:'}
+              />
               <span
                 class=
                 "
@@ -512,7 +587,7 @@
     class=
     "
     m-t-25
-    {VIEWPORT_MOBILE_INIT_PARENT[1] ? 'column-space-center' : 'row-space-out'}
+    {VIEWPORT_MOBILE_INIT[1] ? 'column-space-center' : 'row-space-out'}
     "
   >
     <!--
@@ -522,7 +597,7 @@
     <div
       class=
       "
-      {VIEWPORT_MOBILE_INIT_PARENT[1] ? 'm-b-12' : 'm-r-20'}
+      {VIEWPORT_MOBILE_INIT[1] ? 'm-b-12' : 'm-r-20'}
       <!---->
       referral-code-box
       "
@@ -539,10 +614,11 @@
         color-black-2
         "
       >
-        {
-          profileTrs.investor?.referral.links.ref_id
-          ?? 'Referral ID'
-        }
+        <TranslationText
+          key={`${CNAME}/title`}
+          text={profileTrs?.investor?.referral.links.ref_id}
+          fallback={'Referral ID'}
+        />
       </p>
 
       <!--
@@ -578,10 +654,11 @@
           "
           on:click={() => { copyToClipboard($userBetarenaSettings.user.scores_user_data?.referralID ?? ''); return; }}
         >
-          {
-            profileTrs.investor?.referral.links.copy
-            ?? 'Copy'
-          }
+          <TranslationText
+            key={`${CNAME}/title`}
+            text={profileTrs?.investor?.referral.links.copy}
+            fallback={'Copy'}
+          />
         </p>
       </div>
     </div>
@@ -608,28 +685,73 @@
         color-black-2
         "
       >
-        {
-          profileTrs.investor?.referral.links.ref_link
-          ?? 'Referral Link'
-        }
+        <TranslationText
+          key={`${CNAME}/title`}
+          text={profileTrs?.investor?.referral.links.ref_link}
+          fallback={'Referral Link'}
+        />
       </p>
 
       <!--
       ▓ NOTE:
       ▓ > referral sub-title (text)
       -->
-      <p
+      <div
         class=
         "
-        s-14
-        color-grey
+        row-space-out
         "
       >
-        {
-          profileTrs.investor?.referral.links.message
-          ?? 'Available after investment'
-        }
-      </p>
+        <p
+          class=
+          "
+          s-14
+          color-grey
+          "
+          class:add-ellipsis={referralInviteStateWidget == 'FirstInvestmentMade'}
+        >
+          {#if referralInviteStateWidget == 'FirstInvestmentNotMade'}
+            <TranslationText
+              key={`${CNAME}/title`}
+              text={profileTrs?.investor?.referral.links.message}
+              fallback={'Available after investment'}
+            />
+          {:else}
+            {
+              `${$page.url.origin}?referralId=${$userBetarenaSettings.user.scores_user_data?.referralID ?? ''}`
+            }
+          {/if}
+        </p>
+
+        {#if referralInviteStateWidget == 'FirstInvestmentMade'}
+          <p
+            class=
+            "
+            s-14
+            w-500
+            underline
+            color-black-2
+            hover-color-primary
+            cursor-pointer
+            "
+            on:click=
+            {
+              () =>
+              {
+                copyToClipboard(`${$page.url.origin}?referralId=${$userBetarenaSettings.user.scores_user_data?.referralID ?? ''}`);
+                return;
+              }
+            }
+          >
+            <TranslationText
+              key={`${CNAME}/title`}
+              text={profileTrs?.investor?.referral.links.copy}
+              fallback={'Copy'}
+            />
+          </p>
+        {/if}
+      </div>
+
     </div>
   </div>
 
@@ -641,10 +763,18 @@
     class=
     "
     btn-primary-v2
+      btn-shadow-1
     width-100
-    {VIEWPORT_MOBILE_INIT_PARENT[1] ? 'm-t-30' : 'm-t-25'}
+    {VIEWPORT_MOBILE_INIT[1] ? 'm-t-30' : 'm-t-25'}
     "
-    on:click={() => {return $sessionStore.showReferralInviteModal = true}}
+    on:click=
+    {
+      () =>
+      {
+        $sessionStore.currentActiveModal = 'ProfileInvestor_ReferralInfo_Modal';
+        return;
+      }
+    }
   >
     <img
       id=''
@@ -659,10 +789,11 @@
       m-r-12
       "
     />
-    {
-      profileTrs.investor?.referral.links.cta_title
-      ?? 'Invite Investors'
-    }
+      <TranslationText
+        key={`${CNAME}/title`}
+        text={profileTrs?.investor?.referral.links.cta_title}
+        fallback={'Invite Investors'}
+      />
   </button>
 
 </div>
@@ -671,16 +802,80 @@
 ▓ NOTE:
 ▓ > referral invitation information modal
 -->
-{#if $sessionStore.showReferralInviteModal}
-  <ReferralsInviteModal />
+{#if $sessionStore.currentActiveModal == 'ProfileInvestor_ReferralInfo_Modal'}
+  <ReferralsInviteModal
+    {VIEWPORT_MOBILE_INIT}
+    {VIEWPORT_TABLET_INIT}
+  />
 {/if}
+
+<!--
+▓ NOTE:
+▓ > (widget) admin development state UI change control panel.
+-->
+<AdminDevControlPanel
+  title='Referral Info Main (Pop-Up)'
+>
+
+  <!--
+  ▓ NOTE:
+  ▓ > (select) widget state.
+  -->
+  <div
+    class=
+    "
+    row-space-out
+    "
+  >
+    <!--
+    ▓ NOTE:
+    ▓ > (text) target action.
+    -->
+    <p
+      class=
+      "
+      s-14
+      color-black
+      "
+    >
+      <b>[1]</b> Choose <b>Widget State</b>
+    </p>
+
+    <!--
+    ▓ NOTE:
+    ▓ > (action) target select.
+    -->
+    <select
+      id="widgetState"
+      name="widgetState"
+      bind:value={$scoresProfileInvestorStore.referralInviteStateWidget}
+      on:change=
+      {
+        () =>
+        {
+          scoresProfileInvestorStore.updateAdminMutatedWidgets
+          (
+            'ReferralInvite'
+            , 'set'
+          );
+          return;
+        }
+      }
+    >
+      <option value="FirstInvestmentNotMade">No Investment Made</option>
+      <option value="FirstInvestmentMade">First Investment Made</option>
+    </select>
+  </div>
+
+</AdminDevControlPanel>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ Svelte Component CSS/SCSS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE  │
-│ - access custom Betarena Scores CSS VScode Snippets by typing 'style...'         │
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -700,6 +895,7 @@
     overflow: hidden;
     box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
     padding: 20px;
+    position: relative;
 
     div#active
     {
@@ -735,12 +931,15 @@
       border-radius: 8px;
       background-color: var(--whitev2);
       padding: 12px 20px;
-    }
 
-    &⮕modal
-    {
-      /* 📌 position */
-      position: absolute;
+      p.add-ellipsis
+      {
+        /* 🎨 style */
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        max-width: 110px;
+      }
     }
   }
 

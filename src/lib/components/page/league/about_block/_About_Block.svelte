@@ -41,7 +41,7 @@
 		// [ℹ] get response [lang] [data] [obtained from preload()]
 		const sleep = (ms) =>
 			new Promise((r) => setTimeout(r, ms));
-		await sleep(3000);
+		// await sleep(3000);
 
 		loaded = true;
 
