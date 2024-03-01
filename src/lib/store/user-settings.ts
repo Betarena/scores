@@ -13,7 +13,7 @@ import type { InvestorData } from '@betarena/scores-lib/types/_FIREBASE_.js';
 const userSettings: IUserSetting =
 {
 	lang: undefined,
-	theme: undefined,
+	theme: 'Dark',
 	country_bookmaker: undefined,
 	geoJs: undefined,
 	user: undefined,

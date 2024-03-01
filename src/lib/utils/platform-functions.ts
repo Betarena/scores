@@ -51,7 +51,7 @@ import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
  */
 export function platfrom_lang_ssr
 (
-  page_route_id?: string | undefined,
+  page_route_id?: string | undefined | null,
   page_error?: unknown | undefined,
   page_params_lang?: string | undefined
 ): string
@@ -61,9 +61,9 @@ export function platfrom_lang_ssr
   (
     'platfrom_lang_ssr(..)',
     [
-      `🔹 [var] page_route_id: ${page_route_id}`
-      ,`🔹 [var] page_error: ${JSON.stringify(page_error, null, 2)}`
-      ,`🔹 [var] page_params_lang: ${page_params_lang}`
+      `🔹 [var] page_route_id: ${page_route_id}`,
+      `🔹 [var] page_error: ${JSON.stringify(page_error, null, 2)}`,
+      `🔹 [var] page_params_lang: ${page_params_lang}`
     ]
   );
 
@@ -94,26 +94,22 @@ export function platfrom_lang_ssr
 }
 
 /**
+ * @deprecated
+ * @author
+ *  @migbash
  * @summary
- * 🔹 HELPER | IMPORTANT
- *
+ *  - 🔹 HELPER
+ *  - IMPORTANT
  * @description
- * 📌 Determines `tablet`, `mobile` and `other` viewport
- * changes as a array/tuple of the `x` states
- *
- * @param
- * { number } TABLET_VIEW_INIT - Target viewport/width at
- * which `tablet` is expected to start.
- *
- * @param
- * { number } MOBILE_VIEW_INIT - Target viewport/width at
- * which `mobile` is expected to start.
- *
- * @param
- * { number } OTHER_VIEW - Custom target viewport/width.
- *
- * @returns
- * An array of boolean's (true/false)
+ *  📣 Determines `tablet`, `mobile` and `other` viewport changes as a array/tuple of the `x` states
+ * @param { number } TABLET_VIEW_INIT
+ *  💠 Target viewport/width at which `tablet` is expected to start.
+ * @param { number } MOBILE_VIEW_INIT
+ *  💠 Target viewport/width at which `mobile` is expected to start.
+ * @param { number } OTHER_VIEW
+ *  💠 Custom target viewport/width.
+ * @return { boolean[] }
+ *  📤 An array of boolean's for each respective width.
  */
 export function viewport_change
 (
@@ -122,16 +118,58 @@ export function viewport_change
   OTHER_VIEW?: number
 ): boolean[]
 {
-  const width: number = document.documentElement.clientWidth
-
-	 ,isTabletView: boolean = width <= TABLET_VIEW_INIT
-	 ,isMobileView: boolean = width <= MOBILE_VIEW_INIT
-    ,isOtherView: boolean = width <= OTHER_VIEW;
+  const
+    width: number = document.documentElement.clientWidth,
+    isTabletView: boolean = width <= TABLET_VIEW_INIT,
+    isMobileView: boolean = width <= MOBILE_VIEW_INIT,
+    isOtherView: boolean = width <= OTHER_VIEW
+  ;
 
   return [
-    isTabletView
-    ,isMobileView
-    ,isOtherView
+    isTabletView,
+    isMobileView,
+    isOtherView
+  ];
+}
+
+/**
+ * @author
+ *  @migbash
+ * @summary
+ *  - 🔹 HELPER
+ *  - IMPORTANT
+ * @description
+ *  - 📣 Determines `tablet`, `mobile` and `other` viewport changes as a array/tuple of the `x` states.
+ *  - 📣 Successor to `viewport_change(..)`.
+ * @param { number } currentWidth
+ *  💠 Current width of `window/document`.
+ * @param { number } MOBILE_VIEW_INIT
+ *  💠 Target viewport/width at which `mobile` is expected to start.
+ * @param { number } TABLET_VIEW_INIT
+ *  💠 Target viewport/width at which `tablet` is expected to start.
+ * @param { number } OTHER_VIEW
+ *  💠 Custom target viewport/width.
+ * @return { boolean[] }
+ *  📤 An array of boolean's for each respective width.
+ */
+export function viewportChangeV2
+(
+  currentWidth: number,
+  MOBILE_VIEW_INIT: number,
+  TABLET_VIEW_INIT: number,
+  OTHER_VIEW: number = 0,
+): boolean[]
+{
+  const
+    isTabletView: boolean = currentWidth <= TABLET_VIEW_INIT,
+    isMobileView: boolean = currentWidth <= MOBILE_VIEW_INIT,
+    isOtherView: boolean = currentWidth <= OTHER_VIEW
+  ;
+
+  return [
+    isMobileView,
+    isTabletView,
+    isOtherView
   ];
 }
 
@@ -155,8 +193,8 @@ export function initialDevice
 ): boolean[]
 {
   let
-    isMobileView: boolean
-    ,isTabletView: boolean
+    isMobileView: boolean,
+    isTabletView: boolean
   ;
 
   if (deviceType == 'mobile')
@@ -197,8 +235,8 @@ export function initialDevice
   }
 
   return [
-    isMobileView
-    ,isTabletView
+    isMobileView,
+    isTabletView
   ]
 }
 
@@ -265,8 +303,8 @@ export function googleEventLog
     value?: string
   }
   = {
-    type: 'event'
-    ,value: 'click'
+    type: 'event',
+    value: 'click'
   };
 
   if (action === 'fixture_football_fixtures_probabilities')
@@ -318,9 +356,9 @@ export function googleEventLog
     gtagEventObj.type,
     gtagEventObj.tag_name,
     {
-      event_category: gtagEventObj.tag_name
-      ,event_label: gtagEventObj.event_label
-      ,value: gtagEventObj.value
+      event_category: gtagEventObj.tag_name,
+      event_label: gtagEventObj.event_label,
+      value: gtagEventObj.value
     }
   );
 }
@@ -345,9 +383,9 @@ export async function setUserGeoLocation
   ;
   if (if_M_0) return;
 
-  let geoRes: GeoJsResponse = await getUserLocation()
+  let geoRes: GeoJsResponse = await getUserLocation(),
 
-    ,userGeo: string
+    userGeo: string
     = geoRes.country_code === undefined
       ? null
       : geoRes.country_code.toLowerCase()
@@ -442,23 +480,23 @@ export function PRELOAD_invalid_data
           },
           []
         )
-      }
+      },
 
-      ,nullList: number[] = indexesOf
+      nullList: number[] = indexesOf
       (
         data,
         null
       );
 
     if (nullList.length == 0)
-    {
+
       // [🐞]
       dlog
       (
         '🚏 checkpoint ➤ PRELOAD_invalid_data 🟩',
         true
       );
-    }
+
 
     // ### CHECK
     // ### for `null` data fetched.
@@ -473,12 +511,11 @@ export function PRELOAD_invalid_data
       // ### NOTE:
       // ### list URLs responsible for `null` data points.
       for (const i of nullList)
-      {
+
         console.log
         (
           `\t🚩 ${urls[i]}`
         );
-      }
     }
 
     return;
@@ -512,7 +549,7 @@ export function PRELOAD_invalid_data
  * @param
  * { string } exit_reason - [optional] Message for reason on page 'exit'/'error'
  */
-export function PRELOAD_exitPage
+export function preloadExitLogic
 (
   t0: number,
   page_tag: string,
@@ -547,7 +584,7 @@ export function PRELOAD_exitPage
  * @param
  * { string } redirect_url - **[required]** Target redirect url 'to'
  */
-export function PRELOAD_redirectPage
+export function preloadRedirect
 (
   redirect_url: string
 ): void
@@ -587,13 +624,13 @@ export async function promiseUrlsPreload
         ): Promise < any > =>
         {
         // ### [🐞]
-          const t0: number = performance.now()
+          const t0: number = performance.now(),
 
-            ,response: Response = await fetch(_url)
-            ,resJson: any = await response.json()
+            response: Response = await fetch(_url),
+            resJson: any = await response.json(),
 
             // ### [🐞]
-            ,t1: number = performance.now();
+            t1: number = performance.now();
 
           // ▓▓ [🐞]
           dlogv2
@@ -768,7 +805,7 @@ export async function promiseValidUrlCheck
  */
 export async function initSportbookData
 (
-  geoPos: string
+  geoPos: string | undefined
 ): Promise < void >
 {
   const dataRes0 = await get
@@ -884,25 +921,25 @@ export function toDecimalFix
   let _value: string  = value.toString();
 
   if (noRoundUp)
-  {
+
     _value = _value
       .slice
       (
         0,
         (_value.indexOf('.')) + (d_places + 1)
       );
-  }
+
 
   _value = parseFloat(_value).toFixed(d_places);
 
   if (removeDot00)
-  {
+
     _value = _value.replace
     (
       '.00',
       ''
     );
-  }
+
 
   return _value;
 }
@@ -952,7 +989,7 @@ export function spliceBalanceDoubleZero
 export async function selectLanguage
 (
   lang: string,
-  page: Page < Record < string, string >, string >
+  page: Page
 ): Promise < void >
 {
   // ### CHECK
@@ -977,11 +1014,11 @@ export async function selectLanguage
   (
     '🚏 checkpoint ➤ selectLanguage(..)',
     [
-      `🔹 [var] ➤ $userBetarenaSettings.lang: ${userBetarenaSettings.extract('user-lang')}`
-      ,`🔹 [var] ➤ $sessionStore?.serverLang: ${sessionStore.getServerLang()}`
-      ,`🔹 [var] ➤ lang: ${lang}`
-      ,`🔹 [var] ➤ pastLang: ${pastLang}`
-      ,`🔹 [var] ➤ $page.route.id: ${page.route.id}`
+      `🔹 [var] ➤ $userBetarenaSettings.lang: ${userBetarenaSettings.extract('user-lang')}`,
+      `🔹 [var] ➤ $sessionStore?.serverLang: ${sessionStore.getServerLang()}`,
+      `🔹 [var] ➤ lang: ${lang}`,
+      `🔹 [var] ➤ pastLang: ${pastLang}`,
+      `🔹 [var] ➤ $page.route.id: ${page.route.id}`
     ],
     true
   );
@@ -1035,11 +1072,11 @@ export async function selectLanguage
   // ### manage their own navigation/translation switch.
   const if_M_1: boolean
     = [
-      '/[[lang=lang]]/[sport]/[country]/[league_name]'
-      ,'/[[lang=lang]]/[sport]/[fixture=fixture]'
-      ,'/[[lang=lang]]/[player=player]/[...player_fill]'
-      ,'/[[lang=lang]]/[competitions=competitions]'
-      ,'/[[lang=lang]]/[competitions=competitions]/[...competition_fill]'
+      '/[[lang=lang]]/[sport]/[country]/[league_name]',
+      '/[[lang=lang]]/[sport]/[fixture=fixture]',
+      '/[[lang=lang]]/[player=player]/[...player_fill]',
+      '/[[lang=lang]]/[competitions=competitions]',
+      '/[[lang=lang]]/[competitions=competitions]/[...competition_fill]'
     ]
       .includes(page.route.id)
   ;
@@ -1062,11 +1099,11 @@ export async function selectLanguage
     const pastLangV2: string
       = pastLang == '/'
         ? '/en'
-        : pastLang
+        : pastLang,
 
-      ,tempUrl: string = `${page.url.pathname}/`
+      tempUrl: string = `${page.url.pathname}/`,
 
-      ,newURL: string = tempUrl
+      newURL: string = tempUrl
         .replace
         (
           `${pastLangV2}/`,
@@ -1104,11 +1141,11 @@ export async function selectLanguage
 
     // ### NOTE:
     // ### count number of slashes URL.
-    const count: number =	page.url.pathname.split('/').length - 1
+    const count: number =	page.url.pathname.split('/').length - 1,
 
       // ### NOTE:
       // ### replace path-name accordingly for 'EN', first occurance.
-      ,newURL: string
+      newURL: string
       = count == 1
         ? page.url.pathname.replace(pastLang, '/')
         : page.url.pathname.replace(pastLang, '')

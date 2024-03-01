@@ -64,15 +64,15 @@ export interface IScoreUser
 export interface IUserSetting
 {
   /** @description **Client/User** selected lang (overrides serverLang) */
-	lang: string;
+	lang?: string;
   /** @description **Client/User** selected theme */
 	theme: 'Dark' | 'Light';
   /** @description **Client/User** selected country bookmaker ISO2 */
-	country_bookmaker: string;
+	country_bookmaker?: string;
   /** @description **Client/User** geoJs object response data */
-	geoJs: GeoJsResponse;
+	geoJs?: GeoJsResponse;
   /** @description **User** authenticated data object */
-	user: IScoreUser;
+	user?: IScoreUser;
   /** @description **Client/User** voted fixtures */
   voted_fixtures: Voted_Fixture[];
   /** @description **Client/User** userguides opt-out */
@@ -85,15 +85,10 @@ export interface IUserSetting
  * @summary
  *  🔹 TYPES
  * @description
- *  📌 Interface for Platform Session / State data
- * `a.k.a Strictly Ephermal` data.
+ *  📣 Interface for Platform Session / State data `(a.k.a Strictly Ephermal)` data.
  */
-export interface Platform_Session
+export interface ISessionStore
 {
-  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-  // NOTE: MISC                 ◼️
-  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-
   /**
    * @description
    *  📌 `session/state` variable used for
@@ -143,30 +138,38 @@ export interface Platform_Session
   /**
    * @description
    *  📌 `session/state` variable used for the
-   *  device type obtained from `user-agent`.
-   */
-  deviceType: 'mobile' | 'tablet' | 'desktop';
-  /**
-   * @description
-   *  📌 `session/state` variable used for the
    *  data on users current date.
    *
    * IMPORTANT
    * `date` must be adjusted to user (TZ) timezone;
   */
   userDate: Date;
+
   /**
    * @description
-   *  📌 `session/state` variable used for the
-   *  keeping a record of active listeners on the frontend.
+   *  📣 Active `firestore` event listeners.
    */
   firebaseListeners: Unsubscribe[] = [];
   /**
    * @description
-   *  📌 `session/state` variable used for the
-   *  keeping a record of active listeners on the frontend.
+   *  📣 Active `graphql` event listeners.
    */
   grapqhQlWebSockets: (() => void)[] = [];
+  /**
+   * @description
+   *  📣 Device type obtained from `user-agent`.
+   */
+  deviceType: 'mobile' | 'tablet' | 'desktop';
+  /**
+   * @description
+   *  📣 Wether user is currently `active` on the platform.
+   */
+  isUserActive: boolean;
+  /**
+   * @description
+   *  📣 Current window `width`.
+   */
+  windowWidth: number;
 
   // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   // NOTE: UI                   ◼️
@@ -189,11 +192,6 @@ export interface Platform_Session
 	fixture_select_view: 'overview' | 'news';
   /**
    * @description
-   *  📌 Toggle `visibility` (show/hide) of Email (widget) pop-up modal.
-   */
-	newsletterPopUpShow: boolean;
-  /**
-   * @description
    *  📌 Toggle `visibility` (show/hide) of Authentication (widget) pop-up modal.
    */
 	auth_show: boolean;
@@ -201,12 +199,7 @@ export interface Platform_Session
    * @description
    *  📌 Follow 'user' intent for `hover` language select action (intent).
    */
-  navBtnHover: string;
-  /**
-   * @description
-   *  📌 Toggle `visibility` (show/hide) of Withdraw (widget) pop-up modal.
-   */
-  withdrawModal: boolean;
+  navBtnHover: string | undefined;
   /**
    * @description
    *  📌 Toggle `visibility` (show/hide) of Userguide-1 (widget) pop-up modal.
@@ -227,11 +220,7 @@ export interface Platform_Session
    *  📌 Toggle `visibility` (show/hide) of Fixture Competition (widget) access.
    */
   showFixtureCompetition?: boolean;
-  /**
-   * @description
-   *  📌 Toggle `visibility` (show/hide) of Fixture Competition (widget) Modal View.
-   */
-  isShowFixtureCompetitionJoinModal?: boolean;
+
   /**
    * @description
    *  📣 Currently **active** modal being shown on platform.
@@ -246,8 +235,10 @@ export interface Platform_Session
     | 'ProfileInvestor_ClaimVesting_Modal'
     | 'ProfileInvestor_TxState_Modal'
     | 'ProfileInvestor_SelectCrypto_Modal'
+    | 'ProfileWithdraw_Modal'
     | 'GeneralPlatform_Error'
     | 'Footer_Newsletter_Modal'
+    | 'CompetitionFixtureJoin_Modal'
   ;
 
   // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
@@ -290,7 +281,7 @@ export interface Platform_Session
    * @description
    *  📌 Store `live` data for target (SINGLE) fixture 'odds'
    */
-  live_odds_fixture_target: FIREBASE_odds[];
+  live_odds_fixture_target: FIREBASE_odds[] | null;
   /**
    * @description
    *  📌 Store `live` data on 'Firebase Odds' target (MULTIPLE) fixtures
