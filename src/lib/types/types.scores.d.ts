@@ -94,7 +94,7 @@ export interface ISessionStore
    *  📌 `session/state` variable used for
    *  `inter-component` events of selected season.
    */
-	selectedSeasonID: number;
+	selectedSeasonID: number | undefined;
   /**
    * @description
    *  📌 `session/state` variable used for
@@ -249,12 +249,12 @@ export interface ISessionStore
    * @description
    *  📌 Target `geo-position` sportbook (single-main) data object.
    */
-  sportbook_main: B_SPT_D;
+  sportbook_main: B_SPT_D | undefined;
   /**
    * @description
    *  📌 Target `geo-position` sportbook (list) data.
    */
-  sportbook_list: B_SPT_D[];
+  sportbook_list: B_SPT_D[] | undefined;
 
   // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   // NOTE: LIVESCORE WIDGET STORE DATA;
@@ -266,7 +266,7 @@ export interface ISessionStore
    * @deprecated
    * in favor of `livescore_now_scoreboard`
    */
-  livescore_now: Map < number, FIREBASE_livescores_now >;
+  livescore_now: Map < number, FIREBASE_livescores_now > | undefined;
   /**
    * @description
    *  📌 Store of `live` data 'Firebase Livescore' (Scoreboard) (V2)
@@ -276,7 +276,7 @@ export interface ISessionStore
    * @description
    *  📌 Store `live` data for target (SINGLE) fixture 'scores'.
    */
-  livescore_now_fixture_target: FIREBASE_livescores_now;
+  livescore_now_fixture_target: FIREBASE_livescores_now | undefined;
   /**
    * @description
    *  📌 Store `live` data for target (SINGLE) fixture 'odds'
@@ -291,7 +291,7 @@ export interface ISessionStore
    * @description
    *  📌 Store `live` data for **all** players in a game.
    */
-  livescore_now_player_fixture: number | null;
+  livescore_now_player_fixture: number | null | undefined;
   /**
    * @description
    *  📌 Store `live` data for **all** fixtures.
@@ -330,7 +330,7 @@ export interface ISessionStore
    * @description
    *  📌 Amount `deeplink` to `web3` selected by **user** for mobile.
    */
-  investDepositAmountMobileWeb3: number;
+  investDepositAmountMobileWeb3: number | undefined;
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // | 🛠️ DEVELOPMENT                                                         |
