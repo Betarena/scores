@@ -1,21 +1,49 @@
-<!-- ===============
-COMPONENT JS (w/ TS)
-=================-->
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Internal Svelte Code Format :|: V.8.0                                          │
+│ ➤ Status :|: 🔒 LOCKED                                                           │
+│ ➤ Author(s) :|: @migbash                                                         │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ Svelte Component JS/TS                                                           │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
 
 <script lang="ts">
 
   // #region ➤ 📦 Package Imports
 
-	import { page } from "$app/stores";
-	import { createEventDispatcher, type EventDispatcher } from 'svelte';
-	import { fly } from "svelte/transition";
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
-	import sessionStore from "$lib/store/session.js";
-	import { dlog, NB_W_TAG } from "$lib/utils/debug.js";
-	import { selectLanguage } from "$lib/utils/platform-functions.js";
+	import { page } from '$app/stores';
+	import { createEventDispatcher } from 'svelte';
+	import { fly } from 'svelte/transition';
 
-  import arrow_down from './assets/arrow-down.svg';
-  import arrow_up from './assets/arrow-up.svg';
+	import sessionStore from '$lib/store/session.js';
+	import { dlog, NB_W_TAG } from '$lib/utils/debug.js';
+	import { selectLanguage } from '$lib/utils/platform-functions.js';
+
+  import arrowDown from './assets/arrow-down.svg';
+  import arrowUp from './assets/arrow-up.svg';
 
   import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
 
@@ -23,65 +51,87 @@ COMPONENT JS (w/ TS)
 
   // #region ➤ 📌 VARIABLES
 
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
   export let
-    /** @description TODO: DOC: */
+    /** @description [?] */
     dropDownArea: boolean
   ;
 
   const
-    /** @description TODO: DOC: */
-    HOVER_TIMEOUT = 250,
-    /** @description TODO: DOC: */
-    dispatch: EventDispatcher<any> = createEventDispatcher()
+    /**
+     * @description
+     *  📣 Deifined `hover` timeout, that constitues a navigational `intent.
+    */
+    HOVER_TIMEOUT = 250
   ;
 
   let
-    /** @description TODO: DOC: */
-    B_NAV_T: B_NAV_T = $page.data.B_NAV_T,
-    /** @description TODO: DOC: */
+    /**
+     * @description
+     *  📣 Wether target dropdown menu is **active**.
+     */
     isLangDropdown: boolean = false,
-    /** @description TODO: DOC: */
-    intent_intent_lang: string | undefined = undefined,
-    /** @description TODO: DOC: */
-    timeout_intent: NodeJS.Timeout = undefined
+    /**
+     * @description
+     *  📣 Target `intent` language.
+     */
+    targetIntenLang: string | undefined = undefined,
+    /**
+     * @description
+     *  📣 Target `timeout` intent.
+     */
+    timeoutIntent: NodeJS.Timeout
   ;
 
-  $: B_NAV_T = $page.data.B_NAV_T;
+  $: translatioData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
 
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
 
   /**
+   * @author
+   *  @migbash
    * @summary
-   * 🔹 HELPER
-   *
+   *  🟦 HELPER
    * @description
-   * 📌 Advanced intent logic, applicable to desktop-only.
-   * `Pre-loads` target page , for target `language`
-   * upon `intent`/`hover`.
-   *
-   * @param
-   * { string } lang - Target new `hovered` language.
-  */
+   *  - 📣 Advanced intent logic, applicable to desktop-only.
+   *  - 📣 `Pre-loads` target page , for target `language` upon `intent`/`hover`.
+   * @param { string | undefined } lang
+   *  💠 Target `hovered` language.
+   * @return { void }
+   */
   function detectIntentBuffer
   (
-    lang: string
+    lang: string | undefined
   ): void
   {
-
-    // ➫ CHECK
-    // ➫ Detect change in hover-over lang.
-    const if_M_0: boolean =
-      timeout_intent != undefined
-      && lang != intent_intent_lang
-    ;
-
-    // ➫ CHECK
-    // ➫ First time set lang and timer.
-    const if_M_E_0: boolean =
-      lang != undefined
-      && timeout_intent == undefined
+    const
+      /**
+       * @description
+       *  📣 Detect change in hover-over lang.
+       */
+      if_M_0: boolean
+        = timeoutIntent != undefined
+        && lang != targetIntenLang,
+      /**
+       * @description
+       *  📣 First time set lang and timer.
+       */
+      if_M_E_0: boolean
+        = lang != undefined
+        && timeoutIntent == undefined
     ;
 
     if (if_M_0)
@@ -92,11 +142,9 @@ COMPONENT JS (w/ TS)
         `${NB_W_TAG[0]} clearning timer!`,
       );
 
-      // ➫ NOTE:
-      // ➫ Clear timer.
-      clearTimeout(timeout_intent);
+      clearTimeout(timeoutIntent);
 
-      intent_intent_lang = lang;
+      targetIntenLang = lang;
 
       if (lang == undefined) return;
 
@@ -106,9 +154,7 @@ COMPONENT JS (w/ TS)
         `${NB_W_TAG[0]} setting new timer!`
       );
 
-      // ➫ NOTE:
-      // ➫ Start new timer.
-      timeout_intent = setTimeout
+      timeoutIntent = setTimeout
       (
         () =>
         {
@@ -118,15 +164,15 @@ COMPONENT JS (w/ TS)
             `${NB_W_TAG[0]} intent triggered!`,
             true
           );
-          $sessionStore.lang_intent = intent_intent_lang;
+          $sessionStore.lang_intent = targetIntenLang;
         },
         HOVER_TIMEOUT
       );
     }
     else if (if_M_E_0)
     {
-      intent_intent_lang = lang
-      timeout_intent = setTimeout
+      targetIntenLang = lang
+      timeoutIntent = setTimeout
       (
         () =>
         {
@@ -136,44 +182,49 @@ COMPONENT JS (w/ TS)
             `${NB_W_TAG[0]} intent triggered!`,
             true
           );
-          $sessionStore.lang_intent = intent_intent_lang;
+          $sessionStore.lang_intent = targetIntenLang;
         },
         HOVER_TIMEOUT
-      )
+      );
     }
+
+    return;
   }
 
   /**
    * @description
-   * TODO: DOC:
+   * [?]
    */
-	function clickAction
+  function clickAction
   (
   ): void
   {
     isLangDropdown = !isLangDropdown;
 
-    // ### CHECK
-    // ### for language dropdown action.
     if (!isLangDropdown) return;
 
-    dispatch
+    createEventDispatcher()
     (
       'closeDropdown'
     );
 
     return;
-	}
+  }
 
   // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
 
-  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-  // ### NOTE:                                                            ◼️
-  // ### Please add inside 'this' region the 'logic' that should run      ◼️
-  // ### immediately and/or reactively for 'this' .svelte file is ran.    ◼️
-  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
   $: if (!dropDownArea) isLangDropdown = false;
 
@@ -181,11 +232,16 @@ COMPONENT JS (w/ TS)
 
 </script>
 
-<!-- ===============
-### COMPONENT HTML
-### NOTE:
-### HINT: use (CTRL+SPACE) to select a (class) (id) style
-=================-->
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ Svelte Component HTML                                                            │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
 
 <div
   id="lang-container"
@@ -196,7 +252,9 @@ COMPONENT JS (w/ TS)
 >
 
   <!--
-  SELECTED LANG
+  ╭─────
+  │ > Selected Language
+  ╰─────
   -->
   <div
     class=
@@ -206,7 +264,14 @@ COMPONENT JS (w/ TS)
     cursor-pointer
     "
     class:active-lang-select={isLangDropdown}
-    on:click={() =>	clickAction()}
+    on:click=
+    {
+      () =>
+      {
+        clickAction();
+        return;
+      }
+    }
   >
 
     <p
@@ -217,16 +282,18 @@ COMPONENT JS (w/ TS)
       m-r-5
       "
     >
-      {$sessionStore?.serverLang?.toUpperCase()}
+      {$sessionStore.serverLang?.toUpperCase()}
     </p>
 
     <!--
-    ARROW DOWN
+    ╭─────
+    │ > Arrow Down
+    ╰─────
     -->
     <img
       loading="lazy"
-      src={!isLangDropdown ? arrow_down : arrow_up}
-      alt={!isLangDropdown ? 'arrow_down' : 'arrow_up'}
+      src={!isLangDropdown ? arrowDown : arrowUp}
+      alt={!isLangDropdown ? 'arrowDown' : 'arrowUp'}
       width=16
       height=16
     />
@@ -234,7 +301,9 @@ COMPONENT JS (w/ TS)
   </div>
 
   <!--
-  DROPDOWN (LANG)
+  ╭─────
+  │ > Dropdown Menu
+  ╰─────
   -->
   {#if isLangDropdown}
 
@@ -242,16 +311,49 @@ COMPONENT JS (w/ TS)
       id="dropdown-menu"
       transition:fly
     >
-      {#each B_NAV_T?.langArray.sort() as lang}
+      {#each (translatioData?.langArray?.sort() ?? []) as lang}
 
-        {#if lang.toUpperCase() != $sessionStore?.serverLang?.toUpperCase()}
+        {#if lang.toUpperCase() != $sessionStore.serverLang?.toUpperCase()}
           <div
-            id="lang-select"
-            on:click={() =>	selectLanguage(lang, $page)}
-            on:keydown={() => selectLanguage(lang, $page)}
-            on:mouseout={() => detectIntentBuffer(undefined)}
-            on:mouseover={() => detectIntentBuffer(lang)}
-            on:focus={() => detectIntentBuffer(lang)}
+            class=
+            "
+            lang-select
+            "
+            on:click=
+            {
+              () =>
+              {
+                return selectLanguage(lang, $page)
+              }
+            }
+            on:keydown=
+            {
+              () =>
+              {
+                return selectLanguage(lang, $page)
+              }
+            }
+            on:mouseout=
+            {
+              () =>
+              {
+                return detectIntentBuffer(undefined)
+              }
+            }
+            on:mouseover=
+            {
+              () =>
+              {
+                return detectIntentBuffer(lang)
+              }
+            }
+            on:focus=
+            {
+              () =>
+              {
+                return detectIntentBuffer(lang)
+              }
+            }
           >
             <p
               class=
@@ -272,66 +374,81 @@ COMPONENT JS (w/ TS)
 
 </div>
 
-<!-- ===============
-### COMPONENT STYLE
-### NOTE:
-### HINT: auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
-=================-->
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ Svelte Component CSS/SCSS                                                        │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
 
-<style>
+<style lang="scss">
+
+  /*
+  ╭──────────────────────────────────────────────────────────────────────────────╮
+  │ 📲 MOBILE-FIRST                                                              │
+  ╰──────────────────────────────────────────────────────────────────────────────╯
+  */
 
 	div#lang-container
   {
     /* 📌 position */
 		position: relative;
-	}
 
-	div.selected-language-btn
-  {
-    /* 🎨 style */
-		color: #ffffff;
-		outline: none;
-		border: none;
-		padding: 5px 12px;
-		background-color: transparent;
-	}
-	div#lang-container div.selected-language-btn:hover,
-	div#lang-container div.selected-language-btn.active-lang-select
-  {
-    /* 🎨 style */
-		background-color: rgba(255, 255, 255, 0.1);
-		border-radius: 4px;
-	}
+    div.selected-language-btn
+    {
+      /* 🎨 style */
+      color: #ffffff;
+      outline: none;
+      border: none;
+      padding: 5px 12px;
+      background-color: transparent;
 
-	#dropdown-menu
-  {
-    /* 📌 position */
-		position: absolute;
-		z-index: 5000;
-		top: 100%;
-		left: -20%;
-    /* 🎨 style */
-		width: 88px;
-		margin-top: 5px;
-		border-radius: 4px;
-		background: #292929;
-		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
-		overflow: hidden;
-	}
-	#lang-select
-  {
-    /* 🎨 style */
-		padding: 10px 0;
-		text-align: center;
-		background: #4b4b4b;
-		cursor: pointer;
-		box-shadow: inset 0px -1px 0px #3c3c3c;
-	}
-	#lang-select:hover
-  {
-    /* 🎨 style */
-		background: #292929;
-		box-shadow: inset 0px -1px 0px #3c3c3c;
-	}
+      &:hover,
+      &.active-lang-select
+      {
+        /* 🎨 style */
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+      }
+    }
+
+    div#dropdown-menu
+    {
+      /* 📌 position */
+      position: absolute;
+      z-index: 5000;
+      top: 100%;
+      left: -20%;
+      /* 🎨 style */
+      width: 88px;
+      margin-top: 5px;
+      border-radius: 4px;
+      background: #292929;
+      box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+
+      .lang-select
+      {
+        /* 🎨 style */
+        padding: 10px 0;
+        text-align: center;
+        background: #4b4b4b;
+        cursor: pointer;
+        box-shadow: inset 0px -1px 0px #3c3c3c;
+
+        &:hover
+        {
+          /* 🎨 style */
+          background: #292929;
+          box-shadow: inset 0px -1px 0px #3c3c3c;
+        }
+      }
+    }
+
+
+  }
 
 </style>

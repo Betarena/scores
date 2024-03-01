@@ -1,10 +1,38 @@
-<!-- ===============
-COMPONENT JS (w/ TS)
-=================-->
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ High Order Component Overview                                                    │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Internal Svelte Code Format :|: V.8.0                                          │
+│ ➤ Status :|: 🔒 LOCKED                                                           │
+│ ➤ Author(s) :|: @migbash                                                         │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ Svelte Component JS/TS                                                           │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
 
 <script lang="ts">
 
   // #region ➤ 📦 Package Imports
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
 	import sessionStore from '$lib/store/session.js';
 
@@ -15,7 +43,17 @@ COMPONENT JS (w/ TS)
 
   // #region ➤ 📌 VARIABLES
 
-  const dispatch = createEventDispatcher();
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let
     sportNameDefault: string,
@@ -24,69 +62,51 @@ COMPONENT JS (w/ TS)
     selectedSport: string
   ;
 
+  const
+    /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */ // eslint-disable-next-line no-unused-vars
+    CNAME: string = '<section-scope>⮕<type|w|c>⮕<unique-tag-name>⮕main'
+  ;
+
   let
     sportIcon: string,
-    sportLink: string =
-      $sessionStore?.serverLang == 'en'
-        ? `/${removeDiacritics(sportTranslation?.toLowerCase())}`
-        : `/${$sessionStore?.serverLang}/${removeDiacritics(sportTranslation?.toLowerCase())}`
+    sportLink: string
+      = $sessionStore.serverLang == 'en'
+        ? `/${removeDiacritics(sportTranslation.toLowerCase())}`
+        : `/${$sessionStore.serverLang}/${removeDiacritics(sportTranslation.toLowerCase())}`
   ;
 
   // #endregion ➤ 📌 VARIABLES
 
-  // #region ➤ 🛠️ METHODS
-
-  /**
-   * @description
-   * TODO: DOC:
-   */
-	function clickAction
-  (
-  ): void
-  {
-    dispatch
-    (
-      'closeDropdown',
-      {
-        selectedSport: sportNameDefault
-      }
-    );
-	}
-
-  // #endregion ➤ 🛠️ METHODS
-
   // #region ➤ 🔥 REACTIVIY [SVELTE]
 
-  /**
-   * @description
-   * TODO: DOC:
-   */
-  $: if_R_0 =
-    selectedSport == sportNameDefault
+  $:
+  IF_R_0
+    = selectedSport == sportNameDefault
   ;
-  $: if (!if_R_0)
+  $:
+  if (!IF_R_0)
     sportIcon = `/assets/svg/sport-icon/${sportNameDefault.toLocaleLowerCase()}.svg`;
-  ;
-  $: if (if_R_0)
-    sportIcon = `/assets/svg/sport-icon/${sportNameDefault.toLocaleLowerCase()}-select.svg`
+  else
+    sportIcon = `/assets/svg/sport-icon/${sportNameDefault.toLocaleLowerCase()}-select.svg`;
   ;
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
 </script>
 
-<!-- ===================
-SVELTE INJECTION TAGS
-=================== -->
-
-<svelte:head>
-  <!-- <add> -->
-</svelte:head>
-
-<!-- ===============
-COMPONENT HTML
-NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
-=================-->
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ Svelte Component HTML                                                            │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
 
 <a
   href={sportLink}
@@ -97,12 +117,27 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     sports-box
     row-space-out
     "
-    on:click={() => clickAction()}
+    on:click=
+    {
+      () =>
+      {
+        createEventDispatcher()
+        (
+          'closeDropdown',
+          {
+            selectedSport: sportNameDefault
+          }
+        );
+        return;
+      }
+    }
     class:selected-sports={selectedSport == sportNameDefault}
   >
 
     <!--
-    SPORT IMG + NAME
+    ╭─────
+    │ > sport image + name
+    ╰─────
     -->
     <div
       class=
@@ -136,7 +171,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     </div>
 
     <!--
-    SPORT VALUE (NUM/SOON)
+    ╭─────
+    │ > sport number (or, 'soon')
+    ╰─────
     -->
     <p
       class=
@@ -152,42 +189,37 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   </div>
 </a>
 
-<!-- ===============
-COMPONENT STYLE
-NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
-=================-->
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ Svelte Component CSS/SCSS                                                        │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
 
-<style>
+<style lang="scss">
 
   div.sports-box
   {
-    /* s */
+    /* 🎨 style */
 		height: 44px;
-	}
-  div.sports-box:hover p.capitalize
-  {
-    /* s */
-    color: var(--primary) !important;
+
+    &:hover p.capitalize
+    {
+      /* 🎨 style */
+      color: var(--primary) !important;
+    }
+
+    & .sport-counter-dark
+    {
+      /* 🎨 style */
+      background-color: var(--dark-theme-1);
+      padding: 3px 8px;
+      border-radius: 20px;
+      height: 24px;
+    }
   }
-  div.sports-box .sport-counter-dark
-  {
-    /* s */
-		background-color: var(--dark-theme-1);
-		padding: 3px 8px;
-		border-radius: 20px;
-    height: 24px;
-	}
-
-  /*
-  =============
-  RESPONSIVNESS
-  =============
-  */
-
-  /*
-  =============
-  DARK-THEME
-  =============
-  */
 
 </style>
