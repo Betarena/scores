@@ -138,6 +138,8 @@
         dynamicAssetMap.set('icon_check', (await import('./assets/icon-check.svg')).default);
       }
 
+      dynamicAssetMap = dynamicAssetMap;
+
       return;
     }
   );

@@ -1,8 +1,23 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ Svelte Component JS/TS                                                           │
+│ 📌 High Order Component Overview                                                 │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - access custom Betarena Scores JS VScode Snippets by typing 'script...'         │
+│ ➤ Internal Svelte Code Format :|: V.8.0                                          │
+│ ➤ Status :|: 🔒 LOCKED                                                           │
+│ ➤ Author(s) :|: @migbash                                                         │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ 📝 Description                                                                   │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ Scores Authors                                                                   │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 🟦 Svelte Component JS/TS                                                        │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -30,6 +45,7 @@
   import AuthorLoader from './Author-Loader.svelte';
   import AuthorMain from './Author-Main.svelte';
 
+  import { sleep } from '$lib/utils/platform-functions.js';
   import type { IArticleData } from '@betarena/scores-lib/types/types.authors.articles.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -51,28 +67,28 @@
   const
     /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
     // eslint-disable-next-line no-unused-vars
-    CNAME: string = 'profile⮕w⮕investfaq⮕main'
+    CNAME: string = 'profile⮕w⮕investfaq⮕main',
     /** @description 📣 threshold start + state for 📱 MOBILE */
     // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
+    VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ],
     /** @description 📣 threshold start + state for 💻 TABLET */
     // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
+    VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ],
     /** @description 📣 (widget) dynamic import variable condition */
-    , useDynamicImport: boolean = true
+    useDynamicImport: boolean = true
   ;
 
   let
     /** @description 📣 (widget) translations data */
-    widgetDataTranslation: B_COMP_MAIN_T
+    widgetDataTranslation: B_COMP_MAIN_T,
     /** @description 📣 (widget) translations (SEO) data */
-    , widgetDataSeo: B_COMP_MAIN_S
+    widgetDataSeo: B_COMP_MAIN_S,
     /** @description 📣 (widget) main data */
-    , widgetDataMain: B_COMP_HIGH_D
+    widgetDataMain: B_COMP_HIGH_D,
     /** @description 📣 (widget) wether widget has or no data */
-    , widgetNoData: boolean = true
+    widgetNoData: boolean = true,
     /** @description 📣 (widget) dynamic import variable for svelte component [1] */
-    , MainMainAsDynamic: any
+    MainMainAsDynamic: any
   ;
 
   $: widgetDataMain = $page.data.dataArticle as IArticleData;
@@ -109,8 +125,10 @@
   (
   ): Promise < void >
   {
-    // ▓▓ IMPORTANT
+    // IMPORTANT
     if (!browser) return;
+
+    await sleep(1000);
 
     widgetNoData = false;
 
@@ -148,10 +166,12 @@
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ Svelte Component HTML                                                            │
+│ 💠 Svelte Component HTML                                                         │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - use 'Ctrl+Space' to autocomplete global class="(cursor)" styles                │
-│ - access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.     │
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -187,16 +207,3 @@
   -->
 
 {/await}
-
-<!--
-╭──────────────────────────────────────────────────────────────────────────────────╮
-│ Svelte Component CSS/SCSS                                                        │
-┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE  │
-│ - access custom Betarena Scores CSS VScode Snippets by typing 'style...'         │
-╰──────────────────────────────────────────────────────────────────────────────────╯
--->
-
-<style lang="scss">
-
-</style>

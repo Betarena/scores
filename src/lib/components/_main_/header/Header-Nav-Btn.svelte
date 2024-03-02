@@ -38,8 +38,6 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-	import { page } from '$app/stores';
-
 	import sessionStore from '$lib/store/session.js';
 	import { cleanUrl } from '$lib/utils/platform-functions.js';
 
@@ -120,8 +118,7 @@
     CNAME = '<section-scope>⮕<type|w|c>⮕<unique-tag-name>⮕main'
   ;
 
-  $: isRouteCompetitions = $page.route.id?.includes('/[[lang=lang]]/[competitions=competitions]');
-  $: isProfilePage = $page.route.id == '/u/[view]/[lang=lang]';
+  $: ({ currentPageRouteId } = { ...$sessionStore })
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -139,8 +136,8 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   $: if_R_0
-    = navKey == 'scores' && !isRouteCompetitions && !isProfilePage
-    || navKey == 'competitions' && isRouteCompetitions && !isProfilePage
+    = navKey == 'scores' && !currentPageRouteId
+    || navKey == 'competitions' && currentPageRouteId == 'CompetitionPage'
   ;
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]

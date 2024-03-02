@@ -1761,7 +1761,7 @@ h6 {
   /* 🎨 style */
   color: var(--white-3) !important;
 }
-.dark-background .color-white-3.dark-v3, .dark-background-1 .color-white-3.dark-v3 {
+.dark-background .color-white-3.dark-v3, .dark-background-1 .color-white-3.dark-v3, .dark-mode .color-white-3.dark-v3 {
   /* 🔥 override */
   /* 🎨 style */
   color: var(--grey-shade) !important;
@@ -1776,7 +1776,7 @@ h6 {
   /* 🎨 style */
   color: var(--primary) !important;
 }
-.dark-background .color-primary, .dark-background-1 .color-primary {
+.dark-background .color-primary, .dark-background-1 .color-primary, .dark-mode .color-primary {
   /* 🔥 override */
   /* 🎨 style */
   color: var(--primary) !important;
@@ -1791,7 +1791,7 @@ h6 {
   /* 🎨 style */
   color: var(--primary-fade-2) !important;
 }
-.dark-background .color-primary-fade-2.dark-v0, .dark-background-1 .color-primary-fade-2.dark-v0 {
+.dark-background .color-primary-fade-2.dark-v0, .dark-background-1 .color-primary-fade-2.dark-v0, .dark-mode .color-primary-fade-2.dark-v0 {
   /* 🔥 override */
   /* 🎨 style */
   color: var(--primary-fade-2) !important;
@@ -1836,7 +1836,7 @@ h6 {
   /* 🎨 style */
   color: var(--green-color) !important;
 }
-.dark-background .color-green.dark-v0, .dark-background-1 .color-green.dark-v0 {
+.dark-background .color-green.dark-v0, .dark-background-1 .color-green.dark-v0, .dark-mode .color-green.dark-v0 {
   /* 🔥 override */
   /* 🎨 style */
   color: var(--green-color) !important;
@@ -1861,7 +1861,7 @@ h6 {
   /* 🎨 style */
   color: var(--grey-shade) !important;
 }
-.dark-background .color-grey-shade.dark-v1, .dark-background-1 .color-grey-shade.dark-v1 {
+.dark-background .color-grey-shade.dark-v1, .dark-background-1 .color-grey-shade.dark-v1, .dark-mode .color-grey-shade.dark-v1 {
   /* 🔥 override */
   /* 🎨 style */
   color: var(--grey) !important;
@@ -1881,7 +1881,7 @@ h6 {
   /* 🎨 style */
   color: var(--grey-shade-4) !important;
 }
-.dark-background .color-grey-v2.grey-v1, .dark-background-1 .color-grey-v2.grey-v1 {
+.dark-background .color-grey-v2.grey-v1, .dark-background-1 .color-grey-v2.grey-v1, .dark-mode .color-grey-v2.grey-v1 {
   /* 🔥 override */
   /* 🎨 style */
   color: var(--grey-shade-3) !important;
@@ -1906,27 +1906,27 @@ h6 {
   /* 🎨 style */
   color: var(--grey) !important;
 }
-.dark-background .color-grey, .dark-background-1 .color-grey {
+.dark-background .color-grey, .dark-background-1 .color-grey, .dark-mode .color-grey {
   /* 🔥 override */
   /* 🎨 style */
   color: var(--grey-shade-2) !important;
 }
-.dark-background .color-grey.dark-white-v1, .dark-background-1 .color-grey.dark-white-v1 {
+.dark-background .color-grey.dark-white-v1, .dark-background-1 .color-grey.dark-white-v1, .dark-mode .color-grey.dark-white-v1 {
   /* 🔥 override */
   /* 🎨 style */
   color: var(--white) !important;
 }
-.dark-background .color-grey.dark-white-v3, .dark-background-1 .color-grey.dark-white-v3 {
+.dark-background .color-grey.dark-white-v3, .dark-background-1 .color-grey.dark-white-v3, .dark-mode .color-grey.dark-white-v3 {
   /* 🔥 override */
   /* 🎨 style */
   color: var(--white-3) !important;
 }
-.dark-background .color-grey.grey-v1, .dark-background-1 .color-grey.grey-v1 {
+.dark-background .color-grey.grey-v1, .dark-background-1 .color-grey.grey-v1, .dark-mode .color-grey.grey-v1 {
   /* 🔥 override */
   /* 🎨 style */
   color: var(--grey-shade) !important;
 }
-.dark-background .color-grey.dark-v1, .dark-background-1 .color-grey.dark-v1 {
+.dark-background .color-grey.dark-v1, .dark-background-1 .color-grey.dark-v1, .dark-mode .color-grey.dark-v1 {
   /* 🔥 override */
   /* 🎨 style */
   color: var(--grey) !important;
@@ -1941,17 +1941,17 @@ h6 {
   /* 🎨 style */
   color: var(--dark-theme) !important;
 }
-.dark-background .color-black-2, .dark-background-1 .color-black-2 {
+.dark-background .color-black-2, .dark-background-1 .color-black-2, .dark-mode .color-black-2 {
   /* 🔥 override */
   /* 🎨 style */
   color: var(--white) !important;
 }
-.dark-background .color-black-2.grey-v1, .dark-background-1 .color-black-2.grey-v1 {
+.dark-background .color-black-2.grey-v1, .dark-background-1 .color-black-2.grey-v1, .dark-mode .color-black-2.grey-v1 {
   /* 🔥 override */
   /* 🎨 style */
   color: var(--grey-shade) !important;
 }
-.dark-background .color-black-2.white-v1, .dark-background-1 .color-black-2.white-v1 {
+.dark-background .color-black-2.white-v1, .dark-background-1 .color-black-2.white-v1, .dark-mode .color-black-2.white-v1 {
   /* 🔥 override */
   /* 🎨 style */
   color: var(--grey-color) !important;
@@ -1961,12 +1961,12 @@ h6 {
   /* 🎨 style */
   color: var(--dark-theme-1) !important;
 }
-.dark-background .color-black-3, .dark-background-1 .color-black-3 {
+.dark-background .color-black-3, .dark-background-1 .color-black-3, .dark-mode .color-black-3 {
   /* 🔥 override */
   /* 🎨 style */
   color: var(--white) !important;
 }
-.dark-background .color-black-3.dark-v1, .dark-background-1 .color-black-3.dark-v1 {
+.dark-background .color-black-3.dark-v1, .dark-background-1 .color-black-3.dark-v1, .dark-mode .color-black-3.dark-v1 {
   /* 🔥 override */
   /* 🎨 style */
   color: var(--grey-shade) !important;
@@ -2229,19 +2229,19 @@ button.btn-hollow.v4:hover {
   border: 1px solid var(--grey-shade) !important;
   color: initial;
 }
-.dark-background button.btn-hollow.v2, .dark-background-1 button.btn-hollow.v2 {
+.dark-background button.btn-hollow.v2, .dark-background-1 button.btn-hollow.v2, .dark-mode button.btn-hollow.v2 {
   /* 🎨 style */
   border: 1px solid var(--dark-theme-1) !important;
 }
-.dark-background button.btn-hollow.v3d, .dark-background-1 button.btn-hollow.v3d {
+.dark-background button.btn-hollow.v3d, .dark-background-1 button.btn-hollow.v3d, .dark-mode button.btn-hollow.v3d {
   /* 🎨 style */
   border: 1px solid var(--grey) !important;
 }
-.dark-background button.btn-hollow.v3d:hover, .dark-background-1 button.btn-hollow.v3d:hover {
+.dark-background button.btn-hollow.v3d:hover, .dark-background-1 button.btn-hollow.v3d:hover, .dark-mode button.btn-hollow.v3d:hover {
   /* 🎨 style */
   border: 1px solid var(--grey-shade) !important;
 }
-.dark-background button.btn-hollow.v5d, .dark-background-1 button.btn-hollow.v5d {
+.dark-background button.btn-hollow.v5d, .dark-background-1 button.btn-hollow.v5d, .dark-mode button.btn-hollow.v5d {
   /* 🎨 style */
   border: 1px solid var(--dark-theme-1-shade) !important;
 }
@@ -2255,11 +2255,11 @@ button.btn-dark:hover {
   /* 🎨 style */
   background-color: var(--white-3);
 }
-.dark-background button.btn-dark, .dark-background-1 button.btn-dark {
+.dark-background button.btn-dark, .dark-background-1 button.btn-dark, .dark-mode button.btn-dark {
   /* 🎨 style */
   background-color: var(--dark-theme-1-4-shade);
 }
-.dark-background button.btn-dark:hover, .dark-background-1 button.btn-dark:hover {
+.dark-background button.btn-dark:hover, .dark-background-1 button.btn-dark:hover, .dark-mode button.btn-dark:hover {
   /* 🎨 style */
   background-color: var(--dark-theme);
 }
@@ -2293,7 +2293,7 @@ button.btn-shadow-1 {
   padding: 20px 0;
   overflow: hidden;
 }
-.dark-background .widget-component {
+.dark-background .widget-component, .dark-mode .widget-component {
   /* 🎨 style */
   background-color: var(--dark-theme-1) !important;
 }
@@ -2512,14 +2512,14 @@ form input.v-1 {
   border: 1px solid #CCCCCC;
   accent-color: var(--primary);
 }
-.dark-background-1 form input {
+.dark-background-1 form input, .dark-mode form input {
   border: 1px solid var(--dark-theme-1-2-shade);
 }
-.dark-background-1 form input:hover {
+.dark-background-1 form input:hover, .dark-mode form input:hover {
   /* 🎨 style */
   border: 1px solid var(--dark-theme-1-3-shade);
 }
-.dark-background-1 form input:focus {
+.dark-background-1 form input:focus, .dark-mode form input:focus {
   /* 🎨 style */
   border: 1px solid var(--dark-theme-1-3-shade);
 }
@@ -2595,7 +2595,8 @@ img.google-aspect-ratio {
 ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 */
 .dark-background .hover-color-primary:hover,
-.dark-background-1 .hover-color-primary:hover {
+.dark-background-1 .hover-color-primary:hover,
+.dark-mode .hover-color-primary:hover {
   /* 🎨 style */
   color: var(--primary) !important;
 }

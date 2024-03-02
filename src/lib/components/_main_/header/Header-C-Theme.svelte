@@ -38,10 +38,8 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-	import { page } from '$app/stores';
-
+	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { ROUTE_ID_PROFILE } from '$lib/utils/user.js';
 
 	import icon_dark_mode from './assets/moon-fill.svg';
 	import icon_light_mode from './assets/sun-fill.svg';
@@ -70,6 +68,9 @@
     CNAME = 'header⮕c⮕theme⮕main'
   ;
 
+  $: ({ currentPageRouteId } = $sessionStore);
+  $: ({ theme } = { ...$userBetarenaSettings });
+
   // #endregion ➤ 📌 VARIABLES
 
 </script>
@@ -93,8 +94,8 @@
   m-r-30
   cursor-pointer
   "
-  class:m-r-10={ROUTE_ID_PROFILE == $page.route.id}
-  class:row-space-end={$userBetarenaSettings.theme == 'Dark'}
+  class:m-r-10={currentPageRouteId == 'ProfilePage'}
+  class:row-space-end={theme == 'Dark'}
   on:click=
   {
     () =>
@@ -107,12 +108,12 @@
 
   <img
     loading="lazy"
-    src={$userBetarenaSettings.theme == 'Dark' ? icon_light_mode : icon_dark_mode}
-    alt={$userBetarenaSettings.theme == 'Dark' ? 'icon_light_mode' : 'icon_dark_mode'}
-    title={$userBetarenaSettings.theme == 'Dark' ? 'Enable Light Mode' : 'Enable Dark Mode'}
+    src={theme == 'Dark' ? icon_light_mode : icon_dark_mode}
+    alt={theme == 'Dark' ? 'icon_light_mode' : 'icon_dark_mode'}
+    title={theme == 'Dark' ? 'Enable Light Mode' : 'Enable Dark Mode'}
     width=16
     height=16
-    class:light={$userBetarenaSettings.theme == 'Dark'}
+    class:light={theme == 'Dark'}
   />
 
 </div>

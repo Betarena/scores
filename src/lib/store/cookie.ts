@@ -14,6 +14,8 @@
 
 import cookie from 'cookie';
 
+import { dlogv2 } from '$lib/utils/debug.js';
+
 // #endregion ➤ 📦 Package Imports
 
 /**
@@ -38,12 +40,28 @@ export function setCookie
   expDays: number
 ): void
 {
-  const currentDate = new Date();
+  // [🐞]
+  dlogv2
+  (
+    '🚏 checkpoint ➤ setCookie(..)',
+    [
+      `🔹 [var] ➤ cName :|: ${cName}`,
+      `🔹 [var] ➤ cValue :|: ${cValue}`,
+      `🔹 [var] ➤ expDays :|: ${expDays}`
+    ],
+    true
+  );
+
+  const
+    currentDate = new Date()
+  ;
   currentDate.setTime
   (
     currentDate.getTime() + (expDays * 24 * 60 * 60 * 1000)
   );
-  const expires = `expires=${currentDate.toUTCString()}`;
+  const
+    expires = `expires=${currentDate.toUTCString()}`
+  ;
   document.cookie = `${cName}=${cValue}; ${expires}; path=/`;
   return;
 }
@@ -78,6 +96,8 @@ export function getCookie
  *  🔹 HELPER
  * @description
  *  📣 Deletes target `cookie` from `client`.
+ * @param { string } cName
+ *  💠 **[required]** target cookie name.
  * @return { void }
  */
 export function delCookie
@@ -85,6 +105,16 @@ export function delCookie
   cName: string
 ): void
 {
+  // [🐞]
+  dlogv2
+  (
+    '🚏 checkpoint ➤ delCookie(..)',
+    [
+      `🔹 [var] ➤ cName :|: ${cName}`,
+    ],
+    true
+  );
+
   document.cookie = `${cName}=; Max-Age=0`;
   document.cookie = `${cName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
   return;

@@ -1,8 +1,23 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ Svelte Component JS/TS                                                           │
+│ 📌 High Order Component Overview                                                 │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - access custom Betarena Scores JS VScode Snippets by typing 'script...'         │
+│ ➤ Internal Svelte Code Format :|: V.8.0                                          │
+│ ➤ Status :|: 🔒 LOCKED                                                           │
+│ ➤ Author(s) :|: @migbash                                                         │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ 📝 Description                                                                   │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ Scores Authors Main                                                              │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 🟦 Svelte Component JS/TS                                                        │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -23,11 +38,15 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import type { IArticleData } from '@betarena/scores-lib/types/types.authors.articles.js';
+  import { onMount } from 'svelte';
 
-  import { monthNames } from '$lib/utils/dates.js';
-  import { onMount, tick } from 'svelte';
+  import icon_location_dark from './assets/icon-location-dark.svg';
   import icon_location from './assets/icon-location.svg';
+
+  import userBetarenaSettings from '$lib/store/user-settings.js';
+  import { monthNames } from '$lib/utils/dates.js';
+
+  import type { IArticleData } from '@betarena/scores-lib/types/types.authors.articles.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -55,48 +74,61 @@
   const
     /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
     // eslint-disable-next-line no-unused-vars
-    CNAME: string = 'author⮕w⮕author-content⮕main'
+    CNAME: string = 'author⮕w⮕author-content⮕main',
     /** @description 📣 threshold start + state for 📱 MOBILE */
     // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
+    VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ],
     /** @description 📣 threshold start + state for 💻 TABLET */
     // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
+    VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
   let
     /**
      * @description
-     *  📣
+     *  📣 Target data `map`.
     */
-    tagMap = new Map(widgetData.tags_key_pair)
+    tagMap = new Map(widgetData.tags_key_pair),
     /**
      * @description
-     *  📣
+     *  📣 Target assets `map`.
     */
-    , badgeMap = new Map(widgetData.badge_key_pair)
+    badgeMap = new Map(widgetData.badge_key_pair),
+    /**
+     * @description
+     *  📣 Wether to execute animation.
+    */
+    executeAnimation = false
+  ;
 
-    // #endregion ➤ 📌 VARIABLES
+  $: ({ theme } = { ...$userBetarenaSettings });
 
-    // #region ➤ 🔄 LIFECYCLE [SVELTE]
+  // #endregion ➤ 📌 VARIABLES
 
-    // ╭────────────────────────────────────────────────────────────────────────╮
-    // │ NOTE:                                                                  │
-    // │ Please add inside 'this' region the 'logic' that should run            │
-    // │ immediately and as part of the 'lifecycle' of svelteJs,                │
-    // │ as soon as 'this' .svelte file is ran.                                 │
-    // ╰────────────────────────────────────────────────────────────────────────╯
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
-    ,animate = false
-    ,effect: boolean = false;
-    if (effect)
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  onMount
+  (
+    () =>
     {
-      onMount(async () =>
-      {
-        await tick();
-        animate = effect;
-      });
+      setTimeout
+      (
+        () =>
+        {
+          executeAnimation = true;
+        }, 100
+      );
+
+      return;
     }
+  );
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
@@ -104,10 +136,12 @@
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ Svelte Component HTML                                                            │
+│ 💠 Svelte Component HTML                                                         │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - use 'Ctrl+Space' to autocomplete global class=styles                           │
-│ - access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.     │
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -122,7 +156,7 @@
     class=
     "
     s-38
-    w-600
+    w-500
     m-b-32
     color-black-2
     m-0
@@ -149,7 +183,9 @@
     <div
       id="tags-box-scroll"
     >
-      {#each [...widgetData.tags, ...widgetData.tags, ...widgetData.tags] as item}
+      <!-- [🐞] -->
+      <!-- {#each [...widgetData.tags, ...widgetData.tags, ...widgetData.tags] as item} -->
+      {#each [...widgetData.tags] as item}
         <div
           class=
           "
@@ -160,7 +196,7 @@
             class=
             "
             s-14
-            w-500
+            w-400
             color-black-2
             no-wrap
             "
@@ -201,9 +237,9 @@
       class=
       "
       m-r-12
+      effect
       "
-      class:effect
-      class:animate
+      class:animate={executeAnimation}
     />
 
     <!--
@@ -271,9 +307,19 @@
           "
           s-12
           color-black-3
+            dark-v1
           "
         >
           11 mins
+          <span
+            class=
+            "
+            m-r-5
+            m-l-5
+            "
+          >
+           •
+          </span>
           2 day ago
         </p>
       </div>
@@ -297,6 +343,7 @@
           "
           s-12
           color-black-3
+            dark-v1
           no-wrap
           m-r-12
           "
@@ -318,9 +365,9 @@
         >
           <img
             id=''
-            src={icon_location}
-            alt=icon_location
-            title=icon_location
+            src={theme == 'Dark' ? icon_location_dark : icon_location}
+            alt={theme == 'Dark' ? icon_location_dark : icon_location}
+            title={theme == 'Dark' ? icon_location_dark : icon_location}
             loading='lazy'
             class=
             "
@@ -332,6 +379,7 @@
             "
             s-12
             color-black-3
+              dark-v1
             "
           >
             {widgetData.authors__authors__id__nested?.data?.location ?? ''}
@@ -346,8 +394,9 @@
       <p
         class=
         "
-        s-14
+        s-12
         color-black-3
+          dark-v1
         m-t-12
         "
       >
@@ -360,10 +409,11 @@
   <!--
   ▓ NOTE:
   ▓ > article banner
+  src={widgetData.seo_details?.twitter_card.image}
   -->
   <img
     id='preview-banner'
-    src={widgetData.seo_details?.twitter_card.image}
+    src="https://pbs.twimg.com/media/F5rQ5FPWkAASrF4.jpg:large"
     alt={widgetData.seo_details?.twitter_card.image_alt}
     title={widgetData.data?.title}
     loading='lazy'
@@ -386,10 +436,11 @@
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ Svelte Component CSS/SCSS                                                        │
+│ 🌊 Svelte Component CSS/SCSS                                                     │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE  │
-│ - access custom Betarena Scores CSS VScode Snippets by typing 'style...'         │
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -468,15 +519,15 @@
 
       &.effect
       {
-        transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
         filter: blur(40px);
         transform: scaleX(1.1) scaleY(1.1);
+      }
 
-        &.animate
-        {
-          filter: none;
-          transform: none;
-        }
+      &.animate
+      {
+        filter: none;
+        transform: none;
       }
     }
 
@@ -505,6 +556,9 @@
           text-decoration: underline !important;
           color: var(--primary) !important;
           font-weight: 500;
+          width: fit-content !important;
+          margin: 0;
+          display: initial;
         }
 
         p
@@ -513,6 +567,8 @@
           font-size: 18px;
           line-height: 28px;
           color: var(--dark-theme);
+          margin-bottom: 20px;
+          font-weight: 300;
         }
 
         h2
@@ -522,8 +578,9 @@
           font-size: 24px;
         }
 
-        h3
-        , h5
+        h3,
+        h4,
+        h5
         {
           /* 🎨 style */
           @include header;

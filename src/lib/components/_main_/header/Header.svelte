@@ -1,16 +1,20 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ High Order Component Overview                                                    │
+│ 📌 High Order Component Overview                                                 │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ Internal Svelte Code Format :|: V.8.0                                          │
 │ ➤ Status :|: 🔒 LOCKED                                                           │
 │ ➤ Author(s) :|: @migbash                                                         │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ 📝 Description                                                                   │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ Scores Platform Header                                                           │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ Svelte Component JS/TS                                                           │
+│ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
@@ -39,14 +43,12 @@
 	import { onMount } from 'svelte';
 	import { fly } from 'svelte/transition';
 
-	import { db_firestore } from '$lib/firebase/init';
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { NB_W_TAG, dlog, dlogv2 } from '$lib/utils/debug';
+	import { dlog, dlogv2 } from '$lib/utils/debug';
 	import { generateUrlCompetitions, selectLanguage, spliceBalanceDoubleZero, toDecimalFix, viewportChangeV2 } from '$lib/utils/platform-functions';
 	import { translationObject } from '$lib/utils/translation.js';
-	import { initUser, logoutUser } from '$lib/utils/user.js';
-	import { doc, updateDoc } from 'firebase/firestore';
+	import { initUser, logoutUser, updateSelectLang } from '$lib/utils/user.js';
 
   import SeoBox from '$lib/components/SEO-Box.svelte';
   import TranslationText from '$lib/components/misc/Translation-Text.svelte';
@@ -91,6 +93,9 @@
     | 'close'
     | 'menu_burger_bar'
     | 'profile_avatar'
+    | 'logoAuthor'
+    | 'logoAuthorDark'
+    | 'iconArrowDownDark'
   ;
 
   /**
@@ -126,22 +131,22 @@
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
      */
-    CNAME = 'global/w/navbar/main'
+    CNAME = 'global/w/navbar/main',
     /**
      * @description
      *  📣 threshold start + state for 📱 MOBILE
      */ // eslint-disable-next-line no-unused-vars
-    ,VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
+    VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ],
     /**
      * @description
      *  📣 threshold start + state for 💻 TABLET
      */ // eslint-disable-next-line no-unused-vars
-    ,VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
+    VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ],
     /**
      * @description
      *  📣 Dynamic import variable condition
      */
-    ,useDynamicImport: boolean = true
+    useDynamicImport: boolean = true
   ;
 
   let
@@ -149,52 +154,55 @@
      * @description
      *  📣 Holds target `component(s)` of dynamic nature.
      */
-    dynamicAssetMap = new Map< IDynamicAssetMap, any >()
+    dynamicAssetMap = new Map< IDynamicAssetMap, any >(),
     /**
      * @description
      *  📣 Internal Component State.
      */
-    ,widgetState = new Set < IWidgetState > ()
+    widgetState = new Set < IWidgetState > (),
     /**
      * @description
      *  📣 Target `animation` width tracking variable.
      */
-    ,width = 0
+    width = 0,
     /**
      * @description
      *  📣 Currently `selected sport`.
      */
-    ,selectedSport = 'football'
+    selectedSport = 'football',
     /**
      * @description
      *  📣 Target navigation `button` data list.
      */
-    ,navButtonOrderList: INavBtnData[]
-    = [
-      {
-        key: 'scores'
-        ,url: trsanslationData?.scores_header_translations?.section_links?.scores_url
-        ,navTxt: (trsanslationData?.scores_header_translations?.section_links?.scores_title ?? 'SCORES')
-        ,isNew: false
-        ,newTxt: 'New'
-      }
-      ,{
-        key: 'content'
-        ,url: trsanslationData?.scores_header_translations?.section_links?.sports_content_url
-        ,navTxt: (trsanslationData?.scores_header_translations?.section_links?.sports_content_title ?? 'SPORTS CONTENT')
-        ,isNew: false
-        ,newTxt: 'New'
-      }
-      ,{
-        key: 'competitions'
-        ,url: generateUrlCompetitions($sessionStore.serverLang!, $page.data.B_SAP_D3_CP_H)
-        ,navTxt: (trsanslationData?.scores_header_translations?.section_links?.competitions_title ?? 'COMPETITIONS')
-        ,isNew: true
-        ,newTxt: 'New'
-      }
-    ]
+    navButtonOrderList: INavBtnData[]
+      = [
+        {
+          key: 'scores',
+          url: trsanslationData?.scores_header_translations?.section_links?.scores_url,
+          navTxt: (trsanslationData?.scores_header_translations?.section_links?.scores_title ?? 'SCORES'),
+          isNew: false,
+          newTxt: 'New'
+        },
+        {
+          key: 'content',
+          url: trsanslationData?.scores_header_translations?.section_links?.sports_content_url,
+          navTxt: (trsanslationData?.scores_header_translations?.section_links?.sports_content_title ?? 'SPORTS CONTENT'),
+          isNew: false,
+          newTxt: 'New'
+        },
+        {
+          key: 'competitions',
+          url: generateUrlCompetitions($sessionStore.serverLang!, $page.data.B_SAP_D3_CP_H),
+          navTxt: (trsanslationData?.scores_header_translations?.section_links?.competitions_title ?? 'COMPETITIONS'),
+          isNew: true,
+          newTxt: 'New'
+        }
+      ]
   ;
 
+  $: ({ error } = $page);
+  $: ({ id: pageRouteId } = $page.route);
+  $: ({ windowWidth, currentPageRouteId } = $sessionStore);
   $: [ VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1] ]
     = viewportChangeV2
     (
@@ -202,31 +210,22 @@
       VIEWPORT_MOBILE_INIT[0],
       VIEWPORT_TABLET_INIT[0],
     );
-  $: ({ lang } = $userBetarenaSettings);
-  $: ({ serverLang } = $sessionStore);
-  $: ({ windowWidth } = $sessionStore);
+  $: ({ lang, theme } = $userBetarenaSettings);
+  $: ({ serverLang, navBtnHover } = $sessionStore);
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   $: ({ uid } = { ...$userBetarenaSettings?.user?.firebase_user_data });
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  $: ({ web3_wallet_addr, profile_photo, main_balance } = { ...$userBetarenaSettings?.user?.scores_user_data });
+  $: ({ web3_wallet_addr, profile_photo, main_balance, lang: userLang } = { ...$userBetarenaSettings?.user?.scores_user_data });
   $: deepReactListenUser = JSON.stringify($userBetarenaSettings.user) as string | undefined;
-  $: deepReactListenNavBtnHover = JSON.stringify($sessionStore.navBtnHover);
-  $: isRouteCompetitions = $page.route.id?.includes('/[[lang=lang]]/[competitions=competitions]');
-  $: isRouteProfile = $page.route.id == '/u/[view]/[lang=lang]';
   $: homepageURL
-    = $sessionStore.serverLang != 'en'
+    = serverLang != 'en'
       ? `/${$page.params.lang}`
       : '/';
   $: logoLink
-    = $sessionStore.serverLang != 'en'
-      ? `${$page.url.origin}/${$sessionStore.serverLang}`
+    = serverLang != 'en'
+      ? `${$page.url.origin}/${serverLang}`
       : $page.url.origin
   ;
-  // [?]
-  // $: dropDownArea
-  //   = isOddsDropdown
-  //   || isUserAuthDropdown
-  // ;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -268,8 +267,8 @@
       (
         `${prefix} if_R_0`,
         [
-          '📝 INFO: Non-authenticated user detected! Processing logic...'
-          ,'❗️ WARNING: Non re-occuring logic, (once per load), should not be seen again.'
+          '📝 INFO: Non-authenticated user detected! Processing logic...',
+          '❗️ WARNING: Non re-occuring logic, (once per load), should not be seen again.'
         ],
         true
       );
@@ -278,8 +277,8 @@
       (
         `${prefix} if_R_1`,
         [
-          '📝 INFO: Authenticated user detected! Processing logic...'
-          ,'❗️ WARNING: Non re-occuring logic, (once per load), should not be seen again.'
+          '📝 INFO: Authenticated user detected! Processing logic...',
+          '❗️ WARNING: Non re-occuring logic, (once per load), should not be seen again.'
         ],
         true
       );
@@ -321,7 +320,7 @@
   {
     widgetState.delete('CurrencyDropdownActive');
     widgetState.delete('UserDropdownActive');
-    // dropDownArea = false;
+    widgetState = widgetState;
 
     return;
   }
@@ -334,7 +333,7 @@
    * @description
    *  📣 Calcualte navigation triangle position.
    * @param { string } [mainActive]
-   *  💠 Currently **active/selected** navigation.
+   *  💠 [optional] Currently **active/selected** navigation.
    * @return { void }
    */
   function calcNavTrianglePos
@@ -343,20 +342,20 @@
   ): void
   {
     const
-      parentElem = document.getElementById('navBox')
-      ,childElem = document.getElementById($sessionStore.navBtnHover || mainActive)
+      parentElem = document.getElementById('navBox'),
+      childElem = document.getElementById($sessionStore.navBtnHover || mainActive)
     ;
 
     if (parentElem == undefined || childElem == undefined) return;
 
     const
-      parentPos: DOMRect = parentElem.getBoundingClientRect()
-      ,childPos: DOMRect = childElem.getBoundingClientRect()
-      ,relativePos = {
-        top: (childPos.top - parentPos.top)
-        ,right: (childPos.right - parentPos.right)
-        ,bottom: (childPos.bottom - parentPos.bottom)
-        ,left: (childPos.left - parentPos.left)
+      parentPos: DOMRect = parentElem.getBoundingClientRect(),
+      childPos: DOMRect = childElem.getBoundingClientRect(),
+      relativePos = {
+        top: (childPos.top - parentPos.top),
+        right: (childPos.right - parentPos.right),
+        bottom: (childPos.bottom - parentPos.bottom),
+        left: (childPos.left - parentPos.left)
       }
     ;
 
@@ -365,70 +364,9 @@
     return;
   }
 
-  /**
-   * @author
-   *  @migbash
-   * @summary
-   *  🟦 HELPER
-	 * @description
-   *  📣 Update user's platform language.
-   * @returns { Promise < void > }
-	 */
-  async function updateSelectLang
-  (
-  ): Promise < void >
-  {
-    if
-    (
-      !$userBetarenaSettings.lang
-      || $page.error
-      || !$page.route.id
-      || $userBetarenaSettings.user == undefined
-    )
-      return;
-    //
-
-    const lang = $userBetarenaSettings.lang;
-
-    // [🐞]
-    dlog
-    (
-      `${NB_W_TAG[0]} 🔵 Updating platform user lang ${lang}`
-    );
-
-    userBetarenaSettings.updateData
-    (
-      'lang-user',
-      lang
-    );
-
-    const userRef = doc
-    (
-      db_firestore,
-      'betarena_users',
-      uid,
-    );
-
-    await updateDoc
-    (
-      userRef,
-      {
-        lang
-      }
-    );
-
-    // [🐞]
-    dlog
-    (
-      `${NB_W_TAG[0]} 🟢 User language has been updated`,
-    );
-
-    return;
-  }
-
   // #endregion ➤ 🛠️ METHODS
 
-  // #region ➤ 🔥 REACTIVIY [SVELTE]
+  // #region ➤ 🔥 REACTIVIY [SVELTE]4
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -442,7 +380,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   // ╭─────
-  // │ > 🔥 Initialize User (anonynous) platform language.
+  // │ > 🔥 Initialize 'user' (unauthenticated) platform language.
   // ╰─────
   $: if (browser && deepReactListenUser == undefined)
   {
@@ -459,7 +397,7 @@
   }
 
   // ╭─────
-  // │ > 🔥 Initialize User (post log-in).
+  // │ > 🔥 Initialize 'user' (authenticated) on post 'log-in'.
   // ╰─────
   $: if (browser && deepReactListenUser != undefined)
   {
@@ -468,9 +406,13 @@
   }
 
   // ╭─────
-  // │ > 🔥 [?]
+  // │ > 🔥 Update 'user' (authenticated) platform language.
   // ╰─────
-  $: if (browser && !isRouteProfile && deepReactListenUser != undefined)
+  $: if_R_2
+    = browser
+    && currentPageRouteId != 'ProfilePage'
+  ;
+  $: if (if_R_2 && deepReactListenUser != undefined)
   {
     _DEBUG_('Option2');
 
@@ -481,66 +423,80 @@
     (
     ): void
     {
-      let userlang: string = $userBetarenaSettings.user.scores_user_data?.lang;
       selectLanguage
       (
-        userlang,
+        userLang!,
         $page
       );
     }
   }
 
   // ╭─────
-  // │ > 🔥 [?]
+  // │ > 🔥 Instantiate 'user' (authenticated) platform language.
   // ╰─────
-  $: IF_R_3
-    = !$page.error
-    && $page.route.id
-    && $userBetarenaSettings.user != undefined
+  $: if_R_3
+    = !error
+    && pageRouteId
+    && deepReactListenUser != undefined
   ;
-  $: if (IF_R_3 && lang != undefined)
+  $:
+  if (if_R_3 && lang != undefined)
   {
     _DEBUG_('Option4');
-    updateSelectLang();
+    updateSelectLang
+    (
+      {
+        isPageError: (error ? true : false),
+        routeId: pageRouteId
+      }
+    );
   }
 
   // ╭─────
-  // │ > 🔥 [?]
+  // │ > 🔥 Navbar Z-Index Override
   // ╰─────
-  $: IF_R_4
+  $: if_R_4
     = ($sessionStore.livescoreShowCalendar && VIEWPORT_MOBILE_INIT[1])
     || $sessionStore.showUserguide1
     || $sessionStore.currentActiveModal
   ;
-  $: if (IF_R_4)
+  $:
+  if (if_R_4)
+  {
     widgetState.add('UpdateZIndex');
+    widgetState = widgetState;
+  }
   else if (widgetState.has('UpdateZIndex'))
+  {
     setTimeout
     (
       () =>
       {
         widgetState.delete('UpdateZIndex');
+        widgetState = widgetState;
       },
       750
     );
-
+    widgetState = widgetState;
+  }
 
   // ╭─────
   // │ > 🔥 Trigger Navigation Triangle Position Re-Calculation.
   // ╰─────
-  $: if (browser && deepReactListenNavBtnHover != undefined && serverLang)
+  $:
+  if (browser && navBtnHover != undefined && serverLang)
   {
     _DEBUG_('Option5');
     calcNavTrianglePos();
   }
-  else if (browser && deepReactListenNavBtnHover == undefined && serverLang)
+  else if (browser && navBtnHover == undefined && serverLang)
   {
     _DEBUG_('Option5');
     setTimeout
     (
       () =>
       {
-        if (isRouteCompetitions)
+        if (currentPageRouteId == 'CompetitionPage')
           calcNavTrianglePos('competitions');
         else
           calcNavTrianglePos('scores');
@@ -572,6 +528,8 @@
         dynamicAssetMap.set('arrow_up', (await import('./assets/arrow-up.svg')).default);
         dynamicAssetMap.set('logo_full', (await import('./assets/betarena-logo-full.svg')).default);
         dynamicAssetMap.set('logo_mini', (await import('./assets/betarena-logo-mobile.svg')).default);
+        dynamicAssetMap.set('logoAuthor', (await import('./assets/asset-betarena-logo-full.png')).default);
+        dynamicAssetMap.set('logoAuthorDark', (await import('./assets/asset-betarena-logo-full-dark.png')).default);
         dynamicAssetMap.set('close', (await import('./assets/close.svg')).default);
         dynamicAssetMap.set('menu_burger_bar', (await import('./assets/menu-burger.svg')).default);
         dynamicAssetMap.set('profile_avatar', (await import('./assets/profile-avatar.svg')).default);
@@ -589,7 +547,7 @@
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ Svelte Component HTML                                                            │
+│ 💠 Svelte Component HTML                                                         │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
 │         │ imported from './static/app.css'                                       │
@@ -606,7 +564,13 @@
 {#if widgetState.has('CurrencyDropdownActive') || widgetState.has('OddsDropdownActive')}
 	<div
 		id="background-area-close"
-		on:click={() => {return closeAllDropdowns()}}
+		on:click=
+    {
+      () =>
+      {
+        return closeAllDropdowns()
+      }
+    }
 	/>
 {/if}
 
@@ -655,8 +619,9 @@
   "
   column-space-center
   "
-  class:user-active={isRouteProfile}
   class:update-z-index={widgetState.has('UpdateZIndex')}
+  class:user-active={currentPageRouteId == 'ProfilePage'}
+  class:page-authors={currentPageRouteId == 'AuthorsPage'}
 >
 
   <!--
@@ -666,8 +631,14 @@
   -->
 	{#if widgetState.has('CurrencyDropdownActive') || widgetState.has('OddsDropdownActive')}
 		<div
-			id="background-area-close-inner"
-			on:click={() => {return closeAllDropdowns()}}
+			id="background-area-close"
+			on:click=
+      {
+        () =>
+        {
+          return closeAllDropdowns()
+        }
+      }
 		/>
 	{/if}
 
@@ -715,6 +686,7 @@
             () =>
             {
               widgetState.add('MobileNavToggleMenuActive');
+              widgetState = widgetState;
               return;
             }
           }
@@ -750,7 +722,16 @@
         >
           <img
             loading="lazy"
-            src={VIEWPORT_MOBILE_INIT[1] ? dynamicAssetMap.get('logo_mini') : dynamicAssetMap.get('logo_full')}
+            src=
+            {
+              currentPageRouteId != 'AuthorsPage'
+                ? VIEWPORT_MOBILE_INIT[1]
+                  ? dynamicAssetMap.get('logo_mini')
+                  : dynamicAssetMap.get('logo_full')
+                : theme == 'Dark'
+                  ? dynamicAssetMap.get('logoAuthorDark')
+                  : dynamicAssetMap.get('logoAuthor')
+            }
             alt="betarena_logo"
             width={VIEWPORT_MOBILE_INIT[1] ? 103 : 142}
             height=30
@@ -764,7 +745,7 @@
       │ > External Button / Navigation :|: 📱 MOBILE 💻 TABLET
       ╰─────
       -->
-      {#if !VIEWPORT_TABLET_INIT[1]}
+      {#if !VIEWPORT_TABLET_INIT[1] && currentPageRouteId != 'AuthorsPage'}
         <div
           id='navBox'
           class=
@@ -784,8 +765,8 @@
               navTxt={item.navTxt}
               isNew={item.isNew}
               newTxt={item.newTxt}
-              VIEWPORT_TABLET_INIT={VIEWPORT_TABLET_INIT[1]}
-              VIEWPORT_MOBILE_INIT={VIEWPORT_MOBILE_INIT[1]}
+              {VIEWPORT_TABLET_INIT}
+              {VIEWPORT_MOBILE_INIT}
             />
           {/each}
 
@@ -794,7 +775,7 @@
           │ > Navigation Triangle
           ╰─────
           -->
-          {#if !isRouteProfile}
+          {#if currentPageRouteId != 'ProfilePage'}
             <div
               id="nav-triangle"
               style=
@@ -838,85 +819,88 @@
         │ > Currency Selection
         ╰─────
         -->
-        <div
-          id="currency-box"
-          class=
-          "
-          m-r-16
-          "
-        >
-
-          <!--
-          ╭─────
-          │ > Selected Currency
-          ╰─────
-          -->
+        {#if currentPageRouteId != 'AuthorsPage'}
           <div
+            id="currency-box"
             class=
             "
-            selected-language-btn
-            row-space-start
+            m-r-16
             "
-            class:active-lang-select={widgetState.has('CurrencyDropdownActive')}
-            on:click=
-            {
-              () =>
-              {
-                if (widgetState.has('CurrencyDropdownActive'))
-                  widgetState.delete('CurrencyDropdownActive');
-                else
-                  widgetState.add('CurrencyDropdownActive');
-                return;
-              }
-            }
           >
+
             <!--
             ╭─────
-            │ > Currency Icon
+            │ > Selected Currency
             ╰─────
             -->
-            <img
-              loading="lazy"
-              src='/assets/svg/currency/usd.svg'
-              alt='usd-icon'
-              width="16"
-              height="16"
+            <div
               class=
               "
-              m-r-6
+              selected-language-btn
+              row-space-start
               "
-            />
-            <!--
-            ╭─────
-            │ > Currency Text
-            ╰─────
-            -->
-            <p
-              class=
-              "
-              color-white
-              s-14
-              "
+              class:active-lang-select={widgetState.has('CurrencyDropdownActive')}
+              on:click=
+              {
+                () =>
+                {
+                  if (widgetState.has('CurrencyDropdownActive'))
+                    widgetState.delete('CurrencyDropdownActive');
+                  else
+                    widgetState.add('CurrencyDropdownActive');
+                  widgetState = widgetState;
+                  return;
+                }
+              }
             >
-              USD
-            </p>
-            <!--
-            ╭─────
-            │ > Arrow Down [HIDDEN]
-            ╰─────
-            -->
-            {#if false}
+              <!--
+              ╭─────
+              │ > Currency Icon
+              ╰─────
+              -->
               <img
                 loading="lazy"
-                src={!widgetState.has('CurrencyDropdownActive') ? dynamicAssetMap.get('arrow_down') : dynamicAssetMap.get('arrow_up')}
-                alt={!widgetState.has('CurrencyDropdownActive')	? 'arrow_down' : 'arrow_up'}
-                width=16
-                height=16
+                src='/assets/svg/currency/usd.svg'
+                alt='usd-icon'
+                width="16"
+                height="16"
+                class=
+                "
+                m-r-6
+                "
               />
-            {/if}
-          </div>
+              <!--
+              ╭─────
+              │ > Currency Text
+              ╰─────
+              -->
+              <p
+                class=
+                "
+                color-white
+                s-14
+                "
+              >
+                USD
+              </p>
+              <!--
+              ╭─────
+              │ > Arrow Down [HIDDEN]
+              ╰─────
+              -->
+              {#if false}
+                <img
+                  loading="lazy"
+                  src={!widgetState.has('CurrencyDropdownActive') ? dynamicAssetMap.get('arrow_down') : dynamicAssetMap.get('arrow_up')}
+                  alt={!widgetState.has('CurrencyDropdownActive')	? 'arrow_down' : 'arrow_up'}
+                  width=16
+                  height=16
+                />
+              {/if}
+            </div>
 
-        </div>
+          </div>
+        {/if}
 
         <!--
         ╭─────
@@ -950,7 +934,7 @@
       │ > Sign-In (button)
       ╰─────
       -->
-      {#if $userBetarenaSettings.user == undefined}
+      {#if deepReactListenUser == undefined}
 
         <button
           id="{CNAME}/sign-in-btn"
@@ -960,7 +944,14 @@
           btn-hollow
           cursor-pointer
           "
-          on:click={() => {return ($sessionStore.auth_show = !$sessionStore.auth_show)}}
+          class:v5d={currentPageRouteId == 'AuthorsPage'}
+          on:click=
+          {
+            () =>
+            {
+              return ($sessionStore.auth_show = !$sessionStore.auth_show)
+            }
+          }
         >
           <p
             class=
@@ -1039,6 +1030,7 @@
                   widgetState.delete('UserDropdownActive');
                 else
                   widgetState.add('UserDropdownActive');
+                widgetState = widgetState;
                 return;
               }
             }
@@ -1081,6 +1073,7 @@
                     () =>
                     {
                       widgetState.delete('UserDropdownActive');
+                      widgetState = widgetState;
                       return;
                     }
                   }
@@ -1148,28 +1141,24 @@
 
   </div>
 
-  <div id='header/border/top-box' />
-  <div id='header/border/bottom-box' />
+  <!--
+  ╭─────
+  │ > Divider
+  ╰─────
+  -->
+  {#if currentPageRouteId != 'AuthorsPage'}
+    <div id='header/border/top-box' />
+    <div id='header/border/bottom-box' />
+  {/if}
 
   <!--
   ╭─────
   │ > Bottom Navbar
   ╰─────
   -->
-  <div
-    id="header/bottom"
-    class=
-    "
-    row-space-out
-    "
-  >
-
-    <!--
-    ╭─────
-    │ > 1st Column
-    ╰─────
-    -->
+  {#if currentPageRouteId != 'AuthorsPage'}
     <div
+      id="header/bottom"
       class=
       "
       row-space-out
@@ -1178,273 +1167,286 @@
 
       <!--
       ╭─────
-      │ > Sports Horizontal List (scores only)
-      │ > Competition Horizontal List (competition only)
+      │ > 1st Column
       ╰─────
       -->
-      {#if !isRouteProfile}
-        <div
-          id="header/bottom/inner"
-          class=
-          "
-          row-space-out
-          m-r-10
-          "
-          style="width: fit-content;"
-        >
+      <div
+        class=
+        "
+        row-space-out
+        "
+      >
+
+        <!--
+        ╭─────
+        │ > Sports Horizontal List (scores only)
+        │ > Competition Horizontal List (competition only)
+        ╰─────
+        -->
+        {#if !currentPageRouteId || currentPageRouteId == 'CompetitionPage'}
           <div
+            id="header/bottom/inner"
             class=
             "
             row-space-out
+            m-r-10
             "
             style="width: fit-content;"
           >
-            <!--
-            ╭─────
-            │ > Football
-            ╰─────
-            -->
-            {#if !isRouteCompetitions}
-              <HeaderSportsBtn
-                sportNameDefault={'football'}
-                sportTranslation={trsanslationData?.scores_header_translations?.sports_v2?.football}
-                sportValue={trsanslationData?.scores_header_fixtures_information?.football}
-                selectedSport={selectedSport}
-                on:closeDropdown={(event) => {return selectedSport = event.detail?.selectedSport}}
-              />
-            {/if}
-
-            <!--
-            ╭─────
-            │ > Predictor
-            ╰─────
-            -->
-            {#if isRouteCompetitions}
-              <HeaderCompetitionBtn
-                competitionNameDefault={'predictor'}
-                competitionTranslation={trsanslationData?.competitions_category?.data?.predictor}
-                navUrl={generateUrlCompetitions($sessionStore.serverLang, $page.data.B_SAP_D3_CP_H)}
-              />
-            {/if}
-          </div>
-        </div>
-      {/if}
-
-    </div>
-
-    <!--
-    ╭─────
-    │ > 2nd Column (scores only)
-    ╰─────
-    -->
-    <div
-      class=
-      "
-      row-space-start
-      "
-      style="width: fit-content;"
-    >
-
-      <!--
-      💻 TABLET 🖥️ LAPTOP
-      -->
-      {#if !VIEWPORT_MOBILE_INIT[1]}
-
-        <!--
-        ╭─────
-        │ > Odds Box [HIDDEN]
-        ╰─────
-        -->
-        {#if false}
-          <div
-            id="odds-box"
-            class=
-            "
-            cursor-not-allowed
-            dropdown-opt-box
-            row-space-start
-            "
-            on:click={() => {return (isOddsDropdown = !isOddsDropdown)}}
-          >
-
-            <!--
-            SELECTED ODDS-TYPE BOX
-            -->
             <div
-              class="m-r-10"
+              class=
+              "
+              row-space-out
+              "
+              style="width: fit-content;"
             >
+              <!--
+              ╭─────
+              │ > Football
+              ╰─────
+              -->
+              {#if currentPageRouteId != 'CompetitionPage'}
+                <HeaderSportsBtn
+                  sportNameDefault={'football'}
+                  sportTranslation={trsanslationData?.scores_header_translations?.sports_v2?.football}
+                  sportValue={trsanslationData?.scores_header_fixtures_information?.football}
+                  selectedSport={selectedSport}
+                  on:closeDropdown={(event) => {return selectedSport = event.detail?.selectedSport}}
+                />
+              {/if}
 
-              <p
-                class="
-                  color-grey
-                  s-12
-                  no-wrap
-                "
-              >
-                {trsanslationData?.scores_header_translations?.odds || translationObject.odds_type}
-              </p>
-
-              <p
-                class="
-                  color-white
-                  s-14
-                  no-wrap
-                "
-              >
-                {trsanslationData?.scores_header_translations?.odds_type?.[0]}
-              </p>
-
+              <!--
+              ╭─────
+              │ > Predictor
+              ╰─────
+              -->
+              {#if currentPageRouteId == 'CompetitionPage'}
+                <HeaderCompetitionBtn
+                  competitionNameDefault={'predictor'}
+                  competitionTranslation={trsanslationData?.competitions_category?.data?.predictor}
+                  navUrl={generateUrlCompetitions($sessionStore.serverLang, $page.data.B_SAP_D3_CP_H)}
+                />
+              {/if}
             </div>
-
-            <!--
-            ARROW DOWN
-            -->
-            <img
-              loading="lazy"
-              src={!isOddsDropdown ? arrow_down_fade : arrow_up}
-              alt={!isOddsDropdown ? 'arrow_down_fade' : 'arrow_up'}
-              width=16
-              height=16
-            />
-
-            <!--
-            DROPDOWN MENU (ODDS-TYPE)
-            -->
-            {#if isOddsDropdown}
-              <div
-                id="odds-type-dropdown-menu"
-                transition:fly
-              >
-                {#each trsanslationData?.scores_header_translations?.odds_type || [] as odd}
-                  <div
-                    class="theme-opt-box"
-                    on:click={() => {return (isOddsDropdown = false)}}
-                  >
-                    <p
-                      class="
-                        color-white
-                        s-14
-                      "
-                    >
-                      {odd}
-                    </p>
-                  </div>
-                {/each}
-              </div>
-            {/if}
-
           </div>
         {/if}
 
-        <!--
-        ╭─────
-        │ > Bookmakers Container
-        ╰─────
-        -->
-        {#if !isRouteProfile && !isRouteCompetitions}
-          <HeaderCBookmakers
-            isViewTablet={VIEWPORT_TABLET_INIT[1]}
-            isViewMobile={VIEWPORT_MOBILE_INIT[1]}
-          />
-        {/if}
-
-      {/if}
+      </div>
 
       <!--
       ╭─────
-      │ > Betarena Token
+      │ > 2nd Column (scores only)
       ╰─────
       -->
-      {#if $userBetarenaSettings.user != undefined}
+      <div
+        class=
+        "
+        row-space-start
+        "
+        style="width: fit-content;"
+      >
 
-        <a
-          href="/u/transaction-history/{$userBetarenaSettings.lang}"
-          title='View Transactions History'
-        >
-          <div
-            id="balance-box"
-            class=
-            "
-            dropdown-opt-box
-            row-space-start
-            "
-          >
+        <!--
+        💻 TABLET 🖥️ LAPTOP
+        -->
+        {#if !VIEWPORT_MOBILE_INIT[1]}
 
-            <div>
+          <!--
+          ╭─────
+          │ > Odds Box [HIDDEN]
+          ╰─────
+          -->
+          {#if false}
+            <div
+              id="odds-box"
+              class=
+              "
+              cursor-not-allowed
+              dropdown-opt-box
+              row-space-start
+              "
+              on:click={() => {return (isOddsDropdown = !isOddsDropdown)}}
+            >
 
               <!--
-              📱 MOBILE
-              Balance Title
+              SELECTED ODDS-TYPE BOX
               -->
-              {#if !VIEWPORT_MOBILE_INIT[1]}
+              <div
+                class="m-r-10"
+              >
+
                 <p
-                  class=
-                  "
-                  color-grey
-                  s-12
-                  no-wrap
+                  class="
+                    color-grey
+                    s-12
+                    no-wrap
                   "
                 >
-                  {trsanslationData?.scores_header_translations?.data?.balance ?? translationObject.balance}
+                  {trsanslationData?.scores_header_translations?.odds || translationObject.odds_type}
                 </p>
+
+                <p
+                  class="
+                    color-white
+                    s-14
+                    no-wrap
+                  "
+                >
+                  {trsanslationData?.scores_header_translations?.odds_type?.[0]}
+                </p>
+
+              </div>
+
+              <!--
+              ARROW DOWN
+              -->
+              <img
+                loading="lazy"
+                src={!isOddsDropdown ? arrow_down_fade : arrow_up}
+                alt={!isOddsDropdown ? 'arrow_down_fade' : 'arrow_up'}
+                width=16
+                height=16
+              />
+
+              <!--
+              DROPDOWN MENU (ODDS-TYPE)
+              -->
+              {#if isOddsDropdown}
+                <div
+                  id="odds-type-dropdown-menu"
+                  transition:fly
+                >
+                  {#each trsanslationData?.scores_header_translations?.odds_type || [] as odd}
+                    <div
+                      class="theme-opt-box"
+                      on:click={() => {return (isOddsDropdown = false)}}
+                    >
+                      <p
+                        class="
+                          color-white
+                          s-14
+                        "
+                      >
+                        {odd}
+                      </p>
+                    </div>
+                  {/each}
+                </div>
               {/if}
 
-              <p
-                class=
-                "
-                color-white
-                s-14
-                no-wrap
-                "
-              >
-                <span
-                  class=
-                  "
-                  color-primary
-                  w-500
-                  m-r-5
-                  "
-                >
-                  {spliceBalanceDoubleZero(toDecimalFix(main_balance)) ?? '0.00'} BTA
-                </span>
-                {#if VIEWPORT_MOBILE_INIT[1]}
-                  <br/>
-                {/if}
-                (${spliceBalanceDoubleZero(toDecimalFix(main_balance)) ?? '0.00'})
-              </p>
             </div>
+          {/if}
 
-          </div>
-        </a>
+          <!--
+          ╭─────
+          │ > Bookmakers Container
+          ╰─────
+          -->
+          {#if !currentPageRouteId}
+            <HeaderCBookmakers
+              {VIEWPORT_TABLET_INIT}
+              {VIEWPORT_MOBILE_INIT}
+            />
+          {/if}
+
+        {/if}
 
         <!--
         ╭─────
-        │ > But Betarena Token (navigation)
+        │ > Betarena Token
         ╰─────
         -->
-        {#if true}
+        {#if deepReactListenUser != undefined}
+
           <a
-            href="/u/investor/{$userBetarenaSettings.lang}"
-            title='Go to Investor Page'
+            href="/u/transaction-history/{$userBetarenaSettings.lang}"
+            title='View Transactions History'
           >
-            <button
+            <div
+              id="balance-box"
               class=
               "
-              btn-primary-v2
+              dropdown-opt-box
+              row-space-start
               "
-              class:m-l-50={!VIEWPORT_MOBILE_INIT[1]}
-              class:m-l-20={VIEWPORT_MOBILE_INIT[1]}
             >
-              {trsanslationData?.scores_header_translations?.data?.cta_buy ?? 'Buy BTA'}
-            </button>
+
+              <div>
+
+                <!--
+                📱 MOBILE
+                Balance Title
+                -->
+                {#if !VIEWPORT_MOBILE_INIT[1]}
+                  <p
+                    class=
+                    "
+                    color-grey
+                    s-12
+                    no-wrap
+                    "
+                  >
+                    {trsanslationData?.scores_header_translations?.data?.balance ?? translationObject.balance}
+                  </p>
+                {/if}
+
+                <p
+                  class=
+                  "
+                  color-white
+                  s-14
+                  no-wrap
+                  "
+                >
+                  <span
+                    class=
+                    "
+                    color-primary
+                    w-500
+                    m-r-5
+                    "
+                  >
+                    {spliceBalanceDoubleZero(toDecimalFix(main_balance)) ?? '0.00'} BTA
+                  </span>
+                  {#if VIEWPORT_MOBILE_INIT[1]}
+                    <br/>
+                  {/if}
+                  (${spliceBalanceDoubleZero(toDecimalFix(main_balance)) ?? '0.00'})
+                </p>
+              </div>
+
+            </div>
           </a>
+
+          <!--
+          ╭─────
+          │ > But Betarena Token (navigation)
+          ╰─────
+          -->
+          {#if true}
+            <a
+              href="/u/investor/{$userBetarenaSettings.lang}"
+              title='Go to Investor Page'
+            >
+              <button
+                class=
+                "
+                btn-primary-v2
+                "
+                class:m-l-50={!VIEWPORT_MOBILE_INIT[1]}
+                class:m-l-20={VIEWPORT_MOBILE_INIT[1]}
+              >
+                {trsanslationData?.scores_header_translations?.data?.cta_buy ?? 'Buy BTA'}
+              </button>
+            </a>
+          {/if}
+
         {/if}
 
-      {/if}
+      </div>
 
     </div>
-
-  </div>
+  {/if}
 
   <!--
   ╭─────
@@ -1460,12 +1462,20 @@
       out:fly={{ x: -200, duration: 500 }}
     >
       <!--
-      HEADER (INNER) CLOSE DROPDOWNS AREA
+      ╭─────
+      │ > Header (INNER) close dropdown area
+      ╰─────
       -->
       {#if widgetState.has('UserDropdownActive')}
         <div
-          id="background-area-close-inner"
-          on:click={() => {return closeAllDropdowns()}}
+          id="background-area-close"
+          on:click=
+          {
+            () =>
+            {
+              return closeAllDropdowns()
+            }
+          }
         />
       {/if}
 
@@ -1500,14 +1510,17 @@
               () =>
               {
                 widgetState.delete('MobileNavToggleMenuActive')
+                widgetState = widgetState;
                 return;
               }
             }
           />
 
           <!--
-          MAIN PLATFORM OPTIONS
-          TODO: add the currency, lang, theme box-options as component [?]
+          ╭─────
+          │ > Main Platform Options
+          │ > TODO: add the currency, lang, theme box-options as component [?]
+          ╰─────
           -->
           <div
             class=
@@ -1518,16 +1531,22 @@
           >
 
             <!--
-            CURRENCY SELECTION
-            NOTE: -> HIDDEN TEMPORARILY
+            ╭─────
+            │ > Currency selection (hidden)
+            ╰─────
             -->
             <div
               id="currency-box"
-              class="m-r-16"
+              class=
+              "
+              m-r-16
+              "
             >
 
               <!--
-              SELECTED CURRENCY
+              ╭─────
+              │ > Selected Currency
+              ╰─────
               -->
               <div
                 class=
@@ -1544,13 +1563,16 @@
                       widgetState.delete('CurrencyDropdownActive');
                     else
                       widgetState.add('CurrencyDropdownActive');
+                    widgetState = widgetState;
                     return;
                   }
                 }
               >
 
                 <!--
-                CURRENCY ICON
+                ╭─────
+                │ > Currency Icon
+                ╰─────
                 -->
                 <img
                   loading="lazy"
@@ -1558,26 +1580,31 @@
                   alt='usd-icon'
                   width="16"
                   height="16"
-                  class="
-                    m-r-6
+                  class=
+                  "
+                  m-r-6
                   "
                 />
 
                 <!--
-                CURRENCY TEXT
+                ╭─────
+                │ > Currency text (hidden)
+                ╰─────
                 -->
                 <p
-                  class="
-                    color-white
-                    s-14
+                  class=
+                  "
+                  color-white
+                  s-14
                   "
                 >
                   USD
                 </p>
 
                 <!--
-                ARROW DOWN
-                NOTE: -> HIDDEN TEMPORARILY
+                ╭─────
+                │ > Arrow down (hidden)
+                ╰─────
                 -->
                 {#if false}
                   <img
@@ -1594,7 +1621,9 @@
             </div>
 
             <!--
-            LANGUAGE SELECTION
+            ╭─────
+            │ > Language Selection
+            ╰─────
             -->
             <HeaderCLang
               dropDownArea={widgetState.has('CurrencyDropdownActive') || widgetState.has('OddsDropdownActive')}
@@ -1608,7 +1637,9 @@
             />
 
             <!--
-            THEME SELECTION
+            ╭─────
+            │ > Theme Selection
+            ╰─────
             -->
             {#if VIEWPORT_MOBILE_INIT[1]}
               <HeaderCTheme />
@@ -1644,12 +1675,12 @@
               navTxt={item.navTxt}
               isNew={item.isNew}
               newTxt={item.newTxt}
-              VIEWPORT_TABLET_INIT={VIEWPORT_TABLET_INIT[1]}
-              VIEWPORT_MOBILE_INIT={VIEWPORT_MOBILE_INIT[1]}
+              {VIEWPORT_TABLET_INIT}
+              {VIEWPORT_MOBILE_INIT}
             />
           {/each}
 
-          {#if VIEWPORT_MOBILE_INIT[1] && !isRouteProfile && !isRouteCompetitions}
+          {#if VIEWPORT_MOBILE_INIT[1] && !currentPageRouteId}
 
             <!--
             ODDS SECTION
@@ -1753,11 +1784,13 @@
             {/if}
 
             <!--
-            BOOKMAKERS SECTION
+            ╭─────
+            │ > Bookmakers Section
+            ╰─────
             -->
             <HeaderCBookmakers
-              isViewTablet={VIEWPORT_TABLET_INIT[1]}
-              isViewMobile={VIEWPORT_MOBILE_INIT[1]}
+              {VIEWPORT_TABLET_INIT}
+              {VIEWPORT_MOBILE_INIT}
             />
 
           {/if}
@@ -1774,7 +1807,7 @@
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ Svelte Component CSS/SCSS                                                        │
+│ 🌊 Svelte Component CSS/SCSS                                                     │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
 │         │ values by typing/CTRL+SPACE                                            │
@@ -1784,21 +1817,13 @@
 
 <style lang="scss">
 
-  #background-area-close
-  {
-    /* 📌 position */
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    left: 0;
-    /* 🎨 style */
-    height: 100%;
-    width: 100%;
-    z-index: 1000;
-  }
+  /*
+  ╭──────────────────────────────────────────────────────────────────────────────╮
+  │ 📲 MOBILE-FIRST                                                              │
+  ╰──────────────────────────────────────────────────────────────────────────────╯
+  */
 
-  #background-area-close-inner
+  #background-area-close
   {
     /* 📌 position */
     position: absolute;
@@ -1818,8 +1843,15 @@
 		z-index: 1000;
 		position: relative;
     /* 🎨 style */
-		background-color: #292929;
+		background-color: var(--dark-theme);
 		height: 128px;
+
+    &.page-authors
+    {
+      /* 🎨 style */
+      height: unset;
+      background-color: unset;
+    }
 
     &.update-z-index
     {
@@ -1836,6 +1868,7 @@
       max-width: 1430px;
       width: inherit;
     }
+
     div#header\/top
     {
       /* 📌 position */
@@ -1844,6 +1877,7 @@
       padding: 23px 16px;
       height: 64px !important;
     }
+
     div#header\/bottom
     {
       /* 📌 position */
@@ -1851,20 +1885,22 @@
       /* 🎨 style */
       padding: 10px 16px;
       height: 64px !important;
+
+      div#header\/bottom\/inner::-webkit-scrollbar
+      {
+        /* 🎨 style */
+        display: none;
+      }
+      div#header\/bottom\/inner
+      {
+        /* 🎨 style */
+        overflow-x: scroll;
+        overflow-y: hidden;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
     }
-    div#header\/bottom\/inner::-webkit-scrollbar
-    {
-      /* 🎨 style */
-      display: none;
-    }
-    div#header\/bottom\/inner
-    {
-      /* 🎨 style */
-      overflow-x: scroll;
-      overflow-y: hidden;
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
+
     div#header\/border\/top-box,
     div#header\/border\/bottom-box
     {
@@ -1874,11 +1910,13 @@
       width: 100%;
       border: 0.5px solid var(--dark-theme-1);
     }
+
     div#header\/border\/top-box
     {
       /* 📌 position */
       bottom: 64px;
     }
+
     div#header\/border\/bottom-box
     {
       /* 📌 position */

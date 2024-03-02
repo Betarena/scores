@@ -1,45 +1,43 @@
+// ╭──────────────────────────────────────────────────────────────────────────────────╮
+// │ [🐞] Scores Debug Logic                                                          │
+// ╰──────────────────────────────────────────────────────────────────────────────────╯
+
 // #region ➤ 📦 Package Imports
 
-import { dev } from '$app/environment';
+import { browser, dev } from '$app/environment';
 import * as Sentry from '@sentry/browser';
+import chalk from 'chalk';
 
 // #endregion ➤ 📦 Package Imports
 
 // #region ➤ 📌 VARIABLES
 
-// ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-// ▓▓ NOTE:                                                         ◼️
-// ▓▓ page error messages & error codes                             ◼️
-// ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+export const
+  PAGE_INVALID_MSG = 'Uh-oh! This page does not exist!',
+  ERROR_CODE_INVALID = 404,
+  ERROR_CODE_PRELOAD = 500,
+  LAYOUT_1_LANG_PAGE_ERROR_MSG = 'Uh-oh! There has been a pre-load error (/layout)',
+  HOME_LANG_PAGE_ERROR_MSG = 'Uh-oh! There has been a pre-load error (/lang)',
+  FIXTURE_PAGE_ERROR_MSG = 'Uh-oh! There has been a pre-load error (/fixture)',
+  PRELOAD_ERROR_MSG_PLAYER = 'Uh-oh! There has been a pre-load error (/...player_fill)'
+;
 
-export const PAGE_INVALID_MSG = `Uh-oh! This page does not exist!`;
-export const ERROR_CODE_INVALID = 404;
-export const ERROR_CODE_PRELOAD = 500;
-export const LAYOUT_1_LANG_PAGE_ERROR_MSG = `Uh-oh! There has been a pre-load error (/layout)`;
-export const HOME_LANG_PAGE_ERROR_MSG = `Uh-oh! There has been a pre-load error (/lang)`;
-export const FIXTURE_PAGE_ERROR_MSG = `Uh-oh! There has been a pre-load error (/fixture)`;
-export const PRELOAD_ERROR_MSG_PLAYER = `Uh-oh! There has been a pre-load error (/...player_fill)`;
-
-// ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-// ▓▓ NOTE:                                                         ◼️
-// ▓▓ log visibility toggles                                        ◼️
-// ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-
-/**
- * @description
- *  📌 overrides all individual toggles for show/hide ALL logs.
- */
-const MASTER_DEBUG_TOGGLE: boolean | undefined = undefined
-/**
- * @description
- *  📌 overrides (ADMIN) to show logs even in PROD.
- */
-const LOGS_SHOW_OVERRIDE: boolean =
-  import.meta?.env?.VITE_PROD_LOGS == undefined
-    ? dev
-    : import.meta?.env?.VITE_PROD_LOGS == 'false'
-      ? false
-      : true
+const
+  /**
+   * @description
+   *  📣 overrides all individual toggles for show/hide ALL logs.
+   */
+  MASTER_DEBUG_TOGGLE: boolean | undefined = undefined,
+  /**
+   * @description
+   *  📣 overrides (ADMIN) to show logs even in PROD.
+   */
+  LOGS_SHOW_OVERRIDE: boolean
+    = import.meta.env.VITE_PROD_LOGS == undefined
+      ? dev
+      : import.meta.env.VITE_PROD_LOGS == 'false'
+        ? false
+        : true
 ;
 
 // *****************************************
@@ -167,31 +165,31 @@ export const COMP_HIGH_DEBUG: DEBUG = ['Highlights (COMP) |', true, 'background:
  * @author
  *  @migbash
  * @summary
- *  🔹 HELPER | [🐞]
+ *  - 🔹 HELPER
+ *  - [🐞]
  * @description
- *  📌 debug logging function for displaying target.
+ *  📣 debug logging function for displaying target.
  * @param { string | object } msg
- *  Target `message` to log in `console`.
- * @param { boolean } show
- *  Wether to `show/hide` log message.
- * @param { string } style
- *  Target `style` to apply to console.
- * @returns { void }
+ *  💠 **[required]** Target `message` to log in `console`.
+ * @param { boolean } [show]
+ *  💠 [optional] Wether to `show/hide` log message.
+ * @param { string } [style]
+ *  💠 [optional] Target `style` to apply to console.
+ * @return { void }
  */
 export function dlog
 (
-	msg: string | object,
-	show?: boolean,
-	style?: string,
+  msg: string | object,
+  show?: boolean,
+  style?: string,
 ): void
 {
   let targetLog: string = undefined;
 
-  // ▓▓ NOTE:
-  // ▓▓ New (v2) debug logs approach.
-
-  // ▓▓ NOTE: ▓▓ [🐞]
-  // ▓▓ Livescores V2 Logs
+  // ╭─────
+  // │ NOTE: [🐞]
+  // │ > Livescores V2 Logs
+  // ╰─────
   if (typeof(msg) == 'string' && msg.includes(LV2_W_H_TAG[0]))
     style = LV2_W_H_TAG[2];
   ;
@@ -199,8 +197,10 @@ export function dlog
     show = LV2_W_H_TAG[1];
   ;
 
-  // ▓▓ NOTE: ▓▓ [🐞]
-  // ▓▓ Authentication Logs
+  // ╭─────
+  // │ NOTE: [🐞]
+  // │ > Authentication Logs
+  // ╰─────
   if (typeof(msg) == 'string' && msg.includes(AU_W_TAG[0]))
     targetLog = AU_W_TAG[0];
   ;
@@ -211,39 +211,49 @@ export function dlog
     show = AU_W_TAG[1];
   ;
 
-  // ▓▓ NOTE: ▓▓ [🐞]
-  // ▓▓ Hooks Logs
+  // ╭─────
+  // │ NOTE: [🐞]
+  // │ > Hooks Logs
+  // ╰─────
   if (typeof(msg) == 'string' && msg.includes('[H]'))
     style = 'background: #00bce4; color: black; border-radius: 1.5px; padding: 2.5px 2.5px;';
   ;
 
-  // ▓▓ NOTE: ▓▓ [🐞]
-  // ▓▓ Reactiviy Logs
+  // ╭─────
+  // │ NOTE: [🐞]
+  // │ > Reactiviy Logs
+  // ╰─────
   if (typeof(msg) == 'string' && msg.includes('[R]'))
     style = 'background: #FF6133; color: black; border-radius: 1.5px; padding: 2.5px 2.5px;';
   ;
 
-  show =
-    MASTER_DEBUG_TOGGLE != undefined
+  show
+    = MASTER_DEBUG_TOGGLE != undefined
       ? MASTER_DEBUG_TOGGLE
       : show
   ;
 
-  const if_M_0: boolean =
-    (LOGS_SHOW_OVERRIDE && show && style == undefined)
-    // ▓▓ IMPORTANT Force 'authentication' to show in production.
-    || (targetLog == AU_W_TAG[0] && AU_W_TAG[1] && style == undefined)
-  ;
-  const if_M_1: boolean =
-    (LOGS_SHOW_OVERRIDE && typeof(msg) == 'string' && show && style != undefined)
-    // ▓▓ IMPORTANT Force 'authentication' to show in production.
-    || (targetLog == AU_W_TAG[0] && AU_W_TAG[1] && typeof(msg) == 'string' && show && style != undefined)
+  const
+    if_M_0: boolean
+      = (LOGS_SHOW_OVERRIDE && show && style == undefined)
+      // ╭─────
+      // │ IMPORTANT
+      // │ > Force 'authentication' to show in production.
+      // ╰─────
+      || (targetLog == AU_W_TAG[0] && AU_W_TAG[1] && style == undefined),
+    if_M_1: boolean
+      = (LOGS_SHOW_OVERRIDE && typeof(msg) == 'string' && show && style != undefined)
+      // ╭─────
+      // │ IMPORTANT
+      // │ > Force 'authentication' to show in production.
+      // ╰─────
+      || (targetLog == AU_W_TAG[0] && AU_W_TAG[1] && typeof(msg) == 'string' && show && style != undefined)
   ;
 
-	if (if_M_0)
+  if (if_M_0)
     console.debug(msg);
   ;
-	if (if_M_1)
+  if (if_M_1)
     console.debug(`%c${msg}`, style);
   ;
 
@@ -271,64 +281,99 @@ export function dlog
  */
 export function dlogv2
 (
-	groupName: string,
-	msgs: unknown[],
-	show?: boolean,
-	style?: string,
+  groupName: string,
+  msgs: unknown[],
+  show?: boolean,
+  style?: string,
   closed: boolean = true,
 ): void
 {
   let targetLog: string = undefined;
 
-  // ▓▓ NOTE: ▓▓ [🐞]
-  // ▓▓ Authentication Logs
+  // ╭─────
+  // │ NOTE: [🐞]
+  // │ > Authentication Logs
+  // ╰─────
   if (groupName.includes(AU_W_TAG[0]))
     targetLog = AU_W_TAG[0];
   ;
   if (groupName.includes(AU_W_TAG[0]))
     style = AU_W_TAG[2]
+    ;
   ;
   if (groupName.includes(AU_W_TAG[0]))
     show = AU_W_TAG[1]
+    ;
   ;
 
-  // ▓▓ NOTE: ▓▓ [🐞]
-  // ▓▓ Hooks Logs
+  // ╭─────
+  // │ NOTE: [🐞]
+  // │ > Hooks Logs
+  // ╰─────
   if (groupName.includes('[H]'))
+  {
     style = 'background: #00bce4; color: black; border-radius: 1.5px; padding: 2.5px 2.5px;';
-  ;
+    if (!browser) groupName = `${chalk.bgCyan(groupName)}`;
+  }
 
-  // ▓▓ NOTE: ▓▓ [🐞]
-  // ▓▓ Reactiviy Logs
+  // ╭─────
+  // │ NOTE: [🐞]
+  // │ > Preload Logs
+  // ╰─────
+  if (groupName.includes('[PL]'))
+  {
+    style = 'background: #f52891; color: black; border-radius: 1.5px; padding: 2.5px 2.5px;';
+    if (!browser) groupName = `${chalk.hex('#f52891')(groupName)}`;
+  }
+
+  // ╭─────
+  // │ NOTE: [🐞]
+  // │ > Reactiviy Logs
+  // ╰─────
   if (groupName.includes('[R]'))
+  {
     style = 'background: #FF6133; color: black; border-radius: 1.5px; padding: 2.5px 2.5px;';
-  ;
+    if (!browser) groupName = `${chalk.hex('#FF6133')(groupName)}`;
+  }
 
-  // ▓▓ NOTE: ▓▓ [🐞]
-  // ▓▓ Fetch Logs
+  // ╭─────
+  // │ NOTE: [🐞]
+  // │ > Fetch Logs
+  // ╰─────
   if (groupName.includes('🏹 FETCH'))
+  {
     style = 'background: #C4FD00; color: #000000; border-radius: 1.5px; padding: 2.5px 2.5px;';
-  ;
+    if (!browser) groupName = `${chalk.hex('#C4FD00')(groupName)}`;
+  }
   if (groupName.includes('(preload)'))
+  {
     style = 'background: #004B2B; color: #00CF77; border-radius: 1.5px; padding: 2.5px 2.5px;';
-  ;
+    if (!browser) groupName = `${chalk.green(groupName)}`;
+  }
 
-  // ▓▓ CHECK
-  // ▓▓ for showing logs.
-  const if_M_0: boolean =
-    (LOGS_SHOW_OVERRIDE && show)
-    // ▓▓ IMPORTANT Force 'authentication' to show in production.
+  // ╭─────
+  // │ CHECK
+  // │ > for showing logs.
+  // ╰─────
+  const if_M_0: boolean
+    = (LOGS_SHOW_OVERRIDE && show)
+    // ╭─────
+    // │ IMPORTANT
+    // │ > Force 'authentication' to show in production.
+    // ╰─────
     || (targetLog == AU_W_TAG[0] && AU_W_TAG[1])
   ;
-	if (if_M_0)
+  if (if_M_0)
   {
     if (closed)
+      // eslint-disable-next-line no-console
       console.groupCollapsed
       (
         `%c${groupName}`,
         style
       );
     else
+      // eslint-disable-next-line no-console
       console.group
       (
         `%c${groupName}`,
@@ -336,18 +381,33 @@ export function dlogv2
       );
     ;
 
-		for (const m of msgs)
+    for (const m of msgs)
     {
-			const msg =
-				typeof m == 'string'
-					? m.replace(/\t/g, '')
-					: m
-      ;
-			console.debug(msg);
-		}
+      let msg: unknown = m;
 
-		console.groupEnd();
-	}
+      if (typeof m == 'string')
+      {
+        let mStr: string;
+        mStr = m.replace(/\n/g, '');
+        mStr = m.replace(/\t/g, '');
+
+        if (mStr.includes('🔹 [var]') && mStr.includes('▓▓'))
+        {
+          const tempMsg: string[] = mStr.split
+          (
+            '▓▓'
+          );
+          msg = `${chalk.blue(tempMsg[0]) + chalk.hex('#444444')(tempMsg[1])}`;
+        }
+      }
+
+      // eslint-disable-next-line no-console
+      console.debug(msg);
+    }
+
+    // eslint-disable-next-line no-console
+    console.groupEnd();
+  }
 
   return;
 }
@@ -368,7 +428,7 @@ export function errlog
   msg: string
 ): void
 {
-	console.error
+  console.error
   (
     `❌ Error: ${msg}`
   );
@@ -389,7 +449,7 @@ export function initSentry
 ): void
 {
   if (!dev)
-  {
+
     Sentry.init
     (
       {
@@ -418,7 +478,6 @@ export function initSentry
         replaysOnErrorSampleRate: 1.0,
       }
     );
-  }
 }
 
 // #endregion ➤ 🛠️ METHODS

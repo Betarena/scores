@@ -1,56 +1,58 @@
-// ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-// ### 📝 DESCRIPTION                                                         ◼️
-// ### Server Endpoint for Layouit Page (Prefetch) Data Load                  ◼️
-// ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+// ╭──────────────────────────────────────────────────────────────────────────────────╮
+// │ 📌 High Order Component Overview                                                 │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ ➤ Internal Svelte Code Format :|: V.8.0                                          │
+// │ ➤ Status :|: 🔒 LOCKED                                                           │
+// │ ➤ Author(s) :|: @migbash                                                         │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ 📝 Description                                                                   │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ Main Scores Platform Layout Loader ('Server-Side')                               │
+// ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 // #region ➤ 📦 Package Imports
 
-import { ERROR_CODE_PRELOAD, LAYOUT_1_LANG_PAGE_ERROR_MSG, dlog } from '$lib/utils/debug';
-import { PRELOAD_exitPage, promiseUrlsPreload } from '$lib/utils/platform-functions.js';
-import DeviceDetector from "device-detector-js";
+import DeviceDetector from 'device-detector-js';
 import parser from 'ua-parser-js';
 
-import type { B_FOT_T } from '@betarena/scores-lib/types/footer.js';
+import { routeIdPageAuthors } from '$lib/constants/paths.js';
+import { ERROR_CODE_PRELOAD, LAYOUT_1_LANG_PAGE_ERROR_MSG, dlog, dlogv2 } from '$lib/utils/debug';
+import { preloadExitLogic, promiseUrlsPreload } from '$lib/utils/platform-functions.js';
+
 import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
 import type { B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
-import type { ServerLoadEvent } from '@sveltejs/kit';
+import type { B_FOT_T } from '@betarena/scores-lib/types/types.main.footer.js';
+import type { Cookies, ServerLoadEvent } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types.js';
 
 // #endregion ➤ 📦 Package Imports
 
 // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
+/**
+ * @type {import('./$types').LayoutServerLoad}
+ */
 export async function load
 (
   event: ServerLoadEvent
 ): Promise < LayoutServerLoad >
 {
-
-  // ### [🐞]
-  dlog
+  // [🐞]
+  dlogv2
   (
-    `🔹 [var] ➤ request.headers.get('user-agent') ${JSON.stringify([...event.request.headers.entries()], null, 4)}`,
+    '🚏 checkpoint ➤ src/routes/+layout.server.ts',
+    [
+      `🔹 [var] ➤ request.headers.get('user-agent') :|: ${JSON.stringify([...event.request.headers.entries()], null, 4)}`,
+    ],
     false
   );
 
-  // ### [🐞]
-  const t0: number = performance.now();
-
-  const
-  {
-    // url,
-    fetch,
-    params,
-    request,
-    setHeaders,
-    // route
-  } = event;
-
-  // ### NOTE: | TEST: | STASH:
-  // ### testing to identify USERS IP, from within load
-  // ### only works with deployment using '<node-server>.js'
+  // ╭─────
+  // │ NOTE:
+  // │ > testing to identify 'users ip', from within load
+  // │ > only works with deployment using '<node-server>.js'
+  // ╰─────
   /*
-
     try
     {
       // ### NOTE:
@@ -92,89 +94,109 @@ export async function load
     {
       console.log(`🔴 ${error}`)
     }
-
   */
 
-  // ### NOTE: | TEST:
-  // ### identify 'user-agent' object data, for device type.
-  const deviceType: string = detectDeviceWithUA
-  (
-    request?.headers?.get('user-agent') ?? ''
-  );
-
-  const _langUrl: string =
-    [undefined, 'en'].includes(params?.lang)
-    // ### FIXME:
-    // ### interferes with [player=player] routeId.
-    // || (!response_valid_url && route?.id != '/u/[view]/[lang=lang]')
-    // || (route?.id != '/u/[view]/[lang=lang]')
-      ? 'en'
-      : params.lang
-  ;
-
-  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-  //  📌 PREFETCH DATA                    ◼️
-  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-
   const
-  [
-    B_NAV_T,
-    B_FOT_T,
-    B_SAP_D3_CP_H
-  ] = await fetchData
-  (
-    fetch,
-    _langUrl
-  );
-
-  // ### IMPORTANT
-  // ### exit condition.
-  const if_M_0: boolean =
-    B_NAV_T == undefined
-    || B_FOT_T == undefined
+    // [🐞]
+    t0 = performance.now(),
+    /**
+     * @description
+     *  📣 Destructing variables.
+     */
+    {
+      // url,
+      fetch,
+      params,
+      request,
+      // setHeaders,
+      route
+    } = event,
+    /**
+     * @description
+     *  📣 Identify 'user-agent' object data, for target user 'device' type.
+     */
+    deviceType
+      = detectDeviceWithUA
+      (
+        request.headers.get('user-agent') ?? ''
+      ),
+    /**
+     * @description
+     *  📣 Target `lang` identification
+     */
+    langParam
+      = detectPlatformLanguage
+      (
+        {
+          parameterLanguage: params.lang,
+          cookies: event.cookies,
+          routeId: route.id
+        }
+      ),
+    /**
+     * @description
+     *  📣 Preload Data.
+     */
+    [
+      B_NAV_T,
+      B_FOT_T,
+      B_SAP_D3_CP_H
+    ] = await fetchData
+    (
+      fetch,
+      langParam
+    )
   ;
-	if (if_M_0)
-  {
-    PRELOAD_exitPage
+
+  if (B_NAV_T == undefined || B_FOT_T == undefined)
+    preloadExitLogic
     (
       t0,
-      `[LAYOUT]`,
+      '[LAYOUT]',
       ERROR_CODE_PRELOAD,
       LAYOUT_1_LANG_PAGE_ERROR_MSG
     );
-	}
+  ;
 
-  // ### [🐞]
-  const t1: number = performance.now();
+  const
+    // [🐞]
+    t1 = performance.now()
+  ;
 
-  // ### [🐞]
+  // [🐞]
   dlog
   (
     `⏳ [LAYOUT] preload ${((t1 - t0) / 1000).toFixed(2)} sec`,
     true
   );
 
-  // ### NOTE: ### WARNING:
-  // ### commented out due to interferences
-  // ### with error logs and code-traces.
-	// setHeaders
-  // (
-  //   {
-	// 	  'cache-control': 'public, max-age=3600'
-	//   }
-  // );
+  // ╭─────
+  // │ NOTE: | WARNING:
+  // │ > commented out due to interferences
+  // │ > with error logs and code-traces.
+  // ╰─────
+  /*
+    setHeaders
+    (
+      {
+        'cache-control': 'public, max-age=3600'
+      }
+    );
+  */
 
-	return {
+  return {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error <whatever>
-    // ### NOTE: FIXME:
-    // ### issues with setting correct <PageLoad> types.
-		B_NAV_T,
-		B_FOT_T,
+    // @ts-expect-error 'unknown'
+    // ╭─────
+    // │ NOTE: FIXME:
+    // │ > issues with setting correct <PageLoad> types.
+    // ╰─────
+    B_NAV_T,
+    B_FOT_T,
+    B_SAP_D3_CP_H,
     deviceType,
-    B_SAP_D3_CP_H
-	};
-
+    langParam,
+  };
 }
 
 // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
@@ -187,117 +209,197 @@ export async function load
  * @summary
  *  🔹 INTERFACE
  * @description
- *  📌 Target `types` for `_this_` page required at preload.
+ *  📣 Target `types` for `_this_` page required at preload.
  */
-type PP_PROMISE_0 =
+type IPreloadData0 =
 [
   B_NAV_T | undefined,
   B_FOT_T | undefined,
-  B_SAP_D3 | undefined
+  B_SAP_D3 | undefined,
 ];
 
 /**
  * @author
  *  @migbash
  * @summary
- *  🔹 HELPER
+ *  🟦 HELPER
  * @description
- *  📌 Fetches target data for `_this_` page.
+ *  📣 Fetches target data for `_this_` page.
  * @param { any } fetch
- *  Target instance of `fetch` object.
+ *  💠 **[required]** Target instance of `fetch` object.
  * @param { string } _lang
- *  Target `language`.
- * @returns { Promise < PP_PROMISE_0 > }
+ *  💠 **[required]** Target `language`.
+ * @returns { Promise < IPreloadData0 > }
+ *  📤 `Data` fetched.
  */
 async function fetchData
 (
   fetch: any,
   _lang: string
-): Promise < PP_PROMISE_0 >
+): Promise < IPreloadData0 >
 {
-
-  // ### [🐞]
+  // [🐞]
   dlog
   (
-    `🚏 checkpoint ➤ src/routes/+layout.ts fecthData(..)`
+    '🚏 checkpoint ➤ src/routes/+layout.ts fecthData(..)'
   );
 
-  const urls_0: string[] =
-  [
-    `/api/data/main/navbar?lang=${_lang}&decompress`,
-    `/api/data/main/footer?lang=${_lang}&decompress`,
-    `/api/data/main/seo-pages?term=competitions&decompress`,
-  ];
+  const
+    /**
+     * @description
+     *  📣 Target `urls` to be `fetched`.
+     */
+    urls0: string[]
+      = [
+        `/api/data/main/navbar?lang=${_lang}&decompress`,
+        `/api/data/main/footer?lang=${_lang}&decompress`,
+        '/api/data/main/seo-pages?term=competitions&decompress',
+      ],
+    /**
+     * @description
+     *  📣 Target `data` returned.
+     */
+    data0
+      = await promiseUrlsPreload
+      (
+        urls0,
+        fetch
+      ) as IPreloadData0
+  ;
 
-  const data_0: PP_PROMISE_0 = await promiseUrlsPreload
-  (
-    urls_0,
-    fetch
-  ) as PP_PROMISE_0;
-
-  return data_0;
+  return data0;
 }
 
 /**
  * @author
  *  @migbash
  * @summary
- *  🔹 HELPER
+ *  🟦 HELPER
  * @description
- *  📌 Detect device used from target `User-Agent` data.
- * @see
- *  https://discord.com/channels/457912077277855764/1067871458233159750
- * @see
- *  https://discord.com/channels/457912077277855764/1067529519294070885/1067827869004341319
+ *  📣 Detect device used from target `User-Agent` data.
  * @param { string } userAgent
- *  Target `user-agent` string.
+ *  💠 **[required]** Target `user-agent` string.
+ * @see https://discord.com/channels/457912077277855764/1067871458233159750
+ * @see https://discord.com/channels/457912077277855764/1067529519294070885/1067827869004341319
  * @returns { string }
+ *  📤 Target `device` type.
  */
 function detectDeviceWithUA
 (
   userAgent: string
 ): string
 {
+  let
+    /**
+     * @description
+     *  📣 Target `device type`.
+     */
+    deviceType: string = 'mobile'
+  ;
 
-  let deviceType: string = 'mobile';
+  const
+    /**
+     * @description
+     *  📣 Using `ua-parser-js` module.
+     */
+    parsedUA = parser(userAgent),
+    /**
+     * @description
+     *  📣 Using 'device-detector-js' module.
+     */
+    parsedUA2
+      = new DeviceDetector().parse
+      (
+        userAgent
+      )
+  ;
 
-  // ### NOTE:
-  // ### using 'ua-parser-js' module.
-  const parsedUA: parser.IResult = parser(userAgent);
-
-  // ### [🐞]
-  dlog
+  // [🐞]
+  dlogv2
   (
-    `🔹 [var] ➤ detectDeviceWithUA(..) parsedUA ${JSON.stringify(parsedUA, null, 4)}`,
-    false
-  );
-
-  deviceType = parsedUA?.device?.type ?? 'mobile';
-
-  // ### NOTE:
-  // ### using 'device-detector-js' module.
-  const parsedUA_2: DeviceDetector.DeviceDetectorResult = new DeviceDetector().parse
-  (
-    userAgent
-  );
-
-  // ### [🐞]
-  dlog
-  (
-    `🔹 [var] ➤ detectDeviceWithUA(..) parsedUA_2 ${JSON.stringify(parsedUA_2, null, 4)}`,
-    false
-  );
-
-  deviceType = parsedUA_2?.device?.type ?? 'mobile';
-
-  // ### [🐞]
-  dlog
-  (
-    `🔹 [var] ➤ detectDeviceWithUA(..) deviceType ${deviceType}`,
+    'name',
+    [
+      `🔹 [var] ➤ detectDeviceWithUA(..) parsedUA ${JSON.stringify(parsedUA, null, 4)}`,
+      `🔹 [var] ➤ detectDeviceWithUA(..) parsedUA2 ${JSON.stringify(parsedUA2, null, 4)}`,
+      `🔹 [var] ➤ detectDeviceWithUA(..) deviceType ${deviceType}`,
+    ],
     true
   );
 
+  deviceType = (parsedUA.device.type ?? 'mobile');
+  deviceType = (parsedUA2.device?.type ?? 'mobile');
+
   return deviceType;
+}
+
+/**
+ * @author
+ *  @migbash
+ * @summary
+ *  🟦 HELPER
+ * @description
+ *  📣 Detect platform language.
+ * @param { Object } opts
+ *   💠 **[required]** Target method `arguments`.
+ * @param { string | undefined } opts.parameterLanguage
+ *  💠 **[required]** Preliminary detected language.
+ * @param { Cookies } opts.cookies
+ *  💠 **[required]** Request `cookies`.
+ * @param { string | undefined | null } opts.routeId
+ *  💠 **[required]** Request `route.id`.
+ * @return { string }
+ *  📤 Detected platform `language`.
+ */
+function detectPlatformLanguage
+(
+  opts:
+  {
+    parameterLanguage: string | undefined
+    cookies: Cookies,
+    routeId: string | undefined | null
+  }
+): string
+{
+  let
+    /**
+     * @description
+     *  📣 Target deteted `language`.
+     */
+    urlLang
+      = [undefined, 'en'].includes(opts.parameterLanguage)
+        // ╭─────
+        // │ FIXME:
+        // │ > interferes with [player=player] routeId.
+        // ╰─────
+        // || (!response_valid_url && route?.id != '/u/[view]/[lang=lang]')
+        // || (route?.id != '/u/[view]/[lang=lang]')
+        ? 'en'
+        : opts.parameterLanguage!
+  ;
+
+  const
+    /**
+     * @description
+     *  📣 Extract target expected 'visitor' cookie preference data.
+     */
+    cookieValue = JSON.parse(opts.cookies.get('betarenaScoresCookie') ?? null)
+  ;
+
+  // [🐞]
+  // console.log('cookieValue', JSON.parse(cookieValue).lang);
+
+  // ╭─────
+  // │ CHECK
+  // │ > for authors page, custom logic.
+  // ╰─────
+  if (opts.routeId == routeIdPageAuthors)
+    urlLang = cookieValue.lang;
+  ;
+
+  // [🐞]
+  // console.log('urlLang', urlLang);
+
+  return urlLang;
 }
 
 // #endregion ➤ 🛠️ METHODS

@@ -9,6 +9,8 @@
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
 // │ > Client Hooks (a.k.a SvelteKit Middleware)                                      │
 // │ > 🔗 read-more :|: https://kit.svelte.dev/docs/hooks#server-hooks                │
+// │ > NOTE: | WARNING:                                                               │
+// │ > only applicable to load(..) lifecycle logic in +page[.server].ts files         │
 // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 // #region ➤ 📦 Package Imports
@@ -126,7 +128,7 @@ export const handle: Handle = sequence
 
     // ╭──────────────────────────────────────────────────────────────────────────────────╮
     // │ IMPORTANT                                                                        │
-    // │ 📌 Before 'endpoint' call/execute                                                │
+    // │ 📌 Before 'endpoint' call/execute (below)                                        │
     // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
     const
@@ -167,7 +169,10 @@ export const handle: Handle = sequence
         }
     ;
 
-    event.locals.user = cookies.betarenaCOOKIE ?? defaultLocals;
+    // [🐞]
+    // console.log('cookies', cookies);
+
+    event.locals.user = cookies.betarenaScoresCookie ?? defaultLocals;
 
     // ╭─────
     // │ NOTE:
@@ -182,7 +187,7 @@ export const handle: Handle = sequence
 
     // ╭──────────────────────────────────────────────────────────────────────────────────╮
     // │ IMPORTANT                                                                        │
-    // │ 📌 Actual 'endpoint' call/execute                                                │
+    // │ 📌 Actual 'endpoint' call/execute (below)                                        │
     // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
     // ╭─────
@@ -238,33 +243,40 @@ export const handle: Handle = sequence
     // │ CHECK
     // │ > for first time user visiting app, set cookie.
     // ╰─────
-    if (!cookies.betarenaCOOKIE)
+    if (!cookies.betarenaScoresCookie)
+    {
+      // [🐞]
+      dlog
+      (
+        '🚏 checkpoint ➤ betarenaScoresCookie not found!',
+        true
+      );
       response.headers.set
       (
         'Set-Cookie',
         cookie.serialize
         (
-          'betarenaCOOKIE',
+          'betarenaScoresCookie',
           JSON.stringify(event.locals.user),
           {
             path: '/',
-            httpOnly: true,
+            // httpOnly: true,
             /* 1 week */ maxAge: 60 * 60 * 24 * 7
           }
         )
       );
-    ;
+    }
 
     // [🐞]
     dlogv2
     (
       '🚏 checkpoint [H] ➤ src/hooks.server.ts handle(..)',
       [
-        `🔹 [var] ➤ event.url ▓▓ ${event.url}`,
-        `🔹 [var] ➤ event.route.id ▓▓ ${event.route.id}`,
-        `🔹 [var] ➤ event.url.origin ▓▓ ${event.url.origin}`,
-        `🔹 [var] ➤ event.locals.user ▓▓ ${event.locals.user}`,
-        `🔹 [var] ➤ event.locals.betarenaUser ▓▓ ${event.locals.betarenaUser}`,
+        `🔹 [var] ➤ event.url :|: ${event.url}`,
+        `🔹 [var] ➤ event.route.id :|: ${event.route.id}`,
+        `🔹 [var] ➤ event.url.origin :|: ${event.url.origin}`,
+        `🔹 [var] ➤ event.locals.user :|: ${event.locals.user}`,
+        `🔹 [var] ➤ event.locals.betarenaUser :|: ${event.locals.betarenaUser}`,
       ],
       true
     );

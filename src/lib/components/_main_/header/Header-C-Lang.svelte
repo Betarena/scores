@@ -43,11 +43,14 @@
 	import { fly } from 'svelte/transition';
 
 	import sessionStore from '$lib/store/session.js';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlog, NB_W_TAG } from '$lib/utils/debug.js';
 	import { selectLanguage } from '$lib/utils/platform-functions.js';
 
   import arrowDown from './assets/arrow-down.svg';
   import arrowUp from './assets/arrow-up.svg';
+  import arrowDownDark from './assets/icon-arrow-down-dark.svg';
+  import arrowUpDark from './assets/icon-arrow-up-dark.svg';
 
   import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
 
@@ -77,7 +80,11 @@
      * @description
      *  📣 Deifined `hover` timeout, that constitues a navigational `intent.
     */
-    HOVER_TIMEOUT = 250
+    HOVER_TIMEOUT = 250,
+    /**
+     * @augments EventDispatcher
+    */
+    dispatch = createEventDispatcher()
   ;
 
   let
@@ -98,6 +105,8 @@
     timeoutIntent: NodeJS.Timeout
   ;
 
+  $: ({ serverLang, currentPageRouteId } = $sessionStore);
+  $: ({ theme } = $userBetarenaSettings);
   $: translatioData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
 
   // #endregion ➤ 📌 VARIABLES
@@ -195,26 +204,6 @@
     return;
   }
 
-  /**
-   * @description
-   * [?]
-   */
-  function clickAction
-  (
-  ): void
-  {
-    isLangDropdown = !isLangDropdown;
-
-    if (!isLangDropdown) return;
-
-    createEventDispatcher()
-    (
-      'closeDropdown'
-    );
-
-    return;
-  }
-
   // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -272,7 +261,15 @@
     {
       () =>
       {
-        clickAction();
+        isLangDropdown = !isLangDropdown;
+
+        if (!isLangDropdown) return;
+
+        dispatch
+        (
+          'closeDropdown'
+        );
+
         return;
       }
     }
@@ -281,12 +278,14 @@
     <p
       class=
       "
-      color-white
       s-14
       m-r-5
+      uppercase
       "
+      class:color-white={currentPageRouteId != 'AuthorsPage' || theme == 'Dark'}
+      class:color-black-2={currentPageRouteId == 'AuthorsPage' && theme == 'Light'}
     >
-      {$sessionStore.serverLang?.toUpperCase()}
+      {serverLang}
     </p>
 
     <!--
@@ -296,7 +295,16 @@
     -->
     <img
       loading="lazy"
-      src={!isLangDropdown ? arrowDown : arrowUp}
+      src=
+      {
+        currentPageRouteId != 'AuthorsPage' || theme == 'Dark'
+          ? !isLangDropdown
+            ? arrowDown
+            : arrowUp
+          : !isLangDropdown
+            ? arrowDownDark
+            : arrowUpDark
+      }
       alt={!isLangDropdown ? 'arrowDown' : 'arrowUp'}
       width=16
       height=16
@@ -317,7 +325,7 @@
     >
       {#each (translatioData?.langArray?.sort() ?? []) as lang}
 
-        {#if lang.toUpperCase() != $sessionStore.serverLang?.toUpperCase()}
+        {#if lang.toUpperCase() != serverLang?.toUpperCase()}
           <div
             class=
             "
@@ -364,9 +372,10 @@
               "
               color-white
               s-14
+              uppercase
               "
             >
-              {lang.toUpperCase()}
+              {lang}
             </p>
           </div>
         {/if}

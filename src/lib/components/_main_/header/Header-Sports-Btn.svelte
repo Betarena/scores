@@ -87,7 +87,11 @@
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
      */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = '<section-scope>⮕<type|w|c>⮕<unique-tag-name>⮕main'
+    CNAME: string = '<section-scope>⮕<type|w|c>⮕<unique-tag-name>⮕main',
+    /**
+     * @augments EventDispatcher
+    */
+    dispatch = createEventDispatcher()
   ;
 
   let
@@ -160,7 +164,7 @@
     {
       () =>
       {
-        createEventDispatcher()
+        dispatch
         (
           'closeDropdown',
           {

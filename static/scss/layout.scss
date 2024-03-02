@@ -11,6 +11,7 @@
   overflow: hidden;
 
   .dark-background &
+  , .dark-mode &
   {
     /* 🎨 style */
     background-color: var(--dark-theme-1) !important;

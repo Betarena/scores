@@ -20,6 +20,7 @@ import { writable } from 'svelte/store';
 
 import type { BetarenaUser, IUserSetting, Voted_Fixture } from '$lib/types/types.scores.js';
 import type { InvestorData } from '@betarena/scores-lib/types/_FIREBASE_.js';
+import { setCookie } from './cookie.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -77,7 +78,6 @@ function createLocalStore
      */
     methods
       = {
-
         /**
          * @author
          *  @migbash
@@ -192,6 +192,10 @@ function createLocalStore
 
           return;
         },
+
+        // ╭──────────────────────────────────────────────────────────────────────────────────╮
+        // │ 📣 Main Logic                                                                    │
+        // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
         /**
          * @author
@@ -397,6 +401,13 @@ function createLocalStore
 
           if (!localStore.user) return;
 
+          // [🐞]
+          dlog
+          (
+            '🚏 checkpoint ➤ updateUserData(..)',
+            true
+          );
+
           localStore.user.scores_user_data = data;
 
           // ╭─────
@@ -462,12 +473,8 @@ function createLocalStore
             localStore: IUserSetting = methods.parseLocalStorage()
           ;
 
-          if (!localStore.user?.scores_user_data) return;
-
           if (dataTarget == 'lang')
             localStore.lang = dataPoint;
-          else if (dataTarget == 'lang-user')
-            localStore.user.scores_user_data.lang = dataPoint;
           else if (dataTarget == 'geo-bookmaker')
             localStore.country_bookmaker = dataPoint;
           else if (dataTarget == 'theme')
@@ -478,19 +485,30 @@ function createLocalStore
             ;
           else if (dataTarget == 'geoJs')
             localStore.geoJs = dataPoint;
-          else if (dataTarget == 'user-avatar')
-            localStore.user.scores_user_data.profile_photo = dataPoint;
-          else if (dataTarget == 'user-name')
-            localStore.user.scores_user_data.username = dataPoint;
-          else if (dataTarget == 'user-wallet')
-            localStore.user.scores_user_data.web3_wallet_addr = dataPoint;
           else if (dataTarget == 'user-object')
             localStore.user = dataPoint;
+          ;
+
+          if (localStore.user?.scores_user_data && dataTarget == 'lang-user')
+            localStore.user.scores_user_data.lang = dataPoint;
+          else if (localStore.user?.scores_user_data && dataTarget == 'user-avatar')
+            localStore.user.scores_user_data.profile_photo = dataPoint;
+          else if (localStore.user?.scores_user_data && dataTarget == 'user-name')
+            localStore.user.scores_user_data.username = dataPoint;
+          else if (localStore.user?.scores_user_data && dataTarget == 'user-wallet')
+            localStore.user.scores_user_data.web3_wallet_addr = dataPoint;
           ;
 
           methods.setLocalStorage
           (
             localStore
+          );
+
+          setCookie
+          (
+            'betarenaScoresCookie',
+            JSON.stringify(methods.extractUserDataSnapshot()),
+            30
           );
 
           return;
@@ -504,14 +522,14 @@ function createLocalStore
          *  - IMPORTANT
          * @description
          *  📣 Extracts **target** `user` data property.
-         * @param { 'geo-bookmaker' | 'user-lang' } dataPoint
+         * @param { 'geo-bookmaker' | 'lang' | 'lang-user' | 'uid' } dataPoint
          *  💠 **[required]** Target `data point` to be retrieved.
          * @return { any }
          *  📤 Requested `data point`.
          */
         extract:
         (
-          dataPoint: 'geo-bookmaker' | 'user-lang'
+          dataPoint: 'geo-bookmaker' | 'lang' | 'lang-user' | 'uid'
         ): any =>
         {
           const
@@ -520,9 +538,12 @@ function createLocalStore
 
           if (dataPoint == 'geo-bookmaker')
             return localStore.country_bookmaker;
-          ;
-          if (dataPoint == 'user-lang')
+          else if (dataPoint == 'lang')
             return localStore.lang;
+          else if (dataPoint == 'lang-user')
+            return localStore.user?.scores_user_data?.lang;
+          else if (dataPoint == 'uid')
+            return localStore.user?.firebase_user_data?.uid;
           ;
 
           return;
@@ -549,7 +570,7 @@ function createLocalStore
              * @description
              *  📣 Target `user` data.
              */
-            data: object
+            data
             = {
               lang: localStore.lang,
               geo: localStore.country_bookmaker,
@@ -560,7 +581,7 @@ function createLocalStore
           if (localStore.user)
           {
             data['user-uid'] = localStore.user.firebase_user_data?.uid;
-            data['user-lang'] = localStore.user.scores_user_data?.lang;
+            data['lang-user'] = localStore.user.scores_user_data?.lang;
           }
 
           return data;

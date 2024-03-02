@@ -1,3 +1,9 @@
+// ╭──────────────────────────────────────────────────────────────────────────────────╮
+// │ 📝 Description                                                                   │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ Main Scores Platform Types                                                       │
+// ╰──────────────────────────────────────────────────────────────────────────────────╯
+
 // #region ➤ 📦 Package Imports
 
 import type { GeoJsResponse } from '$lib/types/types.geojs';
@@ -11,8 +17,12 @@ import type { Unsubscribe } from 'firebase/firestore';
 // #endregion ➤ 📦 Package Imports
 
 /**
+ * @author
+ *  @migbash
+ * @summary
+ *  🔹 INTERFACE
  * @description
- * TODO: DOC:
+ *  📣 Interface for `localStorage` data.
  */
 export interface Voted_Fixture
 {
@@ -27,29 +37,33 @@ export interface Voted_Fixture
  * @summary
  *  🔹 TYPES
  * @description
- *  📌 Interface for 'authenticated' users.
+ *  📣 Interface for 'authenticated' users.
  */
 export interface BetarenaUser
 extends
 IBetarenaUser,
 Pick < IUserSetting, 'userguide_id_opt_out' >
-{
-  // NaN
-}
+{ }
 
 /**
  * @author
  *  @migbash
  * @summary
- *  🔹 TYPES
+ *  🔹 INTERFACE
  * @description
- *  📣 Interface for 'authenticated' users.
+ *  📣 Interface for `authenticated` users.
  */
 export interface IScoreUser
 {
-  /** @description 📣 **User** authenticated user `Firebase | Firestore` DB data object */
+  /**
+   * @description
+   *  📣 **User** authenticated user `Firebase | Firestore` DB data object
+   */
 	firebase_user_data?: User;
-  /** @description 📣 **User** authenticated user critical data */
+  /**
+   * @description
+   *  📣 **User** authenticated user critical data
+   */
 	scores_user_data?: BetarenaUser;
 }
 
@@ -57,27 +71,55 @@ export interface IScoreUser
  * @author
  *  @migbash
  * @summary
- *  🔹 TYPES
+ *  🔹 INTERFACE
  * @description
- *  📣 Interface for 'localstorage' data.
+ *  📣 Interface for `localStorage` data.
  */
 export interface IUserSetting
 {
-  /** @description **Client/User** selected lang (overrides serverLang) */
+  /**
+   * @description
+   *  📣 **Client/User** selected lang (overrides serverLang)
+   */
 	lang?: string;
-  /** @description **Client/User** selected theme */
+  /**
+   * @description
+   *  📣 **Client/User** selected theme
+   */
 	theme: 'Dark' | 'Light';
-  /** @description **Client/User** selected country bookmaker ISO2 */
+  /**
+   * @description
+   *  📣 **Client/User** selected country bookmaker ISO2
+   */
 	country_bookmaker?: string;
-  /** @description **Client/User** geoJs object response data */
+  /**
+   * @description
+   *  📣 **Client/User** geoJs object response data
+   */
 	geoJs?: GeoJsResponse;
-  /** @description **User** authenticated data object */
+  /**
+   * @description
+   *  📣 **User** authenticated data object
+   */
 	user?: IScoreUser;
-  /** @description **Client/User** voted fixtures */
+  /**
+   * @description
+   *  📣 **Client/User** voted fixtures
+   */
   voted_fixtures: Voted_Fixture[];
-  /** @description **Client/User** userguides opt-out */
+  /**
+   * @description
+   *  📣 **Client/User** userguides opt-out
+   */
   userguide_id_opt_out: number[];
 }
+
+type IPageRouteId =
+  | 'ProfilePage'
+  | 'CompetitionPage'
+  | 'AuthorsPage'
+  | null
+;
 
 /**
  * @author
@@ -91,60 +133,48 @@ export interface ISessionStore
 {
   /**
    * @description
-   *  📌 `session/state` variable used for
-   *  `inter-component` events of selected season.
+   *  📣 `inter-component` events of selected season.
    */
 	selectedSeasonID: number | undefined;
   /**
    * @description
-   *  📌 `session/state` variable used for
-   *  detecting and pre-loading data for **target** page,
-   *  simulating an `intent`.
-   */
-  lang_intent: string | undefined;
-  /**
-   * @description
-   *  📌 `session/state` variable used for
-   *  instant **Scores Platform** page language identification.
+   *  📣 Instant **Scores Platform** page language identification.
    */
   serverLang: string | undefined;
   /**
    * @description
-   *  📌 `session/state` variable used for
-   *  session data of `Livescore v2` widget of `selected date` (View).
-   *
-   * IMPORTANT
-   * Must be in `ISO/UTC` timezone;
-  */
+   *  📣 Detect and pre-loading data for **target** page, simulating an `intent`.
+   */
+  lang_intent: string | undefined;
+  /**
+   * @description
+   *  📣 Session data of `Livescore v2` widget of `selected date` (View).
+   * @IMPORTANT
+   *  📌 Must be in `ISO/UTC` timezone;
+   */
   livescoreNowSelectedDate: Date;
   /**
    * @description
-   *  📌 `session/state` variable used for
-   *  session data on the today's fixture number.
+   *  📣 Session data on the today's fixture number.
    */
   fixturesTodayNum: number;
   /**
    * @description
-   *  📌 `session/state` variable used for the
-   *  number of **total competitions**.
+   *  📣 Number of **total competitions**.
    */
   competitionsNum: number;
   /**
    * @description
-   *  📌 `session/state` variable used for the
-   *  number of **open competitions**.
+   *  📣 Number of **open competitions**.
    */
   competitionsOpenNum: number;
   /**
    * @description
-   *  📌 `session/state` variable used for the
-   *  data on users current date.
-   *
-   * IMPORTANT
-   * `date` must be adjusted to user (TZ) timezone;
-  */
+   *  📣 data on users current date.
+   * @IMPORTANT
+   *  📌 `date` must be adjusted to user (TZ) timezone;
+   */
   userDate: Date;
-
   /**
    * @description
    *  📣 Active `firestore` event listeners.
@@ -170,6 +200,11 @@ export interface ISessionStore
    *  📣 Current window `width`.
    */
   windowWidth: number;
+  /**
+   * @description
+   *  📣 Current `platform` **route id**.
+   */
+  currentPageRouteId: IPageRouteId;
 
   // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   // NOTE: UI                   ◼️
@@ -177,37 +212,37 @@ export interface ISessionStore
 
   /**
    * @description
-   *  📌 Toggle livescore (widget) target available `view` tabs.
+   *  📣 Toggle livescore (widget) target available `view` tabs.
    */
   livescoreFixtureView: 'all' | 'live';
   /**
    * @description
-   *  📌 Toggle `visibility` (show/hide) of Livescore (widget) pop-up calendar.
+   *  📣 Toggle `visibility` (show/hide) of Livescore (widget) pop-up calendar.
    */
   livescoreShowCalendar: boolean;
   /**
    * @description
-   *  📌 Toggle `visibility` (show/hide) of Fixture (page) target `view` tabs.
+   *  📣 Toggle `visibility` (show/hide) of Fixture (page) target `view` tabs.
    */
 	fixture_select_view: 'overview' | 'news';
   /**
    * @description
-   *  📌 Toggle `visibility` (show/hide) of Authentication (widget) pop-up modal.
+   *  📣 Toggle `visibility` (show/hide) of Authentication (widget) pop-up modal.
    */
 	auth_show: boolean;
   /**
    * @description
-   *  📌 Follow 'user' intent for `hover` language select action (intent).
+   *  📣 Follow 'user' intent for `hover` language select action (intent).
    */
   navBtnHover: string | undefined;
   /**
    * @description
-   *  📌 Toggle `visibility` (show/hide) of Userguide-1 (widget) pop-up modal.
+   *  📣 Toggle `visibility` (show/hide) of Userguide-1 (widget) pop-up modal.
    */
   showUserguide1: boolean;
   /**
    * @description
-   *  📌 Toggle `visibility` (show/hide) of Userguide-1 (widget) access.
+   *  📣 Toggle `visibility` (show/hide) of Userguide-1 (widget) access.
    */
   showUserguide1Conf: boolean;
   /**
@@ -217,7 +252,7 @@ export interface ISessionStore
   showTermsAndConditions: boolean;
   /**
    * @description
-   *  📌 Toggle `visibility` (show/hide) of Fixture Competition (widget) access.
+   *  📣 Toggle `visibility` (show/hide) of Fixture Competition (widget) access.
    */
   showFixtureCompetition?: boolean;
 
@@ -344,8 +379,12 @@ export interface ISessionStore
 }
 
 /**
+ * @author
+ *  @migbash
+ * @summary
+ *  🔹 INTERFACE
  * @description
- * TODO: DOC:
+ *  📣 Interface for `localStorage` data.
  */
 export type PROFILE_OPT =
   | 'Dashboard'

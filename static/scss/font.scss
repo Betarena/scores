@@ -171,6 +171,7 @@ p.s_small
     {
       .dark-background &
       , .dark-background-1 &
+      , .dark-mode &
       {
         &#{map-get($data-dark, "class-name")}
         {
