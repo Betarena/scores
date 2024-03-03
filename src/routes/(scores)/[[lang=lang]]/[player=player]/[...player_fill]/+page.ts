@@ -1,31 +1,38 @@
-// ▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-// ▓▓ 📝 DESCRIPTION                                                        ▓▓
-// ▓▓ Server Endpoint for Player Page (Prefetch) Data Load                  ▓▓
-// ▓▓ 🎟️ FILE TEMPLATE STRUCTURE VERSION                                    ▓▓
-// ▓▓ v.7.0 ➤ (+page.ts)                                                    ▓▓
-// ▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+// ╭──────────────────────────────────────────────────────────────────────────────────╮
+// │ 📌 High Order Component Overview                                                 │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ ➤ Internal Svelte Code Format :|: V.8.0                                          │
+// │ ➤ Status :|: 🔒 LOCKED                                                           │
+// │ ➤ Author(s) :|: @migbash                                                         │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ 📝 Description                                                                   │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ Main Scores Platform Page Loader ('Client-Side')                                 │
+// ╰──────────────────────────────────────────────────────────────────────────────────╯
+
+/* eslint-disable camelcase */
 
 // #region ➤ 📦 Package Imports
 
+import { ERROR_CODE_INVALID, PRELOAD_ERROR_MSG_PLAYER, dlog, dlogv2 } from '$lib/utils/debug';
+import { preloadExitLogic, promiseUrlsPreload, promiseValidUrlCheck, tryCatch } from '$lib/utils/platform-functions';
 
-import { ERROR_CODE_INVALID, PRELOAD_ERROR_MSG_PLAYER, dlog, dlogv2 } from "$lib/utils/debug";
-import { PRELOAD_exitPage, promiseUrlsPreload, promiseValidUrlCheck, tryCatch } from "$lib/utils/platform-functions";
-
-import type { Main_Data, Opengraph_Data, Twitter_Data } from "@betarena/scores-lib/types/_HASURA_.js";
-import type { B_PSEO_D, B_PSEO_T } from "@betarena/scores-lib/types/player-seo.js";
-import type { B_PSTAT_T } from "@betarena/scores-lib/types/player-statistics.js";
-import type { B_PTEAM_D, B_PTEAM_T } from "@betarena/scores-lib/types/player-team.js";
-import type { B_SAP_D1, B_SAP_D2, B_SAP_PP_D, B_SAP_PP_T } from "@betarena/scores-lib/types/seo-pages";
-import type { B_PFIX_D, B_PFIX_T } from "node_modules/@betarena/scores-lib/types/player-fixtures";
-import type { B_PPRO_T } from "node_modules/@betarena/scores-lib/types/player-profile";
-// @ts-ignore
-import type { PageLoad } from "../$types";
+import type { Main_Data, Opengraph_Data, Twitter_Data } from '@betarena/scores-lib/types/_HASURA_.js';
+import type { B_PSEO_D, B_PSEO_T } from '@betarena/scores-lib/types/player-seo.js';
+import type { B_PSTAT_T } from '@betarena/scores-lib/types/player-statistics.js';
+import type { B_PTEAM_D, B_PTEAM_T } from '@betarena/scores-lib/types/player-team.js';
+import type { B_SAP_D1, B_SAP_D2, B_SAP_PP_D, B_SAP_PP_T } from '@betarena/scores-lib/types/seo-pages';
+import type { B_PFIX_D, B_PFIX_T } from 'node_modules/@betarena/scores-lib/types/player-fixtures';
+import type { B_PPRO_T } from 'node_modules/@betarena/scores-lib/types/player-profile';
+import type { PageLoad } from '../../[sport]/$types.js';
 
 // #endregion ➤ 📦 Package Imports
 
 // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
-/** @type {import('./$types').PageLoad} */
+/**
+ * @type {import('./$types').PageLoad}
+ */
 export async function load
 (
   {
@@ -35,90 +42,104 @@ export async function load
   }
 ): Promise < PageLoad >
 {
-
-  // ▓▓ [🐞]
-  const t0: number = performance.now();
-
   const
-  {
-    lang,
-    // player, /* example :: player | jugador */
-    player_fill /* example :: teddy-teuma/829643 | harry-kane/997 */
-  } = params;
-
-  const urlLang: string =
-    lang == undefined
-      ? 'en'
-      : lang
+    /**
+     * @description
+     *  📣 Purely for `debug` and `performance metric` purposes.
+     */
+    t0: number = performance.now(),
+    {
+      lang,
+      /* example :: player | jugador */
+      // player,
+      /* example :: teddy-teuma/829643 | harry-kane/997 */
+      player_fill
+    } = params,
+    /**
+     * @description
+     *  📣
+     */
+    urlLang: string
+      = lang == undefined
+        ? 'en'
+        : lang,
+    /**
+     * @description
+     *  📣
+     */
+    playerId = player_fill.match(/\d+$/),
+    /**
+     * @description
+     *  📣
+     */
+    validUrlCheck: boolean
+      = await promiseValidUrlCheck
+      (
+        fetch,
+        {
+          langUrl: urlLang,
+          playerUrl: player_fill
+        }
+      )
   ;
 
-  const player_id: RegExpMatchArray = player_fill.match(/\d+$/);
-
-  // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-  // ▓▓ 📌 VALIDATE URL                  ▓▓
-  // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-
-  const validUrlCheck: boolean = await promiseValidUrlCheck
-  (
-    fetch,
-    {
-      langUrl: urlLang,
-      playerUrl: player_fill
-    }
-  );
-
-  // ▓▓ CHECK
-  // ▓▓ for exit.
   if (!validUrlCheck)
-  {
-    PRELOAD_exitPage
+    preloadExitLogic
     (
       t0,
       '[...player_fill]',
       ERROR_CODE_INVALID,
       PRELOAD_ERROR_MSG_PLAYER
     );
-  }
+  ;
 
-  // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-  // ▓▓ 📌 PREFETCH DATA                 ▓▓
-  // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+  const
+    /**
+     * @description
+     *  📣 Fetch target `data`.
+     */
+    [
+      PAGE_DATA,
+      PAGE_SEO,
+      B_SAP_D1,
+      B_SAP_D2,
+      B_PPRO_T,
+      B_PFIX_T,
+      B_PFIX_D,
+      B_PSTAT_T,
+      B_PTEAM_T,
+      B_PTEAM_D,
+      B_PSEO_T,
+      B_PSEO_D
+    ]
+      = await fetchData
+      (
+        fetch,
+        urlLang,
+        playerId?.[0] as unknown as string,
+      ),
+    /**
+     * @description
+     *  📣 Mutated `Page SEO` data.
+     */
+    PAGE_SEO_M
+      = mutateSeoData
+      (
+        PAGE_DATA,
+        PAGE_SEO,
+        url?.pathname,
+        urlLang,
+        playerId?.[0] as unknown as string,
+        PAGE_SEO?.player,
+      ),
+    /**
+     * @description
+     *  📣 Purely for `debug` and `performance metric` purposes.
+     */
+    t1 = performance.now()
+  ;
 
-  let
-  [
-    PAGE_DATA,
-    PAGE_SEO,
-    B_SAP_D1,
-    B_SAP_D2,
-    B_PPRO_T,
-    B_PFIX_T,
-    B_PFIX_D,
-    B_PSTAT_T,
-    B_PTEAM_T,
-    B_PTEAM_D,
-    B_PSEO_T,
-    B_PSEO_D
-  ] = await fetchData
-  (
-    fetch,
-    urlLang,
-    player_id?.[0] as unknown as string,
-  );
-
-  PAGE_SEO = mutateSeoData
-  (
-    PAGE_DATA,
-    PAGE_SEO,
-    url?.pathname,
-    urlLang,
-    player_id?.[0] as unknown as string,
-    PAGE_SEO?.player,
-  );
-
-  // ▓▓ [🐞]
-  const t1: number = performance.now();
-
-  // ▓▓ [🐞]
+  // [🐞]
   dlog
   (
     `⏳ PLAYER preload ${((t1 - t0) / 1000).toFixed(2)} sec`,
@@ -126,8 +147,14 @@ export async function load
   );
 
   return {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error 'unknown'
+    // ╭─────
+    // │ NOTE: FIXME:
+    // │ > issues with setting correct <PageLoad> types.
+    // ╰─────
     PAGE_DATA,
-    PAGE_SEO,
+    PAGE_SEO_M,
     B_SAP_D1,
     B_SAP_D2,
     B_PPRO_T,
@@ -151,9 +178,9 @@ export async function load
  * @summary
  *  🔹 INTERFACE
  * @description
- *  📌 Target `types` for `_this_` page required at preload.
+ *  📣 Target `types` for `_this_` page required at preload.
  */
-type PP_PROMISE_0 =
+type IPreloadData0 =
 [
   B_SAP_PP_D | undefined
 ];
@@ -164,9 +191,9 @@ type PP_PROMISE_0 =
  * @summary
  *  🔹 INTERFACE
  * @description
- *  📌 Target `types` for `_this_` page required at preload.
+ *  📣 Target `types` for `_this_` page required at preload.
  */
-type PP_PROMISE_1 =
+type IPreloadData1 =
 [
   B_SAP_PP_T | undefined,
   B_SAP_D1 | undefined,
@@ -187,57 +214,58 @@ type PP_PROMISE_1 =
  * @summary
  *  🔹 INTERFACE
  * @description
- *  📌 Target `types` for `_this_` page required at preload.
+ *  📣 Target `types` for `_this_` page required at preload.
  */
-type PP_PROMISE_FINAL =
+type IPreloadData2 =
 [
-  ...PP_PROMISE_0,
-  ...PP_PROMISE_1
+  ...IPreloadData0,
+  ...IPreloadData1
 ]
 
 /**
  * @author
  *  @migbash
  * @summary
- *  🔹 HELPER
+ *  🟦 HELPER
  * @description
- *  📌 Fetches target data for `_this_` page.
+ *  📣 Fetches target data for `_this_` page.
  * @param { any } fetch
- *  Target instance of `fetch` object.
+ *  💠 Target instance of `fetch` object.
  * @param { string } _lang
- *  Target `language`.
+ *  💠 Target `language`.
  * @param { string } _playerId
- *  Target `player id`.
- * @returns { Promise < PP_PROMISE_0 > }
+ *  💠 Target `player id`.
+ * @returns { Promise < IPreloadData0 > }
+ *  📤 Target `data` fetched.
  */
 async function fetchData
 (
   fetch: any,
   _lang: string,
   _playerId: string
-): Promise < PP_PROMISE_FINAL >
+): Promise < IPreloadData2 >
 {
-
-  // ### [🐞]
+  // [🐞]
   dlog
   (
-    `🚏 checkpoint [PRL] ➤ src/routes/[[lang=lang]]/[player=player]/[...player_fill] fecthData(..)`,
+    '🚏 checkpoint [PRL] ➤ src/routes/[[lang=lang]]/[player=player]/[...player_fill] fecthData(..)',
     true
   );
 
   const
-  [
-    PAGE_DATA
-  ] = await promiseUrlsPreload
-  (
     [
-      `/api/data/main/seo-pages?player_id=${_playerId}&page=player&decompress`
-    ],
-    fetch
-  ) as PP_PROMISE_0;
+      PAGE_DATA
+    ] = await promiseUrlsPreload
+    (
+      [
+        `/api/data/main/seo-pages?player_id=${_playerId}&page=player&decompress`
+      ],
+      fetch
+    ) as IPreloadData0
+  ;
 
-  if (PAGE_DATA == null || PAGE_DATA?.error != undefined)
-    PRELOAD_exitPage
+  if (PAGE_DATA == null || PAGE_DATA.error != undefined)
+    preloadExitLogic
     (
       performance.now(),
       'player',
@@ -246,34 +274,34 @@ async function fetchData
     );
   ;
 
-  const country_id: number = PAGE_DATA?.data?.country_id;
-
-  const urls_0: string[] =
-  [
-		`/api/data/main/seo-pages?lang=${_lang}&page=player&decompress`,
-    `/api/data/main/seo-pages?country_id=${country_id}&decompress`,
-    `/api/data/main/seo-pages?months=true&lang=${_lang}&decompress`,
-    `/api/data/players/profile?lang=${_lang}`,
-    `/api/data/players/fixtures?lang=${_lang}`,
-    `/api/data/players/fixtures?player_id=${_playerId}&limit=10&offset=0`,
-    `/api/data/players/statistics?lang=${_lang}`,
-    `/api/data/players/team?lang=${_lang}`,
-    `/api/data/players/team?player_id=${_playerId}`,
-    `/api/data/players/seo?lang=${_lang}`,
-    `/api/data/players/seo?player_id=${_playerId}&lang=${_lang}`
-  ];
-
-  const data_2 = await promiseUrlsPreload
-  (
-    urls_0,
-    fetch
-  ) as PP_PROMISE_1;
-
-  const finalData: PP_PROMISE_FINAL =
-  [
-    PAGE_DATA,
-    ...data_2
-  ];
+  const
+    countryId = PAGE_DATA?.data?.country_id,
+    urls0: string[]
+      = [
+        `/api/data/main/seo-pages?lang=${_lang}&page=player&decompress`,
+        `/api/data/main/seo-pages?country_id=${countryId}&decompress`,
+        `/api/data/main/seo-pages?months=true&lang=${_lang}&decompress`,
+        `/api/data/players/profile?lang=${_lang}`,
+        `/api/data/players/fixtures?lang=${_lang}`,
+        `/api/data/players/fixtures?player_id=${_playerId}&limit=10&offset=0`,
+        `/api/data/players/statistics?lang=${_lang}`,
+        `/api/data/players/team?lang=${_lang}`,
+        `/api/data/players/team?player_id=${_playerId}`,
+        `/api/data/players/seo?lang=${_lang}`,
+        `/api/data/players/seo?player_id=${_playerId}&lang=${_lang}`
+      ],
+    data2
+      = await promiseUrlsPreload
+      (
+        urls0,
+        fetch
+      ) as IPreloadData1,
+    finalData: IPreloadData2
+      = [
+        PAGE_DATA,
+        ...data2
+      ]
+  ;
 
   return finalData;
 }
@@ -282,32 +310,38 @@ async function fetchData
  * @author
  *  @migbash
  * @summary
- *  🔹 HELPER | IMPORTANT
- * @param { B_SAP_FP_T } pageSeo
- *  player (page) target - critical data.
+ *  - 🟦 HELPER
+ *  - IMPORTANT
+ * @param { B_SAP_PP_D | undefined } pageData
+ *  💠 Target `SEO` **critical** data.
+ * @param { B_SAP_PP_T | undefined } pageSeo
+ *  💠 Target `SEO` **critical** data.
+ * @param { string } _pathname
+ *  💠 Target `pathname`.
  * @param { string } _lang
- *  player (page) target `language` _translation_.
- * @param { string } _playerTranslationTerm
- *  player (page) target `player term` _translation_.
+ *  💠 Target `language`.
+ * @param { string } _playerId
+ *  💠 Target `player id`.
+ * @param { string | undefined } _playerTranslationTerm
+ *  💠 player (page) target `player term` _translation_.
  * @returns { B_SAP_PP_T }
- * a mutated data `object`.
+ *  📤 Mutated data `object`.
  */
 function mutateSeoData
 (
-  pageData: B_SAP_PP_D,
-  pageSeo: B_SAP_PP_T,
+  pageData: B_SAP_PP_D | undefined,
+  pageSeo: B_SAP_PP_T | undefined,
   _pathname: string,
   _lang: string,
   _playerId: string,
-  _playerTranslationTerm: string
+  _playerTranslationTerm: string | undefined
 ): B_SAP_PP_T
 {
-
-  // ▓▓ [🐞]
+  // [🐞]
   dlogv2
   (
-    // ### [🐞]
-    `🚏 checkpoint [PRL] ➤ src/routes/[[lang=lang]]/[player=player]/[...player_fill] mutateSeoData(..)`,
+    // [🐞]
+    '🚏 checkpoint [PRL] ➤ src/routes/[[lang=lang]]/[player=player]/[...player_fill] mutateSeoData(..)',
     [
       `🔹 [var] ➤ _pathname ${_pathname}`,
       `🔹 [var] ➤ _playerId ${_playerId}`,
@@ -319,52 +353,69 @@ function mutateSeoData
     true
   );
 
-  const playerName: string = pageData?.data?.player_name?.replaceAll('\t', '');
+  if (!pageSeo) return { };
 
-  // @ts-ignore
-  pageSeo.main_data = tryCatch((): Main_Data =>
-    JSON.parse
-    (
-      JSON.stringify(pageSeo?.main_data)
-      ?.replace('/{lang}/{type}/{name}/{id}', _pathname)
-      ?.replace('/{type}/{name}/{id}', _pathname)
-      ?.replace(/{id}/g, _playerId)
-      ?.replace(/{name}/g, playerName)
-      ?.replace(/{team}/g, pageData?.data?.team_name)
-      ?.replace(/{lang}/g, _lang)
-      ?.replace(/{type}/g, _playerTranslationTerm)
-    )
-  );
+  const
+    /**
+     * @description
+     *  📣 Target `player name`.
+     */
+    playerName = pageData?.data?.player_name?.replaceAll('\t', '')
+  ;
 
-  // @ts-ignore
-	pageSeo.twitter_card = tryCatch((): Twitter_Data =>
-    JSON.parse
-    (
-      JSON.stringify(pageSeo?.twitter_card)
-      ?.replace('/{lang}/{type}/{name}/{id}', _pathname)
-      ?.replace('/{type}/{name}/{id}', _pathname)
-      ?.replace(/{id}/g, _playerId)
-      ?.replace(/{name}/g, playerName)
-      ?.replace(/{team}/g, pageData?.data?.team_name)
-      ?.replace(/{lang}/g, _lang)
-      ?.replace(/{type}/g, _playerTranslationTerm)
-    )
-  );
+  pageSeo.main_data = tryCatch
+  (
+    () =>
+    {
+      return JSON.parse
+      (
+        JSON.stringify(pageSeo.main_data)
+          .replace('/{lang}/{type}/{name}/{id}', _pathname)
+          .replace('/{type}/{name}/{id}', _pathname)
+          .replace(/{id}/g, _playerId)
+          .replace(/{name}/g, (playerName ?? ''))
+          .replace(/{team}/g, (pageData?.data?.team_name ?? ''))
+          .replace(/{lang}/g, _lang)
+          .replace(/{type}/g, (_playerTranslationTerm ?? ''))
+      )
+    }
+  ) as Main_Data;
 
-  // @ts-ignore
-	pageSeo.opengraph = tryCatch((): Opengraph_Data =>
-    JSON.parse
-    (
-      JSON.stringify(pageSeo?.opengraph)
-      ?.replace('/{lang}/{type}/{name}/{id}', _pathname)
-      ?.replace('/{type}/{name}/{id}', _pathname)
-      ?.replace(/{id}/g, _playerId)
-      ?.replace(/{name}/g, playerName)
-      ?.replace(/{team}/g, pageData?.data?.team_name)
-      ?.replace(/{lang}/g, _lang)
-      ?.replace(/{type}/g, _playerTranslationTerm)
-    )
-  );
+  pageSeo.twitter_card = tryCatch
+  (
+    () =>
+    {
+      return JSON.parse
+      (
+        JSON.stringify(pageSeo.twitter_card)
+          .replace('/{lang}/{type}/{name}/{id}', _pathname)
+          .replace('/{type}/{name}/{id}', _pathname)
+          .replace(/{id}/g, _playerId)
+          .replace(/{name}/g, (playerName ?? ''))
+          .replace(/{team}/g, (pageData?.data?.team_name ?? ''))
+          .replace(/{lang}/g, _lang)
+          .replace(/{type}/g, (_playerTranslationTerm ?? ''))
+      )
+    }
+  ) as Twitter_Data;
+
+  pageSeo.opengraph = tryCatch
+  (
+    () =>
+    {
+      return JSON.parse
+      (
+        JSON.stringify(pageSeo.opengraph)
+          .replace('/{lang}/{type}/{name}/{id}', _pathname)
+          .replace('/{type}/{name}/{id}', _pathname)
+          .replace(/{id}/g, _playerId)
+          .replace(/{name}/g, (playerName ?? ''))
+          .replace(/{team}/g, (pageData?.data?.team_name ?? ''))
+          .replace(/{lang}/g, _lang)
+          .replace(/{type}/g, (_playerTranslationTerm ?? ''))
+      )
+    }
+  ) as Opengraph_Data;
 
   return pageSeo;
 }

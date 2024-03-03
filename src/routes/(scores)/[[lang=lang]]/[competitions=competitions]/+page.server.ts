@@ -1,12 +1,19 @@
-// ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-// ### 📝 DESCRIPTION                                                         ◼️
-// ### Server Endpoint for Competition Page (Prefetch) Data Load              ◼️
-// ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+// ╭──────────────────────────────────────────────────────────────────────────────────╮
+// │ 📌 High Order Component Overview                                                 │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ ➤ Internal Svelte Code Format :|: V.8.0                                          │
+// │ ➤ Status :|: 🔒 LOCKED                                                           │
+// │ ➤ Author(s) :|: @migbash                                                         │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ 📝 Description                                                                   │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ Main Scores Platform Page Loader ('Client-Side')                                 │
+// ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 // #region ➤ 📦 Package Imports
 
 import { ERROR_CODE_PRELOAD, LAYOUT_1_LANG_PAGE_ERROR_MSG, dlog } from '$lib/utils/debug';
-import { PRELOAD_exitPage, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/platform-functions.js';
+import { preloadExitLogic, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/platform-functions.js';
 
 import type { B_SAP_CP_T, B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
 import type { B_COMP_HIGH_S, B_COMP_HIGH_T } from '@betarena/scores-lib/types/types.competition.highlights.js';
@@ -22,57 +29,86 @@ export async function load
   event: ServerLoadEvent
 ): Promise < PageLoad >
 {
-
-  // ### [🐞]
-  const t0: number = performance.now();
-
+  //  [🐞]
   const
-  {
-    // url,
-    fetch,
-    params,
-    request,
-    // setHeaders,
-    // route
-  } = event;
-
-  const _langUrl: string =
-    [undefined, 'en'].includes(params?.lang)
-      ? 'en'
-      : params.lang
+    t0: number = performance.now(),
+    {
+      // url,
+      fetch,
+      params,
+      request,
+      // setHeaders,
+      // route
+    } = event,
+    _langUrl: string
+      = [undefined, 'en'].includes(params.lang)
+        ? 'en'
+        : params.lang,
+    validUrlCheck: boolean = await promiseValidUrlCheck
+    (
+      fetch,
+      {
+        langUrl: _langUrl,
+        competitionMainUrl: params.competitions
+      }
+    )
   ;
 
-  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-  //  📌 VALIDATE URL                     ◼️
-  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-
-  const validUrlCheck: boolean = await promiseValidUrlCheck
-  (
-    fetch,
-    {
-      langUrl: _langUrl,
-      competitionMainUrl: params?.competitions
-    }
-  );
-
-  // ### CHECK | IMPORTANT
-  // ### for page exit.
   if (!validUrlCheck)
-  {
-    PRELOAD_exitPage
+    preloadExitLogic
     (
       t0,
       '[competitions=competitions]',
       500
     );
-  }
-
-  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-  //  📌 PREFETCH DATA                    ◼️
-  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  ;
 
   const
-  [
+    [
+      B_SAP_CP_T,
+      B_SAP_D3_CP_M,
+      B_SAP_D3_SP_M,
+      B_SAP_D3_TEAM_M,
+      B_SAP_D3_COUNTRIES_M_MAP,
+      B_COMP_HIGH_S,
+      B_COMP_HIGH_T
+    ] = await fetchData
+    (
+      fetch,
+      _langUrl
+    ),
+
+    //  CHECK | IMPORTANT
+    //  exit condition.
+    if_M_0: boolean
+    = B_SAP_CP_T == undefined
+  ;
+  if (if_M_0)
+
+    preloadExitLogic
+    (
+      t0,
+      '[LAYOUT]',
+      ERROR_CODE_PRELOAD,
+      LAYOUT_1_LANG_PAGE_ERROR_MSG
+    );
+
+
+  //  [🐞]
+  const t1: number = performance.now();
+
+  //  [🐞]
+  dlog
+  (
+    `⏳ COMPETITION preload ${((t1 - t0) / 1000).toFixed(2)} sec`,
+    true
+  );
+
+  return {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error <whatever>
+    //  NOTE: FIXME:
+    //  issues with setting correct <PageLoad> types.
     B_SAP_CP_T,
     B_SAP_D3_CP_M,
     B_SAP_D3_SP_M,
@@ -80,52 +116,7 @@ export async function load
     B_SAP_D3_COUNTRIES_M_MAP,
     B_COMP_HIGH_S,
     B_COMP_HIGH_T
-  ] = await fetchData
-  (
-    fetch,
-    _langUrl
-  );
-
-  // ### CHECK | IMPORTANT
-  // ### exit condition.
-  const if_M_0: boolean =
-    B_SAP_CP_T == undefined
-  ;
-	if (if_M_0)
-  {
-    PRELOAD_exitPage
-    (
-      t0,
-      `[LAYOUT]`,
-      ERROR_CODE_PRELOAD,
-      LAYOUT_1_LANG_PAGE_ERROR_MSG
-    );
-	}
-
-  // ### [🐞]
-  const t1: number = performance.now();
-
-  // ### [🐞]
-  dlog
-  (
-    `⏳ COMPETITION preload ${((t1 - t0) / 1000).toFixed(2)} sec`,
-    true
-  );
-
-	return {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error <whatever>
-    // ### NOTE: FIXME:
-    // ### issues with setting correct <PageLoad> types.
-		B_SAP_CP_T,
-    B_SAP_D3_CP_M,
-    B_SAP_D3_SP_M,
-    B_SAP_D3_TEAM_M,
-    B_SAP_D3_COUNTRIES_M_MAP,
-    B_COMP_HIGH_S,
-    B_COMP_HIGH_T
-	};
-
+  };
 }
 
 // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
@@ -170,29 +161,29 @@ async function fetchData
   _lang: string,
 ): Promise < PP_PROMISE_0 >
 {
-
-  // ### [🐞]
+  // [🐞]
   dlog
   (
-    `🚏 checkpoint ➤ src/routes/[[lang=lang]]/[competitions] fecthData`
+    '🚏 checkpoint ➤ src/routes/[[lang=lang]]/[competitions] fecthData'
   );
 
-  const urls_0: string[] =
-  [
-    `/api/data/main/seo-pages?lang=${_lang}&page=competitions&decompress`,
-    `/api/data/main/seo-pages?term=competitions&decompress`,
-    `/api/data/main/seo-pages?term=football&decompress`,
-    `/api/data/main/seo-pages?term=team&decompress`,
-    `/api/data/main/seo-pages?countries=true&decompress`,
-    `/api/data/lobby/highlights?seo=true&lang=${_lang}`,
-    `/api/data/lobby/highlights?lang=${_lang}`,
-  ];
-
-  const data_0: PP_PROMISE_0 = await promiseUrlsPreload
-  (
-    urls_0,
-    fetch
-  ) as PP_PROMISE_0;
+  const
+    urls_0: string[]
+      = [
+        `/api/data/main/seo-pages?lang=${_lang}&page=competitions&decompress`,
+        '/api/data/main/seo-pages?term=competitions&decompress',
+        '/api/data/main/seo-pages?term=football&decompress',
+        '/api/data/main/seo-pages?term=team&decompress',
+        '/api/data/main/seo-pages?countries=true&decompress',
+        `/api/data/lobby/highlights?seo=true&lang=${_lang}`,
+        `/api/data/lobby/highlights?lang=${_lang}`,
+      ],
+    data_0 = await promiseUrlsPreload
+    (
+      urls_0,
+      fetch
+    ) as PP_PROMISE_0
+  ;
 
   return data_0;
 }

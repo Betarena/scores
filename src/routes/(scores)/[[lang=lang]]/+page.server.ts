@@ -1,9 +1,8 @@
-// ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-// ### 📝 DESCRIPTION                                                         ◼️
-// ### Server Endpoint for Home Page (Prefetch) Data Load                     ◼️
-// ### 🎟️ FILE TEMPLATE STRUCTURE VERSION                                     ◼️
-// ### v.7.0 ➤ (+page.ts)                                                     ◼️
-// ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+// ╭──────────────────────────────────────────────────────────────────────────────────╮
+// │ 📝 Description                                                                   │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ Main Scores Platform Page Loader ('Server-Side')                                 │
+// ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 // #region ➤ 📦 Package Imports
 
@@ -19,7 +18,7 @@ import type { B_SAP_HP_T } from '@betarena/scores-lib/types/seo-pages.js';
 import type { B_TGOL_S, B_TGOL_T } from '@betarena/scores-lib/types/top-goalscorers.js';
 import type { B_FEATM_S, B_FEATM_T } from '@betarena/scores-lib/types/types.home.feat-match.js';
 import type { B_LEGL_S, B_LEGL_T } from '@betarena/scores-lib/types/types.home.league-list.js';
-import type { PageLoad } from './$types';
+import type { PageLoad } from './[sport]/$types.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -31,99 +30,87 @@ import type { PageLoad } from './$types';
 export async function load
 (
   {
-	  // url,
-	  params,
-	  fetch
+    // url,
+    params,
+    fetch
   }
 ): Promise < PageLoad >
 {
-
-  // ### [🐞]
-  const t0: number = performance.now();
-
-	const urlLang: string =
-		params?.lang == undefined
-      ? 'en'
-      : params?.lang
+  const
+    t0: number = performance.now(),
+    urlParam: string
+      = params?.lang == undefined
+        ? 'en'
+        : params?.lang,
+    validUrlCheck: boolean = await promiseValidUrlCheck
+    (
+      fetch,
+      {
+        langUrl: urlParam
+      }
+    )
   ;
 
-  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-  //  📌 VALIDATE URL                     ◼️
-  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-
-  const validUrlCheck: boolean = await promiseValidUrlCheck
-  (
-    fetch,
-    {
-      langUrl: urlLang
-    }
-  );
-
-  // ### CHECK | IMPORTANT
-  // ### for page exit.
-	if (!validUrlCheck)
-  {
-		throw error
+  if (!validUrlCheck)
+    // eslint-disable-next-line @typescript-eslint/no-throw-literal
+    throw error
     (
-			ERROR_CODE_INVALID,
-			PAGE_INVALID_MSG
-		);
-	}
-
-  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-  //  📌 PREFETCH DATA                    ◼️
-  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+      ERROR_CODE_INVALID,
+      // @ts-expect-error
+      PAGE_INVALID_MSG
+    );
+  ;
 
   const
-  [
-    PAGE_DATA_SEO,
-		B_FEATM_T,
-    B_FEATM_S,
-		B_FEATB_T,
-		B_TGOL_T,
-		B_TGOL_S,
-		B_LEGL_T,
-		B_LEGL_S,
-		B_LEGT_T,
-		SEO_BLOCK_DATA,
-    LIVESCORES_V2_T_DATA,
-    LIVESCORES_V2_SEO
-  ] = await fetchData
-  (
-    fetch,
-    urlLang
-  );
+    [
+      PAGE_DATA_SEO,
+      B_FEATM_T,
+      B_FEATM_S,
+      B_FEATB_T,
+      B_TGOL_T,
+      B_TGOL_S,
+      B_LEGL_T,
+      B_LEGL_S,
+      B_LEGT_T,
+      SEO_BLOCK_DATA,
+      LIVESCORES_V2_T_DATA,
+      LIVESCORES_V2_SEO
+    ] = await fetchData
+    (
+      fetch,
+      urlParam
+    ),
+    // [🐞]
+    t1: number = performance.now()
+  ;
 
-  // ### [🐞]
-  const t1: number = performance.now();
-
-  // ### [🐞]
+  // [🐞]
   dlog
   (
     `⏳ HOME preload ${((t1 - t0) / 1000).toFixed(2)} sec`,
     true
   );
 
-	return {
-	  // FIXME: types not working
+  return {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    // NOTE: issues with setting correct <PageLoad> types,
-    // NOTE: not being applied to return;
-    // NOTE: not critical - can be silenced;
-		PAGE_DATA_SEO,
-		B_FEATM_T,
+    // @ts-expect-error 'unknown'
+    // ╭─────
+    // │ NOTE: FIXME:
+    // │ > issues with setting correct <PageLoad> types.
+    // ╰─────
+    PAGE_DATA_SEO,
+    B_FEATM_T,
     B_FEATM_S,
-		B_FEATB_T,
-		B_TGOL_T,
+    B_FEATB_T,
+    B_TGOL_T,
     B_TGOL_S,
-		B_LEGL_T,
+    B_LEGL_T,
     B_LEGL_S,
-		B_LEGT_T,
-		SEO_BLOCK_DATA,
+    B_LEGT_T,
+    SEO_BLOCK_DATA,
     LIVESCORES_V2_T_DATA,
     LIVESCORES_V2_SEO
-	};
+  };
 }
 
 // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
@@ -136,9 +123,9 @@ export async function load
  * @summary
  *  🔹 INTERFACE
  * @description
- *  📌 Target `types` for `_this_` page required at preload.
+ *  📣 Target `types` for `_this_` page required at preload.
  */
-type PP_PROMISE_0 =
+type IPreloadData0 =
 [
   B_SAP_HP_T | undefined,
   B_FEATM_T | undefined,
@@ -158,52 +145,62 @@ type PP_PROMISE_0 =
  * @author
  *  @migbash
  * @summary
- *  🔹 HELPER
+ *  🟦 HELPER
  * @description
- *  📌 Fetches target data for `_this_` page.
+ *  📣 Fetches target data for `_this_` page.
  * @param { any } fetch
- *  Target instance of `fetch` object.
+ *  💠 **[required]** Target instance of `fetch` object.
  * @param { string } _lang
- *  Target `language`.
- * @returns { Promise < PP_PROMISE_0 > }
+ *  💠 **[required]** Target `language`.
+ * @return { Promise < IPreloadData0 > }
+ *  📤 Target `data` fetched.
  */
 async function fetchData
 (
   fetch: any,
   _lang: string,
-): Promise < PP_PROMISE_0 >
+): Promise < IPreloadData0 >
 {
-
-  // ### [🐞]
+  // [🐞]
   dlog
   (
-    `🚏 checkpoint [PRL] ➤ src/routes/[[lang=lang]] fecthData(..)`,
+    '🚏 checkpoint [PRL] ➤ src/routes/[[lang=lang]] fecthData(..)',
     true
   );
 
-  const urls_0: string[] =
-  [
-		`/api/data/main/seo-pages?lang=${_lang}&page=homepage&decompress`,
-		`/api/data/home/feat-match?lang=${_lang}&decompress`,
-		`/api/data/home/feat-match?lang=${_lang}&seo=true&decompress`,
-		`/api/data/home/feat-betsite?lang=${_lang}&decompress`,
-		`/api/data/home/top-goalscorers?lang=${_lang}&decompress`,
-		`/api/data/home/top-goalscorers?lang=${_lang}&seo=true`,
-		`/api/data/home/league-list?lang=${_lang}&decompress`,
-		`/api/data/home/league-list?lang=${_lang}&seo=true&decompress`,
-		`/api/data/home/league-table?lang=${_lang}&decompress`,
-		`/api/data/home/seo-block?lang=${_lang}&decompress`,
-		`/api/data/home/livescores-v2?lang=${_lang}&decompress`,
-		`/api/data/home/livescores-v2?seo=true&lang=${_lang}&decompress`,
-  ];
+  const
+    /**
+     * @description
+     *  📣 Target `urls` to be `fetched`.
+     */
+    urls0
+      = [
+        `/api/data/main/seo-pages?lang=${_lang}&page=homepage&decompress`,
+        `/api/data/home/feat-match?lang=${_lang}&decompress`,
+        `/api/data/home/feat-match?lang=${_lang}&seo=true&decompress`,
+        `/api/data/home/feat-betsite?lang=${_lang}&decompress`,
+        `/api/data/home/top-goalscorers?lang=${_lang}&decompress`,
+        `/api/data/home/top-goalscorers?lang=${_lang}&seo=true`,
+        `/api/data/home/league-list?lang=${_lang}&decompress`,
+        `/api/data/home/league-list?lang=${_lang}&seo=true&decompress`,
+        `/api/data/home/league-table?lang=${_lang}&decompress`,
+        `/api/data/home/seo-block?lang=${_lang}&decompress`,
+        `/api/data/home/livescores-v2?lang=${_lang}&decompress`,
+        `/api/data/home/livescores-v2?seo=true&lang=${_lang}&decompress`,
+      ],
+    /**
+     * @description
+     *  📣 Target `data` returned.
+     */
+    data0
+      = await promiseUrlsPreload
+      (
+        urls0,
+        fetch,
+      ) as IPreloadData0
+  ;
 
-  const data_0: PP_PROMISE_0 = await promiseUrlsPreload
-  (
-    urls_0,
-    fetch,
-  ) as PP_PROMISE_0;
-
-  return data_0;
+  return data0;
 }
 
 // #endregion ➤ 🛠️ METHODS
