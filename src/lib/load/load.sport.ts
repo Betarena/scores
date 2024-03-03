@@ -12,46 +12,96 @@
 
 // #region ➤ 📦 Package Imports
 
-import { ServerLoadEvent } from '@sveltejs/kit';
+import { LoadEvent, ServerLoadEvent, redirect } from '@sveltejs/kit';
 
-import { main } from '$lib/load/load.competitionLobby.js';
-import { dlogv2 } from '$lib/utils/debug.js';
+import { ERROR_CODE_INVALID, FIXTURE_PAGE_ERROR_MSG, dlogv2 } from '$lib/utils/debug';
+import { preloadExitLogic, promiseValidUrlCheck } from '$lib/utils/platform-functions.js';
 
 // #endregion ➤ 📦 Package Imports
 
-// #region ➤ 🔄 LIFECYCLE [SVELTE]
-
 /**
- * @type {import('./$types').PageLoad}
+ * @author
+ *  @migbash
+ * @summary
+ *  🟥 MAIN
+ * @description
+ *  📣 Logic for `[[lang=lang]]` route data preload.
+ * @return { Promise < {} > }
+ *  📤 Respective `data` for _this_ route.
  */
-export async function load
+export async function main
 (
-  event: ServerLoadEvent
-): Promise < any >
+  event: ServerLoadEvent,
+  parentData:
+  {
+    langParam: string
+  }
+): Promise < {} >
 {
   const
+    // [🐞]
+    t0: number = performance.now(),
+    // ╭─────
+    // │ NOTE:
+    // │ > 📣 Destruct `object`.
+    // ╰─────
     {
-      langParam
-    } = await event.parent()
+      // lang,
+      sport,
+    } = event.params,
+    /**
+     * @description
+     *  📣 Validate **this** `url`.
+     */
+    isUrlValid
+      = await promiseValidUrlCheck
+      (
+        event.fetch,
+        {
+          langUrl: parentData.langParam,
+          sportUrl: sport,
+        }
+      ),
+    /**
+     * @description
+     *  📣 `Data` object for target `route`.
+     */
+    response: any = {}
+  ;
+
+  if (!isUrlValid)
+    preloadExitLogic
+    (
+      t0,
+      '[country]',
+      ERROR_CODE_INVALID,
+      FIXTURE_PAGE_ERROR_MSG
+    );
   ;
 
   // [🐞]
   dlogv2
   (
-    '🚏 checkpoint ➤ src/routes/(scores)/[[lang=lang]]/[competitions=competitions]/+page.server.ts',
+    '🚏 checkpoint ➤ src/routes/(scores)/[[lang=lang]]/[sport]/+page.ts',
     [
-      `🔹 [var] ➤ langParam :|: ${langParam}`,
+      `⏳ [LEAGUE] preload ${((performance.now() - t0) / 1000).toFixed(2)} sec`,
+      // `🔹 [var] ➤ response :|: ${JSON.stringify(response)}`,
     ],
     true
   );
 
-  return await main
-  (
-    event,
-    {
-      langParam
-    }
-  );
-}
+  const
+    redirectUrl: string
+      = parentData.langParam == 'en'
+        ? '/'
+        : `/${parentData.langParam}`
+  ;
 
-// #endregion ➤ 🔄 LIFECYCLE [SVELTE]
+  throw redirect
+  (
+    302,
+    `${redirectUrl}`
+  );
+
+  // return;
+}

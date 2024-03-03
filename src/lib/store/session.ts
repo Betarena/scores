@@ -165,7 +165,7 @@ function createLocalStore
           else if (dataTarget == 'routeId')
           {
             let
-              customRouteId: IPageRouteId = null
+              customRouteId: IPageRouteId = dataPoint
             ;
 
             if (dataPoint == routeIdPageCompetitions)

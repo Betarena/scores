@@ -45,10 +45,10 @@
 
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { dlog, dlogv2 } from '$lib/utils/debug';
-	import { generateUrlCompetitions, selectLanguage, spliceBalanceDoubleZero, toDecimalFix, viewportChangeV2 } from '$lib/utils/platform-functions';
+	import { NB_W_TAG, dlog, dlogv2 } from '$lib/utils/debug';
+	import { generateUrlCompetitions, spliceBalanceDoubleZero, toDecimalFix, viewportChangeV2 } from '$lib/utils/platform-functions';
 	import { translationObject } from '$lib/utils/translation.js';
-	import { initUser, logoutUser, updateSelectLang } from '$lib/utils/user.js';
+	import { initUser, logoutUser, selectLanguage, updateSelectLang } from '$lib/utils/user.js';
 
   import SeoBox from '$lib/components/SEO-Box.svelte';
   import TranslationText from '$lib/components/misc/Translation-Text.svelte';
@@ -258,7 +258,7 @@
   ): void
   {
     const
-      prefix: string = '🚏 checkpoint [R] ➤ ${NB_W_TAG[0]}'
+      prefix: string = `🚏 checkpoint [R] ➤ ${NB_W_TAG[0]}`
     ;
 
     // [🐞]
@@ -380,7 +380,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   // ╭─────
-  // │ > 🔥 Initialize 'user' (unauthenticated) platform language.
+  // │ > 🔥 Initialize 'user' (non-authenticated) platform language.
   // ╰─────
   $: if (browser && deepReactListenUser == undefined)
   {
@@ -416,10 +416,10 @@
   {
     _DEBUG_('Option2');
 
-    if_R_1_Func();
+    if_R_2_Func();
 
     // eslint-disable-next-line svelte/no-inner-declarations
-    function if_R_1_Func
+    function if_R_2_Func
     (
     ): void
     {
@@ -1253,92 +1253,6 @@
 
           <!--
           ╭─────
-          │ > Odds Box [HIDDEN]
-          ╰─────
-          -->
-          {#if false}
-            <div
-              id="odds-box"
-              class=
-              "
-              cursor-not-allowed
-              dropdown-opt-box
-              row-space-start
-              "
-              on:click={() => {return (isOddsDropdown = !isOddsDropdown)}}
-            >
-
-              <!--
-              SELECTED ODDS-TYPE BOX
-              -->
-              <div
-                class="m-r-10"
-              >
-
-                <p
-                  class="
-                    color-grey
-                    s-12
-                    no-wrap
-                  "
-                >
-                  {trsanslationData?.scores_header_translations?.odds || translationObject.odds_type}
-                </p>
-
-                <p
-                  class="
-                    color-white
-                    s-14
-                    no-wrap
-                  "
-                >
-                  {trsanslationData?.scores_header_translations?.odds_type?.[0]}
-                </p>
-
-              </div>
-
-              <!--
-              ARROW DOWN
-              -->
-              <img
-                loading="lazy"
-                src={!isOddsDropdown ? arrow_down_fade : arrow_up}
-                alt={!isOddsDropdown ? 'arrow_down_fade' : 'arrow_up'}
-                width=16
-                height=16
-              />
-
-              <!--
-              DROPDOWN MENU (ODDS-TYPE)
-              -->
-              {#if isOddsDropdown}
-                <div
-                  id="odds-type-dropdown-menu"
-                  transition:fly
-                >
-                  {#each trsanslationData?.scores_header_translations?.odds_type || [] as odd}
-                    <div
-                      class="theme-opt-box"
-                      on:click={() => {return (isOddsDropdown = false)}}
-                    >
-                      <p
-                        class="
-                          color-white
-                          s-14
-                        "
-                      >
-                        {odd}
-                      </p>
-                    </div>
-                  {/each}
-                </div>
-              {/if}
-
-            </div>
-          {/if}
-
-          <!--
-          ╭─────
           │ > Bookmakers Container
           ╰─────
           -->
@@ -1681,107 +1595,6 @@
           {/each}
 
           {#if VIEWPORT_MOBILE_INIT[1] && !currentPageRouteId}
-
-            <!--
-            ODDS SECTION
-            NOTE: -> HIDDEN TEMPORARILY
-            -->
-            {#if false}
-              <div
-                class="side-nav-dropdown m-b-25"
-                on:click={() =>
-                {
-                  return (isOddsDropdown
-                    = !isOddsDropdown)
-                }}
-              >
-
-                <!--
-                SELECTED / TOGGLE BOX
-                -->
-                <div
-                  class=
-                  "
-                    m-b-15
-                  "
-                >
-
-                  <p
-                    class=
-                    "
-                      color-grey
-                      s-12
-                      m-b-5
-                    "
-                  >
-                    {trsanslationData?.scores_header_translations?.odds || translationObject.odds_type}
-                  </p>
-
-                  <div
-                    class=
-                    "
-                      row-space-out
-                    "
-                  >
-
-                    <p
-                      class=
-                      "
-                        color-white
-                        s-14
-                      "
-                    >
-                      {trsanslationData?.scores_header_translations?.odds_type?.[0]}
-                    </p>
-
-                    <!--
-                    ARROW DOWN
-                    -->
-                    <img
-                      loading="lazy"
-                      src={!isOddsDropdown ? arrow_down_fade : arrow_up_fade}
-                      alt={!isOddsDropdown ? 'arrow_down_fade' : 'arrow_up_fade'}
-                      width=16
-                      height=16
-                    />
-                  </div>
-                </div>
-
-                <!--
-                DROWDOWN
-                -->
-                {#if isOddsDropdown}
-                  <div
-                    transition:fly
-                  >
-                    {#each trsanslationData?.scores_header_translations?.odds_type || [] as odd}
-
-                      <div
-                        class=
-                        "
-                          side-nav-dropdown-opt
-                        "
-                        on:click={() => {return (isOddsDropdown = false)}}
-                      >
-
-                        <p
-                          class=
-                          "
-                            color-white
-                            s-14
-                          "
-                        >
-                          {odd}
-                        </p>
-
-                      </div>
-
-                    {/each}
-                  </div>
-                {/if}
-
-              </div>
-            {/if}
 
             <!--
             ╭─────

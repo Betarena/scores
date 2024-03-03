@@ -47,7 +47,7 @@
   import { scoresAdminStore } from '$lib/store/admin.js';
   import sessionStore from '$lib/store/session.js';
   import userBetarenaSettings from '$lib/store/user-settings.js';
-  import { dlog } from '$lib/utils/debug';
+  import { dlog, dlogv2 } from '$lib/utils/debug';
   import { initSportbookData, setUserGeoLocation } from '$lib/utils/platform-functions.js';
   import * as Sentry from '@sentry/sveltekit';
 
@@ -323,6 +323,7 @@
   beforeNavigate
   (
     async (
+      e
     ): Promise < void > =>
     {
       // IMPORTANT
@@ -364,12 +365,23 @@
   afterNavigate
   (
     async (
+      e
     ): Promise < void > =>
     {
       sessionStore.updateData
       (
         'routeId',
         $page.route.id
+      );
+
+      // [🐞]
+      dlogv2
+      (
+        '🚏 checkpoint ➤ src/routes/+layout.svelte afterNavigate(..)',
+        [
+          `🔹 [var] ➤ e.from :|: ${JSON.stringify(e)}`,
+        ],
+        true
       );
 
       return;

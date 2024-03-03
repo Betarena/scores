@@ -12,10 +12,10 @@
 
 // #region ➤ 📦 Package Imports
 
-import { ServerLoadEvent } from '@sveltejs/kit';
-
-import { main } from '$lib/load/load.competitionLobby.js';
+import { main } from '$lib/load/load.sport.js';
 import { dlogv2 } from '$lib/utils/debug.js';
+
+import type { ServerLoadEvent } from '@sveltejs/kit';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -38,9 +38,10 @@ export async function load
   // [🐞]
   dlogv2
   (
-    '🚏 checkpoint ➤ src/routes/(scores)/[[lang=lang]]/[competitions=competitions]/+page.server.ts',
+    '🚏 checkpoint ➤ src/routes/(scores)/[[lang=lang]]/[sport]/+page.server.ts',
     [
       `🔹 [var] ➤ langParam :|: ${langParam}`,
+      `🔹 [var] ➤ event.url.pathname :|: ${JSON.stringify(event)}`,
     ],
     true
   );

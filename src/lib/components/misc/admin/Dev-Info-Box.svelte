@@ -34,6 +34,7 @@
 
 	import { scoresAdminStore } from '$lib/store/admin.js';
 	import sessionStore from '$lib/store/session.js';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -59,6 +60,9 @@
     CNAME: string = 'developer-admin-infobox'
   ;
 
+  $: ({ currentPageRouteId, serverLang } = { ...$sessionStore })
+  $: ({ country_bookmaker, theme, lang } = { ...$userBetarenaSettings });
+
   // #endregion ➤ 📌 VARIABLES
 
 </script>
@@ -78,8 +82,9 @@
   id={CNAME}
 >
   <!--
-  ▓ NOTE:
-  ▓ > Information on Firebase Listeners
+  ╭─────
+  │ > Information on Firebase Listeners
+  ╰─────
   -->
   <p
     class=
@@ -92,8 +97,9 @@
   </p>
 
   <!--
-  ▓ NOTE:
-  ▓ > GraphQL WebSockets Connection
+  ╭─────
+  │ > GraphQL WebSockets Connection
+  ╰─────
   -->
   <p
     class=
@@ -106,8 +112,9 @@
   </p>
 
   <!--
-  ▓ NOTE:
-  ▓ > Items that do not have a translation
+  ╭─────
+  │ > Items that do not have a translation
+  ╰─────
   -->
   <div>
     <p
@@ -131,6 +138,29 @@
       </p>
     {/each}
   </div>
+
+  <!--
+  ╭─────
+  │ > Information on variable store
+  ╰─────
+  -->
+  <p
+    class=
+    "
+    color-white
+    "
+  >
+    currentPageRouteId: {currentPageRouteId}
+    <br>
+    country_bookmaker: {country_bookmaker}
+    <br>
+    theme: {theme}
+    <br>
+    serverLang: {serverLang}
+    <br>
+    lang: {lang}
+  </p>
+
 </div>
 
 <!--

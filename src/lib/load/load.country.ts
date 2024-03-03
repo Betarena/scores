@@ -12,75 +12,98 @@
 
 // #region ➤ 📦 Package Imports
 
-import { error, redirect } from '@sveltejs/kit';
+import { LoadEvent, redirect } from '@sveltejs/kit';
 
-import { ERROR_CODE_INVALID, PAGE_INVALID_MSG } from '$lib/utils/debug';
-import { promiseValidUrlCheck } from '$lib/utils/platform-functions.js';
-
-import type { PageLoad, PageLoadEvent } from './$types.js';
+import { ERROR_CODE_INVALID, FIXTURE_PAGE_ERROR_MSG, dlogv2 } from '$lib/utils/debug';
+import { preloadExitLogic, promiseValidUrlCheck } from '$lib/utils/platform-functions.js';
 
 // #endregion ➤ 📦 Package Imports
 
 /**
- * @type {import('./$types').PageLoad}
+ * @author
+ *  @migbash
+ * @summary
+ *  🟥 MAIN
+ * @description
+ *  📣 Logic for `[[lang=lang]]` route data preload.
+ * @return { Promise < {} > }
+ *  📤 Respective `data` for _this_ route.
  */
-export async function load
+export async function main
 (
+  event: LoadEvent,
+  parentData:
   {
-    // url,
-    params,
-    fetch
-  }: PageLoadEvent
-): Promise < PageLoad >
+    langParam: string
+  }
+): Promise < {} >
 {
   const
-    /**
-     * @description
-     *  📣 Destruct `object`.
-     */
+    // [🐞]
+    t0: number = performance.now(),
+    // ╭─────
+    // │ NOTE:
+    // │ > 📣 Destruct `object`.
+    // ╰─────
     {
-      lang,
-      sport
-    } = params,
+      // lang,
+      sport,
+      country
+    } = event.params,
     /**
      * @description
-     *  📣 Target `language`.
+     *  📣 Validate **this** `url`.
      */
-    urlLang: string
-      = params.lang == undefined
-        ? 'en'
-        : params.lang,
-    /**
-     * @description
-     *  📣 Check for `valid` url.
-     */
-    validUrlCheck
+    isUrlValid
       = await promiseValidUrlCheck
       (
-        fetch,
+        event.fetch,
         {
-          langUrl: urlLang,
-          sportUrl: sport
+          langUrl: parentData.langParam,
+          sportUrl: sport,
+          countryUrl: country,
         }
-      )
+      ),
+    /**
+     * @description
+     *  📣 `Data` object for target `route`.
+     */
+    response: any = {}
   ;
 
-  if (!validUrlCheck)
-    // eslint-disable-next-line @typescript-eslint/no-throw-literal
-    throw error
+  if (!isUrlValid)
+    preloadExitLogic
     (
+      t0,
+      '[country]',
       ERROR_CODE_INVALID,
-      // @ts-expect-error
-      PAGE_INVALID_MSG
+      FIXTURE_PAGE_ERROR_MSG
     );
   ;
 
+  // [🐞]
+  dlogv2
+  (
+    '🚏 checkpoint ➤ src/routes/(scores)/[[lang=lang]]/[sport]/[country]/+page.ts',
+    [
+      `⏳ [LEAGUE] preload ${((performance.now() - t0) / 1000).toFixed(2)} sec`,
+      // `🔹 [var] ➤ response :|: ${JSON.stringify(response)}`,
+    ],
+    true
+  );
+
   const
-    URL: string
-      = lang == undefined
+    redirectUrl: string
+      = parentData.langParam == 'en'
         ? '/'
-        : `/${lang}`
+        : `/${parentData.langParam}`
   ;
 
-  throw redirect(302, `${URL}`);
+  throw redirect
+  (
+    302,
+    `${redirectUrl}`
+  );
+
+  // return;
 }

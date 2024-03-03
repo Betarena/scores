@@ -4,19 +4,15 @@
 
 // #region ➤ 📦 Package Imports
 
-import { dev } from '$app/environment';
-import { goto, invalidateAll } from '$app/navigation';
-import { error, redirect, type Page } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 
 import { get } from '$lib/api/utils.js';
 import { getUserLocation, getUserLocationFromIP } from '$lib/geo-js/init.js';
 import sessionStore from '$lib/store/session.js';
 import userBetarenaSettings from '$lib/store/user-settings.js';
 import LZString from 'lz-string';
-import { NB_W_TAG, PAGE_INVALID_MSG, dlog, dlogv2 } from './debug';
+import { PAGE_INVALID_MSG, dlog, dlogv2 } from './debug';
 import { removeDiacritics } from './languages.js';
-
-import { routeIdPageAuthors, routeIdPageCompetition, routeIdPageCompetitionLobby, routeIdPageFixture, routeIdPageLeague, routeIdPagePlayer, routeIdPageProfile } from '$lib/constants/paths.js';
 
 import type { GeoJsResponse } from '$lib/types/types.geojs.js';
 import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
@@ -957,275 +953,6 @@ export function spliceBalanceDoubleZero
 }
 
 /**
- * @author
- *  @migbash
- * @summary
- *  - 📌 MAIN
- *  - 🟥 IMPORTANT
- * @description
- *  - 📣 Updates `user` language platform selection.
- *  - 📣 Manages platform main navigation and underlying logic.
- * @param { string } lang
- *  💠 **[required]** Target new `selected` language.
- * @param { Page } page
- *  💠 **[required]** Target page sveltekit object.
- * @returns { Promise < void > }
- */
-export async function selectLanguage
-(
-  lang: string,
-  page: Page
-): Promise < void >
-{
-  if (sessionStore.getServerLang() == lang) return;
-
-  const
-    /**
-     * @description
-     *  📣 Past/previous lang option.
-     */
-    pastLang: string
-      = sessionStore.getServerLang() == 'en'
-        ? '/'
-        : `/${sessionStore.getServerLang()}`
-  ;
-
-  userBetarenaSettings.updateData
-  (
-    'lang',
-    lang
-  );
-
-  // [🐞]
-  dlogv2
-  (
-    '🚏 checkpoint ➤ selectLanguage(..)',
-    [
-      `🔹 [var] ➤ $userBetarenaSettings.lang: ${userBetarenaSettings.extract('lang-user')}`,
-      `🔹 [var] ➤ $sessionStore?.serverLang: ${sessionStore.getServerLang()}`,
-      `🔹 [var] ➤ lang: ${lang}`,
-      `🔹 [var] ➤ pastLang: ${pastLang}`,
-      `🔹 [var] ➤ $page.route.id: ${page.route.id}`
-    ],
-    true
-  );
-
-  // ╭─────
-  // │ NOTE:
-  // │ > Update <html {lang}> in platform <DOCTYPE>.
-  // ╰─────
-  document.documentElement.setAttribute
-  (
-    'lang',
-    (lang == 'br' ? 'pt-BR' : lang)
-  );
-
-  // ╭─────
-  // │ CHECK
-  // │ > on 'error', navigate back to homepage.
-  // ╰─────
-  if (!checkNull(page.error))
-  {
-    const
-      targetUrl: string
-      = lang == 'en'
-        ? '/'
-        : `/${lang}`
-    ;
-
-    // [🐞]
-    dlog
-    (
-      `${NB_W_TAG} -> ${lang}`,
-      true,
-    );
-
-    if (dev) return;
-
-    await goto
-    (
-      targetUrl
-    );
-
-    return;
-  }
-
-  // ╭─────
-  // │ CHECK
-  // │ > omit 'special' routes cases, as these routes
-  // │ > manage their own navigation/translation switch.
-  // ╰─────
-  if
-  (
-    [
-      routeIdPageLeague,
-      routeIdPageFixture,
-      routeIdPagePlayer,
-      routeIdPageCompetitionLobby,
-      routeIdPageCompetition
-    ].includes(page.route.id)
-  )
-  {
-    // [🐞]
-    dlog
-    (
-      `🚏 checkpoint ➤ selectLanguage(..) if_M_1 page?.route?.id: ${page.route.id} [exit]`,
-      true
-    );
-
-    return;
-  }
-  else if (routeIdPageProfile == page.route.id)
-  {
-    const
-      pastLangV2: string
-        = pastLang == '/'
-          ? '/en'
-          : pastLang,
-      tempUrl: string = `${page.url.pathname}/`,
-      newURL: string = tempUrl
-        .replace
-        (
-          `${pastLangV2}/`,
-          `/${lang}`
-        )
-    ;
-
-    // [🐞]
-    dlogv2
-    (
-      '🚏 checkpoint ➤ selectLanguage(..) [x1]',
-      [
-        `🔹 [var] ➤ pastLangV2 :|: ${pastLangV2}`,
-        `🔹 [var] ➤ tempUrl :|: ${tempUrl}`,
-        `🔹 [var] ➤ newURL :|: ${newURL}`,
-      ],
-      true
-    );
-
-    await goto
-    (
-      newURL,
-      {
-        replaceState: true
-      }
-    );
-
-    return;
-  }
-  else if (routeIdPageAuthors == page.route.id)
-  {
-    // [🐞]
-    dlogv2
-    (
-      '🚏 checkpoint ➤ selectLanguage(..) [x2]',
-      [
-      ],
-      true
-    );
-
-    invalidateAll();
-
-    sessionStore.updateData
-    (
-      'lang',
-      lang
-    );
-
-    return;
-  }
-
-  // ╭─────
-  // │ NOTE:
-  // │ > otherwise, continue standard navigation switch.
-  // ╰─────
-
-  const
-    /**
-     * @description
-     *  📣 count number of slashes URL.
-     */
-    countSlash: number =	page.url.pathname.split('/').length - 1
-  ;
-
-  let
-    /**
-     * @description
-     *  📣 Target NEW `url` to be navigatated to.
-     */
-    newURL: string | undefined
-  ;
-
-  // ╭─────
-  // │ CHECK
-  // │ > for 'EN' naviagtion.
-  // ╰─────
-  if (lang == 'en' && pastLang != '/')
-
-  // ╭─────
-  // │ NOTE:
-  // │ > maybe [?]
-  // ╰─────
-  // prefetch(`/`);
-
-    // ╭─────
-    // │ NOTE:
-    // │ > replace path-name accordingly for 'EN', first occurance.
-    // ╰─────
-    newURL
-      = countSlash == 1
-        ? page.url.pathname.replace(pastLang, '/')
-        : page.url.pathname.replace(pastLang, '')
-    ;
-
-  // ╭─────
-  // │ CHECK
-  // │ > for 'incoming (past)' from an 'EN (/)' route.
-  // ╰─────
-  else if (lang != 'en' && pastLang == '/')
-    // ╭─────
-    // │ NOTE:
-    // │ > replace path-name accordingly for "<lang>" - first occurance.
-    // ╰─────
-    newURL
-      = countSlash > 1
-        ? page.url.pathname.replace(pastLang, `/${lang}/`)
-        : page.url.pathname.replace(pastLang, `/${lang}`)
-    ;
-  // ╭─────
-  // │ CHECK
-  // │ > for 'incoming (past)' from an 'non-EN (/)' route.
-  // ╰─────
-  else if (lang != 'en' && pastLang != '/')
-    // ╭─────
-    // │ NOTE:
-    // │ > replace path-name accordingly for "<lang>" - first occurance.
-    // ╰─────
-    newURL
-      = page.url.pathname.replace(pastLang, `/${lang}`)
-    ;
-  ;
-
-  // ╭─────
-  // │ NOTE:
-  // │ > update URL breadcrumb.
-  // ╰─────
-
-  // NOTE: Solution [1]
-  // window.history.replaceState({}, "NewPage", newURL);
-  // NOTE: Solution [2]
-  await goto
-  (
-    newURL!,
-    {
-      replaceState: true
-    }
-  );
-
-  return;
-}
-
-/**
  * @summary
  *  🟥 MAIN | 🔹 HELPER
  * @description
@@ -1394,7 +1121,7 @@ export const checkNull = (value: any): boolean =>
   dlog
   (
     `🔹 [var] ➤ checkNull(..) if_M_0 ${if_M_0}`,
-    true
+    false
   );
 
   return if_M_0;

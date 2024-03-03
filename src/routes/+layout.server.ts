@@ -148,6 +148,9 @@ export async function load
     )
   ;
 
+  // [🐞]
+  console.log('params.lang', params.lang, 'langParam', langParam);
+
   if (B_NAV_T == undefined || B_FOT_T == undefined)
     preloadExitLogic
     (
@@ -323,7 +326,7 @@ function detectDeviceWithUA
       `🔹 [var] ➤ detectDeviceWithUA(..) parsedUA2 ${JSON.stringify(parsedUA2, null, 4)}`,
       `🔹 [var] ➤ detectDeviceWithUA(..) deviceType ${deviceType}`,
     ],
-    true
+    false
   );
 
   deviceType = (parsedUA.device.type ?? 'mobile');
@@ -386,6 +389,9 @@ function detectPlatformLanguage
   ;
 
   // [🐞]
+  // console.log('urlLang', urlLang);
+
+  // [🐞]
   // console.log('cookieValue', JSON.parse(cookieValue).lang);
 
   // ╭─────
@@ -397,7 +403,7 @@ function detectPlatformLanguage
   ;
 
   // [🐞]
-  // console.log('urlLang', urlLang);
+  console.log('urlLang', urlLang);
 
   return urlLang;
 }

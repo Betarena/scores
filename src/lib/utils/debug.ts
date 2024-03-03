@@ -1,5 +1,13 @@
 // ╭──────────────────────────────────────────────────────────────────────────────────╮
-// │ [🐞] Scores Debug Logic                                                          │
+// │ 📌 High Order Component Overview                                                 │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ ➤ Internal Svelte Code Format :|: V.8.0                                          │
+// │ ➤ Status :|: 🔒 LOCKED                                                           │
+// │ ➤ Author(s) :|: @migbash                                                         │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ 📝 Description                                                                   │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ > Scores Debug Common Logic                                                      │
 // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 // #region ➤ 📦 Package Imports
@@ -11,6 +19,8 @@ import chalk from 'chalk';
 // #endregion ➤ 📦 Package Imports
 
 // #region ➤ 📌 VARIABLES
+
+type DEBUG = [string, boolean, string]
 
 export const
   PAGE_INVALID_MSG = 'Uh-oh! This page does not exist!',
@@ -40,122 +50,116 @@ const
         : true
 ;
 
-// *****************************************
-// IMPORTANT - Version 1
-// NOTE: naming of new DEBUG variables is of following structure:
-// NOTE: [2]_W{+T}/P/_TAG/TOG/STY
-// NOTE: where:
-// NOTE: => [2] = any 2 shortcode char for target VAR
-// NOTE: => W/P = (widget + page-type) or (page)
-// NOTE: => TAG/TOG/STY = (tag) - (toggle) - (style)
-// NOTE: => for example: BG_W_H_TAG => BestGoalscore (Widget) (Homepage) (Tag)
-// *****************************************
-// IMPORTANT - Version 2
-// NOTE: Use the type DEBUG to construct, one-line debug data;
-// *****************************************
-
-type DEBUG = [string, boolean, string]
-
-// ▓▓ NOTE:
-// ▓▓ MAIN PAGE - DEBUG
-export const NB_W_TAG: DEBUG = ['Navbar |', false, 'background: purple; color: #FFFFFF; border-radius: 1.5px;'];
-export const FT_W_TAG: DEBUG = ['Footer |', false, 'background: blue; color: #FFFFFF; border-radius: 1.5px;'];
-export const AU_W_TAG: DEBUG = ['Auth |', true, 'background: black; color: yellow; border-radius: 1.5px;'];
-
-// ▓▓ NOTE:
-// ▓▓ HOME PAGE - DEBUG
-export const BG_W_H_TAG = 'BG [P/T][D] |';
-export const BG_W_H_STY = 'background: blue; color: #FFFFFF';
-export const BG_W_H_TOG = false;
-export const FB_W_H_TAG = 'FB [P/T][D] |';
-export const FB_W_H_STY = 'background: blue; color: #FFFFFF';
-export const FB_W_H_TOG = false;
-export const FM_W_H_TAG = 'FM [P/T][D] |';
-export const FM_W_H_STY = 'background: blue; color: #FFFFFF';
-export const FM_W_H_TOG = false;
-export const LL_W_H_TAG = 'LL [P/T][D] |';
-export const LL_W_H_STY = 'background: blue; color: #FFFFFF';
-export const LL_W_H_TOG = false;
-export const LT_W_H_TAG = 'LT [P/T][D] |';
-export const LT_W_H_STY = 'background: blue; color: #FFFFFF';
-export const LT_W_H_TOG = false;
-export const SEO_W_H_TAG = 'SEO [P/T][D] |';
-export const SEO_W_H_STY = 'background: blue; color: #FFFFFF';
-export const SEO_W_H_TOG = false;
-export const LV2_W_H_TAG: DEBUG = ['LV2 [P/H][D] |', false, 'background: #292929; color: white; border-radius: 1.5px;'];
-
-// ▓▓ NOTE:
-// ▓▓ LEAGUE/TOURNAMENT PAGE - DEBUG
-export const AB_W_T_TAG = 'tournament (about) [DEBUG] |';
-export const AB_W_T_STY = 'background: blue; color: #FFFFFF';
-export const AB_W_T_TOG = false;
-export const FIX_W_T_TAG = 'tournament (fixture) [DEBUG] |';
-export const FIX_W_T_STY = 'background: blue; color: #FFFFFF';
-export const FIX_W_T_TOG = false;
-export const LI_W_T_TAG = 'tournament (league-info) [DEBUG] |';
-export const LI_W_T_STY = 'background: blue; color: #FFFFFF';
-export const LI_W_T_TOG = false;
-export const LI2_W_T_TAG = 'tournament (league-info-2) [DEBUG] |';
-export const LI2_W_T_STY = 'background: blue; color: #FFFFFF';
-export const LI2_W_T_TOG = false;
-export const ST_W_T_TAG = 'ST [P/T][D] |';
-export const ST_W_T_STY = 'background: blue; color: #FFFFFF';
-export const ST_W_T_TOG = false;
-export const TP_W_TAG = 'tournament (top-players) [DEBUG] |';
-export const TP_W_STY = 'background: green; color: #000000';
-export const TP_W_TOG = false;
-
-// ▓▓ NOTE:
-// ▓▓ FIREBASE - DEBUG
-export const FIREBASE_DEBUG_TAG = 'FB(E) [D] |';
-export const FIREBASE_DEBUG_TOGGLE = false;
-export const FIREBASE_DEBUG_STYLE = 'background: black; color: yellow; border-radius: 1.5px;';
-
-// ▓▓ NOTE:
-// ▓▓ FIXTURE PAGE - DEBUG
-export const F_DEBUG_TAG = 'firebase [DEBUG] |';
-export const F_DEBUG_STYLE = 'background: blue; color: #FFFFFF';
-export const F_DEBUG_TOGGLE = false;
-export const AB_W_F_TAG = 'fixtures (about) [DEBUG] |';
-export const AB_W_F_STY = 'background: blue; color: #FFFFFF';
-export const AB_W_F_TOG = false;
-export const CO_W_F_TAG = 'fixtures (content) [DEBUG] |';
-export const CO_W_F_STY = 'background: blue; color: #FFFFFF';
-export const CO_W_F_TOG = false;
-export const H2H_W_F_TAG = 'fixtures (h2h) [DEBUG] |';
-export const H2H_W_F_STY = 'background: blue; color: #FFFFFF';
-export const H2H_W_F_TOG = false;
-export const IN_W_F_TAG = 'fixtures (incident) [DEBUG] |';
-export const IN_W_F_STY = 'background: blue; color: #FFFFFF';
-export const IN_W_F_TOG = false;
-export const LI_W_F_TAG = 'fixtures (lineups) [DEBUG] |';
-export const LI_W_F_STY = 'background: blue; color: #FFFFFF';
-export const LI_W_F_TOG = false;
-export const PR_W_F_TAG = 'fixtures (prob.) [DEBUG] |';
-export const PR_W_F_STY = 'background: blue; color: #FFFFFF';
-export const PR_W_F_TOG = false;
-export const SC_W_F_TAG = 'fixtures (scoreboard) [DEBUG] |';
-export const SC_W_F_STY = 'background: blue; color: #FFFFFF';
-export const SC_W_F_TOG = false;
-export const ST_W_F_TAG = 'fixtures (standings) [DEBUG] |';
-export const ST_W_F_STY = 'background: blue; color: #FFFFFF';
-export const ST_W_F_TOG = false;
-export const STS_W_F_TAG = 'fixtures (stats) [DEBUG] |';
-export const STS_W_F_STY = 'background: blue; color: #FFFFFF';
-export const STS_W_F_TOG = false;
-export const VO_W_F_TAG = 'fixtures (vote) [DEBUG] |';
-export const VO_W_F_STY = 'background: green; color: #000000';
-export const VO_W_F_TOG = false;
-
-// ▓▓ NOTE:
-// ▓▓ PROFILE PAGE - DEBUG;
-export const PR_P_TAG = 'profile (page) [DEBUG] |';
-export const PR_P_STY = 'background: yellow; color: #000000';
-export const PR_P_TOG =  false;
-
-// ▓▓ NOTE: ▓▓ [🐞]
-// ▓▓ COMPETITION PAGE - DEBUG;
-export const COMP_HIGH_DEBUG: DEBUG = ['Highlights (COMP) |', true, 'background: black; color: yellow; border-radius: 1.5px;'];
+export const
+  // ╭─────
+  // │ NOTE:
+  // │ > Main Page (debug)
+  // ╰─────
+  NB_W_TAG: DEBUG = ['Navbar |', false, 'background: purple; color: #FFFFFF; border-radius: 1.5px;'],
+  FT_W_TAG: DEBUG = ['Footer |', false, 'background: blue; color: #FFFFFF; border-radius: 1.5px;'],
+  AU_W_TAG: DEBUG = ['Auth |', true, 'background: black; color: yellow; border-radius: 1.5px;'],
+  // ╭─────
+  // │ NOTE:
+  // │ > Home Page (debug)
+  // ╰─────
+  BG_W_H_TAG = 'BG [P/T][D] |',
+  BG_W_H_STY = 'background: blue; color: #FFFFFF',
+  BG_W_H_TOG = false,
+  FB_W_H_TAG = 'FB [P/T][D] |',
+  FB_W_H_STY = 'background: blue; color: #FFFFFF',
+  FB_W_H_TOG = false,
+  FM_W_H_TAG = 'FM [P/T][D] |',
+  FM_W_H_STY = 'background: blue; color: #FFFFFF',
+  FM_W_H_TOG = false,
+  LL_W_H_TAG = 'LL [P/T][D] |',
+  LL_W_H_STY = 'background: blue; color: #FFFFFF',
+  LL_W_H_TOG = false,
+  LT_W_H_TAG = 'LT [P/T][D] |',
+  LT_W_H_STY = 'background: blue; color: #FFFFFF',
+  LT_W_H_TOG = false,
+  SEO_W_H_TAG = 'SEO [P/T][D] |',
+  SEO_W_H_STY = 'background: blue; color: #FFFFFF',
+  SEO_W_H_TOG = false,
+  LV2_W_H_TAG: DEBUG = ['LV2 [P/H][D] |', false, 'background: #292929; color: white; border-radius: 1.5px;'],
+  // ╭─────
+  // │ NOTE:
+  // │ > League/Tournament Page (debug)
+  // ╰─────
+  AB_W_T_TAG = 'tournament (about) [DEBUG] |',
+  AB_W_T_STY = 'background: blue; color: #FFFFFF',
+  AB_W_T_TOG = false,
+  FIX_W_T_TAG = 'tournament (fixture) [DEBUG] |',
+  FIX_W_T_STY = 'background: blue; color: #FFFFFF',
+  FIX_W_T_TOG = false,
+  LI_W_T_TAG = 'tournament (league-info) [DEBUG] |',
+  LI_W_T_STY = 'background: blue; color: #FFFFFF',
+  LI_W_T_TOG = false,
+  LI2_W_T_TAG = 'tournament (league-info-2) [DEBUG] |',
+  LI2_W_T_STY = 'background: blue; color: #FFFFFF',
+  LI2_W_T_TOG = false,
+  ST_W_T_TAG = 'ST [P/T][D] |',
+  ST_W_T_STY = 'background: blue; color: #FFFFFF',
+  ST_W_T_TOG = false,
+  TP_W_TAG = 'tournament (top-players) [DEBUG] |',
+  TP_W_STY = 'background: green; color: #000000',
+  TP_W_TOG = false,
+  // ╭─────
+  // │ NOTE:
+  // │ > Firebase (debug)
+  // ╰─────
+  FIREBASE_DEBUG_TAG = 'FB(E) [D] |',
+  FIREBASE_DEBUG_TOGGLE = false,
+  FIREBASE_DEBUG_STYLE = 'background: black; color: yellow; border-radius: 1.5px;',
+  // ╭─────
+  // │ NOTE:
+  // │ > Fixture Page (debug)
+  // ╰─────
+  F_DEBUG_TAG = 'firebase [DEBUG] |',
+  F_DEBUG_STYLE = 'background: blue; color: #FFFFFF',
+  F_DEBUG_TOGGLE = false,
+  AB_W_F_TAG = 'fixtures (about) [DEBUG] |',
+  AB_W_F_STY = 'background: blue; color: #FFFFFF',
+  AB_W_F_TOG = false,
+  CO_W_F_TAG = 'fixtures (content) [DEBUG] |',
+  CO_W_F_STY = 'background: blue; color: #FFFFFF',
+  CO_W_F_TOG = false,
+  H2H_W_F_TAG = 'fixtures (h2h) [DEBUG] |',
+  H2H_W_F_STY = 'background: blue; color: #FFFFFF',
+  H2H_W_F_TOG = false,
+  IN_W_F_TAG = 'fixtures (incident) [DEBUG] |',
+  IN_W_F_STY = 'background: blue; color: #FFFFFF',
+  IN_W_F_TOG = false,
+  LI_W_F_TAG = 'fixtures (lineups) [DEBUG] |',
+  LI_W_F_STY = 'background: blue; color: #FFFFFF',
+  LI_W_F_TOG = false,
+  PR_W_F_TAG = 'fixtures (prob.) [DEBUG] |',
+  PR_W_F_STY = 'background: blue; color: #FFFFFF',
+  PR_W_F_TOG = false,
+  SC_W_F_TAG = 'fixtures (scoreboard) [DEBUG] |',
+  SC_W_F_STY = 'background: blue; color: #FFFFFF',
+  SC_W_F_TOG = false,
+  ST_W_F_TAG = 'fixtures (standings) [DEBUG] |',
+  ST_W_F_STY = 'background: blue; color: #FFFFFF',
+  ST_W_F_TOG = false,
+  STS_W_F_TAG = 'fixtures (stats) [DEBUG] |',
+  STS_W_F_STY = 'background: blue; color: #FFFFFF',
+  STS_W_F_TOG = false,
+  VO_W_F_TAG = 'fixtures (vote) [DEBUG] |',
+  VO_W_F_STY = 'background: green; color: #000000',
+  VO_W_F_TOG = false,
+  // ╭─────
+  // │ NOTE:
+  // │ > Profile Page (debug)
+  // ╰─────
+  PR_P_TAG = 'profile (page) [DEBUG] |',
+  PR_P_STY = 'background: yellow; color: #000000',
+  PR_P_TOG =  false,
+  // ╭─────
+  // │ NOTE:
+  // │ > Competition Page (debug)
+  // ╰─────
+  COMP_HIGH_DEBUG: DEBUG = ['Highlights (COMP) |', true, 'background: black; color: yellow; border-radius: 1.5px;']
+;
 
 // #endregion ➤ 📌 VARIABLES
 
@@ -184,10 +188,11 @@ export function dlog
   style?: string,
 ): void
 {
-  let targetLog: string = undefined;
+  let
+    targetLog: string = undefined
+  ;
 
   // ╭─────
-  // │ NOTE: [🐞]
   // │ > Livescores V2 Logs
   // ╰─────
   if (typeof(msg) == 'string' && msg.includes(LV2_W_H_TAG[0]))
@@ -198,7 +203,6 @@ export function dlog
   ;
 
   // ╭─────
-  // │ NOTE: [🐞]
   // │ > Authentication Logs
   // ╰─────
   if (typeof(msg) == 'string' && msg.includes(AU_W_TAG[0]))
@@ -212,7 +216,6 @@ export function dlog
   ;
 
   // ╭─────
-  // │ NOTE: [🐞]
   // │ > Hooks Logs
   // ╰─────
   if (typeof(msg) == 'string' && msg.includes('[H]'))
@@ -220,7 +223,6 @@ export function dlog
   ;
 
   // ╭─────
-  // │ NOTE: [🐞]
   // │ > Reactiviy Logs
   // ╰─────
   if (typeof(msg) == 'string' && msg.includes('[R]'))
@@ -251,9 +253,11 @@ export function dlog
   ;
 
   if (if_M_0)
+    // eslint-disable-next-line no-console
     console.debug(msg);
   ;
   if (if_M_1)
+    // eslint-disable-next-line no-console
     console.debug(`%c${msg}`, style);
   ;
 
@@ -266,17 +270,17 @@ export function dlog
  * @summary
  *  🔹 HELPER
  * @description
- *  📌 Debug logging function for displaying target
+ *  📣 Debug logging function for displaying target
  * @param { string } groupName
- *  Target debug tag name.
+ *  💠 **[required]** Target debug tag name.
  * @param { unknown[] } msgs
- *  Debug messages to show
+ *  💠 **[required]** Debug messages to show
  * @param { boolean } [show]
- *  Wether to show or not the debug log.
+ *  💠 [optional] Wether to show or not the debug log.
  * @param { string } [style]
- *  `CSS` style applied to logs.
+ *  💠 [optional] `CSS` style applied to logs.
  * @param { boolean } [closed=true]
- *  Wether to keep group console logs.
+ *  💠 [optional] Wether to keep group console logs.
  * @returns { void }
  */
 export function dlogv2
@@ -291,7 +295,6 @@ export function dlogv2
   let targetLog: string = undefined;
 
   // ╭─────
-  // │ NOTE: [🐞]
   // │ > Authentication Logs
   // ╰─────
   if (groupName.includes(AU_W_TAG[0]))
@@ -307,7 +310,6 @@ export function dlogv2
   ;
 
   // ╭─────
-  // │ NOTE: [🐞]
   // │ > Hooks Logs
   // ╰─────
   if (groupName.includes('[H]'))
@@ -317,7 +319,6 @@ export function dlogv2
   }
 
   // ╭─────
-  // │ NOTE: [🐞]
   // │ > Preload Logs
   // ╰─────
   if (groupName.includes('[PL]'))
@@ -327,7 +328,6 @@ export function dlogv2
   }
 
   // ╭─────
-  // │ NOTE: [🐞]
   // │ > Reactiviy Logs
   // ╰─────
   if (groupName.includes('[R]'))
@@ -337,7 +337,6 @@ export function dlogv2
   }
 
   // ╭─────
-  // │ NOTE: [🐞]
   // │ > Fetch Logs
   // ╰─────
   if (groupName.includes('🏹 FETCH'))
@@ -418,7 +417,7 @@ export function dlogv2
  * @summary
  *  🔹 HELPER
  * @description
- *  📌 error console log platform to easily identify errors;
+ *  📣 error console log platform to easily identify errors;
  * @param { string } msg
  *  Target `message` representing the error.
  * @returns { void }

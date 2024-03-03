@@ -45,13 +45,13 @@
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlog, NB_W_TAG } from '$lib/utils/debug.js';
-	import { selectLanguage } from '$lib/utils/platform-functions.js';
 
   import arrowDown from './assets/arrow-down.svg';
   import arrowUp from './assets/arrow-up.svg';
   import arrowDownDark from './assets/icon-arrow-down-dark.svg';
   import arrowUpDark from './assets/icon-arrow-up-dark.svg';
 
+  import { selectLanguage } from '$lib/utils/user.js';
   import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
 
   // #endregion ➤ 📦 Package Imports

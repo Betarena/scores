@@ -12,75 +12,46 @@
 
 // #region ➤ 📦 Package Imports
 
-import { ERROR_CODE_INVALID, PAGE_INVALID_MSG } from '$lib/utils/debug';
-import { promiseValidUrlCheck } from '$lib/utils/platform-functions.js';
-import { error, redirect } from '@sveltejs/kit';
+import { LoadEvent } from '@sveltejs/kit';
 
-import type { PageLoad, PageLoadEvent } from '../$types';
+import { main } from '$lib/load/load.country.js';
+import { dlogv2 } from '$lib/utils/debug.js';
 
 // #endregion ➤ 📦 Package Imports
+
+// #region ➤ 🔄 LIFECYCLE [SVELTE]
 
 /**
  * @type {import('./$types').PageLoad}
  */
 export async function load
 (
-  {
-    // url,
-    params,
-    fetch
-  }: PageLoadEvent
-): Promise < PageLoad >
+  event: LoadEvent
+): Promise < any >
 {
   const
-    /**
-     * @description
-     *  📣 Destruct `object`.
-     */
     {
-      lang,
-      sport,
-      country
-    } = params,
-    /**
-     * @description
-     *  📣 Target `language`.
-     */
-    urlLang: string
-      = params.lang == undefined
-        ? 'en'
-        : params.lang,
-    /**
-     * @description
-     *  📣 Check for `valid` url.
-     */
-    validUrlCheck = await promiseValidUrlCheck
-    (
-      fetch,
-      {
-        langUrl: urlLang,
-        sportUrl: sport,
-        countryUrl: country
-      }
-    )
+      langParam
+    } = await event.parent()
   ;
 
-  if (!validUrlCheck)
-    // eslint-disable-next-line @typescript-eslint/no-throw-literal
-    throw error
-    (
-      ERROR_CODE_INVALID,
-      // @ts-expect-error
-      PAGE_INVALID_MSG
-    );
-  ;
+  // [🐞]
+  dlogv2
+  (
+    '🚏 checkpoint ➤ src/routes/(scores)/[[lang=lang]]/[sport]/[country]/+page.ts',
+    [
+      `🔹 [var] ➤ langParam :|: ${langParam}`,
+    ],
+    true
+  );
 
-  const
-    URL: string
-      = lang == undefined
-        ? '/'
-        : `/${lang}`
-  ;
-
-  throw redirect(302, `${URL}`);
+  return await main
+  (
+    event,
+    {
+      langParam
+    }
+  );
 }
+
+// #endregion ➤ 🔄 LIFECYCLE [SVELTE]

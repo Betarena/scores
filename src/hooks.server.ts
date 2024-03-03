@@ -272,6 +272,7 @@ export const handle: Handle = sequence
     (
       '🚏 checkpoint [H] ➤ src/hooks.server.ts handle(..)',
       [
+        `🔹 [var] ➤ event :|: ${JSON.stringify(event.url.pathname)}`,
         `🔹 [var] ➤ event.url :|: ${event.url}`,
         `🔹 [var] ➤ event.route.id :|: ${event.route.id}`,
         `🔹 [var] ➤ event.url.origin :|: ${event.url.origin}`,
