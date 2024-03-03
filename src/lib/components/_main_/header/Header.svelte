@@ -48,7 +48,7 @@
 	import { NB_W_TAG, dlog, dlogv2 } from '$lib/utils/debug';
 	import { generateUrlCompetitions, spliceBalanceDoubleZero, toDecimalFix, viewportChangeV2 } from '$lib/utils/platform-functions';
 	import { translationObject } from '$lib/utils/translation.js';
-	import { initUser, logoutUser, selectLanguage, updateSelectLang } from '$lib/utils/user.js';
+	import { initUser, logoutUser, selectLanguage, updateSelectLang } from '$lib/utils/user';
 
   import SeoBox from '$lib/components/SEO-Box.svelte';
   import TranslationText from '$lib/components/misc/Translation-Text.svelte';
@@ -392,7 +392,7 @@
     userBetarenaSettings.updateData
     (
       'lang',
-      sessionStore.getServerLang()
+      sessionStore.extract('lang')
     );
   }
 
@@ -412,7 +412,7 @@
     = browser
     && currentPageRouteId != 'ProfilePage'
   ;
-  $: if (if_R_2 && deepReactListenUser != undefined)
+  $: if (if_R_2  && deepReactListenUser != undefined)
   {
     _DEBUG_('Option2');
 

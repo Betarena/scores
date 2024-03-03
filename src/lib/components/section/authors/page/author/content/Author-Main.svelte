@@ -8,7 +8,7 @@
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ 📝 Description                                                                   │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ Scores Authors Main                                                              │
+│ Scores Authors Article Main                                                      │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -38,15 +38,20 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  import { page } from '$app/stores';
   import { onMount } from 'svelte';
 
+  import iconArrowLeftDark from './assets/icon-arrow-left-dark.svg';
+  import iconArrowRightDark from './assets/icon-arrow-right-dark.svg';
   import icon_location_dark from './assets/icon-location-dark.svg';
   import icon_location from './assets/icon-location.svg';
 
   import userBetarenaSettings from '$lib/store/user-settings.js';
   import { monthNames } from '$lib/utils/dates.js';
 
-  import type { IArticleData } from '@betarena/scores-lib/types/types.authors.articles.js';
+  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
+
+  import type { IArticleData, IArticleTranslation } from '@betarena/scores-lib/types/types.authors.articles.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -67,19 +72,34 @@
   export let
     /**
      * @augments IArticleData
-    */
+     */
     widgetData: IArticleData
   ;
 
+  /**
+   * @description
+   *  📣 Component interface.
+   */
+  type IWidgetState =
+    | 'PrevButtonShow'
+    | 'NextButtonShow'
+  ;
+
   const
-    /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
-    // eslint-disable-next-line no-unused-vars
+    /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */ // eslint-disable-next-line no-unused-vars
     CNAME: string = 'author⮕w⮕author-content⮕main',
-    /** @description 📣 threshold start + state for 📱 MOBILE */
-    // eslint-disable-next-line no-unused-vars
+    /**
+     * @description
+     *  📣 threshold start + state for 📱 MOBILE
+     */ // eslint-disable-next-line no-unused-vars
     VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ],
-    /** @description 📣 threshold start + state for 💻 TABLET */
-    // eslint-disable-next-line no-unused-vars
+    /**
+     * @description
+     *  📣 threshold start + state for 💻 TABLET
+     */ // eslint-disable-next-line no-unused-vars
     VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
@@ -87,23 +107,92 @@
     /**
      * @description
      *  📣 Target data `map`.
-    */
+     */
     tagMap = new Map(widgetData.tags_key_pair),
     /**
      * @description
      *  📣 Target assets `map`.
-    */
+     */
     badgeMap = new Map(widgetData.badge_key_pair),
     /**
      * @description
      *  📣 Wether to execute animation.
-    */
-    executeAnimation = false
+     */
+    executeAnimation = false,
+    /**
+     * @description
+     *  📣 Target `HTMLELement` for **Article Tags**.
+     */
+    htmlElementScrollBox: HTMLElement,
+    /**
+     * @description
+     *  📣 **Local** component state
+     */
+    componentLocalState = new Set < IWidgetState >();
   ;
 
   $: ({ theme } = { ...$userBetarenaSettings });
+  $: widgetDataTranslation = $page.data.translationArticle as IArticleTranslation | null | undefined;
 
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟦 HELPER
+   * @description
+   *  📣 Scrolls `tags` in a target `direction`.
+   * @param { -1 | 1 } direction
+   *  💠 **[required]** Target `direction` to _scroll_.
+   * @return { void }
+   */
+  function scrollTags
+  (
+    direction: -1 | 1 | 0
+  ): void
+  {
+    if (direction == -1)
+      htmlElementScrollBox.scrollBy(100, 0);
+    else if (direction == 1)
+      htmlElementScrollBox.scrollBy(-100, 0);
+    ;
+
+    // [🐞]
+    // console.log('htmlElementScrollBox.scrollLeft', htmlElementScrollBox.scrollLeft);
+    // console.log('htmlElementScrollBox.offsetWidth', htmlElementScrollBox.offsetWidth);
+    // console.log('htmlElementScrollBox.scrollWidth', htmlElementScrollBox.scrollWidth);
+
+    if (htmlElementScrollBox.scrollLeft == 0)
+      componentLocalState.delete('PrevButtonShow');
+    else
+      componentLocalState.add('PrevButtonShow');
+    ;
+
+    if ((htmlElementScrollBox.scrollLeft + htmlElementScrollBox.offsetWidth + 5) > htmlElementScrollBox.scrollWidth)
+      componentLocalState.delete('NextButtonShow');
+    else
+      componentLocalState.add('NextButtonShow');
+    ;
+
+    componentLocalState = componentLocalState;
+
+    return;
+  }
+
+  // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
@@ -125,6 +214,8 @@
           executeAnimation = true;
         }, 100
       );
+
+      scrollTags(0);
 
       return;
     }
@@ -149,8 +240,9 @@
   id="{CNAME}"
 >
   <!--
-  ▓ NOTE:
-  ▓ > article title
+  ╭─────
+  │ > article title
+  ╰─────
   -->
   <h1
     class=
@@ -170,8 +262,9 @@
   </h1>
 
   <!--
-  ▓ NOTE:
-  ▓ > article tags
+  ╭─────
+  │ > article tags
+  ╰─────
   -->
   <div
     id="tags-box"
@@ -180,12 +273,57 @@
     m-b-34
     "
   >
+    <!--
+    ╭─────
+    │ > previous (button)
+    ╰─────
+    -->
+    {#if componentLocalState.has('PrevButtonShow')}
+      <div
+        id="tagScrollPrev"
+        class=
+        "
+        tagScrollButton
+        "
+        on:click=
+        {
+          () =>
+          {
+            scrollTags(1);
+            return;
+          }
+        }
+      >
+        <img
+          id=''
+          src={iconArrowLeftDark}
+          alt=''
+          title=''
+          loading='lazy'
+        />
+      </div>
+    {/if}
+
+    <!--
+    ╭─────
+    │ > article tags (inner)
+    ╰─────
+    -->
     <div
       id="tags-box-scroll"
+      bind:this={htmlElementScrollBox}
+      on:scroll=
+      {
+        () =>
+        {
+          scrollTags(0);
+          return;
+        }
+      }
     >
       <!-- [🐞] -->
       <!-- {#each [...widgetData.tags, ...widgetData.tags, ...widgetData.tags] as item} -->
-      {#each [...widgetData.tags] as item}
+      {#each [...(widgetData.tags ?? [])] as item}
         <div
           class=
           "
@@ -206,11 +344,43 @@
         </div>
       {/each}
     </div>
+
+    <!--
+    ╭─────
+    │ > next (button)
+    ╰─────
+    -->
+    {#if componentLocalState.has('NextButtonShow')}
+      <div
+        id="tagScrollNext"
+        class=
+        "
+        tagScrollButton
+        "
+        on:click=
+        {
+          () =>
+          {
+            scrollTags(-1);
+            return;
+          }
+        }
+      >
+        <img
+          id=''
+          src={iconArrowRightDark}
+          alt=''
+          title=''
+          loading='lazy'
+        />
+      </div>
+    {/if}
   </div>
 
   <!--
-  ▓ NOTE:
-  ▓ > article author box
+  ╭─────
+  │ > article author box
+  ╰─────
   -->
   <div
     class=
@@ -225,8 +395,9 @@
   >
 
     <!--
-    ▓ NOTE:
-    ▓ > article author avatar
+    ╭─────
+    │ > article author avatar
+    ╰─────
     -->
     <img
       id='user-avatar'
@@ -243,13 +414,16 @@
     />
 
     <!--
-    ▓ NOTE:
-    ▓ > article author further information
+    ╭─────
+    │ > article author further information
+    ╰─────
     -->
     <div>
+
       <!--
-      ▓ NOTE:
-      ▓ > article author main info
+      ╭─────
+      │ > article author main info
+      ╰─────
       -->
       <div
         class=
@@ -259,8 +433,9 @@
         "
       >
         <!--
-        ▓ NOTE:
-        ▓ > article author name
+        ╭─────
+        │ > article author name
+        ╰─────
         -->
         <p
           class=
@@ -276,8 +451,9 @@
         </p>
 
         <!--
-        ▓ NOTE:
-        ▓ > article author badges
+        ╭─────
+        │ > article author badges
+        ╰─────
         -->
         <div
           class=
@@ -285,6 +461,11 @@
           row-space-start
           width-auto
           m-r-16
+          "
+          style=
+          "
+          width: 16px;
+          height: 16px;
           "
         >
           {#each widgetData.authors__authors__id__nested?.data?.badges ?? [] as item}
@@ -299,8 +480,9 @@
         </div>
 
         <!--
-        ▓ NOTE:
-        ▓ > article author last active
+        ╭─────
+        │ > article author last active
+        ╰─────
         -->
         <p
           class=
@@ -310,7 +492,12 @@
             dark-v1
           "
         >
-          11 mins
+          11
+          <TranslationText
+            key={'uknown'}
+            text={widgetDataTranslation?.translation?.reading_time}
+            fallback={'mins'}
+          />
           <span
             class=
             "
@@ -320,13 +507,20 @@
           >
            •
           </span>
-          2 day ago
+          2
+          <TranslationText
+            key={'uknown'}
+            text={widgetDataTranslation?.translation?.published_date_days}
+            fallback={'days'}
+          />
         </p>
+
       </div>
 
       <!--
-      ▓ NOTE:
-      ▓ > article author extra info
+      ╭─────
+      │ > article author extra info
+      ╰─────
       -->
       <div
         class=
@@ -335,8 +529,9 @@
         "
       >
         <!--
-        ▓ NOTE:
-        ▓ > article author creation date
+        ╭─────
+        │ > article author creation date
+        ╰─────
         -->
         <p
           class=
@@ -354,8 +549,9 @@
         </p>
 
         <!--
-        ▓ NOTE:
-        ▓ > article author location
+        ╭─────
+        │ > article author location
+        ╰─────
         -->
         <div
           class=
@@ -388,8 +584,9 @@
       </div>
 
       <!--
-      ▓ NOTE:
-      ▓ > article author description / about
+      ╭─────
+      │ > article author description / about
+      ╰─────
       -->
       <p
         class=
@@ -407,8 +604,9 @@
   </div>
 
   <!--
-  ▓ NOTE:
-  ▓ > article banner
+  ╭─────
+  │ > article banner
+  ╰─────
   src={widgetData.seo_details?.twitter_card.image}
   -->
   <img
@@ -424,8 +622,9 @@
   />
 
   <!--
-  ▓ NOTE:
-  ▓ > article text
+  ╭─────
+  │ > article text
+  ╰─────
   -->
   <div
     id='content'
@@ -458,6 +657,7 @@
     {
       /* 🎨 style */
       overflow: hidden;
+      position: relative;
 
       div#tags-box-scroll
       {
@@ -498,6 +698,56 @@
               color: var(--white) !important;
             }
           }
+        }
+      }
+
+      div.tagScrollButton
+      {
+        /* 🎨 style */
+        position: absolute;
+        width: 50px;
+        z-index: 5;
+        bottom: 0;
+        top: 0;
+        margin: auto;
+        height: inherit;
+        cursor: pointer;
+
+        &#tagScrollPrev
+        {
+          /* 🎨 style */
+          left: -1px;
+          background: linear-gradient(90deg, #292929 25.69%, rgba(41, 41, 41, 0) 100%);
+
+          img
+          {
+            /* 📌 position */
+            left: 5px;
+          }
+        }
+
+        &#tagScrollNext
+        {
+          /* 🎨 style */
+          right: -1px;
+          text-align: right;
+          background: linear-gradient(270deg, #292929 25.69%, rgba(41, 41, 41, 0) 100%);
+
+          img
+          {
+            /* 📌 position */
+            right: 5px;
+          }
+        }
+
+        img
+        {
+          /* 🎨 style */
+          position: absolute;
+          z-index: 5;
+          bottom: 0;
+          top: 0;
+          margin: auto;
         }
       }
     }
@@ -672,7 +922,7 @@
           p
           {
             /* 🎨 style */
-            font-size: 20px;
+            font-size: 18px;
             line-height: 32px;
           }
 

@@ -29,6 +29,8 @@ import { dlog } from './debug.js';
 import { checkNull } from './platform-functions.js';
 import { gotoSW } from './sveltekitWrapper.js';
 
+import type { IPageRouteId } from '$lib/types/types.scores.js';
+
 // #endregion ➤ 📦 Package Imports
 
 /**
@@ -107,18 +109,7 @@ export async function selectLanguage
   page: Page
 ): Promise < void >
 {
-  if (sessionStore.getServerLang() == lang) return;
-
-  const
-    /**
-     * @description
-     *  📣 Past/previous lang option.
-     */
-    pastLang: string
-      = sessionStore.getServerLang() == 'en'
-        ? '/'
-        : `/${sessionStore.getServerLang()}`
-  ;
+  if (sessionStore.extract('lang') == lang) return;
 
   userBetarenaSettings.updateData
   (
@@ -126,13 +117,24 @@ export async function selectLanguage
     lang
   );
 
+  const
+    /**
+     * @description
+     *  📣 Past/previous lang option.
+     */
+    pastLang: string
+      = sessionStore.extract('lang') == 'en'
+        ? '/'
+        : `/${sessionStore.extract('lang')}`
+  ;
+
   // [🐞]
   dlogv2
   (
     '🚏 checkpoint ➤ selectLanguage(..)',
     [
       `🔹 [var] ➤ $userBetarenaSettings.lang: ${userBetarenaSettings.extract('lang-user')}`,
-      `🔹 [var] ➤ $sessionStore?.serverLang: ${sessionStore.getServerLang()}`,
+      `🔹 [var] ➤ $sessionStore?.serverLang: ${sessionStore.extract('lang')}`,
       `🔹 [var] ➤ lang: ${lang}`,
       `🔹 [var] ➤ pastLang: ${pastLang}`,
       `🔹 [var] ➤ $page.route.id: ${page.route.id}`
@@ -185,8 +187,7 @@ export async function selectLanguage
 
   // ╭─────
   // │ CHECK
-  // │ > omit 'special' routes cases, as these routes
-  // │ > manage their own navigation/translation switch.
+  // │ > handle 'special' routes that self-manage navigation/translation.
   // ╰─────
   if
   (
@@ -268,7 +269,7 @@ export async function selectLanguage
 
   // ╭─────
   // │ NOTE:
-  // │ > otherwise, continue standard navigation switch.
+  // │ > continue standard navigation switch.
   // ╰─────
 
   const
@@ -311,7 +312,7 @@ export async function selectLanguage
 
   // ╭─────
   // │ CHECK
-  // │ > for 'incoming (past)' from an 'EN (/)' route.
+  // │ > for incoming from an 'EN' (/) route.
   // ╰─────
   else if (lang != 'en' && pastLang == '/')
     // ╭─────
@@ -325,7 +326,7 @@ export async function selectLanguage
     ;
   // ╭─────
   // │ CHECK
-  // │ > for 'incoming (past)' from an 'non-EN (/)' route.
+  // │ > for incoming from an 'non-EN' (/<lang>) route.
   // ╰─────
   else if (lang != 'en' && pastLang != '/')
     // ╭─────
@@ -352,11 +353,11 @@ export async function selectLanguage
     true
   );
 
-  sessionStore.updateData
-  (
-    'lang',
-    lang
-  );
+  // sessionStore.updateData
+  // (
+  //   'lang',
+  //   lang
+  // );
 
   // NOTE: Solution [1]
   // window.history.replaceState({}, "NewPage", newURL);
@@ -476,15 +477,30 @@ export async function logoutUser
   );
 
   const
+    /**
+     * @description
+     *  📣 `lang` preference
+     */
     userLang: string = userBetarenaSettings.extract('lang-user'),
+    /**
+     * @description
+     *  📣 current `routeId`
+     */
+    currentRouteId: IPageRouteId = sessionStore.extract('routeId'),
+    /**
+     * @description
+     *  📣 Redirect `user` to upon `logout`.
+     */
     redirectLink = `/${userLang == 'en' ? '' : userLang}`
   ;
 
-  await gotoSW
-  (
-    redirectLink,
-    true
-  );
+  if (currentRouteId != 'AuthorsPage')
+    await gotoSW
+    (
+      redirectLink,
+      true
+    );
+  ;
 
   userBetarenaSettings.updateData
   (

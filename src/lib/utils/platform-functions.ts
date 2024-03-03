@@ -1151,9 +1151,9 @@ export function langPrefix
 (
 ): string
 {
-  return sessionStore.getServerLang() == 'en'
+  return sessionStore.extract('lang') == 'en'
     ? '/'
-    : `/${sessionStore.getServerLang()}/`
+    : `/${sessionStore.extract('lang')}/`
   ;
 }
 

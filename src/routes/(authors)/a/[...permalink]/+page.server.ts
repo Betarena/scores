@@ -12,10 +12,10 @@
 
 // #region ➤ 📦 Package Imports
 
-import { ServerLoadEvent } from '@sveltejs/kit';
-
 import { main } from '$lib/load/load.authors.js';
 import { dlogv2 } from '$lib/utils/debug.js';
+
+import type { ServerLoadEvent } from '@sveltejs/kit';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -47,7 +47,10 @@ export async function load
 
   return await main
   (
-    event
+    event,
+    {
+      langParam
+    }
   );
 }
 

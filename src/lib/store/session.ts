@@ -318,17 +318,27 @@ function createLocalStore
          * @author
          *  @migbash
          * @summary
-         *  🔹 HELPER
+         *  - 🔹 HELPER
+         *  - IMPORTANT
          * @description
-         *  📣 Retrieve target `session` platform `language`.
-         * @return { string }
-         *  📤 Target _current_ platform language.
+         *  📣 Extracts **target** `user` data property.
+         * @param { IDataProp } dataPoint
+         *  💠 **[required]** Target `data point` to be retrieved.
+         * @return { any }
+         *  📤 Requested `data point`.
          */
-        getServerLang:
+        extract:
         (
-        ): string =>
+          dataPoint: IDataProp
+        ): any =>
         {
-          return sessionStoreObj.serverLang!;
+          if (dataPoint == 'lang')
+            return sessionStoreObj.serverLang;
+          else if (dataPoint == 'routeId')
+            return sessionStoreObj.currentPageRouteId;
+          ;
+
+          return;
         },
       }
   ;

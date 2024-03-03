@@ -42,10 +42,12 @@
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
+  import { sleep } from '$lib/utils/platform-functions.js';
+
+  import SeoBox from '$lib/components/SEO-Box.svelte';
   import AuthorLoader from './Author-Loader.svelte';
   import AuthorMain from './Author-Main.svelte';
 
-  import { sleep } from '$lib/utils/platform-functions.js';
   import type { IArticleData } from '@betarena/scores-lib/types/types.authors.articles.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -78,23 +80,7 @@
     useDynamicImport: boolean = true
   ;
 
-  let
-    /** @description 📣 (widget) translations data */
-    widgetDataTranslation: B_COMP_MAIN_T,
-    /** @description 📣 (widget) translations (SEO) data */
-    widgetDataSeo: B_COMP_MAIN_S,
-    /** @description 📣 (widget) main data */
-    widgetDataMain: B_COMP_HIGH_D,
-    /** @description 📣 (widget) wether widget has or no data */
-    widgetNoData: boolean = true,
-    /** @description 📣 (widget) dynamic import variable for svelte component [1] */
-    MainMainAsDynamic: any
-  ;
-
-  $: widgetDataMain = $page.data.dataArticle as IArticleData;
-  // $: widgetDataTranslation = $page.data?.B_COMP_MAIN_T;
-  // $: widgetDataSeo = $page.data?.B_COMP_MAIN_S;
-  // $: WIDGET_TITLE = widgetDataTranslation?.translations?.widget_title ?? translationObject?.featured_bet_site;
+  $: widgetDataMain = $page.data.dataArticle as IArticleData | null | undefined;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -129,8 +115,6 @@
     if (!browser) return;
 
     await sleep(1000);
-
-    widgetNoData = false;
 
     return;
   }
@@ -175,9 +159,11 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<!--
-[🐞]
--->
+<SeoBox>
+  {@html widgetDataMain.data?.content}
+</SeoBox>
+
+<!-- [🐞] -->
 <!-- <AuthorLoader /> -->
 
 {#await widgetInit()}

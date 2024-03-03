@@ -119,6 +119,8 @@
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   $: ({ uid, email }                                          = { ...$userBetarenaSettings?.user?.firebase_user_data });
 	$: navbarTranslationData       = ($page.data.B_NAV_T ?? { }) as B_NAV_T | null | undefined;
+  $: deepReactListenStore1                           = JSON.stringify($sessionStore);
+  $: deepReactListenStore2                           = JSON.stringify($userBetarenaSettings);
 
   $sessionStore.deviceType       = $page.data.deviceType as 'mobile' | 'tablet' | 'desktop';
   $sessionStore.fixturesTodayNum = (navbarTranslationData?.scores_header_fixtures_information?.football ?? 0);
@@ -236,19 +238,6 @@
 
     userBetarenaSettings.useLocalStorage();
     scoresAdminStore.useLocalStorage();
-
-    setUserGeoLocation
-    (
-      navbarTranslationData!
-    );
-
-    const
-      adminSet = $page.url.searchParams.get('admin')
-    ;
-
-    if (adminSet)
-      scoresAdminStore.toggleAdminState(adminSet == 'true' ? true : false);
-    ;
   }
 
   // ╭─────
@@ -259,7 +248,7 @@
     _DEBUG_('Option3');
     initSportbookData
     (
-      $userBetarenaSettings.country_bookmaker
+      country_bookmaker
     );
   }
 
@@ -284,7 +273,7 @@
   // ╭─────
   // │ > 🔥 (3rd Party) Intercom Data Persistance [show/hide]
   // ╰─────
-  $: if (browser && ($userBetarenaSettings || $sessionStore))
+  $: if (browser && (deepReactListenStore1 || deepReactListenStore2))
   {
     _DEBUG_('Option4');
 
@@ -323,7 +312,6 @@
   beforeNavigate
   (
     async (
-      e
     ): Promise < void > =>
     {
       // IMPORTANT
@@ -357,6 +345,19 @@
 
       // IMPORTANT
       $sessionStore.windowWidth = document.documentElement.clientWidth;
+
+      setUserGeoLocation
+      (
+        navbarTranslationData!
+      );
+
+      const
+        adminSet = $page.url.searchParams.get('admin')
+      ;
+
+      if (adminSet)
+        scoresAdminStore.toggleAdminState(adminSet == 'true' ? true : false);
+      ;
 
       return;
     }

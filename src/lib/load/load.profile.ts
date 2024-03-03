@@ -12,14 +12,14 @@
 
 // #region ➤ 📦 Package Imports
 
-import { ServerLoadEvent } from '@sveltejs/kit';
-
 import { preloadRedirect, promiseUrlsPreload } from '$lib/utils/platform-functions.js';
 
 import { dlogv2 } from '$lib/utils/debug.js';
+
 import type { B_SAP_D2, B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
 import type { B_USRG_D } from '@betarena/scores-lib/types/types.misc.userguide.js';
 import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
+import type { ServerLoadEvent } from '@sveltejs/kit';
 
 // #endregion ➤ 📦 Package Imports
 

@@ -1519,19 +1519,22 @@ paths:
           schema:
             type: object
             properties:
-              # ?hasura=[...]
               hasura:
                 type: boolean
                 example: true
-              # ?permalink=[...]
               permalink:
                 type: string
                 example: "betarena-tennis-it/australian-open-men-singles-ryan-peniston-vs-elias-ymer-2023-2024-pronostici-probabili-formazioni-e-consigli-per-le-scommesse-8yomojf34kyzq0j1707239136"
+              lang:
+                type: string
+                example: "es"
             additionalProperties: false
             oneOf:
               # translation
               - required: [permalink]
               - required: [permalink, hasura]
+              - required: [lang]
+              - required: [lang, hasura]
       #
       responses:
         200:

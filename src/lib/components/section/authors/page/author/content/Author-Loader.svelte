@@ -1,8 +1,23 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ Svelte Component JS/TS                                                           │
+│ 📌 High Order Component Overview                                                 │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - access custom Betarena Scores JS VScode Snippets by typing 'script...'         │
+│ ➤ Internal Svelte Code Format :|: V.8.0                                          │
+│ ➤ Status :|: 🔒 LOCKED                                                           │
+│ ➤ Author(s) :|: @migbash                                                         │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ 📝 Description                                                                   │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ Scores Authors Article Placeholder                                               │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 🟦 Svelte Component JS/TS                                                        │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -23,7 +38,8 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { viewport_change } from '$lib/utils/platform-functions.js';
+  import sessionStore from '$lib/store/session.js';
+  import { viewportChangeV2 } from '$lib/utils/platform-functions.js';
 
   import AuthorLoaderMain from './loaders/Author-Loader-Main.svelte';
 
@@ -47,8 +63,7 @@
     /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
-    */
-    // eslint-disable-next-line no-unused-vars
+    */ // eslint-disable-next-line no-unused-vars
     CNAME: string = 'author⮕w⮕article-loader⮕main'
   ;
 
@@ -56,45 +71,37 @@
     /**
      * @description
      *  📣 threshold start + state for 📱 MOBILE
-    */
-    // eslint-disable-next-line no-unused-vars
-    VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
+    */ // eslint-disable-next-line no-unused-vars
+    VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ],
     /**
      * @description
      *  📣 threshold start + state for 💻 TABLET
-    */
-    // eslint-disable-next-line no-unused-vars
-    , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
+    */ // eslint-disable-next-line no-unused-vars
+    VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
+  ;
+
+  $: ({ windowWidth } = $sessionStore);
+  $: [ VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1] ]
+    = viewportChangeV2
+    (
+      windowWidth,
+      VIEWPORT_MOBILE_INIT[0],
+      VIEWPORT_TABLET_INIT[0],
+    );
   ;
 
   // #endregion ➤ 📌 VARIABLES
 
 </script>
 
-<svelte:window
-  on:resize=
-  {
-    () =>
-    {
-      [
-        VIEWPORT_TABLET_INIT[1]
-        , VIEWPORT_MOBILE_INIT[1]
-      ] = viewport_change
-      (
-        VIEWPORT_TABLET_INIT[0]
-        , VIEWPORT_MOBILE_INIT[0]
-      );
-      return;
-    }
-  }
-/>
-
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ Svelte Component HTML                                                            │
+│ 💠 Svelte Component HTML                                                         │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - use 'Ctrl+Space' to autocomplete global class=styles                           │
-│ - access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.     │
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -102,8 +109,9 @@
   id="{CNAME}"
 >
   <!--
-  ▓ NOTE:
-  ▓ > article author box loader 📱 MOBILE
+  ╭─────
+  │ > article author box loader 📱 MOBILE
+  ╰─────
   -->
   {#if VIEWPORT_MOBILE_INIT[1]}
     <AuthorLoaderMain
@@ -113,8 +121,9 @@
   {/if}
 
   <!--
-  ▓ NOTE:
-  ▓ > top title loader
+  ╭─────
+  │ > top title loader
+  ╰─────
   -->
   <div
     id="title-box"
@@ -132,8 +141,9 @@
   </div>
 
   <!--
-  ▓ NOTE:
-  ▓ > badge loader
+  ╭─────
+  │ > badge loader
+  ╰─────
   -->
   <div
     id="badge-box"
@@ -151,16 +161,15 @@
   </div>
 
   <!--
-  ▓ NOTE:
-  ▓ > article author box loader 💻 TABLET + 🖥️ LAPTOP
+  ╭─────
+  │ > article author box loader 💻 TABLET + 🖥️ LAPTOP
+  ╰─────
   -->
-  {#if !VIEWPORT_TABLET_INIT[1]}
+  {#if !VIEWPORT_MOBILE_INIT[1]}
     <AuthorLoaderMain
       option=
       {
-        VIEWPORT_TABLET_INIT[1]
-          ? (VIEWPORT_MOBILE_INIT[1] ? 'ArticleAuthorBlockVariant3' : 'ArticleAuthorBlockVariant2')
-          : 'ArticleAuthorBlockVariant1'
+        (VIEWPORT_TABLET_INIT[1] ? 'ArticleAuthorBlockVariant2' : 'ArticleAuthorBlockVariant1')
       }
       clazz=
       {
@@ -170,8 +179,9 @@
   {/if}
 
   <!--
-  ▓ NOTE:
-  ▓ > article preveiw loader
+  ╭─────
+  │ > article preveiw loader
+  ╰─────
   -->
   <AuthorLoaderMain
     option={'ArticlePreviewBlock'}
@@ -182,8 +192,9 @@
 
     {#if i > 0}
       <!--
-      ▓ NOTE:
-      ▓ > article preveiw text loader
+      ╭─────
+      │ > article preveiw text loader
+      ╰─────
       -->
       <AuthorLoaderMain
         option={'ArticleSubTitle'}
@@ -192,8 +203,9 @@
     {/if}
 
     <!--
-    ▓ NOTE:
-    ▓ > article preveiw text loader
+    ╭─────
+    │ > article preveiw text loader
+    ╰─────
     -->
     <AuthorLoaderMain
       option={'ArticlePeviewText'}
@@ -205,14 +217,21 @@
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ Svelte Component CSS/SCSS                                                        │
+│ 🌊 Svelte Component CSS/SCSS                                                     │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ - auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE  │
-│ - access custom Betarena Scores CSS VScode Snippets by typing 'style...'         │
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <style lang="scss">
+
+  /*
+  ╭──────────────────────────────────────────────────────────────────────────────╮
+  │ 📲 MOBILE-FIRST                                                              │
+  ╰──────────────────────────────────────────────────────────────────────────────╯
+  */
 
   div#author⮕w⮕article-loader⮕main
   {

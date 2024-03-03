@@ -18,7 +18,7 @@ import { promiseUrlsPreload } from '$lib/utils/platform-functions.js';
 
 import { dlogv2 } from '$lib/utils/debug.js';
 
-import type { IArticleData } from '@betarena/scores-lib/types/types.authors.articles.js';
+import type { IArticleData, IArticleTranslation } from '@betarena/scores-lib/types/types.authors.articles.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -32,7 +32,8 @@ import type { IArticleData } from '@betarena/scores-lib/types/types.authors.arti
  */
 type PreloadPromise0 =
 [
-  IArticleData | undefined
+  IArticleData | undefined,
+  IArticleTranslation | undefined
 ];
 
 /**
@@ -47,7 +48,11 @@ type PreloadPromise0 =
  */
 export async function main
 (
-  event: ServerLoadEvent
+  event: ServerLoadEvent,
+  parentData:
+  {
+    langParam: string
+  }
 ): Promise < {} >
 {
   const
@@ -74,10 +79,12 @@ export async function main
 
   [
     response.dataArticle,
+    response.translationArticle
   ] = await fetchData
   (
     event.fetch,
-    permalink
+    permalink,
+    parentData.langParam
   );
 
   // [🐞]
@@ -105,13 +112,16 @@ export async function main
  *  💠 **[required]** Target instance of `fetch` object.
  * @param { string } _permalink
  *  💠 **[required]** Target `parmalink`.
+ * @param { string } _lang
+ *  💠 **[required]** Target `lang`.
  * @returns { Promise < IProfileData2 > }
  *  📤 Target `data` fetched.
  */
 async function fetchData
 (
-  fetch: any
-  , _permalink: string
+  fetch: any,
+  _permalink: string,
+  _lang: string
 ): Promise < PreloadPromise0 >
 {
   const
@@ -121,7 +131,8 @@ async function fetchData
      */
     urls0
       = [
-        `/api/data/author?permalink=${_permalink}`
+        `/api/data/author?permalink=${_permalink}`,
+        `/api/data/author?lang=${_lang}`
       ],
     /**
      * @description
