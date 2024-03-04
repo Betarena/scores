@@ -39,19 +39,19 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
 	import { page } from '$app/stores';
-	import { createEventDispatcher } from 'svelte';
 	import { fly } from 'svelte/transition';
 
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlog, NB_W_TAG } from '$lib/utils/debug.js';
+	import { selectLanguage } from '$lib/utils/user.js';
+	import { scoresNavbarStore } from './_store.js';
 
   import arrowDown from './assets/arrow-down.svg';
   import arrowUp from './assets/arrow-up.svg';
   import arrowDownDark from './assets/icon-arrow-down-dark.svg';
   import arrowUpDark from './assets/icon-arrow-up-dark.svg';
 
-  import { selectLanguage } from '$lib/utils/user.js';
   import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -70,21 +70,12 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let
-    /** @description [?] */
-    dropDownArea: boolean
-  ;
-
   const
     /**
      * @description
      *  📣 Deifined `hover` timeout, that constitues a navigational `intent.
     */
-    HOVER_TIMEOUT = 250,
-    /**
-     * @augments EventDispatcher
-    */
-    dispatch = createEventDispatcher()
+    HOVER_TIMEOUT = 250
   ;
 
   let
@@ -107,6 +98,8 @@
 
   $: ({ serverLang, currentPageRouteId } = $sessionStore);
   $: ({ theme } = $userBetarenaSettings);
+  $: ({ globalState: globalStateNavbar } = $scoresNavbarStore);
+
   $: translatioData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
 
   // #endregion ➤ 📌 VARIABLES
@@ -122,7 +115,7 @@
    *  - 📣 Advanced intent logic, applicable to desktop-only.
    *  - 📣 `Pre-loads` target page , for target `language` upon `intent`/`hover`.
    * @param { string | undefined } lang
-   *  💠 Target `hovered` language.
+   *  💠 **[required]** Target `hovered` language.
    * @return { void }
    */
   function detectIntentBuffer
@@ -206,23 +199,6 @@
 
   // #endregion ➤ 🛠️ METHODS
 
-  // #region ➤ 🔥 REACTIVIY [SVELTE]
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'logic' that should run            │
-  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
-  // │ WARNING:                                                               │
-  // │ ❗️ Can go out of control.                                              │
-  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
-  // │ Please keep very close attention to these methods and                  │
-  // │ use them carefully.                                                    │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  $: if (!dropDownArea) isLangDropdown = false;
-
-  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
-
 </script>
 
 <!--
@@ -256,20 +232,16 @@
     row-space-out
     cursor-pointer
     "
-    class:active-lang-select={isLangDropdown}
+    class:active-lang-select={globalStateNavbar.has('LangDropdownActive')}
     on:click=
     {
       () =>
       {
-        isLangDropdown = !isLangDropdown;
-
-        if (!isLangDropdown) return;
-
-        dispatch
+        scoresNavbarStore.updateData
         (
-          'closeDropdown'
+          'globalStateAdd',
+          'LangDropdownActive'
         );
-
         return;
       }
     }
@@ -298,10 +270,10 @@
       src=
       {
         currentPageRouteId != 'AuthorsPage' || theme == 'Dark'
-          ? !isLangDropdown
+          ? !globalStateNavbar.has('LangDropdownActive')
             ? arrowDown
             : arrowUp
-          : !isLangDropdown
+          : !globalStateNavbar.has('LangDropdownActive')
             ? arrowDownDark
             : arrowUpDark
       }
@@ -317,7 +289,7 @@
   │ > Dropdown Menu
   ╰─────
   -->
-  {#if isLangDropdown}
+  {#if globalStateNavbar.has('LangDropdownActive')}
 
     <div
       id="dropdown-menu"

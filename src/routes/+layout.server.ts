@@ -149,7 +149,7 @@ export async function load
   ;
 
   // [🐞]
-  console.log('params.lang', params.lang, 'langParam', langParam);
+  // console.log('params.lang', params.lang, 'langParam', langParam);
 
   if (B_NAV_T == undefined || B_FOT_T == undefined)
     preloadExitLogic
@@ -390,20 +390,18 @@ function detectPlatformLanguage
 
   // [🐞]
   // console.log('urlLang', urlLang);
-
-  // [🐞]
   // console.log('cookieValue', cookieValue);
 
   // ╭─────
   // │ CHECK
-  // │ > for authors page, custom logic.
+  // │ > for authors page, apply custom logic.
   // ╰─────
   if (opts.routeId == routeIdPageAuthors)
-    urlLang = cookieValue.lang;
+    urlLang = cookieValue.lang ?? 'en';
   ;
 
   // [🐞]
-  console.log('urlLang', urlLang);
+  // console.log('urlLang', urlLang);
 
   return urlLang;
 }

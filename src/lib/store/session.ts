@@ -19,8 +19,9 @@ import { clientTimezoneDate, targetDate } from '$lib/utils/dates.js';
 import { writable } from 'svelte/store';
 
 import { routeIdPageAuthors, routeIdPageCompetitions, routeIdPageProfile } from '$lib/constants/paths.js';
-import type { IPageRouteId, ISessionStore } from '$lib/types/types.scores.js';
 import { dlogv2 } from '$lib/utils/debug.js';
+
+import type { IPageRouteId, ISessionStore } from '$lib/types/types.session.js';
 import type { B_H_COMP_DATA } from '@betarena/scores-lib/types/_HASURA_.js';
 import type { FIREBASE_livescores_now, FIREBASE_odds, FIRE_LNNS } from '@betarena/scores-lib/types/firebase.js';
 
@@ -31,6 +32,7 @@ import type { FIREBASE_livescores_now, FIREBASE_odds, FIRE_LNNS } from '@betaren
 const
   sessionStoreObj: ISessionStore
   = {
+    globalState: new Set(),
     deviceType: 'mobile',
     isUserActive: true,
     windowWidth: 0,
@@ -108,6 +110,8 @@ type IDataProp =
   | 'liveOddsMap'
   | 'livescoresNow'
   | 'livescoresFixtureTarget'
+  | 'globalStateAdd'
+  | 'globalStateRemove'
 ;
 
 // #endregion ➤ 📌 VARIABLES
@@ -257,6 +261,28 @@ function createLocalStore
           else if (dataTarget == 'livescoresFixtureTarget')
           {
             sessionStoreObj.livescore_now_fixture_target = dataPoint as FIREBASE_livescores_now;
+          }
+          else if (dataTarget == 'globalStateAdd')
+          {
+            // ╭─────
+            // │ NOTE:
+            // │ > Authentication Logic Toggle Reset
+            // ╰─────
+            if (dataPoint == 'NotAuthenticated')
+            {
+              sessionStoreObj.globalState.delete('Authenticated');
+              sessionStoreObj.globalState.delete('AuthenticatedAndInitialized');
+            }
+            else if (dataPoint == 'Authenticated')
+            {
+              sessionStoreObj.globalState.delete('NotAuthenticated');
+            }
+
+            sessionStoreObj.globalState.add(dataPoint);
+          }
+          else if (dataTarget == 'globalStateRemove')
+          {
+            sessionStoreObj.globalState.delete(dataPoint);
           }
 
           set

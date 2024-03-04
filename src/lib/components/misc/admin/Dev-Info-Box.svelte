@@ -60,7 +60,7 @@
     CNAME: string = 'developer-admin-infobox'
   ;
 
-  $: ({ currentPageRouteId, serverLang } = { ...$sessionStore })
+  $: ({ currentPageRouteId, serverLang, globalState } = { ...$sessionStore });
   $: ({ country_bookmaker, theme, lang } = { ...$userBetarenaSettings });
 
   // #endregion ➤ 📌 VARIABLES
@@ -160,6 +160,34 @@
     <br>
     lang: {lang}
   </p>
+
+  <!--
+  ╭─────
+  │ > Session (global) state
+  ╰─────
+  -->
+  <div>
+    <p
+      class=
+      "
+      color-white
+      "
+    >
+      Global State(s):
+      {globalState.size}
+    </p>
+
+    {#each [...globalState] as item}
+      <p
+        class=
+        "
+        color-white
+        "
+      >
+        - {item}
+      </p>
+    {/each}
+  </div>
 
 </div>
 

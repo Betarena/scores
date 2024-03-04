@@ -46,9 +46,10 @@
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { NB_W_TAG, dlog, dlogv2 } from '$lib/utils/debug';
-	import { generateUrlCompetitions, spliceBalanceDoubleZero, toDecimalFix, viewportChangeV2 } from '$lib/utils/platform-functions';
+	import { checkNull, generateUrlCompetitions, spliceBalanceDoubleZero, toDecimalFix, viewportChangeV2 } from '$lib/utils/platform-functions';
 	import { translationObject } from '$lib/utils/translation.js';
 	import { initUser, logoutUser, selectLanguage, updateSelectLang } from '$lib/utils/user';
+	import { scoresNavbarStore } from './_store.js';
 
   import SeoBox from '$lib/components/SEO-Box.svelte';
   import TranslationText from '$lib/components/misc/Translation-Text.svelte';
@@ -96,18 +97,8 @@
     | 'logoAuthor'
     | 'logoAuthorDark'
     | 'iconArrowDownDark'
-  ;
-
-  /**
-   * @description
-   *  📣 Component `Type`.
-   */
-  type IWidgetState =
-    | 'MobileNavToggleMenuActive'
-    | 'CurrencyDropdownActive'
-    | 'OddsDropdownActive'
-    | 'UserDropdownActive'
-    | 'UpdateZIndex'
+    | 'iconArrowLeftDark'
+    | 'iconArrowLeftLight'
   ;
 
   /**
@@ -154,12 +145,7 @@
      * @description
      *  📣 Holds target `component(s)` of dynamic nature.
      */
-    dynamicAssetMap = new Map< IDynamicAssetMap, any >(),
-    /**
-     * @description
-     *  📣 Internal Component State.
-     */
-    widgetState = new Set < IWidgetState > (),
+    dynamicAssetMap = new Map < IDynamicAssetMap, any >(),
     /**
      * @description
      *  📣 Target `animation` width tracking variable.
@@ -200,9 +186,12 @@
       ]
   ;
 
-  $: ({ error } = $page);
-  $: ({ id: pageRouteId } = $page.route);
-  $: ({ windowWidth, currentPageRouteId } = $sessionStore);
+  $: ({ error, route: { id: pageRouteId } } = $page);
+  $: ({ windowWidth, currentPageRouteId, serverLang, navBtnHover, globalState } = $sessionStore);
+  $: ({ lang, theme, user } = $userBetarenaSettings);
+  $: ({ web3_wallet_addr, profile_photo, main_balance, lang: userLang } = { ...$userBetarenaSettings.user?.scores_user_data });
+  $: ({ globalState: globalStateNavbar } = $scoresNavbarStore);
+
   $: [ VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1] ]
     = viewportChangeV2
     (
@@ -210,16 +199,9 @@
       VIEWPORT_MOBILE_INIT[0],
       VIEWPORT_TABLET_INIT[0],
     );
-  $: ({ lang, theme } = $userBetarenaSettings);
-  $: ({ serverLang, navBtnHover } = $sessionStore);
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  $: ({ uid } = { ...$userBetarenaSettings?.user?.firebase_user_data });
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  $: ({ web3_wallet_addr, profile_photo, main_balance, lang: userLang } = { ...$userBetarenaSettings?.user?.scores_user_data });
-  $: deepReactListenUser = JSON.stringify($userBetarenaSettings.user) as string | undefined;
   $: homepageURL
     = serverLang != 'en'
-      ? `/${$page.params.lang}`
+      ? `/${serverLang}`
       : '/';
   $: logoLink
     = serverLang != 'en'
@@ -254,7 +236,7 @@
    */
   function _DEBUG_
   (
-    reactDebug: 'Option1' | 'Option2' | 'Option3' | 'Option4' | 'Option5'
+    reactDebug: 'Option0' | 'Option1' | 'Option2' | 'Option3' | 'Option4' | 'Option5'
   ): void
   {
     const
@@ -262,7 +244,17 @@
     ;
 
     // [🐞]
-    if (reactDebug == 'Option1')
+    if (reactDebug == 'Option0')
+      dlogv2
+      (
+        `${prefix} if_R_X`,
+        [
+          '📝 INFO: Authentication logic processing...',
+          '❗️ WARNING: Non re-occuring logic, (once per load), should not be seen again.'
+        ],
+        true
+      );
+    else if (reactDebug == 'Option1')
       dlogv2
       (
         `${prefix} if_R_0`,
@@ -309,26 +301,6 @@
    * @author
    *  @migbash
    * @summary
-   *  🔹 HELPER
-   * @description
-   *  📣 Closes all dropdowns.
-   * @return { void }
-   */
-  function closeAllDropdowns
-  (
-  ): void
-  {
-    widgetState.delete('CurrencyDropdownActive');
-    widgetState.delete('UserDropdownActive');
-    widgetState = widgetState;
-
-    return;
-  }
-
-  /**
-   * @author
-   *  @migbash
-   * @summary
    *  🟦 HELPER
    * @description
    *  📣 Calcualte navigation triangle position.
@@ -366,7 +338,7 @@
 
   // #endregion ➤ 🛠️ METHODS
 
-  // #region ➤ 🔥 REACTIVIY [SVELTE]4
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -380,15 +352,50 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   // ╭─────
-  // │ > 🔥 Initialize 'user' (non-authenticated) platform language.
+  // │ > 🔥 Authentication listener.
+  // │ IMPORTANT
+  // │ > [x3] Kicker(s)
   // ╰─────
-  $: if (browser && deepReactListenUser == undefined)
+  $: if_R_0
+    = browser
+    && user == undefined
+  ;
+  $: if_R_0X
+    = browser
+    && user != undefined
+  ;
+  $:
+  if (if_R_0)
   {
-    _DEBUG_
+    _DEBUG_('Option0');
+    sessionStore.updateData
     (
-      'Option1'
+      'globalStateAdd',
+      'NotAuthenticated'
     );
+  }
+  else if (if_R_0X)
+  {
+    _DEBUG_('Option0');
+    sessionStore.updateData
+    (
+      'globalStateAdd',
+      'Authenticated'
+    );
+  };
 
+  // ╭─────
+  // │ > 🔥 Initialize 'user' (non-authenticated) platform language.
+  // │ IMPORTANT
+  // │ > [x3] Kicker(s)
+  // ╰─────
+  $: if_R_1
+    = browser
+    && globalState.has('NotAuthenticated')
+  ;
+  $: if (if_R_1)
+  {
+    _DEBUG_('Option1');
     userBetarenaSettings.updateData
     (
       'lang',
@@ -398,21 +405,36 @@
 
   // ╭─────
   // │ > 🔥 Initialize 'user' (authenticated) on post 'log-in'.
+  // │ IMPORTANT
+  // │ > [x2] Kicker(s)
   // ╰─────
-  $: if (browser && deepReactListenUser != undefined)
+  $: if_R_1X
+    = browser
+    && globalState.has('Authenticated')
+    && !globalState.has('AuthenticatedAndInitialized')
+  ;
+  $: if (if_R_1X)
   {
     _DEBUG_('Option3');
-    initUser(uid);
+    initUser();
+    sessionStore.updateData
+    (
+      'globalStateAdd',
+      'AuthenticatedAndInitialized'
+    );
   }
 
   // ╭─────
   // │ > 🔥 Update 'user' (authenticated) platform language.
+  // │ NOTE:
+  // │ > [x0] Kicker(s)
   // ╰─────
   $: if_R_2
     = browser
     && currentPageRouteId != 'ProfilePage'
+    && globalState.has('Authenticated')
   ;
-  $: if (if_R_2  && deepReactListenUser != undefined)
+  $: if (if_R_2)
   {
     _DEBUG_('Option2');
 
@@ -433,14 +455,16 @@
 
   // ╭─────
   // │ > 🔥 Instantiate 'user' (authenticated) platform language.
+  // │ IMPORTANT
+  // │ > [x3] Kicker(s)
   // ╰─────
   $: if_R_3
     = !error
-    && pageRouteId
-    && deepReactListenUser != undefined
+    && !checkNull(pageRouteId)
+    && globalState.has('Authenticated')
   ;
   $:
-  if (if_R_3 && lang != undefined)
+  if (if_R_3 && lang)
   {
     _DEBUG_('Option4');
     updateSelectLang
@@ -452,8 +476,11 @@
     );
   }
 
+
   // ╭─────
   // │ > 🔥 Navbar Z-Index Override
+  // │ NOTE:
+  // │ > [x0] Kicker(s)
   // ╰─────
   $: if_R_4
     = ($sessionStore.livescoreShowCalendar && VIEWPORT_MOBILE_INIT[1])
@@ -462,26 +489,22 @@
   ;
   $:
   if (if_R_4)
-  {
-    widgetState.add('UpdateZIndex');
-    widgetState = widgetState;
-  }
-  else if (widgetState.has('UpdateZIndex'))
-  {
+    $scoresNavbarStore.globalState.add('UpdateZIndex');
+  else if (globalStateNavbar.has('UpdateZIndex'))
     setTimeout
     (
       () =>
       {
-        widgetState.delete('UpdateZIndex');
-        widgetState = widgetState;
+        $scoresNavbarStore.globalState.delete('UpdateZIndex');
       },
       750
     );
-    widgetState = widgetState;
-  }
+  ;
 
   // ╭─────
   // │ > 🔥 Trigger Navigation Triangle Position Re-Calculation.
+  // │ IMPORTANT
+  // │ > [x3] Kicker(s)
   // ╰─────
   $:
   if (browser && navBtnHover != undefined && serverLang)
@@ -528,8 +551,10 @@
         dynamicAssetMap.set('arrow_up', (await import('./assets/arrow-up.svg')).default);
         dynamicAssetMap.set('logo_full', (await import('./assets/betarena-logo-full.svg')).default);
         dynamicAssetMap.set('logo_mini', (await import('./assets/betarena-logo-mobile.svg')).default);
-        dynamicAssetMap.set('logoAuthor', (await import('./assets/asset-betarena-logo-full.png')).default);
-        dynamicAssetMap.set('logoAuthorDark', (await import('./assets/asset-betarena-logo-full-dark.png')).default);
+        dynamicAssetMap.set('logoAuthor', (await import('./assets/asset-betarena-logo-full.svg')).default);
+        dynamicAssetMap.set('logoAuthorDark', (await import('./assets/asset-betarena-logo-full-dark.svg')).default);
+        dynamicAssetMap.set('iconArrowLeftDark', (await import('./assets/icon-arrow-left-dark.svg')).default);
+        dynamicAssetMap.set('iconArrowLeftLight', (await import('./assets/icon-arrow-left-light.svg')).default);
         dynamicAssetMap.set('close', (await import('./assets/close.svg')).default);
         dynamicAssetMap.set('menu_burger_bar', (await import('./assets/menu-burger.svg')).default);
         dynamicAssetMap.set('profile_avatar', (await import('./assets/profile-avatar.svg')).default);
@@ -561,14 +586,15 @@
 │ > Navbar Close Dropdown Area
 ╰─────
 -->
-{#if widgetState.has('CurrencyDropdownActive') || widgetState.has('OddsDropdownActive')}
+{#if globalStateNavbar.has('BackdropActive')}
 	<div
 		id="background-area-close"
 		on:click=
     {
       () =>
       {
-        return closeAllDropdowns()
+        scoresNavbarStore.closeAllDropdowns();
+        return;
       }
     }
 	/>
@@ -576,7 +602,9 @@
 
 <SeoBox>
   <!--
-  HOMEPAGE LINKS
+  ╭─────
+  │ > homepage links
+  ╰─────
   -->
   {#each trsanslationData?.langArray || [] as item}
     {#if item != 'en'}
@@ -589,8 +617,11 @@
       </a>
     {/if}
   {/each}
+
   <!--
-  OTHER URLS
+  ╭─────
+  │ > other urls
+  ╰─────
   -->
   <a
     href={trsanslationData?.scores_header_translations?.section_links?.scores_url}>
@@ -604,6 +635,7 @@
     href={trsanslationData?.scores_header_translations?.section_links?.sports_content_url}>
     {trsanslationData?.scores_header_translations?.section_links?.sports_content_title}
   </a>
+
 </SeoBox>
 
 <AuthWidget />
@@ -619,9 +651,10 @@
   "
   column-space-center
   "
-  class:update-z-index={widgetState.has('UpdateZIndex')}
+  class:update-z-index={globalStateNavbar.has('UpdateZIndex')}
   class:user-active={currentPageRouteId == 'ProfilePage'}
   class:page-authors={currentPageRouteId == 'AuthorsPage'}
+  class:dark-mode={theme == 'Dark'}
 >
 
   <!--
@@ -629,14 +662,15 @@
   │ > Close Dropdown Area
   ╰─────
   -->
-	{#if widgetState.has('CurrencyDropdownActive') || widgetState.has('OddsDropdownActive')}
+	{#if globalStateNavbar.has('BackdropActive')}
 		<div
 			id="background-area-close"
 			on:click=
       {
         () =>
         {
-          return closeAllDropdowns()
+          scoresNavbarStore.closeAllDropdowns();
+          return;
         }
       }
 		/>
@@ -671,7 +705,7 @@
       │ > Menu Burger :|: 📱 MOBILE 💻 TABLET
       ╰─────
       -->
-      {#if VIEWPORT_TABLET_INIT[1]}
+      {#if VIEWPORT_TABLET_INIT[1] && currentPageRouteId != 'AuthorsPage'}
         <img
           id="burger-menu"
           data-testid="header-burger-menu"
@@ -685,8 +719,11 @@
           {
             () =>
             {
-              widgetState.add('MobileNavToggleMenuActive');
-              widgetState = widgetState;
+              scoresNavbarStore.updateData
+              (
+                'globalStateAdd',
+                'MobileNavToggleMenuActive'
+              );
               return;
             }
           }
@@ -698,47 +735,61 @@
       │ > Brand Logo :|: 📱 MOBILE 💻 TABLET 🖥️ LAPTOP
       ╰─────
       -->
-      <div
-        id="brand"
-        data-testid="header-brand-img"
-        aria-label="brand-img"
-        class=
-        "
-        cursor-pointer
-        "
-        on:click=
-        {
-          () =>
-          {
-            if ($page.url.pathname == '/')
-              window.location.reload();
-            return;
-          }
-        }
-      >
-        <a
-          href={homepageURL}
-          title={logoLink}
+      {#if VIEWPORT_MOBILE_INIT[1] && currentPageRouteId == 'AuthorsPage'}
+        <div
+          id='authorsBackBtn'
         >
           <img
-            loading="lazy"
-            src=
-            {
-              currentPageRouteId != 'AuthorsPage'
-                ? VIEWPORT_MOBILE_INIT[1]
-                  ? dynamicAssetMap.get('logo_mini')
-                  : dynamicAssetMap.get('logo_full')
-                : theme == 'Dark'
-                  ? dynamicAssetMap.get('logoAuthorDark')
-                  : dynamicAssetMap.get('logoAuthor')
-            }
-            alt="betarena_logo"
-            width={VIEWPORT_MOBILE_INIT[1] ? 103 : 142}
-            height=30
-            class:m-r-40={!VIEWPORT_MOBILE_INIT[1]}
+            id=''
+            src={theme == 'Dark' ? dynamicAssetMap.get('iconArrowLeftDark') : dynamicAssetMap.get('iconArrowLeftLight')}
+            alt='authorsBackBtn'
+            title='authorsBackBtn'
+            loading='lazy'
           />
-        </a>
-      </div>
+        </div>
+      {:else}
+        <div
+          id="brand"
+          data-testid="header-brand-img"
+          aria-label="brand-img"
+          class=
+          "
+          cursor-pointer
+          "
+          on:click=
+          {
+            () =>
+            {
+              if ($page.url.pathname == '/')
+                window.location.reload();
+              return;
+            }
+          }
+        >
+          <a
+            href={homepageURL}
+            title={logoLink}
+          >
+            <img
+              loading="lazy"
+              src=
+              {
+                currentPageRouteId != 'AuthorsPage'
+                  ? VIEWPORT_MOBILE_INIT[1]
+                    ? dynamicAssetMap.get('logo_mini')
+                    : dynamicAssetMap.get('logo_full')
+                  : theme == 'Dark'
+                    ? dynamicAssetMap.get('logoAuthorDark')
+                    : dynamicAssetMap.get('logoAuthor')
+              }
+              alt="betarena_logo"
+              width={VIEWPORT_MOBILE_INIT[1] ? 103 : 142}
+              height=30
+              class:m-r-40={!VIEWPORT_MOBILE_INIT[1]}
+            />
+          </a>
+        </div>
+      {/if}
 
       <!--
       ╭─────
@@ -839,19 +890,6 @@
               selected-language-btn
               row-space-start
               "
-              class:active-lang-select={widgetState.has('CurrencyDropdownActive')}
-              on:click=
-              {
-                () =>
-                {
-                  if (widgetState.has('CurrencyDropdownActive'))
-                    widgetState.delete('CurrencyDropdownActive');
-                  else
-                    widgetState.add('CurrencyDropdownActive');
-                  widgetState = widgetState;
-                  return;
-                }
-              }
             >
               <!--
               ╭─────
@@ -907,17 +945,17 @@
         │ > [child.component] Language Selection
         ╰─────
         -->
-        <HeaderCLang
-          dropDownArea={widgetState.has('CurrencyDropdownActive') || widgetState.has('OddsDropdownActive')}
-          on:closeDropdown=
-          {
-            () =>
-            {
-              return;
-            }
-          }
-        />
+        <HeaderCLang />
 
+      {/if}
+
+      <!--
+      ╭─────
+      │ > [child.component] Language Selection
+      ╰─────
+      -->
+      {#if VIEWPORT_MOBILE_INIT[1] && currentPageRouteId == 'AuthorsPage'}
+        <HeaderCLang />
       {/if}
 
       <!--
@@ -934,7 +972,7 @@
       │ > Sign-In (button)
       ╰─────
       -->
-      {#if deepReactListenUser == undefined}
+      {#if globalState.has('NotAuthenticated')}
 
         <button
           id="{CNAME}/sign-in-btn"
@@ -942,6 +980,7 @@
           class=
           "
           btn-hollow
+            v6
           cursor-pointer
           "
           class:v5d={currentPageRouteId == 'AuthorsPage'}
@@ -1026,11 +1065,11 @@
             {
               () =>
               {
-                if (widgetState.has('UserDropdownActive'))
-                  widgetState.delete('UserDropdownActive');
-                else
-                  widgetState.add('UserDropdownActive');
-                widgetState = widgetState;
+                scoresNavbarStore.updateData
+                (
+                  'globalStateAdd',
+                  'UserDropdownActive'
+                );
                 return;
               }
             }
@@ -1047,7 +1086,7 @@
           │ > Profile Dropdown
           ╰─────
           -->
-          {#if widgetState.has('UserDropdownActive')}
+          {#if globalStateNavbar.has('UserDropdownActive')}
 
             <div
               id="user-profile-dropdown"
@@ -1072,8 +1111,7 @@
                   {
                     () =>
                     {
-                      widgetState.delete('UserDropdownActive');
-                      widgetState = widgetState;
+                      scoresNavbarStore.closeAllDropdowns();
                       return;
                     }
                   }
@@ -1270,7 +1308,7 @@
         │ > Betarena Token
         ╰─────
         -->
-        {#if deepReactListenUser != undefined}
+        {#if user != undefined}
 
           <a
             href="/u/transaction-history/{$userBetarenaSettings.lang}"
@@ -1367,7 +1405,7 @@
   │ > Navbar Slide :|: 📱 MOBILE + 💻 TABLET
   ╰─────
   -->
-  {#if (VIEWPORT_TABLET_INIT[1] || VIEWPORT_MOBILE_INIT[1]) && widgetState.has('MobileNavToggleMenuActive')}
+  {#if (VIEWPORT_TABLET_INIT[1] || VIEWPORT_MOBILE_INIT[1]) && globalStateNavbar.has('MobileNavToggleMenuActive')}
 
     <nav
       data-testid="header-side-menu"
@@ -1380,14 +1418,15 @@
       │ > Header (INNER) close dropdown area
       ╰─────
       -->
-      {#if widgetState.has('UserDropdownActive')}
+      {#if globalStateNavbar.has('UserDropdownActive')}
         <div
           id="background-area-close"
           on:click=
           {
             () =>
             {
-              return closeAllDropdowns()
+              scoresNavbarStore.closeAllDropdowns();
+              return;
             }
           }
         />
@@ -1423,8 +1462,7 @@
             {
               () =>
               {
-                widgetState.delete('MobileNavToggleMenuActive')
-                widgetState = widgetState;
+                scoresNavbarStore.closeAllDropdowns();
                 return;
               }
             }
@@ -1468,19 +1506,7 @@
                 selected-language-btn
                 row-space-start
                 "
-                class:active-lang-select={widgetState.has('CurrencyDropdownActive')}
-                on:click=
-                {
-                  () =>
-                  {
-                    if (widgetState.has('CurrencyDropdownActive'))
-                      widgetState.delete('CurrencyDropdownActive');
-                    else
-                      widgetState.add('CurrencyDropdownActive');
-                    widgetState = widgetState;
-                    return;
-                  }
-                }
+                class:active-lang-select={globalStateNavbar.has('CurrencyDropdownActive')}
               >
 
                 <!--
@@ -1539,16 +1565,7 @@
             │ > Language Selection
             ╰─────
             -->
-            <HeaderCLang
-              dropDownArea={widgetState.has('CurrencyDropdownActive') || widgetState.has('OddsDropdownActive')}
-              on:closeDropdown=
-              {
-                () =>
-                {
-                  return;
-                }
-              }
-            />
+            <HeaderCLang />
 
             <!--
             ╭─────
@@ -1671,8 +1688,7 @@
       z-index: unset;
     }
 
-    div#header\/top,
-    div#header\/bottom
+    @mixin headerBox
     {
       /* 📌 position */
       position: absolute;
@@ -1689,6 +1705,102 @@
       /* 🎨 style */
       padding: 23px 16px;
       height: 64px !important;
+      @include headerBox;
+
+      #burger-menu
+      {
+        margin-right: 16.15px;
+      }
+
+      div#authorsBackBtn
+      {
+        /* 🎨 style */
+        border-radius: 50%;
+        background-color: #E6E6E6CC;
+        width: 32px;
+        height: 32px;
+        position: relative;
+
+        img
+        {
+          /* 📌 position */
+          position: absolute;
+          margin: auto;
+          top: 0;
+          bottom: 0;
+          right: 0;
+          left: 0;
+        }
+      }
+
+      div#user-profile-box
+      {
+        /* 📌 position */
+        position: relative;
+        /* 🎨 style */
+        width: auto;
+
+        div#user-profile-dropdown
+        {
+          /* 📌 position */
+          position: absolute;
+          top: 100%;
+          right: 0;
+          left: unset;
+          z-index: 2000;
+          /* 🎨 style */
+          margin-top: 5px;
+          background: #292929;
+          box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
+          border-radius: 4px;
+          overflow: hidden;
+          width: 168px;
+
+          div.theme-opt-box
+          {
+            padding: 9.5px 16px;
+            box-shadow: inset 0px -1px 0px #3c3c3c;
+            background: #4b4b4b;
+            height: 40px;
+
+            &:hover p
+            {
+              color: #f5620f !important;
+            }
+          }
+        }
+
+        img#user-profile-picture
+        {
+          /* 🎨 style */
+          border-radius: 50%;
+        }
+
+        p#wallet-text
+        {
+          margin-right: 14px;
+        }
+      }
+
+      div#navBox
+      {
+        /* 🎨 style */
+        position: relative;
+
+        div#nav-triangle
+        {
+          /* 📌 position */
+          position: absolute;
+          bottom: -21px;
+          /* 🎨 style */
+          width: 0;
+          height: 0;
+          border-left: 12px solid transparent;
+          border-right: 12px solid transparent;
+          border-bottom: 12px solid var(--dark-theme-1);
+          transition: all 0.25s ease-out;
+        }
+      }
     }
 
     div#header\/bottom
@@ -1698,12 +1810,8 @@
       /* 🎨 style */
       padding: 10px 16px;
       height: 64px !important;
+      @include headerBox;
 
-      div#header\/bottom\/inner::-webkit-scrollbar
-      {
-        /* 🎨 style */
-        display: none;
-      }
       div#header\/bottom\/inner
       {
         /* 🎨 style */
@@ -1711,11 +1819,27 @@
         overflow-y: hidden;
         -ms-overflow-style: none;
         scrollbar-width: none;
+
+        &::-webkit-scrollbar
+        {
+          /* 🎨 style */
+          display: none;
+        }
+      }
+
+      div#balance-box
+      {
+        /* 🎨 style */
+        padding-right: 0;
+        border-left: 1px solid #4b4b4b;
+        height: 44px;
+        padding: 0 16px;
+        width: fit-content;
+        cursor: pointer;
       }
     }
 
-    div#header\/border\/top-box,
-    div#header\/border\/bottom-box
+    @mixin headerDivider
     {
       /* 📌 position */
       position: absolute;
@@ -1728,17 +1852,13 @@
     {
       /* 📌 position */
       bottom: 64px;
+      @include headerDivider;
     }
-
     div#header\/border\/bottom-box
     {
       /* 📌 position */
       bottom: 0;
-    }
-
-    #burger-menu
-    {
-      margin-right: 16.15px;
+      @include headerDivider;
     }
 
     nav
@@ -1772,88 +1892,6 @@
         max-width: 374px !important;
       }
     }
-
-    div#navBox
-    {
-      /* 🎨 style */
-      position: relative;
-    }
-    div#nav-triangle
-    {
-      /* 📌 position */
-      position: absolute;
-      bottom: -21px;
-      /* 🎨 style */
-      width: 0;
-      height: 0;
-      border-left: 12px solid transparent;
-      border-right: 12px solid transparent;
-      border-bottom: 12px solid var(--dark-theme-1);
-      transition: all 0.25s ease-out;
-    }
-
-    img#user-profile-picture
-    {
-      /* 🎨 style */
-      border-radius: 50%;
-    }
-
-    .dropdown-opt-box
-    {
-      /* 🎨 style */
-      border-left: 1px solid #4b4b4b;
-      height: 44px;
-      padding: 0 16px;
-      width: fit-content;
-      cursor: pointer;
-    }
-    div#balance-box.dropdown-opt-box
-    {
-      /* 🎨 style */
-      padding-right: 0;
-    }
-
-    div#user-profile-box
-    {
-      /* 📌 position */
-      position: relative;
-      /* 🎨 style */
-      width: auto;
-
-      div#user-profile-dropdown
-      {
-        /* 📌 position */
-        position: absolute;
-        top: 100%;
-        right: 0;
-        left: unset;
-        z-index: 2000;
-        /* 🎨 style */
-        margin-top: 5px;
-        background: #292929;
-        box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
-        border-radius: 4px;
-        overflow: hidden;
-        width: 168px;
-
-        div.theme-opt-box
-        {
-          padding: 9.5px 16px;
-          box-shadow: inset 0px -1px 0px #3c3c3c;
-          background: #4b4b4b;
-          height: 40px;
-        }
-        div.theme-opt-box:hover p
-        {
-          color: #f5620f;
-        }
-      }
-
-      p#wallet-text
-      {
-        margin-right: 14px;
-      }
-    }
   }
 
 	/*
@@ -1880,56 +1918,42 @@
       {
         /* 🎨 style */
         padding: 23px 34px;
+
+        #burger-menu
+        {
+          /* 🎨 style */
+          margin-right: 24px;
+        }
       }
+
       div#header\/bottom
       {
         /* 🎨 style */
         padding: 6px 34px;
-      }
-
-      #burger-menu
-      {
-        /* 🎨 style */
-        margin-right: 24px;
       }
 		}
 	}
 
 	@media screen
   and (min-width: 1024px)
+  { }
+
+  /*
+  ╭──────────────────────────────────────────────────────────────────────────────╮
+  │ 🌒 DARK-THEME                                                                │
+  ╰──────────────────────────────────────────────────────────────────────────────╯
+  */
+
+  header.dark-mode
   {
-		#odds-box
+    div#header\/top
     {
-			position: relative;
-
-      #odds-type-dropdown-menu
+      div#authorsBackBtn
       {
-        position: absolute;
-        top: 100%;
-        left: 0%;
-        margin-top: 5px;
-        background: #292929;
-        box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
-        border-radius: 4px;
-        overflow: hidden;
-        z-index: 2000;
-        /* height: 80px; */
-        width: 168px;
-
-        .theme-opt-box
-        {
-          padding: 9.5px 16px;
-          box-shadow: inset 0px -1px 0px #3c3c3c;
-          background: #4b4b4b;
-          height: 40px;
-
-          &:hover	p
-          {
-            color: #f5620f;
-          }
-        }
+        /* 🎨 style */
+        background-color: #4B4B4BCC;
       }
     }
-	}
+  }
 
 </style>

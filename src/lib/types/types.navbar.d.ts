@@ -7,30 +7,28 @@
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
 // │ 📝 Description                                                                   │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
-// │ Main Scores Platform Section Types                                               │
+// │ Main Scores Platform Navbar Types                                                │
 // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-// #region ➤ 📦 Package Imports
-
-
-// #endregion ➤ 📦 Package Imports
+type INavbarState =
+  | 'MobileNavToggleMenuActive'
+  | 'CurrencyDropdownActive'
+  | 'OddsDropdownActive'
+  | 'UserDropdownActive'
+  | 'UpdateZIndex'
+  | 'LangDropdownActive'
+  | 'BackdropActive'
+;
 
 /**
- * @author
- *  @migbash
- * @summary
- *  🔹 INTERFACE
  * @description
- *  📣 Interface for `localStorage` data.
+ *  📣 Scores Platfrom | Navbar State Interface.
  */
-export type PROFILE_OPT =
-  | 'Dashboard'
-  | 'Account Settings'
-  | 'Investor'
-  | 'Deposit'
-  | 'Withdraw'
-  | 'Transaction History'
-  | 'Competitions History'
-  | 'Scores'
-  | 'Author'
-;
+interface INavbarWidget
+{
+  /**
+   * @description
+   *  📣 Target **global** `store` state containing multiple **store** states.
+   */
+  globalState: Set < INavbarState >;
+}

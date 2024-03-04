@@ -82,6 +82,11 @@ plugins:
 rules:
 
   # ▓ NOTE:
+  # ▓ > (👇) for svelte/sveltekit project only!
+  'svelte/valid-compile': 0
+  'svelte/no-at-html-tags': 0
+
+  # ▓ NOTE:
   # ▓ > has been depreceted.
   # "valid-jsdoc": [..]
   no-unexpected-multiline: 0
@@ -94,11 +99,6 @@ rules:
   "@typescript-eslint/no-inferrable-types": 0
   "@typescript-eslint/prefer-for-of": error
   "@typescript-eslint/no-non-null-asserted-nullish-coalescing": error
-
-  # ▓ NOTE:
-  # ▓ > (👇) for svelte/sveltekit project only!
-  'svelte/valid-compile': 0
-  'svelte/no-at-html-tags': 0
 
   no-console:
     - error

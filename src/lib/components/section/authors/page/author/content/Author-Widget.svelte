@@ -160,7 +160,7 @@
 -->
 
 <SeoBox>
-  {@html widgetDataMain.data?.content}
+  {@html widgetDataMain?.data?.content}
 </SeoBox>
 
 <!-- [🐞] -->

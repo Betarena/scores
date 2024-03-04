@@ -29,7 +29,7 @@ import { dlog } from './debug.js';
 import { checkNull } from './platform-functions.js';
 import { gotoSW } from './sveltekitWrapper.js';
 
-import type { IPageRouteId } from '$lib/types/types.scores.js';
+import type { IPageRouteId } from '$lib/types/types.session.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -42,13 +42,10 @@ import type { IPageRouteId } from '$lib/types/types.scores.js';
  *  📣 Initialize an **authenticated** `user`.
  *  - ⚡️ Sets `user` privilige cookie.
  *  - ⚡️ Sets `user` data listeners.
- * @param { string } uid
- *  💠 **[required]** Target user `uid`.
  * @return { Promise < void > }
  */
 export async function initUser
 (
-  uid: string
 ): Promise < void >
 {
   // [🐞]
@@ -58,12 +55,14 @@ export async function initUser
     true
   );
 
-  const username = 'true';
+  const
+    uid = userBetarenaSettings.extract('uid')
+  ;
 
   setCookie
   (
     'betarenaCookieLoggedIn',
-    username,
+    'true',
     30
   );
 

@@ -11,30 +11,61 @@
 
 interface Window
 {
-  /** @description `window` | `document` global Google Analytics Methods access. */
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+  /**
+   * @description
+   *  📣 `window` | `document` global Google Analytics Methods access.
+   */ // eslint-disable-next-line @typescript-eslint/no-explicit-any
 	gtag: any;
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-  /** @description `window` | `document` global Ethereum (MetaMask) Methods access. */
+  /**
+   * @description
+   *  📣 `window` | `document` global Ethereum (MetaMask) Methods access.
+   */ // eslint-disable-next-line @typescript-eslint/no-explicit-any
 	ethereum: any;
-  /** @description `window` | `document` global Intercom Properties access. */
+  /**
+   * @description
+   *  📣 `window` | `document` global Intercom Properties access.
+   */
   intercomSettings:
   {
-    /** @description client/user api-base */
+    /**
+     * @description
+     *  📣 client/user api-base
+     */
     api_base: string;
-    /** @description intercom `app-id` */
+    /**
+     * @description
+     *  📣 intercom `app-id`
+     */
     app_id: string;
-    /** @description client/user full name */
+    /**
+     * @description
+     *  📣 client/user full name
+     */
     name?: string | undefined;
-    /** @description client/user email */
+    /**
+     * @description
+     *  📣 client/user email
+     */
     email?: stirng | undefined;
-    /** @description client/user created at date */
+    /**
+     * @description
+     *  📣 client/user created at date
+     */
     created_at?: string | undefined;
-    /** @description client/user `UID` */
+    /**
+     * @description
+     *  📣 client/user `UID`
+     */
     uid?: string;
-    /** @description client/user platform language */
+    /**
+     * @description
+     *  📣 client/user platform language
+     */
     lang?: string;
-    /** @description client/user platform language */
+    /**
+     * @description
+     *  📣 client/user platform language
+     */
     competition_number?: number;
   };
 }

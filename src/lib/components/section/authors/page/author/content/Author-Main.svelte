@@ -42,15 +42,20 @@
   import { onMount } from 'svelte';
 
   import iconArrowLeftDark from './assets/icon-arrow-left-dark.svg';
+  import iconArrowLeftLight from './assets/icon-arrow-left-light.svg';
   import iconArrowRightDark from './assets/icon-arrow-right-dark.svg';
+  import iconArrowRightLight from './assets/icon-arrow-right-light.svg';
   import icon_location_dark from './assets/icon-location-dark.svg';
   import icon_location from './assets/icon-location.svg';
 
+  import sessionStore from '$lib/store/session.js';
   import userBetarenaSettings from '$lib/store/user-settings.js';
   import { monthNames } from '$lib/utils/dates.js';
+  import { viewportChangeV2 } from '$lib/utils/platform-functions.js';
 
   import TranslationText from '$lib/components/misc/Translation-Text.svelte';
 
+  import type { B_SAP_D2 } from '@betarena/scores-lib/types/seo-pages.js';
   import type { IArticleData, IArticleTranslation } from '@betarena/scores-lib/types/types.authors.articles.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -128,11 +133,31 @@
      * @description
      *  📣 **Local** component state
      */
-    componentLocalState = new Set < IWidgetState >();
+    componentLocalState = new Set < IWidgetState >(),
+    /**
+     * @description
+     *  📣 Logic for calculating `published days ago`.
+    */
+    publishDateAgo = () =>
+    {
+      const
+        differenceInDays = Math.ceil(((new Date().getTime() - new Date(widgetData.published_date).getTime()) / 1000) / ( 3600 * 24 ));
+      ;
+      return differenceInDays;
+    }
   ;
 
   $: ({ theme } = { ...$userBetarenaSettings });
+  $: ({ windowWidth } = $sessionStore);
+  $: [ VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1] ]
+    = viewportChangeV2
+    (
+      windowWidth,
+      VIEWPORT_MOBILE_INIT[0],
+      VIEWPORT_TABLET_INIT[0],
+    );
   $: widgetDataTranslation = $page.data.translationArticle as IArticleTranslation | null | undefined;
+  $: monthTranslation = $page.data.monthTranslations as B_SAP_D2 | null | undefined;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -155,7 +180,7 @@
    *  🟦 HELPER
    * @description
    *  📣 Scrolls `tags` in a target `direction`.
-   * @param { -1 | 1 } direction
+   * @param { -1 | 1 | 0 } direction
    *  💠 **[required]** Target `direction` to _scroll_.
    * @return { void }
    */
@@ -165,9 +190,9 @@
   ): void
   {
     if (direction == -1)
-      htmlElementScrollBox.scrollBy(100, 0);
+      htmlElementScrollBox.scrollBy({ behavior: 'smooth', left: 250, top: 0 });
     else if (direction == 1)
-      htmlElementScrollBox.scrollBy(-100, 0);
+      htmlElementScrollBox.scrollBy({ behavior: 'smooth', left: -250, top: 0 });
     ;
 
     // [🐞]
@@ -190,6 +215,45 @@
     componentLocalState = componentLocalState;
 
     return;
+  }
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟦 HELPER
+   * @description
+   *  📣 Calcualte target `text` _reading time_, based on `character` amount.
+   * @param { string } text
+   *  💠 **[required]** Target `direction` to _scroll_.
+   * @return { void }
+   */
+  function readingTime
+  (
+    text: string | null | undefined
+  ): number
+  {
+    if (text == null) return 0;
+
+    const
+      /**
+       * @description
+       *  📣 Hardcoded value for `words per minute`.
+       */
+      wpm = 225,
+      /**
+       * @description
+       *  📣 Calulate number of `words` in target `text`.
+      */
+      words = text.trim().split(/\s+/).length,
+      /**
+       * @description
+       *  📣 Calcualted value for `reading time`.
+      */
+      time = Math.ceil(words / wpm)
+    ;
+
+    return time;
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -247,7 +311,7 @@
   <h1
     class=
     "
-    s-38
+    {!VIEWPORT_MOBILE_INIT[1] ? 's-38' : 's-24'}
     w-500
     m-b-32
     color-black-2
@@ -255,7 +319,7 @@
     "
     style=
     "
-    line-height: 54px;
+    {!VIEWPORT_MOBILE_INIT[1] ? 'line-height: 54px;' : 'line-height: 36px;'}
     "
   >
     {widgetData.data?.title ?? ''}
@@ -296,7 +360,7 @@
       >
         <img
           id=''
-          src={iconArrowLeftDark}
+          src={theme == 'Dark' ? iconArrowLeftDark : iconArrowLeftLight}
           alt=''
           title=''
           loading='lazy'
@@ -322,8 +386,8 @@
       }
     >
       <!-- [🐞] -->
-      <!-- {#each [...widgetData.tags, ...widgetData.tags, ...widgetData.tags] as item} -->
-      {#each [...(widgetData.tags ?? [])] as item}
+      {#each [...widgetData.tags, ...widgetData.tags, ...widgetData.tags] as item}
+      <!-- {#each [...(widgetData.tags ?? [])] as item} -->
         <div
           class=
           "
@@ -368,7 +432,7 @@
       >
         <img
           id=''
-          src={iconArrowRightDark}
+          src={theme == 'Dark' ? iconArrowRightDark : iconArrowRightLight}
           alt=''
           title=''
           loading='lazy'
@@ -411,6 +475,10 @@
       effect
       "
       class:animate={executeAnimation}
+      style=
+      "
+      {VIEWPORT_MOBILE_INIT[1] ? 'width: 34px;' : ''}
+      "
     />
 
     <!--
@@ -464,8 +532,8 @@
           "
           style=
           "
-          width: 16px;
-          height: 16px;
+          max-width: 16px;
+          max-height: 16px;
           "
         >
           {#each widgetData.authors__authors__id__nested?.data?.badges ?? [] as item}
@@ -481,39 +549,41 @@
 
         <!--
         ╭─────
-        │ > article author last active
+        │ > article (1) read time + (2) published days 💻 TABLET [+]
         ╰─────
         -->
-        <p
-          class=
-          "
-          s-12
-          color-black-3
-            dark-v1
-          "
-        >
-          11
-          <TranslationText
-            key={'uknown'}
-            text={widgetDataTranslation?.translation?.reading_time}
-            fallback={'mins'}
-          />
-          <span
+        {#if !VIEWPORT_MOBILE_INIT[1]}
+          <p
             class=
             "
-            m-r-5
-            m-l-5
+            s-12
+            color-black-3
+              dark-v1
             "
           >
-           •
-          </span>
-          2
-          <TranslationText
-            key={'uknown'}
-            text={widgetDataTranslation?.translation?.published_date_days}
-            fallback={'days'}
-          />
-        </p>
+            {readingTime(widgetData.data?.content)}
+            <TranslationText
+              key={'uknown'}
+              text={widgetDataTranslation?.translation?.reading_time}
+              fallback={'mins'}
+            />
+            <span
+              class=
+              "
+              m-r-5
+              m-l-5
+              "
+            >
+            •
+            </span>
+            {publishDateAgo()}
+            <TranslationText
+              key={'uknown'}
+              text={widgetDataTranslation?.translation?.published_date_days}
+              fallback={'days'}
+            />
+          </p>
+        {/if}
 
       </div>
 
@@ -543,7 +613,7 @@
           m-r-12
           "
         >
-          {monthNames[new Date(widgetData.authors__authors__id__nested?.data?.creation_date ?? '').getMonth()]}
+          {monthTranslation?.months?.[monthNames[new Date(widgetData.authors__authors__id__nested?.data?.creation_date ?? '').getMonth()]]}
           {new Date(widgetData.authors__authors__id__nested?.data?.creation_date ?? '').getDate()},
           {new Date(widgetData.authors__authors__id__nested?.data?.creation_date ?? '').getFullYear()}
         </p>
@@ -588,17 +658,100 @@
       │ > article author description / about
       ╰─────
       -->
-      <p
-        class=
-        "
-        s-12
-        color-black-3
-          dark-v1
-        m-t-12
-        "
-      >
-        {widgetData.authors__authors__id__nested?.data?.about ?? ''}
-      </p>
+      {#if VIEWPORT_TABLET_INIT[1]}
+        <p
+          class=
+          "
+          s-12
+          color-black-3
+            dark-v1
+          m-t-12
+          "
+        >
+          {widgetData.authors__authors__id__nested?.data?.about ?? ''}
+        </p>
+      {/if}
+
+      <!--
+      ╭─────
+      │ > [1] article (1) read time + (2) published days 💻 TABLET [+]
+      │ > [2] article author location
+      ╰─────
+      -->
+      {#if VIEWPORT_MOBILE_INIT[1]}
+        <div
+          class=
+          "
+          row-space-start
+          m-t-10
+          "
+        >
+
+          <div
+            class=
+            "
+            row-space-start
+            "
+          >
+            <img
+              id=''
+              src={theme == 'Dark' ? icon_location_dark : icon_location}
+              alt={theme == 'Dark' ? icon_location_dark : icon_location}
+              title={theme == 'Dark' ? icon_location_dark : icon_location}
+              loading='lazy'
+              class=
+              "
+              m-r-5
+              "
+            />
+            <p
+              class=
+              "
+              s-12
+              color-black-3
+                dark-v1
+              "
+            >
+              {widgetData.authors__authors__id__nested?.data?.location ?? ''}
+            </p>
+          </div>
+
+          <p
+            class=
+            "
+            s-12
+            color-black-3
+              dark-v1
+            no-wrap
+            m-l-16
+            "
+          >
+            {readingTime(widgetData.data?.content)}
+            <TranslationText
+              key={'uknown'}
+              text={widgetDataTranslation?.translation?.reading_time}
+              fallback={'mins'}
+            />
+            <span
+              class=
+              "
+              m-r-5
+              m-l-5
+              "
+            >
+            •
+            </span>
+            {publishDateAgo()}
+            <TranslationText
+              key={'uknown'}
+              text={widgetDataTranslation?.translation?.published_date_days}
+              fallback={'days'}
+            />
+          </p>
+
+        </div>
+      {/if}
+
     </div>
 
   </div>
@@ -666,14 +819,14 @@
         overflow-y: hidden;
         display: flex;
         gap: 10px;
+        /* Hide scrollbar for IE, Edge and Firefox */
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
 
         &::-webkit-scrollbar
         {
           /* Hide scrollbar for Chrome, Safari and Opera */
           display: none;
-          /* Hide scrollbar for IE, Edge and Firefox */
-          -ms-overflow-style: none; /* IE and Edge */
-          scrollbar-width: none; /* Firefox */
         }
 
         div.tag-pill
@@ -717,7 +870,7 @@
         {
           /* 🎨 style */
           left: -1px;
-          background: linear-gradient(90deg, #292929 25.69%, rgba(41, 41, 41, 0) 100%);
+          background: linear-gradient(90deg, #FFFFFF 25.69%, rgba(255, 255, 255, 0) 100%);
 
           img
           {
@@ -731,7 +884,7 @@
           /* 🎨 style */
           right: -1px;
           text-align: right;
-          background: linear-gradient(270deg, #292929 25.69%, rgba(41, 41, 41, 0) 100%);
+          background: linear-gradient(270deg, #FFFFFF 25.69%, rgba(255, 255, 255, 0) 100%);
 
           img
           {
@@ -755,9 +908,11 @@
     img#preview-banner
     {
       /* 🎨 style */
-      width: 100%;
       max-height: 352px;
       object-fit: cover;
+      margin-left: -16px;
+      margin-right: -16px;
+      width: -webkit-fill-available;
     }
 
     img#user-avatar
@@ -857,6 +1012,14 @@
   {
     div#author⮕w⮕author-content⮕main
     {
+      img#preview-banner
+      {
+        /* 🎨 style */
+        margin-left: 0;
+        margin-right: 0;
+        width: -webkit-fill-available;
+      }
+
       div#content
       {
         // ▓ IMPORTANT
@@ -971,11 +1134,25 @@
             background-color: var(--dark-theme-1);
           }
         }
+
+        div.tagScrollButton
+        {
+          &#tagScrollPrev
+          {
+            /* 🎨 style */
+            background: linear-gradient(90deg, #292929 25.69%, rgba(41, 41, 41, 0) 100%);
+          }
+
+          &#tagScrollNext
+          {
+            background: linear-gradient(270deg, #292929 25.69%, rgba(41, 41, 41, 0) 100%);
+          }
+        }
       }
 
       div#content
       {
-        // ▓ IMPORTANT
+        // IMPORTANT
         :global
         {
           *

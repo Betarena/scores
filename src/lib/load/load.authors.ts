@@ -18,6 +18,7 @@ import { promiseUrlsPreload } from '$lib/utils/platform-functions.js';
 
 import { dlogv2 } from '$lib/utils/debug.js';
 
+import type { B_SAP_D2 } from '@betarena/scores-lib/types/seo-pages.js';
 import type { IArticleData, IArticleTranslation } from '@betarena/scores-lib/types/types.authors.articles.js';
 
 // #endregion ➤ 📦 Package Imports
@@ -33,7 +34,8 @@ import type { IArticleData, IArticleTranslation } from '@betarena/scores-lib/typ
 type PreloadPromise0 =
 [
   IArticleData | undefined,
-  IArticleTranslation | undefined
+  IArticleTranslation | undefined,
+  B_SAP_D2 | undefined
 ];
 
 /**
@@ -79,7 +81,8 @@ export async function main
 
   [
     response.dataArticle,
-    response.translationArticle
+    response.translationArticle,
+    response.monthTranslations,
   ] = await fetchData
   (
     event.fetch,
@@ -132,7 +135,8 @@ async function fetchData
     urls0
       = [
         `/api/data/author?permalink=${_permalink}`,
-        `/api/data/author?lang=${_lang}`
+        `/api/data/author?lang=${_lang}`,
+        `/api/data/main/seo-pages?months=true&lang=${_lang}&decompress`,
       ],
     /**
      * @description

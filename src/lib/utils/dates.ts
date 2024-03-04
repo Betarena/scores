@@ -1,79 +1,78 @@
-import { dlog } from './debug.js';
 
 export const MONTH_NAMES_ABBRV: string[]
 = [
-  'Jan'
-  ,'Feb'
-  ,'Mar'
-  ,'Apr'
-  ,'May'
-  ,'Jun'
-  ,'Jul'
-  ,'Aug'
-  ,'Sep'
-  ,'Oct'
-  ,'Nov'
-  ,'Dec'
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec'
 ];
 
 export const WEEK_DAYS_ABBRV: string[]
 = [
-  'Sun'
-  ,'Mon'
-  ,'Tue'
-  ,'Wed'
-  ,'Thu'
-  ,'Fri'
-  ,'Sat'
+  'Sun',
+  'Mon',
+  'Tue',
+  'Wed',
+  'Thu',
+  'Fri',
+  'Sat'
 ];
 
 export const WEEK_DAYS_ABBRV_1: string[]
 = [
-  'Sun'
-  ,'Mon'
-  ,'Tue'
-  ,'Wed'
-  ,'Thur'
-  ,'Fri'
-  ,'Sat'
+  'Sun',
+  'Mon',
+  'Tue',
+  'Wed',
+  'Thur',
+  'Fri',
+  'Sat'
 ];
 
 export const WEEK_DAYS_ABBRV_2: string[]
 = [
-  'Mon'
-  ,'Tue'
-  ,'Wed'
-  ,'Thur'
-  ,'Fri'
-  ,'Sat'
-  ,'Sun'
+  'Mon',
+  'Tue',
+  'Wed',
+  'Thur',
+  'Fri',
+  'Sat',
+  'Sun'
 ];
 
 export const monthNames: string[]
 = [
-  'January'
-  ,'February'
-  ,'March'
-  ,'April'
-  ,'May'
-  ,'June'
-  ,'July'
-  ,'August'
-  ,'September'
-  ,'October'
-  ,'November'
-  ,'December'
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December'
 ];
 
 export const weekDays: string[]
 = [
-  'sunday'
-  ,'monday'
-  ,'tuesday'
-  ,'wednesday'
-  ,'thursday'
-  ,'friday'
-  ,'saturday'
+  'sunday',
+  'monday',
+  'tuesday',
+  'wednesday',
+  'thursday',
+  'friday',
+  'saturday'
 ];
 
 /**
@@ -126,11 +125,11 @@ export function clientTimezoneDate
   // date.setTime( date.getTime() - new Date().getTimezoneOffset()*60*1000 );
 
   // [🐞]
-  dlog
-  (
-    `🔹 [var] ➤ date ${date}`,
-    true
-  );
+  // dlog
+  // (
+  //   `🔹 [var] ➤ date ${date}`,
+  //   true
+  // );
 
   return date;
 }
@@ -221,9 +220,9 @@ export function toISOMod
   // NOTE:WARNING: when converting a T00:00:00Z string to BRAZIL new Date()
   if (adjustClientTZ)
   {
-    const year: number = date.getFullYear()
-      ,month: string = toZeroPrefixDateStr(date.getMonth() + 1)
-      ,day: string = toZeroPrefixDateStr(date.getDate());
+    const year: number = date.getFullYear(),
+      month: string = toZeroPrefixDateStr(date.getMonth() + 1),
+      day: string = toZeroPrefixDateStr(date.getDate());
     formattedDate = `${year}-${month}-${day}`;
   }
 
@@ -404,8 +403,8 @@ export function daysDiffNum
   date2: Date
 ): number
 {
-  const _timeDiff: number = date2.getTime() - date1.getTime()
-    ,dateDiff: number = (_timeDiff / (1000 * 3600 * 24));
+  const _timeDiff: number = date2.getTime() - date1.getTime(),
+    dateDiff: number = (_timeDiff / (1000 * 3600 * 24));
   return dateDiff < 0 ? -dateDiff : dateDiff;
 }
 

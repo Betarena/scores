@@ -11,7 +11,7 @@ import { getUserLocation, getUserLocationFromIP } from '$lib/geo-js/init.js';
 import sessionStore from '$lib/store/session.js';
 import userBetarenaSettings from '$lib/store/user-settings.js';
 import LZString from 'lz-string';
-import { PAGE_INVALID_MSG, dlog, dlogv2 } from './debug';
+import { PAGE_INVALID_MSG, dlog, dlogv2 } from './debug.js';
 import { removeDiacritics } from './languages.js';
 
 import type { GeoJsResponse } from '$lib/types/types.geojs.js';
@@ -999,13 +999,17 @@ export function generateUrlCompetitions
 ): string
 {
   // ### [🐞]
-  dlog
+  dlogv2
   (
-    `🔹 [var] ➤ translateUrlCompetitions(..) data : ${JSON.stringify(data)}`,
+    '🚏 checkpoint ➤ generateUrlCompetitions(..)',
+    [
+      `🔹 [var] ➤ lang :|: ${lang}`,
+      `🔹 [var] ➤ data :|: ${JSON.stringify(data)}`,
+    ],
     true
   );
 
-  const competitionTerm: string = removeDiacritics(data[lang]);
+  const competitionTerm = removeDiacritics(data[lang]);
 
   let newUrl: string
     = lang == 'en'
@@ -1026,7 +1030,7 @@ export function generateUrlCompetitions
     true
   );
 
-  if (checkNull(newUrl)) return '/';
+  if (checkNull(newUrl) || checkNull(competitionTerm)) return '/';
 
   return newUrl;
 }
@@ -1098,33 +1102,27 @@ export const tryCatch = (action: any): unknown =>
 }
 
 /**
+ * @author
+ *  @migbash
  * @summary
- * 🔹 HELPER
- *
+ *  🔹 HELPER
  * @description
- * 📌 Determine wether target value is `empty` / `null`
- *
- * @param
- * { any } value - Target value that requires testing.
- *
- * @returns
- * A `boolean`
+ *  📣 Determine wether target value is `empty` / `null`.
+ * @example
+ *  => checkNull(undefined) => (output) `true`.
+ *  => checkNull("hello") => (output) `false`.
+ * @param { any } value
+ *  💠 **[required]** Target value that requires testing.
+ * @return { boolean }
+ *  📤 `Boolean` representing respective identified value state.
  */
-export const checkNull = (value: any): boolean =>
+export const checkNull = (
+  value: any
+): boolean =>
 {
-  const if_M_0: boolean
-    = value == undefined
+  return value == undefined
     || value == null
   ;
-
-  // [🐞]
-  dlog
-  (
-    `🔹 [var] ➤ checkNull(..) if_M_0 ${if_M_0}`,
-    false
-  );
-
-  return if_M_0;
 }
 
 /**

@@ -18,25 +18,30 @@
 import { dlog } from '$lib/utils/debug.js';
 import { writable } from 'svelte/store';
 
-import type { BetarenaUser, IUserSetting, Voted_Fixture } from '$lib/types/types.scores.js';
-import type { InvestorData } from '@betarena/scores-lib/types/_FIREBASE_.js';
 import { setCookie } from './cookie.js';
+
+import type { BetarenaUser, IUserSetting, Voted_Fixture } from '$lib/types/types.user-settings.js';
+import type { InvestorData } from '@betarena/scores-lib/types/_FIREBASE_.js';
 
 // #endregion ➤ 📦 Package Imports
 
 // #region ➤ 📌 VARIABLES
 
 const
+  /**
+   * @description
+   *  📣 Target `data` store.
+   */
   userSettings: IUserSetting
-  = {
-    lang: 'en',
-    theme: 'Dark',
-    country_bookmaker: undefined,
-    geoJs: undefined,
-    user: undefined,
-    voted_fixtures: [],
-    userguide_id_opt_out: []
-  }
+    = {
+      lang: 'en',
+      theme: 'Dark',
+      country_bookmaker: undefined,
+      geoJs: undefined,
+      user: undefined,
+      voted_fixtures: [],
+      userguide_id_opt_out: []
+    }
 ;
 
 // #endregion ➤ 📌 VARIABLES
@@ -150,7 +155,7 @@ function createLocalStore
         ): IUserSetting =>
         {
           // [🐞]
-          console.log('localStorage.getItem(key)', localStorage.getItem(key));
+          // console.log('localStorage.getItem(key)', localStorage.getItem(key));
 
           const
             localStore = localStorage.getItem(key)
@@ -208,10 +213,9 @@ function createLocalStore
          * @summary
          *  🔹 HELPER
          * @description
-         *  📌 Updates (via toggle) `svelte-stores` and `client's` data in
-         *  `localStorage` for `userguides-op-out`.
+         *  📣 Updates `userguides-op-out` preference.
          * @param { number } id
-         *  Target **uiserguide** `id`.
+         *  💠 **[required]** Target **uiserguide** `id`.
          * @returns { void }
          */
         updateToggleUserGuideOpt:

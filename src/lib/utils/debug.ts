@@ -16,6 +16,8 @@ import { browser, dev } from '$app/environment';
 import * as Sentry from '@sentry/browser';
 import chalk from 'chalk';
 
+import { postv2 } from '$lib/api/utils.js';
+
 // #endregion ➤ 📦 Package Imports
 
 // #region ➤ 📌 VARIABLES
@@ -261,6 +263,8 @@ export function dlog
     console.debug(`%c${msg}`, style);
   ;
 
+  saveLog(msg);
+
   return;
 }
 
@@ -292,7 +296,9 @@ export function dlogv2
   closed: boolean = true,
 ): void
 {
-  let targetLog: string = undefined;
+  let
+    targetLog: string = undefined
+  ;
 
   // ╭─────
   // │ > Authentication Logs
@@ -380,6 +386,8 @@ export function dlogv2
       );
     ;
 
+    saveLog(groupName);
+
     for (const m of msgs)
     {
       let msg: unknown = m;
@@ -402,6 +410,8 @@ export function dlogv2
 
       // eslint-disable-next-line no-console
       console.debug(msg);
+
+      saveLog(msg);
     }
 
     // eslint-disable-next-line no-console
@@ -477,6 +487,31 @@ export function initSentry
         replaysOnErrorSampleRate: 1.0,
       }
     );
+}
+
+/**
+ * @author
+ *  @migbash
+ * @summary
+ *  🟦 HELPER
+ * @description
+ *  📣 Save `log` to `file`.
+ * @return { void }
+ */
+async function saveLog
+(
+  data: string
+): Promise < void >
+{
+  // if (browser && dev)
+  //   await postv2
+  //   (
+  //     '/api/misc/debug',
+  //     data
+  //   );
+  // ;
+
+  return;
 }
 
 // #endregion ➤ 🛠️ METHODS
