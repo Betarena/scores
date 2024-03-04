@@ -607,11 +607,11 @@
   ╭─────
   │ > article banner
   ╰─────
-  src={widgetData.seo_details?.twitter_card.image}
+    src="https://pbs.twimg.com/media/F5rQ5FPWkAASrF4.jpg:large"
   -->
   <img
     id='preview-banner'
-    src="https://pbs.twimg.com/media/F5rQ5FPWkAASrF4.jpg:large"
+    src={widgetData.seo_details?.twitter_card.image}
     alt={widgetData.seo_details?.twitter_card.image_alt}
     title={widgetData.data?.title}
     loading='lazy'

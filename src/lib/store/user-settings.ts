@@ -29,7 +29,7 @@ import { setCookie } from './cookie.js';
 const
   userSettings: IUserSetting
   = {
-    lang: undefined,
+    lang: 'en',
     theme: 'Dark',
     country_bookmaker: undefined,
     geoJs: undefined,
@@ -93,7 +93,9 @@ function createLocalStore
         (
         ): void =>
         {
-          let localStore: IUserSetting = methods.parseLocalStorage();
+          let
+            localStore: IUserSetting = methods.parseLocalStorage()
+          ;
 
           // ╭─────
           // │ CHECK
@@ -147,13 +149,16 @@ function createLocalStore
         (
         ): IUserSetting =>
         {
+          // [🐞]
+          console.log('localStorage.getItem(key)', localStorage.getItem(key));
+
+          const
+            localStore = localStorage.getItem(key)
+          ;
+
           return JSON.parse
           (
-            // @ts-expect-error error
-            localStorage.getItem
-            (
-              key
-            )
+            localStore ?? '{}'
           ) as IUserSetting
           ;
         },
@@ -571,11 +576,11 @@ function createLocalStore
              *  📣 Target `user` data.
              */
             data
-            = {
-              lang: localStore.lang,
-              geo: localStore.country_bookmaker,
-              user: undefined
-            }
+              = {
+                lang: localStore.lang,
+                geo: localStore.country_bookmaker,
+                user: undefined
+              }
           ;
 
           if (localStore.user)

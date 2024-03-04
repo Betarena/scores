@@ -392,7 +392,7 @@ function detectPlatformLanguage
   // console.log('urlLang', urlLang);
 
   // [🐞]
-  // console.log('cookieValue', JSON.parse(cookieValue).lang);
+  // console.log('cookieValue', cookieValue);
 
   // ╭─────
   // │ CHECK
