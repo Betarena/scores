@@ -1,3 +1,16 @@
+// ╭──────────────────────────────────────────────────────────────────────────────────╮
+// │ 📌 High Order Component Overview                                                 │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ ➤ Internal Svelte Code Format :|: V.8.0                                          │
+// │ ➤ Status :|: 🔒 LOCKED                                                           │
+// │ ➤ Author(s) :|: @migbash                                                         │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ 📝 Description                                                                   │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ > Client 'Svelte/Store'                                                          │
+// │ > Main Scores Platform Admin Session ('Ephermal') Store                          │
+// ╰──────────────────────────────────────────────────────────────────────────────────╯
+
 /* eslint-disable max-len */
 
 // #region ➤ 📦 Package Imports
@@ -12,8 +25,8 @@ import { writable } from 'svelte/store';
 const
   storeObject: IAdminControl
   = {
-    admin: false
-    , termsWithoutTranslation: new Set()
+    admin: false,
+    termsWithoutTranslation: new Set()
   }
 ;
 
@@ -33,15 +46,17 @@ function createLocalStore
     } = writable
     (
       storeObject
-    )
+    ),
     /**
      * @description
      *  📣 Complementary 'store' added methods.
      */
-    , methods
+    methods
     = {
 
       /**
+       * @author
+       *  @migbash
        * @summary
        *  - 🟥 MAIN
        *  - 🔹 HELPER
@@ -58,13 +73,13 @@ function createLocalStore
         ;
 
         if (localStore == null)
-        {
-          localStore =
-          {
-            admin: false
-            , termsWithoutTranslation: new Set()
-          }
-        }
+          localStore
+          = {
+              admin: false,
+              termsWithoutTranslation: new Set()
+            }
+          ;
+        ;
 
         methods.setLocalStorage
         (
@@ -78,9 +93,9 @@ function createLocalStore
        * @author
        *  @migbash
        * @summary
-       * - 🟥 MAIN
-       * - 🔹 HELPER
-       * - IMPORTANT
+       *  - 🟥 MAIN
+       *  - 🔹 HELPER
+       *  - IMPORTANT
        * @description
        *  📣 Retrieves target `localStorage` for target `key`.
        * @return { IAdminControl }
@@ -146,12 +161,22 @@ function createLocalStore
         (
           storeObject
         );
+
+        return;
       },
 
       /**
-       *
-       * @param newState
-       * @returns
+       * @author
+       *  @migbash
+       * @summary
+       *  - 🟥 MAIN
+       *  - 🔹 HELPER
+       *  - IMPORTANT
+       * @description
+       *  📣 Persists to `localStorage` target data for target `key`.
+       * @param { boolean } newState
+       *  💠 **[required]** New `admin` state.
+       * @return { void }
        */
       toggleAdminState:
       (
@@ -170,8 +195,17 @@ function createLocalStore
       },
 
       /**
+       * @author
+       *  @migbash
+       * @summary
+       *  - 🟥 MAIN
+       *  - 🔹 HELPER
+       *  - IMPORTANT
        * @description
-       * @param text
+       *  📣 Persists to `localStorage` target data for target `key`.
+       * @param { string } text
+       *  💠 **[required]** Target **non-translated** text.
+       * @return { void }
        */
       updateNoTextTranslations:
       (
@@ -180,16 +214,17 @@ function createLocalStore
       {
         storeObject.termsWithoutTranslation.add(text);
         set(storeObject);
+        return;
       }
 
     }
   ;
 
   return {
-    subscribe
-    , set
-    , update
-    , ...methods
+    subscribe,
+    set,
+    update,
+    ...methods
   };
 }
 

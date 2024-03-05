@@ -53,8 +53,8 @@ export async function get
     ): Promise < unknown > =>
     {
       const
-        t0: number = performance.now()
-        , res: Response
+        t0: number = performance.now(),
+        res: Response
           = await _fetch
           (
             endpoint,
@@ -67,12 +67,12 @@ export async function get
       let resJson: any = await res.json();
 
       if (!res.ok)
-      {
+      
         throw new Error
         (
           'Network response was not ok'
         );
-      }
+      
 
       // ### NOTE: | IMPORTANT
       // ### step necessary to 'decompress' lz-string encoded payload.
@@ -82,18 +82,18 @@ export async function get
       // ### [🐞]
       const t1: number = performance.now();
       if (showTime)
-      {
+      
         dlogv2
         (
           `🏹 FETCH (GET) ${endpoint}`,
           [
-            `⏱️ ${((t1 - t0) / 1000).toFixed(2)} sec`
-            , `📝 Loaded via :: ${resJson?.loadType}`
-            , resJson
+            `⏱️ ${((t1 - t0) / 1000).toFixed(2)} sec`,
+            `📝 Loaded via :: ${resJson?.loadType}`,
+            resJson
           ],
           true
         )
-      }
+      
 
       return resJson;
     }
@@ -151,31 +151,31 @@ export async function post
           (
             path
             , {
-              method: 'POST'
-              , credentials: 'include'
-              , body: JSON.stringify(data)
-              , mode: 'cors'
-              , headers:
+              method: 'POST',
+              credentials: 'include',
+              body: JSON.stringify(data),
+              mode: 'cors',
+              headers:
                 {
-                  Accept: 'application/json'
-                  ,   'Content-Type': 'application/json'
+                  Accept: 'application/json',
+                  'Content-Type': 'application/json'
                 }
             }
-          )
+          ),
         /**
          * @description
          *  📣
          */
-        , resJson: unknown = await res.json()
+        resJson: unknown = await res.json()
       ;
 
       if (!res.ok)
-      {
+      
         throw new Error
         (
           'Network response was not ok'
         );
-      }
+      
 
       return resJson;
     }
@@ -240,31 +240,31 @@ export async function postv2
           (
             path
             , {
-              method: 'POST'
-              , credentials: 'include'
-              , body: JSON.stringify(data)
-              , mode: 'cors'
-              , headers:
+              method: 'POST',
+              credentials: 'include',
+              body: JSON.stringify(data),
+              mode: 'cors',
+              headers:
                 {
-                  Accept: 'application/json'
-                  ,   'Content-Type': 'application/json'
+                  Accept: 'application/json',
+                  'Content-Type': 'application/json'
                 }
             }
-          )
+          ),
         /**
          * @description
          *  📣 Target `json` resonse from `endpoint`.
          */
-        , resJson = await res.json()
+        resJson = await res.json()
       ;
 
       if (!res.ok)
-      {
+      
         throw new Error
         (
           JSON.stringify(resJson) ?? 'network response was not ok'
         );
-      }
+      
 
       return resJson;
     }
@@ -276,8 +276,8 @@ export async function postv2
       console.error(`💀 Unhandled :: ${ex}`);
 
       return {
-        error: true
-        , errorLogs: ex
+        error: true,
+        errorLogs: ex
       };
     }
   );

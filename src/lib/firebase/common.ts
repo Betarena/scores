@@ -119,7 +119,7 @@ export async function userUpdateInvestorBalance
   ;
 
   if (opts.type == 'total')
-  {
+
     await updateDoc
     (
       userRef
@@ -127,18 +127,18 @@ export async function userUpdateInvestorBalance
         'investor_balance.grand_total': increment(opts.deltaBalance)
       }
     );
-  }
+
   else
-  {
+
     await updateDoc
     (
       userRef
       , {
-        'investor_balance.grand_total': increment(opts.deltaBalance)
-        , 'investor_balance.tge_to_claim': increment(opts.deltaBalance)
+        'investor_balance.grand_total': increment(opts.deltaBalance),
+        'investor_balance.tge_to_claim': increment(opts.deltaBalance)
       }
     );
-  }
+
 
   return;
 }
@@ -209,9 +209,9 @@ export async function userDataFetch
     db_firestore,
     'betarena_users',
     uid
-  )
+  ),
 
-    ,docSnap: DocumentSnapshot  = await getDoc
+    docSnap: DocumentSnapshot  = await getDoc
     (
       docRef
     );
@@ -249,8 +249,9 @@ export async function onceTargetPlayerIds
     path
   ) as FIRE_LNPI;
 
-  sessionStore.updateLivescorePlayerId
+  sessionStore.updateData
   (
+    'livescorePlayerId',
     firebaseData.id
   );
 }
@@ -272,9 +273,9 @@ export function targetPlayerIdsListen
   (
     db_real,
     path
-  )
+  ),
 
-    ,listenEventRef: Unsubscribe = onValue
+    listenEventRef: Unsubscribe = onValue
     (
       dbRef,
       (
@@ -282,14 +283,19 @@ export function targetPlayerIdsListen
       ): void =>
       {
         const firebaseData: FIRE_LNPI = snapshot.val();
-        sessionStore.updateLivescorePlayerId
+        sessionStore.updateData
         (
+          'livescorePlayerId',
           firebaseData.id
         );
       }
     );
 
-  sessionStore.updateFirebaseListener([listenEventRef]);
+  sessionStore.updateData
+  (
+    'firebaseListeners',
+    [listenEventRef]
+  );
 
   return listenEventRef
 }
@@ -314,8 +320,8 @@ export function createFixtureOddsPath
   fixtureTime: string
 ): string
 {
-  const year_: string = new Date(fixtureTime).getFullYear().toString()
-    ,month_: number = new Date(fixtureTime).getMonth();
+  const year_: string = new Date(fixtureTime).getFullYear().toString(),
+    month_: number = new Date(fixtureTime).getMonth();
   let new_month_ = (month_ + 1).toString();
   new_month_ = `0${new_month_}`.slice(-2);
   let day = new Date(fixtureTime).getDate().toString();
@@ -340,18 +346,18 @@ export function targetLivescoreNowFixtureOddsListen
   (
     db_real,
     path
-  )
+  ),
 
-    ,listenEventRef: Unsubscribe = onValue
+    listenEventRef: Unsubscribe = onValue
     (
       dbRef,
       (
         snapshot: DataSnapshot
       ): void =>
       {
-        const sportbookArray: FIREBASE_odds[] = []
+        const sportbookArray: FIREBASE_odds[] = [],
 
-          ,data: [string, FIREBASE_odds][]
+          data: [string, FIREBASE_odds][]
         = snapshot.exists()
           ? Object.entries(snapshot.val())
           : []
@@ -363,14 +369,19 @@ export function targetLivescoreNowFixtureOddsListen
           sportbookArray.push(sportbook[1]);
         }
 
-        sessionStore.updateLiveOdds
+        sessionStore.updateData
         (
+          'liveOdds',
           sportbookArray
         );
       }
     );
 
-  sessionStore.updateFirebaseListener([listenEventRef]);
+  sessionStore.updateData
+  (
+    'firebaseListeners',
+    [listenEventRef]
+  );
 
   return listenEventRef
 }
@@ -396,9 +407,9 @@ export function targetLivescoreNowFixtureOddsListenMulti
     (
       db_real,
       path
-    )
+    ),
 
-      ,listenEventRef: Unsubscribe = onValue
+      listenEventRef: Unsubscribe = onValue
       (
         dbRef,
         (
@@ -408,9 +419,9 @@ export function targetLivescoreNowFixtureOddsListenMulti
           const data: [string, FIREBASE_odds][]
           = snapshot.exists()
             ? Object.entries(snapshot.val())
-            : []
+            : [],
 
-            ,sportbookArray: FIREBASE_odds[] = []
+            sportbookArray: FIREBASE_odds[] = []
 
           for (const sportbook of data)
           {
@@ -418,10 +429,13 @@ export function targetLivescoreNowFixtureOddsListenMulti
             sportbookArray.push(sportbook[1]);
           }
 
-          sessionStore.updateLiveOddsMap
+          sessionStore.updateData
           (
-            parseInt(snapshot.key),
-            sportbookArray
+            'liveOddsMap',
+            [
+              parseInt(snapshot.key),
+              sportbookArray
+            ]
           );
         }
       );
@@ -432,7 +446,11 @@ export function targetLivescoreNowFixtureOddsListenMulti
     );
   }
 
-  sessionStore.updateFirebaseListener(listenEventRefsList);
+  sessionStore.updateData
+  (
+    'firebaseListeners',
+    listenEventRefsList
+  );
 
   return listenEventRefsList
 }
@@ -456,16 +474,16 @@ export async function oneOffOddsDataGet
     const firebaseData = await getTargetRealDbData
       (
         path
-      )
+      ),
 
-      ,data: [string, FIREBASE_odds][]
+      data: [string, FIREBASE_odds][]
       = firebaseData != null
         ? Object.entries(firebaseData)
-        : []
+        : [],
 
-      ,sportbookArray: FIREBASE_odds[] = []
+      sportbookArray: FIREBASE_odds[] = [],
 
-      ,fixtureId = path.split
+      fixtureId = path.split
       (
         '/'
       )
@@ -477,10 +495,13 @@ export async function oneOffOddsDataGet
       sportbookArray.push(sportbook[1]);
     }
 
-    sessionStore.updateLiveOddsMap
+    sessionStore.updateData
     (
-      parseInt(fixtureId),
-      sportbookArray
+      'liveOddsMap',
+      [
+        parseInt(fixtureId),
+        sportbookArray
+      ]
     );
   }
 
@@ -507,9 +528,9 @@ export function listenRealTimeLivescoresNowChange
   (
     db_real,
     'livescores_now/'
-  )
+  ),
 
-    ,listenEventRef: Unsubscribe = onValue
+    listenEventRef: Unsubscribe = onValue
     (
       dataRef,
       (
@@ -527,7 +548,11 @@ export function listenRealTimeLivescoresNowChange
       }
     );
 
-  sessionStore.updateFirebaseListener([listenEventRef]);
+  sessionStore.updateData
+  (
+    'firebaseListeners',
+    [listenEventRef]
+  );
 
   return listenEventRef
 }
@@ -549,9 +574,9 @@ export function targetLivescoreNowFixtureListen
   (
     db_real,
     path
-  )
+  ),
 
-    ,listenEventRef: Unsubscribe = onValue
+    listenEventRef: Unsubscribe = onValue
     (
       dbRef,
       (
@@ -559,14 +584,19 @@ export function targetLivescoreNowFixtureListen
       ): void =>
       {
         const firebaseData: FIREBASE_livescores_now = snapshot.val();
-        sessionStore.updateLivescoresTarget
+        sessionStore.updateData
         (
+          'livescoresFixtureTarget',
           firebaseData
         );
       }
     );
 
-  sessionStore.updateFirebaseListener([listenEventRef]);
+  sessionStore.updateData
+  (
+    'firebaseListeners',
+    [listenEventRef]
+  );
 
   return listenEventRef
 }
@@ -587,9 +617,9 @@ export async function one_off_livescore_call
   const firebaseData = await getTargetRealDbData
     (
       'livescores_now'
-    )
+    ),
 
-    ,data: [string, FIREBASE_livescores_now][]
+    data: [string, FIREBASE_livescores_now][]
     = firebaseData != null
       ? Object.entries(firebaseData)
       : []
@@ -616,8 +646,9 @@ export async function onceTargetLivescoreNowFixtureGet
   (
     path
   );
-  sessionStore.updateLivescoresTarget
+  sessionStore.updateData
   (
+    'livescoresFixtureTarget',
     firebaseData
   );
 }
@@ -644,9 +675,9 @@ export async function genLiveFixMap
     const fixture_id = parseInt
       (
         live_fixture[0].toString()
-      )
+      ),
 
-      ,fixture_data = live_fixture[1];
+      fixture_data = live_fixture[1];
 
     liveFixturesMap.set
     (
@@ -655,8 +686,9 @@ export async function genLiveFixMap
     );
   }
 
-  sessionStore.updateLivescores
+  sessionStore.updateData
   (
+    'livescoresNow',
     liveFixturesMap
   );
 }
@@ -681,9 +713,9 @@ export function listenRealTimeScoreboardAll
   (
     db_real,
     'livescores_now_scoreboard'
-  )
+  ),
 
-    ,listenEventRef: Unsubscribe = onValue
+    listenEventRef: Unsubscribe = onValue
     (
       dbRef,
       (
@@ -702,7 +734,11 @@ export function listenRealTimeScoreboardAll
       }
     );
 
-  sessionStore.updateFirebaseListener([listenEventRef]);
+  sessionStore.updateData
+  (
+    'firebaseListeners',
+    [listenEventRef]
+  );
 
   return listenEventRef
 }
@@ -724,9 +760,9 @@ export async function onceRealTimeLiveScoreboard
   const firebaseData = await getTargetRealDbData
     (
       'livescores_now_scoreboard'
-    )
+    ),
 
-    ,data: [string, FIRE_LNNS][]
+    data: [string, FIRE_LNNS][]
     = firebaseData != null
       ? Object.entries(firebaseData)
       : []
@@ -753,9 +789,9 @@ function generateLiveScoreboardList
     const fixtureId = parseInt
       (
         liveFixture[0].toString()
-      )
+      ),
 
-      ,fixtureData = liveFixture[1];
+      fixtureData = liveFixture[1];
 
     liveFixturesMap.set
     (
@@ -764,8 +800,9 @@ function generateLiveScoreboardList
     );
   }
 
-  sessionStore.updateLivescoreScoreboard
+  sessionStore.updateData
   (
+    'livescoreScoreboard',
     liveFixturesMap
   )
 }

@@ -1,6 +1,20 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ Svelte Component JS/TS                                                           │
+│ 📌 High Order Component Overview                                                 │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Internal Svelte Code Format :|: V.8.0                                          │
+│ ➤ Status :|: 🔒 LOCKED                                                           │
+│ ➤ Author(s) :|: @migbash                                                         │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ 📝 Description                                                                   │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ Scores Platform Page Layout                                                      │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
@@ -25,17 +39,18 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
 	import { browser } from '$app/environment';
-	import { beforeNavigate } from '$app/navigation';
+	import { afterNavigate, beforeNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
+	import * as Sentry from '@sentry/sveltekit';
 	import { onMount } from 'svelte';
 
   import { post } from '$lib/api/utils.js';
   import { scoresAdminStore } from '$lib/store/admin.js';
   import sessionStore from '$lib/store/session.js';
   import userBetarenaSettings from '$lib/store/user-settings.js';
-  import { dlog } from '$lib/utils/debug';
-  import { initSportbookData, platfrom_lang_ssr, setUserGeoLocation } from '$lib/utils/platform-functions.js';
-  import * as Sentry from '@sentry/sveltekit';
+  import { dlog, dlogv2 } from '$lib/utils/debug';
+  import { isPWA } from '$lib/utils/device.js';
+  import { initSportbookData, setUserGeoLocation } from '$lib/utils/platform-functions.js';
 
 	import Footer from '$lib/components/_main_/footer/Footer.svelte';
 	import Header from '$lib/components/_main_/header/Header.svelte';
@@ -45,14 +60,18 @@
 
 	import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
 
-  // ### WARNING:
-  // ### Disable, if Dynamic Import is Enabled.
+  // ╭─────
+  // │ WARNING:
+  // │ Disable, if Dynamic Import is Enabled.
+  // ╰─────
 	// import OfflineAlert from '$lib/components/Offline-Alert.svelte';
 	// import PlatformAlert from '$lib/components/Platform-Alert.svelte';
 	// import EmailSubscribe from '$lib/components/Email-Subscribe.svelte';
 
-  // ### NOTE:
-  // ### moved to static/
+  // ╭─────
+  // │ NOTE:
+  // │ moved to static/
+  // ╰─────
 	// import '../app.css';
 
   // #endregion ➤ 📦 Package Imports
@@ -71,45 +90,42 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  /**
+   * @description
+   *  📣 Component `Type`.
+   */
+  type IDynamicComponentMap =
+    | 'OfflineAlertDynamic'
+    | 'PlatformAlertDynamic'
+    | 'EmailSubscribeDynamic'
+  ;
+
   const
     /**
      * @description
      *  📣 Dynamic import variable condition
      */
-    useDynamicImport: boolean = true
-    /**
-     * @description
-     */
-    , targetAppEnv: string = import.meta.env?.VITE_ENV_TARGET
-  ;
-
-	let
+    useDynamicImport = true,
     /**
      * @description
      *  📣 Holds target `component(s)` of dynamic nature.
      */
-    dynamicComponentMap: Map < 'OfflineAlertDynamic' | 'PlatformAlertDynamic' | 'EmailSubscribeDynamic', any > = new Map()
-    /**
-     * @description
-     *  📣 listen value for change comparison of client bookmaker change
-     */
-    , currentBookmaker = $sessionStore?.serverLang
+    dynamicComponentMap = new Map < IDynamicComponentMap, any > ()
   ;
 
-	$: B_NAV_T = ($page.data?.B_NAV_T ?? { }) as B_NAV_T;
-  $: deepReactListenServerSideLang = platfrom_lang_ssr
-  (
-		$page?.route?.id,
-		$page?.error,
-		$page?.params?.lang
-	);
-  $: deepReactListenIsRouteCompetitions = $page?.route?.id?.includes('/[[lang=lang]]/[competitions=competitions]');
-  $: deepReactListenIsProfilePage = $page?.route?.id == '/u/[view]/[lang=lang]';
-  $: deepReactListenBookmakerChng = $userBetarenaSettings?.country_bookmaker;
+  $: ({ currentPageRouteId } = { ...$sessionStore })
+  $: ({ country_bookmaker, theme } = { ...$userBetarenaSettings });
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  $: ({ username, lang, competition_number }                  = { ...$userBetarenaSettings?.user?.scores_user_data });
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  $: ({ uid, email }                                          = { ...$userBetarenaSettings?.user?.firebase_user_data });
+	$: navbarTranslationData       = ($page.data.B_NAV_T ?? { }) as B_NAV_T | null | undefined;
+  $: deepReactListenStore1                           = JSON.stringify($sessionStore);
+  $: deepReactListenStore2                           = JSON.stringify($userBetarenaSettings);
 
-  $sessionStore.deviceType = $page.data?.deviceType;
-  // @ts-ignore
-  $sessionStore.fixturesTodayNum = parseInt(B_NAV_T?.scores_header_fixtures_information?.football)
+  $sessionStore.deviceType       = $page.data.deviceType as 'mobile' | 'tablet' | 'desktop';
+  $sessionStore.fixturesTodayNum = (navbarTranslationData?.scores_header_fixtures_information?.football ?? 0);
+  $sessionStore.serverLang       = $page.data.langParam as string;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -140,10 +156,10 @@
   ): void
   {
     const
-      prefix: string = '🚏 checkpoint [R] ➤ src/layout.svelte'
+      prefix: string = '🚏 checkpoint [R] ➤ src/routes/(scores)/layout.svelte'
     ;
 
-    // ▓ [🐞]
+    // [🐞]
     if (reactDebug == 'Option1')
       dlog
       (
@@ -162,13 +178,13 @@
         `${prefix} if_COD_3`
         , true
       );
-    else if (reactDebug == 'Option4')
+    else
       dlog
       (
         `${prefix} if_R_CS43`
         , true
       );
-    //
+    ;
 
     return;
   }
@@ -177,24 +193,26 @@
    * @author
    *  @migbash
    * @summary
-   *  🔹 HELPER
+   *  🟦 HELPER
    * @description
-   *  📌 Updates **Betarena User** for their `Firestore` and `CRISP` data.
-   * @returns { Promise < void > }
+   *  📣 Updates **Betarena User** for their `Firestore` and `CRISP` data.
+   * @return { Promise < void > }
    */
   async function updateFirestoreAndCrisp
   (
   ): Promise < void >
   {
-    if (!browser || $userBetarenaSettings?.user == undefined) return;
+    if (!browser || $userBetarenaSettings.user == undefined) return;
 
     await post
     (
       `${import.meta.env.VITE_FIREBASE_FUNCTIONS_ORIGIN}${import.meta.env.VITE_FIREBASE_FUNCTIONS_F_1}`,
       {
-        user_uids: [$userBetarenaSettings?.user?.firebase_user_data?.uid]
+        user_uids: [$userBetarenaSettings.user.firebase_user_data?.uid]
       }
     );
+
+    return;
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -212,155 +230,69 @@
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  /**
-   * @author
-   *  @migbash
-   * @summary
-   *  🔥 REACTIVITY
-   * @description
-   *  📌 Listens to cases when, the:
-   *  - (1) _initial platform load_ has changed to `client`.
-   * @description
-   *  **WARNING:**
-   *  **triggered by changes in:**
-   *  - `browser`- **kicker**
-   */
-	$: if (browser)
+  // ╭─────
+  // │ > 🔥 Instant critical data initialization.
+  // ╰─────
+  $: if (browser)
   {
     _DEBUG_('Option1');
 
-		userBetarenaSettings.useLocalStorage();
+    userBetarenaSettings.useLocalStorage();
     scoresAdminStore.useLocalStorage();
-
-    setUserGeoLocation
-    (
-      B_NAV_T
-    );
-
-    const
-      adminSet = $page.url.searchParams.get('admin')
-    ;
-
-    console.log('adminSet', adminSet)
-
-    if (adminSet)
-      scoresAdminStore.toggleAdminState(adminSet == 'true' ? true : false)
-	}
-
-  /**
-   * @author
-   *  @migbash
-   * @summary
-   *  🔥 REACTIVITY
-   * @description
-   *  📣 Listens to cases when, the:
-   *  - (1) _initial platform language_ has changed.
-   * @description
-   *  **WARNING:**
-   *  **triggered by changes in:**
-   *  - `deepReactListenServerSideLang`- **kicker** (via deepListen)
-   */
-  $: if (deepReactListenServerSideLang)
-  {
-    _DEBUG_('Option2');
-
-    sessionStore.updateServerLang
-    (
-      deepReactListenServerSideLang
-    );
   }
 
-  /**
-   * @author
-   *  @migbash
-   * @summary
-   *  🔥 REACTIVITY
-   * @description
-   *  📌 Listens to cases when, the:
-   *  - (1) _platform bookmaker_ changes.
-   * @description
-   *  **WARNING:**
-   *  **triggered by changes in:**
-   *  - `deepReactListenServerSideLang`- **kicker** (via deepListen)
-   */
-  $: if_COD_3 =
-    browser
-  ;
-  $: if (if_COD_3 && deepReactListenBookmakerChng != currentBookmaker)
+  // ╭─────
+  // │ > 🔥 Initialize / Update 'Sportbook Details'.
+  // ╰─────
+  $: if (browser && country_bookmaker)
   {
     _DEBUG_('Option3');
-
     initSportbookData
     (
-      $userBetarenaSettings?.country_bookmaker
+      country_bookmaker
     );
   }
 
-  /**
-   * @author
-   *  @migbash
-   * @summary
-   *  🔥 REACTIVITY
-   * @description
-   *  📌 Listens to cases when, the:
-   *  - (1) _route / endpoint_ changes.
-   * @description
-   *  **WARNING:**
-   *  **triggered by changes in:**
-   *  - `browser`- **kicker**
-   *  - `deepReactListenIsRouteCompetitions`- **kicker** (via deepListen)
-   *  - `deepReactListenIsProfilePage`- **kicker** (via deepListen)
-   */
-  $: if (browser && (deepReactListenIsRouteCompetitions || deepReactListenIsProfilePage))
+  // ╭─────
+  // │ > 🔥 (3rd Party) Intercom Logic [show/hide]
+  // ╰─────
+  $: if (browser && currentPageRouteId == 'ProfilePage' || currentPageRouteId == 'CompetitionPage')
   {
-    const intercom: HTMLElement = document?.getElementsByClassName('intercom-lightweight-app')?.[0] as unknown as HTMLElement;
+    const intercom: HTMLElement = document.getElementsByClassName('intercom-lightweight-app')[0] as unknown as HTMLElement;
     if (intercom != undefined)
-      intercom.style.display = "unset";
+      intercom.style.display = 'unset';
     ;
   }
-  else if (browser && !deepReactListenIsRouteCompetitions && !deepReactListenIsProfilePage)
+  else if (browser && !currentPageRouteId)
   {
-    const intercom: HTMLElement = document?.getElementsByClassName('intercom-lightweight-app')?.[0] as unknown as HTMLElement;
+    const intercom: HTMLElement = document.getElementsByClassName('intercom-lightweight-app')[0] as unknown as HTMLElement;
     if (intercom != undefined)
-      intercom.style.display = "none";
+      intercom.style.display = 'none';
     ;
   }
 
-  /**
-   * @author
-   *  @migbash
-   * @summary
-   *  🔥 REACTIVITY
-   * @description
-   *  📌 Listens to cases when, the:
-   *  - (1) _stores_ data changes.
-   * @description
-   *  **WARNING:**
-   *  **triggered by changes in:**
-   *  - `browser`- **kicker**
-   *  - `$userBetarenaSettings`- **kicker**
-   *  - `$sessionStore`- **kicker**
-   */
-  $: if (browser && ($userBetarenaSettings || $sessionStore))
+  // ╭─────
+  // │ > 🔥 (3rd Party) Intercom Data Persistance [show/hide]
+  // ╰─────
+  $: if (browser && (deepReactListenStore1 || deepReactListenStore2))
   {
     _DEBUG_('Option4');
 
-    window.intercomSettings =
-    {
-      api_base: "https://api-iam.intercom.io"
-      , app_id: "yz9qn6p3"
-      , name: $userBetarenaSettings?.user?.scores_user_data?.username
-      , email: $userBetarenaSettings?.user?.firebase_user_data?.email ?? `${$userBetarenaSettings?.user?.firebase_user_data?.uid}-unkown@gmail.com`
-      , uid: $userBetarenaSettings?.user?.firebase_user_data?.uid
-      , lang: $userBetarenaSettings?.user?.scores_user_data?.lang
-      // , created_at: new Date().getTime()?.toString()
-      , competition_number: $userBetarenaSettings?.user?.scores_user_data?.competition_number
-    };
+    window.intercomSettings
+    = {
+        api_base: 'https://api-iam.intercom.io',
+        app_id: 'yz9qn6p3',
+        name: (username ?? ''),
+        email: (email ?? `${uid}-unkown@gmail.com`),
+        uid,
+        lang: (lang ?? 'en'),
+        competition_number: (competition_number ?? 0)
+      };
 
-    // ### [🐞]
+    // [🐞]
     Sentry.setContext
     (
-      "📸 Data",
+      '📸 Data',
       {
         ...userBetarenaSettings.extractUserDataSnapshot()
       }
@@ -378,6 +310,26 @@
   // │ as soon as 'this' .svelte file is ran.                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  beforeNavigate
+  (
+    async (
+    ): Promise < void > =>
+    {
+      // IMPORTANT
+      $sessionStore.live_odds_fixture_target = null;
+
+      /*
+      await firebaseAppDelete();
+      for (const iterator of $sessionStore?.firebaseListeners ?? [])
+        iterator();
+      $sessionStore.firebaseListeners = []
+      for (const iterator of $sessionStore?.grapqhQlWebSockets ?? [])
+        iterator();
+      $sessionStore.grapqhQlWebSockets = []
+      */
+    }
+  );
+
   onMount
   (
     async (
@@ -391,28 +343,56 @@
         dynamicComponentMap.set('PlatformAlertDynamic', (await import('$lib/components/misc/Banner-Platform-Alert.svelte')).default);
         dynamicComponentMap.set('EmailSubscribeDynamic', (await import('$lib/components/misc/modal/Modal-Email-Subscribe.svelte')).default);
       }
-	  }
+
+      // IMPORTANT
+      $sessionStore.windowWidth = document.documentElement.clientWidth;
+      // IMPORTANT
+      if (isPWA())
+        $sessionStore.globalState.add('IsPWA');
+      else
+        $sessionStore.globalState.delete('IsPWA');
+      ;
+
+      setUserGeoLocation
+      (
+        navbarTranslationData!
+      );
+
+      const
+        adminSet = $page.url.searchParams.get('admin')
+      ;
+
+      if (adminSet)
+        scoresAdminStore.toggleAdminState(adminSet == 'true' ? true : false);
+      ;
+
+      return;
+    }
   );
 
-  beforeNavigate
+  afterNavigate
   (
     async (
+      e
     ): Promise < void > =>
     {
-      // ▓▓ IMPORTANT
-      $sessionStore.live_odds_fixture_target = null;
+      sessionStore.updateData
+      (
+        'routeId',
+        $page.route.id
+      );
 
-      // await firebaseAppDelete();
+      // [🐞]
+      dlogv2
+      (
+        '🚏 checkpoint ➤ src/routes/+layout.svelte afterNavigate(..)',
+        [
+          `🔹 [var] ➤ e.from :|: ${JSON.stringify(e)}`,
+        ],
+        true
+      );
 
-      // for (const iterator of $sessionStore?.firebaseListeners ?? [])
-      //   iterator();
-      // //
-      // $sessionStore.firebaseListeners = []
-
-      // for (const iterator of $sessionStore?.grapqhQlWebSockets ?? [])
-      //   iterator();
-      // //
-      // $sessionStore.grapqhQlWebSockets = []
+      return;
     }
   );
 
@@ -422,7 +402,7 @@
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ Svelte Injection Tags                                                            │
+│ 💉 Svelte Injection Tags                                                         │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -430,7 +410,7 @@
   <!--
   HELPDESK PLUGIN
   -->
-  {#if deepReactListenIsRouteCompetitions || deepReactListenIsProfilePage}
+  {#if currentPageRouteId == 'ProfilePage' || currentPageRouteId == 'CompetitionPage'}
     <!-- <script type="text/javascript">
       window.$crisp=[];
       window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
@@ -505,8 +485,26 @@
       if (!document.hidden)
       {
         dlog('🔵 user is active', true)
+        $sessionStore.isUserActive = true;
         updateFirestoreAndCrisp();
+        return;
       }
+      $sessionStore.isUserActive = false;
+      return;
+    }
+  }
+/>
+
+<svelte:window
+  on:resize=
+  {
+    () =>
+    {
+      $sessionStore.windowWidth = document.documentElement.clientWidth;
+      if (isPWA())
+        $sessionStore.globalState.add('IsPWA');
+      else
+        $sessionStore.globalState.delete('IsPWA');
       return;
     }
   }
@@ -514,7 +512,7 @@
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ Svelte Component HTML                                                            │
+│ 💠 Svelte Component HTML                                                         │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
 │         │ imported from './static/app.css'                                       │
@@ -530,17 +528,7 @@
 {/if}
 
 {#if $sessionStore.currentActiveModal == 'GeneralPlatform_Error'}
-  <ModalError
-    stateWidget='Error'
-    on:closeDropdown=
-    {
-      () =>
-      {
-        $sessionStore.currentActiveModal = null;
-        return;
-      }
-    }
-  />
+  <ModalError />
 {/if}
 
 {#if useDynamicImport}
@@ -548,10 +536,6 @@
     this={dynamicComponentMap.get('OfflineAlertDynamic')}
   />
 {:else}
-  <!--
-  NOTE:
-  Remember to re-enable top-level import for _this_ component.
-  -->
   <!-- <OfflineAlert /> -->
 {/if}
 
@@ -560,10 +544,6 @@
     this={dynamicComponentMap.get('PlatformAlertDynamic')}
   />
 {:else}
-  <!--
-  NOTE:
-  Remember to re-enable top-level import for _this_ component.
-  -->
   <!-- <PlatformAlert /> -->
 {/if}
 
@@ -572,19 +552,18 @@
     this={dynamicComponentMap.get('EmailSubscribeDynamic')}
   />
 {:else}
-  <!--
-  NOTE:
-  Remember to re-enable top-level import for _this_ component.
-  -->
   <!-- <EmailSubscribe /> -->
 {/if}
 
 <Header />
 
 <main
-	class:dark-background={$userBetarenaSettings.theme == 'Dark'}
-  class:before-display-none={deepReactListenIsRouteCompetitions}
-  class:profile-page={deepReactListenIsProfilePage}
+	class:dark-background={theme == 'Dark'}
+	class:dark-mode={theme == 'Dark'}
+  class:standard={currentPageRouteId == null || currentPageRouteId == 'ProfilePage'}
+  class:page-competition={currentPageRouteId == 'CompetitionPage'}
+  class:page-profile={currentPageRouteId == 'ProfilePage'}
+  class:page-authors={currentPageRouteId == 'AuthorsPage'}
 >
 	<slot />
 	<Footer />
@@ -592,7 +571,7 @@
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ Svelte Component CSS/SCSS                                                        │
+│ 🌊 Svelte Component CSS/SCSS                                                     │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
 │         │ values by typing/CTRL+SPACE                                            │
@@ -601,6 +580,12 @@
 -->
 
 <style lang="scss">
+
+  /*
+  ╭──────────────────────────────────────────────────────────────────────────────╮
+  │ 📲 MOBILE-FIRST                                                              │
+  ╰──────────────────────────────────────────────────────────────────────────────╯
+  */
 
 	main
   {
@@ -611,31 +596,34 @@
     /* 🎨 style */
 		width: 100%;
 
-    &::before
+    &.standard
     {
-      /* 📌 position */
-      position: absolute;
-      z-index: -1;
-      top: -5px;
-      /* 🎨 style */
-      content: '';
-      display: inline-block;
-      width: 100%;
-      height: 435px;
-      background-image: url('/assets/svg/header-background.svg');
-      background-repeat: no-repeat;
-      background-size: cover;
-      background-origin: border-box;
-      background-position: top;
+      &::before
+      {
+        /* 📌 position */
+        position: absolute;
+        z-index: -1;
+        top: -5px;
+        /* 🎨 style */
+        content: '';
+        display: inline-block;
+        width: 100%;
+        height: 435px;
+        background-image: url('/assets/svg/header-background.svg');
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-origin: border-box;
+        background-position: top;
+      }
     }
 
-    &.before-display-none::before
+    &.page-competition::before
     {
       /* 🎨 style */
       display: none;
     }
 
-    &.profile-page::before
+    &.page-profile::before
     {
       /* 🎨 style */
       height: 611px;
@@ -653,13 +641,16 @@
   {
     main
     {
-      &::before
+      &.standard
       {
-        /* 🎨 style */
-        height: 495px;
+        &::before
+        {
+          /* 🎨 style */
+          height: 495px;
+        }
       }
 
-      &.profile-page::before
+      &.page-profile::before
       {
         /* 🎨 style */
         height: 611px;
@@ -672,22 +663,28 @@
   {
     main
     {
+      /* 🎨 style */
       overflow: hidden;
 
-      &::before
+      &.standard
       {
-        /* 📌 position */
-        top: calc(100vw / -5.5) !important;
-        /* 🎨 style */
-        height: 100%;
-        background-size: contain !important;
+        &::before
+        {
+          /* 📌 position */
+          top: calc(100vw / -5.5) !important;
+          /* 🎨 style */
+          height: 100%;
+          background-size: contain !important;
+        }
       }
-      &.profile-page
+
+      &.page-profile
       {
         /* 🎨 style */
         overflow: visible;
       }
-      &.profile-page::before
+
+      &.page-profile::before
       {
         /* 🎨 style */
         top: 0 !important;

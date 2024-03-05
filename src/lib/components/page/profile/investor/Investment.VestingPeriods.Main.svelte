@@ -73,7 +73,7 @@
     profileData: IProfileData | null
     /**
      * @description
-     *  📣 threshold start + state for 📱 MOBILE
+     *  📣 threshold start + state for  MOBILE
      */ // eslint-disable-next-line no-unused-vars
     , VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ]
     /**
