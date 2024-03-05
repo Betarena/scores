@@ -160,6 +160,7 @@
 -->
 
 <SeoBox>
+  <h1>{widgetDataMain?.data?.title}</h1>
   {@html widgetDataMain?.data?.content}
 </SeoBox>
 

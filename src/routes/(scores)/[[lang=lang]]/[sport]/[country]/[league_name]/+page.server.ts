@@ -14,7 +14,7 @@
 
 import { ServerLoadEvent } from '@sveltejs/kit';
 
-import { main } from '$lib/load/load.league.js';
+import { main } from '$lib/sveltekit/load/load.league.js';
 import { dlogv2 } from '$lib/utils/debug.js';
 
 // #endregion ➤ 📦 Package Imports

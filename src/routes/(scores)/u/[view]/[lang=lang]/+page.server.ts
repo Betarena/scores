@@ -14,7 +14,7 @@
 
 import { ServerLoadEvent } from '@sveltejs/kit';
 
-import { main } from '$lib/load/load.profile.js';
+import { main } from '$lib/sveltekit/load/load.profile.js';
 import { dlogv2 } from '$lib/utils/debug.js';
 
 // #endregion ➤ 📦 Package Imports

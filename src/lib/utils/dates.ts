@@ -1,95 +1,110 @@
+// ╭──────────────────────────────────────────────────────────────────────────────────╮
+// │ 📌 High Order Component Overview                                                 │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ ➤ Internal Svelte Code Format :|: V.8.0                                          │
+// │ ➤ Status :|: 🔒 LOCKED                                                           │
+// │ ➤ Author(s) :|: @migbash                                                         │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ 📝 Description                                                                   │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ Main Scores Platform Date Logic                                                  │
+// ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-export const MONTH_NAMES_ABBRV: string[]
-= [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec'
-];
-
-export const WEEK_DAYS_ABBRV: string[]
-= [
-  'Sun',
-  'Mon',
-  'Tue',
-  'Wed',
-  'Thu',
-  'Fri',
-  'Sat'
-];
-
-export const WEEK_DAYS_ABBRV_1: string[]
-= [
-  'Sun',
-  'Mon',
-  'Tue',
-  'Wed',
-  'Thur',
-  'Fri',
-  'Sat'
-];
-
-export const WEEK_DAYS_ABBRV_2: string[]
-= [
-  'Mon',
-  'Tue',
-  'Wed',
-  'Thur',
-  'Fri',
-  'Sat',
-  'Sun'
-];
-
-export const monthNames: string[]
-= [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December'
-];
-
-export const weekDays: string[]
-= [
-  'sunday',
-  'monday',
-  'tuesday',
-  'wednesday',
-  'thursday',
-  'friday',
-  'saturday'
-];
+export const
+  MONTH_NAMES_ABBRV: string[]
+    = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ],
+  WEEK_DAYS_ABBRV: string[]
+    = [
+      'Sun',
+      'Mon',
+      'Tue',
+      'Wed',
+      'Thu',
+      'Fri',
+      'Sat'
+    ],
+  WEEK_DAYS_ABBRV_1: string[]
+    = [
+      'Sun',
+      'Mon',
+      'Tue',
+      'Wed',
+      'Thur',
+      'Fri',
+      'Sat'
+    ],
+  WEEK_DAYS_ABBRV_2: string[]
+    = [
+      'Mon',
+      'Tue',
+      'Wed',
+      'Thur',
+      'Fri',
+      'Sat',
+      'Sun'
+    ],
+  monthNames: string[]
+    = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
+    ],
+  weekDays: string[]
+    = [
+      'sunday',
+      'monday',
+      'tuesday',
+      'wednesday',
+      'thursday',
+      'friday',
+      'saturday'
+    ]
+;
 
 /**
+ * @author
+ *  @migbash
  * @summary
- * [HELPER]
- * @param
- * {number} num
- * @returns
- * a date string with an ordinal suffix value;
+ *  🟦 HELPER
+ * @description
+ *  📣 Applies a `suffix` to target `number` of its **oridinal type**.
+ * @example
+ *  => getOrdinalNum(5) => `5th`.
+ *  => getOrdinalNum(4) => `4th`.
+ *  => getOrdinalNum(1) => `1st`.
+ * @param { number } num
+ *  💠 **[required]** Target **ordinal** `value`.
+ * @return { string }
+ *  📤 A `number` expressed as `string` with an ordinal suffix value.
  */
-export const getOrdinalNum
-= (
+export const getOrdinalNum = (
   num: number
 ): string =>
 {
   let selector: number;
-  const ordinalStr: string[] = ['th', 'st', 'nd', 'rd', '']
+  const ordinalStr: string[] = ['th', 'st', 'nd', 'rd', ''];
 
   selector = num % 10;
   if (num <= 0) selector = 4;
@@ -101,15 +116,14 @@ export const getOrdinalNum
 };
 
 /**
+ * @author
+ *  @migbash
  * @summary
- * 🔹 HELPER
-
+ *  🟦 HELPER
  * @description
- * 📌 Instantiates target `date` for the current client,
- * applying correct target user timezone;
- *
- * @returns
- * a JavaScript Date object;
+ *  📣 Instantiates target `date` for the current client, applying correct target user timezone;
+ * @return { Date }
+ *  📤 Target `Date`
  */
 export function clientTimezoneDate
 (
@@ -117,11 +131,17 @@ export function clientTimezoneDate
 {
   const date = new Date();
 
-  // ### [STASH] [1]
+  // ╭─────
+  // │ NOTE:
+  // │ > [STASH] [1]
+  // ╰─────
   // const timeOffsetInHours = -(new Date()).getTimezoneOffset()/60
   // date.setHours(date.getHours() + timeOffsetInHours)
 
-  // ### [STASH] [2]
+  // ╭─────
+  // │ NOTE:
+  // │ > [STASH] [2]
+  // ╰─────
   // date.setTime( date.getTime() - new Date().getTimezoneOffset()*60*1000 );
 
   // [🐞]
@@ -135,28 +155,22 @@ export function clientTimezoneDate
 }
 
 /**
+ * @author
+ *  @migbash
  * @summary
- * 🔹 HELPER
- *
+ *  🟦 HELPER
  * @description
- *
- * 📌 Converts target date to an ISO_string of `yyyy-MM-dd` format.
- *
- * ⚡️ Handles dates of `T00:00:00` format and adds in (timezone) `Z`.
- *
- * ⚡️ Handles dates of `T00:00:00+` format and removes the `+` and adds `Z`.
- *
- * @param
- * { Date | string } date - Target date to 'process'.
- *
- * @param
- * { boolean } [adjustClientTZ=false] - Wether to 'adjust' date to that of the 'user' timezone.
- *
- * @param
- * { boolean } [showConversion=false] - [🐞] Wether to show date conversion process, for debug.
- *
- * @returns
- * an ISO Date string of `yyyy-MM-dd` format.
+ *  📣 Converts target date to an ISO_string of `yyyy-MM-dd` format.
+ *  - ⚡️ Handles dates of `T00:00:00` format and adds in (timezone) `Z`.
+ *  - ⚡️ Handles dates of `T00:00:00+` format and removes the `+` and adds `Z`.
+ * @param { Date | string } date
+ *  💠 **[required]** Target date to 'process'.
+ * @param { boolean } [adjustClientTZ=false]
+ *  💠 **[required]** Wether to 'adjust' date to that of the 'user' timezone.
+ * @param { boolean } [showConversion=false]
+ *  💠 **[required]** Wether to show date conversion process, for debug.
+ * @return { string }
+ *  📤 A `ISO Date` string of `yyyy-MM-dd` format.
  */
 export function toISOMod
 (
@@ -236,37 +250,30 @@ export function toISOMod
 }
 
 /**
+ * @author
+ *  @migbash
  * @summary
- * 🔹 HELPER | IMPORTANT
- *
+ *  - 🟦 HELPER
+ *  - IMPORTANT
  * @description
- * 📌 converts target Date/string to JS Date Object.
- * (⚡️) adjusting for missing "Z" string, if necessary.
- * (⚡️) offsetting for user's current timezone, generating a UTC Date object.
- *
+ *  📣 converts target Date/string to JS Date Object.
+ *  - ⚡️ adjusting for missing "Z" string, if necessary.
+ *  - ⚡️ offsetting for user's current timezone, generating a UTC Date object.
  * @overload
- * offset = true (default) -> converts Date to userClient Timezone;
- *
+ *  offset = true (default) -> converts Date to userClient Timezone;
  * @overload
- * showConversion = false (default)
- *
+ *  showConversion = false (default)
  * @example
- * [1] "2023-12-12", locale: ja-JP => 2023-12-12
- *
- * @example
- * [2] "2023-06-05T23:00:00+00:00" (string), => 2023-06-05 (Date)
- *
- * @param
- * { Date | string } date - Target date to be handeled.
- *
- * @param
- * { boolean } offset - Wether to offset data or not, in according to client timezone.
- *
- * @param
- * { boolean } showConversion - [🐞] Wether to show conversion of dates or not.
- *
- * @returns
- * a date object.
+ *  [1] "2023-12-12", locale: ja-JP => 2023-12-12
+ *  [2] "2023-06-05T23:00:00+00:00" (string), => 2023-06-05 (Date)
+ * @param { Date | string } date
+ *  💠 **[required]** Target date to be handeled.
+ * @param { boolean } [offset = true]
+ *  💠 **[required]** Wether to offset data or not, in according to client timezone. (`default` = true)
+ * @param { boolean } [showConversion = false]
+ *  💠 **[required]** Wether to show conversion of dates or not. (`default` = false)
+ * @return { Date }
+ *  📤 A date object.
  */
 export function toCorrectDate
 (
@@ -309,19 +316,16 @@ export function toCorrectDate
 }
 
 /**
+ * @author
+ *  @migbash
  * @summary
- * 🔹 HELPER
- *
+ *  🟦 HELPER
  * @description
- *
- * 📌 Converts Target Date of type 'string/number' to a
- * leading/prefix based `0[..]` string.
- *
- * @param
- * { string | number } dateStr - Target date.
- *
- * @returns
- * a `zero-prefixed` date string.
+ *  📣 Converts Target Date of type 'string/number' to a leading/prefix based `0[..]` string.
+ * @param { string | number } dateStr
+ *  💠 **[required]** Target `date` value.
+ * @return { string }
+ *  📤 zero-prefixed date string.
  */
 export function toZeroPrefixDateStr
 (
@@ -338,22 +342,18 @@ export function toZeroPrefixDateStr
 }
 
 /**
+ * @author
+ *  @migbash
  * @summary
- * 🔹 HELPER
- *
+ *  🟦 HELPER
  * @description
- *
- * 📌 Simple method to generate a `new Date()`
- * using offsets in `hour`, `days`, `months`, years.
- *
- * @param
- * { number } [offsetDays] - Wether to offset date by `(+/-)X` days.
- *
- * @param
- * { number } [offsetMonths] - Wether to offset date by `(+/-)X` months.
- *
- * @returns
- * A target `Date`.
+ *  📣 Generate a `new Date()` using offsets in `hour`, `days`, `months`, `years`.
+ * @param { number } [offsetDays=0]
+ *  💠 [optional] Wether to offset date by `(+/-)X` days. (`default` = 0)
+ * @param { number } [offsetMonths=0]
+ *  💠 [optional] Wether to offset date by `(+/-)X` months. (`default` = 0)
+ * @return { Date }
+ *  📤 Target `Date`.
  */
 export function targetDate
 (
@@ -362,27 +362,25 @@ export function targetDate
 ): Date
 {
   const newDate: Date = new Date();
-
   if (offsetDays != 0)
     newDate.setDate(newDate.getDate() + offsetDays);
-
-
+  ;
   return newDate;
 }
 
 /**
+ * @author
+ *  @migbash
  * @summary
- * 🔹 HELPER
- *
+ *  🟦 HELPER
  * @description
- *
- * 📌 Calculates number of days in a target month, of a target year values.
- *
- * @param
- * { number } month - Target month `number` i.e. `0 - 11`
- *
- * @param
- * { number } year - Target year `number`
+ *  📣 Calculates `number` of days in a target mont & year.
+ * @param { number } month
+ *  💠 **[required]** Target month `number` i.e. `0 - 11`.
+ * @param { number } year
+ *  💠 **[required]** Target year `number`.
+ * @return { number }
+ *  📤 Target `number`.
  */
 export function daysInMonth
 (
@@ -394,8 +392,18 @@ export function daysInMonth
 }
 
 /**
+ * @author
+ *  @migbash
+ * @summary
+ *  🟦 HELPER
  * @description
- * TODO: DOC:
+ *  📣 Calculates difference between 2 dates.
+ * @param { Date } date1
+ *  💠 **[required]** Target **first** `date` value.
+ * @param { Date } date2
+ *  💠 **[required]** Target **second** `date` value.
+ * @return { number }
+ *  📤 Target `number`.
  */
 export function daysDiffNum
 (
@@ -403,8 +411,10 @@ export function daysDiffNum
   date2: Date
 ): number
 {
-  const _timeDiff: number = date2.getTime() - date1.getTime(),
-    dateDiff: number = (_timeDiff / (1000 * 3600 * 24));
+  const
+    _timeDiff: number = date2.getTime() - date1.getTime(),
+    dateDiff: number = (_timeDiff / (1000 * 3600 * 24))
+  ;
   return dateDiff < 0 ? -dateDiff : dateDiff;
 }
 
@@ -415,8 +425,10 @@ export function daysDiffNum
  *  🟦 HELPER
  * @description
  *  📣 Conversion of **target** date to specific `dd/MM/yy` format.
- * @param { string } date
- *  💠 Target `date` to be formated to.
+ * @CUSTOM_TAGS
+ *  Handle `null | undefined`.
+ * @param { string | null } date
+ *  💠 **[required]** Target `date` to be formated to.
  * @return { string }
  *  📤 Target formatted date.
  */

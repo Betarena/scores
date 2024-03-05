@@ -14,7 +14,7 @@
 
 import { ServerLoadEvent } from '@sveltejs/kit';
 
-import { main } from '$lib/load/load.fixture.js';
+import { main } from '$lib/sveltekit/load/load.fixture.js';
 import { dlogv2 } from '$lib/utils/debug.js';
 
 // #endregion ➤ 📦 Package Imports

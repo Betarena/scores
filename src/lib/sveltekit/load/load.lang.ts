@@ -72,8 +72,6 @@ export async function main
 ): Promise < {} >
 {
   const
-    // [🐞]
-    t0: number = performance.now(),
     /**
      * @description
      *  📣 Validate **this** `url`.
@@ -127,7 +125,6 @@ export async function main
   (
     '🚏 checkpoint ➤ src/routes/(scores)/[[lang=lang]]/+page.server.ts',
     [
-      `⏳ HOME preload ${((performance.now() - t0) / 1000).toFixed(2)} sec`,
       `🔹 [var] ➤ response :|: ${JSON.stringify(response.PAGE_DATA_SEO)}`,
     ],
     true

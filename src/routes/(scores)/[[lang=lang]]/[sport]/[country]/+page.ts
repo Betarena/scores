@@ -14,7 +14,7 @@
 
 import { LoadEvent } from '@sveltejs/kit';
 
-import { main } from '$lib/load/load.country.js';
+import { main } from '$lib/sveltekit/load/load.country.js';
 import { dlogv2 } from '$lib/utils/debug.js';
 
 // #endregion ➤ 📦 Package Imports

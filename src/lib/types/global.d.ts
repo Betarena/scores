@@ -1,4 +1,3 @@
-
 // global.d.ts;
 // /// <reference types="@sveltejs/kit" />
 
@@ -69,3 +68,8 @@ interface Window
     competition_number?: number;
   };
 }
+
+type NullUndef =
+  | null
+  | undefined
+;

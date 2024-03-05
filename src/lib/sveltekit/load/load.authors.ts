@@ -58,8 +58,6 @@ export async function main
 ): Promise < {} >
 {
   const
-    // [🐞]
-    t0: number = performance.now(),
     // ╭─────
     // │ NOTE:
     // │ > 📣 Destruct `object`.
@@ -95,7 +93,6 @@ export async function main
   (
     '🚏 checkpoint ➤ src/routes/(authors)/a/[...permalink]/+page.server.ts',
     [
-      `⏳ [AUTHORS] preload ${((performance.now() - t0) / 1000).toFixed(2)} sec`,
       // `🔹 [var] ➤ response :|: ${JSON.stringify(response)}`,
     ],
     true

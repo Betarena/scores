@@ -416,7 +416,7 @@
         {
           () =>
           {
-            $sessionStore.currentActiveModal = null;
+            $sessionStore.currentActiveModal = 'Footer_Newsletter_Modal';
             return;
           }
         }

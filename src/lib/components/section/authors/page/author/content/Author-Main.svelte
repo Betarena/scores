@@ -386,8 +386,8 @@
       }
     >
       <!-- [🐞] -->
-      {#each [...widgetData.tags, ...widgetData.tags, ...widgetData.tags] as item}
-      <!-- {#each [...(widgetData.tags ?? [])] as item} -->
+      <!-- {#each [...widgetData.tags, ...widgetData.tags, ...widgetData.tags] as item} -->
+      {#each [...(widgetData.tags ?? [])] as item}
         <div
           class=
           "
@@ -655,10 +655,10 @@
 
       <!--
       ╭─────
-      │ > article author description / about
+      │ > article author description / about 💻 TABLET [+]
       ╰─────
       -->
-      {#if VIEWPORT_TABLET_INIT[1]}
+      {#if !VIEWPORT_MOBILE_INIT[1]}
         <p
           class=
           "
@@ -913,6 +913,7 @@
       margin-left: -16px;
       margin-right: -16px;
       width: -webkit-fill-available;
+      width: -moz-available;
     }
 
     img#user-avatar
@@ -973,7 +974,7 @@
           line-height: 28px;
           color: var(--dark-theme);
           margin-bottom: 20px;
-          font-weight: 300;
+          font-weight: 400;
         }
 
         h2
@@ -1037,6 +1038,7 @@
           {
             /* 🎨 style */
             line-height: 30px;
+            font-weight: 300;
           }
 
           h2

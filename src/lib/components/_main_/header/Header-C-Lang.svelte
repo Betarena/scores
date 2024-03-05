@@ -411,7 +411,7 @@
       width: 88px;
       margin-top: 5px;
       border-radius: 4px;
-      background: #292929;
+      background: var(--dark-theme);
       box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
       overflow: hidden;
 
@@ -420,19 +420,18 @@
         /* 🎨 style */
         padding: 10px 0;
         text-align: center;
-        background: #4b4b4b;
+        background: var(--dark-theme-1);
         cursor: pointer;
         box-shadow: inset 0px -1px 0px #3c3c3c;
 
         &:hover
         {
           /* 🎨 style */
-          background: #292929;
+          background: var(--dark-theme);
           box-shadow: inset 0px -1px 0px #3c3c3c;
         }
       }
     }
-
 
   }
 

@@ -41,6 +41,7 @@
 	import { browser } from '$app/environment';
 	import { afterNavigate, beforeNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
+	import * as Sentry from '@sentry/sveltekit';
 	import { onMount } from 'svelte';
 
   import { post } from '$lib/api/utils.js';
@@ -48,8 +49,8 @@
   import sessionStore from '$lib/store/session.js';
   import userBetarenaSettings from '$lib/store/user-settings.js';
   import { dlog, dlogv2 } from '$lib/utils/debug';
+  import { isPWA } from '$lib/utils/device.js';
   import { initSportbookData, setUserGeoLocation } from '$lib/utils/platform-functions.js';
-  import * as Sentry from '@sentry/sveltekit';
 
 	import Footer from '$lib/components/_main_/footer/Footer.svelte';
 	import Header from '$lib/components/_main_/header/Header.svelte';
@@ -345,6 +346,12 @@
 
       // IMPORTANT
       $sessionStore.windowWidth = document.documentElement.clientWidth;
+      // IMPORTANT
+      if (isPWA())
+        $sessionStore.globalState.add('IsPWA');
+      else
+        $sessionStore.globalState.delete('IsPWA');
+      ;
 
       setUserGeoLocation
       (
@@ -494,6 +501,10 @@
     () =>
     {
       $sessionStore.windowWidth = document.documentElement.clientWidth;
+      if (isPWA())
+        $sessionStore.globalState.add('IsPWA');
+      else
+        $sessionStore.globalState.delete('IsPWA');
       return;
     }
   }

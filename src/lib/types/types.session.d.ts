@@ -1,19 +1,21 @@
-import type { GeoJsResponse } from '$lib/types/types.geojs';
-import type { IBetarenaUser } from '@betarena/scores-lib/types/_FIREBASE_.js';
+// #region ➤ 📦 Package Imports
+
 import type { B_H_COMP_DATA } from '@betarena/scores-lib/types/_HASURA_.js';
 import type { FIREBASE_livescores_now, FIREBASE_odds, FIRE_LNNS } from '@betarena/scores-lib/types/firebase.js';
 import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
-import type { User } from 'firebase/auth';
 import type { Unsubscribe } from 'firebase/firestore';
 
+// #endregion ➤ 📦 Package Imports
+
 type IPageRouteId =
+  | null
   | 'ProfilePage'
   | 'CompetitionPage'
   | 'AuthorsPage'
-  | null
 ;
 
 type IUserStoreState =
+  | 'IsPWA'
   | 'Authenticated'
   | 'AuthenticatedAndInitialized'
   | 'NotAuthenticated'
@@ -31,17 +33,17 @@ export interface ISessionStore
 {
   /**
    * @description
-   *  📣 Target general `store` state for `user settings`.
+   * ➕ Target general `store` state for `user settings`.
    */
   globalState: Set < IUserStoreState >;
   /**
    * @description
-   *  📣 `inter-component` events of selected season.
+   * ➕ `inter-component` events of selected season.
    */
-	selectedSeasonID: number | undefined;
+  selectedSeasonID: number | undefined;
   /**
    * @description
-   *  📣 Instant **Scores Platform** page language identification.
+   * ➕ Instant **Scores Platform** page language identification.
    */
   serverLang: string | undefined;
   /**

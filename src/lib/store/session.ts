@@ -31,68 +31,68 @@ import type { FIREBASE_livescores_now, FIREBASE_odds, FIRE_LNNS } from '@betaren
 
 const
   sessionStoreObj: ISessionStore
-  = {
-    globalState: new Set(),
-    deviceType: 'mobile',
-    isUserActive: true,
-    windowWidth: 0,
-    firebaseListeners: [],
-    grapqhQlWebSockets: [],
-    currentActiveModal: null,
-    currentAdminToggle: null,
-    currentPageRouteId: null,
+    = {
+      globalState: new Set(),
+      deviceType: 'mobile',
+      isUserActive: true,
+      windowWidth: 0,
+      firebaseListeners: [],
+      grapqhQlWebSockets: [],
+      currentActiveModal: null,
+      currentAdminToggle: null,
+      currentPageRouteId: null,
 
-    // ### NOTE:
-    // ### variables for show/hide.
-    auth_show: false,
-    livescoreShowCalendar: false,
-    selectedSeasonID: undefined,
-    livescoreFixtureView: 'all',
-    fixture_select_view: 'overview',
-    navBtnHover: undefined,
-    showUserguide1: false,
-    showUserguide1Conf: false,
-    showTermsAndConditions: false,
-    showFixtureCompetition: false,
-    // ### NOTE:
-    // ### variables for language handle.
-    lang_intent: undefined,
-    serverLang: undefined,
-    // ### NOTE:
-    // ### variables for misc.
-    fixturesTodayNum: 0,
-    competitionsNum: 0,
-    competitionsOpenNum: 0,
-    // ### NOTE:
-    // ### variables for date handle.
-    userDate: clientTimezoneDate(),
-    livescoreNowSelectedDate: clientTimezoneDate(),
-    userTxShowCalendar: false,
-    userTxHistDateSelect: clientTimezoneDate(),
-    userTxHistFilterDateRange:
-    {
-      from: targetDate
-      (
-        -7
-      ),
-      to: targetDate()
-    },
-    // ### NOTE:
-    // ### variables for sportbook.
-    sportbook_main: undefined,
-    sportbook_list: undefined,
-    // ### NOTE:
-    // ### variables for real-time/live;
-    livescore_now: undefined,
-    livescore_now_scoreboard: new Map(),
-    livescore_now_fixture_target: undefined,
-    live_odds_fixture_target: [],
-    live_odds_fixture_map: new Map(),
-    livescore_now_player_fixture: undefined,
-    livescore_now_fixtures: [],
-    competitions_map: new Map(),
-    investDepositAmountMobileWeb3: undefined
-  }
+      // ### NOTE:
+      // ### variables for show/hide.
+      auth_show: false,
+      livescoreShowCalendar: false,
+      selectedSeasonID: undefined,
+      livescoreFixtureView: 'all',
+      fixture_select_view: 'overview',
+      navBtnHover: undefined,
+      showUserguide1: false,
+      showUserguide1Conf: false,
+      showTermsAndConditions: false,
+      showFixtureCompetition: false,
+      // ### NOTE:
+      // ### variables for language handle.
+      lang_intent: undefined,
+      serverLang: undefined,
+      // ### NOTE:
+      // ### variables for misc.
+      fixturesTodayNum: 0,
+      competitionsNum: 0,
+      competitionsOpenNum: 0,
+      // ### NOTE:
+      // ### variables for date handle.
+      userDate: clientTimezoneDate(),
+      livescoreNowSelectedDate: clientTimezoneDate(),
+      userTxShowCalendar: false,
+      userTxHistDateSelect: clientTimezoneDate(),
+      userTxHistFilterDateRange:
+      {
+        from: targetDate
+        (
+          -7
+        ),
+        to: targetDate()
+      },
+      // ### NOTE:
+      // ### variables for sportbook.
+      sportbook_main: undefined,
+      sportbook_list: undefined,
+      // ### NOTE:
+      // ### variables for real-time/live;
+      livescore_now: undefined,
+      livescore_now_scoreboard: new Map(),
+      livescore_now_fixture_target: undefined,
+      live_odds_fixture_target: [],
+      live_odds_fixture_map: new Map(),
+      livescore_now_player_fixture: undefined,
+      livescore_now_fixtures: [],
+      competitions_map: new Map(),
+      investDepositAmountMobileWeb3: undefined
+    }
 ;
 
 type IDataProp =

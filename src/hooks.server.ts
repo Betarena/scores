@@ -109,8 +109,10 @@ const customErrorHandler: HandleServerError = async (
 
 export const handle: Handle = sequence
 (
-  /* [1] Step */ Sentry.sentryHandle(),
-  /* [2] Step */ async (
+  /* [1] Step */
+  Sentry.sentryHandle(),
+  /* [2] Step */
+  async (
     {
       event,
       resolve
@@ -119,19 +121,26 @@ export const handle: Handle = sequence
   {
     // ╭─────
     // │ NOTE:
-    // │ > attempt to identify user IP from 'request',
-    // │ > to preload data from 'server'.
+    // │ > attempt to identify user IP from 'request' (server-side)
     // │ > 🔗 read-more :|: https://github.com/sveltejs/kit/issues/4873
     // ╰─────
     // const clientAddress = !prerendering ? await event.clientAddress : ''; // incorrect-IP
     // const clientAddressv2 = !prerendering ? event : '' // no-working
 
+    if (event.url.pathname == '/api/misc/debug')
+      return await resolve(event);
+    ;
+
     // ╭──────────────────────────────────────────────────────────────────────────────────╮
     // │ IMPORTANT                                                                        │
-    // │ 📌 Before 'endpoint' call/execute (below)                                        │
+    // │ > Before 'endpoint' call/execute (below)                                         │
+    // │ WARNING:                                                                         │
+    // │ > Executed after to 'layout.server.ts'                                           │
     // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
     const
+      // [🐞]
+      t0 = performance.now(),
       /**
        * @description
        *  📣 obtaining cookies from request headers.
@@ -149,7 +158,7 @@ export const handle: Handle = sequence
         = {
           userid: uuid(),
           lang: 'en',
-          theme: 'Light',
+          theme: 'Dark',
           // ╭─────
           // │ NOTE:
           // │ > attempt to identify user IP from 'request',
@@ -170,7 +179,7 @@ export const handle: Handle = sequence
     ;
 
     // [🐞]
-    // console.log('cookies', cookies);
+    console.log('cookies', cookies);
 
     event.locals.user = cookies.betarenaScoresCookie ?? defaultLocals;
 
@@ -187,7 +196,9 @@ export const handle: Handle = sequence
 
     // ╭──────────────────────────────────────────────────────────────────────────────────╮
     // │ IMPORTANT                                                                        │
-    // │ 📌 Actual 'endpoint' call/execute (below)                                        │
+    // │ > Actual 'endpoint' call/execute (below)                                         │
+    // │ WARNING:                                                                         │
+    // │ > Executed after to 'layout.server.ts'                                           │
     // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
     // ╭─────
@@ -236,8 +247,11 @@ export const handle: Handle = sequence
 
     // ╭──────────────────────────────────────────────────────────────────────────────────╮
     // │ IMPORTANT                                                                        │
-    // │ 📌 After 'endpoint' call/execute                                                 │
+    // │ > After 'endpoint' call/execute                                                  │
     // ╰──────────────────────────────────────────────────────────────────────────────────╯
+
+    // [🐞]
+    console.log('cookies.betarenaScoresCookie', cookies.betarenaScoresCookie);
 
     // ╭─────
     // │ CHECK
@@ -278,6 +292,7 @@ export const handle: Handle = sequence
         `🔹 [var] ➤ event.url.origin :|: ${event.url.origin}`,
         `🔹 [var] ➤ event.locals.user :|: ${event.locals.user}`,
         `🔹 [var] ➤ event.locals.betarenaUser :|: ${event.locals.betarenaUser}`,
+        `⏳ [timer] ➤ ${((performance.now() - t0) / 1000).toFixed(2)} sec`,
       ],
       true
     );

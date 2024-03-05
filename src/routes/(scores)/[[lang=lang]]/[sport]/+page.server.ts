@@ -12,7 +12,7 @@
 
 // #region ➤ 📦 Package Imports
 
-import { main } from '$lib/load/load.sport.js';
+import { main } from '$lib/sveltekit/load/load.sport.js';
 import { dlogv2 } from '$lib/utils/debug.js';
 
 import type { ServerLoadEvent } from '@sveltejs/kit';

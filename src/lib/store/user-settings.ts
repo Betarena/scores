@@ -99,8 +99,11 @@ function createLocalStore
         ): void =>
         {
           let
-            localStore: IUserSetting = methods.parseLocalStorage()
+            localStore = methods.parseLocalStorage()
           ;
+
+          // [🐞]
+          // console.log('localStore', localStore);
 
           // ╭─────
           // │ CHECK
@@ -152,20 +155,18 @@ function createLocalStore
          */
         parseLocalStorage:
         (
-        ): IUserSetting =>
+        ): IUserSetting | NullUndef =>
         {
-          // [🐞]
-          // console.log('localStorage.getItem(key)', localStorage.getItem(key));
-
           const
             localStore = localStorage.getItem(key)
           ;
 
+          if (!localStore) return null;
+
           return JSON.parse
           (
-            localStore ?? '{}'
-          ) as IUserSetting
-          ;
+            localStore
+          );
         },
 
         /**
@@ -223,19 +224,23 @@ function createLocalStore
           id: number
         ): void =>
         {
-          const localStore: IUserSetting = methods.parseLocalStorage();
+          const
+            localStore = methods.parseLocalStorage()
+          ;
+
+          if (!localStore) return;
 
           if (localStore.userguide_id_opt_out.includes(id))
-
-            localStore.userguide_id_opt_out = localStore.userguide_id_opt_out
-              .filter
-              (
-                x => {return x != id}
-              );
-
+            localStore.userguide_id_opt_out
+              = localStore.userguide_id_opt_out
+                .filter
+                (
+                  x => {return x != id}
+                )
+            ;
           else
-
             localStore.userguide_id_opt_out.push(id);
+          ;
 
           localStore.userguide_id_opt_out = [...new Set(localStore.userguide_id_opt_out)] ?? [];
           methods.setLocalStorage
@@ -262,8 +267,10 @@ function createLocalStore
         ): void =>
         {
           const
-            localStore: IUserSetting = methods.parseLocalStorage()
+            localStore = methods.parseLocalStorage()
           ;
+
+          if (!localStore) return;
 
           if (localStore.voted_fixtures == undefined)
             localStore.voted_fixtures = [];
@@ -304,10 +311,10 @@ function createLocalStore
         ): void =>
         {
           const
-            localStore: IUserSetting = methods.parseLocalStorage()
+            localStore = methods.parseLocalStorage()
           ;
 
-          if (!localStore.user?.scores_user_data) return;
+          if (!localStore?.user?.scores_user_data) return;
 
           // ╭─────
           // │ CHECK
@@ -372,10 +379,10 @@ function createLocalStore
         ): void =>
         {
           const
-            localStore: IUserSetting = methods.parseLocalStorage()
+            localStore = methods.parseLocalStorage()
           ;
 
-          if (!localStore.user) return;
+          if (!localStore?.user) return;
 
           localStore.user.scores_user_data!.investor_balance = data;
 
@@ -405,10 +412,10 @@ function createLocalStore
         ): void =>
         {
           const
-            localStore: IUserSetting = methods.parseLocalStorage()
+            localStore = methods.parseLocalStorage()
           ;
 
-          if (!localStore.user) return;
+          if (!localStore?.user) return;
 
           // [🐞]
           dlog
@@ -479,8 +486,10 @@ function createLocalStore
         ): void =>
         {
           const
-            localStore: IUserSetting = methods.parseLocalStorage()
+            localStore = methods.parseLocalStorage()
           ;
+
+          if (!localStore) return;
 
           if (dataTarget == 'lang')
             localStore.lang = dataPoint;
@@ -542,17 +551,17 @@ function createLocalStore
         ): any =>
         {
           const
-            localStore: IUserSetting = methods.parseLocalStorage()
+            localStore = methods.parseLocalStorage()
           ;
 
           if (dataPoint == 'geo-bookmaker')
-            return localStore.country_bookmaker;
+            return localStore?.country_bookmaker;
           else if (dataPoint == 'lang')
-            return localStore.lang;
+            return localStore?.lang;
           else if (dataPoint == 'lang-user')
-            return localStore.user?.scores_user_data?.lang;
+            return localStore?.user?.scores_user_data?.lang;
           else if (dataPoint == 'uid')
-            return localStore.user?.firebase_user_data?.uid;
+            return localStore?.user?.firebase_user_data?.uid;
           ;
 
           return;
@@ -574,20 +583,20 @@ function createLocalStore
         ): object =>
         {
           const
-            localStore: IUserSetting = methods.parseLocalStorage(),
+            localStore = methods.parseLocalStorage(),
             /**
              * @description
              *  📣 Target `user` data.
              */
             data
               = {
-                lang: localStore.lang,
-                geo: localStore.country_bookmaker,
+                lang: localStore?.lang,
+                geo: localStore?.country_bookmaker,
                 user: undefined
               }
           ;
 
-          if (localStore.user)
+          if (localStore?.user)
           {
             data['user-uid'] = localStore.user.firebase_user_data?.uid;
             data['lang-user'] = localStore.user.scores_user_data?.lang;

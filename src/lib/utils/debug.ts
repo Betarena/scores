@@ -37,12 +37,14 @@ export const
 const
   /**
    * @description
-   *  📣 overrides all individual toggles for show/hide ALL logs.
+   *  - 📣 overrides all individual toggles for show/hide ALL logs.
+   *  - 📣 used for local development override of `logs`.
    */
-  MASTER_DEBUG_TOGGLE: boolean | undefined = undefined,
+  MASTER_DEBUG_TOGGLE: boolean = true,
   /**
    * @description
-   *  📣 overrides (ADMIN) to show logs even in PROD.
+   *  - 📣 overrides (ADMIN) to show logs even in PROD.
+   *  - 📣 Prevents logs display on `deployments`.
    */
   LOGS_SHOW_OVERRIDE: boolean
     = import.meta.env.VITE_PROD_LOGS == undefined
@@ -198,24 +200,20 @@ export function dlog
   // │ > Livescores V2 Logs
   // ╰─────
   if (typeof(msg) == 'string' && msg.includes(LV2_W_H_TAG[0]))
+  {
     style = LV2_W_H_TAG[2];
-  ;
-  if (typeof(msg) == 'string' && msg.includes(LV2_W_H_TAG[0]))
     show = LV2_W_H_TAG[1];
-  ;
+  }
 
   // ╭─────
   // │ > Authentication Logs
   // ╰─────
   if (typeof(msg) == 'string' && msg.includes(AU_W_TAG[0]))
+  {
     targetLog = AU_W_TAG[0];
-  ;
-  if (typeof(msg) == 'string' && msg.includes(AU_W_TAG[0]))
     style = AU_W_TAG[2];
-  ;
-  if (typeof(msg) == 'string' && msg.includes(AU_W_TAG[0]))
     show = AU_W_TAG[1];
-  ;
+  }
 
   // ╭─────
   // │ > Hooks Logs
@@ -231,11 +229,7 @@ export function dlog
     style = 'background: #FF6133; color: black; border-radius: 1.5px; padding: 2.5px 2.5px;';
   ;
 
-  show
-    = MASTER_DEBUG_TOGGLE != undefined
-      ? MASTER_DEBUG_TOGGLE
-      : show
-  ;
+  show = MASTER_DEBUG_TOGGLE && show;
 
   const
     if_M_0: boolean
@@ -304,16 +298,11 @@ export function dlogv2
   // │ > Authentication Logs
   // ╰─────
   if (groupName.includes(AU_W_TAG[0]))
+  {
     targetLog = AU_W_TAG[0];
-  ;
-  if (groupName.includes(AU_W_TAG[0]))
-    style = AU_W_TAG[2]
-    ;
-  ;
-  if (groupName.includes(AU_W_TAG[0]))
-    show = AU_W_TAG[1]
-    ;
-  ;
+    style = AU_W_TAG[2];
+    show = AU_W_TAG[1];
+  }
 
   // ╭─────
   // │ > Hooks Logs
@@ -496,6 +485,8 @@ export function initSentry
  *  🟦 HELPER
  * @description
  *  📣 Save `log` to `file`.
+ * @param { string } data
+ *  💠 **[required]** Target `data` to be logged.
  * @return { void }
  */
 async function saveLog
@@ -503,13 +494,13 @@ async function saveLog
   data: string
 ): Promise < void >
 {
-  // if (browser && dev)
-  //   await postv2
-  //   (
-  //     '/api/misc/debug',
-  //     data
-  //   );
-  // ;
+  if (browser && dev)
+    await postv2
+    (
+      '/api/misc/debug',
+      data
+    );
+  ;
 
   return;
 }

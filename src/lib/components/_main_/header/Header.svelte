@@ -39,6 +39,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
 	import { browser } from '$app/environment';
+	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import { fly } from 'svelte/transition';
@@ -114,9 +115,6 @@
     newTxt: string;
   }
 
-  $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
-  $: B_SAP_D3_CP_H = $page.data.B_SAP_D3_CP_H as B_SAP_D3 | null | undefined;
-
   const
     /**
      * @description
@@ -155,35 +153,7 @@
      * @description
      *  📣 Currently `selected sport`.
      */
-    selectedSport = 'football',
-    /**
-     * @description
-     *  📣 Target navigation `button` data list.
-     */
-    navButtonOrderList: INavBtnData[]
-      = [
-        {
-          key: 'scores',
-          url: trsanslationData?.scores_header_translations?.section_links?.scores_url,
-          navTxt: (trsanslationData?.scores_header_translations?.section_links?.scores_title ?? 'SCORES'),
-          isNew: false,
-          newTxt: 'New'
-        },
-        {
-          key: 'content',
-          url: trsanslationData?.scores_header_translations?.section_links?.sports_content_url,
-          navTxt: (trsanslationData?.scores_header_translations?.section_links?.sports_content_title ?? 'SPORTS CONTENT'),
-          isNew: false,
-          newTxt: 'New'
-        },
-        {
-          key: 'competitions',
-          url: generateUrlCompetitions($sessionStore.serverLang!, $page.data.B_SAP_D3_CP_H),
-          navTxt: (trsanslationData?.scores_header_translations?.section_links?.competitions_title ?? 'COMPETITIONS'),
-          isNew: true,
-          newTxt: 'New'
-        }
-      ]
+    selectedSport = 'football'
   ;
 
   $: ({ error, route: { id: pageRouteId } } = $page);
@@ -198,15 +168,49 @@
       windowWidth,
       VIEWPORT_MOBILE_INIT[0],
       VIEWPORT_TABLET_INIT[0],
-    );
+    )
+  ;
+  $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
+  $: B_SAP_D3_CP_H = $page.data.B_SAP_D3_CP_H as B_SAP_D3 | null | undefined;
+
   $: homepageURL
     = serverLang != 'en'
       ? `/${serverLang}`
-      : '/';
+      : '/'
+  ;
   $: logoLink
     = serverLang != 'en'
       ? `${$page.url.origin}/${serverLang}`
       : $page.url.origin
+  ;
+  /**
+   * @description
+   *  📣 Target navigation `button` data list.
+   */
+  $: navButtonOrderList
+    = [
+      {
+        key: 'scores',
+        url: trsanslationData?.scores_header_translations?.section_links?.scores_url,
+        navTxt: (trsanslationData?.scores_header_translations?.section_links?.scores_title ?? 'SCORES'),
+        isNew: false,
+        newTxt: 'New'
+      },
+      {
+        key: 'content',
+        url: trsanslationData?.scores_header_translations?.section_links?.sports_content_url,
+        navTxt: (trsanslationData?.scores_header_translations?.section_links?.sports_content_title ?? 'SPORTS CONTENT'),
+        isNew: false,
+        newTxt: 'New'
+      },
+      {
+        key: 'competitions',
+        url: generateUrlCompetitions($sessionStore.serverLang!, $page.data.B_SAP_D3_CP_H),
+        navTxt: (trsanslationData?.scores_header_translations?.section_links?.competitions_title ?? 'COMPETITIONS'),
+        isNew: true,
+        newTxt: 'New'
+      }
+    ] as INavBtnData[]
   ;
 
   // #endregion ➤ 📌 VARIABLES
@@ -738,6 +742,17 @@
       {#if VIEWPORT_MOBILE_INIT[1] && currentPageRouteId == 'AuthorsPage'}
         <div
           id='authorsBackBtn'
+          on:click=
+          {
+            () =>
+            {
+              if (globalState.has('IsPWA'))
+                window.history.back();
+              else
+                goto(homepageURL);
+              return;
+            }
+          }
         >
           <img
             id=''
@@ -951,15 +966,6 @@
 
       <!--
       ╭─────
-      │ > [child.component] Language Selection
-      ╰─────
-      -->
-      {#if VIEWPORT_MOBILE_INIT[1] && currentPageRouteId == 'AuthorsPage'}
-        <HeaderCLang />
-      {/if}
-
-      <!--
-      ╭─────
       │ > [child.component] Theme Selection
       ╰─────
       -->
@@ -1026,7 +1032,13 @@
               id="wallet-text"
               class=
               "
-              color-white
+              {
+                currentPageRouteId == 'AuthorsPage'
+                  ? theme == 'Dark'
+                    ? 'color-white'
+                    : 'color-black-2'
+                  : 'color-white'
+              }
               w-500
               "
             >
@@ -1733,6 +1745,26 @@
         }
       }
 
+      div#navBox
+      {
+        /* 🎨 style */
+        position: relative;
+
+        div#nav-triangle
+        {
+          /* 📌 position */
+          position: absolute;
+          bottom: -21px;
+          /* 🎨 style */
+          width: 0;
+          height: 0;
+          border-left: 12px solid transparent;
+          border-right: 12px solid transparent;
+          border-bottom: 12px solid var(--dark-theme-1);
+          transition: all 0.25s ease-out;
+        }
+      }
+
       div#user-profile-box
       {
         /* 📌 position */
@@ -1763,9 +1795,11 @@
             background: #4b4b4b;
             height: 40px;
 
-            &:hover p
+            &:hover
             {
-              color: #f5620f !important;
+              /* 🎨 style */
+              background: var(--dark-theme);
+              box-shadow: inset 0px -1px 0px #3c3c3c;
             }
           }
         }
@@ -1779,26 +1813,6 @@
         p#wallet-text
         {
           margin-right: 14px;
-        }
-      }
-
-      div#navBox
-      {
-        /* 🎨 style */
-        position: relative;
-
-        div#nav-triangle
-        {
-          /* 📌 position */
-          position: absolute;
-          bottom: -21px;
-          /* 🎨 style */
-          width: 0;
-          height: 0;
-          border-left: 12px solid transparent;
-          border-right: 12px solid transparent;
-          border-bottom: 12px solid var(--dark-theme-1);
-          transition: all 0.25s ease-out;
         }
       }
     }
@@ -1854,6 +1868,7 @@
       bottom: 64px;
       @include headerDivider;
     }
+
     div#header\/border\/bottom-box
     {
       /* 📌 position */
