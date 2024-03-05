@@ -9,6 +9,7 @@ import type { Unsubscribe } from 'firebase/firestore';
 
 type IPageRouteId =
   | null
+  | 'Standard'
   | 'ProfilePage'
   | 'CompetitionPage'
   | 'AuthorsPage'

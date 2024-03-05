@@ -1206,7 +1206,7 @@
   │ > Bottom Navbar
   ╰─────
   -->
-  {#if currentPageRouteId != 'AuthorsPage'}
+  {#if currentPageRouteId != 'AuthorsPage' }
     <div
       id="header/bottom"
       class=
@@ -1227,13 +1227,13 @@
         "
       >
 
-        <!--
-        ╭─────
-        │ > Sports Horizontal List (scores only)
-        │ > Competition Horizontal List (competition only)
-        ╰─────
-        -->
-        {#if !currentPageRouteId || currentPageRouteId == 'CompetitionPage'}
+        {#if currentPageRouteId == 'Standard'}
+          <!--
+          ╭─────
+          │ > Sports Horizontal List (scores only)
+          │ > Competition Horizontal List (competition only)
+          ╰─────
+          -->
           <div
             id="header/bottom/inner"
             class=
@@ -1299,19 +1299,17 @@
         <!--
         💻 TABLET 🖥️ LAPTOP
         -->
-        {#if !VIEWPORT_MOBILE_INIT[1]}
+        {#if !VIEWPORT_MOBILE_INIT[1] && currentPageRouteId == 'Standard'}
 
           <!--
           ╭─────
           │ > Bookmakers Container
           ╰─────
           -->
-          {#if !currentPageRouteId}
-            <HeaderCBookmakers
-              {VIEWPORT_TABLET_INIT}
-              {VIEWPORT_MOBILE_INIT}
-            />
-          {/if}
+          <HeaderCBookmakers
+            {VIEWPORT_TABLET_INIT}
+            {VIEWPORT_MOBILE_INIT}
+          />
 
         {/if}
 
