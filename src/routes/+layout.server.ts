@@ -359,7 +359,7 @@ function detectPlatformLanguage
   {
     parameterLanguage: string | undefined
     cookies: Cookies,
-    routeId: string | undefined | null
+    routeId: string | NullUndef
   }
 ): string
 {
@@ -385,22 +385,19 @@ function detectPlatformLanguage
      * @description
      *  📣 Extract target expected 'visitor' cookie preference data.
      */
-    cookieValue = JSON.parse(opts.cookies.get('betarenaScoresCookie') ?? null)
+    cookieValue: object | false = JSON.parse(opts.cookies.get('betarenaScoresCookie') ?? 'false')
   ;
-
-  // [🐞]
-  // console.log('urlLang', urlLang);
-  // console.log('cookieValue', cookieValue);
 
   // ╭─────
   // │ CHECK
   // │ > for authors page, apply custom logic.
   // ╰─────
-  if (opts.routeId == routeIdPageAuthors)
-    urlLang = cookieValue.lang ?? 'en';
+  if (opts.routeId == routeIdPageAuthors && typeof(cookieValue) == 'object')
+    urlLang = cookieValue.lang;
   ;
 
   // [🐞]
+  // console.log('cookieValue', cookieValue);
   // console.log('urlLang', urlLang);
 
   return urlLang;
