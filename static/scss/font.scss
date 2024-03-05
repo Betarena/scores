@@ -26,19 +26,19 @@ $fontWeight: (400, 500, 600, 700, 'normal');
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 */
 
-$fontSize: (10, 12, 14, 15, 16, 18, 19, 20, 22, 24, 28, 32, 40, 42);
+$fontSize: 50;
 
 //
 // Generate possible Font Sizes
 //
 
-@each $w in $fontSize
+@for $i from 1 through $count
 {
-  .s-#{$w},
-  .global.s-#{$w},
-  .global.s-#{$w} > *
+  .s-#{$i},
+  .global.s-#{$i},
+  .global.s-#{$i} > *
   {
-    font-size: #{$w}px;
+    font-size: #{$i}px;
   }
 }
 
@@ -171,6 +171,7 @@ p.s_small
     {
       .dark-background &
       , .dark-background-1 &
+      , .dark-mode &
       {
         &#{map-get($data-dark, "class-name")}
         {

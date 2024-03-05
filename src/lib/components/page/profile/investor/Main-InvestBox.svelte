@@ -874,12 +874,10 @@
       {
         // ▓ [🐞]
         if (ex?.toString()?.includes('TypeError: undefined is not an object (evaluating \'window.ethereum.request\')'))
-
           console.warn
           (
             '❗️', 'Ethereum is not available in the global scope (window). Please check that you have MetaMask (or other wallet) installed.'
           );
-
         else
           console.error('💀', `Unhandled :: ${ex}`);
         //
@@ -1598,7 +1596,6 @@
             ?? 'Invest Box'
           }
         </p>
-
 
         <!--
         ▓ NOTE:

@@ -673,7 +673,6 @@
       referral-code-box
       "
     >
-
       <!--
       ▓ NOTE:
       ▓ > referral title (text)

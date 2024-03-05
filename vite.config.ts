@@ -1,7 +1,7 @@
 // ╭──────────────────────────────────────────────────────────────────────────────────╮
-// │ Vite Configuration                                                               │
+// │ ⚙️ Vite Configuration                                                             │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
-// │ - https://vitejs.dev/config/                                                     │
+// │ https://vitejs.dev/config/                                                       │
 // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 // #region ➤ 📦 Package Imports
@@ -14,13 +14,12 @@ import { defineConfig } from 'vitest/config';
 import { loadEnv } from "vite";
 import { version } from './package.json';
 
-// ▓ NOTE:
-// ▓ > required as part of Google Hack.
+// ╭─────
+// │ NOTE: IMPORTANT
+// │ > required as part of Google Hack.
+// ╰─────
 // import viteCompression from 'vite-plugin-compression';
 // import fs from 'fs';
-
-// ▓ NOTE:
-// ▓ > required as part of the establied Google Hack solution.
 // import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
 
 // #endregion ➤ 📦 Package Imports
@@ -35,27 +34,38 @@ export default defineConfig
     }
   ) =>
   {
-    // ▓ NOTE:
-    // ▓ > inject environment secrets.
+    // [🐞]
+    // console.log([JSON.stringify(process.env.VITE_ENV_TARGET)])
+
+    // ╭─────
+    // │ NOTE: IMPORTANT
+    // │ > inject environment secrets.
+    // ╰─────
     process.env =
     {
-      ...process.env
-      , ...loadEnv(mode, process.cwd())
+      ...process.env,
+      ...loadEnv(mode, process.cwd())
     };
 
-    // ▓ [🐞]
+    // [🐞]
+    // console.log([JSON.stringify(process.env.VITE_ENV_TARGET)])
+    // console.log([JSON.stringify(loadEnv(mode, process.cwd()))])
+
+    // [🐞]
     console.log
     (
       table
       (
         [
-          ['💮 betarena scores version', process.env?.VITE_SCORES_PKG_VERSION]
-          , ['📣 @betarena/scores-lib', process.env?.VITE_SCORES_LIB_PKG_VERSION]
-          , ['📣 uploaded sentry sourcemap', process.env?.VITE_SENTRY_UPLOAD_SOURCEMAPS]
-          , ['📣 target .env', process.env?.VITE_ENV_TARGET]
-          , ['📣 vite mode', mode]
-          , ['📣 vite command', command]
-          , ['📣 vite ssrBuild', ssrBuild]
+          ['💮 scores (version)', process.env?.VITE_SCORES_PKG_VERSION],
+          ['💮 [dependency] @betarena/scores-lib (version)', process.env?.VITE_SCORES_LIB_PKG_VERSION],
+          ['📣 uploaded sentry sourcemap', process.env?.VITE_SENTRY_UPLOAD_SOURCEMAPS],
+          ['📣 target .env', process.env?.VITE_ENV_TARGET],
+          ['📣 logging', process.env?.VITE_PROD_LOGS],
+          ['📣 vite mode', mode],
+          ['📣 vite command', command],
+          ['📣 vite ssrBuild', ssrBuild],
+
         ]
       )
     );
@@ -64,8 +74,10 @@ export default defineConfig
 
       plugins:
       [
-        // ▓ NOTE: ▓ IMPORTANT
-        // ▓ > needs to be placed 'before' sveltekit compilation.
+        // ╭─────
+        // │ NOTE: IMPORTANT
+        // │ > needs to be placed 'before' sveltekit compilation.
+        // ╰─────
         sentrySvelteKit
         (
           {
@@ -80,133 +92,147 @@ export default defineConfig
           }
         ),
 
-        // ▓ NOTE: ▓ WARNING:
-        // ▓ > imported from 'vite-plugin-chunk-split'.
-        // ▓ > DOES NOT WORK! BREAKS BUILD/COMPILE!
+        // ╭─────
+        // │ NOTE: WARNING:
+        // │ > imported from 'vite-plugin-chunk-split'.
+        // │ > DOES NOT WORK! BREAKS BUILD/COMPILE!
+        // ╰─────
         // chunkSplitPlugin({ strategy: 'all-in-one' }),
 
-        // ▓ NOTE: ▓ WARNING:
-        // ▓ > imported from 'vite-plugin-progress'.
-        // ▓ > DOES NOT WORK AS ADVERTISED!
+        // ╭─────
+        // │ NOTE: WARNING:
+        // │ > imported from 'vite-plugin-progress'.
+        // │ > DOES NOT WORK AS ADVERTISED!
+        // ╰─────
         // progress(),
 
-        // ▓ NOTE: ▓ WARNING:
-        // ▓ > imported from 'vite-plugin-compress'.
-        // ▓ > DOES NOT WORK AS ADVERTISED!
+        // ╭─────
+        // │ NOTE: WARNING:
+        // │ > imported from 'vite-plugin-compress'.
+        // │ > DOES NOT WORK AS ADVERTISED!
+        // ╰─────
         // c.compress(),
 
-        // ▓ NOTE: ▓ WARNING:
-        // ▓ > imported from 'vite-plugin-preload'.
-        // ▓ > DOES NOT WORK AS ADVERTISED!
+        // ╭─────
+        // │ NOTE: WARNING:
+        // │ > imported from 'vite-plugin-preload'.
+        // │ > DOES NOT WORK AS ADVERTISED!
+        // ╰─────
         // preload(),
 
-        // ▓ IMPORTANT
+        // IMPORTANT
         sveltekit(),
         // viteCompression(),
 
-        // ▓ NOTE:
-        // ▓ > imported from 'vite-plugin-css-injected-by-js'.
-        // ▓ WARNING:
-        // ▓ > overrides 'CSS' imported by 'svelte' & 'svelte-kit'
-        // ▓ > requires to be imported a '<link ... >' in the 'src/app.html'
-        // ▓ IMPORTANT:
-        // ▓ > Please, follow the following steps (to attain google-hack)
-        // ▓ > [1] Uncomment (below) code-block
-        // ▓ > [2] Run `npm run build` in command-line for '_this_' root project path.
-        // ▓ > [3] Validate new `./static/all-one-css-chunk.css` has been generated.
-        // ▓ > [4] Comment (below) code-block.
-        // ▓ > [5] Copy new `CSS` to `src/app.html > <head> <style> (designated area).
-        // ▓ > [6] Push to `Production`.
+        // ╭─────
+        // │ NOTE:
+        // │ > imported from 'vite-plugin-css-injected-by-js'.
+        // │ WARNING:
+        // │ > overrides 'CSS' imported by 'svelte' & 'svelte-kit'
+        // │ > requires to be imported a '<link ... >' in the 'src/app.html'
+        // │ IMPORTANT
+        // │ Please, follow the following steps (to attain google-hack)
+        // │ > [1] Uncomment (below) code-block
+        // │ > [2] Run `npm run build` in command-line for '_this_' root project path.
+        // │ > [3] Validate new `./static/all-one-css-chunk.css` has been generated.
+        // │ > [4] Comment (below) code-block.
+        // │ > [5] Copy new `CSS` to `src/app.html > <head> <style> (designated area).
+        // │ > [6] Push to `Production`.
+        // ╰─────
         /*
-        cssInjectedByJsPlugin
-        (
-          {
-
-            // relativeCSSInjection: true,
-
-            // topExecutionPriority: true,
-
-            // jsAssetsFilterFunction: function customJsAssetsfilterFunction
-            // (
-            //   outputChunk
-            // )
-            // {
-
-            //   // [🐞]
-            //   // ▓ NOTE:
-            //   // ▓ It appears, the 'outputChunk.filename' is of type:
-            //   // ▓ - _app/immutable/chunks/index.088b98a6.js
-            //   // ▓ - _app/immutable/chunks/index.8e8ca4ce.js
-            //   // ▓ etc.
-            //   // console.log(outputChunk.fileName);
-
-            //   return outputChunk.fileName == 'index.js';
-            // }
-
-            // ▓ NOTE:
-            // ▓ definitive 'hack' solution for 'single CSS file' output chunk.
-            injectCode:
-            (
-              cssCode,
-              options
-            ): string =>
+          cssInjectedByJsPlugin
+          (
             {
 
-              const generateOneCssFile: boolean = false;
+              // relativeCSSInjection: true,
 
-              if (generateOneCssFile)
+              // topExecutionPriority: true,
+
+              // jsAssetsFilterFunction: function customJsAssetsfilterFunction
+              // (
+              //   outputChunk
+              // )
+              // {
+
+              //   // [🐞]
+              //   // ▓ NOTE:
+              //   // ▓ It appears, the 'outputChunk.filename' is of type:
+              //   // ▓ - _app/immutable/chunks/index.088b98a6.js
+              //   // ▓ - _app/immutable/chunks/index.8e8ca4ce.js
+              //   // ▓ etc.
+              //   // console.log(outputChunk.fileName);
+
+              //   return outputChunk.fileName == 'index.js';
+              // }
+
+              // ▓ NOTE:
+              // ▓ definitive 'hack' solution for 'single CSS file' output chunk.
+              injectCode:
+              (
+                cssCode,
+                options
+              ): string =>
               {
-                // ▓ NOTE:
-                // ▓ the 'cssCode' generated contains some 'formatting' issues.
-                // ▓ remove 1st and last speech marks.
-                // ▓ remove cases of `\n` chars.
-                // ▓ correct custom case of 'ids'/'classes' using the 'forward-slash' in the declaration.
-                let cssCodeMod: string = cssCode.slice(1, -1);
-                cssCodeMod = cssCodeMod.replace(/\\n/g, "");
-                cssCodeMod = cssCodeMod.replace(/\\\\/g,"\\")
 
-                // ▓ WARNING:
-                // ▓ 'all-css-chunk.css' must exist inside '/static'
-                fs.writeFile
-                (
-                  './static/all-css-chunk.css',
-                  cssCodeMod,
-                  err =>
-                  {
-                    if (err) console.error(err);
-                  }
-                );
+                const generateOneCssFile: boolean = false;
+
+                if (generateOneCssFile)
+                {
+                  // ▓ NOTE:
+                  // ▓ the 'cssCode' generated contains some 'formatting' issues.
+                  // ▓ remove 1st and last speech marks.
+                  // ▓ remove cases of `\n` chars.
+                  // ▓ correct custom case of 'ids'/'classes' using the 'forward-slash' in the declaration.
+                  let cssCodeMod: string = cssCode.slice(1, -1);
+                  cssCodeMod = cssCodeMod.replace(/\\n/g, "");
+                  cssCodeMod = cssCodeMod.replace(/\\\\/g,"\\")
+
+                  // ▓ WARNING:
+                  // ▓ 'all-css-chunk.css' must exist inside '/static'
+                  fs.writeFile
+                  (
+                    './static/all-css-chunk.css',
+                    cssCodeMod,
+                    err =>
+                    {
+                      if (err) console.error(err);
+                    }
+                  );
+                }
+
+                return '';
+
+                // return `try{if(typeof document != 'undefined'){var elementStyle = document.createElement('style');elementStyle.appendChild(document.createTextNode(${cssCode}));document.head.appendChild(elementStyle);}}catch(e){console.error('vite-plugin-css-injected-by-js', e);}`
               }
 
-              return '';
-
-              // return `try{if(typeof document != 'undefined'){var elementStyle = document.createElement('style');elementStyle.appendChild(document.createTextNode(${cssCode}));document.head.appendChild(elementStyle);}}catch(e){console.error('vite-plugin-css-injected-by-js', e);}`
             }
-
-          }
-        ),
+          ),
         */
       ],
 
       build:
       {
-        // ▓ NOTE:
-        // ▓ > gets overridden by SvelteKit.
+        // ╭─────
+        // │ NOTE:
+        // │ > gets overridden by SvelteKit.
+        // ╰─────
         // cssCodeSplit: false,
 
         minify: 'esbuild',
         cssMinify: 'lightningcss',
 
-        // ▓ NOTE:
-        // ▓ > rollup config.
+        // ╭─────
+        // │ NOTE:
+        // │ > rollup config.
+        // ╰─────
         rollupOptions:
         {
           output:
           {
             // manualChunks: undefined
 
-            // ▓ 🔗 read-more :|: https://github.com/vitejs/vite/discussions/9440#discussioncomment-5913798
-            // ▓ 🔗 read-more :|: https://stackoverflow.com/questions/68643743/separating-material-ui-in-vite-rollup-as-a-manual-chunk-to-reduce-chunk-size
+            // 🔗 read-more :|: https://github.com/vitejs/vite/discussions/9440#discussioncomment-5913798
+            // 🔗 read-more :|: https://stackoverflow.com/questions/68643743/separating-material-ui-in-vite-rollup-as-a-manual-chunk-to-reduce-chunk-size
             manualChunks
             (
               id,
@@ -238,45 +264,53 @@ export default defineConfig
                 );
               */
 
-              // ▓ NOTE:
-              // ▓ testing for 'per-page' component build split.
-              // ▓ NOTE:
-              // ▓ works well, but at times incosistent, due to CSS.
+              // ╭─────
+              // │ NOTE:
+              // │ > testing for 'per-page' component build split.
+              // │ > works well, but at times incosistent, due to CSS.
+              // ╰─────
               // if (id.includes('src/lib/components/_main_'))
               //   return 'M-main-single-chunk';
               // ;
+
               if (id.includes('src/'))
                 return 'M-homepage-single-chunk';
               ;
+
               // if (id.includes('src/lib/store/'))
               //   return 'M-stores-single-chunk';
               // ;
+
               // if (id.includes('src/lib/firebase/'))
               //   return 'M-firebase-single-chunk';
               // ;
-              // ▓ NOTE:
-              // ▓ works well, but at times incosistent
-              // ▓ supercharged with hardcoded CSS.
+
+              // ╭─────
+              // │ NOTE:
+              // │ > works well, but at times incosistent, supercharged with hardcoded CSS.
+              // ╰─────
               // if (id.includes('src/'))
               //   return 'M-single-chunk';
               // ;
 
-              // ▓ NOTE:
-              // ▓ gives error of 'dev' issue [?]
+              // ╭─────
+              // │ NOTE: WARNING:
+              // │ > gives error of 'dev' issue [?]
+              // ╰─────
               // if (id.includes('src/lib/utils/'))
               //   return 'M-utils-single-chunk';
 
-              // ▓ SEE:
-              // ▓ 1st comment - https://stackoverflow.com/a/71578633/8421215
+              // 🔗 read-more :|: (1st comment) https://stackoverflow.com/a/71578633/8421215
               // if (id.indexOf("react") !== -1) { return; }
 
-              // ▓ SEE:
-              // ▓ https://github.com/sveltejs/kit/issues/7257#issuecomment-1528962348
+              // 🔗 read-more :|: https://github.com/sveltejs/kit/issues/7257#issuecomment-1528962348
               // if (id.includes('@sentry') && !id.includes('@sentry/browser') && !id.includes('@sentry/tracing'))
               //   return 'vendor_sentry'
 
-              // ▓ NOTE:
-              // ▓ original
+              // ╭─────
+              // │ NOTE:
+              // │ > original
+              // ╰─────
               // if (id.includes('node_modules'))
               //   return id.toString().split('node_modules/')[1].split('/')[0].toString();
             }
@@ -284,28 +318,30 @@ export default defineConfig
         }
       },
 
-      // ▓ 🔗 read-more :|: https://stackoverflow.com/questions/73205096/run-sveltekit-dev-with-https
+      // 🔗 read-more :|: https://stackoverflow.com/questions/73205096/run-sveltekit-dev-with-https
       /*
-      server:
-      {
-        https:
+        server:
         {
-          key: fs.readFileSync(`${__dirname}/cert/key.pem`),
-          cert: fs.readFileSync(`${__dirname}/cert/cert.pem`)
+          https:
+          {
+            key: fs.readFileSync(`${__dirname}/cert/key.pem`),
+            cert: fs.readFileSync(`${__dirname}/cert/cert.pem`)
+          }
         }
-      }
       */
 
-      // ▓ NOTE: | STASH
-      // ▓ > (disabled) 'vitest' integration
+      // ╭─────
+      // │ NOTE:
+      // │ > (disabled) 'vitest' integration
+      // ╰─────
       /*
-      test:
-      {
-        include: ['src/**//*.{test,spec}.{js,ts}'],
-        globals: true,
-        environment: 'jsdom',
-        // setupFiles: ["src/setuptest.js"],
-      }
+        test:
+        {
+          include: ['src/**//*.{test,spec}.{js,ts}'],
+          globals: true,
+          environment: 'jsdom',
+          // setupFiles: ["src/setuptest.js"],
+        }
       */
     }
   }

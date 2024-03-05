@@ -124,14 +124,18 @@ export async function subscribeCompetitionsAllListen
             );
           }
 
-          sessionStore.updateCompetitionsAllNum
+          sessionStore.updateData
           (
-            (competitionMap?.size ?? 0),
-            openCompetitions
+            'competitionAllNum',
+            [
+              (competitionMap?.size ?? 0),
+              openCompetitions
+            ]
           );
 
-          sessionStore.updateCompetitionsLatestMap
+          sessionStore.updateData
           (
+            'competitionLatestMap',
             competitionMap
           );
 
@@ -140,7 +144,11 @@ export async function subscribeCompetitionsAllListen
     }
   );
 
-  sessionStore?.updateGraphQlSubscriptions(subscription?.unsubscribe);
+  sessionStore?.updateData
+  (
+    'graphqlListeners',
+    subscription?.unsubscribe
+  );
 }
 
 /**
@@ -254,8 +262,9 @@ export async function subscribeCompetitionsTargetListen
             );
           }
 
-          sessionStore.updateCompetitionsLatestMap
+          sessionStore.updateData
           (
+            'competitionLatestMap',
             competitionMap
           );
 
@@ -264,7 +273,11 @@ export async function subscribeCompetitionsTargetListen
     }
   );
 
-  sessionStore?.updateGraphQlSubscriptions(subscription?.unsubscribe);
+  sessionStore?.updateData
+  (
+    'graphqlListeners',
+    subscription?.unsubscribe
+  );
 
   return;
 }

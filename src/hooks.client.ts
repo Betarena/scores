@@ -1,18 +1,26 @@
-// ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-// ### 📝 DESCRIPTION                                                         ◼️
-// ### Client Hooks (a.k.a SveltKit Middleware)                               ◼️
-// ### https://kit.svelte.dev/docs/hooks#shared-hooks                         ◼️
-// ### NOTE: | WARNING:                                                       ◼️
-// ### only applicable to load(..) lifecycle logic in +page[.server].ts files ◼️
-// ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+// ╭──────────────────────────────────────────────────────────────────────────────────╮
+// │ 📌 High Order Component Overview                                                 │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ ➤ Internal Svelte Code Format :|: V.8.0                                          │
+// │ ➤ Status :|: 🔒 LOCKED                                                           │
+// │ ➤ Author(s) :|: @migbash                                                         │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ 📝 Description                                                                   │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ > Client Hooks (a.k.a SvelteKit Middleware)                                      │
+// │ > 🔗 read-more :|: https://kit.svelte.dev/docs/hooks#shared-hooks                │
+// │ > NOTE: | WARNING:                                                               │
+// │ > only applicable to load(..) lifecycle logic in +page[.server].ts files         │
+// ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 // #region ➤ 📦 Package Imports
 
+import * as Sentry from '@sentry/sveltekit';
+import { Replay } from '@sentry/sveltekit';
+import { table } from 'table';
+
 import userBetarenaSettings from '$lib/store/user-settings.js';
 import { dlog } from '$lib/utils/debug.js';
-import * as Sentry from '@sentry/sveltekit';
-import { Replay } from "@sentry/sveltekit";
-import { table } from 'table';
 
 import type { HandleClientError } from '@sveltejs/kit';
 
@@ -20,11 +28,13 @@ import type { HandleClientError } from '@sveltejs/kit';
 
 // #region ➤ 💠 MISC.
 
-// ▓▓ CHECK
-// ▓▓ for disabling of Sentry on localhost
+// ╭─────
+// │ CHECK
+// │ > for disabling of Sentry on localhost
+// ╰─────
 if (import.meta.env.VITE_SENTRY_ENVIRONMENT != 'local')
 {
-  // ### [🐞]
+  // [🐞]
   Sentry.init
   (
     {
@@ -48,30 +58,31 @@ if (import.meta.env.VITE_SENTRY_ENVIRONMENT != 'local')
       ],
     }
   );
-  // ### [🐞]
+  // [🐞]
   Sentry.setTags
   (
     {
       location: 'client'
     }
   );
-  // ### [🐞]
+  // [🐞]
   Sentry.setContext
   (
-    "📸 Data",
+    '📸 Data',
     {
       ...userBetarenaSettings.extractUserDataSnapshot()
     }
   );
 }
 
-// ### [🐞]
+// [🐞]
 dlog
 (
-  `🚏 checkpoint [H] ➤ src/hooks.client.ts`,
+  '🚏 checkpoint [H] ➤ src/hooks.client.ts',
   true
 );
-// ### [🐞]
+// [🐞]
+// eslint-disable-next-line no-console
 console.debug
 (
   table
@@ -96,7 +107,7 @@ console.debug
  * @summary
  *  🔹 HELPER
  * @description
- *  📌 Custom `Error` handle logic.
+ *  📣 Custom `Error` handle logic.
  *  NOTE:
  *  kept as an example.
  * @param param0
@@ -104,30 +115,35 @@ console.debug
  * @returns { HandleClientError }
  */
 const customErrorHandler: HandleClientError = async (
-    {
-      error,
-      event
-    }
-  ): Promise < App.Error > =>
   {
-    // ▓▓ [🐞]
-    console.error("❌ An error occurred on the client side:", error);
-
-    return {
-      message: 'Whoops! Client error found!',
-      errorId: '404'
-    }
+    error,
+    event
   }
-;
+): Promise < App.Error > =>
+{
+  // [🐞]
+  // eslint-disable-next-line no-console
+  console.error('❌ An error occurred on the client side:', error);
+
+  return {
+    message: 'Whoops! Client error found!',
+    errorId: '404'
+  }
+}
 
 // #endregion ➤ 🛠️ METHODS
 
 // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
-// ▓▓ NOTE:
-// ▓▓ using Sentry with Custom Error Handler.
+// ╭─────
+// │ NOTE:
+// │ > using Sentry with Custom Error Handler.
+// ╰─────
 export const handleError: HandleClientError = Sentry.handleErrorWithSentry(customErrorHandler);
-// ▓▓ or, alternatively,
+// ╭─────
+// │ NOTE:
+// │ > or, alternatively:
+// ╰─────
 // export const handleError: HandleClientError = Sentry.handleErrorWithSentry();
 
 // #endregion ➤ 🔄 LIFECYCLE [SVELTE]

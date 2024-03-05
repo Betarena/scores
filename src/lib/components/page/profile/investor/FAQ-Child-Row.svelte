@@ -43,7 +43,7 @@
   import icon_faq_plus from '../assets/investor/icon-faq-plus.svg';
 
   import type { InvestorsTranslationNewDataOption } from '@betarena/scores-lib/types/_AUTO-HASURA_.js';
-  
+
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES

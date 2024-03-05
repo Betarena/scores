@@ -152,8 +152,31 @@ button
       color: initial;
     }
 
+    /*
+    Variant (6)
+    */
+    &.v6
+    {
+      /* 🎨 style */
+      background: #292929;
+      height: 44px;
+      padding: 12px 24px 11px 24px;
+      border-radius: 8px;
+      border: 1px;
+      gap: 10px;
+
+      .dark-background &
+      , .dark-background-1 &
+      , .dark-mode &
+      {
+        /* 🎨 style */
+        border: 1px solid #FFFFFF
+      }
+    }
+
     .dark-background &
     , .dark-background-1 &
+    , .dark-mode &
     {
       &.v2
       {
@@ -196,6 +219,7 @@ button
 
     .dark-background &
     , .dark-background-1 &
+    , .dark-mode &
     {
       /* 🎨 style */
       background-color: var(--dark-theme-1-4-shade);

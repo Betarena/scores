@@ -1,25 +1,18 @@
-// *************************************************
-// IMPORTANT                                       *
-// *************************************************
-// The file 'utils/platform-functions.ts' contains *
-// functions that are used by many files and logic *
-// within the Betarena Scores (this) project.      *
-// *************************************************
+// ╭──────────────────────────────────────────────────────────────────────────────────╮
+// │ [🐞] Scores Common/Global Logic                                                  │
+// ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 // #region ➤ 📦 Package Imports
 
-import { dev } from '$app/environment';
-import { goto } from '$app/navigation';
-import { error, redirect, type Page } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 
 import { get } from '$lib/api/utils.js';
 import { getUserLocation, getUserLocationFromIP } from '$lib/geo-js/init.js';
 import sessionStore from '$lib/store/session.js';
 import userBetarenaSettings from '$lib/store/user-settings.js';
 import LZString from 'lz-string';
-import { NB_W_TAG, PAGE_INVALID_MSG, dlog, dlogv2 } from './debug';
+import { PAGE_INVALID_MSG, dlog, dlogv2 } from './debug.js';
 import { removeDiacritics } from './languages.js';
-import { ROUTE_ID_PROFILE } from './user.js';
 
 import type { GeoJsResponse } from '$lib/types/types.geojs.js';
 import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
@@ -31,89 +24,85 @@ import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 // #region ➤ 🛠️ METHODS
 
 /**
+ * @deprecated
+ * @author
+ *  @migbash
  * @summary
- * 🔹 HELPER | IMPORTANT
- *
+ *  - 🔹 HELPER
+ *  - IMPORTANT
  * @description
- * 📌 Determines language (SSR) of platform.
- *
- * @param
- * { string | undefined } page_route_id - Target page `routeId`.
- *
- * @param
- * { unknown | undefined } page_error - Target page `error` object.
- *
- * @param
- * { string | undefined } page_params_lang - Target page `params` for `lang`.
- *
- * @returns
- * A string of target current `platform` language.
+ *  📣 Determines language (SSR) of platform.
+ * @param { string | undefined } pageRouteId
+ *  💠 Target page `routeId`.
+ * @param { unknown | undefined } pageError
+ *  💠 Target page `error` object.
+ * @param { string | undefined } pageParamsLang
+ *  💠 Target page `params` for `lang`.
+ * @return { string }
+ *  📤 Target current `platform` language.
  */
 export function platfrom_lang_ssr
 (
-  page_route_id?: string | undefined,
-  page_error?: unknown | undefined,
-  page_params_lang?: string | undefined
+  pageRouteId?: string | undefined | null,
+  pageError?: unknown | undefined,
+  pageParamsLang?: string | undefined
 ): string
 {
-  // ### [🐞]
+  // [🐞]
   dlogv2
   (
     'platfrom_lang_ssr(..)',
     [
-      `🔹 [var] page_route_id: ${page_route_id}`
-      ,`🔹 [var] page_error: ${JSON.stringify(page_error, null, 2)}`
-      ,`🔹 [var] page_params_lang: ${page_params_lang}`
+      `🔹 [var] pageRouteId: ${pageRouteId}`,
+      `🔹 [var] pageError: ${JSON.stringify(pageError, null, 2)}`,
+      `🔹 [var] pageParamsLang: ${pageParamsLang}`
     ]
   );
 
-  // ### CHECK
-  // ### for cases of 'EN' default.
-  const if_M_0: boolean
-		= page_route_id == null
-    && page_error != null
-  ;
-  if (if_M_0) return 'en';
+  // ╭─────
+  // │ CHECK
+  // │ > cases of 'EN' default.
+  // ╰─────
+  if (pageRouteId == null && pageError != null) return 'en';
 
-  // ### CHECK
-  // ### for cases of [[lang=lang]] page.
-  const server_side_language: string
-    = (page_route_id?.includes('[[lang=lang]]') || page_route_id?.includes('[lang=lang]'))
-    && page_params_lang != undefined
-      ? page_params_lang
+  const
+    /**
+     * @description
+     *  📣 Target detected **language**.
+     */
+    language: string
+    = (pageRouteId?.includes('[[lang=lang]]') || pageRouteId?.includes('[lang=lang]'))
+    && pageParamsLang != undefined
+      ? pageParamsLang
       : 'en'
   ;
 
-  // ### [🐞]
+  // [🐞]
   dlog
   (
-    `🔹 [var] ➤ platfrom_lang_ssr(..) server_side_language ➡️ ${server_side_language}`
+    `🔹 [var] ➤ platfrom_lang_ssr(..) language ➡️ ${language}`
   );
 
-  return server_side_language;
+  return language;
 }
 
 /**
+ * @deprecated
+ * @author
+ *  @migbash
  * @summary
- * 🔹 HELPER | IMPORTANT
- *
+ *  - 🔹 HELPER
+ *  - IMPORTANT
  * @description
- * 📌 Determines `tablet`, `mobile` and `other` viewport
- * changes as a array/tuple of the `x` states
- *
- * @param
- * { number } TABLET_VIEW_INIT - Target viewport/width at
- * which `tablet` is expected to start.
- *
- * @param
- * { number } MOBILE_VIEW_INIT - Target viewport/width at
- * which `mobile` is expected to start.
- *
- * @param
- * { number } OTHER_VIEW - Custom target viewport/width.
- *
- * @returns
- * An array of boolean's (true/false)
+ *  📣 Determines `tablet`, `mobile` and `other` viewport changes as a array/tuple of the `x` states
+ * @param { number } TABLET_VIEW_INIT
+ *  💠 Target viewport/width at which `tablet` is expected to start.
+ * @param { number } MOBILE_VIEW_INIT
+ *  💠 Target viewport/width at which `mobile` is expected to start.
+ * @param { number } OTHER_VIEW
+ *  💠 Custom target viewport/width.
+ * @return { boolean[] }
+ *  📤 An array of boolean's for each respective width.
  */
 export function viewport_change
 (
@@ -122,32 +111,73 @@ export function viewport_change
   OTHER_VIEW?: number
 ): boolean[]
 {
-  const width: number = document.documentElement.clientWidth
-
-	 ,isTabletView: boolean = width <= TABLET_VIEW_INIT
-	 ,isMobileView: boolean = width <= MOBILE_VIEW_INIT
-    ,isOtherView: boolean = width <= OTHER_VIEW;
+  const
+    width: number = document.documentElement.clientWidth,
+    isTabletView: boolean = width <= TABLET_VIEW_INIT,
+    isMobileView: boolean = width <= MOBILE_VIEW_INIT,
+    isOtherView: boolean = width <= OTHER_VIEW
+  ;
 
   return [
-    isTabletView
-    ,isMobileView
-    ,isOtherView
+    isTabletView,
+    isMobileView,
+    isOtherView
   ];
 }
 
 /**
+ * @author
+ *  @migbash
  * @summary
- * 🔹 HELPER | IMPORTANT
- *
+ *  - 🔹 HELPER
+ *  - IMPORTANT
  * @description
- * 📌 Determines target initial device type, by the assigned
- * `user-agent` data.
- *
- * @param
- * { string } deviceType - Target `user-agent` detected device.
- *
- * @returns
- * An array of boolean's (true/false), corresponding to `mobile` and `tablet`.
+ *  - 📣 Determines `tablet`, `mobile` and `other` viewport changes as a array/tuple of the `x` states.
+ *  - 📣 Successor to `viewport_change(..)`.
+ * @param { number } currentWidth
+ *  💠 Current width of `window/document`.
+ * @param { number } MOBILE_VIEW_INIT
+ *  💠 Target viewport/width at which `mobile` is expected to start.
+ * @param { number } TABLET_VIEW_INIT
+ *  💠 Target viewport/width at which `tablet` is expected to start.
+ * @param { number } OTHER_VIEW
+ *  💠 Custom target viewport/width.
+ * @return { boolean[] }
+ *  📤 An array of boolean's for each respective width.
+ */
+export function viewportChangeV2
+(
+  currentWidth: number,
+  MOBILE_VIEW_INIT: number,
+  TABLET_VIEW_INIT: number,
+  OTHER_VIEW: number = 0,
+): boolean[]
+{
+  const
+    isTabletView: boolean = currentWidth <= TABLET_VIEW_INIT,
+    isMobileView: boolean = currentWidth <= MOBILE_VIEW_INIT,
+    isOtherView: boolean = currentWidth <= OTHER_VIEW
+  ;
+
+  return [
+    isMobileView,
+    isTabletView,
+    isOtherView
+  ];
+}
+
+/**
+ * @author
+ *  @migbash
+ * @summary
+ *  - 🔹 HELPER
+ *  - IMPORTANT
+ * @description
+ *  📣 Determines target initial device type, by the assigned `user-agent` data.
+ * @param { string } deviceType
+ *  💠 Target `user-agent` detected device.
+ * @returns { boolean[] }
+ *  📤 `Boolean` array, corresponding to `mobile` and `tablet`.
  */
 export function initialDevice
 (
@@ -155,73 +185,57 @@ export function initialDevice
 ): boolean[]
 {
   let
-    isMobileView: boolean
-    ,isTabletView: boolean
+    isMobileView: boolean,
+    isTabletView: boolean
   ;
 
   if (deviceType == 'mobile')
   {
-    // [🐞]
-    dlog
-    (
-      '🚏 checkpoint ➤ home/Layout.svelte 📱',
-      true
-    );
-
     isMobileView = true;
     isTabletView = false;
   }
   else if (deviceType == 'tablet')
   {
-    // [🐞]
-    dlog
-    (
-      '🚏 checkpoint ➤ home/Layout.svelte 💻',
-      true
-    );
-
     isMobileView = true;
     isTabletView = true;
   }
   else if (deviceType == 'desktop')
   {
-    // [🐞]
-    dlog
-    (
-      '🚏 checkpoint ➤ home/Layout.svelte 🖥️',
-      true
-    );
-
     isMobileView = false;
     isTabletView = false;
   }
 
+  // [🐞]
+  dlog
+  (
+    '🚏 checkpoint ➤ home/Layout.svelte 🖥️',
+    true
+  );
+
   return [
-    isMobileView
-    ,isTabletView
+    isMobileView!,
+    isTabletView!
   ]
 }
 
 /**
+ * @author
+ *  @migbash
  * @summary
- * 🔹 HELPER
- *
+ *  🔹 HELPER
  * @description
- * 📌 "pause" JavaScript execution for X milliseconds.
- *
- * @param
- * { number } ms - Number of Milliseconds.
- *
- * @returns
- * void
+ *  📣 "pause" JavaScript execution for X milliseconds.
+ * @param { number } ms
+ *  💠 Number of Milliseconds.
+ * @return { Promise < void > }
  */
 export async function sleep
 (
   ms: number
 ): Promise < void >
 {
-  // ▓ [🐞]
-  console.log('sleeping...');
+  // [🐞]
+  console.log('😴 sleeping...');
 
   return new Promise
   (
@@ -265,8 +279,8 @@ export function googleEventLog
     value?: string
   }
   = {
-    type: 'event'
-    ,value: 'click'
+    type: 'event',
+    value: 'click'
   };
 
   if (action === 'fixture_football_fixtures_probabilities')
@@ -318,9 +332,9 @@ export function googleEventLog
     gtagEventObj.type,
     gtagEventObj.tag_name,
     {
-      event_category: gtagEventObj.tag_name
-      ,event_label: gtagEventObj.event_label
-      ,value: gtagEventObj.value
+      event_category: gtagEventObj.tag_name,
+      event_label: gtagEventObj.event_label,
+      value: gtagEventObj.value
     }
   );
 }
@@ -345,9 +359,9 @@ export async function setUserGeoLocation
   ;
   if (if_M_0) return;
 
-  let geoRes: GeoJsResponse = await getUserLocation()
+  let geoRes: GeoJsResponse = await getUserLocation(),
 
-    ,userGeo: string
+    userGeo: string
     = geoRes.country_code === undefined
       ? null
       : geoRes.country_code.toLowerCase()
@@ -442,23 +456,23 @@ export function PRELOAD_invalid_data
           },
           []
         )
-      }
+      },
 
-      ,nullList: number[] = indexesOf
+      nullList: number[] = indexesOf
       (
         data,
         null
       );
 
     if (nullList.length == 0)
-    {
+
       // [🐞]
       dlog
       (
         '🚏 checkpoint ➤ PRELOAD_invalid_data 🟩',
         true
       );
-    }
+
 
     // ### CHECK
     // ### for `null` data fetched.
@@ -473,12 +487,11 @@ export function PRELOAD_invalid_data
       // ### NOTE:
       // ### list URLs responsible for `null` data points.
       for (const i of nullList)
-      {
+
         console.log
         (
           `\t🚩 ${urls[i]}`
         );
-      }
     }
 
     return;
@@ -512,7 +525,7 @@ export function PRELOAD_invalid_data
  * @param
  * { string } exit_reason - [optional] Message for reason on page 'exit'/'error'
  */
-export function PRELOAD_exitPage
+export function preloadExitLogic
 (
   t0: number,
   page_tag: string,
@@ -547,7 +560,7 @@ export function PRELOAD_exitPage
  * @param
  * { string } redirect_url - **[required]** Target redirect url 'to'
  */
-export function PRELOAD_redirectPage
+export function preloadRedirect
 (
   redirect_url: string
 ): void
@@ -587,13 +600,13 @@ export async function promiseUrlsPreload
         ): Promise < any > =>
         {
         // ### [🐞]
-          const t0: number = performance.now()
+          const t0: number = performance.now(),
 
-            ,response: Response = await fetch(_url)
-            ,resJson: any = await response.json()
+            response: Response = await fetch(_url),
+            resJson: any = await response.json(),
 
             // ### [🐞]
-            ,t1: number = performance.now();
+            t1: number = performance.now();
 
           // ▓▓ [🐞]
           dlogv2
@@ -768,7 +781,7 @@ export async function promiseValidUrlCheck
  */
 export async function initSportbookData
 (
-  geoPos: string
+  geoPos: string | undefined
 ): Promise < void >
 {
   const dataRes0 = await get
@@ -779,8 +792,9 @@ export async function initSportbookData
     true
   ) as B_SPT_D;
 
-  sessionStore.updateSportbookMain
+  sessionStore.updateData
   (
+    'sportbookMain',
     dataRes0
   );
 
@@ -792,8 +806,9 @@ export async function initSportbookData
     true
   ) as B_SPT_D[];
 
-  sessionStore.updateSportbookList
+  sessionStore.updateData
   (
+    'sportbookList',
     dataRes1
   );
 
@@ -884,25 +899,25 @@ export function toDecimalFix
   let _value: string  = value.toString();
 
   if (noRoundUp)
-  {
+
     _value = _value
       .slice
       (
         0,
         (_value.indexOf('.')) + (d_places + 1)
       );
-  }
+
 
   _value = parseFloat(_value).toFixed(d_places);
 
   if (removeDot00)
-  {
+
     _value = _value.replace
     (
       '.00',
       ''
     );
-  }
+
 
   return _value;
 }
@@ -935,273 +950,6 @@ export function spliceBalanceDoubleZero
     ;
 
   return value;
-}
-
-/**
- * @summary
- *  📌 MAIN | IMPORTANT
- * @description
- *  📌 Updates `user` language platform selection.
- *  ⚡️ Manages platform main navigation, for some of the section routes.
- * @param { string } lang
- *  Target new `selected` language.
- * @param { Page<Record<string, string>, string> } page
- *  Target page sveltekit object.
- * @returns { Promise < void > }
- */
-export async function selectLanguage
-(
-  lang: string,
-  page: Page < Record < string, string >, string >
-): Promise < void >
-{
-  // ### CHECK
-  if (sessionStore.getServerLang() == lang) return;
-
-  // ### NOTE:
-  // ### Past/previous lang option.
-  const pastLang: string
-    = sessionStore.getServerLang() == 'en'
-      ? '/'
-      : `/${sessionStore.getServerLang()}`
-  ;
-
-  userBetarenaSettings.updateData
-  (
-    'lang',
-    lang
-  );
-
-  // ### [🐞]
-  dlogv2
-  (
-    '🚏 checkpoint ➤ selectLanguage(..)',
-    [
-      `🔹 [var] ➤ $userBetarenaSettings.lang: ${userBetarenaSettings.extract('user-lang')}`
-      ,`🔹 [var] ➤ $sessionStore?.serverLang: ${sessionStore.getServerLang()}`
-      ,`🔹 [var] ➤ lang: ${lang}`
-      ,`🔹 [var] ➤ pastLang: ${pastLang}`
-      ,`🔹 [var] ➤ $page.route.id: ${page.route.id}`
-    ],
-    true
-  );
-
-  // ### TODO:
-  // ### <->
-  // isLangDropdown = false;
-
-  // ### NOTE:
-  // ### Update <html {lang}> in DOCTYPE.
-  let tempLang: string = lang;
-  if (lang === 'br') tempLang = 'pt-BR';
-  document.documentElement.setAttribute
-  (
-    'lang',
-    tempLang
-  );
-
-  // ### CHECK
-  // ### on error', navigate back to homepage;
-  const if_M_0: boolean
-    = !checkNull(page.error)
-  ;
-  if (if_M_0)
-  {
-    const targetUrl: string
-      = lang == 'en'
-        ? '/'
-        : `/${lang}`
-    ;
-
-    // [🐞]
-    dlog
-    (
-      `${NB_W_TAG} -> ${lang}`,
-      true,
-    );
-
-    if (dev) return;
-
-    await goto
-    (
-      targetUrl
-    );
-
-    return;
-  }
-
-  // ### CHECK
-  // ### Omit 'special' routes cases, as these routes
-  // ### manage their own navigation/translation switch.
-  const if_M_1: boolean
-    = [
-      '/[[lang=lang]]/[sport]/[country]/[league_name]'
-      ,'/[[lang=lang]]/[sport]/[fixture=fixture]'
-      ,'/[[lang=lang]]/[player=player]/[...player_fill]'
-      ,'/[[lang=lang]]/[competitions=competitions]'
-      ,'/[[lang=lang]]/[competitions=competitions]/[...competition_fill]'
-    ]
-      .includes(page.route.id)
-  ;
-  if (if_M_1)
-  {
-    // [🐞]
-    dlog
-    (
-      `🚏 checkpoint ➤ selectLanguage if_M_1 page?.route?.id: ${page.route.id}`,
-      true
-    );
-
-    return;
-  }
-
-  // ### CHECK
-  // ### On profile page route, handle.
-  else if (ROUTE_ID_PROFILE == page.route.id)
-  {
-    const pastLangV2: string
-      = pastLang == '/'
-        ? '/en'
-        : pastLang
-
-      ,tempUrl: string = `${page.url.pathname}/`
-
-      ,newURL: string = tempUrl
-        .replace
-        (
-          `${pastLangV2}/`,
-          `/${lang}`
-        );
-
-    // [🐞]
-    dlog
-    (
-      `inside (PROFILE) ${lang},
-      pastLangV2: ${pastLangV2}; tempUrl: ${tempUrl}; newURL: ${newURL}`,
-      true
-    );
-
-    await goto
-    (
-      newURL,
-      {
-        replaceState: true
-      }
-    );
-  }
-
-  // ### NOTE:
-  // ### Otherwise, continue navigation switch.
-  // ### NOTE:
-
-  // ### CHECK
-  // ### for 'EN' naviagtion.
-  else if (lang == 'en' && pastLang != '/')
-  {
-    // ### NOTE:
-    // ### maybe [?]
-    // prefetch(`/`);
-
-    // ### NOTE:
-    // ### count number of slashes URL.
-    const count: number =	page.url.pathname.split('/').length - 1
-
-      // ### NOTE:
-      // ### replace path-name accordingly for 'EN', first occurance.
-      ,newURL: string
-      = count == 1
-        ? page.url.pathname.replace(pastLang, '/')
-        : page.url.pathname.replace(pastLang, '')
-    ;
-
-    // ### [🐞]
-    dlog
-    (
-      `inside (EN) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`,
-      true
-    );
-
-    // ### NOTE:
-    // ### update URL breadcrumb.
-
-    // ### Solution 1.
-    // window.history.replaceState({}, "NewPage", newURL);
-
-    // ### Solution 2.
-    await goto
-    (
-      newURL,
-      {
-        replaceState: true
-      }
-    );
-  }
-  // ### CHECK
-  // ### for 'incoming (past)' from an 'EN (/)' route.
-  else if (lang != 'en' && pastLang == '/')
-  {
-    // ### NOTE:
-    // ### count number of slashes URL.
-    var countSlash = page.url.pathname.split('/').length - 1;
-
-    // ### NOTE:
-    // ### replace path-name accordingly for "<lang>" - first occurance.
-    const newURL: string
-      = countSlash > 1
-        ? page.url.pathname.replace(pastLang, `/${lang}/`)
-        : page.url.pathname.replace(pastLang, `/${lang}`)
-    ;
-
-    // ### [🐞]
-    dlog
-    (
-      `${NB_W_TAG} inside (V2) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`,
-      true
-    );
-
-    // ### NOTE:
-    // ### update URL breadcrumb.
-
-    // ### Solution 1.
-    // window.history.replaceState({}, "NewPage", newURL);
-
-    // ### Solution 2.
-    await goto
-    (
-      newURL,
-      {
-        replaceState: true
-      }
-    );
-  }
-  // ### CHECK
-  // ### for 'incoming (past)' from an 'non-EN (/)' route.
-  else if (lang != 'en' && pastLang != '/')
-  {
-    // ### NOTE:
-    // ### count number of slashes URL.
-    var countSlash = page.url.pathname.split('/').length - 1;
-
-    // ### NOTE:
-    // ### replace path-name accordingly for "<lang>", first occurance.
-    const newURL: string = page.url.pathname.replace(pastLang, `/${lang}`);
-
-    // ### [🐞]
-    dlog
-    (
-      `${NB_W_TAG} inside (V3) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`,
-      true
-    );
-
-    // ### NOTE:
-    // ### update URL breadcrumb.
-
-    // ### Solution 1.
-    // window.history.replaceState({}, "NewPage", newURL);
-
-    // ### Solution 2.
-    await goto(newURL, { replaceState: true });
-  }
 }
 
 /**
@@ -1251,13 +999,17 @@ export function generateUrlCompetitions
 ): string
 {
   // ### [🐞]
-  dlog
+  dlogv2
   (
-    `🔹 [var] ➤ translateUrlCompetitions(..) data : ${JSON.stringify(data)}`,
+    '🚏 checkpoint ➤ generateUrlCompetitions(..)',
+    [
+      `🔹 [var] ➤ lang :|: ${lang}`,
+      `🔹 [var] ➤ data :|: ${JSON.stringify(data)}`,
+    ],
     true
   );
 
-  const competitionTerm: string = removeDiacritics(data[lang]);
+  const competitionTerm = removeDiacritics(data[lang]);
 
   let newUrl: string
     = lang == 'en'
@@ -1278,7 +1030,7 @@ export function generateUrlCompetitions
     true
   );
 
-  if (checkNull(newUrl)) return '/';
+  if (checkNull(newUrl) || checkNull(competitionTerm)) return '/';
 
   return newUrl;
 }
@@ -1350,33 +1102,27 @@ export const tryCatch = (action: any): unknown =>
 }
 
 /**
+ * @author
+ *  @migbash
  * @summary
- * 🔹 HELPER
- *
+ *  🔹 HELPER
  * @description
- * 📌 Determine wether target value is `empty` / `null`
- *
- * @param
- * { any } value - Target value that requires testing.
- *
- * @returns
- * A `boolean`
+ *  📣 Determine wether target value is `empty` / `null`.
+ * @example
+ *  => checkNull(undefined) => (output) `true`.
+ *  => checkNull("hello") => (output) `false`.
+ * @param { any } value
+ *  💠 **[required]** Target value that requires testing.
+ * @return { boolean }
+ *  📤 `Boolean` representing respective identified value state.
  */
-export const checkNull = (value: any): boolean =>
+export const checkNull = (
+  value: any
+): boolean =>
 {
-  const if_M_0: boolean
-    = value == undefined
+  return value == undefined
     || value == null
   ;
-
-  // [🐞]
-  dlog
-  (
-    `🔹 [var] ➤ checkNull(..) if_M_0 ${if_M_0}`,
-    true
-  );
-
-  return if_M_0;
 }
 
 /**
@@ -1403,9 +1149,9 @@ export function langPrefix
 (
 ): string
 {
-  return sessionStore.getServerLang() == 'en'
+  return sessionStore.extract('lang') == 'en'
     ? '/'
-    : `/${sessionStore.getServerLang()}/`
+    : `/${sessionStore.extract('lang')}/`
   ;
 }
 

@@ -119,13 +119,7 @@
     ▓ NOTE:
     ▓ > email iframe
     -->
-		{#if $sessionStore.serverLang == 'en'}
-			<iframe
-				id="iframe-email-form"
-				title="email-betarena-form"
-				src="https://cdn.forms-content.sg-form.com/959f35f0-8a5e-11ec-ae12-6ab0b90e93b0"
-			/>
-		{:else if $sessionStore.serverLang == 'es'}
+		{#if $sessionStore.serverLang == 'es'}
 			<iframe
 				title="email-betarena-form"
 				src="https://cdn.forms-content.sg-form.com/e2e80a33-947e-11ec-9a6f-bab7bbd1e44a"
@@ -145,6 +139,12 @@
 				title="email-betarena-form"
 				src="https://cdn.forms-content.sg-form.com/ae8bbec3-9480-11ec-9a6f-bab7bbd1e44a"
 			/>
+    {:else}
+			<iframe
+				id="iframe-email-form"
+				title="email-betarena-form"
+				src="https://cdn.forms-content.sg-form.com/959f35f0-8a5e-11ec-ae12-6ab0b90e93b0"
+			/>
 		{/if}
 	</div>
 
@@ -162,7 +162,7 @@
 
 <style lang="scss">
 
-	div#outer-iframe-cotnainer
+	div#global⮕w⮕email-subscribe-modal⮕main
   {
     /* 📌 position */
 		position: fixed;
@@ -207,7 +207,7 @@
   @media screen
   and (min-width: 475px)
   {
-		div#outer-iframe-cotnainer
+		div#global⮕w⮕email-subscribe-modal⮕main
     {
       /* 🎨 style */
 			width: 465px !important;

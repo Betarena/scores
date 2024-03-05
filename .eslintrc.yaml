@@ -34,6 +34,7 @@ parserOptions:
   ecmaVersion: 2020
   extraFileExtensions:
     - '.svelte'
+    - '.ts'
 
 overrides:
   - files:
@@ -63,10 +64,10 @@ ignorePatterns:
   - src/lib/geo-js
   - src/lib/graphql
   - src/lib/redis
-  - src/lib/store
+  # - src/lib/store
+  # - src/routes
   - src/lib/types
   - src/params
-  - src/routes
 
 plugins:
   - "@typescript-eslint"
@@ -79,6 +80,11 @@ plugins:
 # ▓ > Main 'defacto' configuration, do not remove and/or alter heavily.
 # ▓ > 🔗 read-more :|: https://eslint.org/docs/latest/rules/
 rules:
+
+  # ▓ NOTE:
+  # ▓ > (👇) for svelte/sveltekit project only!
+  'svelte/valid-compile': 0
+  'svelte/no-at-html-tags': 0
 
   # ▓ NOTE:
   # ▓ > has been depreceted.
@@ -94,11 +100,8 @@ rules:
   "@typescript-eslint/prefer-for-of": error
   "@typescript-eslint/no-non-null-asserted-nullish-coalescing": error
 
-  # ▓ NOTE:
-  # ▓ > (👇) for svelte/sveltekit project only!
-  'svelte/valid-compile': 0
-  'svelte/no-at-html-tags': 0
-
+  no-console:
+    - error
   curly:
     - error
     - multi
@@ -132,7 +135,7 @@ rules:
     - only-multiline
   comma-style:
     - error
-    - first
+    - last
   operator-linebreak:
     - error
     - before
@@ -157,3 +160,4 @@ rules:
   one-var:
     - error
     - initialized: "consecutive"
+  no-extra-semi: 0
