@@ -150,7 +150,7 @@
 	$: countD_min = Math.floor((dateObjDif / 1000 / 60) % 60).toString();
 
   // ▓ [🐞]
-	if (dev) inputEmail = 'migbashdev@gmail.com';
+	// if (dev) inputEmail = 'migbashdev@gmail.com';
 
   // #endregion ➤ 📌 VARIABLES
 

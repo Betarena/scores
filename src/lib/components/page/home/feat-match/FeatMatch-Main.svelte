@@ -460,7 +460,7 @@
 
     <WidgetTitle
       WIDGET_TITLE={B_FEATB_T?.widget_title}
-      OVERRIDE_COLOR={tabletExclusive ? true : false}
+      OVERRIDE_COLOR={!tabletExclusive}
     />
 
     <div
