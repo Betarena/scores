@@ -25,11 +25,11 @@ import sessionStore from '$lib/store/session.js';
 import userBetarenaSettings from '$lib/store/user-settings.js';
 import { tryCatchAsync } from '@betarena/scores-lib/dist/util/util.common.js';
 import { AU_W_TAG, dlog, dlogv2, errlog } from './debug.js';
+import { initUser } from './user.js';
 
 import type { BetarenaUser, IScoreUser } from '$lib/types/types.user-settings.js';
 import type { IAuthType } from '@betarena/scores-lib/types/_FIREBASE_.js';
 import type { User } from 'firebase/auth';
-import { initUser } from './user.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -102,37 +102,22 @@ export async function successAuthComplete
 
       userBetarenaSettings.updateData
       (
-        'user-object',
-        userObject
+        [
+          ['user-object', userObject]
+        ]
       );
 
       sessionStore.updateData
       (
-        'currentToast',
-        (authType == 'login' ? 'Auth_Success_L_Toast' : 'Auth_Success_R_Toast')
-      );
-
-      sessionStore.updateData
-      (
-        'currentModal',
-        null
+        [
+          ['currentToast', (authType == 'login' ? 'Auth_Success_L_Toast' : 'Auth_Success_R_Toast')],
+          ['currentModal', null]
+        ]
       );
 
       initUser();
 
       return true;
-    },
-    (
-      ex: unknown
-    ): boolean =>
-    {
-      // [🐞]
-      if (ex?.toString()?.includes('TypeError: null is not an object (evaluating \'signerOrProvider.call\')'))
-        console.info('❗️', '');
-      else
-        console.error('💀 Unhandled :: ex');
-      ;
-      return false;
     }
   ) as boolean;
 }
@@ -197,8 +182,8 @@ export async function authWithMoralis
       // }
 
       return;
-    }
-    , (
+    },
+    (
       ex: unknown
     ): void =>
     {
@@ -259,7 +244,6 @@ async function userFirestore
           uid!
         ),
         docSnap = await getDoc(docRef),
-
         lang = sessionStore.extract<string>('lang')
       ;
 

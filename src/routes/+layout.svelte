@@ -50,7 +50,7 @@
   import userBetarenaSettings from '$lib/store/user-settings.js';
   import { dlog, dlogv2 } from '$lib/utils/debug';
   import { isPWA } from '$lib/utils/device.js';
-  import { initSportbookData, setUserGeoLocation } from '$lib/utils/platform-functions.js';
+  import { setUserGeoLocation } from '$lib/utils/platform-functions.js';
 
 	import Footer from '$lib/components/_main_/footer/Footer.svelte';
 	import Header from '$lib/components/_main_/header/Header.svelte';
@@ -117,19 +117,20 @@
   ;
 
   $: ({ currentPageRouteId, currentActiveModal, currentActiveToast } = { ...$sessionStore })
-  $: ({ country_bookmaker, theme } = { ...$userBetarenaSettings });
+  $: ({ theme } = { ...$userBetarenaSettings });
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  $: ({ username, lang, competition_number }                  = { ...$userBetarenaSettings?.user?.scores_user_data });
+  $: ({ username, lang, competition_number } = { ...$userBetarenaSettings?.user?.scores_user_data });
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  $: ({ uid, email }                                          = { ...$userBetarenaSettings?.user?.firebase_user_data });
-	$: navbarTranslationData       = ($page.data.B_NAV_T ?? { }) as B_NAV_T | null | undefined;
-  $: deepReactListenStore1                           = JSON.stringify($sessionStore);
-  $: deepReactListenStore2                           = JSON.stringify($userBetarenaSettings);
+  $: ({ uid, email } = { ...$userBetarenaSettings?.user?.firebase_user_data });
+	$: navbarTranslationData = ($page.data.B_NAV_T ?? { }) as B_NAV_T | null | undefined;
+  $: deepReactListenStore1 = JSON.stringify($sessionStore);
+  $: deepReactListenStore2 = JSON.stringify($userBetarenaSettings);
+
+  $: $sessionStore.serverLang = $page.data.langParam as string;
+  $: $sessionStore.page = $page;
 
   $sessionStore.deviceType       = $page.data.deviceType as 'mobile' | 'tablet' | 'desktop';
   $sessionStore.fixturesTodayNum = (navbarTranslationData?.scores_header_fixtures_information?.football ?? 0);
-  $sessionStore.serverLang       = $page.data.langParam as string;
-  $sessionStore.page             = $page;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -240,21 +241,9 @@
   $: if (browser)
   {
     _DEBUG_('Option1');
-
+    mainDeepLinkCheck();
     userBetarenaSettings.useLocalStorage();
     scoresAdminStore.useLocalStorage();
-  }
-
-  // ╭─────
-  // │ > 🔥 Initialize / Update 'Sportbook Details'.
-  // ╰─────
-  $: if (browser && country_bookmaker)
-  {
-    _DEBUG_('Option3');
-    initSportbookData
-    (
-      country_bookmaker
-    );
   }
 
   // ╭─────
@@ -370,8 +359,6 @@
         scoresAdminStore.toggleAdminState(adminSet == 'true' ? true : false);
       ;
 
-      mainDeepLinkCheck();
-
       return;
     }
   );
@@ -384,8 +371,9 @@
     {
       sessionStore.updateData
       (
-        'routeId',
-        $page.route.id
+        [
+          ['routeId', $page.route.id]
+        ]
       );
 
       // [🐞]

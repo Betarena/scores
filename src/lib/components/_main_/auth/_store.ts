@@ -14,6 +14,7 @@
 
 // #region ➤ 📦 Package Imports
 
+import { breakdownDates } from '$lib/utils/dates.js';
 import { writable } from 'svelte/store';
 
 // #endregion ➤ 📦 Package Imports
@@ -25,7 +26,7 @@ const
     = {
       globalState: new Set(),
       globalStateErrors: new Set(),
-      sentEmailDate: new Date(),
+      resendEmailCountdown: null,
     }
 ;
 
@@ -34,6 +35,7 @@ type IDataProp =
   | 'globalStateRemove'
   | 'globalSateErrorAdd'
   | 'globalStateErrorRemove'
+  | 'resendEmailCountdown'
 ;
 
 // #endregion ➤ 📌 VARIABLES
@@ -63,88 +65,141 @@ function createLocalStore
      *  📣 Complementary 'store' added methods.
      */
     methods
-    = {
+      = {
 
-      // ╭──────────────────────────────────────────────────────────────────────────────────╮
-      // │ 📣 Main Logic                                                                    │
-      // ╰──────────────────────────────────────────────────────────────────────────────────╯
+        // ╭──────────────────────────────────────────────────────────────────────────────────╮
+        // │ 📣 Main Logic                                                                    │
+        // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-      /**
-       * @author
-       *  @migbash
-       * @summary
-       *  - 🔹 HELPER
-       *  - IMPORTANT
-       * @description
-       *  📣 Update **target** single data property.
-       * @param { IDataProp } dataTarget
-       *  💠 **[required]** Target data to update.
-       * @param { any } dataPoint
-       *  💠 **[required]** Target data value to update.
-       * @return { void }
-       */
-      updateData:
-      (
-        dataTarget: IDataProp,
-        dataPoint?: any,
-      ): void =>
-      {
-        if (dataTarget == 'globalStateAdd')
-          storeObject.globalState.add(dataPoint);
-        else if (dataTarget == 'globalStateRemove')
-          storeObject.globalState.delete(dataPoint);
-        else if (dataTarget == 'globalSateErrorAdd')
-          storeObject.globalStateErrors.add(dataPoint);
-        else if (dataTarget == 'globalStateErrorRemove')
-          storeObject.globalStateErrors.delete(dataPoint);
-        ;
-
-        set
+        /**
+         * @author
+         *  @migbash
+         * @summary
+         *  - 🔹 HELPER
+         *  - IMPORTANT
+         * @description
+         *  📣 Update **target** `list` data of target `properties` to update.
+         * @param { [IDataProp, any][] } data
+         *  💠 **[required]** Target data to update.
+         * @return { void }
+         */
+        updateData:
         (
-          storeObject
-        );
+          data: [IDataProp, any][]
+        ): void =>
+        {
+          for (const iterator of data)
+          {
+            const
+              dataTarget = iterator[0],
+              dataPoint = iterator[1]
+            ;
 
-        return;
-      },
+            if (dataTarget == 'globalStateAdd')
+            {
+              if (dataPoint == 'ExistingEmailLoginSent')
+              {
+                methods.startEmailResendCountdown();
+                storeObject.globalState.delete('AuthenticationStart');
+              }
+              else if (dataPoint == 'NewEmailRegisterationSent')
+              {
+                storeObject.globalState.delete('AuthenticationStart');
+              }
+              storeObject.globalState.add(dataPoint);
+            }
+            else if (dataTarget == 'globalStateRemove')
+            {
+              storeObject.globalState.delete(dataPoint);
+            }
+            else if (dataTarget == 'globalSateErrorAdd')
+            {
+              storeObject.globalStateErrors.add(dataPoint);
+            }
+            else if (dataTarget == 'globalStateErrorRemove')
+            {
+              storeObject.globalStateErrors.delete(dataPoint);
+            }
+            else if (dataTarget == 'resendEmailCountdown')
+            {
+              storeObject.resendEmailCountdown = dataPoint;
+            }
+          }
 
-      /**
-       * @author
-       *  @migbash
-       * @summary
-       *  🟦 HELPER
-       * @description
-       *  📝 Kickstarts email verification `countdown`.
-       * @return { void }
-       */
-      startEmailResendCountdown:
-      (
-      ): void =>
-      {
-        // interval1 = setInterval
-        // (
-        //   (
-        //   ) =>
-        //   {
-        //     const
-        //       dateObjDif = (sentEmailDate!).getTime() - Date.parse(new Date().toString())
-        //     ;
+          set
+          (
+            storeObject
+          );
 
-        //     $: countD_sec = Math.floor((dateObjDif / 1000) % 60).toString();
-        //     $: countD_min = Math.floor((dateObjDif / 1000 / 60) % 60).toString();
+          return;
+        },
 
-        //     if (countD_sec.includes('-'))
-        //     {
-        //       clearInterval(    interval1: NodeJS.Timer)
-        //       allowResend = false;
-        //     }
-        //   },
-        //   1000
-        // );
+        /**
+         * @author
+         *  @migbash
+         * @summary
+         *  🟦 HELPER
+         * @description
+         *  📝 Kickstarts email verification `countdown`.
+         * @return { void }
+         */
+        startEmailResendCountdown:
+        (
+        ): void =>
+        {
+          const
+            futureDate = new Date()
+          ;
 
-        return;
+          // ╭─────
+          // │ NOTE: :|: add 5 min.
+          // ╰─────
+          futureDate.setMinutes
+          (
+            futureDate.getMinutes() + 5
+          );
+
+          const
+            interval = setInterval
+            (
+              (
+              ) =>
+              {
+                const
+                  dateObjDif = breakdownDates(futureDate.getTime() - new Date().getTime());
+                ;
+
+                // [🐞]
+                // console.log('dateObjDif', dateObjDif);
+
+                methods.updateData
+                (
+                  [
+                    ['resendEmailCountdown', dateObjDif]
+                  ]
+                );
+
+                if (dateObjDif[0] <= 0 && dateObjDif[1] <= 0)
+                {
+                  clearInterval(interval);
+                  methods.updateData
+                  (
+                    [
+                      ['globalStateAdd', 'AllowResendEmailLogin']
+                    ]
+                  );
+                }
+
+                return;
+              },
+              1000
+            )
+          ;
+
+          return;
+        }
+
       }
-
-    }
   ;
 
   return {

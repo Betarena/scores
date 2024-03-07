@@ -35,24 +35,22 @@ import { gotoSW } from './sveltekitWrapper.js';
  * @description
  *  - 📣 [1] Updates platform **language** selection.
  *  - 📣 [2] Manages platform **navigation** for correct **language** switch.
- * @param { string } lang
+ * @param { string | NullUndef } lang
  *  💠 **[required]** Target new `selected` language.
- * @param { Page } page
- *  💠 **[required]** Target page sveltekit object.
  * @return { Promise < void > }
  */
 export async function selectLanguage
 (
-  lang: string,
-  page: Page
+  lang: string | NullUndef
 ): Promise < void >
 {
-  if (sessionStore.extract('lang') == lang) return;
+  if (sessionStore.extract('lang') == lang || !lang) return;
 
   userBetarenaSettings.updateData
   (
-    'lang',
-    lang
+    [
+      ['lang', lang]
+    ]
   );
 
   const
@@ -63,7 +61,12 @@ export async function selectLanguage
     pastLang: string
       = sessionStore.extract('lang') == 'en'
         ? '/'
-        : `/${sessionStore.extract('lang')}`
+        : `/${sessionStore.extract('lang')}`,
+    /**
+     * @description
+     * 📝 Data for `page`
+     */
+    page = sessionStore.extract<Page>('page')
   ;
 
   // [🐞]
@@ -75,7 +78,7 @@ export async function selectLanguage
       `🔹 [var] ➤ $sessionStore?.serverLang: ${sessionStore.extract('lang')}`,
       `🔹 [var] ➤ lang: ${lang}`,
       `🔹 [var] ➤ pastLang: ${pastLang}`,
-      `🔹 [var] ➤ $page.route.id: ${page.route.id}`
+      `🔹 [var] ➤ $page.route.id: ${page?.route.id}`
     ],
     true
   );
@@ -94,7 +97,7 @@ export async function selectLanguage
   // │ CHECK
   // │ > on 'error', navigate back to homepage.
   // ╰─────
-  if (!checkNull(page.error))
+  if (!checkNull(page?.error))
   {
     const
       targetUrl: string
@@ -125,7 +128,7 @@ export async function selectLanguage
 
   // ╭─────
   // │ CHECK
-  // │ > handle 'special' routes that self-manage navigation/translation.
+  // │ > handle 'special' routes that already self-manage navigation
   // ╰─────
   if
   (
@@ -135,19 +138,19 @@ export async function selectLanguage
       routeIdPagePlayer,
       routeIdPageCompetitionLobby,
       routeIdPageCompetition
-    ].includes(page.route.id)
+    ].includes(page?.route.id ?? '')
   )
   {
     // [🐞]
     dlog
     (
-      `🚏 checkpoint ➤ selectLanguage(..) if_M_1 page?.route?.id: ${page.route.id} [exit]`,
+      `🚏 checkpoint ➤ selectLanguage(..) if_M_1 page?.route?.id: ${page?.route.id} [exit]`,
       true
     );
 
     return;
   }
-  else if (routeIdPageProfile == page.route.id)
+  else if (routeIdPageProfile == page?.route.id)
   {
     const
       pastLangV2: string
@@ -183,7 +186,7 @@ export async function selectLanguage
 
     return;
   }
-  else if (routeIdPageAuthors == page.route.id)
+  else if (routeIdPageAuthors == page?.route.id)
   {
     // [🐞]
     dlogv2
@@ -198,8 +201,9 @@ export async function selectLanguage
 
     sessionStore.updateData
     (
-      'lang',
-      lang
+      [
+        ['lang', lang]
+      ]
     );
 
     return;
@@ -215,7 +219,7 @@ export async function selectLanguage
      * @description
      *  📣 count number of slashes URL.
      */
-    countSlash: number =	page.url.pathname.split('/').length - 1
+    countSlash: number = (page?.url.pathname.split('/')?.length ?? 0) - 1
   ;
 
   let
@@ -237,17 +241,15 @@ export async function selectLanguage
   // │ > for 'EN' naviagtion.
   // ╰─────
   if (lang == 'en' && pastLang != '/')
-
     // ╭─────
     // │ NOTE:
     // │ > replace path-name accordingly for 'EN', first occurance.
     // ╰─────
     newURL
       = countSlash == 1
-        ? page.url.pathname.replace(pastLang, '/')
-        : page.url.pathname.replace(pastLang, '')
+        ? page?.url.pathname.replace(pastLang, '/')
+        : page?.url.pathname.replace(pastLang, '')
     ;
-
   // ╭─────
   // │ CHECK
   // │ > for incoming from an 'EN' (/) route.
@@ -259,8 +261,8 @@ export async function selectLanguage
     // ╰─────
     newURL
       = countSlash > 1
-        ? page.url.pathname.replace(pastLang, `/${lang}/`)
-        : page.url.pathname.replace(pastLang, `/${lang}`)
+        ? page?.url.pathname.replace(pastLang, `/${lang}/`)
+        : page?.url.pathname.replace(pastLang, `/${lang}`)
     ;
   // ╭─────
   // │ CHECK
@@ -272,7 +274,7 @@ export async function selectLanguage
     // │ > replace path-name accordingly for "<lang>" - first occurance.
     // ╰─────
     newURL
-      = page.url.pathname.replace(pastLang, `/${lang}`)
+      = page?.url.pathname.replace(pastLang, `/${lang}`)
     ;
   ;
 
@@ -291,15 +293,22 @@ export async function selectLanguage
     true
   );
 
-  sessionStore.updateData
-  (
-    'lang',
-    lang
-  );
+  // sessionStore.updateData
+  // (
+  //   [
+  //     ['lang', lang]
+  //   ]
+  // );
 
-  // NOTE: Solution [1]
+  // ╭─────
+  // │ NOTE:
+  // │ > Solution [1]
+  // ╰─────
   // window.history.replaceState({}, "NewPage", newURL);
-  // NOTE: Solution [2]
+  // ╭─────
+  // │ NOTE:
+  // │ > Solution [2]
+  // ╰─────
   await gotoSW
   (
     newURL!,

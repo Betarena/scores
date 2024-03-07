@@ -100,7 +100,12 @@
   {
     () =>
     {
-      userBetarenaSettings.updateData('theme');
+      userBetarenaSettings.updateData
+      (
+        [
+          ['theme',undefined]
+        ]
+      );
       return;
     }
   }

@@ -174,8 +174,10 @@ COMPONENT JS (w/ TS)
             dlog(url_, true);
             userBetarenaSettings.updateData
             (
-              'user-avatar',
-              url_
+              [
+                ['user-avatar', url_]
+
+              ]
             );
             // [ℹ] (update) from Firebase - Firestore
             const userRef = doc(
@@ -212,8 +214,9 @@ COMPONENT JS (w/ TS)
 		// [ℹ] remove from localStorage()
 		userBetarenaSettings.updateData
     (
-      'user-avatar',
-			undefined
+      [
+        ['user-avatar',undefined]
+      ]
 		);
 		// [ℹ] remove (update) from Firebase - Firestore
 		const userRef = doc(
@@ -272,8 +275,9 @@ COMPONENT JS (w/ TS)
 		// [ℹ] (update)from localStorage()
 		userBetarenaSettings.updateData
     (
-      'user-name',
-			usernameInput
+      [
+        ['user-name',usernameInput]
+      ]
 		);
 		// [ℹ] (update)from Firebase - Firestore
 		const userRef = doc(
@@ -410,8 +414,9 @@ COMPONENT JS (w/ TS)
 
 		userBetarenaSettings.updateData
     (
-      'user-wallet',
-			wallet
+      [
+        ['user-wallet',wallet]
+      ]
 		);
 
 		// [ℹ] (update)from Firebase - Firestore
@@ -563,8 +568,9 @@ COMPONENT JS (w/ TS)
 		// [ℹ] from localStorage()
 		userBetarenaSettings.updateData
     (
-      'user-object',
-      undefined
+      [
+        ['user-object',undefined]
+      ]
     );
 
     // [🐞]

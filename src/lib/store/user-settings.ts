@@ -18,8 +18,10 @@
 import { writable } from 'svelte/store';
 
 import sessionStore from '$lib/store/session.js';
-import { initUser, logoutUser, updateSelectLang } from '$lib/utils/user.js';
+import { initUser, logoutUser } from '$lib/utils/user.js';
 import { setCookie } from './cookie.js';
+import { initSportbookData } from '$lib/utils/platform-functions.js';
+import { updateSelectLang } from '$lib/firebase/common.js';
 
 import type { BetarenaUser, IUserSetting, Voted_Fixture } from '$lib/types/types.user-settings.js';
 import type { InvestorData } from '@betarena/scores-lib/types/_FIREBASE_.js';
@@ -154,7 +156,7 @@ function createLocalStore
           ;
 
           // ╭─────
-          // │ CHECK :|: for authenticated user.
+          // │ CHECK :|: for (non)-authenticated user logic.
           // ╰─────
           if (localStore.user)
             initUser();
@@ -261,7 +263,7 @@ function createLocalStore
 
           if (!localStore) return;
 
-          if (localStore.userguide_id_opt_out.includes(id))
+          if (localStore.userguide_id_opt_out?.includes(id))
             localStore.userguide_id_opt_out
               = localStore.userguide_id_opt_out
                 .filter
@@ -270,7 +272,7 @@ function createLocalStore
                 )
             ;
           else
-            localStore.userguide_id_opt_out.push(id);
+            localStore.userguide_id_opt_out?.push(id);
           ;
 
           localStore.userguide_id_opt_out = [...new Set(localStore.userguide_id_opt_out)] ?? [];
@@ -331,17 +333,14 @@ function createLocalStore
          *  - 🔹 HELPER
          *  - IMPORTANT
          * @description
-         *  📣 Update **target** single data property.
-         * @param { IDataProp } dataTarget
+         *  📣 Update **target** `list` data of target `properties` to update.
+         * @param { [IDataProp, any][] } data
          *  💠 **[required]** Target data to update.
-         * @param { any } dataPoint
-         *  💠 **[required]** Target data value to update.
          * @return { void }
          */
         updateData:
         (
-          dataTarget: IDataProp,
-          dataPoint?: any,
+          data: [IDataProp, any][]
         ): void =>
         {
           const
@@ -350,96 +349,113 @@ function createLocalStore
 
           if (!localStore) return;
 
-          if (dataTarget == 'lang')
+          for (const iterator of data)
           {
-            localStore.lang = dataPoint;
-
-            if (localStore.user)
-              updateSelectLang();
+            const
+              dataTarget = iterator[0]
             ;
-          }
-          else if (dataTarget == 'geo-bookmaker')
-          {
-            localStore.country_bookmaker = dataPoint;
-          }
-          else if (dataTarget == 'theme')
-          {
-            localStore.theme
-              = localStore.theme == 'Dark'
-                ? 'Light'
-                : 'Dark'
+            let
+              dataPoint = iterator[1]
             ;
-          }
-          else if (dataTarget == 'geoJs')
-          {
-            localStore.geoJs = dataPoint;
-          }
-          else if (dataTarget == 'user-object')
-          {
-            localStore.user = dataPoint;
 
-            if (dataPoint == undefined)
-              sessionStore.updateData
+            if (dataTarget == 'lang')
+            {
+              localStore.lang = dataPoint;
+
+              if (localStore.user)
+                updateSelectLang();
+              ;
+            }
+            else if (dataTarget == 'geo-bookmaker')
+            {
+              localStore.country_bookmaker = dataPoint;
+              initSportbookData
               (
-                'globalStateAdd',
-                'NotAuthenticated'
+                dataPoint
               );
+            }
+            else if (dataTarget == 'theme')
+            {
+              localStore.theme
+                = localStore.theme == 'Dark'
+                  ? 'Light'
+                  : 'Dark'
+              ;
+            }
+            else if (dataTarget == 'geoJs')
+            {
+              localStore.geoJs = dataPoint;
+            }
+            else if (dataTarget == 'user-object')
+            {
+              localStore.user = dataPoint;
+
+              if (dataPoint == undefined)
+                sessionStore.updateData
+                (
+                  [
+                    ['globalStateAdd', 'NotAuthenticated']
+                  ]
+                );
+              ;
+            }
+            else if (dataTarget == 'user-scores-data')
+            {
+              (localStore.user ??= {});
+
+              localStore.user.scores_user_data = dataPoint as BetarenaUser;
+
+              // ╭─────
+              // │ CHECK :|: for 'null' value for 'main_balance'.
+              // ╰─────
+              if
+              (
+                localStore.user.scores_user_data.main_balance == undefined
+                || isNaN(localStore.user.scores_user_data.main_balance)
+              )
+                localStore.user.scores_user_data.main_balance = 0;
+              ;
+
+              // ╭─────
+              // │ CHECK :|: for 'null' / non-empty value of `userguide_opt_out`.
+              // ╰─────
+              if (localStore.user.scores_user_data.userguide_id_opt_out != null)
+                localStore.userguide_id_opt_out = localStore.user.scores_user_data.userguide_id_opt_out;
+              ;
+            }
+
+            if (localStore.user?.scores_user_data && dataTarget == 'lang-user')
+            {
+              localStore.user.scores_user_data.lang = dataPoint;
+            }
+            else if (localStore.user?.scores_user_data && dataTarget == 'user-avatar')
+            {
+              localStore.user.scores_user_data.profile_photo = dataPoint;
+            }
+            else if (localStore.user?.scores_user_data && dataTarget == 'user-name')
+            {
+              localStore.user.scores_user_data.username = dataPoint;
+            }
+            else if (localStore.user?.scores_user_data && dataTarget == 'user-wallet')
+            {
+              localStore.user.scores_user_data.web3_wallet_addr = dataPoint;
+            }
+            else if (localStore.user?.scores_user_data && dataTarget == 'user-main-balance')
+            {
+              // ╭─────
+              // │ CHECK
+              // │ > for invalid balance type.
+              // ╰─────
+              if (dataPoint == undefined || isNaN(dataPoint as number)) dataPoint = 0;
+
+              localStore.user.scores_user_data.main_balance = dataPoint as number;
+            }
+            else if (localStore.user?.scores_user_data && dataTarget == 'user-investor-balance')
+            {
+              localStore.user.scores_user_data!.investor_balance = dataPoint as InvestorData;
+            }
             ;
           }
-          else if (dataTarget == 'user-scores-data')
-          {
-            localStore.user.scores_user_data = dataPoint as BetarenaUser;
-
-            // ╭─────
-            // │ CHECK :|: for 'null' value for 'main_balance'.
-            // ╰─────
-            if
-            (
-              localStore.user.scores_user_data.main_balance == undefined
-              || isNaN(localStore.user.scores_user_data.main_balance)
-            )
-              localStore.user.scores_user_data.main_balance = 0;
-            ;
-
-            // ╭─────
-            // │ CHECK :|: for 'null' / non-empty value of `userguide_opt_out`.
-            // ╰─────
-            if (localStore.user.scores_user_data.userguide_id_opt_out != null)
-              localStore.userguide_id_opt_out = localStore.user.scores_user_data.userguide_id_opt_out;
-            ;
-          }
-
-          if (localStore.user?.scores_user_data && dataTarget == 'lang-user')
-          {
-            localStore.user.scores_user_data.lang = dataPoint;
-          }
-          else if (localStore.user?.scores_user_data && dataTarget == 'user-avatar')
-          {
-            localStore.user.scores_user_data.profile_photo = dataPoint;
-          }
-          else if (localStore.user?.scores_user_data && dataTarget == 'user-name')
-          {
-            localStore.user.scores_user_data.username = dataPoint;
-          }
-          else if (localStore.user?.scores_user_data && dataTarget == 'user-wallet')
-          {
-            localStore.user.scores_user_data.web3_wallet_addr = dataPoint;
-          }
-          else if (localStore.user?.scores_user_data && dataTarget == 'user-main-balance')
-          {
-            // ╭─────
-            // │ CHECK
-            // │ > for invalid balance type.
-            // ╰─────
-            if (dataPoint == undefined || isNaN(dataPoint as number)) dataPoint = 0;
-
-            localStore.user.scores_user_data.main_balance = dataPoint as number;
-          }
-          else if (localStore.user?.scores_user_data && dataTarget == 'user-investor-balance')
-          {
-            localStore.user.scores_user_data!.investor_balance = dataPoint as InvestorData;
-          }
-          ;
 
           methods.setLocalStorage
           (
@@ -470,22 +486,23 @@ function createLocalStore
          *  📤 Requested `data point`.
          */
         extract:
+        < Typ1 >
         (
           dataPoint: 'geo-bookmaker' | 'lang' | 'lang-user' | 'uid'
-        ): any =>
+        ): Typ1 | NullUndef =>
         {
           const
             localStore = methods.parseLocalStorage()
           ;
 
           if (dataPoint == 'geo-bookmaker')
-            return localStore?.country_bookmaker;
+            return localStore?.country_bookmaker as Typ1 | NullUndef;
           else if (dataPoint == 'lang')
-            return localStore?.lang;
+            return localStore?.lang as Typ1 | NullUndef;
           else if (dataPoint == 'lang-user')
-            return localStore?.user?.scores_user_data?.lang;
+            return localStore?.user?.scores_user_data?.lang as Typ1 | NullUndef;
           else if (dataPoint == 'uid')
-            return localStore?.user?.firebase_user_data?.uid;
+            return localStore?.user?.firebase_user_data?.uid as Typ1 | NullUndef;
           ;
 
           return;

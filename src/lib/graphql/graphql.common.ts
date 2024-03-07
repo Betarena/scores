@@ -126,19 +126,11 @@ export async function subscribeCompetitionsAllListen
 
           sessionStore.updateData
           (
-            'competitionAllNum',
             [
-              (competitionMap?.size ?? 0),
-              openCompetitions
+              ['competitionAllNum', [(competitionMap?.size ?? 0), openCompetitions]],
+              ['competitionLatestMap', competitionMap]
             ]
           );
-
-          sessionStore.updateData
-          (
-            'competitionLatestMap',
-            competitionMap
-          );
-
         }
       },
     }
@@ -146,8 +138,9 @@ export async function subscribeCompetitionsAllListen
 
   sessionStore?.updateData
   (
-    'graphqlListeners',
-    subscription?.unsubscribe
+    [
+      ['graphqlListeners', subscription?.unsubscribe]
+    ]
   );
 }
 
@@ -264,8 +257,9 @@ export async function subscribeCompetitionsTargetListen
 
           sessionStore.updateData
           (
-            'competitionLatestMap',
-            competitionMap
+            [
+              ['competitionLatestMap', competitionMap]
+            ]
           );
 
         }
@@ -275,8 +269,9 @@ export async function subscribeCompetitionsTargetListen
 
   sessionStore?.updateData
   (
-    'graphqlListeners',
-    subscription?.unsubscribe
+    [
+      ['graphqlListeners', subscription?.unsubscribe]
+    ]
   );
 
   return;

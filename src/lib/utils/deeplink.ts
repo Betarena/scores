@@ -12,6 +12,7 @@
 
 // #region ➤ 📦 Package Imports
 
+import { browser } from '$app/environment';
 import { goto } from '$app/navigation';
 import { tryCatchAsync } from '@betarena/scores-lib/dist/util/util.common.js';
 import { isSignInWithEmailLink, signInWithCustomToken, signInWithEmailLink } from 'firebase/auth';
@@ -22,7 +23,6 @@ import sessionStore from '$lib/store/session.js';
 import { authWithMoralis, successAuthComplete } from './authentication.js';
 import { AU_W_TAG, dlog, dlogv2, errlog } from './debug.js';
 
-import { browser } from '$app/environment';
 import type { Page } from '@sveltejs/kit';
 
 // #endregion ➤ 📦 Package Imports
@@ -40,11 +40,33 @@ export async function mainDeepLinkCheck
 (
 ): Promise < void >
 {
-  checkEmailMagicLink();
-  checkDiscordDeepLink();
-  checkMetaMaskDeepLink();
-  checkReferralLink();
-  checkOpenAuth();
+  await checkEmailMagicLink();
+  await checkDiscordDeepLink();
+  await checkMetaMaskDeepLink();
+  await checkReferralLink();
+  await checkOpenAuth();
+
+  const
+    /**
+     * @description
+     * 📝 Data for `page`.
+     */
+    page = sessionStore.extract<Page>('page'),
+    /**
+     * @description
+     * 📝 Data for `page`.
+     */
+    revertUrl = `${page?.url.origin}${page?.url.pathname}`
+  ;
+
+  await goto
+  (
+    revertUrl,
+    {
+      replaceState: true
+    }
+  );
+
   return;
 }
 
@@ -147,11 +169,6 @@ async function checkEmailMagicLink
           ),
         /**
          * @description
-         * 📝 `Url` to revert back to after `deeplinking` extraction.
-         */
-        revertUrl = `${page?.url.origin}${page?.url.pathname}`,
-        /**
-         * @description
          * 📝 Target authentication `type`
          */
         authTypeSelect = page?.url.searchParams
@@ -191,14 +208,6 @@ async function checkEmailMagicLink
         result.user,
         undefined,
         'email'
-      );
-
-      await goto
-      (
-        revertUrl,
-        {
-          replaceState: true
-        }
       );
 
       return;
@@ -257,12 +266,7 @@ async function checkDiscordDeepLink
          * @description
          * 📝 `OAuth2` argument.
          */
-        oauth2 = page?.url.searchParams.get('oauth2'),
-        /**
-         * @description
-         * 📝 `OAuth2` argument.
-         */
-        revertUrl = `${page?.url.origin}${page?.url.pathname}`
+        oauth2 = page?.url.searchParams.get('oauth2')
       ;
 
       // ╭─────
@@ -275,18 +279,6 @@ async function checkDiscordDeepLink
       dlog
       (
         `${AU_W_TAG[0]} 🔵 Discord OAuth2`
-      );
-
-      // ╭─────
-      // │ NOTE:
-      // │ > clean up `url` from deeplink `queries` and `authentication bloat`.
-      // ╰─────
-      goto
-      (
-        revertUrl,
-        {
-          replaceState: true
-        }
       );
 
       const
@@ -326,7 +318,7 @@ async function checkDiscordDeepLink
       // [🐞]
       errlog(errorCode);
       errlog(errorMessage);
-      console.error('💀 Unhandled :: ex');
+      // console.error('💀 Unhandled :: ex');
 
       return;
     }
@@ -371,12 +363,7 @@ async function checkMetaMaskDeepLink
          * @description
          * 📝 Data for `page`.
          */
-        metmaskAuth =	page?.url.searchParams.get('metmaskAuth'),
-        /**
-         * @description
-         * 📝 Data for `page`.
-         */
-        revertUrl = `${page?.url.origin}${page?.url.pathname}`
+        metmaskAuth =	page?.url.searchParams.get('metmaskAuth')
       ;
 
       // $sessionStore.investDepositAmountMobileWeb3 = $page.url.searchParams.get('investDepositAmount');
@@ -389,28 +376,8 @@ async function checkMetaMaskDeepLink
         `${AU_W_TAG[0]} 🔵 MetaMask OAuth2`
       );
 
-      // ╭─────
-      // │ NOTE: WARNING: IMPORTANT CRITICAL
-      // │ > clean up url from queries/auth-bloat.
-      // ╰─────
-      goto
-      (
-        revertUrl,
-        {
-          replaceState: true
-        }
-      );
-
       authWithMoralis();
 
-      return;
-    },
-    (
-      ex: unknown
-    ): void =>
-    {
-      // [🐞]
-      console.error(`💀 Unhandled :: ${ex}`);
       return;
     }
   );
@@ -448,30 +415,13 @@ async function checkReferralLink
          * @description
          * 📝 Data for `page`.
          */
-        referralId = page?.url.searchParams.get('referralId'),
-        /**
-         * @description
-         * 📝 Data for `page`.
-         */
-        revertUrl = `${page?.url.origin}${page?.url.pathname}`
+        referralId = page?.url.searchParams.get('referralId')
       ;
 
       // [🐞]
       dlog
       (
         `${AU_W_TAG[0]} 🔵 ReferralId ${referralId}`
-      );
-
-      // ╭─────
-      // │ NOTE:
-      // │ > clean up `url` from deeplink `queries` and `authentication bloat`.
-      // ╰─────
-      goto
-      (
-        revertUrl,
-        {
-          replaceState: true
-        }
       );
 
       if (!referralId) return;
@@ -487,18 +437,6 @@ async function checkReferralLink
         , 30
       );
 
-      return;
-    },
-    (
-      ex: unknown
-    ): void =>
-    {
-      // [🐞]
-      if (ex?.toString()?.includes('TypeError: null is not an object (evaluating \'signerOrProvider.call\')'))
-        console.info('❗️', '');
-      else
-        console.error('💀 Unhandled :: ex');
-      ;
       return;
     }
   );
@@ -544,12 +482,7 @@ async function checkOpenAuth
          * @description
          * 📝 Data for `page`.
          */
-        isAuthForm = page?.url.searchParams.get('authForm'),
-        /**
-         * @description
-         * 📝 Data for `page`.
-         */
-        revertUrl = `${page?.url.origin}${page?.url.pathname}`
+        isAuthForm = page?.url.searchParams.get('authForm')
       ;
 
       if (isAuthForm != 'true') return;
@@ -566,32 +499,13 @@ async function checkOpenAuth
         true
       );
 
-      // ╭─────
-      // │ NOTE:
-      // │ > clean up `url` from deeplink `queries` and `authentication bloat`.
-      // ╰─────
-      goto
-      (
-        revertUrl,
-        {
-          replaceState: true
-        }
-      );
-
       sessionStore.updateData
       (
-        'currentModal',
-        'Auth_Modal'
+        [
+          ['currentModal', 'Auth_Modal']
+        ]
       );
 
-      return;
-    },
-    (
-      ex: unknown
-    ): void =>
-    {
-      // [🐞]
-      console.error(`💀 Unhandled :: ${ex}`);
       return;
     }
   );

@@ -62,7 +62,7 @@ interface IAuthWidget
   globalStateErrors: Set < IAuthErrorState >;
   /**
    * @description
-   * 📝 `Email` verification sent date
+   * 📝 Target `countdown` for **resend** allow.
    */
-  sentEmailDate: Date;
+  resendEmailCountdown: [number, number, number, number, number] | null;
 }

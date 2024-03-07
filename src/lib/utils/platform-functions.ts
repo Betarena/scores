@@ -379,12 +379,6 @@ export async function setUserGeoLocation
     userGeo = geoRes.country_code.toLowerCase();
   }
 
-  userBetarenaSettings.updateData
-  (
-    'geoJs',
-    geoRes
-  );
-
   // ### CHECK
   // ### for existance of GEO available from
   // ### translations/country list.
@@ -402,12 +396,14 @@ export async function setUserGeoLocation
       }
     );
 
-  if (data_0 == undefined) userGeo = 'en'
+  if (data_0 == undefined) userGeo = 'en';
 
   userBetarenaSettings.updateData
   (
-    'geo-bookmaker',
-    userGeo.toLocaleLowerCase()
+    [
+      ['geoJs', geoRes],
+      ['geo-bookmaker', userGeo.toLocaleLowerCase()]
+    ]
   );
 
   return;
@@ -784,32 +780,31 @@ export async function initSportbookData
   geoPos: string | undefined
 ): Promise < void >
 {
-  const dataRes0 = await get
-  (
-    `/api/data/main/sportbook?geoPos=${geoPos}`,
-    null,
-    true,
-    true
-  ) as B_SPT_D;
-
-  sessionStore.updateData
-  (
-    'sportbookMain',
+  const
     dataRes0
-  );
-
-  const dataRes1 = await get
-  (
-    `/api/data/main/sportbook?all=true&geoPos=${geoPos}`,
-    null,
-    true,
-    true
-  ) as B_SPT_D[];
+      = await get
+      (
+        `/api/data/main/sportbook?geoPos=${geoPos}`,
+        null,
+        true,
+        true
+      ) as B_SPT_D,
+    dataRes1
+      = await get
+      (
+        `/api/data/main/sportbook?all=true&geoPos=${geoPos}`,
+        null,
+        true,
+        true
+      ) as B_SPT_D[]
+  ;
 
   sessionStore.updateData
   (
-    'sportbookList',
-    dataRes1
+    [
+      ['sportbookMain', dataRes0],
+      ['sportbookList', dataRes1]
+    ]
   );
 
   return;

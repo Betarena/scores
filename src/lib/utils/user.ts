@@ -12,12 +12,8 @@
 
 // #region ➤ 📦 Package Imports
 
-import { type Page } from '@sveltejs/kit';
-import { doc, updateDoc } from 'firebase/firestore';
-
 import { post } from '$lib/api/utils.js';
 import { userBalanceListen, userDataFetch } from '$lib/firebase/common.js';
-import { db_firestore } from '$lib/firebase/init.js';
 import { delCookie, setCookie } from '$lib/store/cookie.js';
 import sessionStore from '$lib/store/session.js';
 import userBetarenaSettings from '$lib/store/user-settings.js';
@@ -47,14 +43,9 @@ export async function initUser
   const
     /**
      * @description
-     * 📝 Data.
+     * 📝 Data point
      */
-    uid = userBetarenaSettings.extract('uid'),
-    /**
-     * @description
-     * 📝 Data for `page`.
-     */
-    page = sessionStore.extract<Page>('page')
+    uid = userBetarenaSettings.extract<string>('uid')
   ;
 
   // [🐞]
@@ -67,6 +58,8 @@ export async function initUser
     true
   );
 
+  if (!uid) return;
+
   setCookie
   (
     'betarenaCookieLoggedIn',
@@ -74,16 +67,23 @@ export async function initUser
     30
   );
 
-  userDataFetch
+  await userDataFetch
   (
     uid
   );
 
+  // ╭─────
+  // │ TODO: :|: can be promoted to 'userDataFetch(..)' logic
+  // ╰─────
   userBalanceListen
   (
     uid
   );
 
+  // ╭─────
+  // │ NOTE:
+  // │ > pesists latest user data to `CRISP`
+  // ╰─────
   await post
   (
     `${import.meta.env.VITE_FIREBASE_FUNCTIONS_ORIGIN}${import.meta.env.VITE_FIREBASE_FUNCTIONS_F_1}`,
@@ -94,20 +94,15 @@ export async function initUser
 
   sessionStore.updateData
   (
-    'globalStateAdd',
-    'Authenticated'
-  );
-
-  sessionStore.updateData
-  (
-    'globalStateAdd',
-    'AuthenticatedAndInitialized'
+    [
+      ['globalStateAdd', 'Authenticated'],
+      ['globalStateAdd', 'AuthenticatedAndInitialized']
+    ]
   );
 
   selectLanguage
   (
-    userBetarenaSettings.extract('lang-user'),
-    page
+    userBetarenaSettings.extract<string>('lang-user')
   );
 
   return;
@@ -119,78 +114,10 @@ export async function initUser
  * @summary
  *  🟦 HELPER
  * @description
- *  📣 Update `user` platform language preference.
- * @return { Promise < void > }
- */
-export async function updateSelectLang
-(
-): Promise < void >
-{
-  const
-    lang = userBetarenaSettings.extract('lang') as string | undefined | null,
-    uid = userBetarenaSettings.extract('uid') as string | undefined | null,
-    page = sessionStore.extract< Page >('page')
-  ;
-
-  if
-  (
-    page?.error
-    || !page?.route.id
-    || !lang
-    || !uid
-  )
-    return;
-  ;
-
-  // [🐞]
-  dlogv2
-  (
-    '🚏 checkpoint ➤ updateSelectLang(..)',
-    [
-      `🔹 [var] ➤ opts.isPageError :|: ${page.error}`,
-      `🔹 [var] ➤ opts.routeId :|: ${page.route.id}`,
-      `🔹 [var] ➤ lang :|: ${lang}`,
-      `🔹 [var] ➤ uid :|: ${uid}`,
-    ],
-    true
-  );
-
-  userBetarenaSettings.updateData
-  (
-    'lang-user',
-    lang
-  );
-
-  const
-    userRef = doc
-    (
-      db_firestore,
-      'betarena_users',
-      uid,
-    )
-  ;
-
-  await updateDoc
-  (
-    userRef,
-    {
-      lang
-    }
-  );
-
-  return;
-}
-
-/**
- * @author
- *  @migbash
- * @summary
- *  🟦 HELPER
- * @description
- *  📣 **Logs-out** `user` from platform.
- *  - ⚡️ Toggles respective `UI` changes.
- *  - ⚡️ Deletes `cookies` for `user` privilidges.
- * @return { Promise < void > }
+ *  - [1] 📣 **Logs-out** `user` from platform.
+ *  - [2] ⚡️ Toggles respective `UI` changes.
+ *  - [3] ⚡️ Deletes `cookies` for `user` privilidges.
+ * @returns { Promise < void > }
  */
 export async function logoutUser
 (
@@ -203,25 +130,29 @@ export async function logoutUser
     true
   );
 
-  delCookie
-  (
-    'betarenaCookieLoggedIn'
-  );
-
   const
     /**
      * @description
-     *  📣 `lang` preference
+     *  📣 **Authenticated User** `language` preference
      */
-    userLang: string = userBetarenaSettings.extract('lang-user'),
+    userLang = userBetarenaSettings.extract<string>('lang-user')
+  ;
+
+  // ╭─────
+  // │ CHECK :|: for 'user' already being non-authenticated.
+  // ╰─────
+  // if (checkNull(userLang)) return;
+
+  // eslint-disable-next-line one-var
+  const
     /**
      * @description
-     *  📣 current `routeId`
+     *  📣 Current page `routeId`
      */
-    currentRouteId: IPageRouteId = sessionStore.extract('routeId'),
+    currentRouteId = sessionStore.extract<IPageRouteId>('routeId'),
     /**
      * @description
-     *  📣 Redirect `user` to upon `logout`.
+     *  📣 Redirect `link` to navigate to as a consequence of _logout_
      */
     redirectLink = `/${userLang == 'en' || userLang == undefined ? '' : userLang}`
   ;
@@ -236,14 +167,20 @@ export async function logoutUser
 
   userBetarenaSettings.updateData
   (
-    'lang',
-    sessionStore.extract('lang')
+    [
+      // ╭─────
+      // │ NOTE: IMPORTANT
+      // │ > 'user-object' must be first, otherwise, 'language' will
+      // │ > trigger cascading 'user' logic, which should no longer exist.
+      // ╰─────
+      ['user-object', undefined],
+      ['lang', sessionStore.extract('lang')]
+    ]
   );
 
-  userBetarenaSettings.updateData
+  delCookie
   (
-    'user-object',
-    undefined
+    'betarenaCookieLoggedIn'
   );
 
   return;

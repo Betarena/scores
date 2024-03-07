@@ -74,6 +74,7 @@
 
   import ModalBackdrop from '$lib/components/misc/modal/Modal-Backdrop.svelte';
 
+	import { toZeroPrefixDateStr } from '$lib/utils/dates.js';
 	import type { IAuthTrs } from '@betarena/scores-lib/types/auth.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -129,7 +130,7 @@
   ;
 
   $: ({ windowWidth } = $sessionStore);
-  $: ({ globalState, globalStateErrors } = $scoresAuthStore);
+  $: ({ globalState, globalStateErrors, resendEmailCountdown } = $scoresAuthStore);
   $: [ VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1] ]
     = viewportChangeV2
     (
@@ -373,8 +374,9 @@
       {
         scoresAuthStore.updateData
         (
-          'globalStateAdd',
-          'Processing'
+          [
+            ['globalStateAdd', 'Processing']
+          ]
         );
 
         let
@@ -427,8 +429,9 @@
         else
           scoresAuthStore.updateData
           (
-            'globalStateRemove',
-            'Processing'
+            [
+              ['globalStateRemove', 'Processing']
+            ]
           );
         ;
 
@@ -440,8 +443,9 @@
       {
         scoresAuthStore.updateData
         (
-          'globalStateRemove',
-          'Processing'
+          [
+            [ 'globalStateRemove', 'Processing']
+          ]
         );
 
         // ╭─────
@@ -494,13 +498,10 @@
 
         scoresAuthStore.updateData
         (
-          'globalStateAdd',
-          'Processing'
-        );
-        scoresAuthStore.updateData
-        (
-          'globalStateErrorRemove',
-          'ErrorAuthEmailFormat'
+          [
+            ['globalStateAdd', 'Processing'],
+            ['globalStateErrorRemove', 'ErrorAuthEmailFormat']
+          ]
         );
 
         const
@@ -546,37 +547,6 @@
         );
 
         // ╭─────
-        // │ NOTE: :|: successfully sent email with 'magic link' UI state.
-        // ╰─────
-        scoresAuthStore.updateData
-        (
-          'globalSateErrorAdd',
-          'Processing'
-        );
-
-        if ($scoresAuthStore.globalStateErrors.has('EmailAlreadyInUse'))
-          scoresAuthStore.updateData
-          (
-            'globalStateAdd',
-            'ExistingEmailLoginSent'
-          );
-          // sentEmailDate = new Date();
-          // // ╭─────
-          // // │ NOTE: :|: add 5 min.
-          // // ╰─────
-          // sentEmailDate.setMinutes
-          // (
-          //   sentEmailDate.getMinutes() + 5
-          // );
-        else
-          scoresAuthStore.updateData
-          (
-            'globalStateAdd',
-            'NewEmailRegisterationSent'
-          );
-        ;
-
-        // ╭─────
         // │ NOTE:
         // │ > store target email in localStroage()
         // │ > for retrival on same device.
@@ -587,6 +557,32 @@
           , inputEmail!
         );
 
+        // ╭─────
+        // │ NOTE: :|: successfully sent email with 'magic link' UI state.
+        // ╰─────
+        scoresAuthStore.updateData
+        (
+          [
+            ['globalStateRemove', 'Processing']
+          ]
+        );
+
+        if ($scoresAuthStore.globalStateErrors.has('EmailAlreadyInUse'))
+          scoresAuthStore.updateData
+          (
+            [
+              ['globalStateAdd', 'ExistingEmailLoginSent']
+            ]
+          );
+        else
+          scoresAuthStore.updateData
+          (
+            [
+              ['globalStateAdd', 'NewEmailRegisterationSent']
+            ]
+          );
+        ;
+
         return;
       },
       (
@@ -595,12 +591,12 @@
       {
         scoresAuthStore.updateData
         (
-          'globalStateRemove',
-          'Processing'
+          [
+            ['globalStateRemove', 'Processing']
+          ]
         );
         // [🐞]
         errlog(`❌ Email (MagicLink) Auth error: ${ex}`)
-
         return;
       }
     );
@@ -631,8 +627,9 @@
       {
         scoresAuthStore.updateData
         (
-          'globalStateAdd',
-          'Processing'
+          [
+            ['globalStateAdd', 'Processing']
+          ]
         );
 
         const
@@ -673,8 +670,9 @@
       {
         scoresAuthStore.updateData
         (
-          'globalStateRemove',
-          'Processing'
+          [
+            ['globalStateRemove', 'Processing']
+          ]
         );
         // [🐞]
         errlog(ex as string);
@@ -709,8 +707,9 @@
       {
         scoresAuthStore.updateData
         (
-          'globalStateAdd',
-          'Processing'
+          [
+            ['globalStateAdd', 'Processing']
+          ]
         );
 
         // ╭─────
@@ -743,8 +742,9 @@
           window.open(metamaskAppDeepLink, '_self');
           scoresAuthStore.updateData
           (
-            'globalStateRemove',
-            'Processing'
+            [
+              ['globalStateRemove', 'Processing']
+            ]
           );
           return;
         }
@@ -769,8 +769,9 @@
 
           scoresAuthStore.updateData
           (
-            'globalStateRemove',
-            'Processing'
+            [
+              ['globalStateRemove', 'Processing']
+            ]
           );
           return;
         }
@@ -843,8 +844,9 @@
       {
         scoresAuthStore.updateData
         (
-          'globalStateRemove',
-          'Processing'
+          [
+            ['globalStateRemove', 'Processing']
+          ]
         );
         // [🐞]
         errlog(`❌ Moralis Auth error: ${ex}`);
@@ -890,8 +892,9 @@
 
       scoresAuthStore.updateData
       (
-        'globalStateAdd',
-        'AuthenticationStart'
+        [
+          ['globalStateAdd', 'AuthenticationStart']
+        ]
       );
 
       return;
@@ -1296,8 +1299,13 @@
           color-grey
           "
         >
-          00:00
-          <!-- {toZeroPrefixDateStr(countD_min)}:{toZeroPrefixDateStr(countD_sec)} to resend option -->
+          {
+            toZeroPrefixDateStr(resendEmailCountdown?.[1] ?? 0)
+          }
+          :
+          {
+            toZeroPrefixDateStr(resendEmailCountdown?.[0] ?? 0)
+          }
         </p>
 
       {/if}

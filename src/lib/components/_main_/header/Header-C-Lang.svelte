@@ -307,14 +307,14 @@
             {
               () =>
               {
-                return selectLanguage(lang, $page)
+                return selectLanguage(lang)
               }
             }
             on:keydown=
             {
               () =>
               {
-                return selectLanguage(lang, $page)
+                return selectLanguage(lang)
               }
             }
             on:mouseout=
