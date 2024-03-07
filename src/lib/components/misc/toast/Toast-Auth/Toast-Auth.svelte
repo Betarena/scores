@@ -1,17 +1,23 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ High Order Component Overview                                                    │
+│ 📌 High Order Component Overview                                                 │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+│ ➤ Internal Svelte Code Format :|: V.8.0                                          │
+│ ➤ Status :|: 🔒 LOCKED                                                           │
+│ ➤ Author(s) :|: @migbash                                                         │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ 📝 Description                                                                   │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ Scores Authentication State Toast                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ Svelte Component JS/TS                                                           │
+│ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ HINT: | Access snippets for '<script> [..] </script>' those found in           │
-|         | '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -32,8 +38,16 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { createEventDispatcher, onDestroy, onMount, type EventDispatcher } from 'svelte';
+  import { page } from '$app/stores';
+  import { onMount } from 'svelte';
   import { fade } from 'svelte/transition';
+
+	import sessionStore from '$lib/store/session.js';
+
+  import iconError from './assets/error-alert.svg';
+  import iconSuccess from './assets/success-alert.svg';
+
+	import type { IAuthTrs } from '@betarena/scores-lib/types/auth.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -56,12 +70,11 @@
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
      */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = 'general⮕g⮕background-modal-blur',
-    /**
-     * @augments EventDispatcher
-     */
-    dispatch: EventDispatcher < any > = createEventDispatcher()
+    CNAME: string = 'global⮕component⮕auth-toast⮕main'
   ;
+
+  $: authData = $page.data.authTrs as IAuthTrs | null | undefined;
+  $: ({ currentActiveToast } = $sessionStore);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -78,22 +91,15 @@
   (
     () =>
     {
-      document.body.classList.add
+      setTimeout
       (
-        'disable-scroll'
-      );
-      return;
-    }
-  );
-
-  onDestroy
-  (
-    () =>
-    {
-      document.body.classList.remove
-      (
-        'disable-scroll'
-      );
+        () =>
+        {
+          $sessionStore.currentActiveToast = null;
+          return;
+        },
+        1500
+      )
       return;
     }
   );
@@ -104,44 +110,84 @@
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ Svelte Component HTML                                                            │
+│ 💠 Svelte Component HTML                                                         │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ HINT: | Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    |
-│         │ imported from './static/app.css'                                       |
-│ ➤ HINT: | access custom Betarena Scores VScode Snippets by typing emmet-like     |
-|         | abbrev.                                                                │
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <!--
 ╭─────
-│ NOTE:
-│ > general modal backdrop.
+│ > authentication message (success)
 ╰─────
 -->
-<div
-	in:fade
-	class=
-  "
-  {CNAME}
-  "
-	on:click=
-  {
-    () =>
-    {
-      dispatch('closeModal');
-      return;
-    }
-  }
-/>
+{#if currentActiveToast != 'Auth_Error_Toast'}
+  <div
+    id="auth-alert-box"
+    class=
+    "
+    row-space-start
+    "
+    transition:fade
+  >
+    <img
+      src={iconSuccess}
+      alt="Success Icon"
+      title="Success Icon"
+    />
+    <p
+      class=
+      "
+      w-500
+      "
+    >
+      {#if currentActiveToast == 'Auth_Success_L_Toast'}
+        {authData?.success_msg?.[0]}
+      {:else}
+        {authData?.success_msg?.[1]}
+      {/if}
+    </p>
+  </div>
+<!--
+╭─────
+│ > authentication message (error)
+╰─────
+-->
+{:else}
+  <div
+    id="auth-alert-box"
+    class=
+    "
+    row-space-start
+    "
+    transition:fade
+  >
+    <img
+      src={iconError}
+      alt="Error Icon"
+      title="Error Icon"
+    />
+    <p
+      class=
+      "
+      w-500
+      "
+    >
+      {authData?.err_msg?.[0]}
+    </p>
+  </div>
+{/if}
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ Svelte Component CSS/SCSS                                                        │
+│ 🌊 Svelte Component CSS/SCSS                                                     │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ HINT: | auto-fill/auto-complete iniside <style> for var()                      │
-|         | values by typing/CTRL+SPACE                                            │
-│ ➤ HINT: | access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -153,18 +199,28 @@
   ╰──────────────────────────────────────────────────────────────────────────────╯
   */
 
-  div.general⮕g⮕background-modal-blur
+  div#auth-alert-box
   {
     /* 📌 position */
-    position: fixed;
-    top: 0;
-    right: 0;
-    left: 0;
-    z-index: 4000;
+		position: fixed;
+		bottom: 20px;
+		width: fit-content;
+		z-index: 4000;
+		left: 0;
+		right: 0;
+		margin: auto;
     /* 🎨 style */
-    height: 100%;
-    width: 100%;
-    background: rgba(0, 0, 0, 0.5);
-  }
+		background: rgba(0, 0, 0, 0.8);
+		backdrop-filter: blur(4px);
+		-webkit-backdrop-filter: blur(4px);
+		padding: 14px 18px;
+		border-radius: 6px;
+
+    p
+    {
+      color: #ffffff;
+      margin-left: 10px;
+    }
+	}
 
 </style>

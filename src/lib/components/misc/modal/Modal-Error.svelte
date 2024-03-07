@@ -95,8 +95,10 @@
 >
 
   <!--
-  ▓ NOTE:
-  ▓ > modal image
+  ╭─────
+  │ NOTE:
+  │ > modal image
+  ╰─────
   -->
   <img
     id=''
@@ -109,8 +111,10 @@
   />
 
   <!--
-  ▓ NOTE:
-  ▓ > modal text
+  ╭─────
+  │ NOTE:
+  │ > modal text
+  ╰─────
   -->
   <p
     class=
@@ -128,6 +132,12 @@
     />
   </p>
 
+  <!--
+  ╭─────
+  │ NOTE:
+  │ > modal button
+  ╰─────
+  -->
   <button
     class=
     "

@@ -44,7 +44,7 @@ export interface IUserSetting
    * @description
    *  📣 **Client/User** userguides opt-out
    */
-  userguide_id_opt_out: number[];
+  userguide_id_opt_out: number[] | undefined;
 }
 
 /**

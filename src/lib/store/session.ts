@@ -30,21 +30,25 @@ import type { FIREBASE_livescores_now, FIREBASE_odds, FIRE_LNNS } from '@betaren
 // #region ➤ 📌 VARIABLES
 
 const
+  /**
+   *
+   */
   sessionStoreObj: ISessionStore
     = {
       globalState: new Set(),
+      page: null,
       deviceType: 'mobile',
       isUserActive: true,
       windowWidth: 0,
       firebaseListeners: [],
       grapqhQlWebSockets: [],
       currentActiveModal: null,
+      currentActiveToast: null,
       currentAdminToggle: null,
       currentPageRouteId: null,
 
       // ### NOTE:
       // ### variables for show/hide.
-      auth_show: false,
       livescoreShowCalendar: false,
       selectedSeasonID: undefined,
       livescoreFixtureView: 'all',
@@ -95,9 +99,14 @@ const
     }
 ;
 
+/**
+ *
+ */
 type IDataProp =
   | 'lang'
   | 'routeId'
+  | 'currentModal'
+  | 'currentToast'
   | 'firebaseListeners'
   | 'competitionAllNum'
   | 'sportbookMain'
@@ -112,6 +121,18 @@ type IDataProp =
   | 'livescoresFixtureTarget'
   | 'globalStateAdd'
   | 'globalStateRemove'
+;
+
+/**
+ *
+ */
+type IDataGetProp =
+  Extract < IDataProp,
+    'lang' |
+    'routeId'
+  >
+  | 'globalState'
+  | 'page'
 ;
 
 // #endregion ➤ 📌 VARIABLES
@@ -191,6 +212,14 @@ function createLocalStore
             );
 
             sessionStoreObj.currentPageRouteId = customRouteId;
+          }
+          else if (dataTarget == 'currentModal')
+          {
+            sessionStoreObj.currentActiveModal = dataPoint;
+          }
+          else if (dataTarget == 'currentToast')
+          {
+            sessionStoreObj.currentActiveToast = dataPoint;
           }
           else if (dataTarget == 'firebaseListeners')
           {
@@ -348,22 +377,26 @@ function createLocalStore
          *  - IMPORTANT
          * @description
          *  📣 Extracts **target** `user` data property.
-         * @param { IDataProp } dataPoint
+         * @param { IDataGetProp } dataPoint
          *  💠 **[required]** Target `data point` to be retrieved.
-         * @return { any }
+         * @return { Typ1 }
          *  📤 Requested `data point`.
          */
         extract:
+        < Typ1 >
         (
-          dataPoint: IDataProp
-        ): any =>
+          dataPoint: IDataGetProp
+        ): Typ1 | NullUndef =>
         {
           if (dataPoint == 'lang')
             return sessionStoreObj.serverLang;
           else if (dataPoint == 'routeId')
             return sessionStoreObj.currentPageRouteId;
+          else if (dataPoint == 'globalState')
+            return sessionStoreObj.globalState;
+          else if (dataPoint == 'page')
+            return sessionStoreObj.page;
           ;
-
           return;
         },
       }

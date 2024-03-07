@@ -58,6 +58,9 @@
 	import DevInfoBox from '$lib/components/misc/admin/Dev-Info-Box.svelte';
 	import ModalError from '$lib/components/misc/modal/Modal-Error.svelte';
 
+	import AuthMain from '$lib/components/_main_/auth/Auth-Main.svelte';
+	import ToastAuth from '$lib/components/misc/toast/Toast-Auth/Toast-Auth.svelte';
+	import { mainDeepLinkCheck } from '$lib/utils/deeplink.js';
 	import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
 
   // ╭─────
@@ -113,7 +116,7 @@
     dynamicComponentMap = new Map < IDynamicComponentMap, any > ()
   ;
 
-  $: ({ currentPageRouteId } = { ...$sessionStore })
+  $: ({ currentPageRouteId, currentActiveModal, currentActiveToast } = { ...$sessionStore })
   $: ({ country_bookmaker, theme } = { ...$userBetarenaSettings });
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   $: ({ username, lang, competition_number }                  = { ...$userBetarenaSettings?.user?.scores_user_data });
@@ -126,6 +129,7 @@
   $sessionStore.deviceType       = $page.data.deviceType as 'mobile' | 'tablet' | 'desktop';
   $sessionStore.fixturesTodayNum = (navbarTranslationData?.scores_header_fixtures_information?.football ?? 0);
   $sessionStore.serverLang       = $page.data.langParam as string;
+  $sessionStore.page             = $page;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -339,8 +343,8 @@
 
       if (useDynamicImport)
       {
-        dynamicComponentMap.set('OfflineAlertDynamic', (await import('$lib/components/misc/Banner-Offline-Alert.svelte')).default);
-        dynamicComponentMap.set('PlatformAlertDynamic', (await import('$lib/components/misc/Banner-Platform-Alert.svelte')).default);
+        dynamicComponentMap.set('OfflineAlertDynamic', (await import('$lib/components/misc/banner/Banner-Offline-Alert.svelte')).default);
+        dynamicComponentMap.set('PlatformAlertDynamic', (await import('$lib/components/misc/banner/Banner-Offline-Alert.svelte')).default);
         dynamicComponentMap.set('EmailSubscribeDynamic', (await import('$lib/components/misc/modal/Modal-Email-Subscribe.svelte')).default);
       }
 
@@ -365,6 +369,8 @@
       if (adminSet)
         scoresAdminStore.toggleAdminState(adminSet == 'true' ? true : false);
       ;
+
+      mainDeepLinkCheck();
 
       return;
     }
@@ -523,11 +529,19 @@
 
 <SplashScreen />
 
+{#if currentActiveModal == 'Auth_Modal'}
+  <AuthMain />
+{/if}
+
+{#if currentActiveToast != null}
+  <ToastAuth />
+{/if}
+
 {#if $scoresAdminStore.admin}
   <DevInfoBox />
 {/if}
 
-{#if $sessionStore.currentActiveModal == 'GeneralPlatform_Error'}
+{#if currentActiveModal == 'GeneralPlatform_Error'}
   <ModalError />
 {/if}
 

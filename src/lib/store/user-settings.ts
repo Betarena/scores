@@ -15,9 +15,10 @@
 
 // #region ➤ 📦 Package Imports
 
-import { dlog } from '$lib/utils/debug.js';
 import { writable } from 'svelte/store';
 
+import sessionStore from '$lib/store/session.js';
+import { initUser, logoutUser, updateSelectLang } from '$lib/utils/user.js';
 import { setCookie } from './cookie.js';
 
 import type { BetarenaUser, IUserSetting, Voted_Fixture } from '$lib/types/types.user-settings.js';
@@ -44,6 +45,21 @@ const
     }
 ;
 
+type IDataProp =
+  | 'lang'
+  | 'lang-user'
+  | 'geo-bookmaker'
+  | 'theme'
+  | 'geoJs'
+  | 'user-avatar'
+  | 'user-name'
+  | 'user-wallet'
+  | 'user-object'
+  | 'user-scores-data'
+  | 'user-main-balance'
+  | 'user-investor-balance'
+;
+
 // #endregion ➤ 📌 VARIABLES
 
 // #region ➤ 🛠️ METHODS
@@ -54,10 +70,12 @@ const
  * @summary
  *  🟥 MAIN
  * @description
- *  📣 Initializer of `svelte/stores` method.
- *  ⚡️ Uses `localStorage` persistance.
+ *  - 📣 Initializer of `svelte/stores` method.
+ *  - 📣 Uses `localStorage` persistance.
  * @param { string } key
  *  💠 Target `key` to use for `svelte-stores` / `localStorage`.
+ * @return
+ *  📤 Store logic.
  */
 function createLocalStore
 (
@@ -83,6 +101,10 @@ function createLocalStore
      */
     methods
       = {
+        // ╭──────────────────────────────────────────────────────────────────────────────────╮
+        // │ 🟦 Local Helper Logic                                                            │
+        // ╰──────────────────────────────────────────────────────────────────────────────────╯
+
         /**
          * @author
          *  @migbash
@@ -106,8 +128,7 @@ function createLocalStore
           // console.log('localStore', localStore);
 
           // ╭─────
-          // │ CHECK
-          // │ > absent localstorage object.
+          // │ CHECK :|: for absent localstorage object.
           // ╰─────
           if (localStore == null)
             localStore
@@ -125,10 +146,20 @@ function createLocalStore
 
           // ╭─────
           // │ NOTE:
-          // │ > force users to have '_this_' object data property.
+          // │ ➤ force legacy users to have _this_ object data property.
+          // │ ➤ necessary for new logic to work better.
           // ╰─────
-          if (localStore.userguide_id_opt_out == null)
+          if (localStore.userguide_id_opt_out == undefined)
             localStore.userguide_id_opt_out = [];
+          ;
+
+          // ╭─────
+          // │ CHECK :|: for authenticated user.
+          // ╰─────
+          if (localStore.user)
+            initUser();
+          else
+            logoutUser();
           ;
 
           methods.setLocalStorage
@@ -300,180 +331,8 @@ function createLocalStore
          *  - 🔹 HELPER
          *  - IMPORTANT
          * @description
-         *  📣 Update `user` with _latest_ **main balance** `data`.
-         * @param { number } newBalance
-         *  💠 **[required]** **Latest** `user` balance information for _main_.
-         * @return { void }
-         */
-        userUpdateBTABalance:
-        (
-          newBalance: number
-        ): void =>
-        {
-          const
-            localStore = methods.parseLocalStorage()
-          ;
-
-          if (!localStore?.user?.scores_user_data) return;
-
-          // ╭─────
-          // │ CHECK
-          // │ > for invalid balance type.
-          // ╰─────
-          if (newBalance == undefined || isNaN(newBalance)) newBalance = 0;
-
-          localStore.user.scores_user_data.main_balance = newBalance;
-
-          // ╭─────
-          // │ NOTE:
-          // │ > Approach Num.1
-          // ╰─────
-          /*
-            localStorage.setItem
-            (
-              key,
-              JSON.stringify
-              (
-                localStore
-              )
-            );
-            update
-            (
-              s =>
-              (
-                {
-                  ...s,
-                  user: localStore.user
-                }
-              )
-            );
-          */
-
-          // ╭─────
-          // │ NOTE:
-          // │ > Approach Num.2
-          // ╰─────
-          methods.setLocalStorage
-          (
-            localStore
-          );
-
-          return;
-        },
-
-        /**
-         * @author
-         *  @migbash
-         * @summary
-         *  - 🔹 HELPER
-         *  - IMPORTANT
-         * @description
-         *  📣 Update `user` with _latest_ **investor balance** `data`.
-         * @param { InvestorData } data
-         *  💠 **[required]** **Latest** `user` balance information for _investor_.
-         * @return { void }
-         */
-        userUpdateBTABalance2:
-        (
-          data: InvestorData
-        ): void =>
-        {
-          const
-            localStore = methods.parseLocalStorage()
-          ;
-
-          if (!localStore?.user) return;
-
-          localStore.user.scores_user_data!.investor_balance = data;
-
-          methods.setLocalStorage
-          (
-            localStore
-          );
-
-          return;
-        },
-
-        /**
-         * @author
-         *  @migbash
-         * @summary
-         *  - 🔹 HELPER
-         *  - IMPORTANT
-         * @description
-         *  📣 Update `user` with _latest_ database data.
-         * @param { BetarenaUser } data
-         *  💠 **[required]** **Latest** snapshot of `user` data.
-         * @return { void }
-         */
-        updateUserData:
-        (
-          data: BetarenaUser
-        ): void =>
-        {
-          const
-            localStore = methods.parseLocalStorage()
-          ;
-
-          if (!localStore?.user) return;
-
-          // [🐞]
-          dlog
-          (
-            '🚏 checkpoint ➤ updateUserData(..)',
-            true
-          );
-
-          localStore.user.scores_user_data = data;
-
-          // ╭─────
-          // │ CHECK
-          // │ > for 'null' value for 'main_balance'.
-          // ╰─────
-          if
-          (
-            localStore.user.scores_user_data.main_balance == undefined
-            || isNaN(localStore.user.scores_user_data.main_balance)
-          )
-          {
-            // [🐞]
-            dlog
-            (
-              '🚏 checkpoint ➤ updateUserData if_M_0',
-              true
-            );
-            localStore.user.scores_user_data.main_balance = 0
-          }
-
-          // ╭─────
-          // │ CHECK
-          // │ > for 'null' / non-empty value of `userguide_opt_out`.
-          // ╰─────
-          if (localStore.user.scores_user_data.userguide_id_opt_out != null)
-            localStore.userguide_id_opt_out = localStore.user.scores_user_data.userguide_id_opt_out;
-          ;
-
-          // ╭─────
-          // │ NOTE:
-          // │ > Approach Num.2
-          // ╰─────
-          methods.setLocalStorage
-          (
-            localStore
-          );
-
-          return;
-        },
-
-        /**
-         * @author
-         *  @migbash
-         * @summary
-         *  - 🔹 HELPER
-         *  - IMPORTANT
-         * @description
          *  📣 Update **target** single data property.
-         * @param { 'lang' | 'lang-user' | 'geo-bookmaker' | 'theme' | 'geoJs' | 'user-avatar' | 'user-name' | 'user-wallet' | 'user-object' } dataTarget
+         * @param { IDataProp } dataTarget
          *  💠 **[required]** Target data to update.
          * @param { any } dataPoint
          *  💠 **[required]** Target data value to update.
@@ -481,7 +340,7 @@ function createLocalStore
          */
         updateData:
         (
-          dataTarget: 'lang' | 'lang-user' | 'geo-bookmaker' | 'theme' | 'geoJs' | 'user-avatar' | 'user-name' | 'user-wallet' | 'user-object',
+          dataTarget: IDataProp,
           dataPoint?: any,
         ): void =>
         {
@@ -492,29 +351,94 @@ function createLocalStore
           if (!localStore) return;
 
           if (dataTarget == 'lang')
+          {
             localStore.lang = dataPoint;
+
+            if (localStore.user)
+              updateSelectLang();
+            ;
+          }
           else if (dataTarget == 'geo-bookmaker')
+          {
             localStore.country_bookmaker = dataPoint;
+          }
           else if (dataTarget == 'theme')
+          {
             localStore.theme
               = localStore.theme == 'Dark'
                 ? 'Light'
                 : 'Dark'
             ;
+          }
           else if (dataTarget == 'geoJs')
+          {
             localStore.geoJs = dataPoint;
+          }
           else if (dataTarget == 'user-object')
+          {
             localStore.user = dataPoint;
-          ;
+
+            if (dataPoint == undefined)
+              sessionStore.updateData
+              (
+                'globalStateAdd',
+                'NotAuthenticated'
+              );
+            ;
+          }
+          else if (dataTarget == 'user-scores-data')
+          {
+            localStore.user.scores_user_data = dataPoint as BetarenaUser;
+
+            // ╭─────
+            // │ CHECK :|: for 'null' value for 'main_balance'.
+            // ╰─────
+            if
+            (
+              localStore.user.scores_user_data.main_balance == undefined
+              || isNaN(localStore.user.scores_user_data.main_balance)
+            )
+              localStore.user.scores_user_data.main_balance = 0;
+            ;
+
+            // ╭─────
+            // │ CHECK :|: for 'null' / non-empty value of `userguide_opt_out`.
+            // ╰─────
+            if (localStore.user.scores_user_data.userguide_id_opt_out != null)
+              localStore.userguide_id_opt_out = localStore.user.scores_user_data.userguide_id_opt_out;
+            ;
+          }
 
           if (localStore.user?.scores_user_data && dataTarget == 'lang-user')
+          {
             localStore.user.scores_user_data.lang = dataPoint;
+          }
           else if (localStore.user?.scores_user_data && dataTarget == 'user-avatar')
+          {
             localStore.user.scores_user_data.profile_photo = dataPoint;
+          }
           else if (localStore.user?.scores_user_data && dataTarget == 'user-name')
+          {
             localStore.user.scores_user_data.username = dataPoint;
+          }
           else if (localStore.user?.scores_user_data && dataTarget == 'user-wallet')
+          {
             localStore.user.scores_user_data.web3_wallet_addr = dataPoint;
+          }
+          else if (localStore.user?.scores_user_data && dataTarget == 'user-main-balance')
+          {
+            // ╭─────
+            // │ CHECK
+            // │ > for invalid balance type.
+            // ╰─────
+            if (dataPoint == undefined || isNaN(dataPoint as number)) dataPoint = 0;
+
+            localStore.user.scores_user_data.main_balance = dataPoint as number;
+          }
+          else if (localStore.user?.scores_user_data && dataTarget == 'user-investor-balance')
+          {
+            localStore.user.scores_user_data!.investor_balance = dataPoint as InvestorData;
+          }
           ;
 
           methods.setLocalStorage
@@ -604,7 +528,6 @@ function createLocalStore
 
           return data;
         }
-
       }
   ;
 

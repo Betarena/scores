@@ -34,9 +34,14 @@ export interface ISessionStore
 {
   /**
    * @description
-   * ➕ Target general `store` state for `user settings`.
+   * 📝 Target general `store` state for `user settings`.
    */
   globalState: Set < IUserStoreState >;
+  /**
+   * @description
+   * 📝 Target `sveltekit/page` instance.
+   */
+  page: Page < Record < string, string >, string | null>;
   /**
    * @description
    * ➕ `inter-component` events of selected season.
@@ -133,11 +138,6 @@ export interface ISessionStore
 	fixture_select_view: 'overview' | 'news';
   /**
    * @description
-   *  📣 Toggle `visibility` (show/hide) of Authentication (widget) pop-up modal.
-   */
-	auth_show: boolean;
-  /**
-   * @description
    *  📣 Follow 'user' intent for `hover` language select action (intent).
    */
   navBtnHover: string | undefined;
@@ -164,7 +164,7 @@ export interface ISessionStore
 
   /**
    * @description
-   *  📣 Currently **active** modal being shown on platform. Only **one at a time**.
+   *  📣 Currently **active** `modal` being shown on platform. Only **one at a time**.
    */
   currentActiveModal:
     | null
@@ -179,7 +179,18 @@ export interface ISessionStore
     | 'ProfileWithdraw_Modal'
     | 'GeneralPlatform_Error'
     | 'Footer_Newsletter_Modal'
+    | 'Auth_Modal'
     | 'CompetitionFixtureJoin_Modal'
+  ;
+  /**
+   * @description
+   *  📣 Currently **active** `toast` being shown on platform. Only **one at a time**.
+   */
+  currentActiveToast:
+    | null
+    | 'Auth_Success_L_Toast'
+    | 'Auth_Success_R_Toast'
+    | 'Auth_Error_Toast'
   ;
 
   // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️

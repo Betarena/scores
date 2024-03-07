@@ -20,6 +20,7 @@ import { routeIdPageAuthors } from '$lib/constants/paths.js';
 import { ERROR_CODE_PRELOAD, LAYOUT_1_LANG_PAGE_ERROR_MSG, dlog, dlogv2 } from '$lib/utils/debug';
 import { preloadExitLogic, promiseUrlsPreload } from '$lib/utils/platform-functions.js';
 
+import type { IAuthTrs } from '@betarena/scores-lib/types/auth.js';
 import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
 import type { B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
 import type { B_FOT_T } from '@betarena/scores-lib/types/types.main.footer.js';
@@ -40,6 +41,7 @@ type IPreloadData0 =
   B_NAV_T | undefined,
   B_FOT_T | undefined,
   B_SAP_D3 | undefined,
+  IAuthTrs | undefined
 ];
 
 /**
@@ -144,6 +146,7 @@ export async function main
     response.B_NAV_T,
     response.B_FOT_T,
     response.B_SAP_D3_CP_H,
+    response.authTrs
   ] = await fetchData
   (
     event.fetch,
@@ -223,6 +226,7 @@ async function fetchData
         `/api/data/main/navbar?lang=${_lang}&decompress`,
         `/api/data/main/footer?lang=${_lang}&decompress`,
         '/api/data/main/seo-pages?term=competitions&decompress',
+        `/api/hasura/_main_/auth?lang=${_lang}`,
       ],
     /**
      * @description

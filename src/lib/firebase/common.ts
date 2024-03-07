@@ -4,11 +4,11 @@ import sessionStore from '$lib/store/session.js';
 import userBetarenaSettings from '$lib/store/user-settings.js';
 import { dlog } from '$lib/utils/debug.js';
 import { DataSnapshot, onValue, ref, type DatabaseReference, type Unsubscribe } from 'firebase/database';
-import { arrayRemove, arrayUnion, doc, DocumentReference, DocumentSnapshot, getDoc, increment, onSnapshot, updateDoc } from 'firebase/firestore';
+import { arrayRemove, arrayUnion, doc, DocumentReference, getDoc, increment, onSnapshot, updateDoc } from 'firebase/firestore';
 import { getTargetRealDbData } from './firebase.actions.js';
 import { db_firestore, db_real } from './init';
 
-import type { BetarenaUser } from '$lib/types/types.scores.js';
+import type { BetarenaUser } from '$lib/types/types.user-settings.js';
 import type { FIRE_LNNS, FIRE_LNPI, FIREBASE_livescores_now, FIREBASE_odds } from '@betarena/scores-lib/types/firebase.js';
 
 // #endregion ➤ 📦 Package Imports
@@ -16,6 +16,58 @@ import type { FIRE_LNNS, FIRE_LNPI, FIREBASE_livescores_now, FIREBASE_odds } fro
 // #region ➤ 🛠️ METHODS
 
 // #region 🔥 USER
+
+/**
+ * @author
+ *  @migbash
+ * @summary
+ *  - 🟥 MAIN
+ *  - 🟦 HELPER
+ * @description
+ *  📣 Retrieves `Firebase/Firestore` data for **current user** and saves.
+ * @WARNING
+ *  ❗️ Updates current user with `data` (store).
+ * @param { string } uid
+ *  💠 **[required]** Target user **uid**.
+ * @return { Promise < void > }
+ */
+export async function userDataFetch
+(
+  uid: string
+): Promise < void >
+{
+  // [🐞]
+  dlog
+  (
+    '🚏 checkpoint ➤ userDataFetch(..)',
+    true
+  );
+
+  const
+    docRef
+      = doc
+      (
+        db_firestore,
+        'betarena_users',
+        uid
+      ),
+    docSnap
+      = await getDoc
+      (
+        docRef
+      )
+  ;
+
+  if (!docSnap.exists()) return;
+
+  userBetarenaSettings.updateData
+  (
+    'user-scores-data',
+    docSnap.data()
+  );
+
+  return;
+}
 
 /**
  * @description
@@ -42,12 +94,14 @@ export function userBalanceListen
     ): void =>
     {
       const data: BetarenaUser = doc.data();
-      userBetarenaSettings.userUpdateBTABalance
+      userBetarenaSettings.updateData
       (
+        'user-main-balance',
         data.main_balance
       );
-      userBetarenaSettings.userUpdateBTABalance2
+      userBetarenaSettings.updateData
       (
+        'user-investor-balance',
         data.investor_balance
       );
     }
@@ -186,44 +240,6 @@ export async function userToggleUserguideOptOut
   );
 
   return;
-}
-
-/**
- * @description
- * TODO: DOC:
- */
-export async function userDataFetch
-(
-  uid: string
-): Promise < void >
-{
-  // [🐞]
-  dlog
-  (
-    '🚏 checkpoint ➤ userDataFetch',
-    true
-  );
-
-  const docRef: DocumentReference  = doc
-  (
-    db_firestore,
-    'betarena_users',
-    uid
-  ),
-
-    docSnap: DocumentSnapshot  = await getDoc
-    (
-      docRef
-    );
-
-  if (!docSnap.exists()) return;
-
-  const userData: BetarenaUser = docSnap.data();
-
-  userBetarenaSettings.updateUserData
-  (
-    userData
-  );
 }
 
 // #endregion 🔥 USER
