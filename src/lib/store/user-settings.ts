@@ -17,11 +17,11 @@
 
 import { writable } from 'svelte/store';
 
+import { updateSelectLang } from '$lib/firebase/common.js';
 import sessionStore from '$lib/store/session.js';
+import { initSportbookData } from '$lib/utils/platform-functions.js';
 import { initUser, logoutUser } from '$lib/utils/user.js';
 import { setCookie } from './cookie.js';
-import { initSportbookData } from '$lib/utils/platform-functions.js';
-import { updateSelectLang } from '$lib/firebase/common.js';
 
 import type { BetarenaUser, IUserSetting, Voted_Fixture } from '$lib/types/types.user-settings.js';
 import type { InvestorData } from '@betarena/scores-lib/types/_FIREBASE_.js';
@@ -162,6 +162,16 @@ function createLocalStore
             initUser();
           else
             logoutUser();
+          ;
+
+          // ╭─────
+          // │ CHECK :|: for (non)-authenticated user logic.
+          // ╰─────
+          if (localStore.country_bookmaker)
+            initSportbookData
+            (
+              localStore.country_bookmaker
+            );
           ;
 
           methods.setLocalStorage

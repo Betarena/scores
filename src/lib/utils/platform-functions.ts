@@ -359,8 +359,8 @@ export async function setUserGeoLocation
   ;
   if (if_M_0) return;
 
-  let geoRes: GeoJsResponse = await getUserLocation(),
-
+  let
+    geoRes: GeoJsResponse = await getUserLocation(),
     userGeo: string
     = geoRes.country_code === undefined
       ? null
@@ -382,19 +382,21 @@ export async function setUserGeoLocation
   // ### CHECK
   // ### for existance of GEO available from
   // ### translations/country list.
-  const data_0 =	data.scores_header_translations?.bookmakers_countries
-    ?.find
-    (
-      function
+  const data_0
+    =	data.scores_header_translations?.bookmakers_countries
+      ?.find
       (
-        item
+        function
+        (
+          item
+        )
+        {
+          return (
+            item[0].toString().toLowerCase() === userGeo.toString().toLowerCase()
+          );
+        }
       )
-      {
-        return (
-          item[0].toString().toLowerCase() === userGeo.toString().toLowerCase()
-        );
-      }
-    );
+  ;
 
   if (data_0 == undefined) userGeo = 'en';
 
@@ -780,6 +782,8 @@ export async function initSportbookData
   geoPos: string | undefined
 ): Promise < void >
 {
+  console.log('initSportbookData', initSportbookData)
+
   const
     dataRes0
       = await get
