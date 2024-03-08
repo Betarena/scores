@@ -340,6 +340,7 @@
 
     <WidgetTitle
       WIDGET_TITLE={B_LEGL_T?.translations?.widget_title}
+      OVERRIDE_COLOR={!isViewTablet}
     />
 
     <!--
