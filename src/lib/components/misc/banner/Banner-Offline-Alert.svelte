@@ -34,7 +34,7 @@
 
   import { dlog } from '$lib/utils/debug.js';
 
-  import TranslationText from './Translation-Text.svelte';
+  import TranslationText from '../Translation-Text.svelte';
 
   // #endregion ➤ 📦 Package Imports
 

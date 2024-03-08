@@ -2,14 +2,15 @@
 
 import sessionStore from '$lib/store/session.js';
 import userBetarenaSettings from '$lib/store/user-settings.js';
-import { dlog } from '$lib/utils/debug.js';
+import { dlog, dlogv2 } from '$lib/utils/debug.js';
+import { checkNull } from '$lib/utils/platform-functions.js';
 import { DataSnapshot, onValue, ref, type DatabaseReference, type Unsubscribe } from 'firebase/database';
-import { arrayRemove, arrayUnion, doc, DocumentReference, DocumentSnapshot, getDoc, increment, onSnapshot, updateDoc } from 'firebase/firestore';
+import { arrayRemove, arrayUnion, doc, DocumentReference, getDoc, increment, onSnapshot, updateDoc } from 'firebase/firestore';
 import { getTargetRealDbData } from './firebase.actions.js';
 import { db_firestore, db_real } from './init';
 
-import type { BetarenaUser } from '$lib/types/types.scores.js';
 import type { FIRE_LNNS, FIRE_LNPI, FIREBASE_livescores_now, FIREBASE_odds } from '@betarena/scores-lib/types/firebase.js';
+import type { Page } from '@sveltejs/kit';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -18,40 +19,201 @@ import type { FIRE_LNNS, FIRE_LNPI, FIREBASE_livescores_now, FIREBASE_odds } fro
 // #region 🔥 USER
 
 /**
+ * @author
+ *  @migbash
+ * @summary
+ *  - 🟥 MAIN
+ *  - 🟦 HELPER
  * @description
- * TODO: DOC:
+ *  📣 Retrieves `Firebase/Firestore` data for **current user** and saves.
+ * @CUSTOM_WARNING
+ *  ❗️❗️ Contains `store` update.
+ * @param { string } uid
+ *  💠 **[required]** Target user **uid**.
+ * @return { Promise < void > }
+ */
+export async function userDataFetch
+(
+  uid: string
+): Promise < void >
+{
+  // [🐞]
+  dlog
+  (
+    '🚏 checkpoint ➤ userDataFetch(..)',
+    true
+  );
+
+  const
+    docRef
+      = doc
+      (
+        db_firestore,
+        'betarena_users',
+        uid
+      ),
+    docSnap
+      = await getDoc
+      (
+        docRef
+      )
+  ;
+
+  if (!docSnap.exists()) return;
+
+  userBetarenaSettings.updateData
+  (
+    [
+      ['user-scores-data', docSnap.data()]
+    ]
+  );
+
+  return;
+}
+
+/**
+ * @author
+ *  @migbash
+ * @summary
+ *  - 🟦 HELPER
+ *  - 🟥 IMPORTANT
+ * @description
+ *  📣 Kickstart target user `(uid)` data `(balance)` listen.
+ * @CUSTOM_WARNING
+ *  ❗️❗️ Contains `store` update.
  * @see https://firebase.google.com/docs/firestore/query-data/listen#web-modular-api_3
- * @param
- * { string } uid - Target user UID.
+ * @param { string } uid
+ *  💠 **[required]** Target user UID.
+ * @returns { void }
  */
 export function userBalanceListen
 (
   uid: string
 ): void
 {
-  const _unsubscribe: Unsubscribe = onSnapshot
+  const
+    _unsubscribe
+      = onSnapshot
+      (
+        doc
+        (
+          db_firestore,
+          'betarena_users',
+          uid
+        ),
+        (
+          doc
+        ): void =>
+        {
+          const
+            data = doc.data()
+          ;
+
+          if (data == undefined) return;
+
+          userBetarenaSettings.updateData
+          (
+            [
+              ['user-main-balance', data.main_balance],
+              ['user-investor-balance', data.investor_balance],
+            ]
+          );
+
+          return;
+        }
+      )
+  ;
+
+  sessionStore.updateData
   (
-    doc
+    [
+      ['firebaseListeners', [_unsubscribe] ]
+    ]
+  );
+
+  return;
+}
+
+/**
+ * @author
+ *  @migbash
+ * @summary
+ *  🟦 HELPER
+ * @description
+ *  📣 Update `user` platform language preference.
+ * @returns { Promise < void > }
+ */
+export async function updateSelectLang
+(
+): Promise < void >
+{
+  const
+    /**
+     * @description
+     * 📝 Data point
+     */
+    lang = userBetarenaSettings.extract('lang') as string | undefined | null,
+    /**
+     * @description
+     * 📝 Data point
+     */
+    uid = userBetarenaSettings.extract('uid') as string | undefined | null,
+    /**
+     * @description
+     * 📝 Data for `page`
+     */
+    page = sessionStore.extract< Page >('page')!,
+    /**
+     * @description
+     * 📝 Conditional logic bundle simplification
+     */
+    if_M_0
+      = !checkNull(page.error)
+      || checkNull(page.route.id)
+      || !lang
+      || !uid
+  ;
+
+  if (if_M_0) return;
+
+  // [🐞]
+  dlogv2
+  (
+    '🚏 checkpoint ➤ updateSelectLang(..)',
+    [
+      `🔹 [var] ➤ opts.isPageError :|: ${page.error}`,
+      `🔹 [var] ➤ opts.routeId :|: ${page.route.id}`,
+      `🔹 [var] ➤ lang :|: ${lang}`,
+      `🔹 [var] ➤ uid :|: ${uid}`,
+    ],
+    true
+  );
+
+  userBetarenaSettings.updateData
+  (
+    [
+      ['lang-user', lang]
+    ]
+  );
+
+  const
+    userRef = doc
     (
       db_firestore,
       'betarena_users',
-      uid
-    ),
-    (
-      doc
-    ): void =>
+      uid,
+    )
+  ;
+
+  await updateDoc
+  (
+    userRef,
     {
-      const data: BetarenaUser = doc.data();
-      userBetarenaSettings.userUpdateBTABalance
-      (
-        data.main_balance
-      );
-      userBetarenaSettings.userUpdateBTABalance2
-      (
-        data.investor_balance
-      );
+      lang
     }
   );
+
+  return;
 }
 
 /**
@@ -188,44 +350,6 @@ export async function userToggleUserguideOptOut
   return;
 }
 
-/**
- * @description
- * TODO: DOC:
- */
-export async function userDataFetch
-(
-  uid: string
-): Promise < void >
-{
-  // [🐞]
-  dlog
-  (
-    '🚏 checkpoint ➤ userDataFetch',
-    true
-  );
-
-  const docRef: DocumentReference  = doc
-  (
-    db_firestore,
-    'betarena_users',
-    uid
-  ),
-
-    docSnap: DocumentSnapshot  = await getDoc
-    (
-      docRef
-    );
-
-  if (!docSnap.exists()) return;
-
-  const userData: BetarenaUser = docSnap.data();
-
-  userBetarenaSettings.updateUserData
-  (
-    userData
-  );
-}
-
 // #endregion 🔥 USER
 
 // #region 🔥 PLAYER_IDS
@@ -251,8 +375,9 @@ export async function onceTargetPlayerIds
 
   sessionStore.updateData
   (
-    'livescorePlayerId',
-    firebaseData.id
+    [
+      ['livescorePlayerId', firebaseData.id]
+    ]
   );
 }
 
@@ -269,13 +394,13 @@ export function targetPlayerIdsListen
   path: string
 ): Unsubscribe
 {
-  const dbRef: DatabaseReference = ref
-  (
-    db_real,
-    path
-  ),
-
-    listenEventRef: Unsubscribe = onValue
+  const
+    dbRef: DatabaseReference = ref
+    (
+      db_real,
+      path
+    ),
+    listenEventRef = onValue
     (
       dbRef,
       (
@@ -285,16 +410,19 @@ export function targetPlayerIdsListen
         const firebaseData: FIRE_LNPI = snapshot.val();
         sessionStore.updateData
         (
-          'livescorePlayerId',
-          firebaseData.id
+          [
+            ['livescorePlayerId', firebaseData.id]
+          ]
         );
       }
-    );
+    )
+  ;
 
   sessionStore.updateData
   (
-    'firebaseListeners',
-    [listenEventRef]
+    [
+      ['firebaseListeners', [listenEventRef]]
+    ]
   );
 
   return listenEventRef
@@ -348,7 +476,7 @@ export function targetLivescoreNowFixtureOddsListen
     path
   ),
 
-    listenEventRef: Unsubscribe = onValue
+    listenEventRef = onValue
     (
       dbRef,
       (
@@ -371,16 +499,18 @@ export function targetLivescoreNowFixtureOddsListen
 
         sessionStore.updateData
         (
-          'liveOdds',
-          sportbookArray
+          [
+            ['liveOdds', sportbookArray]
+          ]
         );
       }
     );
 
   sessionStore.updateData
   (
-    'firebaseListeners',
-    [listenEventRef]
+    [
+      ['firebaseListeners', [listenEventRef]]
+    ]
   );
 
   return listenEventRef
@@ -403,25 +533,26 @@ export function targetLivescoreNowFixtureOddsListenMulti
 
   for (const path of paths)
   {
-    const dbRef: DatabaseReference = ref
-    (
-      db_real,
-      path
-    ),
-
-      listenEventRef: Unsubscribe = onValue
+    const
+      dbRef = ref
+      (
+        db_real,
+        path
+      ),
+      listenEventRef = onValue
       (
         dbRef,
         (
           snapshot: DataSnapshot
         ): void =>
         {
-          const data: [string, FIREBASE_odds][]
-          = snapshot.exists()
-            ? Object.entries(snapshot.val())
-            : [],
-
+          const
+            data: [string, FIREBASE_odds][]
+              = snapshot.exists()
+                ? Object.entries(snapshot.val())
+                : [],
             sportbookArray: FIREBASE_odds[] = []
+          ;
 
           for (const sportbook of data)
           {
@@ -431,14 +562,13 @@ export function targetLivescoreNowFixtureOddsListenMulti
 
           sessionStore.updateData
           (
-            'liveOddsMap',
             [
-              parseInt(snapshot.key),
-              sportbookArray
+              ['liveOddsMap', [parseInt(snapshot.key), sportbookArray]]
             ]
           );
         }
-      );
+      )
+    ;
 
     listenEventRefsList.push
     (
@@ -448,8 +578,9 @@ export function targetLivescoreNowFixtureOddsListenMulti
 
   sessionStore.updateData
   (
-    'firebaseListeners',
-    listenEventRefsList
+    [
+      ['firebaseListeners', listenEventRefsList]
+    ]
   );
 
   return listenEventRefsList
@@ -471,23 +602,22 @@ export async function oneOffOddsDataGet
 {
   for (const path of paths)
   {
-    const firebaseData = await getTargetRealDbData
+    const
+      firebaseData = await getTargetRealDbData
       (
         path
       ),
-
       data: [string, FIREBASE_odds][]
-      = firebaseData != null
-        ? Object.entries(firebaseData)
-        : [],
-
+        = firebaseData != null
+          ? Object.entries(firebaseData)
+          : [],
       sportbookArray: FIREBASE_odds[] = [],
-
-      fixtureId = path.split
-      (
-        '/'
-      )
-        [path.split('/').length - 1];
+      fixtureId
+        = path.split
+        (
+          '/'
+        )[path.split('/').length - 1]
+    ;
 
     for (const sportbook of data)
     {
@@ -497,10 +627,8 @@ export async function oneOffOddsDataGet
 
     sessionStore.updateData
     (
-      'liveOddsMap',
       [
-        parseInt(fixtureId),
-        sportbookArray
+        ['liveOddsMap', [parseInt(fixtureId), sportbookArray]]
       ]
     );
   }
@@ -550,8 +678,10 @@ export function listenRealTimeLivescoresNowChange
 
   sessionStore.updateData
   (
-    'firebaseListeners',
-    [listenEventRef]
+    [
+      ['firebaseListeners', [listenEventRef]]
+    ]
+
   );
 
   return listenEventRef
@@ -570,13 +700,14 @@ export function targetLivescoreNowFixtureListen
   path: string
 ): Unsubscribe
 {
-  const dbRef: DatabaseReference = ref
-  (
-    db_real,
-    path
-  ),
-
-    listenEventRef: Unsubscribe = onValue
+  const
+    dbRef
+      = ref
+      (
+        db_real,
+        path
+      ),
+    listenEventRef = onValue
     (
       dbRef,
       (
@@ -586,16 +717,19 @@ export function targetLivescoreNowFixtureListen
         const firebaseData: FIREBASE_livescores_now = snapshot.val();
         sessionStore.updateData
         (
-          'livescoresFixtureTarget',
-          firebaseData
+          [
+            ['livescoresFixtureTarget', firebaseData]
+          ]
         );
       }
-    );
+    )
+  ;
 
   sessionStore.updateData
   (
-    'firebaseListeners',
-    [listenEventRef]
+    [
+      ['firebaseListeners', [listenEventRef]]
+    ]
   );
 
   return listenEventRef
@@ -642,15 +776,21 @@ export async function onceTargetLivescoreNowFixtureGet
   path: string
 ): Promise < void >
 {
-  const firebaseData: FIREBASE_livescores_now = await getTargetRealDbData
-  (
-    path
-  );
+  const
+    firebaseData: FIREBASE_livescores_now
+      = await getTargetRealDbData
+      (
+        path
+      )
+  ;
   sessionStore.updateData
   (
-    'livescoresFixtureTarget',
-    firebaseData
+    [
+      ['livescoresFixtureTarget', firebaseData]
+    ]
   );
+
+  return;
 }
 
 /**
@@ -668,16 +808,20 @@ export async function genLiveFixMap
   data: [string, FIREBASE_livescores_now][]
 ): Promise < void >
 {
-  const liveFixturesMap = new Map<number, FIREBASE_livescores_now>();
+  const
+    liveFixturesMap = new Map<number, FIREBASE_livescores_now>()
+  ;
 
   for await (const live_fixture of data)
   {
-    const fixture_id = parseInt
-      (
-        live_fixture[0].toString()
-      ),
-
-      fixture_data = live_fixture[1];
+    const
+      fixture_id
+        = parseInt
+        (
+          live_fixture[0].toString()
+        ),
+      fixture_data = live_fixture[1]
+    ;
 
     liveFixturesMap.set
     (
@@ -688,9 +832,12 @@ export async function genLiveFixMap
 
   sessionStore.updateData
   (
-    'livescoresNow',
-    liveFixturesMap
+    [
+      ['livescoresNow', liveFixturesMap]
+    ]
   );
+
+  return;
 }
 
 // #endregion 🔥 LIVESCORES_NOW
@@ -709,38 +856,39 @@ export function listenRealTimeScoreboardAll
 (
 ): Unsubscribe
 {
-  const dbRef: DatabaseReference = ref
-  (
-    db_real,
-    'livescores_now_scoreboard'
-  ),
-
-    listenEventRef: Unsubscribe = onValue
+  const
+    dbRef
+      = ref
+      (
+        db_real,
+        'livescores_now_scoreboard'
+      ),
+    listenEventRef = onValue
     (
       dbRef,
       (
         snapshot:DataSnapshot
-      ): void =>
+      ) =>
       {
         if (snapshot.val() != null)
         {
-          const data:
-        [
-          string,
-          FIRE_LNNS
-        ][] = Object.entries(snapshot.val());
+          const
+            data: [string, FIRE_LNNS][] = Object.entries(snapshot.val())
+          ;
           generateLiveScoreboardList(data);
         }
       }
-    );
+    )
+  ;
 
   sessionStore.updateData
   (
-    'firebaseListeners',
-    [listenEventRef]
+    [
+      ['firebaseListeners', [listenEventRef]]
+    ]
   );
 
-  return listenEventRef
+  return listenEventRef;
 }
 
 /**
@@ -782,16 +930,20 @@ function generateLiveScoreboardList
   data: [string, FIRE_LNNS][]
 ): void
 {
-  const liveFixturesMap = new Map<number, FIRE_LNNS>();
+  const
+    liveFixturesMap = new Map<number, FIRE_LNNS>()
+  ;
 
   for (const liveFixture of data)
   {
-    const fixtureId = parseInt
-      (
-        liveFixture[0].toString()
-      ),
-
-      fixtureData = liveFixture[1];
+    const
+      fixtureId
+        = parseInt
+        (
+          liveFixture[0].toString()
+        ),
+      fixtureData = liveFixture[1]
+    ;
 
     liveFixturesMap.set
     (
@@ -802,9 +954,13 @@ function generateLiveScoreboardList
 
   sessionStore.updateData
   (
-    'livescoreScoreboard',
-    liveFixturesMap
-  )
+    [
+      ['livescoreScoreboard', liveFixturesMap]
+    ]
+
+  );
+
+  return;
 }
 
 // #endregion 🔥 LIVESCORES_NOW_SCOREBOARD

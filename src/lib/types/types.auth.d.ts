@@ -7,52 +7,62 @@
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
 // │ 📝 Description                                                                   │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
-// │ > Scores SvelteKit Logic Wrapper                                                 │
+// │ Main Scores Platform Authentication Types                                        │
 // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-// #region ➤ 📦 Package Imports
+type IAuthState =
+  // ╭─────
+  // │ NOTE: :|: Widget is 'Ready' for authentication flow and input.
+  // ╰─────
+  | 'AuthenticationStart'
+  // ╭─────
+  // │ NOTE: :|: Widget is 'Processing' authentication (post-submit).
+  // ╰─────
+  | 'Processing'
+  // ╭─────
+  // │ NOTE: :|: Widget is 'Processing' authentication (post-submit) for 'Email' login.
+  // ╰─────
+  | 'NewEmailRegisterationSent'
+  // ╭─────
+  // │ NOTE: :|: Widget is 'Processing' authentication (post-submit) for 'Email' login.
+  // ╰─────
+  | 'ExistingEmailLoginSent'
+  // ╭─────
+  // │ NOTE: :|: Widget is 'Processing' authentication (post-submit) for 'Email' login.
+  // ╰─────
+  | 'AllowResendEmailLogin'
+;
 
-import { goto } from '$app/navigation';
-
-import { dlogv2 } from './debug.js';
-
-// #endregion ➤ 📦 Package Imports
+type IAuthErrorState =
+  // ╭─────
+  // │ NOTE: :|: Widget Error for incorrect `Email` input.
+  // ╰─────
+  | 'ErrorAuthEmailFormat'
+  // ╭─────
+  // │ NOTE: :|: Widget Error for invalid `Email` input, due to already existing.
+  // ╰─────
+  | 'EmailAlreadyInUse'
+;
 
 /**
- * @author
- *  @migbash
- * @summary
- *  🟦 WRAPPER
  * @description
- *  📣 SvelteKit wrapper for `goto`.
- * @param { string } url
- *  💠 **[required]** Target `url` to navigate to.
- * @param { boolean } [replaceState=false]
- *  💠 [optional] Target `url` to navigate to.
- * @returns { Promise < void > }
+ *  📣 Scores Platfrom | Authentication State Interface.
  */
-export async function gotoSW
-(
-  url: string,
-  replaceState: boolean = false
-): Promise < void >
+interface IAuthWidget
 {
-  // [🐞]
-  dlogv2
-  (
-    'gotoSW(..)',
-    [
-      `🔹 [var] ➤ url :|: ${url}`,
-      `🔹 [var] ➤ replaceState :|: ${replaceState}`,
-    ],
-    false
-  );
-  await goto
-  (
-    url,
-    {
-      replaceState
-    }
-  );
-  return;
+  /**
+   * @description
+   * 📝 Target **component** `multi-state` **store**, used for general `state` tracking.
+   */
+  globalState: Set < IAuthState >;
+  /**
+   * @description
+   * 📝 Target **component** `multi-state` **store**, used for `error/exception` tracking.
+   */
+  globalStateErrors: Set < IAuthErrorState >;
+  /**
+   * @description
+   * 📝 Target `countdown` for **resend** allow.
+   */
+  resendEmailCountdown: [number, number, number, number, number] | null;
 }

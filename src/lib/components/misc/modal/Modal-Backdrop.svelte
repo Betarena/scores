@@ -56,11 +56,11 @@
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
      */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = 'general⮕g⮕background-modal-blur'
+    CNAME: string = 'general⮕g⮕background-modal-blur',
     /**
      * @augments EventDispatcher
      */
-    , dispatch: EventDispatcher < any > = createEventDispatcher()
+    dispatch: EventDispatcher < any > = createEventDispatcher()
   ;
 
   // #endregion ➤ 📌 VARIABLES
@@ -114,8 +114,10 @@
 -->
 
 <!--
-▓ NOTE:
-▓ > general modal backdrop.
+╭─────
+│ NOTE:
+│ > general modal backdrop.
+╰─────
 -->
 <div
 	in:fade

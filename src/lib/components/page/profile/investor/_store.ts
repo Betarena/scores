@@ -2,7 +2,7 @@
 
 // #region ➤ 📦 Package Imports
 
-import { toCorrectDate } from '$lib/utils/dates.js';
+import { breakdownDates, toCorrectDate } from '$lib/utils/dates.js';
 import { checkNull } from '$lib/utils/platform-functions.js';
 import type { PublicTransactionHistoryMain } from '@betarena/scores-lib/types/_AUTO-HASURA-2_.js';
 import { writable } from 'svelte/store';
@@ -173,49 +173,6 @@ function createLocalStore
         }
       ): void =>
       {
-        /**
-         * @author
-         *  @migbash
-         * @summary
-         *  🟦 HELPER
-         * @description
-         *  📣 Breaks down dates into respective countdown fields.
-         * @return { [string, string, string, string] }
-         *  📤 Tuple data consisting of [days, hours, minutes, seconds]
-         */
-        function breakdownDates
-        (
-          dateDiff: number
-        ): [number, number, number, number, number]
-        {
-          return [
-            /**
-             * @description
-             *  📣 Number of `seconds` from target date.
-             */
-            Math.floor((dateDiff / 1000) % 60)
-            /**
-             * @description
-             *  📣 Number of `minutes` from target date.
-             */
-            , Math.floor((dateDiff / 1000 / 60) % 60)
-            /**
-             * @description
-             *  📣 Number of `hours` from target date.
-             */
-            , Math.floor((dateDiff / (1000 * 60 * 60)) % 24)
-            /**
-             * @description
-             *  📣 Number of `days` from target date.
-             */
-            , Math.floor((dateDiff / (1000 * 60 * 60 * 24)))
-            /**
-             *  📣 Number of `hours` from target date.
-             */
-            , Math.floor(dateDiff / (1000 * 60 * 60))
-          ];
-        }
-
         setInterval
         (
           () =>

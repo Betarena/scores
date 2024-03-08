@@ -446,3 +446,48 @@ export function ddMMyyFormat
     + (new Date(date).getFullYear()).toString().substr(-2)
   ;
 }
+
+/**
+ * @author
+ *  @migbash
+ * @summary
+ *  🟦 HELPER
+ * @description
+ *  📣 Breaks down dates into respective countdown fields.
+ * @param { number } dateDiff
+ *  💠 **[required]** Target `date` difference.
+ * @return { [ number, number, number, number, number ] }
+ *  📤 Tuple data consisting of [total-hours, days, hours, minutes, seconds]
+ */
+export function breakdownDates
+(
+  dateDiff: number
+): [number, number, number, number, number]
+{
+  return [
+    /**
+     * @description
+     *  📣 Number of `seconds` from target date.
+     */
+    Math.floor((dateDiff / 1000) % 60),
+    /**
+     * @description
+     *  📣 Number of `minutes` from target date.
+     */
+    Math.floor((dateDiff / 1000 / 60) % 60),
+    /**
+     * @description
+     *  📣 Number of `hours` from target date.
+     */
+    Math.floor((dateDiff / (1000 * 60 * 60)) % 24),
+    /**
+     * @description
+     *  📣 Number of `days` from target date.
+     */
+    Math.floor((dateDiff / (1000 * 60 * 60 * 24))),
+    /**
+     *  📣 Number of `hours` from target date.
+     */
+    Math.floor(dateDiff / (1000 * 60 * 60))
+  ];
+}

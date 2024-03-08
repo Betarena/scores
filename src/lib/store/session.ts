@@ -30,21 +30,25 @@ import type { FIREBASE_livescores_now, FIREBASE_odds, FIRE_LNNS } from '@betaren
 // #region ➤ 📌 VARIABLES
 
 const
+  /**
+   *
+   */
   sessionStoreObj: ISessionStore
     = {
       globalState: new Set(),
+      page: null,
       deviceType: 'mobile',
       isUserActive: true,
       windowWidth: 0,
       firebaseListeners: [],
       grapqhQlWebSockets: [],
       currentActiveModal: null,
+      currentActiveToast: null,
       currentAdminToggle: null,
       currentPageRouteId: null,
 
       // ### NOTE:
       // ### variables for show/hide.
-      auth_show: false,
       livescoreShowCalendar: false,
       selectedSeasonID: undefined,
       livescoreFixtureView: 'all',
@@ -95,9 +99,14 @@ const
     }
 ;
 
+/**
+ *
+ */
 type IDataProp =
   | 'lang'
   | 'routeId'
+  | 'currentModal'
+  | 'currentToast'
   | 'firebaseListeners'
   | 'competitionAllNum'
   | 'sportbookMain'
@@ -114,10 +123,28 @@ type IDataProp =
   | 'globalStateRemove'
 ;
 
+/**
+ *
+ */
+type IDataGetProp =
+  Extract < IDataProp,
+    'lang' |
+    'routeId'
+  >
+  | 'globalState'
+  | 'page'
+;
+
 // #endregion ➤ 📌 VARIABLES
 
 // #region ➤ 🛠️ METHODS
 
+/**
+ * @author
+ * @summary
+ * @description
+ * @returns
+ */
 function createLocalStore
 (
 )
@@ -149,140 +176,153 @@ function createLocalStore
          *  - 🔹 HELPER
          *  - IMPORTANT
          * @description
-         *  📣 Update **target** single data property.
-         * @param { IDataProp } dataTarget
+         *  📣 Update **target** `list` data of target `properties` to update.
+         * @param { [IDataProp, any][] } data
          *  💠 **[required]** Target data to update.
-         * @param { any } dataPoint
-         *  💠 **[required]** Target data value to update.
          * @return { void }
          */
         updateData:
         (
-          dataTarget: IDataProp,
-          dataPoint?: any,
+          data: [IDataProp, any][]
         ): void =>
         {
-          if (dataTarget == 'lang')
+          for (const iterator of data)
           {
-            sessionStoreObj.serverLang = dataPoint;
-          }
-          else if (dataTarget == 'routeId')
-          {
-            let
-              customRouteId: IPageRouteId = 'Standard'
+            const
+              dataTarget = iterator[0],
+              dataPoint = iterator[1]
             ;
 
-            if (dataPoint == routeIdPageCompetitions)
-              customRouteId = 'CompetitionPage';
-            else if (dataPoint == routeIdPageProfile)
-              customRouteId = 'ProfilePage';
-            else if (dataPoint == routeIdPageAuthors)
-              customRouteId = 'AuthorsPage';
-            ;
+            if (dataTarget == 'lang')
+            {
+              sessionStoreObj.serverLang = dataPoint;
+            }
+            else if (dataTarget == 'routeId')
+            {
+              let
+                customRouteId: IPageRouteId = 'Standard'
+              ;
 
-            // [🐞]
-            dlogv2
-            (
-              '🚏 checkpoint ➤ updateRouteId(..)',
-              [
-                `🔹 [var] ➤ customRouteId :|: ${customRouteId}`,
-              ],
-              true
-            );
+              if (dataPoint == routeIdPageCompetitions)
+                customRouteId = 'CompetitionPage';
+              else if (dataPoint == routeIdPageProfile)
+                customRouteId = 'ProfilePage';
+              else if (dataPoint == routeIdPageAuthors)
+                customRouteId = 'AuthorsPage';
+              ;
 
-            sessionStoreObj.currentPageRouteId = customRouteId;
-          }
-          else if (dataTarget == 'firebaseListeners')
-          {
-            sessionStoreObj.firebaseListeners.push(...dataPoint);
-          }
-          else if (dataTarget == 'competitionAllNum')
-          {
-            sessionStoreObj.competitionsNum = dataPoint[0];
-            sessionStoreObj.competitionsOpenNum = dataPoint[1];
-          }
-          else if (dataTarget == 'sportbookMain')
-          {
-            sessionStoreObj.sportbook_main = dataPoint;
-          }
-          else if (dataTarget == 'sportbookList')
-          {
-            // ╭─────
-            // │ NOTE: WARNING: IMPORTANT CRITICAL
-            // │ > Sort data (asc).
-            // ╰─────
-            dataPoint
-              .sort
+              // [🐞]
+              dlogv2
               (
+                '🚏 checkpoint ➤ updateRouteId(..)',
+                [
+                  `🔹 [var] ➤ customRouteId :|: ${customRouteId}`,
+                ],
+                true
+              );
+
+              sessionStoreObj.currentPageRouteId = customRouteId;
+            }
+            else if (dataTarget == 'currentModal')
+            {
+              sessionStoreObj.currentActiveModal = dataPoint;
+            }
+            else if (dataTarget == 'currentToast')
+            {
+              sessionStoreObj.currentActiveToast = dataPoint;
+            }
+            else if (dataTarget == 'firebaseListeners')
+            {
+              sessionStoreObj.firebaseListeners.push(...dataPoint);
+            }
+            else if (dataTarget == 'competitionAllNum')
+            {
+              sessionStoreObj.competitionsNum = dataPoint[0];
+              sessionStoreObj.competitionsOpenNum = dataPoint[1];
+            }
+            else if (dataTarget == 'sportbookMain')
+            {
+              sessionStoreObj.sportbook_main = dataPoint;
+            }
+            else if (dataTarget == 'sportbookList')
+            {
+              // ╭─────
+              // │ NOTE: WARNING: IMPORTANT CRITICAL
+              // │ > Sort data (asc).
+              // ╰─────
+              dataPoint
+                .sort
                 (
-                  a,
-                  b
-                ) =>
-                {
-                  return parseInt(a.position!) - parseInt(b.position!)
-                }
-              )
-            ;
+                  (
+                    a,
+                    b
+                  ) =>
+                  {
+                    return parseInt(a.position!) - parseInt(b.position!)
+                  }
+                )
+              ;
 
-            sessionStoreObj.sportbook_list = dataPoint;
-          }
-          else if (dataTarget == 'livescorePlayerId')
-          {
-            sessionStoreObj.livescore_now_player_fixture = dataPoint;
-          }
-          else if (dataTarget == 'livescoreScoreboard')
-          {
-            sessionStoreObj.livescore_now_scoreboard = dataPoint as Map < number, FIRE_LNNS >;
-          }
-          else if (dataTarget == 'competitionLatestMap')
-          {
-            sessionStoreObj.competitions_map = dataPoint as Map < number, B_H_COMP_DATA >;
-          }
-          else if (dataTarget == 'graphqlListeners')
-          {
-            sessionStoreObj.grapqhQlWebSockets.push(dataPoint as () => void);
-          }
-          else if (dataTarget == 'liveOdds')
-          {
-            sessionStoreObj.live_odds_fixture_target = dataPoint as FIREBASE_odds[];
-          }
-          else if (dataTarget == 'liveOddsMap')
-          {
-            sessionStoreObj.live_odds_fixture_map.set
-            (
-              dataPoint[0],
-              dataPoint[1]
-            );
-          }
-          else if (dataTarget == 'livescoresNow')
-          {
-            sessionStoreObj.livescore_now = dataPoint as Map < number, FIREBASE_livescores_now >;
-          }
-          else if (dataTarget == 'livescoresFixtureTarget')
-          {
-            sessionStoreObj.livescore_now_fixture_target = dataPoint as FIREBASE_livescores_now;
-          }
-          else if (dataTarget == 'globalStateAdd')
-          {
-            // ╭─────
-            // │ NOTE:
-            // │ > Authentication Logic Toggle Reset
-            // ╰─────
-            if (dataPoint == 'NotAuthenticated')
-            {
-              sessionStoreObj.globalState.delete('Authenticated');
-              sessionStoreObj.globalState.delete('AuthenticatedAndInitialized');
+              sessionStoreObj.sportbook_list = dataPoint;
             }
-            else if (dataPoint == 'Authenticated')
+            else if (dataTarget == 'livescorePlayerId')
             {
-              sessionStoreObj.globalState.delete('NotAuthenticated');
+              sessionStoreObj.livescore_now_player_fixture = dataPoint;
             }
+            else if (dataTarget == 'livescoreScoreboard')
+            {
+              sessionStoreObj.livescore_now_scoreboard = dataPoint as Map < number, FIRE_LNNS >;
+            }
+            else if (dataTarget == 'competitionLatestMap')
+            {
+              sessionStoreObj.competitions_map = dataPoint as Map < number, B_H_COMP_DATA >;
+            }
+            else if (dataTarget == 'graphqlListeners')
+            {
+              sessionStoreObj.grapqhQlWebSockets.push(dataPoint as () => void);
+            }
+            else if (dataTarget == 'liveOdds')
+            {
+              sessionStoreObj.live_odds_fixture_target = dataPoint as FIREBASE_odds[];
+            }
+            else if (dataTarget == 'liveOddsMap')
+            {
+              sessionStoreObj.live_odds_fixture_map.set
+              (
+                dataPoint[0],
+                dataPoint[1]
+              );
+            }
+            else if (dataTarget == 'livescoresNow')
+            {
+              sessionStoreObj.livescore_now = dataPoint as Map < number, FIREBASE_livescores_now >;
+            }
+            else if (dataTarget == 'livescoresFixtureTarget')
+            {
+              sessionStoreObj.livescore_now_fixture_target = dataPoint as FIREBASE_livescores_now;
+            }
+            else if (dataTarget == 'globalStateAdd')
+            {
+              // ╭─────
+              // │ NOTE:
+              // │ > Authentication Logic Toggle Reset
+              // ╰─────
+              if (dataPoint == 'NotAuthenticated')
+              {
+                sessionStoreObj.globalState.delete('Authenticated');
+                sessionStoreObj.globalState.delete('AuthenticatedAndInitialized');
+              }
+              else if (dataPoint == 'Authenticated')
+              {
+                sessionStoreObj.globalState.delete('NotAuthenticated');
+              }
 
-            sessionStoreObj.globalState.add(dataPoint);
-          }
-          else if (dataTarget == 'globalStateRemove')
-          {
-            sessionStoreObj.globalState.delete(dataPoint);
+              sessionStoreObj.globalState.add(dataPoint);
+            }
+            else if (dataTarget == 'globalStateRemove')
+            {
+              sessionStoreObj.globalState.delete(dataPoint);
+            }
           }
 
           set
@@ -348,22 +388,26 @@ function createLocalStore
          *  - IMPORTANT
          * @description
          *  📣 Extracts **target** `user` data property.
-         * @param { IDataProp } dataPoint
+         * @param { IDataGetProp } dataPoint
          *  💠 **[required]** Target `data point` to be retrieved.
-         * @return { any }
+         * @return { Typ1 }
          *  📤 Requested `data point`.
          */
         extract:
+        < Typ1 >
         (
-          dataPoint: IDataProp
-        ): any =>
+          dataPoint: IDataGetProp
+        ): Typ1 | NullUndef =>
         {
           if (dataPoint == 'lang')
-            return sessionStoreObj.serverLang;
+            return sessionStoreObj.serverLang as Typ1 | NullUndef;
           else if (dataPoint == 'routeId')
-            return sessionStoreObj.currentPageRouteId;
+            return sessionStoreObj.currentPageRouteId as Typ1 | NullUndef;
+          else if (dataPoint == 'globalState')
+            return sessionStoreObj.globalState as Typ1 | NullUndef;
+          else if (dataPoint == 'page')
+            return sessionStoreObj.page as Typ1 | NullUndef;
           ;
-
           return;
         },
       }
