@@ -50,7 +50,6 @@
   import userBetarenaSettings from '$lib/store/user-settings.js';
   import { dlog, dlogv2 } from '$lib/utils/debug';
   import { isPWA } from '$lib/utils/device.js';
-  import { setUserGeoLocation } from '$lib/utils/platform-functions.js';
 
 	import Footer from '$lib/components/_main_/footer/Footer.svelte';
 	import Header from '$lib/components/_main_/header/Header.svelte';
@@ -62,6 +61,7 @@
 	import ToastAuth from '$lib/components/misc/toast/Toast-Auth/Toast-Auth.svelte';
 	import { mainDeepLinkCheck } from '$lib/utils/deeplink.js';
 	import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
+  import { setUserGeoLocation } from '$lib/utils/geo.js';
 
   // ╭─────
   // │ WARNING:

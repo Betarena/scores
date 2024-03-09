@@ -38,7 +38,7 @@
   import { createEventDispatcher, type EventDispatcher } from 'svelte';
 
   import userBetarenaSettings from '$lib/store/user-settings.js';
-  import { toDecimalFix } from '$lib/utils/platform-functions.js';
+  import { toDecimalFix } from '$lib/utils/string.js';
   import { scoresProfileInvestorStore } from './_store.js';
 
   import icon_arrow_down from '../assets/arrow-down.svg';

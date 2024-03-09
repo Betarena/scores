@@ -31,8 +31,9 @@
 	import { userUpdateBalance } from '$lib/firebase/common.js';
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { checkNull, toDecimalFix } from '$lib/utils/platform-functions.js';
+  import { checkNull } from '$lib/utils/miscellenous.js';
 	import { translationObject } from '$lib/utils/translation.js';
+  import { toDecimalFix } from '$lib/utils/string.js';
 
 	import CompModalMultiple from '../../../shared/COMP-Modal-Multiple.svelte';
 

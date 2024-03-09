@@ -25,7 +25,6 @@
 
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
-	import { sleep } from '$lib/utils/platform-functions.js';
 	import { onMount } from 'svelte';
 
 	import SeoBox from '$lib/components/SEO-Box.svelte';

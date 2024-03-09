@@ -117,7 +117,7 @@ console.debug
 const customErrorHandler: HandleClientError = async (
   {
     error,
-    event
+    // event
   }
 ): Promise < App.Error > =>
 {

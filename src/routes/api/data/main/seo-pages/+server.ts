@@ -6,7 +6,7 @@
 // #region ➤ 📦 Package Imports
 
 import { initGrapQLClient } from '$lib/graphql/init';
-import { checkNull } from '$lib/utils/platform-functions.js';
+import { checkNull } from '$lib/utils/miscellenous.js';
 import { SEO_CS_ENTRY, SEO_FS_ENTRY, SEO_PS_ENTRY } from '@betarena/scores-lib/dist/functions/func.main.seo-pages.js';
 import * as RedisKeys from '@betarena/scores-lib/dist/redis/config.js';
 import { json } from '@sveltejs/kit';
@@ -27,6 +27,7 @@ type PAGE_TYPE =
   | 'player'
   | 'competitions'
   | 'competition'
+  | 'author_article'
 ;
 
 const graphQlInstance = initGrapQLClient();
@@ -58,6 +59,7 @@ export async function GET
 	const playerUrl: string =	req?.url?.searchParams?.get('playerUrl');
   const competitionMainUrl: string = req?.url?.searchParams?.get('competitionMainUrl');
   const competitionUrl: string = req?.url?.searchParams?.get('competitionUrl');
+  const authorArticleUrl: string = req?.url?.searchParams?.get('authorArticleUrl');
 
   // ### IMPORTANT
   // ### required for target SEO & Page data.
@@ -94,6 +96,7 @@ export async function GET
     || !checkNull(playerUrl)
     || !checkNull(competitionMainUrl)
     || !checkNull(competitionUrl)
+    || !checkNull(authorArticleUrl)
   ;
 	if (if_M_0)
   {
@@ -106,7 +109,8 @@ export async function GET
       fixtureUrl,
       playerUrl,
       competitionMainUrl,
-      competitionUrl
+      competitionUrl,
+      authorArticleUrl
     );
 	}
 
@@ -663,7 +667,8 @@ async function validUrlCheck
   fixtureUrl: string,
   playerUrl: string,
   competitionMainUrl: string,
-  competitionUrl: string
+  competitionUrl: string,
+  authorArticleUrl: string
 ): Promise < Response >
 {
   const validUrl: number[] = [];
@@ -691,6 +696,9 @@ async function validUrlCheck
   ;
   if (competitionUrl)
     validUrl.push(await get_target_set_cache_data(RedisKeys?.SAP_C_D_A19, `${competitionUrl}`) as number);
+  ;
+  if (authorArticleUrl)
+    validUrl.push(await get_target_set_cache_data(RedisKeys?.SAP_C_D_A22, `${authorArticleUrl}`) as number);
   ;
 
   // ### [🐞]

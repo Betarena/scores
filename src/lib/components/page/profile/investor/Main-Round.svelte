@@ -39,7 +39,7 @@
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { toZeroPrefixDateStr } from '$lib/utils/dates.js';
-	import { toDecimalFix } from '$lib/utils/platform-functions.js';
+  import { toDecimalFix } from '$lib/utils/string.js';
 	import { scoresProfileInvestorStore } from './_store.js';
 
 	import TranslationText from '$lib/components/misc/Translation-Text.svelte';

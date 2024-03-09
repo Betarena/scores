@@ -42,7 +42,7 @@
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
-  import { sleep } from '$lib/utils/platform-functions.js';
+  import { sleep } from '$lib/utils/miscellenous.js';
 
   import SeoBox from '$lib/components/SEO-Box.svelte';
   import AuthorLoader from './Author-Loader.svelte';

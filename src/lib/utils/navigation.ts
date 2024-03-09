@@ -14,14 +14,17 @@
 
 import { dev } from '$app/environment';
 import { invalidateAll } from '$app/navigation';
-import { type Page } from '@sveltejs/kit';
+import { error, redirect, type Page } from '@sveltejs/kit';
+import LZString from 'lz-string';
 
+import { get } from '$lib/api/utils.js';
 import { routeIdPageAuthors, routeIdPageCompetition, routeIdPageCompetitionLobby, routeIdPageFixture, routeIdPageLeague, routeIdPagePlayer, routeIdPageProfile } from '$lib/constants/paths.js';
 import sessionStore from '$lib/store/session.js';
 import userBetarenaSettings from '$lib/store/user-settings.js';
-import { dlogv2 } from './debug';
+import { tryCatchAsync } from '@betarena/scores-lib/dist/util/util.common.js';
+import { PAGE_INVALID_MSG, dlogv2 } from './debug';
 import { dlog } from './debug.js';
-import { checkNull } from './platform-functions.js';
+import { checkNull, tryCatch } from './miscellenous.js';
 import { gotoSW } from './sveltekitWrapper.js';
 
 // #endregion ➤ 📦 Package Imports
@@ -36,7 +39,7 @@ import { gotoSW } from './sveltekitWrapper.js';
  *  - 📣 [1] Updates platform **language** selection.
  *  - 📣 [2] Manages platform **navigation** for correct **language** switch.
  * @param { string | NullUndef } lang
- *  💠 **[required]** Target new `selected` language.
+ *  💠 **[required]** New `selected` language.
  * @return { Promise < void > }
  */
 export async function selectLanguage
@@ -225,7 +228,7 @@ export async function selectLanguage
   let
     /**
      * @description
-     *  📣 Target NEW `url` to be navigatated to.
+     *  📣 NEW `url` to be navigatated to.
      */
     newURL: string | undefined
   ;
@@ -316,4 +319,403 @@ export async function selectLanguage
   );
 
   return;
+}
+
+/**
+ * @author
+ *  @migbash
+ * @summary
+ *  - 🟦 HELPER
+ *  - 🟥 IMPORTANT
+ * @description
+ *  📣 checks for `url` to be a `valid` or not.
+ * @example
+ *  => promiseValidUrlCheck(.., langUrl: '/es');
+ *  ==> true
+ *  => promiseValidUrlCheck(.., sportUrl: '/football');
+ *  ==> true
+ * @param { fetch } fetch
+ *  💠 **[required]** `fetch(..)` instance, supplied by `sveltekit`.
+ * @param { Object } opts
+ *  💠 **[required]** Method `options`.
+ * @param { string } opts.langUrl
+ *  💠 **[required]** `lang` part of `url`.
+ * @param { string } opts.sportUrl
+ *  💠 **[required]** `sport` part of `url`.
+ * @param { string } opts.countryUrl
+ *  💠 **[required]** `country` part of `url`.
+ * @param { string } opts.leagueUrl
+ *  💠 **[required]** `league` part of `url`.
+ * @param { string } opts.fixtureUrl
+ *  💠 **[required]** `fixture` part of `url`.
+ * @param { string } opts.playerUrl
+ *  💠 **[required]** `player` part of `url`.
+ * @param { string } opts.competitionMainUrl
+ *  💠 **[required]** `competition (lobby)` part of `url`.
+ * @param { string } opts.competitionUrl
+ *  💠 **[required]** `competition (target)` part of `url`.
+ * @param { string } opts.authorArticleUrl
+ *  💠 **[required]** `auhtor (article)` part of `url`.
+ * @returns { boolean }
+ *  📤 A `boolean` where `true` siginifies that `url` is valid.
+ */
+export async function promiseValidUrlCheck
+(
+  fetch: any,
+  opts:
+  {
+    langUrl?: string,
+    sportUrl?: string,
+    countryUrl?: string,
+    leagueUrl?: string,
+    fixtureUrl?: string,
+    playerUrl?: string,
+    competitionMainUrl?: string,
+    competitionUrl?: string,
+    authorArticleUrl?: string,
+  }
+): Promise < boolean >
+{
+  // ╭─────
+  // │ CHECK :|: wether supplied `URL` combination is valid.
+  // ╰─────
+  const if_M_0
+    // ╭─────
+    // │ CHECK :|: for 'lang'.
+    // ╰─────
+    = (opts.langUrl && !opts.sportUrl && !opts.countryUrl && !opts.leagueUrl && !opts.fixtureUrl && !opts.playerUrl && !opts.competitionMainUrl)
+    // ╭─────
+    // │ CHECK :|: for 'sport'.
+    // ╰─────
+    || (opts.langUrl && opts.sportUrl && !opts.countryUrl && !opts.leagueUrl && !opts.fixtureUrl && !opts.playerUrl && !opts.competitionMainUrl)
+    // ╭─────
+    // │ CHECK :|: for 'country'.
+    // ╰─────
+    || (opts.langUrl && opts.sportUrl && opts.countryUrl && !opts.leagueUrl && !opts.fixtureUrl && !opts.playerUrl && !opts.competitionMainUrl && !opts.competitionUrl)
+    // ╭─────
+    // │ CHECK :|: for 'league'.
+    // ╰─────
+    || (opts.langUrl && opts.sportUrl && opts.countryUrl && opts.leagueUrl && !opts.fixtureUrl && !opts.playerUrl && !opts.competitionMainUrl && !opts.competitionUrl)
+    // ╭─────
+    // │ CHECK :|: for 'fixture'.
+    // ╰─────
+    || (opts.langUrl && opts.sportUrl && !opts.countryUrl && !opts.leagueUrl && opts.fixtureUrl && !opts.playerUrl && !opts.competitionMainUrl && !opts.competitionUrl)
+    // ╭─────
+    // │ CHECK :|: for 'player'.
+    // ╰─────
+    || (opts.langUrl && !opts.sportUrl && !opts.countryUrl && !opts.leagueUrl && !opts.fixtureUrl && opts.playerUrl && !opts.competitionMainUrl && !opts.competitionUrl)
+    // ╭─────
+    // │ CHECK :|: for 'competitions (lobby)'.
+    // ╰─────
+    || (opts.langUrl && !opts.sportUrl && !opts.countryUrl && !opts.leagueUrl && !opts.fixtureUrl && !opts.playerUrl && opts.competitionMainUrl && !opts.competitionUrl)
+    // ╭─────
+    // │ CHECK :|: for 'competition'.
+    // ╰─────
+    || (opts.langUrl && !opts.sportUrl && !opts.countryUrl && !opts.leagueUrl && !opts.fixtureUrl && !opts.playerUrl && opts.competitionMainUrl && opts.competitionUrl)
+  ;
+
+  // ╭─────
+  // │ NOTE:
+  // │ > append to string, the parts of url we wish to validate.
+  // ╰─────
+
+  let queryStr: string = '';
+  if (opts.langUrl) queryStr += `?langUrl=${opts.langUrl}`;
+  if (opts.sportUrl) queryStr += `&sportUrl=${opts.sportUrl}`;
+  if (opts.countryUrl) queryStr += `&countryUrl=${opts.countryUrl}`;
+  if (opts.leagueUrl) queryStr += `&leagueUrl=${opts.leagueUrl}`;
+  if (opts.fixtureUrl) queryStr += `&fixtureUrl=${opts.fixtureUrl}`;
+  if (opts.playerUrl) queryStr += `&playerUrl=${opts.playerUrl}`;
+  if (opts.competitionMainUrl) queryStr += `&competitionMainUrl=${opts.competitionMainUrl}`;
+  if (opts.competitionUrl) queryStr += `&competitionUrl=${opts.competitionUrl}`;
+  if (opts.authorArticleUrl) queryStr += `&authorArticleUrl=${opts.authorArticleUrl}`;
+
+  // [🐞]
+  dlogv2
+  (
+    'promiseValidUrlCheck(..)',
+    [
+      `🔹 [var] ➤ if_M_0 :|: ${if_M_0}`,
+      `🔹 [var] ➤ queryStr :|: ${queryStr}`,
+    ],
+    false
+  );
+
+  if (!if_M_0) return false;
+
+  const response: any = await get
+  (
+    `/api/data/main/seo-pages${queryStr}`,
+    fetch,
+    true,
+    false
+  );
+
+  // console.log('🎟️', response)
+
+  return response;
+}
+
+/**
+ * @author
+ *  @migbash
+ * @summary
+ *  - 🟦 HELPER
+ *  - [🐞]
+ * @description
+ *  📣 validates number of `null | undefined` data points in data Array[].
+ * @example
+ *  => [[object Object], [object Object], undefined]
+ *  ==> console.log('error at position 2'):
+ * @param { unknown[] } data
+ *  💠 **[required]** `list` of `items`.
+ * @param { string[] } urls
+ *  💠 **[required]** `list` of respective `urls`.
+ * @returns { void }
+ */
+export function preloadInvelidDataDebug
+(
+  data: unknown[],
+  urls: string[]
+): void
+{
+  tryCatchAsync
+  (
+    (): void =>
+    {
+      const
+        /**
+         * @description
+         */
+        indexesOf:
+          (
+            // eslint-disable-next-line no-unused-vars
+            arr: any[],
+            // eslint-disable-next-line no-unused-vars
+            item: unknown
+          ) => number[]
+          = (
+            arr: any[],
+            item: unknown
+          ) =>
+          {
+            return arr.reduce
+            (
+              (
+                accumulator,
+                currentVal,
+                currentIndex
+              ) =>
+              {
+                return (
+                  currentVal === item
+                    && accumulator.push(currentIndex),
+                  accumulator
+                )
+              },
+              []
+            )
+          },
+        /**
+         * @description
+         */
+        nullList: number[]
+          = indexesOf
+          (
+            data,
+            null
+          )
+      ;
+
+      if (nullList.length == 0)
+        // [🐞]
+        dlog
+        (
+          '🚏 checkpoint ➤ preloadInvelidDataDebug 🟩',
+          true
+        );
+      ;
+
+      // ╭─────
+      // │ CHECK :|: for `null` data fetched.
+      // ╰─────
+      if (nullList.length > 0)
+      {
+        // [🐞]
+        dlog
+        (
+          `🚏 checkpoint ➤ preloadInvelidDataDebug 🟥 (position): ${nullList}`,
+          true
+        );
+        // ╭─────
+        // │ NOTE: :|: list URLs responsible for `null` data points.
+        // ╰─────
+        for (const i of nullList)
+          // eslint-disable-next-line no-console
+          console.log
+          (
+            `\t🚩 ${urls[i]}`
+          );
+        ;
+      }
+
+      return;
+    }
+  );
+}
+
+/**
+ * @author
+ *  @migbash
+ * @summary
+ *  - 🟦 HELPER
+ *  - IMPORTANT
+ * @description
+ *  📣 Handle of `load` lifecypcle for `exit` condition in `.server.ts/.ts`.
+ * @param { number } t0
+ *  💠 **[required]** timer for 'debug'.
+ * @param { stirng } pageTag
+ *  💠 **[required]** Page tag name
+ * @param { number } exitCode
+ *  💠 **[required]** Page exit code
+ * @param { string } [exitReason]
+ *  💠 [optional] Message for reason on page 'exit'/'error'
+ * @returns { void }
+ */
+export function preloadExitLogic
+(
+  t0: number,
+  pageTag: string,
+  exitCode: number,
+  exitReason?: string
+): void
+{
+  const
+    // [🐞]
+    t1: number = performance.now()
+  ;
+
+  // [🐞]
+  dlog
+  (
+    `${pageTag} ${((t1 - t0) / 1000).toFixed(2)} sec`,
+    true
+  );
+
+  // eslint-disable-next-line @typescript-eslint/no-throw-literal
+  throw error
+  (
+    exitCode,
+    {
+      errorId: 'x1',
+      message: exitReason ?? PAGE_INVALID_MSG
+    }
+  );
+}
+
+/**
+ * @author
+ *  @migbash
+ * @summary
+ *  - 🟦 HELPER
+ *  - IMPORTANT
+ * @description
+ *  📣 Handle of `load` for `.server.ts/.ts` files `redirect`.
+ * @param { string } redirectToUrl
+ *  💠 **[required]** Redirect url
+ * @returns { void }
+ */
+export function preloadRedirect
+(
+  redirectToUrl: string
+): void
+{
+  throw redirect
+  (
+    302,
+    redirectToUrl
+  );
+}
+
+/**
+ * @author
+ *  @migbash
+ * @summary
+ *  - 🟦 HELPER
+ *  - IMPORTANT
+ * @description
+ *  📣 `fetch` data from `list` of urls, and returns results.
+ * @param { string[] } endpoints
+ *  💠 **[required]** `List` of urls to fetch.
+ * @param { fetch } fetch
+ *  💠 **[required]** `fetch` instance.
+ * @returns { Promise < any[] > }
+ *  📤 `List` of data loaded
+ */
+export async function promiseUrlsPreload
+(
+  endpoints: string[],
+  fetch: any,
+): Promise < any[] >
+{
+  const
+    data: any[]
+      = await Promise.all
+      (
+        endpoints
+          .map
+          (
+            async (
+              _url: string
+            ): Promise < any > =>
+            {
+              const
+                // [🐞]
+                t0: number = performance.now(),
+                /**
+                 * @description
+                 */
+                response: Response = await fetch(_url),
+                /**
+                 * @description
+                 */
+                resJson: any = await response.json(),
+                // [🐞]
+                t1: number = performance.now()
+              ;
+
+              // [🐞]
+              dlogv2
+              (
+                `🏹 FETCH (GET) (preload) ${_url} `,
+                [
+                  `⏱️ ${((t1 - t0) / 1000).toFixed(2)} sec`
+                ],
+                true,
+                undefined,
+                false
+              );
+
+              // ╭─────
+              // │ NOTE: IMPORTANT
+              // │ > decompress 'lz-string' encoded payload.
+              // ╰─────
+              if (_url.includes('decompress'))
+                return tryCatch(() => {return JSON.parse(LZString.decompress(resJson?.data))});
+              ;
+
+              return resJson;
+            }
+          )
+      )
+  ;
+
+  // [🐞]
+  preloadInvelidDataDebug
+  (
+    data,
+    endpoints,
+  );
+
+  return data;
 }

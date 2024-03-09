@@ -38,7 +38,7 @@
 
   import userBetarenaSettings from '$lib/store/user-settings.js';
   import { dlog } from '$lib/utils/debug.js';
-  import { toDecimalFix } from '$lib/utils/platform-functions.js';
+  import { toDecimalFix } from '$lib/utils/string.js';
   import { tryCatchAsync } from '@betarena/scores-lib/dist/util/util.common.js';
   import { Chart, registerables, type ChartItem } from 'chart.js';
 

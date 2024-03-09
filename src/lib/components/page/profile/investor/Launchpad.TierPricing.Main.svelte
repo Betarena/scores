@@ -36,9 +36,10 @@
   import { page } from '$app/stores';
 
   import userBetarenaSettings from '$lib/store/user-settings.js';
-  import { formatNumberWithCommas, toDecimalFix } from '$lib/utils/platform-functions.js';
+  import { toDecimalFix } from '$lib/utils/string.js';
   import { Misc } from '@betarena/scores-lib/dist/classes/class.misc.js';
   import { scoresProfileInvestorStore } from './_store.js';
+  import { formatNumberWithCommas } from '$lib/utils/string.js';
 
   import icon_bronze from '../assets/price-tier/icon-bta-bronze.svg';
   import icon_gold from '../assets/price-tier/icon-bta-gold.svg';

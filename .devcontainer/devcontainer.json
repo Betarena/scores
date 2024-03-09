@@ -1,9 +1,0 @@
-{
-  "image": "mcr.microsoft.com/devcontainers/universal:2",
-  "features": {
-    // NODE VERSION
-    "ghcr.io/devcontainers/features/node:1": {
-      "version": "16.17.0"
-    } 
-  }
-}

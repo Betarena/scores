@@ -28,7 +28,8 @@
 	import sessionStore from "$lib/store/session.js";
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { toISOMod } from '$lib/utils/dates.js';
-	import { toDecimalFix, tryCatch } from '$lib/utils/platform-functions.js';
+  import { tryCatch } from '$lib/utils/miscellenous.js';
+  import { toDecimalFix } from '$lib/utils/string.js';
 
   import icon_arrow_down from '../assets/arrow-down.svg';
   import icon_arrow_up from '../assets/arrow-up.svg';

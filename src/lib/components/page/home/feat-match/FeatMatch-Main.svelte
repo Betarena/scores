@@ -34,7 +34,8 @@
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { getImageBgColor } from '$lib/utils/color_thief.js';
 	import { MONTH_NAMES_ABBRV, getOrdinalNum, toCorrectDate, toZeroPrefixDateStr } from '$lib/utils/dates.js';
-	import { cleanUrl, viewport_change } from '$lib/utils/platform-functions.js';
+	import { viewport_change } from '$lib/utils/platform-functions.js';
+  import { cleanUrl } from '$lib/utils/string.js';
 
 	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
 	import WidgetTitle from '$lib/components/Widget-Title.svelte';

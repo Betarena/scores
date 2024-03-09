@@ -69,7 +69,7 @@
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { successAuthComplete } from '$lib/utils/authentication.js';
 	import { AU_W_TAG, dlog, dlogv2, errlog } from '$lib/utils/debug';
-	import { viewportChangeV2 } from '$lib/utils/platform-functions';
+	import { viewportChangeV2 } from '$lib/utils/device';
 	import { scoresAuthStore } from './_store.js';
 
   import ModalBackdrop from '$lib/components/misc/modal/Modal-Backdrop.svelte';

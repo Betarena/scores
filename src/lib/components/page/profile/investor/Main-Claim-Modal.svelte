@@ -38,11 +38,11 @@
 
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
+  import { toDecimalFix } from '$lib/utils/string.js';
 
 	import ModalBackdrop from '$lib/components/misc/modal/Modal-Backdrop.svelte';
 	import TranslationText from '$lib/components/misc/Translation-Text.svelte';
 
-	import { toDecimalFix } from '$lib/utils/platform-functions.js';
 	import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports

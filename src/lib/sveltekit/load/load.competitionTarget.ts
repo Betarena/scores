@@ -15,7 +15,7 @@
 import type { ServerLoadEvent } from '@sveltejs/kit';
 
 import { ERROR_CODE_INVALID, dlog, dlogv2 } from '$lib/utils/debug';
-import { preloadExitLogic, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/platform-functions.js';
+import { preloadExitLogic, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/navigation.js';
 
 import type { B_SAP_CTP_D, B_SAP_CTP_T, B_SAP_D1, B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
 import type { B_COMP_MAIN_S, B_COMP_MAIN_T } from '@betarena/scores-lib/types/types.competition.main.js';

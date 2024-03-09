@@ -32,7 +32,7 @@
 	import { get } from '$lib/api/utils.js';
 	import { subscribeCompetitionsTargetListen } from '$lib/graphql/graphql.common.js';
 	import sessionStore from '$lib/store/session.js';
-	import { langPrefix } from '$lib/utils/platform-functions.js';
+	import { langPrefix } from '$lib/utils/string.js';
 
   import SeoBox from '$lib/components/SEO-Box.svelte';
 

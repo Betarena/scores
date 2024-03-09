@@ -39,7 +39,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
 	import sessionStore from '$lib/store/session.js';
-	import { cleanUrl } from '$lib/utils/platform-functions.js';
+	import { cleanUrl } from '$lib/utils/string.js';
 
   // #endregion ➤ 📦 Package Imports
 

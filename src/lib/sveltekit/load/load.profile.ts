@@ -12,9 +12,8 @@
 
 // #region ➤ 📦 Package Imports
 
-import { preloadRedirect, promiseUrlsPreload } from '$lib/utils/platform-functions.js';
-
 import { dlogv2 } from '$lib/utils/debug.js';
+import { preloadRedirect, promiseUrlsPreload } from '$lib/utils/navigation.js';
 
 import type { B_SAP_D2, B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
 import type { B_USRG_D } from '@betarena/scores-lib/types/types.misc.userguide.js';

@@ -11,7 +11,7 @@ import dotenv from 'dotenv';
 import LZString from 'lz-string';
 
 import { get } from '$lib/api/utils.js';
-import { checkNull } from '$lib/utils/platform-functions.js';
+import { checkNull } from '$lib/utils/miscellenous.js';
 
 import type { ICoinMarketCapDataMain } from '@betarena/scores-lib/types/_WEB3_.js';
 

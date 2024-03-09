@@ -13,9 +13,10 @@
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { getOrdinalNum, MONTH_NAMES_ABBRV, toCorrectDate, toZeroPrefixDateStr } from '$lib/utils/dates.js';
 	import { dlog, SC_W_F_STY, SC_W_F_TAG, SC_W_F_TOG } from '$lib/utils/debug';
-	import { googleActionsStr } from '$lib/utils/google.js';
-	import { cleanUrl, googleEventLog, viewport_change } from '$lib/utils/platform-functions.js';
+	import { googleActionsStr, googleEventLog } from '$lib/utils/google.js';
+	import { viewport_change } from '$lib/utils/platform-functions.js';
 	import { FIXTURE_FULL_TIME_OPT, FIXTURE_LIVE_TIME_OPT, FIXTURE_NOT_START_OPT } from "@betarena/scores-lib/dist/api/sportmonks.js";
+  import { cleanUrl } from '$lib/utils/string.js';
 
 	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
 	import close_icon from './assets/close.svg';
