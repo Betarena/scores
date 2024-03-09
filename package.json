@@ -1,7 +1,7 @@
 {
 	"name": "betarena-scores-platform",
 	"description": "Betarena Official Scores Platform (PWA)",
-	"version": "2.6.1",
+	"version": "2.6.2",
 	"type": "module",
 	"engines": {
 		"npm": "10.2.3",
