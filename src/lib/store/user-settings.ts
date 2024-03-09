@@ -19,7 +19,7 @@ import { writable } from 'svelte/store';
 
 import { updateSelectLang } from '$lib/firebase/common.js';
 import sessionStore from '$lib/store/session.js';
-import { initSportbookData } from '$lib/utils/platform-functions.js';
+import { initSportbookData } from '$lib/utils/geo.js';
 import { initUser, logoutUser } from '$lib/utils/user.js';
 import { setCookie } from './cookie.js';
 
@@ -372,8 +372,8 @@ function createLocalStore
             {
               localStore.lang = dataPoint;
 
-              if (localStore.user)
-                updateSelectLang();
+              if (localStore.user?.scores_user_data)
+                data.push(['lang-user', dataPoint]);
               ;
             }
             else if (dataTarget == 'geo-bookmaker')
@@ -437,6 +437,10 @@ function createLocalStore
             if (localStore.user?.scores_user_data && dataTarget == 'lang-user')
             {
               localStore.user.scores_user_data.lang = dataPoint;
+              updateSelectLang
+              (
+                dataPoint
+              );
             }
             else if (localStore.user?.scores_user_data && dataTarget == 'user-avatar')
             {

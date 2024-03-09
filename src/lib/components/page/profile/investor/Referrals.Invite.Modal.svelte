@@ -36,7 +36,7 @@
 
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { copyToClipboard } from '$lib/utils/platform-functions.js';
+	import { copyToClipboard } from '$lib/utils/miscellenous.js';
 	import { scoresProfileInvestorStore } from './_store.js';
 // eslint-disable-next-line camelcase
   import assetInviteInvestor from '../assets/investor/asset-invite-investor.png';

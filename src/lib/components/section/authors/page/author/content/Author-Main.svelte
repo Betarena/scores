@@ -51,7 +51,7 @@
   import sessionStore from '$lib/store/session.js';
   import userBetarenaSettings from '$lib/store/user-settings.js';
   import { monthNames } from '$lib/utils/dates.js';
-  import { viewportChangeV2 } from '$lib/utils/platform-functions.js';
+  import { viewportChangeV2 } from '$lib/utils/device';
 
   import TranslationText from '$lib/components/misc/Translation-Text.svelte';
 

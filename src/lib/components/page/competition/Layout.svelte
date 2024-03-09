@@ -33,7 +33,9 @@
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlog } from '$lib/utils/debug';
-	import { generateUrlCompetition, initialDevice, tryCatch, viewport_change } from '$lib/utils/platform-functions.js';
+	import { viewport_change } from '$lib/utils/platform-functions.js';
+  import { tryCatch } from '$lib/utils/miscellenous.js';
+	import { generateUrlCompetition } from '$lib/utils/string.js';
 
   import SeoBox from '$lib/components/SEO-Box.svelte';
   import SvelteSeo from 'svelte-seo';
@@ -43,6 +45,7 @@
 
   import type { B_SAP_CTP_D, B_SAP_CTP_T, B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
   import type { Unsubscribe } from 'firebase/database';
+  import { initialDevice } from '$lib/utils/device.js';
 
   // #endregion ➤ 📦 Package Imports
 

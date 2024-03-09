@@ -14,8 +14,8 @@
   import userBetarenaSettings from '$lib/store/user-settings.js';
   import { getImageBgColor } from '$lib/utils/color_thief.js';
   import { VO_W_F_STY, VO_W_F_TAG, VO_W_F_TOG, dlog } from '$lib/utils/debug';
-  import { googleActionsStr } from '$lib/utils/google.js';
-  import { googleEventLog, viewport_change } from '$lib/utils/platform-functions.js';
+  import { googleActionsStr, googleEventLog } from '$lib/utils/google.js';
+  import { viewport_change } from '$lib/utils/platform-functions.js';
   import { FIXTURE_NO_VOTES_OPT } from "@betarena/scores-lib/dist/api/sportmonks.js";
 
 	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';

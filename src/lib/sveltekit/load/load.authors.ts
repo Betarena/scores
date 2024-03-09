@@ -14,8 +14,7 @@
 
 import { ServerLoadEvent } from '@sveltejs/kit';
 
-import { promiseUrlsPreload } from '$lib/utils/platform-functions.js';
-
+import { promiseUrlsPreload } from '$lib/utils/navigation.js';
 import { dlogv2 } from '$lib/utils/debug.js';
 
 import type { B_SAP_D2 } from '@betarena/scores-lib/types/seo-pages.js';

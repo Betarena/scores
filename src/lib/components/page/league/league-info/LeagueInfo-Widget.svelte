@@ -11,7 +11,6 @@ COMPONENT JS (w/ TS)
 
   import sessionStore from '$lib/store/session.js';
   import { VO_W_F_STY, VO_W_F_TAG, VO_W_F_TOG, dlog } from '$lib/utils/debug.js';
-  import { sleep } from '$lib/utils/platform-functions';
 
 	import SeoBox from '$lib/components/SEO-Box.svelte';
 	import LeagueInfoMain from './LeagueInfo-Main.svelte';

@@ -7,7 +7,7 @@
 
 import { json } from '@sveltejs/kit';
 
-import { checkNull } from '$lib/utils/platform-functions.js';
+import { checkNull } from '$lib/utils/miscellenous.js';
 import { FIXCOMP_HP_ENTRY, FIXCOMP_HP_ENTRY_1, FIXCOMP_HP_ENTRY_2 } from '@betarena/scores-lib/dist/functions/func.fixture.competition.js';
 import dotenv from 'dotenv';
 import LZString from 'lz-string';

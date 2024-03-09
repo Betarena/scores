@@ -13,9 +13,11 @@ COMPONENT JS (w/ TS)
 	import { userUpdateBalance } from '$lib/firebase/common.js';
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { spliceBalanceDoubleZero, toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
+	import { viewport_change } from '$lib/utils/platform-functions.js';
+  import { toDecimalFix } from '$lib/utils/string.js';
 	import * as EmailValidator from 'email-validator';
 	import * as ibantools from 'ibantools';
+	import { spliceBalanceDoubleZero } from '$lib/utils/string.js';
 
 	import icon_arrow_left from '../assets/arrow-left.svg';
 	import icon_arrow_right from '../assets/arrow-right.svg';

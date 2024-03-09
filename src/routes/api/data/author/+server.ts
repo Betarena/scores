@@ -19,7 +19,7 @@
 import { json } from '@sveltejs/kit';
 import dotenv from 'dotenv';
 
-import { checkNull } from '$lib/utils/platform-functions.js';
+import { checkNull } from '$lib/utils/miscellenous.js';
 import { getAuthorArticleByPermalink, getAuthorArticleTranslation } from '@betarena/scores-lib/dist/functions/func.authors-articles.js';
 import { tryCatchAsync } from '@betarena/scores-lib/dist/util/util.common.js';
 

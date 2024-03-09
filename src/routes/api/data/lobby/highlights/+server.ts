@@ -10,7 +10,7 @@ import { json } from '@sveltejs/kit';
 import dotenv from 'dotenv';
 
 import { get_target_hset_cache_data } from '$lib/redis/std_main.js';
-import { checkNull } from '$lib/utils/platform-functions.js';
+import { checkNull } from '$lib/utils/miscellenous.js';
 import { CHIGH_CP_ENTRY, CHIGH_CP_ENTRY_1, CHIGH_CP_ENTRY_2 } from '@betarena/scores-lib/dist/functions/func.competition.lobby.highlights.js';
 import * as RedisKeys from '@betarena/scores-lib/dist/redis/config.js';
 

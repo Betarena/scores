@@ -30,9 +30,11 @@
 	import sessionStore from "$lib/store/session.js";
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { COMP_HIGH_DEBUG, dlog } from '$lib/utils/debug.js';
-	import { iso2CountryLogo, toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
+	import { viewport_change } from '$lib/utils/platform-functions.js';
 	import { translationObject } from '$lib/utils/translation.js';
 	import { Competition } from '@betarena/scores-lib/dist/classes/class.competition.js';
+	import { iso2CountryLogo } from '$lib/utils/string.js';
+	import { toDecimalFix } from '$lib/utils/string.js';
 
   import icon_win from './assets/icon-green-thumbs-up.svg';
   import icon_draw from './assets/icon-grey-draw.svg';

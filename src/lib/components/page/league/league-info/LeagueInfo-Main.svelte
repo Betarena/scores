@@ -15,7 +15,7 @@
 	import { getImageBgColor } from '$lib/utils/color_thief';
 	import { MONTH_NAMES_ABBRV } from '$lib/utils/dates.js';
 	import { LI_W_T_STY, LI_W_T_TAG, LI_W_T_TOG, dlog } from '$lib/utils/debug';
-	import { googleEventLog } from '$lib/utils/platform-functions.js';
+  import { googleEventLog } from '$lib/utils/google.js';
 
 	import arrow_down from './assets/arrow-down.svg';
 	import arrow_up from './assets/arrow-up.svg';

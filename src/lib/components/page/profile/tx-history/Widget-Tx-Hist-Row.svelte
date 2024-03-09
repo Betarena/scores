@@ -7,7 +7,7 @@ COMPONENT JS (w/ TS)
   // #region ➤ 📦 Package Imports
 
 	import { toISOMod } from '$lib/utils/dates.js';
-  import { toDecimalFix } from '$lib/utils/platform-functions.js';
+  import { toDecimalFix } from '$lib/utils/string.js';
 
 	import icon_arrow_down from '../assets/arrow-down.svg';
 	import icon_arrow_up from '../assets/arrow-up.svg';

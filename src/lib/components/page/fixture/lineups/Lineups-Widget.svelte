@@ -11,7 +11,6 @@ COMPONENT JS (w/ TS)
 
   import sessionStore from '$lib/store/session.js';
   import { LI_W_F_STY, LI_W_F_TAG, LI_W_F_TOG, dlog } from '$lib/utils/debug.js';
-  import { sleep } from '$lib/utils/platform-functions';
 
 	import SeoBox from '$lib/components/SEO-Box.svelte';
 	import LineupsLoader from './Lineups-Loader.svelte';

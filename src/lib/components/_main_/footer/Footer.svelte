@@ -42,7 +42,7 @@
 	import { onMount } from 'svelte';
 
 	import sessionStore from '$lib/store/session.js';
-	import { viewportChangeV2 } from '$lib/utils/platform-functions.js';
+	import { viewportChangeV2 } from '$lib/utils/device';
 
   import SeoBox from '$lib/components/SEO-Box.svelte';
   import TranslationText from '$lib/components/misc/Translation-Text.svelte';

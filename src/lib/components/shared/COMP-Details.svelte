@@ -28,7 +28,7 @@
 
 	import sessionStore from "$lib/store/session.js";
 	import { removeDiacritics } from '$lib/utils/languages.js';
-	import { toDecimalFix } from '$lib/utils/platform-functions.js';
+  import { toDecimalFix } from '$lib/utils/string.js';
 
 	import type { B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
 	import type { B_COMP_HIGH_D, B_COMP_HIGH_T } from '@betarena/scores-lib/types/types.competition.highlights.js';

@@ -33,6 +33,7 @@
 
   import userBetarenaSettings from '$lib/store/user-settings.js';
   import { ddMMyyFormat } from '$lib/utils/dates.js';
+  import { toDecimalFix } from '$lib/utils/string.js';
 
   import icon_arrow_down from '../assets/arrow-down.svg';
   import icon_arrow_up from '../assets/arrow-up.svg';
@@ -42,7 +43,6 @@
   import TranslationText from '$lib/components/misc/Translation-Text.svelte';
 
   import type { PublicInvestorDataIReferralHistory } from '@betarena/scores-lib/types/_AUTO-HASURA-2_.js';
-  import { toDecimalFix } from '$lib/utils/platform-functions.js';
 
   // #endregion ➤ 📦 Package Imports
 

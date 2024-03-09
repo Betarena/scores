@@ -25,8 +25,9 @@
 
 	import { page } from '$app/stores';
 	import { get } from '$lib/api/utils.js';
-	import { sleep, viewport_change } from '$lib/utils/platform-functions';
+	import { viewport_change } from '$lib/utils/platform-functions';
 	import { onMount } from 'svelte';
+  import { sleep } from '$lib/utils/miscellenous.js';
 
   import userBetarenaSettings from '$lib/store/user-settings.js';
   import { scoresProfileInvestorStore } from './_store.js';

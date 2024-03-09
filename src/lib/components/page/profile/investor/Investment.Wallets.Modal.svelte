@@ -37,7 +37,7 @@
 
   import sessionStore from '$lib/store/session.js';
   import userBetarenaSettings from '$lib/store/user-settings.js';
-  import { copyToClipboard } from '$lib/utils/platform-functions.js';
+  import { copyToClipboard } from '$lib/utils/miscellenous.js';
 
   import icon_close from '../assets/investor/icon-close-btn.svg';
   import icon_close_dark from '../assets/investor/icon-close-dark-btn.svg';

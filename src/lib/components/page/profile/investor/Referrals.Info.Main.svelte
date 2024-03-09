@@ -36,9 +36,10 @@
 
   import sessionStore from '$lib/store/session.js';
   import userBetarenaSettings from '$lib/store/user-settings.js';
-  import { copyToClipboard, formatNumberWithCommas } from '$lib/utils/platform-functions.js';
+  import { copyToClipboard } from '$lib/utils/miscellenous.js';
   import { Misc } from '@betarena/scores-lib/dist/classes/class.misc.js';
   import { scoresProfileInvestorStore } from './_store.js';
+  import { formatNumberWithCommas } from '$lib/utils/string.js';
 
   import AdminDevControlPanel from '$lib/components/misc/admin/Admin-Dev-ControlPanel.svelte';
   import AdminDevControlPanelToggleButton from '$lib/components/misc/admin/Admin-Dev-ControlPanelToggleButton.svelte';

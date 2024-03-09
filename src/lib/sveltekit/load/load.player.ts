@@ -17,7 +17,8 @@
 import { LoadEvent } from '@sveltejs/kit';
 
 import { ERROR_CODE_INVALID, PRELOAD_ERROR_MSG_PLAYER, dlog, dlogv2 } from '$lib/utils/debug';
-import { preloadExitLogic, promiseUrlsPreload, promiseValidUrlCheck, tryCatch } from '$lib/utils/platform-functions';
+import { preloadExitLogic, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/navigation.js';
+import { tryCatch } from '$lib/utils/miscellenous.js';
 
 import type { Main_Data, Opengraph_Data, Twitter_Data } from '@betarena/scores-lib/types/_HASURA_.js';
 import type { B_PSEO_D, B_PSEO_T } from '@betarena/scores-lib/types/player-seo.js';
