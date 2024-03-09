@@ -14,7 +14,7 @@ COMPONENT JS (w/ TS)
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { daysInMonth, targetDate, toISOMod } from '$lib/utils/dates.js';
 	import { dlog } from '$lib/utils/debug.js';
-	import { sleep, viewport_change } from '$lib/utils/platform-functions.js';
+	import { viewport_change } from '$lib/utils/platform-functions.js';
 	import { onMount } from 'svelte';
 
 	import WidgetCalendar from './Widget-Calendar.svelte';

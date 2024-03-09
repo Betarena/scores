@@ -17,7 +17,7 @@ import { performance } from 'perf_hooks';
 import { ERROR_CODE_PRELOAD, LAYOUT_1_LANG_PAGE_ERROR_MSG, dlog, dlogv2 } from '$lib/utils/debug';
 import { detectDeviceWithUA } from '$lib/utils/device.js';
 import { detectPlatformLanguage } from '$lib/utils/languages.js';
-import { preloadExitLogic, promiseUrlsPreload } from '$lib/utils/platform-functions.js';
+import { preloadExitLogic, promiseUrlsPreload } from '$lib/utils/navigation.js';
 
 import type { IAuthTrs } from '@betarena/scores-lib/types/auth.js';
 import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';

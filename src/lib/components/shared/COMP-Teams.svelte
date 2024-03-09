@@ -24,7 +24,8 @@
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
 	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { checkNull, cleanUrl } from '$lib/utils/platform-functions.js';
+  import { checkNull } from '$lib/utils/miscellenous.js';
+  import { cleanUrl } from '$lib/utils/string.js';
 
 	import type { B_COMP_HIGH_D } from '@betarena/scores-lib/types/types.competition.highlights.js';
 

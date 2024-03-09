@@ -15,7 +15,8 @@
 import { ServerLoadEvent } from '@sveltejs/kit';
 
 import { dlog, dlogv2, ERROR_CODE_INVALID, FIXTURE_PAGE_ERROR_MSG } from '$lib/utils/debug';
-import { preloadExitLogic, promiseUrlsPreload, promiseValidUrlCheck, tryCatch } from '$lib/utils/platform-functions.js';
+import { preloadExitLogic, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/navigation.js';
+import { tryCatch } from '$lib/utils/miscellenous.js';
 
 import type { B_FO_D, B_FO_T } from '@betarena/scores-lib/types/fixture-odds.js';
 import type { B_LEG_D } from '@betarena/scores-lib/types/league-info.js';

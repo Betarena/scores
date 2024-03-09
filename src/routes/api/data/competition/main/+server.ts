@@ -2,7 +2,7 @@
 
 import { json } from '@sveltejs/kit';
 
-import { checkNull } from '$lib/utils/platform-functions.js';
+import { checkNull } from '$lib/utils/miscellenous.js';
 import { CHIGH_CP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.competition.lobby.highlights.js';
 import { CMAIN_CP_ENTRY, CMAIN_CP_ENTRY_2, CMAIN_CP_ENTRY_3 } from '@betarena/scores-lib/dist/functions/func.competition.target.main.js';
 import dotenv from 'dotenv';

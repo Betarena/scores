@@ -68,6 +68,7 @@ ignorePatterns:
   # - src/routes
   - src/lib/types
   - src/params
+  - src/service-worker.ts
 
 plugins:
   - "@typescript-eslint"

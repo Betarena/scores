@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 /// <reference lib="webworker" />
 
 import {

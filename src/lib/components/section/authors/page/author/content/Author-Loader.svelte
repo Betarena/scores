@@ -39,7 +39,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import sessionStore from '$lib/store/session.js';
-  import { viewportChangeV2 } from '$lib/utils/platform-functions.js';
+  import { viewportChangeV2 } from '$lib/utils/device';
 
   import AuthorLoaderMain from './loaders/Author-Loader-Main.svelte';
 

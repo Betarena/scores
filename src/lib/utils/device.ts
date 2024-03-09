@@ -15,7 +15,7 @@
 import DeviceDetector from 'device-detector-js';
 import parser from 'ua-parser-js';
 
-import { dlogv2 } from '$lib/utils/debug';
+import { dlog, dlogv2 } from '$lib/utils/debug';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -25,13 +25,13 @@ import { dlogv2 } from '$lib/utils/debug';
  * @summary
  *  🟦 HELPER
  * @description
- *  📣 Detect device used from target `User-Agent` data.
+ *  📣 Detect device used from `User-Agent` data.
  * @param { string } userAgent
- *  💠 **[required]** Target `user-agent` string.
+ *  💠 **[required]** `user-agent` string.
  * @see https://discord.com/channels/457912077277855764/1067871458233159750
  * @see https://discord.com/channels/457912077277855764/1067529519294070885/1067827869004341319
  * @returns { string }
- *  📤 Target `device` type.
+ *  📤 `device` type.
  */
 export function detectDeviceWithUA
 (
@@ -41,7 +41,7 @@ export function detectDeviceWithUA
   let
     /**
      * @description
-     *  📣 Target `device type`.
+     *  📣 `device type`.
      */
     deviceType: string = 'mobile'
   ;
@@ -85,6 +85,58 @@ export function detectDeviceWithUA
  * @author
  *  @migbash
  * @summary
+ *  - 🔹 HELPER
+ *  - IMPORTANT
+ * @description
+ *  📣 Determines initial device type, by the assigned `user-agent` data.
+ * @param { string } deviceType
+ *  💠 **[required]** `user-agent` detected device.
+ * @returns { boolean[] }
+ *  📤 `Boolean` array, corresponding to `mobile` and `tablet`.
+ */
+export function initialDevice
+(
+  deviceType: string
+): boolean[]
+{
+  let
+    isMobileView: boolean,
+    isTabletView: boolean
+  ;
+
+  if (deviceType == 'mobile')
+  {
+    isMobileView = true;
+    isTabletView = false;
+  }
+  else if (deviceType == 'tablet')
+  {
+    isMobileView = true;
+    isTabletView = true;
+  }
+  else if (deviceType == 'desktop')
+  {
+    isMobileView = false;
+    isTabletView = false;
+  }
+
+  // [🐞]
+  dlog
+  (
+    '🚏 checkpoint ➤ home/Layout.svelte 🖥️',
+    true
+  );
+
+  return [
+    isMobileView!,
+    isTabletView!
+  ]
+}
+
+/**
+ * @author
+ *  @migbash
+ * @summary
  *  🟦 HELPER
  * @description
  *  📣 Identifies wether `PWA` is running.
@@ -101,4 +153,45 @@ export function isPWA
       (displayMode) => {return window.matchMedia('(display-mode: ' + displayMode + ')').matches}
     )
   ;
+}
+
+/**
+ * @author
+ *  @migbash
+ * @summary
+ *  - 🔹 HELPER
+ *  - IMPORTANT
+ * @description
+ *  - 📣 Determines `tablet`, `mobile` and `other` viewport changes as a array/tuple of the `x` states.
+ *  - 📣 Successor to `viewport_change(..)`.
+ * @param { number } currentWidth
+ *  💠 **[required]** Current width of `window/document`.
+ * @param { number } MOBILE_VIEW_INIT
+ *  💠 **[required]** viewport/width at which `mobile` is expected to start.
+ * @param { number } TABLET_VIEW_INIT
+ *  💠 **[required]** viewport/width at which `tablet` is expected to start.
+ * @param { number } [OTHER_VIEW=0]
+ *  💠 Custom viewport/width. (`default=0`)
+ * @return { boolean[] }
+ *  📤 Array of boolean's for each respective width.
+ */
+export function viewportChangeV2
+(
+  currentWidth: number,
+  MOBILE_VIEW_INIT: number,
+  TABLET_VIEW_INIT: number,
+  OTHER_VIEW: number = 0,
+): boolean[]
+{
+  const
+    isTabletView: boolean = currentWidth <= TABLET_VIEW_INIT,
+    isMobileView: boolean = currentWidth <= MOBILE_VIEW_INIT,
+    isOtherView: boolean = currentWidth <= OTHER_VIEW
+  ;
+
+  return [
+    isMobileView,
+    isTabletView,
+    isOtherView
+  ];
 }

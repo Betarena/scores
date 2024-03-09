@@ -10,7 +10,6 @@ COMPONENT JS (w/ TS)
 
   import sessionStore from '$lib/store/session.js';
   import { AB_W_F_STY, AB_W_F_TAG, AB_W_F_TOG, dlog } from '$lib/utils/debug.js';
-  import { sleep } from '$lib/utils/platform-functions';
 
 	import SeoBox from '$lib/components/SEO-Box.svelte';
 	import AboutLoader from './About-Loader.svelte';

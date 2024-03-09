@@ -3,7 +3,7 @@
  * NOTE: to Interact with REDIS CACHE [STD-MAIN]
  */
 import redis from '$lib/redis/init';
-import { recordToKeyValueArray } from '$lib/utils/platform-functions.js';
+import { recordToKeyValueArray } from '$lib/utils/miscellenous.js';
 
 // [🗃️] archive
 export const live_scores_leagues = 'live_scores_leagues';

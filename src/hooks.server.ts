@@ -86,10 +86,13 @@ const customErrorHandler: HandleServerError = async (
 ): Promise < App.Error > =>
 {
   // [🐞]
+  // eslint-disable-next-line no-console
   console.error('❌ An error occurred on the server side:', error, event);
 
-  let errorMsg: string = 'Whoops!';
-  let errorCode: string;
+  let
+    errorMsg: string = 'Whoops!',
+    errorCode: string = 'x1'
+  ;
 
   if (event.route.id == null)
   {
@@ -179,7 +182,7 @@ export const handle: Handle = sequence
     ;
 
     // [🐞]
-    console.log('cookies', cookies);
+    // console.log('cookies', cookies);
 
     event.locals.user = cookies.betarenaScoresCookie ?? defaultLocals;
 
@@ -251,7 +254,7 @@ export const handle: Handle = sequence
     // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
     // [🐞]
-    console.log('cookies.betarenaScoresCookie', cookies.betarenaScoresCookie);
+    // console.log('cookies.betarenaScoresCookie', cookies.betarenaScoresCookie);
 
     // ╭─────
     // │ CHECK

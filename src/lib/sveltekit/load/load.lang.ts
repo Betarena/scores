@@ -15,7 +15,7 @@
 import { error, ServerLoadEvent } from '@sveltejs/kit';
 
 import { dlog, dlogv2, ERROR_CODE_INVALID, PAGE_INVALID_MSG } from '$lib/utils/debug';
-import { promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/platform-functions.js';
+import { promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/navigation.js';
 
 import type { B_FEATB_T } from '@betarena/scores-lib/types/feat-betsite.js';
 import type { B_LEGT_T } from '@betarena/scores-lib/types/leagues-table.js';

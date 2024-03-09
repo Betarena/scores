@@ -13,8 +13,9 @@
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { getImageBgColor } from '$lib/utils/color_thief';
-	import { googleActionsStr } from '$lib/utils/google.js';
-	import { checkNull, googleEventLog, viewport_change } from '$lib/utils/platform-functions.js';
+	import { googleActionsStr, googleEventLog } from '$lib/utils/google.js';
+	import { viewport_change } from '$lib/utils/platform-functions.js';
+  import { checkNull } from '$lib/utils/miscellenous.js';
 
 	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
 	import WidgetTitle from '$lib/components/Widget-Title.svelte';

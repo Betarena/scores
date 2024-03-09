@@ -47,10 +47,12 @@
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { NB_W_TAG, dlog, dlogv2 } from '$lib/utils/debug';
-	import { generateUrlCompetitions, spliceBalanceDoubleZero, toDecimalFix, viewportChangeV2 } from '$lib/utils/platform-functions';
+	import { toDecimalFix } from '$lib/utils/string.js';
+	import { viewportChangeV2 } from '$lib/utils/device';
 	import { translationObject } from '$lib/utils/translation.js';
 	import { logoutUser } from '$lib/utils/user';
 	import { scoresNavbarStore } from './_store.js';
+  import { generateUrlCompetitions, spliceBalanceDoubleZero } from '$lib/utils/string';
 
   import SeoBox from '$lib/components/SEO-Box.svelte';
   import TranslationText from '$lib/components/misc/Translation-Text.svelte';

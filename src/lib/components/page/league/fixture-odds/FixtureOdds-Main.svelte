@@ -15,7 +15,8 @@
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { MONTH_NAMES_ABBRV, toISOMod, weekDays } from '$lib/utils/dates.js';
 	import { FIX_W_T_STY, FIX_W_T_TAG, FIX_W_T_TOG, dlog, dlogv2 } from '$lib/utils/debug';
-	import { googleEventLog, viewport_change } from '$lib/utils/platform-functions';
+	import { viewport_change } from '$lib/utils/platform-functions';
+  import { googleEventLog } from '$lib/utils/google.js';
 	import { FIXTURE_FULL_TIME_OPT, FIXTURE_LIVE_TIME_OPT } from '@betarena/scores-lib/dist/api/sportmonks.js';
 
 	import type { FIREBASE_odds } from '@betarena/scores-lib/types/firebase.js';

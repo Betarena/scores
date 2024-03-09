@@ -1,4 +1,20 @@
+// ╭──────────────────────────────────────────────────────────────────────────────────╮
+// │ 📌 High Order Component Overview                                                 │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ ➤ Internal Svelte Code Format :|: V.8.0                                          │
+// │ ➤ Status :|: 🔒 LOCKED                                                           │
+// │ ➤ Author(s) :|: @migbash                                                         │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ 📝 Description                                                                   │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ > Scores Web3 Logic                                                              │
+// ╰──────────────────────────────────────────────────────────────────────────────────╯
+
+// #region ➤ 📦 Package Imports
+
 import type { Chain } from '@web3modal/scaffold-utils/dist/types/src/EthersTypesUtil.js';
+
+// #endregion ➤ 📦 Package Imports
 
 /**
  * @description
@@ -9,38 +25,38 @@ export const chainObject: unknown
 = {
   polygon_mumbai:
   {
-    chainId: '0x13881'
-    , chainName: 'Mumbai Testnet'
-    , rpcUrls:
+    chainId: '0x13881',
+    chainName: 'Mumbai Testnet',
+    rpcUrls:
     [
       'https://polygon-mumbai.g.alchemy.com/v2/0zWtf5I24NBkM826G-VJFiYkkGoC5atJ'
-    ]
-    , nativeCurrency:
+    ],
+    nativeCurrency:
     {
-      name: 'MATIC'
-      , symbol: 'MATIC'
-      , decimals: 18
-    }
-    , blockExplorerUrls:
+      name: 'MATIC',
+      symbol: 'MATIC',
+      decimals: 18
+    },
+    blockExplorerUrls:
     [
       'https://mumbai.polygonscan.com'
     ]
-  }
-  , polygon_mainnet:
+  },
+  polygon_mainnet:
   {
-    chainId: '0x89'
-    , chainName: 'Polygon Mainnet'
-    , rpcUrls:
+    chainId: '0x89',
+    chainName: 'Polygon Mainnet',
+    rpcUrls:
     [
       'https://polygon-rpc.com/'
-    ]
-    , nativeCurrency:
+    ],
+    nativeCurrency:
     {
-      name: 'MATIC'
-      , symbol: 'MATIC'
-      , decimals: 18
-    }
-    , blockExplorerUrls:
+      name: 'MATIC',
+      symbol: 'MATIC',
+      decimals: 18
+    },
+    blockExplorerUrls:
     [
       'https://polygonscan.com'
     ]
@@ -56,26 +72,26 @@ export const chainObjectWalletConnect: Record < 'ethereum' | 'polygon_mumbai' | 
 = {
   ethereum:
   {
-    chainId: 1
-    , name: 'Ethereum'
-    , currency: 'ETH'
-    , explorerUrl: 'https://etherscan.io'
-    , rpcUrl: 'https://cloudflare-eth.com'
-  }
-  , polygon_mumbai:
+    chainId: 1,
+    name: 'Ethereum',
+    currency: 'ETH',
+    explorerUrl: 'https://etherscan.io',
+    rpcUrl: 'https://cloudflare-eth.com'
+  },
+  polygon_mumbai:
   {
-    chainId: 80001
-    , name: 'Mumbai Testnet'
-    , currency: 'MATIC'
-    , explorerUrl: 'https://mumbai.polygonscan.com'
-    , rpcUrl: 'https://polygon-mumbai.g.alchemy.com/v2/0zWtf5I24NBkM826G-VJFiYkkGoC5atJ'
-  }
-  , polygon_mainnet:
+    chainId: 80001,
+    name: 'Mumbai Testnet',
+    currency: 'MATIC',
+    explorerUrl: 'https://mumbai.polygonscan.com',
+    rpcUrl: 'https://polygon-mumbai.g.alchemy.com/v2/0zWtf5I24NBkM826G-VJFiYkkGoC5atJ'
+  },
+  polygon_mainnet:
   {
-    chainId: 137
-    , name: 'Polygon'
-    , currency: 'MATIC'
-    , explorerUrl: 'https://polygonscan.com'
-    , rpcUrl: 'https://polygon-rpc.com'
+    chainId: 137,
+    name: 'Polygon',
+    currency: 'MATIC',
+    explorerUrl: 'https://polygonscan.com',
+    rpcUrl: 'https://polygon-rpc.com'
   }
 };

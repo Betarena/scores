@@ -28,7 +28,7 @@ export interface GeoJsResponse
    * @description
    *  📣 2-letter country code
    */
-	country_code:     string;
+	country_code?:     string;
   /**
    * @description
    *  📣 3-letter country code

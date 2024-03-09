@@ -11,7 +11,6 @@ COMPONENT JS (w/ TS)
 
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { sleep } from '$lib/utils/platform-functions.js';
 
 	import WidgetTxHistLoader from '../tx-history/Widget-Tx-Hist-Loader.svelte';
 	import ModalWithdrawForm from './Modal-Withdraw-Form.svelte';

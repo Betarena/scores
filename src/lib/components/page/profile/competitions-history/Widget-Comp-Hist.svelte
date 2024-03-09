@@ -29,7 +29,7 @@
 
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlog } from '$lib/utils/debug.js';
-	import { sleep, viewport_change } from '$lib/utils/platform-functions.js';
+	import { viewport_change } from '$lib/utils/platform-functions.js';
 	import { PROF_U_competitionTitle } from '@betarena/scores-lib/dist/functions/func.profile.js';
 	import { onMount } from 'svelte';
 

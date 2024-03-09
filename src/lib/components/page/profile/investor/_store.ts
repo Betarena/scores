@@ -2,10 +2,12 @@
 
 // #region ➤ 📦 Package Imports
 
-import { breakdownDates, toCorrectDate } from '$lib/utils/dates.js';
-import { checkNull } from '$lib/utils/platform-functions.js';
-import type { PublicTransactionHistoryMain } from '@betarena/scores-lib/types/_AUTO-HASURA-2_.js';
 import { writable } from 'svelte/store';
+
+import { breakdownDates, toCorrectDate } from '$lib/utils/dates.js';
+import { checkNull } from '$lib/utils/miscellenous.js';
+
+import type { PublicTransactionHistoryMain } from '@betarena/scores-lib/types/_AUTO-HASURA-2_.js';
 
 // #endregion ➤ 📦 Package Imports
 

@@ -11,7 +11,6 @@ COMPONENT JS (w/ TS)
 
   import sessionStore from '$lib/store/session.js';
   import { H2H_W_F_STY, H2H_W_F_TAG, dlog } from '$lib/utils/debug.js';
-  import { sleep } from '$lib/utils/platform-functions';
 
 	import SeoBox from '$lib/components/SEO-Box.svelte';
 	import Head2HeadLoader from './Head2Head-Loader.svelte';

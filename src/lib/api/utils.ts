@@ -3,7 +3,7 @@
 import LZString from 'lz-string';
 
 import { dlogv2 } from '$lib/utils/debug.js';
-import { tryCatch } from '$lib/utils/platform-functions.js';
+import { tryCatch } from '$lib/utils/miscellenous.js';
 import { tryCatchAsync, tryCatchAsyncV2 } from '@betarena/scores-lib/dist/util/util.common.js';
 
 // #endregion ➤ 📦 Package Imports
@@ -67,12 +67,12 @@ export async function get
       let resJson: any = await res.json();
 
       if (!res.ok)
-      
+
         throw new Error
         (
           'Network response was not ok'
         );
-      
+
 
       // ### NOTE: | IMPORTANT
       // ### step necessary to 'decompress' lz-string encoded payload.
@@ -82,7 +82,7 @@ export async function get
       // ### [🐞]
       const t1: number = performance.now();
       if (showTime)
-      
+
         dlogv2
         (
           `🏹 FETCH (GET) ${endpoint}`,
@@ -93,7 +93,7 @@ export async function get
           ],
           true
         )
-      
+
 
       return resJson;
     }
@@ -170,12 +170,12 @@ export async function post
       ;
 
       if (!res.ok)
-      
+
         throw new Error
         (
           'Network response was not ok'
         );
-      
+
 
       return resJson;
     }
@@ -259,12 +259,12 @@ export async function postv2
       ;
 
       if (!res.ok)
-      
+
         throw new Error
         (
           JSON.stringify(resJson) ?? 'network response was not ok'
         );
-      
+
 
       return resJson;
     }

@@ -3,7 +3,7 @@
 import sessionStore from '$lib/store/session.js';
 import userBetarenaSettings from '$lib/store/user-settings.js';
 import { dlog, dlogv2 } from '$lib/utils/debug.js';
-import { checkNull } from '$lib/utils/platform-functions.js';
+import { checkNull } from '$lib/utils/miscellenous.js';
 import { DataSnapshot, onValue, ref, type DatabaseReference, type Unsubscribe } from 'firebase/database';
 import { arrayRemove, arrayUnion, doc, DocumentReference, getDoc, increment, onSnapshot, updateDoc } from 'firebase/firestore';
 import { getTargetRealDbData } from './firebase.actions.js';
@@ -141,18 +141,16 @@ export function userBalanceListen
  *  🟦 HELPER
  * @description
  *  📣 Update `user` platform language preference.
+ * @param { string } lang
+ *  💠 **[required]** Language to `set`
  * @returns { Promise < void > }
  */
 export async function updateSelectLang
 (
+  lang: string
 ): Promise < void >
 {
   const
-    /**
-     * @description
-     * 📝 Data point
-     */
-    lang = userBetarenaSettings.extract('lang') as string | undefined | null,
     /**
      * @description
      * 📝 Data point
@@ -187,13 +185,6 @@ export async function updateSelectLang
       `🔹 [var] ➤ uid :|: ${uid}`,
     ],
     true
-  );
-
-  userBetarenaSettings.updateData
-  (
-    [
-      ['lang-user', lang]
-    ]
   );
 
   const

@@ -47,11 +47,14 @@
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlog, dlogv2 } from '$lib/utils/debug.js';
-	import { shortenWeb3WalletAddress, sleep, toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
+	import { viewport_change } from '$lib/utils/platform-functions.js';
+  import { sleep } from '$lib/utils/miscellenous.js';
+  import { toDecimalFix } from '$lib/utils/string.js';
 	import { chainObject, chainObjectWalletConnect } from '$lib/utils/web3.js';
 	import { passByValue } from '@betarena/scores-lib/dist/functions/func.common.js';
 	import { tryCatchAsync } from '@betarena/scores-lib/dist/util/util.common.js';
 	import { scoresProfileInvestorStore } from './_store.js';
+	import { shortenWeb3WalletAddress } from '$lib/utils/string.js';
 	import { polygonMainnet } from './web3/_constants.js';
 
 	import { createWeb3Modal, defaultConfig } from '@web3modal/ethers5';

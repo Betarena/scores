@@ -37,12 +37,12 @@
 
   import userBetarenaSettings from '$lib/store/user-settings.js';
   import { scoresProfileInvestorStore } from './_store.js';
+  import { toDecimalFix } from '$lib/utils/string.js';
 
   import AdminDevControlPanel from '$lib/components/misc/admin/Admin-Dev-ControlPanel.svelte';
   import AdminDevControlPanelToggleButton from '$lib/components/misc/admin/Admin-Dev-ControlPanelToggleButton.svelte';
   import TranslationText from '$lib/components/misc/Translation-Text.svelte';
 
-  import { toDecimalFix } from '$lib/utils/platform-functions.js';
   import type { PublicInvestorDataIBonus } from '@betarena/scores-lib/types/_AUTO-HASURA-2_.js';
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 

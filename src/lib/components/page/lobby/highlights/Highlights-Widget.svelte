@@ -28,12 +28,13 @@
 	import { onMount } from 'svelte';
 
 	import sessionStore from '$lib/store/session.js';
-	import { initialDevice, promiseUrlsPreload } from '$lib/utils/platform-functions.js';
 
 	import HighlightsLoader from './Highlights-Loader.svelte';
 
 	import SeoBox from '$lib/components/SEO-Box.svelte';
 	import type { B_COMP_HIGH_D, B_COMP_HIGH_D_EXTRA, B_COMP_HIGH_D_RES, B_COMP_HIGH_S, B_COMP_HIGH_T } from '@betarena/scores-lib/types/types.competition.highlights.js';
+  import { promiseUrlsPreload } from '$lib/utils/navigation.js';
+  import { initialDevice } from '$lib/utils/device.js';
 
   // ### WARNING:
   // ### Disable, if Dynamic Import is Enabled.

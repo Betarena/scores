@@ -31,10 +31,13 @@
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlog } from '$lib/utils/debug.js';
-	import { checkNull, cleanUrl, iso2CountryLogo, toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
+	import { viewport_change } from '$lib/utils/platform-functions.js';
+	import { checkNull } from '$lib/utils/miscellenous.js';
+	import { toDecimalFix } from '$lib/utils/string.js';
 	import { translationObject } from '$lib/utils/translation.js';
 	import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.betarena-user.js';
 	import { Competition } from '@betarena/scores-lib/dist/classes/class.competition.js';
+  import { cleanUrl, iso2CountryLogo} from '$lib/utils/string.js';
 
 	import CompCountdownStatus from '$lib/components/shared/COMP-Countdown-+-Status.svelte';
 	import CompDetails from '$lib/components/shared/COMP-Details.svelte';
