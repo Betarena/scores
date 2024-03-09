@@ -1,3 +1,101 @@
+// ╭──────────────────────────────────────────────────────────────────────────────────╮
+// │ 📌 High Order Component Overview                                                 │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ ➤ Internal Svelte Code Format :|: V.8.0                                          │
+// │ ➤ Status :|: 🔒 LOCKED                                                           │
+// │ ➤ Author(s) :|: @migbash                                                         │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ 📝 Description                                                                   │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ Main Scores Platform Device Logic                                                │
+// ╰──────────────────────────────────────────────────────────────────────────────────╯
+
+/* eslint-disable max-len */
+
+// #region ➤ 📦 Package Imports
+
+import { routeIdPageAuthors } from '$lib/constants/paths.js';
+import { dlogv2 } from '$lib/utils/debug';
+
+import type { Cookies } from '@sveltejs/kit';
+
+// #endregion ➤ 📦 Package Imports
+
+/**
+ * @author
+ *  @migbash
+ * @summary
+ *  🟦 HELPER
+ * @description
+ *  📣 Detect platform language.
+ * @param { Object } opts
+ *   💠 **[required]** Target method `arguments`.
+ * @param { string | undefined } opts.parameterLanguage
+ *  💠 **[required]** Preliminary detected language.
+ * @param { Cookies } opts.cookies
+ *  💠 **[required]** Request `cookies`.
+ * @param { string | undefined | null } opts.routeId
+ *  💠 **[required]** Request `route.id`.
+ * @return { string }
+ *  📤 Detected platform `language`.
+ */
+export function detectPlatformLanguage
+(
+  opts:
+  {
+    parameterLanguage: string | undefined
+    cookies: Cookies,
+    routeId: string | NullUndef
+  }
+): string
+{
+  let
+    /**
+     * @description
+     *  📣 Target deteted `language`.
+     */
+    urlLang
+      = [undefined, 'en'].includes(opts.parameterLanguage)
+        // ╭─────
+        // │ FIXME:
+        // │ > interferes with [player=player] routeId.
+        // ╰─────
+        // || (!response_valid_url && route?.id != '/u/[view]/[lang=lang]')
+        // || (route?.id != '/u/[view]/[lang=lang]')
+        ? 'en'
+        : opts.parameterLanguage!
+  ;
+
+  const
+    /**
+     * @description
+     *  📣 Extract target expected 'visitor' cookie preference data.
+     */
+    cookieValue: { lang: string } | false = JSON.parse(opts.cookies.get('betarenaScoresCookie') ?? 'false')
+  ;
+
+  // ╭─────
+  // │ CHECK
+  // │ > for authors page, apply custom logic.
+  // ╰─────
+  if (opts.routeId == routeIdPageAuthors && typeof(cookieValue) == 'object')
+    urlLang = (cookieValue.lang ?? 'en');
+  ;
+
+  // [🐞]
+  dlogv2
+  (
+    'detectPlatformLanguage(..)',
+    [
+      `🔹 [var] ➤ cookieValue :|: ${JSON.stringify(cookieValue, null, 4)}`,
+      `🔹 [var] ➤ urlLang :|: ${urlLang}`,
+    ],
+    true
+  );
+
+  return urlLang;
+}
+
 /**
  * @author
  *  @migbash
@@ -6,7 +104,7 @@
  * @description
  *  📣 Remove `diacritics`.
  * @param { string } str
- *  💠 Target `string`.
+ *  💠 **[required]** Target `string`.
  * @return { string }
  *  📤 Clean `string` from _diacritics_.
  */
@@ -316,7 +414,8 @@ export function removeDiacritics
     ]
   ;
 
-  console.log('str', str);
+  // [🐞]
+  // console.log('str', str);
 
   for (const item of defaultDiacriticsRemovalMap)
     str
@@ -340,7 +439,7 @@ export function removeDiacritics
  * @example
  *  "2021/2022" => "21/22"
  * @param { string } name
- *  💠 Target `text`.
+ *  💠 **[required]** Target `text`.
  * @return { string }
  *  📤 A `string` mutated.
  */

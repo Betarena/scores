@@ -1,6 +1,5 @@
-import { RequestHandler } from '@sveltejs/kit';
+import { RequestHandler, json } from '@sveltejs/kit';
 import { appendFileSync } from 'fs';
-import { json } from '@sveltejs/kit';
 
 /**
  * @author
@@ -32,7 +31,8 @@ export const POST = (
     }
     catch (error)
     {
-      //
+      console.error('❌', error);
+      return json(null);
     }
   }
 ) satisfies RequestHandler;

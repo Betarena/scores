@@ -49,10 +49,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     s-20
     m-b-10
     w-500
-    color-black-2
+    {$userBetarenaSettings.theme == 'Dark' || OVERRIDE_COLOR ? 'color-white' : 'color-black-2'}
   "
   style="margin-top: 0px;"
-  class:color-white={$userBetarenaSettings.theme == 'Dark' || OVERRIDE_COLOR}
 >
   {WIDGET_TITLE}
 </h2>

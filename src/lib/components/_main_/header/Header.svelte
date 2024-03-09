@@ -47,14 +47,13 @@
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { NB_W_TAG, dlog, dlogv2 } from '$lib/utils/debug';
-	import { checkNull, generateUrlCompetitions, spliceBalanceDoubleZero, toDecimalFix, viewportChangeV2 } from '$lib/utils/platform-functions';
+	import { generateUrlCompetitions, spliceBalanceDoubleZero, toDecimalFix, viewportChangeV2 } from '$lib/utils/platform-functions';
 	import { translationObject } from '$lib/utils/translation.js';
-	import { initUser, logoutUser, selectLanguage, updateSelectLang } from '$lib/utils/user';
+	import { logoutUser } from '$lib/utils/user';
 	import { scoresNavbarStore } from './_store.js';
 
   import SeoBox from '$lib/components/SEO-Box.svelte';
   import TranslationText from '$lib/components/misc/Translation-Text.svelte';
-  import AuthWidget from '../auth/Auth_Widget.svelte';
   import HeaderCBookmakers from './Header-C-Bookmakers.svelte';
   import HeaderCLang from './Header-C-Lang.svelte';
   import HeaderCTheme from './Header-C-Theme.svelte';
@@ -356,132 +355,6 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   // ╭─────
-  // │ > 🔥 Authentication listener.
-  // │ IMPORTANT
-  // │ > [x3] Kicker(s)
-  // ╰─────
-  $: if_R_0
-    = browser
-    && user == undefined
-  ;
-  $: if_R_0X
-    = browser
-    && user != undefined
-  ;
-  $:
-  if (if_R_0)
-  {
-    _DEBUG_('Option0');
-    sessionStore.updateData
-    (
-      'globalStateAdd',
-      'NotAuthenticated'
-    );
-  }
-  else if (if_R_0X)
-  {
-    _DEBUG_('Option0');
-    sessionStore.updateData
-    (
-      'globalStateAdd',
-      'Authenticated'
-    );
-  };
-
-  // ╭─────
-  // │ > 🔥 Initialize 'user' (non-authenticated) platform language.
-  // │ IMPORTANT
-  // │ > [x3] Kicker(s)
-  // ╰─────
-  $: if_R_1
-    = browser
-    && globalState.has('NotAuthenticated')
-  ;
-  $: if (if_R_1)
-  {
-    _DEBUG_('Option1');
-    userBetarenaSettings.updateData
-    (
-      'lang',
-      sessionStore.extract('lang')
-    );
-  }
-
-  // ╭─────
-  // │ > 🔥 Initialize 'user' (authenticated) on post 'log-in'.
-  // │ IMPORTANT
-  // │ > [x2] Kicker(s)
-  // ╰─────
-  $: if_R_1X
-    = browser
-    && globalState.has('Authenticated')
-    && !globalState.has('AuthenticatedAndInitialized')
-  ;
-  $: if (if_R_1X)
-  {
-    _DEBUG_('Option3');
-    initUser();
-    sessionStore.updateData
-    (
-      'globalStateAdd',
-      'AuthenticatedAndInitialized'
-    );
-  }
-
-  // ╭─────
-  // │ > 🔥 Update 'user' (authenticated) platform language.
-  // │ NOTE:
-  // │ > [x0] Kicker(s)
-  // ╰─────
-  $: if_R_2
-    = browser
-    && currentPageRouteId != 'ProfilePage'
-    && globalState.has('Authenticated')
-  ;
-  $: if (if_R_2)
-  {
-    _DEBUG_('Option2');
-
-    if_R_2_Func();
-
-    // eslint-disable-next-line svelte/no-inner-declarations
-    function if_R_2_Func
-    (
-    ): void
-    {
-      selectLanguage
-      (
-        userLang!,
-        $page
-      );
-    }
-  }
-
-  // ╭─────
-  // │ > 🔥 Instantiate 'user' (authenticated) platform language.
-  // │ IMPORTANT
-  // │ > [x3] Kicker(s)
-  // ╰─────
-  $: if_R_3
-    = !error
-    && !checkNull(pageRouteId)
-    && globalState.has('Authenticated')
-  ;
-  $:
-  if (if_R_3 && lang)
-  {
-    _DEBUG_('Option4');
-    updateSelectLang
-    (
-      {
-        isPageError: (error ? true : false),
-        routeId: pageRouteId
-      }
-    );
-  }
-
-
-  // ╭─────
   // │ > 🔥 Navbar Z-Index Override
   // │ NOTE:
   // │ > [x0] Kicker(s)
@@ -641,8 +514,6 @@
   </a>
 
 </SeoBox>
-
-<AuthWidget />
 
 <!--
 ╭─────
@@ -994,7 +865,8 @@
           {
             () =>
             {
-              return ($sessionStore.auth_show = !$sessionStore.auth_show)
+              $sessionStore.currentActiveModal = 'Auth_Modal';
+              return;
             }
           }
         >

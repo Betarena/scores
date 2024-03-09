@@ -1,14 +1,20 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ High Order Component Overview                                                    │
+│ 📌 High Order Component Overview                                                 │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+│ ➤ Internal Svelte Code Format :|: V.8.0                                          │
+│ ➤ Status :|: 🔒 LOCKED                                                           │
+│ ➤ Author(s) :|: @migbash                                                         │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ 📝 Description                                                                   │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ Scores Admin Dev Info                                                            │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ Svelte Component JS/TS                                                           │
+│ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
@@ -57,11 +63,12 @@
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
      */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = 'developer-admin-infobox'
+    CNAME = 'developer-admin-infobox'
   ;
 
   $: ({ currentPageRouteId, serverLang, globalState } = { ...$sessionStore });
-  $: ({ country_bookmaker, theme, lang } = { ...$userBetarenaSettings });
+  $: ({ country_bookmaker, theme, lang } = { ...$userBetarenaSettings } );
+  $: ({ lang: userLang } = { ...$userBetarenaSettings.user?.scores_user_data } );
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -69,7 +76,7 @@
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ Svelte Component HTML                                                            │
+│ 💠 Svelte Component HTML                                                         │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
 │         │ imported from './static/app.css'                                       │
@@ -81,109 +88,164 @@
 <div
   id={CNAME}
 >
-  <!--
-  ╭─────
-  │ > Information on Firebase Listeners
-  ╰─────
-  -->
-  <p
-    class=
-    "
-    color-white
-    "
-  >
-    Active Firebase Event Listeners:
-    {$sessionStore.firebaseListeners.length}
-  </p>
 
   <!--
   ╭─────
-  │ > GraphQL WebSockets Connection
+  │ > [I] Active Firebase Listener(s)
   ╰─────
   -->
-  <p
+  <div
     class=
     "
-    color-white
+    grid-box
     "
   >
-    Active GraphQl WebSocket Listeners:
-    {$sessionStore.grapqhQlWebSockets.length}
-  </p>
-
-  <!--
-  ╭─────
-  │ > Items that do not have a translation
-  ╰─────
-  -->
-  <div>
     <p
       class=
       "
-      color-white
+      title
       "
     >
-      Text(s) with no translation:
-      {$scoresAdminStore.termsWithoutTranslation.size}
+      Active Listeners:
     </p>
 
-    {#each [...$scoresAdminStore.termsWithoutTranslation] as item}
-      <p
-        class=
-        "
-        color-white
-        "
-      >
-        - {item}
-      </p>
-    {/each}
+    <p>
+      Firebase Event Listeners:
+      {$sessionStore.firebaseListeners.length}
+    </p>
+
+    <p>
+      GraphQl WebSocket Listeners:
+      {$sessionStore.grapqhQlWebSockets.length}
+    </p>
   </div>
 
   <!--
   ╭─────
-  │ > Information on variable store
+  │ > [I] Language
   ╰─────
   -->
-  <p
+  <div
     class=
     "
-    color-white
+    grid-box
     "
   >
-    currentPageRouteId: {currentPageRouteId}
-    <br>
-    country_bookmaker: {country_bookmaker}
-    <br>
-    theme: {theme}
-    <br>
-    serverLang: {serverLang}
-    <br>
-    lang: {lang}
-  </p>
-
-  <!--
-  ╭─────
-  │ > Session (global) state
-  ╰─────
-  -->
-  <div>
     <p
       class=
       "
-      color-white
+      title
       "
     >
-      Global State(s):
-      {globalState.size}
+      Language
     </p>
 
-    {#each [...globalState] as item}
+    <p>
+      Server (lang) :|: {serverLang}
+      <br>
+      Visitor (lang) :|: {lang}
+      <br>
+      User (lang) :|: {userLang}
+    </p>
+
+    <div>
       <p
         class=
         "
         color-white
         "
       >
+        Text(s) with no translation:
+        {$scoresAdminStore.termsWithoutTranslation.size}
+      </p>
+
+      {#each [...$scoresAdminStore.termsWithoutTranslation] as item}
+        <p
+          class=
+          "
+          color-white
+          "
+        >
+          - {item}
+        </p>
+      {/each}
+    </div>
+  </div>
+
+  <!--
+  ╭─────
+  │ > [I] Navigation
+  ╰─────
+  -->
+  <div
+    class=
+    "
+    grid-box
+    "
+  >
+    <p
+      class=
+      "
+      title
+      "
+    >
+      Navigation
+    </p>
+
+    <p>
+      currentPageRouteId: {currentPageRouteId}
+    </p>
+  </div>
+
+  <!--
+  ╭─────
+  │ > [I] Information on variable store
+  ╰─────
+  -->
+  <div
+    class=
+    "
+    grid-box
+    "
+  >
+    <p
+      class=
+      "
+      title
+      "
+    >
+      Miscellenous
+    </p>
+
+    <p>
+      country_bookmaker: {country_bookmaker}
+      <br>
+      theme: {theme}
+    </p>
+  </div>
+
+  <!--
+  ╭─────
+  │ > [I] Session (global) state
+  ╰─────
+  -->
+  <div
+    class=
+    "
+    grid-box
+    "
+  >
+    <p
+      class=
+      "
+      title
+      "
+    >
+      Global State(s): {globalState.size}
+    </p>
+
+    {#each [...globalState] as item}
+      <p>
         - {item}
       </p>
     {/each}
@@ -193,7 +255,7 @@
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ Svelte Component CSS/SCSS                                                        │
+│ 🌊 Svelte Component CSS/SCSS                                                     │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
 │         │ values by typing/CTRL+SPACE                                            │
@@ -202,6 +264,12 @@
 -->
 
 <style lang="scss">
+
+  /*
+  ╭──────────────────────────────────────────────────────────────────────────────╮
+  │ 📲 MOBILE-FIRST                                                              │
+  ╰──────────────────────────────────────────────────────────────────────────────╯
+  */
 
   div#developer-admin-infobox
   {
@@ -213,6 +281,28 @@
     /* 🛝 layout */
     display: grid;
     align-content: space-between;
+    /* 🛝 layout */
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+
+    div.grid-box
+    {
+      /* 🎨 style */
+      padding: 15px;
+
+      p
+      {
+        /* 🎨 style */
+        color: white;
+
+        &.title
+        {
+          /* 🎨 style */
+          font-size: 24px;
+          font-weight: bold;
+        }
+      }
+    }
   }
 
 </style>

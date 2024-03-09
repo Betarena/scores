@@ -488,7 +488,14 @@ MODAL - DYNAMIC
         </button>
 
         <button
-          on:click={() => $sessionStore.auth_show = true}
+          on:click=
+          {
+            () =>
+            {
+              $sessionStore.currentActiveModal = 'Auth_Modal';
+              return;
+            }
+          }
           on:click={() => closeModal()}
           class=
           "

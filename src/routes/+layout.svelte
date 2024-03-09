@@ -50,7 +50,7 @@
   import userBetarenaSettings from '$lib/store/user-settings.js';
   import { dlog, dlogv2 } from '$lib/utils/debug';
   import { isPWA } from '$lib/utils/device.js';
-  import { initSportbookData, setUserGeoLocation } from '$lib/utils/platform-functions.js';
+  import { setUserGeoLocation } from '$lib/utils/platform-functions.js';
 
 	import Footer from '$lib/components/_main_/footer/Footer.svelte';
 	import Header from '$lib/components/_main_/header/Header.svelte';
@@ -58,6 +58,9 @@
 	import DevInfoBox from '$lib/components/misc/admin/Dev-Info-Box.svelte';
 	import ModalError from '$lib/components/misc/modal/Modal-Error.svelte';
 
+	import AuthMain from '$lib/components/_main_/auth/Auth-Main.svelte';
+	import ToastAuth from '$lib/components/misc/toast/Toast-Auth/Toast-Auth.svelte';
+	import { mainDeepLinkCheck } from '$lib/utils/deeplink.js';
 	import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
 
   // ╭─────
@@ -113,19 +116,21 @@
     dynamicComponentMap = new Map < IDynamicComponentMap, any > ()
   ;
 
-  $: ({ currentPageRouteId } = { ...$sessionStore })
-  $: ({ country_bookmaker, theme } = { ...$userBetarenaSettings });
+  $: ({ currentPageRouteId, currentActiveModal, currentActiveToast } = { ...$sessionStore })
+  $: ({ theme } = { ...$userBetarenaSettings });
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  $: ({ username, lang, competition_number }                  = { ...$userBetarenaSettings?.user?.scores_user_data });
+  $: ({ username, lang, competition_number } = { ...$userBetarenaSettings?.user?.scores_user_data });
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  $: ({ uid, email }                                          = { ...$userBetarenaSettings?.user?.firebase_user_data });
-	$: navbarTranslationData       = ($page.data.B_NAV_T ?? { }) as B_NAV_T | null | undefined;
-  $: deepReactListenStore1                           = JSON.stringify($sessionStore);
-  $: deepReactListenStore2                           = JSON.stringify($userBetarenaSettings);
+  $: ({ uid, email } = { ...$userBetarenaSettings?.user?.firebase_user_data });
+	$: navbarTranslationData = ($page.data.B_NAV_T ?? { }) as B_NAV_T | null | undefined;
+  $: deepReactListenStore1 = JSON.stringify($sessionStore);
+  $: deepReactListenStore2 = JSON.stringify($userBetarenaSettings);
+
+  $: $sessionStore.serverLang = $page.data.langParam as string;
+  $: $sessionStore.page = $page;
 
   $sessionStore.deviceType       = $page.data.deviceType as 'mobile' | 'tablet' | 'desktop';
   $sessionStore.fixturesTodayNum = (navbarTranslationData?.scores_header_fixtures_information?.football ?? 0);
-  $sessionStore.serverLang       = $page.data.langParam as string;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -236,21 +241,9 @@
   $: if (browser)
   {
     _DEBUG_('Option1');
-
+    mainDeepLinkCheck();
     userBetarenaSettings.useLocalStorage();
     scoresAdminStore.useLocalStorage();
-  }
-
-  // ╭─────
-  // │ > 🔥 Initialize / Update 'Sportbook Details'.
-  // ╰─────
-  $: if (browser && country_bookmaker)
-  {
-    _DEBUG_('Option3');
-    initSportbookData
-    (
-      country_bookmaker
-    );
   }
 
   // ╭─────
@@ -339,8 +332,8 @@
 
       if (useDynamicImport)
       {
-        dynamicComponentMap.set('OfflineAlertDynamic', (await import('$lib/components/misc/Banner-Offline-Alert.svelte')).default);
-        dynamicComponentMap.set('PlatformAlertDynamic', (await import('$lib/components/misc/Banner-Platform-Alert.svelte')).default);
+        dynamicComponentMap.set('OfflineAlertDynamic', (await import('$lib/components/misc/banner/Banner-Offline-Alert.svelte')).default);
+        dynamicComponentMap.set('PlatformAlertDynamic', (await import('$lib/components/misc/banner/Banner-Offline-Alert.svelte')).default);
         dynamicComponentMap.set('EmailSubscribeDynamic', (await import('$lib/components/misc/modal/Modal-Email-Subscribe.svelte')).default);
       }
 
@@ -378,8 +371,9 @@
     {
       sessionStore.updateData
       (
-        'routeId',
-        $page.route.id
+        [
+          ['routeId', $page.route.id]
+        ]
       );
 
       // [🐞]
@@ -523,11 +517,19 @@
 
 <SplashScreen />
 
+{#if currentActiveModal == 'Auth_Modal'}
+  <AuthMain />
+{/if}
+
+{#if currentActiveToast != null}
+  <ToastAuth />
+{/if}
+
 {#if $scoresAdminStore.admin}
   <DevInfoBox />
 {/if}
 
-{#if $sessionStore.currentActiveModal == 'GeneralPlatform_Error'}
+{#if currentActiveModal == 'GeneralPlatform_Error'}
   <ModalError />
 {/if}
 

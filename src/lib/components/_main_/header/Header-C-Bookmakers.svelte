@@ -320,7 +320,18 @@
               "
               class:theme-opt-box={!VIEWPORT_MOBILE_INIT[1]}
               class:country-selected={country[0] === $userBetarenaSettings.country_bookmaker.toUpperCase()}
-              on:click={() => {return userBetarenaSettings.updateData('geo-bookmaker', country[0].toLocaleLowerCase())}}
+              on:click=
+              {
+                () =>
+                {
+                  return userBetarenaSettings.updateData
+                  (
+                    [
+                      ['geo-bookmaker', country[0].toLocaleLowerCase()]
+                    ]
+                  )
+                }
+              }
             >
               <img
                 loading="lazy"

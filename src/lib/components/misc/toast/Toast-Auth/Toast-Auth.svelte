@@ -8,7 +8,7 @@
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ 📝 Description                                                                   │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ Scores Platform Header Lang Dropdown Component (Child)                           │
+│ Scores Authentication State Toast                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -38,21 +38,16 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-	import { page } from '$app/stores';
-	import { fly } from 'svelte/transition';
+  import { page } from '$app/stores';
+  import { onMount } from 'svelte';
+  import { fade } from 'svelte/transition';
 
 	import sessionStore from '$lib/store/session.js';
-	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { dlog, NB_W_TAG } from '$lib/utils/debug.js';
-	import { scoresNavbarStore } from './_store.js';
 
-  import arrowDown from './assets/arrow-down.svg';
-  import arrowUp from './assets/arrow-up.svg';
-  import arrowDownDark from './assets/icon-arrow-down-dark.svg';
-  import arrowUpDark from './assets/icon-arrow-up-dark.svg';
+  import iconError from './assets/error-alert.svg';
+  import iconSuccess from './assets/success-alert.svg';
 
-  import { selectLanguage } from '$lib/utils/navigation.js';
-  import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
+	import type { IAuthTrs } from '@betarena/scores-lib/types/auth.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -73,131 +68,43 @@
   const
     /**
      * @description
-     *  📣 Deifined `hover` timeout, that constitues a navigational `intent.
-    */
-    HOVER_TIMEOUT = 250
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */ // eslint-disable-next-line no-unused-vars
+    CNAME: string = 'global⮕component⮕auth-toast⮕main'
   ;
 
-  let
-    /**
-     * @description
-     *  📣 Wether target dropdown menu is **active**.
-     */
-    isLangDropdown: boolean = false,
-    /**
-     * @description
-     *  📣 Target `intent` language.
-     */
-    targetIntenLang: string | undefined = undefined,
-    /**
-     * @description
-     *  📣 Target `timeout` intent.
-     */
-    timeoutIntent: NodeJS.Timeout
-  ;
-
-  $: ({ serverLang, currentPageRouteId } = $sessionStore);
-  $: ({ theme } = $userBetarenaSettings);
-  $: ({ globalState: globalStateNavbar } = $scoresNavbarStore);
-
-  $: translatioData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
+  $: authData = $page.data.authTrs as IAuthTrs | null | undefined;
+  $: ({ currentActiveToast } = $sessionStore);
 
   // #endregion ➤ 📌 VARIABLES
 
-  // #region ➤ 🛠️ METHODS
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
-  /**
-   * @author
-   *  @migbash
-   * @summary
-   *  🟦 HELPER
-   * @description
-   *  - 📣 Advanced intent logic, applicable to desktop-only.
-   *  - 📣 `Pre-loads` target page , for target `language` upon `intent`/`hover`.
-   * @param { string | undefined } lang
-   *  💠 **[required]** Target `hovered` language.
-   * @return { void }
-   */
-  function detectIntentBuffer
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  onMount
   (
-    lang: string | undefined
-  ): void
-  {
-    const
-      /**
-       * @description
-       *  📣 Detect change in hover-over lang.
-       */
-      if_M_0: boolean
-        = timeoutIntent != undefined
-        && lang != targetIntenLang,
-      /**
-       * @description
-       *  📣 First time set lang and timer.
-       */
-      if_M_E_0: boolean
-        = lang != undefined
-        && timeoutIntent == undefined
-    ;
-
-    if (if_M_0)
+    () =>
     {
-      // [🐞]
-      dlog
-      (
-        `${NB_W_TAG[0]} clearning timer!`,
-      );
-
-      clearTimeout(timeoutIntent);
-
-      targetIntenLang = lang;
-
-      if (lang == undefined) return;
-
-      // [🐞]
-      dlog
-      (
-        `${NB_W_TAG[0]} setting new timer!`
-      );
-
-      timeoutIntent = setTimeout
+      setTimeout
       (
         () =>
         {
-          // [🐞]
-          dlog
-          (
-            `${NB_W_TAG[0]} intent triggered!`,
-            true
-          );
-          $sessionStore.lang_intent = targetIntenLang;
+          $sessionStore.currentActiveToast = null;
+          return;
         },
-        HOVER_TIMEOUT
-      );
+        1500
+      )
+      return;
     }
-    else if (if_M_E_0)
-    {
-      targetIntenLang = lang
-      timeoutIntent = setTimeout
-      (
-        () =>
-        {
-          // [🐞]
-          dlog
-          (
-            `${NB_W_TAG[0]} intent triggered!`,
-            true
-          );
-          $sessionStore.lang_intent = targetIntenLang;
-        },
-        HOVER_TIMEOUT
-      );
-    }
+  );
 
-    return;
-  }
-
-  // #endregion ➤ 🛠️ METHODS
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
 </script>
 
@@ -212,152 +119,67 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div
-  id="lang-container"
-  class=
-  "
-  m-r-16
-  "
->
-
-  <!--
-  ╭─────
-  │ > Selected Language
-  ╰─────
-  -->
+<!--
+╭─────
+│ > authentication message (success)
+╰─────
+-->
+{#if currentActiveToast != 'Auth_Error_Toast'}
   <div
+    id="auth-alert-box"
     class=
     "
-    selected-language-btn
-    row-space-out
-    cursor-pointer
+    row-space-start
     "
-    class:active-lang-select={globalStateNavbar.has('LangDropdownActive')}
-    on:click=
-    {
-      () =>
-      {
-        scoresNavbarStore.updateData
-        (
-          'globalStateAdd',
-          'LangDropdownActive'
-        );
-        return;
-      }
-    }
+    transition:fade
   >
-
+    <img
+      src={iconSuccess}
+      alt="Success Icon"
+      title="Success Icon"
+    />
     <p
       class=
       "
-      s-14
-      m-r-5
-      uppercase
+      w-500
       "
-      class:color-white={currentPageRouteId != 'AuthorsPage' || theme == 'Dark'}
-      class:color-black-2={currentPageRouteId == 'AuthorsPage' && theme == 'Light'}
     >
-      {serverLang}
+      {#if currentActiveToast == 'Auth_Success_L_Toast'}
+        {authData?.success_msg?.[0]}
+      {:else}
+        {authData?.success_msg?.[1]}
+      {/if}
     </p>
-
-    <!--
-    ╭─────
-    │ > Arrow Down
-    ╰─────
-    -->
-    <img
-      loading="lazy"
-      src=
-      {
-        currentPageRouteId != 'AuthorsPage' || theme == 'Dark'
-          ? !globalStateNavbar.has('LangDropdownActive')
-            ? arrowDown
-            : arrowUp
-          : !globalStateNavbar.has('LangDropdownActive')
-            ? arrowDownDark
-            : arrowUpDark
-      }
-      alt={!isLangDropdown ? 'arrowDown' : 'arrowUp'}
-      width=16
-      height=16
-    />
-
   </div>
-
-  <!--
-  ╭─────
-  │ > Dropdown Menu
-  ╰─────
-  -->
-  {#if globalStateNavbar.has('LangDropdownActive')}
-
-    <div
-      id="dropdown-menu"
-      transition:fly
+<!--
+╭─────
+│ > authentication message (error)
+╰─────
+-->
+{:else}
+  <div
+    id="auth-alert-box"
+    class=
+    "
+    row-space-start
+    "
+    transition:fade
+  >
+    <img
+      src={iconError}
+      alt="Error Icon"
+      title="Error Icon"
+    />
+    <p
+      class=
+      "
+      w-500
+      "
     >
-      {#each (translatioData?.langArray?.sort() ?? []) as lang}
-
-        {#if lang.toUpperCase() != serverLang?.toUpperCase()}
-          <div
-            class=
-            "
-            lang-select
-            "
-            on:click=
-            {
-              () =>
-              {
-                return selectLanguage(lang)
-              }
-            }
-            on:keydown=
-            {
-              () =>
-              {
-                return selectLanguage(lang)
-              }
-            }
-            on:mouseout=
-            {
-              () =>
-              {
-                return detectIntentBuffer(undefined)
-              }
-            }
-            on:mouseover=
-            {
-              () =>
-              {
-                return detectIntentBuffer(lang)
-              }
-            }
-            on:focus=
-            {
-              () =>
-              {
-                return detectIntentBuffer(lang)
-              }
-            }
-          >
-            <p
-              class=
-              "
-              color-white
-              s-14
-              uppercase
-              "
-            >
-              {lang}
-            </p>
-          </div>
-        {/if}
-
-      {/each}
-    </div>
-
-  {/if}
-
-</div>
+      {authData?.err_msg?.[0]}
+    </p>
+  </div>
+{/if}
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -377,62 +199,28 @@
   ╰──────────────────────────────────────────────────────────────────────────────╯
   */
 
-	div#lang-container
+  div#auth-alert-box
   {
     /* 📌 position */
-		position: relative;
+		position: fixed;
+		bottom: 20px;
+		width: fit-content;
+		z-index: 4000;
+		left: 0;
+		right: 0;
+		margin: auto;
+    /* 🎨 style */
+		background: rgba(0, 0, 0, 0.8);
+		backdrop-filter: blur(4px);
+		-webkit-backdrop-filter: blur(4px);
+		padding: 14px 18px;
+		border-radius: 6px;
 
-    div.selected-language-btn
+    p
     {
-      /* 🎨 style */
       color: #ffffff;
-      outline: none;
-      border: none;
-      padding: 5px 12px;
-      background-color: transparent;
-
-      &:hover,
-      &.active-lang-select
-      {
-        /* 🎨 style */
-        background-color: rgba(255, 255, 255, 0.1);
-        border-radius: 4px;
-      }
+      margin-left: 10px;
     }
-
-    div#dropdown-menu
-    {
-      /* 📌 position */
-      position: absolute;
-      z-index: 5000;
-      top: 100%;
-      left: -20%;
-      /* 🎨 style */
-      width: 88px;
-      margin-top: 5px;
-      border-radius: 4px;
-      background: var(--dark-theme);
-      box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
-      overflow: hidden;
-
-      .lang-select
-      {
-        /* 🎨 style */
-        padding: 10px 0;
-        text-align: center;
-        background: var(--dark-theme-1);
-        cursor: pointer;
-        box-shadow: inset 0px -1px 0px #3c3c3c;
-
-        &:hover
-        {
-          /* 🎨 style */
-          background: var(--dark-theme);
-          box-shadow: inset 0px -1px 0px #3c3c3c;
-        }
-      }
-    }
-
-  }
+	}
 
 </style>
