@@ -14,8 +14,8 @@
 
 import { ServerLoadEvent } from '@sveltejs/kit';
 
-import { promiseUrlsPreload } from '$lib/utils/navigation.js';
 import { dlogv2 } from '$lib/utils/debug.js';
+import { preloadExitLogic, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/navigation.js';
 
 import type { B_SAP_D2 } from '@betarena/scores-lib/types/seo-pages.js';
 import type { IArticleData, IArticleTranslation } from '@betarena/scores-lib/types/types.authors.articles.js';
@@ -66,15 +66,31 @@ export async function main
     } = event.params,
     /**
      * @description
+     *  📣 Validate **this** `url`.
+     */
+    isUrlValid
+      = await promiseValidUrlCheck
+      (
+        event.fetch,
+        {
+          authorArticleUrl: permalink
+        }
+      ),
+    /**
+     * @description
      *  📣 `Data` object for target `route`.
      */
     response: any = {}
   ;
 
-  // ╭─────
-  // │ TODO:
-  // │ > url validation check
-  // ╰─────
+  if (!isUrlValid)
+    preloadExitLogic
+    (
+      0,
+      '(authors)',
+      500
+    );
+  ;
 
   [
     response.dataArticle,
