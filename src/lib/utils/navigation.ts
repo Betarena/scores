@@ -412,6 +412,10 @@ export async function promiseValidUrlCheck
     // │ CHECK :|: for 'competition'.
     // ╰─────
     || (opts.langUrl && !opts.sportUrl && !opts.countryUrl && !opts.leagueUrl && !opts.fixtureUrl && !opts.playerUrl && opts.competitionMainUrl && opts.competitionUrl)
+    // ╭─────
+    // │ CHECK :|: for 'author (article)'.
+    // ╰─────
+    || (!opts.langUrl && !opts.sportUrl && !opts.countryUrl && !opts.leagueUrl && !opts.fixtureUrl && !opts.playerUrl && !opts.competitionMainUrl && !opts.competitionUrl && opts.authorArticleUrl)
   ;
 
   // ╭─────
@@ -428,7 +432,7 @@ export async function promiseValidUrlCheck
   if (opts.playerUrl) queryStr += `&playerUrl=${opts.playerUrl}`;
   if (opts.competitionMainUrl) queryStr += `&competitionMainUrl=${opts.competitionMainUrl}`;
   if (opts.competitionUrl) queryStr += `&competitionUrl=${opts.competitionUrl}`;
-  if (opts.authorArticleUrl) queryStr += `&authorArticleUrl=${opts.authorArticleUrl}`;
+  if (opts.authorArticleUrl) queryStr += `?authorArticleUrl=/${opts.authorArticleUrl}`;
 
   // [🐞]
   dlogv2
@@ -438,20 +442,24 @@ export async function promiseValidUrlCheck
       `🔹 [var] ➤ if_M_0 :|: ${if_M_0}`,
       `🔹 [var] ➤ queryStr :|: ${queryStr}`,
     ],
-    false
+    true
   );
 
   if (!if_M_0) return false;
 
-  const response: any = await get
-  (
-    `/api/data/main/seo-pages${queryStr}`,
-    fetch,
-    true,
-    false
-  );
-
-  // console.log('🎟️', response)
+  const
+    /**
+     * @description
+     */
+    response: any
+      = await get
+      (
+        `/api/data/main/seo-pages${queryStr}`,
+        fetch,
+        true,
+        false
+      )
+  ;
 
   return response;
 }
