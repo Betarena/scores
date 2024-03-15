@@ -14,7 +14,7 @@
 
 import { ServerLoadEvent } from '@sveltejs/kit';
 
-import { dlogv2 } from '$lib/utils/debug.js';
+import { ERROR_CODE_INVALID, dlogv2 } from '$lib/utils/debug.js';
 import { preloadExitLogic, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/navigation.js';
 
 import type { B_SAP_D2 } from '@betarena/scores-lib/types/seo-pages.js';
@@ -88,7 +88,7 @@ export async function main
     (
       0,
       '(authors)',
-      500
+      ERROR_CODE_INVALID
     );
   ;
 
