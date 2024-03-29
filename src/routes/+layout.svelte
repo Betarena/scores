@@ -525,6 +525,7 @@
 <WidgetAdEngine
   authorId={$page.data.dataArticle?.author_id}
   authorArticleTagIds={$page.data.dataArticle?.tags}
+  isDarkTheme={theme == 'Dark'}
 />
 
 <SplashScreen />
