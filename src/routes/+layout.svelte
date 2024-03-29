@@ -60,8 +60,13 @@
 	import AuthMain from '$lib/components/_main_/auth/Auth-Main.svelte';
 	import ToastAuth from '$lib/components/misc/toast/Toast-Auth/Toast-Auth.svelte';
 	import { mainDeepLinkCheck } from '$lib/utils/deeplink.js';
+	import { setUserGeoLocation } from '$lib/utils/geo.js';
+
 	import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
-  import { setUserGeoLocation } from '$lib/utils/geo.js';
+
+  // import '@betarena/ad-engine';
+  // import WidgetAdEngine from '@betarena/ad-engine/src/lib/Widget-AdEngine.svelte';
+  import WidgetAdEngine from '@betarena/ad-engine';
 
   // ╭─────
   // │ WARNING:
@@ -514,6 +519,13 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
+
+<!-- {$page.data.dataArticle} -->
+
+<WidgetAdEngine
+  authorId={$page.data.dataArticle?.author_id}
+  authorArticleTagIds={$page.data.dataArticle?.tags}
+/>
 
 <SplashScreen />
 
