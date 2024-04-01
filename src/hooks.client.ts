@@ -40,7 +40,7 @@ if (import.meta.env.VITE_SENTRY_ENVIRONMENT != 'local')
     {
       dsn: import.meta.env.VITE_SENTRY_URL,
       tracesSampleRate: 1.0,
-      release: import.meta.env.VITE_SCORES_PKG_VERSION,
+      release: __PKG_VERSION_SCORES__,
       environment: import.meta.env.VITE_SENTRY_ENVIRONMENT,
 
       // This sets the sample rate to be 10%. You may want this to be 100% while
@@ -88,14 +88,16 @@ console.debug
   table
   (
     [
-      ['📣 Release Version', import.meta.env.VITE_SCORES_PKG_VERSION],
-      ['📣 @betarena/scores-lib', import.meta.env.VITE_SCORES_LIB_PKG_VERSION],
-      ['📣 Vite Mode', import.meta.env.MODE],
-      ['📣 Target .env', import.meta.env.VITE_ENV_TARGET],
-      ['📣 Sentry Env', import.meta.env.VITE_SENTRY_ENVIRONMENT],
+      ['💮 [project] |:| scores', __PKG_VERSION_SCORES__],
+      ['💮 [dependency] |:| @betarena/scores-lib', __PKG_VERSION_SCORES_LIB__],
+      ['💮 [dependency] |:| @betarena/ad-engine', __PKG_VERSION_AD_ENGINE__],
+      ['❓ [condition] |:| logging', import.meta.env?.VITE_PROD_LOGS],
+      ['📌 [vite] |:| mode', import.meta.env.MODE],
+      ['📌 [artifact] |:| .env', import.meta.env?.VITE_ENV_TARGET],
+      ['📌 [sentry] |:| environment', import.meta.env?.VITE_SENTRY_ENVIRONMENT],
     ]
   )
-)
+);
 
 // #endregion ➤ 💠 MISC.
 
