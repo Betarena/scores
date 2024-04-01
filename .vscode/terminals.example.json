@@ -1,0 +1,150 @@
+{
+  // ╭─────
+  // │ NOTE:
+  // │ Execute `Terminals: Run` automatically at startup or when the project is added to the workspace
+  // ╰─────
+  "autorun": true,
+  // ╭─────
+  // │ NOTE:
+  // │ Kill all the terminals created from this configuration when the project is removed from the workspace
+  // ╰─────
+  "autokill": true,
+  // ╭─────
+  // │ NOTE:
+  // │ Global environment variables that will be applied to all terminals
+  // ╰─────
+  "env": { "name": "value" },
+  // ╭─────
+  // │ NOTE:
+  // │ Array of terminals to open
+  // ╰─────
+  "terminals":
+  [
+    // ╭─────
+    // │ NOTE:
+    // │ > An object describing a terminal, most entries are optional
+    // ╰─────
+    {
+      // ╭─────
+      // │ NOTE:
+      // │ > The name of the terminal, it will be displayed in the dropdown
+      // ╰─────
+      "name": "My Terminal",
+      // ╭─────
+      // │ NOTE:
+      // │ > The description of the terminal
+      // ╰─────
+      "description": "A terminal that runs some commands",
+      // ╭─────
+      // │ NOTE:
+      // │ > An icon to show next to the name
+      // ╰─────
+      "icon": "code",
+      // ╭─────
+      // │ NOTE:
+      // │ > A themeable color, ref: https://code.visualstudio.com/api/references/theme-color
+      // ╰─────
+      "color": "terminal.ansiCyan",
+      // ╭─────
+      // │ NOTE:
+      // │ > A path for the current working directory to be used for the terminal
+      // ╰─────
+      // "cwd": "/Users/fabio/Desktop",
+      // ╭─────
+      // │ NOTE:
+      // │ > Single command to run
+      // ╰─────
+      "command": "make dev-local-1-click",
+      // ╭─────
+      // │ NOTE:
+      // │ > Multiple commands to run
+      // ╰─────
+      "commands":
+      [
+        "cd to/my/chest",
+        "touch my_heart"
+      ],
+      // ╭─────
+      // │ NOTE:
+      // │ > Execute the commands in this terminal's instance
+      // ╰─────
+      "target": "My Other Terminal",
+      // ╭─────
+      // │ NOTE:
+      // │ > The name of the other (open) terminal to split from
+      // ╰─────
+      "split": "My Parent Terminal",
+      // ╭─────
+      // │ NOTE:
+      // │ > Keep the process running even when closing the terminal and reuse it, preservig the output. The unique session name will be passed to the terminal multiplexer
+      // ╰─────
+      "persistent": "unique_session_name",
+      // ╭─────
+      // │ NOTE:
+      // │ > Disable variable substitution for this terminal
+      // ╰─────
+      "substitution": false,
+      // ╭─────
+      // │ NOTE:
+      // │ > Always create a new terminal
+      // ╰─────
+      "recycle": false,
+      // ╭─────
+      // │ NOTE:
+      // │ > Open the terminal after executing its commands
+      // ╰─────
+      "open": true,
+      // ╭─────
+      // │ NOTE:
+      // │ > Open the terminal after executing its commands and focus to it
+      // ╰─────
+      "focus": true,
+      // ╭─────
+      // │ NOTE:
+      // │ > Write the last command without executing it
+      // ╰─────
+      "execute": false,
+      // ╭─────
+      // │ NOTE:
+      // │ > Don't use the "name" as the title, let it be dynamic depending on the command being executed
+      // ╰─────
+      "dynamicTitle": true,
+      // ╭─────
+      // │ NOTE:
+      // │ > Don't run this with the `Terminals: Run` command
+      // ╰─────
+      "onlySingle": true,
+      // ╭─────
+      // │ NOTE:
+      // │ > Hide it from the `Terminals: Run Single` command
+      // ╰─────
+      "onlyMultiple": true,
+      // ╭─────
+      // │ NOTE:
+      // │ > Don't run this with the `Terminals: Run` command and hide it from the `Terminals: Run Single` command
+      // ╰─────
+      "onlyAPI": true,
+      // ╭─────
+      // │ NOTE:
+      // │ > Path to a custom shell executable
+      // ╰─────
+      "shellPath": "/bin/bash",
+      // ╭─────
+      // │ NOTE:
+      // │ > Arguments to pass to the shell executable
+      // ╰─────
+      "shellArgs": ["--foo"],
+      // ╭─────
+      // │ NOTE:
+      // │ > Environment variables that will be applied to this terminal
+      // ╰─────
+      "env": { "name": "value" },
+      // ╭─────
+      // │ NOTE:
+      // │ > Don't inherit global environment variables
+      // ╰─────
+      "envInherit": false
+
+    }
+  ]
+}
