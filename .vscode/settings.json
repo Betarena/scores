@@ -1,17 +1,60 @@
 {
-  // DOC: https://stackoverflow.com/questions/64365300/how-can-i-remove-unused-imports-declarations-from-the-entire-project-of-react-ty
-  // DOC: https://stackoverflow.com/questions/46722701/is-there-a-way-to-remove-unused-imports-and-declarations-from-angular-2
-  "editor.codeActionsOnSave": {
+  // ╭─────
+  // │ DOC:
+  // │ VsCode |:| workspace (folder) configuration
+  // ┣─────
+  // | 🔗 read-more |:| https://stackoverflow.com/questions/64365300/how-can-i-remove-unused-imports-declarations-from-the-entire-project-of-react-ty
+  // | 🔗 read-more |:| https://stackoverflow.com/questions/46722701/is-there-a-way-to-remove-unused-imports-and-declarations-from-angular-2
+  // | 🔗 read-more |:| https://stackoverflow.com/a/49777201/8421215
+  // ╰─────
+  "editor.codeActionsOnSave":
+  {
     "source.fixAll": "explicit",
     "source.organizeImports": "explicit",
     "source.sortMembers": "explicit"
   },
-  // -----------
-  // NOTE: [BELOW] SVELTE development specific extensions (Config)
-  // -----------
-  // DOC: https://discord.com/channels/457912077277855764/1036919129782878218
-  // DOC: https://discord.com/channels/457912077277855764/1036369208721813554
-  "svelte.plugin.svelte.compilerWarnings": {
+  "editor.folding": true,
+  "editor.showFoldingControls": "always",
+  "editor.foldingStrategy": "indentation",
+  "editor.foldingImportsByDefault": true,
+  "files.exclude":
+  {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/.classpath": true,
+    "**/.project": true,
+    "**/.settings": true,
+    "**/.factorypath": true,
+    "**/.git/objects/**": true,
+    "**/tmp": true,
+    "**/bower_components": true,
+    "**/.svelte-kit/**": true,
+    "**/._*": true
+  },
+  // ╭─────
+  // │ NOTE:
+  // │ EsLint |:| workspace (folder) configuration
+  // ╰─────
+  "eslint.validate":
+  [
+    "javascript",
+    "javascriptreact",
+    "svelte"
+  ],
+  "eslint.enable": true,
+  // ╭─────
+  // │ NOTE:
+  // │ SvelteJs |:| workspace (folder) configuration
+  // ┣─────
+  // | 🔗 read-more |:| https://discord.com/channels/457912077277855764/1036919129782878218
+  // | 🔗 read-more |:| https://discord.com/channels/457912077277855764/1036369208721813554
+  // ╰─────
+  "svelte.plugin.svelte.compilerWarnings":
+  {
     "a11y-click-events-have-key-events":  "ignore",
     "a11y-aria-attributes": "ignore",
     "a11y-incorrect-aria-attribute-type": "ignore",
@@ -36,35 +79,47 @@
     "a11y-mouse-events-have-key-events": "ignore",
     "a11y-missing-content": "ignore",
   },
-  // DOC: https://stackoverflow.com/a/49777201/8421215
-  "editor.folding": true,
-  "editor.showFoldingControls": "always",
-  "editor.foldingStrategy": "indentation",
-  "editor.foldingImportsByDefault": true,
-  // DOC: https://marketplace.visualstudio.com/items?itemName=maptz.regionfolder
-  "maptz.regionfolder": {
+  // ╭─────
+  // │ NOTE:
+  // │ VsCode [extensions] |:| workspace (folder) configuration
+  // ┣─────
+  // | 🔗 read-more |:| https://marketplace.visualstudio.com/items?itemName=maptz.regionfolder
+  // ╰─────
+  "maptz.regionfolder":
+  {
     "collapseAllRegions": true,
     "collapseDefaultRegionsOnOpen": true
   },
-  // NOTE: speeding up CSS STYLE location and importing
-  "css.styleSheets": [
+  // ╭─────
+  // │ NOTE: |:| [extension] CSS-Peek
+  // ╰─────
+  "css.styleSheets":
+  [
     // "https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css", // example
     "/static/app.css"
   ],
-  // IMPORTANTNOTE: configured in user/settings.json
-  "css.enabledLanguages": [
+  // ╭─────
+  // │ NOTE: |:| [extension] CSS-Peek
+  // │ IMPORTANT |:| configured in user/settings.json
+  // ╰─────
+  "css.enabledLanguages":
+  [
     "html",
     "svelte"
   ],
-  // NOTE: does not work for SVELTE
-  "cssPeek.peekFromLanguages": [
+  // ╭─────
+  // │ IMPORTANT |:| does not work for SVELTE
+  // ╰─────
+  "cssPeek.peekFromLanguages":
+  [
     "html",
     "svelte"
   ],
-  // "[css]": {
-  //   "editor.foldingStrategy": "indentation",
-  // },
-  "material-icon-theme.folders.associations": {
+  // ╭─────
+  // │ NOTE: |:| [extension] Material-Icon
+  // ╰─────
+  "material-icon-theme.folders.associations":
+  {
     "redis": "Database",
     "player": "Layout",
     "fixture": "Layout",
@@ -74,14 +129,4 @@
     "tablet": "Mobile",
     "loaders": "Theme"
   },
-  // "eslint.enable": true,
-  // "eslint.validate": ["javascript", "javascriptreact", "svelte"]
-  "eslint.codeActionsOnSave": false,
-  "eslint.validate": [
-      "javascript",
-        "javascriptreact",
-       "svelte"
-    ],
-    "eslint.enable": true
-
 }
