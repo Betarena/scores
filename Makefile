@@ -199,8 +199,8 @@ dev-local-1-click:
 	# │ > 1-click quick spin up of local development environment         │
 	# ╰──────────────────────────────────────────────────────────────────╯
 
-	. ${NVM_DIR}/nvm.sh
-	nvm use
+	# . ${NVM_DIR}/nvm.sh
+	# nvm use
 
 	echo \
 		"$(COLOUR_B)\
