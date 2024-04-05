@@ -25,7 +25,7 @@
 		"sveltekit|:|debug|:|bull": "cross-env NODE_DEBUG='bull' vite preview --host --port 5000",
 		"sveltekit|:|debug|:|preview": "cross-env NODE_OPTIONS='--inspect' vite preview --host --port 4173",
 		"sveltekit|:|dev": "cross-env NODE_OPTIONS='-r dotenv/config' vite dev --host --port 3050 --force",
-		"sveltekit|:|dev|:|1-click": "rm -r ./.svelte-kit/ && npm run 'pkg|:|link|:|@betarena/scores-lib' && npm ls --link --global && npm run sass-watch & npm run 'sveltekit|:|dev'",
+		"sveltekit|:|dev|:|1-click": "rm -rf ./.svelte-kit/ && npm run 'pkg|:|link|:|@betarena/scores-lib' && npm ls --link --global && npm run sass-watch & npm run 'sveltekit|:|dev'",
 		"sveltekit|:|dev|:|1-click|:|standard": "rm -r ./.svelte-kit/ && npm run sass-watch & npm run 'sveltekit|:|dev'",
 		"sveltekit|:|dev|:|docker": "vite dev --host --port 5055",
 		"sveltekit|:|dev|:|docker-up": "docker-compose -f docker-compose.dev.yml up",
@@ -48,7 +48,6 @@
 		"sass-watch": "sass --watch static/app.scss static/app.css"
 	},
 	"dependencies": {
-		"@betarena/ad-engine": "0.0.47",
 		"@betarena/scores-lib": "1.11.0-alpha.13",
 		"@lukeed/uuid": "2.0.1",
 		"@metamask/sdk": "0.1.0",
