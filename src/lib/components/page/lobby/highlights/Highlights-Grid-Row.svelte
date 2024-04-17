@@ -262,7 +262,7 @@
     // ### for limit reach for list data in slider.
     const if_M_0: boolean =
       (currentSlidePositionNumber + change < 0)
-      || (currentSlidePositionNumber + change + (change * incrementBy) > LIMITS?.get(competitionType))
+      || (currentSlidePositionNumber + change >= Math.ceil(LIMITS?.get(competitionType) / incrementBy))
     ;
     if (if_M_0) return;
 
