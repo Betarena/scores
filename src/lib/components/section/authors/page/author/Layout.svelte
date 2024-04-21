@@ -43,7 +43,7 @@
   import SvelteSeo from 'svelte-seo';
   import AuthorWidget from './content/Author-Widget.svelte';
 
-  import { tryCatch } from '@betarena/scores-lib/dist/util/util.common.js';
+  import { tryCatch } from '@betarena/scores-lib/dist/util/common.js';
 
   import type { IArticleData } from '@betarena/scores-lib/types/types.authors.articles.js';
 

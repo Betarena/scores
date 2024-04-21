@@ -23,7 +23,7 @@ import { app, db_firestore } from '$lib/firebase/init.js';
 import { getCookie } from '$lib/store/cookie.js';
 import sessionStore from '$lib/store/session.js';
 import userBetarenaSettings from '$lib/store/user-settings.js';
-import { tryCatchAsync } from '@betarena/scores-lib/dist/util/util.common.js';
+import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
 import { AU_W_TAG, dlog, dlogv2, errlog } from './debug.js';
 import { initUser } from './user.js';
 
