@@ -2,21 +2,13 @@
 
 import { json } from '@sveltejs/kit';
 
-import { initGrapQLClient } from '$lib/graphql/init';
+import { _Redis } from '@betarena/scores-lib/dist/classes/_redis.js';
+import * as RedisKeys from '@betarena/scores-lib/dist/constant/redis.js';
 import { PSTAT_PP_ENTRY, PSTAT_PP_ENTRY_1, PSTAT_PP_ENTRY_2 } from "@betarena/scores-lib/dist/functions/func.player.statistics.js";
-import * as RedisKeys from '@betarena/scores-lib/dist/redis/config.js';
+
 import type { B_PSTAT_D, B_PSTAT_T, PSTAT_C_Fixture } from '@betarena/scores-lib/types/player-statistics.js';
-import { get_target_hset_cache_data } from '../../../../../lib/redis/std_main';
 
 //#endregion ➤ Package Imports
-
-//#region ➤ [VARIABLES] Imports
-
-const graphQlInstance = initGrapQLClient()
-// [ℹ] debug info
-// const logs = [];
-
-//#endregion ➤ [VARIABLES] Imports
 
 //#region ➤ [METHODS]
 
@@ -53,7 +45,7 @@ export async function GET
     if (!hasura)
     {
       data =
-        await get_target_hset_cache_data
+        await new _Redis().rHGET
         (
           RedisKeys.PSTAT_C_D_A,
           player_id
@@ -132,7 +124,6 @@ async function fallbackMainData
 
   const dataRes0 = await PSTAT_PP_ENTRY
   (
-    graphQlInstance,
     [_player_id]
   )
 
@@ -157,7 +148,6 @@ async function fallbackMainData_1
 {
   const dataRes0 = await PSTAT_PP_ENTRY_2
   (
-    graphQlInstance,
     [lang]
   );
 
@@ -191,7 +181,6 @@ async function fallbackMainData_2
     averageRatingFixtures
   ] = await PSTAT_PP_ENTRY_1
   (
-    graphQlInstance,
     leagueId,
     seasonId,
     playerId

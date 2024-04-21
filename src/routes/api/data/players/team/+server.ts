@@ -2,22 +2,14 @@
 
 import { json } from '@sveltejs/kit';
 
-import { initGrapQLClient } from '$lib/graphql/init';
+import { _Redis } from '@betarena/scores-lib/dist/classes/_redis.js';
+import * as RedisKeys from '@betarena/scores-lib/dist/constant/redis.js';
 import { PTEAM_PP_ENTRY, PTEAM_PP_ENTRY_1 } from "@betarena/scores-lib/dist/functions/func.player.team.js";
-import * as RedisKeys from '@betarena/scores-lib/dist/redis/config.js';
+
 import type { B_PSTAT_T } from '@betarena/scores-lib/types/player-statistics.js';
 import type { B_PTEAM_D } from '@betarena/scores-lib/types/player-team.js';
-import { get_target_hset_cache_data } from '../../../../../lib/redis/std_main';
 
 //#endregion ➤ Package Imports
-
-//#region ➤ [VARIABLES] Imports
-
-const graphQlInstance = initGrapQLClient()
-// [ℹ] debug info
-// const logs = [];
-
-//#endregion ➤ [VARIABLES] Imports
 
 //#region ➤ [METHODS]
 
@@ -50,7 +42,7 @@ export async function GET
     if (!hasura)
     {
       data =
-        await get_target_hset_cache_data
+        await new _Redis().rHGET
         (
           RedisKeys.PTEAM_C_D_A,
           player_id
@@ -100,7 +92,6 @@ async function fallbackMainData
 
   const dataRes0 = await PTEAM_PP_ENTRY
   (
-    graphQlInstance,
     [_player_id]
   )
 
@@ -125,7 +116,6 @@ async function fallbackMainData_1
 {
   const dataRes0 = await PTEAM_PP_ENTRY_1
   (
-    graphQlInstance,
     [lang]
   );
 

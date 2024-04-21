@@ -6,12 +6,12 @@
 // #region ➤ 📦 Package Imports
 
 import { json } from '@sveltejs/kit';
-
-import { HTGOL_HP_ENTRY, HTGOL_HP_ENTRY_1, HTGOL_HP_ENTRY_2 } from '@betarena/scores-lib/dist/functions/func.home.top-goalscorers.js';
-import { TGOL_C_D_A, TGOL_C_D_S, TGOL_C_T_A } from '@betarena/scores-lib/dist/redis/config.js';
 import dotenv from 'dotenv';
 import LZString from 'lz-string';
-import { get_target_hset_cache_data } from '../../../../../lib/redis/std_main';
+
+import { _Redis } from '@betarena/scores-lib/dist/classes/_redis.js';
+import * as RedisKeys from '@betarena/scores-lib/dist/constant/redis.js';
+import { HTGOL_HP_ENTRY, HTGOL_HP_ENTRY_1, HTGOL_HP_ENTRY_2 } from '@betarena/scores-lib/dist/functions/func.home.top-goalscorers.js';
 
 import type { B_TGOL_D, B_TGOL_S, B_TGOL_T } from '@betarena/scores-lib/types/top-goalscorers.js';
 
@@ -59,16 +59,16 @@ export async function GET
       // ### for existance in cache.
       if (!hasura)
       {
-        data = await get_target_hset_cache_data
+        data = await new _Redis().rHGET
         (
-          TGOL_C_D_A,
+          RedisKeys.TGOL_C_D_A,
           geoPos
         );
         if (data == undefined)
         {
-          data = await get_target_hset_cache_data
+          data = await new _Redis().rHGET
           (
-            TGOL_C_D_A,
+            RedisKeys.TGOL_C_D_A,
             'en'
           );
         }
@@ -119,9 +119,9 @@ export async function GET
       // ### for existance in cache.
       if (!hasura)
       {
-        data = await get_target_hset_cache_data
+        data = await new _Redis().rHGET
         (
-          TGOL_C_T_A,
+          RedisKeys.TGOL_C_T_A,
           lang
         );
       }
@@ -172,9 +172,9 @@ export async function GET
       if (!hasura)
       {
         data =
-          await get_target_hset_cache_data
+          await new _Redis().rHGET
           (
-            TGOL_C_D_S,
+            RedisKeys.TGOL_C_D_S,
             lang
           )
         ;
@@ -255,10 +255,7 @@ async function fallbackMainData
   geoPos: string
 ): Promise < B_TGOL_D >
 {
-  const dataRes0: [ Map < string, B_TGOL_D >, string[] ] = await HTGOL_HP_ENTRY
-  (
-    null
-  );
+  const dataRes0: [ Map < string, B_TGOL_D >, string[] ] = await HTGOL_HP_ENTRY();
 
   if (dataRes0?.[0]?.size == 0)
     return null;
@@ -285,7 +282,6 @@ async function fallbackMainData_1
 {
   const dataRes0: [ Map < string, B_TGOL_T >, string[] ] = await HTGOL_HP_ENTRY_1
   (
-    null,
     [lang]
   );
 
@@ -314,7 +310,6 @@ async function fallbackMainData_2
 {
   const dataRes0: [ Map < string, B_TGOL_S >, string[] ] = await HTGOL_HP_ENTRY_2
   (
-    null,
     [lang],
     null
   );

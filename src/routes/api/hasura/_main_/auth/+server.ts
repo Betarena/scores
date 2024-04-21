@@ -1,13 +1,12 @@
 import { json } from '@sveltejs/kit';
 import { performance } from 'perf_hooks';
 
-import { initGrapQLClient } from '$lib/graphql/init';
-
 import type {
-    BETARENA_HASURA_auth_query,
-    REDIS_CACHE_SINGLE_auth_translation
+  BETARENA_HASURA_auth_query,
+  REDIS_CACHE_SINGLE_auth_translation
 } from '$lib/models/_main_/auth/types';
 import type { BETARENA_HASURA_auth_translations } from '$lib/models/hasura';
+import { _GraphQL } from '@betarena/scores-lib/dist/classes/_graphql.js';
 import { B_C_AUTH_M_Q_T } from '@betarena/scores-lib/dist/graphql/query.auth.js';
 
 // [ℹ] debug info
@@ -82,7 +81,7 @@ async function get_auth_translation(
 		langArray: [lang]
 	};
 	const response: BETARENA_HASURA_auth_query =
-		await initGrapQLClient().request(
+		await new _GraphQL().connection.request(
 			B_C_AUTH_M_Q_T,
 			VARIABLES
 		);

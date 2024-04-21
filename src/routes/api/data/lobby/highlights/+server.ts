@@ -9,10 +9,10 @@
 import { json } from '@sveltejs/kit';
 import dotenv from 'dotenv';
 
-import { get_target_hset_cache_data } from '$lib/redis/std_main.js';
 import { checkNull } from '$lib/utils/miscellenous.js';
+import { _Redis } from '@betarena/scores-lib/dist/classes/_redis.js';
+import * as RedisKeys from '@betarena/scores-lib/dist/constant/redis.js';
 import { CHIGH_CP_ENTRY, CHIGH_CP_ENTRY_1, CHIGH_CP_ENTRY_2 } from '@betarena/scores-lib/dist/functions/func.competition.lobby.highlights.js';
-import * as RedisKeys from '@betarena/scores-lib/dist/redis/config.js';
 
 import type { B_COMP_HIGH_D, B_COMP_HIGH_D_EXTRA, B_COMP_HIGH_D_RES, B_COMP_HIGH_S, B_COMP_HIGH_T } from '@betarena/scores-lib/types/types.competition.highlights.js';
 
@@ -70,7 +70,7 @@ export async function GET
       if (!hasura)
       {
         data =
-          await get_target_hset_cache_data
+          await new _Redis().rHGET
           (
             RedisKeys.PLOBBY_C_D_A_2,
             targetStatus
@@ -110,7 +110,7 @@ export async function GET
       if (!hasura)
       {
         data =
-          await get_target_hset_cache_data
+          await new _Redis().rHGET
           (
             RedisKeys.PLOBBY_C_T_A,
             lang
@@ -149,7 +149,7 @@ export async function GET
       if (!hasura)
       {
         data =
-          await get_target_hset_cache_data
+          await new _Redis().rHGET
           (
             RedisKeys.PLOBBY_C_S_A,
             lang

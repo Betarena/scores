@@ -2,18 +2,11 @@
 
 import { json } from '@sveltejs/kit';
 
-import { initGrapQLClient } from '$lib/graphql/init';
 import { FABT_FP_ENTRY, FABT_FP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.fixture.about.js';
 
 import type { B_ABT_D, B_ABT_T } from '@betarena/scores-lib/types/about.js';
 
 //#endregion ➤ Package Imports
-
-//#region ➤ [VARIABLES] Imports
-
-const graphQlInstance = initGrapQLClient()
-
-//#endregion ➤ [VARIABLES] Imports
 
 //#region ➤ [METHODS]
 
@@ -49,7 +42,7 @@ export async function GET
       // if (!hasura)
       // {
       //   data =
-      //     await get_target_hset_cache_data
+      //     await new _Redis().rHGET
       //     (
       //       RedisKeys.LIN_C_D_A,
       //       fixture_id
@@ -135,7 +128,6 @@ async function fallbackMainData
 {
   const dataRes0 = await FABT_FP_ENTRY
   (
-    graphQlInstance,
     [fixtureId],
     [lang]
   )
@@ -167,7 +159,6 @@ async function fallbackMainData_1
 {
   const dataRes0 = await FABT_FP_ENTRY_1
   (
-    graphQlInstance,
     [lang]
   );
 

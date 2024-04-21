@@ -2,18 +2,11 @@
 
 import { json } from '@sveltejs/kit';
 
-import { initGrapQLClient } from '$lib/graphql/init';
 import { FINC_FP_ENTRY, FINC_FP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.fixture.incidents.js';
 
 import type { B_INC_D, B_INC_T } from '@betarena/scores-lib/types/incidents.js';
 
 //#endregion ➤ Package Imports
-
-//#region ➤ [VARIABLES] Imports
-
-const graphQlInstance = initGrapQLClient()
-
-//#endregion ➤ [VARIABLES] Imports
 
 //#region ➤ [METHODS]
 
@@ -131,7 +124,6 @@ async function fallbackMainData
 {
   const dataRes0 = await FINC_FP_ENTRY
   (
-    graphQlInstance,
     [fixtureId]
   )
 
@@ -160,7 +152,6 @@ async function fallbackMainData_1
 {
   const dataRes0 = await FINC_FP_ENTRY_1
   (
-    graphQlInstance,
     [lang]
   );
 

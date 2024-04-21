@@ -6,12 +6,12 @@
 // #region ➤ Package Imports
 
 import { json } from '@sveltejs/kit';
-
-import { LFOOT_L_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.main.footer.js';
-import { FOT_C_T_A1 } from '@betarena/scores-lib/dist/redis/config.js';
 import dotenv from 'dotenv';
 import LZString from 'lz-string';
-import { get_target_hset_cache_data } from '../../../../../lib/redis/std_main';
+
+import { _Redis } from '@betarena/scores-lib/dist/classes/_redis.js';
+import * as RedisKeys from '@betarena/scores-lib/dist/constant/redis.js';
+import { LFOOT_L_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.main.footer.js';
 
 import type { B_FOT_T } from '@betarena/scores-lib/types/types.main.footer.js';
 
@@ -57,9 +57,9 @@ export async function GET
       // ### for existance in cache.
       if (!hasura)
       {
-        data = await get_target_hset_cache_data
+        data = await new _Redis().rHGET
         (
-          FOT_C_T_A1,
+          RedisKeys.FOT_C_T_A1,
           lang
         );
       }

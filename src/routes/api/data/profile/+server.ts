@@ -3,7 +3,7 @@
 import { json } from '@sveltejs/kit';
 import dotenv from 'dotenv';
 
-import { wrapQuery } from '@betarena/scores-lib/dist/functions/func.common.js';
+import { _GraphQL } from '@betarena/scores-lib/dist/classes/_graphql.js';
 import { UPROF_UP_ENTRY_0, UPROF_UP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.profile.js';
 
 import { profileMutation0, type IProfileMutation0Out, type IProfileMutation0Var } from '@betarena/scores-lib/dist/graphql/query.profile.js';
@@ -73,7 +73,7 @@ export async function GET
       // IMPORTANT Check in cache;
       // if (!hasura)
       // {
-      //   data = await get_target_hset_cache_data
+      //   data = await new _Redis().rHGET
       //   (
       //     FEATB_C_T_A,
       //     lang
@@ -143,7 +143,7 @@ export const POST =
         `🔹 [var] body ${JSON.stringify(body)}`,
       );
 
-      const data = await wrapQuery
+      const data = await new _GraphQL().
         <
           IProfileMutation0Var
           , IProfileMutation0Out
