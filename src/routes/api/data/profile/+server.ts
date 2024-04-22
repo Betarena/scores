@@ -143,7 +143,7 @@ export const POST =
         `🔹 [var] body ${JSON.stringify(body)}`,
       );
 
-      const data = await new _GraphQL().
+      const data = await new _GraphQL().wrapQuery
         <
           IProfileMutation0Var
           , IProfileMutation0Out
