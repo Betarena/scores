@@ -29,7 +29,7 @@
     "prefix": [ "debug" ],
     "body":
     [
-      "// ### [🐞]",
+      "// [🐞]",
       "dlog",
       "(",
       "\t`${1|🚏,🔹|} ${2|checkpoint,checkpoint [R],checkpoint [H],[var]|} ➤ ${3:debugTagOrVarName} ${$4}`,",
@@ -37,6 +37,26 @@
       ");",
     ],
     "description": "Betarena Scores | Script (Snippet) Debug"
+  },
+
+  "Betarena Scores | Script (Snippet) Debug (v2)":
+  {
+    "scope": "javascript,typescript",
+    "prefix": [ "debug" ],
+    "body":
+    [
+      "// [🐞]",
+      "dlogv2",
+      "(",
+      "\t'${2:methodName(..)}',",
+      "\t[",
+      "\t\t`🔹 [var] ➤ ${3:variableName} :|: ${JSON.stringify(${4:varibleTarget}}, null, 4)}`,",
+      "\t\t`🔹 [var] ➤ ${5:variableName} :|: ${${6:varibleTarget}}`,",
+      "\t],",
+      "\tfalse",
+      ");"
+    ],
+    "description": "Betarena Scores | Script (Snippet) Debug (v2)"
   },
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -117,8 +137,10 @@
     "body":
     [
       "// ╭─────",
-      "// │ NOTE: WARNING: IMPORTANT CRITICAL",
-      "// │ $0",
+      "// │ NOTE: WARNING: IMPORTANT CRITICAL CHECK",
+      "// │ ➤ $0",
+      "// ┣─────",
+      "// │ 🔗 read-more |:| https://",
       "// ╰─────"
     ],
     "description": "Information Description"

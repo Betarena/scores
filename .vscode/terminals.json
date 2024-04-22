@@ -1,0 +1,37 @@
+// ╭─────
+// │ NOTE:
+// │ ➤ Read the 'terminals.example.json' for detailed example of a configuration file
+// ╰─────
+{
+  "autorun": true,
+  "autokill": true,
+  "terminals":
+  [
+    // ╭─────
+    // │ ➤ Betarena Scores Project
+    // ╰─────
+    {
+      "name": "[frontend]",
+      "description": "Betarena | Scores-Lib Main Terminal",
+      "recycle": true,
+      "commands":
+      [
+        "make dev-local-1-click"
+      ],
+      "icon": "device-desktop",
+      "color": "terminal.ansiCyan"
+    },
+    {
+      "name": "[frontend] [2]",
+      "description": "Betarena | Scores-Lib [2] Terminal",
+      "split": "[frontend]",
+      "recycle": true,
+      "commands":
+      [
+        "nvm use"
+      ],
+      "icon": "device-desktop",
+      "color": "terminal.ansiCyan"
+    }
+  ]
+}
