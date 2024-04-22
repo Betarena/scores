@@ -84,7 +84,7 @@ export async function GET
       {
         data = await new _Redis().rHGET
         (
-          FO_C_T_A,
+          RedisKeys.FO_C_T_A,
           lang
         );
       }

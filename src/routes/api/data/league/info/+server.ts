@@ -107,9 +107,7 @@ async function fallbackMainData
   url: string
 ): Promise < B_LEG_D >
 {
-  const dataRes0 = await LINFO_LP_ENTRY
-  (
-  );
+  const dataRes0 = await LINFO_LP_ENTRY();
 
   // console.log(dataRes0?.[1]);
 
