@@ -57,8 +57,9 @@
 
   import type { B_SAP_D2 } from '@betarena/scores-lib/types/seo-pages.js';
   import type { IArticleData, IArticleTranslation } from '@betarena/scores-lib/types/types.authors.articles.js';
-    import TagsHeader from './Tags-Header.svelte';
-    import TagsCard from './Tags-Card.svelte';
+  import TagsHeader from './Tags-Header.svelte';
+  import ArticleCard from './Articels-Card.svelte';
+    import Button from '$lib/components/ui/Button.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -141,14 +142,20 @@
 <div
   id="{CNAME}"
   class="tags-main"
+  class:tablet={VIEWPORT_TABLET_INIT[1]}
 >
   <TagsHeader tag={widgetData.tags[0]}/>
   <div class="splitter"></div>
   <div class="articles">
     {#each widgetData.dataArticle as article}
-      <TagsCard {article} />
-       <!-- content here -->
+      <ArticleCard {article} tablet={VIEWPORT_TABLET_INIT[1]} />
     {/each}
+  </div>
+  <div class="section-footer">
+    <div class="page-info">
+      5 of 98 articles
+    </div>
+    <Button type="outline">View more</Button>
   </div>
  </div>
 
@@ -165,27 +172,46 @@
 
  <style lang="scss">
 
-    .tags-main {
-      display: flex;
-      flex-direction: column;
-      gap: 40px;
+  .tags-main {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    width: 100%;
+    height: 100%;
+
+    &.tablet {
+      padding: 34px 0;
+    }
+
+    .splitter {
+      height: 1px;
       width: 100%;
-      height: 100%;
+      background: var(--dark-theme-1);
 
-      .splitter {
-        height: 1px;
-        width: 100%;
-        background: var(--dark-theme-1);
+    }
 
-      }
+    .articles {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 24px;
 
-      .articles {
-        display: inline-flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 24px;
+    }
 
+    .section-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .page-info {
+        color: var(--colors-gray4, #CCC);
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 18px;
       }
     }
+  }
+
 
  </style>

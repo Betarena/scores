@@ -32,7 +32,6 @@ export let
   size = 38;
 
 
-
 // #endregion ➤ 📌 VARIABLES
 
 
@@ -49,7 +48,7 @@ export let
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="avatar-circle" style="width: {size}px; height: {size}px; background-image: url('{src}' lightgray 50% / cover no-repeat)">
+<div class="avatar-circle" style="width: {size}px; height: {size}px;  background-image: url({src});">
 
 </div>
 
@@ -68,6 +67,10 @@ export let
     width: 38px;
     height:  38px;
     border-radius: 100%;
+
+    background-image:  url(src);
+    background-repeat: no-repeat;
+    background-size: cover;
   }
 
 

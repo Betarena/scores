@@ -13,6 +13,7 @@
 // #region ➤ 📦 Package Imports
 
     import Button from "$lib/components/ui/Button.svelte";
+    import SelectButton from "$lib/components/ui/SelectButton.svelte";
 
 // ╭────────────────────────────────────────────────────────────────────────╮
 // │ NOTE:                                                                  │
@@ -50,7 +51,13 @@ const
    */ // eslint-disable-next-line no-unused-vars
   CNAME: string = '<author⮕w⮕tags-content⮕header';
 
-
+ const options = [
+   {id: "all", label: "All"},
+  {id: "en", label: "English"},
+  {id: "es", label: "Espanõl"},
+  {id: "pt", label: "Português"},
+  {id: "pt-pt", label: "Português-PT"},
+]
 
 // #endregion ➤ 📌 VARIABLES
 
@@ -81,7 +88,7 @@ const
       </div>
     </div>
     <div class="action-buttons">
-      <button>Language</button>
+      <SelectButton value="all" {options} let:currentValue> Language: {currentValue.label} </SelectButton>
 
       <Button>
         + Follow
