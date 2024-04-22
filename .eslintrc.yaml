@@ -65,7 +65,7 @@ ignorePatterns:
   - src/lib/graphql
   - src/lib/redis
   # - src/lib/store
-  # - src/routes
+  - src/routes/api
   - src/lib/types
   - src/params
   - src/service-worker.ts
