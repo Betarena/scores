@@ -183,7 +183,7 @@
   -->
 
   <TagsMain
-    widgetData={widgetDataMain}
+    widgetData={$page.data}
   />
 
 {:catch error}

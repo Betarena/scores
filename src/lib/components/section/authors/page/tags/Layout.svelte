@@ -93,7 +93,7 @@
 -->
 
 {#if pageSeo}
-	<SvelteSeo
+	<!-- <SvelteSeo
 		title={pageSeo.seo_details?.main_data.title}
 		description={pageSeo.seo_details?.main_data.description}
 		keywords={pageSeo.seo_details?.main_data.keywords}
@@ -102,7 +102,7 @@
 		canonical={pageSeo.seo_details?.main_data.canonical}
 		twitter={pageSeo.seo_details?.twitter_card}
 		openGraph={pageSeo.seo_details?.opengraph}
-	/>
+	/> -->
 {/if}
 
 <section

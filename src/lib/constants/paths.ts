@@ -16,6 +16,11 @@ export const
   routeIdPageAuthors = '/(authors)/a/[...permalink]',
   /**
    * @description
+   *  📣 Target `path` for **authors page**.
+   */
+  routeIdPageTags = '/(authors)/a/tag/[name]',
+  /**
+   * @description
    *  📣 Target `path` for **league page**.
    */
   routeIdPageLeague = '/(scores)/[[lang=lang]]/[sport]/[country]/[league_name]',
