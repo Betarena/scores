@@ -81,7 +81,7 @@
   ;
 
   $: widgetDataMain = $page.data.dataArticle as IArticleData | null | undefined;
-
+  $: console.log(widgetDataMain)
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS

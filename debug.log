@@ -42505,3 +42505,5 @@ Auth | 🟧 checkDiscordDeepLink(..)
 🔹 [var] ➤ data :|: {"br":"competicoes","pt":"competicoes","es":"competiciones","it":"competizioni","ro":"competiții","se":"tavlingar","fr":"competitions","en":"competitions"}
 🔹 [var] ➤ cName :|: betarenaCookieLoggedIn
 🔹 [var] ➤ newUrl :|: /competitions
+🚏 checkpoint [H] ➤ src/hooks.client.ts
+🚏 checkpoint [H] ➤ src/hooks.client.ts
