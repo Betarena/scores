@@ -1,11 +1,11 @@
 // #region ➤ 📦 Package Imports
 
 import { json } from '@sveltejs/kit';
+import dotenv from 'dotenv';
 
 import { checkNull } from '$lib/utils/miscellenous.js';
 import { CHIGH_CP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.competition.lobby.highlights.js';
 import { CMAIN_CP_ENTRY, CMAIN_CP_ENTRY_2, CMAIN_CP_ENTRY_3 } from '@betarena/scores-lib/dist/functions/func.competition.target.main.js';
-import dotenv from 'dotenv';
 
 import type { B_H2H_T } from '@betarena/scores-lib/types/head-2-head.js';
 import type { B_COMP_MAIN_D, B_COMP_MAIN_S } from '@betarena/scores-lib/types/types.competition.main.js';

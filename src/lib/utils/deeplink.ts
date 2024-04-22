@@ -14,7 +14,7 @@
 
 import { browser } from '$app/environment';
 import { goto } from '$app/navigation';
-import { tryCatchAsync } from '@betarena/scores-lib/dist/util/util.common.js';
+import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
 import { isSignInWithEmailLink, signInWithCustomToken, signInWithEmailLink } from 'firebase/auth';
 
 import { auth } from '$lib/firebase/init.js';

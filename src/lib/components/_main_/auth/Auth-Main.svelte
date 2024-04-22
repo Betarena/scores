@@ -51,7 +51,7 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
-	import { tryCatchAsync } from '@betarena/scores-lib/dist/util/util.common.js';
+	import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
 	import { getMoralisAuth } from '@moralisweb3/client-firebase-auth-utils';
 	import { signInWithMoralis } from '@moralisweb3/client-firebase-evm-auth';
 	import

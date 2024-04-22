@@ -2,20 +2,15 @@
 
 import { json } from '@sveltejs/kit';
 
-import { initGrapQLClient } from '$lib/graphql/init';
+import { _GraphQL } from '@betarena/scores-lib/dist/classes/_graphql.js';
 import { FVOT_FP_ENTRY, FVOT_FP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.fixture.votes.js';
-
 import { B_C_VOT_F_M_D1 } from '@betarena/scores-lib/dist/graphql/query.votes.js';
+
 import type { B_H2H_T } from '@betarena/scores-lib/types/head-2-head.js';
 import type { B_H_VOT_M, B_VOT_D } from '@betarena/scores-lib/types/votes.js';
 
 //#endregion ➤ Package Imports
 
-//#region ➤ [VARIABLES] Imports
-
-const graphQlInstance = initGrapQLClient()
-
-//#endregion ➤ [VARIABLES] Imports
 
 //#region ➤ [METHODS]
 
@@ -152,7 +147,6 @@ async function fallbackMainData
 {
   const dataRes0 = await FVOT_FP_ENTRY
   (
-    graphQlInstance,
     [fixtureId]
   )
 
@@ -181,7 +175,6 @@ async function fallbackMainData_1
 {
   const dataRes0 = await FVOT_FP_ENTRY_1
   (
-    graphQlInstance,
     [lang]
   );
 
@@ -207,7 +200,7 @@ async function helperMainAction
     _X_vote: voteType == 'X' ? 1 : 0
   }
 
-  const data: B_H_VOT_M = await graphQlInstance.request
+  const data: B_H_VOT_M = await new _GraphQL().connection.request
   (
     B_C_VOT_F_M_D1,
     VARIABLES

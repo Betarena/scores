@@ -39,14 +39,14 @@
   import userBetarenaSettings from '$lib/store/user-settings.js';
   import { dlog } from '$lib/utils/debug.js';
   import { toDecimalFix } from '$lib/utils/string.js';
-  import { tryCatchAsync } from '@betarena/scores-lib/dist/util/util.common.js';
+  import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
   import { Chart, registerables, type ChartItem } from 'chart.js';
 
   import icon_bta_token from '../assets/price-tier/icon-bta-token.svg';
 
   import TranslationText from '$lib/components/misc/Translation-Text.svelte';
   import { MONTH_NAMES_ABBRV } from '$lib/utils/dates.js';
-  import { passByValue } from '@betarena/scores-lib/dist/functions/func.common.js';
+  import { passByValue } from '@betarena/scores-lib/dist/util/common.js';
   import type { PublicInvestorMain, PublicTransactionHistoryMain } from '@betarena/scores-lib/types/_AUTO-HASURA-2_.js';
   import type { B_SAP_D2 } from '@betarena/scores-lib/types/seo-pages.js';
   import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';

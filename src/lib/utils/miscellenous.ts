@@ -74,39 +74,6 @@ export async function copyToClipboard
  * @author
  *  @migbash
  * @summary
- *  🟦 HELPER
- * @description
- *  📣 Generates an `object` from target `Map(..)`.
- * @param { Record < any, any > | null } [record=null]
- *  💠 **[required]** Record data
- * @returns
- *  📤 `object`
- */
-export function recordToKeyValueArray
-(
-  record: Record < any, any > | null = null
-): any[][]
-{
-  if (!record) return [];
-
-  const
-    jsonObj = Object.keys(record)
-      .map
-      (
-        (
-          key
-        ) =>
-        {return [key, JSON.parse(record[key])]}
-      )
-  ;
-
-  return jsonObj;
-}
-
-/**
- * @author
- *  @migbash
- * @summary
  *  - 🟦 HELPER
  *  - TEST
  *  - LAB

@@ -4,7 +4,7 @@ import LZString from 'lz-string';
 
 import { dlogv2 } from '$lib/utils/debug.js';
 import { tryCatch } from '$lib/utils/miscellenous.js';
-import { tryCatchAsync, tryCatchAsyncV2 } from '@betarena/scores-lib/dist/util/util.common.js';
+import { tryCatchAsync, tryCatchAsyncV2 } from '@betarena/scores-lib/dist/util/common';
 
 // #endregion ➤ 📦 Package Imports
 

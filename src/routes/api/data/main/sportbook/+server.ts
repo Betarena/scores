@@ -7,12 +7,12 @@
 
 import { json } from '@sveltejs/kit';
 
+import * as RedisKeys from '@betarena/scores-lib/dist/constant/redis.js';
 import { LSPT_L_ENTRY } from '@betarena/scores-lib/dist/functions/func.main.sportbook.js';
-import { SPD_C_D_A, SPD_C_D_A1 } from '@betarena/scores-lib/dist/redis/config.js';
 import dotenv from 'dotenv';
 import LZString from 'lz-string';
-import { get_target_hset_cache_data } from '../../../../../lib/redis/std_main';
 
+import { _Redis } from '@betarena/scores-lib/dist/classes/_redis.js';
 import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 
 // #endregion ➤ 📦 Package Imports
@@ -59,16 +59,16 @@ export async function GET
       // ### for existance in cache.
       if (!hasura)
       {
-        data = await get_target_hset_cache_data
+        data = await new _Redis().rHGET
         (
-          SPD_C_D_A1,
+          RedisKeys.SPD_C_D_A1,
           geoPos
         );
         if (data == undefined)
         {
-          data = await get_target_hset_cache_data
+          data = await new _Redis().rHGET
           (
-            SPD_C_D_A1,
+            RedisKeys.SPD_C_D_A1,
             'en'
           );
         }
@@ -119,16 +119,16 @@ export async function GET
       // ### for existance in cache.
       if (!hasura)
       {
-        data = await get_target_hset_cache_data
+        data = await new _Redis().rHGET
         (
-          SPD_C_D_A,
+          RedisKeys.SPD_C_D_A,
           geoPos
         );
         if (data == undefined)
         {
-          data = await get_target_hset_cache_data
+          data = await new _Redis().rHGET
           (
-            SPD_C_D_A,
+            RedisKeys.SPD_C_D_A,
             'en'
           );
         }
@@ -209,10 +209,7 @@ async function fallbackMainData
   geoPos: string
 ): Promise < B_SPT_D[] >
 {
-  const dataRes0: [ Map < string, B_SPT_D >, Map < string, B_SPT_D[] >, string[] ] = await LSPT_L_ENTRY
-  (
-    null
-  );
+  const dataRes0 = await LSPT_L_ENTRY();
 
   if (dataRes0?.[1]?.size == 0)
     return null;
@@ -237,10 +234,7 @@ async function fallbackMainData_1
   geoPos: string
 ): Promise < B_SPT_D >
 {
-  const dataRes0: [ Map < string, B_SPT_D >, Map < string, B_SPT_D[] >, string[] ] = await LSPT_L_ENTRY
-  (
-    null
-  );
+  const dataRes0 = await LSPT_L_ENTRY();
 
   if (dataRes0?.[0].size == 0)
     return null;

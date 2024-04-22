@@ -66,7 +66,7 @@
 
   // import '@betarena/ad-engine';
   // import WidgetAdEngine from '@betarena/ad-engine/src/lib/Widget-AdEngine.svelte';
-  import WidgetAdEngine from '@betarena/ad-engine';
+  // import WidgetAdEngine from '@betarena/ad-engine';
 
   // ╭─────
   // │ WARNING:
@@ -522,11 +522,11 @@
 
 <!-- {$page.data.dataArticle} -->
 
-<WidgetAdEngine
+<!-- <WidgetAdEngine
   authorId={$page.data.dataArticle?.author_id}
   authorArticleTagIds={$page.data.dataArticle?.tags}
   isDarkTheme={theme == 'Dark'}
-/>
+/> -->
 
 <SplashScreen />
 

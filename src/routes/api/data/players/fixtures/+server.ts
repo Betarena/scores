@@ -1,25 +1,16 @@
 //#region ➤ Package Imports
 
-import { initGrapQLClient } from '$lib/graphql/init';
 import { json } from '@sveltejs/kit';
 
+import { _Redis } from '@betarena/scores-lib/dist/classes/_redis.js';
+import * as RedisKeys from '@betarena/scores-lib/dist/constant/redis.js';
 import { PFIX_PP_ENTRY, PFIX_PP_ENTRY_1 } from "@betarena/scores-lib/dist/functions/func.player.fixtures.js";
 import { PFIX_PP_getTargetFixture } from '@betarena/scores-lib/dist/graphql/query.player-fixtures.js';
-import { PFIX_C_D_A } from '@betarena/scores-lib/dist/redis/config.js';
-import { get_target_hset_cache_data } from '../../../../../lib/redis/std_main';
 
 import type { B_H_HF } from '@betarena/scores-lib/types/_HASURA_.js';
 import type { B_PFIX_D, B_PFIX_T } from '@betarena/scores-lib/types/player-fixtures';
 
 //#endregion ➤ Package Imports
-
-//#region ➤ [VARIABLES] Imports
-
-const graphQlInstance = initGrapQLClient()
-// [ℹ] debug info
-// const logs = [];
-
-//#endregion ➤ [VARIABLES] Imports
 
 //#region ➤ [METHODS]
 
@@ -56,9 +47,9 @@ export async function GET
     if (!hasura)
     {
       data =
-        await get_target_hset_cache_data
+        await new _Redis().rHGET
         (
-          PFIX_C_D_A,
+          RedisKeys.PFIX_C_D_A,
           player_id
         )
       ;
@@ -131,7 +122,6 @@ async function fallbackMainData
 
   const dataRes0 = await PFIX_PP_ENTRY
   (
-    graphQlInstance,
     _offset,
     [_player_id]
   );
@@ -157,7 +147,6 @@ async function fallbackMainData_1
 {
   const dataRes0 = await PFIX_PP_ENTRY_1
   (
-    graphQlInstance,
     [lang]
   );
 
@@ -176,7 +165,6 @@ async function helperMainAction
 {
   const dataRes0 = await PFIX_PP_getTargetFixture
   (
-    graphQlInstance,
     fixtureId
   );
 

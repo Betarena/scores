@@ -6,12 +6,12 @@
 // #region ➤ 📦 Package Imports
 
 import { json } from '@sveltejs/kit';
-
-import { HLV2_HP_ENTRY, HLV2_HP_ENTRY_2, HLV2_HP_ENTRY_3 } from '@betarena/scores-lib/dist/functions/func.home.livescores-v2.js';
-import * as RedisKeys from '@betarena/scores-lib/dist/redis/config.js';
 import dotenv from 'dotenv';
 import LZString from 'lz-string';
-import { get_target_hset_cache_data, get_target_string_cache_data } from '../../../../../lib/redis/std_main';
+
+import { _Redis } from '@betarena/scores-lib/dist/classes/_redis.js';
+import * as RedisKeys from '@betarena/scores-lib/dist/constant/redis.js';
+import { HLV2_HP_ENTRY, HLV2_HP_ENTRY_2, HLV2_HP_ENTRY_3 } from '@betarena/scores-lib/dist/functions/func.home.livescores-v2.js';
 
 import type { B_LS2_D, B_LS2_T, LS2_C_Fixture } from '@betarena/scores-lib/types/livescores-v2.js';
 
@@ -61,7 +61,7 @@ export async function GET
     // ### for existance in cache.
     if (!hasura)
     {
-      data = await get_target_string_cache_data
+      data = await new _Redis().rGET
       (
         RedisKeys.LS2_C_D_A
       );
@@ -151,7 +151,7 @@ export async function GET
     // ### for existance in cache.
     if (!hasura)
     {
-      data = await get_target_hset_cache_data
+      data = await new _Redis().rHGET
       (
         RedisKeys.LS2_C_T_A,
         lang
@@ -206,7 +206,7 @@ export async function GET
     // ### for existance in cache.
     if (!hasura)
     {
-      data = await get_target_hset_cache_data
+      data = await new _Redis().rHGET
       (
         RedisKeys.LS2_C_S_A,
         lang
@@ -276,7 +276,6 @@ async function fallbackMainData
 
   const dataRes = await HLV2_HP_ENTRY
   (
-    null,
     targetDateIso
   );
 
@@ -306,7 +305,6 @@ async function fallbackMainData_1
 
   const dataRes0 = await HLV2_HP_ENTRY_2
   (
-    null,
     [lang]
   );
 
@@ -349,7 +347,6 @@ async function fallbackMainData_2
 
   const dataRes0 = await HLV2_HP_ENTRY_3
   (
-    null,
     fixtureIdsList
   );
 

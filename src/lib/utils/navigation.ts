@@ -21,7 +21,7 @@ import { get } from '$lib/api/utils.js';
 import { routeIdPageAuthors, routeIdPageCompetition, routeIdPageCompetitionLobby, routeIdPageFixture, routeIdPageLeague, routeIdPagePlayer, routeIdPageProfile } from '$lib/constants/paths.js';
 import sessionStore from '$lib/store/session.js';
 import userBetarenaSettings from '$lib/store/user-settings.js';
-import { tryCatchAsync } from '@betarena/scores-lib/dist/util/util.common.js';
+import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common';
 import { PAGE_INVALID_MSG, dlogv2 } from './debug';
 import { dlog } from './debug.js';
 import { checkNull, tryCatch } from './miscellenous.js';
