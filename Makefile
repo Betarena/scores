@@ -210,7 +210,9 @@ dev-local-1-click:
 		$(END_COLOUR)\n";
 	#
 
-	npm run "sveltekit|:|dev|:|1-click"
+	DOTENV_KEY=$(shell npx --yes dotenv-vault@1.25.0 keys development)\
+		npm run "sveltekit|:|dev|:|1-click"
+	#
 #
 
 # ╭──────────────────────────────────────────────────────────────────────────────────╮
