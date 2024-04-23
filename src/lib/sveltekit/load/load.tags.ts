@@ -12,14 +12,14 @@
 
 // #region ➤ 📦 Package Imports
 
-import { ServerLoadEvent } from '@sveltejs/kit';
+import type { ServerLoadEvent } from '@sveltejs/kit';
 
-import { ERROR_CODE_INVALID, dlogv2 } from '$lib/utils/debug.js';
-import { preloadExitLogic, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/navigation.js';
+import { dlogv2 } from '$lib/utils/debug.js';
+import { promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/navigation.js';
 
-import type { B_SAP_D2 } from '@betarena/scores-lib/types/seo-pages.js';
-import type { IArticleData, IArticleTranslation } from '@betarena/scores-lib/types/types.authors.articles.js';
-import { data } from './tagsdata.js';
+import type {  IArticleTranslation } from '@betarena/scores-lib/types/types.authors.articles.js';
+import type { B_SAP_D2 } from '@betarena/scores-lib/types/v8/preload.scores.js';
+import type {  IPageAuthorDataFinal, IPageAuthorTagData } from '@betarena/scores-lib/types/v8/preload.authors.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -33,7 +33,7 @@ import { data } from './tagsdata.js';
  */
 type PreloadPromise0 =
 [
-  IArticleData | undefined,
+  IPageAuthorDataFinal | undefined,
   IArticleTranslation | undefined,
   B_SAP_D2 | undefined
 ];
@@ -76,12 +76,7 @@ export async function main
         {
           authorArticleUrl: name
         }
-      ),
-    /**
-     * @description
-     *  📣 `Data` object for target `route`.
-     */
-    response: any = {}
+      )
   ;
 
   // if (!isUrlValid)
@@ -93,18 +88,28 @@ export async function main
   //   );
   // ;
 
-  [
-    response.dataArticle,
-    response.tags,
-    response.translationArticle,
-    response.monthTranslations,
+  const [
+    data
   ] = await fetchData
   (
     event.fetch,
     name,
     parentData.langParam
-  );
+    );
 
+  /**
+     * @description
+     *  📣 `Data` object for target `route`.
+     */
+  const response = {
+    ...data,
+    currentTag: undefined
+  };
+  if (response.mapTag)
+  {
+   const current = response.mapTag.find(([_id, tag]) => (tag as IPageAuthorTagData).permalink === name);
+    response.currentTag = (current ? current[1] : current) as any
+  }
 
   // [🐞]
   dlogv2
@@ -138,7 +143,7 @@ export async function main
 async function fetchData
 (
   fetch: any,
-  _name: string,
+  _name: string | undefined,
   _lang: string
 )
 {
@@ -149,22 +154,21 @@ async function fetchData
      */
     urls0
       = [
-        // `/api/data/author/tags?name=${_name}`,
+        `/api/data/author/tags?permalinkTag=${_name}`,
         // `/api/data/author?lang=${_lang}`,
         // `/api/data/main/seo-pages?months=true&lang=${_lang}&decompress`,
       ],
+
     /**
      * @description
      *  📣 Target `data` returned.
      */
-  //   data0
-  //     = await promiseUrlsPreload
-  //     (
-  //       urls0
-  //       , fetch
-  //     ) as PreloadPromise0
-  // ;
-
-  data0 = [data.authors_articles, data.authors_tags]
+    data0
+      = await promiseUrlsPreload
+      (
+        urls0
+        , fetch
+      ) as PreloadPromise0
+    ;
   return data0;
 }

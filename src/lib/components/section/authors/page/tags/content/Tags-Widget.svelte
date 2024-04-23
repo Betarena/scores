@@ -40,7 +40,6 @@
 
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
-	import { onMount } from 'svelte';
 
   import { sleep } from '$lib/utils/miscellenous.js';
 
@@ -48,7 +47,6 @@
   import TagsLoader from './Tags-Loader.svelte';
   import TagsMain from './Tags-Main.svelte';
 
-  import type { IArticleData } from '@betarena/scores-lib/types/types.authors.articles.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -66,21 +64,7 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  const
-    /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
-    // eslint-disable-next-line no-unused-vars
-    CNAME: string = 'profile⮕w⮕investfaq⮕main',
-    /** @description 📣 threshold start + state for 📱 MOBILE */
-    // eslint-disable-next-line no-unused-vars
-    VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ],
-    /** @description 📣 threshold start + state for 💻 TABLET */
-    // eslint-disable-next-line no-unused-vars
-    VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ],
-    /** @description 📣 (widget) dynamic import variable condition */
-    useDynamicImport: boolean = true
-  ;
-
-  $: widgetDataMain = $page.data.dataArticle as IArticleData | null | undefined;
+  $: widgetDataMain = $page.data;
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -149,14 +133,14 @@
   -->
   <TagsLoader />
 
-{:then}
+{:then data}
   <!--
   ╭────────────────────────────────────────────────────────────────────────╮
   │ NOTE :|: promise is fulfilled                                          │
   ╰────────────────────────────────────────────────────────────────────────╯
   -->
   <TagsMain
-    widgetData={$page.data}
+    widgetData={widgetDataMain}
   />
 
 {:catch error}

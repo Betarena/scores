@@ -14,6 +14,8 @@
 
     import Button from "$lib/components/ui/Button.svelte";
     import SelectButton from "$lib/components/ui/SelectButton.svelte";
+    import type { AuthorsTagsMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+    import type { IPageAuthorTagData } from "@betarena/scores-lib/types/v8/preload.authors.js";
 
 // ╭────────────────────────────────────────────────────────────────────────╮
 // │ NOTE:                                                                  │
@@ -42,9 +44,8 @@
 // │ 4. $: [..]                                                             │
 // ╰────────────────────────────────────────────────────────────────────────╯
 
-export let tag: {name: string, folowers: number, description: string, count: number};
+export let tag: IPageAuthorTagData;
 export let mobile = false;
-
 const
   /**
    * @description
@@ -83,9 +84,9 @@ const
     <div class="tag-info-wrapper">
       <h1>{tag.name}</h1>
       <div class="tag-info">
-        <span>{tag.folowers || 0} followers</span>
+        <span>{tag.followers || 0} followers</span>
         <div class="tag-info-splitter"></div>
-        <span>{tag.count || 0} articles</span>
+        <span>{tag.articleIds?.length || 0} articles</span>
       </div>
     </div>
     <div class="action-buttons">
@@ -102,8 +103,7 @@ const
        {#if tag.description}
       <span>{tag.description}</span>
       {/if}
-      <span>ssafsadafasdf</span>
-    </div>
+  </div>
 
 </div>
 

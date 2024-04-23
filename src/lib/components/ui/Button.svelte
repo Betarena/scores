@@ -8,6 +8,8 @@
 -->
 
 <script lang="ts">
+    import { createEventDispatcher } from "svelte";
+
 
 // #region ➤ 📌 VARIABLES
 
@@ -32,7 +34,7 @@ export let
    */ // eslint-disable-next-line no-unused-vars
   type: "primary" | "outline" = "primary"
 
-
+  const dispatch = createEventDispatcher();
 
 // #endregion ➤ 📌 VARIABLES
 
@@ -48,7 +50,7 @@ export let
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<button class="button {type}">
+<button class="button {type}" on:click={() => dispatch("click")}>
   <slot/>
 </button>
 

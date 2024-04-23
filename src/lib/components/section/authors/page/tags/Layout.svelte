@@ -76,7 +76,6 @@
   ;
 
   $: pageSeo = $page.data.dataArticle as IArticleData;
-
   // #endregion ➤ 📌 VARIABLES
 
 </script>

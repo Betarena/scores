@@ -4,9 +4,11 @@
 // ╰──────────────────────────────────────────────────────────────────╯
 
 import { checkNull } from '$lib/utils/miscellenous.js';
-import { getAuthorArticleByPermalink, getAuthorArticleTranslation } from '@betarena/scores-lib/dist/functions/v8/authors.articles.js';
+import { getAuthorArticleTranslation } from '@betarena/scores-lib/dist/functions/v8/authors.articles.js';
+import { entryAuthorGeneralData } from '@betarena/scores-lib/dist/functions/v8/main.preload.authors.js'
 import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
-import type { IArticleData } from '@betarena/scores-lib/types/types.authors.articles.js';
+import type { IArticleTranslation } from '@betarena/scores-lib/types/types.authors.articles.js';
+import type { IPageAuthorDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
 import { json, type RequestEvent } from '@sveltejs/kit';
 
 // ╭──────────────────────────────────────────────────────────────────╮
@@ -29,7 +31,7 @@ export async function main
       // ╰──────────────────────────────────────────────────────────────────╯
 
       const
-        permalink = request.url.searchParams.get('permalink'),
+        permalinkTag = request.url.searchParams.get('permalinkTag'),
         hasura = request.url.searchParams.get('hasura'),
         lang = request.url.searchParams.get('lang')
       ;
@@ -40,21 +42,17 @@ export async function main
       // │ TODO:                                                            │
       // │ Add cache logic.                                                 │
       // ╰──────────────────────────────────────────────────────────────────╯
-
-      if (!checkNull(permalink))
-      {
-        const
-          data: IArticleData = await fallbackDataGenerate0
+      if (!checkNull(permalinkTag))
+        {
+        const data: IPageAuthorDataFinal = await fallbackDataGenerate0
           (
-            permalink!
+            permalinkTag!
           ),
           loadType = 'HASURA'
         ;
-
         // ▓ [🐞]
         console.log(`📌 loaded [FSCR] with: ${loadType}`)
-
-        if (data != undefined) return json(data);
+       if (data != undefined) return json( data);
       }
 
       // ╭──────────────────────────────────────────────────────────────────╮
@@ -122,15 +120,12 @@ export async function main
  */
 async function fallbackDataGenerate0
 (
-  permalink: string
-): Promise < IArticleData >
+  permalinkTag: string
+): Promise < IPageAuthorDataFinal >
 {
-  const dataRes0: [ IArticleData, string[] ] = await getAuthorArticleByPermalink
-  (
-    permalink
-  );
+  const dataRes0: IPageAuthorDataFinal = await entryAuthorGeneralData({ permalinkTag });
 
-  return dataRes0[0];
+  return dataRes0;
 }
 
 /**

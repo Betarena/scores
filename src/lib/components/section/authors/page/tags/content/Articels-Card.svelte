@@ -10,7 +10,7 @@
 <script lang="ts">
     import Avatar from "$lib/components/ui/Avatar.svelte";
     import Tag from "$lib/components/ui/Tag.svelte";
-import type { IArticleData } from "@betarena/scores-lib/types/types.authors.articles.js";
+    import type { IPageAuthorArticleData, IPageAuthorAuthorData, IPageAuthorTagData } from "@betarena/scores-lib/types/v8/preload.authors.js";
 
 
 // #region ➤ 📌 VARIABLES
@@ -27,12 +27,15 @@ import type { IArticleData } from "@betarena/scores-lib/types/types.authors.arti
 // │ 4. $: [..]                                                             │
 // ╰────────────────────────────────────────────────────────────────────────╯
 
-
+interface IArticle extends IPageAuthorArticleData {
+      author?: IPageAuthorAuthorData,
+      tags_data: (IPageAuthorTagData | undefined) []
+    }
 export let
     /**
-     * @augments IArticleData
+     * @augments IArticIArticleleData
      */
-    article: IArticleData,
+    article: IArticle,
      /**
      * @description tablet view
      */
@@ -41,8 +44,7 @@ export let
      * @description mobile view
      */
     mobile = false;
-
-$: ({permalink, published_date, tags_key_pair, data: {content, title} = {content: "", title: ""} } = article);
+$: ({permalink, tags_data, data: {title}, seo_details: {opengraph:{ images}}} = article);
 
 // #endregion ➤ 📌 VARIABLES
 
@@ -76,16 +78,16 @@ const src =  "https://s3-alpha-sig.figma.com/img/c13c/1e24/1e6baeeb9f8d7582f9d06
       </div>
     </div>
     <div class="tags-wrapper">
-      {#each ["Footbal", "Goals", "Sport"] as item}
-        <a href="/a/tag/{item}">
-          <Tag>{item}</Tag>
+      {#each tags_data as tag}
+        <a href="/a/tag/{tag?.permalink}">
+          <Tag>{tag?.name}</Tag>
 
         </a>
       {/each}
     </div>
   </div>
   <div class="preview" class:tablet class:mobile>
-
+      <img src={images[0]?.url} alt={images[0].alt} srcset="">
   </div>
 
 </div>
@@ -130,10 +132,16 @@ const src =  "https://s3-alpha-sig.figma.com/img/c13c/1e24/1e6baeeb9f8d7582f9d06
 
 
       .preview {
-        height: 200px;
+        min-height: 100%;
         width: 360px;
         flex-shrink: 0;
-        background-color: white;
+
+        img {
+          border-radius: 0px 12px 12px 0px;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
 
         &.tablet {
           width: 248px;
@@ -148,13 +156,16 @@ const src =  "https://s3-alpha-sig.figma.com/img/c13c/1e24/1e6baeeb9f8d7582f9d06
     &-content {
       padding: 24px;
       flex-grow: 1;
-      max-width: 455px;
+      width: 455px;
+      max-width: 100%;
       overflow: hidden;
 
       .tags-wrapper {
         margin-top: 20px;
         display: flex;
         gap: 4px;
+        max-width: 100%;
+        overflow: hidden;
       }
 
       .title {

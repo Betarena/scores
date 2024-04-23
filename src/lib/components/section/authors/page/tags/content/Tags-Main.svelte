@@ -38,28 +38,16 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { page } from '$app/stores';
-  import { onMount } from 'svelte';
-
-  import iconArrowLeftDark from './assets/icon-arrow-left-dark.svg';
-  import iconArrowLeftLight from './assets/icon-arrow-left-light.svg';
-  import iconArrowRightDark from './assets/icon-arrow-right-dark.svg';
-  import iconArrowRightLight from './assets/icon-arrow-right-light.svg';
-  import icon_location_dark from './assets/icon-location-dark.svg';
-  import icon_location from './assets/icon-location.svg';
 
   import sessionStore from '$lib/store/session.js';
   import userBetarenaSettings from '$lib/store/user-settings.js';
-  import { monthNames } from '$lib/utils/dates.js';
   import { viewportChangeV2 } from '$lib/utils/device';
 
-  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
 
-  import type { B_SAP_D2 } from '@betarena/scores-lib/types/seo-pages.js';
-  import type { IArticleData, IArticleTranslation } from '@betarena/scores-lib/types/types.authors.articles.js';
   import TagsHeader from './Tags-Header.svelte';
   import ArticleCard from './Articels-Card.svelte';
-    import Button from '$lib/components/ui/Button.svelte';
+  import Button from '$lib/components/ui/Button.svelte';
+  import type { IPageAuthorArticleData, IPageAuthorAuthorData, IPageAuthorDataFinal, IPageAuthorTagData } from '@betarena/scores-lib/types/v8/preload.authors.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -81,7 +69,7 @@
     /**
      * @augments IArticleData
      */
-    widgetData: any
+    widgetData: IPageAuthorDataFinal & {currentTag: IPageAuthorTagData}
   ;
   const
     /**
@@ -100,7 +88,14 @@
      */ // eslint-disable-next-line no-unused-vars
     VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
-  $: ({ theme } = { ...$userBetarenaSettings });
+
+
+  /**
+   * @description
+   *  📣 array of articles that will be rendered
+   *    */
+   let visibleArticles: IArticle[] = []
+
   $: ({ windowWidth } = $sessionStore);
   $: [ VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1] ]
     = viewportChangeV2
@@ -109,7 +104,51 @@
       VIEWPORT_MOBILE_INIT[0],
       VIEWPORT_TABLET_INIT[0],
     );
+
+    interface IArticle extends IPageAuthorArticleData {
+      author?: IPageAuthorAuthorData,
+      tags_data: (IPageAuthorTagData | undefined)[]
+    }
+
   // #endregion ➤ 📌 VARIABLES
+
+/**
+ * @summary
+ * 🔥 REACTIVITY
+ *
+ * WARNING:
+ * can go out of control
+ *
+ * @description
+ * convert widgetData to Map
+ *
+ * WARNING:
+ * triggered by changes in:
+ * - `` - **widgetData**
+ */
+  $: articles =  widgetData.mapArticle;
+  $: tags = new Map(widgetData.mapTag);
+  $: authors = new Map(widgetData.mapAuthor);
+
+  /**
+ * @summary
+ * 🔥 REACTIVITY
+ *
+ * WARNING:
+ * can go out of control
+ *
+ * @description
+ * it reruns loadArticles every time articles has changed
+ *
+ * WARNING:
+ * triggered by changes in:
+ * - `` - **articles**
+ */
+
+ $: {
+  visibleArticles = [];
+  loadArticles(articles)
+}
 
   // #region ➤ 🛠️ METHODS
 
@@ -123,8 +162,28 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  function prepareArticle(article:[number, IPageAuthorArticleData]): IArticle {
+    const [_id, data] = article;
+    const preparedArticle: IArticle = {tags_data: [], ...data} as IArticle;
+    if (data.author_id) {
+      preparedArticle.author = authors.get(data.author_id);
+    }
+    if (data.tags?.length) {
+      preparedArticle.tags_data = data.tags.map(id => tags.get(id));
+    }
 
-  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
+    return preparedArticle
+  }
+
+  function loadArticles(data: [number, IPageAuthorArticleData][] | undefined) {
+    if (!data) return;
+    const loaded = visibleArticles.length;
+    const splited = data.slice(loaded, loaded + 5);
+    visibleArticles = [...visibleArticles, ...splited.map(a => prepareArticle(a))]
+  }
+
+
+  // #endregion ➤ 🛠️ METHODS
 
 </script>
 
@@ -144,20 +203,20 @@
   class="tags-main"
   class:tablet={VIEWPORT_TABLET_INIT[1]}
 >
-  <TagsHeader tag={widgetData.tags[0]} mobile={VIEWPORT_MOBILE_INIT[1]}/>
+  <TagsHeader tag={widgetData.currentTag} mobile={VIEWPORT_MOBILE_INIT[1]}/>
   {#if !VIEWPORT_MOBILE_INIT[1]}
     <div class="splitter" />
   {/if}
   <div class="articles">
-    {#each widgetData.dataArticle as article}
-      <ArticleCard {article} tablet={VIEWPORT_TABLET_INIT[1]} mobile={VIEWPORT_MOBILE_INIT[1]}/>
+    {#each visibleArticles as article}
+      <ArticleCard article= {article} tablet={VIEWPORT_TABLET_INIT[1]} mobile={VIEWPORT_MOBILE_INIT[1]}/>
     {/each}
   </div>
   <div class="section-footer" class:mobile={VIEWPORT_MOBILE_INIT[1]}>
     <div class="page-info">
-      5 of 98 articles
+      {visibleArticles.length} of {articles?.length || 0} articles
     </div>
-    <Button type="outline">View more</Button>
+    <Button type="outline" on:click={() => loadArticles(articles)}>View more</Button>
   </div>
  </div>
 
