@@ -2,20 +2,13 @@
 
 import { json } from '@sveltejs/kit';
 
-import { initGrapQLClient } from '$lib/graphql/init';
+import { _Redis } from '@betarena/scores-lib/dist/classes/_redis.js';
+import * as RedisKeys from '@betarena/scores-lib/dist/constant/redis.js';
 import { FLIN_FP_ENTRY, FLIN_FP_ENTRY_2 } from '@betarena/scores-lib/dist/functions/func.fixture.lineups.js';
-import * as RedisKeys from '@betarena/scores-lib/dist/redis/config.js';
-import { get_target_hset_cache_data } from '../../../../../lib/redis/std_main';
 
 import type { B_LIN_T, LIN_Fixture } from '@betarena/scores-lib/types/lineups.js';
 
 //#endregion ➤ Package Imports
-
-//#region ➤ [VARIABLES] Imports
-
-const graphQlInstance = initGrapQLClient()
-
-//#endregion ➤ [VARIABLES] Imports
 
 //#region ➤ [METHODS]
 
@@ -50,7 +43,7 @@ export async function GET
       if (!hasura)
       {
         data =
-          await get_target_hset_cache_data
+          await new _Redis().rHGET
           (
             RedisKeys.LIN_C_D_A,
             fixture_id
@@ -133,7 +126,6 @@ async function fallbackMainData
 {
   const dataRes0 = await FLIN_FP_ENTRY
   (
-    graphQlInstance,
     _fixture_id
   )
 
@@ -162,7 +154,6 @@ async function fallbackMainData_1
 {
   const dataRes0 = await FLIN_FP_ENTRY_2
   (
-    graphQlInstance,
     [lang]
   );
 

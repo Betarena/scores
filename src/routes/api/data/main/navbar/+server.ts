@@ -6,12 +6,12 @@
 // #region ➤ 📦 Package Imports
 
 import { json } from '@sveltejs/kit';
-
-import { LNAV_L_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.main.navbar.js';
-import { NAV_C_T_A } from '@betarena/scores-lib/dist/redis/config.js';
 import dotenv from 'dotenv';
 import LZString from 'lz-string';
-import { get_target_hset_cache_data } from '../../../../../lib/redis/std_main';
+
+import { _Redis } from '@betarena/scores-lib/dist/classes/_redis.js';
+import * as RedisKeys from '@betarena/scores-lib/dist/constant/redis.js';
+import { LNAV_L_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.main.navbar.js';
 
 import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
 
@@ -57,9 +57,9 @@ export async function GET
       // ### for existance in cache.
       if (!hasura)
       {
-        data = await get_target_hset_cache_data
+        data = await new _Redis().rHGET
         (
-          NAV_C_T_A,
+          RedisKeys.NAV_C_T_A,
           lang
         );
       }

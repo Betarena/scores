@@ -6,9 +6,9 @@
 // #region ➤ 📦 Package Imports
 
 import { json } from '@sveltejs/kit';
+import dotenv from 'dotenv';
 
 import { USRG_M_ENTRY } from '@betarena/scores-lib/dist/functions/func.misc.userguide.js';
-import dotenv from 'dotenv';
 
 import type { B_USRG_D } from '@betarena/scores-lib/types/types.misc.userguide.js';
 

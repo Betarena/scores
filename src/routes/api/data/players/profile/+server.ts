@@ -1,22 +1,14 @@
 //#region ➤ Package Imports
 
-import { initGrapQLClient } from '$lib/graphql/init';
 import { json } from '@sveltejs/kit';
 
+import { _Redis } from '@betarena/scores-lib/dist/classes/_redis.js';
+import * as RedisKeys from '@betarena/scores-lib/dist/constant/redis.js';
 import { PPRO_PP_ENTRY, PPRO_PP_ENTRY_1 } from "@betarena/scores-lib/dist/functions/func.player.profile.js";
-import { PP_C_D_A } from '@betarena/scores-lib/dist/redis/config.js';
+
 import type { B_PPRO_D, B_PPRO_T } from "@betarena/scores-lib/types/player-profile";
-import { get_target_hset_cache_data } from '../../../../../lib/redis/std_main';
 
 //#endregion ➤ Package Imports
-
-//#region ➤ [VARIABLES] Imports
-
-const graphQlInstance = initGrapQLClient()
-// [ℹ] debug info
-// const logs = [];
-
-//#endregion ➤ [VARIABLES] Imports
 
 //#region ➤ [METHODS]
 
@@ -42,9 +34,9 @@ export async function GET
     let loadType = "cache";
 
     // NOTE: check in cache;
-    let data = await get_target_hset_cache_data
+    let data = await new _Redis().rHGET
     (
-      PP_C_D_A,
+      RedisKeys.PP_C_D_A,
       player_id
     );
 
@@ -96,7 +88,6 @@ async function fallbackMainData
 
   const dataRes0 = await PPRO_PP_ENTRY
   (
-    graphQlInstance,
     [_player_id]
   )
 
@@ -121,7 +112,6 @@ async function fallbackMainData_1
 {
   const dataRes0 = await PPRO_PP_ENTRY_1
   (
-    graphQlInstance,
     [lang]
   );
 

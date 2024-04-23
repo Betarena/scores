@@ -6,12 +6,12 @@
 // #region ➤ 📦 Package Imports
 
 import { json } from '@sveltejs/kit';
-
-import { HSEOB_HP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.home.seo-block.js';
-import { SEB_C_D_A } from '@betarena/scores-lib/dist/redis/config.js';
 import dotenv from 'dotenv';
 import LZString from 'lz-string';
-import { get_target_hset_cache_data } from '../../../../../lib/redis/std_main';
+
+import { _Redis } from '@betarena/scores-lib/dist/classes/_redis.js';
+import * as RedisKeys from '@betarena/scores-lib/dist/constant/redis.js';
+import { HSEOB_HP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.home.seo-block.js';
 
 import type { B_SEB_DT } from '@betarena/scores-lib/types/seo-block.js';
 
@@ -57,9 +57,9 @@ export async function GET
       // ### for existance in cache.
       if (!hasura)
       {
-        data = await get_target_hset_cache_data
+        data = await new _Redis().rHGET
         (
-          SEB_C_D_A,
+          RedisKeys.SEB_C_D_A,
           lang
         );
       }
@@ -141,7 +141,6 @@ async function fallbackMainData
 {
   const dataRes0 = await HSEOB_HP_ENTRY_1
   (
-    null,
     [lang]
   );
 

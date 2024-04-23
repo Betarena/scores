@@ -2,19 +2,12 @@
 
 import { json } from '@sveltejs/kit';
 
-import { initGrapQLClient } from '$lib/graphql/init';
 import { FCONT_FP_ENTRY, FCONT_FP_ENTRY_0 } from '@betarena/scores-lib/dist/functions/func.fixture.content.js';
 
 import type { B_H_EC } from '@betarena/scores-lib/types/_HASURA_.js';
 import type { B_H2H_T } from '@betarena/scores-lib/types/head-2-head.js';
 
 //#endregion ➤ Package Imports
-
-//#region ➤ [VARIABLES] Imports
-
-const graphQlInstance = initGrapQLClient()
-
-//#endregion ➤ [VARIABLES] Imports
 
 //#region ➤ [METHODS]
 
@@ -50,7 +43,7 @@ export async function GET
       // if (!hasura)
       // {
       //   data =
-      //     await get_target_hset_cache_data
+      //     await new _Redis().rHGET
       //     (
       //       RedisKeys.LIN_C_D_A,
       //       fixture_id
@@ -135,7 +128,6 @@ async function fallbackMainData
 {
   const dataRes0 = await FCONT_FP_ENTRY
   (
-    graphQlInstance,
     [fixtureId]
   );
 
@@ -166,7 +158,6 @@ async function fallbackMainData_1
 {
   const dataRes0 = await FCONT_FP_ENTRY_0
   (
-    graphQlInstance,
     [lang]
   );
 

@@ -2,20 +2,13 @@
 
 import { json } from '@sveltejs/kit';
 
-import { initGrapQLClient } from '$lib/graphql/init';
+import { _Redis } from '@betarena/scores-lib/dist/classes/_redis.js';
+import * as RedisKeys from '@betarena/scores-lib/dist/constant/redis.js';
 import { LTPL_LP_ENTRY, LTPL_LP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.league.top-players.js';
-import { TP_C_D_A, TP_C_T_A } from '@betarena/scores-lib/dist/redis/config.js';
-import { get_target_hset_cache_data } from '../../../../../lib/redis/std_main';
 
 import type { B_TP_D, B_TP_T } from '@betarena/scores-lib/types/top-players.js';
 
 // #endregion ➤ Package Imports
-
-// #region ➤ [VARIABLES] Imports
-
-const graphQlInstance = initGrapQLClient()
-
-// #endregion ➤ [VARIABLES] Imports
 
 // #region ➤ [METHODS]
 
@@ -52,9 +45,9 @@ export async function GET
       // IMPORTANT Check in cache;
       if (!hasura)
       {
-        data = await get_target_hset_cache_data
+        data = await new _Redis().rHGET
         (
-          TP_C_D_A,
+          RedisKeys.TP_C_D_A,
           league_id
         );
       }
@@ -89,9 +82,9 @@ export async function GET
       // IMPORTANT Check in cache;
       if (!hasura)
       {
-        data = await get_target_hset_cache_data
+        data = await new _Redis().rHGET
         (
-          TP_C_T_A,
+          RedisKeys.TP_C_T_A,
           lang
         );
       }
@@ -161,7 +154,6 @@ async function fallbackMainData
 
   const dataRes0 = await LTPL_LP_ENTRY
   (
-    graphQlInstance,
     false,
     _leagueId,
     _seasonId || null
@@ -199,7 +191,6 @@ async function fallbackMainData_1
 {
   const dataRes0 = await LTPL_LP_ENTRY_1
   (
-    graphQlInstance,
     [lang]
   );
 

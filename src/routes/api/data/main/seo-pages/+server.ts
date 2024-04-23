@@ -5,16 +5,17 @@
 
 // #region ➤ 📦 Package Imports
 
-import { initGrapQLClient } from '$lib/graphql/init';
-import { checkNull } from '$lib/utils/miscellenous.js';
-import { SEO_CS_ENTRY, SEO_FS_ENTRY, SEO_PS_ENTRY } from '@betarena/scores-lib/dist/functions/func.main.seo-pages.js';
-import * as RedisKeys from '@betarena/scores-lib/dist/redis/config.js';
 import { json } from '@sveltejs/kit';
 import dotenv from 'dotenv';
 import LZString from 'lz-string';
-import { HSET_All, get_target_hset_cache_data, get_target_set_cache_data } from '../../../../../lib/redis/std_main';
 
-import type { B_SAP_CTP_D, B_SAP_FP_D, B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages';
+import { _Redis } from '@betarena/scores-lib/dist/classes/_redis.js';
+import * as RedisKeys from '@betarena/scores-lib/dist/constant/redis.js';
+import { entryPageDataCompetition, entryPageDataFixture, entryPageDataPlayer } from '@betarena/scores-lib/dist/functions/v8/main.preload.scores.js';
+
+import { checkNull } from '$lib/utils/miscellenous.js';
+
+import type { B_SAP_CTP_D, B_SAP_FP_D, B_SAP_PP_D } from '@betarena/scores-lib/types/v8/preload.scores.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -30,7 +31,6 @@ type PAGE_TYPE =
   | 'author_article'
 ;
 
-const graphQlInstance = initGrapQLClient();
 dotenv.config();
 
 // #endregion ➤ 📌 VARIABLES
@@ -124,7 +124,7 @@ export async function GET
   ;
 	if (if_M_1)
   {
-		data = await get_target_hset_cache_data
+		data = await new _Redis().rHGET
     (
       RedisKeys.SAP_C_D_A1,
       lang
@@ -157,7 +157,7 @@ export async function GET
   ;
 	if (if_M_2)
   {
-		data = await get_target_hset_cache_data
+		data = await new _Redis().rHGET
     (
       RedisKeys.SAP_C_D_A3,
       url
@@ -190,7 +190,7 @@ export async function GET
   ;
 	if (if_M_3)
   {
-		data = await get_target_hset_cache_data
+		data = await new _Redis().rHGET
     (
 			RedisKeys.SAP_C_D_A2,
       lang
@@ -229,7 +229,7 @@ export async function GET
     // ### for existance in cache.
     if (!hasura)
     {
-      data = await get_target_hset_cache_data
+      data = await new _Redis().rHGET
       (
         RedisKeys.SAP_C_D_A5,
         fixture_id
@@ -277,7 +277,7 @@ export async function GET
   ;
 	if (if_M_5)
   {
-		data = await get_target_hset_cache_data
+		data = await new _Redis().rHGET
     (
       RedisKeys.SAP_C_D_A4,
       lang
@@ -316,7 +316,7 @@ export async function GET
     // ### for existance in cache.
     if (!hasura)
     {
-      data = await get_target_hset_cache_data
+      data = await new _Redis().rHGET
       (
         RedisKeys.SAP_C_D_A16,
         player_id
@@ -364,7 +364,7 @@ export async function GET
   ;
   if (if_M_7)
   {
-    data = await get_target_hset_cache_data
+    data = await new _Redis().rHGET
     (
       RedisKeys.SAP_C_D_A15,
       lang
@@ -397,7 +397,7 @@ export async function GET
   ;
   if (if_M_8)
   {
-    data = await get_target_hset_cache_data
+    data = await new _Redis().rHGET
     (
       RedisKeys.SAP_C_D_A18,
       lang
@@ -436,7 +436,7 @@ export async function GET
     // ### for existance in cache.
     // if (!hasura)
     // {
-    //   data = await get_target_hset_cache_data
+    //   data = await new _Redis().rHGET
     //   (
     //     RedisKeys.SAP_C_D_A16,
     //     player_id
@@ -484,7 +484,7 @@ export async function GET
   ;
   if (if_M_10)
   {
-    const data: unknown = await get_target_hset_cache_data
+    const data: unknown = await new _Redis().rHGET
     (
       RedisKeys.SAP_C_D_A20,
       lang
@@ -513,7 +513,7 @@ export async function GET
   // ### cache only.
 	if (country_id)
   {
-		const data: unknown  = await get_target_hset_cache_data
+		const data: unknown  = await new _Redis().rHGET
     (
       RedisKeys.SAP_C_D_A7,
       country_id
@@ -542,7 +542,7 @@ export async function GET
   // ### cache only.
 	if (countries)
   {
-		const data: unknown = await HSET_All
+		const data: unknown = await new _Redis().rHGETALL
     (
       RedisKeys.SAP_C_D_A7
     );
@@ -570,7 +570,7 @@ export async function GET
   // ### cache only.
 	if (term)
   {
-		data = await get_target_hset_cache_data
+		data = await new _Redis().rHGET
     (
       RedisKeys.SAP_C_D_A6,
       term
@@ -599,7 +599,7 @@ export async function GET
   // ### cache only.
 	if (months && lang)
   {
-		data = await get_target_hset_cache_data
+		data = await new _Redis().rHGET
     (
       RedisKeys.SAP_C_D_A8,
       lang
@@ -674,31 +674,31 @@ async function validUrlCheck
   const validUrl: number[] = [];
 
   if (langUrl)
-    validUrl.push(await get_target_set_cache_data(RedisKeys?.SAP_C_D_A9, langUrl) as number);
+    validUrl.push(await new _Redis().rSISMEMBER(RedisKeys?.SAP_C_D_A9, langUrl) as number);
   ;
   if (sportUrl)
-    validUrl.push(await get_target_set_cache_data(RedisKeys?.SAP_C_D_A10, `${langUrl}_${sportUrl}`) as number);
+    validUrl.push(await new _Redis().rSISMEMBER(RedisKeys?.SAP_C_D_A10, `${langUrl}_${sportUrl}`) as number);
   ;
   if (countryUrl)
-    validUrl.push(await get_target_set_cache_data(RedisKeys?.SAP_C_D_A11, `${langUrl}_${countryUrl}`) as number);
+    validUrl.push(await new _Redis().rSISMEMBER(RedisKeys?.SAP_C_D_A11, `${langUrl}_${countryUrl}`) as number);
   ;
   if (leagueUrl)
-    validUrl.push(await get_target_set_cache_data(RedisKeys?.SAP_C_D_A12, leagueUrl) as number);
+    validUrl.push(await new _Redis().rSISMEMBER(RedisKeys?.SAP_C_D_A12, leagueUrl) as number);
   ;
   if (fixtureUrl)
-    validUrl.push(await get_target_set_cache_data(RedisKeys?.SAP_C_D_A13, fixtureUrl) as number);
+    validUrl.push(await new _Redis().rSISMEMBER(RedisKeys?.SAP_C_D_A13, fixtureUrl) as number);
   ;
   if (playerUrl)
-    validUrl.push(await get_target_set_cache_data(RedisKeys?.SAP_C_D_A14, playerUrl) as number);
+    validUrl.push(await new _Redis().rSISMEMBER(RedisKeys?.SAP_C_D_A14, playerUrl) as number);
   ;
   if (competitionMainUrl)
-    validUrl.push(await get_target_set_cache_data(RedisKeys?.SAP_C_D_A17, `${langUrl}_${competitionMainUrl}`) as number);
+    validUrl.push(await new _Redis().rSISMEMBER(RedisKeys?.SAP_C_D_A17, `${langUrl}_${competitionMainUrl}`) as number);
   ;
   if (competitionUrl)
-    validUrl.push(await get_target_set_cache_data(RedisKeys?.SAP_C_D_A19, `${competitionUrl}`) as number);
+    validUrl.push(await new _Redis().rSISMEMBER(RedisKeys?.SAP_C_D_A19, `${competitionUrl}`) as number);
   ;
   if (authorArticleUrl)
-    validUrl.push(await get_target_set_cache_data(RedisKeys?.SAP_C_D_A22, `${authorArticleUrl}`) as number);
+    validUrl.push(await new _Redis().rSISMEMBER(RedisKeys?.SAP_C_D_A22, `${authorArticleUrl}`) as number);
   ;
 
   // ### [🐞]
@@ -737,9 +737,8 @@ async function fallbackMainData_0
 ): Promise < B_SAP_PP_D >
 {
 
-  const dataRes0: [ Map<  number, B_SAP_PP_D >, string[] ] = await SEO_PS_ENTRY
+  const dataRes0: [ Map<  number, B_SAP_PP_D >, string[] ] = await entryPageDataPlayer
   (
-    null,
     [player_id]
   )
 
@@ -766,9 +765,8 @@ async function fallbackMainData_2
   fixtureId: number
 ) : Promise < B_SAP_FP_D >
 {
-  const dataRes0: [ Map < number, B_SAP_FP_D >, string[] ] = await SEO_FS_ENTRY
+  const dataRes0: [ Map < number, B_SAP_FP_D >, string[] ] = await entryPageDataFixture
   (
-    null,
     [fixtureId]
   )
 
@@ -793,7 +791,7 @@ async function fallbackMainData_3
   competitionId: number
 ): Promise < B_SAP_CTP_D >
 {
-  const dataRes0: [ Map < number, B_SAP_CTP_D >, string[] ] = await SEO_CS_ENTRY
+  const dataRes0: [ Map < number, B_SAP_CTP_D >, string[] ] = await entryPageDataCompetition
   (
     [competitionId]
   );

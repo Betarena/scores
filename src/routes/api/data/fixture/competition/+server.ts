@@ -6,11 +6,11 @@
 // #region ➤ 📦 Package Imports
 
 import { json } from '@sveltejs/kit';
+import dotenv from 'dotenv';
+import LZString from 'lz-string';
 
 import { checkNull } from '$lib/utils/miscellenous.js';
 import { FIXCOMP_HP_ENTRY, FIXCOMP_HP_ENTRY_1, FIXCOMP_HP_ENTRY_2 } from '@betarena/scores-lib/dist/functions/func.fixture.competition.js';
-import dotenv from 'dotenv';
-import LZString from 'lz-string';
 
 import type { B_FIX_COMP_D, B_FIX_COMP_S, B_FIX_COMP_T } from '@betarena/scores-lib/types/types.fixture.competition.js';
 
@@ -60,7 +60,7 @@ export async function GET
       // ▓▓ for existance in cache.
       // if (!hasura)
       // {
-      //   data = await get_target_hset_cache_data
+      //   data = await new _Redis().rHGET
       //   (
       //     FEATM_C_D_A,
       //     geoPos
@@ -111,7 +111,7 @@ export async function GET
       // ▓▓ for existance in cache.
       // if (!hasura)
       // {
-      //   data = await get_target_hset_cache_data
+      //   data = await new _Redis().rHGET
       //   (
       //     FEATM_C_T_A,
       //     lang

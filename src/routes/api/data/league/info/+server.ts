@@ -2,20 +2,13 @@
 
 import { json } from '@sveltejs/kit';
 
-import { initGrapQLClient } from '$lib/graphql/init';
+import { _Redis } from '@betarena/scores-lib/dist/classes/_redis.js';
+import * as RedisKeys from '@betarena/scores-lib/dist/constant/redis.js';
 import { LINFO_LP_ENTRY } from '@betarena/scores-lib/dist/functions/func.league.info.js';
-import { LEG_C_D_A } from '@betarena/scores-lib/dist/redis/config.js';
-import { get_target_hset_cache_data } from '../../../../../lib/redis/std_main';
 
 import type { B_LEG_D } from '@betarena/scores-lib/types/league-info.js';
 
 // #endregion ➤ Package Imports
-
-// #region ➤ [VARIABLES] Imports
-
-const graphQlInstance = initGrapQLClient()
-
-// #endregion ➤ [VARIABLES] Imports
 
 // #region ➤ [METHODS]
 
@@ -48,9 +41,9 @@ export async function GET
       // IMPORTANT Check in cache;
       if (!hasura)
       {
-        data = await get_target_hset_cache_data
+        data = await new _Redis().rHGET
         (
-          LEG_C_D_A,
+          RedisKeys.LEG_C_D_A,
           url
         );
       }
@@ -114,10 +107,7 @@ async function fallbackMainData
   url: string
 ): Promise < B_LEG_D >
 {
-  const dataRes0 = await LINFO_LP_ENTRY
-  (
-    graphQlInstance
-  );
+  const dataRes0 = await LINFO_LP_ENTRY();
 
   // console.log(dataRes0?.[1]);
 

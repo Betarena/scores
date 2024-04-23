@@ -6,12 +6,12 @@
 // #region ➤ 📦 Package Imports
 
 import { json } from '@sveltejs/kit';
-
-import { HLEGT_HP_ENTRY, HLEGT_HP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.home.leagues-table.js';
-import { LEGT_C_D_A, LEGT_C_T_A } from '@betarena/scores-lib/dist/redis/config.js';
 import dotenv from 'dotenv';
 import LZString from 'lz-string';
-import { get_target_hset_cache_data } from '../../../../../lib/redis/std_main';
+
+import { _Redis } from '@betarena/scores-lib/dist/classes/_redis.js';
+import * as RedisKeys from '@betarena/scores-lib/dist/constant/redis.js';
+import { HLEGT_HP_ENTRY, HLEGT_HP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.home.leagues-table.js';
 
 import type { B_LEGT_D, B_LEGT_T } from '@betarena/scores-lib/types/leagues-table.js';
 
@@ -58,16 +58,16 @@ export async function GET
       // ### for existance in cache.
       if (!hasura)
       {
-        data = await get_target_hset_cache_data
+        data = await new _Redis().rHGET
         (
-          LEGT_C_D_A,
+          RedisKeys.LEGT_C_D_A,
           geoPos
         );
         if (data == undefined)
         {
-          data = await get_target_hset_cache_data
+          data = await new _Redis().rHGET
           (
-            LEGT_C_D_A,
+            RedisKeys.LEGT_C_D_A,
             'en'
           );
         }
@@ -117,9 +117,9 @@ export async function GET
       // ### for existance in cache.
       if (!hasura)
       {
-        data = await get_target_hset_cache_data
+        data = await new _Redis().rHGET
         (
-          LEGT_C_T_A,
+          RedisKeys.LEGT_C_T_A,
           lang
         );
       }

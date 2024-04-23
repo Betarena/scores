@@ -1,5 +1,6 @@
-# ▓ NOTE:
-# ▓ > 📌 Project
+# ╭─────
+# │ NOTE: |:| standard project files
+# ╰─────
 node_modules
 /build
 /.svelte-kit
@@ -7,8 +8,9 @@ node_modules
 /gif
 certs/*
 
-# ▓ CRITICAL
-# ▓ > project secrets (never uncomment)
+# ╭─────
+# │ CRITICAL |:| project secrets (never uncomment)
+# ╰─────
 .env
 .env*
 .env.*
@@ -18,13 +20,18 @@ certs/*
 !.env.vault
 .flaskenv*
 
-# ▓ NOTE:
-# ▓ > miscellenous
+# ╭─────
+# │ NOTE: |:| miscelleaneous
+# ╰─────
 WEBSITE-DEV-README.md
 datalog/
+debug.log
 
-# ▓ NOTE:
-# ▓ > MacOS
+# ╭─────
+# │ NOTE:
+# │ ➤ MacOS system files
+# ┣─────
+# │ 🔗 read-more |:| https://apple.stackexchange.com/questions/14980/why-are-dot-underscore-files-created-and-how-can-i-avoid-them
+# ╰─────
 .DS_Store
-# ▓ @see :> https://apple.stackexchange.com/questions/14980/why-are-dot-underscore-files-created-and-how-can-i-avoid-them
 ._*
