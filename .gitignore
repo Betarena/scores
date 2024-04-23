@@ -22,6 +22,7 @@ certs/*
 # ▓ > miscellenous
 WEBSITE-DEV-README.md
 datalog/
+debug.log
 
 # ▓ NOTE:
 # ▓ > MacOS
