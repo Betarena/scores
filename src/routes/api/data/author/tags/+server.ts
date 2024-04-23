@@ -20,10 +20,10 @@ import { json } from '@sveltejs/kit';
 import dotenv from 'dotenv';
 
 import { checkNull } from '$lib/utils/miscellenous.js';
-import { getAuthorArticleByPermalink, getAuthorArticleTranslation } from '@betarena/scores-lib/dist/functions/func.authors-articles.js';
+// import { getAuthorArticleByPermalink, getAuthorArticleTranslation } from '@betarena/scores-lib/dist/functions/func.authors-articles.js';
 import { tryCatchAsync } from '@betarena/scores-lib/dist/util/util.common.js';
 
-import type { IArticleData, IArticleTranslation } from '@betarena/scores-lib/types/types.authors.articles.js';
+// import type { IArticleData, IArticleTranslation } from '@betarena/scores-lib/types/types.authors.articles.js';
 
 // #endregion ➤ 📦 Package
 
@@ -74,21 +74,21 @@ export async function GET
       // │ Add cache logic.                                                 │
       // ╰──────────────────────────────────────────────────────────────────╯
 
-      if (!checkNull(permalink))
-      {
-        const
-          data: IArticleData = await fallbackDataGenerate0
-          (
-            permalink!
-          ),
-          loadType = 'HASURA'
-        ;
+      // if (!checkNull(permalink))
+      // {
+      //   const
+      //     data: IArticleData = await fallbackDataGenerate0
+      //     (
+      //       permalink!
+      //     ),
+      //     loadType = 'HASURA'
+      //   ;
 
-        // ▓ [🐞]
-        console.log(`📌 loaded [FSCR] with: ${loadType}`)
+      //   // ▓ [🐞]
+      //   console.log(`📌 loaded [FSCR] with: ${loadType}`)
 
-        if (data != undefined) return json(data);
-      }
+      //   if (data != undefined) return json(data);
+      // }
 
       // ╭──────────────────────────────────────────────────────────────────╮
       // │ NOTE:                                                            │
@@ -97,42 +97,44 @@ export async function GET
       // │ Add cache logic.                                                 │
       // ╰──────────────────────────────────────────────────────────────────╯
 
-      if (!checkNull(lang))
-      {
-        const
-          data: IArticleTranslation = await fallbackDataGenerate1
-          (
-            lang
-          ),
-          loadType = 'HASURA'
-        ;
+    //   if (!checkNull(lang))
+    //   {
+    //     const
+    //       data: IArticleTranslation = await fallbackDataGenerate1
+    //       (
+    //         lang
+    //       ),
+    //       loadType = 'HASURA'
+    //     ;
 
-        // ▓ [🐞]
-        console.log(`📌 loaded [FSCR] with: ${loadType}`)
+    //     // ▓ [🐞]
+    //     console.log(`📌 loaded [FSCR] with: ${loadType}`)
 
-        if (data != undefined) return json(data);
-      }
+    //     if (data != undefined) return json(data);
+    //   }
 
-      return json
-      (
-        null
-      );
-    }
-    , (
-      ex: unknown
-    ): Response =>
-    {
-      // ▓ [🐞]
-      console.error(`💀 Unhandled :: ${ex}`);
+    //   return json
+    //   (
+    //     null
+    //   );
+    // }
+    // , (
+    //   ex: unknown
+    // ): Response =>
+    // {
+    //   // ▓ [🐞]
+    //   console.error(`💀 Unhandled :: ${ex}`);
 
-      return json
-      (
-        null
-        , {
-          status: 400,
-          statusText: 'Uh-oh! There has been an error'
-        }
-      );
+    //   return json
+    //   (
+    //     null
+    //     , {
+    //       status: 400,
+    //       statusText: 'Uh-oh! There has been an error'
+    //     }
+      //   );
+
+      return {} as any
     }
   );
 }
@@ -141,58 +143,59 @@ export async function GET
 // │ 🛠️ MAIN HELPER METHODS                                           │
 // ╰──────────────────────────────────────────────────────────────────╯
 
-/**
- * @author
- *  @migbash
- * @summary
- *  🟦 HELPER
- * @description
- *  📣 Fallback data generation.
- * @param { string } name
- *  💠 Target `article` link (permalink).
- * @returns { Promise < IArticleData > }
- *  📤 Target `article` data.
- */
-async function fallbackDataGenerate0
-(
-  name: string
-): Promise < IArticleData >
-{
-  const dataRes0: [ IArticleData, string[] ] = await getAuthorArticleByPermalink
-  (
-    name
-  );
+// /**
+//  * @author
+//  *  @migbash
+//  * @summary
+//  *  🟦 HELPER
+//  * @description
+//  *  📣 Fallback data generation.
+//  * @param { string } name
+//  *  💠 Target `article` link (permalink).
+//  * @returns { Promise < IArticleData > }
+//  *  📤 Target `article` data.
+//  */
+// async function fallbackDataGenerate0
+// (
+//   name: string
+// ): Promise < IArticleData >
+// {
+//   // const dataRes0: [ IArticleData, string[] ] = await getAuthorArticleByPermalink
+//   // (
+//   //   name
+//   // );
 
-  return dataRes0[0];
-}
+//   // return dataRes0[0];
+//   return [] as any
+// }
 
-/**
- * @author
- *  @migbash
- * @summary
- *  🟦 HELPER
- * @description
- *  📣 Fallback data generation.
- * @param { string } lang
- *  💠 Target translation.
- * @returns { Promise < IArticleData > }
- *  📤 Target `article` data.
- */
-async function fallbackDataGenerate1
-(
-  lang: string
-): Promise < IArticleTranslation | null | undefined >
-{
-  const dataRes0 = await getAuthorArticleTranslation
-  (
-    [lang]
-  );
+// /**
+//  * @author
+//  *  @migbash
+//  * @summary
+//  *  🟦 HELPER
+//  * @description
+//  *  📣 Fallback data generation.
+//  * @param { string } lang
+//  *  💠 Target translation.
+//  * @returns { Promise < IArticleData > }
+//  *  📤 Target `article` data.
+//  */
+// async function fallbackDataGenerate1
+// (
+//   lang: string
+// ): Promise < IArticleTranslation | null | undefined >
+// {
+//   // const dataRes0 = await getAuthorArticleTranslation
+//   // (
+//   //   [lang]
+//   // );
+//   return
+//   // if (dataRes0?.[0].size == 0)
+//   //   return null;
+//   // ;
 
-  if (dataRes0?.[0].size == 0)
-    return null;
-  ;
-
-  return dataRes0?.[0].get(lang);
-}
+//   // return dataRes0?.[0].get(lang);
+// }
 
 // #endregion ➤ 🛠️ Functions
