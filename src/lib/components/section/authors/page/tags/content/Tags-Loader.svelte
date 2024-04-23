@@ -111,6 +111,7 @@
 <div
   id="{CNAME}"
   class="tags-loader-main"
+  class:tablet={VIEWPORT_TABLET_INIT[1]}
 >
 <TagsLoaderFilter mobile={VIEWPORT_MOBILE_INIT[1]}/>
 {#if !VIEWPORT_MOBILE_INIT[1]}
@@ -144,6 +145,9 @@
     flex-direction: column;
     gap: 40px;
 
+    &.tablet {
+      padding: 0 34px;
+    }
     .content-loads {
       display: flex;
       flex-direction: column;

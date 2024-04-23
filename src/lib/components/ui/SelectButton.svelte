@@ -125,7 +125,7 @@ export let
   <div class="select-dropdown" class:show={modal}>
     <div class="select-dropdown-list">
       {#each options as option (option.id)}
-        <div on:click={() => select(option)} class="list-item" class:active={option.id === value}>{option.label}</div>
+        <div on:click={() => select(option)} class="list-item" class:active={option.id === currentOption?.id}>{option.label}</div>
       {/each}
     </div>
   </div>
@@ -193,7 +193,7 @@ export let
           padding: 11px 12px;
           cursor: pointer;
 
-          &:hover,.active {
+          &:hover, &.active {
             background: var(--colors-gray2, #4B4B4B);
           }
         }

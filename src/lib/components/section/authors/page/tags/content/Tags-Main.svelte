@@ -144,14 +144,16 @@
   class="tags-main"
   class:tablet={VIEWPORT_TABLET_INIT[1]}
 >
-  <TagsHeader tag={widgetData.tags[0]}/>
-  <div class="splitter"></div>
+  <TagsHeader tag={widgetData.tags[0]} mobile={VIEWPORT_MOBILE_INIT[1]}/>
+  {#if !VIEWPORT_MOBILE_INIT[1]}
+    <div class="splitter" />
+  {/if}
   <div class="articles">
     {#each widgetData.dataArticle as article}
-      <ArticleCard {article} tablet={VIEWPORT_TABLET_INIT[1]} />
+      <ArticleCard {article} tablet={VIEWPORT_TABLET_INIT[1]} mobile={VIEWPORT_MOBILE_INIT[1]}/>
     {/each}
   </div>
-  <div class="section-footer">
+  <div class="section-footer" class:mobile={VIEWPORT_MOBILE_INIT[1]}>
     <div class="page-info">
       5 of 98 articles
     </div>
@@ -180,7 +182,7 @@
     height: 100%;
 
     &.tablet {
-      padding: 34px 0;
+      padding: 0 34px;
     }
 
     .splitter {
@@ -202,6 +204,10 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+
+      &.mobile {
+        padding: 0 24px;
+      }
 
       .page-info {
         color: var(--colors-gray4, #CCC);

@@ -129,7 +129,7 @@ export async function main
  * @param { any } fetch
  *  💠 **[required]** Target instance of `fetch` object.
  * @param { string } _name
- *  💠 **[required]** Target `parmalink`.
+ *  💠 **[required]** Target `tag name`.
  * @param { string } _lang
  *  💠 **[required]** Target `lang`.
  * @returns { Promise < IProfileData2 > }
@@ -166,6 +166,5 @@ async function fetchData
   // ;
 
   data0 = [data.authors_articles, data.authors_tags]
-
   return data0;
 }

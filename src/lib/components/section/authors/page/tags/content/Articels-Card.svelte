@@ -36,7 +36,11 @@ export let
      /**
      * @description tablet view
      */
-    tablet = false;
+    tablet = false,
+     /**
+     * @description mobile view
+     */
+    mobile = false;
 
 $: ({permalink, published_date, tags_key_pair, data: {content, title} = {content: "", title: ""} } = article);
 
@@ -57,7 +61,7 @@ const src =  "https://s3-alpha-sig.figma.com/img/c13c/1e24/1e6baeeb9f8d7582f9d06
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="card-wrapper">
+<div class="card-wrapper"  class:mobile>
   <div class="card-content">
     <a href="/a/{permalink}">
       <div class="title">
@@ -80,7 +84,7 @@ const src =  "https://s3-alpha-sig.figma.com/img/c13c/1e24/1e6baeeb9f8d7582f9d06
       {/each}
     </div>
   </div>
-  <div class="preview" style="{tablet ? `width: ${248}px`: ""}">
+  <div class="preview" class:tablet class:mobile>
 
   </div>
 
@@ -107,8 +111,14 @@ const src =  "https://s3-alpha-sig.figma.com/img/c13c/1e24/1e6baeeb9f8d7582f9d06
       gap: 56px;
       border-radius: 12px;
       box-sizing: border-box;
+      justify-content: space-between;
       background: var(--colors-gray1, #313131);
 
+      &.mobile {
+        flex-direction: column-reverse;
+        background: transparent;
+        align-items: center;
+      }
 
       a {
         color: var(--colors-brand-color-white, #FFF);
@@ -124,6 +134,14 @@ const src =  "https://s3-alpha-sig.figma.com/img/c13c/1e24/1e6baeeb9f8d7582f9d06
         width: 360px;
         flex-shrink: 0;
         background-color: white;
+
+        &.tablet {
+          width: 248px;
+        }
+
+        &.mobile {
+          width: 375px;
+        }
       }
     }
 

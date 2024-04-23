@@ -43,6 +43,7 @@
 // ╰────────────────────────────────────────────────────────────────────────╯
 
 export let tag: {name: string, folowers: number, description: string, count: number};
+export let mobile = false;
 
 const
   /**
@@ -77,7 +78,7 @@ const
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="tags-header-wrapper">
+<div class="tags-header-wrapper" class:mobile>
   <div class="header-buttons">
     <div class="tag-info-wrapper">
       <h1>{tag.name}</h1>
@@ -88,7 +89,9 @@ const
       </div>
     </div>
     <div class="action-buttons">
-      <SelectButton value="all" {options} let:currentValue> Language: {currentValue.label} </SelectButton>
+      {#if !mobile}
+        <SelectButton value="all" {options} let:currentValue> Language: {currentValue?.label} </SelectButton>
+      {/if}
 
       <Button>
         + Follow

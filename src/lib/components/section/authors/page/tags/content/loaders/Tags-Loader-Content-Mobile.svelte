@@ -132,7 +132,7 @@
       "
     >
       {#each [281, 192] as width}
-        <LoaderLine {width} height={26} />
+        <LoaderLine {width} height={20} />
       {/each}
     </div>
 
@@ -144,10 +144,8 @@
       <div class="author-box"  class:author-box-center={VIEWPORT_TABLET_INIT[1]}>
         <LoaderAvatar size={34}  />
         <div class="author-box-text">
-          <LoaderLine height={15} width={121}/>
-          {#if !VIEWPORT_TABLET_INIT[1]}
-            <LoaderLine height={15} width={57}/>
-          {/if}
+          <LoaderLine height={20} width={121}/>
+          <LoaderLine height={12} width={57}/>
         </div>
       </div>
 
@@ -161,7 +159,7 @@
       class="badge-box"
     >
       {#each [68, 60, 59] as width}
-        <LoaderBadge {width} />
+        <LoaderBadge {width} height={22}/>
       {/each}
     </div>
   </div>
