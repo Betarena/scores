@@ -31,7 +31,7 @@ export async function main
       // ╰──────────────────────────────────────────────────────────────────╯
 
       const
-        permalinkTag = request.url.searchParams.get('permalinkTag'),
+        permalinkTag = request.url.searchParams.get('permalinkTag')
         // hasura = request.url.searchParams.get('hasura'),
         // lang = request.url.searchParams.get('lang')
       ;
