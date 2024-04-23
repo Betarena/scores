@@ -46,7 +46,7 @@ export async function main
         const
           data: IArticleData = await fallbackDataGenerate0
           (
-            permalink!
+            permalink
           ),
           loadType = 'HASURA'
         ;

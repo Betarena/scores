@@ -3,11 +3,11 @@
 // │ :|: Author Article Data Endpoint                                 │
 // ╰──────────────────────────────────────────────────────────────────╯
 
-import { checkNull } from '$lib/utils/miscellenous.js';
-import { getAuthorArticleTranslation } from '@betarena/scores-lib/dist/functions/v8/authors.articles.js';
+// import { checkNull } from '$lib/utils/miscellenous.js';
+// import { getAuthorArticleTranslation } from '@betarena/scores-lib/dist/functions/v8/authors.articles.js';
 import { entryAuthorGeneralData } from '@betarena/scores-lib/dist/functions/v8/main.preload.authors.js'
 import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
-import type { IArticleTranslation } from '@betarena/scores-lib/types/types.authors.articles.js';
+// import type { IArticleTranslation } from '@betarena/scores-lib/types/types.authors.articles.js';
 import type { IPageAuthorDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
 import { json, type RequestEvent } from '@sveltejs/kit';
 
@@ -33,7 +33,7 @@ export async function main
       const
         permalinkTag = request.url.searchParams.get('permalinkTag'),
         // hasura = request.url.searchParams.get('hasura'),
-        lang = request.url.searchParams.get('lang')
+        // lang = request.url.searchParams.get('lang')
       ;
 
       // ╭──────────────────────────────────────────────────────────────────╮
