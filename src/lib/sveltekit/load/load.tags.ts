@@ -55,7 +55,7 @@ export async function main
   {
     langParam: string
   }
-): Promise < {} >
+): Promise < IPageAuthorDataFinal & {currentTag: IPageAuthorTagData} >
 {
   const
     // ╭─────
@@ -64,19 +64,19 @@ export async function main
     // ╰─────
     {
       name
-    } = event.params,
+    } = event.params
     /**
      * @description
      *  📣 Validate **this** `url`.
      */
-    isUrlValid
-      = await promiseValidUrlCheck
-      (
-        event.fetch,
-        {
-          authorArticleUrl: name
-        }
-      )
+    // isUrlValid
+    //   = await promiseValidUrlCheck
+    //   (
+    //     event.fetch,
+    //     {
+    //       authorArticleUrl: name
+    //     }
+    //   )
   ;
 
   // if (!isUrlValid)
@@ -102,13 +102,13 @@ export async function main
      *  📣 `Data` object for target `route`.
      */
   const response = {
+    currentTag: {} as IPageAuthorTagData,
     ...data,
-    currentTag: undefined
   };
   if (response.mapTag)
   {
    const current = response.mapTag.find(([_id, tag]) => (tag as IPageAuthorTagData).permalink === name);
-    response.currentTag = (current ? current[1] : current) as any
+    response.currentTag = (current ? current[1] : current) as IPageAuthorTagData
   }
 
   // [🐞]

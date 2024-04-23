@@ -32,7 +32,7 @@ export async function main
 
       const
         permalinkTag = request.url.searchParams.get('permalinkTag'),
-        hasura = request.url.searchParams.get('hasura'),
+        // hasura = request.url.searchParams.get('hasura'),
         lang = request.url.searchParams.get('lang')
       ;
 
@@ -42,11 +42,11 @@ export async function main
       // │ TODO:                                                            │
       // │ Add cache logic.                                                 │
       // ╰──────────────────────────────────────────────────────────────────╯
-      if (!checkNull(permalinkTag))
+      if (permalinkTag)
         {
         const data: IPageAuthorDataFinal = await fallbackDataGenerate0
           (
-            permalinkTag!
+            permalinkTag
           ),
           loadType = 'HASURA'
         ;
@@ -62,21 +62,21 @@ export async function main
       // │ Add cache logic.                                                 │
       // ╰──────────────────────────────────────────────────────────────────╯
 
-      if (!checkNull(lang))
-      {
-        const
-          data: IArticleTranslation = await fallbackDataGenerate1
-          (
-            lang
-          ),
-          loadType = 'HASURA'
-        ;
+      // if (!checkNull(lang))
+      // {
+      //   const
+      //     data: IArticleTranslation = await fallbackDataGenerate1
+      //     (
+      //       lang
+      //     ),
+      //     loadType = 'HASURA'
+      //   ;
 
-        // ▓ [🐞]
-        console.log(`📌 loaded [FSCR] with: ${loadType}`)
+      //   // ▓ [🐞]
+      //   console.log(`📌 loaded [FSCR] with: ${loadType}`)
 
-        if (data != undefined) return json(data);
-      }
+      //   if (data != undefined) return json(data);
+      // }
 
       return json
       (
@@ -140,19 +140,19 @@ async function fallbackDataGenerate0
  * @returns { Promise < IArticleData > }
  *  📤 Target `article` data.
  */
-async function fallbackDataGenerate1
-(
-  lang: string
-): Promise < IArticleTranslation | null | undefined >
-{
-  const dataRes0 = await getAuthorArticleTranslation
-  (
-    [lang]
-  );
+// async function fallbackDataGenerate1
+// (
+//   lang: string
+// ): Promise < IArticleTranslation | null | undefined >
+// {
+//   const dataRes0 = await getAuthorArticleTranslation
+//   (
+//     [lang]
+//   );
 
-  if (dataRes0[0].size == 0)
-    return null;
-  ;
+//   if (dataRes0[0].size == 0)
+//     return null;
+//   ;
 
-  return dataRes0[0].get(lang);
-}
+//   return dataRes0[0].get(lang);
+// }

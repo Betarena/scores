@@ -30,7 +30,7 @@ export async function main
 
       const
         permalink = request.url.searchParams.get('permalink'),
-        hasura = request.url.searchParams.get('hasura'),
+        // hasura = request.url.searchParams.get('hasura'),
         lang = request.url.searchParams.get('lang')
       ;
 

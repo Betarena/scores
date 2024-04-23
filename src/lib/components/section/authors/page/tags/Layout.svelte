@@ -42,7 +42,6 @@
 
   import SvelteSeo from 'svelte-seo';
 
-  import { tryCatch } from '@betarena/scores-lib/dist/util/util.common.js';
 
   import type { IArticleData } from '@betarena/scores-lib/types/types.authors.articles.js';
   import TagsWidget from './content/Tags-Widget.svelte';
@@ -66,13 +65,7 @@
   const
     /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
     // eslint-disable-next-line no-unused-vars
-    CNAME: string = 'section⮕g⮕authors⮕main',
-    /** @description 📣 threshold start + state for 📱 MOBILE */
-    // eslint-disable-next-line no-unused-vars
-    VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ],
-    /** @description 📣 threshold start + state for 💻 TABLET */
-    // eslint-disable-next-line no-unused-vars
-    VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
+    CNAME: string = 'section⮕g⮕authors⮕tag',
   ;
 
   $: pageSeo = $page.data.dataArticle as IArticleData;
