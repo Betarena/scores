@@ -16,7 +16,6 @@ import { browser, dev } from '$app/environment';
 import * as Sentry from '@sentry/browser';
 import chalk from 'chalk';
 
-import { postv2 } from '$lib/api/utils.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -494,13 +493,13 @@ async function saveLog
   data: string
 ): Promise < void >
 {
-  if (browser && dev)
-    await postv2
-    (
-      '/api/misc/debug',
-      data
-    );
-  ;
+  // if (browser && import.meta.env?.VITE_PROD_LOGS)
+  //   await postv2
+  //   (
+  //     '/api/misc/debug',
+  //     data
+  //   );
+  // ;
 
   return;
 }
