@@ -7,53 +7,30 @@
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
 // │ 📝 Description                                                                   │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
-// │ Betarena (Module) ││ Navigation Variables Definitions                            │
+// │ Betarena (Module) ││ Instance Variables Definitions                              │
 // ╰──────────────────────────────────────────────────────────────────────────────────╯
+
+// #region ➤ 📦 Package Imports
+
+import { dev } from "$app/environment";
+
+// #endregion ➤ 📦 Package Imports
+
+// [🐞]
+// console.log('📦 [scores-lib] :: process.env.VITE_PROD_LOGS', process.env.VITE_PROD_LOGS);
 
 export const
   /**
    * @description
-   *  📣 Target `path` for **profile page**.
+   * - 📝 `LOGS_SHOW_OVERRIDE` flag. `(default=false)`
+   * - IMPORTANT Turns off all 'debugging' console logs for 'scores'.
+   * - 📝 overrides (ADMIN) to show logs even in PROD.
+   * - 📝 Prevents logs display on `deployments`.
    */
-  routeIdPageProfile = '/(scores)/u/[view]/[lang=lang]',
-  /**
-   * @description
-   *  📣 Target `path` for **competition page**.
-   */
-  routeIdPageCompetitions = '/(scores)/[[lang=lang]]/[competitions=competitions]',
-  /**
-   * @description
-   *  📣 Target `path` for **authors page**.
-   */
-  routeIdPageAuthors = '/(authors)/a/[...permalink]',
-  /**
-   * @description
-   *  📣 Target `path` for **authors page**.
-   */
-  routeIdPageTags = '/(authors)/a/tag/[name]',
-  /**
-   * @description
-   *  📣 Target `path` for **league page**.
-   */
-  routeIdPageLeague = '/(scores)/[[lang=lang]]/[sport]/[country]/[league_name]',
-  /**
-   * @description
-   *  📣 Target `path` for **fixture page**.
-   */
-  routeIdPageFixture = '/(scores)/[[lang=lang]]/[sport]/[fixture=fixture]',
-  /**
-   * @description
-   *  📣 Target `path` for **player page**.
-   */
-  routeIdPagePlayer = '/(scores)/[[lang=lang]]/[player=player]/[...player_fill]',
-  /**
-   * @description
-   *  📣 Target `path` for **competition (lobby) page**.
-   */
-  routeIdPageCompetitionLobby = '/(scores)/[[lang=lang]]/[competitions=competitions]',
-  /**
-   * @description
-   *  📣 Target `path` for **competition (target) page**.
-   */
-  routeIdPageCompetition = '/(scores)/[[lang=lang]]/[competitions=competitions]/[...competition_fill]'
+  LOGS_SHOW_OVERRIDE =
+    import.meta.env.VITE_PROD_LOGS == undefined
+      ? dev
+      : import.meta.env.VITE_PROD_LOGS == 'false'
+        ? false
+        : true
 ;
