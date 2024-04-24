@@ -214,7 +214,7 @@
   </div>
   <div class="section-footer" class:mobile={VIEWPORT_MOBILE_INIT[1]}>
     <div class="page-info">
-      {visibleArticles.length} of {articles?.length || 0} articles
+      {visibleArticles.length}/{articles?.length || 0} articles
     </div>
     <Button type="outline" on:click={() => loadArticles(articles)}>View more</Button>
   </div>

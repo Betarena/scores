@@ -8,86 +8,105 @@
 -->
 
 <script lang="ts">
+  // #region ➤ 📦 Package Imports
 
+  import Button from "$lib/components/ui/Button.svelte";
+  import SelectButton from "$lib/components/ui/SelectButton.svelte";
+  import sessionStore from "$lib/store/session.js";
+  import arrowDown from "./assets/arrow-down.svg";
+  import type { IPageAuthorTagData } from "@betarena/scores-lib/types/v8/preload.authors.js";
 
-// #region ➤ 📦 Package Imports
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
-    import Button from "$lib/components/ui/Button.svelte";
-    import SelectButton from "$lib/components/ui/SelectButton.svelte";
-    import sessionStore from '$lib/store/session.js';
-    import type { AuthorsTagsMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
-    import type { IPageAuthorTagData } from "@betarena/scores-lib/types/v8/preload.authors.js";
+  // #region ➤ 📌 VARIABLES
 
-// ╭────────────────────────────────────────────────────────────────────────╮
-// │ NOTE:                                                                  │
-// │ Please add inside 'this' region the 'imports' that are required        │
-// │ by 'this' .svelte file is ran.                                         │
-// │ IMPORTANT                                                              │
-// │ Please, structure the imports as follows:                              │
-// │ 1. svelte/sveltekit imports                                            │
-// │ 2. project-internal files and logic                                    │
-// │ 3. component import(s)                                                 │
-// │ 4. assets import(s)                                                    │
-// │ 5. type(s) imports(s)                                                  │
-// ╰────────────────────────────────────────────────────────────────────────╯
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
-// #region ➤ 📌 VARIABLES
+  export let tag: IPageAuthorTagData;
+  export let mobile = false;
 
-// ╭────────────────────────────────────────────────────────────────────────╮
-// │ NOTE:                                                                  │
-// │ Please add inside 'this' region the 'variables' that are to be         │
-// │ and are expected to be used by 'this' .svelte file / component.        │
-// │ IMPORTANT                                                              │
-// │ Please, structure the imports as follows:                              │
-// │ 1. export const / let [..]                                             │
-// │ 2. const [..]                                                          │
-// │ 3. let [..]                                                            │
-// │ 4. $: [..]                                                             │
-// ╰────────────────────────────────────────────────────────────────────────╯
+  // #endregion ➤ 📦 Package Imports
 
-export let tag: IPageAuthorTagData;
-export let mobile = false;
+  const /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */ // eslint-disable-next-line no-unused-vars
+    CNAME: string = "<author⮕w⮕tags-content⮕header";
 
-// #endregion ➤ 📦 Package Imports
+  const options = [
+    { id: "all", label: "All" },
+    { id: "en", label: "English" },
+    { id: "es", label: "Espanõl" },
+    { id: "pt", label: "Português" },
+    { id: "pt-pt", label: "Português-PT" },
+  ];
 
-const
+  // #endregion ➤ 📌 VARIABLES
+
   /**
+   * @summary
+   * 🔥 REACTIVITY
+   *
+   * WARNING:
+   * can go out of control
+   *
    * @description
-   *  📣 `this` component **main** `id` and `data-testid` prefix.
-   */ // eslint-disable-next-line no-unused-vars
-  CNAME: string = '<author⮕w⮕tags-content⮕header';
+   * showDescription - controls visability in mobile
+   *
+   * WARNING:
+   * triggered by changes in:
+   * - `showDescription` - mobile && tag.description
+   */
 
- const options = [
-   {id: "all", label: "All"},
-  {id: "en", label: "English"},
-  {id: "es", label: "Espanõl"},
-  {id: "pt", label: "Português"},
-  {id: "pt-pt", label: "Português-PT"},
-]
+  $: ({ globalState } = $sessionStore);
+  $: showDescription = !mobile && tag.description;
 
-$: ({globalState } = $sessionStore);
 
-// #endregion ➤ 📌 VARIABLES
+  // #region ➤ 🛠️ METHODS
 
-// #region ➤ 🛠️ METHODS
-
-// ╭────────────────────────────────────────────────────────────────────────╮
-// │ NOTE:                                                                  │
-// │ Please add inside 'this' region the 'methods' that are to be           │
-// │ and are expected to be used by 'this' .svelte file / component.        │
-// │ IMPORTANT                                                              │
-// │ Please, structure the imports as follows:                              │
-// │ 1. function (..)                                                       │
-// │ 2. async function (..)                                                 │
-// ╰────────────────────────────────────────────────────────────────────────╯
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
   function follow() {
-    if(!globalState.has('NotAuthenticated')) return;
-    $sessionStore.currentActiveModal = 'Auth_Modal';
+    if (!globalState.has("NotAuthenticated")) return;
+    $sessionStore.currentActiveModal = "Auth_Modal";
   }
 
-// #endregion ➤ 🛠️ METHODS
 
+  function toggleDescription() {
+    if(!mobile || !tag.description) return;
+    showDescription = !showDescription;
+  }
+
+  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--
@@ -104,29 +123,41 @@ $: ({globalState } = $sessionStore);
 <div class="tags-header-wrapper" class:mobile>
   <div class="header-buttons">
     <div class="tag-info-wrapper">
-      <h1>{tag.name}</h1>
+      <h1 on:click={toggleDescription}>
+        {tag.name}
+        {#if mobile && tag.description}
+            <img
+              id=''
+              class:opend={showDescription}
+              src={arrowDown}
+              alt='arrow-down'
+              title=''
+              loading='lazy'
+            />
+          <!-- content here -->
+        {/if}
+      </h1>
       <div class="tag-info">
         <span>{tag.followers || 0} followers</span>
-        <div class="tag-info-splitter"></div>
+        <div class="tag-info-splitter" />
         <span>{tag.articleIds?.length || 0} articles</span>
       </div>
     </div>
     <div class="action-buttons">
       {#if !mobile}
-        <SelectButton value="all" {options} let:currentValue> Language: {currentValue?.label} </SelectButton>
+        <SelectButton value="all" {options} let:currentValue>
+          Language: {currentValue?.label}
+        </SelectButton>
       {/if}
 
-      <Button on:click={follow}>
-        + Follow
-      </Button>
+      <Button on:click={follow}>+ Follow</Button>
     </div>
   </div>
   <div class="header-description">
-       {#if tag.description}
+    {#if showDescription && tag.description}
       <span>{tag.description}</span>
-      {/if}
+    {/if}
   </div>
-
 </div>
 
 <!--
@@ -138,8 +169,6 @@ $: ({globalState } = $sessionStore);
 │ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
-
 
 <style lang="scss">
   .tags-header-wrapper {
@@ -171,7 +200,21 @@ $: ({globalState } = $sessionStore);
           margin: 0;
           font-style: normal;
           font-weight: 600;
+          display: flex;
+          gap: 4px;
+          align-items: center;
           line-height: 54px; /* 142.105% */
+
+          img {
+            transition: transform;
+            transition-duration: 0.7s;
+            &.opend {
+              transform: rotate(180);
+            }
+            path {
+              stroke: var(--text-color);
+            }
+          }
         }
 
         .tag-info {
@@ -204,7 +247,7 @@ $: ({globalState } = $sessionStore);
     .header-description {
       display: flex;
       flex-direction: column;
-      gap: 6px
+      gap: 6px;
     }
   }
 </style>
