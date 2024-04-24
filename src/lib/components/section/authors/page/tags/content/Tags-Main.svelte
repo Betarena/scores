@@ -178,7 +178,7 @@
   function loadArticles(data: [number, IPageAuthorArticleData][] | undefined) {
     if (!data) return;
     const loaded = visibleArticles.length;
-    const splited = data.slice(loaded, loaded + 5);
+    const splited = data.slice(loaded, loaded + 10);
     visibleArticles = [...visibleArticles, ...splited.map(a => prepareArticle(a))]
   }
 
@@ -247,7 +247,7 @@
     .splitter {
       height: 1px;
       width: 100%;
-      background: var(--dark-theme-1);
+      background: var(--border-color-light);
 
     }
 
@@ -269,7 +269,7 @@
       }
 
       .page-info {
-        color: var(--colors-gray4, #CCC);
+        color: var(--text-color-second);
         font-size: 12px;
         font-style: normal;
         font-weight: 400;

@@ -114,7 +114,7 @@ const src =  "https://s3-alpha-sig.figma.com/img/c13c/1e24/1e6baeeb9f8d7582f9d06
       border-radius: 12px;
       box-sizing: border-box;
       justify-content: space-between;
-      background: var(--colors-gray1, #313131);
+      background: var(--bg-color-second);
 
       &.mobile {
         flex-direction: column-reverse;
@@ -123,10 +123,10 @@ const src =  "https://s3-alpha-sig.figma.com/img/c13c/1e24/1e6baeeb9f8d7582f9d06
       }
 
       a {
-        color: var(--colors-brand-color-white, #FFF);
+        color: var(--text-color);
 
         &:hover {
-          color: var(--colors-brand-color-orange, #F5620F);
+          color: var(--primary);
         }
       }
 
@@ -196,10 +196,10 @@ const src =  "https://s3-alpha-sig.figma.com/img/c13c/1e24/1e6baeeb9f8d7582f9d06
         &-info {
           display: flex;
           flex-direction: column;
-          color: var(--colors-gray4, #CCC);
+          color: var(--text-color-second, #CCC);
 
           .publication-date {
-            color: var(--colors-gray3, #8C8C8C);
+            color: var(--text-color-second, #8C8C8C);
             font-family: Roboto;
             font-size: 12px;
             font-style: normal;
@@ -209,7 +209,7 @@ const src =  "https://s3-alpha-sig.figma.com/img/c13c/1e24/1e6baeeb9f8d7582f9d06
         }
 
         &-name {
-          color: var(--colors-brand-color-white, #FFF);
+          color: var(--text-color);
           font-family: Inter;
           font-size: 14px;
           font-style: normal;

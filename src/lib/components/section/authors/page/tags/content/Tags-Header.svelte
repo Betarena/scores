@@ -14,6 +14,7 @@
 
     import Button from "$lib/components/ui/Button.svelte";
     import SelectButton from "$lib/components/ui/SelectButton.svelte";
+    import sessionStore from '$lib/store/session.js';
     import type { AuthorsTagsMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
     import type { IPageAuthorTagData } from "@betarena/scores-lib/types/v8/preload.authors.js";
 
@@ -46,6 +47,9 @@
 
 export let tag: IPageAuthorTagData;
 export let mobile = false;
+
+// #endregion ➤ 📦 Package Imports
+
 const
   /**
    * @description
@@ -61,10 +65,28 @@ const
   {id: "pt-pt", label: "Português-PT"},
 ]
 
+$: ({globalState } = $sessionStore);
+
 // #endregion ➤ 📌 VARIABLES
 
+// #region ➤ 🛠️ METHODS
 
-// #endregion ➤ 📦 Package Imports
+// ╭────────────────────────────────────────────────────────────────────────╮
+// │ NOTE:                                                                  │
+// │ Please add inside 'this' region the 'methods' that are to be           │
+// │ and are expected to be used by 'this' .svelte file / component.        │
+// │ IMPORTANT                                                              │
+// │ Please, structure the imports as follows:                              │
+// │ 1. function (..)                                                       │
+// │ 2. async function (..)                                                 │
+// ╰────────────────────────────────────────────────────────────────────────╯
+
+  function follow() {
+    if(!globalState.has('NotAuthenticated')) return;
+    $sessionStore.currentActiveModal = 'Auth_Modal';
+  }
+
+// #endregion ➤ 🛠️ METHODS
 
 </script>
 
@@ -94,7 +116,7 @@ const
         <SelectButton value="all" {options} let:currentValue> Language: {currentValue?.label} </SelectButton>
       {/if}
 
-      <Button>
+      <Button on:click={follow}>
         + Follow
       </Button>
     </div>
@@ -124,7 +146,7 @@ const
     display: flex;
     flex-direction: column;
     gap: 16px;
-    color: var(--colors-gray4, #CCC);;
+    color: var(--text-color-second);
 
     &.mobile {
       padding: 0 24px;
@@ -143,7 +165,7 @@ const
         flex-direction: column;
 
         h1 {
-          color: var(--white, #FFF);
+          color: var(--text-color);
           font-family: Inter;
           font-size: 38px;
           margin: 0;
@@ -156,7 +178,7 @@ const
           display: flex;
           gap: 5px;
           align-items: center;
-          color: var(--colors-gray4, #CCC);
+          color: var(--text-color-second);
           font-family: Roboto;
           font-size: 12px;
           font-style: normal;
@@ -166,7 +188,7 @@ const
           &-splitter {
             width: 2px;
             height: 2px;
-            background-color: var(--colors-gray4, #CCC);
+            background-color: var(--text-color-second);
             border-radius: 100%;
           }
         }

@@ -83,7 +83,8 @@ export let
   padding: 3px 12px;
   width: max-content;
   border-radius: 100px;
-  background-color: var(--dark-theme-1);
+  color: var(--text-color);
+  background-color: var(--tag-bg-color);
   cursor: pointer;
 
   &:hover, .active {
