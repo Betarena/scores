@@ -82,7 +82,6 @@
   $: ({ globalState } = $sessionStore);
   $: showDescription = !mobile && tag.description;
 
-
   // #region ➤ 🛠️ METHODS
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -100,9 +99,8 @@
     $sessionStore.currentActiveModal = "Auth_Modal";
   }
 
-
   function toggleDescription() {
-    if(!mobile || !tag.description) return;
+    if (!mobile || !tag.description) return;
     showDescription = !showDescription;
   }
 
@@ -126,15 +124,14 @@
       <h1 on:click={toggleDescription}>
         {tag.name}
         {#if mobile && tag.description}
-            <img
-              id=''
-              class:opend={showDescription}
-              src={arrowDown}
-              alt='arrow-down'
-              title=''
-              loading='lazy'
-            />
-          <!-- content here -->
+          <img
+            id=""
+            class:opend={showDescription}
+            src={arrowDown}
+            alt="arrow-down"
+            title=""
+            loading="lazy"
+          />
         {/if}
       </h1>
       <div class="tag-info">
@@ -153,11 +150,11 @@
       <Button on:click={follow}>+ Follow</Button>
     </div>
   </div>
-  <div class="header-description">
-    {#if showDescription && tag.description}
+  {#if showDescription && tag.description}
+    <div class="header-description">
       <span>{tag.description}</span>
-    {/if}
-  </div>
+    </div>
+  {/if}
 </div>
 
 <!--
@@ -208,8 +205,9 @@
           img {
             transition: transform;
             transition-duration: 0.7s;
+            transform: rotate(360deg) translateY(25%);
             &.opend {
-              transform: rotate(180);
+              transform: rotate(180deg);
             }
             path {
               stroke: var(--text-color);
