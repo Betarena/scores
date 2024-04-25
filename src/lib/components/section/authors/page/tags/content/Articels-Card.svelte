@@ -101,26 +101,21 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function resize(tagsWidth: number, node: HTMLDivElement) {
-    if (!tagsWidth || !node) return;
+  function resize(width: number, node: HTMLDivElement) {
+    if (!width || !node) return;
     const scrollWidth = node.scrollWidth;
-    let updated = false;
-    if (tagsWidth < scrollWidth) {
+    if (width < scrollWidth) {
       visibleTags.pop();
       visibleTags = [...visibleTags];
-      updated = true;
-    } else if (tagsWidth > prevWidth) {
+    } else if (width > prevWidth) {
       visibleTags = [...tags_data];
-      updated = true;
     }
 
-    prevWidth = tagsWidth;
+    prevWidth = width;
     countOfNotVisibleTags = tags_data.length - visibleTags.length;
-    if (updated) {
-      tick().then(() => {
-        resize(tagsWidth, node);
-      });
-    }
+    tick().then(() => {
+      if (width < node.scrollWidth) resize(width, node);
+    });
   }
 
   function dateToString(d: string | Date) {
