@@ -48,13 +48,14 @@
      */
     mobile = false;
   let /**
-     * @description variables to controll tags scroll
+     * @description variables to controll tags visability
      */
     tagsWidth,
     tagsNode,
     prevWidth = 0,
     countOfNotVisibleTags = 0,
-    tagsScrollWidth;
+    tagsScrollWidth,
+    expanded = false;
   $: ({
     permalink,
     tags_data,
@@ -85,13 +86,9 @@
   /** @description
    * .recalculate tag visibility when changing width, orScrollWidth
    *  WARNING:
-   * resize function will rewrite tagsScrollWidth and call resize again
-   * until scrollWidth > tagsWidth
    */
   $: resize(tagsWidth, tagsNode);
-  $: if (tagsScrollWidth) {
-    resize(tagsWidth, tagsNode);
-  }
+
   // #region ➤ 🛠️ METHODS
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -107,18 +104,23 @@
   function resize(tagsWidth: number, node: HTMLDivElement) {
     if (!tagsWidth || !node) return;
     const scrollWidth = node.scrollWidth;
+    let updated = false;
     if (tagsWidth < scrollWidth) {
       visibleTags.pop();
       visibleTags = [...visibleTags];
+      updated = true;
     } else if (tagsWidth > prevWidth) {
       visibleTags = [...tags_data];
+      updated = true;
     }
 
     prevWidth = tagsWidth;
     countOfNotVisibleTags = tags_data.length - visibleTags.length;
-    tick().then(() => {
-      tagsScrollWidth = scrollWidth;
-    });
+    if (updated) {
+      tick().then(() => {
+        resize(tagsWidth, node);
+      });
+    }
   }
 
   function dateToString(d: string | Date) {
@@ -134,6 +136,12 @@
 
   function formatDateNumber(number) {
     return number < 10 ? `0${number}` : number;
+  }
+
+  function expandTags() {
+    expanded = true;
+    countOfNotVisibleTags = 0;
+    visibleTags = [...tags_data];
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -166,14 +174,19 @@
         <div class="publication-date">{date}</div>
       </div>
     </div>
-    <div class="tags-wrapper" bind:clientWidth={tagsWidth} bind:this={tagsNode}>
+    <div
+      class="tags-wrapper"
+      class:expanded
+      bind:clientWidth={tagsWidth}
+      bind:this={tagsNode}
+    >
       {#each visibleTags as tag}
         <a href="/a/tag/{tag?.permalink}">
           <Tag>{tag?.name}</Tag>
         </a>
       {/each}
       {#if countOfNotVisibleTags}
-        <Tag>+{countOfNotVisibleTags}</Tag>
+        <Tag on:click={expandTags}>+{countOfNotVisibleTags}</Tag>
       {/if}
     </div>
   </div>
@@ -267,6 +280,10 @@
         gap: 4px;
         max-width: 100%;
         overflow: hidden;
+
+        &.expanded {
+          flex-wrap: wrap;
+        }
       }
 
       .title {
