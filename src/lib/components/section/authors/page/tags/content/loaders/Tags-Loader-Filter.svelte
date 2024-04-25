@@ -34,6 +34,8 @@
     display: flex;
     flex-direction: column;
     gap: 23px;
+    max-width: 100%;
+    overflow: hidden;
 
     &.mobile {
       padding: 0 24px;

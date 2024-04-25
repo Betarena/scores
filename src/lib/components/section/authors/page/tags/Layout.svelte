@@ -22,7 +22,6 @@
 -->
 
 <script lang="ts">
-
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -38,13 +37,14 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { page } from '$app/stores';
+  import sessionStore from "$lib/store/session.js";
+  import { viewportChangeV2 } from "$lib/utils/device";
+  import { page } from "$app/stores";
 
-  import SvelteSeo from 'svelte-seo';
+  import SvelteSeo from "svelte-seo";
 
-
-  import type { IArticleData } from '@betarena/scores-lib/types/types.authors.articles.js';
-  import TagsWidget from './content/Tags-Widget.svelte';
+  import type { IArticleData } from "@betarena/scores-lib/types/types.authors.articles.js";
+  import TagsWidget from "./content/Tags-Widget.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -63,14 +63,28 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   const
-    /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
+    /**
+     * @description
+     *  📣 threshold start + state for 📱 MOBILE
+     */ // eslint-disable-next-line no-unused-vars
+     VIEWPORT_MOBILE_INIT: [number, boolean] = [575, true],
+    /**
+     * @description
+     *  📣 threshold start + state for 💻 TABLET
+     */ // eslint-disable-next-line no-unused-vars
+    VIEWPORT_TABLET_INIT: [number, boolean] = [1160, true],
+  /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
     // eslint-disable-next-line no-unused-vars
-    CNAME: string = 'section⮕g⮕authors⮕tag',
-  ;
+    CNAME: string = "section⮕g⮕authors⮕tag";
 
+  $: ({ windowWidth } = $sessionStore);
+  $: [VIEWPORT_MOBILE_INIT[1]] = viewportChangeV2(
+    windowWidth,
+    VIEWPORT_MOBILE_INIT[0],
+    VIEWPORT_TABLET_INIT[0]
+  );
   $: pageSeo = $page.data.dataArticle as IArticleData;
   // #endregion ➤ 📌 VARIABLES
-
 </script>
 
 <!--
@@ -85,7 +99,7 @@
 -->
 
 {#if pageSeo}
-	<!-- <SvelteSeo
+  <!-- <SvelteSeo
 		title={pageSeo.seo_details?.main_data.title}
 		description={pageSeo.seo_details?.main_data.description}
 		keywords={pageSeo.seo_details?.main_data.keywords}
@@ -97,10 +111,10 @@
 	/> -->
 {/if}
 
-<section
-  id={CNAME}
->
-  <TagsWidget />
+<section id={CNAME} class:mobile={VIEWPORT_MOBILE_INIT[1]}>
+  <div class="main-content">
+    <TagsWidget />
+  </div>
 </section>
 
 <!--
@@ -114,7 +128,6 @@
 -->
 
 <style lang="scss">
-
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
   │ 📲 MOBILE-FIRST                                                              │
@@ -122,38 +135,40 @@
   */
 
   // IMPORTANT
-  :global
-  {
-    body
-    {
-      &:has(main)
-      {
+  :global {
+    body {
+      &:has(main) {
         /* 🎨 style */
         background-color: var(--white) !important;
       }
-      &:has(main.dark-mode)
-      {
+      &:has(main.dark-mode) {
         /* 🎨 style */
         background-color: var(--dark-theme) !important;
       }
     }
   }
 
-  section
-  {
-    /* 🎨 style */
-    margin: auto;
-    max-width: 872px;
+  section {
     width: 100%;
-    padding-left: 0;
-    padding-right: 0;
+    border-top: var(--section-border);
 
+    &.mobile {
+      border-top: none;
+    }
+
+    .main-content {
+      /* 🎨 style */
+      margin: auto;
+      max-width: 872px;
+      width: 100%;
+      padding-left: 0;
+      padding-right: 0;
+
+    }
     &.dark-mode,
-    body:has(&.dark-mode)
-    {
+    body:has(&.dark-mode) {
       /* 🎨 style */
       background-color: var(--dark-theme);
     }
   }
-
 </style>

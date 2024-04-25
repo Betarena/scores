@@ -96,12 +96,14 @@ export let
   }
 
   .outline {
-    color: var(--white-day, #FFF);
+    color: var(--text-color);
     background: transparent;
-    border: 1px solid var(---white, #FFF) !important;
+    border: 1px solid var(--text-color) !important;
+    transition: all;
+    transition-duration: 0.6s;
 
     &:hover {
-      border: 1px solid var(--primary, #FFF) !important;
+      border: 1px solid var(--primary) !important;
       color: var(--primary);
     }
   }

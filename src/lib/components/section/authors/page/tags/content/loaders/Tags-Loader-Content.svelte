@@ -196,6 +196,9 @@
   {
     display: flex;
     justify-content: space-between;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
 
     .preview-box {
       height: 200px;

@@ -23,8 +23,7 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import ArrowDown from "./assets/arrow-down.svelte";
-import arrowDown from "./assets/arrow-down.svelte"
+import ArrowDown from "./assets/arrow-down.svelte"
 
   // #endregion ➤ 📦 Package Imports
 
@@ -46,7 +45,7 @@ import arrowDown from "./assets/arrow-down.svelte"
  * @description
  *  📣 Component interface.
  */
-  interface IOption {id: string | number, label: string}
+  interface IOption {id: string | number, label: string, [key: string]: any}
 ;
 
 export let
@@ -146,12 +145,12 @@ export let
   .select {
     &-wrapper {
 
-      color: var(--colors-brand-color-white, #FFF);
+      color: var(--text-color);
       position: relative;
 
 
       .select-button {
-        color: var(--colors-brand-color-white, #FFF);
+        color: var(--text-color);
         font-family: Roboto;
         font-size: 16px;
         display: flex;
@@ -160,6 +159,13 @@ export let
         font-weight: 500;
         line-height: 16px; /* 100% */
         background: transparent !important;
+
+        svg {
+          width: 100px;
+          path {
+            stroke: var(--text-color)
+          }
+        }
       }
     }
 
@@ -171,7 +177,7 @@ export let
       min-width: 200px;
       width: fit-content;
       border-radius: 4px;
-      background: var(--colors-gray1, #313131);
+      background: var(--bg-color-second);
       box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.24);
       z-index: 1;
       max-height: 300px;
@@ -194,7 +200,7 @@ export let
           cursor: pointer;
 
           &:hover, &.active {
-            background: var(--colors-gray2, #4B4B4B);
+            background: var(--bg-hover-color);
           }
         }
       }

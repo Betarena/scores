@@ -8,64 +8,105 @@
 -->
 
 <script lang="ts">
+  // #region ➤ 📦 Package Imports
 
+  import Button from "$lib/components/ui/Button.svelte";
+  import SelectButton from "$lib/components/ui/SelectButton.svelte";
+  import sessionStore from "$lib/store/session.js";
+  import { createEventDispatcher } from "svelte";
+  import arrowDown from "./assets/arrow-down.svg";
+  import type { IPageAuthorTagData } from "@betarena/scores-lib/types/v8/preload.authors.js";
+  import { page } from "$app/stores";
 
-// #region ➤ 📦 Package Imports
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
-    import Button from "$lib/components/ui/Button.svelte";
-    import SelectButton from "$lib/components/ui/SelectButton.svelte";
-    import type { AuthorsTagsMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
-    import type { IPageAuthorTagData } from "@betarena/scores-lib/types/v8/preload.authors.js";
+  // #region ➤ 📌 VARIABLES
 
-// ╭────────────────────────────────────────────────────────────────────────╮
-// │ NOTE:                                                                  │
-// │ Please add inside 'this' region the 'imports' that are required        │
-// │ by 'this' .svelte file is ran.                                         │
-// │ IMPORTANT                                                              │
-// │ Please, structure the imports as follows:                              │
-// │ 1. svelte/sveltekit imports                                            │
-// │ 2. project-internal files and logic                                    │
-// │ 3. component import(s)                                                 │
-// │ 4. assets import(s)                                                    │
-// │ 5. type(s) imports(s)                                                  │
-// ╰────────────────────────────────────────────────────────────────────────╯
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
-// #region ➤ 📌 VARIABLES
+  // #endregion ➤ 📦 Package Imports
+  export let tag: IPageAuthorTagData;
+  export let mobile = false;
+  let filterValue = "all";
 
-// ╭────────────────────────────────────────────────────────────────────────╮
-// │ NOTE:                                                                  │
-// │ Please add inside 'this' region the 'variables' that are to be         │
-// │ and are expected to be used by 'this' .svelte file / component.        │
-// │ IMPORTANT                                                              │
-// │ Please, structure the imports as follows:                              │
-// │ 1. export const / let [..]                                             │
-// │ 2. const [..]                                                          │
-// │ 3. let [..]                                                            │
-// │ 4. $: [..]                                                             │
-// ╰────────────────────────────────────────────────────────────────────────╯
+  const dispatch = createEventDispatcher<{ filter: string }>();
 
-export let tag: IPageAuthorTagData;
-export let mobile = false;
-const
+  $: dispatch("filter", filterValue);
+
+  const /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */ // eslint-disable-next-line no-unused-vars
+    CNAME: string = "<author⮕w⮕tags-content⮕header";
+  $: options = [
+    { id: "all", label: "All" },
+    ...$page.data.B_NAV_T.langArray.map((lang) => ({ id: lang, label: lang })),
+  ];
+
+  // #endregion ➤ 📌 VARIABLES
+
   /**
+   * @summary
+   * 🔥 REACTIVITY
+   *
+   * WARNING:
+   * can go out of control
+   *
    * @description
-   *  📣 `this` component **main** `id` and `data-testid` prefix.
-   */ // eslint-disable-next-line no-unused-vars
-  CNAME: string = '<author⮕w⮕tags-content⮕header';
+   * showDescription - controls visability in mobile
+   *
+   * WARNING:
+   * triggered by changes in:
+   * - `showDescription` - mobile && tag.description
+   */
 
- const options = [
-   {id: "all", label: "All"},
-  {id: "en", label: "English"},
-  {id: "es", label: "Espanõl"},
-  {id: "pt", label: "Português"},
-  {id: "pt-pt", label: "Português-PT"},
-]
+  $: ({ globalState } = $sessionStore);
+  $: showDescription = !mobile && tag.description;
 
-// #endregion ➤ 📌 VARIABLES
+  // #region ➤ 🛠️ METHODS
 
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
-// #endregion ➤ 📦 Package Imports
+  function follow() {
+    if (!globalState.has("NotAuthenticated")) return;
+    $sessionStore.currentActiveModal = "Auth_Modal";
+  }
 
+  function toggleDescription() {
+    if (!mobile || !tag.description) return;
+    showDescription = !showDescription;
+  }
+
+  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--
@@ -79,32 +120,43 @@ const
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="tags-header-wrapper" class:mobile>
+<div class="tags-header-wrapper">
   <div class="header-buttons">
     <div class="tag-info-wrapper">
-      <h1>{tag.name}</h1>
+      <h1 on:click={toggleDescription}>
+        {tag.name}
+        {#if mobile && tag.description}
+          <img
+            id=""
+            class:opend={showDescription}
+            src={arrowDown}
+            alt="arrow-down"
+            title=""
+            loading="lazy"
+          />
+        {/if}
+      </h1>
       <div class="tag-info">
         <span>{tag.followers || 0} followers</span>
-        <div class="tag-info-splitter"></div>
+        <div class="tag-info-splitter" />
         <span>{tag.articleIds?.length || 0} articles</span>
       </div>
     </div>
     <div class="action-buttons">
       {#if !mobile}
-        <SelectButton value="all" {options} let:currentValue> Language: {currentValue?.label} </SelectButton>
+        <SelectButton bind:value={filterValue} {options} let:currentValue>
+          Language: {currentValue?.label}
+        </SelectButton>
       {/if}
 
-      <Button>
-        + Follow
-      </Button>
+      <Button on:click={follow}>+ Follow</Button>
     </div>
   </div>
-  <div class="header-description">
-       {#if tag.description}
+  {#if showDescription && tag.description}
+    <div class="header-description">
       <span>{tag.description}</span>
-      {/if}
-  </div>
-
+    </div>
+  {/if}
 </div>
 
 <!--
@@ -117,18 +169,12 @@ const
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-
-
 <style lang="scss">
   .tags-header-wrapper {
     display: flex;
     flex-direction: column;
     gap: 16px;
-    color: var(--colors-gray4, #CCC);;
-
-    &.mobile {
-      padding: 0 24px;
-    }
+    color: var(--text-color-second);
 
     .header-buttons {
       width: 100%;
@@ -143,20 +189,35 @@ const
         flex-direction: column;
 
         h1 {
-          color: var(--white, #FFF);
+          color: var(--text-color);
           font-family: Inter;
           font-size: 38px;
           margin: 0;
           font-style: normal;
           font-weight: 600;
+          display: flex;
+          gap: 4px;
+          align-items: center;
           line-height: 54px; /* 142.105% */
+
+          img {
+            transition: transform;
+            transition-duration: 0.7s;
+            transform: rotate(360deg) translateY(25%);
+            &.opend {
+              transform: rotate(180deg);
+            }
+            path {
+              stroke: var(--text-color);
+            }
+          }
         }
 
         .tag-info {
           display: flex;
           gap: 5px;
           align-items: center;
-          color: var(--colors-gray4, #CCC);
+          color: var(--text-color-second);
           font-family: Roboto;
           font-size: 12px;
           font-style: normal;
@@ -166,7 +227,7 @@ const
           &-splitter {
             width: 2px;
             height: 2px;
-            background-color: var(--colors-gray4, #CCC);
+            background-color: var(--text-color-second);
             border-radius: 100%;
           }
         }
@@ -182,7 +243,7 @@ const
     .header-description {
       display: flex;
       flex-direction: column;
-      gap: 6px
+      gap: 6px;
     }
   }
 </style>
