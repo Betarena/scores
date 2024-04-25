@@ -64,7 +64,6 @@
       opengraph: { images },
     },
   } = article);
-  $: console.log(article);
   /**
    * @summary
    * 🔥 REACTIVITY
@@ -212,6 +211,14 @@
 
         .card-content {
           padding: 0;
+        }
+
+        .preview {
+          border-radius: 0;
+
+          img {
+            border-radius: 0%;
+          }
         }
       }
 

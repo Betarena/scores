@@ -13,8 +13,10 @@
   import Button from "$lib/components/ui/Button.svelte";
   import SelectButton from "$lib/components/ui/SelectButton.svelte";
   import sessionStore from "$lib/store/session.js";
+  import { createEventDispatcher } from "svelte";
   import arrowDown from "./assets/arrow-down.svg";
   import type { IPageAuthorTagData } from "@betarena/scores-lib/types/v8/preload.authors.js";
+  import { page } from "$app/stores";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -43,23 +45,23 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  // #endregion ➤ 📦 Package Imports
   export let tag: IPageAuthorTagData;
   export let mobile = false;
+  let filterValue = "all";
 
-  // #endregion ➤ 📦 Package Imports
+  const dispatch = createEventDispatcher<{ filter: string }>();
+
+  $: dispatch("filter", filterValue);
 
   const /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
      */ // eslint-disable-next-line no-unused-vars
     CNAME: string = "<author⮕w⮕tags-content⮕header";
-
-  const options = [
+  $: options = [
     { id: "all", label: "All" },
-    { id: "en", label: "English" },
-    { id: "es", label: "Espanõl" },
-    { id: "pt", label: "Português" },
-    { id: "pt-pt", label: "Português-PT" },
+    ...$page.data.B_NAV_T.langArray.map((lang) => ({ id: lang, label: lang })),
   ];
 
   // #endregion ➤ 📌 VARIABLES
@@ -118,7 +120,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="tags-header-wrapper" >
+<div class="tags-header-wrapper">
   <div class="header-buttons">
     <div class="tag-info-wrapper">
       <h1 on:click={toggleDescription}>
@@ -142,7 +144,7 @@
     </div>
     <div class="action-buttons">
       {#if !mobile}
-        <SelectButton value="all" {options} let:currentValue>
+        <SelectButton bind:value={filterValue} {options} let:currentValue>
           Language: {currentValue?.label}
         </SelectButton>
       {/if}

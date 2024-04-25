@@ -41,6 +41,8 @@
   import { viewportChangeV2 } from "$lib/utils/device";
 
   import TagsHeader from "./Tags-Header.svelte";
+  import TagsLoaderContentMobile from "./loaders/Tags-Loader-Content-Mobile.svelte";
+  import TagsLoaderContent from "./loaders/Tags-Loader-Content.svelte";
   import ArticleCard from "./Articels-Card.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import type {
@@ -49,6 +51,8 @@
     IPageAuthorDataFinal,
     IPageAuthorTagData,
   } from "@betarena/scores-lib/types/v8/preload.authors.js";
+  import { get } from "$lib/api/utils.js";
+    import type { DispatchOptions } from "svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -91,6 +95,8 @@
    *    */
   let visibleArticles: IArticle[] = [];
 
+  let pendingArticles = true;
+
   $: ({ windowWidth } = $sessionStore);
   $: [mobile, tablet] = viewportChangeV2(
     windowWidth,
@@ -122,6 +128,7 @@
   $: articles = widgetData.mapArticle;
   $: tags = new Map(widgetData.mapTag);
   $: authors = new Map(widgetData.mapAuthor);
+  $: offset = visibleArticles.length
 
   /**
    * @summary
@@ -168,7 +175,9 @@
     return preparedArticle;
   }
 
-  function loadArticles(data: [number, IPageAuthorArticleData][] | undefined) {
+  async function loadArticles(
+    data: [number, IPageAuthorArticleData][] | undefined
+  ) {
     if (!data) return;
     const loaded = visibleArticles.length;
     const splited = data.slice(loaded, loaded + 10);
@@ -176,6 +185,31 @@
       ...visibleArticles,
       ...splited.map((a) => prepareArticle(a)),
     ];
+    pendingArticles = true;
+    // const res = (await get(
+    //   `/api/data/author/tags?permalinkTag=${widgetData.currentTag.permalink}&offset=${offset}`
+    // )) as IPageAuthorDataFinal;
+    // if (res?.mapArticle?.length) {
+    //   visibleArticles = [
+    //     ...visibleArticles,
+    //     ...res.mapArticle.map(([id, article]) => prepareArticle([id, article])),
+    //   ];
+    // }
+    pendingArticles = false;
+  }
+
+  async function filter(e: CustomEvent<string>) {
+    const lang = e.detail
+    pendingArticles = true;
+    // const res = (await get(
+    //   `/api/data/author/tags?permalinkTag=${widgetData.currentTag.permalink}&lang=${lang}`
+    // )) as IPageAuthorDataFinal;
+    // if (res?.mapArticle?.length) {
+    //   visibleArticles = [
+    //     ...res.mapArticle.map(([id, article]) => prepareArticle([id, article])),
+    //   ];
+    // }
+    pendingArticles = false;
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -193,7 +227,7 @@
 -->
 
 <div id={CNAME} class="tags-main" class:tablet>
-  <TagsHeader tag={widgetData.currentTag} {mobile} />
+  <TagsHeader tag={widgetData.currentTag} {mobile} on:filter={filter}/>
   {#if !mobile}
     <div class="splitter" />
   {/if}
@@ -201,6 +235,15 @@
     {#each visibleArticles as article (article.id)}
       <ArticleCard {article} {tablet} {mobile} />
     {/each}
+    {#if pendingArticles}
+      {#each Array(3) as _item}
+        {#if mobile}
+          <TagsLoaderContentMobile />
+        {:else}
+          <TagsLoaderContent />
+        {/if}
+      {/each}
+    {/if}
   </div>
   <div class="section-footer" class:mobile>
     <div class="page-info">

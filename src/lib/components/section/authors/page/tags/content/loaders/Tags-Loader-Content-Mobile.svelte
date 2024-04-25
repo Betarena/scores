@@ -36,13 +36,12 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  import LoaderAvatar from '$lib/components/ui/loaders/LoaderAvatar.svelte';
-  import LoaderBadge from '$lib/components/ui/loaders/LoaderBadge.svelte';
-  import LoaderImage from '$lib/components/ui/loaders/LoaderImage.svelte';
-  import LoaderLine from '$lib/components/ui/loaders/LoaderLine.svelte';
-  import sessionStore from '$lib/store/session.js';
-  import { viewportChangeV2 } from '$lib/utils/device';
-
+  import LoaderAvatar from "$lib/components/ui/loaders/LoaderAvatar.svelte";
+  import LoaderBadge from "$lib/components/ui/loaders/LoaderBadge.svelte";
+  import LoaderImage from "$lib/components/ui/loaders/LoaderImage.svelte";
+  import LoaderLine from "$lib/components/ui/loaders/LoaderLine.svelte";
+  import sessionStore from "$lib/store/session.js";
+  import { viewportChangeV2 } from "$lib/utils/device";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -60,39 +59,29 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  const
-    /**
+  const /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
-    */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = 'author⮕w⮕tags-loader⮕main'
-  ;
-
-  let
-    /**
+     */ // eslint-disable-next-line no-unused-vars
+    CNAME: string = "author⮕w⮕tags-loader⮕main";
+  let /**
      * @description
      *  📣 threshold start + state for 📱 MOBILE
-    */ // eslint-disable-next-line no-unused-vars
-    VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ],
+     */ // eslint-disable-next-line no-unused-vars
+    VIEWPORT_MOBILE_INIT: [number, boolean] = [575, true],
     /**
      * @description
      *  📣 threshold start + state for 💻 TABLET
-    */ // eslint-disable-next-line no-unused-vars
-    VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
-  ;
-
+     */ // eslint-disable-next-line no-unused-vars
+    VIEWPORT_TABLET_INIT: [number, boolean] = [1160, true];
   $: ({ windowWidth } = $sessionStore);
-  $: [ VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1] ]
-    = viewportChangeV2
-    (
-      windowWidth,
-      VIEWPORT_MOBILE_INIT[0],
-      VIEWPORT_TABLET_INIT[0],
-    );
-  ;
+  $: [VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1]] = viewportChangeV2(
+    windowWidth,
+    VIEWPORT_MOBILE_INIT[0],
+    VIEWPORT_TABLET_INIT[0]
+  );
 
   // #endregion ➤ 📌 VARIABLES
-
 </script>
 
 <!--
@@ -106,28 +95,24 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div
-  id="{CNAME}"
->
-
- <!--
+<div id={CNAME}>
+  <!--
   ╭─────
   │ > article preveiw loader
   ╰─────
   -->
   <div class="preview-box">
-    <LoaderImage width={375} height={200}/>
+    <LoaderImage width={375} height={200} />
   </div>
 
   <div class="content-box">
-     <!--
+    <!--
   ╭─────
   │ > top title loader
   ╰─────
   -->
     <div
-      class=
-      "
+      class="
       title-box
       "
     >
@@ -141,31 +126,25 @@
     │ > article author box loader 💻 TABLET + 🖥️ LAPTOP
     ╰─────
     -->
-      <div class="author-box"  class:author-box-center={VIEWPORT_TABLET_INIT[1]}>
-        <LoaderAvatar size={34}  />
-        <div class="author-box-text">
-          <LoaderLine height={20} width={121}/>
-          <LoaderLine height={12} width={57}/>
-        </div>
+    <div class="author-box" class:author-box-center={VIEWPORT_TABLET_INIT[1]}>
+      <LoaderAvatar size={34} />
+      <div class="author-box-text">
+        <LoaderLine height={20} width={121} />
+        <LoaderLine height={12} width={57} />
       </div>
-
+    </div>
 
     <!--
     ╭─────
     │ > badge loader
     ╰─────
     -->
-    <div
-      class="badge-box"
-    >
+    <div class="badge-box">
       {#each [68, 60, 59] as width}
-        <LoaderBadge {width} height={22}/>
+        <LoaderBadge {width} height={22} />
       {/each}
     </div>
   </div>
-
-
-
 </div>
 
 <!--
@@ -179,24 +158,24 @@
 -->
 
 <style lang="scss">
-
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
   │ 📲 MOBILE-FIRST                                                              │
   ╰──────────────────────────────────────────────────────────────────────────────╯
   */
 
-  div#author⮕w⮕tags-loader⮕main
-  {
+  div#author⮕w⮕tags-loader⮕main {
     display: flex;
     flex-direction: column;
     gap: 18px;
+    width: 100%;
+    align-items: center;
 
     .preview-box {
-      width: 100%;
       display: flex;
       justify-content: center;
       height: 200px;
+      min-height: 100%;
       flex-shrink: 0;
     }
 
@@ -205,6 +184,8 @@
       flex-direction: column;
       gap: 16px;
       padding: 0 24px;
+      width: 455px;
+      max-width: 100%;
 
       .title-box {
         display: flex;
@@ -219,11 +200,10 @@
         &-center {
           align-items: center;
         }
-        &-text{
+        &-text {
           display: flex;
           flex-direction: column;
           gap: 5px;
-
         }
       }
       .badge-box {
@@ -232,13 +212,10 @@
       }
     }
 
-
-  /*
+    /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
   │ ⚡️ RESPONSIVNESS                                                              │
   ╰──────────────────────────────────────────────────────────────────────────────╯
   */
   }
-
-
 </style>
