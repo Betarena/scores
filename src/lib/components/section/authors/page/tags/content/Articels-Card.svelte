@@ -8,48 +8,138 @@
 -->
 
 <script lang="ts">
-    import Avatar from "$lib/components/ui/Avatar.svelte";
-    import Tag from "$lib/components/ui/Tag.svelte";
-    import type { IPageAuthorArticleData, IPageAuthorAuthorData, IPageAuthorTagData } from "@betarena/scores-lib/types/v8/preload.authors.js";
+  import Avatar from "$lib/components/ui/Avatar.svelte";
+  import Tag from "$lib/components/ui/Tag.svelte";
+  import type {
+    IPageAuthorArticleData,
+    IPageAuthorAuthorData,
+    IPageAuthorTagData,
+  } from "@betarena/scores-lib/types/v8/preload.authors.js";
+  import { tick } from "svelte";
 
+  // #region ➤ 📌 VARIABLES
 
-// #region ➤ 📌 VARIABLES
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
-// ╭────────────────────────────────────────────────────────────────────────╮
-// │ NOTE:                                                                  │
-// │ Please add inside 'this' region the 'variables' that are to be         │
-// │ and are expected to be used by 'this' .svelte file / component.        │
-// │ IMPORTANT                                                              │
-// │ Please, structure the imports as follows:                              │
-// │ 1. export const / let [..]                                             │
-// │ 2. const [..]                                                          │
-// │ 3. let [..]                                                            │
-// │ 4. $: [..]                                                             │
-// ╰────────────────────────────────────────────────────────────────────────╯
-
-interface IArticle extends IPageAuthorArticleData {
-      author?: IPageAuthorAuthorData,
-      tags_data: (IPageAuthorTagData | undefined) []
-    }
-export let
-    /**
+  interface IArticle extends IPageAuthorArticleData {
+    author?: IPageAuthorAuthorData;
+    tags_data: (IPageAuthorTagData | undefined)[];
+  }
+  export let /**
      * @augments IArticIArticleleData
      */
     article: IArticle,
-     /**
+    /**
      * @description tablet view
      */
     tablet = false,
-     /**
+    /**
      * @description mobile view
      */
     mobile = false;
-$: ({permalink, tags_data, data: {title}, seo_details: {opengraph:{ images}}} = article);
+  let /**
+     * @description variables to controll tags scroll
+     */
+    tagsWidth,
+    tagsNode,
+    prevWidth = 0,
+    countOfNotVisibleTags = 0,
+    tagsScrollWidth;
+  $: ({
+    permalink,
+    tags_data,
+    published_date,
+    data: { title },
+    seo_details: {
+      opengraph: { images },
+    },
+  } = article);
+  $: console.log(article);
+  /**
+   * @summary
+   * 🔥 REACTIVITY
+   *
+   * WARNING:
+   * can go out of control
+   *
+   * @description
+   * .variables to control tag visibility
+   *
+   * WARNING:
+   * triggered by changes in:
+   * - `visibleTags` - **tags_data**
+   */
+  $: visibleTags = [...tags_data];
 
-// #endregion ➤ 📌 VARIABLES
+  $: date = dateToString(published_date || "");
+  // #endregion ➤ 📌 VARIABLES
+  /** @description
+   * .recalculate tag visibility when changing width, orScrollWidth
+   *  WARNING:
+   * resize function will rewrite tagsScrollWidth and call resize again
+   * until scrollWidth > tagsWidth
+   */
+  $: resize(tagsWidth, tagsNode);
+  $: if (tagsScrollWidth) {
+    resize(tagsWidth, tagsNode);
+  }
+  // #region ➤ 🛠️ METHODS
 
-const src =  "https://s3-alpha-sig.figma.com/img/c13c/1e24/1e6baeeb9f8d7582f9d06e78b4720cca?Expires=1714953600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=eKvpqipX-DsYJHWoug3ZAq0~tXP9VuL6yTNi0mtpueLdhuC37jiaOKZbPWBlZRCnBgwXWxWhv5Gzk2WEbD7EY5mOzS~yMjiuJsXCXJEfx2RWY2s7ZMp8EgQ-ABjRxLf6XRvtrO7vUfcH17tR749NnVimp6aZwpeLdOgfrw74gYPBlidiMZa6cY3vIcyjM3IoBhaAZ6Uhyq9xoUP85aLcGttg1NWw2zsA4TY1cjb7qLVcKjKWxmiA-HC4Fz~gRBxNfCsfYqr16FhQbI6Jo46zP8GAd5SbEpT0kfNJUjBmUtyqBpxBM~HoUnztOxzo3A9UNNE31D7TfcgXrdenD1JgWA__"
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
+  function resize(tagsWidth: number, node: HTMLDivElement) {
+    if (!tagsWidth || !node) return;
+    const scrollWidth = node.scrollWidth;
+    if (tagsWidth < scrollWidth) {
+      visibleTags.pop();
+      visibleTags = [...visibleTags];
+    } else if (tagsWidth > prevWidth) {
+      visibleTags = [...tags_data];
+    }
+
+    prevWidth = tagsWidth;
+    countOfNotVisibleTags = tags_data.length - visibleTags.length;
+    tick().then(() => {
+      tagsScrollWidth = scrollWidth;
+    });
+  }
+
+  function dateToString(d: string | Date) {
+    if (!d) return "";
+    const date = new Date(d);
+    const day = formatDateNumber(date.getDate());
+    const month = formatDateNumber(date.getMonth() + 1);
+    const year = date.getFullYear();
+    const hour = formatDateNumber(date.getHours());
+    const minutes = formatDateNumber(date.getMinutes());
+    return `${day}.${month}.${year} ${hour}:${minutes}`;
+  }
+
+  function formatDateNumber(number) {
+    return number < 10 ? `0${number}` : number;
+  }
+
+  // #endregion ➤ 🛠️ METHODS
+  const src =
+    "https://s3-alpha-sig.figma.com/img/c13c/1e24/1e6baeeb9f8d7582f9d06e78b4720cca?Expires=1714953600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=eKvpqipX-DsYJHWoug3ZAq0~tXP9VuL6yTNi0mtpueLdhuC37jiaOKZbPWBlZRCnBgwXWxWhv5Gzk2WEbD7EY5mOzS~yMjiuJsXCXJEfx2RWY2s7ZMp8EgQ-ABjRxLf6XRvtrO7vUfcH17tR749NnVimp6aZwpeLdOgfrw74gYPBlidiMZa6cY3vIcyjM3IoBhaAZ6Uhyq9xoUP85aLcGttg1NWw2zsA4TY1cjb7qLVcKjKWxmiA-HC4Fz~gRBxNfCsfYqr16FhQbI6Jo46zP8GAd5SbEpT0kfNJUjBmUtyqBpxBM~HoUnztOxzo3A9UNNE31D7TfcgXrdenD1JgWA__";
 </script>
 
 <!--
@@ -63,7 +153,7 @@ const src =  "https://s3-alpha-sig.figma.com/img/c13c/1e24/1e6baeeb9f8d7582f9d06
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="card-wrapper"  class:mobile>
+<div class="card-wrapper" class:mobile>
   <div class="card-content">
     <a href="/a/{permalink}">
       <div class="title">
@@ -74,24 +164,24 @@ const src =  "https://s3-alpha-sig.figma.com/img/c13c/1e24/1e6baeeb9f8d7582f9d06
       <Avatar {src} />
       <div class="author-info">
         <div class="author-name">Rodrigo Santorino</div>
-        <div class="publication-date">1 hour ago</div>
+        <div class="publication-date">{date}</div>
       </div>
     </div>
-    <div class="tags-wrapper">
-      {#each tags_data as tag}
+    <div class="tags-wrapper" bind:clientWidth={tagsWidth} bind:this={tagsNode}>
+      {#each visibleTags as tag}
         <a href="/a/tag/{tag?.permalink}">
           <Tag>{tag?.name}</Tag>
-
         </a>
       {/each}
+      {#if countOfNotVisibleTags}
+        <Tag>+{countOfNotVisibleTags}</Tag>
+      {/if}
     </div>
   </div>
-  <div class="preview" class:tablet class:mobile>
-      <img src={images[0]?.url} alt={images[0].alt} srcset="">
-  </div>
-
+  <a href="/a/{permalink}" class="preview" class:tablet class:mobile>
+    <img src={images[0]?.url} alt={images[0].alt} srcset="" />
+  </a>
 </div>
-
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -104,9 +194,7 @@ const src =  "https://s3-alpha-sig.figma.com/img/c13c/1e24/1e6baeeb9f8d7582f9d06
 -->
 
 <style lang="scss">
-
   .card {
-
     &-wrapper {
       display: flex;
       width: 100%;
@@ -120,16 +208,22 @@ const src =  "https://s3-alpha-sig.figma.com/img/c13c/1e24/1e6baeeb9f8d7582f9d06
         flex-direction: column-reverse;
         background: transparent;
         align-items: center;
+        gap: 16px;
+
+        .card-content {
+          padding: 0;
+        }
       }
 
       a {
         color: var(--text-color);
+        transition: all;
+        transition-duration: 0.5s;
 
         &:hover {
           color: var(--primary);
         }
       }
-
 
       .preview {
         min-height: 100%;
@@ -185,7 +279,6 @@ const src =  "https://s3-alpha-sig.figma.com/img/c13c/1e24/1e6baeeb9f8d7582f9d06
       }
 
       .author {
-
         &-wrapper {
           display: flex;
           gap: 12px;
@@ -196,10 +289,11 @@ const src =  "https://s3-alpha-sig.figma.com/img/c13c/1e24/1e6baeeb9f8d7582f9d06
         &-info {
           display: flex;
           flex-direction: column;
-          color: var(--text-color-second, #CCC);
+          gap: 4px;
+          color: var(--text-color-second, #ccc);
 
           .publication-date {
-            color: var(--text-color-second, #8C8C8C);
+            color: var(--text-color-second, #8c8c8c);
             font-family: Roboto;
             font-size: 12px;
             font-style: normal;
@@ -218,8 +312,5 @@ const src =  "https://s3-alpha-sig.figma.com/img/c13c/1e24/1e6baeeb9f8d7582f9d06
         }
       }
     }
-
-
   }
-
 </style>

@@ -85,6 +85,8 @@ export let
   border-radius: 100px;
   color: var(--text-color);
   background-color: var(--tag-bg-color);
+  transition: all;
+  transition-duration: 0.4s;
   cursor: pointer;
 
   &:hover, .active {

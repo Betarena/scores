@@ -3142,6 +3142,7 @@ img.google-aspect-ratio {
   --border-color: #4B4B4B;
   --bg-hover-color: #4B4B4B;
   --tag-bg-color: #4B4B4B;
+  --section-border: 1px solid var(--border-color);
 }
 
 .light-mode {
@@ -3153,6 +3154,7 @@ img.google-aspect-ratio {
   --border-color: #292929;
   --bg-hover-color: #E6E6E6;
   --tag-bg-color: #E6E6E6;
+  --section-border: none;
 }
 
 /*# sourceMappingURL=app.css.map */

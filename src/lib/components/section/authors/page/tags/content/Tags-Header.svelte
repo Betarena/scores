@@ -118,7 +118,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="tags-header-wrapper" class:mobile>
+<div class="tags-header-wrapper" >
   <div class="header-buttons">
     <div class="tag-info-wrapper">
       <h1 on:click={toggleDescription}>
@@ -173,10 +173,6 @@
     flex-direction: column;
     gap: 16px;
     color: var(--text-color-second);
-
-    &.mobile {
-      padding: 0 24px;
-    }
 
     .header-buttons {
       width: 100%;
