@@ -16,6 +16,7 @@
     IPageAuthorTagData,
   } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import { tick } from "svelte";
+    import { fade } from "svelte/transition";
 
   // #region ➤ 📌 VARIABLES
 
@@ -176,7 +177,7 @@
       bind:this={tagsNode}
     >
       {#each visibleTags as tag}
-        <a href="/a/tag/{tag?.permalink}">
+        <a href="/a/tag/{tag?.permalink}" in:fade={{duration: 500}}>
           <Tag>{tag?.name}</Tag>
         </a>
       {/each}
