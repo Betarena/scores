@@ -429,6 +429,7 @@ function createLocalStore
                 if (localStore.user.scores_user_data.userguide_id_opt_out != null)
                   localStore.userguide_id_opt_out = localStore.user.scores_user_data.userguide_id_opt_out;
                 break;
+              default: break;
             }
 
             const scores_user = localStore.user?.scores_user_data;
