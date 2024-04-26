@@ -10,13 +10,14 @@
 <script lang="ts">
   import Avatar from "$lib/components/ui/Avatar.svelte";
   import Tag from "$lib/components/ui/Tag.svelte";
+  import { timeAgo } from "$lib/utils/dates.js";
   import type {
     IPageAuthorArticleData,
     IPageAuthorAuthorData,
     IPageAuthorTagData,
   } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import { tick } from "svelte";
-    import { fade } from "svelte/transition";
+  import { fade } from "svelte/transition";
 
   // #region ➤ 📌 VARIABLES
 
@@ -82,7 +83,7 @@
    */
   $: visibleTags = [...tags_data];
 
-  $: date = dateToString(published_date || "");
+  $: date = timeAgo(published_date);
   // #endregion ➤ 📌 VARIABLES
   /** @description
    * .recalculate tag visibility when changing width, orScrollWidth
@@ -177,7 +178,7 @@
       bind:this={tagsNode}
     >
       {#each visibleTags as tag}
-        <a href="/a/tag/{tag?.permalink}" in:fade={{duration: 500}}>
+        <a href="/a/tag/{tag?.permalink}" in:fade={{ duration: 500 }}>
           <Tag>{tag?.name}</Tag>
         </a>
       {/each}

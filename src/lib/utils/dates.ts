@@ -491,3 +491,33 @@ export function breakdownDates
     Math.floor(dateDiff / (1000 * 60 * 60))
   ];
 }
+
+/**
+ * @author
+ *  @izobov
+ * @summary
+ *  🟦 HELPER
+ * @description
+ *  📣 Converts date to strings like '1 hour ago'.
+ * @param { string | null } datestring
+ *  💠 **[required]** Target `date`.
+ * @return { string }
+ *  📤 Target `string` .
+ */
+export function timeAgo(datestring: string | null): string
+{
+  if (!datestring) return '';
+  const now = new Date();
+  const date = new Date(datestring);
+  const dateDiff = now.getTime() - date.getTime();
+  const [_totalhours, days, hours, minutes] = breakdownDates(dateDiff);
+
+  if (minutes < 1) return 'Just now';
+  if (hours < 1) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+  if (days < 1) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+  if (days < 30) return `${days} day${days > 1 ? 's' : ''} ago`;
+
+  return `${ddMMyyFormat(date.toDateString())} ${toZeroPrefixDateStr(date.getHours())}:${toZeroPrefixDateStr(date.getMinutes())}`;
+
+}
+
