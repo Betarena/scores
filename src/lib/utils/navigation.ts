@@ -214,6 +214,7 @@ export async function selectLanguage
 
       return;
     }
+    default: break;
   }
 
   // ╭─────
@@ -318,7 +319,7 @@ export async function selectLanguage
   // ╰─────
   await gotoSW
     (
-      newURL!,
+      newURL as string,
       true
     );
 

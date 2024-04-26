@@ -126,7 +126,7 @@ async function fallbackDataGenerate0
   page: string | number = 0,
 ): Promise < IPageAuthorTagDataFinal >
 {
-  const dataRes0: IPageAuthorTagDataFinal = await entryTargetDataTag({ permalinkTarget, page: +page});
+  const dataRes0: IPageAuthorTagDataFinal = await entryTargetDataTag({ permalinkTarget, page: Number(page)});
   return dataRes0;
 }
 

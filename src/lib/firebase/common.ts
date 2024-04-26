@@ -980,7 +980,7 @@ export async function updateFollowing
      * @description
      * 📝 Data for `page`
      */
-    page = sessionStore.extract< Page >('page')!,
+    page = sessionStore.extract< Page >('page') as Page,
     /**
      * @description
      * 📝 Conditional logic bundle simplification

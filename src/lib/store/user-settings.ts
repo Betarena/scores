@@ -459,15 +459,17 @@ function createLocalStore
               case DataPropEnum.USER_INVESTOR_BALANCE:
                 scores_user.investor_balance = dataPoint as InvestorData;
                 break;
-              case DataPropEnum.USER_FOLLOWING:
-                const { target, id, follow } = dataPoint as { target: string, id: number | number, follow: boolean };
+              case DataPropEnum.USER_FOLLOWING: {
+                const { target, id, follow } = dataPoint as { target: string, id: string | number, follow: boolean };
                 // [TODO] add following key to types in scrores-lib _FIREBASE_.d.ts
                 const following = (scores_user as any).following || {};
                 let target_following = following[target] || [];
-                if (follow) {
+                if (follow)
+                {
                   target_following.push(id);
                   // [TODO] hasura push id to tag.followers
-                } else {
+                } else
+                {
                   target_following = target_following.filter((tag: number) => tag !== id);
                   // [TODO] hasura remove id from tag.followers
                 }
@@ -475,6 +477,8 @@ function createLocalStore
                 (scores_user as any).following = following;
                 updateFollowing(following);
                 break;
+              }
+              default: break
             }
           }
 
