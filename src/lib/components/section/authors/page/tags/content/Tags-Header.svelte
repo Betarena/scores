@@ -49,6 +49,7 @@
   // #endregion ➤ 📦 Package Imports
   export let tag: IPageAuthorTagData;
   export let mobile = false;
+  export let totalArticlesCount = 0;
   let filterValue = "all";
 
   const dispatch = createEventDispatcher<{ filter: string }>();
@@ -144,9 +145,9 @@
         {/if}
       </h1>
       <div class="tag-info">
-        <span>{tag.followers || 0} followers</span>
+        <span>{tag.followers?.length || 0} followers</span>
         <div class="tag-info-splitter" />
-        <span>{tag.articleIds?.length || 0} articles</span>
+        <span>{totalArticlesCount} articles</span>
       </div>
     </div>
     <div class="action-buttons">

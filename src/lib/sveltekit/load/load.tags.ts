@@ -19,7 +19,7 @@ import { promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/navigation.
 
 import type {  IArticleTranslation } from '@betarena/scores-lib/types/types.authors.articles.js';
 import type { B_SAP_D2 } from '@betarena/scores-lib/types/v8/preload.scores.js';
-import type {  IPageAuthorDataFinal, IPageAuthorTagData } from '@betarena/scores-lib/types/v8/preload.authors.js';
+import type { IPageAuthorTagDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -33,7 +33,7 @@ import type {  IPageAuthorDataFinal, IPageAuthorTagData } from '@betarena/scores
  */
 type PreloadPromise0 =
 [
-  IPageAuthorDataFinal | undefined,
+  IPageAuthorTagDataFinal | undefined,
   IArticleTranslation | undefined,
   B_SAP_D2 | undefined
 ];
@@ -55,7 +55,7 @@ export async function main
   {
     langParam: string
   }
-): Promise < IPageAuthorDataFinal & {currentTag: IPageAuthorTagData} >
+): Promise < IPageAuthorTagDataFinal >
 {
   const
     // ╭─────
@@ -101,14 +101,9 @@ export async function main
      *  📣 `Data` object for target `route`.
      */
   const response = {
-    currentTag: {} as IPageAuthorTagData,
     ...data,
   };
-  if (response.mapTag)
-  {
-   const current = response.mapTag.find(([_id, tag]) => (tag as IPageAuthorTagData).permalink === name);
-    response.currentTag = (current ? current[1] : current) as IPageAuthorTagData
-  }
+
 
   // [🐞]
   dlogv2

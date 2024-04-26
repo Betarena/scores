@@ -34,7 +34,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   interface IArticle extends IPageAuthorArticleData {
-    author?: IPageAuthorAuthorData;
+    author: IPageAuthorAuthorData;
     tags_data: (IPageAuthorTagData | undefined)[];
   }
   export let /**
@@ -56,7 +56,6 @@
     tagsNode,
     prevWidth = 0,
     countOfNotVisibleTags = 0,
-    tagsScrollWidth,
     expanded = false;
   $: ({
     permalink,
@@ -66,6 +65,9 @@
     seo_details: {
       opengraph: { images },
     },
+    author: {
+      data: {avatar, username}
+    }
   } = article);
   /**
    * @summary
@@ -120,21 +122,6 @@
     });
   }
 
-  function dateToString(d: string | Date) {
-    if (!d) return "";
-    const date = new Date(d);
-    const day = formatDateNumber(date.getDate());
-    const month = formatDateNumber(date.getMonth() + 1);
-    const year = date.getFullYear();
-    const hour = formatDateNumber(date.getHours());
-    const minutes = formatDateNumber(date.getMinutes());
-    return `${day}.${month}.${year} ${hour}:${minutes}`;
-  }
-
-  function formatDateNumber(number) {
-    return number < 10 ? `0${number}` : number;
-  }
-
   function expandTags() {
     expanded = true;
     countOfNotVisibleTags = 0;
@@ -165,9 +152,9 @@
       </div>
     </a>
     <div class="author-wrapper">
-      <Avatar {src} />
+      <Avatar src={avatar} />
       <div class="author-info">
-        <div class="author-name">Rodrigo Santorino</div>
+        <div class="author-name">{username}</div>
         <div class="publication-date">{date}</div>
       </div>
     </div>

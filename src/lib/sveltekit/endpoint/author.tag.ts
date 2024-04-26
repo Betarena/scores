@@ -5,10 +5,10 @@
 
 // import { checkNull } from '$lib/utils/miscellenous.js';
 // import { getAuthorArticleTranslation } from '@betarena/scores-lib/dist/functions/v8/authors.articles.js';
-import { entryAuthorGeneralData } from '@betarena/scores-lib/dist/functions/v8/main.preload.authors.js'
+import { entryTargetDataTag } from '@betarena/scores-lib/dist/functions/v8/main.preload.authors.js'
 import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
 // import type { IArticleTranslation } from '@betarena/scores-lib/types/types.authors.articles.js';
-import type { IPageAuthorDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
+import type { IPageAuthorTagDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
 import { json, type RequestEvent } from '@sveltejs/kit';
 
 // ╭──────────────────────────────────────────────────────────────────╮
@@ -31,7 +31,8 @@ export async function main
       // ╰──────────────────────────────────────────────────────────────────╯
 
       const
-        permalinkTag = request.url.searchParams.get('permalinkTag')
+        permalinkTag = request.url.searchParams.get('permalinkTag'),
+        page = request.url.searchParams.get('page') as string
         // hasura = request.url.searchParams.get('hasura'),
         // lang = request.url.searchParams.get('lang')
       ;
@@ -44,9 +45,10 @@ export async function main
       // ╰──────────────────────────────────────────────────────────────────╯
       if (permalinkTag)
         {
-        const data: IPageAuthorDataFinal = await fallbackDataGenerate0
+        const data: IPageAuthorTagDataFinal = await fallbackDataGenerate0
           (
-            permalinkTag
+            permalinkTag,
+            page
           ),
           loadType = 'HASURA'
         ;
@@ -120,11 +122,11 @@ export async function main
  */
 async function fallbackDataGenerate0
 (
-  permalinkTag: string
-): Promise < IPageAuthorDataFinal >
+  permalinkTarget: string,
+  page: string | number = 0,
+): Promise < IPageAuthorTagDataFinal >
 {
-  const dataRes0: IPageAuthorDataFinal = await entryAuthorGeneralData({ permalinkTag });
-
+  const dataRes0: IPageAuthorTagDataFinal = await entryTargetDataTag({ permalinkTarget, page: +page});
   return dataRes0;
 }
 
