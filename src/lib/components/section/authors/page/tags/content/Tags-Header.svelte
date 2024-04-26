@@ -13,6 +13,7 @@
   import Button from "$lib/components/ui/Button.svelte";
   import SelectButton from "$lib/components/ui/SelectButton.svelte";
   import sessionStore from "$lib/store/session.js";
+  import userBetarenaSettings from '$lib/store/user-settings.js';
   import { createEventDispatcher } from "svelte";
   import arrowDown from "./assets/arrow-down.svg";
   import type { IPageAuthorTagData } from "@betarena/scores-lib/types/v8/preload.authors.js";
@@ -48,6 +49,7 @@
   // #endregion ➤ 📦 Package Imports
   export let tag: IPageAuthorTagData;
   export let mobile = false;
+  export let totalArticlesCount = 0;
   let filterValue = "all";
 
   const dispatch = createEventDispatcher<{ filter: string }>();
@@ -83,6 +85,8 @@
 
   $: ({ globalState } = $sessionStore);
   $: showDescription = !mobile && tag.description;
+  $: followedTags = (($userBetarenaSettings.user?.scores_user_data as any)?.following?.tags || []) as (string | number)[];
+  $: isFollowed  = followedTags.includes(tag.id);
 
   // #region ➤ 🛠️ METHODS
 
@@ -97,8 +101,12 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   function follow() {
-    if (!globalState.has("NotAuthenticated")) return;
-    $sessionStore.currentActiveModal = "Auth_Modal";
+    if (globalState.has("NotAuthenticated")) {
+      $sessionStore.currentActiveModal = "Auth_Modal";
+      return;
+    }
+    userBetarenaSettings.updateData([["user-following", {target: "tags", id: tag.id, follow: !isFollowed}]]);
+
   }
 
   function toggleDescription() {
@@ -137,9 +145,9 @@
         {/if}
       </h1>
       <div class="tag-info">
-        <span>{tag.followers || 0} followers</span>
+        <span>{tag.followers?.length || 0} followers</span>
         <div class="tag-info-splitter" />
-        <span>{tag.articleIds?.length || 0} articles</span>
+        <span>{totalArticlesCount} articles</span>
       </div>
     </div>
     <div class="action-buttons">
@@ -149,7 +157,7 @@
         </SelectButton>
       {/if}
 
-      <Button on:click={follow}>+ Follow</Button>
+      <Button type={isFollowed ? "outline": "primary"} on:click={follow}>{isFollowed ?  "Following" : "+ Follow"}</Button>
     </div>
   </div>
   {#if showDescription && tag.description}

@@ -10,12 +10,14 @@
 <script lang="ts">
   import Avatar from "$lib/components/ui/Avatar.svelte";
   import Tag from "$lib/components/ui/Tag.svelte";
+  import { timeAgo } from "$lib/utils/dates.js";
   import type {
     IPageAuthorArticleData,
     IPageAuthorAuthorData,
     IPageAuthorTagData,
   } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import { tick } from "svelte";
+  import { fade } from "svelte/transition";
 
   // #region ➤ 📌 VARIABLES
 
@@ -32,7 +34,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   interface IArticle extends IPageAuthorArticleData {
-    author?: IPageAuthorAuthorData;
+    author: IPageAuthorAuthorData;
     tags_data: (IPageAuthorTagData | undefined)[];
   }
   export let /**
@@ -54,7 +56,6 @@
     tagsNode,
     prevWidth = 0,
     countOfNotVisibleTags = 0,
-    tagsScrollWidth,
     expanded = false;
   $: ({
     permalink,
@@ -64,6 +65,9 @@
     seo_details: {
       opengraph: { images },
     },
+    author: {
+      data: {avatar, username}
+    }
   } = article);
   /**
    * @summary
@@ -81,7 +85,7 @@
    */
   $: visibleTags = [...tags_data];
 
-  $: date = dateToString(published_date || "");
+  $: date = timeAgo(published_date);
   // #endregion ➤ 📌 VARIABLES
   /** @description
    * .recalculate tag visibility when changing width, orScrollWidth
@@ -118,21 +122,6 @@
     });
   }
 
-  function dateToString(d: string | Date) {
-    if (!d) return "";
-    const date = new Date(d);
-    const day = formatDateNumber(date.getDate());
-    const month = formatDateNumber(date.getMonth() + 1);
-    const year = date.getFullYear();
-    const hour = formatDateNumber(date.getHours());
-    const minutes = formatDateNumber(date.getMinutes());
-    return `${day}.${month}.${year} ${hour}:${minutes}`;
-  }
-
-  function formatDateNumber(number) {
-    return number < 10 ? `0${number}` : number;
-  }
-
   function expandTags() {
     expanded = true;
     countOfNotVisibleTags = 0;
@@ -163,9 +152,9 @@
       </div>
     </a>
     <div class="author-wrapper">
-      <Avatar {src} />
+      <Avatar src={avatar} />
       <div class="author-info">
-        <div class="author-name">Rodrigo Santorino</div>
+        <div class="author-name">{username}</div>
         <div class="publication-date">{date}</div>
       </div>
     </div>
@@ -176,7 +165,7 @@
       bind:this={tagsNode}
     >
       {#each visibleTags as tag}
-        <a href="/a/tag/{tag?.permalink}">
+        <a href="/a/tag/{tag?.permalink}" in:fade={{ duration: 500 }}>
           <Tag>{tag?.name}</Tag>
         </a>
       {/each}

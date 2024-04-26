@@ -48,11 +48,10 @@
   import type {
     IPageAuthorArticleData,
     IPageAuthorAuthorData,
-    IPageAuthorDataFinal,
+    IPageAuthorTagDataFinal,
     IPageAuthorTagData,
   } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import { get } from "$lib/api/utils.js";
-    import type { DispatchOptions } from "svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -73,7 +72,7 @@
   export let /**
      * @augments IArticleData
      */
-    widgetData: IPageAuthorDataFinal & { currentTag: IPageAuthorTagData };
+    widgetData: IPageAuthorTagDataFinal;
   const /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
@@ -93,9 +92,8 @@
    * @description
    *  📣 array of articles that will be rendered
    *    */
-  let visibleArticles: IArticle[] = [];
 
-  let pendingArticles = true;
+  let pendingArticles = false;
 
   $: ({ windowWidth } = $sessionStore);
   $: [mobile, tablet] = viewportChangeV2(
@@ -105,7 +103,7 @@
   );
 
   interface IArticle extends IPageAuthorArticleData {
-    author?: IPageAuthorAuthorData;
+    author: IPageAuthorAuthorData;
     tags_data: (IPageAuthorTagData | undefined)[];
   }
 
@@ -125,11 +123,12 @@
    * triggered by changes in:
    * - `` - **widgetData**
    */
-  $: articles = widgetData.mapArticle;
   $: tags = new Map(widgetData.mapTag);
   $: authors = new Map(widgetData.mapAuthor);
-  $: offset = visibleArticles.length
-
+  $: articles = prepareArticles(widgetData.mapArticle, tags, authors);
+  $: currentTag = tags.get(widgetData.tagId) as IPageAuthorTagData;
+  $: ({ totalArticlesCount, totalPageCount } = widgetData);
+  $: page = Math.ceil(articles.length / 10);
   /**
    * @summary
    * 🔥 REACTIVITY
@@ -145,11 +144,6 @@
    * - `` - **articles**
    */
 
-  $: {
-    visibleArticles = [];
-    loadArticles(articles);
-  }
-
   // #region ➤ 🛠️ METHODS
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -162,44 +156,43 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function prepareArticle(article: [number, IPageAuthorArticleData]): IArticle {
-    const [_id, data] = article;
-    const preparedArticle: IArticle = { tags_data: [], ...data } as IArticle;
-    if (data.author_id) {
-      preparedArticle.author = authors.get(data.author_id);
-    }
-    if (data.tags?.length) {
-      preparedArticle.tags_data = data.tags.map((id) => tags.get(id));
-    }
-
-    return preparedArticle;
+  function prepareArticles(
+    articles: [number, IPageAuthorArticleData][],
+    tags_map: Map<number, IPageAuthorTagData>,
+    authors: Map<number, IPageAuthorAuthorData>
+  ): IArticle[] {
+    if (!tags_map || !authors || !articles.length) return [];
+    const prepared = articles.map(([id, data]) => {
+      const preparedArticle: IArticle = { author: {}, tags_data: [], ...data } as IArticle;
+      if (data.author_id) {
+        preparedArticle.author = authors.get(data.author_id) as IPageAuthorAuthorData;
+      }
+      if (data.tags?.length) {
+        preparedArticle.tags_data = data.tags.map((id: any) =>
+          tags_map.get(id)
+        );
+      }
+      return preparedArticle;
+    });
+    return prepared;
   }
 
-  async function loadArticles(
-    data: [number, IPageAuthorArticleData][] | undefined
-  ) {
-    if (!data) return;
-    const loaded = visibleArticles.length;
-    const splited = data.slice(loaded, loaded + 10);
-    visibleArticles = [
-      ...visibleArticles,
-      ...splited.map((a) => prepareArticle(a)),
-    ];
+  async function loadArticles() {
     pendingArticles = true;
-    // const res = (await get(
-    //   `/api/data/author/tags?permalinkTag=${widgetData.currentTag.permalink}&offset=${offset}`
-    // )) as IPageAuthorDataFinal;
-    // if (res?.mapArticle?.length) {
-    //   visibleArticles = [
-    //     ...visibleArticles,
-    //     ...res.mapArticle.map(([id, article]) => prepareArticle([id, article])),
-    //   ];
-    // }
+    const res = (await get(
+      `/api/data/author/tags?permalinkTag=${currentTag.permalink}&page=${page}`
+    )) as IPageAuthorTagDataFinal;
+    widgetData = {
+      ...widgetData,
+      mapArticle: [...widgetData.mapArticle, ...res.mapArticle],
+      mapAuthor: [...widgetData.mapAuthor, ...res.mapAuthor],
+      mapTag: [...widgetData.mapTag, ...res.mapTag],
+    };
     pendingArticles = false;
   }
 
   async function filter(e: CustomEvent<string>) {
-    const lang = e.detail
+    const lang = e.detail;
     pendingArticles = true;
     // const res = (await get(
     //   `/api/data/author/tags?permalinkTag=${widgetData.currentTag.permalink}&lang=${lang}`
@@ -227,13 +220,20 @@
 -->
 
 <div id={CNAME} class="tags-main" class:tablet>
-  <TagsHeader tag={widgetData.currentTag} {mobile} on:filter={filter}/>
+  <TagsHeader
+    tag={currentTag}
+    {totalArticlesCount}
+    {mobile}
+    on:filter={filter}
+  />
   {#if !mobile}
     <div class="splitter" />
   {/if}
   <div class="articles" class:mobile>
-    {#each visibleArticles as article (article.id)}
+    {#each articles as article (article.id)}
+    {#key articles.length}
       <ArticleCard {article} {tablet} {mobile} />
+    {/key}
     {/each}
     {#if pendingArticles}
       {#each Array(3) as _item}
@@ -247,12 +247,10 @@
   </div>
   <div class="section-footer" class:mobile>
     <div class="page-info">
-      {visibleArticles.length}/{articles?.length || 0} articles
+      {articles.length}/{totalArticlesCount} articles
     </div>
-    {#if visibleArticles.length < (articles?.length || 0)}
-      <Button type="outline" on:click={() => loadArticles(articles)}
-        >View more</Button
-      >
+    {#if page <= totalPageCount}
+      <Button type="outline" on:click={() => loadArticles()}>View more</Button>
     {/if}
   </div>
 </div>
