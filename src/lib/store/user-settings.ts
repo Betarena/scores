@@ -17,7 +17,7 @@
 
 import { writable } from 'svelte/store';
 
-import { updateSelectLang } from '$lib/firebase/common.js';
+import { updateFollowing, updateSelectLang } from '$lib/firebase/common.js';
 import sessionStore from '$lib/store/session.js';
 import { initSportbookData } from '$lib/utils/geo.js';
 import { initUser, logoutUser } from '$lib/utils/user.js';
@@ -37,15 +37,15 @@ const
    */
   userSettings: IUserSetting
     = {
-      lang: 'en',
-      theme: 'Dark',
-      country_bookmaker: undefined,
-      geoJs: undefined,
-      user: undefined,
-      voted_fixtures: [],
-      userguide_id_opt_out: []
-    }
-;
+    lang: 'en',
+    theme: 'Dark',
+    country_bookmaker: undefined,
+    geoJs: undefined,
+    user: undefined,
+    voted_fixtures: [],
+    userguide_id_opt_out: []
+  }
+  ;
 
 type IDataProp =
   | 'lang'
@@ -60,8 +60,25 @@ type IDataProp =
   | 'user-scores-data'
   | 'user-main-balance'
   | 'user-investor-balance'
-;
+  | 'user-following'
+  ;
 
+enum DataPropEnum
+{
+  LANG = 'lang',
+  LANG_USER = 'lang-user',
+  GEO_BOOKMAKER = 'geo-bookmaker',
+  THEME = 'theme',
+  GEO_JS = 'geoJs',
+  USER_AVATAR = 'user-avatar',
+  USER_NAME = 'user-name',
+  USER_WALLET = 'user-wallet',
+  USER_OBJECT = 'user-object',
+  USER_SCORES_DATA = 'user-scores-data',
+  USER_MAIN_BALANCE = 'user-main-balance',
+  USER_INVESTOR_BALANCE = 'user-investor-balance',
+  USER_FOLLOWING = 'user-following',
+}
 // #endregion ➤ 📌 VARIABLES
 
 // #region ➤ 🛠️ METHODS
@@ -80,9 +97,9 @@ type IDataProp =
  *  📤 Store logic.
  */
 function createLocalStore
-(
-  key: string
-)
+  (
+    key: string
+  )
 {
   const
     /**
@@ -94,37 +111,37 @@ function createLocalStore
       set,
       update
     } = writable
-    (
-      userSettings
-    ),
+        (
+          userSettings
+        ),
     /**
      * @description
      *  📣 complementary `store` added methods.
      */
     methods
       = {
-        // ╭──────────────────────────────────────────────────────────────────────────────────╮
-        // │ 🟦 Local Helper Logic                                                            │
-        // ╰──────────────────────────────────────────────────────────────────────────────────╯
+      // ╭──────────────────────────────────────────────────────────────────────────────────╮
+      // │ 🟦 Local Helper Logic                                                            │
+      // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-        /**
-         * @author
-         *  @migbash
-         * @summary
-         *  - 🟥 MAIN
-         *  - 🔹 HELPER
-         *  - IMPORTANT
-         * @description
-         *   📣 Instantiate `localStorage` data for target `key`.
-         * @return { void }
-         */
-        useLocalStorage:
+      /**
+       * @author
+       *  @migbash
+       * @summary
+       *  - 🟥 MAIN
+       *  - 🔹 HELPER
+       *  - IMPORTANT
+       * @description
+       *   📣 Instantiate `localStorage` data for target `key`.
+       * @return { void }
+       */
+      useLocalStorage:
         (
         ): void =>
         {
           let
             localStore = methods.parseLocalStorage()
-          ;
+            ;
 
           // [🐞]
           // console.log('localStore', localStore);
@@ -134,16 +151,16 @@ function createLocalStore
           // ╰─────
           if (localStore == null)
             localStore
-            = {
-                lang: 'en',
-                theme: 'Dark',
-                country_bookmaker: undefined,
-                geoJs: undefined,
-                user: undefined,
-                voted_fixtures: [],
-                userguide_id_opt_out: [],
-              }
-            ;
+              = {
+              lang: 'en',
+              theme: 'Dark',
+              country_bookmaker: undefined,
+              geoJs: undefined,
+              user: undefined,
+              voted_fixtures: [],
+              userguide_id_opt_out: [],
+            }
+              ;
           ;
 
           // ╭─────
@@ -169,107 +186,107 @@ function createLocalStore
           // ╰─────
           if (localStore.country_bookmaker)
             initSportbookData
-            (
-              localStore.country_bookmaker
-            );
+              (
+                localStore.country_bookmaker
+              );
           ;
 
           methods.setLocalStorage
-          (
-            localStore
-          );
+            (
+              localStore
+            );
 
           return;
         },
 
-        /**
-         * @author
-         *  @migbash
-         * @summary
-         *  - 🟥 MAIN
-         *  - 🔹 HELPER
-         *  - IMPORTANT
-         * @description
-         *   📣 Retrieves target `localStorage` for target `key`.
-         * @param { IUserSetting } data
-         *  💠 **[required]** Target `user` data to be persisted.
-         * @return { IUserSetting }
-         *  📤 Target `user` data object.
-         */
-        parseLocalStorage:
+      /**
+       * @author
+       *  @migbash
+       * @summary
+       *  - 🟥 MAIN
+       *  - 🔹 HELPER
+       *  - IMPORTANT
+       * @description
+       *   📣 Retrieves target `localStorage` for target `key`.
+       * @param { IUserSetting } data
+       *  💠 **[required]** Target `user` data to be persisted.
+       * @return { IUserSetting }
+       *  📤 Target `user` data object.
+       */
+      parseLocalStorage:
         (
         ): IUserSetting | NullUndef =>
         {
           const
             localStore = localStorage.getItem(key)
-          ;
+            ;
 
           if (!localStore) return null;
 
           return JSON.parse
-          (
-            localStore
-          );
+            (
+              localStore
+            );
         },
 
-        /**
-         * @author
-         *  @migbash
-         * @summary
-         *  - 🟥 MAIN
-         *  - 🔹 HELPER
-         *  - IMPORTANT
-         * @description
-         *   📣 Persists to `localStorage` target data for target `key`.
-         * @param { IUserSetting } data
-         *  💠 **[required]** Target `user` data to be persisted.
-         * @return { void }
-         */
-        setLocalStorage:
+      /**
+       * @author
+       *  @migbash
+       * @summary
+       *  - 🟥 MAIN
+       *  - 🔹 HELPER
+       *  - IMPORTANT
+       * @description
+       *   📣 Persists to `localStorage` target data for target `key`.
+       * @param { IUserSetting } data
+       *  💠 **[required]** Target `user` data to be persisted.
+       * @return { void }
+       */
+      setLocalStorage:
         (
           data: IUserSetting
         ): void =>
         {
           localStorage.setItem
-          (
-            key,
-            JSON.stringify
             (
-              data
-            )
-          );
+              key,
+              JSON.stringify
+                (
+                  data
+                )
+            );
 
           set
-          (
-            data
-          );
+            (
+              data
+            );
 
           return;
         },
 
-        // ╭──────────────────────────────────────────────────────────────────────────────────╮
-        // │ 📣 Main Logic                                                                    │
-        // ╰──────────────────────────────────────────────────────────────────────────────────╯
+      // ╭──────────────────────────────────────────────────────────────────────────────────╮
+      // │ 📣 Main Logic                                                                    │
+      // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-        /**
-         * @author
-         *  @migbash
-         * @summary
-         *  🔹 HELPER
-         * @description
-         *  📣 Updates `userguides-op-out` preference.
-         * @param { number } id
-         *  💠 **[required]** Target **uiserguide** `id`.
-         * @returns { void }
-         */
-        updateToggleUserGuideOpt:
+      /**
+       * @author
+       *  @migbash
+       * @summary
+       *  🔹 HELPER
+       * @description
+       *  📣 Updates `userguides-op-out` preference.
+       * @param { number } id
+       *  💠 **[required]** Target **uiserguide** `id`.
+       * @returns { void }
+       */
+      updateToggleUserGuideOpt:
         (
           id: number
         ): void =>
         {
           const
             localStore = methods.parseLocalStorage()
-          ;
+            ;
 
           if (!localStore) return;
 
@@ -278,40 +295,40 @@ function createLocalStore
               = localStore.userguide_id_opt_out
                 .filter
                 (
-                  x => {return x != id}
+                  x => { return x != id }
                 )
-            ;
+              ;
           else
             localStore.userguide_id_opt_out?.push(id);
           ;
 
           localStore.userguide_id_opt_out = [...new Set(localStore.userguide_id_opt_out)] ?? [];
           methods.setLocalStorage
-          (
-            localStore
-          );
+            (
+              localStore
+            );
         },
 
-        /**
-         * @author
-         *  @migbash
-         * @summary
-         *  - 🔹 HELPER
-         *  - IMPORTANT
-         * @description
-         *  📣 Update `user` with target vote casting.
-         * @param { Voted_Fixture } vote
-         *  💠 **[required]** **Latest** `user` vote data.
-         * @return { void }
-         */
-        addToVotes:
+      /**
+       * @author
+       *  @migbash
+       * @summary
+       *  - 🔹 HELPER
+       *  - IMPORTANT
+       * @description
+       *  📣 Update `user` with target vote casting.
+       * @param { Voted_Fixture } vote
+       *  💠 **[required]** **Latest** `user` vote data.
+       * @return { void }
+       */
+      addToVotes:
         (
           vote: Voted_Fixture
         ): void =>
         {
           const
             localStore = methods.parseLocalStorage()
-          ;
+            ;
 
           if (!localStore) return;
 
@@ -320,42 +337,42 @@ function createLocalStore
           ;
 
           localStore.voted_fixtures.push
-          (
-            vote
-          );
+            (
+              vote
+            );
 
           // ╭─────
           // │ NOTE:
           // │ > Approach Num.2
           // ╰─────
           methods.setLocalStorage
-          (
-            localStore
-          );
+            (
+              localStore
+            );
 
           return;
         },
 
-        /**
-         * @author
-         *  @migbash
-         * @summary
-         *  - 🔹 HELPER
-         *  - IMPORTANT
-         * @description
-         *  📣 Update **target** `list` data of target `properties` to update.
-         * @param { [IDataProp, any][] } data
-         *  💠 **[required]** Target data to update.
-         * @return { void }
-         */
-        updateData:
+      /**
+       * @author
+       *  @migbash
+       * @summary
+       *  - 🔹 HELPER
+       *  - IMPORTANT
+       * @description
+       *  📣 Update **target** `list` data of target `properties` to update.
+       * @param { [IDataProp, any][] } data
+       *  💠 **[required]** Target data to update.
+       * @return { void }
+       */
+      updateData:
         (
           data: [IDataProp, any][]
         ): void =>
         {
           const
             localStore = methods.parseLocalStorage()
-          ;
+            ;
 
           if (!localStore) return;
 
@@ -363,151 +380,141 @@ function createLocalStore
           {
             const
               dataTarget = iterator[0]
-            ;
+              ;
             let
               dataPoint = iterator[1]
-            ;
-
-            if (dataTarget == 'lang')
-            {
-              localStore.lang = dataPoint;
-
-              if (localStore.user?.scores_user_data)
-                data.push(['lang-user', dataPoint]);
-              ;
-            }
-            else if (dataTarget == 'geo-bookmaker')
-            {
-              localStore.country_bookmaker = dataPoint;
-              initSportbookData
-              (
-                dataPoint
-              );
-            }
-            else if (dataTarget == 'theme')
-            {
-              localStore.theme
-                = localStore.theme == 'Dark'
-                  ? 'Light'
-                  : 'Dark'
-              ;
-            }
-            else if (dataTarget == 'geoJs')
-            {
-              localStore.geoJs = dataPoint;
-            }
-            else if (dataTarget == 'user-object')
-            {
-              localStore.user = dataPoint;
-
-              if (dataPoint == undefined)
-                sessionStore.updateData
-                (
-                  [
-                    ['globalStateAdd', 'NotAuthenticated']
-                  ]
-                );
-              ;
-            }
-            else if (dataTarget == 'user-scores-data')
-            {
-              (localStore.user ??= {});
-
-              localStore.user.scores_user_data = dataPoint as BetarenaUser;
-
-              // ╭─────
-              // │ CHECK :|: for 'null' value for 'main_balance'.
-              // ╰─────
-              if
-              (
-                localStore.user.scores_user_data.main_balance == undefined
-                || isNaN(localStore.user.scores_user_data.main_balance)
-              )
-                localStore.user.scores_user_data.main_balance = 0;
               ;
 
-              // ╭─────
-              // │ CHECK :|: for 'null' / non-empty value of `userguide_opt_out`.
-              // ╰─────
-              if (localStore.user.scores_user_data.userguide_id_opt_out != null)
-                localStore.userguide_id_opt_out = localStore.user.scores_user_data.userguide_id_opt_out;
-              ;
+            switch (dataTarget as DataPropEnum)
+            {
+              case DataPropEnum.LANG:
+                localStore.lang = dataPoint;
+
+                if (localStore.user?.scores_user_data)
+                  data.push(['lang-user', dataPoint]);
+                break;
+              case DataPropEnum.GEO_BOOKMAKER:
+                localStore.country_bookmaker = dataPoint;
+                initSportbookData(dataPoint);
+                break;
+              case DataPropEnum.THEME:
+                localStore.theme = localStore.theme == 'Dark' ? 'Light' : 'Dark';
+                break;
+              case DataPropEnum.GEO_JS:
+                localStore.geoJs = dataPoint;
+                break;
+              case DataPropEnum.USER_OBJECT:
+                localStore.user = dataPoint;
+
+                if (dataPoint == undefined)
+                  sessionStore.updateData([['globalStateAdd', 'NotAuthenticated']]);
+                break;
+              case DataPropEnum.USER_SCORES_DATA:
+                (localStore.user ??= {});
+
+                localStore.user.scores_user_data = dataPoint as BetarenaUser;
+
+                // ╭─────
+                // │ CHECK :|: for 'null' value for 'main_balance'.
+                // ╰─────
+                if (
+                  localStore.user.scores_user_data.main_balance == undefined ||
+                  isNaN(localStore.user.scores_user_data.main_balance)
+                )
+                  localStore.user.scores_user_data.main_balance = 0;
+
+                // ╭─────
+                // │ CHECK :|: for 'null' / non-empty value of `userguide_opt_out`.
+                // ╰─────
+                if (localStore.user.scores_user_data.userguide_id_opt_out != null)
+                  localStore.userguide_id_opt_out = localStore.user.scores_user_data.userguide_id_opt_out;
+                break;
             }
 
-            if (localStore.user?.scores_user_data && dataTarget == 'lang-user')
+            const scores_user = localStore.user?.scores_user_data;
+            if (!scores_user) continue;
+            switch (dataTarget as DataPropEnum)
             {
-              localStore.user.scores_user_data.lang = dataPoint;
-              updateSelectLang
-              (
-                dataPoint
-              );
-            }
-            else if (localStore.user?.scores_user_data && dataTarget == 'user-avatar')
-            {
-              localStore.user.scores_user_data.profile_photo = dataPoint;
-            }
-            else if (localStore.user?.scores_user_data && dataTarget == 'user-name')
-            {
-              localStore.user.scores_user_data.username = dataPoint;
-            }
-            else if (localStore.user?.scores_user_data && dataTarget == 'user-wallet')
-            {
-              localStore.user.scores_user_data.web3_wallet_addr = dataPoint;
-            }
-            else if (localStore.user?.scores_user_data && dataTarget == 'user-main-balance')
-            {
-              // ╭─────
-              // │ CHECK
-              // │ > for invalid balance type.
-              // ╰─────
-              if (dataPoint == undefined || isNaN(dataPoint as number)) dataPoint = 0;
+              case DataPropEnum.LANG_USER:
+                scores_user.lang = dataPoint;
+                updateSelectLang(dataPoint);
+                break;
+              case DataPropEnum.USER_AVATAR:
+                scores_user.profile_photo = dataPoint;
+                break;
+              case DataPropEnum.USER_NAME:
+                scores_user.username = dataPoint;
+                break;
+              case DataPropEnum.USER_WALLET:
+                scores_user.web3_wallet_addr = dataPoint;
+                break;
+              case DataPropEnum.USER_MAIN_BALANCE:
+                // ╭─────
+                // │ CHECK :|: for invalid balance type.
+                // ╰─────
+                if (dataPoint == undefined || isNaN(dataPoint as number)) dataPoint = 0;
 
-              localStore.user.scores_user_data.main_balance = dataPoint as number;
+                scores_user.main_balance = dataPoint as number;
+                break;
+              case DataPropEnum.USER_INVESTOR_BALANCE:
+                scores_user.investor_balance = dataPoint as InvestorData;
+                break;
+              case DataPropEnum.USER_FOLLOWING:
+                const { target, id, follow } = dataPoint as { target: string, id: number | number, follow: boolean };
+                // [TODO] add following key to types in scrores-lib _FIREBASE_.d.ts
+                const following = (scores_user as any).following || {};
+                let target_following = following[target] || [];
+                if (follow) {
+                  target_following.push(id);
+                  // [TODO] hasura push id to tag.followers
+                } else {
+                  target_following = target_following.filter((tag: number) => tag !== id);
+                  // [TODO] hasura remove id from tag.followers
+                }
+                following[target] = target_following;
+                (scores_user as any).following = following;
+                updateFollowing(following);
+                break;
             }
-            else if (localStore.user?.scores_user_data && dataTarget == 'user-investor-balance')
-            {
-              localStore.user.scores_user_data!.investor_balance = dataPoint as InvestorData;
-            }
-            ;
           }
 
           methods.setLocalStorage
-          (
-            localStore
-          );
+            (
+              localStore
+            );
 
           setCookie
-          (
-            'betarenaScoresCookie',
-            JSON.stringify(methods.extractUserDataSnapshot()),
-            30
-          );
+            (
+              'betarenaScoresCookie',
+              JSON.stringify(methods.extractUserDataSnapshot()),
+              30
+            );
 
           return;
         },
 
-        /**
-         * @author
-         *  @migbash
-         * @summary
-         *  - 🔹 HELPER
-         *  - IMPORTANT
-         * @description
-         *  📣 Extracts **target** `user` data property.
-         * @param { 'geo-bookmaker' | 'lang' | 'lang-user' | 'uid' } dataPoint
-         *  💠 **[required]** Target `data point` to be retrieved.
-         * @return { any }
-         *  📤 Requested `data point`.
-         */
-        extract:
-        < Typ1 >
-        (
-          dataPoint: 'geo-bookmaker' | 'lang' | 'lang-user' | 'uid'
-        ): Typ1 | NullUndef =>
+      /**
+       * @author
+       *  @migbash
+       * @summary
+       *  - 🔹 HELPER
+       *  - IMPORTANT
+       * @description
+       *  📣 Extracts **target** `user` data property.
+       * @param { 'geo-bookmaker' | 'lang' | 'lang-user' | 'uid' } dataPoint
+       *  💠 **[required]** Target `data point` to be retrieved.
+       * @return { any }
+       *  📤 Requested `data point`.
+       */
+      extract:
+        <Typ1>
+          (
+            dataPoint: 'geo-bookmaker' | 'lang' | 'lang-user' | 'uid'
+          ): Typ1 | NullUndef =>
         {
           const
             localStore = methods.parseLocalStorage()
-          ;
+            ;
 
           if (dataPoint == 'geo-bookmaker')
             return localStore?.country_bookmaker as Typ1 | NullUndef;
@@ -522,18 +529,18 @@ function createLocalStore
           return;
         },
 
-        /**
-         * @author
-         *  @migbash
-         * @summary
-         *  - 🔹 HELPER
-         *  - IMPORTANT
-         * @description
-         *  📣 Extracts **target** data batch.
-         * @return { object }
-         *  📤 Main `data point(s)`.
-         */
-        extractUserDataSnapshot:
+      /**
+       * @author
+       *  @migbash
+       * @summary
+       *  - 🔹 HELPER
+       *  - IMPORTANT
+       * @description
+       *  📣 Extracts **target** data batch.
+       * @return { object }
+       *  📤 Main `data point(s)`.
+       */
+      extractUserDataSnapshot:
         (
         ): object =>
         {
@@ -545,11 +552,11 @@ function createLocalStore
              */
             data
               = {
-                lang: localStore?.lang,
-                geo: localStore?.country_bookmaker,
-                user: undefined
-              }
-          ;
+              lang: localStore?.lang,
+              geo: localStore?.country_bookmaker,
+              user: undefined
+            }
+            ;
 
           if (localStore?.user)
           {
@@ -559,8 +566,8 @@ function createLocalStore
 
           return data;
         }
-      }
-  ;
+    }
+    ;
 
   return {
     subscribe,
