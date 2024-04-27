@@ -16,7 +16,6 @@
     IPageAuthorAuthorData,
     IPageAuthorTagData,
   } from "@betarena/scores-lib/types/v8/preload.authors.js";
-  import { tick } from "svelte";
   import { fade } from "svelte/transition";
 
   // #region ➤ 📌 VARIABLES
@@ -66,8 +65,8 @@
       opengraph: { images },
     },
     author: {
-      data: {avatar, username}
-    }
+      data: { avatar, username },
+    },
   } = article);
   /**
    * @summary
@@ -105,21 +104,33 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function resize(width: number, node: HTMLDivElement, tags_data: (IPageAuthorTagData | undefined)[]) {
+  let debounds;
+  function resize(
+    width: number,
+    node: HTMLDivElement,
+    tags_data: (IPageAuthorTagData | undefined)[]
+  ) {
     if (!width || !node) return;
     const scrollWidth = node.scrollWidth;
+    let visibleTagsLength = visibleTags.length
     if (width < scrollWidth) {
       visibleTags.pop();
       visibleTags = [...visibleTags];
     } else if (width > prevWidth) {
-      visibleTags = [...tags_data];
+      const lastVisible = visibleTags.at(-1);
+      const i = tags_data.indexOf(lastVisible);
+      visibleTags = i < 0 ? [tags_data[0]] : [...visibleTags, tags_data[i + 1]];
     }
 
     prevWidth = width;
     countOfNotVisibleTags = tags_data.length - visibleTags.length;
-    tick().then(() => {
-      if (width < node.scrollWidth) resize(width, node, tags_data);
-    });
+    if(debounds) clearTimeout(debounds)
+
+    setTimeout(() => {
+      debounds = null;
+      if (width === tagsWidth && width < node.scrollWidth)
+        resize(width, node, tags_data);
+    }, 50);
   }
 
   function expandTags() {
@@ -129,7 +140,7 @@
   }
 
   // #endregion ➤ 🛠️ METHODS
- </script>
+</script>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -142,7 +153,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="card-wrapper" class:mobile in:fade={{duration: 500}}>
+<div class="card-wrapper" class:mobile in:fade={{ duration: 500 }}>
   <div class="card-content">
     <a href="/a/{permalink}">
       <div class="title">
@@ -168,7 +179,9 @@
         </a>
       {/each}
       {#if countOfNotVisibleTags}
-        <Tag on:click={expandTags}>+{countOfNotVisibleTags}</Tag>
+        <div in:fade={{ duration: 500 }}>
+          <Tag  on:click={expandTags}>+{countOfNotVisibleTags}</Tag>
+        </div>
       {/if}
     </div>
   </div>

@@ -8,7 +8,7 @@
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ 📝 Description                                                                   │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ Scores Authors Section Layout                                                    │
+│ Scores Authors Tags Layout                                                    │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -45,6 +45,8 @@
 
   import type { IArticleData } from "@betarena/scores-lib/types/types.authors.articles.js";
   import TagsWidget from "./content/Tags-Widget.svelte";
+    import { tryCatch } from "@betarena/scores-lib/dist/util/common.js";
+    import type { IPageAuthorTagDataFinal } from "@betarena/scores-lib/types/v8/preload.authors.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -83,8 +85,9 @@
     VIEWPORT_MOBILE_INIT[0],
     VIEWPORT_TABLET_INIT[0]
   );
-  $: pageSeo = $page.data.dataArticle as IArticleData;
-  // #endregion ➤ 📌 VARIABLES
+  $: pageSeo = $page.data.seoTamplate;
+
+   // #endregion ➤ 📌 VARIABLES
 </script>
 
 <!--
@@ -99,16 +102,16 @@
 -->
 
 {#if pageSeo}
-  <!-- <SvelteSeo
-		title={pageSeo.seo_details?.main_data.title}
-		description={pageSeo.seo_details?.main_data.description}
-		keywords={pageSeo.seo_details?.main_data.keywords}
-		noindex={ tryCatch(() => {return JSON.parse(pageSeo.seo_details?.main_data.noindex)}) ?? false }
-		nofollow={ tryCatch(() => {return JSON.parse(pageSeo.seo_details?.main_data.nofollow)}) ?? false }
-		canonical={pageSeo.seo_details?.main_data.canonical}
-		twitter={pageSeo.seo_details?.twitter_card}
-		openGraph={pageSeo.seo_details?.opengraph}
-	/> -->
+  <SvelteSeo
+		title={pageSeo.main_data.title}
+		description={pageSeo.main_data.description}
+		keywords={pageSeo.main_data.keywords}
+		noindex={ tryCatch(() => {return JSON.parse(pageSeo.main_data.noindex)}) ?? false }
+		nofollow={ tryCatch(() => {return JSON.parse(pageSeo.main_data.nofollow)}) ?? false }
+		canonical={pageSeo.main_data.canonical}
+		twitter={pageSeo.twitter_card}
+		openGraph={pageSeo.opengraph}
+	/>
 {/if}
 
 <section id={CNAME} class:mobile={VIEWPORT_MOBILE_INIT[1]}>
