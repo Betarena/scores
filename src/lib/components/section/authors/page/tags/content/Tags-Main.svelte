@@ -90,6 +90,12 @@
     VIEWPORT_TABLET_INIT: [number, boolean] = [1160, true];
   /**
    * @description
+   *  📣 selected language in dropdown to
+   * filter articles by language
+   *    */
+  let selectedLang: string | null = "all";
+  /**
+   * @description
    *  📣 array of articles that will be rendered
    *    */
 
@@ -180,7 +186,7 @@
   async function loadArticles() {
     pendingArticles = true;
     const res = (await get(
-      `/api/data/author/tags?permalinkTag=${currentTag.permalink}&page=${page}`
+      `/api/data/author/tags?permalinkTag=${currentTag.permalink}&page=${page}${selectedLang ? `&lang=${selectedLang}` : ""}`
     )) as IPageAuthorTagDataFinal;
     widgetData = {
       ...widgetData,
@@ -193,15 +199,18 @@
 
   async function filter(e: CustomEvent<string>) {
     const lang = e.detail;
+    selectedLang = lang === "all" ? null : lang;
     pendingArticles = true;
-    // const res = (await get(
-    //   `/api/data/author/tags?permalinkTag=${widgetData.currentTag.permalink}&lang=${lang}`
-    // )) as IPageAuthorDataFinal;
-    // if (res?.mapArticle?.length) {
-    //   visibleArticles = [
-    //     ...res.mapArticle.map(([id, article]) => prepareArticle([id, article])),
-    //   ];
-    // }
+    articles = [];
+    const res = (await get(
+      `/api/data/author/tags?permalinkTag=${currentTag.permalink}${selectedLang ? `&lang=${selectedLang}` : ""}`
+    )) as IPageAuthorTagDataFinal;
+    widgetData = {
+      ...widgetData,
+      mapArticle: res.mapArticle,
+      mapAuthor: res.mapAuthor,
+      mapTag: res.mapTag,
+    };
     pendingArticles = false;
   }
 
@@ -231,9 +240,7 @@
   {/if}
   <div class="articles" class:mobile>
     {#each articles as article (article.id)}
-    {#key articles.length}
       <ArticleCard {article} {tablet} {mobile} />
-    {/key}
     {/each}
     {#if pendingArticles}
       {#each Array(3) as _item}

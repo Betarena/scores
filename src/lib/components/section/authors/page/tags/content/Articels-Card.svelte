@@ -91,7 +91,7 @@
    * .recalculate tag visibility when changing width, orScrollWidth
    *  WARNING:
    */
-  $: resize(tagsWidth, tagsNode);
+  $: resize(tagsWidth, tagsNode, tags_data);
 
   // #region ➤ 🛠️ METHODS
 
@@ -105,7 +105,7 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function resize(width: number, node: HTMLDivElement) {
+  function resize(width: number, node: HTMLDivElement, tags_data: (IPageAuthorTagData | undefined)[]) {
     if (!width || !node) return;
     const scrollWidth = node.scrollWidth;
     if (width < scrollWidth) {
@@ -118,7 +118,7 @@
     prevWidth = width;
     countOfNotVisibleTags = tags_data.length - visibleTags.length;
     tick().then(() => {
-      if (width < node.scrollWidth) resize(width, node);
+      if (width < node.scrollWidth) resize(width, node, tags_data);
     });
   }
 
@@ -129,9 +129,7 @@
   }
 
   // #endregion ➤ 🛠️ METHODS
-  const src =
-    "https://s3-alpha-sig.figma.com/img/c13c/1e24/1e6baeeb9f8d7582f9d06e78b4720cca?Expires=1714953600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=eKvpqipX-DsYJHWoug3ZAq0~tXP9VuL6yTNi0mtpueLdhuC37jiaOKZbPWBlZRCnBgwXWxWhv5Gzk2WEbD7EY5mOzS~yMjiuJsXCXJEfx2RWY2s7ZMp8EgQ-ABjRxLf6XRvtrO7vUfcH17tR749NnVimp6aZwpeLdOgfrw74gYPBlidiMZa6cY3vIcyjM3IoBhaAZ6Uhyq9xoUP85aLcGttg1NWw2zsA4TY1cjb7qLVcKjKWxmiA-HC4Fz~gRBxNfCsfYqr16FhQbI6Jo46zP8GAd5SbEpT0kfNJUjBmUtyqBpxBM~HoUnztOxzo3A9UNNE31D7TfcgXrdenD1JgWA__";
-</script>
+ </script>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -144,7 +142,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="card-wrapper" class:mobile>
+<div class="card-wrapper" class:mobile in:fade={{duration: 500}}>
   <div class="card-content">
     <a href="/a/{permalink}">
       <div class="title">
