@@ -177,7 +177,7 @@
       bind:this={tagsNode}
     >
       {#each visibleTags as tag}
-        <a href="/a/tag/{tag?.permalink}" in:fade={{ duration: 500 }}>
+        <a href="/a/tag/{tag?.permalink}" data-sveltekit-preload-data="hover" in:fade={{ duration: 500 }}>
           <Tag>{tag?.name}</Tag>
         </a>
       {/each}

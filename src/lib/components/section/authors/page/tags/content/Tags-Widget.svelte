@@ -40,6 +40,7 @@
 
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
+  import { afterNavigate, beforeNavigate } from '$app/navigation';
 
   import { sleep } from '$lib/utils/miscellenous.js';
 
@@ -63,7 +64,9 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
+  let loading = false;
   $: widgetDataMain = $page.data as any;
+
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -101,6 +104,13 @@
     return;
   }
 
+  beforeNavigate(() => {
+    loading = true;
+  });
+  afterNavigate(() => {
+    loading = false;
+  });
+
   // #endregion ➤ 🛠️ METHODS
 
 </script>
@@ -137,9 +147,14 @@
   │ NOTE :|: promise is fulfilled                                          │
   ╰────────────────────────────────────────────────────────────────────────╯
   -->
-  <TagsMain
-    widgetData={widgetDataMain}
-  />
+  {#if loading}
+  <TagsLoader />
+  {:else}
+     <!-- else content here -->
+     <TagsMain
+       widgetData={widgetDataMain}
+     />
+  {/if}
 
 {:catch error}
   <!--
