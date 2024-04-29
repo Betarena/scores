@@ -157,6 +157,8 @@
   section {
     width: 100%;
     border-top: var(--section-border);
+    border-bottom: var(--section-border);
+    padding-bottom: 80px !important;
     padding-top: 48px;
 
     &.mobile {
