@@ -11,7 +11,7 @@
   import Avatar from "$lib/components/ui/Avatar.svelte";
   import Tag from "$lib/components/ui/Tag.svelte";
   import { timeAgo } from "$lib/utils/dates.js";
-  import type { AuthorsAuthorsDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import defaultAvatar from "./assets/profile-avatar.svg";
   import type {
     IPageAuthorArticleData,
     IPageAuthorAuthorData,
@@ -35,7 +35,7 @@
 
   interface IArticle extends IPageAuthorArticleData {
     author: IPageAuthorAuthorData;
-    tags_data: (IPageAuthorTagData | undefined)[];
+    tags_data: IPageAuthorTagData[];
   }
   export let /**
      * @augments IArticle
@@ -59,6 +59,7 @@
     expanded = false;
 
   $: ({
+    id,
     permalink,
     tags_data,
     published_date,
@@ -66,11 +67,10 @@
     seo_details: {
       opengraph: { images },
     },
-    author: { data: authorData },
+    author,
   } = article);
 
-  $: ({ avatar, username } = (authorData ||
-    {}) as AuthorsAuthorsDataJSONSchema);
+  $: ({ avatar, username } = author?.data || {username: "unknow", avatar: defaultAvatar});
   /**
    * @summary
    * 🔥 REACTIVITY
@@ -122,11 +122,13 @@
     } else if (width > prevWidth) {
       const lastVisible = visibleTags.at(-1);
       const i = tags_data.indexOf(lastVisible);
-      visibleTags = i < 0 ? [tags_data[0]] : [...visibleTags, tags_data[i + 1]];
+      const addTag = tags_data[i + 1];
+      if (addTag && !visibleTags?.find(t=> t.id === addTag.id))  visibleTags = [...tags_data, addTag] as IPageAuthorTagData[];
     }
 
     prevWidth = width;
     countOfNotVisibleTags = tags_data.length - visibleTags.length;
+    if (countOfNotVisibleTags < 0) countOfNotVisibleTags = 0;
     if (debounds) clearTimeout(debounds);
 
     setTimeout(() => {
@@ -176,7 +178,7 @@
       bind:clientWidth={tagsWidth}
       bind:this={tagsNode}
     >
-      {#each visibleTags as tag}
+      {#each visibleTags as tag (tag.id)}
         <a href="/a/tag/{tag?.permalink}" data-sveltekit-preload-data="hover" in:fade={{ duration: 500 }}>
           <Tag>{tag?.name}</Tag>
         </a>

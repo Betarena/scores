@@ -110,7 +110,7 @@
 
   interface IArticle extends IPageAuthorArticleData {
     author: IPageAuthorAuthorData;
-    tags_data: (IPageAuthorTagData | undefined)[];
+    tags_data: IPageAuthorTagData[];
   }
 
   // #endregion ➤ 📌 VARIABLES
@@ -175,14 +175,18 @@
         ...data,
       } as IArticle;
       if (data.author_id) {
-        preparedArticle.author = authors.get(
+        const author = authors.get(
           data.author_id
         ) as IPageAuthorAuthorData;
+        if (author) preparedArticle.author = author;
       }
       if (data.tags?.length) {
-        preparedArticle.tags_data = data.tags.map((id: any) =>
-          tags_map.get(id)
-        );
+        const prepared_tags: IPageAuthorTagData[] = [];
+        data.tags.forEach(id => {
+          const tag = tags_map.get(id);
+          if(tag) prepared_tags.push(tag);
+        });
+        preparedArticle.tags_data = prepared_tags;
       }
       return preparedArticle;
     });
