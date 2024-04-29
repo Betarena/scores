@@ -20,7 +20,6 @@
   {width}
   {height}
   style="--loader-svg-height:{heightString}; --loader-svg-width:{widthString};"
-  viewBox="0 0 {width} {height}"
   fill="none"
   xmlns="http://www.w3.org/2000/svg"
   preserveAspectRatio="none"

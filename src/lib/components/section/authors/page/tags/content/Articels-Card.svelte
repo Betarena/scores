@@ -222,6 +222,8 @@
 
         .card-content {
           padding: 0;
+          padding: 0 16px;
+          width: 100%;
         }
 
         .preview {
@@ -260,7 +262,7 @@
         }
 
         &.mobile {
-          width: 375px;
+          width: 100%;
         }
       }
     }
@@ -329,7 +331,7 @@
         &-name {
           color: var(--text-color);
           font-family: Inter;
-          font-size:  var(--text-size-m);
+          font-size: var(--text-size-m);
           font-style: normal;
           font-weight: 500;
           line-height: 20px;

@@ -265,7 +265,7 @@
       {/each}
     {/if}
   </div>
-  <div class="section-footer" class:mobile>
+  <div class="section-footer">
     <div class="page-info">
       {articles.length}/{totalArticlesCount} articles
     </div>
@@ -301,18 +301,6 @@
     --text-size-xs: 12px;
     --text-button-size: var(--text-size-m);
 
-    &.mobile {
-      --text-size-2xl: 24px;
-      --text-size-l: 16px;
-      --text-size-m: 14px;
-      --text-size-s: 12px;
-      --text-size-xs: 10px;
-    }
-
-    &.tablet {
-      padding: 0 34px;
-    }
-
     .splitter {
       height: 1px;
       width: 100%;
@@ -324,10 +312,6 @@
       flex-direction: column;
       align-items: flex-start;
       gap: 24px;
-
-      &.mobile {
-        gap: 40px;
-      }
     }
 
     .section-footer {
@@ -342,6 +326,27 @@
         font-weight: 400;
         line-height: 18px;
       }
+    }
+
+    &.mobile {
+      --text-size-2xl: 24px;
+      --text-size-l: 16px;
+      --text-size-m: 14px;
+      --text-size-s: 12px;
+      --text-size-xs: 10px;
+      gap: 32px;
+
+      .articles {
+        gap: 40px;
+      }
+
+      .section-footer {
+        padding: 0 16px;
+      }
+    }
+
+    &.tablet {
+      padding: 0 34px;
     }
   }
 </style>

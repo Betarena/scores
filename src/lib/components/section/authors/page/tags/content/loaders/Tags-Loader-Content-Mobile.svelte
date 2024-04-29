@@ -102,7 +102,7 @@
   ╰─────
   -->
   <div class="preview-box">
-    <LoaderImage width={375} height={200} />
+    <LoaderImage width={"100%"} height={200} />
   </div>
 
   <div class="content-box">
@@ -175,6 +175,7 @@
       display: flex;
       justify-content: center;
       height: 200px;
+      width: 100%;
       min-height: 100%;
       flex-shrink: 0;
     }
@@ -183,8 +184,8 @@
       display: flex;
       flex-direction: column;
       gap: 16px;
-      padding: 0 24px;
-      width: 455px;
+      padding: 0 16px;
+      width: 100%;
       max-width: 100%;
 
       .title-box {
