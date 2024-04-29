@@ -5,10 +5,10 @@
 
 // import { checkNull } from '$lib/utils/miscellenous.js';
 // import { getAuthorArticleTranslation } from '@betarena/scores-lib/dist/functions/v8/authors.articles.js';
-import { entryTargetDataTag } from '@betarena/scores-lib/dist/functions/v8/main.preload.authors.js'
+import { entryTargetDataAuthorTranslation, entryTargetDataTag } from '@betarena/scores-lib/dist/functions/v8/main.preload.authors.js'
 import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
 // import type { IArticleTranslation } from '@betarena/scores-lib/types/types.authors.articles.js';
-import type { IPageAuthorTagDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
+import type { IPageAuthorTagDataFinal, IPageAuthorTranslationDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
 import { json, type RequestEvent } from '@sveltejs/kit';
 
 // ╭──────────────────────────────────────────────────────────────────╮
@@ -65,7 +65,8 @@ export async function main
 
         const
           permalinkTag = request.url.searchParams.get('permalinkTag'),
-          page = request.url.searchParams.get('page') || 0
+          page = request.url.searchParams.get('page') || 0,
+          translation = request.url.searchParams.get('translation')
           // hasura = request.url.searchParams.get('hasura'),
           ;
         let lang: string | undefined = request.url.searchParams.get('lang') as string;
@@ -103,21 +104,21 @@ export async function main
         // │ Add cache logic.                                                 │
         // ╰──────────────────────────────────────────────────────────────────╯
 
-        // if (!checkNull(lang))
-        // {
-        //   const
-        //     data: IArticleTranslation = await fallbackDataGenerate1
-        //     (
-        //       lang
-        //     ),
-        //     loadType = 'HASURA'
-        //   ;
+        if (translation)
+        {
+          const
+            data = await fallbackDataGenerate1
+            (
+              translation
+            ),
+            loadType = 'HASURA'
+          ;
 
-        //   // ▓ [🐞]
-        //   console.log(`📌 loaded [FSCR] with: ${loadType}`)
+          // ▓ [🐞]
+          console.log(`📌 loaded [FSCR] with: ${loadType}`)
 
-        //   if (data != undefined) return json(data);
-        // }
+          if (data != undefined) return json(data);
+        }
 
         return json
           (
@@ -164,10 +165,11 @@ async function fallbackDataGenerate0
     permalinkTarget: string,
     page: string | number,
     language: string | undefined = undefined
-  ): Promise<IPageAuthorTagDataFinal>
+  ): Promise<IPageAuthorTagDataFinal & {translations: IPageAuthorTranslationDataFinal}>
 {
   const dataRes0: IPageAuthorTagDataFinal = await entryTargetDataTag({ permalinkTarget, page: Number(page), language });
-  return dataRes0;
+  const dataRes1 = await entryTargetDataAuthorTranslation({language: "en"})
+  return { ...dataRes0, translations: dataRes1 };
 }
 
 /**
@@ -177,24 +179,16 @@ async function fallbackDataGenerate0
  *  🟦 HELPER
  * @description
  *  📣 Fallback data generation.
- * @param { string } lang
+ * @param { string } language
  *  💠 Target translation.
- * @returns { Promise < IArticleData > }
- *  📤 Target `article` data.
+ * @returns { Promise < IPageAuthorTranslationDataFinal > }
+ *  📤 Target `tags` data translations.
  */
-// async function fallbackDataGenerate1
-// (
-//   lang: string
-// ): Promise < IArticleTranslation | null | undefined >
-// {
-//   const dataRes0 = await getAuthorArticleTranslation
-//   (
-//     [lang]
-//   );
-
-//   if (dataRes0[0].size == 0)
-//     return null;
-//   ;
-
-//   return dataRes0[0].get(lang);
-// }
+async function fallbackDataGenerate1
+(
+  language: string
+): Promise < IPageAuthorTranslationDataFinal >
+{
+  const dataRes0 = await entryTargetDataAuthorTranslation({ language });
+  return dataRes0;
+}

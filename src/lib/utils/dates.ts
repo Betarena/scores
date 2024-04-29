@@ -10,6 +10,8 @@
 // │ Main Scores Platform Date Logic                                                  │
 // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
+import type { TranslationAuthorPublicationDateDataTimeAgo } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+
 export const
   MONTH_NAMES_ABBRV: string[]
     = [
@@ -504,7 +506,7 @@ export function breakdownDates
  * @return { string }
  *  📤 Target `string` .
  */
-export function timeAgo(datestring: string | null): string
+export function timeAgo(datestring: string | null, translation: TranslationAuthorPublicationDateDataTimeAgo): string
 {
   if (!datestring) return '';
   const now = new Date();

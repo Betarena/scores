@@ -193,6 +193,21 @@ export async function selectLanguage
         return;
       }
     case routeIdPageTags:
+       //[🐞]
+       dlogv2
+       (
+         '🚏 checkpoint ➤ selectLanguage(..) [x2]',
+         [
+         ],
+         true
+       );
+       sessionStore.updateData
+       (
+         [
+           ['lang', lang]
+         ]
+       );
+      break;
     case routeIdPageAuthors: {
       //[🐞]
       dlogv2

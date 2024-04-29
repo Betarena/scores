@@ -16,6 +16,7 @@
     IPageAuthorArticleData,
     IPageAuthorAuthorData,
     IPageAuthorTagData,
+    IPageAuthorTranslationDataFinal,
   } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import { fade } from "svelte/transition";
 
@@ -41,6 +42,7 @@
      * @augments IArticle
      */
     article: IArticle,
+    translations: IPageAuthorTranslationDataFinal,
     /**
      * @description tablet view
      */
@@ -59,7 +61,6 @@
     expanded = false;
 
   $: ({
-    id,
     permalink,
     tags_data,
     published_date,
@@ -90,7 +91,7 @@
    */
   $: visibleTags = [...tags_data];
 
-  $: date = timeAgo(published_date);
+  $: date = timeAgo(published_date, translations.time_ago);
   // #endregion ➤ 📌 VARIABLES
   /** @description
    * .recalculate tag visibility when changing width, orScrollWidth
