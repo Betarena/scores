@@ -510,8 +510,9 @@ export function timeAgo(datestring: string | null): string
   const now = new Date();
   const date = new Date(datestring);
   const dateDiff = now.getTime() - date.getTime();
-  const [_totalhours, days, hours, minutes] = breakdownDates(dateDiff);
-
+  const minutes = Math.floor(dateDiff / 60000);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
   if (minutes < 1) return 'Just now';
   if (hours < 1) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
   if (days < 1) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
