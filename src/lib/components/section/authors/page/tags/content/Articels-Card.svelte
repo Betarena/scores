@@ -70,7 +70,10 @@
     author,
   } = article);
 
-  $: ({ avatar, username } = author?.data || {username: "unknow", avatar: defaultAvatar});
+  $: ({ avatar, username } = author?.data || {
+    username: "unknow",
+    avatar: defaultAvatar,
+  });
   /**
    * @summary
    * 🔥 REACTIVITY
@@ -123,7 +126,8 @@
       const lastVisible = visibleTags.at(-1);
       const i = tags_data.indexOf(lastVisible);
       const addTag = tags_data[i + 1];
-      if (addTag && !visibleTags?.find(t=> t.id === addTag.id))  visibleTags = [...tags_data, addTag] as IPageAuthorTagData[];
+      if (addTag && !visibleTags?.find((t) => t.id === addTag.id))
+        visibleTags = [...tags_data, addTag] as IPageAuthorTagData[];
     }
 
     prevWidth = width;
@@ -178,8 +182,12 @@
       bind:clientWidth={tagsWidth}
       bind:this={tagsNode}
     >
-      {#each visibleTags as tag (tag.id)}
-        <a href="/a/tag/{tag?.permalink}" data-sveltekit-preload-data="hover" in:fade={{ duration: 500 }}>
+      {#each visibleTags as tag}
+        <a
+          href="/a/tag/{tag?.permalink}"
+          data-sveltekit-preload-data="hover"
+          in:fade={{ duration: 500 }}
+        >
           <Tag>{tag?.name}</Tag>
         </a>
       {/each}
@@ -226,6 +234,13 @@
           padding: 0;
           padding: 0 24px;
           width: 100%;
+          .title {
+            line-height: 24px;
+          }
+
+          .author-name {
+            font-size: var(--text-size-m);
+          }
         }
 
         .preview {
@@ -303,7 +318,7 @@
         font-size: var(--text-size-l);
         font-style: normal;
         font-weight: 600;
-        line-height: 140%;
+        line-height: 28px;
       }
 
       .author {
@@ -321,19 +336,19 @@
           color: var(--text-color-second, #ccc);
 
           .publication-date {
-            color: var(--text-color-second, #8c8c8c);
+            color: var(--text-color-second-dark, #8c8c8c);
             font-family: Roboto;
             font-size: var(--text-size-xs);
             font-style: normal;
             font-weight: 400;
-            line-height: 120%;
+            line-height: 12px;
           }
         }
 
         &-name {
           color: var(--text-color);
           font-family: Inter;
-          font-size: var(--text-size-m);
+          font-size: var(--text-size-s);
           font-style: normal;
           font-weight: 500;
           line-height: 20px;

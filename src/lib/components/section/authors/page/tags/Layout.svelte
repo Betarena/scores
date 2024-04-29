@@ -43,10 +43,8 @@
 
   import SvelteSeo from "svelte-seo";
 
-  import type { IArticleData } from "@betarena/scores-lib/types/types.authors.articles.js";
   import TagsWidget from "./content/Tags-Widget.svelte";
   import { tryCatch } from "@betarena/scores-lib/dist/util/common.js";
-  import type { IPageAuthorTagDataFinal } from "@betarena/scores-lib/types/v8/preload.authors.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -164,6 +162,7 @@
     &.mobile {
       border-top: none;
       padding: 0;
+      padding-top: 16px;
     }
 
     .main-content {

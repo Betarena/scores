@@ -231,7 +231,7 @@
             transition-duration: 0.7s;
             width: 16px;
             height: 16px;
-            transform: rotate(360deg) translateY(25%);
+            transform: rotate(360deg);
             &.opend {
               transform: rotate(180deg);
             }
