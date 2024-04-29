@@ -57,10 +57,10 @@ export let
 -->
 
 
-<div class="tag-pill" class:active on:click={() => dispatch("click")}>
-  <p class="s-14 w-400 color-black-2 no-wrap">
+<div class="tag-pill" { ...$$restProps} class:active on:click={() => dispatch("click")}>
+  <span class="w-400 color-black-2 no-wrap">
     <slot />
-  </p>
+  </span>
 </div>
 
 
@@ -77,14 +77,12 @@ export let
 <style lang="scss">
 
 .tag-pill {
-  min-height: 26px;
-  height: 26px;
-  max-height: 26px;
   padding: 3px 12px;
   width: max-content;
   border-radius: 100px;
   color: var(--text-color);
   background-color: var(--tag-bg-color);
+  font-size: var(--text-button-size);
   transition: all;
   transition-duration: 0.4s;
   cursor: pointer;
@@ -93,7 +91,7 @@ export let
     /* 🎨 style */
     background-color: var(--primary) !important;
 
-    p
+    span
     {
       /* 🎨 style */
       color: var(--white) !important;

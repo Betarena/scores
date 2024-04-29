@@ -161,7 +161,7 @@
         </SelectButton>
       {/if}
 
-      <Button type={isFollowed ? "outline" : "primary"} on:click={follow}
+      <Button type={isFollowed ? "outline" : "primary"}  on:click={follow}
         >{isFollowed ? "Following" : "+ Follow"}</Button
       >
     </div>
@@ -210,14 +210,14 @@
         h1 {
           color: var(--text-color);
           font-family: Inter;
-          font-size: 38px;
+          font-size: var(--text-size-2xl);
           margin: 0;
           font-style: normal;
           font-weight: 600;
           display: flex;
           gap: 4px;
           align-items: center;
-          line-height: 54px; /* 142.105% */
+          line-height: 142%;
 
           img {
             transition: transform;
@@ -240,7 +240,7 @@
           align-items: center;
           color: var(--text-color-second);
           font-family: Roboto;
-          font-size: 12px;
+          font-size: var(--text-size-xs);
           font-style: normal;
           font-weight: 400;
           line-height: 18px; /* 150% */
@@ -257,6 +257,7 @@
       .action-buttons {
         display: flex;
         gap: 24px;
+        font-size: var(--text-size-m) !important;
         align-items: center;
       }
     }

@@ -8,37 +8,37 @@
 -->
 
 <script lang="ts">
-    import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher } from "svelte";
 
+  // #region ➤ 📌 VARIABLES
 
-// #region ➤ 📌 VARIABLES
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
-// ╭────────────────────────────────────────────────────────────────────────╮
-// │ NOTE:                                                                  │
-// │ Please add inside 'this' region the 'variables' that are to be         │
-// │ and are expected to be used by 'this' .svelte file / component.        │
-// │ IMPORTANT                                                              │
-// │ Please, structure the imports as follows:                              │
-// │ 1. export const / let [..]                                             │
-// │ 2. const [..]                                                          │
-// │ 3. let [..]                                                            │
-// │ 4. $: [..]                                                             │
-// ╰────────────────────────────────────────────────────────────────────────╯
+  export let width: number | string = 200,
+    height: number | string = 50,
+    href = "";
 
-export let width: number | string = 200, height:  number | string = 50, href = "";
-
-export let
-  /**
-   * @description
-   *  button styles: primary | outline
-   */ // eslint-disable-next-line no-unused-vars
-  type: "primary" | "outline" = "primary"
+  export let /**
+     * @description
+     *  button styles: primary | outline
+     */ // eslint-disable-next-line no-unused-vars
+    type: "primary" | "outline" = "primary";
 
   const dispatch = createEventDispatcher();
 
-// #endregion ➤ 📌 VARIABLES
-
+  // #endregion ➤ 📌 VARIABLES
 </script>
+
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ 💠 Svelte Component HTML                                                         │
@@ -50,8 +50,8 @@ export let
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<button class="button {type}" on:click={() => dispatch("click")}>
-  <slot/>
+<button class="button {type}" { ...$$restProps} on:click={() => dispatch("click")}>
+  <slot />
 </button>
 
 <!--
@@ -65,16 +65,15 @@ export let
 -->
 
 <style lang="scss">
-
   .button {
     display: flex;
     padding: 9px 20px;
     align-items: center;
     gap: 8px;
+    font-size: var(--text-button-size);
     border-radius: 8px;
     text-align: center;
     font-family: Roboto;
-    font-size: 16px;
     font-style: normal;
     font-weight: 500;
     line-height: 150%; /* 24px */
@@ -82,16 +81,14 @@ export let
   }
 
   .primary {
-
-    background: var(--primary, #F5620F);
-    color: var(--white-day, #FFF);
-
+    background: var(--primary, #f5620f);
+    color: var(--white-day, #fff);
 
     /* shadow/orange */
     box-shadow: 0px 3px 8px 0px rgba(212, 84, 12, 0.32);
 
     &:hover {
-      background: var(--primary-fade, #F5620F);
+      background: var(--primary-fade, #f5620f);
     }
   }
 
@@ -107,7 +104,4 @@ export let
       color: var(--primary);
     }
   }
-
 </style>
-
-

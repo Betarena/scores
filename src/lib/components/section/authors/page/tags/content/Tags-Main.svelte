@@ -238,7 +238,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div id={CNAME} class="tags-main" class:tablet>
+<div id={CNAME} class="tags-main" class:tablet class:mobile>
   <TagsHeader
     tag={currentTag}
     {totalArticlesCount}
@@ -288,10 +288,26 @@
 <style lang="scss">
   .tags-main {
     display: flex;
+    margin-top: 20px;
     flex-direction: column;
     gap: 40px;
     width: 100%;
     height: 100%;
+    --text-size-2xl: 38px;
+    --text-size-xl: 24px;
+    --text-size-l: 20px;
+    --text-size-m: 16px;
+    --text-size-s: 14px;
+    --text-size-xs: 12px;
+    --text-button-size: var(--text-size-m);
+
+    &.mobile {
+      --text-size-2xl: 24px;
+      --text-size-l: 16px;
+      --text-size-m: 14px;
+      --text-size-s: 12px;
+      --text-size-xs: 10px;
+    }
 
     &.tablet {
       padding: 0 34px;

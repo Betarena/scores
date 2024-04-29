@@ -279,6 +279,7 @@
         max-width: 100%;
         overflow: hidden;
         row-gap: 7px;
+        --text-button-size: var(--text-size-s);
 
         &.expanded {
           flex-wrap: wrap;
@@ -293,12 +294,12 @@
         overflow: hidden;
         text-overflow: ellipsis;
         max-width: 100%;
-        height: 56px;
+        height: max-content;
         font-family: Inter;
-        font-size: 20px;
+        font-size: var(--text-size-l);
         font-style: normal;
         font-weight: 600;
-        line-height: 28px; /* 140% */
+        line-height: 140%;
       }
 
       .author {
@@ -318,17 +319,17 @@
           .publication-date {
             color: var(--text-color-second, #8c8c8c);
             font-family: Roboto;
-            font-size: 12px;
+            font-size: var(--text-size-xs);
             font-style: normal;
             font-weight: 400;
-            line-height: 12px; /* 100% */
+            line-height: var(--text-size-xs); /* 100% */
           }
         }
 
         &-name {
           color: var(--text-color);
           font-family: Inter;
-          font-size: 14px;
+          font-size:  var(--text-size-m);
           font-style: normal;
           font-weight: 500;
           line-height: 20px;
