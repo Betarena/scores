@@ -278,6 +278,7 @@
         gap: 4px;
         max-width: 100%;
         overflow: hidden;
+        row-gap: 7px;
 
         &.expanded {
           flex-wrap: wrap;
