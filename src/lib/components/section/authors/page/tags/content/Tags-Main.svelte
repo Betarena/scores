@@ -50,8 +50,10 @@
     IPageAuthorAuthorData,
     IPageAuthorTagDataFinal,
     IPageAuthorTagData,
+    IPageAuthorTranslationDataFinal,
   } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import { get } from "$lib/api/utils.js";
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -72,7 +74,9 @@
   export let /**
      * @augments IArticleData
      */
-    widgetData: IPageAuthorTagDataFinal;
+    widgetData: IPageAuthorTagDataFinal & {
+      translations: IPageAuthorTranslationDataFinal;
+    };
   const /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
@@ -110,7 +114,7 @@
 
   interface IArticle extends IPageAuthorArticleData {
     author: IPageAuthorAuthorData;
-    tags_data: (IPageAuthorTagData | undefined)[];
+    tags_data: IPageAuthorTagData[];
   }
 
   // #endregion ➤ 📌 VARIABLES
@@ -133,7 +137,7 @@
   $: authors = new Map(widgetData.mapAuthor);
   $: articles = prepareArticles(widgetData.mapArticle, tags, authors);
   $: currentTag = tags.get(widgetData.tagId) as IPageAuthorTagData;
-  $: ({ totalArticlesCount, totalPageCount } = widgetData);
+  $: ({ totalArticlesCount, totalPageCount, translations } = widgetData);
   $: page = Math.ceil(articles.length / 10);
   /**
    * @summary
@@ -149,7 +153,7 @@
    * triggered by changes in:
    * - `` - **articles**
    */
-
+  $: loadTranslations( $sessionStore.serverLang)
   // #region ➤ 🛠️ METHODS
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -175,14 +179,16 @@
         ...data,
       } as IArticle;
       if (data.author_id) {
-        preparedArticle.author = authors.get(
-          data.author_id
-        ) as IPageAuthorAuthorData;
+        const author = authors.get(data.author_id) as IPageAuthorAuthorData;
+        if (author) preparedArticle.author = author;
       }
       if (data.tags?.length) {
-        preparedArticle.tags_data = data.tags.map((id: any) =>
-          tags_map.get(id)
-        );
+        const prepared_tags: IPageAuthorTagData[] = [];
+        data.tags.forEach((id) => {
+          const tag = tags_map.get(id);
+          if (tag) prepared_tags.push(tag);
+        });
+        preparedArticle.tags_data = prepared_tags;
       }
       return preparedArticle;
     });
@@ -216,9 +222,22 @@
       }`
     )) as IPageAuthorTagDataFinal;
     widgetData = {
-      ...res
+      ...widgetData,
+      ...res,
     };
     pendingArticles = false;
+  }
+  let prevLang;
+  async function loadTranslations(lang: string | undefined) {
+
+    if (!lang || prevLang === lang) return;
+    prevLang = lang;
+    const res = (await get(`/api/data/author/tags?translation=${lang}`)) as IPageAuthorTranslationDataFinal;
+    console.log("Translations: ", res);
+    widgetData = {
+      ...widgetData,
+      translations: res,
+    };
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -238,6 +257,7 @@
 <div id={CNAME} class="tags-main" class:tablet class:mobile>
   <TagsHeader
     tag={currentTag}
+    {translations}
     {totalArticlesCount}
     {mobile}
     {tablet}
@@ -249,7 +269,7 @@
   <div class="articles" class:mobile>
     {#each articles as article (article?.id)}
       {#if article}
-        <ArticleCard {article} {tablet} {mobile} />
+        <ArticleCard {article} {tablet} {mobile} {translations} />
       {/if}
     {/each}
     {#if pendingArticles}
@@ -264,10 +284,21 @@
   </div>
   <div class="section-footer">
     <div class="page-info">
-      {articles.length}/{totalArticlesCount} articles
+      {articles.length}/{totalArticlesCount}
+      <TranslationText
+        key={`unknown`}
+        text={translations.articles}
+        fallback={"articles"}
+      />
     </div>
     {#if page <= totalPageCount}
-      <Button type="outline" on:click={() => loadArticles()}>View more</Button>
+      <Button type="outline" on:click={() => loadArticles()}
+        ><TranslationText
+          key={`unknown`}
+          text={translations.view_more}
+          fallback={"View more"}
+        /></Button
+      >
     {/if}
   </div>
 </div>

@@ -184,7 +184,7 @@ export function viewportChangeV2
 ): boolean[]
 {
   const
-    isTabletView: boolean = currentWidth <= TABLET_VIEW_INIT && currentWidth > MOBILE_VIEW_INIT,
+    isTabletView: boolean = currentWidth <= TABLET_VIEW_INIT,
     isMobileView: boolean = currentWidth <= MOBILE_VIEW_INIT,
     isOtherView: boolean = currentWidth <= OTHER_VIEW
   ;

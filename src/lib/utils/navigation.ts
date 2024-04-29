@@ -193,6 +193,21 @@ export async function selectLanguage
         return;
       }
     case routeIdPageTags:
+       //[🐞]
+       dlogv2
+       (
+         '🚏 checkpoint ➤ selectLanguage(..) [x2]',
+         [
+         ],
+         true
+       );
+       sessionStore.updateData
+       (
+         [
+           ['lang', lang]
+         ]
+       );
+      break;
     case routeIdPageAuthors: {
       //[🐞]
       dlogv2
@@ -378,7 +393,7 @@ export async function promiseValidUrlCheck
         competitionMainUrl?: string,
         competitionUrl?: string,
         authorArticleUrl?: string,
-        authorTagsUrl? : string
+        authorTagsUrl?: string
       }
   ): Promise<boolean>
 {
@@ -443,7 +458,7 @@ export async function promiseValidUrlCheck
   if (opts.competitionMainUrl) queryStr += `&competitionMainUrl=${opts.competitionMainUrl}`;
   if (opts.competitionUrl) queryStr += `&competitionUrl=${opts.competitionUrl}`;
   if (opts.authorArticleUrl) queryStr += `?authorArticleUrl=/${opts.authorArticleUrl}`;
-  if (opts.authorTagsUrl) queryStr += `?authorTagsUrl=/${opts.authorTagsUrl}`;
+  if (opts.authorTagsUrl) queryStr += `?authorTagUrl=/${opts.authorTagsUrl}`;
 
   // [🐞]
   dlogv2

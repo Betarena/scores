@@ -16,8 +16,12 @@
   import userBetarenaSettings from "$lib/store/user-settings.js";
   import { createEventDispatcher } from "svelte";
   import arrowDown from "./assets/arrow-down.svg";
-  import type { IPageAuthorTagData } from "@betarena/scores-lib/types/v8/preload.authors.js";
+  import type {
+    IPageAuthorTagData,
+    IPageAuthorTranslationDataFinal,
+  } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import { page } from "$app/stores";
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -48,6 +52,7 @@
 
   // #endregion ➤ 📦 Package Imports
   export let tag: IPageAuthorTagData;
+  export let translations: IPageAuthorTranslationDataFinal;
   export let mobile = false;
   export let tablet = false;
   export let totalArticlesCount = 0;
@@ -149,21 +154,48 @@
         {/if}
       </h1>
       <div class="tag-info">
-        <span>{tag.followers?.length || 0} followers</span>
+        <span
+          >{tag.followers?.length || 0}
+          <TranslationText
+            key={`unknown`}
+            text={translations.followers}
+            fallback={"followers"}
+          />
+        </span>
         <div class="tag-info-splitter" />
-        <span>{totalArticlesCount} articles</span>
+        <span
+          >{totalArticlesCount}
+          <TranslationText
+            key={`unknown`}
+            text={translations.articles}
+            fallback={"articles"}
+          /></span
+        >
       </div>
     </div>
     <div class="action-buttons" bind:clientWidth={buttonsWidth}>
       {#if !mobile}
         <SelectButton bind:value={filterValue} {options} let:currentValue>
-          Language: {currentValue?.label}
+          <TranslationText
+            key={`unknown`}
+            text={translations.subtitle}
+            fallback={"Language"}
+          />
+          : <TranslationText
+          key={`unknown`}
+          text={translations[currentValue.id]}
+          fallback={currentValue?.label}
+        />
         </SelectButton>
       {/if}
 
-      <Button type={isFollowed ? "outline" : "primary"}  on:click={follow}
-        >{isFollowed ? "Following" : "+ Follow"}</Button
-      >
+      <Button type={isFollowed ? "outline" : "primary"} on:click={follow}>
+        <TranslationText
+          key={`unknown`}
+          text={isFollowed ? translations.following : translations.follow}
+          fallback={isFollowed ? "Following" : "+ Follow"}
+        />
+      </Button>
     </div>
   </div>
   {#if showDescription && tag.description}
@@ -231,7 +263,7 @@
             transition-duration: 0.7s;
             width: 16px;
             height: 16px;
-            transform: rotate(360deg) translateY(25%);
+            transform: rotate(360deg);
             &.opend {
               transform: rotate(180deg);
             }
