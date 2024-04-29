@@ -216,10 +216,7 @@
       }`
     )) as IPageAuthorTagDataFinal;
     widgetData = {
-      ...widgetData,
-      mapArticle: res.mapArticle,
-      mapAuthor: res.mapAuthor,
-      mapTag: res.mapTag,
+      ...res
     };
     pendingArticles = false;
   }
