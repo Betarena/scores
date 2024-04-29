@@ -11,6 +11,7 @@
   import Avatar from "$lib/components/ui/Avatar.svelte";
   import Tag from "$lib/components/ui/Tag.svelte";
   import { timeAgo } from "$lib/utils/dates.js";
+  import type { AuthorsAuthorsDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import type {
     IPageAuthorArticleData,
     IPageAuthorAuthorData,
@@ -37,7 +38,7 @@
     tags_data: (IPageAuthorTagData | undefined)[];
   }
   export let /**
-     * @augments IArticIArticleleData
+     * @augments IArticle
      */
     article: IArticle,
     /**
@@ -56,6 +57,7 @@
     prevWidth = 0,
     countOfNotVisibleTags = 0,
     expanded = false;
+
   $: ({
     permalink,
     tags_data,
@@ -64,10 +66,11 @@
     seo_details: {
       opengraph: { images },
     },
-    author: {
-      data: { avatar, username },
-    },
+    author: { data: authorData },
   } = article);
+
+  $: ({ avatar, username } = (authorData ||
+    {}) as AuthorsAuthorsDataJSONSchema);
   /**
    * @summary
    * 🔥 REACTIVITY
@@ -105,6 +108,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   let debounds;
+
   function resize(
     width: number,
     node: HTMLDivElement,
@@ -112,7 +116,6 @@
   ) {
     if (!width || !node) return;
     const scrollWidth = node.scrollWidth;
-    let visibleTagsLength = visibleTags.length
     if (width < scrollWidth) {
       visibleTags.pop();
       visibleTags = [...visibleTags];
@@ -124,7 +127,7 @@
 
     prevWidth = width;
     countOfNotVisibleTags = tags_data.length - visibleTags.length;
-    if(debounds) clearTimeout(debounds)
+    if (debounds) clearTimeout(debounds);
 
     setTimeout(() => {
       debounds = null;
@@ -180,7 +183,7 @@
       {/each}
       {#if countOfNotVisibleTags}
         <div in:fade={{ duration: 500 }}>
-          <Tag  on:click={expandTags}>+{countOfNotVisibleTags}</Tag>
+          <Tag on:click={expandTags}>+{countOfNotVisibleTags}</Tag>
         </div>
       {/if}
     </div>

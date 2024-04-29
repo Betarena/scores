@@ -135,7 +135,6 @@
   $: currentTag = tags.get(widgetData.tagId) as IPageAuthorTagData;
   $: ({ totalArticlesCount, totalPageCount } = widgetData);
   $: page = Math.ceil(articles.length / 10);
-  $: console.log(widgetData)
   /**
    * @summary
    * 🔥 REACTIVITY
@@ -170,9 +169,15 @@
   ): IArticle[] {
     if (!tags_map || !authors || !articles.length) return [];
     const prepared = articles.map(([id, data]) => {
-      const preparedArticle: IArticle = { author: {}, tags_data: [], ...data } as IArticle;
+      const preparedArticle: IArticle = {
+        author: {},
+        tags_data: [],
+        ...data,
+      } as IArticle;
       if (data.author_id) {
-        preparedArticle.author = authors.get(data.author_id) as IPageAuthorAuthorData;
+        preparedArticle.author = authors.get(
+          data.author_id
+        ) as IPageAuthorAuthorData;
       }
       if (data.tags?.length) {
         preparedArticle.tags_data = data.tags.map((id: any) =>
@@ -187,7 +192,9 @@
   async function loadArticles() {
     pendingArticles = true;
     const res = (await get(
-      `/api/data/author/tags?permalinkTag=${currentTag.permalink}&page=${page}${selectedLang ? `&lang=${selectedLang}` : ""}`
+      `/api/data/author/tags?permalinkTag=${currentTag.permalink}&page=${page}${
+        selectedLang ? `&lang=${selectedLang}` : ""
+      }`
     )) as IPageAuthorTagDataFinal;
     widgetData = {
       ...widgetData,
@@ -204,7 +211,9 @@
     pendingArticles = true;
     articles = [];
     const res = (await get(
-      `/api/data/author/tags?permalinkTag=${currentTag.permalink}${selectedLang ? `&lang=${selectedLang}` : ""}`
+      `/api/data/author/tags?permalinkTag=${currentTag.permalink}${
+        selectedLang ? `&lang=${selectedLang}` : ""
+      }`
     )) as IPageAuthorTagDataFinal;
     widgetData = {
       ...widgetData,
@@ -234,14 +243,17 @@
     tag={currentTag}
     {totalArticlesCount}
     {mobile}
+    {tablet}
     on:filter={filter}
   />
   {#if !mobile}
     <div class="splitter" />
   {/if}
   <div class="articles" class:mobile>
-    {#each articles as article (article.id)}
-      <ArticleCard {article} {tablet} {mobile} />
+    {#each articles as article (article?.id)}
+      {#if article}
+        <ArticleCard {article} {tablet} {mobile} />
+      {/if}
     {/each}
     {#if pendingArticles}
       {#each Array(3) as _item}
