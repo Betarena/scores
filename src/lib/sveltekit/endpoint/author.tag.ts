@@ -32,11 +32,11 @@ export async function main
 
       const
         permalinkTag = request.url.searchParams.get('permalinkTag'),
-        page = request.url.searchParams.get('page') as string
+        page = request.url.searchParams.get('page') || 0
         // hasura = request.url.searchParams.get('hasura'),
         ;
-      let lang: string | null = request.url.searchParams.get('lang');
-      if (lang === "all") lang = null;
+      let lang: string | undefined = request.url.searchParams.get('lang') as string;
+      if (lang === "all") lang = undefined;
 
       // ╭──────────────────────────────────────────────────────────────────╮
       // │ NOTE:                                                            │
@@ -125,8 +125,8 @@ export async function main
 async function fallbackDataGenerate0
 (
   permalinkTarget: string,
-  page: string | number = 0,
-  language: string | null
+  page: string | number,
+  language: string | undefined  = undefined
 ): Promise < IPageAuthorTagDataFinal >
 {
   const dataRes0: IPageAuthorTagDataFinal = await entryTargetDataTag({ permalinkTarget, page: Number(page), language});
