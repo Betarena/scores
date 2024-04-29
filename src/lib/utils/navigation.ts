@@ -378,7 +378,7 @@ export async function promiseValidUrlCheck
         competitionMainUrl?: string,
         competitionUrl?: string,
         authorArticleUrl?: string,
-        authorTagsUrl? : string
+        authorTagsUrl?: string
       }
   ): Promise<boolean>
 {
@@ -443,7 +443,7 @@ export async function promiseValidUrlCheck
   if (opts.competitionMainUrl) queryStr += `&competitionMainUrl=${opts.competitionMainUrl}`;
   if (opts.competitionUrl) queryStr += `&competitionUrl=${opts.competitionUrl}`;
   if (opts.authorArticleUrl) queryStr += `?authorArticleUrl=/${opts.authorArticleUrl}`;
-  if (opts.authorTagsUrl) queryStr += `?authorTagsUrl=/${opts.authorTagsUrl}`;
+  if (opts.authorTagsUrl) queryStr += `?authorTagUrl=/${opts.authorTagsUrl}`;
 
   // [🐞]
   dlogv2

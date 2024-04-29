@@ -29,7 +29,8 @@ type PAGE_TYPE =
   | 'competitions'
   | 'competition'
   | 'author_article'
-;
+  | `author_tag`
+  ;
 
 dotenv.config();
 
@@ -45,32 +46,33 @@ dotenv.config();
  * @type {import('./$types').RequestHandler}
  */
 export async function GET
-(
-  req: any
-): Promise < unknown >
+  (
+    req: any
+  ): Promise<unknown>
 {
   // ### IMPORTANT
   // ### required for target URL validity check.
-	const langUrl: string =	req?.url?.searchParams?.get('langUrl');
-	const sportUrl: string = req?.url?.searchParams?.get('sportUrl');
-	const countryUrl: string = req?.url?.searchParams?.get('countryUrl');
-	const leagueUrl: string =	req?.url?.searchParams?.get('leagueUrl');
-	const fixtureUrl: string = req?.url?.searchParams?.get('fixtureUrl');
-	const playerUrl: string =	req?.url?.searchParams?.get('playerUrl');
+  const langUrl: string = req?.url?.searchParams?.get('langUrl');
+  const sportUrl: string = req?.url?.searchParams?.get('sportUrl');
+  const countryUrl: string = req?.url?.searchParams?.get('countryUrl');
+  const leagueUrl: string = req?.url?.searchParams?.get('leagueUrl');
+  const fixtureUrl: string = req?.url?.searchParams?.get('fixtureUrl');
+  const playerUrl: string = req?.url?.searchParams?.get('playerUrl');
   const competitionMainUrl: string = req?.url?.searchParams?.get('competitionMainUrl');
   const competitionUrl: string = req?.url?.searchParams?.get('competitionUrl');
   const authorArticleUrl: string = req?.url?.searchParams?.get('authorArticleUrl');
+  const authorTagUrl: string = req?.url?.searchParams?.get('authorTagUrl');
 
   // ### IMPORTANT
   // ### required for target SEO & Page data.
-	const url: string = req?.url?.searchParams?.get('url');
-	const lang: string = req?.url?.searchParams?.get('lang');
-	const page: PAGE_TYPE =	req?.url?.searchParams?.get('page') as PAGE_TYPE;
-	const country_id: string = req?.url?.searchParams?.get('country_id');
-	const fixture_id: string = req?.url?.searchParams?.get('fixture_id');
-	const player_id: string = req?.url?.searchParams?.get('player_id');
-	const competition_id: string = req?.url?.searchParams?.get('competition_id');
-	const term: string = req?.url?.searchParams?.get('term');
+  const url: string = req?.url?.searchParams?.get('url');
+  const lang: string = req?.url?.searchParams?.get('lang');
+  const page: PAGE_TYPE = req?.url?.searchParams?.get('page') as PAGE_TYPE;
+  const country_id: string = req?.url?.searchParams?.get('country_id');
+  const fixture_id: string = req?.url?.searchParams?.get('fixture_id');
+  const player_id: string = req?.url?.searchParams?.get('player_id');
+  const competition_id: string = req?.url?.searchParams?.get('competition_id');
+  const term: string = req?.url?.searchParams?.get('term');
   const months: string = req?.url?.searchParams?.get('months');
   const countries: string = req?.url?.searchParams?.get('countries');
   const hasura: string = req?.url?.searchParams?.get('hasura');
@@ -97,22 +99,24 @@ export async function GET
     || !checkNull(competitionMainUrl)
     || !checkNull(competitionUrl)
     || !checkNull(authorArticleUrl)
-  ;
-	if (if_M_0)
+    || !checkNull(authorTagUrl)
+    ;
+  if (if_M_0)
   {
     return await validUrlCheck
-    (
-      langUrl,
-      sportUrl,
-      countryUrl,
-      leagueUrl,
-      fixtureUrl,
-      playerUrl,
-      competitionMainUrl,
-      competitionUrl,
-      authorArticleUrl
-    );
-	}
+      (
+        langUrl,
+        sportUrl,
+        countryUrl,
+        leagueUrl,
+        fixtureUrl,
+        playerUrl,
+        competitionMainUrl,
+        competitionUrl,
+        authorArticleUrl,
+        authorTagUrl
+      );
+  }
 
   // ### CHECK
   // ### for target data retrieve of page (home) MAIN SEO.
@@ -121,14 +125,14 @@ export async function GET
   const if_M_1: boolean =
     lang
     && page === 'homepage'
-  ;
-	if (if_M_1)
+    ;
+  if (if_M_1)
   {
-		data = await new _Redis().rHGET
-    (
-      RedisKeys.SAP_C_D_A1,
-      lang
-    );
+    data = await new _Redis().rHGET
+      (
+        RedisKeys.SAP_C_D_A1,
+        lang
+      );
 
     if (data != null)
     {
@@ -138,14 +142,14 @@ export async function GET
       // console.log(JSON.parse(LZString.decompress(compressed)));
 
       return json
-      (
-        {
-          data: compressed,
-          loadType
-        }
-      );
+        (
+          {
+            data: compressed,
+            loadType
+          }
+        );
     }
-	}
+  }
 
   // ### CHECK
   // ### for target data retrieve of page (tournament) MAIN DATA.
@@ -154,14 +158,14 @@ export async function GET
   const if_M_2: boolean =
     url
     && page === 'tournaments'
-  ;
-	if (if_M_2)
+    ;
+  if (if_M_2)
   {
-		data = await new _Redis().rHGET
-    (
-      RedisKeys.SAP_C_D_A3,
-      url
-    );
+    data = await new _Redis().rHGET
+      (
+        RedisKeys.SAP_C_D_A3,
+        url
+      );
 
     if (data != null)
     {
@@ -171,14 +175,14 @@ export async function GET
       // console.log(JSON.parse(LZString.decompress(compressed)));
 
       return json
-      (
-        {
-          data: compressed,
-          loadType
-        }
-      );
+        (
+          {
+            data: compressed,
+            loadType
+          }
+        );
     }
-	}
+  }
 
   // ### CHECK
   // ### for target data retrieve of page (tournament) MAIN SEO.
@@ -187,14 +191,14 @@ export async function GET
   const if_M_3: boolean =
     lang
     && page === 'tournaments'
-  ;
-	if (if_M_3)
+    ;
+  if (if_M_3)
   {
-		data = await new _Redis().rHGET
-    (
-			RedisKeys.SAP_C_D_A2,
-      lang
-    );
+    data = await new _Redis().rHGET
+      (
+        RedisKeys.SAP_C_D_A2,
+        lang
+      );
 
     if (data != null)
     {
@@ -204,14 +208,14 @@ export async function GET
       // console.log(JSON.parse(LZString.decompress(compressed)));
 
       return json
-      (
-        {
-          data: compressed,
-          loadType
-        }
-      );
+        (
+          {
+            data: compressed,
+            loadType
+          }
+        );
     }
-	}
+  }
 
   // ### CHECK
   // ### for target data retrieve of page (fixture) MAIN DATA.
@@ -220,8 +224,8 @@ export async function GET
   const if_M_4: boolean =
     fixture_id
     && page === 'fixtures'
-  ;
-	if (if_M_4)
+    ;
+  if (if_M_4)
   {
     const _fixture_id: number = parseInt(fixture_id)
 
@@ -230,22 +234,22 @@ export async function GET
     if (!hasura)
     {
       data = await new _Redis().rHGET
-      (
-        RedisKeys.SAP_C_D_A5,
-        fixture_id
-      );
+        (
+          RedisKeys.SAP_C_D_A5,
+          fixture_id
+        );
     }
 
     // ### CHECK | IMPORTANT
     // ### for default in Hasura.
-		if (!data || hasura)
+    if (!data || hasura)
     {
       data = await fallbackMainData_2
-      (
-        _fixture_id
-      );
+        (
+          _fixture_id
+        );
       loadType = '🟦 Hasura (SQL)';
-		}
+    }
 
     // ### [🐞]
     // console.log(`📌 loaded [PFIX] with: ${loadType}`);
@@ -258,14 +262,14 @@ export async function GET
       // console.log(JSON.parse(LZString.decompress(compressed)));
 
       return json
-      (
-        {
-          data: compressed,
-          loadType
-        }
-      );
+        (
+          {
+            data: compressed,
+            loadType
+          }
+        );
     }
-	}
+  }
 
   // ### CHECK
   // ### for target data retrieve of page (fixture) MAIN SEO.
@@ -274,14 +278,14 @@ export async function GET
   const if_M_5: boolean =
     lang
     && page === 'fixtures'
-  ;
-	if (if_M_5)
+    ;
+  if (if_M_5)
   {
-		data = await new _Redis().rHGET
-    (
-      RedisKeys.SAP_C_D_A4,
-      lang
-    );
+    data = await new _Redis().rHGET
+      (
+        RedisKeys.SAP_C_D_A4,
+        lang
+      );
 
     if (data != null)
     {
@@ -291,14 +295,14 @@ export async function GET
       // console.log(JSON.parse(LZString.decompress(compressed)));
 
       return json
-      (
-        {
-          data: compressed,
-          loadType
-        }
-      );
+        (
+          {
+            data: compressed,
+            loadType
+          }
+        );
     }
-	}
+  }
 
   // ### CHECK
   // ### for target data retrieve of page (player) MAIN DATA.
@@ -307,7 +311,7 @@ export async function GET
   const if_M_6: boolean =
     player_id
     && page === 'player'
-  ;
+    ;
   if (if_M_6)
   {
     const _player_id: number = parseInt(player_id)
@@ -317,22 +321,22 @@ export async function GET
     if (!hasura)
     {
       data = await new _Redis().rHGET
-      (
-        RedisKeys.SAP_C_D_A16,
-        player_id
-      );
+        (
+          RedisKeys.SAP_C_D_A16,
+          player_id
+        );
     }
 
     // ### CHECK | IMPORTANT
     // ### for default in Hasura.
-		if (!data || hasura)
+    if (!data || hasura)
     {
       data = await fallbackMainData_0
-      (
-        _player_id
-      );
+        (
+          _player_id
+        );
       loadType = '🟦 Hasura (SQL)';
-		}
+    }
 
     // ### [🐞]
     // console.log(`📌 loaded [PPLAY] with: ${loadType}`)
@@ -345,12 +349,12 @@ export async function GET
       // console.log(JSON.parse(LZString.decompress(compressed)));
 
       return json
-      (
-        {
-          data: compressed,
-          loadType
-        }
-      );
+        (
+          {
+            data: compressed,
+            loadType
+          }
+        );
     }
   }
 
@@ -361,14 +365,14 @@ export async function GET
   const if_M_7: boolean =
     lang
     && page === 'player'
-  ;
+    ;
   if (if_M_7)
   {
     data = await new _Redis().rHGET
-    (
-      RedisKeys.SAP_C_D_A15,
-      lang
-    );
+      (
+        RedisKeys.SAP_C_D_A15,
+        lang
+      );
 
     if (data != null)
     {
@@ -378,12 +382,12 @@ export async function GET
       // console.log(JSON.parse(LZString.decompress(compressed)));
 
       return json
-      (
-        {
-          data: compressed,
-          loadType
-        }
-      );
+        (
+          {
+            data: compressed,
+            loadType
+          }
+        );
     }
   }
 
@@ -394,14 +398,14 @@ export async function GET
   const if_M_8: boolean =
     lang
     && page === 'competitions'
-  ;
+    ;
   if (if_M_8)
   {
     data = await new _Redis().rHGET
-    (
-      RedisKeys.SAP_C_D_A18,
-      lang
-    );
+      (
+        RedisKeys.SAP_C_D_A18,
+        lang
+      );
 
     if (data != null)
     {
@@ -411,12 +415,12 @@ export async function GET
       // console.log(JSON.parse(LZString.decompress(compressed)));
 
       return json
-      (
-        {
-          data: compressed,
-          loadType
-        }
-      );
+        (
+          {
+            data: compressed,
+            loadType
+          }
+        );
     }
   }
 
@@ -427,7 +431,7 @@ export async function GET
   const if_M_9: boolean =
     competition_id
     && page === 'competition'
-  ;
+    ;
   if (if_M_9)
   {
     const _competition_id: number = parseInt(competition_id)
@@ -445,14 +449,14 @@ export async function GET
 
     // ### CHECK | IMPORTANT
     // ### for default in Hasura.
-		if (!data || hasura)
+    if (!data || hasura)
     {
       data = await fallbackMainData_3
-      (
-        _competition_id
-      );
+        (
+          _competition_id
+        );
       loadType = '🟦 Hasura (SQL)';
-		}
+    }
 
     // ### [🐞]
     // console.log(`📌 ${logTag} w/ ${loadType}`)
@@ -465,12 +469,12 @@ export async function GET
       // console.log(JSON.parse(LZString.decompress(compressed)));
 
       return json
-      (
-        {
-          data: compressed,
-          loadType
-        }
-      );
+        (
+          {
+            data: compressed,
+            loadType
+          }
+        );
     }
   }
 
@@ -481,14 +485,14 @@ export async function GET
   const if_M_10: boolean =
     lang
     && page === 'competition'
-  ;
+    ;
   if (if_M_10)
   {
     const data: unknown = await new _Redis().rHGET
-    (
-      RedisKeys.SAP_C_D_A20,
-      lang
-    );
+      (
+        RedisKeys.SAP_C_D_A20,
+        lang
+      );
 
     if (data != null)
     {
@@ -498,12 +502,12 @@ export async function GET
       // console.log(JSON.parse(LZString.decompress(compressed)));
 
       return json
-      (
-        {
-          data: compressed,
-          loadType
-        }
-      );
+        (
+          {
+            data: compressed,
+            loadType
+          }
+        );
     }
   }
 
@@ -511,13 +515,13 @@ export async function GET
   // ### for target data retrieve of page (country) TRANSLATION(s).
   // ### NOTE:
   // ### cache only.
-	if (country_id)
+  if (country_id)
   {
-		const data: unknown  = await new _Redis().rHGET
-    (
-      RedisKeys.SAP_C_D_A7,
-      country_id
-    );
+    const data: unknown = await new _Redis().rHGET
+      (
+        RedisKeys.SAP_C_D_A7,
+        country_id
+      );
 
     if (data != null)
     {
@@ -527,25 +531,25 @@ export async function GET
       // console.log(JSON.parse(LZString.decompress(compressed)));
 
       return json
-      (
-        {
-          data: compressed,
-          loadType
-        }
-      );
+        (
+          {
+            data: compressed,
+            loadType
+          }
+        );
     }
-	}
+  }
 
   // ### CHECK
   // ### for target data retrieve of page (country) TRANSLATION(s).
   // ### NOTE:
   // ### cache only.
-	if (countries)
+  if (countries)
   {
-		const data: unknown = await new _Redis().rHGETALL
-    (
-      RedisKeys.SAP_C_D_A7
-    );
+    const data: unknown = await new _Redis().rHGETALL
+      (
+        RedisKeys.SAP_C_D_A7
+      );
 
     if (data != null)
     {
@@ -555,26 +559,26 @@ export async function GET
       // console.log(JSON.parse(LZString.decompress(compressed)));
 
       return json
-      (
-        {
-          data: compressed,
-          loadType
-        }
-      );
+        (
+          {
+            data: compressed,
+            loadType
+          }
+        );
     }
-	}
+  }
 
   // ### CHECK
   // ### for target data retrieve of page (terms) TRANSLATION(s).
   // ### NOTE:
   // ### cache only.
-	if (term)
+  if (term)
   {
-		data = await new _Redis().rHGET
-    (
-      RedisKeys.SAP_C_D_A6,
-      term
-    );
+    data = await new _Redis().rHGET
+      (
+        RedisKeys.SAP_C_D_A6,
+        term
+      );
 
     if (data != null)
     {
@@ -584,26 +588,26 @@ export async function GET
       // console.log(JSON.parse(LZString.decompress(compressed)));
 
       return json
-      (
-        {
-          data: compressed,
-          loadType
-        }
-      );
+        (
+          {
+            data: compressed,
+            loadType
+          }
+        );
     }
-	}
+  }
 
   // ### CHECK
   // ### for target data retrieve of page (months) TRANSLATION(s).
   // ### NOTE:
   // ### cache only.
-	if (months && lang)
+  if (months && lang)
   {
-		data = await new _Redis().rHGET
-    (
-      RedisKeys.SAP_C_D_A8,
-      lang
-    );
+    data = await new _Redis().rHGET
+      (
+        RedisKeys.SAP_C_D_A8,
+        lang
+      );
 
     if (data != null)
     {
@@ -613,20 +617,20 @@ export async function GET
       // console.log(JSON.parse(LZString.decompress(compressed)));
 
       return json
-      (
-        {
-          data: compressed,
-          loadType
-        }
-      );
+        (
+          {
+            data: compressed,
+            loadType
+          }
+        );
     }
-	}
+  }
 
   // ### IMPORTANT
-	return json
-  (
-    null
-  );
+  return json
+    (
+      null
+    );
 }
 
 // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
@@ -659,17 +663,18 @@ export async function GET
  * @returns { Promise < Response > }
  */
 async function validUrlCheck
-(
-  langUrl: string,
-  sportUrl: string,
-  countryUrl: string,
-  leagueUrl: string,
-  fixtureUrl: string,
-  playerUrl: string,
-  competitionMainUrl: string,
-  competitionUrl: string,
-  authorArticleUrl: string
-): Promise < Response >
+  (
+    langUrl: string,
+    sportUrl: string,
+    countryUrl: string,
+    leagueUrl: string,
+    fixtureUrl: string,
+    playerUrl: string,
+    competitionMainUrl: string,
+    competitionUrl: string,
+    authorArticleUrl: string,
+    authorTagUrl: string
+  ): Promise<Response>
 {
   const validUrl: number[] = [];
 
@@ -700,18 +705,20 @@ async function validUrlCheck
   if (authorArticleUrl)
     validUrl.push(await new _Redis().rSISMEMBER(RedisKeys?.SAP_C_D_A22, `${authorArticleUrl}`) as number);
   ;
+  if (authorTagUrl)
+    validUrl.push(await new _Redis().rSISMEMBER(RedisKeys?.SAP_C_D_A23, `${authorTagUrl}`) as number);
 
   // ### [🐞]
   console.debug
-  (
-    `🔹 [var] ➤ validUrl ${validUrl}`
-  );
+    (
+      `🔹 [var] ➤ validUrl ${validUrl}`
+    );
 
   // ### CHECK
   // ### for an invalid `url` segment.
   const if_M_0: boolean =
     validUrl.includes(0)
-  ;
+    ;
   if (if_M_0) return json(false);
 
   return json(true);
@@ -732,21 +739,21 @@ async function validUrlCheck
  * @returns { Promise < B_SAP_PP_D > }
  */
 async function fallbackMainData_0
-(
-  player_id: number
-): Promise < B_SAP_PP_D >
+  (
+    player_id: number
+  ): Promise<B_SAP_PP_D>
 {
 
-  const dataRes0: [ Map<  number, B_SAP_PP_D >, string[] ] = await entryPageDataPlayer
-  (
-    [player_id]
-  )
+  const dataRes0: [Map<number, B_SAP_PP_D>, string[]] = await entryPageDataPlayer
+    (
+      [player_id]
+    )
 
   if (dataRes0?.[0]?.size == 0)
     return null;
   ;
 
-	return dataRes0?.[0]?.get(player_id);
+  return dataRes0?.[0]?.get(player_id);
 }
 
 /**
@@ -761,14 +768,14 @@ async function fallbackMainData_0
  * @returns { Promise < B_SAP_FP_D > }
  */
 async function fallbackMainData_2
-(
-  fixtureId: number
-) : Promise < B_SAP_FP_D >
-{
-  const dataRes0: [ Map < number, B_SAP_FP_D >, string[] ] = await entryPageDataFixture
   (
-    [fixtureId]
-  )
+    fixtureId: number
+  ): Promise<B_SAP_FP_D>
+{
+  const dataRes0: [Map<number, B_SAP_FP_D>, string[]] = await entryPageDataFixture
+    (
+      [fixtureId]
+    )
 
   if (dataRes0?.[0]?.size == 0)
     return null;
@@ -787,14 +794,14 @@ async function fallbackMainData_2
  * @returns { Promise < B_SAP_CTP_D > }
  */
 async function fallbackMainData_3
-(
-  competitionId: number
-): Promise < B_SAP_CTP_D >
-{
-  const dataRes0: [ Map < number, B_SAP_CTP_D >, string[] ] = await entryPageDataCompetition
   (
-    [competitionId]
-  );
+    competitionId: number
+  ): Promise<B_SAP_CTP_D>
+{
+  const dataRes0: [Map<number, B_SAP_CTP_D>, string[]] = await entryPageDataCompetition
+    (
+      [competitionId]
+    );
 
   if (dataRes0?.[0]?.size == 0) return null;
 

@@ -14,8 +14,8 @@
 
 import type { ServerLoadEvent } from '@sveltejs/kit';
 
-import { dlogv2 } from '$lib/utils/debug.js';
-import { promiseUrlsPreload } from '$lib/utils/navigation.js';
+import { ERROR_CODE_INVALID, dlogv2 } from '$lib/utils/debug.js';
+import { preloadExitLogic, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/navigation.js';
 
 import type {  IArticleTranslation } from '@betarena/scores-lib/types/types.authors.articles.js';
 import type { B_SAP_D2 } from '@betarena/scores-lib/types/v8/preload.scores.js';
@@ -64,29 +64,29 @@ export async function main
     // ╰─────
     {
       name
-    } = event.params
+    } = event.params,
     /**
      * @description
      *  📣 Validate **this** `url`.
      */
-    // isUrlValid
-    //   = await promiseValidUrlCheck
-    //   (
-    //     event.fetch,
-    //     {
-    //       authorTagsUrl: name
-    //     }
-    //   )
+    isUrlValid
+      = await promiseValidUrlCheck
+      (
+        event.fetch,
+        {
+          authorTagsUrl: name
+        }
+      )
   ;
 
-  // if (!isUrlValid)
-  //   preloadExitLogic
-  //   (
-  //     0,
-  //     '(authors)',
-  //     ERROR_CODE_INVALID
-  //   );
-  // ;
+  if (!isUrlValid)
+    preloadExitLogic
+    (
+      0,
+      '(authors)/tag',
+      ERROR_CODE_INVALID
+    );
+  ;
   const [
     data
   ] = await fetchData
