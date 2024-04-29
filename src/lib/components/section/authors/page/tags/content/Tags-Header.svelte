@@ -196,7 +196,10 @@
     color: var(--text-color-second);
 
     &.mobile {
-      padding: 0 16px;
+      padding: 0 24px;
+      .tag-info-wrapper .tag-info {
+        font-size: var(--text-size-s) !important;
+      }
     }
 
     .header-buttons {

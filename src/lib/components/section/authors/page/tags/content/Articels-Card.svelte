@@ -222,7 +222,7 @@
 
         .card-content {
           padding: 0;
-          padding: 0 16px;
+          padding: 0 24px;
           width: 100%;
         }
 
@@ -324,7 +324,7 @@
             font-size: var(--text-size-xs);
             font-style: normal;
             font-weight: 400;
-            line-height: var(--text-size-xs); /* 100% */
+            line-height: 120%;
           }
         }
 

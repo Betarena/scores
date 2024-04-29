@@ -288,7 +288,6 @@
 <style lang="scss">
   .tags-main {
     display: flex;
-    margin-top: 20px;
     flex-direction: column;
     gap: 40px;
     width: 100%;
@@ -341,12 +340,8 @@
       }
 
       .section-footer {
-        padding: 0 16px;
+        padding: 0 24px;
       }
-    }
-
-    &.tablet {
-      padding: 0 34px;
     }
   }
 </style>
