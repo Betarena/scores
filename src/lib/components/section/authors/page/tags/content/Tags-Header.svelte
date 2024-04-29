@@ -13,7 +13,7 @@
   import Button from "$lib/components/ui/Button.svelte";
   import SelectButton from "$lib/components/ui/SelectButton.svelte";
   import sessionStore from "$lib/store/session.js";
-  import userBetarenaSettings from '$lib/store/user-settings.js';
+  import userBetarenaSettings from "$lib/store/user-settings.js";
   import { createEventDispatcher } from "svelte";
   import arrowDown from "./assets/arrow-down.svg";
   import type { IPageAuthorTagData } from "@betarena/scores-lib/types/v8/preload.authors.js";
@@ -49,8 +49,10 @@
   // #endregion ➤ 📦 Package Imports
   export let tag: IPageAuthorTagData;
   export let mobile = false;
+  export let tablet = false;
   export let totalArticlesCount = 0;
   let filterValue = "all";
+  let buttonsWidth: number;
 
   const dispatch = createEventDispatcher<{ filter: string }>();
 
@@ -85,8 +87,9 @@
 
   $: ({ globalState } = $sessionStore);
   $: showDescription = !mobile && tag.description;
-  $: followedTags = (($userBetarenaSettings.user?.scores_user_data as any)?.following?.tags || []) as (string | number)[];
-  $: isFollowed  = followedTags.includes(tag.id);
+  $: followedTags = (($userBetarenaSettings.user?.scores_user_data as any)
+    ?.following?.tags || []) as (string | number)[];
+  $: isFollowed = followedTags.includes(tag.id);
 
   // #region ➤ 🛠️ METHODS
 
@@ -105,8 +108,9 @@
       $sessionStore.currentActiveModal = "Auth_Modal";
       return;
     }
-    userBetarenaSettings.updateData([["user-following", {target: "tags", id: tag.id, follow: !isFollowed}]]);
-
+    userBetarenaSettings.updateData([
+      ["user-following", { target: "tags", id: tag.id, follow: !isFollowed }],
+    ]);
   }
 
   function toggleDescription() {
@@ -128,7 +132,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="tags-header-wrapper">
+<div class="tags-header-wrapper" class:mobile>
   <div class="header-buttons">
     <div class="tag-info-wrapper">
       <h1 on:click={toggleDescription}>
@@ -150,18 +154,25 @@
         <span>{totalArticlesCount} articles</span>
       </div>
     </div>
-    <div class="action-buttons">
+    <div class="action-buttons" bind:clientWidth={buttonsWidth}>
       {#if !mobile}
         <SelectButton bind:value={filterValue} {options} let:currentValue>
           Language: {currentValue?.label}
         </SelectButton>
       {/if}
 
-      <Button type={isFollowed ? "outline": "primary"} on:click={follow}>{isFollowed ?  "Following" : "+ Follow"}</Button>
+      <Button type={isFollowed ? "outline" : "primary"}  on:click={follow}
+        >{isFollowed ? "Following" : "+ Follow"}</Button
+      >
     </div>
   </div>
   {#if showDescription && tag.description}
-    <div class="header-description">
+    <div
+      class="header-description"
+      style={!mobile && !tablet
+        ? `width: calc(100% - ${buttonsWidth + 10}px)`
+        : ""}
+    >
       <span>{tag.description}</span>
     </div>
   {/if}
@@ -184,6 +195,13 @@
     gap: 16px;
     color: var(--text-color-second);
 
+    &.mobile {
+      padding: 0 24px;
+      .tag-info-wrapper .tag-info {
+        font-size: var(--text-size-s) !important;
+      }
+    }
+
     .header-buttons {
       width: 100%;
       display: flex;
@@ -199,18 +217,20 @@
         h1 {
           color: var(--text-color);
           font-family: Inter;
-          font-size: 38px;
+          font-size: var(--text-size-2xl);
           margin: 0;
           font-style: normal;
           font-weight: 600;
           display: flex;
           gap: 4px;
           align-items: center;
-          line-height: 54px; /* 142.105% */
+          line-height: 142%;
 
           img {
             transition: transform;
             transition-duration: 0.7s;
+            width: 16px;
+            height: 16px;
             transform: rotate(360deg) translateY(25%);
             &.opend {
               transform: rotate(180deg);
@@ -227,7 +247,7 @@
           align-items: center;
           color: var(--text-color-second);
           font-family: Roboto;
-          font-size: 12px;
+          font-size: var(--text-size-xs);
           font-style: normal;
           font-weight: 400;
           line-height: 18px; /* 150% */
@@ -244,6 +264,7 @@
       .action-buttons {
         display: flex;
         gap: 24px;
+        font-size: var(--text-size-m) !important;
         align-items: center;
       }
     }

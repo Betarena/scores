@@ -48,7 +48,7 @@ export let
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="avatar-circle" style="width: {size}px; height: {size}px;  background-image: url({src});">
+<div class="avatar-circle" { ...$$restProps} style="width: {size}px; height: {size}px;  background-image: url({src});">
 
 </div>
 

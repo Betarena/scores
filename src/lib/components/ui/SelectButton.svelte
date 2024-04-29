@@ -114,7 +114,7 @@ export let
   {/each}
 </select>
 
-<div class="select-wrapper">
+<div class="select-wrapper" >
   <button class="select-button" on:click|stopPropagation={() => modal = !modal} >
 
     <slot currentValue={currentOption}>{currentOption?.label}</slot>
@@ -152,8 +152,8 @@ export let
       .select-button {
         color: var(--text-color);
         font-family: Roboto;
-        font-size: 16px;
         display: flex;
+        font-size: var(--text-button-size);
         gap: 8px;
         font-style: normal;
         font-weight: 500;

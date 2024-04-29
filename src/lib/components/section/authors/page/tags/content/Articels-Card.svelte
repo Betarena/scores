@@ -11,12 +11,12 @@
   import Avatar from "$lib/components/ui/Avatar.svelte";
   import Tag from "$lib/components/ui/Tag.svelte";
   import { timeAgo } from "$lib/utils/dates.js";
+  import type { AuthorsAuthorsDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import type {
     IPageAuthorArticleData,
     IPageAuthorAuthorData,
     IPageAuthorTagData,
   } from "@betarena/scores-lib/types/v8/preload.authors.js";
-  import { tick } from "svelte";
   import { fade } from "svelte/transition";
 
   // #region ➤ 📌 VARIABLES
@@ -38,7 +38,7 @@
     tags_data: (IPageAuthorTagData | undefined)[];
   }
   export let /**
-     * @augments IArticIArticleleData
+     * @augments IArticle
      */
     article: IArticle,
     /**
@@ -57,6 +57,7 @@
     prevWidth = 0,
     countOfNotVisibleTags = 0,
     expanded = false;
+
   $: ({
     permalink,
     tags_data,
@@ -65,10 +66,11 @@
     seo_details: {
       opengraph: { images },
     },
-    author: {
-      data: {avatar, username}
-    }
+    author: { data: authorData },
   } = article);
+
+  $: ({ avatar, username } = (authorData ||
+    {}) as AuthorsAuthorsDataJSONSchema);
   /**
    * @summary
    * 🔥 REACTIVITY
@@ -91,7 +93,7 @@
    * .recalculate tag visibility when changing width, orScrollWidth
    *  WARNING:
    */
-  $: resize(tagsWidth, tagsNode);
+  $: resize(tagsWidth, tagsNode, tags_data);
 
   // #region ➤ 🛠️ METHODS
 
@@ -105,21 +107,33 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function resize(width: number, node: HTMLDivElement) {
+  let debounds;
+
+  function resize(
+    width: number,
+    node: HTMLDivElement,
+    tags_data: (IPageAuthorTagData | undefined)[]
+  ) {
     if (!width || !node) return;
     const scrollWidth = node.scrollWidth;
     if (width < scrollWidth) {
       visibleTags.pop();
       visibleTags = [...visibleTags];
     } else if (width > prevWidth) {
-      visibleTags = [...tags_data];
+      const lastVisible = visibleTags.at(-1);
+      const i = tags_data.indexOf(lastVisible);
+      visibleTags = i < 0 ? [tags_data[0]] : [...visibleTags, tags_data[i + 1]];
     }
 
     prevWidth = width;
     countOfNotVisibleTags = tags_data.length - visibleTags.length;
-    tick().then(() => {
-      if (width < node.scrollWidth) resize(width, node);
-    });
+    if (debounds) clearTimeout(debounds);
+
+    setTimeout(() => {
+      debounds = null;
+      if (width === tagsWidth && width < node.scrollWidth)
+        resize(width, node, tags_data);
+    }, 50);
   }
 
   function expandTags() {
@@ -129,8 +143,6 @@
   }
 
   // #endregion ➤ 🛠️ METHODS
-  const src =
-    "https://s3-alpha-sig.figma.com/img/c13c/1e24/1e6baeeb9f8d7582f9d06e78b4720cca?Expires=1714953600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=eKvpqipX-DsYJHWoug3ZAq0~tXP9VuL6yTNi0mtpueLdhuC37jiaOKZbPWBlZRCnBgwXWxWhv5Gzk2WEbD7EY5mOzS~yMjiuJsXCXJEfx2RWY2s7ZMp8EgQ-ABjRxLf6XRvtrO7vUfcH17tR749NnVimp6aZwpeLdOgfrw74gYPBlidiMZa6cY3vIcyjM3IoBhaAZ6Uhyq9xoUP85aLcGttg1NWw2zsA4TY1cjb7qLVcKjKWxmiA-HC4Fz~gRBxNfCsfYqr16FhQbI6Jo46zP8GAd5SbEpT0kfNJUjBmUtyqBpxBM~HoUnztOxzo3A9UNNE31D7TfcgXrdenD1JgWA__";
 </script>
 
 <!--
@@ -144,7 +156,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="card-wrapper" class:mobile>
+<div class="card-wrapper" class:mobile in:fade={{ duration: 500 }}>
   <div class="card-content">
     <a href="/a/{permalink}">
       <div class="title">
@@ -165,12 +177,14 @@
       bind:this={tagsNode}
     >
       {#each visibleTags as tag}
-        <a href="/a/tag/{tag?.permalink}" in:fade={{ duration: 500 }}>
+        <a href="/a/tag/{tag?.permalink}" data-sveltekit-preload-data="hover" in:fade={{ duration: 500 }}>
           <Tag>{tag?.name}</Tag>
         </a>
       {/each}
       {#if countOfNotVisibleTags}
-        <Tag on:click={expandTags}>+{countOfNotVisibleTags}</Tag>
+        <div in:fade={{ duration: 500 }}>
+          <Tag on:click={expandTags}>+{countOfNotVisibleTags}</Tag>
+        </div>
       {/if}
     </div>
   </div>
@@ -208,6 +222,8 @@
 
         .card-content {
           padding: 0;
+          padding: 0 24px;
+          width: 100%;
         }
 
         .preview {
@@ -246,7 +262,7 @@
         }
 
         &.mobile {
-          width: 375px;
+          width: 100%;
         }
       }
     }
@@ -264,6 +280,8 @@
         gap: 4px;
         max-width: 100%;
         overflow: hidden;
+        row-gap: 7px;
+        --text-button-size: var(--text-size-s);
 
         &.expanded {
           flex-wrap: wrap;
@@ -278,12 +296,12 @@
         overflow: hidden;
         text-overflow: ellipsis;
         max-width: 100%;
-        height: 56px;
+        height: max-content;
         font-family: Inter;
-        font-size: 20px;
+        font-size: var(--text-size-l);
         font-style: normal;
         font-weight: 600;
-        line-height: 28px; /* 140% */
+        line-height: 140%;
       }
 
       .author {
@@ -303,17 +321,17 @@
           .publication-date {
             color: var(--text-color-second, #8c8c8c);
             font-family: Roboto;
-            font-size: 12px;
+            font-size: var(--text-size-xs);
             font-style: normal;
             font-weight: 400;
-            line-height: 12px; /* 100% */
+            line-height: 120%;
           }
         }
 
         &-name {
           color: var(--text-color);
           font-family: Inter;
-          font-size: 14px;
+          font-size: var(--text-size-m);
           font-style: normal;
           font-weight: 500;
           line-height: 20px;

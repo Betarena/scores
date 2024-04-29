@@ -8,7 +8,7 @@
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ 📝 Description                                                                   │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ Scores Authors Section Layout                                                    │
+│ Scores Authors Tags Layout                                                    │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -45,6 +45,8 @@
 
   import type { IArticleData } from "@betarena/scores-lib/types/types.authors.articles.js";
   import TagsWidget from "./content/Tags-Widget.svelte";
+  import { tryCatch } from "@betarena/scores-lib/dist/util/common.js";
+  import type { IPageAuthorTagDataFinal } from "@betarena/scores-lib/types/v8/preload.authors.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -62,18 +64,17 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  const
-    /**
+  const /**
      * @description
      *  📣 threshold start + state for 📱 MOBILE
      */ // eslint-disable-next-line no-unused-vars
-     VIEWPORT_MOBILE_INIT: [number, boolean] = [575, true],
+    VIEWPORT_MOBILE_INIT: [number, boolean] = [575, true],
     /**
      * @description
      *  📣 threshold start + state for 💻 TABLET
      */ // eslint-disable-next-line no-unused-vars
     VIEWPORT_TABLET_INIT: [number, boolean] = [1160, true],
-  /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
+    /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
     // eslint-disable-next-line no-unused-vars
     CNAME: string = "section⮕g⮕authors⮕tag";
 
@@ -83,7 +84,8 @@
     VIEWPORT_MOBILE_INIT[0],
     VIEWPORT_TABLET_INIT[0]
   );
-  $: pageSeo = $page.data.dataArticle as IArticleData;
+  $: pageSeo = $page.data.seoTamplate;
+
   // #endregion ➤ 📌 VARIABLES
 </script>
 
@@ -99,16 +101,20 @@
 -->
 
 {#if pageSeo}
-  <!-- <SvelteSeo
-		title={pageSeo.seo_details?.main_data.title}
-		description={pageSeo.seo_details?.main_data.description}
-		keywords={pageSeo.seo_details?.main_data.keywords}
-		noindex={ tryCatch(() => {return JSON.parse(pageSeo.seo_details?.main_data.noindex)}) ?? false }
-		nofollow={ tryCatch(() => {return JSON.parse(pageSeo.seo_details?.main_data.nofollow)}) ?? false }
-		canonical={pageSeo.seo_details?.main_data.canonical}
-		twitter={pageSeo.seo_details?.twitter_card}
-		openGraph={pageSeo.seo_details?.opengraph}
-	/> -->
+  <SvelteSeo
+    title={pageSeo.main_data.title}
+    description={pageSeo.main_data.description}
+    keywords={pageSeo.main_data.keywords}
+    noindex={tryCatch(() => {
+      return JSON.parse(pageSeo.main_data.noindex);
+    }) ?? false}
+    nofollow={tryCatch(() => {
+      return JSON.parse(pageSeo.main_data.nofollow);
+    }) ?? false}
+    canonical={pageSeo.main_data.canonical}
+    twitter={pageSeo.twitter_card}
+    openGraph={pageSeo.opengraph}
+  />
 {/if}
 
 <section id={CNAME} class:mobile={VIEWPORT_MOBILE_INIT[1]}>
@@ -151,9 +157,13 @@
   section {
     width: 100%;
     border-top: var(--section-border);
+    border-bottom: var(--section-border);
+    padding-bottom: 80px !important;
+    padding-top: 48px;
 
     &.mobile {
       border-top: none;
+      padding: 0;
     }
 
     .main-content {
@@ -163,7 +173,6 @@
       width: 100%;
       padding-left: 0;
       padding-right: 0;
-
     }
     &.dark-mode,
     body:has(&.dark-mode) {

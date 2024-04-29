@@ -4,11 +4,11 @@
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ Internal Svelte Code Format :|: V.8.0                                          │
 │ ➤ Status :|: 🔒 LOCKED                                                           │
-│ ➤ Author(s) :|: @migbash                                                         │
+│ ➤ Author(s) :|: @izobov                                                         │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ 📝 Description                                                                   │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ Scores Authors Article Main                                                      │
+│ Scores Authors Tags Main                                                      │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -90,6 +90,12 @@
     VIEWPORT_TABLET_INIT: [number, boolean] = [1160, true];
   /**
    * @description
+   *  📣 selected language in dropdown to
+   * filter articles by language
+   *    */
+  let selectedLang: string | null = "all";
+  /**
+   * @description
    *  📣 array of articles that will be rendered
    *    */
 
@@ -163,9 +169,15 @@
   ): IArticle[] {
     if (!tags_map || !authors || !articles.length) return [];
     const prepared = articles.map(([id, data]) => {
-      const preparedArticle: IArticle = { author: {}, tags_data: [], ...data } as IArticle;
+      const preparedArticle: IArticle = {
+        author: {},
+        tags_data: [],
+        ...data,
+      } as IArticle;
       if (data.author_id) {
-        preparedArticle.author = authors.get(data.author_id) as IPageAuthorAuthorData;
+        preparedArticle.author = authors.get(
+          data.author_id
+        ) as IPageAuthorAuthorData;
       }
       if (data.tags?.length) {
         preparedArticle.tags_data = data.tags.map((id: any) =>
@@ -180,7 +192,9 @@
   async function loadArticles() {
     pendingArticles = true;
     const res = (await get(
-      `/api/data/author/tags?permalinkTag=${currentTag.permalink}&page=${page}`
+      `/api/data/author/tags?permalinkTag=${currentTag.permalink}&page=${page}${
+        selectedLang ? `&lang=${selectedLang}` : ""
+      }`
     )) as IPageAuthorTagDataFinal;
     widgetData = {
       ...widgetData,
@@ -193,15 +207,17 @@
 
   async function filter(e: CustomEvent<string>) {
     const lang = e.detail;
+    selectedLang = lang === "all" ? null : lang;
     pendingArticles = true;
-    // const res = (await get(
-    //   `/api/data/author/tags?permalinkTag=${widgetData.currentTag.permalink}&lang=${lang}`
-    // )) as IPageAuthorDataFinal;
-    // if (res?.mapArticle?.length) {
-    //   visibleArticles = [
-    //     ...res.mapArticle.map(([id, article]) => prepareArticle([id, article])),
-    //   ];
-    // }
+    articles = [];
+    const res = (await get(
+      `/api/data/author/tags?permalinkTag=${currentTag.permalink}${
+        selectedLang ? `&lang=${selectedLang}` : ""
+      }`
+    )) as IPageAuthorTagDataFinal;
+    widgetData = {
+      ...res
+    };
     pendingArticles = false;
   }
 
@@ -219,21 +235,22 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div id={CNAME} class="tags-main" class:tablet>
+<div id={CNAME} class="tags-main" class:tablet class:mobile>
   <TagsHeader
     tag={currentTag}
     {totalArticlesCount}
     {mobile}
+    {tablet}
     on:filter={filter}
   />
   {#if !mobile}
     <div class="splitter" />
   {/if}
   <div class="articles" class:mobile>
-    {#each articles as article (article.id)}
-    {#key articles.length}
-      <ArticleCard {article} {tablet} {mobile} />
-    {/key}
+    {#each articles as article (article?.id)}
+      {#if article}
+        <ArticleCard {article} {tablet} {mobile} />
+      {/if}
     {/each}
     {#if pendingArticles}
       {#each Array(3) as _item}
@@ -245,7 +262,7 @@
       {/each}
     {/if}
   </div>
-  <div class="section-footer" class:mobile>
+  <div class="section-footer">
     <div class="page-info">
       {articles.length}/{totalArticlesCount} articles
     </div>
@@ -272,10 +289,13 @@
     gap: 40px;
     width: 100%;
     height: 100%;
-
-    &.tablet {
-      padding: 0 34px;
-    }
+    --text-size-2xl: 38px;
+    --text-size-xl: 24px;
+    --text-size-l: 20px;
+    --text-size-m: 16px;
+    --text-size-s: 14px;
+    --text-size-xs: 12px;
+    --text-button-size: var(--text-size-m);
 
     .splitter {
       height: 1px;
@@ -288,10 +308,6 @@
       flex-direction: column;
       align-items: flex-start;
       gap: 24px;
-
-      &.mobile {
-        gap: 40px;
-      }
     }
 
     .section-footer {
@@ -305,6 +321,23 @@
         font-style: normal;
         font-weight: 400;
         line-height: 18px;
+      }
+    }
+
+    &.mobile {
+      --text-size-2xl: 24px;
+      --text-size-l: 16px;
+      --text-size-m: 14px;
+      --text-size-s: 12px;
+      --text-size-xs: 10px;
+      gap: 32px;
+
+      .articles {
+        gap: 40px;
+      }
+
+      .section-footer {
+        padding: 0 24px;
       }
     }
   }
