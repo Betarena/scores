@@ -25,6 +25,7 @@
   import { post } from "$lib/api/utils.js";
   import { writable, type Writable } from "svelte/store";
   import { subscribeTagFollowersListen } from "$lib/graphql/graphql.common.js";
+  import { fade } from "svelte/transition";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -134,7 +135,7 @@
   $: if (tag) subscribe(tag);
   function subscribe(tag: IPageAuthorTagData) {
     if (subscribtion) subscribtion.unsubscribe();
-    tagStore = writable({...tag, followers: [...(tag.followers || [])]});
+    tagStore = writable({ ...tag, followers: [...(tag.followers || [])] });
     subscribtion = subscribeTagFollowersListen($tagStore.id, tagStore);
   }
   // #region ➤ 🛠️ METHODS
@@ -167,7 +168,6 @@
       follow: !isFollowed,
     });
   }
-
   // #endregion ➤ 🛠️ METHODS
 </script>
 
@@ -198,9 +198,17 @@
           />
         {/if}
       </h1>
-      <div class="tag-info">
-        <span
-          >{$tagStore.followers?.length || 0}
+      <div class="tag-info" >
+        <span>
+          {#key $tagStore?.followers?.length}
+            <span
+              in:fade={{duration: 700}}
+
+            >
+              {$tagStore?.followers?.length || 0}
+            </span>
+          {/key}
+
           <TranslationText
             key={`unknown`}
             text={translations.followers}
@@ -246,6 +254,7 @@
   {#if showDescription && tag.description}
     <div
       class="header-description"
+      in:fade={{ duration: 500 }}
       style={!mobile && !tablet
         ? `width: calc(100% - ${buttonsWidth + 10}px)`
         : ""}
