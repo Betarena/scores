@@ -93,17 +93,6 @@
    *  - ⚡️ (and) placeholder handler
    * @returns { Promise < void > }
    */
-  async function widgetInit
-  (
-  ): Promise < void >
-  {
-    // IMPORTANT
-    if (!browser) return;
-
-    await sleep(1000);
-
-    return;
-  }
 
   beforeNavigate(({to}) => {
     if (to?.route.id === $page.route.id) {
