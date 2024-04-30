@@ -26,6 +26,7 @@
   import { writable, type Writable } from "svelte/store";
   import { subscribeTagFollowersListen } from "$lib/graphql/graphql.common.js";
   import { fade } from "svelte/transition";
+    import { browser } from "$app/environment";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -132,7 +133,7 @@
    * - `tag`
    */
   let subscribtion;
-  $: if (tag) subscribe(tag);
+  $: if (tag && browser) subscribe(tag);
   function subscribe(tag: IPageAuthorTagData) {
     if (subscribtion) subscribtion.unsubscribe();
     tagStore = writable({ ...tag, followers: [...(tag.followers || [])] });
