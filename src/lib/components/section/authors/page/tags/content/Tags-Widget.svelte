@@ -105,10 +105,12 @@
     return;
   }
 
-  beforeNavigate(() => {
-    loading = true;
+  beforeNavigate(({to}) => {
+    if (to?.route.id === $page.route.id) {
+      loading = true;
+    }
   });
-  afterNavigate(() => {
+  afterNavigate((b) => {
     loading = false;
   });
 
