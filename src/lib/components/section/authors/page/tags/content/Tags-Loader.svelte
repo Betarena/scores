@@ -112,6 +112,7 @@
   id="{CNAME}"
   class="tags-loader-main"
   class:tablet={VIEWPORT_TABLET_INIT[1]}
+  class:mobile={VIEWPORT_MOBILE_INIT[1]}
 >
 <TagsLoaderFilter mobile={VIEWPORT_MOBILE_INIT[1]}/>
 {#if !VIEWPORT_MOBILE_INIT[1]}
@@ -147,6 +148,9 @@
 
     &.tablet {
       padding: 0 34px;
+    }
+    &.mobile {
+      padding: 0;
     }
     .content-loads {
       display: flex;
