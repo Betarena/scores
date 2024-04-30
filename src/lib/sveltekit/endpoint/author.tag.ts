@@ -203,34 +203,24 @@ export async function updateFollowers(
   return await tryCatchAsync(async () =>
   {
     const { locals: { user: userstring, betarenaUser }, request } = event;
-    console.log("Bettarena User", betarenaUser)
     const user = await JSON.parse(userstring)
-    console.log("UserID",user['user-uid'])
     if (!betarenaUser || betarenaUser === "false") return json(null);
-    const { tagId, follow, tag } = await request.json();
-    const q = TableAuthorTagsMutation0(follow ? 'add' : 'delete');
-    console.log("QUERY", q);
+    const { tagId, follow } = await request.json();
     const type = follow ? 'add' : 'delete';
-    let userUid = user['user-uid'];
-    if (type === 'add')
-    {
-      const prev = tag.followers || [];
-      userUid = JSON.stringify([...prev, user['user-uid']])
-    }
-    console.log("PARAMS: ", { tagId, userUid })
+    const userUid = user['user-uid'];
+
     const data = await new _GraphQL().wrapQuery
         <
         ITableAuthorTagsMutation0Var
           , ITableAuthorTagsMutation0Out
         >
       (
-        TableAuthorTagsMutation0(follow ? 'add' : 'delete')
+        TableAuthorTagsMutation0(type)
         , {
           tagId,
           userUid
         }
       );
-    console.log("UPDATE DATA", data);
     return json({ success: true, tag: data });
   })
 }
