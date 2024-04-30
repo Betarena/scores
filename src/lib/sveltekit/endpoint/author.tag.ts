@@ -5,11 +5,13 @@
 
 // import { checkNull } from '$lib/utils/miscellenous.js';
 // import { getAuthorArticleTranslation } from '@betarena/scores-lib/dist/functions/v8/authors.articles.js';
+import { _GraphQL } from '@betarena/scores-lib/dist/classes/_graphql.js';
 import { entryTargetDataAuthorTranslation, entryTargetDataTag } from '@betarena/scores-lib/dist/functions/v8/main.preload.authors.js'
 import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
 // import type { IArticleTranslation } from '@betarena/scores-lib/types/types.authors.articles.js';
 import type { IPageAuthorTagDataFinal, IPageAuthorTranslationDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
 import { json, type RequestEvent } from '@sveltejs/kit';
+import { TableAuthorTagsMutation0, type ITableAuthorTagsMutation0Out, type ITableAuthorTagsMutation0Var } from "@betarena/scores-lib/dist/graphql/v8/table.authors.tags.js"
 
 // ╭──────────────────────────────────────────────────────────────────╮
 // │ 🛠️ MAIN METHODS                                                  │
@@ -108,11 +110,11 @@ export async function main
         {
           const
             data = await fallbackDataGenerate1
-            (
-              translation
-            ),
+              (
+                translation
+              ),
             loadType = 'HASURA'
-          ;
+            ;
 
           // ▓ [🐞]
           console.log(`📌 loaded [FSCR] with: ${loadType}`)
@@ -165,10 +167,10 @@ async function fallbackDataGenerate0
     permalinkTarget: string,
     page: string | number,
     language: string | undefined = undefined
-  ): Promise<IPageAuthorTagDataFinal & {translations: IPageAuthorTranslationDataFinal}>
+  ): Promise<IPageAuthorTagDataFinal & { translations: IPageAuthorTranslationDataFinal }>
 {
   const dataRes0: IPageAuthorTagDataFinal = await entryTargetDataTag({ permalinkTarget, page: Number(page), language });
-  const dataRes1 = await entryTargetDataAuthorTranslation({language: "en"})
+  const dataRes1 = await entryTargetDataAuthorTranslation({ language: "en" })
   return { ...dataRes0, translations: dataRes1 };
 }
 
@@ -185,10 +187,50 @@ async function fallbackDataGenerate0
  *  📤 Target `tags` data translations.
  */
 async function fallbackDataGenerate1
-(
-  language: string
-): Promise < IPageAuthorTranslationDataFinal >
+  (
+    language: string
+  ): Promise<IPageAuthorTranslationDataFinal>
 {
   const dataRes0 = await entryTargetDataAuthorTranslation({ language });
   return dataRes0;
+}
+
+
+export async function updateFollowers(
+  event: RequestEvent
+)
+{
+  return await tryCatchAsync(async () =>
+  {
+    const { locals: { user: userstring, betarenaUser }, request } = event;
+    console.log("Bettarena User", betarenaUser)
+    const user = await JSON.parse(userstring)
+    console.log("UserID",user['user-uid'])
+    if (!betarenaUser || betarenaUser === "false") return json(null);
+    const { tagId, follow, tag } = await request.json();
+    const q = TableAuthorTagsMutation0(follow ? 'add' : 'delete');
+    console.log("QUERY", q);
+    const type = follow ? 'add' : 'delete';
+    let userUid = user['user-uid'];
+    if (type === 'add')
+    {
+      const prev = tag.followers || [];
+      userUid = JSON.stringify([...prev, user['user-uid']])
+    }
+    console.log("PARAMS: ", { tagId, userUid })
+    const data = await new _GraphQL().wrapQuery
+        <
+        ITableAuthorTagsMutation0Var
+          , ITableAuthorTagsMutation0Out
+        >
+      (
+        TableAuthorTagsMutation0(follow ? 'add' : 'delete')
+        , {
+          tagId,
+          userUid
+        }
+      );
+    console.log("UPDATE DATA", data);
+    return json({ success: true, tag: data });
+  })
 }

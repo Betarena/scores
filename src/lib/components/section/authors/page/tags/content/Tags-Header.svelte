@@ -22,6 +22,7 @@
   } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import { page } from "$app/stores";
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
+  import { post } from "$lib/api/utils.js";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -70,7 +71,10 @@
     CNAME: string = "<author⮕w⮕tags-content⮕header";
   $: options = [
     { id: "all", label: translations.all },
-    ...$page.data.B_NAV_T.langArray.map((lang) => ({ id: lang, label: translations[lang] || lang})),
+    ...$page.data.B_NAV_T.langArray.map((lang) => ({
+      id: lang,
+      label: translations[lang] || lang,
+    })),
   ];
 
   // #endregion ➤ 📌 VARIABLES
@@ -108,7 +112,13 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function follow() {
+
+  function toggleDescription() {
+    if (!mobile || !tag.description) return;
+    showDescription = !showDescription;
+  }
+
+  async function follow() {
     if (globalState.has("NotAuthenticated")) {
       $sessionStore.currentActiveModal = "Auth_Modal";
       return;
@@ -116,12 +126,9 @@
     userBetarenaSettings.updateData([
       ["user-following", { target: "tags", id: tag.id, follow: !isFollowed }],
     ]);
+    const d = await post("/api/data/author/tags", { tagId: tag.id, follow: !isFollowed, tag});
   }
 
-  function toggleDescription() {
-    if (!mobile || !tag.description) return;
-    showDescription = !showDescription;
-  }
 
   // #endregion ➤ 🛠️ METHODS
 </script>
@@ -182,10 +189,10 @@
             fallback={"Language"}
           />
           : <TranslationText
-          key={`unknown`}
-          text={translations[currentValue.id]}
-          fallback={currentValue?.label}
-        />
+            key={`unknown`}
+            text={translations[currentValue.id]}
+            fallback={currentValue?.label}
+          />
         </SelectButton>
       {/if}
 

@@ -18,7 +18,7 @@
 
 import dotenv from 'dotenv';
 
-import { main } from '$lib/sveltekit/endpoint/author.tag.js';
+import { main, updateFollowers } from '$lib/sveltekit/endpoint/author.tag.js';
 
 // #endregion ➤ 📦 Package
 
@@ -34,6 +34,17 @@ export async function GET
 )
 {
   return await main
+  (
+    request
+  );
+}
+
+export async function POST
+(
+  request
+)
+{
+  return await updateFollowers
   (
     request
   );
