@@ -290,7 +290,7 @@
         fallback={"articles"}
       />
     </div>
-    {#if page <= totalPageCount}
+    {#if articles.length <= totalArticlesCount}
       <Button type="outline" on:click={() => loadArticles()}
         ><TranslationText
           key={`unknown`}
@@ -360,7 +360,7 @@
       --text-size-m: 14px;
       --text-size-s: 12px;
       --text-size-xs: 10px;
-      gap: 32px;
+      gap: 0;
 
       .articles {
         gap: 40px;

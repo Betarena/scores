@@ -23,78 +23,78 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-import ArrowDown from "./assets/arrow-down.svelte"
+  import ArrowDown from "./assets/arrow-down.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
-// #region ➤ 📌 VARIABLES
+  // #region ➤ 📌 VARIABLES
 
-// ╭────────────────────────────────────────────────────────────────────────╮
-// │ NOTE:                                                                  │
-// │ Please add inside 'this' region the 'variables' that are to be         │
-// │ and are expected to be used by 'this' .svelte file / component.        │
-// │ IMPORTANT                                                              │
-// │ Please, structure the imports as follows:                              │
-// │ 1. export const / let [..]                                             │
-// │ 2. const [..]                                                          │
-// │ 3. let [..]                                                            │
-// │ 4. $: [..]                                                             │
-// ╰────────────────────────────────────────────────────────────────────────╯
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
-/**
- * @description
- *  📣 Component interface.
- */
-  interface IOption {id: string | number, label: string, [key: string]: any}
-;
-
-export let
   /**
    * @description
-   *  in case if you want to use this controll in forms
+   *  📣 Component interface.
    */
-  name = "",
-  /**
-   * @description
-   *  controls dropdown visability
-   */
-  modal = false,
-  /**
-   * @description
-   *  options for select button
-   */
-  options: IOption[] = [],
-   /**
-   * @description
-   *  initial value for select button
-   */
-  value: string | number = "";
+  interface IOption {
+    id: string | number;
+    label: string;
+    [key: string]: any;
+  }
+  export let /**
+     * @description
+     *  in case if you want to use this controll in forms
+     */
+    name = "",
+    /**
+     * @description
+     *  controls dropdown visability
+     */
+    modal = false,
+    /**
+     * @description
+     *  options for select button
+     */
+    options: IOption[] = [],
+    /**
+     * @description
+     *  initial value for select button
+     */
+    value: string | number = "";
 
-  $: currentOption = options.find(o => o.id === value);
+  $: currentOption = options.find((o) => o.id === value);
   // #endregion ➤ 📌 VARIABLES
 
-// #region ➤ 🛠️ METHODS
+  // #region ➤ 🛠️ METHODS
 
-// ╭────────────────────────────────────────────────────────────────────────╮
-// │ NOTE:                                                                  │
-// │ Please add inside 'this' region the 'methods' that are to be           │
-// │ and are expected to be used by 'this' .svelte file / component.        │
-// │ IMPORTANT                                                              │
-// │ Please, structure the imports as follows:                              │
-// │ 1. function (..)                                                       │
-// │ 2. async function (..)                                                 │
-// ╰────────────────────────────────────────────────────────────────────────╯
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
- function select (option: IOption) {
+  function select(option: IOption) {
     value = option.id;
     modal = false;
- }
+  }
 
-// #endregion ➤ 🛠️ METHODS
-
+  // #endregion ➤ 🛠️ METHODS
 </script>
 
-<svelte:window  on:click={() => modal = false}/>
+<svelte:window on:click={() => (modal = false)} />
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -107,24 +107,32 @@ export let
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-
 <select hidden {name} bind:value>
   {#each options as item}
-    <option value={item.id}></option>
+    <option value={item.id} />
   {/each}
 </select>
 
-<div class="select-wrapper" >
-  <button class="select-button" on:click|stopPropagation={() => modal = !modal} >
-
+<div class="select-wrapper">
+  <button
+    class="select-button"
+    on:click|stopPropagation={() => (modal = !modal)}
+  >
     <slot currentValue={currentOption}>{currentOption?.label}</slot>
-    <ArrowDown />
-
+    <span class="arrow-image" class:opend={modal}>
+      <ArrowDown />
+    </span>
   </button>
   <div class="select-dropdown" class:show={modal}>
     <div class="select-dropdown-list">
       {#each options as option (option.id)}
-        <div on:click={() => select(option)} class="list-item" class:active={option.id === currentOption?.id}>{option.label}</div>
+        <div
+          on:click={() => select(option)}
+          class="list-item"
+          class:active={option.id === currentOption?.id}
+        >
+          {option.label}
+        </div>
       {/each}
     </div>
   </div>
@@ -141,18 +149,16 @@ export let
 -->
 
 <style lang="scss">
-
   .select {
     &-wrapper {
-
       color: var(--text-color);
       position: relative;
-
 
       .select-button {
         color: var(--text-color);
         font-family: Roboto;
         display: flex;
+        padding: 0;
         font-size: var(--text-button-size);
         gap: 8px;
         font-style: normal;
@@ -160,10 +166,19 @@ export let
         line-height: 16px; /* 100% */
         background: transparent !important;
 
-        svg {
-          width: 100px;
+        .arrow-image {
+          transition: transform;
+          transition-duration: 0.7s;
+          width: fit-content;
+          height: fit-content;
+          display: flex;
+          align-items: center;
+          transform: rotate(0deg);
+          &.opend {
+            transform: rotate(-180deg);
+          }
           path {
-            stroke: var(--text-color)
+            stroke: var(--text-color);
           }
         }
       }
@@ -199,14 +214,12 @@ export let
           padding: 11px 12px;
           cursor: pointer;
 
-          &:hover, &.active {
+          &:hover,
+          &.active {
             background: var(--bg-hover-color);
           }
         }
       }
     }
   }
-
-
-
 </style>
