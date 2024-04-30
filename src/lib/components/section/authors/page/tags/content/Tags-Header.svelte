@@ -198,13 +198,10 @@
           />
         {/if}
       </h1>
-      <div class="tag-info" >
+      <div class="tag-info">
         <span>
           {#key $tagStore?.followers?.length}
-            <span
-              in:fade={{duration: 700}}
-
-            >
+            <span in:fade={{ duration: 700 }}>
               {$tagStore?.followers?.length || 0}
             </span>
           {/key}
@@ -229,12 +226,14 @@
     <div class="action-buttons" bind:clientWidth={buttonsWidth}>
       {#if !mobile}
         <SelectButton bind:value={filterValue} {options} let:currentValue>
+          <span>
+            <TranslationText
+              key={`unknown`}
+              text={translations.subtitle}
+              fallback={"Language"}
+            /> :
+          </span>
           <TranslationText
-            key={`unknown`}
-            text={translations.subtitle}
-            fallback={"Language"}
-          />
-          : <TranslationText
             key={`unknown`}
             text={translations[currentValue.id]}
             fallback={currentValue?.label}
@@ -243,11 +242,16 @@
       {/if}
 
       <Button type={isFollowed ? "outline" : "primary"} on:click={follow}>
-        <TranslationText
-          key={`unknown`}
-          text={isFollowed ? translations.following : translations.follow}
-          fallback={isFollowed ? "Following" : "+ Follow"}
-        />
+        <span>
+          {#if !isFollowed}
+            +
+          {/if}
+          <TranslationText
+            key={`unknown`}
+            text={isFollowed ? translations.following : translations.follow}
+            fallback={isFollowed ? "Following" : "Follow"}
+          />
+        </span>
       </Button>
     </div>
   </div>
