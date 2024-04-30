@@ -22,6 +22,10 @@
   } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import { page } from "$app/stores";
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
+  import { post } from "$lib/api/utils.js";
+  import { writable, type Writable } from "svelte/store";
+  import { subscribeTagFollowersListen } from "$lib/graphql/graphql.common.js";
+  import { fade } from "svelte/transition";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -58,7 +62,7 @@
   export let totalArticlesCount = 0;
   let filterValue = "all";
   let buttonsWidth: number;
-
+  let tagStore: Writable<IPageAuthorTagData>;
   const dispatch = createEventDispatcher<{ filter: string }>();
 
   $: dispatch("filter", filterValue);
@@ -69,11 +73,28 @@
      */ // eslint-disable-next-line no-unused-vars
     CNAME: string = "<author⮕w⮕tags-content⮕header";
   $: options = [
-    { id: "all", label: "All" },
-    ...$page.data.B_NAV_T.langArray.map((lang) => ({ id: lang, label: lang })),
+    { id: "all", label: translations.all },
+    ...$page.data.B_NAV_T.langArray.map((lang) => ({
+      id: lang,
+      label: translations[lang] || lang,
+    })),
   ];
-
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   /**
    * @summary
@@ -96,6 +117,27 @@
     ?.following?.tags || []) as (string | number)[];
   $: isFollowed = followedTags.includes(tag.id);
 
+  /**
+   * @summary
+   * 🔥 REACTIVITY
+   *
+   * WARNING:
+   * can go out of control
+   *
+   * @description
+   * subscribes to tag folowers changes each time the tag is recreated
+   * and unsubscribe from  previous subscription
+   * WARNING:
+   * triggered by changes in:
+   * - `tag`
+   */
+  let subscribtion;
+  $: if (tag) subscribe(tag);
+  function subscribe(tag: IPageAuthorTagData) {
+    if (subscribtion) subscribtion.unsubscribe();
+    tagStore = writable({ ...tag, followers: [...(tag.followers || [])] });
+    subscribtion = subscribeTagFollowersListen($tagStore.id, tagStore);
+  }
   // #region ➤ 🛠️ METHODS
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -108,7 +150,12 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function follow() {
+  function toggleDescription() {
+    if (!mobile || !tag.description) return;
+    showDescription = !showDescription;
+  }
+
+  async function follow() {
     if (globalState.has("NotAuthenticated")) {
       $sessionStore.currentActiveModal = "Auth_Modal";
       return;
@@ -116,13 +163,11 @@
     userBetarenaSettings.updateData([
       ["user-following", { target: "tags", id: tag.id, follow: !isFollowed }],
     ]);
+    await post("/api/data/author/tags", {
+      tagId: tag.id,
+      follow: !isFollowed,
+    });
   }
-
-  function toggleDescription() {
-    if (!mobile || !tag.description) return;
-    showDescription = !showDescription;
-  }
-
   // #endregion ➤ 🛠️ METHODS
 </script>
 
@@ -154,8 +199,13 @@
         {/if}
       </h1>
       <div class="tag-info">
-        <span
-          >{tag.followers?.length || 0}
+        <span>
+          {#key $tagStore?.followers?.length}
+            <span in:fade={{ duration: 700 }}>
+              {$tagStore?.followers?.length || 0}
+            </span>
+          {/key}
+
           <TranslationText
             key={`unknown`}
             text={translations.followers}
@@ -176,31 +226,40 @@
     <div class="action-buttons" bind:clientWidth={buttonsWidth}>
       {#if !mobile}
         <SelectButton bind:value={filterValue} {options} let:currentValue>
+          <span>
+            <TranslationText
+              key={`unknown`}
+              text={translations.subtitle}
+              fallback={"Language"}
+            /> :
+          </span>
           <TranslationText
             key={`unknown`}
-            text={translations.subtitle}
-            fallback={"Language"}
+            text={translations[currentValue.id]}
+            fallback={currentValue?.label}
           />
-          : <TranslationText
-          key={`unknown`}
-          text={translations[currentValue.id]}
-          fallback={currentValue?.label}
-        />
         </SelectButton>
       {/if}
 
       <Button type={isFollowed ? "outline" : "primary"} on:click={follow}>
-        <TranslationText
-          key={`unknown`}
-          text={isFollowed ? translations.following : translations.follow}
-          fallback={isFollowed ? "Following" : "+ Follow"}
-        />
+        <span>
+          {#if !isFollowed}
+            +
+          {/if}
+          <TranslationText
+            key={`unknown`}
+            text={isFollowed ? translations.following : translations.follow}
+            fallback={isFollowed ? "Following" : "Follow"}
+          />
+        </span>
       </Button>
     </div>
   </div>
   {#if showDescription && tag.description}
     <div
       class="header-description"
+      in:fade={{ duration: 500 }}
+      out:fade={{ duration: 200 }}
       style={!mobile && !tablet
         ? `width: calc(100% - ${buttonsWidth + 10}px)`
         : ""}

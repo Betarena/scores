@@ -5,43 +5,47 @@
 
 // import { checkNull } from '$lib/utils/miscellenous.js';
 // import { getAuthorArticleTranslation } from '@betarena/scores-lib/dist/functions/v8/authors.articles.js';
+import { _GraphQL } from '@betarena/scores-lib/dist/classes/_graphql.js';
 import { entryTargetDataAuthorTranslation, entryTargetDataTag } from '@betarena/scores-lib/dist/functions/v8/main.preload.authors.js'
 import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
 // import type { IArticleTranslation } from '@betarena/scores-lib/types/types.authors.articles.js';
 import type { IPageAuthorTagDataFinal, IPageAuthorTranslationDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
 import { json, type RequestEvent } from '@sveltejs/kit';
+import { TableAuthorTagsMutation0, type ITableAuthorTagsMutation0Out, type ITableAuthorTagsMutation0Var } from "@betarena/scores-lib/dist/graphql/v8/table.authors.tags.js"
+import type { AuthorsSEODetailsDataJSONSchema } from '@betarena/scores-lib/types/v8/_HASURA-0.js';
 
 // ╭──────────────────────────────────────────────────────────────────╮
 // │ 🛠️ MAIN METHODS                                                  │
 // ╰──────────────────────────────────────────────────────────────────╯
-function covertSEOTemplate(data: IPageAuthorTagDataFinal)
+function covertSEOTemplate(data: IPageAuthorTagDataFinal): AuthorsSEODetailsDataJSONSchema
 {
   const { seoTamplate, tagId, mapTag } = data;
   const currentTag = mapTag.find(([id]) => id === tagId);
-  if (!currentTag) return seoTamplate;
-  const { main_data, opengraph, twitter_card } = seoTamplate;
+  if (!currentTag || !seoTamplate) return seoTamplate as AuthorsSEODetailsDataJSONSchema;
+  const { main_data, opengraph, twitter_card } = seoTamplate as AuthorsSEODetailsDataJSONSchema;
   const tag = currentTag[1];
   const { name, permalink } = tag;
   const description = tag.description || name;
-  const newSeo = {
+  const newSeo: AuthorsSEODetailsDataJSONSchema = {
     ...seoTamplate,
     main_data: {
+      ...main_data,
       description,
-      title: main_data.title.replace(/{name}/g, name),
+      title: main_data.title.replaceAll("{name}", name),
       keywords: name,
       canonical: permalink,
     },
     opengraph: {
       ...opengraph,
-      // url: permalink,
+      url: permalink,
       description,
-      // images: opengraph.images.map((img) => ({...img, alt: name })),
-      title: opengraph.title.replace(/{name}/g, name),
+      images: opengraph.images.map((img) => ({ ...img, alt: name })),
+      title: opengraph.title.replaceAll("{name}", name),
 
     },
     twitter_card: {
       ...twitter_card,
-      title: twitter_card.title.replace(/{name}/g, name),
+      title: twitter_card.title.replaceAll("{name}", name),
       description,
       image_alt: name
     }
@@ -92,7 +96,7 @@ export async function main
           console.log(`📌 loaded [FSCR] with: ${loadType}`)
           if (data.seoTamplate)
           {
-            // data.seoTamplate = {...covertSEOTemplate(data)};
+            data.seoTamplate = { ...covertSEOTemplate(data) };
           }
           if (data != undefined) return json(data);
         }
@@ -108,11 +112,11 @@ export async function main
         {
           const
             data = await fallbackDataGenerate1
-            (
-              translation
-            ),
+              (
+                translation
+              ),
             loadType = 'HASURA'
-          ;
+            ;
 
           // ▓ [🐞]
           console.log(`📌 loaded [FSCR] with: ${loadType}`)
@@ -165,10 +169,10 @@ async function fallbackDataGenerate0
     permalinkTarget: string,
     page: string | number,
     language: string | undefined = undefined
-  ): Promise<IPageAuthorTagDataFinal & {translations: IPageAuthorTranslationDataFinal}>
+  ): Promise<IPageAuthorTagDataFinal & { translations: IPageAuthorTranslationDataFinal }>
 {
   const dataRes0: IPageAuthorTagDataFinal = await entryTargetDataTag({ permalinkTarget, page: Number(page), language });
-  const dataRes1 = await entryTargetDataAuthorTranslation({language: "en"})
+  const dataRes1 = await entryTargetDataAuthorTranslation({ language: "en" })
   return { ...dataRes0, translations: dataRes1 };
 }
 
@@ -185,10 +189,40 @@ async function fallbackDataGenerate0
  *  📤 Target `tags` data translations.
  */
 async function fallbackDataGenerate1
-(
-  language: string
-): Promise < IPageAuthorTranslationDataFinal >
+  (
+    language: string
+  ): Promise<IPageAuthorTranslationDataFinal>
 {
   const dataRes0 = await entryTargetDataAuthorTranslation({ language });
   return dataRes0;
+}
+
+
+export async function updateFollowers(
+  event: RequestEvent
+)
+{
+  return await tryCatchAsync(async () =>
+  {
+    const { locals: { user: userstring, betarenaUser }, request } = event;
+    const user = await JSON.parse(userstring)
+    if (!betarenaUser || betarenaUser === "false") return json(null);
+    const { tagId, follow } = await request.json();
+    const type = follow ? 'add' : 'delete';
+    const userUid = user['user-uid'];
+
+    const data = await new _GraphQL().wrapQuery
+      <
+        ITableAuthorTagsMutation0Var
+        , ITableAuthorTagsMutation0Out
+      >
+      (
+        TableAuthorTagsMutation0(type)
+        , {
+          tagId,
+          userUid
+        }
+      );
+    return json({ success: true, tag: data });
+  })
 }

@@ -6,6 +6,9 @@ import { SubscriptionClient } from "graphql-subscriptions-client";
 
 import type { B_H_COMP_DATA } from "@betarena/scores-lib/types/_HASURA_.js";
 import type { B_H_COMP_HIGH_Q } from "@betarena/scores-lib/types/types.competition.highlights.js";
+import { TableAuthorTagsSubscription0, type ITableAuthorTagsSubscription0Out } from '@betarena/scores-lib/dist/graphql/v8/table.authors.tags.js';
+import type { Writable } from 'svelte/store';
+import type { IPageAuthorTagData } from '@betarena/scores-lib/types/v8/preload.authors.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -22,8 +25,8 @@ import type { B_H_COMP_HIGH_Q } from "@betarena/scores-lib/types/types.competiti
  * `void`
  */
 export async function subscribeCompetitionsAllListen
-(
-): Promise < void >
+  (
+): Promise<void>
 {
   // get ready
   const GRAPHQL_ENDPOINT = import.meta.env?.VITE_HASURA_DB_WSS ?? '';
@@ -33,31 +36,31 @@ export async function subscribeCompetitionsAllListen
   // ### NOTE:
   // ### set up the client, which can be reused
   const client = new SubscriptionClient
-  (
-    GRAPHQL_ENDPOINT,
-    {
-      reconnect: true,
-      // ### NOTE:
-      // ### per-authors-documentation:
-      // ### only connect when there is a query
-      lazy: true,
-      connectionParams:
+    (
+      GRAPHQL_ENDPOINT,
       {
-        // ### IMPORTANT
-        headers:
+        reconnect: true,
+        // ### NOTE:
+        // ### per-authors-documentation:
+        // ### only connect when there is a query
+        lazy: true,
+        connectionParams:
         {
-          'x-hasura-admin-secret': import.meta.env?.VITE_HASURA_DB_TOKEN ?? ''
+          // ### IMPORTANT
+          headers:
+          {
+            'x-hasura-admin-secret': import.meta.env?.VITE_HASURA_DB_TOKEN ?? ''
+          },
         },
-      },
-      connectionCallback:
-      (
-        error
-      ): void =>
-      {
-        error && console.error(error);
-      },
-    }
-  );
+        connectionCallback:
+          (
+            error
+          ): void =>
+          {
+            error && console.error(error);
+          },
+      }
+    );
 
   // ### NOTE:
   // ### per-authors-documentation:
@@ -77,71 +80,71 @@ export async function subscribeCompetitionsAllListen
   // ### per-authors-documentation:
   // ### call subscription.unsubscribe() later to clean up
   const subscription = client
-  .request
-  (
-    {
-      query
-    }
-  )
-  // ### NOTE:
-  // ### so lets actually do something with the response
-  .subscribe
-  (
-    {
-      next
-      (
-        {
-          data
-        }: { data: B_H_COMP_HIGH_Q; }
-      ): void
+    .request
+    (
       {
-        if (data)
+        query
+      }
+    )
+    // ### NOTE:
+    // ### so lets actually do something with the response
+    .subscribe
+    (
+      {
+        next
+          (
+            {
+              data
+            }: { data: B_H_COMP_HIGH_Q; }
+          ): void
         {
-          console.log("We got something!", data);
-
-          const competitionMap = new Map < number, B_H_COMP_DATA >();
-          let openCompetitions: number = 0;
-
-          // ### NOTE:
-          // ### loop over competitions data.
-          for (const competition of data?.competitions_data ?? [])
+          if (data)
           {
+            console.log("We got something!", data);
 
-            // ### CHECK
-            // ### for open competition.
-            if (competition?.data?.status == 'pending')
-              openCompetitions++;
-            ;
+            const competitionMap = new Map<number, B_H_COMP_DATA>();
+            let openCompetitions: number = 0;
 
             // ### NOTE:
-            // ### generate map.
-            // ### TODO:
-            // ### can be added to 'sessionStore.competition_map' data prop.
-            competitionMap.set
-            (
-              competition?.id,
-              competition
-            );
-          }
+            // ### loop over competitions data.
+            for (const competition of data?.competitions_data ?? [])
+            {
 
-          sessionStore.updateData
-          (
-            [
-              ['competitionAllNum', [(competitionMap?.size ?? 0), openCompetitions]],
-              ['competitionLatestMap', competitionMap]
-            ]
-          );
-        }
-      },
-    }
-  );
+              // ### CHECK
+              // ### for open competition.
+              if (competition?.data?.status == 'pending')
+                openCompetitions++;
+              ;
+
+              // ### NOTE:
+              // ### generate map.
+              // ### TODO:
+              // ### can be added to 'sessionStore.competition_map' data prop.
+              competitionMap.set
+                (
+                  competition?.id,
+                  competition
+                );
+            }
+
+            sessionStore.updateData
+              (
+                [
+                  ['competitionAllNum', [(competitionMap?.size ?? 0), openCompetitions]],
+                  ['competitionLatestMap', competitionMap]
+                ]
+              );
+          }
+        },
+      }
+    );
 
   sessionStore?.updateData
-  (
-    [
-      ['graphqlListeners', subscription?.unsubscribe]
-    ]
-  );
+    (
+      [
+        ['graphqlListeners', subscription?.unsubscribe]
+      ]
+    );
 }
 
 /**
@@ -155,9 +158,9 @@ export async function subscribeCompetitionsAllListen
  * `void`
  */
 export async function subscribeCompetitionsTargetListen
-(
-  competitionId: number
-): Promise < void >
+  (
+    competitionId: number
+  ): Promise<void>
 {
   // get ready
   const GRAPHQL_ENDPOINT = import.meta.env?.VITE_HASURA_DB_WSS ?? '';
@@ -167,31 +170,31 @@ export async function subscribeCompetitionsTargetListen
   // ### NOTE:
   // ### set up the client, which can be reused
   const client = new SubscriptionClient
-  (
-    GRAPHQL_ENDPOINT,
-    {
-      reconnect: true,
-      // ### NOTE:
-      // ### per-authors-documentation:
-      // ### only connect when there is a query
-      lazy: true,
-      connectionParams:
+    (
+      GRAPHQL_ENDPOINT,
       {
-        // ### IMPORTANT
-        headers:
+        reconnect: true,
+        // ### NOTE:
+        // ### per-authors-documentation:
+        // ### only connect when there is a query
+        lazy: true,
+        connectionParams:
         {
-          'x-hasura-admin-secret': import.meta.env?.VITE_HASURA_DB_TOKEN ?? ''
+          // ### IMPORTANT
+          headers:
+          {
+            'x-hasura-admin-secret': import.meta.env?.VITE_HASURA_DB_TOKEN ?? ''
+          },
         },
-      },
-      connectionCallback:
-      (
-        error
-      ): void =>
-      {
-        error && console.error(error);
-      },
-    }
-  );
+        connectionCallback:
+          (
+            error
+          ): void =>
+          {
+            error && console.error(error);
+          },
+      }
+    );
 
   // ### NOTE:
   // ### per-authors-documentation:
@@ -211,70 +214,189 @@ export async function subscribeCompetitionsTargetListen
   // ### per-authors-documentation:
   // ### call subscription.unsubscribe() later to clean up
   const subscription = client
-  .request
-  (
-    {
-      query,
-      variables:
+    .request
+    (
       {
-        competitionId
+        query,
+        variables:
+        {
+          competitionId
+        }
       }
-    }
-  )
-  // ### NOTE:
-  // ### so lets actually do something with the response
-  .subscribe
-  (
-    {
-      next
-      (
-        {
-          data
-        }: { data: B_H_COMP_HIGH_Q; }
-      ): void
+    )
+    // ### NOTE:
+    // ### so lets actually do something with the response
+    .subscribe
+    (
       {
-        if (data)
+        next
+          (
+            {
+              data
+            }: { data: B_H_COMP_HIGH_Q; }
+          ): void
         {
-          console.log("We got something! 🟥", data);
-
-          const competitionMap = new Map < number, B_H_COMP_DATA >();
-
-          // ### NOTE:
-          // ### loop over competitions data.
-          for (const competition of data?.competitions_data ?? [])
+          if (data)
           {
+            console.log("We got something! 🟥", data);
+
+            const competitionMap = new Map<number, B_H_COMP_DATA>();
 
             // ### NOTE:
-            // ### generate map.
-            // ### TODO:
-            // ### can be added to 'sessionStore.competition_map' data prop.
-            competitionMap.set
-            (
-              competition?.id,
-              competition
-            );
+            // ### loop over competitions data.
+            for (const competition of data?.competitions_data ?? [])
+            {
+
+              // ### NOTE:
+              // ### generate map.
+              // ### TODO:
+              // ### can be added to 'sessionStore.competition_map' data prop.
+              competitionMap.set
+                (
+                  competition?.id,
+                  competition
+                );
+            }
+
+            sessionStore.updateData
+              (
+                [
+                  ['competitionLatestMap', competitionMap]
+                ]
+              );
+
           }
-
-          sessionStore.updateData
-          (
-            [
-              ['competitionLatestMap', competitionMap]
-            ]
-          );
-
-        }
-      },
-    }
-  );
+        },
+      }
+    );
 
   sessionStore?.updateData
-  (
-    [
-      ['graphqlListeners', subscription?.unsubscribe]
-    ]
-  );
+    (
+      [
+        ['graphqlListeners', subscription?.unsubscribe]
+      ]
+    );
 
   return;
+}
+
+/**
+ * @summary
+ * 🔹 HELPER | IMPORTANT
+ *
+ * @description
+ * 📌 Listens/Subsribes to changes in tag followers.
+ *
+ * @param tagId: number
+ * 💠 **[required]** `tag` ID to subscribe.
+ * @param tagStore: Writable<IPageAuthorTagData>
+ * 💠 **[required]** `tag` store to update.
+ * @returns
+ * `void`
+ */
+export  function subscribeTagFollowersListen
+  (
+    tagId: number,
+    tagStore: Writable<IPageAuthorTagData>
+  ): {unsubscribe: () => void}
+{
+  // get ready
+  const GRAPHQL_ENDPOINT = import.meta.env?.VITE_HASURA_DB_WSS ?? '';
+
+  const query: string = TableAuthorTagsSubscription0;
+
+  // ### NOTE:
+  // ### set up the client, which can be reused
+  const client = new SubscriptionClient
+    (
+      GRAPHQL_ENDPOINT,
+      {
+        reconnect: true,
+        // ### NOTE:
+        // ### per-authors-documentation:
+        // ### only connect when there is a query
+        lazy: true,
+        connectionParams:
+        {
+          // ### IMPORTANT
+          headers:
+          {
+            'x-hasura-admin-secret': import.meta.env?.VITE_HASURA_DB_TOKEN ?? ''
+          },
+        },
+        connectionCallback:
+          (
+            error
+          ): void =>
+          {
+            error && console.error(error);
+          },
+      }
+    );
+
+  // ### NOTE:
+  // ### per-authors-documentation:
+  // ### make the actual request.
+  // client.request
+  // (
+  //   {
+  //     query
+  //   }
+  // );
+
+  // ### NOTE:
+  // ### per-authors-documentation:
+  // ### the above doesn't do much though.
+
+  // ### NOTE:
+  // ### per-authors-documentation:
+  // ### call subscription.unsubscribe() later to clean up
+  const subscription = client
+    .request
+    (
+      {
+        query,
+        variables: {tagId}
+      }
+    )
+    // ### NOTE:
+    // ### so lets actually do something with the response
+    .subscribe
+    (
+      {
+        next
+          (
+            {
+              data
+            }: { data: ITableAuthorTagsSubscription0Out; }
+          ): void
+        {
+          if (data)
+          {
+            console.log("We got something!", data);
+
+            // ### NOTE:
+            // ### update tag store.
+            tagStore.update
+              (
+                (tagStoreData) =>
+                {
+                  return {...tagStoreData, followers: data.authors_tags_by_pk?.followers};
+                }
+              );
+          }
+        },
+      }
+    );
+
+
+  sessionStore?.updateData
+    (
+      [
+        ['graphqlListeners', subscription?.unsubscribe]
+      ]
+  );
+  return subscription;
 }
 
 // #endregion ➤ 🛠️ METHODS

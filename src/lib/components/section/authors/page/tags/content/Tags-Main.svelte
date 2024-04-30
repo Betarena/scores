@@ -233,7 +233,6 @@
     if (!lang || prevLang === lang) return;
     prevLang = lang;
     const res = (await get(`/api/data/author/tags?translation=${lang}`)) as IPageAuthorTranslationDataFinal;
-    console.log("Translations: ", res);
     widgetData = {
       ...widgetData,
       translations: res,
@@ -273,7 +272,7 @@
       {/if}
     {/each}
     {#if pendingArticles}
-      {#each Array(3) as _item}
+      {#each Array(10) as _item}
         {#if mobile}
           <TagsLoaderContentMobile />
         {:else}

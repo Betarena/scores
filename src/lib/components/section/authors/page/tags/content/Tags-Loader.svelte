@@ -118,7 +118,7 @@
    <LoaderLine width="100%" height={1} />
 {/if}
 <div class="content-loads">
-  {#each Array(3) as _item}
+  {#each Array(10) as _item}
   {#if VIEWPORT_MOBILE_INIT[1]}
     <TagsLoaderContentMobile />
   {:else}
