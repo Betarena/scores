@@ -272,7 +272,7 @@
       {/if}
     {/each}
     {#if pendingArticles}
-      {#each Array(3) as _item}
+      {#each Array(10) as _item}
         {#if mobile}
           <TagsLoaderContentMobile />
         {:else}
