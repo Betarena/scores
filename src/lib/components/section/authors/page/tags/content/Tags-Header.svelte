@@ -23,6 +23,8 @@
   import { page } from "$app/stores";
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
   import { post } from "$lib/api/utils.js";
+  import { writable, type Writable } from "svelte/store";
+  import { subscribeTagFollowersListen } from "$lib/graphql/graphql.common.js";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -59,7 +61,7 @@
   export let totalArticlesCount = 0;
   let filterValue = "all";
   let buttonsWidth: number;
-
+  let tagStore: Writable<IPageAuthorTagData>;
   const dispatch = createEventDispatcher<{ filter: string }>();
 
   $: dispatch("filter", filterValue);
@@ -76,8 +78,22 @@
       label: translations[lang] || lang,
     })),
   ];
-
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   /**
    * @summary
@@ -100,6 +116,27 @@
     ?.following?.tags || []) as (string | number)[];
   $: isFollowed = followedTags.includes(tag.id);
 
+  /**
+   * @summary
+   * 🔥 REACTIVITY
+   *
+   * WARNING:
+   * can go out of control
+   *
+   * @description
+   * subscribes to tag folowers changes each time the tag is recreated
+   * and unsubscribe from  previous subscription
+   * WARNING:
+   * triggered by changes in:
+   * - `tag`
+   */
+  let subscribtion;
+  $: if (tag) subscribe(tag);
+  function subscribe(tag: IPageAuthorTagData) {
+    if (subscribtion) subscribtion.unsubscribe();
+    tagStore = writable({...tag, followers: [...(tag.followers || [])]});
+    subscribtion = subscribeTagFollowersListen($tagStore.id, tagStore);
+  }
   // #region ➤ 🛠️ METHODS
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -111,7 +148,6 @@
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
 
   function toggleDescription() {
     if (!mobile || !tag.description) return;
@@ -126,9 +162,11 @@
     userBetarenaSettings.updateData([
       ["user-following", { target: "tags", id: tag.id, follow: !isFollowed }],
     ]);
-    const d = await post("/api/data/author/tags", { tagId: tag.id, follow: !isFollowed, tag});
+    await post("/api/data/author/tags", {
+      tagId: tag.id,
+      follow: !isFollowed,
+    });
   }
-
 
   // #endregion ➤ 🛠️ METHODS
 </script>
@@ -162,7 +200,7 @@
       </h1>
       <div class="tag-info">
         <span
-          >{tag.followers?.length || 0}
+          >{$tagStore.followers?.length || 0}
           <TranslationText
             key={`unknown`}
             text={translations.followers}
