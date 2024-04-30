@@ -255,6 +255,7 @@
     <div
       class="header-description"
       in:fade={{ duration: 500 }}
+      out:fade={{ duration: 200 }}
       style={!mobile && !tablet
         ? `width: calc(100% - ${buttonsWidth + 10}px)`
         : ""}
