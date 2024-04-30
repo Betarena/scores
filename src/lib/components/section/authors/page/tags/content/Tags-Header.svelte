@@ -78,7 +78,7 @@
     ...$page.data.B_NAV_T.langArray.map((lang) => ({
       id: lang,
       label: translations[lang] || lang,
-    })),
+    })).sort((a, b) => a.label.localeCompare(b.label)),
   ];
   // #endregion ➤ 📌 VARIABLES
 
