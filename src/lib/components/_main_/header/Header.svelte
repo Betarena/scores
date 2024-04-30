@@ -56,6 +56,7 @@
 
   import SeoBox from '$lib/components/SEO-Box.svelte';
   import TranslationText from '$lib/components/misc/Translation-Text.svelte';
+  import { routeIdPageTags } from '$lib/constants/paths.js';
   import HeaderCBookmakers from './Header-C-Bookmakers.svelte';
   import HeaderCLang from './Header-C-Lang.svelte';
   import HeaderCTheme from './Header-C-Theme.svelte';
@@ -158,6 +159,7 @@
   ;
 
   $: ({ error, route: { id: pageRouteId } } = $page);
+  $: console.log('pageRouteId', pageRouteId);
   $: ({ windowWidth, currentPageRouteId, serverLang, navBtnHover, globalState } = $sessionStore);
   $: ({ lang, theme, user } = $userBetarenaSettings);
   $: ({ web3_wallet_addr, profile_photo, main_balance, lang: userLang } = { ...$userBetarenaSettings.user?.scores_user_data });
@@ -940,6 +942,7 @@
           │ > User Avatar
           ╰─────
           -->
+          {#if pageRouteId != routeIdPageTags}
           <img
             id="user-profile-picture"
             data-testid="{CNAME}/user-avatar"
@@ -966,6 +969,7 @@
             width=44
             height=44
           />
+          {/if}
 
           <!--
           ╭─────
