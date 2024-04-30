@@ -185,7 +185,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="tags-header-wrapper" class:mobile>
+<div class="tags-header-wrapper" class:mobile class:expand={showDescription}>
   <div class="header-buttons">
     <div class="tag-info-wrapper">
       <h1 on:click={toggleDescription}>
@@ -198,7 +198,7 @@
       </h1>
       <div class="tag-info">
         <span>
-          {#key $tagStore?.followers?.length}
+          {#key $tagStore?.followers?.length !== tag.followers?.length}
             <span in:fade={{ duration: 700 }}>
               {$tagStore?.followers?.length || 0}
             </span>
@@ -255,18 +255,14 @@
       </Button>
     </div>
   </div>
-  {#if showDescription && tag.description}
     <div
       class="header-description"
-      in:fade={{ duration: 500 }}
-      out:fade={{ duration: 200 }}
       style={!mobile && !tablet
         ? `width: calc(100% - ${buttonsWidth + 10}px)`
         : ""}
     >
       <span>{tag.description}</span>
     </div>
-  {/if}
 </div>
 
 {#if mobile}
@@ -309,6 +305,13 @@
 
     &.mobile {
       padding: 0 24px;
+      max-height: 53px;
+      overflow: hidden;
+      transition: max-height 1s ease-in-out;
+
+      &.expand {
+        max-height: 300px;
+      }
       .tag-info-wrapper .tag-info {
         font-size: var(--text-size-s) !important;
       }
