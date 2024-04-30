@@ -511,14 +511,23 @@ export function timeAgo(datestring: string | null, translation: TranslationAutho
   if (!datestring) return '';
   const now = new Date();
   const date = new Date(datestring);
+  const months = now.getMonth() - date.getMonth();
+  const years = now.getFullYear() - date.getFullYear();
   const dateDiff = now.getTime() - date.getTime();
   const minutes = Math.floor(dateDiff / 60000);
   const hours = Math.floor(minutes / 60);
   const days = Math.floor(hours / 24);
-  if (minutes < 1) return 'Just now';
-  if (hours < 1) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
-  if (days < 1) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-  if (days < 30) return `${days} day${days > 1 ? 's' : ''} ago`;
+  const { just_now, minutes: tminutes, one_minute, one_day, hours: thours, one_hour, one_month, one_week, months: tmonths} = translation;
+  if (minutes < 1) return just_now || 'just now';
+  if (minutes === 1) return one_minute || '1 minute ago';
+  if (hours < 1 && minutes > 1) return tminutes?.replace("{minutes}", `${minutes}`) || `${minutes} minute ago`;
+  if (hours === 1) return one_hour || '1 hour ago';
+  if (days < 1 && hours > 1) return thours?.replace("{hours}", `${hours}`) || `${hours} hour ago`;
+  if (days === 1 ) return one_day || '1 day ago';
+  if (days === 7) return one_week || '1 week ago';
+  if (days < 30 && !months) return `${days} day${days > 1 ? 's' : ''} ago`;
+  if (months === 1) return one_month || '1 month ago';
+  if (months > 1 && !years) return tmonths?.replace("{months}", `${months}`) || `${months} months ago`;
 
   return `${ddMMyyFormat(date.toDateString())} ${toZeroPrefixDateStr(date.getHours())}:${toZeroPrefixDateStr(date.getMinutes())}`;
 

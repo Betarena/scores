@@ -69,8 +69,8 @@
      */ // eslint-disable-next-line no-unused-vars
     CNAME: string = "<author⮕w⮕tags-content⮕header";
   $: options = [
-    { id: "all", label: "All" },
-    ...$page.data.B_NAV_T.langArray.map((lang) => ({ id: lang, label: lang })),
+    { id: "all", label: translations.all },
+    ...$page.data.B_NAV_T.langArray.map((lang) => ({ id: lang, label: translations[lang] || lang})),
   ];
 
   // #endregion ➤ 📌 VARIABLES
