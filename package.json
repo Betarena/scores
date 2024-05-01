@@ -48,6 +48,7 @@
 		"sass-watch": "sass --watch static/app.scss static/app.css"
 	},
 	"dependencies": {
+		"@betarena/ad-engine": "0.0.47",
 		"@betarena/scores-lib": "3.1.7",
 		"@lukeed/uuid": "2.0.1",
 		"@metamask/sdk": "0.1.0",
