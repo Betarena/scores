@@ -5,7 +5,7 @@
   --text-color-second-dark: #8C8C8C;
 
   --bg-color: #292929;
-  --bg-color-second: #313131;
+  --bg-color-second: rgb(49, 49, 49);
   --border-color-light: #4B4B4B;
   --border-color: #4B4B4B;
   --bg-hover-color: #4B4B4B;
@@ -13,4 +13,8 @@
   --tag-bg-color: #4B4B4B;
 
   --section-border: 1px solid var(--border-color);
+
+  --gradient-color-light: rgba(49, 49, 49, 0);
+  --gradient-color-medium: rgba(49, 49, 49, 0.6);
+  --gradient-color-dark: rgba(49, 49, 49, 1);
 }

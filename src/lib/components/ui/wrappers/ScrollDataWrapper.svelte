@@ -4,11 +4,11 @@
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ Internal Svelte Code Format :|: V.8.0                                          │
 │ ➤ Status :|: 🔒 LOCKED                                                           │
-│ ➤ Author(s) :|: @izobov                                                         │
+│ ➤ Author(s) :|: @migbash                                                         │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ 📝 Description                                                                   │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ Scores Authors Tags                                                              │
+│ Scores Authors Article Main                                                      │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -37,13 +37,10 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { page } from "$app/stores";
-  import { afterNavigate, beforeNavigate } from "$app/navigation";
+  import { onMount } from "svelte";
 
-  import SeoBox from "$lib/components/SEO-Box.svelte";
-  import TagsLoader from "./Tags-Loader.svelte";
-  import TagsMain from "./Tags-Main.svelte";
-  import type { IPageAuthorTagData } from "@betarena/scores-lib/types/v8/preload.authors.js";
+  import ArrowLeft from "../assets/arrow-left.svelte";
+  import ArrowRight from "../assets/arrow-right.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -60,13 +57,34 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  export let data;
-  let loading = false;
-  $: widgetDataMain = $page.data as any;
-  $: tags = new Map(widgetDataMain?.mapTag ?? []) as Map<
-    Number,
-    IPageAuthorTagData
-  >;
+
+  export let /**
+     * @augments any[]
+     */
+    data = [] as any[];
+
+  /**
+   * @description
+   *  📣 Component interface.
+   */
+  type IWidgetState = "PrevButtonShow" | "NextButtonShow";
+
+  const /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */ // eslint-disable-next-line no-unused-vars
+    CNAME: string = "ui⮕scroll-data-wrapper";
+  let /**
+     * @description
+     *  📣 Target `HTMLELement` for **Article Tags**.
+     */
+    htmlElementScrollBox: HTMLElement,
+    /**
+     * @description
+     *  📣 **Local** component state
+     */
+    componentLocalState = new Set<IWidgetState>();
+
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -85,24 +103,53 @@
    * @author
    *  @migbash
    * @summary
-   *  🟩 MAIN
+   *  🟦 HELPER
    * @description
-   *  📣 main widget data loader
-   *  - ⚡️ (and) try..catch (error) handler
-   *  - ⚡️ (and) placeholder handler
-   * @returns { Promise < void > }
+   *  📣 Scrolls `tags` in a target `direction`.
+   * @param { -1 | 1 | 0 } direction
+   *  💠 **[required]** Target `direction` to _scroll_.
+   * @return { void }
    */
+  function scrollData(direction: -1 | 1 | 0): void {
+    if (direction == -1)
+      htmlElementScrollBox.scrollBy({ behavior: "smooth", left: 250, top: 0 });
+    else if (direction == 1)
+      htmlElementScrollBox.scrollBy({ behavior: "smooth", left: -250, top: 0 });
+    // [🐞]
+    // console.log('htmlElementScrollBox.scrollLeft', htmlElementScrollBox.scrollLeft);
+    // console.log('htmlElementScrollBox.offsetWidth', htmlElementScrollBox.offsetWidth);
+    // console.log('htmlElementScrollBox.scrollWidth', htmlElementScrollBox.scrollWidth);
 
-  beforeNavigate(({ to }) => {
-    if (to?.route.id === $page.route.id) {
-      loading = true;
-    }
-  });
-  afterNavigate((b) => {
-    loading = false;
-  });
+    if (htmlElementScrollBox.scrollLeft == 0)
+      componentLocalState.delete("PrevButtonShow");
+    else componentLocalState.add("PrevButtonShow");
+    if (
+      htmlElementScrollBox.scrollLeft + htmlElementScrollBox.offsetWidth + 5 >
+      htmlElementScrollBox.scrollWidth
+    )
+      componentLocalState.delete("NextButtonShow");
+    else componentLocalState.add("NextButtonShow");
+    componentLocalState = componentLocalState;
+
+    return;
+  }
 
   // #endregion ➤ 🛠️ METHODS
+
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  onMount(() => {
+    scrollData(0);
+  });
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 
 <!--
@@ -116,40 +163,156 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<SeoBox>
-  <h1>{tags.get(widgetDataMain.tagId)?.name}</h1>
-  {#each widgetDataMain.mapArticle ?? [] as [_id, article]}
-    <h2>{article?.data?.title}</h2>
-    <a href={`/a/${article?.permalink}`}>{article?.data?.title}</a>
-    {@html article?.data?.content}
-  {/each}
-</SeoBox>
-
-<!-- [🐞] -->
-
-{#await data}
+<div id={CNAME} class="tags-box">
   <!--
-  ╭────────────────────────────────────────────────────────────────────────╮
-  │ NOTE :|: promise is pending                                            │
-  ╰────────────────────────────────────────────────────────────────────────╯
-  -->
-  <TagsLoader />
-{:then}
-  <!--
-  ╭────────────────────────────────────────────────────────────────────────╮
-  │ NOTE :|: promise is fulfilled                                          │
-  ╰────────────────────────────────────────────────────────────────────────╯
-  -->
-  {#if loading}
-    <TagsLoader />
-  {:else}
-    <!-- else content here -->
-    <TagsMain widgetData={widgetDataMain} />
+    ╭─────
+    │ > previous (button)
+    ╰─────
+    -->
+  {#if componentLocalState.has("PrevButtonShow")}
+    <div
+      id="tagScrollPrev"
+      class="
+        tagScrollButton
+        "
+      on:click={() => {
+        scrollData(1);
+        return;
+      }}
+    >
+      <ArrowLeft />
+    </div>
   {/if}
-{:catch error}
+
   <!--
-  ╭────────────────────────────────────────────────────────────────────────╮
-  │ NOTE :|: promise is rejected                                           │
-  ╰────────────────────────────────────────────────────────────────────────╯
-  -->
-{/await}
+    ╭─────
+    │ > article tags (inner)
+    ╰─────
+    -->
+  <div
+    id="tags-box-scroll"
+    bind:this={htmlElementScrollBox}
+    on:scroll={() => {
+      scrollData(0);
+      return;
+    }}
+  >
+    {#each data as item}
+      <slot {item}>use ScrollDataWrapper let:item</slot>
+    {/each}
+  </div>
+
+  <!--
+    ╭─────
+    │ > next (button)
+    ╰─────
+    -->
+  {#if componentLocalState.has("NextButtonShow")}
+    <div
+      id="tagScrollNext"
+      class="
+        tagScrollButton
+        "
+      on:click={() => {
+        scrollData(-1);
+        return;
+      }}
+    >
+      <ArrowRight />
+    </div>
+  {/if}
+</div>
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 🌊 Svelte Component CSS/SCSS                                                     │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<style lang="scss">
+  /*
+  ╭──────────────────────────────────────────────────────────────────────────────╮
+  │ 📲 MOBILE-FIRST                                                              │
+  ╰──────────────────────────────────────────────────────────────────────────────╯
+  */
+
+  .tags-box {
+    /* 🎨 style */
+    overflow: hidden;
+    position: relative;
+
+    div#tags-box-scroll {
+      /* 🎨 style */
+      overflow-x: scroll;
+      overflow-y: hidden;
+      display: flex;
+      gap: 10px;
+      /* Hide scrollbar for IE, Edge and Firefox */
+      -ms-overflow-style: none; /* IE and Edge */
+      scrollbar-width: none; /* Firefox */
+
+      &::-webkit-scrollbar {
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        display: none;
+      }
+    }
+
+    div.tagScrollButton {
+      /* 🎨 style */
+      position: absolute;
+      display: flex;
+      align-items: center;
+      height: 100%;
+      width: 50px;
+      z-index: 5;
+      bottom: 0;
+      top: 0;
+      margin: auto;
+      cursor: pointer;
+
+      &#tagScrollPrev {
+        /* 🎨 style */
+        justify-content: start;
+        left: -1px;
+        padding-left: -5px;
+        background: linear-gradient(
+          90deg,
+         var(--gradient-color-light) 25.69%,
+          var(--gradient-color-medium) 70%,
+          var(--gradient-color-dark) 100%
+        );
+
+        :global(svg) {
+          position: absolute;
+          left: 5px;
+        }
+      }
+
+      &#tagScrollNext {
+        /* 🎨 style */
+        right: -1px;
+        justify-content: end;
+        padding-right: 5px;
+        background: linear-gradient(
+          90deg,
+          var(--gradient-color-light) 25.69%,
+          var(--gradient-color-medium) 70%,
+          var(--gradient-color-dark) 100%
+        );
+      }
+
+      // img {
+      //   /* 🎨 style */
+      //   position: absolute;
+      //   z-index: 5;
+      //   bottom: 0;
+      //   top: 0;
+      //   margin: auto;
+      // }
+    }
+  }
+</style>

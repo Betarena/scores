@@ -19,6 +19,8 @@
     IPageAuthorTranslationDataFinal,
   } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import { fade } from "svelte/transition";
+  import ExpandDataWrapper from "$lib/components/ui/wrappers/ExpandDataWrapper.svelte";
+  import ScrollDataWrapper from "$lib/components/ui/wrappers/ScrollDataWrapper.svelte";
 
   // #region ➤ 📌 VARIABLES
 
@@ -51,14 +53,6 @@
      * @description mobile view
      */
     mobile = false;
-  let /**
-     * @description variables to controll tags visability
-     */
-    tagsWidth,
-    tagsNode,
-    prevWidth = 0,
-    countOfNotVisibleTags = 0,
-    expanded = false;
 
   $: ({
     permalink,
@@ -75,81 +69,10 @@
     username: "unknow",
     avatar: defaultAvatar,
   });
-  /**
-   * @summary
-   * 🔥 REACTIVITY
-   *
-   * WARNING:
-   * can go out of control
-   *
-   * @description
-   * .variables to control tag visibility
-   *
-   * WARNING:
-   * triggered by changes in:
-   * - `visibleTags` - **tags_data**
-   */
-  $: visibleTags = [...tags_data];
 
   $: date = timeAgo(published_date, translations.time_ago);
+
   // #endregion ➤ 📌 VARIABLES
-  /** @description
-   * .recalculate tag visibility when changing width, orScrollWidth
-   *  WARNING:
-   */
-  $: resize(tagsWidth, tagsNode, tags_data);
-
-  // #region ➤ 🛠️ METHODS
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'methods' that are to be           │
-  // │ and are expected to be used by 'this' .svelte file / component.        │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. function (..)                                                       │
-  // │ 2. async function (..)                                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  let debounds;
-
-  function resize(
-    width: number,
-    node: HTMLDivElement,
-    tags_data: (IPageAuthorTagData | undefined)[]
-  ) {
-    if (!width || !node) return;
-    const scrollWidth = node.scrollWidth;
-    if (width < scrollWidth) {
-      visibleTags.pop();
-      visibleTags = [...visibleTags];
-    } else if (width > prevWidth) {
-      const lastVisible = visibleTags.at(-1);
-      const i = tags_data.indexOf(lastVisible);
-      const addTag = tags_data[i + 1];
-      if (addTag && !visibleTags?.find((t) => t.id === addTag.id))
-        visibleTags = [...tags_data, addTag] as IPageAuthorTagData[];
-    }
-
-    prevWidth = width;
-    countOfNotVisibleTags = tags_data.length - visibleTags.length;
-    if (countOfNotVisibleTags < 0) countOfNotVisibleTags = 0;
-    if (debounds) clearTimeout(debounds);
-
-    setTimeout(() => {
-      debounds = null;
-      if (width === tagsWidth && width < node.scrollWidth)
-        resize(width, node, tags_data);
-    }, 50);
-  }
-
-  function expandTags() {
-    expanded = true;
-    countOfNotVisibleTags = 0;
-    visibleTags = [...tags_data];
-  }
-
-  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--
@@ -177,25 +100,34 @@
         <div class="publication-date">{date}</div>
       </div>
     </div>
-    <div
-      class="tags-wrapper"
-      class:expanded
-      bind:clientWidth={tagsWidth}
-      bind:this={tagsNode}
-    >
-      {#each visibleTags as tag}
-        <a
-          href="/a/tag/{tag?.permalink}"
-          data-sveltekit-preload-data="hover"
-          in:fade={{ duration: 500 }}
-        >
-          <Tag>{tag?.name}</Tag>
-        </a>
-      {/each}
-      {#if countOfNotVisibleTags}
-        <div in:fade={{ duration: 500 }}>
-          <Tag on:click={expandTags}>+{countOfNotVisibleTags}</Tag>
-        </div>
+    <div class="tags-wrapper">
+      {#if mobile || tablet}
+        <ScrollDataWrapper data={tags_data} let:item={tag}>
+          <a
+            href="/a/tag/{tag?.permalink}"
+            data-sveltekit-preload-data="hover"
+            in:fade={{ duration: 500 }}
+          >
+            <Tag>{tag?.name}</Tag>
+          </a>
+        </ScrollDataWrapper>
+      {:else}
+        <ExpandDataWrapper data={tags_data}>
+          <slot slot="item" let:item={tag}>
+            <a
+              href="/a/tag/{tag?.permalink}"
+              data-sveltekit-preload-data="hover"
+              in:fade={{ duration: 500 }}
+            >
+              <Tag>{tag?.name}</Tag>
+            </a>
+          </slot>
+          <slot slot="count" let:count
+            ><div in:fade={{ duration: 500 }}>
+              <Tag>+{count}</Tag>
+            </div></slot
+          >
+        </ExpandDataWrapper>
       {/if}
     </div>
   </div>
@@ -294,12 +226,11 @@
 
       .tags-wrapper {
         margin-top: 20px;
-        display: flex;
-        gap: 4px;
         max-width: 100%;
-        overflow: hidden;
-        row-gap: 7px;
         --text-button-size: var(--text-size-s);
+        --g-color-light: var(--gradient-color-light);
+        --g-color-medium: var(--gradient-color-medium);
+        --g-color-dark: var(--gradient-color-dark);
 
         &.expanded {
           flex-wrap: wrap;
