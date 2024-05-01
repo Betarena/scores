@@ -86,7 +86,27 @@
     componentLocalState = new Set<IWidgetState>();
 
   // #endregion ➤ 📌 VARIABLES
+// #region ➤ 🔥 REACTIVIY [SVELTE]
 
+// ╭────────────────────────────────────────────────────────────────────────╮
+// │ NOTE:                                                                  │
+// │ Please add inside 'this' region the 'logic' that should run            │
+// │ immediately and/or reactively for 'this' .svelte file is ran.          │
+// │ WARNING:                                                               │
+// │ ❗️ Can go out of control.                                              │
+// │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+// │ Please keep very close attention to these methods and                  │
+// │ use them carefully.                                                    │
+// ╰────────────────────────────────────────────────────────────────────────╯
+
+
+$: if(htmlElementScrollBox)  {
+    setTimeout(() => {
+      scrollData(0);
+    }, 500);
+  };
+
+// #endregion ➤ 🔥 REACTIVIY [SVELTE]
   // #region ➤ 🛠️ METHODS
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -111,6 +131,7 @@
    * @return { void }
    */
   function scrollData(direction: -1 | 1 | 0): void {
+    if (!htmlElementScrollBox) return;
     if (direction == -1)
       htmlElementScrollBox.scrollBy({ behavior: "smooth", left: 250, top: 0 });
     else if (direction == 1)
@@ -136,22 +157,6 @@
 
   // #endregion ➤ 🛠️ METHODS
 
-  // #region ➤ 🔄 LIFECYCLE [SVELTE]
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'logic' that should run            │
-  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
-  // │ as soon as 'this' .svelte file is ran.                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  onMount(async () => {
-    setTimeout(() => {
-      scrollData(0);
-    }, 500);
-  });
-
-  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 
 <!--

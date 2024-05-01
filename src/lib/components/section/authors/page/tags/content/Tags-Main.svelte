@@ -92,6 +92,11 @@
      *  📣 threshold start + state for 💻 TABLET
      */ // eslint-disable-next-line no-unused-vars
     VIEWPORT_TABLET_INIT: [number, boolean] = [1160, true];
+     /**
+     * @description
+     *  📣 infinite scroll threshold  for 💻 TABLET and 📱 MOBILE
+     */
+    const threshold = 95;
   /**
    * @description
    *  📣 selected language in dropdown to
@@ -242,7 +247,7 @@
 
   function scrollHandler() {
     if (pendingArticles || (!mobile && !tablet)) return;
-    if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight * ((100 - threshold)/ 100) ) {
       loadArticles();
     }
   }
