@@ -153,7 +153,7 @@
    * triggered by changes in:
    * - `` - **articles**
    */
-  $: loadTranslations( $sessionStore.serverLang)
+  $: loadTranslations($sessionStore.serverLang);
   // #region ➤ 🛠️ METHODS
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -229,14 +229,22 @@
   }
   let prevLang;
   async function loadTranslations(lang: string | undefined) {
-
     if (!lang || prevLang === lang) return;
     prevLang = lang;
-    const res = (await get(`/api/data/author/tags?translation=${lang}`)) as IPageAuthorTranslationDataFinal;
+    const res = (await get(
+      `/api/data/author/tags?translation=${lang}`
+    )) as IPageAuthorTranslationDataFinal;
     widgetData = {
       ...widgetData,
       translations: res,
     };
+  }
+
+  function scrollHandler() {
+    if (pendingArticles || (!mobile && !tablet)) return;
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+      loadArticles();
+    }
   }
   // #endregion ➤ 🛠️ METHODS
 </script>
@@ -251,6 +259,8 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
+
+<svelte:window on:scroll={scrollHandler} />
 
 <div id={CNAME} class="tags-main" class:tablet class:mobile>
   <TagsHeader
@@ -280,25 +290,27 @@
       {/each}
     {/if}
   </div>
-  <div class="section-footer">
-    <div class="page-info">
-      {articles.length}/{totalArticlesCount}
-      <TranslationText
-        key={`unknown`}
-        text={translations.articles}
-        fallback={"articles"}
-      />
-    </div>
-    {#if articles.length < totalArticlesCount}
-      <Button type="outline" on:click={() => loadArticles()}
-        ><TranslationText
+  {#if !mobile && !tablet}
+    <div class="section-footer">
+      <div class="page-info">
+        {articles.length}/{totalArticlesCount}
+        <TranslationText
           key={`unknown`}
-          text={translations.view_more}
-          fallback={"View more"}
-        /></Button
-      >
-    {/if}
-  </div>
+          text={translations.articles}
+          fallback={"articles"}
+        />
+      </div>
+      {#if articles.length < totalArticlesCount}
+        <Button type="outline" on:click={() => loadArticles()}
+          ><TranslationText
+            key={`unknown`}
+            text={translations.view_more}
+            fallback={"View more"}
+          /></Button
+        >
+      {/if}
+    </div>
+  {/if}
 </div>
 
 <!--

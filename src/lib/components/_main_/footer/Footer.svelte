@@ -49,6 +49,7 @@
 
 	import type { B_H_SFOOTD_Social_Network } from '@betarena/scores-lib/types/_HASURA_.js';
 	import type { B_FOT_T } from '@betarena/scores-lib/types/types.main.footer.js';
+    import { routeIdPageTags } from '$lib/constants/paths.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -229,647 +230,649 @@
 │ > Fotter Container
 ╰─────
 -->
-<footer>
+{#if $page.route.id !== routeIdPageTags || ($page.route.id === routeIdPageTags && !VIEWPORT_TABLET_INIT[1] && !VIEWPORT_MOBILE_INIT[1])}
 
-  <div
-    id="{CNAME}⮕inner"
-  >
+  <footer>
 
-    <!--
-    ╭─────
-    │ > Betarena Brand
-    ╰─────
-    -->
     <div
-      id="{CNAME}⮕brand"
-      on:click=
-      {
-        () =>
-        {
-          if ($page.url.pathname.split('/').length - 1 ==	1)
-            window.location.reload();
-          return;
-        }
-      }
-      on:keypress=
-      {
-        (e) =>
-        {
-          if (e.key === 'Enter')
-            if ($page.url.pathname.split('/').length - 1 ==	1)
-              window.location.reload();
-        }
-      }
-    >
-
-      <a
-        href={homepageURL}
-        title={logoLink}
-        class:m-b-12={!VIEWPORT_TABLET_INIT[1]}
-      >
-        <img
-          loading="lazy"
-          src={dynamicAssetMap.get('logoFull')}
-          alt="betarena-logo"
-          title={logoLink}
-        />
-      </a>
-
-      <!--
-      ╭─────
-      │ > 🖥️ LAPTOP
-      ╰─────
-      -->
-      {#if !VIEWPORT_TABLET_INIT[1]}
-        <p
-          class=
-          "
-          s-14
-          w-400
-          color-grey
-          "
-        >
-          © 2021 Betarena All rights reserved
-        </p>
-      {/if}
-
-    </div>
-
-    <!--
-    ╭─────
-    │ > Follow Social Media Links
-    ╰─────
-    -->
-    <div
-      id="{CNAME}⮕social-box"
+      id="{CNAME}⮕inner"
     >
 
       <!--
       ╭─────
-      │ > Follow us
-      ╰─────
-      -->
-      <p
-        class=
-        "
-        color-white
-        s-14
-        w-normal
-        m-b-20
-        "
-      >
-        <TranslationText
-          key={`${CNAME}/unknown`}
-          text={translation.terms.follow}
-          fallback={'Follow us'}
-        />
-      </p>
-
-      <!--
-      ╭─────
-      │ > Social Media Follows
+      │ > Betarena Brand
       ╰─────
       -->
       <div
-        id="social-media-box"
-        class=
-        "
-        column-start-grid
-        "
-      >
-
-        <!--
-        ╭─────
-        │ > List of social media icons
-        ╰─────
-        -->
-        {#each socialNetworkOrder as key}
-
-          <!--
-          ╭─────
-          │ > Social Link
-          ╰─────
-          -->
-          <a
-            rel="external"
-            target="_blank"
-            href={translation.links.social_networks[key]}
-          >
-            <img
-              loading="lazy"
-              src={dynamicAssetMap.get(key)}
-              alt="{key.toLowerCase()}-icon"
-              title="{key.toLowerCase()}-icon"
-              width=32
-              height=32
-            />
-          </a>
-
-        {/each}
-
-      </div>
-
-    </div>
-
-    <!--
-    ╭─────
-    │ > Subsribe to Newsletter
-    ╰─────
-    -->
-    <div
-      id="{CNAME}⮕newsletter-box"
-    >
-      <!--
-      ╭─────
-      │ > Section Title
-      ╰─────
-      -->
-      <p
-        class=
-        "
-        color-white
-        s-14
-        w-normal
-        m-b-8
-        {VIEWPORT_MOBILE_INIT[1] ? 'text-center' : 'text-left'}
-        "
-      >
-        <TranslationText
-          key={`${CNAME}/newsletter-box`}
-          text={translation.terms.subscribe_newsletter}
-          fallback={'Subscribe to newsletter'}
-        />
-      </p>
-
-      <!--
-      ╭─────
-      │ > Submit Button
-      ╰─────
-      -->
-      <button
-        id="newsletter-subscribe-btn"
-        class=
-        "
-        btn-primary-v2
-        "
+        id="{CNAME}⮕brand"
         on:click=
         {
           () =>
           {
-            $sessionStore.currentActiveModal = 'Footer_Newsletter_Modal';
+            if ($page.url.pathname.split('/').length - 1 ==	1)
+              window.location.reload();
             return;
           }
         }
+        on:keypress=
+        {
+          (e) =>
+          {
+            if (e.key === 'Enter')
+              if ($page.url.pathname.split('/').length - 1 ==	1)
+                window.location.reload();
+          }
+        }
       >
+
+        <a
+          href={homepageURL}
+          title={logoLink}
+          class:m-b-12={!VIEWPORT_TABLET_INIT[1]}
+        >
+          <img
+            loading="lazy"
+            src={dynamicAssetMap.get('logoFull')}
+            alt="betarena-logo"
+            title={logoLink}
+          />
+        </a>
+
+        <!--
+        ╭─────
+        │ > 🖥️ LAPTOP
+        ╰─────
+        -->
+        {#if !VIEWPORT_TABLET_INIT[1]}
+          <p
+            class=
+            "
+            s-14
+            w-400
+            color-grey
+            "
+          >
+            © 2021 Betarena All rights reserved
+          </p>
+        {/if}
+
+      </div>
+
+      <!--
+      ╭─────
+      │ > Follow Social Media Links
+      ╰─────
+      -->
+      <div
+        id="{CNAME}⮕social-box"
+      >
+
+        <!--
+        ╭─────
+        │ > Follow us
+        ╰─────
+        -->
         <p
           class=
           "
           color-white
           s-14
-          w-500
+          w-normal
+          m-b-20
           "
         >
           <TranslationText
             key={`${CNAME}/unknown`}
-            text={translation.terms.subscribe_cta}
-            fallback={'Subsribe'}
+            text={translation.terms.follow}
+            fallback={'Follow us'}
           />
         </p>
-      </button>
 
-    </div>
+        <!--
+        ╭─────
+        │ > Social Media Follows
+        ╰─────
+        -->
+        <div
+          id="social-media-box"
+          class=
+          "
+          column-start-grid
+          "
+        >
 
-    <!--
-    ╭─────
-    │ > Menu List
-    ╰─────
-    -->
-    <div
-      id="{CNAME}⮕menu-list"
-      class:row-space-start={!VIEWPORT_MOBILE_INIT[1]}
-    >
+          <!--
+          ╭─────
+          │ > List of social media icons
+          ╰─────
+          -->
+          {#each socialNetworkOrder as key}
+
+            <!--
+            ╭─────
+            │ > Social Link
+            ╰─────
+            -->
+            <a
+              rel="external"
+              target="_blank"
+              href={translation.links.social_networks[key]}
+            >
+              <img
+                loading="lazy"
+                src={dynamicAssetMap.get(key)}
+                alt="{key.toLowerCase()}-icon"
+                title="{key.toLowerCase()}-icon"
+                width=32
+                height=32
+              />
+            </a>
+
+          {/each}
+
+        </div>
+
+      </div>
 
       <!--
       ╭─────
-      │ > 1st List Set
+      │ > Subsribe to Newsletter
       ╰─────
       -->
-      <ul>
+      <div
+        id="{CNAME}⮕newsletter-box"
+      >
+        <!--
+        ╭─────
+        │ > Section Title
+        ╰─────
+        -->
+        <p
+          class=
+          "
+          color-white
+          s-14
+          w-normal
+          m-b-8
+          {VIEWPORT_MOBILE_INIT[1] ? 'text-center' : 'text-left'}
+          "
+        >
+          <TranslationText
+            key={`${CNAME}/newsletter-box`}
+            text={translation.terms.subscribe_newsletter}
+            fallback={'Subscribe to newsletter'}
+          />
+        </p>
 
         <!--
         ╭─────
-        │ > Navigation Link :|: Latest News
+        │ > Submit Button
         ╰─────
         -->
-        <li
+        <button
+          id="newsletter-subscribe-btn"
           class=
           "
-          m-r-10
+          btn-primary-v2
           "
-          class:m-b-16={VIEWPORT_MOBILE_INIT[1]}
+          on:click=
+          {
+            () =>
+            {
+              $sessionStore.currentActiveModal = 'Footer_Newsletter_Modal';
+              return;
+            }
+          }
         >
-          <a
-            rel="external"
-            href={translation.links.latest_news}
-          >
-            <p
-              class=
-              "
-              color-white
-              s-14
-              w-normal
-              hover-color-primary
-              "
-            >
-              <TranslationText
-                key={`${CNAME}/unknown`}
-                text={translation.terms.latest_news}
-                fallback={'Latest News'}
-              />
-            </p>
-          </a>
-        </li>
-
-        <!--
-        ╭─────
-        │ > Separator
-        ╰─────
-        -->
-        <li
-          class=
-          "
-          m-r-10
-          "
-          class:m-b-16={VIEWPORT_MOBILE_INIT[1]}
-        >
-          <div
+          <p
             class=
             "
-            menu-separator
+            color-white
+            s-14
+            w-500
             "
-          />
-        </li>
-
-        <!--
-        ╭─────
-        │ > Navigation Link :|: 'About Us'
-        ╰─────
-        -->
-        <li
-          class=
-          "
-          m-r-10
-          "
-          class:m-b-16={VIEWPORT_MOBILE_INIT[1]}
-        >
-          <a
-            rel="external"
-            href={translation.links.about_us}
           >
-            <p
-              class=
-              "
-              color-white
-              s-14
-              w-normal
-              hover-color-primary
-              "
-            >
-              <TranslationText
-                key={`${CNAME}/unknown`}
-                text={translation.terms.about_us}
-                fallback={'About Us'}
-              />
-            </p>
-          </a>
-        </li>
+            <TranslationText
+              key={`${CNAME}/unknown`}
+              text={translation.terms.subscribe_cta}
+              fallback={'Subsribe'}
+            />
+          </p>
+        </button>
 
-        <!--
-        ╭─────
-        │ > Separator
-        ╰─────
-        -->
-        <li
-          class=
-          "
-          m-r-10
-          "
-          class:m-b-16={VIEWPORT_MOBILE_INIT[1]}
-        >
-          <div
-            class=
-            "
-            menu-separator
-            "
-          />
-        </li>
-
-        <!--
-        ╭─────
-        │ > Navigation Link :|: 'Terms And Conditions'
-        ╰─────
-        -->
-        <li
-          class=
-          "
-          m-r-10
-          "
-          class:m-b-16={VIEWPORT_MOBILE_INIT[1]}
-        >
-          <a
-            rel="external"
-            href={translation.links.terms}
-          >
-            <p
-              class=
-              "
-              color-white
-              s-14
-              w-normal
-              hover-color-primary
-              "
-            >
-              <TranslationText
-                key={`${CNAME}/unknown`}
-                text={translation.terms.terms}
-                fallback={'Terms & Conditions'}
-              />
-            </p>
-          </a>
-        </li>
-
-      </ul>
+      </div>
 
       <!--
       ╭─────
-      │ > 2nd List Set
+      │ > Menu List
       ╰─────
       -->
-      <ul>
+      <div
+        id="{CNAME}⮕menu-list"
+        class:row-space-start={!VIEWPORT_MOBILE_INIT[1]}
+      >
 
         <!--
         ╭─────
-        │ > Separator
+        │ > 1st List Set
         ╰─────
         -->
-        <li
-          class=
-          "
-          m-r-10
-          "
-          class:m-b-16={VIEWPORT_MOBILE_INIT[1]}
-        >
-          <div
+        <ul>
+
+          <!--
+          ╭─────
+          │ > Navigation Link :|: Latest News
+          ╰─────
+          -->
+          <li
             class=
             "
-            menu-separator
+            m-r-10
             "
-          />
-        </li>
-
-        <!--
-        ╭─────
-        │ > Navigation Link :|: 'Privacy And Conditions'
-        ╰─────
-        -->
-        <li
-          class=
-          "
-          m-r-10
-          "
-          class:m-b-16={VIEWPORT_MOBILE_INIT[1]}
-        >
-          <a
-            rel="external"
-            href={translation.links.privacy}
+            class:m-b-16={VIEWPORT_MOBILE_INIT[1]}
           >
-            <p
-              class=
-              "
-              color-white
-              s-14
-              w-normal
-              hover-color-primary
-              "
+            <a
+              rel="external"
+              href={translation.links.latest_news}
             >
-              <TranslationText
-                key={`${CNAME}/unknown`}
-                text={translation.terms.privacy}
-                fallback={'Privacy'}
-              />
-            </p>
-          </a>
-        </li>
+              <p
+                class=
+                "
+                color-white
+                s-14
+                w-normal
+                hover-color-primary
+                "
+              >
+                <TranslationText
+                  key={`${CNAME}/unknown`}
+                  text={translation.terms.latest_news}
+                  fallback={'Latest News'}
+                />
+              </p>
+            </a>
+          </li>
 
-        <!--
-        ╭─────
-        │ > Separator
-        ╰─────
-        -->
-        <li
-          class=
-          "
-          m-r-10
-          "
-          class:m-b-16={VIEWPORT_MOBILE_INIT[1]}
-        >
-          <div
+          <!--
+          ╭─────
+          │ > Separator
+          ╰─────
+          -->
+          <li
             class=
             "
-            menu-separator
+            m-r-10
             "
-          />
-        </li>
-
-        <!--
-        ╭─────
-        │ > Navigation Link :|: 'Status'
-        ╰─────
-        -->
-        <li
-          class=
-          "
-          m-r-10
-          "
-          class:m-b-16={VIEWPORT_MOBILE_INIT[1]}
-        >
-          <a
-            rel="external"
-            href={translation.links.status}
+            class:m-b-16={VIEWPORT_MOBILE_INIT[1]}
           >
-            <p
+            <div
               class=
               "
-              color-white
-              s-14
-              w-normal
-              hover-color-primary
+              menu-separator
               "
-            >
-              <TranslationText
-                key={`${CNAME}/unknown`}
-                text={translation.terms.status}
-                fallback={'Status'}
-              />
-            </p>
-          </a>
-        </li>
+            />
+          </li>
 
-        <!--
-        ╭─────
-        │ > Separator
-        ╰─────
-        -->
-        <li
-          class=
-          "
-          m-r-10
-          "
-          class:m-b-16={VIEWPORT_MOBILE_INIT[1]}
-        >
-          <div
+          <!--
+          ╭─────
+          │ > Navigation Link :|: 'About Us'
+          ╰─────
+          -->
+          <li
             class=
             "
-            menu-separator
+            m-r-10
             "
-          />
-        </li>
+            class:m-b-16={VIEWPORT_MOBILE_INIT[1]}
+          >
+            <a
+              rel="external"
+              href={translation.links.about_us}
+            >
+              <p
+                class=
+                "
+                color-white
+                s-14
+                w-normal
+                hover-color-primary
+                "
+              >
+                <TranslationText
+                  key={`${CNAME}/unknown`}
+                  text={translation.terms.about_us}
+                  fallback={'About Us'}
+                />
+              </p>
+            </a>
+          </li>
+
+          <!--
+          ╭─────
+          │ > Separator
+          ╰─────
+          -->
+          <li
+            class=
+            "
+            m-r-10
+            "
+            class:m-b-16={VIEWPORT_MOBILE_INIT[1]}
+          >
+            <div
+              class=
+              "
+              menu-separator
+              "
+            />
+          </li>
+
+          <!--
+          ╭─────
+          │ > Navigation Link :|: 'Terms And Conditions'
+          ╰─────
+          -->
+          <li
+            class=
+            "
+            m-r-10
+            "
+            class:m-b-16={VIEWPORT_MOBILE_INIT[1]}
+          >
+            <a
+              rel="external"
+              href={translation.links.terms}
+            >
+              <p
+                class=
+                "
+                color-white
+                s-14
+                w-normal
+                hover-color-primary
+                "
+              >
+                <TranslationText
+                  key={`${CNAME}/unknown`}
+                  text={translation.terms.terms}
+                  fallback={'Terms & Conditions'}
+                />
+              </p>
+            </a>
+          </li>
+
+        </ul>
 
         <!--
         ╭─────
-        │ > Navigation Link :|: 'Changelog'
+        │ > 2nd List Set
         ╰─────
         -->
-        <li
-          class=
-          "
-          m-r-10
-          "
-          class:m-b-16={VIEWPORT_MOBILE_INIT[1]}
-        >
-          <a
-            rel="external"
-            href={translation.links.changelog}
+        <ul>
+
+          <!--
+          ╭─────
+          │ > Separator
+          ╰─────
+          -->
+          <li
+            class=
+            "
+            m-r-10
+            "
+            class:m-b-16={VIEWPORT_MOBILE_INIT[1]}
           >
-            <p
+            <div
               class=
               "
-              color-white
-              s-14
-              w-normal
-              hover-color-primary
+              menu-separator
               "
+            />
+          </li>
+
+          <!--
+          ╭─────
+          │ > Navigation Link :|: 'Privacy And Conditions'
+          ╰─────
+          -->
+          <li
+            class=
+            "
+            m-r-10
+            "
+            class:m-b-16={VIEWPORT_MOBILE_INIT[1]}
+          >
+            <a
+              rel="external"
+              href={translation.links.privacy}
             >
-              <TranslationText
-                key={`${CNAME}/unknown`}
-                text={translation.terms.changelog}
-                fallback={'Changelog'}
-              />
-            </p>
-          </a>
-        </li>
+              <p
+                class=
+                "
+                color-white
+                s-14
+                w-normal
+                hover-color-primary
+                "
+              >
+                <TranslationText
+                  key={`${CNAME}/unknown`}
+                  text={translation.terms.privacy}
+                  fallback={'Privacy'}
+                />
+              </p>
+            </a>
+          </li>
 
-      </ul>
+          <!--
+          ╭─────
+          │ > Separator
+          ╰─────
+          -->
+          <li
+            class=
+            "
+            m-r-10
+            "
+            class:m-b-16={VIEWPORT_MOBILE_INIT[1]}
+          >
+            <div
+              class=
+              "
+              menu-separator
+              "
+            />
+          </li>
 
-    </div>
+          <!--
+          ╭─────
+          │ > Navigation Link :|: 'Status'
+          ╰─────
+          -->
+          <li
+            class=
+            "
+            m-r-10
+            "
+            class:m-b-16={VIEWPORT_MOBILE_INIT[1]}
+          >
+            <a
+              rel="external"
+              href={translation.links.status}
+            >
+              <p
+                class=
+                "
+                color-white
+                s-14
+                w-normal
+                hover-color-primary
+                "
+              >
+                <TranslationText
+                  key={`${CNAME}/unknown`}
+                  text={translation.terms.status}
+                  fallback={'Status'}
+                />
+              </p>
+            </a>
+          </li>
 
-    <!--
-    ╭─────
-    │ > Legal Betting Icon
-    ╰─────
-    -->
-    <div
-      id="{CNAME}⮕legal-bet-box"
-      class=
-      "
-      row-space-start
-      width-auto
-      "
-    >
-      <img
-        loading="lazy"
-        src={dynamicAssetMap.get('legal18icon')}
-        alt="legal18icon"
-        title="legal18icon"
-        width="48"
-        height="24"
+          <!--
+          ╭─────
+          │ > Separator
+          ╰─────
+          -->
+          <li
+            class=
+            "
+            m-r-10
+            "
+            class:m-b-16={VIEWPORT_MOBILE_INIT[1]}
+          >
+            <div
+              class=
+              "
+              menu-separator
+              "
+            />
+          </li>
+
+          <!--
+          ╭─────
+          │ > Navigation Link :|: 'Changelog'
+          ╰─────
+          -->
+          <li
+            class=
+            "
+            m-r-10
+            "
+            class:m-b-16={VIEWPORT_MOBILE_INIT[1]}
+          >
+            <a
+              rel="external"
+              href={translation.links.changelog}
+            >
+              <p
+                class=
+                "
+                color-white
+                s-14
+                w-normal
+                hover-color-primary
+                "
+              >
+                <TranslationText
+                  key={`${CNAME}/unknown`}
+                  text={translation.terms.changelog}
+                  fallback={'Changelog'}
+                />
+              </p>
+            </a>
+          </li>
+
+        </ul>
+
+      </div>
+
+      <!--
+      ╭─────
+      │ > Legal Betting Icon
+      ╰─────
+      -->
+      <div
+        id="{CNAME}⮕legal-bet-box"
         class=
         "
-        m-r-24
-        "
-      />
-      <img
-        loading="lazy"
-        src={dynamicAssetMap.get('begambleawareorg')}
-        alt="begambleawareorg"
-        title="begambleawareorg"
-        width="130"
-        height="16"
-      />
-    </div>
-
-    <!--
-    ╭─────
-    │ > Company Details
-    ╰─────
-    -->
-    <div
-      id="{CNAME}⮕company-box"
-    >
-
-      <p
-        class=
-        "
-        s-14
-        w-500
-        color-grey
+        row-space-start
+        width-auto
         "
       >
-        Second Act
-
-        <!--
-        🖥️ LAPTOP
-        -->
-        {#if !VIEWPORT_TABLET_INIT[1] || VIEWPORT_MOBILE_INIT[1]}
-          <br/>
-        {/if}
-
-        <span
+        <img
+          loading="lazy"
+          src={dynamicAssetMap.get('legal18icon')}
+          alt="legal18icon"
+          title="legal18icon"
+          width="48"
+          height="24"
           class=
           "
-          s-14
-          w-400
-          color-grey
+          m-r-24
           "
-          class:m-l-10={VIEWPORT_TABLET_INIT[1]}
-        >
-          18 Boulevard Montmartre Paris 75009
-        </span>
-      </p>
+        />
+        <img
+          loading="lazy"
+          src={dynamicAssetMap.get('begambleawareorg')}
+          alt="begambleawareorg"
+          title="begambleawareorg"
+          width="130"
+          height="16"
+        />
+      </div>
 
       <!--
-      📱 MOBILE + 💻 TABLET
+      ╭─────
+      │ > Company Details
+      ╰─────
       -->
-      {#if VIEWPORT_TABLET_INIT[1]}
+      <div
+        id="{CNAME}⮕company-box"
+      >
+
         <p
           class=
           "
           s-14
-          w-400
+          w-500
           color-grey
-          m-t-8
           "
         >
-          © 2021 Betarena All rights reserved
+          Second Act
+
+          <!--
+          🖥️ LAPTOP
+          -->
+          {#if !VIEWPORT_TABLET_INIT[1] || VIEWPORT_MOBILE_INIT[1]}
+            <br/>
+          {/if}
+
+          <span
+            class=
+            "
+            s-14
+            w-400
+            color-grey
+            "
+            class:m-l-10={VIEWPORT_TABLET_INIT[1]}
+          >
+            18 Boulevard Montmartre Paris 75009
+          </span>
         </p>
-      {/if}
+
+        <!--
+        📱 MOBILE + 💻 TABLET
+        -->
+        {#if VIEWPORT_TABLET_INIT[1]}
+          <p
+            class=
+            "
+            s-14
+            w-400
+            color-grey
+            m-t-8
+            "
+          >
+            © 2021 Betarena All rights reserved
+          </p>
+        {/if}
+
+      </div>
 
     </div>
 
-  </div>
-
-</footer>
-
+  </footer>
+{/if}
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ 🌊 Svelte Component CSS/SCSS                                                     │
