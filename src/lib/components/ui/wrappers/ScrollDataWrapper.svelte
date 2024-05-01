@@ -310,6 +310,11 @@ $: if(htmlElementScrollBox)  {
           rgba(var(--gradient-color-rgb), 1) 75%
         );
       }
+
+      :global(svg) {
+        /* 🎨 style */
+        width: 6px !important;
+      }
     }
   }
 </style>
