@@ -3,52 +3,19 @@
 // │ :|: Author Article Data Endpoint                                 │
 // ╰──────────────────────────────────────────────────────────────────╯
 
-// #region ➤ 📦 Package
-
-// ╭──────────────────────────────────────────────────────────────────╮
-// │ NOTE:                                                            │
-// │ Please add inside 'this' region the 'imports' that are required  │
-// │ by 'this' .svelte file is ran.                                   │
-// │ IMPORTANT                                                        │
-// │ Please, structure the imports as follows:                        │
-// │ 1. svelte/sveltekit, external imports                            │
-// │ 2. project-internal files and logic                              │
-// │ 5. type(s) imports(s)                                            │
-// ╰──────────────────────────────────────────────────────────────────╯
-
-import { json } from '@sveltejs/kit';
-import dotenv from 'dotenv';
-
 import { checkNull } from '$lib/utils/miscellenous.js';
-import { getAuthorArticleByPermalink, getAuthorArticleTranslation } from '@betarena/scores-lib/dist/functions/func.authors-articles.js';
-import { tryCatchAsync } from '@betarena/scores-lib/dist/util/util.common.js';
-
-import type { IArticleData, IArticleTranslation } from '@betarena/scores-lib/types/types.authors.articles.js';
-
-// #endregion ➤ 📦 Package
-
-// ▓ IMPORTANT
-dotenv.config();
-
-// #region ➤ 🛠️ Functions
+import { getAuthorArticleByPermalink, getAuthorArticleTranslation } from '@betarena/scores-lib/dist/functions/v8/authors.articles.js';
+import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
+import type { IArticleData } from '@betarena/scores-lib/types/types.authors.articles.js';
+import { json, type RequestEvent } from '@sveltejs/kit';
 
 // ╭──────────────────────────────────────────────────────────────────╮
 // │ 🛠️ MAIN METHODS                                                  │
 // ╰──────────────────────────────────────────────────────────────────╯
 
-/**
- * @author
- *  @migbash
- * @summary
- *  🟥 MAIN
- * @description
- *  📣 fixture (lineup) widget main data (hasura) fallback;
- * @param { RequestEvent } req
- * @returns { Promise < unknown > }
- */
-export async function GET
+export async function main
 (
-  request
+  request: RequestEvent
 )
 {
   return await tryCatchAsync
@@ -63,8 +30,8 @@ export async function GET
 
       const
         permalink = request.url.searchParams.get('permalink'),
-        hasura = request.url.searchParams.get('hasura'),
-        lang = request?.url?.searchParams?.get('lang')
+        // hasura = request.url.searchParams.get('hasura'),
+        lang = request.url.searchParams.get('lang')
       ;
 
       // ╭──────────────────────────────────────────────────────────────────╮
@@ -79,7 +46,7 @@ export async function GET
         const
           data: IArticleData = await fallbackDataGenerate0
           (
-            permalink!
+            permalink
           ),
           loadType = 'HASURA'
         ;
@@ -117,8 +84,8 @@ export async function GET
       (
         null
       );
-    }
-    , (
+    },
+    (
       ex: unknown
     ): Response =>
     {
@@ -188,11 +155,9 @@ async function fallbackDataGenerate1
     [lang]
   );
 
-  if (dataRes0?.[0].size == 0)
+  if (dataRes0[0].size == 0)
     return null;
   ;
 
-  return dataRes0?.[0].get(lang);
+  return dataRes0[0].get(lang);
 }
-
-// #endregion ➤ 🛠️ Functions

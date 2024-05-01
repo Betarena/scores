@@ -66,7 +66,7 @@
 
   // import '@betarena/ad-engine';
   // import WidgetAdEngine from '@betarena/ad-engine/src/lib/Widget-AdEngine.svelte';
-  import WidgetAdEngine from '@betarena/ad-engine';
+  // import WidgetAdEngine from '@betarena/ad-engine';
 
   // ╭─────
   // │ WARNING:
@@ -522,11 +522,11 @@
 
 <!-- {$page.data.dataArticle} -->
 
-<WidgetAdEngine
+<!-- <WidgetAdEngine
   authorId={$page.data.dataArticle?.author_id}
   authorArticleTagIds={$page.data.dataArticle?.tags}
   isDarkTheme={theme == 'Dark'}
-/>
+/> -->
 
 <SplashScreen />
 
@@ -575,6 +575,7 @@
 <main
 	class:dark-background={theme == 'Dark'}
 	class:dark-mode={theme == 'Dark'}
+  class:light-mode={theme == 'Light'}
   class:standard={currentPageRouteId == null || currentPageRouteId == 'ProfilePage'}
   class:page-competition={currentPageRouteId == 'CompetitionPage'}
   class:page-profile={currentPageRouteId == 'ProfilePage'}
@@ -595,6 +596,13 @@
 -->
 
 <style lang="scss">
+   /*
+  ╭──────────────────────────────────────────────────────────────────────────────╮
+  │ THEMES                                                              │
+  ╰──────────────────────────────────────────────────────────────────────────────╯
+  */
+  @import '../../static/themes/dark.scss';
+  @import '../../static/themes/light.scss';
 
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮

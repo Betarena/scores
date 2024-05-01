@@ -9,14 +9,14 @@
 import { sentrySvelteKit } from "@sentry/sveltekit";
 import { sveltekit } from '@sveltejs/kit/vite';
 import { table } from 'table';
+import { loadEnv } from "vite";
 import { defineConfig } from 'vitest/config';
 
-import { loadEnv } from "vite";
-import { version } from './package.json';
+import { dependencies, version } from './package.json';
 
 // ╭─────
 // │ NOTE: IMPORTANT
-// │ > required as part of Google Hack.
+// │ ➤ required as part of Google Hack.
 // ╰─────
 // import viteCompression from 'vite-plugin-compression';
 // import fs from 'fs';
@@ -34,7 +34,10 @@ export default defineConfig
     }
   ) =>
   {
-    // [🐞]
+    // ╭─────
+    // │ NOTE: [🐞]
+    // │ ➤ [part-1] Testing for override of local .env for that of the dotenv-valut injected secrets.
+    // ╰─────
     // console.log([JSON.stringify(process.env.VITE_ENV_TARGET)])
 
     // ╭─────
@@ -47,9 +50,40 @@ export default defineConfig
       ...loadEnv(mode, process.cwd())
     };
 
-    // [🐞]
+    // ╭─────
+    // │ NOTE: [🐞]
+    // │ ➤ [part-2] Testing for override of local .env for that of the dotenv-valut injected secrets.
+    // ╰─────
     // console.log([JSON.stringify(process.env.VITE_ENV_TARGET)])
     // console.log([JSON.stringify(loadEnv(mode, process.cwd()))])
+
+    const
+      /**
+       * @description
+       * 📝 Scores pacakge version
+       * @note
+       * Previously used as `VITE_SCORES_PKG_VERSION=v.$(npm pkg get version --workspaces=false | tr -d \\\") npm run [..]`
+       * @example
+       * => 0.5
+       */
+      __PKG_VERSION_SCORES__ = version,
+      /**
+       * @description
+       * 📝 Scores-Lib package version
+       * @note
+       * Previously used as `VITE_SCORES_LIB_PKG_VERSION=v.$(npm info @betarena/scores-lib version | tr -d \\\") npm run [..]`
+       * @example
+       * => 0.5
+       */
+      __PKG_VERSION_SCORES_LIB__ = dependencies["@betarena/scores-lib"],
+      /**
+       * @description
+       * 📝 Ad-Engine package version
+       * @example
+       * => 0.5
+       */
+      __PKG_VERSION_AD_ENGINE__ = dependencies["@betarena/ad-engine"]
+    ;
 
     // [🐞]
     console.log
@@ -57,66 +91,73 @@ export default defineConfig
       table
       (
         [
-          ['💮 scores (version)', process.env?.VITE_SCORES_PKG_VERSION],
-          ['💮 [dependency] @betarena/scores-lib (version)', process.env?.VITE_SCORES_LIB_PKG_VERSION],
-          ['📣 uploaded sentry sourcemap', process.env?.VITE_SENTRY_UPLOAD_SOURCEMAPS],
-          ['📣 target .env', process.env?.VITE_ENV_TARGET],
-          ['📣 logging', process.env?.VITE_PROD_LOGS],
-          ['📣 vite mode', mode],
-          ['📣 vite command', command],
-          ['📣 vite ssrBuild', ssrBuild],
-
+          ['💮 [project] |:| scores', __PKG_VERSION_SCORES__],
+          ['💮 [dependency] |:| @betarena/scores-lib', __PKG_VERSION_SCORES_LIB__],
+          ['💮 [dependency] |:| @betarena/ad-engine', __PKG_VERSION_AD_ENGINE__],
+          ['❓ [condition] |:| uploaded sentry sourcemap', process.env?.VITE_SENTRY_UPLOAD_SOURCEMAPS],
+          ['❓ [condition] |:| logging', process.env?.VITE_PROD_LOGS],
+          ['📌 [artifact] |:| .env', process.env?.VITE_ENV_TARGET],
+          ['📌 [vite] |:| mode', mode],
+          ['📌 [vite] |:| command', command],
+          ['📌 [vite] |:| ssrBuild', ssrBuild],
         ]
       )
     );
 
     return {
 
+      define:
+      {
+        __PKG_VERSION_SCORES__: `"${__PKG_VERSION_SCORES__}"`,
+        __PKG_VERSION_SCORES_LIB__: `"${__PKG_VERSION_SCORES_LIB__}"`,
+        __PKG_VERSION_AD_ENGINE__: `"${__PKG_VERSION_AD_ENGINE__}"`
+      },
+
       plugins:
       [
         // ╭─────
         // │ NOTE: IMPORTANT
-        // │ > needs to be placed 'before' sveltekit compilation.
+        // │ ➤ needs to be placed 'before' sveltekit compilation.
         // ╰─────
         sentrySvelteKit
         (
           {
             sourceMapsUploadOptions:
             {
-              org: "betarena"
-              , project: "scores-platform"
-              , release: process.env?.VITE_SCORES_PKG_VERSION ?? process.env?.npm_package_version ?? version ?? 'v.0.0.0'
-              , uploadSourceMaps: process.env?.VITE_SENTRY_UPLOAD_SOURCEMAPS as unknown as string == 'true' ? true : false
-            }
-            , autoUploadSourceMaps: process.env?.VITE_SENTRY_UPLOAD_SOURCEMAPS as unknown as string == 'true' ? true : false
+              org: "betarena",
+              project: "scores-platform",
+              release: process.env?.npm_package_version ?? version ?? 'v.0.0.0',
+              uploadSourceMaps: process.env?.VITE_SENTRY_UPLOAD_SOURCEMAPS as unknown as string == 'true' ? true : false
+            },
+            autoUploadSourceMaps: process.env?.VITE_SENTRY_UPLOAD_SOURCEMAPS as unknown as string == 'true' ? true : false
           }
         ),
 
         // ╭─────
         // │ NOTE: WARNING:
-        // │ > imported from 'vite-plugin-chunk-split'.
-        // │ > DOES NOT WORK! BREAKS BUILD/COMPILE!
+        // │ ➤ imported from 'vite-plugin-chunk-split'.
+        // │ ➤ DOES NOT WORK! BREAKS BUILD/COMPILE!
         // ╰─────
         // chunkSplitPlugin({ strategy: 'all-in-one' }),
 
         // ╭─────
         // │ NOTE: WARNING:
-        // │ > imported from 'vite-plugin-progress'.
-        // │ > DOES NOT WORK AS ADVERTISED!
+        // │ ➤ imported from 'vite-plugin-progress'.
+        // │ ➤ DOES NOT WORK AS ADVERTISED!
         // ╰─────
         // progress(),
 
         // ╭─────
         // │ NOTE: WARNING:
-        // │ > imported from 'vite-plugin-compress'.
-        // │ > DOES NOT WORK AS ADVERTISED!
+        // │ ➤ imported from 'vite-plugin-compress'.
+        // │ ➤ DOES NOT WORK AS ADVERTISED!
         // ╰─────
         // c.compress(),
 
         // ╭─────
         // │ NOTE: WARNING:
-        // │ > imported from 'vite-plugin-preload'.
-        // │ > DOES NOT WORK AS ADVERTISED!
+        // │ ➤ imported from 'vite-plugin-preload'.
+        // │ ➤ DOES NOT WORK AS ADVERTISED!
         // ╰─────
         // preload(),
 
@@ -126,18 +167,18 @@ export default defineConfig
 
         // ╭─────
         // │ NOTE:
-        // │ > imported from 'vite-plugin-css-injected-by-js'.
+        // │ ➤ imported from 'vite-plugin-css-injected-by-js'.
         // │ WARNING:
-        // │ > overrides 'CSS' imported by 'svelte' & 'svelte-kit'
-        // │ > requires to be imported a '<link ... >' in the 'src/app.html'
+        // │ ➤ overrides 'CSS' imported by 'svelte' & 'svelte-kit'
+        // │ ➤ requires to be imported a '<link ... >' in the 'src/app.html'
         // │ IMPORTANT
         // │ Please, follow the following steps (to attain google-hack)
-        // │ > [1] Uncomment (below) code-block
-        // │ > [2] Run `npm run build` in command-line for '_this_' root project path.
-        // │ > [3] Validate new `./static/all-one-css-chunk.css` has been generated.
-        // │ > [4] Comment (below) code-block.
-        // │ > [5] Copy new `CSS` to `src/app.html > <head> <style> (designated area).
-        // │ > [6] Push to `Production`.
+        // │ ➤ [1] Uncomment (below) code-block
+        // │ ➤ [2] Run `npm run build` in command-line for '_this_' root project path.
+        // │ ➤ [3] Validate new `./static/all-one-css-chunk.css` has been generated.
+        // │ ➤ [4] Comment (below) code-block.
+        // │ ➤ [5] Copy new `CSS` to `src/app.html > <head> <style> (designated area).
+        // │ ➤ [6] Push to `Production`.
         // ╰─────
         /*
           cssInjectedByJsPlugin
@@ -214,7 +255,7 @@ export default defineConfig
       {
         // ╭─────
         // │ NOTE:
-        // │ > gets overridden by SvelteKit.
+        // │ ➤ gets overridden by SvelteKit.
         // ╰─────
         // cssCodeSplit: false,
 
@@ -223,7 +264,7 @@ export default defineConfig
 
         // ╭─────
         // │ NOTE:
-        // │ > rollup config.
+        // │ ➤ rollup config.
         // ╰─────
         rollupOptions:
         {
@@ -266,8 +307,8 @@ export default defineConfig
 
               // ╭─────
               // │ NOTE:
-              // │ > testing for 'per-page' component build split.
-              // │ > works well, but at times incosistent, due to CSS.
+              // │ ➤ testing for 'per-page' component build split.
+              // │ ➤ works well, but at times incosistent, due to CSS.
               // ╰─────
               // if (id.includes('src/lib/components/_main_'))
               //   return 'M-main-single-chunk';
@@ -287,7 +328,7 @@ export default defineConfig
 
               // ╭─────
               // │ NOTE:
-              // │ > works well, but at times incosistent, supercharged with hardcoded CSS.
+              // │ ➤ works well, but at times incosistent, supercharged with hardcoded CSS.
               // ╰─────
               // if (id.includes('src/'))
               //   return 'M-single-chunk';
@@ -295,7 +336,7 @@ export default defineConfig
 
               // ╭─────
               // │ NOTE: WARNING:
-              // │ > gives error of 'dev' issue [?]
+              // │ ➤ gives error of 'dev' issue [?]
               // ╰─────
               // if (id.includes('src/lib/utils/'))
               //   return 'M-utils-single-chunk';
@@ -309,7 +350,7 @@ export default defineConfig
 
               // ╭─────
               // │ NOTE:
-              // │ > original
+              // │ ➤ original
               // ╰─────
               // if (id.includes('node_modules'))
               //   return id.toString().split('node_modules/')[1].split('/')[0].toString();
@@ -332,7 +373,7 @@ export default defineConfig
 
       // ╭─────
       // │ NOTE:
-      // │ > (disabled) 'vitest' integration
+      // │ ➤ (disabled) 'vitest' integration
       // ╰─────
       /*
         test:

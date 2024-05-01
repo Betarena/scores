@@ -2,20 +2,13 @@
 
 import { json } from '@sveltejs/kit';
 
-import { initGrapQLClient } from '$lib/graphql/init';
+import { _Redis } from '@betarena/scores-lib/dist/classes/_redis.js';
+import * as RedisKeys from '@betarena/scores-lib/dist/constant/redis.js';
 import { LSTAN_LP_ENTRY, LSTAN_LP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.league.standings.js';
-import { STA_C_D_A, STA_C_T_A } from '@betarena/scores-lib/dist/redis/config.js';
-import { get_target_hset_cache_data } from '../../../../../lib/redis/std_main';
 
 import type { B_STA_D, B_STA_T } from '@betarena/scores-lib/types/standings.js';
 
 // #endregion ➤ Package Imports
-
-// #region ➤ [VARIABLES] Imports
-
-const graphQlInstance = initGrapQLClient()
-
-// #endregion ➤ [VARIABLES] Imports
 
 // #region ➤ [METHODS]
 
@@ -49,9 +42,9 @@ export async function GET
       // IMPORTANT Check in cache;
       if (!hasura)
       {
-        data = await get_target_hset_cache_data
+        data = await new _Redis().rHGET
         (
-          STA_C_D_A,
+          RedisKeys.STA_C_D_A,
           league_id
         );
       }
@@ -85,9 +78,9 @@ export async function GET
       // IMPORTANT Check in cache;
       if (!hasura)
       {
-        data = await get_target_hset_cache_data
+        data = await new _Redis().rHGET
         (
-          STA_C_T_A,
+          RedisKeys.STA_C_T_A,
           lang
         );
       }
@@ -155,7 +148,6 @@ async function fallbackMainData
 
   const dataRes0 = await LSTAN_LP_ENTRY
   (
-    graphQlInstance,
     [_leagueId]
   );
 
@@ -187,7 +179,6 @@ async function fallbackMainData_1
 {
   const dataRes0 = await LSTAN_LP_ENTRY_1
   (
-    graphQlInstance,
     [lang]
   );
 

@@ -15,7 +15,7 @@
 
 // #region ➤ 📦 Package Imports
 
-import { passByValue } from '@betarena/scores-lib/dist/functions/func.common.js';
+import { passByValue } from '@betarena/scores-lib/dist/util/common.js';
 import { writable } from 'svelte/store';
 
 // #endregion ➤ 📦 Package Imports

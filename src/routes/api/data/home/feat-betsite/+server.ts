@@ -6,12 +6,12 @@
 // #region ➤ 📦 Package Imports
 
 import { json } from '@sveltejs/kit';
-
-import { HFEATB_HP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.home.feat-betsite.js';
-import { FEATB_C_T_A } from '@betarena/scores-lib/dist/redis/config.js';
 import dotenv from 'dotenv';
 import LZString from 'lz-string';
-import { get_target_hset_cache_data } from '../../../../../lib/redis/std_main';
+
+import { _Redis } from '@betarena/scores-lib/dist/classes/_redis.js';
+import * as RedisKeys from '@betarena/scores-lib/dist/constant/redis.js';
+import { HFEATB_HP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.home.feat-betsite.js';
 
 import type { B_FEATB_T } from '@betarena/scores-lib/types/feat-betsite.js';
 
@@ -57,9 +57,9 @@ export async function GET
       // ### for existance in cache.
       if (!hasura)
       {
-        data = await get_target_hset_cache_data
+        data = await new _Redis().rHGET
         (
-          FEATB_C_T_A,
+          RedisKeys.FEATB_C_T_A,
           lang
         );
       }
@@ -141,7 +141,6 @@ async function fallbackMainData
 {
   const dataRes0: [ Map < string, B_FEATB_T >, string[] ] = await HFEATB_HP_ENTRY_1
   (
-    null,
     [lang]
   );
 

@@ -1,5 +1,3 @@
-# ▓ > 🔗 read-more :|: https://github.com/sveltejs/eslint-plugin-svelte
-
 root: true
 
 env:
@@ -11,16 +9,23 @@ extends:
   - eslint:recommended
   - plugin:svelte/recommended
   - plugin:@typescript-eslint/strict
-  # ▓ WARNING:
-  # ▓ > (👇) below :: does not work with svelte.
+  # ╭─────
+  # │ NOTE:
+  # │ ➤ (👇) below :: does not work with svelte.
+  # ╰─────
   # - plugin:import/errors
   # - plugin:import/warnings
   # - plugin:import/typescript
-  # ▓ > (👇) :|: https://www.npmjs.com/package/eslint-config-google
+  # ╭─────
+  # │ NOTE:
+  # │ ➤ (👇) :|: https://www.npmjs.com/package/eslint-config-google
+  # ╰─────
   # - google
   # - prettier
-  # ▓ NOTE:
-  # ▓ > (👇) already contained within ../strict.
+  # ╭─────
+  # │ NOTE:
+  # │ ➤ (👇) already contained within ../strict.
+  # ╰─────
   # - plugin:@typescript-eslint/recommended
   # - plugin:@typescript-eslint/stylistic
 
@@ -44,7 +49,7 @@ overrides:
       parser: '@typescript-eslint/parser'
 
 globals:
-  # ▓ > 🔗 read-more :|: https://github.com/Chatie/eslint-config/issues/45#issuecomment-885507652
+  # 🔗 read-more :|: https://github.com/Chatie/eslint-config/issues/45#issuecomment-885507652
   "NodeJS": true
 
 ignorePatterns:
@@ -59,13 +64,16 @@ ignorePatterns:
   - pnpm-lock.yaml
   - package-lock.json
   - yarn.lock
-  # ▓ NOTE:
-  # ▓ > gradual eslint introduction in project.
+  # ╭─────
+  # │ NOTE: |:| gradual eslint introduction in project.
+  # ╰─────
+  # - src/lib/store
+  # - src/routes
   - src/lib/geo-js
   - src/lib/graphql
   - src/lib/redis
   # - src/lib/store
-  # - src/routes
+  - src/routes/api
   - src/lib/types
   - src/params
   - src/service-worker.ts
@@ -73,33 +81,44 @@ ignorePatterns:
 plugins:
   - "@typescript-eslint"
   - svelte
-  # ▓ WARNING:
-  # ▓ > (👇) all-below :: does not work with svelte.
+  # ╭─────
+  # │ WARNING:
+  # │ ➤ (👇) all-below :: does not work with svelte.
+  # ╰─────
   # - import
 
-# ▓ IMPORTANT
-# ▓ > Main 'defacto' configuration, do not remove and/or alter heavily.
-# ▓ > 🔗 read-more :|: https://eslint.org/docs/latest/rules/
+# ╭─────
+# │ IMPORTANT
+# │ ➤ Main 'defacto' configuration, do not remove and/or alter heavily.
+# │ ➤ 🔗 read-more :|: https://eslint.org/docs/latest/rules/
+# ╰─────
 rules:
 
-  # ▓ NOTE:
-  # ▓ > (👇) for svelte/sveltekit project only!
+  # ╭─────
+  # │ NOTE:
+  # │ ➤ (👇) for svelte/sveltekit project only!
+  # ╰─────
   'svelte/valid-compile': 0
   'svelte/no-at-html-tags': 0
 
-  # ▓ NOTE:
-  # ▓ > has been depreceted.
+  # ╭─────
+  # │ NOTE:
+  # │ ➤ has been depreceted.
+  # ╰─────
   # "valid-jsdoc": [..]
   no-unexpected-multiline: 0
   import/no-unresolved: 0
-  # ▓ NOTE:
-  # ▓ > Ideal, but doesn't work as expected :: [ "error", "always", {  "allowNewlines": true } ]
-  # ▓ > as it requires a space after function declaration, 'always'.
+
+  # ╭─────
+  # │ NOTE:
+  # │ ➤ Ideal, but doesn't work as expected :: [ "error", "always", {  "allowNewlines": true } ]
+  # │ ➤ as it requires a space after function declaration, 'always'.
+  # ╰─────
   func-call-spacing: 0
 
-  "@typescript-eslint/no-inferrable-types": 0
-  "@typescript-eslint/prefer-for-of": error
-  "@typescript-eslint/no-non-null-asserted-nullish-coalescing": error
+  '@typescript-eslint/no-inferrable-types': 0
+  '@typescript-eslint/prefer-for-of': error
+  '@typescript-eslint/no-non-null-asserted-nullish-coalescing': error
 
   no-console:
     - error
@@ -162,3 +181,13 @@ rules:
     - error
     - initialized: "consecutive"
   no-extra-semi: 0
+  require-jsdoc:
+    - error
+    - require:
+      - FunctionDeclaration: true
+      - MethodDefinition: true
+      - ClassDeclaration: true
+      - ArrowFunctionExpression: true
+      - FunctionExpression: true
+  no-var:
+    - error
