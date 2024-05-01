@@ -145,8 +145,10 @@
   // │ as soon as 'this' .svelte file is ran.                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  onMount(() => {
-    scrollData(0);
+  onMount(async () => {
+    setTimeout(() => {
+      scrollData(0);
+    }, 500);
   });
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
@@ -163,7 +165,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div id={CNAME} class="tags-box">
+<div id={CNAME} class="tags-box" on:resize={() => scrollData(0)}>
   <!--
     ╭─────
     │ > previous (button)
@@ -266,7 +268,7 @@
       position: absolute;
       display: flex;
       align-items: center;
-      height: 100%;
+      height: calc(100% + 2px);
       width: 50px;
       z-index: 5;
       bottom: 0;
@@ -277,13 +279,12 @@
       &#tagScrollPrev {
         /* 🎨 style */
         justify-content: start;
-        left: -1px;
-        padding-left: -5px;
+        left: -5px;
         background: linear-gradient(
-          90deg,
-         var(--gradient-color-light) 25.69%,
-          var(--gradient-color-medium) 70%,
-          var(--gradient-color-dark) 100%
+          270deg,
+          var(--gradient-color-light) 25.69%,
+          var(--gradient-color-medium) 50%,
+          var(--gradient-color-dark) 75%
         );
 
         :global(svg) {
@@ -294,25 +295,16 @@
 
       &#tagScrollNext {
         /* 🎨 style */
-        right: -1px;
+        right: -5px;
         justify-content: end;
         padding-right: 5px;
         background: linear-gradient(
           90deg,
           var(--gradient-color-light) 25.69%,
-          var(--gradient-color-medium) 70%,
-          var(--gradient-color-dark) 100%
+          var(--gradient-color-medium) 50%,
+          var(--gradient-color-dark) 75%
         );
       }
-
-      // img {
-      //   /* 🎨 style */
-      //   position: absolute;
-      //   z-index: 5;
-      //   bottom: 0;
-      //   top: 0;
-      //   margin: auto;
-      // }
     }
   }
 </style>
