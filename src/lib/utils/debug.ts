@@ -7,16 +7,16 @@
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
 // │ 📝 Description                                                                   │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
-// │ > Scores Debug Common Logic                                                      │
+// │ Betarena (Module) || Scores Debug Common Logic                                   │
 // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 // #region ➤ 📦 Package Imports
 
-import { browser, dev } from '$app/environment';
 import * as Sentry from '@sentry/browser';
 import chalk from 'chalk';
 
-import { postv2 } from '$lib/api/utils.js';
+import { browser, dev } from '$app/environment';
+import { LOGS_SHOW_OVERRIDE } from '$lib/constants/instance.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -40,18 +40,7 @@ const
    *  - 📣 overrides all individual toggles for show/hide ALL logs.
    *  - 📣 used for local development override of `logs`.
    */
-  MASTER_DEBUG_TOGGLE: boolean = true,
-  /**
-   * @description
-   *  - 📣 overrides (ADMIN) to show logs even in PROD.
-   *  - 📣 Prevents logs display on `deployments`.
-   */
-  LOGS_SHOW_OVERRIDE: boolean
-    = import.meta.env.VITE_PROD_LOGS == undefined
-      ? dev
-      : import.meta.env.VITE_PROD_LOGS == 'false'
-        ? false
-        : true
+  MASTER_DEBUG_TOGGLE: boolean = true
 ;
 
 export const
@@ -494,13 +483,13 @@ async function saveLog
   data: string
 ): Promise < void >
 {
-  if (browser && dev)
-    await postv2
-    (
-      '/api/misc/debug',
-      data
-    );
-  ;
+  // if (browser && import.meta.env?.VITE_PROD_LOGS)
+  //   await postv2
+  //   (
+  //     '/api/misc/debug',
+  //     data
+  //   );
+  // ;
 
   return;
 }

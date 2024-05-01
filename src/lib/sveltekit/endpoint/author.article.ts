@@ -6,8 +6,8 @@
 import { checkNull } from '$lib/utils/miscellenous.js';
 import { getAuthorArticleByPermalink, getAuthorArticleTranslation } from '@betarena/scores-lib/dist/functions/v8/authors.articles.js';
 import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
-import { RequestEvent } from '@sveltejs/kit';
-import { json } from 'stream/consumers';
+import type { IArticleData } from '@betarena/scores-lib/types/types.authors.articles.js';
+import { json, type RequestEvent } from '@sveltejs/kit';
 
 // ╭──────────────────────────────────────────────────────────────────╮
 // │ 🛠️ MAIN METHODS                                                  │
@@ -30,7 +30,7 @@ export async function main
 
       const
         permalink = request.url.searchParams.get('permalink'),
-        hasura = request.url.searchParams.get('hasura'),
+        // hasura = request.url.searchParams.get('hasura'),
         lang = request.url.searchParams.get('lang')
       ;
 
@@ -46,7 +46,7 @@ export async function main
         const
           data: IArticleData = await fallbackDataGenerate0
           (
-            permalink!
+            permalink
           ),
           loadType = 'HASURA'
         ;

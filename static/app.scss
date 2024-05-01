@@ -17,3 +17,7 @@ are generally used throughout the project in a consistant and repetetive manner.
 @import './scss/layout.scss';
 @import './scss/common.scss';
 @import './scss/misc.scss';
+
+// themes vars
+@import './themes/dark.scss';
+@import './themes/light.scss';

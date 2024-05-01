@@ -954,6 +954,79 @@ function generateLiveScoreboardList
   return;
 }
 
+/**
+ * @author
+ *  @izobov
+ * @summary
+ *  🟦 HELPER
+ * @description
+ *  📣 Update `user` platform folowings options.
+ * @param { {[key:string]: (string | number)[]} } following
+ *  💠 **[required]** Following object
+ * @returns { Promise < void > }
+ */
+export async function updateFollowing
+(
+  following: { [key: string]: (string | number)[] }
+): Promise < void >
+{
+  const
+    /**
+     * @description
+     * 📝 Data point
+     */
+    uid = userBetarenaSettings.extract('uid') as string | undefined | null,
+    /**
+     * @description
+     * 📝 Data for `page`
+     */
+    page = sessionStore.extract< Page >('page') as Page,
+    /**
+     * @description
+     * 📝 Conditional logic bundle simplification
+     */
+    if_M_0
+      = !checkNull(page.error)
+      || checkNull(page.route.id)
+      || !following
+      || !uid
+  ;
+
+  if (if_M_0) return;
+
+  // [🐞]
+  dlogv2
+  (
+    '🚏 checkpoint ➤ updateFollowing(..)',
+    [
+      `🔹 [var] ➤ opts.isPageError :|: ${page.error}`,
+      `🔹 [var] ➤ opts.routeId :|: ${page.route.id}`,
+      `🔹 [var] ➤ following :|: ${following}`,
+      `🔹 [var] ➤ uid :|: ${uid}`,
+    ],
+    true
+  );
+
+  const
+    userRef = doc
+    (
+      db_firestore,
+      'betarena_users',
+      uid,
+    )
+  ;
+
+  await updateDoc
+  (
+    userRef,
+    {
+      following
+    }
+  );
+
+  return;
+}
+
 // #endregion 🔥 LIVESCORES_NOW_SCOREBOARD
 
 // #endregion ➤ 🛠️ METHODS
