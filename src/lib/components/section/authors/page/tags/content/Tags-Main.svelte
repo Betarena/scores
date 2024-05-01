@@ -228,6 +228,7 @@
     widgetData = {
       ...widgetData,
       ...res,
+      mapTag: [...widgetData.mapTag, ...res.mapTag],
     };
     pendingArticles = false;
   }
