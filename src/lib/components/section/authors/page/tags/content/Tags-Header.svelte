@@ -191,9 +191,9 @@
       <h1 on:click={toggleDescription}>
         {tag.name}
         {#if mobile && tag.description}
-        <span class="arrow-down" class:opend={showDescription}>
-          <ArrowDown />
-        </span>
+          <span class="arrow-down" class:opend={showDescription}>
+            <ArrowDown />
+          </span>
         {/if}
       </h1>
       <div class="tag-info">
@@ -255,6 +255,7 @@
       </Button>
     </div>
   </div>
+  {#if tag.description}
     <div
       class="header-description"
       style={!mobile && !tablet
@@ -263,6 +264,7 @@
     >
       <span>{tag.description}</span>
     </div>
+  {/if}
 </div>
 
 {#if mobile}
