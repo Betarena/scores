@@ -601,7 +601,7 @@
   │ THEMES                                                              │
   ╰──────────────────────────────────────────────────────────────────────────────╯
   */
-  @import '../../static//themes/dark.scss';
+  @import '../../static/themes/dark.scss';
   @import '../../static/themes/light.scss';
 
   /*

@@ -186,8 +186,8 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="tags-header-wrapper" class:mobile class:expand={showDescription}>
-  <div class="header-buttons" bind:clientHeight={titleHeight} style="--max-title-height: {titleHeight}px">
+<div class="tags-header-wrapper" class:mobile class:expand={showDescription} style="--max-title-height: {titleHeight}px">
+  <div class="header-buttons" bind:clientHeight={titleHeight} >
     <div class="tag-info-wrapper">
       <h1 on:click={toggleDescription} >
         {tag.name}

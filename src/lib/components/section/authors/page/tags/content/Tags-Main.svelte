@@ -170,7 +170,6 @@
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
   function prepareArticles(
     articles: [number, IPageAuthorArticleData][],
     tags_map: Map<number, IPageAuthorTagData>,

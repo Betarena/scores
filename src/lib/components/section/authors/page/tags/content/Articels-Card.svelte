@@ -171,6 +171,10 @@
             line-height: 24px;
           }
 
+          .tags-wrapper {
+            --gradient-color-rgb: var(--bg-color-rgb-consts);
+          }
+
           .author-name {
             font-size: var(--text-size-m);
           }
@@ -232,9 +236,7 @@
         margin-top: 20px;
         max-width: 100%;
         --text-button-size: var(--text-size-s);
-        --g-color-light: var(--gradient-color-light);
-        --g-color-medium: var(--gradient-color-medium);
-        --g-color-dark: var(--gradient-color-dark);
+        --gradient-color-rgb: var(--bg-color-second-rgb-consts);
 
         &.expanded {
           flex-wrap: wrap;

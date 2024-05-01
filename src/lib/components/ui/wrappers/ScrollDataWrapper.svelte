@@ -287,9 +287,9 @@ $: if(htmlElementScrollBox)  {
         left: -5px;
         background: linear-gradient(
           270deg,
-          var(--gradient-color-light) 25.69%,
-          var(--gradient-color-medium) 50%,
-          var(--gradient-color-dark) 75%
+          rgba(var(--gradient-color-rgb), 0) 25.69%,
+          rgba(var(--gradient-color-rgb), 0.6) 50%,
+          rgba(var(--gradient-color-rgb), 1) 75%
         );
 
         :global(svg) {
@@ -305,9 +305,9 @@ $: if(htmlElementScrollBox)  {
         padding-right: 5px;
         background: linear-gradient(
           90deg,
-          var(--gradient-color-light) 25.69%,
-          var(--gradient-color-medium) 50%,
-          var(--gradient-color-dark) 75%
+          rgba(var(--gradient-color-rgb), 0) 25.69%,
+          rgba(var(--gradient-color-rgb), 0.6) 50%,
+          rgba(var(--gradient-color-rgb), 1) 75%
         );
       }
     }
