@@ -210,11 +210,13 @@
         }
 
         &.tablet {
-          width: 248px;
+          max-width: 248px;
+          width: 100%;
         }
 
         &.mobile {
           width: 100%;
+          max-width: 100%;
         }
       }
     }

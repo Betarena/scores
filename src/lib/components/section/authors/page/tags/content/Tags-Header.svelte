@@ -64,6 +64,7 @@
   let filterValue = "all";
   let buttonsWidth: number;
   let tagStore: Writable<IPageAuthorTagData>;
+  let titleHeight;
   const dispatch = createEventDispatcher<{ filter: string }>();
 
   $: dispatch("filter", filterValue);
@@ -186,9 +187,9 @@
 -->
 
 <div class="tags-header-wrapper" class:mobile class:expand={showDescription}>
-  <div class="header-buttons">
+  <div class="header-buttons" bind:clientHeight={titleHeight} style="--max-title-height: {titleHeight}px">
     <div class="tag-info-wrapper">
-      <h1 on:click={toggleDescription}>
+      <h1 on:click={toggleDescription} >
         {tag.name}
         {#if mobile && tag.description}
           <span class="arrow-down" class:opend={showDescription}>
@@ -307,7 +308,7 @@
 
     &.mobile {
       padding: 0 24px;
-      max-height: 53px;
+      max-height: var(--max-title-height);
       overflow: hidden;
       transition: max-height 1s ease-in-out;
 
