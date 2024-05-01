@@ -14,19 +14,19 @@
 
 // #region ➤ 📦 Package Imports
 
-import { LoadEvent } from '@sveltejs/kit';
 
 import { ERROR_CODE_INVALID, PRELOAD_ERROR_MSG_PLAYER, dlog, dlogv2 } from '$lib/utils/debug';
-import { preloadExitLogic, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/navigation.js';
 import { tryCatch } from '$lib/utils/miscellenous.js';
+import { preloadExitLogic, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/navigation.js';
 
 import type { Main_Data, Opengraph_Data, Twitter_Data } from '@betarena/scores-lib/types/_HASURA_.js';
 import type { B_PSEO_D, B_PSEO_T } from '@betarena/scores-lib/types/player-seo.js';
 import type { B_PSTAT_T } from '@betarena/scores-lib/types/player-statistics.js';
 import type { B_PTEAM_D, B_PTEAM_T } from '@betarena/scores-lib/types/player-team.js';
 import type { B_SAP_D1, B_SAP_D2, B_SAP_PP_D, B_SAP_PP_T } from '@betarena/scores-lib/types/seo-pages';
-import type { B_PFIX_D, B_PFIX_T } from 'node_modules/@betarena/scores-lib/types/player-fixtures';
-import type { B_PPRO_T } from 'node_modules/@betarena/scores-lib/types/player-profile';
+import type { ServerLoadEvent } from '@sveltejs/kit';
+import type { B_PFIX_D, B_PFIX_T } from '@betarena/scores-lib/types/player-fixtures';
+import type { B_PPRO_T } from '@betarena/scores-lib/types/player-profile';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -92,7 +92,7 @@ type IPreloadData2 =
  */
 export async function main
 (
-  event: LoadEvent,
+  event: ServerLoadEvent,
   parentData:
   {
     langParam: string
