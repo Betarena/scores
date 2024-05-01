@@ -197,7 +197,9 @@
 
       .preview {
         min-height: 100%;
-        width: 360px;
+        max-height: 100%;
+        max-width: 360px;
+        width: 100%;
         flex-shrink: 0;
 
         img {
