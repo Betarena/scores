@@ -247,6 +247,7 @@
 
   function scrollHandler() {
     if (pendingArticles || (!mobile && !tablet)) return;
+    if (articles.length >= totalArticlesCount) return;
     if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 5 ) {
       loadArticles();
     }
