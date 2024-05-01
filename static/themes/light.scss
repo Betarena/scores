@@ -4,11 +4,11 @@
   --text-color-second: #292929;
   --bg-color: #FFF;
   --bg-color-second: #F7F7F7;
-  --border-color-light: #CCCCCC;
+  --border-color-light: #E6E6E6;
   --border-color: #292929;
   --bg-hover-color: #E6E6E6;
 
   --tag-bg-color: #E6E6E6;
 
-  --section-border: none;
+  --section-border: 1px solid var(--border-color-light);
 }

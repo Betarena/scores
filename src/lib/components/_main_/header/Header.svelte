@@ -942,7 +942,7 @@
           │ > User Avatar
           ╰─────
           -->
-          {#if pageRouteId != routeIdPageTags}
+          {#if !VIEWPORT_MOBILE_INIT[1] || pageRouteId != routeIdPageTags}
           <img
             id="user-profile-picture"
             data-testid="{CNAME}/user-avatar"

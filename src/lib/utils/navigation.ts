@@ -207,7 +207,7 @@ export async function selectLanguage
            ['lang', lang]
          ]
        );
-      break;
+      return;
     case routeIdPageAuthors: {
       //[🐞]
       dlogv2

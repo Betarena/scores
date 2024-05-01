@@ -22,7 +22,6 @@
 -->
 
 <script lang="ts">
-
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -38,16 +37,13 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-	import { browser } from '$app/environment';
-	import { page } from '$app/stores';
-  import { afterNavigate, beforeNavigate } from '$app/navigation';
+  import { page } from "$app/stores";
+  import { afterNavigate, beforeNavigate } from "$app/navigation";
 
-  import { sleep } from '$lib/utils/miscellenous.js';
-
-  import SeoBox from '$lib/components/SEO-Box.svelte';
-  import TagsLoader from './Tags-Loader.svelte';
-  import TagsMain from './Tags-Main.svelte';
-
+  import SeoBox from "$lib/components/SEO-Box.svelte";
+  import TagsLoader from "./Tags-Loader.svelte";
+  import TagsMain from "./Tags-Main.svelte";
+  import type { IPageAuthorTagData } from "@betarena/scores-lib/types/v8/preload.authors.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -67,7 +63,10 @@
   export let data;
   let loading = false;
   $: widgetDataMain = $page.data as any;
-
+  $: tags = new Map(widgetDataMain?.mapTag ?? []) as Map<
+    Number,
+    IPageAuthorTagData
+  >;
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -94,7 +93,7 @@
    * @returns { Promise < void > }
    */
 
-  beforeNavigate(({to}) => {
+  beforeNavigate(({ to }) => {
     if (to?.route.id === $page.route.id) {
       loading = true;
     }
@@ -104,7 +103,6 @@
   });
 
   // #endregion ➤ 🛠️ METHODS
-
 </script>
 
 <!--
@@ -119,8 +117,12 @@
 -->
 
 <SeoBox>
-  <h1>{widgetDataMain?.data?.title}</h1>
-  {@html widgetDataMain?.data?.content}
+  <h1>{tags.get(widgetDataMain.tagId)?.name}</h1>
+  {#each widgetDataMain.mapArticle ?? [] as [_id, article]}
+    <h2>{article?.data?.title}</h2>
+    <a href={article?.permalink}>{article?.data?.title}</a>
+    {@html article?.data?.content}
+  {/each}
 </SeoBox>
 
 <!-- [🐞] -->
@@ -132,27 +134,22 @@
   ╰────────────────────────────────────────────────────────────────────────╯
   -->
   <TagsLoader />
-
-  {:then}
+{:then}
   <!--
   ╭────────────────────────────────────────────────────────────────────────╮
   │ NOTE :|: promise is fulfilled                                          │
   ╰────────────────────────────────────────────────────────────────────────╯
   -->
   {#if loading}
-  <TagsLoader />
+    <TagsLoader />
   {:else}
-     <!-- else content here -->
-     <TagsMain
-       widgetData={widgetDataMain}
-     />
+    <!-- else content here -->
+    <TagsMain widgetData={widgetDataMain} />
   {/if}
-
 {:catch error}
   <!--
   ╭────────────────────────────────────────────────────────────────────────╮
   │ NOTE :|: promise is rejected                                           │
   ╰────────────────────────────────────────────────────────────────────────╯
   -->
-
 {/await}

@@ -15,7 +15,7 @@
   import sessionStore from "$lib/store/session.js";
   import userBetarenaSettings from "$lib/store/user-settings.js";
   import { createEventDispatcher } from "svelte";
-  import arrowDown from "./assets/arrow-down.svg";
+  import ArrowDown from "./assets/arrow-down.svelte";
   import type {
     IPageAuthorTagData,
     IPageAuthorTranslationDataFinal,
@@ -26,7 +26,7 @@
   import { writable, type Writable } from "svelte/store";
   import { subscribeTagFollowersListen } from "$lib/graphql/graphql.common.js";
   import { fade } from "svelte/transition";
-    import { browser } from "$app/environment";
+  import { browser } from "$app/environment";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -75,10 +75,12 @@
     CNAME: string = "<author⮕w⮕tags-content⮕header";
   $: options = [
     { id: "all", label: translations.all },
-    ...$page.data.B_NAV_T.langArray.map((lang) => ({
-      id: lang,
-      label: translations[lang] || lang,
-    })),
+    ...$page.data.B_NAV_T.langArray
+      .map((lang) => ({
+        id: lang,
+        label: translations[lang] || lang,
+      }))
+      .sort((a, b) => a.label.localeCompare(b.label)),
   ];
   // #endregion ➤ 📌 VARIABLES
 
@@ -183,25 +185,20 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="tags-header-wrapper" class:mobile>
+<div class="tags-header-wrapper" class:mobile class:expand={showDescription}>
   <div class="header-buttons">
     <div class="tag-info-wrapper">
       <h1 on:click={toggleDescription}>
         {tag.name}
         {#if mobile && tag.description}
-          <img
-            id=""
-            class:opend={showDescription}
-            src={arrowDown}
-            alt="arrow-down"
-            title=""
-            loading="lazy"
-          />
+          <span class="arrow-down" class:opend={showDescription}>
+            <ArrowDown />
+          </span>
         {/if}
       </h1>
       <div class="tag-info">
         <span>
-          {#key $tagStore?.followers?.length}
+          {#key $tagStore?.followers?.length !== tag.followers?.length}
             <span in:fade={{ duration: 700 }}>
               {$tagStore?.followers?.length || 0}
             </span>
@@ -227,18 +224,20 @@
     <div class="action-buttons" bind:clientWidth={buttonsWidth}>
       {#if !mobile}
         <SelectButton bind:value={filterValue} {options} let:currentValue>
-          <span>
+          <div>
+            <span>
+              <TranslationText
+                key={`unknown`}
+                text={translations.subtitle}
+                fallback={"Language"}
+              /> :
+            </span>
             <TranslationText
               key={`unknown`}
-              text={translations.subtitle}
-              fallback={"Language"}
-            /> :
-          </span>
-          <TranslationText
-            key={`unknown`}
-            text={translations[currentValue.id]}
-            fallback={currentValue?.label}
-          />
+              text={translations[currentValue.id]}
+              fallback={currentValue?.label}
+            />
+          </div>
         </SelectButton>
       {/if}
 
@@ -256,11 +255,9 @@
       </Button>
     </div>
   </div>
-  {#if showDescription && tag.description}
+  {#if tag.description}
     <div
       class="header-description"
-      in:fade={{ duration: 500 }}
-      out:fade={{ duration: 200 }}
       style={!mobile && !tablet
         ? `width: calc(100% - ${buttonsWidth + 10}px)`
         : ""}
@@ -269,6 +266,27 @@
     </div>
   {/if}
 </div>
+
+{#if mobile}
+  <div class="mobile-selection">
+    <SelectButton bind:value={filterValue} {options} let:currentValue>
+      <div>
+        <span>
+          <TranslationText
+            key={`unknown`}
+            text={translations.subtitle}
+            fallback={"Language"}
+          /> :
+        </span>
+        <TranslationText
+          key={`unknown`}
+          text={translations[currentValue.id]}
+          fallback={currentValue?.label}
+        />
+      </div>
+    </SelectButton>
+  </div>
+{/if}
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -289,6 +307,13 @@
 
     &.mobile {
       padding: 0 24px;
+      max-height: 53px;
+      overflow: hidden;
+      transition: max-height 1s ease-in-out;
+
+      &.expand {
+        max-height: 300px;
+      }
       .tag-info-wrapper .tag-info {
         font-size: var(--text-size-s) !important;
       }
@@ -318,17 +343,15 @@
           align-items: center;
           line-height: 142%;
 
-          img {
+          .arrow-down {
             transition: transform;
             transition-duration: 0.7s;
             width: 16px;
+            display: flex;
             height: 16px;
             transform: rotate(360deg);
             &.opend {
               transform: rotate(180deg);
-            }
-            path {
-              stroke: var(--text-color);
             }
           }
         }
@@ -366,5 +389,10 @@
       flex-direction: column;
       gap: 6px;
     }
+  }
+  .mobile-selection {
+    margin-top: 32px;
+    margin-bottom: 16px;
+    padding: 0 24px;
   }
 </style>

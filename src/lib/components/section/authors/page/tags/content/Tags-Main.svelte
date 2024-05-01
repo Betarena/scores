@@ -137,7 +137,7 @@
   $: authors = new Map(widgetData.mapAuthor);
   $: articles = prepareArticles(widgetData.mapArticle, tags, authors);
   $: currentTag = tags.get(widgetData.tagId) as IPageAuthorTagData;
-  $: ({ totalArticlesCount, totalPageCount, translations } = widgetData);
+  $: ({ totalArticlesCount, translations } = widgetData);
   $: page = Math.ceil(articles.length / 10);
   /**
    * @summary
@@ -238,7 +238,6 @@
       translations: res,
     };
   }
-
   // #endregion ➤ 🛠️ METHODS
 </script>
 
@@ -290,7 +289,7 @@
         fallback={"articles"}
       />
     </div>
-    {#if page <= totalPageCount}
+    {#if articles.length < totalArticlesCount}
       <Button type="outline" on:click={() => loadArticles()}
         ><TranslationText
           key={`unknown`}
@@ -360,7 +359,7 @@
       --text-size-m: 14px;
       --text-size-s: 12px;
       --text-size-xs: 10px;
-      gap: 32px;
+      gap: 0;
 
       .articles {
         gap: 40px;
