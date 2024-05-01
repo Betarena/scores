@@ -26,6 +26,7 @@ certs/*
 WEBSITE-DEV-README.md
 datalog/
 debug.log
+debug/**/*/
 
 # ╭─────
 # │ NOTE:
