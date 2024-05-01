@@ -63,7 +63,7 @@
   export let data;
   let loading = false;
   $: widgetDataMain = $page.data as any;
-  $: tags = new Map(widgetDataMain?.tags ?? []) as Map<
+  $: tags = new Map(widgetDataMain?.mapTag ?? []) as Map<
     Number,
     IPageAuthorTagData
   >;
@@ -119,6 +119,8 @@
 <SeoBox>
   <h1>{tags.get(widgetDataMain.tagId)?.name}</h1>
   {#each widgetDataMain.mapArticle ?? [] as [_id, article]}
+    <h2>{article?.data?.title}</h2>
+    <a href={article?.permalink}>{article?.data?.title}</a>
     {@html article?.data?.content}
   {/each}
 </SeoBox>
