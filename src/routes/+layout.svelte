@@ -67,6 +67,7 @@
   // import '@betarena/ad-engine';
   // import WidgetAdEngine from '@betarena/ad-engine/src/lib/Widget-AdEngine.svelte';
   import WidgetAdEngine from '@betarena/ad-engine';
+  import {modalSore} from '$lib/store/modal.js';
 
   // ╭─────
   // │ WARNING:
@@ -584,6 +585,9 @@
 	<slot />
 	<Footer />
 </main>
+{#if $modalSore.show && $modalSore.component}
+    <svelte:component this={$modalSore.component} />
+  {/if}
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
