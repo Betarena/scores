@@ -37,6 +37,7 @@
   import icon_close_dark from './assets/icon-close-dark-btn.svg';
 
 	import type { B_USRG_D } from '@betarena/scores-lib/types/types.misc.userguide.js';
+  import { modalSore } from '$lib/store/modal.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -197,6 +198,11 @@
     );
   }
 
+  function close() {
+    $sessionStore.showUserguide1 = false;
+    $modalSore.show = false;
+  }
+
   // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -290,6 +296,7 @@
       (
         () =>
         {
+          $modalSore.show = true;
           showModal = true;
         },
         1500
@@ -322,7 +329,7 @@ MAIN WIDGET COMPONENT
   <div
     id='background-modal-blur'
     in:fade
-    on:click={() => $sessionStore.showUserguide1 = false}
+    on:click={close}
   />
 
   <!--
@@ -357,7 +364,7 @@ MAIN WIDGET COMPONENT
         '
         src={$userBetarenaSettings.theme == 'Dark' ? icon_close : icon_close_dark}
         alt='close-svg'
-        on:click={() => $sessionStore.showUserguide1 = false}
+        on:click={close}
         width=18
         height=18
       />
