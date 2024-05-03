@@ -388,11 +388,12 @@
       <!-- [🐞] -->
       <!-- {#each [...widgetData.tags, ...widgetData.tags, ...widgetData.tags] as item} -->
       {#each [...(widgetData.tags ?? [])] as item}
-        <div
+        <a
           class=
           "
           tag-pill
           "
+          href="/a/tag/{tagMap.get(item)?.permalink}"
         >
           <p
             class=
@@ -405,7 +406,7 @@
           >
             {tagMap.get(item) ?? ''}
           </p>
-        </div>
+        </a>
       {/each}
     </div>
 
