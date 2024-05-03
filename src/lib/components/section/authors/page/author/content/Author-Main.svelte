@@ -388,11 +388,12 @@
       <!-- [🐞] -->
       <!-- {#each [...widgetData.tags, ...widgetData.tags, ...widgetData.tags] as item} -->
       {#each [...(widgetData.tags ?? [])] as item}
-        <div
+        <a
           class=
           "
           tag-pill
           "
+          href="/a/tag/{tagMap.get(item)?.permalink}"
         >
           <p
             class=
@@ -403,9 +404,9 @@
             no-wrap
             "
           >
-            {tagMap.get(item) ?? ''}
+            {tagMap.get(item)?.name ?? ''}
           </p>
-        </div>
+        </a>
       {/each}
     </div>
 
@@ -829,7 +830,7 @@
           display: none;
         }
 
-        div.tag-pill
+        a.tag-pill
         {
           /* 🎨 style */
           min-height: 26px;
@@ -1130,7 +1131,7 @@
       {
         div#tags-box-scroll
         {
-          div.tag-pill
+          a.tag-pill
           {
             /* 🎨 style */
             background-color: var(--dark-theme-1);
