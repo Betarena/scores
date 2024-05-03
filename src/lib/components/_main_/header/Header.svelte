@@ -159,7 +159,6 @@
   ;
 
   $: ({ error, route: { id: pageRouteId } } = $page);
-  $: console.log('pageRouteId', pageRouteId);
   $: ({ windowWidth, currentPageRouteId, serverLang, navBtnHover, globalState } = $sessionStore);
   $: ({ lang, theme, user } = $userBetarenaSettings);
   $: ({ web3_wallet_addr, profile_photo, main_balance, lang: userLang } = { ...$userBetarenaSettings.user?.scores_user_data });

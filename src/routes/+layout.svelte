@@ -22,7 +22,6 @@
 -->
 
 <script lang="ts">
-
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -38,50 +37,51 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-	import { browser } from '$app/environment';
-	import { afterNavigate, beforeNavigate } from '$app/navigation';
-	import { page } from '$app/stores';
-	import * as Sentry from '@sentry/sveltekit';
-	import { onMount } from 'svelte';
+  import { browser } from "$app/environment";
+  import { afterNavigate, beforeNavigate } from "$app/navigation";
+  import { page } from "$app/stores";
+  import * as Sentry from "@sentry/sveltekit";
+  import { onMount } from "svelte";
 
-  import { post } from '$lib/api/utils.js';
-  import { scoresAdminStore } from '$lib/store/admin.js';
-  import sessionStore from '$lib/store/session.js';
-  import userBetarenaSettings from '$lib/store/user-settings.js';
-  import { dlog, dlogv2 } from '$lib/utils/debug';
-  import { isPWA } from '$lib/utils/device.js';
+  import { post } from "$lib/api/utils.js";
+  import { scoresAdminStore } from "$lib/store/admin.js";
+  import sessionStore from "$lib/store/session.js";
+  import userBetarenaSettings from "$lib/store/user-settings.js";
+  import { dlog, dlogv2 } from "$lib/utils/debug";
+  import { isPWA } from "$lib/utils/device.js";
 
-	import Footer from '$lib/components/_main_/footer/Footer.svelte';
-	import Header from '$lib/components/_main_/header/Header.svelte';
-	import SplashScreen from '$lib/components/misc/Splash-Screen.svelte';
-	import DevInfoBox from '$lib/components/misc/admin/Dev-Info-Box.svelte';
-	import ModalError from '$lib/components/misc/modal/Modal-Error.svelte';
+  import Footer from "$lib/components/_main_/footer/Footer.svelte";
+  import Header from "$lib/components/_main_/header/Header.svelte";
+  import MobileMenu from "$lib/components/_main_/mobile-menu/MobileMenu.svelte";
+  import SplashScreen from "$lib/components/misc/Splash-Screen.svelte";
+  import DevInfoBox from "$lib/components/misc/admin/Dev-Info-Box.svelte";
+  import ModalError from "$lib/components/misc/modal/Modal-Error.svelte";
 
-	import AuthMain from '$lib/components/_main_/auth/Auth-Main.svelte';
-	import ToastAuth from '$lib/components/misc/toast/Toast-Auth/Toast-Auth.svelte';
-	import { mainDeepLinkCheck } from '$lib/utils/deeplink.js';
-	import { setUserGeoLocation } from '$lib/utils/geo.js';
+  import AuthMain from "$lib/components/_main_/auth/Auth-Main.svelte";
+  import ToastAuth from "$lib/components/misc/toast/Toast-Auth/Toast-Auth.svelte";
+  import { mainDeepLinkCheck } from "$lib/utils/deeplink.js";
+  import { setUserGeoLocation } from "$lib/utils/geo.js";
 
-	import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
+  import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
 
   // import '@betarena/ad-engine';
   // import WidgetAdEngine from '@betarena/ad-engine/src/lib/Widget-AdEngine.svelte';
-  import WidgetAdEngine from '@betarena/ad-engine';
-  import {modalSore} from '$lib/store/modal.js';
+  import WidgetAdEngine from "@betarena/ad-engine";
+  import { modalSore } from "$lib/store/modal.js";
 
   // ╭─────
   // │ WARNING:
   // │ Disable, if Dynamic Import is Enabled.
   // ╰─────
-	// import OfflineAlert from '$lib/components/Offline-Alert.svelte';
-	// import PlatformAlert from '$lib/components/Platform-Alert.svelte';
-	// import EmailSubscribe from '$lib/components/Email-Subscribe.svelte';
+  // import OfflineAlert from '$lib/components/Offline-Alert.svelte';
+  // import PlatformAlert from '$lib/components/Platform-Alert.svelte';
+  // import EmailSubscribe from '$lib/components/Email-Subscribe.svelte';
 
   // ╭─────
   // │ NOTE:
   // │ moved to static/
   // ╰─────
-	// import '../app.css';
+  // import '../app.css';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -104,13 +104,11 @@
    *  📣 Component `Type`.
    */
   type IDynamicComponentMap =
-    | 'OfflineAlertDynamic'
-    | 'PlatformAlertDynamic'
-    | 'EmailSubscribeDynamic'
-  ;
+    | "OfflineAlertDynamic"
+    | "PlatformAlertDynamic"
+    | "EmailSubscribeDynamic";
 
-  const
-    /**
+  const /**
      * @description
      *  📣 Dynamic import variable condition
      */
@@ -119,24 +117,33 @@
      * @description
      *  📣 Holds target `component(s)` of dynamic nature.
      */
-    dynamicComponentMap = new Map < IDynamicComponentMap, any > ()
-  ;
-
-  $: ({ currentPageRouteId, currentActiveModal, currentActiveToast } = { ...$sessionStore })
+    dynamicComponentMap = new Map<IDynamicComponentMap, any>();
+  $: ({ currentPageRouteId, currentActiveModal, currentActiveToast } = {
+    ...$sessionStore,
+  });
   $: ({ theme } = { ...$userBetarenaSettings });
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  $: ({ username, lang, competition_number } = { ...$userBetarenaSettings?.user?.scores_user_data });
+  $: ({ username, lang, competition_number } = {
+    ...$userBetarenaSettings?.user?.scores_user_data,
+  });
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   $: ({ uid, email } = { ...$userBetarenaSettings?.user?.firebase_user_data });
-	$: navbarTranslationData = ($page.data.B_NAV_T ?? { }) as B_NAV_T | null | undefined;
+  $: navbarTranslationData = ($page.data.B_NAV_T ?? {}) as
+    | B_NAV_T
+    | null
+    | undefined;
   $: deepReactListenStore1 = JSON.stringify($sessionStore);
   $: deepReactListenStore2 = JSON.stringify($userBetarenaSettings);
 
   $: $sessionStore.serverLang = $page.data.langParam as string;
   $: $sessionStore.page = $page;
 
-  $sessionStore.deviceType       = $page.data.deviceType as 'mobile' | 'tablet' | 'desktop';
-  $sessionStore.fixturesTodayNum = (navbarTranslationData?.scores_header_fixtures_information?.football ?? 0);
+  $sessionStore.deviceType = $page.data.deviceType as
+    | "mobile"
+    | "tablet"
+    | "desktop";
+  $sessionStore.fixturesTodayNum =
+    navbarTranslationData?.scores_header_fixtures_information?.football ?? 0;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -161,42 +168,16 @@
    *  📣 Debug Helper
    * @param reactDebug
    */
-  function _DEBUG_
-  (
-    reactDebug: 'Option1' | 'Option2' | 'Option3' | 'Option4'
-  ): void
-  {
-    const
-      prefix: string = '🚏 checkpoint [R] ➤ src/routes/(scores)/layout.svelte'
-    ;
-
+  function _DEBUG_(
+    reactDebug: "Option1" | "Option2" | "Option3" | "Option4"
+  ): void {
+    const prefix: string =
+      "🚏 checkpoint [R] ➤ src/routes/(scores)/layout.svelte";
     // [🐞]
-    if (reactDebug == 'Option1')
-      dlog
-      (
-        `${prefix} if_COD_1`
-        , true
-      );
-    else if (reactDebug == 'Option2')
-      dlog
-      (
-        `${prefix} if_COD_2`
-        , true
-      );
-    else if (reactDebug == 'Option3')
-      dlog
-      (
-        `${prefix} if_COD_3`
-        , true
-      );
-    else
-      dlog
-      (
-        `${prefix} if_R_CS43`
-        , true
-      );
-    ;
-
+    if (reactDebug == "Option1") dlog(`${prefix} if_COD_1`, true);
+    else if (reactDebug == "Option2") dlog(`${prefix} if_COD_2`, true);
+    else if (reactDebug == "Option3") dlog(`${prefix} if_COD_3`, true);
+    else dlog(`${prefix} if_R_CS43`, true);
     return;
   }
 
@@ -209,17 +190,15 @@
    *  📣 Updates **Betarena User** for their `Firestore` and `CRISP` data.
    * @return { Promise < void > }
    */
-  async function updateFirestoreAndCrisp
-  (
-  ): Promise < void >
-  {
+  async function updateFirestoreAndCrisp(): Promise<void> {
     if (!browser || $userBetarenaSettings.user == undefined) return;
 
-    await post
-    (
-      `${import.meta.env.VITE_FIREBASE_FUNCTIONS_ORIGIN}${import.meta.env.VITE_FIREBASE_FUNCTIONS_F_1}`,
+    await post(
+      `${import.meta.env.VITE_FIREBASE_FUNCTIONS_ORIGIN}${
+        import.meta.env.VITE_FIREBASE_FUNCTIONS_F_1
+      }`,
       {
-        user_uids: [$userBetarenaSettings.user.firebase_user_data?.uid]
+        user_uids: [$userBetarenaSettings.user.firebase_user_data?.uid],
       }
     );
 
@@ -244,9 +223,8 @@
   // ╭─────
   // │ > 🔥 Instant critical data initialization.
   // ╰─────
-  $: if (browser)
-  {
-    _DEBUG_('Option1');
+  $: if (browser) {
+    _DEBUG_("Option1");
     mainDeepLinkCheck();
     userBetarenaSettings.useLocalStorage();
     scoresAdminStore.useLocalStorage();
@@ -255,47 +233,41 @@
   // ╭─────
   // │ > 🔥 (3rd Party) Intercom Logic [show/hide]
   // ╰─────
-  $: if (browser && currentPageRouteId == 'ProfilePage' || currentPageRouteId == 'CompetitionPage')
-  {
-    const intercom: HTMLElement = document.getElementsByClassName('intercom-lightweight-app')[0] as unknown as HTMLElement;
-    if (intercom != undefined)
-      intercom.style.display = 'unset';
-    ;
-  }
-  else if (browser && !currentPageRouteId)
-  {
-    const intercom: HTMLElement = document.getElementsByClassName('intercom-lightweight-app')[0] as unknown as HTMLElement;
-    if (intercom != undefined)
-      intercom.style.display = 'none';
-    ;
+  $: if (
+    (browser && currentPageRouteId == "ProfilePage") ||
+    currentPageRouteId == "CompetitionPage"
+  ) {
+    const intercom: HTMLElement = document.getElementsByClassName(
+      "intercom-lightweight-app"
+    )[0] as unknown as HTMLElement;
+    if (intercom != undefined) intercom.style.display = "unset";
+  } else if (browser && !currentPageRouteId) {
+    const intercom: HTMLElement = document.getElementsByClassName(
+      "intercom-lightweight-app"
+    )[0] as unknown as HTMLElement;
+    if (intercom != undefined) intercom.style.display = "none";
   }
 
   // ╭─────
   // │ > 🔥 (3rd Party) Intercom Data Persistance [show/hide]
   // ╰─────
-  $: if (browser && (deepReactListenStore1 || deepReactListenStore2))
-  {
-    _DEBUG_('Option4');
+  $: if (browser && (deepReactListenStore1 || deepReactListenStore2)) {
+    _DEBUG_("Option4");
 
-    window.intercomSettings
-    = {
-        api_base: 'https://api-iam.intercom.io',
-        app_id: 'yz9qn6p3',
-        name: (username ?? ''),
-        email: (email ?? `${uid}-unkown@gmail.com`),
-        uid,
-        lang: (lang ?? 'en'),
-        competition_number: (competition_number ?? 0)
-      };
+    window.intercomSettings = {
+      api_base: "https://api-iam.intercom.io",
+      app_id: "yz9qn6p3",
+      name: username ?? "",
+      email: email ?? `${uid}-unkown@gmail.com`,
+      uid,
+      lang: lang ?? "en",
+      competition_number: competition_number ?? 0,
+    };
 
     // [🐞]
-    Sentry.setContext
-    (
-      '📸 Data',
-      {
-        ...userBetarenaSettings.extractUserDataSnapshot()
-      }
-    );
+    Sentry.setContext("📸 Data", {
+      ...userBetarenaSettings.extractUserDataSnapshot(),
+    });
   }
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
@@ -309,15 +281,11 @@
   // │ as soon as 'this' .svelte file is ran.                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  beforeNavigate
-  (
-    async (
-    ): Promise < void > =>
-    {
-      // IMPORTANT
-      $sessionStore.live_odds_fixture_target = null;
+  beforeNavigate(async (): Promise<void> => {
+    // IMPORTANT
+    $sessionStore.live_odds_fixture_target = null;
 
-      /*
+    /*
       await firebaseAppDelete();
       for (const iterator of $sessionStore?.firebaseListeners ?? [])
         iterator();
@@ -326,78 +294,65 @@
         iterator();
       $sessionStore.grapqhQlWebSockets = []
       */
-    }
-  );
+  });
 
-  onMount
-  (
-    async (
-    ): Promise < void > =>
-    {
-      // initSentry();
+  onMount(async (): Promise<void> => {
+    // initSentry();
 
-      if (useDynamicImport)
-      {
-        dynamicComponentMap.set('OfflineAlertDynamic', (await import('$lib/components/misc/banner/Banner-Offline-Alert.svelte')).default);
-        dynamicComponentMap.set('PlatformAlertDynamic', (await import('$lib/components/misc/banner/Banner-Offline-Alert.svelte')).default);
-        dynamicComponentMap.set('EmailSubscribeDynamic', (await import('$lib/components/misc/modal/Modal-Email-Subscribe.svelte')).default);
-      }
-
-      // IMPORTANT
-      $sessionStore.windowWidth = document.documentElement.clientWidth;
-      // IMPORTANT
-      if (isPWA())
-        $sessionStore.globalState.add('IsPWA');
-      else
-        $sessionStore.globalState.delete('IsPWA');
-      ;
-
-      setUserGeoLocation
-      (
-        navbarTranslationData!
+    if (useDynamicImport) {
+      dynamicComponentMap.set(
+        "OfflineAlertDynamic",
+        (
+          await import(
+            "$lib/components/misc/banner/Banner-Offline-Alert.svelte"
+          )
+        ).default
       );
-
-      const
-        adminSet = $page.url.searchParams.get('admin')
-      ;
-
-      if (adminSet)
-        scoresAdminStore.toggleAdminState(adminSet == 'true' ? true : false);
-      ;
-
-      return;
-    }
-  );
-
-  afterNavigate
-  (
-    async (
-      e
-    ): Promise < void > =>
-    {
-      sessionStore.updateData
-      (
-        [
-          ['routeId', $page.route.id]
-        ]
+      dynamicComponentMap.set(
+        "PlatformAlertDynamic",
+        (
+          await import(
+            "$lib/components/misc/banner/Banner-Offline-Alert.svelte"
+          )
+        ).default
       );
-
-      // [🐞]
-      dlogv2
-      (
-        '🚏 checkpoint ➤ src/routes/+layout.svelte afterNavigate(..)',
-        [
-          `🔹 [var] ➤ e.from :|: ${JSON.stringify(e)}`,
-        ],
-        true
+      dynamicComponentMap.set(
+        "EmailSubscribeDynamic",
+        (
+          await import(
+            "$lib/components/misc/modal/Modal-Email-Subscribe.svelte"
+          )
+        ).default
       );
-
-      return;
     }
-  );
+
+    // IMPORTANT
+    $sessionStore.windowWidth = document.documentElement.clientWidth;
+    // IMPORTANT
+    if (isPWA()) $sessionStore.globalState.add("IsPWA");
+    else $sessionStore.globalState.delete("IsPWA");
+    setUserGeoLocation(navbarTranslationData!);
+
+    const adminSet = $page.url.searchParams.get("admin");
+    if (adminSet)
+      scoresAdminStore.toggleAdminState(adminSet == "true" ? true : false);
+    return;
+  });
+
+  afterNavigate(async (e): Promise<void> => {
+    sessionStore.updateData([["routeId", $page.route.id]]);
+
+    // [🐞]
+    dlogv2(
+      "🚏 checkpoint ➤ src/routes/+layout.svelte afterNavigate(..)",
+      [`🔹 [var] ➤ e.from :|: ${JSON.stringify(e)}`],
+      true
+    );
+
+    return;
+  });
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
-
 </script>
 
 <!--
@@ -410,7 +365,20 @@
   <!--
   HELPDESK PLUGIN
   -->
-  {#if currentPageRouteId == 'ProfilePage' || currentPageRouteId == 'CompetitionPage'}
+  {#if currentPageRouteId == "ProfilePage" || currentPageRouteId == "CompetitionPage"}
+    <!-- <script type="text/javascript">
+      window.$crisp=[];
+      window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
+      (function()
+      {
+        d=document;
+        s=d.createElement("script");
+        s.src="https://client.crisp.chat/l.js";
+        s.async=1;
+        d.getElementsByTagName("head")[0].appendChild(s);
+      }
+      )();
+    </script> -->
     <!-- <script type="text/javascript">
       window.$crisp=[];
       window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
@@ -426,88 +394,63 @@
     </script> -->
     <script>
       // We pre-filled your app ID in the widget URL: 'https://widget.intercom.io/widget/yz9qn6p3'
-      (
-        function()
-        {
-          var w=window;
-          var ic=w.Intercom;
-          if (typeof ic==="function")
-          {
-            ic('reattach_activator');
-            ic('update',w.intercomSettings);
-          }
-          else
-          {
-            var d=document;
-            var i=function()
-            {
-              i.c(arguments);
-            };
-            i.q=[];
-            i.c=function(args)
-            {
-              i.q.push(args);
-            };
-            w.Intercom=i;
-            var l=function()
-            {
-              var s=d.createElement('script');
-              s.type='text/javascript';
-              s.async=true;
-              s.src='https://widget.intercom.io/widget/yz9qn6p3';
-              var x=d.getElementsByTagName('script')[0];
-              x.parentNode.insertBefore(s,x);
-            };
-            if (document.readyState==='complete')
-            {
-              l();
-            }
-            else if ( w.attachEvent )
-            {
-              w.attachEvent('onload',l);
-            }
-            else
-            {
-              w.addEventListener('load',l,false);
-            }
+      (function () {
+        var w = window;
+        var ic = w.Intercom;
+        if (typeof ic === "function") {
+          ic("reattach_activator");
+          ic("update", w.intercomSettings);
+        } else {
+          var d = document;
+          var i = function () {
+            i.c(arguments);
+          };
+          i.q = [];
+          i.c = function (args) {
+            i.q.push(args);
+          };
+          w.Intercom = i;
+          var l = function () {
+            var s = d.createElement("script");
+            s.type = "text/javascript";
+            s.async = true;
+            s.src = "https://widget.intercom.io/widget/yz9qn6p3";
+            var x = d.getElementsByTagName("script")[0];
+            x.parentNode.insertBefore(s, x);
+          };
+          if (document.readyState === "complete") {
+            l();
+          } else if (w.attachEvent) {
+            w.attachEvent("onload", l);
+          } else {
+            w.addEventListener("load", l, false);
           }
         }
-      )();
+      })();
     </script>
   {/if}
 </svelte:head>
 
 <svelte:document
-  on:visibilitychange=
-  {
-    () =>
-    {
-      if (!document.hidden)
-      {
-        dlog('🔵 user is active', true)
-        $sessionStore.isUserActive = true;
-        updateFirestoreAndCrisp();
-        return;
-      }
-      $sessionStore.isUserActive = false;
+  on:visibilitychange={() => {
+    if (!document.hidden) {
+      dlog("🔵 user is active", true);
+      $sessionStore.isUserActive = true;
+      updateFirestoreAndCrisp();
       return;
     }
-  }
+    $sessionStore.isUserActive = false;
+    return;
+  }}
 />
 
 <svelte:window
-  on:resize=
-  {
-    () =>
-    {
-      $sessionStore.windowWidth = document.documentElement.clientWidth;
-      if (isPWA())
-        $sessionStore.globalState.add('IsPWA');
-      else
-        $sessionStore.globalState.delete('IsPWA');
-      return;
-    }
-  }
+  on:resize={() => {
+    $sessionStore.windowWidth = document.documentElement.clientWidth;
+    if (isPWA()) $sessionStore.globalState.add("IsPWA");
+    else $sessionStore.globalState.delete("IsPWA");
+    return;
+  }}
 />
 
 <!--
@@ -522,72 +465,69 @@
 -->
 
 <!-- {$page.data.dataArticle} -->
-
-<WidgetAdEngine
-  authorId={$page.data.dataArticle?.author_id}
-  authorArticleTagIds={$page.data.dataArticle?.tags}
-  isDarkTheme={theme == 'Dark'}
-/>
-
-<SplashScreen />
-
-{#if currentActiveModal == 'Auth_Modal'}
-  <AuthMain />
-{/if}
-
-{#if currentActiveToast != null}
-  <ToastAuth />
-{/if}
-
-{#if $scoresAdminStore.admin}
-  <DevInfoBox />
-{/if}
-
-{#if currentActiveModal == 'GeneralPlatform_Error'}
-  <ModalError />
-{/if}
-
-{#if useDynamicImport}
-  <svelte:component
-    this={dynamicComponentMap.get('OfflineAlertDynamic')}
+<div class="app-wrapper" class:dark-mode={theme == "Dark"} class:light-mode={theme == "Light"}>
+  <WidgetAdEngine
+    authorId={$page.data.dataArticle?.author_id}
+    authorArticleTagIds={$page.data.dataArticle?.tags}
+    isDarkTheme={theme == "Dark"}
   />
-{:else}
-  <!-- <OfflineAlert /> -->
-{/if}
 
-{#if useDynamicImport}
-  <svelte:component
-    this={dynamicComponentMap.get('PlatformAlertDynamic')}
-  />
-{:else}
-  <!-- <PlatformAlert /> -->
-{/if}
+  <SplashScreen />
 
-{#if useDynamicImport}
-  <svelte:component
-    this={dynamicComponentMap.get('EmailSubscribeDynamic')}
-  />
-{:else}
-  <!-- <EmailSubscribe /> -->
-{/if}
+  {#if currentActiveModal == "Auth_Modal"}
+    <AuthMain />
+  {/if}
 
-<Header />
+  {#if currentActiveToast != null}
+    <ToastAuth />
+  {/if}
 
-<main
-	class:dark-background={theme == 'Dark'}
-	class:dark-mode={theme == 'Dark'}
-  class:light-mode={theme == 'Light'}
-  class:standard={currentPageRouteId == null || currentPageRouteId == 'ProfilePage'}
-  class:page-competition={currentPageRouteId == 'CompetitionPage'}
-  class:page-profile={currentPageRouteId == 'ProfilePage'}
-  class:page-authors={currentPageRouteId == 'AuthorsPage'}
->
-	<slot />
-	<Footer />
-</main>
-{#if $modalSore.show && $modalSore.component}
+  {#if $scoresAdminStore.admin}
+    <DevInfoBox />
+  {/if}
+
+  {#if currentActiveModal == "GeneralPlatform_Error"}
+    <ModalError />
+  {/if}
+
+  {#if useDynamicImport}
+    <svelte:component this={dynamicComponentMap.get("OfflineAlertDynamic")} />
+  {:else}
+    <!-- <OfflineAlert /> -->
+  {/if}
+
+  {#if useDynamicImport}
+    <svelte:component this={dynamicComponentMap.get("PlatformAlertDynamic")} />
+  {:else}
+    <!-- <PlatformAlert /> -->
+  {/if}
+
+  {#if useDynamicImport}
+    <svelte:component this={dynamicComponentMap.get("EmailSubscribeDynamic")} />
+  {:else}
+    <!-- <EmailSubscribe /> -->
+  {/if}
+
+  <Header />
+
+  <main
+    class:dark-background={theme == "Dark"}
+    class:dark-mode={theme == "Dark"}
+    class:light-mode={theme == "Light"}
+    class:standard={currentPageRouteId == null ||
+      currentPageRouteId == "ProfilePage"}
+    class:page-competition={currentPageRouteId == "CompetitionPage"}
+    class:page-profile={currentPageRouteId == "ProfilePage"}
+    class:page-authors={currentPageRouteId == "AuthorsPage"}
+  >
+    <slot />
+    <Footer />
+  </main>
+  <MobileMenu />
+  {#if $modalSore.show && $modalSore.component}
     <svelte:component this={$modalSore.component} />
   {/if}
+</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -600,13 +540,13 @@
 -->
 
 <style lang="scss">
-   /*
+  /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
   │ THEMES                                                              │
   ╰──────────────────────────────────────────────────────────────────────────────╯
   */
-  @import '../../static/themes/dark.scss';
-  @import '../../static/themes/light.scss';
+  @import "../../static/themes/dark.scss";
+  @import "../../static/themes/light.scss";
 
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
@@ -614,29 +554,29 @@
   ╰──────────────────────────────────────────────────────────────────────────────╯
   */
 
-	main
-  {
+  .app-wrapper {
+    min-height: 100vh;
+  }
+  main {
     /* 📌 position */
-		position: relative;
-		z-index: 0;
-		margin: 0 auto;
+    position: relative;
+    z-index: 0;
+    margin: 0 auto;
     /* 🎨 style */
-		width: 100%;
+    width: 100%;
 
-    &.standard
-    {
-      &::before
-      {
+    &.standard {
+      &::before {
         /* 📌 position */
         position: absolute;
         z-index: -1;
         top: -5px;
         /* 🎨 style */
-        content: '';
+        content: "";
         display: inline-block;
         width: 100%;
         height: 435px;
-        background-image: url('/assets/svg/header-background.svg');
+        background-image: url("/assets/svg/header-background.svg");
         background-repeat: no-repeat;
         background-size: cover;
         background-origin: border-box;
@@ -644,59 +584,46 @@
       }
     }
 
-    &.page-competition::before
-    {
+    &.page-competition::before {
       /* 🎨 style */
       display: none;
     }
 
-    &.page-profile::before
-    {
+    &.page-profile::before {
       /* 🎨 style */
       height: 611px;
     }
   }
 
-	/*
+  /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
   │ ⚡️ RESPONSIVNESS                                                              │
   ╰──────────────────────────────────────────────────────────────────────────────╯
   */
 
-	@media screen
-  and (min-width: 768px)
-  {
-    main
-    {
-      &.standard
-      {
-        &::before
-        {
+  @media screen and (min-width: 768px) {
+    main {
+      &.standard {
+        &::before {
           /* 🎨 style */
           height: 495px;
         }
       }
 
-      &.page-profile::before
-      {
+      &.page-profile::before {
         /* 🎨 style */
         height: 611px;
       }
     }
-	}
+  }
 
-	@media screen
-  and (min-width: 1024px)
-  {
-    main
-    {
+  @media screen and (min-width: 1024px) {
+    main {
       /* 🎨 style */
       overflow: hidden;
 
-      &.standard
-      {
-        &::before
-        {
+      &.standard {
+        &::before {
           /* 📌 position */
           top: calc(100vw / -5.5) !important;
           /* 🎨 style */
@@ -705,20 +632,17 @@
         }
       }
 
-      &.page-profile
-      {
+      &.page-profile {
         /* 🎨 style */
         overflow: visible;
       }
 
-      &.page-profile::before
-      {
+      &.page-profile::before {
         /* 🎨 style */
         top: 0 !important;
         height: 10%; /*  939px :: 25% */
         background-size: cover !important;
       }
     }
-	}
-
+  }
 </style>
