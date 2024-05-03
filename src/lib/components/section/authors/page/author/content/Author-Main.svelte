@@ -404,7 +404,7 @@
             no-wrap
             "
           >
-            {tagMap.get(item) ?? ''}
+            {tagMap.get(item)?.name ?? ''}
           </p>
         </a>
       {/each}
@@ -830,7 +830,7 @@
           display: none;
         }
 
-        div.tag-pill
+        a.tag-pill
         {
           /* 🎨 style */
           min-height: 26px;
@@ -1131,7 +1131,7 @@
       {
         div#tags-box-scroll
         {
-          div.tag-pill
+          a.tag-pill
           {
             /* 🎨 style */
             background-color: var(--dark-theme-1);
