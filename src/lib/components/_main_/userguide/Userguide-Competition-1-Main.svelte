@@ -201,6 +201,10 @@
   function close() {
     $sessionStore.showUserguide1 = false;
     $modalSore.show = false;
+    document.body.classList.remove
+    (
+      'disable-scroll'
+    );
   }
 
   // #endregion ➤ 🛠️ METHODS
