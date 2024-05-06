@@ -286,9 +286,6 @@
 -->
 
 <style lang="scss">
-  :global(".drag-item") {
-    color: red;
-  }
   .popup-modal {
     position: fixed;
     top: 0;
@@ -364,9 +361,7 @@
         flex-direction: column;
         width: 100%;
         height: 100%;
-        gap: 4px;
         outline: none !important;
-        padding: 7px 0;
 
         :global(svg) {
           width: 24px !important;
@@ -377,7 +372,8 @@
           justify-content: start;
           width: 100%;
           z-index: 1000;
-          padding: 5px 12px;
+          padding: 8px 12px;
+          background: var(--mobile-menu-bg-popup);
 
           --text-color: var(--text-color);
           gap: 10px;
