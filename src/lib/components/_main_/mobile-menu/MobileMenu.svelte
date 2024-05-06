@@ -222,7 +222,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 {#if showPopup}
-  <div class="popup-modal" in:fade out:fade />
+  <div class="popup-modal" in:fade out:fade on:click|preventDefault={() => showPopup = false} />
 {/if}
 <div id={CNAME} class="mobile-menu">
   <div class="blured-container" />
@@ -293,7 +293,6 @@
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 1000;
-    pointer-events: none;
   }
   .mobile-menu {
     display: flex;
