@@ -289,7 +289,7 @@
   .mobile-menu {
     display: flex;
     position: fixed;
-    bottom: 60px;
+    bottom: 24px;
     height: 56px;
     width: 340px;
     max-width: 95%;
