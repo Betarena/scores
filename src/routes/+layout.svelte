@@ -48,7 +48,7 @@
   import sessionStore from "$lib/store/session.js";
   import userBetarenaSettings from "$lib/store/user-settings.js";
   import { dlog, dlogv2 } from "$lib/utils/debug";
-  import { isPWA } from "$lib/utils/device.js";
+  import { isPWA, viewportChangeV2 } from "$lib/utils/device.js";
 
   import Footer from "$lib/components/_main_/footer/Footer.svelte";
   import Header from "$lib/components/_main_/header/Header.svelte";
@@ -115,6 +115,16 @@
     useDynamicImport = true,
     /**
      * @description
+     *  📣 threshold start + state for 📱 MOBILE
+     */ // eslint-disable-next-line no-unused-vars
+     VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ],
+    /**
+     * @description
+     *  📣 threshold start + state for 💻 TABLET
+     */ // eslint-disable-next-line no-unused-vars
+    VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ],
+    /**
+     * @description
      *  📣 Holds target `component(s)` of dynamic nature.
      */
     dynamicComponentMap = new Map<IDynamicComponentMap, any>();
@@ -137,6 +147,15 @@
 
   $: $sessionStore.serverLang = $page.data.langParam as string;
   $: $sessionStore.page = $page;
+
+  $: [ VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1] ]
+    = viewportChangeV2
+    (
+      $sessionStore.windowWidth,
+      VIEWPORT_MOBILE_INIT[0],
+      VIEWPORT_TABLET_INIT[0],
+    )
+  ;
 
   $sessionStore.deviceType = $page.data.deviceType as
     | "mobile"
@@ -523,7 +542,9 @@
     <slot />
     <Footer />
   </main>
-  <MobileMenu />
+  {#if VIEWPORT_MOBILE_INIT[1] || VIEWPORT_TABLET_INIT[1]}
+     <MobileMenu />
+  {/if}
   {#if $modalSore.show && $modalSore.component}
     <svelte:component this={$modalSore.component} />
   {/if}
