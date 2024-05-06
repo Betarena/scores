@@ -346,6 +346,7 @@
       display: flex;
       flex-direction: column;
       border-radius: 8px;
+      --icon-color: var(--text-color);
       background-color: var(--mobile-menu-bg-popup);
 
       .popup-list {
@@ -368,7 +369,6 @@
           background: var(--mobile-menu-bg-popup);
           backdrop-filter: blur(10px);
 
-          --text-color: var(--text-color);
           gap: 10px;
           .drag-item {
             width: 24px;

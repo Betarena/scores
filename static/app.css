@@ -4382,15 +4382,14 @@ img.google-aspect-ratio
   --mobile-menu-bg-color: rgba(49, 49, 49, 0.7);
   --mobile-menu-bg-popup: rgba(41, 41, 41, 0.8);
   --box-shadow: 0px 0px 50px 0px rgba(0, 0, 0, 0.5);
-  --icon-color: #FFFFFF;
   --text-color: #FFFFFF;
-  --icon-color: var(--text-color);
+  --icon-color: rgba(140, 140, 140, 1);
 }
 
 .light-mode
 {
   --text-color: #292929;
-  --icon-color: var(--text-color);
+  --icon-color: rgba(140, 140, 140, 1);
   --mobile-menu-bg-color: rgba(255, 255, 255, 0.9);
   --mobile-menu-bg-popup: var(--mobile-menu-bg-color);
   --box-shadow: 0px 0px 50px 0px rgba(0, 0, 0, 0.15);
