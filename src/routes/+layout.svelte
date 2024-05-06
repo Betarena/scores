@@ -465,7 +465,7 @@
 -->
 
 <!-- {$page.data.dataArticle} -->
-<div class="app-wrapper" class:dark-mode={theme == "Dark"} class:light-mode={theme == "Light"}>
+<div class="app-wrapper" id="app-root-layout" class:dark-mode={theme == "Dark"} class:light-mode={theme == "Light"}>
   <WidgetAdEngine
     authorId={$page.data.dataArticle?.author_id}
     authorArticleTagIds={$page.data.dataArticle?.tags}
@@ -540,13 +540,8 @@
 -->
 
 <style lang="scss">
-  /*
-  ╭──────────────────────────────────────────────────────────────────────────────╮
-  │ THEMES                                                              │
-  ╰──────────────────────────────────────────────────────────────────────────────╯
-  */
-  @import "../../static/themes/dark.scss";
-  @import "../../static/themes/light.scss";
+
+
 
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮

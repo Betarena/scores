@@ -37,44 +37,24 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { browser } from "$app/environment";
-  import { goto } from "$app/navigation";
   import { page } from "$app/stores";
-  import { SvelteComponent, onMount } from "svelte";
-  import { fly } from "svelte/transition";
-
-  import sessionStore from "$lib/store/session.js";
-  import userBetarenaSettings from "$lib/store/user-settings.js";
-  import { NB_W_TAG, dlog, dlogv2 } from "$lib/utils/debug";
-  import { toDecimalFix } from "$lib/utils/string.js";
-  import { viewportChangeV2 } from "$lib/utils/device";
-  import { translationObject } from "$lib/utils/translation.js";
-  import { logoutUser } from "$lib/utils/user";
-  import { scoresNavbarStore } from "./_store.js";
-  import {
-    generateUrlCompetitions,
-    spliceBalanceDoubleZero,
-  } from "$lib/utils/string";
-
-  import SeoBox from "$lib/components/SEO-Box.svelte";
-  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
-  import { routeIdPageTags } from "$lib/constants/paths.js";
-  // import HeaderCBookmakers from "./Header-C-Bookmakers.svelte";
-  // import HeaderCLang from "./Header-C-Lang.svelte";
-  // import HeaderCTheme from "./Header-C-Theme.svelte";
-  // import HeaderCompetitionBtn from "./Header-Competition-Btn.svelte";
-  // import HeaderNavBtn from "./Header-Nav-Btn.svelte";
-  // import HeaderSportsBtn from "./Header-Sports-Btn.svelte";
+  import { flip } from "svelte/animate";
+  import { fade, scale } from "svelte/transition";
 
   import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
-  import type { B_SAP_D3 } from "@betarena/scores-lib/types/seo-pages.js";
+  import sessionStore from "$lib/store/session.js";
+  import userBetarenaSettings from "$lib/store/user-settings.js";
+  import { generateUrlCompetitions } from "$lib/utils/string";
+  import { dndzone } from "svelte-dnd-action";
+
   import StatisticIcon from "./assets/statisticicon.svelte";
   import DocumentsIcon from "./assets/documentsicon.svelte";
   import CupIcon from "./assets/cupicon.svelte";
   import UserIcon from "./assets/usericon.svelte";
   import MenuSquareDotsIcon from "./assets/menusquaredotsicon.svelte";
   import Dragicon from "./assets/dragicon.svelte";
-    import { doc } from "firebase/firestore";
+
+  import type { SvelteComponent } from "svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -94,30 +74,10 @@
 
   /**
    * @description
-   *  📣 Component `Type`.
-   */
-  type IDynamicAssetMap =
-    | "arrow_down_fade"
-    | "arrow_down"
-    | "arrow_up_fade"
-    | "arrow_up"
-    | "logo_full"
-    | "logo_mini"
-    | "close"
-    | "menu_burger_bar"
-    | "profile_avatar"
-    | "logoAuthor"
-    | "logoAuthorDark"
-    | "iconArrowDownDark"
-    | "iconArrowLeftDark"
-    | "iconArrowLeftLight";
-
-  /**
-   * @description
    *  📣 Component `Interface`.
    */
   interface INavBtnData {
-    key: "scores" | "content" | "competitions";
+    id: string;
     url?: string | undefined;
     icon: typeof SvelteComponent;
     type: "link" | "button";
@@ -130,32 +90,8 @@
      *  📣 `this` component **main** `id` and `data-testid` prefix.
      */
     CNAME = "global/w/mobile-menu";
-    let showPopup = true;
-  // let
-  //   /**
-  //    * @description
-  //    *  📣 Holds target `component(s)` of dynamic nature.
-  //    */
-  //   dynamicAssetMap = new Map < IDynamicAssetMap, any >(),
-  //   /**
-  //    * @description
-  //    *  📣 Target `animation` width tracking variable.
-  //    */
-  //   width = 0,
-  //   /**
-  //    * @description
-  //    *  📣 Currently `selected sport`.
-  //    */
-  //   selectedSport = 'football'
-  // ;
-
-  // $: ({ error, route: { id: pageRouteId } } = $page);
-  // $: console.log('pageRouteId', pageRouteId);
-  // $: ({ windowWidth, currentPageRouteId, serverLang, navBtnHover, globalState } = $sessionStore);
-  // $: ({ lang, theme, user } = $userBetarenaSettings);
-  // $: ({ web3_wallet_addr, profile_photo, main_balance, lang: userLang } = { ...$userBetarenaSettings.user?.scores_user_data });
-  // $: ({ globalState: globalStateNavbar } = $scoresNavbarStore);
-
+  let showPopup = false;
+  $: ({ globalState } = $sessionStore);
   $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
   // $: B_SAP_D3_CP_H = $page.data.B_SAP_D3_CP_H as B_SAP_D3 | null | undefined;
 
@@ -173,10 +109,12 @@
   //  * @description
   //  *  📣 Target navigation `button` data list.
   //  */
-  $: console.log("Translation Data", trsanslationData);
+
+  $: console.log("SessionStore", $sessionStore);
+  $: console.log("UserSettings", $userBetarenaSettings);
   $: navButtonOrderList = [
     {
-      key: "scores",
+      id: "scores",
       icon: StatisticIcon,
       type: "link",
       url: trsanslationData?.scores_header_translations?.section_links
@@ -184,10 +122,9 @@
       label:
         trsanslationData?.scores_header_translations?.section_links
           ?.scores_title ?? "SCORES",
-      dragable: true,
     },
     {
-      key: "content",
+      id: "content",
       icon: DocumentsIcon,
       type: "link",
       url: trsanslationData?.scores_header_translations?.section_links
@@ -195,10 +132,9 @@
       label:
         trsanslationData?.scores_header_translations?.section_links
           ?.sports_content_title ?? "SPORTS CONTENT",
-      dragable: true,
     },
     {
-      key: "competitions",
+      id: "competitions",
       icon: CupIcon,
       url: generateUrlCompetitions(
         $sessionStore.serverLang!,
@@ -208,149 +144,72 @@
       label:
         trsanslationData?.scores_header_translations?.section_links
           ?.competitions_title ?? "COMPETITIONS",
-      dragable: true,
     },
+  ] as INavBtnData[];
+  const notDragableButtons = [
     {
-      key: "user",
+      id: "user",
       icon: UserIcon,
       type: "button",
     },
     {
-      key: "more",
+      id: "more",
       icon: MenuSquareDotsIcon,
       type: "button",
     },
   ] as INavBtnData[];
-  $: dargList = navButtonOrderList.filter((item) => item.dragable);
+
+  $: if ($userBetarenaSettings.buttons_order?.length) {
+    navButtonOrderList = $userBetarenaSettings.buttons_order?.map((id) =>
+      navButtonOrderList.find((btn) => btn.id === id)
+    );
+  }
 
   // // #endregion ➤ 📌 VARIABLES
 
-  // // #region ➤ 🛠️ METHODS
+  // #region ➤ 🛠️ METHODS
 
-  // // ╭────────────────────────────────────────────────────────────────────────╮
-  // // │ NOTE:                                                                  │
-  // // │ Please add inside 'this' region the 'methods' that are to be           │
-  // // │ and are expected to be used by 'this' .svelte file / component.        │
-  // // │ IMPORTANT                                                              │
-  // // │ Please, structure the imports as follows:                              │
-  // // │ 1. function (..)                                                       │
-  // // │ 2. async function (..)                                                 │
-  // // ╰────────────────────────────────────────────────────────────────────────╯
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
-  // /**
-  //  * @author
-  //  *  @migbash
-  //  * @summary
-  //  *  [🐞]
-  //  * @description
-  //  *  📣 Debug Helper
-  //  * @param { string } reactDebug
-  //  *  💠 Target log to display.
-  //  * @return { void }
-  //  */
-  // function _DEBUG_
-  // (
-  //   reactDebug: 'Option0' | 'Option1' | 'Option2' | 'Option3' | 'Option4' | 'Option5'
-  // ): void
-  // {
-  //   const
-  //     prefix: string = `🚏 checkpoint [R] ➤ ${NB_W_TAG[0]}`
-  //   ;
+  let initialOrder;
+  function handleDndConsider(e) {
+    if (!initialOrder) {
+      initialOrder = [...navButtonOrderList];
+    }
+    navButtonOrderList = e.detail.items;
+  }
+  function handleDndFinalize(e) {
+    navButtonOrderList = e.detail.items;
+    if (globalState.has("NotAuthenticated")) {
+      $sessionStore.currentActiveModal = "Auth_Modal";
+      return (navButtonOrderList = initialOrder);
+    }
+    userBetarenaSettings.updateData([
+      ["user-buttons-order", navButtonOrderList.map(({ id }) => id)],
+    ]);
+  }
 
-  //   // [🐞]
-  //   if (reactDebug == 'Option0')
-  //     dlogv2
-  //     (
-  //       `${prefix} if_R_X`,
-  //       [
-  //         '📝 INFO: Authentication logic processing...',
-  //         '❗️ WARNING: Non re-occuring logic, (once per load), should not be seen again.'
-  //       ],
-  //       true
-  //     );
-  //   else if (reactDebug == 'Option1')
-  //     dlogv2
-  //     (
-  //       `${prefix} if_R_0`,
-  //       [
-  //         '📝 INFO: Non-authenticated user detected! Processing logic...',
-  //         '❗️ WARNING: Non re-occuring logic, (once per load), should not be seen again.'
-  //       ],
-  //       true
-  //     );
-  //   else if (reactDebug == 'Option2')
-  //     dlogv2
-  //     (
-  //       `${prefix} if_R_1`,
-  //       [
-  //         '📝 INFO: Authenticated user detected! Processing logic...',
-  //         '❗️ WARNING: Non re-occuring logic, (once per load), should not be seen again.'
-  //       ],
-  //       true
-  //     );
-  //   else if (reactDebug == 'Option3')
-  //     dlog
-  //     (
-  //       `${prefix} if_R_2`,
-  //       true
-  //     );
-  //   else if (reactDebug == 'Option4')
-  //     dlog
-  //     (
-  //       `${prefix} if_R_3`,
-  //       true
-  //     );
-  //   else
-  //     dlog
-  //     (
-  //       `${prefix} if_R_5 ${lang}`,
-  //       true
-  //     );
+  function buttonClick(e: MouseEvent, id: string) {
+    if (id === "more") {
+      showPopup = !showPopup;
+    }
+  }
 
-  //   return;
-  // }
+  function transformDraggedElement(draggedElement: HTMLElement) {
+    draggedElement.style.backgroundColor = 'var(--mobile-menu-bg-popup) !important';
+    draggedElement.style.backdropFilter = 'blur(10px)';
+  }
 
-  // /**
-  //  * @author
-  //  *  @migbash
-  //  * @summary
-  //  *  🟦 HELPER
-  //  * @description
-  //  *  📣 Calcualte navigation triangle position.
-  //  * @param { string } [mainActive]
-  //  *  💠 [optional] Currently **active/selected** navigation.
-  //  * @return { void }
-  //  */
-  // function calcNavTrianglePos
-  // (
-  //   mainActive?: string
-  // ): void
-  // {
-  //   const
-  //     parentElem = document.getElementById('navBox'),
-  //     childElem = document.getElementById($sessionStore.navBtnHover || mainActive)
-  //   ;
-
-  //   if (parentElem == undefined || childElem == undefined) return;
-
-  //   const
-  //     parentPos: DOMRect = parentElem.getBoundingClientRect(),
-  //     childPos: DOMRect = childElem.getBoundingClientRect(),
-  //     relativePos = {
-  //       top: (childPos.top - parentPos.top),
-  //       right: (childPos.right - parentPos.right),
-  //       bottom: (childPos.bottom - parentPos.bottom),
-  //       left: (childPos.left - parentPos.left)
-  //     }
-  //   ;
-
-  //   width = relativePos.left + (childPos.width/2) - 32 + 6;
-
-  //   return;
-  // }
-
-
- </script>
+  // #endregion ➤ 🛠️ METHODS
+</script>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -363,40 +222,58 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 {#if showPopup}
-  <div class="popup-modal"/>
+  <div class="popup-modal" in:fade out:fade />
 {/if}
 <div id={CNAME} class="mobile-menu">
   <div class="blured-container" />
-  {#each navButtonOrderList as { key, url, icon, type } (key)}
+  {#each [...navButtonOrderList, ...notDragableButtons] as { id, url, icon, type } (id)}
     {#if type === "link" && url}
       <a href={url} class="item">
         <svelte:component this={icon} />
       </a>
     {:else}
-      <div class="item">
+      <div
+        class="item {id === 'more' && showPopup ? 'active' : ''}"
+        on:click={(e) => buttonClick(e, id)}
+      >
         <svelte:component this={icon} />
       </div>
     {/if}
   {/each}
 
   {#if showPopup}
-     <!-- content here -->
-
-  <div class="popup">
-    <div class="blured-container"></div>
-    {#each dargList as item (item.key)}
-      <div class="list-item" id={`mobile-menu-drag-${item.key}`}>
-        <svelte:component this={item.icon} />
-        <span class="label">{item.label}</span>
-        <div class="drag-icon">
-          <Dragicon />
-        </div>
+    <div class="popup" in:scale out:scale>
+      <div class="blured-container" />
+      <div
+        class="popup-list"
+        use:dndzone={{
+          items: navButtonOrderList,
+          flipDurationMs: 300,
+          dropTargetClasses: ["drag-item"],
+          transformDraggedElement
+        }}
+        on:consider={handleDndConsider}
+        on:finalize={handleDndFinalize}
+      >
+        {#each navButtonOrderList as { icon, label, id } (id)}
+          <div
+            class="list-item"
+            style="gap: 10px; outline:none"
+            animate:flip={{ duration: 300 }}
+          >
+            <div style="width: 24px;">
+              <svelte:component this={icon} />
+            </div>
+            <span class="label" style="flex-grow: 1;">{label}</span>
+            <div class="drag-icon" style="width: 24px;">
+              <Dragicon />
+            </div>
+          </div>
+        {/each}
       </div>
-    {/each}
-  </div>
+    </div>
   {/if}
 </div>
-
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -409,6 +286,9 @@
 -->
 
 <style lang="scss">
+  :global(".drag-item") {
+    color: red;
+  }
   .popup-modal {
     position: fixed;
     top: 0;
@@ -417,11 +297,12 @@
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 1000;
+    pointer-events: none;
   }
   .mobile-menu {
     display: flex;
     position: fixed;
-    bottom: 24px;
+    bottom: 60px;
     height: 56px;
     width: 340px;
     max-width: 95%;
@@ -435,8 +316,6 @@
     justify-content: space-between;
     gap: 40px;
     padding: 16px 30px;
-    // background-color: var(--mobile-menu-bg-color);
-    // backdrop-filter: blur(10px);
 
     .blured-container {
       border-radius: 56px;
@@ -450,12 +329,19 @@
       backdrop-filter: blur(10px);
     }
 
-    svg {
+    :global(svg) {
       width: 24px !important;
+      transition: all 0.5s ease-in-out;
     }
 
     .item {
       flex-shrink: 0;
+
+      &.active {
+        :global(svg) {
+          transform: rotate(180deg);
+        }
+      }
     }
 
     .popup {
@@ -466,27 +352,47 @@
       transform: translate(-50%, -100%);
       display: flex;
       flex-direction: column;
-      padding: 12px;
-      gap: 16px;
       border-radius: 8px;
-      // background-color: var(--mobile-menu-bg-popup);
 
       .blured-container {
         border-radius: 8px;
+        background-color: var(--mobile-menu-bg-popup);
       }
 
-      :global(svg) {
-        width: 24px !important;
-      }
-      .list-item {
+      .popup-list {
         display: flex;
-        align-items: center;
-        justify-content: start;
+        flex-direction: column;
         width: 100%;
-        z-index: 1000;
-        gap: 10px;
-        .label {
-          flex-grow: 1;
+        height: 100%;
+        gap: 4px;
+        outline: none !important;
+        padding: 7px 0;
+
+        :global(svg) {
+          width: 24px !important;
+        }
+        .list-item {
+          display: flex;
+          align-items: center;
+          justify-content: start;
+          width: 100%;
+          z-index: 1000;
+          padding: 5px 12px;
+
+          --text-color: var(--text-color);
+          gap: 10px;
+          .drag-item {
+            width: 24px;
+          }
+          svg {
+            width: 24px !important;
+          }
+          :global(svg) {
+            width: 24px !important;
+          }
+          .label {
+            flex-grow: 1;
+          }
         }
       }
     }
