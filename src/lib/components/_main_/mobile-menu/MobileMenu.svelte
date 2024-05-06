@@ -134,7 +134,7 @@
     },
   ] as INavBtnData[];
 
-  $: if (buttons_order) {
+  $: if (buttons_order && !dragStart) {
     navButtonOrderList = buttons_order?.map((id) =>
       navButtonOrderList.find((btn) => btn.id === id)
     );
@@ -155,9 +155,11 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   let initialOrder;
+  let dragStart = false;
   function handleDndConsider(e) {
+    dragStart = true;
     if (!initialOrder) {
-      initialOrder = [...navButtonOrderList];
+      initialOrder = navButtonOrderList;
     }
     navButtonOrderList = e.detail.items;
   }
@@ -165,11 +167,14 @@
     navButtonOrderList = e.detail.items;
     if (globalState.has("NotAuthenticated")) {
       $sessionStore.currentActiveModal = "Auth_Modal";
-      return (navButtonOrderList = initialOrder);
+      navButtonOrderList = initialOrder;
+      dragStart = false;
+      return
     }
     userBetarenaSettings.updateData([
       ["user-buttons-order", navButtonOrderList.map(({ id }) => id)],
     ]);
+    dragStart = false;
   }
 
   function buttonClick(e: MouseEvent, id: string) {
