@@ -1093,10 +1093,9 @@ export async function updateButtonOrder
   (
     userRef,
     {
-      order
+      buttons_order: order
     }
   );
-
   return;
 }
 

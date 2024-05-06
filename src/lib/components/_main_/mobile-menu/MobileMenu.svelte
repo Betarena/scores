@@ -55,6 +55,7 @@
   import Dragicon from "./assets/dragicon.svelte";
 
   import type { SvelteComponent } from "svelte";
+  import Avatar from "$lib/components/ui/Avatar.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -90,28 +91,14 @@
      *  📣 `this` component **main** `id` and `data-testid` prefix.
      */
     CNAME = "global/w/mobile-menu";
+
   let showPopup = false;
   $: ({ globalState } = $sessionStore);
+  $: ({ profile_photo, buttons_order } = {
+    ...$userBetarenaSettings.user?.scores_user_data,
+  });
   $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
-  // $: B_SAP_D3_CP_H = $page.data.B_SAP_D3_CP_H as B_SAP_D3 | null | undefined;
 
-  // $: homepageURL
-  //   = serverLang != 'en'
-  //     ? `/${serverLang}`
-  //     : '/'
-  // ;
-  // $: logoLink
-  //   = serverLang != 'en'
-  //     ? `${$page.url.origin}/${serverLang}`
-  //     : $page.url.origin
-  // ;
-  // /**
-  //  * @description
-  //  *  📣 Target navigation `button` data list.
-  //  */
-
-  $: console.log("SessionStore", $sessionStore);
-  $: console.log("UserSettings", $userBetarenaSettings);
   $: navButtonOrderList = [
     {
       id: "scores",
@@ -146,21 +133,9 @@
           ?.competitions_title ?? "COMPETITIONS",
     },
   ] as INavBtnData[];
-  const notDragableButtons = [
-    {
-      id: "user",
-      icon: UserIcon,
-      type: "button",
-    },
-    {
-      id: "more",
-      icon: MenuSquareDotsIcon,
-      type: "button",
-    },
-  ] as INavBtnData[];
 
-  $: if ($userBetarenaSettings.buttons_order?.length) {
-    navButtonOrderList = $userBetarenaSettings.buttons_order?.map((id) =>
+  $: if (buttons_order) {
+    navButtonOrderList = buttons_order?.map((id) =>
       navButtonOrderList.find((btn) => btn.id === id)
     );
   }
@@ -204,8 +179,9 @@
   }
 
   function transformDraggedElement(draggedElement: HTMLElement) {
-    draggedElement.style.backgroundColor = 'var(--mobile-menu-bg-popup) !important';
-    draggedElement.style.backdropFilter = 'blur(10px)';
+    draggedElement.style.backgroundColor =
+      "var(--mobile-menu-bg-popup) !important";
+    draggedElement.style.backdropFilter = "blur(10px)";
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -222,24 +198,40 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 {#if showPopup}
-  <div class="popup-modal" in:fade out:fade on:click|preventDefault={() => showPopup = false} />
+  <div
+    class="popup-modal"
+    in:fade
+    out:fade
+    on:click|preventDefault={() => (showPopup = false)}
+  />
 {/if}
 <div id={CNAME} class="mobile-menu">
   <div class="blured-container" />
-  {#each [...navButtonOrderList, ...notDragableButtons] as { id, url, icon, type } (id)}
+  {#each [...navButtonOrderList] as { id, url, icon, type } (id)}
     {#if type === "link" && url}
       <a href={url} class="item">
         <svelte:component this={icon} />
       </a>
     {:else}
-      <div
-        class="item {id === 'more' && showPopup ? 'active' : ''}"
-        on:click={(e) => buttonClick(e, id)}
-      >
+      <div class="item" on:click={(e) => buttonClick(e, id)}>
         <svelte:component this={icon} />
       </div>
     {/if}
   {/each}
+  <div class="item" on:click={(e) => buttonClick(e, "profile")}>
+    {#if globalState.has("NotAuthenticated") || !profile_photo}
+      <UserIcon />
+    {:else}
+      <Avatar src={profile_photo} size={24} />
+    {/if}
+  </div>
+  <div
+    class="item"
+    class:active={showPopup}
+    on:click={(e) => buttonClick(e, "more")}
+  >
+    <MenuSquareDotsIcon />
+  </div>
 
   {#if showPopup}
     <div class="popup" in:scale out:scale>
@@ -249,7 +241,7 @@
           items: navButtonOrderList,
           flipDurationMs: 300,
           dropTargetClasses: ["drag-item"],
-          transformDraggedElement
+          transformDraggedElement,
         }}
         on:consider={handleDndConsider}
         on:finalize={handleDndFinalize}
@@ -331,6 +323,7 @@
 
     .item {
       flex-shrink: 0;
+      display: flex;
 
       &.active {
         :global(svg) {
