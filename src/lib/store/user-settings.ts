@@ -17,7 +17,7 @@
 
 import { writable } from 'svelte/store';
 
-import { updateFollowing, updateSelectLang } from '$lib/firebase/common.js';
+import { updateButtonOrder, updateFollowing, updateSelectLang } from '$lib/firebase/common.js';
 import sessionStore from '$lib/store/session.js';
 import { initSportbookData } from '$lib/utils/geo.js';
 import { initUser, logoutUser } from '$lib/utils/user.js';
@@ -61,6 +61,7 @@ type IDataProp =
   | 'user-main-balance'
   | 'user-investor-balance'
   | 'user-following'
+  | "user-buttons-order"
   ;
 
 enum DataPropEnum
@@ -78,6 +79,7 @@ enum DataPropEnum
   USER_MAIN_BALANCE = 'user-main-balance',
   USER_INVESTOR_BALANCE = 'user-investor-balance',
   USER_FOLLOWING = 'user-following',
+  USER_BUTTONS_ORDER = 'user-buttons-order'
 }
 // #endregion ➤ 📌 VARIABLES
 
@@ -399,6 +401,8 @@ function createLocalStore
                 break;
               case DataPropEnum.THEME:
                 localStore.theme = localStore.theme == 'Dark' ? 'Light' : 'Dark';
+                document.body.classList.toggle('dark-mode');
+                document.body.classList.toggle('light-mode');
                 break;
               case DataPropEnum.GEO_JS:
                 localStore.geoJs = dataPoint;
@@ -429,6 +433,7 @@ function createLocalStore
                 if (localStore.user.scores_user_data.userguide_id_opt_out != null)
                   localStore.userguide_id_opt_out = localStore.user.scores_user_data.userguide_id_opt_out;
                 break;
+
               default: break;
             }
 
@@ -477,6 +482,11 @@ function createLocalStore
                 following[target] = target_following;
                 (scores_user as any).following = following;
                 updateFollowing(following);
+                break;
+              }
+              case DataPropEnum.USER_BUTTONS_ORDER:{
+                (scores_user as any).buttons_order = dataPoint as string[];
+                updateButtonOrder(dataPoint as string[]);
                 break;
               }
               default: break
@@ -562,7 +572,11 @@ function createLocalStore
               user: undefined
             }
             ;
-
+          if (localStore?.theme)
+          {
+            document.body.classList.toggle('dark-mode', localStore.theme == 'Dark');
+            document.body.classList.toggle('light-mode', localStore.theme == 'Light');
+          }
           if (localStore?.user)
           {
             data['user-uid'] = localStore.user.firebase_user_data?.uid;

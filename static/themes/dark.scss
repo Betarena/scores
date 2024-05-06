@@ -1,8 +1,9 @@
-.dark-mode
-{
+.dark-mode {
   --text-color: #FFFFFF;
   --text-color-second: #CCCCCC;
   --text-color-second-dark: #8C8C8C;
+
+  --icon-color: var(--text-color);
 
   --bg-color-rgb-consts: 41, 41, 41;
   --bg-color: rgb(var(--bg-color-rgb-consts));
@@ -17,4 +18,11 @@
   --tag-bg-color: #4B4B4B;
 
   --section-border: 1px solid var(--border-color);
+
+  //Mobile-Menu
+  --mobile-menu-bg-color: rgba(var(--bg-color-second-rgb-consts), 0.7);
+  --mobile-menu-bg-popup: rgba(var(--bg-color-rgb-consts), 0.8);
+  --box-shadow: 0px 0px 50px 0px rgba(0, 0, 0, 0.5);
+  ;
+
 }

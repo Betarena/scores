@@ -9,7 +9,10 @@ const config =
 
 	// ▓▓ SEE:
   // ▓▓ https://github.com/sveltejs/svelte-preprocess
-	preprocess: preprocess(),
+  preprocess: preprocess({
+    scss: {
+      prependData: `@import 'static/themes/index.scss';`
+  }}),
 
   // ▓▓ SEE:
   // ▓▓ https://kit.svelte.dev/docs/configuration
