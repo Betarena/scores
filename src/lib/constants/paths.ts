@@ -60,5 +60,5 @@ export const
    * @description
    *  📣 Target `path` for **scores  page**.
    */
-  routeIdScores = '/(scores)/[[lang=lang]]'
+  routeIdScores = '/(scores)/[[lang=lang]]/scores'
   ;
