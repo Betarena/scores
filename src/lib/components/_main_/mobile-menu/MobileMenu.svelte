@@ -44,7 +44,7 @@
   import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
   import sessionStore from "$lib/store/session.js";
   import userBetarenaSettings from "$lib/store/user-settings.js";
-  import { generateUrlCompetitions } from "$lib/utils/string";
+  import { cleanUrl, generateUrlCompetitions } from "$lib/utils/string";
   import { dndzone } from "svelte-dnd-action";
 
   import StatisticIcon from "./assets/statisticicon.svelte";
@@ -56,6 +56,11 @@
 
   import type { SvelteComponent } from "svelte";
   import Avatar from "$lib/components/ui/Avatar.svelte";
+  import {
+    routeIdPageAuthors,
+    routeIdPageCompetitionLobby,
+    routeIdScores,
+  } from "$lib/constants/paths.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -84,6 +89,7 @@
     type: "link" | "button";
     label?: string;
     dragable?: boolean;
+    route?: string;
   }
 
   const /**
@@ -104,11 +110,12 @@
       id: "scores",
       icon: StatisticIcon,
       type: "link",
-      url: trsanslationData?.scores_header_translations?.section_links
-        ?.scores_url,
+      url: cleanUrl( trsanslationData?.scores_header_translations?.section_links
+        ?.scores_url || "/"),
       label:
         trsanslationData?.scores_header_translations?.section_links
           ?.scores_title ?? "SCORES",
+      route: routeIdScores,
     },
     {
       id: "content",
@@ -119,6 +126,7 @@
       label:
         trsanslationData?.scores_header_translations?.section_links
           ?.sports_content_title ?? "SPORTS CONTENT",
+      route: routeIdPageAuthors,
     },
     {
       id: "competitions",
@@ -131,6 +139,7 @@
       label:
         trsanslationData?.scores_header_translations?.section_links
           ?.competitions_title ?? "COMPETITIONS",
+      route: routeIdPageCompetitionLobby,
     },
   ] as INavBtnData[];
 
@@ -169,7 +178,7 @@
       $sessionStore.currentActiveModal = "Auth_Modal";
       navButtonOrderList = initialOrder;
       dragStart = false;
-      return
+      return;
     }
     userBetarenaSettings.updateData([
       ["user-buttons-order", navButtonOrderList.map(({ id }) => id)],
@@ -178,15 +187,24 @@
   }
 
   function buttonClick(e: MouseEvent, id: string) {
-    if (id === "more") {
-      showPopup = !showPopup;
+    switch (id) {
+      case "profile":
+        if (globalState.has("NotAuthenticated")) {
+          $sessionStore.currentActiveModal = "Auth_Modal";
+        }
+        break;
+      case "more":
+        showPopup = !showPopup;
+        break;
+      default:
+        break;
     }
   }
 
   function transformDraggedElement(draggedElement: HTMLElement) {
-    draggedElement.style.backgroundColor =
-      "var(--mobile-menu-bg-popup) !important";
+    draggedElement.style.background = "var(--mobile-menu-bg-popup)";
     draggedElement.style.backdropFilter = "blur(10px)";
+    draggedElement.style.setProperty("--icon-color", "var(--text-color)");
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -212,10 +230,11 @@
 {/if}
 <div id={CNAME} class="mobile-menu">
   <div class="blured-container" />
-  {#each [...navButtonOrderList] as { id, url, icon, type } (id)}
+  {#each [...navButtonOrderList] as { id, url, icon, type, route } (id)}
     {#if type === "link" && url}
-      <a href={url} class="item">
-        <svelte:component this={icon} />
+      {@const active = $page.route.id === route}
+      <a href={url} class="item" class:active>
+        <svelte:component this={icon} type={active ? "solid" : "outline"} />
       </a>
     {:else}
       <div class="item" on:click={(e) => buttonClick(e, id)}>
@@ -224,18 +243,26 @@
     {/if}
   {/each}
   <div class="item" on:click={(e) => buttonClick(e, "profile")}>
-    {#if globalState.has("NotAuthenticated") || !profile_photo}
+    {#if globalState.has("NotAuthenticated")}
       <UserIcon />
     {:else}
-      <Avatar src={profile_photo} size={24} />
+      <a href="/u/dashboard/{$userBetarenaSettings.lang}">
+        {#if profile_photo}
+          <Avatar src={profile_photo} size={24} />
+        {:else}
+          <UserIcon />
+        {/if}
+      </a>
     {/if}
   </div>
   <div
     class="item"
+    style="margin-top: 1px;"
+    class:rotate={showPopup}
     class:active={showPopup}
     on:click={(e) => buttonClick(e, "more")}
   >
-    <MenuSquareDotsIcon />
+    <MenuSquareDotsIcon type={showPopup ? "solid" : "outline"} />
   </div>
 
   {#if showPopup}
@@ -246,6 +273,7 @@
           items: navButtonOrderList,
           flipDurationMs: 300,
           dropTargetClasses: ["drag-item"],
+          morphDisabled: true,
           transformDraggedElement,
         }}
         on:consider={handleDndConsider}
@@ -331,6 +359,11 @@
       display: flex;
 
       &.active {
+        --icon-color: var(--text-color);
+        --icon-contrast-color: var(--bg-color-second);
+      }
+
+      &.rotate {
         :global(svg) {
           transform: rotate(180deg);
         }
@@ -366,8 +399,6 @@
           width: 100%;
           z-index: 1000;
           padding: 8px 12px;
-          background: var(--mobile-menu-bg-popup);
-          backdrop-filter: blur(10px);
 
           gap: 10px;
           .drag-item {
