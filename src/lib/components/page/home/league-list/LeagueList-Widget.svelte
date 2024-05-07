@@ -119,7 +119,7 @@
 
     const response = await get
     (
-			`api/data/home/league-list?geoPos=${$userBetarenaSettings.country_bookmaker}`,
+			`/api/data/home/league-list?geoPos=${$userBetarenaSettings.country_bookmaker}`,
       null,
       true,
       true

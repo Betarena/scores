@@ -38,7 +38,7 @@ export async function load
   // [🐞]
   dlogv2
   (
-    '🚏 checkpoint ➤ src/routes/(scores)/[[lang=lang]]/+page.server.ts',
+    '🚏 checkpoint ➤ src/routes/(scores)/[[lang=lang]]/scores/+page.server.ts',
     [
       `🔹 [var] ➤ langParam :|: ${langParam}`,
     ],

@@ -123,7 +123,7 @@ export async function main
   // [🐞]
   dlogv2
   (
-    '🚏 checkpoint ➤ src/routes/(scores)/[[lang=lang]]/+page.server.ts',
+    '🚏 checkpoint ➤ src/routes/(scores)/[[lang=lang]]/scores/+page.server.ts',
     [
       `🔹 [var] ➤ response :|: ${JSON.stringify(response.PAGE_DATA_SEO)}`,
     ],
