@@ -246,7 +246,7 @@
     {:else}
       <a href="/u/dashboard/{$userBetarenaSettings.lang}">
         {#if profile_photo}
-          <Avatar src={profile_photo} size={24} />
+          <Avatar src={profile_photo} size={25} />
         {:else}
           <UserIcon />
         {/if}
