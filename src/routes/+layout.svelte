@@ -68,6 +68,7 @@
   // import WidgetAdEngine from '@betarena/ad-engine/src/lib/Widget-AdEngine.svelte';
   import WidgetAdEngine from "@betarena/ad-engine";
   import { modalSore } from "$lib/store/modal.js";
+  import { routeIdPageCompetitions, routeIdPageProfile, routeIdScores } from "$lib/constants/paths.js";
 
   // ╭─────
   // │ WARNING:
@@ -252,15 +253,28 @@
   // ╭─────
   // │ > 🔥 (3rd Party) Intercom Logic [show/hide]
   // ╰─────
+  // $: if (
+  //   (browser && currentPageRouteId == "ProfilePage") ||
+  //   currentPageRouteId == "CompetitionPage"
+  // ) {
+  //   const intercom: HTMLElement = document.getElementsByClassName(
+  //     "intercom-lightweight-app"
+  //   )[0] as unknown as HTMLElement;
+  //   if (intercom != undefined) intercom.style.display = "unset";
+  // } else if (browser && !currentPageRouteId) {
+  //   const intercom: HTMLElement = document.getElementsByClassName(
+  //     "intercom-lightweight-app"
+  //   )[0] as unknown as HTMLElement;
+  //   if (intercom != undefined) intercom.style.display = "none";
+  // }
   $: if (
-    (browser && currentPageRouteId == "ProfilePage") ||
-    currentPageRouteId == "CompetitionPage"
+    browser && $page.route.id == routeIdPageProfile
   ) {
     const intercom: HTMLElement = document.getElementsByClassName(
       "intercom-lightweight-app"
     )[0] as unknown as HTMLElement;
     if (intercom != undefined) intercom.style.display = "unset";
-  } else if (browser && !currentPageRouteId) {
+  } else if (browser) {
     const intercom: HTMLElement = document.getElementsByClassName(
       "intercom-lightweight-app"
     )[0] as unknown as HTMLElement;
@@ -542,7 +556,7 @@
     <slot />
     <Footer />
   </main>
-  {#if VIEWPORT_MOBILE_INIT[1] || VIEWPORT_TABLET_INIT[1]}
+  {#if (VIEWPORT_MOBILE_INIT[1] || VIEWPORT_TABLET_INIT[1]) && [routeIdScores, routeIdPageCompetitions].includes($page.route.id) }
      <MobileMenu />
   {/if}
   {#if $modalSore.show && $modalSore.component}
@@ -562,7 +576,10 @@
 
 <style lang="scss">
 
-
+  :global() {
+    @import url("../../static/themes/dark.scss");
+    @import url("../../static/themes/light.scss");
+  }
 
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
