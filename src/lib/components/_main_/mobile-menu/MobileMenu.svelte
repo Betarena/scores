@@ -99,19 +99,17 @@
     CNAME = "global/w/mobile-menu";
 
   let showPopup = false;
-  $: ({ globalState } = $sessionStore);
+  $: ({ globalState, serverLang } = $sessionStore);
   $: ({ profile_photo, buttons_order } = {
     ...$userBetarenaSettings.user?.scores_user_data,
   });
   $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
-
   $: navButtonOrderList = [
     {
       id: "scores",
       icon: StatisticIcon,
       type: "link",
-      url: cleanUrl( trsanslationData?.scores_header_translations?.section_links
-        ?.scores_url || "/"),
+      url: `${serverLang != "en" ? `/${serverLang}` : ""}/scores`,
       label:
         trsanslationData?.scores_header_translations?.section_links
           ?.scores_title ?? "SCORES",

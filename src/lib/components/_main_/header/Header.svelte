@@ -190,8 +190,7 @@
   $: navButtonOrderList = [
     {
       key: "scores",
-      url: trsanslationData?.scores_header_translations?.section_links
-        ?.scores_url,
+      url: `${serverLang != "en" ? `/${serverLang}` : ""}/scores`,
       navTxt:
         trsanslationData?.scores_header_translations?.section_links
           ?.scores_title ?? "SCORES",
