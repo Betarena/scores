@@ -254,6 +254,8 @@
       loadArticles();
     }
   }
+
+  $: console.log(articles, translations)
   // #endregion ➤ 🛠️ METHODS
 </script>
 

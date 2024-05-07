@@ -18,7 +18,7 @@
 import { clientTimezoneDate, targetDate } from '$lib/utils/dates.js';
 import { writable } from 'svelte/store';
 
-import { routeIdPageAuthors, routeIdPageCompetitions, routeIdPageProfile, routeIdPageTags } from '$lib/constants/paths.js';
+import { routeIdContent, routeIdPageAuthors, routeIdPageCompetitions, routeIdPageProfile, routeIdPageTags } from '$lib/constants/paths.js';
 import { dlogv2 } from '$lib/utils/debug.js';
 
 import type { IPageRouteId, ISessionStore } from '$lib/types/types.session.js';
@@ -207,7 +207,7 @@ function createLocalStore
                 customRouteId = 'CompetitionPage';
               else if (dataPoint == routeIdPageProfile)
                 customRouteId = 'ProfilePage';
-              else if (dataPoint == routeIdPageAuthors || dataPoint === routeIdPageTags)
+              else if (dataPoint == routeIdPageAuthors || dataPoint === routeIdPageTags || dataPoint === routeIdContent)
                 customRouteId = 'AuthorsPage';
               ;
 

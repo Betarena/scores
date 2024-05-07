@@ -60,5 +60,10 @@ export const
    * @description
    *  📣 Target `path` for **scores  page**.
    */
-  routeIdScores = '/(scores)/[[lang=lang]]'
+  routeIdScores = '/(scores)/[[lang=lang]]',
+  /**
+   * @description
+   *  📣 Target `path` for **personalized content  page**.
+   */
+  routeIdContent = '/(authors)/a/content'
   ;

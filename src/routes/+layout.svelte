@@ -17,6 +17,7 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+	import HeaderRedesigned from './../lib/components/_main_/header/HeaderRedesigned.svelte';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
@@ -52,6 +53,7 @@
 
   import Footer from "$lib/components/_main_/footer/Footer.svelte";
   import Header from "$lib/components/_main_/header/Header.svelte";
+  import HeaderRedesigned from "$lib/components/_main_/header_redisigned/HeaderRedesigned.svelte";
   import MobileMenu from "$lib/components/_main_/mobile-menu/MobileMenu.svelte";
   import SplashScreen from "$lib/components/misc/Splash-Screen.svelte";
   import DevInfoBox from "$lib/components/misc/admin/Dev-Info-Box.svelte";
@@ -68,7 +70,12 @@
   // import WidgetAdEngine from '@betarena/ad-engine/src/lib/Widget-AdEngine.svelte';
   import WidgetAdEngine from "@betarena/ad-engine";
   import { modalSore } from "$lib/store/modal.js";
-  import { routeIdPageCompetitions, routeIdPageProfile, routeIdScores } from "$lib/constants/paths.js";
+  import {
+    routeIdContent,
+    routeIdPageCompetitions,
+    routeIdPageProfile,
+    routeIdScores,
+  } from "$lib/constants/paths.js";
 
   // ╭─────
   // │ WARNING:
@@ -118,12 +125,12 @@
      * @description
      *  📣 threshold start + state for 📱 MOBILE
      */ // eslint-disable-next-line no-unused-vars
-     VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ],
+    VIEWPORT_MOBILE_INIT: [number, boolean] = [575, true],
     /**
      * @description
      *  📣 threshold start + state for 💻 TABLET
      */ // eslint-disable-next-line no-unused-vars
-    VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ],
+    VIEWPORT_TABLET_INIT: [number, boolean] = [1160, true],
     /**
      * @description
      *  📣 Holds target `component(s)` of dynamic nature.
@@ -149,14 +156,11 @@
   $: $sessionStore.serverLang = $page.data.langParam as string;
   $: $sessionStore.page = $page;
 
-  $: [ VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1] ]
-    = viewportChangeV2
-    (
-      $sessionStore.windowWidth,
-      VIEWPORT_MOBILE_INIT[0],
-      VIEWPORT_TABLET_INIT[0],
-    )
-  ;
+  $: [VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1]] = viewportChangeV2(
+    $sessionStore.windowWidth,
+    VIEWPORT_MOBILE_INIT[0],
+    VIEWPORT_TABLET_INIT[0]
+  );
 
   $sessionStore.deviceType = $page.data.deviceType as
     | "mobile"
@@ -267,9 +271,7 @@
   //   )[0] as unknown as HTMLElement;
   //   if (intercom != undefined) intercom.style.display = "none";
   // }
-  $: if (
-    browser && $page.route.id == routeIdPageProfile
-  ) {
+  $: if (browser && $page.route.id == routeIdPageProfile) {
     const intercom: HTMLElement = document.getElementsByClassName(
       "intercom-lightweight-app"
     )[0] as unknown as HTMLElement;
@@ -425,6 +427,19 @@
       }
       )();
     </script> -->
+    <!-- <script type="text/javascript">
+      window.$crisp=[];
+      window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
+      (function()
+      {
+        d=document;
+        s=d.createElement("script");
+        s.src="https://client.crisp.chat/l.js";
+        s.async=1;
+        d.getElementsByTagName("head")[0].appendChild(s);
+      }
+      )();
+    </script> -->
     <script>
       // We pre-filled your app ID in the widget URL: 'https://widget.intercom.io/widget/yz9qn6p3'
       (function () {
@@ -498,7 +513,12 @@
 -->
 
 <!-- {$page.data.dataArticle} -->
-<div class="app-wrapper" id="app-root-layout" class:dark-mode={theme == "Dark"} class:light-mode={theme == "Light"}>
+<div
+  class="app-wrapper"
+  id="app-root-layout"
+  class:dark-mode={theme == "Dark"}
+  class:light-mode={theme == "Light"}
+>
   <WidgetAdEngine
     authorId={$page.data.dataArticle?.author_id}
     authorArticleTagIds={$page.data.dataArticle?.tags}
@@ -541,7 +561,11 @@
     <!-- <EmailSubscribe /> -->
   {/if}
 
-  <Header />
+  {#if $page.route.id === routeIdContent}
+    <HeaderRedesigned />
+  {:else}
+    <Header />
+  {/if}
 
   <main
     class:dark-background={theme == "Dark"}
@@ -556,8 +580,8 @@
     <slot />
     <Footer />
   </main>
-  {#if (VIEWPORT_MOBILE_INIT[1] || VIEWPORT_TABLET_INIT[1]) && [routeIdScores, routeIdPageCompetitions].includes($page.route.id) }
-     <MobileMenu />
+  {#if (VIEWPORT_MOBILE_INIT[1] || VIEWPORT_TABLET_INIT[1]) && [routeIdScores, routeIdPageCompetitions, routeIdContent].includes($page.route.id)}
+    <MobileMenu />
   {/if}
   {#if $modalSore.show && $modalSore.component}
     <svelte:component this={$modalSore.component} />
@@ -575,7 +599,6 @@
 -->
 
 <style lang="scss">
-
   :global() {
     @import url("../../static/themes/dark.scss");
     @import url("../../static/themes/light.scss");
@@ -588,6 +611,8 @@
   */
 
   .app-wrapper {
+    display: flex;
+    flex-direction: column;
     min-height: 100vh;
   }
   main {
@@ -595,6 +620,7 @@
     position: relative;
     z-index: 0;
     margin: 0 auto;
+    flex-grow: 1;
     /* 🎨 style */
     width: 100%;
 
