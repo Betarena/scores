@@ -267,6 +267,7 @@
 
   {#if showPopup}
     <div class="popup" in:scale out:scale>
+      <div class="blured-container" />
       <div
         class="popup-list"
         use:dndzone={{
@@ -336,6 +337,7 @@
     justify-content: space-between;
     gap: 40px;
     padding: 16px 30px;
+    background-color: var(--mobile-menu-bg-color) ;
 
     .blured-container {
       border-radius: 56px;
@@ -345,7 +347,6 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: var(--mobile-menu-bg-color);
       backdrop-filter: blur(10px);
     }
 
@@ -381,6 +382,10 @@
       border-radius: 8px;
       --icon-color: var(--text-color);
       background-color: var(--mobile-menu-bg-popup);
+
+      .blured-container {
+        border-radius: 8px;
+      }
 
       .popup-list {
         display: flex;
