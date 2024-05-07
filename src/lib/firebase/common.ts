@@ -1027,6 +1027,78 @@ export async function updateFollowing
   return;
 }
 
+/**
+ * @author
+ *  @izobov
+ * @summary
+ *  🟦 HELPER
+ * @description
+ *  📣 Update `user` platform buttons order in mobile view.
+ * @param { string[] } order
+ *  💠 **[required]** Following object
+ * @returns { Promise < void > }
+ */
+export async function updateButtonOrder
+(
+  order: string[]
+): Promise < void >
+{
+  const
+    /**
+     * @description
+     * 📝 Data point
+     */
+    uid = userBetarenaSettings.extract('uid') as string | undefined | null,
+    /**
+     * @description
+     * 📝 Data for `page`
+     */
+    page = sessionStore.extract< Page >('page') as Page,
+    /**
+     * @description
+     * 📝 Conditional logic bundle simplification
+     */
+    if_M_0
+      = !checkNull(page.error)
+      || checkNull(page.route.id)
+      || !order
+      || !uid
+  ;
+
+  if (if_M_0) return;
+
+  // [🐞]
+  dlogv2
+  (
+    '🚏 checkpoint ➤ updateButtonOrder(..)',
+    [
+      `🔹 [var] ➤ opts.isPageError :|: ${page.error}`,
+      `🔹 [var] ➤ opts.routeId :|: ${page.route.id}`,
+      `🔹 [var] ➤ buttuns order :|: ${order}`,
+      `🔹 [var] ➤ uid :|: ${uid}`,
+    ],
+    true
+  );
+
+  const
+    userRef = doc
+    (
+      db_firestore,
+      'betarena_users',
+      uid,
+    )
+  ;
+
+  await updateDoc
+  (
+    userRef,
+    {
+      buttons_order: order
+    }
+  );
+  return;
+}
+
 // #endregion 🔥 LIVESCORES_NOW_SCOREBOARD
 
 // #endregion ➤ 🛠️ METHODS

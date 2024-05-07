@@ -12,54 +12,46 @@
 
 // #region ➤ 📦 Package Imports
 
-// import { ServerLoadEvent, redirect } from '@sveltejs/kit';
+import { ServerLoadEvent } from '@sveltejs/kit';
 
-// import { main } from '$lib/sveltekit/load/load.lang.js';
-// import { dlogv2 } from '$lib/utils/debug.js';
-// import { getUserById, userDataFetch } from '$lib/firebase/common.js';
+import { main } from '$lib/sveltekit/load/load.lang.js';
+import { dlogv2 } from '$lib/utils/debug.js';
 
 // #endregion ➤ 📦 Package Imports
 
 // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
-// /**
-//  * @type {import('./$types').PageLoad}
-//  */
-// export async function load
-// (
-//   event: ServerLoadEvent
-// ): Promise < any >
-// {
-//   console.log("EVENT :", event);
-//   const userId = await JSON.parse(event.locals.user);
-//   console.log("COOKIES :", userId["user-uid"]);
-//   if (!userId) redirect(300, "/scores");
-//   const user = await getUserById(userId);
-//   console.log("USER :", user);
-//   if (!user) redirect(300, "/scores");
-//   const
-//   d = await event.parent()
-//   ;
-//   console.log("PARENT DATA :", d);
-// const  {langParam} = d;
-//   // [🐞]
-//   dlogv2
-//   (
-//     '🚏 checkpoint ➤ src/routes/(scores)/[[lang=lang]]/+page.server.ts',
-//     [
-//       `🔹 [var] ➤ langParam :|: ${langParam}`,
-//     ],
-//     true
-//   );
+/**
+ * @type {import('./$types').PageLoad}
+ */
+export async function load
+(
+  event: ServerLoadEvent
+): Promise < any >
+{
+  const
+    {
+      langParam
+    } = await event.parent()
+  ;
 
-//   return await main
-//   (
-//     event,
-//     {
-//       langParam
-//     }
-  //   );
+  // [🐞]
+  dlogv2
+  (
+    '🚏 checkpoint ➤ src/routes/(scores)/[[lang=lang]]/scores/+page.server.ts',
+    [
+      `🔹 [var] ➤ langParam :|: ${langParam}`,
+    ],
+    true
+  );
 
-// }
+  return await main
+  (
+    event,
+    {
+      langParam
+    }
+  );
+}
 
 // #endregion ➤ 🔄 LIFECYCLE [SVELTE]

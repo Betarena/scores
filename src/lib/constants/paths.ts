@@ -55,5 +55,10 @@ export const
    * @description
    *  📣 Target `path` for **competition (target) page**.
    */
-  routeIdPageCompetition = '/(scores)/[[lang=lang]]/[competitions=competitions]/[...competition_fill]'
-;
+  routeIdPageCompetition = '/(scores)/[[lang=lang]]/[competitions=competitions]/[...competition_fill]',
+  /**
+   * @description
+   *  📣 Target `path` for **scores  page**.
+   */
+  routeIdScores = '/(scores)/[[lang=lang]]/scores'
+  ;

@@ -109,7 +109,7 @@
     nofollow={tryCatch(() => {
       return JSON.parse(pageSeo.main_data.nofollow);
     }) ?? false}
-    canonical={pageSeo.main_data.canonical}
+    canonical={`${$page.url.origin}/a/tag/${pageSeo.main_data.canonical}`}
     twitter={pageSeo.twitter_card}
     openGraph={pageSeo.opengraph}
   />
