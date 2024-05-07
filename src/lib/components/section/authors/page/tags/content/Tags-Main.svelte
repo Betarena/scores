@@ -206,9 +206,11 @@
         selectedLang ? `&lang=${selectedLang}` : ""
       }`
     )) as IPageAuthorTagDataFinal;
+    const prevMap = new Map(widgetData.mapArticle);
+    const newArticles = res.mapArticle.filter(([id]) => !prevMap.has(id));
     widgetData = {
       ...widgetData,
-      mapArticle: [...widgetData.mapArticle, ...res.mapArticle],
+      mapArticle: [...widgetData.mapArticle, ...newArticles],
       mapAuthor: [...widgetData.mapAuthor, ...res.mapAuthor],
       mapTag: [...widgetData.mapTag, ...res.mapTag],
     };

@@ -1,6 +1,6 @@
 {
 	"name": "betarena-scores-platform",
-	"version": "2.7.1",
+	"version": "2.7.3",
 	"description": "Betarena Official Scores Platform (PWA)",
 	"author": "migbash",
 	"license": "ISC",
@@ -49,7 +49,7 @@
 	},
 	"dependencies": {
 		"@betarena/ad-engine": "0.0.47",
-		"@betarena/scores-lib": "3.1.7",
+		"@betarena/scores-lib": "3.1.9",
 		"@lukeed/uuid": "2.0.1",
 		"@metamask/sdk": "0.1.0",
 		"@moralisweb3/client-firebase-auth-utils": "2.18.4",

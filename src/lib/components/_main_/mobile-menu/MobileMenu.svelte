@@ -404,7 +404,6 @@
           width: 100%;
           z-index: 1000;
           padding: 8px 12px;
-
           gap: 10px;
           .drag-item {
             width: 24px;
