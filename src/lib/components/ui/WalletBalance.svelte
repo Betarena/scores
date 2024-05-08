@@ -3,7 +3,6 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
-	import AssetBetarenaLogoFull from './assets/asset-betarena-logo-full.svelte';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
@@ -23,20 +22,12 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  import { page } from "$app/stores";
-  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
-
-  import sessionStore from "$lib/store/session.js";
-  import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
-  import Button from "$lib/components/ui/Button.svelte";
-  import BetarenaLogoMobile from "./assets/betarena-logo-mobile.svelte";
-  import { translationObject } from "$lib/utils/translation.js";
-  import WalletBalance from "../../ui/WalletBalance.svelte";
-  import HeaderCLang from "./Header-C-Lang.svelte";
-  import HeaderCTheme from "./Header-C-Theme.svelte";
-  import AssetBetarenaLogoFull from "./assets/asset-betarena-logo-full.svelte";
+  import userBetarenaSettings from "$lib/store/user-settings.js";
+  import { spliceBalanceDoubleZero, toDecimalFix } from "$lib/utils/string.js";
+  import Walleticon from "./assets/walleticon.svelte";
 
   // #endregion ➤ 📦 Package Imports
+
   // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -50,92 +41,26 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  export let mobile, tablet;
-  $: ({ globalState, serverLang } = $sessionStore);
 
-  $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
-  $: homepageURL = serverLang != "en" ? `/${serverLang}` : "/";
-  $: logoLink =
-    serverLang != "en" ? `${$page.url.origin}/${serverLang}` : $page.url.origin;
-  // $: ({
-  //   web3_wallet_addr,
-  //   profile_photo,
-  //   main_balance,
-  //   lang: userLang,
-  // } = { ...$userBetarenaSettings.user?.scores_user_data });
-  const /**
-     * @description
-     *  📣 `this` component **main** `id` and `data-testid` prefix.
-     */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = "<section-scope>⮕<type|w|c>⮕<unique-tag-name>⮕main";
+  $: ({
+    main_balance,
+  } = { ...$userBetarenaSettings.user?.scores_user_data });
 
   // #endregion ➤ 📌 VARIABLES
-
-  // #region ➤ 🛠️ METHODS
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'methods' that are to be           │
-  // │ and are expected to be used by 'this' .svelte file / component.        │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. function (..)                                                       │
-  // │ 2. async function (..)                                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  function signIn() {
-    $sessionStore.currentActiveModal = "Auth_Modal";
-    return;
-  }
-
-  // #endregion ➤ 🛠️ METHODS
 </script>
 
-<div class="wrapper">
-  {#if globalState.has("NotAuthenticated")}
-    <div
-      id="brand"
-      data-testid="header-brand-img"
-      aria-label="brand-img"
-      class="cursor-pointer"
-      on:click={() => {
-        if ($page.url.pathname == "/") window.location.reload();
-        return;
-      }}
+<div class="balance">
+  <div class="icon">
+    <Walleticon />
+    <!-- <img src="/assets/images/icons/wallet.svg" alt="wallet" /> -->
+  </div>
+  <div class="info">
+    <span class="amount">
+      {spliceBalanceDoubleZero(toDecimalFix(main_balance)) ?? "0.00"} BTA
+    </span>
+    <span class="currency"
+      >${spliceBalanceDoubleZero(toDecimalFix(main_balance)) ?? "0.00"}</span
     >
-      <a href={homepageURL} title={logoLink}>
-        {#if !mobile && tablet}
-          <AssetBetarenaLogoFull />
-          <!-- content here -->
-        {:else}
-          <!-- else content here -->
-          <BetarenaLogoMobile />
-        {/if}
-      </a>
-    </div>
-  {:else}
-    <WalletBalance />
-  {/if}
-
-  <div class="actions">
-    {#if !mobile && tablet}
-      <HeaderCLang />
-      <HeaderCTheme />
-    {/if}
-    {#if globalState.has("NotAuthenticated")}
-      <Button type="outline" on:click={signIn}>
-        <TranslationText
-          key={"header-txt-unkown"}
-          text={trsanslationData?.scores_header_translations?.sign_in}
-          fallback={translationObject.sign_in}
-        />
-      </Button>
-    {:else}
-      <Button type="primary">
-        {trsanslationData?.scores_header_translations?.data?.cta_buy ??
-          "Buy BTA"}
-      </Button>
-    {/if}
   </div>
 </div>
 
@@ -150,17 +75,45 @@
 -->
 
 <style lang="scss">
-  .wrapper {
+  .balance {
     display: flex;
-    justify-content: space-between;
+    gap: 12px;
     align-items: center;
-    width: 100%;
+    cursor: pointer;
+    &:hover > .info .amount {
+      color: var(--primary);
+    }
 
-    .actions {
-      flex-grow: 1;
-      align-items: center;
-      justify-content: flex-end;
+    .icon {
+      border-radius: 8px;
       display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 40px;
+      width: 40px;
+      background-color: var(--bg-color-second);
+    }
+
+    .info {
+      display: flex;
+      flex-direction: column;
+      height: 34px;
+      justify-content: space-between;
+
+      .amount {
+        font-size: 16px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: var(--text-color);
+        line-height: 20px;
+      }
+
+      .currency {
+        line-height: 12px;
+        font-size: 12px;
+        font-weight: 400;
+        color: var(--text-color-second-dark);
+      }
     }
   }
 </style>

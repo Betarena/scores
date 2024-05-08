@@ -3,7 +3,7 @@
   --text-color-second: rgb(204, 204, 204);
   --text-color-second-dark: #8c8c8c;
 
-  --icon-color: rgba(140, 140, 140, 1);
+  --icon-color: #8c8c8c;
   --icon-color-light: rgba(140, 140, 140, 1);
 
   --bg-color-rgb-consts: 41, 41, 41;
@@ -21,6 +21,8 @@
   --tag-bg-color: #4B4B4B;
 
   --section-border: 1px solid var(--border-color);
+  --border: 1px solid var(--border-color);
+  --header-border: 1px solid #383838;
 
   //Mobile-Menu
   --mobile-menu-bg-color: rgba(var(--bg-color-second-rgb-consts), 0.7);

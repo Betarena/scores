@@ -36,6 +36,7 @@
   }
   export let data = [] as ITab[];
   export let selected = null as ITab | null;
+  export let height = 14;
   let activeNode: HTMLElement;
   const nodeStore = writable<ITabWithNode[]>([]);
   const dispatch = createEventDispatcher();
@@ -76,7 +77,6 @@
     dispatch("select", item);
     const {node,...tab} = item;
     selected = tab;
-    console.log(node);
     activeNode.style.width = `${node?.offsetWidth}px`;
     activeNode.style.left = `${node?.offsetLeft}px`;
 
@@ -92,7 +92,7 @@
 
 <div class="tabbar">
   {#each data as item, i}
-    <div class="tab-item" bind:this={$nodeStore[i].node} class:selected={selected?.id === item.id} on:click={(e) => select($nodeStore[i])}>
+    <div class="tab-item" style="margin-bottom: {height}px;" bind:this={$nodeStore[i].node} class:selected={selected?.id === item.id} on:click={(e) => select($nodeStore[i])}>
       <slot tab={item}>{item.name || item.label}</slot>
     </div>
   {/each}
@@ -116,12 +116,12 @@
     display: flex;
     gap: 20px;
     position: relative;
+    font-weight: 500;
 
     .tab-item {
       position: static;
       color: var(--text-color-second-dark);
       cursor: pointer;
-      margin-bottom: 14px;
     }
 
     .selected {

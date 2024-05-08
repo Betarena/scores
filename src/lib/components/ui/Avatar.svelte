@@ -24,7 +24,7 @@
 
 
 export let
-  src = "",
+  src: string | null  = "",
   /**
    * @description
    * avatar size

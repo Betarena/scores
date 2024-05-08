@@ -23,8 +23,11 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
+  import sessionStore from "$lib/store/session.js";
   import Tabbar from "$lib/components/ui/Tabbar.svelte";
+  import { viewportChangeV2 } from "$lib/utils/device.js";
   import ArticleCard from "./ArticleCard.svelte";
+  import Add from "./assets/add.svelte";
 
   // #endregion ➤ 📦 Package Imports
   // #region ➤ 📌 VARIABLES
@@ -45,7 +48,24 @@
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
      */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = "content";
+    CNAME: string = "content",
+    /**
+     * @description
+     *  📣 threshold start + state for 📱 MOBILE
+     */ // eslint-disable-next-line no-unused-vars
+    VIEWPORT_MOBILE_INIT: [number, boolean] = [575, true],
+    /**
+     * @description
+     *  📣 threshold start + state for 💻 TABLET
+     */ // eslint-disable-next-line no-unused-vars
+    VIEWPORT_TABLET_INIT: [number, boolean] = [1160, true];
+
+  $: ({ windowWidth, globalState } = $sessionStore);
+  $: [mobile, tablet] = viewportChangeV2(
+    windowWidth,
+    VIEWPORT_MOBILE_INIT[0],
+    VIEWPORT_TABLET_INIT[0]
+  );
   const categories = [
     { id: "Forecasts", name: "Forecasts" },
     { id: "Analysis", name: "Analysis" },
@@ -1246,45 +1266,83 @@
       one_minute: "1 minute ago",
     },
   };
+
   // #endregion ➤ 📌 VARIABLES
 </script>
 
-<section id={CNAME}>
+<section id={CNAME} class:mobile class:tablet>
   <div class="tabbar-wrapper">
-    <Tabbar data={categories} />
+    {#if globalState.has("Authenticated")}
+      <Add size={mobile || tablet ? 20 : 24} />
+    {/if}
+    <Tabbar data={categories} height={mobile ? 14 : 8} />
   </div>
-
-  {#each articles as article}
-    <ArticleCard mobile={true} {article} tablet={true}  {translations}/>
-  {/each}
-  <div class="card" />
-  <div class="card" />
-  <div class="card" />
-  <div class="card" />
-  <div class="card" />
+  <div class="articles">
+    {#each articles as article}
+      <ArticleCard {mobile} {article} {tablet} {translations} />
+    {/each}
+  </div>
 </section>
 
 <style lang="scss">
   section {
-    width: 100%;
+    width: fit-content;
     height: 100% !important;
     min-height: 100% !important;
-    padding: 0 !important;
-    background: var(--layout-bg-color);
+    background: var(--bg-color);
     display: flex;
+    padding-top: 32px;
     flex-direction: column;
     gap: 8px;
 
+    --text-size-2xl: 38px;
+    --text-size-xl: 24px;
+    --text-size-l: 20px;
+    --text-size-m: 16px;
+    --text-size-s: 14px;
+    --text-size-xs: 12px;
+    --text-button-size: var(--text-size-m);
+
+    &.mobile {
+      background: var(--layout-bg-color);
+      padding: 0 !important;
+      padding-bottom: 128px;
+      width: 100%;
+      --text-size-2xl: 24px;
+      --text-size-l: 16px;
+      --text-size-m: 14px;
+      --text-size-s: 12px;
+      --text-size-xs: 10px;
+
+      .tabbar-wrapper {
+        padding: 0px 16px;
+        padding-top: 4px;
+      }
+
+      .articles {
+        margin-top: 0;
+      }
+    }
+
+    &.tablet {
+      padding: 32px 34px;
+      padding-bottom: 128px;
+    }
+
     .tabbar-wrapper {
       width: 100%;
-      padding: 0px 16px;
-      padding-top: 4px;
       background-color: var(--bg-color);
+      display: flex;
+      align-items: start;
+      gap: 16px;
+      font-size: var(--text-size-m);
     }
-    .card {
-      height: 150px;
-      width: 100%;
-      background: var(--bg-color);
+
+    .articles {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-top: 20px;
     }
   }
 </style>

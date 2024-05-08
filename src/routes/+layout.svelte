@@ -76,6 +76,7 @@
     routeIdPageProfile,
     routeIdScores,
   } from "$lib/constants/paths.js";
+    import FooterRedisign from "$lib/components/_main_/footer/FooterRedisign.svelte";
 
   // ╭─────
   // │ WARNING:
@@ -576,9 +577,16 @@
     class:page-competition={currentPageRouteId == "CompetitionPage"}
     class:page-profile={currentPageRouteId == "ProfilePage"}
     class:page-authors={currentPageRouteId == "AuthorsPage"}
+    class:page-content = {$page.route.id === routeIdContent}
   >
     <slot />
-    <Footer />
+    {#if $page.route.id === routeIdContent}
+      {#if !VIEWPORT_MOBILE_INIT[1] && !VIEWPORT_TABLET_INIT[1]}
+         <FooterRedisign />
+      {/if}
+    {:else}
+       <Footer />
+    {/if}
   </main>
   {#if (VIEWPORT_MOBILE_INIT[1] || VIEWPORT_TABLET_INIT[1]) && [routeIdScores, routeIdPageCompetitions, routeIdContent].includes($page.route.id)}
     <MobileMenu />
@@ -651,6 +659,12 @@
     &.page-profile::before {
       /* 🎨 style */
       height: 611px;
+    }
+
+    &.page-content {
+      display: flex;
+      overflow: visible;
+
     }
   }
 
