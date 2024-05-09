@@ -242,7 +242,6 @@ jobs:
 
   dev-branch-reset:
     name: Git Reset Dev
-    if: false
     needs: create-release
     runs-on: ubuntu-22.04
     steps:
