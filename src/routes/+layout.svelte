@@ -76,7 +76,7 @@
     routeIdPageProfile,
     routeIdScores,
   } from "$lib/constants/paths.js";
-    import FooterRedisign from "$lib/components/_main_/footer/FooterRedisign.svelte";
+  import FooterRedisign from "$lib/components/_main_/footer/FooterRedisign.svelte";
 
   // ╭─────
   // │ WARNING:
@@ -441,6 +441,19 @@
       }
       )();
     </script> -->
+    <!-- <script type="text/javascript">
+      window.$crisp=[];
+      window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
+      (function()
+      {
+        d=document;
+        s=d.createElement("script");
+        s.src="https://client.crisp.chat/l.js";
+        s.async=1;
+        d.getElementsByTagName("head")[0].appendChild(s);
+      }
+      )();
+    </script> -->
     <script>
       // We pre-filled your app ID in the widget URL: 'https://widget.intercom.io/widget/yz9qn6p3'
       (function () {
@@ -577,19 +590,25 @@
     class:page-competition={currentPageRouteId == "CompetitionPage"}
     class:page-profile={currentPageRouteId == "ProfilePage"}
     class:page-authors={currentPageRouteId == "AuthorsPage"}
-    class:page-content = {$page.route.id === routeIdContent}
+    class:page-content={$page.route.id === routeIdContent}
+    class:mobile={VIEWPORT_MOBILE_INIT[1]}
+    class:tablet={VIEWPORT_TABLET_INIT[1]}
   >
     <slot />
     {#if $page.route.id === routeIdContent}
-      {#if !VIEWPORT_MOBILE_INIT[1] && !VIEWPORT_TABLET_INIT[1]}
-         <FooterRedisign />
-      {/if}
+      <FooterRedisign
+        mobile={VIEWPORT_MOBILE_INIT[1]}
+        tablet={VIEWPORT_TABLET_INIT[1]}
+      />
     {:else}
-       <Footer />
+      <Footer />
     {/if}
   </main>
   {#if (VIEWPORT_MOBILE_INIT[1] || VIEWPORT_TABLET_INIT[1]) && [routeIdScores, routeIdPageCompetitions, routeIdContent].includes($page.route.id)}
-    <MobileMenu />
+    <MobileMenu
+      mobile={VIEWPORT_MOBILE_INIT[1]}
+      tablet={VIEWPORT_TABLET_INIT[1]}
+    />
   {/if}
   {#if $modalSore.show && $modalSore.component}
     <svelte:component this={$modalSore.component} />
@@ -664,7 +683,13 @@
     &.page-content {
       display: flex;
       overflow: visible;
+      gap: 102px;
 
+      &.tablet {
+        flex-direction: column;
+        gap: 0;
+        overflow: hidden;
+      }
     }
   }
 

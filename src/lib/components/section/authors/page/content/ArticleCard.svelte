@@ -86,10 +86,10 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="card-wrapper" class:mobile in:fade={{ duration: 500 }}>
+<div class="card-wrapper" class:mobile class:tablet in:fade={{ duration: 500 }}>
   <div class="card-content">
     <div class="author-wrapper">
-      <Avatar src={avatar} size={mobile ? 32 : 38}/>
+      <Avatar src={avatar} size={mobile ? 32 : 38} />
       <div class="author-info">
         <div class="author-name">{username}</div>
         <div class="publication-date">{date}</div>
@@ -102,7 +102,7 @@
     </a>
     <div class="tags-wrapper">
       {#if mobile || tablet}
-        <ScrollDataWrapper data={tags_data} let:item={tag}>
+        <ScrollDataWrapper showArrows={false} data={tags_data} let:item={tag}>
           <a
             href="/a/tag/{tag?.permalink}"
             data-sveltekit-preload-data="hover"
@@ -131,8 +131,8 @@
       {/if}
     </div>
   </div>
-  {#if images[0]?.url }
-     <a href="/a/{permalink}" class="preview" class:tablet class:mobile>
+  {#if images[0]?.url}
+    <a href="/a/{permalink}" class="preview" class:tablet class:mobile>
       <img src={images[0]?.url} alt={images[0].alt} srcset="" />
     </a>
   {/if}
@@ -149,86 +149,47 @@
 -->
 
 <style lang="scss">
-  .card {
-    &-wrapper {
-      display: flex;
-      width: 100%;
-      max-width: 776px;
-      gap: 56px;
-      border-radius: 12px;
-      padding: 24px;
-      box-sizing: border-box;
-      justify-content: space-between;
-      background: var(--bg-color-second);
+  .card-wrapper {
+    display: flex;
+    width: 100%;
+    gap: 56px;
+    border-radius: 12px;
+    padding: 24px;
+    box-sizing: border-box;
+    justify-content: space-between;
+    background: var(--bg-color-second);
+    align-items: start;
 
-      &.mobile {
-        flex-direction: row-reverse;
-        align-items: center;
-        background: var(--bg-color);
-        gap: 16px;
-        border-radius: 0;
 
-        .card-content {
-          padding: 0;
-          gap: 12px;
 
-          .title {
-            line-height: 24px;
-          }
+    a {
+      color: var(--text-color);
+      transition: all;
+      transition-duration: 0.5s;
 
-          .author-name {
-            line-height: 18px;
-          }
-
-          .tags-wrapper {
-            margin-top: 0;
-          }
-        }
-
-      }
-
-      a {
-        color: var(--text-color);
-        transition: all;
-        transition-duration: 0.5s;
-
-        &:hover {
-          color: var(--primary);
-        }
-      }
-
-      .preview {
-        min-height: 100%;
-        max-height: 100%;
-        max-width: 240px;
-        width: 100%;
-        border-radius: 8px;
-        flex-shrink: 0;
-
-        img {
-          border-radius: 8px;
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-
-        &.tablet {
-          max-width: 248px;
-          width: 100%;
-        }
-
-        &.mobile {
-          width: 112px;
-          height: 190px;
-        }
+      &:hover {
+        color: var(--primary);
       }
     }
 
-    &-content {
+    .preview {
+      border-radius: 8px;
+      flex-shrink: 0;
+      width: 240px;
+      height: 154px;
+
+      img {
+        border-radius: 8px;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    .card-content {
       display: flex;
       flex-direction: column;
       gap: 16px;
-      padding: 24px;
       flex-grow: 1;
       width: 455px;
       max-width: 100%;
@@ -293,6 +254,41 @@
           font-weight: 500;
           line-height: 20px;
         }
+      }
+    }
+
+    &.tablet {
+      max-width: 100%;
+      width: 100%;
+    }
+
+    &.mobile {
+      flex-direction: row-reverse;
+      background: var(--bg-color);
+      gap: 16px;
+      border-radius: 0;
+      padding: 20px 16px;
+
+      .card-content {
+        padding: 0;
+        gap: 12px;
+
+        .title {
+          line-height: 24px;
+        }
+
+        .author-name {
+          line-height: 18px;
+        }
+
+        .tags-wrapper {
+          margin-top: 0;
+        }
+      }
+
+      .preview {
+        width: 112px;
+        height: 150px;
       }
     }
   }

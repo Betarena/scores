@@ -29,12 +29,11 @@
   import sessionStore from "$lib/store/session.js";
   import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
   import Button from "$lib/components/ui/Button.svelte";
-  import BetarenaLogoMobile from "./assets/betarena-logo-mobile.svelte";
   import { translationObject } from "$lib/utils/translation.js";
   import WalletBalance from "../../ui/WalletBalance.svelte";
   import HeaderCLang from "./Header-C-Lang.svelte";
   import HeaderCTheme from "./Header-C-Theme.svelte";
-  import AssetBetarenaLogoFull from "./assets/asset-betarena-logo-full.svelte";
+  import LogoButton from "./LogoButton.svelte";
 
   // #endregion ➤ 📦 Package Imports
   // #region ➤ 📌 VARIABLES
@@ -51,23 +50,17 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
   export let mobile, tablet;
-  $: ({ globalState, serverLang } = $sessionStore);
+  $: ({ globalState } = $sessionStore);
 
+  $: isPWA = globalState.has("IsPWA")
+  $: isAuth = globalState.has("Authenticated");
   $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
-  $: homepageURL = serverLang != "en" ? `/${serverLang}` : "/";
-  $: logoLink =
-    serverLang != "en" ? `${$page.url.origin}/${serverLang}` : $page.url.origin;
-  // $: ({
-  //   web3_wallet_addr,
-  //   profile_photo,
-  //   main_balance,
-  //   lang: userLang,
-  // } = { ...$userBetarenaSettings.user?.scores_user_data });
+
   const /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
      */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = "<section-scope>⮕<type|w|c>⮕<unique-tag-name>⮕main";
+    CNAME: string = "main⮕header";
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -91,30 +84,18 @@
   // #endregion ➤ 🛠️ METHODS
 </script>
 
-<div class="wrapper">
-  {#if globalState.has("NotAuthenticated")}
-    <div
-      id="brand"
-      data-testid="header-brand-img"
-      aria-label="brand-img"
-      class="cursor-pointer"
-      on:click={() => {
-        if ($page.url.pathname == "/") window.location.reload();
-        return;
-      }}
-    >
-      <a href={homepageURL} title={logoLink}>
-        {#if !mobile && tablet}
-          <AssetBetarenaLogoFull />
-          <!-- content here -->
-        {:else}
-          <!-- else content here -->
-          <BetarenaLogoMobile />
-        {/if}
-      </a>
+<div class="wrapper" id={CNAME} class:pwa={isPWA}>
+  {#if !isAuth }
+      <LogoButton {mobile} {tablet} />
+  {/if}
+  {#if isAuth && !isPWA && mobile}
+    <div class="logo-full">
+      <LogoButton {mobile} {tablet} />
     </div>
-  {:else}
-    <WalletBalance />
+  {/if}
+
+  {#if isAuth}
+      <WalletBalance />
   {/if}
 
   <div class="actions">
@@ -155,6 +136,15 @@
     justify-content: space-between;
     align-items: center;
     width: 100%;
+    flex-wrap: wrap;
+
+    .logo-full {
+      width: 100%;
+      margin-bottom: 19px;
+    }
+    &.pwa {
+      flex-wrap: nowrap;
+    }
 
     .actions {
       flex-grow: 1;

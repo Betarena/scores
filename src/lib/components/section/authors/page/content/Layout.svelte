@@ -28,6 +28,7 @@
   import { viewportChangeV2 } from "$lib/utils/device.js";
   import ArticleCard from "./ArticleCard.svelte";
   import Add from "./assets/add.svelte";
+  import Button from "$lib/components/ui/Button.svelte";
 
   // #endregion ➤ 📦 Package Imports
   // #region ➤ 📌 VARIABLES
@@ -61,6 +62,7 @@
     VIEWPORT_TABLET_INIT: [number, boolean] = [1160, true];
 
   $: ({ windowWidth, globalState } = $sessionStore);
+  $: isPWA = globalState.has("IsPWA");
   $: [mobile, tablet] = viewportChangeV2(
     windowWidth,
     VIEWPORT_MOBILE_INIT[0],
@@ -1270,30 +1272,43 @@
   // #endregion ➤ 📌 VARIABLES
 </script>
 
-<section id={CNAME} class:mobile class:tablet>
+<section id={CNAME} class:mobile class:tablet class:pwa={isPWA}>
   <div class="tabbar-wrapper">
     {#if globalState.has("Authenticated")}
-      <Add size={mobile || tablet ? 20 : 24} />
+    <div class="add-icon">
+      <Add size={mobile && tablet ? 20 : 24} />
+    </div>
     {/if}
     <Tabbar data={categories} height={mobile ? 14 : 8} />
   </div>
-  <div class="articles">
-    {#each articles as article}
-      <ArticleCard {mobile} {article} {tablet} {translations} />
-    {/each}
+  <div class="content">
+    <div class="articles">
+      {#each articles as article}
+        <ArticleCard {mobile} {article} {tablet} {translations} />
+      {/each}
+    </div>
+    {#if (tablet || mobile) && !isPWA}
+      <div class="load-more">
+        <Button type="outline">Load More</Button>
+      </div>
+    {/if}
   </div>
 </section>
 
 <style lang="scss">
   section {
     width: fit-content;
+    flex-grow: 1;
+    max-width: 100%;
     height: 100% !important;
     min-height: 100% !important;
     background: var(--bg-color);
     display: flex;
     padding-top: 32px;
+    padding-right: 0;
+    padding-left: 112px;
     flex-direction: column;
-    gap: 8px;
+    gap: 24px;
 
     --text-size-2xl: 38px;
     --text-size-xl: 24px;
@@ -1303,11 +1318,51 @@
     --text-size-xs: 12px;
     --text-button-size: var(--text-size-m);
 
+
+    .tabbar-wrapper {
+      width: 100%;
+      background-color: var(--bg-color);
+      display: flex;
+      align-items: start;
+      gap: 16px;
+      font-size: var(--text-size-m);
+
+      .add-icon {
+        margin-top: 2px;
+      }
+    }
+
+    .articles {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .load-more {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      padding: 34px 0;
+      background: var(--bg-color);
+    }
+
+    &.tablet {
+      padding: 32px 34px;
+      padding-bottom: 0 !important;
+      margin: 0 !important;
+      width: 100%;
+
+      &.pwa {
+        padding-bottom: 128px !important;
+      }
+    }
+
     &.mobile {
       background: var(--layout-bg-color);
       padding: 0 !important;
       padding-bottom: 128px;
       width: 100%;
+      gap: 8px;
       --text-size-2xl: 24px;
       --text-size-l: 16px;
       --text-size-m: 14px;
@@ -1321,28 +1376,18 @@
 
       .articles {
         margin-top: 0;
+        gap: 8px;
+      }
+
+      .add-icon {
+        margin-top: 0;
       }
     }
 
     &.tablet {
-      padding: 32px 34px;
-      padding-bottom: 128px;
-    }
-
-    .tabbar-wrapper {
-      width: 100%;
-      background-color: var(--bg-color);
-      display: flex;
-      align-items: start;
-      gap: 16px;
-      font-size: var(--text-size-m);
-    }
-
-    .articles {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      margin-top: 20px;
+      .add-icon {
+        margin-top: 0;
+      }
     }
   }
 </style>

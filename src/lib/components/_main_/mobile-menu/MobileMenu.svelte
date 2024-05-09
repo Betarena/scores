@@ -92,6 +92,8 @@
     route?: string;
   }
 
+  export let mobile, tablet;
+
   const /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
@@ -110,8 +112,10 @@
       id: "scores",
       icon: StatisticIcon,
       type: "link",
-      url: cleanUrl( trsanslationData?.scores_header_translations?.section_links
-        ?.scores_url || "/"),
+      url: cleanUrl(
+        trsanslationData?.scores_header_translations?.section_links
+          ?.scores_url || "/"
+      ),
       label:
         trsanslationData?.scores_header_translations?.section_links
           ?.scores_title ?? "SCORES",
@@ -228,7 +232,7 @@
     on:click|preventDefault={() => (showPopup = false)}
   />
 {/if}
-<div id={CNAME} class="mobile-menu">
+<div id={CNAME} class="mobile-menu" class:mobile class:tablet>
   <div class="blured-container" />
   {#each [...navButtonOrderList] as { id, url, icon, type, route } (id)}
     {#if type === "link" && url}
@@ -323,7 +327,7 @@
   .mobile-menu {
     display: flex;
     position: fixed;
-    bottom: 24px;
+    bottom: 40px;
     height: 56px;
     width: 340px;
     max-width: 95%;
@@ -337,7 +341,11 @@
     justify-content: space-between;
     gap: 40px;
     padding: 16px 30px;
-    background-color: var(--mobile-menu-bg-color) ;
+    background-color: var(--mobile-menu-bg-color);
+
+    &.mobile {
+      bottom: 24px;
+    }
 
     .blured-container {
       border-radius: 56px;

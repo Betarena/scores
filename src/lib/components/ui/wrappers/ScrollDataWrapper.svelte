@@ -37,8 +37,6 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { onMount } from "svelte";
-
   import ArrowLeft from "../assets/arrow-left.svelte";
   import ArrowRight from "../assets/arrow-right.svelte";
 
@@ -61,7 +59,8 @@
   export let /**
      * @augments any[]
      */
-    data = [] as any[];
+    data = [] as any[],
+    showArrows = true;
 
   /**
    * @description
@@ -176,7 +175,7 @@ $: if(htmlElementScrollBox)  {
     │ > previous (button)
     ╰─────
     -->
-  {#if componentLocalState.has("PrevButtonShow")}
+  {#if showArrows && componentLocalState.has("PrevButtonShow")}
     <div
       id="tagScrollPrev"
       class="
@@ -214,7 +213,7 @@ $: if(htmlElementScrollBox)  {
     │ > next (button)
     ╰─────
     -->
-  {#if componentLocalState.has("NextButtonShow")}
+  {#if showArrows && componentLocalState.has("NextButtonShow")}
     <div
       id="tagScrollNext"
       class="

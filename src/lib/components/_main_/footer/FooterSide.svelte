@@ -4,7 +4,7 @@
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ Internal Svelte Code Format :|: V.8.0                                          │
 │ ➤ Status :|: 🔒 LOCKED                                                           │
-│ ➤ Author(s) :|: @migbash                                                         │
+│ ➤ Author(s) :|: @izobov                                                         │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ 📝 Description                                                                   │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
@@ -38,16 +38,18 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { page } from "$app/stores";
-  import { onMount } from "svelte";
 
   import sessionStore from "$lib/store/session.js";
 
   import SeoBox from "$lib/components/SEO-Box.svelte";
 
-  import type { B_FOT_T } from "@betarena/scores-lib/types/types.main.footer.js";
-  import FooterSide from "./FooterSide.svelte";
-  import FooterBottom from "./FooterBottom.svelte";
+  import WalletBalance from "$lib/components/ui/WalletBalance.svelte";
+  import Button from "$lib/components/ui/Button.svelte";
+
+  import Legal_18ActionBet from "./assets/icon_redisign/legal-18-action-bet.svelte";
+  import BegambleawareorgBlack from "./assets/icon_redisign/begambleawareorg_black.png";
+  import SocialsBlock from "./SocialsBlock.svelte";
+  import FooterNavigationBlock from "./FooterNavigationBlock.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -65,123 +67,16 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  /**
-   * @description
-   *  📣 Component `Type`.
-   */
-  type IDynamicAssetMap =
-    | "begambleawareorg"
-    | "logoFull"
-    | "legal18icon"
-    | "discord"
-    | "linkedin"
-    | "medium"
-    | "telegram"
-    | "x"
-    | "github";
-
-  export let mobile: boolean, tablet: boolean;
-
   const /**
      * @description
-     *  📣 Dynamic import variable condition
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
      */
-    useDynamicImport: boolean = true;
+    CNAME = "global⮕footer⮕w⮕main";
 
-  let /**
-     * @description
-     *  📣 Holds target `component(s)` of dynamic nature.
-     */
-    dynamicAssetMap = new Map<IDynamicAssetMap, any>();
+  export let links, buyBTAText, translation;
+
   $: ({ globalState } = $sessionStore);
-
-  $: isPWA = globalState.has("IsPWA");
-
-  $: translation = $page.data.B_FOT_T as B_FOT_T;
-  $: linksMap = new Map([
-    [
-      "changelog",
-      {
-        id: "changelog",
-        label: translation.terms.changelog,
-        href: translation.links.changelog,
-      },
-    ],
-    [
-      "status",
-      {
-        id: "status",
-        label: translation.terms.status,
-        href: translation.links.status,
-      },
-    ],
-    [
-      "about",
-      {
-        id: "about",
-        label: translation.terms.about_us,
-        href: translation.links.about_us,
-      },
-    ],
-    [
-      "terms",
-      {
-        id: "terms",
-        label: translation.terms.terms,
-        href: translation.links.terms,
-      },
-    ],
-    [
-      "roadmap",
-      {
-        id: "roadmap",
-        label: translation.terms.latest_news,
-        href: translation.links.latest_news,
-      },
-    ],
-    [
-      "privacy",
-      {
-        id: "privacy",
-        label: translation.terms.privacy,
-        href: translation.links.privacy,
-      },
-    ],
-  ]);
-  $: buyBTAText =
-    $page.data.B_NAV_T?.scores_header_translations?.data?.cta_buy ?? "Buy BTA";
   // #endregion ➤ 📌 VARIABLES
-
-  // #region ➤ 🔄 LIFECYCLE [SVELTE]
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'logic' that should run            │
-  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
-  // │ as soon as 'this' .svelte file is ran.                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  onMount(async () => {
-    if (useDynamicImport) {
-      dynamicAssetMap.set(
-        "begambleawareorg",
-        (await import("./assets/begambleawareorg_black.png")).default
-      );
-      dynamicAssetMap.set(
-        "logoFull",
-        (await import("./assets/betarena-logo-full.svg")).default
-      );
-      dynamicAssetMap.set(
-        "legal18icon",
-        (await import("./assets/legal-18-action-bet.png")).default
-      );
-
-      dynamicAssetMap = dynamicAssetMap;
-    }
-
-    return;
-  });
- // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 
 <!--
@@ -230,10 +125,93 @@
 ╰─────
 -->
 
-{#if !mobile && !tablet}
-  <FooterSide links={linksMap} {buyBTAText} {translation} />
-{/if}
+<footer>
+  <div id="{CNAME}⮕inner">
+    {#if !globalState.has("NotAuthenticated")}
+      <div class="wallet">
+        <WalletBalance />
+        <Button type="primary">
+          {buyBTAText}
+        </Button>
+      </div>
+    {/if}
+    <div class="content">
+      <SocialsBlock {translation} />
+      <div class="nav-block-wrap">
+        <FooterNavigationBlock {links} />
+      </div>
+      <div class="legal-block">
+        <Legal_18ActionBet />
+        <img
+          id=""
+          src={BegambleawareorgBlack}
+          alt="BegambleawareorgBlack"
+          title=""
+          loading="lazy"
+        />
+      </div>
+      <div class="rights-block">
+        © 2021 Betarena All rights reserved <br />
+        Second Act, 18 Boulevard Montmartre Paris 75009
+      </div>
+    </div>
+  </div>
+</footer>
 
-{#if !isPWA && (tablet || mobile)}
-  <FooterBottom {mobile} {tablet} {translation} links={linksMap} />
-{/if}
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 🌊 Svelte Component CSS/SCSS                                                     │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<style lang="scss">
+  /*
+  ╭──────────────────────────────────────────────────────────────────────────────╮
+  │ 📲 MOBILE-FIRST                                                              │
+  ╰──────────────────────────────────────────────────────────────────────────────╯
+  */
+
+  footer {
+    /* 🎨 style */
+    // background: #292929;
+    width: 280px;
+    margin-right: 112px;
+    position: relative;
+    color: var(--text-color);
+    position: sticky;
+    position: -webkit-sticky;
+    top: 0;
+    height: fit-content;
+
+    .wallet {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 32px 0;
+      border-bottom: var(--border);
+    }
+    .content {
+      padding: 32px 0;
+
+      .nav-block-wrap {
+        padding: 40px 0;
+      }
+
+      .legal-block {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        margin-bottom: 24px;
+      }
+      .rights-block {
+        color: var(--text-color-second-dark);
+        font-size: 12px;
+      }
+    }
+  }
+</style>

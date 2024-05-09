@@ -1,5 +1,20 @@
-<script lang="ts">
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 🟦 Svelte Component JS/TS                                                        │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+	import BegambleawareorgBlack from './assets/icon_redisign/begambleawareorg_black.svelte';
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
 
+<script lang="ts">
+  // #region ➤ 📦 Package Imports
+
+  import FooterNavigationBlock from "./FooterNavigationBlock.svelte";
+  import SocialsBlock from "./SocialsBlock.svelte";
+  import Legal_18ActionBet from "./assets/icon_redisign/legal-18-action-bet.svelte";
+  import BegambleawareorgBlack from "./assets/icon_redisign/begambleawareorg_black.png";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -13,13 +28,6 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  import SeoBox from "$lib/components/SEO-Box.svelte";
-  import sessionStore from "$lib/store/session.js";
-  import { viewportChangeV2 } from "$lib/utils/device";
-  import MobileHeader from "./MobileHeader.svelte";
-  import Header from "./Header.svelte";
-    import { page } from "$app/stores";
-    import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -37,85 +45,40 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  const /**
-     * @description
-     *  📣 `this` component **main** `id` and `data-testid` prefix.
-     */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = "header",
-    /**
-     * @description
-     *  📣 threshold start + state for 📱 MOBILE
-     */ // eslint-disable-next-line no-unused-vars
-    VIEWPORT_MOBILE_INIT: [number, boolean] = [575, true],
-    /**
-     * @description
-     *  📣 threshold start + state for 💻 TABLET
-     */ // eslint-disable-next-line no-unused-vars
-    VIEWPORT_TABLET_INIT: [number, boolean] = [1160, true];
-
-  $: ({ windowWidth } = $sessionStore);
-  $: [mobile, tablet] = viewportChangeV2(
-    windowWidth,
-    VIEWPORT_MOBILE_INIT[0],
-    VIEWPORT_TABLET_INIT[0]
-  );
-  $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
-
+  export let mobile: boolean, tablet: boolean, translation, links;
+  $: linksOrder =
+    tablet && !mobile
+      ? ["changelog", "about", "roadmap", "status", "terms", "privacy"]
+      : undefined;
   // #endregion ➤ 📌 VARIABLES
 </script>
 
-<SeoBox>
-  <!--
-  ╭─────
-  │ > homepage links
-  ╰─────
-  -->
-  {#each trsanslationData?.langArray || [] as item}
-    {#if item != "en"}
-      <a href={$page.url.origin + "/" + item}>
-        {$page.url.origin + "/" + item}
-      </a>
-    {:else}
-      <a href={$page.url.origin}>
-        {$page.url.origin}
-      </a>
-    {/if}
-  {/each}
-
-  <!--
-  ╭─────
-  │ > other urls
-  ╰─────
-  -->
-  <a
-    href={trsanslationData?.scores_header_translations?.section_links
-      ?.scores_url}
-  >
-    {trsanslationData?.scores_header_translations?.section_links?.scores_title}
-  </a>
-  <a
-    href={trsanslationData?.scores_header_translations?.section_links
-      ?.competitions_url}
-  >
-    {trsanslationData?.scores_header_translations?.section_links
-      ?.competitions_title}
-  </a>
-  <a
-    href={trsanslationData?.scores_header_translations?.section_links
-      ?.sports_content_url}
-  >
-    {trsanslationData?.scores_header_translations?.section_links
-      ?.sports_content_title}
-  </a>
-</SeoBox>
-
-<header class:mobile>
-  {#if mobile || tablet}
-    <MobileHeader {mobile} {tablet} />
-  {:else}
-    <Header />
-  {/if}
-</header>
+<footer class:mobile>
+  <SocialsBlock {translation} />
+  <div class="nav-wrapper">
+    <FooterNavigationBlock
+      vertlical={tablet && mobile}
+      {links}
+      order={linksOrder}
+    />
+  </div>
+  <div class="legal-block">
+    <div class="rights-block">
+      © 2021 Betarena All rights reserved <br />
+      Second Act, 18 Boulevard Montmartre Paris 75009
+    </div>
+    <div class="legal-images">
+      <Legal_18ActionBet />
+      <img
+        id=""
+        src={BegambleawareorgBlack}
+        alt="BegambleawareorgBlack"
+        title=""
+        loading="lazy"
+      />
+    </div>
+  </div>
+</footer>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -128,17 +91,46 @@
 -->
 
 <style lang="scss">
-  header {
+  footer {
+    border-top: var(--border);
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 17px 34px;
-    background-color: var(--bg-color);
-    border-bottom: var(--header-border);
+    flex-direction: column;
+    color: var(--text-color);
+    padding: 32px 34px;
+    padding-bottom: 128px;
+    .nav-wrapper {
+      padding: 32px 0;
+    }
+
+    .legal-block {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      justify-content: space-between;
+
+      .legal-images {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+      }
+
+      .rights-block {
+        color: var(--text-color-second-dark);
+        font-size: 12px;
+      }
+    }
 
     &.mobile {
-      border-bottom: none;
-      padding: 16px;
+      padding: 40px 25px;
+      padding-bottom: 132px;
+      .nav-wrapper {
+        padding: 40px 0;
+      }
+
+      .legal-block {
+        flex-direction: column-reverse;
+        align-items: flex-start;
+      }
     }
   }
 </style>
