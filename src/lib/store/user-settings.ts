@@ -524,7 +524,7 @@ function createLocalStore
       extract:
         <Typ1>
           (
-            dataPoint: 'geo-bookmaker' | 'lang' | 'lang-user' | 'uid'
+            dataPoint: 'geo-bookmaker' | 'lang' | 'lang-user' | 'uid' | 'user'
           ): Typ1 | NullUndef =>
         {
           const
@@ -539,6 +539,8 @@ function createLocalStore
             return localStore?.user?.scores_user_data?.lang as Typ1 | NullUndef;
           else if (dataPoint == 'uid')
             return localStore?.user?.firebase_user_data?.uid as Typ1 | NullUndef;
+          else if (dataPoint === 'user')
+            return localStore?.user?.scores_user_data as Typ1 | NullUndef;
           ;
 
           return;

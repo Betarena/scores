@@ -245,9 +245,9 @@
   // ╰─────
   $: if (browser) {
     _DEBUG_("Option1");
-    mainDeepLinkCheck();
     userBetarenaSettings.useLocalStorage();
     scoresAdminStore.useLocalStorage();
+    mainDeepLinkCheck();
   }
 
   // ╭─────
