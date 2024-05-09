@@ -70,7 +70,7 @@
     avatar: defaultAvatar,
   });
 
-  $: date = timeAgo(published_date, translations.time_ago);
+  $: date = timeAgo(published_date, translations?.time_ago);
 
   // #endregion ➤ 📌 VARIABLES
 </script>

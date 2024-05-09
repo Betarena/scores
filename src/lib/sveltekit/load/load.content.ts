@@ -148,7 +148,7 @@ async function fetchData
      */
     urls0
       = [
-        // `/api/data/author/tags?permalinkTag=${_name}`,
+        `/api/data/author/tags?permalinkTag=forecasts`,
         // `/api/data/author?lang=${_lang}`,
         // `/api/data/main/seo-pages?months=true&lang=${_lang}&decompress`,
       ],
@@ -164,5 +164,5 @@ async function fetchData
         , fetch
       ) as PreloadPromise0
     ;
-  return [];
+  return data0;
 }
