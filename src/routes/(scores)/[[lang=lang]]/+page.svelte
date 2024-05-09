@@ -43,7 +43,7 @@
   import { page } from "$app/stores";
   import { generateUrlCompetitions } from "$lib/utils/string.js";
   import { browser } from "$app/environment";
-    import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
+  import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
 
   $: ({ serverLang } = $sessionStore);
   $: [preferedPage] = $userBetarenaSettings.user?.scores_user_data
