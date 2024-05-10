@@ -261,6 +261,10 @@
     &.tablet {
       max-width: 100%;
       width: 100%;
+
+      .title {
+        -webkit-line-clamp: 3;
+      }
     }
 
     &.mobile {
