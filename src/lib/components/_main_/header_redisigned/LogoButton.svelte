@@ -31,3 +31,11 @@
     {/if}
   </a>
 </div>
+
+<style lang="scss">
+  #brand {
+    :global(svg) {
+      width: unset !important;
+    }
+  }
+</style>
