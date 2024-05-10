@@ -699,6 +699,7 @@
       overflow: visible;
       justify-content: space-between;
       gap: 32px;
+      background-color: var(--bg-color);
 
       &.tablet {
         flex-direction: column;

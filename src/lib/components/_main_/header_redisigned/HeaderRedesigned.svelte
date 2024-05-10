@@ -18,8 +18,8 @@
   import { viewportChangeV2 } from "$lib/utils/device";
   import MobileHeader from "./MobileHeader.svelte";
   import Header from "./Header.svelte";
-    import { page } from "$app/stores";
-    import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
+  import { page } from "$app/stores";
+  import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -132,7 +132,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 17px 34px;
+    padding: 10px 34px;
     background-color: var(--bg-color);
     border-bottom: var(--header-border);
 
