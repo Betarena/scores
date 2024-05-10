@@ -132,13 +132,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 34px;
     background-color: var(--bg-color);
     border-bottom: var(--header-border);
 
     &.mobile {
       border-bottom: none;
-      padding: 16px;
     }
   }
 </style>

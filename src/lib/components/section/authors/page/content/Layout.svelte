@@ -243,10 +243,10 @@
     min-height: 100% !important;
     background: var(--bg-color);
     display: flex;
-    padding-top: 32px;
     flex-direction: column;
     gap: 24px;
-    margin-top: 0;
+    margin: 0;
+    padding: 0;
 
     --text-size-2xl: 38px;
     --text-size-xl: 24px;
@@ -285,7 +285,8 @@
     }
 
     &.tablet {
-      padding: 32px 34px;
+      padding: 26px 34px;
+      padding-top: 32px;
       padding-bottom: 0 !important;
       margin: 0 !important;
       width: 100%;
@@ -309,7 +310,6 @@
 
       .tabbar-wrapper {
         padding: 0px 16px;
-        padding-top: 4px;
       }
 
       .articles {

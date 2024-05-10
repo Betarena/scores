@@ -91,7 +91,7 @@
     scoresNavbarStore.closeAllDropdowns();
   }}
 />
-<div class="wrapper" id={CNAME} class:pwa={isPWA}>
+<div class="wrapper" id={CNAME} class:pwa={isPWA} class:mobile>
   {#if !isAuth }
       <LogoButton {mobile} {tablet} />
   {/if}
@@ -147,7 +147,13 @@
     justify-content: space-between;
     align-items: center;
     width: 100%;
+    padding: 10px 34px;
     flex-wrap: wrap;
+
+    &.mobile {
+      padding: 16px;
+      padding-bottom: 20px;
+    }
 
     .logo-full {
       width: 100%;

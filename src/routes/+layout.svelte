@@ -654,6 +654,7 @@
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    background-color: var(--bg-color);
   }
   main {
     /* 📌 position */
@@ -699,11 +700,21 @@
       overflow: visible;
       justify-content: space-between;
       background-color: var(--bg-color);
+      max-width: 1430px;
+      width: 100%;
+      margin: auto;
+      padding: 26px 34px;
+      padding-top: 32px;
+      gap: 34px;
 
       &.tablet {
         flex-direction: column;
         gap: 0;
         overflow: hidden;
+        padding: 0;
+      }
+      &.mobile {
+        padding: 0;
       }
     }
   }

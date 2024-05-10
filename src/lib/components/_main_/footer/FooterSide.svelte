@@ -182,13 +182,11 @@
 
   footer {
     /* 🎨 style */
-    // background: #292929;
-    margin-right: auto;
     position: relative;
     color: var(--text-color);
     position: sticky;
     position: -webkit-sticky;
-    top: 0;
+    top: 32px;
     height: fit-content;
 
     .wallet {
@@ -196,11 +194,12 @@
       align-items: center;
       justify-content: space-between;
       width: 100%;
-      padding: 32px 0;
+      padding-bottom: 32px;
+      margin-bottom: 32px;
       border-bottom: var(--border);
     }
     .content {
-      padding: 32px 0;
+      padding-bottom: 32px;
 
       .nav-block-wrap {
         padding: 40px 0;

@@ -54,28 +54,30 @@
 </script>
 
 <footer class:mobile>
-  <SocialsBlock {translation} />
-  <div class="nav-wrapper">
-    <FooterNavigationBlock
-      vertlical={tablet && mobile}
-      {links}
-      order={linksOrder}
-    />
-  </div>
-  <div class="legal-block">
-    <div class="rights-block">
-      © 2021 Betarena All rights reserved <br />
-      Second Act, 18 Boulevard Montmartre Paris 75009
-    </div>
-    <div class="legal-images">
-      <Legal_18ActionBet />
-      <img
-        id=""
-        src={BegambleawareorgBlack}
-        alt="BegambleawareorgBlack"
-        title=""
-        loading="lazy"
+  <div class="wrapper">
+    <SocialsBlock {translation} />
+    <div class="nav-wrapper">
+      <FooterNavigationBlock
+        vertlical={tablet && mobile}
+        {links}
+        order={linksOrder}
       />
+    </div>
+    <div class="legal-block">
+      <div class="rights-block">
+        © 2021 Betarena All rights reserved <br />
+        Second Act, 18 Boulevard Montmartre Paris 75009
+      </div>
+      <div class="legal-images">
+        <Legal_18ActionBet />
+        <img
+          id=""
+          src={BegambleawareorgBlack}
+          alt="BegambleawareorgBlack"
+          title=""
+          loading="lazy"
+        />
+      </div>
     </div>
   </div>
 </footer>
@@ -94,10 +96,16 @@
   footer {
     border-top: var(--border);
     display: flex;
+    min-width: 100%;
     flex-direction: column;
     color: var(--text-color);
-    padding: 32px 34px;
-    padding-bottom: 128px;
+    .wrapper {
+      padding: 32px 34px;
+      padding-bottom: 128px;
+      max-width: 1430px;
+      width: 100%;
+      margin: auto;
+    }
     .nav-wrapper {
       padding: 32px 0;
     }
