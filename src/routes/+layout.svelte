@@ -454,6 +454,19 @@
       }
       )();
     </script> -->
+    <!-- <script type="text/javascript">
+      window.$crisp=[];
+      window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
+      (function()
+      {
+        d=document;
+        s=d.createElement("script");
+        s.src="https://client.crisp.chat/l.js";
+        s.async=1;
+        d.getElementsByTagName("head")[0].appendChild(s);
+      }
+      )();
+    </!--> -->
     <script>
       // We pre-filled your app ID in the widget URL: 'https://widget.intercom.io/widget/yz9qn6p3'
       (function () {
@@ -650,6 +663,7 @@
     flex-grow: 1;
     /* 🎨 style */
     width: 100%;
+    max-width: 100%;
 
     &.standard {
       &::before {
@@ -683,7 +697,8 @@
     &.page-content {
       display: flex;
       overflow: visible;
-      gap: 102px;
+      justify-content: space-between;
+      gap: 32px;
 
       &.tablet {
         flex-direction: column;

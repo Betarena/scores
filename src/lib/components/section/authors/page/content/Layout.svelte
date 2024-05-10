@@ -199,7 +199,6 @@
 <style lang="scss">
   section {
     width: fit-content;
-    flex-grow: 1;
     max-width: 100%;
     height: 100% !important;
     min-height: 100% !important;
@@ -207,7 +206,6 @@
     display: flex;
     padding-top: 32px;
     padding-right: 0;
-    padding-left: 112px;
     flex-direction: column;
     gap: 24px;
 

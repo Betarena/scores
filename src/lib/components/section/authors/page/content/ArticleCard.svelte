@@ -152,6 +152,7 @@
   .card-wrapper {
     display: flex;
     width: 100%;
+    max-width: 776px;
     gap: 56px;
     border-radius: 12px;
     padding: 24px;

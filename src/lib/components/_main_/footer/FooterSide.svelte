@@ -178,8 +178,7 @@
   footer {
     /* 🎨 style */
     // background: #292929;
-    width: 280px;
-    margin-right: 112px;
+    margin-right: auto;
     position: relative;
     color: var(--text-color);
     position: sticky;
