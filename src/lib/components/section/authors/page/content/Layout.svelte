@@ -158,11 +158,14 @@
     if (!lang || prevLang === lang) return;
     prevLang = lang;
     articlesStore = new Map();
-    invalidateAll();
+    articles = [];
+    pendingArticles = true;
     const res = (await get(
       `/api/data/author/tags?translation=${lang}`
     )) as IPageAuthorTranslationDataFinal;
     translations = res;
+    await invalidateAll();
+    pendingArticles = false;
   }
 
   async function loadMore() {
@@ -243,6 +246,7 @@
     padding-top: 32px;
     flex-direction: column;
     gap: 24px;
+    margin-top: 0;
 
     --text-size-2xl: 38px;
     --text-size-xl: 24px;
@@ -258,6 +262,7 @@
       display: flex;
       align-items: start;
       gap: 16px;
+      width: 824px;
       font-size: var(--text-size-m);
 
       .add-icon {

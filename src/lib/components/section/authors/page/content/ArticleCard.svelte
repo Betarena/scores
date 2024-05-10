@@ -151,8 +151,8 @@
 <style lang="scss">
   .card-wrapper {
     display: flex;
-    width: 100%;
-    max-width: 824px;
+    max-width: 100%;
+    width: 824px;
     gap: 56px;
     border-radius: 12px;
     padding: 24px;
