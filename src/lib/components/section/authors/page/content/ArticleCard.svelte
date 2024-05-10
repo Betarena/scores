@@ -269,6 +269,7 @@
       gap: 16px;
       border-radius: 0;
       padding: 20px 16px;
+      padding-right: 0px;
 
       .card-content {
         padding: 0;
@@ -276,6 +277,10 @@
 
         .title {
           line-height: 24px;
+          padding-right: 16px;
+        }
+        .author-wrapper {
+          padding-right: 16px;
         }
 
         .author-name {
