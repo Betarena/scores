@@ -278,6 +278,7 @@
         .title {
           line-height: 24px;
           padding-right: 16px;
+          -webkit-line-clamp: 3;
         }
         .author-wrapper {
           padding-right: 16px;
