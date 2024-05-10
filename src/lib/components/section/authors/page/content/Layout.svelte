@@ -216,7 +216,7 @@
       {/each}
       {#if pendingArticles}
         {#each Array(10) as _item}
-          <ArticleLoader />
+          <ArticleLoader {mobile} {tablet} />
         {/each}
       {/if}
     </div>
@@ -241,7 +241,6 @@
     background: var(--bg-color);
     display: flex;
     padding-top: 32px;
-    padding-right: 0;
     flex-direction: column;
     gap: 24px;
 

@@ -49,7 +49,7 @@
   $: linksOrder =
     tablet && !mobile
       ? ["changelog", "about", "roadmap", "status", "terms", "privacy"]
-      : undefined;
+      : ["changelog", "status", "about", "terms", "roadmap", "privacy"];
   // #endregion ➤ 📌 VARIABLES
 </script>
 

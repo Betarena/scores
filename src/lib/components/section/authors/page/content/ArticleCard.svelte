@@ -152,7 +152,7 @@
   .card-wrapper {
     display: flex;
     width: 100%;
-    max-width: 776px;
+    max-width: 824px;
     gap: 56px;
     border-radius: 12px;
     padding: 24px;
@@ -267,7 +267,7 @@
 
       .title {
         -webkit-line-clamp: 3;
-        height: 72px;
+        height: 84px;
       }
     }
 

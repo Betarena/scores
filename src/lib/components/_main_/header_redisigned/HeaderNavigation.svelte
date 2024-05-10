@@ -49,7 +49,6 @@
         translationData?.scores_header_translations?.section_links
           ?.scores_title ?? "SCORES",
       isNew: false,
-      newTxt: "New",
     },
     {
       id: "content",
@@ -72,7 +71,7 @@
       navTxt:
         translationData?.scores_header_translations?.section_links
           ?.competitions_title ?? "COMPETITIONS",
-      isNew: true,
+      isNew: false,
       newTxt: "New",
     },
   ] as INavBtnData[];
