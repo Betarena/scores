@@ -42,6 +42,7 @@
     IPageAuthorTranslationDataFinal,
   } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import { get } from "$lib/api/utils.js";
+    import { browser } from "$app/environment";
 
   // #endregion ➤ 📦 Package Imports
   // #region ➤ 📌 VARIABLES
@@ -131,7 +132,9 @@
     tag: IPageAuthorTagData;
     page?: number;
   }) {
-    debugger;
+    if(browser) {
+      window.loadCalls = (window.loadCalls || 0) + 1;
+    }
     const tagData = articlesStore.get(tag.id);
     const res = await fetchArticles({
       permalink: tag.permalink,
@@ -165,9 +168,16 @@
     loadTagArticles({tag: currentTag, page: tagData.currentPage + 1});
   }
 
+  function scrollHandler() {
+    if ((!isPWA && (mobile || tablet))) return;
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 5 ) {
+      loadMore()
+    }
+  }
+
   // #endregion ➤ 🛠️ METHODS
 </script>
-
+<svelte:window on:scroll={scrollHandler} />
 <section id={CNAME} class:mobile class:tablet class:pwa={isPWA}>
   <div class="tabbar-wrapper">
     {#if globalState.has("Authenticated")}
