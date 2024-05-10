@@ -17,6 +17,7 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+	import { B_NAV_T } from './../../../../../../scores-lib/types/navbar.d.ts';
 	import Linkedin from './assets/icon_redisign/linkedin.svelte';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
@@ -48,6 +49,7 @@
   import type { B_FOT_T } from "@betarena/scores-lib/types/types.main.footer.js";
   import FooterSide from "./FooterSide.svelte";
   import FooterBottom from "./FooterBottom.svelte";
+  import { promiseUrlsPreload } from "$lib/utils/navigation.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -98,6 +100,7 @@
   $: isPWA = globalState.has("IsPWA");
 
   $: translation = $page.data.B_FOT_T as B_FOT_T;
+  $: loadTranslations($sessionStore.serverLang);
   $: linksMap = new Map([
     [
       "changelog",
@@ -181,7 +184,22 @@
 
     return;
   });
- // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
+  let prevLang;
+  async function loadTranslations(lang: string | undefined) {
+    if (!lang || prevLang === lang) return;
+    prevLang = lang;
+    const res = await promiseUrlsPreload(
+      [
+        `/api/data/main/footer?lang=${lang}&decompress`,
+        `/api/data/main/navbar?lang=${lang}&decompress`,
+      ],
+      fetch
+    );
+    translation = res[0];
+    buyBTAText = res[1]?.scores_header_translations?.data?.cta_buy ?? "Buy BTA";
+    return res;
+  }
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 
 <!--

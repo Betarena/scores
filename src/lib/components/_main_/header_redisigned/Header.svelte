@@ -37,7 +37,8 @@
   import Avatar from "$lib/components/ui/Avatar.svelte";
   import { scoresNavbarStore } from "./_store.js";
   import { fly } from "svelte/transition";
-    import HeaderNavigation from "./HeaderNavigation.svelte";
+  import HeaderNavigation from "./HeaderNavigation.svelte";
+  import { promiseUrlsPreload } from "$lib/utils/navigation.js";
 
   // #endregion ➤ 📦 Package Imports
   // #region ➤ 📌 VARIABLES
@@ -55,11 +56,12 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   $: ({ globalState, serverLang } = $sessionStore);
 
-  $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
+  $: translationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
   $: homepageURL = serverLang != "en" ? `/${serverLang}` : "/";
   $: logoLink =
     serverLang != "en" ? `${$page.url.origin}/${serverLang}` : $page.url.origin;
   $: ({ profile_photo } = { ...$userBetarenaSettings.user?.scores_user_data });
+  $: loadTranslations(serverLang);
   const /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
@@ -86,7 +88,8 @@
   }
 
   function avatarClick() {
-    const openDropDown = !$scoresNavbarStore.globalState.has("UserDropdownActive")
+    const openDropDown =
+      !$scoresNavbarStore.globalState.has("UserDropdownActive");
     scoresNavbarStore.closeAllDropdowns();
 
     if (openDropDown) {
@@ -94,12 +97,26 @@
     }
   }
 
+  let prevLang;
+  async function loadTranslations(lang: string | undefined) {
+    if (!lang || prevLang === lang) return;
+    prevLang = lang;
+    const res = await promiseUrlsPreload(
+      [`/api/data/main/navbar?lang=${lang}&decompress`],
+      fetch
+    );
+    translationData = res[0];
+    return res;
+  }
+
   // #endregion ➤ 🛠️ METHODS
 </script>
 
-<svelte:window on:click={() => {
-  scoresNavbarStore.closeAllDropdowns();
-}}/>
+<svelte:window
+  on:click={() => {
+    scoresNavbarStore.closeAllDropdowns();
+  }}
+/>
 <div class="wrapper">
   <div
     id="brand"
@@ -117,7 +134,7 @@
   </div>
 
   <div class="navigation-wrapper">
-    <HeaderNavigation />
+    <HeaderNavigation {translationData} />
   </div>
 
   <div class="actions">
@@ -127,17 +144,13 @@
       <Button type="outline" on:click={signIn}>
         <TranslationText
           key={"header-txt-unkown"}
-          text={trsanslationData?.scores_header_translations?.sign_in}
+          text={translationData?.scores_header_translations?.sign_in}
           fallback={translationObject.sign_in}
         />
       </Button>
     {:else}
       <div class="avatar-wrapper" on:click|stopPropagation>
-        <Avatar
-          src={profile_photo}
-          size={40}
-          on:click={avatarClick}
-        />
+        <Avatar src={profile_photo} size={40} on:click={avatarClick} />
 
         {#if $scoresNavbarStore.globalState.has("UserDropdownActive")}
           <div id="user-profile-dropdown" transition:fly>
@@ -166,7 +179,7 @@
                 >
                   <TranslationText
                     key={"header-txt-unkown"}
-                    text={trsanslationData?.scores_header_translations?.data
+                    text={translationData?.scores_header_translations?.data
                       ?.profile}
                     fallback={"Profile"}
                   />
@@ -197,7 +210,7 @@
               >
                 <TranslationText
                   key={"header-txt-unkown"}
-                  text={trsanslationData?.scores_header_translations?.data
+                  text={translationData?.scores_header_translations?.data
                     ?.logout}
                   fallback={"Logout"}
                 />

@@ -42,7 +42,6 @@
     IPageAuthorTranslationDataFinal,
   } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import { get } from "$lib/api/utils.js";
-    import { browser } from "$app/environment";
 
   // #endregion ➤ 📦 Package Imports
   // #region ➤ 📌 VARIABLES
@@ -132,9 +131,6 @@
     tag: IPageAuthorTagData;
     page?: number;
   }) {
-    if(browser) {
-      window.loadCalls = (window.loadCalls || 0) + 1;
-    }
     const tagData = articlesStore.get(tag.id);
     const res = await fetchArticles({
       permalink: tag.permalink,
@@ -211,6 +207,7 @@
     :global(svg) {
       width: unset;
     }
+
     width: fit-content;
     max-width: 100%;
     height: 100% !important;
