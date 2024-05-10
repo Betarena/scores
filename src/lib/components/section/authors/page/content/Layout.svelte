@@ -198,6 +198,9 @@
 
 <style lang="scss">
   section {
+    :global(svg) {
+      width: unset;
+    }
     width: fit-content;
     max-width: 100%;
     height: 100% !important;
