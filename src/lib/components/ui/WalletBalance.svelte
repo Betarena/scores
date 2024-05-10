@@ -42,27 +42,30 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  $: ({
-    main_balance,
-  } = { ...$userBetarenaSettings.user?.scores_user_data });
+  $: ({ main_balance } = { ...$userBetarenaSettings.user?.scores_user_data });
 
   // #endregion ➤ 📌 VARIABLES
 </script>
 
-<div class="balance">
-  <div class="icon">
-    <Walleticon />
-    <!-- <img src="/assets/images/icons/wallet.svg" alt="wallet" /> -->
+<a
+  href="/u/transaction-history/{$userBetarenaSettings.lang}"
+  title="View Transactions History"
+>
+  <div class="balance">
+    <div class="icon">
+      <Walleticon />
+      <!-- <img src="/assets/images/icons/wallet.svg" alt="wallet" /> -->
+    </div>
+    <div class="info">
+      <span class="amount">
+        {spliceBalanceDoubleZero(toDecimalFix(main_balance)) ?? "0.00"} BTA
+      </span>
+      <span class="currency"
+        >${spliceBalanceDoubleZero(toDecimalFix(main_balance)) ?? "0.00"}</span
+      >
+    </div>
   </div>
-  <div class="info">
-    <span class="amount">
-      {spliceBalanceDoubleZero(toDecimalFix(main_balance)) ?? "0.00"} BTA
-    </span>
-    <span class="currency"
-      >${spliceBalanceDoubleZero(toDecimalFix(main_balance)) ?? "0.00"}</span
-    >
-  </div>
-</div>
+</a>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮

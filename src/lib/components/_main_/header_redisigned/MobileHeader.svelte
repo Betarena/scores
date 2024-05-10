@@ -3,6 +3,7 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+	import { userBetarenaSettings } from '$lib/store/user-settings.js';
 	import AssetBetarenaLogoFull from './assets/asset-betarena-logo-full.svelte';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
@@ -26,6 +27,7 @@
   import { page } from "$app/stores";
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
 
+  import userBetarenaSettings from "$lib/store/user-settings.js"
   import sessionStore from "$lib/store/session.js";
   import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
   import Button from "$lib/components/ui/Button.svelte";
@@ -112,10 +114,14 @@
         />
       </Button>
     {:else}
-      <Button type="primary">
-        {trsanslationData?.scores_header_translations?.data?.cta_buy ??
+      <a  href="/u/investor/{$userBetarenaSettings.lang}"
+      title="Go to Investor Page">
+
+        <Button type="primary">
+          {trsanslationData?.scores_header_translations?.data?.cta_buy ??
           "Buy BTA"}
       </Button>
+    </a>
     {/if}
   </div>
 </div>

@@ -38,8 +38,8 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-
   import sessionStore from "$lib/store/session.js";
+  import userBetarenaSettings from "$lib/store/user-settings.js";
 
   import SeoBox from "$lib/components/SEO-Box.svelte";
 
@@ -130,9 +130,14 @@
     {#if !globalState.has("NotAuthenticated")}
       <div class="wallet">
         <WalletBalance />
-        <Button type="primary">
-          {buyBTAText}
-        </Button>
+        <a
+          href="/u/investor/{$userBetarenaSettings.lang}"
+          title="Go to Investor Page"
+        >
+          <Button type="primary">
+            {buyBTAText}
+          </Button>
+        </a>
       </div>
     {/if}
     <div class="content">
