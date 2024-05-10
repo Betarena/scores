@@ -101,7 +101,7 @@
       </div>
     </a>
     <div class="tags-wrapper">
-      {#if mobile || tablet}
+      {#if mobile}
         <ScrollDataWrapper showArrows={false} data={tags_data} let:item={tag}>
           <a
             href="/a/tag/{tag?.permalink}"
