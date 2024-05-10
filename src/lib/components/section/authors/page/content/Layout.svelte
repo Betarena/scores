@@ -44,6 +44,7 @@
   import { get } from "$lib/api/utils.js";
   import { invalidateAll } from "$app/navigation";
   import ArticleLoader from "./ArticleLoader.svelte";
+  import SeoBox from "$lib/components/SEO-Box.svelte";
 
   // #endregion ➤ 📦 Package Imports
   // #region ➤ 📌 VARIABLES
@@ -182,6 +183,17 @@
   // #endregion ➤ 🛠️ METHODS
 </script>
 
+<SeoBox>
+  <h1>{tags.get(widgetData.tagId)?.name}</h1>
+  {#each widgetData.mapArticle ?? [] as [_id, article]}
+    <h2>{article?.data?.title}</h2>
+    <a href={`/a/${article?.permalink}`}>{article?.data?.title}</a>
+    {@html article?.data?.content}
+  {/each}
+  {#each widgetData.mapTag ?? [] as [_id, tag]}
+    <a href={`/a/tag/${tag?.permalink}`}>{tag.name}</a>
+  {/each}
+</SeoBox>
 <svelte:window on:scroll={scrollHandler} />
 <section id={CNAME} class:mobile class:tablet class:pwa={isPWA}>
   <div class="tabbar-wrapper">
