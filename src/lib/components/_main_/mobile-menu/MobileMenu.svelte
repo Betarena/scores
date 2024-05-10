@@ -57,7 +57,7 @@
   import type { SvelteComponent } from "svelte";
   import Avatar from "$lib/components/ui/Avatar.svelte";
   import {
-    routeIdPageAuthors,
+    routeIdContent,
     routeIdPageCompetitionLobby,
     routeIdScores,
   } from "$lib/constants/paths.js";
@@ -125,12 +125,11 @@
       id: "content",
       icon: DocumentsIcon,
       type: "link",
-      url: trsanslationData?.scores_header_translations?.section_links
-        ?.sports_content_url,
+      url: "/a/content",
       label:
         trsanslationData?.scores_header_translations?.section_links
           ?.sports_content_title ?? "SPORTS CONTENT",
-      route: routeIdPageAuthors,
+      route: routeIdContent,
     },
     {
       id: "competitions",
