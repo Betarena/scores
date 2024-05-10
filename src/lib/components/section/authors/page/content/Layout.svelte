@@ -117,6 +117,7 @@
 
   function selectTag(e: CustomEvent<IPageAuthorTagData>) {
     currentTag = e.detail;
+    articles = [];
     const tag = articlesStore.get(currentTag.id);
     if (!tag) {
       loadTagArticles({ tag: currentTag });
