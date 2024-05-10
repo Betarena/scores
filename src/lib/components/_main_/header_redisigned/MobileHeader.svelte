@@ -36,6 +36,7 @@
   import HeaderCLang from "./Header-C-Lang.svelte";
   import HeaderCTheme from "./Header-C-Theme.svelte";
   import LogoButton from "./LogoButton.svelte";
+  import { scoresNavbarStore } from "./_store.js";
 
   // #endregion ➤ 📦 Package Imports
   // #region ➤ 📌 VARIABLES
@@ -85,7 +86,11 @@
 
   // #endregion ➤ 🛠️ METHODS
 </script>
-
+<svelte:window
+  on:click={() => {
+    scoresNavbarStore.closeAllDropdowns();
+  }}
+/>
 <div class="wrapper" id={CNAME} class:pwa={isPWA}>
   {#if !isAuth }
       <LogoButton {mobile} {tablet} />

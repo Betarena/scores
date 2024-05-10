@@ -42,6 +42,8 @@
     IPageAuthorTranslationDataFinal,
   } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import { get } from "$lib/api/utils.js";
+  import { invalidateAll } from "$app/navigation";
+  import ArticleLoader from "./ArticleLoader.svelte";
 
   // #endregion ➤ 📦 Package Imports
   // #region ➤ 📌 VARIABLES
@@ -85,7 +87,7 @@
     { id: "forecasts", name: "Forecasts", permalink: "forecasts" },
     { id: "atp", name: "ATP", permalink: "atp" },
   ];
-  const articlesStore: Map<
+  let articlesStore: Map<
     string,
     ITagsWidgetData & { articles: IArticle[]; currentPage: number }
   > = new Map();
@@ -93,12 +95,12 @@
     translations: IPageAuthorTranslationDataFinal;
   };
   let currentTag;
-
+  let translations: IPageAuthorTranslationDataFinal;
 
   $: tags = new Map(widgetData.mapTag);
   $: authors = new Map(widgetData.mapAuthor);
   $: articles = prepareArticles(widgetData.mapArticle, tags, authors);
-  $: translations = loadTranslations($sessionStore.serverLang);
+  $: loadTranslations($sessionStore.serverLang);
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -121,9 +123,9 @@
     } else {
       articles = tag.articles;
     }
-
   }
 
+  let pendingArticles = true;
   async function loadTagArticles({
     tag,
     page = 0,
@@ -131,6 +133,7 @@
     tag: IPageAuthorTagData;
     page?: number;
   }) {
+    pendingArticles = true;
     const tagData = articlesStore.get(tag.id);
     const res = await fetchArticles({
       permalink: tag.permalink,
@@ -138,6 +141,7 @@
       lang: $sessionStore.serverLang,
       prevData: tagData,
     });
+    pendingArticles = false;
     if (!res) return;
     articles = [...(tagData?.articles || []), ...res.articles];
     articlesStore.set(currentTag.id, {
@@ -151,28 +155,32 @@
   async function loadTranslations(lang: string | undefined) {
     if (!lang || prevLang === lang) return;
     prevLang = lang;
+    articlesStore = new Map();
+    invalidateAll();
     const res = (await get(
       `/api/data/author/tags?translation=${lang}`
     )) as IPageAuthorTranslationDataFinal;
-    return res;
+    translations = res;
   }
 
   async function loadMore() {
     const tagData = articlesStore.get(currentTag?.id);
     const length = tagData?.articles.length || 0;
-    if (!currentTag || !tagData || length === tagData.totalArticlesCount) return;
-    loadTagArticles({tag: currentTag, page: tagData.currentPage + 1});
+    if (!currentTag || !tagData || length === tagData.totalArticlesCount)
+      return;
+    loadTagArticles({ tag: currentTag, page: tagData.currentPage + 1 });
   }
 
   function scrollHandler() {
-    if ((!isPWA && (mobile || tablet))) return;
-    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 5 ) {
-      loadMore()
+    if (!isPWA && (mobile || tablet)) return;
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 5) {
+      loadMore();
     }
   }
 
   // #endregion ➤ 🛠️ METHODS
 </script>
+
 <svelte:window on:scroll={scrollHandler} />
 <section id={CNAME} class:mobile class:tablet class:pwa={isPWA}>
   <div class="tabbar-wrapper">
@@ -193,6 +201,11 @@
       {#each articles as article}
         <ArticleCard {mobile} {article} {tablet} {translations} />
       {/each}
+      {#if pendingArticles}
+        {#each Array(10) as _item}
+          <ArticleLoader />
+        {/each}
+      {/if}
     </div>
     {#if (tablet || mobile) && !isPWA && articles.length}
       <div class="load-more">
