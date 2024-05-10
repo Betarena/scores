@@ -45,6 +45,8 @@
   import { invalidateAll } from "$app/navigation";
   import ArticleLoader from "./ArticleLoader.svelte";
   import SeoBox from "$lib/components/SEO-Box.svelte";
+  import SvelteSeo from "svelte-seo";
+  import { tryCatch } from "@betarena/scores-lib/dist/util/common.js";
 
   // #endregion ➤ 📦 Package Imports
   // #region ➤ 📌 VARIABLES
@@ -95,6 +97,7 @@
   $: widgetData = $page.data as IPageAuthorTagDataFinal & {
     translations: IPageAuthorTranslationDataFinal;
   };
+  $: pageSeo = $page.data.seoTamplate;
   let currentTag;
   let translations: IPageAuthorTranslationDataFinal;
 
@@ -185,6 +188,22 @@
 
   // #endregion ➤ 🛠️ METHODS
 </script>
+{#if pageSeo}
+  <SvelteSeo
+    title={pageSeo.main_data.title}
+    description={pageSeo.main_data.description}
+    keywords={pageSeo.main_data.keywords}
+    noindex={tryCatch(() => {
+      return JSON.parse(pageSeo.main_data.noindex);
+    }) ?? false}
+    nofollow={tryCatch(() => {
+      return JSON.parse(pageSeo.main_data.nofollow);
+    }) ?? false}
+    canonical={`${$page.url.origin}/a/content`}
+    twitter={pageSeo.twitter_card}
+    openGraph={pageSeo.opengraph}
+  />
+{/if}
 
 <SeoBox>
   <h1>{tags.get(widgetData.tagId)?.name}</h1>
