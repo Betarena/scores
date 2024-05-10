@@ -194,11 +194,14 @@
       flex-grow: 1;
       width: 455px;
       max-width: 100%;
+      height: 100%;
+      min-height: 100%;
 
       overflow: hidden;
 
       .tags-wrapper {
         max-width: 100%;
+        justify-self: flex-end;
         --text-button-size: var(--text-size-s);
         --gradient-color-rgb: var(--bg-color-second-rgb-consts);
         margin-top: 4px;
@@ -264,6 +267,7 @@
 
       .title {
         -webkit-line-clamp: 3;
+        height: 72px;
       }
     }
 
@@ -283,6 +287,7 @@
           line-height: 24px;
           padding-right: 16px;
           -webkit-line-clamp: 3;
+          height: 72px;
         }
         .author-wrapper {
           padding-right: 16px;
