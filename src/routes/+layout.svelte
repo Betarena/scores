@@ -17,6 +17,7 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+	import HeaderRedesigned from './../lib/components/_main_/header/HeaderRedesigned.svelte';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
@@ -52,6 +53,7 @@
 
   import Footer from "$lib/components/_main_/footer/Footer.svelte";
   import Header from "$lib/components/_main_/header/Header.svelte";
+  import HeaderRedesigned from "$lib/components/_main_/header_redisigned/HeaderRedesigned.svelte";
   import MobileMenu from "$lib/components/_main_/mobile-menu/MobileMenu.svelte";
   import SplashScreen from "$lib/components/misc/Splash-Screen.svelte";
   import DevInfoBox from "$lib/components/misc/admin/Dev-Info-Box.svelte";
@@ -68,7 +70,13 @@
   // import WidgetAdEngine from '@betarena/ad-engine/src/lib/Widget-AdEngine.svelte';
   import WidgetAdEngine from "@betarena/ad-engine";
   import { modalSore } from "$lib/store/modal.js";
-  import { routeIdPageCompetitions, routeIdPageProfile, routeIdScores } from "$lib/constants/paths.js";
+  import {
+    routeIdContent,
+    routeIdPageCompetitions,
+    routeIdPageProfile,
+    routeIdScores,
+  } from "$lib/constants/paths.js";
+  import FooterRedisign from "$lib/components/_main_/footer/FooterRedisign.svelte";
 
   // ╭─────
   // │ WARNING:
@@ -118,12 +126,12 @@
      * @description
      *  📣 threshold start + state for 📱 MOBILE
      */ // eslint-disable-next-line no-unused-vars
-     VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ],
+    VIEWPORT_MOBILE_INIT: [number, boolean] = [575, true],
     /**
      * @description
      *  📣 threshold start + state for 💻 TABLET
      */ // eslint-disable-next-line no-unused-vars
-    VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ],
+    VIEWPORT_TABLET_INIT: [number, boolean] = [1160, true],
     /**
      * @description
      *  📣 Holds target `component(s)` of dynamic nature.
@@ -149,14 +157,11 @@
   $: $sessionStore.serverLang = $page.data.langParam as string;
   $: $sessionStore.page = $page;
 
-  $: [ VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1] ]
-    = viewportChangeV2
-    (
-      $sessionStore.windowWidth,
-      VIEWPORT_MOBILE_INIT[0],
-      VIEWPORT_TABLET_INIT[0],
-    )
-  ;
+  $: [VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1]] = viewportChangeV2(
+    $sessionStore.windowWidth,
+    VIEWPORT_MOBILE_INIT[0],
+    VIEWPORT_TABLET_INIT[0]
+  );
 
   $sessionStore.deviceType = $page.data.deviceType as
     | "mobile"
@@ -425,6 +430,58 @@
       }
       )();
     </script> -->
+    <!-- <script type="text/javascript">
+      window.$crisp=[];
+      window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
+      (function()
+      {
+        d=document;
+        s=d.createElement("script");
+        s.src="https://client.crisp.chat/l.js";
+        s.async=1;
+        d.getElementsByTagName("head")[0].appendChild(s);
+      }
+      )();
+    </script> -->
+    <!-- <script type="text/javascript">
+      window.$crisp=[];
+      window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
+      (function()
+      {
+        d=document;
+        s=d.createElement("script");
+        s.src="https://client.crisp.chat/l.js";
+        s.async=1;
+        d.getElementsByTagName("head")[0].appendChild(s);
+      }
+      )();
+    </script> -->
+    <!-- <script type="text/javascript">
+      window.$crisp=[];
+      window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
+      (function()
+      {
+        d=document;
+        s=d.createElement("script");
+        s.src="https://client.crisp.chat/l.js";
+        s.async=1;
+        d.getElementsByTagName("head")[0].appendChild(s);
+      }
+      )();
+    </script> -->
+    <!-- <script type="text/javascript">
+      window.$crisp=[];
+      window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
+      (function()
+      {
+        d=document;
+        s=d.createElement("script");
+        s.src="https://client.crisp.chat/l.js";
+        s.async=1;
+        d.getElementsByTagName("head")[0].appendChild(s);
+      }
+      )();
+    </!--> -->
     <script>
       // We pre-filled your app ID in the widget URL: 'https://widget.intercom.io/widget/yz9qn6p3'
       (function () {
@@ -498,7 +555,12 @@
 -->
 
 <!-- {$page.data.dataArticle} -->
-<div class="app-wrapper" id="app-root-layout" class:dark-mode={theme == "Dark"} class:light-mode={theme == "Light"}>
+<div
+  class="app-wrapper"
+  id="app-root-layout"
+  class:dark-mode={theme == "Dark"}
+  class:light-mode={theme == "Light"}
+>
   <WidgetAdEngine
     authorId={$page.data.dataArticle?.author_id}
     authorArticleTagIds={$page.data.dataArticle?.tags}
@@ -541,7 +603,11 @@
     <!-- <EmailSubscribe /> -->
   {/if}
 
-  <Header />
+  {#if $page.route.id === routeIdContent}
+    <HeaderRedesigned />
+  {:else}
+    <Header />
+  {/if}
 
   <main
     class:dark-background={theme == "Dark"}
@@ -552,12 +618,25 @@
     class:page-competition={currentPageRouteId == "CompetitionPage"}
     class:page-profile={currentPageRouteId == "ProfilePage"}
     class:page-authors={currentPageRouteId == "AuthorsPage"}
+    class:page-content={$page.route.id === routeIdContent}
+    class:mobile={VIEWPORT_MOBILE_INIT[1]}
+    class:tablet={VIEWPORT_TABLET_INIT[1]}
   >
     <slot />
-    <Footer />
+    {#if $page.route.id === routeIdContent}
+      <FooterRedisign
+        mobile={VIEWPORT_MOBILE_INIT[1]}
+        tablet={VIEWPORT_TABLET_INIT[1]}
+      />
+    {:else}
+      <Footer />
+    {/if}
   </main>
-  {#if (VIEWPORT_MOBILE_INIT[1] || VIEWPORT_TABLET_INIT[1]) && [routeIdScores, routeIdPageCompetitions].includes($page.route.id) }
-     <MobileMenu />
+  {#if (VIEWPORT_MOBILE_INIT[1] || VIEWPORT_TABLET_INIT[1]) && [routeIdScores, routeIdPageCompetitions, routeIdContent].includes($page.route.id)}
+    <MobileMenu
+      mobile={VIEWPORT_MOBILE_INIT[1]}
+      tablet={VIEWPORT_TABLET_INIT[1]}
+    />
   {/if}
   {#if $modalSore.show && $modalSore.component}
     <svelte:component this={$modalSore.component} />
@@ -575,7 +654,6 @@
 -->
 
 <style lang="scss">
-
   :global() {
     @import url("../../static/themes/dark.scss");
     @import url("../../static/themes/light.scss");
@@ -588,15 +666,20 @@
   */
 
   .app-wrapper {
+    display: flex;
+    flex-direction: column;
     min-height: 100vh;
+    background-color: var(--bg-color);
   }
   main {
     /* 📌 position */
     position: relative;
     z-index: 0;
     margin: 0 auto;
+    flex-grow: 1;
     /* 🎨 style */
     width: 100%;
+    max-width: 100%;
 
     &.standard {
       &::before {
@@ -625,6 +708,29 @@
     &.page-profile::before {
       /* 🎨 style */
       height: 611px;
+    }
+
+    &.page-content {
+      display: flex;
+      overflow: visible;
+      justify-content: space-between;
+      background-color: var(--bg-color);
+      max-width: 1265px;
+      width: 100%;
+      margin: auto;
+      padding: 26px 34px;
+      padding-top: 32px;
+      gap: 34px;
+
+      &.tablet {
+        flex-direction: column;
+        gap: 0;
+        overflow: hidden;
+        padding: 0;
+      }
+      &.mobile {
+        padding: 0;
+      }
     }
   }
 

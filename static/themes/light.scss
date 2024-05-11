@@ -2,11 +2,16 @@
 {
   --text-color: #292929;
   --text-color-second: #292929;
+  --text-color-second-dark: #8c8c8c;
+
+  --icon-color: rgba(140, 140, 140, 1);
 
   --icon-color: rgba(140, 140, 140, 1);
 
   --bg-color-rgb-consts: 255, 255, 255;
   --bg-color: rgb(var(--bg-color-rgb-consts));
+
+  --layout-bg-color: #E6E6E6;
 
   --bg-color-second-rgb-consts: 247, 247, 247;
   --bg-color-second: rgb(var(--bg-color-second-rgb-consts));
@@ -18,6 +23,8 @@
   --tag-bg-color: #E6E6E6;
 
   --section-border: 1px solid var(--border-color-light);
+  --border: 1px solid #CCC;
+  --header-border: 1px solid #CCC;
 
   //Mobile-Menu
   --mobile-menu-bg-color:  rgba(var(--bg-color-rgb-consts), 0.9);

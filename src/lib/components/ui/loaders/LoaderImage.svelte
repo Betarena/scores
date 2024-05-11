@@ -2,7 +2,7 @@
   import userBetarenaSettings from '$lib/store/user-settings.js';
 
 
-  export let width: number = 676,  height: number = 352, clazz: string = '';
+  export let width: number | string = 676,  height: number | string = 352, clazz: string = '';
 
   $: widthString = typeof width === 'number' ? `${width}px` : width
   $: heightString = typeof width === 'number' ? `${height}px` : height

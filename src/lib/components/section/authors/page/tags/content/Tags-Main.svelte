@@ -54,6 +54,7 @@
   } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import { get } from "$lib/api/utils.js";
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
+  import { fetchArticles, prepareArticles, type ITagsWidgetData } from "../../helpers.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -74,9 +75,7 @@
   export let /**
      * @augments IArticleData
      */
-    widgetData: IPageAuthorTagDataFinal & {
-      translations: IPageAuthorTranslationDataFinal;
-    };
+    widgetData: ITagsWidgetData;
   const /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
@@ -117,11 +116,6 @@
     VIEWPORT_TABLET_INIT[0]
   );
 
-  interface IArticle extends IPageAuthorArticleData {
-    author: IPageAuthorAuthorData;
-    tags_data: IPageAuthorTagData[];
-  }
-
   // #endregion ➤ 📌 VARIABLES
 
   /**
@@ -159,6 +153,7 @@
    * - `` - **articles**
    */
   $: loadTranslations($sessionStore.serverLang);
+
   // #region ➤ 🛠️ METHODS
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -170,50 +165,16 @@
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  function prepareArticles(
-    articles: [number, IPageAuthorArticleData][],
-    tags_map: Map<number, IPageAuthorTagData>,
-    authors: Map<number, IPageAuthorAuthorData>
-  ): IArticle[] {
-    if (!tags_map || !authors || !articles.length) return [];
-    const prepared = articles.map(([id, data]) => {
-      const preparedArticle: IArticle = {
-        author: {},
-        tags_data: [],
-        ...data,
-      } as IArticle;
-      if (data.author_id) {
-        const author = authors.get(data.author_id) as IPageAuthorAuthorData;
-        if (author) preparedArticle.author = author;
-      }
-      if (data.tags?.length) {
-        const prepared_tags: IPageAuthorTagData[] = [];
-        data.tags.forEach((id) => {
-          const tag = tags_map.get(id);
-          if (tag) prepared_tags.push(tag);
-        });
-        preparedArticle.tags_data = prepared_tags;
-      }
-      return preparedArticle;
-    });
-    return prepared;
-  }
 
   async function loadArticles() {
     pendingArticles = true;
-    const res = (await get(
-      `/api/data/author/tags?permalinkTag=${currentTag.permalink}&page=${page}${
-        selectedLang ? `&lang=${selectedLang}` : ""
-      }`
-    )) as IPageAuthorTagDataFinal;
-    const prevMap = new Map(widgetData.mapArticle);
-    const newArticles = res.mapArticle.filter(([id]) => !prevMap.has(id));
-    widgetData = {
-      ...widgetData,
-      mapArticle: [...widgetData.mapArticle, ...newArticles],
-      mapAuthor: [...widgetData.mapAuthor, ...res.mapAuthor],
-      mapTag: [...widgetData.mapTag, ...res.mapTag],
-    };
+    const res =   await fetchArticles({
+      permalink: currentTag.permalink,
+      page,
+      lang: selectedLang,
+      prevData: widgetData
+    });
+    articles = [...articles, ...res.articles];
     pendingArticles = false;
   }
 
@@ -254,6 +215,7 @@
       loadArticles();
     }
   }
+
   // #endregion ➤ 🛠️ METHODS
 </script>
 
