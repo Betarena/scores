@@ -50,7 +50,7 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
+{#key mobile || tablet}
 <div class="card-wrapper" class:mobile class:tablet in:fade={{ duration: 500 }}>
   <div class="card-content">
     <div class="author-wrapper">
@@ -61,9 +61,12 @@
       </div>
     </div>
     <div class="title">
-      {#each ["90%", "85%", "70%"] as item}
+      {#each ["90%", "85%"] as item}
         <LoaderLine width={item} />
-      {/each}
+        {/each}
+        {#if mobile || tablet}
+        <LoaderLine width="70%" />
+      {/if}
     </div>
     <div class="tags-wrapper">
       <LoaderBadge height={!mobile && !tablet ? 26: 24 }/>
@@ -75,6 +78,7 @@
     <LoaderImage width={"100%"} height={"100%"} />
   </div>
 </div>
+{/key}
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -90,7 +94,7 @@
   .card-wrapper {
     display: flex;
     width: 100%;
-    max-width: 776px;
+    max-width: 824px;
     gap: 56px;
     border-radius: 12px;
     padding: 24px;
@@ -148,7 +152,6 @@
         overflow: hidden;
         display: -webkit-box;
         -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2;
         overflow: hidden;
         text-overflow: ellipsis;
         max-width: 100%;
@@ -197,10 +200,6 @@
     &.tablet {
       max-width: 100%;
       width: 100%;
-
-      .title {
-        -webkit-line-clamp: 3;
-      }
     }
 
     &.mobile {
@@ -218,7 +217,6 @@
         .title {
           line-height: 24px;
           padding-right: 16px;
-          -webkit-line-clamp: 3;
         }
         .author-wrapper {
           padding-right: 16px;
