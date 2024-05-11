@@ -3,6 +3,7 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+	import { userBetarenaSettings } from '$lib/store/user-settings.js';
 	import Tabbar from './../../../../ui/Tabbar.svelte';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
@@ -24,6 +25,7 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
   import sessionStore from "$lib/store/session.js";
+  import userBetarenaSettings from "$lib/store/user-settings.js";
   import Tabbar from "$lib/components/ui/Tabbar.svelte";
   import { viewportChangeV2 } from "$lib/utils/device.js";
   import ArticleCard from "./ArticleCard.svelte";
@@ -100,10 +102,11 @@
   $: pageSeo = $page.data.seoTamplate;
   let currentTag;
   let translations: IPageAuthorTranslationDataFinal;
-
-  $: tags = new Map(widgetData.mapTag);
-  $: authors = new Map(widgetData.mapAuthor);
-  $: articles = prepareArticles(widgetData.mapArticle, tags, authors);
+  let articles: IArticle[] = [];
+  let tags: Map<string, IPageAuthorTagData> = new Map();
+  // $: tags = new Map(widgetData.mapTag);
+  // $: authors = new Map(widgetData.mapAuthor);
+  // $: articles = prepareArticles(widgetData.mapArticle, tags, authors);
   $: loadTranslations($sessionStore.serverLang);
   // #endregion ➤ 📌 VARIABLES
 
@@ -140,10 +143,10 @@
   }) {
     pendingArticles = true;
     const tagData = articlesStore.get(tag.id);
+    const followingTags = $userBetarenaSettings.user?.scores_user_data?.following?.tags || [];
+   const url = `/api/data/author/content?&lang=${$sessionStore.serverLang}&page=${page}&followingTags=${followingTags.join(",")}`;
     const res = await fetchArticles({
-      permalink: tag.permalink,
-      page,
-      lang: $sessionStore.serverLang,
+      url,
       prevData: tagData,
     });
     pendingArticles = false;

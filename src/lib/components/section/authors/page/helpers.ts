@@ -44,9 +44,10 @@ export interface ITagsWidgetData extends IPageAuthorTagDataFinal
 {
   translations: IPageAuthorTranslationDataFinal;
 }
-export async function fetchArticles({ permalink, lang, page, prevData, }: { permalink: string; lang?: string | null; page: number; prevData?: ITagsWidgetData })
+export async function fetchArticles({ permalink, lang, page, prevData, url }: { permalink?: string; lang?: string | null; page?: number; prevData?: ITagsWidgetData, url?: string })
 {
   const res = (await get(
+    url ||
     `/api/data/author/tags?permalinkTag=${permalink}&page=${page}${lang ? `&lang=${lang}` : ""
     }`
   )) as ITagsWidgetData;
