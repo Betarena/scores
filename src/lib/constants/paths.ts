@@ -56,14 +56,16 @@ export const
    *  📣 Target `path` for **competition (target) page**.
    */
   routeIdPageCompetition = '/(scores)/[[lang=lang]]/[competitions=competitions]/[...competition_fill]',
-  /**
-   * @description
-   *  📣 Target `path` for **scores  page**.
-   */
-  routeIdScores = '/(scores)/[[lang=lang]]',
+
   /**
    * @description
    *  📣 Target `path` for **personalized content  page**.
    */
-  routeIdContent = '/(authors)/a/content'
+  routeIdContent = '/(authors)/a/content',
+  routeIdScores = '/(scores)/[[lang=lang]]/scores',
+ /**
+   * @description
+   *  📣 Target `path` for **home  page**.
+   */
+  routeIdHome = '/(scores)/[[lang=lang]]'
   ;

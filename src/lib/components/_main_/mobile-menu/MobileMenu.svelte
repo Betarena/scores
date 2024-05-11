@@ -44,7 +44,7 @@
   import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
   import sessionStore from "$lib/store/session.js";
   import userBetarenaSettings from "$lib/store/user-settings.js";
-  import { cleanUrl, generateUrlCompetitions } from "$lib/utils/string";
+  import { generateUrlCompetitions } from "$lib/utils/string";
   import { dndzone } from "svelte-dnd-action";
 
   import StatisticIcon from "./assets/statisticicon.svelte";
@@ -101,21 +101,17 @@
     CNAME = "global/w/mobile-menu";
 
   let showPopup = false;
-  $: ({ globalState } = $sessionStore);
-  $: ({ profile_photo, buttons_order } = {
+  $: ({ globalState, serverLang } = $sessionStore);
+  $: ({ profile_photo, buttons_order, lang } = {
     ...$userBetarenaSettings.user?.scores_user_data,
   });
   $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
-
   $: navButtonOrderList = [
     {
       id: "scores",
       icon: StatisticIcon,
       type: "link",
-      url: cleanUrl(
-        trsanslationData?.scores_header_translations?.section_links
-          ?.scores_url || "/"
-      ),
+      url: `${serverLang != "en" ? `/${serverLang}` : ""}/scores`,
       label:
         trsanslationData?.scores_header_translations?.section_links
           ?.scores_title ?? "SCORES",
@@ -251,7 +247,7 @@
     {:else}
       <a href="/u/dashboard/{$userBetarenaSettings.lang}">
         {#if profile_photo}
-          <Avatar src={profile_photo} size={24} />
+          <Avatar src={profile_photo} size={25} />
         {:else}
           <UserIcon />
         {/if}

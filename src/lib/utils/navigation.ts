@@ -284,7 +284,7 @@ export async function selectLanguage
     // │ > replace path-name accordingly for "<lang>" - first occurance.
     // ╰─────
     newURL
-      = countSlash > 1
+       = page?.url.pathname !== "/"
         ? page?.url.pathname.replace(pastLang, `/${lang}/`)
         : page?.url.pathname.replace(pastLang, `/${lang}`)
       ;

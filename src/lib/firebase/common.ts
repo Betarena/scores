@@ -20,6 +20,52 @@ import type { Page } from '@sveltejs/kit';
 
 /**
  * @author
+ *  @izobov
+ * @summary
+ *  - 🟥 MAIN
+ *  - 🟦 HELPER
+ * @description
+ *  📣 Retrieves `Firebase/Firestore` data for **current user**.
+ * @param { string } uid
+ *  💠 **[required]** Target user **uid**.
+ * @return { Promise < void > }
+ */
+export async function getUserById
+(
+  uid: string
+)
+{
+  // [🐞]
+  dlog
+  (
+    '🚏 checkpoint ➤ getUserById(..)',
+    true
+  );
+
+  console.log("db_firestore",db_firestore)
+  console.log("UID",uid)
+
+  const
+    docRef
+      = doc
+      (
+        db_firestore,
+        'betarena_users',
+        uid
+      ),
+    docSnap
+      = await getDoc
+      (
+        docRef
+      )
+  ;
+
+  if (!docSnap.exists()) return;
+
+  return  docSnap.data();
+}
+/**
+ * @author
  *  @migbash
  * @summary
  *  - 🟥 MAIN
