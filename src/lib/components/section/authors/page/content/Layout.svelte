@@ -88,10 +88,6 @@
     VIEWPORT_MOBILE_INIT[0],
     VIEWPORT_TABLET_INIT[0]
   );
-  const categories = [
-    { id: "forecasts", name: "Forecasts", permalink: "forecasts" },
-    { id: "atp", name: "ATP", permalink: "atp" },
-  ];
   let articlesStore: Map<
     string,
     ITagsWidgetData & { articles: IArticle[]; currentPage: number }
@@ -102,12 +98,11 @@
   $: pageSeo = $page.data.seoTamplate;
   let currentTag;
   let translations: IPageAuthorTranslationDataFinal;
-  let articles: IArticle[] = [];
-  let tags: Map<string, IPageAuthorTagData> = new Map();
-  // $: tags = new Map(widgetData.mapTag);
-  // $: authors = new Map(widgetData.mapAuthor);
-  // $: articles = prepareArticles(widgetData.mapArticle, tags, authors);
+  $: tags = new Map(widgetData.mapTag);
+  $: authors = new Map(widgetData.mapAuthor);
+  $: articles = prepareArticles(widgetData.mapArticle, tags, authors);
   $: loadTranslations($sessionStore.serverLang);
+  $: categories = [tags.get(widgetData.tagId)];
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -143,8 +138,11 @@
   }) {
     pendingArticles = true;
     const tagData = articlesStore.get(tag.id);
-    const followingTags = $userBetarenaSettings.user?.scores_user_data?.following?.tags || [];
-   const url = `/api/data/author/content?&lang=${$sessionStore.serverLang}&page=${page}&followingTags=${followingTags.join(",")}`;
+    const followingTags =
+      $userBetarenaSettings.user?.scores_user_data?.following?.tags || [];
+    const url = `/api/data/author/content?&lang=${
+      $sessionStore.serverLang
+    }&page=${page}&followingTags=${followingTags.join(",")}`;
     const res = await fetchArticles({
       url,
       prevData: tagData,
@@ -191,6 +189,7 @@
 
   // #endregion ➤ 🛠️ METHODS
 </script>
+
 {#if pageSeo}
   <SvelteSeo
     title={pageSeo.main_data.title}
@@ -222,17 +221,20 @@
 <svelte:window on:scroll={scrollHandler} />
 <section id={CNAME} class:mobile class:tablet class:pwa={isPWA}>
   <div class="tabbar-wrapper">
-    {#if globalState.has("Authenticated")}
+    <!-- {#if globalState.has("Authenticated")}
       <div class="add-icon">
         <Add size={mobile && tablet ? 20 : 24} />
       </div>
+    {/if} -->
+    {#if categories?.length}
+      <!-- content here -->
+      <Tabbar
+        on:select={selectTag}
+        data={categories}
+        selected={currentTag}
+        height={mobile ? 14 : 8}
+      />
     {/if}
-    <Tabbar
-      on:select={selectTag}
-      data={categories}
-      selected={currentTag}
-      height={mobile ? 14 : 8}
-    />
   </div>
   <div class="content">
     <div class="articles">
