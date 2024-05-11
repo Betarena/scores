@@ -700,7 +700,7 @@
       overflow: visible;
       justify-content: space-between;
       background-color: var(--bg-color);
-      max-width: 1430px;
+      max-width: 1265px;
       width: 100%;
       margin: auto;
       padding: 26px 34px;

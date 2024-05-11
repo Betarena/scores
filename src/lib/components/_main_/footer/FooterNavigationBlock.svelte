@@ -66,7 +66,7 @@
     &.vertlical {
       display: grid;
       row-gap: 8px;
-      grid-template-columns: repeat(2, minmax(140px, 1fr));
+      grid-template-columns: auto auto;
       font-weight: 500;
     }
 
