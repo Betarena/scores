@@ -14,9 +14,10 @@
   import { generateUrlCompetitions } from "$lib/utils/string.js";
   import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
   import HeaderNavBtn from "./Header-Nav-Btn.svelte";
+    import { routeIdContent, routeIdPageCompetitionLobby, routeIdScores } from "$lib/constants/paths.js";
 
   interface INavBtnData {
-    key: "scores" | "content" | "competitions";
+    key: string;
     url: string | undefined;
     navTxt: string;
     isNew: boolean;
@@ -43,7 +44,7 @@
   $: navButtonOrderList = [
     {
       id: "scores",
-      key: "scores",
+      key: routeIdScores,
       url: `${$sessionStore.serverLang !== "en" ? `/${$sessionStore.serverLang}` : ""}/scores`,
       navTxt:
         translationData?.scores_header_translations?.section_links
@@ -52,7 +53,7 @@
     },
     {
       id: "content",
-      key: "content",
+      key: routeIdContent,
       url: translationData?.scores_header_translations?.section_links
         ?.sports_content_url,
       navTxt:
@@ -63,7 +64,7 @@
     },
     {
       id: "competitions",
-      key: "competitions",
+      key: routeIdPageCompetitionLobby,
       url: generateUrlCompetitions(
         $sessionStore.serverLang!,
         $page.data.B_SAP_D3_CP_H

@@ -22,6 +22,7 @@
 -->
 
 <script lang="ts">
+    import { page } from '$app/stores';
 
   // #region ➤ 📦 Package Imports
 
@@ -162,7 +163,7 @@
   nav-box
   cursor-pointer
   "
-  class:active={if_R_0}
+  class:active={navKey === $page.route.id}
   class:disable-anchor={disableAnchor}
   on:mouseover=
   {
@@ -274,7 +275,7 @@
     &:hover a p
     {
       /* 🎨 style */
-      color: var(--white) !important;
+      color: var(--text-color) !important;
     }
   }
 

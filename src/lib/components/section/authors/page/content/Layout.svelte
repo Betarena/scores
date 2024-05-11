@@ -233,7 +233,6 @@
   </div>
   <div class="content">
     <div class="articles">
-      <ArticleLoader {mobile} {tablet} />
       {#each articles as article}
         <ArticleCard {mobile} {article} {tablet} {translations} />
       {/each}
