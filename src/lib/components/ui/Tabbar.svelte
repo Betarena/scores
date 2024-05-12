@@ -38,7 +38,7 @@
   export let selected = null as ITab | null;
   export let height = 14;
   let activeNode: HTMLElement;
-  const nodeStore = writable<ITabWithNode[]>([]);
+  let nodeStore = writable<ITabWithNode[]>([]);
   const dispatch = createEventDispatcher();
   // #endregion ➤ 📌 VARIABLES
 
@@ -84,14 +84,15 @@
 
 
   $: if (data) {
-    nodeStore.set(data.map((item) => ({ ...item })));
+    selected = null;
+    nodeStore = writable(data.map((item) => ({ ...item })));
   }
 
   // #endregion ➤ 🛠️ METHODS
 </script>
 
 <div class="tabbar">
-  {#each data as item, i}
+  {#each data as item, i (item.id)}
     <div class="tab-item" style="margin-bottom: {height}px;" bind:this={$nodeStore[i].node} class:selected={selected?.id === item.id} on:click={(e) => select($nodeStore[i])}>
       <slot tab={item}>{item.name || item.label}</slot>
     </div>

@@ -227,7 +227,6 @@
       </div>
     {/if} -->
     {#if categories?.length}
-      <!-- content here -->
       <Tabbar
         on:select={selectTag}
         data={categories}
