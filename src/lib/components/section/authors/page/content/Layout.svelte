@@ -90,7 +90,7 @@
     VIEWPORT_TABLET_INIT[0]
   );
   let articlesStore: Map<
-    string,
+    number,
     ITagsWidgetData & { articles: IArticle[]; currentPage: number }
   > = new Map();
   $: widgetData = $page.data as IPageAuthorTagDataFinal & {
@@ -100,7 +100,7 @@
   let translations: IPageAuthorTranslationDataFinal;
   $: tags = new Map(widgetData.mapTag);
   $: authors = new Map(widgetData.mapAuthor);
-  $: articles = hadleArticles(widgetData.mapArticle, tags, authors);
+  $: articles = hadleArticles(widgetData, tags, authors);
   $: loadTranslations($sessionStore.serverLang);
   $: currentTag = tags.get(widgetData.tagId);
   $: categories = [tags.get(widgetData.tagId)];
@@ -130,12 +130,21 @@
   }
 
   function hadleArticles(
-    articles:[ number, IPageAuthorArticleData][],
+    data: ITagsWidgetData,
     tags: Map<number, IPageAuthorTagData>,
     authors: Map<number, IPageAuthorTagData>
   ) {
+    const articles = prepareArticles(data.mapArticle, tags, authors);
+    if (!articlesStore.get(data.tagId)) {
+      articlesStore.set(data.tagId, {
+        ...data,
+        articles: articles,
+        currentPage: 0,
+        totalArticlesCount: data.totalArticlesCount,
+      });
+    }
     pendingArticles = false;
-    return prepareArticles(articles, tags, authors);
+    return articles
   }
 
   let pendingArticles = true;
