@@ -17,39 +17,24 @@ import type { AuthorsSEODetailsDataJSONSchema } from '@betarena/scores-lib/types
 // ╭──────────────────────────────────────────────────────────────────╮
 // │ 🛠️ MAIN METHODS                                                  │
 // ╰──────────────────────────────────────────────────────────────────╯
-function covertSEOTemplate(data: IPageAuthorTagDataFinal): AuthorsSEODetailsDataJSONSchema
+function covertSEOTemplate(data: IPageAuthorTagDataFinal, url): AuthorsSEODetailsDataJSONSchema
 {
-  const { seoTamplate, tagId, mapTag } = data;
-  const currentTag = mapTag.find(([id]) => id === tagId);
-  if (!currentTag || !seoTamplate) return seoTamplate as AuthorsSEODetailsDataJSONSchema;
-  const { main_data, opengraph, twitter_card } = seoTamplate as AuthorsSEODetailsDataJSONSchema;
-  const tag = currentTag[1];
-  const { name, permalink } = tag;
-  const description = tag.description || name;
+  const { seoTamplate } = data;
+  if (!seoTamplate) return seoTamplate as any;
+  const { main_data, opengraph } = seoTamplate as AuthorsSEODetailsDataJSONSchema;
   const newSeo: AuthorsSEODetailsDataJSONSchema = {
     ...seoTamplate,
     main_data: {
       ...main_data,
-      description,
-      title: main_data.title.replaceAll("{name}", name),
-      keywords: name,
-      canonical: permalink,
+      canonical: main_data.canonical.replaceAll("{url}", url),
     },
     opengraph: {
       ...opengraph,
-      url: permalink,
-      description,
-      images: opengraph.images.map((img) => ({ ...img, alt: name })),
-      title: opengraph.title.replaceAll("{name}", name),
+      url: opengraph.url.replaceAll("{url}", url),
 
     },
-    twitter_card: {
-      ...twitter_card,
-      title: twitter_card.title.replaceAll("{name}", name),
-      description,
-      image_alt: name
-    }
   };
+  console.log("new SEO Template", JSON.stringify(newSeo));
   return newSeo;
 }
 export async function main
@@ -96,7 +81,7 @@ export async function main
           console.log(`📌 loaded [FSCR] with: ${loadType}`)
           if (data.seoTamplate)
           {
-            data.seoTamplate = { ...covertSEOTemplate(data) };
+            data.seoTamplate = { ...covertSEOTemplate(data, request.url.origin) };
           }
           if (data != undefined) return json(data);
         }
