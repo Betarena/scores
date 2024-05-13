@@ -236,7 +236,7 @@
 <style lang="scss">
   .wrapper {
     display: flex;
-    padding: 10px 34px;
+    padding: 12px 34px;
     max-width: 1440px;
     margin: auto;
     justify-content: space-between;
