@@ -39,6 +39,7 @@
     type ITagsWidgetData,
   } from "../helpers.js";
   import type {
+    IPageAuthorArticleData,
     IPageAuthorTagData,
     IPageAuthorTagDataFinal,
     IPageAuthorTranslationDataFinal,
@@ -96,12 +97,12 @@
     translations: IPageAuthorTranslationDataFinal;
   };
   $: pageSeo = $page.data.seoTamplate;
-  let currentTag;
   let translations: IPageAuthorTranslationDataFinal;
   $: tags = new Map(widgetData.mapTag);
   $: authors = new Map(widgetData.mapAuthor);
-  $: articles = prepareArticles(widgetData.mapArticle, tags, authors);
+  $: articles = hadleArticles(widgetData.mapArticle, tags, authors);
   $: loadTranslations($sessionStore.serverLang);
+  $: currentTag = tags.get(widgetData.tagId);
   $: categories = [tags.get(widgetData.tagId)];
   // #endregion ➤ 📌 VARIABLES
 
@@ -126,6 +127,15 @@
     } else {
       articles = tag.articles;
     }
+  }
+
+  function hadleArticles(
+    articles:[ number, IPageAuthorArticleData][],
+    tags: Map<number, IPageAuthorTagData>,
+    authors: Map<number, IPageAuthorTagData>
+  ) {
+    pendingArticles = false;
+    return prepareArticles(articles, tags, authors);
   }
 
   let pendingArticles = true;
@@ -164,12 +174,11 @@
     articlesStore = new Map();
     articles = [];
     pendingArticles = true;
-    const res = (await get(
-      `/api/data/author/tags?translation=${lang}`
-    )) as IPageAuthorTranslationDataFinal;
-    translations = res;
+    // const res = (await get(
+    //   `/api/data/author/tags?translation=${lang}`
+    // )) as IPageAuthorTranslationDataFinal;
+    // translations = res;
     await invalidateAll();
-    pendingArticles = false;
   }
 
   async function loadMore() {
