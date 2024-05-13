@@ -655,8 +655,8 @@
 
 <style lang="scss">
   :global() {
-    @import url("../../static/themes/dark.scss");
-    @import url("../../static/themes/light.scss");
+    @import url("../../static/scss/themes/dark.scss");
+    @import url("../../static/scss/themes/light.scss");
   }
 
   /*
