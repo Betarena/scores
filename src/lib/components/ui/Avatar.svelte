@@ -51,7 +51,7 @@ export let
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="avatar-circle" on:click|preventDefault={() => dispatch("click")} { ...$$restProps} style="width: {size}px; height: {size}px;  background-image: url({src});">
+<div class="avatar-circle" on:click={() => dispatch("click")} { ...$$restProps} style="width: {size}px; height: {size}px;  background-image: url({src});">
 
 </div>
 

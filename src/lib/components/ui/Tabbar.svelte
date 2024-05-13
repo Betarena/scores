@@ -31,14 +31,11 @@
     [key: string]: any;
   }
 
-  interface ITabWithNode extends ITab {
-    node?: HTMLElement;
-  }
   export let data = [] as ITab[];
   export let selected = null as ITab | null;
   export let height = 14;
   let activeNode: HTMLElement;
-  const nodeStore = writable<ITabWithNode[]>([]);
+  let tabbarNode: HTMLElement;
   const dispatch = createEventDispatcher();
   // #endregion ➤ 📌 VARIABLES
 
@@ -55,8 +52,12 @@
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  $: if (!selected && $nodeStore[0]?.node) {
-    select($nodeStore[0])
+  $: if (selected && tabbarNode) {
+    select(data[0])
+  }
+
+  $: if(!data?.includes(selected) && tabbarNode) {
+    select(data[0]);
   }
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
@@ -73,26 +74,31 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function select(item: ITabWithNode) {
-    dispatch("select", item);
-    const {node,...tab} = item;
-    selected = tab;
-    activeNode.style.width = `${node?.offsetWidth}px`;
-    activeNode.style.left = `${node?.offsetLeft}px`;
+  function select(tab: ITab) {
+    if (selected?.id !== tab.id) {
+      dispatch("select", tab);
+      selected = tab;
+    };
+  setBorder(tab);
+  }
+
+  function setBorder(tab: ITab) {
+    const tabNode = tabbarNode.querySelector(`[data-tab-id="${tab.id}"]`) as any;
+    if (tabNode) {
+      activeNode.style.width = `${tabNode.offsetWidth}px`;
+      activeNode.style.left = `${tabNode.offsetLeft}px`;
+
+    }
 
   }
 
-
-  $: if (data) {
-    nodeStore.set(data.map((item) => ({ ...item })));
-  }
 
   // #endregion ➤ 🛠️ METHODS
 </script>
 
-<div class="tabbar">
-  {#each data as item, i}
-    <div class="tab-item" style="margin-bottom: {height}px;" bind:this={$nodeStore[i].node} class:selected={selected?.id === item.id} on:click={(e) => select($nodeStore[i])}>
+<div class="tabbar" bind:this = {tabbarNode}>
+  {#each data as item, i (item.id)}
+    <div class="tab-item" style="margin-bottom: {height}px;" data-tab-id={item.id} class:selected={selected?.id === item.id} on:click={(e) => select(item)}>
       <slot tab={item}>{item.name || item.label}</slot>
     </div>
   {/each}
@@ -128,6 +134,7 @@
       color: var(--text-color);
       position: relative;
       transition: all 0.3s ease-in-out;
+      bottom: 1px solid var(--primary);
     }
     .active {
       position: absolute;

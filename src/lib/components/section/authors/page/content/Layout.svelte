@@ -29,7 +29,7 @@
   import Tabbar from "$lib/components/ui/Tabbar.svelte";
   import { viewportChangeV2 } from "$lib/utils/device.js";
   import ArticleCard from "./ArticleCard.svelte";
-  import Add from "./assets/add.svelte";
+  // import Add from "./assets/add.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import { page } from "$app/stores";
   import {
@@ -227,7 +227,6 @@
       </div>
     {/if} -->
     {#if categories?.length}
-      <!-- content here -->
       <Tabbar
         on:select={selectTag}
         data={categories}

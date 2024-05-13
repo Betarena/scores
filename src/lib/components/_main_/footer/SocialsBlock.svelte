@@ -85,6 +85,7 @@
         class="social-icon"
         rel="external"
         target="_blank"
+        aria-label="{key}"
         href={translation.links.social_networks[key]}
       >
         <svelte:component this={dynamicAssetMap.get(key)} />

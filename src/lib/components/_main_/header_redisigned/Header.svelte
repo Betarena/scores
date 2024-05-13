@@ -244,9 +244,6 @@
     width: 100%;
     gap: 44px;
 
-    .brand-logo {
-      margin-top: -7px;
-    }
 
     .navigation-wrapper {
       display: flex;
