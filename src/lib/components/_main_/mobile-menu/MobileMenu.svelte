@@ -232,7 +232,7 @@
   {#each [...navButtonOrderList] as { id, url, icon, type, route } (id)}
     {#if type === "link" && url}
       {@const active = $page.route.id === route}
-      <a href={url} class="item" class:active>
+      <a href={url} class="item" class:active aria-label="link to {id}">
         <svelte:component this={icon} type={active ? "solid" : "outline"} />
       </a>
     {:else}

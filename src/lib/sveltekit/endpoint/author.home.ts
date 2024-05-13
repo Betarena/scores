@@ -6,49 +6,32 @@
 // import { checkNull } from '$lib/utils/miscellenous.js';
 // import { getAuthorArticleTranslation } from '@betarena/scores-lib/dist/functions/v8/authors.articles.js';
 import { _GraphQL } from '@betarena/scores-lib/dist/classes/_graphql.js';
-import { entryTargetDataAuthorHome, entryTargetDataAuthorTranslation, entryTargetDataTag } from '@betarena/scores-lib/dist/functions/v8/main.preload.authors.js'
+import { entryTargetDataAuthorHome } from '@betarena/scores-lib/dist/functions/v8/main.preload.authors.js'
 import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
 // import type { IArticleTranslation } from '@betarena/scores-lib/types/types.authors.articles.js';
-import type { IPageAuthorTagDataFinal, IPageAuthorTranslationDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
+import type { IPageAuthorTagDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
 import { json, type RequestEvent } from '@sveltejs/kit';
-import { TableAuthorTagsMutation0, type ITableAuthorTagsMutation0Out, type ITableAuthorTagsMutation0Var } from "@betarena/scores-lib/dist/graphql/v8/table.authors.tags.js"
 import type { AuthorsSEODetailsDataJSONSchema } from '@betarena/scores-lib/types/v8/_HASURA-0.js';
 
 // ╭──────────────────────────────────────────────────────────────────╮
 // │ 🛠️ MAIN METHODS                                                  │
 // ╰──────────────────────────────────────────────────────────────────╯
-function covertSEOTemplate(data: IPageAuthorTagDataFinal): AuthorsSEODetailsDataJSONSchema
+function covertSEOTemplate(data: IPageAuthorTagDataFinal, url): AuthorsSEODetailsDataJSONSchema
 {
-  const { seoTamplate, tagId, mapTag } = data;
-  const currentTag = mapTag.find(([id]) => id === tagId);
-  if (!currentTag || !seoTamplate) return seoTamplate as AuthorsSEODetailsDataJSONSchema;
-  const { main_data, opengraph, twitter_card } = seoTamplate as AuthorsSEODetailsDataJSONSchema;
-  const tag = currentTag[1];
-  const { name, permalink } = tag;
-  const description = tag.description || name;
+  const { seoTamplate } = data;
+  if (!seoTamplate) return seoTamplate as any;
+  const { main_data, opengraph } = seoTamplate as AuthorsSEODetailsDataJSONSchema;
   const newSeo: AuthorsSEODetailsDataJSONSchema = {
     ...seoTamplate,
     main_data: {
       ...main_data,
-      description,
-      title: main_data.title.replaceAll("{name}", name),
-      keywords: name,
-      canonical: permalink,
+      canonical: main_data.canonical.replaceAll("{url}", url),
     },
     opengraph: {
       ...opengraph,
-      url: permalink,
-      description,
-      images: opengraph.images.map((img) => ({ ...img, alt: name })),
-      title: opengraph.title.replaceAll("{name}", name),
+      url: opengraph.url.replaceAll("{url}", url),
 
     },
-    twitter_card: {
-      ...twitter_card,
-      title: twitter_card.title.replaceAll("{name}", name),
-      description,
-      image_alt: name
-    }
   };
   return newSeo;
 }
@@ -96,7 +79,7 @@ export async function main
           console.log(`📌 loaded [FSCR] with: ${loadType}`)
           if (data.seoTamplate)
           {
-            data.seoTamplate = { ...covertSEOTemplate(data) };
+            data.seoTamplate = { ...covertSEOTemplate(data, request.url.origin) };
           }
           if (data != undefined) return json(data);
         }

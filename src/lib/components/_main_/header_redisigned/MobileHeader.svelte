@@ -147,7 +147,7 @@
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    padding: 10px 34px;
+    padding: 12px 34px;
     flex-wrap: wrap;
 
     &.mobile {

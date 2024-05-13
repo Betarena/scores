@@ -8,8 +8,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
-  import { writable } from "svelte/store";
+  import { createEventDispatcher, tick } from "svelte";
 
   // #region ➤ 📌 VARIABLES
 
@@ -53,7 +52,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   $: if (selected && tabbarNode) {
-    select(data[0])
+    select(data[0]);
   }
 
   $: if(!data?.includes(selected) && tabbarNode) {
@@ -82,13 +81,19 @@
   setBorder(tab);
   }
 
+  let callCount = 0;
   function setBorder(tab: ITab) {
     const tabNode = tabbarNode.querySelector(`[data-tab-id="${tab.id}"]`) as any;
     if (tabNode) {
+      console.log(tabNode)
       activeNode.style.width = `${tabNode.offsetWidth}px`;
       activeNode.style.left = `${tabNode.offsetLeft}px`;
-
+      callCount = 0;
+      return;
     }
+    if(callCount > 2) return;
+    tick().then(() => setBorder(tab));
+    callCount++;
 
   }
 

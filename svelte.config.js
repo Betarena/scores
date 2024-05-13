@@ -11,7 +11,7 @@ const config =
   // ▓▓ https://github.com/sveltejs/svelte-preprocess
   preprocess: preprocess({
     scss: {
-      prependData: `@import 'static/themes/index.scss';`
+      prependData: `@import 'static/scss/themes/index.scss';`
   }}),
 
   // ▓▓ SEE:

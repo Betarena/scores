@@ -39,6 +39,7 @@
     type ITagsWidgetData,
   } from "../helpers.js";
   import type {
+    IPageAuthorArticleData,
     IPageAuthorTagData,
     IPageAuthorTagDataFinal,
     IPageAuthorTranslationDataFinal,
@@ -89,19 +90,19 @@
     VIEWPORT_TABLET_INIT[0]
   );
   let articlesStore: Map<
-    string,
+    number,
     ITagsWidgetData & { articles: IArticle[]; currentPage: number }
   > = new Map();
   $: widgetData = $page.data as IPageAuthorTagDataFinal & {
     translations: IPageAuthorTranslationDataFinal;
   };
   $: pageSeo = $page.data.seoTamplate;
-  let currentTag;
   let translations: IPageAuthorTranslationDataFinal;
   $: tags = new Map(widgetData.mapTag);
   $: authors = new Map(widgetData.mapAuthor);
-  $: articles = prepareArticles(widgetData.mapArticle, tags, authors);
+  $: articles = hadleArticles(widgetData, tags, authors);
   $: loadTranslations($sessionStore.serverLang);
+  $: currentTag = tags.get(widgetData.tagId);
   $: categories = [tags.get(widgetData.tagId)];
   // #endregion ➤ 📌 VARIABLES
 
@@ -126,6 +127,24 @@
     } else {
       articles = tag.articles;
     }
+  }
+
+  function hadleArticles(
+    data: ITagsWidgetData,
+    tags: Map<number, IPageAuthorTagData>,
+    authors: Map<number, IPageAuthorTagData>
+  ) {
+    const articles = prepareArticles(data.mapArticle, tags, authors);
+    if (!articlesStore.get(data.tagId)) {
+      articlesStore.set(data.tagId, {
+        ...data,
+        articles: articles,
+        currentPage: 0,
+        totalArticlesCount: data.totalArticlesCount,
+      });
+    }
+    pendingArticles = false;
+    return articles
   }
 
   let pendingArticles = true;
@@ -164,12 +183,11 @@
     articlesStore = new Map();
     articles = [];
     pendingArticles = true;
-    const res = (await get(
-      `/api/data/author/tags?translation=${lang}`
-    )) as IPageAuthorTranslationDataFinal;
-    translations = res;
+    // const res = (await get(
+    //   `/api/data/author/tags?translation=${lang}`
+    // )) as IPageAuthorTranslationDataFinal;
+    // translations = res;
     await invalidateAll();
-    pendingArticles = false;
   }
 
   async function loadMore() {
