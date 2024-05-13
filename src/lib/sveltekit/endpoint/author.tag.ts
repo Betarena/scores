@@ -171,7 +171,7 @@ async function fallbackDataGenerate0
     language: string | undefined = undefined
   ): Promise<IPageAuthorTagDataFinal & { translations: IPageAuthorTranslationDataFinal }>
 {
-  const dataRes0: IPageAuthorTagDataFinal = await entryTargetDataTag({ permalinkTarget, page: Number(page), language });
+  const dataRes0: IPageAuthorTagDataFinal = await entryTargetDataTag({ permalinkTarget, page: Number(page), languageFilter: language });
   const dataRes1 = await entryTargetDataAuthorTranslation({ language: "en" })
   return { ...dataRes0, translations: dataRes1 };
 }
