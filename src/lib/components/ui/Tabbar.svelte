@@ -9,7 +9,6 @@
 -->
 <script lang="ts">
   import { createEventDispatcher, tick } from "svelte";
-  import { writable } from "svelte/store";
 
   // #region ➤ 📌 VARIABLES
 
@@ -53,7 +52,6 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   $: if (selected && tabbarNode) {
-    console.log(tabbarNode)
     select(data[0]);
   }
 
