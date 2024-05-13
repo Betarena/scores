@@ -34,7 +34,6 @@ function covertSEOTemplate(data: IPageAuthorTagDataFinal, url): AuthorsSEODetail
 
     },
   };
-  console.log("new SEO Template", JSON.stringify(newSeo));
   return newSeo;
 }
 export async function main
