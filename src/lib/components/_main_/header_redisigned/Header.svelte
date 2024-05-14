@@ -237,7 +237,7 @@
   .wrapper {
     display: flex;
     padding: 12px 34px;
-    max-width: 1440px;
+    max-width: 1430px;
     margin: auto;
     justify-content: space-between;
     align-items: center;

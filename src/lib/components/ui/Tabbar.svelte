@@ -85,7 +85,6 @@
   function setBorder(tab: ITab) {
     const tabNode = tabbarNode.querySelector(`[data-tab-id="${tab.id}"]`) as any;
     if (tabNode) {
-      console.log(tabNode)
       activeNode.style.width = `${tabNode.offsetWidth}px`;
       activeNode.style.left = `${tabNode.offsetLeft}px`;
       callCount = 0;
