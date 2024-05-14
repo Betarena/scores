@@ -181,7 +181,6 @@
   async function loadTranslations(lang: string | undefined) {
     if (skipFirst) {
       skipFirst = false;
-      debugger
       return;
     }
     if (!lang || prevLang === lang) return;
