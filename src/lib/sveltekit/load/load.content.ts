@@ -14,8 +14,8 @@
 
 import type { ServerLoadEvent } from '@sveltejs/kit';
 
-import { ERROR_CODE_INVALID, dlogv2 } from '$lib/utils/debug.js';
-import { preloadExitLogic, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/navigation.js';
+import { dlogv2 } from '$lib/utils/debug.js';
+import { promiseUrlsPreload } from '$lib/utils/navigation.js';
 
 import type {  IArticleTranslation } from '@betarena/scores-lib/types/types.authors.articles.js';
 import type { B_SAP_D2 } from '@betarena/scores-lib/types/v8/preload.scores.js';
