@@ -97,13 +97,13 @@
     translations: IPageAuthorTranslationDataFinal;
   };
   $: pageSeo = $page.data.seoTamplate;
-  let translations: IPageAuthorTranslationDataFinal;
   $: tags = new Map(widgetData.mapTag);
   $: authors = new Map(widgetData.mapAuthor);
   $: articles = hadleArticles(widgetData, tags, authors);
   $: loadTranslations($sessionStore.serverLang);
   $: currentTag = tags.get(widgetData.tagId);
   $: categories = [tags.get(widgetData.tagId)];
+  $: translations = widgetData.translations;
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -177,18 +177,25 @@
   }
 
   let prevLang;
+  let skipFirst = true;
   async function loadTranslations(lang: string | undefined) {
+    if (skipFirst) {
+      skipFirst = false;
+      debugger
+      return;
+    }
     if (!lang || prevLang === lang) return;
     prevLang = lang;
     articlesStore = new Map();
     articles = [];
     pendingArticles = true;
-    // const res = (await get(
-    //   `/api/data/author/tags?translation=${lang}`
-    // )) as IPageAuthorTranslationDataFinal;
-    // translations = res;
+    const res = (await get(
+      `/api/data/author/tags?translation=${lang}`
+    )) as IPageAuthorTranslationDataFinal;
+    translations = res;
     await invalidateAll();
   }
+
 
   async function loadMore() {
     const tagData = articlesStore.get(currentTag?.id);

@@ -88,7 +88,8 @@ export async function main
   //   );
   // ;
   const [
-    data
+    data,
+    translations
   ] = await fetchData
   (
     event.fetch,
@@ -100,10 +101,11 @@ export async function main
      * @description
      *  📣 `Data` object for target `route`.
      */
+
   const response = {
     ...data,
+    translations
   };
-
 
   // [🐞]
   dlogv2
@@ -149,6 +151,7 @@ async function fetchData
     urls0
       = [
         `/api/data/author/content?&lang=${_lang}`,
+        `/api/data/author/tags?translation=${_lang}`
         // `/api/data/author/tags?permalinkTag=forecasts&lang=${_lang}`,
         // `/api/data/author?lang=${_lang}`,
         // `/api/data/main/seo-pages?months=true&lang=${_lang}&decompress`,
