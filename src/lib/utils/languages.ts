@@ -14,7 +14,7 @@
 
 // #region ➤ 📦 Package Imports
 
-import { routeIdPageAuthors, routeIdPageTags } from '$lib/constants/paths.js';
+import { routeIdContent, routeIdPageAuthors, routeIdPageTags } from '$lib/constants/paths.js';
 import { dlogv2 } from '$lib/utils/debug';
 
 import type { Cookies } from '@sveltejs/kit';
@@ -72,13 +72,14 @@ export function detectPlatformLanguage
      *  📣 Extract target expected 'visitor' cookie preference data.
      */
     cookieValue: { lang: string } | false = JSON.parse(opts.cookies.get('betarenaScoresCookie') ?? 'false')
-  ;
+    ;
+
 
   // ╭─────
   // │ CHECK
   // │ > for authors page, apply custom logic.
   // ╰─────
-  if ((opts.routeId == routeIdPageAuthors || opts.routeId === routeIdPageTags) && typeof(cookieValue) == 'object')
+  if ([routeIdPageAuthors, routeIdPageTags, routeIdContent].includes(opts.routeId || "") && typeof(cookieValue) == 'object')
     urlLang = (cookieValue.lang ?? 'en');
   ;
 

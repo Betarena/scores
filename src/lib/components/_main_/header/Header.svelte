@@ -58,7 +58,7 @@
 
   import SeoBox from "$lib/components/SEO-Box.svelte";
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
-  import { routeIdPageTags } from "$lib/constants/paths.js";
+  import { routeIdContent, routeIdPageTags } from "$lib/constants/paths.js";
   import HeaderCBookmakers from "./Header-C-Bookmakers.svelte";
   import HeaderCLang from "./Header-C-Lang.svelte";
   import HeaderCTheme from "./Header-C-Theme.svelte";
@@ -899,7 +899,7 @@
           │ > User Avatar
           ╰─────
           -->
-          {#if !VIEWPORT_MOBILE_INIT[1] || pageRouteId != routeIdPageTags}
+          {#if !VIEWPORT_MOBILE_INIT[1] || ![routeIdPageTags, routeIdContent].includes(pageRouteId || "")}
             <img
               id="user-profile-picture"
               data-testid="{CNAME}/user-avatar"

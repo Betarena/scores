@@ -335,7 +335,7 @@ export function formatNumberWithCommas
  */
 export function toDecimalFix
 (
-  value: number | null
+  value: number | null | undefined
   , dPlaces: number = 2
   , noRoundUp: boolean = false
   , removeDot00: boolean = true

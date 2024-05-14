@@ -506,7 +506,8 @@ export function breakdownDates
  * @return { string }
  *  📤 Target `string` .
  */
-export function timeAgo(datestring: string | null, translation: TranslationAuthorPublicationDateDataTimeAgo): string
+export function timeAgo(datestring: string | null, translation
+  = {} as TranslationAuthorPublicationDateDataTimeAgo): string
 {
   if (!datestring) return '';
   const now = new Date();

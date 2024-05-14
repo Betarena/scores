@@ -1,0 +1,3 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="18" viewBox="0 0 20 18" fill="none">
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M6.25036 0H0L7.41067 9.78862L0.474076 18H3.67899L8.92542 11.7894L13.584 17.9428H19.8344L12.2084 7.86978L12.2219 7.88715L18.788 0.114306H15.5831L10.7069 5.88657L6.25036 0ZM3.4501 1.7143H5.39593L16.3843 16.2285H14.4385L3.4501 1.7143Z" fill="var(--icon-color)"/>
+</svg>

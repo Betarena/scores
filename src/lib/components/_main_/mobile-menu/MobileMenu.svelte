@@ -44,7 +44,7 @@
   import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
   import sessionStore from "$lib/store/session.js";
   import userBetarenaSettings from "$lib/store/user-settings.js";
-  import { cleanUrl, generateUrlCompetitions } from "$lib/utils/string";
+  import { generateUrlCompetitions } from "$lib/utils/string";
   import { dndzone } from "svelte-dnd-action";
 
   import StatisticIcon from "./assets/statisticicon.svelte";
@@ -57,7 +57,7 @@
   import type { SvelteComponent } from "svelte";
   import Avatar from "$lib/components/ui/Avatar.svelte";
   import {
-    routeIdPageAuthors,
+    routeIdContent,
     routeIdPageCompetitionLobby,
     routeIdScores,
   } from "$lib/constants/paths.js";
@@ -92,6 +92,8 @@
     route?: string;
   }
 
+  export let mobile, tablet;
+
   const /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
@@ -100,7 +102,7 @@
 
   let showPopup = false;
   $: ({ globalState, serverLang } = $sessionStore);
-  $: ({ profile_photo, buttons_order } = {
+  $: ({ profile_photo, buttons_order, lang } = {
     ...$userBetarenaSettings.user?.scores_user_data,
   });
   $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
@@ -119,12 +121,11 @@
       id: "content",
       icon: DocumentsIcon,
       type: "link",
-      url: trsanslationData?.scores_header_translations?.section_links
-        ?.sports_content_url,
+      url: "/a/content",
       label:
         trsanslationData?.scores_header_translations?.section_links
           ?.sports_content_title ?? "SPORTS CONTENT",
-      route: routeIdPageAuthors,
+      route: routeIdContent,
     },
     {
       id: "competitions",
@@ -226,12 +227,12 @@
     on:click|preventDefault={() => (showPopup = false)}
   />
 {/if}
-<div id={CNAME} class="mobile-menu">
+<div id={CNAME} class="mobile-menu" class:mobile class:tablet>
   <div class="blured-container" />
   {#each [...navButtonOrderList] as { id, url, icon, type, route } (id)}
     {#if type === "link" && url}
       {@const active = $page.route.id === route}
-      <a href={url} class="item" class:active>
+      <a href={url} class="item" class:active aria-label="link to {id}">
         <svelte:component this={icon} type={active ? "solid" : "outline"} />
       </a>
     {:else}
@@ -321,7 +322,7 @@
   .mobile-menu {
     display: flex;
     position: fixed;
-    bottom: 24px;
+    bottom: 40px;
     height: 56px;
     width: 340px;
     max-width: 95%;
@@ -335,7 +336,11 @@
     justify-content: space-between;
     gap: 40px;
     padding: 16px 30px;
-    background-color: var(--mobile-menu-bg-color) ;
+    background-color: var(--mobile-menu-bg-color);
+
+    &.mobile {
+      bottom: 24px;
+    }
 
     .blured-container {
       border-radius: 56px;

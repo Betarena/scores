@@ -75,6 +75,7 @@ export async function main
           ;
         let lang: string | undefined = request.url.searchParams.get('lang') as string;
         if (lang === "all") lang = undefined;
+        const  langUser: string | undefined =  await JSON.parse( request.locals.user || "")?.lang || "en";
 
         // ╭──────────────────────────────────────────────────────────────────╮
         // │ NOTE:                                                            │
@@ -88,7 +89,8 @@ export async function main
             (
               permalinkTag,
               page,
-              lang
+              lang,
+              langUser
             ),
             loadType = 'HASURA'
             ;
@@ -168,10 +170,11 @@ async function fallbackDataGenerate0
   (
     permalinkTarget: string,
     page: string | number,
-    language: string | undefined = undefined
+    language: string | undefined = undefined,
+    languageUser: string | undefined = undefined
   ): Promise<IPageAuthorTagDataFinal & { translations: IPageAuthorTranslationDataFinal }>
 {
-  const dataRes0: IPageAuthorTagDataFinal = await entryTargetDataTag({ permalinkTarget, page: Number(page), language });
+  const dataRes0: IPageAuthorTagDataFinal = await entryTargetDataTag({ permalinkTarget, page: Number(page), languageUser, languageFilter: language });
   const dataRes1 = await entryTargetDataAuthorTranslation({ language: "en" })
   return { ...dataRes0, translations: dataRes1 };
 }

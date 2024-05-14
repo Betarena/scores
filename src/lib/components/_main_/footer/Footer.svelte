@@ -49,7 +49,7 @@
 
 	import type { B_H_SFOOTD_Social_Network } from '@betarena/scores-lib/types/_HASURA_.js';
 	import type { B_FOT_T } from '@betarena/scores-lib/types/types.main.footer.js';
-    import { routeIdPageTags } from '$lib/constants/paths.js';
+    import { routeIdContent, routeIdPageTags } from '$lib/constants/paths.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -230,7 +230,7 @@
 │ > Fotter Container
 ╰─────
 -->
-{#if $page.route.id !== routeIdPageTags || ($page.route.id === routeIdPageTags && !VIEWPORT_TABLET_INIT[1] && !VIEWPORT_MOBILE_INIT[1])}
+{#if $page.route.id !== routeIdPageTags && $page.route.id !== routeIdContent || ($page.route.id === routeIdPageTags && !VIEWPORT_TABLET_INIT[1] && !VIEWPORT_MOBILE_INIT[1])}
 
   <footer>
 

@@ -149,9 +149,7 @@ async function fetchData
     urls0
       = [
         `/api/data/author/tags?permalinkTag=${_name}`,
-        // `/api/data/author?lang=${_lang}`,
-        // `/api/data/main/seo-pages?months=true&lang=${_lang}&decompress`,
-      ],
+       ],
 
     /**
      * @description

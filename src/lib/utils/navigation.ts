@@ -18,7 +18,7 @@ import { error, redirect, type Page } from '@sveltejs/kit';
 import LZString from 'lz-string';
 
 import { get } from '$lib/api/utils.js';
-import { routeIdPageAuthors, routeIdPageCompetition, routeIdPageCompetitionLobby, routeIdPageFixture, routeIdPageLeague, routeIdPagePlayer, routeIdPageProfile, routeIdPageTags } from '$lib/constants/paths.js';
+import { routeIdContent, routeIdPageAuthors, routeIdPageCompetition, routeIdPageCompetitionLobby, routeIdPageFixture, routeIdPageLeague, routeIdPagePlayer, routeIdPageProfile, routeIdPageTags } from '$lib/constants/paths.js';
 import sessionStore from '$lib/store/session.js';
 import userBetarenaSettings from '$lib/store/user-settings.js';
 import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common';
@@ -193,6 +193,7 @@ export async function selectLanguage
         return;
       }
     case routeIdPageTags:
+    case routeIdContent:
        //[🐞]
        dlogv2
        (
