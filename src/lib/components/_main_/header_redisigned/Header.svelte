@@ -150,7 +150,7 @@
       </Button>
     {:else}
       <div class="avatar-wrapper" on:click|stopPropagation>
-        <Avatar src={profile_photo} size={40} on:click={avatarClick} />
+        <Avatar src={profile_photo} size={44} on:click={avatarClick} />
 
         {#if $scoresNavbarStore.globalState.has("UserDropdownActive")}
           <div id="user-profile-dropdown" transition:fly>
