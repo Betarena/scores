@@ -144,7 +144,7 @@
       });
     }
     pendingArticles = false;
-    return articles
+    return articles;
   }
 
   let pendingArticles = true;
@@ -158,10 +158,12 @@
     pendingArticles = true;
     const tagData = articlesStore.get(tag.id);
     const followingTags =
-      $userBetarenaSettings.user?.scores_user_data?.following?.tags || [];
-    const url = `/api/data/author/content?&lang=${
-      $sessionStore.serverLang
-    }&page=${page}&followingTags=${followingTags.join(",")}`;
+      $userBetarenaSettings.user?.scores_user_data?.following?.tags;
+    let url = `/api/data/author/content?&lang=${$sessionStore.serverLang}&page=${page}`;
+
+    if (followingTags?.length) {
+      url += `&followingTags=${followingTags.join(",")}`;
+    }
     const res = await fetchArticles({
       url,
       prevData: tagData,
@@ -194,7 +196,6 @@
     translations = res;
     await invalidateAll();
   }
-
 
   async function loadMore() {
     const tagData = articlesStore.get(currentTag?.id);
