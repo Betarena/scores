@@ -97,13 +97,13 @@
     translations: IPageAuthorTranslationDataFinal;
   };
   $: pageSeo = $page.data.seoTamplate;
-  let translations: IPageAuthorTranslationDataFinal;
   $: tags = new Map(widgetData.mapTag);
   $: authors = new Map(widgetData.mapAuthor);
   $: articles = hadleArticles(widgetData, tags, authors);
   $: loadTranslations($sessionStore.serverLang);
   $: currentTag = tags.get(widgetData.tagId);
   $: categories = [tags.get(widgetData.tagId)];
+  $: translations = widgetData.translations;
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -144,7 +144,7 @@
       });
     }
     pendingArticles = false;
-    return articles
+    return articles;
   }
 
   let pendingArticles = true;
@@ -158,10 +158,12 @@
     pendingArticles = true;
     const tagData = articlesStore.get(tag.id);
     const followingTags =
-      $userBetarenaSettings.user?.scores_user_data?.following?.tags || [];
-    const url = `/api/data/author/content?&lang=${
-      $sessionStore.serverLang
-    }&page=${page}&followingTags=${followingTags.join(",")}`;
+      $userBetarenaSettings.user?.scores_user_data?.following?.tags;
+    let url = `/api/data/author/content?&lang=${$sessionStore.serverLang}&page=${page}`;
+
+    if (followingTags?.length) {
+      url += `&followingTags=${followingTags.join(",")}`;
+    }
     const res = await fetchArticles({
       url,
       prevData: tagData,
@@ -177,16 +179,21 @@
   }
 
   let prevLang;
+  let skipFirst = true;
   async function loadTranslations(lang: string | undefined) {
+    if (skipFirst) {
+      skipFirst = false;
+      return;
+    }
     if (!lang || prevLang === lang) return;
     prevLang = lang;
     articlesStore = new Map();
     articles = [];
     pendingArticles = true;
-    // const res = (await get(
-    //   `/api/data/author/tags?translation=${lang}`
-    // )) as IPageAuthorTranslationDataFinal;
-    // translations = res;
+    const res = (await get(
+      `/api/data/author/tags?translation=${lang}`
+    )) as IPageAuthorTranslationDataFinal;
+    translations = res;
     await invalidateAll();
   }
 
@@ -230,7 +237,6 @@
   {#each widgetData.mapArticle ?? [] as [_id, article]}
     <h2>{article?.data?.title}</h2>
     <a href={`/a/${article?.permalink}`}>{article?.data?.title}</a>
-    {@html article?.data?.content}
   {/each}
   {#each widgetData.mapTag ?? [] as [_id, tag]}
     <a href={`/a/tag/${tag?.permalink}`}>{tag.name}</a>

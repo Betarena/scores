@@ -14,8 +14,8 @@
 
 import type { ServerLoadEvent } from '@sveltejs/kit';
 
-import { ERROR_CODE_INVALID, dlogv2 } from '$lib/utils/debug.js';
-import { preloadExitLogic, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/navigation.js';
+import { dlogv2 } from '$lib/utils/debug.js';
+import { promiseUrlsPreload } from '$lib/utils/navigation.js';
 
 import type {  IArticleTranslation } from '@betarena/scores-lib/types/types.authors.articles.js';
 import type { B_SAP_D2 } from '@betarena/scores-lib/types/v8/preload.scores.js';
@@ -88,7 +88,8 @@ export async function main
   //   );
   // ;
   const [
-    data
+    data,
+    translations
   ] = await fetchData
   (
     event.fetch,
@@ -100,10 +101,11 @@ export async function main
      * @description
      *  📣 `Data` object for target `route`.
      */
+
   const response = {
     ...data,
+    translations
   };
-
 
   // [🐞]
   dlogv2
@@ -149,6 +151,7 @@ async function fetchData
     urls0
       = [
         `/api/data/author/content?&lang=${_lang}`,
+        `/api/data/author/tags?translation=${_lang}`
         // `/api/data/author/tags?permalinkTag=forecasts&lang=${_lang}`,
         // `/api/data/author?lang=${_lang}`,
         // `/api/data/main/seo-pages?months=true&lang=${_lang}&decompress`,
