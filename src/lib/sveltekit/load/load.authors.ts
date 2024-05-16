@@ -18,7 +18,8 @@ import { ERROR_CODE_INVALID, dlogv2 } from '$lib/utils/debug.js';
 import { preloadExitLogic, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/navigation.js';
 
 import type { B_SAP_D2 } from '@betarena/scores-lib/types/seo-pages.js';
-import type { IArticleData, IArticleTranslation } from '@betarena/scores-lib/types/types.authors.articles.js';
+import type { IPageAuhtorArticleDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
+import type { IPageArticleTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.articles.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -32,8 +33,8 @@ import type { IArticleData, IArticleTranslation } from '@betarena/scores-lib/typ
  */
 type PreloadPromise0 =
 [
-  IArticleData | undefined,
-  IArticleTranslation | undefined,
+  IPageAuhtorArticleDataFinal | undefined,
+  IPageArticleTranslationDataFinal | undefined,
   B_SAP_D2 | undefined
 ];
 

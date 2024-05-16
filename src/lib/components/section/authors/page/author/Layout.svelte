@@ -45,7 +45,7 @@
 
   import { tryCatch } from '@betarena/scores-lib/dist/util/common.js';
 
-  import type { IArticleData } from '@betarena/scores-lib/types/types.authors.articles.js';
+  import type { IPageAuhtorArticleDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -75,7 +75,7 @@
     VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
-  $: pageSeo = $page.data.dataArticle as IArticleData;
+  $: pageSeo = $page.data.dataArticle as IPageAuhtorArticleDataFinal;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -94,14 +94,14 @@
 
 {#if pageSeo}
 	<SvelteSeo
-		title={pageSeo.seo_details?.main_data.title}
-		description={pageSeo.seo_details?.main_data.description}
-		keywords={pageSeo.seo_details?.main_data.keywords}
-		noindex={ tryCatch(() => {return JSON.parse(pageSeo.seo_details?.main_data.noindex)}) ?? false }
-		nofollow={ tryCatch(() => {return JSON.parse(pageSeo.seo_details?.main_data.nofollow)}) ?? false }
-		canonical={pageSeo.seo_details?.main_data.canonical}
-		twitter={pageSeo.seo_details?.twitter_card}
-		openGraph={pageSeo.seo_details?.opengraph}
+		title={pageSeo.article.seo_details?.main_data.title}
+		description={pageSeo.article.seo_details?.main_data.description}
+		keywords={pageSeo.article.seo_details?.main_data.keywords}
+		noindex={ tryCatch(() => {return JSON.parse(pageSeo.article.seo_details?.main_data.noindex)}) ?? false }
+		nofollow={ tryCatch(() => {return JSON.parse(pageSeo.article.seo_details?.main_data.nofollow)}) ?? false }
+		canonical={pageSeo.article.seo_details?.main_data.canonical}
+		twitter={pageSeo.article.seo_details?.twitter_card}
+		openGraph={pageSeo.article.seo_details?.opengraph}
 	/>
 {/if}
 

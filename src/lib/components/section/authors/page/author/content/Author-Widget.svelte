@@ -49,6 +49,7 @@
   import AuthorMain from './Author-Main.svelte';
 
   import type { IArticleData } from '@betarena/scores-lib/types/types.authors.articles.js';
+  import type { IPageAuhtorArticleDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -80,7 +81,7 @@
     useDynamicImport: boolean = true
   ;
 
-  $: widgetDataMain = $page.data.dataArticle as IArticleData | null | undefined;
+  $: widgetDataMain = $page.data.dataArticle as IPageAuhtorArticleDataFinal | null | undefined;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -160,8 +161,8 @@
 -->
 
 <SeoBox>
-  <h1>{widgetDataMain?.data?.title}</h1>
-  {@html widgetDataMain?.data?.content}
+  <h1>{widgetDataMain?.article.data.title}</h1>
+  {@html widgetDataMain?.article.data.content}
 </SeoBox>
 
 <!-- [🐞] -->

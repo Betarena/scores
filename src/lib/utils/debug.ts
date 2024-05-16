@@ -17,6 +17,7 @@ import chalk from 'chalk';
 
 import { browser, dev } from '$app/environment';
 import { LOGS_SHOW_OVERRIDE } from '$lib/constants/instance.js';
+import { json } from '@sveltejs/kit';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -31,7 +32,18 @@ export const
   LAYOUT_1_LANG_PAGE_ERROR_MSG = 'Uh-oh! There has been a pre-load error (/layout)',
   HOME_LANG_PAGE_ERROR_MSG = 'Uh-oh! There has been a pre-load error (/lang)',
   FIXTURE_PAGE_ERROR_MSG = 'Uh-oh! There has been a pre-load error (/fixture)',
-  PRELOAD_ERROR_MSG_PLAYER = 'Uh-oh! There has been a pre-load error (/...player_fill)'
+  PRELOAD_ERROR_MSG_PLAYER = 'Uh-oh! There has been a pre-load error (/...player_fill)',
+  API_DATA_ERROR_RESPONSE = () =>
+    {
+      return json
+      (
+        null,
+        {
+          status: 400,
+          statusText: 'Uh-oh! There has been an error'
+        }
+      );
+    }
 ;
 
 const
