@@ -6,13 +6,15 @@
 // import { checkNull } from '$lib/utils/miscellenous.js';
 // import { getAuthorArticleTranslation } from '@betarena/scores-lib/dist/functions/v8/authors.articles.js';
 import { _GraphQL } from '@betarena/scores-lib/dist/classes/_graphql.js';
-import { entryTargetDataAuthorTranslation, entryTargetDataTag } from '@betarena/scores-lib/dist/functions/v8/main.preload.authors.js'
+import { entryTargetDataTag } from '@betarena/scores-lib/dist/functions/v8/main.preload.authors.js';
 import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
 // import type { IArticleTranslation } from '@betarena/scores-lib/types/types.authors.articles.js';
-import type { IPageAuthorTagDataFinal, IPageAuthorTranslationDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
-import { json, type RequestEvent } from '@sveltejs/kit';
-import { TableAuthorTagsMutation0, type ITableAuthorTagsMutation0Out, type ITableAuthorTagsMutation0Var } from "@betarena/scores-lib/dist/graphql/v8/table.authors.tags.js"
+import { entryTargetDataAuthorTranslation } from '@betarena/scores-lib/dist/functions/v8/authors.tags.js';
+import { TableAuthorTagsMutation0, type ITableAuthorTagsMutation0Out, type ITableAuthorTagsMutation0Var } from "@betarena/scores-lib/dist/graphql/v8/table.authors.tags.js";
 import type { AuthorsSEODetailsDataJSONSchema } from '@betarena/scores-lib/types/v8/_HASURA-0.js';
+import type { IPageAuthorTagDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
+import type { IPageAuthorTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.tags.js';
+import { json, type RequestEvent } from '@sveltejs/kit';
 
 // ╭──────────────────────────────────────────────────────────────────╮
 // │ 🛠️ MAIN METHODS                                                  │
@@ -176,7 +178,7 @@ async function fallbackDataGenerate0
 {
   const dataRes0: IPageAuthorTagDataFinal = await entryTargetDataTag({ permalinkTarget, page: Number(page), languageUser, languageFilter: language });
   const dataRes1 = await entryTargetDataAuthorTranslation({ language: "en" })
-  return { ...dataRes0, translations: dataRes1 };
+  return { ...dataRes0, translations: dataRes1.get("en")! };
 }
 
 /**
@@ -197,7 +199,7 @@ async function fallbackDataGenerate1
   ): Promise<IPageAuthorTranslationDataFinal>
 {
   const dataRes0 = await entryTargetDataAuthorTranslation({ language });
-  return dataRes0;
+  return dataRes0.get(language)!;
 }
 
 
