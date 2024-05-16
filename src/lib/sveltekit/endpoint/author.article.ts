@@ -89,11 +89,13 @@ export async function main
         (
           // 'https://webhook.site/a16a8324-c046-487a-a1ac-db6e1eaffed6',
           `
-            http://65.109.14.126:8500/ttl/author-articles
+            http://65.109.14.126:8500/sitemap-and-preload
               ?
                 ids[]=${data.article.id}
               &
-                completeRegenerate=true
+                operation[]=preload-target
+              &
+                category[]=author_article
           `
           .replaceAll('\n', '')
           .replaceAll(' ', '')

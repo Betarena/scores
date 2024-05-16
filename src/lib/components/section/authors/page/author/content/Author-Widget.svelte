@@ -115,7 +115,7 @@
     // IMPORTANT
     if (!browser) return;
 
-    await sleep(1000);
+    // await sleep(1000);
 
     return;
   }
