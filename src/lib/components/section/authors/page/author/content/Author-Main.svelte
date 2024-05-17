@@ -56,8 +56,8 @@
   import TranslationText from '$lib/components/misc/Translation-Text.svelte';
 
   import type { B_SAP_D2 } from '@betarena/scores-lib/types/seo-pages.js';
-  import type { IArticleTranslation } from '@betarena/scores-lib/types/types.authors.articles.js';
   import type { IPageAuhtorArticleDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
+  import type { IPageArticleTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.articles.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -154,7 +154,7 @@
       VIEWPORT_MOBILE_INIT[0],
       VIEWPORT_TABLET_INIT[0],
     );
-  $: widgetDataTranslation = $page.data.translationArticle as IArticleTranslation | null | undefined;
+  $: widgetDataTranslation = $page.data.translationArticle as IPageArticleTranslationDataFinal | null | undefined;
   $: monthTranslation = $page.data.monthTranslations as B_SAP_D2 | null | undefined;
 
   // #endregion ➤ 📌 VARIABLES

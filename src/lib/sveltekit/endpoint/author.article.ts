@@ -126,11 +126,20 @@ export async function main
                 language: queryParamLanguage,
                 cacheCheck: true
               }
-            )
+            ),
+          /**
+           * @description
+           * 📝 Target data.
+           */
+          target
+            = data.get(queryParamLanguage)
         ;
 
+        // [🐞]
+        console.log('data-091', target);
+
         if (data != undefined)
-          return json(data);
+          return json(target);
         ;
       }
 
