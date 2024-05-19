@@ -1,84 +1,159 @@
-// ╭──────────────────────────────────────────────────────────────────╮
-// │ 📑 DESCRIPTION                                                   │
-// │ :|: Author Article Data Endpoint                                 │
-// ╰──────────────────────────────────────────────────────────────────╯
+// ╭──────────────────────────────────────────────────────────────────────────────────╮
+// │ 📌 High Order Overview                                                           │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ ➤ Code Format // V.8.0                                                           │
+// │ ➤ Status      // 🔒 LOCKED                                                       │
+// │ ➤ Author(s)   // @migbash                                                        │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ 📝 Description                                                                   │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ Betarena (Module) ││ (Author) Article Data Endpoint                              │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ 📌 NOTE                                                                          │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ 1. no logs allowed, including those custom 'debug' logs.                         │
+// ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-import { checkNull } from '$lib/utils/miscellenous.js';
-import { getAuthorArticleByPermalink, getAuthorArticleTranslation } from '@betarena/scores-lib/dist/functions/v8/authors.articles.js';
-import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
-import type { IArticleData } from '@betarena/scores-lib/types/types.authors.articles.js';
+/* eslint-disable new-cap */
+
+// #region ➤ 📦 Package Imports
+
 import { json, type RequestEvent } from '@sveltejs/kit';
+// import { dev } from '$app/environment';
+
+import { entryAuthorArticleTranslation } from '@betarena/scores-lib/dist/functions/v8/authors.articles.js';
+import { entryTargetDataArticle } from '@betarena/scores-lib/dist/functions/v8/main.preload.authors.js';
+import { tryCatchAsyncV2 } from '@betarena/scores-lib/dist/util/common.js';
+
+import { postv2 } from '$lib/api/utils.js';
+import { API_DATA_ERROR_RESPONSE } from '$lib/utils/debug.js';
+
+// #endregion ➤ 📦 Package Imports
 
 // ╭──────────────────────────────────────────────────────────────────╮
-// │ 🛠️ MAIN METHODS                                                  │
+// │ 🛠️ │ MAIN METHODS                                                │
 // ╰──────────────────────────────────────────────────────────────────╯
 
+/**
+ * @author
+ *  @migbash
+ * @summary
+ *  🟥 MAIN
+ * @description
+ *  📝 (Author) Article Data Endpoint handler.
+ * @param { RequestEvent } request
+ *  💠 **[required]** Request Event.
+ * @returns { Promise < Response > }
+ *  📤 Response.
+ */
 export async function main
 (
   request: RequestEvent
-)
+): Promise < Response >
 {
-  return await tryCatchAsync
+  return await tryCatchAsyncV2
   (
     async (
     ): Promise < Response > =>
     {
       // ╭──────────────────────────────────────────────────────────────────╮
-      // │ NOTE:                                                            │
-      // │ 👇 :|: extract url query data.                                   │
+      // │:| extract url query data.                                        │
       // ╰──────────────────────────────────────────────────────────────────╯
 
       const
-        permalink = request.url.searchParams.get('permalink'),
-        // hasura = request.url.searchParams.get('hasura'),
-        lang = request.url.searchParams.get('lang')
+        queryParamPermalink = request.url.searchParams.get('permalink'),
+        queryParamLanguage = request.url.searchParams.get('lang')
       ;
 
       // ╭──────────────────────────────────────────────────────────────────╮
-      // │ NOTE:                                                            │
-      // │ 👇 :|: extract target article data.                              │
-      // │ TODO:                                                            │
-      // │ Add cache logic.                                                 │
+      // │:| (output) fetch TARGET article data.                            │
       // ╰──────────────────────────────────────────────────────────────────╯
 
-      if (!checkNull(permalink))
+      if (queryParamPermalink)
       {
         const
-          data: IArticleData = await fallbackDataGenerate0
-          (
-            permalink
-          ),
-          loadType = 'HASURA'
+          /**
+           * @description
+           * 📝 Data Response.
+           */
+          data
+            = await entryTargetDataArticle
+            (
+              {
+                permalinkTarget: queryParamPermalink,
+                cacheCheck: true
+              }
+            )
         ;
 
-        // ▓ [🐞]
-        console.log(`📌 loaded [FSCR] with: ${loadType}`)
+        // console.log('data-091', data);
 
-        if (data != undefined) return json(data);
+        // ╭─────
+        // │ NOTE: IMPORTANT
+        // │ ➤ Trigger article 're-cache' and 'TTL' update
+        // ╰─────
+        await postv2
+        (
+          // 'https://webhook.site/a16a8324-c046-487a-a1ac-db6e1eaffed6',
+          `
+            http://65.109.14.126:8500/sitemap-and-preload
+              ?
+                ids[]=${data.article.id}
+              &
+                operation[]=preload-target
+              &
+                category[]=author_article
+          `
+            .replaceAll('\n', '')
+            .replaceAll(' ', '')
+          ,
+          { }
+        );
+
+        if (data != undefined)
+          return json(data);
+        ;
       }
 
       // ╭──────────────────────────────────────────────────────────────────╮
-      // │ NOTE:                                                            │
-      // │ 👇 :|: extract target article translation.                       │
-      // │ TODO:                                                            │
-      // │ Add cache logic.                                                 │
+      // │:| (output) fetch TARGET translation data.                        │
       // ╰──────────────────────────────────────────────────────────────────╯
 
-      if (!checkNull(lang))
+      if (queryParamLanguage)
       {
         const
-          data: IArticleTranslation = await fallbackDataGenerate1
-          (
-            lang
-          ),
-          loadType = 'HASURA'
+          /**
+           * @description
+           * 📝 Data Response.
+           */
+          data
+            = await entryAuthorArticleTranslation
+            (
+              {
+                language: queryParamLanguage,
+                cacheCheck: true
+              }
+            ),
+          /**
+           * @description
+           * 📝 Target data.
+           */
+          target
+            = data[0].get(queryParamLanguage)
         ;
 
-        // ▓ [🐞]
-        console.log(`📌 loaded [FSCR] with: ${loadType}`)
+        // [🐞]
+        // eslint-disable-next-line no-console
+        // if (dev) console.log(target);
 
-        if (data != undefined) return json(data);
+        if (data != undefined)
+          return json(target);
+        ;
       }
+
+      // ╭──────────────────────────────────────────────────────────────────╮
+      // │:| (default) data.                                                │
+      // ╰──────────────────────────────────────────────────────────────────╯
 
       return json
       (
@@ -89,75 +164,11 @@ export async function main
       ex: unknown
     ): Response =>
     {
-      // ▓ [🐞]
-      console.error(`💀 Unhandled :: ${ex}`);
+      // [🐞]
+      // eslint-disable-next-line no-console
+      console.error(ex);
 
-      return json
-      (
-        null
-        , {
-          status: 400,
-          statusText: 'Uh-oh! There has been an error'
-        }
-      );
+      return API_DATA_ERROR_RESPONSE();
     }
   );
-}
-
-// ╭──────────────────────────────────────────────────────────────────╮
-// │ 🛠️ MAIN HELPER METHODS                                           │
-// ╰──────────────────────────────────────────────────────────────────╯
-
-/**
- * @author
- *  @migbash
- * @summary
- *  🟦 HELPER
- * @description
- *  📣 Fallback data generation.
- * @param { string } permalink
- *  💠 Target `article` link (permalink).
- * @returns { Promise < IArticleData > }
- *  📤 Target `article` data.
- */
-async function fallbackDataGenerate0
-(
-  permalink: string
-): Promise < IArticleData >
-{
-  const dataRes0: [ IArticleData, string[] ] = await getAuthorArticleByPermalink
-  (
-    permalink
-  );
-
-  return dataRes0[0];
-}
-
-/**
- * @author
- *  @migbash
- * @summary
- *  🟦 HELPER
- * @description
- *  📣 Fallback data generation.
- * @param { string } lang
- *  💠 Target translation.
- * @returns { Promise < IArticleData > }
- *  📤 Target `article` data.
- */
-async function fallbackDataGenerate1
-(
-  lang: string
-): Promise < IArticleTranslation | null | undefined >
-{
-  const dataRes0 = await getAuthorArticleTranslation
-  (
-    [lang]
-  );
-
-  if (dataRes0[0].size == 0)
-    return null;
-  ;
-
-  return dataRes0[0].get(lang);
 }

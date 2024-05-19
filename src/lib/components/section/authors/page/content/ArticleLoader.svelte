@@ -8,11 +8,29 @@
 -->
 
 <script lang="ts">
-  import { fade } from "svelte/transition";
-  import LoaderAvatar from "$lib/components/ui/loaders/LoaderAvatar.svelte";
-  import LoaderLine from "$lib/components/ui/loaders/LoaderLine.svelte";
-  import LoaderImage from "$lib/components/ui/loaders/LoaderImage.svelte";
-  import LoaderBadge from "$lib/components/ui/loaders/LoaderBadge.svelte";
+
+  // #region ➤ 📦 Package Imports
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  import LoaderAvatar from '$lib/components/ui/loaders/LoaderAvatar.svelte';
+  import LoaderBadge from '$lib/components/ui/loaders/LoaderBadge.svelte';
+  import LoaderImage from '$lib/components/ui/loaders/LoaderImage.svelte';
+  import LoaderLine from '$lib/components/ui/loaders/LoaderLine.svelte';
+  import { fade } from 'svelte/transition';
+
+  // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
 
@@ -28,16 +46,19 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let /**
+  export let
+    /**
      * @description tablet view
      */
     tablet = false,
     /**
      * @description mobile view
      */
-    mobile = false;
+    mobile = false
+  ;
 
   // #endregion ➤ 📌 VARIABLES
+
 </script>
 
 <!--
@@ -51,7 +72,8 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 {#key mobile || tablet}
-<div class="card-wrapper" class:mobile class:tablet in:fade={{ duration: 500 }}>
+
+<div class="card-wrapper" class:mobile class:tablet in:fade={{ duration: 250 }}>
   <div class="card-content">
     <div class="author-wrapper">
       <LoaderAvatar size={mobile ? 32 : 38} />
@@ -61,7 +83,7 @@
       </div>
     </div>
     <div class="title">
-      {#each ["90%", "85%"] as item}
+      {#each ['90%', '85%'] as item}
         <LoaderLine width={item} />
         {/each}
         {#if mobile || tablet}
@@ -75,9 +97,10 @@
     </div>
   </div>
   <div class="preview" class:tablet class:mobile>
-    <LoaderImage width={"100%"} height={"100%"} />
+    <LoaderImage width={'100%'} height={'100%'} />
   </div>
 </div>
+
 {/key}
 
 <!--

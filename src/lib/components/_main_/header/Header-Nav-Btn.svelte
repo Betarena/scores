@@ -184,7 +184,7 @@
 >
   <a
     href={navKey == 'content' ? navUrl : cleanUrl(navUrl)}
-    target={navKey == 'content' ? '_blank' : '_self'}
+    target='_self'
   >
     <p
       class=
