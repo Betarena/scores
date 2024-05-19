@@ -1,23 +1,25 @@
 // ╭──────────────────────────────────────────────────────────────────────────────────╮
 // │ 📌 High Order Component Overview                                                 │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
-// │ ➤ Internal Svelte Code Format :|: V.8.0                                          │
-// │ ➤ Status :|: 🔒 LOCKED                                                           │
-// │ ➤ Author(s) :|: @migbash                                                         │
+// │ ➤ Internal Svelte Code Format // V.8.0                                           │
+// │ ➤ Status // 🔒 LOCKED                                                            │
+// │ ➤ Author(s) // @migbash                                                          │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
 // │ 📝 Description                                                                   │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
 // │ Betarena (Module) || Scores Debug Common Logic                                   │
 // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
+/* eslint-disable no-console */
+
 // #region ➤ 📦 Package Imports
 
+import { browser, dev } from '$app/environment';
 import * as Sentry from '@sentry/browser';
+import { json } from '@sveltejs/kit';
 import chalk from 'chalk';
 
-import { browser, dev } from '$app/environment';
 import { LOGS_SHOW_OVERRIDE } from '$lib/constants/instance.js';
-import { json } from '@sveltejs/kit';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -33,20 +35,23 @@ export const
   HOME_LANG_PAGE_ERROR_MSG = 'Uh-oh! There has been a pre-load error (/lang)',
   FIXTURE_PAGE_ERROR_MSG = 'Uh-oh! There has been a pre-load error (/fixture)',
   PRELOAD_ERROR_MSG_PLAYER = 'Uh-oh! There has been a pre-load error (/...player_fill)',
+  LOG_PREFIX_HOOKS_S = '[HOOKS-SERVER] ::',
   API_DATA_ERROR_RESPONSE = () =>
-    {
-      return json
-      (
-        null,
-        {
-          status: 400,
-          statusText: 'Uh-oh! There has been an error'
-        }
-      );
-    }
+  {
+    return json
+    (
+      null,
+      {
+        status: 400,
+        statusText: 'Uh-oh! There has been an error'
+      }
+    );
+  }
 ;
 
 const
+  // [🐞]
+  logPrefix = '🖥️  [scores] ::',
   /**
    * @description
    *  - 📣 overrides all individual toggles for show/hide ALL logs.
@@ -250,15 +255,13 @@ export function dlog
   ;
 
   if (if_M_0)
-    // eslint-disable-next-line no-console
-    console.debug(msg);
+    console.debug(chalk.hex('#00FFFF')(`🖥️ [scores] :: ${msg}`));
   ;
   if (if_M_1)
-    // eslint-disable-next-line no-console
-    console.debug(`%c${msg}`, style);
+    console.debug(chalk.hex('#00FFFF')(`🖥️ [scores] :: ${msg}`));
   ;
 
-  saveLog(msg);
+  saveLogToFile(msg);
 
   return;
 }
@@ -269,17 +272,17 @@ export function dlog
  * @summary
  *  🔹 HELPER
  * @description
- *  📣 Debug logging function for displaying target
+ *  📝 Debug logging function for displaying target
  * @param { string } groupName
- *  💠 **[required]** Target debug tag name.
+ *  💠 **[required]** Debug tag name.
  * @param { unknown[] } msgs
- *  💠 **[required]** Debug messages to show
+ *  💠 **[required]** Debug message(s) to show.
  * @param { boolean } [show]
  *  💠 [optional] Wether to show or not the debug log.
  * @param { string } [style]
  *  💠 [optional] `CSS` style applied to logs.
  * @param { boolean } [closed=true]
- *  💠 [optional] Wether to keep group console logs.
+ *  💠 [optional] Wether to keep group console logs closed/open by default.
  * @returns { void }
  */
 export function dlogv2
@@ -291,16 +294,22 @@ export function dlogv2
   closed: boolean = true,
 ): void
 {
-  let
-    targetLog: string = undefined
+  // ╭─────
+  // │ CHECK |:| for showing logs.
+  // ╰─────
+  const if_M_0: boolean
+    = (LOGS_SHOW_OVERRIDE && show)
+      || (groupName.includes(AU_W_TAG[0]))
   ;
+  if (!if_M_0) return;
+
+  groupName = `${logPrefix} ${groupName}`;
 
   // ╭─────
   // │ > Authentication Logs
   // ╰─────
   if (groupName.includes(AU_W_TAG[0]))
   {
-    targetLog = AU_W_TAG[0];
     style = AU_W_TAG[2];
     show = AU_W_TAG[1];
   }
@@ -308,105 +317,96 @@ export function dlogv2
   // ╭─────
   // │ > Hooks Logs
   // ╰─────
-  if (groupName.includes('[H]'))
-  {
-    style = 'background: #00bce4; color: black; border-radius: 1.5px; padding: 2.5px 2.5px;';
-    if (!browser) groupName = `${chalk.bgCyan(groupName)}`;
-  }
+  // if (groupName.includes('[H]'))
+  //   groupName = `${chalk.bgCyan(`${logPrefix} ${groupName}`)}`;
+  // ;
 
   // ╭─────
   // │ > Preload Logs
   // ╰─────
   if (groupName.includes('[PL]'))
-  {
-    style = 'background: #f52891; color: black; border-radius: 1.5px; padding: 2.5px 2.5px;';
-    if (!browser) groupName = `${chalk.hex('#f52891')(groupName)}`;
-  }
+    groupName = `${chalk.hex('#f52891')(groupName)}`;
+  ;
 
   // ╭─────
   // │ > Reactiviy Logs
   // ╰─────
   if (groupName.includes('[R]'))
-  {
-    style = 'background: #FF6133; color: black; border-radius: 1.5px; padding: 2.5px 2.5px;';
-    if (!browser) groupName = `${chalk.hex('#FF6133')(groupName)}`;
-  }
+    groupName = `${chalk.hex('#FF6133')(groupName)}`;
+  ;
 
   // ╭─────
   // │ > Fetch Logs
   // ╰─────
   if (groupName.includes('🏹 FETCH'))
-  {
-    style = 'background: #C4FD00; color: #000000; border-radius: 1.5px; padding: 2.5px 2.5px;';
-    if (!browser) groupName = `${chalk.hex('#C4FD00')(groupName)}`;
-  }
+    groupName = `${chalk.hex('#C4FD00')(groupName)}`;
+  ;
   if (groupName.includes('(preload)'))
-  {
-    style = 'background: #004B2B; color: #00CF77; border-radius: 1.5px; padding: 2.5px 2.5px;';
-    if (!browser) groupName = `${chalk.green(groupName)}`;
-  }
+    groupName = `${chalk.green(groupName)}`;
+  ;
 
   // ╭─────
-  // │ CHECK
-  // │ > for showing logs.
+  // │ NOTE: |:| logs generation
   // ╰─────
-  const if_M_0: boolean
-    = (LOGS_SHOW_OVERRIDE && show)
-    // ╭─────
-    // │ IMPORTANT
-    // │ > Force 'authentication' to show in production.
-    // ╰─────
-    || (targetLog == AU_W_TAG[0] && AU_W_TAG[1])
+  if (!browser)
+    console.log(chalk.hex('#324ca8')(`${logPrefix}     ─────────────────────────`));
   ;
-  if (if_M_0)
-  {
+
+  if (browser)
     if (closed)
-      // eslint-disable-next-line no-console
       console.groupCollapsed
       (
-        `%c${groupName}`,
-        style
+        groupName
       );
     else
-      // eslint-disable-next-line no-console
       console.group
       (
-        `%c${groupName}`,
-        style
+        groupName
       );
-    ;
+  else
+    console.log
+    (
+      groupName
+    );
+  ;
 
-    saveLog(groupName);
+  saveLogToFile(groupName);
 
-    for (const m of msgs)
+  // ╭─────
+  // │ NOTE: |:| loop through all messages.
+  // ╰─────
+  for (const m of msgs)
+  {
+    let msg: unknown = m;
+
+    if (typeof m == 'string')
     {
-      let msg: unknown = m;
+      let
+        mStr: string
+      ;
+      mStr = m.replace(/\n/g, '');
+      mStr = m.replace(/\t/g, '');
 
-      if (typeof m == 'string')
+      if (mStr.includes('🔹 [var]') && mStr.includes('▓▓'))
       {
-        let mStr: string;
-        mStr = m.replace(/\n/g, '');
-        mStr = m.replace(/\t/g, '');
-
-        if (mStr.includes('🔹 [var]') && mStr.includes('▓▓'))
-        {
-          const tempMsg: string[] = mStr.split
+        const
+          tempMsg = mStr.split
           (
             '▓▓'
-          );
-          msg = `${chalk.blue(tempMsg[0]) + chalk.hex('#444444')(tempMsg[1])}`;
-        }
+          )
+        ;
+        msg = `${chalk.blue(tempMsg[0]) + chalk.hex('#444444')(tempMsg[1])}`;
       }
-
-      // eslint-disable-next-line no-console
-      console.debug(msg);
-
-      saveLog(msg);
     }
 
-    // eslint-disable-next-line no-console
-    console.groupEnd();
+    console.debug(chalk.hex('#00FFFF')(`${logPrefix} ${msg}`));
+
+    saveLogToFile(msg);
   }
+
+  if (browser)
+    console.groupEnd();
+  ;
 
   return;
 }
@@ -429,7 +429,8 @@ export function errlog
 {
   console.error
   (
-    `❌ Error: ${msg}`
+
+    chalk.bgRedBright(`❌ Error: ${msg}`)
   );
   return;
 }
@@ -490,7 +491,7 @@ export function initSentry
  *  💠 **[required]** Target `data` to be logged.
  * @return { void }
  */
-async function saveLog
+async function saveLogToFile
 (
   data: string
 ): Promise < void >
