@@ -8,11 +8,18 @@
 // │ 📝 Description                                                                   │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
 // │ Betarena (Module) ││ (Author) Article Data Endpoint                              │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ 📌 NOTE                                                                          │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ 1. no logs allowed, including those custom 'debug' logs.                         │
 // ╰──────────────────────────────────────────────────────────────────────────────────╯
+
+/* eslint-disable new-cap */
 
 // #region ➤ 📦 Package Imports
 
 import { json, type RequestEvent } from '@sveltejs/kit';
+// import { dev } from '$app/environment';
 
 import { entryAuthorArticleTranslation } from '@betarena/scores-lib/dist/functions/v8/authors.articles.js';
 import { entryTargetDataArticle } from '@betarena/scores-lib/dist/functions/v8/main.preload.authors.js';
@@ -97,8 +104,8 @@ export async function main
               &
                 category[]=author_article
           `
-          .replaceAll('\n', '')
-          .replaceAll(' ', '')
+            .replaceAll('\n', '')
+            .replaceAll(' ', '')
           ,
           { }
         );
@@ -132,16 +139,21 @@ export async function main
            * 📝 Target data.
            */
           target
-            = data.get(queryParamLanguage)
+            = data[0].get(queryParamLanguage)
         ;
 
         // [🐞]
-        console.log('data-091', target);
+        // eslint-disable-next-line no-console
+        // if (dev) console.log(target);
 
         if (data != undefined)
           return json(target);
         ;
       }
+
+      // ╭──────────────────────────────────────────────────────────────────╮
+      // │:| (default) data.                                                │
+      // ╰──────────────────────────────────────────────────────────────────╯
 
       return json
       (
@@ -152,6 +164,10 @@ export async function main
       ex: unknown
     ): Response =>
     {
+      // [🐞]
+      // eslint-disable-next-line no-console
+      console.error(ex);
+
       return API_DATA_ERROR_RESPONSE();
     }
   );
