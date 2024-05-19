@@ -8,19 +8,39 @@
 -->
 
 <script lang="ts">
-  import Avatar from "$lib/components/ui/Avatar.svelte";
-  import Tag from "$lib/components/ui/Tag.svelte";
-  import { timeAgo } from "$lib/utils/dates.js";
-  import defaultAvatar from "../tags/content/assets/profile-avatar.svg";
+
+  // #region ➤ 📦 Package Imports
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  import Avatar from '$lib/components/ui/Avatar.svelte';
+  import Tag from '$lib/components/ui/Tag.svelte';
+  import ExpandDataWrapper from '$lib/components/ui/wrappers/ExpandDataWrapper.svelte';
+  import ScrollDataWrapper from '$lib/components/ui/wrappers/ScrollDataWrapper.svelte';
+  import { timeAgo } from '$lib/utils/dates.js';
+
+  import { fade } from 'svelte/transition';
+  import defaultAvatar from '../tags/content/assets/profile-avatar.svg';
+
   import type {
     IPageAuthorArticleData,
     IPageAuthorAuthorData,
     IPageAuthorTagData,
-    IPageAuthorTranslationDataFinal,
-  } from "@betarena/scores-lib/types/v8/preload.authors.js";
-  import { fade } from "svelte/transition";
-  import ExpandDataWrapper from "$lib/components/ui/wrappers/ExpandDataWrapper.svelte";
-  import ScrollDataWrapper from "$lib/components/ui/wrappers/ScrollDataWrapper.svelte";
+  } from '@betarena/scores-lib/types/v8/preload.authors.js';
+  import type { IPageAuthorTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.tags.js';
+
+  // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
 
@@ -40,10 +60,15 @@
     author: IPageAuthorAuthorData;
     tags_data: IPageAuthorTagData[];
   }
-  export let /**
+
+  export let
+    /**
      * @augments IArticle
      */
     article: IArticle,
+    /**
+     * @description translations
+     */
     translations: IPageAuthorTranslationDataFinal,
     /**
      * @description tablet view
@@ -52,7 +77,8 @@
     /**
      * @description mobile view
      */
-    mobile = false;
+    mobile = false
+  ;
 
   $: ({
     permalink,
@@ -65,14 +91,15 @@
     author,
   } = article);
 
-  $: ({ avatar, username } = author?.data || {
-    username: "unknow",
+  $: ({ avatar, username } = author.data || {
+    username: 'unknow',
     avatar: defaultAvatar,
   });
 
-  $: date = timeAgo(published_date, translations?.time_ago);
+  $: date = timeAgo(published_date, translations.time_ago);
 
   // #endregion ➤ 📌 VARIABLES
+
 </script>
 
 <!--
