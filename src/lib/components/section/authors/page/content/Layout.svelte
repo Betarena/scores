@@ -1,15 +1,28 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 📌 High Order Component Overview                                                 │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Internal Svelte Code Format |:| V.8.0                                          │
+│ ➤ Status |:| 🔒 LOCKED                                                           │
+│ ➤ Author(s) |:| @migbash                                                         │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ 📝 Description                                                                   │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│                                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
-	import { userBetarenaSettings } from '$lib/store/user-settings.js';
-	import Tabbar from './../../../../ui/Tabbar.svelte';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <script lang="ts">
+
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -24,34 +37,36 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  import sessionStore from "$lib/store/session.js";
-  import userBetarenaSettings from "$lib/store/user-settings.js";
-  import Tabbar from "$lib/components/ui/Tabbar.svelte";
-  import { viewportChangeV2 } from "$lib/utils/device.js";
-  import ArticleCard from "./ArticleCard.svelte";
-  // import Add from "./assets/add.svelte";
-  import Button from "$lib/components/ui/Button.svelte";
-  import { page } from "$app/stores";
-  import {
-    fetchArticles,
-    prepareArticles,
-    type IArticle,
-    type ITagsWidgetData,
-  } from "../helpers.js";
+
+  import { browser } from '$app/environment';
+  import { page } from '$app/stores';
+
+  import { tryCatch } from '@betarena/scores-lib/dist/util/common.js';
+
+  import { get } from '$lib/api/utils.js';
+  import sessionStore from '$lib/store/session.js';
+  import userBetarenaSettings from '$lib/store/user-settings.js';
+  import { dlogv2 } from '$lib/utils/debug.js';
+  import { viewportChangeV2 } from '$lib/utils/device.js';
+
+  import SeoBox from '$lib/components/SEO-Box.svelte';
+  import Button from '$lib/components/ui/Button.svelte';
+  import Tabbar from '$lib/components/ui/Tabbar.svelte';
+  import SvelteSeo from 'svelte-seo';
+  import ArticleCard from './ArticleCard.svelte';
+  import ArticleLoader from './ArticleLoader.svelte';
+
   import type {
     IPageAuthorArticleData,
+    IPageAuthorAuthorData,
     IPageAuthorTagData,
-    IPageAuthorTagDataFinal,
-    IPageAuthorTranslationDataFinal,
-  } from "@betarena/scores-lib/types/v8/preload.authors.js";
-  import { get } from "$lib/api/utils.js";
-  import { invalidateAll } from "$app/navigation";
-  import ArticleLoader from "./ArticleLoader.svelte";
-  import SeoBox from "$lib/components/SEO-Box.svelte";
-  import SvelteSeo from "svelte-seo";
-  import { tryCatch } from "@betarena/scores-lib/dist/util/common.js";
+    IPageAuthorTagDataFinal
+  } from '@betarena/scores-lib/types/v8/preload.authors.js';
+  import type { IPageAuthorTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.tags.js';
+  import type { IArticle, ITagsWidgetData } from '../helpers.js';
 
   // #endregion ➤ 📦 Package Imports
+
   // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -66,44 +81,96 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  const /**
-     * @description
-     *  📣 `this` component **main** `id` and `data-testid` prefix.
-     */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = "content",
+  const
     /**
      * @description
-     *  📣 threshold start + state for 📱 MOBILE
+     *  📝 `this` component **main** `id` and `data-testid` prefix.
+     */ // eslint-disable-next-line no-unused-vars
+    CNAME: string = 'content',
+    /**
+     * @description
+     *  📝 threshold start + state for 📱 MOBILE
      */ // eslint-disable-next-line no-unused-vars
     VIEWPORT_MOBILE_INIT: [number, boolean] = [575, true],
     /**
      * @description
-     *  📣 threshold start + state for 💻 TABLET
+     *  📝 threshold start + state for 💻 TABLET
      */ // eslint-disable-next-line no-unused-vars
-    VIEWPORT_TABLET_INIT: [number, boolean] = [1160, true];
+    VIEWPORT_TABLET_INIT: [number, boolean] = [1160, true]
+  ;
 
   $: ({ windowWidth, globalState } = $sessionStore);
-  $: isPWA = globalState.has("IsPWA");
-  $: [mobile, tablet] = viewportChangeV2(
-    windowWidth,
-    VIEWPORT_MOBILE_INIT[0],
-    VIEWPORT_TABLET_INIT[0]
-  );
-  let articlesStore: Map<
-    number,
-    ITagsWidgetData & { articles: IArticle[]; currentPage: number }
-  > = new Map();
+  $: isPWA = globalState.has('IsPWA');
+  $: [mobile, tablet]
+    = viewportChangeV2
+    (
+      windowWidth,
+      VIEWPORT_MOBILE_INIT[0],
+      VIEWPORT_TABLET_INIT[0]
+    )
+  ;
+
   $: widgetData = $page.data as IPageAuthorTagDataFinal & {
     translations: IPageAuthorTranslationDataFinal;
-  };
+  } | undefined;
   $: pageSeo = $page.data.seoTamplate;
-  $: tags = new Map(widgetData.mapTag);
-  $: authors = new Map(widgetData.mapAuthor);
-  $: articles = hadleArticles(widgetData, tags, authors);
-  $: loadTranslations($sessionStore.serverLang);
-  $: currentTag = tags.get(widgetData.tagId);
-  $: categories = [tags.get(widgetData.tagId)];
-  $: translations = widgetData.translations;
+  $: translations = widgetData?.translations;
+
+  /**
+   * @description
+   * 📝 Interecpted data for `map` instance of `author(s)`.
+   */
+  $: mapAuthors = new Map(widgetData?.mapAuthor ?? []);
+  /**
+   * @description
+   * 📝 Interecpted data for `map` instance of `tag(s)`.
+   */
+  $: mapTags = new Map(widgetData?.mapTag ?? []);
+  /**
+   * @description
+   * 📝 Interecpted data for `map` instance of `article(s)`.
+   */
+  $: mapArticles = new Map(widgetData?.mapArticle ?? []);
+  /**
+   * @description
+   * 📝 Currently selected tag data.
+   */
+  $: selectedTag = mapTags.get(widgetData?.tagId ?? 0);
+  /**
+   * @description
+   * 📝 Categories avaialble.
+   */
+  $: categories = selectedTag != undefined ? [selectedTag] : [];
+
+  $: if (browser) updateData(widgetData ?? {} as ITagsWidgetData, true);
+
+  let
+    /**
+     * @description
+     * 📝 `Map` where, `key=tagId` and `value=tagData`.
+     */
+    mapTagSelectData
+      = new Map
+        <
+          number,
+          ITagsWidgetData &
+          {
+            mapArticlesMod: Map < number, IArticle >;
+            currentPage: number
+          }
+        >(),
+    /**
+     * @description
+     * 📝 State UI for `Loading Articles`.
+     */
+    isLoadingArticles = true,
+    /**
+     * @description
+     * 📝 `Map` data for `article(s)`, ready for frontend consumption.
+     */
+    mapArticlesMod =  new Map < number, IArticle >(),
+  ;
+
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -118,114 +185,392 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function selectTag(e: CustomEvent<IPageAuthorTagData>) {
-    currentTag = e.detail;
-    articles = [];
-    const tag = articlesStore.get(currentTag.id);
-    if (!tag) {
-      loadTagArticles({ tag: currentTag });
-    } else {
-      articles = tag.articles;
+  /**
+   * @author
+   *  <-insert-author->
+   * @summary
+   *  🟦 HELPER
+   * @description
+   *  📝 Selects `tag`.
+   * @param { CustomEvent<IPageAuthorTagData> } e
+   *  💠 **REQUIRED** Event argument.
+   * @returns { void }
+   */
+  function selectTag
+  (
+    e: CustomEvent<IPageAuthorTagData>
+  ): void
+  {
+    // [🐞]
+    dlogv2
+    (
+      'selectTag(..)',
+      [
+        `🔹 [var] ➤ e :|: ${e}`,
+      ],
+      true
+    );
+
+    selectedTag = e.detail;
+    mapArticlesMod = new Map();
+
+    if (!mapTagSelectData.has(selectedTag.id ?? 0))
+      loadTagArticles();
+    else
+      mapArticlesMod = mapTagSelectData.get(selectedTag.id ?? 0)?.mapArticlesMod ?? new Map();
+    ;
+
+    return;
+  }
+
+  /**
+   * @author
+   *  <-insert-author->
+   * @summary
+   *  🟦 HELPER
+   * @description
+   *  📝 Update data for 'content' page.
+   * @param { ITagsWidgetData } dataNew
+   *  💠 **REQUIRED** New data instance.
+   * @returns { void }
+   */
+  function updateData
+  (
+    dataNew: ITagsWidgetData,
+    reset: boolean = false
+  ): void
+  {
+    // [🐞]
+    dlogv2
+    (
+      'updateData(..) // START',
+      [
+        `🔹 [var] ➤ dataNew :|: ${dataNew}`,
+      ],
+      true
+    );
+
+    if (reset)
+    {
+      mapArticles = new Map();
+      mapAuthors = new Map();
+      mapTags = new Map();
+      mapTagSelectData = new Map();
+      mapArticlesMod = new Map();
     }
+
+    mapArticles = new Map([...mapArticles, ...dataNew.mapArticle]);
+    mapAuthors = new Map([...mapAuthors, ...dataNew.mapAuthor]);
+    mapTags = new Map([...mapTags, ...dataNew.mapTag]);
+
+    const
+      /**
+       * @description
+       * 📝 `Map` article generated from NEW data.
+       */
+      mapNewArticlesMod
+        = prepareArticles
+        (
+          new Map(dataNew.mapArticle),
+          new Map(dataNew.mapTag),
+          new Map(dataNew.mapAuthor),
+        )
+    ;
+
+    mapArticlesMod = new Map([...mapArticlesMod, ...mapNewArticlesMod]);
+
+    if (!mapTagSelectData.has(dataNew.tagId))
+      mapTagSelectData.set
+      (
+        dataNew.tagId,
+        {
+          ...dataNew,
+          mapArticlesMod,
+          currentPage: 0,
+          totalArticlesCount: dataNew.totalArticlesCount,
+        }
+      );
+    ;
+
+    isLoadingArticles = false;
+
+    // [🐞]
+    dlogv2
+    (
+      'updateData(..) // END',
+      [ ],
+      true
+    );
+
+    return;
   }
 
-  function hadleArticles(
-    data: ITagsWidgetData,
-    tags: Map<number, IPageAuthorTagData>,
-    authors: Map<number, IPageAuthorTagData>
-  ) {
-    const articles = prepareArticles(data.mapArticle, tags, authors);
-    if (!articlesStore.get(data.tagId)) {
-      articlesStore.set(data.tagId, {
-        ...data,
-        articles: articles,
-        currentPage: 0,
-        totalArticlesCount: data.totalArticlesCount,
-      });
+  /**
+   * @author
+   *  <-insert-author->
+   * @summary
+   *  🟦 HELPER
+   * @description
+   *  📝 Prepare article data.
+   * @param { Map < number, IPageAuthorArticleData > | null } mapArticle
+   *  💠 **REQUIRED** `Map` of article data.
+   * @param { Map < number, IPageAuthorTagData > | null } mapTag
+   *  💠 **REQUIRED** `Map` of tag data.
+   * @param { Map < number, IPageAuthorAuthorData > | null } mapAuthor
+   *  💠 **REQUIRED** `Map` of author data.
+   * @return { Map < number, IArticle > }
+   *  📤 Prepared articles data.
+   */
+  function prepareArticles
+  (
+    mapArticle: Map < number, IPageAuthorArticleData > | null,
+    mapTag: Map < number, IPageAuthorTagData > | null,
+    mapAuthor: Map < number, IPageAuthorAuthorData > | null
+  ): Map < number, IArticle >
+  {
+    if (!mapTag || !mapAuthor || !mapArticle) return new Map();
+
+    const
+      /**
+       * @description
+       * 📝 `Map` of modified article data.
+       */
+      mapArticleMod = new Map < number, IArticle >()
+    ;
+
+    // ╭─────
+    // │ NOTE: |:| loop through articles and prepare data.
+    // ╰─────
+    for (const [articleId, articleData] of mapArticle)
+    {
+      const
+        /**
+         * @description
+         * 📝 Prepare article data.
+         */
+        dataArticle: IArticle
+          = {
+            author: mapAuthor.get(articleData.author_id ?? 0) ?? {},
+            tags_data: [],
+            ...articleData,
+          }
+      ;
+
+      // ╭─────
+      // │ NOTE: |:| loop through 'tags' and add final data to `tags_data`.
+      // ╰─────
+      for (const tagId of (articleData.tags ?? []))
+      {
+        if (mapTag.has(tagId))
+          dataArticle.tags_data.push(mapTag.get(tagId)!);
+        ;
+      }
+
+      mapArticleMod.set
+      (
+        articleId,
+        dataArticle
+      );
     }
-    pendingArticles = false;
-    return articles;
+
+    return mapArticleMod;
   }
 
-  let pendingArticles = true;
-  async function loadTagArticles({
-    tag,
-    page = 0,
-  }: {
-    tag: IPageAuthorTagData;
-    page?: number;
-  }) {
-    pendingArticles = true;
-    const tagData = articlesStore.get(tag.id);
-    const followingTags =
-      $userBetarenaSettings.user?.scores_user_data?.following?.tags;
-    let url = `/api/data/author/content?&lang=${$sessionStore.serverLang}&page=${page}`;
-
-    if (followingTags?.length) {
-      url += `&followingTags=${followingTags.join(",")}`;
-    }
-    const res = await fetchArticles({
-      url,
-      prevData: tagData,
-    });
-    pendingArticles = false;
-    if (!res) return;
-    articles = [...(tagData?.articles || []), ...res.articles];
-    articlesStore.set(currentTag.id, {
-      ...res.next,
-      articles: articles,
-      currentPage: page,
-    });
-  }
-
-  let prevLang;
-  let skipFirst = true;
-  async function loadTranslations(lang: string | undefined) {
-    if (skipFirst) {
-      skipFirst = false;
-      return;
-    }
-    if (!lang || prevLang === lang) return;
-    prevLang = lang;
-    articlesStore = new Map();
-    articles = [];
-    pendingArticles = true;
-    const res = (await get(
-      `/api/data/author/tags?translation=${lang}`
-    )) as IPageAuthorTranslationDataFinal;
-    translations = res;
-    await invalidateAll();
-  }
-
-  async function loadMore() {
-    const tagData = articlesStore.get(currentTag?.id);
-    const length = tagData?.articles.length || 0;
-    if (!currentTag || !tagData || length === tagData.totalArticlesCount)
-      return;
-    loadTagArticles({ tag: currentTag, page: tagData.currentPage + 1 });
-  }
-
-  function scrollHandler() {
+  /**
+   * @author
+   *  <-insert-author->
+   * @summary
+   *  🟦 HELPER
+   * @description
+   *  📝 Custom handler for scroll logic.
+   * @return { void }
+   */
+  function scrollHandler
+  (
+  ): void
+  {
     if (!isPWA && (mobile || tablet)) return;
-    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 5) {
+
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 5)
       loadMore();
-    }
+    ;
+
+    return;
+  }
+
+  /**
+   * @author
+   *  <-insert-author->
+   * @summary
+   *  🟦 HELPER
+   * @description
+   *  📝 Check for instance of loading more articles.
+   * @return { Promise < void > }
+   */
+  async function loadMore
+  (
+  ): Promise < void >
+  {
+    // [🐞]
+    dlogv2
+    (
+      'loadMore(..)',
+      [ ],
+      true
+    );
+
+    const
+      /**
+       * @description
+       * 📝 Selected 'tag' tab data.
+       */
+      dataTag = mapTagSelectData.get(selectedTag?.id ?? 0),
+      /**
+       * @description
+       * 📝 Article length.
+       */
+      length = dataTag?.mapArticlesMod.size || 0
+    ;
+
+    if (!selectedTag || !dataTag || length === dataTag.totalArticlesCount) return;
+
+    loadTagArticles
+    (
+      dataTag.currentPage + 1
+    );
+
+    return;
+  }
+
+  /**
+   * @author
+   *  <-insert-author->
+   * @summary
+   *  🟦 HELPER
+   * @description
+   *  📝 Load tag articles.
+   * @param { number } [page=0]
+   *  💠 **REQUIRED** Number page to request.
+   * @return { Promise < void > }
+   */
+  async function loadTagArticles
+  (
+    page: number = 0
+  ): Promise < void >
+  {
+    // [🐞]
+    dlogv2
+    (
+      'loadTagArticles(..) // START',
+      [
+        `🔹 [var] ➤ page |:| ${page}`,
+      ],
+      true
+    );
+
+    const
+      /**
+       * @description
+       * 📝 Following tags.
+       */
+      followingTags = $userBetarenaSettings.user?.scores_user_data?.following?.tags
+    ;
+
+    let
+      /**
+       * @description
+       * 📝 URL to be requested.
+       */
+      url = `/api/data/author/content?&lang=${$sessionStore.serverLang}&page=${page}`
+    ;
+
+    if (followingTags?.length)
+      url += `&followingTags=${followingTags.join(',')}`;
+    ;
+
+    isLoadingArticles = true;
+
+    const
+      /**
+       * @description
+       * 📝 Data Response (0).
+       */
+      dataRes0
+        = await get
+        (
+          url
+        ) as ITagsWidgetData
+    ;
+
+    updateData(dataRes0);
+
+    // [🐞]
+    dlogv2
+    (
+      'loadTagArticles(..) // END',
+      [
+        `🔹 [var] ➤ page |:| ${page}`,
+      ],
+      true
+    );
+
+    if (!dataRes0) return;
+
+    mapTagSelectData.set
+    (
+      selectedTag.id!,
+      {
+        ...dataRes0,
+        mapArticlesMod,
+        currentPage: page,
+      }
+    );
+
+    return;
   }
 
   // #endregion ➤ 🛠️ METHODS
+
 </script>
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 💠 Svelte Component HTML                                                         │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<svelte:window on:scroll={scrollHandler} />
 
 {#if pageSeo}
   <SvelteSeo
     title={pageSeo.main_data.title}
     description={pageSeo.main_data.description}
     keywords={pageSeo.main_data.keywords}
-    noindex={tryCatch(() => {
-      return JSON.parse(pageSeo.main_data.noindex);
-    }) ?? false}
-    nofollow={tryCatch(() => {
-      return JSON.parse(pageSeo.main_data.nofollow);
-    }) ?? false}
+    noindex=
+    {
+      tryCatch
+      (
+        () =>
+        {
+          return JSON.parse(pageSeo.main_data.noindex);
+        }
+      ) ?? false
+    }
+    nofollow=
+    {
+      tryCatch
+      (
+        () =>
+        {
+          return JSON.parse(pageSeo.main_data.nofollow);
+        }
+      ) ?? false
+    }
     canonical={`${$page.url.origin}/a/content`}
     twitter={pageSeo.twitter_card}
     openGraph={pageSeo.opengraph}
@@ -233,50 +578,106 @@
 {/if}
 
 <SeoBox>
-  <h1>{tags.get(widgetData.tagId)?.name}</h1>
-  {#each widgetData.mapArticle ?? [] as [_id, article]}
-    <h2>{article?.data?.title}</h2>
-    <a href={`/a/${article?.permalink}`}>{article?.data?.title}</a>
+  <h1>{selectedTag?.name}</h1>
+
+  <!--
+  ╭─────
+  │ > Loop through articles
+  ╰─────
+  -->
+  {#each [...mapArticles.entries()] as [, article]}
+    <h2>
+      {article.data?.title}
+    </h2>
+    <a
+      href={`/a/${article.permalink}`}
+    >
+      {article.data?.title}
+    </a>
   {/each}
-  {#each widgetData.mapTag ?? [] as [_id, tag]}
-    <a href={`/a/tag/${tag?.permalink}`}>{tag.name}</a>
+
+  <!--
+  ╭─────
+  │ > Loop through tags
+  ╰─────
+  -->
+  {#each [...mapArticles.entries()] as [_id, tag]}
+    <a href={`/a/tag/${tag.permalink}`}>{tag.name}</a>
   {/each}
 </SeoBox>
-<svelte:window on:scroll={scrollHandler} />
-<section id={CNAME} class:mobile class:tablet class:pwa={isPWA}>
-  <div class="tabbar-wrapper">
-    <!-- {#if globalState.has("Authenticated")}
-      <div class="add-icon">
-        <Add size={mobile && tablet ? 20 : 24} />
-      </div>
-    {/if} -->
-    {#if categories?.length}
+
+<section
+  id={CNAME}
+  class:mobile
+  class:tablet
+  class:pwa={isPWA}
+>
+  <!--
+  ╭─────
+  │ > INSERT-DESCRIPTION
+  ╰─────
+  -->
+  <div
+    class="tabbar-wrapper"
+  >
+    {#if categories.length}
       <Tabbar
         on:select={selectTag}
         data={categories}
-        selected={currentTag}
+        selected={selectedTag}
         height={mobile ? 14 : 8}
       />
     {/if}
   </div>
-  <div class="content">
-    <div class="articles">
-      {#each articles as article}
-        <ArticleCard {mobile} {article} {tablet} {translations} />
+
+  <!--
+  ╭─────
+  │ > INSERT-DESCRIPTION
+  ╰─────
+  -->
+  <div
+    class="content"
+  >
+    <div
+      class="listArticlesMod"
+    >
+      {#each [...mapArticlesMod.entries()] as [,article]}
+        <ArticleCard
+          {mobile}
+          {article}
+          {tablet}
+          {translations}
+        />
       {/each}
-      {#if pendingArticles}
+
+      {#if isLoadingArticles}
         {#each Array(10) as _item}
-          <ArticleLoader {mobile} {tablet} />
+          <ArticleLoader
+          {mobile}
+          {tablet}
+        />
         {/each}
       {/if}
     </div>
-    {#if (tablet || mobile) && !isPWA && articles.length}
+
+    {#if (tablet || mobile) && !isPWA && mapArticlesMod.size}
       <div class="load-more">
         <Button type="outline" on:click={loadMore}>Load More</Button>
       </div>
     {/if}
   </div>
+
 </section>
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 🌊 Svelte Component CSS/SCSS                                                     │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
 
 <style lang="scss">
   section {
@@ -375,4 +776,5 @@
       }
     }
   }
+
 </style>
