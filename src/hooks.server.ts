@@ -1,16 +1,16 @@
 // ╭──────────────────────────────────────────────────────────────────────────────────╮
 // │ 📌 High Order Component Overview                                                 │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
-// │ ➤ Internal Svelte Code Format :|: V.8.0                                          │
-// │ ➤ Status :|: 🔒 LOCKED                                                           │
-// │ ➤ Author(s) :|: @migbash                                                         │
+// │ ➤ Internal Svelte Code Format // V.8.0                                           │
+// │ ➤ Status // 🔒 LOCKED                                                            │
+// │ ➤ Author(s) // @migbash                                                          │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
 // │ 📝 Description                                                                   │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
-// │ > Client Hooks (a.k.a SvelteKit Middleware)                                      │
-// │ > 🔗 read-more :|: https://kit.svelte.dev/docs/hooks#server-hooks                │
-// │ > NOTE: | WARNING:                                                               │
-// │ > only applicable to load(..) lifecycle logic in +page[.server].ts files         │
+// │:│ Client Hooks (a.k.a SvelteKit Middleware)                                      │
+// │:│ 🔗 read-more :|: https://kit.svelte.dev/docs/hooks#server-hooks                │
+// │:│ NOTE: | WARNING:                                                               │
+// │:│ only applicable to load(..) lifecycle logic in +page[.server].ts files         │
 // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 // #region ➤ 📦 Package Imports
@@ -20,14 +20,14 @@ import * as Sentry from '@sentry/sveltekit';
 import { sequence } from '@sveltejs/kit/hooks';
 import cookie from 'cookie';
 
-import { ERROR_CODE_INVALID, PAGE_INVALID_MSG, dlog, dlogv2 } from '$lib/utils/debug';
+import { ERROR_CODE_INVALID, LOG_PREFIX_HOOKS_S, PAGE_INVALID_MSG, dlog, dlogv2, errlog } from '$lib/utils/debug';
 import { platfrom_lang_ssr } from '$lib/utils/platform-functions';
 
 import type { Handle, HandleServerError } from '@sveltejs/kit';
 
 // #endregion ➤ 📦 Package Imports
 
-// #region ➤ 💠 MISC.
+// #region ➤ 💠 MISCELLANEOUS
 
 // ╭─────
 // │ CHECK
@@ -61,7 +61,7 @@ dlog
   true
 );
 
-// #endregion ➤ 💠 MISC.
+// #endregion ➤ 💠 MISCELLANEOUS
 
 // #region ➤ 🛠️ METHODS
 
@@ -71,7 +71,7 @@ dlog
  * @summary
  *  🔹 HELPER
  * @description
- *  📣 Custom `Error` handle logic.
+ *  📝 Custom `Error` handle logic.
  *  NOTE:
  *  kept as an example.
  * @param param0
@@ -87,7 +87,10 @@ const customErrorHandler: HandleServerError = async (
 {
   // [🐞]
   // eslint-disable-next-line no-console
-  console.error('❌ An error occurred on the server side:', error, event);
+  errlog
+  (
+    `${LOG_PREFIX_HOOKS_S} \n ${error} \n ${event}`,
+  );
 
   let
     errorMsg: string = 'Whoops!',
@@ -148,7 +151,7 @@ export const handle: Handle = sequence
        * @description
        *  📣 obtaining cookies from request headers.
        */
-      cookies: Record < string, string >
+      cookies
         = cookie.parse
         (
           event.request.headers.get('cookie') ?? ''
@@ -287,15 +290,15 @@ export const handle: Handle = sequence
     // [🐞]
     dlogv2
     (
-      '🚏 checkpoint [H] ➤ src/hooks.server.ts handle(..)',
+      `${LOG_PREFIX_HOOKS_S} 🚏 checkpoint ➤ src/hooks.server.ts handle(..)`,
       [
-        `🔹 [var] ➤ event :|: ${JSON.stringify(event.url.pathname)}`,
-        `🔹 [var] ➤ event.url :|: ${event.url}`,
-        `🔹 [var] ➤ event.route.id :|: ${event.route.id}`,
-        `🔹 [var] ➤ event.url.origin :|: ${event.url.origin}`,
-        `🔹 [var] ➤ event.locals.user :|: ${event.locals.user}`,
-        `🔹 [var] ➤ event.locals.betarenaUser :|: ${event.locals.betarenaUser}`,
-        `⏳ [timer] ➤ ${((performance.now() - t0) / 1000).toFixed(2)} sec`,
+        // `${LOG_PREFIX_HOOKS_S} 🔹 [var] ➤ event :: ${JSON.stringify(event.url.pathname)}`,
+        `${LOG_PREFIX_HOOKS_S} 🔹 [var] ➤ event.url :: ${event.url}`,
+        // `${LOG_PREFIX_HOOKS_S} 🔹 [var] ➤ event.route.id :: ${event.route.id}`,
+        // `${LOG_PREFIX_HOOKS_S} 🔹 [var] ➤ event.url.origin :: ${event.url.origin}`,
+        `${LOG_PREFIX_HOOKS_S} 🔹 [var] ➤ event.locals.user :: ${event.locals.user}`,
+        `${LOG_PREFIX_HOOKS_S} 🔹 [var] ➤ event.locals.betarenaUser :: ${event.locals.betarenaUser}`,
+        `${LOG_PREFIX_HOOKS_S} ⏳ [timer] ➤ ${((performance.now() - t0) / 1000).toFixed(5)} sec`,
       ],
       true
     );

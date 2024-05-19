@@ -181,13 +181,5 @@ rules:
     - error
     - initialized: "consecutive"
   no-extra-semi: 0
-  require-jsdoc:
-    - error
-    - require:
-      - FunctionDeclaration: true
-      - MethodDefinition: true
-      - ClassDeclaration: true
-      - ArrowFunctionExpression: true
-      - FunctionExpression: true
   no-var:
     - error

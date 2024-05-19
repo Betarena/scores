@@ -43,18 +43,18 @@ import { gotoSW } from './sveltekitWrapper.js';
  * @return { Promise < void > }
  */
 export async function selectLanguage
-  (
-    lang: string | NullUndef
-  ): Promise<void>
+(
+  lang: string | NullUndef
+): Promise<void>
 {
   if (sessionStore.extract('lang') == lang || !lang) return;
 
   userBetarenaSettings.updateData
-    (
-      [
-        ['lang', lang]
-      ]
-    );
+  (
+    [
+      ['lang', lang]
+    ]
+  );
 
   const
     /**
@@ -74,27 +74,27 @@ export async function selectLanguage
 
   // [🐞]
   dlogv2
-    (
-      '🚏 checkpoint ➤ selectLanguage(..)',
-      [
-        `🔹 [var] ➤ $userBetarenaSettings.lang: ${userBetarenaSettings.extract('lang-user')}`,
-        `🔹 [var] ➤ $sessionStore?.serverLang: ${sessionStore.extract('lang')}`,
-        `🔹 [var] ➤ lang: ${lang}`,
-        `🔹 [var] ➤ pastLang: ${pastLang}`,
-        `🔹 [var] ➤ $page.route.id: ${page?.route.id}`
-      ],
-      true
-    );
+  (
+    '🚏 checkpoint ➤ selectLanguage(..)',
+    [
+      `🔹 [var] ➤ $userBetarenaSettings.lang: ${userBetarenaSettings.extract('lang-user')}`,
+      `🔹 [var] ➤ $sessionStore?.serverLang: ${sessionStore.extract('lang')}`,
+      `🔹 [var] ➤ lang: ${lang}`,
+      `🔹 [var] ➤ pastLang: ${pastLang}`,
+      `🔹 [var] ➤ $page.route.id: ${page?.route.id}`
+    ],
+    true
+  );
 
   // ╭─────
   // │ NOTE:
   // │ > Update <html {lang}> in platform <DOCTYPE>.
   // ╰─────
   document.documentElement.setAttribute
-    (
-      'lang',
-      (lang == 'br' ? 'pt-BR' : lang)
-    );
+  (
+    'lang',
+    (lang == 'br' ? 'pt-BR' : lang)
+  );
 
   // ╭─────
   // │ CHECK
@@ -111,20 +111,20 @@ export async function selectLanguage
 
     // [🐞]
     dlogv2
-      (
-        '🚏 checkpoint ➤ selectLanguage(..) [x0]',
-        [
-          `🔹 [var] ➤ targetUrl :|: ${targetUrl}`,
-        ],
-        true
-      );
+    (
+      '🚏 checkpoint ➤ selectLanguage(..) [x0]',
+      [
+        `🔹 [var] ➤ targetUrl :|: ${targetUrl}`,
+      ],
+      true
+    );
 
     if (dev) return;
 
     await gotoSW
-      (
-        targetUrl
-      );
+    (
+      targetUrl
+    );
 
     return;
   }
@@ -134,7 +134,7 @@ export async function selectLanguage
   // │ > handle 'special' routes that already self-manage navigation
   // ╰─────
   if
-    (
+  (
     [
       routeIdPageLeague,
       routeIdPageFixture,
@@ -146,91 +146,97 @@ export async function selectLanguage
   {
     // [🐞]
     dlog
-      (
-        `🚏 checkpoint ➤ selectLanguage(..) if_M_1 page?.route?.id: ${page?.route.id} [exit]`,
-        true
-      );
+    (
+      `🚏 checkpoint ➤ selectLanguage(..) if_M_1 page?.route?.id: ${page?.route.id} [exit]`,
+      true
+    );
 
     return;
   }
 
   switch (page?.route.id)
   {
-    case routeIdPageProfile:
-      {
-        const
-          pastLangV2: string
-            = pastLang == '/'
-              ? '/en'
-              : pastLang,
-          tempUrl: string = `${page.url.pathname}/`,
-          newURL: string = tempUrl
-            .replace
-            (
-              `${pastLangV2}/`,
-              `/${lang}`
-            )
-          ;
-
-        // [🐞]
-        dlogv2
-          (
-            '🚏 checkpoint ➤ selectLanguage(..) [x1]',
-            [
-              `🔹 [var] ➤ pastLangV2 :|: ${pastLangV2}`,
-              `🔹 [var] ➤ tempUrl :|: ${tempUrl}`,
-              `🔹 [var] ➤ newURL :|: ${newURL}`,
-            ],
-            true
-          );
-
-        await gotoSW
-          (
-            newURL,
-            true
-          );
-
-        return;
-      }
-    case routeIdPageTags:
-    case routeIdContent:
-       //[🐞]
-       dlogv2
-       (
-         '🚏 checkpoint ➤ selectLanguage(..) [x2]',
-         [
-         ],
-         true
-       );
-       sessionStore.updateData
-       (
-         [
-           ['lang', lang]
-         ]
-       );
-      return;
-    case routeIdPageAuthors: {
-      //[🐞]
-      dlogv2
+  case routeIdPageProfile:
+  {
+    const
+      pastLangV2: string
+              = pastLang == '/'
+                ? '/en'
+                : pastLang,
+      tempUrl: string = `${page.url.pathname}/`,
+      newURL: string = tempUrl
+        .replace
         (
-          '🚏 checkpoint ➤ selectLanguage(..) [x2]',
-          [
-          ],
-          true
-        );
+          `${pastLangV2}/`,
+          `/${lang}`
+        )
+            ;
 
-      invalidateAll();
+    // [🐞]
+    dlogv2
+    (
+      '🚏 checkpoint ➤ selectLanguage(..) [x1]',
+      [
+        `🔹 [var] ➤ pastLangV2 :|: ${pastLangV2}`,
+        `🔹 [var] ➤ tempUrl :|: ${tempUrl}`,
+        `🔹 [var] ➤ newURL :|: ${newURL}`,
+      ],
+      true
+    );
 
-      sessionStore.updateData
-        (
-          [
-            ['lang', lang]
-          ]
-        );
+    await gotoSW
+    (
+      newURL,
+      true
+    );
 
-      return;
-    }
-    default: break;
+    return;
+  }
+  case routeIdPageTags:
+  case routeIdContent:
+
+    //[🐞]
+    dlogv2
+    (
+      '🚏 checkpoint ➤ selectLanguage(..) [x2]',
+      [
+      ],
+      true
+    );
+
+    sessionStore.updateData
+    (
+      [
+        ['lang', lang]
+      ]
+    );
+
+    invalidateAll();
+
+    return;
+  case routeIdPageAuthors:
+  {
+    //[🐞]
+    dlogv2
+    (
+      '🚏 checkpoint ➤ selectLanguage(..) [x2]',
+      [
+      ],
+      true
+    );
+
+    invalidateAll();
+
+    sessionStore.updateData
+    (
+      [
+        ['lang', lang]
+      ]
+    );
+
+    return;
+  }
+  default: break;
   }
 
   // ╭─────
@@ -273,7 +279,7 @@ export async function selectLanguage
       = countSlash == 1
         ? page?.url.pathname.replace(pastLang, '/')
         : page?.url.pathname.replace(pastLang, '')
-      ;
+    ;
   // ╭─────
   // │ CHECK
   // │ > for incoming from an 'EN' (/) route.
@@ -284,10 +290,10 @@ export async function selectLanguage
     // │ > replace path-name accordingly for "<lang>" - first occurance.
     // ╰─────
     newURL
-       = page?.url.pathname !== "/"
+       = page?.url.pathname !== '/'
         ? page?.url.pathname.replace(pastLang, `/${lang}/`)
-        : page?.url.pathname.replace(pastLang, `/${lang}`)
-      ;
+        : page.url.pathname.replace(pastLang, `/${lang}`)
+    ;
   // ╭─────
   // │ CHECK
   // │ > for incoming from an 'non-EN' (/<lang>) route.
@@ -299,7 +305,7 @@ export async function selectLanguage
     // ╰─────
     newURL
       = page?.url.pathname.replace(pastLang, `/${lang}`)
-      ;
+    ;
   ;
 
   // ╭─────
@@ -309,13 +315,13 @@ export async function selectLanguage
 
   // [🐞]
   dlogv2
-    (
-      '🚏 checkpoint ➤ selectLanguage(..) [x3]',
-      [
-        `🔹 [var] ➤ newURL :|: ${newURL}`,
-      ],
-      true
-    );
+  (
+    '🚏 checkpoint ➤ selectLanguage(..) [x3]',
+    [
+      `🔹 [var] ➤ newURL :|: ${newURL}`,
+    ],
+    true
+  );
 
   // sessionStore.updateData
   // (
@@ -334,10 +340,10 @@ export async function selectLanguage
   // │ > Solution [2]
   // ╰─────
   await gotoSW
-    (
-      newURL as string,
+  (
+      newURL!,
       true
-    );
+  );
 
   return;
 }
@@ -381,9 +387,9 @@ export async function selectLanguage
  *  📤 A `boolean` where `true` siginifies that `url` is valid.
  */
 export async function promiseValidUrlCheck
-  (
-    fetch: any,
-    opts:
+(
+  fetch: any,
+  opts:
       {
         langUrl?: string,
         sportUrl?: string,
@@ -396,7 +402,7 @@ export async function promiseValidUrlCheck
         authorArticleUrl?: string,
         authorTagsUrl?: string
       }
-  ): Promise<boolean>
+): Promise<boolean>
 {
   // ╭─────
   // │ CHECK :|: wether supplied `URL` combination is valid.
@@ -463,14 +469,14 @@ export async function promiseValidUrlCheck
 
   // [🐞]
   dlogv2
-    (
-      'promiseValidUrlCheck(..)',
-      [
-        `🔹 [var] ➤ if_M_0 :|: ${if_M_0}`,
-        `🔹 [var] ➤ queryStr :|: ${queryStr}`,
-      ],
-      true
-    );
+  (
+    'promiseValidUrlCheck(..)',
+    [
+      `🔹 [var] ➤ if_M_0 :|: ${if_M_0}`,
+      `🔹 [var] ➤ queryStr :|: ${queryStr}`,
+    ],
+    true
+  );
 
   if (!if_M_0) return false;
 
@@ -480,12 +486,12 @@ export async function promiseValidUrlCheck
      */
     response: any
       = await get
-        (
-          `/api/data/main/seo-pages${queryStr}`,
-          fetch,
-          true,
-          false
-        )
+      (
+        `/api/data/main/seo-pages${queryStr}`,
+        fetch,
+        true,
+        false
+      )
     ;
 
   return response;
@@ -509,94 +515,102 @@ export async function promiseValidUrlCheck
  * @returns { void }
  */
 export function preloadInvelidDataDebug
-  (
-    data: unknown[],
-    urls: string[]
-  ): void
+(
+  data: unknown[],
+  urls: string[]
+): void
 {
   tryCatchAsync
-    (
-      (): void =>
-      {
-        const
-          /**
-           * @description
-           */
-          indexesOf:
+  (
+    (): void =>
+    {
+      const
+        /**
+         * @description
+         *  📝 Helper function to get indexes of `null` data points.
+         * @param { any[] } arr
+         *  💠 **[required]** `list` of `items`.
+         * @param { unknown } item
+         *  💠 **[required]** `item` to search for.
+         * @return { number[] }
+         */
+        indexesOf:
+          (
+            // eslint-disable-next-line no-unused-vars
+            arr: any[],
+            // eslint-disable-next-line no-unused-vars
+            item: unknown
+          ) => number[]
+          = (
+            arr: any[],
+            item: unknown
+          ) =>
+          {
+            return arr.reduce
             (
-              // eslint-disable-next-line no-unused-vars
-              arr: any[],
-              // eslint-disable-next-line no-unused-vars
-              item: unknown
-            ) => number[]
-            = (
-              arr: any[],
-              item: unknown
-            ) =>
-            {
-              return arr.reduce
-                (
-                  (
-                    accumulator,
-                    currentVal,
-                    currentIndex
-                  ) =>
-                  {
-                    return (
-                      currentVal === item
-                      && accumulator.push(currentIndex),
-                      accumulator
-                    )
-                  },
-                  []
+              (
+                accumulator,
+                currentVal,
+                currentIndex
+              ) =>
+              {
+                return (
+                  currentVal === item
+                    && accumulator.push(currentIndex),
+                  accumulator
                 )
-            },
-          /**
-           * @description
-           */
-          nullList: number[]
-            = indexesOf
-              (
-                data,
-                null
-              )
-          ;
+              },
+              []
+            )
+          },
+        /**
+         * @description
+         * 📝 List of `null` data points.
+         */
+        nullList: number[]
+          = indexesOf
+          (
+            data,
+            null
+          )
+      ;
 
-        if (nullList.length == 0)
-          // [🐞]
-          dlog
-            (
-              '🚏 checkpoint ➤ preloadInvelidDataDebug 🟩',
-              true
-            );
-        ;
+      if (nullList.length == 0)
+        // [🐞]
+        dlog
+        (
+          '🚏 checkpoint ➤ preloadInvelidDataDebug 🟩',
+          true
+        );
+      ;
 
+      // ╭─────
+      // │ CHECK :|: for `null` data fetched.
+      // ╰─────
+      if (nullList.length > 0)
+      {
+        // [🐞]
+        dlog
+        (
+          `🚏 checkpoint ➤ preloadInvelidDataDebug 🟥 (position): ${nullList}`,
+          true
+        );
         // ╭─────
-        // │ CHECK :|: for `null` data fetched.
+        // │ NOTE: :|: list URLs responsible for `null` data points.
         // ╰─────
-        if (nullList.length > 0)
-        {
-          // [🐞]
-          dlog
-            (
-              `🚏 checkpoint ➤ preloadInvelidDataDebug 🟥 (position): ${nullList}`,
-              true
-            );
-          // ╭─────
-          // │ NOTE: :|: list URLs responsible for `null` data points.
-          // ╰─────
-          for (const i of nullList)
-            // eslint-disable-next-line no-console
-            console.log
-              (
-                `\t🚩 ${urls[i]}`
-              );
-          ;
-        }
-
-        return;
+        for (const i of nullList)
+          // eslint-disable-next-line no-console
+          console.log
+          (
+            `\t🚩 ${urls[i]}`
+          );
+        ;
       }
-    );
+
+      return;
+    }
+  );
+  return;
 }
 
 /**
@@ -618,12 +632,12 @@ export function preloadInvelidDataDebug
  * @returns { void }
  */
 export function preloadExitLogic
-  (
-    t0: number,
-    pageTag: string,
-    exitCode: number,
-    exitReason?: string
-  ): void
+(
+  t0: number,
+  pageTag: string,
+  exitCode: number,
+  exitReason?: string
+): void
 {
   const
     // [🐞]
@@ -632,20 +646,20 @@ export function preloadExitLogic
 
   // [🐞]
   dlog
-    (
-      `${pageTag} ${((t1 - t0) / 1000).toFixed(2)} sec`,
-      true
-    );
+  (
+    `${pageTag} ${((t1 - t0) / 1000).toFixed(2)} sec`,
+    true
+  );
 
   // eslint-disable-next-line @typescript-eslint/no-throw-literal
   throw error
-    (
-      exitCode,
-      {
-        errorId: 'x1',
-        message: exitReason ?? PAGE_INVALID_MSG
-      }
-    );
+  (
+    exitCode,
+    {
+      errorId: 'x1',
+      message: exitReason ?? PAGE_INVALID_MSG
+    }
+  );
 }
 
 /**
@@ -661,15 +675,15 @@ export function preloadExitLogic
  * @returns { void }
  */
 export function preloadRedirect
-  (
-    redirectToUrl: string
-  ): void
+(
+  redirectToUrl: string
+): void
 {
   throw redirect
-    (
-      302,
-      redirectToUrl
-    );
+  (
+    302,
+    redirectToUrl
+  );
 }
 
 /**
@@ -688,69 +702,69 @@ export function preloadRedirect
  *  📤 `List` of data loaded
  */
 export async function promiseUrlsPreload
-  (
-    endpoints: string[],
-    fetch: any,
-  ): Promise<any[]>
+(
+  endpoints: string[],
+  fetch: any,
+): Promise<any[]>
 {
   const
     data: any[]
       = await Promise.all
-        (
-          endpoints
-            .map
-            (
-              async (
-                _url: string
-              ): Promise<any> =>
-              {
-                const
-                  // [🐞]
-                  t0: number = performance.now(),
-                  /**
+      (
+        endpoints
+          .map
+          (
+            async (
+              _url: string
+            ): Promise<any> =>
+            {
+              const
+                // [🐞]
+                t0: number = performance.now(),
+                /**
                    * @description
                    */
-                  response: Response = await fetch(_url),
-                  /**
+                response: Response = await fetch(_url),
+                /**
                    * @description
                    */
-                  resJson: any = await response.json(),
-                  // [🐞]
-                  t1: number = performance.now()
+                resJson: any = await response.json(),
+                // [🐞]
+                t1: number = performance.now()
                   ;
 
-                // [🐞]
-                dlogv2
-                  (
-                    `🏹 FETCH (GET) (preload) ${_url} `,
-                    [
-                      `⏱️ ${((t1 - t0) / 1000).toFixed(2)} sec`
-                    ],
-                    true,
-                    undefined,
-                    false
-                  );
+              // [🐞]
+              dlogv2
+              (
+                `🏹 FETCH (GET) (preload) ${_url} `,
+                [
+                  `⏱️ ${((t1 - t0) / 1000).toFixed(2)} sec`
+                ],
+                true,
+                undefined,
+                false
+              );
 
-                // ╭─────
-                // │ NOTE: IMPORTANT
-                // │ > decompress 'lz-string' encoded payload.
-                // ╰─────
-                if (_url.includes('decompress'))
-                  return tryCatch(() => { return JSON.parse(LZString.decompress(resJson?.data)) });
-                ;
+              // ╭─────
+              // │ NOTE: IMPORTANT
+              // │ > decompress 'lz-string' encoded payload.
+              // ╰─────
+              if (_url.includes('decompress'))
+                return tryCatch(() => { return JSON.parse(LZString.decompress(resJson?.data)) });
+              ;
 
-                return resJson;
-              }
-            )
-        )
+              return resJson;
+            }
+          )
+      )
     ;
 
   // [🐞]
   preloadInvelidDataDebug
-    (
-      data,
-      endpoints,
-    );
+  (
+    data,
+    endpoints,
+  );
 
   return data;
 }

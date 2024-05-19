@@ -56,7 +56,8 @@
   import TranslationText from '$lib/components/misc/Translation-Text.svelte';
 
   import type { B_SAP_D2 } from '@betarena/scores-lib/types/seo-pages.js';
-  import type { IArticleData, IArticleTranslation } from '@betarena/scores-lib/types/types.authors.articles.js';
+  import type { IPageAuhtorArticleDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
+  import type { IPageArticleTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.articles.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -76,9 +77,9 @@
 
   export let
     /**
-     * @augments IArticleData
+     * @augments IPageAuhtorArticleDataFinal
      */
-    widgetData: IArticleData
+    widgetData: IPageAuhtorArticleDataFinal
   ;
 
   /**
@@ -108,17 +109,14 @@
     VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
+  console.log('widgetData', widgetData);
+
   let
     /**
      * @description
      *  📣 Target data `map`.
      */
-    tagMap = new Map(widgetData.tags_key_pair),
-    /**
-     * @description
-     *  📣 Target assets `map`.
-     */
-    badgeMap = new Map(widgetData.badge_key_pair),
+    tagMap = new Map(widgetData.mapTag),
     /**
      * @description
      *  📣 Wether to execute animation.
@@ -141,7 +139,7 @@
     publishDateAgo = () =>
     {
       const
-        differenceInDays = Math.ceil(((new Date().getTime() - new Date(widgetData.published_date).getTime()) / 1000) / ( 3600 * 24 ));
+        differenceInDays = Math.ceil(((new Date().getTime() - new Date(widgetData.article.published_date).getTime()) / 1000) / ( 3600 * 24 ));
       ;
       return differenceInDays;
     }
@@ -156,7 +154,7 @@
       VIEWPORT_MOBILE_INIT[0],
       VIEWPORT_TABLET_INIT[0],
     );
-  $: widgetDataTranslation = $page.data.translationArticle as IArticleTranslation | null | undefined;
+  $: widgetDataTranslation = $page.data.translationArticle as IPageArticleTranslationDataFinal | null | undefined;
   $: monthTranslation = $page.data.monthTranslations as B_SAP_D2 | null | undefined;
 
   // #endregion ➤ 📌 VARIABLES
@@ -322,7 +320,7 @@
     {!VIEWPORT_MOBILE_INIT[1] ? 'line-height: 54px;' : 'line-height: 36px;'}
     "
   >
-    {widgetData.data?.title ?? ''}
+    {widgetData.article.data?.title ?? ''}
   </h1>
 
   <!--
@@ -387,7 +385,7 @@
     >
       <!-- [🐞] -->
       <!-- {#each [...widgetData.tags, ...widgetData.tags, ...widgetData.tags] as item} -->
-      {#each [...(widgetData.tags ?? [])] as item}
+      {#each [...(widgetData.article.tags ?? [])] as item}
         <a
           class=
           "
@@ -466,9 +464,9 @@
     -->
     <img
       id='user-avatar'
-      src={widgetData.authors__authors__id__nested?.data?.avatar ?? ''}
+      src={widgetData.author?.data?.avatar ?? ''}
       alt='user_avatar'
-      title={widgetData.authors__authors__id__nested?.data?.username ?? ''}
+      title={widgetData.author?.data?.username ?? ''}
       loading='lazy'
       class=
       "
@@ -516,7 +514,7 @@
           no-wrap
           "
         >
-          {widgetData.authors__authors__id__nested?.data?.username ?? ''}
+          {widgetData.author.data?.username ?? ''}
         </p>
 
         <!--
@@ -537,12 +535,12 @@
           max-height: 16px;
           "
         >
-          {#each widgetData.authors__authors__id__nested?.data?.badges ?? [] as item}
+          {#each widgetData.author?.badges ?? [] as item}
             <img
               id=''
-              src={badgeMap.get(item)?.data?.image ?? ''}
-              alt={badgeMap.get(item)?.data?.description ?? ''}
-              title={badgeMap.get(item)?.data?.description ?? ''}
+              src={item?.image ?? ''}
+              alt={item?.description ?? ''}
+              title={item?.description ?? ''}
               loading='lazy'
             />
           {/each}
@@ -562,7 +560,7 @@
               dark-v1
             "
           >
-            {readingTime(widgetData.data?.content)}
+            {readingTime(widgetData.article.data?.content)}
             <TranslationText
               key={'uknown'}
               text={widgetDataTranslation?.translation?.reading_time}
@@ -614,9 +612,9 @@
           m-r-12
           "
         >
-          {monthTranslation?.months?.[monthNames[new Date(widgetData.authors__authors__id__nested?.data?.creation_date ?? '').getMonth()]]}
-          {new Date(widgetData.authors__authors__id__nested?.data?.creation_date ?? '').getDate()},
-          {new Date(widgetData.authors__authors__id__nested?.data?.creation_date ?? '').getFullYear()}
+          {monthTranslation?.months?.[monthNames[new Date(widgetData.author?.data?.creation_date ?? '').getMonth()]]}
+          {new Date(widgetData.author?.data?.creation_date ?? '').getDate()},
+          {new Date(widgetData.author?.data?.creation_date ?? '').getFullYear()}
         </p>
 
         <!--
@@ -649,7 +647,7 @@
               dark-v1
             "
           >
-            {widgetData.authors__authors__id__nested?.data?.location ?? ''}
+            {widgetData.author?.data?.location ?? ''}
           </p>
         </div>
       </div>
@@ -669,7 +667,7 @@
           m-t-12
           "
         >
-          {widgetData.authors__authors__id__nested?.data?.about ?? ''}
+          {widgetData.author.data?.about ?? ''}
         </p>
       {/if}
 
@@ -713,7 +711,7 @@
                 dark-v1
               "
             >
-              {widgetData.authors__authors__id__nested?.data?.location ?? ''}
+              {widgetData.author?.data?.location ?? ''}
             </p>
           </div>
 
@@ -727,7 +725,7 @@
             m-l-16
             "
           >
-            {readingTime(widgetData.data?.content)}
+            {readingTime(widgetData.article.data?.content)}
             <TranslationText
               key={'uknown'}
               text={widgetDataTranslation?.translation?.reading_time}
@@ -765,9 +763,9 @@
   -->
   <img
     id='preview-banner'
-    src={widgetData.seo_details?.twitter_card.image}
-    alt={widgetData.seo_details?.twitter_card.image_alt}
-    title={widgetData.data?.title}
+    src={widgetData.article.seo_details?.twitter_card.image}
+    alt={widgetData.article.seo_details?.twitter_card.image_alt}
+    title={widgetData.article.data?.title}
     loading='lazy'
     class=
     "
@@ -783,7 +781,7 @@
   <div
     id='content'
   >
-    {@html widgetData.data?.content}
+    {@html widgetData.article.data?.content}
   </div>
 </div>
 

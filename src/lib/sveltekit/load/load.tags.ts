@@ -17,9 +17,9 @@ import type { ServerLoadEvent } from '@sveltejs/kit';
 import { ERROR_CODE_INVALID, dlogv2 } from '$lib/utils/debug.js';
 import { preloadExitLogic, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/navigation.js';
 
-import type {  IArticleTranslation } from '@betarena/scores-lib/types/types.authors.articles.js';
-import type { B_SAP_D2 } from '@betarena/scores-lib/types/v8/preload.scores.js';
 import type { IPageAuthorTagDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
+import type { B_SAP_D2 } from '@betarena/scores-lib/types/v8/preload.scores.js';
+import type { IPageAuthorTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.tags.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -34,7 +34,7 @@ import type { IPageAuthorTagDataFinal } from '@betarena/scores-lib/types/v8/prel
 type PreloadPromise0 =
 [
   IPageAuthorTagDataFinal | undefined,
-  IArticleTranslation | undefined,
+  IPageAuthorTranslationDataFinal | undefined,
   B_SAP_D2 | undefined
 ];
 
