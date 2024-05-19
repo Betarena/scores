@@ -177,8 +177,8 @@ async function fallbackDataGenerate0
   ): Promise<IPageAuthorTagDataFinal & { translations: IPageAuthorTranslationDataFinal }>
 {
   const dataRes0: IPageAuthorTagDataFinal = await entryTargetDataTag({ permalinkTarget, page: Number(page), languageUser, languageFilter: language });
-  const dataRes1 = await entryTargetDataAuthorTranslation({ language: "en" })
-  return { ...dataRes0, translations: dataRes1.get("en")! };
+  const dataRes1 = await entryTargetDataAuthorTranslation({ language: "en", cacheCheck: true })
+  return { ...dataRes0, translations: dataRes1[0].get("en")! };
 }
 
 /**
@@ -198,8 +198,8 @@ async function fallbackDataGenerate1
     language: string
   ): Promise<IPageAuthorTranslationDataFinal>
 {
-  const dataRes0 = await entryTargetDataAuthorTranslation({ language });
-  return dataRes0.get(language)!;
+  const dataRes0 = await entryTargetDataAuthorTranslation({ language, cacheCheck: true });
+  return dataRes0[0].get(language)!;
 }
 
 
