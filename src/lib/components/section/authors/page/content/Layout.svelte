@@ -680,8 +680,11 @@
 -->
 
 <style lang="scss">
-  section {
-    :global(svg) {
+
+  section
+  {
+    :global(svg)
+    {
       width: unset;
     }
 
@@ -718,7 +721,7 @@
       }
     }
 
-    .articles {
+    .listArticlesMod {
       display: flex;
       flex-direction: column;
       gap: 24px;
@@ -760,7 +763,7 @@
         padding: 0px 16px;
       }
 
-      .articles {
+      .listArticlesMod {
         margin-top: 0;
         gap: 8px;
       }
