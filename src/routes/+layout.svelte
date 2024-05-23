@@ -562,8 +562,8 @@
   class:light-mode={theme == "Light"}
 >
   <WidgetAdEngine
-    authorId={$page.data.dataArticle?.author_id}
-    authorArticleTagIds={$page.data.dataArticle?.tags}
+    authorId={$page.data.dataArticle?.author?.id}
+    authorArticleTagIds={$page.data.dataArticle?.article?.tags}
     isDarkTheme={theme == "Dark"}
   />
 
