@@ -47,6 +47,7 @@
   import SeoBox from '$lib/components/SEO-Box.svelte';
   import ArticleLoader from './Article-Loader.svelte';
   import ArticleMain from './Article-Main.svelte';
+  import Tabbar from '$lib/components/ui/Tabbar.svelte';
 
   import { viewportChangeV2 } from '$lib/utils/device.js';
 
@@ -115,6 +116,11 @@
    * 📝 Currently selected tag data.
    */
   $: selectedTag = mapTags.get(widgetData?.tagId ?? 0);
+  /**
+   * @description
+   * 📝 Categories avaialble.
+   */
+  $: categories = selectedTag != undefined ? [selectedTag] : [];
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -203,12 +209,28 @@
   │ NOTE :|: promise is pending                                            │
   ╰────────────────────────────────────────────────────────────────────────╯
   -->
-  {#each Array(10) as _item}
-    <ArticleLoader
-      {mobile}
-      {tablet}
-    />
-  {/each}
+  <div
+    class="tabbar-wrapper"
+  >
+    {#if categories.length}
+      <Tabbar
+        data={categories}
+        selected={selectedTag}
+        height={mobile ? 14 : 8}
+      />
+    {/if}
+  </div>
+
+  <div
+    class="listArticlesMod"
+  >
+    {#each Array(10) as _item}
+      <ArticleLoader
+        {mobile}
+        {tablet}
+      />
+    {/each}
+  </div>
 
 {:then data}
   <!--
