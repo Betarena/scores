@@ -156,7 +156,7 @@
 
   :global
   {
-    section
+    section#content
     {
 
       width: fit-content;
