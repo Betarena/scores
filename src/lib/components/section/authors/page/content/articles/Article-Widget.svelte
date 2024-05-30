@@ -45,9 +45,9 @@
   import { sleep } from '$lib/utils/miscellenous.js';
 
   import SeoBox from '$lib/components/SEO-Box.svelte';
+  import Tabbar from '$lib/components/ui/Tabbar.svelte';
   import ArticleLoader from './Article-Loader.svelte';
   import ArticleMain from './Article-Main.svelte';
-  import Tabbar from '$lib/components/ui/Tabbar.svelte';
 
   import { viewportChangeV2 } from '$lib/utils/device.js';
 
@@ -154,7 +154,7 @@
     // IMPORTANT
     if (!browser) return;
 
-    await sleep(450);
+    await sleep(1500);
 
     return;
   }
