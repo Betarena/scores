@@ -2,9 +2,9 @@ import { json } from '@sveltejs/kit';
 import { _GraphQL } from '@betarena/scores-lib/dist/classes/_graphql.js';
 import type { RequestHandler } from './$types';
 
-export const GET: RequestHandler = async ({ url }) =>
+export const GET: RequestHandler = async () =>
 {
-  const r = await new _GraphQL().wrapQuery(`query {
+  const res = await new _GraphQL().wrapQuery(`query {
     userguide_data
     (
       where:
@@ -21,5 +21,5 @@ export const GET: RequestHandler = async ({ url }) =>
     }
   }`, {})
 
-  return json(r[0]?.userguide_data[0]?.content?.lang)
+  return json(res[0]?.userguide_data[0]?.content?.lang)
 };
