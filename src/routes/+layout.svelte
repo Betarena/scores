@@ -17,6 +17,7 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+	import { fade } from 'svelte/transition';
 	import HeaderRedesigned from './../lib/components/_main_/header/HeaderRedesigned.svelte';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
@@ -69,7 +70,7 @@
   // import '@betarena/ad-engine';
   // import WidgetAdEngine from '@betarena/ad-engine/src/lib/Widget-AdEngine.svelte';
   import WidgetAdEngine from "@betarena/ad-engine";
-  import { modalSore } from "$lib/store/modal.js";
+  import { modalStore } from "$lib/store/modal.js";
   import {
     routeIdContent,
     routeIdPageCompetitions,
@@ -77,6 +78,7 @@
     routeIdScores,
   } from "$lib/constants/paths.js";
   import FooterRedisign from "$lib/components/_main_/footer/FooterRedisign.svelte";
+    import { fade } from "svelte/transition";
 
   // ╭─────
   // │ WARNING:
@@ -169,7 +171,7 @@
     | "desktop";
   $sessionStore.fixturesTodayNum =
     navbarTranslationData?.scores_header_fixtures_information?.football ?? 0;
-
+  $: $sessionStore.viewportType = $sessionStore.windowWidth && VIEWPORT_MOBILE_INIT[1] ? "mobile" : VIEWPORT_TABLET_INIT[1] ? "tablet" : "desktop";
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -272,9 +274,7 @@
   //   )[0] as unknown as HTMLElement;
   //   if (intercom != undefined) intercom.style.display = "none";
   // }
-  $: if (
-    browser && $page.route.id == routeIdPageProfile
-  ) {
+  $: if (browser && $page.route.id == routeIdPageProfile) {
     const intercom: HTMLElement = document.getElementsByClassName(
       "intercom-lightweight-app"
     )[0] as unknown as HTMLElement;
@@ -481,7 +481,8 @@
         d.getElementsByTagName("head")[0].appendChild(s);
       }
       )();
-    </!--> -->
+    </!-->
+    -->
     <script>
       // We pre-filled your app ID in the widget URL: 'https://widget.intercom.io/widget/yz9qn6p3'
       (function () {
@@ -638,8 +639,11 @@
       tablet={VIEWPORT_TABLET_INIT[1]}
     />
   {/if}
-  {#if $modalSore.show && $modalSore.component}
-    <svelte:component this={$modalSore.component} />
+  {#if $modalStore.show && $modalStore.component}
+    {#if $modalStore.modal}
+    <div class="modal-popup" in:fade out:fade on:click|preventDefault={() => ($modalStore.show = false)}/>
+    {/if}
+    <svelte:component this={$modalStore.component} />
   {/if}
 </div>
 
@@ -732,6 +736,16 @@
         padding: 0;
       }
     }
+  }
+  .modal-popup {
+    /* 📌 position */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
   }
 
   /*

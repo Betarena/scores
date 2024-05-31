@@ -38,6 +38,7 @@ const
       globalState: new Set(),
       page: null,
       deviceType: 'mobile',
+      viewportType: "mobile",
       isUserActive: true,
       windowWidth: 0,
       firebaseListeners: [],
