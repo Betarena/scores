@@ -1,14 +1,14 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ 📌 High Order Component Overview                                                 │
+│ 📌 High Order Overview                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ Internal Svelte Code Format :|: V.8.0                                          │
-│ ➤ Status :|: 🔒 LOCKED                                                           │
-│ ➤ Author(s) :|: @migbash                                                         │
+│ ➤ Internal Code Format // V.8.0                                                  │
+│ ➤ Status               // 🔒 LOCKED                                              │
+│ ➤ Author(s)            // @migbash                                               │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ 📝 Description                                                                   │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ Scores Authors Section Layout                                                    │
+│ Betarena (Component) || Authors Content Widget (entry)                           │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -38,14 +38,21 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  import { browser } from '$app/environment';
   import { page } from '$app/stores';
 
   import sessionStore from '$lib/store/session.js';
-  import { viewportChangeV2 } from '$lib/utils/device.js';
-  import { tryCatch } from '@betarena/scores-lib/dist/util/common.js';
+  import { sleep } from '$lib/utils/miscellenous.js';
 
-  import SvelteSeo from 'svelte-seo';
-  import ArticleWidget from './articles/Article-Widget.svelte';
+  import SeoBox from '$lib/components/SEO-Box.svelte';
+  import Tabbar from '$lib/components/ui/Tabbar.svelte';
+  import ArticleLoader from './Article-Loader.svelte';
+  import ArticleMain from './Article-Main.svelte';
+
+  import { viewportChangeV2 } from '$lib/utils/device.js';
+
+  import type { IPageAuthorTagDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
+  import type { IPageAuthorTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.tags.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -64,20 +71,24 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   const
-    /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
-    // eslint-disable-next-line no-unused-vars
+    /**
+     * @description
+     *  📝 `this` component **main** `id` and `data-testid` prefix.
+     */ // eslint-disable-next-line no-unused-vars
     CNAME: string = 'content',
-    /** @description 📣 threshold start + state for 📱 MOBILE */
-    // eslint-disable-next-line no-unused-vars
-    VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ],
-    /** @description 📣 threshold start + state for 💻 TABLET */
-    // eslint-disable-next-line no-unused-vars
-    VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
+    /**
+     * @description
+     *  📝 threshold start + state for 📱 MOBILE
+     */ // eslint-disable-next-line no-unused-vars
+    VIEWPORT_MOBILE_INIT: [number, boolean] = [575, true],
+    /**
+     * @description
+     *  📝 threshold start + state for 💻 TABLET
+     */ // eslint-disable-next-line no-unused-vars
+    VIEWPORT_TABLET_INIT: [number, boolean] = [1160, true]
   ;
 
-  $: pageSeo = $page.data.seoTamplate;
-  $: ({ windowWidth, globalState } = $sessionStore);
-  $: isPWA = globalState.has('IsPWA');
+  $: ({ windowWidth } = $sessionStore);
   $: [mobile, tablet]
     = viewportChangeV2
     (
@@ -87,7 +98,68 @@
     )
   ;
 
+  $: widgetData = $page.data as IPageAuthorTagDataFinal & {
+    translations: IPageAuthorTranslationDataFinal;
+  } | undefined;
+  /**
+   * @description
+   * 📝 Interecpted data for `map` instance of `tag(s)`.
+   */
+  $: mapTags = new Map(widgetData?.mapTag ?? []);
+  /**
+   * @description
+   * 📝 Interecpted data for `map` instance of `article(s)`.
+   */
+  $: mapArticles = new Map(widgetData?.mapArticle ?? []);
+  /**
+   * @description
+   * 📝 Currently selected tag data.
+   */
+  $: selectedTag = mapTags.get(widgetData?.tagId ?? 0);
+  /**
+   * @description
+   * 📝 Categories avaialble.
+   */
+  $: categories = selectedTag != undefined ? [selectedTag] : [];
+
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟩 MAIN
+   * @description
+   *  📣 main widget data loader
+   *  - ⚡️ (and) try..catch (error) handler
+   *  - ⚡️ (and) placeholder handler
+   * @returns { Promise < void > }
+   */
+  async function widgetInit
+  (
+  ): Promise < void >
+  {
+    // IMPORTANT
+    if (!browser) return;
+
+    await sleep(1500);
+
+    return;
+  }
+
+  // #endregion ➤ 🛠️ METHODS
 
 </script>
 
@@ -102,165 +174,78 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-{#if pageSeo}
-  <SvelteSeo
-    title={pageSeo.main_data.title}
-    description={pageSeo.main_data.description}
-    keywords={pageSeo.main_data.keywords}
-    noindex=
-    {
-      tryCatch
-      (
-        () =>
-        {
-          return JSON.parse(pageSeo.main_data.noindex);
-        }
-      ) ?? false
-    }
-    nofollow=
-    {
-      tryCatch
-      (
-        () =>
-        {
-          return JSON.parse(pageSeo.main_data.nofollow);
-        }
-      ) ?? false
-    }
-    canonical={`${$page.url.origin}/a/content`}
-    twitter={pageSeo.twitter_card}
-    openGraph={pageSeo.opengraph}
-  />
-{/if}
+<SeoBox>
+  <h1>{selectedTag?.name}</h1>
 
-<section
-  id={CNAME}
-  class:mobile
-  class:tablet
-  class:pwa={isPWA}
->
-  <ArticleWidget />
-</section>
+  <!--
+  ╭─────
+  │ > Loop through articles
+  ╰─────
+  -->
+  {#each [...mapArticles.entries()] as [, article]}
+    <h2>
+      {article.data?.title}
+    </h2>
+    <a
+      href={`/a/${article.permalink}`}
+    >
+      {article.data?.title}
+    </a>
+  {/each}
 
-<!--
-╭──────────────────────────────────────────────────────────────────────────────────╮
-│ 🌊 Svelte Component CSS/SCSS                                                     │
-┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
-│         │ values by typing/CTRL+SPACE                                            │
-│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
-╰──────────────────────────────────────────────────────────────────────────────────╯
--->
+  <!--
+  ╭─────
+  │ > Loop through tags
+  ╰─────
+  -->
+  {#each [...mapArticles.entries()] as [_id, tag]}
+    <a href={`/a/tag/${tag.permalink}`}>{tag.name}</a>
+  {/each}
+</SeoBox>
 
-<style lang="scss">
+{#await widgetInit()}
+  <!--
+  ╭────────────────────────────────────────────────────────────────────────╮
+  │ NOTE :|: promise is pending                                            │
+  ╰────────────────────────────────────────────────────────────────────────╯
+  -->
+  <div
+    class="tabbar-wrapper"
+  >
+    {#if categories.length}
+      <Tabbar
+        data={categories}
+        selected={selectedTag}
+        height={mobile ? 14 : 8}
+      />
+    {/if}
+  </div>
 
-  :global
-  {
-    section#content
-    {
+  <div
+    class="listArticlesMod"
+  >
+    {#each Array(10) as _item}
+      <ArticleLoader
+        {mobile}
+        {tablet}
+      />
+    {/each}
+  </div>
 
-      width: fit-content;
-      max-width: 100%;
-      height: 100% !important;
-      min-height: 100% !important;
-      background: var(--bg-color);
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-      margin: 0;
-      padding: 0;
+{:then data}
+  <!--
+  ╭────────────────────────────────────────────────────────────────────────╮
+  │ NOTE :|: promise is fulfilled                                          │
+  ╰────────────────────────────────────────────────────────────────────────╯
+  -->
 
-      --text-size-2xl: 38px;
-      --text-size-xl: 24px;
-      --text-size-l: 20px;
-      --text-size-m: 16px;
-      --text-size-s: 14px;
-      --text-size-xs: 12px;
-      --text-button-size: var(--text-size-m);
+  <ArticleMain />
 
-      svg
-      {
-        width: unset;
-      }
+{:catch error}
+  <!--
+  ╭────────────────────────────────────────────────────────────────────────╮
+  │ NOTE :|: promise is rejected                                           │
+  ╰────────────────────────────────────────────────────────────────────────╯
+  -->
 
-      .tabbar-wrapper
-      {
-        width: 100%;
-        background-color: var(--bg-color);
-        display: flex;
-        align-items: start;
-        gap: 16px;
-        width: 824px;
-        font-size: var(--text-size-m);
-
-        .add-icon
-        {
-          margin-top: 2px;
-        }
-      }
-
-      .listArticlesMod
-      {
-        display: flex;
-        flex-direction: column;
-        gap: 24px;
-      }
-
-      .load-more
-      {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        padding: 34px 0;
-        background: var(--bg-color);
-      }
-
-      &.tablet
-      {
-        padding: 26px 34px;
-        padding-top: 32px;
-        padding-bottom: 0 !important;
-        margin: 0 !important;
-        width: 100%;
-
-        &.pwa
-        {
-          padding-bottom: 128px !important;
-        }
-
-        .add-icon
-        {
-          margin-top: 0;
-        }
-      }
-
-      &.mobile
-      {
-        background: var(--layout-bg-color);
-        padding: 0 !important;
-        padding-bottom: 128px;
-        width: 100%;
-        gap: 8px;
-        --text-size-2xl: 24px;
-        --text-size-l: 16px;
-        --text-size-m: 14px;
-        --text-size-s: 12px;
-        --text-size-xs: 10px;
-
-        .tabbar-wrapper {
-          padding: 0px 16px;
-        }
-
-        .listArticlesMod {
-          margin-top: 0;
-          gap: 8px;
-        }
-
-        .add-icon {
-          margin-top: 0;
-        }
-      }
-    }
-  }
-
-</style>
+{/await}
