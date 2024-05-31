@@ -31,7 +31,7 @@
   import { timeAgo } from '$lib/utils/dates.js';
 
   import { fade } from 'svelte/transition';
-  import defaultAvatar from '../tags/content/assets/profile-avatar.svg';
+  import defaultAvatar from '../../tags/content/assets/profile-avatar.svg';
 
   import type {
     IPageAuthorArticleData,

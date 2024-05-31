@@ -1,6 +1,6 @@
 {
 	"name": "betarena-scores-platform",
-	"version": "2.8.2",
+	"version": "2.8.4",
 	"description": "Betarena Official Scores Platform (PWA)",
 	"author": "migbash",
 	"license": "ISC",
@@ -48,7 +48,7 @@
 		"sass-watch": "sass --watch static/app.scss static/app.css"
 	},
 	"dependencies": {
-		"@betarena/ad-engine": "0.0.47",
+		"@betarena/ad-engine": "0.0.51",
 		"@betarena/scores-lib": "3.2.7",
 		"@lukeed/uuid": "2.0.1",
 		"@metamask/sdk": "0.1.0",
