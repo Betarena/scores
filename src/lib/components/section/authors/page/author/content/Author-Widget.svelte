@@ -48,7 +48,6 @@
   import AuthorLoader from './Author-Loader.svelte';
   import AuthorMain from './Author-Main.svelte';
 
-  import type { IArticleData } from '@betarena/scores-lib/types/types.authors.articles.js';
   import type { IPageAuhtorArticleDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -115,7 +114,7 @@
     // IMPORTANT
     if (!browser) return;
 
-    // await sleep(1000);
+    await sleep(750);
 
     return;
   }
