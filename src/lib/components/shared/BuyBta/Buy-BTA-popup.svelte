@@ -1,28 +1,14 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ 📌 High Order Component Overview                                                 │
-┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ Internal Svelte Code Format :|: V.8.0                                          │
-│ ➤ Status :|: 🔒 LOCKED                                                           │
-│ ➤ Author(s) :|: @izobov                                                         │
-┣──────────────────────────────────────────────────────────────────────────────────┫
-│ 📝 Description                                                                   │
-┣──────────────────────────────────────────────────────────────────────────────────┫
-│ Scores Footer Component                                                          │
-╰──────────────────────────────────────────────────────────────────────────────────╯
--->
-
-<!--
-╭──────────────────────────────────────────────────────────────────────────────────╮
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
-	import Linkedin from './assets/icon_redisign/linkedin.svelte';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <script lang="ts">
+  import { modalStore } from "$lib/store/modal.js";
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -38,22 +24,13 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import sessionStore from "$lib/store/session.js";
   import userBetarenaSettings from "$lib/store/user-settings.js";
-
-  import SeoBox from "$lib/components/SEO-Box.svelte";
-
-  import WalletBalance from "$lib/components/ui/WalletBalance.svelte";
-  import Button from "$lib/components/ui/Button.svelte";
-
-  import Legal_18ActionBet from "./assets/icon_redisign/legal-18-action-bet.svelte";
-  import BegambleawareorgBlack from "./assets/icon_redisign/begambleawareorg_black.png";
-  import SocialsBlock from "./SocialsBlock.svelte";
-  import FooterNavigationBlock from "./FooterNavigationBlock.svelte";
-    import BuyBtaButton from "$lib/components/shared/BuyBta/Buy-BTA-Button.svelte";
+  import { fly } from "svelte/transition";
+  import IconArrowRight from "../assets/icon-arrow-right.svelte";
+  import sessionStore from "$lib/store/session.js";
+  import buyOptionsTranslations from "./store.js";
 
   // #endregion ➤ 📦 Package Imports
-
   // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -67,16 +44,20 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
+  $: data = $buyOptionsTranslations[$userBetarenaSettings.lang as string];
+  $: options = [
+    {
+      name: data.competitions || "Competitions",
+      description: data.info_competitions || "Get tokens to participate",
+      link: data.link_competitions || "/competitions",
+    },
+    {
+      name: data.presale || "Presale",
+      description: data.info_presale || "Invest on BTA token presale",
+      link: data.link_presale || `/u/investor/${$userBetarenaSettings.lang}`,
+    },
+  ];
 
-  const /**
-     * @description
-     *  📣 `this` component **main** `id` and `data-testid` prefix.
-     */
-    CNAME = "global⮕footer⮕w⮕main";
-
-  export let links, buyBTAText, translation;
-
-  $: ({ globalState } = $sessionStore);
   // #endregion ➤ 📌 VARIABLES
 </script>
 
@@ -91,71 +72,26 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<!--
-╭─────
-│ > Footer SEO
-╰─────
--->
-<SeoBox>
-  <!--
-  ╭─────
-  │ > Social Links [1]
-  ╰─────
-  -->
-  <p>{translation.links.latest_news}</p>
-  <p>{translation.links.about_us}</p>
-  <p>{translation.links.betting_tips}</p>
-  <p>{translation.links.privacy}</p>
-  <p>{translation.links.social_networks}</p>
-  <p>{translation.links.terms}</p>
-  <p>{translation.links.status}</p>
-  <p>{translation.links.changelog}</p>
-  <!--
-  ╭─────
-  │ > Social Links [2]
-  ╰─────
-  -->
-  {#each Object.keys(translation.links.social_networks) ?? [] as key}
-    <p>{translation.links.social_networks[key]}</p>
-  {/each}
-</SeoBox>
-
-<!--
-╭─────
-│ > Fotter Container
-╰─────
--->
-
-<footer>
-  <div id="{CNAME}⮕inner">
-    {#if !globalState.has("NotAuthenticated")}
-      <div class="wallet">
-        <WalletBalance />
-        <BuyBtaButton popup={true} />
+<div
+  in:fly={{ y: 200 }}
+  class:mobile={$sessionStore.viewportType === "mobile"}
+  out:fly={{ y: 200 }}
+  class="wrapper"
+  on:click={() => ($modalStore.show = false)}
+>
+  {#each options as option, i}
+    <a href={option.link} class="option" title={option.description}>
+      <div class="label">
+        <span class="name">{option.name}</span>
+        <span class="description">{option.description}</span>
       </div>
+      <IconArrowRight color="var(--icon-color-light)" />
+    </a>
+    {#if i !== options.length - 1}
+      <div class="separator" />
     {/if}
-    <div class="content">
-      <SocialsBlock {translation} />
-      <div class="nav-block-wrap">
-        <FooterNavigationBlock {links} />
-      </div>
-      <div class="legal-block">
-        <Legal_18ActionBet />
-        <img
-          id=""
-          src={BegambleawareorgBlack}
-          alt="BegambleawareorgBlack"
-          title=""
-          loading="lazy"
-        />
-      </div>
-      <div class="rights-block">
-        © 2021 Betarena All rights reserved <br />
-        Second Act, 18 Boulevard Montmartre Paris 75009
-      </div>
-    </div>
-  </div>
-</footer>
+  {/each}
+</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -168,47 +104,62 @@
 -->
 
 <style lang="scss">
-  /*
-  ╭──────────────────────────────────────────────────────────────────────────────╮
-  │ 📲 MOBILE-FIRST                                                              │
-  ╰──────────────────────────────────────────────────────────────────────────────╯
-  */
+  .wrapper {
+    position: fixed;
 
-  footer {
-    /* 🎨 style */
-    position: relative;
-    color: var(--text-color);
-    position: sticky;
-    position: -webkit-sticky;
-    top: 32px;
-    height: fit-content;
+    z-index: 1000;
+    border-radius: 16px 16px 0px 0px;
+    max-width: 100%;
+    display: inline-flex;
+    background-color: var(--popup-bg-color);
+    padding: 24px 16px 24px 20px;
+    border-radius: 16px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 16px;
 
-    .wallet {
+    &.mobile {
+      border-radius: 16px 16px 0px 0px;
+      transform: unset;
+      top: unset;
+      bottom: 0;
+      left: 50%;
+      max-width: 100%;
+      transform: translateX(-50%);
+    }
+  }
+
+  .option {
+    display: flex;
+    width: 335px;
+    max-width: 100%;
+    justify-content: space-between;
+    align-items: center;
+
+    .label {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 100%;
-      padding-bottom: 32px;
-      margin-bottom: 32px;
-      border-bottom: var(--border);
-    }
-    .content {
-      padding-bottom: 32px;
+      flex-direction: column;
+      align-items: flex-start;
 
-      .nav-block-wrap {
-        padding: 40px 0;
+      .name {
+        font-size: 16px;
+        font-weight: 500;
+        color: var(--text-color);
       }
 
-      .legal-block {
-        display: flex;
-        align-items: center;
-        gap: 24px;
-        margin-bottom: 24px;
-      }
-      .rights-block {
+      .description {
+        font-size: 14px;
         color: var(--text-color-second-dark);
-        font-size: 12px;
       }
     }
+  }
+  .separator {
+    width: 100%;
+    height: 1px;
+    background: var(--popup-contrast-color);
   }
 </style>

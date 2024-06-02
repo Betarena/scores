@@ -37,7 +37,7 @@
   import icon_close_dark from './assets/icon-close-dark-btn.svg';
 
 	import type { B_USRG_D } from '@betarena/scores-lib/types/types.misc.userguide.js';
-  import { modalSore } from '$lib/store/modal.js';
+  import { modalStore } from '$lib/store/modal.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -299,12 +299,14 @@
       (
         () =>
         {
-          $modalSore.show = true;
+          $modalStore.modal = false;
+          $modalStore.show = true;
+
           showModal = true;
         },
         1500
       );
-      return () => $modalSore.show = false;
+      return () => $modalStore.show = false;
     }
   );
 

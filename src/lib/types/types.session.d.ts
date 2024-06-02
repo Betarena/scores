@@ -13,14 +13,14 @@ type IPageRouteId =
   | 'ProfilePage'
   | 'CompetitionPage'
   | 'AuthorsPage'
-;
+  ;
 
 type IUserStoreState =
   | 'IsPWA'
   | 'Authenticated'
   | 'AuthenticatedAndInitialized'
   | 'NotAuthenticated'
-;
+  ;
 
 /**
  * @author
@@ -36,12 +36,12 @@ export interface ISessionStore
    * @description
    * 📝 Target general `store` state for `user settings`.
    */
-  globalState: Set < IUserStoreState >;
+  globalState: Set<IUserStoreState>;
   /**
    * @description
    * 📝 Target `sveltekit/page` instance.
    */
-  page: Page < Record < string, string >, string | null>;
+  page: Page<Record<string, string>, string | null>;
   /**
    * @description
    * ➕ `inter-component` events of selected season.
@@ -135,7 +135,7 @@ export interface ISessionStore
    * @description
    *  📣 Toggle `visibility` (show/hide) of Fixture (page) target `view` tabs.
    */
-	fixture_select_view: 'overview' | 'news';
+  fixture_select_view: 'overview' | 'news';
   /**
    * @description
    *  📣 Follow 'user' intent for `hover` language select action (intent).
@@ -167,30 +167,30 @@ export interface ISessionStore
    *  📣 Currently **active** `modal` being shown on platform. Only **one at a time**.
    */
   currentActiveModal:
-    | null
-    | 'ProfileInvestor_ReferralInfo_Modal'
-    | 'ProfileInvestor_Wallets_Modal'
-    | 'ProfileInvestor_Terms&Cond_Modal'
-    | 'ProfileInvestor_WalletConnect_Modal'
-    | 'ProfileInvestor_ClaimTGE_Modal'
-    | 'ProfileInvestor_ClaimVesting_Modal'
-    | 'ProfileInvestor_TxState_Modal'
-    | 'ProfileInvestor_SelectCrypto_Modal'
-    | 'ProfileWithdraw_Modal'
-    | 'GeneralPlatform_Error'
-    | 'Footer_Newsletter_Modal'
-    | 'Auth_Modal'
-    | 'CompetitionFixtureJoin_Modal'
+  | null
+  | 'ProfileInvestor_ReferralInfo_Modal'
+  | 'ProfileInvestor_Wallets_Modal'
+  | 'ProfileInvestor_Terms&Cond_Modal'
+  | 'ProfileInvestor_WalletConnect_Modal'
+  | 'ProfileInvestor_ClaimTGE_Modal'
+  | 'ProfileInvestor_ClaimVesting_Modal'
+  | 'ProfileInvestor_TxState_Modal'
+  | 'ProfileInvestor_SelectCrypto_Modal'
+  | 'ProfileWithdraw_Modal'
+  | 'GeneralPlatform_Error'
+  | 'Footer_Newsletter_Modal'
+  | 'Auth_Modal'
+  | 'CompetitionFixtureJoin_Modal'
   ;
   /**
    * @description
    *  📣 Currently **active** `toast` being shown on platform. Only **one at a time**.
    */
   currentActiveToast:
-    | null
-    | 'Auth_Success_L_Toast'
-    | 'Auth_Success_R_Toast'
-    | 'Auth_Error_Toast'
+  | null
+  | 'Auth_Success_L_Toast'
+  | 'Auth_Success_R_Toast'
+  | 'Auth_Error_Toast'
   ;
 
   // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
@@ -218,12 +218,12 @@ export interface ISessionStore
    * @deprecated
    * in favor of `livescore_now_scoreboard`
    */
-  livescore_now: Map < number, FIREBASE_livescores_now > | undefined;
+  livescore_now: Map<number, FIREBASE_livescores_now> | undefined;
   /**
    * @description
    *  📌 Store of `live` data 'Firebase Livescore' (Scoreboard) (V2)
    */
-  livescore_now_scoreboard: Map < number, FIRE_LNNS >;
+  livescore_now_scoreboard: Map<number, FIRE_LNNS>;
   /**
    * @description
    *  📌 Store `live` data for target (SINGLE) fixture 'scores'.
@@ -238,7 +238,7 @@ export interface ISessionStore
    * @description
    *  📌 Store `live` data on 'Firebase Odds' target (MULTIPLE) fixtures
    */
-  live_odds_fixture_map: Map < number, FIREBASE_odds[] >;
+  live_odds_fixture_map: Map<number, FIREBASE_odds[]>;
   /**
    * @description
    *  📌 Store `live` data for **all** players in a game.
@@ -253,7 +253,7 @@ export interface ISessionStore
    * @description
    *  📌 Store data for new 'real-time' (a.k.a) latest competitions data.
    */
-  competitions_map: Map < number, B_H_COMP_DATA >;
+  competitions_map: Map<number, B_H_COMP_DATA>;
 
   // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   // NOTE: USER SESSION;
@@ -293,4 +293,11 @@ export interface ISessionStore
    *  📣 Current name for target **admin** widget under inspection.
    */
   currentAdminToggle: string | null;
+
+  /**
+   * @description
+   *  📣 Defines the type of device being used for viewing.
+   * Can take the values 'mobile', 'tablet', 'desktop', or null if the device type is not determined.
+   */
+  viewportType: string | null;
 }
