@@ -17,7 +17,7 @@ import type { ServerLoadEvent } from '@sveltejs/kit';
 import { dlogv2 } from '$lib/utils/debug.js';
 import { promiseUrlsPreload } from '$lib/utils/navigation.js';
 
-import type {  IArticleTranslation } from '@betarena/scores-lib/types/types.authors.articles.js';
+import type { IArticleTranslation } from '@betarena/scores-lib/types/types.authors.articles.js';
 import type { B_SAP_D2 } from '@betarena/scores-lib/types/v8/preload.scores.js';
 import type { IPageAuthorTagDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
 
@@ -32,11 +32,11 @@ import type { IPageAuthorTagDataFinal } from '@betarena/scores-lib/types/v8/prel
  *  📣 Target `types` for `_this_` page required at preload.
  */
 type PreloadPromise0 =
-[
-  IPageAuthorTagDataFinal | undefined,
-  IArticleTranslation | undefined,
-  B_SAP_D2 | undefined
-];
+  [
+    IPageAuthorTagDataFinal | undefined,
+    IArticleTranslation | undefined,
+    B_SAP_D2 | undefined
+  ];
 
 /**
  * @author
@@ -49,13 +49,13 @@ type PreloadPromise0 =
  *  📤 Respective `data` for _this_ route.
  */
 export async function main
-(
-  event: ServerLoadEvent,
-  parentData:
-  {
-    langParam: string
-  }
-): Promise < any >
+  (
+    event: ServerLoadEvent,
+    parentData:
+      {
+        langParam: string
+      }
+  ): Promise<any>
 {
   const
     // ╭─────
@@ -77,7 +77,7 @@ export async function main
     //       authorTagsUrl: name
     //     }
     //   )
-  ;
+    ;
 
   // if (!isUrlValid)
   //   preloadExitLogic
@@ -89,13 +89,15 @@ export async function main
   // ;
   const [
     data,
-    translations
+    contentTranslations,
+    articleTranslations,
   ] = await fetchData
-  (
-    event.fetch,
-    name,
-    parentData.langParam
+    (
+      event.fetch,
+      name,
+      parentData.langParam
     );
+  const translations = { ...contentTranslations, readingTime: articleTranslations?.translation };
 
   /**
      * @description
@@ -109,13 +111,13 @@ export async function main
 
   // [🐞]
   dlogv2
-  (
-    '🚏 checkpoint ➤ src/routes/(authors)/a/content/+page.server.ts',
-    [
-      // `🔹 [var] ➤ response :|: ${JSON.stringify(response)}`,
-    ],
-    true
-  );
+    (
+      '🚏 checkpoint ➤ src/routes/(authors)/a/content/+page.server.ts',
+      [
+        // `🔹 [var] ➤ response :|: ${JSON.stringify(response)}`,
+      ],
+      true
+    );
 
   return response;
 }
@@ -137,11 +139,11 @@ export async function main
  *  📤 Target `data` fetched.
  */
 async function fetchData
-(
-  fetch: any,
-  _name: string | undefined,
-  _lang: string
-)
+  (
+    fetch: any,
+    _name: string | undefined,
+    _lang: string
+  )
 {
   const
     /**
@@ -150,11 +152,9 @@ async function fetchData
      */
     urls0
       = [
-        `/api/data/author/content?&lang=${_lang}`,
-        `/api/data/author/tags?translation=${_lang}`
-        // `/api/data/author/tags?permalinkTag=forecasts&lang=${_lang}`,
-        // `/api/data/author?lang=${_lang}`,
-        // `/api/data/main/seo-pages?months=true&lang=${_lang}&decompress`,
+        `/api/data/author/content?lang=${_lang}`,
+        `/api/data/author/tags?translation=${_lang}`,
+        `/api/data/author/article?lang=${_lang}`,
       ],
 
     /**
@@ -163,10 +163,10 @@ async function fetchData
      */
     data0
       = await promiseUrlsPreload
-      (
-        urls0
-        , fetch
-      ) as PreloadPromise0
+        (
+          urls0
+          , fetch
+        ) as PreloadPromise0
     ;
   return data0;
 }

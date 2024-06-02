@@ -39,6 +39,8 @@
     IPageAuthorTagData,
   } from '@betarena/scores-lib/types/v8/preload.authors.js';
   import type { IPageAuthorTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.tags.js';
+  import { readingTime } from '../../helpers.js';
+  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -97,7 +99,7 @@
   });
 
   $: date = timeAgo(published_date, translations.time_ago);
-
+  $: timeToRead =  readingTime(article.data?.content)
   // #endregion ➤ 📌 VARIABLES
 
 </script>
@@ -119,7 +121,18 @@
       <Avatar src={avatar} size={mobile ? 32 : 38} />
       <div class="author-info">
         <div class="author-name">{username}</div>
-        <div class="publication-date">{date}</div>
+        <div class="publication-date">
+          {#if timeToRead}
+            {timeToRead}
+            <TranslationText
+              key={'uknown'}
+              text={translations?.readingTime?.reading_time}
+              fallback={'mins'}
+            />
+            -
+          {/if}
+          {date}
+        </div>
       </div>
     </div>
     <a href="/a/{permalink}">

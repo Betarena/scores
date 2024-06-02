@@ -65,3 +65,43 @@ export async function fetchArticles({ permalink, lang, page, prevData, url }: { 
   const articles = prepareArticles(newArticles, new Map(res.mapTag), new Map(res.mapAuthor));
   return { next, articles }
 }
+
+
+/**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟦 HELPER
+   * @description
+   *  📣 Calcualte target `text` _reading time_, based on `character` amount.
+   * @param { string } text
+   *  💠 **[required]** Target `direction` to _scroll_.
+   * @return { void }
+   */
+export function readingTime
+(
+  text: string | null | undefined
+): number
+{
+  if (text == null) return 0;
+
+  const
+    /**
+     * @description
+     *  📣 Hardcoded value for `words per minute`.
+     */
+    wpm = 225,
+    /**
+     * @description
+     *  📣 Calulate number of `words` in target `text`.
+    */
+    words = text.trim().split(/\s+/).length,
+    /**
+     * @description
+     *  📣 Calcualted value for `reading time`.
+    */
+    time = Math.ceil(words / wpm)
+  ;
+
+  return time;
+}
