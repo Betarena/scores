@@ -1184,7 +1184,10 @@
           ╰─────
           -->
           {#if true}
-            <div class="m-l-50">
+            <div
+              class:m-l-50={!VIEWPORT_MOBILE_INIT[1]}
+              class:m-l-20={VIEWPORT_MOBILE_INIT[1]}
+            >
               <BuyBtaButton popup={true} />
             </div>
           {/if}
