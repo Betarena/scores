@@ -133,8 +133,12 @@
       top: unset;
       bottom: 0;
       left: 50%;
-      max-width: 100%;
+      width: 100%;
       transform: translateX(-50%);
+
+      .option {
+        width: 100%;
+      }
     }
   }
 
