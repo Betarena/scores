@@ -50,6 +50,7 @@
   import FooterSide from "./FooterSide.svelte";
   import FooterBottom from "./FooterBottom.svelte";
   import { promiseUrlsPreload } from "$lib/utils/navigation.js";
+    import { browser } from "$app/environment";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -100,7 +101,7 @@
   $: isPWA = globalState.has("IsPWA");
 
   $: translation = $page.data.B_FOT_T as B_FOT_T;
-  $: loadTranslations($sessionStore.serverLang);
+  $: if (browser) loadTranslations($sessionStore.serverLang);
   $: linksMap = new Map([
     [
       "changelog",

@@ -44,7 +44,7 @@
   import type { B_SAP_CP_T, B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
   import type { Unsubscribe } from 'firebase/database';
   import { initialDevice } from '$lib/utils/device.js';
-  import { modalSore } from '$lib/store/modal.js';
+  import { modalStore } from '$lib/store/modal.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -297,8 +297,9 @@
     async (
     ): Promise < void > =>
     {
-      $modalSore.component = UserguideCompetition_1Widget;
-      $modalSore.show = true;
+      $modalStore.component = UserguideCompetition_1Widget;
+      $modalStore.modal = false;
+      $modalStore.show = true;
       resizeAction();
       initEventListeners();
 

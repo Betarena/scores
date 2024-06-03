@@ -68,6 +68,7 @@
 
   import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
   import type { B_SAP_D3 } from "@betarena/scores-lib/types/seo-pages.js";
+  import BuyBtaButton from "$lib/components/shared/BuyBta/Buy-BTA-Button.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -258,8 +259,9 @@
         );
         break;
       case "content":
-        url = trsanslationData?.scores_header_translations?.section_links
-          ?.sports_content_url;
+        url =
+          trsanslationData?.scores_header_translations?.section_links
+            ?.sports_content_url;
         break;
       case "scores":
       default:
@@ -1182,21 +1184,9 @@
           ╰─────
           -->
           {#if true}
-            <a
-              href="/u/investor/{$userBetarenaSettings.lang}"
-              title="Go to Investor Page"
-            >
-              <button
-                class="
-                btn-primary-v2
-                "
-                class:m-l-50={!VIEWPORT_MOBILE_INIT[1]}
-                class:m-l-20={VIEWPORT_MOBILE_INIT[1]}
-              >
-                {trsanslationData?.scores_header_translations?.data?.cta_buy ??
-                  "Buy BTA"}
-              </button>
-            </a>
+            <div class="m-l-50">
+              <BuyBtaButton popup={true} />
+            </div>
           {/if}
         {/if}
       </div>
