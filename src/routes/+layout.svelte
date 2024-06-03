@@ -658,10 +658,6 @@
 -->
 
 <style lang="scss">
-  :global() {
-    @import url("../../scss/themes/dark.scss");
-    @import url("../../scss/themes/light.scss");
-  }
 
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
