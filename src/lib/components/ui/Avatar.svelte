@@ -8,36 +8,33 @@
 -->
 
 <script lang="ts">
-// #region ➤ 📌 VARIABLES
+  // #region ➤ 📌 VARIABLES
 
   import { createEventDispatcher } from "svelte";
+  import DefaultAvatar from "./assets/default-avatar.svelte";
 
-// ╭────────────────────────────────────────────────────────────────────────╮
-// │ NOTE:                                                                  │
-// │ Please add inside 'this' region the 'variables' that are to be         │
-// │ and are expected to be used by 'this' .svelte file / component.        │
-// │ IMPORTANT                                                              │
-// │ Please, structure the imports as follows:                              │
-// │ 1. export const / let [..]                                             │
-// │ 2. const [..]                                                          │
-// │ 3. let [..]                                                            │
-// │ 4. $: [..]                                                             │
-// ╰────────────────────────────────────────────────────────────────────────╯
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
+  export let src: string | null = "",
+    /**
+     * @description
+     * avatar size
+     */
+    size = 38;
 
-export let
-  src: string | null  = "",
-  /**
-   * @description
-   * avatar size
-   */
-  size = 38;
+  const dispatch = createEventDispatcher();
 
-  const dispatch = createEventDispatcher()
-
-// #endregion ➤ 📌 VARIABLES
-
-
+  // #endregion ➤ 📌 VARIABLES
 </script>
 
 <!--
@@ -50,9 +47,16 @@ export let
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
-<div class="avatar-circle" on:click={() => dispatch("click")} { ...$$restProps} style="width: {size}px; height: {size}px;  background-image: url({src});">
-
+<div class="avatar-wrapper" on:click={() => dispatch("click")}>
+  {#if src}
+    <div
+      class="avatar-circle"
+      {...$$restProps}
+      style="width: {size}px; height: {size}px;  background-image: url({src});"
+    />
+  {:else}
+    <DefaultAvatar {size} />
+  {/if}
 </div>
 
 <!--
@@ -68,13 +72,11 @@ export let
 <style lang="scss">
   .avatar-circle {
     width: 38px;
-    height:  38px;
+    height: 38px;
     border-radius: 100%;
 
-    background-image:  url(src);
+    background-image: url(src);
     background-repeat: no-repeat;
     background-size: cover;
   }
-
-
 </style>
