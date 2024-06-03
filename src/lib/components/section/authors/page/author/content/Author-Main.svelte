@@ -58,6 +58,7 @@
   import type { B_SAP_D2 } from '@betarena/scores-lib/types/seo-pages.js';
   import type { IPageAuhtorArticleDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
   import type { IPageArticleTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.articles.js';
+  import { readingTime } from '../../helpers.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -215,44 +216,7 @@
     return;
   }
 
-  /**
-   * @author
-   *  @migbash
-   * @summary
-   *  🟦 HELPER
-   * @description
-   *  📣 Calcualte target `text` _reading time_, based on `character` amount.
-   * @param { string } text
-   *  💠 **[required]** Target `direction` to _scroll_.
-   * @return { void }
-   */
-  function readingTime
-  (
-    text: string | null | undefined
-  ): number
-  {
-    if (text == null) return 0;
 
-    const
-      /**
-       * @description
-       *  📣 Hardcoded value for `words per minute`.
-       */
-      wpm = 225,
-      /**
-       * @description
-       *  📣 Calulate number of `words` in target `text`.
-      */
-      words = text.trim().split(/\s+/).length,
-      /**
-       * @description
-       *  📣 Calcualted value for `reading time`.
-      */
-      time = Math.ceil(words / wpm)
-    ;
-
-    return time;
-  }
 
   // #endregion ➤ 🛠️ METHODS
 
