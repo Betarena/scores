@@ -122,6 +122,11 @@
     align-items: flex-start;
     gap: 16px;
 
+    :global(svg) {
+      width: 20px !important;
+      height: 20px !important;
+    }
+
     &.mobile {
       border-radius: 16px 16px 0px 0px;
       transform: unset;
