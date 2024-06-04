@@ -79,15 +79,26 @@
     }
   }
 
+  // #endregion ➤ 🛠️ METHODS
+
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
   onMount(async () => {
 
-    const r = await get(`/api/data/bta/buy/options`);
-    if (r) {
-      $buyOptionsTranslations = r as any;
-    }
-  });
+  const r = await get(`/api/data/bta/buy/options`);
+  if (r) {
+    $buyOptionsTranslations = r as any;
+  }
+});
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
-  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <Button type="primary" on:click={click}>
