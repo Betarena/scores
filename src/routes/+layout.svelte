@@ -79,6 +79,8 @@
   } from "$lib/constants/paths.js";
   import FooterRedisign from "$lib/components/_main_/footer/FooterRedisign.svelte";
     import { fade } from "svelte/transition";
+    import ModalBackdrop from "$lib/components/misc/modal/Modal-Backdrop.svelte";
+    import ModalMain from "$lib/components/misc/modal/ModalMain.svelte";
 
   // ╭─────
   // │ WARNING:
@@ -639,12 +641,7 @@
       tablet={VIEWPORT_TABLET_INIT[1]}
     />
   {/if}
-  {#if $modalStore.show && $modalStore.component}
-    {#if $modalStore.modal}
-    <div class="modal-popup" in:fade out:fade on:click|preventDefault={() => ($modalStore.show = false)}/>
-    {/if}
-    <svelte:component this={$modalStore.component} />
-  {/if}
+  <ModalMain />
 </div>
 
 <!--
@@ -733,16 +730,7 @@
       }
     }
   }
-  .modal-popup {
-    /* 📌 position */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-  }
+
 
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
