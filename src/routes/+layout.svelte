@@ -70,7 +70,6 @@
   // import '@betarena/ad-engine';
   // import WidgetAdEngine from '@betarena/ad-engine/src/lib/Widget-AdEngine.svelte';
   import WidgetAdEngine from "@betarena/ad-engine";
-  import { modalStore } from "$lib/store/modal.js";
   import {
     routeIdContent,
     routeIdPageCompetitions,
@@ -78,9 +77,7 @@
     routeIdScores,
   } from "$lib/constants/paths.js";
   import FooterRedisign from "$lib/components/_main_/footer/FooterRedisign.svelte";
-    import { fade } from "svelte/transition";
-    import ModalBackdrop from "$lib/components/misc/modal/Modal-Backdrop.svelte";
-    import ModalMain from "$lib/components/misc/modal/ModalMain.svelte";
+  import ModalMain from "$lib/components/misc/modal/ModalMain.svelte";
 
   // ╭─────
   // │ WARNING:
@@ -173,7 +170,12 @@
     | "desktop";
   $sessionStore.fixturesTodayNum =
     navbarTranslationData?.scores_header_fixtures_information?.football ?? 0;
-  $: $sessionStore.viewportType = $sessionStore.windowWidth && VIEWPORT_MOBILE_INIT[1] ? "mobile" : VIEWPORT_TABLET_INIT[1] ? "tablet" : "desktop";
+  $: $sessionStore.viewportType =
+    $sessionStore.windowWidth && VIEWPORT_MOBILE_INIT[1]
+      ? "mobile"
+      : VIEWPORT_TABLET_INIT[1]
+      ? "tablet"
+      : "desktop";
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -655,7 +657,6 @@
 -->
 
 <style lang="scss">
-
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
   │ 📲 MOBILE-FIRST                                                              │
@@ -730,7 +731,6 @@
       }
     }
   }
-
 
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮

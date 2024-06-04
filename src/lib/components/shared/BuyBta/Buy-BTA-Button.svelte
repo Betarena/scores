@@ -92,9 +92,9 @@
 
   onMount(async () => {
 
-  const r = await get(`/api/data/bta/buy/options`);
-  if (r) {
-    $buyOptionsTranslations = r as any;
+  const res = await get(`/api/data/bta/buy/options`);
+  if (res) {
+    $buyOptionsTranslations = res as any;
   }
 });
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
