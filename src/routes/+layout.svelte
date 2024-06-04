@@ -170,12 +170,6 @@
     | "desktop";
   $sessionStore.fixturesTodayNum =
     navbarTranslationData?.scores_header_fixtures_information?.football ?? 0;
-  $: $sessionStore.viewportType =
-    $sessionStore.windowWidth && VIEWPORT_MOBILE_INIT[1]
-      ? "mobile"
-      : VIEWPORT_TABLET_INIT[1]
-      ? "tablet"
-      : "desktop";
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -541,6 +535,7 @@
 
 <svelte:window
   on:resize={() => {
+    sessionStore.updateData([["windowWidth", document.documentElement.clientWidth]]);
     $sessionStore.windowWidth = document.documentElement.clientWidth;
     if (isPWA()) $sessionStore.globalState.add("IsPWA");
     else $sessionStore.globalState.delete("IsPWA");
