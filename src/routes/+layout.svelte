@@ -536,7 +536,6 @@
 <svelte:window
   on:resize={() => {
     sessionStore.updateData([["windowWidth", document.documentElement.clientWidth]]);
-    $sessionStore.windowWidth = document.documentElement.clientWidth;
     if (isPWA()) $sessionStore.globalState.add("IsPWA");
     else $sessionStore.globalState.delete("IsPWA");
     return;
