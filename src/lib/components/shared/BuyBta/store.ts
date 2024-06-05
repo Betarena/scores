@@ -1,16 +1,15 @@
 import { writable, type Writable } from "svelte/store";
 
 
-interface IBuyOptionsTranslations {
-  [key: string]: {
-    "presale": string,
-    "competitions": string,
-    "info_presale": string,
-    "link_presale": string,
-    "info_competitions": string,
-    "link_competitions": string
-  }
+interface IBuyOptionsTranslations
+{
+  "presale": string,
+  "competitions": string,
+  "info_presale": string,
+  "link_presale": string,
+  "info_competitions": string,
+  "link_competitions": string
 }
 
-const buyOptionsTranslations: Writable<IBuyOptionsTranslations> = writable({});
+const buyOptionsTranslations: Writable<IBuyOptionsTranslations> = writable({} as any);
 export default buyOptionsTranslations;

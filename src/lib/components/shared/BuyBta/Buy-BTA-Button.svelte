@@ -31,6 +31,7 @@
   import BuyBtaPopup from "./Buy-BTA-popup.svelte";
   import { get } from "$lib/api/utils.js";
   import buyOptionsTranslations from "./store"
+  import sessionStore  from "$lib/store/session.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -52,8 +53,10 @@
 
   const dispatch = createEventDispatcher();
 
-  $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
+  let prevLang = "";
 
+  $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
+  $: fetchOptions($sessionStore.serverLang)
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -74,30 +77,19 @@
       modalStore.update((s) => ({
         show: true,
         modal: true,
-        component: BuyBtaPopup,
+        component: BuyBtaPopup as any,
       }));
     }
   }
 
-  // #endregion ➤ 🛠️ METHODS
-
-  // #region ➤ 🔄 LIFECYCLE [SVELTE]
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'logic' that should run            │
-  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
-  // │ as soon as 'this' .svelte file is ran.                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  onMount(async () => {
-
-  const res = await get(`/api/data/bta/buy/options`);
-  if (res) {
-    $buyOptionsTranslations = res as any;
+  async function fetchOptions(lang?: string) {
+    if (prevLang === lang || !lang) return;
+    prevLang = lang;
+    const res = await get(`/api/data/main/userguide?userguideId=3&lang=${lang}`) as any;
+    if (res?.content) {
+      $buyOptionsTranslations = res.content as any;
+    }
   }
-});
-  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
 </script>
 
