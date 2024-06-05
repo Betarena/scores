@@ -44,7 +44,7 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  $: data = $buyOptionsTranslations[$userBetarenaSettings.lang as string];
+  $: data = $buyOptionsTranslations;
   $: options = [
     {
       name: data.competitions || "Competitions",
