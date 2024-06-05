@@ -363,7 +363,7 @@
     }
 
     // IMPORTANT
-    $sessionStore.windowWidth = document.documentElement.clientWidth;
+    sessionStore.updateData([["windowWidth", document.documentElement.clientWidth]]);
     // IMPORTANT
     if (isPWA()) $sessionStore.globalState.add("IsPWA");
     else $sessionStore.globalState.delete("IsPWA");
