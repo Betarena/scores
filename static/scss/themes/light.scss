@@ -5,8 +5,8 @@
   --text-color-second-dark: #8c8c8c;
 
   --icon-color: rgba(140, 140, 140, 1);
+  --icon-color-light: #000000;
 
-  --icon-color: rgba(140, 140, 140, 1);
 
   --bg-color-rgb-consts: 255, 255, 255;
   --bg-color: rgb(var(--bg-color-rgb-consts));
@@ -29,5 +29,10 @@
   //Mobile-Menu
   --mobile-menu-bg-color:  rgba(var(--bg-color-rgb-consts), 0.9);
   --box-shadow: 0px 0px 50px 0px rgba(0, 0, 0, 0.15);
+
+  //colors
+  --popup-bg-color: #fff;
+  --popup-contrast-color: #E6E6E6;
+  --popup-hover-color: #F2F2F2
 
 }

@@ -7,34 +7,27 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<script lang="ts">
-  // #region ➤ 📌 VARIABLES
-
-  import { createEventDispatcher } from "svelte";
-  import DefaultAvatar from "./assets/default-avatar.svelte";
+<script>
+  // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'variables' that are to be         │
-  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
   // │ IMPORTANT                                                              │
   // │ Please, structure the imports as follows:                              │
-  // │ 1. export const / let [..]                                             │
-  // │ 2. const [..]                                                          │
-  // │ 3. let [..]                                                            │
-  // │ 4. $: [..]                                                             │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
+  import { modalStore } from "$lib/store/modal";
+  import ModalBackdrop from "./Modal-Backdrop.svelte";
 
-  export let src: string | null = "",
-    /**
-     * @description
-     * avatar size
-     */
-    size = 38;
+  // #endregion ➤ 📦 Package Imports
 
-  const dispatch = createEventDispatcher();
 
-  // #endregion ➤ 📌 VARIABLES
 </script>
 
 <!--
@@ -47,17 +40,15 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<div class="avatar-wrapper" on:click={() => dispatch("click")}>
-  {#if src}
-    <div
-      class="avatar-circle"
-      {...$$restProps}
-      style="width: {size}px; height: {size}px;  background-image: url({src});"
-    />
-  {:else}
-    <DefaultAvatar {size} />
+
+{#if $modalStore.show && $modalStore.component}
+  {#if $modalStore.modal}
+    <ModalBackdrop on:closeModal={() => ($modalStore.show = false)} />
   {/if}
-</div>
+  <div class="modal-content">
+    <svelte:component this={$modalStore.component} />
+  </div>
+{/if}
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -70,13 +61,7 @@
 -->
 
 <style lang="scss">
-  .avatar-circle {
-    width: 38px;
-    height: 38px;
-    border-radius: 100%;
-
-    background-image: url(src);
-    background-repeat: no-repeat;
-    background-size: cover;
+  .modal-content {
+    z-index: 4000;
   }
 </style>

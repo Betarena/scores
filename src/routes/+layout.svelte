@@ -17,6 +17,7 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+	import { fade } from 'svelte/transition';
 	import HeaderRedesigned from './../lib/components/_main_/header/HeaderRedesigned.svelte';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
@@ -69,7 +70,6 @@
   // import '@betarena/ad-engine';
   // import WidgetAdEngine from '@betarena/ad-engine/src/lib/Widget-AdEngine.svelte';
   import WidgetAdEngine from "@betarena/ad-engine";
-  import { modalSore } from "$lib/store/modal.js";
   import {
     routeIdContent,
     routeIdPageCompetitions,
@@ -77,6 +77,7 @@
     routeIdScores,
   } from "$lib/constants/paths.js";
   import FooterRedisign from "$lib/components/_main_/footer/FooterRedisign.svelte";
+  import ModalMain from "$lib/components/misc/modal/ModalMain.svelte";
 
   // ╭─────
   // │ WARNING:
@@ -169,7 +170,6 @@
     | "desktop";
   $sessionStore.fixturesTodayNum =
     navbarTranslationData?.scores_header_fixtures_information?.football ?? 0;
-
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -272,9 +272,7 @@
   //   )[0] as unknown as HTMLElement;
   //   if (intercom != undefined) intercom.style.display = "none";
   // }
-  $: if (
-    browser && $page.route.id == routeIdPageProfile
-  ) {
+  $: if (browser && $page.route.id == routeIdPageProfile) {
     const intercom: HTMLElement = document.getElementsByClassName(
       "intercom-lightweight-app"
     )[0] as unknown as HTMLElement;
@@ -365,7 +363,7 @@
     }
 
     // IMPORTANT
-    $sessionStore.windowWidth = document.documentElement.clientWidth;
+    sessionStore.updateData([["windowWidth", document.documentElement.clientWidth]]);
     // IMPORTANT
     if (isPWA()) $sessionStore.globalState.add("IsPWA");
     else $sessionStore.globalState.delete("IsPWA");
@@ -481,7 +479,8 @@
         d.getElementsByTagName("head")[0].appendChild(s);
       }
       )();
-    </!--> -->
+    </!-->
+    -->
     <script>
       // We pre-filled your app ID in the widget URL: 'https://widget.intercom.io/widget/yz9qn6p3'
       (function () {
@@ -536,7 +535,7 @@
 
 <svelte:window
   on:resize={() => {
-    $sessionStore.windowWidth = document.documentElement.clientWidth;
+    sessionStore.updateData([["windowWidth", document.documentElement.clientWidth]]);
     if (isPWA()) $sessionStore.globalState.add("IsPWA");
     else $sessionStore.globalState.delete("IsPWA");
     return;
@@ -638,9 +637,7 @@
       tablet={VIEWPORT_TABLET_INIT[1]}
     />
   {/if}
-  {#if $modalSore.show && $modalSore.component}
-    <svelte:component this={$modalSore.component} />
-  {/if}
+  <ModalMain />
 </div>
 
 <!--
@@ -654,11 +651,6 @@
 -->
 
 <style lang="scss">
-  :global() {
-    @import url("../../scss/themes/dark.scss");
-    @import url("../../scss/themes/light.scss");
-  }
-
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
   │ 📲 MOBILE-FIRST                                                              │

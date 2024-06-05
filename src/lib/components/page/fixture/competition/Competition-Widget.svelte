@@ -136,7 +136,6 @@
       true,
     ) as B_FIX_COMP_D;
 
-    console.log('response', response);
 
     widgetDataMain = response;
 

@@ -24,10 +24,14 @@ import { dlogv2 } from '$lib/utils/debug.js';
 import type { IPageRouteId, ISessionStore } from '$lib/types/types.session.js';
 import type { B_H_COMP_DATA } from '@betarena/scores-lib/types/_HASURA_.js';
 import type { FIREBASE_livescores_now, FIREBASE_odds, FIRE_LNNS } from '@betarena/scores-lib/types/firebase.js';
+import { viewportChangeV2 } from '$lib/utils/device.js';
 
 // #endregion ➤ 📦 Package Imports
 
 // #region ➤ 📌 VARIABLES
+
+const mobileBreakpoint = 575;
+const tabletBreakpoint = 1160;
 
 const
   /**
@@ -38,6 +42,7 @@ const
       globalState: new Set(),
       page: null,
       deviceType: 'mobile',
+      viewportType: "mobile",
       isUserActive: true,
       windowWidth: 0,
       firebaseListeners: [],
@@ -121,6 +126,7 @@ type IDataProp =
   | 'livescoresFixtureTarget'
   | 'globalStateAdd'
   | 'globalStateRemove'
+  | 'windowWidth'
 ;
 
 /**
@@ -322,6 +328,12 @@ function createLocalStore
             else if (dataTarget == 'globalStateRemove')
             {
               sessionStoreObj.globalState.delete(dataPoint);
+            }
+            else if (dataTarget == 'windowWidth')
+            {
+              sessionStoreObj.windowWidth = dataPoint;
+              const [isMobile, isTablet] = viewportChangeV2(dataPoint, mobileBreakpoint, tabletBreakpoint);
+              sessionStoreObj.viewportType = dataPoint && isMobile ? 'mobile' : isTablet ? 'tablet' : 'desktop';
             }
           }
 

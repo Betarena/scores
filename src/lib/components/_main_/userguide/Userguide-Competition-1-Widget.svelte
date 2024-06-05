@@ -30,7 +30,7 @@
 	import sessionStore from "$lib/store/session.js";
 
 	import type { B_USRG_D } from '@betarena/scores-lib/types/types.misc.userguide.js';
-  import { modalSore } from '$lib/store/modal.js';
+  import { modalStore } from '$lib/store/modal.js';
 
   // ### NOTE: || WARNING:
   // ### Disable, if Dynamic Import is Enabled.
@@ -128,14 +128,16 @@
 
 			widgetNoData = true;
       $sessionStore.showUserguide1Conf = false;
-      $modalSore.show = true;
+      $modalStore.modal = false;
+      $modalStore.show = true;
 
       return;
 		}
 
     widgetNoData = false;
     $sessionStore.showUserguide1Conf = true;
-    $modalSore.show = true;
+    $modalStore.modal = false;
+    $modalStore.show = true;
 
     // ### [🐞]
     // alert('🎟️');
