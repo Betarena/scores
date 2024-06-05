@@ -560,11 +560,13 @@
   class:dark-mode={theme == "Dark"}
   class:light-mode={theme == "Light"}
 >
-  <WidgetAdEngine
-    authorId={$page.data.dataArticle?.author?.id}
-    authorArticleTagIds={$page.data.dataArticle?.article?.tags}
-    isDarkTheme={theme == "Dark"}
-  />
+  {#key $page.route.id}
+    <WidgetAdEngine
+      authorId={$page.data.dataArticle?.author?.id}
+      authorArticleTagIds={$page.data.dataArticle?.article?.tags}
+      isDarkTheme={theme == "Dark"}
+    />
+  {/key}
 
   <SplashScreen />
 
