@@ -82,7 +82,6 @@
     }
   }
 
-
   async function fetchOptions(lang?: string) {
     if (prevLang === lang || !lang) return;
     prevLang = lang;
@@ -92,7 +91,6 @@
     }
   }
 
-  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <Button type="primary" on:click={click}>

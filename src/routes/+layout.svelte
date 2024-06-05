@@ -70,7 +70,6 @@
   // import '@betarena/ad-engine';
   // import WidgetAdEngine from '@betarena/ad-engine/src/lib/Widget-AdEngine.svelte';
   import WidgetAdEngine from "@betarena/ad-engine";
-  import { modalStore } from "$lib/store/modal.js";
   import {
     routeIdContent,
     routeIdPageCompetitions,
@@ -78,7 +77,7 @@
     routeIdScores,
   } from "$lib/constants/paths.js";
   import FooterRedisign from "$lib/components/_main_/footer/FooterRedisign.svelte";
-    import { fade } from "svelte/transition";
+  import ModalMain from "$lib/components/misc/modal/ModalMain.svelte";
 
   // ╭─────
   // │ WARNING:
@@ -171,7 +170,6 @@
     | "desktop";
   $sessionStore.fixturesTodayNum =
     navbarTranslationData?.scores_header_fixtures_information?.football ?? 0;
-  $: $sessionStore.viewportType = $sessionStore.windowWidth && VIEWPORT_MOBILE_INIT[1] ? "mobile" : VIEWPORT_TABLET_INIT[1] ? "tablet" : "desktop";
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -537,7 +535,7 @@
 
 <svelte:window
   on:resize={() => {
-    $sessionStore.windowWidth = document.documentElement.clientWidth;
+    sessionStore.updateData([["windowWidth", document.documentElement.clientWidth]]);
     if (isPWA()) $sessionStore.globalState.add("IsPWA");
     else $sessionStore.globalState.delete("IsPWA");
     return;
@@ -639,12 +637,7 @@
       tablet={VIEWPORT_TABLET_INIT[1]}
     />
   {/if}
-  {#if $modalStore.show && $modalStore.component}
-    {#if $modalStore.modal}
-    <div class="modal-popup" in:fade out:fade on:click|preventDefault={() => ($modalStore.show = false)}/>
-    {/if}
-    <svelte:component this={$modalStore.component} />
-  {/if}
+  <ModalMain />
 </div>
 
 <!--
@@ -658,7 +651,6 @@
 -->
 
 <style lang="scss">
-
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
   │ 📲 MOBILE-FIRST                                                              │
@@ -732,16 +724,6 @@
         padding: 0;
       }
     }
-  }
-  .modal-popup {
-    /* 📌 position */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
   }
 
   /*
