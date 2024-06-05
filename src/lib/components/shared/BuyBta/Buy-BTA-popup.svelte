@@ -88,7 +88,9 @@
       <IconArrowRight color="var(--icon-color-light)" />
     </a>
     {#if i !== options.length - 1}
-      <div class="separator" />
+      <div class="separator-wrapper">
+        <div class="separator" />
+      </div>
     {/if}
   {/each}
 </div>
@@ -108,11 +110,9 @@
     position: fixed;
 
     z-index: 1000;
-    border-radius: 16px 16px 0px 0px;
     max-width: 100%;
     display: inline-flex;
     background-color: var(--popup-bg-color);
-    padding: 24px 16px 24px 20px;
     border-radius: 16px;
     left: 50%;
     top: 50%;
@@ -120,7 +120,6 @@
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-    gap: 16px;
 
     :global(svg) {
       width: 20px !important;
@@ -130,6 +129,7 @@
     &.mobile {
       border-radius: 16px 16px 0px 0px;
       transform: unset;
+      background-color: var(--popup-bg-color);
       top: unset;
       bottom: 0;
       left: 50%;
@@ -138,6 +138,10 @@
 
       .option {
         width: 100%;
+
+        &:last-child {
+          border-radius: 0;
+        }
       }
     }
   }
@@ -148,6 +152,21 @@
     max-width: 100%;
     justify-content: space-between;
     align-items: center;
+    padding: 16px 20px;
+    background-color: var(--popup-bg-color);
+
+    &:first-child {
+      padding-top: 24px;
+      border-radius: 16px 16px 0px 0px;
+    }
+    &:last-child {
+      padding-bottom: 24px;
+      border-radius: 0px 0px 16px 16px;
+    }
+
+    &:hover {
+      background-color: var(--popup-hover-color);
+    }
 
     .label {
       display: flex;
@@ -166,9 +185,17 @@
       }
     }
   }
-  .separator {
+  .separator-wrapper {
     width: 100%;
-    height: 1px;
-    background: var(--popup-contrast-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 20px;
+    background-color: var(--popup-bg-color);
+    .separator {
+      width: 100%;
+      height: 1px;
+      background: var(--popup-contrast-color);
+    }
   }
 </style>
