@@ -121,7 +121,6 @@
   {#each widgetDataMain.mapArticle ?? [] as [_id, article]}
     <h2>{article?.data?.title}</h2>
     <a href={`/a/${article?.permalink}`}>{article?.data?.title}</a>
-    {@html article?.data?.content}
   {/each}
 </SeoBox>
 
