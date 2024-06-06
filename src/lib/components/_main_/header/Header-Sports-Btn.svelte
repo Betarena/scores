@@ -99,16 +99,20 @@
      * @description
      *  📣 (default) sport icon.
     */
-    sportIcon: string,
+    sportIcon: string
     /**
      * @description
      *  📣 (default) sport link.
     */
-    sportLink: string
-      = $sessionStore.serverLang == 'en'
-        ? `/${removeDiacritics(sportTranslation.toLowerCase())}`
-        : `/${$sessionStore.serverLang}/${removeDiacritics(sportTranslation.toLowerCase())}`
+    // sportLink: string // this code will be usful when we have more sports options
+    //   = $sessionStore.serverLang == 'en'
+    //     ? `/${removeDiacritics(sportTranslation.toLowerCase())}`
+    //     : `/${$sessionStore.serverLang}/${removeDiacritics(sportTranslation.toLowerCase())}`
   ;
+  $: sportLink
+      = $sessionStore.serverLang == 'en'
+        ? `/scores`
+        : `/${$sessionStore.serverLang}/scores`
 
   // #endregion ➤ 📌 VARIABLES
 
