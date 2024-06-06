@@ -120,7 +120,7 @@
   <h1>{tags.get(widgetDataMain.tagId)?.name}</h1>
   {#each widgetDataMain.mapArticle ?? [] as [_id, article]}
     <h2>{article?.data?.title}</h2>
-    <a href={`/a/${article?.permalink}`}>{article?.data?.title}</a>
+    <a href={`${$page.url.origin}/a/${article?.permalink}`}>{article?.data?.title}</a>
     {@html article?.data?.content}
   {/each}
 </SeoBox>
