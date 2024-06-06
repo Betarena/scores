@@ -61,7 +61,6 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 	class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
 >
 
-	{#if viewportDesktop}
 
 		<div
       class=
@@ -168,7 +167,6 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
 		</div>
 
-	{/if}
 
 </div>
 
