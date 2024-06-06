@@ -753,7 +753,7 @@
                     <br />
                   {/if}
 
-                  {placeholderData?.home}%
+                  {Math.round(parseFloat(B_FEATM_D.probabilities?.home || ""))}%
                 </p>
 
               {:else if B_FEATM_D.match_votes != undefined}
@@ -823,7 +823,7 @@
                   <span
                     class:active_p={fixtureVoteObj?.fixture_vote == 'X'}
                   >
-                    {placeholderData?.draw}
+                  {placeholderData?.draw}
                   </span>
                 </p>
               </button>
@@ -846,7 +846,8 @@
                     <br />
                   {/if}
 
-                  {placeholderData?.draw}%
+                  {Math.round(parseFloat(B_FEATM_D.probabilities?.draw || ""))}%
+
 
                 </p>
 
@@ -928,8 +929,7 @@
                   {#if !tabletExclusive}
                     <br />
                   {/if}
-
-                  {placeholderData?.away}%
+                  {Math.round(parseFloat(B_FEATM_D.probabilities?.away || ""))}%
 
                 </p>
               {:else if B_FEATM_D.match_votes != undefined}
