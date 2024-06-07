@@ -381,9 +381,7 @@
 			<FeatMatchWidget />
 			<TopGoalScorersWidget />
 
-			{#if tabletExclusive && !mobileExclusive}
-				<LeaguesTableWidget />
-			{/if}
+      <LeaguesTableWidget />
 
 			<SeoBlock />
 		</div>
