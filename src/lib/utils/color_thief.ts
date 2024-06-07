@@ -21,11 +21,11 @@ import ColorThief from 'colorthief/dist/color-thief.mjs';
 const colorThief = new ColorThief();
 
 /**
- * 
- * @param r 
- * @param g 
- * @param b 
- * @returns 
+ *
+ * @param r
+ * @param g
+ * @param b
+ * @returns
  */
 export const rgbToHex = (
   r,
@@ -71,7 +71,7 @@ export function getImageBgColor
       'load',
       () =>
       {
-        const colorValues =	colorThief.getColor(img),
+        const colorValues = colorThief.getColor(img),
 
           // convert RGB => HEX;
           hexColor: string = rgbToHex
@@ -92,11 +92,10 @@ export function getImageBgColor
     );
     // [ℹ] declaring the image paramaters & CORS by-pass
     const
-      imageURL = imgURL,
-      googleProxyURL = 'https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&refresh=2592000&url='
+      imageURL = imgURL
     ;
-    img.crossOrigin = 'Anonymous';
-    img.src =	`${googleProxyURL}${encodeURIComponent(imageURL)}`;
+    img.crossOrigin = 'anonymous';
+    img.src = imageURL;
   }
   catch (e)
   {
