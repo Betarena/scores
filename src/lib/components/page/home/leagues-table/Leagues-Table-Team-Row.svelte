@@ -10,7 +10,7 @@
 	import { fade } from 'svelte/transition';
 
 	import userBetarenaSettings from '$lib/store/user-settings.js';
-
+  import sessionStore  from '$lib/store/session.js';
 	import type { Single_Team_Object_Data } from '$lib/models/leagues_table/types';
 
   // #endregion ➤ 📦 Package Imports
@@ -58,6 +58,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   "
   league-table-team-row
   "
+  class:mobile={$sessionStore.viewportType === 'mobile'}
 	class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
 >
 
@@ -111,6 +112,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         TEAM NAME
         -->
 				<div
+          class="team-name"
           style="margin-left: 16px;"
         >
 					<p
@@ -175,7 +177,7 @@ COMPONENT STYLE
 NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
 =================-->
 
-<style>
+<style lang="scss">
 
 	.league-table-team-row
   {
@@ -252,6 +254,16 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		}
 
 	}
+
+  .mobile {
+    div.team-pos {
+      margin-right: 12px;
+      flex-shrink: 0;
+      }
+    .team-name {
+      margin-left: 10px !important;
+    }
+  }
 
 	/*
   =============
