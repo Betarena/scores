@@ -18,6 +18,7 @@ COMPONENT JS (w/ TS)
 
 	import type { B_INC_D, B_INC_T } from '@betarena/scores-lib/types/incidents.js';
 	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
+  import type { B_H2H_D } from '@betarena/scores-lib/types/head-2-head.js';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -27,13 +28,14 @@ COMPONENT JS (w/ TS)
   let WIDGET_S_DATA: B_INC_D = $page.data?.FIXTURE_INCIDENTS
   let WIDGET_T_DATA: B_INC_T = $page.data?.FXITURE_INCIDENTS_TRANSLATION
   let WIDGET_DATA: B_INC_D;
+  let H2H_D: B_H2H_D;
   let NO_WIDGET_DATA: boolean = true // [ℹ] default (true)
 
   $: PAGE_DATA = $page.data?.PAGE_DATA
   $: WIDGET_S_DATA = $page.data?.FIXTURE_INCIDENTS
   $: WIDGET_T_DATA = $page.data?.FXITURE_INCIDENTS_TRANSLATION
   $: WIDGET_TITLE = WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.title || 'Incidents' : 'Incidents'
-
+  $: H2H_D = $page.data?.FIXTURE_H2H;
   $: deepReactListenPageChange = JSON.stringify($page?.url?.pathname);
   $: deepReactListenLangChng = JSON.stringify($sessionStore?.serverLang);
 
@@ -154,6 +156,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   {#if !NO_WIDGET_DATA}
     <IncidentsMain
       FIXTURE_INCIDENTS={WIDGET_DATA}
+      FIXTURE_H2H={H2H_D}
       FXITURE_INCIDENTS_TRANSLATION={WIDGET_T_DATA}
     />
   {/if}

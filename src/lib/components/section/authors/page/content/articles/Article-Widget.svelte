@@ -154,7 +154,7 @@
     // IMPORTANT
     if (!browser) return;
 
-    await sleep(1500);
+    // await sleep(1500);
 
     return;
   }
