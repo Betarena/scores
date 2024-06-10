@@ -43,6 +43,7 @@
 
   import type { B_SAP_HP_T } from '@betarena/scores-lib/types/seo-pages.js';
   import type { Unsubscribe } from 'firebase/database';
+  import SportsNavigation from '$lib/components/shared/SportNavigation/SportsNavigation.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -320,6 +321,10 @@
 ### access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.         ◼️
 ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 -->
+
+{#if $sessionStore.viewportType == "mobile"}
+  <SportsNavigation />
+{/if}
 
 <section
   id="home-page"
