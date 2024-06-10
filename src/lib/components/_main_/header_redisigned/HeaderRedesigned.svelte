@@ -16,6 +16,7 @@
   import SeoBox from "$lib/components/SEO-Box.svelte";
   import sessionStore from "$lib/store/session.js";
   import { viewportChangeV2 } from "$lib/utils/device";
+  import { routeIdContent } from "$lib/constants/paths.js";
   import MobileHeader from "./MobileHeader.svelte";
   import Header from "./Header.svelte";
   import { page } from "$app/stores";
@@ -109,7 +110,7 @@
   </a>
 </SeoBox>
 
-<header class:mobile>
+<header class:mobile class:dark-mode={$page.route.id !== routeIdContent}>
   {#if mobile || tablet}
     <MobileHeader {mobile} {tablet} />
   {:else}
