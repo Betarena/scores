@@ -224,7 +224,7 @@
       class=
       "
       color-white
-      s-14
+      s-{$sessionStore.viewportType == 'mobile' ? 12 : 14}
       sport-counter-dark
       "
     >
@@ -249,7 +249,6 @@
   div.sports-box
   {
     /* 🎨 style */
-		height: 44px;
 
     &:hover p.capitalize
     {

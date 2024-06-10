@@ -22,7 +22,7 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
   import { page } from "$app/stores";
-  import HeaderSportsBtn from "../../_main_/header/Header-Sports-Btn.svelte";
+  import HeaderSportsBtn from "./SportsNavBtn.svelte";
   import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
 
   // #endregion ➤ 📦 Package Imports
@@ -90,6 +90,7 @@
   .wrapper {
     display: flex;
     padding: 20px 16px;
+    height: 64px;
     border-top: 1px solid #4b4b4b;
     border-bottom: 1px solid #4b4b4b;
     background: #292929;
