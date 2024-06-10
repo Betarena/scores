@@ -257,7 +257,7 @@
           <a
             aria-label="fixture-post-link"
             href='/a/{item.permalink}'
-            target="_blank"
+            target="_self"
           >
             <div
               class=
