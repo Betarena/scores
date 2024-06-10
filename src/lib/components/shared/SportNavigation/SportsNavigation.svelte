@@ -22,7 +22,7 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
   import { page } from "$app/stores";
-  import HeaderSportsBtn from "../header/Header-Sports-Btn.svelte";
+  import HeaderSportsBtn from "../../_main_/header/Header-Sports-Btn.svelte";
   import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
 
   // #endregion ➤ 📦 Package Imports

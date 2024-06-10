@@ -78,7 +78,6 @@
   } from "$lib/constants/paths.js";
   import FooterRedisign from "$lib/components/_main_/footer/FooterRedisign.svelte";
   import ModalMain from "$lib/components/misc/modal/ModalMain.svelte";
-  import SportsNavigation from "$lib/components/_main_/header_redisigned/SportsNavigation.svelte";
 
   // ╭─────
   // │ WARNING:
@@ -607,9 +606,6 @@
 
   {#if $page.route.id === routeIdContent || ($page.route.id === routeIdScores && $sessionStore.viewportType === "mobile")}
     <HeaderRedesigned />
-    {#if $page.route.id === routeIdScores}
-       <SportsNavigation />
-    {/if}
   {:else}
     <Header />
   {/if}
