@@ -413,7 +413,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         href={FIXTURE_D?.tips[
           server_side_language
         ]}
-        target="_blank"
+        target="_self"
         class="width-auto"
       >
         <div
