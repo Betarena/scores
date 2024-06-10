@@ -433,7 +433,7 @@
           {#each (B_LEGL_D?.top_geo_leagues ?? []) as item}
 
             <a
-              href={item?.urls?.[B_LEGL_T?.lang]}
+              href={`/${item?.urls?.[B_LEGL_T?.lang]}`}
             >
 
               <div
@@ -587,7 +587,7 @@
                 {#each (countryLeagues ?? []) as league}
 
                   <a
-                    href={league?.urls?.[B_LEGL_T?.lang]}
+                    href={`/${league?.urls?.[B_LEGL_T?.lang]}`}
                   >
 
                     <div
@@ -688,7 +688,7 @@
           {#each leagueSearchData?.slice(0, fullLeagueListDisplayNum) ?? [] as item}
 
             <a
-              href={item.urls?.[B_LEGL_T?.lang]}
+              href={`/${item.urls?.[B_LEGL_T?.lang]}`}
             >
 
               <div
@@ -851,7 +851,7 @@
 
                 {#each leagueListMap.get(selectedCountryLeagueId) as league}
                   <a
-                    href={league?.urls?.[B_LEGL_T.lang]}
+                    href={`/${league?.urls?.[B_LEGL_T.lang]}`}
                   >
 
                     <div
