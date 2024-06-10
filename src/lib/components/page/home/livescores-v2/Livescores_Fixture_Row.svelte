@@ -410,9 +410,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         trigger_google_events(
           'livescore_betting_tips'
         )}
-        href={FIXTURE_D?.tips[
-          server_side_language
-        ]}
+        href={FIXTURE_D?.tips[server_side_language] == undefined ? '' : FIXTURE_D?.tips[server_side_language].replace('https://scores.betarena.com','')}
         target="_self"
         class="width-auto"
       >
