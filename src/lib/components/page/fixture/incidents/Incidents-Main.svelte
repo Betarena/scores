@@ -21,10 +21,6 @@
     B_INC_D,
     B_INC_T,
   } from "@betarena/scores-lib/types/incidents.js";
-  import type {
-    B_H2H_D,
-    H2H_D_Teams,
-  } from "@betarena/scores-lib/types/head-2-head.js";
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -32,9 +28,7 @@
 
   export let FIXTURE_INCIDENTS: B_INC_D;
   export let FXITURE_INCIDENTS_TRANSLATION: B_INC_T;
-  export let FIXTURE_H2H: B_H2H_D;
   const MOBILE_VIEW = 725;
-  const teamsMap = new Map<number, H2H_D_Teams>(FIXTURE_H2H?.teams_map);
   const TABLET_VIEW = 1000;
 
   let mobileExclusive = false;
@@ -229,7 +223,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             "
           >
             {#if $sessionStore.viewportType === "mobile"}
-              {teamsMap.get(FIXTURE_INCIDENTS?.home?.team_id || 0)?.team_short}
+              {FIXTURE_INCIDENTS?.home?.team_short_code}
             {:else}
               {FIXTURE_INCIDENTS?.home?.team_name}
             {/if}
@@ -252,7 +246,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             "
           >
             {#if $sessionStore.viewportType === "mobile"}
-              {teamsMap.get(FIXTURE_INCIDENTS?.away?.team_id || 0)?.team_short}
+              {FIXTURE_INCIDENTS?.away?.team_short_code}
             {:else}
               {FIXTURE_INCIDENTS?.away?.team_name}
             {/if}
