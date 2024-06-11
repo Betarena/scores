@@ -1,176 +1,40 @@
-//#region ➤ Package Imports
+// ╭──────────────────────────────────────────────────────────────────╮
+// │ 📑 DESCRIPTION                                                   │
+// │ :|: Fixture Content Data Endpoint                                │
+// ╰──────────────────────────────────────────────────────────────────╯
 
-import { json } from '@sveltejs/kit';
+// #region ➤ 📦 Package
 
-import { FCONT_FP_ENTRY, FCONT_FP_ENTRY_0 } from '@betarena/scores-lib/dist/functions/func.fixture.content.js';
+// ╭──────────────────────────────────────────────────────────────────╮
+// │ NOTE:                                                            │
+// │ Please add inside 'this' region the 'imports' that are required  │
+// │ by 'this' .svelte file is ran.                                   │
+// │ IMPORTANT                                                        │
+// │ Please, structure the imports as follows:                        │
+// │ 1. svelte/sveltekit, external imports                            │
+// │ 2. project-internal files and logic                              │
+// │ 5. type(s) imports(s)                                            │
+// ╰──────────────────────────────────────────────────────────────────╯
 
-import type { B_H_EC } from '@betarena/scores-lib/types/_HASURA_.js';
-import type { B_H2H_T } from '@betarena/scores-lib/types/head-2-head.js';
+import dotenv from 'dotenv';
 
-//#endregion ➤ Package Imports
+import { main } from '$lib/sveltekit/endpoint/fixture.content.js';
 
-//#region ➤ [METHODS]
+// #endregion ➤ 📦 Package
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-//  [MAIN] ENDPOINT METHOD
-// ~~~~~~~~~~~~~~~~~~~~~~~~
+// ╭─────
+// │ IMPORTANT
+// │ Loads environment secrets
+// ╰─────
+dotenv.config();
 
 export async function GET
 (
-  req
-): Promise < unknown >
+  request
+)
 {
-  try
-  {
-    // NOTE: Handle url-query data;
-    const lang: string = req?.url?.searchParams?.get('lang');
-	  const fixture_id: string = req?.url?.searchParams?.get('fixture_id');
-    const hasura: string = req?.url?.searchParams?.get('hasura');
-
-    // ACTION: Get Fixture Content (WIDGET) MAIN data;
-    // NOTE: With [HASURA] Fallback;
-    const if_M_0: boolean =
-      fixture_id != undefined
-      && lang != undefined
-    ;
-    if (if_M_0)
-    {
-      const _fixture_id = parseInt(fixture_id)
-      let data = null;
-      let loadType = "cache";
-
-      // NOTE: check CACHE;
-      // if (!hasura)
-      // {
-      //   data =
-      //     await new _Redis().rHGET
-      //     (
-      //       RedisKeys.LIN_C_D_A,
-      //       fixture_id
-      //     )
-      //   ;
-      // }
-
-      // NOTE: (default) HASURA fallback;
-      if (!data || hasura)
-      {
-        data = await fallbackMainData
-        (
-          _fixture_id,
-          lang
-        )
-        loadType = 'HASURA'
-      }
-
-      console.log(`📌 loaded [FCONT] with: ${loadType}`)
-
-      if (data != undefined) return json(data);
-    }
-
-    // ACTION: Get Fixture Content (WIDGET) TRANSLATION data;
-    // NOTE: With [HASURA] Fallback;
-    const if_M_1: boolean =
-      lang != undefined
-    ;
-    if (if_M_1)
-    {
-      // TODO: LIN_C_T_A
-      const data =	await fallbackMainData_1
-      (
-        lang
-      );
-      if (data != undefined) return json(data);
-    }
-
-    // IMPORTANT - fallback to NULL
-    return json
-    (
-      null
-    );
-  }
-  catch (ex)
-  {
-    console.error
-    (
-      '❌ Err: ',
-      ex
-    );
-    return json
-    (
-      null,
-      {
-        status: 400,
-        statusText: 'Uh-oh! There has been an error'
-      }
-    );
-  }
-}
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-//  [MAIN] METHOD
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-
-/**
- * @summary
- * [MAIN] [FALLBACK] [#0]
- * @description
- * ➨ fixture (lineup) widget main data (hasura) fallback;
- * @param
- * {number} fixId
- * @returns
- * Promise < B_PSTAT_D >
- */
-async function fallbackMainData
-(
-  fixtureId: number,
-  lang: string
-): Promise < B_H_EC[] >
-{
-  const dataRes0 = await FCONT_FP_ENTRY
+  return await main
   (
-    [fixtureId]
+    request
   );
-
-  if (dataRes0?.[0]?.size == 0)
-  {
-    return null
-  }
-
-  const key = `${fixtureId}_${lang}`
-
-	return dataRes0?.[0]?.get(key);
 }
-
-/**
- * @summary
- * [MAIN] [FALLBACK] [#1] method
- * @version
- * 1.0 - past versions: []
- * @param
- * {string} lang
- * @returns
- * Promise < B_PSEO_T >
- */
-async function fallbackMainData_1
-(
-  lang: string
-): Promise < B_H2H_T >
-{
-  const dataRes0 = await FCONT_FP_ENTRY_0
-  (
-    [lang]
-  );
-
-  if (dataRes0?.[0]?.size == 0)
-  {
-    return null
-  }
-
-	return dataRes0?.[0]?.get(lang);
-}
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-//  [HELPER] OTHER METHODS
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-
-//#endregion ➤ [METHODS]

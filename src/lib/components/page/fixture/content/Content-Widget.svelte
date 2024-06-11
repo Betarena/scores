@@ -1,190 +1,186 @@
-<!-- ===============
-COMPONENT JS (w/ TS)
-=================-->
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 📌 High Order Component Overview                                                 │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Internal Svelte Code Format :|: V.8.0                                          │
+│ ➤ Status :|: 🔒 LOCKED                                                           │
+│ ➤ Author(s) :|: @migbash                                                         │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ 📝 Description                                                                   │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ Scores Fixture Content Widget                                                    │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 🟦 Svelte Component JS/TS                                                        │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
 
 <script lang="ts">
 
-  //#region ➤ [MAIN] Package Imports
+  // #region ➤ 📦 Package Imports
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 
   import sessionStore from '$lib/store/session.js';
-  import { CO_W_F_STY, CO_W_F_TAG, CO_W_F_TOG, dlog } from '$lib/utils/debug.js';
 
 	import SeoBox from '$lib/components/SEO-Box.svelte';
 	import ContentLoader from './Content-Loader.svelte';
 	import ContentMain from './Content-Main.svelte';
 
-	import type { B_CONT_D, B_CONT_T } from '@betarena/scores-lib/types/content.js';
+  import type { IFixtureContentDataFinal, IFixtureContentTranslationFinal } from '@betarena/scores-lib/types/v8/fixture.content.js';
 
-  //#endregion ➤ [MAIN] Package Imports
+  // #endregion ➤ 📦 Package Imports
 
-  //#region ➤ [VARIABLES]
+  // #region ➤ 📌 VARIABLES
 
-  let WIDGET_S_DATA: B_CONT_D[] = $page.data?.FIXTURE_CONTENT
-  let WIDGET_T_DATA: B_CONT_T = $page.data?.FIXTURE_CONTENT_TRANSLATION
-  let WIDGET_DATA: B_CONT_D[];
-  let NO_WIDGET_DATA: boolean = true // [ℹ] default (true)
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
-  $: WIDGET_S_DATA = $page.data?.FIXTURE_CONTENT
-  $: WIDGET_T_DATA = $page.data?.FIXTURE_CONTENT_TRANSLATION
+  $: ({ serverLang } = $sessionStore);
+  $: ({ pathname } = $page.url);
 
-  $: deepReactListenPageChange = JSON.stringify($page?.url?.pathname);
-  $: deepReactListenLangChng = JSON.stringify($sessionStore?.serverLang);
+  $: dataMain = $page.data.FIXTURE_CONTENT as IFixtureContentDataFinal[] | null | undefined;
+  $: dataTranslation = $page.data.FIXTURE_CONTENT_TRANSLATION as IFixtureContentTranslationFinal | null | undefined;
 
-  //#endregion ➤ [VARIABLES]
+  // #endregion ➤ 📌 VARIABLES
 
-  //#region ➤ [MAIN-METHODS]
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
   /**
+   * @author
+   *  @migbash
    * @summary
-   * [MAIN] [INIT]
+   *  🟩 MAIN
    * @description
-   * main widget data loader,
-   * (and) try..catch (error) handler
-   * (and) placeholder handler
+   *  📣 main widget data loader
+   *  - ⚡️ (and) try..catch (error) handler
+   *  - ⚡️ (and) placeholder handler
+   * @returns { Promise < void > }
    */
   async function widgetInit
   (
-  ): Promise < B_CONT_D[] >
+  ): Promise < void >
   {
-		// await sleep(3000);
+    // IMPORTANT
+    if (!browser) return;
 
-    WIDGET_DATA = WIDGET_S_DATA
-
-    const if_M_0: boolean =
-      WIDGET_DATA == undefined
-      || WIDGET_DATA?.length == 0
-    ;
-		if (if_M_0)
-    {
-      // [🐞]
-      dlog
-      (
-        `${CO_W_F_TAG} ❌ no data available!`,
-        CO_W_F_TOG,
-        CO_W_F_STY
-      );
-			NO_WIDGET_DATA = true;
-			return;
-		}
-
-    NO_WIDGET_DATA = false;
-    return WIDGET_DATA
+    return;
   }
 
-  //#endregion ➤ [METHODS]
+  // #endregion ➤ 🛠️ METHODS
 
-  //#region ➤ [ONE-OFF] [METHODS] [HELPER] [IF]
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
 
-  //#endregion ➤ [ONE-OFF] [METHODS] [IF]
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
-  //#region ➤ [REACTIVIY] [METHODS]
-
-  /**
-   * @summary
-   * [MAIN] [REACTIVE]
-   * @description
-   * listens to target "language" change;
-  */
-  $: if_R_0 =
-    browser
+  $: if (browser && (pathname || serverLang))
+    widgetInit();
   ;
-  $: if (if_R_0 && (deepReactListenLangChng || deepReactListenPageChange))
-  {
-    widgetInit()
-  }
 
-  //#endregion ➤ [REACTIVIY] [METHODS]
-
-  //#region ➤ SvelteJS/SvelteKit [LIFECYCLE]
-
-  //#endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
 </script>
 
-<!-- ===================
-SVELTE INJECTION TAGS
-=================== -->
-
-<svelte:head>
-  <!-- <add> -->
-</svelte:head>
-
-<!-- ===============
-COMPONENT HTML
-NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
-=================-->
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 💠 Svelte Component HTML                                                         │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
 
 <SeoBox>
-  <!--
-  WIDGET TITLE
-  -->
-  <h2>
-    {WIDGET_T_DATA?.news_and_views}
-  </h2>
-  <!--
-  widget-contents list
-  -->
-  {#each WIDGET_S_DATA || [] as item}
-    <a href={item.link}>
-      {item.link}
-    </a>
-    <h3>{item.title}</h3>
-    <p>{item.excerpt}</p>
+  <h2> {dataTranslation?.news_and_views} </h2>
+  {#each dataMain ?? [] as item}
+    <a href=/a/{item.permalink}> {item.permalink} </a>
+    <h3> {item.title} </h3>
+    <p> {item.data?.seo_title} </p>
+    <p> {item.data?.content} </p>
+    <p> {item.data?.meta_description} </p>
   {/each}
 </SeoBox>
 
 <!-- [🐞] -->
 <!-- <ContentLoader /> -->
 
-<!--
-[ℹ] main widget
--->
 {#await widgetInit()}
   <!--
-  promise is pending
+  ╭────────────────────────────────────────────────────────────────────────╮
+  │ NOTE :|: promise is pending                                            │
+  ╰────────────────────────────────────────────────────────────────────────╯
   -->
   <ContentLoader />
+
 {:then data}
   <!--
-  promise was fulfilled
+  ╭────────────────────────────────────────────────────────────────────────╮
+  │ NOTE :|: promise is fulfilled                                          │
+  ╰────────────────────────────────────────────────────────────────────────╯
   -->
-  {#if !NO_WIDGET_DATA}
+
+  {#if (dataMain?.length ?? 0) > 0}
     <ContentMain
-      FIXTURE_CONTENT={WIDGET_DATA}
-      FIXTURE_CONTENT_TRANSLATION={WIDGET_T_DATA}
+      FIXTURE_CONTENT={dataMain}
+      FIXTURE_CONTENT_TRANSLATION={dataTranslation}
     />
   {/if}
+
 {:catch error}
   <!--
-  promise was rejected
+  ╭────────────────────────────────────────────────────────────────────────╮
+  │ NOTE :|: promise is rejected                                           │
+  ╰────────────────────────────────────────────────────────────────────────╯
   -->
+
 {/await}
-
-<!-- ===============
-COMPONENT STYLE
-NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
-=================-->
-
-<style>
-
-  /*
-  =============
-  RESPONSIVNESS
-  =============
-  */
-
-  @media only screen
-    and (min-width: 726px)
-    and (max-width: 1000px) {
-  }
-
-  /*
-  =============
-  DARK-THEME
-  =============
-  */
-
-</style>
