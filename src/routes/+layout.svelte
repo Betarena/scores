@@ -604,7 +604,7 @@
     <!-- <EmailSubscribe /> -->
   {/if}
 
-  {#if $page.route.id === routeIdContent}
+  {#if $page.route.id === routeIdContent || ($page.route.id === routeIdScores && $sessionStore.viewportType === "mobile")}
     <HeaderRedesigned />
   {:else}
     <Header />
