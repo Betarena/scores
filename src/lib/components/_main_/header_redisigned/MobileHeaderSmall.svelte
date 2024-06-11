@@ -32,6 +32,7 @@
   import BackButton from "$lib/components/ui/BackButton.svelte";
   import Avatar from "$lib/components/ui/Avatar.svelte";
   import { createEventDispatcher } from "svelte";
+  import UserDropdownPopup from "./UserDropdownPopup.svelte";
 
   // #endregion ➤ 📦 Package Imports
   // #region ➤ 📌 VARIABLES
@@ -91,15 +92,20 @@
   {#if !isPWA}
     <LogoButton {mobile} {tablet} />
   {:else}
-    <BackButton/>
+    <BackButton />
   {/if}
 
   <div class="actions">
-    <Avatar
-      src={profile_photo}
-      size={32}
-      on:click={() => (isAuth ? dispatch("avatarClick") : signIn())}
-    />
+    <div class="avatar-wrapper" on:click|stopPropagation>
+      <Avatar
+        src={profile_photo}
+        size={32}
+        on:click={() => isAuth ? dispatch("avatarClick") : signIn()}
+      />
+      {#if $scoresNavbarStore.globalState.has("UserDropdownActive")}
+          <UserDropdownPopup />
+        {/if}
+    </div>
   </div>
 </div>
 
@@ -139,6 +145,10 @@
       align-items: center;
       justify-content: flex-end;
       display: flex;
+    }
+    .avatar-wrapper {
+      position: relative;
+      cursor: pointer;
     }
   }
 </style>

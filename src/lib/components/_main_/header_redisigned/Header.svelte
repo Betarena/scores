@@ -40,6 +40,7 @@
   import HeaderNavigation from "./HeaderNavigation.svelte";
   import { promiseUrlsPreload } from "$lib/utils/navigation.js";
   import { createEventDispatcher } from "svelte";
+  import UserDropdownPopup from "./UserDropdownPopup.svelte";
 
   // #endregion ➤ 📦 Package Imports
   // #region ➤ 📌 VARIABLES
@@ -147,70 +148,7 @@
         <Avatar src={profile_photo} size={44} on:click={() => dispatch("avatarClick")} />
 
         {#if $scoresNavbarStore.globalState.has("UserDropdownActive")}
-          <div id="user-profile-dropdown" transition:fly>
-            <!--
-              ╭─────
-              │ > Profile Navigation Button
-              ╰─────
-              -->
-            <a href="/u/dashboard/{$userBetarenaSettings.lang}">
-              <div
-                class="
-                  theme-opt-box
-                  cursor-pointer
-                  "
-                style="width: 100%;"
-                on:click={() => {
-                  scoresNavbarStore.closeAllDropdowns();
-                  return;
-                }}
-              >
-                <p
-                  class="
-                    color-white
-                    s-14
-                    "
-                >
-                  <TranslationText
-                    key={"header-txt-unkown"}
-                    text={translationData?.scores_header_translations?.data
-                      ?.profile}
-                    fallback={"Profile"}
-                  />
-                </p>
-              </div>
-            </a>
-
-            <!--
-              ╭─────
-              │ > Profile Logout
-              ╰─────
-              -->
-            <div
-              class="
-                theme-opt-box
-                cursor-pointer
-                "
-              on:click={() => {
-                logoutUser();
-                return;
-              }}
-            >
-              <p
-                class="
-                  color-white
-                  s-14
-                  "
-              >
-                <TranslationText
-                  key={"header-txt-unkown"}
-                  text={translationData?.scores_header_translations?.data
-                    ?.logout}
-                  fallback={"Logout"}
-                />
-              </p>
-            </div>
-          </div>
+          <UserDropdownPopup />
         {/if}
       </div>
     {/if}
@@ -254,35 +192,6 @@
     .avatar-wrapper {
       position: relative;
       cursor: pointer;
-
-      div#user-profile-dropdown {
-        /* 📌 position */
-        position: absolute;
-        top: 100%;
-        right: 0;
-        left: unset;
-        z-index: 2000;
-        /* 🎨 style */
-        margin-top: 5px;
-        background: #292929;
-        box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
-        border-radius: 4px;
-        overflow: hidden;
-        width: 168px;
-
-        .theme-opt-box {
-          padding: 9.5px 16px;
-          box-shadow: inset 0px -1px 0px #3c3c3c;
-          background: #4b4b4b;
-          height: 40px;
-
-          &:hover {
-            /* 🎨 style */
-            background: var(--dark-theme);
-            box-shadow: inset 0px -1px 0px #3c3c3c;
-          }
-        }
-      }
     }
   }
 </style>

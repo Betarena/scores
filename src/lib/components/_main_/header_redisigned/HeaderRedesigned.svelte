@@ -141,7 +141,7 @@
 <header class:mobile class:dark-mode={$page.route.id !== routeIdContent}>
   {#if mobile || tablet}
     {#if richMobileHeaderRoutes.includes($page.route.id || "")}
-      <MobileHeaderRich {mobile} {tablet} />
+      <MobileHeaderRich {mobile} {tablet}  />
     {:else if simpleMobileHeaderRoutes.includes($page.route.id || "")}
       <MobileHeaderSmall {mobile} {tablet} on:avatarClick={avatarClick}/>
     {/if}
