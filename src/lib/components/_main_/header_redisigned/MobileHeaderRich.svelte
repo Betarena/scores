@@ -96,7 +96,7 @@
   {#if !isAuth }
       <LogoButton {mobile} {tablet} />
   {/if}
-  {#if isAuth && !isPWA && mobile}
+  {#if isAuth && !isPWA}
     <div class="logo-full">
       <LogoButton {mobile} {tablet} />
     </div>
@@ -162,6 +162,7 @@
       align-items: center;
       justify-content: flex-end;
       display: flex;
+      gap: 24px;
     }
   }
 </style>

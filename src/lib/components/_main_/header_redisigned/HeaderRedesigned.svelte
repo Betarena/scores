@@ -1,6 +1,4 @@
 <script lang="ts">
-
-
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'imports' that are required        │
@@ -16,13 +14,17 @@
   import SeoBox from "$lib/components/SEO-Box.svelte";
   import sessionStore from "$lib/store/session.js";
   import { viewportChangeV2 } from "$lib/utils/device";
-  import { routeIdContent, routeIdPageFixture, routeIdPagePlayer, routeIdPageProfile, routeIdScores } from "$lib/constants/paths.js";
+  import {
+    routeIdPageFixture,
+    routeIdPagePlayer,
+  } from "$lib/constants/paths.js";
   import MobileHeaderRich from "./MobileHeaderRich.svelte";
   import Header from "./Header.svelte";
   import { page } from "$app/stores";
   import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
   import MobileHeaderSmall from "./MobileHeaderSmall.svelte";
   import { scoresNavbarStore } from "./_store.js";
+  import SportsNavigation from "./SportNavigation/SportsNavigation.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -56,10 +58,10 @@
      */ // eslint-disable-next-line no-unused-vars
     VIEWPORT_TABLET_INIT: [number, boolean] = [1160, true];
 
-  const richMobileHeaderRoutes = [routeIdScores, routeIdContent, routeIdPageProfile];
   const simpleMobileHeaderRoutes = [routeIdPageFixture, routeIdPagePlayer];
 
-  $: ({ windowWidth } = $sessionStore);
+  $: isSimpleHeader = simpleMobileHeaderRoutes.includes($page.route.id || "");
+  $: ({ windowWidth, currentPageRouteId } = $sessionStore);
   $: [mobile, tablet] = viewportChangeV2(
     windowWidth,
     VIEWPORT_MOBILE_INIT[0],
@@ -138,15 +140,18 @@
   </a>
 </SeoBox>
 
-<header class:mobile class:dark-mode={$page.route.id !== routeIdContent}>
+<header class:mobile class="dark-mode">
   {#if mobile || tablet}
-    {#if richMobileHeaderRoutes.includes($page.route.id || "")}
-      <MobileHeaderRich {mobile} {tablet}  />
-    {:else if simpleMobileHeaderRoutes.includes($page.route.id || "")}
-      <MobileHeaderSmall {mobile} {tablet} on:avatarClick={avatarClick}/>
+    {#if !mobile || !isSimpleHeader }
+      <MobileHeaderRich {mobile} {tablet} />
+    {:else if mobile && isSimpleHeader}
+      <MobileHeaderSmall {mobile} {tablet} on:avatarClick={avatarClick} />
     {/if}
   {:else}
-    <Header on:avatarClick={avatarClick}/>
+    <Header on:avatarClick={avatarClick} />
+  {/if}
+  {#if currentPageRouteId !== "AuthorsPage" && (!mobile || !isSimpleHeader)}
+    <SportsNavigation />
   {/if}
 </header>
 
@@ -163,6 +168,7 @@
 <style lang="scss">
   header {
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
     align-items: center;
     background-color: var(--bg-color);

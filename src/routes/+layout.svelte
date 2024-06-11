@@ -53,7 +53,6 @@
   import { isPWA, viewportChangeV2 } from "$lib/utils/device.js";
 
   import Footer from "$lib/components/_main_/footer/Footer.svelte";
-  import Header from "$lib/components/_main_/header/Header.svelte";
   import HeaderRedesigned from "$lib/components/_main_/header_redisigned/HeaderRedesigned.svelte";
   import MobileMenu from "$lib/components/_main_/mobile-menu/MobileMenu.svelte";
   import SplashScreen from "$lib/components/misc/Splash-Screen.svelte";
@@ -73,8 +72,6 @@
   import {
     routeIdContent,
     routeIdPageCompetitions,
-    routeIdPageFixture,
-    routeIdPagePlayer,
     routeIdPageProfile,
     routeIdScores,
   } from "$lib/constants/paths.js";
@@ -606,11 +603,7 @@
     <!-- <EmailSubscribe /> -->
   {/if}
 
-  {#if $page.route.id === routeIdContent || ([routeIdScores, routeIdPageCompetitions, routeIdPageFixture, routeIdPageProfile, routeIdPagePlayer].includes($page.route.id || "") && $sessionStore.viewportType === "mobile")}
-    <HeaderRedesigned />
-  {:else}
-    <Header />
-  {/if}
+  <HeaderRedesigned />
 
   <main
     class:dark-background={theme == "Dark"}

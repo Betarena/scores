@@ -91,7 +91,6 @@
   class=
   "
   row-space-start
-  m-r-30
   cursor-pointer
   "
   class:m-r-10={currentPageRouteId == 'ProfilePage'}

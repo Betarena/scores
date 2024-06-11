@@ -136,7 +136,7 @@
     <HeaderCLang />
     <HeaderCTheme />
     {#if globalState.has("NotAuthenticated")}
-      <Button type="outline" on:click={signIn}>
+      <Button type="outline" on:click={signIn} style="padding: 11px 24px">
         <TranslationText
           key={"header-txt-unkown"}
           text={translationData?.scores_header_translations?.sign_in}
@@ -188,6 +188,7 @@
       justify-content: flex-end;
       display: flex;
       justify-self: flex-end;
+      gap: 24px;
     }
     .avatar-wrapper {
       position: relative;

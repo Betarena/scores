@@ -8,7 +8,7 @@
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ 📝 Description                                                                   │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ Scores Platform Header Lang Dropdown Component (Child)                           │
+│ Scores Platform Header Sports Button Component (Child)                           │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -22,6 +22,7 @@
 -->
 
 <script lang="ts">
+
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -37,21 +38,8 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { page } from "$app/stores";
-  import { fly } from "svelte/transition";
-
-  import sessionStore from "$lib/store/session.js";
-  import userBetarenaSettings from "$lib/store/user-settings.js";
-  import { dlog, NB_W_TAG } from "$lib/utils/debug.js";
-  import { scoresNavbarStore } from "./_store.js";
-
-  import arrowDown from "./assets/arrow-down.svg";
-  import arrowUp from "./assets/arrow-up.svg";
-  import arrowDownDark from "./assets/icon-arrow-down-dark.svg";
-  import arrowUpDark from "./assets/icon-arrow-up-dark.svg";
-
-  import { selectLanguage } from "$lib/utils/navigation.js";
-  import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
+	import sessionStore from '$lib/store/session.js';
+  import { createEventDispatcher } from 'svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -69,101 +57,89 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  const /**
-     * @description
-     *  📣 Deifined `hover` timeout, that constitues a navigational `intent.
-     */
-    HOVER_TIMEOUT = 250;
-  let /**
-     * @description
-     *  📣 Wether target dropdown menu is **active**.
-     */
-    isLangDropdown: boolean = false,
+  export let
     /**
      * @description
-     *  📣 Target `intent` language.
-     */
-    targetIntenLang: string | undefined = undefined,
+     *  📣 (default) sport name.
+    */
+    sportNameDefault: string,
     /**
      * @description
-     *  📣 Target `timeout` intent.
-     */
-    timeoutIntent: NodeJS.Timeout;
+     *  📣 (default) sport translation.
+    */
+    sportTranslation: string,
+    /**
+     * @description
+     *  📣 (default) sport value.
+    */
+    sportValue: string | number,
+    /**
+     * @description
+     *  📣 (default) sport selected.
+    */
+    selectedSport: string
+  ;
 
-  $: ({ serverLang, currentPageRouteId } = $sessionStore);
-  $: ({ theme } = $userBetarenaSettings);
-  $: ({ globalState: globalStateNavbar } = $scoresNavbarStore);
+  const
+    /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */ // eslint-disable-next-line no-unused-vars
+    CNAME: string = '<section-scope>⮕<type|w|c>⮕<unique-tag-name>⮕main',
+    /**
+     * @augments EventDispatcher
+    */
+    dispatch = createEventDispatcher()
+  ;
 
-  $: translatioData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
+  let
+    /**
+     * @description
+     *  📣 (default) sport icon.
+    */
+    sportIcon: string
+    /**
+     * @description
+     *  📣 (default) sport link.
+    */
+    // sportLink: string // this code will be usful when we have more sports options
+    //   = $sessionStore.serverLang == 'en'
+    //     ? `/${removeDiacritics(sportTranslation.toLowerCase())}`
+    //     : `/${$sessionStore.serverLang}/${removeDiacritics(sportTranslation.toLowerCase())}`
+  ;
+  $: sportLink
+      = $sessionStore.serverLang == 'en'
+        ? `/scores`
+        : `/${$sessionStore.serverLang}/scores`
 
   // #endregion ➤ 📌 VARIABLES
 
-  // #region ➤ 🛠️ METHODS
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
 
-  /**
-   * @author
-   *  @migbash
-   * @summary
-   *  🟦 HELPER
-   * @description
-   *  - 📣 Advanced intent logic, applicable to desktop-only.
-   *  - 📣 `Pre-loads` target page , for target `language` upon `intent`/`hover`.
-   * @param { string | undefined } lang
-   *  💠 **[required]** Target `hovered` language.
-   * @return { void }
-   */
-  function detectIntentBuffer(lang: string | undefined): void {
-    const /**
-       * @description
-       *  📣 Detect change in hover-over lang.
-       */
-      if_M_0: boolean = timeoutIntent != undefined && lang != targetIntenLang,
-      /**
-       * @description
-       *  📣 First time set lang and timer.
-       */
-      if_M_E_0: boolean = lang != undefined && timeoutIntent == undefined;
-    if (if_M_0) {
-      // [🐞]
-      dlog(`${NB_W_TAG[0]} clearning timer!`);
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
-      clearTimeout(timeoutIntent);
+  $:
+  IF_R_0
+    = selectedSport == sportNameDefault
+  ;
+  $:
+  if (!IF_R_0)
+    sportIcon = `../assets/svg/sport-icon/${sportNameDefault.toLocaleLowerCase()}.svg`;
+  else
+    sportIcon = `../assets/svg/sport-icon/${sportNameDefault.toLocaleLowerCase()}-select.svg`;
+  ;
 
-      targetIntenLang = lang;
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
-      if (lang == undefined) return;
-
-      // [🐞]
-      dlog(`${NB_W_TAG[0]} setting new timer!`);
-
-      timeoutIntent = setTimeout(() => {
-        // [🐞]
-        dlog(`${NB_W_TAG[0]} intent triggered!`, true);
-        $sessionStore.lang_intent = targetIntenLang;
-      }, HOVER_TIMEOUT);
-    } else if (if_M_E_0) {
-      targetIntenLang = lang;
-      timeoutIntent = setTimeout(() => {
-        // [🐞]
-        dlog(`${NB_W_TAG[0]} intent triggered!`, true);
-        $sessionStore.lang_intent = targetIntenLang;
-      }, HOVER_TIMEOUT);
-    }
-
-    return;
-  }
-
-  function handleClick() {
-    const openDropDown = !$scoresNavbarStore.globalState.has("LangDropdownActive")
-    scoresNavbarStore.closeAllDropdowns();
-
-    if (openDropDown) {
-      scoresNavbarStore.updateData("globalStateAdd", "LangDropdownActive");
-    }
-    return;
-  }
-
-  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--
@@ -177,100 +153,87 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div
-  id="lang-container"
+<a
+  href={sportLink}
 >
-  <!--
-  ╭─────
-  │ > Selected Language
-  ╰─────
-  -->
   <div
-    class="
-    selected-language-btn
-    row-space-out
-    cursor-pointer
+    class=
     "
-    class:active-lang-select={globalStateNavbar.has("LangDropdownActive")}
-    on:click|stopPropagation={handleClick}
+    sports-box
+    row-space-out
+    "
+    on:click=
+    {
+      () =>
+      {
+        dispatch
+        (
+          'closeDropdown',
+          {
+            selectedSport: sportNameDefault
+          }
+        );
+        return;
+      }
+    }
+    class:selected-sports={selectedSport == sportNameDefault}
   >
-    <p
-      class="
-      s-14
-      m-r-5
-      uppercase
-      "
-      class:color-white={currentPageRouteId != "AuthorsPage" || theme == "Dark"}
-      class:color-black-2={currentPageRouteId == "AuthorsPage" &&
-        theme == "Light"}
-    >
-      {serverLang}
-    </p>
 
     <!--
     ╭─────
-    │ > Arrow Down
+    │ > sport image + name
     ╰─────
     -->
-    <img
-      loading="lazy"
-      src={currentPageRouteId != "AuthorsPage" || theme == "Dark"
-        ? !globalStateNavbar.has("LangDropdownActive")
-          ? arrowDown
-          : arrowUp
-        : !globalStateNavbar.has("LangDropdownActive")
-        ? arrowDownDark
-        : arrowUpDark}
-      alt={!isLangDropdown ? "arrowDown" : "arrowUp"}
-      width="16"
-      height="16"
-    />
-  </div>
-
-  <!--
-  ╭─────
-  │ > Dropdown Menu
-  ╰─────
-  -->
-  {#if globalStateNavbar.has("LangDropdownActive")}
-    <div id="dropdown-menu" transition:fly>
-      {#each translatioData?.langArray?.sort() ?? [] as lang}
-        {#if lang.toUpperCase() != serverLang?.toUpperCase()}
-          <div
-            class="
-            lang-select
-            "
-            on:click={() => {
-              return selectLanguage(lang);
-            }}
-            on:keydown={() => {
-              return selectLanguage(lang);
-            }}
-            on:mouseout={() => {
-              return detectIntentBuffer(undefined);
-            }}
-            on:mouseover={() => {
-              return detectIntentBuffer(lang);
-            }}
-            on:focus={() => {
-              return detectIntentBuffer(lang);
-            }}
-          >
-            <p
-              class="
-              color-white
-              s-14
-              uppercase
-              "
-            >
-              {lang}
-            </p>
-          </div>
-        {/if}
-      {/each}
+    <div
+      class=
+      "
+      row-space-out
+      "
+      style="width: fit-content;"
+    >
+      <img
+        loading="lazy"
+        class=
+        "
+        m-r-10
+        "
+        src={sportIcon}
+        alt="{sportNameDefault}-img"
+        width=20
+        height=20
+      />
+      <p
+        class=
+        "
+        color-white
+        s-14
+        m-r-10
+        capitalize
+        "
+      >
+        {sportTranslation}
+      </p>
     </div>
-  {/if}
-</div>
+
+    <!--
+    ╭─────
+    │ > sport number (or, 'soon')
+    ╰─────
+    -->
+    <span
+      class=
+      "
+      tag
+      color-white
+      s-12
+      sport-counter-dark
+      "
+    >
+      {sportValue}
+    </span>
+
+  </div>
+</a>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -283,60 +246,33 @@
 -->
 
 <style lang="scss">
-  /*
-  ╭──────────────────────────────────────────────────────────────────────────────╮
-  │ 📲 MOBILE-FIRST                                                              │
-  ╰──────────────────────────────────────────────────────────────────────────────╯
-  */
 
-  div#lang-container {
-    /* 📌 position */
-    position: relative;
+  div.sports-box
+  {
+    /* 🎨 style */
 
-    div.selected-language-btn {
+    &:hover p.capitalize
+    {
       /* 🎨 style */
-      color: #ffffff;
-      outline: none;
-      border: none;
-      padding: 5px 0px;
-      background-color: transparent;
-
-      &:hover,
-      &.active-lang-select {
-        /* 🎨 style */
-        background-color: rgba(255, 255, 255, 0.1);
-        border-radius: 4px;
-      }
+      color: var(--primary) !important;
     }
 
-    div#dropdown-menu {
-      /* 📌 position */
-      position: absolute;
-      z-index: 5000;
-      top: 100%;
-      left: -20%;
+    & .sport-counter-dark
+    {
       /* 🎨 style */
-      width: 88px;
-      margin-top: 5px;
-      border-radius: 4px;
-      background: var(--dark-theme);
-      box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
-      overflow: hidden;
-
-      .lang-select {
-        /* 🎨 style */
-        padding: 10px 0;
-        text-align: center;
-        background: var(--dark-theme-1);
-        cursor: pointer;
-        box-shadow: inset 0px -1px 0px #3c3c3c;
-
-        &:hover {
-          /* 🎨 style */
-          background: var(--dark-theme);
-          box-shadow: inset 0px -1px 0px #3c3c3c;
-        }
-      }
+      background-color: var(--dark-theme-1);
+      padding: 3px 8px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+    }
+    .tag {
+      font-family: Roboto;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 150%
     }
   }
+
 </style>

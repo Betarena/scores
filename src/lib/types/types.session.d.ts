@@ -299,5 +299,5 @@ export interface ISessionStore
    *  📣 Defines the type of device being used for viewing.
    * Can take the values 'mobile', 'tablet', 'desktop', or null if the device type is not determined.
    */
-  viewportType: string | null;
+  viewportType: "mobile" | "tablet" | "desktop" |  null;
 }

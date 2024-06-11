@@ -3,6 +3,7 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+	import { sessionStore } from '$lib/store/session.js';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
@@ -22,6 +23,10 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
   import { page } from "$app/stores";
+  import sessionStore from "$lib/store/session.js";
+  import userBetarenaSettings from "$lib/store/user-settings.js";
+  import Balance from "./Balance.svelte";
+  import HeaderCBookmakers from "./Header-C-Bookmakers.svelte";
   import HeaderSportsBtn from "./SportsNavBtn.svelte";
   import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
 
@@ -47,7 +52,7 @@
     selectedSport = "football";
 
   $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
-
+  $: ({ user } = $userBetarenaSettings);
   // #endregion ➤ 📌 VARIABLES $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
 </script>
 
@@ -63,17 +68,32 @@
 -->
 
 <div class="wrapper">
-  <HeaderSportsBtn
-    sportNameDefault={"football"}
-    sportTranslation={trsanslationData?.scores_header_translations?.sports_v2
-      ?.football || ""}
-    sportValue={trsanslationData?.scores_header_fixtures_information
-      ?.football || ""}
-    {selectedSport}
-    on:closeDropdown={(event) => {
-      return (selectedSport = event.detail?.selectedSport);
-    }}
-  />
+  <div
+    class="navigation-container"
+    class:mobile={$sessionStore.viewportType === "mobile"}
+  >
+    <div class="sport-options">
+      <HeaderSportsBtn
+        sportNameDefault={"football"}
+        sportTranslation={trsanslationData?.scores_header_translations
+          ?.sports_v2?.football || ""}
+        sportValue={trsanslationData?.scores_header_fixtures_information
+          ?.football || ""}
+        {selectedSport}
+        on:closeDropdown={(event) => {
+          return (selectedSport = event.detail?.selectedSport);
+        }}
+      />
+    </div>
+    {#if $sessionStore.viewportType !== "mobile"}
+      <div class="actions">
+        <HeaderCBookmakers />
+        {#if user != undefined && $sessionStore.viewportType === "desktop"}
+          <Balance />
+        {/if}
+      </div>
+    {/if}
+  </div>
 </div>
 
 <!--
@@ -89,10 +109,32 @@
 <style lang="scss">
   .wrapper {
     display: flex;
-    padding: 20px 16px;
     height: 64px;
+    width: 100%;
     border-top: 1px solid #4b4b4b;
     border-bottom: 1px solid #4b4b4b;
     background: #292929;
+
+    .navigation-container {
+      max-width: 1430px;
+      display: flex;
+      margin: auto;
+      width: 100%;
+      height: 100%;
+      padding: 10px 34px;
+      justify-content: space-between;
+
+      .sport-options {
+        padding: 10px 0;
+      }
+
+      .actions {
+        display: flex;
+        justify-self: end;
+      }
+      &.mobile {
+        padding: 10px 16px;
+      }
+    }
   }
 </style>

@@ -129,7 +129,7 @@
     flex-wrap: wrap;
 
     &.mobile {
-      padding: 20px 16px;
+      padding: 12px 16px;
     }
 
     .logo-full {
