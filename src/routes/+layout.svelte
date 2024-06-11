@@ -73,6 +73,8 @@
   import {
     routeIdContent,
     routeIdPageCompetitions,
+    routeIdPageFixture,
+    routeIdPagePlayer,
     routeIdPageProfile,
     routeIdScores,
   } from "$lib/constants/paths.js";
@@ -604,7 +606,7 @@
     <!-- <EmailSubscribe /> -->
   {/if}
 
-  {#if $page.route.id === routeIdContent || ($page.route.id === routeIdScores && $sessionStore.viewportType === "mobile")}
+  {#if $page.route.id === routeIdContent || ([routeIdScores, routeIdPageCompetitions, routeIdPageFixture, routeIdPageProfile, routeIdPagePlayer].includes($page.route.id || "") && $sessionStore.viewportType === "mobile")}
     <HeaderRedesigned />
   {:else}
     <Header />

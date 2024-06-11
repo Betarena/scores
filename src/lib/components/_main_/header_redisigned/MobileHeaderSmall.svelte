@@ -1,5 +1,16 @@
-<script lang="ts">
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 🟦 Svelte Component JS/TS                                                        │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+	import { userBetarenaSettings } from '$lib/store/user-settings.js';
+	import AssetBetarenaLogoFull from './assets/asset-betarena-logo-full.svelte';
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
 
+<script lang="ts">
+  // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -13,19 +24,16 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  import SeoBox from "$lib/components/SEO-Box.svelte";
+
+  import userBetarenaSettings from "$lib/store/user-settings.js";
   import sessionStore from "$lib/store/session.js";
-  import { viewportChangeV2 } from "$lib/utils/device";
-  import { routeIdContent, routeIdPageFixture, routeIdPagePlayer, routeIdPageProfile, routeIdScores } from "$lib/constants/paths.js";
-  import MobileHeaderRich from "./MobileHeaderRich.svelte";
-  import Header from "./Header.svelte";
-  import { page } from "$app/stores";
-  import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
-  import MobileHeaderSmall from "./MobileHeaderSmall.svelte";
+  import LogoButton from "./LogoButton.svelte";
   import { scoresNavbarStore } from "./_store.js";
+  import BackButton from "$lib/components/ui/BackButton.svelte";
+  import Avatar from "$lib/components/ui/Avatar.svelte";
+  import { createEventDispatcher } from "svelte";
 
   // #endregion ➤ 📦 Package Imports
-
   // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -39,35 +47,21 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
+  export let mobile, tablet;
+  const dispatch = createEventDispatcher();
+  $: ({ globalState } = $sessionStore);
+  $: ({ profile_photo } = { ...$userBetarenaSettings.user?.scores_user_data });
+  $: isPWA = globalState.has("IsPWA");
+  $: isAuth = globalState.has("Authenticated");
 
   const /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
      */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = "header",
-    /**
-     * @description
-     *  📣 threshold start + state for 📱 MOBILE
-     */ // eslint-disable-next-line no-unused-vars
-    VIEWPORT_MOBILE_INIT: [number, boolean] = [575, true],
-    /**
-     * @description
-     *  📣 threshold start + state for 💻 TABLET
-     */ // eslint-disable-next-line no-unused-vars
-    VIEWPORT_TABLET_INIT: [number, boolean] = [1160, true];
-
-  const richMobileHeaderRoutes = [routeIdScores, routeIdContent, routeIdPageProfile];
-  const simpleMobileHeaderRoutes = [routeIdPageFixture, routeIdPagePlayer];
-
-  $: ({ windowWidth } = $sessionStore);
-  $: [mobile, tablet] = viewportChangeV2(
-    windowWidth,
-    VIEWPORT_MOBILE_INIT[0],
-    VIEWPORT_TABLET_INIT[0]
-  );
-  $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
+    CNAME: string = "main⮕header";
 
   // #endregion ➤ 📌 VARIABLES
+
   // #region ➤ 🛠️ METHODS
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -80,75 +74,34 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function avatarClick() {
-    const openDropDown =
-      !$scoresNavbarStore.globalState.has("UserDropdownActive");
-    scoresNavbarStore.closeAllDropdowns();
-
-    if (openDropDown) {
-      scoresNavbarStore.updateData("globalStateAdd", "UserDropdownActive");
-    }
+  function signIn() {
+    $sessionStore.currentActiveModal = "Auth_Modal";
+    return;
   }
 
   // #endregion ➤ 🛠️ METHODS
 </script>
 
-<SeoBox>
-  <!--
-  ╭─────
-  │ > homepage links
-  ╰─────
-  -->
-  {#each trsanslationData?.langArray || [] as item}
-    {#if item != "en"}
-      <a href={$page.url.origin + "/" + item}>
-        {$page.url.origin + "/" + item}
-      </a>
-    {:else}
-      <a href={$page.url.origin}>
-        {$page.url.origin}
-      </a>
-    {/if}
-  {/each}
-
-  <!--
-  ╭─────
-  │ > other urls
-  ╰─────
-  -->
-  <a
-    href={trsanslationData?.scores_header_translations?.section_links
-      ?.scores_url}
-  >
-    {trsanslationData?.scores_header_translations?.section_links?.scores_title}
-  </a>
-  <a
-    href={trsanslationData?.scores_header_translations?.section_links
-      ?.competitions_url}
-  >
-    {trsanslationData?.scores_header_translations?.section_links
-      ?.competitions_title}
-  </a>
-  <a
-    href={trsanslationData?.scores_header_translations?.section_links
-      ?.sports_content_url}
-  >
-    {trsanslationData?.scores_header_translations?.section_links
-      ?.sports_content_title}
-  </a>
-</SeoBox>
-
-<header class:mobile class:dark-mode={$page.route.id !== routeIdContent}>
-  {#if mobile || tablet}
-    {#if richMobileHeaderRoutes.includes($page.route.id || "")}
-      <MobileHeaderRich {mobile} {tablet} />
-    {:else if simpleMobileHeaderRoutes.includes($page.route.id || "")}
-      <MobileHeaderSmall {mobile} {tablet} on:avatarClick={avatarClick}/>
-    {/if}
+<svelte:window
+  on:click={() => {
+    scoresNavbarStore.closeAllDropdowns();
+  }}
+/>
+<div class="wrapper" id={CNAME} class:pwa={isPWA} class:mobile>
+  {#if !isPWA}
+    <LogoButton {mobile} {tablet} />
   {:else}
-    <Header on:avatarClick={avatarClick}/>
+    <BackButton/>
   {/if}
-</header>
+
+  <div class="actions">
+    <Avatar
+      src={profile_photo}
+      size={32}
+      on:click={() => (isAuth ? dispatch("avatarClick") : signIn())}
+    />
+  </div>
+</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -161,15 +114,31 @@
 -->
 
 <style lang="scss">
-  header {
+  .wrapper {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: var(--bg-color);
-    border-bottom: var(--header-border);
+    width: 100%;
+    padding: 12px 34px;
+    flex-wrap: wrap;
 
     &.mobile {
-      border-bottom: none;
+      padding: 20px 16px;
+    }
+
+    .logo-full {
+      width: 100%;
+      margin-bottom: 19px;
+    }
+    &.pwa {
+      flex-wrap: nowrap;
+    }
+
+    .actions {
+      flex-grow: 1;
+      align-items: center;
+      justify-content: flex-end;
+      display: flex;
     }
   }
 </style>

@@ -39,6 +39,7 @@
   import { fly } from "svelte/transition";
   import HeaderNavigation from "./HeaderNavigation.svelte";
   import { promiseUrlsPreload } from "$lib/utils/navigation.js";
+  import { createEventDispatcher } from "svelte";
 
   // #endregion ➤ 📦 Package Imports
   // #region ➤ 📌 VARIABLES
@@ -62,6 +63,8 @@
     serverLang != "en" ? `${$page.url.origin}/${serverLang}` : $page.url.origin;
   $: ({ profile_photo } = { ...$userBetarenaSettings.user?.scores_user_data });
   $: loadTranslations(serverLang);
+
+  const dispatch = createEventDispatcher()
   const /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
@@ -87,15 +90,6 @@
     return;
   }
 
-  function avatarClick() {
-    const openDropDown =
-      !$scoresNavbarStore.globalState.has("UserDropdownActive");
-    scoresNavbarStore.closeAllDropdowns();
-
-    if (openDropDown) {
-      scoresNavbarStore.updateData("globalStateAdd", "UserDropdownActive");
-    }
-  }
 
   let prevLang;
   async function loadTranslations(lang: string | undefined) {
@@ -150,7 +144,7 @@
       </Button>
     {:else}
       <div class="avatar-wrapper" on:click|stopPropagation>
-        <Avatar src={profile_photo} size={44} on:click={avatarClick} />
+        <Avatar src={profile_photo} size={44} on:click={() => dispatch("avatarClick")} />
 
         {#if $scoresNavbarStore.globalState.has("UserDropdownActive")}
           <div id="user-profile-dropdown" transition:fly>
