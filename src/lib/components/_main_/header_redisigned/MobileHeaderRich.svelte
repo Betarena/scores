@@ -96,7 +96,7 @@
   {#if !isAuth }
       <LogoButton {mobile} {tablet} />
   {/if}
-  {#if isAuth && !isPWA && mobile}
+  {#if isAuth && !isPWA}
     <div class="logo-full">
       <LogoButton {mobile} {tablet} />
     </div>
@@ -146,8 +146,7 @@
     flex-wrap: wrap;
 
     &.mobile {
-      padding: 16px;
-      padding-bottom: 20px;
+      padding: 20px 16px;
     }
 
     .logo-full {
@@ -163,6 +162,7 @@
       align-items: center;
       justify-content: flex-end;
       display: flex;
+      gap: 24px;
     }
   }
 </style>

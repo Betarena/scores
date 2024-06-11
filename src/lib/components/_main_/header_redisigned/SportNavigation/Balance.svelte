@@ -3,7 +3,6 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
-	import AssetBetarenaLogoFull from './assets/asset-betarena-logo-full.svelte';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
@@ -23,26 +22,17 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  import { page } from "$app/stores";
-  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
-  import { logoutUser } from "$lib/utils/user";
+
+  import { spliceBalanceDoubleZero, toDecimalFix } from "$lib/utils/string";
+  import { translationObject } from "$lib/utils/translation";
   import sessionStore from "$lib/store/session.js";
   import userBetarenaSettings from "$lib/store/user-settings.js";
+  import { page } from "$app/stores";
   import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
-  import Button from "$lib/components/ui/Button.svelte";
-  import { translationObject } from "$lib/utils/translation.js";
-  import HeaderCLang from "./Header-C-Lang.svelte";
-  import HeaderCTheme from "./Header-C-Theme.svelte";
-  import AssetBetarenaLogoFull from "./assets/asset-betarena-logo-full.svelte";
-  import Avatar from "$lib/components/ui/Avatar.svelte";
-  import { scoresNavbarStore } from "./_store.js";
-  import { fly } from "svelte/transition";
-  import HeaderNavigation from "./HeaderNavigation.svelte";
-  import { promiseUrlsPreload } from "$lib/utils/navigation.js";
-  import { createEventDispatcher } from "svelte";
-  import UserDropdownPopup from "./UserDropdownPopup.svelte";
+  import BuyBtaButton from "$lib/components/shared/BuyBta/Buy-BTA-Button.svelte";
 
   // #endregion ➤ 📦 Package Imports
+
   // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -56,102 +46,83 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  $: ({ globalState, serverLang } = $sessionStore);
-
+  $: isMobile = $sessionStore.viewportType === "mobile";
   $: translationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
-  $: homepageURL = serverLang != "en" ? `/${serverLang}` : "/";
-  $: logoLink =
-    serverLang != "en" ? `${$page.url.origin}/${serverLang}` : $page.url.origin;
-  $: ({ profile_photo } = { ...$userBetarenaSettings.user?.scores_user_data });
-  $: loadTranslations(serverLang);
-
-  const dispatch = createEventDispatcher()
-  const /**
-     * @description
-     *  📣 `this` component **main** `id` and `data-testid` prefix.
-     */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = "<section-scope>⮕<type|w|c>⮕<unique-tag-name>⮕main";
-
+  // $: ({ main_balance } = { ...$userBetarenaSettings.user?.scores_user_data });
+  const main_balance = 120.84;
   // #endregion ➤ 📌 VARIABLES
-
-  // #region ➤ 🛠️ METHODS
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'methods' that are to be           │
-  // │ and are expected to be used by 'this' .svelte file / component.        │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. function (..)                                                       │
-  // │ 2. async function (..)                                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  function signIn() {
-    $sessionStore.currentActiveModal = "Auth_Modal";
-    return;
-  }
-
-
-  let prevLang;
-  async function loadTranslations(lang: string | undefined) {
-    if (!lang || prevLang === lang) return;
-    prevLang = lang;
-    const res = await promiseUrlsPreload(
-      [`/api/data/main/navbar?lang=${lang}&decompress`],
-      fetch
-    );
-    translationData = res[0];
-    return res;
-  }
-
-  // #endregion ➤ 🛠️ METHODS
 </script>
 
-<svelte:window
-  on:click={() => {
-    scoresNavbarStore.closeAllDropdowns();
-  }}
-/>
-<div class="wrapper">
-  <div
-    id="brand"
-    data-testid="header-brand-img"
-    aria-label="brand-img"
-    class="cursor-pointer brand-logo"
-    on:click={() => {
-      if ($page.url.pathname == "/") window.location.reload();
-      return;
-    }}
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 💠 Svelte Component HTML                                                         │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+<div class="balance-wrapper">
+  <a
+    href="/u/transaction-history/{$userBetarenaSettings.lang}"
+    title="View Transactions History"
   >
-    <a href={homepageURL} title={logoLink}>
-      <AssetBetarenaLogoFull />
-    </a>
-  </div>
+    <div
+      id="balance-box"
+      class="
+    dropdown-opt-box
+    row-space-start
+    "
+    >
+      <div>
+        <!--
+      📱 MOBILE
+      Balance Title
+      -->
+        <p
+          class="
+          color-grey
+          s-12
+          no-wrap
+          "
+        >
+          {translationData?.scores_header_translations?.data?.balance ??
+            translationObject.balance}
+        </p>
 
-  <div class="navigation-wrapper">
-    <HeaderNavigation {translationData} />
-  </div>
-
-  <div class="actions">
-    <HeaderCLang />
-    <HeaderCTheme />
-    {#if globalState.has("NotAuthenticated")}
-      <Button type="outline" on:click={signIn} style="padding: 11px 24px">
-        <TranslationText
-          key={"header-txt-unkown"}
-          text={translationData?.scores_header_translations?.sign_in}
-          fallback={translationObject.sign_in}
-        />
-      </Button>
-    {:else}
-      <div class="avatar-wrapper" on:click|stopPropagation>
-        <Avatar src={profile_photo} size={44} on:click={() => dispatch("avatarClick")} />
-
-        {#if $scoresNavbarStore.globalState.has("UserDropdownActive")}
-          <UserDropdownPopup />
-        {/if}
+        <p
+          class="
+        color-white
+        s-14
+        no-wrap
+        "
+        >
+          <span
+            class="
+          color-primary
+          w-500
+          m-r-5
+          "
+          >
+            {spliceBalanceDoubleZero(toDecimalFix(main_balance)) ?? "0.00"} BTA
+          </span>
+          {#if isMobile}
+            <br />
+          {/if}
+          (${spliceBalanceDoubleZero(toDecimalFix(main_balance)) ?? "0.00"})
+        </p>
       </div>
-    {/if}
+    </div>
+  </a>
+
+  <!--
+╭─────
+│ > But Betarena Token (navigation)
+╰─────
+-->
+  <div>
+    <BuyBtaButton popup={true} />
   </div>
 </div>
 
@@ -166,33 +137,17 @@
 -->
 
 <style lang="scss">
-  .wrapper {
+  .balance-wrapper {
     display: flex;
-    padding: 12px 34px;
-    max-width: 1430px;
-    margin: auto;
-    justify-content: space-between;
     align-items: center;
-    width: 100%;
-    gap: 44px;
-
-
-    .navigation-wrapper {
-      display: flex;
-      flex-grow: 1;
-      justify-content: start;
-      gap: 32px;
-    }
-    .actions {
-      align-items: center;
-      justify-content: flex-end;
-      display: flex;
-      justify-self: flex-end;
-      gap: 24px;
-    }
-    .avatar-wrapper {
-      position: relative;
-      cursor: pointer;
-    }
+    gap: 56px;
+    border-left: 1px solid #4b4b4b;
+    height: 44px;
+    padding: 0 16px;
+    padding-right: 0;
+    width: fit-content;
+  }
+  div#balance-box {
+    cursor: pointer;
   }
 </style>

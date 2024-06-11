@@ -3,6 +3,7 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+	import { userBetarenaSettings } from '$lib/store/user-settings.js';
 	import AssetBetarenaLogoFull from './assets/asset-betarena-logo-full.svelte';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
@@ -23,22 +24,13 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  import { page } from "$app/stores";
-  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
-  import { logoutUser } from "$lib/utils/user";
-  import sessionStore from "$lib/store/session.js";
+
   import userBetarenaSettings from "$lib/store/user-settings.js";
-  import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
-  import Button from "$lib/components/ui/Button.svelte";
-  import { translationObject } from "$lib/utils/translation.js";
-  import HeaderCLang from "./Header-C-Lang.svelte";
-  import HeaderCTheme from "./Header-C-Theme.svelte";
-  import AssetBetarenaLogoFull from "./assets/asset-betarena-logo-full.svelte";
-  import Avatar from "$lib/components/ui/Avatar.svelte";
+  import sessionStore from "$lib/store/session.js";
+  import LogoButton from "./LogoButton.svelte";
   import { scoresNavbarStore } from "./_store.js";
-  import { fly } from "svelte/transition";
-  import HeaderNavigation from "./HeaderNavigation.svelte";
-  import { promiseUrlsPreload } from "$lib/utils/navigation.js";
+  import BackButton from "$lib/components/ui/BackButton.svelte";
+  import Avatar from "$lib/components/ui/Avatar.svelte";
   import { createEventDispatcher } from "svelte";
   import UserDropdownPopup from "./UserDropdownPopup.svelte";
 
@@ -56,21 +48,18 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  $: ({ globalState, serverLang } = $sessionStore);
-
-  $: translationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
-  $: homepageURL = serverLang != "en" ? `/${serverLang}` : "/";
-  $: logoLink =
-    serverLang != "en" ? `${$page.url.origin}/${serverLang}` : $page.url.origin;
+  export let mobile, tablet;
+  const dispatch = createEventDispatcher();
+  $: ({ globalState } = $sessionStore);
   $: ({ profile_photo } = { ...$userBetarenaSettings.user?.scores_user_data });
-  $: loadTranslations(serverLang);
+  $: isPWA = globalState.has("IsPWA");
+  $: isAuth = globalState.has("Authenticated");
 
-  const dispatch = createEventDispatcher()
   const /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
      */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = "<section-scope>⮕<type|w|c>⮕<unique-tag-name>⮕main";
+    CNAME: string = "main⮕header";
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -91,19 +80,6 @@
     return;
   }
 
-
-  let prevLang;
-  async function loadTranslations(lang: string | undefined) {
-    if (!lang || prevLang === lang) return;
-    prevLang = lang;
-    const res = await promiseUrlsPreload(
-      [`/api/data/main/navbar?lang=${lang}&decompress`],
-      fetch
-    );
-    translationData = res[0];
-    return res;
-  }
-
   // #endregion ➤ 🛠️ METHODS
 </script>
 
@@ -112,46 +88,24 @@
     scoresNavbarStore.closeAllDropdowns();
   }}
 />
-<div class="wrapper">
-  <div
-    id="brand"
-    data-testid="header-brand-img"
-    aria-label="brand-img"
-    class="cursor-pointer brand-logo"
-    on:click={() => {
-      if ($page.url.pathname == "/") window.location.reload();
-      return;
-    }}
-  >
-    <a href={homepageURL} title={logoLink}>
-      <AssetBetarenaLogoFull />
-    </a>
-  </div>
-
-  <div class="navigation-wrapper">
-    <HeaderNavigation {translationData} />
-  </div>
+<div class="wrapper" id={CNAME} class:pwa={isPWA} class:mobile>
+  {#if !isPWA}
+    <LogoButton {mobile} {tablet} />
+  {:else}
+    <BackButton />
+  {/if}
 
   <div class="actions">
-    <HeaderCLang />
-    <HeaderCTheme />
-    {#if globalState.has("NotAuthenticated")}
-      <Button type="outline" on:click={signIn} style="padding: 11px 24px">
-        <TranslationText
-          key={"header-txt-unkown"}
-          text={translationData?.scores_header_translations?.sign_in}
-          fallback={translationObject.sign_in}
-        />
-      </Button>
-    {:else}
-      <div class="avatar-wrapper" on:click|stopPropagation>
-        <Avatar src={profile_photo} size={44} on:click={() => dispatch("avatarClick")} />
-
-        {#if $scoresNavbarStore.globalState.has("UserDropdownActive")}
+    <div class="avatar-wrapper" on:click|stopPropagation>
+      <Avatar
+        src={profile_photo}
+        size={32}
+        on:click={() => isAuth ? dispatch("avatarClick") : signIn()}
+      />
+      {#if $scoresNavbarStore.globalState.has("UserDropdownActive")}
           <UserDropdownPopup />
         {/if}
-      </div>
-    {/if}
+    </div>
   </div>
 </div>
 
@@ -168,27 +122,29 @@
 <style lang="scss">
   .wrapper {
     display: flex;
-    padding: 12px 34px;
-    max-width: 1430px;
-    margin: auto;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    gap: 44px;
+    padding: 12px 34px;
+    flex-wrap: wrap;
 
-
-    .navigation-wrapper {
-      display: flex;
-      flex-grow: 1;
-      justify-content: start;
-      gap: 32px;
+    &.mobile {
+      padding: 12px 16px;
     }
+
+    .logo-full {
+      width: 100%;
+      margin-bottom: 19px;
+    }
+    &.pwa {
+      flex-wrap: nowrap;
+    }
+
     .actions {
+      flex-grow: 1;
       align-items: center;
       justify-content: flex-end;
       display: flex;
-      justify-self: flex-end;
-      gap: 24px;
     }
     .avatar-wrapper {
       position: relative;

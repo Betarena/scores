@@ -39,8 +39,6 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
 	import sessionStore from '$lib/store/session.js';
-
-  import { removeDiacritics } from '$lib/utils/languages.js';
   import { createEventDispatcher } from 'svelte';
 
   // #endregion ➤ 📦 Package Imports
@@ -74,7 +72,7 @@
      * @description
      *  📣 (default) sport value.
     */
-    sportValue: string,
+    sportValue: string | number,
     /**
      * @description
      *  📣 (default) sport selected.

@@ -3,11 +3,10 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
-	import AssetBetarenaLogoFull from './assets/asset-betarena-logo-full.svelte';
+	import { sessionStore } from '$lib/store/session.js';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
 <script lang="ts">
   // #region ➤ 📦 Package Imports
 
@@ -24,25 +23,15 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
   import { page } from "$app/stores";
-  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
-  import { logoutUser } from "$lib/utils/user";
   import sessionStore from "$lib/store/session.js";
   import userBetarenaSettings from "$lib/store/user-settings.js";
+  import Balance from "./Balance.svelte";
+  import HeaderCBookmakers from "./Header-C-Bookmakers.svelte";
+  import HeaderSportsBtn from "./SportsNavBtn.svelte";
   import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
-  import Button from "$lib/components/ui/Button.svelte";
-  import { translationObject } from "$lib/utils/translation.js";
-  import HeaderCLang from "./Header-C-Lang.svelte";
-  import HeaderCTheme from "./Header-C-Theme.svelte";
-  import AssetBetarenaLogoFull from "./assets/asset-betarena-logo-full.svelte";
-  import Avatar from "$lib/components/ui/Avatar.svelte";
-  import { scoresNavbarStore } from "./_store.js";
-  import { fly } from "svelte/transition";
-  import HeaderNavigation from "./HeaderNavigation.svelte";
-  import { promiseUrlsPreload } from "$lib/utils/navigation.js";
-  import { createEventDispatcher } from "svelte";
-  import UserDropdownPopup from "./UserDropdownPopup.svelte";
 
   // #endregion ➤ 📦 Package Imports
+
   // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -56,99 +45,51 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  $: ({ globalState, serverLang } = $sessionStore);
-
-  $: translationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
-  $: homepageURL = serverLang != "en" ? `/${serverLang}` : "/";
-  $: logoLink =
-    serverLang != "en" ? `${$page.url.origin}/${serverLang}` : $page.url.origin;
-  $: ({ profile_photo } = { ...$userBetarenaSettings.user?.scores_user_data });
-  $: loadTranslations(serverLang);
-
-  const dispatch = createEventDispatcher()
-  const /**
+  let /**
      * @description
-     *  📣 `this` component **main** `id` and `data-testid` prefix.
-     */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = "<section-scope>⮕<type|w|c>⮕<unique-tag-name>⮕main";
+     *  📣 Currently `selected sport`.
+     */
+    selectedSport = "football";
 
-  // #endregion ➤ 📌 VARIABLES
-
-  // #region ➤ 🛠️ METHODS
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'methods' that are to be           │
-  // │ and are expected to be used by 'this' .svelte file / component.        │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. function (..)                                                       │
-  // │ 2. async function (..)                                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  function signIn() {
-    $sessionStore.currentActiveModal = "Auth_Modal";
-    return;
-  }
-
-
-  let prevLang;
-  async function loadTranslations(lang: string | undefined) {
-    if (!lang || prevLang === lang) return;
-    prevLang = lang;
-    const res = await promiseUrlsPreload(
-      [`/api/data/main/navbar?lang=${lang}&decompress`],
-      fetch
-    );
-    translationData = res[0];
-    return res;
-  }
-
-  // #endregion ➤ 🛠️ METHODS
+  $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
+  $: ({ user } = $userBetarenaSettings);
+  // #endregion ➤ 📌 VARIABLES $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
 </script>
 
-<svelte:window
-  on:click={() => {
-    scoresNavbarStore.closeAllDropdowns();
-  }}
-/>
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 💠 Svelte Component HTML                                                         │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
 <div class="wrapper">
   <div
-    id="brand"
-    data-testid="header-brand-img"
-    aria-label="brand-img"
-    class="cursor-pointer brand-logo"
-    on:click={() => {
-      if ($page.url.pathname == "/") window.location.reload();
-      return;
-    }}
+    class="navigation-container"
+    class:mobile={$sessionStore.viewportType === "mobile"}
   >
-    <a href={homepageURL} title={logoLink}>
-      <AssetBetarenaLogoFull />
-    </a>
-  </div>
-
-  <div class="navigation-wrapper">
-    <HeaderNavigation {translationData} />
-  </div>
-
-  <div class="actions">
-    <HeaderCLang />
-    <HeaderCTheme />
-    {#if globalState.has("NotAuthenticated")}
-      <Button type="outline" on:click={signIn} style="padding: 11px 24px">
-        <TranslationText
-          key={"header-txt-unkown"}
-          text={translationData?.scores_header_translations?.sign_in}
-          fallback={translationObject.sign_in}
-        />
-      </Button>
-    {:else}
-      <div class="avatar-wrapper" on:click|stopPropagation>
-        <Avatar src={profile_photo} size={44} on:click={() => dispatch("avatarClick")} />
-
-        {#if $scoresNavbarStore.globalState.has("UserDropdownActive")}
-          <UserDropdownPopup />
+    <div class="sport-options">
+      <HeaderSportsBtn
+        sportNameDefault={"football"}
+        sportTranslation={trsanslationData?.scores_header_translations
+          ?.sports_v2?.football || ""}
+        sportValue={trsanslationData?.scores_header_fixtures_information
+          ?.football || ""}
+        {selectedSport}
+        on:closeDropdown={(event) => {
+          return (selectedSport = event.detail?.selectedSport);
+        }}
+      />
+    </div>
+    {#if $sessionStore.viewportType !== "mobile"}
+      <div class="actions">
+        <HeaderCBookmakers />
+        {#if user != undefined && $sessionStore.viewportType === "desktop"}
+          <Balance />
         {/if}
       </div>
     {/if}
@@ -168,31 +109,32 @@
 <style lang="scss">
   .wrapper {
     display: flex;
-    padding: 12px 34px;
-    max-width: 1430px;
-    margin: auto;
-    justify-content: space-between;
-    align-items: center;
+    height: 64px;
     width: 100%;
-    gap: 44px;
+    border-top: 1px solid #4b4b4b;
+    border-bottom: 1px solid #4b4b4b;
+    background: #292929;
 
+    .navigation-container {
+      max-width: 1430px;
+      display: flex;
+      margin: auto;
+      width: 100%;
+      height: 100%;
+      padding: 10px 34px;
+      justify-content: space-between;
 
-    .navigation-wrapper {
-      display: flex;
-      flex-grow: 1;
-      justify-content: start;
-      gap: 32px;
-    }
-    .actions {
-      align-items: center;
-      justify-content: flex-end;
-      display: flex;
-      justify-self: flex-end;
-      gap: 24px;
-    }
-    .avatar-wrapper {
-      position: relative;
-      cursor: pointer;
+      .sport-options {
+        padding: 10px 0;
+      }
+
+      .actions {
+        display: flex;
+        justify-self: end;
+      }
+      &.mobile {
+        padding: 10px 16px;
+      }
     }
   }
 </style>
