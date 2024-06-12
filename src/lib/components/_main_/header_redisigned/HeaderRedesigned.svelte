@@ -61,7 +61,7 @@
   const simpleMobileHeaderRoutes = [routeIdPageFixture, routeIdPagePlayer];
 
   $: isSimpleHeader = simpleMobileHeaderRoutes.includes($page.route.id || "");
-  $: ({ windowWidth, currentPageRouteId } = $sessionStore);
+  $: ({ windowWidth, currentPageRouteId, viewportType } = $sessionStore);
   $: [mobile, tablet] = viewportChangeV2(
     windowWidth,
     VIEWPORT_MOBILE_INIT[0],
@@ -140,9 +140,9 @@
   </a>
 </SeoBox>
 
-<header class:mobile class="dark-mode">
+<header class:mobile class:dark-mode={currentPageRouteId !== "AuthorsPage"}>
   {#if mobile || tablet}
-    {#if !mobile || !isSimpleHeader }
+    {#if !mobile || !isSimpleHeader}
       <MobileHeaderRich {mobile} {tablet} />
     {:else if mobile && isSimpleHeader}
       <MobileHeaderSmall {mobile} {tablet} on:avatarClick={avatarClick} />
@@ -150,7 +150,7 @@
   {:else}
     <Header on:avatarClick={avatarClick} />
   {/if}
-  {#if currentPageRouteId !== "AuthorsPage" && (!mobile || !isSimpleHeader)}
+  {#if currentPageRouteId !== "AuthorsPage" && (!mobile || !isSimpleHeader) && (currentPageRouteId === "Standard" || viewportType === "desktop")}
     <SportsNavigation />
   {/if}
 </header>

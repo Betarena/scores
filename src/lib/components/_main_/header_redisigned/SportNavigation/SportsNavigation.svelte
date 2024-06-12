@@ -53,6 +53,7 @@
 
   $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
   $: ({ user } = $userBetarenaSettings);
+  $: ({viewportType, currentPageRouteId} = $sessionStore)
   // #endregion ➤ 📌 VARIABLES $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
 </script>
 
@@ -70,25 +71,30 @@
 <div class="wrapper">
   <div
     class="navigation-container"
-    class:mobile={$sessionStore.viewportType === "mobile"}
+    class:mobile={viewportType === "mobile"}
   >
     <div class="sport-options">
-      <HeaderSportsBtn
-        sportNameDefault={"football"}
-        sportTranslation={trsanslationData?.scores_header_translations
-          ?.sports_v2?.football || ""}
-        sportValue={trsanslationData?.scores_header_fixtures_information
-          ?.football || ""}
-        {selectedSport}
-        on:closeDropdown={(event) => {
-          return (selectedSport = event.detail?.selectedSport);
-        }}
-      />
+      {#if currentPageRouteId === "Standard"}
+
+        <HeaderSportsBtn
+          sportNameDefault={"football"}
+          sportTranslation={trsanslationData?.scores_header_translations
+            ?.sports_v2?.football || ""}
+          sportValue={trsanslationData?.scores_header_fixtures_information
+            ?.football || ""}
+          {selectedSport}
+          on:closeDropdown={(event) => {
+            return (selectedSport = event.detail?.selectedSport);
+          }}
+        />
+      {/if}
     </div>
-    {#if $sessionStore.viewportType !== "mobile"}
+    {#if viewportType !== "mobile"}
       <div class="actions">
-        <HeaderCBookmakers />
-        {#if user != undefined && $sessionStore.viewportType === "desktop"}
+        {#if currentPageRouteId === "Standard"}
+          <HeaderCBookmakers />
+        {/if}
+        {#if user != undefined && viewportType === "desktop"}
           <Balance />
         {/if}
       </div>
