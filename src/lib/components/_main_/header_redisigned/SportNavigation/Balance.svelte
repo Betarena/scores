@@ -48,8 +48,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   $: isMobile = $sessionStore.viewportType === "mobile";
   $: translationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
-  // $: ({ main_balance } = { ...$userBetarenaSettings.user?.scores_user_data });
-  const main_balance = 120.84;
+  $: ({ main_balance } = { ...$userBetarenaSettings.user?.scores_user_data });
   // #endregion ➤ 📌 VARIABLES
 </script>
 
