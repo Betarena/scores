@@ -56,7 +56,7 @@
         class=
         "
         s-14
-        color-black-2
+        color-white
         no-wrap
         capitalize
         breadcrumb
@@ -92,7 +92,7 @@
       class=
       "
       s-14
-      color-black-2
+      color-white
       no-wrap
       capitalize
       breadcrumb

@@ -386,7 +386,7 @@
     class=
     "
     s-14
-    color-black-2
+    color-white
     "
   >
     {B_SAP_CP_T?.general?.data?.title ?? 'Competitions'}

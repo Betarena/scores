@@ -13,6 +13,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   import SeoBox from "$lib/components/SEO-Box.svelte";
   import sessionStore from "$lib/store/session.js";
+  import userBetarenaSettings from "$lib/store/user-settings.js";
   import { viewportChangeV2 } from "$lib/utils/device";
   import {
     routeIdPageFixture,
@@ -25,6 +26,7 @@
   import MobileHeaderSmall from "./MobileHeaderSmall.svelte";
   import { scoresNavbarStore } from "./_store.js";
   import SportsNavigation from "./SportNavigation/SportsNavigation.svelte";
+  import SportsNavigationStandart from "./SportNavigation/SportsNavigationStandart.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -68,7 +70,7 @@
     VIEWPORT_TABLET_INIT[0]
   );
   $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
-
+  $: ({ user } = $userBetarenaSettings);
   // #endregion ➤ 📌 VARIABLES
   // #region ➤ 🛠️ METHODS
 
@@ -150,8 +152,33 @@
   {:else}
     <Header on:avatarClick={avatarClick} />
   {/if}
-  {#if currentPageRouteId !== "AuthorsPage" && (!mobile || !isSimpleHeader) && (currentPageRouteId === "Standard" || viewportType === "desktop")}
+
+  {#if currentPageRouteId === "Standard" && (!mobile || !isSimpleHeader)}
+    <SportsNavigationStandart />
+  {:else if currentPageRouteId !== "AuthorsPage" && user && viewportType === "desktop"}
     <SportsNavigation />
+  {/if}
+
+  {#if currentPageRouteId !== "AuthorsPage"}
+    <div class="wave-wrapper">
+      {#if !user || viewportType !== "desktop"}
+        <div class="sport-nav-placeholder" />
+      {/if}
+      <svg
+        style={!user || viewportType !== "desktop"
+          ? "transform: translateY(-1px);"
+          : " "}
+        class="wave-bg"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 1440 463"
+        fill="none"
+      >
+        <path
+          d="M447 314.307C240 314.307 0 435.854 0 435.854L4.61216e-06 -32H1440V460.864C1440 460.864 1275.86 473.72 1088 436.354C885.365 396.051 654 314.307 447 314.307Z"
+          fill="#292929"
+        />
+      </svg>
+    </div>
   {/if}
 </header>
 
@@ -173,9 +200,41 @@
     align-items: center;
     background-color: var(--bg-color);
     border-bottom: var(--header-border);
+    position: relative;
+
+    .empty-nav {
+      box-sizing: border-box;
+      height: 64px;
+      width: 100%;
+      background: #292929;
+      position: absolute;
+      z-index: 0;
+      bottom: 0;
+    }
 
     &.mobile {
       border-bottom: none;
+    }
+  }
+  .wave-wrapper {
+    position: relative;
+    width: 100%;
+    z-index: 0;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 0;
+    width: 100%;
+    transform: translateY(100%);
+
+    .sport-nav-placeholder {
+      height: 64px;
+      width: 100%;
+      background: #292929;
+    }
+    svg {
+      width: 100%;
+      height: auto;
     }
   }
 </style>
