@@ -22,11 +22,7 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  import { page } from "$app/stores";
-  import sessionStore from "$lib/store/session.js";
-  import userBetarenaSettings from "$lib/store/user-settings.js";
   import Balance from "./Balance.svelte";
-  import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
 
   // #endregion ➤ 📦 Package Imports
 

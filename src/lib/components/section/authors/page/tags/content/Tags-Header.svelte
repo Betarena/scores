@@ -307,7 +307,7 @@
     color: var(--text-color-second);
 
     &.mobile {
-      padding: 0 24px;
+      padding: 0 16px;
       max-height: var(--max-title-height);
       overflow: hidden;
       transition: max-height 1s ease-in-out;
