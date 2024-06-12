@@ -9,6 +9,12 @@
 
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
+  import { goto } from "$app/navigation";
+  import { page } from "$app/stores";
+  import sessionStore from "$lib/store/session.js";
+  import { generateUrlCompetitions } from "$lib/utils/string.js";
+  import userBetarenaSettings from "$lib/store/user-settings.js";
+    import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
 
   // #region ➤ 📦 Package Imports
 
@@ -41,11 +47,40 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let backgroundColor ="#4b4b4bcc", color = "white";
-
-  const dispatch = createEventDispatcher();
+  export let backgroundColor = "#4b4b4bcc",
+    color = "white";
+  $: ({ globalState, serverLang = "en" } = $sessionStore);
+  $: homepageURL = serverLang != "en" ? `/${serverLang}` : "/";
+  $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
 
   // #endregion ➤ 📌 VARIABLES
+
+  function backBtnClick(): void {
+    if (globalState.has("IsPWA")) return window.history.back();
+    const [preferedPage] = $userBetarenaSettings.user?.scores_user_data
+      ?.buttons_order || ["scores"];
+    let url: string;
+    switch (preferedPage) {
+      case "competitions":
+        url = generateUrlCompetitions(
+          serverLang,
+          $page.data.B_SAP_D3_CP_H
+        );
+        break;
+      case "content":
+        url =
+          trsanslationData?.scores_header_translations?.section_links
+            ?.sports_content_url || "/";
+        break;
+      case "scores":
+      default:
+        url = homepageURL;
+        break;
+    }
+
+    goto(url);
+    return;
+  }
 </script>
 
 <!--
@@ -59,7 +94,11 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<button class="back-button-wrapper" style="background-color: {backgroundColor};" on:click={() => dispatch("click")}>
+<button
+  class="back-button-wrapper"
+  style="background-color: {backgroundColor};"
+  on:click={backBtnClick}
+>
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="22"
@@ -95,8 +134,7 @@
     align-items: center;
     justify-content: center;
     border-radius: 100%;
-    background-color:  #4b4b4bcc;
+    background-color: #4b4b4bcc;
     cursor: pointer;
-
   }
 </style>

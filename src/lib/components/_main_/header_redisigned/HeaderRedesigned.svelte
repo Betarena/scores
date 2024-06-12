@@ -16,8 +16,12 @@
   import userBetarenaSettings from "$lib/store/user-settings.js";
   import { viewportChangeV2 } from "$lib/utils/device";
   import {
+    routeIdPageAuthors,
+    routeIdPageCompetition,
     routeIdPageFixture,
+    routeIdPageLeague,
     routeIdPagePlayer,
+    routeIdPageTags,
   } from "$lib/constants/paths.js";
   import MobileHeaderRich from "./MobileHeaderRich.svelte";
   import Header from "./Header.svelte";
@@ -60,7 +64,7 @@
      */ // eslint-disable-next-line no-unused-vars
     VIEWPORT_TABLET_INIT: [number, boolean] = [1160, true];
 
-  const simpleMobileHeaderRoutes = [routeIdPageFixture, routeIdPagePlayer];
+  const simpleMobileHeaderRoutes = [routeIdPageFixture, routeIdPagePlayer, routeIdPageLeague, routeIdPageCompetition, routeIdPageTags, routeIdPageAuthors];
 
   $: isSimpleHeader = simpleMobileHeaderRoutes.includes($page.route.id || "");
   $: ({ windowWidth, currentPageRouteId, viewportType } = $sessionStore);
@@ -160,14 +164,11 @@
   {/if}
 
   {#if currentPageRouteId !== "AuthorsPage"}
-    <div class="wave-wrapper">
+    <div class="wave-wrapper" >
       {#if !user || viewportType !== "desktop"}
         <div class="sport-nav-placeholder" />
       {/if}
       <svg
-        style={!user || viewportType !== "desktop"
-          ? "transform: translateY(-1px);"
-          : " "}
         class="wave-bg"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 1440 463"
