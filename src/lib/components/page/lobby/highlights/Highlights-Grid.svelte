@@ -661,7 +661,7 @@
       <h2
         class=
         "
-        color-black-2
+        color-white
         s-24
         w-600
         inter-font

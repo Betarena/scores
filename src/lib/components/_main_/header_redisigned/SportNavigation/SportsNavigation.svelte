@@ -22,39 +22,11 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  import { page } from "$app/stores";
-  import sessionStore from "$lib/store/session.js";
-  import userBetarenaSettings from "$lib/store/user-settings.js";
   import Balance from "./Balance.svelte";
-  import HeaderCBookmakers from "./Header-C-Bookmakers.svelte";
-  import HeaderSportsBtn from "./SportsNavBtn.svelte";
-  import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
 
   // #endregion ➤ 📦 Package Imports
 
-  // #region ➤ 📌 VARIABLES
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'variables' that are to be         │
-  // │ and are expected to be used by 'this' .svelte file / component.        │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. export const / let [..]                                             │
-  // │ 2. const [..]                                                          │
-  // │ 3. let [..]                                                            │
-  // │ 4. $: [..]                                                             │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-  let /**
-     * @description
-     *  📣 Currently `selected sport`.
-     */
-    selectedSport = "football";
-
-  $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
-  $: ({ user } = $userBetarenaSettings);
-  // #endregion ➤ 📌 VARIABLES $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
-</script>
+ </script>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -70,31 +42,16 @@
 <div class="wrapper">
   <div
     class="navigation-container"
-    class:mobile={$sessionStore.viewportType === "mobile"}
   >
     <div class="sport-options">
-      <HeaderSportsBtn
-        sportNameDefault={"football"}
-        sportTranslation={trsanslationData?.scores_header_translations
-          ?.sports_v2?.football || ""}
-        sportValue={trsanslationData?.scores_header_fixtures_information
-          ?.football || ""}
-        {selectedSport}
-        on:closeDropdown={(event) => {
-          return (selectedSport = event.detail?.selectedSport);
-        }}
-      />
+
     </div>
-    {#if $sessionStore.viewportType !== "mobile"}
       <div class="actions">
-        <HeaderCBookmakers />
-        {#if user != undefined && $sessionStore.viewportType === "desktop"}
           <Balance />
-        {/if}
       </div>
-    {/if}
   </div>
 </div>
+
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -131,9 +88,6 @@
       .actions {
         display: flex;
         justify-self: end;
-      }
-      &.mobile {
-        padding: 10px 16px;
       }
     }
   }

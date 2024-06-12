@@ -3,10 +3,10 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+	import { sessionStore } from '$lib/store/session.js';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
 <script lang="ts">
   // #region ➤ 📦 Package Imports
 
@@ -22,14 +22,13 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
-  import { spliceBalanceDoubleZero, toDecimalFix } from "$lib/utils/string";
-  import { translationObject } from "$lib/utils/translation";
+  import { page } from "$app/stores";
   import sessionStore from "$lib/store/session.js";
   import userBetarenaSettings from "$lib/store/user-settings.js";
-  import { page } from "$app/stores";
+  import Balance from "./Balance.svelte";
+  import HeaderCBookmakers from "./Header-C-Bookmakers.svelte";
+  import HeaderSportsBtn from "./SportsNavBtn.svelte";
   import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
-  import BuyBtaButton from "$lib/components/shared/BuyBta/Buy-BTA-Button.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -46,10 +45,16 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  $: isMobile = $sessionStore.viewportType === "mobile";
-  $: translationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
-  $: ({ main_balance } = { ...$userBetarenaSettings.user?.scores_user_data });
-  // #endregion ➤ 📌 VARIABLES
+  let /**
+     * @description
+     *  📣 Currently `selected sport`.
+     */
+    selectedSport = "football";
+
+  $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
+  $: ({ user } = $userBetarenaSettings);
+  $: ({viewportType} = $sessionStore)
+  // #endregion ➤ 📌 VARIABLES $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
 </script>
 
 <!--
@@ -62,68 +67,37 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<div class="balance-wrapper">
-  <a
-    href="/u/transaction-history/{$userBetarenaSettings.lang}"
-    title="View Transactions History"
+
+<div class="wrapper">
+  <div
+    class="navigation-container"
+    class:mobile={viewportType === "mobile"}
   >
-    <div
-      id="balance-box"
-      class="
-    dropdown-opt-box
-    row-space-start
-    "
-    >
-      <div>
-        <!--
-      📱 MOBILE
-      Balance Title
-      -->
-        <p
-          class="
-          color-grey
-          s-12
-          no-wrap
-          "
-        >
-          {translationData?.scores_header_translations?.data?.balance ??
-            translationObject.balance}
-        </p>
+    <div class="sport-options">
 
-        <p
-          class="
-        color-white
-        s-14
-        no-wrap
-        "
-        >
-          <span
-            class="
-          color-primary
-          w-500
-          m-r-5
-          "
-          >
-            {spliceBalanceDoubleZero(toDecimalFix(main_balance)) ?? "0.00"} BTA
-          </span>
-          {#if isMobile}
-            <br />
-          {/if}
-          (${spliceBalanceDoubleZero(toDecimalFix(main_balance)) ?? "0.00"})
-        </p>
-      </div>
+        <HeaderSportsBtn
+          sportNameDefault={"football"}
+          sportTranslation={trsanslationData?.scores_header_translations
+            ?.sports_v2?.football || ""}
+          sportValue={trsanslationData?.scores_header_fixtures_information
+            ?.football || ""}
+          {selectedSport}
+          on:closeDropdown={(event) => {
+            return (selectedSport = event.detail?.selectedSport);
+          }}
+        />
     </div>
-  </a>
-
-  <!--
-╭─────
-│ > But Betarena Token (navigation)
-╰─────
--->
-  <div>
-    <BuyBtaButton popup={true} />
+    {#if viewportType !== "mobile"}
+      <div class="actions">
+          <HeaderCBookmakers />
+        {#if user != undefined && viewportType === "desktop"}
+          <Balance />
+        {/if}
+      </div>
+    {/if}
   </div>
 </div>
+
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -136,17 +110,34 @@
 -->
 
 <style lang="scss">
-  .balance-wrapper {
+  .wrapper {
     display: flex;
-    align-items: center;
-    gap: 56px;
-    border-left: 1px solid #4b4b4b;
-    height: 44px;
-    padding: 0 16px;
-    padding-right: 0;
-    width: fit-content;
-  }
-  div#balance-box {
-    cursor: pointer;
+    height: 64px;
+    width: 100%;
+    border-top: 1px solid #4b4b4b;
+    border-bottom: 1px solid #4b4b4b;
+    background: #292929;
+
+    .navigation-container {
+      max-width: 1430px;
+      display: flex;
+      margin: auto;
+      width: 100%;
+      height: 100%;
+      padding: 10px 34px;
+      justify-content: space-between;
+
+      .sport-options {
+        padding: 10px 0;
+      }
+
+      .actions {
+        display: flex;
+        justify-self: end;
+      }
+      &.mobile {
+        padding: 10px 16px;
+      }
+    }
   }
 </style>
