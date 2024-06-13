@@ -189,6 +189,7 @@
   {:else if currentPageRouteId !== "AuthorsPage" && user && viewportType === "desktop"}
     <SportsNavigation />
   {/if}
+
 </header>
 
 <!--
