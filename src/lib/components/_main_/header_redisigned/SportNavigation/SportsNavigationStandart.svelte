@@ -111,6 +111,7 @@
 
 <style lang="scss">
   .wrapper {
+    z-index: 1;
     display: flex;
     height: 64px;
     width: 100%;
