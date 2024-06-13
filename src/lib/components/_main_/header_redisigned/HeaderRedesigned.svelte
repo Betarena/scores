@@ -21,6 +21,7 @@
     routeIdPageFixture,
     routeIdPageLeague,
     routeIdPagePlayer,
+    routeIdPageProfile,
     routeIdPageTags,
   } from "$lib/constants/paths.js";
   import MobileHeaderRich from "./MobileHeaderRich.svelte";
@@ -72,6 +73,7 @@
     routeIdPageLeague,
     routeIdPageCompetition,
     routeIdPageTags,
+    routeIdPageProfile,
     routeIdPageAuthors,
   ];
 
