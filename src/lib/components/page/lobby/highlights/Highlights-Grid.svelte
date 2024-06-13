@@ -25,7 +25,7 @@
 
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
-	import { onMount } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 
 	import { get } from '$lib/api/utils.js';
 	import sessionStore from '$lib/store/session.js';
@@ -98,6 +98,8 @@
     /** @description TODO: DOC: */
     competitionMapSnap: Map < number, B_H_COMP_DATA > = new Map()
   ;
+
+  const dispatch = createEventDispatcher();
 
   $: B_SAP_CP_T = $page.data?.B_SAP_CP_T;
 
@@ -681,7 +683,7 @@
           row-space-start
           width-auto
           "
-          on:click={() => $sessionStore.showUserguide1 = true}
+          on:click={() => {dispatch("showModal"); $sessionStore.showUserguide1 = true}}
         >
 
           <p

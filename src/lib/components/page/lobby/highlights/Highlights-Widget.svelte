@@ -276,6 +276,7 @@
   -->
   <svelte:component
     this={HighlightsGridDynamic}
+    on:showModal
     WIDGET_DATA={new Map(WIDGET_DATA)}
     LIMITS={miscDataMap}
   />
