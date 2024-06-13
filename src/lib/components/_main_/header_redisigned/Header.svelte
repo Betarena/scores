@@ -167,7 +167,7 @@
 
 <style lang="scss">
   .wrapper {
-    z-index: 1;
+    z-index: 2;
     display: flex;
     padding: 12px 34px;
     max-width: 1430px;
