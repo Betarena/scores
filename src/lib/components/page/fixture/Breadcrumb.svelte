@@ -36,8 +36,8 @@
   <a
 
     href={$page.params.lang != undefined
-      ? `/${$page.params.lang}/${$page.params.sport}`
-      : `/${$page.params.sport}`}
+      ? `/${$page.params.lang}/scores`
+      : `/scores`}
   >
     <p
       class="

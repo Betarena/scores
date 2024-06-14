@@ -236,14 +236,10 @@
     z-index: 0;
     width: 100%;
 
-    .sport-nav-placeholder {
-      height: 64px;
-      width: 100%;
-      background: #292929;
-    }
     img {
       width: 100%;
-      height: auto;
+      max-height: 450px;
+      object-fit: cover;
     }
   }
 </style>
