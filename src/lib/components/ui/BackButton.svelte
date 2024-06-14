@@ -8,13 +8,6 @@
 -->
 
 <script lang="ts">
-  import { goto } from "$app/navigation";
-  import { page } from "$app/stores";
-  import sessionStore from "$lib/store/session.js";
-  import { generateUrlCompetitions } from "$lib/utils/string.js";
-  import userBetarenaSettings from "$lib/store/user-settings.js";
-  import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
-
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -29,6 +22,13 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
+
+  import { goto } from "$app/navigation";
+  import { page } from "$app/stores";
+  import sessionStore from "$lib/store/session.js";
+  import { generateUrlCompetitions } from "$lib/utils/string.js";
+  import userBetarenaSettings from "$lib/store/user-settings.js";
+  import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -54,6 +54,18 @@
 
   // #endregion ➤ 📌 VARIABLES
 
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
   function backBtnClick(): void {
     if (globalState.has("IsPWA")) return window.history.back();
     const [preferedPage] = $userBetarenaSettings.user?.scores_user_data
@@ -77,6 +89,7 @@
     goto(url);
     return;
   }
+// #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--
