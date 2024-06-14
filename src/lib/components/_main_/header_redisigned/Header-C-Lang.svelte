@@ -298,7 +298,8 @@
       color: #ffffff;
       outline: none;
       border: none;
-      padding: 5px 0px;
+      padding: 5px 12px;
+      transform: translateX(12px);
       background-color: transparent;
 
       &:hover,
@@ -318,6 +319,7 @@
       /* 🎨 style */
       width: 88px;
       margin-top: 5px;
+      transform: translateX(12px);
       border-radius: 4px;
       background: var(--dark-theme);
       box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
