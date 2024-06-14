@@ -1,28 +1,12 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ 📌 High Order Component Overview                                                 │
-┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ Internal Svelte Code Format :|: V.8.0                                          │
-│ ➤ Status :|: 🔒 LOCKED                                                           │
-│ ➤ Author(s) :|: @migbash                                                         │
-┣──────────────────────────────────────────────────────────────────────────────────┫
-│ 📝 Description                                                                   │
-┣──────────────────────────────────────────────────────────────────────────────────┫
-│ Scores Platform Header Theme Button Component (Child)                            │
-╰──────────────────────────────────────────────────────────────────────────────────╯
--->
-
-<!--
-╭──────────────────────────────────────────────────────────────────────────────────╮
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
 <script lang="ts">
-
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -37,12 +21,19 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
-	import sessionStore from '$lib/store/session.js';
-	import userBetarenaSettings from '$lib/store/user-settings.js';
-
-	import icon_dark_mode from './assets/moon-fill.svg';
-	import icon_light_mode from './assets/sun-fill.svg';
+  import { page } from "$app/stores";
+  import {
+    routeIdPageCompetition,
+    routeIdPageCompetitionLobby,
+  } from "$lib/constants/paths.js";
+  import sessionStore from "$lib/store/session.js";
+  import userBetarenaSettings from "$lib/store/user-settings.js";
+  import { generateUrlCompetitions } from "$lib/utils/string.js";
+  import HeaderCompetitionBtn from "../../header/Header-Competition-Btn.svelte";
+  import Balance from "./Balance.svelte";
+  import HeaderCBookmakers from "./Header-C-Bookmakers.svelte";
+  import HeaderSportsBtn from "./SportsNavBtn.svelte";
+  import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -59,20 +50,22 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
-  const
-    /**
+  let /**
      * @description
-     *  📣 `this` component **main** `id` and `data-testid` prefix.
-     */ // eslint-disable-next-line no-unused-vars
-    CNAME = 'header⮕c⮕theme⮕main'
-  ;
+     *  📣 Currently `selected sport`.
+     */
+    selectedSport = "football";
+  const competitionRoutes = [
+    routeIdPageCompetitionLobby,
+    routeIdPageCompetition,
+  ];
 
-  $: ({ currentPageRouteId } = $sessionStore);
-  $: ({ theme } = { ...$userBetarenaSettings });
+  $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
+  $: ({ user } = $userBetarenaSettings);
+  $: ({ viewportType, serverLang = "en" } = $sessionStore);
 
+  $: isCompetitionSection = competitionRoutes.includes($page.route.id);
   // #endregion ➤ 📌 VARIABLES
-
 </script>
 
 <!--
@@ -86,40 +79,42 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div
-  id={CNAME}
-  class=
-  "
-  row-space-start
-  cursor-pointer
-  "
-  class:m-r-10={currentPageRouteId == 'ProfilePage'}
-  class:row-space-end={theme == 'Dark'}
-  on:click=
-  {
-    () =>
-    {
-      userBetarenaSettings.updateData
-      (
-        [
-          ['theme',undefined]
-        ]
-      );
-      return;
-    }
-  }
->
-
-  <img
-    loading="lazy"
-    src={theme == 'Dark' ? icon_light_mode : icon_dark_mode}
-    alt={theme == 'Dark' ? 'icon_light_mode' : 'icon_dark_mode'}
-    title={theme == 'Dark' ? 'Enable Light Mode' : 'Enable Dark Mode'}
-    width=16
-    height=16
-    class:light={theme == 'Dark'}
-  />
-
+<div class="wrapper" id="header-sports-nav-standart">
+  <div class="navigation-container" class:mobile={viewportType === "mobile"}>
+    <div class="sport-options">
+      <!-- [TODO] - Create Independet Component (join HeaderCompetitionBtn and HeaderSportsBtn) as they very simmilar + made layout with {#for} -->
+      {#if isCompetitionSection}
+        <HeaderCompetitionBtn
+          competitionNameDefault={"predictor"}
+          competitionTranslation={trsanslationData?.competitions_category?.data
+            ?.predictor || ""}
+          navUrl={generateUrlCompetitions(serverLang, $page.data.B_SAP_D3_CP_H)}
+        />
+      {:else}
+        <HeaderSportsBtn
+          sportNameDefault={"football"}
+          sportTranslation={trsanslationData?.scores_header_translations
+            ?.sports_v2?.football || ""}
+          sportValue={trsanslationData?.scores_header_fixtures_information
+            ?.football || ""}
+          {selectedSport}
+          on:closeDropdown={(event) => {
+            return (selectedSport = event.detail?.selectedSport);
+          }}
+        />
+      {/if}
+    </div>
+    {#if viewportType !== "mobile"}
+      <div class="actions">
+        {#if !isCompetitionSection}
+          <HeaderCBookmakers />
+        {/if}
+        {#if user != undefined && viewportType === "desktop"}
+          <Balance />
+        {/if}
+      </div>
+    {/if}
+  </div>
 </div>
 
 <!--
@@ -133,37 +128,38 @@
 -->
 
 <style lang="scss">
+  .wrapper {
+    z-index: 1;
+    display: flex;
+    height: 64px;
+    width: 100%;
+    border-top: 1px solid #4b4b4b;
+    border-bottom: 1px solid #4b4b4b;
+    background: #292929;
 
-  /*
-  ╭──────────────────────────────────────────────────────────────────────────────╮
-  │ 📲 MOBILE-FIRST                                                              │
-  ╰──────────────────────────────────────────────────────────────────────────────╯
-  */
+    .navigation-container {
+      max-width: 1430px;
+      display: flex;
+      margin: auto;
+      width: 100%;
+      height: 100%;
+      padding: 10px 34px;
+      justify-content: space-between;
 
-  div#header⮕c⮕theme⮕main
-  {
-    height: 24px;
-    width: 44px;
-    /* 🎨 style */
-    background: var(--dark-theme-1);
-    border-radius: 24px;
+      .sport-options {
+        padding: 10px 0;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
 
-    & > img
-    {
-      width: 20px;
-      margin: 2px;
-      height: 20px;
-      /* 🎨 style */
-      padding: 4.5px;
-      border-radius: 50%;
-      background-color: var(--dark-theme);
-    }
-
-    & > img.light
-    {
-      /* 🎨 style */
-      background-color: var(--white);
+      .actions {
+        display: flex;
+        justify-self: end;
+      }
+      &.mobile {
+        padding: 10px 16px;
+      }
     }
   }
-
 </style>

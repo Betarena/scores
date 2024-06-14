@@ -306,7 +306,6 @@
         },
         1500
       );
-      return () => $modalStore.show = false;
     }
   );
 

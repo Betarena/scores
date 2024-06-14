@@ -3,8 +3,6 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
-	import { userBetarenaSettings } from '$lib/store/user-settings.js';
-	import AssetBetarenaLogoFull from './assets/asset-betarena-logo-full.svelte';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
@@ -24,22 +22,17 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  import { page } from "$app/stores";
-  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
 
-  import userBetarenaSettings from "$lib/store/user-settings.js"
+  import { spliceBalanceDoubleZero, toDecimalFix } from "$lib/utils/string";
+  import { translationObject } from "$lib/utils/translation";
   import sessionStore from "$lib/store/session.js";
+  import userBetarenaSettings from "$lib/store/user-settings.js";
+  import { page } from "$app/stores";
   import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
-  import Button from "$lib/components/ui/Button.svelte";
-  import { translationObject } from "$lib/utils/translation.js";
-  import WalletBalance from "../../ui/WalletBalance.svelte";
-  import HeaderCLang from "./Header-C-Lang.svelte";
-  import HeaderCTheme from "./Header-C-Theme.svelte";
-  import LogoButton from "./LogoButton.svelte";
-  import { scoresNavbarStore } from "./_store.js";
-  import BuyBtaButton from "$lib/components/shared/BuyBta/Buy-BTA-Button.svelte"
+  import BuyBtaButton from "$lib/components/shared/BuyBta/Buy-BTA-Button.svelte";
 
   // #endregion ➤ 📦 Package Imports
+
   // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -53,76 +46,82 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  export let mobile, tablet;
-  $: ({ globalState } = $sessionStore);
-
-  $: isPWA = globalState.has("IsPWA")
-  $: isAuth = globalState.has("Authenticated");
-  $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
-
-  const /**
-     * @description
-     *  📣 `this` component **main** `id` and `data-testid` prefix.
-     */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = "main⮕header";
-
+  $: isMobile = $sessionStore.viewportType === "mobile";
+  $: translationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
+  $: ({ main_balance } = { ...$userBetarenaSettings.user?.scores_user_data });
   // #endregion ➤ 📌 VARIABLES
-
-  // #region ➤ 🛠️ METHODS
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'methods' that are to be           │
-  // │ and are expected to be used by 'this' .svelte file / component.        │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. function (..)                                                       │
-  // │ 2. async function (..)                                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  function signIn() {
-    $sessionStore.currentActiveModal = "Auth_Modal";
-    return;
-  }
-
-  // #endregion ➤ 🛠️ METHODS
 </script>
-<svelte:window
-  on:click={() => {
-    scoresNavbarStore.closeAllDropdowns();
-  }}
-/>
-<div class="wrapper" id={CNAME} class:pwa={isPWA} class:mobile>
-  {#if !isAuth }
-      <LogoButton {mobile} {tablet} />
-  {/if}
-  {#if isAuth && !isPWA && mobile}
-    <div class="logo-full">
-      <LogoButton {mobile} {tablet} />
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 💠 Svelte Component HTML                                                         │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+<div class="balance-wrapper">
+  <a
+    href="/u/transaction-history/{$userBetarenaSettings.lang}"
+    title="View Transactions History"
+  >
+    <div
+      id="balance-box"
+      class="
+    dropdown-opt-box
+    row-space-start
+    "
+    >
+      <div>
+        <!--
+      📱 MOBILE
+      Balance Title
+      -->
+        <p
+          class="
+          color-grey
+          s-12
+          no-wrap
+          "
+        >
+          {translationData?.scores_header_translations?.data?.balance ??
+            translationObject.balance}
+        </p>
+
+        <p
+          class="
+        color-white
+        s-14
+        no-wrap
+        "
+        >
+          <span
+            class="
+          color-primary
+          w-500
+          m-r-5
+          "
+          >
+            {spliceBalanceDoubleZero(toDecimalFix(main_balance)) ?? "0.00"} BTA
+          </span>
+          {#if isMobile}
+            <br />
+          {/if}
+          (${spliceBalanceDoubleZero(toDecimalFix(main_balance)) ?? "0.00"})
+        </p>
+      </div>
     </div>
-  {/if}
+  </a>
 
-  {#if isAuth}
-      <WalletBalance />
-  {/if}
-
-  <div class="actions">
-    {#if !mobile && tablet}
-      <HeaderCLang />
-      <HeaderCTheme />
-    {/if}
-    {#if globalState.has("NotAuthenticated")}
-      <Button type="outline" on:click={signIn}>
-        <TranslationText
-          key={"header-txt-unkown"}
-          text={trsanslationData?.scores_header_translations?.sign_in}
-          fallback={translationObject.sign_in}
-        />
-      </Button>
-    {:else}
+  <!--
+╭─────
+│ > But Betarena Token (navigation)
+╰─────
+-->
+  <div>
     <BuyBtaButton popup={true} />
-
-    {/if}
   </div>
 </div>
 
@@ -137,32 +136,17 @@
 -->
 
 <style lang="scss">
-  .wrapper {
+  .balance-wrapper {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    width: 100%;
-    padding: 12px 34px;
-    flex-wrap: wrap;
-
-    &.mobile {
-      padding: 16px;
-      padding-bottom: 20px;
-    }
-
-    .logo-full {
-      width: 100%;
-      margin-bottom: 19px;
-    }
-    &.pwa {
-      flex-wrap: nowrap;
-    }
-
-    .actions {
-      flex-grow: 1;
-      align-items: center;
-      justify-content: flex-end;
-      display: flex;
-    }
+    gap: 56px;
+    border-left: 1px solid #4b4b4b;
+    height: 44px;
+    padding: 0 16px;
+    padding-right: 0;
+    width: fit-content;
+  }
+  div#balance-box {
+    cursor: pointer;
   }
 </style>

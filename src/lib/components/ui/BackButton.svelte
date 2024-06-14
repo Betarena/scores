@@ -1,19 +1,5 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ 📌 High Order Component Overview                                                 │
-┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ Internal Svelte Code Format :|: V.8.0                                          │
-│ ➤ Status :|: 🔒 LOCKED                                                           │
-│ ➤ Author(s) :|: @migbash                                                         │
-┣──────────────────────────────────────────────────────────────────────────────────┫
-│ 📝 Description                                                                   │
-┣──────────────────────────────────────────────────────────────────────────────────┫
-│ Scores Platform Header Theme Button Component (Child)                            │
-╰──────────────────────────────────────────────────────────────────────────────────╯
--->
-
-<!--
-╭──────────────────────────────────────────────────────────────────────────────────╮
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
@@ -22,7 +8,6 @@
 -->
 
 <script lang="ts">
-
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -38,11 +23,12 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-	import sessionStore from '$lib/store/session.js';
-	import userBetarenaSettings from '$lib/store/user-settings.js';
-
-	import icon_dark_mode from './assets/moon-fill.svg';
-	import icon_light_mode from './assets/sun-fill.svg';
+  import { goto } from "$app/navigation";
+  import { page } from "$app/stores";
+  import sessionStore from "$lib/store/session.js";
+  import { generateUrlCompetitions } from "$lib/utils/string.js";
+  import userBetarenaSettings from "$lib/store/user-settings.js";
+  import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -60,19 +46,50 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  const
-    /**
-     * @description
-     *  📣 `this` component **main** `id` and `data-testid` prefix.
-     */ // eslint-disable-next-line no-unused-vars
-    CNAME = 'header⮕c⮕theme⮕main'
-  ;
-
-  $: ({ currentPageRouteId } = $sessionStore);
-  $: ({ theme } = { ...$userBetarenaSettings });
+  export let backgroundColor = "#4b4b4bcc",
+    color = "white";
+  $: ({ globalState, serverLang = "en" } = $sessionStore);
+  $: homepageURL = serverLang != "en" ? `/${serverLang}` : "/";
+  $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
 
   // #endregion ➤ 📌 VARIABLES
 
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  function backBtnClick(): void {
+    if (globalState.has("IsPWA")) return window.history.back();
+    const [preferedPage] = $userBetarenaSettings.user?.scores_user_data
+      ?.buttons_order || ["scores"];
+    let url: string;
+    switch (preferedPage) {
+      case "competitions":
+        url = generateUrlCompetitions(serverLang, $page.data.B_SAP_D3_CP_H);
+        break;
+      case "content":
+        url =
+          trsanslationData?.scores_header_translations?.section_links
+            ?.sports_content_url || "/";
+        break;
+      case "scores":
+      default:
+        url = homepageURL;
+        break;
+    }
+
+    goto(url);
+    return;
+  }
+// #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--
@@ -86,41 +103,27 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div
-  id={CNAME}
-  class=
-  "
-  row-space-start
-  cursor-pointer
-  "
-  class:m-r-10={currentPageRouteId == 'ProfilePage'}
-  class:row-space-end={theme == 'Dark'}
-  on:click=
-  {
-    () =>
-    {
-      userBetarenaSettings.updateData
-      (
-        [
-          ['theme',undefined]
-        ]
-      );
-      return;
-    }
-  }
+<button
+  class="back-button-wrapper"
+  style="background-color: {backgroundColor};"
+  on:click={backBtnClick}
 >
-
-  <img
-    loading="lazy"
-    src={theme == 'Dark' ? icon_light_mode : icon_dark_mode}
-    alt={theme == 'Dark' ? 'icon_light_mode' : 'icon_dark_mode'}
-    title={theme == 'Dark' ? 'Enable Light Mode' : 'Enable Dark Mode'}
-    width=16
-    height=16
-    class:light={theme == 'Dark'}
-  />
-
-</div>
+  <svg
+    width="6"
+    height="10"
+    viewBox="0 0 6 10"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M4.77832 8.55448L1.22277 4.99892L4.77832 1.44336"
+      stroke={color}
+      stroke-width="1.33333"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </svg>
+</button>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -133,37 +136,14 @@
 -->
 
 <style lang="scss">
-
-  /*
-  ╭──────────────────────────────────────────────────────────────────────────────╮
-  │ 📲 MOBILE-FIRST                                                              │
-  ╰──────────────────────────────────────────────────────────────────────────────╯
-  */
-
-  div#header⮕c⮕theme⮕main
-  {
-    height: 24px;
-    width: 44px;
-    /* 🎨 style */
-    background: var(--dark-theme-1);
-    border-radius: 24px;
-
-    & > img
-    {
-      width: 20px;
-      margin: 2px;
-      height: 20px;
-      /* 🎨 style */
-      padding: 4.5px;
-      border-radius: 50%;
-      background-color: var(--dark-theme);
-    }
-
-    & > img.light
-    {
-      /* 🎨 style */
-      background-color: var(--white);
-    }
+  .back-button-wrapper {
+    display: flex;
+    height: 32px;
+    width: 32px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 100%;
+    background-color: #4b4b4bcc;
+    cursor: pointer;
   }
-
 </style>

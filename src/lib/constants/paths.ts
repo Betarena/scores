@@ -33,6 +33,11 @@ export const
   routeIdPageTags = '/(authors)/a/tag/[name]',
   /**
    * @description
+   *  📣 Target `path` for **sport page**.
+   */
+  routeIdPageSport = '/(scores)/[[lang=lang]]/[sport]',
+  /**
+   * @description
    *  📣 Target `path` for **league page**.
    */
   routeIdPageLeague = '/(scores)/[[lang=lang]]/[sport]/[country]/[league_name]',

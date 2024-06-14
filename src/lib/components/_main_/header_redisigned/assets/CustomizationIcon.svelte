@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+  <rect x="2.99609" y="2.99658" width="18.0075" height="18.0075" rx="5" stroke="var(--outline-color)" fill="var(--icon-fill)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M9.50042 8.99874C9.50042 8.72249 9.27647 8.49854 9.00021 8.49854C8.72395 8.49854 8.5 8.72249 8.5 8.99874C8.5 9.275 8.72395 9.49895 9.00021 9.49895C9.27647 9.49895 9.50042 9.275 9.50042 8.99874" stroke="var(--icon-dot-color)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M15.5043 8.99874C15.5043 8.72249 15.2804 8.49854 15.0041 8.49854C14.7279 8.49854 14.5039 8.72249 14.5039 8.99874C14.5039 9.275 14.7279 9.49895 15.0041 9.49895C15.2804 9.49895 15.5043 9.275 15.5043 8.99874" stroke="var(--icon-dot-color)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M9.50042 15.0012C9.50042 14.7249 9.27647 14.501 9.00021 14.501C8.72395 14.501 8.5 14.7249 8.5 15.0012C8.5 15.2774 8.72395 15.5014 9.00021 15.5014C9.27647 15.5014 9.50042 15.2774 9.50042 15.0012" stroke="var(--icon-dot-color)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M15.5043 15.0012C15.5043 14.7249 15.2804 14.501 15.0041 14.501C14.7279 14.501 14.5039 14.7249 14.5039 15.0012C14.5039 15.2774 14.7279 15.5014 15.0041 15.5014C15.2804 15.5014 15.5043 15.2774 15.5043 15.0012" stroke="var(--icon-dot-color)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

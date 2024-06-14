@@ -12,7 +12,7 @@
 
 // #region ➤ 📦 Package Imports
 
-import { LoadEvent, redirect } from '@sveltejs/kit';
+import { redirect, type LoadEvent } from '@sveltejs/kit';
 
 import { ERROR_CODE_INVALID, FIXTURE_PAGE_ERROR_MSG, dlogv2 } from '$lib/utils/debug';
 import { preloadExitLogic, promiseValidUrlCheck } from '$lib/utils/navigation.js';

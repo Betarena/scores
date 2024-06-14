@@ -22,7 +22,7 @@
 -->
 
 <script lang="ts">
-    import { page } from '$app/stores';
+  import { page } from "$app/stores";
 
   // #region ➤ 📦 Package Imports
 
@@ -39,8 +39,8 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-	import sessionStore from '$lib/store/session.js';
-	import { cleanUrl } from '$lib/utils/string.js';
+  import sessionStore from "$lib/store/session.js";
+  import { cleanUrl } from "$lib/utils/string.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -58,22 +58,21 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let
-    /**
+  export let /**
      * @description
      *  📣 threshold start + state for 📱 MOBILE
      */ // eslint-disable-next-line no-unused-vars
-    VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ],
+    VIEWPORT_MOBILE_INIT: [number, boolean] = [575, true],
     /**
      * @description
      *  📣 threshold start + state for 💻 TABLET
      */ // eslint-disable-next-line no-unused-vars
-    VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ],
+    VIEWPORT_TABLET_INIT: [number, boolean] = [1160, true],
     /**
      * @description
      *  📣 navigation target default key name
      */
-    navKey: string,
+    navKey: string[],
     /**
      * @description
      *  📣 navigation target `url`
@@ -88,12 +87,12 @@
      * @description
      *  📣 **translation** of target `soon` text
      */
-    soonTxt: string = 'soon',
+    soonTxt: string = "soon",
     /**
      * @description
      *  📣 **translation** of target `new` text
      */
-    newTxt: string = 'new',
+    newTxt: string = "new",
     /**
      * @description
      *  📣 wether target navigation is `BETA` and/or coming soon
@@ -108,18 +107,14 @@
      * @description
      * TODO: DOC:
      */
-    disableAnchor: boolean = false
-  ;
+    disableAnchor: boolean = false;
 
-  const
-    /**
+  const /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
      */ // eslint-disable-next-line no-unused-vars
-    CNAME = '<section-scope>⮕<type|w|c>⮕<unique-tag-name>⮕main'
-  ;
-
-  $: ({ currentPageRouteId } = { ...$sessionStore })
+    CNAME = "<section-scope>⮕<type|w|c>⮕<unique-tag-name>⮕main";
+  $: ({ currentPageRouteId } = { ...$sessionStore });
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -136,13 +131,11 @@
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  $: if_R_0
-    = navKey == 'scores' && !currentPageRouteId
-    || navKey == 'competitions' && currentPageRouteId == 'CompetitionPage'
-  ;
+  $: if_R_0 =
+    (navKey[0] == "scores" && !currentPageRouteId) ||
+    (navKey[0] == "competitions" && currentPageRouteId == "CompetitionPage");
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
-
 </script>
 
 <!--
@@ -157,39 +150,20 @@
 -->
 
 <div
-  id={navKey}
-  class=
-  "
+  id={navKey[0]}
+  class="
   nav-box
   cursor-pointer
   "
-  class:active={navKey === $page.route.id}
+  class:active={navKey.some((nav) => $page.route.id?.startsWith(nav))}
   class:disable-anchor={disableAnchor}
-  on:mouseover=
-  {
-    () =>
-    {
-      $sessionStore.navBtnHover = navKey;
-      return;
-    }
-  }
-  on:mouseout=
-  {
-    () =>
-    {
-      $sessionStore.navBtnHover = undefined;
-      return;
-    }
-  }
 >
   <a
-    href={navKey == 'content' ? navUrl : cleanUrl(navUrl)}
-    target={navKey == 'content' ? '_blank' : '_self'}
+    href={navKey[0] == "content" ? navUrl : cleanUrl(navUrl)}
+    target={navKey[0] == "content" ? "_blank" : "_self"}
   >
-    <p
-      class=
-      "
-      color-grey
+    <span
+      class="
       s-14
       w-500
       uppercase
@@ -205,8 +179,7 @@
       -->
       {#if isSoon}
         <span
-          class=
-          "
+          class="
           color-white
           s-12
           m-l-10
@@ -225,8 +198,7 @@
       -->
       {#if isNew}
         <span
-          class=
-          "
+          class="
           color-white
           s-12
           m-l-10
@@ -238,10 +210,8 @@
           {newTxt}
         </span>
       {/if}
-
-    </p>
+    </span>
   </a>
-
 </div>
 
 <!--
@@ -255,43 +225,41 @@
 -->
 
 <style lang="scss">
-
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
   │ 📲 MOBILE-FIRST                                                              │
   ╰──────────────────────────────────────────────────────────────────────────────╯
   */
-
-  div.nav-box
-  {
+  div.nav-box {
     /* 📌 position */
     position: relative;
+    color: var(--grey);
 
-    &.active p
-    {
+    &.active {
       /* 🎨 style */
-      color: var(--primary) !important;
+      color: var(--primary);
     }
-    &:hover a p
-    {
+    &:hover {
       /* 🎨 style */
-      color: var(--text-color) !important;
+      color: var(--text-color);
+    }
+  }
+  :global([nav-dragged="true"]) {
+    div.nav-box:hover {
+      color: var(--grey) !important;
     }
   }
 
-  .pill
-  {
+  .pill {
     /* 🎨 style */
     height: 24px;
-		padding: 3px 8px;
+    padding: 3px 8px;
     background-color: var(--dark-theme-1);
-		border-radius: 20px;
+    border-radius: 20px;
 
-    &.new
-    {
+    &.new {
       /* 🎨 style */
       background-color: var(--primary);
     }
   }
-
 </style>

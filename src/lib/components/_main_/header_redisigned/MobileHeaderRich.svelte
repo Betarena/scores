@@ -1,4 +1,17 @@
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 🟦 Svelte Component JS/TS                                                        │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+	import { userBetarenaSettings } from '$lib/store/user-settings.js';
+	import AssetBetarenaLogoFull from './assets/asset-betarena-logo-full.svelte';
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
 <script lang="ts">
+  // #region ➤ 📦 Package Imports
+
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'imports' that are required        │
@@ -11,32 +24,22 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  import SeoBox from "$lib/components/SEO-Box.svelte";
-  import sessionStore from "$lib/store/session.js";
-  import userBetarenaSettings from "$lib/store/user-settings.js";
-  import { viewportChangeV2 } from "$lib/utils/device";
-  import {
-    routeIdPageAuthors,
-    routeIdPageCompetition,
-    routeIdPageFixture,
-    routeIdPageLeague,
-    routeIdPagePlayer,
-    routeIdPageProfile,
-    routeIdPageTags,
-  } from "$lib/constants/paths.js";
-  import MobileHeaderRich from "./MobileHeaderRich.svelte";
-  import Header from "./Header.svelte";
   import { page } from "$app/stores";
-  import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
-  import MobileHeaderSmall from "./MobileHeaderSmall.svelte";
-  import { scoresNavbarStore } from "./_store.js";
-  import SportsNavigation from "./SportNavigation/SportsNavigation.svelte";
-  import SportsNavigationStandart from "./SportNavigation/SportsNavigationStandart.svelte";
-  import TabletWave from "./assets/wave-bg-tablet.svg";
-  import DesktopWave from "./assets/wave-bg-desktop.svg";
-  import MobileWave from "./assets/wave-bg-mobile.svg";
-  // #endregion ➤ 📦 Package Imports
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
 
+  import userBetarenaSettings from "$lib/store/user-settings.js"
+  import sessionStore from "$lib/store/session.js";
+  import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
+  import Button from "$lib/components/ui/Button.svelte";
+  import { translationObject } from "$lib/utils/translation.js";
+  import WalletBalance from "../../ui/WalletBalance.svelte";
+  import HeaderCLang from "./Header-C-Lang.svelte";
+  import HeaderCTheme from "./Header-C-Theme.svelte";
+  import LogoButton from "./LogoButton.svelte";
+  import { scoresNavbarStore } from "./_store.js";
+  import BuyBtaButton from "$lib/components/shared/BuyBta/Buy-BTA-Button.svelte"
+
+  // #endregion ➤ 📦 Package Imports
   // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -50,43 +53,21 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
+  export let mobile, tablet;
+  $: ({ globalState } = $sessionStore);
+
+  $: isPWA = globalState.has("IsPWA")
+  $: isAuth = globalState.has("Authenticated");
+  $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
 
   const /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
      */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = "header",
-    /**
-     * @description
-     *  📣 threshold start + state for 📱 MOBILE
-     */ // eslint-disable-next-line no-unused-vars
-    VIEWPORT_MOBILE_INIT: [number, boolean] = [575, true],
-    /**
-     * @description
-     *  📣 threshold start + state for 💻 TABLET
-     */ // eslint-disable-next-line no-unused-vars
-    VIEWPORT_TABLET_INIT: [number, boolean] = [1160, true];
+    CNAME: string = "main⮕header";
 
-  const simpleMobileHeaderRoutes = [
-    routeIdPageFixture,
-    routeIdPagePlayer,
-    routeIdPageLeague,
-    routeIdPageCompetition,
-    routeIdPageTags,
-    routeIdPageProfile,
-    routeIdPageAuthors,
-  ];
-
-  $: isSimpleHeader = simpleMobileHeaderRoutes.includes($page.route.id || "");
-  $: ({ windowWidth, currentPageRouteId, viewportType } = $sessionStore);
-  $: [mobile, tablet] = viewportChangeV2(
-    windowWidth,
-    VIEWPORT_MOBILE_INIT[0],
-    VIEWPORT_TABLET_INIT[0]
-  );
-  $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
-  $: ({ user } = $userBetarenaSettings);
   // #endregion ➤ 📌 VARIABLES
+
   // #region ➤ 🛠️ METHODS
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -99,103 +80,51 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function avatarClick() {
-    const openDropDown =
-      !$scoresNavbarStore.globalState.has("UserDropdownActive");
-    scoresNavbarStore.closeAllDropdowns();
-
-    if (openDropDown) {
-      scoresNavbarStore.updateData("globalStateAdd", "UserDropdownActive");
-    }
+  function signIn() {
+    $sessionStore.currentActiveModal = "Auth_Modal";
+    return;
   }
 
   // #endregion ➤ 🛠️ METHODS
 </script>
-
-<SeoBox>
-  <!--
-  ╭─────
-  │ > homepage links
-  ╰─────
-  -->
-  {#each trsanslationData?.langArray || [] as item}
-    {#if item != "en"}
-      <a href={$page.url.origin + "/" + item}>
-        {$page.url.origin + "/" + item}
-      </a>
-    {:else}
-      <a href={$page.url.origin}>
-        {$page.url.origin}
-      </a>
-    {/if}
-  {/each}
-
-  <!--
-  ╭─────
-  │ > other urls
-  ╰─────
-  -->
-  <a
-    href={trsanslationData?.scores_header_translations?.section_links
-      ?.scores_url}
-  >
-    {trsanslationData?.scores_header_translations?.section_links?.scores_title}
-  </a>
-  <a
-    href={trsanslationData?.scores_header_translations?.section_links
-      ?.competitions_url}
-  >
-    {trsanslationData?.scores_header_translations?.section_links
-      ?.competitions_title}
-  </a>
-  <a
-    href={trsanslationData?.scores_header_translations?.section_links
-      ?.sports_content_url}
-  >
-    {trsanslationData?.scores_header_translations?.section_links
-      ?.sports_content_title}
-  </a>
-</SeoBox>
-
-<header
-  class:mobile
-  class:dark-mode={currentPageRouteId !== "AuthorsPage"}
-  style:border-bottom={$page.route.id === routeIdPageAuthors
-    ? "none"
-    : "var(--header-border)"}
->
-  {#if currentPageRouteId !== "AuthorsPage"}
-    <div class="wave-wrapper">
-      <img
-        id=""
-        src={viewportType === "mobile"
-          ? MobileWave
-          : viewportType === "tablet"
-          ? TabletWave
-          : DesktopWave}
-        alt="wave-bg"
-        title=""
-        class="wave-bg"
-        loading="lazy"
-      />
+<svelte:window
+  on:click={() => {
+    scoresNavbarStore.closeAllDropdowns();
+  }}
+/>
+<div class="wrapper" id={CNAME} class:pwa={isPWA} class:mobile>
+  {#if !isAuth }
+      <LogoButton {mobile} {tablet} />
+  {/if}
+  {#if isAuth && !isPWA}
+    <div class="logo-full">
+      <LogoButton {mobile} {tablet} />
     </div>
   {/if}
-  {#if mobile || tablet}
-    {#if !mobile || !isSimpleHeader}
-      <MobileHeaderRich {mobile} {tablet} />
-    {:else if mobile && isSimpleHeader}
-      <MobileHeaderSmall {mobile} {tablet} on:avatarClick={avatarClick} />
-    {/if}
-  {:else}
-    <Header on:avatarClick={avatarClick} />
+
+  {#if isAuth}
+      <WalletBalance />
   {/if}
 
-  {#if (currentPageRouteId === "Standard" || currentPageRouteId === "CompetitionPage") && (!mobile || !isSimpleHeader)}
-    <SportsNavigationStandart />
-  {:else if currentPageRouteId !== "AuthorsPage" && user && viewportType === "desktop"}
-    <SportsNavigation />
-  {/if}
-</header>
+  <div class="actions">
+    {#if !mobile && tablet}
+      <HeaderCLang />
+      <HeaderCTheme />
+    {/if}
+    {#if globalState.has("NotAuthenticated")}
+      <Button type="outline" on:click={signIn}>
+        <TranslationText
+          key={"header-txt-unkown"}
+          text={trsanslationData?.scores_header_translations?.sign_in}
+          fallback={translationObject.sign_in}
+        />
+      </Button>
+    {:else}
+    <BuyBtaButton popup={true} />
+
+    {/if}
+  </div>
+</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -208,42 +137,33 @@
 -->
 
 <style lang="scss">
-  header {
+  .wrapper {
+    z-index: 1;
     display: flex;
-    flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    background-color: var(--bg-color);
-    position: relative;
-
-    .empty-nav {
-      box-sizing: border-box;
-      height: 64px;
-      width: 100%;
-      background: #292929;
-      position: absolute;
-      z-index: 0;
-      bottom: 0;
-    }
+    width: 100%;
+    padding: 12px 34px;
+    flex-wrap: wrap;
 
     &.mobile {
-      border-bottom: none;
+      padding: 20px 16px;
     }
-  }
-  .wave-wrapper {
-    position: relative;
-    width: 100%;
-    z-index: 0;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 0;
-    width: 100%;
 
-    img {
+    .logo-full {
       width: 100%;
-      max-height: 450px;
-      object-fit: cover;
+      margin-bottom: 19px;
+    }
+    &.pwa {
+      flex-wrap: nowrap;
+    }
+
+    .actions {
+      flex-grow: 1;
+      align-items: center;
+      justify-content: flex-end;
+      display: flex;
+      gap: 24px;
     }
   }
 </style>

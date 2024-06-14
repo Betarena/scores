@@ -4,7 +4,7 @@
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ Internal Svelte Code Format :|: V.8.0                                          │
 │ ➤ Status :|: 🔒 LOCKED                                                           │
-│ ➤ Author(s) :|: @Izobov                                                         │
+│ ➤ Author(s) :|: @migbash                                                         │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ 📝 Description                                                                   │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
@@ -22,7 +22,6 @@
 -->
 
 <script lang="ts">
-
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -38,16 +37,17 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { page } from '$app/stores';
-  import { onMount } from 'svelte';
-  import { fly } from 'svelte/transition';
+  import { page } from "$app/stores";
+  import { onMount } from "svelte";
+  import { fly } from "svelte/transition";
 
-  import userBetarenaSettings from '$lib/store/user-settings.js';
-  import { translationObject } from '$lib/utils/translation.js';
+  import sessionStore from "$lib/store/session.js";
+  import userBetarenaSettings from "$lib/store/user-settings.js";
+  import { translationObject } from "$lib/utils/translation.js";
 
-  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
 
-  import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
+  import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -70,39 +70,22 @@
    *  📣 Component `Type`.
    */
   type IDynamicAssetMap =
-    | 'icon_arrow_down_fade'
-    | 'icon_arrow_up'
-    | 'icon_check'
-  ;
+    | "icon_arrow_down_fade"
+    | "icon_arrow_up"
+    | "icon_check";
 
-  export let
-    /**
-     * @description
-     *  📣 threshold start + state for 📱 MOBILE
-     */ // eslint-disable-next-line no-unused-vars
-    VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ],
-    /**
-     * @description
-     *  📣 threshold start + state for 💻 TABLET
-     */ // eslint-disable-next-line no-unused-vars
-    VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
-  ;
-
-  const
-    /**
+  $: VIEWPORT_MOBILE_INIT = $sessionStore.viewportType === "mobile";
+  const /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
      */ // eslint-disable-next-line no-unused-vars
-    CNAME = 'header⮕c⮕bookmaker⮕main',
+    CNAME = "header⮕c⮕bookmaker⮕main",
     /**
      * @description
      *  📣 Dynamic import variable condition
      */
-    useDynamicImport: boolean = true
-  ;
-
-  let
-    /**
+    useDynamicImport: boolean = true;
+  let /**
      * @description
      *  📣 Wether target dropdown menu is **active**.
      */
@@ -111,9 +94,7 @@
      * @description
      *  📣 Holds target `component(s)` of dynamic nature.
      */
-    dynamicAssetMap = new Map< IDynamicAssetMap, any >()
-  ;
-
+    dynamicAssetMap = new Map<IDynamicAssetMap, any>();
   $: translationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
 
   // #endregion ➤ 📌 VARIABLES
@@ -127,25 +108,28 @@
   // │ as soon as 'this' .svelte file is ran.                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  onMount
-  (
-    async () =>
-    {
-      if (useDynamicImport)
-      {
-        dynamicAssetMap.set('icon_arrow_down_fade', (await import('./assets/arrow-down-fade.svg')).default);
-        dynamicAssetMap.set('icon_arrow_up', (await import('./assets/arrow-up.svg')).default);
-        dynamicAssetMap.set('icon_check', (await import('./assets/icon-check.svg')).default);
-      }
-
-      dynamicAssetMap = dynamicAssetMap;
-
-      return;
+  onMount(async () => {
+    if (useDynamicImport) {
+      dynamicAssetMap.set(
+        "icon_arrow_down_fade",
+        (await import("../assets/arrow-down-fade.svg")).default
+      );
+      dynamicAssetMap.set(
+        "icon_arrow_up",
+        (await import("../assets/arrow-up.svg")).default
+      );
+      dynamicAssetMap.set(
+        "icon_check",
+        (await import("../assets/icon-check.svg")).default
+      );
     }
-  );
+
+    dynamicAssetMap = dynamicAssetMap;
+
+    return;
+  });
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
-
 </script>
 
 <!--
@@ -162,30 +146,23 @@
 <div
   id={CNAME}
   data-testid={CNAME}
-  class=
-  {
-    !VIEWPORT_MOBILE_INIT[1]
-      ? `
+  class={!VIEWPORT_MOBILE_INIT[1]
+    ? `
         dropdown-opt-box
         row-space-start
         `
-      : `
+    : `
         side-nav-dropdown
         m-b-25
-        `
-  }
-  on:click=
-  {
-    () =>
-    {
-      isBookmakersDropdown = !isBookmakersDropdown;
-      return;
-    }
-  }
-  class:not-last={!VIEWPORT_MOBILE_INIT[1] && $userBetarenaSettings.user != undefined}
+        `}
+  on:click={() => {
+    isBookmakersDropdown = !isBookmakersDropdown;
+    return;
+  }}
+  class:not-last={!VIEWPORT_MOBILE_INIT[1] &&
+    $userBetarenaSettings.user != undefined}
   class:mobile={VIEWPORT_MOBILE_INIT[1]}
 >
-
   <!--
   ╭─────
   │ > Selected Bookmaker
@@ -195,15 +172,13 @@
     class:m-r-10={!VIEWPORT_MOBILE_INIT[1]}
     class:m-b-15={VIEWPORT_MOBILE_INIT[1]}
   >
-
     <!--
     ╭─────
     │ > Title
     ╰─────
     -->
     <p
-      class=
-      "
+      class="
       color-grey
       s-12
       no-wrap
@@ -211,7 +186,7 @@
       class:m-b-5={VIEWPORT_MOBILE_INIT[1]}
     >
       <TranslationText
-        key={'unknow'}
+        key={"unknow"}
         text={translationData?.scores_header_translations?.bookmakers}
         fallback={translationObject.bookmakers}
       />
@@ -222,13 +197,9 @@
     │ > Current selected Bookmaker
     ╰─────
     -->
-    <div
-      class:row-space-out={VIEWPORT_MOBILE_INIT[1]}
-    >
-
+    <div class:row-space-out={VIEWPORT_MOBILE_INIT[1]}>
       <div
-        class=
-        "
+        class="
         row-space-start
         "
       >
@@ -237,19 +208,17 @@
             {#if country.includes($userBetarenaSettings.country_bookmaker.toUpperCase())}
               <img
                 loading="lazy"
-                class=
-                "
+                class="
                 country-flag
                 m-r-5
                 "
                 src="https://betarena.com/images/flags/{country[0]}.svg"
                 alt={country[1]}
-                width=20
-                height=14
+                width="20"
+                height="14"
               />
               <p
-                class=
-                "
+                class="
                 color-white
                 s-14
                 "
@@ -269,15 +238,15 @@
       {#if VIEWPORT_MOBILE_INIT[1]}
         <img
           loading="lazy"
-          src={!isBookmakersDropdown ? dynamicAssetMap.get('icon_arrow_down_fade') : dynamicAssetMap.get('icon_arrow_up')}
-          alt={!isBookmakersDropdown ? 'icon_arrow_down_fade' : 'icon_arrow_up'}
-          width=16
-          height=16
+          src={!isBookmakersDropdown
+            ? dynamicAssetMap.get("icon_arrow_down_fade")
+            : dynamicAssetMap.get("icon_arrow_up")}
+          alt={!isBookmakersDropdown ? "icon_arrow_down_fade" : "icon_arrow_up"}
+          width="16"
+          height="16"
         />
       {/if}
-
     </div>
-
   </div>
 
   <!--
@@ -288,10 +257,12 @@
   {#if !VIEWPORT_MOBILE_INIT[1]}
     <img
       loading="lazy"
-      src={!isBookmakersDropdown ? dynamicAssetMap.get('icon_arrow_down_fade') : dynamicAssetMap.get('icon_arrow_up')}
-      alt={!isBookmakersDropdown ? 'icon_arrow_down_fade' : 'icon_arrow_up'}
-      width=16
-      height=16
+      src={!isBookmakersDropdown
+        ? dynamicAssetMap.get("icon_arrow_down_fade")
+        : dynamicAssetMap.get("icon_arrow_up")}
+      alt={!isBookmakersDropdown ? "icon_arrow_down_fade" : "icon_arrow_up"}
+      width="16"
+      height="16"
     />
   {/if}
 
@@ -301,53 +272,39 @@
   ╰─────
   -->
   {#if isBookmakersDropdown}
-    <div
-      class:bookmaker-dropdown={!VIEWPORT_MOBILE_INIT[1]}
-      transition:fly
-    >
+    <div class:bookmaker-dropdown={!VIEWPORT_MOBILE_INIT[1]} transition:fly>
       {#if $userBetarenaSettings.country_bookmaker != undefined}
         {#each translationData?.scores_header_translations?.bookmakers_countries || [] as country}
-
           <div
             class:row-space-start={VIEWPORT_MOBILE_INIT[1]}
             class:side-nav-dropdown-opt={VIEWPORT_MOBILE_INIT[1]}
           >
-
             <div
-              class=
-              "
+              class="
               row-space-start
               "
               class:theme-opt-box={!VIEWPORT_MOBILE_INIT[1]}
-              class:country-selected={country[0] === $userBetarenaSettings.country_bookmaker.toUpperCase()}
-              on:click=
-              {
-                () =>
-                {
-                  return userBetarenaSettings.updateData
-                  (
-                    [
-                      ['geo-bookmaker', country[0].toLocaleLowerCase()]
-                    ]
-                  )
-                }
-              }
+              class:country-selected={country[0] ===
+                $userBetarenaSettings.country_bookmaker.toUpperCase()}
+              on:click={() => {
+                return userBetarenaSettings.updateData([
+                  ["geo-bookmaker", country[0].toLocaleLowerCase()],
+                ]);
+              }}
             >
               <img
                 loading="lazy"
-                class=
-                "
+                class="
                 country-flag
                 m-r-10
                 "
                 src="https://betarena.com/images/flags/{country[0]}.svg"
                 alt={country[1]}
-                width=20
-                height=14
+                width="20"
+                height="14"
               />
               <p
-                class=
-                "
+                class="
                 color-white
                 s-14
                 "
@@ -364,20 +321,17 @@
             {#if VIEWPORT_MOBILE_INIT[1] && country.includes($userBetarenaSettings.country_bookmaker.toUpperCase())}
               <img
                 loading="lazy"
-                src={dynamicAssetMap.get('icon_check')}
+                src={dynamicAssetMap.get("icon_check")}
                 alt="{country[0]}_icon"
-                width=16
-                height=16
+                width="16"
+                height="16"
               />
             {/if}
-
           </div>
-
         {/each}
       {/if}
     </div>
   {/if}
-
 </div>
 
 <!--
@@ -391,34 +345,29 @@
 -->
 
 <style lang="scss">
-
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
   │ 📲 MOBILE-FIRST                                                              │
   ╰──────────────────────────────────────────────────────────────────────────────╯
   */
 
-  div#header⮕c⮕bookmaker⮕main
-  {
+  div#header⮕c⮕bookmaker⮕main {
     /* 📌 position */
     position: relative;
     /* 🎨 style */
     padding: 0 0 0 16px;
 
-    &.mobile
-    {
+    &.mobile {
       /* 🎨 style */
       padding: 0;
     }
 
-    &.not-last
-    {
+    &.not-last {
       /* 🎨 style */
       padding: 0 16px 0 16px;
     }
 
-    &.dropdown-opt-box
-    {
+    &.dropdown-opt-box {
       /* 🎨 style */
       border-left: 1px solid #4b4b4b;
       height: 44px;
@@ -427,15 +376,13 @@
       cursor: pointer;
     }
 
-    &.side-nav-dropdown
-    {
+    &.side-nav-dropdown {
       /* 🎨 style */
       width: 100%;
       box-shadow: inset 0px -1px 0px #616161;
     }
 
-    div.bookmaker-dropdown
-    {
+    div.bookmaker-dropdown {
       /* 📌 position */
       position: absolute;
       top: 100%;
@@ -454,8 +401,7 @@
       gap: 5px 20px;
       padding: 8px 12px;
 
-      div.theme-opt-box
-      {
+      div.theme-opt-box {
         /* 📌 position */
         position: relative;
         /* 🎨 style */
@@ -465,39 +411,30 @@
         background: #4b4b4b;
       }
       div.theme-opt-box:hover,
-      div.country-selected
-      {
+      div.country-selected {
         /* 🎨 style */
         background: #292929;
         border-radius: 4px;
       }
     }
 
-    div.side-nav-dropdown-opt
-    {
+    div.side-nav-dropdown-opt {
       /* 🎨 style */
       width: 100%;
       padding: 9.5px 0;
     }
 
-    div.side-nav-dropdown-opt p
-    {
+    div.side-nav-dropdown-opt p {
       /* 🎨 style */
       font-weight: 400;
     }
 
-    img.country-flag
-    {
+    img.country-flag {
       /* 🎨 style */
       background: linear-gradient
-      (
-        180deg,
-        rgba(255, 255, 255, 0.7) 0%,
-        rgba(0, 0, 0, 0.3) 100%
-      );
+        (180deg, rgba(255, 255, 255, 0.7) 0%, rgba(0, 0, 0, 0.3) 100%);
       background-blend-mode: overlay;
       border-radius: 2px;
     }
   }
-
 </style>

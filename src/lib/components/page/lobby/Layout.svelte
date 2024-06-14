@@ -297,9 +297,7 @@
     async (
     ): Promise < void > =>
     {
-      $modalStore.component = UserguideCompetition_1Widget;
-      $modalStore.modal = false;
-      $modalStore.show = true;
+      showModal();
       resizeAction();
       initEventListeners();
 
@@ -313,6 +311,12 @@
       let connectionRef: Unsubscribe = listenRealTimeScoreboardAll();
     }
   );
+
+  function showModal(){
+    $modalStore.component = UserguideCompetition_1Widget;
+    $modalStore.modal = false;
+    $modalStore.show = true;
+  }
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
@@ -386,7 +390,7 @@
     class=
     "
     s-14
-    color-black-2
+    color-white
     "
   >
     {B_SAP_CP_T?.general?.data?.title ?? 'Competitions'}
@@ -394,7 +398,7 @@
 
 
   <div>
-    <HighlightsWidget />
+    <HighlightsWidget on:showModal={showModal}/>
   </div>
 
 </section>

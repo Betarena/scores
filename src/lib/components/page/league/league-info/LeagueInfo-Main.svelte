@@ -70,7 +70,12 @@
       {
         const _b = b.name.replace(/\D/g, "");
         const _a = a.name.replace(/\D/g, "");
-        return parseFloat(_b.toString().slice(-2)) - parseFloat(_a.toString().slice(-2))
+
+        if (_a.length == 4)
+          return parseFloat(_b) - parseFloat(_a);
+        else
+          return parseFloat(_b.toString().slice(-2)) - parseFloat(_a.toString().slice(-2));
+        ;
       }
 		);
 
