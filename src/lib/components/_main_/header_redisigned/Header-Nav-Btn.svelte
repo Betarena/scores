@@ -186,10 +186,9 @@
     href={navKey == 'content' ? navUrl : cleanUrl(navUrl)}
     target={navKey == 'content' ? '_blank' : '_self'}
   >
-    <p
+    <span
       class=
       "
-      color-grey
       s-14
       w-500
       uppercase
@@ -239,7 +238,7 @@
         </span>
       {/if}
 
-    </p>
+    </span>
   </a>
 
 </div>
@@ -261,23 +260,29 @@
   │ 📲 MOBILE-FIRST                                                              │
   ╰──────────────────────────────────────────────────────────────────────────────╯
   */
-
   div.nav-box
   {
     /* 📌 position */
     position: relative;
+    color: var(--grey);
 
-    &.active p
+    &.active
     {
       /* 🎨 style */
-      color: var(--primary) !important;
+      color: var(--primary);
     }
-    &:hover a p
+    &:hover
     {
       /* 🎨 style */
-      color: var(--text-color) !important;
+      color: var(--text-color);
     }
   }
+  :global([nav-dragged="true"])  {
+    div.nav-box:hover {
+      color: var(--grey) !important;
+    }
+  }
+
 
   .pill
   {

@@ -128,9 +128,8 @@
     </a>
   </div>
 
-  <div class="navigation-wrapper">
-    <HeaderNavigation {translationData} />
-  </div>
+  <HeaderNavigation {translationData} />
+
 
   <div class="actions">
     <HeaderCLang />
@@ -177,13 +176,6 @@
     width: 100%;
     gap: 44px;
 
-
-    .navigation-wrapper {
-      display: flex;
-      flex-grow: 1;
-      justify-content: start;
-      gap: 32px;
-    }
     .actions {
       align-items: center;
       justify-content: flex-end;
