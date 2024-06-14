@@ -12,10 +12,10 @@
 
 // #region ➤ 📦 Package Imports
 
-import { LoadEvent } from '@sveltejs/kit';
 
 import { main } from '$lib/sveltekit/load/load.country.js';
 import { dlogv2 } from '$lib/utils/debug.js';
+import type { LoadEvent } from '@sveltejs/kit';
 
 // #endregion ➤ 📦 Package Imports
 

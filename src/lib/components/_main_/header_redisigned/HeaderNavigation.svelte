@@ -12,11 +12,12 @@
   import sessionStore from "$lib/store/session.js";
   import userBetarenaSettings from "$lib/store/user-settings.js";
   import { generateUrlCompetitions } from "$lib/utils/string.js";
-  import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
   import HeaderNavBtn from "./Header-Nav-Btn.svelte";
   import {
     routeIdContent,
     routeIdPageCompetitionLobby,
+    routeIdPagePlayer,
+    routeIdPageSport,
     routeIdScores,
   } from "$lib/constants/paths.js";
   import CustomizationIcon from "./assets/CustomizationIcon.svelte";
@@ -25,7 +26,7 @@
   import { flip } from "svelte/animate";
 
   interface INavBtnData {
-    key: string;
+    key: string[];
     url: string | undefined;
     navTxt: string;
     isNew: boolean;
@@ -54,7 +55,7 @@
   $: navButtonOrderList = [
     {
       id: "scores",
-      key: routeIdScores,
+      key: [routeIdScores, routeIdPageSport, routeIdPagePlayer],
       url: `${serverLang !== "en" ? `/${serverLang}` : ""}/scores`,
       navTxt:
         translationData?.scores_header_translations?.section_links
@@ -63,7 +64,7 @@
     },
     {
       id: "content",
-      key: routeIdContent,
+      key: [routeIdContent],
       url: translationData?.scores_header_translations?.section_links
         ?.sports_content_url,
       navTxt:
@@ -74,7 +75,7 @@
     },
     {
       id: "competitions",
-      key: routeIdPageCompetitionLobby,
+      key:[routeIdPageCompetitionLobby],
       url: generateUrlCompetitions(serverLang!, $page.data.B_SAP_D3_CP_H),
       navTxt:
         translationData?.scores_header_translations?.section_links
