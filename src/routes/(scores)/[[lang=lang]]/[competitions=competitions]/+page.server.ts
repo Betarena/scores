@@ -12,10 +12,10 @@
 
 // #region ➤ 📦 Package Imports
 
-import { ServerLoadEvent } from '@sveltejs/kit';
 
 import { main } from '$lib/sveltekit/load/load.competitionLobby.js';
 import { dlogv2 } from '$lib/utils/debug.js';
+import type { ServerLoadEvent } from '@sveltejs/kit';
 
 // #endregion ➤ 📦 Package Imports
 
