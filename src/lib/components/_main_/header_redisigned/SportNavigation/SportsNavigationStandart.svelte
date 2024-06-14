@@ -3,7 +3,6 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
-	import { sessionStore } from '$lib/store/session.js';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
@@ -66,7 +65,7 @@
   $: ({ viewportType, serverLang = "en" } = $sessionStore);
 
   $: isCompetitionSection = competitionRoutes.includes($page.route.id);
-  // #endregion ➤ 📌 VARIABLES $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
+  // #endregion ➤ 📌 VARIABLES
 </script>
 
 <!--
