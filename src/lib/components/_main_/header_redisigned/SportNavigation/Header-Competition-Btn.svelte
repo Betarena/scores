@@ -8,7 +8,7 @@
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ 📝 Description                                                                   │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ Scores Platform Header Navigation Button Component (Child)                       │
+│ Scores Platform Header Competition Button Component (Child)                      │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -22,7 +22,6 @@
 -->
 
 <script lang="ts">
-    import { page } from '$app/stores';
 
   // #region ➤ 📦 Package Imports
 
@@ -40,7 +39,6 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
 	import sessionStore from '$lib/store/session.js';
-	import { cleanUrl } from '$lib/utils/string.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -61,54 +59,24 @@
   export let
     /**
      * @description
-     *  📣 threshold start + state for 📱 MOBILE
-     */ // eslint-disable-next-line no-unused-vars
-    VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ],
-    /**
-     * @description
-     *  📣 threshold start + state for 💻 TABLET
-     */ // eslint-disable-next-line no-unused-vars
-    VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ],
-    /**
-     * @description
-     *  📣 navigation target default key name
+     *  📣 default competition name
      */
-    navKey: string,
+    competitionNameDefault: string,
     /**
      * @description
-     *  📣 navigation target `url`
+     *  📣 translation competition name
      */
-    navUrl: string,
+    competitionTranslation: string,
     /**
      * @description
-     *  📣 **translation** of target `navigation` text
+     *  📣 target competition option
      */
-    navTxt: string,
+    selectedCompetition: string = 'predictor',
     /**
      * @description
-     *  📣 **translation** of target `soon` text
+     *  📣 translation competition lobby
      */
-    soonTxt: string = 'soon',
-    /**
-     * @description
-     *  📣 **translation** of target `new` text
-     */
-    newTxt: string = 'new',
-    /**
-     * @description
-     *  📣 wether target navigation is `BETA` and/or coming soon
-     */
-    isSoon: boolean = false,
-    /**
-     * @description
-     *  📣 wether target navigation is `NEW`
-     */
-    isNew: boolean = false,
-    /**
-     * @description
-     * TODO: DOC:
-     */
-    disableAnchor: boolean = false
+    navUrl: string
   ;
 
   const
@@ -116,10 +84,13 @@
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
      */ // eslint-disable-next-line no-unused-vars
-    CNAME = '<section-scope>⮕<type|w|c>⮕<unique-tag-name>⮕main'
+    CNAME = 'header⮕c⮕competition-btn⮕main'
   ;
 
-  $: ({ currentPageRouteId } = { ...$sessionStore })
+  let
+    /** @description TODO: DOC: */
+    sportIcon: string
+  ;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -136,9 +107,13 @@
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  $: if_R_0
-    = navKey == 'scores' && !currentPageRouteId
-    || navKey == 'competitions' && currentPageRouteId == 'CompetitionPage'
+  $: IF_R_0
+    = selectedCompetition == competitionNameDefault
+  ;
+  $: if (!IF_R_0)
+    sportIcon = 'https://firebasestorage.googleapis.com/v0/b/betarena-ios.appspot.com/o/Betarena_Media%2Fcompetitions%2FTarget.svg?alt=media&token=13570fcf-ec34-48dc-b612-06e97102a3c6';
+  else
+    sportIcon = 'https://firebasestorage.googleapis.com/v0/b/betarena-ios.appspot.com/o/Betarena_Media%2Fcompetitions%2FTarget.svg?alt=media&token=13570fcf-ec34-48dc-b612-06e97102a3c6';
   ;
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
@@ -156,92 +131,73 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div
-  id={navKey}
-  class=
-  "
-  nav-box
-  cursor-pointer
-  "
-  class:active={navKey === $page.route.id}
-  class:disable-anchor={disableAnchor}
-  on:mouseover=
-  {
-    () =>
-    {
-      $sessionStore.navBtnHover = navKey;
-      return;
-    }
-  }
-  on:mouseout=
-  {
-    () =>
-    {
-      $sessionStore.navBtnHover = undefined;
-      return;
-    }
-  }
+<a
+  href={navUrl}
 >
-  <a
-    href={navKey == 'content' ? navUrl : cleanUrl(navUrl)}
-    target={navKey == 'content' ? '_blank' : '_self'}
+  <div
+    class=
+    "
+    row-space-out
+    cursor-pointer
+    {CNAME}
+    "
+    class:selected-sports={selectedCompetition == competitionNameDefault}
   >
-    <span
+
+    <!--
+    ╭─────
+    │ > Competition Image + Name
+    ╰─────
+    -->
+    <div
       class=
       "
+      row-space-out
+      "
+      style="width: fit-content;"
+    >
+      <img
+        loading="lazy"
+        class=
+        "
+        m-r-10
+        "
+        src={sportIcon}
+        alt="{competitionNameDefault}-img"
+        width=20
+        height=20
+      />
+      <p
+        class=
+        "
+        color-white
+        s-14
+        m-r-10
+        capitalize
+        "
+      >
+        {competitionTranslation}
+      </p>
+    </div>
+
+    <!--
+    ╭─────
+    │ > Competition Amount
+    ╰─────
+    -->
+    <p
+      class=
+      "
+      color-white
       s-14
-      w-500
-      uppercase
-      no-wrap
+      competition-count-dark
       "
     >
-      {navTxt}
+      {$sessionStore.competitionsOpenNum ?? 0}
+    </p>
 
-      <!--
-      ╭─────
-      │ > 'soon' text info
-      ╰─────
-      -->
-      {#if isSoon}
-        <span
-          class=
-          "
-          color-white
-          s-12
-          m-l-10
-          pill
-          lowercase
-          "
-        >
-          {soonTxt}
-        </span>
-      {/if}
-
-      <!--
-      ╭─────
-      │ > 'new' text info
-      ╰─────
-      -->
-      {#if isNew}
-        <span
-          class=
-          "
-          color-white
-          s-12
-          m-l-10
-          lowercase
-          pill
-          new
-          "
-        >
-          {newTxt}
-        </span>
-      {/if}
-
-    </span>
-  </a>
-
-</div>
+  </div>
+</a>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -260,42 +216,24 @@
   │ 📲 MOBILE-FIRST                                                              │
   ╰──────────────────────────────────────────────────────────────────────────────╯
   */
-  div.nav-box
-  {
-    /* 📌 position */
-    position: relative;
-    color: var(--grey);
 
-    &.active
-    {
-      /* 🎨 style */
-      color: var(--primary);
-    }
-    &:hover
-    {
-      /* 🎨 style */
-      color: var(--text-color);
-    }
-  }
-  :global([nav-dragged="true"])  {
-    div.nav-box:hover {
-      color: var(--grey) !important;
-    }
-  }
-
-
-  .pill
+  div.header⮕c⮕competition-btn⮕main
   {
     /* 🎨 style */
-    height: 24px;
-		padding: 3px 8px;
-    background-color: var(--dark-theme-1);
-		border-radius: 20px;
+		height: 44px;
 
-    &.new
+    &:hover p.capitalize
     {
       /* 🎨 style */
-      background-color: var(--primary);
+      color: var(--primary) !important;
+    }
+    & .competition-count-dark
+    {
+      /* 🎨 style */
+      height: 24px;
+      padding: 3px 8px;
+      background-color: var(--dark-theme-1);
+      border-radius: 20px;
     }
   }
 

@@ -23,8 +23,14 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
   import { page } from "$app/stores";
+  import {
+    routeIdPageCompetition,
+    routeIdPageCompetitionLobby,
+  } from "$lib/constants/paths.js";
   import sessionStore from "$lib/store/session.js";
   import userBetarenaSettings from "$lib/store/user-settings.js";
+  import { generateUrlCompetitions } from "$lib/utils/string.js";
+  import HeaderCompetitionBtn from "../../header/Header-Competition-Btn.svelte";
   import Balance from "./Balance.svelte";
   import HeaderCBookmakers from "./Header-C-Bookmakers.svelte";
   import HeaderSportsBtn from "./SportsNavBtn.svelte";
@@ -50,10 +56,16 @@
      *  📣 Currently `selected sport`.
      */
     selectedSport = "football";
+  const competitionRoutes = [
+    routeIdPageCompetitionLobby,
+    routeIdPageCompetition,
+  ];
 
   $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
   $: ({ user } = $userBetarenaSettings);
-  $: ({viewportType} = $sessionStore)
+  $: ({ viewportType, serverLang = "en" } = $sessionStore);
+
+  $: isCompetitionSection = competitionRoutes.includes($page.route.id);
   // #endregion ➤ 📌 VARIABLES $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
 </script>
 
@@ -68,13 +80,18 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="wrapper">
-  <div
-    class="navigation-container"
-    class:mobile={viewportType === "mobile"}
-  >
+<div class="wrapper" id="header-sports-nav-standart">
+  <div class="navigation-container" class:mobile={viewportType === "mobile"}>
     <div class="sport-options">
-
+      <!-- [TODO] - Create Independet Component (join HeaderCompetitionBtn and HeaderSportsBtn) as they very simmilar + made layout with {#for} -->
+      {#if isCompetitionSection}
+        <HeaderCompetitionBtn
+          competitionNameDefault={"predictor"}
+          competitionTranslation={trsanslationData?.competitions_category?.data
+            ?.predictor || ""}
+          navUrl={generateUrlCompetitions(serverLang, $page.data.B_SAP_D3_CP_H)}
+        />
+      {:else}
         <HeaderSportsBtn
           sportNameDefault={"football"}
           sportTranslation={trsanslationData?.scores_header_translations
@@ -86,10 +103,13 @@
             return (selectedSport = event.detail?.selectedSport);
           }}
         />
+      {/if}
     </div>
     {#if viewportType !== "mobile"}
       <div class="actions">
+        {#if !isCompetitionSection}
           <HeaderCBookmakers />
+        {/if}
         {#if user != undefined && viewportType === "desktop"}
           <Balance />
         {/if}
@@ -97,7 +117,6 @@
     {/if}
   </div>
 </div>
-
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -111,6 +130,7 @@
 
 <style lang="scss">
   .wrapper {
+    z-index: 1;
     display: flex;
     height: 64px;
     width: 100%;
@@ -129,6 +149,9 @@
 
       .sport-options {
         padding: 10px 0;
+        display: flex;
+        gap: 10px;
+        align-items: center;
       }
 
       .actions {

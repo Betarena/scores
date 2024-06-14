@@ -21,6 +21,7 @@
     routeIdPageFixture,
     routeIdPageLeague,
     routeIdPagePlayer,
+    routeIdPageProfile,
     routeIdPageTags,
   } from "$lib/constants/paths.js";
   import MobileHeaderRich from "./MobileHeaderRich.svelte";
@@ -31,7 +32,9 @@
   import { scoresNavbarStore } from "./_store.js";
   import SportsNavigation from "./SportNavigation/SportsNavigation.svelte";
   import SportsNavigationStandart from "./SportNavigation/SportsNavigationStandart.svelte";
-
+  import TabletWave from "./assets/wave-bg-tablet.svg";
+  import DesktopWave from "./assets/wave-bg-desktop.svg";
+  import MobileWave from "./assets/wave-bg-mobile.svg";
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -64,7 +67,15 @@
      */ // eslint-disable-next-line no-unused-vars
     VIEWPORT_TABLET_INIT: [number, boolean] = [1160, true];
 
-  const simpleMobileHeaderRoutes = [routeIdPageFixture, routeIdPagePlayer, routeIdPageLeague, routeIdPageCompetition, routeIdPageTags, routeIdPageAuthors];
+  const simpleMobileHeaderRoutes = [
+    routeIdPageFixture,
+    routeIdPagePlayer,
+    routeIdPageLeague,
+    routeIdPageCompetition,
+    routeIdPageTags,
+    routeIdPageProfile,
+    routeIdPageAuthors,
+  ];
 
   $: isSimpleHeader = simpleMobileHeaderRoutes.includes($page.route.id || "");
   $: ({ windowWidth, currentPageRouteId, viewportType } = $sessionStore);
@@ -147,6 +158,22 @@
 </SeoBox>
 
 <header class:mobile class:dark-mode={currentPageRouteId !== "AuthorsPage"}>
+  {#if currentPageRouteId !== "AuthorsPage"}
+    <div class="wave-wrapper">
+      <img
+        id=""
+        src={viewportType === "mobile"
+          ? MobileWave
+          : viewportType === "tablet"
+          ? TabletWave
+          : DesktopWave}
+        alt="wave-bg"
+        title=""
+        class="wave-bg"
+        loading="lazy"
+      />
+    </div>
+  {/if}
   {#if mobile || tablet}
     {#if !mobile || !isSimpleHeader}
       <MobileHeaderRich {mobile} {tablet} />
@@ -157,30 +184,12 @@
     <Header on:avatarClick={avatarClick} />
   {/if}
 
-  {#if currentPageRouteId === "Standard" && (!mobile || !isSimpleHeader)}
+  {#if (currentPageRouteId === "Standard" || currentPageRouteId === "CompetitionPage" ) && (!mobile || !isSimpleHeader)}
     <SportsNavigationStandart />
   {:else if currentPageRouteId !== "AuthorsPage" && user && viewportType === "desktop"}
     <SportsNavigation />
   {/if}
 
-  {#if currentPageRouteId !== "AuthorsPage"}
-    <div class="wave-wrapper" >
-      {#if !user || viewportType !== "desktop"}
-        <div class="sport-nav-placeholder" />
-      {/if}
-      <svg
-        class="wave-bg"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 1440 463"
-        fill="none"
-      >
-        <path
-          d="M447 314.307C240 314.307 0 435.854 0 435.854L4.61216e-06 -32H1440V460.864C1440 460.864 1275.86 473.72 1088 436.354C885.365 396.051 654 314.307 447 314.307Z"
-          fill="#292929"
-        />
-      </svg>
-    </div>
-  {/if}
 </header>
 
 <!--
@@ -222,18 +231,17 @@
     width: 100%;
     z-index: 0;
     position: absolute;
-    bottom: 0;
+    top: 0;
     left: 0;
     z-index: 0;
     width: 100%;
-    transform: translateY(100%);
 
     .sport-nav-placeholder {
       height: 64px;
       width: 100%;
       background: #292929;
     }
-    svg {
+    img {
       width: 100%;
       height: auto;
     }
