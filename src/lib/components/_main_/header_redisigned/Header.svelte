@@ -41,6 +41,7 @@
   import { promiseUrlsPreload } from "$lib/utils/navigation.js";
   import { createEventDispatcher } from "svelte";
   import UserDropdownPopup from "./UserDropdownPopup.svelte";
+  import { routeIdPageAuthors, routeIdPageTags } from "$lib/constants/paths.js";
 
   // #endregion ➤ 📦 Package Imports
   // #region ➤ 📌 VARIABLES
@@ -65,7 +66,8 @@
   $: ({ profile_photo } = { ...$userBetarenaSettings.user?.scores_user_data });
   $: loadTranslations(serverLang);
 
-  const dispatch = createEventDispatcher()
+  const pagesWihoutNav = [routeIdPageTags, routeIdPageAuthors];
+  const dispatch = createEventDispatcher();
   const /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
@@ -90,7 +92,6 @@
     $sessionStore.currentActiveModal = "Auth_Modal";
     return;
   }
-
 
   let prevLang;
   async function loadTranslations(lang: string | undefined) {
@@ -127,9 +128,9 @@
       <AssetBetarenaLogoFull />
     </a>
   </div>
-
-  <HeaderNavigation {translationData} />
-
+  {#if !pagesWihoutNav.includes($page.route.id || "")}
+    <HeaderNavigation {translationData} />
+  {/if}
 
   <div class="actions">
     <HeaderCLang />
@@ -144,7 +145,11 @@
       </Button>
     {:else}
       <div class="avatar-wrapper" on:click|stopPropagation>
-        <Avatar src={profile_photo} size={44} on:click={() => dispatch("avatarClick")} />
+        <Avatar
+          src={profile_photo}
+          size={44}
+          on:click={() => dispatch("avatarClick")}
+        />
 
         {#if $scoresNavbarStore.globalState.has("UserDropdownActive")}
           <UserDropdownPopup />
