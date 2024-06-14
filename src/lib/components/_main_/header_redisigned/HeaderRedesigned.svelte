@@ -157,7 +157,13 @@
   </a>
 </SeoBox>
 
-<header class:mobile class:dark-mode={currentPageRouteId !== "AuthorsPage"}>
+<header
+  class:mobile
+  class:dark-mode={currentPageRouteId !== "AuthorsPage"}
+  style:border-bottom={$page.route.id === routeIdPageAuthors
+    ? "none"
+    : "var(--header-border)"}
+>
   {#if currentPageRouteId !== "AuthorsPage"}
     <div class="wave-wrapper">
       <img
@@ -184,12 +190,11 @@
     <Header on:avatarClick={avatarClick} />
   {/if}
 
-  {#if (currentPageRouteId === "Standard" || currentPageRouteId === "CompetitionPage" ) && (!mobile || !isSimpleHeader)}
+  {#if (currentPageRouteId === "Standard" || currentPageRouteId === "CompetitionPage") && (!mobile || !isSimpleHeader)}
     <SportsNavigationStandart />
   {:else if currentPageRouteId !== "AuthorsPage" && user && viewportType === "desktop"}
     <SportsNavigation />
   {/if}
-
 </header>
 
 <!--
@@ -209,7 +214,6 @@
     justify-content: space-between;
     align-items: center;
     background-color: var(--bg-color);
-    border-bottom: var(--header-border);
     position: relative;
 
     .empty-nav {
