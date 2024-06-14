@@ -13,7 +13,7 @@
   import sessionStore from "$lib/store/session.js";
   import { generateUrlCompetitions } from "$lib/utils/string.js";
   import userBetarenaSettings from "$lib/store/user-settings.js";
-    import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
+  import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
 
   // #region ➤ 📦 Package Imports
 
@@ -61,10 +61,7 @@
     let url: string;
     switch (preferedPage) {
       case "competitions":
-        url = generateUrlCompetitions(
-          serverLang,
-          $page.data.B_SAP_D3_CP_H
-        );
+        url = generateUrlCompetitions(serverLang, $page.data.B_SAP_D3_CP_H);
         break;
       case "content":
         url =
@@ -99,14 +96,14 @@
   on:click={backBtnClick}
 >
   <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="22"
-    height="22"
-    viewBox="0 0 22 22"
+    width="6"
+    height="10"
+    viewBox="0 0 6 10"
     fill="none"
+    xmlns="http://www.w3.org/2000/svg"
   >
     <path
-      d="M12.7763 7.44531L9.2207 11.0009L12.7763 14.5564"
+      d="M4.77832 8.55448L1.22277 4.99892L4.77832 1.44336"
       stroke={color}
       stroke-width="1.33333"
       stroke-linecap="round"
