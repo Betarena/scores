@@ -23,6 +23,10 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
   import { page } from "$app/stores";
+  import {
+    routeIdPageCompetition,
+    routeIdPageCompetitionLobby,
+  } from "$lib/constants/paths.js";
   import sessionStore from "$lib/store/session.js";
   import userBetarenaSettings from "$lib/store/user-settings.js";
   import { generateUrlCompetitions } from "$lib/utils/string.js";
@@ -52,10 +56,16 @@
      *  📣 Currently `selected sport`.
      */
     selectedSport = "football";
+  const competitionRoutes = [
+    routeIdPageCompetitionLobby,
+    routeIdPageCompetition,
+  ];
 
   $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
   $: ({ user } = $userBetarenaSettings);
-  $: ({ viewportType, currentPageRouteId, serverLang = "en" } = $sessionStore);
+  $: ({ viewportType, serverLang = "en" } = $sessionStore);
+
+  $: isCompetitionSection = competitionRoutes.includes($page.route.id);
   // #endregion ➤ 📌 VARIABLES $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
 </script>
 
@@ -74,7 +84,7 @@
   <div class="navigation-container" class:mobile={viewportType === "mobile"}>
     <div class="sport-options">
       <!-- [TODO] - Create Independet Component (join HeaderCompetitionBtn and HeaderSportsBtn) as they very simmilar + made layout with {#for} -->
-      {#if currentPageRouteId === "CompetitionPage"}
+      {#if isCompetitionSection}
         <HeaderCompetitionBtn
           competitionNameDefault={"predictor"}
           competitionTranslation={trsanslationData?.competitions_category?.data
@@ -97,8 +107,8 @@
     </div>
     {#if viewportType !== "mobile"}
       <div class="actions">
-        {#if currentPageRouteId !== "CompetitionPage"}
-           <HeaderCBookmakers />
+        {#if !isCompetitionSection}
+          <HeaderCBookmakers />
         {/if}
         {#if user != undefined && viewportType === "desktop"}
           <Balance />
