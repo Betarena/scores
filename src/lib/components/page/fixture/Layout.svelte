@@ -34,6 +34,7 @@
 	import StandingsWidget from './standings/Standings-Widget.svelte';
 
   import type { B_SAP_FP_D, B_SAP_FP_T } from '@betarena/scores-lib/types/seo-pages.js';
+    import { isPWA } from '$lib/utils/device.js';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -348,12 +349,14 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
 <section
   id="fixture-page">
-
-	<Breadcrumb
-    {FIXTURE_INFO}
-    {country_link}
-    {league_name_link}
-  />
+  {#if !isPWA()}
+   <!-- content here -->
+    <Breadcrumb
+      {FIXTURE_INFO}
+      {country_link}
+      {league_name_link}
+    />
+   {/if}
 
   <!--
   FIXME: TODO: update to have a single dynamic layout

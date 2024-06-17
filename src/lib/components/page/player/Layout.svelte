@@ -26,6 +26,7 @@ COMPONENT JS (w/ TS)
 	import TeamWidget from './team/Team-Widget.svelte';
 
   import type { B_SAP_PP_D, B_SAP_PP_T } from '@betarena/scores-lib/types/seo-pages';
+    import { isPWA } from '$lib/utils/device.js';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -360,8 +361,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
 <section
   id="section-player-page">
-
-  <Breadcrumb />
+  {#if !isPWA()}
+     <Breadcrumb />
+  {/if}
   <ProfileWidget/>
 
   <!--
