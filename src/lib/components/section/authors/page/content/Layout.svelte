@@ -156,6 +156,9 @@
 
   :global
   {
+    .mobile#header {
+      --header-border: none;
+    }
     section#content
     {
 
