@@ -29,12 +29,12 @@
   import { page } from "$app/stores";
   import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
   import MobileHeaderSmall from "./MobileHeaderSmall.svelte";
-  import { scoresNavbarStore } from "./_store.js";
   import SportsNavigation from "./SportNavigation/SportsNavigation.svelte";
   import SportsNavigationStandart from "./SportNavigation/SportsNavigationStandart.svelte";
   import TabletWave from "./assets/wave-bg-tablet.svg";
   import DesktopWave from "./assets/wave-bg-desktop.svg";
   import MobileWave from "./assets/wave-bg-mobile.svg";
+    import { goto } from "$app/navigation";
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -76,9 +76,9 @@
     routeIdPageProfile,
     routeIdPageAuthors,
   ];
-
   $: isSimpleHeader = simpleMobileHeaderRoutes.includes($page.route.id || "");
-  $: ({ windowWidth, currentPageRouteId, viewportType } = $sessionStore);
+  $: ({ windowWidth, currentPageRouteId, viewportType,globalState } = $sessionStore);
+  $: isAuth = globalState.has("Authenticated");
   $: [mobile, tablet] = viewportChangeV2(
     windowWidth,
     VIEWPORT_MOBILE_INIT[0],
@@ -100,16 +100,20 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   function avatarClick() {
-    const openDropDown =
-      !$scoresNavbarStore.globalState.has("UserDropdownActive");
-    scoresNavbarStore.closeAllDropdowns();
-
-    if (openDropDown) {
-      scoresNavbarStore.updateData("globalStateAdd", "UserDropdownActive");
+    if (!isAuth) {
+      signIn();
+      return;
     }
+    goto(`/u/dashboard/${$userBetarenaSettings.lang}`)
   }
 
   // #endregion ➤ 🛠️ METHODS
+
+
+    function signIn()
+    {
+        throw new Error("Function not implemented.");
+    }
 </script>
 
 <SeoBox>
