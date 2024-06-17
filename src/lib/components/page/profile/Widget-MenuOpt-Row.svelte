@@ -99,7 +99,7 @@ COMPONENT JS (w/ TS)
   $: tabletExclusive = tabletExclusive;
 	$: mobileExclusive = mobileExclusive;
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
-
+  $: trsanslationData = $page.data.B_NAV_T
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -288,7 +288,9 @@ VIEW DESIGN - 1
         {:else if MENU_OPT == 'Competitions History'}
           {profileTrs.profile?.competitions_history ?? 'Competitions History'}
         {:else if MENU_OPT == 'Logout'}
-          {profileTrs.profile?.logout || 'Logout'}
+        {trsanslationData?.scores_header_translations?.data
+                      ?.logout ?? 'Logout'}
+          <!-- {profileTrs.profile?.logout || 'Logout'} -->
         {/if}
 			</p>
 
@@ -423,7 +425,9 @@ VIEW DESIGN - 2
         {:else if MENU_OPT == 'Competitions History'}
           {profileTrs.profile?.competitions_history ?? 'Competitions History'}
         {:else if MENU_OPT == 'Logout'}
-          {profileTrs.profile?.logout ?? 'Logout'}
+        {trsanslationData?.scores_header_translations?.data
+                      ?.logout ?? 'Logout'}
+          <!-- {profileTrs.profile?.logout ?? 'Logout'} -->
         {/if}
 			</p>
 
