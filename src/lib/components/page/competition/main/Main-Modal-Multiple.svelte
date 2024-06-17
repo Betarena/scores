@@ -47,7 +47,8 @@
     /** @description competition (main) - view type */
     viewType: 'confirm' | 'insufficient' | 'geo-restriction' | 'not-authenticated',
     /** @description competition (main) - amount entry fee */
-    balanceDeductAmount: number
+    balanceDeductAmount: number,
+    on: any
   ;
 
 	const
@@ -72,6 +73,7 @@
   (
   ): void
   {
+    on.closeModal();
     dispatch('closeModal');
   }
 
@@ -86,6 +88,7 @@
   (
   ): void
   {
+    on.confirmEntry();
     dispatch('confirmEntry');
   }
 

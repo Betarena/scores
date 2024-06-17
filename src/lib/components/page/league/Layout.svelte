@@ -27,8 +27,9 @@
 	import SvelteSeo from 'svelte-seo';
 	import Breadcrumb from './Breadcrumb.svelte';
 	import FixtureOddsWidget from './fixture-odds/FixtureOdds-Widget.svelte';
+    import { isPWA } from '$lib/utils/device.js';
 
-  
+
   // #endregion ➤ [MAIN] Package Imports
 
   // #region ➤ [VARIABLES]
@@ -240,13 +241,13 @@
 <section
   id="tournaments-page"
 >
-
-  <Breadcrumb
-    sportT={TOURNAMENT_DATA.sport}
-    countryT={TOURNAMENT_DATA.country}
-    leagueNameT={TOURNAMENT_DATA.name}
-  />
-
+  {#if !isPWA()}
+    <Breadcrumb
+      sportT={TOURNAMENT_DATA.sport}
+      countryT={TOURNAMENT_DATA.country}
+      leagueNameT={TOURNAMENT_DATA.name}
+    />
+  {/if}
 	{#if !tabletExclusive && !mobileExclusive}
 		<!-- <LeagueInfoWidget LEAGUE_INFO_SEO_DATA={LEAGUE_INFO_DATA} /> -->
 		<svelte:component

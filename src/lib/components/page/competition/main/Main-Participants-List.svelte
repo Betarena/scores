@@ -47,6 +47,7 @@
 	import type { BetarenaUser } from '@betarena/scores-lib/types/_FIREBASE_.js';
 	import type { B_C_COMP_DATA_Prediction_Group, B_C_COMP_DATA_Status } from '@betarena/scores-lib/types/_HASURA_.js';
 	import type { B_COMP_MAIN_T } from '@betarena/scores-lib/types/types.competition.main.js';
+  import { modalStore } from '$lib/store/modal.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -128,6 +129,7 @@
 
     // ### [🐞]
     // alert('Joining Competition');
+
 
     await get
     (
@@ -229,6 +231,23 @@
     adjustParticipantListUser();
   }
 
+  function showModalHandler() {
+    debugger
+    $modalStore.component = MainModalMultiple;
+    $modalStore.props = {
+      isViewMobile,
+      isViewTablet,
+      viewType: modalViewType,
+      balanceDeductAmount: entryFee,
+      on: {
+        closeModal: () => $modalStore.show = false,
+        confirmEntry: () => joinCompetition(),
+      }
+    };
+    $modalStore.show = true;
+    $modalStore.modal = false;
+  }
+
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
@@ -281,19 +300,7 @@
 ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 -->
 
-<!--
-MORE INFORMATION / ALERT MODAL
--->
-{#if showModal}
-  <MainModalMultiple
-    {isViewMobile}
-    {isViewTablet}
-    viewType={modalViewType}
-    balanceDeductAmount={entryFee}
-    on:closeModal={() => showModal = false}
-    on:confirmEntry={() => joinCompetition()}
-  />
-{/if}
+
 
 <!--
 PARTICIPANTS VOTE LIST
@@ -445,7 +452,7 @@ PARTICIPANTS VOTE LIST
           w-500
           btn-primary-v2
           "
-          on:click={() => showModal = true}
+          on:click={showModalHandler}
           class:disabled={isJoinedNotThis || competitionStatus != 'pending' || disabledJoinBtn}
           class:color-grey={isJoinedNotThis || competitionStatus != 'pending' || disabledJoinBtn}
           disabled={isJoinedNotThis || competitionStatus != 'pending' || disabledJoinBtn}

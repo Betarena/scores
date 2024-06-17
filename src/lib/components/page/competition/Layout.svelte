@@ -45,7 +45,7 @@
 
   import type { B_SAP_CTP_D, B_SAP_CTP_T, B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
   import type { Unsubscribe } from 'firebase/database';
-  import { initialDevice } from '$lib/utils/device.js';
+  import { initialDevice, isPWA } from '$lib/utils/device.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -365,7 +365,9 @@
   id="page-competitions"
 >
 
-  <Breadcrumb />
+  {#if !isPWA()}
+    <Breadcrumb />
+   {/if}
 
   <div
     class=

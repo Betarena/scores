@@ -46,7 +46,7 @@
     <ModalBackdrop on:closeModal={() => ($modalStore.show = false)} />
   {/if}
   <div class="modal-content">
-    <svelte:component this={$modalStore.component} />
+    <svelte:component this={$modalStore.component} {...$modalStore.props} />
   </div>
 {/if}
 

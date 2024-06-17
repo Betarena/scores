@@ -6,6 +6,7 @@ interface IModalStore
   show: boolean;
   modal: boolean;
   component: SvelteComponent | null;
+  props?: any
 }
 
-export const modalStore: Writable<IModalStore> = writable({ show: false, modal: false, component: null });
+export const modalStore: Writable<IModalStore> = writable({ show: false, modal: false, component: null, props: {} });
