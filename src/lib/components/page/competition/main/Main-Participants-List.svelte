@@ -232,7 +232,6 @@
   }
 
   function showModalHandler() {
-    debugger
     $modalStore.component = MainModalMultiple;
     $modalStore.props = {
       isViewMobile,
