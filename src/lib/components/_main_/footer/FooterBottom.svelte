@@ -129,8 +129,11 @@
     }
 
     &.mobile {
-      padding: 40px 25px;
       padding-bottom: 132px;
+      .wrapper {
+        padding: 40px 25px;
+
+      }
       .nav-wrapper {
         padding: 40px 0;
       }

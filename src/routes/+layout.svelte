@@ -137,9 +137,10 @@
      *  📣 Holds target `component(s)` of dynamic nature.
      */
     dynamicComponentMap = new Map<IDynamicComponentMap, any>();
-  $: ({ currentPageRouteId, currentActiveModal, currentActiveToast } = {
+  $: ({ currentPageRouteId, currentActiveModal, currentActiveToast, globalState } = {
     ...$sessionStore,
   });
+  $: ispwa = globalState.has("IsPWA");
   $: ({ theme } = { ...$userBetarenaSettings });
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   $: ({ username, lang, competition_number } = {
@@ -645,7 +646,7 @@
         mobile={VIEWPORT_MOBILE_INIT[1]}
         tablet={VIEWPORT_TABLET_INIT[1]}
       />
-    {:else}
+    {:else if !ispwa}
       <Footer />
     {/if}
   </main>

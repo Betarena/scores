@@ -91,7 +91,7 @@ const customErrorHandler: HandleServerError = async (
   (
     `${LOG_PREFIX_HOOKS_S} \n ${error} \n ${event}`,
   );
-
+  console.trace(error)
   let
     errorMsg: string = 'Whoops!',
     errorCode: string = 'x1'
