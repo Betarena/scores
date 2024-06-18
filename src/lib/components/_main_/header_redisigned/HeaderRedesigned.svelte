@@ -158,6 +158,7 @@
 </SeoBox>
 
 <header
+  id="header"
   class:mobile
   class:dark-mode={currentPageRouteId !== "AuthorsPage"}
   style:border-bottom={$page.route.id === routeIdPageAuthors

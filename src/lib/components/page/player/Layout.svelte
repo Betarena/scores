@@ -360,8 +360,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
 <section
   id="section-player-page">
-
-  <Breadcrumb />
+  {#if !$sessionStore.globalState.has("IsPWA")}
+     <Breadcrumb />
+  {/if}
   <ProfileWidget/>
 
   <!--

@@ -305,6 +305,12 @@
     });
   }
 
+  $: if (browser) {
+    window.Intercom("update", {
+      hide_default_launcher: currentPageRouteId != "ProfilePage",
+    });
+  }
+
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
@@ -362,7 +368,9 @@
     }
 
     // IMPORTANT
-    sessionStore.updateData([["windowWidth", document.documentElement.clientWidth]]);
+    sessionStore.updateData([
+      ["windowWidth", document.documentElement.clientWidth],
+    ]);
     // IMPORTANT
     if (isPWA()) $sessionStore.globalState.add("IsPWA");
     else $sessionStore.globalState.delete("IsPWA");
@@ -400,8 +408,8 @@
   <!--
   HELPDESK PLUGIN
   -->
-  {#if currentPageRouteId == "ProfilePage" || currentPageRouteId == "CompetitionPage"}
-    <!-- <script type="text/javascript">
+
+  <!-- <script type="text/javascript">
       window.$crisp=[];
       window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
       (function()
@@ -414,7 +422,7 @@
       }
       )();
     </script> -->
-    <!-- <script type="text/javascript">
+  <!-- <script type="text/javascript">
       window.$crisp=[];
       window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
       (function()
@@ -427,7 +435,7 @@
       }
       )();
     </script> -->
-    <!-- <script type="text/javascript">
+  <!-- <script type="text/javascript">
       window.$crisp=[];
       window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
       (function()
@@ -440,7 +448,7 @@
       }
       )();
     </script> -->
-    <!-- <script type="text/javascript">
+  <!-- <script type="text/javascript">
       window.$crisp=[];
       window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
       (function()
@@ -453,7 +461,7 @@
       }
       )();
     </script> -->
-    <!-- <script type="text/javascript">
+  <!-- <script type="text/javascript">
       window.$crisp=[];
       window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
       (function()
@@ -466,7 +474,7 @@
       }
       )();
     </script> -->
-    <!-- <script type="text/javascript">
+  <!-- <script type="text/javascript">
       window.$crisp=[];
       window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
       (function()
@@ -479,44 +487,55 @@
       }
       )();
     </!-->
-    -->
-    <script>
-      // We pre-filled your app ID in the widget URL: 'https://widget.intercom.io/widget/yz9qn6p3'
-      (function () {
-        var w = window;
-        var ic = w.Intercom;
-        if (typeof ic === "function") {
-          ic("reattach_activator");
-          ic("update", w.intercomSettings);
+  <!-- <script type="text/javascript">
+      window.$crisp=[];
+      window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
+      (function()
+      {
+        d=document;
+        s=d.createElement("script");
+        s.src="https://client.crisp.chat/l.js";
+        s.async=1;
+        d.getElementsByTagName("head")[0].appendChild(s);
+      }
+      )();
+    </!-->
+  <script>
+    // We pre-filled your app ID in the widget URL: 'https://widget.intercom.io/widget/yz9qn6p3'
+    (function () {
+      var w = window;
+      var ic = w.Intercom;
+      if (typeof ic === "function") {
+        ic("reattach_activator");
+        ic("update", w.intercomSettings);
+      } else {
+        var d = document;
+        var i = function () {
+          i.c(arguments);
+        };
+        i.q = [];
+        i.c = function (args) {
+          i.q.push(args);
+        };
+        w.Intercom = i;
+        var l = function () {
+          var s = d.createElement("script");
+          s.type = "text/javascript";
+          s.async = true;
+          s.src = "https://widget.intercom.io/widget/yz9qn6p3";
+          var x = d.getElementsByTagName("script")[0];
+          x.parentNode.insertBefore(s, x);
+        };
+        if (document.readyState === "complete") {
+          l();
+        } else if (w.attachEvent) {
+          w.attachEvent("onload", l);
         } else {
-          var d = document;
-          var i = function () {
-            i.c(arguments);
-          };
-          i.q = [];
-          i.c = function (args) {
-            i.q.push(args);
-          };
-          w.Intercom = i;
-          var l = function () {
-            var s = d.createElement("script");
-            s.type = "text/javascript";
-            s.async = true;
-            s.src = "https://widget.intercom.io/widget/yz9qn6p3";
-            var x = d.getElementsByTagName("script")[0];
-            x.parentNode.insertBefore(s, x);
-          };
-          if (document.readyState === "complete") {
-            l();
-          } else if (w.attachEvent) {
-            w.attachEvent("onload", l);
-          } else {
-            w.addEventListener("load", l, false);
-          }
+          w.addEventListener("load", l, false);
         }
-      })();
-    </script>
-  {/if}
+      }
+    })();
+  </script>
 </svelte:head>
 
 <svelte:document
@@ -534,7 +553,9 @@
 
 <svelte:window
   on:resize={() => {
-    sessionStore.updateData([["windowWidth", document.documentElement.clientWidth]]);
+    sessionStore.updateData([
+      ["windowWidth", document.documentElement.clientWidth],
+    ]);
     if (isPWA()) $sessionStore.globalState.add("IsPWA");
     else $sessionStore.globalState.delete("IsPWA");
     return;

@@ -365,7 +365,9 @@
   id="page-competitions"
 >
 
-  <Breadcrumb />
+  {#if !$sessionStore.globalState.has("IsPWA")}
+    <Breadcrumb />
+   {/if}
 
   <div
     class=

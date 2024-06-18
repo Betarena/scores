@@ -348,12 +348,14 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
 <section
   id="fixture-page">
-
-	<Breadcrumb
-    {FIXTURE_INFO}
-    {country_link}
-    {league_name_link}
-  />
+  {#if !$sessionStore.globalState.has("IsPWA")}
+   <!-- content here -->
+    <Breadcrumb
+      {FIXTURE_INFO}
+      {country_link}
+      {league_name_link}
+    />
+   {/if}
 
   <!--
   FIXME: TODO: update to have a single dynamic layout
