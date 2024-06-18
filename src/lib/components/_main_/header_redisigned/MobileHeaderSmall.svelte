@@ -98,11 +98,8 @@
       <Avatar
         src={profile_photo}
         size={32}
-        on:click={() => isAuth ? dispatch("avatarClick") : signIn()}
+        on:click={() => dispatch("avatarClick")}
       />
-      {#if $scoresNavbarStore.globalState.has("UserDropdownActive")}
-          <UserDropdownPopup />
-        {/if}
     </div>
   </div>
 </div>

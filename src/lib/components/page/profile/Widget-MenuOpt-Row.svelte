@@ -30,6 +30,8 @@ COMPONENT JS (w/ TS)
 	import icon_tx_hist from './assets/menu-opt/tx-hist.svg';
 	import icon_withdraw_select from './assets/menu-opt/withdraw-selected.svg';
 	import icon_withdraw from './assets/menu-opt/withdraw.svg';
+  import icon_logout from './assets/menu-opt/logout.svg';
+  import icon_logout_select from './assets/menu-opt/logout-selected.svg';
 
 	import type { PROFILE_OPT } from '$lib/types/types.scores.js';
 	import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
@@ -97,7 +99,7 @@ COMPONENT JS (w/ TS)
   $: tabletExclusive = tabletExclusive;
 	$: mobileExclusive = mobileExclusive;
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
-
+  $: trsanslationData = $page.data.B_NAV_T
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -208,6 +210,10 @@ COMPONENT JS (w/ TS)
     selectedMenuOptIcon = icon_calendar;
   else if (MENU_OPT == 'Author')
     selectedMenuOptIcon = icon_edit;
+  else if (MENU_OPT == 'Logout')
+    hoverMenuOptIconAlt = icon_logout_select;
+    selectedMenuOptIcon = icon_logout;
+
   //
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
@@ -281,6 +287,10 @@ VIEW DESIGN - 1
           {profileTrs.profile?.transact_history ?? 'Transaction History'}
         {:else if MENU_OPT == 'Competitions History'}
           {profileTrs.profile?.competitions_history ?? 'Competitions History'}
+        {:else if MENU_OPT == 'Logout'}
+        {trsanslationData?.scores_header_translations?.data
+                      ?.logout ?? 'Logout'}
+          <!-- {profileTrs.profile?.logout || 'Logout'} -->
         {/if}
 			</p>
 
@@ -414,6 +424,10 @@ VIEW DESIGN - 2
           {profileTrs.profile?.transact_history ?? 'Transaction History'}
         {:else if MENU_OPT == 'Competitions History'}
           {profileTrs.profile?.competitions_history ?? 'Competitions History'}
+        {:else if MENU_OPT == 'Logout'}
+        {trsanslationData?.scores_header_translations?.data
+                      ?.logout ?? 'Logout'}
+          <!-- {profileTrs.profile?.logout ?? 'Logout'} -->
         {/if}
 			</p>
 

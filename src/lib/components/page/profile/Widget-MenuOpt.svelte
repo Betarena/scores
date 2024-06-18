@@ -13,6 +13,7 @@ COMPONENT JS (w/ TS)
 
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { viewport_change } from '$lib/utils/platform-functions';
+  import { logoutUser } from '$lib/utils/user.js';
 
 	import MenuOptRow from './Widget-MenuOpt-Row.svelte';
 
@@ -37,7 +38,8 @@ COMPONENT JS (w/ TS)
       'Transaction History',
       'Competitions History',
       'Scores',
-      'Author'
+      'Author',
+      'Logout'
     ]
   ;
 
@@ -67,7 +69,7 @@ COMPONENT JS (w/ TS)
 		selectedMenuOpt = event?.detail?.opt || event;
 		showDropdown = false;
 
-    let targetUrl: string;
+    let targetUrl = `/u/dashboard/${$userBetarenaSettings.lang}`;
 
 		if (selectedMenuOpt == 'Dashboard')
       targetUrl = `/u/dashboard/${$userBetarenaSettings.lang}`
@@ -90,7 +92,10 @@ COMPONENT JS (w/ TS)
     if (selectedMenuOpt == 'Competitions History')
       targetUrl = `/u/competition-history/${$userBetarenaSettings.lang}`
     ;
-
+    if (selectedMenuOpt == "Logout") {
+      logoutUser();
+      return;
+    }
     goto
     (
       targetUrl,
