@@ -641,13 +641,11 @@
     class:tablet={VIEWPORT_TABLET_INIT[1]}
   >
     <slot />
-    {#if $page.route.id === routeIdContent}
+    {#if !ispwa}
       <FooterRedisign
         mobile={VIEWPORT_MOBILE_INIT[1]}
         tablet={VIEWPORT_TABLET_INIT[1]}
       />
-    {:else if !ispwa}
-      <Footer />
     {/if}
   </main>
   {#if (VIEWPORT_MOBILE_INIT[1] || VIEWPORT_TABLET_INIT[1]) && [routeIdScores, routeIdPageCompetitions, routeIdContent].includes($page.route.id)}

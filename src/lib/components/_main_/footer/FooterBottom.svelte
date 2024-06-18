@@ -10,11 +10,12 @@
 
 <script lang="ts">
   // #region ➤ 📦 Package Imports
-
+  import sessionStore from "$lib/store/session.js";
   import FooterNavigationBlock from "./FooterNavigationBlock.svelte";
   import SocialsBlock from "./SocialsBlock.svelte";
   import Legal_18ActionBet from "./assets/icon_redisign/legal-18-action-bet.svelte";
-  import BegambleawareorgBlack from "./assets/icon_redisign/begambleawareorg_black.png";
+  import BegambleawareorgBlack from "./assets/icon_redisign/gamble_aware.svg";
+  import BetarenaLogo from "./assets/betarena-logo-full.svg";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -50,24 +51,46 @@
     tablet && !mobile
       ? ["changelog", "about", "roadmap", "status", "terms", "privacy"]
       : ["changelog", "status", "about", "terms", "roadmap", "privacy"];
+  $: isDesktop = $sessionStore.viewportType === "desktop";
   // #endregion ➤ 📌 VARIABLES
 </script>
 
-<footer class:mobile>
+<footer class:mobile class="dark-mode" class:desktop={isDesktop}>
   <div class="wrapper">
-    <SocialsBlock {translation} />
-    <div class="nav-wrapper">
-      <FooterNavigationBlock
-        vertlical={tablet && mobile}
-        {links}
-        order={linksOrder}
-      />
+    {#if $sessionStore.viewportType !== "mobile"}
+      <div class="first-block">
+        <img
+          id=""
+          src={BetarenaLogo}
+          alt="BetarenaLogo"
+          title=""
+          loading="lazy"
+        />
+        {#if isDesktop}
+        <div class="rights-block">
+          © 2021 Betarena All rights reserved <br />
+          Second Act, 18 Boulevard Montmartre Paris 75009
+        </div>
+      {/if}
+      </div>
+    {/if}
+    <div class="central-block">
+      <SocialsBlock {translation} />
+      <div class="nav-wrapper">
+        <FooterNavigationBlock
+          vertlical={tablet && mobile}
+          {links}
+          order={linksOrder}
+        />
+      </div>
     </div>
     <div class="legal-block">
-      <div class="rights-block">
-        © 2021 Betarena All rights reserved <br />
-        Second Act, 18 Boulevard Montmartre Paris 75009
-      </div>
+      {#if !isDesktop}
+        <div class="rights-block">
+          © 2021 Betarena All rights reserved <br />
+          Second Act, 18 Boulevard Montmartre Paris 75009
+        </div>
+      {/if}
       <div class="legal-images">
         <Legal_18ActionBet />
         <img
@@ -94,8 +117,8 @@
 
 <style lang="scss">
   footer {
-    border-top: var(--border);
     display: flex;
+    background-color: var(--bg-color);
     min-width: 100%;
     flex-direction: column;
     color: var(--text-color);
@@ -104,10 +127,14 @@
       padding-bottom: 128px;
       max-width: 1430px;
       width: 100%;
+      gap: 64px;
+      display: flex;
+      flex-direction: column;
       margin: auto;
-    }
-    .nav-wrapper {
-      padding: 32px 0;
+
+      .nav-wrapper {
+        margin-top: 34px;
+      }
     }
 
     .legal-block {
@@ -132,15 +159,42 @@
       padding-bottom: 132px;
       .wrapper {
         padding: 40px 25px;
-
+        gap: 40px;
       }
       .nav-wrapper {
-        padding: 40px 0;
+        margin-top: 40px;
       }
 
       .legal-block {
         flex-direction: column-reverse;
         align-items: flex-start;
+        gap: 40px;
+      }
+    }
+
+    &.desktop {
+      .wrapper {
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 40px 32px;
+        padding-bottom: 85px;
+
+        .first-block {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          color: var(--text-color-second-dark);
+          font-size: 12px;
+
+          img {
+            width: 151px;
+            height: 32px;
+          }
+        }
+
+        .legal-block {
+          align-items: flex-end;
+        }
       }
     }
   }
