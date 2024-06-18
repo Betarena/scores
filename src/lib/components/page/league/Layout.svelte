@@ -27,7 +27,6 @@
 	import SvelteSeo from 'svelte-seo';
 	import Breadcrumb from './Breadcrumb.svelte';
 	import FixtureOddsWidget from './fixture-odds/FixtureOdds-Widget.svelte';
-    import { isPWA } from '$lib/utils/device.js';
 
 
   // #endregion ➤ [MAIN] Package Imports
@@ -241,7 +240,7 @@
 <section
   id="tournaments-page"
 >
-  {#if !isPWA()}
+  {#if !$sessionStore.globalState.has("IsPWA")}
     <Breadcrumb
       sportT={TOURNAMENT_DATA.sport}
       countryT={TOURNAMENT_DATA.country}
