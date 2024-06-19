@@ -85,7 +85,6 @@
       class=
       "
       s-22
-      color-black
       text-center
       "
     >
@@ -121,6 +120,7 @@
 		grid-template-columns: 1fr;
 		align-items: center;
 		justify-items: center;
+    color: var(--text-color);
 	}
 
 </style>

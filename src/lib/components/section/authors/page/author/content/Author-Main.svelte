@@ -588,34 +588,37 @@
           │ > article author location
           ╰─────
           -->
-          <div
-            class=
-            "
-            row-space-start
-            "
-          >
-            <img
-              id=''
-              src={theme == 'Dark' ? icon_location_dark : icon_location}
-              alt={theme == 'Dark' ? icon_location_dark : icon_location}
-              title={theme == 'Dark' ? icon_location_dark : icon_location}
-              loading='lazy'
+          {#if !VIEWPORT_MOBILE_INIT[1]}
+
+            <div
               class=
               "
-              m-r-5
-              "
-            />
-            <p
-              class=
-              "
-              s-12
-              color-black-3
-                dark-v1
+              row-space-start
               "
             >
-              {widgetData.author?.data?.location ?? ''}
-            </p>
-          </div>
+              <img
+                id=''
+                src={theme == 'Dark' ? icon_location_dark : icon_location}
+                alt={theme == 'Dark' ? icon_location_dark : icon_location}
+                title={theme == 'Dark' ? icon_location_dark : icon_location}
+                loading='lazy'
+                class=
+                "
+                m-r-5
+                "
+              />
+              <p
+                class=
+                "
+                s-12
+                color-black-3
+                  dark-v1
+                "
+              >
+                {widgetData.author?.data?.location ?? ''}
+              </p>
+            </div>
+          {/if}
         </div>
 
         <!--
@@ -764,6 +767,16 @@
 
 <style lang="scss">
 
+  :global(#header.mobile) {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    width: 100%;
+    background: initial;
+    background-color: rgba(var(--bg-color-rgb-consts), 0.8);
+    backdrop-filter: blur(4px);
+  }
+
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
   │ 📲 MOBILE-FIRST                                                              │
@@ -884,8 +897,8 @@
       /* 🎨 style */
       max-height: 352px;
       object-fit: cover;
-      margin-left: -24px;
-      margin-right: -24px;
+      margin-left: -16px;
+      margin-right: -16px;
       width: -webkit-fill-available;
       width: -moz-available;
     }
@@ -1012,9 +1025,15 @@
           {
             /* 🎨 style */
             line-height: 30px;
-            font-weight: 300;
+            font-weight: 400;
           }
 
+          ul {
+            font-size: 18px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 32px; /* 160% */
+          }
           h2
           {
             /* 🎨 style */
@@ -1063,6 +1082,12 @@
             /* 🎨 style */
             font-size: 18px;
             line-height: 32px;
+            font-weight: 300;
+          }
+
+          ul {
+            font-weight: 300;
+            font-size: 20px
           }
 
           h2
