@@ -85,6 +85,7 @@
     VIEWPORT_MOBILE_INIT[0],
     VIEWPORT_TABLET_INIT[0]
   );
+  $: isPWA = globalState.has("IsPWA");
   $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
   $: ({ user } = $userBetarenaSettings);
   // #endregion ➤ 📌 VARIABLES
@@ -162,6 +163,7 @@
 
 <header
   id="header"
+  class:sticky={$page.route.id === routeIdPageAuthors && isPWA && mobile}
   class:mobile
   class:dark-mode={currentPageRouteId !== "AuthorsPage"}
   style:border-bottom={$page.route.id === routeIdPageAuthors
@@ -219,6 +221,14 @@
     align-items: center;
     background-color: var(--bg-color);
     position: relative;
+
+    &.sticky {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      width: 100%;
+      background: initial;
+    }
 
     .empty-nav {
       box-sizing: border-box;

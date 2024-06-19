@@ -767,16 +767,6 @@
 
 <style lang="scss">
 
-  :global(#header.mobile) {
-    position: sticky;
-    top: 0;
-    z-index: 2;
-    width: 100%;
-    background: initial;
-    background-color: rgba(var(--bg-color-rgb-consts), 0.8);
-    backdrop-filter: blur(4px);
-  }
-
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
   │ 📲 MOBILE-FIRST                                                              │
