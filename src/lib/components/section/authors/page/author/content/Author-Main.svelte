@@ -442,7 +442,7 @@
         class:animate={executeAnimation}
         style=
         "
-        {VIEWPORT_MOBILE_INIT[1] ? 'width: 34px;' : ''}
+        {VIEWPORT_MOBILE_INIT[1] ? 'width: 34px; height: 34px' : ''}
         "
       />
 
@@ -775,6 +775,9 @@
 
   div#author⮕w⮕author-content⮕main
   {
+    &.mobile {
+      padding-top: 12px;
+    }
     .article-header.mobile {
       display: flex;
       flex-direction: column-reverse;
