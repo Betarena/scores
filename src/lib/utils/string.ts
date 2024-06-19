@@ -209,8 +209,8 @@ export const iso2CountryLogo = (
 ): string =>
 {
   return value != undefined
-    ? `https://betarena.com/images/flags/${value}.svg`
-    : 'https://www.betarena.com/images/flags/EN.svg'
+    ? `/assets/flags/${value}.svg`
+    : '/assets/flags/EN.svg'
   ;
 }
 

@@ -578,11 +578,11 @@ COMPONENT JS (w/ TS)
     let targetLeagueFlag: string;
 
     if (leagueId == 5 || leagueId == 2)
-      targetLeagueFlag = `https://betarena.com/images/flags/EU.svg`;
+      targetLeagueFlag = `/assets/flags/EU.svg`;
     else if (leagueMap.get(leagueId)?.iso2 != null)
-      targetLeagueFlag = `https://betarena.com/images/flags/${leagueMap.get(leagueId)?.iso2}.svg`;
+      targetLeagueFlag = `/assets/flags/${leagueMap.get(leagueId)?.iso2}.svg`;
     else
-      targetLeagueFlag = `https://betarena.com/images/flags/EN.svg`;
+      targetLeagueFlag = `/assets/flags/EN.svg`;
     ;
 
     return targetLeagueFlag;
