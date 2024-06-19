@@ -72,13 +72,13 @@
 </script>
 
 <div class="follow-block">
-  <span class="follow-text">
-    <TranslationText
-      key={`${CNAME}/unknown`}
-      text={translation.terms.follow}
-      fallback={"Follow us"}
-    />
-  </span>
+    <span class="follow-text">
+      <TranslationText
+        key={`${CNAME}/unknown`}
+        text={translation.terms.follow}
+        fallback={"Follow us"}
+      />
+    </span>
   <div class="socials-wrapper">
     {#each socialNetworkOrder as key}
       <a
@@ -98,11 +98,13 @@
   .follow-block {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 8px;
 
     .follow-text {
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 500;
+      text-transform: uppercase;
+      color: var(--text-color-second-dark);
     }
 
     .socials-wrapper {

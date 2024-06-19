@@ -28,7 +28,6 @@
 	import Breadcrumb from './Breadcrumb.svelte';
 	import FixtureOddsWidget from './fixture-odds/FixtureOdds-Widget.svelte';
 
-
   // #endregion ➤ [MAIN] Package Imports
 
   // #region ➤ [VARIABLES]

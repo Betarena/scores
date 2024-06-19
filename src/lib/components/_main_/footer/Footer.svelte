@@ -278,23 +278,7 @@
           />
         </a>
 
-        <!--
-        ╭─────
-        │ > 🖥️ LAPTOP
-        ╰─────
-        -->
-        {#if !VIEWPORT_TABLET_INIT[1]}
-          <p
-            class=
-            "
-            s-14
-            w-400
-            color-grey
-            "
-          >
-            © 2021 Betarena All rights reserved
-          </p>
-        {/if}
+
 
       </div>
 
@@ -374,73 +358,6 @@
 
       </div>
 
-      <!--
-      ╭─────
-      │ > Subsribe to Newsletter
-      ╰─────
-      -->
-      <div
-        id="{CNAME}⮕newsletter-box"
-      >
-        <!--
-        ╭─────
-        │ > Section Title
-        ╰─────
-        -->
-        <p
-          class=
-          "
-          color-white
-          s-14
-          w-normal
-          m-b-8
-          {VIEWPORT_MOBILE_INIT[1] ? 'text-center' : 'text-left'}
-          "
-        >
-          <TranslationText
-            key={`${CNAME}/newsletter-box`}
-            text={translation.terms.subscribe_newsletter}
-            fallback={'Subscribe to newsletter'}
-          />
-        </p>
-
-        <!--
-        ╭─────
-        │ > Submit Button
-        ╰─────
-        -->
-        <button
-          id="newsletter-subscribe-btn"
-          class=
-          "
-          btn-primary-v2
-          "
-          on:click=
-          {
-            () =>
-            {
-              $sessionStore.currentActiveModal = 'Footer_Newsletter_Modal';
-              return;
-            }
-          }
-        >
-          <p
-            class=
-            "
-            color-white
-            s-14
-            w-500
-            "
-          >
-            <TranslationText
-              key={`${CNAME}/unknown`}
-              text={translation.terms.subscribe_cta}
-              fallback={'Subsribe'}
-            />
-          </p>
-        </button>
-
-      </div>
 
       <!--
       ╭─────
@@ -828,7 +745,23 @@
           color-grey
           "
         >
-          Second Act
+           <!--
+        ╭─────
+        │ > 🖥️ LAPTOP
+        ╰─────
+        -->
+        {#if !VIEWPORT_TABLET_INIT[1]}
+          <span
+            class=
+            "
+            s-14
+            w-400
+            color-grey
+            "
+          >
+            © 2021 Betarena All rights reserved
+          </span>
+        {/if}
 
           <!--
           🖥️ LAPTOP
@@ -846,7 +779,7 @@
             "
             class:m-l-10={VIEWPORT_TABLET_INIT[1]}
           >
-            18 Boulevard Montmartre Paris 75009
+          Second Act  18 Boulevard Montmartre Paris 75009
           </span>
         </p>
 
@@ -921,6 +854,7 @@
         grid-row: 1;
         /* 🎨 style */
         justify-self: center;
+        align-self: self-start;
 
         img
         {
