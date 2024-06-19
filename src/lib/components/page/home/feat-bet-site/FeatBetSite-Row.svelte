@@ -165,7 +165,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       <img
         loading="lazy"
         class="rating-img"
-        src="https://www.betarena.com/widgets/featured_betting_sites/static/star{data.stars}.svg"
+        src="/assets/svg/rating/star{data.stars}.svg"
         alt="default alt text"
       />
 		{/if}
