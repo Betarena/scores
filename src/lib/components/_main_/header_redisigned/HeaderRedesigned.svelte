@@ -34,7 +34,7 @@
   import TabletWave from "./assets/wave-bg-tablet.svg";
   import DesktopWave from "./assets/wave-bg-desktop.svg";
   import MobileWave from "./assets/wave-bg-mobile.svg";
-    import { goto } from "$app/navigation";
+  import { goto } from "$app/navigation";
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -77,7 +77,8 @@
     routeIdPageAuthors,
   ];
   $: isSimpleHeader = simpleMobileHeaderRoutes.includes($page.route.id || "");
-  $: ({ windowWidth, currentPageRouteId, viewportType,globalState } = $sessionStore);
+  $: ({ windowWidth, currentPageRouteId, viewportType, globalState } =
+    $sessionStore);
   $: isAuth = globalState.has("Authenticated");
   $: [mobile, tablet] = viewportChangeV2(
     windowWidth,
@@ -104,16 +105,14 @@
       signIn();
       return;
     }
-    goto(`/u/dashboard/${$userBetarenaSettings.lang}`)
+    goto(`/u/dashboard/${$userBetarenaSettings.lang}`);
+  }
+
+  function signIn() {
+    $sessionStore.currentActiveModal = "Auth_Modal";
   }
 
   // #endregion ➤ 🛠️ METHODS
-
-
-    function signIn()
-    {
-        throw new Error("Function not implemented.");
-    }
 </script>
 
 <SeoBox>

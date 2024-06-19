@@ -106,6 +106,7 @@
 {/if}
 
 <section
+  class:mobile={VIEWPORT_MOBILE_INIT[1]}
   id={CNAME}
 >
   <AuthorWidget />

@@ -110,7 +110,6 @@
     VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
-  console.log('widgetData', widgetData);
 
   let
     /**
@@ -265,225 +264,198 @@
 <div
   id="{CNAME}"
 >
+
+  <div class="article-header" class:mobile={VIEWPORT_MOBILE_INIT[1]}>
   <!--
   ╭─────
   │ > article title
   ╰─────
   -->
-  <h1
-    class=
-    "
-    {!VIEWPORT_MOBILE_INIT[1] ? 's-38' : 's-24'}
-    w-500
-    m-b-32
-    color-black-2
-    m-0
-    "
-    style=
-    "
-    {!VIEWPORT_MOBILE_INIT[1] ? 'line-height: 54px;' : 'line-height: 36px;'}
-    "
-  >
-    {widgetData.article.data?.title ?? ''}
-  </h1>
-
-  <!--
-  ╭─────
-  │ > article tags
-  ╰─────
-  -->
-  <div
-    id="tags-box"
-    class=
-    "
-    m-b-34
-    "
-  >
-    <!--
-    ╭─────
-    │ > previous (button)
-    ╰─────
-    -->
-    {#if componentLocalState.has('PrevButtonShow')}
-      <div
-        id="tagScrollPrev"
+    <div class="article-title">
+      <h1
         class=
         "
-        tagScrollButton
+        {!VIEWPORT_MOBILE_INIT[1] ? 's-38' : 's-24'}
+        w-500
+        m-b-32
+        color-black-2
+        m-0
         "
-        on:click=
-        {
-          () =>
-          {
-            scrollTags(1);
-            return;
-          }
-        }
+        style=
+        "
+        {!VIEWPORT_MOBILE_INIT[1] ? 'line-height: 54px;' : 'line-height: 36px;'}
+        "
       >
-        <img
-          id=''
-          src={theme == 'Dark' ? iconArrowLeftDark : iconArrowLeftLight}
-          alt=''
-          title=''
-          loading='lazy'
-        />
-      </div>
-    {/if}
-
-    <!--
-    ╭─────
-    │ > article tags (inner)
-    ╰─────
-    -->
-    <div
-      id="tags-box-scroll"
-      bind:this={htmlElementScrollBox}
-      on:scroll=
-      {
-        () =>
-        {
-          scrollTags(0);
-          return;
-        }
-      }
-    >
-      <!-- [🐞] -->
-      <!-- {#each [...widgetData.tags, ...widgetData.tags, ...widgetData.tags] as item} -->
-      {#each [...(widgetData.article.tags ?? [])] as item}
-        <a
-          class=
-          "
-          tag-pill
-          "
-          href="/a/tag/{tagMap.get(item)?.permalink}"
-        >
-          <p
-            class=
-            "
-            s-14
-            w-400
-            color-black-2
-            no-wrap
-            "
-          >
-            {tagMap.get(item)?.name ?? ''}
-          </p>
-        </a>
-      {/each}
-    </div>
-
-    <!--
-    ╭─────
-    │ > next (button)
-    ╰─────
-    -->
-    {#if componentLocalState.has('NextButtonShow')}
-      <div
-        id="tagScrollNext"
-        class=
-        "
-        tagScrollButton
-        "
-        on:click=
-        {
-          () =>
-          {
-            scrollTags(-1);
-            return;
-          }
-        }
-      >
-        <img
-          id=''
-          src={theme == 'Dark' ? iconArrowRightDark : iconArrowRightLight}
-          alt=''
-          title=''
-          loading='lazy'
-        />
-      </div>
-    {/if}
-  </div>
-
-  <!--
-  ╭─────
-  │ > article author box
-  ╰─────
-  -->
-  <div
-    class=
-    "
-    row-space-start
-    m-b-24
-    "
-    style=
-    "
-    align-items: flex-start;
-    "
-  >
-
-    <!--
-    ╭─────
-    │ > article author avatar
-    ╰─────
-    -->
-    <img
-      id='user-avatar'
-      src={widgetData.author?.data?.avatar ?? ''}
-      alt='user_avatar'
-      title={widgetData.author?.data?.username ?? ''}
-      loading='lazy'
-      class=
-      "
-      m-r-12
-      effect
-      "
-      class:animate={executeAnimation}
-      style=
-      "
-      {VIEWPORT_MOBILE_INIT[1] ? 'width: 34px;' : ''}
-      "
-    />
-
-    <!--
-    ╭─────
-    │ > article author further information
-    ╰─────
-    -->
-    <div>
+        {widgetData.article.data?.title ?? ''}
+      </h1>
 
       <!--
       ╭─────
-      │ > article author main info
+      │ > article tags
       ╰─────
       -->
       <div
+        id="tags-box"
         class=
         "
-        row-space-start
-        width-auto
+        m-b-34
         "
       >
         <!--
         ╭─────
-        │ > article author name
+        │ > previous (button)
         ╰─────
         -->
-        <p
-          class=
-          "
-          s-14
-          w-600
-          color-black-2
-          m-r-8
-          no-wrap
-          "
-        >
-          {widgetData.author.data?.username ?? ''}
-        </p>
+        {#if componentLocalState.has('PrevButtonShow')}
+          <div
+            id="tagScrollPrev"
+            class=
+            "
+            tagScrollButton
+            "
+            on:click=
+            {
+              () =>
+              {
+                scrollTags(1);
+                return;
+              }
+            }
+          >
+            <img
+              id=''
+              src={theme == 'Dark' ? iconArrowLeftDark : iconArrowLeftLight}
+              alt=''
+              title=''
+              loading='lazy'
+            />
+          </div>
+        {/if}
 
         <!--
         ╭─────
-        │ > article author badges
+        │ > article tags (inner)
+        ╰─────
+        -->
+        <div
+          id="tags-box-scroll"
+          bind:this={htmlElementScrollBox}
+          on:scroll=
+          {
+            () =>
+            {
+              scrollTags(0);
+              return;
+            }
+          }
+        >
+          <!-- [🐞] -->
+          <!-- {#each [...widgetData.tags, ...widgetData.tags, ...widgetData.tags] as item} -->
+          {#each [...(widgetData.article.tags ?? [])] as item}
+            <a
+              class=
+              "
+              tag-pill
+              "
+              href="/a/tag/{tagMap.get(item)?.permalink}"
+            >
+              <p
+                class=
+                "
+                s-14
+                w-400
+                color-black-2
+                no-wrap
+                "
+              >
+                {tagMap.get(item)?.name ?? ''}
+              </p>
+            </a>
+          {/each}
+        </div>
+
+        <!--
+        ╭─────
+        │ > next (button)
+        ╰─────
+        -->
+        {#if componentLocalState.has('NextButtonShow')}
+          <div
+            id="tagScrollNext"
+            class=
+            "
+            tagScrollButton
+            "
+            on:click=
+            {
+              () =>
+              {
+                scrollTags(-1);
+                return;
+              }
+            }
+          >
+            <img
+              id=''
+              src={theme == 'Dark' ? iconArrowRightDark : iconArrowRightLight}
+              alt=''
+              title=''
+              loading='lazy'
+            />
+          </div>
+        {/if}
+      </div>
+    </div>
+    <!--
+    ╭─────
+    │ > article author box
+    ╰─────
+    -->
+    <div
+      class=
+      "
+      row-space-start
+      m-b-24
+      "
+      style=
+      "
+      align-items: flex-start;
+      "
+    >
+
+      <!--
+      ╭─────
+      │ > article author avatar
+      ╰─────
+      -->
+      <img
+        id='user-avatar'
+        src={widgetData.author?.data?.avatar ?? ''}
+        alt='user_avatar'
+        title={widgetData.author?.data?.username ?? ''}
+        loading='lazy'
+        class=
+        "
+        m-r-12
+        effect
+        "
+        class:animate={executeAnimation}
+        style=
+        "
+        {VIEWPORT_MOBILE_INIT[1] ? 'width: 34px;' : ''}
+        "
+      />
+
+      <!--
+      ╭─────
+      │ > article author further information
+      ╰─────
+      -->
+      <div>
+
+        <!--
+        ╭─────
+        │ > article author main info
         ╰─────
         -->
         <div
@@ -491,28 +463,167 @@
           "
           row-space-start
           width-auto
-          m-r-16
-          "
-          style=
-          "
-          max-width: 16px;
-          max-height: 16px;
           "
         >
-          {#each widgetData.author?.badges ?? [] as item}
-            <img
-              id=''
-              src={item?.image ?? ''}
-              alt={item?.description ?? ''}
-              title={item?.description ?? ''}
-              loading='lazy'
-            />
-          {/each}
+          <!--
+          ╭─────
+          │ > article author name
+          ╰─────
+          -->
+          <p
+            class=
+            "
+            s-14
+            w-600
+            color-black-2
+            m-r-8
+            no-wrap
+            "
+          >
+            {widgetData.author.data?.username ?? ''}
+          </p>
+
+          <!--
+          ╭─────
+          │ > article author badges
+          ╰─────
+          -->
+          <div
+            class=
+            "
+            row-space-start
+            width-auto
+            m-r-16
+            "
+            style=
+            "
+            max-width: 16px;
+            max-height: 16px;
+            "
+          >
+            {#each widgetData.author?.badges ?? [] as item}
+              <img
+                id=''
+                src={item?.image ?? ''}
+                alt={item?.description ?? ''}
+                title={item?.description ?? ''}
+                loading='lazy'
+              />
+            {/each}
+          </div>
+
+          <!--
+          ╭─────
+          │ > article (1) read time + (2) published days 💻 TABLET [+]
+          ╰─────
+          -->
+          {#if !VIEWPORT_MOBILE_INIT[1]}
+            <p
+              class=
+              "
+              s-12
+              color-black-3
+                dark-v1
+              "
+            >
+              {readingTime(widgetData.article.data?.content)}
+              <TranslationText
+                key={'uknown'}
+                text={widgetDataTranslation?.translation?.reading_time}
+                fallback={'mins'}
+              />
+              <span
+                class=
+                "
+                m-r-5
+                m-l-5
+                "
+              >
+              •
+              </span>
+              {publishDateAgo()}
+              <TranslationText
+                key={'uknown'}
+                text={widgetDataTranslation?.translation?.published_date_days}
+                fallback={'days'}
+              />
+            </p>
+          {/if}
+
         </div>
 
         <!--
         ╭─────
-        │ > article (1) read time + (2) published days 💻 TABLET [+]
+        │ > article author extra info
+        ╰─────
+        -->
+        <div
+          class=
+          "
+          row-space-start
+          "
+        >
+          <!--
+          ╭─────
+          │ > article author creation date
+          ╰─────
+          -->
+          <p
+            class=
+            "
+            s-12
+            color-black-3
+              dark-v1
+            no-wrap
+            m-r-12
+            "
+          >
+            {monthTranslation?.months?.[monthNames[new Date(widgetData.author?.data?.creation_date ?? '').getMonth()]]}
+            {new Date(widgetData.author?.data?.creation_date ?? '').getDate()},
+            {new Date(widgetData.author?.data?.creation_date ?? '').getFullYear()}
+          </p>
+
+          <!--
+          ╭─────
+          │ > article author location
+          ╰─────
+          -->
+          {#if !VIEWPORT_MOBILE_INIT[1]}
+
+            <div
+              class=
+              "
+              row-space-start
+              "
+            >
+              <img
+                id=''
+                src={theme == 'Dark' ? icon_location_dark : icon_location}
+                alt={theme == 'Dark' ? icon_location_dark : icon_location}
+                title={theme == 'Dark' ? icon_location_dark : icon_location}
+                loading='lazy'
+                class=
+                "
+                m-r-5
+                "
+              />
+              <p
+                class=
+                "
+                s-12
+                color-black-3
+                  dark-v1
+                "
+              >
+                {widgetData.author?.data?.location ?? ''}
+              </p>
+            </div>
+          {/if}
+        </div>
+
+        <!--
+        ╭─────
+        │ > article author description / about 💻 TABLET [+]
         ╰─────
         -->
         {#if !VIEWPORT_MOBILE_INIT[1]}
@@ -522,203 +633,98 @@
             s-12
             color-black-3
               dark-v1
+            m-t-12
             "
           >
-            {readingTime(widgetData.article.data?.content)}
-            <TranslationText
-              key={'uknown'}
-              text={widgetDataTranslation?.translation?.reading_time}
-              fallback={'mins'}
-            />
-            <span
-              class=
-              "
-              m-r-5
-              m-l-5
-              "
-            >
-            •
-            </span>
-            {publishDateAgo()}
-            <TranslationText
-              key={'uknown'}
-              text={widgetDataTranslation?.translation?.published_date_days}
-              fallback={'days'}
-            />
+            {widgetData.author.data?.about ?? ''}
           </p>
         {/if}
 
-      </div>
-
-      <!--
-      ╭─────
-      │ > article author extra info
-      ╰─────
-      -->
-      <div
-        class=
-        "
-        row-space-start
-        "
-      >
         <!--
         ╭─────
-        │ > article author creation date
+        │ > [1] article (1) read time + (2) published days 💻 TABLET [+]
+        │ > [2] article author location
         ╰─────
         -->
-        <p
-          class=
-          "
-          s-12
-          color-black-3
-            dark-v1
-          no-wrap
-          m-r-12
-          "
-        >
-          {monthTranslation?.months?.[monthNames[new Date(widgetData.author?.data?.creation_date ?? '').getMonth()]]}
-          {new Date(widgetData.author?.data?.creation_date ?? '').getDate()},
-          {new Date(widgetData.author?.data?.creation_date ?? '').getFullYear()}
-        </p>
-
-        <!--
-        ╭─────
-        │ > article author location
-        ╰─────
-        -->
-        <div
-          class=
-          "
-          row-space-start
-          "
-        >
-          <img
-            id=''
-            src={theme == 'Dark' ? icon_location_dark : icon_location}
-            alt={theme == 'Dark' ? icon_location_dark : icon_location}
-            title={theme == 'Dark' ? icon_location_dark : icon_location}
-            loading='lazy'
-            class=
-            "
-            m-r-5
-            "
-          />
-          <p
-            class=
-            "
-            s-12
-            color-black-3
-              dark-v1
-            "
-          >
-            {widgetData.author?.data?.location ?? ''}
-          </p>
-        </div>
-      </div>
-
-      <!--
-      ╭─────
-      │ > article author description / about 💻 TABLET [+]
-      ╰─────
-      -->
-      {#if !VIEWPORT_MOBILE_INIT[1]}
-        <p
-          class=
-          "
-          s-12
-          color-black-3
-            dark-v1
-          m-t-12
-          "
-        >
-          {widgetData.author.data?.about ?? ''}
-        </p>
-      {/if}
-
-      <!--
-      ╭─────
-      │ > [1] article (1) read time + (2) published days 💻 TABLET [+]
-      │ > [2] article author location
-      ╰─────
-      -->
-      {#if VIEWPORT_MOBILE_INIT[1]}
-        <div
-          class=
-          "
-          row-space-start
-          m-t-10
-          "
-        >
-
+        {#if VIEWPORT_MOBILE_INIT[1]}
           <div
             class=
             "
+            article-author-info
             row-space-start
+            m-t-10
             "
           >
-            <img
-              id=''
-              src={theme == 'Dark' ? icon_location_dark : icon_location}
-              alt={theme == 'Dark' ? icon_location_dark : icon_location}
-              title={theme == 'Dark' ? icon_location_dark : icon_location}
-              loading='lazy'
+
+            <div
               class=
               "
-              m-r-5
+              row-space-start
               "
-            />
+            >
+              <img
+                id=''
+                src={theme == 'Dark' ? icon_location_dark : icon_location}
+                alt={theme == 'Dark' ? icon_location_dark : icon_location}
+                title={theme == 'Dark' ? icon_location_dark : icon_location}
+                loading='lazy'
+                class=
+                "
+                m-r-5
+                "
+              />
+              <p
+                class=
+                "
+                s-12
+                color-black-3
+                  dark-v1
+                "
+              >
+                {widgetData.author?.data?.location ?? ''}
+              </p>
+            </div>
+
             <p
               class=
               "
               s-12
               color-black-3
                 dark-v1
+              no-wrap
+              m-l-16
               "
             >
-              {widgetData.author?.data?.location ?? ''}
+              {readingTime(widgetData.article.data?.content)}
+              <TranslationText
+                key={'uknown'}
+                text={widgetDataTranslation?.translation?.reading_time}
+                fallback={'mins'}
+              />
+              <span
+                class=
+                "
+                m-r-5
+                m-l-5
+                "
+              >
+              •
+              </span>
+              {publishDateAgo()}
+              <TranslationText
+                key={'uknown'}
+                text={widgetDataTranslation?.translation?.published_date_days}
+                fallback={'days'}
+              />
             </p>
+
           </div>
+        {/if}
 
-          <p
-            class=
-            "
-            s-12
-            color-black-3
-              dark-v1
-            no-wrap
-            m-l-16
-            "
-          >
-            {readingTime(widgetData.article.data?.content)}
-            <TranslationText
-              key={'uknown'}
-              text={widgetDataTranslation?.translation?.reading_time}
-              fallback={'mins'}
-            />
-            <span
-              class=
-              "
-              m-r-5
-              m-l-5
-              "
-            >
-            •
-            </span>
-            {publishDateAgo()}
-            <TranslationText
-              key={'uknown'}
-              text={widgetDataTranslation?.translation?.published_date_days}
-              fallback={'days'}
-            />
-          </p>
-
-        </div>
-      {/if}
+      </div>
 
     </div>
-
   </div>
-
   <!--
   ╭─────
   │ > article banner
@@ -761,6 +767,16 @@
 
 <style lang="scss">
 
+  :global(#header.mobile) {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    width: 100%;
+    background: initial;
+    background-color: rgba(var(--bg-color-rgb-consts), 0.8);
+    backdrop-filter: blur(4px);
+  }
+
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
   │ 📲 MOBILE-FIRST                                                              │
@@ -769,6 +785,14 @@
 
   div#author⮕w⮕author-content⮕main
   {
+    .article-header.mobile {
+      display: flex;
+      flex-direction: column-reverse;
+    }
+    .article-author-info {
+      margin-left: -44px;
+    }
+    max-width: 676px;
     div#tags-box
     {
       /* 🎨 style */
@@ -1001,9 +1025,15 @@
           {
             /* 🎨 style */
             line-height: 30px;
-            font-weight: 300;
+            font-weight: 400;
           }
 
+          ul {
+            font-size: 18px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 32px; /* 160% */
+          }
           h2
           {
             /* 🎨 style */
@@ -1052,6 +1082,12 @@
             /* 🎨 style */
             font-size: 18px;
             line-height: 32px;
+            font-weight: 300;
+          }
+
+          ul {
+            font-weight: 300;
+            font-size: 20px
           }
 
           h2
