@@ -144,17 +144,12 @@
         />
       </Button>
     {:else}
-      <div class="avatar-wrapper" on:click|stopPropagation>
+      <a href="/u/dashboard/{$userBetarenaSettings.lang}" class="avatar-wrapper" on:click|stopPropagation>
         <Avatar
           src={profile_photo}
           size={44}
-          on:click={() => dispatch("avatarClick")}
         />
-
-        {#if $scoresNavbarStore.globalState.has("UserDropdownActive")}
-          <UserDropdownPopup />
-        {/if}
-      </div>
+      </a>
     {/if}
   </div>
 </div>
