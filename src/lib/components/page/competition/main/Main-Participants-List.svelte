@@ -130,7 +130,6 @@
     // ### [🐞]
     // alert('Joining Competition');
 
-
     await get
     (
       `/api/data/competition/main?competition_id=${$page.data?.COMPETITION_ID}&participantUid=${$userBetarenaSettings?.user?.firebase_user_data?.uid}&predictionChoice=${viewType}`
@@ -138,6 +137,8 @@
 
     let newBalance: number = ($userBetarenaSettings?.user?.scores_user_data?.main_balance - entryFee) ?? 0;
     if (newBalance < 0) newBalance = 0;
+    $modalStore.show = false;
+    $modalStore.component = null;
 
     await userUpdateBalance
     (
@@ -239,7 +240,7 @@
       viewType: modalViewType,
       balanceDeductAmount: entryFee,
       on: {
-        closeModal: () => $modalStore.show = false,
+        closeModal: () => {$modalStore.show = false },
         confirmEntry: () => joinCompetition(),
       }
     };
