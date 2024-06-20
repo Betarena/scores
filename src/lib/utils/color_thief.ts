@@ -62,6 +62,7 @@ export function getImageBgColor
   imageVar: string
 ): void
 {
+  if(!imgURL) return;
   try
   {
     const img = new Image();
@@ -92,7 +93,7 @@ export function getImageBgColor
     );
     // [ℹ] declaring the image paramaters & CORS by-pass
     const
-      imageURL = imgURL
+      imageURL = 'https://corsproxy.io/?' + encodeURIComponent(imgURL)
     ;
     img.crossOrigin = 'anonymous';
     img.src = imageURL;
