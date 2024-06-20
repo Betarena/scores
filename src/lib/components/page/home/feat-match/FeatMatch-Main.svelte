@@ -179,7 +179,6 @@
 				}
 			}
 		}
-
     getImageBgColor
     (
       SPORTBOOK_INFO?.image,
@@ -962,7 +961,7 @@
 
               <img
                 loading="lazy"
-                src="https://www.betarena.com/widgets/featured_match/static/icon/white-close.svg"
+                src="/assets/svg/close.svg"
                 alt="default alt text"
                 width="16"
                 height="16"
