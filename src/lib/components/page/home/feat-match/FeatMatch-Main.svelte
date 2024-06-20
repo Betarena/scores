@@ -390,10 +390,10 @@
   */
   $: if (browser)
   {
-    if (B_FEATM_D?.league_id == 2 || B_FEATM_D?.league_id == 5)
+    if (B_FEATM_D?.league_id == 2 || B_FEATM_D?.league_id == 5 ||  B_FEATM_D?.country_flag === "https://betarena.com/images/flags/.svg" )
       dataTargetCountryImgLink = '/assets/flags/EU.svg';
     else
-      dataTargetCountryImgLink = B_FEATM_D?.country_flag;
+      dataTargetCountryImgLink = B_FEATM_D?.country_flag?.replace("https://betarena.com/images/flags", "/assets/flags") || '/assets/flags/EU.svg';
     ;
   }
 
@@ -2003,7 +2003,8 @@
   {
 		width: 24px;
 		height: 18px;
-		margin-right: 16px;
+		margin-right: 27px;
+    margin-top: -2px;
 		filter: drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.1));
 		border-radius: 2px !important;
 		vertical-align: middle !important;

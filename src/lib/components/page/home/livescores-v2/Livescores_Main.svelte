@@ -776,7 +776,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 <img
                   loading="lazy"
                   src={correctFlagGenerate(leagueId)}
-                  on:error={(e) => (e.currentTarget.src = 'https://www.betarena.com/images/flags/EN.svg')}
+                  on:error={(e) => (e.currentTarget.src = '/assets/flags/EN.svg')}
                   alt="default alt text"
                   class="m-r-15"
                   width="21"
@@ -831,7 +831,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               <img
                 loading="lazy"
                 src={correctFlagGenerate(leagueId)}
-                on:error={(e) => (e.currentTarget.src = 'https://www.betarena.com/images/flags/EN.svg')}
+                on:error={(e) => (e.currentTarget.src = '/assets/flags/EN.svg')}
                 alt="default alt text"
                 class="m-r-15"
                 width="21"
@@ -935,8 +935,9 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     div.league-group {
       padding: 18px 28px 10px 28px;
     } div.league-group img {
-      margin-right: 32px;
-      widows: 24px;
+      margin-right: 27px;
+      width: 24px;
+      margin-top: -2px;
       height: 18px;
     } div.league-group p {
       font-size: 16px;
