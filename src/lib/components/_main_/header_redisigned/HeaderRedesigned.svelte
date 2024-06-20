@@ -29,12 +29,12 @@
   import { page } from "$app/stores";
   import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
   import MobileHeaderSmall from "./MobileHeaderSmall.svelte";
-  import { scoresNavbarStore } from "./_store.js";
   import SportsNavigation from "./SportNavigation/SportsNavigation.svelte";
   import SportsNavigationStandart from "./SportNavigation/SportsNavigationStandart.svelte";
   import TabletWave from "./assets/wave-bg-tablet.svg";
   import DesktopWave from "./assets/wave-bg-desktop.svg";
   import MobileWave from "./assets/wave-bg-mobile.svg";
+  import { goto } from "$app/navigation";
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -76,14 +76,16 @@
     routeIdPageProfile,
     routeIdPageAuthors,
   ];
-
   $: isSimpleHeader = simpleMobileHeaderRoutes.includes($page.route.id || "");
-  $: ({ windowWidth, currentPageRouteId, viewportType } = $sessionStore);
+  $: ({ windowWidth, currentPageRouteId, viewportType, globalState } =
+    $sessionStore);
+  $: isAuth = globalState.has("Authenticated");
   $: [mobile, tablet] = viewportChangeV2(
     windowWidth,
     VIEWPORT_MOBILE_INIT[0],
     VIEWPORT_TABLET_INIT[0]
   );
+  $: isPWA = globalState.has("IsPWA");
   $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
   $: ({ user } = $userBetarenaSettings);
   // #endregion ➤ 📌 VARIABLES
@@ -100,13 +102,15 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   function avatarClick() {
-    const openDropDown =
-      !$scoresNavbarStore.globalState.has("UserDropdownActive");
-    scoresNavbarStore.closeAllDropdowns();
-
-    if (openDropDown) {
-      scoresNavbarStore.updateData("globalStateAdd", "UserDropdownActive");
+    if (!isAuth) {
+      signIn();
+      return;
     }
+    goto(`/u/dashboard/${$userBetarenaSettings.lang}`);
+  }
+
+  function signIn() {
+    $sessionStore.currentActiveModal = "Auth_Modal";
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -159,6 +163,7 @@
 
 <header
   id="header"
+  class:sticky={$page.route.id === routeIdPageAuthors && isPWA && mobile}
   class:mobile
   class:dark-mode={currentPageRouteId !== "AuthorsPage"}
   style:border-bottom={$page.route.id === routeIdPageAuthors
@@ -216,6 +221,14 @@
     align-items: center;
     background-color: var(--bg-color);
     position: relative;
+
+    &.sticky {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      width: 100%;
+      background: initial;
+    }
 
     .empty-nav {
       box-sizing: border-box;

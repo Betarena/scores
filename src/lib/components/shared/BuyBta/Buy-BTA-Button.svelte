@@ -32,6 +32,7 @@
   import { get } from "$lib/api/utils.js";
   import buyOptionsTranslations from "./store"
   import sessionStore  from "$lib/store/session.js";
+  import { browser } from "$app/environment";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -56,7 +57,7 @@
   let prevLang = "";
 
   $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
-  $: fetchOptions($sessionStore.serverLang)
+  $: if (browser) fetchOptions($sessionStore.serverLang)
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS

@@ -212,7 +212,7 @@
                 country-flag
                 m-r-5
                 "
-                src="https://betarena.com/images/flags/{country[0]}.svg"
+                src="/assets/flags/{country[0]}.svg"
                 alt={country[1]}
                 width="20"
                 height="14"
@@ -298,7 +298,7 @@
                 country-flag
                 m-r-10
                 "
-                src="https://betarena.com/images/flags/{country[0]}.svg"
+                src="/assets/flags/{country[0]}.svg"
                 alt={country[1]}
                 width="20"
                 height="14"

@@ -33,4 +33,5 @@ export type PROFILE_OPT =
   | 'Competitions History'
   | 'Scores'
   | 'Author'
+  | 'Logout'
 ;

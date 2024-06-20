@@ -4,7 +4,7 @@
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ Internal Svelte Code Format :|: V.8.0                                          │
 │ ➤ Status :|: 🔒 LOCKED                                                           │
-│ ➤ Author(s) :|: @migbash                                                         │
+│ ➤ Author(s) :|: @izobov                                                         │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ 📝 Description                                                                   │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
@@ -17,8 +17,6 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
-	import { B_NAV_T } from './../../../../../../scores-lib/types/navbar.d.ts';
-	import Linkedin from './assets/icon_redisign/linkedin.svelte';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
@@ -50,7 +48,8 @@
   import FooterSide from "./FooterSide.svelte";
   import FooterBottom from "./FooterBottom.svelte";
   import { promiseUrlsPreload } from "$lib/utils/navigation.js";
-    import { browser } from "$app/environment";
+  import { browser } from "$app/environment";
+  import { routeIdContent } from "$lib/constants/paths.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -85,6 +84,8 @@
 
   export let mobile: boolean, tablet: boolean;
 
+  const sideFooter = [routeIdContent];
+
   const /**
      * @description
      *  📣 Dynamic import variable condition
@@ -97,8 +98,6 @@
      */
     dynamicAssetMap = new Map<IDynamicAssetMap, any>();
   $: ({ globalState } = $sessionStore);
-
-  $: isPWA = globalState.has("IsPWA");
 
   $: translation = $page.data.B_FOT_T as B_FOT_T;
   $: if (browser) loadTranslations($sessionStore.serverLang);
@@ -249,10 +248,8 @@
 ╰─────
 -->
 
-{#if !mobile && !tablet}
+{#if !mobile && !tablet && sideFooter.includes($page.route.id || "")}
   <FooterSide links={linksMap} {buyBTAText} {translation} />
-{/if}
-
-{#if !isPWA && (tablet || mobile)}
+{:else}
   <FooterBottom {mobile} {tablet} {translation} links={linksMap} />
 {/if}

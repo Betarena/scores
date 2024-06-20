@@ -391,7 +391,7 @@
   $: if (browser)
   {
     if (B_FEATM_D?.league_id == 2 || B_FEATM_D?.league_id == 5)
-      dataTargetCountryImgLink = 'https://betarena.com/images/flags/EU.svg';
+      dataTargetCountryImgLink = '/assets/flags/EU.svg';
     else
       dataTargetCountryImgLink = B_FEATM_D?.country_flag;
     ;
@@ -813,7 +813,7 @@
                   {:else}
                     <img
                       loading="lazy"
-                      src="https://www.betarena.com/widgets/featured_match/static/icon/icon-close.svg"
+                      src="/assets/svg/icon-close.svg"
                       alt="default alt text"
                       width="28"
                       height="28"
