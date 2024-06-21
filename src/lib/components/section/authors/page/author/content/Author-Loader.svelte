@@ -132,7 +132,7 @@
     m-b-34
     "
   >
-    {#each [676, 464, 676, 577, 676, 577, 293] as item}
+    {#each [676, 464, 676] as item}
       <AuthorLoaderMain
         option={'ArticleTitleVariant1'}
         width={item}
