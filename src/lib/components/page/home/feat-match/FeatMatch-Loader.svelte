@@ -304,7 +304,7 @@
 	@media only screen
   and (max-width: 475px)
   {
-		:global(svg) {
+		:global(#live-score-container svg) {
 			width: 100% !important;
 		}
 
@@ -320,7 +320,7 @@
 	@media only screen
   and (max-width: 768px)
   {
-		:global(svg) {
+		:global(#live-score-container svg) {
 			width: 100% !important;
 		}
 	}

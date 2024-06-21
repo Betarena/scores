@@ -247,13 +247,13 @@
     MOBILE-EXCLUSIVE RESPONSIVNESS */
 	@media only screen and (max-width: 475px) {
 		/* ... REUIRED FOR SVELTE-CONTENT-LOADER ... */
-		:global(svg) {
+		:global(#live-score-container svg) {
 			width: 100% !important;
 		}
 	}
 
 	@media only screen and (max-width: 768px) {
-		:global(svg) {
+		:global(#live-score-container svg) {
 			width: 100% !important;
 		}
 	}
