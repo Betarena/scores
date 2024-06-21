@@ -41,7 +41,7 @@
   {#each order as id}
     {@const item = links.get(id)}
     {#if item}
-      <a href={item?.href} rel="external">
+      <a href={item?.href} target="_blank" rel="external">
         <TranslationText key={`${CNAME}/unknown`} text={item.label} />
       </a>
     {/if}

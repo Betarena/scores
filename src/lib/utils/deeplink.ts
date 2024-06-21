@@ -82,16 +82,15 @@ export async function mainDeepLinkCheck
         case "scores":
       default:
         revertUrl = `/${lang === "en" ? "" : `${lang}/`}scores`;
-      }
-  }
-
-  await goto
-  (
-    revertUrl,
-    {
-      replaceState: true
     }
-  );
+    goto
+    (
+      revertUrl,
+      {
+        replaceState: true
+      }
+    );
+  }
 
   return;
 }
