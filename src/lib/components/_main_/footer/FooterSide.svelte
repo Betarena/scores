@@ -39,18 +39,16 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import sessionStore from "$lib/store/session.js";
-  import userBetarenaSettings from "$lib/store/user-settings.js";
 
   import SeoBox from "$lib/components/SEO-Box.svelte";
 
   import WalletBalance from "$lib/components/ui/WalletBalance.svelte";
-  import Button from "$lib/components/ui/Button.svelte";
 
   import Legal_18ActionBet from "./assets/icon_redisign/legal-18-action-bet.svelte";
   import BegambleawareorgBlack from "./assets/icon_redisign/begambleawareorg_black.png";
   import SocialsBlock from "./SocialsBlock.svelte";
   import FooterNavigationBlock from "./FooterNavigationBlock.svelte";
-    import BuyBtaButton from "$lib/components/shared/BuyBta/Buy-BTA-Button.svelte";
+  import BuyBtaButton from "$lib/components/shared/BuyBta/Buy-BTA-Button.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
