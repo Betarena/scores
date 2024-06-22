@@ -157,7 +157,7 @@ export async function logoutUser
     redirectLink = `/${userLang == 'en' || userLang == undefined ? '' : userLang}`
   ;
 
-  if (currentRouteId != 'AuthorsPage')
+  if (currentRouteId === "Standard" || currentRouteId === "ProfilePage")
     await gotoSW
     (
       redirectLink,
