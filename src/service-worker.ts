@@ -1,6 +1,6 @@
 // @ts-nocheck
 
-import "./progressier.js"
+import "../static/progressier.js"
 /// <reference lib="webworker" />
 
 import
