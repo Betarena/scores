@@ -127,6 +127,12 @@ interface ImportMetaEnv
    * 📝 `walletconnect` project env
    */
   readonly VITE_WALLETCONNECT_ID?: string
+
+  /**
+   * @description
+   * 📝 `sha256_cert_fingerprints` cert for android app
+   */
+  readonly VITE_SHA256_CERT_FINGERPRINTS?: string;
 }
 
 interface ImportMeta
