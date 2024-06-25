@@ -1,5 +1,7 @@
 // @ts-nocheck
 
+importScripts("https://progressier.app/A0K7kzxcIrOaWtW8h3Ol/sw.js");
+
 /// <reference lib="webworker" />
 
 import {
