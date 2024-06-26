@@ -1,0 +1,11 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.betarena.scores",
+      "sha256_cert_fingerprints":
+        ["9A:38:D6:52:6F:AA:9A:A0:44:E5:4E:3E:AA:8E:C7:C0:79:F2:00:03:FC:36:33:73:F5:2D:C6:13:9C:EB:F0:38"]
+    }
+  }
+]
