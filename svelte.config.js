@@ -18,6 +18,9 @@ const config =
   // ▓▓ https://kit.svelte.dev/docs/configuration
 	kit:
   {
+    serviceWorker: {
+      register: false,
+    },
     output:
     {
       preloadStrategy: 'modulepreload'
