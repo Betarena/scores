@@ -76,7 +76,8 @@
     , "src/**/*.svelte"
     , "docker-server.js"
     , "heroku-server.js"
-  ],
+    , "static/service-worker.js"
+],
   "exclude":
   [
     "build/**/*"
