@@ -196,7 +196,7 @@
     <Header on:avatarClick={avatarClick} />
   {/if}
 
-  {#if (currentPageRouteId === "Standard" || currentPageRouteId === "CompetitionPage") && (!mobile || !isSimpleHeader)}
+  {#if (currentPageRouteId === "Standard" || currentPageRouteId === "CompetitionPage") && ((!mobile && !tablet) || !isSimpleHeader)}
     <SportsNavigationStandart />
   {:else if currentPageRouteId !== "AuthorsPage" && user && viewportType === "desktop"}
     <SportsNavigation />
