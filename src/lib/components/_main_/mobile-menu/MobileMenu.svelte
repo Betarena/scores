@@ -101,10 +101,12 @@
     CNAME = "global/w/mobile-menu";
 
   let showPopup = false;
-  $: ({ globalState, serverLang } = $sessionStore);
+  $: ({ serverLang } = $sessionStore);
   $: ({ profile_photo, buttons_order, lang } = {
     ...$userBetarenaSettings.user?.scores_user_data,
   });
+  $: ({user} = $userBetarenaSettings);
+  $: isAuth = !!user;
   $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
   $: navButtonOrderList = [
     {
@@ -173,7 +175,7 @@
   }
   function handleDndFinalize(e) {
     navButtonOrderList = e.detail.items;
-    if (globalState.has("NotAuthenticated")) {
+    if (!isAuth) {
       $sessionStore.currentActiveModal = "Auth_Modal";
       navButtonOrderList = initialOrder;
       dragStart = false;
@@ -188,7 +190,7 @@
   function buttonClick(e: MouseEvent, id: string) {
     switch (id) {
       case "profile":
-        if (globalState.has("NotAuthenticated")) {
+        if (!isAuth) {
           $sessionStore.currentActiveModal = "Auth_Modal";
         }
         break;
@@ -242,7 +244,7 @@
     {/if}
   {/each}
   <div class="item" on:click={(e) => buttonClick(e, "profile")}>
-    {#if globalState.has("NotAuthenticated")}
+    {#if !isAuth}
       <UserIcon />
     {:else}
       <a href="/u/dashboard/{$userBetarenaSettings.lang}">

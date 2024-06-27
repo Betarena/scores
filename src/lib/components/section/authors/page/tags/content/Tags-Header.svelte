@@ -115,7 +115,8 @@
    * - `showDescription` - mobile && tag.description
    */
 
-  $: ({ globalState } = $sessionStore);
+  $: ({user} = $userBetarenaSettings);
+  $: isAuth = !!user;
   $: showDescription = !mobile && tag.description;
   $: followedTags = (($userBetarenaSettings.user?.scores_user_data as any)
     ?.following?.tags || []) as (string | number)[];
@@ -160,7 +161,7 @@
   }
 
   async function follow() {
-    if (globalState.has("NotAuthenticated")) {
+    if (!isAuth) {
       $sessionStore.currentActiveModal = "Auth_Modal";
       return;
     }

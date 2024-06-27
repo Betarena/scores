@@ -51,7 +51,6 @@
   $: ({ globalState } = $sessionStore);
   $: ({ profile_photo } = { ...$userBetarenaSettings.user?.scores_user_data });
   $: isPWA = globalState.has("IsPWA");
-  $: isAuth = globalState.has("Authenticated");
 
   const /**
      * @description

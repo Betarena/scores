@@ -51,7 +51,9 @@
   $: ({ buttons_order } = {
     ...$userBetarenaSettings.user?.scores_user_data,
   });
-  $: ({ globalState, serverLang } = $sessionStore);
+  $: ({user} = $userBetarenaSettings);
+  $: isAuth = !!user;
+  $: ({ serverLang } = $sessionStore);
   $: navButtonOrderList = [
     {
       id: "scores",
@@ -113,7 +115,7 @@
   }
   function handleDndFinalize(e) {
     navButtonOrderList = e.detail.items;
-    if (globalState.has("NotAuthenticated")) {
+    if (!isAuth) {
       $sessionStore.currentActiveModal = "Auth_Modal";
       navButtonOrderList = initialOrder;
       dragStart = false;
