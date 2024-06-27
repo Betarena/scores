@@ -55,9 +55,10 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   export let mobile, tablet;
   $: ({ globalState } = $sessionStore);
+  $: ({user} = $userBetarenaSettings);
 
   $: isPWA = globalState.has("IsPWA")
-  $: isAuth = globalState.has("Authenticated");
+  $: isAuth = !!user;
   $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
 
   const /**
@@ -111,7 +112,7 @@
       <HeaderCLang />
       <HeaderCTheme />
     {/if}
-    {#if globalState.has("NotAuthenticated")}
+    {#if !isAuth}
       <Button type="outline" on:click={signIn}>
         <TranslationText
           key={"header-txt-unkown"}

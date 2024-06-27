@@ -38,7 +38,7 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import sessionStore from "$lib/store/session.js";
+  import userBetarenaSettings from "$lib/store/user-settings.js"
 
   import SeoBox from "$lib/components/SEO-Box.svelte";
 
@@ -74,7 +74,8 @@
 
   export let links, buyBTAText, translation;
 
-  $: ({ globalState } = $sessionStore);
+  $: ({user} = $userBetarenaSettings);
+  $: isAuth = !!user;
   // #endregion ➤ 📌 VARIABLES
 </script>
 
@@ -126,7 +127,7 @@
 
 <footer>
   <div id="{CNAME}⮕inner">
-    {#if !globalState.has("NotAuthenticated")}
+    {#if isAuth}
       <div class="wallet">
         <WalletBalance />
         <BuyBtaButton popup={true} />
