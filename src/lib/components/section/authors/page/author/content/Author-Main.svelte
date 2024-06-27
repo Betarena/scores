@@ -265,7 +265,7 @@
   id="{CNAME}"
 >
 
-  <div class="article-header" class:mobile={VIEWPORT_MOBILE_INIT[1]}>
+  <div class="article-header" class:reverse={VIEWPORT_MOBILE_INIT[1] || !widgetData.article.seo_details?.twitter_card.image}>
   <!--
   ╭─────
   │ > article title
@@ -731,18 +731,20 @@
   ╰─────
     src="https://pbs.twimg.com/media/F5rQ5FPWkAASrF4.jpg:large"
   -->
-  <img
-    id='preview-banner'
-    src={widgetData.article.seo_details?.twitter_card.image}
-    alt={widgetData.article.seo_details?.twitter_card.image_alt}
-    title={widgetData.article.data?.title}
-    loading='lazy'
-    class=
-    "
-    m-b-24
-    "
-  />
+  {#if widgetData.article.seo_details?.twitter_card.image}
 
+    <img
+      id='preview-banner'
+      src={widgetData.article.seo_details?.twitter_card.image}
+      alt={widgetData.article.seo_details?.twitter_card.image_alt}
+      title={widgetData.article.data?.title}
+      loading='lazy'
+      class=
+      "
+      m-b-24
+      "
+    />
+  {/if}
   <!--
   ╭─────
   │ > article text
@@ -775,10 +777,10 @@
 
   div#author⮕w⮕author-content⮕main
   {
-    &.mobile {
+    &.reverse {
       padding-top: 12px;
     }
-    .article-header.mobile {
+    .article-header.reverse {
       display: flex;
       flex-direction: column-reverse;
     }

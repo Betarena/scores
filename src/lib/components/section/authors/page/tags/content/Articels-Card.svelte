@@ -131,9 +131,11 @@
       {/if}
     </div>
   </div>
-  <a href="/a/{permalink}" class="preview" class:tablet class:mobile>
-    <img src={images[0]?.url} alt={images[0].alt} srcset="" />
-  </a>
+  {#if images[0]?.url}
+    <a href="/a/{permalink}" class="preview" class:tablet class:mobile>
+      <img src={images[0]?.url} alt={images[0].alt} srcset="" />
+    </a>
+  {/if}
 </div>
 
 <!--
