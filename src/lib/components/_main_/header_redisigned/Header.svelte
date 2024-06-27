@@ -57,12 +57,14 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  $: ({ globalState, serverLang } = $sessionStore);
+  $: ({ serverLang } = $sessionStore);
 
   $: translationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
   $: homepageURL = serverLang != "en" ? `/${serverLang}` : "/";
   $: logoLink =
     serverLang != "en" ? `${$page.url.origin}/${serverLang}` : $page.url.origin;
+  $: ({user} = $userBetarenaSettings);
+  $: isAuth = !!user;
   $: ({ profile_photo } = { ...$userBetarenaSettings.user?.scores_user_data });
   $: loadTranslations(serverLang);
 
@@ -135,7 +137,7 @@
   <div class="actions">
     <HeaderCLang />
     <HeaderCTheme />
-    {#if globalState.has("NotAuthenticated")}
+    {#if !isAuth}
       <Button type="outline" on:click={signIn} style="padding: 11px 24px">
         <TranslationText
           key={"header-txt-unkown"}

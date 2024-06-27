@@ -79,15 +79,15 @@
   $: isSimpleHeader = simpleMobileHeaderRoutes.includes($page.route.id || "");
   $: ({ windowWidth, currentPageRouteId, viewportType, globalState } =
     $sessionStore);
-  $: isAuth = globalState.has("Authenticated");
-  $: [mobile, tablet] = viewportChangeV2(
-    windowWidth,
-    VIEWPORT_MOBILE_INIT[0],
-    VIEWPORT_TABLET_INIT[0]
-  );
-  $: isPWA = globalState.has("IsPWA");
-  $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
-  $: ({ user } = $userBetarenaSettings);
+    $: [mobile, tablet] = viewportChangeV2(
+      windowWidth,
+      VIEWPORT_MOBILE_INIT[0],
+      VIEWPORT_TABLET_INIT[0]
+    );
+    $: isPWA = globalState.has("IsPWA");
+    $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
+    $: ({ user } = $userBetarenaSettings);
+    $: isAuth = !!user;
   // #endregion ➤ 📌 VARIABLES
   // #region ➤ 🛠️ METHODS
 
