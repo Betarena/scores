@@ -138,26 +138,13 @@
   ╰──────────────────────────────────────────────────────────────────────────────╯
   */
 
-  // IMPORTANT
-  :global {
-    body {
-      &:has(main) {
-        /* 🎨 style */
-        background-color: var(--white) !important;
-      }
-      &:has(main.dark-mode) {
-        /* 🎨 style */
-        background-color: var(--dark-theme) !important;
-      }
-    }
-  }
-
   section {
     width: 100%;
     border-top: var(--section-border);
     border-bottom: var(--section-border);
     padding-bottom: 80px !important;
     padding-top: 48px;
+    background-color: var(--bg-color);
 
     &.mobile {
       border-top: none;
