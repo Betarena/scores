@@ -75,18 +75,18 @@
     routeIdPageTags,
     routeIdPageProfile,
     routeIdPageAuthors,
-    routeIdPageAuthors
+    routeIdPageAuthors,
   ];
   $: isSimpleHeader = simpleMobileHeaderRoutes.includes($page.route.id || "");
   $: ({ windowWidth, currentPageRouteId, viewportType, globalState } =
     $sessionStore);
-    $: mobile = viewportType === "mobile";
-    $: tablet = viewportType === "tablet";
-    $: desktop = !mobile && !tablet;
-    $: isPWA = globalState.has("IsPWA");
-    $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
-    $: ({ user } = $userBetarenaSettings);
-    $: isAuth = !!user;
+  $: mobile = viewportType === "mobile";
+  $: tablet = viewportType === "tablet";
+  $: desktop = !mobile && !tablet;
+  $: isPWA = globalState.has("IsPWA");
+  $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
+  $: ({ user } = $userBetarenaSettings);
+  $: isAuth = !!user;
   // #endregion ➤ 📌 VARIABLES
   // #region ➤ 🛠️ METHODS
 
