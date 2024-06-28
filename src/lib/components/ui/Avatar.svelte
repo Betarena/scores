@@ -12,6 +12,7 @@
 
   import { createEventDispatcher } from "svelte";
   import DefaultAvatar from "./assets/default-avatar.svelte";
+  import LoggedoutAvatar from "./assets/loggedout-avatar.svelte";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -26,6 +27,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let src: string | null = "",
+    isLoogedIn = false,
     /**
      * @description
      * avatar size
@@ -54,8 +56,10 @@
       {...$$restProps}
       style="width: {size}px; height: {size}px;  background-image: url({src});"
     />
-  {:else}
+  {:else if isLoogedIn}
     <DefaultAvatar {size} />
+  {:else}
+    <LoggedoutAvatar {size} />
   {/if}
 </div>
 

@@ -75,19 +75,18 @@
     routeIdPageTags,
     routeIdPageProfile,
     routeIdPageAuthors,
+    routeIdPageAuthors,
   ];
   $: isSimpleHeader = simpleMobileHeaderRoutes.includes($page.route.id || "");
   $: ({ windowWidth, currentPageRouteId, viewportType, globalState } =
     $sessionStore);
-    $: [mobile, tablet] = viewportChangeV2(
-      windowWidth,
-      VIEWPORT_MOBILE_INIT[0],
-      VIEWPORT_TABLET_INIT[0]
-    );
-    $: isPWA = globalState.has("IsPWA");
-    $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
-    $: ({ user } = $userBetarenaSettings);
-    $: isAuth = !!user;
+  $: mobile = viewportType === "mobile";
+  $: tablet = viewportType === "tablet";
+  $: desktop = !mobile && !tablet;
+  $: isPWA = globalState.has("IsPWA");
+  $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
+  $: ({ user } = $userBetarenaSettings);
+  $: isAuth = !!user;
   // #endregion ➤ 📌 VARIABLES
   // #region ➤ 🛠️ METHODS
 
@@ -187,18 +186,18 @@
     </div>
   {/if}
   {#if mobile || tablet}
-    {#if !mobile || !isSimpleHeader}
+    {#if !isSimpleHeader && !isPWA}
       <MobileHeaderRich {mobile} {tablet} />
-    {:else if mobile && isSimpleHeader}
+    {:else if isSimpleHeader}
       <MobileHeaderSmall {mobile} {tablet} on:avatarClick={avatarClick} />
     {/if}
   {:else}
     <Header on:avatarClick={avatarClick} />
   {/if}
 
-  {#if (currentPageRouteId === "Standard" || currentPageRouteId === "CompetitionPage") && ((!mobile && !tablet) || !isSimpleHeader)}
+  {#if (currentPageRouteId === "Standard" || currentPageRouteId === "CompetitionPage") && (desktop || !isSimpleHeader)}
     <SportsNavigationStandart />
-  {:else if currentPageRouteId !== "AuthorsPage" && user && viewportType === "desktop"}
+  {:else if currentPageRouteId !== "AuthorsPage" && user && desktop}
     <SportsNavigation />
   {/if}
 </header>
