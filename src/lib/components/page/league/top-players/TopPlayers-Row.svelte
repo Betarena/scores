@@ -85,7 +85,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     <!--
     first container of the row site
     -->
-    <div class="row-space-out">
+    <div class="row-space-out" style="gap: 5px">
 
       <!--
       first container
@@ -229,6 +229,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		margin: auto;
 		height: 21px;
 	}
+
+  p.player-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
   a.enabeld-anchor:hover p.player-name
   {
