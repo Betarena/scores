@@ -15,6 +15,7 @@ COMPONENT JS (w/ TS)
 	import { viewport_change } from "$lib/utils/platform-functions";
 	import type { B_LS2_T, LS2_C_Fixture } from "@betarena/scores-lib/types/livescores-v2";
 	import { onMount } from "svelte";
+    import { isPWA } from "$lib/utils/device.js";
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -437,7 +438,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     <!--
     [ℹ] bet-site SHOW/HIDE
     -->
-    {#if $sessionStore?.sportbook_main}
+    {#if $sessionStore?.sportbook_main && !isPWA()}
       <a
         rel="nofollow noreferrer"
         aria-label="livescore_betting_sites"
