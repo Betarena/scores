@@ -593,6 +593,8 @@
   id="app-root-layout"
   class:dark-mode={theme == "Dark"}
   class:light-mode={theme == "Light"}
+  data-page-id={currentPageRouteId}
+  data-mode={ispwa ? "pwa" : "web"}
   class:page-content={$page.route.id === routeIdContent}
 >
   {#key $page.route.id}
@@ -687,6 +689,9 @@
   │ 📲 MOBILE-FIRST                                                              │
   ╰──────────────────────────────────────────────────────────────────────────────╯
   */
+  [data-page-id="AuthorsPage"][data-mode="pwa"] {
+    background-color: var(--bg-color);
+  }
 
   .app-wrapper {
     display: flex;
