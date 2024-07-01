@@ -116,6 +116,10 @@ body.disable-scroll {
   height: 100%;
 }
 
+#svelte
+{
+  max-height: 100vh;
+}
 a {
   text-decoration: none !important;
   color: inherit;
