@@ -133,9 +133,9 @@
   ;
   $:
   if (!IF_R_0)
-    sportIcon = `../assets/svg/sport-icon/${sportNameDefault.toLocaleLowerCase()}.svg`;
+    sportIcon = `/assets/svg/sport-icon/${sportNameDefault.toLocaleLowerCase()}.svg`;
   else
-    sportIcon = `../assets/svg/sport-icon/${sportNameDefault.toLocaleLowerCase()}-select.svg`;
+    sportIcon = `/assets/svg/sport-icon/${sportNameDefault.toLocaleLowerCase()}-select.svg`;
   ;
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
