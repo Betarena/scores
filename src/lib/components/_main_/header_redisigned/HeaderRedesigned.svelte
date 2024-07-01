@@ -14,7 +14,6 @@
   import SeoBox from "$lib/components/SEO-Box.svelte";
   import sessionStore from "$lib/store/session.js";
   import userBetarenaSettings from "$lib/store/user-settings.js";
-  import { viewportChangeV2 } from "$lib/utils/device";
   import {
     routeIdPageAuthors,
     routeIdPageCompetition,
@@ -51,21 +50,6 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  const /**
-     * @description
-     *  📣 `this` component **main** `id` and `data-testid` prefix.
-     */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = "header",
-    /**
-     * @description
-     *  📣 threshold start + state for 📱 MOBILE
-     */ // eslint-disable-next-line no-unused-vars
-    VIEWPORT_MOBILE_INIT: [number, boolean] = [575, true],
-    /**
-     * @description
-     *  📣 threshold start + state for 💻 TABLET
-     */ // eslint-disable-next-line no-unused-vars
-    VIEWPORT_TABLET_INIT: [number, boolean] = [1160, true];
 
   const simpleMobileHeaderRoutes = [
     routeIdPageFixture,
@@ -77,8 +61,8 @@
     routeIdPageAuthors,
     routeIdPageAuthors,
   ];
-  $: isSimpleHeader = simpleMobileHeaderRoutes.includes($page.route.id || "");
-  $: ({ windowWidth, currentPageRouteId, viewportType, globalState } =
+  $: isInnerPage = simpleMobileHeaderRoutes.includes($page.route.id || "");
+  $: ({ currentPageRouteId, viewportType, globalState } =
     $sessionStore);
   $: mobile = viewportType === "mobile";
   $: tablet = viewportType === "tablet";
@@ -186,16 +170,16 @@
     </div>
   {/if}
   {#if mobile || tablet}
-    {#if !isSimpleHeader && !isPWA}
+    {#if !isInnerPage}
       <MobileHeaderRich {mobile} {tablet} />
-    {:else if isSimpleHeader}
+    {:else }
       <MobileHeaderSmall {mobile} {tablet} on:avatarClick={avatarClick} />
     {/if}
   {:else}
     <Header on:avatarClick={avatarClick} />
   {/if}
 
-  {#if (currentPageRouteId === "Standard" || currentPageRouteId === "CompetitionPage") && (desktop || !isSimpleHeader)}
+  {#if (currentPageRouteId === "Standard" || currentPageRouteId === "CompetitionPage") && (desktop || !isInnerPage)}
     <SportsNavigationStandart />
   {:else if currentPageRouteId !== "AuthorsPage" && user && desktop}
     <SportsNavigation />
