@@ -265,7 +265,7 @@
   id="{CNAME}"
 >
 
-  <div class="article-header" class:reverse={VIEWPORT_MOBILE_INIT[1] || !widgetData.article.seo_details?.twitter_card.image}>
+  <div class="article-header" class:reverse={VIEWPORT_MOBILE_INIT[1]}>
   <!--
   ╭─────
   │ > article title
