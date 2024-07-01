@@ -593,6 +593,7 @@
   id="app-root-layout"
   class:dark-mode={theme == "Dark"}
   class:light-mode={theme == "Light"}
+  class:page-content={$page.route.id === routeIdContent}
 >
   {#key $page.route.id}
     <WidgetAdEngine
@@ -661,7 +662,7 @@
       />
     {/if}
   </main>
-  {#if (VIEWPORT_MOBILE_INIT[1] || VIEWPORT_TABLET_INIT[1]) && [routeIdScores, routeIdPageCompetitions, routeIdContent].includes($page.route.id)}
+  {#if (VIEWPORT_MOBILE_INIT[1] || VIEWPORT_TABLET_INIT[1]) && [routeIdScores, routeIdPageCompetitions, routeIdContent].includes($page.route.id || "")}
     <MobileMenu
       mobile={VIEWPORT_MOBILE_INIT[1]}
       tablet={VIEWPORT_TABLET_INIT[1]}
@@ -691,7 +692,9 @@
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    background-color: var(--bg-color);
+    &.page-content {
+      background-color: var(--bg-color);
+    }
   }
   main {
     /* 📌 position */
@@ -736,7 +739,6 @@
       display: flex;
       overflow: visible;
       justify-content: space-between;
-      background-color: var(--bg-color);
       max-width: 1265px;
       width: 100%;
       margin: auto;

@@ -395,6 +395,6 @@
   .mobile-selection {
     margin-top: 32px;
     margin-bottom: 16px;
-    padding: 0 24px;
+    padding: 0 16px;
   }
 </style>

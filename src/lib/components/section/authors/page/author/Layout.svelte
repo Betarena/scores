@@ -105,12 +105,14 @@
 	/>
 {/if}
 
-<section
-  class:mobile={VIEWPORT_MOBILE_INIT[1]}
-  id={CNAME}
->
-  <AuthorWidget />
-</section>
+<div class="section-wrapper">
+  <section
+    class:mobile={VIEWPORT_MOBILE_INIT[1]}
+    id={CNAME}
+  >
+    <AuthorWidget />
+  </section>
+</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -130,22 +132,10 @@
   ╰──────────────────────────────────────────────────────────────────────────────╯
   */
 
-  // IMPORTANT
-  :global
-  {
-    body
-    {
-      &:has(main)
-      {
-        /* 🎨 style */
-        background-color: var(--white) !important;
-      }
-      &:has(main.dark-mode)
-      {
-        /* 🎨 style */
-        background-color: var(--dark-theme) !important;
-      }
-    }
+  .section-wrapper {
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-color);
   }
 
   section
