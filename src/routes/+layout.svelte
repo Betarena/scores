@@ -594,6 +594,8 @@
   class:dark-mode={theme == "Dark"}
   class:light-mode={theme == "Light"}
   class:page-content={$page.route.id === routeIdContent}
+  data-page-id={currentPageRouteId}
+  data-mode={ispwa ? "pwa" : "web"}
 >
   {#key $page.route.id}
     <WidgetAdEngine
@@ -687,6 +689,10 @@
   │ 📲 MOBILE-FIRST                                                              │
   ╰──────────────────────────────────────────────────────────────────────────────╯
   */
+
+  [data-page-id="AuthorsPage"][data-mode="pwa"] {
+    background-color: var(--bg-color);
+  }
 
   .app-wrapper {
     display: flex;
