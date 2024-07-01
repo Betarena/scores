@@ -251,10 +251,6 @@
     );
   }
 
-  // $: console.log('current_lang', current_lang);
-  // $: console.log('refresh_lang', refresh_lang);
-  // $: console.log('lang_intent', lang_intent);
-
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🚏 ONE-OFF CONDITIONS
