@@ -150,6 +150,7 @@
         <Avatar
           src={profile_photo}
           size={44}
+          isLoogedIn={isAuth}
         />
       </a>
     {/if}
