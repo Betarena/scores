@@ -23,7 +23,7 @@
 
 	import type { B_CONT_D } from '@betarena/scores-lib/types/content.js';
 	import type { B_FO_T } from '@betarena/scores-lib/types/fixture-odds.js';
-	import type { B_FS_D, B_FS_T } from '@betarena/scores-lib/types/scoreboard.js';
+	import type { B_FS_D, B_FS_T, SF_Odds } from '@betarena/scores-lib/types/scoreboard.js';
 	import type { B_SAP_FP_D } from '@betarena/scores-lib/types/seo-pages.js';
 	import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 
@@ -52,6 +52,7 @@
 	let showCountdown: boolean = true;
 	let initialDivDistance: number = undefined;
 	let count = 0;
+  let _1x2: SF_Odds | null = null;
 
   $: countDownSec = toZeroPrefixDateStr(Math.floor((dateDiff / 1000) % 60).toString());
 	$: countDownMin = toZeroPrefixDateStr(Math.floor((dateDiff / 1000 / 60) % 60).toString());
@@ -121,12 +122,12 @@
         ;
         if (if_M_0)
         {
-					FIXTURE_SCOREBOARD._1x2 =
-          {
-						home: firebaseSportbook?.markets?.['1X2FT']?.data[0]?.value?.toFixed(2),
+          _1x2 = {
+            home: firebaseSportbook?.markets?.['1X2FT']?.data[0]?.value?.toFixed(2),
 						away: firebaseSportbook?.markets?.['1X2FT']?.data[2]?.value?.toFixed(2),
 						draw: firebaseSportbook?.markets?.['1X2FT']?.data[1]?.value?.toFixed(2)
-					};
+          }
+					FIXTURE_SCOREBOARD._1x2 = _1x2
 					SPORTBOOK_INFO = m_sportBook;
 					count = 1;
 				}
@@ -320,7 +321,6 @@
     && FIXTURE_SCOREBOARD?._1x2?.draw
     && FIXTURE_SCOREBOARD?._1x2?.away
   ;
-
   //#endregion ➤ [REACTIVIY] [METHODS]
 
   //#region ➤ SvelteJS/SvelteKit [LIFECYCLE]
@@ -782,8 +782,7 @@ TODO:
                         w-500
                       "
                     >
-                      {FIXTURE_SCOREBOARD
-                        ?._1x2?.home}
+                      {_1x2?.home}
                     </p>
                   </div>
                 </a>
@@ -821,7 +820,7 @@ TODO:
                         w-500
                       "
                     >
-                      {FIXTURE_SCOREBOARD?._1x2?.draw}
+                      {_1x2?.draw}
                     </p>
                   </div>
                 </a>
@@ -862,7 +861,7 @@ TODO:
                         w-500
                       "
                     >
-                      {FIXTURE_SCOREBOARD?._1x2?.away}
+                      {_1x2?.away}
                     </p>
                   </div>
                 </a>
@@ -1183,7 +1182,7 @@ TODO:
             [ℹ] w/ betting site
             [ℹ] non-"FT"
             -->
-            {#if !FIXTURE_FULL_TIME_OPT.includes(FIXTURE_SCOREBOARD?.status) && FIXTURE_SCOREBOARD?._1x2?.home && FIXTURE_SCOREBOARD?._1x2?.draw && FIXTURE_SCOREBOARD?._1x2?.away}
+            {#if !FIXTURE_FULL_TIME_OPT.includes(FIXTURE_SCOREBOARD?.status) && _1x2?.home && _1x2?.draw && _1x2?.away}
               <div id="tablet-bet-odds-box">
                 <!--
                 [ℹ] betting site
@@ -1263,8 +1262,7 @@ TODO:
                           w-500
                         "
                       >
-                        {FIXTURE_SCOREBOARD
-                          ?._1x2?.home}
+                        {_1x2?.home}
                       </p>
                     </div>
                   </a>
@@ -1301,8 +1299,7 @@ TODO:
                           w-500
                         "
                       >
-                        {FIXTURE_SCOREBOARD
-                          ?._1x2?.draw}
+                        {_1x2?.draw}
                       </p>
                     </div>
                   </a>
@@ -1339,8 +1336,7 @@ TODO:
                           w-500
                         "
                       >
-                        {FIXTURE_SCOREBOARD
-                          ?._1x2?.away}
+                        {_1x2?.away}
                       </p>
                     </div>
                   </a>
@@ -1630,7 +1626,7 @@ TODO:
                 [ℹ] w/ betting site
                 [ℹ] non-"FT"
                 -->
-                {#if !FIXTURE_FULL_TIME_OPT.includes(FIXTURE_SCOREBOARD?.status) && FIXTURE_SCOREBOARD?._1x2?.home && FIXTURE_SCOREBOARD?._1x2?.draw && FIXTURE_SCOREBOARD?._1x2?.away}
+                {#if !FIXTURE_FULL_TIME_OPT.includes(FIXTURE_SCOREBOARD?.status) && _1x2?.home && _1x2?.draw && _1x2?.away}
                   <div
                     id="tablet-bet-odds-box"
                   >
@@ -1713,8 +1709,7 @@ TODO:
                               w-500
                             "
                           >
-                            {FIXTURE_SCOREBOARD
-                              ?._1x2?.home}
+                            {_1x2?.home}
                           </p>
                         </div>
                       </a>
@@ -1752,8 +1747,7 @@ TODO:
                               w-500
                             "
                           >
-                            {FIXTURE_SCOREBOARD
-                              ?._1x2?.draw}
+                            {_1x2?.draw}
                           </p>
                         </div>
                       </a>
@@ -1791,8 +1785,7 @@ TODO:
                               w-500
                             "
                           >
-                            {FIXTURE_SCOREBOARD
-                              ?._1x2?.away}
+                            {_1x2?.away}
                           </p>
                         </div>
                       </a>
