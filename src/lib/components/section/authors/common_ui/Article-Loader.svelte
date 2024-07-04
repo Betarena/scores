@@ -8,6 +8,7 @@
 -->
 
 <script lang="ts">
+
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -23,13 +24,11 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { goto } from "$app/navigation";
-  import { page } from "$app/stores";
-  import sessionStore from "$lib/store/session.js";
-  import { generateUrlCompetitions } from "$lib/utils/string.js";
-  import userBetarenaSettings from "$lib/store/user-settings.js";
-  import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
-  import { createEventDispatcher } from "svelte";
+  import LoaderAvatar from '$lib/components/ui/loaders/LoaderAvatar.svelte';
+  import LoaderBadge from '$lib/components/ui/loaders/LoaderBadge.svelte';
+  import LoaderImage from '$lib/components/ui/loaders/LoaderImage.svelte';
+  import LoaderLine from '$lib/components/ui/loaders/LoaderLine.svelte';
+  import { fade } from 'svelte/transition';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -47,57 +46,19 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let backgroundColor = "#4b4b4bcc",
-    color = "white",
-    custom_handler = false;
-
-  const dispatch = createEventDispatcher();
-  $: ({ globalState, serverLang = "en" } = $sessionStore);
-  $: homepageURL = serverLang != "en" ? `/${serverLang}` : "/";
-  $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
+  export let
+    /**
+     * @description tablet view
+     */
+    tablet = false,
+    /**
+     * @description mobile view
+     */
+    mobile = false
+  ;
 
   // #endregion ➤ 📌 VARIABLES
 
-  // #region ➤ 🛠️ METHODS
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'methods' that are to be           │
-  // │ and are expected to be used by 'this' .svelte file / component.        │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. function (..)                                                       │
-  // │ 2. async function (..)                                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  function backBtnClick(): void {
-    if (custom_handler) {
-      dispatch("click");
-      return
-    }
-    if (globalState.has("IsPWA")) return window.history.back();
-    const [preferedPage] = $userBetarenaSettings.user?.scores_user_data
-      ?.buttons_order || ["scores"];
-    let url: string;
-    switch (preferedPage) {
-      case "competitions":
-        url = generateUrlCompetitions(serverLang, $page.data.B_SAP_D3_CP_H);
-        break;
-      case "content":
-        url =
-          trsanslationData?.scores_header_translations?.section_links
-            ?.sports_content_url || "/";
-        break;
-      case "scores":
-      default:
-        url = homepageURL;
-        break;
-    }
-
-    goto(url);
-    return;
-  }
-  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--
@@ -110,28 +71,37 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
+{#key mobile || tablet}
 
-<button
-  class="back-button-wrapper"
-  style="background-color: {backgroundColor};"
-  on:click={backBtnClick}
->
-  <svg
-    width="6"
-    height="10"
-    viewBox="0 0 6 10"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      d="M4.77832 8.55448L1.22277 4.99892L4.77832 1.44336"
-      stroke={color}
-      stroke-width="1.33333"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    />
-  </svg>
-</button>
+<div class="card-wrapper" class:mobile class:tablet in:fade={{ duration: 250 }}>
+  <div class="card-content">
+    <div class="author-wrapper">
+      <LoaderAvatar size={mobile ? 32 : 38} />
+      <div class="author-info">
+        <LoaderLine width={110} />
+        <LoaderLine width={90} />
+      </div>
+    </div>
+    <div class="title">
+      {#each ['90%', '85%'] as item}
+        <LoaderLine width={item} />
+        {/each}
+        {#if mobile || tablet}
+        <LoaderLine width="70%" />
+      {/if}
+    </div>
+    <div class="tags-wrapper">
+      <LoaderBadge height={!mobile && !tablet ? 26: 24 }/>
+      <LoaderBadge height={!mobile && !tablet ? 26: 24 }/>
+      <LoaderBadge height={!mobile && !tablet ? 26: 24 }/>
+    </div>
+  </div>
+  <div class="preview" class:tablet class:mobile>
+    <LoaderImage width={'100%'} height={'100%'} />
+  </div>
+</div>
+
+{/key}
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -144,14 +114,150 @@
 -->
 
 <style lang="scss">
-  .back-button-wrapper {
+  .card-wrapper {
     display: flex;
-    height: 32px;
-    width: 32px;
-    align-items: center;
-    justify-content: center;
-    border-radius: 100%;
-    background-color: #4b4b4bcc;
-    cursor: pointer;
+    width: 100%;
+    max-width: 824px;
+    gap: 56px;
+    border-radius: 12px;
+    padding: 24px;
+    box-sizing: border-box;
+    justify-content: space-between;
+    background: var(--bg-color-second);
+    align-items: start;
+
+    a {
+      color: var(--text-color);
+      transition: all;
+      transition-duration: 0.5s;
+
+      &:hover {
+        color: var(--primary);
+      }
+    }
+
+    .preview {
+      border-radius: 8px;
+      flex-shrink: 0;
+      width: 240px;
+      height: 154px;
+
+      img {
+        border-radius: 8px;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    .card-content {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      flex-grow: 1;
+      width: 455px;
+      max-width: 100%;
+
+      overflow: hidden;
+
+      .tags-wrapper {
+        max-width: 100%;
+        --text-button-size: var(--text-size-s);
+        --gradient-color-rgb: var(--bg-color-second-rgb-consts);
+        margin-top: 4px;
+
+        &.expanded {
+          flex-wrap: wrap;
+        }
+      }
+
+      .title {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+        height: max-content;
+        font-family: Inter;
+        font-size: var(--text-size-l);
+        font-style: normal;
+        font-weight: 600;
+        line-height: 28px;
+      }
+
+      .author {
+        &-wrapper {
+          display: flex;
+          gap: 12px;
+          align-items: start;
+        }
+
+        &-info {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          color: var(--text-color-second, #ccc);
+
+          .publication-date {
+            color: var(--text-color-second-dark, #8c8c8c);
+            font-family: Roboto;
+            font-size: var(--text-size-xs);
+            font-style: normal;
+            font-weight: 400;
+            line-height: 12px;
+          }
+        }
+
+        &-name {
+          color: var(--text-color);
+          font-family: Inter;
+          font-size: var(--text-size-s);
+          font-style: normal;
+          font-weight: 500;
+          line-height: 20px;
+        }
+      }
+    }
+
+    &.tablet {
+      max-width: 100%;
+      width: 100%;
+    }
+
+    &.mobile {
+      flex-direction: row-reverse;
+      background: var(--bg-color);
+      gap: 16px;
+      border-radius: 0;
+      padding: 20px 16px;
+      padding-right: 0px;
+
+      .card-content {
+        padding: 0;
+        gap: 12px;
+
+        .title {
+          line-height: 24px;
+          padding-right: 16px;
+        }
+        .author-wrapper {
+          padding-right: 16px;
+        }
+
+        .author-name {
+          line-height: 18px;
+        }
+
+        .tags-wrapper {
+          margin-top: 0;
+        }
+      }
+
+      .preview {
+        width: 112px;
+        height: 150px;
+      }
+    }
   }
 </style>

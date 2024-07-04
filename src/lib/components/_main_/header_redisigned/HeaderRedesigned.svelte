@@ -16,6 +16,7 @@
   import userBetarenaSettings from "$lib/store/user-settings.js";
   import { viewportChangeV2 } from "$lib/utils/device";
   import {
+    routeIdAuthorProfile,
     routeIdPageAuthors,
     routeIdPageCompetition,
     routeIdPageFixture,
@@ -75,6 +76,7 @@
     routeIdPageTags,
     routeIdPageProfile,
     routeIdPageAuthors,
+    routeIdAuthorProfile
   ];
   $: isSimpleHeader = simpleMobileHeaderRoutes.includes($page.route.id || "");
   $: ({ windowWidth, currentPageRouteId, viewportType, globalState } =
@@ -88,6 +90,7 @@
     $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
     $: ({ user } = $userBetarenaSettings);
     $: isAuth = !!user;
+
   // #endregion ➤ 📌 VARIABLES
   // #region ➤ 🛠️ METHODS
 

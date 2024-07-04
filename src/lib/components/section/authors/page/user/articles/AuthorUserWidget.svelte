@@ -1,5 +1,19 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 📌 High Order Overview                                                           │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Internal Code Format // V.8.0                                                  │
+│ ➤ Status               // 🔒 LOCKED                                              │
+│ ➤ Author(s)            // @migbash                                               │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ 📝 Description                                                                   │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ Betarena (Component) || Authors Content Widget (entry)                           │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
@@ -23,13 +37,13 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { goto } from "$app/navigation";
-  import { page } from "$app/stores";
-  import sessionStore from "$lib/store/session.js";
-  import { generateUrlCompetitions } from "$lib/utils/string.js";
-  import userBetarenaSettings from "$lib/store/user-settings.js";
-  import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
-  import { createEventDispatcher } from "svelte";
+  import { browser } from "$app/environment";
+    import FollowersView from "./followers_view/FollowersView.svelte";
+
+
+
+
+  import AuthorProfileMain from "./profile_view/AuthorProfileMain.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -47,14 +61,37 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let backgroundColor = "#4b4b4bcc",
-    color = "white",
-    custom_handler = false;
+  const /**
+     * @description
+     *  📝 `this` component **main** `id` and `data-testid` prefix.
+     */ // eslint-disable-next-line no-unused-vars
+    CNAME: string = "content";
 
-  const dispatch = createEventDispatcher();
-  $: ({ globalState, serverLang = "en" } = $sessionStore);
-  $: homepageURL = serverLang != "en" ? `/${serverLang}` : "/";
-  $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
+  let isProfileMode = true;
+
+  // $: widgetData = $page.data as IPageAuthorTagDataFinal & {
+  //   translations: IPageAuthorTranslationDataFinal;
+  // } | undefined;
+  /**
+   * @description
+   * 📝 Interecpted data for `map` instance of `tag(s)`.
+   */
+  // $: mapTags = new Map(widgetData?.mapTag ?? []);
+  /**
+   * @description
+   * 📝 Interecpted data for `map` instance of `article(s)`.
+   */
+  // $: mapArticles = new Map(widgetData?.mapArticle ?? []);
+  /**
+   * @description
+   * 📝 Currently selected tag data.
+   */
+  // $: selectedTag = mapTags.get(widgetData?.tagId ?? 0);
+  /**
+   * @description
+   * 📝 Categories avaialble.
+   */
+  // $: categories = selectedTag != undefined ? [selectedTag] : [];
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -70,32 +107,28 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function backBtnClick(): void {
-    if (custom_handler) {
-      dispatch("click");
-      return
-    }
-    if (globalState.has("IsPWA")) return window.history.back();
-    const [preferedPage] = $userBetarenaSettings.user?.scores_user_data
-      ?.buttons_order || ["scores"];
-    let url: string;
-    switch (preferedPage) {
-      case "competitions":
-        url = generateUrlCompetitions(serverLang, $page.data.B_SAP_D3_CP_H);
-        break;
-      case "content":
-        url =
-          trsanslationData?.scores_header_translations?.section_links
-            ?.sports_content_url || "/";
-        break;
-      case "scores":
-      default:
-        url = homepageURL;
-        break;
-    }
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟩 MAIN
+   * @description
+   *  📣 main widget data loader
+   *  - ⚡️ (and) try..catch (error) handler
+   *  - ⚡️ (and) placeholder handler
+   * @returns { Promise < void > }
+   */
+  async function widgetInit(): Promise<void> {
+    // IMPORTANT
+    if (!browser) return;
 
-    goto(url);
+    // await sleep(1500);
+
     return;
+  }
+
+  function switchMode() {
+    isProfileMode = !isProfileMode;
   }
   // #endregion ➤ 🛠️ METHODS
 </script>
@@ -111,47 +144,67 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<button
-  class="back-button-wrapper"
-  style="background-color: {backgroundColor};"
-  on:click={backBtnClick}
->
-  <svg
-    width="6"
-    height="10"
-    viewBox="0 0 6 10"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
+<!-- <SeoBox>
+  <h1>{selectedTag?.name}</h1>
+
+  {#each [...mapArticles.entries()] as [, article]}
+    <h2>
+      {article.data?.title}
+    </h2>
+    <a
+      href={`/a/${article.permalink}`}
+    >
+      {article.data?.title}
+    </a>
+  {/each}
+  {#each [...mapArticles.entries()] as [_id, tag]}
+    <a href={`/a/tag/${tag.permalink}`}>{tag.name}</a>
+  {/each}
+</SeoBox> -->
+
+{#await widgetInit()}
+  <!--
+  ╭────────────────────────────────────────────────────────────────────────╮
+  │ NOTE :|: promise is pending                                            │
+  ╰────────────────────────────────────────────────────────────────────────╯
+  -->
+  <!-- <div
+    class="tabbar-wrapper"
   >
-    <path
-      d="M4.77832 8.55448L1.22277 4.99892L4.77832 1.44336"
-      stroke={color}
-      stroke-width="1.33333"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    />
-  </svg>
-</button>
+    {#if categories.length}
+      <Tabbar
+        data={categories}
+        selected={selectedTag}
+        height={mobile ? 14 : 8}
+      />
+    {/if}
+  </div>
 
-<!--
-╭──────────────────────────────────────────────────────────────────────────────────╮
-│ 🌊 Svelte Component CSS/SCSS                                                     │
-┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
-│         │ values by typing/CTRL+SPACE                                            │
-│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
-╰──────────────────────────────────────────────────────────────────────────────────╯
--->
-
-<style lang="scss">
-  .back-button-wrapper {
-    display: flex;
-    height: 32px;
-    width: 32px;
-    align-items: center;
-    justify-content: center;
-    border-radius: 100%;
-    background-color: #4b4b4bcc;
-    cursor: pointer;
-  }
-</style>
+  <div
+    class="listArticlesMod"
+  >
+    {#each Array(10) as _item}
+      <ArticleLoader
+        {mobile}
+        {tablet}
+      />
+    {/each}
+  </div> -->
+{:then}
+  <!--
+  ╭────────────────────────────────────────────────────────────────────────╮
+  │ NOTE :|: promise is fulfilled                                          │
+  ╰────────────────────────────────────────────────────────────────────────╯
+  -->
+  {#if isProfileMode}
+    <AuthorProfileMain on:changeMode={switchMode} />
+  {:else}
+    <FollowersView  data={{}} on:changeMode={switchMode}/>
+  {/if}
+{:catch error}
+  <!--
+    ╭────────────────────────────────────────────────────────────────────────╮
+    │ NOTE :|: promise is rejected                                           │
+    ╰────────────────────────────────────────────────────────────────────────╯
+    -->
+{/await}

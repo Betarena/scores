@@ -8,9 +8,12 @@
 -->
 
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
-
   // #region ➤ 📌 VARIABLES
+
+  import Avatar from "$lib/components/ui/Avatar.svelte";
+  import Button from "$lib/components/ui/Button.svelte";
+    import session from "$lib/store/session.js";
+  import FollowersHeader from "./FollowersHeader.svelte";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -24,17 +27,15 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let width: number | string = 200,
-    height: number | string = 50,
-    href = "";
+  export let data = {};
 
-  export let /**
+  const /**
      * @description
-     *  button styles: primary | outline
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
      */ // eslint-disable-next-line no-unused-vars
-    type: "primary" | "outline" | "secondary" = "primary";
+    CNAME: string = "author⮕followers⮕list";
 
-  const dispatch = createEventDispatcher();
+    $: ({viewportType} = $session)
 
   // #endregion ➤ 📌 VARIABLES
 </script>
@@ -49,10 +50,19 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
-<button class="button {type}" { ...$$restProps} on:click={() => dispatch("click")}>
-  <slot />
-</button>
+<div class="wrapper {viewportType}" id={CNAME}>
+  <div class="list-wrapper">
+    {#each Array(100) as item}
+      <div class="list-item">
+        <div class="user-info">
+          <Avatar size={40} />
+          <div class="useer-name">Ivan Izobov</div>
+        </div>
+        <Button type="primary">Follow</Button>
+      </div>
+    {/each}
+  </div>
+</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -65,52 +75,47 @@
 -->
 
 <style lang="scss">
-  .button {
+  .wrapper {
     display: flex;
-    padding: 9px 20px;
-    align-items: center;
-    gap: 8px;
-    font-size: var(--text-button-size);
-    border-radius: 8px;
-    text-align: center;
-    font-family: Roboto;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 150%; /* 24px */
-    cursor: pointer;
-  }
+    flex-grow: 1;
+    padding-top: 8px;
 
-  .primary {
-    background: var(--primary, #f5620f);
-    color: var(--white-day, #fff);
+    flex-direction: column;
+    background-color: var(--bg-color);
 
-    /* shadow/orange */
-    box-shadow: 0px 3px 8px 0px rgba(212, 84, 12, 0.32);
+    .list-wrapper {
+      display: flex;
+      flex-direction: column;
 
-    &:hover {
-      background: var(--primary-fade, #f5620f);
+      .list-item {
+        display: flex;
+        padding-block: 10px;
+        border-bottom: var(--header-border);
+        justify-content: space-between;
+        gap: 20px;
+        align-items: center;
+
+        .user-info {
+          display: flex;
+          justify-content: start;
+          flex-grow: 1;
+          align-items: center;
+          gap: 12px;
+          color: var(--text-color);
+          font-family: Roboto;
+          font-size: 16px;
+          font-style: normal;
+          font-weight: 500;
+          line-height: 24px; /* 150% */
+        }
+      }
     }
-  }
 
-  .outline {
-    color: var(--text-color);
-    background: transparent;
-    border: 1px solid var(--text-color) !important;
-    transition: all;
-    transition-duration: 0.6s;
-
-    &:hover {
-      border: 1px solid var(--primary) !important;
-      color: var(--primary);
-    }
-  }
-
-  .secondary {
-    background-color: var(--button-secondary-bg);
-    color: var(--text-color);
-
-    &:hover {
-      background-color: var(--bg-color-second);
+    &.mobile {
+      .list-item {
+        padding: 16px;
+        border-bottom: none;
+      }
     }
   }
 </style>

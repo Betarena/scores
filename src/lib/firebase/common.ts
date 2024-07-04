@@ -5,12 +5,13 @@ import userBetarenaSettings from '$lib/store/user-settings.js';
 import { dlog, dlogv2 } from '$lib/utils/debug.js';
 import { checkNull } from '$lib/utils/miscellenous.js';
 import { DataSnapshot, onValue, ref, type DatabaseReference, type Unsubscribe } from 'firebase/database';
-import { arrayRemove, arrayUnion, doc, DocumentReference, getDoc, increment, onSnapshot, updateDoc } from 'firebase/firestore';
+import { arrayRemove, arrayUnion, collection, doc, DocumentReference, getDoc, getDocs, increment, onSnapshot, query, updateDoc, where, type DocumentData } from 'firebase/firestore';
 import { getTargetRealDbData } from './firebase.actions.js';
 import { db_firestore, db_real } from './init';
 
 import type { FIRE_LNNS, FIRE_LNPI, FIREBASE_livescores_now, FIREBASE_odds } from '@betarena/scores-lib/types/firebase.js';
 import type { Page } from '@sveltejs/kit';
+import type { BetarenaUser } from '$lib/types/types.user-settings.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -31,38 +32,35 @@ import type { Page } from '@sveltejs/kit';
  * @return { Promise < void > }
  */
 export async function getUserById
-(
-  uid: string
-)
+  (
+    uid: string
+  )
 {
   // [🐞]
   dlog
-  (
-    '🚏 checkpoint ➤ getUserById(..)',
-    true
-  );
-
-  console.log("db_firestore",db_firestore)
-  console.log("UID",uid)
+    (
+      '🚏 checkpoint ➤ getUserById(..)',
+      true
+    );
 
   const
     docRef
       = doc
-      (
-        db_firestore,
-        'betarena_users',
-        uid
-      ),
+        (
+          db_firestore,
+          'betarena_users',
+          uid
+        ),
     docSnap
       = await getDoc
-      (
-        docRef
-      )
-  ;
+        (
+          docRef
+        )
+    ;
 
   if (!docSnap.exists()) return;
 
-  return  docSnap.data();
+  return docSnap.data();
 }
 /**
  * @author
@@ -79,43 +77,99 @@ export async function getUserById
  * @return { Promise < void > }
  */
 export async function userDataFetch
-(
-  uid: string
-): Promise < void >
+  (
+    uid: string
+): Promise<void>
 {
   // [🐞]
   dlog
-  (
-    '🚏 checkpoint ➤ userDataFetch(..)',
-    true
-  );
+    (
+      '🚏 checkpoint ➤ userDataFetch(..)',
+      true
+    );
 
   const
     docRef
       = doc
-      (
-        db_firestore,
-        'betarena_users',
-        uid
-      ),
+        (
+          db_firestore,
+          'betarena_users',
+          uid
+        ),
     docSnap
       = await getDoc
-      (
-        docRef
-      )
-  ;
+        (
+          docRef
+        )
+    ;
 
   if (!docSnap.exists()) return;
 
   userBetarenaSettings.updateData
-  (
-    [
-      ['user-scores-data', docSnap.data()]
-    ]
-  );
+    (
+      [
+        ['user-scores-data', docSnap.data()]
+      ]
+    );
 
   return;
 }
+
+
+/**
+ * @author
+ *  @izobov
+ * @summary
+ *  - 🟥 MAIN
+ *  - 🟦 HELPER
+ * @description
+ *  📣 Retrieves `Firebase/Firestore` data for **current user** and saves.
+ * @CUSTOM_WARNING
+ *  ❗️❗️ Contains `store` update.
+ * @param { string } name
+ *  💠 **[required]** Target user **name**.
+ * @return { Promise < void > }
+ */
+
+export async function getUserByName
+  (
+    username: string
+  ): Promise<BetarenaUser | undefined>
+{
+  // [🐞]
+  dlog
+    (
+      '🚏 checkpoint ➤ getUserByName(..)',
+      true
+    );
+
+  const usersCollection = collection(db_firestore, 'betarena_users');
+  const q = query(usersCollection, where('username', '==', username));
+  try
+  {
+
+    const querySnapshot = await getDocs(q);
+    if (querySnapshot.empty)
+    {
+      console.log('No matching documents.');
+      return;
+    }
+
+    let userData;
+    querySnapshot.forEach(doc =>
+    {
+      userData = doc.data();
+    });
+
+    return userData;
+  } catch (e)
+  {
+    console.log(e)
+  }
+}
+
+
+
 
 /**
  * @author
@@ -133,49 +187,49 @@ export async function userDataFetch
  * @returns { void }
  */
 export function userBalanceListen
-(
-  uid: string
-): void
+  (
+    uid: string
+  ): void
 {
   const
     _unsubscribe
       = onSnapshot
-      (
-        doc
-        (
-          db_firestore,
-          'betarena_users',
-          uid
-        ),
         (
           doc
-        ): void =>
-        {
-          const
-            data = doc.data()
-          ;
-
-          if (data == undefined) return;
-
-          userBetarenaSettings.updateData
+            (
+              db_firestore,
+              'betarena_users',
+              uid
+            ),
           (
-            [
-              ['user-main-balance', data.main_balance],
-              ['user-investor-balance', data.investor_balance],
-            ]
-          );
+            doc
+          ): void =>
+          {
+            const
+              data = doc.data()
+              ;
 
-          return;
-        }
-      )
-  ;
+            if (data == undefined) return;
+
+            userBetarenaSettings.updateData
+              (
+                [
+                  ['user-main-balance', data.main_balance],
+                  ['user-investor-balance', data.investor_balance],
+                ]
+              );
+
+            return;
+          }
+        )
+    ;
 
   sessionStore.updateData
-  (
-    [
-      ['firebaseListeners', [_unsubscribe] ]
-    ]
-  );
+    (
+      [
+        ['firebaseListeners', [_unsubscribe]]
+      ]
+    );
 
   return;
 }
@@ -192,9 +246,9 @@ export function userBalanceListen
  * @returns { Promise < void > }
  */
 export async function updateSelectLang
-(
-  lang: string
-): Promise < void >
+  (
+    lang: string
+): Promise<void>
 {
   const
     /**
@@ -206,7 +260,7 @@ export async function updateSelectLang
      * @description
      * 📝 Data for `page`
      */
-    page = sessionStore.extract< Page >('page')!,
+    page = sessionStore.extract<Page>('page')!,
     /**
      * @description
      * 📝 Conditional logic bundle simplification
@@ -216,39 +270,39 @@ export async function updateSelectLang
       || checkNull(page.route.id)
       || !lang
       || !uid
-  ;
+    ;
 
   if (if_M_0) return;
 
   // [🐞]
   dlogv2
-  (
-    '🚏 checkpoint ➤ updateSelectLang(..)',
-    [
-      `🔹 [var] ➤ opts.isPageError :|: ${page.error}`,
-      `🔹 [var] ➤ opts.routeId :|: ${page.route.id}`,
-      `🔹 [var] ➤ lang :|: ${lang}`,
-      `🔹 [var] ➤ uid :|: ${uid}`,
-    ],
-    true
-  );
+    (
+      '🚏 checkpoint ➤ updateSelectLang(..)',
+      [
+        `🔹 [var] ➤ opts.isPageError :|: ${page.error}`,
+        `🔹 [var] ➤ opts.routeId :|: ${page.route.id}`,
+        `🔹 [var] ➤ lang :|: ${lang}`,
+        `🔹 [var] ➤ uid :|: ${uid}`,
+      ],
+      true
+    );
 
   const
     userRef = doc
-    (
-      db_firestore,
-      'betarena_users',
-      uid,
-    )
-  ;
+      (
+        db_firestore,
+        'betarena_users',
+        uid,
+      )
+    ;
 
   await updateDoc
-  (
-    userRef,
-    {
-      lang
-    }
-  );
+    (
+      userRef,
+      {
+        lang
+      }
+    );
 
   return;
 }
@@ -258,25 +312,25 @@ export async function updateSelectLang
  * TODO: DOC:
  */
 export async function userUpdateBalance
-(
-  uid: string,
-  balanceChng: number
-): Promise < void >
-{
-  const userRef: DocumentReference  = doc
   (
-    db_firestore,
-    'betarena_users',
-    uid
-  );
+    uid: string,
+    balanceChng: number
+): Promise<void>
+{
+  const userRef: DocumentReference = doc
+    (
+      db_firestore,
+      'betarena_users',
+      uid
+    );
 
   await updateDoc
-  (
-    userRef,
-    {
-      main_balance: balanceChng
-    }
-  );
+    (
+      userRef,
+      {
+        main_balance: balanceChng
+      }
+    );
 
   return;
 }
@@ -299,44 +353,44 @@ export async function userUpdateBalance
  * @returns { Promise < void > }
  */
 export async function userUpdateInvestorBalance
-(
-  opts:
-  {
-    uid: string
-    , deltaBalance: number
-    , type: 'tge' | 'total'
-  }
-): Promise < void >
+  (
+    opts:
+      {
+        uid: string
+        , deltaBalance: number
+        , type: 'tge' | 'total'
+      }
+): Promise<void>
 {
   const
-    userRef: DocumentReference  = doc
-    (
-      db_firestore
-      , 'betarena_users'
-      , opts.uid
-    )
-  ;
+    userRef: DocumentReference = doc
+      (
+        db_firestore
+        , 'betarena_users'
+        , opts.uid
+      )
+    ;
 
   if (opts.type == 'total')
 
     await updateDoc
-    (
-      userRef
-      , {
-        'investor_balance.grand_total': increment(opts.deltaBalance)
-      }
-    );
+      (
+        userRef
+        , {
+          'investor_balance.grand_total': increment(opts.deltaBalance)
+        }
+      );
 
   else
 
     await updateDoc
-    (
-      userRef
-      , {
-        'investor_balance.grand_total': increment(opts.deltaBalance),
-        'investor_balance.tge_to_claim': increment(opts.deltaBalance)
-      }
-    );
+      (
+        userRef
+        , {
+          'investor_balance.grand_total': increment(opts.deltaBalance),
+          'investor_balance.tge_to_claim': increment(opts.deltaBalance)
+        }
+      );
 
 
   return;
@@ -350,39 +404,39 @@ export async function userUpdateInvestorBalance
  * @returns { Promise < void > }
  */
 export async function userToggleUserguideOptOut
-(
-  uid: string,
-  userguideId: number,
-  currentOptOuts: number[]
-): Promise < void >
-{
-  const userRef: DocumentReference  = doc
   (
-    db_firestore,
-    'betarena_users',
-    uid
-  );
+    uid: string,
+    userguideId: number,
+    currentOptOuts: number[]
+): Promise<void>
+{
+  const userRef: DocumentReference = doc
+    (
+      db_firestore,
+      'betarena_users',
+      uid
+    );
 
   if (currentOptOuts.includes(userguideId))
   {
     await updateDoc
-    (
-      userRef,
-      {
-        userguide_id_opt_out: arrayRemove(userguideId)
-      }
-    );
+      (
+        userRef,
+        {
+          userguide_id_opt_out: arrayRemove(userguideId)
+        }
+      );
 
     return;
   }
 
   await updateDoc
-  (
-    userRef,
-    {
-      userguide_id_opt_out: arrayUnion(userguideId)
-    }
-  );
+    (
+      userRef,
+      {
+        userguide_id_opt_out: arrayUnion(userguideId)
+      }
+    );
 
   return;
 }
@@ -401,21 +455,21 @@ export async function userToggleUserguideOptOut
  * {Promise < void >}
 */
 export async function onceTargetPlayerIds
-(
-  path: string
-): Promise < void >
+  (
+    path: string
+): Promise<void>
 {
   const firebaseData = await getTargetRealDbData
-  (
-    path
-  ) as FIRE_LNPI;
+    (
+      path
+    ) as FIRE_LNPI;
 
   sessionStore.updateData
-  (
-    [
-      ['livescorePlayerId', firebaseData.id]
-    ]
-  );
+    (
+      [
+        ['livescorePlayerId', firebaseData.id]
+      ]
+    );
 }
 
 /**
@@ -427,40 +481,40 @@ export async function onceTargetPlayerIds
  * {Unsubscribe} Unsubscribe
  */
 export function targetPlayerIdsListen
-(
-  path: string
-): Unsubscribe
+  (
+    path: string
+  ): Unsubscribe
 {
   const
     dbRef: DatabaseReference = ref
-    (
-      db_real,
-      path
-    ),
-    listenEventRef = onValue
-    (
-      dbRef,
       (
-        snapshot: DataSnapshot
-      ): void =>
-      {
-        const firebaseData: FIRE_LNPI = snapshot.val();
-        sessionStore.updateData
+        db_real,
+        path
+      ),
+    listenEventRef = onValue
+      (
+        dbRef,
         (
-          [
-            ['livescorePlayerId', firebaseData.id]
-          ]
-        );
-      }
-    )
-  ;
+          snapshot: DataSnapshot
+        ): void =>
+        {
+          const firebaseData: FIRE_LNPI = snapshot.val();
+          sessionStore.updateData
+            (
+              [
+                ['livescorePlayerId', firebaseData.id]
+              ]
+            );
+        }
+      )
+    ;
 
   sessionStore.updateData
-  (
-    [
-      ['firebaseListeners', [listenEventRef]]
-    ]
-  );
+    (
+      [
+        ['firebaseListeners', [listenEventRef]]
+      ]
+    );
 
   return listenEventRef
 }
@@ -480,10 +534,10 @@ export function targetPlayerIdsListen
  * a target directory/url to listen to "odds" data to a target fixture;
  */
 export function createFixtureOddsPath
-(
-  fixtureId: number,
-  fixtureTime: string
-): string
+  (
+    fixtureId: number,
+    fixtureTime: string
+  ): string
 {
   const year_: string = new Date(fixtureTime).getFullYear().toString(),
     month_: number = new Date(fixtureTime).getMonth();
@@ -503,52 +557,52 @@ export function createFixtureOddsPath
  * {Unsubscribe} Unsubscribe
  */
 export function targetLivescoreNowFixtureOddsListen
-(
-  path: string
-): Unsubscribe
+  (
+    path: string
+  ): Unsubscribe
 {
   const dbRef: DatabaseReference = ref
-  (
-    db_real,
-    path
-  ),
+    (
+      db_real,
+      path
+    ),
 
     listenEventRef = onValue
-    (
-      dbRef,
       (
-        snapshot: DataSnapshot
-      ): void =>
-      {
-        const sportbookArray: FIREBASE_odds[] = [],
-
-          data: [string, FIREBASE_odds][]
-        = snapshot.exists()
-          ? Object.entries(snapshot.val())
-          : []
-      ;
-
-        for (const sportbook of data)
-        {
-          sportbook[1].sportbook = sportbook[0].toString();
-          sportbookArray.push(sportbook[1]);
-        }
-
-        sessionStore.updateData
+        dbRef,
         (
-          [
-            ['liveOdds', sportbookArray]
-          ]
-        );
-      }
-    );
+          snapshot: DataSnapshot
+        ): void =>
+        {
+          const sportbookArray: FIREBASE_odds[] = [],
+
+            data: [string, FIREBASE_odds][]
+              = snapshot.exists()
+                ? Object.entries(snapshot.val())
+                : []
+            ;
+
+          for (const sportbook of data)
+          {
+            sportbook[1].sportbook = sportbook[0].toString();
+            sportbookArray.push(sportbook[1]);
+          }
+
+          sessionStore.updateData
+            (
+              [
+                ['liveOdds', sportbookArray]
+              ]
+            );
+        }
+      );
 
   sessionStore.updateData
-  (
-    [
-      ['firebaseListeners', [listenEventRef]]
-    ]
-  );
+    (
+      [
+        ['firebaseListeners', [listenEventRef]]
+      ]
+    );
 
   return listenEventRef
 }
@@ -562,9 +616,9 @@ export function targetLivescoreNowFixtureOddsListen
  * {Unsubscribe} Unsubscribe
  */
 export function targetLivescoreNowFixtureOddsListenMulti
-(
-  paths: string[]
-): Unsubscribe[]
+  (
+    paths: string[]
+  ): Unsubscribe[]
 {
   const listenEventRefsList: Unsubscribe[] = [];
 
@@ -572,53 +626,53 @@ export function targetLivescoreNowFixtureOddsListenMulti
   {
     const
       dbRef = ref
-      (
-        db_real,
-        path
-      ),
-      listenEventRef = onValue
-      (
-        dbRef,
         (
-          snapshot: DataSnapshot
-        ): void =>
-        {
-          const
-            data: [string, FIREBASE_odds][]
-              = snapshot.exists()
-                ? Object.entries(snapshot.val())
-                : [],
-            sportbookArray: FIREBASE_odds[] = []
-          ;
-
-          for (const sportbook of data)
-          {
-            sportbook[1].sportbook = sportbook[0].toString();
-            sportbookArray.push(sportbook[1]);
-          }
-
-          sessionStore.updateData
+          db_real,
+          path
+        ),
+      listenEventRef = onValue
+        (
+          dbRef,
           (
-            [
-              ['liveOddsMap', [parseInt(snapshot.key), sportbookArray]]
-            ]
-          );
-        }
-      )
-    ;
+            snapshot: DataSnapshot
+          ): void =>
+          {
+            const
+              data: [string, FIREBASE_odds][]
+                = snapshot.exists()
+                  ? Object.entries(snapshot.val())
+                  : [],
+              sportbookArray: FIREBASE_odds[] = []
+              ;
+
+            for (const sportbook of data)
+            {
+              sportbook[1].sportbook = sportbook[0].toString();
+              sportbookArray.push(sportbook[1]);
+            }
+
+            sessionStore.updateData
+              (
+                [
+                  ['liveOddsMap', [parseInt(snapshot.key), sportbookArray]]
+                ]
+              );
+          }
+        )
+      ;
 
     listenEventRefsList.push
-    (
-      listenEventRef
-    );
+      (
+        listenEventRef
+      );
   }
 
   sessionStore.updateData
-  (
-    [
-      ['firebaseListeners', listenEventRefsList]
-    ]
-  );
+    (
+      [
+        ['firebaseListeners', listenEventRefsList]
+      ]
+    );
 
   return listenEventRefsList
 }
@@ -633,17 +687,17 @@ export function targetLivescoreNowFixtureOddsListenMulti
  * {Promise < void >}
 */
 export async function oneOffOddsDataGet
-(
-  paths: string[]
-): Promise < void >
+  (
+    paths: string[]
+): Promise<void>
 {
   for (const path of paths)
   {
     const
       firebaseData = await getTargetRealDbData
-      (
-        path
-      ),
+        (
+          path
+        ),
       data: [string, FIREBASE_odds][]
         = firebaseData != null
           ? Object.entries(firebaseData)
@@ -651,10 +705,10 @@ export async function oneOffOddsDataGet
       sportbookArray: FIREBASE_odds[] = [],
       fixtureId
         = path.split
-        (
-          '/'
-        )[path.split('/').length - 1]
-    ;
+          (
+            '/'
+          )[path.split('/').length - 1]
+      ;
 
     for (const sportbook of data)
     {
@@ -663,11 +717,11 @@ export async function oneOffOddsDataGet
     }
 
     sessionStore.updateData
-    (
-      [
-        ['liveOddsMap', [parseInt(fixtureId), sportbookArray]]
-      ]
-    );
+      (
+        [
+          ['liveOddsMap', [parseInt(fixtureId), sportbookArray]]
+        ]
+      );
   }
 
   return;
@@ -686,38 +740,38 @@ export async function oneOffOddsDataGet
  * {Unsubscribe}
  */
 export function listenRealTimeLivescoresNowChange
-(
+  (
 ): Unsubscribe
 {
   const dataRef: DatabaseReference = ref
-  (
-    db_real,
-    'livescores_now/'
-  ),
+    (
+      db_real,
+      'livescores_now/'
+    ),
 
     listenEventRef: Unsubscribe = onValue
-    (
-      dataRef,
       (
-        snapshot: DataSnapshot
-      ): void =>
-      {
-        if (snapshot.val() != null)
+        dataRef,
+        (
+          snapshot: DataSnapshot
+        ): void =>
         {
-          const data: [
-          string,
-          FIREBASE_livescores_now
-        ][] = Object.entries(snapshot.val());
-          genLiveFixMap(data);
+          if (snapshot.val() != null)
+          {
+            const data: [
+              string,
+              FIREBASE_livescores_now
+            ][] = Object.entries(snapshot.val());
+            genLiveFixMap(data);
+          }
         }
-      }
-    );
+      );
 
   sessionStore.updateData
-  (
-    [
-      ['firebaseListeners', [listenEventRef]]
-    ]
+    (
+      [
+        ['firebaseListeners', [listenEventRef]]
+      ]
 
   );
 
@@ -733,41 +787,41 @@ export function listenRealTimeLivescoresNowChange
  * {Unsubscribe} Unsubscribe
  */
 export function targetLivescoreNowFixtureListen
-(
-  path: string
-): Unsubscribe
+  (
+    path: string
+  ): Unsubscribe
 {
   const
     dbRef
       = ref
-      (
-        db_real,
-        path
-      ),
-    listenEventRef = onValue
-    (
-      dbRef,
-      (
-        snapshot: DataSnapshot
-      ): void =>
-      {
-        const firebaseData: FIREBASE_livescores_now = snapshot.val();
-        sessionStore.updateData
         (
-          [
-            ['livescoresFixtureTarget', firebaseData]
-          ]
-        );
-      }
-    )
-  ;
+          db_real,
+          path
+        ),
+    listenEventRef = onValue
+      (
+        dbRef,
+        (
+          snapshot: DataSnapshot
+        ): void =>
+        {
+          const firebaseData: FIREBASE_livescores_now = snapshot.val();
+          sessionStore.updateData
+            (
+              [
+                ['livescoresFixtureTarget', firebaseData]
+              ]
+            );
+        }
+      )
+    ;
 
   sessionStore.updateData
-  (
-    [
-      ['firebaseListeners', [listenEventRef]]
-    ]
-  );
+    (
+      [
+        ['firebaseListeners', [listenEventRef]]
+      ]
+    );
 
   return listenEventRef
 }
@@ -782,8 +836,8 @@ export function targetLivescoreNowFixtureListen
  * {Promise < void >}
 */
 export async function one_off_livescore_call
-(
-): Promise < void >
+  (
+): Promise<void>
 {
   const firebaseData = await getTargetRealDbData
     (
@@ -791,10 +845,10 @@ export async function one_off_livescore_call
     ),
 
     data: [string, FIREBASE_livescores_now][]
-    = firebaseData != null
-      ? Object.entries(firebaseData)
-      : []
-  ;
+      = firebaseData != null
+        ? Object.entries(firebaseData)
+        : []
+    ;
 
   genLiveFixMap(data);
 }
@@ -809,23 +863,23 @@ export async function one_off_livescore_call
  * {Promise < void >}
 */
 export async function onceTargetLivescoreNowFixtureGet
-(
-  path: string
-): Promise < void >
+  (
+    path: string
+): Promise<void>
 {
   const
     firebaseData: FIREBASE_livescores_now
       = await getTargetRealDbData
-      (
-        path
-      )
-  ;
+        (
+          path
+        )
+    ;
   sessionStore.updateData
-  (
-    [
-      ['livescoresFixtureTarget', firebaseData]
-    ]
-  );
+    (
+      [
+        ['livescoresFixtureTarget', firebaseData]
+      ]
+    );
 
   return;
 }
@@ -841,38 +895,38 @@ export async function onceTargetLivescoreNowFixtureGet
  * {Promise < void >}
  */
 export async function genLiveFixMap
-(
-  data: [string, FIREBASE_livescores_now][]
-): Promise < void >
+  (
+    data: [string, FIREBASE_livescores_now][]
+): Promise<void>
 {
   const
     liveFixturesMap = new Map<number, FIREBASE_livescores_now>()
-  ;
+    ;
 
   for await (const live_fixture of data)
   {
     const
       fixture_id
         = parseInt
-        (
-          live_fixture[0].toString()
-        ),
+          (
+            live_fixture[0].toString()
+          ),
       fixture_data = live_fixture[1]
-    ;
+      ;
 
     liveFixturesMap.set
-    (
-      fixture_id,
-      fixture_data
-    );
+      (
+        fixture_id,
+        fixture_data
+      );
   }
 
   sessionStore.updateData
-  (
-    [
-      ['livescoresNow', liveFixturesMap]
-    ]
-  );
+    (
+      [
+        ['livescoresNow', liveFixturesMap]
+      ]
+    );
 
   return;
 }
@@ -890,40 +944,40 @@ export async function genLiveFixMap
  * @returns {Unsubscribe} Unsubscribe
  */
 export function listenRealTimeScoreboardAll
-(
+  (
 ): Unsubscribe
 {
   const
     dbRef
       = ref
-      (
-        db_real,
-        'livescores_now_scoreboard'
-      ),
+        (
+          db_real,
+          'livescores_now_scoreboard'
+        ),
     listenEventRef = onValue
-    (
-      dbRef,
       (
-        snapshot:DataSnapshot
-      ) =>
-      {
-        if (snapshot.val() != null)
+        dbRef,
+        (
+          snapshot: DataSnapshot
+        ) =>
         {
-          const
-            data: [string, FIRE_LNNS][] = Object.entries(snapshot.val())
-          ;
-          generateLiveScoreboardList(data);
+          if (snapshot.val() != null)
+          {
+            const
+              data: [string, FIRE_LNNS][] = Object.entries(snapshot.val())
+              ;
+            generateLiveScoreboardList(data);
+          }
         }
-      }
-    )
-  ;
+      )
+    ;
 
   sessionStore.updateData
-  (
-    [
-      ['firebaseListeners', [listenEventRef]]
-    ]
-  );
+    (
+      [
+        ['firebaseListeners', [listenEventRef]]
+      ]
+    );
 
   return listenEventRef;
 }
@@ -939,8 +993,8 @@ export function listenRealTimeScoreboardAll
  * {Promise < void >}
 */
 export async function onceRealTimeLiveScoreboard
-(
-): Promise < void >
+  (
+): Promise<void>
 {
   const firebaseData = await getTargetRealDbData
     (
@@ -948,10 +1002,10 @@ export async function onceRealTimeLiveScoreboard
     ),
 
     data: [string, FIRE_LNNS][]
-    = firebaseData != null
-      ? Object.entries(firebaseData)
-      : []
-  ;
+      = firebaseData != null
+        ? Object.entries(firebaseData)
+        : []
+    ;
   generateLiveScoreboardList(data);
 }
 
@@ -963,42 +1017,44 @@ export async function onceRealTimeLiveScoreboard
  * @param {[string, FIRE_LNNS][]} data
  */
 function generateLiveScoreboardList
-(
-  data: [string, FIRE_LNNS][]
-): void
+  (
+    data: [string, FIRE_LNNS][]
+  ): void
 {
   const
     liveFixturesMap = new Map<number, FIRE_LNNS>()
-  ;
+    ;
 
   for (const liveFixture of data)
   {
     const
       fixtureId
         = parseInt
-        (
-          liveFixture[0].toString()
-        ),
+          (
+            liveFixture[0].toString()
+          ),
       fixtureData = liveFixture[1]
-    ;
+      ;
 
     liveFixturesMap.set
-    (
-      fixtureId,
-      fixtureData
-    );
+      (
+        fixtureId,
+        fixtureData
+      );
   }
 
   sessionStore.updateData
-  (
-    [
-      ['livescoreScoreboard', liveFixturesMap]
-    ]
+    (
+      [
+        ['livescoreScoreboard', liveFixturesMap]
+      ]
 
   );
 
   return;
 }
+
+// #endregion 🔥 LIVESCORES_NOW_SCOREBOARD
 
 /**
  * @author
@@ -1012,9 +1068,9 @@ function generateLiveScoreboardList
  * @returns { Promise < void > }
  */
 export async function updateFollowing
-(
-  following: { [key: string]: (string | number)[] }
-): Promise < void >
+  (
+    following: { [key: string]: (string | number)[] }
+): Promise<void>
 {
   const
     /**
@@ -1026,7 +1082,7 @@ export async function updateFollowing
      * @description
      * 📝 Data for `page`
      */
-    page = sessionStore.extract< Page >('page') as Page,
+    page = sessionStore.extract<Page>('page') as Page,
     /**
      * @description
      * 📝 Conditional logic bundle simplification
@@ -1036,39 +1092,108 @@ export async function updateFollowing
       || checkNull(page.route.id)
       || !following
       || !uid
-  ;
+    ;
 
   if (if_M_0) return;
 
   // [🐞]
   dlogv2
-  (
-    '🚏 checkpoint ➤ updateFollowing(..)',
-    [
-      `🔹 [var] ➤ opts.isPageError :|: ${page.error}`,
-      `🔹 [var] ➤ opts.routeId :|: ${page.route.id}`,
-      `🔹 [var] ➤ following :|: ${following}`,
-      `🔹 [var] ➤ uid :|: ${uid}`,
-    ],
-    true
-  );
+    (
+      '🚏 checkpoint ➤ updateFollowing(..)',
+      [
+        `🔹 [var] ➤ opts.isPageError :|: ${page.error}`,
+        `🔹 [var] ➤ opts.routeId :|: ${page.route.id}`,
+        `🔹 [var] ➤ following :|: ${following}`,
+        `🔹 [var] ➤ uid :|: ${uid}`,
+      ],
+      true
+    );
 
   const
     userRef = doc
-    (
-      db_firestore,
-      'betarena_users',
-      uid,
-    )
-  ;
+      (
+        db_firestore,
+        'betarena_users',
+        uid,
+      )
+    ;
 
   await updateDoc
+    (
+      userRef,
+      {
+        following
+      }
+    );
+
+  return;
+}
+
+/**
+ * @author
+ *  @izobov
+ * @summary
+ *  🟦 HELPER
+ * @description
+ *  📣 Update `user` platform folowings options.
+ * @param { {[key:string]: (string | number)[]} } followed_by
+ *  💠 **[required]** Following object
+ * @returns { Promise < void > }
+ */
+export async function updateFollowed
   (
-    userRef,
-    {
-      following
-    }
-  );
+    uid: string,
+    followed_by: string[]
+  ): Promise<void>
+{
+  const
+    /**
+     * @description
+     * 📝 Data for `page`
+     */
+    page = sessionStore.extract<Page>('page') as Page,
+    /**
+     * @description
+     * 📝 Conditional logic bundle simplification
+     */
+    if_M_0
+      = !checkNull(page.error)
+      || checkNull(page.route.id)
+      || !followed_by
+      || !uid
+    ;
+
+  if (if_M_0) return;
+
+  // [🐞]
+  dlogv2
+    (
+      '🚏 checkpoint ➤ updateFollowing(..)',
+      [
+        `🔹 [var] ➤ opts.isPageError :|: ${page.error}`,
+        `🔹 [var] ➤ opts.routeId :|: ${page.route.id}`,
+        `🔹 [var] ➤ following :|: ${followed_by}`,
+        `🔹 [var] ➤ uid :|: ${uid}`,
+      ],
+      true
+    );
+
+  const
+    userRef = doc
+      (
+        db_firestore,
+        'betarena_users',
+        uid,
+      )
+    ;
+
+  await updateDoc
+    (
+      userRef,
+      {
+        followed_by
+      }
+    );
 
   return;
 }
@@ -1085,9 +1210,9 @@ export async function updateFollowing
  * @returns { Promise < void > }
  */
 export async function updateButtonOrder
-(
-  order: string[]
-): Promise < void >
+  (
+    order: string[]
+): Promise<void>
 {
   const
     /**
@@ -1099,7 +1224,7 @@ export async function updateButtonOrder
      * @description
      * 📝 Data for `page`
      */
-    page = sessionStore.extract< Page >('page') as Page,
+    page = sessionStore.extract<Page>('page') as Page,
     /**
      * @description
      * 📝 Conditional logic bundle simplification
@@ -1109,42 +1234,41 @@ export async function updateButtonOrder
       || checkNull(page.route.id)
       || !order
       || !uid
-  ;
+    ;
 
   if (if_M_0) return;
 
   // [🐞]
   dlogv2
-  (
-    '🚏 checkpoint ➤ updateButtonOrder(..)',
-    [
-      `🔹 [var] ➤ opts.isPageError :|: ${page.error}`,
-      `🔹 [var] ➤ opts.routeId :|: ${page.route.id}`,
-      `🔹 [var] ➤ buttuns order :|: ${order}`,
-      `🔹 [var] ➤ uid :|: ${uid}`,
-    ],
-    true
-  );
+    (
+      '🚏 checkpoint ➤ updateButtonOrder(..)',
+      [
+        `🔹 [var] ➤ opts.isPageError :|: ${page.error}`,
+        `🔹 [var] ➤ opts.routeId :|: ${page.route.id}`,
+        `🔹 [var] ➤ buttuns order :|: ${order}`,
+        `🔹 [var] ➤ uid :|: ${uid}`,
+      ],
+      true
+    );
 
   const
     userRef = doc
-    (
-      db_firestore,
-      'betarena_users',
-      uid,
-    )
-  ;
+      (
+        db_firestore,
+        'betarena_users',
+        uid,
+      )
+    ;
 
   await updateDoc
-  (
-    userRef,
-    {
-      buttons_order: order
-    }
-  );
+    (
+      userRef,
+      {
+        buttons_order: order
+      }
+    );
   return;
 }
 
-// #endregion 🔥 LIVESCORES_NOW_SCOREBOARD
 
 // #endregion ➤ 🛠️ METHODS

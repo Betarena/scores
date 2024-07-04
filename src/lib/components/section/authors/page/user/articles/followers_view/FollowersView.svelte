@@ -8,36 +8,43 @@
 -->
 
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
 
-  // #region ➤ 📌 VARIABLES
 
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'variables' that are to be         │
-  // │ and are expected to be used by 'this' .svelte file / component.        │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. export const / let [..]                                             │
-  // │ 2. const [..]                                                          │
-  // │ 3. let [..]                                                            │
-  // │ 4. $: [..]                                                             │
-  // ╰────────────────────────────────────────────────────────────────────────╯
+// #region ➤ 📌 VARIABLES
 
-  export let width: number | string = 200,
-    height: number | string = 50,
-    href = "";
+    import FollowersHeader from "./FollowersHeader.svelte";
+    import FollowersList from "./FollowersList.svelte";
 
-  export let /**
-     * @description
-     *  button styles: primary | outline
-     */ // eslint-disable-next-line no-unused-vars
-    type: "primary" | "outline" | "secondary" = "primary";
+// ╭────────────────────────────────────────────────────────────────────────╮
+// │ NOTE:                                                                  │
+// │ Please add inside 'this' region the 'variables' that are to be         │
+// │ and are expected to be used by 'this' .svelte file / component.        │
+// │ IMPORTANT                                                              │
+// │ Please, structure the imports as follows:                              │
+// │ 1. export const / let [..]                                             │
+// │ 2. const [..]                                                          │
+// │ 3. let [..]                                                            │
+// │ 4. $: [..]                                                             │
+// ╰────────────────────────────────────────────────────────────────────────╯
 
-  const dispatch = createEventDispatcher();
 
-  // #endregion ➤ 📌 VARIABLES
+export let data;
+
+
+
+const
+  /**
+   * @description
+   *  📣 `this` component **main** `id` and `data-testid` prefix.
+   */ // eslint-disable-next-line no-unused-vars
+  CNAME: string = 'author⮕followers'
+;
+
+
+// #endregion ➤ 📌 VARIABLES
+
 </script>
+
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -49,10 +56,11 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
+<div class="wrapper" id={CNAME}>
 
-<button class="button {type}" { ...$$restProps} on:click={() => dispatch("click")}>
-  <slot />
-</button>
+  <FollowersHeader on:changeMode />
+  <FollowersList />
+</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -64,53 +72,13 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
+
 <style lang="scss">
-  .button {
-    display: flex;
-    padding: 9px 20px;
-    align-items: center;
-    gap: 8px;
-    font-size: var(--text-button-size);
-    border-radius: 8px;
-    text-align: center;
-    font-family: Roboto;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 150%; /* 24px */
-    cursor: pointer;
-  }
 
-  .primary {
-    background: var(--primary, #f5620f);
-    color: var(--white-day, #fff);
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-color);
+}
 
-    /* shadow/orange */
-    box-shadow: 0px 3px 8px 0px rgba(212, 84, 12, 0.32);
-
-    &:hover {
-      background: var(--primary-fade, #f5620f);
-    }
-  }
-
-  .outline {
-    color: var(--text-color);
-    background: transparent;
-    border: 1px solid var(--text-color) !important;
-    transition: all;
-    transition-duration: 0.6s;
-
-    &:hover {
-      border: 1px solid var(--primary) !important;
-      color: var(--primary);
-    }
-  }
-
-  .secondary {
-    background-color: var(--button-secondary-bg);
-    color: var(--text-color);
-
-    &:hover {
-      background-color: var(--bg-color-second);
-    }
-  }
 </style>

@@ -3147,7 +3147,8 @@ img.google-aspect-ratio {
   --border-color-light: #4B4B4B;
   --border-color: #4B4B4B;
   --bg-hover-color: #4B4B4B;
-  --tag-bg-color: #4B4B4B;
+  --button-secondary-bg: #4B4B4B;
+    --button-secondary-bg: #4B4B4B;
   --section-border: 1px solid var(--border-color);
   --border: 1px solid var(--border-color);
   --header-border: 1px solid #383838;
@@ -3173,7 +3174,7 @@ img.google-aspect-ratio {
   --border-color-light: #E6E6E6;
   --border-color: #292929;
   --bg-hover-color: #E6E6E6;
-  --tag-bg-color: #E6E6E6;
+  --button-secondary-bg: #E6E6E6;
   --section-border: 1px solid var(--border-color-light);
   --border: 1px solid #CCC;
   --header-border: 1px solid #CCC;

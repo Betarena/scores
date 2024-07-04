@@ -8,9 +8,9 @@
 -->
 
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
-
   // #region ➤ 📌 VARIABLES
+
+  import Avatar from "./Avatar.svelte";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -24,17 +24,19 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let width: number | string = 200,
-    height: number | string = 50,
-    href = "";
-
-  export let /**
+  export let src: (string | null)[] = [""],
+    /**
      * @description
-     *  button styles: primary | outline
-     */ // eslint-disable-next-line no-unused-vars
-    type: "primary" | "outline" | "secondary" = "primary";
+     * avatar size
+     */
+    size = 38,
+    /**
+     * @description
+     * how much  next avatar will stack
+     */
 
-  const dispatch = createEventDispatcher();
+    deep = 14,
+    bgColor = "var(--bg-color)";
 
   // #endregion ➤ 📌 VARIABLES
 </script>
@@ -49,10 +51,16 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
-<button class="button {type}" { ...$$restProps} on:click={() => dispatch("click")}>
-  <slot />
-</button>
+<div class="stacked-avatar-wrapper">
+  {#each src as s, index}
+    <div
+      class="avatar-wrapper"
+      style="margin-left: -{ index ? deep : 0}px; border: 2px solid {bgColor};"
+    >
+      <Avatar src={s} {size} />
+    </div>
+  {/each}
+</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -65,52 +73,11 @@
 -->
 
 <style lang="scss">
-  .button {
+  .stacked-avatar-wrapper {
     display: flex;
-    padding: 9px 20px;
-    align-items: center;
-    gap: 8px;
-    font-size: var(--text-button-size);
-    border-radius: 8px;
-    text-align: center;
-    font-family: Roboto;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 150%; /* 24px */
-    cursor: pointer;
   }
-
-  .primary {
-    background: var(--primary, #f5620f);
-    color: var(--white-day, #fff);
-
-    /* shadow/orange */
-    box-shadow: 0px 3px 8px 0px rgba(212, 84, 12, 0.32);
-
-    &:hover {
-      background: var(--primary-fade, #f5620f);
-    }
-  }
-
-  .outline {
-    color: var(--text-color);
-    background: transparent;
-    border: 1px solid var(--text-color) !important;
-    transition: all;
-    transition-duration: 0.6s;
-
-    &:hover {
-      border: 1px solid var(--primary) !important;
-      color: var(--primary);
-    }
-  }
-
-  .secondary {
-    background-color: var(--button-secondary-bg);
-    color: var(--text-color);
-
-    &:hover {
-      background-color: var(--bg-color-second);
-    }
+  .avatar-wrapper {
+    border-radius: 100%;
+    overflow: hidden;
   }
 </style>

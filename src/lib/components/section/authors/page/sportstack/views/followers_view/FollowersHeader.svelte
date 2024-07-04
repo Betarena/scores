@@ -8,6 +8,9 @@
 -->
 
 <script lang="ts">
+  import BackButton from "$lib/components/ui/BackButton.svelte";
+  import Tabbar from "$lib/components/ui/Tabbar.svelte";
+  import session from "$lib/store/session.js";
   import { createEventDispatcher } from "svelte";
 
   // #region ➤ 📌 VARIABLES
@@ -24,18 +27,23 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let width: number | string = 200,
-    height: number | string = 50,
-    href = "";
+  export let data = { name: "Rodrigo Monteirasso" };
 
-  export let /**
+  const /**
      * @description
-     *  button styles: primary | outline
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
      */ // eslint-disable-next-line no-unused-vars
-    type: "primary" | "outline" | "secondary" = "primary";
-
+    CNAME: string = "author-profile⮕followers⮕header";
   const dispatch = createEventDispatcher();
+  const options = [
+    { id: "subscribers", label: "Subscribers" },
+    { id: "followers", label: "Followers" },
+    { id: "followings", label: "Followings" },
+  ];
 
+  $: ({ globalState, viewportType } = $session);
+  $: isPWA = globalState.has("IsPWA");
+  $: ({ name } = data);
   // #endregion ➤ 📌 VARIABLES
 </script>
 
@@ -49,10 +57,22 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
-<button class="button {type}" { ...$$restProps} on:click={() => dispatch("click")}>
-  <slot />
-</button>
+<div class="wrapper {viewportType}" id={CNAME}>
+  <div class="name-block">
+    {#if !isPWA}
+      <div class="back-button">
+        <BackButton
+          custom_handler={true}
+          on:click={() => dispatch("changeMode")}
+        />
+      </div>
+    {/if}
+    <div class="name">{name}</div>
+  </div>
+  <div class="tabbar-wrapper">
+    <Tabbar data={options} style="gap: {viewportType === "mobile" ? 40 : 24}px; font-size: var(--text-size-m)" />
+  </div>
+</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -65,52 +85,51 @@
 -->
 
 <style lang="scss">
-  .button {
+  .wrapper {
     display: flex;
-    padding: 9px 20px;
-    align-items: center;
-    gap: 8px;
-    font-size: var(--text-button-size);
-    border-radius: 8px;
-    text-align: center;
-    font-family: Roboto;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 150%; /* 24px */
-    cursor: pointer;
-  }
+    flex-direction: column;
+    gap: 20px;
 
-  .primary {
-    background: var(--primary, #f5620f);
-    color: var(--white-day, #fff);
+    &.mobile {
+      border-bottom: var(--header-border);
+      padding-inline: 16px;
 
-    /* shadow/orange */
-    box-shadow: 0px 3px 8px 0px rgba(212, 84, 12, 0.32);
+      .tabbar-wrapper {
+        margin: auto;
+      }
 
-    &:hover {
-      background: var(--primary-fade, #f5620f);
+      .name-block .name {
+        justify-content: center;
+        padding-left: 0;
+      }
     }
-  }
 
-  .outline {
-    color: var(--text-color);
-    background: transparent;
-    border: 1px solid var(--text-color) !important;
-    transition: all;
-    transition-duration: 0.6s;
+    .name-block {
+      display: flex;
+      justify-content: start;
+      align-items: center;
+      position: relative;
 
-    &:hover {
-      border: 1px solid var(--primary) !important;
-      color: var(--primary);
-    }
-  }
+      .back-button {
+        position: absolute;
+        left: 0;
+        top: 0;
+        transform: translateY(-20%);
+      }
 
-  .secondary {
-    background-color: var(--button-secondary-bg);
-    color: var(--text-color);
-
-    &:hover {
-      background-color: var(--bg-color-second);
+      .name {
+        display: flex;
+        color: var(--text-color);
+        justify-self: start;
+        padding-left: 48px;
+        align-items: center;
+        flex-grow: 1;
+        font-family: Roboto;
+        font-size: var(--text-size-l);
+        font-style: normal;
+        font-weight: 500;
+        line-height: 24px; /* 150% */
+      }
     }
   }
 </style>
