@@ -115,62 +115,6 @@ export async function userDataFetch
   return;
 }
 
-
-/**
- * @author
- *  @izobov
- * @summary
- *  - 🟥 MAIN
- *  - 🟦 HELPER
- * @description
- *  📣 Retrieves `Firebase/Firestore` data for **current user** and saves.
- * @CUSTOM_WARNING
- *  ❗️❗️ Contains `store` update.
- * @param { string } name
- *  💠 **[required]** Target user **name**.
- * @return { Promise < void > }
- */
-
-export async function getUserByName
-  (
-    username: string
-  ): Promise<BetarenaUser | undefined>
-{
-  // [🐞]
-  dlog
-    (
-      '🚏 checkpoint ➤ getUserByName(..)',
-      true
-    );
-
-  const usersCollection = collection(db_firestore, 'betarena_users');
-  const q = query(usersCollection, where('username', '==', username));
-  try
-  {
-
-    const querySnapshot = await getDocs(q);
-    if (querySnapshot.empty)
-    {
-      console.log('No matching documents.');
-      return;
-    }
-
-    let userData;
-    querySnapshot.forEach(doc =>
-    {
-      userData = doc.data();
-    });
-
-    return userData;
-  } catch (e)
-  {
-    console.log(e)
-  }
-}
-
-
-
-
 /**
  * @author
  *  @migbash
@@ -1135,18 +1079,22 @@ export async function updateFollowing
  * @summary
  *  🟦 HELPER
  * @description
- *  📣 Update `user` platform folowings options.
- * @param { {[key:string]: (string | number)[]} } followed_by
+ *  📣 Update `user` platform subscriptions.
+ * @param { {[key:string]: (string | number)[]} } subscriptions
  *  💠 **[required]** Following object
  * @returns { Promise < void > }
  */
-export async function updateFollowed
+export async function updateSubscriptions
   (
-    uid: string,
-    followed_by: string[]
+    subscriptions: { [key: string]: (string | number)[] }
   ): Promise<void>
 {
   const
+    /**
+     * @description
+    * 📝 Data point
+    */
+    uid = userBetarenaSettings.extract('uid') as string | undefined | null,
     /**
      * @description
      * 📝 Data for `page`
@@ -1159,7 +1107,7 @@ export async function updateFollowed
     if_M_0
       = !checkNull(page.error)
       || checkNull(page.route.id)
-      || !followed_by
+      || !subscriptions
       || !uid
     ;
 
@@ -1168,11 +1116,11 @@ export async function updateFollowed
   // [🐞]
   dlogv2
     (
-      '🚏 checkpoint ➤ updateFollowing(..)',
+      '🚏 checkpoint ➤ updateSubscriptions(..)',
       [
         `🔹 [var] ➤ opts.isPageError :|: ${page.error}`,
         `🔹 [var] ➤ opts.routeId :|: ${page.route.id}`,
-        `🔹 [var] ➤ following :|: ${followed_by}`,
+        `🔹 [var] ➤ following :|: ${subscriptions}`,
         `🔹 [var] ➤ uid :|: ${uid}`,
       ],
       true
@@ -1191,7 +1139,7 @@ export async function updateFollowed
     (
       userRef,
       {
-        followed_by
+        subscriptions
       }
     );
 

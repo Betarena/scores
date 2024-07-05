@@ -38,6 +38,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { browser } from "$app/environment";
+    import { page } from "$app/stores";
     import FollowersView from "./followers_view/FollowersView.svelte";
 
 
@@ -69,6 +70,8 @@
 
   let isProfileMode = true;
 
+  $: ({author, articles: widgetData} = $page.data)
+
   // $: widgetData = $page.data as IPageAuthorTagDataFinal & {
   //   translations: IPageAuthorTranslationDataFinal;
   // } | undefined;
@@ -76,22 +79,13 @@
    * @description
    * 📝 Interecpted data for `map` instance of `tag(s)`.
    */
-  // $: mapTags = new Map(widgetData?.mapTag ?? []);
+  $: mapTags = new Map(widgetData?.mapTag ?? []);
   /**
    * @description
    * 📝 Interecpted data for `map` instance of `article(s)`.
    */
-  // $: mapArticles = new Map(widgetData?.mapArticle ?? []);
-  /**
-   * @description
-   * 📝 Currently selected tag data.
-   */
-  // $: selectedTag = mapTags.get(widgetData?.tagId ?? 0);
-  /**
-   * @description
-   * 📝 Categories avaialble.
-   */
-  // $: categories = selectedTag != undefined ? [selectedTag] : [];
+  $: mapArticles = new Map(widgetData?.mapArticle ?? []);
+
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -162,7 +156,7 @@
   {/each}
 </SeoBox> -->
 
-{#await widgetInit()}
+{#await widgetData}
   <!--
   ╭────────────────────────────────────────────────────────────────────────╮
   │ NOTE :|: promise is pending                                            │
@@ -197,9 +191,9 @@
   ╰────────────────────────────────────────────────────────────────────────╯
   -->
   {#if isProfileMode}
-    <AuthorProfileMain on:changeMode={switchMode} />
+    <AuthorProfileMain widgetData={widgetData[0]} {author} on:changeMode={switchMode} />
   {:else}
-    <FollowersView  data={{}} on:changeMode={switchMode}/>
+    <FollowersView  {author} data={{}} on:changeMode={switchMode}/>
   {/if}
 {:catch error}
   <!--

@@ -36,11 +36,9 @@
   import AssetBetarenaLogoFull from "./assets/asset-betarena-logo-full.svelte";
   import Avatar from "$lib/components/ui/Avatar.svelte";
   import { scoresNavbarStore } from "./_store.js";
-  import { fly } from "svelte/transition";
   import HeaderNavigation from "./HeaderNavigation.svelte";
   import { promiseUrlsPreload } from "$lib/utils/navigation.js";
   import { createEventDispatcher } from "svelte";
-  import UserDropdownPopup from "./UserDropdownPopup.svelte";
   import { routeIdPageAuthors, routeIdPageTags } from "$lib/constants/paths.js";
 
   // #endregion ➤ 📦 Package Imports

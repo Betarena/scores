@@ -44,7 +44,6 @@
   import sessionStore from "$lib/store/session.js";
   import userBetarenaSettings from "$lib/store/user-settings.js";
   import { dlogv2 } from "$lib/utils/debug.js";
-  import { viewportChangeV2 } from "$lib/utils/device.js";
 
   import Button from "$lib/components/ui/Button.svelte";
   import ArticleLoader from "../../../../common_ui/Article-Loader.svelte";
@@ -75,7 +74,7 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
+  export let author, widgetData;
 
   $: ({ globalState, viewportType } = $sessionStore);
   $: isPWA = globalState.has("IsPWA");
@@ -153,30 +152,6 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  /**
-   * @author
-   *  <-insert-author->
-   * @summary
-   *  🟦 HELPER
-   * @description
-   *  📝 Selects `tag`.
-   * @param { CustomEvent<IPageAuthorTagData> } e
-   *  💠 **REQUIRED** Event argument.
-   * @returns { void }
-   */
-  function selectTag(e: CustomEvent<IPageAuthorTagData>): void {
-    // [🐞]
-    dlogv2("selectTag(..)", [`🔹 [var] ➤ e :|: ${e}`], true);
-
-    selectedTag = e.detail;
-    mapArticlesMod = new Map();
-
-    if (!mapTagSelectData.has(selectedTag.id ?? 0)) loadTagArticles();
-    else
-      mapArticlesMod =
-        mapTagSelectData.get(selectedTag.id ?? 0)?.mapArticlesMod ?? new Map();
-    return;
-  }
 
   /**
    * @author
@@ -196,7 +171,6 @@
       [`🔹 [var] ➤ dataNew :|: ${dataNew}`],
       true
     );
-
     if (reset) {
       mapArticles = new Map();
       mapAuthors = new Map();
@@ -393,7 +367,6 @@
   }
 
   // #endregion ➤ 🛠️ METHODS
-
 </script>
 
 <!--
@@ -415,32 +388,18 @@
 ╰─────
 -->
 
-<AuthorProfileHeader name ={$page.params.username} on:changeMode/>
+<AuthorProfileHeader {author} on:changeMode />
+
 
 <!--
 ╭─────
-│ > INSERT-DESCRIPTION
+│ > User articles
 ╰─────
 -->
-<!-- <div class="tabbar-wrapper">
-  {#if categories.length}
-    <Tabbar
-      on:select={selectTag}
-      data={categories}
-      selected={selectedTag}
-      height={mobile ? 14 : 8}
-    />
-  {/if}
-</div> -->
 
-<!--
-╭─────
-│ > INSERT-DESCRIPTION
-╰─────
--->
-<div class="content {viewportType}" >
+<div class="content {viewportType}">
   <div class="listArticlesMod">
-    {#each [...mapArticlesMod.entries()] as [,article]}
+    {#each [...mapArticlesMod.entries()] as [article]}
       <ArticleCard {mobile} {article} {tablet} {translations} />
     {/each}
 
@@ -455,6 +414,9 @@
     <div class="load-more">
       <Button type="outline" on:click={loadMore}>Load More</Button>
     </div>
+  {/if}
+  {#if !mapArticles.size}
+    <div class="no-data">No articles yet</div>
   {/if}
 </div>
 
@@ -471,12 +433,27 @@
 <style lang="scss">
   .content {
     max-width: 1265px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
   }
 
   .listArticlesMod {
     display: flex;
     flex-direction: column;
     gap: 24px;
+  }
+  .no-data {
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-color);
+    font-weight: 600;
+    color: var(--text-color);
+    font-size: var(--text-size-2xl);
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   .load-more {

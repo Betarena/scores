@@ -27,7 +27,7 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let data = { name: "Rodrigo Monteirasso" };
+  export let author = { name: "Rodrigo Monteirasso" };
 
   const /**
      * @description
@@ -43,7 +43,7 @@
 
   $: ({ globalState, viewportType } = $session);
   $: isPWA = globalState.has("IsPWA");
-  $: ({ name } = data);
+  $: ({ name, username } = author);
   // #endregion ➤ 📌 VARIABLES
 </script>
 
@@ -67,7 +67,7 @@
         />
       </div>
     {/if}
-    <div class="name">{name}</div>
+    <div class="name">{name || username}</div>
   </div>
   <div class="tabbar-wrapper">
     <Tabbar data={options} style="gap: {viewportType === "mobile" ? 40 : 24}px; font-size: var(--text-size-m)" />

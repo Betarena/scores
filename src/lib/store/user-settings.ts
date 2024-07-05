@@ -17,7 +17,7 @@
 
 import { writable } from 'svelte/store';
 
-import { updateButtonOrder, updateFollowing, updateSelectLang } from '$lib/firebase/common.js';
+import { updateButtonOrder, updateFollowing, updateSelectLang, updateSubscriptions } from '$lib/firebase/common.js';
 import sessionStore from '$lib/store/session.js';
 import { initSportbookData } from '$lib/utils/geo.js';
 import { initUser, logoutUser } from '$lib/utils/user.js';
@@ -62,6 +62,7 @@ type IDataProp =
   | 'user-investor-balance'
   | 'user-following'
   | "user-buttons-order"
+  | "user-subscriptions"
   ;
 
 enum DataPropEnum
@@ -79,6 +80,7 @@ enum DataPropEnum
   USER_MAIN_BALANCE = 'user-main-balance',
   USER_INVESTOR_BALANCE = 'user-investor-balance',
   USER_FOLLOWING = 'user-following',
+  USER_SUBSCRIPTION = 'user-subscriptions',
   USER_BUTTONS_ORDER = 'user-buttons-order'
 }
 // #endregion ➤ 📌 VARIABLES
@@ -465,8 +467,30 @@ function createLocalStore
               case DataPropEnum.USER_INVESTOR_BALANCE:
                 scores_user.investor_balance = dataPoint as InvestorData;
                 break;
+              case DataPropEnum.USER_SUBSCRIPTION: {
+                const { target, id, follow } = dataPoint as { target: string, id: string | number, follow: boolean };
+                if (!id) return
+                // [TODO] add following key to types in scrores-lib _FIREBASE_.d.ts
+                const subscriptions = (scores_user as any).subscriptions || {};
+                let target_subscriptions: (string | number)[] = subscriptions[target] || [];
+                if (follow && !target_subscriptions.includes(id))
+                {
+                  target_subscriptions.push(id);
+                  // [TODO] hasura push id to tag.followers
+                }
+                if (!follow)
+                {
+                  target_subscriptions = target_subscriptions.filter((tag: number) => tag !== id);
+                  // [TODO] hasura remove id from tag.followers
+                }
+                subscriptions[target] = target_subscriptions;
+                (scores_user as any).subscriptions = subscriptions;
+                updateSubscriptions(subscriptions);
+                break;
+              }
               case DataPropEnum.USER_FOLLOWING: {
                 const { target, id, follow } = dataPoint as { target: string, id: string | number, follow: boolean };
+                if (!id) return
                 // [TODO] add following key to types in scrores-lib _FIREBASE_.d.ts
                 const following = (scores_user as any).following || {};
                 let target_following = following[target] || [];
@@ -484,7 +508,7 @@ function createLocalStore
                 updateFollowing(following);
                 break;
               }
-              case DataPropEnum.USER_BUTTONS_ORDER:{
+              case DataPropEnum.USER_BUTTONS_ORDER: {
                 (scores_user as any).buttons_order = dataPoint as string[];
                 updateButtonOrder(dataPoint as string[]);
                 break;

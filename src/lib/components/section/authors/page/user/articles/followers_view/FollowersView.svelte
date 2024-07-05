@@ -29,6 +29,7 @@
 
 
 export let data;
+export let author;
 
 
 
@@ -58,7 +59,7 @@ const
 -->
 <div class="wrapper" id={CNAME}>
 
-  <FollowersHeader on:changeMode />
+  <FollowersHeader {author} on:changeMode />
   <FollowersList />
 </div>
 

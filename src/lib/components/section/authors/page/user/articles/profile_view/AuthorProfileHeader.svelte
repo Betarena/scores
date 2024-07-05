@@ -16,10 +16,10 @@
   import session from "$lib/store/session.js";
   import { createEventDispatcher, onMount } from "svelte";
   import ShareIcon from "../assets/share-icon.svelte";
-  import { getUserByName, updateFollowed } from "$lib/firebase/common.js";
   import type { BetarenaUser } from "$lib/types/types.user-settings.js";
   import userSettings from "$lib/store/user-settings.js";
-  import { fetchMod } from "@betarena/scores-lib/dist/util/common.js";
+  import { Betarena_User_Class } from "@betarena/scores-lib/dist/classes/class.betarena-user.js";
+  import { updateFollowed } from "$lib/firebase/common.js";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -33,7 +33,7 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let name;
+  export let author: BetarenaUser;
 
   const /**
      * @description
@@ -41,25 +41,23 @@
      */ // eslint-disable-next-line no-unused-vars
     CNAME: string = "author-profile⮕header";
 
-  const dispatch = createEventDispatcher()
+  const dispatch = createEventDispatcher();
 
-  let profile: BetarenaUser | undefined;
-
+  $: ({ name, uid, profile_photo, username, about, followings, followed_by = [] } =
+    author);
+  $: authors_followings = followings?.authors || [];
+  $: follower_count = followed_by.length;
   $: ({ viewportType } = $session);
 
-  $: isOwner =
-    profile?.username === $userSettings.user?.scores_user_data?.username;
-  $: getUser(name);
-  $: ({user} = $userSettings);
-  $: isFollowed = false;
+  $: isOwner = uid === $userSettings.user?.scores_user_data?.uid;
+  $: ({ user } = $userSettings);
+
+  $: isFollowed = user?.scores_user_data?.following?.authors.includes(uid) || false;
+  $: isSubscribed = user?.scores_user_data?.subscriptions?.authors.includes(uid) || false;
   $: isAuth = !!user;
 
-  async function getUser(name) {
-
-    const user = await getUserByName(name);
-    profile = user;
-    return user;
-  }
+  let users = [];
+  const BetarenaUsers = new Betarena_User_Class();
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -72,9 +70,25 @@
   // │ as soon as 'this' .svelte file is ran.                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  onMount(() => {});
+  // onMount(() => {});
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  function followersClick() {
+    dispatch("changeMode");
+  }
 
   async function follow() {
     if (!isAuth) {
@@ -82,16 +96,23 @@
       return;
     }
     userSettings.updateData([
-      ["user-following", { target: "authors", id: "", follow: !isFollowed }],
+      ["user-following", { target: "authors", id: uid, follow: !isFollowed }],
     ]);
 
-    await updateFollowed("", []);
+    await updateFollowed(user?.firebase_user_data.uid, author, !isFollowed);
+    follower_count = follower_count + (isFollowed ? -1 : 1);
   }
 
-  function followersClick() {
-    dispatch("changeMode")
+  async function subscribe() {
+    if (!isAuth) {
+      $session.currentActiveModal = "Auth_Modal";
+      return;
+    }
+    userSettings.updateData([
+      ["user-subscriptions", { target: "authors", id: uid, follow: !isSubscribed }],
+    ]);
   }
-
+  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--
@@ -112,28 +133,30 @@
 >
   <div class="user-block">
     <div class="social-info">
-      <Avatar size={64} src={profile?.profile_photo} />
+      <Avatar size={64} src={profile_photo} />
 
       <div class="follow-block" on:click={followersClick}>
-        <div class="count">1465</div>
+        <div class="count">{follower_count}</div>
         <div class="follow-block-text">Followers</div>
       </div>
       <div class="follow-block" on:click={followersClick}>
-        <div class="count">54</div>
+        <div class="count">{authors_followings.length}</div>
         <div class="follow-block-text">Following</div>
       </div>
     </div>
 
     <div class="user-info">
-      <div class="name">Rodrigo Monteirasso</div>
-      <div class="nick">@{profile?.username}</div>
+      {#if name}
+        <div class="name">{name}</div>
+      {/if}
+      <div class="nick">@{username}</div>
     </div>
 
-    <div class="user-description">
-      Its a publication that the user can create, there are no limit on the
-      number of Sportstack that the user can create and can also invite other
-      users.
-    </div>
+    {#if about}
+      <div class="user-description">
+        {about}
+      </div>
+    {/if}
     <div class="followers" on:click={followersClick}>
       <StackedAvatars src={[null, null, null]} size={24} />
       <div class="followers-names">
@@ -152,11 +175,17 @@
   <div class="actions-wrapper">
     <div class="buttons-wrapper">
       {#if isOwner}
-        <Button type="secondary" style="flex-grow: 1;">Edit my Profile</Button>
-        <!-- content here -->
+        <a href="/u/dashboard/{$userSettings.lang}">
+          <Button type="secondary" style="flex-grow: 1;">Edit my Profile</Button
+          >
+        </a>
       {:else}
-        <Button type="primary" style="flex-grow: 1;">Subscribe</Button>
-        <Button type="secondary" style="flex-grow: 1;">Follow</Button>
+        <Button type={isSubscribed ? "primary-outline" : "primary"} style="flex-grow: 1;" on:click={subscribe}
+          >{isSubscribed ?  "Unsubscribe" : "Subscribe"}</Button
+        >
+        <Button type={isFollowed ? "outline" : "secondary"}  style="flex-grow: 1;" on:click={follow}
+          >{isFollowed ? "Unfollow" :"Follow"}</Button
+        >
       {/if}
       <Button type="secondary" style="width: 40px; height: 40px; padding: 0">
         <ShareIcon />

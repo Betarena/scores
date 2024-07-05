@@ -18,7 +18,7 @@
 
 import dotenv from 'dotenv';
 
-import { main } from '$lib/sveltekit/endpoint/author.home.js';
+import { main } from '$lib/sveltekit/endpoint/author.profile.js';
 
 // #endregion ➤ 📦 Package
 
@@ -29,14 +29,14 @@ import { main } from '$lib/sveltekit/endpoint/author.home.js';
 dotenv.config();
 
 export async function GET
-(
-  request
-)
-{
-  return await main
   (
     request
-  ) as Response;
+  )
+{
+  return await main
+    (
+      request
+    );
 }
 
 // export async function POST
