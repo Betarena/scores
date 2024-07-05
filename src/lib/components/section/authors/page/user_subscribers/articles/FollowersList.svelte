@@ -8,12 +8,11 @@
 -->
 
 <script lang="ts">
-  import BackButton from "$lib/components/ui/BackButton.svelte";
-  import Tabbar from "$lib/components/ui/Tabbar.svelte";
-  import session from "$lib/store/session.js";
-  import { createEventDispatcher } from "svelte";
-
   // #region ➤ 📌 VARIABLES
+
+  import Avatar from "$lib/components/ui/Avatar.svelte";
+  import Button from "$lib/components/ui/Button.svelte";
+  import session from "$lib/store/session.js";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -27,23 +26,16 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let author = { name: "Rodrigo Monteirasso" };
+  export let data = {};
 
   const /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
      */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = "author-profile⮕followers⮕header";
-  const dispatch = createEventDispatcher();
-  const options = [
-    { id: "subscribers", label: "Subscribers" },
-    { id: "followers", label: "Followers" },
-    { id: "followings", label: "Followings" },
-  ];
+    CNAME: string = "author⮕followers⮕list";
 
-  $: ({ globalState, viewportType } = $session);
-  $: isPWA = globalState.has("IsPWA");
-  $: ({ name, username } = author);
+    $: ({viewportType} = $session)
+
   // #endregion ➤ 📌 VARIABLES
 </script>
 
@@ -58,19 +50,16 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 <div class="wrapper {viewportType}" id={CNAME}>
-  <div class="name-block">
-    {#if !isPWA}
-      <div class="back-button">
-        <BackButton
-          custom_handler={true}
-          on:click={() => dispatch("changeMode")}
-        />
+  <div class="list-wrapper">
+    {#each Array(100) as item}
+      <div class="list-item">
+        <div class="user-info">
+          <Avatar size={40} />
+          <div class="useer-name">Ivan Izobov</div>
+        </div>
+        <Button type="primary">Follow</Button>
       </div>
-    {/if}
-    <div class="name">{name || username}</div>
-  </div>
-  <div class="tabbar-wrapper">
-    <Tabbar data={options} style="gap: {viewportType === "mobile" ? 40 : 24}px; font-size: var(--text-size-m)" />
+    {/each}
   </div>
 </div>
 
@@ -87,48 +76,44 @@
 <style lang="scss">
   .wrapper {
     display: flex;
+    flex-grow: 1;
+    padding-top: 8px;
+
     flex-direction: column;
-    gap: 20px;
+    background-color: var(--bg-color);
 
-    &.mobile {
-      border-bottom: var(--header-border);
-      padding-inline: 16px;
+    .list-wrapper {
+      display: flex;
+      flex-direction: column;
 
-      .tabbar-wrapper {
-        margin: auto;
-      }
+      .list-item {
+        display: flex;
+        padding-block: 10px;
+        border-bottom: var(--header-border);
+        justify-content: space-between;
+        gap: 20px;
+        align-items: center;
 
-      .name-block .name {
-        justify-content: center;
-        padding-left: 0;
+        .user-info {
+          display: flex;
+          justify-content: start;
+          flex-grow: 1;
+          align-items: center;
+          gap: 12px;
+          color: var(--text-color);
+          font-family: Roboto;
+          font-size: 16px;
+          font-style: normal;
+          font-weight: 500;
+          line-height: 24px; /* 150% */
+        }
       }
     }
 
-    .name-block {
-      display: flex;
-      justify-content: start;
-      align-items: center;
-      position: relative;
-
-      .back-button {
-        position: absolute;
-        left: 0;
-        top: 0;
-        transform: translateY(-20%);
-      }
-
-      .name {
-        display: flex;
-        color: var(--text-color);
-        justify-self: start;
-        padding-left: 48px;
-        align-items: center;
-        flex-grow: 1;
-        font-family: Roboto;
-        font-size: var(--text-size-l);
-        font-style: normal;
-        font-weight: 500;
-        line-height: 24px; /* 150% */
+    &.mobile {
+      .list-item {
+        padding: 16px;
+        border-bottom: none;
       }
     }
   }

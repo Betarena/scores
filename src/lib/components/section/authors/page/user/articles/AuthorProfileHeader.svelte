@@ -15,11 +15,12 @@
   import StackedAvatars from "$lib/components/ui/StackedAvatars.svelte";
   import session from "$lib/store/session.js";
   import { createEventDispatcher, onMount } from "svelte";
-  import ShareIcon from "../assets/share-icon.svelte";
   import type { BetarenaUser } from "$lib/types/types.user-settings.js";
   import userSettings from "$lib/store/user-settings.js";
   import { Betarena_User_Class } from "@betarena/scores-lib/dist/classes/class.betarena-user.js";
-  import { updateFollowed } from "$lib/firebase/common.js";
+  import ShareIcon from "./assets/share-icon.svelte";
+  import { goto } from "$app/navigation";
+  import { page } from "$app/stores";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -43,8 +44,15 @@
 
   const dispatch = createEventDispatcher();
 
-  $: ({ name, uid, profile_photo, username, about, followings, followed_by = [] } =
-    author);
+  $: ({
+    name,
+    uid,
+    profile_photo,
+    username,
+    about,
+    followings,
+    followed_by = [],
+  } = author);
   $: authors_followings = followings?.authors || [];
   $: follower_count = followed_by.length;
   $: ({ viewportType } = $session);
@@ -52,8 +60,10 @@
   $: isOwner = uid === $userSettings.user?.scores_user_data?.uid;
   $: ({ user } = $userSettings);
 
-  $: isFollowed = user?.scores_user_data?.following?.authors.includes(uid) || false;
-  $: isSubscribed = user?.scores_user_data?.subscriptions?.authors.includes(uid) || false;
+  $: isFollowed =
+    user?.scores_user_data?.following?.authors.includes(uid) || false;
+  $: isSubscribed =
+    user?.scores_user_data?.subscriptions?.authors.includes(uid) || false;
   $: isAuth = !!user;
 
   let users = [];
@@ -87,7 +97,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   function followersClick() {
-    dispatch("changeMode");
+    goto($page.url.pathname + "/subscribers");
   }
 
   async function follow() {
@@ -99,7 +109,6 @@
       ["user-following", { target: "authors", id: uid, follow: !isFollowed }],
     ]);
 
-    await updateFollowed(user?.firebase_user_data.uid, author, !isFollowed);
     follower_count = follower_count + (isFollowed ? -1 : 1);
   }
 
@@ -109,7 +118,10 @@
       return;
     }
     userSettings.updateData([
-      ["user-subscriptions", { target: "authors", id: uid, follow: !isSubscribed }],
+      [
+        "user-subscriptions",
+        { target: "authors", id: uid, follow: !isSubscribed },
+      ],
     ]);
   }
   // #endregion ➤ 🛠️ METHODS
@@ -180,11 +192,16 @@
           >
         </a>
       {:else}
-        <Button type={isSubscribed ? "primary-outline" : "primary"} style="flex-grow: 1;" on:click={subscribe}
-          >{isSubscribed ?  "Unsubscribe" : "Subscribe"}</Button
+        <Button
+          type={isSubscribed ? "primary-outline" : "primary"}
+          style="flex-grow: 1;"
+          on:click={subscribe}
+          >{isSubscribed ? "Unsubscribe" : "Subscribe"}</Button
         >
-        <Button type={isFollowed ? "outline" : "secondary"}  style="flex-grow: 1;" on:click={follow}
-          >{isFollowed ? "Unfollow" :"Follow"}</Button
+        <Button
+          type={isFollowed ? "outline" : "secondary"}
+          style="flex-grow: 1;"
+          on:click={follow}>{isFollowed ? "Unfollow" : "Follow"}</Button
         >
       {/if}
       <Button type="secondary" style="width: 40px; height: 40px; padding: 0">

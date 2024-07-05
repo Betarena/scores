@@ -39,8 +39,7 @@
 
   import { browser } from "$app/environment";
   import { page } from "$app/stores";
-
-  import AuthorProfileMain from "./AuthorProfileMain.svelte";
+  import FollowersView from "./FollowersView.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -62,11 +61,25 @@
      * @description
      *  📝 `this` component **main** `id` and `data-testid` prefix.
      */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = "author-profile-section";
+    CNAME: string = "content";
 
+  let isProfileMode = true;
 
   $: ({ author, articles: widgetData } = $page.data);
 
+  // $: widgetData = $page.data as IPageAuthorTagDataFinal & {
+  //   translations: IPageAuthorTranslationDataFinal;
+  // } | undefined;
+  /**
+   * @description
+   * 📝 Interecpted data for `map` instance of `tag(s)`.
+   */
+  $: mapTags = new Map(widgetData?.mapTag ?? []);
+  /**
+   * @description
+   * 📝 Interecpted data for `map` instance of `article(s)`.
+   */
+  $: mapArticles = new Map(widgetData?.mapArticle ?? []);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -82,6 +95,29 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟩 MAIN
+   * @description
+   *  📣 main widget data loader
+   *  - ⚡️ (and) try..catch (error) handler
+   *  - ⚡️ (and) placeholder handler
+   * @returns { Promise < void > }
+   */
+  async function widgetInit(): Promise<void> {
+    // IMPORTANT
+    if (!browser) return;
+
+    // await sleep(1500);
+
+    return;
+  }
+
+  function switchMode() {
+    isProfileMode = !isProfileMode;
+  }
   // #endregion ➤ 🛠️ METHODS
 </script>
 
@@ -148,7 +184,7 @@
   │ NOTE :|: promise is fulfilled                                          │
   ╰────────────────────────────────────────────────────────────────────────╯
   -->
-  <AuthorProfileMain widgetData={widgetData[0]} {author} />
+  <FollowersView {author} data={{}} on:changeMode={switchMode} />
 {:catch error}
   <!--
     ╭────────────────────────────────────────────────────────────────────────╮

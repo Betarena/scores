@@ -46,18 +46,16 @@
   import { dlogv2 } from "$lib/utils/debug.js";
 
   import Button from "$lib/components/ui/Button.svelte";
-  import ArticleLoader from "../../../../common_ui/Article-Loader.svelte";
-
   import type {
-    IPageAuthorArticleData,
-    IPageAuthorAuthorData,
-    IPageAuthorTagData,
     IPageAuthorTagDataFinal,
+    IPageAuthorArticleData,
+    IPageAuthorTagData,
+    IPageAuthorAuthorData,
   } from "@betarena/scores-lib/types/v8/preload.authors.js";
-  import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
-  import type { IArticle, ITagsWidgetData } from "../../../helpers.js";
+  import ArticleCard from "../../../common_ui/Article-Card.svelte";
+  import ArticleLoader from "../../../common_ui/Article-Loader.svelte";
+  import type { ITagsWidgetData, IArticle } from "../../helpers.js";
   import AuthorProfileHeader from "./AuthorProfileHeader.svelte";
-  import ArticleCard from "../../../../common_ui/Article-Card.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -81,11 +79,11 @@
   $: mobile = viewportType === "mobile";
   $: tablet = viewportType === "tablet";
 
-  $: widgetData = $page.data as
-    | (IPageAuthorTagDataFinal & {
-        translations: IPageAuthorTranslationDataFinal;
-      })
-    | undefined;
+  // $: widgetData = $page.data as
+  //   | (IPageAuthorTagDataFinal & {
+  //       translations: IPageAuthorTranslationDataFinal;
+  //     })
+  //   | undefined;
   $: pageSeo = $page.data.seoTamplate;
   $: translations = widgetData?.translations;
 
@@ -151,7 +149,6 @@
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
 
   /**
    * @author
@@ -388,8 +385,7 @@
 ╰─────
 -->
 
-<AuthorProfileHeader {author} on:changeMode />
-
+<AuthorProfileHeader {author} />
 
 <!--
 ╭─────

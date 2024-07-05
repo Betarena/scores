@@ -49,7 +49,8 @@
 
   export let backgroundColor = "#4b4b4bcc",
     color = "white",
-    custom_handler = false;
+    custom_handler = false,
+    mode: "back" | "home"="home";
 
   const dispatch = createEventDispatcher();
   $: ({ globalState, serverLang = "en" } = $sessionStore);
@@ -75,7 +76,7 @@
       dispatch("click");
       return
     }
-    if (globalState.has("IsPWA")) return window.history.back();
+    if (globalState.has("IsPWA") || mode === "back") return window.history.back();
     const [preferedPage] = $userBetarenaSettings.user?.scores_user_data
       ?.buttons_order || ["scores"];
     let url: string;

@@ -8,44 +8,42 @@
 -->
 
 <script lang="ts">
+  import BackButton from "$lib/components/ui/BackButton.svelte";
+  import Tabbar from "$lib/components/ui/Tabbar.svelte";
+  import session from "$lib/store/session.js";
 
+  // #region ➤ 📌 VARIABLES
 
-// #region ➤ 📌 VARIABLES
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
-    import FollowersHeader from "./FollowersHeader.svelte";
-    import FollowersList from "./FollowersList.svelte";
+  export let author = { name: "Rodrigo Monteirasso" };
 
-// ╭────────────────────────────────────────────────────────────────────────╮
-// │ NOTE:                                                                  │
-// │ Please add inside 'this' region the 'variables' that are to be         │
-// │ and are expected to be used by 'this' .svelte file / component.        │
-// │ IMPORTANT                                                              │
-// │ Please, structure the imports as follows:                              │
-// │ 1. export const / let [..]                                             │
-// │ 2. const [..]                                                          │
-// │ 3. let [..]                                                            │
-// │ 4. $: [..]                                                             │
-// ╰────────────────────────────────────────────────────────────────────────╯
+  const /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */ // eslint-disable-next-line no-unused-vars
+    CNAME: string = "author-profile⮕followers⮕header";
+  const options = [
+    { id: "subscribers", label: "Subscribers" },
+    { id: "followers", label: "Followers" },
+    { id: "followings", label: "Followings" },
+  ];
 
-
-export let data;
-export let author;
-
-
-
-const
-  /**
-   * @description
-   *  📣 `this` component **main** `id` and `data-testid` prefix.
-   */ // eslint-disable-next-line no-unused-vars
-  CNAME: string = 'author⮕followers'
-;
-
-
-// #endregion ➤ 📌 VARIABLES
-
+  $: ({ globalState, viewportType } = $session);
+  $: isPWA = globalState.has("IsPWA");
+  $: ({ name, username } = author);
+  // #endregion ➤ 📌 VARIABLES
 </script>
-
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -57,10 +55,23 @@ const
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<div class="wrapper" id={CNAME}>
-
-  <FollowersHeader {author} on:changeMode />
-  <FollowersList />
+<div class="wrapper {viewportType}" id={CNAME}>
+  <div class="name-block">
+    {#if !isPWA}
+      <div class="back-button">
+        <BackButton mode="back" />
+      </div>
+    {/if}
+    <div class="name">{name || username}</div>
+  </div>
+  <div class="tabbar-wrapper">
+    <Tabbar
+      data={options}
+      style="gap: {viewportType === 'mobile'
+        ? 40
+        : 24}px; font-size: var(--text-size-m)"
+    />
+  </div>
 </div>
 
 <!--
@@ -73,13 +84,52 @@ const
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-
 <style lang="scss">
+  .wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 
-.wrapper {
-  display: flex;
-  flex-direction: column;
-  background-color: var(--bg-color);
-}
+    &.mobile {
+      border-bottom: var(--header-border);
+      padding-inline: 16px;
 
+      .tabbar-wrapper {
+        margin: auto;
+      }
+
+      .name-block .name {
+        justify-content: center;
+        padding-left: 0;
+      }
+    }
+
+    .name-block {
+      display: flex;
+      justify-content: start;
+      align-items: center;
+      position: relative;
+
+      .back-button {
+        position: absolute;
+        left: 0;
+        top: 0;
+        transform: translateY(-20%);
+      }
+
+      .name {
+        display: flex;
+        color: var(--text-color);
+        justify-self: start;
+        padding-left: 48px;
+        align-items: center;
+        flex-grow: 1;
+        font-family: Roboto;
+        font-size: var(--text-size-l);
+        font-style: normal;
+        font-weight: 500;
+        line-height: 24px; /* 150% */
+      }
+    }
+  }
 </style>
