@@ -51,11 +51,11 @@
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  $: if (selected && tabbarNode) {
+  $: if (!selected && tabbarNode) {
     select(data[0]);
   }
 
-  $: if(!data?.includes(selected) && tabbarNode) {
+  $: if (!data?.includes(selected) && tabbarNode) {
     select(data[0]);
   }
 
@@ -77,36 +77,42 @@
     if (selected?.id !== tab.id) {
       dispatch("select", tab);
       selected = tab;
-    };
-  setBorder(tab);
+    }
+    setBorder(tab);
   }
 
   let callCount = 0;
   function setBorder(tab: ITab) {
-    const tabNode = tabbarNode.querySelector(`[data-tab-id="${tab.id}"]`) as any;
+    const tabNode = tabbarNode.querySelector(
+      `[data-tab-id="${tab.id}"]`
+    ) as any;
     if (tabNode) {
       activeNode.style.width = `${tabNode.offsetWidth}px`;
       activeNode.style.left = `${tabNode.offsetLeft}px`;
       callCount = 0;
       return;
     }
-    if(callCount > 2) return;
+    if (callCount > 2) return;
     tick().then(() => setBorder(tab));
     callCount++;
-
   }
-
 
   // #endregion ➤ 🛠️ METHODS
 </script>
 
-<div class="tabbar" bind:this = {tabbarNode}>
+<div class="tabbar" bind:this={tabbarNode} {...$$restProps}>
   {#each data as item, i (item.id)}
-    <div class="tab-item" style="margin-bottom: {height}px;" data-tab-id={item.id} class:selected={selected?.id === item.id} on:click={(e) => select(item)}>
+    <div
+      class="tab-item"
+      style="margin-bottom: {height}px;"
+      data-tab-id={item.id}
+      class:selected={selected?.id === item.id}
+      on:click={(e) => select(item)}
+    >
       <slot tab={item}>{item.name || item.label}</slot>
     </div>
   {/each}
-  <div class="active" bind:this = {activeNode} />
+  <div class="active" bind:this={activeNode} />
 </div>
 
 <!--
@@ -137,7 +143,7 @@
     .selected {
       color: var(--text-color);
       position: relative;
-      transition: all 0.3s ease-in-out;
+      transition: all 0.3s ease-out;
       bottom: 1px solid var(--primary);
     }
     .active {
@@ -145,7 +151,7 @@
       bottom: 0;
       left: 0;
       height: 2px;
-      transition: all 0.3s ease-in-out;
+      transition: all .5s cubic-bezier(0, 0.14, 0.29, 1.07);
       background: var(--primary);
     }
   }

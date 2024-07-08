@@ -81,7 +81,7 @@ export let
   width: max-content;
   border-radius: 100px;
   color: var(--text-color);
-  background-color: var(--tag-bg-color);
+  background-color: var(--button-secondary-bg);
   font-size: var(--text-button-size);
   transition: all;
   transition-duration: 0.4s;

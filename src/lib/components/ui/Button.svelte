@@ -32,7 +32,7 @@
      * @description
      *  button styles: primary | outline
      */ // eslint-disable-next-line no-unused-vars
-    type: "primary" | "outline" = "primary";
+    type: "primary" | "outline" | "secondary" | "primary-outline" | "subtle" = "primary";
 
   const dispatch = createEventDispatcher();
 
@@ -91,6 +91,26 @@
       background: var(--primary-fade, #f5620f);
     }
   }
+  .subtle {
+    background: unset;
+    border: 1px solid var(--button-secondary-bg) !important;
+    color: var(--text-color);
+
+    &:hover {
+      color: var(--text-color-second-dark);
+    }
+  }
+
+  .primary-outline {
+    border: 1px solid var(--primary-fade, #f5620f) !important;
+    color: var(--primary);
+    background-color: unset;
+
+    &:hover {
+      border: 1px solid var(--text-color) !important;
+      color: var(--text-color);
+    }
+  }
 
   .outline {
     color: var(--text-color);
@@ -102,6 +122,15 @@
     &:hover {
       border: 1px solid var(--primary) !important;
       color: var(--primary);
+    }
+  }
+
+  .secondary {
+    background-color: var(--button-secondary-bg);
+    color: var(--text-color);
+
+    &:hover {
+      background-color: var(--bg-color-second);
     }
   }
 </style>

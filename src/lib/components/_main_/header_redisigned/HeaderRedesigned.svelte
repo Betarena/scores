@@ -15,6 +15,8 @@
   import sessionStore from "$lib/store/session.js";
   import userBetarenaSettings from "$lib/store/user-settings.js";
   import {
+    routeIdAuthorProfile,
+    routeIdAuthorSubscribers,
     routeIdPageAuthors,
     routeIdPageCompetition,
     routeIdPageFixture,
@@ -59,7 +61,8 @@
     routeIdPageTags,
     routeIdPageProfile,
     routeIdPageAuthors,
-    routeIdPageAuthors,
+    routeIdAuthorProfile,
+    routeIdAuthorSubscribers
   ];
   $: isInnerPage = simpleMobileHeaderRoutes.includes($page.route.id || "");
   $: ({ currentPageRouteId, viewportType, globalState } =

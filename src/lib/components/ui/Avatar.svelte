@@ -49,7 +49,7 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<div class="avatar-wrapper" on:click={() => dispatch("click")}>
+<div class="avatar-wrapper" on:click={() => dispatch("click")} style="height: {size}px; width: {size}px">
   {#if src}
     <div
       class="avatar-circle"
@@ -74,6 +74,10 @@
 -->
 
 <style lang="scss">
+  .avatar-wrapper {
+    border-radius: 50%;
+    overflow: hidden;
+  }
   .avatar-circle {
     width: 38px;
     height: 38px;

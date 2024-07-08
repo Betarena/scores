@@ -400,7 +400,8 @@ export async function promiseValidUrlCheck
         competitionMainUrl?: string,
         competitionUrl?: string,
         authorArticleUrl?: string,
-        authorTagsUrl?: string
+      authorTagsUrl?: string,
+      authorUrl?: string,
       }
 ): Promise<boolean>
 {
@@ -448,6 +449,11 @@ export async function promiseValidUrlCheck
     // │ CHECK :|: for 'author (tags)'.
     // ╰─────
     || (!opts.langUrl && !opts.sportUrl && !opts.countryUrl && !opts.leagueUrl && !opts.fixtureUrl && !opts.playerUrl && !opts.competitionMainUrl && !opts.competitionUrl && !opts.authorArticleUrl && opts.authorTagsUrl)
+    // ╭─────
+    // │ CHECK :|: for 'author (profile)'.
+    // ╰─────
+    || opts.authorUrl
+
     ;
 
   // ╭─────
@@ -466,6 +472,7 @@ export async function promiseValidUrlCheck
   if (opts.competitionUrl) queryStr += `&competitionUrl=${opts.competitionUrl}`;
   if (opts.authorArticleUrl) queryStr += `?authorArticleUrl=/${opts.authorArticleUrl}`;
   if (opts.authorTagsUrl) queryStr += `?authorTagUrl=/${opts.authorTagsUrl}`;
+  if (opts.authorUrl) queryStr += `?authorUrl=/${opts.authorUrl}`;
 
   // [🐞]
   dlogv2

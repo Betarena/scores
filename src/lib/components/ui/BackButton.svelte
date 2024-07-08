@@ -29,6 +29,7 @@
   import { generateUrlCompetitions } from "$lib/utils/string.js";
   import userBetarenaSettings from "$lib/store/user-settings.js";
   import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
+  import { createEventDispatcher } from "svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -47,7 +48,11 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let backgroundColor = "#4b4b4bcc",
-    color = "white";
+    color = "white",
+    custom_handler = false,
+    mode: "back" | "home"="home";
+
+  const dispatch = createEventDispatcher();
   $: ({ globalState, serverLang = "en" } = $sessionStore);
   $: homepageURL = serverLang != "en" ? `/${serverLang}` : "/";
   $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
@@ -67,7 +72,11 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   function backBtnClick(): void {
-    if (globalState.has("IsPWA")) return window.history.back();
+    if (custom_handler) {
+      dispatch("click");
+      return
+    }
+    if (globalState.has("IsPWA") || mode === "back") return window.history.back();
     const [preferedPage] = $userBetarenaSettings.user?.scores_user_data
       ?.buttons_order || ["scores"];
     let url: string;
@@ -89,7 +98,7 @@
     goto(url);
     return;
   }
-// #endregion ➤ 🛠️ METHODS
+  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--

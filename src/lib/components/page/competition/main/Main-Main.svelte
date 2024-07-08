@@ -214,7 +214,6 @@
       newUids?.length == 0
     ;
     if (if_M_0) return;
-
     const participantPublicData = await new Betarena_User_Class().obtainPublicInformationTargetUsers
     (
       newUids
