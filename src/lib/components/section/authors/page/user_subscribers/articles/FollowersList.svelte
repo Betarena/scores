@@ -51,7 +51,7 @@
 -->
 <div class="wrapper {viewportType}" id={CNAME}>
   <div class="list-wrapper">
-    {#each Array(100) as item}
+    {#each Array(10) as item}
       <div class="list-item">
         <div class="user-info">
           <Avatar size={40} />
