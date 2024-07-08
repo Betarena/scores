@@ -12,8 +12,15 @@ import { db_firestore, db_real } from './init';
 import type { FIRE_LNNS, FIRE_LNPI, FIREBASE_livescores_now, FIREBASE_odds } from '@betarena/scores-lib/types/firebase.js';
 import type { Page } from '@sveltejs/kit';
 import type { BetarenaUser } from '$lib/types/types.user-settings.js';
+import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.betarena-user.js';
 
 // #endregion ➤ 📦 Package Imports
+
+// #region ➤ 📌 VARIABLES
+
+const BetarenaUser = new Betarena_User_Class();
+
+// #endregion ➤ 📌 VARIABLES
 
 // #region ➤ 🛠️ METHODS
 
@@ -999,22 +1006,66 @@ function generateLiveScoreboardList
 }
 
 // #endregion 🔥 LIVESCORES_NOW_SCOREBOARD
-
 /**
  * @author
  *  @izobov
  * @summary
  *  🟦 HELPER
  * @description
- *  📣 Update `user` platform folowings options.
- * @param { {[key:string]: (string | number)[]} } following
- *  💠 **[required]** Following object
+ *  📣 Update field by key.
+ * @param { "subscriptions" | "following" } field
+ *  💠 **[required]** field in user firebase to update
+ * @param { string } key
+ *  💠 **[required]** id for target
+ * @param {[key: string]: any} obj
+ *  💠 **[required]** source obj
+ * @param {boolean} add
+ *  💠 **[required]** action type
+ * @param {boolean} id
+ *  💠 **[required]** id to add or remove
+ * @returns { Promise < void > }
+ */
+
+export function updateDataByKey({ field = "", key = "", obj, add = true, id })
+{
+  const current_field = obj[field] || {};
+  let current_target: string[] = current_field[key] || [];
+  if (add && !current_target.includes(id))
+  {
+    current_target.push(id);
+    // [TODO] hasura push id to tag.followers
+  }
+  if (!add)
+  {
+    current_target = current_target.filter(i => i !== id);
+    // [TODO] hasura remove id from tag.followers
+  }
+  return current_target
+}
+/**
+ * @author
+ *  @izobov
+ * @summary
+ *  🟦 HELPER
+ * @description
+ *  📣 Update `user`susbscriptions and followings.
+ * @param { string } target_id
+ *  💠 **[required]** id for target
+ * @param { "subscriptions" | "following" } field
+ *  💠 **[required]** field in user firebase to update
+ * @param {"tags" | "authors"} obj
+ *  💠 **[required]** target for updates
+ * @param {boolean} follow
+ *  💠 **[required]** action type
  * @returns { Promise < void > }
  */
 export async function updateFollowing
   (
-    following: { [key: string]: (string | number)[] }
-): Promise<void>
+    target_id: string,
+    field: "subscriptions" | "following",
+    target: "tags" | "authors",
+    follow: boolean,
+  ): Promise<void>
 {
   const
     /**
@@ -1022,6 +1073,7 @@ export async function updateFollowing
      * 📝 Data point
      */
     uid = userBetarenaSettings.extract('uid') as string | undefined | null,
+    user = userBetarenaSettings.extract('user'),
     /**
      * @description
      * 📝 Data for `page`
@@ -1034,8 +1086,10 @@ export async function updateFollowing
     if_M_0
       = !checkNull(page.error)
       || checkNull(page.route.id)
-      || !following
+      || !target_id
+      || !target
       || !uid
+      || !user
     ;
 
   if (if_M_0) return;
@@ -1047,29 +1101,41 @@ export async function updateFollowing
       [
         `🔹 [var] ➤ opts.isPageError :|: ${page.error}`,
         `🔹 [var] ➤ opts.routeId :|: ${page.route.id}`,
-        `🔹 [var] ➤ following :|: ${following}`,
+        `🔹 [var] ➤ target_id :|: ${target_id}`,
+        `🔹 [var] ➤ target :|: ${target}`,
+        `🔹 [var] ➤ follow :|: ${follow}`,
         `🔹 [var] ➤ uid :|: ${uid}`,
       ],
       true
     );
 
-  const
-    userRef = doc
-      (
-        db_firestore,
-        'betarena_users',
-        uid,
-      )
+  const current_field = user[field] || {};
+  const current_target: string[] = updateDataByKey({ obj: user, field, key: target, add: follow, id: target_id });
+  if (target === "authors")
+  {
+    const d = await BetarenaUser.updateUsersFollowers({
+      uidToUpdate: target_id,
+      uidNewFollower: uid,
+      type: field === "subscriptions" ? "subscriber" : "follower",
+      action: follow ? "add" : "remove"
+    })
+  }
+  current_field[target] = current_target;
+  const data = {};
+  data[field] = current_field;
+  const userRef = doc
+    (
+      db_firestore,
+      'betarena_users',
+      uid,
+    )
     ;
 
   await updateDoc
     (
       userRef,
-      {
-        following
-      }
-    );
-
+      data
+  );
   return;
 }
 

@@ -50,21 +50,20 @@
     profile_photo,
     username,
     about,
-    followings,
+    following,
     followed_by = [],
   } = author);
-  $: authors_followings = followings?.authors || [];
+  $: authors_followings = following?.authors || [];
   $: follower_count = followed_by.length;
   $: ({ viewportType } = $session);
 
   $: isOwner = uid === $userSettings.user?.firebase_user_data?.uid;
   $: ({ user } = $userSettings);
-  // $: console.log( "USER: ",$userSettings.user, author)
 
   $: isFollowed =
-    user?.scores_user_data?.following?.authors.includes(uid) || false;
+    user?.scores_user_data?.following?.authors?.includes(uid) || false;
   $: isSubscribed =
-    user?.scores_user_data?.subscriptions?.authors.includes(uid) || false;
+    user?.scores_user_data?.subscriptions?.authors?.includes(uid) || false;
   $: isAuth = !!user;
 
   let users = [];
@@ -101,29 +100,26 @@
     goto($page.url.pathname + "/subscribers");
   }
 
-  async function follow() {
-    if (!isAuth) {
-      $session.currentActiveModal = "Auth_Modal";
-      return;
-    }
-    userSettings.updateData([
-      ["user-following", { target: "authors", id: uid, follow: !isFollowed }],
-    ]);
+  function follow() {
+    action("user-following", !isFollowed);
 
-    follower_count = follower_count + (isFollowed ? -1 : 1);
   }
 
-  async function subscribe() {
+  function subscribe() {
+    action("user-subscriptions", !isSubscribed)
+  }
+
+  async function action(type: "user-subscriptions" |  "user-following" , follow) {
     if (!isAuth) {
       $session.currentActiveModal = "Auth_Modal";
       return;
     }
     userSettings.updateData([
       [
-        "user-subscriptions",
-        { target: "authors", id: uid, follow: !isSubscribed },
-      ],
-    ]);
+        type,
+        {target: "authors", id: uid, follow}
+      ]
+    ])
   }
   // #endregion ➤ 🛠️ METHODS
 </script>
