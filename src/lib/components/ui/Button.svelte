@@ -32,7 +32,7 @@
      * @description
      *  button styles: primary | outline
      */ // eslint-disable-next-line no-unused-vars
-    type: "primary" | "outline" | "secondary" | "primary-outline" = "primary";
+    type: "primary" | "outline" | "secondary" | "primary-outline" | "subtle" = "primary";
 
   const dispatch = createEventDispatcher();
 
@@ -90,6 +90,13 @@
     &:hover {
       background: var(--primary-fade, #f5620f);
     }
+  }
+  .subtle {
+    background: unset;
+    border: 1px solid var(--button-secondary-bg) !important;
+    color: var(--text-color);
+
+
   }
 
   .primary-outline {

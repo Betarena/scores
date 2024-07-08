@@ -193,13 +193,13 @@
         </a>
       {:else}
         <Button
-          type={isSubscribed ? "primary-outline" : "primary"}
+          type={isSubscribed ? "subtle" : "primary"}
           style="flex-grow: 1;"
           on:click={subscribe}
           >{isSubscribed ? "Unsubscribe" : "Subscribe"}</Button
         >
         <Button
-          type={isFollowed ? "outline" : "secondary"}
+          type={isFollowed ? "subtle" : "secondary"}
           style="flex-grow: 1;"
           on:click={follow}>{isFollowed ? "Unfollow" : "Follow"}</Button
         >
