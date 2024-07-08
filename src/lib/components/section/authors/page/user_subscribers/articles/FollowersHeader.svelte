@@ -8,6 +8,8 @@
 -->
 
 <script lang="ts">
+  import { goto } from "$app/navigation";
+  import { page } from "$app/stores";
   import BackButton from "$lib/components/ui/BackButton.svelte";
   import Tabbar from "$lib/components/ui/Tabbar.svelte";
   import session from "$lib/store/session.js";
@@ -43,6 +45,30 @@
   $: isPWA = globalState.has("IsPWA");
   $: ({ name, username } = author);
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  function select(e) {
+    const option = e.detail;
+    // const query = new URLSearchParams($page.url.searchParams.toString());
+
+    // query.set("type", option.id);
+
+    // goto(`?${query.toString()}`);
+  }
+
+
+  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--
@@ -66,6 +92,7 @@
   </div>
   <div class="tabbar-wrapper">
     <Tabbar
+      on:select={select}
       data={options}
       style="gap: {viewportType === 'mobile'
         ? 40

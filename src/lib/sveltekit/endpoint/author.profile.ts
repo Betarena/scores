@@ -134,7 +134,6 @@ async function fallbackDataGenerate0
     language: string | undefined = undefined
   ): Promise<IPageAuthorProfileData | undefined>
 {
-
   try
   {
     const dataRes0: IPageAuthorProfileData = await entryTargetDataAuthorProfile({ uid, page: Number(page) });

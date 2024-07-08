@@ -84,6 +84,7 @@
   //       translations: IPageAuthorTranslationDataFinal;
   //     })
   //   | undefined;
+  let currentPage = 1
   $: pageSeo = $page.data.seoTamplate;
   // $: translations = widgetData?.translations;
 
@@ -106,26 +107,10 @@
    * @description
    * 📝 Currently selected tag data.
    */
-  $: selectedTag = mapTags.get(widgetData?.tagId ?? 0);
-  /**
-   * @description
-   * 📝 Categories avaialble.
-   */
-  $: categories = selectedTag != undefined ? [selectedTag] : [];
 
   $: if (browser) updateData(widgetData ?? ({} as ITagsWidgetData), true);
 
-  let /**
-     * @description
-     * 📝 `Map` where, `key=tagId` and `value=tagData`.
-     */
-    mapTagSelectData = new Map<
-      number,
-      ITagsWidgetData & {
-        mapArticlesMod: Map<number, IArticle>;
-        currentPage: number;
-      }
-    >(),
+  let
     /**
      * @description
      * 📝 State UI for `Loading Articles`.
@@ -172,7 +157,6 @@
       mapArticles = new Map();
       mapAuthors = new Map();
       mapTags = new Map();
-      mapTagSelectData = new Map();
       mapArticlesMod = new Map();
     }
 
@@ -191,13 +175,6 @@
       );
     mapArticlesMod = new Map([...mapArticlesMod, ...mapNewArticlesMod]);
 
-    if (!mapTagSelectData.has(dataNew.tagId))
-      mapTagSelectData.set(dataNew.tagId, {
-        ...dataNew,
-        mapArticlesMod,
-        currentPage: 0,
-        totalArticlesCount: dataNew.totalArticlesCount,
-      });
     isLoadingArticles = false;
 
     // [🐞]
@@ -289,21 +266,17 @@
   async function loadMore(): Promise<void> {
     // [🐞]
     dlogv2("loadMore(..)", [], true);
-
-    const /**
-       * @description
-       * 📝 Selected 'tag' tab data.
-       */
-      dataTag = mapTagSelectData.get(selectedTag?.id ?? 0),
+    isLoadingArticles = true;
+    const
       /**
        * @description
        * 📝 Article length.
        */
-      length = dataTag?.mapArticlesMod.size || 0;
-    if (!selectedTag || !dataTag || length === dataTag.totalArticlesCount)
+      length = mapArticlesMod.size || 0;
+    if (length >= widgetData.totalArticlesCount)
       return;
 
-    loadTagArticles(dataTag.currentPage + 1);
+    loadTagArticles(currentPage + 1);
 
     return;
   }
@@ -329,37 +302,21 @@
 
     const /**
        * @description
-       * 📝 Following tags.
-       */
-      followingTags =
-        $userBetarenaSettings.user?.scores_user_data?.following?.tags;
-    let /**
-       * @description
        * 📝 URL to be requested.
        */
-      url = `/api/data/author/content?&lang=${$sessionStore.serverLang}&page=${page}`;
-    if (followingTags?.length)
-      url += `&followingTags=${followingTags.join(",")}`;
-    isLoadingArticles = true;
-
+      url = `/api/data/author/profile?uid=${author.uid}&page=${page}`;
     const /**
        * @description
        * 📝 Data Response (0).
        */
       dataRes0 = (await get(url)) as ITagsWidgetData;
     updateData(dataRes0);
+    currentPage = page;
 
     // [🐞]
     dlogv2("loadTagArticles(..) // END", [`🔹 [var] ➤ page |:| ${page}`], true);
 
     if (!dataRes0) return;
-
-    mapTagSelectData.set(selectedTag.id!, {
-      ...dataRes0,
-      mapArticlesMod,
-      currentPage: page,
-    });
-
     return;
   }
 
@@ -395,7 +352,7 @@
 
 <div class="content {viewportType}">
   <div class="listArticlesMod">
-    {#each [...mapArticlesMod.entries()] as [,article]}
+    {#each [...mapArticlesMod.entries()] as [key, article] (key)}
       <ArticleCard {mobile} {article} {tablet} {translations} />
     {/each}
 

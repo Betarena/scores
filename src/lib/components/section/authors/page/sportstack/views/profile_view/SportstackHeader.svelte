@@ -16,7 +16,6 @@
   import session from "$lib/store/session.js";
   import { createEventDispatcher, onMount } from "svelte";
   import ShareIcon from "../assets/share-icon.svelte";
-  import { getUserByName, updateFollowed } from "$lib/firebase/common.js";
   import type { BetarenaUser } from "$lib/types/types.user-settings.js";
   import userSettings from "$lib/store/user-settings.js";
   import SportsTackImg from "$lib/components/section/authors/common_ui/SportsTackImg.svelte";
@@ -44,11 +43,8 @@
 
   const dispatch = createEventDispatcher();
 
-  let profile: BetarenaUser | undefined;
-
   $: ({ viewportType } = $session);
 
-  $: getUser(name);
   $: isFollowed = false;
   $: isAuth = !!sportstack;
   const options = [
@@ -65,12 +61,6 @@
     username: "Betarena Tennis IT",
     creation_date: "2023-12-18T14:43:54.035431+00:00",
   };
-
-  async function getUser(name) {
-    const sportstack = await getUserByName(name);
-    profile = sportstack;
-    return sportstack;
-  }
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -96,7 +86,7 @@
       ["user-following", { target: "authors", id: "", follow: !isFollowed }],
     ]);
 
-    await updateFollowed("", []);
+    // await updateFollowed("", []);
   }
 
   function followersClick() {
@@ -137,6 +127,7 @@
     </div>
   </div>
   <Tabbar
+    on:select={followersClick}
     height={12}
     data={options}
     style="gap: 24px; font-size: var(--text-size-m)"

@@ -39,7 +39,7 @@ export async function load
   // [🐞]
   dlogv2
     (
-      '🚏 checkpoint ➤ src/routes/(authors)/a/user/[username]/+page.server.ts',
+      '🚏 checkpoint ➤ src/routes/(authors)/a/sportstack/[username]/+page.server.ts',
       [
         `🔹 [var] ➤ langParam :|: ${langParam}`,
       ],
