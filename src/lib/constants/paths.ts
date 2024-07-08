@@ -73,6 +73,11 @@ export const
    *  📣 Target `path` for **Author profile**.
    */
   routeIdAuthorProfile = '/(authors)/a/user/[username]',
+  /**
+   * @description
+   *  📣 Target `path` for **Author profile**.
+   */
+  routeIdAuthorSubscribers = '/(authors)/a/user/[username]/subscribers',
 
   /**
    * @description

@@ -17,6 +17,7 @@
   import { viewportChangeV2 } from "$lib/utils/device";
   import {
     routeIdAuthorProfile,
+    routeIdAuthorSubscribers,
     routeIdPageAuthors,
     routeIdPageCompetition,
     routeIdPageFixture,
@@ -76,7 +77,8 @@
     routeIdPageTags,
     routeIdPageProfile,
     routeIdPageAuthors,
-    routeIdAuthorProfile
+    routeIdAuthorProfile,
+    routeIdAuthorSubscribers
   ];
   $: isSimpleHeader = simpleMobileHeaderRoutes.includes($page.route.id || "");
   $: ({ windowWidth, currentPageRouteId, viewportType, globalState } =

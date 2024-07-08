@@ -126,6 +126,31 @@ async function fetchData
   const bu = new Betarena_User_Class();
   const users = await bu.obtainPublicInformationTargetUsers([_name], true);
   const [user] = users;
+  // const
+  //   /**
+  //    * @description
+  //    *  📣 Target `urls` to be `fetched`.
+  //    */
+  //   urls0
+  //     = [
+  //       // `/api/data/author/profile?uid=${user.uid}`,
+
+
+  //     ]
+
+  //     /**
+  //      * @description
+  //      *  📣 Target `data` returned.
+  //     */
+  //    return {
+  //      author: user,
+  //      articles: promiseUrlsPreload
+  //      (
+  //        urls0
+  //        , fetch
+  //       )
+  //    }
+
   const
     /**
      * @description
@@ -133,19 +158,13 @@ async function fetchData
      */
     urls0
       = [
-        `/api/data/author/profile?uid=${user.uid}`,
-      ]
-
-  /**
-   * @description
-   *  📣 Target `data` returned.
-   */
+        `/api/data/author/content?lang=${_lang}`,
+        `/api/data/author/tags?translation=${_lang}`,
+        `/api/data/author/article?lang=${_lang}`,
+      ];
+  const d = await promiseUrlsPreload(urls0, fetch)
   return {
     author: user,
-    articles: promiseUrlsPreload
-      (
-        urls0
-        , fetch
-      )
+    articles: d
   }
 }

@@ -72,7 +72,7 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  export let author, widgetData;
+  export let author, widgetData, translations;
 
   $: ({ globalState, viewportType } = $sessionStore);
   $: isPWA = globalState.has("IsPWA");
@@ -85,7 +85,7 @@
   //     })
   //   | undefined;
   $: pageSeo = $page.data.seoTamplate;
-  $: translations = widgetData?.translations;
+  // $: translations = widgetData?.translations;
 
   /**
    * @description
@@ -395,7 +395,7 @@
 
 <div class="content {viewportType}">
   <div class="listArticlesMod">
-    {#each [...mapArticlesMod.entries()] as [article]}
+    {#each [...mapArticlesMod.entries()] as [,article]}
       <ArticleCard {mobile} {article} {tablet} {translations} />
     {/each}
 
@@ -445,7 +445,7 @@
     height: 100%;
     background-color: var(--bg-color);
     font-weight: 600;
-    color: var(--text-color);
+    color: var(--text-color-second);
     font-size: var(--text-size-2xl);
     display: flex;
     justify-content: center;

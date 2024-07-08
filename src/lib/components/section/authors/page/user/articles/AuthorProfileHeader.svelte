@@ -57,8 +57,9 @@
   $: follower_count = followed_by.length;
   $: ({ viewportType } = $session);
 
-  $: isOwner = uid === $userSettings.user?.scores_user_data?.uid;
+  $: isOwner = uid === $userSettings.user?.firebase_user_data?.uid;
   $: ({ user } = $userSettings);
+  // $: console.log( "USER: ",$userSettings.user, author)
 
   $: isFollowed =
     user?.scores_user_data?.following?.authors.includes(uid) || false;
@@ -187,7 +188,7 @@
   <div class="actions-wrapper">
     <div class="buttons-wrapper">
       {#if isOwner}
-        <a href="/u/dashboard/{$userSettings.lang}">
+        <a href="/u/dashboard/{$userSettings.lang}" class="edit-button">
           <Button type="secondary" style="flex-grow: 1;">Edit my Profile</Button
           >
         </a>
@@ -275,6 +276,8 @@
           display: flex;
           flex-direction: column;
           margin-top: 5px;
+          cursor: pointer;
+
           .count {
             color: var(--text-color);
             font-weight: 600;
@@ -324,6 +327,7 @@
         margin-top: 4px;
         align-items: center;
         color: var(--text-color-second);
+        cursor: pointer;
 
         .followers-names {
           max-width: 206px;
@@ -348,6 +352,10 @@
         display: flex;
         gap: 8px;
         width: 100%;
+
+        .edit-button {
+          flex-grow: 1;
+        }
       }
 
       .sportstack {
@@ -359,6 +367,7 @@
         gap: 12px;
         max-width: 345px;
         width: 100%;
+        cursor: pointer;
 
         &-info {
           gap: 12px;

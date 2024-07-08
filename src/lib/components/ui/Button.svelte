@@ -96,7 +96,9 @@
     border: 1px solid var(--button-secondary-bg) !important;
     color: var(--text-color);
 
-
+    &:hover {
+      color: var(--text-color-second-dark);
+    }
   }
 
   .primary-outline {
