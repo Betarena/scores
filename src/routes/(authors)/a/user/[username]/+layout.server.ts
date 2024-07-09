@@ -44,11 +44,11 @@ export async function load
         `🔹 [var] ➤ langParam :|: ${langParam}`,
       ],
       true
-    );
+  );
 
   return await main
     (
-      event,
+      { params: event.params, fetch: event.fetch } as ServerLoadEvent,
       {
         langParam
       }
