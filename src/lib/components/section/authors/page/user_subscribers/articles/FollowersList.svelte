@@ -13,6 +13,8 @@
   import Avatar from "$lib/components/ui/Avatar.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import session from "$lib/store/session.js";
+  import type { BetarenaUser } from "$lib/types/types.user-settings.js";
+  import FollowersUserItem from "./FollowersUserItem.svelte";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -26,7 +28,7 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let data = {};
+  export let users: BetarenaUser[] = [];
 
   const /**
      * @description
@@ -34,7 +36,7 @@
      */ // eslint-disable-next-line no-unused-vars
     CNAME: string = "author⮕followers⮕list";
 
-    $: ({viewportType} = $session)
+  $: ({ viewportType } = $session);
 
   // #endregion ➤ 📌 VARIABLES
 </script>
@@ -51,14 +53,8 @@
 -->
 <div class="wrapper {viewportType}" id={CNAME}>
   <div class="list-wrapper">
-    {#each Array(10) as item}
-      <div class="list-item">
-        <div class="user-info">
-          <Avatar size={40} />
-          <div class="useer-name">Ivan Izobov</div>
-        </div>
-        <Button type="primary">Follow</Button>
-      </div>
+    {#each users as user}
+      <FollowersUserItem {user} />
     {/each}
   </div>
 </div>
@@ -76,7 +72,6 @@
 <style lang="scss">
   .wrapper {
     display: flex;
-    flex-grow: 1;
     padding-top: 8px;
 
     flex-direction: column;
@@ -85,36 +80,6 @@
     .list-wrapper {
       display: flex;
       flex-direction: column;
-
-      .list-item {
-        display: flex;
-        padding-block: 10px;
-        border-bottom: var(--header-border);
-        justify-content: space-between;
-        gap: 20px;
-        align-items: center;
-
-        .user-info {
-          display: flex;
-          justify-content: start;
-          flex-grow: 1;
-          align-items: center;
-          gap: 12px;
-          color: var(--text-color);
-          font-family: Roboto;
-          font-size: 16px;
-          font-style: normal;
-          font-weight: 500;
-          line-height: 24px; /* 150% */
-        }
-      }
-    }
-
-    &.mobile {
-      .list-item {
-        padding: 16px;
-        border-bottom: none;
-      }
     }
   }
 </style>

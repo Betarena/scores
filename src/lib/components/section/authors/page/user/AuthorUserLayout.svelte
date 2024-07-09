@@ -114,8 +114,10 @@
   /> -->
 {/if}
 
-<section id={CNAME} class={viewportType} class:pwa={isPWA}>
-  <AuthorUserWidget />
+<section id={CNAME} class:pwa={isPWA}>
+  <div class="main-content {viewportType}" class:pwa={isPWA}>
+    <AuthorUserWidget />
+  </div>
 </section>
 
 <!--
@@ -138,7 +140,14 @@
     padding-top: 3px;
   }
   section {
+    background-color: var(--bg-color);
+    width: 100%;
+    height: 100%;
+  }
+  .main-content {
     max-width: 824px;
+    height: 100%;
+    margin: auto;
     --text-size-2xl: 38px;
     --text-size-xl: 24px;
     --text-size-l: 20px;

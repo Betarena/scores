@@ -1,19 +1,5 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ 📌 High Order Overview                                                           │
-┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ Internal Code Format // V.8.0                                                  │
-│ ➤ Status               // 🔒 LOCKED                                              │
-│ ➤ Author(s)            // @migbash                                               │
-┣──────────────────────────────────────────────────────────────────────────────────┫
-│ 📝 Description                                                                   │
-┣──────────────────────────────────────────────────────────────────────────────────┫
-│ Betarena (Component) || Authors Content Widget (entry)                           │
-╰──────────────────────────────────────────────────────────────────────────────────╯
--->
-
-<!--
-╭──────────────────────────────────────────────────────────────────────────────────╮
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
@@ -36,11 +22,11 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
-  import { browser } from "$app/environment";
-  import { page } from "$app/stores";
-  import FollowersView from "./FollowersView.svelte";
-
+  import Avatar from "$lib/components/ui/Avatar.svelte";
+  import Button from "$lib/components/ui/Button.svelte";
+  import session from "$lib/store/session.js";
+  import userSettings from "$lib/store/user-settings.js";
+  import type { BetarenaUser } from "$lib/types/types.user-settings.js";
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -57,29 +43,15 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  const /**
-     * @description
-     *  📝 `this` component **main** `id` and `data-testid` prefix.
-     */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = "content";
+  export let user: BetarenaUser;
 
-  let isProfileMode = true;
-
-  $: ({ author, articles: widgetData } = $page.data);
-
-  // $: widgetData = $page.data as IPageAuthorTagDataFinal & {
-  //   translations: IPageAuthorTranslationDataFinal;
-  // } | undefined;
-  /**
-   * @description
-   * 📝 Interecpted data for `map` instance of `tag(s)`.
-   */
-  $: mapTags = new Map(widgetData?.mapTag ?? []);
-  /**
-   * @description
-   * 📝 Interecpted data for `map` instance of `article(s)`.
-   */
-  $: mapArticles = new Map(widgetData?.mapArticle ?? []);
+  $: ({ viewportType } = $session);
+  $: ({ user: ctx } = $userSettings);
+  $: ({ uid, username, profile_photo } = user);
+  $: isAuth = !!ctx;
+  $: isFollow = !!(ctx?.scores_user_data.following?.authors || []).includes(
+    uid
+  );
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -95,24 +67,17 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  /**
-   * @author
-   *  @migbash
-   * @summary
-   *  🟩 MAIN
-   * @description
-   *  📣 main widget data loader
-   *  - ⚡️ (and) try..catch (error) handler
-   *  - ⚡️ (and) placeholder handler
-   * @returns { Promise < void > }
-   */
-  async function widgetInit(): Promise<void> {
-    // IMPORTANT
-    if (!browser) return;
-
-    // await sleep(1500);
-
-    return;
+  function handleClick() {
+    if (!isAuth) {
+      $session.currentActiveModal = "Auth_Modal";
+      return;
+    }
+    userSettings.updateData([
+      [
+        "user-following",
+        { target: "authors", id: uid, follow: !isFollow },
+      ],
+    ]);
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -129,63 +94,55 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<!-- <SeoBox>
-  <h1>{selectedTag?.name}</h1>
-
-  {#each [...mapArticles.entries()] as [, article]}
-    <h2>
-      {article.data?.title}
-    </h2>
-    <a
-      href={`/a/${article.permalink}`}
+<div class="list-item {viewportType}">
+  <a href="/a/user/{username}" class="user-info">
+    <Avatar size={40} src={profile_photo} />
+    <div class="useer-name">{username}</div>
+  </a>
+  {#if uid !== ctx?.firebase_user_data?.uid}
+    <Button type={isFollow ? "subtle": "primary"} on:click={handleClick}
+      >{isFollow ? "Unfollow" : "Follow"}</Button
     >
-      {article.data?.title}
-    </a>
-  {/each}
-  {#each [...mapArticles.entries()] as [_id, tag]}
-    <a href={`/a/tag/${tag.permalink}`}>{tag.name}</a>
-  {/each}
-</SeoBox> -->
+  {/if}
+</div>
 
-{#await widgetData}
-  <!--
-  ╭────────────────────────────────────────────────────────────────────────╮
-  │ NOTE :|: promise is pending                                            │
-  ╰────────────────────────────────────────────────────────────────────────╯
-  -->
-  <!-- <div
-    class="tabbar-wrapper"
-  >
-    {#if categories.length}
-      <Tabbar
-        data={categories}
-        selected={selectedTag}
-        height={mobile ? 14 : 8}
-      />
-    {/if}
-  </div>
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 🌊 Svelte Component CSS/SCSS                                                     │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
 
-  <div
-    class="listArticlesMod"
-  >
-    {#each Array(10) as _item}
-      <ArticleLoader
-        {mobile}
-        {tablet}
-      />
-    {/each}
-  </div> -->
-{:then}
-  <!--
-  ╭────────────────────────────────────────────────────────────────────────╮
-  │ NOTE :|: promise is fulfilled                                          │
-  ╰────────────────────────────────────────────────────────────────────────╯
-  -->
-  <FollowersView {author} />
-{:catch error}
-  <!--
-    ╭────────────────────────────────────────────────────────────────────────╮
-    │ NOTE :|: promise is rejected                                           │
-    ╰────────────────────────────────────────────────────────────────────────╯
-    -->
-{/await}
+<style lang="scss">
+  .list-item {
+    display: flex;
+    padding-block: 16px;
+    border-bottom: var(--header-border);
+    justify-content: space-between;
+    gap: 20px;
+    align-items: center;
+
+    .user-info {
+      display: flex;
+      justify-content: start;
+      flex-grow: 1;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-color);
+      font-family: Roboto;
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 24px; /* 150% */
+    }
+
+    &.mobile {
+      padding: 16px;
+      padding-block: 8px;
+      border-bottom: none;
+    }
+  }
+</style>
