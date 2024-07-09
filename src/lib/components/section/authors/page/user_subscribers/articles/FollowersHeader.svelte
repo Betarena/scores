@@ -28,7 +28,7 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let author = { name: "Rodrigo Monteirasso" };
+  export let author = { name: "Rodrigo Monteirasso" }, selection = "subscribers";
 
   const /**
      * @description
@@ -58,16 +58,6 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function select(e) {
-    const option = e.detail;
-    // const query = new URLSearchParams($page.url.searchParams.toString());
-
-    // query.set("type", option.id);
-
-    // goto(`?${query.toString()}`);
-  }
-
-
   // #endregion ➤ 🛠️ METHODS
 </script>
 
@@ -92,7 +82,7 @@
   </div>
   <div class="tabbar-wrapper">
     <Tabbar
-      on:select={select}
+      on:select
       data={options}
       style="gap: {viewportType === 'mobile'
         ? 40

@@ -52,6 +52,7 @@
     about,
     following,
     followed_by = [],
+    subscribed_by = [],
   } = author);
   $: authors_followings = following?.authors || [];
   $: follower_count = followed_by.length;
@@ -66,10 +67,11 @@
     user?.scores_user_data?.subscriptions?.authors?.includes(uid) || false;
   $: isAuth = !!user;
 
-  $:  link = $page.url.pathname + "/subscribers"
+  $: link = $page.url.pathname + "/subscribers";
+  $: getSubscribers(subscribed_by)
 
-  let users = [];
   const BetarenaUsers = new Betarena_User_Class();
+  let subscribers: BetarenaUser[] = [];
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -104,24 +106,26 @@
 
   function follow() {
     action("user-following", !isFollowed);
-
   }
 
   function subscribe() {
-    action("user-subscriptions", !isSubscribed)
+    action("user-subscriptions", !isSubscribed);
   }
 
-  async function action(type: "user-subscriptions" |  "user-following" , follow) {
+  async function action(type: "user-subscriptions" | "user-following", follow) {
     if (!isAuth) {
       $session.currentActiveModal = "Auth_Modal";
       return;
     }
-    userSettings.updateData([
-      [
-        type,
-        {target: "authors", id: uid, follow}
-      ]
-    ])
+    userSettings.updateData([[type, { target: "authors", id: uid, follow }]]);
+  }
+
+  async function getSubscribers(subscribers_arr = []) {
+    subscribers = [];
+    if (!subscribers_arr.length) return;
+    const ids = subscribers_arr.slice(0, 3);
+    const users = await BetarenaUsers.obtainPublicInformationTargetUsers(ids);
+    subscribers = [...users] as BetarenaUser[];
   }
   // #endregion ➤ 🛠️ METHODS
 </script>
@@ -150,7 +154,7 @@
         <div class="count">{follower_count}</div>
         <div class="follow-block-text">Followers</div>
       </a>
-      <a  href={link} class="follow-block" >
+      <a href={link} class="follow-block">
         <div class="count">{authors_followings.length}</div>
         <div class="follow-block-text">Following</div>
       </a>
@@ -168,20 +172,28 @@
         {about}
       </div>
     {/if}
-    <a href={link} class="followers" >
-      <StackedAvatars src={[null, null, null]} size={24} />
-      <div class="followers-names">
-        Subscribed by
-        {#each ["tigasdamassa", "tiagomartins"] as follower}
-          <span class="username">
-            {" "}
-            {follower},
-          </span>
-        {/each}
-
-        <span class="username"> and 12 others </span>
-      </div>
-    </a>
+    {#if subscribers.length}
+      <a href={link} class="followers">
+        <StackedAvatars
+          src={subscribers.map((u) => u.profile_photo || "")}
+          size={24}
+        />
+        <div class="followers-names">
+          Subscribed by
+          {#each subscribers as follower}
+            <span class="username">
+              {" "}
+              {follower.username}
+            </span>
+          {/each}
+          {#if subscribed_by.length > 3}
+            <span class="username">
+              and {subscribed_by.length - 3} others
+            </span>
+          {/if}
+        </div>
+      </a>
+    {/if}
   </div>
   <div class="actions-wrapper">
     <div class="buttons-wrapper">

@@ -247,10 +247,10 @@
    * @return { void }
    */
   function scrollHandler(): void {
-    if (!isPWA && (mobile || tablet)) return;
+    if (!isPWA) return;
 
     if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 5)
-      // loadMore();
+      loadMore();
       return;
   }
 
@@ -363,13 +363,14 @@
     {/if}
   </div>
 
-  {#if (tablet || mobile) && !isPWA && mapArticlesMod.size}
+  {#if !mapArticles.size}
+    <div class="no-data">No articles yet</div>
+  {/if}
+
+  {#if !isPWA && mapArticlesMod.size}
     <div class="load-more">
       <Button type="outline" on:click={loadMore}>Load More</Button>
     </div>
-  {/if}
-  {#if !mapArticles.size}
-    <div class="no-data">No articles yet</div>
   {/if}
 </div>
 

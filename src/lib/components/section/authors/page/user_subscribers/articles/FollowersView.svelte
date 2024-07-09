@@ -8,44 +8,101 @@
 -->
 
 <script lang="ts">
+  // #region ➤ 📌 VARIABLES
 
+  import Button from "$lib/components/ui/Button.svelte";
+  import session from "$lib/store/session.js";
+  import { Betarena_User_Class } from "@betarena/scores-lib/dist/classes/class.betarena-user.js";
+  import FollowersHeader from "./FollowersHeader.svelte";
+  import FollowersList from "./FollowersList.svelte";
+  import type { BetarenaUser } from "$lib/types/types.user-settings.js";
 
-// #region ➤ 📌 VARIABLES
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
-    import FollowersHeader from "./FollowersHeader.svelte";
-    import FollowersList from "./FollowersList.svelte";
+  export let author;
 
-// ╭────────────────────────────────────────────────────────────────────────╮
-// │ NOTE:                                                                  │
-// │ Please add inside 'this' region the 'variables' that are to be         │
-// │ and are expected to be used by 'this' .svelte file / component.        │
-// │ IMPORTANT                                                              │
-// │ Please, structure the imports as follows:                              │
-// │ 1. export const / let [..]                                             │
-// │ 2. const [..]                                                          │
-// │ 3. let [..]                                                            │
-// │ 4. $: [..]                                                             │
-// ╰────────────────────────────────────────────────────────────────────────╯
+  type TSelectedOption = "subscribers" | "followers" | "followings";
+  const /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */ // eslint-disable-next-line no-unused-vars
+    CNAME: string = "author⮕followers";
 
+  const BetarenaUserHelper = new Betarena_User_Class();
+  let selectedOption: TSelectedOption = "subscribers";
+  $: ({ globalState } = $session);
+  $: isPWA = globalState.has("IsPWA");
 
-export let data;
-export let author;
+  $: displayedData = {
+    subscribers: [] as BetarenaUser[],
+    followers: [] as BetarenaUser[],
+    followings: [] as BetarenaUser[],
+  };
+  $: currentData = displayedData[selectedOption];
+  let rawData;
 
+  $: if (author) {
+    displayedData = {
+      subscribers: [],
+      followers: [],
+      followings: [],
+    };
 
+    rawData = {
+      subscribers: author?.subscribed_by || [],
+      followers: author?.followed_by || [],
+      followings: author?.following.authors || [],
+    };
 
-const
+    loadUsers("subscribers").then(scrollHandler);
+    loadUsers("followers");
+    loadUsers("followings");
+  }
+
+  async function loadUsers(type: TSelectedOption) {
+    const offset = displayedData[type].length;
+    const ids = rawData[type].slice(offset, offset + 10);
+    if (!ids.length) return;
+    const users = (await BetarenaUserHelper.obtainPublicInformationTargetUsers(
+      ids
+    )) as BetarenaUser[];
+    displayedData[type].push(...users);
+    displayedData = { ...displayedData };
+  }
+
+  function select(e) {
+    selectedOption = e.detail.id;
+  }
+
+  // #endregion ➤ 📌 VARIABLES
+
   /**
+   * @author
+   *  <-insert-author->
+   * @summary
+   *  🟦 HELPER
    * @description
-   *  📣 `this` component **main** `id` and `data-testid` prefix.
-   */ // eslint-disable-next-line no-unused-vars
-  CNAME: string = 'author⮕followers'
-;
+   *  📝 Custom handler for scroll logic.
+   * @return { void }
+   */
+  function scrollHandler(): void {
+    if (!isPWA) return;
 
-
-// #endregion ➤ 📌 VARIABLES
-
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 5)
+      loadUsers(selectedOption);
+    return;
+  }
 </script>
-
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -57,10 +114,22 @@ const
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
+<svelte:window on:scroll={scrollHandler} />
 <div class="wrapper" id={CNAME}>
-
-  <FollowersHeader {author} />
-  <FollowersList />
+  <FollowersHeader {author} selection={selectedOption} on:select={select} />
+  {#if !currentData.length}
+    <div class="empty">
+      No {selectedOption} yet
+    </div>
+  {/if}
+  <FollowersList users={currentData} />
+  {#if !isPWA && currentData?.length < rawData[selectedOption]?.length}
+    <div class="load-more">
+      <Button type="outline" on:click={() => loadUsers(selectedOption)}
+        >Load More</Button
+      >
+    </div>
+  {/if}
 </div>
 
 <!--
@@ -73,13 +142,29 @@ const
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-
 <style lang="scss">
+  .wrapper {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-color);
 
-.wrapper {
-  display: flex;
-  flex-direction: column;
-  background-color: var(--bg-color);
-}
-
+    .load-more {
+      display: flex;
+      justify-content: center;
+      margin-top: 32px;
+    }
+    .empty {
+      flex-grow: 1;
+      width: 100%;
+      height: 100%;
+      background-color: var(--bg-color);
+      font-weight: 600;
+      color: var(--text-color-second);
+      font-size: var(--text-size-2xl);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 10px;
+    }
+  }
 </style>

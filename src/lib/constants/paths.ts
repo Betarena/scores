@@ -75,7 +75,7 @@ export const
   routeIdAuthorProfile = '/(authors)/a/user/[username]',
   /**
    * @description
-   *  📣 Target `path` for **Author profile**.
+   *  📣 Target `path` for **Author subscribers**.
    */
   routeIdAuthorSubscribers = '/(authors)/a/user/[username]/subscribers',
 

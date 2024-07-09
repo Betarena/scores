@@ -117,7 +117,7 @@
     background: transparent;
     border: 1px solid var(--text-color) !important;
     transition: all;
-    transition-duration: 0.6s;
+    transition-duration: 0.2s;
 
     &:hover {
       border: 1px solid var(--primary) !important;
