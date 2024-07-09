@@ -66,6 +66,8 @@
     user?.scores_user_data?.subscriptions?.authors?.includes(uid) || false;
   $: isAuth = !!user;
 
+  $:  link = $page.url.pathname + "/subscribers"
+
   let users = [];
   const BetarenaUsers = new Betarena_User_Class();
 
@@ -144,14 +146,14 @@
     <div class="social-info">
       <Avatar size={64} src={profile_photo} />
 
-      <div class="follow-block" on:click={followersClick}>
+      <a href={link} class="follow-block">
         <div class="count">{follower_count}</div>
         <div class="follow-block-text">Followers</div>
-      </div>
-      <div class="follow-block" on:click={followersClick}>
+      </a>
+      <a  href={link} class="follow-block" >
         <div class="count">{authors_followings.length}</div>
         <div class="follow-block-text">Following</div>
-      </div>
+      </a>
     </div>
 
     <div class="user-info">
@@ -166,7 +168,7 @@
         {about}
       </div>
     {/if}
-    <div class="followers" on:click={followersClick}>
+    <a href={link} class="followers" >
       <StackedAvatars src={[null, null, null]} size={24} />
       <div class="followers-names">
         Subscribed by
@@ -179,7 +181,7 @@
 
         <span class="username"> and 12 others </span>
       </div>
-    </div>
+    </a>
   </div>
   <div class="actions-wrapper">
     <div class="buttons-wrapper">
