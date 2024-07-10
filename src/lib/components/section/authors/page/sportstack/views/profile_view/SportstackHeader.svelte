@@ -33,7 +33,14 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let name;
+  export let sportstack;
+
+  $:({data, uid} = sportstack);
+  $: ({
+    avatar,
+    about,
+    username
+  } = data || {})
 
   const /**
      * @description
@@ -51,16 +58,6 @@
     { id: "posts", label: "Posts" },
     { id: "people", label: "People" },
   ];
-
-  const sportstack = {
-    about: "Previsioni e analisi sul tennis",
-    avatar:
-      "https://firebasestorage.googleapis.com/v0/b/betarena-ios.appspot.com/o/Betarena_Media%2Fauthors%2Favatars%2Fbetarena_tennis_avatar.svg?alt=media&token=1aa86e49-07e8-42a3-bbee-7ad2900de3f4",
-    badges: [1],
-    location: "Rome",
-    username: "Betarena Tennis IT",
-    creation_date: "2023-12-18T14:43:54.035431+00:00",
-  };
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -109,12 +106,12 @@
   <div class="sportstack-main-info {viewportType}">
     <div class="sportstack-block">
       <div class="sportstack-info">
-        <SportsTackImg src={sportstack.avatar} />
-        <div class="name">{sportstack.username}</div>
+        <SportsTackImg src={avatar} />
+        <div class="name">{username}</div>
       </div>
 
       <div class="sportstack-description">
-        {sportstack.about}
+        {about}
       </div>
     </div>
     <div class="actions-wrapper">

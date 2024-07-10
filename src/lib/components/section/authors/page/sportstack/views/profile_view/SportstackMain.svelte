@@ -51,11 +51,17 @@
   import type {
     IPageAuthorArticleData,
     IPageAuthorAuthorData,
+    IPageAuthorSportstackData,
     IPageAuthorTagData,
     IPageAuthorTagDataFinal,
   } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
-  import type { IArticle, ITagsWidgetData } from "../../../helpers.js";
+  import {
+    prepareArticles,
+    prepareArticlesMap,
+    type IArticle,
+    type ITagsWidgetData,
+  } from "../../../helpers.js";
   import AuthorProfileHeader from "./SportstackHeader.svelte";
   import ArticleCard from "../../../../common_ui/Article-Card.svelte";
 
@@ -75,20 +81,18 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-
+  export let widgetData: IPageAuthorAuthorData,
+    translations: IPageAuthorTranslationDataFinal;
   $: ({ globalState, viewportType } = $sessionStore);
   $: isPWA = globalState.has("IsPWA");
   $: mobile = viewportType === "mobile";
   $: tablet = viewportType === "tablet";
 
-  $: widgetData = $page.data as
-    | (IPageAuthorTagDataFinal & {
-        translations: IPageAuthorTranslationDataFinal;
-      })
-    | undefined;
+  $: console.log(widgetData);
   $: pageSeo = $page.data.seoTamplate;
-  $: translations = widgetData?.translations;
-
+  $: sportstack = widgetData?.mapAuthor?.length
+    ? widgetData?.mapAuthor[0][1]
+    : ({} as IPageAuthorAuthorData);
   /**
    * @description
    * 📝 Interecpted data for `map` instance of `author(s)`.
@@ -104,31 +108,15 @@
    * 📝 Interecpted data for `map` instance of `article(s)`.
    */
   $: mapArticles = new Map(widgetData?.mapArticle ?? []);
-  /**
-   * @description
-   * 📝 Currently selected tag data.
-   */
-  $: selectedTag = mapTags.get(widgetData?.tagId ?? 0);
+
   /**
    * @description
    * 📝 Categories avaialble.
    */
-  $: categories = selectedTag != undefined ? [selectedTag] : [];
 
-  $: if (browser) updateData(widgetData ?? ({} as ITagsWidgetData), true);
+  $: if (browser) updateData(widgetData ?? {}, true);
 
   let /**
-     * @description
-     * 📝 `Map` where, `key=tagId` and `value=tagData`.
-     */
-    mapTagSelectData = new Map<
-      number,
-      ITagsWidgetData & {
-        mapArticlesMod: Map<number, IArticle>;
-        currentPage: number;
-      }
-    >(),
-    /**
      * @description
      * 📝 State UI for `Loading Articles`.
      */
@@ -137,7 +125,12 @@
      * @description
      * 📝 `Map` data for `article(s)`, ready for frontend consumption.
      */
-    mapArticlesMod = new Map<number, IArticle>();
+    mapArticlesMod = new Map<number, IArticle>(),
+    /**
+     * @description
+     * 📝 current page number;
+     */
+    currentPage = 1;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -166,16 +159,14 @@
    */
   function selectTag(e: CustomEvent<IPageAuthorTagData>): void {
     // [🐞]
-    dlogv2("selectTag(..)", [`🔹 [var] ➤ e :|: ${e}`], true);
-
-    selectedTag = e.detail;
-    mapArticlesMod = new Map();
-
-    if (!mapTagSelectData.has(selectedTag.id ?? 0)) loadTagArticles();
-    else
-      mapArticlesMod =
-        mapTagSelectData.get(selectedTag.id ?? 0)?.mapArticlesMod ?? new Map();
-    return;
+    // dlogv2("selectTag(..)", [`🔹 [var] ➤ e :|: ${e}`], true);
+    // selectedTag = e.detail;
+    // mapArticlesMod = new Map();
+    // if (!mapTagSelectData.has(selectedTag.id ?? 0)) loadTagArticles();
+    // else
+    //   mapArticlesMod =
+    //     mapTagSelectData.get(selectedTag.id ?? 0)?.mapArticlesMod ?? new Map();
+    // return;
   }
 
   /**
@@ -189,7 +180,10 @@
    *  💠 **REQUIRED** New data instance.
    * @returns { void }
    */
-  function updateData(dataNew: ITagsWidgetData, reset: boolean = false): void {
+  function updateData(
+    dataNew: IPageAuthorSportstackData,
+    reset: boolean = false
+  ): void {
     // [🐞]
     dlogv2(
       "updateData(..) // START",
@@ -201,8 +195,8 @@
       mapArticles = new Map();
       mapAuthors = new Map();
       mapTags = new Map();
-      mapTagSelectData = new Map();
       mapArticlesMod = new Map();
+      currentPage = 1;
     }
 
     mapArticles = new Map([...mapArticles, ...dataNew.mapArticle]);
@@ -213,20 +207,12 @@
        * @description
        * 📝 `Map` article generated from NEW data.
        */
-      mapNewArticlesMod = prepareArticles(
+      mapNewArticlesMod = prepareArticlesMap(
         new Map(dataNew.mapArticle),
         new Map(dataNew.mapTag),
         new Map(dataNew.mapAuthor)
       );
     mapArticlesMod = new Map([...mapArticlesMod, ...mapNewArticlesMod]);
-
-    if (!mapTagSelectData.has(dataNew.tagId))
-      mapTagSelectData.set(dataNew.tagId, {
-        ...dataNew,
-        mapArticlesMod,
-        currentPage: 0,
-        totalArticlesCount: dataNew.totalArticlesCount,
-      });
     isLoadingArticles = false;
 
     // [🐞]
@@ -241,68 +227,14 @@
    * @summary
    *  🟦 HELPER
    * @description
-   *  📝 Prepare article data.
-   * @param { Map < number, IPageAuthorArticleData > | null } mapArticle
-   *  💠 **REQUIRED** `Map` of article data.
-   * @param { Map < number, IPageAuthorTagData > | null } mapTag
-   *  💠 **REQUIRED** `Map` of tag data.
-   * @param { Map < number, IPageAuthorAuthorData > | null } mapAuthor
-   *  💠 **REQUIRED** `Map` of author data.
-   * @return { Map < number, IArticle > }
-   *  📤 Prepared articles data.
-   */
-  function prepareArticles(
-    mapArticle: Map<number, IPageAuthorArticleData> | null,
-    mapTag: Map<number, IPageAuthorTagData> | null,
-    mapAuthor: Map<number, IPageAuthorAuthorData> | null
-  ): Map<number, IArticle> {
-    if (!mapTag || !mapAuthor || !mapArticle) return new Map();
-
-    const /**
-       * @description
-       * 📝 `Map` of modified article data.
-       */
-      mapArticleMod = new Map<number, IArticle>();
-    // ╭─────
-    // │ NOTE: |:| loop through articles and prepare data.
-    // ╰─────
-    for (const [articleId, articleData] of mapArticle) {
-      const /**
-         * @description
-         * 📝 Prepare article data.
-         */
-        dataArticle: IArticle = {
-          author: mapAuthor.get(articleData.author_id ?? 0) ?? {},
-          tags_data: [],
-          ...articleData,
-        };
-      // ╭─────
-      // │ NOTE: |:| loop through 'tags' and add final data to `tags_data`.
-      // ╰─────
-      for (const tagId of articleData.tags ?? []) {
-        if (mapTag.has(tagId)) dataArticle.tags_data.push(mapTag.get(tagId)!);
-      }
-
-      mapArticleMod.set(articleId, dataArticle);
-    }
-
-    return mapArticleMod;
-  }
-
-  /**
-   * @author
-   *  <-insert-author->
-   * @summary
-   *  🟦 HELPER
-   * @description
    *  📝 Custom handler for scroll logic.
    * @return { void }
    */
   function scrollHandler(): void {
-    if (!isPWA && (mobile || tablet)) return;
+    if (!isPWA) return;
 
     if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 5)
-      // loadMore();
+      loadMore();
       return;
   }
 
@@ -319,24 +251,13 @@
     // [🐞]
     dlogv2("loadMore(..)", [], true);
 
-    const /**
-       * @description
-       * 📝 Selected 'tag' tab data.
-       */
-      dataTag = mapTagSelectData.get(selectedTag?.id ?? 0),
-      /**
-       * @description
-       * 📝 Article length.
-       */
-      length = dataTag?.mapArticlesMod.size || 0;
-    if (!selectedTag || !dataTag || length === dataTag.totalArticlesCount)
-      return;
+    const length = mapArticlesMod.size || 0;
+    if (length >= widgetData.totalArticlesCount) return;
 
-    loadTagArticles(dataTag.currentPage + 1);
+    loadTagArticles(currentPage + 1);
 
     return;
   }
-
   /**
    * @author
    *  <-insert-author->
@@ -355,45 +276,32 @@
       [`🔹 [var] ➤ page |:| ${page}`],
       true
     );
-
+    isLoadingArticles = true;
+    const permalink = sportstack.data?.username
+      .toLowerCase()
+      .replaceAll(" ", "-");
     const /**
-       * @description
-       * 📝 Following tags.
-       */
-      followingTags =
-        $userBetarenaSettings.user?.scores_user_data?.following?.tags;
-    let /**
        * @description
        * 📝 URL to be requested.
        */
-      url = `/api/data/author/content?&lang=${$sessionStore.serverLang}&page=${page}`;
-    if (followingTags?.length)
-      url += `&followingTags=${followingTags.join(",")}`;
-    isLoadingArticles = true;
-
+      url = `/api/data/author/sportstack?permalink=${permalink}&page=${page}`;
     const /**
        * @description
        * 📝 Data Response (0).
        */
       dataRes0 = (await get(url)) as ITagsWidgetData;
+      isLoadingArticles = false;
     updateData(dataRes0);
+    currentPage = page;
 
     // [🐞]
     dlogv2("loadTagArticles(..) // END", [`🔹 [var] ➤ page |:| ${page}`], true);
 
     if (!dataRes0) return;
-
-    mapTagSelectData.set(selectedTag.id!, {
-      ...dataRes0,
-      mapArticlesMod,
-      currentPage: page,
-    });
-
     return;
   }
 
   // #endregion ➤ 🛠️ METHODS
-
 </script>
 
 <!--
@@ -415,7 +323,7 @@
 ╰─────
 -->
 
-<AuthorProfileHeader name ={$page.params.username} on:changeMode/>
+<AuthorProfileHeader {sportstack} on:changeMode />
 
 <!--
 ╭─────
@@ -438,9 +346,9 @@
 │ > INSERT-DESCRIPTION
 ╰─────
 -->
-<div class="content {viewportType}" >
+<div class="content {viewportType}">
   <div class="listArticlesMod">
-    {#each [...mapArticlesMod.entries()] as [,article]}
+    {#each [...mapArticlesMod.entries()] as [id, article] (id)}
       <ArticleCard {mobile} {article} {tablet} {translations} />
     {/each}
 
@@ -451,7 +359,7 @@
     {/if}
   </div>
 
-  {#if (tablet || mobile) && !isPWA && mapArticlesMod.size}
+  {#if !isPWA && mapArticlesMod.size}
     <div class="load-more">
       <Button type="outline" on:click={loadMore}>Load More</Button>
     </div>

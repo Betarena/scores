@@ -12,7 +12,7 @@
 
 // #region ➤ 📦 Package Imports
 
-import { main } from '$lib/sveltekit/load/load.content';
+import { main } from '$lib/sveltekit/load/load.sportstack.js';
 import { dlogv2 } from '$lib/utils/debug.js';
 
 import type { ServerLoadEvent } from '@sveltejs/kit';
@@ -26,14 +26,14 @@ import type { ServerLoadEvent } from '@sveltejs/kit';
  */
 export async function load
   (
-    event: ServerLoadEvent
+    { params, fetch, parent }: ServerLoadEvent
   ): Promise<any>
 {
 
   const
     {
       langParam
-    } = await event.parent()
+    } = await parent()
     ;
 
   // [🐞]
@@ -44,13 +44,18 @@ export async function load
         `🔹 [var] ➤ langParam :|: ${langParam}`,
       ],
       true
-    );
+  );
+  const {
+    name = ""
+  } = params;
 
-  return await main
-    (
-      event,
-      {
-        langParam
+  console.log("SERER PAGE")
+
+  return main
+    ({
+      name,
+      fetch,
+      langParam
       }
     );
 }

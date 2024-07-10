@@ -38,7 +38,9 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { browser } from "$app/environment";
-  import FollowersView from "./followers_view/FollowersView.svelte";
+  import { page } from "$app/stores";
+  import type { IPageAuthorSportstackData } from "@betarena/scores-lib/types/v8/preload.authors.js";
+  import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
   import SportstackMain from "./profile_view/SportstackMain.svelte";
 
   // #endregion ➤ 📦 Package Imports
@@ -63,7 +65,6 @@
      */ // eslint-disable-next-line no-unused-vars
     CNAME: string = "content";
 
-  let isProfileMode = true;
 
   // $: widgetData = $page.data as IPageAuthorTagDataFinal & {
   //   translations: IPageAuthorTranslationDataFinal;
@@ -132,10 +133,12 @@
 
     return;
   }
-
-  function switchMode() {
-    isProfileMode = !isProfileMode;
+  interface IPageData {
+    articles: IPageAuthorSportstackData;
+    translations: IPageAuthorTranslationDataFinal;
   }
+  $: ({ articles, translations } = $page.data as IPageData);
+
   // #endregion ➤ 🛠️ METHODS
 </script>
 
@@ -168,7 +171,7 @@
   {/each}
 </SeoBox> -->
 
-{#await widgetInit()}
+{#await articles}
   <!--
   ╭────────────────────────────────────────────────────────────────────────╮
   │ NOTE :|: promise is pending                                            │
@@ -202,11 +205,7 @@
   │ NOTE :|: promise is fulfilled                                          │
   ╰────────────────────────────────────────────────────────────────────────╯
   -->
-  {#if isProfileMode}
-    <SportstackMain on:changeMode={switchMode} />
-  {:else}
-    <FollowersView data={{}} on:changeMode={switchMode} />
-  {/if}
+  <SportstackMain widgetData={articles} {translations} />
 {:catch error}
   <!--
     ╭────────────────────────────────────────────────────────────────────────╮
