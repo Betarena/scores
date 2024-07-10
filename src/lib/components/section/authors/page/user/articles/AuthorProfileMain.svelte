@@ -390,6 +390,11 @@
     flex-grow: 1;
     display: flex;
     flex-direction: column;
+    margin-top: 28px;
+
+    &.mobile {
+      margin-top: 0;
+    }
   }
 
   .listArticlesMod {

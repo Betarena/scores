@@ -68,7 +68,7 @@
   $: isAuth = !!user;
 
   $: link = $page.url.pathname + "/subscribers";
-  $: getSubscribers(subscribed_by)
+  $: getSubscribers(subscribed_by);
 
   const BetarenaUsers = new Betarena_User_Class();
   let subscribers: BetarenaUser[] = [];
@@ -99,10 +99,6 @@
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
-  function followersClick() {
-    goto($page.url.pathname + "/subscribers");
-  }
 
   function follow() {
     action("user-following", !isFollowed);
@@ -161,12 +157,11 @@
     </div>
 
     <div class="user-info">
-      {#if name}
-        <div class="name">{name}</div>
-      {/if}
+      <div class="name" style="visibility: {name ? 'unset' : 'hidden'}">
+        {name || "name"}
+      </div>
       <div class="nick">@{username}</div>
     </div>
-
     {#if about}
       <div class="user-description">
         {about}
@@ -198,7 +193,7 @@
   <div class="actions-wrapper">
     <div class="buttons-wrapper">
       {#if isOwner}
-        <a href="/u/dashboard/{$userSettings.lang}" class="edit-button">
+        <a href="/u/settings/{$userSettings.lang}" class="edit-button">
           <Button type="secondary" style="flex-grow: 1;">Edit my Profile</Button
           >
         </a>
@@ -335,8 +330,10 @@
         font-style: normal;
         line-height: 13px;
         margin-top: 4px;
+        margin-top: auto;
         align-items: center;
         color: var(--text-color-second);
+        color: rgba(255, 255, 255, 0.8);
         cursor: pointer;
 
         .followers-names {
