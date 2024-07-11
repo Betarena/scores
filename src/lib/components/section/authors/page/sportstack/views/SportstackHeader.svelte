@@ -15,11 +15,12 @@
   import StackedAvatars from "$lib/components/ui/StackedAvatars.svelte";
   import session from "$lib/store/session.js";
   import { createEventDispatcher, onMount } from "svelte";
-  import ShareIcon from "../assets/share-icon.svelte";
+  import ShareIcon from "./assets/share-icon.svelte";
   import type { BetarenaUser } from "$lib/types/types.user-settings.js";
   import userSettings from "$lib/store/user-settings.js";
   import SportsTackImg from "$lib/components/section/authors/common_ui/SportsTackImg.svelte";
   import Tabbar from "$lib/components/ui/Tabbar.svelte";
+  import { post } from "$lib/api/utils.js";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -33,7 +34,10 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let name;
+  export let sportstackData = [];
+  $: [id, sportstack] = sportstackData;
+  $: ({ data } = sportstack);
+  $: ({ avatar, about, username } = data || {});
 
   const /**
      * @description
@@ -41,26 +45,15 @@
      */ // eslint-disable-next-line no-unused-vars
     CNAME: string = "user-profile⮕header";
 
-  const dispatch = createEventDispatcher();
-
+  $: ({ user } = $userSettings);
   $: ({ viewportType } = $session);
-
-  $: isFollowed = false;
-  $: isAuth = !!sportstack;
+  $: isSubscribed =
+    user?.scores_user_data?.subscriptions?.sportstacks?.includes(id);
+  $: isAuth = !!user;
   const options = [
     { id: "posts", label: "Posts" },
     { id: "people", label: "People" },
   ];
-
-  const sportstack = {
-    about: "Previsioni e analisi sul tennis",
-    avatar:
-      "https://firebasestorage.googleapis.com/v0/b/betarena-ios.appspot.com/o/Betarena_Media%2Fauthors%2Favatars%2Fbetarena_tennis_avatar.svg?alt=media&token=1aa86e49-07e8-42a3-bbee-7ad2900de3f4",
-    badges: [1],
-    location: "Rome",
-    username: "Betarena Tennis IT",
-    creation_date: "2023-12-18T14:43:54.035431+00:00",
-  };
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -73,24 +66,23 @@
   // │ as soon as 'this' .svelte file is ran.                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  onMount(() => {});
-
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
-  async function follow() {
+  async function subscribe() {
     if (!isAuth) {
       $session.currentActiveModal = "Auth_Modal";
       return;
     }
     userSettings.updateData([
-      ["user-following", { target: "authors", id: "", follow: !isFollowed }],
+      [
+        "user-subscriptions",
+        { target: "sportstacks", id: id, follow: !isSubscribed },
+      ],
     ]);
-
-    // await updateFollowed("", []);
-  }
-
-  function followersClick() {
-    dispatch("changeMode");
+    await post("/api/data/author/sportstack", {
+      authorId: id,
+      subscribe: !isSubscribed,
+    });
   }
 </script>
 
@@ -109,17 +101,22 @@
   <div class="sportstack-main-info {viewportType}">
     <div class="sportstack-block">
       <div class="sportstack-info">
-        <SportsTackImg src={sportstack.avatar} />
-        <div class="name">{sportstack.username}</div>
+        <SportsTackImg src={avatar} />
+        <div class="name">{username}</div>
       </div>
 
       <div class="sportstack-description">
-        {sportstack.about}
+        {about}
       </div>
     </div>
     <div class="actions-wrapper">
       <div class="buttons-wrapper">
-        <Button type="primary" style="flex-grow: 1;">Subscribe</Button>
+        <Button
+          type={isSubscribed ? "subtle" : "primary"}
+          style="flex-grow: 1;"
+          on:click={subscribe}
+          >{isSubscribed ? "Unsubscribe" : "Subscribe"}</Button
+        >
         <Button type="secondary" style="width: 40px; height: 40px; padding: 0">
           <ShareIcon />
         </Button>
@@ -127,7 +124,7 @@
     </div>
   </div>
   <Tabbar
-    on:select={followersClick}
+    on:select
     height={12}
     data={options}
     style="gap: 24px; font-size: var(--text-size-m)"
@@ -231,7 +228,7 @@
         }
 
         .sportstack-description {
-          font-family: Inter;
+          font-family: Roboto;
           font-size: 12px;
           font-style: normal;
           font-weight: 400;
@@ -242,7 +239,7 @@
         .followers {
           display: flex;
           gap: 8px;
-          font-family: Inter;
+          font-family: Roboto;
           font-size: 10px;
           font-style: normal;
           line-height: 13px;

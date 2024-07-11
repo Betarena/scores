@@ -473,7 +473,8 @@ export async function promiseValidUrlCheck
   if (opts.authorArticleUrl) queryStr += `?authorArticleUrl=/${opts.authorArticleUrl}`;
   if (opts.authorTagsUrl) queryStr += `?authorTagUrl=/${opts.authorTagsUrl}`;
   if (opts.authorUrl) queryStr += `?authorUrl=/${opts.authorUrl}`;
-
+  console.warn("Validate URL: ", JSON.stringify(opts))
+  console.trace(opts)
   // [🐞]
   dlogv2
   (

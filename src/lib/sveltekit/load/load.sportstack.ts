@@ -21,6 +21,7 @@ import type { IPageAuthorTagDataFinal } from '@betarena/scores-lib/types/v8/prel
 import type { B_SAP_D2 } from '@betarena/scores-lib/types/v8/preload.scores.js';
 import type { IPageAuthorTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.tags.js';
 import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.betarena-user.js';
+import { readingTime } from '$lib/components/section/authors/common_ui/helpers.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -51,36 +52,26 @@ type PreloadPromise0 =
  */
 export async function main
   (
-    event: ServerLoadEvent,
-    parentData:
-      {
-        langParam: string
-      }
-  ): Promise<{
-    data: any
-  }>
+    { name,
+      fetch,
+      langParam
+    }: { name: string, fetch: any, langParam: string }
+  ): Promise<any[]>
 {
-  const
-    // ╭─────
-    // │ NOTE:
-    // │ > 📣 Destruct `object`.
-    // ╰─────
-    {
-      username
-    } = event.params
-    /**
-     * @description
-     *  📣 Validate **this** `url`.
-     */
-    // isUrlValid
-    //   = await promiseValidUrlCheck
-    //     (
-    //       event.fetch,
-    //       {
-    //         authorUrl: username
-    //       }
-    //     )
-    ;
+
+  /**
+   * @description
+   *  📣 Validate **this** `url`.
+   */
+  // isUrlValid
+  //   = await promiseValidUrlCheck
+  //     (
+  //       event.fetch,
+  //       {
+  //         authorUrl: username
+  //       }
+  //     )
+  ;
 
   // if (!isUrlValid)
   //   preloadExitLogic
@@ -91,12 +82,11 @@ export async function main
   //     );
   // ;
 
-
   return fetchData
     (
-      event.fetch,
-      username || "",
-      parentData.langParam
+      fetch,
+      name || "",
+      langParam
     )
 }
 
@@ -123,9 +113,6 @@ async function fetchData
     _lang: string
   )
 {
-  const bu = new Betarena_User_Class();
-  const users = await bu.obtainPublicInformationTargetUsers([_name], true);
-  const [user] = users;
   const
     /**
      * @description
@@ -133,14 +120,18 @@ async function fetchData
      */
     urls0
       = [
-        `/api/data/author/profile?uid=${user.uid}`,
+        `/api/data/author/sportstack?permalink=${_name}`,
         `/api/data/author/tags?translation=${_lang}`,
         `/api/data/author/article?lang=${_lang}`,
-      ];
 
+      ]
+
+  /**
+   * @description
+   *  📣 Target `data` returned.
+  */
   const [articles, translations, articleTranslation] = await promiseUrlsPreload(urls0, fetch);
   return {
-    author: user,
     articles,
     translations: {
       ...translations,

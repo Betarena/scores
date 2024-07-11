@@ -83,6 +83,7 @@
   .primary {
     background: var(--primary, #f5620f);
     color: var(--white-day, #fff);
+    border: 1px solid var(--primary) !important;
 
     /* shadow/orange */
     box-shadow: 0px 3px 8px 0px rgba(212, 84, 12, 0.32);

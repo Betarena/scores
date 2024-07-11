@@ -38,8 +38,10 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { browser } from "$app/environment";
-  import FollowersView from "./followers_view/FollowersView.svelte";
-  import SportstackMain from "./profile_view/SportstackMain.svelte";
+  import { page } from "$app/stores";
+  import type { IPageAuthorSportstackData } from "@betarena/scores-lib/types/v8/preload.authors.js";
+  import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
+  import SportstackMain from "./SportstackMain.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -56,87 +58,14 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
-  const /**
-     * @description
-     *  📝 `this` component **main** `id` and `data-testid` prefix.
-     */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = "content";
-
-  let isProfileMode = true;
-
-  // $: widgetData = $page.data as IPageAuthorTagDataFinal & {
-  //   translations: IPageAuthorTranslationDataFinal;
-  // } | undefined;
-  /**
-   * @description
-   * 📝 Interecpted data for `map` instance of `tag(s)`.
-   */
-  // $: mapTags = new Map(widgetData?.mapTag ?? []);
-  /**
-   * @description
-   * 📝 Interecpted data for `map` instance of `article(s)`.
-   */
-  // $: mapArticles = new Map(widgetData?.mapArticle ?? []);
-  /**
-   * @description
-   * 📝 Currently selected tag data.
-   */
-  // $: selectedTag = mapTags.get(widgetData?.tagId ?? 0);
-  /**
-   * @description
-   * 📝 Categories avaialble.
-   */
-  // $: categories = selectedTag != undefined ? [selectedTag] : [];
-
-  const sportstack = {
-    about: "Previsioni e analisi sul tennis",
-    avatar:
-      "https://firebasestorage.googleapis.com/v0/b/betarena-ios.appspot.com/o/Betarena_Media%2Fauthors%2Favatars%2Fbetarena_tennis_avatar.svg?alt=media&token=1aa86e49-07e8-42a3-bbee-7ad2900de3f4",
-    badges: [1],
-    location: "Rome",
-    username: "Betarena Tennis IT",
-    creation_date: "2023-12-18T14:43:54.035431+00:00",
-  };
+  interface IPageData {
+    articles: IPageAuthorSportstackData;
+    translations: IPageAuthorTranslationDataFinal;
+  }
+  $: ({ articles, translations } = $page.data as IPageData);
 
   // #endregion ➤ 📌 VARIABLES
 
-  // #region ➤ 🛠️ METHODS
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'methods' that are to be           │
-  // │ and are expected to be used by 'this' .svelte file / component.        │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. function (..)                                                       │
-  // │ 2. async function (..)                                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  /**
-   * @author
-   *  @migbash
-   * @summary
-   *  🟩 MAIN
-   * @description
-   *  📣 main widget data loader
-   *  - ⚡️ (and) try..catch (error) handler
-   *  - ⚡️ (and) placeholder handler
-   * @returns { Promise < void > }
-   */
-  async function widgetInit(): Promise<void> {
-    // IMPORTANT
-    if (!browser) return;
-
-    // await sleep(1500);
-
-    return;
-  }
-
-  function switchMode() {
-    isProfileMode = !isProfileMode;
-  }
-  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--
@@ -168,7 +97,7 @@
   {/each}
 </SeoBox> -->
 
-{#await widgetInit()}
+{#await articles}
   <!--
   ╭────────────────────────────────────────────────────────────────────────╮
   │ NOTE :|: promise is pending                                            │
@@ -202,11 +131,7 @@
   │ NOTE :|: promise is fulfilled                                          │
   ╰────────────────────────────────────────────────────────────────────────╯
   -->
-  {#if isProfileMode}
-    <SportstackMain on:changeMode={switchMode} />
-  {:else}
-    <FollowersView data={{}} on:changeMode={switchMode} />
-  {/if}
+  <SportstackMain widgetData={articles} {translations} />
 {:catch error}
   <!--
     ╭────────────────────────────────────────────────────────────────────────╮
