@@ -10,13 +10,9 @@
 <script lang="ts">
   // #region ➤ 📌 VARIABLES
 
-  import Avatar from "$lib/components/ui/Avatar.svelte";
   import Button from "$lib/components/ui/Button.svelte";
-  import StackedAvatars from "$lib/components/ui/StackedAvatars.svelte";
   import session from "$lib/store/session.js";
-  import { createEventDispatcher, onMount } from "svelte";
   import ShareIcon from "./assets/share-icon.svelte";
-  import type { BetarenaUser } from "$lib/types/types.user-settings.js";
   import userSettings from "$lib/store/user-settings.js";
   import SportsTackImg from "$lib/components/section/authors/common_ui/SportsTackImg.svelte";
   import Tabbar from "$lib/components/ui/Tabbar.svelte";
@@ -148,6 +144,7 @@
     gap: 24px;
     background-color: var(--bg-color);
     width: 100%;
+    --text-button-size: 14px;
 
     &.mobile {
       padding-inline: 16px;
