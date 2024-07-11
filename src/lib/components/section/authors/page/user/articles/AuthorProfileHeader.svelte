@@ -146,14 +146,16 @@
     <div class="social-info">
       <Avatar size={64} src={profile_photo} />
 
-      <a href={link} class="follow-block">
-        <div class="count">{follower_count}</div>
-        <div class="follow-block-text">Followers</div>
-      </a>
-      <a href={link} class="follow-block">
-        <div class="count">{authors_followings.length}</div>
-        <div class="follow-block-text">Following</div>
-      </a>
+      <div class="following-info">
+        <a href={link} class="follow-block">
+          <div class="count">{follower_count}</div>
+          <div class="follow-block-text">Followers</div>
+        </a>
+        <a href={link} class="follow-block">
+          <div class="count">{authors_followings.length}</div>
+          <div class="follow-block-text">Following</div>
+        </a>
+      </div>
     </div>
 
     <div class="user-info">
@@ -217,7 +219,10 @@
 
     <div class="sportstack">
       <div class="sportstack-info">
-        <SportstackAvatar size={48} src='https://s3-alpha-sig.figma.com/img/ead9/422f/35e3b50c15d637cc9219c84e6578d300?Expires=1721001600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=EmvyAFwy5cFn4kbaOCzPBmg2mcO6P7VUi~P0P46f86WYbq52HvxuxJgpqXFcOuXP-G5q5Lsv6jzPovh1Xt-aeEKnDtwgZoMG2TpTw41A5LJAAFFMbYcVwEAqBPWf4VT3SVc-hXB8u~dk7IT-Ntu77WBnXLTGKCZePMQykjBbrkS0NTiFhvHFIOAmbQ-HmlgIdvrJZxvVQR2f0Xe9g5qX2Tle37SNqA2EjlOaxzMbn4zw8MXcRkAOzATeOzao1GNdD3yUt~pHs6EDiRVLxf9xjKXYsYdUn~geDu12j7HP9CNuW9nC~CgzE6NeTQLFi0UjU3aQuYVsSDJTYAAg06hM-A__'/>
+        <SportstackAvatar
+          size={48}
+          src="https://s3-alpha-sig.figma.com/img/ead9/422f/35e3b50c15d637cc9219c84e6578d300?Expires=1721001600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=EmvyAFwy5cFn4kbaOCzPBmg2mcO6P7VUi~P0P46f86WYbq52HvxuxJgpqXFcOuXP-G5q5Lsv6jzPovh1Xt-aeEKnDtwgZoMG2TpTw41A5LJAAFFMbYcVwEAqBPWf4VT3SVc-hXB8u~dk7IT-Ntu77WBnXLTGKCZePMQykjBbrkS0NTiFhvHFIOAmbQ-HmlgIdvrJZxvVQR2f0Xe9g5qX2Tle37SNqA2EjlOaxzMbn4zw8MXcRkAOzATeOzao1GNdD3yUt~pHs6EDiRVLxf9xjKXYsYdUn~geDu12j7HP9CNuW9nC~CgzE6NeTQLFi0UjU3aQuYVsSDJTYAAg06hM-A__"
+        />
         <div class="sportstack-name">
           <div class="name">Sports Best</div>
           <div class="owner">By Rogrigo Monteirasso</div>
@@ -275,20 +280,27 @@
         display: flex;
         gap: 40px;
 
-        .follow-block {
+        .following-info {
           display: flex;
-          flex-direction: column;
-          margin-top: 5px;
-          cursor: pointer;
+          align-items: center;
+          justify-content: center;
+          gap: 32px;
 
-          .count {
-            color: var(--text-color);
-            font-weight: 600;
-            font-size: 16px;
-          }
-          &-text {
-            color: var(--text-color-second);
-            font-size: 10px;
+          .follow-block {
+            display: flex;
+            flex-direction: column;
+            margin-top: 5px;
+            cursor: pointer;
+
+            .count {
+              color: var(--text-color);
+              font-weight: 600;
+              font-size: 16px;
+            }
+            &-text {
+              color: var(--text-color-second);
+              font-size: 10px;
+            }
           }
         }
       }
