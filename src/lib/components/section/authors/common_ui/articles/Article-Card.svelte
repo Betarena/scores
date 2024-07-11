@@ -41,6 +41,7 @@
   import type { IPageAuthorTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.tags.js';
   import { readingTime } from '../helpers.js';
   import TranslationText from '$lib/components/misc/Translation-Text.svelte';
+    import SportstackAvatar from '$lib/components/ui/SportstackAvatar.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -97,7 +98,7 @@
     username: 'unknow',
     avatar: defaultAvatar,
   });
-
+  $: sportstackUrl = `/a/sportstack/${username.toLowerCase().replaceAll(' ', '-')}`;
   $: date = timeAgo(published_date, translations.time_ago);
   $: timeToRead =  readingTime(article.data?.content)
   // #endregion ➤ 📌 VARIABLES
@@ -117,8 +118,8 @@
 
 <div class="card-wrapper" class:mobile class:tablet in:fade={{ duration: 500 }}>
   <div class="card-content">
-    <div class="author-wrapper">
-      <Avatar src={avatar} size={mobile ? 32 : 38} />
+    <a href={sportstackUrl} class="author-wrapper">
+      <SportstackAvatar src={avatar} size={32} />
       <div class="author-info">
         <div class="author-name">{username}</div>
         <div class="publication-date">
@@ -134,7 +135,7 @@
           {date}
         </div>
       </div>
-    </div>
+    </a>
     <a href="/a/{permalink}">
       <div class="title">
         {title}

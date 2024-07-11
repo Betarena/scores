@@ -25,6 +25,7 @@
     routeIdPagePlayer,
     routeIdPageProfile,
     routeIdPageTags,
+    routeIdSportstack,
   } from "$lib/constants/paths.js";
   import MobileHeaderRich from "./MobileHeaderRich.svelte";
   import Header from "./Header.svelte";
@@ -78,7 +79,8 @@
     routeIdPageProfile,
     routeIdPageAuthors,
     routeIdAuthorProfile,
-    routeIdAuthorSubscribers
+    routeIdAuthorSubscribers,
+    routeIdSportstack
   ];
   $: isSimpleHeader = simpleMobileHeaderRoutes.includes($page.route.id || "");
   $: ({ windowWidth, currentPageRouteId, viewportType, globalState } =
