@@ -65,7 +65,7 @@
     CNAME: string = "author-profile-section";
 
 
-  $: ({ author, articles: [widgetData, translations] } = $page.data);
+  $: ({ author, articles: widgetData, translations } = $page.data);
 
 
   // #endregion ➤ 📌 VARIABLES

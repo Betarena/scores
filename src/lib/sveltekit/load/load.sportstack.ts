@@ -21,6 +21,7 @@ import type { IPageAuthorTagDataFinal } from '@betarena/scores-lib/types/v8/prel
 import type { B_SAP_D2 } from '@betarena/scores-lib/types/v8/preload.scores.js';
 import type { IPageAuthorTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.tags.js';
 import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.betarena-user.js';
+import { readingTime } from '$lib/components/section/authors/common_ui/helpers.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -81,7 +82,6 @@ export async function main
   //     );
   // ;
 
-
   return fetchData
     (
       fetch,
@@ -122,6 +122,7 @@ async function fetchData
       = [
         `/api/data/author/sportstack?permalink=${_name}`,
         `/api/data/author/tags?translation=${_lang}`,
+        `/api/data/author/article?lang=${_lang}`,
 
       ]
 
@@ -129,9 +130,12 @@ async function fetchData
    * @description
    *  📣 Target `data` returned.
   */
-  const [articles, translations] = await promiseUrlsPreload(urls0, fetch);
+  const [articles, translations, articleTranslation] = await promiseUrlsPreload(urls0, fetch);
   return {
     articles,
-    translations
+    translations: {
+      ...translations,
+      readingTime: articleTranslation?.translation
+    }
   }
 }

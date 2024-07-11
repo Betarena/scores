@@ -135,19 +135,16 @@ async function fetchData
       = [
         `/api/data/author/profile?uid=${user.uid}`,
         `/api/data/author/tags?translation=${_lang}`,
+        `/api/data/author/article?lang=${_lang}`,
+      ];
 
-      ]
-
-  /**
-   * @description
-   *  📣 Target `data` returned.
-  */
+  const [articles, translations, articleTranslation] = await promiseUrlsPreload(urls0, fetch);
   return {
     author: user,
-    articles: promiseUrlsPreload
-      (
-        urls0
-        , fetch
-      )
+    articles,
+    translations: {
+      ...translations,
+      readingTime: articleTranslation?.translation
+    }
   }
 }
