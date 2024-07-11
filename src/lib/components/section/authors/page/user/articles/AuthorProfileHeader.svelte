@@ -314,7 +314,7 @@
       }
 
       .user-description {
-        font-family: Inter;
+        font-family: Roboto;
         font-size: 12px;
         font-style: normal;
         font-weight: 400;
@@ -325,7 +325,7 @@
       .followers {
         display: flex;
         gap: 8px;
-        font-family: Inter;
+        font-family: Roboto;
         font-size: 10px;
         font-style: normal;
         line-height: 13px;
@@ -415,7 +415,7 @@
 
         &-description {
           color: var(--text-color-second);
-          font-family: Inter;
+          font-family: Roboto;
           font-size: 12px;
           font-style: normal;
           font-weight: 400;

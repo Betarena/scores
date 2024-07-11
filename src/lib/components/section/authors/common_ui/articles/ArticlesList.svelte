@@ -8,10 +8,26 @@
 -->
 
 <script lang="ts">
-  import BackButton from "$lib/components/ui/BackButton.svelte";
-  import Tabbar from "$lib/components/ui/Tabbar.svelte";
+  // #region ➤ 📦 Package Imports
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+  import ArticleCard from "./Article-Card.svelte";
+  import ArticleLoader from "./Article-Loader.svelte";
   import session from "$lib/store/session.js";
-  import { createEventDispatcher } from "svelte";
+  import type { IArticle } from "../helpers.js";
+
+  // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
 
@@ -27,23 +43,18 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let data = { name: "Rodrigo Monteirasso" };
+  export let articles: Map<string | number, IArticle> = new Map(),
+    isLoadingArticles = false,
+    translations = {};
 
   const /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
      */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = "author-profile⮕followers⮕header";
-  const dispatch = createEventDispatcher();
-  const options = [
-    { id: "subscribers", label: "Subscribers" },
-    { id: "followers", label: "Followers" },
-    { id: "followings", label: "Followings" },
-  ];
-
-  $: ({ globalState, viewportType } = $session);
-  $: isPWA = globalState.has("IsPWA");
-  $: ({ name } = data);
+    CNAME: string = "author⮕articles⮕list";
+  $: ({ viewportType } = $session);
+  $: mobile = viewportType === "mobile";
+  $: tablet = viewportType === "tablet";
   // #endregion ➤ 📌 VARIABLES
 </script>
 
@@ -57,21 +68,21 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<div class="wrapper {viewportType}" id={CNAME}>
-  <div class="name-block">
-    {#if !isPWA}
-      <div class="back-button">
-        <BackButton
-          custom_handler={true}
-          on:click={() => dispatch("changeMode")}
-        />
-      </div>
-    {/if}
-    <div class="name">{name}</div>
-  </div>
-  <div class="tabbar-wrapper">
-    <Tabbar data={options} style="gap: {viewportType === "mobile" ? 40 : 24}px; font-size: var(--text-size-m)" />
-  </div>
+
+<div class="listArticlesMod {viewportType}" id={CNAME}>
+  {#if articles.size}
+    {#each [...articles.entries()] as [key, article] (key)}
+      <ArticleCard {mobile} {article} {tablet} {translations} />
+    {/each}
+  {:else}
+    <div class="no-data">No articles yet</div>
+  {/if}
+
+  {#if isLoadingArticles}
+    {#each Array(10) as _item}
+      <ArticleLoader {mobile} {tablet} />
+    {/each}
+  {/if}
 </div>
 
 <!--
@@ -85,51 +96,27 @@
 -->
 
 <style lang="scss">
-  .wrapper {
+  .listArticlesMod {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 24px;
 
     &.mobile {
-      border-bottom: var(--header-border);
-      padding-inline: 16px;
-
-      .tabbar-wrapper {
-        margin: auto;
-      }
-
-      .name-block .name {
-        justify-content: center;
-        padding-left: 0;
-      }
+      margin-top: 0;
+      gap: 8px;
     }
 
-    .name-block {
+    .no-data {
+      flex-grow: 1;
+      width: 100%;
+      height: 100%;
+      background-color: var(--bg-color);
+      font-weight: 600;
+      color: var(--text-color-second);
+      font-size: var(--text-size-2xl);
       display: flex;
-      justify-content: start;
+      justify-content: center;
       align-items: center;
-      position: relative;
-
-      .back-button {
-        position: absolute;
-        left: 0;
-        top: 0;
-        transform: translateY(-20%);
-      }
-
-      .name {
-        display: flex;
-        color: var(--text-color);
-        justify-self: start;
-        padding-left: 48px;
-        align-items: center;
-        flex-grow: 1;
-        font-family: Roboto;
-        font-size: var(--text-size-l);
-        font-style: normal;
-        font-weight: 500;
-        line-height: 24px; /* 150% */
-      }
     }
   }
 </style>

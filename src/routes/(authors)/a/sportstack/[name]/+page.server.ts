@@ -49,8 +49,6 @@ export async function load
     name = ""
   } = params;
 
-  console.log("SERER PAGE")
-
   return main
     ({
       name,

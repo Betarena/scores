@@ -14,7 +14,7 @@
   import session from "$lib/store/session.js";
   import { Betarena_User_Class } from "@betarena/scores-lib/dist/classes/class.betarena-user.js";
   import FollowersHeader from "./FollowersHeader.svelte";
-  import FollowersList from "./FollowersList.svelte";
+  import FollowersList from "../../../common_ui/FollowersList.svelte";
   import type { BetarenaUser } from "$lib/types/types.user-settings.js";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -117,12 +117,7 @@
 <svelte:window on:scroll={scrollHandler} />
 <div class="wrapper" id={CNAME}>
   <FollowersHeader {author} selection={selectedOption} on:select={select} />
-  {#if !currentData.length}
-    <div class="empty">
-      No {selectedOption} yet
-    </div>
-  {/if}
-  <FollowersList users={currentData} />
+  <FollowersList users={currentData} emptyMessage="no {selectedOption} yet"/>
   {#if !isPWA && currentData?.length < rawData[selectedOption]?.length}
     <div class="load-more">
       <Button type="outline" on:click={() => loadUsers(selectedOption)}
@@ -153,18 +148,6 @@
       justify-content: center;
       margin-top: 32px;
     }
-    .empty {
-      flex-grow: 1;
-      width: 100%;
-      height: 100%;
-      background-color: var(--bg-color);
-      font-weight: 600;
-      color: var(--text-color-second);
-      font-size: var(--text-size-2xl);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-top: 10px;
-    }
+
   }
 </style>

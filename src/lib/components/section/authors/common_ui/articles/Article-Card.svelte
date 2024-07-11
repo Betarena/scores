@@ -31,7 +31,7 @@
   import { timeAgo } from '$lib/utils/dates.js';
 
   import { fade } from 'svelte/transition';
-  import defaultAvatar from './profile-avatar.svg';
+  import defaultAvatar from '../profile-avatar.svg';
 
   import type {
     IPageAuthorArticleData,
@@ -39,7 +39,7 @@
     IPageAuthorTagData,
   } from '@betarena/scores-lib/types/v8/preload.authors.js';
   import type { IPageAuthorTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.tags.js';
-  import { readingTime } from './helpers.js';
+  import { readingTime } from '../helpers.js';
   import TranslationText from '$lib/components/misc/Translation-Text.svelte';
 
   // #endregion ➤ 📦 Package Imports

@@ -42,28 +42,24 @@
 
   import { get } from "$lib/api/utils.js";
   import sessionStore from "$lib/store/session.js";
-  import userBetarenaSettings from "$lib/store/user-settings.js";
   import { dlogv2 } from "$lib/utils/debug.js";
 
   import Button from "$lib/components/ui/Button.svelte";
-  import ArticleLoader from "../../../../common_ui/Article-Loader.svelte";
 
   import type {
-    IPageAuthorArticleData,
     IPageAuthorAuthorData,
     IPageAuthorSportstackData,
     IPageAuthorTagData,
-    IPageAuthorTagDataFinal,
   } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
   import {
-    prepareArticles,
     prepareArticlesMap,
     type IArticle,
     type ITagsWidgetData,
-  } from "../../../helpers.js";
-  import AuthorProfileHeader from "./SportstackHeader.svelte";
-  import ArticleCard from "../../../../common_ui/Article-Card.svelte";
+  } from "../../helpers.js";
+  import SportstackHeader from "./SportstackHeader.svelte";
+  import FollowersList from "../../../common_ui/FollowersList.svelte";
+  import ArticlesList from "../../../common_ui/articles/ArticlesList.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -90,8 +86,8 @@
 
   $: console.log(widgetData);
   $: pageSeo = $page.data.seoTamplate;
-  $: sportstack = widgetData?.mapAuthor?.length
-    ? widgetData?.mapAuthor[0][1]
+  $: sportstackData = widgetData?.mapAuthor?.length
+    ? widgetData?.mapAuthor[0]
     : ({} as IPageAuthorAuthorData);
   /**
    * @description
@@ -128,6 +124,11 @@
     mapArticlesMod = new Map<number, IArticle>(),
     /**
      * @description
+     * 📝 current view mode;
+     */
+    currentView: "posts" | "people" = "posts",
+    /**
+     * @description
      * 📝 current page number;
      */
     currentPage = 1;
@@ -152,14 +153,16 @@
    * @summary
    *  🟦 HELPER
    * @description
-   *  📝 Selects `tag`.
+   *  📝 Selects `mode`.
    * @param { CustomEvent<IPageAuthorTagData> } e
    *  💠 **REQUIRED** Event argument.
    * @returns { void }
    */
-  function selectTag(e: CustomEvent<IPageAuthorTagData>): void {
+  function selectMode(e: CustomEvent<{ id: string }>): void {
     // [🐞]
-    // dlogv2("selectTag(..)", [`🔹 [var] ➤ e :|: ${e}`], true);
+    dlogv2("selectMode(..)", [`🔹 [var] ➤ e :|: ${e}`], true);
+    const { id } = e.detail;
+    currentView = id as "posts" | "people";
     // selectedTag = e.detail;
     // mapArticlesMod = new Map();
     // if (!mapTagSelectData.has(selectedTag.id ?? 0)) loadTagArticles();
@@ -235,7 +238,7 @@
 
     if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 5)
       loadMore();
-      return;
+    return;
   }
 
   /**
@@ -277,7 +280,7 @@
       true
     );
     isLoadingArticles = true;
-    const permalink = sportstack.data?.username
+    const permalink = sportstackData[1].data?.username
       .toLowerCase()
       .replaceAll(" ", "-");
     const /**
@@ -290,7 +293,7 @@
        * 📝 Data Response (0).
        */
       dataRes0 = (await get(url)) as ITagsWidgetData;
-      isLoadingArticles = false;
+    isLoadingArticles = false;
     updateData(dataRes0);
     currentPage = page;
 
@@ -323,43 +326,30 @@
 ╰─────
 -->
 
-<AuthorProfileHeader {sportstack} on:changeMode />
+<SportstackHeader {sportstackData} on:select={selectMode} />
 
 <!--
 ╭─────
-│ > INSERT-DESCRIPTION
-╰─────
--->
-<!-- <div class="tabbar-wrapper">
-  {#if categories.length}
-    <Tabbar
-      on:select={selectTag}
-      data={categories}
-      selected={selectedTag}
-      height={mobile ? 14 : 8}
-    />
-  {/if}
-</div> -->
-
-<!--
-╭─────
-│ > INSERT-DESCRIPTION
+│ > Articles view
 ╰─────
 -->
 <div class="content {viewportType}">
-  <div class="listArticlesMod">
-    {#each [...mapArticlesMod.entries()] as [id, article] (id)}
-      <ArticleCard {mobile} {article} {tablet} {translations} />
-    {/each}
+  {#if currentView === "posts"}
+    <ArticlesList
+      articles={mapArticlesMod}
+      {translations}
+      {isLoadingArticles}
+    />
+  {:else}
+    <!--
+╭─────
+│ > People view
+╰─────
+-->
+    <FollowersList users={[]} emptyMessage="No people yet" />
+  {/if}
 
-    {#if isLoadingArticles}
-      {#each Array(10) as _item}
-        <ArticleLoader {mobile} {tablet} />
-      {/each}
-    {/if}
-  </div>
-
-  {#if !isPWA && mapArticlesMod.size}
+  {#if !isPWA && ((currentView === "posts" && mapArticlesMod.size) || (currentView === "people" && 0))}
     <div class="load-more">
       <Button type="outline" on:click={loadMore}>Load More</Button>
     </div>
@@ -380,12 +370,7 @@
   .content {
     max-width: 1265px;
     padding-top: 32px;
-  }
-
-  .listArticlesMod {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
+    flex-grow: 1;
   }
 
   .load-more {
@@ -429,11 +414,6 @@
 
       .tabbar-wrapper {
         padding: 0px 16px;
-      }
-
-      .listArticlesMod {
-        margin-top: 0;
-        gap: 8px;
       }
 
       .add-icon {

@@ -42,24 +42,16 @@
 
   import { get } from "$lib/api/utils.js";
   import sessionStore from "$lib/store/session.js";
-  import userBetarenaSettings from "$lib/store/user-settings.js";
   import { dlogv2 } from "$lib/utils/debug.js";
 
   import Button from "$lib/components/ui/Button.svelte";
-  import type {
-    IPageAuthorTagDataFinal,
-    IPageAuthorArticleData,
-    IPageAuthorTagData,
-    IPageAuthorAuthorData,
-  } from "@betarena/scores-lib/types/v8/preload.authors.js";
-  import ArticleCard from "../../../common_ui/Article-Card.svelte";
-  import ArticleLoader from "../../../common_ui/Article-Loader.svelte";
   import {
     type ITagsWidgetData,
     type IArticle,
     prepareArticlesMap,
   } from "../../helpers.js";
   import AuthorProfileHeader from "./AuthorProfileHeader.svelte";
+  import ArticlesList from "../../../common_ui/articles/ArticlesList.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -257,7 +249,7 @@
        * 📝 Data Response (0).
        */
       dataRes0 = (await get(url)) as ITagsWidgetData;
-      isLoadingArticles = false;
+    isLoadingArticles = false;
     updateData(dataRes0);
     currentPage = page;
 
@@ -298,21 +290,7 @@
 -->
 
 <div class="content {viewportType}">
-  <div class="listArticlesMod">
-    {#each [...mapArticlesMod.entries()] as [key, article] (key)}
-      <ArticleCard {mobile} {article} {tablet} {translations} />
-    {/each}
-
-    {#if isLoadingArticles}
-      {#each Array(10) as _item}
-        <ArticleLoader {mobile} {tablet} />
-      {/each}
-    {/if}
-  </div>
-
-  {#if !mapArticles.size}
-    <div class="no-data">No articles yet</div>
-  {/if}
+  <ArticlesList articles={mapArticlesMod} {translations} {isLoadingArticles} />
 
   {#if !isPWA && mapArticlesMod.size}
     <div class="load-more">
@@ -342,24 +320,6 @@
     &.mobile {
       margin-top: 0;
     }
-  }
-
-  .listArticlesMod {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
-  .no-data {
-    flex-grow: 1;
-    width: 100%;
-    height: 100%;
-    background-color: var(--bg-color);
-    font-weight: 600;
-    color: var(--text-color-second);
-    font-size: var(--text-size-2xl);
-    display: flex;
-    justify-content: center;
-    align-items: center;
   }
 
   .load-more {
@@ -402,11 +362,6 @@
 
       .tabbar-wrapper {
         padding: 0px 16px;
-      }
-
-      .listArticlesMod {
-        margin-top: 0;
-        gap: 8px;
       }
 
       .add-icon {

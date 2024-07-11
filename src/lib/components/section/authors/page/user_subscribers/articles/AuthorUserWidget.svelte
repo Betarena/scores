@@ -57,65 +57,10 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  const /**
-     * @description
-     *  📝 `this` component **main** `id` and `data-testid` prefix.
-     */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = "content";
-
-  let isProfileMode = true;
-
   $: ({ author, articles: widgetData } = $page.data);
-
-  // $: widgetData = $page.data as IPageAuthorTagDataFinal & {
-  //   translations: IPageAuthorTranslationDataFinal;
-  // } | undefined;
-  /**
-   * @description
-   * 📝 Interecpted data for `map` instance of `tag(s)`.
-   */
-  $: mapTags = new Map(widgetData?.mapTag ?? []);
-  /**
-   * @description
-   * 📝 Interecpted data for `map` instance of `article(s)`.
-   */
-  $: mapArticles = new Map(widgetData?.mapArticle ?? []);
 
   // #endregion ➤ 📌 VARIABLES
 
-  // #region ➤ 🛠️ METHODS
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'methods' that are to be           │
-  // │ and are expected to be used by 'this' .svelte file / component.        │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. function (..)                                                       │
-  // │ 2. async function (..)                                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  /**
-   * @author
-   *  @migbash
-   * @summary
-   *  🟩 MAIN
-   * @description
-   *  📣 main widget data loader
-   *  - ⚡️ (and) try..catch (error) handler
-   *  - ⚡️ (and) placeholder handler
-   * @returns { Promise < void > }
-   */
-  async function widgetInit(): Promise<void> {
-    // IMPORTANT
-    if (!browser) return;
-
-    // await sleep(1500);
-
-    return;
-  }
-
-  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--

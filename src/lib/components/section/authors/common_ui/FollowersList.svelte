@@ -8,12 +8,10 @@
 -->
 
 <script lang="ts">
+  import session from "$lib/store/session.js";
+  import type { BetarenaUser } from "$lib/types/types.user-settings.js";
+  import FollowersUserItem from "./FollowersUserItem.svelte";
   // #region ➤ 📌 VARIABLES
-
-  import Avatar from "$lib/components/ui/Avatar.svelte";
-  import Button from "$lib/components/ui/Button.svelte";
-    import session from "$lib/store/session.js";
-  import FollowersHeader from "./FollowersHeader.svelte";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -27,7 +25,8 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let data = {};
+  export let users: BetarenaUser[] = [],
+    emptyMessage = "No followers yet";
 
   const /**
      * @description
@@ -35,7 +34,7 @@
      */ // eslint-disable-next-line no-unused-vars
     CNAME: string = "author⮕followers⮕list";
 
-    $: ({viewportType} = $session)
+  $: ({ viewportType } = $session);
 
   // #endregion ➤ 📌 VARIABLES
 </script>
@@ -51,17 +50,17 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 <div class="wrapper {viewportType}" id={CNAME}>
-  <div class="list-wrapper">
-    {#each Array(100) as item}
-      <div class="list-item">
-        <div class="user-info">
-          <Avatar size={40} />
-          <div class="useer-name">Ivan Izobov</div>
-        </div>
-        <Button type="primary">Follow</Button>
-      </div>
-    {/each}
-  </div>
+  {#if !users.length}
+    <div class="empty">
+      {emptyMessage}
+    </div>
+  {:else}
+    <div class="list-wrapper">
+      {#each users as user}
+        <FollowersUserItem {user} />
+      {/each}
+    </div>
+  {/if}
 </div>
 
 <!--
@@ -77,7 +76,6 @@
 <style lang="scss">
   .wrapper {
     display: flex;
-    flex-grow: 1;
     padding-top: 8px;
 
     flex-direction: column;
@@ -86,36 +84,20 @@
     .list-wrapper {
       display: flex;
       flex-direction: column;
-
-      .list-item {
-        display: flex;
-        padding-block: 10px;
-        border-bottom: var(--header-border);
-        justify-content: space-between;
-        gap: 20px;
-        align-items: center;
-
-        .user-info {
-          display: flex;
-          justify-content: start;
-          flex-grow: 1;
-          align-items: center;
-          gap: 12px;
-          color: var(--text-color);
-          font-family: Roboto;
-          font-size: 16px;
-          font-style: normal;
-          font-weight: 500;
-          line-height: 24px; /* 150% */
-        }
-      }
     }
 
-    &.mobile {
-      .list-item {
-        padding: 16px;
-        border-bottom: none;
-      }
+    .empty {
+      flex-grow: 1;
+      width: 100%;
+      height: 100%;
+      background-color: var(--bg-color);
+      font-weight: 600;
+      color: var(--text-color-second);
+      font-size: var(--text-size-2xl);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 10px;
     }
   }
 </style>

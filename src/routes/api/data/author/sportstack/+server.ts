@@ -18,7 +18,7 @@
 
 import dotenv from 'dotenv';
 
-import { main } from '$lib/sveltekit/endpoint/sportstack.js';
+import { main, updateSubscribers } from '$lib/sveltekit/endpoint/sportstack.js';
 
 // #endregion ➤ 📦 Package
 
@@ -37,4 +37,14 @@ export async function GET
     (
       request
     ) as Promise<Response>;
+}
+
+
+export async function POST
+  (
+    request
+  )
+{
+
+  return await updateSubscribers(request)
 }
