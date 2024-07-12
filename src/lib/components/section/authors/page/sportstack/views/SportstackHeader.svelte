@@ -105,24 +105,29 @@
       </div>
 
       <div class="sportstack-description">
-        {about}
-      </div>
-    </div>
-    <div class="actions-wrapper">
-      <div class="buttons-wrapper">
-        {#if !isOwner}
-          <Button
-            type={isSubscribed ? "subtle" : "primary"}
-            style="flex-grow: 1; {viewportType === 'mobile'
-              ? ''
-              : 'width: 145px;'}"
-            on:click={subscribe}
-            >{isSubscribed ? "Unsubscribe" : "Subscribe"}</Button
-          >
-        {/if}
-        <Button type="secondary" style="width: 40px; height: 40px; padding: 0">
-          <ShareIcon />
-        </Button>
+        <div class="about-text">
+          {about}
+        </div>
+        <div class="actions-wrapper">
+          <div class="buttons-wrapper">
+            {#if !isOwner}
+              <Button
+                type={isSubscribed ? "subtle" : "primary"}
+                style="flex-grow: 1; {viewportType === 'mobile'
+                  ? ''
+                  : 'width: 145px;'}"
+                on:click={subscribe}
+                >{isSubscribed ? "Unsubscribe" : "Subscribe"}</Button
+              >
+            {/if}
+            <Button
+              type="secondary"
+              style="width: 40px; height: 40px; padding: 0"
+            >
+              <ShareIcon />
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -179,6 +184,9 @@
           }
 
           .sportstack-description {
+            flex-direction: column;
+            width: 100%;
+            gap: 20px;
             text-align: center;
           }
         }
@@ -187,6 +195,7 @@
 
     .sportstack-main-info {
       display: flex;
+      flex-direction: column;
       gap: 60px;
       justify-content: space-between;
 
@@ -195,7 +204,6 @@
         gap: 12px;
         justify-content: center;
         display: flex;
-        max-width: 355px;
 
         .social-info {
           display: flex;
@@ -221,6 +229,7 @@
           display: flex;
           align-items: center;
           gap: 24px;
+          width: 100%;
 
           .name {
             color: var(--text-color);
@@ -236,11 +245,16 @@
         }
 
         .sportstack-description {
+          display: flex;
+          justify-content: space-between;
           font-size: var(--text-size-s);
           font-style: normal;
           font-weight: 400;
           line-height: 18px;
           color: var(--text-color-second);
+          .about-text {
+            max-width: 355px;
+          }
         }
 
         .followers {
