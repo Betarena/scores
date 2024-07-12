@@ -26,25 +26,10 @@ import type { ServerLoadEvent } from '@sveltejs/kit';
  */
 export async function load
   (
-    { params, fetch, parent }: ServerLoadEvent
+    { params, fetch }: ServerLoadEvent
   ): Promise<any>
 {
 
-  const
-    {
-      langParam
-    } = await parent()
-    ;
-
-  // [🐞]
-  dlogv2
-    (
-      '🚏 checkpoint ➤ src/routes/(authors)/a/sportstack/[username]/+page.server.ts',
-      [
-        `🔹 [var] ➤ langParam :|: ${langParam}`,
-      ],
-      true
-  );
   const {
     name = ""
   } = params;
@@ -52,8 +37,7 @@ export async function load
   return main
     ({
       name,
-      fetch,
-      langParam
+      fetch
       }
     );
 }

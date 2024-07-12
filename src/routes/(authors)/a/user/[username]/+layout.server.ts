@@ -13,8 +13,6 @@
 // #region ➤ 📦 Package Imports
 
 import { main } from '$lib/sveltekit/load/load.author.js';
-import { dlogv2 } from '$lib/utils/debug.js';
-
 import type { ServerLoadEvent } from '@sveltejs/kit';
 
 // #endregion ➤ 📦 Package Imports
@@ -30,28 +28,9 @@ export async function load
   ): Promise<any>
 {
 
-  const
-    {
-      langParam
-    } = await event.parent()
-    ;
-
-  // [🐞]
-  dlogv2
-    (
-      '🚏 checkpoint ➤ src/routes/(authors)/a/user/[username]/+page.server.ts',
-      [
-        `🔹 [var] ➤ langParam :|: ${langParam}`,
-      ],
-      true
-  );
-
   return await main
     (
-      { params: event.params, fetch: event.fetch } as ServerLoadEvent,
-      {
-        langParam
-      }
+      { params: event.params, fetch: event.fetch } as ServerLoadEvent
     );
 }
 

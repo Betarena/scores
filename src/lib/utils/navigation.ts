@@ -13,12 +13,12 @@
 // #region ➤ 📦 Package Imports
 
 import { dev } from '$app/environment';
-import { invalidateAll } from '$app/navigation';
+import { invalidate, invalidateAll } from '$app/navigation';
 import { error, redirect, type Page } from '@sveltejs/kit';
 import LZString from 'lz-string';
 
 import { get } from '$lib/api/utils.js';
-import { routeIdContent, routeIdPageAuthors, routeIdPageCompetition, routeIdPageCompetitionLobby, routeIdPageFixture, routeIdPageLeague, routeIdPagePlayer, routeIdPageProfile, routeIdPageTags } from '$lib/constants/paths.js';
+import { routeIdAuthorProfile, routeIdAuthorSubscribers, routeIdContent, routeIdPageAuthors, routeIdPageCompetition, routeIdPageCompetitionLobby, routeIdPageFixture, routeIdPageLeague, routeIdPagePlayer, routeIdPageProfile, routeIdPageTags, routeIdSportstack } from '$lib/constants/paths.js';
 import sessionStore from '$lib/store/session.js';
 import userBetarenaSettings from '$lib/store/user-settings.js';
 import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common';
@@ -192,8 +192,28 @@ export async function selectLanguage
 
     return;
   }
-  case routeIdPageTags:
-  case routeIdContent:
+    case routeIdContent:
+    case routeIdAuthorProfile:
+    case routeIdAuthorSubscribers:
+    case routeIdSportstack:
+      //[🐞]
+      dlogv2
+        (
+          '🚏 checkpoint ➤ selectLanguage(..) [x2]',
+          [
+          ],
+          true
+        );
+
+      sessionStore.updateData
+        (
+          [
+            ['lang', lang]
+          ]
+        );
+      invalidate("author:translations")
+      return
+    case routeIdPageTags:
 
     //[🐞]
     dlogv2
@@ -210,8 +230,7 @@ export async function selectLanguage
         ['lang', lang]
       ]
     );
-
-    invalidateAll();
+      invalidateAll();
 
     return;
   case routeIdPageAuthors:

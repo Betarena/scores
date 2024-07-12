@@ -84,7 +84,6 @@
   $: mobile = viewportType === "mobile";
   $: tablet = viewportType === "tablet";
 
-  $: console.log(widgetData);
   $: pageSeo = $page.data.seoTamplate;
   $: sportstackData = widgetData?.mapAuthor?.length
     ? widgetData?.mapAuthor[0]
@@ -368,8 +367,8 @@
 
 <style lang="scss">
   .content {
-    max-width: 1265px;
-    padding-top: 32px;
+    width: 100%;
+    padding-top: 24px;
     flex-grow: 1;
   }
 

@@ -50,7 +50,7 @@
 <div
   on:click={() => dispatch("click")}
   class="sportstack-image"
-  style="background: url({src}) lightgray center center / 140% 140% no-repeat; width: {size}px; height: {size}px;"
+  style="background: url({src}) lightgray center center / 145% 145% no-repeat; width: {size}px; height: {size}px;"
 />
 
 <!--

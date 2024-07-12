@@ -148,7 +148,7 @@
     }
   }
   .main-content {
-    max-width: 776px;
+    max-width: 824px;
     height: 100%;
     margin: auto;
     --text-size-2xl: 38px;
