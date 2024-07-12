@@ -84,7 +84,6 @@
   $: mobile = viewportType === "mobile";
   $: tablet = viewportType === "tablet";
 
-  $: console.log(widgetData);
   $: pageSeo = $page.data.seoTamplate;
   $: sportstackData = widgetData?.mapAuthor?.length
     ? widgetData?.mapAuthor[0]

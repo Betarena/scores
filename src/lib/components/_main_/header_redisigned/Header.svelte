@@ -39,7 +39,13 @@
   import HeaderNavigation from "./HeaderNavigation.svelte";
   import { promiseUrlsPreload } from "$lib/utils/navigation.js";
   import { createEventDispatcher } from "svelte";
-  import { routeIdPageAuthors, routeIdPageTags } from "$lib/constants/paths.js";
+  import {
+    routeIdAuthorProfile,
+    routeIdAuthorSubscribers,
+    routeIdPageAuthors,
+    routeIdPageTags,
+    routeIdSportstack,
+  } from "$lib/constants/paths.js";
 
   // #endregion ➤ 📦 Package Imports
   // #region ➤ 📌 VARIABLES
@@ -61,18 +67,23 @@
   $: homepageURL = serverLang != "en" ? `/${serverLang}` : "/";
   $: logoLink =
     serverLang != "en" ? `${$page.url.origin}/${serverLang}` : $page.url.origin;
-  $: ({user} = $userBetarenaSettings);
+  $: ({ user } = $userBetarenaSettings);
   $: isAuth = !!user;
   $: ({ profile_photo } = { ...$userBetarenaSettings.user?.scores_user_data });
   $: loadTranslations(serverLang);
 
-  const pagesWihoutNav = [routeIdPageTags, routeIdPageAuthors];
-  const dispatch = createEventDispatcher();
+  const pagesWihoutNav = [
+    routeIdPageTags,
+    routeIdPageAuthors,
+    routeIdAuthorProfile,
+    routeIdSportstack,
+    routeIdAuthorSubscribers,
+  ];
   const /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
      */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = "<section-scope>⮕<type|w|c>⮕<unique-tag-name>⮕main";
+    CNAME: string = "header⮕web";
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -113,7 +124,7 @@
     scoresNavbarStore.closeAllDropdowns();
   }}
 />
-<div class="wrapper">
+<div class="wrapper" id={CNAME}>
   <div
     id="brand"
     data-testid="header-brand-img"
@@ -144,11 +155,12 @@
         />
       </Button>
     {:else}
-      <a href="/u/dashboard/{$userBetarenaSettings.lang}" class="avatar-wrapper" on:click|stopPropagation>
-        <Avatar
-          src={profile_photo}
-          size={44}
-        />
+      <a
+        href="/u/dashboard/{$userBetarenaSettings.lang}"
+        class="avatar-wrapper"
+        on:click|stopPropagation
+      >
+        <Avatar src={profile_photo} size={44} />
       </a>
     {/if}
   </div>

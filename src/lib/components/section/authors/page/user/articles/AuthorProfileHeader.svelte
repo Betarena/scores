@@ -21,6 +21,7 @@
   import ShareIcon from "./assets/share-icon.svelte";
   import { page } from "$app/stores";
   import SportstackAvatar from "$lib/components/ui/SportstackAvatar.svelte";
+  import { browser } from "$app/environment";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -68,7 +69,7 @@
   $: isAuth = !!user;
 
   $: link = $page.url.pathname + "/subscribers";
-  $: getSubscribers(subscribed_by);
+  $: if (browser) getSubscribers(subscribed_by);
 
   const BetarenaUsers = new Betarena_User_Class();
   let subscribers: BetarenaUser[] = [];
@@ -282,7 +283,6 @@
 
         .following-info {
           display: flex;
-          align-items: center;
           justify-content: center;
           gap: 32px;
 

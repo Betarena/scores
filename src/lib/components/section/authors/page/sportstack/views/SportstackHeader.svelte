@@ -17,6 +17,7 @@
   import SportsTackImg from "$lib/components/section/authors/common_ui/SportsTackImg.svelte";
   import Tabbar from "$lib/components/ui/Tabbar.svelte";
   import { post } from "$lib/api/utils.js";
+  import SportstackAvatar from "$lib/components/ui/SportstackAvatar.svelte";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -32,7 +33,7 @@
 
   export let sportstackData = [];
   $: [id, sportstack] = sportstackData;
-  $: ({ data } = sportstack);
+  $: ({ data, uid } = sportstack);
   $: ({ avatar, about, username } = data || {});
 
   const /**
@@ -46,6 +47,8 @@
   $: isSubscribed =
     user?.scores_user_data?.subscriptions?.sportstacks?.includes(id);
   $: isAuth = !!user;
+  $: isOwner = uid === user?.firebase_user_data?.uid;
+
   const options = [
     { id: "posts", label: "Posts" },
     { id: "people", label: "People" },
@@ -97,7 +100,7 @@
   <div class="sportstack-main-info {viewportType}">
     <div class="sportstack-block">
       <div class="sportstack-info">
-        <SportsTackImg src={avatar} />
+        <SportstackAvatar src={avatar} size={64} />
         <div class="name">{username}</div>
       </div>
 
@@ -107,12 +110,16 @@
     </div>
     <div class="actions-wrapper">
       <div class="buttons-wrapper">
-        <Button
-          type={isSubscribed ? "subtle" : "primary"}
-          style="flex-grow: 1;"
-          on:click={subscribe}
-          >{isSubscribed ? "Unsubscribe" : "Subscribe"}</Button
-        >
+        {#if !isOwner}
+          <Button
+            type={isSubscribed ? "subtle" : "primary"}
+            style="flex-grow: 1; {viewportType === 'mobile'
+              ? ''
+              : 'width: 145px;'}"
+            on:click={subscribe}
+            >{isSubscribed ? "Unsubscribe" : "Subscribe"}</Button
+          >
+        {/if}
         <Button type="secondary" style="width: 40px; height: 40px; padding: 0">
           <ShareIcon />
         </Button>
@@ -144,21 +151,15 @@
     gap: 24px;
     background-color: var(--bg-color);
     width: 100%;
+    font-family: Roboto;
     --text-button-size: 14px;
 
     &.mobile {
       padding-inline: 16px;
       padding-top: 3px;
-    }
 
-    .sportstack-main-info {
-      display: flex;
-      gap: 60px;
-      justify-content: space-between;
-
-      &.mobile {
+      .sportstack-main-info {
         gap: 20px;
-
         flex-direction: column;
 
         .actions-wrapper {
@@ -176,14 +177,25 @@
             flex-direction: column;
             gap: 16px;
           }
+
+          .sportstack-description {
+            text-align: center;
+          }
         }
       }
+    }
+
+    .sportstack-main-info {
+      display: flex;
+      gap: 60px;
+      justify-content: space-between;
 
       .sportstack-block {
         flex-direction: column;
         gap: 12px;
         justify-content: center;
         display: flex;
+        max-width: 355px;
 
         .social-info {
           display: flex;
@@ -212,7 +224,6 @@
 
           .name {
             color: var(--text-color);
-            font-family: Roboto;
             font-size: 20px;
             font-style: normal;
             font-weight: 500;
@@ -225,8 +236,7 @@
         }
 
         .sportstack-description {
-          font-family: Roboto;
-          font-size: 12px;
+          font-size: var(--text-size-s);
           font-style: normal;
           font-weight: 400;
           line-height: 18px;
@@ -236,7 +246,6 @@
         .followers {
           display: flex;
           gap: 8px;
-          font-family: Roboto;
           font-size: 10px;
           font-style: normal;
           line-height: 13px;
