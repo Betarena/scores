@@ -52,11 +52,9 @@ export async function load
       }
     );
   */
-
-  return await main
-  (
-    event
-  );
+  const res = await main(event);
+  event.depends("autthor:translations")
+  return res
 }
 
 // #endregion ➤ 🔄 LIFECYCLE [SVELTE]

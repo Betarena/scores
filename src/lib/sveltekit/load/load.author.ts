@@ -52,10 +52,6 @@ type PreloadPromise0 =
 export async function main
   (
     event: ServerLoadEvent,
-    parentData:
-      {
-        langParam: string
-      }
   ): Promise<{
     data: any
   }>
@@ -96,7 +92,6 @@ export async function main
     (
       event.fetch,
       username || "",
-      parentData.langParam
     )
 }
 
@@ -111,8 +106,6 @@ export async function main
  *  💠 **[required]** Target instance of `fetch` object.
  * @param { string } _name
  *  💠 **[required]** Target `tag username`.
- * @param { string } _lang
- *  💠 **[required]** Target `lang`.
  * @returns { Promise < IProfileData2 > }
  *  📤 Target `data` fetched.
  */
@@ -120,11 +113,10 @@ async function fetchData
   (
     fetch: any,
     _name: string,
-    _lang: string
   )
 {
   const bu = new Betarena_User_Class();
-  const users = await bu.obtainPublicInformationTargetUsers([_name], true);
+  const users = await bu.obtainPublicInformationTargetUsers([_name.toLowerCase()], true);
   const [user] = users;
   const
     /**
@@ -134,17 +126,11 @@ async function fetchData
     urls0
       = [
         `/api/data/author/profile?uid=${user.uid}`,
-        `/api/data/author/tags?translation=${_lang}`,
-        `/api/data/author/article?lang=${_lang}`,
       ];
 
-  const [articles, translations, articleTranslation] = await promiseUrlsPreload(urls0, fetch);
+  const [articles] = await promiseUrlsPreload(urls0, fetch);
   return {
     author: user,
-    articles,
-    translations: {
-      ...translations,
-      readingTime: articleTranslation?.translation
-    }
+    articles
   }
 }

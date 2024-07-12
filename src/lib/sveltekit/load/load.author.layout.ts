@@ -11,6 +11,8 @@
 // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 // #region ➤ 📦 Package Imports
+
+
 import { promiseUrlsPreload } from '$lib/utils/navigation.js';
 
 import type { IPageAuthorTagDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
@@ -46,39 +48,17 @@ type PreloadPromise0 =
  */
 export async function main
   (
-    { name,
+    {
       fetch,
-    }: { name: string, fetch: any }
+      langParam
+    }: { fetch: any, langParam: string }
   ): Promise<any[]>
 {
-
-  /**
-   * @description
-   *  📣 Validate **this** `url`.
-   */
-  // isUrlValid
-  //   = await promiseValidUrlCheck
-  //     (
-  //       event.fetch,
-  //       {
-  //         authorUrl: username
-  //       }
-  //     )
-  ;
-
-  // if (!isUrlValid)
-  //   preloadExitLogic
-  //     (
-  //       0,
-  //       '(authors)/a/user/[username]',
-  //       ERROR_CODE_INVALID
-  //     );
-  // ;
 
   return fetchData
     (
       fetch,
-      name || ""
+      langParam
     )
 }
 
@@ -91,8 +71,6 @@ export async function main
  *  📣 Fetches target data for `_this_` page.
  * @param { any } fetch
  *  💠 **[required]** Target instance of `fetch` object.
- * @param { string } _name
- *  💠 **[required]** Target `tag username`.
  * @param { string } _lang
  *  💠 **[required]** Target `lang`.
  * @returns { Promise < IProfileData2 > }
@@ -101,17 +79,18 @@ export async function main
 async function fetchData
   (
     fetch: any,
-    _name: string,
+    _lang: string
   )
 {
   const
     /**
      * @description
-     *  📣 Target `urls` to be `fetched`.
+     *  📣 Load translations for articles layout
      */
     urls0
       = [
-        `/api/data/author/sportstack?permalink=${_name}`
+        `/api/data/author/tags?translation=${_lang}`,
+        `/api/data/author/article?lang=${_lang}`,
 
       ]
 
@@ -119,8 +98,10 @@ async function fetchData
    * @description
    *  📣 Target `data` returned.
   */
-  const [articles] = await promiseUrlsPreload(urls0, fetch);
+  const [translations, articleTranslation] = await promiseUrlsPreload(urls0, fetch);
   return {
-    articles
+    ...translations,
+    readingTime: articleTranslation?.translation
+
   }
 }
