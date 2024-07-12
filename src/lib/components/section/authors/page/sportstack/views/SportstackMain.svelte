@@ -367,8 +367,8 @@
 
 <style lang="scss">
   .content {
-    max-width: 1265px;
-    padding-top: 32px;
+    width: 100%;
+    padding-top: 24px;
     flex-grow: 1;
   }
 

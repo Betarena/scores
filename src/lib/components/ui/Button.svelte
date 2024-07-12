@@ -32,7 +32,8 @@
      * @description
      *  button styles: primary | outline
      */ // eslint-disable-next-line no-unused-vars
-    type: "primary" | "outline" | "secondary" | "primary-outline" | "subtle" = "primary";
+    type: "primary" | "outline" | "secondary" | "primary-outline" | "subtle" =
+      "primary";
 
   const dispatch = createEventDispatcher();
 
@@ -50,7 +51,11 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<button class="button {type}" { ...$$restProps} on:click={() => dispatch("click")}>
+<button
+  class="button {type}"
+  {...$$restProps}
+  on:click={() => dispatch("click")}
+>
   <slot />
 </button>
 
@@ -131,7 +136,8 @@
     color: var(--text-color);
 
     &:hover {
-      background-color: var(--bg-color-second);
+      background: var(--primary, #f5620f);
+      color: var(--white-day, #fff);
     }
   }
 </style>
