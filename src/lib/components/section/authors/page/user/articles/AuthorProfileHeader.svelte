@@ -174,14 +174,16 @@
       <a href={link} class="followers">
         <StackedAvatars
           src={subscribers.map((u) => u.profile_photo || "")}
-          size={24}
+          size={viewportType === "desktop" ? 30 : 24}
         />
         <div class="followers-names">
           Subscribed by
-          {#each subscribers as follower}
+          {#each subscribers as follower, index}
             <span class="username">
               {" "}
-              {follower.username}
+              {`${follower.username}${
+                index < subscribers.length - 1 ? "," : ""
+              }`}
             </span>
           {/each}
           {#if subscribed_by.length > 3}
@@ -336,7 +338,8 @@
         display: flex;
         gap: 8px;
         font-family: Roboto;
-        font-size: 10px;
+        font-size: var(--text-size-xs);
+        line-height: calc(var(--text-size-xs) + 3px);
         font-style: normal;
         line-height: 13px;
         margin-top: 4px;
