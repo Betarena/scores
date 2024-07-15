@@ -122,7 +122,7 @@
   {#if !isPWA && currentData?.length < rawData[selectedOption]?.length}
     <div class="load-more">
       <Button type="outline" on:click={() => loadUsers(selectedOption)}>
-        <TranslationText text={translations.load_more} fallback="Load More" />
+        <TranslationText text={translations.view_more} fallback="View More" />
       </Button>
     </div>
   {/if}

@@ -70,7 +70,6 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
   export let author, widgetData, translations, highlited_sportstack;
-
   $: ({ globalState, viewportType } = $sessionStore);
   $: isPWA = globalState.has("IsPWA");
   // $: widgetData = $page.data as
@@ -293,7 +292,7 @@
   {#if !isPWA && mapArticlesMod.size}
     <div class="load-more">
       <Button type="outline" on:click={loadMore}>
-        <TranslationText  text={translations.load_more} fallback="Load More"/>
+        <TranslationText  text={translations.view_more} fallback="View More"/>
       </Button>
     </div>
   {/if}

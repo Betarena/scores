@@ -53,8 +53,8 @@
   $: isOwner = uid === user?.firebase_user_data?.uid;
 
   const options = [
-    { id: "posts", label: "Posts" },
-    { id: "people", label: "People" },
+    { id: "posts", label: "posts" },
+    { id: "people", label: "people" },
   ];
 
   // #endregion ➤ 📌 VARIABLES
@@ -122,8 +122,8 @@
                 on:click={subscribe}
               >
                 <TranslationText
-                  text={translations[isSubscribed ? "Subscribed" : "Subscribe"]}
-                  fallback="{isSubscribed ? "Subscribed" : "Subscribe"}"
+                  text={translations[isSubscribed ? "subscribed" : "subscribe"]}
+                  fallback={isSubscribed ? "Subscribed" : "Subscribe"}
                 />
               </Button>
             {/if}
@@ -142,14 +142,9 @@
     on:select
     height={12}
     data={options}
+    {translations}
     style="gap: 24px; font-size: var(--text-size-m)"
-    let:tab
-  >
-    <TranslationText
-      text={translations[tab.label]}
-      fallback={tab.label || tab.name}
-    />
-  </Tabbar>
+  />
 </div>
 
 <!--

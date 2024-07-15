@@ -346,13 +346,13 @@
 │ > People view
 ╰─────
 -->
-    <FollowersList users={[]} emptyMessage="No people yet" />
+    <FollowersList users={[]} {translations} emptyMessage="No people yet" />
   {/if}
 
   {#if !isPWA && ((currentView === "posts" && mapArticlesMod.size) || (currentView === "people" && 0))}
     <div class="load-more">
       <Button type="outline" on:click={loadMore}>
-        <TranslationText text={translations.load_more} fallback="Load More" />
+        <TranslationText text={translations.view_more} fallback="View More" />
       </Button>
     </div>
   {/if}

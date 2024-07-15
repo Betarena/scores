@@ -251,7 +251,6 @@
             />
           {:else}
             <TranslationText text={translations.follow} fallback="Follow" />
-            {isFollowed ? "Unfollow" : "Follow"}
           {/if}
         </Button>
       {/if}
@@ -480,6 +479,9 @@
             line-height: 18px; /* 150% */
             &:hover {
               text-decoration: underline !important;
+            }
+            &::before {
+              content: " ";
             }
           }
         }

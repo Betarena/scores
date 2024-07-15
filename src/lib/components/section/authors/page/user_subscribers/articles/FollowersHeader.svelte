@@ -8,7 +8,6 @@
 -->
 
 <script lang="ts">
-  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
   import BackButton from "$lib/components/ui/BackButton.svelte";
   import Tabbar from "$lib/components/ui/Tabbar.svelte";
   import session from "$lib/store/session.js";
@@ -38,9 +37,9 @@
      */ // eslint-disable-next-line no-unused-vars
     CNAME: string = "author-profile⮕followers⮕header";
   $: options = [
-    { id: "subscribers", label: "Subscribers" },
-    { id: "followers", label: "Followers" },
-    { id: "followings", label: "Followings" },
+    { id: "subscribers", label: "subscribers" },
+    { id: "followers", label: "followers" },
+    { id: "followings", label: "following" },
   ];
 
   $: ({ globalState, viewportType } = $session);
@@ -89,10 +88,8 @@
       style="gap: {viewportType === 'mobile'
         ? 40
         : 24}px; font-size: var(--text-size-m)"
-      let:tab
-    >
-      <TranslationText text={translations[tab.label]} fallback={tab.label}/>
-    </Tabbar>
+      {translations}
+    />
   </div>
 </div>
 
