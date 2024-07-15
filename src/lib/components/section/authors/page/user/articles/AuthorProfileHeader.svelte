@@ -78,7 +78,11 @@
   $: isAuth = !!user;
 
   $: link = $page.url.pathname + "/subscribers";
-  $: if (browser) getSubscribers(subscribed_by);
+  let prevUid = "";
+  $: if (browser && uid && prevUid !== uid) {
+    prevUid = uid;
+    getSubscribers(subscribed_by)
+  };
 
   const BetarenaUsers = new Betarena_User_Class();
   let subscribers: BetarenaUser[] = [];

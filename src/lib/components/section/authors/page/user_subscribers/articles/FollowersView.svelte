@@ -18,6 +18,7 @@
   import type { BetarenaUser } from "$lib/types/types.user-settings.js";
   import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
+  import { browser } from "$app/environment";
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'variables' that are to be         │
@@ -51,8 +52,9 @@
   };
   $: currentData = displayedData[selectedOption];
   let rawData;
-
-  $: if (author) {
+  let prevAuthorId = "";
+  $: if (browser && prevAuthorId !== author?.uid) {
+    prevAuthorId = author?.uid;
     displayedData = {
       subscribers: [],
       followers: [],
@@ -117,8 +119,17 @@
 -->
 <svelte:window on:scroll={scrollHandler} />
 <div class="wrapper" id={CNAME}>
-  <FollowersHeader {author} selection={selectedOption} {translations} on:select={select} />
-  <FollowersList {translations} users={currentData} emptyMessage="no {selectedOption} yet" />
+  <FollowersHeader
+    {author}
+    selection={selectedOption}
+    {translations}
+    on:select={select}
+  />
+  <FollowersList
+    {translations}
+    users={currentData}
+    emptyMessage="no {selectedOption} yet"
+  />
   {#if !isPWA && currentData?.length < rawData[selectedOption]?.length}
     <div class="load-more">
       <Button type="outline" on:click={() => loadUsers(selectedOption)}>
