@@ -701,6 +701,13 @@
     &.page-content {
       background-color: var(--bg-color);
     }
+
+    &[data-page-id='Standard'], &[data-page-id='CompetitionPage'] {
+      background-color: red;
+      &.light-mode {
+        background-color: var(--whitev2);
+      }
+    }
   }
   main {
     /* 📌 position */

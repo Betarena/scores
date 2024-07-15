@@ -65,7 +65,7 @@
     CNAME: string = "author-profile-section";
 
 
-  $: ({ author, articles: widgetData, translations } = $page.data);
+  $: ({ author, highlited_sportstack, articles: widgetData, translations } = $page.data);
 
 
   // #endregion ➤ 📌 VARIABLES
@@ -148,7 +148,7 @@
   │ NOTE :|: promise is fulfilled                                          │
   ╰────────────────────────────────────────────────────────────────────────╯
   -->
-  <AuthorProfileMain widgetData={widgetData} {author} {translations} />
+  <AuthorProfileMain widgetData={widgetData} {author} {translations} {highlited_sportstack} />
 {:catch error}
   <!--
     ╭────────────────────────────────────────────────────────────────────────╮

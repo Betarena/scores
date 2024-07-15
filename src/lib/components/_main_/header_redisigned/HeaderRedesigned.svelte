@@ -64,7 +64,8 @@
     routeIdPageAuthors,
     routeIdAuthorProfile,
     routeIdAuthorSubscribers,
-    routeIdSportstack
+    routeIdSportstack,
+    routeIdPageAuthors,
   ];
   $: isInnerPage = simpleMobileHeaderRoutes.includes($page.route.id || "");
   $: ({ currentPageRouteId, viewportType, globalState } =

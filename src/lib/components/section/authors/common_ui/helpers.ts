@@ -69,7 +69,7 @@ export async function fetchArticles({ permalink, lang, page, prevData, url }: { 
 
 /**
    * @author
-   *  @migbash
+   *  @izobov
    * @summary
    *  🟦 HELPER
    * @description
@@ -104,4 +104,22 @@ export function readingTime
   ;
 
   return time;
+}
+
+
+/**
+   * @author
+   *  @izobov
+   * @summary
+   *  🟦 HELPER
+   * @description
+   *  📣 Calcualte target `text` _reading time_, based on `character` amount.
+   * @param { string } text
+   *  💠 **[required]** Target `direction` to _scroll_.
+   * @return {string}
+   */
+export function userNameToUrlString(userName: string | undefined | null): string
+{
+  if (!userName) return "";
+  return userName.toLowerCase().replace(/ /g, "-");
 }

@@ -127,10 +127,15 @@ async function fetchData
       = [
         `/api/data/author/profile?uid=${user.uid}`,
       ];
+  if (user.highlights?.sportstack)
+  {
+    urls0.push(`/api/data/author/sportstack?id=${user.highlights.sportstack}`);
+  }
 
-  const [articles] = await promiseUrlsPreload(urls0, fetch);
+  const [articles, highlited_sportstack] = await promiseUrlsPreload(urls0, fetch);
   return {
     author: user,
-    articles
+    articles,
+    highlited_sportstack
   }
 }

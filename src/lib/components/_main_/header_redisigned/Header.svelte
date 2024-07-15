@@ -155,12 +155,12 @@
         />
       </Button>
     {:else}
-      <a
-        href="/u/dashboard/{$userBetarenaSettings.lang}"
-        class="avatar-wrapper"
-        on:click|stopPropagation
-      >
-        <Avatar src={profile_photo} size={44} />
+      <a href="/u/dashboard/{$userBetarenaSettings.lang}" class="avatar-wrapper" on:click|stopPropagation>
+        <Avatar
+          src={profile_photo}
+          size={44}
+          isLoogedIn={isAuth}
+        />
       </a>
     {/if}
   </div>
