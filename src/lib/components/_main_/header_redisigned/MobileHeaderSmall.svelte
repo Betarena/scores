@@ -48,6 +48,8 @@
   export let mobile, tablet;
   const dispatch = createEventDispatcher();
   $: ({ globalState } = $sessionStore);
+  $: ({user} = $userBetarenaSettings);
+  $: isAuth = !!user;
   $: ({ profile_photo } = { ...$userBetarenaSettings.user?.scores_user_data });
   $: isPWA = globalState.has("IsPWA");
 
@@ -96,6 +98,7 @@
       <Avatar
         src={profile_photo}
         size={32}
+        isLoogedIn={isAuth}
         on:click={() => dispatch("avatarClick")}
       />
     </div>
