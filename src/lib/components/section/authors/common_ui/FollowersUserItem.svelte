@@ -22,11 +22,13 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
   import Avatar from "$lib/components/ui/Avatar.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import session from "$lib/store/session.js";
   import userSettings from "$lib/store/user-settings.js";
   import type { BetarenaUser } from "$lib/types/types.user-settings.js";
+  import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -43,7 +45,7 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let user: BetarenaUser;
+  export let user: BetarenaUser, translations: IPageAuthorTranslationDataFinal;
 
   $: ({ viewportType } = $session);
   $: ({ user: ctx } = $userSettings);
@@ -73,10 +75,7 @@
       return;
     }
     userSettings.updateData([
-      [
-        "user-following",
-        { target: "authors", id: uid, follow: !isFollow },
-      ],
+      ["user-following", { target: "authors", id: uid, follow: !isFollow }],
     ]);
   }
 
@@ -100,9 +99,12 @@
     <div class="useer-name">{username}</div>
   </a>
   {#if uid !== ctx?.firebase_user_data?.uid}
-    <Button type={isFollow ? "subtle": "primary"} on:click={handleClick}
-      >{isFollow ? "Unfollow" : "Follow"}</Button
-    >
+    <Button type={isFollow ? "subtle" : "primary"} on:click={handleClick}>
+      <TranslationText
+        text={translations[isFollow ? "following" : "follow"]}
+        fallback={isFollow ? "Following" : "Follow"}
+      />
+    </Button>
   {/if}
 </div>
 

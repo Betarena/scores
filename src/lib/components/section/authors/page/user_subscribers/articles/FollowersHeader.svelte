@@ -8,11 +8,10 @@
 -->
 
 <script lang="ts">
-  import { goto } from "$app/navigation";
-  import { page } from "$app/stores";
   import BackButton from "$lib/components/ui/BackButton.svelte";
   import Tabbar from "$lib/components/ui/Tabbar.svelte";
   import session from "$lib/store/session.js";
+  import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
 
   // #region ➤ 📌 VARIABLES
 
@@ -28,17 +27,19 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let author = { name: "Rodrigo Monteirasso" }, selection = "subscribers";
+  export let author = { name: "Rodrigo Monteirasso" },
+    selection = "subscribers",
+    translations: IPageAuthorTranslationDataFinal;
 
   const /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
      */ // eslint-disable-next-line no-unused-vars
     CNAME: string = "author-profile⮕followers⮕header";
-  const options = [
-    { id: "subscribers", label: "Subscribers" },
-    { id: "followers", label: "Followers" },
-    { id: "followings", label: "Followings" },
+  $: options = [
+    { id: "subscribers", label: "subscribers" },
+    { id: "followers", label: "followers" },
+    { id: "followings", label: "following" },
   ];
 
   $: ({ globalState, viewportType } = $session);
@@ -87,6 +88,7 @@
       style="gap: {viewportType === 'mobile'
         ? 40
         : 24}px; font-size: var(--text-size-m)"
+      {translations}
     />
   </div>
 </div>
