@@ -68,7 +68,7 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  export let author, widgetData, translations;
+  export let author, widgetData, translations, highlited_sportstack;
 
   $: ({ globalState, viewportType } = $sessionStore);
   $: isPWA = globalState.has("IsPWA");
@@ -281,7 +281,7 @@
 ╰─────
 -->
 
-<AuthorProfileHeader {author} />
+<AuthorProfileHeader {author} {highlited_sportstack}/>
 
 <!--
 ╭─────

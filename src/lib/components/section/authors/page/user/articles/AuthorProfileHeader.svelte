@@ -22,6 +22,9 @@
   import { page } from "$app/stores";
   import SportstackAvatar from "$lib/components/ui/SportstackAvatar.svelte";
   import { browser } from "$app/environment";
+  import type { IPageAuthorAuthorData } from "@betarena/scores-lib/types/v8/preload.authors.js";
+  import type { IBetarenaUser } from "@betarena/scores-lib/types/_FIREBASE_.js";
+  import { userNameToUrlString } from "../../../common_ui/helpers.js";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -35,7 +38,10 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let author: BetarenaUser;
+  export let author: BetarenaUser,
+    highlited_sportstack:
+      | (IPageAuthorAuthorData & { owner: IBetarenaUser })
+      | undefined;
 
   const /**
      * @description
@@ -75,19 +81,6 @@
   let subscribers: BetarenaUser[] = [];
 
   // #endregion ➤ 📌 VARIABLES
-
-  // #region ➤ 🔄 LIFECYCLE [SVELTE]
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'logic' that should run            │
-  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
-  // │ as soon as 'this' .svelte file is ran.                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  // onMount(() => {});
-
-  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
   // #region ➤ 🛠️ METHODS
 
@@ -179,12 +172,18 @@
         <div class="followers-names">
           Subscribed by
           {#each subscribers as follower, index}
-            <span class="username">
-              {" "}
-              {`${follower.username}${
-                index < subscribers.length - 1 ? "," : ""
-              }`}
-            </span>
+            <a
+              class="username"
+              on:click|stopPropagation
+              href="/a/user/{userNameToUrlString(follower.username)}"
+            >
+              <span>
+                {" "}
+                {`${follower.username}${
+                  index < subscribers.length - 1 ? "," : ""
+                }`}
+              </span>
+            </a>
           {/each}
           {#if subscribed_by.length > 3}
             <span class="username">
@@ -219,23 +218,35 @@
         <ShareIcon />
       </Button>
     </div>
-
-    <div class="sportstack">
-      <div class="sportstack-info">
-        <SportstackAvatar
-          size={48}
-          src="https://s3-alpha-sig.figma.com/img/ead9/422f/35e3b50c15d637cc9219c84e6578d300?Expires=1721001600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=EmvyAFwy5cFn4kbaOCzPBmg2mcO6P7VUi~P0P46f86WYbq52HvxuxJgpqXFcOuXP-G5q5Lsv6jzPovh1Xt-aeEKnDtwgZoMG2TpTw41A5LJAAFFMbYcVwEAqBPWf4VT3SVc-hXB8u~dk7IT-Ntu77WBnXLTGKCZePMQykjBbrkS0NTiFhvHFIOAmbQ-HmlgIdvrJZxvVQR2f0Xe9g5qX2Tle37SNqA2EjlOaxzMbn4zw8MXcRkAOzATeOzao1GNdD3yUt~pHs6EDiRVLxf9xjKXYsYdUn~geDu12j7HP9CNuW9nC~CgzE6NeTQLFi0UjU3aQuYVsSDJTYAAg06hM-A__"
-        />
-        <div class="sportstack-name">
-          <div class="name">Sports Best</div>
-          <div class="owner">By Rogrigo Monteirasso</div>
+    {#if highlited_sportstack}
+      <a
+        class="sportstack"
+        href="/a/sportstack/{userNameToUrlString(
+          highlited_sportstack.data?.username
+        )}"
+      >
+        <div class="sportstack-info">
+          <SportstackAvatar
+            size={48}
+            src={highlited_sportstack.data?.avatar || ""}
+          />
+          <div class="sportstack-name">
+            <div class="name">{highlited_sportstack.data?.username}</div>
+            <a
+              class="owner"
+              href="/a/user/{userNameToUrlString(
+                highlited_sportstack.owner.username
+              )}">By {highlited_sportstack.owner.username}</a
+            >
+          </div>
         </div>
-      </div>
-      <div class="sportstack-description">
-        Its a publication that the user can create, there are no limit on the
-        number of Sportstack.
-      </div>
-    </div>
+        <div class="sportstack-description">
+          {highlited_sportstack.data?.about}
+        </div>
+      </a>
+    {:else}
+      <div />
+    {/if}
   </div>
 </div>
 
@@ -268,6 +279,8 @@
       .actions-wrapper {
         flex-direction: column;
         justify-content: space-between;
+        max-width: unset;
+        width: 100%;
         .sportstack {
           max-width: unset;
         }
@@ -355,14 +368,22 @@
 
         .username {
           font-weight: 500;
+          display: inline;
           color: var(--text-color);
+          &:hover {
+            text-decoration: underline !important;
+          }
+          &::before {
+            content: " ";
+          }
         }
       }
     }
 
     .actions-wrapper {
       display: flex;
-
+      max-width: 345px;
+      width: 100%;
       gap: 24px;
       flex-shrink: 0;
       flex-direction: column-reverse;
@@ -413,13 +434,16 @@
             font-style: normal;
             font-weight: 400;
             line-height: 18px; /* 150% */
+            &:hover {
+              text-decoration: underline !important;
+            }
           }
         }
 
         &-description {
           color: var(--text-color-second);
           font-family: Roboto;
-          font-size: 12px;
+          font-size: var(--text-size-s);
           font-style: normal;
           font-weight: 400;
           line-height: 18px; /* 150% */
