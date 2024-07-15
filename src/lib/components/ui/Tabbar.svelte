@@ -26,7 +26,7 @@
   interface ITab {
     id: string;
     name?: string;
-    label?: string;
+    label: string;
     [key: string]: any;
   }
 
@@ -151,7 +151,7 @@
       bottom: 0;
       left: 0;
       height: 2px;
-      transition: all .5s cubic-bezier(0, 0.14, 0.29, 1.07);
+      transition: all 0.5s cubic-bezier(0, 0.14, 0.29, 1.07);
       background: var(--primary);
     }
   }

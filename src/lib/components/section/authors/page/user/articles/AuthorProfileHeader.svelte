@@ -25,6 +25,8 @@
   import type { IPageAuthorAuthorData } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import type { IBetarenaUser } from "@betarena/scores-lib/types/_FIREBASE_.js";
   import { userNameToUrlString } from "../../../common_ui/helpers.js";
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
+  import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -39,6 +41,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let author: BetarenaUser,
+    translations: IPageAuthorTranslationDataFinal,
     highlited_sportstack:
       | (IPageAuthorAuthorData & { owner: IBetarenaUser })
       | undefined;
@@ -143,11 +146,21 @@
       <div class="following-info">
         <a href={link} class="follow-block">
           <div class="count">{follower_count}</div>
-          <div class="follow-block-text">Followers</div>
+          <div class="follow-block-text">
+            <TranslationText
+              text={translations.followers}
+              fallback="Followers"
+            />
+          </div>
         </a>
         <a href={link} class="follow-block">
           <div class="count">{authors_followings.length}</div>
-          <div class="follow-block-text">Following</div>
+          <div class="follow-block-text">
+            <TranslationText
+              text={translations.following}
+              fallback="Following"
+            />
+          </div>
         </a>
       </div>
     </div>
@@ -170,7 +183,10 @@
           size={viewportType === "desktop" ? 30 : 24}
         />
         <div class="followers-names">
-          Subscribed by
+          <TranslationText
+            text={translations.subscribed_by}
+            fallback="Subscribed by"
+          />
           {#each subscribers as follower, index}
             <a
               class="username"
@@ -198,21 +214,46 @@
     <div class="buttons-wrapper">
       {#if isOwner}
         <a href="/u/settings/{$userSettings.lang}" class="edit-button">
-          <Button type="secondary" style="flex-grow: 1;">Edit my Profile</Button
-          >
+          <Button type="secondary" style="flex-grow: 1;">
+            <TranslationText
+              text={translations.edit_my_profile}
+              fallback="Edit my Profile"
+            />
+          </Button>
         </a>
       {:else}
         <Button
           type={isSubscribed ? "subtle" : "primary"}
           style="flex-grow: 1;"
           on:click={subscribe}
-          >{isSubscribed ? "Unsubscribe" : "Subscribe"}</Button
         >
+          {#if isSubscribed}
+            <TranslationText
+              text={translations.subscribed}
+              fallback="Subscribed"
+            />
+          {:else}
+            <TranslationText
+              text={translations.subscribe}
+              fallback="Subscribe"
+            />
+          {/if}
+        </Button>
         <Button
           type={isFollowed ? "subtle" : "secondary"}
           style="flex-grow: 1;"
-          on:click={follow}>{isFollowed ? "Unfollow" : "Follow"}</Button
+          on:click={follow}
         >
+          {#if isFollowed}
+            <TranslationText
+              text={translations.following}
+              fallback="Following"
+            />
+          {:else}
+            <TranslationText text={translations.follow} fallback="Follow" />
+            {isFollowed ? "Unfollow" : "Follow"}
+          {/if}
+        </Button>
       {/if}
       <Button type="secondary" style="width: 40px; height: 40px; padding: 0">
         <ShareIcon />
@@ -236,8 +277,11 @@
               class="owner"
               href="/a/user/{userNameToUrlString(
                 highlited_sportstack.owner.username
-              )}">By {highlited_sportstack.owner.username}</a
+              )}"
             >
+              <TranslationText text={translations.by} fallback="By" />
+              {highlited_sportstack.owner.username}
+            </a>
           </div>
         </div>
         <div class="sportstack-description">

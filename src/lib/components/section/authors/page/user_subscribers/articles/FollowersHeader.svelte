@@ -8,11 +8,11 @@
 -->
 
 <script lang="ts">
-  import { goto } from "$app/navigation";
-  import { page } from "$app/stores";
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
   import BackButton from "$lib/components/ui/BackButton.svelte";
   import Tabbar from "$lib/components/ui/Tabbar.svelte";
   import session from "$lib/store/session.js";
+  import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
 
   // #region ➤ 📌 VARIABLES
 
@@ -28,14 +28,16 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let author = { name: "Rodrigo Monteirasso" }, selection = "subscribers";
+  export let author = { name: "Rodrigo Monteirasso" },
+    selection = "subscribers",
+    translations: IPageAuthorTranslationDataFinal;
 
   const /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
      */ // eslint-disable-next-line no-unused-vars
     CNAME: string = "author-profile⮕followers⮕header";
-  const options = [
+  $: options = [
     { id: "subscribers", label: "Subscribers" },
     { id: "followers", label: "Followers" },
     { id: "followings", label: "Followings" },
@@ -87,7 +89,10 @@
       style="gap: {viewportType === 'mobile'
         ? 40
         : 24}px; font-size: var(--text-size-m)"
-    />
+      let:tab
+    >
+      <TranslationText text={translations[tab.label]} fallback={tab.label}/>
+    </Tabbar>
   </div>
 </div>
 

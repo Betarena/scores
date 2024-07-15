@@ -60,6 +60,7 @@
   import SportstackHeader from "./SportstackHeader.svelte";
   import FollowersList from "../../../common_ui/FollowersList.svelte";
   import ArticlesList from "../../../common_ui/articles/ArticlesList.svelte";
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -325,7 +326,7 @@
 ╰─────
 -->
 
-<SportstackHeader {sportstackData} on:select={selectMode} />
+<SportstackHeader {sportstackData} {translations} on:select={selectMode} />
 
 <!--
 ╭─────
@@ -350,7 +351,9 @@
 
   {#if !isPWA && ((currentView === "posts" && mapArticlesMod.size) || (currentView === "people" && 0))}
     <div class="load-more">
-      <Button type="outline" on:click={loadMore}>Load More</Button>
+      <Button type="outline" on:click={loadMore}>
+        <TranslationText text={translations.load_more} fallback="Load More" />
+      </Button>
     </div>
   {/if}
 </div>

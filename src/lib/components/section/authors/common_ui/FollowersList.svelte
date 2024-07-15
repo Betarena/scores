@@ -11,6 +11,7 @@
   import session from "$lib/store/session.js";
   import type { BetarenaUser } from "$lib/types/types.user-settings.js";
   import FollowersUserItem from "./FollowersUserItem.svelte";
+  import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
   // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -26,6 +27,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let users: BetarenaUser[] = [],
+    translations: IPageAuthorTranslationDataFinal,
     emptyMessage = "No followers yet";
 
   const /**
@@ -57,7 +59,7 @@
   {:else}
     <div class="list-wrapper">
       {#each users as user}
-        <FollowersUserItem {user} />
+        <FollowersUserItem {user} {translations} />
       {/each}
     </div>
   {/if}

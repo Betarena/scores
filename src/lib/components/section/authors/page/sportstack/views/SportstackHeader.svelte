@@ -18,6 +18,8 @@
   import Tabbar from "$lib/components/ui/Tabbar.svelte";
   import { post } from "$lib/api/utils.js";
   import SportstackAvatar from "$lib/components/ui/SportstackAvatar.svelte";
+  import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -31,7 +33,8 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let sportstackData = [];
+  export let sportstackData = [],
+    translations: IPageAuthorTranslationDataFinal;
   $: [id, sportstack] = sportstackData;
   $: ({ data, uid } = sportstack);
   $: ({ avatar, about, username } = data || {});
@@ -117,8 +120,12 @@
                   ? ''
                   : 'width: 145px;'}"
                 on:click={subscribe}
-                >{isSubscribed ? "Unsubscribe" : "Subscribe"}</Button
               >
+                <TranslationText
+                  text={translations[isSubscribed ? "Subscribed" : "Subscribe"]}
+                  fallback="{isSubscribed ? "Subscribed" : "Subscribe"}"
+                />
+              </Button>
             {/if}
             <Button
               type="secondary"
@@ -136,7 +143,13 @@
     height={12}
     data={options}
     style="gap: 24px; font-size: var(--text-size-m)"
-  />
+    let:tab
+  >
+    <TranslationText
+      text={translations[tab.label]}
+      fallback={tab.label || tab.name}
+    />
+  </Tabbar>
 </div>
 
 <!--

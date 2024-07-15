@@ -52,6 +52,7 @@
   } from "../../helpers.js";
   import AuthorProfileHeader from "./AuthorProfileHeader.svelte";
   import ArticlesList from "../../../common_ui/articles/ArticlesList.svelte";
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -72,9 +73,6 @@
 
   $: ({ globalState, viewportType } = $sessionStore);
   $: isPWA = globalState.has("IsPWA");
-  $: mobile = viewportType === "mobile";
-  $: tablet = viewportType === "tablet";
-
   // $: widgetData = $page.data as
   //   | (IPageAuthorTagDataFinal & {
   //       translations: IPageAuthorTranslationDataFinal;
@@ -281,7 +279,7 @@
 ╰─────
 -->
 
-<AuthorProfileHeader {author} {highlited_sportstack}/>
+<AuthorProfileHeader {author} {highlited_sportstack} {translations}/>
 
 <!--
 ╭─────
@@ -294,7 +292,9 @@
 
   {#if !isPWA && mapArticlesMod.size}
     <div class="load-more">
-      <Button type="outline" on:click={loadMore}>Load More</Button>
+      <Button type="outline" on:click={loadMore}>
+        <TranslationText  text={translations.load_more} fallback="Load More"/>
+      </Button>
     </div>
   {/if}
 </div>

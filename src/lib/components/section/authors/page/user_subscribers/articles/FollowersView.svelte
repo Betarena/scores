@@ -16,7 +16,8 @@
   import FollowersHeader from "./FollowersHeader.svelte";
   import FollowersList from "../../../common_ui/FollowersList.svelte";
   import type { BetarenaUser } from "$lib/types/types.user-settings.js";
-
+  import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'variables' that are to be         │
@@ -29,7 +30,7 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let author;
+  export let author, translations: IPageAuthorTranslationDataFinal;
 
   type TSelectedOption = "subscribers" | "followers" | "followings";
   const /**
@@ -116,13 +117,13 @@
 -->
 <svelte:window on:scroll={scrollHandler} />
 <div class="wrapper" id={CNAME}>
-  <FollowersHeader {author} selection={selectedOption} on:select={select} />
-  <FollowersList users={currentData} emptyMessage="no {selectedOption} yet"/>
+  <FollowersHeader {author} selection={selectedOption} {translations} on:select={select} />
+  <FollowersList {translations} users={currentData} emptyMessage="no {selectedOption} yet" />
   {#if !isPWA && currentData?.length < rawData[selectedOption]?.length}
     <div class="load-more">
-      <Button type="outline" on:click={() => loadUsers(selectedOption)}
-        >Load More</Button
-      >
+      <Button type="outline" on:click={() => loadUsers(selectedOption)}>
+        <TranslationText text={translations.load_more} fallback="Load More" />
+      </Button>
     </div>
   {/if}
 </div>
@@ -148,6 +149,5 @@
       justify-content: center;
       margin-top: 32px;
     }
-
   }
 </style>
