@@ -26,7 +26,7 @@ import type { ServerLoadEvent } from '@sveltejs/kit';
  */
 export async function load
   (
-    { params, fetch }: ServerLoadEvent
+    { params, fetch, url }: ServerLoadEvent
   ): Promise<any>
 {
 
@@ -37,7 +37,8 @@ export async function load
   return main
     ({
       name,
-      fetch
+      fetch,
+      url: url.origin
       }
     );
 }

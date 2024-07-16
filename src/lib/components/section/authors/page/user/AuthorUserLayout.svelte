@@ -65,10 +65,9 @@
     // eslint-disable-next-line no-unused-vars
     CNAME: string = "author-user";
 
-  $: pageSeo = $page.data.seoTamplate;
+  $: pageSeo = $page.data.seoTemplate;
   $: ({ globalState, viewportType } = $sessionStore);
   $: isPWA = globalState.has("IsPWA");
-
   // #endregion ➤ 📌 VARIABLES
 </script>
 
@@ -84,7 +83,7 @@
 -->
 
 {#if pageSeo}
-  <!-- <SvelteSeo
+  <SvelteSeo
     title={pageSeo.main_data.title}
     description={pageSeo.main_data.description}
     keywords={pageSeo.main_data.keywords}
@@ -108,10 +107,10 @@
         }
       ) ?? false
     }
-    canonical={`${$page.url.origin}/a/content`}
+    canonical={$page.url.href}
     twitter={pageSeo.twitter_card}
     openGraph={pageSeo.opengraph}
-  /> -->
+  />
 {/if}
 
 <section id={CNAME} class={viewportType} class:pwa={isPWA}>

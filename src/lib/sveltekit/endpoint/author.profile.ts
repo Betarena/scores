@@ -16,26 +16,7 @@ import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.bet
 
 // ╭──────────────────────────────────────────────────────────────────╮
 // │ 🛠️ MAIN METHODS                                                  │
-// ╰──────────────────────────────────────────────────────────────────╯
-function covertSEOTemplate(data: IPageAuthorTagDataFinal, url): AuthorsSEODetailsDataJSONSchema
-{
-  const { seoTamplate } = data;
-  if (!seoTamplate) return seoTamplate as any;
-  const { main_data, opengraph } = seoTamplate as AuthorsSEODetailsDataJSONSchema;
-  const newSeo: AuthorsSEODetailsDataJSONSchema = {
-    ...seoTamplate,
-    main_data: {
-      ...main_data,
-      canonical: main_data.canonical.replaceAll("{url}", url),
-    },
-    opengraph: {
-      ...opengraph,
-      url: opengraph.url.replaceAll("{url}", url),
 
-    },
-  };
-  return newSeo;
-}
 export async function main
   (
     request: RequestEvent
@@ -72,10 +53,7 @@ export async function main
           loadType = 'HASURA'
           ;
         // ▓ [🐞]
-        if (data?.seoTamplate)
-        {
-          data.seoTamplate = { ...covertSEOTemplate(data, request.url.origin) };
-        }
+
         if (data != undefined) return json(data);
 
 

@@ -21,7 +21,7 @@ import type { IPageAuthorTagDataFinal } from '@betarena/scores-lib/types/v8/prel
 import type { B_SAP_D2 } from '@betarena/scores-lib/types/v8/preload.scores.js';
 import type { IPageAuthorTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.tags.js';
 import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.betarena-user.js';
-
+import { normalizeSeo } from '$lib/utils/seo';
 // #endregion ➤ 📦 Package Imports
 
 /**
@@ -87,11 +87,11 @@ export async function main
   //     );
   // ;
 
-
   return fetchData
     (
       event.fetch,
       username || "",
+      event.url.origin,
     )
 }
 
@@ -113,6 +113,7 @@ async function fetchData
   (
     fetch: any,
     _name: string,
+    url,
   )
 {
   const bu = new Betarena_User_Class();
@@ -136,6 +137,7 @@ async function fetchData
   return {
     author: user,
     articles,
+    seoTemplate: normalizeSeo(articles.seoTamplate, { name: user.username, about: "", ...user, username: user.usernameLower, url }),
     highlited_sportstack
   }
 }
