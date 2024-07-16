@@ -487,7 +487,7 @@
       height={mobile ? 14 : 8}
       let:tab
     >
-    {tab.label}
+    {tab.name}
   </Tabbar>
   {/if}
 </div>
