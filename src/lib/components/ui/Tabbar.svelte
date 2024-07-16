@@ -152,6 +152,9 @@
       position: static;
       color: var(--text-color-second-dark);
       cursor: pointer;
+      &:hover {
+        color: var(--text-color);
+      }
     }
 
     .selected {

@@ -485,7 +485,10 @@
       data={categories}
       selected={selectedTag}
       height={mobile ? 14 : 8}
-    />
+      let:tab
+    >
+    {tab.label}
+  </Tabbar>
   {/if}
 </div>
 

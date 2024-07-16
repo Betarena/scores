@@ -187,10 +187,12 @@
           size={viewportType === "desktop" ? 30 : 24}
         />
         <div class="followers-names">
-          <TranslationText
+          <span class="subscribed_by">
+            <TranslationText
             text={translations.subscribed_by}
             fallback="Subscribed by"
-          />
+            />
+          </span>
           {#each subscribers as follower, index}
             <a
               class="username"
@@ -361,6 +363,7 @@
             }
             &-text {
               color: var(--text-color-second);
+              opacity: 0.8;
               font-size: 10px;
             }
           }
@@ -382,6 +385,7 @@
         .nick {
           color: var(--text-color-second);
           font-size: 12px;
+          opacity: 0.8;
         }
       }
 
@@ -392,6 +396,7 @@
         font-weight: 400;
         line-height: 18px;
         color: var(--text-color-second);
+        opacity: 0.8;
       }
 
       .followers {
@@ -411,6 +416,10 @@
 
         .followers-names {
           max-width: 206px;
+        }
+        .subscribed_by {
+          color: var(--text-color);
+          opacity: 0.8;
         }
 
         .username {
@@ -466,7 +475,6 @@
         &-name {
           display: flex;
           flex-direction: column;
-
           .name {
             font-family: Roboto;
             font-size: 16px;
@@ -477,6 +485,7 @@
           .owner {
             color: var(--text-color-second);
             font-family: Inter;
+            opacity: 0.8;
             font-size: 12px;
             font-style: normal;
             font-weight: 400;
@@ -495,6 +504,7 @@
           font-family: Roboto;
           font-size: var(--text-size-s);
           font-style: normal;
+          opacity: 0.8;
           font-weight: 400;
           line-height: 18px; /* 150% */
         }

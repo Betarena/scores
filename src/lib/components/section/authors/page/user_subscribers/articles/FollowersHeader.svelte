@@ -107,12 +107,12 @@
   .wrapper {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 32px;
+    border-bottom: var(--header-border);
 
     &.mobile {
-      border-bottom: var(--header-border);
       padding-inline: 16px;
-
+      gap: 20px;
       .tabbar-wrapper {
         margin: auto;
       }
