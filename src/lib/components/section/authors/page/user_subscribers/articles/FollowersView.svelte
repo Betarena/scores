@@ -19,6 +19,8 @@
   import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
   import { browser } from "$app/environment";
+  import { goto } from "$app/navigation";
+  import { page } from "$app/stores";
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'variables' that are to be         │
@@ -41,18 +43,21 @@
     CNAME: string = "author⮕followers";
 
   const BetarenaUserHelper = new Betarena_User_Class();
-  let selectedOption: TSelectedOption = "subscribers";
+  $: selectedOption = $page.params.type || "subscribers";
+
   $: ({ globalState } = $session);
   $: isPWA = globalState.has("IsPWA");
 
-  $: displayedData = {
+  let displayedData = {
     subscribers: [] as BetarenaUser[],
     followers: [] as BetarenaUser[],
     followings: [] as BetarenaUser[],
   };
+  let rawData = {...displayedData};
+
   $: currentData = displayedData[selectedOption];
-  let rawData;
   let prevAuthorId = "";
+
   $: if (browser && prevAuthorId !== author?.uid) {
     prevAuthorId = author?.uid;
     displayedData = {
@@ -73,7 +78,7 @@
   }
 
   async function loadUsers(type: TSelectedOption) {
-    const offset = displayedData[type].length;
+    const offset = displayedData[type]?.length || 0;
     const ids = rawData[type].slice(offset, offset + 10);
     if (!ids.length) return;
     const users = (await BetarenaUserHelper.obtainPublicInformationTargetUsers(
@@ -85,6 +90,15 @@
 
   function select(e) {
     selectedOption = e.detail.id;
+    const paths = $page.url.href.split("/");
+    if (selectedOption === paths[paths.length - 1]) return;
+    paths[paths.length - 1] = selectedOption;
+    goto(`${paths.join("/")}`, {
+      replaceState: true,
+      invalidateAll: false,
+      noScroll: true,
+      keepFocus: true,
+    });
   }
 
   // #endregion ➤ 📌 VARIABLES

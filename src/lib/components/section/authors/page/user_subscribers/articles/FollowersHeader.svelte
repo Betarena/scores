@@ -39,8 +39,9 @@
   $: options = [
     { id: "subscribers", label: "subscribers" },
     { id: "followers", label: "followers" },
-    { id: "followings", label: "following" },
+    { id: "following", label: "following" },
   ];
+  $: select = options.find((o) => o.id === selection);
 
   $: ({ globalState, viewportType } = $session);
   $: isPWA = globalState.has("IsPWA");
@@ -85,6 +86,7 @@
     <Tabbar
       on:select
       data={options}
+      selected={select}
       style="gap: {viewportType === 'mobile'
         ? 40
         : 24}px; font-size: var(--text-size-m)"

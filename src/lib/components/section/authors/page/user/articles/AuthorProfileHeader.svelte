@@ -77,7 +77,6 @@
     user?.scores_user_data?.subscriptions?.authors?.includes(uid) || false;
   $: isAuth = !!user;
 
-  $: link = $page.url.pathname + "/subscribers";
   let prevUid = "";
   $: if (browser && uid && prevUid !== uid) {
     prevUid = uid;
@@ -107,6 +106,10 @@
 
   function subscribe() {
     action("user-subscriptions", !isSubscribed);
+  }
+
+  function getLink(type: "subscribers" | "followers" | "following") {
+    return $page.url.pathname + `/${type}`;
   }
 
   async function action(type: "user-subscriptions" | "user-following", follow) {
@@ -148,7 +151,7 @@
       <Avatar size={64} src={profile_photo} />
 
       <div class="following-info">
-        <a href={link} class="follow-block">
+        <a href={getLink("followers")} class="follow-block">
           <div class="count">{follower_count}</div>
           <div class="follow-block-text">
             <TranslationText
@@ -157,7 +160,7 @@
             />
           </div>
         </a>
-        <a href={link} class="follow-block">
+        <a href={getLink("following")} class="follow-block">
           <div class="count">{authors_followings.length}</div>
           <div class="follow-block-text">
             <TranslationText
@@ -181,7 +184,7 @@
       </div>
     {/if}
     {#if subscribers.length}
-      <a href={link} class="followers">
+      <a href={getLink("subscribers")} class="followers">
         <StackedAvatars
           src={subscribers.map((u) => u.profile_photo || "")}
           size={viewportType === "desktop" ? 30 : 24}
