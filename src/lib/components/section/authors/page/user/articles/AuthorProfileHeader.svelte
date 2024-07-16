@@ -80,8 +80,8 @@
   let prevUid = "";
   $: if (browser && uid && prevUid !== uid) {
     prevUid = uid;
-    getSubscribers(subscribed_by)
-  };
+    getSubscribers(subscribed_by);
+  }
 
   const BetarenaUsers = new Betarena_User_Class();
   let subscribers: BetarenaUser[] = [];
@@ -192,8 +192,8 @@
         <div class="followers-names">
           <span class="subscribed_by">
             <TranslationText
-            text={translations.subscribed_by}
-            fallback="Subscribed by"
+              text={translations.subscribed_by}
+              fallback="Subscribed by"
             />
           </span>
           {#each subscribers as follower, index}
@@ -469,6 +469,10 @@
         width: 100%;
         cursor: pointer;
 
+        &:hover {
+          background-color: rgba(var(--bg-color-second-rgb-consts), 0.7);
+         }
+
         &-info {
           gap: 12px;
           display: flex;
@@ -478,12 +482,16 @@
         &-name {
           display: flex;
           flex-direction: column;
+
           .name {
             font-family: Roboto;
             font-size: 16px;
             font-style: normal;
             font-weight: 500;
             color: var(--text-color);
+            &:hover {
+              color: var(--primary);
+            }
           }
           .owner {
             color: var(--text-color-second);
