@@ -273,6 +273,7 @@
           display: flex;
           gap: 12px;
           align-items: start;
+
         }
 
         &-info {
@@ -298,6 +299,9 @@
           font-style: normal;
           font-weight: 500;
           line-height: 20px;
+          &:hover {
+            color: var(--primary);
+          }
         }
       }
     }
