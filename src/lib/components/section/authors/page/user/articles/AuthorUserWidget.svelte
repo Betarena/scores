@@ -64,9 +64,12 @@
      */ // eslint-disable-next-line no-unused-vars
     CNAME: string = "author-profile-section";
 
-
-  $: ({ author, highlited_sportstack, articles: widgetData, translations } = $page.data);
-
+  $: ({
+    author,
+    highlited_sportstack,
+    articles: widgetData,
+    translations,
+  } = $page.data);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -120,35 +123,18 @@
   │ NOTE :|: promise is pending                                            │
   ╰────────────────────────────────────────────────────────────────────────╯
   -->
-  <!-- <div
-    class="tabbar-wrapper"
-  >
-    {#if categories.length}
-      <Tabbar
-        data={categories}
-        selected={selectedTag}
-        height={mobile ? 14 : 8}
-      />
-    {/if}
-  </div>
-
-  <div
-    class="listArticlesMod"
-  >
-    {#each Array(10) as _item}
-      <ArticleLoader
-        {mobile}
-        {tablet}
-      />
-    {/each}
-  </div> -->
 {:then}
   <!--
   ╭────────────────────────────────────────────────────────────────────────╮
   │ NOTE :|: promise is fulfilled                                          │
   ╰────────────────────────────────────────────────────────────────────────╯
   -->
-  <AuthorProfileMain widgetData={widgetData} {author} {translations} {highlited_sportstack} />
+  <AuthorProfileMain
+    {widgetData}
+    {author}
+    {translations}
+    {highlited_sportstack}
+  />
 {:catch error}
   <!--
     ╭────────────────────────────────────────────────────────────────────────╮

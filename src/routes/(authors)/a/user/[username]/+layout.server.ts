@@ -30,7 +30,7 @@ export async function load
 
   return await main
     (
-      { params: event.params, fetch: event.fetch } as ServerLoadEvent
+      { params: event.params, fetch: event.fetch, url: event.url } as ServerLoadEvent
     );
 }
 

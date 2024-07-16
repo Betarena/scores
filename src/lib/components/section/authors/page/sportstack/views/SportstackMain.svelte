@@ -85,7 +85,6 @@
   $: ({ globalState, viewportType } = $sessionStore);
   $: isPWA = globalState.has("IsPWA");
 
-  $: pageSeo = $page.data.seoTamplate;
   $: sportstackData = widgetData?.mapAuthor?.length
     ? widgetData?.mapAuthor[0]
     : ({} as IPageAuthorAuthorData);

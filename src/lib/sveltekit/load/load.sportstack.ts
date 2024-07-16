@@ -12,6 +12,7 @@
 
 // #region ➤ 📦 Package Imports
 import { promiseUrlsPreload } from '$lib/utils/navigation.js';
+import { normalizeSeo } from '$lib/utils/seo.js';
 
 import type { IPageAuthorTagDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
 import type { B_SAP_D2 } from '@betarena/scores-lib/types/v8/preload.scores.js';
@@ -48,7 +49,8 @@ export async function main
   (
     { name,
       fetch,
-    }: { name: string, fetch: any }
+      url
+    }: { name: string, fetch: any, url: string }
   ): Promise<any[]>
 {
 
@@ -78,7 +80,8 @@ export async function main
   return fetchData
     (
       fetch,
-      name || ""
+      name || "",
+      url
     )
 }
 
@@ -102,6 +105,7 @@ async function fetchData
   (
     fetch: any,
     _name: string,
+    url,
   )
 {
   const
@@ -120,7 +124,10 @@ async function fetchData
    *  📣 Target `data` returned.
   */
   const [articles] = await promiseUrlsPreload(urls0, fetch);
+  const author = articles.mapAuthor[0] || [null, {}];
+  const sportstack = author[1].data || {};
   return {
-    articles
+    articles,
+    seoTemplate: normalizeSeo(articles?.seoTamplate, { username_link: _name, ...sportstack, url })
   }
 }
