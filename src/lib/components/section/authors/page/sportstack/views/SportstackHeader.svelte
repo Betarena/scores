@@ -185,6 +185,7 @@
 
         .sportstack-block {
           align-items: center;
+          gap: 12px;
 
           .sportstack-info {
             flex-direction: column;
@@ -209,7 +210,7 @@
 
       .sportstack-block {
         flex-direction: column;
-        gap: 12px;
+        gap: 16px;
         justify-content: center;
         display: flex;
 
@@ -246,10 +247,6 @@
             font-weight: 500;
             line-height: 28px; /* 140% */
           }
-          .nick {
-            color: var(--text-color-second);
-            font-size: 12px;
-          }
         }
 
         .sportstack-description {
@@ -261,6 +258,7 @@
           line-height: 18px;
           color: var(--text-color-second);
           .about-text {
+            opacity: 0.8;
             max-width: 355px;
           }
         }

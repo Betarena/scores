@@ -77,12 +77,11 @@
     user?.scores_user_data?.subscriptions?.authors?.includes(uid) || false;
   $: isAuth = !!user;
 
-  $: link = $page.url.pathname + "/subscribers";
   let prevUid = "";
   $: if (browser && uid && prevUid !== uid) {
     prevUid = uid;
-    getSubscribers(subscribed_by)
-  };
+    getSubscribers(subscribed_by);
+  }
 
   const BetarenaUsers = new Betarena_User_Class();
   let subscribers: BetarenaUser[] = [];
@@ -107,6 +106,10 @@
 
   function subscribe() {
     action("user-subscriptions", !isSubscribed);
+  }
+
+  function getLink(type: "subscribers" | "followers" | "following") {
+    return $page.url.pathname + `/${type}`;
   }
 
   async function action(type: "user-subscriptions" | "user-following", follow) {
@@ -148,7 +151,7 @@
       <Avatar size={64} src={profile_photo} />
 
       <div class="following-info">
-        <a href={link} class="follow-block">
+        <a href={getLink("followers")} class="follow-block">
           <div class="count">{follower_count}</div>
           <div class="follow-block-text">
             <TranslationText
@@ -157,7 +160,7 @@
             />
           </div>
         </a>
-        <a href={link} class="follow-block">
+        <a href={getLink("following")} class="follow-block">
           <div class="count">{authors_followings.length}</div>
           <div class="follow-block-text">
             <TranslationText
@@ -181,16 +184,18 @@
       </div>
     {/if}
     {#if subscribers.length}
-      <a href={link} class="followers">
+      <a href={getLink("subscribers")} class="followers">
         <StackedAvatars
           src={subscribers.map((u) => u.profile_photo || "")}
           size={viewportType === "desktop" ? 30 : 24}
         />
         <div class="followers-names">
-          <TranslationText
-            text={translations.subscribed_by}
-            fallback="Subscribed by"
-          />
+          <span class="subscribed_by">
+            <TranslationText
+              text={translations.subscribed_by}
+              fallback="Subscribed by"
+            />
+          </span>
           {#each subscribers as follower, index}
             <a
               class="username"
@@ -361,6 +366,7 @@
             }
             &-text {
               color: var(--text-color-second);
+              opacity: 0.8;
               font-size: 10px;
             }
           }
@@ -382,6 +388,7 @@
         .nick {
           color: var(--text-color-second);
           font-size: 12px;
+          opacity: 0.8;
         }
       }
 
@@ -392,6 +399,7 @@
         font-weight: 400;
         line-height: 18px;
         color: var(--text-color-second);
+        opacity: 0.8;
       }
 
       .followers {
@@ -411,6 +419,10 @@
 
         .followers-names {
           max-width: 206px;
+        }
+        .subscribed_by {
+          color: var(--text-color);
+          opacity: 0.8;
         }
 
         .username {
@@ -457,6 +469,10 @@
         width: 100%;
         cursor: pointer;
 
+        &:hover {
+          background-color: rgba(var(--bg-color-second-rgb-consts), 0.7);
+         }
+
         &-info {
           gap: 12px;
           display: flex;
@@ -473,10 +489,14 @@
             font-style: normal;
             font-weight: 500;
             color: var(--text-color);
+            &:hover {
+              color: var(--primary);
+            }
           }
           .owner {
             color: var(--text-color-second);
             font-family: Inter;
+            opacity: 0.8;
             font-size: 12px;
             font-style: normal;
             font-weight: 400;
@@ -495,6 +515,7 @@
           font-family: Roboto;
           font-size: var(--text-size-s);
           font-style: normal;
+          opacity: 0.8;
           font-weight: 400;
           line-height: 18px; /* 150% */
         }

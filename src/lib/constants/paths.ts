@@ -77,7 +77,7 @@ export const
    * @description
    *  📣 Target `path` for **Author subscribers**.
    */
-  routeIdAuthorSubscribers = '/(authors)/a/user/[username]/subscribers',
+  routeIdAuthorSubscribers = '/(authors)/a/user/[username]/[type=subscribers]',
 
   /**
    * @description

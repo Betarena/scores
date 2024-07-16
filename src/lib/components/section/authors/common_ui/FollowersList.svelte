@@ -10,6 +10,7 @@
 <script lang="ts">
   import session from "$lib/store/session.js";
   import type { BetarenaUser } from "$lib/types/types.user-settings.js";
+  import type { IBetarenaUser } from "@betarena/scores-lib/types/_FIREBASE_.js";
   import FollowersUserItem from "./FollowersUserItem.svelte";
   import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
   // #region ➤ 📌 VARIABLES
@@ -26,7 +27,7 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let users: BetarenaUser[] = [],
+  export let users: (BetarenaUser | IBetarenaUser)[] = [],
     translations: IPageAuthorTranslationDataFinal,
     emptyMessage = "No followers yet";
 

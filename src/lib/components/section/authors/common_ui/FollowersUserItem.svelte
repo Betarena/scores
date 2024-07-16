@@ -139,6 +139,10 @@
       font-style: normal;
       font-weight: 500;
       line-height: 24px; /* 150% */
+
+      &:hover {
+        color: var(--primary);
+      }
     }
 
     &.mobile {

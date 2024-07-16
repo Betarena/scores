@@ -61,6 +61,8 @@
   import FollowersList from "../../../common_ui/FollowersList.svelte";
   import ArticlesList from "../../../common_ui/articles/ArticlesList.svelte";
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
+  import { Betarena_User_Class } from "@betarena/scores-lib/dist/classes/class.betarena-user.js";
+  import type { IBetarenaUser } from "@betarena/scores-lib/types/_FIREBASE_.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -82,13 +84,19 @@
     translations: IPageAuthorTranslationDataFinal;
   $: ({ globalState, viewportType } = $sessionStore);
   $: isPWA = globalState.has("IsPWA");
-  $: mobile = viewportType === "mobile";
-  $: tablet = viewportType === "tablet";
 
   $: pageSeo = $page.data.seoTamplate;
   $: sportstackData = widgetData?.mapAuthor?.length
     ? widgetData?.mapAuthor[0]
     : ({} as IPageAuthorAuthorData);
+
+  const BetarenaUser = new Betarena_User_Class();
+
+  let peopleIds: string[] = [];
+
+  let prevSportstackId = null;
+  let people: IBetarenaUser[] = [];
+
   /**
    * @description
    * 📝 Interecpted data for `map` instance of `author(s)`.
@@ -111,12 +119,21 @@
    */
 
   $: if (browser) updateData(widgetData ?? {}, true);
+  $: if(prevSportstackId !== sportstackData[1].id) {
+    prevSportstackId = sportstackData[1].id;
+    updatePeopleIdArray()
+  };
 
   let /**
      * @description
      * 📝 State UI for `Loading Articles`.
      */
     isLoadingArticles = true,
+    /**
+     * @description
+     * 📝 State UI for `Loading Articles`.
+     */
+    isLoadingPeople = true,
     /**
      * @description
      * 📝 `Map` data for `article(s)`, ready for frontend consumption.
@@ -163,18 +180,29 @@
     dlogv2("selectMode(..)", [`🔹 [var] ➤ e :|: ${e}`], true);
     const { id } = e.detail;
     currentView = id as "posts" | "people";
-    // selectedTag = e.detail;
-    // mapArticlesMod = new Map();
-    // if (!mapTagSelectData.has(selectedTag.id ?? 0)) loadTagArticles();
-    // else
-    //   mapArticlesMod =
-    //     mapTagSelectData.get(selectedTag.id ?? 0)?.mapArticlesMod ?? new Map();
-    // return;
   }
 
   /**
    * @author
-   *  <-insert-author->
+   *  izobov
+   * @summary
+   *  🟦 HELPER
+   * @description
+   *  📝 Update people ids for 'people' data. Use when sportstak was changed
+   * @returns { void }
+   */
+  function updatePeopleIdArray() {
+    peopleIds = [
+      sportstackData[1].uid,
+      ...(sportstackData[1]?.data.people || []),
+    ];
+    people = [];
+    loadPeople();
+  }
+
+  /**
+   * @author
+   *  izobov
    * @summary
    *  🟦 HELPER
    * @description
@@ -253,11 +281,12 @@
   async function loadMore(): Promise<void> {
     // [🐞]
     dlogv2("loadMore(..)", [], true);
+    if (currentView === "posts") {
+      loadTagArticles(currentPage + 1);
+    } else {
+      loadPeople();
+    }
 
-    const length = mapArticlesMod.size || 0;
-    if (length >= widgetData.totalArticlesCount) return;
-
-    loadTagArticles(currentPage + 1);
 
     return;
   }
@@ -273,6 +302,9 @@
    * @return { Promise < void > }
    */
   async function loadTagArticles(page: number = 0): Promise<void> {
+
+    const length = mapArticlesMod.size || 0;
+    if (length >= widgetData.totalArticlesCount) return;
     // [🐞]
     dlogv2(
       "loadTagArticles(..) // START",
@@ -302,6 +334,25 @@
 
     if (!dataRes0) return;
     return;
+  }
+
+  /**
+   * @author
+   *  izobov
+   * @summary
+   *  🟦 HELPER
+   * @description
+   *  📝 Load sportstack people.
+   *   Depends on `peopleIds` array. be sure to update it before calling this method.
+   *  @return { Promise < void > }
+   */
+  async function loadPeople() {
+    if (!peopleIds.length) return;
+    isLoadingPeople = true;
+    const ids = peopleIds.splice(0, 10);
+    const data = await BetarenaUser.obtainPublicInformationTargetUsers(ids);
+    isLoadingPeople = false;
+    people = [...people, ...data];
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -346,7 +397,7 @@
 │ > People view
 ╰─────
 -->
-    <FollowersList users={[]} {translations} emptyMessage="No people yet" />
+    <FollowersList users={people} {translations} emptyMessage="No people yet" />
   {/if}
 
   {#if !isPWA && ((currentView === "posts" && mapArticlesMod.size) || (currentView === "people" && 0))}
