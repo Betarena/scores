@@ -68,6 +68,7 @@
 		"compression": "1.7.4",
 		"cookie": "0.5.0",
 		"device-detector-js": "3.0.3",
+		"dompurify": "3.1.6",
 		"dotenv": "16.3.1",
 		"email-validator": "2.0.4",
 		"ethers": "5.7.2",

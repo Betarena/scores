@@ -11,12 +11,13 @@ COMPONENT JS (w/ TS)
 	import { onMount } from 'svelte';
 
 	import { auth, db_firestore, storage } from '$lib/firebase/init';
-	import userBetarenaSettings from '$lib/store/user-settings.js';
+	import userBetarenaSettings, { type IDataProp } from '$lib/store/user-settings.js';
 	import { dlog, errlog } from '$lib/utils/debug';
 	import { viewport_change } from '$lib/utils/platform-functions';
 	import { deleteUser } from 'firebase/auth';
 	import { CollectionReference, Query, QuerySnapshot, collection, deleteDoc, doc, getDocs, query, updateDoc, where, type DocumentData } from 'firebase/firestore';
 	import { deleteObject, getDownloadURL, ref, uploadString } from 'firebase/storage';
+  import purify from 'dompurify';
 
 	import ModalConnectWallet from './Modal-ConnectWallet.svelte';
 	import ModalDeleteAccount from './Modal-DeleteAccount.svelte';
@@ -259,44 +260,58 @@ COMPONENT JS (w/ TS)
   ): Promise < void >
   {
     // [🐞]
-		dlog
-    (
-      '🔵 Updating username...'
-    );
+    dlog("🔵 Updating username...");
 
-    // [ℹ] validation [1]
-    const valid = await username_update_validation()
-    if (!valid)
-    {
-		  dlog('🔴 Username is invalid...', true);
+    let data_to_update: any = {};
+    // [ℹ] (update) only if changes detected
+    if (
+      usernameInput != $userBetarenaSettings?.user?.scores_user_data?.username
+    ) {
+      data_to_update["username"] = usernameInput;
+    }
+    if (nameInput != $userBetarenaSettings?.user?.scores_user_data?.name) {
+      data_to_update["name"] = nameInput;
+    }
+    if (aboutInput != $userBetarenaSettings?.user?.scores_user_data?.about) {
+      data_to_update["about"] = aboutInput;
+    }
+    if (!Object.keys(data_to_update).length) {
+      dlog("🔴 No changes detected...", true);
       return;
     }
+    // [ℹ] validation [1]
+    const valid =
+      !data_to_update["username"] || (await username_update_validation());
+    if (!valid) {
+      dlog("🔴 Username is invalid...", true);
+      return;
+    }
+    const betarena_updates: [IDataProp, any][] = [];
+    // [ℹ] sanitize data to prevent XSS
+    Object.keys(data_to_update).forEach((key) => {
+      let value = purify.sanitize(data_to_update[key]);
+      data_to_update[key] = value;
+      const betarena_key: IDataProp =
+        key === "username"
+          ? "user-name"
+          : key === "name"
+          ? "user-name2"
+          : "user-about";
+      betarena_updates.push([betarena_key, value]);
+    });
 
     usernameErrorMsg = undefined;
+    // [ℹ] (update)from localStorage()
+    userBetarenaSettings.updateData(betarena_updates);
+    // [ℹ] (update)from Firebase - Firestore
+    const userRef = doc(
+      db_firestore,
+      "betarena_users",
+      $userBetarenaSettings?.user?.firebase_user_data?.uid
+    );
+    await updateDoc(userRef, data_to_update);
 
-		// [ℹ] (update)from localStorage()
-		userBetarenaSettings.updateData
-    (
-      [
-        ['user-name',usernameInput],
-        ['user-name2', nameInput],
-        ['user-about', aboutInput],
-      ]
-		);
-		// [ℹ] (update)from Firebase - Firestore
-		const userRef = doc(
-			db_firestore,
-			'betarena_users',
-			$userBetarenaSettings?.user
-				?.firebase_user_data?.uid
-		);
-		await updateDoc(userRef, {
-			username: usernameInput,
-      name: nameInput,
-      about: aboutInput
-		});
-
-		dlog('🟢 Username updated', true);
+    dlog("🟢 Username updated", true);
 	}
 
   /**

@@ -47,7 +47,7 @@ const
   }
   ;
 
-type IDataProp =
+export type IDataProp =
   | 'lang'
   | 'lang-user'
   | 'geo-bookmaker'
