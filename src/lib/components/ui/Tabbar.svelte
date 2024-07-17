@@ -55,7 +55,7 @@
   $: if (!selected && tabbarNode) {
     select(data[0]);
   }
-  $: if (translations && selected) updateBorder();
+  $: if (translations && selected && tabbarNode) updateBorder();
 
   $: if (!data?.includes(selected) && tabbarNode) {
     select(data[0]);

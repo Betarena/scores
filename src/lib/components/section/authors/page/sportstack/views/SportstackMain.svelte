@@ -58,7 +58,7 @@
     type ITagsWidgetData,
   } from "../../helpers.js";
   import SportstackHeader from "./SportstackHeader.svelte";
-  import FollowersList from "../../../common_ui/FollowersList.svelte";
+  import FollowersList from "../../../common_ui/users_list/UsersList.svelte";
   import ArticlesList from "../../../common_ui/articles/ArticlesList.svelte";
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
   import { Betarena_User_Class } from "@betarena/scores-lib/dist/classes/class.betarena-user.js";
@@ -396,7 +396,7 @@
 │ > People view
 ╰─────
 -->
-    <FollowersList users={people} {translations} emptyMessage="No people yet" />
+    <FollowersList users={people} {translations} loading={isLoadingPeople} emptyMessage="No people yet" />
   {/if}
 
   {#if !isPWA && ((currentView === "posts" && mapArticlesMod.size) || (currentView === "people" && 0))}

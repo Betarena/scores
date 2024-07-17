@@ -22,14 +22,11 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
-  import Avatar from "$lib/components/ui/Avatar.svelte";
-  import Button from "$lib/components/ui/Button.svelte";
+  import LoaderButton from "$lib/components/ui/loaders/LoaderButton.svelte";
+  import LoaderAvatar from "$lib/components/ui/loaders/LoaderAvatar.svelte";
+  import LoaderLine from "$lib/components/ui/loaders/LoaderLine.svelte";
   import session from "$lib/store/session.js";
-  import userSettings from "$lib/store/user-settings.js";
-  import type { BetarenaUser } from "$lib/types/types.user-settings.js";
-  import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
-  // #endregion ➤ 📦 Package Imports
+    // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
 
@@ -45,41 +42,9 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let user: BetarenaUser, translations: IPageAuthorTranslationDataFinal;
-
   $: ({ viewportType } = $session);
-  $: ({ user: ctx } = $userSettings);
-  $: ({ uid, username, profile_photo } = user);
-  $: isAuth = !!ctx;
-  $: isFollow = !!(ctx?.scores_user_data.following?.authors || []).includes(
-    uid
-  );
 
   // #endregion ➤ 📌 VARIABLES
-
-  // #region ➤ 🛠️ METHODS
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'methods' that are to be           │
-  // │ and are expected to be used by 'this' .svelte file / component.        │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. function (..)                                                       │
-  // │ 2. async function (..)                                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  function handleClick() {
-    if (!isAuth) {
-      $session.currentActiveModal = "Auth_Modal";
-      return;
-    }
-    userSettings.updateData([
-      ["user-following", { target: "authors", id: uid, follow: !isFollow }],
-    ]);
-  }
-
-  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--
@@ -94,18 +59,11 @@
 -->
 
 <div class="list-item {viewportType}">
-  <a href="/a/user/{username}" class="user-info">
-    <Avatar size={40} src={profile_photo} />
-    <div class="useer-name">{username}</div>
-  </a>
-  {#if uid !== ctx?.firebase_user_data?.uid}
-    <Button type={isFollow ? "subtle" : "primary"} on:click={handleClick}>
-      <TranslationText
-        text={translations[isFollow ? "following" : "follow"]}
-        fallback={isFollow ? "Following" : "Follow"}
-      />
-    </Button>
-  {/if}
+  <div class="user-info">
+    <LoaderAvatar size={40} />
+    <LoaderLine width={70} />
+  </div>
+  <LoaderButton width={75} height={32}/>
 </div>
 
 <!--

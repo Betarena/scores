@@ -14,7 +14,7 @@
   import session from "$lib/store/session.js";
   import { Betarena_User_Class } from "@betarena/scores-lib/dist/classes/class.betarena-user.js";
   import FollowersHeader from "./FollowersHeader.svelte";
-  import FollowersList from "../../../common_ui/FollowersList.svelte";
+  import FollowersList from "../../../common_ui/users_list/UsersList.svelte";
   import type { BetarenaUser } from "$lib/types/types.user-settings.js";
   import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
@@ -35,7 +35,7 @@
 
   export let author, translations: IPageAuthorTranslationDataFinal;
 
-  type TSelectedOption = "subscribers" | "followers" | "followings";
+  type TSelectedOption = "subscribers" | "followers" | "following";
   const /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
@@ -43,49 +43,57 @@
     CNAME: string = "author⮕followers";
 
   const BetarenaUserHelper = new Betarena_User_Class();
-  $: selectedOption = $page.params.type || "subscribers";
-
-  $: ({ globalState } = $session);
-  $: isPWA = globalState.has("IsPWA");
-
+  let loading = false;
   let displayedData = {
     subscribers: [] as BetarenaUser[],
     followers: [] as BetarenaUser[],
-    followings: [] as BetarenaUser[],
+    following: [] as BetarenaUser[],
   };
-  let rawData = {...displayedData};
-
-  $: currentData = displayedData[selectedOption];
+  let rawData = {
+    subscribers: [] as string[],
+    followers: [] as string[],
+    following: [] as string[],
+  };
   let prevAuthorId = "";
+
+  $: selectedOption = $page.params.type || "subscribers";
+  $: ({ globalState } = $session);
+  $: isPWA = globalState.has("IsPWA");
+  $: currentData = displayedData[selectedOption];
 
   $: if (browser && prevAuthorId !== author?.uid) {
     prevAuthorId = author?.uid;
     displayedData = {
       subscribers: [],
       followers: [],
-      followings: [],
+      following: [],
     };
 
     rawData = {
       subscribers: author?.subscribed_by || [],
       followers: author?.followed_by || [],
-      followings: author?.following.authors || [],
+      following: author?.following.authors || [],
     };
 
     loadUsers("subscribers").then(scrollHandler);
-    loadUsers("followers");
-    loadUsers("followings");
+    loadUsers("followers").then(scrollHandler);
+    loadUsers("following").then(scrollHandler);
   }
 
   async function loadUsers(type: TSelectedOption) {
     const offset = displayedData[type]?.length || 0;
     const ids = rawData[type].slice(offset, offset + 10);
+
     if (!ids.length) return;
+    loading = true;
+
     const users = (await BetarenaUserHelper.obtainPublicInformationTargetUsers(
-      ids
+      ids,
+      false
     )) as BetarenaUser[];
     displayedData[type].push(...users);
     displayedData = { ...displayedData };
+    loading = false;
   }
 
   function select(e) {
@@ -142,6 +150,7 @@
   <FollowersList
     {translations}
     users={currentData}
+    {loading}
     emptyMessage="no {selectedOption} yet"
   />
   {#if !isPWA && currentData?.length < rawData[selectedOption]?.length}
