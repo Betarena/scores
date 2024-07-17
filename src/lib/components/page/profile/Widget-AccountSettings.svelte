@@ -44,6 +44,8 @@ COMPONENT JS (w/ TS)
     files: HTMLInputElement['files'],
     fileInputElem: HTMLInputElement,
     usernameInput: string = $userBetarenaSettings?.user?.scores_user_data?.username,
+    nameInput: string = $userBetarenaSettings?.user?.scores_user_data?.name || "",
+    aboutInput: string = $userBetarenaSettings?.user?.scores_user_data?.about || "",
     usernameErrorMsg: string,
     profilePicExists: boolean = false,
     profile_wallet_connected: boolean = false,
@@ -252,7 +254,7 @@ COMPONENT JS (w/ TS)
    * @returns
    * { Promise < void > }
 	 */
-	async function update_username
+	async function update_user
   (
   ): Promise < void >
   {
@@ -276,7 +278,9 @@ COMPONENT JS (w/ TS)
 		userBetarenaSettings.updateData
     (
       [
-        ['user-name',usernameInput]
+        ['user-name',usernameInput],
+        ['user-name2', nameInput],
+        ['user-about', aboutInput],
       ]
 		);
 		// [ℹ] (update)from Firebase - Firestore
@@ -287,7 +291,9 @@ COMPONENT JS (w/ TS)
 				?.firebase_user_data?.uid
 		);
 		await updateDoc(userRef, {
-			username: usernameInput
+			username: usernameInput,
+      name: nameInput,
+      about: aboutInput
 		});
 
 		dlog('🟢 Username updated', true);
@@ -486,7 +492,7 @@ COMPONENT JS (w/ TS)
   (
   ): Promise < void >
   {
-    update_username()
+    update_user()
 	}
 
 	/**
@@ -883,9 +889,174 @@ MAIN SETTINGS WIDGET
       {/if}
 
     </div>
-
     <!--
     [ℹ] third row
+    <-contents->
+    [ℹ] name text
+    [ℹ] name update
+    -->
+    <div
+      class=
+      "
+        m-b-24
+      "
+    >
+
+      <!--
+      <-contents->
+      [ℹ] name text
+      -->
+      <div
+        class="
+          row-space-start
+          m-b-16
+        "
+      >
+        <!--
+        <-contents->
+        [ℹ] name "head" text
+        [ℹ] (user) text description
+        -->
+        <div>
+          <!--
+          <-contents->
+          [ℹ] name "head" text
+          -->
+          <div
+            class="
+              row-space-start
+              m-b-5
+            ">
+            <!--
+            [ℹ] name "head" text
+            -->
+            <p
+              class="
+              s-16
+              w-500
+              m-r-6
+              color-black-2
+            "
+            >
+              {profileTrs?.profile?.name_2}
+            </p>
+
+          </div>
+          <!--
+          [ℹ] (user) text description
+          -->
+          <span
+            class="
+              s-14
+              color-grey
+            "
+          >
+            {profileTrs?.profile?.name_description}
+          </span>
+        </div>
+      </div>
+
+      <!--
+      [ℹ] name input
+      -->
+      <input
+        type="text"
+        placeholder={profileTrs?.profile?.name_2_form_field}
+        aria-placeholder="Name input here"
+        aria-label="Name input"
+        bind:value={nameInput}
+      />
+
+    </div>
+    <!--
+    [ℹ] fourth row
+    <-contents->
+    [ℹ] about text
+    [ℹ] about update
+    -->
+    <div
+      class=
+      "
+        m-b-24
+      "
+    >
+
+      <!--
+      <-contents->
+      [ℹ] about text
+      -->
+      <div
+        class="
+          row-space-start
+          m-b-16
+        "
+      >
+        <!--
+        <-contents->
+        [ℹ] name "head" text
+        [ℹ] (user) text description
+        -->
+        <div>
+          <!--
+          <-contents->
+          [ℹ] name "head" text
+          -->
+          <div
+            class="
+              row-space-start
+              m-b-5
+            ">
+            <!--
+            [ℹ] name "head" text
+            -->
+            <p
+              class="
+              s-16
+              w-500
+              m-r-6
+              color-black-2
+            "
+            >
+              {profileTrs?.profile?.about}
+            </p>
+          </div>
+          <!--
+          [ℹ] (user) text description
+          -->
+          <span
+            class="
+              s-14
+              color-grey
+            "
+          >
+            {profileTrs?.profile?.about_description }
+          </span>
+        </div>
+      </div>
+
+      <!--
+      [ℹ] about textarea input
+      -->
+      <div class="textarea-wrapper">
+
+      <textarea
+        class="input"
+        maxlength="256"
+        cols="10"
+        rows="3"
+        placeholder={profileTrs?.profile?.about_form_field }
+        aria-placeholder="Username input here"
+        aria-label="Username input"
+        bind:value={aboutInput}
+        class:input-error={usernameErrorMsg != undefined}
+      />
+      <span class="counter">{aboutInput.length}/256</span>
+    </div>
+
+    </div>
+
+    <!--
+    [ℹ] fifth row
     <-contents->
     [ℹ] cryptocurrency wallet text
     [ℹ] cryptocurrency wallet update
@@ -970,7 +1141,7 @@ MAIN SETTINGS WIDGET
     />
 
     <!--
-    [ℹ] fourth row
+    [ℹ] six row
     <-contents->
     [ℹ] delete text / desc
     [ℹ] delete account (action)
@@ -1057,7 +1228,7 @@ MAIN SETTINGS WIDGET
 		padding: 20px;
 	}
 
-	input[type='text']
+	input[type='text'], textarea
   {
 		/* white theme/gray */
 		border: 1px solid var(--grey-shade);
@@ -1069,21 +1240,38 @@ MAIN SETTINGS WIDGET
 		outline: none;
 		font-size: 14px;
 	}
-	input[type='text']:hover
+  textarea {
+    height: 88px;
+    padding: 20px 11px;
+    resize: none;
+    font-family: Arial, Helvetica, sans-serif;
+    position: relative;
+  }
+  .textarea-wrapper {
+    position: relative;
+  }
+  .textarea-wrapper .counter {
+    position: absolute;
+    bottom: 10px;
+    right: 14px;
+    font-size: 14px;
+    color: var(--grey);
+  }
+	input[type='text']:hover, textarea:hover
   {
 		border: 1px solid var(--grey);
 	}
-	input[type='text']:focus
+	input[type='text']:focus, textarea:focus
   {
 		border: 1px solid var(--dark-theme-1);
 	}
-	input[type='text'][placeholder]
+	input[type='text'][placeholder], textarea[placeholder]
   {
 		overflow: hidden;
 		white-space: nowrap;
 		text-overflow: ellipsis;
 	}
-  input[type='text'].input-error
+  input[type='text'].input-error, textarea.input-error
   {
     border: 1px solid var(--red-bright) !important;
   }
@@ -1145,7 +1333,7 @@ MAIN SETTINGS WIDGET
 		background-color: var(--dark-theme-1) !important;
 	}
 
-  div#account-settings-widget-box.dark-background-1 input[type='text']
+  div#account-settings-widget-box.dark-background-1 input[type='text'], div#account-settings-widget-box.dark-background-1 textarea
   {
     background: var(--dark-theme-1);
     border: 1px solid var(--dark-theme-1-2-shade);
