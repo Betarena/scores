@@ -8,11 +8,12 @@
 -->
 
 <script lang="ts">
-  import BackButton from "$lib/components/ui/BackButton.svelte";
-  import Tabbar from "$lib/components/ui/Tabbar.svelte";
   import session from "$lib/store/session.js";
+  import type { BetarenaUser } from "$lib/types/types.user-settings.js";
+  import type { IBetarenaUser } from "@betarena/scores-lib/types/_FIREBASE_.js";
+  import ListUserItem from "./ListUserItem.svelte";
   import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
-
+  import ListUserLoader from "./ListUserLoader.svelte";
   // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -27,40 +28,20 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let author = { name: "Rodrigo Monteirasso" },
-    selection = "subscribers",
-    translations: IPageAuthorTranslationDataFinal;
+  export let users: (BetarenaUser | IBetarenaUser)[] = [],
+    translations: IPageAuthorTranslationDataFinal,
+    loading = false,
+    emptyMessage = "No followers yet";
 
   const /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
      */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = "author-profile⮕followers⮕header";
-  $: options = [
-    { id: "subscribers", label: "subscribers" },
-    { id: "followers", label: "followers" },
-    { id: "following", label: "following" },
-  ];
-  $: select = options.find((o) => o.id === selection);
+    CNAME: string = "author⮕followers⮕list";
 
-  $: ({ globalState, viewportType } = $session);
-  $: isPWA = globalState.has("IsPWA");
-  $: ({ name, username } = author);
+  $: ({ viewportType } = $session);
+
   // #endregion ➤ 📌 VARIABLES
-
-  // #region ➤ 🛠️ METHODS
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'methods' that are to be           │
-  // │ and are expected to be used by 'this' .svelte file / component.        │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. function (..)                                                       │
-  // │ 2. async function (..)                                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--
@@ -74,25 +55,24 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 <div class="wrapper {viewportType}" id={CNAME}>
-  <div class="name-block">
-    {#if !isPWA}
-      <div class="back-button">
-        <BackButton mode="back" />
-      </div>
-    {/if}
-    <div class="name">{name || username}</div>
-  </div>
-  <div class="tabbar-wrapper">
-    <Tabbar
-      on:select
-      data={options}
-      selected={select}
-      style="gap: {viewportType === 'mobile'
-        ? 40
-        : 24}px; font-size: var(--text-size-m)"
-      {translations}
-    />
-  </div>
+  {#if !users.length}
+    <div class="empty">
+      {emptyMessage}
+    </div>
+  {:else}
+    <div class="list-wrapper">
+      {#each users as user}
+        <ListUserItem {user} {translations} />
+      {/each}
+    </div>
+  {/if}
+  {#if loading}
+    <div class="list-wrapper">
+      {#each new Array(10) as _item}
+        <ListUserLoader />
+      {/each}
+    </div>
+  {/if}
 </div>
 
 <!--
@@ -108,49 +88,28 @@
 <style lang="scss">
   .wrapper {
     display: flex;
+    padding-top: 8px;
+
     flex-direction: column;
-    gap: 32px;
-    border-bottom: var(--header-border);
+    background-color: var(--bg-color);
 
-    &.mobile {
-      padding-inline: 16px;
-      gap: 20px;
-      .tabbar-wrapper {
-        margin: auto;
-      }
-
-      .name-block .name {
-        justify-content: center;
-        padding-left: 0;
-      }
+    .list-wrapper {
+      display: flex;
+      flex-direction: column;
     }
 
-    .name-block {
+    .empty {
+      flex-grow: 1;
+      width: 100%;
+      height: 100%;
+      background-color: var(--bg-color);
+      font-weight: 600;
+      color: var(--text-color-second);
+      font-size: var(--text-size-2xl);
       display: flex;
-      justify-content: start;
+      justify-content: center;
       align-items: center;
-      position: relative;
-
-      .back-button {
-        position: absolute;
-        left: 0;
-        top: 0;
-        transform: translateY(-20%);
-      }
-
-      .name {
-        display: flex;
-        color: var(--text-color);
-        justify-self: start;
-        padding-left: 48px;
-        align-items: center;
-        flex-grow: 1;
-        font-family: Roboto;
-        font-size: var(--text-size-l);
-        font-style: normal;
-        font-weight: 500;
-        line-height: 24px; /* 150% */
-      }
+      margin-top: 10px;
     }
   }
 </style>

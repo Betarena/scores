@@ -384,6 +384,7 @@
   });
 
   afterNavigate(async (e): Promise<void> => {
+    if(!browser) return;
     sessionStore.updateData([["routeId", $page.route.id]]);
 
     // [🐞]

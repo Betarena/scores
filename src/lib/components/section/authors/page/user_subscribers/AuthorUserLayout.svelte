@@ -43,7 +43,7 @@
   import { tryCatch } from "@betarena/scores-lib/dist/util/common.js";
 
   import SvelteSeo from "svelte-seo";
-  import AuthorUserWidget from "./articles/AuthorUserWidget.svelte";
+  import AuthorUserWidget from "./views/AuthorUserWidget.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -84,7 +84,7 @@
 -->
 
 {#if pageSeo}
-  <!-- <SvelteSeo
+  <SvelteSeo
     title={pageSeo.main_data.title}
     description={pageSeo.main_data.description}
     keywords={pageSeo.main_data.keywords}
@@ -108,10 +108,10 @@
         }
       ) ?? false
     }
-    canonical={`${$page.url.origin}/a/content`}
+    canonical={$page.url.href}
     twitter={pageSeo.twitter_card}
     openGraph={pageSeo.opengraph}
-  /> -->
+  />
 {/if}
 
 <section id={CNAME} class={viewportType} class:pwa={isPWA}>

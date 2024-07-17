@@ -8,11 +8,29 @@
 -->
 
 <script lang="ts">
+  // #region ➤ 📦 Package Imports
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
+  import Avatar from "$lib/components/ui/Avatar.svelte";
+  import Button from "$lib/components/ui/Button.svelte";
   import session from "$lib/store/session.js";
+  import userSettings from "$lib/store/user-settings.js";
   import type { BetarenaUser } from "$lib/types/types.user-settings.js";
-  import type { IBetarenaUser } from "@betarena/scores-lib/types/_FIREBASE_.js";
-  import FollowersUserItem from "./FollowersUserItem.svelte";
   import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
+  // #endregion ➤ 📦 Package Imports
+
   // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -27,19 +45,41 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let users: (BetarenaUser | IBetarenaUser)[] = [],
-    translations: IPageAuthorTranslationDataFinal,
-    emptyMessage = "No followers yet";
-
-  const /**
-     * @description
-     *  📣 `this` component **main** `id` and `data-testid` prefix.
-     */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = "author⮕followers⮕list";
+  export let user: BetarenaUser, translations: IPageAuthorTranslationDataFinal;
 
   $: ({ viewportType } = $session);
+  $: ({ user: ctx } = $userSettings);
+  $: ({ uid, username, profile_photo } = user);
+  $: isAuth = !!ctx;
+  $: isFollow = !!(ctx?.scores_user_data.following?.authors || []).includes(
+    uid
+  );
 
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  function handleClick() {
+    if (!isAuth) {
+      $session.currentActiveModal = "Auth_Modal";
+      return;
+    }
+    userSettings.updateData([
+      ["user-following", { target: "authors", id: uid, follow: !isFollow }],
+    ]);
+  }
+
+  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--
@@ -52,17 +92,19 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<div class="wrapper {viewportType}" id={CNAME}>
-  {#if !users.length}
-    <div class="empty">
-      {emptyMessage}
-    </div>
-  {:else}
-    <div class="list-wrapper">
-      {#each users as user}
-        <FollowersUserItem {user} {translations} />
-      {/each}
-    </div>
+
+<div class="list-item {viewportType}">
+  <a href="/a/user/{username}" class="user-info">
+    <Avatar size={40} wrapStyle="border: 1px solid #1D1D1D" src={profile_photo} />
+    <div class="useer-name">{username}</div>
+  </a>
+  {#if uid !== ctx?.firebase_user_data?.uid}
+    <Button type={isFollow ? "subtle" : "primary"} style="padding:10px 16px; font-size: 14px; height: 32px; min-width: 72px " on:click={handleClick}>
+      <TranslationText
+        text={translations[isFollow ? "following" : "follow"]}
+        fallback={isFollow ? "Following" : "Follow"}
+      />
+    </Button>
   {/if}
 </div>
 
@@ -77,30 +119,36 @@
 -->
 
 <style lang="scss">
-  .wrapper {
+  .list-item {
     display: flex;
-    padding-top: 8px;
+    padding-block: 16px;
+    border-bottom: var(--header-border);
+    justify-content: space-between;
+    gap: 20px;
+    align-items: center;
 
-    flex-direction: column;
-    background-color: var(--bg-color);
-
-    .list-wrapper {
+    .user-info {
       display: flex;
-      flex-direction: column;
+      justify-content: start;
+      flex-grow: 1;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-color);
+      font-family: Roboto;
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 24px; /* 150% */
+
+      &:hover {
+        color: var(--primary);
+      }
     }
 
-    .empty {
-      flex-grow: 1;
-      width: 100%;
-      height: 100%;
-      background-color: var(--bg-color);
-      font-weight: 600;
-      color: var(--text-color-second);
-      font-size: var(--text-size-2xl);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-top: 10px;
+    &.mobile {
+      padding: 16px;
+      padding-block: 8px;
+      border-bottom: none;
     }
   }
 </style>
