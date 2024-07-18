@@ -10,18 +10,11 @@
 <script lang="ts">
   // #region ➤ 📌 VARIABLES
 
-  import Button from "$lib/components/ui/Button.svelte";
   import session from "$lib/store/session.js";
-  import { Betarena_User_Class } from "@betarena/scores-lib/dist/classes/class.betarena-user.js";
-  import FollowersHeader from "./FollowersHeader.svelte";
-  import FollowersList from "../../../common_ui/users_list/UsersList.svelte";
-  import type { BetarenaUser } from "$lib/types/types.user-settings.js";
-  import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
-  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
-  import { browser } from "$app/environment";
-  import { goto } from "$app/navigation";
-  import { page } from "$app/stores";
-  import FollowersHeaderLoader from "./FollowersHeaderLoader.svelte";
+  import LoaderSporttackAvatar from "$lib/components/ui/loaders/LoaderSporttackAvatar.svelte";
+  import LoaderLine from "$lib/components/ui/loaders/LoaderLine.svelte";
+  import LoaderButton from "$lib/components/ui/loaders/LoaderButton.svelte";
+
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'variables' that are to be         │
@@ -34,100 +27,20 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let author, translations: IPageAuthorTranslationDataFinal;
-
-  type TSelectedOption = "subscribers" | "followers" | "following";
   const /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
      */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = "author⮕followers";
+    CNAME: string = "sportstack-profile⮕header";
 
-  const BetarenaUserHelper = new Betarena_User_Class();
-  let loading = false;
-  let displayedData = {
-    subscribers: [] as BetarenaUser[],
-    followers: [] as BetarenaUser[],
-    following: [] as BetarenaUser[],
-  };
-  let rawData = {
-    subscribers: [] as string[],
-    followers: [] as string[],
-    following: [] as string[],
-  };
-  let prevAuthorId = "";
+  $: ({ viewportType } = $session);
 
-  $: selectedOption = $page.params.type || "subscribers";
-  $: ({ globalState } = $session);
-  $: isPWA = globalState.has("IsPWA");
-  $: currentData = displayedData[selectedOption];
-
-  $: if (browser && prevAuthorId !== author?.uid) {
-    prevAuthorId = author?.uid;
-    displayedData = {
-      subscribers: [],
-      followers: [],
-      following: [],
-    };
-
-    rawData = {
-      subscribers: author?.subscribed_by || [],
-      followers: author?.followed_by || [],
-      following: author?.following.authors || [],
-    };
-
-    loadUsers("subscribers").then(scrollHandler);
-    loadUsers("followers").then(scrollHandler);
-    loadUsers("following").then(scrollHandler);
-  }
-
-  async function loadUsers(type: TSelectedOption) {
-    const offset = displayedData[type]?.length || 0;
-    const ids = rawData[type].slice(offset, offset + 10);
-
-    if (!ids.length) return;
-    loading = true;
-
-    const users = (await BetarenaUserHelper.obtainPublicInformationTargetUsers(
-      ids,
-      false
-    )) as BetarenaUser[];
-    displayedData[type].push(...users);
-    displayedData = { ...displayedData };
-    loading = false;
-  }
-
-  function select(e) {
-    selectedOption = e.detail.id;
-    const paths = $page.url.href.split("/");
-    if (selectedOption === paths[paths.length - 1]) return;
-    paths[paths.length - 1] = selectedOption;
-    goto(`${paths.join("/")}`, {
-      replaceState: true,
-      invalidateAll: false,
-      noScroll: true,
-      keepFocus: true,
-    });
-  }
+  const options = [
+    { id: "posts", label: "posts" },
+    { id: "people", label: "people" },
+  ];
 
   // #endregion ➤ 📌 VARIABLES
-
-  /**
-   * @author
-   *  <-insert-author->
-   * @summary
-   *  🟦 HELPER
-   * @description
-   *  📝 Custom handler for scroll logic.
-   * @return { void }
-   */
-  function scrollHandler(): void {
-    if (!isPWA) return;
-
-    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 5)
-      loadUsers(selectedOption);
-    return;
-  }
 </script>
 
 <!--
@@ -140,27 +53,34 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<svelte:window on:scroll={scrollHandler} />
-<div class="wrapper" id={CNAME}>
-  <FollowersHeader
-    {author}
-    selection={selectedOption}
-    {translations}
-    on:select={select}
-  />
-  <FollowersList
-    {translations}
-    users={currentData}
-    {loading}
-    emptyMessage="no {selectedOption} yet"
-  />
-  {#if !isPWA && currentData?.length < rawData[selectedOption]?.length}
-    <div class="load-more">
-      <Button type="outline" on:click={() => loadUsers(selectedOption)}>
-        <TranslationText text={translations.view_more} fallback="View More" />
-      </Button>
+
+<div class="sportstack-header-wrapper {viewportType}" id={CNAME}>
+  <div class="sportstack-main-info {viewportType}">
+    <div class="sportstack-block">
+      <div class="sportstack-info">
+        <LoaderSporttackAvatar size={64} />
+        <div class="name"><LoaderLine height={20} /></div>
+      </div>
+
+      <div class="sportstack-description">
+        <div class="about-text">
+          {#each ["100%", "80%", "90%"] as width}
+            <LoaderLine {width} height={10} />
+          {/each}
+        </div>
+        <div class="actions-wrapper">
+          <div class="buttons-wrapper">
+            <LoaderButton style="flex-grow: 1" width={145} />
+            <LoaderButton width={40} height={40} />
+          </div>
+        </div>
+      </div>
     </div>
-  {/if}
+  </div>
+  <div class="tabbar">
+    <LoaderLine height={12} width={50} />
+    <LoaderLine height={12} width={50} />
+  </div>
 </div>
 
 <!--
@@ -174,15 +94,154 @@
 -->
 
 <style lang="scss">
-  .wrapper {
+  .sportstack-header-wrapper {
     display: flex;
     flex-direction: column;
+    gap: 24px;
     background-color: var(--bg-color);
+    width: 100%;
+    font-family: Roboto;
+    --text-button-size: 14px;
 
-    .load-more {
+    .tabbar {
       display: flex;
-      justify-content: center;
-      margin-top: 32px;
+      gap: 24px;
+    }
+
+    &.mobile {
+      padding-inline: 16px;
+      padding-top: 3px;
+
+      .sportstack-main-info {
+        gap: 20px;
+        flex-direction: column;
+
+        .actions-wrapper {
+          flex-direction: column;
+          justify-content: space-between;
+          .sportstack {
+            max-width: unset;
+          }
+        }
+
+        .sportstack-block {
+          align-items: center;
+          gap: 12px;
+
+          .sportstack-info {
+            flex-direction: column;
+            gap: 16px;
+          }
+
+          .sportstack-description {
+            flex-direction: column;
+            width: 100%;
+            gap: 20px;
+            text-align: center;
+          }
+        }
+      }
+    }
+
+    .sportstack-main-info {
+      display: flex;
+      flex-direction: column;
+      gap: 60px;
+      justify-content: space-between;
+
+      .sportstack-block {
+        flex-direction: column;
+        gap: 16px;
+        justify-content: center;
+        display: flex;
+
+        .social-info {
+          display: flex;
+          gap: 40px;
+
+          .follow-block {
+            display: flex;
+            flex-direction: column;
+            margin-top: 5px;
+            .count {
+              color: var(--text-color);
+              font-weight: 600;
+              font-size: 16px;
+            }
+            &-text {
+              color: var(--text-color-second);
+              font-size: 10px;
+            }
+          }
+        }
+
+        .sportstack-info {
+          display: flex;
+          align-items: center;
+          gap: 24px;
+          width: 100%;
+
+          .name {
+            color: var(--text-color);
+            font-size: 20px;
+            font-style: normal;
+            font-weight: 500;
+            line-height: 28px; /* 140% */
+          }
+        }
+
+        .sportstack-description {
+          display: flex;
+          justify-content: space-between;
+          font-size: var(--text-size-s);
+          font-style: normal;
+          font-weight: 400;
+          color: var(--text-color);
+          .about-text {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            line-height: 20px;
+            opacity: 0.8;
+            max-width: 355px;
+          }
+        }
+
+        .followers {
+          display: flex;
+          gap: 8px;
+          font-size: 10px;
+          font-style: normal;
+          line-height: 13px;
+          margin-top: 4px;
+          align-items: center;
+          color: var(--text-color-second);
+
+          .followers-names {
+            max-width: 206px;
+          }
+
+          .username {
+            font-weight: 500;
+            color: var(--text-color);
+          }
+        }
+      }
+
+      .actions-wrapper {
+        display: flex;
+
+        gap: 24px;
+        flex-shrink: 0;
+        flex-direction: column-reverse;
+        justify-content: space-between;
+
+        .buttons-wrapper {
+          display: flex;
+          gap: 8px;
+          width: 100%;
+        }
+      }
     }
   }
 </style>

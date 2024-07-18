@@ -8,20 +8,12 @@
 -->
 
 <script lang="ts">
+  import LoaderAvatar from "$lib/components/ui/loaders/LoaderAvatar.svelte";
+  import LoaderLine from "$lib/components/ui/loaders/LoaderLine.svelte";
+  import session from "$lib/store/session.js";
+
   // #region ➤ 📌 VARIABLES
 
-  import Button from "$lib/components/ui/Button.svelte";
-  import session from "$lib/store/session.js";
-  import { Betarena_User_Class } from "@betarena/scores-lib/dist/classes/class.betarena-user.js";
-  import FollowersHeader from "./FollowersHeader.svelte";
-  import FollowersList from "../../../common_ui/users_list/UsersList.svelte";
-  import type { BetarenaUser } from "$lib/types/types.user-settings.js";
-  import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
-  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
-  import { browser } from "$app/environment";
-  import { goto } from "$app/navigation";
-  import { page } from "$app/stores";
-  import FollowersHeaderLoader from "./FollowersHeaderLoader.svelte";
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'variables' that are to be         │
@@ -34,100 +26,29 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let author, translations: IPageAuthorTranslationDataFinal;
-
-  type TSelectedOption = "subscribers" | "followers" | "following";
   const /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
      */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = "author⮕followers";
+    CNAME: string = "author-profile⮕followers⮕header-loader";
 
-  const BetarenaUserHelper = new Betarena_User_Class();
-  let loading = false;
-  let displayedData = {
-    subscribers: [] as BetarenaUser[],
-    followers: [] as BetarenaUser[],
-    following: [] as BetarenaUser[],
-  };
-  let rawData = {
-    subscribers: [] as string[],
-    followers: [] as string[],
-    following: [] as string[],
-  };
-  let prevAuthorId = "";
-
-  $: selectedOption = $page.params.type || "subscribers";
-  $: ({ globalState } = $session);
+  $: ({ globalState, viewportType } = $session);
   $: isPWA = globalState.has("IsPWA");
-  $: currentData = displayedData[selectedOption];
-
-  $: if (browser && prevAuthorId !== author?.uid) {
-    prevAuthorId = author?.uid;
-    displayedData = {
-      subscribers: [],
-      followers: [],
-      following: [],
-    };
-
-    rawData = {
-      subscribers: author?.subscribed_by || [],
-      followers: author?.followed_by || [],
-      following: author?.following.authors || [],
-    };
-
-    loadUsers("subscribers").then(scrollHandler);
-    loadUsers("followers").then(scrollHandler);
-    loadUsers("following").then(scrollHandler);
-  }
-
-  async function loadUsers(type: TSelectedOption) {
-    const offset = displayedData[type]?.length || 0;
-    const ids = rawData[type].slice(offset, offset + 10);
-
-    if (!ids.length) return;
-    loading = true;
-
-    const users = (await BetarenaUserHelper.obtainPublicInformationTargetUsers(
-      ids,
-      false
-    )) as BetarenaUser[];
-    displayedData[type].push(...users);
-    displayedData = { ...displayedData };
-    loading = false;
-  }
-
-  function select(e) {
-    selectedOption = e.detail.id;
-    const paths = $page.url.href.split("/");
-    if (selectedOption === paths[paths.length - 1]) return;
-    paths[paths.length - 1] = selectedOption;
-    goto(`${paths.join("/")}`, {
-      replaceState: true,
-      invalidateAll: false,
-      noScroll: true,
-      keepFocus: true,
-    });
-  }
-
   // #endregion ➤ 📌 VARIABLES
 
-  /**
-   * @author
-   *  <-insert-author->
-   * @summary
-   *  🟦 HELPER
-   * @description
-   *  📝 Custom handler for scroll logic.
-   * @return { void }
-   */
-  function scrollHandler(): void {
-    if (!isPWA) return;
+  // #region ➤ 🛠️ METHODS
 
-    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 5)
-      loadUsers(selectedOption);
-    return;
-  }
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--
@@ -140,27 +61,20 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<svelte:window on:scroll={scrollHandler} />
-<div class="wrapper" id={CNAME}>
-  <FollowersHeader
-    {author}
-    selection={selectedOption}
-    {translations}
-    on:select={select}
-  />
-  <FollowersList
-    {translations}
-    users={currentData}
-    {loading}
-    emptyMessage="no {selectedOption} yet"
-  />
-  {#if !isPWA && currentData?.length < rawData[selectedOption]?.length}
-    <div class="load-more">
-      <Button type="outline" on:click={() => loadUsers(selectedOption)}>
-        <TranslationText text={translations.view_more} fallback="View More" />
-      </Button>
-    </div>
-  {/if}
+<div class="wrapper {viewportType}" id={CNAME}>
+  <div class="name-block">
+    {#if !isPWA}
+      <div class="back-button">
+        <LoaderAvatar size={32} />
+      </div>
+    {/if}
+    <div class="name"><LoaderLine height={20} width={100} /></div>
+  </div>
+  <div class="tabbar-wrapper">
+    <LoaderLine height={12} width={50} />
+    <LoaderLine height={12} width={50} />
+    <LoaderLine height={12} width={50} />
+  </div>
 </div>
 
 <!--
@@ -177,12 +91,53 @@
   .wrapper {
     display: flex;
     flex-direction: column;
-    background-color: var(--bg-color);
+    gap: 32px;
+    border-bottom: var(--header-border);
 
-    .load-more {
+    &.mobile {
+      padding-inline: 16px;
+      gap: 20px;
+      .tabbar-wrapper {
+        margin: auto;
+      }
+
+      .name-block .name {
+        justify-content: center;
+        padding-left: 0;
+      }
+    }
+
+    .name-block {
       display: flex;
-      justify-content: center;
-      margin-top: 32px;
+      justify-content: start;
+      align-items: center;
+      position: relative;
+
+      .back-button {
+        position: absolute;
+        left: 0;
+        top: 0;
+        transform: translateY(-20%);
+      }
+
+      .name {
+        display: flex;
+        color: var(--text-color);
+        justify-self: start;
+        padding-left: 48px;
+        align-items: center;
+        flex-grow: 1;
+        font-family: Roboto;
+        font-size: var(--text-size-l);
+        font-style: normal;
+        font-weight: 500;
+        line-height: 24px; /* 150% */
+      }
+    }
+    .tabbar-wrapper {
+      display: flex;
+      gap: 24px;
+      padding-bottom: 14px;
     }
   }
 </style>
