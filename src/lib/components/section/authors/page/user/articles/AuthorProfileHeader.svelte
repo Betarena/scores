@@ -55,11 +55,11 @@
   const dispatch = createEventDispatcher();
 
   $: ({
-    name,
+    name = "IVAN IZOBOV",
     uid,
     profile_photo,
     username,
-    about,
+    about = "THIS IS HELL",
     following,
     followed_by = [],
     subscribed_by = [],
@@ -365,7 +365,7 @@
               font-size: 16px;
             }
             &-text {
-              color: var(--text-color-second);
+              color: #8C8C8C;
               opacity: 0.8;
               font-size: 10px;
             }
@@ -386,9 +386,8 @@
           line-height: 28px; /* 140% */
         }
         .nick {
-          color: var(--text-color-second);
+          color: #8C8C8C;
           font-size: 12px;
-          opacity: 0.8;
         }
       }
 
@@ -398,7 +397,7 @@
         font-style: normal;
         font-weight: 400;
         line-height: 18px;
-        color: var(--text-color-second);
+        color: var(--text-color);
         opacity: 0.8;
       }
 
@@ -494,7 +493,7 @@
             }
           }
           .owner {
-            color: var(--text-color-second);
+            color: var(--text-color);
             font-family: Inter;
             opacity: 0.8;
             font-size: 12px;
@@ -511,7 +510,7 @@
         }
 
         &-description {
-          color: var(--text-color-second);
+          color: var(--text-color);
           font-family: Roboto;
           font-size: var(--text-size-s);
           font-style: normal;
