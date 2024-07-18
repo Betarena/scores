@@ -2,13 +2,13 @@
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ 📌 High Order Component Overview                                                 │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ Internal Svelte Code Format :|: V.8.0                                          │
-│ ➤ Status :|: 🔒 LOCKED                                                           │
-│ ➤ Author(s) :|: @migbash                                                         │
+│ ➤ Internal Svelte Code Format |:| V.8.0                                          │
+│ ➤ Status |:| 🔒 LOCKED                                                           │
+│ ➤ Author(s) |:| @migbash                                                         │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ 📝 Description                                                                   │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ Scores Authors Section Layout                                                    │
+│ Betarena (Component) || Authors Content Main                                     │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -37,14 +37,11 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { page } from "$app/stores";
 
   import sessionStore from "$lib/store/session.js";
-  import { tryCatch } from "@betarena/scores-lib/dist/util/common.js";
 
-  import SvelteSeo from "svelte-seo";
-  import AuthorUserWidget from "./articles/AuthorUserWidget.svelte";
-  import { normalizeSeo } from "$lib/utils/seo.js";
+  import ArticlesList from "../../../common_ui/articles/ArticlesList.svelte";
+  import AuthorProfileHeaderLoader from "./AuthorProfileHeaderLoader.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -61,19 +58,9 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
+  $: ({ viewportType } = $sessionStore);
 
-  const /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
-    // eslint-disable-next-line no-unused-vars
-    CNAME: string = "author-user";
-  $: ({
-    section_data: { articles, author },
-  } = $page.data);
-  $: seoPromise = Promise.all([articles, author]).then(([art, auth]) =>
-    normalizeSeo(art?.seoTamplate, { ...auth, url: $page.url.href })
-  );
-  $: ({ globalState, viewportType } = $sessionStore);
-  $: isPWA = globalState.has("IsPWA");
-  // #endregion ➤ 📌 VARIABLES
+  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--
@@ -86,28 +73,24 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-{#await seoPromise then pageSeo}
-  <SvelteSeo
-    title={pageSeo.main_data.title}
-    description={pageSeo.main_data.description}
-    keywords={pageSeo.main_data.keywords}
-    noindex={tryCatch(() => {
-      return JSON.parse(pageSeo.main_data.noindex);
-    }) ?? false}
-    nofollow={tryCatch(() => {
-      return JSON.parse(pageSeo.main_data.nofollow);
-    }) ?? false}
-    canonical={$page.url.href}
-    twitter={pageSeo.twitter_card}
-    openGraph={pageSeo.opengraph}
-  />
-{/await}
 
-<section id={CNAME} class={viewportType} class:pwa={isPWA}>
-  <div class="main-content {viewportType}" class:pwa={isPWA}>
-    <AuthorUserWidget data={$page.data.section_data} />
-  </div>
-</section>
+<!--
+╭─────
+│ > User profile info
+╰─────
+-->
+
+<AuthorProfileHeaderLoader />
+
+<!--
+╭─────
+│ > User articles
+╰─────
+-->
+
+<div class="content {viewportType}">
+  <ArticlesList articles={new Map()} isLoadingArticles={true} />
+</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -120,35 +103,43 @@
 -->
 
 <style lang="scss">
-  :global {
-    .mobile#header {
-      --header-border: none;
-    }
-  }
-  .mobile {
-    padding-top: 3px;
-  }
-  section {
-    background-color: var(--bg-color);
-    width: 100%;
-    height: 100%;
-    &.mobile {
-      padding-inline: 0;
-    }
-  }
-  .main-content {
-    max-width: 824px;
-    height: 100%;
-    margin: auto;
-    --text-size-2xl: 38px;
-    --text-size-xl: 24px;
-    --text-size-l: 20px;
-    --text-size-m: 16px;
-    --text-size-s: 14px;
-    --text-size-xs: 12px;
-    --text-button-size: var(--text-size-m);
+  .content {
+    max-width: 1265px;
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
+    margin-top: 28px;
+
+    &.mobile {
+      margin-top: 0;
+    }
+  }
+
+  .load-more {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 34px 0;
+    background: var(--bg-color);
+  }
+
+  .content {
+    &.tablet {
+      padding: 26px 34px;
+      padding-top: 32px;
+      padding-inline: 0;
+      padding-bottom: 0 !important;
+      margin: 0 !important;
+      width: 100%;
+
+      &.pwa {
+        padding-bottom: 128px !important;
+      }
+
+      .add-icon {
+        margin-top: 0;
+      }
+    }
 
     &.mobile {
       background: var(--layout-bg-color);
@@ -162,9 +153,12 @@
       --text-size-s: 12px;
       --text-size-xs: 10px;
 
-      .listArticlesMod {
+      .tabbar-wrapper {
+        padding: 0px 16px;
+      }
+
+      .add-icon {
         margin-top: 0;
-        gap: 8px;
       }
     }
   }

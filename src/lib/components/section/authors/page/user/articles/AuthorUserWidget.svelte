@@ -41,6 +41,7 @@
   import { page } from "$app/stores";
 
   import AuthorProfileMain from "./AuthorProfileMain.svelte";
+  import AuthorProfileMainLoader from "./AuthorProfileMainLoader.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -63,13 +64,13 @@
      *  📝 `this` component **main** `id` and `data-testid` prefix.
      */ // eslint-disable-next-line no-unused-vars
     CNAME: string = "author-profile-section";
-
+  export let data;
   $: ({
     author,
     highlited_sportstack,
     articles: widgetData,
     translations,
-  } = $page.data);
+  } = data);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -99,25 +100,9 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<!-- <SeoBox>
-  <h1>{selectedTag?.name}</h1>
 
-  {#each [...mapArticles.entries()] as [, article]}
-    <h2>
-      {article.data?.title}
-    </h2>
-    <a
-      href={`/a/${article.permalink}`}
-    >
-      {article.data?.title}
-    </a>
-  {/each}
-  {#each [...mapArticles.entries()] as [_id, tag]}
-    <a href={`/a/tag/${tag.permalink}`}>{tag.name}</a>
-  {/each}
-</SeoBox> -->
-
-{#await widgetData}
+{#await Promise.all([widgetData, highlited_sportstack])}
+  <AuthorProfileMainLoader />
   <!--
   ╭────────────────────────────────────────────────────────────────────────╮
   │ NOTE :|: promise is pending                                            │

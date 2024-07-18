@@ -78,7 +78,6 @@
   //     })
   //   | undefined;
   let currentPage = 1;
-  $: pageSeo = $page.data.seoTamplate;
   // $: translations = widgetData?.translations;
 
   /**

@@ -28,10 +28,12 @@ export async function load
   ): Promise<any>
 {
 
-  return await main
-    (
-      { params: event.params, fetch: event.fetch, url: event.url } as ServerLoadEvent
-    );
+  return {
+    section_data: main
+      (
+        { params: event.params, fetch: event.fetch, url: event.url } as ServerLoadEvent
+    )
+  }
 }
 
 // #endregion ➤ 🔄 LIFECYCLE [SVELTE]

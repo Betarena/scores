@@ -133,11 +133,9 @@ async function fetchData
     urls0.push(`/api/data/author/sportstack?id=${user.highlights.sportstack}`);
   }
 
-  const [articles, highlited_sportstack] = await promiseUrlsPreload(urls0, fetch);
   return {
     author: user,
-    articles,
-    seoTemplate: normalizeSeo(articles.seoTamplate, { name: user.username, about: "", ...user, username: user.usernameLower, url }),
-    highlited_sportstack
+    articles: promiseUrlsPreload([`/api/data/author/profile?uid=${user.uid}`], fetch, "single"),
+    highlited_sportstack: user.highlights?.sportstack ? promiseUrlsPreload([`/api/data/author/sportstack?id=${user.highlights.sportstack}`], fetch, "single") : undefined
   }
 }
