@@ -24,10 +24,10 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import LoaderAvatar from '$lib/components/ui/loaders/LoaderAvatar.svelte';
   import LoaderBadge from '$lib/components/ui/loaders/LoaderBadge.svelte';
   import LoaderImage from '$lib/components/ui/loaders/LoaderImage.svelte';
   import LoaderLine from '$lib/components/ui/loaders/LoaderLine.svelte';
+  import LoaderSporttackAvatar from '$lib/components/ui/loaders/LoaderSporttackAvatar.svelte';
   import { fade } from 'svelte/transition';
 
   // #endregion ➤ 📦 Package Imports
@@ -76,7 +76,7 @@
 <div class="card-wrapper" class:mobile class:tablet in:fade={{ duration: 250 }}>
   <div class="card-content">
     <div class="author-wrapper">
-      <LoaderAvatar size={mobile ? 32 : 38} />
+      <LoaderSporttackAvatar size={mobile ? 24 : 32} />
       <div class="author-info">
         <LoaderLine width={110} />
         <LoaderLine width={90} />

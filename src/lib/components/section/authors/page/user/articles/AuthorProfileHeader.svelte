@@ -27,6 +27,7 @@
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
   import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
   import ShareButton from "$lib/components/ui/ShareButton.svelte";
+  import AuthorProfileHeaderLoader from "./AuthorProfileHeaderLoader.svelte";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -53,6 +54,8 @@
     CNAME: string = "author-profile⮕header";
 
   const dispatch = createEventDispatcher();
+
+  let loading = false
 
   $: ({
     name,
@@ -123,9 +126,11 @@
   async function getSubscribers(subscribers_arr = []) {
     subscribers = [];
     if (!subscribers_arr.length) return;
+    loading = true;
     const ids = subscribers_arr.slice(0, 3);
     const users = await BetarenaUsers.obtainPublicInformationTargetUsers(ids);
     subscribers = [...users] as BetarenaUser[];
+    loading = false;
   }
   // #endregion ➤ 🛠️ METHODS
 </script>
@@ -140,165 +145,169 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
+{#if loading}
+   <AuthorProfileHeaderLoader />
+{:else}
+   <div
+     class="user-header-wrapper"
+     id={CNAME}
+     class:mobile={viewportType === "mobile"}
+   >
 
-<div
-  class="user-header-wrapper"
-  id={CNAME}
-  class:mobile={viewportType === "mobile"}
->
-  <div class="user-block">
-    <div class="social-info">
-      <Avatar size={64} src={profile_photo} />
+     <div class="user-block">
+       <div class="social-info">
+         <Avatar size={64} src={profile_photo} />
 
-      <div class="following-info">
-        <a href={getLink("followers")} class="follow-block">
-          <div class="count">{follower_count}</div>
-          <div class="follow-block-text">
-            <TranslationText
-              text={translations.followers}
-              fallback="Followers"
-            />
-          </div>
-        </a>
-        <a href={getLink("following")} class="follow-block">
-          <div class="count">{authors_followings.length}</div>
-          <div class="follow-block-text">
-            <TranslationText
-              text={translations.following}
-              fallback="Following"
-            />
-          </div>
-        </a>
-      </div>
-    </div>
+         <div class="following-info">
+           <a href={getLink("followers")} class="follow-block">
+             <div class="count">{follower_count}</div>
+             <div class="follow-block-text">
+               <TranslationText
+                 text={translations.followers}
+                 fallback="Followers"
+               />
+             </div>
+           </a>
+           <a href={getLink("following")} class="follow-block">
+             <div class="count">{authors_followings.length}</div>
+             <div class="follow-block-text">
+               <TranslationText
+                 text={translations.following}
+                 fallback="Following"
+               />
+             </div>
+           </a>
+         </div>
+       </div>
 
-    <div class="user-info">
-      <div class="name" style="visibility: {name ? 'unset' : 'hidden'}">
-        {name || "name"}
-      </div>
-      <div class="nick">@{username}</div>
-    </div>
-    {#if about}
-      <div class="user-description">
-        {about}
-      </div>
-    {/if}
-    {#if subscribers.length}
-      <a href={getLink("subscribers")} class="followers">
-        <StackedAvatars
-          src={subscribers.map((u) => u.profile_photo || "")}
-          size={viewportType === "desktop" ? 30 : 24}
-        />
-        <div class="followers-names">
-          <span class="subscribed_by">
-            <TranslationText
-              text={translations.subscribed_by}
-              fallback="Subscribed by"
-            />
-          </span>
-          {#each subscribers as follower, index}
-            <a
-              class="username"
-              on:click|stopPropagation
-              href="/a/user/{userNameToUrlString(follower.username)}"
-            >
-              <span>
-                {" "}
-                {`${follower.username}${
-                  index < subscribers.length - 1 ? "," : ""
-                }`}
-              </span>
-            </a>
-          {/each}
-          {#if subscribed_by.length > 3}
-            <span class="username">
-              and {subscribed_by.length - 3} others
-            </span>
-          {/if}
-        </div>
-      </a>
-    {/if}
-  </div>
-  <div class="actions-wrapper">
-    <div class="buttons-wrapper">
-      {#if isOwner}
-        <a href="/u/settings/{$userSettings.lang}" class="edit-button">
-          <Button type="secondary" style="flex-grow: 1;">
-            <TranslationText
-              text={translations.edit_my_profile}
-              fallback="Edit my Profile"
-            />
-          </Button>
-        </a>
-      {:else}
-        <Button
-          type={isSubscribed ? "subtle" : "primary"}
-          style="flex-grow: 1;"
-          on:click={subscribe}
-        >
-          {#if isSubscribed}
-            <TranslationText
-              text={translations.subscribed}
-              fallback="Subscribed"
-            />
-          {:else}
-            <TranslationText
-              text={translations.subscribe}
-              fallback="Subscribe"
-            />
-          {/if}
-        </Button>
-        <Button
-          type={isFollowed ? "subtle" : "secondary"}
-          style="flex-grow: 1;"
-          on:click={follow}
-        >
-          {#if isFollowed}
-            <TranslationText
-              text={translations.following}
-              fallback="Following"
-            />
-          {:else}
-            <TranslationText text={translations.follow} fallback="Follow" />
-          {/if}
-        </Button>
-      {/if}
-      <ShareButton />
-    </div>
-    {#if highlited_sportstack}
-      <a
-        class="sportstack"
-        href="/a/sportstack/{userNameToUrlString(
-          highlited_sportstack.data?.username
-        )}"
-      >
-        <div class="sportstack-info">
-          <SportstackAvatar
-            size={48}
-            src={highlited_sportstack.data?.avatar || ""}
-          />
-          <div class="sportstack-name">
-            <div class="name">{highlited_sportstack.data?.username}</div>
-            <a
-              class="owner"
-              href="/a/user/{userNameToUrlString(
-                highlited_sportstack.owner.username
-              )}"
-            >
-              <TranslationText text={translations.by} fallback="By" />
-              {highlited_sportstack.owner.username}
-            </a>
-          </div>
-        </div>
-        <div class="sportstack-description">
-          {highlited_sportstack.data?.about}
-        </div>
-      </a>
-    {:else}
-      <div />
-    {/if}
-  </div>
-</div>
+       <div class="user-info">
+         <div class="name" style="visibility: {name ? 'unset' : 'hidden'}">
+           {name || "name"}
+         </div>
+         <div class="nick">@{username}</div>
+       </div>
+       {#if about}
+         <div class="user-description">
+           {about}
+         </div>
+       {/if}
+       {#if subscribers.length}
+         <a href={getLink("subscribers")} class="followers">
+           <StackedAvatars
+             src={subscribers.map((u) => u.profile_photo || "")}
+             size={viewportType === "desktop" ? 30 : 24}
+           />
+           <div class="followers-names">
+             <span class="subscribed_by">
+               <TranslationText
+                 text={translations.subscribed_by}
+                 fallback="Subscribed by"
+               />
+             </span>
+             {#each subscribers as follower, index}
+               <a
+                 class="username"
+                 on:click|stopPropagation
+                 href="/a/user/{userNameToUrlString(follower.username)}"
+               >
+                 <span>
+                   {" "}
+                   {`${follower.username}${
+                     index < subscribers.length - 1 ? "," : ""
+                   }`}
+                 </span>
+               </a>
+             {/each}
+             {#if subscribed_by.length > 3}
+               <span class="username">
+                 and {subscribed_by.length - 3} others
+               </span>
+             {/if}
+           </div>
+         </a>
+       {/if}
+     </div>
+     <div class="actions-wrapper">
+       <div class="buttons-wrapper">
+         {#if isOwner}
+           <a href="/u/settings/{$userSettings.lang}" class="edit-button">
+             <Button type="secondary" style="flex-grow: 1;">
+               <TranslationText
+                 text={translations.edit_my_profile}
+                 fallback="Edit my Profile"
+               />
+             </Button>
+           </a>
+         {:else}
+           <Button
+             type={isSubscribed ? "subtle" : "primary"}
+             style="flex-grow: 1;"
+             on:click={subscribe}
+           >
+             {#if isSubscribed}
+               <TranslationText
+                 text={translations.subscribed}
+                 fallback="Subscribed"
+               />
+             {:else}
+               <TranslationText
+                 text={translations.subscribe}
+                 fallback="Subscribe"
+               />
+             {/if}
+           </Button>
+           <Button
+             type={isFollowed ? "subtle" : "secondary"}
+             style="flex-grow: 1;"
+             on:click={follow}
+           >
+             {#if isFollowed}
+               <TranslationText
+                 text={translations.following}
+                 fallback="Following"
+               />
+             {:else}
+               <TranslationText text={translations.follow} fallback="Follow" />
+             {/if}
+           </Button>
+         {/if}
+         <ShareButton />
+       </div>
+       {#if highlited_sportstack}
+         <a
+           class="sportstack"
+           href="/a/sportstack/{userNameToUrlString(
+             highlited_sportstack.data?.username
+           )}"
+         >
+           <div class="sportstack-info">
+             <SportstackAvatar
+               size={48}
+               src={highlited_sportstack.data?.avatar || ""}
+             />
+             <div class="sportstack-name">
+               <div class="name">{highlited_sportstack.data?.username}</div>
+               <a
+                 class="owner"
+                 href="/a/user/{userNameToUrlString(
+                   highlited_sportstack.owner.username
+                 )}"
+               >
+                 <TranslationText text={translations.by} fallback="By" />
+                 {highlited_sportstack.owner.username}
+               </a>
+             </div>
+           </div>
+           <div class="sportstack-description">
+             {highlited_sportstack.data?.about}
+           </div>
+         </a>
+       {:else}
+         <div />
+       {/if}
+     </div>
+   </div>
+{/if}
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
