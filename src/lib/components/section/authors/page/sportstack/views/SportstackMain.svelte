@@ -63,6 +63,7 @@
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
   import { Betarena_User_Class } from "@betarena/scores-lib/dist/classes/class.betarena-user.js";
   import type { IBetarenaUser } from "@betarena/scores-lib/types/_FIREBASE_.js";
+  import SportstackHeaderLoader from "./SportstackHeaderLoader.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -375,7 +376,6 @@
 │ > User profile info
 ╰─────
 -->
-
 <SportstackHeader {sportstackData} {translations} on:select={selectMode} />
 
 <!--

@@ -8,13 +8,12 @@
 -->
 
 <script lang="ts">
-  import session from "$lib/store/session.js";
-  import type { BetarenaUser } from "$lib/types/types.user-settings.js";
-  import type { IBetarenaUser } from "@betarena/scores-lib/types/_FIREBASE_.js";
-  import ListUserItem from "./ListUserItem.svelte";
-  import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
-  import ListUserLoader from "./ListUserLoader.svelte";
   // #region ➤ 📌 VARIABLES
+
+  import session from "$lib/store/session.js";
+  import LoaderSporttackAvatar from "$lib/components/ui/loaders/LoaderSporttackAvatar.svelte";
+  import LoaderLine from "$lib/components/ui/loaders/LoaderLine.svelte";
+  import LoaderButton from "$lib/components/ui/loaders/LoaderButton.svelte";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -28,16 +27,11 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let users: (BetarenaUser | IBetarenaUser)[] = [],
-    translations: IPageAuthorTranslationDataFinal,
-    loading = false,
-    emptyMessage = "";
-
   const /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
      */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = "author⮕followers⮕list";
+    CNAME: string = "sportstack-profile⮕header";
 
   $: ({ viewportType } = $session);
 
@@ -54,25 +48,34 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<div class="wrapper {viewportType}" id={CNAME}>
-  {#if !users.length && emptyMessage && !loading}
-    <div class="empty">
-      {emptyMessage}
+
+<div class="sportstack-header-wrapper {viewportType}" id={CNAME}>
+  <div class="sportstack-main-info {viewportType}">
+    <div class="sportstack-block">
+      <div class="sportstack-info">
+        <LoaderSporttackAvatar size={64} />
+        <div class="name"><LoaderLine height={20} /></div>
+      </div>
+
+      <div class="sportstack-description">
+        <div class="about-text">
+          {#each ["100%", "80%", "90%"] as width}
+            <LoaderLine {width} height={10} />
+          {/each}
+        </div>
+        <div class="actions-wrapper">
+          <div class="buttons-wrapper">
+            <LoaderButton style="flex-grow: 1" width={145} />
+            <LoaderButton width={40} height={40} />
+          </div>
+        </div>
+      </div>
     </div>
-  {:else}
-    <div class="list-wrapper">
-      {#each users as user}
-        <ListUserItem {user} {translations} />
-      {/each}
-    </div>
-  {/if}
-  {#if loading}
-    <div class="list-wrapper">
-      {#each new Array(10) as _item}
-        <ListUserLoader />
-      {/each}
-    </div>
-  {/if}
+  </div>
+  <div class="tabbar">
+    <LoaderLine height={12} width={50} />
+    <LoaderLine height={12} width={50} />
+  </div>
 </div>
 
 <!--
@@ -86,30 +89,154 @@
 -->
 
 <style lang="scss">
-  .wrapper {
+  .sportstack-header-wrapper {
     display: flex;
-    padding-top: 8px;
-
     flex-direction: column;
+    gap: 24px;
     background-color: var(--bg-color);
+    width: 100%;
+    font-family: Roboto;
+    --text-button-size: 14px;
 
-    .list-wrapper {
+    .tabbar {
       display: flex;
-      flex-direction: column;
+      gap: 24px;
     }
 
-    .empty {
-      flex-grow: 1;
-      width: 100%;
-      height: 100%;
-      background-color: var(--bg-color);
-      font-weight: 600;
-      color: var(--text-color-second);
-      font-size: var(--text-size-2xl);
+    &.mobile {
+      padding-inline: 16px;
+      padding-top: 3px;
+
+      .sportstack-main-info {
+        gap: 20px;
+        flex-direction: column;
+
+        .actions-wrapper {
+          flex-direction: column;
+          justify-content: space-between;
+          .sportstack {
+            max-width: unset;
+          }
+        }
+
+        .sportstack-block {
+          align-items: center;
+          gap: 12px;
+
+          .sportstack-info {
+            flex-direction: column;
+            gap: 16px;
+          }
+
+          .sportstack-description {
+            flex-direction: column;
+            width: 100%;
+            gap: 20px;
+            text-align: center;
+          }
+        }
+      }
+    }
+
+    .sportstack-main-info {
       display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-top: 10px;
+      flex-direction: column;
+      gap: 60px;
+      justify-content: space-between;
+
+      .sportstack-block {
+        flex-direction: column;
+        gap: 16px;
+        justify-content: center;
+        display: flex;
+
+        .social-info {
+          display: flex;
+          gap: 40px;
+
+          .follow-block {
+            display: flex;
+            flex-direction: column;
+            margin-top: 5px;
+            .count {
+              color: var(--text-color);
+              font-weight: 600;
+              font-size: 16px;
+            }
+            &-text {
+              color: var(--text-color-second);
+              font-size: 10px;
+            }
+          }
+        }
+
+        .sportstack-info {
+          display: flex;
+          align-items: center;
+          gap: 24px;
+          width: 100%;
+
+          .name {
+            color: var(--text-color);
+            font-size: 20px;
+            font-style: normal;
+            font-weight: 500;
+            line-height: 28px; /* 140% */
+          }
+        }
+
+        .sportstack-description {
+          display: flex;
+          justify-content: space-between;
+          font-size: var(--text-size-s);
+          font-style: normal;
+          font-weight: 400;
+          color: var(--text-color);
+          .about-text {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            line-height: 20px;
+            opacity: 0.8;
+            max-width: 355px;
+          }
+        }
+
+        .followers {
+          display: flex;
+          gap: 8px;
+          font-size: 10px;
+          font-style: normal;
+          line-height: 13px;
+          margin-top: 4px;
+          align-items: center;
+          color: var(--text-color-second);
+
+          .followers-names {
+            max-width: 206px;
+          }
+
+          .username {
+            font-weight: 500;
+            color: var(--text-color);
+          }
+        }
+      }
+
+      .actions-wrapper {
+        display: flex;
+
+        gap: 24px;
+        flex-shrink: 0;
+        flex-direction: column-reverse;
+        justify-content: space-between;
+
+        .buttons-wrapper {
+          display: flex;
+          gap: 8px;
+          width: 100%;
+        }
+      }
     }
   }
 </style>

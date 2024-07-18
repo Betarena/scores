@@ -49,7 +49,7 @@
 
   $: ({ viewportType } = $session);
   $: ({ user: ctx } = $userSettings);
-  $: ({ uid, username, profile_photo } = user);
+  $: ({ uid, username, usernameLower, profile_photo } = user);
   $: isAuth = !!ctx;
   $: isFollow = !!(ctx?.scores_user_data.following?.authors || []).includes(
     uid
@@ -94,7 +94,7 @@
 -->
 
 <div class="list-item {viewportType}">
-  <a href="/a/user/{username}" class="user-info">
+  <a href="/a/user/{usernameLower}" class="user-info">
     <Avatar size={40} wrapStyle="border: 1px solid #1D1D1D" src={profile_photo} />
     <div class="useer-name">{username}</div>
   </a>
