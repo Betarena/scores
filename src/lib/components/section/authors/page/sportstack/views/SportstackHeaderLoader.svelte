@@ -35,11 +35,6 @@
 
   $: ({ viewportType } = $session);
 
-  const options = [
-    { id: "posts", label: "posts" },
-    { id: "people", label: "people" },
-  ];
-
   // #endregion ➤ 📌 VARIABLES
 </script>
 
