@@ -31,7 +31,7 @@
   export let users: (BetarenaUser | IBetarenaUser)[] = [],
     translations: IPageAuthorTranslationDataFinal,
     loading = false,
-    emptyMessage = "No followers yet";
+    emptyMessage = "";
 
   const /**
      * @description
@@ -55,7 +55,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 <div class="wrapper {viewportType}" id={CNAME}>
-  {#if !users.length}
+  {#if !users.length && emptyMessage && !loading}
     <div class="empty">
       {emptyMessage}
     </div>

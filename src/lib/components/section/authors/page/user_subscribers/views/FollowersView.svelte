@@ -56,6 +56,7 @@
     following: [] as string[],
   };
   let prevAuthorId = "";
+  let profileLoading = false;
 
   $: selectedOption = $page.params.type || "subscribers";
   $: ({ globalState } = $session);
@@ -75,10 +76,15 @@
       followers: author?.followed_by || [],
       following: author?.following.authors || [],
     };
-
-    loadUsers("subscribers").then(scrollHandler);
-    loadUsers("followers").then(scrollHandler);
-    loadUsers("following").then(scrollHandler);
+    profileLoading = true;
+    Promise.all([
+      loadUsers("subscribers"),
+      loadUsers("followers"),
+      loadUsers("following"),
+    ]).then(() => {
+      profileLoading = false;
+      scrollHandler();
+    });
   }
 
   async function loadUsers(type: TSelectedOption) {
@@ -142,16 +148,20 @@
 -->
 <svelte:window on:scroll={scrollHandler} />
 <div class="wrapper" id={CNAME}>
-  <FollowersHeader
-    {author}
-    selection={selectedOption}
-    {translations}
-    on:select={select}
-  />
+  {#if profileLoading}
+    <FollowersHeaderLoader />
+  {:else}
+     <FollowersHeader
+       {author}
+       selection={selectedOption}
+       {translations}
+       on:select={select}
+     />
+  {/if}
   <FollowersList
     {translations}
-    users={currentData}
-    {loading}
+    users={!profileLoading ? currentData : []}
+    loading={profileLoading || loading}
     emptyMessage="no {selectedOption} yet"
   />
   {#if !isPWA && currentData?.length < rawData[selectedOption]?.length}
