@@ -55,7 +55,7 @@
   {#each src as s, index}
     <div
       class="avatar-wrapper"
-      style="margin-left: -{ index ? deep : 0}px; border: 2px solid {bgColor};"
+      style="width:{size}px; height: {size}px; margin-left: -{ index ? deep : 0}px; border: 1px solid {bgColor};"
     >
       <Avatar src={s} {size} />
     </div>
