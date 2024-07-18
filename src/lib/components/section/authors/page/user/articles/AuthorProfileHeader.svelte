@@ -55,11 +55,11 @@
   const dispatch = createEventDispatcher();
 
   $: ({
-    name = "IVAN IZOBOV",
+    name,
     uid,
     profile_photo,
     username,
-    about = "THIS IS HELL",
+    about,
     following,
     followed_by = [],
     subscribed_by = [],
