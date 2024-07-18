@@ -18,7 +18,6 @@
   import type { BetarenaUser } from "$lib/types/types.user-settings.js";
   import userSettings from "$lib/store/user-settings.js";
   import { Betarena_User_Class } from "@betarena/scores-lib/dist/classes/class.betarena-user.js";
-  import ShareIcon from "./assets/share-icon.svelte";
   import { page } from "$app/stores";
   import SportstackAvatar from "$lib/components/ui/SportstackAvatar.svelte";
   import { browser } from "$app/environment";
@@ -27,6 +26,7 @@
   import { userNameToUrlString } from "../../../common_ui/helpers.js";
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
   import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
+  import ShareButton from "$lib/components/ui/ShareButton.svelte";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -263,9 +263,7 @@
           {/if}
         </Button>
       {/if}
-      <Button type="secondary" style="width: 40px; height: 40px; padding: 0">
-        <ShareIcon />
-      </Button>
+      <ShareButton />
     </div>
     {#if highlited_sportstack}
       <a
@@ -470,7 +468,7 @@
 
         &:hover {
           background-color: rgba(var(--bg-color-second-rgb-consts), 0.7);
-         }
+        }
 
         &-info {
           gap: 12px;

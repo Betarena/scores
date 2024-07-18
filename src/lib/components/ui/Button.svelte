@@ -26,6 +26,7 @@
 
   export let width: number | string = 200,
     height: number | string = 50,
+    classname: string = "",
     href = "";
 
   export let /**
@@ -52,7 +53,7 @@
 -->
 
 <button
-  class="button {type}"
+  class="button {type} {classname}"
   {...$$restProps}
   on:click={() => dispatch("click")}
 >

@@ -12,14 +12,13 @@
 
   import Button from "$lib/components/ui/Button.svelte";
   import session from "$lib/store/session.js";
-  import ShareIcon from "./assets/share-icon.svelte";
   import userSettings from "$lib/store/user-settings.js";
-  import SportsTackImg from "$lib/components/section/authors/common_ui/SportsTackImg.svelte";
   import Tabbar from "$lib/components/ui/Tabbar.svelte";
   import { post } from "$lib/api/utils.js";
   import SportstackAvatar from "$lib/components/ui/SportstackAvatar.svelte";
   import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
+  import ShareButton from "$lib/components/ui/ShareButton.svelte";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -127,12 +126,7 @@
                 />
               </Button>
             {/if}
-            <Button
-              type="secondary"
-              style="width: 40px; height: 40px; padding: 0"
-            >
-              <ShareIcon />
-            </Button>
+            <ShareButton />
           </div>
         </div>
       </div>
@@ -255,9 +249,9 @@
           font-size: var(--text-size-s);
           font-style: normal;
           font-weight: 400;
-          line-height: 18px;
-          color: var(--text-color-second);
+          color: var(--text-color);
           .about-text {
+            line-height: 20px;
             opacity: 0.8;
             max-width: 355px;
           }
