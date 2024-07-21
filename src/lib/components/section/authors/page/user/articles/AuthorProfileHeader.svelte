@@ -250,7 +250,7 @@
              {/if}
            </Button>
          {/if}
-         <ShareButton />
+         <ShareButton shareText={$page.data.seoTemplate?.main_data?.description} />
        </div>
        {#if highlited_sportstack}
          <a
