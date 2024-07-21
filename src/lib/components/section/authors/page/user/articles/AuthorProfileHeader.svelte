@@ -14,13 +14,10 @@
   import Button from "$lib/components/ui/Button.svelte";
   import StackedAvatars from "$lib/components/ui/StackedAvatars.svelte";
   import session from "$lib/store/session.js";
-  import { createEventDispatcher, onMount } from "svelte";
   import type { BetarenaUser } from "$lib/types/types.user-settings.js";
   import userSettings from "$lib/store/user-settings.js";
-  import { Betarena_User_Class } from "@betarena/scores-lib/dist/classes/class.betarena-user.js";
   import { page } from "$app/stores";
   import SportstackAvatar from "$lib/components/ui/SportstackAvatar.svelte";
-  import { browser } from "$app/environment";
   import type { IPageAuthorAuthorData } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import type { IBetarenaUser } from "@betarena/scores-lib/types/_FIREBASE_.js";
   import { userNameToUrlString } from "../../../common_ui/helpers.js";
@@ -43,6 +40,7 @@
 
   export let author: BetarenaUser,
     translations: IPageAuthorTranslationDataFinal,
+    subscribers_profiles:  BetarenaUser[],
     highlited_sportstack:
       | (IPageAuthorAuthorData & { owner: IBetarenaUser })
       | undefined;
@@ -53,7 +51,6 @@
      */ // eslint-disable-next-line no-unused-vars
     CNAME: string = "author-profile⮕header";
 
-  const dispatch = createEventDispatcher();
 
   let loading = false
 
@@ -79,15 +76,6 @@
   $: isSubscribed =
     user?.scores_user_data?.subscriptions?.authors?.includes(uid) || false;
   $: isAuth = !!user;
-
-  let prevUid = "";
-  $: if (browser && uid && prevUid !== uid) {
-    prevUid = uid;
-    getSubscribers(subscribed_by);
-  }
-
-  const BetarenaUsers = new Betarena_User_Class();
-  let subscribers: BetarenaUser[] = [];
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -123,15 +111,6 @@
     userSettings.updateData([[type, { target: "authors", id: uid, follow }]]);
   }
 
-  async function getSubscribers(subscribers_arr = []) {
-    subscribers = [];
-    if (!subscribers_arr.length) return;
-    loading = true;
-    const ids = subscribers_arr.slice(0, 3);
-    const users = await BetarenaUsers.obtainPublicInformationTargetUsers(ids);
-    subscribers = [...users] as BetarenaUser[];
-    loading = false;
-  }
   // #endregion ➤ 🛠️ METHODS
 </script>
 
@@ -191,10 +170,10 @@
            {about}
          </div>
        {/if}
-       {#if subscribers.length}
+       {#if subscribers_profiles.length}
          <a href={getLink("subscribers")} class="followers">
            <StackedAvatars
-             src={subscribers.map((u) => u.profile_photo || "")}
+             src={subscribers_profiles.map((u) => u.profile_photo || "")}
              size={viewportType === "desktop" ? 30 : 24}
            />
            <div class="followers-names">
@@ -204,7 +183,7 @@
                  fallback="Subscribed by"
                />
              </span>
-             {#each subscribers as follower, index}
+             {#each subscribers_profiles as follower, index}
                <a
                  class="username"
                  on:click|stopPropagation
@@ -213,7 +192,7 @@
                  <span>
                    {" "}
                    {`${follower.username}${
-                     index < subscribers.length - 1 ? "," : ""
+                     index < subscribers_profiles.length - 1 ? "," : ""
                    }`}
                  </span>
                </a>

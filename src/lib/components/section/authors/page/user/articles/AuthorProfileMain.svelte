@@ -53,6 +53,9 @@
   import AuthorProfileHeader from "./AuthorProfileHeader.svelte";
   import ArticlesList from "../../../common_ui/articles/ArticlesList.svelte";
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
+  import type { BetarenaUser } from "$lib/types/types.user-settings.js";
+  import { Betarena_User_Class } from "@betarena/scores-lib/dist/classes/class.betarena-user.js";
+  import AuthorProfileHeaderLoader from "./AuthorProfileHeaderLoader.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -72,14 +75,13 @@
   export let author, widgetData, translations, highlited_sportstack;
   $: ({ globalState, viewportType } = $sessionStore);
   $: isPWA = globalState.has("IsPWA");
-  // $: widgetData = $page.data as
-  //   | (IPageAuthorTagDataFinal & {
-  //       translations: IPageAuthorTranslationDataFinal;
-  //     })
-  //   | undefined;
+
+
+  const BetarenaUsers = new Betarena_User_Class();
   let currentPage = 1;
-  $: pageSeo = $page.data.seoTamplate;
-  // $: translations = widgetData?.translations;
+  let isLoadingSubscribers = false;
+  let author_subscribers_profiles: BetarenaUser[] = [];
+  let prevAuthorId = "";
 
   /**
    * @description
@@ -102,6 +104,11 @@
    */
 
   $: if (browser) updateData(widgetData ?? ({} as ITagsWidgetData), true);
+
+  $: if (browser && author?.uid && prevAuthorId !== author?.uid) {
+    prevAuthorId = author?.uid;
+    getSubscribers(author.subscribed_by);
+  }
 
   let /**
      * @description
@@ -126,6 +133,28 @@
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
+
+  /**
+   * @author
+   *  izobov
+   * @summary
+   *  🟦 HELPER
+   * @description
+   *  📝 Get first 3 subscribers profiles
+   * @param { string[] } subscribers_arr
+   *  💠 **REQUIRED** New data instance.
+   * @returns { void }
+   */
+
+  async function getSubscribers(subscribers_arr = []) {
+    author_subscribers_profiles = [];
+    if (!subscribers_arr.length) return;
+    isLoadingSubscribers = true;
+    const ids = subscribers_arr.slice(0, 3);
+    const users = await BetarenaUsers.obtainPublicInformationTargetUsers(ids);
+    author_subscribers_profiles = [...users] as BetarenaUser[];
+    isLoadingSubscribers = false;
+  }
 
   /**
    * @author
@@ -278,8 +307,16 @@
 ╰─────
 -->
 
-<AuthorProfileHeader {author} {highlited_sportstack} {translations}/>
-
+{#if isLoadingSubscribers}
+  <AuthorProfileHeaderLoader />
+{:else}
+  <AuthorProfileHeader
+    {author}
+    {highlited_sportstack}
+    {translations}
+    subscribers_profiles={author_subscribers_profiles}
+  />
+{/if}
 <!--
 ╭─────
 │ > User articles
@@ -287,12 +324,16 @@
 -->
 
 <div class="content {viewportType}">
-  <ArticlesList articles={mapArticlesMod} {translations} {isLoadingArticles} />
+  <ArticlesList
+    articles={isLoadingSubscribers ? [] : mapArticlesMod}
+    {translations}
+    isLoadingArticles={isLoadingArticles || isLoadingSubscribers}
+  />
 
   {#if !isPWA && mapArticlesMod.size}
     <div class="load-more">
       <Button type="outline" on:click={loadMore}>
-        <TranslationText  text={translations.view_more} fallback="View More"/>
+        <TranslationText text={translations.view_more} fallback="View More" />
       </Button>
     </div>
   {/if}
