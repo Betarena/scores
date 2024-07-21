@@ -1284,5 +1284,42 @@ export async function updateButtonOrder
   return;
 }
 
+/**
+ * Listens for real-time updates to a specific user's document in the "betarena_users_public" collection in Firestore.
+ * This function is designed to facilitate real-time responsiveness in applications by providing immediate updates
+ * whenever the specified user's document changes.
+ *
+ * @param {string} uid - The unique identifier for the user whose document updates you want to listen to.
+ * @param {(data: BetarenaUser) => void} cb - A callback function that is called with the updated data
+ * whenever the user's document changes. The data is passed as a parameter to this callback.
+ *
+ * @returns {Unsubscribe} A function that can be called to unsubscribe from the document updates,
+ * effectively stopping further invocation of the callback function when the document changes.
+ *
+ * @example
+ * const unsubscribe = listenRealTimeUserUpdates("user123", (data) => {
+ *   console.log("Updated user data:", data);
+ * });
+ * // To stop listening for updates:
+ * unsubscribe();
+ */
+export function listenRealTimeUserUpdates
+  (
+    uid: string,
+    cb: (data: BetarenaUser) => void
+  ): Unsubscribe
+{
+  const docRef = doc(db_firestore, "betarena_users_public", uid);
+  const unsubscribe = onSnapshot(docRef, (doc) =>
+  {
+    if (doc.exists())
+    {
+      const data = doc.data() as BetarenaUser;
+      cb(data);
+    }
+  });
+
+  return unsubscribe;
+}
 
 // #endregion ➤ 🛠️ METHODS

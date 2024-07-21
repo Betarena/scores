@@ -74,7 +74,7 @@
     {#each [...articles.entries()] as [key, article] (key)}
       <ArticleCard {mobile} {article} {tablet} {translations} />
     {/each}
-  {:else}
+  {:else if !isLoadingArticles}
     <div class="no-data">No articles yet</div>
   {/if}
 

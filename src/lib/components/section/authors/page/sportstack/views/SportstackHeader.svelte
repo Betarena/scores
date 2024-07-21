@@ -19,6 +19,7 @@
   import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
   import ShareButton from "$lib/components/ui/ShareButton.svelte";
+  import { page } from "$app/stores";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -37,7 +38,6 @@
   $: [id, sportstack] = sportstackData;
   $: ({ data, uid } = sportstack);
   $: ({ avatar, about, username } = data || {});
-
   const /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
@@ -126,7 +126,7 @@
                 />
               </Button>
             {/if}
-            <ShareButton />
+            <ShareButton shareText={$page.data.seoTemplate?.main_data?.description} />
           </div>
         </div>
       </div>

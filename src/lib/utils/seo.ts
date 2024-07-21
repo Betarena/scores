@@ -1,7 +1,7 @@
 
 function replacePlaceholders(str, source)
 {
-  return str.replace(/{(\w+)}/g, (_, key) => source[key] || `{${key}}`);
+  return str.replace(/{(\w+)}/g, (_, key) => source[key] || "");
 }
 /**
  * @author
