@@ -203,7 +203,7 @@
         <a href={getLink("subscribers")} class="followers">
           <StackedAvatars
             src={subscribers_profiles.map((u) => u.profile_photo || "")}
-            size={viewportType === "desktop" ? 31 : 24}
+            size={viewportType === "desktop" ? 32 : 24}
           />
           <div class="followers-names">
             <span class="subscribed_by">
