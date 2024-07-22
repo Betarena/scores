@@ -66,7 +66,7 @@
     subscribed_by = [],
   } = author);
   $: authors_followings = following?.authors || [];
-  $: follower_count = followed_by.length;
+  $: follower_count = followed_by?.length;
   $: ({ viewportType } = $session);
 
   $: isOwner = uid === $userSettings.user?.firebase_user_data?.uid;
@@ -113,8 +113,9 @@
     }
     unsubscribe = listenRealTimeUserUpdates(uid, (updates) => {
       if(!updates) return;
-      followed_by = updates.followed_by;
-      subscribed_by = updates.subscribed_by;
+      debugger
+      followed_by = updates.followed_by || [];
+      subscribed_by = updates.subscribed_by || [];
     });
   }
 
@@ -203,7 +204,7 @@
         <a href={getLink("subscribers")} class="followers">
           <StackedAvatars
             src={subscribers_profiles.map((u) => u.profile_photo || "")}
-            size={viewportType === "desktop" ? 30 : 24}
+            size={viewportType === "desktop" ? 31 : 24}
           />
           <div class="followers-names">
             <span class="subscribed_by">
@@ -226,9 +227,9 @@
                 </span>
               </a>
             {/each}
-            {#if subscribed_by.length > 3}
+            {#if subscribed_by?.length > 3}
               <span class="username">
-                and {subscribed_by.length - 3} others
+                and {subscribed_by?.length - 3} others
               </span>
             {/if}
           </div>
@@ -353,6 +354,22 @@
           max-width: unset;
         }
       }
+
+      .user-description {
+        line-height: 18px;
+        margin-top: 0;
+        margin-bottom: 4px;
+      }
+    }
+
+    &.tablet{
+      .user-description {
+        font-size: 12px;
+        line-height: 18px;
+        margin-top: 0;
+        margin-bottom: 4px;
+      }
+
     }
 
     .user-block {
@@ -409,12 +426,14 @@
 
       .user-description {
         font-family: Roboto;
-        font-size: 12px;
+        font-size: var(--text-size-s);
         font-style: normal;
         font-weight: 400;
-        line-height: 18px;
+        line-height: 20px;
         color: var(--text-color);
         opacity: 0.8;
+        margin-top: 4px;
+        margin-bottom: 13px;
       }
 
       .followers {
