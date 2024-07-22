@@ -58,7 +58,7 @@
   let prevAuthorId = "";
   let profileLoading = false;
 
-  $: selectedOption = $page.params.type || "subscribers";
+  $: selectedOption = ($page.params.type || "subscribers") as TSelectedOption;
   $: ({ globalState } = $session);
   $: isPWA = globalState.has("IsPWA");
   $: currentData = displayedData[selectedOption];
@@ -164,7 +164,7 @@
     loading={profileLoading || loading}
     emptyMessage="no {selectedOption} yet"
   />
-  {#if !isPWA && currentData?.length < rawData[selectedOption]?.length}
+  {#if !isPWA && currentData?.length < rawData[selectedOption]?.length && !profileLoading}
     <div class="load-more">
       <Button type="outline" on:click={() => loadUsers(selectedOption)}>
         <TranslationText text={translations.view_more} fallback="View More" />
