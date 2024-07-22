@@ -49,7 +49,7 @@
 
   import Button from '$lib/components/ui/Button.svelte';
   import Tabbar from '$lib/components/ui/Tabbar.svelte';
-  import ArticleCard from './Article-Card.svelte';
+  import ArticleCard from '../../../common_ui/articles/Article-Card.svelte';
   import ArticleLoader from './Article-Loader.svelte';
 
   import type {
