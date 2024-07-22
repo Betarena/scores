@@ -113,7 +113,6 @@
     }
     unsubscribe = listenRealTimeUserUpdates(uid, (updates) => {
       if(!updates) return;
-      debugger
       followed_by = updates.followed_by || [];
       subscribed_by = updates.subscribed_by || [];
     });
