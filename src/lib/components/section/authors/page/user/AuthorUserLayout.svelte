@@ -68,9 +68,6 @@
   $: ({
     section_data: { articles, author },
   } = $page.data);
-  $: seoPromise = Promise.all([articles, author]).then(([art, auth]) =>
-    normalizeSeo(art?.seoTamplate, { ...auth, url: $page.url.href })
-  );
   $: ({ globalState, viewportType } = $sessionStore);
   $: isPWA = globalState.has("IsPWA");
   // #endregion ➤ 📌 VARIABLES
@@ -86,20 +83,21 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-{#await seoPromise then pageSeo}
+{#await Promise.all([articles, author]) then [art, auth]}
+{@const normalisedSeo = normalizeSeo(art?.seoTamplate, { ...auth, url: $page.url.href })}
   <SvelteSeo
-    title={pageSeo.main_data.title}
-    description={pageSeo.main_data.description}
-    keywords={pageSeo.main_data.keywords}
+    title={normalisedSeo.main_data.title}
+    description={normalisedSeo.main_data.description}
+    keywords={normalisedSeo.main_data.keywords}
     noindex={tryCatch(() => {
-      return JSON.parse(pageSeo.main_data.noindex);
+      return JSON.parse(normalisedSeo.main_data.noindex);
     }) ?? false}
     nofollow={tryCatch(() => {
-      return JSON.parse(pageSeo.main_data.nofollow);
+      return JSON.parse(normalisedSeo.main_data.nofollow);
     }) ?? false}
     canonical={$page.url.href}
-    twitter={pageSeo.twitter_card}
-    openGraph={pageSeo.opengraph}
+    twitter={normalisedSeo.twitter_card}
+    openGraph={normalisedSeo.opengraph}
   />
 {/await}
 
