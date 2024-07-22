@@ -12,6 +12,7 @@ import { db_firestore, db_real } from './init';
 import type { FIRE_LNNS, FIRE_LNPI, FIREBASE_livescores_now, FIREBASE_odds } from '@betarena/scores-lib/types/firebase.js';
 import type { Page } from '@sveltejs/kit';
 import type { BetarenaUser } from '$lib/types/types.user-settings.js';
+import type { IBetarenaUserPublic } from '@betarena/scores-lib/types/firebase/firestore.js';
 import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.betarena-user.js';
 
 // #endregion ➤ 📦 Package Imports
@@ -1306,7 +1307,7 @@ export async function updateButtonOrder
 export function listenRealTimeUserUpdates
   (
     uid: string,
-    cb: (data: BetarenaUser) => void
+    cb: (data: IBetarenaUserPublic) => void
   ): Unsubscribe
 {
   const docRef = doc(db_firestore, "betarena_users_public", uid);
@@ -1314,7 +1315,7 @@ export function listenRealTimeUserUpdates
   {
     if (doc.exists())
     {
-      const data = doc.data() as BetarenaUser;
+      const data = doc.data() as IBetarenaUserPublic;
       cb(data);
     }
   });
