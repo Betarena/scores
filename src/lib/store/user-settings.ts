@@ -17,7 +17,7 @@
 
 import { writable } from 'svelte/store';
 
-import { updateButtonOrder, updateDataByKey, updateFollowing, updateSelectLang, updateSubscriptions } from '$lib/firebase/common.js';
+import { updateButtonOrder, updateDataByKey, updateFollowing, updateSelectLang } from '$lib/firebase/common.js';
 import sessionStore from '$lib/store/session.js';
 import { initSportbookData } from '$lib/utils/geo.js';
 import { initUser, logoutUser } from '$lib/utils/user.js';
