@@ -5,13 +5,12 @@ import userBetarenaSettings from '$lib/store/user-settings.js';
 import { dlog, dlogv2 } from '$lib/utils/debug.js';
 import { checkNull } from '$lib/utils/miscellenous.js';
 import { DataSnapshot, onValue, ref, type DatabaseReference, type Unsubscribe } from 'firebase/database';
-import { arrayRemove, arrayUnion, collection, doc, DocumentReference, getDoc, getDocs, increment, onSnapshot, query, updateDoc, where, type DocumentData } from 'firebase/firestore';
+import { arrayRemove, arrayUnion, doc, DocumentReference, getDoc, increment, onSnapshot, updateDoc } from 'firebase/firestore';
 import { getTargetRealDbData } from './firebase.actions.js';
 import { db_firestore, db_real } from './init';
 
 import type { FIRE_LNNS, FIRE_LNPI, FIREBASE_livescores_now, FIREBASE_odds } from '@betarena/scores-lib/types/firebase.js';
 import type { Page } from '@sveltejs/kit';
-import type { BetarenaUser } from '$lib/types/types.user-settings.js';
 import type { IBetarenaUserPublic } from '@betarena/scores-lib/types/firebase/firestore.js';
 import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.betarena-user.js';
 
@@ -19,7 +18,7 @@ import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.bet
 
 // #region ➤ 📌 VARIABLES
 
-const BetarenaUser = new Betarena_User_Class();
+export const BetarenaUserHelper = new Betarena_User_Class();
 
 // #endregion ➤ 📌 VARIABLES
 
@@ -1114,12 +1113,13 @@ export async function updateFollowing
   const current_target: string[] = updateDataByKey({ obj: user, field, key: target, add: follow, id: target_id });
   if (target === "authors")
   {
-    const d = await BetarenaUser.updateUsersFollowers({
+    const d = await BetarenaUserHelper.updateUsersFollowers({
       uidToUpdate: target_id,
       uidNewFollower: uid,
       type: field === "subscriptions" ? "subscriber" : "follower",
       action: follow ? "add" : "remove"
     })
+    return
   }
   current_field[target] = current_target;
   const data = {};
