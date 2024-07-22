@@ -41,6 +41,7 @@
   import type { IPageAuthorTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.tags.js';
   import { readingTime } from '../../helpers.js';
   import TranslationText from '$lib/components/misc/Translation-Text.svelte';
+  import { userNameToUrlString } from '../../../common_ui/helpers.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -120,7 +121,7 @@
     <div class="author-wrapper">
       <Avatar src={avatar} size={mobile ? 32 : 38} />
       <div class="author-info">
-        <div class="author-name">{username}</div>
+        <a  href="/a/user/{userNameToUrlString(username)}" class="author-name">{username}</a>
         <div class="publication-date">
           {#if timeToRead}
             {timeToRead}

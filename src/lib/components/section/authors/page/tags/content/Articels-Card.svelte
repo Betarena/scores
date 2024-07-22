@@ -21,6 +21,7 @@
   import { fade } from "svelte/transition";
   import ExpandDataWrapper from "$lib/components/ui/wrappers/ExpandDataWrapper.svelte";
   import ScrollDataWrapper from "$lib/components/ui/wrappers/ScrollDataWrapper.svelte";
+  import { userNameToUrlString } from "../../../common_ui/helpers.js";
 
   // #region ➤ 📌 VARIABLES
 
@@ -96,7 +97,7 @@
     <div class="author-wrapper">
       <Avatar src={avatar} />
       <div class="author-info">
-        <div class="author-name">{username}</div>
+        <a href="a/user/{userNameToUrlString(username)}" class="author-name">{username}</a>
         <div class="publication-date">{date}</div>
       </div>
     </div>
