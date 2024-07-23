@@ -240,6 +240,14 @@
 
       overflow: hidden;
 
+      .author-wrapper {
+        &:hover {
+          .author-name {
+            color: var(--primary);
+          }
+        }
+      }
+
       .tags-wrapper {
         max-width: 100%;
         justify-self: flex-end;
