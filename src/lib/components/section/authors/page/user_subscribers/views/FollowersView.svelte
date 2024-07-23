@@ -23,6 +23,8 @@
   import { page } from "$app/stores";
   import FollowersHeaderLoader from "./FollowersHeaderLoader.svelte";
   import SeoBox from "$lib/components/SEO-Box.svelte";
+  import userSettings from "$lib/store/user-settings.js";
+  import { listenRealTimeUserUpdates } from "$lib/firebase/common.js";
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'variables' that are to be         │
@@ -58,12 +60,16 @@
   };
   let prevAuthorId = "";
   let profileLoading = false;
+  let unsubscribe;
+
+  $: userProfile = (user ? {...user?.scores_user_data, uid: user?.firebase_user_data.uid} : {}) as BetarenaUser;
+
 
   $: selectedOption = ($page.params.type || "subscribers") as TSelectedOption;
   $: ({ globalState } = $session);
+  $: ({user} = $userSettings)
   $: isPWA = globalState.has("IsPWA");
   $: currentData = displayedData[selectedOption];
-
   $: if (browser && prevAuthorId !== author?.uid) {
     prevAuthorId = author?.uid;
     displayedData = {
@@ -73,11 +79,12 @@
     };
 
     rawData = {
-      subscribers: author?.subscribed_by || [],
-      followers: author?.followed_by || [],
-      following: author?.following.authors || [],
+      subscribers: (author?.subscribed_by || []).reverse(),
+      followers: (author?.followed_by || []).reverse(),
+      following: (author?.following.authors || []).reverse(),
     };
     profileLoading = true;
+    subscribeOnUserChanges(prevAuthorId);
     Promise.all([
       loadUsers("subscribers"),
       loadUsers("followers"),
@@ -88,18 +95,45 @@
     });
   }
 
-  async function loadUsers(type: TSelectedOption) {
-    const offset = displayedData[type]?.length || 0;
-    const ids = rawData[type].slice(offset, offset + 10);
+  function subscribeOnUserChanges(uid) {
+    if (unsubscribe) {
+      unsubscribe();
+    }
+    unsubscribe = listenRealTimeUserUpdates(uid, (updates) => {
+      if(!updates) return;
+      const {followed_by, subscribed_by} = updates;
+      if (followed_by.reverse().join("") !== rawData.followers.join("")) {
+        rawData.followers = followed_by.reverse();
+        const prevCount = displayedData.followers.length;
+        displayedData.followers = [];
+        loadUsers("followers", false, prevCount);
+      }
+      if (subscribed_by.reverse().join("") !== rawData.subscribers.join("")) {
+        rawData.subscribers = subscribed_by.reverse();
+        const prevCount = displayedData.subscribers.length;
+        displayedData.subscribers = [];
+        loadUsers("subscribers", false, prevCount);
+      }
+    });
+  }
 
+  async function loadUsers(type: TSelectedOption, trackLoader = true, reload:boolean) {
+    const offset = reload ? 0 : displayedData[type]?.length || 0;
+    const to = reload ? displayedData[type]?.length : offset + 10;
+    const userInList = rawData[type]?.includes(user?.firebase_user_data.uid);
+    let ids = rawData[type].slice(offset, to);
+    if (userInList) ids = ids.filter(id => id !== user?.firebase_user_data.uid);
     if (!ids.length) return;
-    loading = true;
+    loading = !reload;
 
     const users = (await BetarenaUserHelper.obtainPublicInformationTargetUsers(
       ids,
       false
     )) as BetarenaUser[];
-    displayedData[type].push(...users);
+    const prevData = reload ? [] : displayedData[type];
+    const prevProfiles = userInList ? [userProfile, ...displayedData[type]] : displayedData[type];
+    displayedData[type] = [...prevProfiles, ...users];
+
     displayedData = { ...displayedData };
     loading = false;
   }
