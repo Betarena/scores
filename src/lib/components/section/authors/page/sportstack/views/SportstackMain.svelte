@@ -64,6 +64,7 @@
   import { Betarena_User_Class } from "@betarena/scores-lib/dist/classes/class.betarena-user.js";
   import type { IBetarenaUser } from "@betarena/scores-lib/types/_FIREBASE_.js";
   import SportstackHeaderLoader from "./SportstackHeaderLoader.svelte";
+  import SeoBox from "$lib/components/SEO-Box.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -368,6 +369,11 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
+
+<SeoBox>
+  <h1>{sportstackData[1].data.username}</h1>
+  <b>{sportstackData[1].data.about}</b>
+</SeoBox>
 
 <svelte:window on:scroll={scrollHandler} />
 

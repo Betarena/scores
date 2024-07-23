@@ -115,6 +115,7 @@
 
 <button
   class="back-button-wrapper"
+  aria-label="Back"
   style={backgroundColor ? ` background-color: ${backgroundColor};` : ""}
   on:click={backBtnClick}
 >

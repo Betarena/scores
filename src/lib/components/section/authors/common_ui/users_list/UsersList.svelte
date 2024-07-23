@@ -14,6 +14,8 @@
   import ListUserItem from "./ListUserItem.svelte";
   import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
   import ListUserLoader from "./ListUserLoader.svelte";
+  import SeoBox from "$lib/components/SEO-Box.svelte";
+  import { page } from "$app/stores";
   // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -54,6 +56,15 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
+<SeoBox>
+  {#each users as user}
+    <h2>{user?.name || user.username}</h2>
+    <a href={`${$page.url.origin}/a/user/${user?.usernameLower}`}
+      >{user.usernameLower}</a
+    >
+  {/each}
+</SeoBox>
+
 <div class="wrapper {viewportType}" id={CNAME}>
   {#if !users.length && emptyMessage && !loading}
     <div class="empty">

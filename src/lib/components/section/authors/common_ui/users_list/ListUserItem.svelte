@@ -49,7 +49,7 @@
 
   $: ({ viewportType } = $session);
   $: ({ user: ctx } = $userSettings);
-  $: ({ uid, username, usernameLower, profile_photo } = user);
+  $: ({ uid, username, name, usernameLower, profile_photo } = user);
   $: isAuth = !!ctx;
   $: isFollow = !!(ctx?.scores_user_data.following?.authors || []).includes(
     uid
@@ -96,7 +96,7 @@
 <div class="list-item {viewportType}">
   <a href="/a/user/{usernameLower}" class="user-info">
     <Avatar size={40} wrapStyle="border: 1px solid #1D1D1D" src={profile_photo} />
-    <div class="useer-name">{username}</div>
+    <div class="useer-name">{name || username}</div>
   </a>
   {#if uid !== ctx?.firebase_user_data?.uid}
     <Button type={isFollow ? "subtle" : "primary"} style="padding:10px 16px; font-size: 14px; height: 32px; min-width: 72px " on:click={handleClick}>

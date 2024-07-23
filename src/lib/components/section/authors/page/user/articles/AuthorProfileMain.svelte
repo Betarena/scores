@@ -57,6 +57,8 @@
   import { Betarena_User_Class } from "@betarena/scores-lib/dist/classes/class.betarena-user.js";
   import AuthorProfileHeaderLoader from "./AuthorProfileHeaderLoader.svelte";
   import userSettings from "$lib/store/user-settings.js";
+  import SeoBox from "$lib/components/SEO-Box.svelte";
+  import { userNameToUrlString } from "../../../common_ui/helpers.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -104,8 +106,6 @@
    * 📝 Currently selected tag data.
    */
 
-
-
   $: isOwner = author?.uid === user?.firebase_user_data.uid;
 
   $: if (browser) updateData(widgetData ?? ({} as ITagsWidgetData), true);
@@ -116,7 +116,7 @@
   }
 
   $: noArticles =
-  !mapArticles.size && !isLoadingArticles && !isLoadingSubscribers;
+    !mapArticles.size && !isLoadingArticles && !isLoadingSubscribers;
 
   let /**
      * @description
@@ -307,6 +307,29 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
+<SeoBox>
+  <h1>{author.name || author.username}</h1>
+  <b>{author?.about}</b>
+  <a href={`${$page.url.origin}/a/user/${author.usernameLower}/subscribers`}>
+    subscribers
+  </a>
+  <a href={`${$page.url.origin}/a/user/${author.usernameLower}/followers`}>
+    followers
+  </a>
+  <a href={`${$page.url.origin}/a/user/${author.usernameLower}/following`}>
+    following
+  </a>
+  {#each widgetData.mapArticle ?? [] as [_id, article]}
+    <h2>{article?.data?.title}</h2>
+    <a href={`${$page.url.origin}/a/${article?.permalink}`}
+      >{article?.data?.title}</a
+    >
+  {/each}
+  {#each author_subscribers_profiles as profile}
+    <h3>{profile?.name || profile?.username}</h3>
+    <a href="/a/user/${userNameToUrlString(profile?.usernameLower)}" />
+  {/each}
+</SeoBox>
 <svelte:window on:scroll={scrollHandler} />
 
 <!--

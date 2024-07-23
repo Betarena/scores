@@ -26,6 +26,7 @@
   import ArticleLoader from "./Article-Loader.svelte";
   import session from "$lib/store/session.js";
   import type { IArticle } from "../helpers.js";
+  import SeoBox from "$lib/components/SEO-Box.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -68,6 +69,16 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
+<SeoBox>
+  {#each [...articles.entries()] as [key, article]}
+    <h2>{article.title}</h2>
+    <a href="/a/{article.permalink}" />
+    {#each article.tags_data as tag}
+      <h3>{tag?.name}</h3>
+      <a href="/a/tag/{tag?.permalink}" />
+    {/each}
+  {/each}
+</SeoBox>
 
 <div class="listArticlesMod {viewportType}" id={CNAME}>
   {#if articles.size}

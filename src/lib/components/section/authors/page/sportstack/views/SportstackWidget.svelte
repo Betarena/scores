@@ -79,23 +79,6 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<!-- <SeoBox>
-  <h1>{selectedTag?.name}</h1>
-
-  {#each [...mapArticles.entries()] as [, article]}
-    <h2>
-      {article.data?.title}
-    </h2>
-    <a
-      href={`/a/${article.permalink}`}
-    >
-      {article.data?.title}
-    </a>
-  {/each}
-  {#each [...mapArticles.entries()] as [_id, tag]}
-    <a href={`/a/tag/${tag.permalink}`}>{tag.name}</a>
-  {/each}
-</SeoBox> -->
 
 {#await articles}
   <!--
