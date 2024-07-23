@@ -56,6 +56,7 @@
   import type { BetarenaUser } from "$lib/types/types.user-settings.js";
   import { Betarena_User_Class } from "@betarena/scores-lib/dist/classes/class.betarena-user.js";
   import AuthorProfileHeaderLoader from "./AuthorProfileHeaderLoader.svelte";
+  import userSettings from "$lib/store/user-settings.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -74,8 +75,8 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   export let author, widgetData, translations, highlited_sportstack;
   $: ({ globalState, viewportType } = $sessionStore);
+  $: ({ user } = $userSettings);
   $: isPWA = globalState.has("IsPWA");
-
 
   const BetarenaUsers = new Betarena_User_Class();
   let currentPage = 1;
@@ -103,6 +104,11 @@
    * 📝 Currently selected tag data.
    */
 
+  $: noArticles =
+    !mapArticles.size && !isLoadingArticles && !isLoadingSubscribers;
+
+  $: isOwner = author?.uid === user?.firebase_user_data.uid;
+
   $: if (browser) updateData(widgetData ?? ({} as ITagsWidgetData), true);
 
   $: if (browser && author?.uid && prevAuthorId !== author?.uid) {
@@ -114,7 +120,7 @@
      * @description
      * 📝 State UI for `Loading Articles`.
      */
-    isLoadingArticles = true,
+    isLoadingArticles = false,
     /**
      * @description
      * 📝 `Map` data for `article(s)`, ready for frontend consumption.
@@ -322,22 +328,38 @@
 │ > User articles
 ╰─────
 -->
-
-<div class="content {viewportType}">
-  <ArticlesList
-    articles={isLoadingSubscribers ? [] : mapArticlesMod}
-    {translations}
-    isLoadingArticles={isLoadingArticles || isLoadingSubscribers}
-  />
-
-  {#if !isPWA && mapArticlesMod.size && !isLoadingArticles && !isLoadingSubscribers}
-    <div class="load-more">
-      <Button type="outline" on:click={loadMore}>
-        <TranslationText text={translations.view_more} fallback="View More" />
-      </Button>
+{#if noArticles}
+  <div class="no-articles {viewportType}">
+    <div class="text">
+      <TranslationText
+        text={translations.no_articles}
+        fallback="No articles at this moment.Come back later"
+      />
     </div>
-  {/if}
-</div>
+    <!-- [TODO] Uncomment when creation logic is implemented -->
+    <!-- {#if isOwner}
+      <Button type="primary">Create new article</Button>
+    {/if} -->
+  </div>
+{:else}
+  <div class="content {viewportType}" class:empty={noArticles}>
+    {#if noArticles}{:else}
+      <ArticlesList
+        articles={isLoadingSubscribers ? [] : mapArticlesMod}
+        {translations}
+        isLoadingArticles={isLoadingArticles || isLoadingSubscribers}
+      />
+    {/if}
+
+    {#if !isPWA && mapArticlesMod.size && !isLoadingArticles && !isLoadingSubscribers}
+      <div class="load-more">
+        <Button type="outline" on:click={loadMore}>
+          <TranslationText text={translations.view_more} fallback="View More" />
+        </Button>
+      </div>
+    {/if}
+  </div>
+{/if}
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -359,6 +381,35 @@
 
     &.mobile {
       margin-top: 0;
+    }
+  }
+
+  .no-articles {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    background: var(--bg-color);
+    margin-top: 44px;
+    flex-grow: 1;
+    padding-top: 80px;
+    border-top: var(--header-border);
+
+    .text {
+      color: var(--text-color);
+      opacity: 0.8;
+      max-width: 179px;
+      text-align: center;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 20px;
+    }
+
+    &.mobile {
+      margin-top: -8px;
+      border: none;
+      padding-top: 52px;
     }
   }
 
