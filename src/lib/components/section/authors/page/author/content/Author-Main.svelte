@@ -412,11 +412,13 @@
     │ > article author box
     ╰─────
     -->
-    <div
+    <a
+      href="/a/sportstack/{userNameToUrlString(widgetData.author?.data?.username)}"
       class=
       "
       row-space-start
       m-b-24
+      author-link
       "
       style=
       "
@@ -727,7 +729,7 @@
 
       </div>
 
-    </div>
+    </a>
   </div>
   <!--
   ╭─────
@@ -781,8 +783,10 @@
 
   div#author⮕w⮕author-content⮕main
   {
-    .author-name:hover {
-      color: var(--primary) !important;
+    .author-link:hover {
+      .author-name {
+        color: var(--primary) !important;
+      }
     }
     &.reverse {
       padding-top: 12px;
