@@ -72,7 +72,7 @@
     </div>
   {:else}
     <div class="list-wrapper">
-      {#each users as user}
+      {#each users as user (user.uid)}
         <ListUserItem {user} {translations} />
       {/each}
     </div>
