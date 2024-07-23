@@ -48,6 +48,7 @@
 
   const BetarenaUserHelper = new Betarena_User_Class();
   let loading = false;
+  let reloading = false;
   let displayedData = {
     subscribers: [] as BetarenaUser[],
     followers: [] as BetarenaUser[],
@@ -101,29 +102,27 @@
     }
     unsubscribe = listenRealTimeUserUpdates(uid, (updates) => {
       if(!updates) return;
-      const {followed_by, subscribed_by} = updates;
-      if (followed_by.reverse().join("") !== rawData.followers.join("")) {
-        rawData.followers = followed_by.reverse();
-        const prevCount = displayedData.followers.length;
-        displayedData.followers = [];
-        loadUsers("followers", false, prevCount);
+      const fb = (updates.followed_by || []).reverse();
+      const sb = (updates.subscribed_by || []).reverse();
+      if (fb.join("") !== rawData.followers.join("")) {
+        rawData.followers = fb;
+        loadUsers("followers", true);
       }
-      if (subscribed_by.reverse().join("") !== rawData.subscribers.join("")) {
-        rawData.subscribers = subscribed_by.reverse();
-        const prevCount = displayedData.subscribers.length;
-        displayedData.subscribers = [];
-        loadUsers("subscribers", false, prevCount);
+      if (sb.join("") !== rawData.subscribers.join("")) {
+        rawData.subscribers = sb;
+        loadUsers("subscribers", true);
       }
     });
   }
 
-  async function loadUsers(type: TSelectedOption, trackLoader = true, reload:boolean) {
+  async function loadUsers(type: TSelectedOption, reload:boolean = false) {
     const offset = reload ? 0 : displayedData[type]?.length || 0;
-    const to = reload ? displayedData[type]?.length : offset + 10;
+    const to =  reload ? Math.ceil((displayedData[type]?.length || 1) / 10) * 10 : Math.ceil((offset + 10) / 10) * 10
     const userInList = rawData[type]?.includes(user?.firebase_user_data.uid);
     let ids = rawData[type].slice(offset, to);
     if (userInList) ids = ids.filter(id => id !== user?.firebase_user_data.uid);
     if (!ids.length) return;
+    reloading = true;
     loading = !reload;
 
     const users = (await BetarenaUserHelper.obtainPublicInformationTargetUsers(
@@ -131,10 +130,11 @@
       false
     )) as BetarenaUser[];
     const prevData = reload ? [] : displayedData[type];
-    const prevProfiles = userInList ? [userProfile, ...displayedData[type]] : displayedData[type];
+    const prevProfiles = userInList ? [userProfile, ...prevData] : prevData;
     displayedData[type] = [...prevProfiles, ...users];
 
     displayedData = { ...displayedData };
+    reloading = false;
     loading = false;
   }
 
@@ -214,7 +214,7 @@
     loading={profileLoading || loading}
     emptyMessage="no {selectedOption} yet"
   />
-  {#if !isPWA && currentData?.length < rawData[selectedOption]?.length && !profileLoading}
+  {#if !isPWA && currentData?.length < rawData[selectedOption]?.length && !profileLoading && !reloading && !loading}
     <div class="load-more">
       <Button type="outline" on:click={() => loadUsers(selectedOption)}>
         <TranslationText text={translations.view_more} fallback="View More" />
