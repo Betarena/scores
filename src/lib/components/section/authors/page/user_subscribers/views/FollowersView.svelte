@@ -22,6 +22,7 @@
   import { goto } from "$app/navigation";
   import { page } from "$app/stores";
   import FollowersHeaderLoader from "./FollowersHeaderLoader.svelte";
+  import SeoBox from "$lib/components/SEO-Box.svelte";
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'variables' that are to be         │
@@ -146,17 +147,32 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
+<SeoBox>
+  <h1>{author.name || author.username}</h1>
+  <a href={`${$page.url.origin}/a/user/${author.usernameLower}`}>
+    {author.usernameLower}
+  </a>
+  <a href={`${$page.url.origin}/a/user/${author.usernameLower}/subscribers`}>
+    subscribers
+  </a>
+  <a href={`${$page.url.origin}/a/user/${author.usernameLower}/followers`}>
+    followers
+  </a>
+  <a href={`${$page.url.origin}/a/user/${author.usernameLower}/following`}>
+    following
+  </a>
+</SeoBox>
 <svelte:window on:scroll={scrollHandler} />
 <div class="wrapper" id={CNAME}>
   {#if profileLoading}
     <FollowersHeaderLoader />
   {:else}
-     <FollowersHeader
-       {author}
-       selection={selectedOption}
-       {translations}
-       on:select={select}
-     />
+    <FollowersHeader
+      {author}
+      selection={selectedOption}
+      {translations}
+      on:select={select}
+    />
   {/if}
   <FollowersList
     {translations}

@@ -109,7 +109,7 @@
         }
       ) ?? false
     }
-    canonical={`${$page.url.origin}`}
+    canonical={$page.url.href}
     twitter={pageSeo.twitter_card}
     openGraph={pageSeo.opengraph}
   />

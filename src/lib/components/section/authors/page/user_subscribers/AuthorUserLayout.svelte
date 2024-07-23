@@ -65,10 +65,9 @@
     // eslint-disable-next-line no-unused-vars
     CNAME: string = "author-user";
 
-  $: pageSeo = $page.data.seoTamplate;
+  $: pageSeo = $page.data.seoTemplate;
   $: ({ globalState, viewportType } = $sessionStore);
   $: isPWA = globalState.has("IsPWA");
-
   // #endregion ➤ 📌 VARIABLES
 </script>
 
