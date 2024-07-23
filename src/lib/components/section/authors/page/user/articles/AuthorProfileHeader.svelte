@@ -225,7 +225,7 @@
       <a href={getLink("subscribers")} class="followers">
         <StackedAvatars
           src={subscribers_profiles.map((u) => u.profile_photo || "")}
-          size={viewportType === "desktop" ? 32 : 24}
+          size={viewportType === "desktop" ? 29 : 24}
         />
         <div class="followers-names">
           <span class="subscribed_by">
@@ -359,38 +359,6 @@
     background-color: var(--bg-color);
     --text-button-size: 14px;
 
-    &.mobile {
-      gap: 20px;
-      padding-inline: 16px;
-      padding-top: 3px;
-      flex-direction: column;
-
-      .actions-wrapper {
-        flex-direction: column;
-        justify-content: space-between;
-        max-width: unset;
-        width: 100%;
-        .sportstack {
-          max-width: unset;
-        }
-      }
-
-      .user-description {
-        line-height: 18px;
-        margin-top: 0;
-        margin-bottom: 4px;
-      }
-    }
-
-    &.tablet {
-      .user-description {
-        font-size: 12px;
-        line-height: 18px;
-        margin-top: 0;
-        margin-bottom: 4px;
-      }
-    }
-
     .user-block {
       flex-direction: column;
       gap: 12px;
@@ -451,8 +419,7 @@
         line-height: 20px;
         color: var(--text-color);
         opacity: 0.8;
-        margin-top: 4px;
-        margin-bottom: 13px;
+        margin-bottom: 2px;
       }
 
       .followers {
@@ -570,6 +537,39 @@
           font-weight: 400;
           line-height: 18px; /* 150% */
         }
+      }
+    }
+
+
+    &.tablet {
+      .user-description {
+        font-size: 12px;
+        line-height: 18px;
+        margin-top: 0;
+        margin-bottom: 4px;
+      }
+    }
+
+    &.mobile {
+      gap: 20px;
+      padding-inline: 16px;
+      padding-top: 3px;
+      flex-direction: column;
+
+      .actions-wrapper {
+        flex-direction: column;
+        justify-content: space-between;
+        max-width: unset;
+        width: 100%;
+        .sportstack {
+          max-width: unset;
+        }
+      }
+
+      .user-description {
+        line-height: 18px;
+        margin-top: 0;
+        margin-bottom: 0px;
       }
     }
   }
