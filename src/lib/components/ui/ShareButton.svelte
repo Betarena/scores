@@ -30,7 +30,7 @@
     }
 
 </script>
-<Button type="secondary" on:click={share} id="share-button" classname="share-button" style="width: 40px; height: 40px; padding: 0">
+<Button aria-label="share" type="secondary" on:click={share} id="share-button" classname="share-button" style="width: 40px; height: 40px; padding: 0">
   <ShareIcon />
 </Button>
 
