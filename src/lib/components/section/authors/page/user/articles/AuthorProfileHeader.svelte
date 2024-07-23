@@ -76,9 +76,10 @@
   $: ({ user } = $userSettings);
 
   $: isFollowed =
-    user?.scores_user_data?.following?.authors?.includes(uid) || false;
+  user?.scores_user_data?.following?.authors?.includes(uid) || false;
   $: isSubscribed =
-    user?.scores_user_data?.subscriptions?.authors?.includes(uid) || false;
+  user?.scores_user_data?.subscriptions?.authors?.includes(uid) || false;
+  $: sortSubscribers(subscribers_profiles);
   $: isAuth = !!user;
 
   $: if (browser && uid) subscribeOnUserChanges(uid);
@@ -109,6 +110,13 @@
     return $page.url.pathname + `/${type}`;
   }
 
+  function sortSubscribers(arr) {
+    if(!isSubscribed) return
+    const subscribers = arr.filter(u => u.uid !== user?.firebase_user_data.uid);
+    subscribers_profiles = [{...user?.scores_user_data, uid: user?.firebase_user_data.uid}, ...(subscribers.length > 2 ? subscribers.slice(0, 2) : subscribers)];
+
+  }
+
   function subscribeOnUserChanges(uid) {
     if (unsubscribe) {
       unsubscribe();
@@ -116,8 +124,8 @@
     unsubscribe = listenRealTimeUserUpdates(uid, (updates) => {
       if (!updates) return;
       followed_by = updates.followed_by || [];
-      const subscribers_ids = updates.subscribed_by?.slice(0, 3) || [];
-      if (subscribed_by.slice(0, 3).join() !== subscribers_ids.join()) {
+      const subscribers_ids = updates.subscribed_by?.slice(-3) || [];
+      if (subscribed_by.slice(-3).join() !== subscribers_ids.join()) {
         getSubscribersProfiles(subscribers_ids);
         subscribed_by = updates.subscribed_by || [];
       }

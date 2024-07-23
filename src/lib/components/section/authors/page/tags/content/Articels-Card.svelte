@@ -97,7 +97,7 @@
     <div class="author-wrapper">
       <Avatar src={avatar} />
       <div class="author-info">
-        <a href="a/user/{userNameToUrlString(username)}" class="author-name">{username}</a>
+        <a href="/a/sportstack/{userNameToUrlString(username)}" class="author-name">{username}</a>
         <div class="publication-date">{date}</div>
       </div>
     </div>

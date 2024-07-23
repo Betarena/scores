@@ -472,7 +472,7 @@
           ╰─────
           -->
           <a
-            href="/a/user/{userNameToUrlString(widgetData.author?.data?.username)}"
+            href="/a/sportstack/{userNameToUrlString(widgetData.author?.data?.username)}"
             class=
             "
             s-14
