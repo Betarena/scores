@@ -104,8 +104,7 @@
    * 📝 Currently selected tag data.
    */
 
-  $: noArticles =
-    !mapArticles.size && !isLoadingArticles && !isLoadingSubscribers;
+
 
   $: isOwner = author?.uid === user?.firebase_user_data.uid;
 
@@ -115,6 +114,9 @@
     prevAuthorId = author?.uid;
     getSubscribers(author.subscribed_by);
   }
+
+  $: noArticles =
+  !mapArticles.size && !isLoadingArticles && !isLoadingSubscribers;
 
   let /**
      * @description
