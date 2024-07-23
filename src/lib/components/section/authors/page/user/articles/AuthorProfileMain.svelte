@@ -106,7 +106,7 @@
    * 📝 Currently selected tag data.
    */
 
-  $: isOwner = author?.uid === user?.firebase_user_data.uid;
+  // $: isOwner = author?.uid === user?.firebase_user_data.uid;
 
   $: if (browser) updateData(widgetData ?? ({} as ITagsWidgetData), true);
 
@@ -158,7 +158,7 @@
     author_subscribers_profiles = [];
     if (!subscribers_arr.length) return;
     isLoadingSubscribers = true;
-    const ids = subscribers_arr.slice(0, 3);
+    const ids = subscribers_arr.slice(-3);
     const users = await BetarenaUsers.obtainPublicInformationTargetUsers(ids);
     author_subscribers_profiles = [...users] as BetarenaUser[];
     isLoadingSubscribers = false;

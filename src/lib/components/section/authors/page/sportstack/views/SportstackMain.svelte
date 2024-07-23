@@ -97,6 +97,7 @@
 
   let prevSportstackId = null;
   let people: IBetarenaUser[] = [];
+  let initLoad = false;
 
   /**
    * @description
@@ -120,10 +121,10 @@
    */
 
   $: if (browser) updateData(widgetData ?? {}, true);
-  $: if(prevSportstackId !== sportstackData[1].id) {
+  $: if (prevSportstackId !== sportstackData[1].id) {
     prevSportstackId = sportstackData[1].id;
-    updatePeopleIdArray()
-  };
+    updatePeopleIdArray();
+  }
 
   let /**
      * @description
@@ -195,10 +196,13 @@
   function updatePeopleIdArray() {
     peopleIds = [
       sportstackData[1].uid,
-      ...(sportstackData[1]?.data.people || []),
+      ...(sportstackData[1]?.data.people || []).reverse(),
     ];
     people = [];
-    loadPeople();
+    initLoad = true;
+    loadPeople().then(() => {
+      initLoad = false;
+    });
   }
 
   /**
@@ -288,7 +292,6 @@
       loadPeople();
     }
 
-
     return;
   }
   /**
@@ -303,7 +306,6 @@
    * @return { Promise < void > }
    */
   async function loadTagArticles(page: number = 0): Promise<void> {
-
     const length = mapArticlesMod.size || 0;
     if (length >= widgetData.totalArticlesCount) return;
     // [🐞]
@@ -382,7 +384,11 @@
 │ > User profile info
 ╰─────
 -->
-<SportstackHeader {sportstackData} {translations} on:select={selectMode} />
+{#if initLoad}
+  <SportstackHeaderLoader />
+{:else}
+  <SportstackHeader {sportstackData} {translations} on:select={selectMode} />
+{/if}
 
 <!--
 ╭─────
@@ -392,9 +398,9 @@
 <div class="content {viewportType}">
   {#if currentView === "posts"}
     <ArticlesList
-      articles={mapArticlesMod}
+      articles={initLoad ?new Map() : mapArticlesMod}
       {translations}
-      {isLoadingArticles}
+      isLoadingArticles={isLoadingArticles || initLoad}
     />
   {:else}
     <!--
@@ -402,10 +408,15 @@
 │ > People view
 ╰─────
 -->
-    <FollowersList users={people} {translations} loading={isLoadingPeople} emptyMessage="No people yet" />
+    <FollowersList
+      users={initLoad ? [] : people}
+      {translations}
+      loading={isLoadingPeople || initLoad}
+      emptyMessage="No people yet"
+    />
   {/if}
 
-  {#if !isPWA && ((currentView === "posts" && mapArticlesMod.size) || (currentView === "people" && 0))}
+  {#if !isPWA && ((currentView === "posts" && mapArticlesMod.size) || (currentView === "people" && 0)) && !initLoad}
     <div class="load-more">
       <Button type="outline" on:click={loadMore}>
         <TranslationText text={translations.view_more} fallback="View More" />
