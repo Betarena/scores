@@ -1,38 +1,61 @@
 <script>
-    import { page } from "$app/stores";
-    import session from "$lib/store/session";
-    import { copyToClipboard } from "$lib/utils/miscellenous";
-    import ShareIcon from "./assets/share-icon.svelte";
-    import Button from "./Button.svelte";
+  import { page } from "$app/stores";
+  import session from "$lib/store/session";
+  import { copyToClipboard } from "$lib/utils/miscellenous";
+  import { title } from "process";
+  import ShareIcon from "./assets/share-icon.svelte";
+  import Button from "./Button.svelte";
 
-    export let shareText = "Share";
+  export let shareText = "Share",
+    img = "";
 
-    $: ({deviceType} = $session)
+  let imgNode;
+  $: file = img
+    ? fetch(img)
+        .then((r) => r.blob())
+        .then(
+          (blobFile) =>
+            new File([blobFile], "share.jpg", { type: "image/jpeg" })
+        )
+    : null;
 
-   async function share() {
+  $: ({ deviceType } = $session);
+
+  async function share() {
     const href = $page.url.href;
-      if(deviceType === "desktop") {
-        copyToClipboard(href)
-        return
-      }
-      if (navigator.share) {
-          try {
-            await navigator.share({
-              title: shareText,
-              url: href
-            });
-          } catch (error) {
-            copyToClipboard(href);
-          }
-        } else {
-          copyToClipboard(href);
-        }
+    if (deviceType === "desktop") {
+      copyToClipboard(href);
+      return;
     }
-
+    const data = { title: shareText, url: href };
+    if (file) {
+      data.files = [file];
+    }
+    if (navigator.share && navigator.canShare && navigator.canShare(data)) {
+      try {
+        await navigator.share(data);
+      } catch (error) {
+        copyToClipboard(href);
+      }
+    } else {
+      copyToClipboard(href);
+    }
+  }
 </script>
-<Button aria-label="share" type="secondary" on:click={share} id="share-button" classname="share-button" style="width: 40px; height: 40px; padding: 0">
+
+<Button
+  aria-label="share"
+  type="secondary"
+  on:click={share}
+  id="share-button"
+  classname="share-button"
+  style="width: 40px; height: 40px; padding: 0"
+>
   <ShareIcon />
 </Button>
+{#if img}
+  <img src={img} bind:this={imgNode} alt="share" style="display: none;" />
+{/if}
 
 <style lang="scss">
   :global(.share-button#share-button) {
@@ -41,8 +64,7 @@
     height: 40px;
 
     &:hover {
-      --text-color: #fff
+      --text-color: #fff;
     }
-
   }
 </style>
