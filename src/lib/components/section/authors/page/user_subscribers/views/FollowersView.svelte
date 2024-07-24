@@ -182,7 +182,6 @@
     return;
   }
 
-  $: console.log("TRANSLATIONS: ", translations)
 </script>
 
 <!--
