@@ -225,7 +225,6 @@
     {#if subscribers_profiles.length}
       <a href={getLink("subscribers")} class="followers">
         <StackedAvatars
-        reverse = {true}
           src={subscribers_profiles.map((u) => u.profile_photo || "")}
           size={viewportType === "desktop" ? 29 : 24}
         />
