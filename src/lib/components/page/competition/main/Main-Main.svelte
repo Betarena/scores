@@ -38,6 +38,7 @@
 	import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.betarena-user.js';
 	import { Competition } from '@betarena/scores-lib/dist/classes/class.competition.js';
   import { cleanUrl, iso2CountryLogo} from '$lib/utils/string.js';
+  import { Parser } from '@betarena/scores-lib/dist/classes/class.parser.js';
 
 	import CompCountdownStatus from '$lib/components/shared/COMP-Countdown-+-Status.svelte';
 	import CompDetails from '$lib/components/shared/COMP-Details.svelte';
@@ -54,7 +55,7 @@
   import icon_twitter_white from './assets/icon-twitter-white.svg';
   import icon_twitter from './assets/icon-twitter.svg';
 
-	import type { BetarenaUser } from '@betarena/scores-lib/types/_FIREBASE_.js';
+  import type { IBetarenaUser } from '@betarena/scores-lib/types/firebase/firestore.js';
 	import type { B_H_COMP_DATA } from '@betarena/scores-lib/types/_HASURA_.js';
 	import type { FIRE_LNNS } from '@betarena/scores-lib/types/firebase.js';
 	import type { LS2_C_Fixture } from '@betarena/scores-lib/types/livescores-v2.js';
@@ -103,7 +104,7 @@
     /** @description TODO: DOC: */
     prediction_side: 'home' | 'away',
     /** @description TODO: DOC: */
-    participantsMap: Map < string, BetarenaUser > = new Map(),
+    participantsMap: Map < string, IBetarenaUser > = new Map(),
     /** @description TODO: DOC: */
     competitionWasLive: boolean = false
   ;
@@ -214,18 +215,43 @@
       newUids?.length == 0
     ;
     if (if_M_0) return;
-    const participantPublicData = await new Betarena_User_Class().obtainPublicInformationTargetUsers
-    (
-      newUids
-    ) as (BetarenaUser | undefined)[];
 
-    const newParticipantsMap: Map < string, BetarenaUser > = new Betarena_User_Class().convertToMap
-    (
-      participantPublicData
-    );
+    const
+      /**
+       * @description
+       * 📝 `map` for Fixtures
+       */
+      dataRes1: IBetarenaUser[]
+        = (
+          await new Betarena_User_Class().obtainPublicInformationTargetUsers
+          (
+            {
+              query: {},
+              body:
+              {
+                user_uids: newUids
+              }
+            }
+          )
+        ).success.data,
+      /**
+       * @description
+       * 📝 Map of author data.
+       */
+      userMap
+        = new Parser().toMapById
+        <
+          IBetarenaUser,
+          string
+        >
+        (
+          dataRes1 ?? [],
+          'uid'
+        )
+    ;
 
     // ### IMPORTANT
-    participantsMap = new Map([...participantsMap, ...newParticipantsMap]);
+    participantsMap = new Map([...participantsMap, ...userMap]);
 
     return;
   }
