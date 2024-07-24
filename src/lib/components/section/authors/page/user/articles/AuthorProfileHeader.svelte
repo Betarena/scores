@@ -24,14 +24,12 @@
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
   import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
   import ShareButton from "$lib/components/ui/ShareButton.svelte";
-  import AuthorProfileHeaderLoader from "./AuthorProfileHeaderLoader.svelte";
   import { browser } from "$app/environment";
   import {
     BetarenaUserHelper,
     listenRealTimeUserUpdates,
   } from "$lib/firebase/common.js";
   import { onDestroy } from "svelte";
-    import LoaderStackedAvatar from "$lib/components/ui/loaders/LoaderStackedAvatar.svelte";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -304,7 +302,9 @@
           {/if}
         </Button>
       {/if}
-      <ShareButton shareText={$page.data.seoTemplate?.main_data?.description} />
+      {#if viewportType !== "desktop"}
+         <ShareButton shareText={$page.data.seoTemplate?.main_data?.description} />
+      {/if}
     </div>
     {#if highlited_sportstack}
       <a
