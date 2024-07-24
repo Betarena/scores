@@ -50,21 +50,10 @@ type PreloadPromise0 =
  */
 export async function main
 (
-  event: ServerLoadEvent,
-  parentData:
-  {
-    langParam: string
-  }
+  {name, fetch}
 ): Promise < IPageAuthorTagDataFinal >
 {
   const
-    // ╭─────
-    // │ NOTE:
-    // │ > 📣 Destruct `object`.
-    // ╰─────
-    {
-      name
-    } = event.params,
     /**
      * @description
      *  📣 Validate **this** `url`.
@@ -72,7 +61,7 @@ export async function main
     isUrlValid
       = await promiseValidUrlCheck
       (
-        event.fetch,
+        fetch,
         {
           authorTagsUrl: name
         }
@@ -91,9 +80,8 @@ export async function main
     data
   ] = await fetchData
   (
-    event.fetch,
+    fetch,
     name,
-    parentData.langParam
     );
 
   /**
@@ -128,8 +116,6 @@ export async function main
  * @param { any } fetch
  *  💠 **[required]** Target instance of `fetch` object.
  * @param { string } _name
- *  💠 **[required]** Target `tag name`.
- * @param { string } _lang
  *  💠 **[required]** Target `lang`.
  * @returns { Promise < IProfileData2 > }
  *  📤 Target `data` fetched.
@@ -138,7 +124,6 @@ async function fetchData
 (
   fetch: any,
   _name: string | undefined,
-  _lang: string
 )
 {
   const

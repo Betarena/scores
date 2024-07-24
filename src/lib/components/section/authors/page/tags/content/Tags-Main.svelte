@@ -54,7 +54,13 @@
   } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import { get } from "$lib/api/utils.js";
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
-  import { fetchArticles, prepareArticles, type ITagsWidgetData } from "../../helpers.js";
+  import {
+    fetchArticles,
+    prepareArticles,
+    type ITagsWidgetData,
+  } from "../../helpers.js";
+  import { page } from "$app/stores";
+  import type { IArticle } from "../../../common_ui/helpers.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -91,11 +97,11 @@
      *  📣 threshold start + state for 💻 TABLET
      */ // eslint-disable-next-line no-unused-vars
     VIEWPORT_TABLET_INIT: [number, boolean] = [1160, true];
-    //  /**
-    //  * @description
-    //  *  📣 infinite scroll threshold  for 💻 TABLET and 📱 MOBILE
-    //  */
-    // const threshold = 95;
+  //  /**
+  //  * @description
+  //  *  📣 infinite scroll threshold  for 💻 TABLET and 📱 MOBILE
+  //  */
+  // const threshold = 95;
   /**
    * @description
    *  📣 selected language in dropdown to
@@ -132,12 +138,15 @@
    * triggered by changes in:
    * - `` - **widgetData**
    */
-  $: tags = new Map(widgetData.mapTag);
-  $: authors = new Map(widgetData.mapAuthor);
-  $: articles = prepareArticles(widgetData.mapArticle, tags, authors);
-  $: currentTag = tags.get(widgetData.tagId) as IPageAuthorTagData;
-  $: ({ totalArticlesCount, translations } = widgetData);
-  $: page = Math.ceil(articles.length / 10);
+  let tags: Map<number, IPageAuthorTagData> = new Map();
+  let authors: Map<number, IPageAuthorTagData> = new Map();
+  let currentTag: IPageAuthorTagData = {};
+  let articles = [] as IArticle[];
+  let prevTagName;
+  $: ({ totalArticlesCount } = widgetData);
+  $: pageNumber = Math.ceil(articles.length / 10);
+  $: ({ serverLang } = $sessionStore);
+  let translations: IPageAuthorTranslationDataFinal = {};
   /**
    * @summary
    * 🔥 REACTIVITY
@@ -152,7 +161,14 @@
    * triggered by changes in:
    * - `` - **articles**
    */
-  $: loadTranslations($sessionStore.serverLang);
+  $: loadTranslations(serverLang);
+  $: if (prevTagName !== $page.params.name) {
+    tags = new Map(widgetData.mapTag);
+    authors = new Map(widgetData.mapAuthor);
+    articles = prepareArticles(widgetData.mapArticle, tags, authors);
+    currentTag = tags.get(widgetData.tagId) as IPageAuthorTagData;
+    prevTagName = $page.params.name;
+  }
 
   // #region ➤ 🛠️ METHODS
 
@@ -168,11 +184,11 @@
 
   async function loadArticles() {
     pendingArticles = true;
-    const res =   await fetchArticles({
+    const res = await fetchArticles({
       permalink: currentTag.permalink,
-      page,
+      page: pageNumber,
       lang: selectedLang,
-      prevData: widgetData
+      prevData: widgetData,
     });
     articles = [...articles, ...res.articles];
     pendingArticles = false;
@@ -202,16 +218,13 @@
     const res = (await get(
       `/api/data/author/tags?translation=${lang}`
     )) as IPageAuthorTranslationDataFinal;
-    widgetData = {
-      ...widgetData,
-      translations: res,
-    };
+    translations = { ...res };
   }
 
   function scrollHandler() {
     if (pendingArticles || (!mobile && !tablet)) return;
     if (articles.length >= totalArticlesCount) return;
-    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 5 ) {
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 5) {
       loadArticles();
     }
   }
