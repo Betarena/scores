@@ -370,8 +370,6 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<h1>{sportstackData[1].data.username}</h1>
-<b>{sportstackData[1].data.about}</b>
 <SeoBox>
   <h1>{sportstackData[1].data.username}</h1>
   <b>{sportstackData[1].data.about}</b>
