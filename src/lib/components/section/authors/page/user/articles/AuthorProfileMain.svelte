@@ -59,6 +59,7 @@
   import userSettings from "$lib/store/user-settings.js";
   import SeoBox from "$lib/components/SEO-Box.svelte";
   import { userNameToUrlString } from "../../../common_ui/helpers.js";
+    import ArticlesSeo from "../../../common_ui/articles/ArticlesSeo.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -325,17 +326,12 @@
   <a href={`${$page.url.origin}/a/user/${author.usernameLower}/following`}>
     following
   </a>
-  {#each widgetData.mapArticle ?? [] as [_id, article]}
-    <h2>{article?.data?.title}</h2>
-    <a href={`${$page.url.origin}/a/${article?.permalink}`}
-      >{article?.data?.title}</a
-    >
-  {/each}
   {#each author_subscribers_profiles as profile}
     <h3>{profile?.name || profile?.username}</h3>
     <a href="/a/user/${userNameToUrlString(profile?.usernameLower)}" />
   {/each}
 </SeoBox>
+<ArticlesSeo articles={widgetData.mapArticle} />
 <svelte:window on:scroll={scrollHandler} />
 
 <!--
