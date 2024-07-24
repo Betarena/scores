@@ -126,6 +126,7 @@
       if (!updates) return;
       followed_by = updates.followed_by || [];
       const subscribers_ids = updates.subscribed_by?.slice(-3) || [];
+      isSubscribed = updates.subscribed_by?.includes(user?.firebase_user_data.uid) || false;
       if (subscribed_by.slice(-3).join() !== subscribers_ids.join()) {
         getSubscribersProfiles(subscribers_ids);
         subscribed_by = updates.subscribed_by || [];
