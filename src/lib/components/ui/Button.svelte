@@ -37,7 +37,7 @@
       "primary";
 
   const dispatch = createEventDispatcher();
-
+  let hover = false;
   // #endregion ➤ 📌 VARIABLES
 </script>
 
@@ -55,6 +55,10 @@
 <button
   class="button {type} {classname}"
   {...$$restProps}
+  class:hover
+  on:mouseenter={() => (hover = true)}
+  on:mouseleave={() => (hover = false)}
+  on:touchend={() => (hover = false)}
   on:click={() => dispatch("click")}
 >
   <slot />
@@ -94,7 +98,7 @@
     /* shadow/orange */
     box-shadow: 0px 3px 8px 0px rgba(212, 84, 12, 0.32);
 
-    &:hover {
+    &.hover{
       background: var(--primary-fade, #f5620f);
     }
   }
@@ -103,7 +107,7 @@
     border: 1px solid var(--button-secondary-bg) !important;
     color: var(--text-color);
 
-    &:hover {
+    &.hover{
       color: var(--text-color-second-dark);
     }
   }
@@ -113,7 +117,7 @@
     color: var(--primary);
     background-color: unset;
 
-    &:hover {
+    &.hover{
       border: 1px solid var(--text-color) !important;
       color: var(--text-color);
     }
@@ -126,7 +130,7 @@
     transition: all;
     transition-duration: 0.2s;
 
-    &:hover {
+    &.hover{
       border: 1px solid var(--primary) !important;
       color: var(--primary);
     }
@@ -136,7 +140,7 @@
     background-color: var(--button-secondary-bg);
     color: var(--text-color);
 
-    &:hover {
+    &.hover{
       background: var(--primary, #f5620f);
       color: var(--white-day, #fff);
     }
