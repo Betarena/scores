@@ -126,7 +126,7 @@
                 />
               </Button>
             {/if}
-            <ShareButton shareText={$page.data.seoTemplate?.main_data?.description} />
+            <ShareButton shareText={$page.data.seoTemplate?.main_data?.description} img={avatar} />
           </div>
         </div>
       </div>
