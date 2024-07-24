@@ -26,32 +26,17 @@ import type { ServerLoadEvent } from '@sveltejs/kit';
  */
 export async function load
 (
-  event: ServerLoadEvent
+  { params, fetch }: ServerLoadEvent
 ): Promise < any >
 {
-  const
-    {
-      langParam
-    } = await event.parent()
-  ;
-
   // [🐞]
   dlogv2
   (
     '🚏 checkpoint ➤ src/routes/(authors)/a/tag/[name]/+page.server.ts',
-    [
-      `🔹 [var] ➤ langParam :|: ${langParam}`,
-    ],
+    [],
     true
   );
-
-  return await main
-  (
-    event,
-    {
-      langParam
-    }
-  );
+  return await main({ name: params.name, fetch })
 }
 
 // #endregion ➤ 🔄 LIFECYCLE [SVELTE]

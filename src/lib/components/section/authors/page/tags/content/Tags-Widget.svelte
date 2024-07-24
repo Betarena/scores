@@ -62,7 +62,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   export let data;
   let loading = false;
-  $: widgetDataMain = $page.data as any;
+  $: widgetDataMain = data as any;
   $: tags = new Map(widgetDataMain?.mapTag ?? []) as Map<
     Number,
     IPageAuthorTagData

@@ -62,6 +62,7 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  export let data
   const /**
      * @description
      *  📣 threshold start + state for 📱 MOBILE
@@ -82,7 +83,7 @@
     VIEWPORT_MOBILE_INIT[0],
     VIEWPORT_TABLET_INIT[0]
   );
-  $: pageSeo = $page.data.seoTamplate;
+  $: pageSeo = data.seoTamplate;
 
   // #endregion ➤ 📌 VARIABLES
 </script>
@@ -117,7 +118,7 @@
 
 <section id={CNAME} class:mobile={VIEWPORT_MOBILE_INIT[1]}>
   <div class="main-content">
-    <TagsWidget />
+    <TagsWidget {data} />
   </div>
 </section>
 
