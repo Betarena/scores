@@ -65,6 +65,7 @@
   import type { IBetarenaUser } from "@betarena/scores-lib/types/_FIREBASE_.js";
   import SportstackHeaderLoader from "./SportstackHeaderLoader.svelte";
   import SeoBox from "$lib/components/SEO-Box.svelte";
+  import ArticlesSeo from "../../../common_ui/articles/ArticlesSeo.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -369,10 +370,13 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
+<h1>{sportstackData[1].data.username}</h1>
+<b>{sportstackData[1].data.about}</b>
 <SeoBox>
   <h1>{sportstackData[1].data.username}</h1>
   <b>{sportstackData[1].data.about}</b>
 </SeoBox>
+<ArticlesSeo articles={widgetData.mapArticles} />
 
 <svelte:window on:scroll={scrollHandler} />
 
