@@ -163,7 +163,7 @@
     if (!subscribers_arr.length) return;
     isLoadingSubscribers = true;
     const ids = subscribers_arr.slice(-3);
-    const res = (await BetarenaUsers.obtainPublicInformationTargetUsers({query: {}, body:{user_uids: ids}})).success;
+    const res = (await BetarenaUsers.obtainPublicInformationTargetUsers({query: {}, body:{user_uids: ids}}))?.success;
     if(res) {
       author_subscribers_profiles = [...res.data] as BetarenaUser[];
     }
