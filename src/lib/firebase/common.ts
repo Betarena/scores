@@ -1114,10 +1114,14 @@ export async function updateFollowing
   if (target === "authors")
   {
     const d = await BetarenaUserHelper.updateUsersFollowers({
-      uidToUpdate: target_id,
-      uidNewFollower: uid,
-      type: field === "subscriptions" ? "subscriber" : "follower",
-      action: follow ? "add" : "remove"
+      query: {},
+      body: {
+
+        uidToUpdate: target_id,
+        uidNewFollower: uid,
+        type: field === "subscriptions" ? "subscriber" : "follower",
+        action: follow ? "add" : "remove"
+      }
     })
     return
   }
