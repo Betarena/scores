@@ -61,6 +61,7 @@
   } from "../../helpers.js";
   import { page } from "$app/stores";
   import type { IArticle } from "../../../common_ui/helpers.js";
+    import { browser } from "$app/environment";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -161,12 +162,10 @@
    * triggered by changes in:
    * - `` - **articles**
    */
-  $: loadTranslations(serverLang);
+  $: if (browser) loadTranslations(serverLang);
   $: if (prevTagName !== $page.params.name) {
-    tags = new Map(widgetData.mapTag);
-    authors = new Map(widgetData.mapAuthor);
-    articles = prepareArticles(widgetData.mapArticle, tags, authors);
-    currentTag = tags.get(widgetData.tagId) as IPageAuthorTagData;
+    translations = widgetData.translations;
+    reloadData(widgetData);
     prevTagName = $page.params.name;
   }
 
@@ -182,6 +181,12 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  function reloadData(data) {
+    tags = new Map(data.mapTag);
+    authors = new Map(data.mapAuthor);
+    articles = prepareArticles(data.mapArticle, tags, authors);
+    currentTag = tags.get(data.tagId) as IPageAuthorTagData;
+  }
   async function loadArticles() {
     pendingArticles = true;
     const res = await fetchArticles({
@@ -209,6 +214,7 @@
       ...res,
       mapTag: [...widgetData.mapTag, ...res.mapTag],
     };
+    reloadData(widgetData);
     pendingArticles = false;
   }
   let prevLang;

@@ -117,8 +117,9 @@ async function fetchData
   )
 {
   const bu = new Betarena_User_Class();
-  const users = await bu.obtainPublicInformationTargetUsers([_name.toLowerCase()], true);
-  const [user] = users;
+  const { success } = await bu.obtainPublicInformationTargetUsers({ query: {}, body: { user_uids: [_name.toLowerCase()], isSearchByUsername: true } });
+
+  const [user] = success.data;
   const
     /**
      * @description

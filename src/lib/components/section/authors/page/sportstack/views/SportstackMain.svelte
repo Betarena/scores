@@ -353,7 +353,7 @@
     if (!peopleIds.length) return;
     isLoadingPeople = true;
     const ids = peopleIds.splice(0, 10);
-    const data = await BetarenaUser.obtainPublicInformationTargetUsers(ids);
+    const {data} = (await BetarenaUser.obtainPublicInformationTargetUsers({query: {}, body:{user_uids: ids}})).success;
     isLoadingPeople = false;
     people = [...people, ...data];
   }

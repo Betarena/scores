@@ -169,11 +169,11 @@ async function fallbackDataGenerate1
   if (dataRes1.length)
   {
     const data = dataRes1[0].get(+id) || {} as IPageAuthorAuthorData;
-    const { uid } = data;
+    const { uid = "" } = data;
     const BetarenUserClass = new Betarena_User_Class();
-    const user = await BetarenUserClass.obtainPublicInformationTargetUsers([uid]);
-
-    return { ...data, owner: user[0] };
+    const res = (await BetarenUserClass.obtainPublicInformationTargetUsers({ query: {}, body: { user_uids: [uid] } })).success;
+    if (!res?.data) return { ...data, owner: {} as IBetarenaUser };
+    return { ...data, owner: res.data[0] };
   }
   return
 }

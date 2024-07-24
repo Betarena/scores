@@ -63,12 +63,13 @@
   let profileLoading = false;
   let unsubscribe;
 
-  $: userProfile = (user ? {...user?.scores_user_data, uid: user?.firebase_user_data.uid} : {}) as BetarenaUser;
-
+  $: userProfile = (
+    user ? { ...user?.scores_user_data, uid: user?.firebase_user_data.uid } : {}
+  ) as BetarenaUser;
 
   $: selectedOption = ($page.params.type || "subscribers") as TSelectedOption;
   $: ({ globalState } = $session);
-  $: ({user} = $userSettings)
+  $: ({ user } = $userSettings);
   $: isPWA = globalState.has("IsPWA");
   $: currentData = displayedData[selectedOption];
   $: if (browser && prevAuthorId !== author?.uid) {
@@ -101,7 +102,7 @@
       unsubscribe();
     }
     unsubscribe = listenRealTimeUserUpdates(uid, (updates) => {
-      if(!updates) return;
+      if (!updates) return;
       const fb = (updates.followed_by || []).reverse();
       const sb = (updates.subscribed_by || []).reverse();
       if (fb.join("") !== rawData.followers.join("")) {
@@ -115,22 +116,33 @@
     });
   }
 
-  async function loadUsers(type: TSelectedOption, reload:boolean = false) {
+  async function loadUsers(type: TSelectedOption, reload: boolean = false) {
     const offset = reload ? 0 : displayedData[type]?.length || 0;
-    const to =  reload ? Math.ceil((displayedData[type]?.length || 1) / 10) * 10 : Math.ceil((offset + 10) / 10) * 10
+    const to = reload
+      ? Math.ceil((displayedData[type]?.length || 1) / 10) * 10
+      : Math.ceil((offset + 10) / 10) * 10;
     const userInList = rawData[type]?.includes(user?.firebase_user_data.uid);
     let ids = rawData[type].slice(offset, to);
-    if (userInList) ids = ids.filter(id => id !== user?.firebase_user_data.uid);
+    if (userInList)
+      ids = ids.filter((id) => id !== user?.firebase_user_data.uid);
     if (!ids.length) return;
     reloading = true;
     loading = !reload;
 
-    const users = (await BetarenaUserHelper.obtainPublicInformationTargetUsers(
-      ids,
-      false
-    )) as BetarenaUser[];
+    const res = (
+      await BetarenaUserHelper.obtainPublicInformationTargetUsers({
+        query: {},
+        body: { user_uids: ids },
+      })
+    ).success;
+    if (!res) {
+      reloading = false;
+      loading = false;
+      return;
+    }
     const prevData = reload ? [] : displayedData[type];
     const prevProfiles = userInList ? [userProfile, ...prevData] : prevData;
+    const users = res.data as BetarenaUser[];
     displayedData[type] = [...prevProfiles, ...users];
 
     displayedData = { ...displayedData };
