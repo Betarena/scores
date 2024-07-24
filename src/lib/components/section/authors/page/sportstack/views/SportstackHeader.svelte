@@ -126,7 +126,9 @@
                 />
               </Button>
             {/if}
-            <ShareButton shareText={$page.data.seoTemplate?.main_data?.description} img={avatar} />
+            {#if viewportType !== "desktop"}
+               <ShareButton shareText={$page.data.seoTemplate?.main_data?.description} img={avatar} />
+              {/if}
           </div>
         </div>
       </div>
