@@ -1,8 +1,8 @@
 <script>
+  import { browser } from "$app/environment";
   import { page } from "$app/stores";
   import session from "$lib/store/session";
   import { copyToClipboard } from "$lib/utils/miscellenous";
-  import { title } from "process";
   import ShareIcon from "./assets/share-icon.svelte";
   import Button from "./Button.svelte";
 
@@ -10,16 +10,24 @@
     img = "";
 
   let imgNode;
-  $: file = img
-    ? fetch(img)
-        .then((r) => r.blob())
-        .then(
-          (blobFile) =>
-            new File([blobFile], "share.jpg", { type: "image/jpeg" })
-        )
-    : null;
+  let file;
+  $: if (browser && img) {
+   getFile(img);
+  }
 
   $: ({ deviceType } = $session);
+
+  async function getFile(src) {
+    try {
+      const r = await fetch(`https://corsproxy.io/?${encodeURIComponent(src)}`)
+      if (!r.ok)  return
+        const blob = await r.blob();
+        file = new File([blob], "share.jpg", { type: "image/jpeg" });
+
+    } catch(e) {
+      console.log(e)
+    }
+  }
 
   async function share() {
     const href = $page.url.href;
