@@ -30,7 +30,7 @@ import { normalizeSeo } from '$lib/utils/seo';
  * @return { Promise < {} > }
  *  📤 Respective `data` for _this_ route.
  */
-export async function main
+export function main
   (
     event: ServerLoadEvent,
   ): Promise<{

@@ -27,7 +27,7 @@ import { promiseUrlsPreload } from '$lib/utils/navigation.js';
  * @return { Promise < {} > }
  *  📤 Respective `data` for _this_ route.
  */
-export async function main
+export function main
   (
     {
       fetch,

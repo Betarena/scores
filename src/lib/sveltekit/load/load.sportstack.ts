@@ -27,7 +27,7 @@ import { normalizeSeo } from '$lib/utils/seo.js';
  * @return { Promise < {} > }
  *  📤 Respective `data` for _this_ route.
  */
-export async function main
+export function main
   (
     { name,
       fetch,
