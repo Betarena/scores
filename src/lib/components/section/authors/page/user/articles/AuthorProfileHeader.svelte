@@ -327,8 +327,10 @@
               )}"
             >
               <TranslationText text={translations.by} fallback="By" />
-              &nbsp;
-              {highlited_sportstack.owner.username}
+              <span class="sportstack-owner-name">
+                 {highlited_sportstack.owner.username}
+
+              </span>
             </a>
           </div>
         </div>
@@ -539,6 +541,11 @@
           opacity: 0.8;
           font-weight: 400;
           line-height: 18px; /* 150% */
+        }
+      }
+      .sportstack-owner-name {
+        &::before {
+          content: "\00a0";
         }
       }
     }

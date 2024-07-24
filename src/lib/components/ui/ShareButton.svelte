@@ -45,8 +45,13 @@
       } catch (error) {
         copyToClipboard(href);
       }
+      return;
+    } else if (data.files) {
+      file = null;
+      share();
     } else {
       copyToClipboard(href);
+
     }
   }
 </script>
