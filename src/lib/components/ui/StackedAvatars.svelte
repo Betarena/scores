@@ -25,6 +25,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let src: (string | null)[] = [""],
+    reverse = false,
     /**
      * @description
      * avatar size
@@ -55,7 +56,7 @@
   {#each src as s, index}
     <div
       class="avatar-wrapper"
-      style="width:{size}px; height: {size}px; margin-left: -{ index ? deep : 0}px; border: 1px solid {bgColor};"
+      style="width:{size}px; z-index: {reverse ? 1 : src.length - index}; height: {size}px; margin-left: -{ index ? deep : 0}px; border: 1px solid {bgColor};"
     >
       <Avatar src={s} {size} />
     </div>

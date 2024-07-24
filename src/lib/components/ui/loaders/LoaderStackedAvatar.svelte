@@ -3,6 +3,7 @@
 
   export let size: number = 34;
   export let deep = 14;
+  export let reverse = false;
   export let clazz: string = "";
   export let count: number = 3; // Количество аватаров в стеке
 
@@ -34,11 +35,19 @@
         xmlns="http://www.w3.org/2000/svg"
         preserveAspectRatio="none"
       >
-        {#if index !== count - 1}
+        {#if !reverse && index}
           <defs>
             <mask id="hole-{index}">
               <rect width="100%" height="100%" fill="white" />
-              <circle {r} cx={deep + r / 2} cy={r} fill="black" />
+              <circle {r} cx={deep - r + 1} cy={r} fill="black" />
+            </mask>
+          </defs>
+        {/if}
+        {#if reverse && index !== count - 1}
+          <defs>
+            <mask id="hole-{index}">
+              <rect width="100%" height="100%" fill="white" />
+              <circle {r} cx={deep + r - 1} cy={r} fill="black" />
             </mask>
           </defs>
         {/if}
