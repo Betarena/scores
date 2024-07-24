@@ -121,7 +121,7 @@
       unsubscribe();
     }
     unsubscribe = listenRealTimeUserUpdates(uid, (updates) => {
-      if (!updates) return;
+      if(!updates) return;
       followed_by = updates.followed_by || [];
       const subscribers_ids = updates.subscribed_by?.slice(-3) || [];
       isSubscribed = updates.subscribed_by?.includes(user?.firebase_user_data.uid) || false;
@@ -338,7 +338,7 @@
           {highlited_sportstack.data?.about}
         </div>
       </a>
-    {:else}
+    {:else if viewportType !== "mobile"}
       <div />
     {/if}
   </div>
