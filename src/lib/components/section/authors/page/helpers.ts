@@ -1,6 +1,5 @@
 import type { IPageAuthorArticleData, IPageAuthorTagData, IPageAuthorAuthorData, IPageAuthorTranslationDataFinal, IPageAuthorTagDataFinal } from "@betarena/scores-lib/types/v8/preload.authors.js";
 import { get } from "$lib/api/utils.js";
-import { dlogv2 } from "$lib/utils/debug.js";
 
 export interface IArticle extends IPageAuthorArticleData
 {

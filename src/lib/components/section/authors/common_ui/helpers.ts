@@ -14,7 +14,7 @@ export function prepareArticles(
 ): IArticle[]
 {
   if (!tags_map || !authors || !articles.length) return [];
-  const prepared = articles.map(([id, data]) =>
+  const prepared = articles.map(([_id, data]) =>
   {
     const preparedArticle: IArticle = {
       author: {},

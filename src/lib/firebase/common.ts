@@ -1113,7 +1113,7 @@ export async function updateFollowing
   const current_target: string[] = updateDataByKey({ obj: user, field, key: target, add: follow, id: target_id });
   if (target === "authors")
   {
-    const d = await BetarenaUserHelper.updateUsersFollowers({
+    await BetarenaUserHelper.updateUsersFollowers({
       query: {},
       body: {
 
