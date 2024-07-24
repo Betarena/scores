@@ -373,8 +373,13 @@
 <SeoBox>
   <h1>{sportstackData[1].data.username}</h1>
   <b>{sportstackData[1].data.about}</b>
+  {#each widgetData.mapArticle ?? [] as [_id, article]}
+  <h2>{article?.data?.title}</h2>
+  <a href={`${$page.url.origin}/a/${article?.permalink}`}
+    >{article?.data?.title}</a
+  >
+{/each}
 </SeoBox>
-<ArticlesSeo articles={widgetData.mapArticles} />
 
 <svelte:window on:scroll={scrollHandler} />
 
