@@ -85,33 +85,31 @@
   let isLoadingSubscribers = false;
   let author_subscribers_profiles: BetarenaUser[] = [];
   let prevAuthorId = "";
-
-  /**
+    /**
    * @description
    * 📝 Interecpted data for `map` instance of `author(s)`.
    */
-  $: mapAuthors = new Map(widgetData?.mapAuthor ?? []);
-  /**
+  let mapAuthors = new Map();
+   /**
    * @description
    * 📝 Interecpted data for `map` instance of `tag(s)`.
    */
-  $: mapTags = new Map(widgetData?.mapTag ?? []);
-  /**
+  let mapTags = new Map();
+   /**
    * @description
    * 📝 Interecpted data for `map` instance of `article(s)`.
    */
-  $: mapArticles = new Map(widgetData?.mapArticle ?? []);
-  /**
-   * @description
-   * 📝 Currently selected tag data.
-   */
+  let mapArticles = new Map();
 
   // $: isOwner = author?.uid === user?.firebase_user_data.uid;
 
-  $: if (browser) updateData(widgetData ?? ({} as ITagsWidgetData), true);
-
+    /**
+   * @description
+   * 📝 Update data only when the URL has changed.
+   */
   $: if (browser && author?.uid && prevAuthorId !== author?.uid) {
     prevAuthorId = author?.uid;
+    updateData(widgetData ?? ({} as ITagsWidgetData), true);
     getSubscribers(author.subscribed_by);
   }
 

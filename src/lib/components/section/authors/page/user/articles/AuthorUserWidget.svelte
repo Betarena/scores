@@ -37,7 +37,6 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { browser } from "$app/environment";
   import { page } from "$app/stores";
 
   import AuthorProfileMain from "./AuthorProfileMain.svelte";
