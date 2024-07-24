@@ -72,6 +72,7 @@
   $: ({ user } = $userSettings);
   $: isPWA = globalState.has("IsPWA");
   $: currentData = displayedData[selectedOption];
+  $: noUsers = !currentData?.length;
   $: if (browser && prevAuthorId !== author?.uid) {
     prevAuthorId = author?.uid;
     displayedData = {
@@ -181,6 +182,8 @@
       loadUsers(selectedOption);
     return;
   }
+
+  $: console.log("TRANSLATIONS: ", translations)
 </script>
 
 <!--
@@ -220,18 +223,34 @@
       on:select={select}
     />
   {/if}
-  <FollowersList
-    {translations}
-    users={!profileLoading ? currentData : []}
-    loading={profileLoading || loading}
-    emptyMessage="no {selectedOption} yet"
-  />
-  {#if !isPWA && currentData?.length < rawData[selectedOption]?.length && !profileLoading && !reloading && !loading}
-    <div class="load-more">
-      <Button type="outline" on:click={() => loadUsers(selectedOption)}>
-        <TranslationText text={translations.view_more} fallback="View More" />
-      </Button>
+
+  {#if noUsers}
+    <div class="no-articles">
+      <div class="text">
+        <TranslationText
+          text={translations.no_users}
+          fallback="No users at this moment"
+        />
+      </div>
+      <!-- [TODO] Uncomment when creation logic is implemented -->
+      <!-- {#if isOwner}
+      <Button type="primary">Create new article</Button>
+    {/if} -->
     </div>
+  {:else}
+    <FollowersList
+      {translations}
+      users={!profileLoading ? currentData : []}
+      loading={profileLoading || loading}
+      emptyMessage="no {selectedOption} yet"
+    />
+    {#if !isPWA && currentData?.length < rawData[selectedOption]?.length && !profileLoading && !reloading && !loading}
+      <div class="load-more">
+        <Button type="outline" on:click={() => loadUsers(selectedOption)}>
+          <TranslationText text={translations.view_more} fallback="View More" />
+        </Button>
+      </div>
+    {/if}
   {/if}
 </div>
 
@@ -255,6 +274,27 @@
       display: flex;
       justify-content: center;
       margin-top: 32px;
+    }
+
+    .no-articles {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      background: var(--bg-color);
+      flex-grow: 1;
+      padding-top: 80px;
+
+      .text {
+        color: var(--text-color);
+        opacity: 0.8;
+        max-width: 179px;
+        text-align: center;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 20px;
+      }
     }
   }
 </style>

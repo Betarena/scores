@@ -91,6 +91,10 @@
     ? widgetData?.mapAuthor[0]
     : ({} as IPageAuthorAuthorData);
 
+  $: noData =
+    (currentView === "posts" && !mapArticlesMod.size && !isLoadingArticles) ||
+    (currentView === "people" && !people.length && !isLoadingPeople);
+
   const BetarenaUser = new Betarena_User_Class();
 
   let peopleIds: string[] = [];
@@ -99,30 +103,18 @@
   let people: IBetarenaUser[] = [];
   let initLoad = false;
 
-  /**
-   * @description
-   * 📝 Interecpted data for `map` instance of `author(s)`.
-   */
-  $: mapAuthors = new Map(widgetData?.mapAuthor ?? []);
-  /**
-   * @description
-   * 📝 Interecpted data for `map` instance of `tag(s)`.
-   */
-  $: mapTags = new Map(widgetData?.mapTag ?? []);
-  /**
-   * @description
-   * 📝 Interecpted data for `map` instance of `article(s)`.
-   */
-  $: mapArticles = new Map(widgetData?.mapArticle ?? []);
+  let mapArticles = new Map();
+  let mapAuthors = new Map();
+  let mapTags = new Map();
 
   /**
    * @description
    * 📝 Categories avaialble.
    */
 
-  $: if (browser) updateData(widgetData ?? {}, true);
-  $: if (prevSportstackId !== sportstackData[1].id) {
+  $: if (browser && prevSportstackId !== sportstackData[1].id) {
     prevSportstackId = sportstackData[1].id;
+    updateData(widgetData ?? {}, true);
     updatePeopleIdArray();
   }
 
@@ -353,7 +345,12 @@
     if (!peopleIds.length) return;
     isLoadingPeople = true;
     const ids = peopleIds.splice(0, 10);
-    const {data} = (await BetarenaUser.obtainPublicInformationTargetUsers({query: {}, body:{user_uids: ids}})).success;
+    const { data } = (
+      await BetarenaUser.obtainPublicInformationTargetUsers({
+        query: {},
+        body: { user_uids: ids },
+      })
+    ).success;
     isLoadingPeople = false;
     people = [...people, ...data];
   }
@@ -395,35 +392,53 @@
 │ > Articles view
 ╰─────
 -->
-<div class="content {viewportType}">
-  {#if currentView === "posts"}
-    <ArticlesList
-      articles={initLoad ?new Map() : mapArticlesMod}
-      {translations}
-      isLoadingArticles={isLoadingArticles || initLoad}
-    />
-  {:else}
-    <!--
+
+{#if noData}
+  <div class="no-articles {viewportType}">
+    <div class="text">
+      <TranslationText
+        text={currentView === "posts"
+          ? translations.no_articles
+          : translations.no_users}
+        fallback="No articles at this moment.Come back later"
+      />
+    </div>
+    <!-- [TODO] Uncomment when creation logic is implemented -->
+    <!-- {#if isOwner}
+      <Button type="primary">Create new article</Button>
+    {/if} -->
+  </div>
+{:else}
+  <div class="content {viewportType}">
+    {#if currentView === "posts"}
+      <ArticlesList
+        articles={initLoad ? new Map() : mapArticlesMod}
+        {translations}
+        isLoadingArticles={isLoadingArticles || initLoad}
+      />
+    {:else}
+      <!--
 ╭─────
 │ > People view
 ╰─────
 -->
-    <FollowersList
-      users={initLoad ? [] : people}
-      {translations}
-      loading={isLoadingPeople || initLoad}
-      emptyMessage="No people yet"
-    />
-  {/if}
+      <FollowersList
+        users={initLoad ? [] : people}
+        {translations}
+        loading={isLoadingPeople || initLoad}
+        emptyMessage="No people yet"
+      />
+    {/if}
 
-  {#if !isPWA && ((currentView === "posts" && mapArticlesMod.size) || (currentView === "people" && 0)) && !initLoad}
-    <div class="load-more">
-      <Button type="outline" on:click={loadMore}>
-        <TranslationText text={translations.view_more} fallback="View More" />
-      </Button>
-    </div>
-  {/if}
-</div>
+    {#if !isPWA && ((currentView === "posts" && mapArticlesMod.size) || (currentView === "people" && 0)) && !initLoad}
+      <div class="load-more">
+        <Button type="outline" on:click={loadMore}>
+          <TranslationText text={translations.view_more} fallback="View More" />
+        </Button>
+      </div>
+    {/if}
+  </div>
+{/if}
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -450,6 +465,29 @@
     background: var(--bg-color);
   }
 
+  .no-articles {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    background: var(--bg-color);
+    flex-grow: 1;
+    padding-top: 80px;
+
+    .text {
+      color: var(--text-color);
+      opacity: 0.8;
+      max-width: 179px;
+      text-align: center;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 20px;
+    }
+    &.mobile {
+      margin-top: -8px;
+    }
+  }
   .content {
     &.tablet {
       padding: 26px 34px;

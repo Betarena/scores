@@ -107,6 +107,12 @@
    * @description
    * 📝 Update data only when the URL has changed.
    */
+
+
+
+  $: isOwner = author?.uid === user?.firebase_user_data.uid;
+
+
   $: if (browser && author?.uid && prevAuthorId !== author?.uid) {
     prevAuthorId = author?.uid;
     updateData(widgetData ?? ({} as ITagsWidgetData), true);
@@ -157,7 +163,7 @@
     if (!subscribers_arr.length) return;
     isLoadingSubscribers = true;
     const ids = subscribers_arr.slice(-3);
-    const res = (await BetarenaUsers.obtainPublicInformationTargetUsers({query: {}, body:{user_uids: ids}})).success;
+    const res = (await BetarenaUsers.obtainPublicInformationTargetUsers({query: {}, body:{user_uids: ids}}))?.success;
     if(res) {
       author_subscribers_profiles = [...res.data] as BetarenaUser[];
     }
