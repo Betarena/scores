@@ -44,8 +44,7 @@ export async function main
           (
             page,
             uid
-          ),
-          loadType = 'HASURA'
+        )
           ;
         // ▓ [🐞]
 

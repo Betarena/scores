@@ -211,19 +211,19 @@ export async function updateSelectLang
      * @description
      * 📝 Data for `page`
      */
-    page = sessionStore.extract<Page>('page')!,
+    page = sessionStore.extract<Page>('page'),
     /**
      * @description
      * 📝 Conditional logic bundle simplification
      */
     if_M_0
-      = !checkNull(page.error)
-      || checkNull(page.route.id)
+      = !checkNull(page?.error)
+      || checkNull(page?.route.id)
       || !lang
       || !uid
     ;
 
-  if (if_M_0) return;
+  if (if_M_0 || !page) return;
 
   // [🐞]
   dlogv2

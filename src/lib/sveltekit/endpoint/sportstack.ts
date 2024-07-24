@@ -7,7 +7,7 @@ import { _GraphQL } from '@betarena/scores-lib/dist/classes/_graphql.js';
 import { entryPageAuthorDataAndSeo, entryTargetDataAuthorSportstack } from '@betarena/scores-lib/dist/functions/v8/main.preload.authors.js'
 import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
 import { TableAuthorAuthorsMutation0, type ITableAuthorAuthorsMutation0Out, type ITableAuthorAuthorsMutation0Var } from "@betarena/scores-lib/dist/graphql/v8/table.authors.authors.js";
-import type { IPageAuthorAuthorData, IPageAuthorProfileData, IPageAuthorSportstackData, IPageAuthorTagDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
+import type { IPageAuthorAuthorData, IPageAuthorProfileData, IPageAuthorSportstackData } from '@betarena/scores-lib/types/v8/preload.authors.js';
 import { json, type RequestEvent } from '@sveltejs/kit';
 import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.betarena-user.js';
 import type { IBetarenaUser } from '@betarena/scores-lib/types/_FIREBASE_.js';
@@ -53,8 +53,7 @@ export async function main
           (
             page,
             permalink
-          ),
-          loadType = 'HASURA'
+        )
           ;
         // ▓ [🐞]
         if (data?.seoTamplate)
@@ -143,10 +142,10 @@ async function fallbackDataGenerate1
     id: number | string,
   ): Promise<IPageAuthorAuthorData & { owner: IBetarenaUser } | undefined>
 {
-  const dataRes1 = await entryPageAuthorDataAndSeo({ ids: [+id], cacheAll: true })
+  const dataRes1 = await entryPageAuthorDataAndSeo({ ids: [Number(id)], cacheAll: true })
   if (dataRes1.length)
   {
-    const data = dataRes1[0].get(+id) || {} as IPageAuthorAuthorData;
+    const data = dataRes1[0].get(Number(id)) || {} as IPageAuthorAuthorData;
     const { uid = "" } = data;
     const BetarenUserClass = new Betarena_User_Class();
     const res = (await BetarenUserClass.obtainPublicInformationTargetUsers({ query: {}, body: { user_uids: [uid] } })).success;

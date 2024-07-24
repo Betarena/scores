@@ -33,7 +33,7 @@ export async function load
     name = ""
   } = params;
 
-  return main
+  return await main
     ({
       name,
       fetch,

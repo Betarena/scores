@@ -154,7 +154,8 @@ export function prepareArticlesMap(
     // ╰─────
     for (const tagId of articleData.tags ?? [])
     {
-      if (mapTag.has(tagId)) dataArticle.tags_data.push(mapTag.get(tagId)!);
+      const tag = mapTag.get(tagId);
+      if (tag) dataArticle.tags_data.push(tag);
     }
 
     mapArticleMod.set(articleId, dataArticle);

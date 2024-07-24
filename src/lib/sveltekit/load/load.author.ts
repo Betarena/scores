@@ -16,27 +16,9 @@ import type { ServerLoadEvent } from '@sveltejs/kit';
 
 import { promiseUrlsPreload } from '$lib/utils/navigation.js';
 
-import type { IPageAuthorTagDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
-import type { B_SAP_D2 } from '@betarena/scores-lib/types/v8/preload.scores.js';
-import type { IPageAuthorTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.tags.js';
 import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.betarena-user.js';
 import { normalizeSeo } from '$lib/utils/seo';
 // #endregion ➤ 📦 Package Imports
-
-/**
- * @author
- *  @migbash
- * @summary
- *  🔹 INTERFACE
- * @description
- *  📣 Target `types` for `_this_` page required at preload.
- */
-type PreloadPromise0 =
-  [
-    IPageAuthorTagDataFinal | undefined,
-    IPageAuthorTranslationDataFinal | undefined,
-    B_SAP_D2 | undefined
-  ];
 
 /**
  * @author
