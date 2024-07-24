@@ -144,10 +144,11 @@
   }
 
   async function getSubscribersProfiles(ids) {
-    const users = await BetarenaUserHelper.obtainPublicInformationTargetUsers(
-      ids
-    );
-    subscribers_profiles = [...users] as BetarenaUser[];
+    const res = (await BetarenaUserHelper.obtainPublicInformationTargetUsers({query: {}, body: {user_uids: ids}})).success;
+    if (res) {
+      subscribers_profiles = [...res.data] as BetarenaUser[];
+
+    }
   }
 
   // #endregion ➤ 🛠️ METHODS

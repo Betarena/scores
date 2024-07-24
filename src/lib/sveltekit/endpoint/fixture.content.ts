@@ -23,7 +23,7 @@ import { json, type RequestEvent } from '@sveltejs/kit';
 // import { dev } from '$app/environment';
 
 import { entryFixtureContentData, entryFixtureContentTranslation } from '@betarena/scores-lib/dist/functions/v8/fixture.content.js';
-import { tryCatchAsyncV2 } from '@betarena/scores-lib/dist/util/common.js';
+import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
 
 import { API_DATA_ERROR_RESPONSE } from '$lib/utils/debug.js';
 
@@ -50,7 +50,7 @@ export async function main
   request: RequestEvent
 ): Promise < Response >
 {
-  return await tryCatchAsyncV2
+  return await tryCatchAsync
   (
     async (
     ): Promise < Response > =>

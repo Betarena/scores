@@ -4,7 +4,7 @@ import LZString from 'lz-string';
 
 import { dlogv2 } from '$lib/utils/debug.js';
 import { tryCatch } from '$lib/utils/miscellenous.js';
-import { tryCatchAsync, tryCatchAsyncV2 } from '@betarena/scores-lib/dist/util/common';
+import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -222,7 +222,7 @@ export async function postv2
   , data: any
 ): Promise < T1 | null | undefined | unknown | IResponseError >
 {
-  return await tryCatchAsyncV2
+  return await tryCatchAsync
   <
    T1
   >

@@ -23,7 +23,7 @@ import { json, type RequestEvent } from '@sveltejs/kit';
 
 import { entryAuthorArticleTranslation } from '@betarena/scores-lib/dist/functions/v8/authors.articles.js';
 import { entryTargetDataArticle } from '@betarena/scores-lib/dist/functions/v8/main.preload.authors.js';
-import { tryCatchAsyncV2 } from '@betarena/scores-lib/dist/util/common.js';
+import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
 
 import { postv2 } from '$lib/api/utils.js';
 import { API_DATA_ERROR_RESPONSE } from '$lib/utils/debug.js';
@@ -51,7 +51,7 @@ export async function main
   request: RequestEvent
 ): Promise < Response >
 {
-  return await tryCatchAsyncV2
+  return await tryCatchAsync
   (
     async (
     ): Promise < Response > =>
