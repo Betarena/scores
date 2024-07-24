@@ -59,7 +59,8 @@
   on:mouseenter={() => (hover = true)}
   on:mouseleave={() => (hover = false)}
   on:touchend={() => (hover = false)}
-  on:click={() => dispatch("click")}
+  on:mouseup={() => (hover = false)}
+  on:click={() => {dispatch("click"); hover = false;}}
 >
   <slot />
 </button>
