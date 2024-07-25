@@ -22,6 +22,7 @@
 -->
 
 <script lang="ts">
+  import { page } from '$app/stores';
 
   // #region ➤ 📦 Package Imports
 

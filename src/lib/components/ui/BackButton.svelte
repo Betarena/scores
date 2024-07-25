@@ -29,6 +29,7 @@
   import { generateUrlCompetitions } from "$lib/utils/string.js";
   import userBetarenaSettings from "$lib/store/user-settings.js";
   import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
+  import { createEventDispatcher } from "svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -46,8 +47,12 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let backgroundColor = "#4b4b4bcc",
-    color = "white";
+  export let backgroundColor = "",
+    color = "",
+    custom_handler = false,
+    mode: "back" | "home" = "home";
+
+  const dispatch = createEventDispatcher();
   $: ({ globalState, serverLang = "en" } = $sessionStore);
   $: homepageURL = serverLang != "en" ? `/${serverLang}` : "/";
   $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
@@ -67,7 +72,12 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   function backBtnClick(): void {
-    if (globalState.has("IsPWA")) return window.history.back();
+    if (custom_handler) {
+      dispatch("click");
+      return;
+    }
+    if (globalState.has("IsPWA") || mode === "back")
+      return window.history.back();
     const [preferedPage] = $userBetarenaSettings.user?.scores_user_data
       ?.buttons_order || ["scores"];
     let url: string;
@@ -89,7 +99,7 @@
     goto(url);
     return;
   }
-// #endregion ➤ 🛠️ METHODS
+  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--
@@ -105,7 +115,8 @@
 
 <button
   class="back-button-wrapper"
-  style="background-color: {backgroundColor};"
+  aria-label="Back"
+  style={backgroundColor ? ` background-color: ${backgroundColor};` : ""}
   on:click={backBtnClick}
 >
   <svg
@@ -117,7 +128,7 @@
   >
     <path
       d="M4.77832 8.55448L1.22277 4.99892L4.77832 1.44336"
-      stroke={color}
+      stroke={color ? color : "var(--text-color)"}
       stroke-width="1.33333"
       stroke-linecap="round"
       stroke-linejoin="round"
@@ -136,6 +147,16 @@
 -->
 
 <style lang="scss">
+  :global(.dark-mode) {
+    .back-button-wrapper {
+      background-color: #4b4b4bcc;
+    }
+  }
+  :global(.light-mode) {
+    .back-button-wrapper {
+      background-color: rgba(230, 230, 230, 0.8);
+    }
+  }
   .back-button-wrapper {
     display: flex;
     height: 32px;

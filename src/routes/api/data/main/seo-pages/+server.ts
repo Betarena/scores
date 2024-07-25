@@ -62,6 +62,7 @@ export async function GET
   const competitionUrl: string = req?.url?.searchParams?.get('competitionUrl');
   const authorArticleUrl: string = req?.url?.searchParams?.get('authorArticleUrl');
   const authorTagUrl: string = req?.url?.searchParams?.get('authorTagUrl');
+  const authorUrl: string = req?.url?.searchParams?.get('authorUrl');
 
   // ### IMPORTANT
   // ### required for target SEO & Page data.
@@ -100,6 +101,8 @@ export async function GET
     || !checkNull(competitionUrl)
     || !checkNull(authorArticleUrl)
     || !checkNull(authorTagUrl)
+    || !checkNull(authorUrl)
+
     ;
   if (if_M_0)
   {
@@ -114,7 +117,8 @@ export async function GET
         competitionMainUrl,
         competitionUrl,
         authorArticleUrl,
-        authorTagUrl
+        authorTagUrl,
+        authorUrl
       );
   }
 
@@ -673,7 +677,9 @@ async function validUrlCheck
     competitionMainUrl: string,
     competitionUrl: string,
     authorArticleUrl: string,
-    authorTagUrl: string
+    authorTagUrl: string,
+    authorUrl: string
+
   ): Promise<Response>
 {
   const validUrl: number[] = [];
@@ -707,6 +713,8 @@ async function validUrlCheck
   ;
   if (authorTagUrl)
     validUrl.push(await new _Redis().rSISMEMBER(RedisKeys?.SAP_C_D_A23, `${authorTagUrl}`) as number);
+  if (authorUrl)
+    validUrl.push(await new _Redis().rSISMEMBER(RedisKeys?.SAP_C_D_A23, `${authorUrl}`) as number);
 
   // ### [🐞]
   console.debug

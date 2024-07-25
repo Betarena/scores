@@ -57,7 +57,7 @@
      * @description
      *  📣 Target `key` for respective text.
     */
-    key: string
+    key: string = "undefined"
     /**
      * @description
      *  📣 Target `text` to be displayed.

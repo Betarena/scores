@@ -49,7 +49,7 @@
 
   import Button from '$lib/components/ui/Button.svelte';
   import Tabbar from '$lib/components/ui/Tabbar.svelte';
-  import ArticleCard from './Article-Card.svelte';
+  import ArticleCard from '../../../common_ui/articles/Article-Card.svelte';
   import ArticleLoader from './Article-Loader.svelte';
 
   import type {
@@ -59,7 +59,7 @@
     IPageAuthorTagDataFinal
   } from '@betarena/scores-lib/types/v8/preload.authors.js';
   import type { IPageAuthorTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.tags.js';
-  import type { IArticle, ITagsWidgetData } from '../../helpers.js';
+  import { prepareArticlesMap, type IArticle, type ITagsWidgetData } from '../../helpers.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -265,7 +265,7 @@
        * 📝 `Map` article generated from NEW data.
        */
       mapNewArticlesMod
-        = prepareArticles
+        = prepareArticlesMap
         (
           new Map(dataNew.mapArticle),
           new Map(dataNew.mapTag),
@@ -299,77 +299,6 @@
     );
 
     return;
-  }
-
-  /**
-   * @author
-   *  <-insert-author->
-   * @summary
-   *  🟦 HELPER
-   * @description
-   *  📝 Prepare article data.
-   * @param { Map < number, IPageAuthorArticleData > | null } mapArticle
-   *  💠 **REQUIRED** `Map` of article data.
-   * @param { Map < number, IPageAuthorTagData > | null } mapTag
-   *  💠 **REQUIRED** `Map` of tag data.
-   * @param { Map < number, IPageAuthorAuthorData > | null } mapAuthor
-   *  💠 **REQUIRED** `Map` of author data.
-   * @return { Map < number, IArticle > }
-   *  📤 Prepared articles data.
-   */
-  function prepareArticles
-  (
-    mapArticle: Map < number, IPageAuthorArticleData > | null,
-    mapTag: Map < number, IPageAuthorTagData > | null,
-    mapAuthor: Map < number, IPageAuthorAuthorData > | null
-  ): Map < number, IArticle >
-  {
-    if (!mapTag || !mapAuthor || !mapArticle) return new Map();
-
-    const
-      /**
-       * @description
-       * 📝 `Map` of modified article data.
-       */
-      mapArticleMod = new Map < number, IArticle >()
-    ;
-
-    // ╭─────
-    // │ NOTE: |:| loop through articles and prepare data.
-    // ╰─────
-    for (const [articleId, articleData] of mapArticle)
-    {
-      const
-        /**
-         * @description
-         * 📝 Prepare article data.
-         */
-        dataArticle: IArticle
-          = {
-            author: mapAuthor.get(articleData.author_id ?? 0) ?? {},
-            tags_data: [],
-            ...articleData,
-          }
-      ;
-
-      // ╭─────
-      // │ NOTE: |:| loop through 'tags' and add final data to `tags_data`.
-      // ╰─────
-      for (const tagId of (articleData.tags ?? []))
-      {
-        if (mapTag.has(tagId))
-          dataArticle.tags_data.push(mapTag.get(tagId)!);
-        ;
-      }
-
-      mapArticleMod.set
-      (
-        articleId,
-        dataArticle
-      );
-    }
-
-    return mapArticleMod;
   }
 
   /**
@@ -556,7 +485,10 @@
       data={categories}
       selected={selectedTag}
       height={mobile ? 14 : 8}
-    />
+      let:tab
+    >
+    {tab.name}
+  </Tabbar>
   {/if}
 </div>
 

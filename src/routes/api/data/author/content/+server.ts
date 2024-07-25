@@ -36,7 +36,7 @@ export async function GET
   return await main
   (
     request
-  );
+  ) as Response;
 }
 
 // export async function POST

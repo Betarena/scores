@@ -15,6 +15,8 @@
   import sessionStore from "$lib/store/session.js";
   import userBetarenaSettings from "$lib/store/user-settings.js";
   import {
+    routeIdAuthorProfile,
+    routeIdAuthorSubscribers,
     routeIdPageAuthors,
     routeIdPageCompetition,
     routeIdPageFixture,
@@ -22,6 +24,7 @@
     routeIdPagePlayer,
     routeIdPageProfile,
     routeIdPageTags,
+    routeIdSportstack,
   } from "$lib/constants/paths.js";
   import MobileHeaderRich from "./MobileHeaderRich.svelte";
   import Header from "./Header.svelte";
@@ -59,6 +62,9 @@
     routeIdPageTags,
     routeIdPageProfile,
     routeIdPageAuthors,
+    routeIdAuthorProfile,
+    routeIdAuthorSubscribers,
+    routeIdSportstack,
     routeIdPageAuthors,
   ];
   $: isInnerPage = simpleMobileHeaderRoutes.includes($page.route.id || "");

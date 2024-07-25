@@ -9,6 +9,7 @@
 -->
 <script lang="ts">
   import { createEventDispatcher, tick } from "svelte";
+  import TranslationText from "../misc/Translation-Text.svelte";
 
   // #region ➤ 📌 VARIABLES
 
@@ -26,13 +27,14 @@
   interface ITab {
     id: string;
     name?: string;
-    label?: string;
+    label: string;
     [key: string]: any;
   }
 
   export let data = [] as ITab[];
   export let selected = null as ITab | null;
   export let height = 14;
+  export let translations: { [key: string]: string } = {};
   let activeNode: HTMLElement;
   let tabbarNode: HTMLElement;
   const dispatch = createEventDispatcher();
@@ -50,12 +52,12 @@
   // │ Please keep very close attention to these methods and                  │
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
-  $: if (selected && tabbarNode) {
+  $: if (!selected && tabbarNode) {
     select(data[0]);
   }
+  $: if (translations && selected && tabbarNode) updateBorder();
 
-  $: if(!data?.includes(selected) && tabbarNode) {
+  $: if (!data?.includes(selected) && tabbarNode) {
     select(data[0]);
   }
 
@@ -74,39 +76,57 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   function select(tab: ITab) {
+    setBorder(tab);
     if (selected?.id !== tab.id) {
       dispatch("select", tab);
       selected = tab;
-    };
-  setBorder(tab);
+    }
   }
 
   let callCount = 0;
   function setBorder(tab: ITab) {
-    const tabNode = tabbarNode.querySelector(`[data-tab-id="${tab.id}"]`) as any;
+    const tabNode = tabbarNode.querySelector(
+      `[data-tab-id="${tab.id}"]`
+    ) as any;
     if (tabNode) {
       activeNode.style.width = `${tabNode.offsetWidth}px`;
       activeNode.style.left = `${tabNode.offsetLeft}px`;
       callCount = 0;
       return;
     }
-    if(callCount > 2) return;
+    if (callCount > 2) return;
     tick().then(() => setBorder(tab));
     callCount++;
-
   }
 
+  async function updateBorder() {
+    if (selected) {
+      await tick();
+      setBorder(selected);
+    }
+  }
 
   // #endregion ➤ 🛠️ METHODS
 </script>
 
-<div class="tabbar" bind:this = {tabbarNode}>
+<div class="tabbar" bind:this={tabbarNode} {...$$restProps}>
   {#each data as item, i (item.id)}
-    <div class="tab-item" style="margin-bottom: {height}px;" data-tab-id={item.id} class:selected={selected?.id === item.id} on:click={(e) => select(item)}>
-      <slot tab={item}>{item.name || item.label}</slot>
-    </div>
+      <div
+        class="tab-item"
+        style="margin-bottom: {height}px;"
+        data-tab-id={item.id}
+        class:selected={selected?.id === item.id}
+        on:click={(e) => select(item)}
+      >
+        <slot tab={item}
+          ><TranslationText
+            text={translations[item.label] || translations[item?.name || ""]}
+            fallback={item.name || item.label}
+          />
+        </slot>
+      </div>
   {/each}
-  <div class="active" bind:this = {activeNode} />
+  <div class="active" bind:this={activeNode} />
 </div>
 
 <!--
@@ -132,12 +152,15 @@
       position: static;
       color: var(--text-color-second-dark);
       cursor: pointer;
+      &:hover {
+        color: var(--text-color);
+      }
     }
 
     .selected {
       color: var(--text-color);
       position: relative;
-      transition: all 0.3s ease-in-out;
+      transition: all 0.3s ease-out;
       bottom: 1px solid var(--primary);
     }
     .active {
@@ -145,7 +168,7 @@
       bottom: 0;
       left: 0;
       height: 2px;
-      transition: all 0.3s ease-in-out;
+      transition: all 0.5s cubic-bezier(0, 0.14, 0.29, 1.07);
       background: var(--primary);
     }
   }

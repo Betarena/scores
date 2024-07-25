@@ -21,6 +21,7 @@
   import { fade } from "svelte/transition";
   import ExpandDataWrapper from "$lib/components/ui/wrappers/ExpandDataWrapper.svelte";
   import ScrollDataWrapper from "$lib/components/ui/wrappers/ScrollDataWrapper.svelte";
+  import { userNameToUrlString } from "../../../common_ui/helpers.js";
 
   // #region ➤ 📌 VARIABLES
 
@@ -93,13 +94,13 @@
         {title}
       </div>
     </a>
-    <div class="author-wrapper">
+    <a  href="/a/sportstack/{userNameToUrlString(username)}" class="author-wrapper">
       <Avatar src={avatar} />
       <div class="author-info">
-        <div class="author-name">{username}</div>
+        <a href="/a/sportstack/{userNameToUrlString(username)}" class="author-name">{username}</a>
         <div class="publication-date">{date}</div>
       </div>
-    </div>
+    </a>
     <div class="tags-wrapper">
       {#if mobile || tablet}
         <ScrollDataWrapper data={tags_data} let:item={tag}>
@@ -267,6 +268,12 @@
           gap: 12px;
           margin-top: 16px;
           align-items: start;
+
+          &:hover {
+            .author-name {
+              color: var(--primary);
+            }
+          }
         }
 
         &-info {

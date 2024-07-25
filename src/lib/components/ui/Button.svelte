@@ -26,16 +26,18 @@
 
   export let width: number | string = 200,
     height: number | string = 50,
+    classname: string = "",
     href = "";
 
   export let /**
      * @description
      *  button styles: primary | outline
      */ // eslint-disable-next-line no-unused-vars
-    type: "primary" | "outline" = "primary";
+    type: "primary" | "outline" | "secondary" | "primary-outline" | "subtle" =
+      "primary";
 
   const dispatch = createEventDispatcher();
-
+  let hover = false;
   // #endregion ➤ 📌 VARIABLES
 </script>
 
@@ -50,7 +52,16 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<button class="button {type}" { ...$$restProps} on:click={() => dispatch("click")}>
+<button
+  class="button {type} {classname}"
+  {...$$restProps}
+  class:hover
+  on:mouseenter={() => (hover = true)}
+  on:mouseleave={() => (hover = false)}
+  on:touchend={() => (hover = false)}
+  on:mouseup={() => (hover = false)}
+  on:click={() => {dispatch("click"); hover = false;}}
+>
   <slot />
 </button>
 
@@ -83,12 +94,33 @@
   .primary {
     background: var(--primary, #f5620f);
     color: var(--white-day, #fff);
+    border: 1px solid var(--primary) !important;
 
     /* shadow/orange */
     box-shadow: 0px 3px 8px 0px rgba(212, 84, 12, 0.32);
 
-    &:hover {
+    &.hover{
       background: var(--primary-fade, #f5620f);
+    }
+  }
+  .subtle {
+    background: unset;
+    border: 1px solid var(--button-secondary-bg) !important;
+    color: var(--text-color);
+
+    &.hover{
+      color: var(--text-color-second-dark);
+    }
+  }
+
+  .primary-outline {
+    border: 1px solid var(--primary-fade, #f5620f) !important;
+    color: var(--primary);
+    background-color: unset;
+
+    &.hover{
+      border: 1px solid var(--text-color) !important;
+      color: var(--text-color);
     }
   }
 
@@ -97,11 +129,21 @@
     background: transparent;
     border: 1px solid var(--text-color) !important;
     transition: all;
-    transition-duration: 0.6s;
+    transition-duration: 0.2s;
 
-    &:hover {
+    &.hover{
       border: 1px solid var(--primary) !important;
       color: var(--primary);
+    }
+  }
+
+  .secondary {
+    background-color: var(--button-secondary-bg);
+    color: var(--text-color);
+
+    &.hover{
+      background: var(--primary, #f5620f);
+      color: var(--white-day, #fff);
     }
   }
 </style>

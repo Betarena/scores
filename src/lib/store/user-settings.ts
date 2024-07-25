@@ -17,7 +17,7 @@
 
 import { writable } from 'svelte/store';
 
-import { updateButtonOrder, updateFollowing, updateSelectLang } from '$lib/firebase/common.js';
+import { updateButtonOrder, updateDataByKey, updateFollowing, updateSelectLang } from '$lib/firebase/common.js';
 import sessionStore from '$lib/store/session.js';
 import { initSportbookData } from '$lib/utils/geo.js';
 import { initUser, logoutUser } from '$lib/utils/user.js';
@@ -62,6 +62,7 @@ type IDataProp =
   | 'user-investor-balance'
   | 'user-following'
   | "user-buttons-order"
+  | "user-subscriptions"
   ;
 
 enum DataPropEnum
@@ -79,6 +80,7 @@ enum DataPropEnum
   USER_MAIN_BALANCE = 'user-main-balance',
   USER_INVESTOR_BALANCE = 'user-investor-balance',
   USER_FOLLOWING = 'user-following',
+  USER_SUBSCRIPTION = 'user-subscriptions',
   USER_BUTTONS_ORDER = 'user-buttons-order'
 }
 // #endregion ➤ 📌 VARIABLES
@@ -465,26 +467,31 @@ function createLocalStore
               case DataPropEnum.USER_INVESTOR_BALANCE:
                 scores_user.investor_balance = dataPoint as InvestorData;
                 break;
-              case DataPropEnum.USER_FOLLOWING: {
-                const { target, id, follow } = dataPoint as { target: string, id: string | number, follow: boolean };
-                // [TODO] add following key to types in scrores-lib _FIREBASE_.d.ts
-                const following = (scores_user as any).following || {};
-                let target_following = following[target] || [];
-                if (follow)
+              case DataPropEnum.USER_SUBSCRIPTION: {
+                const { target, id, follow } = dataPoint as { target: string, id: string, follow: boolean };
+                if (!id) return
+                const updated_field = updateDataByKey({ obj: scores_user, field: "subscriptions", key: target, add: follow, id })
+                updateFollowing(id, "subscriptions", target as any, follow);
+                if (!(scores_user as any).subscriptions)
                 {
-                  target_following.push(id);
-                  // [TODO] hasura push id to tag.followers
-                } else
-                {
-                  target_following = target_following.filter((tag: number) => tag !== id);
-                  // [TODO] hasura remove id from tag.followers
+                  (scores_user as any).subscriptions = {}
                 }
-                following[target] = target_following;
-                (scores_user as any).following = following;
-                updateFollowing(following);
+                (scores_user as any).subscriptions[target] = updated_field;
                 break;
               }
-              case DataPropEnum.USER_BUTTONS_ORDER:{
+              case DataPropEnum.USER_FOLLOWING: {
+                const { target, id, follow } = dataPoint as { target: string, id: string, follow: boolean };
+                if (!id) return
+                const updated_field = updateDataByKey({ obj: scores_user, field: "following", key: target, id, add: follow })
+                updateFollowing(id, "following", target as any, follow);
+                if (!(scores_user as any).following)
+                {
+                  (scores_user as any).following = {}
+                }
+                (scores_user as any).following[target] = updated_field;
+                break;
+              }
+              case DataPropEnum.USER_BUTTONS_ORDER: {
                 (scores_user as any).buttons_order = dataPoint as string[];
                 updateButtonOrder(dataPoint as string[]);
                 break;
