@@ -116,10 +116,6 @@ body.disable-scroll {
   height: 100%;
 }
 
-#svelte
-{
-  max-height: 100vh;
-}
 a {
   text-decoration: none !important;
   color: inherit;
@@ -3151,13 +3147,14 @@ img.google-aspect-ratio {
   --border-color-light: #4B4B4B;
   --border-color: #4B4B4B;
   --bg-hover-color: #4B4B4B;
-  --tag-bg-color: #4B4B4B;
+  --button-secondary-bg: #4B4B4B;
   --section-border: 1px solid var(--border-color);
   --border: 1px solid var(--border-color);
   --header-border: 1px solid #383838;
   --mobile-menu-bg-color: rgba(var(--bg-color-second-rgb-consts), 0.7);
   --mobile-menu-bg-popup: rgba(var(--bg-color-rgb-consts), 0.8);
   --box-shadow: 0px 0px 50px 0px rgba(0, 0, 0, 0.5);
+  --tag-bg: #4B4B4B;
   --popup-bg-color: #4b4b4b;
   --popup-contrast-color: #3E3E3E;
   --popup-hover-color: #3D3D3D;
@@ -3177,12 +3174,13 @@ img.google-aspect-ratio {
   --border-color-light: #E6E6E6;
   --border-color: #292929;
   --bg-hover-color: #E6E6E6;
-  --tag-bg-color: #E6E6E6;
+  --button-secondary-bg: #F0F0F0;
   --section-border: 1px solid var(--border-color-light);
   --border: 1px solid #CCC;
   --header-border: 1px solid #CCC;
   --mobile-menu-bg-color: rgba(var(--bg-color-rgb-consts), 0.9);
   --box-shadow: 0px 0px 50px 0px rgba(0, 0, 0, 0.15);
+  --tag-bg: #E6E6E6;
   --popup-bg-color: #fff;
   --popup-contrast-color: #E6E6E6;
   --popup-hover-color: #F2F2F2 ;

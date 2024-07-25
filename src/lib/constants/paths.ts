@@ -67,6 +67,28 @@ export const
    *  📣 Target `path` for **personalized content  page**.
    */
   routeIdContent = '/(authors)/a/content',
+
+  /**
+   * @description
+   *  📣 Target `path` for **Author profile**.
+   */
+  routeIdAuthorProfile = '/(authors)/a/user/[username]',
+  /**
+   * @description
+   *  📣 Target `path` for **Author subscribers**.
+   */
+  routeIdAuthorSubscribers = '/(authors)/a/user/[username]/[type=subscribers]',
+
+  /**
+   * @description
+   *  📣 Target `path` for **Sportstack view**.
+   */
+  routeIdSportstack = '/(authors)/a/sportstack/[name]',
+
+/**
+ * @description
+ *  📣 Target `path` for **scores page**.
+ */
   routeIdScores = '/(scores)/[[lang=lang]]/scores',
  /**
    * @description

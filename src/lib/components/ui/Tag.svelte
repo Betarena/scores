@@ -10,28 +10,25 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
 
+  // #region ➤ 📌 VARIABLES
 
-// #region ➤ 📌 VARIABLES
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
-// ╭────────────────────────────────────────────────────────────────────────╮
-// │ NOTE:                                                                  │
-// │ Please add inside 'this' region the 'variables' that are to be         │
-// │ and are expected to be used by 'this' .svelte file / component.        │
-// │ IMPORTANT                                                              │
-// │ Please, structure the imports as follows:                              │
-// │ 1. export const / let [..]                                             │
-// │ 2. const [..]                                                          │
-// │ 3. let [..]                                                            │
-// │ 4. $: [..]                                                             │
-// ╰────────────────────────────────────────────────────────────────────────╯
-
-
-export let
-  /**
-   * @description
-   *  📣 button state
-   */
-  active = false
+  export let /**
+     * @description
+     *  📣 button state
+     */
+    active = false;
 
   /**
    * @description
@@ -39,10 +36,7 @@ export let
    */
   const dispatch = createEventDispatcher();
 
-
-
-// #endregion ➤ 📌 VARIABLES
-
+  // #endregion ➤ 📌 VARIABLES
 </script>
 
 <!--
@@ -56,13 +50,16 @@ export let
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-
-<div class="tag-pill" { ...$$restProps} class:active on:click={() => dispatch("click")}>
+<div
+  class="tag-pill"
+  {...$$restProps}
+  class:active
+  on:click={() => dispatch("click")}
+>
   <span class="w-400 color-black-2 no-wrap">
     <slot />
   </span>
 </div>
-
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -75,28 +72,26 @@ export let
 -->
 
 <style lang="scss">
+  .tag-pill {
+    padding: 3px 12px;
+    width: max-content;
+    border-radius: 100px;
+    color: var(--text-color);
+    background-color: var(--tag-bg);
+    font-size: var(--text-button-size);
+    transition: all;
+    transition-duration: 0.4s;
+    cursor: pointer;
 
-.tag-pill {
-  padding: 3px 12px;
-  width: max-content;
-  border-radius: 100px;
-  color: var(--text-color);
-  background-color: var(--tag-bg-color);
-  font-size: var(--text-button-size);
-  transition: all;
-  transition-duration: 0.4s;
-  cursor: pointer;
-
-  &:hover, .active {
-    /* 🎨 style */
-    background-color: var(--primary) !important;
-
-    span
-    {
+    &:hover,
+    .active {
       /* 🎨 style */
-      color: var(--white) !important;
+      background-color: var(--primary) !important;
+
+      span {
+        /* 🎨 style */
+        color: var(--white) !important;
+      }
     }
   }
-}
-
 </style>

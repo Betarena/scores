@@ -30,7 +30,6 @@
   import BackButton from "$lib/components/ui/BackButton.svelte";
   import Avatar from "$lib/components/ui/Avatar.svelte";
   import { createEventDispatcher } from "svelte";
-  import UserDropdownPopup from "./UserDropdownPopup.svelte";
 
   // #endregion ➤ 📦 Package Imports
   // #region ➤ 📌 VARIABLES

@@ -49,12 +49,12 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<div class="avatar-wrapper" on:click={() => dispatch("click")}>
+<div class="avatar-wrapper"  on:click={() => dispatch("click")} style="height: {size}px; width: {size}px; {$$restProps.wrapStyle}">
   {#if src}
     <div
       class="avatar-circle"
       {...$$restProps}
-      style="width: {size}px; height: {size}px;  background-image: url({src});"
+      style="width: {size}px; height: {size}px;  background-image: url({src}); "
     />
   {:else if isLoogedIn}
     <DefaultAvatar {size} />
@@ -74,6 +74,10 @@
 -->
 
 <style lang="scss">
+  .avatar-wrapper {
+    border-radius: 50%;
+    overflow: hidden;
+  }
   .avatar-circle {
     width: 38px;
     height: 38px;

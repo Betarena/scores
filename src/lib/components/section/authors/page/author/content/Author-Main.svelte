@@ -59,6 +59,7 @@
   import type { IPageAuhtorArticleDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
   import type { IPageArticleTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.articles.js';
   import { readingTime } from '../../helpers.js';
+  import { userNameToUrlString } from '../../../common_ui/helpers.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -411,11 +412,13 @@
     │ > article author box
     ╰─────
     -->
-    <div
+    <a
+      href="/a/sportstack/{userNameToUrlString(widgetData.author?.data?.username)}"
       class=
       "
       row-space-start
       m-b-24
+      author-link
       "
       style=
       "
@@ -470,7 +473,8 @@
           │ > article author name
           ╰─────
           -->
-          <p
+          <a
+            href="/a/sportstack/{userNameToUrlString(widgetData.author?.data?.username)}"
             class=
             "
             s-14
@@ -478,10 +482,12 @@
             color-black-2
             m-r-8
             no-wrap
+
+            author-name
             "
           >
             {widgetData.author.data?.username ?? ''}
-          </p>
+          </a>
 
           <!--
           ╭─────
@@ -723,7 +729,7 @@
 
       </div>
 
-    </div>
+    </a>
   </div>
   <!--
   ╭─────
@@ -777,6 +783,11 @@
 
   div#author⮕w⮕author-content⮕main
   {
+    .author-link:hover {
+      .author-name {
+        color: var(--primary) !important;
+      }
+    }
     &.reverse {
       padding-top: 12px;
     }

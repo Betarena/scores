@@ -13,12 +13,12 @@
 // #region ➤ 📦 Package Imports
 
 import { dev } from '$app/environment';
-import { invalidateAll } from '$app/navigation';
+import { invalidate, invalidateAll } from '$app/navigation';
 import { error, redirect, type Page } from '@sveltejs/kit';
 import LZString from 'lz-string';
 
 import { get } from '$lib/api/utils.js';
-import { routeIdContent, routeIdPageAuthors, routeIdPageCompetition, routeIdPageCompetitionLobby, routeIdPageFixture, routeIdPageLeague, routeIdPagePlayer, routeIdPageProfile, routeIdPageTags } from '$lib/constants/paths.js';
+import { routeIdAuthorProfile, routeIdAuthorSubscribers, routeIdContent, routeIdPageAuthors, routeIdPageCompetition, routeIdPageCompetitionLobby, routeIdPageFixture, routeIdPageLeague, routeIdPagePlayer, routeIdPageProfile, routeIdPageTags, routeIdSportstack } from '$lib/constants/paths.js';
 import sessionStore from '$lib/store/session.js';
 import userBetarenaSettings from '$lib/store/user-settings.js';
 import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common';
@@ -192,8 +192,28 @@ export async function selectLanguage
 
     return;
   }
-  case routeIdPageTags:
-  case routeIdContent:
+    case routeIdContent:
+    case routeIdAuthorProfile:
+    case routeIdAuthorSubscribers:
+    case routeIdSportstack:
+      //[🐞]
+      dlogv2
+        (
+          '🚏 checkpoint ➤ selectLanguage(..) [x2]',
+          [
+          ],
+          true
+        );
+
+      sessionStore.updateData
+        (
+          [
+            ['lang', lang]
+          ]
+        );
+      invalidate("author:translations")
+      return
+    case routeIdPageTags:
 
     //[🐞]
     dlogv2
@@ -210,8 +230,7 @@ export async function selectLanguage
         ['lang', lang]
       ]
     );
-
-    invalidateAll();
+      invalidateAll();
 
     return;
   case routeIdPageAuthors:
@@ -400,7 +419,8 @@ export async function promiseValidUrlCheck
         competitionMainUrl?: string,
         competitionUrl?: string,
         authorArticleUrl?: string,
-        authorTagsUrl?: string
+      authorTagsUrl?: string,
+      authorUrl?: string,
       }
 ): Promise<boolean>
 {
@@ -448,6 +468,11 @@ export async function promiseValidUrlCheck
     // │ CHECK :|: for 'author (tags)'.
     // ╰─────
     || (!opts.langUrl && !opts.sportUrl && !opts.countryUrl && !opts.leagueUrl && !opts.fixtureUrl && !opts.playerUrl && !opts.competitionMainUrl && !opts.competitionUrl && !opts.authorArticleUrl && opts.authorTagsUrl)
+    // ╭─────
+    // │ CHECK :|: for 'author (profile)'.
+    // ╰─────
+    || opts.authorUrl
+
     ;
 
   // ╭─────
@@ -466,7 +491,9 @@ export async function promiseValidUrlCheck
   if (opts.competitionUrl) queryStr += `&competitionUrl=${opts.competitionUrl}`;
   if (opts.authorArticleUrl) queryStr += `?authorArticleUrl=/${opts.authorArticleUrl}`;
   if (opts.authorTagsUrl) queryStr += `?authorTagUrl=/${opts.authorTagsUrl}`;
-
+  if (opts.authorUrl) queryStr += `?authorUrl=/${opts.authorUrl}`;
+  console.warn("Validate URL: ", JSON.stringify(opts))
+  console.trace(opts)
   // [🐞]
   dlogv2
   (
