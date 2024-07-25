@@ -1261,6 +1261,7 @@ MAIN SETTINGS WIDGET
     resize: none;
     font-family: Arial, Helvetica, sans-serif;
     position: relative;
+    white-space: normal !important;
   }
   .textarea-wrapper {
     position: relative;
