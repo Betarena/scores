@@ -1250,7 +1250,7 @@ MAIN SETTINGS WIDGET
 		box-sizing: border-box;
 		border-radius: 8px;
 		padding: 20px 12px;
-		width: -webkit-fill-available;
+		width: 100%;
 		height: 44px;
 		outline: none;
 		font-size: 14px;
@@ -1293,7 +1293,7 @@ MAIN SETTINGS WIDGET
 
 	button
   {
-		width: -webkit-fill-available;
+		width: 100%;
 	}
 
 	div#settings-hr-divider
