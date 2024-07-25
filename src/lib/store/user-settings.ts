@@ -47,7 +47,7 @@ const
   }
   ;
 
-type IDataProp =
+export type IDataProp =
   | 'lang'
   | 'lang-user'
   | 'geo-bookmaker'
@@ -55,6 +55,8 @@ type IDataProp =
   | 'geoJs'
   | 'user-avatar'
   | 'user-name'
+  | 'user-name2'
+  | 'user-about'
   | 'user-wallet'
   | 'user-object'
   | 'user-scores-data'
@@ -74,6 +76,8 @@ enum DataPropEnum
   GEO_JS = 'geoJs',
   USER_AVATAR = 'user-avatar',
   USER_NAME = 'user-name',
+  USER_NAME2 = 'user-name2',
+  USER_ABOUT = 'user-about',
   USER_WALLET = 'user-wallet',
   USER_OBJECT = 'user-object',
   USER_SCORES_DATA = 'user-scores-data',
@@ -452,6 +456,12 @@ function createLocalStore
                 break;
               case DataPropEnum.USER_NAME:
                 scores_user.username = dataPoint;
+                break;
+              case DataPropEnum.USER_NAME2:
+                scores_user.name = dataPoint;
+                break;
+              case DataPropEnum.USER_ABOUT:
+                scores_user.about = dataPoint;
                 break;
               case DataPropEnum.USER_WALLET:
                 scores_user.web3_wallet_addr = dataPoint;
