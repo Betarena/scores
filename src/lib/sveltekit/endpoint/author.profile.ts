@@ -3,16 +3,11 @@
 // │ :|: Author Content Data Endpoint                                 │
 // ╰──────────────────────────────────────────────────────────────────╯
 
-// import { checkNull } from '$lib/utils/miscellenous.js';
-// import { getAuthorArticleTranslation } from '@betarena/scores-lib/dist/functions/v8/authors.articles.js';
 import { _GraphQL } from '@betarena/scores-lib/dist/classes/_graphql.js';
-import { entryPageAuthorDataAndSeo, entryTargetDataAuthorHome, entryTargetDataAuthorProfile } from '@betarena/scores-lib/dist/functions/v8/main.preload.authors.js'
+import { entryTargetDataAuthorProfile } from '@betarena/scores-lib/dist/functions/v8/main.preload.authors.js'
 import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
-// import type { IArticleTranslation } from '@betarena/scores-lib/types/types.authors.articles.js';
-import type { IPageAuthorProfileData, IPageAuthorTagDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
+import type { IPageAuthorProfileData } from '@betarena/scores-lib/types/v8/preload.authors.js';
 import { json, type RequestEvent } from '@sveltejs/kit';
-import type { AuthorsSEODetailsDataJSONSchema } from '@betarena/scores-lib/types/v8/_HASURA-0.js';
-import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.betarena-user.js';
 
 // ╭──────────────────────────────────────────────────────────────────╮
 // │ 🛠️ MAIN METHODS                                                  │
@@ -49,8 +44,7 @@ export async function main
           (
             page,
             uid
-          ),
-          loadType = 'HASURA'
+        )
           ;
         // ▓ [🐞]
 

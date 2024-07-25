@@ -126,7 +126,6 @@
     let ids = rawData[type].slice(offset, to);
     if (userInList)
       ids = ids.filter((id) => id !== user?.firebase_user_data.uid);
-    if (!ids.length) return;
     reloading = true;
     loading = !reload;
 
@@ -183,7 +182,6 @@
     return;
   }
 
-  $: console.log("TRANSLATIONS: ", translations)
 </script>
 
 <!--

@@ -26,7 +26,7 @@ function recursiveNormalize(obj, source)
     const normalizedObject = {};
     for (const key in obj)
     {
-      if (obj.hasOwnProperty(key))
+      if (Object.prototype.hasOwnProperty.call(obj, key))
       {
         normalizedObject[key] = recursiveNormalize(obj[key], source);
       }

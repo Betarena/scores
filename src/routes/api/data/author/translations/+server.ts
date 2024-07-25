@@ -18,7 +18,6 @@
 
 import dotenv from 'dotenv';
 
-import { main } from '$lib/sveltekit/endpoint/author.profile.js';
 import { json } from '@sveltejs/kit';
 import { entryTargetDataAuthorProfileTranslation } from '@betarena/scores-lib/dist/functions/v8/authors.profile.js';
 import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';

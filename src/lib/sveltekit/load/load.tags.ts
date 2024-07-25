@@ -12,8 +12,6 @@
 
 // #region ➤ 📦 Package Imports
 
-import type { ServerLoadEvent } from '@sveltejs/kit';
-
 import { ERROR_CODE_INVALID, dlogv2 } from '$lib/utils/debug.js';
 import { preloadExitLogic, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/navigation.js';
 

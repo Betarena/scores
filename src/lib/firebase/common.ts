@@ -211,19 +211,19 @@ export async function updateSelectLang
      * @description
      * 📝 Data for `page`
      */
-    page = sessionStore.extract<Page>('page')!,
+    page = sessionStore.extract<Page>('page'),
     /**
      * @description
      * 📝 Conditional logic bundle simplification
      */
     if_M_0
-      = !checkNull(page.error)
-      || checkNull(page.route.id)
+      = !checkNull(page?.error)
+      || checkNull(page?.route.id)
       || !lang
       || !uid
     ;
 
-  if (if_M_0) return;
+  if (if_M_0 || !page) return;
 
   // [🐞]
   dlogv2
@@ -1113,7 +1113,7 @@ export async function updateFollowing
   const current_target: string[] = updateDataByKey({ obj: user, field, key: target, add: follow, id: target_id });
   if (target === "authors")
   {
-    const d = await BetarenaUserHelper.updateUsersFollowers({
+    await BetarenaUserHelper.updateUsersFollowers({
       query: {},
       body: {
 
@@ -1141,6 +1141,80 @@ export async function updateFollowing
       userRef,
       data
   );
+  return;
+}
+
+/**
+ * @author
+ *  @izobov
+ * @summary
+ *  🟦 HELPER
+ * @description
+ *   Update `user` platform subscriptions.
+ * @param { {[key:string]: (string | number)[]} } subscriptions
+ *  💠 **[required]** Following object
+ * @returns { Promise < void > }
+ */
+export async function updateSubscriptions
+  (
+    subscriptions: { [key: string]: (string | number)[] }
+  ): Promise<void>
+{
+  const
+    /**
+     * @description
+    * 📝 Data point
+    */
+    uid = userBetarenaSettings.extract('uid') as string | undefined | null,
+    user = userBetarenaSettings.extract('user'),
+    /**
+     * @description
+     * 📝 Data for `page`
+     */
+    page = sessionStore.extract<Page>('page') as Page,
+    /**
+     * @description
+     * 📝 Conditional logic bundle simplification
+     */
+    if_M_0
+      = !checkNull(page.error)
+      || checkNull(page.route.id)
+      || !subscriptions
+      || !uid
+    ;
+
+  if (if_M_0) return;
+
+  // [🐞]
+  dlogv2
+    (
+      '🚏 checkpoint ➤ updateSubscriptions(..)',
+      [
+        `🔹 [var] ➤ opts.isPageError :|: ${page.error}`,
+        `🔹 [var] ➤ opts.routeId :|: ${page.route.id}`,
+        `🔹 [var] ➤ following :|: ${subscriptions}`,
+        `🔹 [var] ➤ uid :|: ${uid}`,
+      ],
+      true
+    );
+
+  const
+    userRef = doc
+      (
+        db_firestore,
+        'betarena_users',
+        uid,
+      )
+    ;
+
+  await updateDoc
+    (
+      userRef,
+      {
+        subscriptions
+      }
+    );
+
   return;
 }
 

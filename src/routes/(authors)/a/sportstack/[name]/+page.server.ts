@@ -13,7 +13,6 @@
 // #region ➤ 📦 Package Imports
 
 import { main } from '$lib/sveltekit/load/load.sportstack.js';
-import { dlogv2 } from '$lib/utils/debug.js';
 
 import type { ServerLoadEvent } from '@sveltejs/kit';
 
@@ -34,7 +33,7 @@ export async function load
     name = ""
   } = params;
 
-  return main
+  return await main
     ({
       name,
       fetch,
