@@ -45,7 +45,7 @@
   import sessionStore from "$lib/store/session.js";
   import userBetarenaSettings from "$lib/store/user-settings.js";
   import { generateUrlCompetitions } from "$lib/utils/string";
-  import { dndzone } from "svelte-dnd-action";
+  import { dndzone, dragHandle } from "svelte-dnd-action";
 
   import StatisticIcon from "./assets/statisticicon.svelte";
   import DocumentsIcon from "./assets/documentsicon.svelte";
@@ -105,7 +105,7 @@
   $: ({ profile_photo, buttons_order, lang } = {
     ...$userBetarenaSettings.user?.scores_user_data,
   });
-  $: ({user} = $userBetarenaSettings);
+  $: ({ user } = $userBetarenaSettings);
   $: isAuth = !!user;
   $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
   $: navButtonOrderList = [
@@ -187,7 +187,7 @@
     dragStart = false;
   }
 
-  function buttonClick(e: MouseEvent, id: string) {
+  function buttonClick(id: string) {
     switch (id) {
       case "profile":
         if (!isAuth) {
@@ -238,12 +238,12 @@
         <svelte:component this={icon} type={active ? "solid" : "outline"} />
       </a>
     {:else}
-      <div class="item" on:click={(e) => buttonClick(e, id)}>
+      <div class="item" on:click={() => buttonClick(id)}>
         <svelte:component this={icon} />
       </div>
     {/if}
   {/each}
-  <div class="item" on:click={(e) => buttonClick(e, "profile")}>
+  <div class="item" on:click={() => buttonClick("profile")}>
     {#if !isAuth}
       <UserIcon />
     {:else}
@@ -261,7 +261,7 @@
     style="margin-top: 1px;"
     class:rotate={showPopup}
     class:active={showPopup}
-    on:click={(e) => buttonClick(e, "more")}
+    on:click={(e) => buttonClick("more")}
   >
     <MenuSquareDotsIcon type={showPopup ? "solid" : "outline"} />
   </div>
@@ -281,17 +281,32 @@
         on:consider={handleDndConsider}
         on:finalize={handleDndFinalize}
       >
-        {#each navButtonOrderList as { icon, label, id } (id)}
+        {#each navButtonOrderList as { icon, label, id, url } (id)}
           <div
             class="list-item"
             style="gap: 10px; outline:none"
             animate:flip={{ duration: 300 }}
           >
-            <div style="width: 24px;">
-              <svelte:component this={icon} />
-            </div>
-            <span class="label" style="flex-grow: 1;">{label}</span>
-            <div class="drag-icon" style="width: 24px;">
+            <a href={url} class="mobile-dnd-list-item" style="
+              gap: 10px;
+            flex-grow: 1;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: start;
+
+            ">
+              <div style="width: 24px;">
+                <svelte:component this={icon} />
+              </div>
+              <span class="label" style="flex-grow: 1;">{label}</span>
+            </a>
+            <div
+              use:dragHandle
+              aria-label="drag-handle for {label}"
+              class="drag-icon"
+              style="width: 24px;"
+            >
               <Dragicon />
             </div>
           </div>
@@ -410,6 +425,15 @@
           z-index: 1000;
           padding: 8px 12px;
           gap: 10px;
+
+          .mobile-dnd-list-item {
+            gap: 10px;
+            flex-grow: 1;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: start;
+          }
           .drag-item {
             width: 24px;
           }
