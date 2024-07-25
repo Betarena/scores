@@ -725,6 +725,8 @@ export function preloadRedirect
  *  💠 **[required]** `List` of urls to fetch.
  * @param { fetch } fetch
  *  💠 **[required]** `fetch` instance.
+ * @param { "array" | "single"  } returnType
+ *  💠 **[optional]** `type` of returned response.
  * @returns { Promise < any[] > }
  *  📤 `List` of data loaded
  */
@@ -732,6 +734,7 @@ export async function promiseUrlsPreload
 (
   endpoints: string[],
   fetch: any,
+  returnType: "array" | "single" = "array"
 ): Promise<any[]>
 {
   const
@@ -793,5 +796,6 @@ export async function promiseUrlsPreload
     endpoints,
   );
 
-  return data;
+
+  return returnType === "single" ? data[0] : data;
 }

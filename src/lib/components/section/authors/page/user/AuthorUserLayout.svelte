@@ -44,6 +44,7 @@
 
   import SvelteSeo from "svelte-seo";
   import AuthorUserWidget from "./articles/AuthorUserWidget.svelte";
+  import { normalizeSeo } from "$lib/utils/seo.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -64,8 +65,9 @@
   const /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
     // eslint-disable-next-line no-unused-vars
     CNAME: string = "author-user";
-
-  $: pageSeo = $page.data.seoTemplate;
+  $: ({
+    section_data: { articles, author },
+  } = $page.data);
   $: ({ globalState, viewportType } = $sessionStore);
   $: isPWA = globalState.has("IsPWA");
   // #endregion ➤ 📌 VARIABLES
@@ -81,41 +83,27 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
-{#if pageSeo}
+{#await Promise.all([articles, author]) then [art, auth]}
+{@const normalisedSeo = normalizeSeo(art?.seoTamplate, { ...auth, url: $page.url.href })}
   <SvelteSeo
-    title={pageSeo.main_data.title}
-    description={pageSeo.main_data.description}
-    keywords={pageSeo.main_data.keywords}
-    noindex=
-    {
-      tryCatch
-      (
-        () =>
-        {
-          return JSON.parse(pageSeo.main_data.noindex);
-        }
-      ) ?? false
-    }
-    nofollow=
-    {
-      tryCatch
-      (
-        () =>
-        {
-          return JSON.parse(pageSeo.main_data.nofollow);
-        }
-      ) ?? false
-    }
+    title={normalisedSeo.main_data.title}
+    description={normalisedSeo.main_data.description}
+    keywords={normalisedSeo.main_data.keywords}
+    noindex={tryCatch(() => {
+      return JSON.parse(normalisedSeo.main_data.noindex);
+    }) ?? false}
+    nofollow={tryCatch(() => {
+      return JSON.parse(normalisedSeo.main_data.nofollow);
+    }) ?? false}
     canonical={$page.url.href}
-    twitter={pageSeo.twitter_card}
-    openGraph={pageSeo.opengraph}
+    twitter={normalisedSeo.twitter_card}
+    openGraph={normalisedSeo.opengraph}
   />
-{/if}
+{/await}
 
 <section id={CNAME} class={viewportType} class:pwa={isPWA}>
   <div class="main-content {viewportType}" class:pwa={isPWA}>
-    <AuthorUserWidget />
+    <AuthorUserWidget data={$page.data.section_data} />
   </div>
 </section>
 
