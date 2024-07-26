@@ -303,7 +303,7 @@
         </Button>
       {/if}
       {#if viewportType !== "desktop"}
-         <ShareButton shareText={$page.data.seoTemplate?.main_data?.description} />
+         <ShareButton shareText={$page.data.seoTemplate?.main_data?.description} img={profile_photo} />
       {/if}
     </div>
     {#if highlited_sportstack}
