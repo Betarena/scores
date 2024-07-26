@@ -30,7 +30,7 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let users: (BetarenaUser | IBetarenaUser)[] = [],
+  export let users: Map<string, IBetarenaUser> = new Map(),
     translations: IPageAuthorTranslationDataFinal,
     loading = false,
     emptyMessage = "";
@@ -57,7 +57,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 <SeoBox>
-  {#each users as user}
+  {#each [...users] as [uid, user] (uid) }
     <h2>{user?.name || user.username}</h2>
     <a href={`${$page.url.origin}/a/user/${user?.usernameLower}`}
       >{user.usernameLower}</a
@@ -66,13 +66,13 @@
 </SeoBox>
 
 <div class="wrapper {viewportType}" id={CNAME}>
-  {#if !users.length && emptyMessage && !loading}
+  {#if !users.size && emptyMessage && !loading}
     <div class="empty">
       {emptyMessage}
     </div>
   {:else}
     <div class="list-wrapper">
-      {#each users as user (user.uid)}
+      {#each [...users] as [uid, user] (uid)}
         <ListUserItem {user} {translations} />
       {/each}
     </div>

@@ -49,7 +49,6 @@
   import type {
     IPageAuthorAuthorData,
     IPageAuthorSportstackData,
-    IPageAuthorTagData,
   } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
   import {
@@ -65,7 +64,6 @@
   import type { IBetarenaUser } from "@betarena/scores-lib/types/_FIREBASE_.js";
   import SportstackHeaderLoader from "./SportstackHeaderLoader.svelte";
   import SeoBox from "$lib/components/SEO-Box.svelte";
-  import ArticlesSeo from "../../../common_ui/articles/ArticlesSeo.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -83,7 +81,7 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let widgetData: IPageAuthorAuthorData,
+  export let widgetData: IPageAuthorSportstackData,
     translations: IPageAuthorTranslationDataFinal;
   $: ({ globalState, viewportType } = $sessionStore);
   $: isPWA = globalState.has("IsPWA");
@@ -94,14 +92,14 @@
 
   $: noData =
     (currentView === "posts" && !mapArticlesMod.size && !isLoadingArticles) ||
-    (currentView === "people" && !people.length && !isLoadingPeople);
+    (currentView === "people" && !people.size && !isLoadingPeople);
 
   const BetarenaUser = new Betarena_User_Class();
 
   let peopleIds: string[] = [];
 
   let prevSportstackId = null;
-  let people: IBetarenaUser[] = [];
+  let people = new Map<string, IBetarenaUser>();
   let initLoad = false;
 
   let mapArticles = new Map();
@@ -191,7 +189,7 @@
       sportstackData[1].uid,
       ...(sportstackData[1]?.data.people || []).reverse(),
     ];
-    people = [];
+    people = new Map();
     initLoad = true;
     loadPeople().then(() => {
       initLoad = false;
@@ -353,7 +351,11 @@
       })
     ).success;
     isLoadingPeople = false;
-    people = [...people, ...data];
+    const nextPeople = new Map();
+    data.forEach((user) => {
+      nextPeople.set(user.uid, user);
+    });
+    people = new Map([...people, ...nextPeople]);
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -374,11 +376,11 @@
   <h1>{sportstackData[1].data.username}</h1>
   <b>{sportstackData[1].data.about}</b>
   {#each widgetData.mapArticle ?? [] as [_id, article]}
-  <h2>{article?.data?.title}</h2>
-  <a href={`${$page.url.origin}/a/${article?.permalink}`}
-    >{article?.data?.title}</a
-  >
-{/each}
+    <h2>{article?.data?.title}</h2>
+    <a href={`${$page.url.origin}/a/${article?.permalink}`}
+      >{article?.data?.title}</a
+    >
+  {/each}
 </SeoBox>
 
 <svelte:window on:scroll={scrollHandler} />
@@ -430,14 +432,14 @@
 ╰─────
 -->
       <FollowersList
-        users={initLoad ? [] : people}
+        users={initLoad ? new Map() : people}
         {translations}
         loading={isLoadingPeople || initLoad}
         emptyMessage="No people yet"
       />
     {/if}
 
-    {#if !isPWA && ((currentView === "posts" && mapArticlesMod.size) || (currentView === "people" && 0)) && !initLoad}
+    {#if !isPWA && ((currentView === "posts" && mapArticlesMod.size < widgetData?.totalArticlesCount) || (currentView === "people" && people.size < peopleIds?.length)) && !initLoad}
       <div class="load-more">
         <Button type="outline" on:click={loadMore}>
           <TranslationText text={translations.view_more} fallback="View More" />

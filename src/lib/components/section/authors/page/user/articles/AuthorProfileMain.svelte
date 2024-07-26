@@ -299,6 +299,8 @@
     return;
   }
 
+  $: console.log("DATA: ", widgetData)
+
   // #endregion ➤ 🛠️ METHODS
 </script>
 
@@ -382,7 +384,7 @@
       />
     {/if}
 
-    {#if !isPWA && mapArticlesMod.size && !isLoadingArticles && !isLoadingSubscribers}
+    {#if !isPWA && mapArticlesMod.size < widgetData?.totalArticlesCount && !isLoadingArticles && !isLoadingSubscribers}
       <div class="load-more">
         <Button type="outline" on:click={loadMore}>
           <TranslationText text={translations.view_more} fallback="View More" />
