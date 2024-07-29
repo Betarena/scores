@@ -503,7 +503,7 @@
   <div
     class="listArticlesMod"
   >
-    {#each [...mapArticlesMod.entries()] as [,article]}
+    {#each [...mapArticlesMod.entries()] as [id,article] (id)}
       <ArticleCard
         {mobile}
         {article}

@@ -52,7 +52,7 @@
     expanded = false,
     prevDataIds = ""
     ;
-  $: reset(data);
+  $: reset(wrapNode, data);
   const visibleData = writable({
     vd: [...data] as any[],
     countOfNotVisibleData: 0,
@@ -78,12 +78,12 @@
   // │ 2. async function (..)                                                 │
   // ╰───
 
-  function reset(data) {
-    if (data.map((d) => d.id).join(",") === prevDataIds) return;
+  function reset(node, data) {
+    if (!node || data.map((d) => d.id).join(",") === prevDataIds) return;
     prevDataIds = data.map((d) => d.id).join(",");
     visibleData.set({ vd: [...data], countOfNotVisibleData: 0 });
     requestAnimationFrame(() => {
-      calculateBreakpoints(wrapNode, data);
+      calculateBreakpoints(node, data);
       resize();
     })
   }
@@ -115,14 +115,17 @@
   function calculateBreakpoints(node, data) {
     let totalWidth = 0;
     let maxVisibleItems = 0;
-    const extraSpace = 50;
     const gap = 4;
 
     for (let i = 0; i < data.length; i++) {
       const itemWidth = getItemWidth(node, i);
-      const nextItemWidth = totalWidth + itemWidth + extraSpace;
+      let nextItemWidth = totalWidth + itemWidth;
+      if (i !== data.length - 1) {
+        const hidden = data.length - i - 1;
+        nextItemWidth += hidden > 9 ? 50 : 40;
+      }
       totalWidth += itemWidth + gap;
-      breakpointsMap.set(nextItemWidth,  i);
+      breakpointsMap.set(nextItemWidth,  i + 1);
     }
     return maxVisibleItems;
   }
