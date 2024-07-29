@@ -25,7 +25,6 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   import { page } from "$app/stores";
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
-  import { logoutUser } from "$lib/utils/user";
   import sessionStore from "$lib/store/session.js";
   import userBetarenaSettings from "$lib/store/user-settings.js";
   import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
@@ -38,7 +37,6 @@
   import { scoresNavbarStore } from "./_store.js";
   import HeaderNavigation from "./HeaderNavigation.svelte";
   import { promiseUrlsPreload } from "$lib/utils/navigation.js";
-  import { createEventDispatcher } from "svelte";
   import {
     routeIdAuthorProfile,
     routeIdAuthorSubscribers,
