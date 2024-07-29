@@ -658,7 +658,7 @@
     class:tablet={VIEWPORT_TABLET_INIT[1]}
   >
     <slot />
-    {#if !ispwa}
+    {#if !ispwa || $page.route.id  === routeIdPageProfile }
       <FooterRedisign
         mobile={VIEWPORT_MOBILE_INIT[1]}
         tablet={VIEWPORT_TABLET_INIT[1]}
