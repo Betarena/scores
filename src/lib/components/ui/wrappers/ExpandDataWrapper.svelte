@@ -8,6 +8,27 @@
 -->
 
 <script lang="ts">
+  // #region ➤ 📦 Package Imports
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  import { onMount, afterUpdate, tick } from "svelte";
+  import { writable } from "svelte/store";
+  import type { IPageAuthorTagData } from "@betarena/scores-lib/types/v8/preload.authors.js";
+
+  // #endregion ➤ 📦 Package Imports
+
   // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -21,24 +42,30 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  export let data = [] as any[];
+  export let data = [] as IPageAuthorTagData[];
   let /**
      * @description variables to controll tags visability
      */
     wrapWidth,
     wrapNode,
-    prevWidth = 0,
     countOfNotVisibleData = 0,
-    expanded = false;
-  $: visibleData = [...data] as any[];
+    expanded = false,
+    prevDataIds = ""
+    ;
+  $: reset(data);
+  const visibleData = writable({
+    vd: [...data] as any[],
+    countOfNotVisibleData: 0,
+  });
+
+  const breakpointsMap = new Map<number, any>();
 
   const /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
      */ // eslint-disable-next-line no-unused-vars
     CNAME: string = "ui⮕expand-data-wrapper";
-  $: resize(wrapWidth, wrapNode, data);
-
+  // #endregion ➤ 📌 VARIABLES
   // #region ➤ 🛠️ METHODS
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -50,42 +77,71 @@
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
   // ╰───
-  // #endregion ➤ 🛠️ METHODS
-  let debounds;
 
-  function resize(width: number, node: HTMLDivElement, data: any[]) {
-    if (!width || !node) return;
-    const scrollWidth = node.scrollWidth;
-    if (width < scrollWidth) {
-      visibleData.pop();
-      visibleData = [...visibleData];
-    } else if (width > prevWidth) {
-      const lastVisible = visibleData.at(-1);
-      const i = data.indexOf(lastVisible);
-      const addData = data[i + 1];
-      if (addData && !visibleData?.find((t) => t.id === addData.id))
-        visibleData = [...data, addData];
+  function reset(data) {
+    if (data.map((d) => d.id).join(",") === prevDataIds) return;
+    prevDataIds = data.map((d) => d.id).join(",");
+    visibleData.set({ vd: [...data], countOfNotVisibleData: 0 });
+    requestAnimationFrame(() => {
+      calculateBreakpoints(wrapNode, data);
+      resize();
+    })
+  }
+  function resize() {
+    if (!wrapNode || !wrapWidth || expanded || !breakpointsMap.set) return;
+    const breakpoints = Array.from(breakpointsMap.keys());
+    const closestBreakpoint = breakpoints.find((bp, i) => wrapWidth >= bp && (i + 1 === breakpoints.length || wrapWidth < breakpoints[i + 1]));
+    if (!closestBreakpoint || !breakpointsMap.has(closestBreakpoint)) {
+      return;
     }
+    const index = breakpointsMap.get(closestBreakpoint);
+    if (index === $visibleData.vd.length) return;
+    const vd = data.slice(0, index);
+    const countOfNotVisibleData = data.length - vd.length;
+    visibleData.set({ vd, countOfNotVisibleData });
+  }
 
-    prevWidth = width;
-    countOfNotVisibleData = data.length - visibleData.length;
-    if (countOfNotVisibleData < 0) countOfNotVisibleData = 0;
-    if (debounds) clearTimeout(debounds);
 
-    setTimeout(() => {
-      debounds = null;
-      if (width === wrapWidth && width < node.scrollWidth)
-        resize(width, node, data);
-    }, 50);
+  function getItemWidth(node, index) {
+    const item = node.children[index];
+    return item ? item.offsetWidth : 0;
   }
 
   function expandTags() {
     expanded = true;
-    countOfNotVisibleData = 0;
-    visibleData = [...data];
+    visibleData.set({ vd: data, countOfNotVisibleData: 0 });
   }
 
-  // #endregion ➤ 📌 VARIABLES
+  function calculateBreakpoints(node, data) {
+    let totalWidth = 0;
+    let maxVisibleItems = 0;
+    const extraSpace = 50;
+    const gap = 4;
+
+    for (let i = 0; i < data.length; i++) {
+      const itemWidth = getItemWidth(node, i);
+      const nextItemWidth = totalWidth + itemWidth + extraSpace;
+      totalWidth += itemWidth + gap;
+      breakpointsMap.set(nextItemWidth,  i);
+    }
+    return maxVisibleItems;
+  }
+
+  // #endregion ➤ 🛠️ METHODS
+
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  afterUpdate(() => {
+    resize();
+  });
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 
 <div
@@ -95,13 +151,23 @@
   bind:clientWidth={wrapWidth}
   bind:this={wrapNode}
 >
-  {#each visibleData as item}
-    <slot name="item" {item}>{item.title}</slot>
-  {/each}
   {#if countOfNotVisibleData}
     <div on:click={expandTags}>
-      <slot name="count" count={countOfNotVisibleData}
+      <slot id="expand-wrapper-count" name="count" count={countOfNotVisibleData}
         >+{countOfNotVisibleData}</slot
+      >
+    </div>
+  {/if}
+  {#each $visibleData.vd as item}
+    <slot name="item" class="expand-wrapper-item" {item}>{item.title}</slot>
+  {/each}
+  {#if $visibleData.countOfNotVisibleData > 0}
+    <div on:click={expandTags}>
+      <slot
+        id="expand-wrapper-count"
+        name="count"
+        count={$visibleData.countOfNotVisibleData}
+        >+{$visibleData.countOfNotVisibleData}</slot
       >
     </div>
   {/if}
