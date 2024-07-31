@@ -1901,7 +1901,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   <!--
                   FIXTURE SCORE
                   -->
-                  {#if (fixture?.teams?.away?.score && fixture?.teams?.home?.score) || ['FT', 'FT_PEN', 'AET', 'LIVE', 'HT'].includes(fixture?.status)}
+                  {#if ( fixture?.teams?.away?.score && fixture?.teams?.home?.score) || [...FIXTURE_FULL_TIME_OPT, ...FIXTURE_LIVE_TIME_OPT].includes(fixture?.status)}
                     <div
                       class=
                       "
@@ -1922,7 +1922,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                           color-black-2
                         "
                         class:color-grey={fixture?.teams?.home?.score < fixture?.teams?.away?.score && fixture?.status != 'LIVE'}
-                        class:color-red-bright={fixture?.status === 'LIVE'}
+                        class:color-red-bright={[...FIXTURE_LIVE_TIME_OPT].includes(fixture?.status)}
                       >
                         {fixture?.teams?.home?.score}
                       </p>
@@ -1938,7 +1938,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                           color-black-2
                         "
                         class:color-grey={fixture?.teams?.away?.score < fixture?.teams?.home?.score && fixture?.status != 'LIVE'}
-                        class:color-red-bright={fixture?.status === 'LIVE'}
+                        class:color-red-bright={[...FIXTURE_LIVE_TIME_OPT].includes(fixture?.status)}
                       >
                         {fixture?.teams?.away?.score}
                       </p>
@@ -2440,6 +2440,10 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		width: 100%;
 		position: relative;
 	}
+
+  .color-red-bright {
+    color: var(--red-bright) !important;
+  }
 
 	/*
   =============
