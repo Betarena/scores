@@ -37,6 +37,7 @@
 	import WidgetTxHist from '$lib/components/page/profile/tx-history/Widget-Tx-Hist.svelte';
 	import WidgetWithdraw from '$lib/components/page/profile/withdraw/Widget-Withdraw.svelte';
 	import WidgetInvestor from './investor/Widget-Investor.svelte';
+  import WidgetPlatformSettings from '$lib/components/page/profile/Widget-PlatformSettings.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -107,8 +108,10 @@
 		<div
       id="main-profile-page-widget"
     >
-			{#if $page?.url?.pathname.includes('settings')}
+			{#if $page?.params.view === 'settings'}
 				<AccountSettingsBoard	/>
+			{:else if $page?.params.view === 'platform-settings'}
+				<WidgetPlatformSettings />
 			{:else if $page?.url?.pathname.includes('dashboard')}
 				<DashboardWidget />
       {:else if $page?.url?.pathname.includes('investor')}

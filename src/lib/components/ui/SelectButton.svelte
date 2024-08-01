@@ -8,6 +8,7 @@
 -->
 
 <script lang="ts">
+  import { createEventDispatcher } from "svelte";
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -69,8 +70,11 @@
      * @description
      *  initial value for select button
      */
-    value: string | number = "";
-
+    value: string | number = "",
+    className = "",
+    dropdownClass= ""
+    ;
+  const dispatch = createEventDispatcher();
   $: currentOption = options.find((o) => o.id === value);
   // #endregion ➤ 📌 VARIABLES
 
@@ -88,7 +92,9 @@
 
   function select(option: IOption) {
     value = option.id;
+    dispatch("change", option);
     modal = false;
+
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -113,17 +119,17 @@
   {/each}
 </select>
 
-<div class="select-wrapper">
+<div class="select-wrapper {className}" {...$$restProps}>
   <button
     class="select-button"
     on:click|stopPropagation={() => (modal = !modal)}
   >
-    <slot currentValue={currentOption}>{currentOption?.label}</slot>
+    <slot currentValue={currentOption}><span>{currentOption?.label}</span></slot>
     <span class="arrow-image" class:opend={modal}>
       <ArrowDown />
     </span>
   </button>
-  <div class="select-dropdown" class:show={modal}>
+  <div class="select-dropdown {dropdownClass}" class:show={modal}>
     <div class="select-dropdown-list">
       {#each options as option (option.id)}
         <div
