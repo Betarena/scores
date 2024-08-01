@@ -60,6 +60,9 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  export let dark_bg: string = "var(--dark-theme-1)";
+  export let light_bg: string = "var(--dark-theme-1)";
+
   const
     /**
      * @description
@@ -95,6 +98,8 @@
   "
   class:m-r-10={currentPageRouteId == 'ProfilePage'}
   class:row-space-end={theme == 'Dark'}
+  class:light={theme == 'Dark'}
+  style = 'background: {theme == 'Dark' ? dark_bg: light_bg};'
   on:click=
   {
     () =>
