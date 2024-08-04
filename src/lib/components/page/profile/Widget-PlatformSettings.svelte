@@ -40,38 +40,9 @@ COMPONENT JS (w/ TS)
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
   $: langArray = ($page.data.B_NAV_T?.langArray || []).sort() as string[];
   $: langOptions = langArray.map((lang) => {
-    let label = "";
-    switch (lang) {
-      case "en":
-        label = "English";
-        break;
-      case "pt":
-        label = "Portuguese";
-        break;
-      case "es":
-        label = "Spanish";
-        break;
-      case "fr":
-        label = "French";
-        break;
-      case "it":
-        label = "Italian";
-        break;
-      case "ro":
-        label = "Romanian";
-        break;
-      case "br":
-        label = "Brazilian";
-        break;
-      case "se":
-        label = "Serbian";
-        break;
-      default:
-        label = lang;
-    }
     return {
       id: lang,
-      label,
+      label: lang.toUpperCase(),
     };
   });
   // #endregion ➤ 📌 VARIABLES
@@ -263,7 +234,7 @@ PLATFORM SETTINGS WIDGET
               color-grey
             "
           >
-            {profileTrs?.profile?.lang_description ||
+            {profileTrs?.profile?.lang_desc ||
               "Select the language to be displayed"}
           </span>
         </div>
