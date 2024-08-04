@@ -147,14 +147,14 @@
 -->
 
 <style lang="scss">
-  :global(.dark-mode) {
-    .back-button-wrapper {
-      background-color: #4b4b4bcc;
-    }
-  }
   :global(.light-mode) {
     .back-button-wrapper {
       background-color: rgba(230, 230, 230, 0.8);
+    }
+  }
+  :global(.dark-mode) {
+    .back-button-wrapper {
+      background-color: #4b4b4bcc;
     }
   }
   .back-button-wrapper {
