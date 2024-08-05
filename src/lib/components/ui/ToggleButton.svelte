@@ -81,9 +81,10 @@
 <style lang="scss">
   .toggle-wrapper {
     display: flex;
-    gap: 8px;
+    gap: var(--spacing-lg);
     justify-content: center;
     align-items: center;
+    color: var(--Text-text-secondary);
 
     .toggle-button {
       display: flex;
@@ -93,14 +94,14 @@
       background-color: var(--grey);
       transition: all 0.3s ease-out;
       border-radius: 16px;
-      width: 48px;
+      width: 44px;
       height: 24px;
       position: relative;
       cursor: pointer;
       transition: background-color 0.3s;
 
       .toggle-circle {
-        background-color: var(--bg-color);
+        background-color: var(--white);
         border-radius: 50%;
         width: 20px;
         height: 20px;

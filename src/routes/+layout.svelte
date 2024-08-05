@@ -78,7 +78,7 @@
   import FooterRedisign from "$lib/components/_main_/footer/FooterRedisign.svelte";
   import ModalMain from "$lib/components/misc/modal/ModalMain.svelte";
   import { modalStore } from "$lib/store/modal.js";
-  import AllowNotificationModal from "$lib/components/shared/Modals/AllowNotificationModal.svelte";
+  import AllowNotificationModal from "$lib/components/section/notifications/feature_modal/AllowNotificationModalLayout.svelte";
 
   // ╭─────
   // │ WARNING:
