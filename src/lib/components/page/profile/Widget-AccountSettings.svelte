@@ -1370,5 +1370,12 @@ MAIN SETTINGS WIDGET
   {
     border: 1px solid var(--dark-theme-1-2-shade) !important;
   }
+  div#account-settings-widget-box.dark-background-1 input[type='text']:hover,
+  div#account-settings-widget-box.dark-background-1 input[type='text']:focus,
+  div#account-settings-widget-box.dark-background-1 textarea:focus
+  div#account-settings-widget-box.dark-background-1 textarea:hover
+  {
+    border: 1px solid var(--dark-theme-1-3-shade)!important;
+  }
 
 </style>

@@ -333,4 +333,10 @@ PLATFORM SETTINGS WIDGET
     ) {
     border: 1px solid var(--text-color) !important;
   }
+  :global(
+      div#platform-settings-widget-box.dark-background-1 .language-input button:hover,
+      div#platform-settings-widget-box.dark-background-1 .language-input button:focus
+    ) {
+    border: 1px solid var(--dark-theme-1-3-shade)!important;
+  }
 </style>
