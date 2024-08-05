@@ -13,6 +13,7 @@ type IPageRouteId =
   | 'ProfilePage'
   | 'CompetitionPage'
   | 'AuthorsPage'
+  | "NotificationsPage"
   ;
 
 type IUserStoreState =

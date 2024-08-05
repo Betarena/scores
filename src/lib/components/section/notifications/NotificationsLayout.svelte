@@ -8,7 +8,7 @@
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ 📝 Description                                                                   │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ Scores Platform Header Lang Dropdown Component (Child)                           │
+│ Scores Notifications Section Layout                                                    │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -38,20 +38,11 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { page } from "$app/stores";
-  import { fly } from "svelte/transition";
 
   import sessionStore from "$lib/store/session.js";
-  import userBetarenaSettings from "$lib/store/user-settings.js";
-  import { dlog, NB_W_TAG } from "$lib/utils/debug.js";
-  import { scoresNavbarStore } from "./_store.js";
+  import type { PageData } from ".svelte-kit/types/src/routes/notifications/$types.js";
 
-  import arrowDown from "./assets/arrow-down.svg";
-  import arrowUp from "./assets/arrow-up.svg";
-  import arrowDownDark from "./assets/icon-arrow-down-dark.svg";
-  import arrowUpDark from "./assets/icon-arrow-up-dark.svg";
-
-  import { selectLanguage } from "$lib/utils/navigation.js";
-  import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
+  import SvelteSeo from "svelte-seo";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -69,101 +60,14 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  const /**
-     * @description
-     *  📣 Deifined `hover` timeout, that constitues a navigational `intent.
-     */
-    HOVER_TIMEOUT = 250;
-  let /**
-     * @description
-     *  📣 Wether target dropdown menu is **active**.
-     */
-    isLangDropdown: boolean = false,
-    /**
-     * @description
-     *  📣 Target `intent` language.
-     */
-    targetIntenLang: string | undefined = undefined,
-    /**
-     * @description
-     *  📣 Target `timeout` intent.
-     */
-    timeoutIntent: NodeJS.Timeout;
+  export let data: PageData;
 
-  $: ({ serverLang, currentPageRouteId } = $sessionStore);
-  $: ({ theme } = $userBetarenaSettings);
-  $: ({ globalState: globalStateNavbar } = $scoresNavbarStore);
+  const /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
+    // eslint-disable-next-line no-unused-vars
+    CNAME: string = "notifications-layout";
 
-  $: translatioData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
-  $: isCustom = ["AuthorsPage", "NotificationsPage"].includes(currentPageRouteId || "");
+  $: ({ viewportType } = $sessionStore);
   // #endregion ➤ 📌 VARIABLES
-
-  // #region ➤ 🛠️ METHODS
-
-  /**
-   * @author
-   *  @migbash
-   * @summary
-   *  🟦 HELPER
-   * @description
-   *  - 📣 Advanced intent logic, applicable to desktop-only.
-   *  - 📣 `Pre-loads` target page , for target `language` upon `intent`/`hover`.
-   * @param { string | undefined } lang
-   *  💠 **[required]** Target `hovered` language.
-   * @return { void }
-   */
-  function detectIntentBuffer(lang: string | undefined): void {
-    const /**
-       * @description
-       *  📣 Detect change in hover-over lang.
-       */
-      if_M_0: boolean = timeoutIntent != undefined && lang != targetIntenLang,
-      /**
-       * @description
-       *  📣 First time set lang and timer.
-       */
-      if_M_E_0: boolean = lang != undefined && timeoutIntent == undefined;
-    if (if_M_0) {
-      // [🐞]
-      dlog(`${NB_W_TAG[0]} clearning timer!`);
-
-      clearTimeout(timeoutIntent);
-
-      targetIntenLang = lang;
-
-      if (lang == undefined) return;
-
-      // [🐞]
-      dlog(`${NB_W_TAG[0]} setting new timer!`);
-
-      timeoutIntent = setTimeout(() => {
-        // [🐞]
-        dlog(`${NB_W_TAG[0]} intent triggered!`, true);
-        $sessionStore.lang_intent = targetIntenLang;
-      }, HOVER_TIMEOUT);
-    } else if (if_M_E_0) {
-      targetIntenLang = lang;
-      timeoutIntent = setTimeout(() => {
-        // [🐞]
-        dlog(`${NB_W_TAG[0]} intent triggered!`, true);
-        $sessionStore.lang_intent = targetIntenLang;
-      }, HOVER_TIMEOUT);
-    }
-
-    return;
-  }
-
-  function handleClick() {
-    const openDropDown = !$scoresNavbarStore.globalState.has("LangDropdownActive")
-    scoresNavbarStore.closeAllDropdowns();
-
-    if (openDropDown) {
-      scoresNavbarStore.updateData("globalStateAdd", "LangDropdownActive");
-    }
-    return;
-  }
-
-  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--
@@ -177,100 +81,11 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div
-  id="lang-container"
->
-  <!--
-  ╭─────
-  │ > Selected Language
-  ╰─────
-  -->
-  <div
-    class="
-    selected-language-btn
-    row-space-out
-    cursor-pointer
-    "
-    class:active-lang-select={globalStateNavbar.has("LangDropdownActive")}
-    on:click|stopPropagation={handleClick}
-  >
-    <p
-      class="
-      s-14
-      m-r-5
-      uppercase
-      "
-      class:color-white={!isCustom|| theme == "Dark"}
-      class:color-black-2= {isCustom &&
-        theme == "Light"}
-    >
-      {serverLang}
-    </p>
-
-    <!--
-    ╭─────
-    │ > Arrow Down
-    ╰─────
-    -->
-    <img
-      loading="lazy"
-      src={!isCustom|| theme == "Dark"
-        ? !globalStateNavbar.has("LangDropdownActive")
-          ? arrowDown
-          : arrowUp
-        : !globalStateNavbar.has("LangDropdownActive")
-        ? arrowDownDark
-        : arrowUpDark}
-      alt={!isLangDropdown ? "arrowDown" : "arrowUp"}
-      width="16"
-      height="16"
-    />
+<section id={CNAME} class={viewportType}>
+  <div class="main-content {viewportType}">
+    <h2>Lets go</h2>
   </div>
-
-  <!--
-  ╭─────
-  │ > Dropdown Menu
-  ╰─────
-  -->
-  {#if globalStateNavbar.has("LangDropdownActive")}
-    <div id="dropdown-menu" transition:fly>
-      {#each translatioData?.langArray?.sort() ?? [] as lang}
-        {#if lang.toUpperCase() != serverLang?.toUpperCase()}
-          <div
-            class="
-            lang-select
-            "
-            on:click={() => {
-              return selectLanguage(lang);
-            }}
-            on:keydown={() => {
-              return selectLanguage(lang);
-            }}
-            on:mouseout={() => {
-              return detectIntentBuffer(undefined);
-            }}
-            on:mouseover={() => {
-              return detectIntentBuffer(lang);
-            }}
-            on:focus={() => {
-              return detectIntentBuffer(lang);
-            }}
-          >
-            <p
-              class="
-              color-white
-              s-14
-              uppercase
-              "
-            >
-              {lang}
-            </p>
-          </div>
-        {/if}
-      {/each}
-    </div>
-  {/if}
-</div>
+</section>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -283,62 +98,51 @@
 -->
 
 <style lang="scss">
-  /*
-  ╭──────────────────────────────────────────────────────────────────────────────╮
-  │ 📲 MOBILE-FIRST                                                              │
-  ╰──────────────────────────────────────────────────────────────────────────────╯
-  */
-
-  div#lang-container {
-    /* 📌 position */
-    position: relative;
-    margin-left: -12px;
-
-    div.selected-language-btn {
-      /* 🎨 style */
-      color: #ffffff;
-      outline: none;
-      border: none;
-      padding: 5px 12px;
-      transform: translateX(12px);
-      background-color: transparent;
-
-      &:hover,
-      &.active-lang-select {
-        /* 🎨 style */
-        background-color: rgba(255, 255, 255, 0.1);
-        border-radius: 4px;
-      }
+  :global {
+    .mobile#header {
+      --header-border: none;
     }
+  }
+  .mobile {
+    padding-top: 3px;
+  }
+  section {
+    background-color: var(--bg-color);
+    width: 100%;
+    height: 100%;
+    &.mobile {
+      padding-inline: 0;
+    }
+  }
+  .main-content {
+    max-width: 824px;
+    height: 100%;
+    margin: auto;
+    --text-size-2xl: 38px;
+    --text-size-xl: 24px;
+    --text-size-l: 20px;
+    --text-size-m: 16px;
+    --text-size-s: 14px;
+    --text-size-xs: 12px;
+    --text-button-size: var(--text-size-m);
+    display: flex;
+    flex-direction: column;
 
-    div#dropdown-menu {
-      /* 📌 position */
-      position: absolute;
-      z-index: 5000;
-      top: 100%;
-      left: -20%;
-      /* 🎨 style */
-      width: 88px;
-      margin-top: 5px;
-      transform: translateX(12px);
-      border-radius: 4px;
-      background: var(--dark-theme);
-      box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
-      overflow: hidden;
+    &.mobile {
+      background: var(--layout-bg-color);
+      padding: 0 !important;
+      padding-bottom: 128px;
+      width: 100%;
+      gap: 8px;
+      --text-size-2xl: 24px;
+      --text-size-l: 16px;
+      --text-size-m: 14px;
+      --text-size-s: 12px;
+      --text-size-xs: 10px;
 
-      .lang-select {
-        /* 🎨 style */
-        padding: 10px 0;
-        text-align: center;
-        background: var(--dark-theme-1);
-        cursor: pointer;
-        box-shadow: inset 0px -1px 0px #3c3c3c;
-
-        &:hover {
-          /* 🎨 style */
-          background: var(--dark-theme);
-          box-shadow: inset 0px -1px 0px #3c3c3c;
-        }
+      .listArticlesMod {
+        margin-top: 0;
+        gap: 8px;
       }
     }
   }
