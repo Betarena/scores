@@ -8,25 +8,7 @@
 -->
 
 <script lang="ts">
-  // #region ➤ 📦 Package Imports
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'imports' that are required        │
-  // │ by 'this' .svelte file is ran.                                         │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. svelte/sveltekit imports                                            │
-  // │ 2. project-internal files and logic                                    │
-  // │ 3. component import(s)                                                 │
-  // │ 4. assets import(s)                                                    │
-  // │ 5. type(s) imports(s)                                                  │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-  import userBetarenaSettings from "$lib/store/user-settings.js";
-  import { spliceBalanceDoubleZero, toDecimalFix } from "$lib/utils/string.js";
-  import Walleticon from "./assets/walleticon.svelte";
-
-  // #endregion ➤ 📦 Package Imports
+  import { createEventDispatcher } from "svelte";
 
   // #region ➤ 📌 VARIABLES
 
@@ -42,30 +24,49 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  $: ({ main_balance } = { ...$userBetarenaSettings.user?.scores_user_data });
+  export let active = false;
+
+  const dispatch = createEventDispatcher();
 
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  function toggle() {
+    active = !active;
+    dispatch("toggle", active);
+  }
+
+  // #endregion ➤ 🛠️ METHODS
 </script>
 
-<a
-  href="/u/transaction-history/{$userBetarenaSettings.lang}"
-  title="View Transactions History"
->
-  <div class="balance">
-    <div class="icon">
-      <Walleticon />
-      <!-- <img src="/assets/images/icons/wallet.svg" alt="wallet" /> -->
-    </div>
-    <div class="info">
-      <span class="amount">
-        {spliceBalanceDoubleZero(toDecimalFix(main_balance)) ?? "0.00"} BTA
-      </span>
-      <span class="currency"
-        >${spliceBalanceDoubleZero(toDecimalFix(main_balance)) ?? "0.00"}</span
-      >
-    </div>
-  </div>
-</a>
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 💠 Svelte Component HTML                                                         │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<div class="toggle-wrapper">
+  <button on:click={toggle} class="toggle-button" class:active>
+    <div class="toggle-circle" />
+  </button>
+  <slot />
+</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -78,46 +79,42 @@
 -->
 
 <style lang="scss">
-  .balance {
+  .toggle-wrapper {
     display: flex;
-    gap: 12px;
+    gap: 8px;
+    justify-content: center;
     align-items: center;
-    cursor: pointer;
-    &:hover > .info .amount {
-      color: var(--primary);
-    }
 
-    .icon {
-      border-radius: 8px;
+    .toggle-button {
       display: flex;
-      justify-content: center;
       align-items: center;
-      height: 40px;
-      width: 40px;
-      background-color: rgb(49,49,49);
+      justify-content: center;
+      background-color: var(--primary);
+      background-color: var(--grey);
+      transition: all 0.3s ease-out;
+      border-radius: 16px;
+      width: 48px;
+      height: 24px;
+      position: relative;
+      cursor: pointer;
+      transition: background-color 0.3s;
 
-      --text-color: #FFFFFF
-    }
-
-    .info {
-      display: flex;
-      flex-direction: column;
-      height: 34px;
-      justify-content: space-between;
-
-      .amount {
-        font-size: 16px;
-        font-weight: 700;
-        text-transform: uppercase;
-        color: var(--text-color);
-        line-height: 20px;
+      .toggle-circle {
+        background-color: var(--bg-color);
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        position: absolute;
+        left: 2px;
+        transition: all 0.3s ease-out;
       }
 
-      .currency {
-        line-height: 12px;
-        font-size: 12px;
-        font-weight: 400;
-        color: var(--text-color-second-dark);
+      &.active {
+        background-color: var(--primary);
+
+        .toggle-circle {
+          left: calc(100% - 22px);
+        }
       }
     }
   }

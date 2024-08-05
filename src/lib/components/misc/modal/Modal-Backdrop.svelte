@@ -121,6 +121,7 @@
 -->
 <div
 	in:fade
+  out:fade
 	class=
   "
   {CNAME}
