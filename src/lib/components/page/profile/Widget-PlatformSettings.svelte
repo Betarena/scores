@@ -321,4 +321,16 @@ PLATFORM SETTINGS WIDGET
     box-shadow: inset 0px 1px 0px var(--dark-theme-1-shade) !important;
     background-color: var(--dark-theme-1) !important;
   }
+
+  :global(
+      div#platform-settings-widget-box.dark-background-1 .language-input button
+    ) {
+    border: 1px solid var(--dark-theme-1-2-shade) !important;
+  }
+  :global(
+      div#platform-settings-widget-box .language-input button:hover,
+      div#platform-settings-widget-box .language-input button:focus
+    ) {
+    border: 1px solid var(--text-color) !important;
+  }
 </style>
