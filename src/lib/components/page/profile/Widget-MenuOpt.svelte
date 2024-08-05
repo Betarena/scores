@@ -20,6 +20,7 @@ COMPONENT JS (w/ TS)
 	import profile_avatar from './assets/profile-avatar.svg';
 
 	import type { PROFILE_OPT } from '$lib/types/types.scores.js';
+  import { fade, fly } from 'svelte/transition';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -273,11 +274,15 @@ COMPONENT JS (w/ TS)
     -->
 		{#if showDropdown}
 			<div
+        in:fade
+        out:fade
 				id="background-modal-blur"
 				on:click={() =>	(showDropdown = !showDropdown)}
 			/>
 			<div
         id="dropdown-menu-opt-mobile"
+        in:fly={{ y: 600, duration: 700 }}
+        out:fly={{ y: 600, duration: 700 }}
       >
 				{#each PROFILE_MENU_OPT as item}
 					<MenuOptRow
