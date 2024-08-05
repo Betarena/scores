@@ -26,6 +26,7 @@
 export type PROFILE_OPT =
   | 'Dashboard'
   | 'Account Settings'
+  | 'Settings'
   | 'Investor'
   | 'Deposit'
   | 'Withdraw'
