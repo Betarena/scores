@@ -281,7 +281,7 @@ COMPONENT JS (w/ TS)
     }
     // [ℹ] validation [1]
     const valid =
-      !data_to_update["username"] || (await username_update_validation());
+      data_to_update["username"] === undefined || (await username_update_validation());
     if (!valid) {
       dlog("🔴 Username is invalid...", true);
       return;
@@ -1063,7 +1063,6 @@ MAIN SETTINGS WIDGET
         aria-placeholder="Username input here"
         aria-label="Username input"
         bind:value={aboutInput}
-        class:input-error={usernameErrorMsg != undefined}
       />
       <span class="counter">{aboutInput.length}/256</span>
     </div>
