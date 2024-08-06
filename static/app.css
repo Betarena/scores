@@ -3134,7 +3134,10 @@ img.google-aspect-ratio {
 }
 
 body {
+  --radius-xs: 4px;
   --radius-xl: 12px;
+  --spacing-xs: 4px;
+  --spacing-sm: 6px;
   --spacing-md: 8px;
   --spacing-lg: 12px;
   --spacing-xl: 16px;
@@ -3145,8 +3148,12 @@ body {
   --Line-height-text-sm: 20px;
   --Line-height-display-xs: 32px;
   --white: #FFFFFF;
+  --colors-gray-light-mode-900: #313131;
   --Background-bg-brand-primary: #FEEFE7;
   --Colors-Brand-Brand-5: #F5620F;
+  /* Shadows/shadow-xl */
+  --box-shadow: 0px 20px 24px -4px rgba(41, 41, 41, 0.08),
+    0px 0px 8px 0px rgba(41, 41, 41, 0.08);
 }
 
 .dark-mode {
@@ -3176,6 +3183,7 @@ body {
   --mobile-menu-bg-color: rgba(var(--bg-color-second-rgb-consts), 0.7);
   --mobile-menu-bg-popup: rgba(var(--bg-color-rgb-consts), 0.8);
   --box-shadow: 0px 0px 50px 0px rgba(0, 0, 0, 0.5);
+  --dropdowmn-popup-bg: var(--colors-gray-light-mode-900);
   --tag-bg: #4B4B4B;
   --popup-bg-color: #4b4b4b;
   --popup-contrast-color: #3E3E3E;
@@ -3194,6 +3202,7 @@ body {
   --bg-color-rgb-consts: 255, 255, 255;
   --bg-color: rgb(var(--bg-color-rgb-consts));
   --Background-bg-secondary: #F7F7F7;
+  --Background-bg-primary: #FFF;
   --layout-bg-color: #E6E6E6;
   --bg-color-second-rgb-consts: 247, 247, 247;
   --bg-color-second: rgb(var(--bg-color-second-rgb-consts));
@@ -3208,6 +3217,7 @@ body {
   --Border-border-secondary: #D2D2D2;
   --mobile-menu-bg-color: rgba(var(--bg-color-rgb-consts), 0.9);
   --box-shadow: 0px 0px 50px 0px rgba(0, 0, 0, 0.15);
+  --dropdowmn-popup-bg: var(--Background-bg-primary);
   --tag-bg: #E6E6E6;
   --popup-bg-color: #fff;
   --popup-contrast-color: #E6E6E6;

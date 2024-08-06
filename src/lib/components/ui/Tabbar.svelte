@@ -8,8 +8,9 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 <script lang="ts">
-  import { createEventDispatcher, tick } from "svelte";
+  import { createEventDispatcher, onMount, tick } from "svelte";
   import TranslationText from "../misc/Translation-Text.svelte";
+  import session from "$lib/store/session.js";
 
   // #region ➤ 📌 VARIABLES
 
@@ -39,6 +40,7 @@
   let activeNode: HTMLElement;
   let tabbarNode: HTMLElement;
   const dispatch = createEventDispatcher();
+  $: ({ viewportType } = $session);
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -53,9 +55,11 @@
   // │ Please keep very close attention to these methods and                  │
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
+
   $: if (!selected && tabbarNode) {
     select(data[0]);
   }
+  $: if (viewportType) updateBorder();
   $: if (translations && selected && tabbarNode) updateBorder();
 
   $: if (!data?.includes(selected) && tabbarNode) {
@@ -110,22 +114,29 @@
   // #endregion ➤ 🛠️ METHODS
 </script>
 
-<div {...$$restProps}  class="tabbar {$$restProps.class || ""}" bind:this={tabbarNode}  style="{bottom_border ? "border-bottom: 1px solid var(--Border-border-tertiary);": ""} {$$restProps.style || ""}">
+<div
+  {...$$restProps}
+  class="tabbar {$$restProps.class || ''}"
+  bind:this={tabbarNode}
+  style="{bottom_border
+    ? 'border-bottom: 1px solid var(--Border-border-tertiary);'
+    : ''} {$$restProps.style || ''}"
+>
   {#each data as item, i (item.id)}
-      <div
-        class="tab-item"
-        style="margin-bottom: {height}px;"
-        data-tab-id={item.id}
-        class:selected={selected?.id === item.id}
-        on:click={(e) => select(item)}
-      >
-        <slot tab={item}
-          ><TranslationText
-            text={translations[item.label] || translations[item?.name || ""]}
-            fallback={item.name || item.label}
-          />
-        </slot>
-      </div>
+    <div
+      class="tab-item"
+      style="margin-bottom: {height}px;"
+      data-tab-id={item.id}
+      class:selected={selected?.id === item.id}
+      on:click={(e) => select(item)}
+    >
+      <slot tab={item}
+        ><TranslationText
+          text={translations[item.label] || translations[item?.name || ""]}
+          fallback={item.name || item.label}
+        />
+      </slot>
+    </div>
   {/each}
   <div class="active" bind:this={activeNode} />
 </div>

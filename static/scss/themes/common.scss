@@ -1,6 +1,9 @@
 body {
+  --radius-xs: 4px;
   --radius-xl: 12px;
 
+  --spacing-xs: 4px;
+  --spacing-sm: 6px;
   --spacing-md: 8px;
   --spacing-lg: 12px;
   --spacing-xl: 16px;
@@ -14,6 +17,12 @@ body {
     --Line-height-display-xs: 32px;
 
   --white: #FFFFFF;
+  --colors-gray-light-mode-900: #313131;
   --Background-bg-brand-primary: #FEEFE7;
     --Colors-Brand-Brand-5: #F5620F;
+
+
+    /* Shadows/shadow-xl */
+    --box-shadow: 0px 20px 24px -4px rgba(41, 41, 41, 0.08),
+      0px 0px 8px 0px rgba(41, 41, 41, 0.08);
 }

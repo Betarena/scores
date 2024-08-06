@@ -47,8 +47,9 @@
   import Tabbar from "$lib/components/ui/Tabbar.svelte";
   import NotificationListItem from "./NotificationListItem.svelte";
   import Tag from "$lib/components/ui/Tag.svelte";
-  import { fly } from "svelte/transition";
-  import { elasticOut } from "svelte/easing";
+  import { crossfade, fly } from "svelte/transition";
+  import { elasticOut, quintOut } from "svelte/easing";
+    import { flip } from "svelte/animate";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -133,6 +134,25 @@
     scores: new Map(),
   };
 
+  const [send, receive] = crossfade({
+		fallback(node, _params) {
+			const style = getComputedStyle(node);
+			const transform = style.transform === 'none' ? '' : style.transform;
+
+			return {
+				duration: 600,
+				easing: quintOut,
+				css: (t) => `
+					transform: ${transform} scale(${t});
+					opacity: ${t}
+				`
+			};
+		}
+	});
+  function addNotifications() {
+    notifications.all = new Map([...[...notifications.all].map(),...notifications.all]);
+  }
+
   $: ({ viewportType } = $sessionStore);
   const options = [
     { id: "all", label: "All" },
@@ -175,11 +195,11 @@
           class="new-notifications"
           in:fly={{ easing: elasticOut, y: -10, duration: 3000 }}
         >
-          <Tag active={true}>+ {newNotifications} new</Tag>
+          <Tag active={true} on:click={addNotifications}>+ {newNotifications} new</Tag>
         </div>
       {/if}
       {#each [...notificationsList] as [id, notification] (id)}
-        <div class="list-item" class:active={notification.isNew}>
+        <div class="list-item"  animate:flip class:active={notification.isNew}>
           <NotificationListItem {notification} />
         </div>
       {/each}

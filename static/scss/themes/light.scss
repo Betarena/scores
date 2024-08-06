@@ -1,12 +1,11 @@
-.light-mode
-{
+.light-mode {
   --text-color: #292929;
   --text-color-second: #292929;
   --text-color-second-dark: #8c8c8c;
 
   --Text-text-secondary: #3B3B3B;
   --Text-text-primary: #292929;
-    --icon-color: #8c8c8c;
+  --icon-color: #8c8c8c;
   --icon-color-light: #000000;
 
 
@@ -14,6 +13,7 @@
   --bg-color: rgb(var(--bg-color-rgb-consts));
 
   --Background-bg-secondary: #F7F7F7;
+  --Background-bg-primary: #FFF;
   --layout-bg-color: #E6E6E6;
 
   --bg-color-second-rgb-consts: 247, 247, 247;
@@ -30,10 +30,13 @@
   --header-border: 1px solid #CCC;
 
   --Border-border-tertiary: #D2D2D2;
-    --Border-border-secondary: #D2D2D2;
+  --Border-border-secondary: #D2D2D2;
   //Mobile-Menu
-  --mobile-menu-bg-color:  rgba(var(--bg-color-rgb-consts), 0.9);
+  --mobile-menu-bg-color: rgba(var(--bg-color-rgb-consts), 0.9);
   --box-shadow: 0px 0px 50px 0px rgba(0, 0, 0, 0.15);
+
+  //DropDown popup
+  --dropdowmn-popup-bg: var(--Background-bg-primary);
 
   --tag-bg: #E6E6E6;
   //colors
