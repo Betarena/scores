@@ -352,7 +352,7 @@ export function toDecimalFix
 
   let _value: string  = value.toString();
 
-  if (noRoundUp)
+  if (noRoundUp && _value.includes('.'))
     _value = _value
       .slice
       (
