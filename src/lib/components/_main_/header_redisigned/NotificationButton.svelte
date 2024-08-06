@@ -25,6 +25,8 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import NotifiicationsIcon from "./assets/NotifiicationsIcon.svelte";
+    import { page } from "$app/stores";
+    import { routeIdNotifications } from "$lib/constants/paths.js";
   let count = 0;
   setTimeout(() => {
     count = 18
@@ -43,7 +45,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<a href="/notifications" class="notification-wrapper">
+<a href="/notifications" class="notification-wrapper" class:active={$page.route.id === routeIdNotifications}>
   <NotifiicationsIcon />
   {#if count}
     <div class="count" in:scale>{count}</div>
@@ -68,7 +70,7 @@
     justify-content: center;
     cursor: pointer;
 
-    &:hover {
+    &:hover, &.active {
       --text-color: var(--primary);
     }
     .count {

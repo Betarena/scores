@@ -35,6 +35,7 @@
   export let selected = null as ITab | null;
   export let height = 14;
   export let translations: { [key: string]: string } = {};
+  export let bottom_border = false;
   let activeNode: HTMLElement;
   let tabbarNode: HTMLElement;
   const dispatch = createEventDispatcher();
@@ -109,7 +110,7 @@
   // #endregion ➤ 🛠️ METHODS
 </script>
 
-<div class="tabbar" bind:this={tabbarNode} {...$$restProps}>
+<div {...$$restProps}  class="tabbar {$$restProps.class || ""}" bind:this={tabbarNode}  style="{bottom_border ? "border-bottom: 1px solid var(--Border-border-tertiary);": ""} {$$restProps.style || ""}">
   {#each data as item, i (item.id)}
       <div
         class="tab-item"
@@ -147,22 +148,26 @@
     gap: 20px;
     position: relative;
     font-weight: 500;
+    overflow-x: auto;
 
     .tab-item {
       position: static;
       color: var(--text-color-second-dark);
+      user-select: none;
       cursor: pointer;
+      flex-shrink: 0;
       &:hover {
         color: var(--text-color);
       }
+      &.selected {
+        color: var(--text-color);
+        position: relative;
+        transition: all 0.3s ease-out;
+        bottom: 1px solid var(--primary);
+        color: var(--primary);
+      }
     }
 
-    .selected {
-      color: var(--text-color);
-      position: relative;
-      transition: all 0.3s ease-out;
-      bottom: 1px solid var(--primary);
-    }
     .active {
       position: absolute;
       bottom: 0;

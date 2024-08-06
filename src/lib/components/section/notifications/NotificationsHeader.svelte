@@ -8,9 +8,11 @@
 -->
 
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
-
   // #region ➤ 📌 VARIABLES
+
+  import CrossIcon from "$lib/components/ui/assets/crossicon.svelte";
+  import Dotsicon from "$lib/components/ui/assets/dotsicon.svelte";
+  import session from "$lib/store/session.js";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -24,18 +26,13 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let /**
+  const /**
      * @description
-     *  📣 button state
-     */
-    active = false;
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */ // eslint-disable-next-line no-unused-vars
+    CNAME: string = "notifications⮕header";
 
-  /**
-   * @description
-   *  📣 dispatch for click event
-   */
-  const dispatch = createEventDispatcher();
-
+    $: ({viewportType} = $session)
   // #endregion ➤ 📌 VARIABLES
 </script>
 
@@ -50,15 +47,10 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div
-  class="tag-pill"
-  {...$$restProps}
-  class:active
-  on:click={() => dispatch("click")}
->
-  <span class="w-400 color-black-2 no-wrap">
-    <slot />
-  </span>
+<div class="notifications-header {viewportType}" id={CNAME}>
+  <button class="button"><CrossIcon /></button>
+  <div class="title">Notifications</div>
+  <button class="button"><Dotsicon /></button>
 </div>
 
 <!--
@@ -72,30 +64,37 @@
 -->
 
 <style lang="scss">
-  .tag-pill {
-    padding: 3px 12px;
-    width: max-content;
-    border-radius: 100px;
-    color: var(--text-color);
-    background-color: var(--tag-bg);
-    font-size: var(--text-button-size);
-    transition: all;
-    transition-duration: 0.4s;
-    cursor: pointer;
+  .notifications-header {
+    width: 100%;
+    display: flex;
+    padding: var(--spacing-lg, 12px) 0;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
 
-    &:hover,
-    &.active {
-      /* 🎨 style */
-      background-color: var(--primary) !important;
-
-      span {
-        /* 🎨 style */
-        color: var(--white) !important;
+    .button {
+      &:hover {
+        --icon-color: var(--Text-text-primary)
       }
     }
 
-    &.active:hover {
-      background-color: var(--primary-fade) !important;
+    .title {
+      color: var(--Text-text-primary);
+      text-align: center;
+      font-family: var(--Font-family-font-family-display);
+      font-size: var(--Font-size-display-xs);
+      font-style: normal;
+      font-weight: 500;
+      line-height: var(--Line-height-display-xs);
+    }
+
+    button {
+      background-color: inherit;
+      padding: 0;
+    }
+
+    &.mobile {
+      padding-inline: 16px;
     }
   }
 </style>
