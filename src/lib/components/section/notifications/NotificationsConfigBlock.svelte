@@ -104,6 +104,7 @@
       font-family: var(--Font-family-font-family-body, Roboto);
       font-size: var(--Font-size-text-md);
       font-weight: bold;
+      line-height: var(--Line-height-text-md);
     }
     .options-wrapper {
       display: flex;

@@ -91,7 +91,7 @@
       align-items: center;
       justify-content: center;
       background-color: var(--primary);
-      background-color: var(--grey);
+      background-color: var(--Background-bg-tertiary);
       transition: all 0.3s ease-out;
       border-radius: 16px;
       width: 44px;
@@ -99,6 +99,9 @@
       position: relative;
       cursor: pointer;
       transition: background-color 0.3s;
+      &:hover {
+        background-color: var(--Background-bg-tertiary_hover);
+      }
 
       .toggle-circle {
         background-color: var(--white);
@@ -112,6 +115,10 @@
 
       &.active {
         background-color: var(--primary);
+
+        &:hover {
+          background-color: var(--Colors-Brand-4);
+        }
 
         .toggle-circle {
           left: calc(100% - 22px);

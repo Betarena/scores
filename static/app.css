@@ -3145,12 +3145,15 @@ body {
   --Font-family-font-family-display: Roboto;
   --Font-size-display-xs: 24px;
   --Font-size-text-sm: 14px;
+  --Font-size-text-md: 16px;
   --Line-height-text-sm: 20px;
   --Line-height-display-xs: 32px;
+  --Line-height-text-md: 24px;
   --white: #FFFFFF;
   --colors-gray-light-mode-900: #313131;
   --Background-bg-brand-primary: #FEEFE7;
   --Colors-Brand-Brand-5: #F5620F;
+  --Colors-Brand-4: #F77D38;
   /* Shadows/shadow-xl */
   --box-shadow: 0px 20px 24px -4px rgba(41, 41, 41, 0.08),
     0px 0px 8px 0px rgba(41, 41, 41, 0.08);
@@ -3189,6 +3192,8 @@ body {
   --popup-contrast-color: #3E3E3E;
   --popup-hover-color: #3D3D3D;
   --colors-text-text-secondary-700: #CECFD2;
+  --Background-bg-tertiary: #4B4B4B;
+  --Background-bg-tertiary_hover: #8C8C8C;
   --modal-bg: #292929;
 }
 
@@ -3224,6 +3229,8 @@ body {
   --popup-contrast-color: #E6E6E6;
   --popup-hover-color: #F2F2F2;
   --colors-text-text-secondary-700: #696969;
+  --Background-bg-tertiary: #E6E6E6;
+  --Background-bg-tertiary_hover: #F7F7F7;
   --modal-bg: #FFF;
 }
 

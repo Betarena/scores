@@ -93,7 +93,7 @@
 >
   <slot name="trigger" />
   {#if show}
-    <div class="dropdown" in:scale out:scale id={CNAME} on:click={hide}>
+    <div class="dropdown" in:scale out:scale id={CNAME}>
       <slot name="content" />
     </div>
   {/if}

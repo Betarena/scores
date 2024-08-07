@@ -11,18 +11,21 @@ body {
 
 
   --Font-family-font-family-display: Roboto;
-    --Font-size-display-xs: 24px;
+  --Font-size-display-xs: 24px;
     --Font-size-text-sm: 14px;
-    --Line-height-text-sm: 20px;
+  --Font-size-text-md: 16px;
+  --Line-height-text-sm: 20px;
     --Line-height-display-xs: 32px;
+  --Line-height-text-md: 24px;
 
   --white: #FFFFFF;
   --colors-gray-light-mode-900: #313131;
   --Background-bg-brand-primary: #FEEFE7;
-    --Colors-Brand-Brand-5: #F5620F;
+  --Colors-Brand-Brand-5: #F5620F;
+  --Colors-Brand-4: #F77D38;
 
 
-    /* Shadows/shadow-xl */
+  /* Shadows/shadow-xl */
     --box-shadow: 0px 20px 24px -4px rgba(41, 41, 41, 0.08),
       0px 0px 8px 0px rgba(41, 41, 41, 0.08);
 }

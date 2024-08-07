@@ -8,8 +8,7 @@
 -->
 
 <script lang="ts">
-  // #region ➤ 📌 VARIABLES
-
+  import { goto } from "$app/navigation";
   import CrossIcon from "$lib/components/ui/assets/crossicon.svelte";
   import Dotsicon from "$lib/components/ui/assets/dotsicon.svelte";
   import Settings_01 from "$lib/components/ui/assets/settings-01.svelte";
@@ -17,6 +16,9 @@
   import Dropdown from "$lib/components/ui/wrappers/Dropdown.svelte";
   import session from "$lib/store/session.js";
   import { createEventDispatcher } from "svelte";
+
+  // #region ➤ 📌 VARIABLES
+
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -39,7 +41,11 @@
 
   const dispatch = createEventDispatcher();
   function back() {
-    history.back();
+    if (window?.history.length > 1) {
+      history.back();
+    } else {
+      goto("/");
+    }
   }
 
   $: ({ viewportType } = $session);
@@ -74,7 +80,8 @@
         </a>
       </div>
     </Dropdown>
-    {:else} <div />
+  {:else}
+    <div />
   {/if}
 </div>
 

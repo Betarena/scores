@@ -121,9 +121,11 @@
 <section id={CNAME} class={viewportType}>
   <div class="main-content {viewportType}">
     <NotificationsHeader config={true} />
-    {#each sections as { title, options }}
-      <NotificationsConfigBlock {title} {options} />
-    {/each}
+    <div class="config-blocks">
+      {#each sections as { title, options }}
+        <NotificationsConfigBlock {title} {options} />
+      {/each}
+    </div>
   </div>
 </section>
 
@@ -179,6 +181,10 @@
       --text-size-m: 14px;
       --text-size-s: 12px;
       --text-size-xs: 10px;
+
+      .config-blocks {
+        padding-inline: 16px;
+      }
     }
   }
 </style>
