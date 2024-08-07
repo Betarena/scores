@@ -94,7 +94,9 @@
       align-items: center;
       height: 40px;
       width: 40px;
-      background-color: var(--bg-color-second);
+      background-color: rgb(49,49,49);
+
+      --text-color: #FFFFFF
     }
 
     .info {

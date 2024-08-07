@@ -8,35 +8,28 @@
 -->
 
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
-
-  // #region ➤ 📌 VARIABLES
+  // #region ➤ 📦 Package Imports
+  import { timeAgo } from "$lib/utils/dates.js";
+  import CompetitonStarted from "./assets/CompetitonStarted.svelte";
+  import WinIcon from "./assets/WinIcon.svelte";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'variables' that are to be         │
-  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
   // │ IMPORTANT                                                              │
   // │ Please, structure the imports as follows:                              │
-  // │ 1. export const / let [..]                                             │
-  // │ 2. const [..]                                                          │
-  // │ 3. let [..]                                                            │
-  // │ 4. $: [..]                                                             │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let /**
-     * @description
-     *  📣 button state
-     */
-    active = false;
-
-  /**
-   * @description
-   *  📣 dispatch for click event
-   */
-  const dispatch = createEventDispatcher();
-
-  // #endregion ➤ 📌 VARIABLES
+  export let notification;
+  $: ({ isNew = true, text, amount, title, date, status } = notification);
+  $: textContent = text.split("{count}") || [];
+  // #endregion ➤ 📦 Package Imports
 </script>
 
 <!--
@@ -50,15 +43,28 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div
-  class="tag-pill"
-  {...$$restProps}
-  class:active
-  on:click={() => dispatch("click")}
->
-  <span class="w-400 color-black-2 no-wrap">
-    <slot />
-  </span>
+<div class="notification">
+  <div class="img">
+    {#if status === "won"}
+      <WinIcon />
+    {:else}
+      <CompetitonStarted />
+    {/if}
+  </div>
+  <div class="content">
+    <div class="text">
+      {textContent[0]}
+      {#if textContent.length > 1}
+          <span class="amount">{amount} BTA</span>
+          {textContent[1]}
+      {/if}
+    </div>
+    <div class="title">{title}</div>
+    <div class="time-ago">{timeAgo(date)}</div>
+  </div>
+  {#if isNew}
+    <div class="new-icon" />
+  {/if}
 </div>
 
 <!--
@@ -72,30 +78,48 @@
 -->
 
 <style lang="scss">
-  .tag-pill {
-    padding: 3px 12px;
-    width: max-content;
-    border-radius: 100px;
-    color: var(--text-color);
-    background-color: var(--tag-bg);
-    font-size: var(--text-button-size);
-    transition: all;
-    transition-duration: 0.4s;
-    cursor: pointer;
+  .notification {
+    display: flex;
+    align-items: start;
+    justify-content: flex-start;
+    gap: var(--spacing-xl);
 
-    &:hover,
-    &.active {
-      /* 🎨 style */
-      background-color: var(--primary) !important;
+    .content {
+      flex-grow: 1;
+      color: var(--Text-text-secondary);
 
-      span {
-        /* 🎨 style */
-        color: var(--white) !important;
+      /* Text sm/Regular */
+      font-family: var(--Font-family-font-family-display);
+      font-size: var(--Font-size-text-sm);
+      font-style: normal;
+      font-weight: 400;
+      line-height: var(--Line-height-text-sm);
+
+      .title, .amount {
+        color: var(--Colors-Brand-Brand-5);
+
+        /* Text sm/Semibold */
+        font-family: var(--Font-family-font-family-display);
+        font-size: var(--Font-size-text-sm);
+        font-style: normal;
+        font-weight: 600;
+        line-height: var(--Line-height-text-sm);
+      }
+
+      .time-ago {
+        color: var(--Text-text-tertiary, #9d9d9d);
+        font-size: 10px;
+        font-style: normal;
+        margin-top: 4px;
+        font-weight: 400;
+        line-height: 14px;
       }
     }
-
-    &.active:hover {
-      background-color: var(--primary-fade) !important;
+    .new-icon {
+      width: 10px;
+      height: 10px;
+      background-color: var(--Colors-Brand-Brand-5);
+      border-radius: 50%;
     }
   }
 </style>

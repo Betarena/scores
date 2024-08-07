@@ -1,22 +1,27 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ High Order Component Overview                                                    │
+│ 📌 High Order Component Overview                                                 │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ Version Svelte Format :|: V.8.0 [locked]                                       │
+│ ➤ Internal Svelte Code Format :|: V.8.0                                          │
+│ ➤ Status :|: 🔒 LOCKED                                                           │
+│ ➤ Author(s) :|: @migbash                                                         │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ 📝 Description                                                                   │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ Scores Notifications Section Layout                                                    │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ Svelte Component JS/TS                                                           │
+│ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ HINT: | Access snippets for '<script> [..] </script>' those found in           │
-|         | '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <script lang="ts">
-
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -32,8 +37,11 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { createEventDispatcher, onDestroy, onMount, type EventDispatcher } from 'svelte';
-  import { fade } from 'svelte/transition';
+  import type { PageData } from ".svelte-kit/types/src/routes/notifications/settings/$types";
+
+  import NotificationsHeader from "./NotificationsHeader.svelte";
+  import session from "$lib/store/session.js";
+  import NotificationsConfigBlock from "./NotificationsConfigBlock.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -51,121 +59,132 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  const
-    /**
-     * @description
-     *  📣 `this` component **main** `id` and `data-testid` prefix.
-     */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = 'general⮕g⮕background-modal-blur',
-    /**
-     * @augments EventDispatcher
-     */
-    dispatch: EventDispatcher < any > = createEventDispatcher()
-  ;
+  export let data: PageData;
+
+  const /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
+    // eslint-disable-next-line no-unused-vars
+    CNAME: string = "notifications-config";
+  $: ({ viewportType } = $session);
+
+  const sections = [
+    {
+      title: "Email Notifications",
+      options: [
+        {
+          label: "Send me notification every time I win a competition",
+          checked: true,
+        },
+      ],
+    },
+    {
+      title: "Mobile Notifications",
+      options: [
+        {
+          label: "Send me a notification every time I win a competition",
+          checked: true,
+        },
+        {
+          label: "Send me a notification every time a ne competition starts",
+          checked: true,
+        },
+      ],
+    },
+    {
+      title: "General Notifications",
+      options: [
+        {
+          label: "Send me a notification every time I win a competition",
+          checked: true,
+        },
+        {
+          label: "Send me a notification every time a ne competition starts",
+          checked: true,
+        },
+      ],
+    },
+  ];
 
   // #endregion ➤ 📌 VARIABLES
-
-  // #region ➤ 🔄 LIFECYCLE [SVELTE]
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'logic' that should run            │
-  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
-  // │ as soon as 'this' .svelte file is ran.                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  onMount
-  (
-    () =>
-    {
-      document.body.classList.add
-      (
-        'disable-scroll'
-      );
-      return;
-    }
-  );
-
-  onDestroy
-  (
-    () =>
-    {
-      document.body.classList.remove
-      (
-        'disable-scroll'
-      );
-      return;
-    }
-  );
-
-  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
-
 </script>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ Svelte Component HTML                                                            │
+│ 💠 Svelte Component HTML                                                         │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ HINT: | Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    |
-│         │ imported from './static/app.css'                                       |
-│ ➤ HINT: | access custom Betarena Scores VScode Snippets by typing emmet-like     |
-|         | abbrev.                                                                │
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<!--
-╭─────
-│ NOTE:
-│ > general modal backdrop.
-╰─────
--->
-<div
-	in:fade
-  out:fade
-	class=
-  "
-  {CNAME}
-  "
-	on:click=
-  {
-    () =>
-    {
-      dispatch('closeModal');
-      return;
-    }
-  }
-/>
+<section id={CNAME} class={viewportType}>
+  <div class="main-content {viewportType}">
+    <NotificationsHeader config={true} />
+    <div class="config-blocks">
+      {#each sections as { title, options }}
+        <NotificationsConfigBlock {title} {options} />
+      {/each}
+    </div>
+  </div>
+</section>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ Svelte Component CSS/SCSS                                                        │
+│ 🌊 Svelte Component CSS/SCSS                                                     │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ HINT: | auto-fill/auto-complete iniside <style> for var()                      │
-|         | values by typing/CTRL+SPACE                                            │
-│ ➤ HINT: | access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <style lang="scss">
-
-  /*
-  ╭──────────────────────────────────────────────────────────────────────────────╮
-  │ 📲 MOBILE-FIRST                                                              │
-  ╰──────────────────────────────────────────────────────────────────────────────╯
-  */
-
-  div.general⮕g⮕background-modal-blur
-  {
-    /* 📌 position */
-    position: fixed;
-    top: 0;
-    right: 0;
-    left: 0;
-    z-index: 4000;
-    /* 🎨 style */
-    height: 100%;
+  :global {
+    .mobile#header {
+      --header-border: none;
+    }
+  }
+  .mobile {
+    padding-top: 3px;
+  }
+  section {
+    background-color: var(--bg-color);
     width: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    height: 100%;
+    &.mobile {
+      padding-inline: 0;
+    }
   }
 
+  .main-content {
+    max-width: 824px;
+    height: 100%;
+    margin: auto;
+    --text-size-2xl: 38px;
+    --text-size-xl: 24px;
+    --text-size-l: 20px;
+    --text-size-m: 16px;
+    --text-size-s: 14px;
+    --text-size-xs: 12px;
+    --text-button-size: var(--text-size-m);
+    display: flex;
+    flex-direction: column;
+
+    &.mobile {
+      padding: 0 !important;
+      padding-bottom: 128px;
+      width: 100%;
+      gap: 8px;
+      --text-size-2xl: 24px;
+      --text-size-l: 16px;
+      --text-size-m: 14px;
+      --text-size-s: 12px;
+      --text-size-xs: 10px;
+
+      .config-blocks {
+        padding-inline: 16px;
+      }
+    }
+  }
 </style>

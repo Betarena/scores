@@ -44,6 +44,8 @@
     routeIdPageTags,
     routeIdSportstack,
   } from "$lib/constants/paths.js";
+    import NotifiicationsIcon from "./assets/NotifiicationsIcon.svelte";
+    import NotificationButton from "./NotificationButton.svelte";
 
   // #endregion ➤ 📦 Package Imports
   // #region ➤ 📌 VARIABLES
@@ -142,6 +144,7 @@
   {/if}
 
   <div class="actions">
+   <NotificationButton />
     <HeaderCLang />
     <HeaderCTheme />
     {#if !isAuth}

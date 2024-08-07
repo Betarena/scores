@@ -8,7 +8,24 @@
 -->
 
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
+  // #region ➤ 📦 Package Imports
+
+  import ToggleButton from "$lib/components/ui/ToggleButton.svelte";
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
 
@@ -24,17 +41,13 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let /**
+  export let title: string;
+  export let options: { label: string; checked: boolean }[];
+  const /**
      * @description
-     *  📣 button state
-     */
-    active = false;
-
-  /**
-   * @description
-   *  📣 dispatch for click event
-   */
-  const dispatch = createEventDispatcher();
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */ // eslint-disable-next-line no-unused-vars
+    CNAME: string = "notifications⮕config⮕block";
 
   // #endregion ➤ 📌 VARIABLES
 </script>
@@ -50,15 +63,16 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div
-  class="tag-pill"
-  {...$$restProps}
-  class:active
-  on:click={() => dispatch("click")}
->
-  <span class="w-400 color-black-2 no-wrap">
-    <slot />
-  </span>
+<div class="notifications-config-block" id={CNAME}>
+  <div class="title">{title}</div>
+  <div class="options-wrapper">
+    {#each options as { label, checked }}
+      <div class="option">
+        <div class="label">{label}</div>
+        <ToggleButton active={checked} />
+      </div>
+    {/each}
+  </div>
 </div>
 
 <!--
@@ -72,30 +86,46 @@
 -->
 
 <style lang="scss">
-  .tag-pill {
-    padding: 3px 12px;
-    width: max-content;
-    border-radius: 100px;
-    color: var(--text-color);
-    background-color: var(--tag-bg);
-    font-size: var(--text-button-size);
-    transition: all;
-    transition-duration: 0.4s;
-    cursor: pointer;
+  :global(#notifications⮕config⮕block:last-of-type) {
+    border-bottom: none;
+  }
+  .notifications-config-block {
+    display: flex;
+    padding-block: var(--spacing-xl);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-lg);
+    align-self: stretch;
+    border-bottom: 1px solid var(--Border-border-tertiary);
 
-    &:hover,
-    &.active {
-      /* 🎨 style */
-      background-color: var(--primary) !important;
-
-      span {
-        /* 🎨 style */
-        color: var(--white) !important;
-      }
+    .title {
+      color: var(--Text-text-primary);
+      /* Text md/Medium */
+      font-family: var(--Font-family-font-family-body, Roboto);
+      font-size: var(--Font-size-text-md);
+      font-weight: bold;
+      line-height: var(--Line-height-text-md);
     }
+    .options-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--spacing-xl);
+      align-self: stretch;
 
-    &.active:hover {
-      background-color: var(--primary-fade) !important;
+      .option {
+        display: flex;
+        align-items: start;
+        width: 100%;
+        gap: var(--spacing-xl, 16px);
+        align-self: stretch;
+
+        .label {
+          font-size: var(--Font-size-text-sm);
+          color: var( --colors-text-text-secondary-700);
+          flex-grow: 1;
+        }
+      }
     }
   }
 </style>

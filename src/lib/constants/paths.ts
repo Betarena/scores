@@ -94,5 +94,16 @@ export const
    * @description
    *  📣 Target `path` for **home  page**.
    */
-  routeIdHome = '/(scores)/[[lang=lang]]'
+  routeIdHome = '/(scores)/[[lang=lang]]',
+
+  /**
+   * @description
+   *  📣 Target `path` for **notifications**.
+   */
+  routeIdNotifications = '/notifications',
+  /**
+   * @description
+   *  📣 Target `path` for **notifications settings**.
+   */
+  routeIdNotificationsSettings = '/notifications/settings'
   ;

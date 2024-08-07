@@ -1,16 +1,19 @@
-.light-mode
-{
+.light-mode {
   --text-color: #292929;
   --text-color-second: #292929;
   --text-color-second-dark: #8c8c8c;
 
-  --icon-color: rgba(140, 140, 140, 1);
+  --Text-text-secondary: #3B3B3B;
+  --Text-text-primary: #292929;
+  --icon-color: #8c8c8c;
   --icon-color-light: #000000;
 
 
   --bg-color-rgb-consts: 255, 255, 255;
   --bg-color: rgb(var(--bg-color-rgb-consts));
 
+  --Background-bg-secondary: #F7F7F7;
+  --Background-bg-primary: #FFF;
   --layout-bg-color: #E6E6E6;
 
   --bg-color-second-rgb-consts: 247, 247, 247;
@@ -26,14 +29,23 @@
   --border: 1px solid #CCC;
   --header-border: 1px solid #CCC;
 
+  --Border-border-tertiary: #D2D2D2;
+  --Border-border-secondary: #D2D2D2;
   //Mobile-Menu
-  --mobile-menu-bg-color:  rgba(var(--bg-color-rgb-consts), 0.9);
+  --mobile-menu-bg-color: rgba(var(--bg-color-rgb-consts), 0.9);
   --box-shadow: 0px 0px 50px 0px rgba(0, 0, 0, 0.15);
+
+  //DropDown popup
+  --dropdowmn-popup-bg: var(--Background-bg-primary);
 
   --tag-bg: #E6E6E6;
   //colors
   --popup-bg-color: #fff;
   --popup-contrast-color: #E6E6E6;
-  --popup-hover-color: #F2F2F2
+  --popup-hover-color: #F2F2F2;
+  --colors-text-text-secondary-700: #696969;
 
+  --Background-bg-tertiary: #E6E6E6;
+    --Background-bg-tertiary_hover: #F7F7F7;
+  --modal-bg: #FFF;
 }

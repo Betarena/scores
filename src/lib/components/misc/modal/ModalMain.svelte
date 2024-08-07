@@ -26,8 +26,6 @@
   import ModalBackdrop from "./Modal-Backdrop.svelte";
 
   // #endregion ➤ 📦 Package Imports
-
-
 </script>
 
 <!--
@@ -41,14 +39,14 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-{#if $modalStore.show && $modalStore.component}
-  {#if $modalStore.modal}
-    <ModalBackdrop on:closeModal={() => ($modalStore.show = false)} />
-  {/if}
-  <div class="modal-content">
-    <svelte:component this={$modalStore.component} {...$modalStore.props} />
-  </div>
+{#if $modalStore.modal && $modalStore.show}
+  <ModalBackdrop on:closeModal={() => ($modalStore.show = false)} />
 {/if}
+<div class="modal-content">
+  {#if $modalStore.show && $modalStore.component}
+    <svelte:component this={$modalStore.component} {...$modalStore.props} />
+  {/if}
+</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮

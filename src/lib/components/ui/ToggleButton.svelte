@@ -24,19 +24,30 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let /**
-     * @description
-     *  📣 button state
-     */
-    active = false;
+  export let active = false;
 
-  /**
-   * @description
-   *  📣 dispatch for click event
-   */
   const dispatch = createEventDispatcher();
 
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  function toggle() {
+    active = !active;
+    dispatch("toggle", active);
+  }
+
+  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--
@@ -50,15 +61,11 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div
-  class="tag-pill"
-  {...$$restProps}
-  class:active
-  on:click={() => dispatch("click")}
->
-  <span class="w-400 color-black-2 no-wrap">
-    <slot />
-  </span>
+<div class="toggle-wrapper">
+  <button on:click={toggle} class="toggle-button" class:active>
+    <div class="toggle-circle" />
+  </button>
+  <slot />
 </div>
 
 <!--
@@ -72,30 +79,51 @@
 -->
 
 <style lang="scss">
-  .tag-pill {
-    padding: 3px 12px;
-    width: max-content;
-    border-radius: 100px;
-    color: var(--text-color);
-    background-color: var(--tag-bg);
-    font-size: var(--text-button-size);
-    transition: all;
-    transition-duration: 0.4s;
-    cursor: pointer;
+  .toggle-wrapper {
+    display: flex;
+    gap: var(--spacing-lg);
+    justify-content: center;
+    align-items: center;
+    color: var(--Text-text-secondary);
 
-    &:hover,
-    &.active {
-      /* 🎨 style */
-      background-color: var(--primary) !important;
-
-      span {
-        /* 🎨 style */
-        color: var(--white) !important;
+    .toggle-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--primary);
+      background-color: var(--Background-bg-tertiary);
+      transition: all 0.3s ease-out;
+      border-radius: 16px;
+      width: 44px;
+      height: 24px;
+      position: relative;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      &:hover {
+        background-color: var(--Background-bg-tertiary_hover);
       }
-    }
 
-    &.active:hover {
-      background-color: var(--primary-fade) !important;
+      .toggle-circle {
+        background-color: var(--white);
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        position: absolute;
+        left: 2px;
+        transition: all 0.3s ease-out;
+      }
+
+      &.active {
+        background-color: var(--primary);
+
+        &:hover {
+          background-color: var(--Colors-Brand-4);
+        }
+
+        .toggle-circle {
+          left: calc(100% - 22px);
+        }
+      }
     }
   }
 </style>

@@ -8,35 +8,32 @@
 -->
 
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
+  import { fade, scale, fly } from "svelte/transition";
+  import { backOut, expoOut } from "svelte/easing";
+  import Button from "$lib/components/ui/Button.svelte";
+  import ToggleButton from "$lib/components/ui/ToggleButton.svelte";
+  import PhoneIcon from "../assets/PhoneIcon.svelte";
+  import BellIcon from "../assets/BellIcon.svelte";
+  import SoundWave from "../assets/SoundWave.svelte";
+  import CrossIcon from "../assets/CrossIcon.svelte";
+  import { modalStore } from "$lib/store/modal.js";
+  import session from "$lib/store/session.js";
 
-  // #region ➤ 📌 VARIABLES
+  let active = false;
 
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'variables' that are to be         │
-  // │ and are expected to be used by 'this' .svelte file / component.        │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. export const / let [..]                                             │
-  // │ 2. const [..]                                                          │
-  // │ 3. let [..]                                                            │
-  // │ 4. $: [..]                                                             │
-  // ╰────────────────────────────────────────────────────────────────────────╯
+  $: ({ viewportType } = $session);
 
-  export let /**
-     * @description
-     *  📣 button state
-     */
-    active = false;
+  function startBell() {
+    active = true;
+  }
 
-  /**
-   * @description
-   *  📣 dispatch for click event
-   */
-  const dispatch = createEventDispatcher();
+  function transition(node) {
+    if (viewportType === "mobile") {
+      return fly(node, { duration: 700, y: 450 });
+    }
 
-  // #endregion ➤ 📌 VARIABLES
+    return scale(node, { easing: expoOut, duration: 1000 });
+  }
 </script>
 
 <!--
@@ -51,14 +48,50 @@
 -->
 
 <div
-  class="tag-pill"
-  {...$$restProps}
-  class:active
-  on:click={() => dispatch("click")}
+  class="modal-body block {viewportType}"
+  on:introend={startBell}
+  in:transition
+  out:transition
 >
-  <span class="w-400 color-black-2 no-wrap">
-    <slot />
-  </span>
+  <div class="header">
+    <button on:click={() => ($modalStore.show = false)}>
+      <CrossIcon />
+    </button>
+  </div>
+  <div class="block body">
+    <div class="block info">
+      <div class="img">
+        <div class="svg-wrap">
+          <PhoneIcon />
+        </div>
+        {#if active}
+          <div
+            class="svg-wrap"
+            in:scale={{ easing: backOut, duration: 500 }}
+            out:scale={{ easing: backOut, duration: 500 }}
+          >
+            <BellIcon />
+          </div>
+          <div
+            class="svg-wrap"
+            in:fade={{ duration: 500, delay: 300 }}
+            out:fade={{ duration: 200 }}
+          >
+            <SoundWave />
+          </div>
+        {/if}
+      </div>
+      <div class="block text">
+        <h2>Stay Updated with Betarena</h2>
+        <div class="desc">
+          Enable push notifications for the latest sports updates from Betarena
+        </div>
+      </div>
+    </div>
+
+    <ToggleButton bind:active>Turn on</ToggleButton>
+    <Button style="width: 100%" type="primary">Confirm</Button>
+  </div>
 </div>
 
 <!--
@@ -72,30 +105,83 @@
 -->
 
 <style lang="scss">
-  .tag-pill {
-    padding: 3px 12px;
-    width: max-content;
-    border-radius: 100px;
-    color: var(--text-color);
-    background-color: var(--tag-bg);
-    font-size: var(--text-button-size);
-    transition: all;
-    transition-duration: 0.4s;
-    cursor: pointer;
+  .block {
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    display: flex;
 
-    &:hover,
-    &.active {
-      /* 🎨 style */
-      background-color: var(--primary) !important;
+    &.body {
+      gap: var(--spacing-5xl);
+    }
 
-      span {
-        /* 🎨 style */
-        color: var(--white) !important;
+    &.info {
+      gap: var(--spacing-xl);
+    }
+
+    &.text {
+      gap: var(--spacing-md);
+    }
+  }
+  .modal-body {
+    display: flex;
+    background-color: var(--modal-bg);
+    max-width: 375px;
+    width: 100%;
+    padding: var(--spacing-xl, 16px) var(--spacing-4xl, 32px)
+      var(--spacing-4xl, 32px) var(--spacing-4xl, 32px);
+
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 40px;
+    border-radius: var(--radius-xl);
+
+    .header {
+      display: flex;
+      justify-content: end;
+      width: 100%;
+
+      button {
+        background-color: inherit;
       }
     }
 
-    &.active:hover {
-      background-color: var(--primary-fade) !important;
+    .img {
+      position: relative;
+      height: 100px;
+      display: flex;
+      width: 85px;
+      justify-content: center;
+      margin: auto;
+      .svg-wrap {
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+    }
+    .text {
+      width: 100%;
+
+      h2 {
+        margin: 0;
+        color: var(--text-color);
+      }
+
+      .desc {
+        color: var(--text-color-second-dark);
+      }
+    }
+
+    &.mobile {
+      top: unset;
+      max-width: 100%;
+      bottom: 0;
+      transform: unset;
+      left: 0;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
     }
   }
 </style>

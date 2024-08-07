@@ -3133,10 +3133,38 @@ img.google-aspect-ratio {
   color: var(--primary) !important;
 }
 
+body {
+  --radius-xs: 4px;
+  --radius-xl: 12px;
+  --spacing-xs: 4px;
+  --spacing-sm: 6px;
+  --spacing-md: 8px;
+  --spacing-lg: 12px;
+  --spacing-xl: 16px;
+  --spacing-5xl: 40px;
+  --Font-family-font-family-display: Roboto;
+  --Font-size-display-xs: 24px;
+  --Font-size-text-sm: 14px;
+  --Font-size-text-md: 16px;
+  --Line-height-text-sm: 20px;
+  --Line-height-display-xs: 32px;
+  --Line-height-text-md: 24px;
+  --white: #FFFFFF;
+  --colors-gray-light-mode-900: #313131;
+  --Background-bg-brand-primary: #FEEFE7;
+  --Colors-Brand-Brand-5: #F5620F;
+  --Colors-Brand-4: #F77D38;
+  /* Shadows/shadow-xl */
+  --box-shadow: 0px 20px 24px -4px rgba(41, 41, 41, 0.08),
+    0px 0px 8px 0px rgba(41, 41, 41, 0.08);
+}
+
 .dark-mode {
   --text-color: #FFFFFF;
   --text-color-second: #cccccc;
   --text-color-second-dark: #8c8c8c;
+  --Text-text-secondary: #D2D2D2;
+  --Text-text-primary: #FFF;
   --icon-color: #8c8c8c;
   --icon-color-light: #A8A8A8;
   --bg-color-rgb-consts: 41, 41, 41;
@@ -3144,6 +3172,8 @@ img.google-aspect-ratio {
   --layout-bg-color: rgba(29, 29, 29, 1);
   --bg-color-second-rgb-consts: 49, 49, 49;
   --bg-color-second: rgb(var(--bg-color-second-rgb-consts));
+  --Background-bg-secondary: #3B3B3B;
+  --Background-bg-secondary_hover: #4B4B4B;
   --border-color-light: #4B4B4B;
   --border-color: #4B4B4B;
   --bg-hover-color: #4B4B4B;
@@ -3151,23 +3181,34 @@ img.google-aspect-ratio {
   --section-border: 1px solid var(--border-color);
   --border: 1px solid var(--border-color);
   --header-border: 1px solid #383838;
+  --Border-border-tertiary: #3B3B3B;
+  --Border-border-secondary: #727171;
   --mobile-menu-bg-color: rgba(var(--bg-color-second-rgb-consts), 0.7);
   --mobile-menu-bg-popup: rgba(var(--bg-color-rgb-consts), 0.8);
   --box-shadow: 0px 0px 50px 0px rgba(0, 0, 0, 0.5);
+  --dropdowmn-popup-bg: var(--colors-gray-light-mode-900);
   --tag-bg: #4B4B4B;
   --popup-bg-color: #4b4b4b;
   --popup-contrast-color: #3E3E3E;
   --popup-hover-color: #3D3D3D;
+  --colors-text-text-secondary-700: #CECFD2;
+  --Background-bg-tertiary: #4B4B4B;
+  --Background-bg-tertiary_hover: #8C8C8C;
+  --modal-bg: #292929;
 }
 
 .light-mode {
   --text-color: #292929;
   --text-color-second: #292929;
   --text-color-second-dark: #8c8c8c;
-  --icon-color: rgba(140, 140, 140, 1);
+  --Text-text-secondary: #3B3B3B;
+  --Text-text-primary: #292929;
+  --icon-color: #8c8c8c;
   --icon-color-light: #000000;
   --bg-color-rgb-consts: 255, 255, 255;
   --bg-color: rgb(var(--bg-color-rgb-consts));
+  --Background-bg-secondary: #F7F7F7;
+  --Background-bg-primary: #FFF;
   --layout-bg-color: #E6E6E6;
   --bg-color-second-rgb-consts: 247, 247, 247;
   --bg-color-second: rgb(var(--bg-color-second-rgb-consts));
@@ -3178,12 +3219,19 @@ img.google-aspect-ratio {
   --section-border: 1px solid var(--border-color-light);
   --border: 1px solid #CCC;
   --header-border: 1px solid #CCC;
+  --Border-border-tertiary: #D2D2D2;
+  --Border-border-secondary: #D2D2D2;
   --mobile-menu-bg-color: rgba(var(--bg-color-rgb-consts), 0.9);
   --box-shadow: 0px 0px 50px 0px rgba(0, 0, 0, 0.15);
+  --dropdowmn-popup-bg: var(--Background-bg-primary);
   --tag-bg: #E6E6E6;
   --popup-bg-color: #fff;
   --popup-contrast-color: #E6E6E6;
-  --popup-hover-color: #F2F2F2 ;
+  --popup-hover-color: #F2F2F2;
+  --colors-text-text-secondary-700: #696969;
+  --Background-bg-tertiary: #E6E6E6;
+  --Background-bg-tertiary_hover: #F7F7F7;
+  --modal-bg: #FFF;
 }
 
 /*# sourceMappingURL=app.css.map */

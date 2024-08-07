@@ -8,35 +8,30 @@
 -->
 
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
-
-  // #region ➤ 📌 VARIABLES
+    import { scale } from "svelte/transition";
+  // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'variables' that are to be         │
-  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
   // │ IMPORTANT                                                              │
   // │ Please, structure the imports as follows:                              │
-  // │ 1. export const / let [..]                                             │
-  // │ 2. const [..]                                                          │
-  // │ 3. let [..]                                                            │
-  // │ 4. $: [..]                                                             │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let /**
-     * @description
-     *  📣 button state
-     */
-    active = false;
-
-  /**
-   * @description
-   *  📣 dispatch for click event
-   */
-  const dispatch = createEventDispatcher();
-
-  // #endregion ➤ 📌 VARIABLES
+  import NotifiicationsIcon from "./assets/NotifiicationsIcon.svelte";
+    import { page } from "$app/stores";
+    import { routeIdNotifications } from "$lib/constants/paths.js";
+  let count = 0;
+  setTimeout(() => {
+    count = 18
+  }, 2500)
+  // #endregion ➤ 📦 Package Imports
 </script>
 
 <!--
@@ -50,16 +45,12 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div
-  class="tag-pill"
-  {...$$restProps}
-  class:active
-  on:click={() => dispatch("click")}
->
-  <span class="w-400 color-black-2 no-wrap">
-    <slot />
-  </span>
-</div>
+<a href="/notifications" class="notification-wrapper" class:active={$page.route.id === routeIdNotifications}>
+  <NotifiicationsIcon />
+  {#if count}
+    <div class="count" in:scale>{count}</div>
+  {/if}
+</a>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -72,30 +63,37 @@
 -->
 
 <style lang="scss">
-  .tag-pill {
-    padding: 3px 12px;
-    width: max-content;
-    border-radius: 100px;
-    color: var(--text-color);
-    background-color: var(--tag-bg);
-    font-size: var(--text-button-size);
-    transition: all;
-    transition-duration: 0.4s;
+  .notification-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
 
-    &:hover,
-    &.active {
-      /* 🎨 style */
-      background-color: var(--primary) !important;
-
-      span {
-        /* 🎨 style */
-        color: var(--white) !important;
-      }
+    &:hover, &.active {
+      --text-color: var(--primary);
     }
-
-    &.active:hover {
-      background-color: var(--primary-fade) !important;
+    .count {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background-color: var(--primary);
+      color: var(--white);
+      text-align: center;
+      font-family: Roboto;
+      font-size: 10px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 130%; /* 13px */
+      display: flex;
+      padding: var(--spacing-none, 0px) var(--spacing-xxs, 2px);
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      position: absolute;
+      right: -5px;
+      top: -3px;
+      border-radius: 3px;
     }
   }
 </style>

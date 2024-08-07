@@ -68,7 +68,7 @@
     routeIdPageAuthors,
   ];
   $: isInnerPage = simpleMobileHeaderRoutes.includes($page.route.id || "");
-  $: ({ currentPageRouteId, viewportType, globalState } =
+  $: ({ currentPageRouteId = "", viewportType, globalState } =
     $sessionStore);
   $: mobile = viewportType === "mobile";
   $: tablet = viewportType === "tablet";
@@ -154,12 +154,12 @@
   id="header"
   class:sticky={$page.route.id === routeIdPageAuthors && isPWA && mobile}
   class:mobile
-  class:dark-mode={currentPageRouteId !== "AuthorsPage"}
+  class:dark-mode={!["AuthorsPage", "NotificationsPage"].includes(currentPageRouteId || "")}
   style:border-bottom={$page.route.id === routeIdPageAuthors
     ? "none"
     : "var(--header-border)"}
 >
-  {#if currentPageRouteId !== "AuthorsPage"}
+  {#if  !["AuthorsPage", "NotificationsPage"].includes(currentPageRouteId || "")}
     <div class="wave-wrapper">
       <img
         id=""
@@ -187,7 +187,7 @@
 
   {#if (currentPageRouteId === "Standard" || currentPageRouteId === "CompetitionPage") && (desktop || !isInnerPage)}
     <SportsNavigationStandart />
-  {:else if currentPageRouteId !== "AuthorsPage" && user && desktop}
+  {:else if !["AuthorsPage", "NotificationsPage"].includes(currentPageRouteId || "") && user && desktop}
     <SportsNavigation />
   {/if}
 </header>

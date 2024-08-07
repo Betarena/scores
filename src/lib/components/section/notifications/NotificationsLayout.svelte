@@ -8,7 +8,7 @@
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ 📝 Description                                                                   │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ Scores Platform Header Lang Dropdown Component (Child)                           │
+│ Scores Notifications Section Layout                                                    │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -38,20 +38,18 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { page } from "$app/stores";
-  import { fly } from "svelte/transition";
 
   import sessionStore from "$lib/store/session.js";
-  import userBetarenaSettings from "$lib/store/user-settings.js";
-  import { dlog, NB_W_TAG } from "$lib/utils/debug.js";
-  import { scoresNavbarStore } from "./_store.js";
+  import type { PageData } from ".svelte-kit/types/src/routes/notifications/$types.js";
 
-  import arrowDown from "./assets/arrow-down.svg";
-  import arrowUp from "./assets/arrow-up.svg";
-  import arrowDownDark from "./assets/icon-arrow-down-dark.svg";
-  import arrowUpDark from "./assets/icon-arrow-up-dark.svg";
-
-  import { selectLanguage } from "$lib/utils/navigation.js";
-  import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
+  import SvelteSeo from "svelte-seo";
+  import NotificationsHeader from "./NotificationsHeader.svelte";
+  import Tabbar from "$lib/components/ui/Tabbar.svelte";
+  import NotificationListItem from "./NotificationListItem.svelte";
+  import Tag from "$lib/components/ui/Tag.svelte";
+  import { crossfade, fade, fly } from "svelte/transition";
+  import { elasticOut, quintOut } from "svelte/easing";
+  import { flip } from "svelte/animate";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -69,101 +67,142 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  const /**
-     * @description
-     *  📣 Deifined `hover` timeout, that constitues a navigational `intent.
-     */
-    HOVER_TIMEOUT = 250;
-  let /**
-     * @description
-     *  📣 Wether target dropdown menu is **active**.
-     */
-    isLangDropdown: boolean = false,
-    /**
-     * @description
-     *  📣 Target `intent` language.
-     */
-    targetIntenLang: string | undefined = undefined,
-    /**
-     * @description
-     *  📣 Target `timeout` intent.
-     */
-    timeoutIntent: NodeJS.Timeout;
+  export let data: PageData;
 
-  $: ({ serverLang, currentPageRouteId } = $sessionStore);
-  $: ({ theme } = $userBetarenaSettings);
-  $: ({ globalState: globalStateNavbar } = $scoresNavbarStore);
+  const /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
+    // eslint-disable-next-line no-unused-vars
+    CNAME: string = "notifications-layout";
+  let selectedTab;
+  let newNotifications = 0;
+  $: notificationsList = notifications[selectedTab?.id] || new Map();
+  setTimeout(() => {
+    newNotifications = 10;
+  }, 2500);
+  const competitionsNotifications = [
+    [
+      1,
+      {
+        id: 1,
+        text: "You have won {count} on the competition!",
+        amount: 6,
+        title: "Team England Will Win!",
+        date: new Date(),
+        isNew: true,
+        status: "won",
+      },
+    ],
+    [
+      2,
+      {
+        id: 2,
+        text: "You have won {count} on the competition!",
+        amount: 6,
+        title: "Team England Will Win!",
+        date: new Date(),
+        isNew: true,
+        status: "won",
+      },
+    ],
+    [
+      3,
+      {
+        id: 3,
+        text: "A new competition has started!",
+        title: "Barcelona Will Win!",
+        date: new Date(),
+        isNew: false,
+        status: "competition_started",
+      },
+    ],
+    [
+      4,
+      {
+        id: 4,
+        text: "A new competition has started!",
+        title: "Barcelona Will Win!",
+        date: new Date(),
+        isNew: false,
+        status: "competition_started",
+      },
+    ],
+  ];
 
-  $: translatioData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
-  $: isCustom = ["AuthorsPage", "NotificationsPage"].includes(currentPageRouteId || "");
+  let notifications = {
+    all: new Map([...competitionsNotifications]),
+    competitions: new Map(competitionsNotifications),
+    authors: new Map(),
+    scores: new Map(),
+  };
+
+  const [send, receive] = crossfade({
+    fallback(node, _params) {
+      const style = getComputedStyle(node);
+      const transform = style.transform === "none" ? "" : style.transform;
+
+      return {
+        duration: 600,
+        easing: quintOut,
+        css: (t) => `
+					transform: ${transform} scale(${t});
+					opacity: ${t}
+				`,
+      };
+    },
+  });
+  function addNotifications() {
+    const all = notifications.all;
+    let next = new Map();
+    Array.from(all).forEach(([_id, notification]) => {
+      const id = all.size + 1 + next.size;
+      next.set(id, { ...notification, id, isNew: true });
+    });
+    next = new Map([...next, ...all]);
+    newNotifications = 0;
+    notifications = {
+      ...notifications,
+      all: next,
+    };
+  }
+
+  function read(notifiaction) {
+    notifications = {
+      ...notifications,
+      all: new Map(
+        [...notifications.all].map(([id, notification]) => {
+          if (notification.id === notifiaction.id) {
+            return [id, { ...notification, isNew: false }];
+          }
+          return [id, notification];
+        })
+      ),
+    };
+  }
+
+  function readAll() {
+    notifications = {
+      ...notifications,
+      all: new Map(
+        [...notifications.all].map(([id, notification]) => {
+          return [id, { ...notification, isNew: false }];
+        })
+      ),
+
+      competitions: new Map(
+        [...notifications.competitions].map(([id, notification]) => {
+          return [id, { ...notification, isNew: false }];
+        })
+      ),
+    };
+  }
+
+  $: ({ viewportType } = $sessionStore);
+  const options = [
+    { id: "all", label: "All" },
+    { id: "scores", label: "Scores" },
+    { id: "authors", label: "Authors" },
+    { id: "competitions", label: "Competitions" },
+  ];
   // #endregion ➤ 📌 VARIABLES
-
-  // #region ➤ 🛠️ METHODS
-
-  /**
-   * @author
-   *  @migbash
-   * @summary
-   *  🟦 HELPER
-   * @description
-   *  - 📣 Advanced intent logic, applicable to desktop-only.
-   *  - 📣 `Pre-loads` target page , for target `language` upon `intent`/`hover`.
-   * @param { string | undefined } lang
-   *  💠 **[required]** Target `hovered` language.
-   * @return { void }
-   */
-  function detectIntentBuffer(lang: string | undefined): void {
-    const /**
-       * @description
-       *  📣 Detect change in hover-over lang.
-       */
-      if_M_0: boolean = timeoutIntent != undefined && lang != targetIntenLang,
-      /**
-       * @description
-       *  📣 First time set lang and timer.
-       */
-      if_M_E_0: boolean = lang != undefined && timeoutIntent == undefined;
-    if (if_M_0) {
-      // [🐞]
-      dlog(`${NB_W_TAG[0]} clearning timer!`);
-
-      clearTimeout(timeoutIntent);
-
-      targetIntenLang = lang;
-
-      if (lang == undefined) return;
-
-      // [🐞]
-      dlog(`${NB_W_TAG[0]} setting new timer!`);
-
-      timeoutIntent = setTimeout(() => {
-        // [🐞]
-        dlog(`${NB_W_TAG[0]} intent triggered!`, true);
-        $sessionStore.lang_intent = targetIntenLang;
-      }, HOVER_TIMEOUT);
-    } else if (if_M_E_0) {
-      targetIntenLang = lang;
-      timeoutIntent = setTimeout(() => {
-        // [🐞]
-        dlog(`${NB_W_TAG[0]} intent triggered!`, true);
-        $sessionStore.lang_intent = targetIntenLang;
-      }, HOVER_TIMEOUT);
-    }
-
-    return;
-  }
-
-  function handleClick() {
-    const openDropDown = !$scoresNavbarStore.globalState.has("LangDropdownActive")
-    scoresNavbarStore.closeAllDropdowns();
-
-    if (openDropDown) {
-      scoresNavbarStore.updateData("globalStateAdd", "LangDropdownActive");
-    }
-    return;
-  }
-
-  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--
@@ -177,100 +216,46 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div
-  id="lang-container"
->
-  <!--
-  ╭─────
-  │ > Selected Language
-  ╰─────
-  -->
-  <div
-    class="
-    selected-language-btn
-    row-space-out
-    cursor-pointer
-    "
-    class:active-lang-select={globalStateNavbar.has("LangDropdownActive")}
-    on:click|stopPropagation={handleClick}
-  >
-    <p
-      class="
-      s-14
-      m-r-5
-      uppercase
-      "
-      class:color-white={!isCustom|| theme == "Dark"}
-      class:color-black-2= {isCustom &&
-        theme == "Light"}
-    >
-      {serverLang}
-    </p>
-
-    <!--
-    ╭─────
-    │ > Arrow Down
-    ╰─────
-    -->
-    <img
-      loading="lazy"
-      src={!isCustom|| theme == "Dark"
-        ? !globalStateNavbar.has("LangDropdownActive")
-          ? arrowDown
-          : arrowUp
-        : !globalStateNavbar.has("LangDropdownActive")
-        ? arrowDownDark
-        : arrowUpDark}
-      alt={!isLangDropdown ? "arrowDown" : "arrowUp"}
-      width="16"
-      height="16"
-    />
-  </div>
-
-  <!--
-  ╭─────
-  │ > Dropdown Menu
-  ╰─────
-  -->
-  {#if globalStateNavbar.has("LangDropdownActive")}
-    <div id="dropdown-menu" transition:fly>
-      {#each translatioData?.langArray?.sort() ?? [] as lang}
-        {#if lang.toUpperCase() != serverLang?.toUpperCase()}
-          <div
-            class="
-            lang-select
-            "
-            on:click={() => {
-              return selectLanguage(lang);
-            }}
-            on:keydown={() => {
-              return selectLanguage(lang);
-            }}
-            on:mouseout={() => {
-              return detectIntentBuffer(undefined);
-            }}
-            on:mouseover={() => {
-              return detectIntentBuffer(lang);
-            }}
-            on:focus={() => {
-              return detectIntentBuffer(lang);
-            }}
+<section id={CNAME} class={viewportType}>
+  <div class="main-content {viewportType}">
+    <NotificationsHeader on:readAll={readAll} />
+    <div class="content">
+      <Tabbar
+        data={options}
+        style={viewportType === "mobile" ? "padding-inline: 16px" : ""}
+        bind:selected={selectedTab}
+        let:tab
+        bottom_border={true}
+        on:select
+      >
+        {tab.label} ({notifications[tab.id]?.size || 0})
+      </Tabbar>
+    </div>
+    <div class="list-wrapper">
+      {#if newNotifications}
+        <div
+          class="new-notifications"
+          in:fly={{ easing: elasticOut, y: -10, duration: 3000 }}
+        >
+          <Tag active={true} on:click={addNotifications}
+            >+ {newNotifications} new</Tag
           >
-            <p
-              class="
-              color-white
-              s-14
-              uppercase
-              "
-            >
-              {lang}
-            </p>
-          </div>
-        {/if}
+        </div>
+      {/if}
+      {#each [...notificationsList] as [id, notification] (id)}
+        <div
+          class="list-item"
+          in:fade={{ delay: 200, duration: 1000 }}
+          animate:flip={{ duration: 1000 }}
+          class:active={notification.isNew}
+          on:click={() => read(notification)}
+        >
+          <NotificationListItem {notification} />
+        </div>
       {/each}
     </div>
-  {/if}
-</div>
+  </div>
+</section>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -283,63 +268,86 @@
 -->
 
 <style lang="scss">
-  /*
-  ╭──────────────────────────────────────────────────────────────────────────────╮
-  │ 📲 MOBILE-FIRST                                                              │
-  ╰──────────────────────────────────────────────────────────────────────────────╯
-  */
+  :global {
+    .mobile#header {
+      --header-border: none;
+    }
+  }
+  .mobile {
+    padding-top: 3px;
+  }
+  section {
+    background-color: var(--bg-color);
+    width: 100%;
+    height: 100%;
+    &.mobile {
+      padding-inline: 0;
+    }
+  }
 
-  div#lang-container {
-    /* 📌 position */
-    position: relative;
-    margin-left: -12px;
+  :global(.light-mode #notifications-layout) {
+    --Background-bg-secondary_hover: var(--Background-bg-brand-primary);
+  }
+  .main-content {
+    max-width: 824px;
+    height: 100%;
+    margin: auto;
+    --text-size-2xl: 38px;
+    --text-size-xl: 24px;
+    --text-size-l: 20px;
+    --text-size-m: 16px;
+    --text-size-s: 14px;
+    --text-size-xs: 12px;
+    --text-button-size: var(--text-size-m);
+    display: flex;
+    flex-direction: column;
 
-    div.selected-language-btn {
-      /* 🎨 style */
-      color: #ffffff;
-      outline: none;
-      border: none;
-      padding: 5px 12px;
-      transform: translateX(12px);
-      background-color: transparent;
+    .content {
+      padding-top: var(--spacing-xl);
+      overflow: hidden;
+    }
 
-      &:hover,
-      &.active-lang-select {
-        /* 🎨 style */
-        background-color: rgba(255, 255, 255, 0.1);
-        border-radius: 4px;
+    .list-wrapper {
+      margin-top: 20px;
+      flex-grow: 1;
+      position: relative;
+
+      .new-notifications {
+        position: absolute;
+        top: 0;
+        right: 50%;
+        transform: translate(50%, -50%);
+        --text-button-size: 12px;
+      }
+
+      .list-item {
+        width: 100%;
+        padding: 11px var(--spacing-xl);
+        border-bottom: 1px solid var(--Border-border-tertiary);
+        cursor: pointer;
+
+        &.active {
+          background-color: var(--Background-bg-secondary);
+          border-bottom: 1px solid var(--Border-border-secondary);
+        }
+
+        &:hover {
+          border-bottom: 1px solid var(--Border-border-secondary);
+          background-color: var(--Background-bg-secondary_hover);
+        }
       }
     }
 
-    div#dropdown-menu {
-      /* 📌 position */
-      position: absolute;
-      z-index: 5000;
-      top: 100%;
-      left: -20%;
-      /* 🎨 style */
-      width: 88px;
-      margin-top: 5px;
-      transform: translateX(12px);
-      border-radius: 4px;
-      background: var(--dark-theme);
-      box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
-      overflow: hidden;
-
-      .lang-select {
-        /* 🎨 style */
-        padding: 10px 0;
-        text-align: center;
-        background: var(--dark-theme-1);
-        cursor: pointer;
-        box-shadow: inset 0px -1px 0px #3c3c3c;
-
-        &:hover {
-          /* 🎨 style */
-          background: var(--dark-theme);
-          box-shadow: inset 0px -1px 0px #3c3c3c;
-        }
-      }
+    &.mobile {
+      padding: 0 !important;
+      padding-bottom: 128px;
+      width: 100%;
+      gap: 8px;
+      --text-size-2xl: 24px;
+      --text-size-l: 16px;
+      --text-size-m: 14px;
+      --text-size-s: 12px;
+      --text-size-xs: 10px;
     }
   }
 </style>
