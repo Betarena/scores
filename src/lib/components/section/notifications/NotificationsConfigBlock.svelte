@@ -100,9 +100,10 @@
 
     .title {
       color: var(--Text-text-primary);
-      font-size: 1.5rem;
+      /* Text md/Medium */
+      font-family: var(--Font-family-font-family-body, Roboto);
+      font-size: var(--Font-size-text-md);
       font-weight: bold;
-      margin-bottom: 1rem;
     }
     .options-wrapper {
       display: flex;
@@ -119,7 +120,8 @@
         align-self: stretch;
 
         .label {
-          color: var(--Text-text-secondary);
+          font-size: var(--Font-size-text-sm);
+          color: var( --colors-text-text-secondary-700);
           flex-grow: 1;
         }
       }

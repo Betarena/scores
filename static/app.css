@@ -3188,6 +3188,7 @@ body {
   --popup-bg-color: #4b4b4b;
   --popup-contrast-color: #3E3E3E;
   --popup-hover-color: #3D3D3D;
+  --colors-text-text-secondary-700: #CECFD2;
   --modal-bg: #292929;
 }
 
@@ -3222,6 +3223,7 @@ body {
   --popup-bg-color: #fff;
   --popup-contrast-color: #E6E6E6;
   --popup-hover-color: #F2F2F2;
+  --colors-text-text-secondary-700: #696969;
   --modal-bg: #FFF;
 }
 
