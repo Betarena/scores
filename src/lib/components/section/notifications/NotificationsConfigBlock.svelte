@@ -8,15 +8,26 @@
 -->
 
 <script lang="ts">
-  // #region ➤ 📌 VARIABLES
+  // #region ➤ 📦 Package Imports
 
-  import CrossIcon from "$lib/components/ui/assets/crossicon.svelte";
-  import Dotsicon from "$lib/components/ui/assets/dotsicon.svelte";
-  import Settings_01 from "$lib/components/ui/assets/settings-01.svelte";
-  import Settings_02 from "$lib/components/ui/assets/settings-02.svelte";
-  import Dropdown from "$lib/components/ui/wrappers/Dropdown.svelte";
-  import session from "$lib/store/session.js";
-  import { createEventDispatcher } from "svelte";
+  import ToggleButton from "$lib/components/ui/ToggleButton.svelte";
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  // #endregion ➤ 📦 Package Imports
+
+  // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -30,19 +41,14 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let config = false;
+  export let title: string;
+  export let options: { label: string; checked: boolean }[];
   const /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
      */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = "notifications⮕header";
+    CNAME: string = "notifications⮕config⮕block";
 
-  const dispatch = createEventDispatcher();
-  function back() {
-    history.back();
-  }
-
-  $: ({ viewportType } = $session);
   // #endregion ➤ 📌 VARIABLES
 </script>
 
@@ -57,25 +63,16 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="notifications-header {viewportType}" id={CNAME}>
-  <button class="button" on:click={back}><CrossIcon /></button>
-  <div class="title">Notifications {config ? "Settings" : ""}</div>
-  {#if !config}
-    <Dropdown>
-      <button class="button" slot="trigger"><Dotsicon /></button>
-      <div slot="content">
-        <button class="action-button" on:click={() => dispatch("readAll")}>
-          <i class="icon"><Settings_01 /></i>
-          Mark all as read
-        </button>
-        <a href="/notifications/settings" class="action-button">
-          <i class="icon"><Settings_02 /></i>
-          Notification settings
-        </a>
+<div class="notifications-config-block" id={CNAME}>
+  <div class="title">{title}</div>
+  <div class="options-wrapper">
+    {#each options as { label, checked }}
+      <div class="option">
+        <div class="label">{label}</div>
+        <ToggleButton active={checked} />
       </div>
-    </Dropdown>
-    {:else} <div />
-  {/if}
+    {/each}
+  </div>
 </div>
 
 <!--
@@ -89,58 +86,42 @@
 -->
 
 <style lang="scss">
-  .notifications-header {
-    width: 100%;
-    z-index: 1;
+  :global(#notifications⮕config⮕block:last-of-type) {
+    border-bottom: none;
+  }
+  .notifications-config-block {
     display: flex;
-    padding: var(--spacing-lg, 12px) 0;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-
-    .button {
-      &:hover {
-        --icon-color: var(--Text-text-primary);
-      }
-    }
+    padding-block: var(--spacing-xl);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-lg);
+    align-self: stretch;
+    border-bottom: 1px solid var(--Border-border-tertiary);
 
     .title {
       color: var(--Text-text-primary);
-      text-align: center;
-      font-family: var(--Font-family-font-family-display);
-      font-size: var(--Font-size-display-xs);
-      font-style: normal;
-      font-weight: 500;
-      line-height: var(--Line-height-display-xs);
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
     }
-
-    button {
-      background-color: inherit;
-      padding: 0;
-    }
-
-    &.mobile {
-      padding-inline: 16px;
-    }
-
-    .action-button {
+    .options-wrapper {
       display: flex;
-      padding: 9px var(--spacing-lg);
-      align-items: center;
-      gap: var(--spacing-sm);
-      color: unset;
-      width: 100%;
-      white-space: nowrap;
-      justify-content: start;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--spacing-xl);
+      align-self: stretch;
 
-      .icon {
-        transform: translateY(1px);
-      }
+      .option {
+        display: flex;
+        align-items: start;
+        width: 100%;
+        gap: var(--spacing-xl, 16px);
+        align-self: stretch;
 
-      &:hover {
-        background-color: var(--Background-bg-secondary_hover);
-        color: var(--Text-text-primary);
-        --icon-color: var(--Text-text-primary);
+        .label {
+          color: var(--Text-text-secondary);
+          flex-grow: 1;
+        }
       }
     }
   }
