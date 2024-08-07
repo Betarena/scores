@@ -38,6 +38,7 @@
   import LogoButton from "./LogoButton.svelte";
   import { scoresNavbarStore } from "./_store.js";
   import BuyBtaButton from "$lib/components/shared/BuyBta/Buy-BTA-Button.svelte"
+    import NotificationButton from "./NotificationButton.svelte";
 
   // #endregion ➤ 📦 Package Imports
   // #region ➤ 📌 VARIABLES
@@ -108,6 +109,7 @@
   {/if}
 
   <div class="actions">
+    <NotificationButton/>
     {#if !mobile && tablet}
       <HeaderCLang />
       <HeaderCTheme />
