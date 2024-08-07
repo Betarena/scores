@@ -9,6 +9,7 @@
 
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
+    import { scale } from "svelte/transition";
 
   // #region ➤ 📌 VARIABLES
 
@@ -23,7 +24,7 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  export let show = true;
+  export let show = false;
 
   const /**
      * @description
@@ -49,6 +50,8 @@
     if (!show) {
       show = true;
       dispatch("show");
+    } else {
+      hide();
     }
   }
 
@@ -90,7 +93,7 @@
 >
   <slot name="trigger" />
   {#if show}
-    <div class="dropdown" id={CNAME} on:click={hide}>
+    <div class="dropdown" in:scale out:scale id={CNAME} on:click={hide}>
       <slot name="content" />
     </div>
   {/if}

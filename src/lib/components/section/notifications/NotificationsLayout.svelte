@@ -47,9 +47,9 @@
   import Tabbar from "$lib/components/ui/Tabbar.svelte";
   import NotificationListItem from "./NotificationListItem.svelte";
   import Tag from "$lib/components/ui/Tag.svelte";
-  import { crossfade, fly } from "svelte/transition";
+  import { crossfade, fade, fly } from "svelte/transition";
   import { elasticOut, quintOut } from "svelte/easing";
-    import { flip } from "svelte/animate";
+  import { flip } from "svelte/animate";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -127,7 +127,7 @@
     ],
   ];
 
-  const notifications = {
+  let notifications = {
     all: new Map([...competitionsNotifications]),
     competitions: new Map(competitionsNotifications),
     authors: new Map(),
@@ -135,22 +135,64 @@
   };
 
   const [send, receive] = crossfade({
-		fallback(node, _params) {
-			const style = getComputedStyle(node);
-			const transform = style.transform === 'none' ? '' : style.transform;
+    fallback(node, _params) {
+      const style = getComputedStyle(node);
+      const transform = style.transform === "none" ? "" : style.transform;
 
-			return {
-				duration: 600,
-				easing: quintOut,
-				css: (t) => `
+      return {
+        duration: 600,
+        easing: quintOut,
+        css: (t) => `
 					transform: ${transform} scale(${t});
 					opacity: ${t}
-				`
-			};
-		}
-	});
+				`,
+      };
+    },
+  });
   function addNotifications() {
-    notifications.all = new Map([...[...notifications.all].map(),...notifications.all]);
+    const all = notifications.all;
+    let next = new Map();
+    Array.from(all).forEach(([_id, notification]) => {
+      const id = all.size + 1 + next.size;
+      next.set(id, { ...notification, id, isNew: true });
+    });
+    next = new Map([...next, ...all]);
+    newNotifications = 0;
+    notifications = {
+      ...notifications,
+      all: next,
+    };
+  }
+
+  function read(notifiaction) {
+    notifications = {
+      ...notifications,
+      all: new Map(
+        [...notifications.all].map(([id, notification]) => {
+          if (notification.id === notifiaction.id) {
+            return [id, { ...notification, isNew: false }];
+          }
+          return [id, notification];
+        })
+      ),
+    };
+  }
+
+  function readAll() {
+    notifications = {
+      ...notifications,
+      all: new Map(
+        [...notifications.all].map(([id, notification]) => {
+          return [id, { ...notification, isNew: false }];
+        })
+      ),
+
+      competitions: new Map(
+        [...notifications.competitions].map(([id, notification]) => {
+          return [id, { ...notification, isNew: false }];
+        })
+      ),
+    };
   }
 
   $: ({ viewportType } = $sessionStore);
@@ -176,7 +218,7 @@
 
 <section id={CNAME} class={viewportType}>
   <div class="main-content {viewportType}">
-    <NotificationsHeader />
+    <NotificationsHeader on:readAll={readAll} />
     <div class="content">
       <Tabbar
         data={options}
@@ -186,7 +228,7 @@
         bottom_border={true}
         on:select
       >
-        {tab.label} (10)
+        {tab.label} ({notifications[tab.id]?.size || 0})
       </Tabbar>
     </div>
     <div class="list-wrapper">
@@ -195,11 +237,19 @@
           class="new-notifications"
           in:fly={{ easing: elasticOut, y: -10, duration: 3000 }}
         >
-          <Tag active={true} on:click={addNotifications}>+ {newNotifications} new</Tag>
+          <Tag active={true} on:click={addNotifications}
+            >+ {newNotifications} new</Tag
+          >
         </div>
       {/if}
       {#each [...notificationsList] as [id, notification] (id)}
-        <div class="list-item"  animate:flip class:active={notification.isNew}>
+        <div
+          class="list-item"
+          in:fade={{ delay: 200, duration: 1000 }}
+          animate:flip={{ duration: 1000 }}
+          class:active={notification.isNew}
+          on:click={() => read(notification)}
+        >
           <NotificationListItem {notification} />
         </div>
       {/each}

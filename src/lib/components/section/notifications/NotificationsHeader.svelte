@@ -16,6 +16,7 @@
   import Settings_02 from "$lib/components/ui/assets/settings-02.svelte";
   import Dropdown from "$lib/components/ui/wrappers/Dropdown.svelte";
   import session from "$lib/store/session.js";
+  import { createEventDispatcher } from "svelte";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -35,6 +36,11 @@
      */ // eslint-disable-next-line no-unused-vars
     CNAME: string = "notifications⮕header";
 
+  const dispatch = createEventDispatcher();
+  function back() {
+    history.back();
+  }
+
   $: ({ viewportType } = $session);
   // #endregion ➤ 📌 VARIABLES
 </script>
@@ -51,19 +57,19 @@
 -->
 
 <div class="notifications-header {viewportType}" id={CNAME}>
-  <button class="button"><CrossIcon /></button>
+  <button class="button" on:click={back}><CrossIcon /></button>
   <div class="title">Notifications</div>
   <Dropdown>
     <button class="button" slot="trigger"><Dotsicon /></button>
     <div slot="content">
-      <button class="action-button">
+      <button class="action-button" on:click={() => dispatch('readAll')}>
         <i class="icon"><Settings_01 /></i>
         Mark all as read
       </button>
-      <button class="action-button">
+      <a href="/notifications/settings" class="action-button">
         <i class="icon"><Settings_02 /></i>
         Notification settings
-      </button>
+      </a>
     </div>
   </Dropdown>
 </div>
@@ -120,6 +126,7 @@
       gap: var(--spacing-sm);
       color: unset;
       width: 100%;
+      white-space: nowrap;
       justify-content: start;
 
       .icon {
