@@ -174,7 +174,7 @@
         position: relative;
         transition: all 0.3s ease-out;
         bottom: 1px solid var(--foreground-fg-brand-primary);
-        color: var(--text-text-brand-secondary);
+        color: var(--text-text-brand-primary);
       }
     }
 

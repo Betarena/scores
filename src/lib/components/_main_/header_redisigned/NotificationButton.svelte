@@ -24,7 +24,6 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import NotifiicationsIcon from "./assets/NotifiicationsIcon.svelte";
   import { page } from "$app/stores";
   import { routeIdNotifications } from "$lib/constants/paths.js";
   let count = 0;

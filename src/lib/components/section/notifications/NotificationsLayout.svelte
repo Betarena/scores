@@ -230,8 +230,8 @@
       {#each [...notificationsList] as [id, notification] (id)}
         <div
           class="list-item"
-          in:fade={{ delay: 200, duration: 1000 }}
-          animate:flip={{ duration: 1000 }}
+          in:fade={{ delay: 200, duration: 500 }}
+          animate:flip={{ duration: 800 }}
           class:active={notification.isNew}
           on:click={() => read(notification)}
         >
@@ -301,6 +301,7 @@
         position: absolute;
         top: 0;
         right: 50%;
+        z-index: 100;
         transform: translate(50%, -50%);
         --text-button-size: 12px;
       }
