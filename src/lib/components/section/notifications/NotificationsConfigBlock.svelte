@@ -99,7 +99,7 @@
     border-bottom: 1px solid var(--Border-border-tertiary);
 
     .title {
-      color: var(--Text-text-primary);
+      color: var(--text-text-primary);
       /* Text md/Medium */
       font-family: var(--Font-family-font-family-body, Roboto);
       font-size: var(--Font-size-text-md);

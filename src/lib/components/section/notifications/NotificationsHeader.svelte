@@ -65,14 +65,14 @@
 -->
 
 <div class="notifications-header {viewportType}" id={CNAME}>
-  <Icon size="sm">
-    <button class="button" on:click={back}><CrossIcon /></button>
+  <Icon size="sm" on:click={back}>
+    <button class="button" ><CrossIcon /></button>
   </Icon>
   <div class="title">Notifications {config ? "Settings" : ""}</div>
   {#if !config}
     <Dropdown>
       <Icon size="sm" slot="trigger">
-        <button class="button" ><Dotsicon /></button>
+        <Dotsicon />
       </Icon>
       <div slot="content">
         <button class="action-button" on:click={() => dispatch("readAll")}>
@@ -117,7 +117,7 @@
     }
 
     .title {
-      color: var(--Text-text-primary);
+      color: var(--text-text-primary);
       text-align: center;
       font-family: var(--Font-family-font-family-display);
       font-size: var(--Font-size-display-xs);
@@ -140,7 +140,8 @@
       padding: 9px var(--spacing-lg);
       align-items: center;
       gap: var(--spacing-sm);
-      color: unset;
+      background-color: var(--background-bg-primary);
+      color: var(--text-text-quarternary);
       width: 100%;
       white-space: nowrap;
       justify-content: start;
@@ -150,9 +151,9 @@
       }
 
       &:hover {
-        background-color: var(--Background-bg-secondary_hover);
-        color: var(--Text-text-primary);
-        --icon-color: var(--Text-text-primary);
+        background-color: var(--background-bg-quarterary_hover);
+        color: var(--text-text-primary);
+        --icon-color: var(--text-text-primary);
       }
     }
   }

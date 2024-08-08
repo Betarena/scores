@@ -44,7 +44,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="icon-wrapper {size}" >
+<div class="icon-wrapper {size}" on:click >
   <slot/>
 </div>
 
@@ -67,8 +67,9 @@
     justify-content: center;
     align-items: center;
     flex-shrink: 0;
-    --icon-color: var( --text-color-second-dark);
+    --icon-color: var( --foreground-fg-tertiary);
     border-radius: var(--radius-md);
+    cursor: pointer;
 
     &.sm {
       width: 36px;
@@ -85,8 +86,8 @@
     }
 
     &:hover {
-      --icon-color: var(--Text-text-primary);
-      background-color: var(--Background-bg-primary_hover);
+      --icon-color: var(--foreground-fg-secondary);
+      background-color: var(--background-bg-primary_hover);
     }
   }
 </style>

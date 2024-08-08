@@ -164,7 +164,7 @@
      * @description
      * 📝 `Map` data for `article(s)`, ready for frontend consumption.
      */
-    mapArticlesMod =  new Map < number, IArticle >(),
+    mapArticlesMod =  new Map < number, IArticle >()
   ;
 
   // #endregion ➤ 📌 VARIABLES

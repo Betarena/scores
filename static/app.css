@@ -3225,7 +3225,7 @@ body {
   --Background-bg-error-solid: #FF3C3C;
   /* Shadows/shadow-xl */
   --box-shadow: 0px 20px 24px -4px rgba(41, 41, 41, 0.08),
-      0px 0px 8px 0px rgba(41, 41, 41, 0.08);
+    0px 0px 8px 0px rgba(41, 41, 41, 0.08);
   --colors-gray-gray-1: #F7F7F7;
   --colors-gray-gray-2: #D2D2D2;
   --colors-gray-gray-3: #9D9D9D;
@@ -3515,6 +3515,14 @@ body {
   --spacing-140-560px-rem: 35rem;
   --spacing-180-720px: 720px;
   --spacing-180-720px-rem: 45rem;
+  --font-family-font-family-display: Roboto;
+  --font-family-font-family-body: Roboto;
+  --font-size-display-xs: 24px;
+  --font-size-text-sm: 14px;
+  --font-size-text-md: 16px;
+  --line-height-text-sm: 20px;
+  --line-height-display-xs: 32px;
+  --line-height-text-md: 24px;
 }
 
 .dark-mode {

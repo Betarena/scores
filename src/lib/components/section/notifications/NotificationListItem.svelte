@@ -55,8 +55,8 @@
     <div class="text">
       {textContent[0]}
       {#if textContent.length > 1}
-          <span class="amount">{amount} BTA</span>
-          {textContent[1]}
+        <span class="amount">{amount} BTA</span>
+        {textContent[1]}
       {/if}
     </div>
     <div class="title">{title}</div>
@@ -86,28 +86,31 @@
 
     .content {
       flex-grow: 1;
-      color: var(--Text-text-secondary);
 
-      /* Text sm/Regular */
-      font-family: var(--Font-family-font-family-display);
-      font-size: var(--Font-size-text-sm);
-      font-style: normal;
-      font-weight: 400;
-      line-height: var(--Line-height-text-sm);
+      .text {
+        color: var(--text-text-secondary, #e6e6e6);
+        /* Text sm/Regular */
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-sm, 14px);
+        font-style: normal;
+        font-weight: 400;
+        line-height: var(--line-height-text-sm, 20px)
+      }
 
-      .title, .amount {
-        color: var(--Colors-Brand-Brand-5);
+      .title,
+      .amount {
+        color: var(--colors-brand-5);
 
         /* Text sm/Semibold */
-        font-family: var(--Font-family-font-family-display);
-        font-size: var(--Font-size-text-sm);
+        font-family: var(--font-family-font-family-display);
+        font-size: var(--font-size-text-sm);
         font-style: normal;
         font-weight: 600;
-        line-height: var(--Line-height-text-sm);
+        line-height: var(--line-height-text-sm);
       }
 
       .time-ago {
-        color: var(--Text-text-tertiary, #9d9d9d);
+        color: var(--text-text-tertiary, #9d9d9d);
         font-size: 10px;
         font-style: normal;
         margin-top: 4px;
@@ -118,7 +121,7 @@
     .new-icon {
       width: 10px;
       height: 10px;
-      background-color: var(--Colors-Brand-Brand-5);
+      background-color: var(--colors-brand-5);
       border-radius: 50%;
     }
   }

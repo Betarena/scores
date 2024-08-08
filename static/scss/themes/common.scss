@@ -1,36 +1,34 @@
 body {
   --radius-none: 0px;
-    --radius-xxs: 2px;
+  --radius-xxs: 2px;
   --radius-xs: 4px;
   --radius-sm: 6px;
   --radius-md: 8px;
   --radius-lg: 10px;
   --radius-xl: 12px;
   --radius-2xl: 16px;
-    --radius-3xl: 20px;
+  --radius-3xl: 20px;
     --radius-4xl: 24px;
     --radius-full: 9999px;
 
   --spacing-none: 0px;
-    --spacing-xxs: 2px;
+  --spacing-xxs: 2px;
   --spacing-xs: 4px;
   --spacing-sm: 6px;
   --spacing-md: 8px;
   --spacing-lg: 12px;
   --spacing-xl: 16px;
   --spacing-2xl: 20px;
-    --spacing-3xl: 24px;
+  --spacing-3xl: 24px;
   --spacing-4xl: 32px;
   --spacing-5xl: 40px;
   --spacing-6xl: 48px;
-    --spacing-7xl: 64px;
+  --spacing-7xl: 64px;
     --spacing-8xl: 80px;
     --spacing-9xl: 96px;
     --spacing-10xl: 128px;
     --spacing-11xl: 160px;
-  
-  
-    --width-xxs: 320px;
+  --width-xxs: 320px;
     --width-sm: 480px;
     --width-lg: 640px;
     --width-xl: 768px;
@@ -42,15 +40,10 @@ body {
     --width-md: 560px;
     --paragraph-max-width: 720px;
     --width-xs: 384px;
-  
-  
-  
-    --container-max-width-desktop: 1280px;
+  --container-max-width-desktop: 1280px;
     --container-padding-desktop: 32px;
     --container-padding-mobile: 16px;
-  
-  
-    --spacing-0--0px-: 0px;
+  --spacing-0--0px-: 0px;
     --spacing-0-5--2px-: 2px;
     --spacing-1--4px-: 4px;
     --spacing-2--8px-: 8px;
@@ -103,9 +96,9 @@ body {
 
   /* Shadows/shadow-xl */
   --box-shadow: 0px 20px 24px -4px rgba(41, 41, 41, 0.08),
-      0px 0px 8px 0px rgba(41, 41, 41, 0.08);
+    0px 0px 8px 0px rgba(41, 41, 41, 0.08);
   --colors-gray-gray-1: #F7F7F7;
-    --colors-gray-gray-2: #D2D2D2;
+  --colors-gray-gray-2: #D2D2D2;
     --colors-gray-gray-3: #9D9D9D;
     --colors-gray-gray-4: #727171;
     --colors-gray-gray-5: #525252;
@@ -139,9 +132,7 @@ body {
     --colors-success-success-5: #4ABF4C;
     --colors-success-success-6: #348635;
     --colors-success-success-7: #2D752E;
-  
-  
-    --shadows-shadow-xs: 0px 1px 2px 0px rgba(41, 41, 41, 0);
+  --shadows-shadow-xs: 0px 1px 2px 0px rgba(41, 41, 41, 0);
     --shadows-shadow-sm: 0px 1px 2px 0px rgba(41, 41, 41, 0), 0px 1px 3px 0px rgba(41, 41, 41, 0);
     --shadows-shadow-md: 0px 2px 4px -2px rgba(41, 41, 41, 0), 0px 4px 8px -2px rgba(41, 41, 41, 0);
     --shadows-shadow-lg: 0px 4px 6px -2px rgba(41, 41, 41, 0), 0px 12px 16px -4px rgba(41, 41, 41, 0);
@@ -200,7 +191,7 @@ body {
     --display-2xl-semibold: 72px;
     --display-2xl-bold: 72px;
   }
-  
+
   :root {
     /* _PRIMITIVES */
     --colors-gray-1: #f7f7f7;
@@ -240,9 +231,7 @@ body {
     --colors-warning-5: #e79404;
     --colors-warning-6: #a26803;
     --colors-warning-7: #8d5a02;
-  
-  
-    /* 3. SPACING */
+  /* 3. SPACING */
     --spacing-none: 0px;
     --spacing-none-rem: 0rem;
     --spacing-xxs: 2px;
@@ -277,7 +266,7 @@ body {
     --spacing-sm-rem: 0.375rem;
     --spacing-5xl: 40px;
     --spacing-5xl-rem: 2.5rem;
-  
+
     /* 4. WIDTHS */
     --width-xxs: 320px;
     --width-xxs-rem: 20rem;
@@ -303,7 +292,7 @@ body {
     --paragraph-max-width-rem: 45rem;
     --width-xs: 384px;
     --width-xs-rem: 24rem;
-  
+
     /* 5. CONTAINERS */
     --container-max-width-desktop: 1280px;
     --container-max-width-desktop-rem: 80rem;
@@ -311,7 +300,7 @@ body {
     --container-padding-desktop-rem: 2rem;
     --container-padding-mobile: 16px;
     --container-padding-mobile-rem: 1rem;
-  
+
     /* 2. RADIUS */
     --radius-none: 0px;
     --radius-none-rem: 0rem;
@@ -335,7 +324,7 @@ body {
     --radius-lg-rem: 0.625rem;
     --radius-3xl: 20px;
     --radius-3xl-rem: 1.25rem;
-  
+
     /* _PRIMITIVE SPACINGS */
     --spacing-0-0px: 0px;
     --spacing-0-0px-rem: 0rem;
@@ -401,4 +390,13 @@ body {
     --spacing-140-560px-rem: 35rem;
     --spacing-180-720px: 720px;
     --spacing-180-720px-rem: 45rem;
+//fonts
+  --font-family-font-family-display: Roboto;
+  --font-family-font-family-body: Roboto;
+  --font-size-display-xs: 24px;
+  --font-size-text-sm: 14px;
+  --font-size-text-md: 16px;
+  --line-height-text-sm: 20px;
+  --line-height-display-xs: 32px;
+  --line-height-text-md: 24px;
 }

@@ -163,19 +163,18 @@
 
     .tab-item {
       position: static;
-      color: var(--text-color-second-dark);
+      color: var(--text-text-quarternary);
       user-select: none;
       cursor: pointer;
       flex-shrink: 0;
       &:hover {
-        color: var(--text-color);
+        color: var(--text-text-primary);
       }
       &.selected {
-        color: var(--text-color);
         position: relative;
         transition: all 0.3s ease-out;
-        bottom: 1px solid var(--primary);
-        color: var(--primary);
+        bottom: 1px solid var(--foreground-fg-brand-primary);
+        color: var(--text-text-brand-secondary);
       }
     }
 
@@ -185,7 +184,7 @@
       left: 0;
       height: 2px;
       transition: all 0.5s cubic-bezier(0, 0.14, 0.29, 1.07);
-      background: var(--primary);
+      background: var(--text-text-brand-secondary);
     }
   }
 </style>

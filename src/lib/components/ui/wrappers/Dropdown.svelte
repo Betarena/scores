@@ -111,11 +111,11 @@
     z-index: 1000;
 
     border-radius: var(--radius-xs);
-    background: var(--dropdowmn-popup-bg);
+    background-color: var(--background-bg-primary);
+    color: var(--text-text-quarternary);
     padding-block: var(--spacing-xs);
-    color: var(--text-color-second-dark, #8c8c8c);
     transform: translateX(-50%);
-    --icon-color: var(--text-color-second-dark);
+    --icon-color: var(--text-text-quarternary);
     box-shadow: var( --box-shadow);
   }
 </style>
