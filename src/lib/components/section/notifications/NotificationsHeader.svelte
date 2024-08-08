@@ -13,6 +13,7 @@
   import Dotsicon from "$lib/components/ui/assets/dotsicon.svelte";
   import Settings_01 from "$lib/components/ui/assets/settings-01.svelte";
   import Settings_02 from "$lib/components/ui/assets/settings-02.svelte";
+  import Icon from "$lib/components/ui/Icon.svelte";
   import Dropdown from "$lib/components/ui/wrappers/Dropdown.svelte";
   import session from "$lib/store/session.js";
   import { createEventDispatcher } from "svelte";
@@ -64,11 +65,15 @@
 -->
 
 <div class="notifications-header {viewportType}" id={CNAME}>
-  <button class="button" on:click={back}><CrossIcon /></button>
+  <Icon size="sm">
+    <button class="button" on:click={back}><CrossIcon /></button>
+  </Icon>
   <div class="title">Notifications {config ? "Settings" : ""}</div>
   {#if !config}
     <Dropdown>
-      <button class="button" slot="trigger"><Dotsicon /></button>
+      <Icon size="sm" slot="trigger">
+        <button class="button" ><Dotsicon /></button>
+      </Icon>
       <div slot="content">
         <button class="action-button" on:click={() => dispatch("readAll")}>
           <i class="icon"><Settings_01 /></i>
@@ -107,7 +112,7 @@
 
     .button {
       &:hover {
-        --icon-color: var(--Text-text-primary);
+        background-color: unset;
       }
     }
 

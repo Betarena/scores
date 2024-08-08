@@ -8,30 +8,29 @@
 -->
 
 <script lang="ts">
-  import { scale } from "svelte/transition";
-  // #region ➤ 📦 Package Imports
+  // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'imports' that are required        │
-  // │ by 'this' .svelte file is ran.                                         │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
   // │ IMPORTANT                                                              │
   // │ Please, structure the imports as follows:                              │
-  // │ 1. svelte/sveltekit imports                                            │
-  // │ 2. project-internal files and logic                                    │
-  // │ 3. component import(s)                                                 │
-  // │ 4. assets import(s)                                                    │
-  // │ 5. type(s) imports(s)                                                  │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import NotifiicationsIcon from "./assets/NotifiicationsIcon.svelte";
-  import { page } from "$app/stores";
-  import { routeIdNotifications } from "$lib/constants/paths.js";
-  let count = 0;
-  setTimeout(() => {
-    count = 18;
-  }, 2500);
-  // #endregion ➤ 📦 Package Imports
+  export let size: "sm" | "md" | "lg" = "md";
+
+  const /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */ // eslint-disable-next-line no-unused-vars
+    CNAME: string = "<section-scope>⮕<type|w|c>⮕<unique-tag-name>⮕main";
+
+  // #endregion ➤ 📌 VARIABLES
 </script>
 
 <!--
@@ -45,16 +44,9 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<a
-  href="/notifications"
-  class="notification-wrapper"
-  class:active={$page.route.id === routeIdNotifications}
->
-  <NotifiicationsIcon />
-  {#if count}
-    <div class="count" in:scale>{count}</div>
-  {/if}
-</a>
+<div class="icon-wrapper {size}" >
+  <slot/>
+</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -67,45 +59,34 @@
 -->
 
 <style lang="scss">
-  .notification-wrapper {
-    position: relative;
+  .icon-wrapper {
     display: flex;
-    align-items: center;
+    width: 36px;
+    height: 36px;
+    padding: var(--spacing-md);
     justify-content: center;
-    cursor: pointer;
+    align-items: center;
+    flex-shrink: 0;
+    --icon-color: var( --text-color-second-dark);
+    border-radius: var(--radius-md);
 
-    &:hover,
-    &.active {
-      --text-color: var(--primary);
+    &.sm {
+      width: 36px;
+      height: 36px;
     }
-    .count {
-      position: absolute;
-      top: 0;
-      right: 0;
-      background-color: var(--Background-bg-error-solid);
-      color: var(--white);
-      text-align: center;
-      font-family: Roboto;
-      font-size: 10px;
-      font-style: normal;
-      color: var(--Text-Text-white);
-      text-align: center;
-      font-family: Roboto;
-      font-size: 10px;
-      font-style: normal;
-      font-weight: 500;
-      line-height: 130%; /* 13px */
-      font-weight: 500;
-      line-height: 130%; /* 13px */
-      display: flex;
-      padding: var(--spacing-none, 0px) var(--spacing-xxs, 2px);
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-start;
-      position: absolute;
-      right: -5px;
-      top: -3px;
-      border-radius: 3px;
+    &.md {
+      width: 40px;
+      height: 40px;
+    }
+
+    &.lg {
+      width: 44px;
+      height: 44px;
+    }
+
+    &:hover {
+      --icon-color: var(--Text-text-primary);
+      background-color: var(--Background-bg-primary_hover);
     }
   }
 </style>

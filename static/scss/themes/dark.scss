@@ -16,9 +16,6 @@
   --bg-color-second-rgb-consts: 49, 49, 49;
   --bg-color-second: rgb(var(--bg-color-second-rgb-consts));
 
-  --Background-bg-secondary: #3B3B3B;
-  --Background-bg-secondary_hover: #4B4B4B;
-
 
   --border-color-light: #4B4B4B;
   --border-color: #4B4B4B;
@@ -51,6 +48,9 @@
 
   --Background-bg-tertiary: #4B4B4B;
   --Background-bg-tertiary_hover: #8C8C8C;
+  --Background-bg-primary_hover: #CECECE;
+    --Background-bg-secondary: #3B3B3B;
+    --Background-bg-secondary_hover: #757678;
 
   --modal-bg: #292929;
 }

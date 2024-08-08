@@ -292,7 +292,7 @@
   div#lang-container {
     /* 📌 position */
     position: relative;
-    margin-left: -12px;
+    margin-left: -17px;
 
     div.selected-language-btn {
       /* 🎨 style */

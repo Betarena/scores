@@ -1,5 +1,6 @@
 body {
   --radius-xs: 4px;
+  --radius-md: 8px;
   --radius-xl: 12px;
 
   --spacing-xs: 4px;
@@ -24,7 +25,9 @@ body {
   --Background-bg-brand-primary: #FEEFE7;
   --Colors-Brand-Brand-5: #F5620F;
   --Colors-Brand-4: #F77D38;
+  --Text-Text-white: #fff;
 
+  --Background-bg-error-solid: #FF3C3C;
 
   /* Shadows/shadow-xl */
     --box-shadow: 0px 20px 24px -4px rgba(41, 41, 41, 0.08),
