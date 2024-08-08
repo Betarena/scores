@@ -125,7 +125,7 @@
   }
   .modal-body {
     display: flex;
-    background-color: var(--modal-bg);
+    background-color: var(--background-bg-primary);
     max-width: 375px;
     width: 100%;
 
@@ -138,7 +138,7 @@
     transform: translate(-50%, -50%);
     border-radius: var(--radius-xl);
     .title {
-      color: var(--text-color);
+      color: var(--text-text-primary);
       margin: 0;
       font-family: Roboto;
       font-size: 20px;
@@ -174,7 +174,8 @@
       width: 100%;
 
       .desc {
-        color: var(--text-color-second-dark);
+        color: var(--text-text-tertiary);
+        text-align: center;
         font-family: Roboto;
         font-size: 14px;
         font-style: normal;
