@@ -82,7 +82,7 @@
         {/if}
       </div>
       <div class="block text">
-        <h2>Stay Updated with Betarena</h2>
+        <h2 class="title">Stay Updated with Betarena</h2>
         <div class="desc">
           Enable push notifications for the latest sports updates from Betarena
         </div>
@@ -125,18 +125,27 @@
   }
   .modal-body {
     display: flex;
-    background-color: var(--modal-bg);
+    background-color: var(--background-bg-primary);
     max-width: 375px;
     width: 100%;
-    padding: var(--spacing-xl, 16px) var(--spacing-4xl, 32px)
-      var(--spacing-4xl, 32px) var(--spacing-4xl, 32px);
+
+    padding: var(--spacing-4xl);
+    padding-top: var(--spacing-xl);
 
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    padding: 40px;
     border-radius: var(--radius-xl);
+    .title {
+      color: var(--text-text-primary);
+      margin: 0;
+      font-family: Roboto;
+      font-size: 20px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 130%; /* 26px */
+    }
 
     .header {
       display: flex;
@@ -150,7 +159,7 @@
 
     .img {
       position: relative;
-      height: 100px;
+      height: 98px;
       display: flex;
       width: 85px;
       justify-content: center;
@@ -164,13 +173,14 @@
     .text {
       width: 100%;
 
-      h2 {
-        margin: 0;
-        color: var(--text-color);
-      }
-
       .desc {
-        color: var(--text-color-second-dark);
+        color: var(--text-text-tertiary);
+        text-align: center;
+        font-family: Roboto;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 130%; /* 18.2px */
       }
     }
 

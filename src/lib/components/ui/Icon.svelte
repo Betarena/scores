@@ -8,9 +8,6 @@
 -->
 
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
-    import { scale } from "svelte/transition";
-
   // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -24,45 +21,16 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  export let show = false;
+
+  export let size: "sm" | "md" | "lg" = "md";
 
   const /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
      */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = "dropdown⮕wrapper";
-  const dispatch = createEventDispatcher();
+    CNAME: string = "<section-scope>⮕<type|w|c>⮕<unique-tag-name>⮕main";
 
   // #endregion ➤ 📌 VARIABLES
-  // #region ➤ 🛠️ METHODS
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'methods' that are to be           │
-  // │ and are expected to be used by 'this' .svelte file / component.        │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. function (..)                                                       │
-  // │ 2. async function (..)                                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  function showPopup() {
-    if (!show) {
-      show = true;
-      dispatch("show");
-    } else {
-      hide();
-    }
-  }
-
-  function hide() {
-    if (show) {
-      show = false;
-      dispatch("hide");
-    }
-  }
-
-  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--
@@ -76,6 +44,10 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
+<div class="icon-wrapper {size}" on:click >
+  <slot/>
+</div>
+
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ 🌊 Svelte Component CSS/SCSS                                                     │
@@ -85,37 +57,37 @@
 │ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<svelte:body on:click={hide} />
-<div
-  class="trigger"
-  on:click|stopPropagation={showPopup}
-  style="position: relative;"
->
-  <slot name="trigger" />
-  {#if show}
-    <div class="dropdown" in:scale out:scale id={CNAME}>
-      <slot name="content" />
-    </div>
-  {/if}
-</div>
 
 <style lang="scss">
-  .trigger {
-    position: relative;
-    overflow: visible;
-  }
-  .dropdown {
-    position: absolute;
-    top: calc(100% + 10px);
-    left: 0;
-    z-index: 1000;
+  .icon-wrapper {
+    display: flex;
+    width: 36px;
+    height: 36px;
+    padding: var(--spacing-md);
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    --icon-color: var( --foreground-fg-tertiary);
+    border-radius: var(--radius-md);
+    cursor: pointer;
 
-    border-radius: var(--radius-xs);
-    background-color: var(--background-bg-primary);
-    color: var(--text-text-quarternary);
-    padding-block: var(--spacing-xs);
-    transform: translateX(-50%);
-    --icon-color: var(--text-text-quarternary);
-    box-shadow: var( --box-shadow);
+    &.sm {
+      width: 36px;
+      height: 36px;
+    }
+    &.md {
+      width: 40px;
+      height: 40px;
+    }
+
+    &.lg {
+      width: 44px;
+      height: 44px;
+    }
+
+    &:hover {
+      --icon-color: var(--foreground-fg-secondary);
+      background-color: var(--background-bg-primary_hover);
+    }
   }
 </style>

@@ -134,21 +134,6 @@
     scores: new Map(),
   };
 
-  const [send, receive] = crossfade({
-    fallback(node, _params) {
-      const style = getComputedStyle(node);
-      const transform = style.transform === "none" ? "" : style.transform;
-
-      return {
-        duration: 600,
-        easing: quintOut,
-        css: (t) => `
-					transform: ${transform} scale(${t});
-					opacity: ${t}
-				`,
-      };
-    },
-  });
   function addNotifications() {
     const all = notifications.all;
     let next = new Map();
@@ -245,8 +230,8 @@
       {#each [...notificationsList] as [id, notification] (id)}
         <div
           class="list-item"
-          in:fade={{ delay: 200, duration: 1000 }}
-          animate:flip={{ duration: 1000 }}
+          in:fade={{ delay: 200, duration: 500 }}
+          animate:flip={{ duration: 800 }}
           class:active={notification.isNew}
           on:click={() => read(notification)}
         >
@@ -286,7 +271,7 @@
   }
 
   :global(.light-mode #notifications-layout) {
-    --Background-bg-secondary_hover: var(--Background-bg-brand-primary);
+    --background-bg-secondary_hover: var(--background-bg-brand-primary);
   }
   .main-content {
     max-width: 824px;
@@ -316,6 +301,7 @@
         position: absolute;
         top: 0;
         right: 50%;
+        z-index: 100;
         transform: translate(50%, -50%);
         --text-button-size: 12px;
       }
@@ -323,17 +309,17 @@
       .list-item {
         width: 100%;
         padding: 11px var(--spacing-xl);
-        border-bottom: 1px solid var(--Border-border-tertiary);
+        border-bottom: 1px solid var(--border-border-tertiary);
         cursor: pointer;
 
         &.active {
-          background-color: var(--Background-bg-secondary);
-          border-bottom: 1px solid var(--Border-border-secondary);
+          background-color: var(--background-bg-secondary);
+          border-bottom: 1px solid var(--border-border-secondary);
         }
 
         &:hover {
-          border-bottom: 1px solid var(--Border-border-secondary);
-          background-color: var(--Background-bg-secondary_hover);
+          border-bottom: 1px solid var(--border-border-secondary);
+          background-color: var(--background-bg-secondary_hover);
         }
       }
     }

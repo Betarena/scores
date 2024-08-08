@@ -13,6 +13,7 @@
   import Dotsicon from "$lib/components/ui/assets/dotsicon.svelte";
   import Settings_01 from "$lib/components/ui/assets/settings-01.svelte";
   import Settings_02 from "$lib/components/ui/assets/settings-02.svelte";
+  import Icon from "$lib/components/ui/Icon.svelte";
   import Dropdown from "$lib/components/ui/wrappers/Dropdown.svelte";
   import session from "$lib/store/session.js";
   import { createEventDispatcher } from "svelte";
@@ -64,20 +65,24 @@
 -->
 
 <div class="notifications-header {viewportType}" id={CNAME}>
-  <button class="button" on:click={back}><CrossIcon /></button>
+  <Icon size="sm" on:click={back}>
+    <button class="button" ><CrossIcon /></button>
+  </Icon>
   <div class="title">Notifications {config ? "Settings" : ""}</div>
   {#if !config}
     <Dropdown>
-      <button class="button" slot="trigger"><Dotsicon /></button>
+      <Icon size="sm" slot="trigger">
+        <Dotsicon />
+      </Icon>
       <div slot="content">
         <button class="action-button" on:click={() => dispatch("readAll")}>
           <i class="icon"><Settings_01 /></i>
           Mark all as read
         </button>
-        <a href="/notifications/settings" class="action-button">
+        <button on:click|stopPropagation={() => goto("/notifications/settings")} class="action-button">
           <i class="icon"><Settings_02 /></i>
           Notification settings
-        </a>
+        </button>
       </div>
     </Dropdown>
   {:else}
@@ -107,12 +112,12 @@
 
     .button {
       &:hover {
-        --icon-color: var(--Text-text-primary);
+        background-color: unset;
       }
     }
 
     .title {
-      color: var(--Text-text-primary);
+      color: var(--text-text-primary);
       text-align: center;
       font-family: var(--Font-family-font-family-display);
       font-size: var(--Font-size-display-xs);
@@ -135,7 +140,8 @@
       padding: 9px var(--spacing-lg);
       align-items: center;
       gap: var(--spacing-sm);
-      color: unset;
+      background-color: var(--background-bg-primary);
+      color: var(--text-text-quarternary);
       width: 100%;
       white-space: nowrap;
       justify-content: start;
@@ -145,9 +151,9 @@
       }
 
       &:hover {
-        background-color: var(--Background-bg-secondary_hover);
-        color: var(--Text-text-primary);
-        --icon-color: var(--Text-text-primary);
+        background-color: var(--background-bg-quarterary_hover);
+        color: var(--text-text-primary);
+        --icon-color: var(--text-text-primary);
       }
     }
   }

@@ -44,8 +44,7 @@
     routeIdPageTags,
     routeIdSportstack,
   } from "$lib/constants/paths.js";
-    import NotifiicationsIcon from "./assets/NotifiicationsIcon.svelte";
-    import NotificationButton from "./NotificationButton.svelte";
+  import NotificationButton from "./NotificationButton.svelte";
 
   // #endregion ➤ 📦 Package Imports
   // #region ➤ 📌 VARIABLES
@@ -144,7 +143,7 @@
   {/if}
 
   <div class="actions">
-   <NotificationButton />
+    <NotificationButton />
     <HeaderCLang />
     <HeaderCTheme />
     {#if !isAuth}
@@ -156,12 +155,12 @@
         />
       </Button>
     {:else}
-      <a href="/u/dashboard/{$userBetarenaSettings.lang}" class="avatar-wrapper" on:click|stopPropagation>
-        <Avatar
-          src={profile_photo}
-          size={44}
-          isLoogedIn={isAuth}
-        />
+      <a
+        href="/u/dashboard/{$userBetarenaSettings.lang}"
+        class="avatar-wrapper"
+        on:click|stopPropagation
+      >
+        <Avatar src={profile_photo} size={44} isLoogedIn={isAuth} />
       </a>
     {/if}
   </div>

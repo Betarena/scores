@@ -99,11 +99,12 @@
     border-bottom: 1px solid var(--Border-border-tertiary);
 
     .title {
-      color: var(--Text-text-primary);
+      color: var(--colors-text-text-primary-900);
       /* Text md/Medium */
       font-family: var(--Font-family-font-family-body, Roboto);
       font-size: var(--Font-size-text-md);
-      font-weight: bold;
+      font-style: normal;
+      font-weight: 500;
       line-height: var(--Line-height-text-md);
     }
     .options-wrapper {
@@ -122,7 +123,7 @@
 
         .label {
           font-size: var(--Font-size-text-sm);
-          color: var( --colors-text-text-secondary-700);
+          color: var(--colors-text-text-secondary-700);
           flex-grow: 1;
         }
       }
