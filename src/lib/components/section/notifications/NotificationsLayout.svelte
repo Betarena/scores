@@ -37,7 +37,6 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-
   import sessionStore from "$lib/store/session.js";
   import type { PageData } from ".svelte-kit/types/src/routes/notifications/$types.js";
 
@@ -49,6 +48,7 @@
   import { elasticOut } from "svelte/easing";
   import { flip } from "svelte/animate";
   import NoNotifications from "./assets/NoNotifications.svelte";
+  import NotificationListItemLoader from "./NotificationListItemLoader.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -132,20 +132,28 @@
     authors: new Map(),
     scores: new Map(),
   };
+  let loading = false;
 
   function addNotifications() {
     const all = notifications.all;
     let next = new Map();
-    Array.from(all).forEach(([_id, notification]) => {
-      const id = all.size + 1 + next.size;
-      next.set(id, { ...notification, id, isNew: true });
-    });
-    next = new Map([...next, ...all]);
-    newNotifications = 0;
-    notifications = {
-      ...notifications,
-      all: next,
-    };
+    loading = true;
+
+    setTimeout(() => {
+      newNotifications = 0;
+
+
+      Array.from(all).forEach(([_id, notification]) => {
+        const id = all.size + 1 + next.size;
+        next.set(id, { ...notification, id, isNew: true });
+      });
+      next = new Map([...next, ...all]);
+      notifications = {
+        ...notifications,
+        all: next,
+      };
+      loading = false;
+    }, 1000)
   }
 
   function read(notifiaction) {
@@ -221,12 +229,12 @@
           class="new-notifications"
           in:fly={{ easing: elasticOut, y: -10, duration: 3000 }}
         >
-          <Tag active={true} on:click={addNotifications}
+          <Tag size="sm" active={true} on:click={addNotifications}
             >+ {newNotifications} new</Tag
           >
         </div>
       {/if}
-      {#if !notificationsList.size}
+      {#if !notificationsList.size && !loading}
         <div class="no-notifications">
           <div class="no-notification-content">
             <NoNotifications />
@@ -240,6 +248,13 @@
           </div>
         </div>
       {:else}
+        {#if loading}
+          {#each Array(newNotifications) as _item}
+              <div class="list-item loader">
+                <NotificationListItemLoader />
+              </div>
+          {/each}
+        {/if}
         {#each [...notificationsList] as [id, notification] (id)}
           <div
             class="list-item"
@@ -376,7 +391,7 @@
           border-bottom: 1px solid var(--border-border-secondary);
         }
 
-        &:hover {
+        &:not(.loader):hover {
           border-bottom: 1px solid var(--border-border-secondary);
           background-color: var(--background-bg-secondary_hover);
         }

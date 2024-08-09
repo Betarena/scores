@@ -8,41 +8,25 @@
 -->
 
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
+  import LoaderAvatar from "$lib/components/ui/loaders/LoaderAvatar.svelte";
+  import LoaderLine from "$lib/components/ui/loaders/LoaderLine.svelte";
 
-  // #region ➤ 📌 VARIABLES
+  // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'variables' that are to be         │
-  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
   // │ IMPORTANT                                                              │
   // │ Please, structure the imports as follows:                              │
-  // │ 1. export const / let [..]                                             │
-  // │ 2. const [..]                                                          │
-  // │ 3. let [..]                                                            │
-  // │ 4. $: [..]                                                             │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let /**
-     * @description
-     *  📣 button state
-     */
-    active = false;
-
-  export let /**
-     * @description
-     *  📣 button size
-     */
-    size: "sm" | "md" | "lg" | "" = "";
-
-  /**
-   * @description
-   *  📣 dispatch for click event
-   */
-  const dispatch = createEventDispatcher();
-
-  // #endregion ➤ 📌 VARIABLES
+  // #endregion ➤ 📦 Package Imports
 </script>
 
 <!--
@@ -56,15 +40,21 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div
-  class="tag-pill {size}"
-  {...$$restProps}
-  class:active
-  on:click={() => dispatch("click")}
->
-  <span class="w-400 color-black-2 no-wrap">
-    <slot />
-  </span>
+<div class="notification">
+  <div class="img">
+    <LoaderAvatar size={49} />
+  </div>
+  <div class="content">
+    <div class="text">
+      <LoaderLine width="70%" height={10} />
+    </div>
+    <div class="title">
+      <LoaderLine width="50%" height={15} />
+    </div>
+    <div class="time-ago">
+      <LoaderLine width="20%" height={5} />
+    </div>
+  </div>
 </div>
 
 <!--
@@ -78,46 +68,52 @@
 -->
 
 <style lang="scss">
-  .tag-pill {
-    padding: 3px 12px;
-    width: max-content;
-    border-radius: 100px;
-    color: var(--text-color);
-    background-color: var(--tag-bg);
+  .notification {
+    display: flex;
+    align-items: start;
+    height: 80px;
+    justify-content: flex-start;
+    gap: var(--spacing-xl);
 
-    font-size: var(--text-button-size);
-    transition: all;
-    transition-duration: 0.4s;
-    cursor: pointer;
+    .content {
+      flex-grow: 1;
 
-    &.sm {
-      font-size: 12px;
-      padding: var(--spacing-xxs) var(--spacing-md);
-    }
+      .text {
+        color: var(--text-text-secondary, #e6e6e6);
+        /* Text sm/Regular */
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-sm, 14px);
+        font-style: normal;
+        font-weight: 400;
+        line-height: var(--line-height-text-sm, 20px);
+      }
 
-    &.md {
-      padding: 3px 10px;
-      font-size: 14px;
-    }
+      .title,
+      .amount {
+        color: var(--colors-brand-5);
 
-    &.lg {
-      padding: var(--spacing-xs, 4px) var(--spacing-lg, 12px);
-      font-size: 14px;
-    }
+        /* Text sm/Semibold */
+        font-family: var(--font-family-font-family-display);
+        font-size: var(--font-size-text-sm);
+        font-style: normal;
+        font-weight: 600;
+        line-height: var(--line-height-text-sm);
+      }
 
-    &:hover,
-    &.active {
-      /* 🎨 style */
-      background-color: var(--primary) !important;
-
-      span {
-        /* 🎨 style */
-        color: var(--white) !important;
+      .time-ago {
+        color: var(--text-text-tertiary, #9d9d9d);
+        font-size: 10px;
+        font-style: normal;
+        margin-top: 4px;
+        font-weight: 400;
+        line-height: 14px;
       }
     }
-
-    &.active:hover {
-      background-color: var(--primary-fade) !important;
+    .new-icon {
+      width: 10px;
+      height: 10px;
+      background-color: var(--colors-brand-5);
+      border-radius: 50%;
     }
   }
 </style>
