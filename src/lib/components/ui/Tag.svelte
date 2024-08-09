@@ -30,6 +30,12 @@
      */
     active = false;
 
+  export let /**
+     * @description
+     *  📣 button size
+     */
+    size: "sm" | "md" | "lg" | "" = "";
+
   /**
    * @description
    *  📣 dispatch for click event
@@ -51,7 +57,7 @@
 -->
 
 <div
-  class="tag-pill"
+  class="tag-pill {size}"
   {...$$restProps}
   class:active
   on:click={() => dispatch("click")}
@@ -78,10 +84,26 @@
     border-radius: 100px;
     color: var(--text-color);
     background-color: var(--tag-bg);
+
     font-size: var(--text-button-size);
     transition: all;
     transition-duration: 0.4s;
     cursor: pointer;
+
+    &.sm {
+      font-size: 12px;
+      padding: var(--spacing-xxs) var(--spacing-md);
+    }
+
+    &.md {
+      padding: 3px 10px;
+      font-size: 14px;
+    }
+
+    &.lg {
+      padding: var(--spacing-xs, 4px) var(--spacing-lg, 12px);
+      font-size: 14px;
+    }
 
     &:hover,
     &.active {
