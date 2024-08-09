@@ -79,6 +79,7 @@
   import ModalMain from "$lib/components/misc/modal/ModalMain.svelte";
   import { modalStore } from "$lib/store/modal.js";
   import AllowNotificationModal from "$lib/components/section/notifications/feature_modal/AllowNotificationModalLayout.svelte";
+  import { requestPermission } from "$lib/firebase/init.js";
 
   // ╭─────
   // │ WARNING:
@@ -347,7 +348,7 @@
 
   onMount(async (): Promise<void> => {
     // initSentry();
-
+    requestPermission();
     if (useDynamicImport) {
       dynamicComponentMap.set(
         "OfflineAlertDynamic",

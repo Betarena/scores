@@ -5,6 +5,7 @@ import { getAuth, type Auth } from 'firebase/auth';
 import { Database, enableLogging, getDatabase } from 'firebase/database';
 import { Firestore, getFirestore } from 'firebase/firestore';
 import { getStorage, type FirebaseStorage } from 'firebase/storage';
+import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -108,4 +109,39 @@ export function realDb
   );
 }
 
+
+export function requestPermission()
+{
+  Notification.requestPermission().then((permission) =>
+  {
+    if (permission === 'granted')
+    {
+      setTimeout(() =>
+      {
+        setTimeout(() =>
+        {
+          new Notification('Betarena', {
+            body: 'You have won 6BTA on the competition!',
+            icon: '/assets/img/favicon/48x48.png' // Укажите путь к иконке, если необходимо
+          });
+        }, 3000);
+      }, 3000)
+      // getToken(messaging, { vapidKey: 'YOUR_VAPID_KEY' })
+      //   .then((currentToken) => {
+      //     if (currentToken) {
+      //       console.log('FCM Token:', currentToken);
+      //       // Send token to your backend server and store it
+      //     } else {
+      //       console.log('No registration token available.');
+      //     }
+      //   })
+      //   .catch((err) => {
+      //     console.log('An error occurred while retrieving token.', err);
+      //   });
+    } else
+    {
+      console.log('Permission not granted for notifications.');
+    }
+  });
+}
 // #endregion version-2 (init)
