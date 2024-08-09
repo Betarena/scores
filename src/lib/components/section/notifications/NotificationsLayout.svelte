@@ -37,19 +37,18 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { page } from "$app/stores";
 
   import sessionStore from "$lib/store/session.js";
   import type { PageData } from ".svelte-kit/types/src/routes/notifications/$types.js";
 
-  import SvelteSeo from "svelte-seo";
   import NotificationsHeader from "./NotificationsHeader.svelte";
   import Tabbar from "$lib/components/ui/Tabbar.svelte";
   import NotificationListItem from "./NotificationListItem.svelte";
   import Tag from "$lib/components/ui/Tag.svelte";
-  import { crossfade, fade, fly } from "svelte/transition";
-  import { elasticOut, quintOut } from "svelte/easing";
+  import { fade, fly } from "svelte/transition";
+  import { elasticOut } from "svelte/easing";
   import { flip } from "svelte/animate";
+  import NoNotifications from "./assets/NoNotifications.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -204,7 +203,7 @@
 <section id={CNAME} class={viewportType}>
   <div class="main-content {viewportType}">
     <NotificationsHeader on:readAll={readAll} />
-    <div class="content">
+    <div class="tabbar">
       <Tabbar
         data={options}
         style={viewportType === "mobile" ? "padding-inline: 16px" : ""}
@@ -227,17 +226,32 @@
           >
         </div>
       {/if}
-      {#each [...notificationsList] as [id, notification] (id)}
-        <div
-          class="list-item"
-          in:fade={{ delay: 200, duration: 500 }}
-          animate:flip={{ duration: 800 }}
-          class:active={notification.isNew}
-          on:click={() => read(notification)}
-        >
-          <NotificationListItem {notification} />
+      {#if !notificationsList.size}
+        <div class="no-notifications">
+          <div class="no-notification-content">
+            <NoNotifications />
+            <div class="no-notifications-text">
+              <div class="title">There are no notifications</div>
+              <div class="text">
+                There are no notifications at this point. <br /> You can try refreshing
+                the page.
+              </div>
+            </div>
+          </div>
         </div>
-      {/each}
+      {:else}
+        {#each [...notificationsList] as [id, notification] (id)}
+          <div
+            class="list-item"
+            in:fade={{ delay: 200, duration: 500 }}
+            animate:flip={{ duration: 800 }}
+            class:active={notification.isNew}
+            on:click={() => read(notification)}
+          >
+            <NotificationListItem {notification} />
+          </div>
+        {/each}
+      {/if}
     </div>
   </div>
 </section>
@@ -287,7 +301,7 @@
     display: flex;
     flex-direction: column;
 
-    .content {
+    .tabbar {
       padding-top: var(--spacing-xl);
       overflow: hidden;
     }
@@ -304,6 +318,51 @@
         z-index: 100;
         transform: translate(50%, -50%);
         --text-button-size: 12px;
+      }
+
+      .no-notifications {
+        display: flex;
+        padding-top: var(--spacing-10xl);
+        flex-direction: column;
+        align-items: center;
+        flex: 1 0 0;
+        align-self: stretch;
+
+        .no-notification-content {
+          display: flex;
+          width: 273.578px;
+          flex-direction: column;
+          align-items: center;
+          gap: var(--spacing-xl);
+
+          .no-notifications-text {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--spacing-lg);
+
+            .title {
+              color: var(--text-text-primary);
+              text-align: center;
+              /* Text-lg/Medium */
+              font-family: Roboto;
+              font-size: 18px;
+              font-style: normal;
+              font-weight: 500;
+              line-height: 22px; /* 122.222% */
+            }
+            .text {
+              color: var(--text-text-tertiary);
+              text-align: center;
+              /* Text-sm/Regular */
+              font-family: Roboto;
+              font-size: 14px;
+              font-style: normal;
+              font-weight: 400;
+              line-height: 130%; /* 18.2px */
+            }
+          }
+        }
       }
 
       .list-item {
@@ -334,6 +393,26 @@
       --text-size-m: 14px;
       --text-size-s: 12px;
       --text-size-xs: 10px;
+
+      .no-notifications {
+        display: flex;
+        padding-top: var(--spacing-8xl);
+        flex-direction: column;
+        align-items: center;
+        flex: 1 0 0;
+        align-self: stretch;
+      }
+    }
+
+    &.tablet {
+      .no-notifications {
+        display: flex;
+        padding-top: var(--spacing-9xl);
+        flex-direction: column;
+        align-items: center;
+        flex: 1 0 0;
+        align-self: stretch;
+      }
     }
   }
 </style>
