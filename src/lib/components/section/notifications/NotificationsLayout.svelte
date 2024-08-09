@@ -270,7 +270,7 @@
     }
   }
 
-  :global(.light-mode #notifications-layout) {
+  :global(.light-mode #notifications-layout .list-wrapper) {
     --background-bg-secondary_hover: var(--background-bg-brand-primary);
   }
   .main-content {

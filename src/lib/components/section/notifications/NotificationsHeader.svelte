@@ -151,7 +151,7 @@
       }
 
       &:hover {
-        background-color: var(--background-bg-quarterary_hover);
+        background-color: var(--background-bg-secondary_hover);
         color: var(--text-text-primary);
         --icon-color: var(--text-text-primary);
       }
