@@ -18,8 +18,13 @@
   import CrossIcon from "../assets/CrossIcon.svelte";
   import { modalStore } from "$lib/store/modal.js";
   import session from "$lib/store/session.js";
+  import { requestPermission } from "$lib/firebase/init.js";
 
   let active = false;
+  let text =
+    "Notification permission denied. Please enable notifications in your browser settings.";
+  let title = "Notification permission denied.";
+  let denied = false;
 
   $: ({ viewportType } = $session);
 
@@ -33,6 +38,17 @@
     }
 
     return scale(node, { easing: expoOut, duration: 1000 });
+  }
+
+  async function click() {
+    if (!active) return ($modalStore.show = false);
+    const accepted = await requestPermission();
+    if (accepted) {
+      $modalStore.show = false;
+      return;
+    }
+    active = false;
+    denied = true;
   }
 </script>
 
@@ -82,15 +98,35 @@
         {/if}
       </div>
       <div class="block text">
-        <h2 class="title">Stay Updated with Betarena</h2>
+        <h2 class="title">
+          {#if denied}
+            {title}
+          {:else}
+            <!-- content here -->
+            Stay Updated with Betarena
+          {/if}
+        </h2>
         <div class="desc">
-          Enable push notifications for the latest sports updates from Betarena
+          {#if denied}
+            {text}
+          {:else}
+            Enable push notifications for the latest sports updates from
+            Betarena. Please confirm to receive notifications.
+          {/if}
         </div>
       </div>
     </div>
 
-    <ToggleButton bind:active>Turn on</ToggleButton>
-    <Button style="width: 100%" type="primary">Confirm</Button>
+    {#if !denied}
+      <ToggleButton bind:active>Turn on</ToggleButton>
+    {/if}
+    <Button style="width: 100%" type="primary" on:click={click}>
+      {#if denied}
+        Close
+      {:else}
+        Confirm
+      {/if}
+    </Button>
   </div>
 </div>
 

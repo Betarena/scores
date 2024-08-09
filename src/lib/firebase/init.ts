@@ -23,7 +23,8 @@ const firebaseConfig: FirebaseOptions =
 	authDomain:	import.meta.env?.VITE_FIREBASE_DB_AUTH_DOMAIN as string,
 	projectId: import.meta.env?.VITE_FIREBASE_DB_PROJECT_ID as string,
 	databaseURL: import.meta.env?.VITE_FIREBASE_DB_DATABASE_URL as string,
-	storageBucket: import.meta.env?.VITE_FIREBASE_DB_STORAGE_BUCKET as string
+  storageBucket: import.meta.env?.VITE_FIREBASE_DB_STORAGE_BUCKET as string,
+  // messagingSenderId: import.meta.env?.VITE_SENDER_ID as string,
 };
 
 // #region version-1 (init)
@@ -40,7 +41,7 @@ export const app: FirebaseApp =
 		? initializeApp(firebaseConfig)
 		: getApp()
 ;
-
+// export const messaging = getMessaging(app);
 /**
  * @author
  *  @migbash
@@ -92,7 +93,7 @@ export async function firebaseAppInit
 {
   if (getApps().length === 0)
   {
-    initializeApp(firebaseConfig)
+    initializeApp(firebaseConfig);
   }
 }
 
@@ -112,36 +113,43 @@ export function realDb
 
 export function requestPermission()
 {
-  Notification.requestPermission().then((permission) =>
+  return Notification.requestPermission().then((permission) =>
   {
     if (permission === 'granted')
     {
       setTimeout(() =>
       {
-        setTimeout(() =>
-        {
           new Notification('Betarena', {
             body: 'You have won 6BTA on the competition!',
             icon: '/assets/img/favicon/48x48.png' // Укажите путь к иконке, если необходимо
           });
         }, 3000);
-      }, 3000)
-      // getToken(messaging, { vapidKey: 'YOUR_VAPID_KEY' })
-      //   .then((currentToken) => {
-      //     if (currentToken) {
+      return true
+      //   debugger
+      //   getToken(messaging, { vapidKey: 'YOUR_VAPID_KEY' })
+      //     .then((currentToken) =>
+      //     {
+      //     debugger
+      //     if (currentToken)
+      //     {
       //       console.log('FCM Token:', currentToken);
       //       // Send token to your backend server and store it
-      //     } else {
+      //     } else
+      //     {
       //       console.log('No registration token available.');
       //     }
       //   })
-      //   .catch((err) => {
-      //     console.log('An error occurred while retrieving token.', err);
-      //   });
+      //     .catch((err) =>
+      //     {
+      //       console.log('An error occurred while retrieving token.', err);
+      //     });
+      // } else
+      // {
+      //   console.log('Permission not granted for notifications.');
     } else
     {
-      console.log('Permission not granted for notifications.');
+      return false
     }
   });
 }
-// #endregion version-2 (init)
+// #endregion version-2 (init)==
