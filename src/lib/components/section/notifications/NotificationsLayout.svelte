@@ -229,7 +229,7 @@
           class="new-notifications"
           in:fly={{ easing: elasticOut, y: -10, duration: 3000 }}
         >
-          <Tag size="sm" active={true} on:click={addNotifications}
+          <Tag size="md" active={true} on:click={addNotifications}
             >+ {newNotifications} new</Tag
           >
         </div>

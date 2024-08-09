@@ -93,16 +93,20 @@
     &.sm {
       font-size: 12px;
       padding: var(--spacing-xxs) var(--spacing-md);
+      line-height: 130%;
+
     }
 
     &.md {
       padding: 3px 10px;
       font-size: 14px;
+      line-height: 130%; /* 18.2px */
     }
 
     &.lg {
       padding: var(--spacing-xs, 4px) var(--spacing-lg, 12px);
       font-size: 14px;
+      line-height: 130%;
     }
 
     &:hover,
