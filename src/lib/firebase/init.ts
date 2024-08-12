@@ -24,7 +24,8 @@ const firebaseConfig: FirebaseOptions =
 	projectId: import.meta.env?.VITE_FIREBASE_DB_PROJECT_ID as string,
 	databaseURL: import.meta.env?.VITE_FIREBASE_DB_DATABASE_URL as string,
   storageBucket: import.meta.env?.VITE_FIREBASE_DB_STORAGE_BUCKET as string,
-  // messagingSenderId: import.meta.env?.VITE_SENDER_ID as string,
+  messagingSenderId: import.meta.env?.VITE_FIREBASE_SENDER_ID as string,
+  appId: import.meta.env?.VITE_FIREBASE_APP_ID as string,
 };
 
 // #region version-1 (init)
@@ -41,7 +42,7 @@ export const app: FirebaseApp =
 		? initializeApp(firebaseConfig)
 		: getApp()
 ;
-// export const messaging = getMessaging(app);
+export let messaging;
 /**
  * @author
  *  @migbash
@@ -113,43 +114,46 @@ export function realDb
 
 export function requestPermission()
 {
+  if (!messaging)
+  {
+    messaging = getMessaging(app);
+  }
+
   return Notification.requestPermission().then((permission) =>
   {
     if (permission === 'granted')
     {
-      setTimeout(() =>
-      {
-          new Notification('Betarena', {
-            body: 'You have won 6BTA on the competition!',
-            icon: '/assets/img/favicon/48x48.png' // Укажите путь к иконке, если необходимо
-          });
-        }, 3000);
-      return true
-      //   debugger
-      //   getToken(messaging, { vapidKey: 'YOUR_VAPID_KEY' })
-      //     .then((currentToken) =>
-      //     {
-      //     debugger
-      //     if (currentToken)
-      //     {
-      //       console.log('FCM Token:', currentToken);
-      //       // Send token to your backend server and store it
-      //     } else
-      //     {
-      //       console.log('No registration token available.');
-      //     }
-      //   })
-      //     .catch((err) =>
-      //     {
-      //       console.log('An error occurred while retrieving token.', err);
-      //     });
-      // } else
-      // {
-      //   console.log('Permission not granted for notifications.');
+      const key = import.meta.env?.VITE_FIREBASE_MESSAGING_VAPID_PUBLIC_KEY;
+      console.log("KEY: ", key)
+      return getToken(messaging, { vapidKey: key })
+        .then((currentToken) =>
+        {
+          if (currentToken)
+          {
+            console.log('FCM Token:', currentToken);
+            // Send token to your backend server and store it
+          } else
+          {
+            console.log('No registration token available.');
+          }
+          return true
+        })
+        .catch((err) =>
+        {
+          console.log('An error occurred while retrieving token.', err);
+          return false
+        });
     } else
     {
+
+      console.log('Permission not granted for notifications.');
       return false
     }
   });
+}
+export function checkNotificationPermission()
+{
+  if (Notification.permission === 'granted' || Notification.permission === 'denied') return true;
+  return false;
 }
 // #endregion version-2 (init)==

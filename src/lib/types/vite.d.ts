@@ -127,6 +127,22 @@ interface ImportMetaEnv
    * 📝 `walletconnect` project env
    */
   readonly VITE_WALLETCONNECT_ID?: string
+
+  /**
+   * @description
+   * 📝 `firebase senedr id` project env
+   */
+  readonly VITE_FIREBASE_SENDER_ID?: string;
+  /**
+   * @description
+   * 📝 `firebase app id` project env
+   */
+  readonly VITE_FIREBASE_APP_ID?: string;
+  /**
+   * @description
+   * 📝 `firebase messaging api key` project env
+   */
+  readonly VITE_FIREBASE_MESSAGING_VAPID_PUBLIC_KEY?: string;
 }
 
 interface ImportMeta
