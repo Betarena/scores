@@ -18,7 +18,7 @@
   import CrossIcon from "../assets/CrossIcon.svelte";
   import { modalStore } from "$lib/store/modal.js";
   import session from "$lib/store/session.js";
-  import { requestPermission } from "$lib/firebase/init.js";
+  import { requestPermission } from "$lib/firebase/notifications.js";
 
   let active = false;
   let text =

@@ -79,7 +79,7 @@
   import ModalMain from "$lib/components/misc/modal/ModalMain.svelte";
   import { modalStore } from "$lib/store/modal.js";
   import AllowNotificationModal from "$lib/components/section/notifications/feature_modal/AllowNotificationModalLayout.svelte";
-  import { checkNotificationPermission } from "$lib/firebase/init.js";
+  import { checkNotificationPermission } from "$lib/firebase/notifications.js";
 
   // ╭─────
   // │ WARNING:
