@@ -64,6 +64,16 @@ export function requestPermission()
 
 export function checkNotificationPermission()
 {
+  setTimeout(() =>
+  {
+    if (Notification.permission === 'granted')
+    {
+      new Notification('Welcome to Scores', {
+        body: 'Congrates! You will now receive notifications from betarena.',
+        icon: '/assets/img/192x192.png'
+      });
+    }
+  }, 1000);
   if (Notification.permission === 'granted' || Notification.permission === 'denied') return true;
   return false;
 }
