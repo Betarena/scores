@@ -38,7 +38,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import sessionStore from "$lib/store/session.js";
-  import { notifications as notificationsStore } from "$lib/firebase/notifications.js";
+  import {notifications as notificationsStore} from "$lib/firebase/notifications.js"
   import type { PageData } from ".svelte-kit/types/src/routes/notifications/$types.js";
 
   import NotificationsHeader from "./NotificationsHeader.svelte";
@@ -50,8 +50,6 @@
   import { flip } from "svelte/animate";
   import NoNotifications from "./assets/NoNotifications.svelte";
   import NotificationListItemLoader from "./NotificationListItemLoader.svelte";
-  import { onMount } from "svelte";
-  import { browser } from "$app/environment";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -75,12 +73,8 @@
     // eslint-disable-next-line no-unused-vars
     CNAME: string = "notifications-layout";
   let selectedTab;
-
+  $: newNotifications = $notificationsStore.length;
   $: notificationsList = notifications[selectedTab?.id] || new Map();
-  let loaded = false;
-  onMount(() => {
-    loaded = true;
-  });
 
   const competitionsNotifications = [
     [
@@ -145,6 +139,9 @@
     loading = true;
 
     setTimeout(() => {
+      newNotifications = 0;
+
+
       Array.from(all).forEach(([_id, notification]) => {
         const id = all.size + 1 + next.size;
         next.set(id, { ...notification, id, isNew: true });
@@ -155,7 +152,7 @@
         all: next,
       };
       loading = false;
-    }, 1000);
+    }, 1000)
   }
 
   function read(notifiaction) {
@@ -226,18 +223,15 @@
       </Tabbar>
     </div>
     <div class="list-wrapper">
-      {#if browser && $notificationsStore.length}
-        {#if loaded}
-          <!-- content here -->
-          <div
-            class="new-notifications"
-            in:fly={{ easing: elasticOut, y: -10, duration: 3000 }}
+      {#if newNotifications}
+        <div
+          class="new-notifications"
+          in:fly={{ easing: elasticOut, y: -10, duration: 3000 }}
+        >
+          <Tag size="md" active={true} on:click={addNotifications}
+            >+ {newNotifications} new</Tag
           >
-            <Tag size="md" active={true} on:click={addNotifications}
-              >+ {$notificationsStore.length} new</Tag
-            >
-          </div>
-        {/if}
+        </div>
       {/if}
       {#if !notificationsList.size && !loading}
         <div class="no-notifications">
@@ -255,9 +249,9 @@
       {:else}
         {#if loading}
           {#each Array(newNotifications) as _item}
-            <div class="list-item loader">
-              <NotificationListItemLoader />
-            </div>
+              <div class="list-item loader">
+                <NotificationListItemLoader />
+              </div>
           {/each}
         {/if}
         {#each [...notificationsList] as [id, notification] (id)}
