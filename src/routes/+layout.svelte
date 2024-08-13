@@ -79,7 +79,10 @@
   import ModalMain from "$lib/components/misc/modal/ModalMain.svelte";
   import { modalStore } from "$lib/store/modal.js";
   import AllowNotificationModal from "$lib/components/section/notifications/feature_modal/AllowNotificationModalLayout.svelte";
-  import { checkNotificationPermission, mockNotification } from "$lib/firebase/notifications.js";
+  import {
+    checkNotificationPermission,
+    mockNotification,
+  } from "$lib/firebase/notifications.js";
   import Button from "$lib/components/ui/Button.svelte";
 
   // ╭─────
@@ -419,10 +422,16 @@
         .catch((error) => {
           console.error("Service Worker registration failed:", error);
         });
-        navigator.serviceWorker.register("/firebase-messaging-sw.js").then((registration) => {
-          console.log('Service Worker registered with scope:', registration.scope);
-        }).catch((error) => {
-          console.error('Service Worker registration failed:', error);
+      navigator.serviceWorker
+        .register("/firebase-messaging-sw.js")
+        .then((registration) => {
+          console.log(
+            "Service Worker registered with scope:",
+            registration.scope
+          );
+        })
+        .catch((error) => {
+          console.error("Service Worker registration failed:", error);
         });
     }
     if (!checkNotificationPermission()) {
@@ -444,7 +453,9 @@
 -->
 
 <svelte:head>
-  <script src="/service-worker-env.js"></script>
+  {#if !browser}
+    <script src="/service-worker-env.js"></script>
+  {/if}
   <!--
   HELPDESK PLUGIN
   -->
@@ -514,6 +525,19 @@
       }
       )();
     </script> -->
+  <!-- <script type="text/javascript">
+      window.$crisp=[];
+      window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
+      (function()
+      {
+        d=document;
+        s=d.createElement("script");
+        s.src="https://client.crisp.chat/l.js";
+        s.async=1;
+        d.getElementsByTagName("head")[0].appendChild(s);
+      }
+      )();
+    </!-->
   <!-- <script type="text/javascript">
       window.$crisp=[];
       window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
@@ -636,7 +660,7 @@
   data-page-id={currentPageRouteId}
   data-mode={ispwa ? "pwa" : "web"}
 >
-<Button on:click={() => mockNotification()}>Send Notification</Button>
+  <Button on:click={() => mockNotification()}>Send Notification</Button>
   {#key $page.route.id}
     <WidgetAdEngine
       authorId={$page.data.dataArticle?.author?.id}

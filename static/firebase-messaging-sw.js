@@ -23,6 +23,20 @@ const messaging = firebase.messaging();
 // Configure message handler (assumes backend is set up)
 messaging.onBackgroundMessage((payload) =>
 {
+  const audio = new Audio('/audio/notification.mp3');
+  audio.play();
+
   const { icon, body, title } = payload.data;
   self.registration.showNotification(title, { body, icon });
+
+  self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clients =>
+  {
+    clients.forEach(client =>
+    {
+      client.postMessage({
+        type: 'NEW_NOTIFICATION',
+        payload: payload.data
+      });
+    });
+  });
 });

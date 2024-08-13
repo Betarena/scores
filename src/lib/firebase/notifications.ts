@@ -66,6 +66,14 @@ function setMessaging()
 
     });
 
+    navigator.serviceWorker.addEventListener('message', (event) =>
+    {
+      if (event.data && event.data.type === 'NEW_NOTIFICATION')
+      {
+        notifications.update((notifications) => [...notifications, event.data.payload]);
+      }
+    });
+
   }
 }
 
@@ -92,15 +100,6 @@ export function mockNotification()
     .then((currentToken) =>
     {
       post(`https://us-central1-betarena-ios.cloudfunctions.net/api/messaging/test?userToken=${currentToken}`, {});
-
-      if (currentToken)
-      {
-        // Send token to your backend server and store it
-      } else
-      {
-        console.log('No registration token available.');
-      }
-      showWelcomeNotification();
       return true
     })
     .catch((err) =>
