@@ -41,6 +41,10 @@ export function requestPermission()
           {
             console.log('No registration token available.');
           }
+          new Notification('Welcome to Scores', {
+            body: 'Congrates! You will now receive notifications from betarena.',
+            icon: '/assets/img/192x192.png'
+          });
           return true
         })
         .catch((err) =>

@@ -26,10 +26,8 @@
 
   import { page } from "$app/stores";
   import { routeIdNotifications } from "$lib/constants/paths.js";
-  let count = 0;
-  setTimeout(() => {
-    count = 18;
-  }, 2500);
+    import { notifications } from "$lib/firebase/notifications.js";
+  $: count = $notifications.length;
   // #endregion ➤ 📦 Package Imports
 </script>
 
