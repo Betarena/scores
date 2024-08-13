@@ -35,7 +35,7 @@ messaging.onBackgroundMessage((payload) =>
     {
       client.postMessage({
         type: 'NEW_NOTIFICATION',
-        payload: payload.data
+        payload
       });
     });
   });
