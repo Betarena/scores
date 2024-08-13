@@ -38,6 +38,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import sessionStore from "$lib/store/session.js";
+  import {notifications as notificationsStore} from "$lib/firebase/notifications.js"
   import type { PageData } from ".svelte-kit/types/src/routes/notifications/$types.js";
 
   import NotificationsHeader from "./NotificationsHeader.svelte";
@@ -72,11 +73,9 @@
     // eslint-disable-next-line no-unused-vars
     CNAME: string = "notifications-layout";
   let selectedTab;
-  let newNotifications = 0;
+  $: newNotifications = $notificationsStore.length;
   $: notificationsList = notifications[selectedTab?.id] || new Map();
-  setTimeout(() => {
-    newNotifications = 10;
-  }, 2500);
+
   const competitionsNotifications = [
     [
       1,

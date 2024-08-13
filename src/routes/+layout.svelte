@@ -79,7 +79,8 @@
   import ModalMain from "$lib/components/misc/modal/ModalMain.svelte";
   import { modalStore } from "$lib/store/modal.js";
   import AllowNotificationModal from "$lib/components/section/notifications/feature_modal/AllowNotificationModalLayout.svelte";
-  import { checkNotificationPermission } from "$lib/firebase/notifications.js";
+  import { checkNotificationPermission, mockNotification } from "$lib/firebase/notifications.js";
+  import Button from "$lib/components/ui/Button.svelte";
 
   // ╭─────
   // │ WARNING:
@@ -635,6 +636,7 @@
   data-page-id={currentPageRouteId}
   data-mode={ispwa ? "pwa" : "web"}
 >
+<Button on:click={() => mockNotification()}>Send Notification</Button>
   {#key $page.route.id}
     <WidgetAdEngine
       authorId={$page.data.dataArticle?.author?.id}
