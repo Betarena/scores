@@ -66,16 +66,24 @@ export function checkNotificationPermission()
 {
   setTimeout(() =>
   {
-    if (Notification.permission === 'granted')
-    {
-      new Notification('Welcome to Scores', {
-        body: 'Congrates! You will now receive notifications from betarena.',
-        icon: '/assets/img/192x192.png'
-      });
-    }
+    showWelcomeNotification();
   }, 1000);
   if (Notification.permission === 'granted' || Notification.permission === 'denied') return true;
   return false;
+}
+
+export function showWelcomeNotification()
+{
+  if ('serviceWorker' in navigator && Notification.permission === 'granted')
+  {
+    navigator.serviceWorker.ready.then(function (registration)
+    {
+      registration.showNotification('Welcome to Scores', {
+        body: 'Congrats! You will now receive notifications from betarena.',
+        icon: '/assets/img/192x192.png'
+      });
+    });
+  }
 }
 
 
