@@ -24,7 +24,7 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage((payload) =>
 {
   const { icon, body, title } = payload.data;
-  self.registration.showNotification(title, { body, icon });
+  self.registration.showNotification("Background Message", { body, icon });
 });
 
 messaging.onMessage((payload) =>
@@ -33,7 +33,7 @@ messaging.onMessage((payload) =>
   audio.play();
 
   const { icon, body, title } = payload.data;
-  self.registration.showNotification(title, { body, icon });
+  self.registration.showNotification("On Message", { body, icon });
 
   self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clients =>
   {
