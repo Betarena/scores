@@ -66,14 +66,18 @@ function setMessaging()
 
     });
 
-    window.addEventListener("message", (event) =>
+    if (navigator.serviceWorker)
     {
-      alert(`Window: ${JSON.stringify(event.data)}`);
-      if (event.data && event.data.type === 'NEW_NOTIFICATION')
+      navigator.serviceWorker.addEventListener('message', (event) =>
       {
-        notifications.update((notifications) => [...notifications, event.data.payload]);
-      }
-    });
+        if (event.data && event.data.type === 'NEW_NOTIFICATION')
+        {
+          const payload = event.data.payload;
+          notifications.update((notifications) => [...notifications, payload]);
+          audio.play();
+        }
+      });
+    }
 
   }
 }

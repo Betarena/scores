@@ -24,9 +24,10 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage((payload) =>
 {
   const { icon, body, title } = payload.data;
-  self.registration.showNotification("Background Message", { body, icon });
 
-  self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clients =>
+  const notificationPromise = self.registration.showNotification(title, { body, icon });
+
+  const clientsPromise = self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clients =>
   {
     clients.forEach(client =>
     {
@@ -36,4 +37,10 @@ messaging.onBackgroundMessage((payload) =>
       });
     });
   });
+  // Use event.waitUntil inside a push event listener
+  self.addEventListener('push', function (event)
+  {
+    event.waitUntil(Promise.all([notificationPromise, clientsPromise]));
+  });
+
 });
