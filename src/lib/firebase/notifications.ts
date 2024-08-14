@@ -60,7 +60,10 @@ function setMessaging()
     messaging = getMessaging();
     onMessage(messaging, (payload) =>
     {
-      alert(`ON mess : ${JSON.stringify(payload)}`)
+      new Notification(payload?.data?.title || "Betarena", {
+        body: payload.data?.body || "New notification",
+        icon: '/assets/img/192x192.png',
+      });
       notifications.update((notifications) => [...notifications, payload]);
       audio.play();
 
