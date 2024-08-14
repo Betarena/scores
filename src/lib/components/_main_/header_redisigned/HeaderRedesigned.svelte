@@ -32,11 +32,14 @@
   import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
   import MobileHeaderSmall from "./MobileHeaderSmall.svelte";
   import SportsNavigation from "./SportNavigation/SportsNavigation.svelte";
+  import AllowNotificationModal from "$lib/components/section/notifications/feature_modal/AllowNotificationModalLayout.svelte"
   import SportsNavigationStandart from "./SportNavigation/SportsNavigationStandart.svelte";
   import TabletWave from "./assets/wave-bg-tablet.svg";
   import DesktopWave from "./assets/wave-bg-desktop.svg";
   import MobileWave from "./assets/wave-bg-mobile.svg";
   import { goto } from "$app/navigation";
+  import { checkNotificationPermission } from "$lib/firebase/notifications.js";
+  import { modalStore } from "$lib/store/modal.js";
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -53,7 +56,6 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-
   const simpleMobileHeaderRoutes = [
     routeIdPageFixture,
     routeIdPagePlayer,
@@ -68,8 +70,7 @@
     routeIdPageAuthors,
   ];
   $: isInnerPage = simpleMobileHeaderRoutes.includes($page.route.id || "");
-  $: ({ currentPageRouteId = "", viewportType, globalState } =
-    $sessionStore);
+  $: ({ currentPageRouteId = "", viewportType, globalState } = $sessionStore);
   $: mobile = viewportType === "mobile";
   $: tablet = viewportType === "tablet";
   $: desktop = !mobile && !tablet;
@@ -100,6 +101,14 @@
 
   function signIn() {
     $sessionStore.currentActiveModal = "Auth_Modal";
+  }
+
+  $: if (isAuth && !checkNotificationPermission()) {
+    $modalStore.component = AllowNotificationModal;
+    $modalStore.modal = true;
+    setTimeout(() => {
+      $modalStore.show = true;
+    }, 2000);
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -154,12 +163,14 @@
   id="header"
   class:sticky={$page.route.id === routeIdPageAuthors && isPWA && mobile}
   class:mobile
-  class:dark-mode={!["AuthorsPage", "NotificationsPage"].includes(currentPageRouteId || "")}
+  class:dark-mode={!["AuthorsPage", "NotificationsPage"].includes(
+    currentPageRouteId || ""
+  )}
   style:border-bottom={$page.route.id === routeIdPageAuthors
     ? "none"
     : "var(--header-border)"}
 >
-  {#if  !["AuthorsPage", "NotificationsPage"].includes(currentPageRouteId || "")}
+  {#if !["AuthorsPage", "NotificationsPage"].includes(currentPageRouteId || "")}
     <div class="wave-wrapper">
       <img
         id=""
@@ -178,7 +189,7 @@
   {#if mobile || tablet}
     {#if !isInnerPage}
       <MobileHeaderRich {mobile} {tablet} />
-    {:else }
+    {:else}
       <MobileHeaderSmall {mobile} {tablet} on:avatarClick={avatarClick} />
     {/if}
   {:else}

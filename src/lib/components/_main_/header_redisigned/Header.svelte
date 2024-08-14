@@ -143,7 +143,7 @@
   {/if}
 
   <div class="actions">
-    <NotificationButton />
+    <NotificationButton {isAuth} />
     <HeaderCLang />
     <HeaderCTheme />
     {#if !isAuth}

@@ -8,7 +8,6 @@
 -->
 
 <script lang="ts">
-  import { scale } from "svelte/transition";
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -23,12 +22,53 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
+  import { scale } from "svelte/transition";
   import { page } from "$app/stores";
   import { routeIdNotifications } from "$lib/constants/paths.js";
-    import { notifications } from "$lib/firebase/notifications.js";
-  $: count = $notifications.length;
+  import { notifications } from "$lib/firebase/notifications.js";
+  import session from "$lib/store/session.js";
+
   // #endregion ➤ 📦 Package Imports
+
+  // #region ➤ 📌 VARIABLES
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+  export let isAuth = false;
+  $: count = $notifications.length;
+
+  // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  function click(e) {
+   if (!isAuth) {
+    e.preventDefault();
+    $session.currentActiveModal = "Auth_Modal";
+    return;
+   }
+  }
+
+  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--
@@ -45,6 +85,7 @@
 <a
   href="/notifications"
   class="notification-wrapper"
+  on:click={click}
   class:active={$page.route.id === routeIdNotifications}
 >
   <svg
@@ -168,7 +209,6 @@
   }
 
   @keyframes bell-swing {
-
     0%,
     100% {
       transform: rotate(0deg);

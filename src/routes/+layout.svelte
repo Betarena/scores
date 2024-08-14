@@ -434,13 +434,6 @@
           console.error("Service Worker registration failed:", error);
         });
     }
-    if (!checkNotificationPermission()) {
-      $modalStore.component = AllowNotificationModal;
-      $modalStore.modal = true;
-      setTimeout(() => {
-        $modalStore.show = true;
-      }, 5000);
-    }
   });
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]

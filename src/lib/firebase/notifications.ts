@@ -7,7 +7,7 @@ export let messaging;
 export function requestPermission()
 {
   setMessaging();
-  return Notification.requestPermission().then((permission) =>
+  return Notification.requestPermission().then(async (permission) =>
   {
     if (permission === 'granted')
     {

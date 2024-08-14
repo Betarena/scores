@@ -1,11 +1,11 @@
-import type { SvelteComponent } from "svelte";
+import type { ComponentType, SvelteComponent } from "svelte";
 import { writable, type Writable } from "svelte/store";
 
 interface IModalStore
 {
   show: boolean;
   modal: boolean;
-  component: SvelteComponent | null;
+  component: ComponentType<SvelteComponent> | null;
   props?: any
 }
 
