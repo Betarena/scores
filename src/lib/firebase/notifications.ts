@@ -1,5 +1,4 @@
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
-import { app } from "./init.js";
 import { type Writable, writable } from "svelte/store";
 import { post } from "$lib/api/utils.js";
 
@@ -58,7 +57,7 @@ function setMessaging()
   if (!messaging)
   {
     const audio = new Audio('/audio/notification.mp3');
-    messaging = getMessaging(app);
+    messaging = getMessaging();
     onMessage(messaging, (payload) =>
     {
       notifications.update((notifications) => [...notifications, payload]);
