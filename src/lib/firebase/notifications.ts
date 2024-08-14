@@ -66,9 +66,9 @@ function setMessaging()
 
     });
 
-    navigator.serviceWorker.addEventListener('message', (event) =>
+    window.addEventListener("message", (event) =>
     {
-      alert(`SW: ${JSON.stringify(event.data)}`);
+      alert(`Window: ${JSON.stringify(event.data)}`);
       if (event.data && event.data.type === 'NEW_NOTIFICATION')
       {
         notifications.update((notifications) => [...notifications, event.data.payload]);
