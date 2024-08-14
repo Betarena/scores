@@ -60,6 +60,7 @@ function setMessaging()
     messaging = getMessaging();
     onMessage(messaging, (payload) =>
     {
+      alert(`ON mess : ${JSON.stringify(payload)}`)
       notifications.update((notifications) => [...notifications, payload]);
       audio.play();
 
@@ -67,6 +68,7 @@ function setMessaging()
 
     navigator.serviceWorker.addEventListener('message', (event) =>
     {
+      alert(`SW: ${JSON.stringify(event.data)}`);
       if (event.data && event.data.type === 'NEW_NOTIFICATION')
       {
         notifications.update((notifications) => [...notifications, event.data.payload]);

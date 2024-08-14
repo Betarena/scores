@@ -25,15 +25,6 @@ messaging.onBackgroundMessage((payload) =>
 {
   const { icon, body, title } = payload.data;
   self.registration.showNotification("Background Message", { body, icon });
-});
-
-messaging.onMessage((payload) =>
-{
-  const audio = new Audio('/audio/notification.mp3');
-  audio.play();
-
-  const { icon, body, title } = payload.data;
-  self.registration.showNotification("On Message", { body, icon });
 
   self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clients =>
   {
