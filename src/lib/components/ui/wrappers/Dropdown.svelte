@@ -9,7 +9,7 @@
 
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-    import { scale } from "svelte/transition";
+  import { scale } from "svelte/transition";
 
   // #region ➤ 📌 VARIABLES
 
@@ -32,6 +32,13 @@
      */ // eslint-disable-next-line no-unused-vars
     CNAME: string = "dropdown⮕wrapper";
   const dispatch = createEventDispatcher();
+  let modalNode: HTMLElement;
+  let modalNodeCopy: HTMLElement;
+  let positionAdjusted = false;
+  let pos: { left: string; top: string; position?: string } = {
+    left: "0",
+    top: "0",
+  };
 
   // #endregion ➤ 📌 VARIABLES
   // #region ➤ 🛠️ METHODS
@@ -57,8 +64,39 @@
 
   function hide() {
     if (show) {
+      positionAdjusted = false;
       show = false;
       dispatch("hide");
+    }
+  }
+
+  function addjustPosition() {
+    if (modalNodeCopy) {
+      let { right, left, bottom, top, width, height } =
+        modalNodeCopy.getBoundingClientRect();
+      const { innerWidth } = window;
+      let isChanged = false;
+      pos = { left: `0px`, top: `calc(100% + 10px)`, position: "absolute" };
+      if (right > innerWidth) {
+        isChanged = true;
+        left = innerWidth - width - 10;
+      }
+      if (left < 0) {
+        isChanged = true;
+        left = 5;
+      }
+      if (bottom > window.innerHeight) {
+        isChanged = true;
+        top = window.innerHeight - height - 10;
+      }
+      if (top < 0) {
+        isChanged = true;
+        top = 5;
+      }
+      if (isChanged) {
+        pos = { left: `${left}px`, top: `${top}px`, position: "fixed" };
+      }
+      positionAdjusted = true;
     }
   }
 
@@ -92,8 +130,27 @@
   style="position: relative;"
 >
   <slot name="trigger" />
-  {#if show}
-    <div class="dropdown" in:scale out:scale id={CNAME}>
+  {#if show && positionAdjusted}
+    <div
+      class="dropdown"
+      style="left: {pos.left}; top: {pos.top}; position: {pos.position ||
+        'absolute'}; {pos.position === 'fixed' ? 'transform: none; ' : ''}"
+      bind:this={modalNode}
+      in:scale
+      out:scale
+      id={CNAME}
+    >
+      <slot name="content" />
+    </div>
+  {/if}
+  {#if show && !positionAdjusted}
+    <div
+      class="dropdown copy"
+      bind:this={modalNodeCopy}
+      on:introend={addjustPosition}
+      in:scale={{ duration: 0 }}
+      id={`${CNAME}-hidden-copy`}
+    >
       <slot name="content" />
     </div>
   {/if}
@@ -116,6 +173,10 @@
     padding-block: var(--spacing-xs);
     transform: translateX(-50%);
     --icon-color: var(--text-text-quarternary);
-    box-shadow: var( --box-shadow);
+    box-shadow: var(--box-shadow);
+
+    &.copy {
+      visibility: hidden;
+    }
   }
 </style>
