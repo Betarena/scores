@@ -156,7 +156,7 @@
     width: 100%;
     height: 100%;
     display: flex;
-    gap: 20px;
+    gap: var(--spacing-lg);
     position: relative;
     font-weight: 500;
     overflow-x: auto;
