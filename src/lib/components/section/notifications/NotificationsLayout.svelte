@@ -38,7 +38,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import sessionStore from "$lib/store/session.js";
-  import {notifications as notificationsStore} from "$lib/firebase/notifications.js"
+  import { notifications as notificationsStore } from "$lib/firebase/notifications.js";
   import type { PageData } from ".svelte-kit/types/src/routes/notifications/$types.js";
 
   import NotificationsHeader from "./NotificationsHeader.svelte";
@@ -81,8 +81,7 @@
       1,
       {
         id: 1,
-        text: "You have won {count} on the competition!",
-        amount: 6,
+        body: "You have won 6 BTA on the competition!",
         title: "Team England Will Win!",
         date: new Date(),
         isNew: true,
@@ -93,8 +92,7 @@
       2,
       {
         id: 2,
-        text: "You have won {count} on the competition!",
-        amount: 6,
+        body: "You have won 6 BTA on the competition!",
         title: "Team England Will Win!",
         date: new Date(),
         isNew: true,
@@ -105,7 +103,7 @@
       3,
       {
         id: 3,
-        text: "A new competition has started!",
+        body: "A new competition has started!",
         title: "Barcelona Will Win!",
         date: new Date(),
         isNew: false,
@@ -116,7 +114,7 @@
       4,
       {
         id: 4,
-        text: "A new competition has started!",
+        body: "A new competition has started!",
         title: "Barcelona Will Win!",
         date: new Date(),
         isNew: false,
@@ -137,22 +135,27 @@
     const all = notifications.all;
     let next = new Map();
     loading = true;
+    if (!newNotifications) return  Promise.resolve();
 
-    setTimeout(() => {
-      newNotifications = 0;
+    newNotifications = 0;
+    return new Promise<void>((resolve) => {
 
+      setTimeout(() => {
+        $notificationsStore.forEach((notification) => {
+          const id = notification.messageId;
+          next.set(id, { ...notification.data, id, isNew: true });
+        });
+        next = new Map([...next, ...all]);
+        notifications = {
+          ...notifications,
+          all: next,
+        };
+        notificationsStore.set([]);
+        loading = false;
+        resolve();
+      }, 1000);
+    })
 
-      Array.from(all).forEach(([_id, notification]) => {
-        const id = all.size + 1 + next.size;
-        next.set(id, { ...notification, id, isNew: true });
-      });
-      next = new Map([...next, ...all]);
-      notifications = {
-        ...notifications,
-        all: next,
-      };
-      loading = false;
-    }, 1000)
   }
 
   function read(notifiaction) {
@@ -169,7 +172,9 @@
     };
   }
 
-  function readAll() {
+  async function readAll() {
+    await addNotifications();
+
     notifications = {
       ...notifications,
       all: new Map(
@@ -248,10 +253,10 @@
         </div>
       {:else}
         {#if loading}
-          {#each Array(newNotifications) as _item}
-              <div class="list-item loader">
-                <NotificationListItemLoader />
-              </div>
+          {#each Array($notificationsStore.length) as _item}
+            <div class="list-item loader">
+              <NotificationListItemLoader />
+            </div>
           {/each}
         {/if}
         {#each [...notificationsList] as [id, notification] (id)}

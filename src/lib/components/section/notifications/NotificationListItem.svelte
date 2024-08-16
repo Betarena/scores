@@ -27,8 +27,10 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let notification;
-  $: ({ isNew = true, text, amount, title, date, status } = notification);
-  $: textContent = text.split("{count}") || [];
+  $: ({ isNew = true, body, title, date, status } = notification);
+  $: match =  body.match(/\d+\sBTA/);
+  $: amount = match ? match[0] : "";
+  $: textContent = amount ? body.split(amount) : [body];
   // #endregion ➤ 📦 Package Imports
 </script>
 
@@ -52,10 +54,10 @@
     {/if}
   </div>
   <div class="content">
-    <div class="text">
+    <div class="body">
       {textContent[0]}
       {#if textContent.length > 1}
-        <span class="amount">{amount} BTA</span>
+        <span class="amount">{amount}</span>
         {textContent[1]}
       {/if}
     </div>
@@ -87,30 +89,30 @@
     .content {
       flex-grow: 1;
 
-      .text {
-        color: var(--text-text-secondary, #e6e6e6);
-        /* Text sm/Regular */
+      .body {
+        color: var(--body-body-secondary, #e6e6e6);
+        /* body sm/Regular */
         font-family: var(--font-family-font-family-body, Roboto);
-        font-size: var(--font-size-text-sm, 14px);
+        font-size: var(--font-size-body-sm, 14px);
         font-style: normal;
         font-weight: 400;
-        line-height: var(--line-height-text-sm, 20px)
+        line-height: var(--line-height-body-sm, 20px)
       }
 
       .title,
       .amount {
         color: var(--colors-brand-5);
 
-        /* Text sm/Semibold */
+        /* body sm/Semibold */
         font-family: var(--font-family-font-family-display);
-        font-size: var(--font-size-text-sm);
+        font-size: var(--font-size-body-sm);
         font-style: normal;
         font-weight: 600;
-        line-height: var(--line-height-text-sm);
+        line-height: var(--line-height-body-sm);
       }
 
       .time-ago {
-        color: var(--text-text-tertiary, #9d9d9d);
+        color: var(--body-body-tertiary, #9d9d9d);
         font-size: 10px;
         font-style: normal;
         margin-top: 4px;
