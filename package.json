@@ -74,7 +74,7 @@
 		"ethers": "5.7.2",
 		"express": "4.18.2",
 		"express-sslify": "1.2.0",
-		"firebase": "9.20.0",
+		"firebase": "9.23.0",
 		"graphql-request": "5.1.0",
 		"graphql-subscriptions-client": "0.16.4",
 		"heroku-ssl-redirect": "0.1.1",
