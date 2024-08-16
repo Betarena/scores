@@ -116,6 +116,7 @@
 
 <div
   {...$$restProps}
+  id="tabbar-ui-widget"
   class="tabbar {$$restProps.class || ''}"
   bind:this={tabbarNode}
   style="{bottom_border
@@ -152,6 +153,9 @@
 -->
 
 <style lang="scss">
+  :global(.dark-mode #tabbar-ui-widget .tab-item:not(.selected):not(:hover)) {
+    color: var(--colors-text-text-secondary-700);
+  }
   .tabbar {
     width: 100%;
     height: 100%;
