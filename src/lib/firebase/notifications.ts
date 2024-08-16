@@ -1,38 +1,36 @@
-import { getMessaging, getToken, type Messaging, onMessage } from "firebase/messaging";
+import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import { type Writable, writable } from "svelte/store";
 import { post } from "$lib/api/utils.js";
-import { app } from "./init.js";
 
-export let messaging: Messaging;
-export let token;
+export let messaging;
 
 export function requestPermission()
 {
+  setMessaging();
   return Notification.requestPermission().then(async (permission) =>
   {
     if (permission === 'granted')
     {
-      // const key = import.meta.env?.VITE_FIREBASE_MESSAGING_VAPID_PUBLIC_KEY;
-      return true
-      // return getToken(messaging, { vapidKey: key })
-      //   .then((currentToken) =>
-      //   {
-      //     if (currentToken)
-      //     {
-      //       // console.log('FCM Token:', currentToken);
-      //       // Send token to your backend server and store it
-      //     } else
-      //     {
-      //       console.log('No registration token available.');
-      //     }
-      //     showWelcomeNotification();
-      //     return true
-      //   })
-      //   .catch((err) =>
-      //   {
-      //     console.log('An error occurred while retrieving token.', err);
-      //     return false
-      //   });
+      const key = import.meta.env?.VITE_FIREBASE_MESSAGING_VAPID_PUBLIC_KEY;
+      return getToken(messaging, { vapidKey: key })
+        .then((currentToken) =>
+        {
+          if (currentToken)
+          {
+            // console.log('FCM Token:', currentToken);
+            // Send token to your backend server and store it
+          } else
+          {
+            console.log('No registration token available.');
+          }
+          showWelcomeNotification();
+          return true
+        })
+        .catch((err) =>
+        {
+          console.log('An error occurred while retrieving token.', err);
+          return false
+        });
     } else
     {
 
@@ -47,6 +45,7 @@ export function checkNotificationPermission()
 {
   if (Notification.permission === 'granted' || Notification.permission === 'denied')
   {
+    setMessaging();
     return true;
   };
   return false;
@@ -57,10 +56,33 @@ function setMessaging()
 {
   if (!messaging)
   {
+    const audio = new Audio('/audio/notification.mp3');
+    messaging = getMessaging();
+    onMessage(messaging, (payload) =>
+    {
+      new Notification(payload?.data?.title || "Betarena", {
+        body: payload.data?.body || "New notification",
+        icon: '/assets/img/192x192.png',
+      });
+      notifications.update((notifications) => [...notifications, payload]);
+      audio.play();
 
-    messaging = getMessaging(app);
+    });
+
+    if (navigator.serviceWorker)
+    {
+      navigator.serviceWorker.addEventListener('message', (event) =>
+      {
+        if (event.data && event.data.type === 'NEW_NOTIFICATION')
+        {
+          const payload = event.data.payload;
+          notifications.update((notifications) => [...notifications, payload]);
+          audio.play();
+        }
+      });
+    }
+
   }
-  return messaging;
 }
 
 
@@ -81,52 +103,18 @@ export function showWelcomeNotification()
 export function mockNotification()
 {
 
-  post(`https://us-central1-betarena-ios.cloudfunctions.net/api/messaging/test?userToken=${token}`, {});
-}
-
-function setHandlers(messaging?: any)
-{
-  if (!messaging) return;
-  const audio = new Audio('/audio/notification.mp3');
-  onMessage(messaging, (payload) =>
-  {
-    new Notification(payload?.data?.title || "Betarena", {
-      body: payload.data?.body || "New notification",
-      icon: '/assets/img/192x192.png',
-    });
-    notifications.update((notifications) => [...notifications, payload]);
-    audio.play();
-
-  });
-  messaging.onBackgroundMessageHandler = ((payload) =>
-  {
-    new Notification(payload?.data?.title || "Betarena", {
-      body: payload.data?.body || "New notification",
-      icon: '/assets/img/192x192.png',
-    });
-    notifications.update((notifications) => [...notifications, payload]);
-    audio.play();
-  });
-  if (navigator.serviceWorker)
-  {
-    navigator.serviceWorker.addEventListener('message', (event) =>
-    {
-      if (event.data && event.data.type === 'NEW_NOTIFICATION')
-      {
-        const payload = event.data.payload;
-        notifications.update((notifications) => [...notifications, payload]);
-        audio.play();
-      }
-    });
-  }
-}
-
-export async function initFMessaging(sw: ServiceWorkerRegistration)
-{
-  messaging = setMessaging();
   const key = import.meta.env?.VITE_FIREBASE_MESSAGING_VAPID_PUBLIC_KEY;
-  token = await getToken(messaging, { vapidKey: key, serviceWorkerRegistration: sw });
-  setHandlers(messaging);
+  getToken(messaging, { vapidKey: key })
+    .then((currentToken) =>
+    {
+      post(`https://us-central1-betarena-ios.cloudfunctions.net/api/messaging/test?userToken=${currentToken}`, {});
+      return true
+    })
+    .catch((err) =>
+    {
+      console.log('An error occurred while retrieving token.', err);
+      return false
+    });
 }
 
 export const notifications: Writable<any[]> = writable([]);
