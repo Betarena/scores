@@ -17,7 +17,7 @@ import { getMessaging, getToken, onMessage } from 'firebase/messaging';
  * @description
  *  📌 Firebase Config Object
  */
-const firebaseConfig: FirebaseOptions =
+export const firebaseConfig: FirebaseOptions =
 {
 	apiKey:	import.meta.env?.VITE_FIREBASE_DB_API_KEY as string,
 	authDomain:	import.meta.env?.VITE_FIREBASE_DB_AUTH_DOMAIN as string,

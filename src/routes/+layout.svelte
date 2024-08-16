@@ -84,6 +84,7 @@
     mockNotification,
   } from "$lib/firebase/notifications.js";
   import Button from "$lib/components/ui/Button.svelte";
+    import { firebaseConfig } from "$lib/firebase/init.js";
 
   // ╭─────
   // │ WARNING:
@@ -411,6 +412,7 @@
   //service worker init
   onMount(() => {
     if ("serviceWorker" in navigator) {
+      const fbconf = new URLSearchParams({...firebaseConfig}).toString();
       navigator.serviceWorker
         .register("/progressier.js")
         .then((registration) => {
@@ -423,7 +425,7 @@
           console.error("Service Worker registration failed:", error);
         });
       navigator.serviceWorker
-        .register("/firebase-messaging-sw.js")
+        .register("/firebase-messaging-sw.js?" + fbconf)
         .then((registration) => {
           console.log(
             "Service Worker registered with scope:",
@@ -446,9 +448,6 @@
 -->
 
 <svelte:head>
-  {#if !browser}
-    <script src="/service-worker-env.js"></script>
-  {/if}
   <!--
   HELPDESK PLUGIN
   -->
@@ -518,6 +517,71 @@
       }
       )();
     </script> -->
+  <!-- <script type="text/javascript">
+      window.$crisp=[];
+      window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
+      (function()
+      {
+        d=document;
+        s=d.createElement("script");
+        s.src="https://client.crisp.chat/l.js";
+        s.async=1;
+        d.getElementsByTagName("head")[0].appendChild(s);
+      }
+      )();
+    </!-->
+  <!-- <script type="text/javascript">
+      window.$crisp=[];
+      window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
+      (function()
+      {
+        d=document;
+        s=d.createElement("script");
+        s.src="https://client.crisp.chat/l.js";
+        s.async=1;
+        d.getElementsByTagName("head")[0].appendChild(s);
+      }
+      )();
+    </!-->
+  <!-- <script type="text/javascript">
+      window.$crisp=[];
+      window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
+      (function()
+      {
+        d=document;
+        s=d.createElement("script");
+        s.src="https://client.crisp.chat/l.js";
+        s.async=1;
+        d.getElementsByTagName("head")[0].appendChild(s);
+      }
+      )();
+    </!-->
+  <!-- <script type="text/javascript">
+      window.$crisp=[];
+      window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
+      (function()
+      {
+        d=document;
+        s=d.createElement("script");
+        s.src="https://client.crisp.chat/l.js";
+        s.async=1;
+        d.getElementsByTagName("head")[0].appendChild(s);
+      }
+      )();
+    </!-->
+  <!-- <script type="text/javascript">
+      window.$crisp=[];
+      window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
+      (function()
+      {
+        d=document;
+        s=d.createElement("script");
+        s.src="https://client.crisp.chat/l.js";
+        s.async=1;
+        d.getElementsByTagName("head")[0].appendChild(s);
+      }
+      )();
+    </!-->
   <!-- <script type="text/javascript">
       window.$crisp=[];
       window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
