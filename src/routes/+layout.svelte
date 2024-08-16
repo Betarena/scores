@@ -81,6 +81,7 @@
   import AllowNotificationModal from "$lib/components/section/notifications/feature_modal/AllowNotificationModalLayout.svelte";
   import {
     checkNotificationPermission,
+    initFMessaging,
     mockNotification,
   } from "$lib/firebase/notifications.js";
   import Button from "$lib/components/ui/Button.svelte";
@@ -425,6 +426,7 @@
       navigator.serviceWorker
         .register("/firebase-messaging-sw.js")
         .then((registration) => {
+          initFMessaging(registration);
           console.log(
             "Service Worker registered with scope:",
             registration.scope
