@@ -90,7 +90,7 @@
       flex-grow: 1;
 
       .body {
-        color: var(--body-body-secondary, #e6e6e6);
+        color: var(--text-text-tertiary, #e6e6e6);
         /* body sm/Regular */
         font-family: var(--font-family-font-family-body, Roboto);
         font-size: var(--font-size-body-sm, 14px);
