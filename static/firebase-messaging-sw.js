@@ -1,5 +1,5 @@
-importScripts('https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js');
-importScripts('https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/10.13.0/firebase-messaging-compat.js');
 
 // Set Firebase configuration, once available
 self.addEventListener('fetch', () =>
@@ -19,22 +19,18 @@ const defaultConfig = {
 // Initialize Firebase app
 firebase.initializeApp(self.firebaseConfig || defaultConfig);
 const messaging = firebase.messaging();
-
 // Configure message handler (assumes backend is set up)
 messaging.onBackgroundMessage((payload) =>
 {
   const { icon, body, title } = payload.data;
 
-  const notificationPromise = self.registration.showNotification(title, payload);
+  const notificationPromise = self.registration.showNotification(title, { body, icon });
 
-  const clientsPromise = self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clients =>
+  const clientsPromise = self.clients.matchAll({ includeUncontrolled: true }).then(clients =>
   {
     clients.forEach(client =>
     {
-      client.postMessage({
-        type: 'NEW_NOTIFICATION',
-        payload: payload.data
-      });
+      client.postMessage({ type: 'NEW_NOTIFICATION', payload });
     });
   });
   // Use event.waitUntil inside a push event listener
@@ -44,3 +40,28 @@ messaging.onBackgroundMessage((payload) =>
   });
 
 });
+// Configure message handler (assumes backend is set up)
+// messaging.onMessage((payload) =>
+// {
+//   const { icon, body, title } = payload.data;
+
+//   const notificationPromise = self.registration.showNotification("On Message", { body, icon });
+
+//   const clientsPromise = self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clients =>
+//   {
+//     clients.forEach(client =>
+//     {
+//       for (let i = 0; i < windowClients.length; i++)
+//       {
+//         const windowClient = windowClients[i];
+//         windowClient.postMessage({ type: 'NEW_NOTIFICATION', payload });
+//       }
+//     });
+//   });
+//   // Use event.waitUntil inside a push event listener
+//   self.addEventListener('push', function (event)
+//   {
+//     event.waitUntil(Promise.all([notificationPromise, clientsPromise]));
+//   });
+
+// });
