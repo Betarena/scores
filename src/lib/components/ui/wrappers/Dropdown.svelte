@@ -71,36 +71,39 @@
   }
 
   function addjustPosition() {
-    if (modalNodeCopy) {
-      let { right, left, bottom, top, width, height } =
-        modalNodeCopy.getBoundingClientRect();
-        const bodyRect = document.body.getBoundingClientRect();
-      const { innerWidth, innerHeight } = window;
-      const viewPortWidth = window.visualViewport?.width || innerWidth;
-      const viewPortHeight = window.visualViewport?.height || innerHeight;
-      let isChanged = false;
-      pos = { left: `0px`, top: `calc(100% + 10px)`, position: "absolute" };
-      if (right > viewPortWidth) {
-        isChanged = true;
-        left = viewPortWidth - width - 10;
-      }
-      if (left < 0) {
-        isChanged = true;
-        left = 5;
-      }
-      if (bottom > viewPortHeight) {
-        isChanged = true;
-        top = viewPortHeight - height - 10;
-      }
-      if (top < 0) {
-        isChanged = true;
-        top = 5;
-      }
-      if (isChanged) {
-        pos = { left: `${left}px`, top: `${top}px`, position: "fixed" };
-      }
-      positionAdjusted = true;
+    if (!show) return;
+    let { right, left, bottom, top, width, height } =
+      modalNodeCopy.getBoundingClientRect();
+    const { innerWidth, innerHeight } = window;
+    const viewPortWidth = window.visualViewport?.width || innerWidth;
+    const viewPortHeight = window.visualViewport?.height || innerHeight;
+    let isChanged = false;
+    pos = { left: `0px`, top: `calc(100% + 10px)`, position: "absolute" };
+    if (right > viewPortWidth) {
+      isChanged = true;
+      left = viewPortWidth - width - 10;
     }
+    if (left < 0) {
+      isChanged = true;
+      left = 5;
+    }
+    if (bottom > viewPortHeight) {
+      isChanged = true;
+      top = viewPortHeight - height - 10;
+    }
+    if (top < 0) {
+      isChanged = true;
+      top = 5;
+    }
+    if (isChanged) {
+      pos = { left: `${left}px`, top: `${top}px`, position: "fixed" };
+    }
+    positionAdjusted = true;
+  }
+
+  function handleScroll(e) {
+    if (!show || !positionAdjusted) return;
+    hide();
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -126,6 +129,7 @@
 │ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
+<svelte:window on:scroll|passive={handleScroll} />
 <svelte:body on:click={hide} />
 <div
   class="trigger"
