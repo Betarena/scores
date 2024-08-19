@@ -74,6 +74,7 @@
     if (modalNodeCopy) {
       let { right, left, bottom, top, width, height } =
         modalNodeCopy.getBoundingClientRect();
+        const bodyRect = document.body.getBoundingClientRect();
       const { innerWidth, innerHeight } = window;
       const viewPortWidth = window.visualViewport?.width || innerWidth;
       const viewPortHeight = window.visualViewport?.height || innerHeight;
@@ -81,7 +82,7 @@
       pos = { left: `0px`, top: `calc(100% + 10px)`, position: "absolute" };
       if (right > viewPortWidth) {
         isChanged = true;
-        left = innerWidth - width - 10;
+        left = viewPortWidth - width - 10;
       }
       if (left < 0) {
         isChanged = true;
