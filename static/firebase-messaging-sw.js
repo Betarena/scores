@@ -25,7 +25,7 @@ messaging.onBackgroundMessage((payload) =>
 {
   const { icon, body, title } = payload.data;
 
-  const notificationPromise = self.registration.showNotification(title, { body, icon });
+  const notificationPromise = self.registration.showNotification(title, payload);
 
   const clientsPromise = self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clients =>
   {
