@@ -16,6 +16,7 @@
   import Icon from "$lib/components/ui/Icon.svelte";
   import Dropdown from "$lib/components/ui/wrappers/Dropdown.svelte";
   import session from "$lib/store/session.js";
+  import type { IPageNotificationsTranslationDataFinal } from "@betarena/scores-lib/types/v8/preload.notifications.js";
   import { createEventDispatcher } from "svelte";
 
   // #region ➤ 📌 VARIABLES
@@ -34,12 +35,12 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let config = false;
+  export let translations: IPageNotificationsTranslationDataFinal['translation']
   const /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
      */ // eslint-disable-next-line no-unused-vars
     CNAME: string = "notifications⮕header";
-
   const dispatch = createEventDispatcher();
   function back() {
     if (window?.history.length > 1) {
@@ -81,11 +82,11 @@
       <div slot="content">
         <button class="action-button" on:click={() => dispatch("readAll")}>
           <i class="icon"><Settings_01 /></i>
-          Mark all as read
+          {translations?.mark_all_read}
         </button>
         <button on:click|stopPropagation={() => goto("notifications/settings")} class="action-button">
           <i class="icon"><Settings_02 /></i>
-          Notification settings
+          {translations?.notifications_setting}
         </button>
       </div>
     </Dropdown>

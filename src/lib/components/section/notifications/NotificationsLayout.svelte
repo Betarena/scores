@@ -39,7 +39,7 @@
 
   import sessionStore from "$lib/store/session.js";
   import { notifications as notificationsStore } from "$lib/firebase/notifications.js";
-  import type { PageData } from ".svelte-kit/types/src/routes/notifications/$types.js";
+  import type { PageData } from ".svelte-kit/types/src/routes/(scores)/[[lang=lang]]/notifications/$types.js";
 
   import NotificationsHeader from "./NotificationsHeader.svelte";
   import Tabbar from "$lib/components/ui/Tabbar.svelte";
@@ -50,6 +50,8 @@
   import { flip } from "svelte/animate";
   import NoNotifications from "./assets/NoNotifications.svelte";
   import NotificationListItemLoader from "./NotificationListItemLoader.svelte";
+  import session from "$lib/store/session.js";
+  import type { INotificationMessage } from "$lib/types/types.notifications.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -74,131 +76,98 @@
     CNAME: string = "notifications-layout";
   let selectedTab;
   $: newNotifications = $notificationsStore.length;
-  $: notificationsList = notifications[selectedTab?.id] || new Map();
-
-  $: console.log("NOTIFICATIONS: ", data)
-
-  const competitionsNotifications = [
-    [
-      1,
-      {
-        id: 1,
-        body: "You have won 6 BTA on the competition!",
-        title: "Team England Will Win!",
-        date: new Date(),
-        isNew: true,
-        status: "won",
-      },
-    ],
-    [
-      2,
-      {
-        id: 2,
-        body: "You have won 6 BTA on the competition!",
-        title: "Team England Will Win!",
-        date: new Date(),
-        isNew: true,
-        status: "won",
-      },
-    ],
-    [
-      3,
-      {
-        id: 3,
-        body: "A new competition has started!",
-        title: "Barcelona Will Win!",
-        date: new Date(),
-        isNew: false,
-        status: "competition_started",
-      },
-    ],
-    [
-      4,
-      {
-        id: 4,
-        body: "A new competition has started!",
-        title: "Barcelona Will Win!",
-        date: new Date(),
-        isNew: false,
-        status: "competition_started",
-      },
-    ],
-  ];
-
+  $: notificationsList =( notifications[selectedTab?.id] || []) as INotificationMessage[];
+  $: ({ serverLang = "en" } = $session);
+  $: ({ tr, notifications: n } = data || {});
+  $: translationsMap = tr?.[0];
+  $: translations = translationsMap?.get(serverLang)?.translation;
+  $: templates = translations?.message;
+  let sn: INotificationMessage[] = [];
   let notifications = {
-    all: new Map([...competitionsNotifications]),
-    competitions: new Map(competitionsNotifications),
-    authors: new Map(),
-    scores: new Map(),
+    all: [] as INotificationMessage[] ,
+    competitions: [] as INotificationMessage[],
+    // authors: new Map(),
+    // scores: new Map(),
   };
+  $: if (templates && n?.user.messages) {
+    notifications = {
+      all: [],
+      competitions: [],
+    }
+    n.user.messages.forEach((m) => {
+      const message =  { ...m, template: templates[`id_${m.template_id}`] };
+      notifications.all.push(message);
+      notifications.competitions.push(message);
+      sn.push({ ...m, template: templates[`id_${m.template_id}`] });
+    });
+  }
+
   let loading = false;
 
   function addNotifications() {
-    const all = notifications.all;
-    let next = new Map();
-    loading = true;
-    if (!newNotifications) return  Promise.resolve();
+    // const all = notifications.all;
+    // let next = new Map();
+    // loading = true;
+    // if (!newNotifications) return Promise.resolve();
 
-    newNotifications = 0;
-    return new Promise<void>((resolve) => {
-
-      setTimeout(() => {
-        $notificationsStore.forEach((notification) => {
-          const id = notification.messageId;
-          next.set(id, { ...notification.data, id, isNew: true });
-        });
-        next = new Map([...next, ...all]);
-        notifications = {
-          ...notifications,
-          all: next,
-        };
-        notificationsStore.set([]);
-        loading = false;
-        resolve();
-      }, 1000);
-    })
-
+    // newNotifications = 0;
+    // return new Promise<void>((resolve) => {
+    //   setTimeout(() => {
+    //     $notificationsStore.forEach((notification) => {
+    //       const id = notification.messageId;
+    //       next.set(id, { ...notification.data, id, isNew: true });
+    //     });
+    //     next = new Map([...next, ...all]);
+    //     notifications = {
+    //       ...notifications,
+    //       all: next,
+    //     };
+    //     notificationsStore.set([]);
+    //     loading = false;
+    //     resolve();
+    //   }, 1000);
+    // });
   }
 
   function read(notifiaction) {
-    notifications = {
-      ...notifications,
-      all: new Map(
-        [...notifications.all].map(([id, notification]) => {
-          if (notification.id === notifiaction.id) {
-            return [id, { ...notification, isNew: false }];
-          }
-          return [id, notification];
-        })
-      ),
-    };
+    // notifications = {
+    //   ...notifications,
+    //   all: new Map(
+    //     [...notifications.all].map(([id, notification]) => {
+    //       if (notification.id === notifiaction.id) {
+    //         return [id, { ...notification, isNew: false }];
+    //       }
+    //       return [id, notification];
+    //     })
+    //   ),
+    // };
   }
 
   async function readAll() {
     await addNotifications();
 
-    notifications = {
-      ...notifications,
-      all: new Map(
-        [...notifications.all].map(([id, notification]) => {
-          return [id, { ...notification, isNew: false }];
-        })
-      ),
+    // notifications = {
+    //   ...notifications,
+    //   all: new Map(
+    //     [...notifications.all].map(([id, notification]) => {
+    //       return [id, { ...notification, isNew: false }];
+    //     })
+    //   ),
 
-      competitions: new Map(
-        [...notifications.competitions].map(([id, notification]) => {
-          return [id, { ...notification, isNew: false }];
-        })
-      ),
-    };
+    //   competitions: new Map(
+    //     [...notifications.competitions].map(([id, notification]) => {
+    //       return [id, { ...notification, isNew: false }];
+    //     })
+    //   ),
+    // };
   }
 
   $: ({ viewportType } = $sessionStore);
-  const options = [
-    { id: "all", label: "All" },
-    { id: "scores", label: "Scores" },
-    { id: "authors", label: "Authors" },
-    { id: "competitions", label: "Competitions" },
+  $: options = [
+    { id: "all", label: translations?.all },
+    // { id: "scores", label: "Scores" },
+    // { id: "authors", label: "Authors" },
+    { id: "competitions", label: translations?.competitions },
   ];
   // #endregion ➤ 📌 VARIABLES
 </script>
@@ -216,7 +185,9 @@
 
 <section id={CNAME} class={viewportType}>
   <div class="main-content {viewportType}">
-    <NotificationsHeader on:readAll={readAll} />
+    <NotificationsHeader on:readAll={readAll} {translations}>
+      {translations?.notifications || "Notifications"}
+    </NotificationsHeader>
     <div class="tabbar">
       <Tabbar
         data={options}
@@ -226,7 +197,7 @@
         bottom_border={true}
         on:select
       >
-        {tab.label} ({notifications[tab.id]?.size || 0})
+        {tab.label} ({notifications[tab.id]?.length || 0})
       </Tabbar>
     </div>
     <div class="list-wrapper">
@@ -240,7 +211,7 @@
           >
         </div>
       {/if}
-      {#if !notificationsList.size && !loading}
+      {#if !notificationsList.length && !loading}
         <div class="no-notifications">
           <div class="no-notification-content">
             <NoNotifications />
@@ -261,7 +232,7 @@
             </div>
           {/each}
         {/if}
-        {#each [...notificationsList] as [id, notification] (id)}
+        {#each notificationsList as notification (notification.id)}
           <div
             class="list-item"
             in:fade={{ delay: 200, duration: 500 }}

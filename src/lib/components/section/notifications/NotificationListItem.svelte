@@ -12,6 +12,7 @@
   import { timeAgo } from "$lib/utils/dates.js";
   import CompetitonStarted from "./assets/CompetitonStarted.svelte";
   import WinIcon from "./assets/WinIcon.svelte";
+  import type { INotificationMessage } from "$lib/types/types.notifications.js";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -26,11 +27,17 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let notification;
-  $: ({ isNew = true, body, title, date, status } = notification);
-  $: match =  body.match(/\d+\sBTA/);
-  $: amount = match ? match[0] : "";
-  $: textContent = amount ? body.split(amount) : [body];
+  export let notification: INotificationMessage;
+  $: ({
+    isNew = true,
+    template,
+    type,
+    data: { BTA, competition_title },
+    inserted_at,
+  } = notification);
+  $: amount = BTA;
+  $: textContent = amount ? template.split("{BTA}") : [template];
+  $: ([restContent] = textContent[1]?.split("{competition_title}"));
   // #endregion ➤ 📦 Package Imports
 </script>
 
@@ -47,7 +54,7 @@
 
 <div class="notification">
   <div class="img">
-    {#if status === "won"}
+    {#if type === "2"}
       <WinIcon />
     {:else}
       <CompetitonStarted />
@@ -57,12 +64,12 @@
     <div class="body">
       {textContent[0]}
       {#if textContent.length > 1}
-        <span class="amount">{amount}</span>
-        {textContent[1]}
+        <span class="amount">{amount}BTA</span>
+        {restContent}
       {/if}
     </div>
-    <div class="title">{title}</div>
-    <div class="time-ago">{timeAgo(date)}</div>
+    <div class="title">{competition_title}</div>
+    <div class="time-ago">{timeAgo(inserted_at)}</div>
   </div>
   {#if isNew}
     <div class="new-icon" />
@@ -96,7 +103,7 @@
         font-size: var(--font-size-body-sm, 14px);
         font-style: normal;
         font-weight: 400;
-        line-height: var(--line-height-body-sm, 20px)
+        line-height: var(--line-height-body-sm, 20px);
       }
 
       .title,

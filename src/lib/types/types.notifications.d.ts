@@ -1,3 +1,5 @@
+import type { NotificationsHistoryMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+
 export interface INotificationsConfigSection
 {
   title: string;
@@ -7,4 +9,9 @@ export interface INotificationsConfigSection
     label: string;
     checked: boolean;
   }[];
+}
+
+export interface INotificationMessage extends NotificationsHistoryMain
+{
+  template: string;
 }
