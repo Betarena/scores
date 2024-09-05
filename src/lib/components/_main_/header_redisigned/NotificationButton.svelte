@@ -83,7 +83,7 @@
 -->
 
 <a
-  href="/notifications"
+  href="/{$page.params.lang ? `${$page.params.lang}/`: ''}notifications"
   class="notification-wrapper"
   on:click={click}
   class:active={$page.route.id === routeIdNotifications}

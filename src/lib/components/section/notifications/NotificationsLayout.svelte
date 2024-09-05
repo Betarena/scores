@@ -76,6 +76,8 @@
   $: newNotifications = $notificationsStore.length;
   $: notificationsList = notifications[selectedTab?.id] || new Map();
 
+  $: console.log("NOTIFICATIONS: ", data)
+
   const competitionsNotifications = [
     [
       1,

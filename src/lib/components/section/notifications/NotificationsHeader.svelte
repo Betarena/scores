@@ -83,7 +83,7 @@
           <i class="icon"><Settings_01 /></i>
           Mark all as read
         </button>
-        <button on:click|stopPropagation={() => goto("/notifications/settings")} class="action-button">
+        <button on:click|stopPropagation={() => goto("notifications/settings")} class="action-button">
           <i class="icon"><Settings_02 /></i>
           Notification settings
         </button>
