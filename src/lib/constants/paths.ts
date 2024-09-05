@@ -100,7 +100,7 @@ export const
    * @description
    *  📣 Target `path` for **notifications**.
    */
-  routeIdNotifications = '/notifications',
+  routeIdNotifications = '/(scores)/[[lang=lang]]/notifications',
   /**
    * @description
    *  📣 Target `path` for **notifications settings**.
