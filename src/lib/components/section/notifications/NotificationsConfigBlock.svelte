@@ -10,7 +10,10 @@
 <script lang="ts">
   // #region ➤ 📦 Package Imports
 
+  import { post } from "$lib/api/utils.js";
   import ToggleButton from "$lib/components/ui/ToggleButton.svelte";
+  import userSettings from "$lib/store/user-settings.js";
+  import type { INotificationsConfigSection } from "$lib/types/types.notifications.js";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -41,14 +44,36 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let title: string;
-  export let options: { label: string; checked: boolean }[];
+  export let section: INotificationsConfigSection;
+
   const /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
      */ // eslint-disable-next-line no-unused-vars
     CNAME: string = "notifications⮕config⮕block";
 
+  $: ({ title, options, type } = section);
+
+  async function toggle(
+    e: CustomEvent<boolean>,
+    o: INotificationsConfigSection["options"][0]
+  ) {
+    const { detail } = e;
+    const uid = userSettings.extract("uid");
+    if (!uid) return;
+    await post("/api/notifications/config", {
+      uid,
+      type: "notification",
+      data: {
+        notificationId: o.id,
+        notificationType: type,
+        notificationState: detail,
+      },
+    });
+    userSettings.updateData([
+      ["user-notifications-settings", { [type]: section }],
+    ]);
+  }
   // #endregion ➤ 📌 VARIABLES
 </script>
 
@@ -66,10 +91,10 @@
 <div class="notifications-config-block" id={CNAME}>
   <div class="title">{title}</div>
   <div class="options-wrapper">
-    {#each options as { label, checked }}
+    {#each options as o}
       <div class="option">
-        <div class="label">{label}</div>
-        <ToggleButton active={checked} />
+        <div class="label">{o.label}</div>
+        <ToggleButton active={o.checked} on:toggle={(e) => toggle(e, o)} />
       </div>
     {/each}
   </div>

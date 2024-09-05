@@ -105,5 +105,5 @@ export const
    * @description
    *  📣 Target `path` for **notifications settings**.
    */
-  routeIdNotificationsSettings = '/notifications/settings'
+  routeIdNotificationsSettings = '/(scores)/[[lang=lang]]/notifications/settings'
   ;

@@ -6,7 +6,7 @@ declare global
   {
 		// interface Error {}
 		// interface Locals {}
-		// interface PageData {}
+    interface PageData { }
 		// interface Platform {}
 
     interface Error

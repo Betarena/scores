@@ -1,4 +1,5 @@
 import { IBetarenaUser } from "@betarena/scores-lib/types/_FIREBASE_.js";
+import { INotificationsConfigSection } from './types.notifications.js'
 
 /**
  * @author
@@ -45,6 +46,13 @@ export interface IUserSetting
    *  📣 **Client/User** userguides opt-out
    */
   userguide_id_opt_out: number[] | undefined;
+  /**
+   * @description
+   *  📣 **Notifications settings** notifications
+   */
+  notificationSettings: {
+    [key: string]: INotificationsConfigSection
+  };
 }
 
 /**

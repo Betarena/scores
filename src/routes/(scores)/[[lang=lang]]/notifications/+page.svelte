@@ -1,6 +1,6 @@
 <script lang="ts">
   import NotificationsLayout from "$lib/components/section/notifications/NotificationsLayout.svelte";
-import type { PageData } from "./$types";
+  import type { PageData } from "./$types";
 
   export let data: PageData;
 </script>
@@ -16,8 +16,4 @@ import type { PageData } from "./$types";
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-
 <NotificationsLayout {data} />
-
-
-

@@ -68,7 +68,11 @@
   <Icon size="sm" on:click={back}>
     <button class="button" ><CrossIcon /></button>
   </Icon>
-  <div class="title">Notifications {config ? "Settings" : ""}</div>
+  <div class="title">
+    <slot>
+      Notifications {config ? "Settings" : ""}
+    </slot>
+  </div>
   {#if !config}
     <Dropdown>
       <Icon size="sm" slot="trigger">

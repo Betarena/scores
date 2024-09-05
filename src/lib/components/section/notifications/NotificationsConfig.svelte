@@ -37,11 +37,13 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import type { PageData } from ".svelte-kit/types/src/routes/notifications/settings/$types";
-
   import NotificationsHeader from "./NotificationsHeader.svelte";
   import session from "$lib/store/session.js";
   import NotificationsConfigBlock from "./NotificationsConfigBlock.svelte";
+  import type { PageData } from ".svelte-kit/types/src/routes/(scores)/[[lang=lang]]/notifications/settings/$types.js";
+  import type { INotificationsConfigSection } from "$lib/types/types.notifications.js";
+  import userSettings from "$lib/store/user-settings.js";
+  import { browser } from "$app/environment";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -60,49 +62,72 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let data: PageData;
+  $: ({ serverLang = "en" } = $session);
+  $: ({notifications, tr} = data)
+  $: translationsMap = tr?.[0];
+  $: translations = translationsMap?.get(serverLang)?.translation;
 
+  $: if (translations && notifications) {
+    const settings = notifications?.user.settings;
+    sections = [
+      {
+        title: translations?.notifications_email,
+        type: "mail",
+        options: [
+          {
+            id: 1,
+            label: translations?.title.id_1,
+            checked: settings?.data?.notification.mail["id_1"],
+          },
+        ],
+      },
+      {
+        title: translations?.notifications_push,
+        type: "push",
+        options: [
+          {
+            id: 1,
+            label: translations?.title.id_1,
+            checked: settings?.data?.notification.mail["id_1"],
+          },
+          {
+            id: 2,
+            label: translations?.title.id_2,
+            checked: settings?.data?.notification.mail["id_2"],
+          },
+        ],
+      },
+      {
+        title: translations?.notifications_general,
+        type: "general",
+        options: [
+          {
+            id: 1,
+            label: translations?.title.id_1,
+            checked: settings?.data?.notification.mail["id_1"],
+          },
+          {
+            id: 2,
+            label: translations?.title.id_2,
+            checked: settings?.data?.notification.mail["id_2"],
+          },
+        ],
+      },
+    ];
+  }
+  $: if (browser && sections) {
+    const settingsMap = {};
+    sections.forEach((section) => {
+      settingsMap[section.type] = section;
+    });
+    userSettings.updateData([["user-notifications-settings",  {...settingsMap}]]);
+
+  }
   const /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
     // eslint-disable-next-line no-unused-vars
     CNAME: string = "notifications-config";
   $: ({ viewportType } = $session);
-
-  const sections = [
-    {
-      title: "Email Notifications",
-      options: [
-        {
-          label: "Send me notification every time I win a competition",
-          checked: true,
-        },
-      ],
-    },
-    {
-      title: "Mobile Notifications",
-      options: [
-        {
-          label: "Send me a notification every time I win a competition",
-          checked: true,
-        },
-        {
-          label: "Send me a notification every time a ne competition starts",
-          checked: true,
-        },
-      ],
-    },
-    {
-      title: "General Notifications",
-      options: [
-        {
-          label: "Send me a notification every time I win a competition",
-          checked: true,
-        },
-        {
-          label: "Send me a notification every time a ne competition starts",
-          checked: true,
-        },
-      ],
-    },
-  ];
+  let sections: INotificationsConfigSection[] =  browser ? userSettings.extract('user-notification-settings') || [] : [];
 
   // #endregion ➤ 📌 VARIABLES
 </script>
@@ -120,10 +145,12 @@
 
 <section id={CNAME} class={viewportType}>
   <div class="main-content {viewportType}">
-    <NotificationsHeader config={true} />
+    <NotificationsHeader config={true}>
+      {translations?.notifications_setting}
+    </NotificationsHeader>
     <div class="config-blocks">
-      {#each sections as { title, options }}
-        <NotificationsConfigBlock {title} {options} />
+      {#each sections as section}
+        <NotificationsConfigBlock {section}/>
       {/each}
     </div>
   </div>

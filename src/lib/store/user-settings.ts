@@ -25,6 +25,7 @@ import { setCookie } from './cookie.js';
 
 import type { BetarenaUser, IUserSetting, Voted_Fixture } from '$lib/types/types.user-settings.js';
 import type { InvestorData } from '@betarena/scores-lib/types/_FIREBASE_.js';
+import type { INotificationsConfigSection } from '$lib/types/types.notifications.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -43,7 +44,8 @@ const
     geoJs: undefined,
     user: undefined,
     voted_fixtures: [],
-    userguide_id_opt_out: []
+    userguide_id_opt_out: [],
+    notificationSettings: {}
   }
   ;
 
@@ -65,6 +67,7 @@ export type IDataProp =
   | 'user-following'
   | "user-buttons-order"
   | "user-subscriptions"
+  | 'user-notifications-settings'
   ;
 
 enum DataPropEnum
@@ -85,7 +88,8 @@ enum DataPropEnum
   USER_INVESTOR_BALANCE = 'user-investor-balance',
   USER_FOLLOWING = 'user-following',
   USER_SUBSCRIPTION = 'user-subscriptions',
-  USER_BUTTONS_ORDER = 'user-buttons-order'
+  USER_BUTTONS_ORDER = 'user-buttons-order',
+  USER_NOTIFICATIONS_SETTINGS = 'user-notifications-settings'
 }
 // #endregion ➤ 📌 VARIABLES
 
@@ -167,6 +171,7 @@ function createLocalStore
               user: undefined,
               voted_fixtures: [],
               userguide_id_opt_out: [],
+              notificationSettings: {}
             }
               ;
           ;
@@ -439,6 +444,14 @@ function createLocalStore
                 if (localStore.user.scores_user_data.userguide_id_opt_out != null)
                   localStore.userguide_id_opt_out = localStore.user.scores_user_data.userguide_id_opt_out;
                 break;
+              case DataPropEnum.USER_NOTIFICATIONS_SETTINGS: {
+                if (!localStore.notificationSettings) localStore.notificationSettings = {};
+                Object.keys(dataPoint).forEach((key) =>
+                {
+                  localStore.notificationSettings[key] = dataPoint[key];
+                })
+                break
+              }
 
               default: break;
             }
@@ -541,7 +554,7 @@ function createLocalStore
       extract:
         <Typ1>
           (
-            dataPoint: 'geo-bookmaker' | 'lang' | 'lang-user' | 'uid' | 'user'
+            dataPoint: 'geo-bookmaker' | 'lang' | 'lang-user' | 'uid' | 'user' | 'user-notification-settings'
           ): Typ1 | NullUndef =>
         {
           const
@@ -558,6 +571,16 @@ function createLocalStore
             return localStore?.user?.firebase_user_data?.uid as Typ1 | NullUndef;
           else if (dataPoint === 'user')
             return localStore?.user?.scores_user_data as Typ1 | NullUndef;
+          else if (dataPoint === 'user-notification-settings')
+          {
+            const settings: INotificationsConfigSection[] = [];
+            Object.values(localStore?.notificationSettings || {}).forEach((v) =>
+            {
+              settings.push(v);
+            })
+            return settings as Typ1;
+          } else
+            return null;
           ;
 
           return;

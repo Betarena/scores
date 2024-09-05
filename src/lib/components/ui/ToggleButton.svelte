@@ -26,7 +26,7 @@
 
   export let active = false;
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher<{toggle: boolean}>();
 
   // #endregion ➤ 📌 VARIABLES
 
