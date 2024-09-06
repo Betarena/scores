@@ -1,4 +1,4 @@
-import type { RequestHandler } from './$types';
+import type { RequestHandler } from '../$types';
 import { entryNotificationsUserMutation } from "@betarena/scores-lib/dist/functions/v8/notifications.general.js";
 
 export const POST: RequestHandler = async ({ request }) =>

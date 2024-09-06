@@ -145,7 +145,7 @@
 
 <section id={CNAME} class={viewportType}>
   <div class="main-content {viewportType}">
-    <NotificationsHeader config={true}>
+    <NotificationsHeader {translations} config={true}>
       {translations?.notifications_setting}
     </NotificationsHeader>
     <div class="config-blocks">
