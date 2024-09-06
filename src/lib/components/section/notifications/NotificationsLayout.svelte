@@ -82,7 +82,6 @@
   $: translationsMap = tr?.[0];
   $: translations = translationsMap?.get(serverLang)?.translation;
   $: templates = translations?.message;
-  let sn: INotificationMessage[] = [];
   let notifications = {
     all: [] as INotificationMessage[] ,
     competitions: [] as INotificationMessage[],
@@ -95,10 +94,9 @@
       competitions: [],
     }
     n.user.messages.forEach((m) => {
-      const message =  { ...m, template: templates[`id_${m.template_id}`] };
+      const message =  { ...m, template: templates[m.template_id as number] };
       notifications.all.push(message);
       notifications.competitions.push(message);
-      sn.push({ ...m, template: templates[`id_${m.template_id}`] });
     });
   }
 
