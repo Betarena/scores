@@ -108,10 +108,7 @@ export function showWelcomeNotification()
 
 export function mockNotification()
 {
-
-  const currentToken = localStorage.getItem('fcmToken');
-  if (!currentToken) return;
-  post(`https://us-central1-betarena-ios.cloudfunctions.net/api/messaging/test?userToken=${currentToken}`, {});
+  post(`https://us-central1-betarena-ios.cloudfunctions.net/api/messaging/multicast?uid=${userSettings.extract('uid')}`, {});
 }
 
 export const notifications: Writable<any[]> = writable([]);
