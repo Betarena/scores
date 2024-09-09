@@ -71,46 +71,46 @@
     const settings = notifications?.user.settings;
     sections = [
       {
-        title: translations?.notifications_email,
+        title: translations?.general?.notifications_email || "Email",
         type: "mail",
         options: [
           {
             id: 1,
-            label: translations?.title.id_1,
-            checked: settings?.data?.notification.mail["id_1"],
+            label: translations?.message?.title["1"] || "",
+            checked: settings?.data?.notification.mail["1"] ?? true,
           },
         ],
       },
       {
-        title: translations?.notifications_push,
+        title: translations?.general?.notifications_push || "Push",
         type: "push",
         options: [
           {
             id: 1,
-            label: translations?.title.id_1,
-            checked: settings?.data?.notification.mail["id_1"],
+            label: translations?.message?.title["1"] || "",
+            checked: settings?.data?.notification.push["1"] ?? true,
           },
-          {
-            id: 2,
-            label: translations?.title.id_2,
-            checked: settings?.data?.notification.mail["id_2"],
-          },
+          // {
+          //   id: 2,
+          //   label: translations?.title["2"],
+          //   checked: settings?.data?.notification.mail["2"],
+          // },
         ],
       },
       {
-        title: translations?.notifications_general,
+        title: translations?.general?.notifications_general || "General",
         type: "general",
         options: [
           {
             id: 1,
-            label: translations?.title.id_1,
-            checked: settings?.data?.notification.mail["id_1"],
+            label: translations?.message?.title["1"] || "",
+            checked: settings?.data?.notification.general["1"] ?? true,
           },
-          {
-            id: 2,
-            label: translations?.title.id_2,
-            checked: settings?.data?.notification.mail["id_2"],
-          },
+          // {
+          //   id: 2,
+          //   label: translations?.title["2"],
+          //   checked: settings?.data?.notification.mail["2"],
+          // },
         ],
       },
     ];
@@ -146,7 +146,7 @@
 <section id={CNAME} class={viewportType}>
   <div class="main-content {viewportType}">
     <NotificationsHeader {translations} config={true}>
-      {translations?.notifications_setting}
+      {translations?.general?.notifications_setting}
     </NotificationsHeader>
     <div class="config-blocks">
       {#each sections as section}

@@ -94,7 +94,7 @@
     {#each options as o}
       <div class="option">
         <div class="label">{o.label}</div>
-        <ToggleButton active={o.checked} on:toggle={(e) => toggle(e, o)} />
+        <ToggleButton bind:active={o.checked} on:toggle={(e) => toggle(e, o)} />
       </div>
     {/each}
   </div>

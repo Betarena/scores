@@ -35,7 +35,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let config = false;
-  export let translations: IPageNotificationsTranslationDataFinal['translation']
+  export let translations: IPageNotificationsTranslationDataFinal['translation'] | undefined
   const /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
@@ -82,11 +82,11 @@
       <div slot="content">
         <button class="action-button" on:click={() => dispatch("readAll")}>
           <i class="icon"><Settings_01 /></i>
-          {translations?.mark_all_read}
+          {translations?.general?.mark_all_read}
         </button>
         <button on:click|stopPropagation={() => goto("notifications/settings")} class="action-button">
           <i class="icon"><Settings_02 /></i>
-          {translations?.notifications_setting}
+          {translations?.general?.notifications_setting}
         </button>
       </div>
     </Dropdown>

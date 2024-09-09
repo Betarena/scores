@@ -81,7 +81,7 @@
   $: ({ tr, notifications: n } = data || {});
   $: translationsMap = tr?.[0];
   $: translations = translationsMap?.get(serverLang)?.translation;
-  $: templates = translations?.message;
+  $: templates = translations?.message?.message
   let notifications = {
     all: [] as INotificationMessage[] ,
     competitions: [] as INotificationMessage[],
@@ -105,7 +105,7 @@
   function addNotifications() {
     // const all = notifications.all;
     // let next = new Map();
-    // loading = true;
+    // loading = true;=
     // if (!newNotifications) return Promise.resolve();
 
     // newNotifications = 0;
@@ -162,10 +162,10 @@
 
   $: ({ viewportType } = $sessionStore);
   $: options = [
-    { id: "all", label: translations?.all },
+    { id: "all", label: translations?.general?.all },
     // { id: "scores", label: "Scores" },
     // { id: "authors", label: "Authors" },
-    { id: "competitions", label: translations?.competitions },
+    { id: "competitions", label: translations?.general?.competitions },
   ];
   // #endregion ➤ 📌 VARIABLES
 </script>
@@ -184,7 +184,7 @@
 <section id={CNAME} class={viewportType}>
   <div class="main-content {viewportType}">
     <NotificationsHeader on:readAll={readAll} {translations}>
-      {translations?.notifications || "Notifications"}
+      {translations?.general?.notifications || "Notifications"}
     </NotificationsHeader>
     <div class="tabbar">
       <Tabbar
