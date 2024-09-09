@@ -20,7 +20,7 @@ export function requestPermission()
         {
           if (currentToken)
           {
-            post('/api/notifications', {
+            post('/api/notifications/settings', {
               uid, type: "device",
               data: {
                 deviceToken: currentToken

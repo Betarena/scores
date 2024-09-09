@@ -1,14 +1,13 @@
 import type { LayoutServerLoad } from './$types';
 import { entryNotificationsData, entryNotificationsTranslations } from '@betarena/scores-lib/dist/functions/v8/notifications.general.js';
 
-export const load = (async ({ locals, parent }) =>
+export const load = (async ({ locals, parent, fetch }) =>
 {
   const { langParam } = await parent();
   const uid = locals.user && JSON.parse(locals.user)["user-uid"];
   if (!uid) return {};
-  const data = await entryNotificationsData({ uid });
   return {
-    notifications: data,
+    notifications: await fetch('/api/notifications?uid=' + uid).then((res) => res.json()),
     tr: entryNotificationsTranslations({
       language: langParam,
       cacheCheck: true,

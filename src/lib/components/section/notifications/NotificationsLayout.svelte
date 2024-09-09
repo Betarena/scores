@@ -52,6 +52,8 @@
   import NotificationListItemLoader from "./NotificationListItemLoader.svelte";
   import session from "$lib/store/session.js";
   import type { INotificationMessage } from "$lib/types/types.notifications.js";
+  import { get } from "$lib/api/utils.js";
+  import userSettings from "$lib/store/user-settings.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -76,55 +78,35 @@
     CNAME: string = "notifications-layout";
   let selectedTab;
   $: newNotifications = $notificationsStore.length;
-  $: notificationsList =( notifications[selectedTab?.id] || []) as INotificationMessage[];
+  $: notificationsList = (notifications[selectedTab?.id] ||
+    []) as INotificationMessage[];
   $: ({ serverLang = "en" } = $session);
   $: ({ tr, notifications: n } = data || {});
   $: translationsMap = tr?.[0];
   $: translations = translationsMap?.get(serverLang)?.translation;
-  $: templates = translations?.message?.message
+  $: templates = translations?.message?.message;
+  $: messages = n?.user?.messages;
   let notifications = {
-    all: [] as INotificationMessage[] ,
+    all: [] as INotificationMessage[],
     competitions: [] as INotificationMessage[],
     // authors: new Map(),
     // scores: new Map(),
   };
-  $: if (templates && n?.user.messages) {
-    notifications = {
-      all: [],
-      competitions: [],
-    }
-    n.user.messages.forEach((m) => {
-      const message =  { ...m, template: templates[m.template_id as number] };
-      notifications.all.push(message);
-      notifications.competitions.push(message);
-    });
+  $: if (templates && messages) {
+    initMessages(messages);
   }
 
   let loading = false;
 
-  function addNotifications() {
-    // const all = notifications.all;
-    // let next = new Map();
-    // loading = true;=
-    // if (!newNotifications) return Promise.resolve();
+  async function addNotifications() {
+    loading = true;
+    const res = await get<PageData["notifications"]>(
+      `/api/notifications?uid=${userSettings.extract("uid")}`
+    )
 
-    // newNotifications = 0;
-    // return new Promise<void>((resolve) => {
-    //   setTimeout(() => {
-    //     $notificationsStore.forEach((notification) => {
-    //       const id = notification.messageId;
-    //       next.set(id, { ...notification.data, id, isNew: true });
-    //     });
-    //     next = new Map([...next, ...all]);
-    //     notifications = {
-    //       ...notifications,
-    //       all: next,
-    //     };
-    //     notificationsStore.set([]);
-    //     loading = false;
-    //     resolve();
-    //   }, 1000);
-    // });
+    initMessages((res as PageData["notifications"]).user.messages)
+    notificationsStore.set([]);
+    loading = false;
   }
 
   function read(notifiaction) {
@@ -139,6 +121,18 @@
     //     })
     //   ),
     // };
+  }
+
+  function initMessages(messages) {
+    notifications = {
+      all: [],
+      competitions: [],
+    };
+    n.user?.messages.forEach((m) => {
+      const message = { ...m, template: templates?.[m.template_id as number] };
+      notifications.all.push(message);
+      notifications.competitions.push(message);
+    });
   }
 
   async function readAll() {
