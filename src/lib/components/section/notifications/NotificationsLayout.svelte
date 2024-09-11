@@ -102,25 +102,19 @@
     loading = true;
     const res = await get<PageData["notifications"]>(
       `/api/notifications?uid=${userSettings.extract("uid")}`
-    )
+    );
 
-    initMessages((res as PageData["notifications"]).user.messages)
+    initMessages((res as PageData["notifications"]).user.messages);
     notificationsStore.set([]);
     loading = false;
   }
 
   function read(notifiaction) {
-    // notifications = {
-    //   ...notifications,
-    //   all: new Map(
-    //     [...notifications.all].map(([id, notification]) => {
-    //       if (notification.id === notifiaction.id) {
-    //         return [id, { ...notification, isNew: false }];
-    //       }
-    //       return [id, notification];
-    //     })
-    //   ),
-    // };
+    fetch(`/api/notifications?messageId=${notifiaction.id}`, {
+      method: "PUT",
+    });
+    notifiaction.is_read = true;
+    notifications = { ...notifications };
   }
 
   function initMessages(messages) {
@@ -128,7 +122,7 @@
       all: [],
       competitions: [],
     };
-    n.user?.messages.forEach((m) => {
+    messages.forEach((m) => {
       const message = { ...m, template: templates?.[m.template_id as number] };
       notifications.all.push(message);
       notifications.competitions.push(message);
@@ -137,21 +131,15 @@
 
   async function readAll() {
     await addNotifications();
-
-    // notifications = {
-    //   ...notifications,
-    //   all: new Map(
-    //     [...notifications.all].map(([id, notification]) => {
-    //       return [id, { ...notification, isNew: false }];
-    //     })
-    //   ),
-
-    //   competitions: new Map(
-    //     [...notifications.competitions].map(([id, notification]) => {
-    //       return [id, { ...notification, isNew: false }];
-    //     })
-    //   ),
-    // };
+    const not_readed = notifications.all.filter((n) => !n.is_read);
+    fetch(
+      `/api/notifications?messageIds=${not_readed.map((n) => n.id).join(",")}`,
+      {
+        method: "PUT",
+      }
+    );
+    not_readed.forEach((n: any) => (n.is_read = true));
+    notifications = { ...notifications };
   }
 
   $: ({ viewportType } = $sessionStore);
@@ -229,7 +217,7 @@
             class="list-item"
             in:fade={{ delay: 200, duration: 500 }}
             animate:flip={{ duration: 800 }}
-            class:active={notification.isNew}
+            class:active={!notification.is_read}
             on:click={() => read(notification)}
           >
             <NotificationListItem {notification} />

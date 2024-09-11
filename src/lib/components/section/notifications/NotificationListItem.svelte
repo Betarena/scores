@@ -29,7 +29,7 @@
 
   export let notification: INotificationMessage;
   $: ({
-    isNew = true,
+    is_read,
     template,
     type,
     data: { BTA, competition_title },
@@ -37,7 +37,7 @@
   } = notification);
   $: amount = BTA;
   $: textContent = amount ? template.split("{BTA}") : [template];
-  $: ([restContent] = textContent[1]?.split("{competition_title}"));
+  $: [restContent] = textContent[1]?.split("{competition_title}");
   // #endregion ➤ 📦 Package Imports
 </script>
 
@@ -69,9 +69,11 @@
       {/if}
     </div>
     <div class="title">{competition_title}</div>
-    <div class="time-ago">{timeAgo(inserted_at)}</div>
+    {#if inserted_at}
+      <div class="time-ago">{timeAgo(inserted_at)}</div>
+    {/if}
   </div>
-  {#if isNew}
+  {#if !is_read}
     <div class="new-icon" />
   {/if}
 </div>
