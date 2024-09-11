@@ -62,7 +62,7 @@
   $: if (viewportType) updateBorder();
   $: if (translations && selected && tabbarNode) updateBorder();
 
-  $: if (!data?.includes(selected) && tabbarNode) {
+  $: if (selected && !data?.includes(selected) && tabbarNode) {
     select(data[0]);
   }
 

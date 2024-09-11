@@ -77,6 +77,13 @@
     // eslint-disable-next-line no-unused-vars
     CNAME: string = "notifications-layout";
   let selectedTab;
+  let loading = false;
+  let notifications = {
+    all: [] as INotificationMessage[],
+    competitions: [] as INotificationMessage[],
+    // authors: new Map(),
+    // scores: new Map(),
+  };
   $: newNotifications = $notificationsStore.length;
   $: notificationsList = (notifications[selectedTab?.id] ||
     []) as INotificationMessage[];
@@ -86,17 +93,71 @@
   $: translations = translationsMap?.get(serverLang)?.translation;
   $: templates = translations?.message?.message;
   $: messages = n?.user?.messages;
-  let notifications = {
-    all: [] as INotificationMessage[],
-    competitions: [] as INotificationMessage[],
-    // authors: new Map(),
-    // scores: new Map(),
-  };
+  $: ({ viewportType } = $sessionStore);
+
+
+  // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  $: options = [
+    { id: "all", label: translations?.general?.all || "All" },
+    // { id: "scores", label: "Scores" },
+    // { id: "authors", label: "Authors" },
+    { id: "competitions", label: translations?.general?.competitions || "Competitions" },
+  ];
+
   $: if (templates && messages) {
     initMessages(messages);
   }
 
-  let loading = false;
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
+
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+  function read(notifiaction) {
+    fetch(`/api/notifications?messageId=${notifiaction.id}`, {
+      method: "PUT",
+    });
+    notifiaction.is_read = true;
+    notifications = { ...notifications };
+  }
+
+  function initMessages(messages) {
+    const all: INotificationMessage[] = [];
+    const competitions: INotificationMessage[] = [];
+    messages.forEach((m) => {
+      const message = { ...m, template: templates?.[m.template_id as number] };
+      all.push(message);
+      competitions.push(message);
+    });
+    notifications = { all, competitions };
+    if (selectedTab?.id) {
+      notificationsList = notifications[
+        selectedTab?.id
+      ] as INotificationMessage[];
+    }
+  }
 
   async function addNotifications() {
     loading = true;
@@ -107,26 +168,6 @@
     initMessages((res as PageData["notifications"]).user.messages);
     notificationsStore.set([]);
     loading = false;
-  }
-
-  function read(notifiaction) {
-    fetch(`/api/notifications?messageId=${notifiaction.id}`, {
-      method: "PUT",
-    });
-    notifiaction.is_read = true;
-    notifications = { ...notifications };
-  }
-
-  function initMessages(messages) {
-    notifications = {
-      all: [],
-      competitions: [],
-    };
-    messages.forEach((m) => {
-      const message = { ...m, template: templates?.[m.template_id as number] };
-      notifications.all.push(message);
-      notifications.competitions.push(message);
-    });
   }
 
   async function readAll() {
@@ -142,14 +183,7 @@
     notifications = { ...notifications };
   }
 
-  $: ({ viewportType } = $sessionStore);
-  $: options = [
-    { id: "all", label: translations?.general?.all },
-    // { id: "scores", label: "Scores" },
-    // { id: "authors", label: "Authors" },
-    { id: "competitions", label: translations?.general?.competitions },
-  ];
-  // #endregion ➤ 📌 VARIABLES
+  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--
@@ -174,6 +208,10 @@
         style={viewportType === "mobile" ? "padding-inline: 16px" : ""}
         bind:selected={selectedTab}
         let:tab
+        translations={{
+          all: translations?.general?.all || "",
+          competitions: translations?.general?.competitions || "",
+        }}
         bottom_border={true}
         on:select
       >
