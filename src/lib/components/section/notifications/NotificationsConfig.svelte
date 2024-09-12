@@ -76,7 +76,7 @@
         options: [
           {
             id: 1,
-            label: translations?.message?.title["1"] || "",
+            label: translations?.message?.name["1"] || "",
             checked: settings?.data?.notification.mail["1"] ?? true,
           },
         ],
@@ -87,7 +87,7 @@
         options: [
           {
             id: 1,
-            label: translations?.message?.title["1"] || "",
+            label: translations?.message?.name["1"] || "",
             checked: settings?.data?.notification.push["1"] ?? true,
           },
           // {
@@ -103,7 +103,7 @@
         options: [
           {
             id: 1,
-            label: translations?.message?.title["1"] || "",
+            label: translations?.message?.name["1"] || "",
             checked: settings?.data?.notification.general["1"] ?? true,
           },
           // {
