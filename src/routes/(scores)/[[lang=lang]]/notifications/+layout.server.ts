@@ -1,5 +1,5 @@
 import type { LayoutServerLoad } from './$types';
-import { entryNotificationsData, entryNotificationsTranslations } from '@betarena/scores-lib/dist/functions/v8/notifications.general.js';
+import { entryNotificationsTranslations } from '@betarena/scores-lib/dist/functions/v8/notifications.general.js';
 
 export const load = (async ({ locals, parent, fetch }) =>
 {

@@ -92,9 +92,13 @@
 <style lang="scss">
   .notification {
     display: flex;
-    align-items: start;
+    align-items: center;
     justify-content: flex-start;
     gap: var(--spacing-xl);
+
+    .img {
+      height: 48px;
+    }
 
     .content {
       flex-grow: 1;
