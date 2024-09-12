@@ -27,6 +27,9 @@
   import { routeIdNotifications } from "$lib/constants/paths.js";
   import { notifications } from "$lib/firebase/notifications.js";
   import session from "$lib/store/session.js";
+  import userSettings from "$lib/store/user-settings.js";
+  import { get } from "$lib/api/utils.js";
+  import { browser } from "$app/environment";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -45,8 +48,24 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   export let isAuth = false;
   $: count = $notifications.length;
-
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and/or reactively fncor 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  $: if (browser && isAuth) getUnreadMessages();
+
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🛠️ METHODS
 
@@ -61,11 +80,20 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   function click(e) {
-   if (!isAuth) {
-    e.preventDefault();
-    $session.currentActiveModal = "Auth_Modal";
-    return;
-   }
+    if (!isAuth) {
+      e.preventDefault();
+      $session.currentActiveModal = "Auth_Modal";
+      return;
+    }
+  }
+
+  async function getUnreadMessages() {
+    const uid = userSettings.extract("uid");
+    const data = await get(`api/notifications?uid=${uid}`) as any;
+    if (!data?.user?.messages?.length) return;
+    const messages = data.user.messages;
+    const not_read = messages.filter((m) => !m.is_read);
+    notifications.set(not_read);
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -83,7 +111,7 @@
 -->
 
 <a
-  href="/{$page.params.lang ? `${$page.params.lang}/`: ''}notifications"
+  href="/{$page.params.lang ? `${$page.params.lang}/` : ''}notifications"
   class="notification-wrapper"
   on:click={click}
   class:active={$page.route.id === routeIdNotifications}
