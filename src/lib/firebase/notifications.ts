@@ -113,4 +113,9 @@ export function mockNotification()
 }
 export const newNotifications: Writable<any[]> = writable([]);
 export const notReadNotifications: Writable<any[]> = writable([]);
+export function setNotReadNotifications(notifications)
+{
+  const not_read = notifications.filter((m) => !m.is_read);
+  notReadNotifications.set(not_read);
+}
 

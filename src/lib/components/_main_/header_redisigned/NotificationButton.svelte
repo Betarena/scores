@@ -25,7 +25,7 @@
   import { scale } from "svelte/transition";
   import { page } from "$app/stores";
   import { routeIdNotifications } from "$lib/constants/paths.js";
-  import { notReadNotifications } from "$lib/firebase/notifications.js";
+  import { notReadNotifications, setNotReadNotifications } from "$lib/firebase/notifications.js";
   import session from "$lib/store/session.js";
   import userSettings from "$lib/store/user-settings.js";
   import { get } from "$lib/api/utils.js";
@@ -91,9 +91,7 @@
     const uid = userSettings.extract("uid");
     const data = await get(`api/notifications?uid=${uid}`) as any;
     if (!data?.user?.messages?.length) return;
-    const messages = data.user.messages;
-    const not_read = messages.filter((m) => !m.is_read);
-    notReadNotifications.set(not_read);
+    setNotReadNotifications(data.user.messages);
   }
 
   // #endregion ➤ 🛠️ METHODS

@@ -38,7 +38,11 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import sessionStore from "$lib/store/session.js";
-  import { newNotifications as notificationsStore, notReadNotifications } from "$lib/firebase/notifications.js";
+  import {
+    newNotifications as notificationsStore,
+    notReadNotifications,
+    setNotReadNotifications,
+  } from "$lib/firebase/notifications.js";
   import type { PageData } from ".svelte-kit/types/src/routes/(scores)/[[lang=lang]]/notifications/$types.js";
 
   import NotificationsHeader from "./NotificationsHeader.svelte";
@@ -95,7 +99,6 @@
   $: messages = n?.user?.messages;
   $: ({ viewportType } = $sessionStore);
 
-
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -115,7 +118,10 @@
     { id: "all", label: translations?.general?.all || "All" },
     // { id: "scores", label: "Scores" },
     // { id: "authors", label: "Authors" },
-    { id: "competitions", label: translations?.general?.competitions || "Competitions" },
+    {
+      id: "competitions",
+      label: translations?.general?.competitions || "Competitions",
+    },
   ];
 
   $: if (templates && messages) {
@@ -140,7 +146,9 @@
       method: "PUT",
     });
     notifiaction.is_read = true;
-    notReadNotifications.update(n => n.filter((n) => n.id !== notifiaction.id));
+    notReadNotifications.update((n) =>
+      n.filter((n) => n.id !== notifiaction.id)
+    );
     notifications = { ...notifications };
   }
 
@@ -165,9 +173,8 @@
     const res = await get<PageData["notifications"]>(
       `/api/notifications?uid=${userSettings.extract("uid")}`
     );
-
     initMessages((res as PageData["notifications"]).user.messages);
-    notificationsStore.set([]);
+    setNotReadNotifications((res as PageData["notifications"]).user.messages);
     loading = false;
   }
 
