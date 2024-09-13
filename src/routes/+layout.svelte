@@ -80,7 +80,6 @@
   import { modalStore } from "$lib/store/modal.js";
   import AllowNotificationModal from "$lib/components/section/notifications/feature_modal/AllowNotificationModalLayout.svelte";
   import {
-    checkNotificationPermission,
     mockNotification,
   } from "$lib/firebase/notifications.js";
   import Button from "$lib/components/ui/Button.svelte";

@@ -140,6 +140,7 @@
       method: "PUT",
     });
     notifiaction.is_read = true;
+    notReadNotifications.update(n => n.filter((n) => n.id !== notifiaction.id));
     notifications = { ...notifications };
   }
 

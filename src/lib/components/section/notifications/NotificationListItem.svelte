@@ -76,7 +76,7 @@
       <div class="time-ago">{timeAgo(inserted_at)}</div>
     {/if}
   </div>
-  {#if !is_read}
+  {#if true}
     <div class="new-icon" />
   {/if}
 </div>
@@ -141,6 +141,8 @@
       height: 10px;
       background-color: var(--colors-brand-5);
       border-radius: 50%;
+      align-self: start;
+      margin-top: 5px;
     }
   }
 </style>
