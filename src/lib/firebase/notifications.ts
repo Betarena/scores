@@ -77,18 +77,18 @@ function setMessaging()
 
   });
 
-  if (navigator.serviceWorker)
-  {
-    navigator.serviceWorker.addEventListener('message', (event) =>
-    {
-      if (event.data && event.data.type === 'NEW_NOTIFICATION')
-      {
-        const payload = event.data.payload;
-        newNotifications.update((notifications) => [...notifications, payload]);
-        audio.play();
-      }
-    });
-  }
+  // if (navigator.serviceWorker)
+  // {
+  //   navigator.serviceWorker.addEventListener('message', (event) =>
+  //   {
+  //     if (event.data && event.data.type === 'NEW_NOTIFICATION')
+  //     {
+  //       const payload = event.data.payload;
+  //       newNotifications.update((notifications) => [...notifications, payload]);
+  //       audio.play();
+  //     }
+  //   });
+  // }
 
 }
 
