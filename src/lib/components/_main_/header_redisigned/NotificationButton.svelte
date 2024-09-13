@@ -25,7 +25,7 @@
   import { scale } from "svelte/transition";
   import { page } from "$app/stores";
   import { routeIdNotifications } from "$lib/constants/paths.js";
-  import { notifications } from "$lib/firebase/notifications.js";
+  import { notReadNotifications } from "$lib/firebase/notifications.js";
   import session from "$lib/store/session.js";
   import userSettings from "$lib/store/user-settings.js";
   import { get } from "$lib/api/utils.js";
@@ -47,7 +47,7 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
   export let isAuth = false;
-  $: count = $notifications.length;
+  $: count = $notReadNotifications.length;
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -93,7 +93,7 @@
     if (!data?.user?.messages?.length) return;
     const messages = data.user.messages;
     const not_read = messages.filter((m) => !m.is_read);
-    notifications.set(not_read);
+    notReadNotifications.set(not_read);
   }
 
   // #endregion ➤ 🛠️ METHODS

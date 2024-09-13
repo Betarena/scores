@@ -69,7 +69,9 @@
         {restContent}
       {/if}
     </div>
-    <div class="title">{competition_title}</div>
+    {#if competition_title}
+       <div class="title">{competition_title}</div>
+    {/if}
     {#if inserted_at}
       <div class="time-ago">{timeAgo(inserted_at)}</div>
     {/if}

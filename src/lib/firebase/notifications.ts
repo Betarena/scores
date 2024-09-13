@@ -71,7 +71,8 @@ function setMessaging()
       body: payload.data?.body || "New notification",
       icon: '/assets/img/192x192.png',
     });
-    notifications.update((notifications) => [...notifications, payload]);
+    newNotifications.update((notifications) => [...notifications, payload]);
+    notReadNotifications.update((notifications) => [...notifications, payload]);
     audio.play();
 
   });
@@ -83,7 +84,7 @@ function setMessaging()
       if (event.data && event.data.type === 'NEW_NOTIFICATION')
       {
         const payload = event.data.payload;
-        notifications.update((notifications) => [...notifications, payload]);
+        newNotifications.update((notifications) => [...notifications, payload]);
         audio.play();
       }
     });
@@ -110,5 +111,6 @@ export function mockNotification()
 {
   post(`https://us-central1-betarena-ios.cloudfunctions.net/api/messaging/multicast?uid=${userSettings.extract('uid')}`, {});
 }
+export const newNotifications: Writable<any[]> = writable([]);
+export const notReadNotifications: Writable<any[]> = writable([]);
 
-export const notifications: Writable<any[]> = writable([]);
