@@ -65,7 +65,7 @@
     <div class="body">
       {textContent[0]}
       {#if textContent.length > 1}
-        <span class="amount">{amount}BTA</span>
+        <span class="amount">{amount} BTA</span>
         {restContent}
       {/if}
     </div>
