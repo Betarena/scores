@@ -38,7 +38,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import sessionStore from "$lib/store/session.js";
-  import { newNotifications as notificationsStore } from "$lib/firebase/notifications.js";
+  import { newNotifications as notificationsStore, notReadNotifications } from "$lib/firebase/notifications.js";
   import type { PageData } from ".svelte-kit/types/src/routes/(scores)/[[lang=lang]]/notifications/$types.js";
 
   import NotificationsHeader from "./NotificationsHeader.svelte";
@@ -180,6 +180,7 @@
       }
     );
     not_readed.forEach((n: any) => (n.is_read = true));
+    notReadNotifications.set([]);
     notifications = { ...notifications };
   }
 
