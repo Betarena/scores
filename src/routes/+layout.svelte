@@ -338,23 +338,6 @@
   beforeNavigate(async (e): Promise<void> => {
     if (!browser) return;
     $sessionStore.live_odds_fixture_target = null;
-    if(e.type === "popstate" && e.to?.route.id?.includes("[lang=lang]") ) {
-      const langs = ['en', 'pt', 'es', 'fr', 'it', 'br', 'ro', 'se'];
-      const paths = e.to.url.pathname.split("/");
-      const pageLang = paths[1];
-      const userLang = userBetarenaSettings.extract("lang")  as string;
-      if (pageLang === userLang || (userLang === "en" && !langs.includes(pageLang))) return;
-      e.cancel()
-      let newPath = "";
-      if (langs.includes(pageLang)) {
-        newPath = e.to.url.pathname.replace(pageLang, userLang);
-      } else {
-        newPath = `/${userLang}${e.to.url.pathname}`;
-      }
-      const newPathLang = newPath.split("/")[1];
-      if (newPathLang === "en") newPath = newPath.replace("/en", "");
-      goto(newPath, { replaceState: true });
-    }
     // IMPORTANT
 
 
