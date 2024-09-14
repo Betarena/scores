@@ -66,7 +66,6 @@
   $: ({notifications, tr} = data)
   $: translationsMap = tr?.[0];
   $: translations = translationsMap?.get(serverLang)?.translation;
-  $: console.log("notifiactions config: ", data)
 
   $: if (translations && notifications) {
     const settings = notifications?.user.settings;
