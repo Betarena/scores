@@ -341,18 +341,19 @@
     if(e.type === "popstate" && e.to?.route.id?.includes("[lang=lang]") ) {
       const langs = ['en', 'pt', 'es', 'fr', 'it', 'br', 'ro', 'se'];
       const paths = e.to.url.pathname.split("/");
-      const lang = paths[1];
-      const l = userBetarenaSettings.extract("lang")  as string;
+      const pageLang = paths[1];
+      const userLang = userBetarenaSettings.extract("lang")  as string;
+      if (pageLang === userLang || (userLang === "en" && !langs.includes(pageLang))) return;
       e.cancel()
       let newPath = "";
-      if (langs.includes(lang)) {
-        newPath = e.to.url.pathname.replace(lang, l);
+      if (langs.includes(pageLang)) {
+        newPath = e.to.url.pathname.replace(pageLang, userLang);
       } else {
-        newPath = `/${l}${e.to.url.pathname}`;
+        newPath = `/${userLang}${e.to.url.pathname}`;
       }
       const newPathLang = newPath.split("/")[1];
       if (newPathLang === "en") newPath = newPath.replace("/en", "");
-      goto(newPath);
+      goto(newPath, { replaceState: true });
     }
     // IMPORTANT
 
