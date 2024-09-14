@@ -66,6 +66,7 @@
   $: ({notifications, tr} = data)
   $: translationsMap = tr?.[0];
   $: translations = translationsMap?.get(serverLang)?.translation;
+  $: console.log("notifiactions config: ", data)
 
   $: if (translations && notifications) {
     const settings = notifications?.user.settings;
@@ -103,8 +104,8 @@
         options: [
           {
             id: 1,
-            label: translations?.message?.name["1"] || "",
-            checked: settings?.data?.notification.general["1"] ?? true,
+            label: translations?.message?.title["3"] || "",
+            checked: settings?.data?.notification.general["3"] ?? true,
           },
           // {
           //   id: 2,
