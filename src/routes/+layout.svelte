@@ -40,7 +40,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { browser } from "$app/environment";
-  import { afterNavigate, beforeNavigate } from "$app/navigation";
+  import { afterNavigate, beforeNavigate, goto } from "$app/navigation";
   import { page } from "$app/stores";
   import * as Sentry from "@sentry/sveltekit";
   import { onMount } from "svelte";
@@ -335,10 +335,27 @@
   // │ as soon as 'this' .svelte file is ran.                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  beforeNavigate(async (): Promise<void> => {
+  beforeNavigate(async (e): Promise<void> => {
     if (!browser) return;
-    // IMPORTANT
     $sessionStore.live_odds_fixture_target = null;
+    if(e.type === "popstate" && e.to?.route.id?.includes("[lang=lang]") ) {
+      const langs = ['en', 'pt', 'es', 'fr', 'it', 'br', 'ro', 'se'];
+      const paths = e.to.url.pathname.split("/");
+      const lang = paths[1];
+      const l = userBetarenaSettings.extract("lang")  as string;
+      e.cancel()
+      let newPath = "";
+      if (langs.includes(lang)) {
+        newPath = e.to.url.pathname.replace(lang, l);
+      } else {
+        newPath = `/${l}${e.to.url.pathname}`;
+      }
+      const newPathLang = newPath.split("/")[1];
+      if (newPathLang === "en") newPath = newPath.replace("/en", "");
+      goto(newPath);
+    }
+    // IMPORTANT
+
 
     /*
       await firebaseAppDelete();

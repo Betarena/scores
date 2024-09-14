@@ -88,7 +88,7 @@
     // authors: new Map(),
     // scores: new Map(),
   };
-  $: newNotifications = $notificationsStore.length;
+  $: newNotifications = $notificationsStore?.length;
   $: notificationsList = (notifications[selectedTab?.id] ||
     []) as INotificationMessage[];
   $: ({ serverLang = "en" } = $session);
