@@ -8,6 +8,7 @@
 -->
 
 <script lang="ts">
+    import { browser } from "$app/environment";
   import { goto } from "$app/navigation";
   import CrossIcon from "$lib/components/ui/assets/crossicon.svelte";
   import Dotsicon from "$lib/components/ui/assets/dotsicon.svelte";
@@ -16,7 +17,9 @@
   import Icon from "$lib/components/ui/Icon.svelte";
   import Dropdown from "$lib/components/ui/wrappers/Dropdown.svelte";
   import session from "$lib/store/session.js";
+    import userSettings from "$lib/store/user-settings.js";
   import type { IPageNotificationsTranslationDataFinal } from "@betarena/scores-lib/types/v8/preload.notifications.js";
+    import { id } from "ethers/lib/utils.js";
   import { createEventDispatcher } from "svelte";
 
   // #region ➤ 📌 VARIABLES
@@ -49,6 +52,11 @@
       goto("/");
     }
   }
+  // $: console.log("user settings", userSettings.extract('user')?.buttons_order)
+  let href = "/scores";
+  $: lang = $session.serverLang;
+  $: routeLang = lang === "en" ? "" : `/${lang}`;
+  $: if(browser) href = config ? `${routeLang}/notifications` :`${routeLang}/${userSettings.extract('user')?.buttons_order[0]}`;
 
   $: ({ viewportType } = $session);
   // #endregion ➤ 📌 VARIABLES
@@ -66,9 +74,12 @@
 -->
 
 <div class="notifications-header {viewportType}" id={CNAME}>
-  <Icon size="sm" on:click={back}>
-    <button class="button" ><CrossIcon /></button>
-  </Icon>
+  <a href={href || ""}>
+
+    <Icon size="sm">
+      <button class="button" ><CrossIcon /></button>
+    </Icon>
+  </a>
   <div class="title">
     <slot>
       Notifications {config ? "Settings" : ""}
