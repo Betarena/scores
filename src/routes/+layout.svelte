@@ -336,6 +336,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   beforeNavigate(async (): Promise<void> => {
+    if (!browser) return;
     // IMPORTANT
     $sessionStore.live_odds_fixture_target = null;
 

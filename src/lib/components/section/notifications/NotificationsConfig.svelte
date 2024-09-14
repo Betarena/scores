@@ -71,17 +71,17 @@
   $: if (translations && notifications) {
     const settings = notifications?.user.settings;
     sections = [
-      {
-        title: translations?.general?.notifications_email || "Email",
-        type: "mail",
-        options: [
-          {
-            id: 1,
-            label: translations?.message?.name["1"] || "",
-            checked: settings?.data?.notification.mail["1"] ?? true,
-          },
-        ],
-      },
+      // {
+      //   title: translations?.general?.notifications_email || "Email",
+      //   type: "mail",
+      //   options: [
+      //     {
+      //       id: 1,
+      //       label: translations?.message?.name["1"] || "",
+      //       checked: settings?.data?.notification.mail["1"] ?? true,
+      //     },
+      //   ],
+      // },
       {
         title: translations?.general?.notifications_push || "Push",
         type: "push",
@@ -104,8 +104,8 @@
         options: [
           {
             id: 1,
-            label: translations?.message?.title["3"] || "",
-            checked: settings?.data?.notification.general["3"] ?? true,
+            label: translations?.message?.name["1"] || "",
+            checked: settings?.data?.notification.general["1"] ?? true,
           },
           // {
           //   id: 2,
