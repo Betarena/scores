@@ -37,6 +37,7 @@
 	import WidgetTxHist from '$lib/components/page/profile/tx-history/Widget-Tx-Hist.svelte';
 	import WidgetWithdraw from '$lib/components/page/profile/withdraw/Widget-Withdraw.svelte';
 	import WidgetInvestor from './investor/Widget-Investor.svelte';
+  import WidgetAuthor from './Widget-Author.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -121,7 +122,9 @@
         <WidgetWithdraw />
       {:else if $page?.url?.pathname.includes('competition-history')}
         <WidgetCompHist />
-			{/if}
+      {:else if $page?.url?.pathname.includes('author')}
+        <WidgetAuthor />
+      {/if}
 		</div>
 
 	</div>

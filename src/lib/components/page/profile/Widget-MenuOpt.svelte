@@ -92,6 +92,9 @@ COMPONENT JS (w/ TS)
     if (selectedMenuOpt == 'Competitions History')
       targetUrl = `/u/competition-history/${$userBetarenaSettings.lang}`
     ;
+    if (selectedMenuOpt == 'Author')
+      targetUrl = `/u/author/${$userBetarenaSettings.lang}`
+    ;
     if (selectedMenuOpt == "Logout") {
       logoutUser();
       return;
@@ -146,6 +149,9 @@ COMPONENT JS (w/ TS)
     ;
     if ($page?.url?.pathname.includes('competition-history'))
 			selectedMenuOpt = 'Competitions History';
+    ;
+    if ($page?.url?.pathname.includes('author'))
+			selectedMenuOpt = 'Author';
     ;
 	}
 

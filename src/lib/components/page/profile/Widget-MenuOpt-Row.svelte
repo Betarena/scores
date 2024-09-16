@@ -20,6 +20,7 @@ COMPONENT JS (w/ TS)
 	import icon_deposit_select from './assets/menu-opt/deposit-selected.svg';
 	import icon_deposit from './assets/menu-opt/deposit.svg';
 	import icon_edit from './assets/menu-opt/edit.svg';
+	import icon_edit_select from './assets/menu-opt/edit-selected.svg';
 	import icon_home_select from './assets/menu-opt/home-select.svg';
 	import icon_home from './assets/menu-opt/home.svg';
 	import icon_investor_select from './assets/menu-opt/investor-select.svg';
@@ -114,7 +115,7 @@ COMPONENT JS (w/ TS)
 	): void
 	{
 	  const if_M_0: boolean
-      = ['Scores', 'Author'].includes(MENU_OPT)
+      = ['Scores'].includes(MENU_OPT)
     ;
 	  if (if_M_0) return;
 
@@ -201,15 +202,22 @@ COMPONENT JS (w/ TS)
   {
     hoverMenuOptIconAlt = icon_competition_select;
     selectedMenuOptIcon
-      = SELECTED_OPT == MENU_OPT
-        ? icon_competition_select
-        : icon_competition
+    = SELECTED_OPT == MENU_OPT
+    ? icon_competition_select
+    : icon_competition
     ;
+  }
+  else if (MENU_OPT == 'Author') {
+    hoverMenuOptIconAlt = icon_edit_select;
+    selectedMenuOptIcon
+    = SELECTED_OPT == MENU_OPT
+    ? icon_edit_select
+    : icon_edit
+    ;
+
   }
   else if (MENU_OPT == 'Scores')
     selectedMenuOptIcon = icon_calendar;
-  else if (MENU_OPT == 'Author')
-    selectedMenuOptIcon = icon_edit;
   else if (MENU_OPT == 'Logout')
     hoverMenuOptIconAlt = icon_logout_select;
     selectedMenuOptIcon = icon_logout;
@@ -364,7 +372,7 @@ VIEW DESIGN - 2
 			<img
 				src=
         {
-          (!isHoverMenuOptItem || ['Scores', 'Author'].includes(MENU_OPT))
+          (!isHoverMenuOptItem || ['Scores'].includes(MENU_OPT))
             ? selectedMenuOptIcon
             : hoverMenuOptIconAlt
         }
@@ -394,7 +402,7 @@ VIEW DESIGN - 2
         {
           [
             'Scores'
-            ,'Author'
+
 				  ].includes(MENU_OPT)
         }
 				class:menu-opt-text=
@@ -402,7 +410,7 @@ VIEW DESIGN - 2
           !
           [
             'Scores'
-            ,'Author'
+
           ].includes(MENU_OPT)
         }
 			>
@@ -449,7 +457,7 @@ VIEW DESIGN - 2
 		<!--
     MENU OPTION (not yet avaialble)
     -->
-		{#if ['Scores', 'Author'].includes(MENU_OPT)}
+		{#if ['Scores'].includes(MENU_OPT)}
 			<p
 				class=
         "
