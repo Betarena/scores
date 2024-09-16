@@ -8,7 +8,26 @@
 -->
 
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
+  // #region ➤ 📦 Package Imports
+
+  import ImgPlaceholder from "$lib/components/ui/assets/img-placeholder.svelte";
+  import Badge from "$lib/components/ui/Badge.svelte";
+  import userSettings from "$lib/store/user-settings.js";
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
 
@@ -24,21 +43,8 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let width: number | string = 200,
-    height: number | string = 50,
-    classname: string = "",
-    full = false,
-    href = "";
+  export let sportstack: any = {};
 
-  export let /**
-     * @description
-     *  button styles: primary | outline
-     */ // eslint-disable-next-line no-unused-vars
-    type: "primary" | "outline" | "secondary" | "primary-outline" | "subtle" =
-      "primary";
-
-  const dispatch = createEventDispatcher();
-  let hover = false;
   // #endregion ➤ 📌 VARIABLES
 </script>
 
@@ -53,19 +59,21 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<button
-  class="button {type} {classname}"
-  class:full
-  {...$$restProps}
-  class:hover
-  on:mouseenter={() => (hover = true)}
-  on:mouseleave={() => (hover = false)}
-  on:touchend={() => (hover = false)}
-  on:mouseup={() => (hover = false)}
-  on:click={() => {dispatch("click"); hover = false;}}
->
-  <slot />
-</button>
+<div class="publication-card">
+  {#if sportstack.img}
+    <div class="img" style="--img-url: url({sportstack.img})" />
+  {:else}
+    <div class="img empty">
+      <ImgPlaceholder />
+    </div>
+  {/if}
+  <div class="info">
+    {#if sportstack.owner === $userSettings.user?.firebase_user_data.uid}
+      <Badge size="sm" color="gray">Owner</Badge>
+    {/if}
+    <h3>{sportstack.title}</h3>
+  </div>
+</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -78,78 +86,44 @@
 -->
 
 <style lang="scss">
-  .button {
+  .publication-card {
     display: flex;
-    padding: 9px 20px;
     align-items: center;
-    gap: 8px;
-    font-size: var(--text-button-size);
-    border-radius: 8px;
-    text-align: center;
-    font-family: Roboto;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 150%; /* 24px */
-    cursor: pointer;
-  }
+    gap: 16px;
+    flex: 1 0 0;
 
-  .full {
-    width: 100%;
-  }
+    .img {
+      width: 74px;
+      height: 74px;
+      flex-shrink: 0;
 
-  .primary {
-    background: var(--primary, #f5620f);
-    color: var(--white-day, #fff);
-    border: 1px solid var(--primary) !important;
+      border-radius: var(--radius-sm, 6px);
+      background: var(--img-url) lightgray 50% / cover no-repeat;
 
-    /* shadow/orange */
-    box-shadow: 0px 3px 8px 0px rgba(212, 84, 12, 0.32);
-
-    &.hover{
-      background: var(--primary-fade, #f5620f);
+      &.empty {
+        background-color: var(--colors-background-bg-quaternary, #525252);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
     }
-  }
-  .subtle {
-    background: unset;
-    border: 1px solid var(--button-secondary-bg) !important;
-    color: var(--text-color);
 
-    &.hover{
-      color: var(--text-color-second-dark);
-    }
-  }
+    .info {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--spacing-xs, 4px);
+      align-self: stretch;
 
-  .primary-outline {
-    border: 1px solid var(--primary-fade, #f5620f) !important;
-    color: var(--primary);
-    background-color: unset;
-
-    &.hover{
-      border: 1px solid var(--text-color) !important;
-      color: var(--text-color);
-    }
-  }
-
-  .outline {
-    color: var(--text-color);
-    background: transparent;
-    border: 1px solid var(--text-color) !important;
-    transition: all;
-    transition-duration: 0.2s;
-
-    &.hover{
-      border: 1px solid var(--primary) !important;
-      color: var(--primary);
-    }
-  }
-
-  .secondary {
-    background-color: var(--button-secondary-bg);
-    color: var(--text-color);
-
-    &.hover{
-      background: var(--primary, #f5620f);
-      color: var(--white-day, #fff);
+      h3 {
+        margin: 0;
+        color: var(--colors-text-text-primary-900, #fbfbfb);
+        font-family: var(--Font-family-font-family-body, Roboto);
+        font-size: var(--Font-size-text-lg, 18px);
+        font-style: normal;
+        font-weight: 500;
+        line-height: var(--Line-height-text-md, 24px); /* 133.333% */
+      }
     }
   }
 </style>
