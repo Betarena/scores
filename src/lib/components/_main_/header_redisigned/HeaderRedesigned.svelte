@@ -23,6 +23,7 @@
     routeIdPageLeague,
     routeIdPagePlayer,
     routeIdPageProfile,
+    routeIdPageProfileAuthorCreate,
     routeIdPageTags,
     routeIdSportstack,
   } from "$lib/constants/paths.js";
@@ -61,6 +62,7 @@
     routeIdPageCompetition,
     routeIdPageTags,
     routeIdPageProfile,
+    routeIdPageProfileAuthorCreate,
     routeIdPageAuthors,
     routeIdAuthorProfile,
     routeIdAuthorSubscribers,

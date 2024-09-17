@@ -10,6 +10,7 @@ COMPONENT JS (w/ TS)
   import Button from "$lib/components/ui/Button.svelte";
   import session from "$lib/store/session.js";
   import userSettings from "$lib/store/user-settings.js";
+  import {sportstack} from "./sportstack.js"
 
   import type { IProfileTrs } from "@betarena/scores-lib/types/types.profile.js";
   import PublicationCard from "./PublicationCard.svelte";
@@ -21,26 +22,9 @@ COMPONENT JS (w/ TS)
   let profileTrs: IProfileTrs,
     noWidgetData: boolean = false;
 
+
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
 
-
-  $: sportstacks = [
-    {
-      owner: $userSettings.user?.firebase_user_data?.uid,
-      title: "This is a sample of a long sportstack title",
-      img: "",
-    },
-    {
-      owner: $userSettings.user?.firebase_user_data?.uid,
-      title: "This is a sample of a long sportstack title",
-      img: "",
-    },
-    {
-      owner: $userSettings.user?.firebase_user_data?.uid,
-      title: "This is a sample of a long sportstack title",
-      img: "",
-    },
-  ];
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -82,18 +66,19 @@ COMPONENT JS (w/ TS)
             "Lorem ipsum dolor sit amet consectetur. Turpis sed et proin commodo."}
         </div>
       </div>
-
-      <Button full={true}>
-        <div class="button-text">
-          <Plus />
-          New Publication
-        </div>
-      </Button>
+      <a href="/u/author/create/{$userSettings.lang}">
+        <Button full={true}>
+          <div class="button-text">
+            <Plus />
+            New Publication
+          </div>
+        </Button>
+      </a>
     </div>
 
     <div class="publications-wrapper">
-      {#each sportstacks as sportstack}
-        <PublicationCard {sportstack} />
+      {#each $sportstack as s (s.id)}
+        <PublicationCard sportstack={s} />
       {/each}
     </div>
   </div>
@@ -151,6 +136,9 @@ COMPONENT JS (w/ TS)
         }
       }
 
+      a {
+        width: 100%;
+      }
       .button-text {
         display: flex;
         justify-content: center;

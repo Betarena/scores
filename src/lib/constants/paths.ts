@@ -18,6 +18,11 @@ export const
   routeIdPageProfile = '/(scores)/u/[view]/[lang=lang]',
   /**
    * @description
+   *  📣 Target `path` for **profile page**.
+   */
+  routeIdPageProfileAuthorCreate = '/(scores)/u/author/create/[lang=lang]',
+  /**
+   * @description
    *  📣 Target `path` for **competition page**.
    */
   routeIdPageCompetitions = '/(scores)/[[lang=lang]]/[competitions=competitions]',
