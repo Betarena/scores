@@ -20,6 +20,7 @@ COMPONENT JS (w/ TS)
 	import profile_avatar from './assets/profile-avatar.svg';
 
 	import type { PROFILE_OPT } from '$lib/types/types.scores.js';
+  import { fade, fly } from 'svelte/transition';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -32,6 +33,7 @@ COMPONENT JS (w/ TS)
     [
       'Dashboard',
       'Account Settings',
+      'Settings',
       'Investor',
       'Deposit',
       'Withdraw',
@@ -76,6 +78,9 @@ COMPONENT JS (w/ TS)
     ;
     if (selectedMenuOpt == 'Account Settings')
       targetUrl = `/u/settings/${$userBetarenaSettings.lang}`
+    ;
+    if (selectedMenuOpt == 'Settings')
+      targetUrl = `/u/platform-settings/${$userBetarenaSettings.lang}`
     ;
 		if (selectedMenuOpt == 'Investor')
       targetUrl = `/u/investor/${$userBetarenaSettings.lang}`
@@ -129,30 +134,39 @@ COMPONENT JS (w/ TS)
   */
 	$: if (browser)
   {
-		if ($page?.url?.pathname.includes('dashboard'))
-			selectedMenuOpt = 'Dashboard';
-    ;
-		if ($page?.url?.pathname.includes('settings'))
-			selectedMenuOpt = 'Account Settings';
-    ;
-    if ($page?.url?.pathname.includes('investor'))
-			selectedMenuOpt = 'Investor';
-    ;
-    if ($page?.url?.pathname.includes('deposit'))
-			selectedMenuOpt = 'Deposit';
-    ;
-    if ($page?.url?.pathname.includes('transaction-history'))
-			selectedMenuOpt = 'Transaction History';
-    ;
-    if ($page?.url?.pathname.includes('withdraw'))
-			selectedMenuOpt = 'Withdraw';
-    ;
-    if ($page?.url?.pathname.includes('competition-history'))
-			selectedMenuOpt = 'Competitions History';
-    ;
-    if ($page?.url?.pathname.includes('author'))
-			selectedMenuOpt = 'Author';
-    ;
+    switch ($page.params.view) {
+      case 'dashboard':
+        selectedMenuOpt = 'Dashboard';
+        break;
+      case 'settings':
+        selectedMenuOpt = 'Account Settings';
+        break;
+      case 'platform-settings':
+        selectedMenuOpt = 'Settings';
+        break;
+      case 'investor':
+        selectedMenuOpt = 'Investor';
+        break;
+      case 'deposit':
+        selectedMenuOpt = 'Deposit';
+        break;
+      case 'transaction-history':
+        selectedMenuOpt = 'Transaction History';
+        break;
+      case 'withdraw':
+        selectedMenuOpt = 'Withdraw';
+        break;
+      case 'competition-history':
+        selectedMenuOpt = 'Competitions History';
+        break;
+      case 'author':
+        selectedMenuOpt = 'Author';
+        break;
+      default:
+        selectedMenuOpt = 'Dashboard';
+        break;
+    }
+
 	}
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
@@ -266,11 +280,15 @@ COMPONENT JS (w/ TS)
     -->
 		{#if showDropdown}
 			<div
+        in:fade
+        out:fade
 				id="background-modal-blur"
 				on:click={() =>	(showDropdown = !showDropdown)}
 			/>
 			<div
         id="dropdown-menu-opt-mobile"
+        in:fly={{ y: 600, duration: 700 }}
+        out:fly={{ y: 600, duration: 700 }}
       >
 				{#each PROFILE_MENU_OPT as item}
 					<MenuOptRow

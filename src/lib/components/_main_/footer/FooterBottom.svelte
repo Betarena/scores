@@ -10,12 +10,14 @@
 
 <script lang="ts">
   // #region ➤ 📦 Package Imports
+  import { page } from "$app/stores";
   import sessionStore from "$lib/store/session.js";
   import FooterNavigationBlock from "./FooterNavigationBlock.svelte";
   import SocialsBlock from "./SocialsBlock.svelte";
   import Legal_18ActionBet from "./assets/icon_redisign/legal-18-action-bet.svelte";
   import BegambleawareorgBlack from "./assets/icon_redisign/gamble_aware.svg";
   import BetarenaLogo from "./assets/betarena-logo-full.svg";
+  import { routeIdPageProfile } from "$lib/constants/paths.js";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -52,10 +54,16 @@
       ? ["changelog", "about", "roadmap", "status", "terms", "privacy"]
       : ["changelog", "status", "about", "terms", "roadmap", "privacy"];
   $: isDesktop = $sessionStore.viewportType === "desktop";
+
   // #endregion ➤ 📌 VARIABLES
 </script>
 
-<footer class:mobile class="dark-mode" class:desktop={isDesktop}>
+<footer
+  class:mobile
+  class="dark-mode"
+  class:desktop={isDesktop}
+  class:border={$page.route.id === routeIdPageProfile}
+>
   <div class="wrapper">
     {#if $sessionStore.viewportType !== "mobile"}
       <div class="first-block">
@@ -67,11 +75,11 @@
           loading="lazy"
         />
         {#if isDesktop}
-        <div class="rights-block">
-          © 2021 Betarena All rights reserved <br />
-          Second Act, 18 Boulevard Montmartre Paris 75009
-        </div>
-      {/if}
+          <div class="rights-block">
+            © 2021 Betarena All rights reserved <br />
+            Second Act, 18 Boulevard Montmartre Paris 75009
+          </div>
+        {/if}
       </div>
     {/if}
     <div class="central-block">
@@ -122,6 +130,10 @@
     min-width: 100%;
     flex-direction: column;
     color: var(--text-color);
+
+    &.border {
+      border-top: var(--border);
+    }
     .wrapper {
       padding: 32px 34px;
       padding-bottom: 128px;

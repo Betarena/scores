@@ -15,7 +15,7 @@
   import { Betarena_User_Class } from "@betarena/scores-lib/dist/classes/class.betarena-user.js";
   import FollowersHeader from "./FollowersHeader.svelte";
   import FollowersList from "../../../common_ui/users_list/UsersList.svelte";
-  import type { BetarenaUser } from "$lib/types/types.user-settings.js";
+  import type { IBetarenaUser } from "$lib/types/types.user-settings.js";
   import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
   import { browser } from "$app/environment";
@@ -24,6 +24,7 @@
   import FollowersHeaderLoader from "./FollowersHeaderLoader.svelte";
   import SeoBox from "$lib/components/SEO-Box.svelte";
   import userSettings from "$lib/store/user-settings.js";
+  import type { IBetarenaUser } from "@betarena/scores-lib/types/_FIREBASE_.js";
   import { listenRealTimeUserUpdates } from "$lib/firebase/common.js";
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -50,9 +51,9 @@
   let loading = false;
   let reloading = false;
   let displayedData = {
-    subscribers: [] as BetarenaUser[],
-    followers: [] as BetarenaUser[],
-    following: [] as BetarenaUser[],
+    subscribers: new Map<string, IBetarenaUser>(),
+    followers: new Map<string, IBetarenaUser>(),
+    following: new Map<string, IBetarenaUser>(),
   };
   let rawData = {
     subscribers: [] as string[],
@@ -65,20 +66,20 @@
 
   $: userProfile = (
     user ? { ...user?.scores_user_data, uid: user?.firebase_user_data.uid } : {}
-  ) as BetarenaUser;
+  ) as IBetarenaUser;
 
   $: selectedOption = ($page.params.type || "subscribers") as TSelectedOption;
   $: ({ globalState } = $session);
   $: ({ user } = $userSettings);
   $: isPWA = globalState.has("IsPWA");
   $: currentData = displayedData[selectedOption];
-  $: noUsers = !currentData?.length;
+  $: noUsers = !currentData?.size;
   $: if (browser && prevAuthorId !== author?.uid) {
     prevAuthorId = author?.uid;
     displayedData = {
-      subscribers: [],
-      followers: [],
-      following: [],
+      subscribers: new Map(),
+      followers: new Map(),
+      following: new Map(),
     };
 
     rawData = {
@@ -118,9 +119,9 @@
   }
 
   async function loadUsers(type: TSelectedOption, reload: boolean = false) {
-    const offset = reload ? 0 : displayedData[type]?.length || 0;
+    const offset = reload ? 0 : displayedData[type]?.size || 0;
     const to = reload
-      ? Math.ceil((displayedData[type]?.length || 1) / 10) * 10
+      ? Math.ceil((displayedData[type]?.size || 1) / 10) * 10
       : Math.ceil((offset + 10) / 10) * 10;
     const userInList = rawData[type]?.includes(user?.firebase_user_data.uid);
     let ids = rawData[type].slice(offset, to);
@@ -140,10 +141,16 @@
       loading = false;
       return;
     }
-    const prevData = reload ? [] : displayedData[type];
-    const prevProfiles = userInList ? [userProfile, ...prevData] : prevData;
-    const users = res.data as BetarenaUser[];
-    displayedData[type] = [...prevProfiles, ...users];
+    const prevData = reload ? new Map() :  displayedData[type];
+    let nextMap  = new Map<string, IBetarenaUser>();
+    if (userInList) {
+      nextMap.set(userProfile.uid, userProfile);
+     }
+     const prevProfiles = userInList ? [userProfile, ...prevData] : prevData;
+     const users = res.data as IBetarenaUser[];
+    nextMap = new Map([...nextMap, ...prevData]);
+    users.forEach((u) => nextMap.set(u.uid, u));
+    displayedData[type] = nextMap;
 
     displayedData = { ...displayedData };
     reloading = false;
@@ -238,11 +245,11 @@
   {:else}
     <FollowersList
       {translations}
-      users={!profileLoading ? currentData : []}
+      users={!profileLoading ? currentData : new Map()}
       loading={profileLoading || loading}
       emptyMessage="no {selectedOption} yet"
     />
-    {#if !isPWA && currentData?.length < rawData[selectedOption]?.length && !profileLoading && !reloading && !loading}
+    {#if !isPWA && currentData?.size < rawData[selectedOption]?.length && !profileLoading && !reloading && !loading}
       <div class="load-more">
         <Button type="outline" on:click={() => loadUsers(selectedOption)}>
           <TranslationText text={translations.view_more} fallback="View More" />

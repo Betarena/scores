@@ -49,6 +49,7 @@
   import AuthorMain from './Author-Main.svelte';
 
   import type { IPageAuhtorArticleDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
+    import { userNameToUrlString } from '../../../common_ui/helpers.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -144,6 +145,8 @@
     }
   );
 
+  console.log("WIDGET DATA MAIN: ", widgetDataMain);
+
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
 </script>
@@ -162,6 +165,12 @@
 <SeoBox>
   <h1>{widgetDataMain?.article.data.title}</h1>
   {@html widgetDataMain?.article.data.content}
+  <a
+      href="/a/sportstack/{userNameToUrlString(widgetDataMain?.author?.data?.username)}"
+    >{widgetDataMain?.author?.data?.username}</a>
+  {#each (widgetDataMain?.mapTag || []) as [_id, tag]}
+   <a href="/a/tag/{tag.permalink}">{tag.name}</a>
+  {/each}
 </SeoBox>
 
 <!-- [🐞] -->

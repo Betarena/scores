@@ -33,6 +33,8 @@ COMPONENT JS (w/ TS)
 	import icon_withdraw from './assets/menu-opt/withdraw.svg';
   import icon_logout from './assets/menu-opt/logout.svg';
   import icon_logout_select from './assets/menu-opt/logout-selected.svg';
+  import icon_settings2 from './assets/menu-opt/settings2.svg'
+  import icon_settings2_select from './assets/menu-opt/settings2-select.svg'
 
 	import type { PROFILE_OPT } from '$lib/types/types.scores.js';
 	import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
@@ -101,6 +103,7 @@ COMPONENT JS (w/ TS)
 	$: mobileExclusive = mobileExclusive;
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
   $: trsanslationData = $page.data.B_NAV_T
+
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -160,6 +163,15 @@ COMPONENT JS (w/ TS)
       = SELECTED_OPT == MENU_OPT
         ? icon_settings_select
         : icon_settings
+    ;
+  }
+  else if (MENU_OPT == 'Settings')
+  {
+    hoverMenuOptIconAlt = icon_settings2_select;
+    selectedMenuOptIcon
+      = SELECTED_OPT == MENU_OPT
+        ? icon_settings2_select
+        : icon_settings2
     ;
   }
   else if (MENU_OPT == 'Investor')
@@ -279,6 +291,8 @@ VIEW DESIGN - 1
 			>
         {#if MENU_OPT == 'Account Settings'}
           {profileTrs.profile?.acc_settings ?? 'Account Settings'}
+        {:else if MENU_OPT == 'Settings'}
+          {profileTrs.profile?.settings ?? "Settings"}
         {:else if MENU_OPT == 'Dashboard' ?? 'Dashboard'}
           {profileTrs.profile?.dashboard}
         {:else if MENU_OPT == 'Investor'}
@@ -416,6 +430,8 @@ VIEW DESIGN - 2
 			>
         {#if MENU_OPT == 'Account Settings'}
           {profileTrs.profile?.acc_settings ?? 'Account Settings'}
+        {:else if MENU_OPT == 'Settings'}
+          {profileTrs.profile?.settings ?? 'Settings'}
         {:else if MENU_OPT == 'Dashboard'}
           {profileTrs.profile?.dashboard ?? 'Dashboard'}
         {:else if MENU_OPT == 'Author'}

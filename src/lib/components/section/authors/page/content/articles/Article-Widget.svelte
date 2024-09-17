@@ -53,6 +53,7 @@
 
   import type { IPageAuthorTagDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
   import type { IPageAuthorTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.tags.js';
+  import { userNameToUrlString } from '../../../common_ui/helpers.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -106,6 +107,11 @@
    * 📝 Interecpted data for `map` instance of `tag(s)`.
    */
   $: mapTags = new Map(widgetData?.mapTag ?? []);
+  /**
+   * @description
+   * 📝 Interecpted data for `map` instance of `author(s)`.
+   */
+  $: mapAuthors = new Map(widgetData?.mapAuthor ?? []);
   /**
    * @description
    * 📝 Interecpted data for `map` instance of `article(s)`.
@@ -186,6 +192,7 @@
     <h2>
       {article.data?.title}
     </h2>
+    <a>{article.a}</a>
     <a
       href={`/a/${article.permalink}`}
     >
@@ -198,8 +205,12 @@
   │ > Loop through tags
   ╰─────
   -->
-  {#each [...mapArticles.entries()] as [_id, tag]}
+  {#each [...mapTags.entries()] as [_id, tag]}
     <a href={`/a/tag/${tag.permalink}`}>{tag.name}</a>
+  {/each}
+
+  {#each [...mapAuthors.entries()] as [_id, author]}
+  <a href="/a/user/{userNameToUrlString(author?.data?.username)}" >{author?.data?.username}</a>
   {/each}
 </SeoBox>
 
