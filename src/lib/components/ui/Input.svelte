@@ -151,7 +151,8 @@
       gap: var(--spacing-xxs, 2px);
 
       .label-text {
-        color: var(--colors-text-text-secondary-700, #d2d2d2);
+
+        color: var( --colors-gray-gray-2, #d2d2d2);
 
         /* Text sm/Medium */
         font-family: var(--font-family-font-family-body, Roboto);
