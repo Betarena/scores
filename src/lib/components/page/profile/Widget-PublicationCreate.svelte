@@ -98,7 +98,7 @@
         </div>
         <div class="buttons-header">
           <a href="/u/author/{$userSettings.lang}">
-            <Button full={true} type="secondary">Cancel</Button>
+            <Button full={true} type="secondary-gray">Cancel</Button>
           </a>
           <a on:click={create} href="/u/author/{$userSettings.lang}">
             <Button>Create</Button>
@@ -117,7 +117,7 @@
 
         <div class="buttons">
           <a href="/u/author/{$userSettings.lang}">
-            <Button full={true} type="secondary">Cancel</Button>
+            <Button full={true} type="secondary-gray">Cancel</Button>
           </a>
           <a on:click={create} href="/u/author/{$userSettings.lang}">
             <Button>Create</Button>

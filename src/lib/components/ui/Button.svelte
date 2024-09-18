@@ -34,8 +34,13 @@
      * @description
      *  button styles: primary | outline
      */ // eslint-disable-next-line no-unused-vars
-    type: "primary" | "outline" | "secondary" | "primary-outline" | "subtle" =
-      "primary";
+    type:
+      | "primary"
+      | "outline"
+      | "secondary"
+      | "secondary-gray"
+      | "primary-outline"
+      | "subtle" = "primary";
 
   const dispatch = createEventDispatcher();
   let hover = false;
@@ -62,7 +67,10 @@
   on:mouseleave={() => (hover = false)}
   on:touchend={() => (hover = false)}
   on:mouseup={() => (hover = false)}
-  on:click={() => {dispatch("click"); hover = false;}}
+  on:click={() => {
+    dispatch("click");
+    hover = false;
+  }}
 >
   <slot />
 </button>
@@ -105,7 +113,7 @@
     /* shadow/orange */
     box-shadow: 0px 3px 8px 0px rgba(212, 84, 12, 0.32);
 
-    &.hover{
+    &.hover {
       background: var(--primary-fade, #f5620f);
     }
   }
@@ -114,7 +122,7 @@
     border: 1px solid var(--button-secondary-bg) !important;
     color: var(--text-color);
 
-    &.hover{
+    &.hover {
       color: var(--text-color-second-dark);
     }
   }
@@ -124,7 +132,7 @@
     color: var(--primary);
     background-color: unset;
 
-    &.hover{
+    &.hover {
       border: 1px solid var(--text-color) !important;
       color: var(--text-color);
     }
@@ -137,7 +145,7 @@
     transition: all;
     transition-duration: 0.2s;
 
-    &.hover{
+    &.hover {
       border: 1px solid var(--primary) !important;
       color: var(--primary);
     }
@@ -147,9 +155,19 @@
     background-color: var(--button-secondary-bg);
     color: var(--text-color);
 
-    &.hover{
+    &.hover {
       background: var(--primary, #f5620f);
       color: var(--white-day, #fff);
+    }
+  }
+  .secondary-gray {
+    background-color: var(--button-secondary-bg2);
+    border: 1px solid var(--button-secondary-border);
+    color: var(--button-secondary-fg);
+
+    &.hover {
+      background-color: var(--button-secondary-bg);
+      color: var(--text-color);
     }
   }
 </style>
