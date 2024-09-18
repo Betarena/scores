@@ -348,7 +348,6 @@ VIEW DESIGN - 2
       !
       [
         'Scores'
-        ,'Author'
       ]
         .includes(MENU_OPT)
     }
@@ -356,7 +355,6 @@ VIEW DESIGN - 2
     {
       [
         'Scores'
-        ,'Author'
       ]
         .includes(MENU_OPT)
     }
