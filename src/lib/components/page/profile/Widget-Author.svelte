@@ -10,7 +10,7 @@ COMPONENT JS (w/ TS)
   import Button from "$lib/components/ui/Button.svelte";
   import session from "$lib/store/session.js";
   import userSettings from "$lib/store/user-settings.js";
-  import {sportstack} from "./sportstack.js"
+  import { sportstack } from "./sportstack.js";
 
   import type { IProfileTrs } from "@betarena/scores-lib/types/types.profile.js";
   import PublicationCard from "./PublicationCard.svelte";
@@ -22,9 +22,7 @@ COMPONENT JS (w/ TS)
   let profileTrs: IProfileTrs,
     noWidgetData: boolean = false;
 
-
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
-
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -51,7 +49,7 @@ COMPONENT JS (w/ TS)
   AUTHOR WIDGET
 -->
 {#if !noWidgetData}
-  <div id="account-author-widget-box">
+  <div id="account-author-widget-box" class={$session.viewportType}>
     <!--
     WIDGET TITLE
     -->
@@ -67,7 +65,7 @@ COMPONENT JS (w/ TS)
         </div>
       </div>
       <a href="/u/author/create/{$userSettings.lang}">
-        <Button full={true}>
+        <Button full={$session.viewportType === "mobile"}>
           <div class="button-text">
             <Plus />
             New Publication
@@ -117,8 +115,8 @@ COMPONENT JS (w/ TS)
 
         h2 {
           color: var(--colors-text-text-primary-900, #fbfbfb);
-          font-family: var(--Font-family-font-family-display, Roboto);
-          font-size: var(--Font-size-display-xs, 24px);
+          font-family: var(--font-family-font-family-display, Roboto);
+          font-size: var(--font-size-display-xs, 24px);
           font-style: normal;
           font-weight: 600;
           line-height: var(--Line-height-display-xs, 32px);
@@ -128,11 +126,11 @@ COMPONENT JS (w/ TS)
           color: var(--colors-text-text-tertiary-600, #8c8c8c);
 
           /* Text md/Regular */
-          font-family: var(--Font-family-font-family-body, Roboto);
-          font-size: var(--Font-size-text-md, 16px);
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-md, 16px);
           font-style: normal;
           font-weight: 400;
-          line-height: var(--Line-height-text-md, 24px); /* 150% */
+          line-height: var(--line-height-text-md, 24px); /* 150% */
         }
       }
 
@@ -168,99 +166,35 @@ COMPONENT JS (w/ TS)
       flex: 1 0 0;
       align-self: stretch;
     }
-  }
 
-  input[type="text"] {
-    /* white theme/gray */
-    border: 1px solid var(--grey-shade);
-    box-sizing: border-box;
-    border-radius: 8px;
-    padding: 20px 12px;
-    width: -webkit-fill-available;
-    height: 44px;
-    outline: none;
-    font-size: 14px;
-  }
-  input[type="text"]:hover {
-    border: 1px solid var(--grey);
-  }
-  input[type="text"]:focus {
-    border: 1px solid var(--dark-theme-1);
-  }
-  input[type="text"][placeholder] {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-  input[type="text"].input-error {
-    border: 1px solid var(--red-bright) !important;
-  }
+    &.tablet,
+    &.desktop {
+      .header {
+        flex-direction: row;
+        gap: 10px;
+        align-items: center;
+        justify-content: space-between;
 
-  button {
-    width: -webkit-fill-available;
-  }
 
-  div#settings-hr-divider {
-    width: 100%;
-    height: 1px;
-    background-color: var(--grey-color);
-  }
-
-  p.required-pill-tag {
-    padding: 3px 8px;
-    height: 24px;
-    background-color: var(--oragne-pale-bg);
-    color: var(--primary-fade);
-    border-radius: 32px;
-  }
-
-  /*
-  input - custom file upload
-  */
-  .custom-file-input {
-    opacity: 0;
-    position: absolute;
-    z-index: -1;
-  }
-
-  /*
-  =============
-  RESPONSIVNESS
-  =============
-  */
-
-  @media only screen and (min-width: 575px) {
-    button {
-      width: auto;
+        a {
+          width: max-content;
+        }
+      }
+      .publications-wrapper {
+        gap: var(--spacing-3xl, 24px);
+      }
     }
-  }
 
-  /*
-  =============
-  DARK-THEME
-  =============
-  */
-
-  div#account-settings-widget-box.dark-background-1 {
-    box-shadow: inset 0px 1px 0px var(--dark-theme-1-shade) !important;
-    background-color: var(--dark-theme-1) !important;
-  }
-
-  div#account-settings-widget-box.dark-background-1 input[type="text"] {
-    background: var(--dark-theme-1);
-    border: 1px solid var(--dark-theme-1-2-shade);
-    color: var(--white);
-  }
-
-  div#account-settings-widget-box.dark-background-1 div#settings-hr-divider {
-    background-color: var(--dark-theme-1-2-shade);
-  }
-
-  div#account-settings-widget-box.dark-background-1 p.required-pill-tag {
-    color: var(--primary-fade);
-  }
-
-  div#account-settings-widget-box.dark-background-1 button.btn-hollow.danger {
-    border: 1px solid var(--dark-theme-1-2-shade) !important;
+    &.desktop {
+      gap: 24px;
+      .header {
+        h2 {
+          font-size: var(--Font-size-text-xl, 20px);
+          font-style: normal;
+          font-weight: 600;
+          line-height: var(--Line-height-text-xl, 30px); /* 150% */
+        }
+      }
+    }
   }
 </style>

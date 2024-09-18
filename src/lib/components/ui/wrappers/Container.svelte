@@ -1,3 +1,6 @@
+<script>
+  import session from "$lib/store/session";
+</script>
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ 💠 Svelte Component HTML                                                         │
@@ -10,7 +13,7 @@
 -->
 
 
-<div class="container-wrapper">
+<div class="container-wrapper {$session.viewportType}">
   <slot/>
 </div>
 
@@ -30,6 +33,16 @@
   width: 100%;
   height: 100%;
   padding-inline: 16px;
+
+  &.tablet {
+    padding-inline: 34px;
+  }
+
+  &.desktop {
+    max-width: 1430px;
+    margin-inline: auto;
+    padding-inline: 34px;
+  }
 }
 
 </style>

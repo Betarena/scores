@@ -29,6 +29,8 @@
   import userSettings from "$lib/store/user-settings.js";
   import type { PageData } from ".svelte-kit/types/src/routes/(scores)/u/author/create/[lang=lang]/$types.js";
   import { sportstack } from "./sportstack.js";
+  import session from "$lib/store/session.js";
+  import WidgetMenuOpt from "./Widget-MenuOpt.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -61,7 +63,7 @@
         img: "",
         owner: userSettings.extract("uid"),
       },
-      ...s
+      ...s,
     ]);
   }
 </script>
@@ -78,33 +80,51 @@
 -->
 
 <Container>
-  <div id="publication-create">
-    <div class="header">
-      <h2>{translate?.publication_create || "Publication Create"}</h2>
-      <p>
-        {translate?.publication_create_desc ||
-          "Lorem ipsum dolor sit amet consectetur. Turpis sed et proin commodo."}
-      </p>
-    </div>
-    <form class="form">
-      <div class="form-controls">
-        <Input type="leading-text" requred={true} bind:value={name}>
-          <span slot="label">URL</span>
-          <span slot="leading-text">sportstack/</span>
-          <span slot="error">The name is already in use.</span>
-          <span slot="info">You can change the name later if you wish.</span>
-        </Input>
+  <div class="publication-create-wrapper {$session.viewportType}">
+    {#if $session.viewportType === "desktop"}
+      <div class="menu">
+        <WidgetMenuOpt />
       </div>
+      <!-- content here -->
+    {/if}
+    <div id="publication-create" class={$session.viewportType}>
+      <div class="header-wrapper">
+        <div class="header">
+          <h2>{translate?.publication_create || "Publication Create"}</h2>
+          <p>
+            {translate?.publication_create_desc ||
+              "Lorem ipsum dolor sit amet consectetur. Turpis sed et proin commodo."}
+          </p>
+        </div>
+        <div class="buttons-header">
+          <a href="/u/author/{$userSettings.lang}">
+            <Button full={true} type="secondary">Cancel</Button>
+          </a>
+          <a on:click={create} href="/u/author/{$userSettings.lang}">
+            <Button>Create</Button>
+          </a>
+        </div>
+      </div>
+      <form class="form">
+        <div class="form-controls">
+          <Input type="leading-text" requred={true} bind:value={name}>
+            <span slot="label">URL</span>
+            <span slot="leading-text">sportstack/</span>
+            <span slot="error">The name is already in use.</span>
+            <span slot="info">You can change the name later if you wish.</span>
+          </Input>
+        </div>
 
-      <div class="buttons">
-        <a href="/u/author/{$userSettings.lang}">
-          <Button full={true} type="secondary">Cancel</Button>
-        </a>
-        <a on:click={create} href="/u/author/{$userSettings.lang}">
-          <Button >Create</Button>
-        </a>
-      </div>
-    </form>
+        <div class="buttons">
+          <a href="/u/author/{$userSettings.lang}">
+            <Button full={true} type="secondary">Cancel</Button>
+          </a>
+          <a on:click={create} href="/u/author/{$userSettings.lang}">
+            <Button>Create</Button>
+          </a>
+        </div>
+      </form>
+    </div>
   </div>
 </Container>
 
@@ -127,34 +147,40 @@
     gap: var(--spacing-3xl, 24px);
     flex: 1 0 0;
     align-self: stretch;
-    min-height: calc(100vh - 56px);
+    min-height: calc(100vh - 56px - 12px - 5px);
 
-    .header {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: var(--spacing-xs, 4px);
-      align-self: stretch;
-      h2 {
-        color: var(--colors-text-text-primary-900, #fbfbfb);
-        margin: 0;
+    .header-wrapper {
+      .header {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-xs, 4px);
+        align-self: stretch;
+        h2 {
+          color: var(--colors-text-text-primary-900, #fbfbfb);
+          margin: 0;
 
-        /* Display xs/Semibold */
-        font-family: var(--Font-family-font-family-display, Roboto);
-        font-size: var(--Font-size-display-xs, 24px);
-        font-style: normal;
-        font-weight: 600;
-        line-height: var(--Line-height-display-xs, 32px); /* 133.333% */
+          /* Display xs/Semibold */
+          font-family: var(--Font-family-font-family-display, Roboto);
+          font-size: var(--Font-size-display-xs, 24px);
+          font-style: normal;
+          font-weight: 600;
+          line-height: var(--Line-height-display-xs, 32px); /* 133.333% */
+        }
+        p {
+          color: var(--colors-text-text-tertiary-600, #8c8c8c);
+
+          /* Text md/Regular */
+          font-family: var(--Font-family-font-family-body, Roboto);
+          font-size: var(--Font-size-text-md, 16px);
+          font-style: normal;
+          font-weight: 400;
+          line-height: var(--Line-height-text-md, 24px); /* 150% */
+        }
       }
-      p {
-        color: var(--colors-text-text-tertiary-600, #8c8c8c);
 
-        /* Text md/Regular */
-        font-family: var(--Font-family-font-family-body, Roboto);
-        font-size: var(--Font-size-text-md, 16px);
-        font-style: normal;
-        font-weight: 400;
-        line-height: var(--Line-height-text-md, 24px); /* 150% */
+      .buttons-header {
+        display: none;
       }
     }
 
@@ -191,6 +217,56 @@
         :global(button) {
           flex-grow: 1;
         }
+      }
+    }
+
+    &.desktop {
+      padding: var(--spacing-2xl, 20px);
+      min-height: unset;
+
+
+      .header-wrapper {
+        display: flex;
+        gap: 24px;
+        width: 100%;
+
+        .buttons-header {
+          display: flex;
+          flex-grow: 1;
+          align-items: start;
+          justify-content: end;
+          width: 50%;
+          gap: var(--spacing-lg, 12px);
+          a {
+            width: max-content;
+          }
+        }
+        .header {
+          width: 50%;
+          flex-grow: 1;
+        }
+      }
+
+      .form {
+        height: max-content;
+        .buttons {
+          display: none;
+        }
+      }
+    }
+  }
+
+  .publication-create-wrapper {
+    &.desktop {
+      display: flex;
+      align-items: start;
+      gap: var(--spacing-2xl, 20px);
+      padding-top: var(--spacing-2xl, 20px);
+      padding-bottom: 72px;
+
+      .menu {
+        flex-shrink: 0;
+        min-width: 328px;
       }
     }
   }

@@ -21,6 +21,7 @@ COMPONENT JS (w/ TS)
 
 	import type { PROFILE_OPT } from '$lib/types/types.scores.js';
   import { fade, fly } from 'svelte/transition';
+  import { routeIdPageProfileAuthorCreate } from '$lib/constants/paths.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -34,13 +35,13 @@ COMPONENT JS (w/ TS)
       'Dashboard',
       'Account Settings',
       'Settings',
+      'Author',
       'Investor',
       'Deposit',
       'Withdraw',
       'Transaction History',
       'Competitions History',
       'Scores',
-      'Author',
       'Logout'
     ]
   ;
@@ -166,6 +167,9 @@ COMPONENT JS (w/ TS)
         selectedMenuOpt = 'Dashboard';
         break;
     }
+
+    if($page.route.id === routeIdPageProfileAuthorCreate)
+      selectedMenuOpt = 'Author';
 
 	}
 

@@ -12,6 +12,7 @@
 
   import ImgPlaceholder from "$lib/components/ui/assets/img-placeholder.svelte";
   import Badge from "$lib/components/ui/Badge.svelte";
+  import session from "$lib/store/session.js";
   import userSettings from "$lib/store/user-settings.js";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -59,7 +60,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="publication-card">
+<div class="publication-card {$session.viewportType}">
   {#if sportstack.img}
     <div class="img" style="--img-url: url({sportstack.img})" />
   {:else}
@@ -123,6 +124,44 @@
         font-style: normal;
         font-weight: 500;
         line-height: var(--Line-height-text-md, 24px); /* 133.333% */
+      }
+    }
+
+    &.tablet,
+    &.desktop {
+      border-radius: var(--radius-xl, 12px);
+      width: 100%;
+      border: 1px solid var(--colors-border-border-secondary, #3b3b3b);
+      .img {
+        width: 128px;
+        height: 128px;
+      }
+      .info {
+        flex-direction: column-reverse;
+        justify-content: center;
+
+        h3 {
+          font-size: var(--Font-size-text-xl, 20px);
+          font-style: normal;
+          font-weight: 600;
+          line-height: var(--Line-height-text-xl, 30px); /* 150% */
+        }
+      }
+    }
+
+    &.desktop {
+      .img {
+        width: 104px;
+        height: 104px;
+      }
+      .info {
+        gap: var(--spacing-md, 8px);
+        h3 {
+          font-size: var(--Font-size-text-md, 16px);
+          font-style: normal;
+          font-weight: 600;
+          line-height: var(--Line-height-text-md, 24px); /* 150% */
+        }
       }
     }
   }
