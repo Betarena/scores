@@ -147,7 +147,7 @@
     gap: var(--spacing-3xl, 24px);
     flex: 1 0 0;
     align-self: stretch;
-    min-height: calc(100vh - 56px - 12px - 5px);
+    min-height: calc(100vh - 56px - 21px - 5px);
 
     .header-wrapper {
       .header {
