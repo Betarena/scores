@@ -672,8 +672,7 @@
     class:dark-background={theme == "Dark"}
     class:dark-mode={theme == "Dark"}
     class:light-mode={theme == "Light"}
-    class:standard={currentPageRouteId == null ||
-      currentPageRouteId == "ProfilePage"}
+    class:standard={currentPageRouteId == null }
     class:page-competition={currentPageRouteId == "CompetitionPage"}
     class:page-profile={currentPageRouteId == "ProfilePage"}
     class:page-authors={currentPageRouteId == "AuthorsPage"}

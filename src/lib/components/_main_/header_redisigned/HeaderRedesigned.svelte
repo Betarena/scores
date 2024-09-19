@@ -161,7 +161,7 @@
     ? "none"
     : "var(--header-border)"}
 >
-  {#if currentPageRouteId !== "AuthorsPage"}
+  {#if !["ProfilePage","AuthorsPage"].includes(currentPageRouteId || "")}
     <div class="wave-wrapper">
       <img
         id=""
