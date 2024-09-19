@@ -31,6 +31,7 @@
   import { sportstack } from "./sportstack.js";
   import session from "$lib/store/session.js";
   import WidgetMenuOpt from "./Widget-MenuOpt.svelte";
+  import { infoMessages } from "$lib/components/ui/infomessages/infomessages.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -56,15 +57,35 @@
 
   function create() {
     if (!name) return;
-    sportstack.update((s) => [
-      {
-        id: s.length + 1,
-        title: name,
-        img: "",
-        owner: userSettings.extract("uid"),
-      },
-      ...s,
-    ]);
+
+    const loadingId = infoMessages.add({
+      type: "loading",
+      text: "",
+    });
+
+    setTimeout(() => {
+      infoMessages.remove(loadingId);
+      if (name.includes("error"))
+        infoMessages.add({
+          type: "error",
+          text: "An error occurred.",
+        });
+      if (name.includes("success")) {
+        infoMessages.add({
+          type: "success",
+          text: "The publication was created successfully.",
+        });
+        sportstack.update((s) => [
+          {
+            id: s.length + 1,
+            title: name,
+            img: "",
+            owner: userSettings.extract("uid"),
+          },
+          ...s,
+        ]);
+      }
+    }, 1000);
   }
   $: name = name.toLowerCase().replaceAll(" ", "-");
 </script>

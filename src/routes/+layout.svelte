@@ -77,6 +77,7 @@
   } from "$lib/constants/paths.js";
   import FooterRedisign from "$lib/components/_main_/footer/FooterRedisign.svelte";
   import ModalMain from "$lib/components/misc/modal/ModalMain.svelte";
+  import InfoMessages from "$lib/components/ui/infomessages/InfoMessages.svelte";
 
   // ╭─────
   // │ WARNING:
@@ -694,6 +695,7 @@
       tablet={VIEWPORT_TABLET_INIT[1]}
     />
   {/if}
+  <InfoMessages />
   <ModalMain />
 </div>
 
