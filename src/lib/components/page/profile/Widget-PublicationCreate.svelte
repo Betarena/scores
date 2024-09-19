@@ -99,10 +99,10 @@
         </div>
         <div class="buttons-header">
           <a href="/u/author/{$userSettings.lang}">
-            <Button full={true} type="secondary-gray">Cancel</Button>
+            <Button full={true} type="outline">Cancel</Button>
           </a>
           <a on:click={create} href="/u/author/{$userSettings.lang}">
-            <Button>Create</Button>
+            <Button>Save</Button>
           </a>
         </div>
       </div>
@@ -121,7 +121,7 @@
             <Button full={true} type="secondary-gray">Cancel</Button>
           </a>
           <a on:click={create} href="/u/author/{$userSettings.lang}">
-            <Button>Create</Button>
+            <Button>Save</Button>
           </a>
         </div>
       </form>
@@ -247,12 +247,19 @@
           width: 50%;
           gap: var(--spacing-lg, 12px);
           a {
+            height: 44px;
             width: max-content;
           }
         }
         .header {
           width: 50%;
           flex-grow: 1;
+          h2 {
+            font-size: var(--font-size-text-xl, 20px);
+            font-style: normal;
+            font-weight: 600;
+            line-height: var(--line-height-text-xl, 30px); /* 150% */
+          }
         }
       }
 
@@ -273,8 +280,9 @@
       display: flex;
       align-items: start;
       gap: var(--spacing-2xl, 20px);
-      padding-top: var(--spacing-2xl, 20px);
+      padding-top: var(--spacing-5xl, 40px);
       padding-bottom: 72px;
+      min-height: calc(100vh - 128px);
 
       .menu {
         flex-shrink: 0;

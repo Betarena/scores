@@ -187,6 +187,7 @@ COMPONENT JS (w/ TS)
 
     &.desktop {
       gap: 24px;
+      padding: 20px;
       .header {
         h2 {
           font-size: var(--Font-size-text-xl, 20px);

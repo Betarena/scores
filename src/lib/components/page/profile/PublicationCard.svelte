@@ -156,6 +156,9 @@
       }
       .info {
         gap: var(--spacing-md, 8px);
+        justify-content: start;
+        padding-top: 12px;
+
         h3 {
           font-size: var(--Font-size-text-md, 16px);
           font-style: normal;
