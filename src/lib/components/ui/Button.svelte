@@ -42,6 +42,8 @@
       | "primary-outline"
       | "subtle" = "primary";
 
+    export let submit = false;
+
   const dispatch = createEventDispatcher();
   let hover = false;
   // #endregion ➤ 📌 VARIABLES
@@ -62,6 +64,7 @@
   class="button {type} {classname}"
   class:full
   {...$$restProps}
+  type={submit ? "submit" : "button"}
   class:hover
   on:mouseenter={() => (hover = true)}
   on:mouseleave={() => (hover = false)}

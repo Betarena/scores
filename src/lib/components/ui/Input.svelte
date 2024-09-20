@@ -27,6 +27,7 @@
 
   export let requred: boolean = false;
   export let inputType = "text";
+  export let error = false;
   export let placeholder = "";
   export let type: "input" | "leading-text" = "input";
   export let value = "";
@@ -41,7 +42,6 @@
   const dispatch = createEventDispatcher<
     { input: HTMLInputElement } | { change: HTMLInputElement }
   >();
-  let validationError = false;
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -56,19 +56,10 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function onInput(e: any) {
-    dispatch("input", e.currentTarget as HTMLInputElement);
-    value = DOMPurify.sanitize(e.currentTarget.value);
-    if (onInputValidation) {
-      validationError = !onInputValidation(e.currentTarget.value);
-    }
-  }
-  function onChange(e: any) {
 
-    dispatch("change", e.currentTarget as HTMLInputElement);
-    if (onChangeValidation) {
-      validationError = !onChangeValidation(e.currentTarget.value);
-    }
+  function handleEvent(e: any, type: "input" | "change") {
+    value = DOMPurify.sanitize(e.currentTarget.value);
+    dispatch(type, value);
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -101,21 +92,21 @@
         <slot name="leading-text" />
       </div>
     {/if}
-    <div class="input-element input-{type}" class:error={validationError}>
+    <div class="input-element input-{type}" class:error>
       <input
         class=""
         type="text"
         {placeholder}
         bind:value
         {name}
-        on:change={onChange}
-        on:input={onInput}
+        on:change={e => handleEvent(e, "change")}
+        on:input={e => handleEvent(e, "input")}
       />
     </div>
   </div>
   {#if $$slots.error || $$slots.info}
     <div class="field-info">
-      {#if validationError}
+      {#if error}
         <span class="error">
           <slot name="error" />
         </span>

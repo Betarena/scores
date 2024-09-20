@@ -32,6 +32,7 @@
   import session from "$lib/store/session.js";
   import WidgetMenuOpt from "./Widget-MenuOpt.svelte";
   import { infoMessages } from "$lib/components/ui/infomessages/infomessages.js";
+  import { post } from "$lib/api/utils.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -53,9 +54,27 @@
 
   $: ({ translate } = data);
   let name = "";
+  let inputError = false;
+  let debounceTimer;
   // #endregion ➤ 📌 VARIABLES
 
-  function create() {
+  function debounceValidation(e: CustomEvent<string>) {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => validateName(e.detail), 300); // 300ms debounce
+  }
+
+  async function validateName(val) {
+    if (!val) return (inputError = false);
+    const v = JSON.stringify({ name: val });
+    const res = await post<{ isValid: boolean }>(
+      "/api/data/author/sportstack/validate",
+      { name: val }
+    );
+
+    inputError = res?.isValid ?? true;
+  }
+
+  async function create() {
     if (!name) return;
 
     const loadingId = infoMessages.add({
@@ -127,9 +146,15 @@
           </a>
         </div>
       </div>
-      <form class="form">
+      <form class="form" action="?/create">
         <div class="form-controls">
-          <Input type="leading-text" requred={true} bind:value={name}>
+          <Input
+            type="leading-text"
+            on:input={debounceValidation}
+            error={inputError}
+            requred={true}
+            bind:value={name}
+          >
             <span slot="label">URL</span>
             <span slot="leading-text">sportstack/</span>
             <span slot="error">The name is already in use.</span>
@@ -142,7 +167,7 @@
             <Button full={true} type="secondary-gray">Cancel</Button>
           </a>
           <a on:click={create} href="/u/author/{$userSettings.lang}">
-            <Button>Save</Button>
+            <Button submit={true}>Save</Button>
           </a>
         </div>
       </form>
