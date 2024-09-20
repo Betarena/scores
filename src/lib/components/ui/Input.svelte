@@ -152,7 +152,7 @@
 
       .label-text {
 
-        color: var( --colors-gray-gray-2, #d2d2d2);
+        color: var(--colors-text-text-secondary-700);
 
         /* Text sm/Medium */
         font-family: var(--font-family-font-family-body, Roboto);
@@ -164,11 +164,11 @@
       .required {
         color: var(--colors-brand-5);
         /* Text sm/Medium */
-        font-family: var(--Font-family-font-family-body, Roboto);
-        font-size: var(--Font-size-text-sm, 14px);
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-sm, 14px);
         font-style: normal;
         font-weight: 500;
-        line-height: var(--Line-height-text-sm, 20px); /* 142.857% */
+        line-height: var(--line-height-text-sm, 20px); /* 142.857% */
       }
     }
 
@@ -228,7 +228,7 @@
         border-bottom-right-radius: 0;
         border-right: none;
         user-select: none;
-        color: var(--colors-foreground-fg-tertiary-600, #8c8c8c);
+        color: var(--colors-foreground-fg-tertiary-600);
 
         /* Text md/Regular */
         font-family: var(--Font-family-font-family-body, Roboto);

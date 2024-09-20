@@ -11,9 +11,9 @@
   import { infoMessages } from "./infomessages.js";
   import checkCircle from "./check-circle.svg";
   import alertCircle from "./alert-circle.svg";
-  import close from "./x-close.svg";
   import { fly, scale } from "svelte/transition";
   import { flip } from "svelte/animate";
+  import XClose from "./x-close.svelte";
 </script>
 
 <!--
@@ -70,7 +70,9 @@
                 loading="lazy"
               />
             </div>
-            <img id="" src={close} alt="" title="" loading="lazy" />
+            <i class="x-close">
+              <XClose />
+            </i>
           </div>
           <span class="text">{item.text}</span>
         </div>
@@ -133,8 +135,8 @@
         pointer-events: all;
 
         border-radius: var(--radius-xl, 12px);
-        border: 1px solid var(--Colors-Border-border-primary, #6a6a6a);
-        background: var(--Colors-Background-bg-primary_alt, #313131);
+        border: 1px solid var(--colors-border-border-primary, #6a6a6a);
+        background: var(--colors-background-bg-primary_alt, #313131);
 
         /* Shadows/shadow-lg */
         box-shadow: 0px 12px 16px -4px var(--Colors-Effects-Shadows-shadow-lg_01, rgba(255, 255, 255, 0)),
@@ -180,6 +182,12 @@
               opacity: 0.1;
             }
           }
+
+          .x-close {
+            :global(path) {
+              stroke: var(--colors-foreground-fg-quinary-400) !important;
+            }
+          }
         }
 
         .text {
@@ -207,8 +215,8 @@
           align-self: stretch;
 
           border-radius: var(--radius-md, 8px);
-          border: 1px solid var(--Colors-Border-border-disabled_subtle, #3b3b3b);
-          background: var(--Colors-Background-bg-disabled, #3b3b3b);
+          border: 1px solid var(--colors-border-border-disabled_subtle, #3b3b3b);
+          background: var(--colors-background-bg-disabled, #3b3b3b);
 
           /* Shadows/shadow-xs */
           box-shadow: 0px 1px 2px 0px
@@ -218,14 +226,14 @@
     }
 
     .saving-animation {
-      color: var(--Colors-Foreground-fg-disabled, #727171);
+      color: var(--colors-foreground-fg-disabled, #727171);
 
       /* Text md/Medium */
-      font-family: var(--Font-family-font-family-body, Roboto);
-      font-size: var(--Font-size-text-md, 16px);
+      font-family: var(--font-family-font-family-body, Roboto);
+      font-size: var(--font-size-text-md, 16px);
       font-style: normal;
       font-weight: 500;
-      line-height: var(--Line-height-text-md, 24px); /* 150% */
+      line-height: var(--line-height-text-md, 24px); /* 150% */
     }
 
     .dot {

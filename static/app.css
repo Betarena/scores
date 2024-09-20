@@ -3286,6 +3286,21 @@ img.google-aspect-ratio {
   --button-secondary-bg2: #313131;
   --button-secondary-border: #525252;
   --button-secondary-fg: #D2D2D2;
+  --colors-background-bg-quaternary: #525252;
+  --colors-foreground-fg-secondary-700: #D2D2D2;
+  --colors-border-border-secondary: #3b3b3b;
+  --colors-border-border-primary: #6a6a6a;
+  --colors-foreground-fg-tertiary-600: #6A6A6A;
+  --colors-text-text-secondary-700: #D2D2D2;
+  --colors-foreground-fg-quinary-400: #727171;
+  --colors-background-bg-primary_alt: #313131;
+  --colors-foreground-fg-primary-900: #fff;
+  --colors-background-bg-disabled: #3B3B3B;
+  --colors-border-border-disabled_subtle: #3b3b3b;
+  --colors-foreground-fg-disabled: #727171;
+  --component-colors-utility-gray-utility-gray-200: #525252;
+  --component-colors-utility-gray-utility-gray-50: #313131;
+  --component-colors-utility-gray-utility-gray-700: #D2D2D2;
 }
 
 .light-mode {
@@ -3440,6 +3455,21 @@ img.google-aspect-ratio {
   --button-secondary-bg2: #FFFFFF;
   --button-secondary-border: #D2D2D2;
   --button-secondary-fg: var(--text-text-secondary);
+  --colors-background-bg-quaternary: #EDEDED;
+  --colors-foreground-fg-secondary-700: #525252;
+  --colors-border-border-secondary: #E6E6E6;
+  --colors-border-border-primary: #D2D2D2;
+  --colors-foreground-fg-tertiary-600: #6A6A6A;
+  --colors-text-text-secondary-700: #525252;
+  --colors-foreground-fg-quinary-400: #8C8C8C;
+  --colors-background-bg-primary_alt: #FFF;
+  --colors-foreground-fg-primary-900: #313131;
+  --colors-background-bg-disabled: #F7F7F7;
+  --colors-border-border-disabled_subtle: #EDEDED;
+  --colors-foreground-fg-disabled: #8C8C8C;
+  --component-colors-utility-gray-utility-gray-200: #EDEDED;
+  --component-colors-utility-gray-utility-gray-50: #FBFBFB;
+  --component-colors-utility-gray-utility-gray-700: #525252;
 }
 
 /*# sourceMappingURL=app.css.map */

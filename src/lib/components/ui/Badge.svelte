@@ -56,7 +56,7 @@
 
 <style lang="scss">
   .badge {
-    color: var(--Component-colors-Utility-Gray-utility-gray-700, #d2d2d2);
+    color: var(--component-colors-utility-gray-utility-gray-700, #d2d2d2);
     text-align: center;
     display: flex;
     padding: var(--spacing-xxs, 2px) var(--spacing-md, 8px);
@@ -64,14 +64,14 @@
 
     border-radius: var(--radius-full, 9999px);
     border: 1px solid
-      var(--Component-colors-Utility-Gray-utility-gray-200, #525252);
-    background: var(--Component-colors-Utility-Gray-utility-gray-50, #313131);
+      var(--component-colors-utility-gray-utility-gray-200, #525252);
+    background: var(--component-colors-utility-gray-utility-gray-50, #313131);
 
     /* Text xs/Regular */
-    font-family: var(--Font-family-font-family-body, Roboto);
-    font-size: var(--Font-size-text-xs, 12px);
+    font-family: var(--font-family-font-family-body, Roboto);
+    font-size: var(--font-size-text-xs, 12px);
     font-style: normal;
     font-weight: 400;
-    line-height: var(--Line-height-text-xs, 18px); /* 150% */
+    line-height: var(--line-height-text-xs, 18px); /* 150% */
   }
 </style>

@@ -106,6 +106,9 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        :global(svg path) {
+          stroke: var( --colors-foreground-fg-secondary-700) !important;
+        }
       }
     }
 

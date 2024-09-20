@@ -1,5 +1,4 @@
-.light-mode
-{
+.light-mode {
   --text-color: #292929;
   --text-color-second: #292929;
   --text-color-second-dark: #8c8c8c;
@@ -27,7 +26,7 @@
   --header-border: 1px solid #CCC;
 
   //Mobile-Menu
-  --mobile-menu-bg-color:  rgba(var(--bg-color-rgb-consts), 0.9);
+  --mobile-menu-bg-color: rgba(var(--bg-color-rgb-consts), 0.9);
   --box-shadow: 0px 0px 50px 0px rgba(0, 0, 0, 0.15);
 
   --tag-bg: #E6E6E6;
@@ -159,8 +158,24 @@
   --background-bg-white: var(--colors-base-white);
   --background-bg-quarterary: var(--colors-gray-3);
   --background-bg-quarterary_hover: var(--colors-gray-4);
+// BTA2.0
   --colors-text-text-primary-900: #313131;
   --button-secondary-bg2: #FFFFFF;
-    --button-secondary-border: #D2D2D2;
+  --button-secondary-border: #D2D2D2;
     --button-secondary-fg: var(--text-text-secondary);
+  --colors-background-bg-quaternary: #EDEDED;
+    --colors-foreground-fg-secondary-700: #525252;
+    --colors-border-border-secondary: #E6E6E6;
+    --colors-border-border-primary: #D2D2D2;
+    --colors-foreground-fg-tertiary-600: #6A6A6A;
+    --colors-text-text-secondary-700: #525252;
+    --colors-foreground-fg-quinary-400: #8C8C8C;
+    --colors-background-bg-primary_alt: #FFF;
+    --colors-foreground-fg-primary-900: #313131;
+    --colors-background-bg-disabled: #F7F7F7;
+    --colors-border-border-disabled_subtle: #EDEDED;
+    --colors-foreground-fg-disabled: #8C8C8C;
+    --component-colors-utility-gray-utility-gray-200: #EDEDED;
+    --component-colors-utility-gray-utility-gray-50: #FBFBFB;
+    --component-colors-utility-gray-utility-gray-700: #525252;
 }

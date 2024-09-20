@@ -37,6 +37,7 @@
   --popup-contrast-color: #3E3E3E;
   --popup-hover-color: #3D3D3D;
 }
+
 .dark-mode {
   --background-bg-primary: var(--colors-gray-7);
   --background-bg-secondary: var(--colors-gray-6);
@@ -158,11 +159,25 @@
   --background-bg-white: var(--colors-base-white);
   --background-bg-quarterary: var(--colors-gray-4);
   --background-bg-quarterary_hover: var(--colors-gray-5);
+  // BTA2.0
   --colors-text-text-primary-900: #F5F5F6;
   --colors-text-text-secondary-700: #696969;
-
   --button-secondary-bg2: #313131;
   --button-secondary-border: #525252;
- --button-secondary-fg: #D2D2D2;
-
+  --button-secondary-fg: #D2D2D2;
+  --colors-background-bg-quaternary: #525252;
+  --colors-foreground-fg-secondary-700: #D2D2D2;
+  --colors-border-border-secondary: #3b3b3b;
+  --colors-border-border-primary: #6a6a6a;
+  --colors-foreground-fg-tertiary-600: #6A6A6A;
+  --colors-text-text-secondary-700: #D2D2D2;
+  --colors-foreground-fg-quinary-400: #727171;
+  --colors-background-bg-primary_alt: #313131;
+  --colors-foreground-fg-primary-900: #fff;
+  --colors-background-bg-disabled: #3B3B3B;
+  --colors-border-border-disabled_subtle: #3b3b3b;
+  --colors-foreground-fg-disabled: #727171;
+  --component-colors-utility-gray-utility-gray-200: #525252;
+  --component-colors-utility-gray-utility-gray-50: #313131;
+  --component-colors-utility-gray-utility-gray-700: #D2D2D2;
 }
