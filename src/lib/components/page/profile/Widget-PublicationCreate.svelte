@@ -56,6 +56,7 @@
   let name = "";
   let inputError = false;
   let debounceTimer;
+  let form;
   // #endregion ➤ 📌 VARIABLES
 
   function debounceValidation(e: CustomEvent<string>) {
@@ -71,7 +72,7 @@
       { name: val }
     );
 
-    inputError = res?.isValid ?? true;
+    inputError = !res?.isValid ?? false;
   }
 
   async function create() {
@@ -146,7 +147,7 @@
           </a>
         </div>
       </div>
-      <form class="form" action="?/create">
+      <form class="form" action="?/create" bind:this={form}>
         <div class="form-controls">
           <Input
             type="leading-text"
@@ -167,7 +168,7 @@
             <Button full={true} type="secondary-gray">Cancel</Button>
           </a>
           <a on:click={create} href="/u/author/{$userSettings.lang}">
-            <Button submit={true}>Save</Button>
+            <Button>Save</Button>
           </a>
         </div>
       </form>

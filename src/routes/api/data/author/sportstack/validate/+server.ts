@@ -9,8 +9,8 @@ export const POST: RequestHandler = async ({ request }) =>
 
     const body = await request.text();
     const parsedBody = JSON.parse(body);
-    const isValid = await entryProfileTabAuthorValidateSportstackUsername({ username: parsedBody.name })
-    return json({ isValid });
+    const hasMatch = await entryProfileTabAuthorValidateSportstackUsername({ username: parsedBody.name })
+    return json({ isValid: !hasMatch });
   } catch (e)
   {
     return json({ isValid: false });
