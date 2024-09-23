@@ -16,6 +16,7 @@ COMPONENT JS (w/ TS)
   import { onMount } from "svelte";
   import { get } from "$lib/api/utils.js";
   import type { AuthorsAuthorsMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import PublicationCardLoader from "./PublicationCardLoader.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -27,6 +28,7 @@ COMPONENT JS (w/ TS)
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
 
   let sportstacks: AuthorsAuthorsMain[] = [];
+  let loading = false;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -42,9 +44,11 @@ COMPONENT JS (w/ TS)
 
   onMount(async () => {
     const uid = userSettings.extract("uid");
+    loading = true;
     const res = await get<{
       sportstacks: AuthorsAuthorsMain[];
     }>(`/api/data/author/sportstack?user=${uid}`);
+    loading = false;
     if (res?.sportstacks) {
       sportstacks = res.sportstacks;
     }
@@ -89,9 +93,15 @@ COMPONENT JS (w/ TS)
     </div>
 
     <div class="publications-wrapper">
-      {#each sportstacks as s (s.id)}
-        <PublicationCard sportstack={s.data} owner={s.uid} />
-      {/each}
+      {#if loading}
+        {#each Array(3) as _}
+          <PublicationCardLoader />
+        {/each}
+      {:else}
+        {#each sportstacks as s (s.id)}
+          <PublicationCard sportstack={s.data} owner={s.uid} />
+        {/each}
+      {/if}
     </div>
   </div>
 {/if}
