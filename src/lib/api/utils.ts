@@ -35,7 +35,7 @@ export async function get
   _fetch: any = null,
   showTime: boolean = false,
   decompress: boolean = false,
-): Promise < T1 | null | undefined | unknown >
+): Promise<T1 | undefined>
 {
   // ### NOTE:
   // ### curcanavigate CORS issues
@@ -138,7 +138,7 @@ export async function post
   path: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   , data: any
-): Promise < T1 | null | undefined | unknown >
+): Promise < T1 | undefined >
 {
   return await tryCatchAsync
   (

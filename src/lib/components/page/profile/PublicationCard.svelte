@@ -14,6 +14,7 @@
   import Badge from "$lib/components/ui/Badge.svelte";
   import session from "$lib/store/session.js";
   import userSettings from "$lib/store/user-settings.js";
+  import type { AuthorsAuthorsDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -44,7 +45,8 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let sportstack: any = {};
+  export let sportstack = {} as AuthorsAuthorsDataJSONSchema;
+  export let owner = '';
 
   // #endregion ➤ 📌 VARIABLES
 </script>
@@ -61,18 +63,18 @@
 -->
 
 <div class="publication-card {$session.viewportType}">
-  {#if sportstack.img}
-    <div class="img" style="--img-url: url({sportstack.img})" />
+  {#if sportstack.avatar}
+    <div class="img" style="--img-url: url({sportstack.avatar})" />
   {:else}
     <div class="img empty">
       <ImgPlaceholder />
     </div>
   {/if}
   <div class="info">
-    {#if sportstack.owner === $userSettings.user?.firebase_user_data.uid}
+    {#if owner === $userSettings.user?.firebase_user_data.uid}
       <Badge size="sm" color="gray">Owner</Badge>
     {/if}
-    <h3>{sportstack.title}</h3>
+    <h3>{sportstack.username}</h3>
   </div>
 </div>
 

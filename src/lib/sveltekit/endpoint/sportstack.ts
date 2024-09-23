@@ -11,6 +11,7 @@ import type { IPageAuthorAuthorData, IPageAuthorProfileData, IPageAuthorSportsta
 import { json, type RequestEvent } from '@sveltejs/kit';
 import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.betarena-user.js';
 import type { IBetarenaUser } from '@betarena/scores-lib/types/_FIREBASE_.js';
+import { ITableAuthorAuthorQuery2Out, ITableAuthorAuthorQuery2Var, TableAuthorAuthorQuery2 } from '@betarena/scores-lib/src/graphql/v8/table.authors.authors.js';
 
 // ╭──────────────────────────────────────────────────────────────────╮
 // │ 🛠️ MAIN METHODS                                                  │
@@ -31,10 +32,12 @@ export async function main
         // │ 👇 :|: extract url query data.                                   │
         // ╰──────────────────────────────────────────────────────────────────╯
 
+        const searchParams = request.url.searchParams;
         const
-          page = request.url.searchParams.get('page') || 1,
-          permalink = request.url.searchParams.get('permalink') || "",
-          id = request.url.searchParams.get('id') || ""
+          page = searchParams.get('page') || 1,
+          permalink = searchParams.get('permalink') || "",
+          id = searchParams.get('id') || "",
+          user = searchParams.get('user')
           ;
 
         // ╭──────────────────────────────────────────────────────────────────╮
@@ -43,6 +46,12 @@ export async function main
         // │ TODO:                                                            │
         // │ Add cache logic.                                                 │
         // ╰──────────────────────────────────────────────────────────────────╯
+        if (user)
+        {
+          const data = await getSportstackByUserId(user);
+          return json(data)
+        }
+
         if (id)
         {
           const data = await fallbackDataGenerate1(id);
@@ -153,6 +162,35 @@ async function fallbackDataGenerate1
     return { ...data, owner: res.data[0] };
   }
   return
+}
+
+/**
+ * @author
+ *  @izobov
+ * @summary
+ *  🟦 HELPER
+ * @description
+ *  📣 Fallback data generation.
+ * @param { string } id
+ *  💠 Target `sportstacks` by user id
+ * @param { number } page
+ *  💠  page number.
+ * @returns { Promise < AuthorsAuthorsObject > }
+ *  📤 Target `sportstacks` data.
+ */
+async function getSportstackByUserId
+  (
+    uid: string,
+  )
+{
+  const ql = (await new _GraphQL().wrapQuery<ITableAuthorAuthorQuery2Var, ITableAuthorAuthorQuery2Out>(TableAuthorAuthorQuery2, {
+    uid
+  })) || [];
+  if (ql[0]?.authors_authors)
+  {
+    return { sportstacks: ql[0].authors_authors }
+  }
+  return ql;
 }
 
 

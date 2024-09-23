@@ -28,11 +28,13 @@
   import Container from "$lib/components/ui/wrappers/Container.svelte";
   import userSettings from "$lib/store/user-settings.js";
   import type { PageData } from ".svelte-kit/types/src/routes/(scores)/u/author/create/[lang=lang]/$types.js";
-  import { sportstack } from "./sportstack.js";
   import session from "$lib/store/session.js";
   import WidgetMenuOpt from "./Widget-MenuOpt.svelte";
   import { infoMessages } from "$lib/components/ui/infomessages/infomessages.js";
   import { post } from "$lib/api/utils.js";
+  import { page } from "$app/stores";
+  import { enhance } from "$app/forms";
+  import { goto } from "$app/navigation";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -56,7 +58,7 @@
   let name = "";
   let inputError = false;
   let debounceTimer;
-  let form;
+  let form: HTMLFormElement;
   // #endregion ➤ 📌 VARIABLES
 
   function debounceValidation(e: CustomEvent<string>) {
@@ -67,45 +69,39 @@
   async function validateName(val) {
     if (!val) return (inputError = false);
     const v = JSON.stringify({ name: val });
-    const res = await post<{ isValid: boolean }>(
+    const res = await post<{ isValid: boolean | undefined }>(
       "/api/data/author/sportstack/validate",
       { name: val }
     );
-
     inputError = !res?.isValid ?? false;
   }
 
-  async function create() {
-    if (!name) return;
-
+  function submit() {
+    if (inputError) return;
     const loadingId = infoMessages.add({
       type: "loading",
       text: "",
     });
 
-    setTimeout(() => {
-      infoMessages.remove(loadingId);
-      if (name.includes("error"))
-        infoMessages.add({
-          type: "error",
-          text: "An error occurred.",
-        });
-      if (name.includes("success")) {
-        infoMessages.add({
-          type: "success",
-          text: "The publication was created successfully.",
-        });
-        sportstack.update((s) => [
-          {
-            id: s.length + 1,
-            title: name,
-            img: "",
-            owner: userSettings.extract("uid"),
-          },
-          ...s,
-        ]);
-      }
-    }, 1000);
+    return ({ update }) => {
+      // Set invalidateAll to false if you don't want to reload page data when submitting
+      update({ invalidateAll: false }).finally(async (d) => {
+        infoMessages.remove(loadingId);
+        if ($page.form.error) {
+          infoMessages.add({
+            type: "error",
+            text: "An error occurred.",
+          });
+        }
+        if ($page.form.success) {
+          infoMessages.add({
+            type: "success",
+            text: "The publication was created successfully.",
+          });
+          goto(`/u/author/${userSettings.extract("lang")}`);
+        }
+      });
+    };
   }
   $: name = name.toLowerCase().replaceAll(" ", "-");
 </script>
@@ -122,12 +118,16 @@
 -->
 
 <Container>
-  <div class="publication-create-wrapper {$session.viewportType}">
+  <form
+    class="publication-create-wrapper {$session.viewportType}"
+    method="POST"
+    bind:this={form}
+    use:enhance={submit}
+  >
     {#if $session.viewportType === "desktop"}
       <div class="menu">
         <WidgetMenuOpt />
       </div>
-      <!-- content here -->
     {/if}
     <div id="publication-create" class={$session.viewportType}>
       <div class="header-wrapper">
@@ -142,14 +142,13 @@
           <a href="/u/author/{$userSettings.lang}">
             <Button full={true} type="outline">Cancel</Button>
           </a>
-          <a on:click={create} href="/u/author/{$userSettings.lang}">
-            <Button>Save</Button>
-          </a>
+          <Button submit={true} disabled={inputError}>Save</Button>
         </div>
       </div>
-      <form class="form" action="?/create" bind:this={form}>
+      <div class="form">
         <div class="form-controls">
           <Input
+            name="name"
             type="leading-text"
             on:input={debounceValidation}
             error={inputError}
@@ -167,13 +166,11 @@
           <a href="/u/author/{$userSettings.lang}">
             <Button full={true} type="secondary-gray">Cancel</Button>
           </a>
-          <a on:click={create} href="/u/author/{$userSettings.lang}">
-            <Button>Save</Button>
-          </a>
+          <Button submit={true} disabled={inputError}>Save</Button>
         </div>
-      </form>
+      </div>
     </div>
-  </div>
+  </form>
 </Container>
 
 <!--

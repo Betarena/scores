@@ -10,10 +10,12 @@ COMPONENT JS (w/ TS)
   import Button from "$lib/components/ui/Button.svelte";
   import session from "$lib/store/session.js";
   import userSettings from "$lib/store/user-settings.js";
-  import { sportstack } from "./sportstack.js";
 
   import type { IProfileTrs } from "@betarena/scores-lib/types/types.profile.js";
   import PublicationCard from "./PublicationCard.svelte";
+  import { onMount } from "svelte";
+  import { get } from "$lib/api/utils.js";
+  import type { AuthorsAuthorsMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -23,6 +25,8 @@ COMPONENT JS (w/ TS)
     noWidgetData: boolean = false;
 
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
+
+  let sportstacks: AuthorsAuthorsMain[] = [];
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -35,6 +39,16 @@ COMPONENT JS (w/ TS)
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  onMount(async () => {
+    const uid = userSettings.extract("uid");
+    const res = await get<{
+      sportstacks: AuthorsAuthorsMain[];
+    }>(`/api/data/author/sportstack?user=${uid}`);
+    if (res?.sportstacks) {
+      sportstacks = res.sportstacks;
+    }
+  });
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
@@ -75,8 +89,8 @@ COMPONENT JS (w/ TS)
     </div>
 
     <div class="publications-wrapper">
-      {#each $sportstack as s (s.id)}
-        <PublicationCard sportstack={s} />
+      {#each sportstacks as s (s.id)}
+        <PublicationCard sportstack={s.data} owner={s.uid} />
       {/each}
     </div>
   </div>
@@ -174,7 +188,6 @@ COMPONENT JS (w/ TS)
         gap: 10px;
         align-items: center;
         justify-content: space-between;
-
 
         a {
           width: max-content;

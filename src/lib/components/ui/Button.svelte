@@ -29,6 +29,7 @@
     classname: string = "",
     full = false,
     href = "";
+  export let disabled = false;
 
   export let /**
      * @description
@@ -63,6 +64,7 @@
 <button
   class="button {type} {classname}"
   class:full
+  class:disabled
   {...$$restProps}
   type={submit ? "submit" : "button"}
   class:hover
@@ -71,6 +73,7 @@
   on:touchend={() => (hover = false)}
   on:mouseup={() => (hover = false)}
   on:click={() => {
+    if (disabled) return;
     dispatch("click");
     hover = false;
   }}
@@ -118,6 +121,13 @@
 
     &.hover {
       background: var(--primary-fade, #f5620f);
+      border: 1px solid var(--primary-fade) !important;
+    }
+
+    &.disabled {
+      background: var(--primary-fade, #f5620f);
+      border: 1px solid var(--primary-fade) !important;
+      cursor: not-allowed;
     }
   }
   .subtle {

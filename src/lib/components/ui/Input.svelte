@@ -9,7 +9,7 @@
 
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import DOMPurify from 'dompurify'
+  import DOMPurify from "dompurify";
 
   // #region ➤ 📌 VARIABLES
 
@@ -56,7 +56,6 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-
   function handleEvent(e: any, type: "input" | "change") {
     value = DOMPurify.sanitize(e.currentTarget.value);
     dispatch(type, value);
@@ -99,8 +98,8 @@
         {placeholder}
         bind:value
         {name}
-        on:change={e => handleEvent(e, "change")}
-        on:input={e => handleEvent(e, "input")}
+        on:change={(e) => handleEvent(e, "change")}
+        on:input={(e) => handleEvent(e, "input")}
       />
     </div>
   </div>
@@ -142,7 +141,6 @@
       gap: var(--spacing-xxs, 2px);
 
       .label-text {
-
         color: var(--colors-text-text-secondary-700);
 
         /* Text sm/Medium */
@@ -205,6 +203,12 @@
           font-style: normal;
           font-weight: 400;
           line-height: var(--Line-height-text-md, 24px); /* 150% */
+
+          &:-webkit-autofill, &:-internal-autofill-selected {
+            background-color: transparent !important;
+            color: inherit !important;
+            box-shadow: none !important;
+          }
         }
       }
 
