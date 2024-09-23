@@ -23,6 +23,11 @@ export const
   routeIdPageProfileAuthorCreate = '/(scores)/u/author/create/[lang=lang]',
   /**
    * @description
+   *  📣 Target `path` for **author publication page**.
+   */
+  routeIdPageProfilePublication = '/(scores)/u/author/publication/[permalink]/[lang=lang]',
+  /**
+   * @description
    *  📣 Target `path` for **competition page**.
    */
   routeIdPageCompetitions = '/(scores)/[[lang=lang]]/[competitions=competitions]',

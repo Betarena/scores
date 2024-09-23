@@ -26,6 +26,7 @@
     routeIdPageProfileAuthorCreate,
     routeIdPageTags,
     routeIdSportstack,
+    routeIdPageProfilePublication
   } from "$lib/constants/paths.js";
   import MobileHeaderRich from "./MobileHeaderRich.svelte";
   import Header from "./Header.svelte";
@@ -63,6 +64,7 @@
     routeIdPageTags,
     routeIdPageProfile,
     routeIdPageProfileAuthorCreate,
+    routeIdPageProfilePublication,
     routeIdPageAuthors,
     routeIdAuthorProfile,
     routeIdAuthorSubscribers,

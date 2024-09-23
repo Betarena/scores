@@ -52,6 +52,7 @@ COMPONENT JS (w/ TS)
     if (res?.sportstacks) {
       sportstacks = res.sportstacks;
     }
+    console.log("sportstacks", sportstacks);
   });
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
@@ -99,7 +100,7 @@ COMPONENT JS (w/ TS)
         {/each}
       {:else}
         {#each sportstacks as s (s.id)}
-          <PublicationCard sportstack={s.data} owner={s.uid} />
+          <PublicationCard sportstack={s.data} owner={s.uid} permalink={s.permalink}/>
         {/each}
       {/if}
     </div>

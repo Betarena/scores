@@ -47,6 +47,7 @@
 
   export let sportstack = {} as AuthorsAuthorsDataJSONSchema;
   export let owner = '';
+  export let permalink = '';
 
   // #endregion ➤ 📌 VARIABLES
 </script>
@@ -62,7 +63,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="publication-card {$session.viewportType}">
+<a class="publication-card {$session.viewportType}" href='/u/author/publication/{permalink}/{$userSettings.lang}'>
   {#if sportstack.avatar}
     <div class="img" style="--img-url: url({sportstack.avatar})" />
   {:else}
@@ -76,7 +77,7 @@
     {/if}
     <h3>{sportstack.username}</h3>
   </div>
-</div>
+</a>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮

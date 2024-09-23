@@ -21,7 +21,7 @@ COMPONENT JS (w/ TS)
 
 	import type { PROFILE_OPT } from '$lib/types/types.scores.js';
   import { fade, fly } from 'svelte/transition';
-  import { routeIdPageProfileAuthorCreate } from '$lib/constants/paths.js';
+  import { routeIdPageProfileAuthorCreate, routeIdPageProfilePublication } from '$lib/constants/paths.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -168,7 +168,7 @@ COMPONENT JS (w/ TS)
         break;
     }
 
-    if($page.route.id === routeIdPageProfileAuthorCreate)
+    if([routeIdPageProfileAuthorCreate, routeIdPageProfilePublication].includes($page.route.id || ""))
       selectedMenuOpt = 'Author';
 
 	}
