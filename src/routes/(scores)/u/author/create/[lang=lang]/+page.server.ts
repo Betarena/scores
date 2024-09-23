@@ -1,6 +1,6 @@
 import { Actions, fail } from '@sveltejs/kit';
 import type { PageServerLoad } from '../$types';
-import { entryProfileTabAuthorNewSportstack, entryProfileTabAuthorValidateSportstackUsername } from '@betarena/scores-lib/src/functions/v8/profile.main.js';
+import { entryProfileTabAuthorNewSportstack, entryProfileTabAuthorValidateSportstackUsername } from '@betarena/scores-lib/dist/functions/v8/profile.main.js';
 
 export const load = (async () =>
 {

@@ -1,6 +1,6 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { entryProfileTabAuthorValidateSportstackUsername } from '@betarena/scores-lib/src/functions/v8/profile.main.js';
+import { entryProfileTabAuthorValidateSportstackUsername } from '@betarena/scores-lib/dist/functions/v8/profile.main.js';
 
 export const POST: RequestHandler = async ({ request }) =>
 {
