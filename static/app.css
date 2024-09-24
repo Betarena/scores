@@ -3454,7 +3454,7 @@ img.google-aspect-ratio {
   --colors-text-text-primary-900: #313131;
   --button-secondary-bg2: #FFFFFF;
   --button-secondary-border: #D2D2D2;
-  --button-secondary-fg: var(--text-text-secondary);
+  --button-secondary-fg: #525252;
   --colors-background-bg-quaternary: #EDEDED;
   --colors-foreground-fg-secondary-700: #525252;
   --colors-border-border-secondary: #E6E6E6;
