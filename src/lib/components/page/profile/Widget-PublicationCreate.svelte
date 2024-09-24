@@ -103,7 +103,6 @@
       });
     };
   }
-  $: name = name.toLowerCase().replaceAll(" ", "-");
 </script>
 
 <!--
