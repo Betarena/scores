@@ -6,12 +6,13 @@
 import { _GraphQL } from '@betarena/scores-lib/dist/classes/_graphql.js';
 import { entryPageAuthorDataAndSeo, entryTargetDataAuthorSportstack } from '@betarena/scores-lib/dist/functions/v8/main.preload.authors.js'
 import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
-import { TableAuthorAuthorsMutation0, type ITableAuthorAuthorsMutation0Out, type ITableAuthorAuthorsMutation0Var } from "@betarena/scores-lib/dist/graphql/v8/table.authors.authors.js";
+import { ITableAuthorAuthorQuery3Out, ITableAuthorAuthorQuery3Var, TableAuthorAuthorQuery3, TableAuthorAuthorsMutation0, type ITableAuthorAuthorsMutation0Out, type ITableAuthorAuthorsMutation0Var } from "@betarena/scores-lib/dist/graphql/v8/table.authors.authors.js";
 import type { IPageAuthorAuthorData, IPageAuthorProfileData, IPageAuthorSportstackData } from '@betarena/scores-lib/types/v8/preload.authors.js';
 import { json, type RequestEvent } from '@sveltejs/kit';
 import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.betarena-user.js';
 import type { IBetarenaUser } from '@betarena/scores-lib/types/_FIREBASE_.js';
 import { ITableAuthorAuthorQuery2Out, ITableAuthorAuthorQuery2Var, TableAuthorAuthorQuery2 } from '@betarena/scores-lib/dist/graphql/v8/table.authors.authors.js';
+import { uid } from 'chart.js/dist/helpers/helpers.core.js';
 
 // ╭──────────────────────────────────────────────────────────────────╮
 // │ 🛠️ MAIN METHODS                                                  │
@@ -189,6 +190,36 @@ async function getSportstackByUserId
   if (ql[0]?.authors_authors)
   {
     return { sportstacks: ql[0].authors_authors }
+  }
+  return ql;
+}
+
+/**
+ * @author
+ *  @izobov
+ * @summary
+ *  🟦 HELPER
+ * @description
+ *  📣 Fallback data generation.
+ * @param { string } id
+ *  💠 Target `sportstacks` by user id
+ * @param { number } page
+ *  💠  page number.
+ * @returns { Promise < AuthorsAuthorsObject > }
+ *  📤 Target `sportstacks` data.
+ */
+async function getSportstackByPermalink
+  (
+    permalink: string,
+  )
+{
+  const ql = (await new _GraphQL().wrapQuery<ITableAuthorAuthorQuery3Var, ITableAuthorAuthorQuery3Out>(TableAuthorAuthorQuery3, {
+    permalink
+  })) || [];
+  const sportstack = ql[0]?.authors_authors?.[0];
+  if (sportstack)
+  {
+    return { sportstacks: sportstack }
   }
   return ql;
 }

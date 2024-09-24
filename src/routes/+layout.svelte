@@ -420,7 +420,6 @@
         });
     }
   });
-$: console.log("Page: ", $page)
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 

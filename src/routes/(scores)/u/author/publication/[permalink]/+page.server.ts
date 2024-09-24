@@ -1,9 +1,11 @@
 import { Actions, fail } from '@sveltejs/kit';
 import type { PageServerLoad } from '../$types';
 import { entryProfileTabAuthorNewSportstack, entryProfileTabAuthorValidateSportstackUsername } from '@betarena/scores-lib/dist/functions/v8/profile.main.js';
+import { _GraphQL } from '@betarena/scores-lib/dist/classes/_graphql.js';
 
 export const load = (async () =>
 {
+  const gql = new _GraphQL();
   return {};
 }) satisfies PageServerLoad;
 
