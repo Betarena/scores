@@ -273,6 +273,7 @@
       font-style: normal;
       font-weight: 500;
       line-height: var(--line-height-text-md, 24px); /* 150% */
+      max-height: 44px;
     }
 
     &.desktop {

@@ -3301,6 +3301,8 @@ img.google-aspect-ratio {
   --component-colors-utility-gray-utility-gray-200: #525252;
   --component-colors-utility-gray-utility-gray-50: #313131;
   --component-colors-utility-gray-utility-gray-700: #D2D2D2;
+  --Colors-Effects-Shadows-shadow-lg_01: rgba(255, 255, 255, 0.00);
+  --Colors-Effects-Shadows-shadow-lg_02: rgba(255, 255, 255, 0.00);
 }
 
 .light-mode {
@@ -3470,6 +3472,8 @@ img.google-aspect-ratio {
   --component-colors-utility-gray-utility-gray-200: #EDEDED;
   --component-colors-utility-gray-utility-gray-50: #FBFBFB;
   --component-colors-utility-gray-utility-gray-700: #525252;
+  --Colors-Effects-Shadows-shadow-lg_01: rgba(31, 31, 31, 0.08);
+  --Colors-Effects-Shadows-shadow-lg_02: rgba(31, 31, 31, 0.03);
 }
 
 /*# sourceMappingURL=app.css.map */

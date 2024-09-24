@@ -14,6 +14,7 @@
   import { fly, scale } from "svelte/transition";
   import { flip } from "svelte/animate";
   import XClose from "./x-close.svelte";
+  import session from "$lib/store/session.js";
 </script>
 
 <!--
@@ -38,7 +39,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div id="info-message" class="info-message-wrapper">
+<div id="info-message" class="info-message-wrapper {$session.viewportType}">
   {#each $infoMessages as item, index (item.id)}
     <div
       class="info-message"
@@ -50,9 +51,10 @@
       {#if ["success", "error"].includes(item.type)}
         <div
           class="body"
+          on:click={() => infoMessages.remove(item.id)}
           style="z-index: {1000 + $infoMessages.length - index}"
         >
-          <div class="header" on:click={() => infoMessages.remove(item.id)}>
+          <div class="header" >
             <div class="icon">
               <div
                 class="inner {item.type}"
@@ -102,29 +104,47 @@
 <style lang="scss">
   .info-message-wrapper {
     position: fixed;
-    top: 0;
+    top: 10px;
     right: 0;
     z-index: 1000;
     display: flex;
     flex-direction: column;
     pointer-events: none;
+    gap: 10px;
 
     .info-message {
-      margin-top: -70px;
+      // margin-top: -70px;
       display: flex;
+      height: fit-content;
       width: 375px;
-      padding: var(--spacing-8xl, 80px) var(--spacing-md, 8px)
-        var(--spacing-xl, 16px) var(--spacing-md, 8px);
-      flex-direction: column;
-      pointer-events: none;
-      align-items: flex-start;
+      cursor: pointer;
+      // padding: var(--spacing-8xl, 80px) var(--spacing-md, 8px)
+      //   var(--spacing-xl, 16px) var(--spacing-md, 8px);
+      // flex-direction: column;
+      // pointer-events: none;
+      // align-items: flex-start;
 
-      background: linear-gradient(
-        357deg,
-        rgba(0, 0, 0, 0.1) 2.75%,
-        rgba(0, 0, 0, 0) 92.77%
-      );
-
+      // background: linear-gradient(
+      //   357deg,
+      //   rgba(0, 0, 0, 0.1) 2.75%,
+      //   rgba(0, 0, 0, 0) 92.77%
+      // );
+      &::after {
+          content: "";
+          position: absolute;
+          top: -80px;
+          left: -8px;
+          right: 0;
+          bottom: 0;
+          width: calc(100% + 16px);
+          height: calc(100% + 16px + 80px);
+          background: linear-gradient(
+            357deg,
+            rgba(0, 0, 0, 0.1) 2.75%,
+            rgba(0, 0, 0, 0) 92.77%
+          );
+          z-index: -1;
+        }
       .body {
         display: flex;
         flex-direction: column;
@@ -133,6 +153,8 @@
         gap: var(--spacing-xl, 16px);
         align-self: stretch;
         pointer-events: all;
+        width: 100%;
+        z-index: 1;
 
         border-radius: var(--radius-xl, 12px);
         border: 1px solid var(--colors-border-border-primary, #6a6a6a);
@@ -141,6 +163,8 @@
         /* Shadows/shadow-lg */
         box-shadow: 0px 12px 16px -4px var(--Colors-Effects-Shadows-shadow-lg_01, rgba(255, 255, 255, 0)),
           0px 4px 6px -2px var(--Colors-Effects-Shadows-shadow-lg_02, rgba(255, 255, 255, 0));
+
+
 
         .header {
           display: flex;
@@ -262,6 +286,11 @@
       100% {
         opacity: 1;
       }
+    }
+
+    &.mobile {
+      bottom: 0;
+      right: 0;
     }
   }
 </style>

@@ -7,7 +7,23 @@ interface IInfoMessage
 
 function messageInfo()
 {
-  const { subscribe, update } = writable<IInfoMessage[]>([]);
+  const { subscribe, update } = writable<IInfoMessage[]>([
+    // {
+    //   type: "success",
+    //   text: "Welcome to the game!",
+    //   id: 1
+    // },
+    // {
+    //   type: "error",
+    //   text: "You have lost the game!",
+    //   id: 2
+    // },
+    // {
+    //   type: "loading",
+    //   text: "Loading...",
+    //   id: 3
+    // }
+  ]);
 
   function add(message: IInfoMessage)
   {
