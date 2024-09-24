@@ -175,7 +175,7 @@
   }
   .secondary-gray {
     background-color: var(--button-secondary-bg2);
-    border: 1px solid var(--button-secondary-border);
+    border: 1px solid var(--button-secondary-border) !important;
     color: var(--button-secondary-fg);
 
     &.hover {
