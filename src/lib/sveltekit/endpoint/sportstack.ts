@@ -127,9 +127,11 @@ async function fallbackDataGenerate0
   (
     page: string | number,
     permalink: string,
-  ): Promise<IPageAuthorSportstackData | undefined>
+): Promise<IPageAuthorSportstackData | undefined>
 {
-  const dataRes0: IPageAuthorProfileData = await entryTargetDataAuthorSportstack({ permalink, page: Number(page) });
+  const dataRes0: IPageAuthorProfileData = await entryTargetDataAuthorSportstack({ permalink, page: Number(page), isUsingAuthorData: true });
+  const dataRes1 = await getSportstackByPermalink(permalink);;
+  (dataRes0 as any).sportstack = dataRes1?.sportstack;
   return dataRes0
 }
 
@@ -202,7 +204,7 @@ async function getSportstackByUserId
  * @description
  *  📣 Fallback data generation.
  * @param { string } id
- *  💠 Target `sportstacks` by user id
+ *  💠 Target `sportstacks` by permalink
  * @param { number } page
  *  💠  page number.
  * @returns { Promise < AuthorsAuthorsObject > }
@@ -221,7 +223,7 @@ async function getSportstackByPermalink
   {
     return { sportstacks: sportstack }
   }
-  return ql;
+  return null;
 }
 
 

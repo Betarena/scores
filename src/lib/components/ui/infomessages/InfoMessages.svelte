@@ -113,10 +113,11 @@
     gap: 10px;
 
     .info-message {
-      // margin-top: -70px;
+      position: relative;
       display: flex;
       height: fit-content;
       width: 375px;
+      max-width: 90vw;
       cursor: pointer;
       // padding: var(--spacing-8xl, 80px) var(--spacing-md, 8px)
       //   var(--spacing-xl, 16px) var(--spacing-md, 8px);
@@ -290,7 +291,8 @@
 
     &.mobile {
       bottom: 0;
-      right: 0;
+      right: 50%;
+      transform: translateX(50%);
     }
   }
 </style>

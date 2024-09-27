@@ -50,7 +50,9 @@ COMPONENT JS (w/ TS)
     }>(`/api/data/author/sportstack?user=${uid}`);
     loading = false;
     if (res?.sportstacks) {
-      sportstacks = res.sportstacks;
+      sportstacks = res.sportstacks.sort((a, b) => {
+        return  new Date(b.data?.creation_date) - new Date(a.data?.creation_date);
+      });
     }
     console.log("sportstacks", sportstacks);
   });

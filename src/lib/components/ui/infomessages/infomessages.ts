@@ -12,16 +12,6 @@ function messageInfo()
     //   type: "success",
     //   text: "Welcome to the game!",
     //   id: 1
-    // },
-    // {
-    //   type: "error",
-    //   text: "You have lost the game!",
-    //   id: 2
-    // },
-    // {
-    //   type: "loading",
-    //   text: "Loading...",
-    //   id: 3
     // }
   ]);
 

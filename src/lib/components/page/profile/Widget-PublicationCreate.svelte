@@ -103,7 +103,7 @@
       });
     };
   }
-  $: name = name.toLowerCase().replaceAll(" ", "-");
+  $: name = name.replace(/[^\w\s]/gi, '');
 </script>
 
 <!--
