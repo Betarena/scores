@@ -35,6 +35,7 @@
   export let selected = null as ITab | null;
   export let height = 14;
   export let translations: { [key: string]: string } = {};
+  export let type: "underline" | "button_border" = "underline";
   let activeNode: HTMLElement;
   let tabbarNode: HTMLElement;
   const dispatch = createEventDispatcher();
@@ -109,24 +110,26 @@
   // #endregion ➤ 🛠️ METHODS
 </script>
 
-<div class="tabbar" bind:this={tabbarNode} {...$$restProps}>
+<div class="tabbar {type}" bind:this={tabbarNode} {...$$restProps}>
   {#each data as item, i (item.id)}
-      <div
-        class="tab-item"
-        style="margin-bottom: {height}px;"
-        data-tab-id={item.id}
-        class:selected={selected?.id === item.id}
-        on:click={(e) => select(item)}
-      >
-        <slot tab={item}
-          ><TranslationText
-            text={translations[item.label] || translations[item?.name || ""]}
-            fallback={item.name || item.label}
-          />
-        </slot>
-      </div>
+    <div
+      class="tab-item"
+      style="margin-bottom: {type === 'underline' ? height : 0}px;"
+      data-tab-id={item.id}
+      class:selected={selected?.id === item.id}
+      on:click={(e) => select(item)}
+    >
+      <slot tab={item}
+        ><TranslationText
+          text={translations[item.label] || translations[item?.name || ""]}
+          fallback={item.name || item.label}
+        />
+      </slot>
+    </div>
   {/each}
-  <div class="active" bind:this={activeNode} />
+  {#if type === "underline"}
+    <div class="active" bind:this={activeNode} />
+  {/if}
 </div>
 
 <!--
@@ -170,6 +173,64 @@
       height: 2px;
       transition: all 0.5s cubic-bezier(0, 0.14, 0.29, 1.07);
       background: var(--primary);
+    }
+
+    &.button_border {
+      display: flex;
+      padding: var(--spacing-sm, 6px);
+      align-items: center;
+      gap: var(--spacing-xs, 4px);
+
+      border-radius: var(--radius-xl, 12px);
+      border: 1px solid var(--Colors-Border-border-secondary, #ededed);
+      background: var(--Colors-Background-bg-secondary_alt, #fbfbfb);
+
+      .tab-item {
+        display: flex;
+        height: 44px;
+        padding: var(--spacing-md, 8px) var(--spacing-lg, 12px);
+        justify-content: center;
+        align-items: center;
+        gap: var(--spacing-md, 8px);
+
+        border-radius: var(--radius-sm, 6px);
+
+        color: var(--colors-text-text-quaternary-500, #727171);
+
+        /* Text md/Semibold */
+        font-family: var(--Font-family-font-family-body, Roboto);
+        font-size: var(--Font-size-text-md, 16px);
+        font-style: normal;
+        font-weight: 600;
+        line-height: var(--Line-height-text-md, 24px); /* 150% */
+      }
+
+      .selected {
+        display: flex;
+        height: 44px;
+        padding: var(--spacing-md, 8px) var(--spacing-lg, 12px);
+        justify-content: center;
+        align-items: center;
+        gap: var(--spacing-md, 8px);
+
+        border-radius: var(--radius-sm, 6px);
+        background: var(--Colors-Background-bg-primary_alt, #fff);
+
+        /* Shadows/shadow-sm */
+        box-shadow: 0px 1px 3px 0px
+            var(--Colors-Effects-Shadows-shadow-sm_01, rgba(31, 31, 31, 0.1)),
+          0px 1px 2px 0px
+            var(--Colors-Effects-Shadows-shadow-sm_02, rgba(31, 31, 31, 0.06));
+
+        color: var(--colors-text-text-secondary-700, #525252);
+
+        /* Text md/Semibold */
+        font-family: var(--Font-family-font-family-body, Roboto);
+        font-size: var(--Font-size-text-md, 16px);
+        font-style: normal;
+        font-weight: 600;
+        line-height: var(--Line-height-text-md, 24px); /* 150% */
+      }
     }
   }
 </style>

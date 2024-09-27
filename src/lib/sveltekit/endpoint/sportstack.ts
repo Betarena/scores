@@ -12,7 +12,6 @@ import { json, type RequestEvent } from '@sveltejs/kit';
 import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.betarena-user.js';
 import type { IBetarenaUser } from '@betarena/scores-lib/types/_FIREBASE_.js';
 import { ITableAuthorAuthorQuery2Out, ITableAuthorAuthorQuery2Var, TableAuthorAuthorQuery2 } from '@betarena/scores-lib/dist/graphql/v8/table.authors.authors.js';
-import { uid } from 'chart.js/dist/helpers/helpers.core.js';
 
 // ╭──────────────────────────────────────────────────────────────────╮
 // │ 🛠️ MAIN METHODS                                                  │

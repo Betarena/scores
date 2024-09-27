@@ -29,12 +29,14 @@
   import userSettings from "$lib/store/user-settings.js";
   import type { PageData } from ".svelte-kit/types/src/routes/(scores)/u/author/create/[lang=lang]/$types.js";
   import session from "$lib/store/session.js";
-  import WidgetMenuOpt from "./Widget-MenuOpt.svelte";
+  import WidgetMenuOpt from "../Widget-MenuOpt.svelte";
   import { infoMessages } from "$lib/components/ui/infomessages/infomessages.js";
   import { post } from "$lib/api/utils.js";
   import { page } from "$app/stores";
   import { enhance } from "$app/forms";
   import { goto } from "$app/navigation";
+    import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
+    import Tabbar from "$lib/components/ui/Tabbar.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -104,6 +106,8 @@
     };
   }
   $: name = name.replace(/[^\w\s]/gi, '');
+  const tabs = [{id: 1, label: 'Home'}, {id: 2, label: 'Articles'}, {id: 3, label: 'Config'}];
+  const options = [{id: 1, label: 'SprortsTack1'}, {id: 2, label: 'SprortsTack2'}, {id: 3, label: 'SprortsTack3'}];
 </script>
 
 <!--
@@ -132,11 +136,10 @@
     <div id="publication-create" class={$session.viewportType}>
       <div class="header-wrapper">
         <div class="header">
-          <h2>{translate?.publication_create || "Publication Create"}</h2>
-          <p>
-            {translate?.publication_create_desc ||
-              "Lorem ipsum dolor sit amet consectetur. Turpis sed et proin commodo."}
-          </p>
+          <h2>{translate?.publication_create || "Home"}</h2>
+
+          <DropDownInput {options} />
+          <Tabbar type="button_border" data={tabs} />
         </div>
         <div class="buttons-header">
           <a href="/u/author/{$userSettings.lang}">
