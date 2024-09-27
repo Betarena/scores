@@ -135,8 +135,8 @@
         query: {},
         body: { user_uids: ids },
       })
-    ).success;
-    if (!res) {
+    );
+    if (!res || !res?.success) {
       reloading = false;
       loading = false;
       return;
@@ -147,7 +147,7 @@
       nextMap.set(userProfile.uid, userProfile);
      }
      const prevProfiles = userInList ? [userProfile, ...prevData] : prevData;
-     const users = res.data as IBetarenaUser[];
+     const users = res.success.data as IBetarenaUser[];
     nextMap = new Map([...nextMap, ...prevData]);
     users.forEach((u) => nextMap.set(u.uid, u));
     displayedData[type] = nextMap;
