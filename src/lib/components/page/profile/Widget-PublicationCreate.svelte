@@ -98,7 +98,7 @@
             type: "success",
             text: "The publication was created successfully.",
           });
-          goto(`/u/author/${userSettings.extract("lang")}`);
+          goto(`/u/author/${userSettings.extract("lang")}`, {replaceState: true});
         }
       });
     };
@@ -139,7 +139,7 @@
           </p>
         </div>
         <div class="buttons-header">
-          <a href="/u/author/{$userSettings.lang}">
+          <a data-sveltekit-replacestate href="/u/author/{$userSettings.lang}">
             <Button full={true} type="outline">Cancel</Button>
           </a>
           <Button submit={true} disabled={inputError}>Save</Button>
