@@ -30,6 +30,7 @@ COMPONENT JS (w/ TS)
   let sportstacks: AuthorsAuthorsMain[] = [];
   let loading = false;
 
+
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -37,7 +38,10 @@ COMPONENT JS (w/ TS)
   // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
-
+$: if(sportstacks.length && $userSettings.user?.firebase_user_data && !$userSettings.user.firebase_user_data.highlights?.sportstack) {
+  const firstSporsttack = sportstacks.at(-1);
+  userSettings.updateData([["user-highlighted-sportstack", firstSporsttack?.id]])
+}
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
