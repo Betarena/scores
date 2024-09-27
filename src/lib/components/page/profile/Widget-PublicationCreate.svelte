@@ -103,6 +103,7 @@
       });
     };
   }
+  $: name = name.replace(/[^\w\s]/gi, '');
 </script>
 
 <!--

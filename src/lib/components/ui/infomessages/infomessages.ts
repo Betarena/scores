@@ -8,11 +8,11 @@ interface IInfoMessage
 function messageInfo()
 {
   const { subscribe, update } = writable<IInfoMessage[]>([
-    {
-      type: "success",
-      text: "Welcome to the game!",
-      id: 1
-    }
+    // {
+    //   type: "success",
+    //   text: "Welcome to the game!",
+    //   id: 1
+    // }
   ]);
 
   function add(message: IInfoMessage)
