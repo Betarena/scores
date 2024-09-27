@@ -139,7 +139,7 @@
           <h2>{translate?.publication_create || "Home"}</h2>
 
           <DropDownInput {options} />
-          <Tabbar type="button_border" data={tabs} />
+          <Tabbar type="button_border" data={tabs} selected={tabs[0]} />
         </div>
         <div class="buttons-header">
           <a href="/u/author/{$userSettings.lang}">

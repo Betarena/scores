@@ -399,8 +399,203 @@ body {
   --line-height-text-sm: 20px;
   --line-height-display-xs: 32px;
   --line-height-text-md: 24px;
-//BTA-2.0
   --colors-border-border-brand: #F5620F;
   --colors-foreground-fg-brand-primary-500: #F5620F;
   --colors-foreground-fg-quaternary-500: #727171;
+}
+//BTA-2.0
+/* _Primitives - Style */
+:root {
+  --colors-base-white: #ffffff;
+  --colors-base-black: #000000;
+  --colors-base-transparent: #ffffff00;
+  --colors-gray-25: #fcfcfd;
+  --colors-gray-50: rgba(251, 251, 251, 1);
+  --colors-gray-100: rgba(247, 247, 247, 1);
+  --colors-gray-200: rgba(237, 237, 237, 1);
+  --colors-gray-300: rgba(210, 210, 210, 1);
+  --colors-gray-400: rgba(140, 140, 140, 1);
+  --colors-gray-500: rgba(114, 113, 113, 1);
+  --colors-gray-600: rgba(106, 106, 106, 1);
+  --colors-gray-700: rgba(82, 82, 82, 1);
+  --colors-gray-800: rgba(59, 59, 59, 1);
+  --colors-gray-900: rgba(49, 49, 49, 1);
+  --colors-gray-950: #1f1f1f;
+  --colors-brand-25: rgba(255, 250, 248, 1);
+  --colors-brand-50: rgba(254, 245, 240, 1);
+  --colors-brand-100: rgba(254, 236, 226, 1);
+  --colors-brand-200: rgba(252, 213, 192, 1);
+  --colors-brand-300: rgba(250, 175, 133, 1);
+  --colors-brand-400: rgba(247, 129, 63, 1);
+  --colors-brand-500: rgba(245, 98, 15, 1);
+  --colors-brand-600: rgba(212, 85, 12, 1);
+  --colors-brand-700: rgba(174, 70, 11, 1);
+  --colors-brand-800: rgba(135, 54, 8, 1);
+  --colors-brand-900: rgba(103, 41, 6, 1);
+  --colors-brand-950: rgba(103, 41, 6, 1);
+  --colors-error-25: rgba(255, 251, 250, 1);
+  --colors-error-50: rgba(254, 243, 242, 1);
+  --colors-error-100: rgba(254, 228, 226, 1);
+  --colors-error-200: rgba(254, 205, 202, 1);
+  --colors-error-300: rgba(253, 162, 155, 1);
+  --colors-error-400: rgba(249, 112, 102, 1);
+  --colors-error-500: rgba(255, 60, 60, 1);
+  --colors-error-600: rgba(234, 43, 43, 1);
+  --colors-error-700: rgba(199, 35, 35, 1);
+  --colors-error-800: rgba(151, 26, 26, 1);
+  --colors-error-900: rgba(111, 18, 18, 1);
+  --colors-error-950: rgba(88, 14, 14, 1);
+  --colors-warning-25: rgba(255, 252, 245, 1);
+  --colors-warning-50: rgba(255, 250, 235, 1);
+  --colors-warning-100: rgba(254, 240, 199, 1);
+  --colors-warning-200: rgba(254, 223, 137, 1);
+  --colors-warning-300: rgba(254, 200, 75, 1);
+  --colors-warning-400: rgba(253, 176, 34, 1);
+  --colors-warning-500: rgba(247, 144, 9, 1);
+  --colors-warning-600: rgba(220, 104, 3, 1);
+  --colors-warning-700: rgba(181, 71, 8, 1);
+  --colors-warning-800: rgba(147, 55, 13, 1);
+  --colors-warning-900: rgba(122, 46, 14, 1);
+  --colors-warning-950: rgba(78, 29, 9, 1);
+  --colors-success-25: rgba(246, 254, 249, 1);
+  --colors-success-50: rgba(236, 253, 243, 1);
+  --colors-success-100: rgba(220, 250, 230, 1);
+  --colors-success-200: rgba(171, 239, 198, 1);
+  --colors-success-300: rgba(117, 224, 167, 1);
+  --colors-success-400: rgba(71, 205, 137, 1);
+  --colors-success-500: rgba(23, 178, 106, 1);
+  --colors-success-600: rgba(7, 148, 85, 1);
+  --colors-success-700: rgba(6, 118, 71, 1);
+  --colors-success-800: rgba(8, 93, 58, 1);
+  --colors-success-900: rgba(7, 77, 49, 1);
+  --colors-success-950: rgba(5, 51, 33, 1);
+  --spacing-0: 0px;
+  --spacing-0․5: 2px;
+  --spacing-1: 4px;
+  --spacing-1․5: 6px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --spacing-10: 40px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-20: 80px;
+  --spacing-24: 96px;
+  --spacing-32: 128px;
+  --spacing-40: 160px;
+  --spacing-48: 192px;
+  --spacing-56: 224px;
+  --spacing-64: 256px;
+  --spacing-80: 320px;
+  --spacing-96: 384px;
+  --spacing-120: 480px;
+  --spacing-140: 560px;
+  --spacing-160: 640px;
+  --spacing-180: 720px;
+  --spacing-192: 768px;
+  --spacing-256: 1024px;
+  --spacing-320: 1280px;
+  --spacing-360: 1440px;
+  --spacing-400: 1600px;
+  --spacing-480: 1920px;
+}
+
+/* 5. Containers - Value */
+:root {
+  --container-padding-mobile: var(--spacing-4);
+  --container-padding-desktop: var(--spacing-8);
+  --container-max-width-desktop: var(--spacing-320);
+}
+
+/* 4. Widths - Mode 1 */
+:root {
+  --width-xxs: var(--spacing-80);
+  --width-xs: var(--spacing-96);
+  --width-sm: var(--spacing-120);
+  --width-md: var(--spacing-140);
+  --width-lg: var(--spacing-160);
+  --width-xl: var(--spacing-192);
+  --width-2xl: var(--spacing-256);
+  --width-3xl: var(--spacing-320);
+  --width-4xl: var(--spacing-360);
+  --width-5xl: var(--spacing-400);
+  --width-6xl: var(--spacing-480);
+  --paragraph-max-width: var(--spacing-180);
+}
+
+
+/* 3. Spacing - Mode 1 */
+:root {
+  --spacing-none: var(--spacing-0);
+  --spacing-xxs: var(--spacing-0․5);
+  --spacing-xs: var(--spacing-1);
+  --spacing-sm: var(--spacing-1․5);
+  --spacing-md: var(--spacing-2);
+  --spacing-lg: var(--spacing-3);
+  --spacing-xl: var(--spacing-4);
+  --spacing-2xl: var(--spacing-5);
+  --spacing-3xl: var(--spacing-6);
+  --spacing-4xl: var(--spacing-8);
+  --spacing-5xl: var(--spacing-10);
+  --spacing-6xl: var(--spacing-12);
+  --spacing-7xl: var(--spacing-16);
+  --spacing-8xl: var(--spacing-20);
+  --spacing-9xl: var(--spacing-24);
+  --spacing-10xl: var(--spacing-32);
+  --spacing-11xl: var(--spacing-40);
+}
+
+/* 2. Radius - Mode 1 */
+:root {
+  --radius-none: 0px;
+  --radius-xxs: 2px;
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-3xl: 20px;
+  --radius-4xl: 24px;
+  --radius-full: 9999px;
+}
+
+
+/* 6. Typography - Value */
+:root {
+  --font-family-font-family-display: Roboto;
+  --font-family-font-family-body: Roboto;
+  --font-weight-regular: Regular;
+  --font-weight-regular-italic: Regular italic;
+  --font-weight-medium: Medium;
+  --font-weight-medium-italic: Medium italic;
+  --font-weight-semibold: Semibold;
+  --font-weight-semibold-italic: Semibold italic;
+  --font-weight-bold: Bold;
+  --font-weight-bold-italic: Bold italic;
+  --font-size-text-xs: 12px;
+  --line-height-text-xs: 18px;
+  --line-height-text-sm: 20px;
+  --line-height-text-md: 24px;
+  --line-height-text-lg: 28px;
+  --line-height-text-xl: 30px;
+  --line-height-display-xs: 32px;
+  --line-height-display-sm: 38px;
+  --line-height-display-md: 44px;
+  --line-height-display-lg: 60px;
+  --line-height-display-xl: 72px;
+  --line-height-display-2xl: 90px;
+  --font-size-text-sm: 14px;
+  --font-size-text-md: 16px;
+  --font-size-text-lg: 18px;
+  --font-size-text-xl: 20px;
+  --font-size-display-xs: 24px;
+  --font-size-display-sm: 30px;
+  --font-size-display-md: 36px;
+  --font-size-display-lg: 48px;
+  --font-size-display-xl: 60px;
+  --font-size-display-2xl: 72px;
 }

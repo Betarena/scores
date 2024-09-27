@@ -9,7 +9,6 @@
 
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import DOMPurify from "dompurify";
   import ArrowDown from "./assets/arrow-down.svelte";
 
   // #region ➤ 📌 VARIABLES
@@ -131,7 +130,7 @@
                 >
                   <path
                     d="M20 6L9 17L4 12"
-                    stroke="var( --colors-foreground-fg-brand-primary-500)"
+                    stroke="var( --colors-foreground-fg-brand-primary)"
                     stroke-width="1.66"
                     stroke-linecap="round"
                     stroke-linejoin="round"
@@ -183,7 +182,7 @@
       gap: var(--spacing-xxs, 2px);
 
       .label-text {
-        color: var(--colors-text-text-secondary-700);
+        color: var(--colors-text-text-secondary);
 
         /* Text sm/Medium */
         font-family: var(--font-family-font-family-body, Roboto);
@@ -211,7 +210,7 @@
       position: relative;
       /* Shadows/shadow-xs */
       box-shadow: 0px 1px 2px 0px
-        var(--Colors-Effects-Shadows-shadow-xs, rgba(255, 255, 255, 0));
+        var(--colors-effects-shadows-shadow-xs, rgba(255, 255, 255, 0));
 
       .input-element {
         display: flex;
@@ -245,7 +244,7 @@
         border-bottom-right-radius: 0;
         border-right: none;
         user-select: none;
-        color: var(--colors-foreground-fg-tertiary-600);
+        color: var(--colors-foreground-fg-tertiary);
 
         /* Text md/Regular */
         font-family: var(--Font-family-font-family-body, Roboto);
@@ -258,25 +257,25 @@
 
     .field-info {
       .info {
-        color: var(--colors-text-text-tertiary-600, #8c8c8c);
+        color: var(--colors-text-text-tertiary, #8c8c8c);
 
         /* Text sm/Regular */
-        font-family: var(--Font-family-font-family-body, Roboto);
-        font-size: var(--Font-size-text-sm, 14px);
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-sm, 14px);
         font-style: normal;
         font-weight: 400;
-        line-height: var(--Line-height-text-sm, 20px); /* 142.857% */
+        line-height: var(--line-height-text-sm, 20px); /* 142.857% */
       }
 
       .error {
-        color: var(--colors-text-text-error-primary-600, #f97066);
+        color: var(--colors-text-text-error-primary, #f97066);
 
         /* Text sm/Regular */
-        font-family: var(--Font-family-font-family-body, Roboto);
-        font-size: var(--Font-size-text-sm, 14px);
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-sm, 14px);
         font-style: normal;
         font-weight: 400;
-        line-height: var(--Line-height-text-sm, 20px); /* 142.857% */
+        line-height: var(--line-height-text-sm, 20px); /* 142.857% */
       }
     }
 

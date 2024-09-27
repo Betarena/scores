@@ -86,6 +86,7 @@
 
   let callCount = 0;
   function setBorder(tab: ITab) {
+    if (!activeNode) return;
     const tabNode = tabbarNode.querySelector(
       `[data-tab-id="${tab.id}"]`
     ) as any;
@@ -182,8 +183,8 @@
       gap: var(--spacing-xs, 4px);
 
       border-radius: var(--radius-xl, 12px);
-      border: 1px solid var(--Colors-Border-border-secondary, #ededed);
-      background: var(--Colors-Background-bg-secondary_alt, #fbfbfb);
+      border: 1px solid var(--colors-border-border-secondary, #ededed);
+      background: var(--colors-background-bg-secondary_alt, #fbfbfb);
 
       .tab-item {
         display: flex;
@@ -214,22 +215,22 @@
         gap: var(--spacing-md, 8px);
 
         border-radius: var(--radius-sm, 6px);
-        background: var(--Colors-Background-bg-primary_alt, #fff);
+        background: var(--colors-background-bg-primary_alt, #fff);
 
         /* Shadows/shadow-sm */
         box-shadow: 0px 1px 3px 0px
-            var(--Colors-Effects-Shadows-shadow-sm_01, rgba(31, 31, 31, 0.1)),
+            var(--colors-effects-shadows-shadow-sm_01, rgba(31, 31, 31, 0.1)),
           0px 1px 2px 0px
-            var(--Colors-Effects-Shadows-shadow-sm_02, rgba(31, 31, 31, 0.06));
+            var(--colors-effects-shadows-shadow-sm_02, rgba(31, 31, 31, 0.06));
 
-        color: var(--colors-text-text-secondary-700, #525252);
+        color: var(--colors-text-text-secondary, #525252);
 
         /* Text md/Semibold */
-        font-family: var(--Font-family-font-family-body, Roboto);
-        font-size: var(--Font-size-text-md, 16px);
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-md, 16px);
         font-style: normal;
         font-weight: 600;
-        line-height: var(--Line-height-text-md, 24px); /* 150% */
+        line-height: var(--line-height-text-md, 24px); /* 150% */
       }
     }
   }
