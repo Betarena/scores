@@ -17,7 +17,7 @@
 
 import { writable } from 'svelte/store';
 
-import { updateButtonOrder, updateDataByKey, updateFollowing, updateSelectLang } from '$lib/firebase/common.js';
+import { updateButtonOrder, updateDataByKey, updateFollowing, updateHighlightedSpotstack, updateSelectLang } from '$lib/firebase/common.js';
 import sessionStore from '$lib/store/session.js';
 import { initSportbookData } from '$lib/utils/geo.js';
 import { initUser, logoutUser } from '$lib/utils/user.js';
@@ -65,6 +65,7 @@ export type IDataProp =
   | 'user-following'
   | "user-buttons-order"
   | "user-subscriptions"
+  | "user-highlighted-sportstack"
   ;
 
 enum DataPropEnum
@@ -85,7 +86,8 @@ enum DataPropEnum
   USER_INVESTOR_BALANCE = 'user-investor-balance',
   USER_FOLLOWING = 'user-following',
   USER_SUBSCRIPTION = 'user-subscriptions',
-  USER_BUTTONS_ORDER = 'user-buttons-order'
+  USER_BUTTONS_ORDER = 'user-buttons-order',
+  USER_HIGHLIGHTED_SPORTSTACK = 'user-highlighted-sportstack',
 }
 // #endregion ➤ 📌 VARIABLES
 
@@ -504,6 +506,15 @@ function createLocalStore
               case DataPropEnum.USER_BUTTONS_ORDER: {
                 (scores_user as any).buttons_order = dataPoint as string[];
                 updateButtonOrder(dataPoint as string[]);
+                break;
+              }
+              case DataPropEnum.USER_HIGHLIGHTED_SPORTSTACK: {
+                if (!scores_user.highlights)
+                {
+                  (scores_user as any).highlights = {}
+                }
+                (scores_user as any).highlights.sportstack = dataPoint as string;
+                updateHighlightedSpotstack(dataPoint as string);
                 break;
               }
               default: break

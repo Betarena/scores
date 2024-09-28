@@ -1241,17 +1241,10 @@ export async function updateButtonOrder
     uid = userBetarenaSettings.extract('uid') as string | undefined | null,
     /**
      * @description
-     * 📝 Data for `page`
-     */
-    page = sessionStore.extract<Page>('page') as Page,
-    /**
-     * @description
      * 📝 Conditional logic bundle simplification
      */
     if_M_0
-      = !checkNull(page.error)
-      || checkNull(page.route.id)
-      || !order
+      = !order
       || !uid
     ;
 
@@ -1262,8 +1255,6 @@ export async function updateButtonOrder
     (
       '🚏 checkpoint ➤ updateButtonOrder(..)',
       [
-        `🔹 [var] ➤ opts.isPageError :|: ${page.error}`,
-        `🔹 [var] ➤ opts.routeId :|: ${page.route.id}`,
         `🔹 [var] ➤ buttuns order :|: ${order}`,
         `🔹 [var] ➤ uid :|: ${uid}`,
       ],
@@ -1284,6 +1275,71 @@ export async function updateButtonOrder
       userRef,
       {
         buttons_order: order
+      }
+    );
+  return;
+}
+
+/**
+ * @author
+ *  @izobov
+ * @summary
+ *  🟦 HELPER
+ * @description
+ *  📣 Update `user` highlighted sportstack
+ * @param { string } id
+ *  💠 **[required]** Following object
+ * @returns { Promise < void > }
+ */
+export async function updateHighlightedSpotstack
+  (
+    id: string
+  ): Promise<void>
+{
+  const
+    /**
+     * @description
+     * 📝 Data point
+     */
+    uid = userBetarenaSettings.extract('uid') as string | undefined | null,
+    /**
+     * @description
+     * 📝 Conditional logic bundle simplification
+     */
+    if_M_0
+      = !id
+      || !uid
+    ;
+
+  if (if_M_0) return;
+
+  // [🐞]
+  dlogv2
+    (
+      '🚏 checkpoint ➤ updateButtonOrder(..)',
+      [
+        `🔹 [var] ➤ sportstack id :|: ${id}`,
+        `🔹 [var] ➤ uid :|: ${uid}`,
+      ],
+      true
+    );
+
+  const
+    userRef = doc
+      (
+        db_firestore,
+        'betarena_users',
+        uid,
+      )
+    ;
+
+  await updateDoc
+    (
+      userRef,
+      {
+        highlights: {
+          sportstack: id
+        }
       }
     );
   return;
