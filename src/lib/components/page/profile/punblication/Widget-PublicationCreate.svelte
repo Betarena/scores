@@ -54,11 +54,11 @@
 
   export let data: PageData;
 
-  $: ({ translate } = data);
   let name = "";
   let inputError = false;
   let debounceTimer;
   let form: HTMLFormElement;
+  $: translation = $page.data.RESPONSE_PROFILE_DATA?.sportstack;
   // #endregion ➤ 📌 VARIABLES
 
   function debounceValidation(e: CustomEvent<string>) {
@@ -132,17 +132,17 @@
     <div id="publication-create" class={$session.viewportType}>
       <div class="header-wrapper">
         <div class="header">
-          <h2>{translate?.publication_create || "Publication Create"}</h2>
+          <h2>{translation?.create || "Publication Create"}</h2>
           <p>
-            {translate?.publication_create_desc ||
+            {translation?.description ||
               "Lorem ipsum dolor sit amet consectetur. Turpis sed et proin commodo."}
           </p>
         </div>
         <div class="buttons-header">
           <a data-sveltekit-replacestate href="/u/author/{$userSettings.lang}">
-            <Button full={true} type="outline">Cancel</Button>
+            <Button full={true} type="outline">{translation?.cancel || "Cancel"}</Button>
           </a>
-          <Button submit={true} disabled={inputError}>Save</Button>
+          <Button submit={true} disabled={inputError}>{translation?.save || "Save"}</Button>
         </div>
       </div>
       <div class="form">
@@ -150,6 +150,7 @@
           <Input
             name="name"
             type="leading-text"
+            placeholder={translation?.default_name || "default_sportstack"}
             on:input={debounceValidation}
             error={inputError}
             requred={true}
@@ -157,16 +158,16 @@
           >
             <span slot="label">URL</span>
             <span slot="leading-text">sportstack/</span>
-            <span slot="error">The name is already in use.</span>
-            <span slot="info">You can change the name later if you wish.</span>
+            <span slot="error">{translation.alert || "The name is already in use."}</span>
+            <span slot="info">{translation.message || "You can change the name later if you wish."}</span>
           </Input>
         </div>
 
         <div class="buttons">
           <a href="/u/author/{$userSettings.lang}">
-            <Button full={true} type="secondary-gray">Cancel</Button>
+            <Button full={true} type="secondary-gray">{translation?.cancel || "Cancel"}</Button>
           </a>
-          <Button submit={true} disabled={inputError}>Save</Button>
+          <Button submit={true} disabled={inputError}>{translation?.save || "Save"}</Button>
         </div>
       </div>
     </div>
