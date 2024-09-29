@@ -9,6 +9,23 @@
 
 <script lang="ts">
   import Button from "$lib/components/ui/Button.svelte";
+  import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
+    import userSettings from "$lib/store/user-settings.js";
+
+  const options = [
+    {
+      id: 3,
+      label: "All",
+    },
+    {
+      id: 1,
+      label: "Published",
+    },
+    {
+      id: 2,
+      label: "Unpunlished",
+    },
+  ];
 </script>
 
 <!--
@@ -22,15 +39,17 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="publication-home">
+<div class="publication-articles">
   <div class="buttons-header">
-    <Button type="secondary-gray">VIew sportstack</Button>
-    <Button type="primary">+ New article</Button>
+    <a href="u/author/article/create/{$userSettings.lang}">
+      <Button type="primary">+ New article</Button>
+    </a>
   </div>
   <div class="header">
-    <h3>Recent articles</h3>
+    <div class="dropdown-input">
+      <DropDownInput {options} value={options[1]} />
+    </div>
     <a class="view-all">
-      <span>View all</span>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="20"
@@ -39,13 +58,13 @@
         fill="none"
       >
         <path
-          d="M7.5 15L12.5 10L7.5 5"
-          stroke="#8C8C8C"
+          d="M5 10H15M2.5 5H17.5M7.5 15H12.5"
           stroke-width="1.66667"
           stroke-linecap="round"
           stroke-linejoin="round"
         />
       </svg>
+      <span>Sort by</span>
     </a>
   </div>
   <div class="content" />
@@ -62,7 +81,7 @@
 -->
 
 <style lang="scss">
-  .publication-home {
+  .publication-articles {
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -87,21 +106,8 @@
       gap: var(--spacing-lg, 12px);
       align-self: stretch;
 
-      h3 {
-        margin: 0;
-        color: var(--colors-text-text-primary, #fbfbfb);
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        flex: 1 0 0;
-        align-self: stretch;
-
-        /* Display xs/Semibold */
-        font-family: var(--font-family-font-family-display, Roboto);
-        font-size: var(--font-size-display-xs, 24px);
-        font-style: normal;
-        font-weight: 600;
-        line-height: var(--line-height-display-xs, 32px); /* 133.333% */
+      .dropdown-input {
+        flex-grow: 1;
       }
 
       .view-all {

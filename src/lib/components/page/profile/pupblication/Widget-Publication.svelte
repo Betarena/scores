@@ -27,7 +27,6 @@
   import type { PageData } from ".svelte-kit/types/src/routes/(scores)/u/author/create/[lang=lang]/$types.js";
   import session from "$lib/store/session.js";
   import WidgetMenuOpt from "../Widget-MenuOpt.svelte";
-  import { enhance } from "$app/forms";
   import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
   import Tabbar from "$lib/components/ui/Tabbar.svelte";
   import PublicationHome from "./PublicationHome.svelte";
