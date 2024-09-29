@@ -54,7 +54,6 @@
 
   export let data: PageData;
 
-  $: ({ translate } = data);
   let name = "";
   let inputError = false;
   let debounceTimer;
