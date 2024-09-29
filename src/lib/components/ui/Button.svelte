@@ -43,7 +43,8 @@
       | "primary-outline"
       | "subtle" = "primary";
 
-    export let submit = false;
+  export let submit = false;
+  export let size: "lg" | "md" | "sm" | "xl" | "xxl" = "lg";
 
   const dispatch = createEventDispatcher();
   let hover = false;
@@ -62,7 +63,7 @@
 -->
 
 <button
-  class="button {type} {classname}"
+  class="button {type} {classname} {size}"
   class:full
   class:disabled
   {...$$restProps}
@@ -105,6 +106,35 @@
     font-weight: 500;
     line-height: 150%; /* 24px */
     cursor: pointer;
+
+    /* Text sm/Medium */
+    font-family: var(--font-family-font-family-body, Roboto);
+    font-size: var(--font-size-text-sm, 14px);
+    font-style: normal;
+    font-weight: 500;
+    line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+
+    border-radius: var(--radius-md, 8px);
+
+    &.lg {
+      padding: 10px var(--spacing-xl, 16px);
+    }
+
+    &.md {
+      padding: 10px 14px;
+    }
+
+    &.sm {
+      padding: var(--spacing-md, 8px) var(--spacing-lg, 12px);
+    }
+
+    &.xl {
+      padding: var(--spacing-lg, 12px) 18px;
+    }
+
+    &.xxl {
+      padding: var(--spacing-xl, 16px) 22px;
+    }
   }
 
   .full {
@@ -112,22 +142,38 @@
   }
 
   .primary {
-    background: var(--primary, #f5620f);
-    color: var(--white-day, #fff);
-    border: 1px solid var(--primary) !important;
+    background: var(
+      --component-colors-components-buttons-primary-button-primary-bg,
+      #f5620f
+    );
 
-    /* shadow/orange */
-    box-shadow: 0px 3px 8px 0px rgba(212, 84, 12, 0.32);
+    /* Shadows/shadow-xs */
+    box-shadow: 0px 1px 2px 0px
+      var(--colors-effects-shadows-shadow-xs, rgba(31, 31, 31, 0.05));
+
+    color: var(
+      --component-colors-components-buttons-primary-button-primary-fg,
+      #fff
+    );
 
     &.hover {
-      background: var(--primary-fade, #f5620f);
-      border: 1px solid var(--primary-fade) !important;
+      background: var(
+        --component-colors-components-иuttons-зrimary-button-primary-bg_hover,
+        #f7813f
+      );
+      /* Shadows/shadow-xs */
+      box-shadow: 0px 1px 2px 0px
+        var(--colors-effects-shadows-shadow-xs, rgba(31, 31, 31, 0.05));
     }
 
     &.disabled {
-      background: var(--primary-fade, #f5620f);
-      border: 1px solid var(--primary-fade) !important;
+      border: 1px solid var(--colors-border-border-disabled_subtle, #ededed);
+      background: var(--colors-background-bg-disabled, #f7f7f7);
+      /* Shadows/shadow-xs */
+      box-shadow: 0px 1px 2px 0px
+        var(--colors-effects-shadows-shadow-xs, rgba(31, 31, 31, 0.05));
       cursor: not-allowed;
+      color: var(--colors-foreground-fg-disabled, #8c8c8c);
     }
   }
   .subtle {
@@ -174,13 +220,49 @@
     }
   }
   .secondary-gray {
-    background-color: var(--button-secondary-bg2);
-    border: 1px solid var(--button-secondary-border) !important;
-    color: var(--button-secondary-fg);
+    color: var(
+      --component-colors-components-buttons-secondary-button-secondary-fg,
+      #525252
+    );
+
+    border: 1px solid
+      var(
+        --component-colors-components-buttons-secondary-button-secondary-border,
+        #d2d2d2
+      ) !important;
+    background: var(
+      --component-colors-components-buttons-secondary-button-secondary-bg,
+      #fff
+    );
+    /* Shadows/shadow-xs */
+    box-shadow: 0px 1px 2px 0px
+      var(--colors-effects-shadows-shadow-xs, rgba(31, 31, 31, 0.05));
 
     &.hover {
-      background-color: var(--button-secondary-bg);
-      color: var(--text-color);
+      color: var(
+        --component-colors-components-buttons-secondary-button-secondary-fg_hover,
+        #3b3b3b
+      );
+
+      border: 1px solid
+        var(
+          --component-colors-components-buttons-secondary-button-secondary-border_hover,
+          #d2d2d2
+        );
+      background: var(
+        --component-colors-components-buttons-secondary-button-secondary-bg_hover,
+        #fbfbfb
+      );
+      /* Shadows/shadow-xs */
+      box-shadow: 0px 1px 2px 0px
+        var(--colors-effects-shadows-shadow-xs, rgba(31, 31, 31, 0.05));
+    }
+
+    &.disabled {
+      background: var(--colors-background-bg-primary, #fff);
+      /* Shadows/shadow-xs */
+      box-shadow: 0px 1px 2px 0px
+        var(--colors-effects-shadows-shadow-xs, rgba(31, 31, 31, 0.05));
     }
   }
 </style>

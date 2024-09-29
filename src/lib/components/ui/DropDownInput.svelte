@@ -37,6 +37,7 @@
   export let name = "";
   export let textKey = "label";
   export let options: IOption[] = [];
+  export let checkIcon = false;
   export let onInputValidation:
     | ((val: string | number) => boolean)
     | undefined = undefined;
@@ -81,67 +82,79 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<svelte:window on:click={() => {modal = false; focus = false}} />
+<svelte:window
+  on:click={() => {
+    modal = false;
+    focus = false;
+  }}
+/>
 <div class="field">
   <select {name} style="display: none;" bind:value>
     {#each options as option}
       <option value={option}>{option.label}</option>
     {/each}
   </select>
-  <label class="label" for={name}>
-    {#if $$slots.label}
+  {#if $$slots.label || requred}
+    <label class="label" for={name}>
       <span class="label-text">
         <slot name="label" />
       </span>
-    {/if}
-    {#if requred}
-      <span class="required">*</span>
-    {/if}
-  </label>
+      {#if requred}
+        <span class="required">*</span>
+      {/if}
+    </label>
+  {/if}
   <div class="input-wrapper">
-    <div class="input-element" class:focus class:error on:click|stopPropagation={() => {modal = !modal; focus= true}}>
-        {#if value}
-          <slot name="option" option={value}>{value[textKey]}</slot>
-        {:else}
-          <slot name="placeholder" />
-        {/if}
-        <span class="arrow-image" class:opend={modal}>
-          <ArrowDown color="var(--colors-foreground-fg-quaternary-500)"/>
-        </span>
+    <div
+      class="input-element"
+      class:focus
+      class:error
+      on:click|stopPropagation={() => {
+        modal = !modal;
+        focus = true;
+      }}
+    >
+      {#if value}
+        <slot name="option" option={value}>{value[textKey]}</slot>
+      {:else}
+        <slot name="placeholder" />
+      {/if}
+      <span class="arrow-image" class:opend={modal}>
+        <ArrowDown color="var(--colors-foreground-fg-quaternary-500)" />
+      </span>
     </div>
     <div class="select-dropdown" class:show={modal}>
-      <div class="select-dropdown-list">
         {#each options as option (option.id)}
-          <div
-            on:click={() => select(option)}
-            class="list-item"
-            class:active={option.id === value?.id}
-          >
-            <slot name="option">
-              {option[textKey]}
+          <div class="list-item-wrapper">
+            <div
+              on:click={() => select(option)}
+              class="list-item"
+              class:active={option.id === value?.id}
+            >
+              <slot name="option">
+                {option[textKey]}
 
-              {#if option.id === value?.id}
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M20 6L9 17L4 12"
-                    stroke="var( --colors-foreground-fg-brand-primary)"
-                    stroke-width="1.66"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
-
-              {/if}
-            </slot>
+                {#if checkIcon && option.id === value?.id}
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M20 6L9 17L4 12"
+                      stroke="var( --colors-foreground-fg-brand-primary)"
+                      stroke-width="1.66"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                {/if}
+              </slot>
+            </div>
           </div>
         {/each}
-      </div>
     </div>
   </div>
   {#if $$slots.error || $$slots.info}
@@ -222,11 +235,10 @@
         align-self: stretch;
         border-radius: var(--radius-md, 8px);
         border: 1px solid var(--colors-border-border-primary, #6a6a6a);
-        color: var(--colors-text-text-primary-900, #FBFBFB);
+        color: var(--colors-text-text-primary-900, #fbfbfb);
 
         &.focus {
-          border: 1px solid var(--colors-border-border-brand, #F5620F);
-
+          border: 1px solid var(--colors-border-border-brand, #f5620f);
         }
         &.error {
           border: 1px solid var(--colors-border-border-error_subtle, #f97066);
@@ -281,44 +293,63 @@
 
     .select-dropdown {
       position: absolute;
-      top: calc( 100% + var(--spacing-xs, 4px));
+      top: calc(100% + var(--spacing-xs, 4px));
       left: 50%;
       transform: translateX(-50%);
       min-width: 100%;
       width: 100%;
       width: fit-content;
       border-radius: var(--radius-md);
-      background: var(--bg-color-second);
       box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.24);
       z-index: 1;
       max-height: 300px;
       overflow-y: auto;
       cursor: default;
+
       display: none;
+      padding: var(--spacing-xs, 4px) var(--spacing-none, 0px);
+      background: var(--colors-background-bg-active);
+
       flex-direction: column;
+      align-items: flex-start;
+      align-self: stretch;
 
       &.show {
         display: flex;
       }
-
-      &-list {
-        display: flex;
-        flex-direction: column;
-        padding: 8px 0px;
-
-        .list-item {
+      .list-item-wrapper {
           display: flex;
+          padding: 1px var(--spacing-sm, 6px);
           align-items: center;
+          align-self: stretch;
           justify-content: space-between;
-          padding: 11px 12px;
-          cursor: pointer;
 
-          &:hover,
-          &.active {
-            background: var(--bg-hover-color);
+          color: var(--colors-text-text-secondary_hover, #ededed);
+
+          /* Text sm/Medium */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-sm, 14px);
+          font-style: normal;
+          font-weight: 500;
+          line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+
+          .list-item {
+            cursor: pointer;
+            display: flex;
+            padding: 9px 10px;
+            align-items: center;
+            flex: 1 0 0;
+
+            &:hover,
+            &.active {
+              border-radius: var(--radius-sm, 6px);
+              color: var(--colors-text-text-secondary_hover, #EDEDED);
+
+              background: var(--colors-background-bg-primary_hover, #3b3b3b);
+            }
           }
         }
-      }
+
     }
   }
 </style>
