@@ -30,7 +30,7 @@
   let element;
   let editor;
   let title = "";
-  let linkPopup = true;
+  let linkPopup = false;
   let showLinkText = false;
   let linkText = "";
   let linkHref = "";
