@@ -28,7 +28,7 @@
 
   let element;
   let editor;
-
+  let title = "";
   const options = [
     { id: 1, label: "Sportstack 1" },
     { id: 2, label: "Sportstack 2" },
@@ -45,8 +45,7 @@
           linkOnPaste: true,
         }),
         Placeholder.configure({
-          placeholder:
-            "<h1> Title (required) <h1> <p> Create your sports content</p>",
+          placeholder: "Create your sports content"
         }),
       ],
       onTransaction: () => {
@@ -63,6 +62,13 @@
   function toggle(cb) {
     editor.chain().focus()[cb]().run();
   }
+
+  function handleKeyDown(event) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      editor.chain().focus().run();
+    }
+  }
 </script>
 
 <!--
@@ -77,12 +83,21 @@
 -->
 
 <div id="create-article" class="create-article">
-  <Container>
+  <Container style="display: flex; flex-direction: column; flex-grow: 1">
     <div class="header">
       <XClose />
       <DropDownInput {options} />
     </div>
-    <div class="editor" bind:this={element} />
+    <div class="editor-wrapper">
+      <input
+        type="text"
+        class="title"
+        bind:value={title}
+        placeholder="Title (required)"
+        on:keydown={handleKeyDown}
+      />
+      <div class="editor" bind:this={element} />
+    </div>
   </Container>
 
   {#if editor}
@@ -155,6 +170,7 @@
     height: calc(100vh - 34px);
     display: flex;
     flex-direction: column;
+    justify-content: flex-end;
 
     .header {
       display: flex;
@@ -172,34 +188,78 @@
       }
     }
 
-    .editor {
+    .editor-wrapper {
+      display: flex;
+      flex-direction: column;
       padding-top: var(--spacing-xl, 16px);
       flex-grow: 1;
+      gap: var(--spacing-lg, 12px);
+      justify-content: flex-end;
 
-      :global(p) {
-        color: var(--colors-text-text-primary) !important;
+      .title {
+        border: none;
+        background: inherit;
+
+        color: var(--colors-text-text-primary, #fbfbfb);
+
+        /* Display xs/Regular */
         font-family: var(--font-family-font-family-display, Roboto);
-      }
-      :global(.ProseMirror) {
-        height: 100%;
-      }
-      :global(.ProseMirror-focused) {
-        height: 100%;
-        border: 0;
-      }
-      :global([contenteditable]) {
-        outline: none !important;
+        font-size: var(--font-size-display-xs, 24px);
+        font-style: normal;
+        font-weight: 400;
+        line-height: var(--line-height-display-xs, 32px); /* 133.333% */
+
+        &:focus-visible {
+          outline: none;
+        }
+        &::placeholder {
+          color: var(--colors-text-text-placeholder, #727171);
+        }
       }
 
-      :global(blockquote) {
-        border-left: 4px solid var(--component-colors-alpha-alpha-black-40);
-        padding-left: var(--spacing-lg, 12px);
-      }
-      :global(ul) {
-        color: var(--colors-text-text-primary) !important; /* Цвет маркеров и чисел */
-      }
-      :global(ol) {
-        color: var(--colors-text-text-primary) !important; /* Цвет маркеров и чисел */
+      .editor {
+        flex-grow: 1;
+        font-size: var(--font-size-text-md, 16px) !important;
+
+        :global(p) {
+          color: var(--colors-text-text-primary) !important;
+          font-family: var(--font-family-font-family-display, Roboto);
+          font-size: var(--font-size-text-md, 16px) !important;
+        }
+        :global(p.is-editor-empty:first-child::before) {
+          color: var(--colors-text-text-placeholder, #727171);
+          content: attr(data-placeholder);
+          font-family: var(--font-family-font-family-display, Roboto);
+          float: left;
+          height: 0;
+          pointer-events: none;
+
+        }
+        :global(.ProseMirror) {
+          height: 100%;
+        }
+        :global(.ProseMirror-focused) {
+          height: 100%;
+          border: 0;
+        }
+        :global([contenteditable]) {
+          outline: none !important;
+        }
+
+        :global(blockquote) {
+          border-left: 4px solid var(--component-colors-alpha-alpha-black-40);
+          padding-left: var(--spacing-lg, 12px);
+        }
+        :global(ul) {
+          color: var(
+            --colors-text-text-primary
+          ) !important; /* Цвет маркеров и чисел */
+        }
+        :global(ol) {
+          color: var(
+            --colors-text-text-primary
+          ) !important; /* Цвет маркеров и чисел */
+        }
       }
     }
 

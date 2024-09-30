@@ -13,7 +13,7 @@
 -->
 
 
-<div class="container-wrapper {$session.viewportType}">
+<div class="container-wrapper {$session.viewportType}  {$$restProps.class}" {...$$restProps}>
   <slot/>
 </div>
 
