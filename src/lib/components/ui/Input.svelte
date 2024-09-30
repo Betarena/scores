@@ -174,7 +174,6 @@
 
       .input-element {
         display: flex;
-        padding: 10px 14px;
         align-items: center;
         gap: var(--spacing-md, 8px);
         flex: 1 0 0;
@@ -197,6 +196,8 @@
           text-overflow: ellipsis;
           border: none;
           padding: 0;
+          background-color: inherit;
+          padding: 10px 14px;
 
           /* Text md/Regular */
           font-family: var(--Font-family-font-family-body, Roboto);
@@ -209,6 +210,9 @@
             background-color: transparent !important;
             color: inherit !important;
             box-shadow: none !important;
+          }
+          &:focus-visible {
+            outline: none;
           }
         }
       }

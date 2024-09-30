@@ -30,8 +30,10 @@
   let element;
   let editor;
   let title = "";
-  let linkPopup = false;
-  let editorFocused = false;
+  let linkPopup = true;
+  let showLinkText = false;
+  let linkText = "";
+  let linkHref = "";
   const options = [
     { id: 1, label: "Sportstack 1" },
     { id: 2, label: "Sportstack 2" },
@@ -55,24 +57,9 @@
         // force re-render so `editor.isActive` works as expected
         editor = editor;
       },
-      onFocus: () => {
-        editorFocused = true;
-      },
-      onBlur: () => {
-        editorFocused = false;
-      },
     });
-    alert("Virtual Keyboard: " + "virtualKeyboard" in navigator);
-    if ("virtualKeyboard" in navigator) {
-      (navigator.virtualKeyboard as any).overlaysContent = true;
-    }
-    if (navigator) {
-    }
 
     return () => {
-      if ("virtualKeyboard" in navigator) {
-        (navigator.virtualKeyboard as any).overlaysContent = false;
-      }
       editor?.destroy();
     };
   });
@@ -88,8 +75,33 @@
     }
   }
 
-  function showLinkPopup() {
+  function linkClick() {
+    if (editor.isActive("link")) {
+      editor.chain().focus().unsetLink().run();
+      return;
+    }
+    const selectionEmpty = editor.state.selection.empty;
+    showLinkText = selectionEmpty;
     linkPopup = true;
+  }
+
+  function hideLinkPopup() {
+    if (!linkPopup) return;
+    linkPopup = false;
+    if (linkHref) {
+      if (showLinkText) {
+        editor
+          .chain()
+          .focus()
+          .setLink({ href: linkHref })
+          .insertContent(linkText || linkHref)
+          .run();
+      } else {
+        editor.chain().focus().setLink({ href: linkHref }).run();
+      }
+      linkHref = "";
+      linkText = "";
+    }
   }
 </script>
 
@@ -103,15 +115,9 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<svelte:head>
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, virtual-keyboard=resizes-content"
-  />
-</svelte:head>
-<svelte:body on:click={() => (linkPopup = false)} />
+<svelte:body on:click={hideLinkPopup} />
 
-<div id="create-article" class="create-article" class:focused={editorFocused}>
+<div id="create-article" class="create-article">
   <Container style="display: flex; flex-direction: column; flex-grow: 1">
     <div class="header">
       <XClose />
@@ -158,13 +164,24 @@
             <Q />
           </div>
           <div
-            on:click|stopPropagation={showLinkPopup}
+            on:click|stopPropagation={linkClick}
             class="button link-button"
+            class:active={linkPopup || editor.isActive("link")}
           >
             {#if linkPopup}
               <div class="link-popup">
-                <Input placeholder="Enter title" label="Title" />
-                <Input placeholder="Enter URL" label="URL" />
+                {#if showLinkText}
+                  <Input
+                    placeholder="Enter text"
+                    label="Text"
+                    bind:value={linkText}
+                  />
+                {/if}
+                <Input
+                  placeholder="Enter URL"
+                  label="URL"
+                  bind:value={linkHref}
+                />
               </div>
             {/if}
             <L />
@@ -209,10 +226,6 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-
-    &.focused {
-      height: calc(100vh - env(keyboard-inset-height, 34px));
-    }
 
     .header {
       display: flex;
@@ -303,6 +316,10 @@
             --colors-text-text-primary
           ) !important; /* Цвет маркеров и чисел */
         }
+
+        :global(a) {
+          text-decoration: underline !important;
+        }
       }
     }
 
@@ -339,19 +356,19 @@
             position: absolute;
             top: -10px;
             left: 0;
-            width: 100%;
-            height: 100px;
+            width: fit-content;
+            height: fit-content;
             z-index: 100;
-            transform: translate(0, -100%);
+            transform: translate(-50%, -100%);
 
             display: flex;
             flex-direction: column;
-            gap: var(--spacing-xs, 4px);
+            gap: var(--spacing-lg, 6px);
 
             border-radius: var(--radius-md);
             box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.24);
             z-index: 1;
-            padding: var(--spacing-xs, 4px) var(--spacing-none, 0px);
+            padding: var(--spacing-lg) var(--spacing-sm, 6px);
             background: var(--colors-background-bg-active);
           }
         }
