@@ -62,6 +62,7 @@
         editorFocused = false;
       },
     });
+    alert("Virtual Keyboard: " + "virtualKeyboard" in navigator);
     if ("virtualKeyboard" in navigator) {
       (navigator.virtualKeyboard as any).overlaysContent = true;
     }
@@ -105,7 +106,7 @@
 <svelte:head>
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1.0, virtual-keyboard=overlays-content"
+    content="width=device-width, initial-scale=1.0, virtual-keyboard=resizes-content"
   />
 </svelte:head>
 <svelte:body on:click={() => (linkPopup = false)} />
@@ -210,7 +211,7 @@
     justify-content: flex-end;
 
     &.focused {
-      height: calc(100vh - env(keyboard-inset-height, 0px));
+      height: calc(100vh - env(keyboard-inset-height, 34px));
     }
 
     .header {
@@ -234,6 +235,7 @@
       flex-direction: column;
       padding-top: var(--spacing-xl, 16px);
       flex-grow: 1;
+      flex-shrink: 1;
       gap: var(--spacing-lg, 12px);
       justify-content: flex-end;
 
