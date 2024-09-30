@@ -29,7 +29,6 @@
   let element;
   let editor;
   let title = "";
-  let editorContainer;
   const options = [
     { id: 1, label: "Sportstack 1" },
     { id: 2, label: "Sportstack 2" },
@@ -71,22 +70,6 @@
     }
   }
 
-  function adjustHeight() {
-    const height = window.innerHeight;
-    editorContainer.style.height = `${height}px`;
-  }
-
-  onMount(() => {
-    adjustHeight(); // Первоначальная установка высоты
-
-    window.addEventListener('resize', adjustHeight); // Пересчитываем высоту при изменении окна
-    window.addEventListener('orientationchange', adjustHeight); // Для изменения ориентации экрана
-
-    return () => {
-      window.removeEventListener('resize', adjustHeight);
-      window.removeEventListener('orientationchange', adjustHeight);
-    };
-  });
 </script>
 
 <!--
@@ -100,7 +83,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div id="create-article" class="create-article" bind:this={editorContainer}>
+<div id="create-article" class="create-article">
   <Container style="display: flex; flex-direction: column; flex-grow: 1">
     <div class="header">
       <XClose />
@@ -185,7 +168,7 @@
 
 <style lang="scss">
   .create-article {
-    height: calc(100vh - 34px);
+    height: calc(100vh - 34px - 114px);
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -217,6 +200,7 @@
       .title {
         border: none;
         background: inherit;
+        padding: 0;
 
         color: var(--colors-text-text-primary, #fbfbfb);
 
@@ -283,11 +267,14 @@
 
     .toolbar-wrapper {
       display: flex;
+      height: 114px;
       padding: var(--spacing-lg, 12px) var(--spacing-none, 0px);
       flex-direction: column;
       align-items: flex-start;
       gap: 10px;
       align-self: stretch;
+      position: fixed;
+      bottom: 34px;
       .toolbar {
         width: 100%;
         display: flex;
