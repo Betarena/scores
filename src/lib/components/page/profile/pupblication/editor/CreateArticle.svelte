@@ -102,12 +102,12 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<!-- <svelte:head>
+<svelte:head>
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content"
+    content="width=device-width, initial-scale=1.0, virtual-keyboard=overlays-content"
   />
-</svelte:head> -->
+</svelte:head>
 <svelte:body on:click={() => (linkPopup = false)} />
 
 <div id="create-article" class="create-article" class:focused={editorFocused}>
@@ -211,7 +211,6 @@
 
     &.focused {
       height: calc(100vh - env(keyboard-inset-height, 0px));
-
     }
 
     .header {
