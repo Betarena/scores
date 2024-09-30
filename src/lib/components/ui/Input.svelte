@@ -32,6 +32,7 @@
   export let type: "input" | "leading-text" = "input";
   export let value = "";
   export let name = "";
+  export let label = "";
   export let onInputValidation:
     | ((val: string | number) => boolean)
     | undefined = undefined;
@@ -76,9 +77,9 @@
 -->
 <div class="field">
   <label class="label" for={name}>
-    {#if $$slots.label}
+    {#if $$slots.label || label}
       <span class="label-text">
-        <slot name="label" />
+        <slot name="label">{label} </slot>
       </span>
     {/if}
     {#if requred}

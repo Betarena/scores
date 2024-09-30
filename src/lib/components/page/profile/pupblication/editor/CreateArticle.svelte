@@ -25,10 +25,13 @@
   import NumList from "./icons/NumList.svelte";
   import Arrow from "./icons/Arrow.svelte";
   import Button from "$lib/components/ui/Button.svelte";
+  import Input from "$lib/components/ui/Input.svelte";
 
   let element;
   let editor;
   let title = "";
+  let linkPopup = false;
+  let editorFocused = false;
   const options = [
     { id: 1, label: "Sportstack 1" },
     { id: 2, label: "Sportstack 2" },
@@ -45,16 +48,30 @@
           linkOnPaste: true,
         }),
         Placeholder.configure({
-          placeholder: "Create your sports content"
+          placeholder: "Create your sports content",
         }),
       ],
       onTransaction: () => {
         // force re-render so `editor.isActive` works as expected
         editor = editor;
       },
+      onFocus: () => {
+        editorFocused = true;
+      },
+      onBlur: () => {
+        editorFocused = false;
+      },
     });
+    if ("virtualKeyboard" in navigator) {
+      (navigator.virtualKeyboard as any).overlaysContent = true;
+    }
+    if (navigator) {
+    }
 
     return () => {
+      if ("virtualKeyboard" in navigator) {
+        (navigator.virtualKeyboard as any).overlaysContent = false;
+      }
       editor?.destroy();
     };
   });
@@ -64,12 +81,15 @@
   }
 
   function handleKeyDown(event) {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       event.preventDefault();
       editor.chain().focus().run();
     }
   }
 
+  function showLinkPopup() {
+    linkPopup = true;
+  }
 </script>
 
 <!--
@@ -82,8 +102,15 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
+<!-- <svelte:head>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content"
+  />
+</svelte:head> -->
+<svelte:body on:click={() => (linkPopup = false)} />
 
-<div id="create-article" class="create-article">
+<div id="create-article" class="create-article" class:focused={editorFocused}>
   <Container style="display: flex; flex-direction: column; flex-grow: 1">
     <div class="header">
       <XClose />
@@ -129,7 +156,16 @@
           >
             <Q />
           </div>
-          <div>
+          <div
+            on:click|stopPropagation={showLinkPopup}
+            class="button link-button"
+          >
+            {#if linkPopup}
+              <div class="link-popup">
+                <Input placeholder="Enter title" label="Title" />
+                <Input placeholder="Enter URL" label="URL" />
+              </div>
+            {/if}
             <L />
           </div>
           <div
@@ -146,7 +182,7 @@
           >
             <NumList />
           </div>
-          <div>
+          <div on:click={() => toggle("undo")}>
             <Arrow />
           </div>
         </div>
@@ -168,10 +204,15 @@
 
 <style lang="scss">
   .create-article {
-    height: calc(100vh - 34px - 114px);
+    height: calc(100vh - 34px);
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+
+    &.focused {
+      height: calc(100vh - env(keyboard-inset-height, 0px));
+
+    }
 
     .header {
       display: flex;
@@ -235,7 +276,6 @@
           float: left;
           height: 0;
           pointer-events: none;
-
         }
         :global(.ProseMirror) {
           height: 100%;
@@ -267,14 +307,11 @@
 
     .toolbar-wrapper {
       display: flex;
-      height: 114px;
       padding: var(--spacing-lg, 12px) var(--spacing-none, 0px);
       flex-direction: column;
       align-items: flex-start;
       gap: 10px;
       align-self: stretch;
-      position: fixed;
-      bottom: 34px;
       .toolbar {
         width: 100%;
         display: flex;
@@ -292,6 +329,29 @@
             :global(path) {
               fill: var(--colors-base-white);
             }
+          }
+        }
+        .link-button {
+          position: relative;
+
+          .link-popup {
+            position: absolute;
+            top: -10px;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            z-index: 100;
+            transform: translate(0, -100%);
+
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs, 4px);
+
+            border-radius: var(--radius-md);
+            box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.24);
+            z-index: 1;
+            padding: var(--spacing-xs, 4px) var(--spacing-none, 0px);
+            background: var(--colors-background-bg-active);
           }
         }
       }
