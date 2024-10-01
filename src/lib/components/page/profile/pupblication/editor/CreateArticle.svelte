@@ -58,11 +58,25 @@
         editor = editor;
       },
     });
+    // Update the viewport height on mount
+    updateViewportHeight();
+
+    // Listen for viewport changes (e.g., when the keyboard appears)
+    window.visualViewport?.addEventListener('resize', updateViewportHeight);
 
     return () => {
       editor?.destroy();
+       // Clean up the event listener
+       window.visualViewport?.removeEventListener('resize', updateViewportHeight);
     };
   });
+
+  function updateViewportHeight() {
+    const vh = (window.visualViewport?.height || 0) * 0.01;
+    if (vh) {
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }
+  }
 
   function toggle(cb) {
     editor.chain().focus()[cb]().run();
@@ -222,7 +236,7 @@
 
 <style lang="scss">
   .create-article {
-    height: calc(100vh - 34px);
+    height: calc(var(--vh, 1vh) * 100 - 34px);
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
