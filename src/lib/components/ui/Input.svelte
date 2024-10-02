@@ -26,13 +26,14 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let requred: boolean = false;
-  export let inputType = "text";
+  export let inputType: "text" | "number" | "password" | "textarea" = "text";
   export let error = false;
   export let placeholder = "";
   export let type: "input" | "leading-text" = "input";
   export let value = "";
   export let name = "";
   export let label = "";
+  export let height = inputType === "textarea" ? "100px" : "44px";
   export let onInputValidation:
     | ((val: string | number) => boolean)
     | undefined = undefined;
@@ -92,16 +93,26 @@
         <slot name="leading-text" />
       </div>
     {/if}
-    <div class="input-element input-{type}" class:error>
-      <input
-        class=""
-        type="text"
-        {placeholder}
-        bind:value
-        {name}
-        on:change={(e) => handleEvent(e, "change")}
-        on:input={(e) => handleEvent(e, "input")}
-      />
+    <div class="input-element input-{type}" class:error style="height: {height}">
+      {#if inputType === "textarea"}
+        <textarea
+          class=""
+          {placeholder}
+          bind:value
+          {name}
+          on:change={(e) => handleEvent(e, "change")}
+          on:input={(e) => handleEvent(e, "input")} />
+      {:else}
+         <input
+           class=""
+           type={inputType}
+           {placeholder}
+           {value}
+           {name}
+           on:change={(e) => handleEvent(e, "change")}
+           on:input={(e) => handleEvent(e, "input")}
+         />
+      {/if}
     </div>
   </div>
   {#if $$slots.error || $$slots.info}
@@ -190,7 +201,7 @@
           border-bottom-left-radius: 0;
         }
 
-        input {
+        input, textarea {
           overflow: hidden;
           color: var(--colors-text-text-primary-900, #fbfbfb);
           text-overflow: ellipsis;
@@ -198,6 +209,9 @@
           padding: 0;
           background-color: inherit;
           padding: 10px 14px;
+          flex-grow: 1;
+          max-height: 100%;
+          height: 100%;
 
           /* Text md/Regular */
           font-family: var(--Font-family-font-family-body, Roboto);
@@ -214,6 +228,10 @@
           &:focus-visible {
             outline: none;
           }
+        }
+
+        &.input-textarea {
+          height: 100px;
         }
       }
 

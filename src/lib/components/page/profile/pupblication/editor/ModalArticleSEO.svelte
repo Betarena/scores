@@ -1,0 +1,155 @@
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 🟦 Svelte Component JS/TS                                                        │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<script lang="ts">
+  import { getContext } from "svelte";
+  import { create_article_store } from "./create_article.store.js";
+
+  $: ({ seo, tags } = $create_article_store);
+
+  const changeView = getContext("changeView") as (newView: string) => void;
+</script>
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 💠 Svelte Component HTML                                                         │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<div id="article-seo-modal" class="seo-modal">
+  <div class="option-wrapper" on:click={() => ($create_article_store.view = "tags")}>
+    <div class="info">
+      <h3>Tags</h3>
+      {#if tags.length}
+        <!-- content here -->
+      {:else}
+        <div class="info-message">No tags added</div>
+      {/if}
+    </div>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="21"
+      height="20"
+      viewBox="0 0 21 20"
+      fill="none"
+    >
+      <path
+        d="M8.35254 15L13.4115 10L8.35254 5"
+        stroke="white"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  </div>
+  <div class="separator" />
+  <div
+    class="option-wrapper"
+    on:click={() => ($create_article_store.view = "seo")}
+  >
+    <div class="info">
+      <h3>SEO</h3>
+      {#if seo.title || seo.description}
+        <!-- content here -->
+      {:else}
+        <div class="info-message">Add a title and description to SEO</div>
+      {/if}
+    </div>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="21"
+      height="20"
+      viewBox="0 0 21 20"
+      fill="none"
+    >
+      <path
+        d="M8.35254 15L13.4115 10L8.35254 5"
+        stroke="white"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  </div>
+</div>
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 🌊 Svelte Component CSS/SCSS                                                     │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<style lang="scss">
+  .seo-modal {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+    bottom: 0;
+    width: 100%;
+    position: absolute;
+    // transform: translateY(-100%);
+
+    padding: 24px 16px calc(var(--spacing-lg, 12px) + 34px) 16px;
+
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    border-radius: var(--radius-2xl, 16px) var(--radius-2xl, 16px)
+      var(--radius-none, 0px) var(--radius-none, 0px);
+    background: var(--colors-background-bg-primary, #fff);
+
+    .separator {
+      height: 1px;
+      align-self: stretch;
+      background: #3e3e3e;
+    }
+    .option-wrapper {
+      display: flex;
+      width: 100%;
+      justify-content: space-between;
+      align-items: center;
+
+      .info {
+        display: flex;
+        flex-direction: column;
+
+        h3 {
+          color: var(--colors-text-text-primary, #fbfbfb);
+
+          /* nav/16px */
+          font-family: Roboto;
+          font-size: 16px;
+          font-style: normal;
+          font-weight: 500;
+          line-height: 150%; /* 24px */
+          margin: 0;
+        }
+        .info-message {
+          color: var(--colors-text-text-tertiary, #8c8c8c);
+
+          /* body/14px */
+          font-family: Roboto;
+          font-size: 14px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: 150%; /* 21px */
+        }
+      }
+    }
+  }
+</style>

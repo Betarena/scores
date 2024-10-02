@@ -1,5 +1,6 @@
 <script>
   import session from "$lib/store/session";
+  export let clazz = "";
 </script>
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -13,7 +14,7 @@
 -->
 
 
-<div class="container-wrapper {$session.viewportType}  {$$restProps.class}" {...$$restProps}>
+<div {...$$restProps} class="container-wrapper {$session.viewportType}  {clazz}" >
   <slot/>
 </div>
 

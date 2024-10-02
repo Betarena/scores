@@ -22,8 +22,9 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let size: "sm" | "md" | "lg" = "md";
+  export let size: "sm" | "md" | "lg" | "xl" | "xxl" = "md";
   export let color: "gray" | "error" | "brand" | undefined = "gray";
+  export let active: boolean = false;
 
   // #endregion ➤ 📌 VARIABLES
 </script>
@@ -39,7 +40,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="badge" {...$$restProps}>
+<div class="badge {size} {color}" class:active {...$$restProps}>
   <slot name="icon" />
   <slot />
 </div>
@@ -73,5 +74,76 @@
     font-style: normal;
     font-weight: 400;
     line-height: var(--line-height-text-xs, 18px); /* 150% */
+
+    &.sm {
+      padding: var(--spacing-xxs, 2px) var(--spacing-md, 8px);
+      font-size: var(--font-size-text-xs, 12px);
+      line-height: var(--line-height-text-xs, 18px); /* 142.857% */
+    }
+    &.md {
+      padding: var(--spacing-xxs, 2px) 10px;
+      font-size: var(--font-size-text-sm, 14px);
+      line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+    }
+    &.lg {
+      padding: var(--spacing-xs, 4px) var(--spacing-lg, 12px);
+      font-size: var(--font-size-text-sm, 14px);
+      line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+    }
+    &.xl {
+      display: inline-flex;
+      padding: var(--spacing-sm, 6px) 14px;
+
+      /* Text sm/Regular */
+      font-size: var(--font-size-text-sm, 14px);
+      line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+    }
+
+    &.xxl {
+      padding: var(--spacing-md, 8px) var(--spacing-xl, 16px);
+
+      /* Text md/Regular */
+      font-size: var(--font-size-text-md, 16px);
+      line-height: var(--line-height-text-md, 24px); /* 150% */
+    }
+
+    &.brand {
+      border: 1px solid
+        var(--component-colors-utility-brand-utility-brand-200, #fcd5c0);
+      color: var(--component-colors-utility-brand-utility-brand-700, #ae460b);
+
+      background: var(
+        --component-colors-utility-brand-utility-brand-50,
+        #fef5f0
+      );
+
+      &.active {
+        border: 1px solid
+          var(--component-colors-utility-brand-utility-brand-500, #ae460b);
+        color: var(--colors-text-text-white, #fff);
+
+        background: var(
+          --component-colors-utility-brand-utility-brand-500,
+          #fef5f0
+        );
+      }
+    }
+
+    &.gray {
+      border: 1px solid
+        var(--component-colors-utility-gray-utility-gray-200, #ededed);
+      background: var(--component-colors-utility-gray-utility-gray-50, #fbfbfb);
+      color: var(--component-colors-utility-gray-utility-gray-700, #525252);
+
+      &.active {
+        border: 1px solid
+          var(--component-colors-utility-gray-utility-gray-200, #ededed);
+        background: var(
+          --component-colors-utility-gray-utility-gray-200,
+          #ededed
+        );
+        color: var(--component-colors-utility-gray-utility-gray-800, #3b3b3b);
+      }
+    }
   }
 </style>
