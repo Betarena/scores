@@ -12,6 +12,7 @@
   import { create_article_store } from "./create_article.store.js";
   import { fly } from "svelte/transition";
   import { cubicIn, cubicOut } from "svelte/easing";
+  import Button from "$lib/components/ui/Button.svelte";
 
   $: ({ seo, tags } = $create_article_store);
 
@@ -92,6 +93,7 @@
       />
     </svg>
   </div>
+  <Button full={true}>Publish now</Button>
 </div>
 
 <!--
