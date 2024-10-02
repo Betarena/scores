@@ -100,6 +100,7 @@
 <svelte:body  class="disable-scroll"/>
 <div
 	in:fade
+  out:fade
 	class=
   "
   {CNAME}

@@ -10,6 +10,8 @@
 <script lang="ts">
   import { getContext } from "svelte";
   import { create_article_store } from "./create_article.store.js";
+  import { fly } from "svelte/transition";
+  import { cubicIn, cubicOut } from "svelte/easing";
 
   $: ({ seo, tags } = $create_article_store);
 
@@ -27,8 +29,16 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div id="article-seo-modal" class="seo-modal">
-  <div class="option-wrapper" on:click={() => ($create_article_store.view = "tags")}>
+<div
+  id="article-seo-modal"
+  class="seo-modal"
+  in:fly={{ y: 600, duration: 700, easing: cubicOut }}
+  out:fly={{ y: 600, duration: 900, easing: cubicIn }}
+>
+  <div
+    class="option-wrapper"
+    on:click={() => ($create_article_store.view = "tags")}
+  >
     <div class="info">
       <h3>Tags</h3>
       {#if tags.length}

@@ -16,8 +16,8 @@
   import TagsView from "./TagsView.svelte";
   import SeoView from "./SeoView.svelte";
 
-  let view = "tags";
-  let prevView = "tags";
+  let view = "edit";
+  let prevView = "edit";
 
   onMount(() => {
     modalStore.set({
@@ -27,9 +27,6 @@
     });
   });
 
-  function handleClick() {
-    $modalStore.show = true;
-  }
 
   function changeView(newView: string) {
     prevView = view;

@@ -127,21 +127,6 @@
   function back() {
     history.back();
   }
-
-  function handleButtonClick() {
-    modalStore.set({
-      modal: true,
-      component: ModalArticleSeo,
-    });
-  }
-
-  onMount(() => {
-    modalStore.set({
-      modal: true,
-      component: ModalArticleSeo,
-      show: true,
-    });
-  });
 </script>
 
 <!--
@@ -245,7 +230,7 @@
             <Arrow />
           </div>
         </div>
-        <Button type="primary" full={true} on:click={handleButtonClick}
+        <Button type="primary" full={true} on:click={() => {$modalStore.show = true}}
           >Publish</Button
         >
       </Container>

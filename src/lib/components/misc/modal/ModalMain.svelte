@@ -41,10 +41,10 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
+{#if $modalStore.modal &&  $modalStore.show}
+  <ModalBackdrop on:closeModal={() => ($modalStore.show = false)} />
+{/if}
 {#if $modalStore.show && $modalStore.component}
-  {#if $modalStore.modal}
-    <ModalBackdrop on:closeModal={() => ($modalStore.show = false)} />
-  {/if}
   <div class="modal-content">
     <svelte:component this={$modalStore.component} {...$modalStore.props} />
   </div>
