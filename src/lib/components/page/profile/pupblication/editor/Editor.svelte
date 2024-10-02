@@ -230,8 +230,12 @@
             <Arrow />
           </div>
         </div>
-        <Button type="primary" full={true} on:click={() => {$modalStore.show = true}}
-          >Publish</Button
+        <Button
+          type="primary"
+          full={true}
+          on:click={() => {
+            $modalStore.show = true;
+          }}>Publish</Button
         >
       </Container>
     </div>
@@ -358,6 +362,7 @@
       align-items: flex-start;
       gap: 10px;
       align-self: stretch;
+      border-top: 1px solid var(--colors-border-border-secondary, #3b3b3b);
       .toolbar {
         width: 100%;
         display: flex;
