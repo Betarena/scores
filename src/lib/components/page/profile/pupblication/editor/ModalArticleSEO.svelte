@@ -123,7 +123,7 @@
     gap: 16px;
     border-radius: var(--radius-2xl, 16px) var(--radius-2xl, 16px)
       var(--radius-none, 0px) var(--radius-none, 0px);
-    background: var(--colors-background-bg-primary, #fff);
+    background: var( --colors-background-bg-active, #fff);
 
     .separator {
       height: 1px;
