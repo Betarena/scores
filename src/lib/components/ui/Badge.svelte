@@ -8,6 +8,8 @@
 -->
 
 <script lang="ts">
+    import { createEventDispatcher } from "svelte";
+
   // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -26,6 +28,8 @@
   export let color: "gray" | "error" | "brand" | undefined = "gray";
   export let active: boolean = false;
 
+  const dispatch = createEventDispatcher();
+
   // #endregion ➤ 📌 VARIABLES
 </script>
 
@@ -40,7 +44,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="badge {size} {color}" class:active {...$$restProps}>
+<div class="badge {size} {color}" class:active {...$$restProps} on:click={() => dispatch("click")}>
   <slot name="icon" />
   <slot />
 </div>

@@ -13,11 +13,39 @@
   import Button from "$lib/components/ui/Button.svelte";
   import Input from "$lib/components/ui/Input.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
+  import { id } from "ethers/lib/utils.js";
   import { create_article_store } from "./create_article.store.js";
-
+  import { flip } from "svelte/animate";
+  import { cubicInOut, quintOut } from "svelte/easing";
+  import { fade } from "svelte/transition";
 
   function goBack() {
-    $create_article_store.view = "editor"
+    $create_article_store.view = "editor";
+  }
+
+  const tags = [];
+  for (let i = 0; i < 20; i++) {
+    tags.push({ label: `Tag ${i + 1}`, id: i });
+  }
+  console.log(tags);
+
+  function select(tag) {
+    if (
+      $create_article_store.tags.length === 5 ||
+      check(tag, $create_article_store.tags)
+    )
+      return;
+    $create_article_store.tags = [tag, ...$create_article_store.tags];
+  }
+
+  function deselect(tag) {
+    $create_article_store.tags = $create_article_store.tags.filter(
+      (t) => t.id !== tag.id
+    );
+  }
+
+  function check(tag, selected) {
+    return !!selected.some((t) => t.id === tag.id);
   }
 </script>
 
@@ -53,9 +81,40 @@
             <Input placeholder="Search for tabs" />
 
             <div class="seleted-tags">
-              <Badge color="brand" active={true} size="md">Soccer</Badge>
-              <Badge color="brand" active={true} size="md">Players</Badge>
-              <Badge color="brand" active={true} size="md">Transfers</Badge>
+              {#each $create_article_store.tags as tag (tag.id)}
+                <div
+                  in:fade={{delay:100}}
+                  animate:flip={{
+                    duration: 250,
+                    easing: cubicInOut,
+                  }}
+                >
+                  <Badge
+                    color="brand"
+                    active={true}
+                    size="md"
+                    on:click={() => deselect(tag)}
+                    >{tag.label}
+                    <div class="cross-icon">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M9 3L3 9M3 3L9 9"
+                          stroke="#873608"
+                          stroke-width="1.5"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </div>
+                  </Badge>
+                </div>
+              {/each}
             </div>
           </div>
         </Container>
@@ -63,8 +122,14 @@
       <div class="tags-wrapper">
         <h2>Choose tags</h2>
         <div class="tags-to-select">
-          {#each Array(20) as _}
-            <Badge size="xl">Soccer</Badge>
+          {#each tags as tag (tag.id)}
+            {@const isActive = check(tag, $create_article_store.tags)}
+            <Badge
+              size="xl"
+              active={isActive}
+              color={isActive ? "brand" : "gray"}
+              on:click={() => select(tag)}>{tag.label}</Badge
+            >
           {/each}
         </div>
       </div>
@@ -164,6 +229,16 @@
               display: flex;
               align-items: flex-start;
               gap: var(--spacing-md, 8px);
+              flex-wrap: wrap;
+
+              .cross-icon {
+                display: flex;
+                width: 16px;
+                height: 16px;
+                padding: var(--spacing-xxs, 2px);
+                flex-direction: column;
+                align-items: flex-start;
+              }
             }
           }
         }
