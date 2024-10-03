@@ -15,6 +15,7 @@
   import session from "$lib/store/session.js";
   import userSettings from "$lib/store/user-settings.js";
   import type { AuthorsAuthorsDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import PublicationAvatar from "./pupblication/PublicationAvatar.svelte";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -46,8 +47,8 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let sportstack = {} as AuthorsAuthorsDataJSONSchema;
-  export let owner = '';
-  export let permalink = '';
+  export let owner = "";
+  export let permalink = "";
 
   // #endregion ➤ 📌 VARIABLES
 </script>
@@ -63,14 +64,11 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<a class="publication-card {$session.viewportType}" href='/u/author/publication/{permalink}/{$userSettings.lang}'>
-  {#if sportstack.avatar}
-    <div class="img" style="--img-url: url({sportstack.avatar})" />
-  {:else}
-    <div class="img empty">
-      <ImgPlaceholder />
-    </div>
-  {/if}
+<a
+  class="publication-card {$session.viewportType}"
+  href="/u/author/publication/{permalink}/{$userSettings.lang}"
+>
+  <PublicationAvatar avatar={sportstack.avatar} />
   <div class="info">
     {#if owner === $userSettings.user?.firebase_user_data.uid}
       <Badge size="sm" color="gray">Owner</Badge>
@@ -95,25 +93,6 @@
     align-items: center;
     gap: 16px;
     flex: 1 0 0;
-
-    .img {
-      width: 74px;
-      height: 74px;
-      flex-shrink: 0;
-
-      border-radius: var(--radius-sm, 6px);
-      background: var(--img-url) lightgray 50% / cover no-repeat;
-
-      &.empty {
-        background-color: var(--colors-background-bg-quaternary, #525252);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        :global(svg path) {
-          stroke: var( --colors-foreground-fg-secondary-700) !important;
-        }
-      }
-    }
 
     .info {
       display: flex;

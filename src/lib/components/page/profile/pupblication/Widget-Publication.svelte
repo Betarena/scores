@@ -33,6 +33,7 @@
   import { goto } from "$app/navigation";
   import { page } from "$app/stores";
   import PublicationArticles from "./PublicationArticles.svelte";
+  import PublicationSettings from "./PublicationSettings.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -60,6 +61,7 @@
     { id: 2, label: "Articles", view: "articles" },
     { id: 3, label: "Settings", view: "settings" },
   ];
+  let selected = tabs[0];
   const options = [
     { id: 1, label: "SprortsTack1" },
     { id: 2, label: "SprortsTack2" },
@@ -69,6 +71,7 @@
   const viewMap = {
     home: PublicationHome,
     articles: PublicationArticles,
+    settings: PublicationSettings,
   };
 
   function change(e) {
@@ -101,14 +104,13 @@
     <div id="publication-home" class={$session.viewportType}>
       <div class="header-wrapper">
         <div class="header">
-          <h2>{translate?.publication_create || "Home"}</h2>
-
+          <h2>{translate?.[view] || selected.label}</h2>
           <DropDownInput {options} />
           <Tabbar
             on:select={change}
             type="button_border"
             data={tabs}
-            selected={tabs[0]}
+            bind:selected
           />
         </div>
       </div>

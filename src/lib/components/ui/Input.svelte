@@ -87,13 +87,13 @@
       <span class="required">*</span>
     {/if}
   </label>
-  <div class="input-wrapper">
+  <div class="input-wrapper" style="height: {height}">
     {#if type === "leading-text"}
       <div class="leading-text">
         <slot name="leading-text" />
       </div>
     {/if}
-    <div class="input-element input-{type}" class:error style="height: {height}">
+    <div class="input-element input-{type}" class:error >
       {#if inputType === "textarea"}
         <textarea
           class=""
@@ -181,7 +181,7 @@
 
       /* Shadows/shadow-xs */
       box-shadow: 0px 1px 2px 0px
-        var(--Colors-Effects-Shadows-shadow-xs, rgba(255, 255, 255, 0));
+        var(--colors-effects-shadows-shadow-xs, rgba(255, 255, 255, 0));
 
       .input-element {
         display: flex;

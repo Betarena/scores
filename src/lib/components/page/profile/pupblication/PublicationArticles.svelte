@@ -42,7 +42,7 @@
 <div class="publication-articles">
   <div class="buttons-header">
     <a href="u/author/article/create/{$userSettings.lang}">
-      <Button type="primary">+ New article</Button>
+      <Button type="primary" full={true}>+ New article</Button>
     </a>
   </div>
   <div class="header">
@@ -92,6 +92,9 @@
       align-items: flex-start;
       gap: var(--spacing-lg, 12px);
       align-self: stretch;
+      a {
+        width: 100%;
+      }
       :global(.button) {
         flex-grow: 1;
         flex-shrink: 0;
