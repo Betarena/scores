@@ -27,7 +27,6 @@
   for (let i = 0; i < 20; i++) {
     tags.push({ label: `Tag ${i + 1}`, id: i });
   }
-  console.log(tags);
 
   function select(tag) {
     if (

@@ -13,10 +13,10 @@
   import { fly } from "svelte/transition";
   import { cubicIn, cubicOut } from "svelte/easing";
   import Button from "$lib/components/ui/Button.svelte";
+  import Badge from "$lib/components/ui/Badge.svelte";
 
   $: ({ seo, tags } = $create_article_store);
 
-  const changeView = getContext("changeView") as (newView: string) => void;
 </script>
 
 <!--
@@ -43,7 +43,11 @@
     <div class="info">
       <h3>Tags</h3>
       {#if tags.length}
-        <!-- content here -->
+        <div class="tags-wrapper">
+          {#each tags as tag (tag.id)}
+            <Badge active={true} color="brand" size="sm">{tag.label}</Badge>
+          {/each}
+        </div>
       {:else}
         <div class="info-message">No tags added</div>
       {/if}
@@ -123,7 +127,7 @@
     gap: 16px;
     border-radius: var(--radius-2xl, 16px) var(--radius-2xl, 16px)
       var(--radius-none, 0px) var(--radius-none, 0px);
-    background: var( --colors-background-bg-active, #fff);
+    background: var(--colors-background-bg-active, #fff);
 
     .separator {
       height: 1px;
@@ -160,6 +164,14 @@
           font-style: normal;
           font-weight: 400;
           line-height: 150%; /* 21px */
+        }
+
+        .tags-wrapper {
+          display: flex;
+          align-items: flex-start;
+          gap: var(--spacing-sm, 6px);
+          align-self: stretch;
+          flex-wrap: wrap;
         }
       }
     }

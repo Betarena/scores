@@ -16,8 +16,8 @@
   import TagsView from "./TagsView.svelte";
   import SeoView from "./SeoView.svelte";
 
-  let view = "edit";
-  let prevView = "edit";
+  let view = "editor";
+  let prevView = "editor";
 
   onMount(() => {
     modalStore.set({
