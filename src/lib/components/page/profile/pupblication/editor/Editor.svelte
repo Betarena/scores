@@ -322,19 +322,19 @@
           <Arrow />
         </div>
       </div>
-      <!-- {#if !titleInFocus && !editorInFocus} -->
-        <Container>
-          <Button
-            type="primary"
-            full={true}
-            on:click={() => {
-              $modalStore.show = true;
-            }}>Publish</Button
-          >
-        </Container>
-      <!-- {/if} -->
     </div>
   {/if}
+  <div class="button-container">
+    <Container>
+      <Button
+        type="primary"
+        full={true}
+        on:click={() => {
+          $modalStore.show = true;
+        }}>Publish</Button
+      >
+    </Container>
+  </div>
 </div>
 
 <!--
@@ -349,7 +349,7 @@
 
 <style lang="scss">
   .create-article {
-    height: calc(var(--vh, 1vh) * 100 - 34px);
+    height: calc(var(--vh, 1vh) * 100 - 34px - 40px);
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -512,6 +512,12 @@
           }
         }
       }
+    }
+    .button-container {
+      display: flex;
+      width: 100%;
+      position: fixed;
+      bottom: 36px;
     }
   }
 </style>
