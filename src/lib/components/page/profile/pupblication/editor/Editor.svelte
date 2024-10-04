@@ -70,6 +70,7 @@
   let editorInFocus = false;
   let vh = "1vh";
   let isKeyboardOpen = false;
+  let keyBoardHeight = `calc(34px + 40px)`;
   const options = [
     { id: 1, label: "Sportstack 1" },
     { id: 2, label: "Sportstack 2" },
@@ -94,6 +95,12 @@
   function updateViewportHeight() {
     vh = `${(window.visualViewport?.height || 0) * 0.01}px`;
     isKeyboardOpen = (window.visualViewport?.height || 0) < window.innerHeight;
+    if (isKeyboardOpen) {
+      const keyboardHeight = window.innerHeight - window.visualViewport.height;
+      keyBoardHeight = `${keyboardHeight}px`; // Поднимаем тулбар на высоту клавиатуры
+    } else {
+      keyBoardHeight = `calc(34px + 40px)`; // Возвращаем тулбар на обычное место, когда клавиатура закрыта
+    }
   }
 
   function toggle(cb) {
@@ -261,7 +268,7 @@
   </Container>
 
   {#if editor}
-    <div class="toolbar-wrapper">
+    <div class="toolbar-wrapper" style="bottom: {keyBoardHeight};">
       <div class="toolbar">
         <div class="button" class:disabled={titleInFocus}>
           <Add />
@@ -367,7 +374,7 @@
 
 <style lang="scss">
   .create-article {
-    height: calc(var(--vh, 1vh) * 100 + var(--h));
+    height: calc(100vh - 34px - 40px);
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -474,6 +481,7 @@
 
     .toolbar-wrapper {
       display: flex;
+      position: fixed;
       padding: var(--spacing-lg, 12px) var(--spacing-none, 0px);
       flex-direction: column;
       align-items: flex-start;
