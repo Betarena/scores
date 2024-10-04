@@ -322,7 +322,7 @@
           <Arrow />
         </div>
       </div>
-      {#if !titleInFocus && !editorInFocus}
+      <!-- {#if !titleInFocus && !editorInFocus} -->
         <Container>
           <Button
             type="primary"
@@ -332,7 +332,7 @@
             }}>Publish</Button
           >
         </Container>
-      {/if}
+      <!-- {/if} -->
     </div>
   {/if}
 </div>
