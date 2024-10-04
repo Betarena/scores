@@ -58,7 +58,10 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function handleEvent(e: any, type: "input" | "change") {
+  function handleEvent(e: any, type: "input" | "change"| "focus" | "blur") {
+    if (["focus", "blur"].includes(type)) {
+      return dispatch(type, e);
+    }
     value = DOMPurify.sanitize(e.currentTarget.value);
     dispatch(type, value);
   }
@@ -109,6 +112,8 @@
            {placeholder}
            {value}
            {name}
+           on:focus={e => handleEvent(e, "focus")}
+           on:blur={e => handleEvent(e, "blur")}
            on:change={(e) => handleEvent(e, "change")}
            on:input={(e) => handleEvent(e, "input")}
          />

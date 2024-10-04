@@ -94,15 +94,6 @@
   function updateViewportHeight() {
     vh = `${(window.visualViewport?.height || 0) * 0.01}px`;
     isKeyboardOpen = (window.visualViewport?.height || 0) < window.innerHeight;
-
-    // if (vh) {
-    //   document.documentElement.style.setProperty("--vh", `${vh}px`);
-    // }
-    // if (isKeyboardOpen) {
-    //   document.documentElement.style.setProperty("--container", "true");
-    // } else {
-    //   document.documentElement.style.setProperty("--keyboard-open", "false");
-    // }
   }
 
   function toggle(cb) {
@@ -295,12 +286,14 @@
                 <Input
                   placeholder="Enter text"
                   label="Text"
+                  on:focus={(e) => {e.detail.target.scrollIntoView(false)}}
                   bind:value={linkText}
                 />
               {/if}
               <Input
                 placeholder="Enter URL"
                 label="URL"
+                on:focus={(e) => {e.detail.target.scrollIntoView(false)}}
                 bind:value={linkHref}
               />
             </div>
