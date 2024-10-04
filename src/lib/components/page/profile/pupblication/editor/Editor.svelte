@@ -160,15 +160,10 @@
 
       if (popup) {
         const popupRect = popup.getBoundingClientRect();
-        if (popupRect.bottom > window.visualViewport.height) {
-          // Если попап выходит за пределы видимой области, скроллим его вверх
-          window.scrollBy({
-            top: popupRect.bottom - window.visualViewport.height,
-            behavior: "smooth",
-          });
-        }
+        alert("bottom");
+        e.target.focus();
       }
-    }, 100)
+    }, 300)
   }
 
   // #endregion ➤ 🛠️ METHODS
