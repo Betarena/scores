@@ -66,12 +66,14 @@
   let showLinkText = false;
   let linkText = "";
   let linkHref = "";
+  let titleInFocus = false;
   const options = [
     { id: 1, label: "Sportstack 1" },
     { id: 2, label: "Sportstack 2" },
     { id: 3, label: "Sportstack 3" },
   ];
 
+  // $: titleInFocus = editor
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -94,6 +96,7 @@
   }
 
   function toggle(cb) {
+    if (titleInFocus) return;
     editor.chain().focus()[cb]().run();
   }
 
@@ -105,6 +108,7 @@
   }
 
   function linkClick() {
+    if (titleInFocus) return;
     if (editor.isActive("link")) {
       editor.chain().focus().unsetLink().run();
       return;
@@ -174,6 +178,9 @@
         // force re-render so `editor.isActive` works as expected
         editor = editor;
       },
+      onFocus: () => {
+        titleInFocus = false;
+      }
     });
     // Update the viewport height on mount
     updateViewportHeight();
@@ -221,20 +228,21 @@
         placeholder="Title (required)"
         on:keydown={handleKeyDown}
         on:input={resizeTextarea}
+        on:focus={() => (titleInFocus = true)}
       />
-      <div class="editor" bind:this={element} />
+      <div class="editor" bind:this={element}  on:focus={() => (titleInFocus = false)}/>
     </div>
   </Container>
 
   {#if editor}
     <div class="toolbar-wrapper">
-      <Container>
         <div class="toolbar">
-          <div>
+          <div class="button" class:disabled={titleInFocus}>
             <Add />
           </div>
           <div
             class="button"
+            class:disabled={titleInFocus}
             class:active={editor.isActive("bold")}
             on:click={() => toggle("toggleBold")}
           >
@@ -242,6 +250,7 @@
           </div>
           <div
             class="button"
+            class:disabled={titleInFocus}
             class:active={editor.isActive("italic")}
             on:click={() => toggle("toggleItalic")}
           >
@@ -249,6 +258,7 @@
           </div>
           <div
             class="button"
+            class:disabled={titleInFocus}
             class:active={editor.isActive("blockquote")}
             on:click={() => toggle("toggleBlockquote")}
           >
@@ -257,6 +267,7 @@
           <div
             on:click|stopPropagation={linkClick}
             class="button link-button"
+            class:disabled={titleInFocus}
             class:active={linkPopup || editor.isActive("link")}
           >
             {#if linkPopup}
@@ -280,21 +291,28 @@
           <div
             class="button"
             class:active={editor.isActive("bulletList")}
+            class:disabled={titleInFocus}
             on:click={() => toggle("toggleBulletList")}
           >
             <List />
           </div>
           <div
             class="button"
+            class:disabled={titleInFocus}
             class:active={editor.isActive("orderedList")}
             on:click={() => toggle("toggleOrderedList")}
           >
             <NumList />
           </div>
-          <div on:click={() => toggle("undo")}>
+          <div
+            class="button"
+            class:disabled={titleInFocus}
+            on:click={() => toggle("undo")}
+          >
             <Arrow />
           </div>
         </div>
+      <Container>
         <Button
           type="primary"
           full={true}
@@ -434,6 +452,7 @@
       .toolbar {
         width: 100%;
         display: flex;
+        padding-inline: var(--spacing-md, 8px);
         gap: var(--spacing-xxs, 2px);
         justify-content: space-between;
         .button {
@@ -446,7 +465,14 @@
               --component-colors-components-buttons-primary-button-primary-bg
             );
             :global(path) {
-              fill: var(--colors-base-white);
+              fill: var(--colors-base-white) !important;
+            }
+          }
+          &.disabled {
+            // background-color: ;
+            background: var(--colors-background-bg-disabled, #f7f7f7);
+            :global(path) {
+              fill: var(--colors-foreground-fg-disabled, #8c8c8c) !important;
             }
           }
         }
