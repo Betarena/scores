@@ -371,6 +371,7 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+    overscroll-behavior: contain;
 
     .header {
       display: flex;
