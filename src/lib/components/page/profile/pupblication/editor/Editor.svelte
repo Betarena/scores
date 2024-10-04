@@ -212,7 +212,7 @@
 
     // Listen for viewport changes (e.g., when the keyboard appears)
     window.visualViewport?.addEventListener("resize", updateViewportHeight);
-
+    window.visualViewport?.addEventListener("scroll", updateViewportHeight);
     return () => {
       editor?.destroy();
       // Clean up the event listener
@@ -220,6 +220,7 @@
         "resize",
         updateViewportHeight
       );
+      window.visualViewport?.removeEventListener("scroll", updateViewportHeight);
     };
   });
 
@@ -349,7 +350,7 @@
       </div>
     </div>
   {/if}
-  <div class="button-container">
+  <div class="button-container" style="{isKeyboardOpen ? 'bottom: -50px' : ""}">
     <Container>
       <Button
         type="primary"
