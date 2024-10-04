@@ -15,7 +15,9 @@
   import Button from "$lib/components/ui/Button.svelte";
   import Badge from "$lib/components/ui/Badge.svelte";
 
-  $: ({ seo, tags } = $create_article_store);
+  $: ({ seo, tags, view } = $create_article_store);
+
+  $: isClose = view === "editor";
 
 </script>
 
@@ -34,7 +36,7 @@
   id="article-seo-modal"
   class="seo-modal"
   in:fly={{ y: 600, duration: 700, easing: cubicOut }}
-  out:fly={{ y: 600, duration: 900, easing: cubicIn }}
+  out:fly={{ y: isClose ? 600 : 0, duration: isClose ? 900 : 0, easing: cubicIn }}
 >
   <div
     class="option-wrapper"
