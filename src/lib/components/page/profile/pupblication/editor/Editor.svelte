@@ -67,6 +67,7 @@
   let linkText = "";
   let linkHref = "";
   let titleInFocus = false;
+  let editorInFocus = false;
   const options = [
     { id: 1, label: "Sportstack 1" },
     { id: 2, label: "Sportstack 2" },
@@ -180,7 +181,12 @@
       },
       onFocus: () => {
         titleInFocus = false;
-      }
+        editorInFocus = true;
+      },
+
+      onBlur: () => {
+        editorInFocus = false;
+      },
     });
     // Update the viewport height on mount
     updateViewportHeight();
@@ -230,97 +236,103 @@
         on:input={resizeTextarea}
         on:focus={() => (titleInFocus = true)}
       />
-      <div class="editor" bind:this={element}  on:focus={() => (titleInFocus = false)}/>
+      <div
+        class="editor"
+        bind:this={element}
+        on:focus={() => (titleInFocus = false)}
+      />
     </div>
   </Container>
 
   {#if editor}
     <div class="toolbar-wrapper">
-        <div class="toolbar">
-          <div class="button" class:disabled={titleInFocus}>
-            <Add />
-          </div>
-          <div
-            class="button"
-            class:disabled={titleInFocus}
-            class:active={editor.isActive("bold")}
-            on:click={() => toggle("toggleBold")}
-          >
-            <B />
-          </div>
-          <div
-            class="button"
-            class:disabled={titleInFocus}
-            class:active={editor.isActive("italic")}
-            on:click={() => toggle("toggleItalic")}
-          >
-            <I />
-          </div>
-          <div
-            class="button"
-            class:disabled={titleInFocus}
-            class:active={editor.isActive("blockquote")}
-            on:click={() => toggle("toggleBlockquote")}
-          >
-            <Q />
-          </div>
-          <div
-            on:click|stopPropagation={linkClick}
-            class="button link-button"
-            class:disabled={titleInFocus}
-            class:active={linkPopup || editor.isActive("link")}
-          >
-            {#if linkPopup}
-              <div class="link-popup">
-                {#if showLinkText}
-                  <Input
-                    placeholder="Enter text"
-                    label="Text"
-                    bind:value={linkText}
-                  />
-                {/if}
-                <Input
-                  placeholder="Enter URL"
-                  label="URL"
-                  bind:value={linkHref}
-                />
-              </div>
-            {/if}
-            <L />
-          </div>
-          <div
-            class="button"
-            class:active={editor.isActive("bulletList")}
-            class:disabled={titleInFocus}
-            on:click={() => toggle("toggleBulletList")}
-          >
-            <List />
-          </div>
-          <div
-            class="button"
-            class:disabled={titleInFocus}
-            class:active={editor.isActive("orderedList")}
-            on:click={() => toggle("toggleOrderedList")}
-          >
-            <NumList />
-          </div>
-          <div
-            class="button"
-            class:disabled={titleInFocus}
-            on:click={() => toggle("undo")}
-          >
-            <Arrow />
-          </div>
+      <div class="toolbar">
+        <div class="button" class:disabled={titleInFocus}>
+          <Add />
         </div>
-      <Container>
-        <Button
-          type="primary"
-          full={true}
-          on:click={() => {
-            $modalStore.show = true;
-          }}>Publish</Button
+        <div
+          class="button"
+          class:disabled={titleInFocus}
+          class:active={editor.isActive("bold")}
+          on:click={() => toggle("toggleBold")}
         >
-      </Container>
+          <B />
+        </div>
+        <div
+          class="button"
+          class:disabled={titleInFocus}
+          class:active={editor.isActive("italic")}
+          on:click={() => toggle("toggleItalic")}
+        >
+          <I />
+        </div>
+        <div
+          class="button"
+          class:disabled={titleInFocus}
+          class:active={editor.isActive("blockquote")}
+          on:click={() => toggle("toggleBlockquote")}
+        >
+          <Q />
+        </div>
+        <div
+          on:click|stopPropagation={linkClick}
+          class="button link-button"
+          class:disabled={titleInFocus}
+          class:active={linkPopup || editor.isActive("link")}
+        >
+          {#if linkPopup}
+            <div class="link-popup">
+              {#if showLinkText}
+                <Input
+                  placeholder="Enter text"
+                  label="Text"
+                  bind:value={linkText}
+                />
+              {/if}
+              <Input
+                placeholder="Enter URL"
+                label="URL"
+                bind:value={linkHref}
+              />
+            </div>
+          {/if}
+          <L />
+        </div>
+        <div
+          class="button"
+          class:active={editor.isActive("bulletList")}
+          class:disabled={titleInFocus}
+          on:click={() => toggle("toggleBulletList")}
+        >
+          <List />
+        </div>
+        <div
+          class="button"
+          class:disabled={titleInFocus}
+          class:active={editor.isActive("orderedList")}
+          on:click={() => toggle("toggleOrderedList")}
+        >
+          <NumList />
+        </div>
+        <div
+          class="button"
+          class:disabled={titleInFocus}
+          on:click={() => toggle("undo")}
+        >
+          <Arrow />
+        </div>
+      </div>
+      {#if !titleInFocus && !editorInFocus}
+        <Container>
+          <Button
+            type="primary"
+            full={true}
+            on:click={() => {
+              $modalStore.show = true;
+            }}>Publish</Button
+          >
+        </Container>
+      {/if}
     </div>
   {/if}
 </div>
