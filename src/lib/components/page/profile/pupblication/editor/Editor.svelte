@@ -77,7 +77,6 @@
     { id: 3, label: "Sportstack 3" },
   ];
 
-  // $: titleInFocus = editor
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -170,6 +169,13 @@
     }, 300);
   }
 
+  function updateToolbarPosition() {
+  if (isKeyboardOpen) {
+    const scrollTop = window.scrollY;
+    keyBoardHeight = `${scrollTop + (window.visualViewport?.height || 0) - editor.getBoundingClientRect().bottom}px`;
+  }
+}
+
   // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
@@ -213,6 +219,7 @@
     // Listen for viewport changes (e.g., when the keyboard appears)
     window.visualViewport?.addEventListener("resize", updateViewportHeight);
     window.visualViewport?.addEventListener("scroll", updateViewportHeight);
+    window.addEventListener("scroll", updateToolbarPosition);
     return () => {
       editor?.destroy();
       // Clean up the event listener
@@ -220,6 +227,7 @@
         "resize",
         updateViewportHeight
       );
+      window.addEventListener("scroll", updateToolbarPosition);
       window.visualViewport?.removeEventListener("scroll", updateViewportHeight);
     };
   });
@@ -350,7 +358,7 @@
       </div>
     </div>
   {/if}
-  <div class="button-container" style="{isKeyboardOpen ? 'bottom: -50px' : ""}">
+  <div class="button-container" style="{isKeyboardOpen ? 'bottom: -50vh' : ""}">
     <Container>
       <Button
         type="primary"
