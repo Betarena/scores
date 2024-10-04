@@ -158,7 +158,6 @@
     ev.target.scrollIntoView(false);
     setTimeout(() => {
       if (popup) {
-        const popupRect = popup.getBoundingClientRect();
         e.target.focus();
       }
     }, 300);
