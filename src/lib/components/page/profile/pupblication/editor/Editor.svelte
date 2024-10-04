@@ -484,6 +484,7 @@
 
         :global(a) {
           text-decoration: underline !important;
+          display: initial;
         }
       }
     }
