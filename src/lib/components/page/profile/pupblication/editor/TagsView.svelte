@@ -23,9 +23,15 @@
     $create_article_store.view = "editor";
   }
 
-  const tags = [];
+  let tags = [];
+  let search = "";
+  const initialTags = [];
+
+  $: tags = initialTags.filter(
+    (tag) => !search || tag.label.toLowerCase().includes(search.toLowerCase())
+  );
   for (let i = 0; i < 20; i++) {
-    tags.push({ label: `Tag ${i + 1}`, id: i });
+    initialTags.push({ label: `Tag ${i + 1}`, id: i });
   }
 
   function select(tag) {
@@ -45,6 +51,12 @@
 
   function check(tag, selected) {
     return !!selected.some((t) => t.id === tag.id);
+  }
+
+  function keyHandler(e) {
+    if (e.detail.key === "Enter") {
+      select(tags.find(tag => !check(tag, $create_article_store.tags)));
+    }
   }
 </script>
 
@@ -77,12 +89,12 @@
                 is about and also find it easier.
               </div>
             </div>
-            <Input placeholder="Search for tabs" />
+            <Input placeholder="Search for tabs" bind:value={search} on:keydown={keyHandler} />
 
             <div class="seleted-tags">
               {#each $create_article_store.tags as tag (tag.id)}
                 <div
-                  in:fade={{delay:100}}
+                  in:fade={{ delay: 100 }}
                   animate:flip={{
                     duration: 250,
                     easing: cubicInOut,
@@ -123,12 +135,19 @@
         <div class="tags-to-select">
           {#each tags as tag (tag.id)}
             {@const isActive = check(tag, $create_article_store.tags)}
-            <Badge
-              size="xl"
-              active={isActive}
-              color={isActive ? "brand" : "gray"}
-              on:click={() => select(tag)}>{tag.label}</Badge
+            <div
+              animate:flip={{
+                duration: 250,
+                easing: cubicInOut,
+              }}
             >
+              <Badge
+                size="xl"
+                active={isActive}
+                color={isActive ? "brand" : "gray"}
+                on:click={() => select(tag)}>{tag.label}</Badge
+              >
+            </div>
           {/each}
         </div>
       </div>

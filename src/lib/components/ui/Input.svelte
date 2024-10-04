@@ -42,7 +42,11 @@
     | undefined = undefined;
 
   const dispatch = createEventDispatcher<
-    { input: HTMLInputElement } | { change: HTMLInputElement }
+    | { input: HTMLInputElement }
+    | { change: HTMLInputElement }
+    | { focus: HTMLInputElement }
+    | { blur: HTMLInputElement }
+    | { keydown: HTMLInputElement }
   >();
   // #endregion ➤ 📌 VARIABLES
 
@@ -58,8 +62,11 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function handleEvent(e: any, type: "input" | "change"| "focus" | "blur") {
-    if (["focus", "blur"].includes(type)) {
+  function handleEvent(
+    e: any,
+    type: "input" | "change" | "focus" | "blur" | "keydown"
+  ) {
+    if (["focus", "blur", "keydown"].includes(type)) {
       return dispatch(type, e);
     }
     value = DOMPurify.sanitize(e.currentTarget.value);
@@ -83,7 +90,7 @@
   <label class="label" for={name}>
     {#if $$slots.label || label}
       <span class="label-text">
-        <slot name="label">{label} </slot>
+        <slot name="label">{label}</slot>
       </span>
     {/if}
     {#if requred}
@@ -96,7 +103,7 @@
         <slot name="leading-text" />
       </div>
     {/if}
-    <div class="input-element input-{type}" class:error >
+    <div class="input-element input-{type}" class:error>
       {#if inputType === "textarea"}
         <textarea
           class=""
@@ -104,19 +111,21 @@
           bind:value
           {name}
           on:change={(e) => handleEvent(e, "change")}
-          on:input={(e) => handleEvent(e, "input")} />
+          on:input={(e) => handleEvent(e, "input")}
+        />
       {:else}
-         <input
-           class=""
-           type={inputType}
-           {placeholder}
-           {value}
-           {name}
-           on:focus={e => handleEvent(e, "focus")}
-           on:blur={e => handleEvent(e, "blur")}
-           on:change={(e) => handleEvent(e, "change")}
-           on:input={(e) => handleEvent(e, "input")}
-         />
+        <input
+          class=""
+          type={inputType}
+          {placeholder}
+          {value}
+          {name}
+          on:keydown={(e) => handleEvent(e, "keydown")}
+          on:focus={(e) => handleEvent(e, "focus")}
+          on:blur={(e) => handleEvent(e, "blur")}
+          on:change={(e) => handleEvent(e, "change")}
+          on:input={(e) => handleEvent(e, "input")}
+        />
       {/if}
     </div>
   </div>
@@ -206,7 +215,8 @@
           border-bottom-left-radius: 0;
         }
 
-        input, textarea {
+        input,
+        textarea {
           overflow: hidden;
           color: var(--colors-text-text-primary-900, #fbfbfb);
           text-overflow: ellipsis;
@@ -225,7 +235,8 @@
           font-weight: 400;
           line-height: var(--Line-height-text-md, 24px); /* 150% */
 
-          &:-webkit-autofill, &:-internal-autofill-selected {
+          &:-webkit-autofill,
+          &:-internal-autofill-selected {
             background-color: transparent !important;
             color: inherit !important;
             box-shadow: none !important;
