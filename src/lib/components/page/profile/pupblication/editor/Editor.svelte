@@ -42,6 +42,8 @@
   import Button from "$lib/components/ui/Button.svelte";
   import Input from "$lib/components/ui/Input.svelte";
   import { modalStore } from "$lib/store/modal.js";
+  import session from "$lib/store/session.js";
+  import BackButton from "$lib/components/ui/BackButton.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -76,6 +78,8 @@
     { id: 2, label: "Sportstack 2" },
     { id: 3, label: "Sportstack 3" },
   ];
+
+  $: ({ viewportType } = $session);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -170,11 +174,15 @@
   }
 
   function updateToolbarPosition() {
-  if (isKeyboardOpen) {
-    const scrollTop = window.scrollY;
-    keyBoardHeight = `${scrollTop + (window.visualViewport?.height || 0) - editor.getBoundingClientRect().bottom}px`;
+    if (isKeyboardOpen) {
+      const scrollTop = window.scrollY;
+      keyBoardHeight = `${
+        scrollTop +
+        (window.visualViewport?.height || 0) -
+        editor.getBoundingClientRect().bottom
+      }px`;
+    }
   }
-}
 
   // #endregion ➤ 🛠️ METHODS
 
@@ -228,7 +236,10 @@
         updateViewportHeight
       );
       window.addEventListener("scroll", updateToolbarPosition);
-      window.visualViewport?.removeEventListener("scroll", updateViewportHeight);
+      window.visualViewport?.removeEventListener(
+        "scroll",
+        updateViewportHeight
+      );
     };
   });
 
@@ -249,14 +260,19 @@
 
 <div
   id="create-article"
-  class="create-article"
+  class="create-article {viewportType}"
   style="--vh: {vh}; --h:{isKeyboardOpen ? '0px' : `calc(-34px - 40px)`}"
 >
   <Container style="display: flex; flex-direction: column; flex-grow: 1">
     <div class="header">
       <div on:click={back}>
-        <XClose />
+        {#if viewportType === "mobile"}
+          <XClose />
+        {:else}
+          <BackButton custom_handler={true} />
+        {/if}
       </div>
+
       <DropDownInput {options} />
     </div>
     <div class="editor-wrapper">
@@ -358,11 +374,11 @@
       </div>
     </div>
   {/if}
-  <div class="button-container" style="{isKeyboardOpen ? 'bottom: -50vh' : ""}">
+  <div class="button-container" style={isKeyboardOpen ? "bottom: -50vh" : ""}>
     <Container>
       <Button
         type="primary"
-        full={true}
+        full={viewportType === "mobile"}
         on:click={() => {
           $modalStore.show = true;
         }}>Publish</Button
@@ -490,6 +506,7 @@
     }
 
     .toolbar-wrapper {
+      width: 100%;
       display: flex;
       position: fixed;
       padding: var(--spacing-lg, 12px) var(--spacing-none, 0px);
@@ -503,7 +520,7 @@
         display: flex;
         padding-inline: var(--spacing-md, 8px);
         gap: var(--spacing-xxs, 2px);
-        justify-content: space-between;
+        justify-content: center;
         .button {
           height: max-content;
           border-radius: var(--radius-md, 8px);
@@ -554,7 +571,25 @@
       display: flex;
       width: 100%;
       position: fixed;
+      justify-content: center;
       bottom: 36px;
+    }
+
+    &.tablet {
+      .header {
+        :global(.field .input-wrapper) {
+          width: 100%;
+          max-width: 343px;
+          margin: 0 auto;
+        }
+      }
+
+      .button-container {
+        :global(.container-wrapper) {
+          display: flex;
+          justify-content: center;
+        }
+      }
     }
   }
 </style>
