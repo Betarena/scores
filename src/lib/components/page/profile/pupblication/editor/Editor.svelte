@@ -157,13 +157,11 @@
     const popup = ev.target.closest(".link-popup");
     ev.target.scrollIntoView(false);
     setTimeout(() => {
-
       if (popup) {
         const popupRect = popup.getBoundingClientRect();
-        alert("bottom");
         e.target.focus();
       }
-    }, 300)
+    }, 300);
   }
 
   // #endregion ➤ 🛠️ METHODS
