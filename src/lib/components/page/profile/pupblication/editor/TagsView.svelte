@@ -27,11 +27,9 @@
   let search = "";
   const initialTags = [];
 
-  $: tags = initialTags.filter(
-    (tag) => !search || tag.label.toLowerCase().includes(search.toLowerCase())
-  );
-  for (let i = 0; i < 20; i++) {
+  $: for (let i = 0; i < 20; i++) {
     initialTags.push({ label: `Tag ${i + 1}`, id: i });
+    tags = initialTags;
   }
 
   function select(tag) {
@@ -55,8 +53,15 @@
 
   function keyHandler(e) {
     if (e.detail.key === "Enter") {
-      select(tags.find(tag => !check(tag, $create_article_store.tags)));
+      select(tags.find((tag) => !check(tag, $create_article_store.tags)));
     }
+  }
+
+  function handleInput(e) {
+    search = e.detail;
+    tags = initialTags.filter(
+      (tag) => !search || tag.label.toLowerCase().includes(search.toLowerCase())
+    );
   }
 </script>
 
@@ -89,7 +94,12 @@
                 is about and also find it easier.
               </div>
             </div>
-            <Input placeholder="Search for tabs" bind:value={search} on:keydown={keyHandler} />
+            <Input
+              placeholder="Search for tabs"
+              value={search}
+              on:input={handleInput}
+              on:keydown={keyHandler}
+            />
 
             <div class="seleted-tags">
               {#each $create_article_store.tags as tag (tag.id)}
