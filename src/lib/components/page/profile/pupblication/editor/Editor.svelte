@@ -151,6 +151,26 @@
     textarea.style.height = height + "px";
   }
 
+  function handlePopupFocus(e) {
+    const ev = e.detail;
+    ev.preventDefault();
+    const popup = ev.target.closest(".link-popup");
+    ev.target.scrollIntoView(false);
+    setTimeout(() => {
+
+      if (popup) {
+        const popupRect = popup.getBoundingClientRect();
+        if (popupRect.bottom > window.visualViewport.height) {
+          // Если попап выходит за пределы видимой области, скроллим его вверх
+          window.scrollBy({
+            top: popupRect.bottom - window.visualViewport.height,
+            behavior: "smooth",
+          });
+        }
+      }
+    }, 100)
+  }
+
   // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
@@ -219,7 +239,11 @@
 -->
 <svelte:body on:click={hideLinkPopup} />
 
-<div id="create-article" class="create-article" style="--vh: {vh}; --h:{ isKeyboardOpen ? "0px": `calc(-34px - 40px)`}">
+<div
+  id="create-article"
+  class="create-article"
+  style="--vh: {vh}; --h:{isKeyboardOpen ? '0px' : `calc(-34px - 40px)`}"
+>
   <Container style="display: flex; flex-direction: column; flex-grow: 1">
     <div class="header">
       <div on:click={back}>
@@ -286,14 +310,14 @@
                 <Input
                   placeholder="Enter text"
                   label="Text"
-                  on:focus={(e) => {e.detail.target.scrollIntoView(false)}}
+                  on:focus={handlePopupFocus}
                   bind:value={linkText}
                 />
               {/if}
               <Input
                 placeholder="Enter URL"
                 label="URL"
-                on:focus={(e) => {e.detail.target.scrollIntoView(false)}}
+                on:focus={handlePopupFocus}
                 bind:value={linkHref}
               />
             </div>
