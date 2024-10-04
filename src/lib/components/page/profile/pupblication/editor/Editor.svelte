@@ -8,6 +8,21 @@
 -->
 
 <script lang="ts">
+  // #region ➤ 📦 Package Imports
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
   import { onMount } from "svelte";
   import { Editor } from "@tiptap/core";
   import StarterKit from "@tiptap/starter-kit";
@@ -27,8 +42,22 @@
   import Button from "$lib/components/ui/Button.svelte";
   import Input from "$lib/components/ui/Input.svelte";
   import { modalStore } from "$lib/store/modal.js";
-  import ModalArticleSeo from "./ModalArticleSEO.svelte";
-  import { browser } from "$app/environment";
+
+  // #endregion ➤ 📦 Package Imports
+
+  // #region ➤ 📌 VARIABLES
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
   let element;
   let editor;
@@ -43,39 +72,19 @@
     { id: 3, label: "Sportstack 3" },
   ];
 
-  onMount(() => {
-    editor = new Editor({
-      element: element,
-      extensions: [
-        StarterKit,
-        Link.configure({
-          openOnClick: false,
-          linkOnPaste: true,
-        }),
-        Placeholder.configure({
-          placeholder: "Create your sports content",
-        }),
-      ],
-      onTransaction: () => {
-        // force re-render so `editor.isActive` works as expected
-        editor = editor;
-      },
-    });
-    // Update the viewport height on mount
-    updateViewportHeight();
+  // #endregion ➤ 📌 VARIABLES
 
-    // Listen for viewport changes (e.g., when the keyboard appears)
-    window.visualViewport?.addEventListener("resize", updateViewportHeight);
+  // #region ➤ 🛠️ METHODS
 
-    return () => {
-      editor?.destroy();
-      // Clean up the event listener
-      window.visualViewport?.removeEventListener(
-        "resize",
-        updateViewportHeight
-      );
-    };
-  });
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
   function updateViewportHeight() {
     const vh = (window.visualViewport?.height || 0) * 0.01;
@@ -127,6 +136,62 @@
   function back() {
     history.back();
   }
+
+  function resizeTextarea(
+    e: Event & { currentTarget: EventTarget & HTMLTextAreaElement }
+  ) {
+    const textarea = e.currentTarget;
+    textarea.style.height = "32px";
+    let height = textarea.scrollHeight;
+    textarea.style.height = height + "px";
+  }
+
+  // #endregion ➤ 🛠️ METHODS
+
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  onMount(() => {
+    editor = new Editor({
+      element: element,
+      extensions: [
+        StarterKit,
+        Link.configure({
+          openOnClick: false,
+          linkOnPaste: true,
+        }),
+        Placeholder.configure({
+          placeholder: "Create your sports content",
+        }),
+      ],
+      onTransaction: () => {
+        // force re-render so `editor.isActive` works as expected
+        editor = editor;
+      },
+    });
+    // Update the viewport height on mount
+    updateViewportHeight();
+
+    // Listen for viewport changes (e.g., when the keyboard appears)
+    window.visualViewport?.addEventListener("resize", updateViewportHeight);
+
+    return () => {
+      editor?.destroy();
+      // Clean up the event listener
+      window.visualViewport?.removeEventListener(
+        "resize",
+        updateViewportHeight
+      );
+    };
+  });
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 
 <!--
@@ -150,12 +215,12 @@
       <DropDownInput {options} />
     </div>
     <div class="editor-wrapper">
-      <input
-        type="text"
+      <textarea
         class="title"
         bind:value={title}
         placeholder="Title (required)"
         on:keydown={handleKeyDown}
+        on:input={resizeTextarea}
       />
       <div class="editor" bind:this={element} />
     </div>
@@ -288,6 +353,9 @@
         border: none;
         background: inherit;
         padding: 0;
+        height: 32px;
+        overflow-y: hidden;
+        resize: none;
 
         color: var(--colors-text-text-primary, #fbfbfb);
 
