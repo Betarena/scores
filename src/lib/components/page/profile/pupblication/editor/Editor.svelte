@@ -68,6 +68,8 @@
   let linkHref = "";
   let titleInFocus = false;
   let editorInFocus = false;
+  let vh = "1vh";
+  let isKeyboardOpen = false;
   const options = [
     { id: 1, label: "Sportstack 1" },
     { id: 2, label: "Sportstack 2" },
@@ -90,10 +92,17 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   function updateViewportHeight() {
-    const vh = (window.visualViewport?.height || 0) * 0.01;
-    if (vh) {
-      document.documentElement.style.setProperty("--vh", `${vh}px`);
-    }
+    vh = `${(window.visualViewport?.height || 0) * 0.01}px`;
+    isKeyboardOpen = (window.visualViewport?.height || 0) < window.innerHeight;
+
+    // if (vh) {
+    //   document.documentElement.style.setProperty("--vh", `${vh}px`);
+    // }
+    // if (isKeyboardOpen) {
+    //   document.documentElement.style.setProperty("--container", "true");
+    // } else {
+    //   document.documentElement.style.setProperty("--keyboard-open", "false");
+    // }
   }
 
   function toggle(cb) {
@@ -219,7 +228,7 @@
 -->
 <svelte:body on:click={hideLinkPopup} />
 
-<div id="create-article" class="create-article">
+<div id="create-article" class="create-article" style="--vh: {vh}; --h:{ isKeyboardOpen ? "0px": `calc(-34px - 40px)`}">
   <Container style="display: flex; flex-direction: column; flex-grow: 1">
     <div class="header">
       <div on:click={back}>
@@ -349,7 +358,7 @@
 
 <style lang="scss">
   .create-article {
-    height: calc(var(--vh, 1vh) * 100 - 34px - 40px);
+    height: calc(var(--vh, 1vh) * 100 + var(--h));
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
