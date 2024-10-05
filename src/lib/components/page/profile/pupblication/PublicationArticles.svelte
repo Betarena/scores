@@ -10,7 +10,8 @@
 <script lang="ts">
   import Button from "$lib/components/ui/Button.svelte";
   import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
-    import userSettings from "$lib/store/user-settings.js";
+  import session from "$lib/store/session.js";
+  import userSettings from "$lib/store/user-settings.js";
 
   const options = [
     {
@@ -26,6 +27,8 @@
       label: "Unpunlished",
     },
   ];
+
+  $: ({ viewportType } = $session);
 </script>
 
 <!--
@@ -39,15 +42,23 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="publication-articles">
-  <div class="buttons-header">
-    <a href="u/author/article/create/{$userSettings.lang}">
-      <Button type="primary" full={true}>+ New article</Button>
-    </a>
-  </div>
+<div class="publication-articles {viewportType}">
+  {#if viewportType === "mobile"}
+    <div class="buttons-header">
+      <a href="u/author/article/create/{$userSettings.lang}">
+        <Button type="primary" full={true}>+ New article</Button>
+      </a>
+    </div>
+  {/if}
   <div class="header">
     <div class="dropdown-input">
       <DropDownInput {options} value={options[1]} />
+
+      {#if viewportType !== "mobile"}
+        <a href="u/author/article/create/{$userSettings.lang}">
+          <Button type="primary" full={true}>+ New article</Button>
+        </a>
+      {/if}
     </div>
     <a class="view-all">
       <svg
@@ -138,6 +149,23 @@
           stroke: var(
             --component-colors-components-buttons-tertiary-button-tertiary-fg
           );
+        }
+      }
+    }
+
+    &.tablet {
+      .header {
+        gap: var(--spacing-lg, 12px);
+        .dropdown-input {
+          display: flex;
+          flex-grow: 1;
+          gap: var(--spacing-lg, 12px);
+          :global(.field) {
+            flex-grow: 1;
+          }
+        }
+        .view-all {
+          flex-grow: 1;
         }
       }
     }

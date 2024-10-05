@@ -54,6 +54,7 @@
   export let data: PageData;
 
   $: ({ translate } = data);
+  $: ({ viewportType } = $session);
   // #endregion ➤ 📌 VARIABLES
 
   const tabs = [
@@ -61,7 +62,6 @@
     { id: 2, label: "Articles", view: "articles" },
     { id: 3, label: "Settings", view: "settings" },
   ];
-  let selected = tabs[0];
   const options = [
     { id: 1, label: "SprortsTack1" },
     { id: 2, label: "SprortsTack2" },
@@ -81,6 +81,8 @@
     view = e.detail.view;
   }
   $: view = $page.url.searchParams.get("view") || "home";
+  $: selected = tabs.find((tab) => tab.view === view) || tabs[0];
+  $: console.log("selected", selected);
 </script>
 
 <!--
@@ -95,20 +97,22 @@
 -->
 
 <Container>
-  <div class="publication-widget-wrapper {$session.viewportType}">
-    {#if $session.viewportType === "desktop"}
+  <div class="publication-widget-wrapper {viewportType}">
+    {#if viewportType === "desktop"}
       <div class="menu">
         <WidgetMenuOpt />
       </div>
     {/if}
-    <div id="publication-home" class={$session.viewportType}>
+    <div id="publication-home" class={viewportType}>
       <div class="header-wrapper">
         <div class="header">
           <h2>{translate?.[view] || selected.label}</h2>
-          <DropDownInput {options} />
+          {#if viewportType === "mobile"}
+            <DropDownInput {options} />
+          {/if}
           <Tabbar
             on:select={change}
-            type="button_border"
+            type={viewportType === "mobile" ? "button_border" : "underline"}
             data={tabs}
             bind:selected
           />
@@ -163,11 +167,11 @@
             margin: 0;
 
             /* Display xs/Semibold */
-            font-family: var(--Font-family-font-family-display, Roboto);
-            font-size: var(--Font-size-display-xs, 24px);
+            font-family: var(--font-family-font-family-display, Roboto);
+            font-size: var(--font-size-display-xs, 24px);
             font-style: normal;
             font-weight: 600;
-            line-height: var(--Line-height-display-xs, 32px); /* 133.333% */
+            line-height: var(--line-height-display-xs, 32px); /* 133.333% */
           }
         }
 
@@ -226,10 +230,53 @@
             width: 50%;
             flex-grow: 1;
             h2 {
-              font-size: var(--font-size-text-xl, 20px);
+              font-size: var(--font-size-display-xs, 24px);
               font-style: normal;
               font-weight: 600;
-              line-height: var(--line-height-text-xl, 30px); /* 150% */
+              line-height: var(--line-height-display-xs, 32px);
+            }
+
+            :global(.tabbar) {
+              border-bottom: 1px solid var(--colors-border-border-secondary, #3B3B3B);
+            }
+          }
+        }
+      }
+    }
+    &.tablet {
+      margin-top: 0;
+      display: flex;
+      align-items: start;
+      gap: var(--spacing-2xl, 20px);
+      padding-top: var(--spacing-5xl, 40px);
+      padding-bottom: 72px;
+      min-height: calc(100vh - 128px);
+
+      #publication-home {
+        min-height: unset;
+        gap: var(--spacing-2xl, 20px);
+
+        .header-wrapper {
+          display: flex;
+          gap: 24px;
+          width: 100%;
+
+          .buttons-header {
+            display: flex;
+            flex-grow: 1;
+            align-items: start;
+            justify-content: end;
+            width: 50%;
+            gap: var(--spacing-lg, 12px);
+            a {
+              height: 44px;
+              width: max-content;
+            }
+          }
+          .header {
+            gap: var(--spacing-2xl, 20px);
+            :global(.tabbar) {
+              border-bottom: 1px solid var(--colors-border-border-secondary, #3B3B3B);
             }
           }
         }

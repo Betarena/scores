@@ -25,7 +25,7 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
   interface ITab {
-    id: string;
+    id: string | number;
     name?: string;
     label: string;
     [key: string]: any;
@@ -56,6 +56,8 @@
   $: if (!selected && tabbarNode) {
     select(data[0]);
   }
+  $: if (selected && tabbarNode && (type !== "underline" || activeNode))
+    select(selected);
   $: if (translations && selected && tabbarNode) updateBorder();
 
   $: if (!data?.includes(selected) && tabbarNode) {
@@ -91,8 +93,11 @@
       `[data-tab-id="${tab.id}"]`
     ) as any;
     if (tabNode) {
-      activeNode.style.width = `${tabNode.offsetWidth}px`;
-      activeNode.style.left = `${tabNode.offsetLeft}px`;
+      setTimeout(() => {
+        activeNode.style.width = `${tabNode.offsetWidth}px`;
+        activeNode.style.left = `${tabNode.offsetLeft}px`;
+
+      }, 100)
       callCount = 0;
       return;
     }
@@ -129,7 +134,9 @@
     </div>
   {/each}
   {#if type === "underline"}
-    <div class="active" bind:this={activeNode} />
+    {#key translations}
+      <div class="active" bind:this={activeNode} />
+    {/key}
   {/if}
 </div>
 

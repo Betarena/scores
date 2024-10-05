@@ -9,7 +9,16 @@
 
 <script lang="ts">
   import Button from "$lib/components/ui/Button.svelte";
-    import userSettings from "$lib/store/user-settings.js";
+  import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
+  import session from "$lib/store/session.js";
+  import userSettings from "$lib/store/user-settings.js";
+
+  $: ({ viewportType } = $session);
+  const options = [
+    { id: 1, label: "SprortsTack1" },
+    { id: 2, label: "SprortsTack2" },
+    { id: 3, label: "SprortsTack3" },
+  ];
 </script>
 
 <!--
@@ -23,9 +32,15 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="publication-home">
+<div class="publication-home {viewportType}">
   <div class="buttons-header">
-    <Button type="secondary-gray">VIew sportstack</Button>
+    <div class="button-wrapper">
+      {#if viewportType === "mobile"}
+        <Button type="secondary-gray">VIew sportstack</Button>
+      {:else}
+        <DropDownInput {options} />
+      {/if}
+    </div>
     <a href="/u/author/article/create/{$userSettings.lang}">
       <Button full={true} type="primary">+ New article</Button>
     </a>
@@ -76,13 +91,14 @@
       align-items: flex-start;
       gap: var(--spacing-lg, 12px);
       align-self: stretch;
-      a, :global(.button) {
+      a,
+      :global(.button),
+      .button-wrapper {
         flex-grow: 1;
         flex-shrink: 0;
         flex-basis: 0;
         width: 100%;
       }
-
     }
 
     .header {
@@ -134,6 +150,12 @@
             --component-colors-components-buttons-tertiary-button-tertiary-fg
           );
         }
+      }
+    }
+
+    &.tablet {
+      .buttons-header {
+        gap: var(--spacing-2xl, 20px);
       }
     }
   }

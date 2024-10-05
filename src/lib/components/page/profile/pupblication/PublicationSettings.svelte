@@ -9,9 +9,10 @@
 
 <script lang="ts">
   import { page } from "$app/stores";
-    import Button from "$lib/components/ui/Button.svelte";
+  import Button from "$lib/components/ui/Button.svelte";
   import { infoMessages } from "$lib/components/ui/infomessages/infomessages.js";
   import Input from "$lib/components/ui/Input.svelte";
+  import session from "$lib/store/session.js";
   import userSettings from "$lib/store/user-settings.js";
   import PublicationAvatar from "./PublicationAvatar.svelte";
 
@@ -21,6 +22,8 @@
   let form: HTMLFormElement;
   let fileInput: HTMLInputElement;
   $: translation = $page.data.RESPONSE_PROFILE_DATA?.sportstack;
+
+  $: ({ viewportType } = $session);
   // #endregion ➤ 📌 VARIABLES
 
   function debounceValidation(e: CustomEvent<string>) {
@@ -78,7 +81,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<form method="POST" id="publication-settings" class="form">
+<form method="POST" id="publication-settings" class="form {viewportType}">
   <Input
     name="url"
     type="leading-text"
@@ -101,7 +104,7 @@
       <PublicationAvatar />
 
       <div class="file-uploader" on:click={() => fileInput.click()}>
-        <input type="file" class="hidden-input"  bind:this={fileInput}>
+        <input type="file" class="hidden-input" bind:this={fileInput} />
         <div class="upload-icon">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -142,7 +145,7 @@
     placeholder={"Write your description"}
   />
   <div class="button-wrapper">
-    <Button type="primary" submit={true} full={true}>Save</Button>
+    <Button type="primary" submit={true} full={viewportType === "mobile"}>Save</Button>
   </div>
 </form>
 
@@ -224,7 +227,7 @@
             border-radius: var(--radius-md, 8px);
             border: 1px solid
               var(
-                --Component-colors-components-icons-featured-icons-modern-featured-icon-modern-border,
+                --component-colors-components-icons-featured-icons-modern-featured-icon-modern-border,
                 #525252
               );
 
@@ -285,6 +288,29 @@
     .button-wrapper {
       width: 100%;
       margin-top: -4px;
+    }
+
+    &.tablet {
+      .thumbnail-field {
+
+        .input-wrapper {
+
+          :global(.img) {
+            width: 74px;
+            height: 74px;
+          }
+
+          .file-uploader {
+            width: max-content;
+            flex: unset
+          }
+        }
+      }
+
+      .button-wrapper {
+        display: flex;
+        justify-content: center;
+      }
     }
   }
 </style>
