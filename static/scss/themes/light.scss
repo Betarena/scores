@@ -449,4 +449,6 @@
   --colors-background-bg-success-primary: var(--colors-success-50);
   --colors-background-bg-success-secondary: var(--colors-success-100);
   --colors-background-bg-success-solid: var(--colors-success-600);
+
+  --colors-background-bg-main: var(--colors-background-bg-primary, #FFF);
 }

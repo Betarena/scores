@@ -44,6 +44,7 @@
   import { modalStore } from "$lib/store/modal.js";
   import session from "$lib/store/session.js";
   import BackButton from "$lib/components/ui/BackButton.svelte";
+  import ModalArticleSeo from "./ModalArticleSEO.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -380,6 +381,8 @@
         type="primary"
         full={viewportType === "mobile"}
         on:click={() => {
+          $modalStore.component = ModalArticleSeo;
+          $modalStore.modal = true;
           $modalStore.show = true;
         }}>Publish</Button
       >

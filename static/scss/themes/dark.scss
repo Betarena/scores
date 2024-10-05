@@ -181,8 +181,9 @@
   --component-colors-utility-gray-utility-gray-50: #313131;
   --component-colors-utility-gray-utility-gray-700: #D2D2D2;
   --Colors-Effects-Shadows-shadow-lg_01: rgba(255, 255, 255, 0.00);
-    --Colors-Effects-Shadows-shadow-lg_02: rgba(255, 255, 255, 0.00);
+  --Colors-Effects-Shadows-shadow-lg_02: rgba(255, 255, 255, 0.00);
 }
+
 //BTA2.0
 /* 1. Color modes - Dark mode */
 .dark-mode {
@@ -451,4 +452,5 @@
   --colors-background-bg-success-primary: var(--colors-success-500);
   --colors-background-bg-success-secondary: var(--colors-success-600);
   --colors-background-bg-success-solid: var(--colors-success-600);
+  --colors-background-bg-main: #292929;
 }

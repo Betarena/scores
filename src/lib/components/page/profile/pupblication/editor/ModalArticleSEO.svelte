@@ -10,15 +10,35 @@
 <script lang="ts">
   import { getContext } from "svelte";
   import { create_article_store } from "./create_article.store.js";
-  import { fly } from "svelte/transition";
+  import { fade, fly, scale } from "svelte/transition";
   import { cubicIn, cubicOut } from "svelte/easing";
   import Button from "$lib/components/ui/Button.svelte";
   import Badge from "$lib/components/ui/Badge.svelte";
+  import TagsView from "./TagsView.svelte";
+  import SeoView from "./SeoView.svelte";
+  import { modalStore } from "$lib/store/modal.js";
+  import session from "$lib/store/session.js";
 
-  $: ({ seo, tags, view } = $create_article_store);
+  $: ({ seo, tags } = $create_article_store);
 
-  $: isClose = view === "editor";
+  $: ({ viewportType } = $session);
 
+  const viewMap = {
+    tags: TagsView,
+    seo: SeoView,
+  };
+
+  function changeView(view: string) {
+    $modalStore.modal = true;
+    $modalStore.component = viewMap[view];
+  }
+
+  function chooseTransition(node, {easing, out = false}) {
+    if (viewportType === "mobile") {
+      return fly(node, { y: 600, duration: out ? 900 : 700, easing });
+    }
+    return scale(node, { duration: out ? 400 : 700, easing });
+  }
 </script>
 
 <!--
@@ -34,14 +54,11 @@
 
 <div
   id="article-seo-modal"
-  class="seo-modal"
-  in:fly={{ y: 600, duration: 700, easing: cubicOut }}
-  out:fly={{ y: isClose ? 600 : 0, duration: isClose ? 900 : 0, easing: cubicIn }}
+  class="seo-modal {viewportType}"
+  in:chooseTransition={{ easing: cubicOut }}
+  out:chooseTransition={{ easing: cubicIn, out: true }}
 >
-  <div
-    class="option-wrapper"
-    on:click={() => ($create_article_store.view = "tags")}
-  >
+  <div class="option-wrapper" on:click={() => changeView("tags")}>
     <div class="info">
       <h3>Tags</h3>
       {#if tags.length}
@@ -71,10 +88,7 @@
     </svg>
   </div>
   <div class="separator" />
-  <div
-    class="option-wrapper"
-    on:click={() => ($create_article_store.view = "seo")}
-  >
+  <div class="option-wrapper" on:click={() => changeView("seo")}>
     <div class="info">
       <h3>SEO</h3>
       {#if seo.title || seo.description}
@@ -176,6 +190,17 @@
           flex-wrap: wrap;
         }
       }
+    }
+
+    &.tablet {
+      width: 375px;
+      padding: 24px 16px var(--spacing-3xl, 24px) 16px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: var(--radius-2xl, 16px);
+      background: var(--colors-background-bg-primary, #FFF);
+      bottom: unset;
     }
   }
 </style>
