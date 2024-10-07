@@ -228,6 +228,7 @@
         <div class="actions">
           <Button
             type="primary"
+            disabled = {!title || editor?.getText().trim().split(/\s+/).length < 50}
             on:click={() => {
               $modalStore.component = ModalArticleSeo;
               $modalStore.modal = true;
@@ -269,6 +270,7 @@
       <Container>
         <Button
           type="primary"
+
           full={viewportType === "mobile"}
           on:click={() => {
             $modalStore.component = ModalArticleSeo;
