@@ -96,8 +96,7 @@
       setTimeout(() => {
         activeNode.style.width = `${tabNode.offsetWidth}px`;
         activeNode.style.left = `${tabNode.offsetLeft}px`;
-
-      }, 100)
+      }, 100);
       callCount = 0;
       return;
     }
@@ -125,12 +124,7 @@
       class:selected={selected?.id === item.id}
       on:click={(e) => select(item)}
     >
-      <slot tab={item}
-        ><TranslationText
-          text={translations[item.label] || translations[item?.name || ""]}
-          fallback={item.name || item.label}
-        />
-      </slot>
+      <slot tab={item}>{item.label}</slot>
     </div>
   {/each}
   {#if type === "underline"}
@@ -158,13 +152,19 @@
     gap: 20px;
     position: relative;
     font-weight: 500;
+    color: rgba(0, 0, 0, 0);
 
     .tab-item {
       position: static;
-      color: var(--text-color-second-dark);
+      color: var(--colors-text-text-quaternary, #727171);
+
       cursor: pointer;
       &:hover {
         color: var(--text-color);
+      }
+
+      &.selected {
+        color: var(--colors-text-text-brand-tertiary, #F5620F);
       }
     }
 
@@ -172,7 +172,7 @@
       color: var(--text-color);
       position: relative;
       transition: all 0.3s ease-out;
-      bottom: 1px solid var(--primary);
+      bottom: 1px solid  var(--colors-foreground-fg-brand-primary, #F5620F);
     }
     .active {
       position: absolute;
@@ -180,7 +180,7 @@
       left: 0;
       height: 2px;
       transition: all 0.5s cubic-bezier(0, 0.14, 0.29, 1.07);
-      background: var(--primary);
+      background: var(--colors-foreground-fg-brand-primary);
     }
 
     &.button_border {

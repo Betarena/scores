@@ -98,16 +98,11 @@
     isKeyboardOpen = (window.visualViewport?.height || 0) < window.innerHeight;
     if (isKeyboardOpen) {
       const keyboardHeight = window.innerHeight - window.visualViewport.height;
-      keyBoardHeight = `${keyboardHeight}px`; // Поднимаем тулбар на высоту клавиатуры
+      keyBoardHeight = `${keyboardHeight}px`;
     } else {
-      keyBoardHeight = `calc(34px + 40px)`; // Возвращаем тулбар на обычное место, когда клавиатура закрыта
+      keyBoardHeight = `calc(34px + 40px)`;
     }
   }
-
-  // function toggle(cb) {
-  //   if (titleInFocus) return;
-  //   editor.chain().focus()[cb]().run();
-  // }
 
   function handleKeyDown(event) {
     if (event.key === "Enter") {
@@ -115,36 +110,6 @@
       editor.chain().focus().run();
     }
   }
-
-  // function linkClick() {
-  //   if (titleInFocus) return;
-  //   if (editor.isActive("link")) {
-  //     editor.chain().focus().unsetLink().run();
-  //     return;
-  //   }
-  //   const selectionEmpty = editor.state.selection.empty;
-  //   showLinkText = selectionEmpty;
-  //   linkPopup = true;
-  // }
-
-  // function hideLinkPopup() {
-  //   if (!linkPopup) return;
-  //   linkPopup = false;
-  //   if (linkHref) {
-  //     if (showLinkText) {
-  //       editor
-  //         .chain()
-  //         .focus()
-  //         .setLink({ href: linkHref })
-  //         .insertContent(linkText || linkHref)
-  //         .run();
-  //     } else {
-  //       editor.chain().focus().setLink({ href: linkHref }).run();
-  //     }
-  //     linkHref = "";
-  //     linkText = "";
-  //   }
-  // }
 
   function back() {
     history.back();
@@ -158,18 +123,6 @@
     let height = textarea.scrollHeight;
     textarea.style.height = height + "px";
   }
-
-  // function handlePopupFocus(e) {
-  //   const ev = e.detail;
-  //   ev.preventDefault();
-  //   const popup = ev.target.closest(".link-popup");
-  //   ev.target.scrollIntoView(false);
-  //   setTimeout(() => {
-  //     if (popup) {
-  //       e.target.focus();
-  //     }
-  //   }, 300);
-  // }
 
   function updateToolbarPosition() {
     if (isKeyboardOpen) {
@@ -340,7 +293,8 @@
 
 <style lang="scss">
   .create-article {
-    height: calc(100vh - 34px - 40px);
+    height: 100vh;
+    max-height: calc(100vh - 34px - 40px);
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -367,6 +321,8 @@
       flex-direction: column;
       padding-top: var(--spacing-xl, 16px);
       flex-grow: 1;
+      max-height: 100%;
+      overflow: hidden;
       flex-shrink: 1;
       gap: var(--spacing-lg, 12px);
       justify-content: flex-end;
@@ -375,6 +331,7 @@
         border: none;
         background: inherit;
         padding: 0;
+        flex-shrink: 0;
         height: 32px;
         overflow-y: hidden;
         resize: none;
@@ -398,7 +355,10 @@
 
       .editor {
         flex-grow: 1;
-        font-size: var(--font-size-text-md, 16px) !important;
+        color: var(--colors-text-text-primary) !important;
+        font-family: var(--font-family-font-family-display, Roboto);
+        overflow: auto;
+        font-size: var(--font-size-text-md, 16px);
 
         :global(p) {
           color: var(--colors-text-text-primary) !important;
@@ -413,11 +373,7 @@
           height: 0;
           pointer-events: none;
         }
-        :global(.ProseMirror) {
-          height: 100%;
-        }
         :global(.ProseMirror-focused) {
-          height: 100%;
           border: 0;
         }
         :global([contenteditable]) {
@@ -428,20 +384,11 @@
           border-left: 4px solid var(--component-colors-alpha-alpha-black-40);
           padding-left: var(--spacing-lg, 12px);
         }
-        :global(ul) {
-          color: var(
-            --colors-text-text-primary
-          ) !important; /* Цвет маркеров и чисел */
-        }
-        :global(ol) {
-          color: var(
-            --colors-text-text-primary
-          ) !important; /* Цвет маркеров и чисел */
-        }
 
         :global(a) {
           text-decoration: underline !important;
           display: initial;
+          color: var( --colors-text-text-brand-tertiary) !important;
         }
       }
     }
