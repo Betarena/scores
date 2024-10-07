@@ -119,7 +119,7 @@
     e: Event & { currentTarget: EventTarget & HTMLTextAreaElement }
   ) {
     const textarea = e.currentTarget;
-    textarea.style.height = "32px";
+    textarea.style.height = viewportType === "desktop" ? "44px" : "32px";
     let height = textarea.scrollHeight;
     textarea.style.height = height + "px";
   }
@@ -513,6 +513,12 @@
       }
       .editor-wrapper {
         padding-top: var(--spacing-lg, 12px);
+        .title {
+          font-size: var(--font-size-display-md, 36px);
+          line-height: var(--line-height-display-md, 44px); /* 122.222% */
+          letter-spacing: -0.72px;
+          height: auto;
+        }
       }
     }
   }

@@ -37,6 +37,8 @@
     tags = initialTags;
   }
 
+  $: tags = tags.filter((tag) => !check(tag, $create_article_store.tags));
+
   function select(tag) {
     if (
       $create_article_store.tags.length === 5 ||
@@ -44,6 +46,7 @@
     )
       return;
     $create_article_store.tags = [tag, ...$create_article_store.tags];
+    search = "";
   }
 
   function deselect(tag) {
@@ -344,7 +347,7 @@
       left: 50%;
       transform: translate(-50%, -50%);
       padding-bottom: var(--spacing-xl, 16px);
-
+      min-height: 629px;
       border-radius: var(--radius-xl, 12px);
       background: var(--colors-background-bg-primary, #fff);
       height: auto;
