@@ -52,7 +52,7 @@
             <div class="title-wrapper">
               <h2>SEO</h2>
               {#if viewportType !== "mobile"}
-                <div class="close"  on:click={goBack}>
+                <div class="close" on:click={goBack}>
                   <XClose />
                 </div>
               {/if}
@@ -77,7 +77,11 @@
     </div>
     <Container style="height: unset">
       <div class="buttons-wrapper">
-        <Button full={viewportType !== "mobile"} type="secondary-gray" on:click={goBack}>Go Back</Button>
+        <Button
+          full={viewportType !== "mobile"}
+          type="secondary-gray"
+          on:click={goBack}>Go Back</Button
+        >
         <Button full={viewportType !== "mobile"}>Save</Button>
       </div>
     </Container>
@@ -189,7 +193,8 @@
       }
     }
 
-    &.tablet {
+    &.tablet,
+    &.desktop {
       width: var(--width-md, 560px);
       top: 50%;
       left: 50%;
@@ -227,6 +232,10 @@
               font-style: normal;
               font-weight: 400;
               line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+            }
+
+            .close {
+              cursor: pointer;
             }
           }
         }

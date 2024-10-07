@@ -338,7 +338,7 @@
       }
     }
 
-    &.tablet {
+    &.tablet, &.desktop {
       top: 50%;
       width: var(--width-md, 560px);
       left: 50%;
@@ -374,6 +374,10 @@
               .title-wrapper {
                 display: flex;
                 justify-content: space-between;
+
+                .close {
+                  cursor: pointer;
+                }
               }
 
               h2 {
@@ -396,6 +400,12 @@
           gap: var(--spacing-lg, 12px);
           flex-direction: column-reverse;
         }
+      }
+    }
+
+    &.desktop {
+      .tags-to-select {
+        gap: 16px;
       }
     }
   }

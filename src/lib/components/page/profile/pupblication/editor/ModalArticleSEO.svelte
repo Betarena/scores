@@ -33,7 +33,7 @@
     $modalStore.component = viewMap[view];
   }
 
-  function chooseTransition(node, {easing, out = false}) {
+  function chooseTransition(node, { easing, out = false }) {
     if (viewportType === "mobile") {
       return fly(node, { y: 600, duration: out ? 900 : 700, easing });
     }
@@ -143,7 +143,7 @@
     gap: 16px;
     border-radius: var(--radius-2xl, 16px) var(--radius-2xl, 16px)
       var(--radius-none, 0px) var(--radius-none, 0px);
-    background: var(--colors-background-bg-active, #fff);
+    background: var(--colors-background-bg-primary, #fff);
 
     .separator {
       height: 1px;
@@ -192,14 +192,14 @@
       }
     }
 
-    &.tablet {
+    &.tablet, &.desktop {
       width: 375px;
       padding: 24px 16px var(--spacing-3xl, 24px) 16px;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       border-radius: var(--radius-2xl, 16px);
-      background: var(--colors-background-bg-primary, #FFF);
+
       bottom: unset;
     }
   }
