@@ -41,6 +41,7 @@
       | "secondary"
       | "secondary-gray"
       | "primary-outline"
+      | "terlary-gray"
       | "subtle" = "primary";
 
   export let submit = false;
@@ -268,5 +269,16 @@
       box-shadow: 0px 1px 2px 0px
         var(--colors-effects-shadows-shadow-xs, rgba(31, 31, 31, 0.05));
     }
+  }
+
+  .terlary-gray {
+    background: inherit;
+    color: var(--component-colors-components-buttons-tertiary-button-tertiary-fg, #6A6A6A);
+
+    &:hover, &.hover {
+      background: var(--component-colors-components-buttons-tertiary-button-tertiary-bg_hover, #FBFBFB);
+      color: var(--component-colors-components-buttons-tertiary-button-tertiary-fg_hover, #525252);
+    }
+
   }
 </style>

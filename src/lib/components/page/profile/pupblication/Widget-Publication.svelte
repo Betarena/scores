@@ -131,7 +131,9 @@
                 <DropDownInput {options} on:change={selectSportstack}  value={selectedSportstack}/>
               {/if}
               {#if viewportType === "desktop"}
-                <div class="back">Go Back</div>
+              <Button type="terlary-gray" on:click={() => history.back()}>
+                Go Back
+              </Button>
                 {#if view === "settings"}
                   <Button type="primary" size="xl">Save</Button>
                 {:else}
