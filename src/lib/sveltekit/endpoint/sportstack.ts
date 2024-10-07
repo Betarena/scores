@@ -192,7 +192,7 @@ async function getSportstackByUserId
   {
     return { sportstacks: ql[0].authors_authors }
   }
-  return ql;
+  return { sportstacks: [] };
 }
 
 /**

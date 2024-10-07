@@ -24,7 +24,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import Container from "$lib/components/ui/wrappers/Container.svelte";
-  import type { PageData } from ".svelte-kit/types/src/routes/(scores)/u/author/create/[lang=lang]/$types.js";
+  import type { PageData } from ".svelte-kit/types/src/routes/(scores)/u/author/publication/[permalink]/[lang=lang]/$types.js";
   import session from "$lib/store/session.js";
   import WidgetMenuOpt from "../Widget-MenuOpt.svelte";
   import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
@@ -36,6 +36,7 @@
   import PublicationSettings from "./PublicationSettings.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import userSettings from "$lib/store/user-settings.js";
+  import type { AuthorsAuthorsMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -54,20 +55,28 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let data: PageData;
-
   $: ({ translate } = data);
   $: ({ viewportType } = $session);
+  let selectedSportstack
+  let options: (AuthorsAuthorsMain & { label: string })[] = [];
+  $: if (data.sportstack instanceof Promise) {
+    console.log("data.sportstack is a promise");
+  } else {
+    options = data.sportstacks.map((s) => {
+      const sportstack = { ...s, label: s.data?.username || "" };
+      if (sportstack.permalink === $page.params.permalink) {
+        selectedSportstack = sportstack;
+      }
+      return sportstack;
+    });
+
+  }
   // #endregion ➤ 📌 VARIABLES
 
   const tabs = [
     { id: 1, label: "Home", view: "home" },
     { id: 2, label: "Articles", view: "articles" },
     { id: 3, label: "Settings", view: "settings" },
-  ];
-  const options = [
-    { id: 1, label: "SprortsTack1" },
-    { id: 2, label: "SprortsTack2" },
-    { id: 3, label: "SprortsTack3" },
   ];
 
   const viewMap = {
@@ -82,9 +91,15 @@
     goto(url, { replaceState: true, noScroll: true });
     view = e.detail.view;
   }
+
+  function selectSportstack(e) {
+    const url = $page.url;
+    const {permalink} = e.detail as AuthorsAuthorsMain;
+    const lang = url.pathname.split('/').at(-1);
+    goto(`/u/author/publication/${permalink}/${lang}${url.search}`, { replaceState: true, noScroll: true, keepFocus: true });
+  }
   $: view = $page.url.searchParams.get("view") || "home";
   $: selected = tabs.find((tab) => tab.view === view) || tabs[0];
-  $: console.log("selected", selected);
 </script>
 
 <!--
@@ -112,7 +127,7 @@
             <h2>{translate?.[view] || selected.label}</h2>
             <div class="actions-buttons">
               {#if viewportType !== "tablet"}
-                <DropDownInput {options} />
+                <DropDownInput {options} on:change={selectSportstack}  value={selectedSportstack}/>
               {/if}
               {#if viewportType === "desktop"}
                 <div class="back">Go Back</div>

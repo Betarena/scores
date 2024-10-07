@@ -25,7 +25,7 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
   interface IOption {
-    id: string | number;
+    id?: string | number;
     label: string;
     [key: string]: any;
   }

@@ -195,6 +195,11 @@ export const handle: Handle = sequence
     // ╰─────
     event.locals.betarenaUser = cookies.betarenaCookieLoggedIn ?? null;
 
+    if (event.locals.betarenaUser)
+    {
+      event.locals.uid = JSON.parse(event.locals.user)['user-uid'];
+    }
+
     // 🔗 read-more :|: https://github.com/sveltejs/kit/issues/1046
     // if (event.url.searchParams.has('_method')) {
     // 	event.method = event.url.searchParams.get('_method').toUpperCase();

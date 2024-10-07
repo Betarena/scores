@@ -18,7 +18,8 @@ declare global
     interface Locals
     {
 			user: any;
-      betarenaUser: any
+      betarenaUser: any;
+      uid?: string
 		}
   }
 }
