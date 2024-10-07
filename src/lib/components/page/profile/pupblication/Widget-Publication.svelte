@@ -34,6 +34,8 @@
   import { page } from "$app/stores";
   import PublicationArticles from "./PublicationArticles.svelte";
   import PublicationSettings from "./PublicationSettings.svelte";
+  import Button from "$lib/components/ui/Button.svelte";
+  import userSettings from "$lib/store/user-settings.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -106,10 +108,24 @@
     <div id="publication-home" class={viewportType}>
       <div class="header-wrapper">
         <div class="header">
-          <h2>{translate?.[view] || selected.label}</h2>
-          {#if viewportType === "mobile"}
-            <DropDownInput {options} />
-          {/if}
+          <div class="title-wrapper">
+            <h2>{translate?.[view] || selected.label}</h2>
+            <div class="actions-buttons">
+              {#if viewportType !== "tablet"}
+                <DropDownInput {options} />
+              {/if}
+              {#if viewportType === "desktop"}
+                <div class="back">Go Back</div>
+                {#if view === "settings"}
+                  <Button type="primary" size="xl">Save</Button>
+                {:else}
+                  <a href="/u/author/article/create/{$userSettings.lang}">
+                    <Button full={true} type="primary">+ New article</Button>
+                  </a>
+                {/if}
+              {/if}
+            </div>
+          </div>
           <Tabbar
             on:select={change}
             type={viewportType === "mobile" ? "button_border" : "underline"}
@@ -155,7 +171,8 @@
         align-items: flex-start;
         gap: var(--spacing-xl, 16px);
 
-        .header {
+        .header,
+        .title-wrapper {
           width: 100%;
           display: flex;
           flex-direction: column;
@@ -173,17 +190,8 @@
             font-weight: 600;
             line-height: var(--line-height-display-xs, 32px); /* 133.333% */
           }
-        }
 
-        .buttons-header {
-          display: flex;
-          align-items: flex-start;
-          gap: var(--spacing-lg, 12px);
-          align-self: stretch;
-          :global(.button) {
-            flex-grow: 1;
-            flex-shrink: 0;
-            flex-basis: 0;
+          .actions-buttons {
             width: 100%;
           }
         }
@@ -214,30 +222,59 @@
           gap: 24px;
           width: 100%;
 
-          .buttons-header {
-            display: flex;
-            flex-grow: 1;
-            align-items: start;
-            justify-content: end;
-            width: 50%;
-            gap: var(--spacing-lg, 12px);
-            a {
-              height: 44px;
-              width: max-content;
-            }
-          }
           .header {
-            width: 50%;
+            width: 100%;
             flex-grow: 1;
-            h2 {
-              font-size: var(--font-size-display-xs, 24px);
-              font-style: normal;
-              font-weight: 600;
-              line-height: var(--line-height-display-xs, 32px);
+            .title-wrapper {
+              display: flex;
+              justify-content: space-between;
+              flex-direction: row;
+              align-items: center;
+
+              h2 {
+                font-size: var(--font-size-text-xl, 20px);
+                font-style: normal;
+                font-weight: 600;
+                line-height: var(--line-height-text-xl, 30px); /* 150% */
+              }
+
+              .actions-buttons {
+                display: flex;
+                height: 44px;
+                justify-content: flex-end;
+                align-items: center;
+                gap: 20px;
+
+                :global(.field) {
+                  min-width: 343px;
+                }
+                .back {
+                  display: flex;
+                  padding: 10px var(--spacing-xl, 16px);
+                  justify-content: center;
+                  align-items: center;
+                  gap: var(--spacing-sm, 6px);
+                  cursor: pointer;
+
+                  color: var(
+                    --component-colors-components-buttons-tertiary-button-tertiary-fg,
+                    #8c8c8c
+                  );
+
+                  /* Text md/Medium */
+                  font-family: var(--font-family-font-family-body, Roboto);
+                  font-size: var(--font-size-text-md, 16px);
+                  font-style: normal;
+                  font-weight: 500;
+                  line-height: var(--line-height-text-md, 24px); /* 150% */
+                }
+              }
             }
 
             :global(.tabbar) {
-              border-bottom: 1px solid var(--colors-border-border-secondary, #3B3B3B);
+              border-bottom: 1px solid
+                var(--colors-border-border-secondary, #3b3b3b);
+              width: 100%;
             }
           }
         }
@@ -261,22 +298,11 @@
           gap: 24px;
           width: 100%;
 
-          .buttons-header {
-            display: flex;
-            flex-grow: 1;
-            align-items: start;
-            justify-content: end;
-            width: 50%;
-            gap: var(--spacing-lg, 12px);
-            a {
-              height: 44px;
-              width: max-content;
-            }
-          }
           .header {
             gap: var(--spacing-2xl, 20px);
             :global(.tabbar) {
-              border-bottom: 1px solid var(--colors-border-border-secondary, #3B3B3B);
+              border-bottom: 1px solid
+                var(--colors-border-border-secondary, #3b3b3b);
             }
           }
         }

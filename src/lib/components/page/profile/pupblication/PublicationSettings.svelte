@@ -144,9 +144,13 @@
     inputType="textarea"
     placeholder={"Write your description"}
   />
-  <div class="button-wrapper">
-    <Button type="primary" submit={true} full={viewportType === "mobile"}>Save</Button>
-  </div>
+  {#if viewportType !== "desktop"}
+    <div class="button-wrapper">
+      <Button type="primary" submit={true} full={viewportType === "mobile"}
+        >Save</Button
+      >
+    </div>
+  {/if}
 </form>
 
 <!--
@@ -290,11 +294,9 @@
       margin-top: -4px;
     }
 
-    &.tablet {
+    &.tablet, &.desktop {
       .thumbnail-field {
-
         .input-wrapper {
-
           :global(.img) {
             width: 74px;
             height: 74px;
@@ -302,7 +304,7 @@
 
           .file-uploader {
             width: max-content;
-            flex: unset
+            flex: unset;
           }
         }
       }

@@ -45,6 +45,7 @@
   import session from "$lib/store/session.js";
   import BackButton from "$lib/components/ui/BackButton.svelte";
   import ModalArticleSeo from "./ModalArticleSEO.svelte";
+  import Toolbar from "./Toolbar.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -65,10 +66,6 @@
   let element;
   let editor;
   let title = "";
-  let linkPopup = false;
-  let showLinkText = false;
-  let linkText = "";
-  let linkHref = "";
   let titleInFocus = false;
   let editorInFocus = false;
   let vh = "1vh";
@@ -107,10 +104,10 @@
     }
   }
 
-  function toggle(cb) {
-    if (titleInFocus) return;
-    editor.chain().focus()[cb]().run();
-  }
+  // function toggle(cb) {
+  //   if (titleInFocus) return;
+  //   editor.chain().focus()[cb]().run();
+  // }
 
   function handleKeyDown(event) {
     if (event.key === "Enter") {
@@ -119,35 +116,35 @@
     }
   }
 
-  function linkClick() {
-    if (titleInFocus) return;
-    if (editor.isActive("link")) {
-      editor.chain().focus().unsetLink().run();
-      return;
-    }
-    const selectionEmpty = editor.state.selection.empty;
-    showLinkText = selectionEmpty;
-    linkPopup = true;
-  }
+  // function linkClick() {
+  //   if (titleInFocus) return;
+  //   if (editor.isActive("link")) {
+  //     editor.chain().focus().unsetLink().run();
+  //     return;
+  //   }
+  //   const selectionEmpty = editor.state.selection.empty;
+  //   showLinkText = selectionEmpty;
+  //   linkPopup = true;
+  // }
 
-  function hideLinkPopup() {
-    if (!linkPopup) return;
-    linkPopup = false;
-    if (linkHref) {
-      if (showLinkText) {
-        editor
-          .chain()
-          .focus()
-          .setLink({ href: linkHref })
-          .insertContent(linkText || linkHref)
-          .run();
-      } else {
-        editor.chain().focus().setLink({ href: linkHref }).run();
-      }
-      linkHref = "";
-      linkText = "";
-    }
-  }
+  // function hideLinkPopup() {
+  //   if (!linkPopup) return;
+  //   linkPopup = false;
+  //   if (linkHref) {
+  //     if (showLinkText) {
+  //       editor
+  //         .chain()
+  //         .focus()
+  //         .setLink({ href: linkHref })
+  //         .insertContent(linkText || linkHref)
+  //         .run();
+  //     } else {
+  //       editor.chain().focus().setLink({ href: linkHref }).run();
+  //     }
+  //     linkHref = "";
+  //     linkText = "";
+  //   }
+  // }
 
   function back() {
     history.back();
@@ -162,17 +159,17 @@
     textarea.style.height = height + "px";
   }
 
-  function handlePopupFocus(e) {
-    const ev = e.detail;
-    ev.preventDefault();
-    const popup = ev.target.closest(".link-popup");
-    ev.target.scrollIntoView(false);
-    setTimeout(() => {
-      if (popup) {
-        e.target.focus();
-      }
-    }, 300);
-  }
+  // function handlePopupFocus(e) {
+  //   const ev = e.detail;
+  //   ev.preventDefault();
+  //   const popup = ev.target.closest(".link-popup");
+  //   ev.target.scrollIntoView(false);
+  //   setTimeout(() => {
+  //     if (popup) {
+  //       e.target.focus();
+  //     }
+  //   }, 300);
+  // }
 
   function updateToolbarPosition() {
     if (isKeyboardOpen) {
@@ -257,7 +254,6 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<svelte:body on:click={hideLinkPopup} />
 
 <div
   id="create-article"
@@ -275,7 +271,24 @@
       </div>
 
       <DropDownInput {options} />
+      {#if viewportType === "desktop"}
+        <div class="actions">
+          <Button
+            type="primary"
+            on:click={() => {
+              $modalStore.component = ModalArticleSeo;
+              $modalStore.modal = true;
+              $modalStore.show = true;
+            }}>Publish</Button
+          >
+        </div>
+      {/if}
     </div>
+    {#if viewportType === "desktop"}
+      <div class="toolbar-wrapper">
+        <Toolbar {editor} bind:titleInFocus />
+      </div>
+    {/if}
     <div class="editor-wrapper">
       <textarea
         class="title"
@@ -293,101 +306,26 @@
     </div>
   </Container>
 
-  {#if editor}
+  {#if editor && viewportType !== "desktop"}
     <div class="toolbar-wrapper" style="bottom: {keyBoardHeight};">
-      <div class="toolbar">
-        <div class="button" class:disabled={titleInFocus}>
-          <Add />
-        </div>
-        <div
-          class="button"
-          class:disabled={titleInFocus}
-          class:active={editor.isActive("bold")}
-          on:click={() => toggle("toggleBold")}
-        >
-          <B />
-        </div>
-        <div
-          class="button"
-          class:disabled={titleInFocus}
-          class:active={editor.isActive("italic")}
-          on:click={() => toggle("toggleItalic")}
-        >
-          <I />
-        </div>
-        <div
-          class="button"
-          class:disabled={titleInFocus}
-          class:active={editor.isActive("blockquote")}
-          on:click={() => toggle("toggleBlockquote")}
-        >
-          <Q />
-        </div>
-        <div
-          on:click|stopPropagation={linkClick}
-          class="button link-button"
-          class:disabled={titleInFocus}
-          class:active={linkPopup || editor.isActive("link")}
-        >
-          {#if linkPopup}
-            <div class="link-popup">
-              {#if showLinkText}
-                <Input
-                  placeholder="Enter text"
-                  label="Text"
-                  on:focus={handlePopupFocus}
-                  bind:value={linkText}
-                />
-              {/if}
-              <Input
-                placeholder="Enter URL"
-                label="URL"
-                on:focus={handlePopupFocus}
-                bind:value={linkHref}
-              />
-            </div>
-          {/if}
-          <L />
-        </div>
-        <div
-          class="button"
-          class:active={editor.isActive("bulletList")}
-          class:disabled={titleInFocus}
-          on:click={() => toggle("toggleBulletList")}
-        >
-          <List />
-        </div>
-        <div
-          class="button"
-          class:disabled={titleInFocus}
-          class:active={editor.isActive("orderedList")}
-          on:click={() => toggle("toggleOrderedList")}
-        >
-          <NumList />
-        </div>
-        <div
-          class="button"
-          class:disabled={titleInFocus}
-          on:click={() => toggle("undo")}
-        >
-          <Arrow />
-        </div>
-      </div>
+      <Toolbar {editor} bind:titleInFocus />
     </div>
   {/if}
-  <div class="button-container" style={isKeyboardOpen ? "bottom: -50vh" : ""}>
-    <Container>
-      <Button
-        type="primary"
-        full={viewportType === "mobile"}
-        on:click={() => {
-          $modalStore.component = ModalArticleSeo;
-          $modalStore.modal = true;
-          $modalStore.show = true;
-        }}>Publish</Button
-      >
-    </Container>
-  </div>
+  {#if viewportType !== "desktop"}
+    <div class="button-container" style={isKeyboardOpen ? "bottom: -50vh" : ""}>
+      <Container>
+        <Button
+          type="primary"
+          full={viewportType === "mobile"}
+          on:click={() => {
+            $modalStore.component = ModalArticleSeo;
+            $modalStore.modal = true;
+            $modalStore.show = true;
+          }}>Publish</Button
+        >
+      </Container>
+    </div>
+  {/if}
 </div>
 
 <!--
@@ -592,6 +530,40 @@
           display: flex;
           justify-content: center;
         }
+      }
+    }
+
+    &.desktop {
+      .header {
+        gap: var(--spacing-3xl, 24px);
+        margin-top: var(--spacing-2xl, 20px);
+        padding-block: var(--spacing-2xl, 20px);
+        height: 84px;
+        :global(.field) {
+          max-width: 343px;
+        }
+
+        .actions {
+          flex-grow: 1;
+          display: flex;
+          justify-content: flex-end;
+        }
+      }
+      .toolbar-wrapper {
+        position: static;
+        padding: var(--spacing-lg, 12px) var(--spacing-none, 0px);
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        align-self: stretch;
+        border-bottom: 1px solid var(--colors-border-border-secondary, #3B3B3B);
+
+        :global(.toolbar) {
+          justify-content: start;
+        }
+      }
+      .editor-wrapper {
+        padding-top: var(--spacing-lg, 12px);
       }
     }
   }

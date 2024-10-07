@@ -54,7 +54,7 @@
     <div class="dropdown-input">
       <DropDownInput {options} value={options[1]} />
 
-      {#if viewportType !== "mobile"}
+      {#if viewportType === "tablet"}
         <a href="u/author/article/create/{$userSettings.lang}">
           <Button type="primary" full={true}>+ New article</Button>
         </a>
@@ -163,6 +163,18 @@
           :global(.field) {
             flex-grow: 1;
           }
+        }
+        .view-all {
+          flex-grow: 1;
+        }
+      }
+    }
+
+    &.desktop {
+      .header {
+        .dropdown-input {
+          flex-grow: 0;
+          width: 160px;
         }
         .view-all {
           flex-grow: 1;

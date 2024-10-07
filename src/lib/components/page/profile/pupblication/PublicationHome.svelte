@@ -33,18 +33,20 @@
 -->
 
 <div class="publication-home {viewportType}">
-  <div class="buttons-header">
-    <div class="button-wrapper">
-      {#if viewportType === "mobile"}
-        <Button type="secondary-gray">VIew sportstack</Button>
-      {:else}
-        <DropDownInput {options} />
-      {/if}
+  {#if viewportType !== "desktop"}
+    <div class="buttons-header">
+      <div class="button-wrapper">
+        {#if viewportType === "mobile"}
+          <Button type="secondary-gray">VIew sportstack</Button>
+        {:else}
+          <DropDownInput {options} />
+        {/if}
+      </div>
+      <a href="/u/author/article/create/{$userSettings.lang}">
+        <Button full={true} type="primary">+ New article</Button>
+      </a>
     </div>
-    <a href="/u/author/article/create/{$userSettings.lang}">
-      <Button full={true} type="primary">+ New article</Button>
-    </a>
-  </div>
+  {/if}
   <div class="header">
     <h3>Recent articles</h3>
     <a class="view-all">
