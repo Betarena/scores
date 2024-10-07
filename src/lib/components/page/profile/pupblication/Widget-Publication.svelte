@@ -97,6 +97,7 @@
     const {permalink} = e.detail as AuthorsAuthorsMain;
     const lang = url.pathname.split('/').at(-1);
     goto(`/u/author/publication/${permalink}/${lang}${url.search}`, { replaceState: true, noScroll: true, keepFocus: true });
+    selectedSportstack = e.detail as AuthorsAuthorsMain;
   }
   $: view = $page.url.searchParams.get("view") || "home";
   $: selected = tabs.find((tab) => tab.view === view) || tabs[0];
@@ -149,7 +150,7 @@
           />
         </div>
       </div>
-      <svelte:component this={viewMap[view]} />
+      <svelte:component this={viewMap[view]} {selectedSportstack} />
     </div>
   </div>
 </Container>

@@ -13,17 +13,20 @@
   import { infoMessages } from "$lib/components/ui/infomessages/infomessages.js";
   import Input from "$lib/components/ui/Input.svelte";
   import session from "$lib/store/session.js";
-  import userSettings from "$lib/store/user-settings.js";
+  import type { AuthorsAuthorsDataJSONSchema, AuthorsAuthorsMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import PublicationAvatar from "./PublicationAvatar.svelte";
 
-  let name = "";
+  export let selectedSportstack: AuthorsAuthorsMain;
+
   let inputError = false;
   let debounceTimer;
   let form: HTMLFormElement;
   let fileInput: HTMLInputElement;
   $: translation = $page.data.RESPONSE_PROFILE_DATA?.sportstack;
-
+  let username = "";
   $: ({ viewportType } = $session);
+  $: ({ permalink, data = {} } = selectedSportstack);
+  $: ({username} = data as AuthorsAuthorsDataJSONSchema);
   // #endregion ➤ 📌 VARIABLES
 
   function debounceValidation(e: CustomEvent<string>) {
@@ -67,7 +70,7 @@
       });
     };
   }
-  $: name = name.replace(/[^\w\s]/gi, "");
+  $: url = permalink?.replace(/[^\w\s-]/gi, "") || "";
 </script>
 
 <!--
@@ -90,7 +93,7 @@
     on:input={debounceValidation}
     error={inputError}
     requred={true}
-    bind:value={name}
+    bind:value={url}
   >
     <span slot="leading-text">sportstack/</span>
     <span slot="error"
@@ -135,7 +138,7 @@
     placeholder={translation?.default_name || "Default name"}
     on:input={debounceValidation}
     requred={true}
-    bind:value={name}
+    bind:value={username}
   />
 
   <Input
@@ -294,7 +297,8 @@
       margin-top: -4px;
     }
 
-    &.tablet, &.desktop {
+    &.tablet,
+    &.desktop {
       .thumbnail-field {
         .input-wrapper {
           :global(.img) {
