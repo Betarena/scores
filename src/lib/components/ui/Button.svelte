@@ -119,6 +119,10 @@
 
     &.lg {
       padding: 10px var(--spacing-xl, 16px);
+      font-size: var(--font-size-text-md, 16px);
+      font-style: normal;
+      font-weight: 500;
+      line-height: var(--line-height-text-md, 24px); /* 150% */
     }
 
     &.md {
