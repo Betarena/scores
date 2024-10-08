@@ -27,6 +27,7 @@
   import { Editor } from "@tiptap/core";
   import StarterKit from "@tiptap/starter-kit";
   import Placeholder from "@tiptap/extension-placeholder";
+  import BubbleMenu from "@tiptap/extension-bubble-menu";
   import Link from "@tiptap/extension-link";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
   import XClose from "$lib/components/ui/infomessages/x-close.svelte";
@@ -46,6 +47,7 @@
   import BackButton from "$lib/components/ui/BackButton.svelte";
   import ModalArticleSeo from "./ModalArticleSEO.svelte";
   import Toolbar from "./Toolbar.svelte";
+  import LinkPopup from "./LinkPopup.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -64,13 +66,17 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   let element;
-  let editor;
+  let editor: Editor;
   let title = "";
   let titleInFocus = false;
   let editorInFocus = false;
   let vh = "1vh";
   let isKeyboardOpen = false;
   let keyBoardHeight = `calc(34px + 40px)`;
+  let linkPopup;
+  let bmenu;
+  let linkState = {url: "", text: ""};
+  let linkMode: "info" | "edit" = "info";
   const options = [
     { id: 1, label: "Sportstack 1" },
     { id: 2, label: "Sportstack 2" },
@@ -158,6 +164,29 @@
         Placeholder.configure({
           placeholder: "Create your sports content",
         }),
+        BubbleMenu.configure({
+          element: bmenu,
+          shouldShow: ({ editor }) => {
+            const isLink = editor.isActive("link");
+            if (!linkPopup && !isLink) return false;
+            let url = "";
+            let text = "";
+            if (isLink) {
+              const linkAttrs = editor.getAttributes("link");
+              url = linkAttrs.href;
+              const { from } = editor.view.state.selection;
+              const linkNode = editor.state.doc.nodeAt(from);
+              text = linkNode?.textContent || "";
+              linkMode = "info";
+            } else {
+              linkMode = "edit";
+              const { from, to } = editor.state.selection;
+              text = editor.state.doc.textBetween(from, to, " ");
+            }
+            linkState = { url, text };
+            return true;
+          },
+        }),
       ],
       onTransaction: () => {
         // force re-render so `editor.isActive` works as expected
@@ -168,10 +197,11 @@
         editorInFocus = true;
       },
 
-      onBlur: () => {
-        editorInFocus = false;
-      },
+      // onBlur: () => {
+      //   editorInFocus = false;
+      // },
     });
+
     // Update the viewport height on mount
     updateViewportHeight();
 
@@ -194,6 +224,11 @@
     };
   });
 
+  function toogleLinkPopup(show?: boolean) {
+    linkPopup = show ?? !linkPopup;
+    editor.view.updateState(editor.view.state);
+    editor.commands.focus();
+  }
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 
@@ -207,6 +242,10 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
+
+<div bind:this={bmenu}>
+  <LinkPopup {editor} {linkState} bind:mode={linkMode} on:hide={() => toogleLinkPopup(false)} />
+</div>
 
 <div
   id="create-article"
@@ -228,7 +267,8 @@
         <div class="actions">
           <Button
             type="primary"
-            disabled = {!title || editor?.getText().trim().split(/\s+/).length < 50}
+            disabled={!title ||
+              editor?.getText().trim().split(/\s+/).length < 50}
             on:click={() => {
               $modalStore.component = ModalArticleSeo;
               $modalStore.modal = true;
@@ -240,7 +280,11 @@
     </div>
     {#if viewportType === "desktop"}
       <div class="toolbar-wrapper">
-        <Toolbar {editor} bind:titleInFocus />
+        <Toolbar
+          {editor}
+          bind:titleInFocus
+          on:showLinkPopup={() => toogleLinkPopup(true)}
+        />
       </div>
     {/if}
     <div class="editor-wrapper">
@@ -270,7 +314,6 @@
       <Container>
         <Button
           type="primary"
-
           full={viewportType === "mobile"}
           on:click={() => {
             $modalStore.component = ModalArticleSeo;
@@ -390,7 +433,7 @@
         :global(a) {
           text-decoration: underline !important;
           display: initial;
-          color: var( --colors-text-text-brand-tertiary) !important;
+          color: var(--colors-text-text-brand-tertiary) !important;
         }
       }
     }
@@ -505,7 +548,7 @@
         align-items: flex-start;
         gap: 10px;
         align-self: stretch;
-        border-bottom: 1px solid var(--colors-border-border-secondary, #3B3B3B);
+        border-bottom: 1px solid var(--colors-border-border-secondary, #3b3b3b);
 
         :global(.toolbar) {
           justify-content: start;

@@ -9,6 +9,7 @@
 
 <script lang="ts">
   import Input from "$lib/components/ui/Input.svelte";
+    import { createEventDispatcher } from "svelte";
   import Add from "./icons/Add.svelte";
   import Arrow from "./icons/Arrow.svelte";
   import B from "./icons/B.svelte";
@@ -35,11 +36,8 @@
   export let editor;
   export let titleInFocus = false;
 
-  let linkPopup = false;
-  let showLinkText = false;
-  let linkText = "";
-  let linkHref = "";
 
+  const dispatch = createEventDispatcher();
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -59,46 +57,9 @@
     editor.chain().focus()[cb]().run();
   }
 
-  function linkClick() {
-    if (titleInFocus) return;
-    if (editor.isActive("link")) {
-      editor.chain().focus().unsetLink().run();
-      return;
-    }
-    const selectionEmpty = editor.state.selection.empty;
-    showLinkText = selectionEmpty;
-    linkPopup = true;
-  }
-
-  function hideLinkPopup() {
-    if (!linkPopup) return;
-    linkPopup = false;
-    if (linkHref) {
-      if (showLinkText) {
-        editor
-          .chain()
-          .focus()
-          .setLink({ href: linkHref })
-          .insertContent(linkText || linkHref)
-          .run();
-      } else {
-        editor.chain().focus().setLink({ href: linkHref }).run();
-      }
-      linkHref = "";
-      linkText = "";
-    }
-  }
-
-  function handlePopupFocus(e) {
-    const ev = e.detail;
-    ev.preventDefault();
-    const popup = ev.target.closest(".link-popup");
-    ev.target.scrollIntoView(false);
-    setTimeout(() => {
-      if (popup) {
-        e.target.focus();
-      }
-    }, 300);
+  function linkClick(e) {
+    e.preventDefault();
+    dispatch("showLinkPopup");
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -115,7 +76,6 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<svelte:body on:click={hideLinkPopup} />
 
 {#if editor}
   <div class="toolbar">
@@ -147,29 +107,11 @@
       <Q />
     </div>
     <div
-      on:click|stopPropagation={linkClick}
+      on:click|stopPropagation|preventDefault={linkClick}
       class="button link-button"
       class:disabled={titleInFocus}
-      class:active={linkPopup || editor.isActive("link")}
+      class:active={editor.isActive("link")}
     >
-      {#if linkPopup}
-        <div class="link-popup">
-          {#if showLinkText}
-            <Input
-              placeholder="Enter text"
-              label="Text"
-              on:focus={handlePopupFocus}
-              bind:value={linkText}
-            />
-          {/if}
-          <Input
-            placeholder="Enter URL"
-            label="URL"
-            on:focus={handlePopupFocus}
-            bind:value={linkHref}
-          />
-        </div>
-      {/if}
       <L />
     </div>
     <div
@@ -240,25 +182,6 @@
     .link-button {
       position: relative;
 
-      .link-popup {
-        position: absolute;
-        top: -10px;
-        left: 0;
-        width: fit-content;
-        height: fit-content;
-        z-index: 100;
-        transform: translate(-50%, -100%);
-
-        display: flex;
-        flex-direction: column;
-        gap: var(--spacing-lg, 6px);
-
-        border-radius: var(--radius-md);
-        box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.24);
-        z-index: 1;
-        padding: var(--spacing-lg) var(--spacing-sm, 6px);
-        background: var(--colors-background-bg-active);
-      }
     }
   }
 </style>

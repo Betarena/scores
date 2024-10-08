@@ -94,6 +94,7 @@
     ) as any;
     if (tabNode) {
       setTimeout(() => {
+        if(!activeNode) return
         activeNode.style.width = `${tabNode.offsetWidth}px`;
         activeNode.style.left = `${tabNode.offsetLeft}px`;
       }, 100);
