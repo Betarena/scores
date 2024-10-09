@@ -32,16 +32,7 @@
   import Container from "$lib/components/ui/wrappers/Container.svelte";
   import XClose from "$lib/components/ui/infomessages/x-close.svelte";
   import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
-  import Add from "./icons/Add.svelte";
-  import B from "./icons/B.svelte";
-  import I from "./icons/I.svelte";
-  import Q from "./icons/Q.svelte";
-  import L from "./icons/L.svelte";
-  import List from "./icons/List.svelte";
-  import NumList from "./icons/NumList.svelte";
-  import Arrow from "./icons/Arrow.svelte";
   import Button from "$lib/components/ui/Button.svelte";
-  import Input from "$lib/components/ui/Input.svelte";
   import { modalStore } from "$lib/store/modal.js";
   import session from "$lib/store/session.js";
   import BackButton from "$lib/components/ui/BackButton.svelte";
@@ -69,7 +60,6 @@
   let editor: Editor;
   let title = "";
   let titleInFocus = false;
-  let editorInFocus = false;
   let vh = "1vh";
   let isKeyboardOpen = false;
   let keyBoardHeight = `calc(34px + 40px)`;
@@ -194,12 +184,7 @@
       },
       onFocus: () => {
         titleInFocus = false;
-        editorInFocus = true;
       },
-
-      // onBlur: () => {
-      //   editorInFocus = false;
-      // },
     });
 
     // Update the viewport height on mount
@@ -225,6 +210,7 @@
   });
 
   function toogleLinkPopup(show?: boolean) {
+    if(show !== undefined && show === linkPopup) return;
     linkPopup = show ?? !linkPopup;
     editor.view.updateState(editor.view.state);
     editor.commands.focus();
@@ -246,6 +232,7 @@
 <div bind:this={bmenu}>
   <LinkPopup
     {editor}
+    show={linkPopup}
     {linkState}
     bind:mode={linkMode}
     on:hide={() => toogleLinkPopup(false)}
@@ -569,7 +556,7 @@
           font-size: var(--font-size-display-md, 36px);
           line-height: var(--line-height-display-md, 44px); /* 122.222% */
           letter-spacing: -0.72px;
-          height: auto;
+          height: 44px;
         }
       }
     }

@@ -16,12 +16,14 @@
   export let editor: Editor;
   export let linkState: { url: string; text: string };
   export let mode: "info" | "edit";
+  export let show = false;
 
   $: url = linkState.url.toLowerCase();
 
   const dispatch = createEventDispatcher();
 
   function hide() {
+    if (!show) return;
     dispatch("hide");
   }
 
@@ -55,7 +57,6 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
 <svelte:body on:click={hide} />
 
 <div class="link-popup {mode}" on:click|stopPropagation>

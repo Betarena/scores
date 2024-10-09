@@ -8,8 +8,7 @@
 -->
 
 <script lang="ts">
-  import Input from "$lib/components/ui/Input.svelte";
-    import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher } from "svelte";
   import Add from "./icons/Add.svelte";
   import Arrow from "./icons/Arrow.svelte";
   import B from "./icons/B.svelte";
@@ -18,6 +17,7 @@
   import List from "./icons/List.svelte";
   import NumList from "./icons/NumList.svelte";
   import Q from "./icons/Q.svelte";
+  import H from "./icons/H.svelte";
 
   // #region ➤ 📌 VARIABLES
 
@@ -36,7 +36,6 @@
   export let editor;
   export let titleInFocus = false;
 
-
   const dispatch = createEventDispatcher();
   // #endregion ➤ 📌 VARIABLES
 
@@ -52,9 +51,9 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function toggle(cb) {
+  function toggle(cb, conf?) {
     if (titleInFocus) return;
-    editor.chain().focus()[cb]().run();
+    editor.chain().focus()[cb](conf).run();
   }
 
   function linkClick(e) {
@@ -76,7 +75,6 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-
 {#if editor}
   <div class="toolbar">
     <div class="button" class:disabled={titleInFocus}>
@@ -97,6 +95,14 @@
       on:click={() => toggle("toggleItalic")}
     >
       <I />
+    </div>
+    <div
+      class="button"
+      class:disabled={titleInFocus}
+      class:active={editor.isActive("heading", { level: 1 })}
+      on:click={() => toggle("toggleHeading", { level: 1 })}
+    >
+      <H />
     </div>
     <div
       class="button"
@@ -181,7 +187,6 @@
     }
     .link-button {
       position: relative;
-
     }
   }
 </style>
