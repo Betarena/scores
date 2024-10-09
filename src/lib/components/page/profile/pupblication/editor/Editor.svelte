@@ -75,7 +75,7 @@
   let keyBoardHeight = `calc(34px + 40px)`;
   let linkPopup;
   let bmenu;
-  let linkState = {url: "", text: ""};
+  let linkState = { url: "", text: "" };
   let linkMode: "info" | "edit" = "info";
   const options = [
     { id: 1, label: "Sportstack 1" },
@@ -244,7 +244,12 @@
 -->
 
 <div bind:this={bmenu}>
-  <LinkPopup {editor} {linkState} bind:mode={linkMode} on:hide={() => toogleLinkPopup(false)} />
+  <LinkPopup
+    {editor}
+    {linkState}
+    bind:mode={linkMode}
+    on:hide={() => toogleLinkPopup(false)}
+  />
 </div>
 
 <div
@@ -306,7 +311,11 @@
 
   {#if editor && viewportType !== "desktop"}
     <div class="toolbar-wrapper" style="bottom: {keyBoardHeight};">
-      <Toolbar {editor} bind:titleInFocus />
+      <Toolbar
+        {editor}
+        bind:titleInFocus
+        on:showLinkPopup={() => toogleLinkPopup(true)}
+      />
     </div>
   {/if}
   {#if viewportType !== "desktop"}
