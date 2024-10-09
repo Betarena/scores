@@ -128,7 +128,7 @@
             <h2>{translate?.[view] || selected.label}</h2>
             <div class="actions-buttons">
               {#if viewportType !== "tablet"}
-                <DropDownInput {options} on:change={selectSportstack}  value={selectedSportstack}/>
+                <DropDownInput checkIcon={true} {options} on:change={selectSportstack}  value={selectedSportstack}/>
               {/if}
               {#if viewportType === "desktop"}
               <Button type="terlary-gray" on:click={() => history.back()}>

@@ -37,7 +37,7 @@
   export let name = "";
   export let textKey = "label";
   export let options: IOption[] = [];
-  export let checkIcon = false;
+  export let checkIcon = true;
   export let onInputValidation:
     | ((val: string | number) => boolean)
     | undefined = undefined;
@@ -124,37 +124,37 @@
       </span>
     </div>
     <div class="select-dropdown" class:show={modal}>
-        {#each options as option (option.id)}
-          <div class="list-item-wrapper">
-            <div
-              on:click={() => select(option)}
-              class="list-item"
-              class:active={option.id === value?.id}
-            >
-              <slot name="option">
-                {option[textKey]}
+      {#each options as option (option.id)}
+        <div class="list-item-wrapper">
+          <div
+            on:click={() => select(option)}
+            class="list-item"
+            class:active={option.id === value?.id}
+          >
+            <slot name="option">
+              {option[textKey]}
 
-                {#if checkIcon && option.id === value?.id}
-                  <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M20 6L9 17L4 12"
-                      stroke="var( --colors-foreground-fg-brand-primary)"
-                      stroke-width="1.66"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                {/if}
-              </slot>
-            </div>
+              {#if checkIcon && option.id === value?.id}
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M20 6L9 17L4 12"
+                    stroke="var( --colors-foreground-fg-brand-primary)"
+                    stroke-width="1.66"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              {/if}
+            </slot>
           </div>
-        {/each}
+        </div>
+      {/each}
     </div>
   </div>
   {#if $$slots.error || $$slots.info}
@@ -308,48 +308,64 @@
 
       display: none;
       padding: var(--spacing-xs, 4px) var(--spacing-none, 0px);
-      background: var(--colors-background-bg-active);
+      // background: var(--colors-background-bg-active);
+      background: var(--colors-background-bg-primary, #fff);
+      border: 1px solid var(--colors-border-border-primary, #6a6a6a);
 
       flex-direction: column;
       align-items: flex-start;
       align-self: stretch;
 
+      &::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: inherit;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: var(--colors-background-bg-quaternary);
+        border-radius: 4px;
+      }
+
+
       &.show {
         display: flex;
       }
       .list-item-wrapper {
+        display: flex;
+        padding: 1px var(--spacing-sm, 6px);
+        align-items: center;
+        align-self: stretch;
+        justify-content: space-between;
+
+        color: var(--colors-text-text-secondary_hover, #ededed);
+
+        /* Text sm/Medium */
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-sm, 14px);
+        font-style: normal;
+        font-weight: 500;
+        line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+
+        .list-item {
+          cursor: pointer;
           display: flex;
-          padding: 1px var(--spacing-sm, 6px);
+          padding: 9px 10px;
           align-items: center;
-          align-self: stretch;
           justify-content: space-between;
+          flex: 1 0 0;
 
-          color: var(--colors-text-text-secondary_hover, #ededed);
-
-          /* Text sm/Medium */
-          font-family: var(--font-family-font-family-body, Roboto);
-          font-size: var(--font-size-text-sm, 14px);
-          font-style: normal;
-          font-weight: 500;
-          line-height: var(--line-height-text-sm, 20px); /* 142.857% */
-
-          .list-item {
-            cursor: pointer;
-            display: flex;
-            padding: 9px 10px;
-            align-items: center;
-            flex: 1 0 0;
-
-            &:hover,
-            &.active {
-              border-radius: var(--radius-sm, 6px);
-              color: var(--colors-text-text-secondary_hover, #EDEDED);
-
-              background: var(--colors-background-bg-primary_hover, #3b3b3b);
-            }
+          &:hover,
+          &.active {
+            border-radius: var(--radius-sm, 6px);
+            color: var(--colors-text-text-secondary_hover, #ededed);
+            background-color: red;
+            background: var(--colors-background-bg-primary_hover, #3b3b3b);
           }
         }
-
+      }
     }
   }
 </style>
