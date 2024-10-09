@@ -19,6 +19,8 @@
   import Q from "./icons/Q.svelte";
   import H from "./icons/H.svelte";
   import Upload from "./icons/Upload.svelte";
+  import session from "$lib/store/session.js";
+  import { fly } from "svelte/transition";
 
   // #region ➤ 📌 VARIABLES
 
@@ -38,7 +40,116 @@
   export let titleInFocus = false;
 
   let fileInput;
+  let view = "full";
 
+  $: ({ viewportType } = $session);
+
+  $: view = viewportType !== "mobile" ? "full" : "first";
+
+  const fullToolbar = [
+    {
+      icon: B,
+      cb: () => toggle("toggleBold"),
+      id: "bold",
+    },
+    {
+      icon: I,
+      cb: () => toggle("toggleItalic"),
+      id: "italic",
+    },
+    {
+      icon: H,
+      cb: () => toggle("toggleHeading", { level: 1 }),
+      id: "heading",
+    },
+    {
+      icon: Q,
+      cb: () => toggle("toggleBlockquote"),
+      id: "blockquote",
+    },
+    {
+      icon: L,
+      cb: linkClick,
+      id: "link",
+    },
+    {
+      icon: Upload,
+      cb: upload,
+      id: "img",
+    },
+    {
+      icon: List,
+      cb: () => toggle("toggleBulletList"),
+      id: "bulletList",
+    },
+    {
+      icon: NumList,
+      cb: () => toggle("toggleOrderedList"),
+      id: "orderedList",
+    },
+    {
+      icon: Arrow,
+      cb: () => toggle("undo"),
+      id: "undo",
+    },
+  ];
+
+  const firstView = [
+    {
+      icon: B,
+      cb: () => toggle("toggleBold"),
+      id: "bold",
+    },
+    {
+      icon: I,
+      cb: () => toggle("toggleItalic"),
+      id: "italic",
+    },
+    {
+      icon: H,
+      cb: () => toggle("toggleHeading", { level: 1 }),
+      id: "heading",
+    },
+    {
+      icon: Q,
+      cb: () => toggle("toggleBlockquote"),
+      id: "blockquote",
+    },
+    {
+      icon: L,
+      cb: linkClick,
+      id: "link",
+    },
+    {
+      icon: NumList,
+      cb: () => toggle("toggleOrderedList"),
+      id: "orderedList",
+    },
+    {
+      icon: Arrow,
+      cb: () => toggle("undo"),
+      id: "undo",
+    },
+  ];
+
+  const secondView = [
+    {
+      icon: Upload,
+      cb: upload,
+      id: "img",
+    },
+    {
+      icon: List,
+      cb: () => toggle("toggleBulletList"),
+      id: "bulletList",
+    },
+  ];
+
+  const viewMap = {
+    full: fullToolbar,
+    first: firstView,
+    second: secondView,
+  };
   const dispatch = createEventDispatcher();
   // #endregion ➤ 📌 VARIABLES
 
@@ -61,9 +172,9 @@
 
   function linkClick(e) {
     e.preventDefault();
+    e.stopPropagation();
     dispatch("showLinkPopup");
   }
-
 
   function upload() {
     fileInput.click();
@@ -80,6 +191,11 @@
       reader.readAsDataURL(file);
     }
   }
+
+  function changeView() {
+    if (viewportType !== "mobile") return;
+    view = view === "first" ? "second" : "first";
+  }
   // #endregion ➤ 🛠️ METHODS
 </script>
 
@@ -95,11 +211,38 @@
 -->
 
 {#if editor}
-  <div class="toolbar">
-    <div class="button" class:disabled={titleInFocus}>
+  <div class="toolbar {viewportType}">
+    <div
+      class="button view-change"
+      on:click={changeView}
+      class:active={view === "second"}
+      class:disabled={titleInFocus}
+    >
       <Add />
     </div>
-    <div
+    {#each viewMap[view] as { icon, cb, id }}
+      <div
+        in:fly={{ x: -100, duration: 200 }}
+        out:fly={{ x: 100, duration: 200 }}
+        class="button"
+        class:disabled={titleInFocus}
+        class:active={editor.isActive(id)}
+        on:click={cb}
+      >
+        {#if id === "img"}
+          <input
+            type="file"
+            bind:this={fileInput}
+            name=""
+            on:change={handleFileChange}
+            hidden
+            id=""
+          />
+        {/if}
+        <svelte:component this={icon} />
+      </div>
+    {/each}
+    <!-- <div
       class="button"
       class:disabled={titleInFocus}
       class:active={editor.isActive("bold")}
@@ -145,7 +288,14 @@
       class:disabled={titleInFocus}
       on:click={upload}
     >
-      <input type="file" bind:this={fileInput} name="" on:change={handleFileChange} hidden id="">
+      <input
+        type="file"
+        bind:this={fileInput}
+        name=""
+        on:change={handleFileChange}
+        hidden
+        id=""
+      />
       <Upload />
     </div>
     <div
@@ -170,7 +320,7 @@
       on:click={() => toggle("undo")}
     >
       <Arrow />
-    </div>
+    </div> -->
   </div>
 {/if}
 
@@ -213,8 +363,21 @@
         }
       }
     }
-    .link-button {
-      position: relative;
+
+    .view-change {
+      :global(svg) {
+        transition: all 0.3s ease-out;
+        transform: rotate(0deg);
+      }
+      &.active {
+        :global(svg) {
+          transform: rotate(180deg);
+        }
+      }
+    }
+
+    &.mobile {
+      justify-content: flex-start;
     }
   }
 </style>
