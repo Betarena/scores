@@ -12,7 +12,8 @@
   import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
   import session from "$lib/store/session.js";
   import userSettings from "$lib/store/user-settings.js";
-
+  import type { AuthorsAuthorsMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  export let selectedSportstack: AuthorsAuthorsMain;
   $: ({ viewportType } = $session);
   const options = [
     { id: 1, label: "SprortsTack1" },
@@ -42,7 +43,7 @@
           <DropDownInput {options} />
         {/if}
       </div>
-      <a href="/u/author/article/create/{$userSettings.lang}">
+      <a href="/u/author/article/create/{$userSettings.lang}?sportstack={selectedSportstack.permalink}">
         <Button full={true} type="primary">+ New article</Button>
       </a>
     </div>

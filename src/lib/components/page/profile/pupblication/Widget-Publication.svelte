@@ -137,7 +137,7 @@
                 {#if view === "settings"}
                   <Button type="primary" size="xl">Save</Button>
                 {:else}
-                  <a href="/u/author/article/create/{$userSettings.lang}">
+                  <a href="/u/author/article/create/{$userSettings.lang}?sportstack={selectedSportstack.permalink}">
                     <Button full={true} type="primary">+ New article</Button>
                   </a>
                 {/if}

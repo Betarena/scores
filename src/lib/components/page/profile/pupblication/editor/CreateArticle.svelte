@@ -8,8 +8,9 @@
 -->
 
 <script lang="ts">
+  import type { PageData } from ".svelte-kit/types/src/routes/(scores)/u/author/article/create/[lang=lang]/$types.js";
   import Editor from "./Editor.svelte";
-
+  export let data: PageData;
 </script>
 
 <!--
@@ -23,4 +24,4 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<Editor />
+<Editor {data} />

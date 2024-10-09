@@ -29,7 +29,7 @@
   import Placeholder from "@tiptap/extension-placeholder";
   import BubbleMenu from "@tiptap/extension-bubble-menu";
   import Link from "@tiptap/extension-link";
-  import Image from '@tiptap/extension-image'
+  import Image from "@tiptap/extension-image";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
   import XClose from "$lib/components/ui/infomessages/x-close.svelte";
   import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
@@ -40,6 +40,10 @@
   import ModalArticleSeo from "./ModalArticleSEO.svelte";
   import Toolbar from "./Toolbar.svelte";
   import LinkPopup from "./LinkPopup.svelte";
+  import type { PageData } from ".svelte-kit/types/src/routes/(scores)/u/author/article/create/[lang=lang]/$types.js";
+  import type { AuthorsAuthorsMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import { page } from "$app/stores";
+    import { goto } from "$app/navigation";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -56,6 +60,7 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
+  export let data: PageData;
 
   let element;
   let editor: Editor;
@@ -68,11 +73,25 @@
   let bmenu;
   let linkState = { url: "", text: "" };
   let linkMode: "info" | "edit" = "info";
-  const options = [
-    { id: 1, label: "Sportstack 1" },
-    { id: 2, label: "Sportstack 2" },
-    { id: 3, label: "Sportstack 3" },
-  ];
+  let options: (AuthorsAuthorsMain & { label: string })[] = [];
+  let selectedSportstack;
+  $: if (data.sportstack instanceof Promise) {
+    console.log("data.sportstack is a promise");
+  } else {
+    options = data.sportstacks.map((s) => {
+      const sportstack = { ...s, label: s.data?.username || "" };
+      if (sportstack.permalink === $page.url.searchParams.get("sportstack")) {
+        selectedSportstack = sportstack;
+      }
+      return sportstack;
+    });
+    if (!selectedSportstack) {
+      selectedSportstack = options[0];
+      const {url} = $page
+      url.searchParams.set("sportstack", selectedSportstack.permalink);
+      goto(url, { replaceState: true, noScroll: true, keepFocus: true})
+    }
+  }
 
   $: ({ viewportType } = $session);
 
@@ -130,6 +149,20 @@
         editor.getBoundingClientRect().bottom
       }px`;
     }
+  }
+  function toogleLinkPopup(show?: boolean) {
+    if (show !== undefined && show === linkPopup) return;
+    linkPopup = show ?? !linkPopup;
+    editor.view.updateState(editor.view.state);
+    editor.commands.focus();
+  }
+
+  function selectSportstack(e) {
+    const url = $page.url;
+    const {permalink} = e.detail as AuthorsAuthorsMain;
+    selectedSportstack = e.detail as AuthorsAuthorsMain;
+    url.searchParams.set("sportstack", permalink);
+    goto(url, { replaceState: true, noScroll: true, keepFocus: true});
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -213,12 +246,7 @@
     };
   });
 
-  function toogleLinkPopup(show?: boolean) {
-    if(show !== undefined && show === linkPopup) return;
-    linkPopup = show ?? !linkPopup;
-    editor.view.updateState(editor.view.state);
-    editor.commands.focus();
-  }
+
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 
@@ -258,7 +286,7 @@
         {/if}
       </div>
 
-      <DropDownInput {options} />
+      <DropDownInput {options} value={selectedSportstack} on:change={selectSportstack} />
       {#if viewportType === "desktop"}
         <div class="actions">
           <Button
