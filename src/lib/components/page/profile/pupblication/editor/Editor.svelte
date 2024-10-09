@@ -29,6 +29,7 @@
   import Placeholder from "@tiptap/extension-placeholder";
   import BubbleMenu from "@tiptap/extension-bubble-menu";
   import Link from "@tiptap/extension-link";
+  import Image from '@tiptap/extension-image'
   import Container from "$lib/components/ui/wrappers/Container.svelte";
   import XClose from "$lib/components/ui/infomessages/x-close.svelte";
   import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
@@ -153,6 +154,9 @@
         }),
         Placeholder.configure({
           placeholder: "Create your sports content",
+        }),
+        Image.configure({
+          base64: true,
         }),
         BubbleMenu.configure({
           element: bmenu,

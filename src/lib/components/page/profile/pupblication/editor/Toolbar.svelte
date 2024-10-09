@@ -18,6 +18,7 @@
   import NumList from "./icons/NumList.svelte";
   import Q from "./icons/Q.svelte";
   import H from "./icons/H.svelte";
+  import Upload from "./icons/Upload.svelte";
 
   // #region ➤ 📌 VARIABLES
 
@@ -35,6 +36,8 @@
 
   export let editor;
   export let titleInFocus = false;
+
+  let fileInput;
 
   const dispatch = createEventDispatcher();
   // #endregion ➤ 📌 VARIABLES
@@ -61,6 +64,22 @@
     dispatch("showLinkPopup");
   }
 
+
+  function upload() {
+    fileInput.click();
+  }
+
+  function handleFileChange(event) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const url = e.target.result;
+        editor.chain().focus().setImage({ src: url }).run();
+      };
+      reader.readAsDataURL(file);
+    }
+  }
   // #endregion ➤ 🛠️ METHODS
 </script>
 
@@ -119,6 +138,15 @@
       class:active={editor.isActive("link")}
     >
       <L />
+    </div>
+    <div
+      class="button"
+      class:active={editor.isActive("img")}
+      class:disabled={titleInFocus}
+      on:click={upload}
+    >
+      <input type="file" bind:this={fileInput} name="" on:change={handleFileChange} hidden id="">
+      <Upload />
     </div>
     <div
       class="button"
