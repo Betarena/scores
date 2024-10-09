@@ -18,7 +18,7 @@
   export let mode: "info" | "edit";
   export let show = false;
 
-  $: url = linkState.url.toLowerCase();
+  $: linkState.url = linkState.url.toLowerCase();
 
   const dispatch = createEventDispatcher();
 
@@ -28,13 +28,14 @@
   }
 
   function save() {
+    const {url, text} = linkState
     editor
       .chain()
       .focus()
       .extendMarkRange("link")
       .deleteSelection()
-      .setLink({ href: url })
-      .insertContent(linkState.text || url)
+      .setLink({ href: url  })
+      .insertContent(text || url)
       .run();
 
     hide();
