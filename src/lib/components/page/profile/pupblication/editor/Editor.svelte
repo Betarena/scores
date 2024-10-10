@@ -263,7 +263,7 @@
 <div bind:this={bmenu}>
   <LinkPopup
     {editor}
-    show={linkPopup}
+    bind:show={linkPopup}
     {linkState}
     bind:mode={linkMode}
     on:hide={() => toogleLinkPopup(false)}
