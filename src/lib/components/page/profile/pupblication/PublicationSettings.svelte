@@ -138,7 +138,7 @@
     placeholder={translation?.default_name || "Default name"}
     on:input={debounceValidation}
     requred={true}
-    bind:value={username}
+    value={username}
   />
 
   <Input

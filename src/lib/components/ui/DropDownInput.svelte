@@ -109,7 +109,7 @@
 <svelte:window
   on:click={hide}
 />
-<div class="field">
+<div class="field dropdown-input {$$restProps.class}">
   <select {name} style="display: none;" bind:value>
     {#each options as option}
       <option value={option}>{option.label}</option>
@@ -153,7 +153,7 @@
             class="list-item"
             class:active={option.id === value?.id}
           >
-            <slot name="option">
+            <slot name="option" {option}>
               {option[textKey]}
 
               {#if checkIcon && option.id === value?.id}
@@ -242,6 +242,7 @@
       align-items: flex-start;
       align-self: stretch;
       height: 44px;
+      cursor: pointer;
       position: relative;
       /* Shadows/shadow-xs */
       box-shadow: 0px 1px 2px 0px

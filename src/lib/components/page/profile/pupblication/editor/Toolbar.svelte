@@ -23,6 +23,10 @@
   import { fly } from "svelte/transition";
   import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
   import { Editor } from "@tiptap/core";
+  import P from "./icons/P.svelte";
+  import H2 from "./icons/H2.svelte";
+  import H3 from "./icons/H3.svelte";
+  import H4 from "./icons/H4.svelte";
 
   // #region ➤ 📌 VARIABLES
 
@@ -49,19 +53,21 @@
   $: view = viewportType !== "mobile" ? "full" : "first";
 
   let headings = [
-    { id: "text", label: "Normal text" },
-    { id: 2, label: "Heading 2" },
-    { id: 3, label: "Heading 3" },
-    { id: 4, label: "Heading 4" },
+    { id: "text", label: "Normal text", icon: P },
+    { id: 2, label: "Heading 2", icon: H2 },
+    { id: 3, label: "Heading 3", icon: H3 },
+    { id: 4, label: "Heading 4", icon: H4 },
   ];
 
-  $: selectedHedings = editor?.isActive("heading") ? getCurrentHeading(editor) : headings[0]
+  $: selectedHedings = editor?.isActive("heading")
+    ? getCurrentHeading(editor)
+    : headings[0];
   const fullToolbar = [
     {
       icon: H,
       cb: handleHeadings,
       id: "heading",
-      options: headings
+      options: headings,
     },
     {
       icon: B,
@@ -110,7 +116,7 @@
       icon: H,
       cb: handleHeadings,
       id: "heading",
-      options: headings
+      options: headings,
     },
     {
       icon: B,
@@ -186,12 +192,15 @@
     if (titleInFocus || !editor) return;
     const node = e.detail;
     if (node.id === "text") {
-      return editor.chain().focus().toggleHeading({level: selectedHedings.id as number}).run();
-    };
+      return editor
+        .chain()
+        .focus()
+        .toggleHeading({ level: selectedHedings.id as number })
+        .run();
+    }
     editor.chain().focus().setHeading({ level: node.id }).run();
     selectedHedings = node;
   }
-
 
   function toggle(cb, conf?) {
     if (titleInFocus) return;
@@ -250,7 +259,16 @@
     </div>
     {#each viewMap[view] as { icon, cb, id, options }}
       {#if id === "heading"}
-        <DropDownInput {options} value={selectedHedings} on:change={cb}/>
+        <DropDownInput
+          {options}
+          value={selectedHedings}
+          class="dropdown"
+          on:change={cb}
+        >
+          <div slot="option" class="dropdow-item" let:option>
+            <svelte:component this={option?.icon} />
+          </div>
+        </DropDownInput>
       {:else}
         <div
           in:fly={{ x: -100, duration: 200 }}
@@ -374,6 +392,9 @@
     padding-inline: var(--spacing-md, 8px);
     gap: var(--spacing-xxs, 2px);
     justify-content: center;
+    :global(path) {
+      stroke: #8c8c8c !important;
+    }
     .button {
       height: max-content;
       border-radius: var(--radius-md, 8px);
@@ -397,6 +418,45 @@
       }
     }
 
+    :global(.dropdown) {
+      width: 44px !important;
+      height: 44px !important;
+    }
+    // :global(.dropdown-input) {
+    // }
+    :global(.dropdown .input-element) {
+      padding: 0 !important;
+      max-width: 100%;
+      border: none !important;
+      margin-bottom: -5px;
+    }
+
+    :global(.dropdown .select-dropdown) {
+      border: none !important;
+      background: var(--colors-background-bg-active);
+      box-shadow: 0px 20px 24px -4px var(--colors-effects-shadows-shadow-xl_01, rgba(255, 255, 255, 0)),
+      0px 8px 8px -4px var(--colors-effects-shadows-shadow-xl_02, rgba(255, 255, 255, 0));
+    }
+    :global(.dropdown .list-item) {
+      width: 44px;
+      height: 44px;
+    }
+    :global(.dropdown .list-item:hover) {
+      background-color: var(
+          --component-colors-components-buttons-primary-button-primary-bg
+        ) !important;
+    }
+    :global(.dropdown .list-item:hover svg path) {
+     stroke: var(--colors-base-white) !important;
+    }
+    :global(.dropdown .list-item.active) {
+      background-color: var(
+          --component-colors-components-buttons-primary-button-primary-bg
+        ) !important;
+    }
+    :global(.dropdown .list-item.active svg path) {
+     stroke: var(--colors-base-white) !important;
+    }
     .view-change {
       :global(svg) {
         transition: all 0.3s ease-out;

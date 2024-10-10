@@ -155,6 +155,7 @@
       width: 100%;
       justify-content: space-between;
       align-items: center;
+      cursor: pointer;
 
       .info {
         display: flex;
@@ -192,7 +193,8 @@
       }
     }
 
-    &.tablet, &.desktop {
+    &.tablet,
+    &.desktop {
       width: 375px;
       padding: 24px 16px var(--spacing-3xl, 24px) 16px;
       top: 50%;

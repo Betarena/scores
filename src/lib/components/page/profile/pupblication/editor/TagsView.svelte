@@ -20,7 +20,7 @@
   import { fade } from "svelte/transition";
   import ModalArticleSeo from "./ModalArticleSEO.svelte";
   import session from "$lib/store/session.js";
-    import XClose from "$lib/components/ui/infomessages/x-close.svelte";
+  import XClose from "$lib/components/ui/infomessages/x-close.svelte";
 
   function goBack() {
     $modalStore.component = ModalArticleSeo;
@@ -36,7 +36,6 @@
     initialTags.push({ label: `Tag ${i + 1}`, id: i });
     tags = initialTags;
   }
-
 
   function select(tag) {
     if (
@@ -212,6 +211,10 @@
     height: 100vh;
     padding-bottom: 34px;
 
+    :global(.badge) {
+      cursor: pointer;
+    }
+
     .header {
       display: flex;
       height: 64px;
@@ -322,6 +325,17 @@
             gap: 16px;
             align-self: stretch;
             flex-wrap: wrap;
+
+            :global(.badge:hover) {
+              border: 1px solid
+                var(--component-colors-utility-brand-utility-brand-500, #ae460b);
+              color: var(--colors-text-text-white, #fff);
+
+              background: var(
+                --component-colors-utility-brand-utility-brand-500,
+                #fef5f0
+              );
+            }
           }
         }
       }
@@ -340,7 +354,8 @@
       }
     }
 
-    &.tablet, &.desktop {
+    &.tablet,
+    &.desktop {
       top: 50%;
       width: var(--width-md, 560px);
       left: 50%;
