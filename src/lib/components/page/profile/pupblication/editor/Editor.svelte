@@ -195,6 +195,7 @@
           element: bmenu,
           shouldShow: ({ editor }) => {
             const isLink = editor.isActive("link");
+
             if (!linkPopup && !isLink) return false;
             let url = "";
             let text = "";
@@ -202,7 +203,14 @@
               const linkAttrs = editor.getAttributes("link");
               url = linkAttrs.href;
               const { from } = editor.view.state.selection;
-              const linkNode = editor.state.doc.nodeAt(from);
+              let linkNode = editor.state.doc.nodeAt(from);
+              if (
+                !linkNode ||
+                !linkNode.marks.some((mark) => mark.type.name === "link")
+              ) {
+                linkNode = editor.state.doc.nodeAt(from - 1);
+              }
+
               text = linkNode?.textContent || "";
               linkMode = "info";
             } else {
