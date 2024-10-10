@@ -517,6 +517,11 @@
         :global(h3:first-of-type) {
           margin-top: 0;
         }
+        :global(img) {
+          max-width: 100%;
+          width: 100%;
+          max-height: 352px;
+        }
       }
     }
 

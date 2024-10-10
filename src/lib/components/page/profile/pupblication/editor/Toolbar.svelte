@@ -236,6 +236,7 @@
             name=""
             on:change={handleFileChange}
             hidden
+            accept="image/*"
             id=""
           />
         {/if}
