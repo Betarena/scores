@@ -43,7 +43,7 @@
   import type { PageData } from ".svelte-kit/types/src/routes/(scores)/u/author/article/create/[lang=lang]/$types.js";
   import type { AuthorsAuthorsMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import { page } from "$app/stores";
-    import { goto } from "$app/navigation";
+  import { goto } from "$app/navigation";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -87,9 +87,9 @@
     });
     if (!selectedSportstack) {
       selectedSportstack = options[0];
-      const {url} = $page
+      const { url } = $page;
       url.searchParams.set("sportstack", selectedSportstack.permalink);
-      goto(url, { replaceState: true, noScroll: true, keepFocus: true})
+      goto(url, { replaceState: true, noScroll: true, keepFocus: true });
     }
   }
 
@@ -135,7 +135,7 @@
     e: Event & { currentTarget: EventTarget & HTMLTextAreaElement }
   ) {
     const textarea = e.currentTarget;
-    textarea.style.height = viewportType === "desktop" ? "44px" : "32px";
+    textarea.style.height = viewportType === "mobile" ? "36px" : "54px";
     let height = textarea.scrollHeight;
     textarea.style.height = height + "px";
   }
@@ -159,10 +159,10 @@
 
   function selectSportstack(e) {
     const url = $page.url;
-    const {permalink} = e.detail as AuthorsAuthorsMain;
+    const { permalink } = e.detail as AuthorsAuthorsMain;
     selectedSportstack = e.detail as AuthorsAuthorsMain;
     url.searchParams.set("sportstack", permalink);
-    goto(url, { replaceState: true, noScroll: true, keepFocus: true});
+    goto(url, { replaceState: true, noScroll: true, keepFocus: true });
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -246,7 +246,6 @@
     };
   });
 
-
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 
@@ -286,7 +285,11 @@
         {/if}
       </div>
 
-      <DropDownInput {options} value={selectedSportstack} on:change={selectSportstack} />
+      <DropDownInput
+        {options}
+        value={selectedSportstack}
+        on:change={selectSportstack}
+      />
       {#if viewportType === "desktop"}
         <div class="actions">
           <Button
@@ -367,7 +370,7 @@
 <style lang="scss">
   .create-article {
     height: 100vh;
-    max-height: calc(100vh - 34px - 40px);
+    max-height: calc(100vh - 34px - 110px);
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -397,6 +400,9 @@
       max-height: 100%;
       overflow: hidden;
       flex-shrink: 1;
+      max-width: 676px;
+      margin: 0 auto;
+      width: 100%;
       gap: var(--spacing-lg, 12px);
       justify-content: flex-end;
 
@@ -431,12 +437,32 @@
         color: var(--colors-text-text-primary) !important;
         font-family: var(--font-family-font-family-display, Roboto);
         overflow: auto;
-        font-size: var(--font-size-text-md, 16px);
+        // font-size: var(--font-size-text-md, 16px);
+
+        font-size: 18px;
+        line-height: 32px;
+        font-weight: 300;
+
+        &::-webkit-scrollbar {
+          width: 8px;
+        }
+
+        &::-webkit-scrollbar-track {
+          background: inherit;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background: var(--colors-background-bg-quaternary);
+          border-radius: 4px;
+        }
 
         :global(p) {
+          font-size: 18px;
+          line-height: 32px;
+          font-weight: 300;
           color: var(--colors-text-text-primary) !important;
-          font-family: var(--font-family-font-family-display, Roboto);
-          font-size: var(--font-size-text-md, 16px) !important;
+          // font-family: var(--font-family-font-family-display, Roboto);
+          // font-size: var(--font-size-text-md, 16px) !important;
         }
         :global(p.is-editor-empty:first-child::before) {
           color: var(--colors-text-text-placeholder, #727171);
@@ -462,6 +488,26 @@
           text-decoration: underline !important;
           display: initial;
           color: var(--colors-text-text-brand-tertiary) !important;
+        }
+
+        :global(h2) {
+          line-height: 32px;
+          font-weight: 700;
+          margin: 40px 0 16px;
+          font-size: 24px;
+        }
+        :global(h2:first-of-type) {
+          margin-top: 0;
+        }
+
+        :global(h3) {
+          line-height: 32px;
+          font-weight: 700;
+          margin: 40px 0 16px;
+          font-size: 20px;
+        }
+        :global(h3:first-of-type) {
+          margin-top: 0;
         }
       }
     }
@@ -554,6 +600,7 @@
     }
 
     &.desktop {
+      max-height: 95vh;
       .header {
         gap: var(--spacing-3xl, 24px);
         margin-top: var(--spacing-2xl, 20px);
@@ -561,6 +608,15 @@
         height: 84px;
         :global(.field) {
           max-width: 343px;
+        }
+
+        .editor-wrapper {
+          .title {
+            font-size: 38px;
+            line-height: 54px;
+            letter-spacing: -0.72px;
+            height: 54px;
+          }
         }
 
         .actions {
@@ -585,10 +641,18 @@
       .editor-wrapper {
         padding-top: var(--spacing-lg, 12px);
         .title {
-          font-size: var(--font-size-display-md, 36px);
-          line-height: var(--line-height-display-md, 44px); /* 122.222% */
+          font-size: 38px;
+          line-height: 54px;
           letter-spacing: -0.72px;
-          height: 44px;
+          height: 54px;
+        }
+      }
+    }
+    &.mobile {
+      .editor-wrapper {
+        .title {
+          line-height: 36px;
+          font-size: 24px;
         }
       }
     }

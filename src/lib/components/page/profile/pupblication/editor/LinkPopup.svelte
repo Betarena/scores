@@ -138,9 +138,15 @@
       justify-content: flex-end;
     }
     &.edit {
+      padding:  var( --spacing-xl);
       flex-direction: column;
       .buttons {
         justify-content: flex-start;
+        width: 100%;
+        :global(.button) {
+          flex-grow: 1;
+          flex-basis: 0;
+        }
       }
     }
     &.info {

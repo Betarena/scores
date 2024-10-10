@@ -37,7 +37,6 @@
     tags = initialTags;
   }
 
-  $: tags = tags.filter((tag) => !check(tag, $create_article_store.tags));
 
   function select(tag) {
     if (
