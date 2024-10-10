@@ -21,6 +21,8 @@
   import Upload from "./icons/Upload.svelte";
   import session from "$lib/store/session.js";
   import { fly } from "svelte/transition";
+  import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
+  import { Editor } from "@tiptap/core";
 
   // #region ➤ 📌 VARIABLES
 
@@ -36,7 +38,7 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let editor;
+  export let editor: Editor;
   export let titleInFocus = false;
 
   let fileInput;
@@ -46,7 +48,21 @@
 
   $: view = viewportType !== "mobile" ? "full" : "first";
 
+  let headings = [
+    { id: "text", label: "Normal text" },
+    { id: 2, label: "Heading 2" },
+    { id: 3, label: "Heading 3" },
+    { id: 4, label: "Heading 4" },
+  ];
+
+  $: selectedHedings = editor?.isActive("heading") ? getCurrentHeading(editor) : headings[0]
   const fullToolbar = [
+    {
+      icon: H,
+      cb: handleHeadings,
+      id: "heading",
+      options: headings
+    },
     {
       icon: B,
       cb: () => toggle("toggleBold"),
@@ -56,11 +72,6 @@
       icon: I,
       cb: () => toggle("toggleItalic"),
       id: "italic",
-    },
-    {
-      icon: H,
-      cb: () => toggle("toggleHeading", { level: 1 }),
-      id: "heading",
     },
     {
       icon: Q,
@@ -96,6 +107,12 @@
 
   const firstView = [
     {
+      icon: H,
+      cb: handleHeadings,
+      id: "heading",
+      options: headings
+    },
+    {
       icon: B,
       cb: () => toggle("toggleBold"),
       id: "bold",
@@ -104,11 +121,6 @@
       icon: I,
       cb: () => toggle("toggleItalic"),
       id: "italic",
-    },
-    {
-      icon: H,
-      cb: () => toggle("toggleHeading", { level: 1 }),
-      id: "heading",
     },
     {
       icon: Q,
@@ -165,6 +177,22 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  function getCurrentHeading(editor) {
+    const level = editor.getAttributes("heading").level;
+    return headings.find((h) => h.id === level) || headings[0];
+  }
+
+  function handleHeadings(e) {
+    if (titleInFocus || !editor) return;
+    const node = e.detail;
+    if (node.id === "text") {
+      return editor.chain().focus().toggleHeading({level: selectedHedings.id as number}).run();
+    };
+    editor.chain().focus().setHeading({ level: node.id }).run();
+    selectedHedings = node;
+  }
+
+
   function toggle(cb, conf?) {
     if (titleInFocus) return;
     editor.chain().focus()[cb](conf).run();
@@ -220,28 +248,32 @@
     >
       <Add />
     </div>
-    {#each viewMap[view] as { icon, cb, id }}
-      <div
-        in:fly={{ x: -100, duration: 200 }}
-        out:fly={{ x: 100, duration: 200 }}
-        class="button"
-        class:disabled={titleInFocus}
-        class:active={editor.isActive(id)}
-        on:click={cb}
-      >
-        {#if id === "img"}
-          <input
-            type="file"
-            bind:this={fileInput}
-            name=""
-            on:change={handleFileChange}
-            hidden
-            accept="image/*"
-            id=""
-          />
-        {/if}
-        <svelte:component this={icon} />
-      </div>
+    {#each viewMap[view] as { icon, cb, id, options }}
+      {#if id === "heading"}
+        <DropDownInput {options} value={selectedHedings} on:change={cb}/>
+      {:else}
+        <div
+          in:fly={{ x: -100, duration: 200 }}
+          out:fly={{ x: 100, duration: 200 }}
+          class="button"
+          class:disabled={titleInFocus}
+          class:active={editor.isActive(id)}
+          on:click={cb}
+        >
+          {#if id === "img"}
+            <input
+              type="file"
+              bind:this={fileInput}
+              name=""
+              on:change={handleFileChange}
+              hidden
+              accept="image/*"
+              id=""
+            />
+          {/if}
+          <svelte:component this={icon} />
+        </div>
+      {/if}
     {/each}
     <!-- <div
       class="button"

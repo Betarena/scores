@@ -44,6 +44,7 @@
   import type { AuthorsAuthorsMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import { page } from "$app/stores";
   import { goto } from "$app/navigation";
+  import { browser } from "$app/environment";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -85,7 +86,7 @@
       }
       return sportstack;
     });
-    if (!selectedSportstack) {
+    if (!selectedSportstack && browser) {
       selectedSportstack = options[0];
       const { url } = $page;
       url.searchParams.set("sportstack", selectedSportstack.permalink);
@@ -529,6 +530,7 @@
       width: 100%;
       display: flex;
       position: fixed;
+      z-index: 1;
       padding: var(--spacing-lg, 12px) var(--spacing-none, 0px);
       flex-direction: column;
       align-items: flex-start;

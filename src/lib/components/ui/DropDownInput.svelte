@@ -8,7 +8,7 @@
 -->
 
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, tick } from "svelte";
   import ArrowDown from "./assets/arrow-down.svelte";
 
   // #region ➤ 📌 VARIABLES
@@ -49,6 +49,14 @@
 
   let modal = false;
   let focus = false;
+  let dropDownNode;
+  let top = false;
+
+  $: if (modal && dropDownNode) {
+    tick().then(() => {
+      adjustDropdownPosition();
+    });
+  }
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -66,7 +74,23 @@
   function select(option: IOption) {
     value = option;
     dispatch("change", value);
+    hide();
+  }
+
+  function hide() {
     modal = false;
+    focus = false;
+    top = false;
+  }
+
+  function adjustDropdownPosition() {
+    const dropdownRect = dropDownNode.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+    if (dropdownRect.bottom > viewportHeight) {
+      top = true;
+    } else {
+      top = false;
+    }
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -83,10 +107,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 <svelte:window
-  on:click={() => {
-    modal = false;
-    focus = false;
-  }}
+  on:click={hide}
 />
 <div class="field">
   <select {name} style="display: none;" bind:value>
@@ -112,6 +133,7 @@
       on:click|stopPropagation={() => {
         modal = !modal;
         focus = true;
+        top = false;
       }}
     >
       {#if value}
@@ -123,7 +145,7 @@
         <ArrowDown color="var(--colors-foreground-fg-quaternary-500)" />
       </span>
     </div>
-    <div class="select-dropdown" class:show={modal}>
+    <div class="select-dropdown" class:show={modal} bind:this={dropDownNode} class:top>
       {#each options as option (option.id)}
         <div class="list-item-wrapper">
           <div
@@ -329,7 +351,6 @@
         border-radius: 4px;
       }
 
-
       &.show {
         display: flex;
       }
@@ -365,6 +386,11 @@
             background: var(--colors-background-bg-primary_hover, #3b3b3b);
           }
         }
+      }
+
+      &.top {
+        top: calc(-1 * var(--spacing-xs, 4px));
+        transform: translate(-50%, -100%);
       }
     }
   }
