@@ -423,6 +423,7 @@
         height: 32px;
         overflow-y: hidden;
         resize: none;
+        font-weight: 500;
 
         color: var(--colors-text-text-primary, #fbfbfb);
 
@@ -430,7 +431,6 @@
         font-family: var(--font-family-font-family-display, Roboto);
         font-size: var(--font-size-display-xs, 24px);
         font-style: normal;
-        font-weight: 400;
         line-height: var(--line-height-display-xs, 32px); /* 133.333% */
 
         &:focus-visible {
