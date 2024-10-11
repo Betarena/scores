@@ -8,7 +8,7 @@
 -->
 
 <script lang="ts">
-  import { createEventDispatcher, tick } from "svelte";
+  import { createEventDispatcher, onMount, tick } from "svelte";
   import ArrowDown from "./assets/arrow-down.svelte";
 
   // #region ➤ 📌 VARIABLES
@@ -85,7 +85,8 @@
 
   function adjustDropdownPosition() {
     const dropdownRect = dropDownNode.getBoundingClientRect();
-    const viewportHeight = window.innerHeight;
+    const viewportHeight = window.visualViewport?.height || window.innerHeight;
+
     if (dropdownRect.bottom > viewportHeight) {
       top = true;
     } else {
@@ -106,9 +107,7 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<svelte:window
-  on:click={hide}
-/>
+<svelte:window on:click={hide} on:resize={adjustDropdownPosition} />
 <div class="field dropdown-input {$$restProps.class}">
   <select {name} style="display: none;" bind:value>
     {#each options as option}
@@ -145,7 +144,12 @@
         <ArrowDown color="var(--colors-foreground-fg-quaternary-500)" />
       </span>
     </div>
-    <div class="select-dropdown" class:show={modal} bind:this={dropDownNode} class:top>
+    <div
+      class="select-dropdown"
+      class:show={modal}
+      bind:this={dropDownNode}
+      class:top
+    >
       {#each options as option (option.id)}
         <div class="list-item-wrapper">
           <div

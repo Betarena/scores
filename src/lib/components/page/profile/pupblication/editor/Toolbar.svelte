@@ -262,12 +262,11 @@
         <DropDownInput
           {options}
           value={selectedHedings}
-          class="dropdown"
+          class="dropdown {titleInFocus ? 'disabled' : ''}"
           on:change={cb}
         >
           <div slot="option" class="dropdow-item {id}" let:option>
             <div class="icon-wrapper {option.id?.toString()}">
-
               <svelte:component this={option?.icon} />
             </div>
           </div>
@@ -335,17 +334,26 @@
       }
       &.disabled {
         // background-color: ;
+        pointer-events: none;
         background: var(--colors-background-bg-disabled, #f7f7f7);
         :global(path) {
-          fill: var(--colors-foreground-fg-disabled, #8c8c8c) !important;
+          stroke: var(--colors-foreground-fg-disabled, #8c8c8c) !important;
         }
       }
     }
 
     :global(.dropdown) {
-      width: 44px !important;
+      width: 60px !important;
       height: 44px !important;
     }
+
+    :global(.dropdown.disabled) {
+      background: var(--colors-background-bg-disabled, #f7f7f7);
+      pointer-events: none;
+      border-radius: var(--radius-md, 8px);
+      cursor: pointer;
+    }
+
     // :global(.dropdown-input) {
     // }
     :global(.dropdown .input-element) {
@@ -353,13 +361,15 @@
       max-width: 100%;
       border: none !important;
       margin-bottom: -5px;
+      // gap: 1px;
+      // justify-content: center;
     }
 
     :global(.dropdown .select-dropdown) {
       border: none !important;
       background: var(--colors-background-bg-active);
       box-shadow: 0px 20px 24px -4px var(--colors-effects-shadows-shadow-xl_01, rgba(255, 255, 255, 0)),
-      0px 8px 8px -4px var(--colors-effects-shadows-shadow-xl_02, rgba(255, 255, 255, 0));
+        0px 8px 8px -4px var(--colors-effects-shadows-shadow-xl_02, rgba(255, 255, 255, 0));
     }
     :global(.dropdown .list-item) {
       width: 44px;
@@ -367,25 +377,31 @@
     }
     :global(.dropdown .list-item:hover) {
       background-color: var(
-          --component-colors-components-buttons-primary-button-primary-bg
-        ) !important;
+        --component-colors-components-buttons-primary-button-primary-bg
+      ) !important;
     }
-    :global(.dropdown .list-item:hover  .icon-wrapper:not(.p) svg path) {
-     fill: var(--colors-base-white) !important;
+    :global(.dropdown .list-item:hover .icon-wrapper:not(.p) svg path) {
+      fill: var(--colors-base-white) !important;
     }
-    :global(.dropdown .list-item:hover .icon-wrapper  svg path) {
-     stroke: var(--colors-base-white) !important;
+    :global(.dropdown .list-item:hover .icon-wrapper svg path) {
+      stroke: var(--colors-base-white) !important;
     }
     :global(.dropdown .list-item.active) {
       background-color: var(
-          --component-colors-components-buttons-primary-button-primary-bg
-        ) !important;
+        --component-colors-components-buttons-primary-button-primary-bg
+      ) !important;
     }
-    :global(.dropdown .list-item.active  .icon-wrapper:not(.p) svg path) {
-     fill: var(--colors-base-white) !important;
+    :global(.dropdown .list-item.active .icon-wrapper:not(.p) svg path) {
+      fill: var(--colors-base-white) !important;
     }
-    :global(.dropdown .list-item.active  .icon-wrapper svg path) {
-     stroke: var(--colors-base-white) !important;
+    :global(.dropdown .list-item.active .icon-wrapper svg path) {
+      stroke: var(--colors-base-white) !important;
+    }
+    :global(.dropdown.disabled .icon-wrapper:not(.p) path) {
+      fill: var(--colors-foreground-fg-disabled, #8c8c8c) !important;
+    }
+    :global(.dropdown.disabled .icon-wrapper path) {
+      stroke: var(--colors-foreground-fg-disabled, #8c8c8c) !important;
     }
     .view-change {
       :global(svg) {

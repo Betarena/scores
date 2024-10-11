@@ -38,11 +38,13 @@
   }
 
   function select(tag) {
-    if (
-      $create_article_store.tags.length === 5 ||
-      check(tag, $create_article_store.tags)
-    )
+    if ($create_article_store.tags.length === 5) return;
+    if (check(tag, $create_article_store.tags)) {
+      $create_article_store.tags = $create_article_store.tags.filter(
+        (t) => t.id !== tag.id
+      );
       return;
+    }
     $create_article_store.tags = [tag, ...$create_article_store.tags];
     search = "";
   }
