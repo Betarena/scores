@@ -53,7 +53,7 @@
   $: view = viewportType !== "mobile" ? "full" : "first";
 
   let headings = [
-    { id: "text", label: "Normal text", icon: P },
+    { id: "p", label: "Normal text", icon: P },
     { id: 2, label: "Heading 2", icon: H2 },
     { id: 3, label: "Heading 3", icon: H3 },
     { id: 4, label: "Heading 4", icon: H4 },
@@ -191,7 +191,7 @@
   function handleHeadings(e) {
     if (titleInFocus || !editor) return;
     const node = e.detail;
-    if (node.id === "text") {
+    if (node.id === "p") {
       return editor
         .chain()
         .focus()
@@ -265,8 +265,11 @@
           class="dropdown"
           on:change={cb}
         >
-          <div slot="option" class="dropdow-item" let:option>
-            <svelte:component this={option?.icon} />
+          <div slot="option" class="dropdow-item {id}" let:option>
+            <div class="icon-wrapper {option.id?.toString()}">
+
+              <svelte:component this={option?.icon} />
+            </div>
           </div>
         </DropDownInput>
       {:else}
@@ -293,85 +296,6 @@
         </div>
       {/if}
     {/each}
-    <!-- <div
-      class="button"
-      class:disabled={titleInFocus}
-      class:active={editor.isActive("bold")}
-      on:click={() => toggle("toggleBold")}
-    >
-      <B />
-    </div>
-    <div
-      class="button"
-      class:disabled={titleInFocus}
-      class:active={editor.isActive("italic")}
-      on:click={() => toggle("toggleItalic")}
-    >
-      <I />
-    </div>
-    <div
-      class="button"
-      class:disabled={titleInFocus}
-      class:active={editor.isActive("heading", { level: 1 })}
-      on:click={() => toggle("toggleHeading", { level: 1 })}
-    >
-      <H />
-    </div>
-    <div
-      class="button"
-      class:disabled={titleInFocus}
-      class:active={editor.isActive("blockquote")}
-      on:click={() => toggle("toggleBlockquote")}
-    >
-      <Q />
-    </div>
-    <div
-      on:click|stopPropagation|preventDefault={linkClick}
-      class="button link-button"
-      class:disabled={titleInFocus}
-      class:active={editor.isActive("link")}
-    >
-      <L />
-    </div>
-    <div
-      class="button"
-      class:active={editor.isActive("img")}
-      class:disabled={titleInFocus}
-      on:click={upload}
-    >
-      <input
-        type="file"
-        bind:this={fileInput}
-        name=""
-        on:change={handleFileChange}
-        hidden
-        id=""
-      />
-      <Upload />
-    </div>
-    <div
-      class="button"
-      class:active={editor.isActive("bulletList")}
-      class:disabled={titleInFocus}
-      on:click={() => toggle("toggleBulletList")}
-    >
-      <List />
-    </div>
-    <div
-      class="button"
-      class:disabled={titleInFocus}
-      class:active={editor.isActive("orderedList")}
-      on:click={() => toggle("toggleOrderedList")}
-    >
-      <NumList />
-    </div>
-    <div
-      class="button"
-      class:disabled={titleInFocus}
-      on:click={() => toggle("undo")}
-    >
-      <Arrow />
-    </div> -->
   </div>
 {/if}
 
@@ -446,7 +370,10 @@
           --component-colors-components-buttons-primary-button-primary-bg
         ) !important;
     }
-    :global(.dropdown .list-item:hover svg path) {
+    :global(.dropdown .list-item:hover  .icon-wrapper:not(.p) svg path) {
+     fill: var(--colors-base-white) !important;
+    }
+    :global(.dropdown .list-item:hover .icon-wrapper  svg path) {
      stroke: var(--colors-base-white) !important;
     }
     :global(.dropdown .list-item.active) {
@@ -454,7 +381,10 @@
           --component-colors-components-buttons-primary-button-primary-bg
         ) !important;
     }
-    :global(.dropdown .list-item.active svg path) {
+    :global(.dropdown .list-item.active  .icon-wrapper:not(.p) svg path) {
+     fill: var(--colors-base-white) !important;
+    }
+    :global(.dropdown .list-item.active  .icon-wrapper svg path) {
      stroke: var(--colors-base-white) !important;
     }
     .view-change {
