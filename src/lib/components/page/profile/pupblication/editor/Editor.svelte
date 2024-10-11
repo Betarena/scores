@@ -354,7 +354,7 @@
       <Container>
         <Button
           type="primary"
-          full={viewportType === "mobile"}
+          disabled={!title || editor?.getText().trim().split(/\s+/).length < 50}
           on:click={() => {
             $modalStore.component = ModalArticleSeo;
             $modalStore.modal = true;
