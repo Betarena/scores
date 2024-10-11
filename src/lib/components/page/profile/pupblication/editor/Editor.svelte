@@ -648,10 +648,6 @@
         gap: 10px;
         align-self: stretch;
         border-bottom: 1px solid var(--colors-border-border-secondary, #3b3b3b);
-
-        :global(.toolbar) {
-          justify-content: start;
-        }
       }
       .editor-wrapper {
         padding-top: var(--spacing-lg, 12px);

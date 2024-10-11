@@ -148,7 +148,7 @@
     .separator {
       height: 1px;
       align-self: stretch;
-      background: #3e3e3e;
+      background: var(--component-colors-utility-gray-utility-gray-200);
     }
     .option-wrapper {
       display: flex;
@@ -157,6 +157,9 @@
       align-items: center;
       cursor: pointer;
 
+      :global(svg path) {
+        stroke: var(--colors-foreground-fg-quaternary_hover ) !important
+      }
       .info {
         display: flex;
         flex-direction: column;
