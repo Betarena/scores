@@ -14,6 +14,7 @@
   import Trash_01 from "$lib/components/ui/assets/trash-01.svelte";
   import AvatarLabel from "$lib/components/ui/AvatarLabel.svelte";
   import SportstackAvatar from "$lib/components/ui/SportstackAvatar.svelte";
+  import session from "$lib/store/session.js";
 
   export let article: IArticle;
 
@@ -33,6 +34,7 @@
   }
   let actionMenu = false;
 
+  $: ({ viewportType } = $session);
   $: options = [
     {
       id: "edit",
@@ -67,14 +69,18 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 <svelte:body on:click={() => (actionMenu = false)} />
-<div class="article-wrapper">
+<div class="article-wrapper {viewportType}">
   <div class="content">
-    <SportstackAvatar src={avatar} size={96} radius="var(--radius-sm, 6px)" />
+    <SportstackAvatar
+      src={avatar}
+      size={viewportType === "mobile" ? 96 : 104}
+      radius="var(--radius-sm, 6px)"
+    />
     <div class="info">
       <h2>{title}</h2>
       <AvatarLabel
         avatar={author.data?.avatar}
-        size="xs"
+        size={viewportType === "mobile" ? "xs" : "sm"}
         name={author.data?.username}
         label={publishedDate}
       />
@@ -175,6 +181,9 @@
       display: flex;
       align-items: start;
       position: relative;
+      svg {
+        cursor: pointer;
+      }
       path {
         stroke: var(--colors-foreground-fg-quinary-400) !important;
       }
@@ -227,7 +236,8 @@
             }
           }
 
-          &.delete, &.delete:hover {
+          &.delete,
+          &.delete:hover {
             .label {
               color: var(--colors-text-text-error-primary-600, #f97066);
             }
@@ -236,6 +246,52 @@
             }
           }
         }
+      }
+    }
+
+    &.tablet {
+      border: 1px solid #3b3b3b;
+      border-radius: var(--radius-xl, 12px);
+      .content {
+        gap: 0;
+        .info {
+          padding: var(--spacing-md, 8px) var(--spacing-xl, 16px)
+            var(--spacing-xl, 16px) var(--spacing-xl, 16px);
+
+          h2 {
+            font-size: var(--font-size-text-xl, 20px);
+            line-height: var(--line-height-text-xl, 30px); /* 150% */
+            white-space: nowrap;
+          }
+        }
+      }
+      .action {
+        padding: var(--spacing-md, 8px) var(--spacing-xl, 16px)
+          var(--spacing-xl, 16px) var(--spacing-xl, 16px);
+        padding-left: 0;
+      }
+    }
+
+    &.desktop {
+      border: 1px solid #3b3b3b;
+      border-radius: var(--radius-xl, 12px);
+      .content {
+        gap: 0;
+        .info {
+          padding: var(--spacing-md, 8px) var(--spacing-xl, 16px)
+            var(--spacing-xl, 16px) var(--spacing-xl, 16px);
+
+          h2 {
+            font-size: var(--font-size-text-md, 16px);
+            line-height: var(--line-height-text-md, 24px); /* 150% */
+            white-space: nowrap;
+          }
+        }
+      }
+      .action {
+        padding: var(--spacing-md, 8px) var(--spacing-xl, 16px)
+          var(--spacing-xl, 16px) var(--spacing-xl, 16px);
+        padding-left: 0;
       }
     }
   }
