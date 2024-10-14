@@ -57,7 +57,7 @@
   export let data: PageData;
   $: ({ translate } = data);
   $: ({ viewportType } = $session);
-  let selectedSportstack
+  let selectedSportstack;
   let options: (AuthorsAuthorsMain & { label: string })[] = [];
   $: if (data.sportstack instanceof Promise) {
     console.log("data.sportstack is a promise");
@@ -69,7 +69,6 @@
       }
       return sportstack;
     });
-
   }
   // #endregion ➤ 📌 VARIABLES
 
@@ -94,9 +93,13 @@
 
   function selectSportstack(e) {
     const url = $page.url;
-    const {permalink} = e.detail as AuthorsAuthorsMain;
-    const lang = url.pathname.split('/').at(-1);
-    goto(`/u/author/publication/${permalink}/${lang}${url.search}`, { replaceState: true, noScroll: true, keepFocus: true });
+    const { permalink } = e.detail as AuthorsAuthorsMain;
+    const lang = url.pathname.split("/").at(-1);
+    goto(`/u/author/publication/${permalink}/${lang}${url.search}`, {
+      replaceState: true,
+      noScroll: true,
+      keepFocus: true,
+    });
     selectedSportstack = e.detail as AuthorsAuthorsMain;
   }
   $: view = $page.url.searchParams.get("view") || "home";
@@ -128,16 +131,23 @@
             <h2>{translate?.[view] || selected.label}</h2>
             <div class="actions-buttons">
               {#if viewportType !== "tablet"}
-                <DropDownInput checkIcon={true} {options} on:change={selectSportstack}  value={selectedSportstack}/>
+                <DropDownInput
+                  checkIcon={true}
+                  {options}
+                  on:change={selectSportstack}
+                  value={selectedSportstack}
+                />
               {/if}
               {#if viewportType === "desktop"}
-              <Button type="terlary-gray" on:click={() => history.back()}>
-                Go Back
-              </Button>
+                <Button type="terlary-gray" on:click={() => history.back()}>
+                  Go Back
+                </Button>
                 {#if view === "settings"}
                   <Button type="primary" size="xl">Save</Button>
                 {:else}
-                  <a href="/u/author/article/create/{$userSettings.lang}?sportstack={selectedSportstack.permalink}">
+                  <a
+                    href="/u/author/article/create/{$userSettings.lang}?sportstack={selectedSportstack.permalink}"
+                  >
                     <Button full={true} type="primary">+ New article</Button>
                   </a>
                 {/if}
@@ -146,7 +156,7 @@
           </div>
           <Tabbar
             on:select={change}
-            type={viewportType === "mobile" ? "button_border" : "underline"}
+            type="underline"
             data={tabs}
             bind:selected
           />
@@ -188,6 +198,11 @@
         flex-direction: column;
         align-items: flex-start;
         gap: var(--spacing-xl, 16px);
+        :global(.tabbar) {
+          border-bottom: 1px solid
+            var(--colors-border-border-secondary, #3b3b3b);
+          width: 100%;
+        }
 
         .header,
         .title-wrapper {
@@ -287,12 +302,6 @@
                   line-height: var(--line-height-text-md, 24px); /* 150% */
                 }
               }
-            }
-
-            :global(.tabbar) {
-              border-bottom: 1px solid
-                var(--colors-border-border-secondary, #3b3b3b);
-              width: 100%;
             }
           }
         }

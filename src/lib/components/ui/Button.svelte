@@ -46,6 +46,7 @@
 
   export let submit = false;
   export let size: "lg" | "md" | "sm" | "xl" | "xxl" = "lg";
+  export let destructive = false;
 
   const dispatch = createEventDispatcher();
   let hover = false;
@@ -70,6 +71,7 @@
   {...$$restProps}
   type={submit ? "submit" : "button"}
   class:hover
+  class:destructive
   on:mouseenter={() => (hover = true)}
   on:mouseleave={() => (hover = false)}
   on:touchend={() => (hover = false)}
@@ -227,6 +229,43 @@
       background: var(--primary, #f5620f);
       color: var(--white-day, #fff);
     }
+
+    &.destructive {
+      border-radius: var(--radius-md, 8px);
+      border: 1px solid
+        var(
+          --component-colors-components-buttons-secondary-error-button-secondary-error-border,
+          #fda29b
+        );
+      background: var(
+        --component-colors-components-buttons-secondary-error-button-secondary-error-bg,
+        #fff
+      );
+      /* Shadows/shadow-xs */
+      box-shadow: 0px 1px 2px 0px
+        var(--colors-rffects-shadows-shadow-xs, rgba(31, 31, 31, 0.05));
+
+      color: var(
+        --component-colors-components-buttons-secondary-error-button-secondary-error-fg,
+        #ff3c3c
+      );
+
+      &.hover {
+        border: 1px solid
+          var(
+            --component-colors-components-buttons-secondary-error-button-secondary-error-border_hover,
+            #fda29b
+          );
+        background: var(
+          --component-colors-components-buttons-secondary-error-button-secondary-error-bg_hover,
+          #fef3f2
+        );
+        color: var(
+          --component-colors-components-buttons-secondary-error-button-secondary-error-fg_hover,
+          #ea2b2b
+        );
+      }
+    }
   }
   .secondary-gray {
     color: var(
@@ -277,12 +316,21 @@
 
   .terlary-gray {
     background: inherit;
-    color: var(--component-colors-components-buttons-tertiary-button-tertiary-fg, #6A6A6A);
+    color: var(
+      --component-colors-components-buttons-tertiary-button-tertiary-fg,
+      #6a6a6a
+    );
 
-    &:hover, &.hover {
-      background: var(--component-colors-components-buttons-tertiary-button-tertiary-bg_hover, #FBFBFB);
-      color: var(--component-colors-components-buttons-tertiary-button-tertiary-fg_hover, #525252);
+    &:hover,
+    &.hover {
+      background: var(
+        --component-colors-components-buttons-tertiary-button-tertiary-bg_hover,
+        #fbfbfb
+      );
+      color: var(
+        --component-colors-components-buttons-tertiary-button-tertiary-fg_hover,
+        #525252
+      );
     }
-
   }
 </style>

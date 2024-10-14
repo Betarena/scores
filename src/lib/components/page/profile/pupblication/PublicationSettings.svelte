@@ -13,7 +13,10 @@
   import { infoMessages } from "$lib/components/ui/infomessages/infomessages.js";
   import Input from "$lib/components/ui/Input.svelte";
   import session from "$lib/store/session.js";
-  import type { AuthorsAuthorsDataJSONSchema, AuthorsAuthorsMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import type {
+    AuthorsAuthorsDataJSONSchema,
+    AuthorsAuthorsMain,
+  } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import PublicationAvatar from "./PublicationAvatar.svelte";
 
   export let selectedSportstack: AuthorsAuthorsMain;
@@ -26,7 +29,7 @@
   let username = "";
   $: ({ viewportType } = $session);
   $: ({ permalink, data = {} } = selectedSportstack);
-  $: ({username} = data as AuthorsAuthorsDataJSONSchema);
+  $: ({ username } = data as AuthorsAuthorsDataJSONSchema);
   // #endregion ➤ 📌 VARIABLES
 
   function debounceValidation(e: CustomEvent<string>) {
@@ -154,6 +157,19 @@
       >
     </div>
   {/if}
+  <div class="separator" />
+  <div class="delete-wrapper">
+    <div class="warn-text">
+      <h3>Delete publication</h3>
+      <p>
+        Permanently delete your publication, podcasts and subscriber list. This
+        action is permantely and can’t be rolled back
+      </p>
+    </div>
+    <Button type="secondary" destructive={true} full={viewportType === "mobile"}
+      >Delete sportstack</Button
+    >
+  </div>
 </form>
 
 <!--
@@ -173,7 +189,7 @@
     flex-shrink: 0;
     flex-direction: column;
     align-items: flex-start;
-    gap: 20px;
+    gap: 37px;
     flex: 1 0 0;
     align-self: stretch;
 
@@ -211,9 +227,10 @@
           display: flex;
           padding: var(--spacing-xl, 16px);
           justify-content: center;
-          align-items: flex-start;
+          align-items: center;
           gap: var(--spacing-lg, 12px);
           flex: 1 0 0;
+          height: 100%;
 
           border-radius: var(--radius-xl, 12px);
           border: 1px solid var(--colors-border-border-secondary, #3b3b3b);
@@ -268,9 +285,12 @@
             align-items: flex-start;
             gap: var(--spacing-xs, 4px);
             align-self: stretch;
+            justify-content: center;
 
             .upload-title {
-              color: var(--component-colors-components-buttons-tertiary-color-button-tertiary-color-fg);
+              color: var(
+                --component-colors-components-buttons-tertiary-color-button-tertiary-color-fg
+              );
 
               /* Text sm/Medium */
               font-family: var(--font-family-font-family-body, Roboto);
@@ -299,8 +319,52 @@
       margin-top: -4px;
     }
 
+    .separator {
+      width: 100%;
+      height: 1px;
+      background-color: var(--colors-border-border-secondary, #3b3b3b);
+    }
+    .delete-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-2xl, 20px);
+      align-self: stretch;
+
+      .warn-text {
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        gap: 9px;
+        align-self: stretch;
+
+        h3 {
+          color: var(--colors-text-text-error-primary-600, #f97066);
+          margin: 0;
+          text-align: left;
+          /* Text md/Semibold */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-md, 16px);
+          font-style: normal;
+          font-weight: 600;
+          line-height: var(--line-height-text-md, 24px); /* 150% */
+        }
+        p {
+          color: var(--colors-text-text-tertiary-600, #8c8c8c);
+
+          /* Text sm/Regular */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-sm, 14px);
+          font-style: normal;
+          font-weight: 400;
+          line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+        }
+      }
+    }
+
     &.tablet,
     &.desktop {
+      gap: 24px;
       .thumbnail-field {
         .input-wrapper {
           :global(.img) {
@@ -318,6 +382,14 @@
       .button-wrapper {
         display: flex;
         justify-content: center;
+        :global(.button) {
+          min-width: 160px;;
+        }
+      }
+
+      .delete-wrapper {
+        flex-direction: row;
+        justify-content: space-between;
       }
     }
   }
