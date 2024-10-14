@@ -58,116 +58,96 @@
     { id: 3, label: "Heading 3", icon: H3 },
     { id: 4, label: "Heading 4", icon: H4 },
   ];
+  const toolbarButtons = {
+    heading: {
+      icon: H,
+      cb: handleHeadings,
+      id: "heading",
+      options: headings,
+    },
+    bold: {
+      icon: B,
+      cb: () => toggle("toggleBold"),
+      id: "bold",
+    },
+    italic: {
+      icon: I,
+      cb: () => toggle("toggleItalic"),
+      id: "italic",
+    },
+    blockquote: {
+      icon: Q,
+      cb: () => toggle("toggleBlockquote"),
+      id: "blockquote",
+    },
+    link: {
+      icon: L,
+      cb: linkClick,
+      id: "link",
+    },
+    img: {
+      icon: Upload,
+      cb: upload,
+      id: "img",
+    },
+    bulletList: {
+      icon: List,
+      cb: () => toggle("toggleBulletList"),
+      id: "bulletList",
+    },
+    orderedList: {
+      icon: NumList,
+      cb: () => toggle("toggleOrderedList"),
+      id: "orderedList",
+    },
+    undo: {
+      icon: Arrow,
+      cb: () => toggle("undo"),
+      id: "undo",
+    },
+  };
 
+  let selectedHedings = headings[0];
+
+  let viewMap = {
+    full: [
+      toolbarButtons.heading,
+      toolbarButtons.bold,
+      toolbarButtons.italic,
+      toolbarButtons.blockquote,
+      toolbarButtons.link,
+      toolbarButtons.img,
+      toolbarButtons.bulletList,
+      toolbarButtons.orderedList,
+      toolbarButtons.undo,
+    ],
+    first: [
+      toolbarButtons.heading,
+      toolbarButtons.bold,
+      toolbarButtons.italic,
+      toolbarButtons.blockquote,
+      toolbarButtons.link,
+      toolbarButtons.orderedList,
+      toolbarButtons.undo,
+    ],
+    second: [toolbarButtons.img, toolbarButtons.bulletList],
+  };
+
+  // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │
   $: selectedHedings = editor?.isActive("heading")
     ? getCurrentHeading(editor)
     : headings[0];
-  const fullToolbar = [
-    {
-      icon: H,
-      cb: handleHeadings,
-      id: "heading",
-      options: headings,
-    },
-    {
-      icon: B,
-      cb: () => toggle("toggleBold"),
-      id: "bold",
-    },
-    {
-      icon: I,
-      cb: () => toggle("toggleItalic"),
-      id: "italic",
-    },
-    {
-      icon: Q,
-      cb: () => toggle("toggleBlockquote"),
-      id: "blockquote",
-    },
-    {
-      icon: L,
-      cb: linkClick,
-      id: "link",
-    },
-    {
-      icon: Upload,
-      cb: upload,
-      id: "img",
-    },
-    {
-      icon: List,
-      cb: () => toggle("toggleBulletList"),
-      id: "bulletList",
-    },
-    {
-      icon: NumList,
-      cb: () => toggle("toggleOrderedList"),
-      id: "orderedList",
-    },
-    {
-      icon: Arrow,
-      cb: () => toggle("undo"),
-      id: "undo",
-    },
-  ];
 
-  const firstView = [
-    {
-      icon: H,
-      cb: handleHeadings,
-      id: "heading",
-      options: headings,
-    },
-    {
-      icon: B,
-      cb: () => toggle("toggleBold"),
-      id: "bold",
-    },
-    {
-      icon: I,
-      cb: () => toggle("toggleItalic"),
-      id: "italic",
-    },
-    {
-      icon: Q,
-      cb: () => toggle("toggleBlockquote"),
-      id: "blockquote",
-    },
-    {
-      icon: L,
-      cb: linkClick,
-      id: "link",
-    },
-    {
-      icon: NumList,
-      cb: () => toggle("toggleOrderedList"),
-      id: "orderedList",
-    },
-    {
-      icon: Arrow,
-      cb: () => toggle("undo"),
-      id: "undo",
-    },
-  ];
-
-  const secondView = [
-    {
-      icon: Upload,
-      cb: upload,
-      id: "img",
-    },
-    {
-      icon: List,
-      cb: () => toggle("toggleBulletList"),
-      id: "bulletList",
-    },
-  ];
-
-  const viewMap = {
-    full: fullToolbar,
-    first: firstView,
-    second: secondView,
-  };
   const dispatch = createEventDispatcher();
   // #endregion ➤ 📌 VARIABLES
 
@@ -249,14 +229,16 @@
 
 {#if editor}
   <div class="toolbar {viewportType}">
-    <div
-      class="button view-change"
-      on:click={changeView}
-      class:active={view === "second"}
-      class:disabled={titleInFocus}
-    >
-      <Add />
-    </div>
+    {#if view !== "full"}
+      <div
+        class="button view-change"
+        on:click={changeView}
+        class:active={view === "second"}
+        class:disabled={titleInFocus}
+      >
+        <Add />
+      </div>
+    {/if}
     {#each viewMap[view] as { icon, cb, id, options }}
       {#if id === "heading"}
         <DropDownInput
