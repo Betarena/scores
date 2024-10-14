@@ -33,7 +33,6 @@
     },
   ];
 
-
   $: ({ viewportType } = $session);
 </script>
 
@@ -109,6 +108,8 @@
   .publication-articles {
     width: 100%;
     display: flex;
+    flex-grow: 1;
+    flex-shrink: 0;
     flex-direction: column;
     gap: var(--spacing-2xl, 20px);
     overflow: hidden;
@@ -173,6 +174,8 @@
       align-items: flex-start;
       gap: var(--spacing-xl, 16px);
       flex: 1 0 0;
+      overflow-y: auto;
+      overflow-x: hidden;
     }
 
     &.tablet {

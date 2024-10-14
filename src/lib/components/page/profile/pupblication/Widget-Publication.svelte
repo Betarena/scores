@@ -213,6 +213,17 @@
   .publication-widget-wrapper {
     margin-top: 24px;
 
+    :global(*::-webkit-scrollbar) {
+      width: 8px;
+    }
+    :global(*::-webkit-scrollbar-track) {
+      background: inherit;
+    }
+    :global(*::-webkit-scrollbar-thumb) {
+      background: var(--colors-background-bg-quaternary);
+      border-radius: 4px;
+    }
+
     #publication-home {
       display: flex;
       padding: var(--spacing-none, 0px);
@@ -221,7 +232,8 @@
       gap: var(--spacing-3xl, 24px);
       flex: 1 0 0;
       align-self: stretch;
-      min-height: calc(100vh - 56px - 22px - 5px);
+      max-height: calc(100vh - 56px - 22px - 5px);
+      height: 100vh;
       padding-bottom: 22px;
 
       .header-wrapper {
