@@ -274,7 +274,6 @@
       {:else}
         <div
           in:fly={{ x: -100, duration: 200 }}
-          out:fly={{ x: 100, duration: 200 }}
           class="button"
           class:disabled={titleInFocus}
           class:active={editor.isActive(id)}

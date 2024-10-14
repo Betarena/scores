@@ -284,7 +284,9 @@
   class="create-article {viewportType}"
   style="--vh: {vh}; --h:{isKeyboardOpen ? '0px' : `calc(-34px - 40px)`}"
 >
-  <Container style="display: flex; flex-direction: column; flex-grow: 1">
+  <Container
+    style="display: flex; flex-direction: column; flex-grow: 1; max-height: 100%; height: 100%"
+  >
     <div class="header">
       <div on:click={back}>
         {#if viewportType === "mobile"}
@@ -323,20 +325,22 @@
         />
       </div>
     {/if}
-    <div class="editor-wrapper">
-      <textarea
-        class="title"
-        bind:value={title}
-        placeholder="Title (required)"
-        on:keydown={handleKeyDown}
-        on:input={resizeTextarea}
-        on:focus={() => (titleInFocus = true)}
-      />
-      <div
-        class="editor"
-        bind:this={element}
-        on:focus={() => (titleInFocus = false)}
-      />
+    <div class="editor-block">
+      <div class="editor-wrapper">
+        <textarea
+          class="title"
+          bind:value={title}
+          placeholder="Title (required)"
+          on:keydown={handleKeyDown}
+          on:input={resizeTextarea}
+          on:focus={() => (titleInFocus = true)}
+        />
+        <div
+          class="editor"
+          bind:this={element}
+          on:focus={() => (titleInFocus = false)}
+        />
+      </div>
     </div>
   </Container>
 
@@ -354,6 +358,7 @@
       <Container>
         <Button
           type="primary"
+          full={true}
           disabled={!title || editor?.getText().trim().split(/\s+/).length < 50}
           on:click={() => {
             $modalStore.component = ModalArticleSeo;
@@ -384,6 +389,7 @@
     flex-direction: column;
     justify-content: flex-end;
     overscroll-behavior: contain;
+    overflow: hidden;
 
     .header {
       display: flex;
@@ -401,13 +407,30 @@
       }
     }
 
+    .editor-block {
+      overflow: auto;
+      max-height: 100%;
+
+      &::-webkit-scrollbar {
+          width: 8px;
+        }
+
+        &::-webkit-scrollbar-track {
+          background: inherit;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background: var(--colors-background-bg-quaternary);
+          border-radius: 4px;
+        }
+
+    }
     .editor-wrapper {
       display: flex;
       flex-direction: column;
       padding-top: var(--spacing-xl, 16px);
       flex-grow: 1;
-      max-height: 100%;
-      overflow: hidden;
+      // max-height: 100%;
       flex-shrink: 1;
       max-width: 676px;
       margin: 0 auto;
@@ -445,25 +468,14 @@
         flex-grow: 1;
         color: var(--colors-text-text-primary) !important;
         font-family: var(--font-family-font-family-display, Roboto);
-        overflow: auto;
+
         // font-size: var(--font-size-text-md, 16px);
 
         font-size: 18px;
         line-height: 32px;
         font-weight: 300;
 
-        &::-webkit-scrollbar {
-          width: 8px;
-        }
 
-        &::-webkit-scrollbar-track {
-          background: inherit;
-        }
-
-        &::-webkit-scrollbar-thumb {
-          background: var(--colors-background-bg-quaternary);
-          border-radius: 4px;
-        }
 
         :global(p) {
           font-size: 18px;
