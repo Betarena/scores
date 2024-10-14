@@ -192,7 +192,7 @@
         font-size: var(--font-size-text-sm, 14px);
         font-style: normal;
         font-weight: 500;
-        line-height: var(--Line-height-text-sm, 20px); /* 142.857% */
+        line-height: var(--line-height-text-sm, 20px); /* 142.857% */
       }
 
       .input-wrapper {
@@ -218,6 +218,11 @@
           border-radius: var(--radius-xl, 12px);
           border: 1px solid var(--colors-border-border-secondary, #3b3b3b);
           background: var(--colors-background-bg-primary_alt, #313131);
+          cursor: pointer;
+
+          &:hover {
+            background-color: var(--colors-background-bg-secondary_hover);
+          }
 
           .hidden-input {
             display: none;
@@ -265,17 +270,14 @@
             align-self: stretch;
 
             .upload-title {
-              color: var(
-                --Component-colors-Components-Buttons-Tertiary-color-button-tertiary-color-fg,
-                #d2d2d2
-              );
+              color: var(--component-colors-components-buttons-tertiary-color-button-tertiary-color-fg);
 
               /* Text sm/Medium */
               font-family: var(--font-family-font-family-body, Roboto);
               font-size: var(--font-size-text-sm, 14px);
               font-style: normal;
               font-weight: 500;
-              line-height: var(--Line-height-text-sm, 20px); /* 142.857% */
+              line-height: var(--line-height-text-sm, 20px); /* 142.857% */
             }
             .upload-file-type {
               color: var(--colors-text-text-tertiary-600, #8c8c8c);
