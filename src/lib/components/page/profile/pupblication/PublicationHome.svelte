@@ -43,7 +43,9 @@
           <DropDownInput {options} />
         {/if}
       </div>
-      <a href="/u/author/article/create/{$userSettings.lang}?sportstack={selectedSportstack.permalink}">
+      <a
+        href="/u/author/article/create/{$userSettings.lang}?sportstack={selectedSportstack.permalink}"
+      >
         <Button full={true} type="primary">+ New article</Button>
       </a>
     </div>
@@ -133,6 +135,8 @@
         justify-content: flex-end;
         align-items: center;
         gap: var(--spacing-sm, 6px);
+        cursor: pointer;
+
 
         span {
           color: var(
@@ -152,6 +156,25 @@
           stroke: var(
             --component-colors-components-buttons-tertiary-button-tertiary-fg
           );
+        }
+        &:hover {
+          background: var(
+            --component-colors-components-buttons-tertiary-button-tertiary-bg_hover,
+            #fbfbfb
+          );
+          span {
+            color: var(
+              --component-colors-components-buttons-tertiary-button-tertiary-fg_hover,
+              #525252
+            );
+            path {
+              stroke: var(
+                --component-colors-components-buttons-tertiary-button-tertiary-fg_hover,
+                #525252
+              );
+            }
+
+          }
         }
       }
     }
