@@ -136,6 +136,7 @@
         align-items: center;
         gap: var(--spacing-sm, 6px);
         cursor: pointer;
+        border-radius: 8px;
 
 
         span {
