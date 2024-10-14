@@ -37,6 +37,12 @@
   import Button from "$lib/components/ui/Button.svelte";
   import userSettings from "$lib/store/user-settings.js";
   import type { AuthorsAuthorsMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import { fetchArticlesBySportstack } from "$lib/components/section/authors/common_ui/helpers.js";
+  import { browser } from "$app/environment";
+  import {
+    type IArticle,
+    prepareArticlesMap,
+  } from "$lib/components/section/authors/page/helpers.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -59,6 +65,8 @@
   $: ({ viewportType } = $session);
   let selectedSportstack;
   let options: (AuthorsAuthorsMain & { label: string })[] = [];
+  let loadingArticles = false;
+  let articles: Map<number, IArticle> = new Map();
   $: if (data.sportstack instanceof Promise) {
     console.log("data.sportstack is a promise");
   } else {
@@ -69,6 +77,9 @@
       }
       return sportstack;
     });
+  }
+  $: if (selectedSportstack && browser) {
+    getArticles();
   }
   // #endregion ➤ 📌 VARIABLES
 
@@ -91,19 +102,35 @@
     view = e.detail.view;
   }
 
-  function selectSportstack(e) {
+  async function selectSportstack(e) {
     const url = $page.url;
     const { permalink } = e.detail as AuthorsAuthorsMain;
     const lang = url.pathname.split("/").at(-1);
+    selectedSportstack = e.detail as AuthorsAuthorsMain;
+    debugger;
+    getArticles();
     goto(`/u/author/publication/${permalink}/${lang}${url.search}`, {
       replaceState: true,
       noScroll: true,
       keepFocus: true,
     });
-    selectedSportstack = e.detail as AuthorsAuthorsMain;
   }
   $: view = $page.url.searchParams.get("view") || "home";
   $: selected = tabs.find((tab) => tab.view === view) || tabs[0];
+
+  async function getArticles() {
+    loadingArticles = true;
+    articles = new Map();
+    const data = await fetchArticlesBySportstack({
+      permalink: "betarena-tennis",
+    });
+    loadingArticles = false;
+    articles = prepareArticlesMap(
+      new Map(data.mapArticle),
+      new Map(data.mapTag),
+      new Map(data.mapAuthor)
+    );
+  }
 </script>
 
 <!--
@@ -162,7 +189,12 @@
           />
         </div>
       </div>
-      <svelte:component this={viewMap[view]} {selectedSportstack} />
+      <svelte:component
+        this={viewMap[view]}
+        {loadingArticles}
+        {articles}
+        {selectedSportstack}
+      />
     </div>
   </div>
 </Container>

@@ -30,7 +30,8 @@
      * @description
      * avatar size
      */
-    size = 48;
+    size = 48,
+    radius = "4px";
 
   const dispatch = createEventDispatcher();
 
@@ -50,7 +51,7 @@
 <div
   on:click={() => dispatch("click")}
   class="sportstack-image"
-  style="background: url({src}) lightgray center center / 145% 145% no-repeat; width: {size}px; height: {size}px;"
+  style="background: url({src}) lightgray center center / 145% 145% no-repeat; width: {size}px; height: {size}px; border-radius: {radius}"
 />
 
 <!--

@@ -13,8 +13,11 @@
   import session from "$lib/store/session.js";
   import userSettings from "$lib/store/user-settings.js";
   import type { AuthorsAuthorsMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import PublicationArticleArticle from "./PublicationArticleArticle.svelte";
+  import type { IArticle } from "$lib/components/section/authors/common_ui/helpers.js";
 
   export let selectedSportstack: AuthorsAuthorsMain;
+  export let articles: Map<number, IArticle>;
   const options = [
     {
       id: 3,
@@ -29,6 +32,7 @@
       label: "Unpunlished",
     },
   ];
+
 
   $: ({ viewportType } = $session);
 </script>
@@ -47,7 +51,9 @@
 <div class="publication-articles {viewportType}">
   {#if viewportType === "mobile"}
     <div class="buttons-header">
-      <a href="u/author/article/create/{$userSettings.lang}?sportstack={selectedSportstack.permalink}">
+      <a
+        href="u/author/article/create/{$userSettings.lang}?sportstack={selectedSportstack.permalink}"
+      >
         <Button type="primary" full={true}>+ New article</Button>
       </a>
     </div>
@@ -80,7 +86,13 @@
       <span>Sort by</span>
     </a>
   </div>
-  <div class="content" />
+  <div class="content">
+    {#if articles.size}
+      {#each [...articles.entries()] as [key, article] (key)}
+        <PublicationArticleArticle {article} />
+      {/each}
+    {:else}{/if}
+  </div>
 </div>
 
 <!--
@@ -99,6 +111,7 @@
     display: flex;
     flex-direction: column;
     gap: var(--spacing-2xl, 20px);
+    overflow: hidden;
 
     .buttons-header {
       display: flex;
@@ -153,6 +166,13 @@
           );
         }
       }
+    }
+    .content {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--spacing-xl, 16px);
+      flex: 1 0 0;
     }
 
     &.tablet {

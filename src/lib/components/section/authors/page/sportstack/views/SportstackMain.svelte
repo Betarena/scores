@@ -64,6 +64,7 @@
   import type { IBetarenaUser } from "@betarena/scores-lib/types/_FIREBASE_.js";
   import SportstackHeaderLoader from "./SportstackHeaderLoader.svelte";
   import SeoBox from "$lib/components/SEO-Box.svelte";
+    import { fetchArticlesBySportstack } from "../../../common_ui/helpers.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -299,32 +300,18 @@
   async function loadTagArticles(page: number = 0): Promise<void> {
     const length = mapArticlesMod.size || 0;
     if (length >= widgetData.totalArticlesCount) return;
-    // [🐞]
-    dlogv2(
-      "loadTagArticles(..) // START",
-      [`🔹 [var] ➤ page |:| ${page}`],
-      true
-    );
     isLoadingArticles = true;
     const permalink = sportstackData[1].data?.username
       .toLowerCase()
       .replaceAll(" ", "-");
     const /**
        * @description
-       * 📝 URL to be requested.
-       */
-      url = `/api/data/author/sportstack?permalink=${permalink}&page=${page}`;
-    const /**
-       * @description
        * 📝 Data Response (0).
        */
-      dataRes0 = (await get(url)) as ITagsWidgetData;
+      dataRes0 = (await fetchArticlesBySportstack({permalink, page}) );
     isLoadingArticles = false;
     updateData(dataRes0);
     currentPage = page;
-
-    // [🐞]
-    dlogv2("loadTagArticles(..) // END", [`🔹 [var] ➤ page |:| ${page}`], true);
 
     if (!dataRes0) return;
     return;

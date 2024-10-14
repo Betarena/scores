@@ -8,49 +8,12 @@
 -->
 
 <script lang="ts">
-  // #region ➤ 📌 VARIABLES
+  import Avatar from "./Avatar.svelte";
 
-  import { createEventDispatcher } from "svelte";
-  import DefaultAvatar from "./assets/default-avatar.svelte";
-  import LoggedoutAvatar from "./assets/loggedout-avatar.svelte";
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'variables' that are to be         │
-  // │ and are expected to be used by 'this' .svelte file / component.        │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. export const / let [..]                                             │
-  // │ 2. const [..]                                                          │
-  // │ 3. let [..]                                                            │
-  // │ 4. $: [..]                                                             │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  export let src: string | null = "",
-    isLoogedIn = false,
-    /**
-     * @description
-     * avatar size
-     */
-    size: number | string = 38;
-
-    let numSize = 38;
-  $: styles = `height: ${numSize}px; width: ${numSize}px;`;
-  const sizeMap = {
-    xs: 24,
-    sm: 32,
-    md: 40,
-    lg: 48,
-    xl: 56,
-    xxl:64,
-  }
-  $: if (typeof size === "string") {
-    numSize = sizeMap[size] || 38;
-  }
-
-  const dispatch = createEventDispatcher();
-
-  // #endregion ➤ 📌 VARIABLES
+  export let size: "xs" | "md" | "lg" | "xl" | "s" = "md";
+  export let avatar = "";
+  export let name = "";
+  export let label = "";
 </script>
 
 <!--
@@ -63,23 +26,12 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<div
-  class="avatar-wrapper"
-  on:click={() => dispatch("click")}
-  style="{styles}  {$$restProps.wrapStyle}"
->
-  {#if src}
-    <div
-      class="avatar-circle"
-      {...$$restProps}
-      class:size
-      style="{styles}  background-image: url({src}); "
-    />
-  {:else if isLoogedIn}
-    <DefaultAvatar size={numSize} />
-  {:else}
-    <LoggedoutAvatar size={numSize} />
-  {/if}
+<div class="wrapper {size}">
+  <Avatar src={avatar} {size} />
+  <div class="info">
+    <div class="name">{name}</div>
+    <div class="label">{label}</div>
+  </div>
 </div>
 
 <!--
@@ -93,17 +45,77 @@
 -->
 
 <style lang="scss">
-  .avatar-wrapper {
-    border-radius: 50%;
-    overflow: hidden;
-  }
-  .avatar-circle {
-    width: 38px;
-    height: 38px;
-    border-radius: 100%;
+  .wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
 
-    background-image: url(src);
-    background-repeat: no-repeat;
-    background-size: cover;
+    .info {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+
+      .name {
+        color: var(--colors-text-text-secondary-700, #525252);
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: 10px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: 14px; /* 140% */
+      }
+      .label {
+        color: var(--colors-text-text-tertiary-600, #6a6a6a);
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: 10px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 14px; /* 140% */
+      }
+    }
+
+    .sm {
+      .name {
+        font-size: var(--font-size-text-sm, 14px);
+        line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+      }
+      .label {
+        font-size: var(--font-size-text-xs, 12px);
+        line-height: var(--line-height-text-xs, 18px); /* 150% */
+      }
+    }
+    .md {
+      gap: var(--spacing-lg, 12px);
+
+      .name {
+        font-size: var(--font-size-text-sm, 14px);
+        line-height: var(--line-height-text-sm, 20px);
+      }
+      .label {
+        font-size: var(--font-size-text-sm, 14px);
+        line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+      }
+    }
+    .lg {
+      gap: var(--spacing-lg, 12px);
+      .name {
+        font-size: var(--font-size-text-md, 16px);
+        line-height: var(--line-height-text-md, 24px); /* 150% */
+      }
+      .label {
+        font-size: var(--font-size-text-md, 16px);
+        line-height: var(--line-height-text-md, 24px); /* 150% */
+      }
+    }
+    .xl {
+      gap: var(--spacing-xl, 16px);
+      .name {
+        font-size: var(--font-size-text-lg, 18px);
+        line-height: var(--line-height-text-lg, 28px); /* 155.556% */
+      }
+      .label {
+        font-size: var(--font-size-text-md, 16px);
+        line-height: var(--line-height-text-md, 24px); /* 150% */
+      }
+    }
   }
 </style>
