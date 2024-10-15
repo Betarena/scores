@@ -18,7 +18,7 @@
     AuthorsAuthorsMain,
   } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import PublicationAvatar from "./PublicationAvatar.svelte";
-    import UrlInfo from "./UrlInfo.svelte";
+  import UrlInfo from "./UrlInfo.svelte";
 
   export let selectedSportstack: AuthorsAuthorsMain;
 
@@ -153,9 +153,7 @@
         action is permantely and can’t be rolled back
       </p>
     </div>
-    <Button type="secondary" destructive={true} full={viewportType === "mobile"}
-      >Delete sportstack</Button
-    >
+    <Button type="subtle" full={viewportType === "mobile"}>Delete</Button>
   </div>
 </form>
 
@@ -318,6 +316,22 @@
       align-items: center;
       gap: var(--spacing-2xl, 20px);
       align-self: stretch;
+      :global(.button) {
+        border: 1px solid var(--custom-button-gray-border, #737373) !important;
+        color: #ff5959 !important;
+        display: flex;
+        height: 44px;
+        padding: 12px 24px;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        align-self: stretch;
+        min-width: 160px;
+        &:hover {
+          border: 1px solid var(--colors-background-bg-secondary_hover) !important;
+          color: var(--colors-foreground-fg-error-primary) !important;
+        }
+      }
 
       .warn-text {
         display: flex;
@@ -371,13 +385,14 @@
         display: flex;
         justify-content: center;
         :global(.button) {
-          min-width: 160px;;
+          min-width: 160px;
         }
       }
 
       .delete-wrapper {
         flex-direction: row;
         justify-content: space-between;
+        align-items: center;
       }
     }
   }
