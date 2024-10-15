@@ -18,6 +18,7 @@
     AuthorsAuthorsMain,
   } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import PublicationAvatar from "./PublicationAvatar.svelte";
+    import UrlInfo from "./UrlInfo.svelte";
 
   export let selectedSportstack: AuthorsAuthorsMain;
 
@@ -88,21 +89,7 @@
 -->
 
 <form method="POST" id="publication-settings" class="form {viewportType}">
-  <Input
-    name="url"
-    type="leading-text"
-    label="URL"
-    placeholder={translation?.default_name || "default_sportstack"}
-    on:input={debounceValidation}
-    error={inputError}
-    requred={true}
-    bind:value={url}
-  >
-    <span slot="leading-text">sportstack/</span>
-    <span slot="error"
-      >{translation.alert || "The name is already in use."}</span
-    >
-  </Input>
+  <UrlInfo permalink={url} />
 
   <div class="thumbnail-field">
     <div class="label">Thumbnail</div>
