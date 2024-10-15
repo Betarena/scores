@@ -186,6 +186,17 @@
       cursor: not-allowed;
       color: var(--colors-foreground-fg-disabled, #8c8c8c);
     }
+
+    &.destructive {
+      background: var(--component-colors-components-buttons-primary-error-button-primary-error-bg, #FF3C3C);
+      color: var(--colors-foreground-fg-white, #FFF);
+
+      &:hover {
+        background: var(--component-colors-components-buttons-primary-error-button-primary-error-bg_hover, #EA2B2B);
+        color: var(--colors-foreground-fg-white, #FFF);
+
+      }
+    }
   }
   .subtle {
     background: unset;

@@ -107,7 +107,6 @@
     const { permalink } = e.detail as AuthorsAuthorsMain;
     const lang = url.pathname.split("/").at(-1);
     selectedSportstack = e.detail as AuthorsAuthorsMain;
-    debugger;
     getArticles();
     goto(`/u/author/publication/${permalink}/${lang}${url.search}`, {
       replaceState: true,

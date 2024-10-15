@@ -14,7 +14,10 @@
   import Trash_01 from "$lib/components/ui/assets/trash-01.svelte";
   import AvatarLabel from "$lib/components/ui/AvatarLabel.svelte";
   import SportstackAvatar from "$lib/components/ui/SportstackAvatar.svelte";
+  import { modalStore } from "$lib/store/modal.js";
   import session from "$lib/store/session.js";
+  import DeleteModal from "./DeleteModal.svelte";
+  import Unpublish from "./Unpublish.svelte";
 
   export let article: IArticle;
 
@@ -22,6 +25,7 @@
     permalink,
     data: { title },
     author,
+    id,
     seo_details: { twitter_card = {} },
   } = article);
   $: avatar = twitter_card.image;
@@ -53,8 +57,19 @@
     },
   ];
 
-  function click(id) {
-    console.log("Clicked", id);
+  function click(action) {
+    const modalState: any = { modal: true, show: true, props: { id } };
+    switch (action) {
+      case "edit":
+        return
+      case "unpublish":
+        modalState.component = Unpublish;
+        break;
+      case "delete":
+        modalState.component = DeleteModal;
+        break;
+    }
+    modalStore.set(modalState);
   }
 </script>
 

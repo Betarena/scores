@@ -8,31 +8,15 @@
 -->
 
 <script lang="ts">
+  import XClose from "$lib/components/ui/assets/x-close.svelte";
   import Button from "$lib/components/ui/Button.svelte";
-  import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
+  import { modalStore } from "$lib/store/modal.js";
   import session from "$lib/store/session.js";
-  import userSettings from "$lib/store/user-settings.js";
-  import type { AuthorsAuthorsMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
-  import PublicationArticleArticle from "./PublicationArticleArticle.svelte";
-  import type { IArticle } from "$lib/components/section/authors/common_ui/helpers.js";
 
-
-  export let selectedSportstack: AuthorsAuthorsMain;
-  export let articles: Map<number, IArticle>;
-  const options = [
-    {
-      id: 3,
-      label: "All",
-    },
-    {
-      id: 1,
-      label: "Published",
-    },
-    {
-      id: 2,
-      label: "Unpunlished",
-    },
-  ];
+  export let title = "Title";
+  export let text = "";
+  export let actionButton = "Action Button";
+  export let cancel = "Cancel";
 
   $: ({ viewportType } = $session);
 </script>
@@ -48,50 +32,39 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="publication-articles {viewportType}">
-  {#if viewportType === "mobile"}
-    <div class="buttons-header">
-      <a
-        href="u/author/article/create/{$userSettings.lang}?sportstack={selectedSportstack.permalink}"
-      >
-        <Button type="primary" full={true}>+ New article</Button>
-      </a>
+<div class="modal">
+  <div class="top-block">
+    <div class="header">
+      <slot name="header-icon" />
+      <div class="close" on:click={() => ($modalStore.show = false)}>
+        <XClose />
+      </div>
     </div>
-  {/if}
-  <div class="header">
-    <div class="dropdown-input">
-      <DropDownInput {options} value={options[1]} />
 
-      {#if viewportType === "tablet"}
-        <a href="u/author/article/create/{$userSettings.lang}">
-          <Button type="primary" full={true}>+ New article</Button>
-        </a>
-      {/if}
-    </div>
-    <a class="view-all">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="20"
-        height="20"
-        viewBox="0 0 20 20"
-        fill="none"
-      >
-        <path
-          d="M5 10H15M2.5 5H17.5M7.5 15H12.5"
-          stroke-width="1.66667"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-      </svg>
-      <span>Sort by</span>
-    </a>
+    {#if text || title}
+      <div class="content">
+        {#if title}
+          <div class="title">
+            <slot name="title">{title}</slot>
+          </div>
+        {/if}
+        {#if text || $$slots.text}
+          <div class="text"><slot name="text">{text}</slot></div>
+        {/if}
+      </div>
+    {/if}
   </div>
-  <div class="content">
-    {#if articles.size}
-      {#each [...articles.entries()] as [key, article] (key)}
-        <PublicationArticleArticle {article} />
-      {/each}
-    {:else}{/if}
+  <div class="buttons">
+    <slot name="action-button"
+      ><Button full={viewportType === "mobile"}>{actionButton}</Button></slot
+    >
+    <slot name="cancel-button"
+      ><Button
+        type="secondary-gray"
+        on:click={() => ($modalStore.show = false)}
+        full={viewportType === "mobile"}>{cancel}</Button
+      ></slot
+    >
   </div>
 </div>
 
@@ -106,66 +79,47 @@
 -->
 
 <style lang="scss">
-  .publication-articles {
-    width: 100%;
-    display: flex;
-    flex-grow: 1;
-    flex-shrink: 0;
+  .modal {
+    display: inline-flex;
     flex-direction: column;
-    gap: var(--spacing-2xl, 20px);
-    overflow: hidden;
+    min-width: 418px;
+    gap: var(--spacing-3xl, 24px);
+    align-items: center;
+    border-radius: var(--radius-xl, 12px);
+    background: #4b4b4b;
 
-    .buttons-header {
+    padding: var(--spacing-xl, 16px);
+    padding-top: var(--spacing-2xl, 20px);
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /* Shadows/shadow-xl */
+    box-shadow: 0px 20px 24px -4px var(--colors-effects-shadows-shadow-xl_01, rgba(255, 255, 255, 0)),
+      0px 8px 8px -4px var(--colors-effects-shadows-shadow-xl_02, rgba(255, 255, 255, 0));
+
+    .top-block {
+      width: 100%;
       display: flex;
-      align-items: flex-start;
-      gap: var(--spacing-lg, 12px);
-      align-self: stretch;
-      a {
-        width: 100%;
-      }
-      :global(.button) {
-        flex-grow: 1;
-        flex-shrink: 0;
-        flex-basis: 0;
-        width: 100%;
-      }
+      flex-direction: column;
+      gap: var(--spacing-xl, 16px);;
     }
 
     .header {
+      width: 100%;
       display: flex;
-      align-items: flex-start;
-      gap: var(--spacing-lg, 12px);
-      align-self: stretch;
+      align-items: center;
+      justify-content: space-between;
 
-      .dropdown-input {
-        flex-grow: 1;
-      }
+      /* Text lg/Semibold */
 
-      .view-all {
-        display: flex;
-        padding: 10px var(--spacing-xl, 16px);
-        justify-content: flex-end;
-        align-items: center;
-        gap: var(--spacing-sm, 6px);
-
-        span {
-          color: var(
-            --component-colors-components-buttons-tertiary-button-tertiary-fg,
-            #8c8c8c
-          );
-
-          /* Text md/Medium */
-          font-family: var(--Font-family-font-family-body, Roboto);
-          font-size: var(--Font-size-text-md, 16px);
-          font-style: normal;
-          font-weight: 500;
-          line-height: var(--Line-height-text-md, 24px); /* 150% */
-        }
-
-        path {
-          stroke: var(
-            --component-colors-components-buttons-tertiary-button-tertiary-fg
-          );
+      .close {
+        cursor: pointer;
+        &:hover {
+          :global(path) {
+            stroke: var(--colors-foreground-fg-quinary_hover);
+          }
         }
       }
     }
@@ -173,39 +127,35 @@
       display: flex;
       flex-direction: column;
       align-items: flex-start;
-      gap: var(--spacing-xl, 16px);
-      flex: 1 0 0;
-      overflow-y: auto;
-      overflow-x: hidden;
-    }
+      gap: var(--spacing-xs, 4px);
+      align-self: stretch;
+      .title {
+        color: var(--colors-text-text-primary, #fbfbfb) !important;
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-lg, 18px);
+        font-style: normal;
+        font-weight: 600;
+        line-height: var(--line-height-text-lg, 28px); /* 155.556% */
+      }
 
-    &.tablet {
-      .header {
-        gap: var(--spacing-lg, 12px);
-        .dropdown-input {
-          display: flex;
-          flex-grow: 1;
-          gap: var(--spacing-lg, 12px);
-          :global(.field) {
-            flex-grow: 1;
-          }
-        }
-        .view-all {
-          flex-grow: 1;
-        }
+      .text {
+        color: var(--colors-text-text-tertiary, #8c8c8c) !important;
+
+        /* Text sm/Regular */
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-sm, 14px);
+        font-style: normal;
+        font-weight: 400;
+        line-height: var(--line-height-text-sm, 20px); /* 142.857% */
       }
     }
 
-    &.desktop {
-      .header {
-        .dropdown-input {
-          flex-grow: 0;
-          width: 160px;
-        }
-        .view-all {
-          flex-grow: 1;
-        }
-      }
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--spacing-lg, 12px);
+      align-self: stretch;
     }
   }
 </style>
