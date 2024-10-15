@@ -82,7 +82,8 @@
   .modal {
     display: inline-flex;
     flex-direction: column;
-    min-width: 418px;
+    width: 418px;
+    max-width: 90vw;
     gap: var(--spacing-3xl, 24px);
     align-items: center;
     border-radius: var(--radius-xl, 12px);
