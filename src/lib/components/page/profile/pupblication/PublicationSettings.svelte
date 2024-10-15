@@ -325,7 +325,6 @@
         justify-content: center;
         align-items: center;
         gap: 10px;
-        align-self: stretch;
         min-width: 160px;
         &:hover {
           border: 1px solid var(--colors-background-bg-secondary_hover) !important;
