@@ -58,6 +58,7 @@
   ];
 
   function click(action) {
+    actionMenu = false;
     const modalState: any = { modal: true, show: true, props: { id } };
     switch (action) {
       case "edit":

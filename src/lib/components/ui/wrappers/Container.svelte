@@ -1,6 +1,7 @@
 <script>
   import session from "$lib/store/session";
   export let clazz = "";
+  export let hFull = true;
 </script>
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -14,7 +15,7 @@
 -->
 
 
-<div {...$$restProps} class="container-wrapper {$session.viewportType}  {clazz}" >
+<div {...$$restProps} class="container-wrapper {$session.viewportType}  {clazz}" class:hFull >
   <slot/>
 </div>
 
@@ -32,7 +33,6 @@
 
 .container-wrapper {
   width: 100%;
-  height: 100%;
   padding-inline: 16px;
 
   &.tablet {
@@ -43,6 +43,10 @@
     max-width: 1430px;
     margin-inline: auto;
     padding-inline: 34px;
+  }
+
+  &.hFull {
+    height: 100%;
   }
 }
 

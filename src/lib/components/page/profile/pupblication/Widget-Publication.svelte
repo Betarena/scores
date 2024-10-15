@@ -143,14 +143,14 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<Container>
+<Container hFull={false}>
   <div class="publication-widget-wrapper {viewportType}">
     {#if viewportType === "desktop"}
       <div class="menu">
         <WidgetMenuOpt />
       </div>
     {/if}
-    <div id="publication-home" class={viewportType}>
+    <div id="publication-home" class="{viewportType} {view}">
       <div class="header-wrapper">
         <div class="header">
           <div class="title-wrapper">
@@ -234,6 +234,11 @@
       max-height: calc(100vh - 56px - 22px - 5px);
       height: 100vh;
       padding-bottom: 22px;
+
+      &.settings {
+        max-height: unset;
+        height: fit-content;
+      }
 
       .header-wrapper {
         width: 100%;

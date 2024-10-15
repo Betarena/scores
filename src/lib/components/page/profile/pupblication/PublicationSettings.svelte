@@ -187,6 +187,7 @@
     display: flex;
     height: fit-content;
     flex-shrink: 0;
+    height: max-content;
     flex-direction: column;
     align-items: flex-start;
     gap: 37px;
