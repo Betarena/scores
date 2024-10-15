@@ -46,6 +46,8 @@
   }
   $: if (typeof size === "string") {
     numSize = sizeMap[size] || 38;
+  } else {
+    numSize = size;
   }
 
   const dispatch = createEventDispatcher();
