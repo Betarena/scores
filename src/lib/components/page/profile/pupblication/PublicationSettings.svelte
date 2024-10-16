@@ -368,6 +368,7 @@
       gap: 24px;
       .thumbnail-field {
         .input-wrapper {
+          height: 74px;
           :global(.img) {
             width: 74px;
             height: 74px;
