@@ -15,10 +15,11 @@
   import type { AuthorsAuthorsMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import PublicationArticleArticle from "./PublicationArticleArticle.svelte";
   import type { IArticle } from "$lib/components/section/authors/common_ui/helpers.js";
-
+  import PublicationArticleArticleLoader from "./PublicationArticleArticleLoader.svelte";
 
   export let selectedSportstack: AuthorsAuthorsMain;
   export let articles: Map<number, IArticle>;
+  export let loadingArticles = false;
   const options = [
     {
       id: 3,
@@ -87,6 +88,11 @@
     </a>
   </div>
   <div class="content">
+    {#if loadingArticles}
+      {#each Array(10) as _item}
+        <PublicationArticleArticleLoader />
+      {/each}
+    {/if}
     {#if articles.size}
       {#each [...articles.entries()] as [key, article] (key)}
         <PublicationArticleArticle {article} />
