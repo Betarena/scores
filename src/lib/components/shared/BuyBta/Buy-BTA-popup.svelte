@@ -45,16 +45,19 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
   $: data = $buyOptionsTranslations;
+  $: console.log("DATA: ", data)
   $: options = [
     {
       name: data.competitions || "Competitions",
       description: data.info_competitions || "Get tokens to participate",
       link: data.link_competitions || "/competitions",
+      target: "_self",
     },
     {
       name: data.presale || "Presale",
       description: data.info_presale || "Invest on BTA token presale",
-      link: data.link_presale || `/u/investor/${$userBetarenaSettings.lang}`,
+      link: "https://betarena.com/public-presale",
+      target: "_blank",
     },
   ];
 
@@ -80,7 +83,7 @@
   on:click={() => ($modalStore.show = false)}
 >
   {#each options as option, i}
-    <a href={option.link} class="option" title={option.description}>
+    <a href={option.link} target={option.target} class="option" title={option.description}>
       <div class="label">
         <span class="name">{option.name}</span>
         <span class="description">{option.description}</span>
