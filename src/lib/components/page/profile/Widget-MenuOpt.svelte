@@ -85,9 +85,13 @@ COMPONENT JS (w/ TS)
 		if (selectedMenuOpt == 'Investor')
       targetUrl = `/u/investor/${$userBetarenaSettings.lang}`
     ;
-    if (selectedMenuOpt == 'Deposit')
-      targetUrl = `/u/deposit/${$userBetarenaSettings.lang}`
-    ;
+    if (selectedMenuOpt == "Deposit") {
+      if (browser) {
+        window.open(`https://betarena.com/public-presale`, "_blank");
+      }
+      selectedMenuOpt = "Dashboard";
+      targetUrl = `/u/dashboard/${$userBetarenaSettings.lang}`;
+    }
     if (selectedMenuOpt == 'Transaction History')
       targetUrl = `/u/transaction-history/${$userBetarenaSettings.lang}`
     ;
@@ -145,6 +149,14 @@ COMPONENT JS (w/ TS)
         selectedMenuOpt = 'Investor';
         break;
       case 'deposit':
+      case 'deposit':
+          goto
+        (
+          `/u/dashboard/${$userBetarenaSettings.lang}`,
+          {
+            replaceState: true
+          }
+        );
         selectedMenuOpt = 'Deposit';
         break;
       case 'transaction-history':
