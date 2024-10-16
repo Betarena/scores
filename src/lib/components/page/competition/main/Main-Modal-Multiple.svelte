@@ -276,8 +276,9 @@ MODAL - DYNAMIC
         </button>
 
         <a
-          href="/u/deposit/{$userBetarenaSettings.lang}"
-          title='Go to Deposit Page'
+          href="https://betarena.com/public-presale"
+          target="_blank"
+          title='Go to Presale Page'
         >
           <button
             on:click={() => closeModal()}
