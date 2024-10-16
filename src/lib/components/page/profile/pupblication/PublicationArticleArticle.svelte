@@ -62,7 +62,7 @@
     const modalState: any = { modal: true, show: true, props: { id } };
     switch (action) {
       case "edit":
-        return
+        return;
       case "unpublish":
         modalState.component = Unpublish;
         break;
@@ -87,10 +87,9 @@
 <svelte:body on:click={() => (actionMenu = false)} />
 <div class="article-wrapper {viewportType}">
   <div class="content">
-    <SportstackAvatar
-      src={avatar}
-      size={viewportType === "mobile" ? 96 : 104}
-      radius="var(--radius-sm, 6px)"
+    <div
+      class="img"
+      style="background: url({avatar}) lightgray center center / 100% 100% no-repeat"
     />
     <div class="info">
       <h2>{title}</h2>
@@ -163,21 +162,38 @@
     display: flex;
     padding: var(--spacing-none, 0px);
     align-items: flex-start;
+    justify-content: space-between;
     gap: var(--spacing-xl, 16px);
     align-self: stretch;
+    max-width: 100%;
+    overflow: hidden;
+    max-height: 104px;
     .content {
       display: flex;
       align-items: center;
       gap: 16px;
-      flex: 1 0 0;
+
+      :global(.sportstack-image) {
+      }
+
+      .img {
+        flex-shrink: 0;
+        object-fit: contain;
+        background-repeat: no-repeat;
+        background-size: cover;
+        border-radius: var(--radius-sm, 6px);
+        width: 96px;
+        height: 96px;
+      }
 
       .info {
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: flex-start;
+        flex-grow: 1;
+        overflow: hidden;
         gap: var(--spacing-md, 8px);
-        flex: 1 0 0;
 
         h2 {
           margin: 0;
@@ -190,6 +206,10 @@
           max-height: 48px;
           overflow: hidden;
           text-overflow: ellipsis;
+          white-space: normal;
+          display: -webkit-box;
+          -webkit-line-clamp: 1;
+          -webkit-box-orient: vertical;
         }
       }
     }
@@ -197,6 +217,7 @@
       display: flex;
       align-items: start;
       position: relative;
+      flex-shrink: 0;
       svg {
         cursor: pointer;
       }
@@ -270,6 +291,10 @@
       border-radius: var(--radius-xl, 12px);
       .content {
         gap: 0;
+        .img {
+          height: 104px;
+          width: 104px;
+        }
         .info {
           padding: var(--spacing-md, 8px) var(--spacing-xl, 16px)
             var(--spacing-xl, 16px) var(--spacing-xl, 16px);
@@ -289,10 +314,15 @@
     }
 
     &.desktop {
-      border: 1px solid #3b3b3b;
+      border: 1px solid var(--colors-border-border-secondary);
       border-radius: var(--radius-xl, 12px);
       .content {
         gap: 0;
+
+        .img {
+          height: 104px;
+          width: 104px;
+        }
         .info {
           padding: var(--spacing-md, 8px) var(--spacing-xl, 16px)
             var(--spacing-xl, 16px) var(--spacing-xl, 16px);
@@ -300,7 +330,6 @@
           h2 {
             font-size: var(--font-size-text-md, 16px);
             line-height: var(--line-height-text-md, 24px); /* 150% */
-            white-space: nowrap;
           }
         }
       }

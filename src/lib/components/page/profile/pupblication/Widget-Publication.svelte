@@ -211,6 +211,9 @@
 <style lang="scss">
   .publication-widget-wrapper {
     margin-top: 24px;
+    // overflow: hidden;
+    display: flex;
+    flex-grow: 1;
 
     :global(*::-webkit-scrollbar) {
       width: 8px;
@@ -229,16 +232,12 @@
       flex-direction: column;
       align-items: flex-start;
       gap: var(--spacing-3xl, 24px);
-      flex: 1 0 0;
+      flex-grow: 1;
       align-self: stretch;
-      max-height: calc(100vh - 56px - 22px - 5px);
-      height: 100vh;
+      min-height: calc(100vh - 56px - 22px - 5px);
       padding-bottom: 22px;
+      overflow: hidden;
 
-      &.settings {
-        max-height: unset;
-        height: fit-content;
-      }
 
       .header-wrapper {
         width: 100%;

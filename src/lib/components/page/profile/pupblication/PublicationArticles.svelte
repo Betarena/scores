@@ -112,8 +112,8 @@
     flex-grow: 1;
     flex-shrink: 0;
     flex-direction: column;
+    max-width: 100%;
     gap: var(--spacing-2xl, 20px);
-    overflow: hidden;
 
     .buttons-header {
       display: flex;
@@ -174,9 +174,7 @@
       flex-direction: column;
       align-items: flex-start;
       gap: var(--spacing-xl, 16px);
-      flex: 1 0 0;
-      overflow-y: auto;
-      overflow-x: hidden;
+      max-width: 100%;
     }
 
     &.tablet {
