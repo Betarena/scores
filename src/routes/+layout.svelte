@@ -74,6 +74,7 @@
     routeIdPageCompetitions,
     routeIdPageProfile,
     routeIdPageProfileArticleCreation,
+    routeIdPageProfileEditArticle,
     routeIdScores,
   } from "$lib/constants/paths.js";
   import FooterRedisign from "$lib/components/_main_/footer/FooterRedisign.svelte";
@@ -666,7 +667,7 @@
     <!-- <EmailSubscribe /> -->
   {/if}
 
-  {#if $page.route.id  !== routeIdPageProfileArticleCreation}
+  {#if ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle].includes($page.route.id )}
      <HeaderRedesigned />
   {/if}
 
@@ -683,7 +684,7 @@
     class:tablet={VIEWPORT_TABLET_INIT[1]}
   >
     <slot />
-    {#if (!ispwa && $page.route.id !== routeIdPageProfileArticleCreation) || $page.route.id === routeIdPageProfile}
+    {#if (!ispwa && ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle].includes($page.route.id || "")) || $page.route.id === routeIdPageProfile}
       <FooterRedisign
         mobile={VIEWPORT_MOBILE_INIT[1]}
         tablet={VIEWPORT_TABLET_INIT[1]}

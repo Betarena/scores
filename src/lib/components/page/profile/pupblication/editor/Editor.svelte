@@ -63,8 +63,9 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   export let data: PageData;
   export let editor: Editor;
+  export let title = "";
+  export let content: string | undefined;
   let element;
-  let title = "";
   let titleInFocus = false;
   let vh = "1vh";
   let isKeyboardOpen = false;
@@ -73,9 +74,14 @@
   let bmenu;
   let linkState = { url: "", text: "" };
   let linkMode: "info" | "edit" = "info";
+  let textareaNode;
 
   $: ({ viewportType } = $session);
-
+  $: if (title && textareaNode && viewportType) {
+    setTimeout(() => {
+      resizeTextarea();
+    });
+  }
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -111,10 +117,8 @@
     }
   }
 
-  function resizeTextarea(
-    e: Event & { currentTarget: EventTarget & HTMLTextAreaElement }
-  ) {
-    const textarea = e.currentTarget;
+  function resizeTextarea() {
+    const textarea = textareaNode as HTMLTextAreaElement;
     textarea.style.height = viewportType === "mobile" ? "36px" : "54px";
     let height = textarea.scrollHeight;
     textarea.style.height = height + "px";
@@ -152,6 +156,7 @@
   onMount(() => {
     editor = new Editor({
       element: element,
+      content: content || "",
       extensions: [
         StarterKit,
         Link.configure({
@@ -172,13 +177,13 @@
                 {
                   name: "preventOverflow",
                   options: {
-                    boundaryElement: document.querySelector(".create-article-wrapper"),
+                    boundaryElement: document.querySelector(".editor-wrapper"),
                   },
                   enabled: true,
                 },
               ],
             },
-            appendTo: document.querySelector(".create-article-wrapper"),
+            appendTo: document.querySelector(".editor-wrapper"),
           },
           shouldShow: ({ editor }) => {
             const isLink = editor.isActive("link");
@@ -266,8 +271,8 @@
 </div>
 
 <div
-  id="create-article"
-  class="create-article {viewportType}"
+  id="editor"
+  class="editor {viewportType}"
   style="--vh: {vh}; --h:{isKeyboardOpen ? '0px' : `calc(-34px - 40px)`}"
 >
   {#if viewportType === "desktop"}
@@ -286,11 +291,11 @@
   >
     <div class="editor-wrapper" id="parent">
       <textarea
+        bind:this={textareaNode}
         class="title"
         bind:value={title}
         placeholder="Title (required)"
         on:keydown={handleKeyDown}
-        on:input={resizeTextarea}
         on:focus={() => (titleInFocus = true)}
       />
       <div
@@ -342,7 +347,7 @@
   .link-popup {
     z-index: 2 !important;
   }
-  .create-article {
+  .editor {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;

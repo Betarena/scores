@@ -236,7 +236,6 @@
       align-self: stretch;
       min-height: calc(100vh - 56px - 22px - 5px);
       padding-bottom: 22px;
-      overflow: hidden;
 
 
       .header-wrapper {

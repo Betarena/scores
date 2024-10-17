@@ -8,6 +8,7 @@
 -->
 
 <script lang="ts">
+    import { goto } from "$app/navigation";
   import type { IArticle } from "$lib/components/section/authors/common_ui/helpers.js";
   import ClipboardX from "$lib/components/ui/assets/clipboard-x.svelte";
   import Edit_02 from "$lib/components/ui/assets/edit-02.svelte";
@@ -16,6 +17,7 @@
   import SportstackAvatar from "$lib/components/ui/SportstackAvatar.svelte";
   import { modalStore } from "$lib/store/modal.js";
   import session from "$lib/store/session.js";
+    import userSettings from "$lib/store/user-settings.js";
   import DeleteModal from "./DeleteModal.svelte";
   import Unpublish from "./Unpublish.svelte";
 
@@ -62,6 +64,7 @@
     const modalState: any = { modal: true, show: true, props: { id } };
     switch (action) {
       case "edit":
+        goto(`/u/author/article/edit/${permalink}/${userSettings.extract('lang')}`)
         return;
       case "unpublish":
         modalState.component = Unpublish;
@@ -166,15 +169,12 @@
     gap: var(--spacing-xl, 16px);
     align-self: stretch;
     max-width: 100%;
-    overflow: hidden;
     max-height: 104px;
     .content {
       display: flex;
       align-items: center;
       gap: 16px;
 
-      :global(.sportstack-image) {
-      }
 
       .img {
         flex-shrink: 0;
@@ -302,7 +302,6 @@
           h2 {
             font-size: var(--font-size-text-xl, 20px);
             line-height: var(--line-height-text-xl, 30px); /* 150% */
-            white-space: nowrap;
           }
         }
       }
