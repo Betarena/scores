@@ -62,37 +62,17 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
   export let data: PageData;
-
+  export let editor: Editor;
   let element;
-  let editor: Editor;
   let title = "";
   let titleInFocus = false;
   let vh = "1vh";
   let isKeyboardOpen = false;
-  let keyBoardHeight = `calc(34px + 40px)`;
+  let keyBoardHeight = `80px`;
   let linkPopup;
   let bmenu;
   let linkState = { url: "", text: "" };
   let linkMode: "info" | "edit" = "info";
-  let options: (AuthorsAuthorsMain & { label: string })[] = [];
-  let selectedSportstack;
-  $: if (data.sportstack instanceof Promise) {
-    console.log("data.sportstack is a promise");
-  } else {
-    options = data.sportstacks.map((s) => {
-      const sportstack = { ...s, label: s.data?.username || "" };
-      if (sportstack.permalink === $page.url.searchParams.get("sportstack")) {
-        selectedSportstack = sportstack;
-      }
-      return sportstack;
-    });
-    if (!selectedSportstack && browser) {
-      selectedSportstack = options[0];
-      const { url } = $page;
-      url.searchParams.set("sportstack", selectedSportstack.permalink);
-      goto(url, { replaceState: true, noScroll: true, keepFocus: true });
-    }
-  }
 
   $: ({ viewportType } = $session);
 
@@ -111,13 +91,16 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   function updateViewportHeight() {
+    // toogleLinkPopup(false)
     vh = `${(window.visualViewport?.height || 0) * 0.01}px`;
     isKeyboardOpen = (window.visualViewport?.height || 0) < window.innerHeight;
     if (isKeyboardOpen) {
       const keyboardHeight = window.innerHeight - window.visualViewport.height;
       keyBoardHeight = `${keyboardHeight}px`;
     } else {
-      keyBoardHeight = `calc(34px + 40px)`;
+      console.log("updateViewportHeight");
+      keyBoardHeight = `80px`;
+      linkPopup = false;
     }
   }
 
@@ -126,10 +109,6 @@
       event.preventDefault();
       editor.chain().focus().run();
     }
-  }
-
-  function back() {
-    history.back();
   }
 
   function resizeTextarea(
@@ -152,18 +131,11 @@
     }
   }
   function toogleLinkPopup(show?: boolean) {
+    // debugger
     if (show !== undefined && show === linkPopup) return;
     linkPopup = show ?? !linkPopup;
     editor.view.updateState(editor.view.state);
     editor.commands.focus();
-  }
-
-  function selectSportstack(e) {
-    const url = $page.url;
-    const { permalink } = e.detail as AuthorsAuthorsMain;
-    selectedSportstack = e.detail as AuthorsAuthorsMain;
-    url.searchParams.set("sportstack", permalink);
-    goto(url, { replaceState: true, noScroll: true, keepFocus: true });
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -194,6 +166,20 @@
         }),
         BubbleMenu.configure({
           element: bmenu,
+          tippyOptions: {
+            popperOptions: {
+              modifiers: [
+                {
+                  name: "preventOverflow",
+                  options: {
+                    boundaryElement: document.querySelector(".create-article-wrapper"),
+                  },
+                  enabled: true,
+                },
+              ],
+            },
+            appendTo: document.querySelector(".create-article-wrapper"),
+          },
           shouldShow: ({ editor }) => {
             const isLink = editor.isActive("link");
 
@@ -247,7 +233,7 @@
         "resize",
         updateViewportHeight
       );
-      window.addEventListener("scroll", updateToolbarPosition);
+      window.removeEventListener("scroll", updateToolbarPosition);
       window.visualViewport?.removeEventListener(
         "scroll",
         updateViewportHeight
@@ -269,7 +255,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div bind:this={bmenu}>
+<div bind:this={bmenu} class="link-popup">
   <LinkPopup
     {editor}
     bind:show={linkPopup}
@@ -284,39 +270,8 @@
   class="create-article {viewportType}"
   style="--vh: {vh}; --h:{isKeyboardOpen ? '0px' : `calc(-34px - 40px)`}"
 >
-  <Container
-    style="display: flex; flex-direction: column; flex-grow: 1; max-height: 100%; height: 100%"
-  >
-    <div class="header">
-      <div on:click={back}>
-        {#if viewportType === "mobile"}
-          <XClose />
-        {:else}
-          <BackButton custom_handler={true} />
-        {/if}
-      </div>
-
-      <DropDownInput
-        {options}
-        value={selectedSportstack}
-        on:change={selectSportstack}
-      />
-      {#if viewportType === "desktop"}
-        <div class="actions">
-          <Button
-            type="primary"
-            disabled={!title ||
-              editor?.getText().trim().split(/\s+/).length < 50}
-            on:click={() => {
-              $modalStore.component = ModalArticleSeo;
-              $modalStore.modal = true;
-              $modalStore.show = true;
-            }}>Publish</Button
-          >
-        </div>
-      {/if}
-    </div>
-    {#if viewportType === "desktop"}
+  {#if viewportType === "desktop"}
+    <Container clazz="sticky-toolbar" hFull={false}>
       <div class="toolbar-wrapper">
         <Toolbar
           {editor}
@@ -324,23 +279,25 @@
           on:showLinkPopup={() => toogleLinkPopup(true)}
         />
       </div>
-    {/if}
-    <div class="editor-block">
-      <div class="editor-wrapper">
-        <textarea
-          class="title"
-          bind:value={title}
-          placeholder="Title (required)"
-          on:keydown={handleKeyDown}
-          on:input={resizeTextarea}
-          on:focus={() => (titleInFocus = true)}
-        />
-        <div
-          class="editor"
-          bind:this={element}
-          on:focus={() => (titleInFocus = false)}
-        />
-      </div>
+    </Container>
+  {/if}
+  <Container
+    style="display: flex; flex-direction: column; flex-grow: 1; max-height: 100%; height: 100%"
+  >
+    <div class="editor-wrapper" id="parent">
+      <textarea
+        class="title"
+        bind:value={title}
+        placeholder="Title (required)"
+        on:keydown={handleKeyDown}
+        on:input={resizeTextarea}
+        on:focus={() => (titleInFocus = true)}
+      />
+      <div
+        class="editor"
+        bind:this={element}
+        on:focus={() => (titleInFocus = false)}
+      />
     </div>
   </Container>
 
@@ -382,49 +339,25 @@
 -->
 
 <style lang="scss">
+  .link-popup {
+    z-index: 2 !important;
+  }
   .create-article {
-    height: 100vh;
-    max-height: calc(100vh - 34px - 110px);
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     overscroll-behavior: contain;
-    overflow: hidden;
 
-    .header {
-      display: flex;
-      height: 64px;
-      align-items: center;
-      gap: 20px;
-      width: 100%;
-      flex-shrink: 0;
-      align-self: stretch;
-
-      :global(.field) {
-        flex-grow: 1;
-        align-items: center;
-        justify-content: center;
-      }
+    :global(.tippy-tooltip[data-out-of-boundaries]) {
+      display: none;
     }
 
-    .editor-block {
-      overflow: auto;
-      max-height: 100%;
+    // .editor-block {
+    //   overflow: auto;
+    //   max-height: 100%;
 
-      &::-webkit-scrollbar {
-          width: 8px;
-        }
-
-        &::-webkit-scrollbar-track {
-          background: inherit;
-        }
-
-        &::-webkit-scrollbar-thumb {
-          background: var(--colors-background-bg-quaternary);
-          border-radius: 4px;
-        }
-
-    }
+    //
+    // }
     .editor-wrapper {
       display: flex;
       flex-direction: column;
@@ -437,6 +370,9 @@
       width: 100%;
       gap: var(--spacing-lg, 12px);
       justify-content: flex-end;
+      padding-bottom: calc(
+        80px + 12px + 69px
+      ); // button height + padding + toolbar height
 
       .title {
         border: none;
@@ -474,8 +410,6 @@
         font-size: 18px;
         line-height: 32px;
         font-weight: 300;
-
-
 
         :global(p) {
           font-size: 18px;
@@ -545,10 +479,12 @@
       z-index: 1;
       padding: var(--spacing-lg, 12px) var(--spacing-none, 0px);
       flex-direction: column;
+      background-color: var(--colors-background-bg-main);
       align-items: flex-start;
       gap: 10px;
       align-self: stretch;
       border-top: 1px solid var(--colors-border-border-secondary, #3b3b3b);
+      z-index: 10;
       .toolbar {
         width: 100%;
         display: flex;
@@ -606,18 +542,12 @@
       width: 100%;
       position: fixed;
       justify-content: center;
-      bottom: 36px;
+      bottom: 0;
+      background-color: var(--colors-background-bg-main);
+      padding-bottom: 36px;
     }
 
     &.tablet {
-      .header {
-        :global(.field .input-wrapper) {
-          width: 100%;
-          max-width: 343px;
-          margin: 0 auto;
-        }
-      }
-
       .button-container {
         :global(.container-wrapper) {
           display: flex;
@@ -627,42 +557,25 @@
     }
 
     &.desktop {
-      max-height: 95vh;
-      .header {
-        gap: var(--spacing-3xl, 24px);
-        margin-top: var(--spacing-2xl, 20px);
-        padding-block: var(--spacing-2xl, 20px);
-        height: 84px;
-        :global(.field) {
-          max-width: 343px;
-        }
-
-        .editor-wrapper {
-          .title {
-            font-size: 38px;
-            line-height: 54px;
-            letter-spacing: -0.72px;
-            height: 54px;
-          }
-        }
-
-        .actions {
-          flex-grow: 1;
-          display: flex;
-          justify-content: flex-end;
-        }
+      // max-height: 95vh;
+      :global(.sticky-toolbar) {
+        position: sticky;
+        top: 104px;
+        z-index: 1;
       }
       .toolbar-wrapper {
-        position: static;
+        background-color: var(--colors-background-bg-main);
         padding: var(--spacing-lg, 12px) var(--spacing-none, 0px);
         flex-direction: column;
         align-items: flex-start;
+        position: static;
         gap: 10px;
         align-self: stretch;
         border-bottom: 1px solid var(--colors-border-border-secondary, #3b3b3b);
       }
       .editor-wrapper {
         padding-top: var(--spacing-lg, 12px);
+        // margin-top: 70px;
         .title {
           font-size: 38px;
           line-height: 54px;

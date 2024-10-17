@@ -124,7 +124,7 @@
 <style lang="scss">
   .link-popup {
     display: flex;
-
+    z-index: 2 !important;
     background: var(--colors-background-bg-active);
     padding: var(--spacing-lg) var(--spacing-sm, 6px);
     gap: var(--spacing-lg, 6px);
