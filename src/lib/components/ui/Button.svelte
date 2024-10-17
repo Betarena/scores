@@ -42,6 +42,7 @@
       | "secondary-gray"
       | "primary-outline"
       | "terlary-gray"
+      | "tertiary"
       | "subtle" = "primary";
 
   export let submit = false;
@@ -188,13 +189,19 @@
     }
 
     &.destructive {
-      background: var(--component-colors-components-buttons-primary-error-button-primary-error-bg, #FF3C3C);
-      color: var(--colors-foreground-fg-white, #FFF);
+      background: var(
+        --component-colors-components-buttons-primary-error-button-primary-error-bg,
+        #ff3c3c
+      );
+      color: var(--colors-foreground-fg-white, #fff);
 
-      &:hover {
-        background: var(--component-colors-components-buttons-primary-error-button-primary-error-bg_hover, #EA2B2B);
-        color: var(--colors-foreground-fg-white, #FFF);
-
+      &:hover,
+      &.hover {
+        background: var(
+          --component-colors-components-buttons-primary-error-button-primary-error-bg_hover,
+          #ea2b2b
+        );
+        color: var(--colors-foreground-fg-white, #fff);
       }
     }
   }
@@ -342,6 +349,36 @@
         --component-colors-components-buttons-tertiary-button-tertiary-fg_hover,
         #525252
       );
+    }
+  }
+  .tertiary {
+    background: inherit;
+    color: var(
+      --component-colors-components-buttons-tertiary-color-button-tertiary-color-fg,
+      #f5620f
+    );
+    &:hover,
+    &.hover {
+      background: var(
+        --component-colors-components-buttons-tertiary-color-button-tertiary-color-bg_hover,
+        #fef5f0
+      );
+      color: var(
+        --component-colors-components-buttons-tertiary-color-button-tertiary-color-fg_hover,
+        #d4550c
+      );
+    }
+    &.destructive {
+
+      color: var(--component-colors-components-buttons-tertiary-error-button-tertiary-error-fg, #FF3C3C);
+
+
+      &:hover,
+      &.hover {
+        background: var(--component-colors-components-buttons-tertiary-error-button-tertiary-error-bg_hover, #FEF3F2);
+        color: var(--component-colors-components-buttons-tertiary-error-button-tertiary-error-fg_hover, #EA2B2B);
+
+      }
     }
   }
 </style>

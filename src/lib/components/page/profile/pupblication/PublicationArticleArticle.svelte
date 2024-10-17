@@ -14,10 +14,9 @@
   import Edit_02 from "$lib/components/ui/assets/edit-02.svelte";
   import Trash_01 from "$lib/components/ui/assets/trash-01.svelte";
   import AvatarLabel from "$lib/components/ui/AvatarLabel.svelte";
-  import SportstackAvatar from "$lib/components/ui/SportstackAvatar.svelte";
   import { modalStore } from "$lib/store/modal.js";
   import session from "$lib/store/session.js";
-    import userSettings from "$lib/store/user-settings.js";
+  import userSettings from "$lib/store/user-settings.js";
   import DeleteModal from "./DeleteModal.svelte";
   import Unpublish from "./Unpublish.svelte";
 

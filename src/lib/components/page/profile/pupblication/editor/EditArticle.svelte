@@ -24,8 +24,8 @@
   import ModalArticleSeo from "./ModalArticleSEO.svelte";
   export let data: PageData;
 
-  $: ({article = {data: {}}} = data);
-  $: ({title, content, featured_image} = article.data);
+  $: ({ article = { data: {} } } = data);
+  $: ({ title, content, featured_image } = article.data);
 
   $: if (featured_image) {
     content = `<img src="${featured_image}" alt="${title}" />${content}`;
@@ -87,14 +87,20 @@
           <BackButton custom_handler={true} />
         {/if}
       </div>
-
-      <DropDownInput
-        {options}
-        value={selectedSportstack}
-        on:change={selectSportstack}
-      />
       {#if viewportType === "desktop"}
-        <div class="actions">
+        <DropDownInput
+          {options}
+          value={selectedSportstack}
+          on:change={selectSportstack}
+        />
+      {/if}
+
+      <div class="actions">
+        <Button type="tertiary" destructive={true} on:click={() => {}}
+          >Delete Article</Button
+        >
+        <Button type="terlary-gray" on:click={() => {}}>Unpublish</Button>
+        {#if viewportType === "desktop"}
           <Button
             type="primary"
             disabled={!title ||
@@ -103,15 +109,13 @@
               $modalStore.component = ModalArticleSeo;
               $modalStore.modal = true;
               $modalStore.show = true;
-            }}>Publish</Button
+            }}>Update & Publish</Button
           >
-        </div>
-      {/if}
+        {/if}
+      </div>
     </div>
   </Container>
-  <!-- <div class="editor-wrapper"> -->
-    <Editor {data} bind:editor {title} {content} />
-  <!-- </div> -->
+  <Editor {data} bind:editor {title} {content} />
 </div>
 
 <!--
@@ -132,17 +136,17 @@
     height: 100vh;
     overflow: auto;
     &::-webkit-scrollbar {
-        width: 8px;
-      }
+      width: 8px;
+    }
 
-      &::-webkit-scrollbar-track {
-        background: inherit;
-      }
+    &::-webkit-scrollbar-track {
+      background: inherit;
+    }
 
-      &::-webkit-scrollbar-thumb {
-        background: var(--colors-background-bg-quaternary);
-        border-radius: 4px;
-      }
+    &::-webkit-scrollbar-thumb {
+      background: var(--colors-background-bg-quaternary);
+      border-radius: 4px;
+    }
     :global(.sticky) {
       position: sticky !important;
       top: 0;
@@ -158,11 +162,18 @@
       flex-shrink: 0;
       z-index: 1;
       align-self: stretch;
+      justify-content: space-between;
 
       :global(.field) {
         flex-grow: 1;
         align-items: center;
         justify-content: center;
+      }
+      .actions {
+        display: flex;
+
+        justify-content: space-between;
+        gap: var(--spacing-lg, 12px);
       }
       &.tablet {
         :global(.field .input-wrapper) {
@@ -183,8 +194,8 @@
 
         .actions {
           flex-grow: 1;
-          display: flex;
           justify-content: flex-end;
+          gap: var(--spacing-sm, 6px);
         }
       }
     }
