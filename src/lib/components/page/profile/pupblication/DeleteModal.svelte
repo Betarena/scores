@@ -10,12 +10,9 @@
 <script lang="ts">
   import Trash_01 from "$lib/components/ui/assets/trash-01.svelte";
   import Button from "$lib/components/ui/Button.svelte";
-    import FeaturedIcon from "$lib/components/ui/FeaturedIcon.svelte";
-  import session from "$lib/store/session.js";
+  import FeaturedIcon from "$lib/components/ui/FeaturedIcon.svelte";
   import ModalWrapper from "./ModalWrapper.svelte";
   export let id = "";
-
-  $: ({ viewportType } = $session);
 </script>
 
 <ModalWrapper title="Delete" actionButton="Delete" cancel="Cancel">
@@ -25,8 +22,8 @@
   <div slot="text">
     Are you sure you want to delete this article? <br /> This action cannot be undone.
   </div>
-  <div slot="action-button" class=" action-button {viewportType}">
-    <Button destructive={true} full={viewportType === "mobile"}>Delete</Button>
+  <div slot="action-button" class=" action-button">
+    <Button destructive={true} full={true}>Delete</Button>
   </div>
 </ModalWrapper>
 
@@ -42,8 +39,6 @@
 
 <style lang="scss">
   .action-button {
-    &.mobile {
-      width: 100%;
-    }
+    width: 100%;
   }
 </style>

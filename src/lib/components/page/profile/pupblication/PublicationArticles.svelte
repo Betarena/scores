@@ -16,6 +16,7 @@
   import PublicationArticleArticle from "./PublicationArticleArticle.svelte";
   import type { IArticle } from "$lib/components/section/authors/common_ui/helpers.js";
   import PublicationArticleArticleLoader from "./PublicationArticleArticleLoader.svelte";
+  import EyeOffIcon from "$lib/components/ui/assets/eye-off-icon.svelte";
 
   export let selectedSportstack: AuthorsAuthorsMain;
   export let articles: Map<number, IArticle>;
@@ -69,7 +70,7 @@
         </a>
       {/if}
     </div>
-    <a class="view-all">
+    <a class="sort-by">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="20"
@@ -93,11 +94,16 @@
         <PublicationArticleArticleLoader />
       {/each}
     {/if}
-    {#if articles.size}
+    {#if false}
       {#each [...articles.entries()] as [key, article] (key)}
         <PublicationArticleArticle {article} />
       {/each}
-    {:else}{/if}
+    {:else}
+      <div class="no-content">
+        <EyeOffIcon />
+        <p>No articles available, start creating content today!</p>
+      </div>
+    {/if}
   </div>
 </div>
 
@@ -147,7 +153,7 @@
         flex-grow: 1;
       }
 
-      .view-all {
+      .sort-by {
         display: flex;
         padding: 10px var(--spacing-xl, 16px);
         justify-content: flex-end;
@@ -181,6 +187,34 @@
       align-items: flex-start;
       gap: var(--spacing-xl, 16px);
       max-width: 100%;
+      width: 100%;
+      flex-grow: 1;
+
+      .no-content {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        gap: 45px;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        :global(svg) {
+          width: 32px;
+          height: 32px;
+        }
+        p {
+          margin: 0;
+          color: var(--colors-text-text-quaternary-500, #8c8c8c);
+          text-align: center;
+
+          /* Text md/Regular */
+          font-family: Roboto;
+          font-size: 14px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: 150%; /* 21px */
+        }
+      }
     }
 
     &.tablet {
@@ -194,8 +228,15 @@
             flex-grow: 1;
           }
         }
-        .view-all {
+        .sort-by {
           flex-grow: 1;
+        }
+      }
+
+      .no-content {
+        :global(svg) {
+          width: 48px;
+          height: 48px;
         }
       }
     }
@@ -206,10 +247,14 @@
           flex-grow: 0;
           width: 160px;
         }
-        .view-all {
+        .sort-by {
           flex-grow: 1;
         }
       }
+      .no-content {
+        max-height: 368px;
+      }
+
     }
   }
 </style>

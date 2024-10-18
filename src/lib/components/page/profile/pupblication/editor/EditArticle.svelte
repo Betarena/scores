@@ -22,10 +22,13 @@
   import { goto } from "$app/navigation";
   import session from "$lib/store/session.js";
   import ModalArticleSeo from "./ModalArticleSEO.svelte";
+  import Unpublish from "../Unpublish.svelte";
+  import DeleteModal from "../DeleteModal.svelte";
+  import component from "svelte-seo";
   export let data: PageData;
 
   $: ({ article = { data: {} } } = data);
-  $: ({ title, content, featured_image } = article.data);
+  $: ({ title, content, featured_image, id } = article.data);
 
   $: if (featured_image) {
     content = `<img src="${featured_image}" alt="${title}" />${content}`;
@@ -65,6 +68,16 @@
     url.searchParams.set("sportstack", permalink);
     goto(url, { replaceState: true, noScroll: true, keepFocus: true });
   }
+
+  function showModal(action: "unpublish" | "delete") {
+    const modalState: any = {
+      modal: true,
+      show: true,
+      props: { id },
+      component: action === "delete" ? DeleteModal : Unpublish,
+    };
+    modalStore.set(modalState);
+  }
 </script>
 
 <!--
@@ -96,10 +109,14 @@
       {/if}
 
       <div class="actions">
-        <Button type="tertiary" destructive={true} on:click={() => {}}
-          >Delete Article</Button
+        <Button
+          type="tertiary"
+          destructive={true}
+          on:click={() => showModal("delete")}>Delete Article</Button
         >
-        <Button type="terlary-gray" on:click={() => {}}>Unpublish</Button>
+        <Button type="terlary-gray" on:click={() => showModal("unpublish")}
+          >Unpublish</Button
+        >
         {#if viewportType === "desktop"}
           <Button
             type="primary"
@@ -195,7 +212,7 @@
         .actions {
           flex-grow: 1;
           justify-content: flex-end;
-          gap: var(--spacing-sm, 6px);
+          gap: var(--spacing-lg, 12px);
         }
       }
     }

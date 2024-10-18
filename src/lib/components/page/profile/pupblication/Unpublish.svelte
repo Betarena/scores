@@ -9,22 +9,22 @@
 
 <script lang="ts">
   import Save from "$lib/components/ui/assets/save.svelte";
-import Button from "$lib/components/ui/Button.svelte";
-    import FeaturedIcon from "$lib/components/ui/FeaturedIcon.svelte";
-  import session from "$lib/store/session.js";
+  import Button from "$lib/components/ui/Button.svelte";
+  import FeaturedIcon from "$lib/components/ui/FeaturedIcon.svelte";
   import ModalWrapper from "./ModalWrapper.svelte";
   export let id = "";
-
-
-  $: ({ viewportType } = $session);
 </script>
 
-<ModalWrapper title="Are you sure you want to unpublish?" actionButton="Unpublish" cancel="Cancel">
-  <div  slot="header-icon">
-    <FeaturedIcon size="lg" type="brand"><Save/></FeaturedIcon>
+<ModalWrapper
+  title="Are you sure you want to unpublish?"
+  actionButton="Unpublish"
+  cancel="Cancel"
+>
+  <div slot="header-icon">
+    <FeaturedIcon size="lg" type="brand"><Save /></FeaturedIcon>
   </div>
-  <div slot="action-button" class=" action-button {viewportType}">
-    <Button full={viewportType === "mobile"}>Unpublish</Button>
+  <div slot="action-button" class=" action-button">
+    <Button full={true}>Unpublish</Button>
   </div>
 </ModalWrapper>
 
@@ -40,9 +40,6 @@ import Button from "$lib/components/ui/Button.svelte";
 
 <style lang="scss">
   .action-button {
-    &.mobile {
-      width: 100%;
-    }
+    width: 100%;
   }
-
 </style>

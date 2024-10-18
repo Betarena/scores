@@ -12,6 +12,7 @@
   import Button from "$lib/components/ui/Button.svelte";
   import { modalStore } from "$lib/store/modal.js";
   import session from "$lib/store/session.js";
+  import { scale } from "svelte/transition";
 
   export let title = "Title";
   export let text = "";
@@ -32,7 +33,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="modal">
+<div class="modal" in:scale out:scale>
   <div class="top-block">
     <div class="header">
       <slot name="header-icon" />
@@ -56,13 +57,13 @@
   </div>
   <div class="buttons">
     <slot name="action-button"
-      ><Button full={viewportType === "mobile"}>{actionButton}</Button></slot
+      ><Button full={true}>{actionButton}</Button></slot
     >
     <slot name="cancel-button"
       ><Button
         type="secondary-gray"
         on:click={() => ($modalStore.show = false)}
-        full={viewportType === "mobile"}>{cancel}</Button
+        full={true}>{cancel}</Button
       ></slot
     >
   </div>
@@ -87,7 +88,7 @@
     gap: var(--spacing-3xl, 24px);
     align-items: center;
     border-radius: var(--radius-xl, 12px);
-    background: #4b4b4b;
+    background: var(--colors-background-bg-primary, #fff);
 
     padding: var(--spacing-xl, 16px);
     padding-top: var(--spacing-2xl, 20px);

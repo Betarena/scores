@@ -121,7 +121,7 @@
     border-radius: var(--radius-md, 8px);
 
     &.lg {
-      padding: 10px var(--spacing-xl, 16px);
+      padding: 10px calc(var(--spacing-xl, 16px) + var(--spacing-xxs, 2px));
       font-size: var(--font-size-text-md, 16px);
       font-style: normal;
       font-weight: 500;
@@ -130,14 +130,16 @@
 
     &.md {
       padding: 10px 14px;
+      padding: 10px calc(14px + var(--spacing-xxs, 2px));
     }
 
     &.sm {
-      padding: var(--spacing-md, 8px) var(--spacing-lg, 12px);
+      padding: var(--spacing-md, 8px)
+        calc(var(--spacing-lg, 12px) + var(--spacing-xxs, 2px));
     }
 
     &.xl {
-      padding: var(--spacing-lg, 12px) 20px;
+      padding: var(--spacing-lg, 12px) calc(20px + var(--spacing-xxs, 2px));
       font-size: var(--font-size-text-md, 16px);
       font-style: normal;
       font-weight: 500;
@@ -145,7 +147,7 @@
     }
 
     &.xxl {
-      padding: var(--spacing-xl, 16px) 22px;
+      padding: var(--spacing-xl, 16px) calc(22px + var(--spacing-xxs, 2px));
     }
   }
 
@@ -369,15 +371,21 @@
       );
     }
     &.destructive {
-
-      color: var(--component-colors-components-buttons-tertiary-error-button-tertiary-error-fg, #FF3C3C);
-
+      color: var(
+        --component-colors-components-buttons-tertiary-error-button-tertiary-error-fg,
+        #ff3c3c
+      );
 
       &:hover,
       &.hover {
-        background: var(--component-colors-components-buttons-tertiary-error-button-tertiary-error-bg_hover, #FEF3F2);
-        color: var(--component-colors-components-buttons-tertiary-error-button-tertiary-error-fg_hover, #EA2B2B);
-
+        background: var(
+          --component-colors-components-buttons-tertiary-error-button-tertiary-error-bg_hover,
+          #fef3f2
+        );
+        color: var(
+          --component-colors-components-buttons-tertiary-error-button-tertiary-error-fg_hover,
+          #ea2b2b
+        );
       }
     }
   }
