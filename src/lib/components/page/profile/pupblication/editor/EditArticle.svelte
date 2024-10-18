@@ -167,7 +167,7 @@
     :global(.sticky) {
       position: sticky !important;
       top: 0;
-      z-index: 10;
+      z-index: 10000;
       background-color: var(--colors-background-bg-main);
     }
     .header {

@@ -104,7 +104,6 @@
       const keyboardHeight = window.innerHeight - window.visualViewport.height;
       keyBoardHeight = `${keyboardHeight}px`;
     } else {
-      console.log("updateViewportHeight");
       keyBoardHeight = `80px`;
       linkPopup = false;
     }
@@ -130,7 +129,7 @@
       keyBoardHeight = `${
         scrollTop +
         (window.visualViewport?.height || 0) -
-        editor.getBoundingClientRect().bottom
+        editor.getBoundingClientRect().bottom - 2
       }px`;
     }
   }
@@ -171,6 +170,7 @@
         }),
         BubbleMenu.configure({
           element: bmenu,
+
           tippyOptions: {
             popperOptions: {
               modifiers: [
@@ -260,7 +260,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div bind:this={bmenu} class="link-popup">
+<div bind:this={bmenu} class="link-popup" style="z-index: 3!important;">
   <LinkPopup
     {editor}
     bind:show={linkPopup}
@@ -316,7 +316,7 @@
     </div>
   {/if}
   {#if viewportType !== "desktop"}
-    <div class="button-container" style={isKeyboardOpen ? "bottom: -50vh" : ""}>
+    <div class="button-container" style={isKeyboardOpen ? "visibility: hidden;" : ""}>
       <Container>
         <Button
           type="primary"
@@ -348,6 +348,7 @@
     z-index: 2 !important;
   }
   .editor {
+
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -357,18 +358,12 @@
       display: none;
     }
 
-    // .editor-block {
-    //   overflow: auto;
-    //   max-height: 100%;
 
-    //
-    // }
     .editor-wrapper {
       display: flex;
       flex-direction: column;
       padding-top: var(--spacing-xl, 16px);
       flex-grow: 1;
-      // max-height: 100%;
       flex-shrink: 1;
       max-width: 676px;
       margin: 0 auto;
@@ -407,6 +402,7 @@
 
       .editor {
         flex-grow: 1;
+        z-index: 1;
         color: var(--colors-text-text-primary) !important;
         font-family: var(--font-family-font-family-display, Roboto);
 
@@ -481,7 +477,7 @@
       width: 100%;
       display: flex;
       position: fixed;
-      z-index: 1;
+      z-index: 10000;
       padding: var(--spacing-lg, 12px) var(--spacing-none, 0px);
       flex-direction: column;
       background-color: var(--colors-background-bg-main);
@@ -489,7 +485,6 @@
       gap: 10px;
       align-self: stretch;
       border-top: 1px solid var(--colors-border-border-secondary, #3b3b3b);
-      z-index: 10;
       .toolbar {
         width: 100%;
         display: flex;
@@ -550,6 +545,7 @@
       bottom: 0;
       background-color: var(--colors-background-bg-main);
       padding-bottom: 36px;
+      z-index: 10000;
     }
 
     &.tablet {
@@ -566,7 +562,7 @@
       :global(.sticky-toolbar) {
         position: sticky;
         top: 104px;
-        z-index: 1;
+        z-index: 10000;
       }
       .toolbar-wrapper {
         background-color: var(--colors-background-bg-main);
@@ -575,6 +571,7 @@
         align-items: flex-start;
         position: static;
         gap: 10px;
+        z-index: 1000;
         align-self: stretch;
         border-bottom: 1px solid var(--colors-border-border-secondary, #3b3b3b);
       }
