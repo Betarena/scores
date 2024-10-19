@@ -54,7 +54,7 @@
   {#if viewportType === "mobile"}
     <div class="buttons-header">
       <a
-        href="u/author/article/create/{$userSettings.lang}?sportstack={selectedSportstack.permalink}"
+        href="/u/author/article/create/{$userSettings.lang}?sportstack={selectedSportstack.permalink}"
       >
         <Button type="primary" full={true}>+ New article</Button>
       </a>
@@ -65,7 +65,7 @@
       <DropDownInput {options} value={options[1]} />
 
       {#if viewportType === "tablet"}
-        <a href="u/author/article/create/{$userSettings.lang}">
+        <a href="/u/author/article/create/{$userSettings.lang}">
           <Button type="primary" full={true}>+ New article</Button>
         </a>
       {/if}
@@ -94,7 +94,7 @@
         <PublicationArticleArticleLoader />
       {/each}
     {/if}
-    {#if false}
+    {#if articles.size}
       {#each [...articles.entries()] as [key, article] (key)}
         <PublicationArticleArticle {article} />
       {/each}
