@@ -169,6 +169,10 @@
     align-self: stretch;
     max-width: 100%;
     max-height: 104px;
+    &:hover {
+      background: var(--colors-background-bg-quaternary, #1F1F1F);
+      cursor: pointer;
+    }
     .content {
       display: flex;
       align-items: center;

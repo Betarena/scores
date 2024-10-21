@@ -124,6 +124,7 @@
     padding-bottom: 20px;
     height: 100vh;
     overflow: auto;
+    background-color: var(--colors-background-bg-main);
     &::-webkit-scrollbar {
         width: 8px;
       }

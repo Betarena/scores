@@ -239,6 +239,7 @@
         <Add />
       </div>
     {/if}
+
     {#each viewMap[view] as { icon, cb, id, options }}
       {#if id === "heading"}
         <DropDownInput
@@ -296,9 +297,7 @@
     padding-inline: var(--spacing-md, 8px);
     gap: var(--spacing-xxs, 2px);
     justify-content: center;
-    :global(path) {
-      stroke: #8c8c8c !important;
-    }
+
     .button {
       height: max-content;
       border-radius: var(--radius-md, 8px);
