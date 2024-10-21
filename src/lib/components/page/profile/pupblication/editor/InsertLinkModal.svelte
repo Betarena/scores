@@ -60,6 +60,7 @@
 
   onMount(() => {
     updateModalPosition()
+    window?.getSelection()?.removeAllRanges()
   });
 </script>
 

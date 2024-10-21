@@ -127,6 +127,7 @@
 
   function updateToolbarPosition() {
     if (isKeyboardOpen) {
+      window?.getSelection()?.removeAllRanges()
       const scrollTop = window.scrollY;
       keyBoardHeight = `${
         scrollTop +
