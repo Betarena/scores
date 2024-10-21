@@ -160,6 +160,9 @@
 -->
 
 <style lang="scss">
+  :global(.dark-mode .article-wrapper:hover) {
+    background: var(--colors-background-bg-primary, #1F1F1F) !important;
+  }
   .article-wrapper {
     display: flex;
     padding: var(--spacing-none, 0px);

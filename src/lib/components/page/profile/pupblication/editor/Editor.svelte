@@ -266,10 +266,7 @@
       modal: true,
       props: { linkState, editor },
     };
-    $modalStore.component = InsertLinkModal;
-    $modalStore.modal = true;
-
-    $modalStore.show = true;
+    modalStore.set(modal);
   }
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]

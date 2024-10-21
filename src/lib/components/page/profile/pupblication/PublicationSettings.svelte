@@ -19,6 +19,7 @@
   } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import PublicationAvatar from "./PublicationAvatar.svelte";
   import UrlInfo from "./UrlInfo.svelte";
+  import userSettings from "$lib/store/user-settings.js";
 
   export let selectedSportstack: AuthorsAuthorsMain;
 
@@ -29,6 +30,7 @@
   $: translation = $page.data.RESPONSE_PROFILE_DATA?.sportstack;
   let username = "";
   $: ({ viewportType } = $session);
+  $: ({ theme } = { ...$userSettings });
   $: ({ permalink, data = {} } = selectedSportstack);
   $: ({ username } = data as AuthorsAuthorsDataJSONSchema);
   // #endregion ➤ 📌 VARIABLES
@@ -88,7 +90,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<form method="POST" id="publication-settings" class="form {viewportType}">
+<form method="POST" id="publication-settings" class="form {viewportType}" class:light-mode={theme == "Light"}>
   <UrlInfo permalink={url} />
 
   <div class="thumbnail-field">
@@ -317,6 +319,7 @@
       gap: var(--spacing-2xl, 20px);
       align-self: stretch;
       :global(.button) {
+        background-color: #292929;
         border: 1px solid var(--custom-button-gray-border, #737373) !important;
         color: #ff5959 !important;
         display: flex;
@@ -393,6 +396,14 @@
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
+      }
+    }
+    &.light-mode {
+      .delete-wrapper {
+        :global(.button) {
+          background-color: #FFF;
+        }
+
       }
     }
   }

@@ -151,6 +151,7 @@
     flex-direction: column;
     padding-bottom: 20px;
     height: 100vh;
+    background-color: var(--colors-background-bg-main);
     overflow: auto;
     &::-webkit-scrollbar {
       width: 8px;

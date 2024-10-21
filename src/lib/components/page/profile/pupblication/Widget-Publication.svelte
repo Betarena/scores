@@ -63,6 +63,7 @@
   export let data: PageData;
   $: ({ translate } = data);
   $: ({ viewportType } = $session);
+  $: ({ theme } = { ...$userSettings });
   let selectedSportstack;
   let options: (AuthorsAuthorsMain & { label: string })[] = [];
   let loadingArticles = false;
@@ -144,7 +145,7 @@
 -->
 
 <Container hFull={false}>
-  <div class="publication-widget-wrapper {viewportType}">
+  <div class="publication-widget-wrapper {viewportType}" class:light-mode={theme == "Light"}>
     {#if viewportType === "desktop"}
       <div class="menu">
         <WidgetMenuOpt />
@@ -209,11 +210,21 @@
 -->
 
 <style lang="scss">
+
   .publication-widget-wrapper {
     margin-top: 24px;
     // overflow: hidden;
     display: flex;
     flex-grow: 1;
+
+    &.light-mode {
+      --component-colors-components-buttons-tertiary-button-tertiary-fg: var(--colors-gray-400);
+      .header-wrapper {
+        :global(.tabbar) {
+          border-bottom: 1px solid #E6E6E6 !important;
+        }
+      }
+    }
 
     :global(*::-webkit-scrollbar) {
       width: 8px;

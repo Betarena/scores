@@ -17,8 +17,10 @@
 
   export let linkState: { url: string; text: string };
   export let editor: Editor;
-  $: linkState.url = linkState.url.toLowerCase();
 
+  let modal;
+  $: linkState.url = linkState?.url.toLowerCase();
+  let keyBoardHeight = `80px`;
   let top = `100vh`;
 
   function save() {
@@ -45,31 +47,24 @@
     const isKeyboardOpen =
       (window.visualViewport?.height || 0) < window.innerHeight;
     if (isKeyboardOpen) {
+      keyboardHeight = window.innerHeight - window.visualViewport.height;
       top = `${window.visualViewport.height / 2}px`;
     } else {
       top = `50vh`;
     }
   }
+  function updateModalPosition() {
+    const scrollTop = window.scrollY;
+    top = `${window.visualViewport.height / 2 + scrollTop}px`;
+  }
 
   onMount(() => {
-    updateViewportHeight();
-    window.visualViewport?.addEventListener("resize", updateViewportHeight);
-    window.visualViewport?.addEventListener("scroll", updateViewportHeight);
-
-    return () => {
-      // Clean up the event listener
-      window.visualViewport?.removeEventListener(
-        "resize",
-        updateViewportHeight
-      );
-      window.visualViewport?.removeEventListener(
-        "scroll",
-        updateViewportHeight
-      );
-    };
+    updateModalPosition()
   });
 </script>
 
+
+<svelte:window on:resize={updateViewportHeight} on:scroll={updateModalPosition}/>
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ 💠 Svelte Component HTML                                                         │
@@ -80,7 +75,7 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<div class="link-popup" style="top: {top}" in:scale out:scale>
+<div bind:this={modal} class="link-popup" style="top: {top}" in:scale out:scale>
   <Input
     bind:value={linkState.text}
     placeholder="Enter link text"

@@ -57,6 +57,7 @@
     align-self: stretch;
     max-width: 100%;
     overflow: hidden;
+    height: max-content;
     max-height: 104px;
     .content {
       display: flex;

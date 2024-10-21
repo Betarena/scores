@@ -98,7 +98,7 @@
       {#each [...articles.entries()] as [key, article] (key)}
         <PublicationArticleArticle {article} />
       {/each}
-    {:else}
+    {:else if !loadingArticles}
       <div class="no-content">
         <EyeOffIcon />
         <p>No articles available, start creating content today!</p>
