@@ -20,6 +20,7 @@
   import PublicationAvatar from "./PublicationAvatar.svelte";
   import UrlInfo from "./UrlInfo.svelte";
   import userSettings from "$lib/store/user-settings.js";
+  import { post } from "$lib/api/utils.js";
 
   export let selectedSportstack: AuthorsAuthorsMain;
 
@@ -47,6 +48,7 @@
       "/api/data/author/sportstack/validate",
       { name: val }
     );
+
     inputError = !res?.isValid ?? false;
   }
 
