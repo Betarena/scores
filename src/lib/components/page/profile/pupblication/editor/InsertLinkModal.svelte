@@ -12,11 +12,14 @@
   import Input from "$lib/components/ui/Input.svelte";
   import { modalStore } from "$lib/store/modal.js";
   import { Editor } from "@tiptap/core";
+    import { onMount } from "svelte";
   import { scale } from "svelte/transition";
 
   export let linkState: { url: string; text: string };
   export let editor: Editor;
   $: linkState.url = linkState.url.toLowerCase();
+
+  let top = `100vh`;
 
   function save() {
     const { url, text } = linkState;
@@ -36,6 +39,35 @@
   function hide() {
     $modalStore.show = false;
   }
+
+  function updateViewportHeight() {
+    // toogleLinkPopup(false)
+    const isKeyboardOpen =
+      (window.visualViewport?.height || 0) < window.innerHeight;
+    if (isKeyboardOpen) {
+      top = `${window.visualViewport.height / 2}px`;
+    } else {
+      top = `50vh`;
+    }
+  }
+
+  onMount(() => {
+    updateViewportHeight();
+    window.visualViewport?.addEventListener("resize", updateViewportHeight);
+    window.visualViewport?.addEventListener("scroll", updateViewportHeight);
+
+    return () => {
+      // Clean up the event listener
+      window.visualViewport?.removeEventListener(
+        "resize",
+        updateViewportHeight
+      );
+      window.visualViewport?.removeEventListener(
+        "scroll",
+        updateViewportHeight
+      );
+    };
+  });
 </script>
 
 <!--
@@ -48,7 +80,7 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<div class="link-popup" in:scale out:scale>
+<div class="link-popup" style="top: {top}" in:scale out:scale>
   <Input
     bind:value={linkState.text}
     placeholder="Enter link text"
