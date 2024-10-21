@@ -45,6 +45,7 @@
   import { page } from "$app/stores";
   import { goto } from "$app/navigation";
   import { browser } from "$app/environment";
+  import InsertLinkModal from "./InsertLinkModal.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -70,12 +71,14 @@
   let vh = "1vh";
   let isKeyboardOpen = false;
   let keyBoardHeight = `80px`;
-  let linkPopup;
+  let linkInsertModal;
   let bmenu;
   let linkState = { url: "", text: "" };
-  let linkMode: "info" | "edit" = "info";
   let textareaNode;
 
+  $: if ($modalStore.show) {
+    linkInsertModal = false;
+  }
   $: ({ viewportType } = $session);
   $: if (title && textareaNode && viewportType) {
     setTimeout(() => {
@@ -105,7 +108,6 @@
       keyBoardHeight = `${keyboardHeight}px`;
     } else {
       keyBoardHeight = `80px`;
-      linkPopup = false;
     }
   }
 
@@ -129,14 +131,15 @@
       keyBoardHeight = `${
         scrollTop +
         (window.visualViewport?.height || 0) -
-        editor.getBoundingClientRect().bottom - 2
+        editor.getBoundingClientRect().bottom -
+        2
       }px`;
     }
   }
   function toogleLinkPopup(show?: boolean) {
     // debugger
-    if (show !== undefined && show === linkPopup) return;
-    linkPopup = show ?? !linkPopup;
+    if (show !== undefined && show === linkInsertModal) return;
+    linkInsertModal = show ?? !linkInsertModal;
     editor.view.updateState(editor.view.state);
     editor.commands.focus();
   }
@@ -188,7 +191,7 @@
           shouldShow: ({ editor }) => {
             const isLink = editor.isActive("link");
 
-            if (!linkPopup && !isLink) return false;
+            if (!linkInsertModal && !isLink) return false;
             let url = "";
             let text = "";
             if (isLink) {
@@ -204,14 +207,23 @@
               }
 
               text = linkNode?.textContent || "";
-              linkMode = "info";
             } else {
-              linkMode = "edit";
               const { from, to } = editor.state.selection;
               text = editor.state.doc.textBetween(from, to, " ");
             }
             linkState = { url, text };
-            return true;
+            if (!isLink) {
+              const modal = {
+                show: true,
+                component: InsertLinkModal,
+                modal: true,
+                props: { linkState, editor },
+              };
+              modalStore.set(modal);
+
+              return false;
+            }
+            return isLink;
           },
         }),
       ],
@@ -246,6 +258,20 @@
     };
   });
 
+  function showInsertLinkModal() {
+    linkInsertModal = true;
+    const modal = {
+      show: true,
+      component: InsertLinkModal,
+      modal: true,
+      props: { linkState, editor },
+    };
+    $modalStore.component = InsertLinkModal;
+    $modalStore.modal = true;
+
+    $modalStore.show = true;
+  }
+
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 
@@ -259,13 +285,12 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
 <div bind:this={bmenu} class="link-popup" style="z-index: 3!important;">
   <LinkPopup
     {editor}
-    bind:show={linkPopup}
+    show={linkInsertModal}
     {linkState}
-    bind:mode={linkMode}
+    on:edit={showInsertLinkModal}
     on:hide={() => toogleLinkPopup(false)}
   />
 </div>
@@ -316,7 +341,10 @@
     </div>
   {/if}
   {#if viewportType !== "desktop"}
-    <div class="button-container" style={isKeyboardOpen ? "visibility: hidden;" : ""}>
+    <div
+      class="button-container"
+      style={isKeyboardOpen ? "visibility: hidden;" : ""}
+    >
       <Container>
         <Button
           type="primary"
@@ -348,7 +376,6 @@
     z-index: 2 !important;
   }
   .editor {
-
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -357,7 +384,6 @@
     :global(.tippy-tooltip[data-out-of-boundaries]) {
       display: none;
     }
-
 
     .editor-wrapper {
       display: flex;
