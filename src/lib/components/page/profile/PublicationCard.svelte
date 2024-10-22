@@ -88,11 +88,19 @@
 -->
 
 <style lang="scss">
+  :global(.dark-mode .publication-card:hover) {
+    background: var(--colors-background-bg-primary, #1F1F1F) !important;
+  }
   .publication-card {
     display: flex;
     align-items: center;
     gap: 16px;
     flex: 1 0 0;
+
+    &:hover {
+      background: var(--colors-background-bg-quaternary, #1F1F1F);
+      cursor: pointer;
+    }
 
     .info {
       display: flex;

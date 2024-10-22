@@ -58,7 +58,6 @@ $: if(sportstacks.length && $userSettings.user?.firebase_user_data && !$userSett
         return  new Date(b.data?.creation_date) - new Date(a.data?.creation_date);
       });
     }
-    console.log("sportstacks", sportstacks);
   });
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]

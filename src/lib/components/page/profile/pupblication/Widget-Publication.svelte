@@ -192,6 +192,7 @@
           <Tabbar
             on:select={change}
             type="underline"
+            size="md"
             data={tabs}
             bind:selected
           />

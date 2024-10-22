@@ -36,6 +36,7 @@
   export let height = 14;
   export let translations: { [key: string]: string } = {};
   export let type: "underline" | "button_border" = "underline";
+  export let size: "sm" | "md" | undefined = undefined;
   let activeNode: HTMLElement;
   let tabbarNode: HTMLElement;
   const dispatch = createEventDispatcher();
@@ -94,7 +95,7 @@
     ) as any;
     if (tabNode) {
       setTimeout(() => {
-        if(!activeNode) return
+        if (!activeNode) return;
         activeNode.style.width = `${tabNode.offsetWidth}px`;
         activeNode.style.left = `${tabNode.offsetLeft}px`;
       }, 100);
@@ -116,7 +117,7 @@
   // #endregion ➤ 🛠️ METHODS
 </script>
 
-<div class="tabbar {type}" bind:this={tabbarNode} {...$$restProps}>
+<div class="tabbar {type} {size}" bind:this={tabbarNode} {...$$restProps}>
   {#each data as item, i (item.id)}
     <div
       class="tab-item"
@@ -165,7 +166,7 @@
       }
 
       &.selected {
-        color: var(--colors-text-text-brand-tertiary, #F5620F);
+        color: var(--colors-text-text-brand-tertiary, #f5620f);
       }
     }
 
@@ -173,7 +174,7 @@
       color: var(--text-color);
       position: relative;
       transition: all 0.3s ease-out;
-      bottom: 1px solid  var(--colors-foreground-fg-brand-primary, #F5620F);
+      bottom: 1px solid var(--colors-foreground-fg-brand-primary, #f5620f);
     }
     .active {
       position: absolute;
@@ -234,6 +235,25 @@
         color: var(--colors-text-text-secondary, #525252);
 
         /* Text md/Semibold */
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-md, 16px);
+        font-style: normal;
+        font-weight: 600;
+        line-height: var(--line-height-text-md, 24px); /* 150% */
+      }
+    }
+
+    &.md {
+      gap: var(--spacing-lg, 12px);
+      .tab-item {
+        display: flex;
+        height: 36px;
+        padding: var(--spacing-none, 0px) var(--spacing-xs, 4px)
+          var(--spacing-lg, 12px) var(--spacing-xs, 4px);
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 0!important;
+
         font-family: var(--font-family-font-family-body, Roboto);
         font-size: var(--font-size-text-md, 16px);
         font-style: normal;
