@@ -155,9 +155,17 @@
       <div class="header-wrapper">
         <div class="header">
           <div class="title-wrapper">
+            {#if viewportType === "mobile"}
+                <DropDownInput
+                checkIcon={true}
+                {options}
+                on:change={selectSportstack}
+                value={selectedSportstack}
+              />
+            {/if}
             <h2>{translate?.[view] || selected.label}</h2>
             <div class="actions-buttons">
-              {#if viewportType !== "tablet"}
+              {#if viewportType === "desktop"}
                 <DropDownInput
                   checkIcon={true}
                   {options}
@@ -286,6 +294,15 @@
             width: 100%;
           }
         }
+        .header {
+          gap: 0;
+          :global(.field) {
+            height: 65px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+          }
+        }
       }
     }
 
@@ -316,6 +333,7 @@
           .header {
             width: 100%;
             flex-grow: 1;
+            gap: 24px;
             .title-wrapper {
               display: flex;
               justify-content: space-between;
@@ -338,6 +356,7 @@
 
                 :global(.field) {
                   min-width: 343px;
+                  height: unset;
                 }
                 .back {
                   display: flex;
