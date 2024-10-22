@@ -165,7 +165,7 @@
             {/if}
             <h2>{translate?.[view] || selected.label}</h2>
             <div class="actions-buttons">
-              {#if viewportType === "desktop"}
+              {#if viewportType !== "mobile"}
                 <DropDownInput
                   checkIcon={true}
                   {options}
@@ -407,6 +407,22 @@
             :global(.tabbar) {
               border-bottom: 1px solid
                 var(--colors-border-border-secondary, #3b3b3b);
+            }
+             .title-wrapper {
+              display: flex;
+              justify-content: space-between;
+              flex-direction: row;
+              align-items: center;
+              gap: 200px;
+
+              :global(.field) {
+                min-width: 351px;
+                height: unset;
+              }
+              h2 {
+                min-width: 169px;
+
+              }
             }
           }
         }

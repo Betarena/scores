@@ -42,15 +42,13 @@
 <div class="publication-home {viewportType}">
   {#if viewportType !== "desktop"}
     <div class="buttons-header">
-      <div class="button-wrapper">
-        {#if viewportType === "mobile"}
-          <a href="/a/sportstack/{selectedSportstack.permalink}">
-            <Button tton type="secondary-gray">View sportstack</Button>
-          </a>
-        {:else}
-          <DropDownInput {options} />
-        {/if}
-      </div>
+      {#if viewportType === "mobile"}
+        <div class="button-wrapper">
+            <a href="/a/sportstack/{selectedSportstack.permalink}">
+              <Button tton type="secondary-gray">View sportstack</Button>
+            </a>
+          </div>
+      {/if}
       <a
         href="/u/author/article/create/{$userSettings.lang}?sportstack={selectedSportstack.permalink}"
       >
@@ -191,6 +189,10 @@
     &.tablet {
       .buttons-header {
         gap: var(--spacing-2xl, 20px);
+
+        // a {
+        //   width: 100%;
+        // }
       }
     }
   }

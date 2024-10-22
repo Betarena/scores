@@ -372,7 +372,7 @@
 
     &.tablet,
     &.desktop {
-      gap: 24px;
+      gap: 20px;
       .thumbnail-field {
         .input-wrapper {
           height: 74px;
