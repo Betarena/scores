@@ -13,6 +13,7 @@
   import session from "$lib/store/session.js";
   import userSettings from "$lib/store/user-settings.js";
   import type { AuthorsAuthorsMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+    import { createEventDispatcher } from "svelte";
   export let selectedSportstack: AuthorsAuthorsMain;
   $: ({ viewportType } = $session);
   const options = [
@@ -20,6 +21,11 @@
     { id: 2, label: "SprortsTack2" },
     { id: 3, label: "SprortsTack3" },
   ];
+  const dispatch = createEventDispatcher();
+
+  function viewAll() {
+    dispatch("changeView", {view: "articles"})
+  }
 </script>
 
 <!--
@@ -38,7 +44,9 @@
     <div class="buttons-header">
       <div class="button-wrapper">
         {#if viewportType === "mobile"}
-          <Button type="secondary-gray">VIew sportstack</Button>
+          <a href="/a/sportstack/{selectedSportstack.permalink}">
+            <Button tton type="secondary-gray">View sportstack</Button>
+          </a>
         {:else}
           <DropDownInput {options} />
         {/if}
@@ -52,7 +60,7 @@
   {/if}
   <div class="header">
     <h3>Recent articles</h3>
-    <a class="view-all">
+    <a class="view-all"  on:click={viewAll}>
       <span>View all</span>
       <svg
         xmlns="http://www.w3.org/2000/svg"

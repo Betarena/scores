@@ -193,6 +193,7 @@
         this={viewMap[view]}
         {loadingArticles}
         {articles}
+        on:changeView={change}
         {selectedSportstack}
       />
     </div>
