@@ -53,7 +53,6 @@
     display: flex;
     align-items: center;
     gap: var(--spacing-xl, 16px);
-    flex: 1 0 0;
 
     .icon {
       flex-shrink: 0;

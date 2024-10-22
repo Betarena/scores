@@ -95,6 +95,15 @@
 <form method="POST" id="publication-settings" class="form {viewportType}" class:light-mode={theme == "Light"}>
   <UrlInfo permalink={url} />
 
+  <Input
+    name="name"
+    label="Name"
+    placeholder={translation?.default_name || "Default name"}
+    on:input={debounceValidation}
+    requred={true}
+    value={username}
+  />
+
   <div class="thumbnail-field">
     <div class="label">Thumbnail</div>
     <div class="input-wrapper">
@@ -126,14 +135,7 @@
       </div>
     </div>
   </div>
-  <Input
-    name="name"
-    label="Name"
-    placeholder={translation?.default_name || "Default name"}
-    on:input={debounceValidation}
-    requred={true}
-    value={username}
-  />
+
 
   <Input
     name="description"
@@ -179,7 +181,7 @@
     height: max-content;
     flex-direction: column;
     align-items: flex-start;
-    gap: 37px;
+    gap: 20px;
     flex: 1 0 0;
     align-self: stretch;
 
