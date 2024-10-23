@@ -21,6 +21,7 @@
   import UrlInfo from "./UrlInfo.svelte";
   import userSettings from "$lib/store/user-settings.js";
   import { post } from "$lib/api/utils.js";
+  import { mutateStringToPermalink } from "@betarena/scores-lib/dist/util/language.js";
 
   export let selectedSportstack: AuthorsAuthorsMain;
 
@@ -32,8 +33,11 @@
   let username = "";
   $: ({ viewportType } = $session);
   $: ({ theme } = { ...$userSettings });
-  $: ({ permalink, data = {} } = selectedSportstack);
+  $: ({ data = {} } = selectedSportstack);
   $: ({ username } = data as AuthorsAuthorsDataJSONSchema);
+  $: ({username: initialName} = data as AuthorsAuthorsDataJSONSchema);
+  $: permalink = mutateStringToPermalink(username);
+
   // #endregion ➤ 📌 VARIABLES
 
   function debounceValidation(e: CustomEvent<string>) {
@@ -42,7 +46,8 @@
   }
 
   async function validateName(val) {
-    if (!val) return (inputError = false);
+    permalink = mutateStringToPermalink(val);
+    if (!val || val === initialName) return (inputError = false);
     const v = JSON.stringify({ name: val });
     const res = await post<{ isValid: boolean | undefined }>(
       "/api/data/author/sportstack/validate",
@@ -92,7 +97,12 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<form method="POST" id="publication-settings" class="form {viewportType}" class:light-mode={theme == "Light"}>
+<form
+  method="POST"
+  id="publication-settings"
+  class="form {viewportType}"
+  class:light-mode={theme == "Light"}
+>
   <UrlInfo permalink={url} />
 
   <Input
@@ -101,8 +111,13 @@
     placeholder={translation?.default_name || "Default name"}
     on:input={debounceValidation}
     requred={true}
+    error={inputError}
     value={username}
-  />
+  >
+    <span slot="error"
+      >{"The name is already in use."}</span
+    >
+  </Input>
 
   <div class="thumbnail-field">
     <div class="label">Thumbnail</div>
@@ -135,7 +150,6 @@
       </div>
     </div>
   </div>
-
 
   <Input
     name="description"
@@ -405,9 +419,8 @@
     &.light-mode {
       .delete-wrapper {
         :global(.button) {
-          background-color: #FFF;
+          background-color: #fff;
         }
-
       }
     }
   }
