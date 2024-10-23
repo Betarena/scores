@@ -157,6 +157,9 @@
 -->
 
 <style lang="scss">
+  :global(.dark-mode #publication-article:not(.mobile)) {
+    border: 1px solid #3b3b3b;
+  }
   .article-wrapper {
     display: flex;
     padding: var(--spacing-none, 0px);
@@ -167,7 +170,7 @@
     max-width: 100%;
     max-height: 104px;
     &:hover {
-      background: var( --colors-background-bg-quaternary, #1f1f1f);
+      background: var(--colors-background-bg-secondary, #1f1f1f);
       cursor: pointer;
     }
     .content {
@@ -228,7 +231,7 @@
     }
 
     &.tablet {
-      border: 1px solid #3b3b3b;
+      border: 1px solid #E6E6E6;
       border-radius: var(--radius-xl, 12px);
       .content {
         gap: 0;
@@ -254,7 +257,7 @@
     }
 
     &.desktop {
-      border: 1px solid var(--colors-border-border-secondary);
+      border: 1px solid #E6E6E6;
       border-radius: var(--radius-xl, 12px);
       .content {
         gap: 0;
