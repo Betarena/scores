@@ -147,7 +147,10 @@
 -->
 
 <Container hFull={false}>
-  <div class="publication-widget-wrapper {viewportType}" class:light-mode={theme == "Light"}>
+  <div
+    class="publication-widget-wrapper {viewportType}"
+    class:light-mode={theme == "Light"}
+  >
     {#if viewportType === "desktop"}
       <div class="menu">
         <WidgetMenuOpt />
@@ -158,7 +161,7 @@
         <div class="header">
           <div class="title-wrapper">
             {#if viewportType === "mobile"}
-                <DropDownInput
+              <DropDownInput
                 checkIcon={true}
                 {options}
                 on:change={selectSportstack}
@@ -176,9 +179,14 @@
                 />
               {/if}
               {#if viewportType === "desktop"}
-                <Button type="terlary-gray" on:click={() => history.back()}>
-                  Go Back
-                </Button>
+              <Button type="terlary-gray" on:click={() => history.back()}>
+                Go Back
+              </Button>
+              {#if view === "home"}
+                <a href="/a/sportstack/{selectedSportstack.permalink}" style="margin-left: -10px !important; margin-right: -8px !important">
+                  <Button  type="secondary-gray">View sportstack</Button>
+                </a>
+              {/if}
                 {#if view === "settings"}
                   <Button type="primary" size="xl">Save</Button>
                 {:else}
@@ -222,7 +230,6 @@
 -->
 
 <style lang="scss">
-
   .publication-widget-wrapper {
     margin-top: 24px;
     // overflow: hidden;
@@ -230,10 +237,12 @@
     flex-grow: 1;
 
     &.light-mode {
-      --component-colors-components-buttons-tertiary-button-tertiary-fg: var(--colors-gray-400);
+      --component-colors-components-buttons-tertiary-button-tertiary-fg: var(
+        --colors-gray-400
+      );
       .header-wrapper {
         :global(.tabbar) {
-          border-bottom: 1px solid #E6E6E6 !important;
+          border-bottom: 1px solid #e6e6e6 !important;
         }
       }
     }
@@ -259,7 +268,6 @@
       align-self: stretch;
       min-height: calc(100vh - 56px - 22px - 5px);
       padding-bottom: 22px;
-
 
       .header-wrapper {
         width: 100%;
@@ -411,7 +419,7 @@
               border-bottom: 1px solid
                 var(--colors-border-border-secondary, #3b3b3b);
             }
-             .title-wrapper {
+            .title-wrapper {
               display: flex;
               justify-content: space-between;
               flex-direction: row;
@@ -424,7 +432,6 @@
               }
               h2 {
                 min-width: 169px;
-
               }
             }
           }

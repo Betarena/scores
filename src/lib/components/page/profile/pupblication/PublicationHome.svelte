@@ -13,7 +13,7 @@
   import session from "$lib/store/session.js";
   import userSettings from "$lib/store/user-settings.js";
   import type { AuthorsAuthorsMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
-    import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher } from "svelte";
   export let selectedSportstack: AuthorsAuthorsMain;
   $: ({ viewportType } = $session);
   const options = [
@@ -24,7 +24,7 @@
   const dispatch = createEventDispatcher();
 
   function viewAll() {
-    dispatch("changeView", {view: "articles"})
+    dispatch("changeView", { view: "articles" });
   }
 </script>
 
@@ -42,13 +42,11 @@
 <div class="publication-home {viewportType}">
   {#if viewportType !== "desktop"}
     <div class="buttons-header">
-      {#if viewportType === "mobile"}
-        <div class="button-wrapper">
-            <a href="/a/sportstack/{selectedSportstack.permalink}">
-              <Button tton type="secondary-gray">View sportstack</Button>
-            </a>
-          </div>
-      {/if}
+      <div class="button-wrapper">
+        <a href="/a/sportstack/{selectedSportstack.permalink}">
+          <Button  type="secondary-gray">View sportstack</Button>
+        </a>
+      </div>
       <a
         href="/u/author/article/create/{$userSettings.lang}?sportstack={selectedSportstack.permalink}"
       >
@@ -58,7 +56,7 @@
   {/if}
   <div class="header">
     <h3>Recent articles</h3>
-    <a class="view-all"  on:click={viewAll}>
+    <a class="view-all" on:click={viewAll}>
       <span>View all</span>
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -144,7 +142,6 @@
         cursor: pointer;
         border-radius: 8px;
 
-
         span {
           color: var(
             --component-colors-components-buttons-tertiary-button-tertiary-fg,
@@ -180,7 +177,6 @@
                 #525252
               );
             }
-
           }
         }
       }
