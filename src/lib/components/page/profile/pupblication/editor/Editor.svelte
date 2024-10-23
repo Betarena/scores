@@ -127,7 +127,6 @@
 
   function updateToolbarPosition() {
     if (isKeyboardOpen) {
-      window?.getSelection()?.removeAllRanges();
       const scrollTop = window.scrollY;
       keyBoardHeight = `${
         scrollTop +
@@ -135,6 +134,7 @@
         editor.getBoundingClientRect().bottom -
         2
       }px`;
+      editor.commands.blur();
     }
   }
   function toogleLinkPopup(show?: boolean) {
@@ -239,6 +239,7 @@
 
     // Update the viewport height on mount
     updateViewportHeight();
+
 
     // Listen for viewport changes (e.g., when the keyboard appears)
     window.visualViewport?.addEventListener("resize", updateViewportHeight);
