@@ -39,6 +39,7 @@
 
       if (left + rect.width > viewportWidth) {
         left = viewportWidth - rect.width - 8;
+      }
       if (left < 0) {
         left = 8;
       }
