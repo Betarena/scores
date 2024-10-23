@@ -279,6 +279,14 @@
         padding-left: 0;
       }
     }
+
+    &.mobile {
+      padding-right: var(--spacing-xs, 4px);
+      border-radius: var(--radius-md, 8px);
+      .action {
+        padding-top: var(--spacing-xs, 4px);
+      }
+    }
   }
 
   :global(#publication-article .menu .menu-item .delete) {
