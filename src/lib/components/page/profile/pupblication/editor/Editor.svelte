@@ -106,6 +106,10 @@
     if (isKeyboardOpen) {
       const keyboardHeight = window.innerHeight - window.visualViewport.height;
       keyBoardHeight = `${keyboardHeight}px`;
+      const editorElement = document.querySelector(".editor.mobile");
+      if (editorElement) {
+        editorElement.style.height = `calc(100% - ${keyboardHeight}px - 69px - 40px)`; // Установите нужную высоту
+      }
     } else {
       keyBoardHeight = `80px`;
     }
@@ -387,7 +391,6 @@
       z-index: 0;
     }
 
-
     .editor-wrapper {
       display: flex;
       flex-direction: column;
@@ -617,7 +620,10 @@
       }
     }
     &.mobile {
+      overflow: auto;
+      height: calc(100% - 69px - 80px - 45px);
       .editor-wrapper {
+        padding-bottom: 20px;
         .title {
           line-height: 36px;
           font-size: 24px;
