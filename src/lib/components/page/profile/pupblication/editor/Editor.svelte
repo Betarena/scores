@@ -111,7 +111,7 @@
       keyBoardHeight = `80px`;
     }
     if (editorElement) {
-      editorElement.style.height = `calc(100% - ${keyBoardHeight}px - 69px - 40px)`;
+      editorElement.style.height = `100px`;
     }
   }
 
