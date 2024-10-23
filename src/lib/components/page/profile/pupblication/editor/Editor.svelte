@@ -103,15 +103,15 @@
     // toogleLinkPopup(false)
     vh = `${(window.visualViewport?.height || 0) * 0.01}px`;
     isKeyboardOpen = (window.visualViewport?.height || 0) < window.innerHeight;
+    const editorElement = document.querySelector(".editor.mobile") as HTMLElement;
     if (isKeyboardOpen) {
       const keyboardHeight = window.innerHeight - window.visualViewport.height;
       keyBoardHeight = `${keyboardHeight}px`;
-      const editorElement = document.querySelector(".editor.mobile");
-      if (editorElement) {
-        editorElement.style.height = `calc(100% - ${keyboardHeight}px - 69px - 40px)`; // Установите нужную высоту
-      }
     } else {
       keyBoardHeight = `80px`;
+    }
+    if (editorElement) {
+      editorElement.style.height = `calc(100% - ${keyBoardHeight}px - 69px - 40px)`;
     }
   }
 
