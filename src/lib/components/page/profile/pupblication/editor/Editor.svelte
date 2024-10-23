@@ -127,7 +127,7 @@
 
   function updateToolbarPosition() {
     if (isKeyboardOpen) {
-      window?.getSelection()?.removeAllRanges()
+      window?.getSelection()?.removeAllRanges();
       const scrollTop = window.scrollY;
       keyBoardHeight = `${
         scrollTop +
@@ -426,7 +426,7 @@
 
       .editor {
         flex-grow: 1;
-        z-index: 1;
+        z-index: 0;
         color: var(--colors-text-text-primary) !important;
         font-family: var(--font-family-font-family-display, Roboto);
 
@@ -494,6 +494,9 @@
           width: 100%;
           max-height: 352px;
         }
+        &::selection {
+          z-index: 0;
+        }
       }
     }
 
@@ -501,7 +504,7 @@
       width: 100%;
       display: flex;
       position: fixed;
-      z-index: 10000;
+      z-index: 100;
       padding: var(--spacing-lg, 12px) var(--spacing-none, 0px);
       flex-direction: column;
       background-color: var(--colors-background-bg-main);

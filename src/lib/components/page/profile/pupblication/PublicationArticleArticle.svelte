@@ -75,6 +75,8 @@
       case "delete":
         modalState.component = DeleteModal;
         break;
+      default:
+        return;
     }
     modalStore.set(modalState);
   }
