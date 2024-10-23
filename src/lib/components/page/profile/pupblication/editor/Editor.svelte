@@ -103,15 +103,11 @@
     // toogleLinkPopup(false)
     vh = `${(window.visualViewport?.height || 0) * 0.01}px`;
     isKeyboardOpen = (window.visualViewport?.height || 0) < window.innerHeight;
-    const editorElement = document.querySelector(".editor.mobile") as HTMLElement;
     if (isKeyboardOpen) {
       const keyboardHeight = window.innerHeight - window.visualViewport.height;
       keyBoardHeight = `${keyboardHeight}px`;
     } else {
       keyBoardHeight = `80px`;
-    }
-    if (editorElement) {
-      editorElement.style.height = `calc(100% - ${keyBoardHeight}px - 69px - 40px)`;
     }
   }
 
@@ -387,17 +383,12 @@
       display: none;
     }
 
-    :global(.ProseMirror) {
-      z-index: 0;
-    }
-
     .editor-wrapper {
       display: flex;
       flex-direction: column;
       padding-top: var(--spacing-xl, 16px);
       flex-grow: 1;
       flex-shrink: 1;
-      z-index: 0;
       max-width: 676px;
       margin: 0 auto;
       width: 100%;
@@ -502,6 +493,9 @@
           max-width: 100%;
           width: 100%;
           max-height: 352px;
+        }
+        &::selection {
+          z-index: 0;
         }
       }
     }
@@ -620,10 +614,7 @@
       }
     }
     &.mobile {
-      overflow: auto;
-      height: calc(100% - 69px - 80px - 45px);
       .editor-wrapper {
-        padding-bottom: 20px;
         .title {
           line-height: 36px;
           font-size: 24px;
