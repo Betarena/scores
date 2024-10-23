@@ -340,6 +340,12 @@
       --component-colors-components-buttons-tertiary-button-tertiary-fg,
       #6a6a6a
     );
+    :global(path) {
+      stroke: var(
+        --component-colors-components-buttons-tertiary-button-tertiary-fg,
+        #6a6a6a
+      );
+    }
 
     &:hover,
     &.hover {
@@ -351,6 +357,12 @@
         --component-colors-components-buttons-tertiary-button-tertiary-fg_hover,
         #525252
       );
+      :global(path) {
+        stroke: var(
+          --component-colors-components-buttons-tertiary-button-tertiary-fg_hover,
+          #525252
+        );
+      }
     }
   }
   .tertiary {

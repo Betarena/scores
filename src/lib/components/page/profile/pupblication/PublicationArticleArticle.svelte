@@ -8,12 +8,13 @@
 -->
 
 <script lang="ts">
-    import { goto } from "$app/navigation";
+  import { goto } from "$app/navigation";
   import type { IArticle } from "$lib/components/section/authors/common_ui/helpers.js";
   import ClipboardX from "$lib/components/ui/assets/clipboard-x.svelte";
   import Edit_02 from "$lib/components/ui/assets/edit-02.svelte";
   import Trash_01 from "$lib/components/ui/assets/trash-01.svelte";
   import AvatarLabel from "$lib/components/ui/AvatarLabel.svelte";
+  import PopupMenu from "$lib/components/ui/PopupMenu.svelte";
   import { modalStore } from "$lib/store/modal.js";
   import session from "$lib/store/session.js";
   import userSettings from "$lib/store/user-settings.js";
@@ -58,12 +59,15 @@
     },
   ];
 
-  function click(action) {
+  function click(e: CustomEvent<string>) {
+    const action = e.detail;
     actionMenu = false;
     const modalState: any = { modal: true, show: true, props: { id } };
     switch (action) {
       case "edit":
-        goto(`/u/author/article/edit/${permalink}/${userSettings.extract('lang')}`)
+        goto(
+          `/u/author/article/edit/${permalink}/${userSettings.extract("lang")}`
+        );
         return;
       case "unpublish":
         modalState.component = Unpublish;
@@ -87,7 +91,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 <svelte:body on:click={() => (actionMenu = false)} />
-<div class="article-wrapper {viewportType}">
+<div class="article-wrapper {viewportType}" id="publication-article">
   <div class="content">
     <div
       class="img"
@@ -103,14 +107,15 @@
       />
     </div>
   </div>
-  <div class="action">
+  <div class="action"  on:click|stopPropagation={() => (actionMenu = !actionMenu)}>
+
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="20"
       height="20"
       viewBox="0 0 20 20"
       fill="none"
-      on:click|stopPropagation={() => (actionMenu = !actionMenu)}
+
     >
       <path
         d="M9.99996 10.8333C10.4602 10.8333 10.8333 10.4602 10.8333 9.99992C10.8333 9.53968 10.4602 9.16659 9.99996 9.16659C9.53972 9.16659 9.16663 9.53968 9.16663 9.99992C9.16663 10.4602 9.53972 10.8333 9.99996 10.8333Z"
@@ -134,19 +139,9 @@
         stroke-linejoin="round"
       />
     </svg>
-    {#if actionMenu}
-      <div class="menu" on:click|stopPropagation>
-        {#each options as item}
-          <div class="menu-item {item.id}" on:click={() => click(item.id)}>
-            <div class="content">
-              <div class="icon"><svelte:component this={item.icon} /></div>
-              <div class="label">{item.label}</div>
-            </div>
-          </div>
-        {/each}
-      </div>
-    {/if}
-  </div>
+
+    <PopupMenu bind:show={actionMenu} {options} on:click={click} />
+     </div>
 </div>
 
 <!--
@@ -160,8 +155,8 @@
 -->
 
 <style lang="scss">
-  :global(.dark-mode .article-wrapper:hover) {
-    background: var(--colors-background-bg-primary, #1F1F1F) !important;
+  :global(.dark-mode #publication-article:hover) {
+    background: var(--colors-background-bg-primary, #1f1f1f) !important;
   }
   .article-wrapper {
     display: flex;
@@ -173,14 +168,13 @@
     max-width: 100%;
     max-height: 104px;
     &:hover {
-      background: var(--colors-background-bg-quaternary, #1F1F1F);
+      background: var(--colors-background-bg-quaternary, #1f1f1f);
       cursor: pointer;
     }
     .content {
       display: flex;
       align-items: center;
       gap: 16px;
-
 
       .img {
         flex-shrink: 0;
@@ -224,6 +218,7 @@
       align-items: start;
       position: relative;
       flex-shrink: 0;
+      z-index: 1;
       svg {
         cursor: pointer;
       }
@@ -231,65 +226,6 @@
         stroke: var(--colors-foreground-fg-quinary-400) !important;
       }
 
-      .menu {
-        position: absolute;
-        border-radius: var(--radius-md, 8px);
-        border: 1px solid var(--colors-border-border-primary, #6a6a6a);
-        background: var(--colors-background-bg-quaternary, #525252);
-        top: 100%;
-        z-index: 1;
-        transform: translate(-90%, 8px);
-        /* Shadows/shadow-lg */
-        box-shadow: 0px 12px 16px -4px var(--colors-effects-shadows-shadow-lg_01, rgba(255, 255, 255, 0)),
-          0px 4px 6px -2px var(--colors-effects-shadows-shadow-lg_02, rgba(255, 255, 255, 0));
-
-        .menu-item {
-          display: flex;
-          padding: 1px 6px;
-          align-items: start;
-          align-self: stretch;
-          cursor: pointer;
-          .content {
-            padding: 9px 10px;
-            width: 100%;
-            display: flex;
-            gap: var(--spacing-md, 8px);
-          }
-          .label {
-            color: var(--colors-text-text-secondary-700, #d2d2d2);
-
-            /* Text sm/Medium */
-            font-family: var(--font-family-font-family-body, Roboto);
-            font-size: var(--font-size-text-sm, 14px);
-            font-style: normal;
-            font-weight: 500;
-            line-height: var(--line-height-text-sm, 20px); /* 142.857% */
-          }
-          &:hover {
-            .content {
-              border-radius: var(--radius-sm, 6px);
-              background: var(--colors-background-bg-primary_hover, #3b3b3b);
-
-              .label {
-                color: var(--colors-text-text-secondary_hover, #ededed);
-              }
-              :global(path) {
-                stroke: var(--colors-text-text-secondary_hover, #ededed);
-              }
-            }
-          }
-
-          &.delete,
-          &.delete:hover {
-            .label {
-              color: var(--colors-text-text-error-primary-600, #f97066);
-            }
-            :global(path) {
-              stroke: var(--colors-text-text-error-primary-600, #f97066);
-            }
-          }
-        }
-      }
     }
 
     &.tablet {
@@ -343,6 +279,15 @@
           var(--spacing-xl, 16px) var(--spacing-xl, 16px);
         padding-left: 0;
       }
+    }
+  }
+
+  :global(#publication-article .menu .menu-item .delete) {
+    .label {
+      color: var(--colors-text-text-error-primary-600, #f97066);
+    }
+    :global(path) {
+      stroke: var(--colors-text-text-error-primary-600, #f97066);
     }
   }
 </style>

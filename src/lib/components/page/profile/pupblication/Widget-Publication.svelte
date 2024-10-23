@@ -125,11 +125,13 @@
       permalink: "betarena-tennis",
     });
     loadingArticles = false;
-    articles = prepareArticlesMap(
-      new Map(data.mapArticle),
-      new Map(data.mapTag),
-      new Map(data.mapAuthor)
-    );
+    if (data) {
+      articles = prepareArticlesMap(
+        new Map(data.mapArticle),
+        new Map(data.mapTag),
+        new Map(data.mapAuthor)
+      );
+    }
   }
 </script>
 
