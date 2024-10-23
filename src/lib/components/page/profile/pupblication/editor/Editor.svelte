@@ -383,12 +383,18 @@
       display: none;
     }
 
+    :global(.ProseMirror) {
+      z-index: 0;
+    }
+
+
     .editor-wrapper {
       display: flex;
       flex-direction: column;
       padding-top: var(--spacing-xl, 16px);
       flex-grow: 1;
       flex-shrink: 1;
+      z-index: 0;
       max-width: 676px;
       margin: 0 auto;
       width: 100%;
@@ -493,9 +499,6 @@
           max-width: 100%;
           width: 100%;
           max-height: 352px;
-        }
-        &::selection {
-          z-index: 0;
         }
       }
     }
