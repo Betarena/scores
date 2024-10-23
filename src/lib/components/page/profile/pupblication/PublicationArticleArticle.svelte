@@ -95,7 +95,7 @@
   <div class="content">
     <div
       class="img"
-      style="background: url({avatar}) lightgray center center / 100% 100% no-repeat"
+      style="background: url({avatar}) lightgray center center / cover no-repeat"
     />
     <div class="info">
       <h2>{title}</h2>
@@ -155,9 +155,6 @@
 -->
 
 <style lang="scss">
-  :global(.dark-mode #publication-article:hover) {
-    background: var(--colors-background-bg-primary, #1f1f1f) !important;
-  }
   .article-wrapper {
     display: flex;
     padding: var(--spacing-none, 0px);
@@ -168,7 +165,7 @@
     max-width: 100%;
     max-height: 104px;
     &:hover {
-      background: var(--colors-background-bg-quaternary, #1f1f1f);
+      background: var( --colors-background-bg-quaternary, #1f1f1f);
       cursor: pointer;
     }
     .content {
@@ -180,7 +177,7 @@
         flex-shrink: 0;
         object-fit: contain;
         background-repeat: no-repeat;
-        background-size: cover;
+        background-size: contain;
         border-radius: var(--radius-sm, 6px);
         width: 96px;
         height: 96px;

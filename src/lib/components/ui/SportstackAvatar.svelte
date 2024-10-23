@@ -12,6 +12,7 @@
 
   import { createEventDispatcher } from "svelte";
   import DefaultAvatar from "./assets/default-avatar.svelte";
+  import ImgPlaceholder from "./assets/img-placeholder.svelte";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -48,11 +49,20 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<div
-  on:click={() => dispatch("click")}
-  class="sportstack-image"
-  style="background: url({src}) lightgray center center / 100% 100% no-repeat; width: {size}px; height: {size}px; border-radius: {radius}"
-/>
+{#if src}
+  <div
+    on:click={() => dispatch("click")}
+    class="sportstack-image"
+    style="background: url({src}) lightgray center center / cover no-repeat; width: {size}px; height: {size}px; border-radius: {radius}"
+  />
+{:else}
+  <div
+    class="img empty"
+    style=" width: {size}px; height: {size}px; border-radius: {radius}"
+  >
+    <ImgPlaceholder />
+  </div>
+{/if}
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -65,7 +75,8 @@
 -->
 
 <style lang="scss">
-  .sportstack-image {
+  .sportstack-image,
+  .empty {
     width: 48px;
     height: 48px;
     border-radius: 4px;
@@ -73,5 +84,14 @@
     background-image: url(src);
     background-repeat: no-repeat;
     background-size: cover;
+  }
+  .empty {
+    background-color: var(--colors-background-bg-quaternary, #525252);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    :global(svg path) {
+      stroke: var(--colors-foreground-fg-secondary-700) !important;
+    }
   }
 </style>

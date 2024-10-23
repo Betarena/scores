@@ -49,7 +49,7 @@
     align-items: center;
     align-self: stretch;
     border-radius: var(--radius-xl, 12px);
-    background: var(--colors-background-bg-primary_alt, #313131);
+    background: var(--colors-background-bg-secondary, #313131);
     display: flex;
     align-items: center;
     gap: var(--spacing-xl, 16px);

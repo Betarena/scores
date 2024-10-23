@@ -73,7 +73,7 @@
       }
     }
 
-    .sm {
+    &.sm {
       .name {
         font-size: var(--font-size-text-sm, 14px);
         line-height: var(--line-height-text-sm, 20px); /* 142.857% */
@@ -83,7 +83,7 @@
         line-height: var(--line-height-text-xs, 18px); /* 150% */
       }
     }
-    .md {
+    &.md {
       gap: var(--spacing-lg, 12px);
 
       .name {
@@ -95,7 +95,7 @@
         line-height: var(--line-height-text-sm, 20px); /* 142.857% */
       }
     }
-    .lg {
+    &.lg {
       gap: var(--spacing-lg, 12px);
       .name {
         font-size: var(--font-size-text-md, 16px);
@@ -106,7 +106,7 @@
         line-height: var(--line-height-text-md, 24px); /* 150% */
       }
     }
-    .xl {
+    &.xl {
       gap: var(--spacing-xl, 16px);
       .name {
         font-size: var(--font-size-text-lg, 18px);
