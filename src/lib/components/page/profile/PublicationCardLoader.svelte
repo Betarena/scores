@@ -45,15 +45,15 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   const imgSize = {
-    desktop: '104px',
-    tablet: '128px',
-    mobile: '74px'
-  }
+    desktop: "104px",
+    tablet: "128px",
+    mobile: "74px",
+  };
   const borderRadius = {
-    desktop: '12px',
-    tablet: '12px',
-    mobile: '6px'
-  }
+    desktop: "12px",
+    tablet: "12px",
+    mobile: "6px",
+  };
   // #endregion ➤ 📌 VARIABLES
 </script>
 
@@ -68,10 +68,15 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="publication-card {$session.viewportType}">
-  <LoaderImage clazz="img" borderRadius={ borderRadius[$session.viewportType || "mobile"]} height={imgSize[$session.viewportType || "mobile"]} width={imgSize[$session.viewportType || "mobile"]}/>
+<div class="publication-card {$session.viewportType}"  id="publication-card-loader">
+  <LoaderImage
+    clazz="img"
+    borderRadius={borderRadius[$session.viewportType || "mobile"]}
+    height={imgSize[$session.viewportType || "mobile"]}
+    width={imgSize[$session.viewportType || "mobile"]}
+  />
   <div class="info">
-    <LoaderBadge width={52} height={24}/>
+    <LoaderBadge width={52} height={24} />
     <LoaderLine />
   </div>
 </div>
@@ -85,26 +90,20 @@
 │ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
 <style lang="scss">
+  :global(.dark-mode #publication-card-loader:not(.mobile)) {
+    border: 1px solid #3b3b3b;
+  }
   .publication-card {
     display: flex;
     align-items: center;
     gap: 16px;
     flex: 1 0 0;
+    width: 100%;
 
-    .img {
-      width: 74px !important;
-      height: 74px !important;
-      flex-shrink: 0;
-
-      border-radius: var(--radius-sm, 6px) !important;
-      background: var(--img-url) lightgray 50% / cover no-repeat;
-
-      :global(rect) {
-        width: 74px !important;
-        height: 74px !important;
-      }
+    &:hover {
+      background: var(--colors-background-bg-secondary, #1f1f1f);
+      cursor: pointer;
     }
 
     .info {
@@ -117,33 +116,32 @@
 
     &.tablet,
     &.desktop {
-      border-radius: var(--radius-xl, 12px) !important;
+      border-radius: var(--radius-xl, 12px);
       width: 100%;
-      border: 1px solid var(--colors-border-border-secondary, #3b3b3b);
+      border: 1px solid #e6e6e6;
+      height: 104px;
       .img {
-        width: 128px !important;
-        height: 128px !important;
+        width: 128px;
+        height: 128px;
+        //  transform: translate(-1px, -1px);
       }
       .info {
         flex-direction: column-reverse;
         justify-content: center;
+
       }
     }
 
     &.desktop {
       .img {
-        width: 104px !important;
-        height: 104px !important;
-
-        :global(rect) {
-          width: 104px !important;
-          height: 104px !important;
-        }
+        width: 104px;
+        height: 104px;
       }
       .info {
         gap: var(--spacing-md, 8px);
         justify-content: start;
         padding-top: 12px;
+
       }
     }
   }

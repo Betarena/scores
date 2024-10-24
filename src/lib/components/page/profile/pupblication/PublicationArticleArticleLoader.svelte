@@ -27,7 +27,7 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<div class="article-wrapper {viewportType}">
+<div class="article-wrapper {viewportType}" id="publication-article-loader">
   <div class="content">
     <LoaderImage width={imageSize} height={imageSize} borderRadius={6} />
     <div class="info">
@@ -48,6 +48,9 @@
 -->
 
 <style lang="scss">
+  :global(.dark-mode #publication-article-loader:not(.mobile)) {
+    border: 1px solid #3b3b3b;
+  }
   .article-wrapper {
     display: flex;
     padding: var(--spacing-none, 0px);
@@ -56,22 +59,21 @@
     gap: var(--spacing-xl, 16px);
     align-self: stretch;
     max-width: 100%;
-    overflow: hidden;
-    height: max-content;
     max-height: 104px;
+    &:hover {
+      background: var(--colors-background-bg-secondary, #1f1f1f);
+      cursor: pointer;
+    }
     .content {
       display: flex;
       align-items: center;
       gap: 16px;
 
-      :global(.sportstack-image) {
-      }
-
       .img {
         flex-shrink: 0;
         object-fit: contain;
         background-repeat: no-repeat;
-        background-size: cover;
+        background-size: contain;
         border-radius: var(--radius-sm, 6px);
         width: 96px;
         height: 96px;
@@ -86,22 +88,7 @@
         overflow: hidden;
         gap: var(--spacing-md, 8px);
 
-        h2 {
-          margin: 0;
-          color: var(--colors-text-text-primary-900, #fbfbfb);
-          font-family: var(--font-family-font-family-body, Roboto);
-          font-size: var(--font-size-text-lg, 18px);
-          font-style: normal;
-          font-weight: 500;
-          line-height: var(--line-height-text-md, 24px); /* 133.333% */
-          max-height: 48px;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: normal;
-          display: -webkit-box;
-          -webkit-line-clamp: 1;
-          -webkit-box-orient: vertical;
-        }
+
       }
     }
     .action {
@@ -109,76 +96,17 @@
       align-items: start;
       position: relative;
       flex-shrink: 0;
+      z-index: 1;
       svg {
         cursor: pointer;
       }
       path {
         stroke: var(--colors-foreground-fg-quinary-400) !important;
       }
-
-      .menu {
-        position: absolute;
-        border-radius: var(--radius-md, 8px);
-        border: 1px solid var(--colors-border-border-primary, #6a6a6a);
-        background: var(--colors-background-bg-quaternary, #525252);
-        top: 100%;
-        z-index: 1;
-        transform: translate(-90%, 8px);
-        /* Shadows/shadow-lg */
-        box-shadow: 0px 12px 16px -4px var(--colors-effects-shadows-shadow-lg_01, rgba(255, 255, 255, 0)),
-          0px 4px 6px -2px var(--colors-effects-shadows-shadow-lg_02, rgba(255, 255, 255, 0));
-
-        .menu-item {
-          display: flex;
-          padding: 1px 6px;
-          align-items: start;
-          align-self: stretch;
-          cursor: pointer;
-          .content {
-            padding: 9px 10px;
-            width: 100%;
-            display: flex;
-            gap: var(--spacing-md, 8px);
-          }
-          .label {
-            color: var(--colors-text-text-secondary-700, #d2d2d2);
-
-            /* Text sm/Medium */
-            font-family: var(--font-family-font-family-body, Roboto);
-            font-size: var(--font-size-text-sm, 14px);
-            font-style: normal;
-            font-weight: 500;
-            line-height: var(--line-height-text-sm, 20px); /* 142.857% */
-          }
-          &:hover {
-            .content {
-              border-radius: var(--radius-sm, 6px);
-              background: var(--colors-background-bg-primary_hover, #3b3b3b);
-
-              .label {
-                color: var(--colors-text-text-secondary_hover, #ededed);
-              }
-              :global(path) {
-                stroke: var(--colors-text-text-secondary_hover, #ededed);
-              }
-            }
-          }
-
-          &.delete,
-          &.delete:hover {
-            .label {
-              color: var(--colors-text-text-error-primary-600, #f97066);
-            }
-            :global(path) {
-              stroke: var(--colors-text-text-error-primary-600, #f97066);
-            }
-          }
-        }
-      }
     }
 
     &.tablet {
-      border: 1px solid #3b3b3b;
+      border: 1px solid #e6e6e6;
       border-radius: var(--radius-xl, 12px);
       .content {
         gap: 0;
@@ -190,11 +118,7 @@
           padding: var(--spacing-md, 8px) var(--spacing-xl, 16px)
             var(--spacing-xl, 16px) var(--spacing-xl, 16px);
 
-          h2 {
-            font-size: var(--font-size-text-xl, 20px);
-            line-height: var(--line-height-text-xl, 30px); /* 150% */
-            white-space: nowrap;
-          }
+
         }
       }
       .action {
@@ -205,7 +129,7 @@
     }
 
     &.desktop {
-      border: 1px solid var(--colors-border-border-secondary);
+      border: 1px solid #e6e6e6;
       border-radius: var(--radius-xl, 12px);
       .content {
         gap: 0;
@@ -217,11 +141,6 @@
         .info {
           padding: var(--spacing-md, 8px) var(--spacing-xl, 16px)
             var(--spacing-xl, 16px) var(--spacing-xl, 16px);
-
-          h2 {
-            font-size: var(--font-size-text-md, 16px);
-            line-height: var(--line-height-text-md, 24px); /* 150% */
-          }
         }
       }
       .action {
@@ -230,5 +149,15 @@
         padding-left: 0;
       }
     }
+
+    &.mobile {
+      padding-right: var(--spacing-xs, 4px);
+      border-radius: var(--radius-md, 8px);
+      .action {
+        padding-top: var(--spacing-xs, 4px);
+      }
+    }
   }
+
+
 </style>
