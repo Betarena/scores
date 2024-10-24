@@ -98,7 +98,7 @@
         id: selectedSportstack.id,
         deleteSportsTack: true,
       },
-      show: true
+      show: true,
     });
   }
 </script>
@@ -172,13 +172,11 @@
     inputType="textarea"
     placeholder={"Write your description"}
   />
-  {#if viewportType !== "desktop"}
-    <div class="button-wrapper">
-      <Button type="primary" submit={true} full={viewportType === "mobile"}
-        >Save</Button
-      >
-    </div>
-  {/if}
+  <div class="button-wrapper">
+    <Button type="primary" submit={true} full={viewportType === "mobile"}
+      >Save</Button
+    >
+  </div>
   <div class="separator" />
   <div class="delete-wrapper">
     <div class="warn-text">

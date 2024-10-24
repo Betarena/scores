@@ -44,7 +44,7 @@
     <div class="buttons-header">
       <div class="button-wrapper">
         <a href="/a/sportstack/{selectedSportstack.permalink}">
-          <Button  type="secondary-gray">View sportstack</Button>
+          <Button type="secondary-gray">View sportstack</Button>
         </a>
       </div>
       <a
@@ -185,10 +185,23 @@
     &.tablet {
       .buttons-header {
         gap: var(--spacing-2xl, 20px);
+      }
+      .header {
+        h3 {
+          /* Text lg/Semibold */
+          font-size: var(--font-size-text-lg, 18px);
+          line-height: var(--line-height-text-lg, 28px); /* 155.556% */
+        }
+      }
+    }
 
-        // a {
-        //   width: 100%;
-        // }
+    &.desktop {
+      .header {
+        h3 {
+          /* Text lg/Semibold */
+          font-size: var(--font-size-text-lg, 18px);
+          line-height: var(--line-height-text-lg, 28px); /* 155.556% */
+        }
       }
     }
   }

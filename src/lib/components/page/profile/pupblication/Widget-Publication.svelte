@@ -179,17 +179,18 @@
                 />
               {/if}
               {#if viewportType === "desktop"}
-              <Button type="terlary-gray" on:click={() => history.back()}>
-                Go Back
-              </Button>
-              {#if view === "home"}
-                <a href="/a/sportstack/{selectedSportstack.permalink}" style="margin-left: -10px !important; margin-right: -8px !important">
-                  <Button  type="secondary-gray">View sportstack</Button>
-                </a>
-              {/if}
-                {#if view === "settings"}
-                  <Button type="primary" size="xl">Save</Button>
-                {:else}
+                <Button type="terlary-gray" on:click={() => history.back()}>
+                  Go Back
+                </Button>
+                {#if view === "home"}
+                  <a
+                    href="/a/sportstack/{selectedSportstack.permalink}"
+                    style="margin-left: -10px !important; margin-right: -8px !important"
+                  >
+                    <Button type="secondary-gray">View sportstack</Button>
+                  </a>
+                {/if}
+                {#if view !== "settings"}
                   <a
                     href="/u/author/article/create/{$userSettings.lang}?sportstack={selectedSportstack.permalink}"
                   >

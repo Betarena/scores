@@ -99,9 +99,6 @@
     flex: 1 0 0;
     width: 100%;
 
-    &:not(.mobile) {
-      border: 1px solid #E6E6E6;
-    }
 
     &:hover {
       background: var(--colors-background-bg-secondary, #1f1f1f);
@@ -130,10 +127,12 @@
     &.desktop {
       border-radius: var(--radius-xl, 12px);
       width: 100%;
-      border: 1px solid var(--colors-border-border-secondary, #3b3b3b);
+      border: 1px solid #E6E6E6;
+      height: 104px;
       .img {
         width: 128px;
         height: 128px;
+      //  transform: translate(-1px, -1px);
       }
       .info {
         flex-direction: column-reverse;
