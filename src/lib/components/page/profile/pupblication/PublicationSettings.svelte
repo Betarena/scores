@@ -22,6 +22,8 @@
   import userSettings from "$lib/store/user-settings.js";
   import { post } from "$lib/api/utils.js";
   import { mutateStringToPermalink } from "@betarena/scores-lib/dist/util/language.js";
+  import { modalStore } from "$lib/store/modal.js";
+  import DeleteModal from "./DeleteModal.svelte";
 
   export let selectedSportstack: AuthorsAuthorsMain;
 
@@ -35,7 +37,7 @@
   $: ({ theme } = { ...$userSettings });
   $: ({ data = {} } = selectedSportstack);
   $: ({ username } = data as AuthorsAuthorsDataJSONSchema);
-  $: ({username: initialName} = data as AuthorsAuthorsDataJSONSchema);
+  $: ({ username: initialName } = data as AuthorsAuthorsDataJSONSchema);
   $: permalink = mutateStringToPermalink(username);
 
   // #endregion ➤ 📌 VARIABLES
@@ -84,6 +86,21 @@
     };
   }
   $: url = permalink?.replace(/[^\w\s-]/gi, "") || "";
+
+  function showDeleteModal() {
+    const nodalState = {
+      modal: true,
+    };
+    modalStore.set({
+      modal: true,
+      component: DeleteModal,
+      props: {
+        id: selectedSportstack.id,
+        deleteSportsTack: true,
+      },
+      show: true
+    });
+  }
 </script>
 
 <!--
@@ -114,9 +131,7 @@
     error={inputError}
     value={username}
   >
-    <span slot="error"
-      >{"The name is already in use."}</span
-    >
+    <span slot="error">{"The name is already in use."}</span>
   </Input>
 
   <div class="thumbnail-field">
@@ -173,7 +188,11 @@
         action is permantely and can’t be rolled back
       </p>
     </div>
-    <Button type="subtle" full={viewportType === "mobile"}>Delete</Button>
+    <Button
+      type="subtle"
+      on:click={showDeleteModal}
+      full={viewportType === "mobile"}>Delete</Button
+    >
   </div>
 </form>
 

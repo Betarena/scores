@@ -13,6 +13,7 @@
   import FeaturedIcon from "$lib/components/ui/FeaturedIcon.svelte";
   import ModalWrapper from "./ModalWrapper.svelte";
   export let id = "";
+  export let deleteSportsTack = false;
 </script>
 
 <ModalWrapper title="Delete" actionButton="Delete" cancel="Cancel">
@@ -20,7 +21,7 @@
     <FeaturedIcon size="lg" type="error"><Trash_01 /></FeaturedIcon>
   </div>
   <div slot="text">
-    Are you sure you want to delete this article? <br /> This action cannot be undone.
+    Are you sure you want to delete this { deleteSportsTack ? "publication" : "article"}? <br /> This action cannot be undone.
   </div>
   <div slot="action-button" class=" action-button">
     <Button destructive={true} full={true}>Delete</Button>
