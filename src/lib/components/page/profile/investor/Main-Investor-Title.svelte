@@ -143,7 +143,9 @@
     ▓ NOTE:
     ▓ > Public Presale box.
     -->
-    <div
+    <a
+      href="https://betarena.com/public-presale"
+      target="_blank"
       class=
       "
       view-opt-box
@@ -163,11 +165,11 @@
         <TranslationText
           key={`${CNAME}/title`}
           text={profileTrs?.investor?.tab.tab_2}
-          fallback={'Public Presale (Soon)'}
+          fallback={'Public Presale'}
         />
       </p>
 
-    </div>
+    </a>
 
   </div>
 
@@ -270,6 +272,12 @@
       background-color: var(--dark-theme-1);
       height: 1px;
       width: 100%;
+    }
+
+    a.view-opt-box:hover p {
+      cursor: pointer;
+      color: var(--white) !important;
+      opacity: 1;
     }
 
     div.view-opt-box
