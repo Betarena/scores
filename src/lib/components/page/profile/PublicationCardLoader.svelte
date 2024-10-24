@@ -68,13 +68,18 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="publication-card {$session.viewportType}"  id="publication-card-loader">
-  <LoaderImage
-    clazz="img"
-    borderRadius={borderRadius[$session.viewportType || "mobile"]}
-    height={imgSize[$session.viewportType || "mobile"]}
-    width={imgSize[$session.viewportType || "mobile"]}
-  />
+<div
+  class="publication-card {$session.viewportType}"
+  id="publication-card-loader"
+>
+  <div style="margin-top: -1px; margin-left: -1px">
+    <LoaderImage
+      clazz="img"
+      borderRadius={borderRadius[$session.viewportType || "mobile"]}
+      height={imgSize[$session.viewportType || "mobile"]}
+      width={imgSize[$session.viewportType || "mobile"]}
+    />
+  </div>
   <div class="info">
     <LoaderBadge width={52} height={24} />
     <LoaderLine />
@@ -128,7 +133,6 @@
       .info {
         flex-direction: column-reverse;
         justify-content: center;
-
       }
     }
 
@@ -141,7 +145,6 @@
         gap: var(--spacing-md, 8px);
         justify-content: start;
         padding-top: 12px;
-
       }
     }
   }

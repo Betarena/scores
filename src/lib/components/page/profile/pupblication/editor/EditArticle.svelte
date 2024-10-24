@@ -28,8 +28,8 @@
   export let data: PageData;
 
   $: ({ article = { data: {} } } = data);
-  $: ({ title, content, featured_image, id } = article.data);
-
+  $: ({ title: initTitle, content, featured_image, id } = article.data);
+  $: title = initTitle || "";
   $: if (featured_image) {
     content = `<img src="${featured_image}" alt="${title}" />${content}`;
   }
@@ -132,7 +132,7 @@
       </div>
     </div>
   </Container>
-  <Editor {data} bind:editor {title} {content} />
+  <Editor {data} bind:editor bind:title={title} {content} />
 </div>
 
 <!--

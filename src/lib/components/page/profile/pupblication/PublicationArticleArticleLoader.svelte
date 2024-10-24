@@ -29,7 +29,10 @@
 -->
 <div class="article-wrapper {viewportType}" id="publication-article-loader">
   <div class="content">
-    <LoaderImage width={imageSize} height={imageSize} borderRadius={6} />
+    <div style="margin-top: -1px; margin-left: -1px">
+
+      <LoaderImage width={imageSize} height={imageSize} borderRadius={6} />
+    </div>
     <div class="info">
       <LoaderLine width="100%" height={20} />
       <LoaderAvatarLabel size={viewportType === "mobile" ? "xs" : "sm"} />

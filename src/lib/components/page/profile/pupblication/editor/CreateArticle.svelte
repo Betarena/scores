@@ -16,7 +16,6 @@
   import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
   import { modalStore } from "$lib/store/modal.js";
-  import { title } from "process";
   import type { AuthorsAuthorsMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import { page } from "$app/stores";
   import { browser } from "$app/environment";
@@ -27,6 +26,7 @@
   let options: (AuthorsAuthorsMain & { label: string })[] = [];
   let selectedSportstack;
   let editor;
+  let title = "";
   $: if (data.sportstack instanceof Promise) {
     console.log("data.sportstack is a promise");
   } else {
@@ -103,7 +103,7 @@
     </div>
   </Container>
   <!-- <div class="editor-wrapper"> -->
-    <Editor {data} bind:editor />
+    <Editor {data} bind:editor bind:title />
   <!-- </div> -->
 </div>
 

@@ -36,9 +36,12 @@
   $: ({ viewportType } = $session);
   $: ({ theme } = { ...$userSettings });
   $: ({ data = {} } = selectedSportstack);
-  $: ({ username } = data as AuthorsAuthorsDataJSONSchema);
+  $: ({ username, about } = data as AuthorsAuthorsDataJSONSchema);
   $: ({ username: initialName } = data as AuthorsAuthorsDataJSONSchema);
   $: permalink = mutateStringToPermalink(username);
+
+  $: desc = about || ""
+  $: name = username || ""
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -129,7 +132,7 @@
     on:input={debounceValidation}
     requred={true}
     error={inputError}
-    value={username}
+    bind:value={name}
   >
     <span slot="error">{"The name is already in use."}</span>
   </Input>
@@ -167,14 +170,19 @@
   </div>
 
   <Input
+    requred={true}
     name="description"
     label="Description"
     inputType="textarea"
     placeholder={"Write your description"}
+    bind:value={desc}
   />
   <div class="button-wrapper">
-    <Button type="primary" submit={true} full={viewportType === "mobile"}
-      >Save</Button
+    <Button
+      type="primary"
+      disabled={!desc || !name}
+      submit={true}
+      full={viewportType === "mobile"}>Save</Button
     >
   </div>
   <div class="separator" />
