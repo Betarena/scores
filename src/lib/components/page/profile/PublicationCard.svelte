@@ -49,7 +49,7 @@
   export let sportstack = {} as AuthorsAuthorsDataJSONSchema;
   export let owner = "";
   export let permalink = "";
-
+  $: ({ viewportType } = $session);
   // #endregion ➤ 📌 VARIABLES
 </script>
 
@@ -65,10 +65,11 @@
 -->
 
 <a
-  class="publication-card {$session.viewportType}"
+  class="publication-card {viewportType}"
+  id="publication-card"
   href="/u/author/publication/{permalink}/{$userSettings.lang}"
 >
-  <PublicationAvatar avatar={sportstack.avatar} />
+  <PublicationAvatar avatar={sportstack.avatar} size={viewportType === "mobile" ? "74px" : "104px"}/>
   <div class="info">
     {#if owner === $userSettings.user?.firebase_user_data.uid}
       <Badge size="sm" color="gray">Owner</Badge>
@@ -88,6 +89,9 @@
 -->
 
 <style lang="scss">
+   :global(.dark-mode #publication-card:not(.mobile)) {
+    border: 1px solid #3b3b3b;
+  }
   .publication-card {
     display: flex;
     align-items: center;
@@ -95,8 +99,12 @@
     flex: 1 0 0;
     width: 100%;
 
+    &:not(.mobile) {
+      border: 1px solid #E6E6E6;
+    }
+
     &:hover {
-      background: var( --colors-background-bg-quaternary, #1f1f1f);
+      background: var(--colors-background-bg-secondary, #1f1f1f);
       cursor: pointer;
     }
 

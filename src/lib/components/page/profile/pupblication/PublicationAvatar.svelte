@@ -11,12 +11,15 @@
   import ImgPlaceholder from "$lib/components/ui/assets/img-placeholder.svelte";
 
   export let avatar = "";
+  export let size = "74px";
+
+  $: avatarSize = `height: ${size}; width: ${size};`;
 </script>
 
 {#if avatar}
-  <div class="img" style="--img-url: url({avatar})" />
+  <div class="img" style="--img-url: url({avatar}); {avatarSize}" />
 {:else}
-  <div class="img empty">
+  <div class="img empty" style="{avatarSize}">
     <ImgPlaceholder />
   </div>
 {/if}
