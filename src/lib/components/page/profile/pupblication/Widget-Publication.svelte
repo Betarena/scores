@@ -65,7 +65,6 @@
   $: ({ viewportType } = $session);
   $: ({ theme } = { ...$userSettings });
   let selectedSportstack;
-  let options: (AuthorsAuthorsMain & { label: string })[] = [];
   let loadingArticles = false;
   let articles: Map<number, IArticle> = new Map();
   let sportstacks = [] as AuthorsAuthorsMain & { label: string }[];
@@ -431,10 +430,15 @@
               justify-content: space-between;
               flex-direction: row;
               align-items: center;
-              gap: 200px;
+
+              .actions-buttons {
+                display: flex;
+                justify-content: flex-end;
+              }
 
               :global(.field) {
-                min-width: 351px;
+                max-width: 351px;
+                width: 100%;
                 height: unset;
               }
               h2 {
