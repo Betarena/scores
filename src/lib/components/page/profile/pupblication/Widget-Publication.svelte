@@ -68,10 +68,14 @@
   let options: (AuthorsAuthorsMain & { label: string })[] = [];
   let loadingArticles = false;
   let articles: Map<number, IArticle> = new Map();
+  let sportstacks = [] as AuthorsAuthorsMain & { label: string }[];
   $: if (data.sportstack instanceof Promise) {
     console.log("data.sportstack is a promise");
   } else {
-    options = data.sportstacks.map((s) => {
+    const  sorted = data.sportstacks.sort((a, b) => {
+      return new Date(b.data?.creation_date || "").getTime() - new Date(a.data?.creation_date || "").getTime()
+    });
+    sportstacks = sorted.map((s) => {
       const sportstack = { ...s, label: s.data?.username || "" };
       if (sportstack.permalink === $page.params.permalink) {
         selectedSportstack = sportstack;
@@ -119,6 +123,7 @@
   $: selected = tabs.find((tab) => tab.view === view) || tabs[0];
 
   async function getArticles() {
+    if (articles?.size) return;
     loadingArticles = true;
     articles = new Map();
     const data = await fetchArticlesBySportstack({
@@ -163,7 +168,7 @@
             {#if viewportType === "mobile"}
               <DropDownInput
                 checkIcon={true}
-                {options}
+                options = {sportstacks}
                 on:change={selectSportstack}
                 value={selectedSportstack}
               />
@@ -173,7 +178,7 @@
               {#if viewportType !== "mobile"}
                 <DropDownInput
                   checkIcon={true}
-                  {options}
+                  options = {sportstacks}
                   on:change={selectSportstack}
                   value={selectedSportstack}
                 />
@@ -213,6 +218,7 @@
         this={viewMap[view]}
         {loadingArticles}
         {articles}
+        {sportstacks}
         on:changeView={change}
         {selectedSportstack}
       />

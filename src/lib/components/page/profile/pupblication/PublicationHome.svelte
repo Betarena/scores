@@ -15,12 +15,9 @@
   import type { AuthorsAuthorsMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import { createEventDispatcher } from "svelte";
   export let selectedSportstack: AuthorsAuthorsMain;
+
   $: ({ viewportType } = $session);
-  const options = [
-    { id: 1, label: "SprortsTack1" },
-    { id: 2, label: "SprortsTack2" },
-    { id: 3, label: "SprortsTack3" },
-  ];
+
   const dispatch = createEventDispatcher();
 
   function viewAll() {

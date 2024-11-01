@@ -11,7 +11,6 @@
   import { page } from "$app/stores";
   import { enhance } from "$app/forms";
   import Button from "$lib/components/ui/Button.svelte";
-  import { infoMessages } from "$lib/components/ui/infomessages/infomessages.js";
   import Input from "$lib/components/ui/Input.svelte";
   import session from "$lib/store/session.js";
   import type {
@@ -25,7 +24,6 @@
   import { mutateStringToPermalink } from "@betarena/scores-lib/dist/util/language.js";
   import { modalStore } from "$lib/store/modal.js";
   import DeleteModal from "./DeleteModal.svelte";
-  import { goto } from "$app/navigation";
   import { submitWrapper } from "$lib/utils/sveltekitWrapper.js";
 
   export let selectedSportstack: AuthorsAuthorsMain;
