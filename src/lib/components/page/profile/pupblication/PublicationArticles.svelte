@@ -185,12 +185,7 @@
         align-items: center;
 
         .sort-button {
-          gap: var(--spacing-sm, 6px);
           position: relative;
-          cursor: pointer;
-          display: flex;
-          padding: 10px var(--spacing-xl, 16px);
-          align-items: center;
         }
 
         span {
