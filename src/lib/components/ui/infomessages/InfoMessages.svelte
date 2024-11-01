@@ -261,8 +261,6 @@
     }
 
     &.mobile {
-      bottom: 50px;
-      top: unset;
       right: 50%;
       transform: translateX(50%);
     }
