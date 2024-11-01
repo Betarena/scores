@@ -195,6 +195,7 @@
         align-items: flex-start;
         flex-grow: 1;
         overflow: hidden;
+        height: 100%;
         gap: var(--spacing-md, 8px);
 
         h2 {
@@ -210,7 +211,7 @@
           text-overflow: ellipsis;
           white-space: normal;
           display: -webkit-box;
-          -webkit-line-clamp: 1;
+          -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
         }
       }
@@ -234,14 +235,15 @@
       border: 1px solid #E6E6E6;
       border-radius: var(--radius-xl, 12px);
       .content {
-        gap: 0;
+        gap: 16;
         .img {
+          transform: translate(-1px, -1px);
           height: 104px;
           width: 104px;
         }
         .info {
-          padding: var(--spacing-md, 8px) var(--spacing-xl, 16px)
-            var(--spacing-xl, 16px) var(--spacing-xl, 16px);
+          // padding: var(--spacing-md, 8px) var(--spacing-xl, 16px)
+          //   var(--spacing-xl, 16px) var(--spacing-xl, 16px);
 
           h2 {
             font-size: var(--font-size-text-xl, 20px);
@@ -260,15 +262,16 @@
       border: 1px solid #E6E6E6;
       border-radius: var(--radius-xl, 12px);
       .content {
-        gap: 0;
+        gap: 16;
 
         .img {
+          transform: translate(-1px, -1px);
           height: 104px;
           width: 104px;
         }
         .info {
-          padding: var(--spacing-md, 8px) var(--spacing-xl, 16px)
-            var(--spacing-xl, 16px) var(--spacing-xl, 16px);
+          // padding: var(--spacing-md, 8px) var(--spacing-xl, 16px)
+          //   var(--spacing-xl, 16px) var(--spacing-xl, 16px);
 
           h2 {
             font-size: var(--font-size-text-md, 16px);
