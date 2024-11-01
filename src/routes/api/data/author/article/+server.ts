@@ -19,6 +19,7 @@
 import dotenv from 'dotenv';
 
 import { main } from '$lib/sveltekit/endpoint/author.article.js';
+import { error, RequestHandler } from '@sveltejs/kit';
 
 // #endregion ➤ 📦 Package
 
@@ -38,3 +39,20 @@ export async function GET
     request
   );
 }
+
+
+
+export const POST: RequestHandler = async ({request, locals}) => {
+
+  if (!locals.uid) throw error(401, { message: 'Unauthorized' });
+  const body = await request.json()
+  console.log("POST BODY: ", body)
+  return new Response();
+};
+
+
+export const PUT: RequestHandler = async ({request, locals}) => {
+  if(!locals.uid) return new Response(null, { status: 401 });
+
+  return new Response();
+};

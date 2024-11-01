@@ -63,7 +63,7 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
   export let data: PageData;
-  export let editor: Editor;
+  export let contentEditor: Editor;
   export let title = "";
   export let content: string | undefined;
   let element;
@@ -75,6 +75,7 @@
   let bmenu;
   let linkState = { url: "", text: "" };
   let textareaNode;
+  let editor
 
   $: if ($modalStore.show) {
     linkInsertModal = false;
@@ -236,6 +237,7 @@
         titleInFocus = false;
       },
     });
+    contentEditor = editor;
 
     // Update the viewport height on mount
     updateViewportHeight();

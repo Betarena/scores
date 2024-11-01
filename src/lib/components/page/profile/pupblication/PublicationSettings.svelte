@@ -9,6 +9,7 @@
 
 <script lang="ts">
   import { page } from "$app/stores";
+  import { enhance } from "$app/forms";
   import Button from "$lib/components/ui/Button.svelte";
   import { infoMessages } from "$lib/components/ui/infomessages/infomessages.js";
   import Input from "$lib/components/ui/Input.svelte";
@@ -24,6 +25,8 @@
   import { mutateStringToPermalink } from "@betarena/scores-lib/dist/util/language.js";
   import { modalStore } from "$lib/store/modal.js";
   import DeleteModal from "./DeleteModal.svelte";
+  import { goto } from "$app/navigation";
+  import { submitWrapper } from "$lib/utils/sveltekitWrapper.js";
 
   export let selectedSportstack: AuthorsAuthorsMain;
 
@@ -40,8 +43,8 @@
   $: ({ username: initialName } = data as AuthorsAuthorsDataJSONSchema);
   $: permalink = mutateStringToPermalink(username);
 
-  $: desc = about || ""
-  $: name = username || ""
+  $: desc = about || "";
+  $: name = username || "";
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -61,39 +64,15 @@
 
     inputError = !res?.isValid ?? false;
   }
-
-  function submit() {
-    if (inputError) return;
-    const loadingId = infoMessages.add({
-      type: "loading",
-      text: "",
-    });
-
-    return ({ update }) => {
-      // Set invalidateAll to false if you don't want to reload page data when submitting
-      update({ invalidateAll: false }).finally(async (d) => {
-        infoMessages.remove(loadingId);
-        if ($page.form.error) {
-          infoMessages.add({
-            type: "error",
-            text: "An error occurred.",
-          });
-        }
-        if ($page.form.success) {
-          infoMessages.add({
-            type: "success",
-            text: "The publication was created successfully.",
-          });
-        }
-      });
-    };
+  async function submit() {
+    return submitWrapper({
+    successMessage: "The publication was created successfully.",
+  })
   }
+
   $: url = permalink?.replace(/[^\w\s-]/gi, "") || "";
 
   function showDeleteModal() {
-    const nodalState = {
-      modal: true,
-    };
     modalStore.set({
       modal: true,
       component: DeleteModal,
@@ -121,7 +100,9 @@
   method="POST"
   id="publication-settings"
   class="form {viewportType}"
+  use:enhance={submit}
   class:light-mode={theme == "Light"}
+  action="/api/data/author/sportstack?/update"
 >
   <UrlInfo permalink={url} />
 

@@ -13,6 +13,7 @@
 // #region ➤ 📦 Package Imports
 
 import { goto } from '$app/navigation';
+import { infoMessages } from '$lib/components/ui/infomessages/infomessages.js';
 
 import { dlogv2 } from './debug.js';
 
@@ -55,4 +56,43 @@ export async function gotoSW
     }
   );
   return;
+}
+
+
+/**
+ * @author
+ *  @izobov
+ * @summary
+ *  🟦 submit with custom notifications
+ * @description
+ *  📣 SvelteKit wrapper for `enchence`.
+ * @param { string } url
+ *  💠 **[required]** Target `url` to navigate to.
+ * @param { boolean } [replaceState=false]
+ *  💠 [optional] Target `url` to navigate to.
+ * @returns { Promise < void > }
+ */
+export async function submitWrapper({successMessage = "Success!", errorMessage = "An error occurred.", reset = false})
+{
+  const loadingId = infoMessages.add({
+    type: "loading",
+    text: "",
+  });
+  return ({ update, result }) => {
+    infoMessages.remove(loadingId);
+
+    if (result.type === "success") {
+      infoMessages.add({
+        type: "success",
+        text: successMessage,
+      });
+    } else {
+      infoMessages.add({
+        type: "error",
+        text: errorMessage,
+      });
+    }
+    // Set invalidateAll to false if you don't want to reload page data when submitting
+    update({ invalidateAll: false, reset });
+  };
 }

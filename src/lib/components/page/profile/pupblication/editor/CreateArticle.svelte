@@ -9,7 +9,7 @@
 
 <script lang="ts">
   import type { PageData } from ".svelte-kit/types/src/routes/(scores)/u/author/article/create/[lang=lang]/$types.js";
-  import Editor from "./Editor.svelte";
+  import { Editor as IEditor } from "@tiptap/core";
   import XClose from "$lib/components/ui/assets/x-close.svelte";
   import BackButton from "$lib/components/ui/BackButton.svelte";
   import Button from "$lib/components/ui/Button.svelte";
@@ -22,10 +22,13 @@
   import { goto } from "$app/navigation";
   import session from "$lib/store/session.js";
   import ModalArticleSeo from "./ModalArticleSEO.svelte";
+  import DOMPurify from "dompurify";
+  import { postv2 } from "$lib/api/utils.js";
+  import Editor from "./Editor.svelte";
   export let data: PageData;
   let options: (AuthorsAuthorsMain & { label: string })[] = [];
   let selectedSportstack;
-  let editor;
+  let contentEditor: IEditor;
   let title = "";
   $: if (data.sportstack instanceof Promise) {
     console.log("data.sportstack is a promise");
@@ -57,6 +60,15 @@
     selectedSportstack = e.detail as AuthorsAuthorsMain;
     url.searchParams.set("sportstack", permalink);
     goto(url, { replaceState: true, noScroll: true, keepFocus: true });
+  }
+
+  async function publish() {
+    const v = DOMPurify.sanitize(contentEditor.getHTML());
+    const t = DOMPurify.sanitize(title);
+    const res = await postv2("/api/data/author/article", {
+      content: v,
+      title: t,
+    });
   }
 </script>
 
@@ -91,20 +103,19 @@
           <Button
             type="primary"
             disabled={!title ||
-              editor?.getText().trim().split(/\s+/).length < 50}
+              contentEditor?.getText().trim().split(/\s+/).length < 50}
             on:click={() => {
               $modalStore.component = ModalArticleSeo;
               $modalStore.modal = true;
               $modalStore.show = true;
+              $modalStore.props = { cb: publish };
             }}>Publish</Button
           >
         </div>
       {/if}
     </div>
   </Container>
-  <!-- <div class="editor-wrapper"> -->
-    <Editor {data} bind:editor bind:title />
-  <!-- </div> -->
+  <Editor {data} bind:contentEditor bind:title />
 </div>
 
 <!--
@@ -126,17 +137,17 @@
     overflow: auto;
     background-color: var(--colors-background-bg-main);
     &::-webkit-scrollbar {
-        width: 8px;
-      }
+      width: 8px;
+    }
 
-      &::-webkit-scrollbar-track {
-        background: inherit;
-      }
+    &::-webkit-scrollbar-track {
+      background: inherit;
+    }
 
-      &::-webkit-scrollbar-thumb {
-        background: var(--colors-background-bg-quaternary);
-        border-radius: 4px;
-      }
+    &::-webkit-scrollbar-thumb {
+      background: var(--colors-background-bg-quaternary);
+      border-radius: 4px;
+    }
     :global(.sticky) {
       position: sticky !important;
       top: 0;

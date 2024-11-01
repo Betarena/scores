@@ -19,6 +19,8 @@
   import { modalStore } from "$lib/store/modal.js";
   import session from "$lib/store/session.js";
 
+  export let cb = () => {};
+
   $: ({ seo, tags } = $create_article_store);
 
   $: ({ viewportType } = $session);
@@ -113,7 +115,7 @@
       />
     </svg>
   </div>
-  <Button full={true}>Publish now</Button>
+  <Button full={true} on:click={cb}>Publish now</Button>
 </div>
 
 <!--
