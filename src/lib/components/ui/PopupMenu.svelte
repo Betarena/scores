@@ -35,7 +35,7 @@
       const viewportWidth = document.documentElement.clientWidth;
       const viewportHeight = document.documentElement.clientHeight;
       let left = parentRect.left + parentRect.width / 2 - rect.width / 2;
-      let top = parentRect.bottom + 8;
+      let top = parentRect.bottom + 5;
 
       if (left + rect.width > viewportWidth) {
         left = viewportWidth - rect.width - 8;
