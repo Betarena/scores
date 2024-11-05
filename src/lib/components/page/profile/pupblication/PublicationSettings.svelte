@@ -25,25 +25,32 @@
   import { modalStore } from "$lib/store/modal.js";
   import DeleteModal from "./DeleteModal.svelte";
   import { submitWrapper } from "$lib/utils/sveltekitWrapper.js";
+  import ModalProfilePictureCrop from "../Modal-ProfilePictureCrop.svelte";
+  import { dlog } from "$lib/utils/debug.js";
 
   export let selectedSportstack: AuthorsAuthorsMain;
 
-  let inputError = false;
-  let debounceTimer;
-  let form: HTMLFormElement;
-  let fileInput: HTMLInputElement;
+  let inputError = false,
+    debounceTimer,
+    form: HTMLFormElement,
+    fileInput: HTMLInputElement,
+    files: HTMLInputElement['files'] | undefined,
+    username = "",
+    modal_pic_crop_show: boolean = false,
+    profile_pic: string | undefined,
+    profile_crop_widget: ModalProfilePictureCrop;
+
   $: translation = $page.data.RESPONSE_PROFILE_DATA?.sportstack;
-  let username = "";
   $: ({ viewportType } = $session);
   $: ({ theme } = { ...$userSettings });
   $: ({ data = {}, id, permalink: initPermalink } = selectedSportstack);
-  $: ({ username, about } = data as AuthorsAuthorsDataJSONSchema);
+  $: ({ username, about, avatar:initialAvatar } = data as AuthorsAuthorsDataJSONSchema);
   $: ({ username: initialName } = data as AuthorsAuthorsDataJSONSchema);
   $: permalink = mutateStringToPermalink(username);
 
   $: desc = about || "";
   $: name = username || "";
-
+  $: avatar = initialAvatar || "";
   // #endregion ➤ 📌 VARIABLES
 
   function debounceValidation(e: CustomEvent<string>) {
@@ -63,9 +70,16 @@
     inputError = !res?.isValid ?? false;
   }
   async function submit() {
+    let url = avatar
+    if (profile_pic) {
+
+    }
+
+		form.append("avatar", url);
+    
     return submitWrapper({
-    successMessage: "The publication was updated successfully.",
-  })
+      successMessage: "The publication was updated successfully.",
+    });
   }
 
   $: url = permalink?.replace(/[^\w\s-]/gi, "") || "";
@@ -81,6 +95,64 @@
       show: true,
     });
   }
+  function handleFileChange(event) {
+    const target = event.target as HTMLInputElement;
+    if (!target.files) return;
+    files = target.files;
+    const allowedFormats = ["image/jpeg", "image/png", "image/gif"];
+    for (const file_ of files) {
+      // [🐞]
+      dlog(`${file_.name}: ${file_.size} ${typeof file_} type`, true);
+    }
+    const file = files[0];
+    if (!allowedFormats.includes(file.type)) {
+      alert("🔴 Invalid file format. Please upload a PNG, JPG or GIF file.");
+      fileInput.value = "";
+      return;
+    }
+    if (file.size > 10000000) {
+      alert("🔴 Uploaded picture is too large. Limit is 10MB.");
+      fileInput.value = "";
+      return;
+    }
+    profile_crop_widget.load_picture(file);
+    modal_pic_crop_show = true;
+    files = undefined;
+  }
+
+
+  /**
+   * @description
+   * closing off picture-crop;
+   * and reset files data;
+   */
+  function close_crop_pic(): void {
+    modal_pic_crop_show = false;
+    fileInput.value = "";
+  }
+
+
+  /**
+	 * @description
+   * cropped picture upload;
+	 * DOC: https://firebase.google.com/docs/storage/web/upload-files#upload_from_a_string
+	 * @param
+   * { any } event
+   * @returns
+   * Promise < void >
+	 */
+	async function upload_profile_picture
+  (
+		event
+	): Promise < void >
+  {
+		modal_pic_crop_show = false;
+		profile_pic = event?.detail?.img;
+    debugger
+    avatar = profile_pic;
+
+
+	}
 </script>
 
 <!--
@@ -93,7 +165,15 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
+<!--
+CROP PICTURE MODAL
+-->
+<ModalProfilePictureCrop
+  bind:this={profile_crop_widget}
+  {modal_pic_crop_show}
+  on:toggle_delete_modal={() => close_crop_pic()}
+  on:upload_selected_img={(event) => upload_profile_picture(event)}
+/>
 <form
   method="POST"
   id="publication-settings"
@@ -102,10 +182,8 @@
   class:light-mode={theme == "Light"}
   action="/api/data/author/sportstack?/update"
 >
-
-  <input type="hidden" name="id" value={id}>
-  <input type="hidden" name="permalink" value={initPermalink}>
-
+  <input type="hidden" name="id" value={id} />
+  <input type="hidden" name="permalink" value={initPermalink} />
 
   <UrlInfo permalink={url} />
 
@@ -124,10 +202,16 @@
   <div class="thumbnail-field">
     <div class="label">Thumbnail</div>
     <div class="input-wrapper">
-      <PublicationAvatar />
+      <PublicationAvatar {avatar}  />
 
       <div class="file-uploader" on:click={() => fileInput.click()}>
-        <input type="file" class="hidden-input" bind:this={fileInput} />
+        <input
+          type="file"
+          class="hidden-input"
+          bind:this={fileInput}
+          on:change={handleFileChange}
+          accept=".jpg, .jpeg, .png, .gif"
+        />
         <div class="upload-icon">
           <svg
             xmlns="http://www.w3.org/2000/svg"

@@ -5,9 +5,10 @@ import userBetarenaSettings from '$lib/store/user-settings.js';
 import { dlog, dlogv2 } from '$lib/utils/debug.js';
 import { checkNull } from '$lib/utils/miscellenous.js';
 import { DataSnapshot, onValue, ref, type DatabaseReference, type Unsubscribe } from 'firebase/database';
+import { ref as storageRef, deleteObject, getDownloadURL, uploadString } from "firebase/storage"
 import { arrayRemove, arrayUnion, doc, DocumentReference, getDoc, increment, onSnapshot, updateDoc } from 'firebase/firestore';
 import { getTargetRealDbData } from './firebase.actions.js';
-import { db_firestore, db_real } from './init';
+import { db_firestore, db_real, storage } from './init';
 
 import type { FIRE_LNNS, FIRE_LNPI, FIREBASE_livescores_now, FIREBASE_odds } from '@betarena/scores-lib/types/firebase.js';
 import type { Page } from '@sveltejs/kit';
@@ -1343,6 +1344,56 @@ export async function updateHighlightedSpotstack
       }
     );
   return;
+}
+
+/**
+ * @author
+ *  @izobov
+ * @summary
+ *  🟦 HELPER
+ * @description
+ *  📣 Uplaod images to firebase
+ * @param { string } img
+ *  💠 **[required]** file to upload
+ * @param { string } targetPath
+ *  💠 **[required]** target path to upload imange
+ * @returns { Promise < string > }
+ *  return url of uploaded image
+ */
+export async function uploadImage
+  (
+    img: string,
+    targetPath: string
+  ): Promise<string>
+{
+  const sRef = storageRef
+    (
+      storage,
+      targetPath
+    );
+  const snapshot = await uploadString
+    (
+      sRef,
+      img,
+      'data_url'
+    )
+
+  // [🐞]
+  dlog
+    (
+      '🟢 Uploaded file!'
+    );
+
+  const url = await snapshot.ref.fullPath;
+
+  // [🐞]
+  dlog
+    (
+      url,
+      true
+    );
+
+  return url;
 }
 
 /**
