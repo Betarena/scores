@@ -34,7 +34,7 @@
 		"sveltekit|:|preview": "vite preview --host --port 4173",
 		"sveltekit|:|preview|:|1-click": "make preview-1-click-spin",
 		"sveltekit|:|start": "node build/index.js",
-		"sveltekit|:|start|:|docker": "node server-docker.js",
+		"sveltekit|:|start|:|docker": "cross-env NODE_OPTIONS='-r dotenv/config' node dual.instance.js",
 		"sveltekit|:|start|:|heroku": "node server-heroku.js",
 		"pkg|:|next|:|@betarena/scores-lib": "npm i @betarena/scores-lib@latest",
 		"pkg|:|link|:|@betarena/scores-lib": "npm link @betarena/scores-lib",
@@ -45,7 +45,8 @@
 		"test|:|integration-ui": "playwright test --ui",
 		"test|:|unit": "vitest",
 		"coverage": "vitest run --coverage",
-		"sass-watch": "sass --watch static/app.scss static/app.css"
+		"sass-watch": "sass --watch static/app.scss static/app.css",
+		"server|:|build": "tsc --project tsconfig.server.json"
 	},
 	"dependencies": {
 		"@betarena/ad-engine": "0.0.51",
