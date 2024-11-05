@@ -1,0 +1,26 @@
+name: betarena-scores
+
+services:
+
+  web-prod:
+    image: betarena-scores:1.0.0
+    container_name: web-prod
+    restart: always
+    build:
+      context: ../
+      dockerfile: ./.docker/Dockerfile
+    ports:
+      - 5055:5055
+  #
+
+  nginx:
+    image: nginx:1.27.1
+    container_name: proxy
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ${HOME}/../etc/letsencrypt:/etc/letsencrypt:ro
+      - ../.nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    command: ["nginx", "-g", "daemon off;"]
+  #
