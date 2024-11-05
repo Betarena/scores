@@ -33,28 +33,28 @@ import { dlogv2 } from './debug.js';
  * @returns { Promise < void > }
  */
 export async function gotoSW
-(
-  url: string,
-  replaceState: boolean = false
-): Promise < void >
+  (
+    url: string,
+    replaceState: boolean = false
+): Promise<void>
 {
   // [🐞]
   dlogv2
-  (
-    'gotoSW(..)',
-    [
-      `🔹 [var] ➤ url :|: ${url}`,
-      `🔹 [var] ➤ replaceState :|: ${replaceState}`,
-    ],
-    false
-  );
+    (
+      'gotoSW(..)',
+      [
+        `🔹 [var] ➤ url :|: ${url}`,
+        `🔹 [var] ➤ replaceState :|: ${replaceState}`,
+      ],
+      false
+    );
   await goto
-  (
-    url,
-    {
-      replaceState
-    }
-  );
+    (
+      url,
+      {
+        replaceState
+      }
+    );
   return;
 }
 
@@ -72,21 +72,24 @@ export async function gotoSW
  *  💠 [optional] Target `url` to navigate to.
  * @returns { Promise < void > }
  */
-export async function submitWrapper({successMessage = "Success!", errorMessage = "An error occurred.", reset = false})
+export async function submitWrapper({ successMessage = "Success!", errorMessage = "An error occurred.", reset = false, cbAfter }: { successMessage?: string, errorMessage?: string, reset?: boolean, cbAfter?: ({ update, result }) => void } = {})
 {
   const loadingId = infoMessages.add({
     type: "loading",
     text: "",
   });
-  return ({ update, result }) => {
+  return ({ update, result }) =>
+  {
     infoMessages.remove(loadingId);
 
-    if (result.type === "success") {
+    if (result.type === "success")
+    {
       infoMessages.add({
         type: "success",
         text: successMessage,
       });
-    } else {
+    } else
+    {
       infoMessages.add({
         type: "error",
         text: errorMessage,
@@ -94,5 +97,9 @@ export async function submitWrapper({successMessage = "Success!", errorMessage =
     }
     // Set invalidateAll to false if you don't want to reload page data when submitting
     update({ invalidateAll: false, reset });
+    if (cbAfter)
+    {
+      cbAfter({ update, result });
+    }
   };
 }

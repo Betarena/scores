@@ -19,6 +19,7 @@
   import session from "$lib/store/session.js";
   import userSettings from "$lib/store/user-settings.js";
   import DeleteModal from "./DeleteModal.svelte";
+  import PublicationAvatar from "./PublicationAvatar.svelte";
   import Unpublish from "./Unpublish.svelte";
 
   export let article: IArticle;
@@ -28,9 +29,9 @@
     data: { title },
     author,
     id,
-    seo_details: { twitter_card = {} },
   } = article);
-  $: avatar = twitter_card.image;
+
+  $: profile = $userSettings.user?.scores_user_data;
   let publishedDate = "";
   $: if (article.published_date) {
     const date = new Date(article.published_date);
@@ -95,16 +96,14 @@
 <svelte:body on:click={() => (actionMenu = false)} />
 <div class="article-wrapper {viewportType}" id="publication-article">
   <div class="content">
-    <div
-      class="img"
-      style="background: url({avatar}) lightgray center center / cover no-repeat"
-    />
+    <PublicationAvatar {avatar} size={viewportType === "mobile" ? "96px" : "104px"}/>
+
     <div class="info">
       <h2>{title}</h2>
       <AvatarLabel
-        avatar={author.data?.avatar}
+        avatar={profile?.profile_photo}
         size={viewportType === "mobile" ? "xs" : "sm"}
-        name={author.data?.username}
+        name={profile?.name}
         label={publishedDate}
       />
     </div>

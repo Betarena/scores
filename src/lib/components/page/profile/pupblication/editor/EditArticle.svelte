@@ -24,7 +24,10 @@
   import ModalArticleSeo from "./ModalArticleSEO.svelte";
   import Unpublish from "../Unpublish.svelte";
   import DeleteModal from "../DeleteModal.svelte";
+  import DOMPurify from "dompurify";
   import component from "svelte-seo";
+  import { infoMessages } from "$lib/components/ui/infomessages/infomessages.js";
+    import { put } from "$lib/api/utils.js";
   export let data: PageData;
 
   $: ({ article = { data: {} } } = data);
@@ -36,7 +39,7 @@
 
   let options: (AuthorsAuthorsMain & { label: string })[] = [];
   let selectedSportstack;
-  let editor;
+  let contentEditor;
   $: if (data.sportstack instanceof Promise) {
     console.log("data.sportstack is a promise");
   } else {
@@ -77,6 +80,24 @@
       component: action === "delete" ? DeleteModal : Unpublish,
     };
     modalStore.set(modalState);
+  }
+  async function publish() {
+    const v = DOMPurify.sanitize(contentEditor.getHTML());
+    const t = DOMPurify.sanitize(title);
+    $modalStore.show = false;
+
+    const loadingId = infoMessages.add({type: "loading", text: "Publishing article..."});
+    const res = await put("/api/data/author/article", {
+      content: v,
+      title: t,
+      author_id: selectedSportstack.id,
+    }) as  any;
+    infoMessages.remove(loadingId);
+    if(res.success) {
+      infoMessages.add({type: "success", text: "Article published!"});
+    } else {
+      infoMessages.add({type: "error", text: "Failed to publish article"});
+    }
   }
 </script>
 
@@ -121,18 +142,19 @@
           <Button
             type="primary"
             disabled={!title ||
-              editor?.getText().trim().split(/\s+/).length < 50}
+              contentEditor?.getText().trim().split(/\s+/).length < 50}
             on:click={() => {
               $modalStore.component = ModalArticleSeo;
               $modalStore.modal = true;
               $modalStore.show = true;
+              $modalStore.props = { cb: publish };
             }}>Update & Publish</Button
           >
         {/if}
       </div>
     </div>
   </Container>
-  <Editor {data} bind:editor bind:title={title} {content} />
+  <Editor {data} bind:contentEditor bind:title={title} {content} />
 </div>
 
 <!--

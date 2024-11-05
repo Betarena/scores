@@ -209,7 +209,7 @@ async function getSportstackByUserId
  * @returns { Promise < AuthorsAuthorsObject > }
  *  📤 Target `sportstacks` data.
  */
-async function getSportstackByPermalink
+export async function getSportstackByPermalink
   (
     permalink: string,
   )

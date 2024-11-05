@@ -25,6 +25,7 @@
   import DOMPurify from "dompurify";
   import { postv2 } from "$lib/api/utils.js";
   import Editor from "./Editor.svelte";
+  import { infoMessages } from "$lib/components/ui/infomessages/infomessages.js";
   export let data: PageData;
   let options: (AuthorsAuthorsMain & { label: string })[] = [];
   let selectedSportstack;
@@ -65,10 +66,20 @@
   async function publish() {
     const v = DOMPurify.sanitize(contentEditor.getHTML());
     const t = DOMPurify.sanitize(title);
+    $modalStore.show = false;
+
+    const loadingId = infoMessages.add({type: "loading", text: "Publishing article..."});
     const res = await postv2("/api/data/author/article", {
       content: v,
       title: t,
-    });
+      author_id: selectedSportstack.id,
+    }) as  any;
+    infoMessages.remove(loadingId);
+    if(res.success) {
+      infoMessages.add({type: "success", text: "Article published!"});
+    } else {
+      infoMessages.add({type: "error", text: "Failed to publish article"});
+    }
   }
 </script>
 

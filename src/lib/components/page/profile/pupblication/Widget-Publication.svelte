@@ -64,16 +64,16 @@
   $: ({ translate } = data);
   $: ({ viewportType } = $session);
   $: ({ theme } = { ...$userSettings });
-  let selectedSportstack;
+    let selectedSportstack;
   let loadingArticles = false;
   let articles: Map<number, IArticle> = new Map();
   let sportstacks = [] as AuthorsAuthorsMain & { label: string }[];
   $: if (data.sportstack instanceof Promise) {
     console.log("data.sportstack is a promise");
   } else {
-    const  sorted = data.sportstacks.sort((a, b) => {
+    const  sorted = data.sportstacks?.sort((a, b) => {
       return new Date(b.data?.creation_date || "").getTime() - new Date(a.data?.creation_date || "").getTime()
-    });
+    }) || [];
     sportstacks = sorted.map((s) => {
       const sportstack = { ...s, label: s.data?.username || "" };
       if (sportstack.permalink === $page.params.permalink) {
@@ -85,6 +85,7 @@
   $: if (selectedSportstack && browser) {
     getArticles();
   }
+
   // #endregion ➤ 📌 VARIABLES
 
   const tabs = [
@@ -126,7 +127,7 @@
     loadingArticles = true;
     articles = new Map();
     const data = await fetchArticlesBySportstack({
-      permalink: "betarena-tennis",
+      permalink: selectedSportstack.permalink,
     });
     loadingArticles = false;
     if (data) {

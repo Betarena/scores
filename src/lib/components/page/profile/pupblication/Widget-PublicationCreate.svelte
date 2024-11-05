@@ -34,7 +34,7 @@
   import { post } from "$lib/api/utils.js";
   import { page } from "$app/stores";
   import { enhance } from "$app/forms";
-  import { goto } from "$app/navigation";
+  import { gotoSW, submitWrapper } from "$lib/utils/sveltekitWrapper.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -77,33 +77,17 @@
   }
 
   function submit() {
-    if (inputError) return;
-    const loadingId = infoMessages.add({
-      type: "loading",
-      text: "",
-    });
+    return submitWrapper({
+      successMessage: "The publication was created successfully.",
+      cbAfter: ({result}) => {
+        if(result.type === "success") {
+          gotoSW(`/u/author/${userSettings.extract("lang")}`, {replaceState: true});
+        }
 
-    return ({ update }) => {
-      // Set invalidateAll to false if you don't want to reload page data when submitting
-      update({ invalidateAll: false }).finally(async (d) => {
-        infoMessages.remove(loadingId);
-        if ($page.form.error) {
-          infoMessages.add({
-            type: "error",
-            text: "An error occurred.",
-          });
-        }
-        if ($page.form.success) {
-          infoMessages.add({
-            type: "success",
-            text: "The publication was created successfully.",
-          });
-          goto(`/u/author/${userSettings.extract("lang")}`, {replaceState: true});
-        }
-      });
-    };
+      }
+    });
   }
-  $: name = name.replace(/[^\w\s]/gi, '');
+  $: name = name.replace(/[^\w\s]/gi, "");
 </script>
 
 <!--
@@ -122,6 +106,7 @@
     class="publication-create-wrapper {$session.viewportType}"
     method="POST"
     bind:this={form}
+    action="/api/data/author/sportstack?/create"
     use:enhance={submit}
   >
     {#if $session.viewportType === "desktop"}
@@ -140,9 +125,13 @@
         </div>
         <div class="buttons-header">
           <a data-sveltekit-replacestate href="/u/author/{$userSettings.lang}">
-            <Button full={true} type="outline">{translation?.cancel || "Cancel"}</Button>
+            <Button full={true} type="outline"
+              >{translation?.cancel || "Cancel"}</Button
+            >
           </a>
-          <Button submit={true} disabled={inputError}>{translation?.save || "Save"}</Button>
+          <Button submit={true} disabled={inputError}
+            >{translation?.save || "Save"}</Button
+          >
         </div>
       </div>
       <div class="form">
@@ -158,16 +147,25 @@
           >
             <span slot="label">URL</span>
             <span slot="leading-text">sportstack/</span>
-            <span slot="error">{translation.alert || "The name is already in use."}</span>
-            <span slot="info">{translation.message || "You can change the name later if you wish."}</span>
+            <span slot="error"
+              >{translation.alert || "The name is already in use."}</span
+            >
+            <span slot="info"
+              >{translation.message ||
+                "You can change the name later if you wish."}</span
+            >
           </Input>
         </div>
 
         <div class="buttons">
           <a href="/u/author/{$userSettings.lang}">
-            <Button full={true} type="secondary-gray">{translation?.cancel || "Cancel"}</Button>
+            <Button full={true} type="secondary-gray"
+              >{translation?.cancel || "Cancel"}</Button
+            >
           </a>
-          <Button submit={true} disabled={inputError}>{translation?.save || "Save"}</Button>
+          <Button submit={true} disabled={inputError}
+            >{translation?.save || "Save"}</Button
+          >
         </div>
       </div>
     </div>

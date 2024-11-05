@@ -36,7 +36,7 @@
   let username = "";
   $: ({ viewportType } = $session);
   $: ({ theme } = { ...$userSettings });
-  $: ({ data = {} } = selectedSportstack);
+  $: ({ data = {}, id, permalink: initPermalink } = selectedSportstack);
   $: ({ username, about } = data as AuthorsAuthorsDataJSONSchema);
   $: ({ username: initialName } = data as AuthorsAuthorsDataJSONSchema);
   $: permalink = mutateStringToPermalink(username);
@@ -64,7 +64,7 @@
   }
   async function submit() {
     return submitWrapper({
-    successMessage: "The publication was created successfully.",
+    successMessage: "The publication was updated successfully.",
   })
   }
 
@@ -102,10 +102,15 @@
   class:light-mode={theme == "Light"}
   action="/api/data/author/sportstack?/update"
 >
+
+  <input type="hidden" name="id" value={id}>
+  <input type="hidden" name="permalink" value={initPermalink}>
+
+
   <UrlInfo permalink={url} />
 
   <Input
-    name="name"
+    name="username"
     label="Name"
     placeholder={translation?.default_name || "Default name"}
     on:input={debounceValidation}
@@ -150,7 +155,7 @@
 
   <Input
     requred={true}
-    name="description"
+    name="about"
     label="Description"
     inputType="textarea"
     placeholder={"Write your description"}
