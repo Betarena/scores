@@ -4,11 +4,17 @@ services:
 
   web-prod:
     image: betarena-scores:1.0.0
-    container_name: web-prod
+    # ╭─────
+    # │ WARNING:
+    # │ |: Does not work with `deploy.replicas`
+    # ╰─────
+    # container_name: web-prod
     restart: always
     build:
       context: ../
       dockerfile: ./.docker/Dockerfile
+    deploy:
+      replicas: 3
     expose:
       - 3000
   #
