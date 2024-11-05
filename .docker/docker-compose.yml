@@ -9,8 +9,8 @@ services:
     build:
       context: ../
       dockerfile: ./.docker/Dockerfile
-    ports:
-      - 5055:5055
+    expose:
+      - 3000
   #
 
   nginx:
