@@ -24,7 +24,7 @@ export const actions: Actions = {
 
       const formData = await request.formData();
       const dataObject = Object.fromEntries(formData.entries());
-      const { id, username, about, permalink } = dataObject as { id: number } & AuthorsAuthorsMain["data"];
+      const { id, username, about, permalink, avatar } = dataObject as { id: number } & AuthorsAuthorsMain["data"];
       const s = await getSportstackByPermalink(permalink);
       if (!s)
       {
@@ -38,8 +38,7 @@ export const actions: Actions = {
           ...sportstacks.data,
           creation_date: new Date(sportstacks.data.creation_date),
           about,
-          avatar: "",
-          badges: [],
+          avatar,
           username,
         }
       });

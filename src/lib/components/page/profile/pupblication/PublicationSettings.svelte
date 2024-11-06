@@ -27,6 +27,7 @@
   import { submitWrapper } from "$lib/utils/sveltekitWrapper.js";
   import ModalProfilePictureCrop from "../Modal-ProfilePictureCrop.svelte";
   import { dlog } from "$lib/utils/debug.js";
+  import { uploadImage } from "$lib/firebase/common.js";
 
   export let selectedSportstack: AuthorsAuthorsMain;
 
@@ -69,14 +70,14 @@
 
     inputError = !res?.isValid ?? false;
   }
-  async function submit() {
-    let url = avatar
+  async function submit(e) {
+    e.data.append("avatar", avatar);
     if (profile_pic) {
-
+      const avatar = await uploadImage(profile_pic, `Betarena_Media/authors/authors_list/${id}/avatars/${id}.png`)
+      e.data.append("avatar", avatar);
     }
 
-		form.append("avatar", url);
-    
+
     return submitWrapper({
       successMessage: "The publication was updated successfully.",
     });
@@ -148,10 +149,7 @@
   {
 		modal_pic_crop_show = false;
 		profile_pic = event?.detail?.img;
-    debugger
     avatar = profile_pic;
-
-
 	}
 </script>
 
@@ -176,6 +174,7 @@ CROP PICTURE MODAL
 />
 <form
   method="POST"
+  bind:this={form}
   id="publication-settings"
   class="form {viewportType}"
   use:enhance={submit}

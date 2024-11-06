@@ -1384,7 +1384,8 @@ export async function uploadImage
       '🟢 Uploaded file!'
     );
 
-  const url = await snapshot.ref.fullPath;
+  // const url = await snapshot.ref.fullPath;
+  const url = await getDownloadURL(sRef);
 
   // [🐞]
   dlog
