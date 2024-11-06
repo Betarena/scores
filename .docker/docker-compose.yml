@@ -2,6 +2,45 @@ name: betarena-scores
 
 services:
 
+  # ╭──────────────────────────────────────────────────────────────────────────────────╮
+  # │ 🟩 │ NGINX CONTAINER(s)                                                          │
+  # ╰──────────────────────────────────────────────────────────────────────────────────╯
+
+  nginx:
+    image: nginx:1.27.1
+    container_name: proxy
+    ports:
+      - 80:80
+      - 443:443
+      - 8081:8081
+      # ╭─────
+      # │ NOTE:
+      # │ |: Pors for DEVELOPMENT (LOCAL) [commented out]
+      # ╰─ ⤦⤦⤦⤦
+      # - 8080:8080
+    command: ["nginx", "-g", "daemon off;"]
+    volumes:
+      # ╭─────
+      # │ NOTE:
+      # │ |: Volumes for PRODUCTION
+      # ╰─ ⤦⤦⤦⤦
+      - ${HOME}/../etc/letsencrypt:/etc/letsencrypt:ro
+      - ../.docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ../.docker/goaccess:/etc/nginx/html:ro
+      - ../.docker/nginx/logs/scores:/var/log/nginx/scores:rw
+      - ../.docker/nginx/logs/goaccess:/var/log/nginx/goaccess:rw
+      # ╭─────
+      # │ NOTE:
+      # │ |: Volumes for DEVELOPMENT (LOCAL) [commented out]
+      # ╰─ ⤦⤦⤦⤦
+      # - ../.docker/nginx/nginx.dev.conf:/etc/nginx/nginx.conf:ro
+    logging:
+      driver: local
+      options:
+        max-size: 1g
+        max-file: 5
+  #
+
   web-prod:
     image: betarena-scores:1.0.0
     # ╭─────
@@ -29,4 +68,3 @@ services:
       - ${HOME}/../etc/letsencrypt:/etc/letsencrypt:ro
       - ../.nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     command: ["nginx", "-g", "daemon off;"]
-  #
