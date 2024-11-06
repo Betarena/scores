@@ -567,6 +567,12 @@ docker-spin-start-ngnix:
 		\n╰──────────────────────────────────────────────────────────────────╯"
 	#
 
+	mkdir \
+		-p \
+		./.docker/nginx/logs/scores \
+		./.docker/nginx/logs/goaccess
+	#
+
 	BUILDKIT_PROGRESS=plain \
 		docker compose \
 		-f .docker/docker-compose.yml \
@@ -574,7 +580,7 @@ docker-spin-start-ngnix:
 		up \
 		--build \
 		-d \
-		nginx
+		nginx goaccess
 	#
 #
 
