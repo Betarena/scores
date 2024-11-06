@@ -96,7 +96,7 @@
 <svelte:body on:click={() => (actionMenu = false)} />
 <div class="article-wrapper {viewportType}" id="publication-article">
   <div class="content">
-    <PublicationAvatar {avatar} size={viewportType === "mobile" ? "96px" : "104px"}/>
+    <PublicationAvatar  size={viewportType === "mobile" ? "96px" : "104px"}/>
 
     <div class="info">
       <h2>{title}</h2>
