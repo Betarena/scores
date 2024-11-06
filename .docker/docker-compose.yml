@@ -41,6 +41,19 @@ services:
         max-file: 5
   #
 
+  goaccess:
+    image: allinurl/goaccess:1.9.3
+    container_name: goaccess
+    ports:
+      - 7890:7890
+    volumes:
+      - ../.docker/nginx/logs/scores:/var/log/nginx:ro
+      - ../.docker/goaccess:/srv:rw
+    command: --config-file=/srv/goaccess.conf --log-file=/var/log/nginx/access.log --log-format=COMBINED --output=/srv/index.html --real-time-html --ping-interval=5
+    depends_on:
+      - nginx
+  #
+
   web-prod:
     image: betarena-scores:1.0.0
     # ╭─────
