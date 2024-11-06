@@ -201,7 +201,7 @@ CROP PICTURE MODAL
   <div class="thumbnail-field">
     <div class="label">Thumbnail</div>
     <div class="input-wrapper">
-      <PublicationAvatar {avatar}  />
+      <PublicationAvatar {avatar} size={viewportType === "mobile" ? "92px" : "74px"} />
 
       <div class="file-uploader" on:click={() => fileInput.click()}>
         <input
