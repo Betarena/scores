@@ -34,6 +34,8 @@ services:
       # │ |: Volumes for DEVELOPMENT (LOCAL) [commented out]
       # ╰─ ⤦⤦⤦⤦
       # - ../.docker/nginx/nginx.dev.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - loadbalancer
     logging:
       driver: local
       options:
@@ -54,30 +56,38 @@ services:
       - nginx
   #
 
+  # ╭──────────────────────────────────────────────────────────────────────────────────╮
+  # │ 🟦 │ APPLICATION CONTAINER(s)                                                    │
+  # ╰──────────────────────────────────────────────────────────────────────────────────╯
+
   web-prod:
     image: betarena-scores:1.0.0
     # ╭─────
     # │ WARNING:
-    # │ |: Does not work with `deploy.replicas`
+    # │ |: Does not work with 'deploy.replicas: [n]' configuration
     # ╰─────
     # container_name: web-prod
     restart: always
-    build:
-      context: ../
-      dockerfile: ./.docker/Dockerfile
+    # ╭─────
+    # │ NOTE:
+    # │ |: Use the following build configuration for local development
+    # ╰─────
+    # build:
+    #   context: ../
+    #   dockerfile: ./.docker/Dockerfile
     deploy:
       replicas: 3
     expose:
       - 3000
+    logging:
+      driver: local
+      options:
+        max-size: 500m
+        max-file: 5
+    networks:
+      - loadbalancer
   #
 
-  nginx:
-    image: nginx:1.27.1
-    container_name: proxy
-    ports:
-      - 80:80
-      - 443:443
-    volumes:
-      - ${HOME}/../etc/letsencrypt:/etc/letsencrypt:ro
-      - ../.nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-    command: ["nginx", "-g", "daemon off;"]
+networks:
+  loadbalancer:
+    driver: bridge
