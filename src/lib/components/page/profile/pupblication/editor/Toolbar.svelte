@@ -27,6 +27,7 @@
   import H2 from "./icons/H2.svelte";
   import H3 from "./icons/H3.svelte";
   import H4 from "./icons/H4.svelte";
+    import { uploadImage } from "$lib/firebase/common.js";
 
   // #region ➤ 📌 VARIABLES
 
@@ -44,6 +45,7 @@
 
   export let editor: Editor;
   export let titleInFocus = false;
+  export let uploadUrl = ""
 
   let fileInput;
   let view = "full";
@@ -197,21 +199,26 @@
     fileInput.click();
   }
 
-  function handleFileChange(event) {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const url = e.target.result;
-        editor.chain().focus().setImage({ src: url }).run();
-      };
-      reader.readAsDataURL(file);
-    }
-  }
+
 
   function changeView() {
     if (viewportType !== "mobile") return;
     view = view === "first" ? "second" : "first";
+  }
+
+  async function handleFileChange(event) {
+    const file = event.target.files[0];
+    if (!file) return
+
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    const fileContent = (e.target?.result || "") as string;
+    const url = await uploadImage(fileContent, `${uploadUrl}/${new Date().valueOf()}.png`);
+    editor.chain().focus().setImage({ src: url }).run();
+  };
+  reader.readAsDataURL(file);
+
+
   }
   // #endregion ➤ 🛠️ METHODS
 </script>

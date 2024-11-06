@@ -16,13 +16,30 @@
   import Container from "$lib/components/ui/wrappers/Container.svelte";
   import { modalStore } from "$lib/store/modal.js";
   import session from "$lib/store/session.js";
+    import { onMount } from "svelte";
+    import { create_article_store } from "./create_article.store.js";
   import ModalArticleSeo from "./ModalArticleSEO.svelte";
 
   $: ({ viewportType } = $session);
 
+  $: ({ seo } = $create_article_store);
+  let description = "";
+  let title = "";
+
+
   function goBack() {
     $modalStore.component = ModalArticleSeo;
   }
+
+  function save() {
+    $create_article_store.seo = { title, description };
+    goBack();
+  }
+
+  onMount(() => {
+    title = seo.title || "";
+    description = seo.description || "";
+  })
 </script>
 
 <!--
@@ -66,12 +83,13 @@
         </Container>
       </div>
       <div class="form-wrapper">
-        <Input placeholder="Default title" label="SEO title" />
+        <Input bind:value={title} placeholder="Default title" label="SEO title" />
         <Input
           inputType="textarea"
           height="176px"
-          placeholder="Default title"
-          label="SEO title"
+          bind:value={description}
+          placeholder="Description"
+          label="Meta description"
         />
       </div>
     </div>
@@ -82,7 +100,7 @@
           type="secondary-gray"
           on:click={goBack}>Go Back</Button
         >
-        <Button full={viewportType !== "mobile"}>Save</Button>
+        <Button full={viewportType !== "mobile"} on:click={save}>Save</Button>
       </div>
     </Container>
   </div>

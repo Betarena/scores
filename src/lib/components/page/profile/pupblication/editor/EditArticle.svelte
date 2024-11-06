@@ -24,10 +24,7 @@
   import ModalArticleSeo from "./ModalArticleSEO.svelte";
   import Unpublish from "../Unpublish.svelte";
   import DeleteModal from "../DeleteModal.svelte";
-  import DOMPurify from "dompurify";
-  import component from "svelte-seo";
-  import { infoMessages } from "$lib/components/ui/infomessages/infomessages.js";
-    import { put } from "$lib/api/utils.js";
+  import { publish } from "./helpers.js";
   export let data: PageData;
 
   $: ({ article = { data: {} } } = data);
@@ -36,6 +33,8 @@
   $: if (featured_image) {
     content = `<img src="${featured_image}" alt="${title}" />${content}`;
   }
+  $: uploadUrl = selectedSportstack ? `Betarena_Media/authors/authors_list/${selectedSportstack.id}/media` : "";
+
 
   let options: (AuthorsAuthorsMain & { label: string })[] = [];
   let selectedSportstack;
@@ -81,24 +80,11 @@
     };
     modalStore.set(modalState);
   }
-  async function publish() {
-    const v = DOMPurify.sanitize(contentEditor.getHTML());
-    const t = DOMPurify.sanitize(title);
-    $modalStore.show = false;
 
-    const loadingId = infoMessages.add({type: "loading", text: "Publishing article..."});
-    const res = await put("/api/data/author/article", {
-      content: v,
-      title: t,
-      author_id: selectedSportstack.id,
-    }) as  any;
-    infoMessages.remove(loadingId);
-    if(res.success) {
-      infoMessages.add({type: "success", text: "Article published!"});
-    } else {
-      infoMessages.add({type: "error", text: "Failed to publish article"});
-    }
+  function publishClick() {
+    publish(contentEditor, title, selectedSportstack.id);
   }
+
 </script>
 
 <!--
@@ -147,14 +133,14 @@
               $modalStore.component = ModalArticleSeo;
               $modalStore.modal = true;
               $modalStore.show = true;
-              $modalStore.props = { cb: publish };
+              $modalStore.props = { cb: publishClick };
             }}>Update & Publish</Button
           >
         {/if}
       </div>
     </div>
   </Container>
-  <Editor {data} bind:contentEditor bind:title={title} {content} />
+  <Editor {data} bind:contentEditor {uploadUrl} bind:title={title} {content} />
 </div>
 
 <!--

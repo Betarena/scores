@@ -23,6 +23,7 @@ import { error, RequestHandler, json } from '@sveltejs/kit';
 import { entryProfileTabAuthorArticleUpsert } from '@betarena/scores-lib/dist/functions/v8/profile.main.js';
 import createDOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
+import { mutateStringToPermalink } from '@betarena/scores-lib/dist/util/language.js';
 
 
 // #endregion ➤ 📦 Package
@@ -50,48 +51,53 @@ export const POST: RequestHandler = async ({ request, locals }) =>
 {
   if (!locals.uid) throw error(401, { message: 'Unauthorized' } as App.Error);
   const body = await request.json();
-  let { content, title, author_id } = body;
+  let { content, title, author_id, images, id, seo } = body;
   const window = new JSDOM('').window;
   const DOMPurify = createDOMPurify(window);
 
   content = DOMPurify.sanitize(content);
   title = DOMPurify.sanitize(title);
+  const seoTitle = DOMPurify.sanitize(seo.title) || title;
+  const seoDescription = DOMPurify.sanitize(seo.description) || "";
+  const permalink = mutateStringToPermalink(title);
+  const link = `https://scores.betarena.com/a/${permalink}`;
   try
   {
-    entryProfileTabAuthorArticleUpsert({
+    await entryProfileTabAuthorArticleUpsert({
       author_id,
       lang: 'en',
+      id,
       tags: [],
       seo_details: {
         twitter_card: {
-          description: "",
-          title: title,
-          image: "",
+          description: seoDescription,
+          title: seoTitle,
+          image: images[0] || "",
           site: '@betarenasocial',
           image_alt: "",
         },
         opengraph: {
-          description: "",
-          images: [],
+          description: seoDescription,
+          images: images.map((image: string) => ({ url: image, alt: title, width: 120, height: 120 })),
           locale: "en_US",
-          title: title,
+          title: seoTitle,
           type: 'website',
-          url: "",
+          url: link,
         },
         main_data: {
-          canonical: "",
-          description: "",
+          canonical: link,
+          description: seoDescription,
           keywords: "",
           nofollow: false,
           noindex: false,
-          title
+          title: seoTitle
         }
       },
       data: {
         content,
         title,
-        seo_title: title,
-        meta_description: ""
+        meta_description: seoDescription,
+        seo_title: seoTitle
       }
     });
 
@@ -103,38 +109,4 @@ export const POST: RequestHandler = async ({ request, locals }) =>
     return json({ success: false, message: e.message });
   }
 
-};
-
-
-export const PUT: RequestHandler = async ({ request, locals }) =>
-{
-  if (!locals.uid) throw error(401, { message: 'Unauthorized' } as App.Error);
-  const body = await request.json();
-  let { content, title, author_id } = body;
-  const window = new JSDOM('').window;
-  const DOMPurify = createDOMPurify(window);
-
-  content = DOMPurify.sanitize(content);
-  title = DOMPurify.sanitize(title);
-  try
-  {
-    entryProfileTabAuthorArticleUpsert({
-      author_id,
-      lang: 'en',
-      tags: [],
-      data: {
-        content,
-        title,
-        seo_title: title,
-        meta_description: ""
-      }
-    });
-
-    return json({ success: true });
-
-  } catch (e)
-  {
-    console.log("Error: ", e);
-    return json({ success: false, message: e.message });
-  }
 };

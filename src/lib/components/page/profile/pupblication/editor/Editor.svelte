@@ -66,6 +66,7 @@
   export let contentEditor: Editor;
   export let title = "";
   export let content: string | undefined;
+  export let uploadUrl: string = "";
   let element;
   let titleInFocus = false;
   let vh = "1vh";
@@ -86,6 +87,7 @@
       resizeTextarea();
     });
   }
+
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -305,6 +307,7 @@
     <Container clazz="sticky-toolbar" hFull={false}>
       <div class="toolbar-wrapper">
         <Toolbar
+          {uploadUrl}
           {editor}
           bind:titleInFocus
           on:showLinkPopup={() => toogleLinkPopup(true)}
@@ -336,6 +339,7 @@
     <div class="toolbar-wrapper" style="bottom: {keyBoardHeight};">
       <Toolbar
         {editor}
+        {uploadUrl}
         bind:titleInFocus
         on:showLinkPopup={() => toogleLinkPopup(true)}
       />

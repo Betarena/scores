@@ -26,11 +26,13 @@
 
   $: ({
     permalink,
-    data: { title },
-    author,
+    data,
     id,
+    seo_details,
   } = article);
-
+  $: ({title} = data || {title: ""});
+  $: ({twitter_card} = seo_details || {twitter_card: {image: ""}});
+  $: articlePreview = twitter_card.image;
   $: profile = $userSettings.user?.scores_user_data;
   let publishedDate = "";
   $: if (article.published_date) {
@@ -96,7 +98,7 @@
 <svelte:body on:click={() => (actionMenu = false)} />
 <div class="article-wrapper {viewportType}" id="publication-article">
   <div class="content">
-    <PublicationAvatar  size={viewportType === "mobile" ? "96px" : "104px"}/>
+    <PublicationAvatar avatar={articlePreview} size={viewportType === "mobile" ? "96px" : "104px"}/>
 
     <div class="info">
       <h2>{title}</h2>

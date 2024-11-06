@@ -1371,7 +1371,7 @@ export async function uploadImage
       storage,
       targetPath
     );
-  const snapshot = await uploadString
+  await uploadString
     (
       sRef,
       img,
