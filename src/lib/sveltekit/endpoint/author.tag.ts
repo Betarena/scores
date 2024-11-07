@@ -15,6 +15,7 @@ import type { AuthorsSEODetailsDataJSONSchema } from '@betarena/scores-lib/types
 import type { IPageAuthorTagDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
 import type { IPageAuthorTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.tags.js';
 import { json, type RequestEvent } from '@sveltejs/kit';
+import { entryProfileTabAuthorSearchTag } from '@betarena/scores-lib/dist/functions/v8/profile.main.js';
 
 // ╭──────────────────────────────────────────────────────────────────╮
 // │ 🛠️ MAIN METHODS                                                  │
@@ -72,12 +73,23 @@ export async function main
         const
           permalinkTag = request.url.searchParams.get('permalinkTag'),
           page = request.url.searchParams.get('page') || 0,
-          translation = request.url.searchParams.get('translation')
+          translation = request.url.searchParams.get('translation'),
+          search = request.url.searchParams.get('search')
           // hasura = request.url.searchParams.get('hasura'),
           ;
         let lang: string | undefined = request.url.searchParams.get('lang') as string;
         if (lang === "all") lang = undefined;
         const  langUser: string | undefined =  await JSON.parse( request.locals.user || "")?.lang || "en";
+
+
+
+        if (search !== null)
+        {
+          // ▓ [🐞]
+          console.log(`🔍 search tags: ${search}`);
+          const data = await searchTags(search);
+          return json(data);
+        }
 
         // ╭──────────────────────────────────────────────────────────────────╮
         // │ NOTE:                                                            │
@@ -230,4 +242,11 @@ export async function updateFollowers(
       );
     return json({ success: true, tag: data });
   })
+}
+
+
+export async function searchTags(text: string)
+{
+  const res = await entryProfileTabAuthorSearchTag({ tagName: text });
+  return res;
 }

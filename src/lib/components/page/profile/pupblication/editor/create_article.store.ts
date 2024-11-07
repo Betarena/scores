@@ -1,7 +1,8 @@
+import type { AuthorsTagsMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
 import { writable } from "svelte/store";
 interface CreateArticleStore
 {
-  tags: any[],
+  tags: AuthorsTagsMain[],
   seo: {
     title: string,
     description: string,
@@ -12,7 +13,7 @@ function articleStore()
 {
 
   let state = {
-    tags: [] as any[],
+    tags: [] as AuthorsTagsMain[],
     seo: {
       title: "",
       description: "",

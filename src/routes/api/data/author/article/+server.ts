@@ -51,7 +51,7 @@ export const POST: RequestHandler = async ({ request, locals }) =>
 {
   if (!locals.uid) throw error(401, { message: 'Unauthorized' } as App.Error);
   const body = await request.json();
-  let { content, title, author_id, images, id, seo } = body;
+  let { content, title, author_id, images, id, seo, tags } = body;
   const window = new JSDOM('').window;
   const DOMPurify = createDOMPurify(window);
 
@@ -67,7 +67,7 @@ export const POST: RequestHandler = async ({ request, locals }) =>
       author_id,
       lang: 'en',
       id,
-      tags: [],
+      tags: tags.map((tag) => tag.id),
       seo_details: {
         twitter_card: {
           description: seoDescription,
@@ -87,7 +87,7 @@ export const POST: RequestHandler = async ({ request, locals }) =>
         main_data: {
           canonical: link,
           description: seoDescription,
-          keywords: "",
+          keywords: tags.map((tag) => tag.name).join(", "),
           nofollow: false,
           noindex: false,
           title: seoTitle

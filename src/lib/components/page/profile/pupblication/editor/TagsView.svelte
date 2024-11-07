@@ -21,36 +21,36 @@
   import ModalArticleSeo from "./ModalArticleSEO.svelte";
   import session from "$lib/store/session.js";
   import XClose from "$lib/components/ui/infomessages/x-close.svelte";
+  import { get } from "$lib/api/utils.js";
+  import { browser } from "$app/environment";
+  import type { AuthorsTagsMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import { onMount } from "svelte";
 
   function goBack() {
     $modalStore.component = ModalArticleSeo;
   }
 
-  let tags = [];
+  let tags: AuthorsTagsMain[] = [];
   let search = "";
-  const initialTags = [];
+  let selectedTags: AuthorsTagsMain[] = [];
 
   $: ({ viewportType } = $session);
 
-  $: for (let i = 0; i < 20; i++) {
-    initialTags.push({ label: `Tag ${i + 1}`, id: i });
-    tags = initialTags;
-  }
+  $: if (browser) searchTags(search);
 
   function select(tag) {
-    if ($create_article_store.tags.length === 5) return;
-    if (check(tag, $create_article_store.tags)) {
-      $create_article_store.tags = $create_article_store.tags.filter(
+    if (selectedTags.length === 5) return;
+    if (check(tag, selectedTags)) {
+      selectedTags = selectedTags.filter(
         (t) => t.id !== tag.id
       );
       return;
     }
-    $create_article_store.tags = [tag, ...$create_article_store.tags];
-    search = "";
+    selectedTags = [tag, ...selectedTags];
   }
 
   function deselect(tag) {
-    $create_article_store.tags = $create_article_store.tags.filter(
+    selectedTags = selectedTags.filter(
       (t) => t.id !== tag.id
     );
   }
@@ -62,15 +62,26 @@
   function keyHandler(e) {
     if (e.detail.key === "Enter") {
       select(tags.find((tag) => !check(tag, $create_article_store.tags)));
+      search = "";
     }
   }
 
-  function handleInput(e) {
-    search = e.detail;
-    tags = initialTags.filter(
-      (tag) => !search || tag.label.toLowerCase().includes(search.toLowerCase())
-    );
+  function save() {
+    $create_article_store.tags = selectedTags;
+    goBack();
   }
+
+
+  async function searchTags(text: string) {
+    const res = (await get(
+      `/api/data/author/tags?search=${text}`
+    )) as AuthorsTagsMain[];
+    tags = [...res];
+  }
+
+  onMount(() => {
+    selectedTags = $create_article_store.tags;
+  })
 </script>
 
 <!--
@@ -113,13 +124,12 @@
             </div>
             <Input
               placeholder="Search for tabs"
-              value={search}
-              on:input={handleInput}
+              bind:value={search}
               on:keydown={keyHandler}
             />
-            {#if $create_article_store.tags.length}
+            {#if selectedTags.length}
               <div class="seleted-tags">
-                {#each $create_article_store.tags as tag (tag.id)}
+                {#each selectedTags as tag (tag.id)}
                   <div
                     in:fade={{ delay: 100 }}
                     animate:flip={{
@@ -132,7 +142,7 @@
                       active={true}
                       size="md"
                       on:click={() => deselect(tag)}
-                      >{tag.label}
+                      >{tag.name}
                       <div class="cross-icon">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -162,7 +172,7 @@
         <h2>Choose tags</h2>
         <div class="tags-to-select">
           {#each tags as tag (tag.id)}
-            {@const isActive = check(tag, $create_article_store.tags)}
+            {@const isActive = check(tag, selectedTags)}
             <div
               animate:flip={{
                 duration: 250,
@@ -173,7 +183,7 @@
                 size={viewportType === "mobile" ? "xl" : "xxl"}
                 active={isActive}
                 color={isActive ? "brand" : "gray"}
-                on:click={() => select(tag)}>{tag.label}</Badge
+                on:click={() => select(tag)}>{tag.name}</Badge
               >
             </div>
           {/each}
@@ -187,7 +197,7 @@
           full={viewportType !== "mobile"}
           on:click={goBack}>Go Back</Button
         >
-        <Button full={viewportType !== "mobile"}>Save</Button>
+        <Button full={viewportType !== "mobile"} on:click={save}>Save</Button>
       </div>
     </Container>
   </div>
@@ -212,6 +222,19 @@
     flex-direction: column;
     height: 100vh;
     padding-bottom: 34px;
+
+    *::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    *::-webkit-scrollbar-track {
+      background: inherit;
+    }
+
+    *::-webkit-scrollbar-thumb {
+      background: var(--colors-background-bg-quaternary);
+      border-radius: 4px;
+    }
 
     :global(.badge) {
       cursor: pointer;
@@ -412,6 +435,12 @@
                 line-height: var(--line-height-text-sm, 20px); /* 142.857% */
               }
             }
+          }
+
+          .tags-wrapper {
+            flex-shrink: 0;
+            max-height: calc(215px + 30px + 12px + 5px);
+            overflow-y: auto;
           }
         }
 

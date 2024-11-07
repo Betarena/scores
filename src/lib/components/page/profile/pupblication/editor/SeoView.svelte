@@ -9,15 +9,14 @@
 
 <script lang="ts">
   import BackButton from "$lib/components/ui/BackButton.svelte";
-  import Badge from "$lib/components/ui/Badge.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import XClose from "$lib/components/ui/infomessages/x-close.svelte";
   import Input from "$lib/components/ui/Input.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
   import { modalStore } from "$lib/store/modal.js";
   import session from "$lib/store/session.js";
-    import { onMount } from "svelte";
-    import { create_article_store } from "./create_article.store.js";
+  import { onMount } from "svelte";
+  import { create_article_store } from "./create_article.store.js";
   import ModalArticleSeo from "./ModalArticleSEO.svelte";
 
   $: ({ viewportType } = $session);
@@ -25,7 +24,6 @@
   $: ({ seo } = $create_article_store);
   let description = "";
   let title = "";
-
 
   function goBack() {
     $modalStore.component = ModalArticleSeo;
@@ -39,7 +37,7 @@
   onMount(() => {
     title = seo.title || "";
     description = seo.description || "";
-  })
+  });
 </script>
 
 <!--
@@ -83,7 +81,11 @@
         </Container>
       </div>
       <div class="form-wrapper">
-        <Input bind:value={title} placeholder="Default title" label="SEO title" />
+        <Input
+          bind:value={title}
+          placeholder="Default title"
+          label="SEO title"
+        />
         <Input
           inputType="textarea"
           height="176px"

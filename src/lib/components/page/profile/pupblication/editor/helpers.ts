@@ -31,13 +31,14 @@ export async function publish(editor: Editor, title: string, author_id: string |
   const images = getAllImages(editor);
   modalStore.update(state => ({ ...state, show: false }));
 
-  const { seo } = create_article_store.get();
+  const { seo, tags } = create_article_store.get();
 
   const loadingId = infoMessages.add({ type: "loading", text: "Publishing article..." });
   const res = await postv2("/api/data/author/article", {
     content: v,
     title: t,
     author_id,
+    tags,
     seo,
     images,
     status: "published"

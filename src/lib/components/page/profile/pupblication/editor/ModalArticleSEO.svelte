@@ -66,7 +66,7 @@
       {#if tags.length}
         <div class="tags-wrapper">
           {#each tags as tag (tag.id)}
-            <Badge active={true} color="brand" size="sm">{tag.label}</Badge>
+            <Badge active={true} color="brand" size="sm">{tag.name}</Badge>
           {/each}
         </div>
       {:else}
@@ -138,6 +138,19 @@
     position: absolute;
     // transform: translateY(-100%);
 
+    *::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    *::-webkit-scrollbar-track {
+      background: inherit;
+    }
+
+    *::-webkit-scrollbar-thumb {
+      background: var(--colors-background-bg-quaternary);
+      border-radius: 4px;
+    }
+
     padding: 24px 16px calc(var(--spacing-lg, 12px) + 34px) 16px;
 
     flex-direction: column;
@@ -157,6 +170,7 @@
       width: 100%;
       justify-content: space-between;
       align-items: center;
+      gap: 16px;
       cursor: pointer;
 
       :global(svg path) {
@@ -165,6 +179,7 @@
       .info {
         display: flex;
         flex-direction: column;
+        overflow: hidden;
 
         h3 {
           color: var(--colors-text-text-primary, #fbfbfb);
@@ -193,7 +208,12 @@
           align-items: flex-start;
           gap: var(--spacing-sm, 6px);
           align-self: stretch;
-          flex-wrap: wrap;
+          overflow-x: auto;
+          max-width: 100%;
+          padding-bottom: 5px;
+          :global(.badge) {
+            flex-shrink: 0;
+          }
         }
       }
     }

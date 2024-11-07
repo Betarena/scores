@@ -337,6 +337,7 @@
 
     :global(.dropdown.disabled) {
       background: var(--colors-background-bg-disabled, #f7f7f7);
+      width: 65px !important;
       pointer-events: none;
       border-radius: var(--radius-md, 8px);
       cursor: pointer;
