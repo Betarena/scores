@@ -83,3 +83,26 @@ export async function deleteArticle(article: IArticle)
     infoMessages.add({ type: "error", text: "Failed to delete article" });
   }
 }
+
+export async function unpublish(article: IArticle)
+{
+  modalStore.update(state => ({ ...state, show: false }));
+  const loadingId = infoMessages.add({ type: "loading", text: "Unpublishing article..." });
+  const res = await fetch(`/api/data/author/article`, {
+    method: "POST",
+    body: JSON.stringify({ id: article.id, article, status: "unpublish", uid: article.author.uid })
+  });
+  infoMessages.remove(loadingId);
+  const data = await res.json();
+  if (data.success)
+  {
+    infoMessages.add({ type: "success", text: "Article unpublished!" });
+    setTimeout(() =>
+    {
+      goto(`/u/author/publication/${article.author.permalink}/${session.extract('lang')}?view=articles`);
+    })
+  } else
+  {
+    infoMessages.add({ type: "error", text: "Failed to unpublish article" });
+  }
+}

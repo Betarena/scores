@@ -13,6 +13,7 @@
   import FeaturedIcon from "$lib/components/ui/FeaturedIcon.svelte";
   import ModalWrapper from "./ModalWrapper.svelte";
   export let id = "";
+  export let cb;
 </script>
 
 <ModalWrapper
@@ -24,7 +25,7 @@
     <FeaturedIcon size="lg" type="brand"><Save /></FeaturedIcon>
   </div>
   <div slot="action-button" class=" action-button">
-    <Button full={true}>Unpublish</Button>
+    <Button full={true} on:click={cb}>Unpublish</Button>
   </div>
 </ModalWrapper>
 

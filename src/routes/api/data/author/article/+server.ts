@@ -51,19 +51,22 @@ export const POST: RequestHandler = async ({ request, locals }) =>
 {
   if (!locals.uid) throw error(401, { message: 'Unauthorized' } as App.Error);
   const body = await request.json();
-  let { content, title, author_id, images, id, seo, tags } = body;
-  const window = new JSDOM('').window;
-  const DOMPurify = createDOMPurify(window);
+  let { content, title, author_id, images, id, seo, tags, status = "published", uid, article } = body;
 
-  content = DOMPurify.sanitize(content);
-  title = DOMPurify.sanitize(title);
-  const seoTitle = DOMPurify.sanitize(seo.title) || title;
-  const seoDescription = DOMPurify.sanitize(seo.description) || "";
-  const permalink = mutateStringToPermalink(title);
-  const link = `https://scores.betarena.com/a/${permalink}`;
-  try
+  if (status === "unpublish" && locals.uid !== uid) return json({ success: false, message: "Not an owner" });
+  let data = article;
+  if (status === "published")
   {
-    await entryProfileTabAuthorArticleUpsert({
+    const window = new JSDOM('').window;
+    const DOMPurify = createDOMPurify(window);
+
+    content = DOMPurify.sanitize(content);
+    title = DOMPurify.sanitize(title);
+    const seoTitle = DOMPurify.sanitize(seo.title) || title;
+    const seoDescription = DOMPurify.sanitize(seo.description) || "";
+    const permalink = mutateStringToPermalink(title);
+    const link = `https://scores.betarena.com/a/${permalink}`;
+    data = {
       author_id,
       lang: 'en',
       id,
@@ -97,10 +100,21 @@ export const POST: RequestHandler = async ({ request, locals }) =>
         content,
         title,
         meta_description: seoDescription,
-        seo_title: seoTitle
+        seo_title: seoTitle,
+        status
       }
-    });
+    };
+  }
 
+  if (status === "unpublish")
+  {
+    data.data.status = status;
+  }
+
+  try
+  {
+
+    await entryProfileTabAuthorArticleUpsert(data);
     return json({ success: true });
 
   } catch (e)

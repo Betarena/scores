@@ -19,7 +19,7 @@
   import session from "$lib/store/session.js";
   import userSettings from "$lib/store/user-settings.js";
   import DeleteModal from "./DeleteModal.svelte";
-  import { deleteArticle } from "./editor/helpers.js";
+  import { deleteArticle, unpublish } from "./editor/helpers.js";
   import PublicationAvatar from "./PublicationAvatar.svelte";
   import Unpublish from "./Unpublish.svelte";
 
@@ -70,6 +70,9 @@
         return;
       case "unpublish":
         modalState.component = Unpublish;
+        modalState.props = {
+          cb: () => unpublish(article),
+        };
         break;
       case "delete":
         modalState.props = {

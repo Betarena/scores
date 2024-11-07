@@ -18,6 +18,7 @@
   import SeoView from "./SeoView.svelte";
   import { modalStore } from "$lib/store/modal.js";
   import session from "$lib/store/session.js";
+  import ExpandDataWrapper from "$lib/components/ui/wrappers/ExpandDataWrapper.svelte";
 
   export let cb = () => {};
 
@@ -65,9 +66,14 @@
       <h3>Tags</h3>
       {#if tags.length}
         <div class="tags-wrapper">
-          {#each tags as tag (tag.id)}
-            <Badge active={true} color="brand" size="sm">{tag.name}</Badge>
-          {/each}
+          <ExpandDataWrapper data={tags}>
+            <slot slot="item" let:item={tag}>
+              <Badge active={true} color="brand" size="sm">{tag.name} </Badge>
+            </slot>
+            <slot slot="count" let:count>
+              <Badge active={true} color="brand" size="sm">+{count}</Badge>
+            </slot>
+          </ExpandDataWrapper>
         </div>
       {:else}
         <div class="info-message">No tags added</div>
@@ -180,6 +186,7 @@
         display: flex;
         flex-direction: column;
         overflow: hidden;
+        flex-grow: 1;
 
         h3 {
           color: var(--colors-text-text-primary, #fbfbfb);
