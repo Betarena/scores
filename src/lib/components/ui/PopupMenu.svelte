@@ -33,19 +33,18 @@
       const parentRect = parentElement.getBoundingClientRect();
       const rect = menuNode.getBoundingClientRect();
       const viewportWidth = document.documentElement.clientWidth;
-      const viewportHeight = document.documentElement.clientHeight;
+      const viewportHeight = document.documentElement.offsetHeight;
       let left = parentRect.left + parentRect.width / 2 - rect.width / 2;
-      let top = parentRect.bottom + 5;
+      let top = parentRect.bottom + 5 + window.scrollY;
 
       if (left + rect.width > viewportWidth) {
-        left = viewportWidth - rect.width - 8;
+        left = viewportWidth - rect.width - 5;
       }
       if (left < 0) {
-        left = 8;
+        left = 5;
       }
       if (top + rect.height > viewportHeight) {
-        top = parentRect.top - rect.height - 8;
-      }
+        top = parentRect.top - rect.height - 5 + window.scrollY;  }
 
       menuNode.style.left = `${left}px`;
       menuNode.style.top = `${top}px`;

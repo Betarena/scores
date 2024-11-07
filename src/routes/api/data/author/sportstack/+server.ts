@@ -19,6 +19,8 @@
 import dotenv from 'dotenv';
 
 import { main, updateSubscribers } from '$lib/sveltekit/endpoint/sportstack.js';
+import { error, json } from '@sveltejs/kit';
+import { entryProfileTabAuthorSportstackDelete } from '@betarena/scores-lib/dist/functions/v8/profile.main.js';
 
 // #endregion ➤ 📦 Package
 
@@ -47,4 +49,26 @@ export async function POST
 {
 
   return await updateSubscribers(request)
+}
+
+export async function DELETE
+  (
+    { request, locals }
+  )
+{
+  if (!locals.uid) return json({ success: false, message: "Unauthorized" });
+  const body = await request.json();
+  const { id, uid } = body;
+  if (!id || !uid) return json({ success: false, message: "Bad request" });
+  if (locals.uid !== uid) return json({ success: false, message: "Not an owner" });
+  try
+  {
+    await entryProfileTabAuthorSportstackDelete(id);
+    return json({ success: true });
+
+  } catch (e)
+  {
+    throw error(500, { message: 'Internal server error' } as App.Error);
+  }
+
 }

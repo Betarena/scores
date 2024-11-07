@@ -14,6 +14,7 @@
   import ModalWrapper from "./ModalWrapper.svelte";
   export let id = "";
   export let deleteSportsTack = false;
+  export let cb
 </script>
 
 <ModalWrapper title="Delete" actionButton="Delete" cancel="Cancel">
@@ -24,7 +25,7 @@
     Are you sure you want to delete this { deleteSportsTack ? "publication" : "article"}? <br /> This action cannot be undone.
   </div>
   <div slot="action-button" class=" action-button">
-    <Button destructive={true} full={true}>Delete</Button>
+    <Button destructive={true} full={true} on:click={cb}>Delete</Button>
   </div>
 </ModalWrapper>
 

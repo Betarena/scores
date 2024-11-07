@@ -24,7 +24,7 @@
   import ModalArticleSeo from "./ModalArticleSEO.svelte";
   import Unpublish from "../Unpublish.svelte";
   import DeleteModal from "../DeleteModal.svelte";
-  import { publish } from "./helpers.js";
+  import { deleteArticle, publish } from "./helpers.js";
   export let data: PageData;
 
   $: ({ article = { data: {} } } = data);
@@ -75,7 +75,7 @@
     const modalState: any = {
       modal: true,
       show: true,
-      props: { id },
+      props: { id, cb: action === "delete" ? () => deleteArticle(article) : () => {} },
       component: action === "delete" ? DeleteModal : Unpublish,
     };
     modalStore.set(modalState);

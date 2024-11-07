@@ -81,7 +81,7 @@
       {:else if item.type === "loading"}
         <div class="body">
           <div class="saving-animation">
-            Saving<span class="dot">.</span><span class="dot">.</span><span
+            {item.text || "Loading"}<span class="dot">.</span><span class="dot">.</span><span
               class="dot">.</span
             >
           </div>

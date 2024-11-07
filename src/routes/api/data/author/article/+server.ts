@@ -20,7 +20,7 @@ import dotenv from 'dotenv';
 
 import { main } from '$lib/sveltekit/endpoint/author.article.js';
 import { error, RequestHandler, json } from '@sveltejs/kit';
-import { entryProfileTabAuthorArticleUpsert } from '@betarena/scores-lib/dist/functions/v8/profile.main.js';
+import { entryProfileTabAuthorArticleDelete, entryProfileTabAuthorArticleUpsert } from '@betarena/scores-lib/dist/functions/v8/profile.main.js';
 import createDOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
 import { mutateStringToPermalink } from '@betarena/scores-lib/dist/util/language.js';
@@ -109,4 +109,24 @@ export const POST: RequestHandler = async ({ request, locals }) =>
     return json({ success: false, message: e.message });
   }
 
+};
+
+
+export const DELETE: RequestHandler = async ({ request, locals }) =>
+{
+  if (!locals.uid) return json({ success: false, message: "Unauthorized" });
+  const body = await request.json();
+  const { id, uid } = body;
+  if (!id || !uid) return json({ success: false, message: "Bad request" });
+  if (locals.uid !== uid) return json({ success: false, message: "Not an owner" });
+  try
+  {
+    await entryProfileTabAuthorArticleDelete(id);
+    return json({ success: true });
+
+  } catch (e)
+  {
+    console.log("Error: ", e);
+    throw error(500, { message: 'Internal server error' } as App.Error);
+  }
 };

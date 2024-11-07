@@ -28,6 +28,8 @@
   import ModalProfilePictureCrop from "../Modal-ProfilePictureCrop.svelte";
   import { dlog } from "$lib/utils/debug.js";
   import { uploadImage } from "$lib/firebase/common.js";
+    import { infoMessages } from "$lib/components/ui/infomessages/infomessages.js";
+    import { goto } from "$app/navigation";
 
   export let selectedSportstack: AuthorsAuthorsMain;
 
@@ -92,9 +94,38 @@
       props: {
         id: selectedSportstack.id,
         deleteSportsTack: true,
+        cb: deleteSportstack
       },
       show: true,
     });
+  }
+
+  async function deleteSportstack() {
+    $modalStore.show = false;
+    const loadingId = infoMessages.add({
+      type: "loading",
+      text: "Deleting publication...",
+    })
+    const res = await fetch(`/api/data/author/sportstack`, {
+      method: "DELETE",
+      body: JSON.stringify({ id, uid: selectedSportstack.uid }),
+    });
+    infoMessages.remove(loadingId);
+    const data = await res.json();
+    if (data.success) {
+      infoMessages.add({
+        type: "success",
+        text: "Publication deleted!",
+      });
+      setTimeout(() => {
+        goto(`/u/author/${session.extract("lang")}`)
+      }, 1000);
+    } else {
+      infoMessages.add({
+        type: "error",
+        text: "Failed to delete publication.",
+      });
+    }
   }
   function handleFileChange(event) {
     const target = event.target as HTMLInputElement;
@@ -201,7 +232,10 @@ CROP PICTURE MODAL
   <div class="thumbnail-field">
     <div class="label">Thumbnail</div>
     <div class="input-wrapper">
-      <PublicationAvatar {avatar} size={viewportType === "mobile" ? "92px" : "74px"} />
+      <PublicationAvatar
+        {avatar}
+        size={viewportType === "mobile" ? "92px" : "74px"}
+      />
 
       <div class="file-uploader" on:click={() => fileInput.click()}>
         <input

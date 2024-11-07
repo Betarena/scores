@@ -19,19 +19,15 @@
   import session from "$lib/store/session.js";
   import userSettings from "$lib/store/user-settings.js";
   import DeleteModal from "./DeleteModal.svelte";
+  import { deleteArticle } from "./editor/helpers.js";
   import PublicationAvatar from "./PublicationAvatar.svelte";
   import Unpublish from "./Unpublish.svelte";
 
   export let article: IArticle;
 
-  $: ({
-    permalink,
-    data,
-    id,
-    seo_details,
-  } = article);
-  $: ({title} = data || {title: ""});
-  $: ({twitter_card} = seo_details || {twitter_card: {image: ""}});
+  $: ({ permalink, data, id, seo_details } = article);
+  $: ({ title } = data || { title: "" });
+  $: ({ twitter_card } = seo_details || { twitter_card: { image: "" } });
   $: articlePreview = twitter_card.image;
   $: profile = $userSettings.user?.scores_user_data;
   let publishedDate = "";
@@ -76,6 +72,9 @@
         modalState.component = Unpublish;
         break;
       case "delete":
+        modalState.props = {
+          cb: () => deleteArticle(article),
+        };
         modalState.component = DeleteModal;
         break;
       default:
@@ -98,7 +97,10 @@
 <svelte:body on:click={() => (actionMenu = false)} />
 <div class="article-wrapper {viewportType}" id="publication-article">
   <div class="content">
-    <PublicationAvatar avatar={articlePreview} size={viewportType === "mobile" ? "96px" : "104px"}/>
+    <PublicationAvatar
+      avatar={articlePreview}
+      size={viewportType === "mobile" ? "96px" : "104px"}
+    />
 
     <div class="info">
       <h2>{title}</h2>
@@ -110,15 +112,16 @@
       />
     </div>
   </div>
-  <div class="action"  on:click|stopPropagation={() => (actionMenu = !actionMenu)}>
-
+  <div
+    class="action"
+    on:click|stopPropagation={() => (actionMenu = !actionMenu)}
+  >
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="20"
       height="20"
       viewBox="0 0 20 20"
       fill="none"
-
     >
       <path
         d="M9.99996 10.8333C10.4602 10.8333 10.8333 10.4602 10.8333 9.99992C10.8333 9.53968 10.4602 9.16659 9.99996 9.16659C9.53972 9.16659 9.16663 9.53968 9.16663 9.99992C9.16663 10.4602 9.53972 10.8333 9.99996 10.8333Z"
@@ -144,7 +147,7 @@
     </svg>
 
     <PopupMenu bind:show={actionMenu} {options} on:click={click} />
-     </div>
+  </div>
 </div>
 
 <!--
@@ -229,11 +232,10 @@
       path {
         stroke: var(--colors-foreground-fg-quinary-400) !important;
       }
-
     }
 
     &.tablet {
-      border: 1px solid #E6E6E6;
+      border: 1px solid #e6e6e6;
       border-radius: var(--radius-xl, 12px);
       .content {
         gap: 16;
@@ -260,7 +262,7 @@
     }
 
     &.desktop {
-      border: 1px solid #E6E6E6;
+      border: 1px solid #e6e6e6;
       border-radius: var(--radius-xl, 12px);
       .content {
         gap: 16;

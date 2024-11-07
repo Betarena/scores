@@ -4,6 +4,9 @@ import { postv2 } from "$lib/api/utils.js";
 import { modalStore } from "$lib/store/modal.js";
 import { infoMessages } from "$lib/components/ui/infomessages/infomessages.js";
 import { create_article_store } from "./create_article.store.js";
+import type { IArticle } from "$lib/components/section/authors/page/helpers.js";
+import { goto } from "$app/navigation";
+import session from "$lib/store/session.js";
 export function getAllImages(editor: Editor)
 {
   const json = editor.getJSON();
@@ -50,5 +53,28 @@ export async function publish(editor: Editor, title: string, author_id: string |
   } else
   {
     infoMessages.add({ type: "error", text: "Failed to publish article" });
+  }
+}
+
+export async function deleteArticle(article: IArticle)
+{
+  modalStore.update(state => ({ ...state, show: false }));
+  const loadingId = infoMessages.add({ type: "loading", text: "Deleting article..." });
+  const res = await fetch(`/api/data/author/article`, {
+    method: "DELETE",
+    body: JSON.stringify({ id: article.id, uid: article.author.uid })
+  });
+  infoMessages.remove(loadingId);
+  const data = await res.json();
+  if (data.success)
+  {
+    infoMessages.add({ type: "success", text: "Article deleted!" });
+    setTimeout(() =>
+    {
+      goto(`/u/author/publication/${article.author.permalink}/${session.extract('lang')}?view=articles`);
+    })
+  } else
+  {
+    infoMessages.add({ type: "error", text: "Failed to delete article" });
   }
 }
