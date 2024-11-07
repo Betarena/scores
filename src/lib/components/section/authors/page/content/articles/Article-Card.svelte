@@ -8,7 +8,6 @@
 -->
 
 <script lang="ts">
-
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -24,24 +23,24 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import Avatar from '$lib/components/ui/Avatar.svelte';
-  import Tag from '$lib/components/ui/Tag.svelte';
-  import ExpandDataWrapper from '$lib/components/ui/wrappers/ExpandDataWrapper.svelte';
-  import ScrollDataWrapper from '$lib/components/ui/wrappers/ScrollDataWrapper.svelte';
-  import { timeAgo } from '$lib/utils/dates.js';
+  import Avatar from "$lib/components/ui/Avatar.svelte";
+  import Tag from "$lib/components/ui/Tag.svelte";
+  import ExpandDataWrapper from "$lib/components/ui/wrappers/ExpandDataWrapper.svelte";
+  import ScrollDataWrapper from "$lib/components/ui/wrappers/ScrollDataWrapper.svelte";
+  import { timeAgo } from "$lib/utils/dates.js";
 
-  import { fade } from 'svelte/transition';
-  import defaultAvatar from '../../tags/content/assets/profile-avatar.svg';
+  import { fade } from "svelte/transition";
+  import defaultAvatar from "../../tags/content/assets/profile-avatar.svg";
 
   import type {
     IPageAuthorArticleData,
     IPageAuthorAuthorData,
     IPageAuthorTagData,
-  } from '@betarena/scores-lib/types/v8/preload.authors.js';
-  import type { IPageAuthorTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.tags.js';
-  import { readingTime } from '../../helpers.js';
-  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
-  import { userNameToUrlString } from '../../../common_ui/helpers.js';
+  } from "@betarena/scores-lib/types/v8/preload.authors.js";
+  import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
+  import { readingTime } from "../../helpers.js";
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
+  import { userNameToUrlString } from "../../../common_ui/helpers.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -64,8 +63,7 @@
     tags_data: IPageAuthorTagData[];
   }
 
-  export let
-    /**
+  export let /**
      * @augments IArticle
      */
     article: IArticle,
@@ -80,29 +78,27 @@
     /**
      * @description mobile view
      */
-    mobile = false
-  ;
+    mobile = false;
 
   $: ({
     permalink,
     tags_data,
     published_date,
-    data: { title },
-    seo_details: {
-      opengraph: { images },
-    },
+    data,
+    seo_details,
     author,
   } = article);
 
+  $: ({ images = [] } = seo_details || {});
+  $: ({ title = "", content = "" } = data || {});
   $: ({ avatar, username } = author.data || {
-    username: 'unknow',
+    username: "unknow",
     avatar: defaultAvatar,
   });
 
   $: date = timeAgo(published_date, translations.time_ago);
-  $: timeToRead =  readingTime(article.data?.content)
+  $: timeToRead = readingTime(content);
   // #endregion ➤ 📌 VARIABLES
-
 </script>
 
 <!--
@@ -121,14 +117,16 @@
     <div class="author-wrapper">
       <Avatar src={avatar} size={mobile ? 32 : 38} />
       <div class="author-info">
-        <a  href="/a/user/{userNameToUrlString(username)}" class="author-name">{username}</a>
+        <a href="/a/user/{userNameToUrlString(username)}" class="author-name"
+          >{username}</a
+        >
         <div class="publication-date">
           {#if timeToRead}
             {timeToRead}
             <TranslationText
-              key={'uknown'}
+              key={"uknown"}
               text={translations?.readingTime?.reading_time}
-              fallback={'mins'}
+              fallback={"mins"}
             />
             -
           {/if}
@@ -201,8 +199,6 @@
     justify-content: space-between;
     background: var(--bg-color-second);
     align-items: start;
-
-
 
     a {
       color: var(--text-color);

@@ -34,7 +34,7 @@ export async function main
 
         const searchParams = request.url.searchParams;
         const
-          page = searchParams.get('page') || 1,
+          page = searchParams.get('page') || 0,
           permalink = searchParams.get('permalink') || "",
           id = searchParams.get('id') || "",
           user = searchParams.get('user')

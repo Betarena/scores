@@ -87,10 +87,8 @@
     permalink,
     tags_data,
     published_date,
-    data: { title },
-    seo_details: {
-      opengraph: { images },
-    },
+    data,
+    seo_details,
     author,
   } = article);
 
@@ -98,9 +96,11 @@
     username: 'unknow',
     avatar: defaultAvatar,
   });
+  $: ({ images = [] } = seo_details || {});
+  $: ({ title = "", content = "" } = data || {});
   $: sportstackUrl = `/a/sportstack/${username.toLowerCase().replaceAll(' ', '-')}`;
   $: date = timeAgo(published_date, translations.time_ago);
-  $: timeToRead =  readingTime(article.data?.content)
+  $: timeToRead =  readingTime(content)
   // #endregion ➤ 📌 VARIABLES
 
 </script>
