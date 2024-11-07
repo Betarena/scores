@@ -67,7 +67,7 @@
   }
 
   function publishClick() {
-    publish(contentEditor, title, selectedSportstack.id);
+    publish(contentEditor, title, selectedSportstack);
   }
 </script>
 

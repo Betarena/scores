@@ -7,6 +7,7 @@ import { create_article_store } from "./create_article.store.js";
 import type { IArticle } from "$lib/components/section/authors/page/helpers.js";
 import { goto } from "$app/navigation";
 import session from "$lib/store/session.js";
+import type { AuthorsAuthorsMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
 export function getAllImages(editor: Editor)
 {
   const json = editor.getJSON();
@@ -27,7 +28,7 @@ export function getAllImages(editor: Editor)
 }
 
 
-export async function publish(editor: Editor, title: string, author_id: string | number)
+export async function publish(editor: Editor, title: string, author: AuthorsAuthorsMain)
 {
   const v = DOMPurify.sanitize(editor.getHTML());
   const t = DOMPurify.sanitize(title);
@@ -40,7 +41,7 @@ export async function publish(editor: Editor, title: string, author_id: string |
   const res = await postv2("/api/data/author/article", {
     content: v,
     title: t,
-    author_id,
+    author_id: author.id,
     tags,
     seo,
     images,
@@ -50,6 +51,10 @@ export async function publish(editor: Editor, title: string, author_id: string |
   if (res.success)
   {
     infoMessages.add({ type: "success", text: "Article published!" });
+    setTimeout(() =>
+    {
+      goto(`/u/author/publication/${author.permalink}/${session.extract('lang')}?view=articles`, { invalidateAll: true });
+    })
   } else
   {
     infoMessages.add({ type: "error", text: "Failed to publish article" });
