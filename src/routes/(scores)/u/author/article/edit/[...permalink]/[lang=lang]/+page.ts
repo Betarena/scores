@@ -1,5 +1,6 @@
 import { ERROR_CODE_INVALID } from '$lib/utils/debug.js';
 import { preloadExitLogic, promiseValidUrlCheck } from '$lib/utils/navigation.js';
+import type { IPageAuhtorArticleDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
 import type { PageLoad } from './$types';
 
 export const load = (async ({ fetch, params }) =>
@@ -34,6 +35,6 @@ export const load = (async ({ fetch, params }) =>
       );
   ;
   const res = await fetch(`/api/data/author/article?permalink=${permalink}`);
-  const article = await res.json();
+  const article = await res.json() as IPageAuhtorArticleDataFinal;
   return { ...article };
 }) satisfies PageLoad;

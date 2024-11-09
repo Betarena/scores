@@ -1,8 +1,8 @@
 import type { AuthorsAuthorsMain } from '@betarena/scores-lib/types/v8/_HASURA-0.js';
 import { _GraphQL } from '@betarena/scores-lib/dist/classes/_graphql.js';
-import type { PageServerLoad } from '../../create/[lang=lang]/$types.js';
+import type { LayoutServerLoad } from '.svelte-kit/types/src/routes/(scores)/u/author/publication/[permalink]/$types.js';
 
-export const load = (async ({ locals, fetch }) =>
+export const load: LayoutServerLoad = (async ({ locals, fetch, params }) =>
 {
   const uid = locals.uid
 
@@ -17,4 +17,4 @@ export const load = (async ({ locals, fetch }) =>
   return {
     sportstacks: getSportsTacks(uid)
   };
-}) satisfies PageServerLoad;
+}) satisfies LayoutServerLoad;

@@ -25,16 +25,23 @@
   import Unpublish from "../Unpublish.svelte";
   import DeleteModal from "../DeleteModal.svelte";
   import { deleteArticle, publish } from "./helpers.js";
+  import { create_article_store } from "./create_article.store.js";
   export let data: PageData;
 
-  $: ({ article = { data: {} } } = data);
-  $: ({ title: initTitle, content, featured_image, id } = article.data);
+  $: ({ article, mapTag } = data);
+  $: ({
+    title: initTitle,
+    content,
+    featured_image,
+    id,
+  } = article.data || { title: "", content: "", featured_image: "", id: "" });
   $: title = initTitle || "";
-  $: if (featured_image) {
+  $: if (featured_image && !content.includes(featured_image)) {
     content = `<img src="${featured_image}" alt="${title}" />${content}`;
   }
-  $: uploadUrl = selectedSportstack ? `Betarena_Media/authors/authors_list/${selectedSportstack.id}/media` : "";
-
+  $: uploadUrl = selectedSportstack
+    ? `Betarena_Media/authors/authors_list/${selectedSportstack.id}/media`
+    : "";
 
   let options: (AuthorsAuthorsMain & { label: string })[] = [];
   let selectedSportstack;
@@ -57,6 +64,17 @@
     }
   }
 
+  $: if (article && mapTag) {
+    create_article_store.set({
+      tags: mapTag.map(([_id, tag]) => tag),
+      seo: {
+        title: article.seo_details?.main_data.title || "",
+        description: article.seo_details?.main_data.description || "",
+      },
+      view: "preview",
+    });
+  }
+
   $: ({ viewportType } = $session);
 
   function back() {
@@ -75,7 +93,10 @@
     const modalState: any = {
       modal: true,
       show: true,
-      props: { id, cb: action === "delete" ? () => deleteArticle(article) : () => {} },
+      props: {
+        id,
+        cb: action === "delete" ? () => deleteArticle(article) : () => {},
+      },
       component: action === "delete" ? DeleteModal : Unpublish,
     };
     modalStore.set(modalState);
@@ -84,7 +105,6 @@
   function publishClick() {
     publish(contentEditor, title, selectedSportstack);
   }
-
 </script>
 
 <!--
@@ -140,7 +160,7 @@
       </div>
     </div>
   </Container>
-  <Editor {data} bind:contentEditor {uploadUrl} bind:title={title} {content} />
+  <Editor {data} bind:contentEditor {uploadUrl} bind:title {content} />
 </div>
 
 <!--

@@ -64,7 +64,7 @@
   $: ({ translate } = data);
   $: ({ viewportType } = $session);
   $: ({ theme } = { ...$userSettings });
-    let selectedSportstack;
+  let selectedSportstack;
   let loadingArticles = false;
   let articles: Map<number, IArticle> = new Map();
   let sportstacks = [] as AuthorsAuthorsMain & { label: string }[];
@@ -189,7 +189,7 @@
                 </Button>
                 {#if view === "home"}
                   <a
-                    href="/a/sportstack/{selectedSportstack.permalink}"
+                    href="/a/sportstack/{selectedSportstack?.permalink}"
                     style="margin-left: -10px !important; margin-right: -8px !important"
                   >
                     <Button type="secondary-gray">View sportstack</Button>
@@ -197,7 +197,7 @@
                 {/if}
                 {#if view !== "settings"}
                   <a
-                    href="/u/author/article/create/{$userSettings.lang}?sportstack={selectedSportstack.permalink}"
+                    href="/u/author/article/create/{$userSettings.lang}?sportstack={selectedSportstack?.permalink}"
                   >
                     <Button full={true} type="primary">+ New article</Button>
                   </a>

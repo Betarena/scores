@@ -114,7 +114,7 @@
       {/if}
     </div>
   </Container>
-  <Editor {uploadUrl} {data} bind:contentEditor bind:title />
+  <Editor {uploadUrl} {data} bind:contentEditor bind:title  />
 </div>
 
 <!--

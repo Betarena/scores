@@ -213,7 +213,7 @@
           font-style: normal;
           font-weight: 500;
           line-height: var(--line-height-text-md, 24px); /* 133.333% */
-          max-height: 48px;
+          max-height: 54px;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: normal;

@@ -72,7 +72,7 @@
   {#if viewportType === "mobile"}
     <div class="buttons-header">
       <a
-        href="/u/author/article/create/{$userSettings.lang}?sportstack={selectedSportstack.permalink}"
+        href="/u/author/article/create/{$userSettings.lang}?sportstack={selectedSportstack?.permalink}"
       >
         <Button type="primary" full={true}>+ New article</Button>
       </a>

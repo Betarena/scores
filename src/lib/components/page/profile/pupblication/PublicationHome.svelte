@@ -40,12 +40,12 @@
   {#if viewportType !== "desktop"}
     <div class="buttons-header">
       <div class="button-wrapper">
-        <a href="/a/sportstack/{selectedSportstack.permalink}">
+        <a href="/a/sportstack/{selectedSportstack?.permalink}">
           <Button type="secondary-gray">View sportstack</Button>
         </a>
       </div>
       <a
-        href="/u/author/article/create/{$userSettings.lang}?sportstack={selectedSportstack.permalink}"
+        href="/u/author/article/create/{$userSettings.lang}?sportstack={selectedSportstack?.permalink}"
       >
         <Button full={true} type="primary">+ New article</Button>
       </a>
