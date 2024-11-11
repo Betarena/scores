@@ -18,6 +18,8 @@
   import PublicationArticleArticleLoader from "./PublicationArticleArticleLoader.svelte";
   import EyeOffIcon from "$lib/components/ui/assets/eye-off-icon.svelte";
   import PopupMenu from "$lib/components/ui/PopupMenu.svelte";
+  import { articleFilterStore } from "./editor/helpers.js";
+  import { createEventDispatcher } from "svelte";
 
   export let selectedSportstack: AuthorsAuthorsMain;
   export let articles: Map<number, IArticle>;
@@ -26,35 +28,52 @@
   let showSortBy = false;
   const options = [
     {
-      id: 3,
+      id: "all",
       label: "All",
     },
     {
-      id: 1,
+      id: "published",
       label: "Published",
     },
     {
-      id: 2,
+      id: "unpublished",
       label: "Unpunlished",
+    },
+    {
+      id: "draft",
+      label: "Draft",
     },
   ];
 
   const sortOptions = [
     {
-      id: "title",
+      id: "sortTitle",
       label: "Title",
     },
     {
-      id: "date",
+      id: "sortPublishDate",
       label: "Published date",
     },
     {
-      id: "edit",
+      id: "sortEditedDate",
       label: "Last edited",
     },
   ];
+  const dispatch = createEventDispatcher();
 
   $: ({ viewportType } = $session);
+  function changeFilter(
+    e
+  ) {
+    $articleFilterStore.status =  e.detail.id;
+    dispatch("reloadArticles");
+  }
+  function changeSort(
+    e: CustomEvent<"sortTitle" | "sortPublishDate" | "sortEditedDate">
+  ) {
+    $articleFilterStore.sortBy = e.detail;
+    dispatch("reloadArticles");
+  }
 </script>
 
 <!--
@@ -80,7 +99,11 @@
   {/if}
   <div class="header">
     <div class="dropdown-input">
-      <DropDownInput {options} value={options[1]} />
+      <DropDownInput
+        on:change={changeFilter}
+        {options}
+        value={options.find(({ id }) => id == $articleFilterStore.status)}
+      />
 
       {#if viewportType === "tablet"}
         <a href="/u/author/article/create/{$userSettings.lang}">
@@ -110,7 +133,11 @@
           </svg>
           <span>Sort by</span>
         </Button>
-        <PopupMenu options={sortOptions} bind:show={showSortBy}/>
+        <PopupMenu
+          options={sortOptions}
+          bind:show={showSortBy}
+          on:click={changeSort}
+        />
       </div>
     </div>
   </div>
@@ -122,7 +149,11 @@
     {/if}
     {#if articles.size}
       {#each [...articles.entries()] as [key, article] (key)}
-        <PublicationArticleArticle {article} />
+        <PublicationArticleArticle
+          {article}
+          on:reloadArticles
+          on:deleteArticle
+        />
       {/each}
     {:else if !loadingArticles}
       <div class="no-content">
@@ -189,8 +220,6 @@
         }
 
         span {
-
-
           /* Text md/Medium */
           font-family: var(--Font-family-font-family-body, Roboto);
           font-size: var(--Font-size-text-md, 16px);
@@ -198,7 +227,6 @@
           font-weight: 500;
           line-height: var(--Line-height-text-md, 24px); /* 150% */
         }
-
       }
     }
     .content {

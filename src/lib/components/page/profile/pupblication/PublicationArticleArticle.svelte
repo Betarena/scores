@@ -18,8 +18,9 @@
   import { modalStore } from "$lib/store/modal.js";
   import session from "$lib/store/session.js";
   import userSettings from "$lib/store/user-settings.js";
+  import { createEventDispatcher } from "svelte";
   import DeleteModal from "./DeleteModal.svelte";
-  import { deleteArticle, unpublish } from "./editor/helpers.js";
+  import { deleteArticle, publish } from "./editor/helpers.js";
   import PublicationAvatar from "./PublicationAvatar.svelte";
   import Unpublish from "./Unpublish.svelte";
 
@@ -30,6 +31,8 @@
   $: ({ twitter_card } = seo_details || { twitter_card: { image: "" } });
   $: articlePreview = twitter_card.image;
   $: profile = $userSettings.user?.scores_user_data;
+
+  const dispatch = createEventDispatcher();
   let publishedDate = "";
   $: if (article.published_date) {
     const date = new Date(article.published_date);
@@ -71,12 +74,20 @@
       case "unpublish":
         modalState.component = Unpublish;
         modalState.props = {
-          cb: () => unpublish(article),
+          cb: () => {
+            publish(article, "unpublish");
+            dispatch("reloadArticles");
+          },
         };
         break;
       case "delete":
         modalState.props = {
-          cb: () => deleteArticle(article),
+          cb: async () => {
+            const res = await deleteArticle(article);
+            if (res.success) {
+              dispatch("deleteArticle", article.id);
+            }
+          },
         };
         modalState.component = DeleteModal;
         break;

@@ -37,7 +37,11 @@ export async function main
           page = searchParams.get('page') || 0,
           permalink = searchParams.get('permalink') || "",
           id = searchParams.get('id') || "",
-          user = searchParams.get('user')
+          user = searchParams.get('user'),
+          status = searchParams.get('status') || undefined,
+          sortTitle = searchParams.get('sortTitle') || undefined,
+          sortPublishDate = searchParams.get('sortPublishDate') || undefined,
+          sortEditedDate = searchParams.get('sortEditedDate') || undefined
           ;
 
         // ╭──────────────────────────────────────────────────────────────────╮
@@ -57,11 +61,19 @@ export async function main
           const data = await fallbackDataGenerate1(id);
           return json(data || null);
         }
+        let options;
+
+        if (sortTitle || sortPublishDate || sortEditedDate || status) options = {};
+        if (sortTitle) options.sortTitle = sortTitle as 'desc' | 'asc';
+        if (sortPublishDate) options.sortPublishDate = sortPublishDate as 'desc' | 'asc';
+        if (sortEditedDate) options.sortEditedDate = sortEditedDate as 'desc' | 'asc';
+        if (status) options.filterStatus = status as 'published' | 'unpublished' | 'draft' | 'all';
 
         const data: IPageAuthorProfileData | undefined = await fallbackDataGenerate0
           (
             page,
-            permalink
+            permalink,
+            options
         )
           ;
         // ▓ [🐞]
@@ -126,12 +138,24 @@ async function fallbackDataGenerate0
   (
     page: string | number,
     permalink: string,
+    optsQuery?: {
+      sortTitle?: 'desc' | 'asc';
+      sortPublishDate?: 'desc' | 'asc';
+      sortEditedDate?: 'desc' | 'asc';
+      filterStatus?: 'published' | 'unpublished' | 'draft' | 'all';
+    }
 ): Promise<IPageAuthorSportstackData | undefined>
 {
-  const dataRes0: IPageAuthorProfileData = await entryTargetDataAuthorSportstack({ permalink, page: Number(page), isUsingAuthorData: true });
-  const dataRes1 = await getSportstackByPermalink(permalink);;
-  (dataRes0 as any).sportstack = dataRes1?.sportstack;
-  return dataRes0
+  try
+  {
+    const dataRes0: IPageAuthorProfileData = await entryTargetDataAuthorSportstack({ permalink, page: Number(page), isUsingAuthorData: true, optsQuery });
+    const dataRes1 = await getSportstackByPermalink(permalink);;
+    (dataRes0 as any).sportstack = dataRes1?.sportstack;
+    return dataRes0
+  } catch (e)
+  {
+    return
+  }
 }
 
 /**

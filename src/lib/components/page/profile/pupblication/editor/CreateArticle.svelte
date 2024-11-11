@@ -24,7 +24,7 @@
   import ModalArticleSeo from "./ModalArticleSEO.svelte";
 
   import Editor from "./Editor.svelte";
-  import { publish } from "./helpers.js";
+  import { publish, upsert } from "./helpers.js";
   export let data: PageData;
   let options: (AuthorsAuthorsMain & { label: string })[] = [];
   let selectedSportstack;
@@ -66,8 +66,9 @@
     goto(url, { replaceState: true, noScroll: true, keepFocus: true });
   }
 
-  function publishClick() {
-    publish(contentEditor, title, selectedSportstack);
+  async function publishClick() {
+    const res = await upsert(contentEditor, title, selectedSportstack, false);
+
   }
 </script>
 
@@ -114,7 +115,7 @@
       {/if}
     </div>
   </Container>
-  <Editor {uploadUrl} {data} bind:contentEditor bind:title  />
+  <Editor {uploadUrl} {data} bind:contentEditor bind:title />
 </div>
 
 <!--

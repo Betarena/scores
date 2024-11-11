@@ -43,6 +43,7 @@
     type IArticle,
     prepareArticlesMap,
   } from "$lib/components/section/authors/page/helpers.js";
+  import { articleFilterStore } from "./editor/helpers.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -123,11 +124,15 @@
   $: selected = tabs.find((tab) => tab.view === view) || tabs[0];
 
   async function getArticles() {
-    if (articles?.size) return;
     loadingArticles = true;
     articles = new Map();
+    const options = {
+      status: $articleFilterStore.status,
+    }
+    options[$articleFilterStore.sortBy] = "asc";
     const data = await fetchArticlesBySportstack({
       permalink: selectedSportstack.permalink,
+      options
     });
     loadingArticles = false;
     if (data) {
@@ -136,7 +141,15 @@
         new Map(data.mapTag),
         new Map(data.mapAuthor)
       );
+    } else {
+      articles = new Map();
     }
+  }
+
+  function deleteArticle(e) {
+    const id = e.detail;
+    articles.delete(id);
+    articles = new Map(articles);
   }
 </script>
 
@@ -219,7 +232,9 @@
         {loadingArticles}
         {articles}
         {sportstacks}
+        on:reloadArticles={getArticles}
         on:changeView={change}
+        on:deleteArticle={deleteArticle}
         {selectedSportstack}
       />
     </div>

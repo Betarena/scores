@@ -30,9 +30,9 @@
     $modalStore.component = ModalArticleSeo;
   }
 
-  let tags: AuthorsTagsMain[] = [];
+  let tags: string[] = [];
   let search = "";
-  let selectedTags: AuthorsTagsMain[] = [];
+  let selectedTags: string[] = [];
 
   $: ({ viewportType } = $session);
 
@@ -42,7 +42,7 @@
     if (selectedTags.length === 5) return;
     if (check(tag, selectedTags)) {
       selectedTags = selectedTags.filter(
-        (t) => t.id !== tag.id
+        (t) => t !== tag
       );
       return;
     }
@@ -51,17 +51,21 @@
 
   function deselect(tag) {
     selectedTags = selectedTags.filter(
-      (t) => t.id !== tag.id
+      (t) => t !== tag
     );
   }
 
   function check(tag, selected) {
-    return !!selected.some((t) => t.id === tag.id);
+    return !!selected.some((t) => t === tag);
   }
 
   function keyHandler(e) {
     if (e.detail.key === "Enter") {
-      select(tags.find((tag) => !check(tag, $create_article_store.tags)));
+      if (tags.length) {
+        select(tags.find((tag) => !check(tag, $create_article_store.tags)));
+      } else {
+        select(search);
+      }
       search = "";
     }
   }
@@ -76,7 +80,7 @@
     const res = (await get(
       `/api/data/author/tags?search=${text}`
     )) as AuthorsTagsMain[];
-    tags = [...res];
+    tags = [...res.map(tag => tag.name as string)];
   }
 
   onMount(() => {
@@ -129,7 +133,7 @@
             />
             {#if selectedTags.length}
               <div class="seleted-tags">
-                {#each selectedTags as tag (tag.id)}
+                {#each selectedTags as tag (tag)}
                   <div
                     in:fade={{ delay: 100 }}
                     animate:flip={{
@@ -142,7 +146,7 @@
                       active={true}
                       size="md"
                       on:click={() => deselect(tag)}
-                      >{tag.name}
+                      >{tag}
                       <div class="cross-icon">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -171,7 +175,7 @@
       <div class="tags-wrapper">
         <h2>Choose tags</h2>
         <div class="tags-to-select">
-          {#each tags as tag (tag.id)}
+          {#each tags as tag (tag)}
             {@const isActive = check(tag, selectedTags)}
             <div
               animate:flip={{
@@ -183,7 +187,7 @@
                 size={viewportType === "mobile" ? "xl" : "xxl"}
                 active={isActive}
                 color={isActive ? "brand" : "gray"}
-                on:click={() => select(tag)}>{tag.name}</Badge
+                on:click={() => select(tag)}>{tag}</Badge
               >
             </div>
           {/each}

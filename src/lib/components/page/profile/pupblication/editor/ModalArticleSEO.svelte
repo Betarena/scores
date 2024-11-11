@@ -68,7 +68,7 @@
         <div class="tags-wrapper">
           <ExpandDataWrapper data={tags}>
             <slot slot="item" let:item={tag}>
-              <Badge active={true} color="brand" size="sm">{tag.name} </Badge>
+              <Badge active={true} color="brand" size="sm">{tag} </Badge>
             </slot>
             <slot slot="count" let:count>
               <Badge active={true} color="brand" size="sm">+{count}</Badge>

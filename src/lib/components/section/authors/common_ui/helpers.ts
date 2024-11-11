@@ -126,18 +126,29 @@ export function userNameToUrlString(userName: string | undefined | null): string
 }
 
 
-export async function fetchArticlesBySportstack({ permalink = "", page = 0 })
+export async function fetchArticlesBySportstack({ permalink = "", page = 0, options = {} }: {
+  permalink?: string; page?: number; options?: {
+    sortTitle?: 'desc' | 'asc';
+    sortPublishDate?: 'desc' | 'asc';
+    sortEditedDate?: 'desc' | 'asc';
+    status?: 'published' | 'unpublished' | 'draft' | 'all';
+  }
+})
 {
   dlogv2(
     "loadArticles(..) // START",
     [`🔹 [var] ➤ page |:| ${page}`],
     true
   );
-  const /**
+  let /**
    * @description
    * 📝 URL to be requested.
    */
     url = `/api/data/author/sportstack?permalink=${permalink}&page=${page}`;
+  if (options)
+  {
+    Object.entries(options).forEach(([key, value]) => url += `&${key}=${value}`);
+  }
   const /**
    * @description
    * 📝 Data Response (0).

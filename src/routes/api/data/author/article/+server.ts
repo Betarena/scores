@@ -20,7 +20,7 @@ import dotenv from 'dotenv';
 
 import { main } from '$lib/sveltekit/endpoint/author.article.js';
 import { error, RequestHandler, json } from '@sveltejs/kit';
-import { entryProfileTabAuthorArticleDelete, entryProfileTabAuthorArticleUpsert } from '@betarena/scores-lib/dist/functions/v8/profile.main.js';
+import { entryProfileTabAuthorArticleDelete, entryProfileTabAuthorArticleUpdateStatus, entryProfileTabAuthorArticleUpsert } from '@betarena/scores-lib/dist/functions/v8/profile.main.js';
 import createDOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
 import { mutateStringToPermalink } from '@betarena/scores-lib/dist/util/language.js';
@@ -51,71 +51,68 @@ export const POST: RequestHandler = async ({ request, locals }) =>
 {
   if (!locals.uid) throw error(401, { message: 'Unauthorized' } as App.Error);
   const body = await request.json();
-  let { content, title, author_id, images, id, seo, tags, status = "published", uid, article } = body;
+  let { content, title, author_id, images, id, seo, tags, uid, article, } = body;
 
-  if (status === "unpublish" && locals.uid !== uid) return json({ success: false, message: "Not an owner" });
+  if (locals.uid !== uid) return json({ success: false, message: "Not an owner" });
   let data = article;
-  if (status === "published")
-  {
-    const window = new JSDOM('').window;
-    const DOMPurify = createDOMPurify(window);
 
-    content = DOMPurify.sanitize(content);
-    title = DOMPurify.sanitize(title);
-    const seoTitle = DOMPurify.sanitize(seo.title) || title;
-    const seoDescription = DOMPurify.sanitize(seo.description) || "";
-    const permalink = mutateStringToPermalink(title);
-    const link = `https://scores.betarena.com/a/${permalink}`;
-    data = {
-      author_id,
-      lang: 'en',
-      id,
-      tags: tags.map((tag) => tag.id),
-      seo_details: {
-        twitter_card: {
-          description: seoDescription,
-          title: seoTitle,
-          image: images[0] || "",
-          site: '@betarenasocial',
-          image_alt: "",
-        },
-        opengraph: {
-          description: seoDescription,
-          images: images.map((image: string) => ({ url: image, alt: title, width: 120, height: 120 })),
-          locale: "en_US",
-          title: seoTitle,
-          type: 'website',
-          url: link,
-        },
-        main_data: {
-          canonical: link,
-          description: seoDescription,
-          keywords: tags.map((tag) => tag.name).join(", "),
-          nofollow: false,
-          noindex: false,
-          title: seoTitle
-        }
+  const window = new JSDOM('').window;
+  const DOMPurify = createDOMPurify(window);
+
+  content = DOMPurify.sanitize(content);
+  title = DOMPurify.sanitize(title);
+  const seoTitle = DOMPurify.sanitize(seo.title) || title;
+  const seoDescription = DOMPurify.sanitize(seo.description) || "";
+  const permalink = mutateStringToPermalink(title);
+  const link = `https://scores.betarena.com/a/${permalink}`;
+  data = {
+    author_id,
+    lang: 'en',
+    // id,
+    tags,
+    seo_details: {
+      twitter_card: {
+        description: seoDescription,
+        title: seoTitle,
+        image: images[0] || "",
+        site: '@betarenasocial',
+        image_alt: "",
       },
-      data: {
-        content,
-        title,
-        meta_description: seoDescription,
-        seo_title: seoTitle,
-        status
+      opengraph: {
+        description: seoDescription,
+        images: images.map((image: string) => ({ url: image, alt: title, width: 120, height: 120 })),
+        locale: "en_US",
+        title: seoTitle,
+        type: 'website',
+        url: link,
+      },
+      main_data: {
+        canonical: link,
+        description: seoDescription,
+        keywords: tags.map((tag) => tag.name).join(", "),
+        nofollow: false,
+        noindex: false,
+        title: seoTitle
       }
-    };
-  }
+    },
+    data: {
+      content,
+      title,
+      meta_description: seoDescription,
+      seo_title: seoTitle,
+    }
+  };
 
-  if (status === "unpublish")
+  if (id)
   {
-    data.data.status = status;
+    data.id = id;
   }
 
   try
   {
-
-    await entryProfileTabAuthorArticleUpsert(data);
-    return json({ success: true });
+    console.log("Data: ", data)
+    const articleId = await entryProfileTabAuthorArticleUpsert(data);
+    return json({ success: true, id: articleId });
 
   } catch (e)
   {
@@ -143,4 +140,26 @@ export const DELETE: RequestHandler = async ({ request, locals }) =>
     console.log("Error: ", e);
     throw error(500, { message: 'Internal server error' } as App.Error);
   }
+};
+
+export const PUT: RequestHandler = async ({ locals, request }) =>
+{
+  if (!locals.uid) return json({ success: false, message: "Unauthorized" });
+  const body = await request.json();
+  const { id, uid, status } = body;
+  if (uid !== locals.uid) return json({ success: false, message: "Not an owner" });
+  if (!id) return json({ success: false, message: "Bad request" });
+  try
+  {
+    await entryProfileTabAuthorArticleUpdateStatus({
+      numArticleId: id,
+      enumArticleNewStatus: status
+    })
+
+  } catch (e)
+  {
+    console.log("Error: ", e);
+    throw error(500, { message: 'Internal server error' } as App.Error);
+  }
+  return new Response();
 };

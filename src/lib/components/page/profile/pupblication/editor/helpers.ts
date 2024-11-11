@@ -8,6 +8,7 @@ import type { IArticle } from "$lib/components/section/authors/page/helpers.js";
 import { goto } from "$app/navigation";
 import session from "$lib/store/session.js";
 import type { AuthorsAuthorsMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+import { type Writable, writable } from "svelte/store";
 export function getAllImages(editor: Editor)
 {
   const json = editor.getJSON();
@@ -28,7 +29,7 @@ export function getAllImages(editor: Editor)
 }
 
 
-export async function publish(editor: Editor, title: string, author: AuthorsAuthorsMain)
+export async function upsert(editor: Editor, title: string, author: AuthorsAuthorsMain, reload: boolean = false)
 {
   const v = DOMPurify.sanitize(editor.getHTML());
   const t = DOMPurify.sanitize(title);
@@ -45,20 +46,26 @@ export async function publish(editor: Editor, title: string, author: AuthorsAuth
     tags,
     seo,
     images,
+    uid: author.uid,
     status: "published"
   }) as any;
   infoMessages.remove(loadingId);
   if (res.success)
   {
     infoMessages.add({ type: "success", text: "Article published!" });
-    setTimeout(() =>
+    if (reload)
     {
-      goto(`/u/author/publication/${author.permalink}/${session.extract('lang')}?view=articles`, { invalidateAll: true });
-    })
+
+      setTimeout(() =>
+      {
+        goto(`/u/author/publication/${author.permalink}/${session.extract('lang')}?view=articles`, { invalidateAll: true });
+      })
+    }
   } else
   {
     infoMessages.add({ type: "error", text: "Failed to publish article" });
   }
+  return res;
 }
 
 export async function deleteArticle(article: IArticle)
@@ -76,33 +83,37 @@ export async function deleteArticle(article: IArticle)
     infoMessages.add({ type: "success", text: "Article deleted!" });
     setTimeout(() =>
     {
-      goto(`/u/author/publication/${article.author.permalink}/${session.extract('lang')}?view=articles`);
+      goto(`/u/author/publication/${article.author.permalink}/${session.extract('lang')}?view=articles`, { invalidateAll: true });
     })
   } else
   {
     infoMessages.add({ type: "error", text: "Failed to delete article" });
   }
+  return data
 }
 
-export async function unpublish(article: IArticle)
+export async function publish(article: IArticle, status: "publish" | "unpublish")
 {
   modalStore.update(state => ({ ...state, show: false }));
   const loadingId = infoMessages.add({ type: "loading", text: "Unpublishing article..." });
   const res = await fetch(`/api/data/author/article`, {
-    method: "POST",
-    body: JSON.stringify({ id: article.id, article, status: "unpublish", uid: article.author.uid })
+    method: "PUT",
+    body: JSON.stringify({ id: article.id, status: "unpublish", uid: article.author.uid })
   });
   infoMessages.remove(loadingId);
   const data = await res.json();
   if (data.success)
   {
-    infoMessages.add({ type: "success", text: "Article unpublished!" });
+    infoMessages.add({ type: "success", text: `Article ${status}ed!` });
     setTimeout(() =>
     {
       goto(`/u/author/publication/${article.author.permalink}/${session.extract('lang')}?view=articles`);
     })
   } else
   {
-    infoMessages.add({ type: "error", text: "Failed to unpublish article" });
+    infoMessages.add({ type: "error", text: `Failed to ${status} article` });
   }
+  return data
 }
+
+export const articleFilterStore: Writable<{ status: 'published' | 'unpublished' | 'draft' | 'all', sortBy: "sortTitle" | "sortPublishDate" | "sortEditedDate" }> = writable({ status: "all", sortBy: "sortEditedDate" });

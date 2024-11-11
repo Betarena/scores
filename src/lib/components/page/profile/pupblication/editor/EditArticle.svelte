@@ -66,7 +66,7 @@
 
   $: if (article && mapTag) {
     create_article_store.set({
-      tags: mapTag.map(([_id, tag]) => tag),
+      tags: mapTag.map(([_id, tag]) => tag.name as string),
       seo: {
         title: article.seo_details?.main_data.title || "",
         description: article.seo_details?.main_data.description || "",
