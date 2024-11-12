@@ -126,10 +126,11 @@
   async function getArticles() {
     loadingArticles = true;
     articles = new Map();
+    const {status, sortBy} = $articleFilterStore;
     const options = {
-      status: $articleFilterStore.status,
+      status,
     }
-    options[$articleFilterStore.sortBy] = "asc";
+    options[sortBy] = sortBy === "sortTitle" ? "asc" : "desc";
     const data = await fetchArticlesBySportstack({
       permalink: selectedSportstack.permalink,
       options
