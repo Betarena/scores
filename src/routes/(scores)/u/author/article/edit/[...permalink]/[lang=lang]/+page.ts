@@ -26,14 +26,14 @@ export const load = (async ({ fetch, params }) =>
     response: any = {}
     ;
 
-  if (!isUrlValid)
-    preloadExitLogic
-      (
-        0,
-        '(authors)',
-        ERROR_CODE_INVALID
-      );
-  ;
+  // if (!isUrlValid)
+  //   preloadExitLogic
+  //     (
+  //       0,
+  //       '(authors)',
+  //       ERROR_CODE_INVALID
+  //     );
+  // ;
   const res = await fetch(`/api/data/author/article?permalink=${permalink}`);
   const article = await res.json() as IPageAuhtorArticleDataFinal;
   return { ...article };

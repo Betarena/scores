@@ -318,7 +318,7 @@
   >
     <div class="editor-wrapper" id="parent">
       <textarea
-        on:input={() => dispatch("update", { editor, title })}
+        on:input={(e) => dispatch("update", { editor, title: e.target.value })}
         bind:this={textareaNode}
         class="title"
         bind:value={title}

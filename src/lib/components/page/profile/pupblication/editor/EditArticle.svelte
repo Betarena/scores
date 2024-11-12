@@ -24,16 +24,16 @@
   import ModalArticleSeo from "./ModalArticleSEO.svelte";
   import Unpublish from "../Unpublish.svelte";
   import DeleteModal from "../DeleteModal.svelte";
-  import { deleteArticle, publish } from "./helpers.js";
+  import { deleteArticle, publish, upsert } from "./helpers.js";
   import { create_article_store } from "./create_article.store.js";
   export let data: PageData;
 
   $: ({ article, mapTag } = data);
+  $:({id} = article);
   $: ({
     title: initTitle,
     content,
     featured_image,
-    id,
   } = article.data || { title: "", content: "", featured_image: "", id: "" });
   $: title = initTitle || "";
   $: if (featured_image && !content.includes(featured_image)) {
@@ -95,15 +95,32 @@
       show: true,
       props: {
         id,
-        cb: action === "delete" ? () => deleteArticle(article) : () => {},
+        cb: action === "delete" ? deleteArticleWrapper : unpublish,
       },
       component: action === "delete" ? DeleteModal : Unpublish,
     };
     modalStore.set(modalState);
   }
 
-  function publishClick() {
-    publish(contentEditor, title, selectedSportstack);
+  function unpublish() {
+    publish({id, status: "unpublish", sportstack: article.author});
+  }
+  async function deleteArticleWrapper() {
+   const res =  await deleteArticle(article);
+   if(res.success) {
+
+     setTimeout(() =>
+     {
+       goto(`/u/author/publication/${article.author.permalink}/${session.extract('lang')}?view=articles`, { invalidateAll: true });
+      }, 500);
+    }
+  }
+
+  async function publishClick() {
+   const res = await upsert({editor: contentEditor, title, id, author: selectedSportstack});
+   if (res.success) {
+     publish({id, status: "publish", sportstack: selectedSportstack});
+   }
   }
 </script>
 

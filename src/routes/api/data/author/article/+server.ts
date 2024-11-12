@@ -51,7 +51,7 @@ export const POST: RequestHandler = async ({ request, locals }) =>
 {
   if (!locals.uid) throw error(401, { message: 'Unauthorized' } as App.Error);
   const body = await request.json();
-  let { content, title, author_id, images, id, seo, tags, uid, article, } = body;
+  let { content, title, author_id, images, id, seo, tags, uid, article, is_draft } = body;
 
   if (locals.uid !== uid) return json({ success: false, message: "Not an owner" });
   let data = article;
@@ -68,7 +68,7 @@ export const POST: RequestHandler = async ({ request, locals }) =>
   data = {
     author_id,
     lang: 'en',
-    // id,
+    is_draft: !!is_draft,
     tags,
     seo_details: {
       twitter_card: {
@@ -154,6 +154,7 @@ export const PUT: RequestHandler = async ({ locals, request }) =>
       numArticleId: id,
       enumArticleNewStatus: status
     })
+    return json({ success: true });
 
   } catch (e)
   {

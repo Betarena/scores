@@ -28,18 +28,22 @@
   import { publish, upsert } from "./helpers.js";
   export let data: PageData;
 
-  $: ({article} = data);
+  $: ({ article } = data);
   let options: (AuthorsAuthorsMain & { label: string })[] = [];
   let selectedSportstack;
   let contentEditor: IEditor;
   let debounceTimer;
   let disablePublishButton = true;
   $: id = article.id || 0;
-  let title = ""
-  $: init(article)
-  $: if ($create_article_store.tags.length || $create_article_store.seo.title || $create_article_store.seo.description ) {
+  let title = "";
+  $: init(article);
+  $: if (
+    $create_article_store.tags.length ||
+    $create_article_store.seo.title ||
+    $create_article_store.seo.description
+  ) {
     save();
-    $modalStore.show = true
+    $modalStore.show = true;
   }
   $: uploadUrl = selectedSportstack
     ? `Betarena_Media/authors/authors_list/${selectedSportstack.id}/media`
@@ -62,7 +66,6 @@
     }
   }
 
-
   $: ({ viewportType } = $session);
 
   function init(article: PageData["article"]) {
@@ -75,7 +78,8 @@
       view: "preview",
     });
     title = article.data?.title || "";
-    disablePublishButton = !title || (article.data?.content || "").trim().split(/\s+/).length < 50;
+    disablePublishButton =
+      !title || (article.data?.content || "").trim().split(/\s+/).length < 50;
   }
 
   function back() {
@@ -90,17 +94,32 @@
     goto(url, { replaceState: true, noScroll: true, keepFocus: true });
   }
 
+  async function updateArticle() {
+    return upsert({
+      editor: contentEditor,
+      title,
+      id,
+      is_draft: true,
+      author: selectedSportstack,
+      reload: false,
+      showLoaders: false,
+    });
+  }
+
   async function publishClick() {
-    const res = await upsert({editor: contentEditor, title, author: selectedSportstack, reload: false});
+    const res = await updateArticle();
     if (res.success && res.id) {
-      publish(res.id, "publish", selectedSportstack)
+      publish({
+        id: res.id,
+        status: "publish",
+        sportstack: selectedSportstack,
+      });
     }
   }
 
-
-  function saveOnChange (e)  {
+  function saveOnChange(e) {
     title = e.detail.title;
-    if (title && (contentEditor?.getText().trim().split(/\s+/).length > 50)) {
+    if (title && contentEditor?.getText().trim().split(/\s+/).length > 50) {
       disablePublishButton = false;
     }
     debounceSave(e);
@@ -109,7 +128,7 @@
   const debounceSave = debounce(save, 1500);
 
   async function save() {
-    const res = await upsert({editor: contentEditor, id, title, author: selectedSportstack, reload: false, showLoaders: false});
+    const res = await updateArticle();
     if (res.id && !$page.url.searchParams.get("draft")) {
       id = res.id;
       const url = $page.url;
@@ -119,7 +138,7 @@
   }
 
   function debounce(func, wait) {
-    return function(...args) {
+    return function (...args) {
       clearTimeout(debounceTimer);
       debounceTimer = setTimeout(() => func.apply(this, args), wait);
     };
@@ -168,7 +187,14 @@
       {/if}
     </div>
   </Container>
-  <Editor {uploadUrl} content={article.data?.content} {title} on:update={saveOnChange} {data} bind:contentEditor />
+  <Editor
+    {uploadUrl}
+    content={article.data?.content}
+    {title}
+    on:update={saveOnChange}
+    {data}
+    bind:contentEditor
+  />
 </div>
 
 <!--

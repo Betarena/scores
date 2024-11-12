@@ -9,7 +9,7 @@ import { goto } from "$app/navigation";
 import session from "$lib/store/session.js";
 import type { AuthorsAuthorsMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
 import { type Writable, writable } from "svelte/store";
-import type { IPageAuthorAuthorData } from "@betarena/scores-lib/types/v8/preload.authors.js";
+import type { IPageAuthorArticleData, IPageAuthorAuthorData } from "@betarena/scores-lib/types/v8/preload.authors.js";
 export function getAllImages(editor: Editor)
 {
   const json = editor.getJSON();
@@ -30,7 +30,7 @@ export function getAllImages(editor: Editor)
 }
 
 
-export async function upsert({ editor, title, author, reload = false, showLoaders = true, id }: { editor: Editor, title: string, author: AuthorsAuthorsMain, reload?: boolean, showLoaders?: boolean, id?: number })
+export async function upsert({ editor, title, author, reload = false, showLoaders = true, id, is_draft = false }: { is_draft?: boolean, editor: Editor, title: string, author: AuthorsAuthorsMain, reload?: boolean, showLoaders?: boolean, id?: number })
 {
   const v = DOMPurify.sanitize(editor.getHTML());
   const t = DOMPurify.sanitize(title);
@@ -49,6 +49,7 @@ export async function upsert({ editor, title, author, reload = false, showLoader
     seo,
     images,
     uid: author.uid,
+    is_draft,
     status: "published"
   }) as any;
   if (showLoaders && loadingId)
@@ -74,7 +75,7 @@ export async function upsert({ editor, title, author, reload = false, showLoader
   return res;
 }
 
-export async function deleteArticle(article: IArticle)
+export async function deleteArticle(article: IArticle | IPageAuthorArticleData)
 {
   modalStore.update(state => ({ ...state, show: false }));
   const loadingId = infoMessages.add({ type: "loading", text: "Deleting article..." });
@@ -87,10 +88,6 @@ export async function deleteArticle(article: IArticle)
   if (data.success)
   {
     infoMessages.add({ type: "success", text: "Article deleted!" });
-    setTimeout(() =>
-    {
-      goto(`/u/author/publication/${article.author.permalink}/${session.extract('lang')}?view=articles`, { invalidateAll: true });
-    })
   } else
   {
     infoMessages.add({ type: "error", text: "Failed to delete article" });
