@@ -35,6 +35,8 @@ export const actions: Actions = {
         id,
         uid,
         data: {
+          badges: [],
+          location: "",
           ...sportstacks.data,
           creation_date: new Date(sportstacks.data.creation_date),
           about,
