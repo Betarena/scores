@@ -9,6 +9,7 @@ import { goto } from "$app/navigation";
 import session from "$lib/store/session.js";
 import type { AuthorsAuthorsMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
 import { type Writable, writable } from "svelte/store";
+import type { IPageAuthorAuthorData } from "@betarena/scores-lib/types/v8/preload.authors.js";
 export function getAllImages(editor: Editor)
 {
   const json = editor.getJSON();
@@ -29,7 +30,7 @@ export function getAllImages(editor: Editor)
 }
 
 
-export async function upsert(editor: Editor, title: string, author: AuthorsAuthorsMain, reload: boolean = false)
+export async function upsert({ editor, title, author, reload = false, showLoaders = true, id }: { editor: Editor, title: string, author: AuthorsAuthorsMain, reload?: boolean, showLoaders?: boolean, id?: number })
 {
   const v = DOMPurify.sanitize(editor.getHTML());
   const t = DOMPurify.sanitize(title);
@@ -38,10 +39,11 @@ export async function upsert(editor: Editor, title: string, author: AuthorsAutho
 
   const { seo, tags } = create_article_store.get();
 
-  const loadingId = infoMessages.add({ type: "loading", text: "Publishing article..." });
+  const loadingId = showLoaders && infoMessages.add({ type: "loading", text: "Saving article..." });
   const res = await postv2("/api/data/author/article", {
     content: v,
     title: t,
+    id,
     author_id: author.id,
     tags,
     seo,
@@ -49,10 +51,14 @@ export async function upsert(editor: Editor, title: string, author: AuthorsAutho
     uid: author.uid,
     status: "published"
   }) as any;
-  infoMessages.remove(loadingId);
+  if (showLoaders && loadingId)
+  {
+    infoMessages.remove(loadingId);
+  }
+  if (!showLoaders) return res;
   if (res.success)
   {
-    infoMessages.add({ type: "success", text: "Article published!" });
+    infoMessages.add({ type: "success", text: "Article saved!" });
     if (reload)
     {
 
@@ -92,13 +98,13 @@ export async function deleteArticle(article: IArticle)
   return data
 }
 
-export async function publish(article: IArticle, status: "publish" | "unpublish")
+export async function publish({ id, status, sportstack }: { id?: number, status: "publish" | "unpublish", sportstack: IPageAuthorAuthorData })
 {
   modalStore.update(state => ({ ...state, show: false }));
-  const loadingId = infoMessages.add({ type: "loading", text: "Unpublishing article..." });
+  const loadingId = infoMessages.add({ type: "loading", text: `${status} article...` });
   const res = await fetch(`/api/data/author/article`, {
     method: "PUT",
-    body: JSON.stringify({ id: article.id, status: "unpublish", uid: article.author.uid })
+    body: JSON.stringify({ id: id, status, uid: sportstack.uid })
   });
   infoMessages.remove(loadingId);
   const data = await res.json();
@@ -107,7 +113,7 @@ export async function publish(article: IArticle, status: "publish" | "unpublish"
     infoMessages.add({ type: "success", text: `Article ${status}ed!` });
     setTimeout(() =>
     {
-      goto(`/u/author/publication/${article.author.permalink}/${session.extract('lang')}?view=articles`);
+      goto(`/u/author/publication/${sportstack.permalink}/${session.extract('lang')}?view=articles`);
     })
   } else
   {

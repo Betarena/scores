@@ -110,7 +110,6 @@ export const POST: RequestHandler = async ({ request, locals }) =>
 
   try
   {
-    console.log("Data: ", data)
     const articleId = await entryProfileTabAuthorArticleUpsert(data);
     return json({ success: true, id: articleId });
 

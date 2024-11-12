@@ -1,5 +1,7 @@
 import { error } from "@sveltejs/kit";
 import type { PageLoad } from "../../edit/[...permalink]/[lang=lang]/$types.js";
+import { entryProfileTabAuthorArticleDraftGet } from "@betarena/scores-lib/dist/functions/v8/profile.main.js";
+import type { AuthorsArticlesMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
 
 export const load: PageLoad = async ({ url }) =>
 {
@@ -7,11 +9,16 @@ export const load: PageLoad = async ({ url }) =>
   let article = {
     content: "",
     title: "",
-  }
-  let mapTag = [];
+    tags: []
+  } as AuthorsArticlesMain
   try
   {
-    return {}
+    if (id)
+    {
+      const res = await entryProfileTabAuthorArticleDraftGet({ numArticleId: +id }) as any;
+      article = res?.article || article;
+    }
+    return { article }
   } catch (e)
   {
     throw error(500, { message: 'Internal server error' } as App.Error);

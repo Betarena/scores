@@ -22,18 +22,28 @@
   import { goto } from "$app/navigation";
   import session from "$lib/store/session.js";
   import ModalArticleSeo from "./ModalArticleSEO.svelte";
+  import { create_article_store } from "./create_article.store.js";
 
   import Editor from "./Editor.svelte";
   import { publish, upsert } from "./helpers.js";
   export let data: PageData;
+
+  $: ({article} = data);
   let options: (AuthorsAuthorsMain & { label: string })[] = [];
   let selectedSportstack;
   let contentEditor: IEditor;
-  let title = "";
+  let debounceTimer;
+  let disablePublishButton = true;
+  $: id = article.id || 0;
+  let title = ""
+  $: init(article)
+  $: if ($create_article_store.tags.length || $create_article_store.seo.title || $create_article_store.seo.description ) {
+    save();
+    $modalStore.show = true
+  }
   $: uploadUrl = selectedSportstack
     ? `Betarena_Media/authors/authors_list/${selectedSportstack.id}/media`
     : "";
-
   $: if (data.sportstack instanceof Promise) {
     console.log("data.sportstack is a promise");
   } else {
@@ -52,7 +62,21 @@
     }
   }
 
+
   $: ({ viewportType } = $session);
+
+  function init(article: PageData["article"]) {
+    create_article_store.set({
+      tags: article.tags as string[],
+      seo: {
+        title: article.seo_details?.main_data.title || "",
+        description: article.seo_details?.main_data.description || "",
+      },
+      view: "preview",
+    });
+    title = article.data?.title || "";
+    disablePublishButton = !title || (article.data?.content || "").trim().split(/\s+/).length < 50;
+  }
 
   function back() {
     history.back();
@@ -67,8 +91,38 @@
   }
 
   async function publishClick() {
-    const res = await upsert(contentEditor, title, selectedSportstack, false);
+    const res = await upsert({editor: contentEditor, title, author: selectedSportstack, reload: false});
+    if (res.success && res.id) {
+      publish(res.id, "publish", selectedSportstack)
+    }
+  }
 
+
+  function saveOnChange (e)  {
+    title = e.detail.title;
+    if (title && (contentEditor?.getText().trim().split(/\s+/).length > 50)) {
+      disablePublishButton = false;
+    }
+    debounceSave(e);
+  }
+
+  const debounceSave = debounce(save, 1500);
+
+  async function save() {
+    const res = await upsert({editor: contentEditor, id, title, author: selectedSportstack, reload: false, showLoaders: false});
+    if (res.id && !$page.url.searchParams.get("draft")) {
+      id = res.id;
+      const url = $page.url;
+      url.searchParams.set("draft", res.id);
+      goto(url, { replaceState: true, noScroll: true, keepFocus: true });
+    }
+  }
+
+  function debounce(func, wait) {
+    return function(...args) {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => func.apply(this, args), wait);
+    };
   }
 </script>
 
@@ -102,8 +156,7 @@
         <div class="actions">
           <Button
             type="primary"
-            disabled={!title ||
-              contentEditor?.getText().trim().split(/\s+/).length < 50}
+            disabled={disablePublishButton}
             on:click={() => {
               $modalStore.component = ModalArticleSeo;
               $modalStore.modal = true;
@@ -115,7 +168,7 @@
       {/if}
     </div>
   </Container>
-  <Editor {uploadUrl} {data} bind:contentEditor bind:title />
+  <Editor {uploadUrl} content={article.data?.content} {title} on:update={saveOnChange} {data} bind:contentEditor />
 </div>
 
 <!--

@@ -65,12 +65,14 @@
   function changeFilter(
     e
   ) {
+    if (typeof e.detail === "number" ) return
     $articleFilterStore.status =  e.detail.id;
     dispatch("reloadArticles");
   }
   function changeSort(
     e: CustomEvent<"sortTitle" | "sortPublishDate" | "sortEditedDate">
   ) {
+    if (typeof e.detail === "number" ) return
     $articleFilterStore.sortBy = e.detail;
     dispatch("reloadArticles");
   }

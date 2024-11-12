@@ -26,7 +26,7 @@
 
   export let article: IArticle;
 
-  $: ({ permalink, data, id, seo_details } = article);
+  $: ({ permalink, data, id, seo_details, status, author } = article);
   $: ({ title } = data || { title: "" });
   $: ({ twitter_card } = seo_details || { twitter_card: { image: "" } });
   $: articlePreview = twitter_card.image;
@@ -67,15 +67,19 @@
     const modalState: any = { modal: true, show: true, props: { id } };
     switch (action) {
       case "edit":
-        goto(
-          `/u/author/article/edit/${permalink}/${userSettings.extract("lang")}`
-        );
+        const isDraft = status === "draft";
+        const url = `/u/author/article/${
+          isDraft ? "create" : `edit/${permalink}`
+        }/${userSettings.extract("lang")}${
+          isDraft ? `?sportstack=${author.permalink}&draft=${id}` : ""
+        }`;
+        goto(url);
         return;
       case "unpublish":
         modalState.component = Unpublish;
         modalState.props = {
           cb: () => {
-            publish(article, "unpublish");
+            publish({id, status: "unpublish", sportstack: author});
             dispatch("reloadArticles");
           },
         };

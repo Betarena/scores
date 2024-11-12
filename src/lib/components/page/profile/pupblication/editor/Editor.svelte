@@ -23,7 +23,7 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { onMount } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
   import { Editor } from "@tiptap/core";
   import StarterKit from "@tiptap/starter-kit";
   import Placeholder from "@tiptap/extension-placeholder";
@@ -31,20 +31,13 @@
   import Link from "@tiptap/extension-link";
   import Image from "@tiptap/extension-image";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
-  import XClose from "$lib/components/ui/infomessages/x-close.svelte";
-  import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import { modalStore } from "$lib/store/modal.js";
   import session from "$lib/store/session.js";
-  import BackButton from "$lib/components/ui/BackButton.svelte";
   import ModalArticleSeo from "./ModalArticleSEO.svelte";
   import Toolbar from "./Toolbar.svelte";
   import LinkPopup from "./LinkPopup.svelte";
   import type { PageData } from ".svelte-kit/types/src/routes/(scores)/u/author/article/create/[lang=lang]/$types.js";
-  import type { AuthorsAuthorsMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
-  import { page } from "$app/stores";
-  import { goto } from "$app/navigation";
-  import { browser } from "$app/environment";
   import InsertLinkModal from "./InsertLinkModal.svelte";
 
   // #endregion ➤ 📦 Package Imports
@@ -87,6 +80,8 @@
       resizeTextarea();
     });
   }
+
+  const dispatch = createEventDispatcher();
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -238,6 +233,9 @@
       onFocus: () => {
         titleInFocus = false;
       },
+      onUpdate: ({editor}) => {
+        dispatch("update", { editor, title });
+      }
     });
     contentEditor = editor;
 
@@ -320,6 +318,7 @@
   >
     <div class="editor-wrapper" id="parent">
       <textarea
+        on:input={() => dispatch("update", { editor, title })}
         bind:this={textareaNode}
         class="title"
         bind:value={title}
