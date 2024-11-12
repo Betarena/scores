@@ -34,7 +34,8 @@
   import { post } from "$lib/api/utils.js";
   import { page } from "$app/stores";
   import { enhance } from "$app/forms";
-  import { gotoSW, submitWrapper } from "$lib/utils/sveltekitWrapper.js";
+  import { submitWrapper } from "$lib/utils/sveltekitWrapper.js";
+  import { goto } from "$app/navigation";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -79,12 +80,13 @@
   function submit() {
     return submitWrapper({
       successMessage: "The publication was created successfully.",
-      cbAfter: ({result}) => {
-        if(result.type === "success") {
-          gotoSW(`/u/author/${userSettings.extract("lang")}`, {replaceState: true});
+      cbAfter: ({ result }) => {
+        if (result.type === "success") {
+          goto(`/u/author/${userSettings.extract("lang")}`, {
+            replaceState: true,
+          });
         }
-
-      }
+      },
     });
   }
   $: name = name.replace(/[^\w\s]/gi, "");
