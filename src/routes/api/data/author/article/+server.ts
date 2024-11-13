@@ -21,8 +21,6 @@ import dotenv from 'dotenv';
 import { main } from '$lib/sveltekit/endpoint/author.article.js';
 import { error, RequestHandler, json } from '@sveltejs/kit';
 import { entryProfileTabAuthorArticleDelete, entryProfileTabAuthorArticleUpdateStatus, entryProfileTabAuthorArticleUpsert } from '@betarena/scores-lib/dist/functions/v8/profile.main.js';
-import createDOMPurify from 'dompurify';
-import { JSDOM } from 'jsdom';
 import { mutateStringToPermalink } from '@betarena/scores-lib/dist/util/language.js';
 
 
@@ -56,13 +54,8 @@ export const POST: RequestHandler = async ({ request, locals }) =>
   if (locals.uid !== uid) return json({ success: false, message: "Not an owner" });
   let data = article;
 
-  const window = new JSDOM('').window;
-  const DOMPurify = createDOMPurify(window);
-
-  content = DOMPurify.sanitize(content);
-  title = DOMPurify.sanitize(title);
-  const seoTitle = DOMPurify.sanitize(seo.title) || title;
-  const seoDescription = DOMPurify.sanitize(seo.description) || "";
+  const seoTitle = seo.title || title;
+  const seoDescription = seo.description || "";
   const permalink = mutateStringToPermalink(title);
   const link = `https://scores.betarena.com/a/${permalink}`;
   data = {
