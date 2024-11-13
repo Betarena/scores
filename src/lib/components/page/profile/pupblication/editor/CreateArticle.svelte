@@ -192,6 +192,7 @@
     content={article.data?.content}
     {title}
     on:update={saveOnChange}
+    {publishClick}
     {data}
     bind:contentEditor
   />

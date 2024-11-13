@@ -60,6 +60,7 @@
   export let title = "";
   export let content: string | undefined;
   export let uploadUrl: string = "";
+  export let publishClick: () => void;
   let element;
   let titleInFocus = false;
   let vh = "1vh";
@@ -358,6 +359,7 @@
             $modalStore.component = PublishModal;
             $modalStore.modal = true;
             $modalStore.show = true;
+            $modalStore.props = { cb: publishClick };
           }}>Publish</Button
         >
       </Container>

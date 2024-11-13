@@ -51,7 +51,7 @@
   } else {
     options = data.sportstacks.map((s) => {
       const sportstack = { ...s, label: s.data?.username || "" };
-      if (sportstack.permalink === $page.url.searchParams.get("sportstack")) {
+      if (sportstack.id === article.author_id) {
         selectedSportstack = sportstack;
       }
       return sportstack;
@@ -177,7 +177,7 @@
       </div>
     </div>
   </Container>
-  <Editor {data} bind:contentEditor {uploadUrl} bind:title {content} />
+  <Editor {data} bind:contentEditor {uploadUrl} bind:title {content} {publishClick} />
 </div>
 
 <!--
