@@ -8,14 +8,18 @@
 -->
 
 <script lang="ts">
+  import type { IArticle } from "$lib/components/section/authors/page/helpers.js";
   import Button from "$lib/components/ui/Button.svelte";
-  import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
   import session from "$lib/store/session.js";
   import userSettings from "$lib/store/user-settings.js";
   import type { AuthorsAuthorsMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import { createEventDispatcher } from "svelte";
+  import PublicationArticleArticleLoader from "./PublicationArticleArticleLoader.svelte";
+    import PublicationArticleArticle from "./PublicationArticleArticle.svelte";
+    import EyeOffIcon from "$lib/components/ui/assets/eye-off-icon.svelte";
   export let selectedSportstack: AuthorsAuthorsMain;
-
+  export let articles: Map<number, IArticle>;
+  export let loadingArticles = false;
   $: ({ viewportType } = $session);
 
   const dispatch = createEventDispatcher();
@@ -72,7 +76,26 @@
       </svg>
     </a>
   </div>
-  <div class="content" />
+  <div class="content">
+    {#if loadingArticles}
+      {#each Array(10) as _item}
+        <PublicationArticleArticleLoader />
+      {/each}
+    {:else if articles.size}
+      {#each [...articles.entries()] as [key, article] (key)}
+        <PublicationArticleArticle
+          {article}
+          on:reloadArticles
+          on:deleteArticle
+        />
+      {/each}
+    {:else if !loadingArticles}
+      <div class="no-content">
+        <EyeOffIcon />
+        <p>No articles available, start creating content today!</p>
+      </div>
+    {/if}
+  </div>
 </div>
 
 <!--
@@ -179,6 +202,43 @@
       }
     }
 
+    .content {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--spacing-xl, 16px);
+      max-width: 100%;
+      width: 100%;
+      flex-grow: 1;
+
+      .no-content {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        gap: 45px;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        :global(svg) {
+          width: 32px;
+          height: 32px;
+        }
+        p {
+          margin: 0;
+          color: var(--colors-text-text-quaternary-500, #8c8c8c);
+          text-align: center;
+
+          /* Text md/Regular */
+          font-family: Roboto;
+          font-size: 14px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: 150%; /* 21px */
+        }
+      }
+    }
+
+
     &.tablet {
       .buttons-header {
         gap: var(--spacing-2xl, 20px);
@@ -190,6 +250,12 @@
           line-height: var(--line-height-text-lg, 28px); /* 155.556% */
         }
       }
+      .no-content {
+        :global(svg) {
+          width: 48px;
+          height: 48px;
+        }
+      }
     }
 
     &.desktop {
@@ -199,6 +265,9 @@
           font-size: var(--font-size-text-lg, 18px);
           line-height: var(--line-height-text-lg, 28px); /* 155.556% */
         }
+      }
+      .no-content {
+        max-height: 368px;
       }
     }
   }

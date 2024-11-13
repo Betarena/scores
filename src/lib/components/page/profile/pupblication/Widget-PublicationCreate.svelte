@@ -30,7 +30,6 @@
   import type { PageData } from ".svelte-kit/types/src/routes/(scores)/u/author/create/[lang=lang]/$types.js";
   import session from "$lib/store/session.js";
   import WidgetMenuOpt from "../Widget-MenuOpt.svelte";
-  import { infoMessages } from "$lib/components/ui/infomessages/infomessages.js";
   import { post } from "$lib/api/utils.js";
   import { page } from "$app/stores";
   import { enhance } from "$app/forms";

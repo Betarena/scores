@@ -121,7 +121,10 @@
     />
 
     <div class="info">
-      <h2>{title}</h2>
+      <h2>{title}
+         {#if status !== "published"}
+        <span class="draft">({status})</span>
+      {/if}</h2>
       <AvatarLabel
         avatar={profile?.profile_photo}
         size={viewportType === "mobile" ? "xs" : "sm"}

@@ -68,6 +68,8 @@
   let selectedSportstack;
   let loadingArticles = false;
   let articles: Map<number, IArticle> = new Map();
+  let recentArticles: Map<number, IArticle> = new Map();
+  let recentLoading = false;
   let sportstacks = [] as AuthorsAuthorsMain & { label: string }[];
   $: if (data.sportstack instanceof Promise) {
     console.log("data.sportstack is a promise");
@@ -85,6 +87,7 @@
   }
   $: if (selectedSportstack && browser) {
     getArticles();
+    getResentArticles();
   }
 
   // #endregion ➤ 📌 VARIABLES
@@ -147,10 +150,34 @@
     }
   }
 
+  async function getResentArticles() {
+    recentLoading = true;
+    recentArticles = new Map();
+    const data = await fetchArticlesBySportstack({
+      permalink: selectedSportstack.permalink,
+      options: {
+        status: "published",
+        sortPublishDate: "desc",
+      },
+    });
+    recentLoading = false;
+    if (data) {
+      recentArticles = prepareArticlesMap(
+        new Map(data.mapArticle),
+        new Map(data.mapTag),
+        new Map(data.mapAuthor)
+      );
+    } else {
+      recentArticles = new Map();
+    }
+  }
+
   function deleteArticle(e) {
     const id = e.detail;
     articles.delete(id);
     articles = new Map(articles);
+    recentArticles.delete(id);
+    recentArticles = new Map(recentArticles);
   }
 </script>
 
@@ -230,8 +257,8 @@
       </div>
       <svelte:component
         this={viewMap[view]}
-        {loadingArticles}
-        {articles}
+        loadingArticles={view === "home" ? recentLoading : loadingArticles}
+        articles={view === "home" ? recentArticles : articles}
         {sportstacks}
         on:reloadArticles={getArticles}
         on:changeView={change}
