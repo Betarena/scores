@@ -8,23 +8,23 @@
 -->
 
 <script lang="ts">
-  import { getContext } from "svelte";
+  import { createEventDispatcher, getContext, setContext } from "svelte";
   import { create_article_store } from "./create_article.store.js";
-  import { fade, fly, scale } from "svelte/transition";
+  import {  fly, scale } from "svelte/transition";
   import { cubicIn, cubicOut } from "svelte/easing";
   import Button from "$lib/components/ui/Button.svelte";
   import Badge from "$lib/components/ui/Badge.svelte";
   import TagsView from "./TagsView.svelte";
   import SeoView from "./SeoView.svelte";
-  import { modalStore } from "$lib/store/modal.js";
   import session from "$lib/store/session.js";
   import ExpandDataWrapper from "$lib/components/ui/wrappers/ExpandDataWrapper.svelte";
 
   export let cb = () => {};
-
   $: ({ seo, tags } = $create_article_store);
 
   $: ({ viewportType } = $session);
+
+  const dispatch = createEventDispatcher();
 
   const viewMap = {
     tags: TagsView,
@@ -32,8 +32,7 @@
   };
 
   function changeView(view: string) {
-    $modalStore.modal = true;
-    $modalStore.component = viewMap[view];
+    dispatch("changeView", view);
   }
 
   function chooseTransition(node, { easing, out = false }) {
@@ -55,12 +54,14 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
+
 <div
   id="article-seo-modal"
   class="seo-modal {viewportType}"
   in:chooseTransition={{ easing: cubicOut }}
   out:chooseTransition={{ easing: cubicIn, out: true }}
 >
+
   <div class="option-wrapper" on:click={() => changeView("tags")}>
     <div class="info">
       <h3>Tags</h3>

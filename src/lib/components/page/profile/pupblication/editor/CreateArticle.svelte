@@ -21,11 +21,11 @@
   import { browser } from "$app/environment";
   import { goto } from "$app/navigation";
   import session from "$lib/store/session.js";
-  import ModalArticleSeo from "./ModalArticleSEO.svelte";
   import { create_article_store } from "./create_article.store.js";
 
   import Editor from "./Editor.svelte";
   import { publish, upsert } from "./helpers.js";
+    import PublishModal from "./PublishModal.svelte";
   export let data: PageData;
 
   $: ({ article } = data);
@@ -177,7 +177,7 @@
             type="primary"
             disabled={disablePublishButton}
             on:click={() => {
-              $modalStore.component = ModalArticleSeo;
+              $modalStore.component = PublishModal;
               $modalStore.modal = true;
               $modalStore.show = true;
               $modalStore.props = { cb: publishClick };

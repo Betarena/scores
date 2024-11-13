@@ -34,11 +34,11 @@
   import Button from "$lib/components/ui/Button.svelte";
   import { modalStore } from "$lib/store/modal.js";
   import session from "$lib/store/session.js";
-  import ModalArticleSeo from "./ModalArticleSEO.svelte";
   import Toolbar from "./Toolbar.svelte";
   import LinkPopup from "./LinkPopup.svelte";
   import type { PageData } from ".svelte-kit/types/src/routes/(scores)/u/author/article/create/[lang=lang]/$types.js";
   import InsertLinkModal from "./InsertLinkModal.svelte";
+  import PublishModal from "./PublishModal.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -355,7 +355,7 @@
           full={true}
           disabled={!title || editor?.getText().trim().split(/\s+/).length < 50}
           on:click={() => {
-            $modalStore.component = ModalArticleSeo;
+            $modalStore.component = PublishModal;
             $modalStore.modal = true;
             $modalStore.show = true;
           }}>Publish</Button

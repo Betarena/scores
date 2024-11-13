@@ -13,20 +13,19 @@
   import XClose from "$lib/components/ui/infomessages/x-close.svelte";
   import Input from "$lib/components/ui/Input.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
-  import { modalStore } from "$lib/store/modal.js";
   import session from "$lib/store/session.js";
-  import { onMount } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
   import { create_article_store } from "./create_article.store.js";
-  import ModalArticleSeo from "./ModalArticleSEO.svelte";
 
   $: ({ viewportType } = $session);
 
   $: ({ seo } = $create_article_store);
   let description = "";
   let title = "";
+  const dispatch = createEventDispatcher();
 
   function goBack() {
-    $modalStore.component = ModalArticleSeo;
+    dispatch("changeView", "preview");
   }
 
   function save() {

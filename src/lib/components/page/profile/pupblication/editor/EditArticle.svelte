@@ -21,11 +21,11 @@
   import { browser } from "$app/environment";
   import { goto } from "$app/navigation";
   import session from "$lib/store/session.js";
-  import ModalArticleSeo from "./ModalArticleSEO.svelte";
   import Unpublish from "../Unpublish.svelte";
   import DeleteModal from "../DeleteModal.svelte";
   import { deleteArticle, publish, upsert } from "./helpers.js";
   import { create_article_store } from "./create_article.store.js";
+    import PublishModal from "./PublishModal.svelte";
   export let data: PageData;
 
   $: ({ article, mapTag } = data);
@@ -167,7 +167,7 @@
             disabled={!title ||
               contentEditor?.getText().trim().split(/\s+/).length < 50}
             on:click={() => {
-              $modalStore.component = ModalArticleSeo;
+              $modalStore.component = PublishModal;
               $modalStore.modal = true;
               $modalStore.show = true;
               $modalStore.props = { cb: publishClick };

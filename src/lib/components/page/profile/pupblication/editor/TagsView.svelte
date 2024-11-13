@@ -13,22 +13,19 @@
   import Button from "$lib/components/ui/Button.svelte";
   import Input from "$lib/components/ui/Input.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
-  import { modalStore } from "$lib/store/modal.js";
   import { create_article_store } from "./create_article.store.js";
   import { flip } from "svelte/animate";
   import { cubicInOut } from "svelte/easing";
   import { fade } from "svelte/transition";
-  import ModalArticleSeo from "./ModalArticleSEO.svelte";
   import session from "$lib/store/session.js";
   import XClose from "$lib/components/ui/infomessages/x-close.svelte";
   import { get } from "$lib/api/utils.js";
   import { browser } from "$app/environment";
   import type { AuthorsTagsMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
-  import { onMount } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
 
-  function goBack() {
-    $modalStore.component = ModalArticleSeo;
-  }
+
+  const dispatch = createEventDispatcher();
 
   let tags: string[] = [];
   let search = "";
@@ -37,6 +34,10 @@
   $: ({ viewportType } = $session);
 
   $: if (browser) searchTags(search);
+
+  function goBack() {
+    dispatch("changeView", "preview");
+  }
 
   function select(tag) {
     if (selectedTags.length === 5) return;
