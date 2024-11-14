@@ -27,6 +27,7 @@
   export let showLoadButton
 
   let showSortBy = false;
+  let node;
   const options = [
     {
       id: "all",
@@ -73,6 +74,16 @@
     if (typeof e.detail === "number") return;
     $articleFilterStore.sortBy = e.detail;
   }
+
+  function handleScroll() {
+    if(viewportType === "desktop" || !node)
+    return;
+    const rect = node.getBoundingClientRect();
+    // debugger;
+    if (window.scrollY > rect.bottom - 10) {
+      dispatch("loadMore");
+    }
+  }
 </script>
 
 <!--
@@ -86,7 +97,8 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="publication-articles {viewportType}">
+<svelte:window  on:scroll={handleScroll}/>
+<div class="publication-articles {viewportType}" bind:this={node}>
   {#if viewportType === "mobile"}
     <div class="buttons-header">
       <a
@@ -156,7 +168,7 @@
         <PublicationArticleArticleLoader />
       {/each}
     {/if}
-    {#if showLoadButton}
+    {#if showLoadButton && viewportType === "desktop"}
       <div class="load-more">
         <Button type="outline" on:click={() => dispatch("loadMore")}
           >Load more</Button
