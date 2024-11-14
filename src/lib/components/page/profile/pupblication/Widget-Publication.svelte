@@ -43,7 +43,7 @@
     type IArticle,
     prepareArticlesMap,
   } from "$lib/components/section/authors/page/helpers.js";
-  import { articleFilterStore } from "./editor/helpers.js";
+  import { articleFilterStore, type IArticleFilter } from "./editor/helpers.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -71,6 +71,8 @@
   let recentArticles: Map<number, IArticle> = new Map();
   let recentLoading = false;
   let sportstacks = [] as AuthorsAuthorsMain & { label: string }[];
+  let nextPage = 0;
+  let totalPageCount = 1;
   $: if (data.sportstack instanceof Promise) {
     console.log("data.sportstack is a promise");
   } else {
@@ -84,10 +86,14 @@
       }
       return sportstack;
     });
-  }
-  $: if (selectedSportstack && browser) {
-    getArticles();
     getResentArticles();
+  }
+  $: if (selectedSportstack?.permalink !== $page.params.permalink) {
+    getResentArticles();
+  }
+
+  $: if ($articleFilterStore.status && $articleFilterStore.sortBy) {
+    filterArticles($articleFilterStore);
   }
 
   // #endregion ➤ 📌 VARIABLES
@@ -126,47 +132,59 @@
   $: view = $page.url.searchParams.get("view") || "home";
   $: selected = tabs.find((tab) => tab.view === view) || tabs[0];
 
-  async function getArticles() {
-    loadingArticles = true;
-    articles = new Map();
-    const {status, sortBy} = $articleFilterStore;
+  async function getArticles(page: number, filter: IArticleFilter) {
+
+    const {status, sortBy} = filter;
     const options = {
       status,
     }
     options[sortBy] = sortBy === "sortTitle" ? "asc" : "desc";
     const data = await fetchArticlesBySportstack({
       permalink: selectedSportstack.permalink,
+      page,
       options
     });
-    loadingArticles = false;
+    let nextArticles = new Map();
     if (data) {
-      articles = prepareArticlesMap(
+      nextArticles = prepareArticlesMap(
         new Map(data.mapArticle),
         new Map(data.mapTag),
         new Map(data.mapAuthor)
       );
-    } else {
-      articles = new Map();
+    }
+    return{data, nextArticles};
+  }
+
+  async function filterArticles(filter: IArticleFilter) {
+    loadingArticles = true;
+    articles = new Map();
+    const {data, nextArticles} = await getArticles(0, filter);
+    totalPageCount = data.totalPageCount;
+    loadingArticles = false;
+    articles = nextArticles;
+    nextPage = 0;
+  }
+
+  async function loadMore() {
+    if (nextPage < totalPageCount - 1) {
+      loadingArticles = true;
+      nextPage++;
+      const {data, nextArticles } = await getArticles(nextPage, $articleFilterStore);
+      loadingArticles = false;
+      if (data) {
+        totalPageCount = data.totalPageCount;
+        articles = new Map([...articles, ...nextArticles]);
+      }
     }
   }
 
   async function getResentArticles() {
     recentLoading = true;
     recentArticles = new Map();
-    const data = await fetchArticlesBySportstack({
-      permalink: selectedSportstack.permalink,
-      options: {
-        status: "published",
-        sortPublishDate: "desc",
-      },
-    });
+    const {data, nextArticles} = await getArticles(0, {status: "published", sortBy: "sortPublishDate"});
     recentLoading = false;
     if (data) {
-      recentArticles = prepareArticlesMap(
-        new Map(data.mapArticle),
-        new Map(data.mapTag),
-        new Map(data.mapAuthor)
-      );
+      recentArticles = nextArticles
     } else {
       recentArticles = new Map();
     }
@@ -263,7 +281,8 @@
         loadingArticles={view === "home" ? recentLoading : loadingArticles}
         articles={view === "home" ? recentArticles : articles}
         {sportstacks}
-        on:reloadArticles={getArticles}
+        showLoadButton={nextPage < totalPageCount - 1}
+        on:loadMore={loadMore}
         on:changeView={change}
         on:deleteArticle={deleteArticle}
         {selectedSportstack}

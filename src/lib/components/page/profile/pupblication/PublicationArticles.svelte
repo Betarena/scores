@@ -24,6 +24,7 @@
   export let selectedSportstack: AuthorsAuthorsMain;
   export let articles: Map<number, IArticle>;
   export let loadingArticles = false;
+  export let showLoadButton
 
   let showSortBy = false;
   const options = [
@@ -62,19 +63,15 @@
   const dispatch = createEventDispatcher();
 
   $: ({ viewportType } = $session);
-  function changeFilter(
-    e
-  ) {
-    if (typeof e.detail === "number" ) return
-    $articleFilterStore.status =  e.detail.id;
-    dispatch("reloadArticles");
+  function changeFilter(e) {
+    if (typeof e.detail === "number") return;
+    $articleFilterStore.status = e.detail.id;
   }
   function changeSort(
     e: CustomEvent<"sortTitle" | "sortPublishDate" | "sortEditedDate">
   ) {
-    if (typeof e.detail === "number" ) return
+    if (typeof e.detail === "number") return;
     $articleFilterStore.sortBy = e.detail;
-    dispatch("reloadArticles");
   }
 </script>
 
@@ -144,23 +141,26 @@
     </div>
   </div>
   <div class="content">
-    {#if loadingArticles}
-      {#each Array(10) as _item}
-        <PublicationArticleArticleLoader />
-      {/each}
-    {/if}
     {#if articles.size}
       {#each [...articles.entries()] as [key, article] (key)}
-        <PublicationArticleArticle
-          {article}
-          on:reloadArticles
-          on:deleteArticle
-        />
+        <PublicationArticleArticle {article} on:deleteArticle />
       {/each}
     {:else if !loadingArticles}
       <div class="no-content">
         <EyeOffIcon />
         <p>No articles available, start creating content today!</p>
+      </div>
+    {/if}
+    {#if loadingArticles}
+      {#each Array(10) as _item}
+        <PublicationArticleArticleLoader />
+      {/each}
+    {/if}
+    {#if showLoadButton}
+      <div class="load-more">
+        <Button type="outline" on:click={() => dispatch("loadMore")}
+          >Load more</Button
+        >
       </div>
     {/if}
   </div>
@@ -264,6 +264,12 @@
           font-weight: 400;
           line-height: 150%; /* 21px */
         }
+      }
+
+      .load-more {
+        width: 100%;
+        display: flex;
+        justify-content: center;
       }
     }
 

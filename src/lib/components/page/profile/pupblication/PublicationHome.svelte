@@ -85,7 +85,6 @@
       {#each [...articles.entries()] as [key, article] (key)}
         <PublicationArticleArticle
           {article}
-          on:reloadArticles
           on:deleteArticle
         />
       {/each}

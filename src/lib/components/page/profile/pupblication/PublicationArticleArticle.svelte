@@ -80,7 +80,7 @@
         modalState.props = {
           cb: () => {
             publish({ id, status: "unpublish", sportstack: author });
-            dispatch("reloadArticles");
+            article.status = "unpublished";
           },
         };
         break;

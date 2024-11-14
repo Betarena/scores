@@ -119,4 +119,10 @@ export async function publish({ id, status, sportstack }: { id?: number, status:
   return data
 }
 
-export const articleFilterStore: Writable<{ status: 'published' | 'unpublished' | 'draft' | 'all', sortBy: "sortTitle" | "sortPublishDate" | "sortEditedDate" }> = writable({ status: "all", sortBy: "sortEditedDate" });
+
+export interface IArticleFilter
+{
+  status: 'published' | 'unpublished' | 'draft' | 'all',
+  sortBy: "sortTitle" | "sortPublishDate" | "sortEditedDate"
+}
+export const articleFilterStore: Writable<IArticleFilter> = writable({ status: "all", sortBy: "sortEditedDate" });
