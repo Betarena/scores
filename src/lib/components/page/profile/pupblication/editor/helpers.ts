@@ -35,7 +35,6 @@ export async function upsert({ editor, title, author, reload = false, showLoader
   const v = DOMPurify.sanitize(editor.getHTML());
   const t = DOMPurify.sanitize(title);
   const images = getAllImages(editor);
-  modalStore.update(state => ({ ...state, show: false }));
 
   const { seo, tags } = create_article_store.get();
 
@@ -95,7 +94,7 @@ export async function deleteArticle(article: IArticle | IPageAuthorArticleData)
   return data
 }
 
-export async function publish({ id, status, sportstack }: { id?: number, status: "publish" | "unpublish", sportstack: IPageAuthorAuthorData })
+export async function publish({ id, status, sportstack, redirect = true }: { id?: number, status: "publish" | "unpublish", sportstack: IPageAuthorAuthorData, redirect?: boolean })
 {
   modalStore.update(state => ({ ...state, show: false }));
   const loadingId = infoMessages.add({ type: "loading", text: `${status} article...` });
@@ -108,10 +107,14 @@ export async function publish({ id, status, sportstack }: { id?: number, status:
   if (data.success)
   {
     infoMessages.add({ type: "success", text: `Article ${status}ed!` });
-    setTimeout(() =>
+    if (redirect)
     {
-      goto(`/u/author/publication/${sportstack.permalink}/${session.extract('lang')}?view=articles`);
-    })
+
+      setTimeout(() =>
+      {
+        goto(`/u/author/publication/${sportstack.permalink}/${session.extract('lang')}?view=articles`);
+      })
+    }
   } else
   {
     infoMessages.add({ type: "error", text: `Failed to ${status} article` });

@@ -45,7 +45,6 @@
     $create_article_store.seo.description
   ) {
     save();
-    $modalStore.show = true;
   }
   $: uploadUrl = selectedSportstack
     ? `Betarena_Media/authors/authors_list/${selectedSportstack.id}/media`
@@ -116,6 +115,7 @@
         status: "publish",
         sportstack: selectedSportstack,
       });
+      $modalStore.show = false;
     }
   }
 
@@ -130,6 +130,7 @@
   const debounceSave = debounce(save, 500);
 
   async function save() {
+    if (!contentEditor || !selectedSportstack) return
     isSaving = true;
     isSaved = false;
     const res = await updateArticle();

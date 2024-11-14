@@ -29,7 +29,7 @@
   export let data: PageData;
 
   $: ({ article, mapTag } = data);
-  $:({id} = article);
+  $:({id, status} = article);
   $: ({
     title: initTitle,
     content,
@@ -102,8 +102,12 @@
     modalStore.set(modalState);
   }
 
-  function unpublish() {
-    publish({id, status: "unpublish", sportstack: article.author});
+ async function unpublish() {
+   const res = await publish({id, status: "unpublish", sportstack: selectedSportstack, redirect: false});
+   if(res.success) {
+    status = "unpublished";
+    article.status = status;
+   }
   }
   async function deleteArticleWrapper() {
    const res =  await deleteArticle(article);
@@ -119,8 +123,16 @@
   async function publishClick() {
    const res = await upsert({editor: contentEditor, title, id, author: selectedSportstack});
    if (res.success) {
-     publish({id, status: "publish", sportstack: selectedSportstack});
+     const res2 = await publish({id, status: "publish", sportstack: selectedSportstack});
+     $modalStore.show = false;
+     if(res2.success) {
+       status = "published";
+       article.status = status;
+     }
    }
+  }
+  function save() {
+    upsert({editor: contentEditor, title, id, author: selectedSportstack});
   }
 </script>
 
@@ -158,9 +170,13 @@
           destructive={true}
           on:click={() => showModal("delete")}>Delete Article</Button
         >
+        {#if status ==="published"}
         <Button type="terlary-gray" on:click={() => showModal("unpublish")}
-          >Unpublish</Button
-        >
+          >Unpublish</Button>
+          {:else}
+          <Button type="terlary-gray" on:click={save}
+            >Save</Button>
+        {/if}
         {#if viewportType === "desktop"}
           <Button
             type="primary"
@@ -171,7 +187,13 @@
               $modalStore.modal = true;
               $modalStore.show = true;
               $modalStore.props = { cb: publishClick };
-            }}>Update & Publish</Button
+            }}>
+            {#if status ==="published"}
+              Update & Publish
+            {:else}
+              Publish
+            {/if}
+            </Button
           >
         {/if}
       </div>
