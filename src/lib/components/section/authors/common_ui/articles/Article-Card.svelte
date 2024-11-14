@@ -41,7 +41,7 @@
   import type { IPageAuthorTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.tags.js';
   import { readingTime } from '../helpers.js';
   import TranslationText from '$lib/components/misc/Translation-Text.svelte';
-    import SportstackAvatar from '$lib/components/ui/SportstackAvatar.svelte';
+  import SportstackAvatar from '$lib/components/ui/SportstackAvatar.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -96,7 +96,7 @@
     username: 'unknow',
     avatar: defaultAvatar,
   });
-  $: ({ images = [] } = seo_details || {});
+  $: ({ images = [] } = seo_details?.opengraph || {});
   $: ({ title = "", content = "" } = data || {});
   $: sportstackUrl = `/a/sportstack/${username.toLowerCase().replaceAll(' ', '-')}`;
   $: date = timeAgo(published_date, translations.time_ago);
