@@ -76,9 +76,9 @@
     linkInsertModal = false;
   }
   $: ({ viewportType } = $session);
-  $: if (title && textareaNode && viewportType) {
+  $: if (textareaNode && viewportType) {
     setTimeout(() => {
-      resizeTextarea();
+      resizeTextarea(title);
     });
   }
 
@@ -117,7 +117,7 @@
     }
   }
 
-  function resizeTextarea() {
+  function resizeTextarea(_title: string) {
     const textarea = textareaNode as HTMLTextAreaElement;
     textarea.style.height = viewportType === "mobile" ? "36px" : "54px";
     let height = textarea.scrollHeight;
