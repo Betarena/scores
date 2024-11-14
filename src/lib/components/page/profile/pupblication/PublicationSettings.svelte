@@ -271,7 +271,6 @@ CROP PICTURE MODAL
   </div>
 
   <Input
-    requred={true}
     name="about"
     label="Description"
     inputType="textarea"
@@ -281,7 +280,7 @@ CROP PICTURE MODAL
   <div class="button-wrapper">
     <Button
       type="primary"
-      disabled={!desc || !name}
+      disabled={!name}
       submit={true}
       full={viewportType === "mobile"}>Save</Button
     >

@@ -79,7 +79,6 @@
     if(viewportType === "desktop" || !node)
     return;
     const rect = node.getBoundingClientRect();
-    // debugger;
     if (window.scrollY > rect.bottom - 10) {
       dispatch("loadMore");
     }
