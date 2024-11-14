@@ -79,7 +79,7 @@
         modalState.component = Unpublish;
         modalState.props = {
           cb: () => {
-            publish({id, status: "unpublish", sportstack: author});
+            publish({ id, status: "unpublish", sportstack: author });
             dispatch("reloadArticles");
           },
         };
@@ -100,6 +100,11 @@
     }
     modalStore.set(modalState);
   }
+
+  function openArticle() {
+    if (status !== "published") return;
+    window.open( `/a/${permalink}`, "_blank");
+  }
 </script>
 
 <!--
@@ -113,7 +118,11 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 <svelte:body on:click={() => (actionMenu = false)} />
-<div class="article-wrapper {viewportType}" id="publication-article">
+<div
+  class="article-wrapper {viewportType}"
+  on:click={openArticle}
+  id="publication-article"
+>
   <div class="content">
     <PublicationAvatar
       avatar={articlePreview}
@@ -121,10 +130,12 @@
     />
 
     <div class="info">
-      <h2>{title}
-         {#if status !== "published"}
-        <span class="draft">({status})</span>
-      {/if}</h2>
+      <h2>
+        {title}
+        {#if status !== "published"}
+          <span class="draft">({status})</span>
+        {/if}
+      </h2>
       <AvatarLabel
         avatar={profile?.profile_photo}
         size={viewportType === "mobile" ? "xs" : "sm"}

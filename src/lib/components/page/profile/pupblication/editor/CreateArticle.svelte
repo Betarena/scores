@@ -25,7 +25,7 @@
 
   import Editor from "./Editor.svelte";
   import { publish, upsert } from "./helpers.js";
-    import PublishModal from "./PublishModal.svelte";
+  import PublishModal from "./PublishModal.svelte";
   export let data: PageData;
 
   $: ({ article } = data);
@@ -36,6 +36,8 @@
   let disablePublishButton = true;
   $: id = article.id || 0;
   let title = "";
+  let isSaving = false;
+  let isSaved = false;
   $: init(article);
   $: if (
     $create_article_store.tags.length ||
@@ -125,10 +127,16 @@
     debounceSave(e);
   }
 
-  const debounceSave = debounce(save, 1500);
+  const debounceSave = debounce(save, 500);
 
   async function save() {
+    isSaving = true;
+    isSaved = false;
     const res = await updateArticle();
+    isSaving = false;
+    if (res.success) {
+      isSaved = true;
+    }
     if (res.id && !$page.url.searchParams.get("draft")) {
       id = res.id;
       const url = $page.url;
@@ -173,6 +181,17 @@
       />
       {#if viewportType === "desktop"}
         <div class="actions">
+          {#if isSaving || isSaved}
+            <div class="saving-state">
+              <div class="circle" class:success={isSaved} />
+              <span>{isSaving ? "Saving" : "Draft Saved"}</span>
+              {#if isSaving}
+                <span class="dot">.</span><span class="dot">.</span><span
+                  class="dot">.</span
+                >
+              {/if}
+            </div>
+          {/if}
           <Button
             type="primary"
             disabled={disablePublishButton}
@@ -249,6 +268,64 @@
         align-items: center;
         justify-content: center;
       }
+
+      .saving-state {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+
+        .circle {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background-color: #8c8c8c;
+
+          &.success {
+            background-color: #47cd89;
+          }
+        }
+
+        span {
+          color: var(--colors-text-text-tertiary-600, #8c8c8c);
+          text-align: right;
+
+          /* Text md/Medium */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-md, 16px);
+          font-style: normal;
+          font-weight: 500;
+          line-height: var(--line-height-text-md, 24px); /* 150% */
+        }
+
+        .dot {
+          animation: blink 1.4s infinite both;
+        }
+
+        .dot:nth-child(1) {
+          animation-delay: 0s;
+        }
+
+        .dot:nth-child(2) {
+          animation-delay: 0.3s;
+        }
+
+        .dot:nth-child(3) {
+          animation-delay: 0.6s;
+        }
+
+        @keyframes blink {
+          0% {
+            opacity: 0.2;
+          }
+          20% {
+            opacity: 1;
+          }
+          100% {
+            opacity: 0.2;
+          }
+        }
+      }
+
       &.tablet {
         :global(.field .input-wrapper) {
           width: 100%;
@@ -270,6 +347,10 @@
           flex-grow: 1;
           display: flex;
           justify-content: flex-end;
+          align-items: center;
+          :global(.button) {
+            margin-left: var(--spacing-6xl, 48px);
+          }
         }
       }
     }

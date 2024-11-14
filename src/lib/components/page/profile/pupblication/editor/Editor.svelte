@@ -500,7 +500,7 @@
         :global(img) {
           max-width: 100%;
           width: 100%;
-          max-height: 352px;
+          height: auto;
         }
         &::selection {
           z-index: 0;
