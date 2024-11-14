@@ -225,9 +225,12 @@
                 />
               {/if}
               {#if viewportType === "desktop"}
-                <Button type="terlary-gray" on:click={() => history.back()}>
+              <a href="/u/author/{$page.params.lang}">
+
+                <Button type="terlary-gray" >
                   Go Back
                 </Button>
+              </a>
                 {#if view === "home"}
                   <a
                     href="/a/sportstack/{selectedSportstack?.permalink}"

@@ -35,6 +35,7 @@
   import { enhance } from "$app/forms";
   import { submitWrapper } from "$lib/utils/sveltekitWrapper.js";
   import { goto } from "$app/navigation";
+  import { mutateStringToPermalink } from "@betarena/scores-lib/dist/util/language.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -68,7 +69,6 @@
 
   async function validateName(val) {
     if (!val) return (inputError = false);
-    const v = JSON.stringify({ name: val });
     const res = await post<{ isValid: boolean | undefined }>(
       "/api/data/author/sportstack/validate",
       { name: val }
@@ -76,16 +76,17 @@
     inputError = !res?.isValid ?? false;
   }
 
+  async function gotoPublication(e) {
+    if (e.result.type !== "success") return;
+    const permalink = mutateStringToPermalink(name);
+    const url = `/u/author/publication/${permalink}/${userSettings.extract("lang")}`;
+    await goto(url);
+  }
+
   function submit() {
     return submitWrapper({
       successMessage: "The publication was created successfully.",
-      cbAfter: ({ result }) => {
-        if (result.type === "success") {
-          goto(`/u/author/${userSettings.extract("lang")}`, {
-            replaceState: true,
-          });
-        }
-      },
+      cbAfter: gotoPublication,
     });
   }
   $: name = name.replace(/[^\w\s]/gi, "");

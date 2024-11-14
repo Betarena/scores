@@ -78,11 +78,11 @@ export async function submitWrapper({ successMessage = "Success!", errorMessage 
     type: "loading",
     text: "",
   });
-  return ({ update, result }) =>
+  return async (e) =>
   {
     infoMessages.remove(loadingId);
 
-    if (result.type === "success")
+    if (e.result.type === "success")
     {
       infoMessages.add({
         type: "success",
@@ -96,10 +96,10 @@ export async function submitWrapper({ successMessage = "Success!", errorMessage 
       });
     }
     // Set invalidateAll to false if you don't want to reload page data when submitting
-    update({ invalidateAll: false, reset });
     if (cbAfter)
     {
-      cbAfter({ update, result });
+      await cbAfter(e);
     }
+    e.update({ invalidateAll: false, reset });
   };
 }
