@@ -18,7 +18,7 @@
   import { modalStore } from "$lib/store/modal.js";
   import session from "$lib/store/session.js";
   import userSettings from "$lib/store/user-settings.js";
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onDestroy } from "svelte";
   import DeleteModal from "./DeleteModal.svelte";
   import { deleteArticle, publish } from "./editor/helpers.js";
   import PublicationAvatar from "./PublicationAvatar.svelte";
@@ -60,6 +60,10 @@
       icon: Trash_01,
     },
   ];
+
+  onDestroy(() => {
+    actionMenu = false;
+  })
 
   function click(e: CustomEvent<string>) {
     const action = e.detail;

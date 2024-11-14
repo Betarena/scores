@@ -179,19 +179,19 @@
         value={selectedSportstack}
         on:change={selectSportstack}
       />
-      {#if viewportType === "desktop"}
-        <div class="actions">
-          {#if isSaving || isSaved}
-            <div class="saving-state">
-              <div class="circle" class:success={isSaved} />
-              <span>{isSaving ? "Saving" : "Draft Saved"}</span>
-              {#if isSaving}
-                <span class="dot">.</span><span class="dot">.</span><span
-                  class="dot">.</span
-                >
-              {/if}
-            </div>
-          {/if}
+      <div class="actions">
+        {#if isSaving || isSaved}
+          <div class="saving-state">
+            <div class="circle" class:success={isSaved} />
+            <span>{isSaving ? "Saving" : "Draft Saved"}</span>
+            {#if isSaving}
+              <span class="dot">.</span><span class="dot">.</span><span
+                class="dot">.</span
+              >
+            {/if}
+          </div>
+        {/if}
+        {#if viewportType === "desktop"}
           <Button
             type="primary"
             disabled={disablePublishButton}
@@ -202,8 +202,8 @@
               $modalStore.props = { cb: publishClick };
             }}>Publish</Button
           >
-        </div>
-      {/if}
+        {/if}
+      </div>
     </div>
   </Container>
   <Editor
@@ -279,7 +279,7 @@
           height: 8px;
           border-radius: 50%;
           background-color: #8c8c8c;
-
+          transition: 0.3s;
           &.success {
             background-color: #47cd89;
           }
