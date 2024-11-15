@@ -38,10 +38,6 @@
       label: "Published",
     },
     {
-      id: "unpublished",
-      label: "Unpunlished",
-    },
-    {
       id: "draft",
       label: "Draft",
     },
