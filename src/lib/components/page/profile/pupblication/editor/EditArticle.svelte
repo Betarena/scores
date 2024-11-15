@@ -124,7 +124,7 @@
   }
 
   async function publishClick() {
-   const res = await upsert({translations, editor: contentEditor, title, id, author: selectedSportstack});
+   const res = await upsert({translations, editor: contentEditor, title, id, author: selectedSportstack, showLoaders: false});
    if (res.success) {
      const res2 = await publish({translations, id, status: "publish", sportstack: selectedSportstack});
      $modalStore.show = false;
