@@ -105,7 +105,7 @@
   .info-message-wrapper {
     position: fixed;
     top: 10px;
-    right: 0;
+    right: 10px;
     z-index: 1000;
     display: flex;
     flex-direction: column;
