@@ -21,9 +21,12 @@
   import XClose from "$lib/components/ui/infomessages/x-close.svelte";
   import { get } from "$lib/api/utils.js";
   import { browser } from "$app/environment";
-  import type { AuthorsTagsMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import type { AuthorsTagsMain, TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import { createEventDispatcher, onMount } from "svelte";
 
+  export let translations:
+    | TranslationSportstacksSectionDataJSONSchema
+    | undefined;
 
   const dispatch = createEventDispatcher();
 
@@ -115,7 +118,7 @@
           <div class="content-header">
             <div class="header-info">
               <div class="title-wrapper">
-                <h2>Add Tags</h2>
+                <h2>{translations?.add_tags || "Add Tags"}</h2>
                 {#if viewportType !== "mobile"}
                   <div class="close" on:click={goBack}>
                     <XClose />
@@ -123,8 +126,8 @@
                 {/if}
               </div>
               <div class="info-desc">
-                Add or change tags (up to 5) so readers know what your article
-                is about and also find it easier.
+                {translations?.add_tags_description || `Add or change tags (up to 5) so readers know what your article
+                is about and also find it easier.`}
               </div>
             </div>
             <Input
@@ -174,7 +177,7 @@
         </Container>
       </div>
       <div class="tags-wrapper">
-        <h2>Choose tags</h2>
+        <h2>{translations?.choose_tags || "Choose tags"}</h2>
         <div class="tags-to-select">
           {#each tags as tag (tag)}
             {@const isActive = check(tag, selectedTags)}
@@ -200,9 +203,9 @@
         <Button
           type="secondary-gray"
           full={viewportType !== "mobile"}
-          on:click={goBack}>Go Back</Button
+          on:click={goBack}>{translations?.go_back || "Go Back"}</Button
         >
-        <Button full={viewportType !== "mobile"} on:click={save}>Save</Button>
+        <Button full={viewportType !== "mobile"} on:click={save}>{translations?.save || "Save"}</Button>
       </div>
     </Container>
   </div>

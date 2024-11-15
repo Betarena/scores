@@ -16,7 +16,7 @@
   import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
   import { modalStore } from "$lib/store/modal.js";
-  import type { AuthorsAuthorsMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import type { AuthorsAuthorsMain, TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import { page } from "$app/stores";
   import { browser } from "$app/environment";
   import { goto } from "$app/navigation";
@@ -35,6 +35,8 @@
     content,
     featured_image,
   } = article.data || { title: "", content: "", featured_image: "", id: "" });
+  $: translations = (data as any).RESPONSE_PROFILE_DATA.sportstack2 as TranslationSportstacksSectionDataJSONSchema;
+
   $: title = initTitle || "";
   $: if (featured_image && !content.includes(featured_image)) {
     content = `<img src="${featured_image}" alt="${title}" />${content}`;
@@ -96,6 +98,7 @@
       props: {
         id,
         cb: action === "delete" ? deleteArticleWrapper : unpublish,
+        translations,
       },
       component: action === "delete" ? DeleteModal : Unpublish,
     };
@@ -103,14 +106,14 @@
   }
 
  async function unpublish() {
-   const res = await publish({id, status: "unpublish", sportstack: selectedSportstack, redirect: false});
+   const res = await publish({id, translations, status: "unpublish", sportstack: selectedSportstack, redirect: false});
    if(res.success) {
     status = "unpublished";
     article.status = status;
    }
   }
   async function deleteArticleWrapper() {
-   const res =  await deleteArticle(article);
+   const res =  await deleteArticle(article, translations);
    if(res.success) {
 
      setTimeout(() =>
@@ -121,9 +124,9 @@
   }
 
   async function publishClick() {
-   const res = await upsert({editor: contentEditor, title, id, author: selectedSportstack});
+   const res = await upsert({translations, editor: contentEditor, title, id, author: selectedSportstack});
    if (res.success) {
-     const res2 = await publish({id, status: "publish", sportstack: selectedSportstack});
+     const res2 = await publish({translations, id, status: "publish", sportstack: selectedSportstack});
      $modalStore.show = false;
      if(res2.success) {
        status = "published";
@@ -132,7 +135,7 @@
    }
   }
   function save() {
-    upsert({editor: contentEditor, title, id, author: selectedSportstack});
+    upsert({translations, editor: contentEditor, title, id, author: selectedSportstack});
   }
 </script>
 
@@ -168,14 +171,14 @@
         <Button
           type="tertiary"
           destructive={true}
-          on:click={() => showModal("delete")}>Delete Article</Button
+          on:click={() => showModal("delete")}>{translations?.delete || "Delete Article"}</Button
         >
         {#if status ==="published"}
         <Button type="terlary-gray" on:click={() => showModal("unpublish")}
-          >Unpublish</Button>
+          >{translations?.unpublish || "Unpublish"}</Button>
           {:else}
           <Button type="terlary-gray" on:click={save}
-            >Save</Button>
+            >{translations?.save || "Save"}</Button>
         {/if}
         {#if viewportType === "desktop"}
           <Button
@@ -186,12 +189,12 @@
               $modalStore.component = PublishModal;
               $modalStore.modal = true;
               $modalStore.show = true;
-              $modalStore.props = { cb: publishClick };
+              $modalStore.props = { cb: publishClick, translations };
             }}>
             {#if status ==="published"}
               Update & Publish
             {:else}
-              Publish
+              {translations?.publish || "Publish"}
             {/if}
             </Button
           >
@@ -199,7 +202,7 @@
       </div>
     </div>
   </Container>
-  <Editor {data} bind:contentEditor {uploadUrl} bind:title {content} {publishClick} />
+  <Editor {translations} {data} bind:contentEditor {uploadUrl} bind:title {content} {publishClick} />
 </div>
 
 <!--

@@ -16,6 +16,7 @@
   import type {
     AuthorsAuthorsDataJSONSchema,
     AuthorsAuthorsMain,
+    TranslationSportstacksSectionDataJSONSchema,
   } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import PublicationAvatar from "./PublicationAvatar.svelte";
   import UrlInfo from "./UrlInfo.svelte";
@@ -32,6 +33,9 @@
     import { goto } from "$app/navigation";
 
   export let selectedSportstack: AuthorsAuthorsMain;
+  export let translations:
+    | TranslationSportstacksSectionDataJSONSchema
+    | undefined;
 
   let inputError = false,
     debounceTimer,
@@ -92,6 +96,7 @@
       modal: true,
       component: DeleteModal,
       props: {
+        translations,
         id: selectedSportstack.id,
         deleteSportsTack: true,
         cb: deleteSportstack
@@ -115,7 +120,7 @@
     if (data.success) {
       infoMessages.add({
         type: "success",
-        text: "Publication deleted!",
+        text: translations?.publication_deleted || "Publication deleted!",
       });
       setTimeout(() => {
         goto(`/u/author/${session.extract("lang")}`)
@@ -226,11 +231,11 @@ CROP PICTURE MODAL
     error={inputError}
     bind:value={name}
   >
-    <span slot="error">{"The name is already in use."}</span>
+    <span slot="error">{ translation.alert || "The name is already in use."}</span>
   </Input>
 
   <div class="thumbnail-field">
-    <div class="label">Thumbnail</div>
+    <div class="label">{translations?.thumbnail || "Thumbnail"}</div>
     <div class="input-wrapper">
       <PublicationAvatar
         {avatar}
@@ -263,8 +268,8 @@ CROP PICTURE MODAL
           </svg>
         </div>
         <div class="upload-info">
-          <div class="upload-title">Upload thumbnail</div>
-          <div class="upload-file-type">PNG, JPG or GIF (max. 800x400px)</div>
+          <div class="upload-title">{translations?.upload_thumbnail || "Upload thumbnail"}</div>
+          <div class="upload-file-type">PNG, JPG {translations?.or || "or"} GIF ({translations?.max || "max"}. 800x400px)</div>
         </div>
       </div>
     </div>
@@ -282,22 +287,22 @@ CROP PICTURE MODAL
       type="primary"
       disabled={!name}
       submit={true}
-      full={viewportType === "mobile"}>Save</Button
+      full={viewportType === "mobile"}>{translations?.save || "Save"}</Button
     >
   </div>
   <div class="separator" />
   <div class="delete-wrapper">
     <div class="warn-text">
-      <h3>Delete publication</h3>
+      <h3>{translations?.delete_publication || "Delete publication"}</h3>
       <p>
-        Permanently delete your publication, podcasts and subscriber list. This
-        action is permantely and can’t be rolled back
+        {translations?.permanently_delete || `Permanently delete your publication, podcasts and subscriber list. This
+        action is permantely and can’t be rolled back`}
       </p>
     </div>
     <Button
       type="subtle"
       on:click={showDeleteModal}
-      full={viewportType === "mobile"}>Delete</Button
+      full={viewportType === "mobile"}>{translations?.delete || "Delete"}</Button
     >
   </div>
 </form>

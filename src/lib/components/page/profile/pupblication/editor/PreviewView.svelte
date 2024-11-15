@@ -10,7 +10,7 @@
 <script lang="ts">
   import { createEventDispatcher, getContext, setContext } from "svelte";
   import { create_article_store } from "./create_article.store.js";
-  import {  fly, scale } from "svelte/transition";
+  import { fly, scale } from "svelte/transition";
   import { cubicIn, cubicOut } from "svelte/easing";
   import Button from "$lib/components/ui/Button.svelte";
   import Badge from "$lib/components/ui/Badge.svelte";
@@ -18,8 +18,12 @@
   import SeoView from "./SeoView.svelte";
   import session from "$lib/store/session.js";
   import ExpandDataWrapper from "$lib/components/ui/wrappers/ExpandDataWrapper.svelte";
+  import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
 
   export let cb = () => {};
+  export let translations:
+    | TranslationSportstacksSectionDataJSONSchema
+    | undefined;
   $: ({ seo, tags } = $create_article_store);
 
   $: ({ viewportType } = $session);
@@ -54,22 +58,20 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-
 <div
   id="article-seo-modal"
   class="seo-modal {viewportType}"
   in:chooseTransition={{ easing: cubicOut }}
   out:chooseTransition={{ easing: cubicIn, out: true }}
 >
-
   <div class="option-wrapper" on:click={() => changeView("tags")}>
     <div class="info">
-      <h3>Tags</h3>
+      <h3>{translations?.tags || "Tags"}</h3>
       {#if tags.length}
         <div class="tags-wrapper">
           <ExpandDataWrapper data={tags}>
             <slot slot="item" let:item={tag}>
-              <Badge active={true} color="brand" size="sm">{tag} </Badge>
+              <Badge active={true} color="brand" size="sm">{tag}</Badge>
             </slot>
             <slot slot="count" let:count>
               <Badge active={true} color="brand" size="sm">+{count}</Badge>
@@ -77,7 +79,7 @@
           </ExpandDataWrapper>
         </div>
       {:else}
-        <div class="info-message">No tags added</div>
+        <div class="info-message">{translations?.no_tags_added || "No tags added"}</div>
       {/if}
     </div>
     <svg
@@ -99,7 +101,7 @@
   <div class="separator" />
   <div class="option-wrapper" on:click={() => changeView("seo")}>
     <div class="info">
-      <h3>SEO</h3>
+      <h3>{translations?.seo || "SEO"}</h3>
       {#if seo.title || seo.description}
         <!-- content here -->
       {:else}
@@ -122,7 +124,7 @@
       />
     </svg>
   </div>
-  <Button full={true} on:click={cb}>Publish now</Button>
+  <Button full={true} on:click={cb}>{translations?.publish_now || "Publish now"}</Button>
 </div>
 
 <!--
@@ -181,7 +183,7 @@
       cursor: pointer;
 
       :global(svg path) {
-        stroke: var(--colors-foreground-fg-quaternary_hover ) !important
+        stroke: var(--colors-foreground-fg-quaternary_hover) !important;
       }
       .info {
         display: flex;

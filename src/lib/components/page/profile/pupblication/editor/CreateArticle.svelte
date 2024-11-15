@@ -16,7 +16,7 @@
   import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
   import { modalStore } from "$lib/store/modal.js";
-  import type { AuthorsAuthorsMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import type { AuthorsAuthorsMain, TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import { page } from "$app/stores";
   import { browser } from "$app/environment";
   import { goto } from "$app/navigation";
@@ -38,6 +38,8 @@
   let title = "";
   let isSaving = false;
   let isSaved = false;
+  $: translations = (data as any).RESPONSE_PROFILE_DATA.sportstack2 as TranslationSportstacksSectionDataJSONSchema;
+  $: console.log("translations", translations);
   $: init(article);
   $: if (
     $create_article_store.tags.length ||
@@ -103,6 +105,7 @@
       author: selectedSportstack,
       reload: false,
       showLoaders: false,
+      translations,
     });
   }
 
@@ -113,6 +116,7 @@
         id: res.id,
         status: "publish",
         sportstack: selectedSportstack,
+        translations
       });
       $modalStore.show = false;
     }
@@ -199,8 +203,8 @@
               $modalStore.component = PublishModal;
               $modalStore.modal = true;
               $modalStore.show = true;
-              $modalStore.props = { cb: publishClick };
-            }}>Publish</Button
+              $modalStore.props = { cb: publishClick, translations };
+            }}>{translations?.publish || "Publish"}</Button
           >
         {/if}
       </div>
@@ -208,6 +212,7 @@
   </Container>
   <Editor
     {uploadUrl}
+    {translations}
     content={article.data?.content}
     {title}
     on:update={saveOnChange}

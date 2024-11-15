@@ -12,8 +12,12 @@
   import TagsView from "./TagsView.svelte";
   import SeoView from "./SeoView.svelte";
   import PreviewView from "./PreviewView.svelte";
+  import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
 
   export let cb = () => {};
+  export let translations:
+    | TranslationSportstacksSectionDataJSONSchema
+    | undefined;
   setContext("self", this);
 
   let currentView = "preview";
@@ -21,7 +25,7 @@
   const viewMap = {
     tags: TagsView,
     seo: SeoView,
-    preview: PreviewView
+    preview: PreviewView,
   };
 
   function changeView(e: CustomEvent<string>) {
@@ -41,9 +45,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-
-
-<svelte:component this={viewMap[currentView]} on:changeView={changeView} {cb}/>
+<svelte:component this={viewMap[currentView]} {translations} on:changeView={changeView} {cb} />
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮

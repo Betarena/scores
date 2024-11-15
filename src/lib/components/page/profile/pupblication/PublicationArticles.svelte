@@ -12,7 +12,7 @@
   import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
   import session from "$lib/store/session.js";
   import userSettings from "$lib/store/user-settings.js";
-  import type { AuthorsAuthorsMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import type { AuthorsAuthorsMain, TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import PublicationArticleArticle from "./PublicationArticleArticle.svelte";
   import type { IArticle } from "$lib/components/section/authors/common_ui/helpers.js";
   import PublicationArticleArticleLoader from "./PublicationArticleArticleLoader.svelte";
@@ -24,37 +24,40 @@
   export let selectedSportstack: AuthorsAuthorsMain;
   export let articles: Map<number, IArticle>;
   export let loadingArticles = false;
-  export let showLoadButton
+  export let showLoadButton;
+  export let translations:
+    | TranslationSportstacksSectionDataJSONSchema
+    | undefined;
 
   let showSortBy = false;
   let node;
-  const options = [
+  $: options = [
     {
       id: "all",
-      label: "All",
+      label: translations?.all || "All",
     },
     {
       id: "published",
-      label: "Published",
+      label: translations?.published || "Published",
     },
     {
       id: "draft",
-      label: "Draft",
+      label: translations?.drafts || "Drafts",
     },
   ];
 
-  const sortOptions = [
+  $: sortOptions = [
     {
       id: "sortTitle",
-      label: "Title",
+      label: translations?.title || "Title",
     },
     {
       id: "sortPublishDate",
-      label: "Published date",
+      label: translations?.published_date || "Published date",
     },
     {
       id: "sortEditedDate",
-      label: "Last edited",
+      label: translations?.last_edited || "Last edited",
     },
   ];
   const dispatch = createEventDispatcher();
@@ -99,7 +102,7 @@
       <a
         href="/u/author/article/create/{$userSettings.lang}?sportstack={selectedSportstack?.permalink}"
       >
-        <Button type="primary" full={true}>+ New article</Button>
+        <Button type="primary" full={true}>+ {translations?.new_article || "New article"}</Button>
       </a>
     </div>
   {/if}
@@ -113,7 +116,7 @@
 
       {#if viewportType === "tablet"}
         <a href="/u/author/article/create/{$userSettings.lang}">
-          <Button type="primary" full={true}>+ New article</Button>
+          <Button type="primary" full={true}>+ {translations?.new_article || "New article"}</Button>
         </a>
       {/if}
     </div>
@@ -137,7 +140,7 @@
               stroke-linejoin="round"
             />
           </svg>
-          <span>Sort by</span>
+          <span>{translations?.sort_byt || "Sort by"}</span>
         </Button>
         <PopupMenu
           options={sortOptions}
@@ -150,12 +153,12 @@
   <div class="content">
     {#if articles.size}
       {#each [...articles.entries()] as [key, article] (key)}
-        <PublicationArticleArticle {article} on:deleteArticle />
+        <PublicationArticleArticle {translations} {article} on:deleteArticle />
       {/each}
     {:else if !loadingArticles}
       <div class="no-content">
         <EyeOffIcon />
-        <p>No articles available, start creating content today!</p>
+        <p>{translations?.no_articles_available || "No articles available, start creating content today!"}</p>
       </div>
     {/if}
     {#if loadingArticles}
@@ -166,7 +169,7 @@
     {#if showLoadButton && viewportType === "desktop"}
       <div class="load-more">
         <Button type="outline" on:click={() => dispatch("loadMore")}
-          >Load more</Button
+          >{translations?.view_more || "Load more"}</Button
         >
       </div>
     {/if}

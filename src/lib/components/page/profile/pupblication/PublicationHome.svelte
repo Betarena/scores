@@ -12,14 +12,21 @@
   import Button from "$lib/components/ui/Button.svelte";
   import session from "$lib/store/session.js";
   import userSettings from "$lib/store/user-settings.js";
-  import type { AuthorsAuthorsMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import type {
+    AuthorsAuthorsMain,
+    TranslationSportstacksSectionDataJSONSchema,
+  } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import { createEventDispatcher } from "svelte";
   import PublicationArticleArticleLoader from "./PublicationArticleArticleLoader.svelte";
-    import PublicationArticleArticle from "./PublicationArticleArticle.svelte";
-    import EyeOffIcon from "$lib/components/ui/assets/eye-off-icon.svelte";
+  import PublicationArticleArticle from "./PublicationArticleArticle.svelte";
+  import EyeOffIcon from "$lib/components/ui/assets/eye-off-icon.svelte";
+
   export let selectedSportstack: AuthorsAuthorsMain;
   export let articles: Map<number, IArticle>;
   export let loadingArticles = false;
+  export let translations:
+    | TranslationSportstacksSectionDataJSONSchema
+    | undefined;
   $: ({ viewportType } = $session);
 
   const dispatch = createEventDispatcher();
@@ -45,20 +52,24 @@
     <div class="buttons-header">
       <div class="button-wrapper">
         <a href="/a/sportstack/{selectedSportstack?.permalink}">
-          <Button type="secondary-gray">View sportstack</Button>
+          <Button type="secondary-gray"
+            >{translations?.view_sportstacks || "View sportstack"}</Button
+          >
         </a>
       </div>
       <a
         href="/u/author/article/create/{$userSettings.lang}?sportstack={selectedSportstack?.permalink}"
       >
-        <Button full={true} type="primary">+ New article</Button>
+        <Button full={true} type="primary"
+          >+ {translations?.new_article || "New article"}</Button
+        >
       </a>
     </div>
   {/if}
   <div class="header">
-    <h3>Recent articles</h3>
+    <h3>{translations?.recent_articles || "Recent articles"}</h3>
     <a class="view-all" on:click={viewAll}>
-      <span>View all</span>
+      <span>{translations?.view_all || "View all"}</span>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="20"
@@ -83,15 +94,15 @@
       {/each}
     {:else if articles.size}
       {#each [...articles.entries()] as [key, article] (key)}
-        <PublicationArticleArticle
-          {article}
-          on:deleteArticle
-        />
+        <PublicationArticleArticle {translations} {article} on:deleteArticle />
       {/each}
     {:else if !loadingArticles}
       <div class="no-content">
         <EyeOffIcon />
-        <p>No articles available, start creating content today!</p>
+        <p>
+          {translations?.no_articles_available ||
+            "No articles available, start creating content today!"}
+        </p>
       </div>
     {/if}
   </div>
@@ -236,7 +247,6 @@
         }
       }
     }
-
 
     &.tablet {
       .buttons-header {

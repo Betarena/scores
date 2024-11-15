@@ -23,8 +23,12 @@
   import { deleteArticle, publish } from "./editor/helpers.js";
   import PublicationAvatar from "./PublicationAvatar.svelte";
   import Unpublish from "./Unpublish.svelte";
+  import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
 
   export let article: IArticle;
+  export let translations:
+    | TranslationSportstacksSectionDataJSONSchema
+    | undefined;
 
   $: ({ permalink, data, id, seo_details, status, author } = article);
   $: ({ title } = data || { title: "" });
@@ -46,24 +50,24 @@
   $: options = [
     {
       id: "edit",
-      label: "Edit",
+      label: translations?.edit || "Edit",
       icon: Edit_02,
     },
     {
       id: "unpublish",
-      label: "Unpublish",
+      label: translations?.unpublished || "Unpublish",
       icon: ClipboardX,
     },
     {
       id: "delete",
-      label: "Delete",
+      label: translations?.delete || "Delete",
       icon: Trash_01,
     },
   ];
 
   onDestroy(() => {
     actionMenu = false;
-  })
+  });
 
   function click(e: CustomEvent<string>) {
     const action = e.detail;
@@ -86,16 +90,18 @@
             publish({ id, status: "unpublish", sportstack: author });
             article.status = "unpublished";
           },
+          translations
         };
         break;
       case "delete":
         modalState.props = {
           cb: async () => {
-            const res = await deleteArticle(article);
+            const res = await deleteArticle(article, translations);
             if (res.success) {
               dispatch("deleteArticle", article.id);
             }
           },
+          translations
         };
         modalState.component = DeleteModal;
         break;
@@ -107,7 +113,7 @@
 
   function openArticle() {
     if (status !== "published") return;
-    window.open( `/a/${permalink}`, "_blank");
+    window.open(`/a/${permalink}`, "_blank");
   }
 </script>
 
@@ -137,7 +143,7 @@
       <h2>
         {title}
         {#if status !== "published"}
-          <span class="draft">({status})</span>
+          <span class="draft">({translations?.drafts})</span>
         {/if}
       </h2>
       <AvatarLabel

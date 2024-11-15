@@ -22,14 +22,15 @@ COMPONENT JS (w/ TS)
 
   // #region ➤ 📌 VARIABLES
 
-  let profileTrs: IProfileTrs["sportstack"],
+  let profileTrs = {} as (IProfileTrs["sportstack"] & IProfileTrs["sportstack2"]),
     noWidgetData: boolean = false;
 
-  $: profileTrs = ($page.data.RESPONSE_PROFILE_DATA as IProfileTrs)?.sportstack;
+  $: if ($page.data.RESPONSE_PROFILE_DATA) {
+    profileTrs = {...$page.data.RESPONSE_PROFILE_DATA.sportstack, ...$page.data.RESPONSE_PROFILE_DATA.sportstack2};
+  }
 
   let sportstacks: AuthorsAuthorsMain[] = [];
   let loading = false;
-
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -92,7 +93,7 @@ $: if(sportstacks.length && $userSettings.user?.firebase_user_data && !$userSett
         <Button full={$session.viewportType === "mobile"}>
           <div class="button-text">
             <Plus />
-            {profileTrs.new_publication || "New Publication"}
+            {profileTrs?.new_publication || "New Publication"}
 
           </div>
         </Button>

@@ -16,7 +16,10 @@
   import session from "$lib/store/session.js";
   import { createEventDispatcher, onMount } from "svelte";
   import { create_article_store } from "./create_article.store.js";
-
+  import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  export let translations:
+    | TranslationSportstacksSectionDataJSONSchema
+    | undefined;
   $: ({ viewportType } = $session);
 
   $: ({ seo } = $create_article_store);
@@ -64,7 +67,7 @@
         <Container>
           <div class="header-info">
             <div class="title-wrapper">
-              <h2>SEO</h2>
+              <h2>{translations?.seo || "SEO"}</h2>
               {#if viewportType !== "mobile"}
                 <div class="close" on:click={goBack}>
                   <XClose />
@@ -72,9 +75,9 @@
               {/if}
             </div>
             <div class="info-desc">
-              The changes made in the SEO details will affect how the article
+              {translations?.seo_add_description || `The changes made in the SEO details will affect how the article
               appears in public laces like Betarena homepage and in subscribers’
-              inboxes — not the contents of the story itself.
+              inboxes — not the contents of the story itself.`}
             </div>
           </div>
         </Container>
@@ -82,15 +85,15 @@
       <div class="form-wrapper">
         <Input
           bind:value={title}
-          placeholder="Default title"
-          label="SEO title"
+          placeholder={translations?.title  || "Default title"}
+          label="{translations?.title || "SEO title"}"
         />
         <Input
           inputType="textarea"
           height="176px"
           bind:value={description}
           placeholder="Description"
-          label="Meta description"
+          label={translations?.seo_descriptions || "SEO description"}
         />
       </div>
     </div>
@@ -99,9 +102,9 @@
         <Button
           full={viewportType !== "mobile"}
           type="secondary-gray"
-          on:click={goBack}>Go Back</Button
+          on:click={goBack}>{translations?.go_back || "Go Back"}</Button
         >
-        <Button full={viewportType !== "mobile"} on:click={save}>Save</Button>
+        <Button full={viewportType !== "mobile"} on:click={save}>{translations?.save || "Save"}</Button>
       </div>
     </Container>
   </div>

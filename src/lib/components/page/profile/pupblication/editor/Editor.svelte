@@ -39,6 +39,7 @@
   import type { PageData } from ".svelte-kit/types/src/routes/(scores)/u/author/article/create/[lang=lang]/$types.js";
   import InsertLinkModal from "./InsertLinkModal.svelte";
   import PublishModal from "./PublishModal.svelte";
+  import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -61,6 +62,9 @@
   export let content: string | undefined;
   export let uploadUrl: string = "";
   export let publishClick: () => void;
+  export let translations:
+    | TranslationSportstacksSectionDataJSONSchema
+    | undefined;
   let element;
   let titleInFocus = false;
   let vh = "1vh";
@@ -166,7 +170,7 @@
           linkOnPaste: true,
         }),
         Placeholder.configure({
-          placeholder: "Create your sports content",
+          placeholder: translations?.create_sports_content || "Create your sports content",
         }),
         Image.configure({
           base64: true,
@@ -323,7 +327,7 @@
         bind:this={textareaNode}
         class="title"
         bind:value={title}
-        placeholder="Title (required)"
+        placeholder="{translations?.title_required || "Title (required)"}"
         on:keydown={handleKeyDown}
         on:focus={() => (titleInFocus = true)}
       />
@@ -359,8 +363,8 @@
             $modalStore.component = PublishModal;
             $modalStore.modal = true;
             $modalStore.show = true;
-            $modalStore.props = { cb: publishClick };
-          }}>Publish</Button
+            $modalStore.props = { cb: publishClick, translations };
+          }}>{translations?.publish || "Publish"}</Button
         >
       </Container>
     </div>

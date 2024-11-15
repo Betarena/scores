@@ -7,7 +7,7 @@ import { create_article_store } from "./create_article.store.js";
 import type { IArticle } from "$lib/components/section/authors/page/helpers.js";
 import { goto } from "$app/navigation";
 import session from "$lib/store/session.js";
-import type { AuthorsAuthorsMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+import type { AuthorsAuthorsMain, TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
 import { type Writable, writable } from "svelte/store";
 import type { IPageAuthorArticleData, IPageAuthorAuthorData } from "@betarena/scores-lib/types/v8/preload.authors.js";
 export function getAllImages(editor: Editor)
@@ -30,7 +30,10 @@ export function getAllImages(editor: Editor)
 }
 
 
-export async function upsert({ editor, title, author, reload = false, showLoaders = true, id }: { editor: Editor, title: string, author: AuthorsAuthorsMain, reload?: boolean, showLoaders?: boolean, id?: number })
+export async function upsert({ editor, title, author, reload = false, showLoaders = true, id, translations }: {
+  translations: TranslationSportstacksSectionDataJSONSchema
+  | undefined, editor: Editor, title: string, author: AuthorsAuthorsMain, reload?: boolean, showLoaders?: boolean, id?: number
+})
 {
   const v = DOMPurify.sanitize(editor.getHTML());
   const t = DOMPurify.sanitize(title);
@@ -38,7 +41,7 @@ export async function upsert({ editor, title, author, reload = false, showLoader
 
   const { seo, tags } = create_article_store.get();
 
-  const loadingId = showLoaders && infoMessages.add({ type: "loading", text: "Saving article..." });
+  const loadingId = showLoaders && infoMessages.add({ type: "loading", text: translations?.saving || "Saving article..." });
   const res = await postv2("/api/data/author/article", {
     content: v,
     title: t,
@@ -57,7 +60,7 @@ export async function upsert({ editor, title, author, reload = false, showLoader
   if (!showLoaders) return res;
   if (res.success)
   {
-    infoMessages.add({ type: "success", text: "Article saved!" });
+    infoMessages.add({ type: "success", text: translations?.article_saved || "Article saved!" });
     if (reload)
     {
 
@@ -68,15 +71,15 @@ export async function upsert({ editor, title, author, reload = false, showLoader
     }
   } else
   {
-    infoMessages.add({ type: "error", text: "Failed to publish article" });
+    infoMessages.add({ type: "error", text: "Failed to save article" });
   }
   return res;
 }
 
-export async function deleteArticle(article: IArticle | IPageAuthorArticleData)
+export async function deleteArticle(article: IArticle | IPageAuthorArticleData, translations: TranslationSportstacksSectionDataJSONSchema | undefined)
 {
   modalStore.update(state => ({ ...state, show: false }));
-  const loadingId = infoMessages.add({ type: "loading", text: "Deleting article..." });
+  const loadingId = infoMessages.add({ type: "loading", text: translations?.deleting || "Deleting article..." });
   const res = await fetch(`/api/data/author/article`, {
     method: "DELETE",
     body: JSON.stringify({ id: article.id, uid: article.author.uid })
@@ -85,7 +88,7 @@ export async function deleteArticle(article: IArticle | IPageAuthorArticleData)
   const data = await res.json();
   if (data.success)
   {
-    infoMessages.add({ type: "success", text: "Article deleted!" });
+    infoMessages.add({ type: "success", text: translations?.article_deleted || "Article deleted!" });
   } else
   {
     infoMessages.add({ type: "error", text: "Failed to delete article" });
@@ -93,7 +96,7 @@ export async function deleteArticle(article: IArticle | IPageAuthorArticleData)
   return data
 }
 
-export async function publish({ id, status, sportstack, redirect = true }: { id?: number, status: "publish" | "unpublish", sportstack: IPageAuthorAuthorData, redirect?: boolean })
+export async function publish({ id, status, sportstack, redirect = true, translations }: {translations:  TranslationSportstacksSectionDataJSONSchema | undefined,  id?: number, status: "publish" | "unpublish", sportstack: IPageAuthorAuthorData, redirect?: boolean })
 {
   modalStore.update(state => ({ ...state, show: false }));
   const loadingId = infoMessages.add({ type: "loading", text: `${status} article...` });

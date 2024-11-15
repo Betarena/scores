@@ -36,9 +36,8 @@
   import PublicationSettings from "./PublicationSettings.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import userSettings from "$lib/store/user-settings.js";
-  import type { AuthorsAuthorsMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import type { AuthorsAuthorsMain, TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import { fetchArticlesBySportstack } from "$lib/components/section/authors/common_ui/helpers.js";
-  import { browser } from "$app/environment";
   import {
     type IArticle,
     prepareArticlesMap,
@@ -65,6 +64,7 @@
   $: ({ translate } = data);
   $: ({ viewportType } = $session);
   $: ({ theme } = { ...$userSettings });
+  $: translations = (data as any).RESPONSE_PROFILE_DATA.sportstack2 as TranslationSportstacksSectionDataJSONSchema;
   let selectedSportstack;
   let loadingArticles = false;
   let articles: Map<number, IArticle> = new Map();
@@ -76,9 +76,13 @@
   $: if (data.sportstack instanceof Promise) {
     console.log("data.sportstack is a promise");
   } else {
-    const  sorted = data.sportstacks?.sort((a, b) => {
-      return new Date(b.data?.creation_date || "").getTime() - new Date(a.data?.creation_date || "").getTime()
-    }) || [];
+    const sorted =
+      data.sportstacks?.sort((a, b) => {
+        return (
+          new Date(b.data?.creation_date || "").getTime() -
+          new Date(a.data?.creation_date || "").getTime()
+        );
+      }) || [];
     sportstacks = sorted.map((s) => {
       const sportstack = { ...s, label: s.data?.username || "" };
       if (sportstack.permalink === $page.params.permalink) {
@@ -98,10 +102,10 @@
 
   // #endregion ➤ 📌 VARIABLES
 
-  const tabs = [
-    { id: 1, label: "Home", view: "home" },
-    { id: 2, label: "Articles", view: "articles" },
-    { id: 3, label: "Settings", view: "settings" },
+  $: tabs = [
+    { id: 1, label: translations?.home || "Home", view: "home" },
+    { id: 2, label: translations?.articles || "Articles", view: "articles" },
+    { id: 3, label: translations?.settings || "Settings", view: "settings" },
   ];
 
   const viewMap = {
@@ -133,16 +137,15 @@
   $: selected = tabs.find((tab) => tab.view === view) || tabs[0];
 
   async function getArticles(page: number, filter: IArticleFilter) {
-
-    const {status, sortBy} = filter;
+    const { status, sortBy } = filter;
     const options = {
       status,
-    }
+    };
     options[sortBy] = sortBy === "sortTitle" ? "asc" : "desc";
     const data = await fetchArticlesBySportstack({
       permalink: selectedSportstack.permalink,
       page,
-      options
+      options,
     });
     let nextArticles = new Map();
     if (data) {
@@ -152,13 +155,13 @@
         new Map(data.mapAuthor)
       );
     }
-    return{data, nextArticles};
+    return { data, nextArticles };
   }
 
   async function filterArticles(filter: IArticleFilter) {
     loadingArticles = true;
     articles = new Map();
-    const {data, nextArticles} = await getArticles(0, filter);
+    const { data, nextArticles } = await getArticles(0, filter);
     totalPageCount = data.totalPageCount;
     loadingArticles = false;
     articles = nextArticles;
@@ -169,7 +172,10 @@
     if (nextPage < totalPageCount - 1) {
       loadingArticles = true;
       nextPage++;
-      const {data, nextArticles } = await getArticles(nextPage, $articleFilterStore);
+      const { data, nextArticles } = await getArticles(
+        nextPage,
+        $articleFilterStore
+      );
       loadingArticles = false;
       if (data) {
         totalPageCount = data.totalPageCount;
@@ -181,10 +187,13 @@
   async function getResentArticles() {
     recentLoading = true;
     recentArticles = new Map();
-    const {data, nextArticles} = await getArticles(0, {status: "published", sortBy: "sortPublishDate"});
+    const { data, nextArticles } = await getArticles(0, {
+      status: "published",
+      sortBy: "sortPublishDate",
+    });
     recentLoading = false;
     if (data) {
-      recentArticles = nextArticles
+      recentArticles = nextArticles;
     } else {
       recentArticles = new Map();
     }
@@ -227,41 +236,38 @@
             {#if viewportType === "mobile"}
               <DropDownInput
                 checkIcon={true}
-                options = {sportstacks}
+                options={sportstacks}
                 on:change={selectSportstack}
                 value={selectedSportstack}
               />
             {/if}
-            <h2>{translate?.[view] || selected.label}</h2>
+            <h2>{translations?.[view] || selected.label}</h2>
             <div class="actions-buttons">
               {#if viewportType !== "mobile"}
                 <DropDownInput
                   checkIcon={true}
-                  options = {sportstacks}
+                  options={sportstacks}
                   on:change={selectSportstack}
                   value={selectedSportstack}
                 />
               {/if}
               {#if viewportType === "desktop"}
-              <a href="/u/author/{$page.params.lang}">
-
-                <Button type="terlary-gray" >
-                  Go Back
-                </Button>
-              </a>
+                <a href="/u/author/{$page.params.lang}">
+                  <Button type="terlary-gray">{translations?.go_back}</Button>
+                </a>
                 {#if view === "home"}
                   <a
                     href="/a/sportstack/{selectedSportstack?.permalink}"
                     style="margin-left: -10px !important; margin-right: -8px !important"
                   >
-                    <Button type="secondary-gray">View sportstack</Button>
+                    <Button type="secondary-gray">{translations?.view_sportstacks}</Button>
                   </a>
                 {/if}
                 {#if view !== "settings"}
                   <a
                     href="/u/author/article/create/{$userSettings.lang}?sportstack={selectedSportstack?.permalink}"
                   >
-                    <Button full={true} type="primary">+ New article</Button>
+                    <Button full={true} type="primary">+ {translations?.new_article}</Button>
                   </a>
                 {/if}
               {/if}
@@ -281,6 +287,7 @@
         loadingArticles={view === "home" ? recentLoading : loadingArticles}
         articles={view === "home" ? recentArticles : articles}
         {sportstacks}
+        {translations}
         showLoadButton={nextPage < totalPageCount - 1}
         on:loadMore={loadMore}
         on:changeView={change}

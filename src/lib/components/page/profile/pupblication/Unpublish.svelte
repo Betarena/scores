@@ -11,21 +11,25 @@
   import Save from "$lib/components/ui/assets/save.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import FeaturedIcon from "$lib/components/ui/FeaturedIcon.svelte";
+  import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import ModalWrapper from "./ModalWrapper.svelte";
   export let id = "";
   export let cb;
+  export let translations:
+    | TranslationSportstacksSectionDataJSONSchema
+    | undefined;
 </script>
 
 <ModalWrapper
   title="Are you sure you want to unpublish?"
-  actionButton="Unpublish"
-  cancel="Cancel"
+  actionButton={translations?.unpublish  || "Unpublish"}
+  cancel={translations?.cancel || "Cancel"}
 >
   <div slot="header-icon">
     <FeaturedIcon size="lg" type="brand"><Save /></FeaturedIcon>
   </div>
   <div slot="action-button" class=" action-button">
-    <Button full={true} on:click={cb}>Unpublish</Button>
+    <Button full={true} on:click={cb}>{translations?.unpublish || "Unpublish"} </Button>
   </div>
 </ModalWrapper>
 
