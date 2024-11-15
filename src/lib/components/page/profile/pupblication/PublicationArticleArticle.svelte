@@ -24,6 +24,7 @@
   import PublicationAvatar from "./PublicationAvatar.svelte";
   import Unpublish from "./Unpublish.svelte";
   import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import ClipboardCheck from "$lib/components/ui/assets/clipboard-check.svelte";
 
   export let article: IArticle;
   export let translations:
@@ -35,7 +36,8 @@
   $: ({ twitter_card } = seo_details || { twitter_card: { image: "" } });
   $: articlePreview = twitter_card.image;
   $: profile = $userSettings.user?.scores_user_data;
-
+  $: isPublished = status === "published";
+  $: console.log("status", status, isPublished);
   const dispatch = createEventDispatcher();
   let publishedDate = "";
   $: if (article.published_date) {
@@ -54,9 +56,9 @@
       icon: Edit_02,
     },
     {
-      id: "unpublish",
-      label: translations?.unpublished || "Unpublish",
-      icon: ClipboardX,
+      id: isPublished  ? "unpublish" : "publish",
+      label: isPublished ? translations?.unpublished || "Unpublish" : translations?.publish || "Publish",
+      icon: isPublished ? ClipboardX : ClipboardCheck,
     },
     {
       id: "delete",
@@ -87,7 +89,7 @@
         modalState.component = Unpublish;
         modalState.props = {
           cb: () => {
-            publish({ id, status: "unpublish", sportstack: author });
+            publish({ id, status: "unpublish", sportstack: author, translations });
             article.status = "unpublished";
           },
           translations
@@ -105,6 +107,9 @@
         };
         modalState.component = DeleteModal;
         break;
+      case "publish":
+        publish({id, status: "publish", sportstack: author, translations});
+        article.status = "published";
       default:
         return;
     }
