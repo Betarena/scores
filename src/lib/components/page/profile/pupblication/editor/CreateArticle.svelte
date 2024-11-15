@@ -100,7 +100,6 @@
       editor: contentEditor,
       title,
       id,
-      is_draft: true,
       author: selectedSportstack,
       reload: false,
       showLoaders: false,

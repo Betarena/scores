@@ -30,7 +30,7 @@ export function getAllImages(editor: Editor)
 }
 
 
-export async function upsert({ editor, title, author, reload = false, showLoaders = true, id, is_draft = false }: { is_draft?: boolean, editor: Editor, title: string, author: AuthorsAuthorsMain, reload?: boolean, showLoaders?: boolean, id?: number })
+export async function upsert({ editor, title, author, reload = false, showLoaders = true, id }: { editor: Editor, title: string, author: AuthorsAuthorsMain, reload?: boolean, showLoaders?: boolean, id?: number })
 {
   const v = DOMPurify.sanitize(editor.getHTML());
   const t = DOMPurify.sanitize(title);
@@ -48,7 +48,6 @@ export async function upsert({ editor, title, author, reload = false, showLoader
     seo,
     images,
     uid: author.uid,
-    is_draft,
     status: "published"
   }) as any;
   if (showLoaders && loadingId)
