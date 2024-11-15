@@ -737,7 +737,7 @@
   ╰─────
     src="https://pbs.twimg.com/media/F5rQ5FPWkAASrF4.jpg:large"
   -->
-  {#if widgetData.article.seo_details?.twitter_card.image}
+  <!-- {#if widgetData.article.seo_details?.twitter_card.image}
 
     <img
       id='preview-banner'
@@ -750,7 +750,7 @@
       m-b-24
       "
     />
-  {/if}
+  {/if} -->
   <!--
   ╭─────
   │ > article text
@@ -941,6 +941,16 @@
           color: var(--dark-theme);
         }
 
+        img {
+          /* 🎨 style */
+          max-height: 352px;
+          object-fit: cover;
+          margin-left: -16px;
+          margin-right: -16px;
+          width: -webkit-fill-available;
+          width: -moz-available;
+        }
+
         @mixin header
         {
           /* 🎨 style */
@@ -1019,12 +1029,22 @@
         // ▓ IMPORTANT
         :global
         {
+
+
           @mixin header
           {
             /* 🎨 style */
             line-height: 32px;
             font-weight: 700;
             margin: 40px 0 16px 0;
+          }
+
+
+          img {
+            /* 🎨 style */
+            margin-left: 0;
+            margin-right: 0;
+            width: -webkit-fill-available;
           }
 
           p
