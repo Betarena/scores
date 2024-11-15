@@ -11,7 +11,8 @@
 // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 // #region ➤ 📦 Package Imports
-import { promiseUrlsPreload } from '$lib/utils/navigation.js';
+import { ERROR_CODE_INVALID } from '$lib/utils/debug.js';
+import { preloadExitLogic, promiseUrlsPreload } from '$lib/utils/navigation.js';
 import { normalizeSeo } from '$lib/utils/seo.js';
 
 // #endregion ➤ 📦 Package Imports
@@ -106,6 +107,8 @@ async function fetchData
    *  📣 Target `data` returned.
   */
   const [articles] = await promiseUrlsPreload(urls0, fetch);
+  // preloadExitLogic
+  if (articles.errorId) return preloadExitLogic(0, "sportstack", ERROR_CODE_INVALID);
   const author = articles.mapAuthor[0] || [null, {}];
   const sportstack = author[1].data || {};
   return {

@@ -33,13 +33,7 @@ export async function load
     name = ""
   } = params;
 
-  return await main
-    ({
-      name,
-      fetch,
-      url: url.origin
-      }
-    );
+  return await main({ name, fetch, url: url.origin });
 }
 
 // #endregion ➤ 🔄 LIFECYCLE [SVELTE]

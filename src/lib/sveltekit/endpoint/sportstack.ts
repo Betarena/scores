@@ -12,6 +12,8 @@ import { json, type RequestEvent } from '@sveltejs/kit';
 import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.betarena-user.js';
 import type { IBetarenaUser } from '@betarena/scores-lib/types/_FIREBASE_.js';
 import { ITableAuthorAuthorQuery2Out, ITableAuthorAuthorQuery2Var, TableAuthorAuthorQuery2 } from '@betarena/scores-lib/dist/graphql/v8/table.authors.authors.js';
+import { preloadExitLogic } from '$lib/utils/navigation.js';
+import { ERROR_CODE_INVALID } from '$lib/utils/debug.js';
 
 // ╭──────────────────────────────────────────────────────────────────╮
 // │ 🛠️ MAIN METHODS                                                  │
@@ -22,11 +24,7 @@ export async function main
     request: RequestEvent
   )
 {
-  return await tryCatchAsync
-    (
-      async (
-      ): Promise<Response> =>
-      {
+
         // ╭──────────────────────────────────────────────────────────────────╮
         // │ NOTE:                                                            │
         // │ 👇 :|: extract url query data.                                   │
@@ -95,25 +93,8 @@ export async function main
         return json
           (
             null
-          );
-      },
-      (
-        ex: unknown
-      ): Response =>
-      {
-        // ▓ [🐞]
-        console.error(`💀 Unhandled :: ${ex}`);
+        );
 
-        return json
-          (
-            null
-            , {
-              status: 400,
-              statusText: 'Uh-oh! There has been an error'
-            }
-          );
-      }
-    );
 }
 
 // ╭──────────────────────────────────────────────────────────────────╮
@@ -146,16 +127,11 @@ async function fallbackDataGenerate0
     }
 ): Promise<IPageAuthorSportstackData | undefined>
 {
-  try
-  {
-    const dataRes0: IPageAuthorProfileData = await entryTargetDataAuthorSportstack({ permalink, page: Number(page), isUsingAuthorData: true, optsQuery });
-    const dataRes1 = await getSportstackByPermalink(permalink);;
+
+  const dataRes1 = await getSportstackByPermalink(permalink);
+  const dataRes0: IPageAuthorProfileData = await entryTargetDataAuthorSportstack({ permalink, page: Number(page), isUsingAuthorData: true, optsQuery });
     (dataRes0 as any).sportstack = dataRes1?.sportstack;
-    return dataRes0
-  } catch (e)
-  {
-    return
-  }
+  return dataRes0
 }
 
 /**
@@ -242,11 +218,8 @@ export async function getSportstackByPermalink
     permalink
   })) || [];
   const sportstack = ql[0]?.authors_authors?.[0];
-  if (sportstack)
-  {
-    return { sportstacks: sportstack }
-  }
-  return null;
+  if (!sportstack) return preloadExitLogic(0, 'sportstack-permalink', ERROR_CODE_INVALID);
+  return { sportstacks: sportstack }
 }
 
 

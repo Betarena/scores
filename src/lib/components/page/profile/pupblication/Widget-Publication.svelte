@@ -122,7 +122,7 @@
     const { permalink } = e.detail as AuthorsAuthorsMain;
     const lang = url.pathname.split("/").at(-1);
     selectedSportstack = e.detail as AuthorsAuthorsMain;
-    getArticles();
+    getArticles(0, $articleFilterStore);
     goto(`/u/author/publication/${permalink}/${lang}${url.search}`, {
       replaceState: true,
       noScroll: true,
