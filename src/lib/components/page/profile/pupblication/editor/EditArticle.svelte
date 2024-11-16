@@ -192,7 +192,7 @@
               $modalStore.props = { cb: publishClick, translations };
             }}>
             {#if status ==="published"}
-              Update & Publish
+              {translations?.update_publish || "Update & Publish"}
             {:else}
               {translations?.publish || "Publish"}
             {/if}

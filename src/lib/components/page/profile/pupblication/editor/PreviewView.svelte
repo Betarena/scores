@@ -105,7 +105,7 @@
       {#if seo.title || seo.description}
         <!-- content here -->
       {:else}
-        <div class="info-message">Add a title and description to SEO</div>
+        <div class="info-message">{translations?.add_title_seo ||" Add a title and description to SEO"}</div>
       {/if}
     </div>
     <svg

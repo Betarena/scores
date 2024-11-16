@@ -37,7 +37,6 @@
   $: articlePreview = twitter_card.image;
   $: profile = $userSettings.user?.scores_user_data;
   $: isPublished = status === "published";
-  $: console.log("status", status, isPublished);
   const dispatch = createEventDispatcher();
   let publishedDate = "";
   $: if (article.published_date) {
@@ -57,7 +56,7 @@
     },
     {
       id: isPublished  ? "unpublish" : "publish",
-      label: isPublished ? translations?.unpublished || "Unpublish" : translations?.publish || "Publish",
+      label: isPublished ? translations?.unpublish || "Unpublish" : translations?.publish || "Publish",
       icon: isPublished ? ClipboardX : ClipboardCheck,
     },
     {

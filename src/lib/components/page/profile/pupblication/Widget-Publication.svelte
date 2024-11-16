@@ -161,11 +161,16 @@
   async function filterArticles(filter: IArticleFilter) {
     loadingArticles = true;
     articles = new Map();
-    const { data, nextArticles } = await getArticles(0, filter);
-    totalPageCount = data.totalPageCount;
-    loadingArticles = false;
-    articles = nextArticles;
-    nextPage = 0;
+    try {
+
+      const { data, nextArticles } = await getArticles(0, filter);
+      totalPageCount = data.totalPageCount;
+      loadingArticles = false;
+      articles = nextArticles;
+      nextPage = 0;
+    } catch (e) {
+      loadingArticles = false;
+    }
   }
 
   async function loadMore() {

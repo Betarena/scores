@@ -85,7 +85,7 @@ $: if(sportstacks.length && $userSettings.user?.firebase_user_data && !$userSett
         </h2>
 
         <div class="description">
-          {profileTrs?.publications_desc ||
+          {profileTrs?.publications_description ||
             "Lorem ipsum dolor sit amet consectetur. Turpis sed et proin commodo."}
         </div>
       </div>

@@ -85,7 +85,7 @@
 
 
     return submitWrapper({
-      successMessage: "The publication was updated successfully.",
+      successMessage: translations?.update_success || "The publication was updated successfully.",
     });
   }
 
@@ -224,7 +224,7 @@ CROP PICTURE MODAL
 
   <Input
     name="username"
-    label="Name"
+    label={translations?.name || "Name"}
     placeholder={translation?.default_name || "Default name"}
     on:input={debounceValidation}
     requred={true}
@@ -277,7 +277,7 @@ CROP PICTURE MODAL
 
   <Input
     name="about"
-    label="Description"
+    label={translations?.description || "Description"}
     inputType="textarea"
     placeholder={"Write your description"}
     bind:value={desc}

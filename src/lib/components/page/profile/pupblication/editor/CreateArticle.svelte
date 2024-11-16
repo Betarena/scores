@@ -39,7 +39,6 @@
   let isSaving = false;
   let isSaved = false;
   $: translations = (data as any).RESPONSE_PROFILE_DATA.sportstack2 as TranslationSportstacksSectionDataJSONSchema;
-  $: console.log("translations", translations);
   $: init(article);
   $: if (
     $create_article_store.tags.length ||
@@ -187,7 +186,7 @@
         {#if isSaving || isSaved}
           <div class="saving-state">
             <div class="circle" class:success={isSaved} />
-            <span>{isSaving ? "Saving" : "Draft Saved"}</span>
+            <span>{isSaving ? translations?.saving || "Saving" :  translations?.draft_save || "Draft Saved"}</span>
             {#if isSaving}
               <span class="dot">.</span><span class="dot">.</span><span
                 class="dot">.</span

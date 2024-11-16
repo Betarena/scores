@@ -75,7 +75,7 @@
               {/if}
             </div>
             <div class="info-desc">
-              {translations?.seo_add_description || `The changes made in the SEO details will affect how the article
+              {translations?.seo_changes || `The changes made in the SEO details will affect how the article
               appears in public laces like Betarena homepage and in subscribers’
               inboxes — not the contents of the story itself.`}
             </div>
@@ -92,7 +92,7 @@
           inputType="textarea"
           height="176px"
           bind:value={description}
-          placeholder="Description"
+          placeholder={translations?.description || "Description"}
           label={translations?.seo_descriptions || "SEO description"}
         />
       </div>

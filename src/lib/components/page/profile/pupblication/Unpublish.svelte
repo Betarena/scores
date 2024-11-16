@@ -21,7 +21,7 @@
 </script>
 
 <ModalWrapper
-  title="Are you sure you want to unpublish?"
+  title={translations?.unbublish_confirmation || "Are you sure you want to unpublish?"}
   actionButton={translations?.unpublish  || "Unpublish"}
   cancel={translations?.cancel || "Cancel"}
 >

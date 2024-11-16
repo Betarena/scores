@@ -21,14 +21,13 @@
     | undefined;
 </script>
 
-<ModalWrapper title="Delete" actionButton="Delete" cancel="Cancel">
+<ModalWrapper title={translations?.delete || "Delete"} actionButton={translations?.delete || "Delete"} cancel= {translations?.cancel || "Cancel"}>
   <div slot="header-icon">
     <FeaturedIcon size="lg" type="error"><Trash_01 /></FeaturedIcon>
   </div>
   <div slot="text">
-    Are you sure you want to delete this {deleteSportsTack
-      ? "publication"
-      : "article"}? <br /> This action cannot be undone.
+     {translations?.delete_confirmation || "Are you sure you want to delete ?"}.
+     {translations?.action_undone || "This action cannot be undone."}
   </div>
   <div slot="action-button" class=" action-button">
     <Button destructive={true} full={true} on:click={cb}>{translations?.delete}</Button>

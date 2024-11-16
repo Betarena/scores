@@ -71,7 +71,7 @@ export async function upsert({ editor, title, author, reload = false, showLoader
     }
   } else
   {
-    infoMessages.add({ type: "error", text: "Failed to save article" });
+    infoMessages.add({ type: "error", text: translations?.failed_save || "Failed to save article" });
   }
   return res;
 }
@@ -91,15 +91,15 @@ export async function deleteArticle(article: IArticle | IPageAuthorArticleData, 
     infoMessages.add({ type: "success", text: translations?.article_deleted || "Article deleted!" });
   } else
   {
-    infoMessages.add({ type: "error", text: "Failed to delete article" });
+    infoMessages.add({ type: "error", text: translations?.failed_delete || "Failed to delete article" });
   }
   return data
 }
 
-export async function publish({ id, status, sportstack, redirect = true, translations }: {translations:  TranslationSportstacksSectionDataJSONSchema | undefined,  id?: number, status: "publish" | "unpublish", sportstack: IPageAuthorAuthorData, redirect?: boolean })
+export async function publish({ id, status, sportstack, redirect = true, translations }: { translations: TranslationSportstacksSectionDataJSONSchema | undefined, id?: number, status: "publish" | "unpublish", sportstack: IPageAuthorAuthorData, redirect?: boolean })
 {
   modalStore.update(state => ({ ...state, show: false }));
-  const loadingId = infoMessages.add({ type: "loading", text: `${status} article...` });
+  const loadingId = infoMessages.add({ type: "loading", text: translations?.saving || `${status} article...` });
   const res = await fetch(`/api/data/author/article`, {
     method: "PUT",
     body: JSON.stringify({ id: id, status, uid: sportstack.uid })
@@ -108,7 +108,7 @@ export async function publish({ id, status, sportstack, redirect = true, transla
   const data = await res.json();
   if (data.success)
   {
-    infoMessages.add({ type: "success", text: `Article ${status}ed!` });
+    infoMessages.add({ type: "success", text: status === "publish" ? translations?.article_published || "Article published!" : translations?.article_unpublished || "Article unpublished!" });
     if (redirect)
     {
 
@@ -119,7 +119,7 @@ export async function publish({ id, status, sportstack, redirect = true, transla
     }
   } else
   {
-    infoMessages.add({ type: "error", text: `Failed to ${status} article` });
+    infoMessages.add({ type: "error", text: translations?.failed_save || `Failed to ${status} article` });
   }
   return data
 }
