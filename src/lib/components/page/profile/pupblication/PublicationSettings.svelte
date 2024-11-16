@@ -136,7 +136,7 @@
     const target = event.target as HTMLInputElement;
     if (!target.files) return;
     files = target.files;
-    const allowedFormats = ["image/jpeg", "image/png", "image/gif"];
+    const allowedFormats = ["image/jpeg", "image/png", "image/gif",  "image/webp"];
     for (const file_ of files) {
       // [🐞]
       dlog(`${file_.name}: ${file_.size} ${typeof file_} type`, true);
