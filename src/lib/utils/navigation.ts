@@ -173,7 +173,7 @@ export async function selectLanguage
         (
           `${pastLangV2}/`,
           `/${lang}`
-        )
+      ) + page.url.search
             ;
 
     // [🐞]
