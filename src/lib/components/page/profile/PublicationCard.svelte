@@ -10,7 +10,6 @@
 <script lang="ts">
   // #region ➤ 📦 Package Imports
 
-  import ImgPlaceholder from "$lib/components/ui/assets/img-placeholder.svelte";
   import Badge from "$lib/components/ui/Badge.svelte";
   import session from "$lib/store/session.js";
   import userSettings from "$lib/store/user-settings.js";
@@ -69,7 +68,7 @@
   id="publication-card"
   href="/u/author/publication/{permalink}/{$userSettings.lang}"
 >
-  <PublicationAvatar avatar={sportstack.avatar} size={viewportType === "mobile" ? "74px" : "104px"}/>
+  <PublicationAvatar avatar={sportstack.avatar} size={viewportType === "mobile" ? "74px" : "102px"}/>
   <div class="info">
     {#if owner === $userSettings.user?.firebase_user_data.uid}
       <Badge size="sm" color="gray">Owner</Badge>
@@ -129,10 +128,10 @@
       width: 100%;
       border: 1px solid #E6E6E6;
       height: 104px;
-      .img {
-        width: 128px;
-        height: 128px;
-      //  transform: translate(-1px, -1px);
+
+      :global(.img) {
+        border-top-left-radius: var(--radius-xl, 12px);
+        border-bottom-left-radius: var(--radius-xl, 12px);
       }
       .info {
         flex-direction: column-reverse;
@@ -148,10 +147,6 @@
     }
 
     &.desktop {
-      .img {
-        width: 104px;
-        height: 104px;
-      }
       .info {
         gap: var(--spacing-md, 8px);
         justify-content: start;
