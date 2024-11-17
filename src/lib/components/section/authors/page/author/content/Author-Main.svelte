@@ -140,7 +140,7 @@
     publishDateAgo = () =>
     {
       const
-        differenceInDays = Math.ceil(((new Date().getTime() - new Date(widgetData.article.published_date).getTime()) / 1000) / ( 3600 * 24 ));
+        differenceInDays = Math.floor(((new Date().getTime() - new Date(widgetData.article.published_date).getTime()) / 1000) / ( 3600 * 24 ));
       ;
       return differenceInDays;
     }
