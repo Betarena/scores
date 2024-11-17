@@ -279,7 +279,7 @@ CROP PICTURE MODAL
           class="hidden-input"
           bind:this={fileInput}
           on:change={handleFileChange}
-          accept=".jpg, .jpeg, .png, .gif"
+          accept=".jpg, .jpeg, .png, .gif, .webp"
         />
         <div class="upload-icon">
           <svg
