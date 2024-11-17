@@ -50,7 +50,7 @@
 
   import sessionStore from '$lib/store/session.js';
   import userBetarenaSettings from '$lib/store/user-settings.js';
-  import { monthNames } from '$lib/utils/dates.js';
+  import { monthNames, timeAgo } from '$lib/utils/dates.js';
   import { viewportChangeV2 } from '$lib/utils/device';
 
   import TranslationText from '$lib/components/misc/Translation-Text.svelte';
@@ -77,6 +77,7 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  $: console.log("Data: ", $page.data)
   export let
     /**
      * @augments IPageAuhtorArticleDataFinal
@@ -547,12 +548,7 @@
               >
               •
               </span>
-              {publishDateAgo()}
-              <TranslationText
-                key={'uknown'}
-                text={widgetDataTranslation?.translation?.published_date_days}
-                fallback={'days'}
-              />
+              {timeAgo(widgetData.article.published_date, $page.data.translations.time_ago)}
             </p>
           {/if}
 
