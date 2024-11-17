@@ -48,6 +48,7 @@
   export let submit = false;
   export let size: "lg" | "md" | "sm" | "xl" | "xxl" = "lg";
   export let destructive = false;
+  export let icon_leading = false;
 
   const dispatch = createEventDispatcher();
   let hover = false;
@@ -64,27 +65,52 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
-<button
-  class="button {type} {classname} {size}"
-  class:full
-  class:disabled
-  {...$$restProps}
-  type={submit ? "submit" : "button"}
-  class:hover
-  class:destructive
-  on:mouseenter={() => (hover = true)}
-  on:mouseleave={() => (hover = false)}
-  on:touchend={() => (hover = false)}
-  on:mouseup={() => (hover = false)}
-  on:click={() => {
-    if (disabled) return;
-    dispatch("click");
-    hover = false;
-  }}
->
-  <slot />
-</button>
+{#if href}
+  <a
+    {href}
+    class="button {type} {classname} {size}"
+    class:full
+    class:disabled
+    class:icon_leading
+    {...$$restProps}
+    type={submit ? "submit" : "button"}
+    class:hover
+    class:destructive
+    on:mouseenter={() => (hover = true)}
+    on:mouseleave={() => (hover = false)}
+    on:touchend={() => (hover = false)}
+    on:mouseup={() => (hover = false)}
+    on:click={() => {
+      if (disabled) return;
+      dispatch("click");
+      hover = false;
+    }}
+  >
+    <slot />
+  </a>
+{:else}
+  <button
+    class="button {type} {classname} {size}"
+    class:full
+    class:disabled
+    class:icon_leading
+    {...$$restProps}
+    type={submit ? "submit" : "button"}
+    class:hover
+    class:destructive
+    on:mouseenter={() => (hover = true)}
+    on:mouseleave={() => (hover = false)}
+    on:touchend={() => (hover = false)}
+    on:mouseup={() => (hover = false)}
+    on:click={() => {
+      if (disabled) return;
+      dispatch("click");
+      hover = false;
+    }}
+  >
+    <slot />
+  </button>
+{/if}
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -126,16 +152,25 @@
       font-style: normal;
       font-weight: 500;
       line-height: var(--line-height-text-md, 24px); /* 150% */
+      &.icon_leading {
+        padding: var(--spacing-lg, 12px);
+      }
     }
 
     &.md {
       padding: 10px 14px;
       padding: 10px calc(14px + var(--spacing-xxs, 2px));
+      &.icon_leading {
+        padding: 10px;
+      }
     }
 
     &.sm {
       padding: var(--spacing-md, 8px)
         calc(var(--spacing-lg, 12px) + var(--spacing-xxs, 2px));
+      &.icon_leading {
+        padding: var(--spacing-md, 8px);
+      }
     }
 
     &.xl {
@@ -144,10 +179,16 @@
       font-style: normal;
       font-weight: 500;
       line-height: var(--line-height-text-md, 24px);
+      &.icon_leading {
+        padding: var(--font-size-text-sm, 14px);
+      }
     }
 
     &.xxl {
       padding: var(--spacing-xl, 16px) calc(22px + var(--spacing-xxs, 2px));
+      &.icon_leading {
+        padding: var(--spacing-xl, 16px);
+      }
     }
   }
 

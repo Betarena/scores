@@ -60,7 +60,7 @@
     class="img empty"
     style=" width: {size}px; height: {size}px; border-radius: {radius}"
   >
-    <ImgPlaceholder />
+    <ImgPlaceholder size={size/2} />
   </div>
 {/if}
 
