@@ -65,11 +65,8 @@
 
   function keyHandler(e) {
     if (e.detail.key === "Enter") {
-      if (tags.length) {
-        select(tags.find((tag) => !check(tag, $create_article_store.tags)));
-      } else {
-        select(search);
-      }
+      const searchedTag = tags.find((tag) => tag.toLowerCase() === search.toLowerCase()) || search;
+      select(searchedTag);
       search = "";
     }
   }
