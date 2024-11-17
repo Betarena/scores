@@ -12,7 +12,10 @@
   import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
   import session from "$lib/store/session.js";
   import userSettings from "$lib/store/user-settings.js";
-  import type { AuthorsAuthorsMain, TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import type {
+    AuthorsAuthorsMain,
+    TranslationSportstacksSectionDataJSONSchema,
+  } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import PublicationArticleArticle from "./PublicationArticleArticle.svelte";
   import type { IArticle } from "$lib/components/section/authors/common_ui/helpers.js";
   import PublicationArticleArticleLoader from "./PublicationArticleArticleLoader.svelte";
@@ -20,8 +23,9 @@
   import PopupMenu from "$lib/components/ui/PopupMenu.svelte";
   import { articleFilterStore } from "./editor/helpers.js";
   import { createEventDispatcher } from "svelte";
+  import type { Writable } from "svelte/store";
 
-  export let selectedSportstack: AuthorsAuthorsMain;
+  export let selectedSportstack: Writable<AuthorsAuthorsMain>;
   export let articles: Map<number, IArticle>;
   export let loadingArticles = false;
   export let showLoadButton;
@@ -75,8 +79,7 @@
   }
 
   function handleScroll() {
-    if(viewportType === "desktop" || !node)
-    return;
+    if (viewportType === "desktop" || !node) return;
     const rect = node.getBoundingClientRect();
     if (window.scrollY > rect.bottom - 10) {
       dispatch("loadMore");
@@ -95,14 +98,16 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<svelte:window  on:scroll={handleScroll}/>
+<svelte:window on:scroll={handleScroll} />
 <div class="publication-articles {viewportType}" bind:this={node}>
   {#if viewportType === "mobile"}
     <div class="buttons-header">
       <a
-        href="/u/author/article/create/{$userSettings.lang}?sportstack={selectedSportstack?.permalink}"
+        href="/u/author/article/create/{$userSettings.lang}?sportstack={$selectedSportstack?.permalink}"
       >
-        <Button type="primary" full={true}>+ {translations?.new_article || "New article"}</Button>
+        <Button type="primary" full={true}
+          >+ {translations?.new_article || "New article"}</Button
+        >
       </a>
     </div>
   {/if}
@@ -116,7 +121,9 @@
 
       {#if viewportType === "tablet"}
         <a href="/u/author/article/create/{$userSettings.lang}">
-          <Button type="primary" full={true}>+ {translations?.new_article || "New article"}</Button>
+          <Button type="primary" full={true}
+            >+ {translations?.new_article || "New article"}</Button
+          >
         </a>
       {/if}
     </div>
@@ -158,7 +165,10 @@
     {:else if !loadingArticles}
       <div class="no-content">
         <EyeOffIcon />
-        <p>{translations?.no_articles_available || "No articles available, start creating content today!"}</p>
+        <p>
+          {translations?.no_articles_available ||
+            "No articles available, start creating content today!"}
+        </p>
       </div>
     {/if}
     {#if loadingArticles}

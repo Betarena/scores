@@ -20,8 +20,9 @@
   import PublicationArticleArticleLoader from "./PublicationArticleArticleLoader.svelte";
   import PublicationArticleArticle from "./PublicationArticleArticle.svelte";
   import EyeOffIcon from "$lib/components/ui/assets/eye-off-icon.svelte";
+  import type { Writable } from "svelte/store";
 
-  export let selectedSportstack: AuthorsAuthorsMain;
+  export let selectedSportstack: Writable<AuthorsAuthorsMain>;
   export let articles: Map<number, IArticle>;
   export let loadingArticles = false;
   export let translations:
@@ -51,14 +52,14 @@
   {#if viewportType !== "desktop"}
     <div class="buttons-header">
       <div class="button-wrapper">
-        <a href="/a/sportstack/{selectedSportstack?.permalink}">
+        <a href="/a/sportstack/{$selectedSportstack?.permalink}">
           <Button type="secondary-gray"
             >{translations?.view_sportstacks || "View sportstack"}</Button
           >
         </a>
       </div>
       <a
-        href="/u/author/article/create/{$userSettings.lang}?sportstack={selectedSportstack?.permalink}"
+        href="/u/author/article/create/{$userSettings.lang}?sportstack={$selectedSportstack?.permalink}"
       >
         <Button full={true} type="primary"
           >+ {translations?.new_article || "New article"}</Button

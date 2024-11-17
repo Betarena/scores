@@ -29,10 +29,11 @@
   import ModalProfilePictureCrop from "../Modal-ProfilePictureCrop.svelte";
   import { dlog } from "$lib/utils/debug.js";
   import { uploadImage } from "$lib/firebase/common.js";
-    import { infoMessages } from "$lib/components/ui/infomessages/infomessages.js";
-    import { goto } from "$app/navigation";
+  import { infoMessages } from "$lib/components/ui/infomessages/infomessages.js";
+  import { goto, invalidateAll } from "$app/navigation";
+  import type { Writable } from "svelte/store";
 
-  export let selectedSportstack: AuthorsAuthorsMain;
+  export let selectedSportstack: Writable<AuthorsAuthorsMain>;
   export let translations:
     | TranslationSportstacksSectionDataJSONSchema
     | undefined;
@@ -41,7 +42,7 @@
     debounceTimer,
     form: HTMLFormElement,
     fileInput: HTMLInputElement,
-    files: HTMLInputElement['files'] | undefined,
+    files: HTMLInputElement["files"] | undefined,
     username = "",
     modal_pic_crop_show: boolean = false,
     profile_pic: string | undefined,
@@ -50,8 +51,12 @@
   $: translation = $page.data.RESPONSE_PROFILE_DATA?.sportstack;
   $: ({ viewportType } = $session);
   $: ({ theme } = { ...$userSettings });
-  $: ({ data = {}, id, permalink: initPermalink } = selectedSportstack);
-  $: ({ username, about, avatar:initialAvatar } = data as AuthorsAuthorsDataJSONSchema);
+  $: ({ data = {}, id, permalink: initPermalink } = $selectedSportstack);
+  $: ({
+    username,
+    about,
+    avatar: initialAvatar,
+  } = data as AuthorsAuthorsDataJSONSchema);
   $: ({ username: initialName } = data as AuthorsAuthorsDataJSONSchema);
   $: permalink = mutateStringToPermalink(username);
 
@@ -79,13 +84,38 @@
   async function submit(e) {
     e.data.append("avatar", avatar);
     if (profile_pic) {
-      const avatar = await uploadImage(profile_pic, `Betarena_Media/authors/authors_list/${id}/avatars/${id}.png`)
+      const avatar = await uploadImage(
+        profile_pic,
+        `Betarena_Media/authors/authors_list/${id}/avatars/${id}.png`
+      );
       e.data.append("avatar", avatar);
     }
 
-
     return submitWrapper({
-      successMessage: translations?.update_success || "The publication was updated successfully.",
+      successMessage:
+        translations?.update_success ||
+        "The publication was updated successfully.",
+      cbAfter: async (e) => {
+        const name = e.data.get("username");
+        const avatar = e.data.get("avatar");
+        const permalink = mutateStringToPermalink(name);
+        selectedSportstack.update((prev) => {
+          return {
+            ...prev,
+            data: {...prev.data, avatar},
+            username: name,
+            label: name,
+            permalink,
+            avatar,
+          };
+        });
+        window.history.replaceState(
+          {},
+          "",
+          `/u/author/publication/${permalink}/${session.extract("lang")}${$page.url.search}`
+        );
+        invalidateAll()
+      },
     });
   }
 
@@ -99,7 +129,7 @@
         translations,
         id: selectedSportstack.id,
         deleteSportsTack: true,
-        cb: deleteSportstack
+        cb: deleteSportstack,
       },
       show: true,
     });
@@ -110,7 +140,7 @@
     const loadingId = infoMessages.add({
       type: "loading",
       text: "Deleting publication...",
-    })
+    });
     const res = await fetch(`/api/data/author/sportstack`, {
       method: "DELETE",
       body: JSON.stringify({ id, uid: selectedSportstack.uid }),
@@ -123,7 +153,7 @@
         text: translations?.publication_deleted || "Publication deleted!",
       });
       setTimeout(() => {
-        goto(`/u/author/${session.extract("lang")}`)
+        goto(`/u/author/${session.extract("lang")}`);
       }, 1000);
     } else {
       infoMessages.add({
@@ -136,7 +166,12 @@
     const target = event.target as HTMLInputElement;
     if (!target.files) return;
     files = target.files;
-    const allowedFormats = ["image/jpeg", "image/png", "image/gif",  "image/webp"];
+    const allowedFormats = [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+    ];
     for (const file_ of files) {
       // [🐞]
       dlog(`${file_.name}: ${file_.size} ${typeof file_} type`, true);
@@ -157,7 +192,6 @@
     files = undefined;
   }
 
-
   /**
    * @description
    * closing off picture-crop;
@@ -168,25 +202,20 @@
     fileInput.value = "";
   }
 
-
   /**
-	 * @description
+   * @description
    * cropped picture upload;
-	 * DOC: https://firebase.google.com/docs/storage/web/upload-files#upload_from_a_string
-	 * @param
+   * DOC: https://firebase.google.com/docs/storage/web/upload-files#upload_from_a_string
+   * @param
    * { any } event
    * @returns
    * Promise < void >
-	 */
-	async function upload_profile_picture
-  (
-		event
-	): Promise < void >
-  {
-		modal_pic_crop_show = false;
-		profile_pic = event?.detail?.img;
+   */
+  async function upload_profile_picture(event): Promise<void> {
+    modal_pic_crop_show = false;
+    profile_pic = event?.detail?.img;
     avatar = profile_pic;
-	}
+  }
 </script>
 
 <!--
@@ -231,7 +260,9 @@ CROP PICTURE MODAL
     error={inputError}
     bind:value={name}
   >
-    <span slot="error">{ translation.alert || "The name is already in use."}</span>
+    <span slot="error"
+      >{translation.alert || "The name is already in use."}</span
+    >
   </Input>
 
   <div class="thumbnail-field">
@@ -268,8 +299,13 @@ CROP PICTURE MODAL
           </svg>
         </div>
         <div class="upload-info">
-          <div class="upload-title">{translations?.upload_thumbnail || "Upload thumbnail"}</div>
-          <div class="upload-file-type">PNG, JPG {translations?.or || "or"} GIF ({translations?.max || "max"}. 800x400px)</div>
+          <div class="upload-title">
+            {translations?.upload_thumbnail || "Upload thumbnail"}
+          </div>
+          <div class="upload-file-type">
+            PNG, JPG {translations?.or || "or"} GIF ({translations?.max ||
+              "max"}. 800x400px)
+          </div>
         </div>
       </div>
     </div>
@@ -295,14 +331,16 @@ CROP PICTURE MODAL
     <div class="warn-text">
       <h3>{translations?.delete_publication || "Delete publication"}</h3>
       <p>
-        {translations?.permanently_delete || `Permanently delete your publication, podcasts and subscriber list. This
+        {translations?.permanently_delete ||
+          `Permanently delete your publication, podcasts and subscriber list. This
         action is permantely and can’t be rolled back`}
       </p>
     </div>
     <Button
       type="subtle"
       on:click={showDeleteModal}
-      full={viewportType === "mobile"}>{translations?.delete || "Delete"}</Button
+      full={viewportType === "mobile"}
+      >{translations?.delete || "Delete"}</Button
     >
   </div>
 </form>

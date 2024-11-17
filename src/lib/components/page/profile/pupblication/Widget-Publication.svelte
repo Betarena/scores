@@ -36,13 +36,17 @@
   import PublicationSettings from "./PublicationSettings.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import userSettings from "$lib/store/user-settings.js";
-  import type { AuthorsAuthorsMain, TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import type {
+    AuthorsAuthorsMain,
+    TranslationSportstacksSectionDataJSONSchema,
+  } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import { fetchArticlesBySportstack } from "$lib/components/section/authors/common_ui/helpers.js";
   import {
     type IArticle,
     prepareArticlesMap,
   } from "$lib/components/section/authors/page/helpers.js";
   import { articleFilterStore, type IArticleFilter } from "./editor/helpers.js";
+  import { writable } from "svelte/store";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -64,8 +68,11 @@
   $: ({ translate } = data);
   $: ({ viewportType } = $session);
   $: ({ theme } = { ...$userSettings });
-  $: translations = (data as any).RESPONSE_PROFILE_DATA.sportstack2 as TranslationSportstacksSectionDataJSONSchema;
-  let selectedSportstack;
+  $: translations = (data as any).RESPONSE_PROFILE_DATA
+    .sportstack2 as TranslationSportstacksSectionDataJSONSchema;
+  let selectedSportstack = writable(
+    {} as AuthorsAuthorsMain & { label: string }
+  );
   let loadingArticles = false;
   let articles: Map<number, IArticle> = new Map();
   let recentArticles: Map<number, IArticle> = new Map();
@@ -86,19 +93,24 @@
     sportstacks = sorted.map((s) => {
       const sportstack = { ...s, label: s.data?.username || "" };
       if (sportstack.permalink === $page.params.permalink) {
-        selectedSportstack = sportstack;
+        $selectedSportstack = sportstack;
       }
       return sportstack;
     });
     getResentArticles();
   }
-  $: if (selectedSportstack?.permalink !== $page.params.permalink) {
+  $: if ($selectedSportstack?.permalink !== $page.params.permalink) {
     getResentArticles();
   }
 
   $: if ($articleFilterStore.status && $articleFilterStore.sortBy) {
     filterArticles($articleFilterStore);
   }
+
+  $: sportstacks = sportstacks.map((s) => {
+    if (s.id === $selectedSportstack.id) return {...$selectedSportstack, label: $selectedSportstack.data?.username || ""};
+    return { ...s, label: s.data?.username || "" };
+  });
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -125,7 +137,7 @@
     const url = $page.url;
     const { permalink } = e.detail as AuthorsAuthorsMain;
     const lang = url.pathname.split("/").at(-1);
-    selectedSportstack = e.detail as AuthorsAuthorsMain;
+    $selectedSportstack = e.detail as AuthorsAuthorsMain;
     getArticles(0, $articleFilterStore);
     goto(`/u/author/publication/${permalink}/${lang}${url.search}`, {
       replaceState: true,
@@ -143,7 +155,7 @@
     };
     options[sortBy] = sortBy === "sortTitle" ? "asc" : "desc";
     const data = await fetchArticlesBySportstack({
-      permalink: selectedSportstack.permalink,
+      permalink: $selectedSportstack.permalink,
       page,
       options,
     });
@@ -162,7 +174,6 @@
     loadingArticles = true;
     articles = new Map();
     try {
-
       const { data, nextArticles } = await getArticles(0, filter);
       totalPageCount = data.totalPageCount;
       loadingArticles = false;
@@ -243,7 +254,7 @@
                 checkIcon={true}
                 options={sportstacks}
                 on:change={selectSportstack}
-                value={selectedSportstack}
+                value={$selectedSportstack}
               />
             {/if}
             <h2>{translations?.[view] || selected.label}</h2>
@@ -253,7 +264,7 @@
                   checkIcon={true}
                   options={sportstacks}
                   on:change={selectSportstack}
-                  value={selectedSportstack}
+                  value={$selectedSportstack}
                 />
               {/if}
               {#if viewportType === "desktop"}
@@ -262,17 +273,21 @@
                 </a>
                 {#if view === "home"}
                   <a
-                    href="/a/sportstack/{selectedSportstack?.permalink}"
+                    href="/a/sportstack/{$selectedSportstack?.permalink}"
                     style="margin-left: -10px !important; margin-right: -8px !important"
                   >
-                    <Button type="secondary-gray">{translations?.view_sportstacks}</Button>
+                    <Button type="secondary-gray"
+                      >{translations?.view_sportstacks}</Button
+                    >
                   </a>
                 {/if}
                 {#if view !== "settings"}
                   <a
-                    href="/u/author/article/create/{$userSettings.lang}?sportstack={selectedSportstack?.permalink}"
+                    href="/u/author/article/create/{$userSettings.lang}?sportstack={$selectedSportstack?.permalink}"
                   >
-                    <Button full={true} type="primary">+ {translations?.new_article}</Button>
+                    <Button full={true} type="primary"
+                      >+ {translations?.new_article}</Button
+                    >
                   </a>
                 {/if}
               {/if}
