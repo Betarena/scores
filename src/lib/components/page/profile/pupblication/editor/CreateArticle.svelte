@@ -16,7 +16,10 @@
   import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
   import { modalStore } from "$lib/store/modal.js";
-  import type { AuthorsAuthorsMain, TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import type {
+    AuthorsAuthorsMain,
+    TranslationSportstacksSectionDataJSONSchema,
+  } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import { page } from "$app/stores";
   import { browser } from "$app/environment";
   import { goto } from "$app/navigation";
@@ -38,7 +41,8 @@
   let title = "";
   let isSaving = false;
   let isSaved = false;
-  $: translations = (data as any).RESPONSE_PROFILE_DATA.sportstack2 as TranslationSportstacksSectionDataJSONSchema;
+  $: translations = (data as any).RESPONSE_PROFILE_DATA
+    .sportstack2 as TranslationSportstacksSectionDataJSONSchema;
   $: init(article);
   $: if (
     $create_article_store.tags.length ||
@@ -115,7 +119,7 @@
         id: res.id,
         status: "publish",
         sportstack: selectedSportstack,
-        translations
+        translations,
       });
       $modalStore.show = false;
     }
@@ -132,7 +136,7 @@
   const debounceSave = debounce(save, 500);
 
   async function save() {
-    if (!contentEditor || !selectedSportstack) return
+    if (!contentEditor || !selectedSportstack) return;
     isSaving = true;
     isSaved = false;
     const res = await updateArticle();
@@ -154,6 +158,30 @@
       debounceTimer = setTimeout(() => func.apply(this, args), wait);
     };
   }
+
+  function showPublishModal() {
+    $modalStore.component = PublishModal;
+    $modalStore.modal = true;
+    $modalStore.show = true;
+    if (!$create_article_store.seo.title) {
+      $create_article_store.seo.title = title;
+    }
+    if (!$create_article_store.seo.description) {
+      $create_article_store.seo.description = getFirstParagraph();
+    }
+    $modalStore.props = { cb: publishClick, translations };
+  }
+
+  function getFirstParagraph() {
+  const json = contentEditor.getJSON();
+  if (!json) return '';
+  for (const node of (json.content || [])) {
+    if (node.type === 'paragraph') {
+      return (node.content || []).map(n => n.text).join(' ');
+    }
+  }
+  return '';
+}
 </script>
 
 <!--
@@ -186,7 +214,11 @@
         {#if isSaving || isSaved}
           <div class="saving-state">
             <div class="circle" class:success={isSaved} />
-            <span>{isSaving ? translations?.saving || "Saving" :  translations?.draft_save || "Draft Saved"}</span>
+            <span
+              >{isSaving
+                ? translations?.saving || "Saving"
+                : translations?.draft_save || "Draft Saved"}</span
+            >
             {#if isSaving}
               <span class="dot">.</span><span class="dot">.</span><span
                 class="dot">.</span
@@ -198,12 +230,7 @@
           <Button
             type="primary"
             disabled={disablePublishButton}
-            on:click={() => {
-              $modalStore.component = PublishModal;
-              $modalStore.modal = true;
-              $modalStore.show = true;
-              $modalStore.props = { cb: publishClick, translations };
-            }}>{translations?.publish || "Publish"}</Button
+            on:click={showPublishModal}>{translations?.publish || "Publish"}</Button
           >
         {/if}
       </div>
