@@ -75,6 +75,7 @@
     routeIdPageProfile,
     routeIdPageProfileArticleCreation,
     routeIdPageProfileEditArticle,
+    routeIdPageProfilePublication,
     routeIdScores,
   } from "$lib/constants/paths.js";
   import FooterRedisign from "$lib/components/_main_/footer/FooterRedisign.svelte";
@@ -684,7 +685,7 @@
     class:tablet={VIEWPORT_TABLET_INIT[1]}
   >
     <slot />
-    {#if (!ispwa && ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle].includes($page.route.id || "")) || $page.route.id === routeIdPageProfile}
+    {#if (!ispwa && ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle].includes($page.route.id || "")) || [routeIdPageProfile, routeIdPageProfilePublication].includes($page.route.id || "")}
       <FooterRedisign
         mobile={VIEWPORT_MOBILE_INIT[1]}
         tablet={VIEWPORT_TABLET_INIT[1]}
