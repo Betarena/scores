@@ -10,8 +10,7 @@ export const load: LayoutServerLoad = (async ({ locals, fetch, params }) =>
   const uid = locals.uid
   const { permalink } = params;
   const current = await getSportstackByPermalink(permalink);
-  if (current?.uid !== uid) preloadExitLogic(0, "/u/author/publication", ERROR_CODE_UNAUTHORIZED, PAGE_UNAUTHORIZED_MSG);
-  console.log("Current: ", current)
+  if (current?.sportstacks.uid !== uid) preloadExitLogic(0, "/u/author/publication", ERROR_CODE_UNAUTHORIZED, PAGE_UNAUTHORIZED_MSG);
   async function getSportsTacks(uid?: string)
   {
     if (!uid) return [];
