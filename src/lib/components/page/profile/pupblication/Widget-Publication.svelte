@@ -47,6 +47,7 @@
   } from "$lib/components/section/authors/page/helpers.js";
   import { articleFilterStore, type IArticleFilter } from "./editor/helpers.js";
   import { writable } from "svelte/store";
+    import { browser } from "$app/environment";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -97,7 +98,10 @@
       }
       return sportstack;
     });
-    getResentArticles();
+  }
+
+  $: if (browser && $selectedSportstack) {
+    getResentArticles()
   }
   $: if ($selectedSportstack?.permalink !== $page.params.permalink) {
     getResentArticles();
