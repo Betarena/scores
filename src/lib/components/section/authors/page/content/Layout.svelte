@@ -48,6 +48,7 @@
   import ArticleWidget from './articles/Article-Widget.svelte';
   import Edit_02 from '$lib/components/ui/assets/edit-02.svelte';
   import Button from '$lib/components/ui/Button.svelte';
+    import Edit_05 from '$lib/components/ui/assets/edit-05.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -144,8 +145,8 @@
   <ArticleWidget />
 </section>
 <a class="create-article" class:tablet class:mobile href="/u/author/article/create/{$sessionStore.serverLang}">
-  <Button type="primary" icon_leading={true}>
-    <Edit_02 color="var(--colors-base-white)" />
+  <Button size={mobile ? "xl" : "xxl"} type="primary" icon_leading={true}>
+    <Edit_05 size={mobile ? "20" : "24"} color="var(--colors-base-white)" />
   </Button>
 </a>
 
