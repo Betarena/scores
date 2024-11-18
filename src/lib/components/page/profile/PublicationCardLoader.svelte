@@ -45,7 +45,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   const imgSize = {
-    desktop: "104px",
+    desktop: "102px",
     tablet: "128px",
     mobile: "74px",
   };
@@ -72,7 +72,7 @@
   class="publication-card {$session.viewportType}"
   id="publication-card-loader"
 >
-  <div style="margin-top: -1px; margin-left: -1px">
+  <div style="max-height: 100%;">
     <LoaderImage
       clazz="img"
       borderRadius={borderRadius[$session.viewportType || "mobile"]}
@@ -138,8 +138,8 @@
 
     &.desktop {
       .img {
-        width: 104px;
-        height: 104px;
+        // width: 104px;
+        // height: 104px;
       }
       .info {
         gap: var(--spacing-md, 8px);
