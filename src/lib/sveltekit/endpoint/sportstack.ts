@@ -36,13 +36,18 @@ export async function main
           permalink = searchParams.get('permalink') || "",
           id = searchParams.get('id') || "",
           user = searchParams.get('user'),
-          limit = searchParams.get('limit') || 10,
-          offset = searchParams.get('offset') || 0,
           status = searchParams.get('status') || undefined,
           sortTitle = searchParams.get('sortTitle') || undefined,
           sortPublishDate = searchParams.get('sortPublishDate') || undefined,
-          sortEditedDate = searchParams.get('sortEditedDate') || undefined
+          sortEditedDate = searchParams.get('sortEditedDate') || undefined,
+          limitSearch = searchParams.get('limit') || undefined,
+          offsetSearch = searchParams.get('offset') || undefined
           ;
+
+  let limit, offset;
+
+  if (limitSearch) limit = +limitSearch;
+  if (offsetSearch) offset = +offsetSearch;
 
         // ╭──────────────────────────────────────────────────────────────────╮
         // │ NOTE:                                                            │
@@ -52,7 +57,7 @@ export async function main
         // ╰──────────────────────────────────────────────────────────────────╯
         if (user)
         {
-          const data = await getSportstackByUserId(user, +limit, +offset);
+          const data = await getSportstackByUserId(user, limit, offset);
           return json(data)
         }
 
@@ -187,8 +192,8 @@ async function fallbackDataGenerate1
 async function getSportstackByUserId
   (
     uid: string,
-    limit: number,
-    offset: number
+    limit?: number,
+    offset?: number
   )
 {
   const ql = (await new _GraphQL().wrapQuery<ITableAuthorAuthorQuery4Var, ITableAuthorAuthorQuery4Out>(TableAuthorAuthorQuery4, {
