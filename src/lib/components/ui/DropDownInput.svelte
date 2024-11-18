@@ -162,37 +162,39 @@
       bind:this={dropDownNode}
       class:top
     >
-      {#each options as option (option.id)}
-        <div class="list-item-wrapper">
-          <div
-            on:click={() => select(option)}
-            class="list-item"
-            class:active={option.id === value?.id}
-          >
-            <slot name="option" {option}>
-              {option[textKey]}
+      <div class="inner-wrrapper">
+        {#each options as option (option.id)}
+          <div class="list-item-wrapper">
+            <div
+              on:click={() => select(option)}
+              class="list-item"
+              class:active={option.id === value?.id}
+            >
+              <slot name="option" {option}>
+                {option[textKey]}
 
-              {#if checkIcon && option.id === value?.id}
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M20 6L9 17L4 12"
-                    stroke="var( --colors-foreground-fg-brand-primary)"
-                    stroke-width="1.66"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
-              {/if}
-            </slot>
+                {#if checkIcon && option.id === value?.id}
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M20 6L9 17L4 12"
+                      stroke="var( --colors-foreground-fg-brand-primary)"
+                      stroke-width="1.66"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                {/if}
+              </slot>
+            </div>
           </div>
-        </div>
-      {/each}
+        {/each}
+      </div>
     </div>
   </div>
   {#if $$slots.error || $$slots.info}
@@ -362,6 +364,15 @@
       flex-direction: column;
       align-items: flex-start;
       align-self: stretch;
+
+      .inner-wrrapper {
+        height: 100%;
+        overflow: auto;
+        display: flex;
+        flex-direction: column;
+        width: fit-content;
+        width: 100%;
+      }
 
       &::-webkit-scrollbar {
         width: 8px;
