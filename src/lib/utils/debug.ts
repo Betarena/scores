@@ -31,6 +31,8 @@ export const
   PAGE_INVALID_MSG = 'Uh-oh! This page does not exist!',
   ERROR_CODE_INVALID = 404,
   ERROR_CODE_PRELOAD = 500,
+  ERROR_CODE_UNAUTHORIZED = 401,
+  PAGE_UNAUTHORIZED_MSG = 'Uh-oh! You are not authorized to view this page!',
   LAYOUT_1_LANG_PAGE_ERROR_MSG = 'Uh-oh! There has been a pre-load error (/layout)',
   HOME_LANG_PAGE_ERROR_MSG = 'Uh-oh! There has been a pre-load error (/lang)',
   FIXTURE_PAGE_ERROR_MSG = 'Uh-oh! There has been a pre-load error (/fixture)',
