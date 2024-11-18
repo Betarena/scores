@@ -278,8 +278,8 @@
 
   .create-article {
     position: fixed;
-    bottom: 100px;
-    transform: translateX(1238px);
+    bottom: 34px;
+    transform: translateX(1226px);
     &.tablet {
       right: 34px;
       transform: none;
