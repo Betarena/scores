@@ -81,7 +81,7 @@ export const POST: RequestHandler = async ({ request, locals }) =>
       main_data: {
         canonical: link,
         description: seoDescription,
-        keywords: tags.map((tag) => tag.name).join(", "),
+        keywords: tags.join(", "),
         nofollow: false,
         noindex: false,
         title: seoTitle
