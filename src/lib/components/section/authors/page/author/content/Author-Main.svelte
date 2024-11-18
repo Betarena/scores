@@ -77,7 +77,6 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  $: console.log("Data: ", $page.data)
   export let
     /**
      * @augments IPageAuhtorArticleDataFinal
@@ -733,7 +732,7 @@
   ╰─────
     src="https://pbs.twimg.com/media/F5rQ5FPWkAASrF4.jpg:large"
   -->
-  <!-- {#if widgetData.article.seo_details?.twitter_card.image}
+  {#if widgetData.article.seo_details?.twitter_card.image && !widgetData.article.data?.content.includes("<img")}
 
     <img
       id='preview-banner'
@@ -746,7 +745,7 @@
       m-b-24
       "
     />
-  {/if} -->
+  {/if}
   <!--
   ╭─────
   │ > article text
