@@ -63,6 +63,7 @@
   $: desc = about || "";
   $: name = username || "";
   $: avatar = initialAvatar || "";
+
   // #endregion ➤ 📌 VARIABLES
 
   function debounceValidation(e: CustomEvent<string>) {
@@ -261,7 +262,7 @@ CROP PICTURE MODAL
     bind:value={name}
   >
     <span slot="error"
-      >{translation.alert || "The name is already in use."}</span
+      >{$page.data.RESPONSE_PROFILE_DATA.sportstack.alert || "The name is already in use."}</span
     >
   </Input>
 
@@ -315,7 +316,7 @@ CROP PICTURE MODAL
     name="about"
     label={translations?.description || "Description"}
     inputType="textarea"
-    placeholder={"Write your description"}
+    placeholder={translations?.description_place_holder ||  "Write your description"}
     bind:value={desc}
   />
   <div class="button-wrapper">
