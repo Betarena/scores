@@ -40,6 +40,7 @@
     title = seo.title || "";
     description = seo.description || "";
   });
+  $: console.log("translations", translations);
 </script>
 
 <!--
@@ -92,7 +93,7 @@
           inputType="textarea"
           height="176px"
           bind:value={description}
-          placeholder={translations?.description || "Description"}
+          placeholder={translations?.description_place_holder || "Description"}
           label={translations?.seo_descriptions || "SEO description"}
         />
       </div>
