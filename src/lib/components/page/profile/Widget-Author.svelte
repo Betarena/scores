@@ -22,43 +22,81 @@ COMPONENT JS (w/ TS)
 
   // #region ➤ 📌 VARIABLES
 
-  let profileTrs = {} as (IProfileTrs["sportstack"] & IProfileTrs["sportstack2"]),
+  let profileTrs = {} as IProfileTrs["sportstack"] & IProfileTrs["sportstack2"],
     noWidgetData: boolean = false;
-
-  $: if ($page.data.RESPONSE_PROFILE_DATA) {
-    profileTrs = {...$page.data.RESPONSE_PROFILE_DATA.sportstack, ...$page.data.RESPONSE_PROFILE_DATA.sportstack2};
-  }
-
   let sportstacks: AuthorsAuthorsMain[] = [];
   let loading = false;
+  let currentPage = 0;
+  let limitOfArticles = 5;
+  let totalPages = 0;
+  let node;
 
   // #endregion ➤ 📌 VARIABLES
 
-  // #region ➤ 🛠️ METHODS
-
-  // #endregion ➤ 🛠️ METHODS
-
   // #region ➤ 🔥 REACTIVIY [SVELTE]
-$: if(sportstacks.length && $userSettings.user?.firebase_user_data && !$userSettings.user.firebase_user_data.highlights?.sportstack) {
-  const firstSporsttack = sportstacks.at(-1);
-  userSettings.updateData([["user-highlighted-sportstack", firstSporsttack?.id]])
-}
+
+  $: if ($page.data.RESPONSE_PROFILE_DATA) {
+    profileTrs = {
+      ...$page.data.RESPONSE_PROFILE_DATA.sportstack,
+      ...$page.data.RESPONSE_PROFILE_DATA.sportstack2,
+    };
+  }
+
+  $: showLoadButton = currentPage < totalPages - 1;
+  $: if (
+    sportstacks.length &&
+    $userSettings.user?.firebase_user_data &&
+    !$userSettings.user.firebase_user_data.highlights?.sportstack
+  ) {
+    const firstSporsttack = sportstacks.at(-1);
+    userSettings.updateData([
+      ["user-highlighted-sportstack", firstSporsttack?.id],
+    ]);
+  }
+
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
-  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+  // #region ➤ 🛠️ METHODS
+  function handleScroll() {
+    if ($session.viewportType === "desktop" || !node || !showLoadButton) return;
+    const rect = node.getBoundingClientRect();
+    if (window.scrollY > rect.bottom - 20) {
+      loadMore()
+    }
+  }
 
-  onMount(async () => {
+  function loadMore() {
+    currentPage++;
+    getSportstacks();
+  }
+
+  async function getSportstacks() {
     const uid = userSettings.extract("uid");
     loading = true;
     const res = await get<{
       sportstacks: AuthorsAuthorsMain[];
-    }>(`/api/data/author/sportstack?user=${uid}`);
+      count: number;
+    }>(
+      `/api/data/author/sportstack?user=${uid}&limit=${limitOfArticles}&offset=${
+        limitOfArticles * currentPage
+      }`
+    );
     loading = false;
     if (res?.sportstacks) {
-      sportstacks = res.sportstacks.sort((a, b) => {
-        return  new Date(b.data?.creation_date) - new Date(a.data?.creation_date);
+      sportstacks = [...sportstacks, ...res.sportstacks].sort((a, b) => {
+        return (
+          new Date(b.data?.creation_date) - new Date(a.data?.creation_date)
+        );
       });
+      totalPages = Math.floor(res.count / limitOfArticles);
     }
+  }
+  // #endregion ➤ 🛠️ METHODS
+
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  onMount(async () => {
+    getSportstacks();
   });
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
@@ -73,6 +111,7 @@ $: if(sportstacks.length && $userSettings.user?.firebase_user_data && !$userSett
 <!--
   AUTHOR WIDGET
 -->
+<svelte:window on:scroll={handleScroll} />
 {#if !noWidgetData}
   <div id="account-author-widget-box" class={$session.viewportType}>
     <!--
@@ -81,7 +120,7 @@ $: if(sportstacks.length && $userSettings.user?.firebase_user_data && !$userSett
     <div class="header">
       <div class="title">
         <h2>
-          {profileTrs?.publications|| "Publications"}
+          {profileTrs?.publications || "Publications"}
         </h2>
 
         <div class="description">
@@ -94,23 +133,32 @@ $: if(sportstacks.length && $userSettings.user?.firebase_user_data && !$userSett
           <div class="button-text">
             <Plus />
             {profileTrs?.new_publication || "New Publication"}
-
           </div>
         </Button>
       </a>
     </div>
 
-    <div class="publications-wrapper">
+    <div class="publications-wrapper" bind:this={node}>
+      {#each sportstacks as s (s.id)}
+        <PublicationCard
+          sportstack={s.data}
+          owner={s.uid}
+          permalink={s.permalink}
+        />
+      {/each}
       {#if loading}
-        {#each Array(3) as _}
+        {#each Array(limitOfArticles) as _}
           <PublicationCardLoader />
-        {/each}
-      {:else}
-        {#each sportstacks as s (s.id)}
-          <PublicationCard sportstack={s.data} owner={s.uid} permalink={s.permalink}/>
         {/each}
       {/if}
     </div>
+    {#if showLoadButton && $session.viewportType === "desktop"}
+      <div class="load-more">
+        <Button type="outline" on:click={loadMore}
+          >{profileTrs?.view_more || "View more"}</Button
+        >
+      </div>
+    {/if}
   </div>
 {/if}
 
@@ -196,6 +244,14 @@ $: if(sportstacks.length && $userSettings.user?.firebase_user_data && !$userSett
       align-items: flex-start;
       gap: var(--spacing-xl, 16px);
       flex: 1 0 0;
+      align-self: stretch;
+    }
+
+    .load-more {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: var(--spacing-sm, 6px);
       align-self: stretch;
     }
 

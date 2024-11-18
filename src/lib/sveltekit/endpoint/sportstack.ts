@@ -6,7 +6,7 @@
 import { _GraphQL } from '@betarena/scores-lib/dist/classes/_graphql.js';
 import { entryPageAuthorDataAndSeo, entryTargetDataAuthorSportstack } from '@betarena/scores-lib/dist/functions/v8/main.preload.authors.js'
 import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
-import { ITableAuthorAuthorQuery3Out, ITableAuthorAuthorQuery3Var, TableAuthorAuthorQuery3, TableAuthorAuthorsMutation0, type ITableAuthorAuthorsMutation0Out, type ITableAuthorAuthorsMutation0Var } from "@betarena/scores-lib/dist/graphql/v8/table.authors.authors.js";
+import { ITableAuthorAuthorQuery3Out, ITableAuthorAuthorQuery3Var, ITableAuthorAuthorQuery4Out, ITableAuthorAuthorQuery4Var, TableAuthorAuthorQuery3, TableAuthorAuthorQuery4, TableAuthorAuthorsMutation0, type ITableAuthorAuthorsMutation0Out, type ITableAuthorAuthorsMutation0Var } from "@betarena/scores-lib/dist/graphql/v8/table.authors.authors.js";
 import type { IPageAuthorAuthorData, IPageAuthorProfileData, IPageAuthorSportstackData } from '@betarena/scores-lib/types/v8/preload.authors.js';
 import { json, type RequestEvent } from '@sveltejs/kit';
 import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.betarena-user.js';
@@ -36,6 +36,8 @@ export async function main
           permalink = searchParams.get('permalink') || "",
           id = searchParams.get('id') || "",
           user = searchParams.get('user'),
+          limit = searchParams.get('limit') || 10,
+          offset = searchParams.get('offset') || 0,
           status = searchParams.get('status') || undefined,
           sortTitle = searchParams.get('sortTitle') || undefined,
           sortPublishDate = searchParams.get('sortPublishDate') || undefined,
@@ -50,7 +52,7 @@ export async function main
         // ╰──────────────────────────────────────────────────────────────────╯
         if (user)
         {
-          const data = await getSportstackByUserId(user);
+          const data = await getSportstackByUserId(user, +limit, +offset);
           return json(data)
         }
 
@@ -175,24 +177,30 @@ async function fallbackDataGenerate1
  *  📣 Fallback data generation.
  * @param { string } id
  *  💠 Target `sportstacks` by user id
- * @param { number } page
- *  💠  page number.
+ * @param { number } limit
+ *  💠  limit of authors per request.
+ * @param { number } offset
+ *  💠  count of skip sportstacks.
  * @returns { Promise < AuthorsAuthorsObject > }
  *  📤 Target `sportstacks` data.
  */
 async function getSportstackByUserId
   (
     uid: string,
+    limit: number,
+    offset: number
   )
 {
-  const ql = (await new _GraphQL().wrapQuery<ITableAuthorAuthorQuery2Var, ITableAuthorAuthorQuery2Out>(TableAuthorAuthorQuery2, {
-    uid
+  const ql = (await new _GraphQL().wrapQuery<ITableAuthorAuthorQuery4Var, ITableAuthorAuthorQuery4Out>(TableAuthorAuthorQuery4, {
+    uid,
+    limit,
+    offset
   })) || [];
   if (ql[0]?.authors_authors)
   {
-    return { sportstacks: ql[0].authors_authors }
+    return { sportstacks: ql[0].authors_authors, count: ql[0].authors_authors_aggregate?.aggregate.count }
   }
-  return { sportstacks: [] };
+  return { sportstacks: [], count: 0 };
 }
 
 /**

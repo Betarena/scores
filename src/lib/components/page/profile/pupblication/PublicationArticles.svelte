@@ -179,7 +179,7 @@
     {#if showLoadButton && viewportType === "desktop"}
       <div class="load-more">
         <Button type="outline" on:click={() => dispatch("loadMore")}
-          >{translations?.view_more || "Load more"}</Button
+          >{translations?.view_more || "View more"}</Button
         >
       </div>
     {/if}
