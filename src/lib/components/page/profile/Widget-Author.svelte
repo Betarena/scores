@@ -27,7 +27,7 @@ COMPONENT JS (w/ TS)
   let sportstacks: AuthorsAuthorsMain[] = [];
   let loading = false;
   let currentPage = 0;
-  let limitOfArticles = 5;
+  let limitOfArticles = 10;
   let totalPages = 0;
   let node;
 
