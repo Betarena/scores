@@ -88,7 +88,7 @@ COMPONENT JS (w/ TS)
           new Date(b.data?.creation_date) - new Date(a.data?.creation_date)
         );
       });
-      totalPages = Math.floor(res.count / limitOfArticles);
+      totalPages = Math.ceil(res.count / limitOfArticles);
     }
   }
   // #endregion ➤ 🛠️ METHODS
