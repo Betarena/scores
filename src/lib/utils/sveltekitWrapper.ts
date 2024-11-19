@@ -81,7 +81,7 @@ export async function submitWrapper({ successMessage = "Success!", errorMessage 
   return async (e) =>
   {
     infoMessages.remove(loadingId);
-
+    console.log("RESPONSE: ", e)
     if (e.result.type === "success")
     {
       infoMessages.add({
