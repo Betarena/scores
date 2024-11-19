@@ -196,7 +196,8 @@ async function getSportstackByUserId
     offset?: number
   )
 {
-  const ql = (await new _GraphQL().wrapQuery<ITableAuthorAuthorQuery4Var, ITableAuthorAuthorQuery4Out>(TableAuthorAuthorQuery4, {
+  const type = !limit && !offset ? 'all' : 'pagination';
+  const ql = (await new _GraphQL().wrapQuery<ITableAuthorAuthorQuery4Var, ITableAuthorAuthorQuery4Out>(TableAuthorAuthorQuery4(type), {
     uid,
     limit,
     offset

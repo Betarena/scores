@@ -10,6 +10,19 @@ import session from "$lib/store/session.js";
 import type { AuthorsAuthorsMain, TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
 import { type Writable, writable } from "svelte/store";
 import type { IPageAuthorArticleData, IPageAuthorAuthorData } from "@betarena/scores-lib/types/v8/preload.authors.js";
+import { franc, francAll } from "franc";
+
+
+const francLangMap = {
+  "eng": "en",
+  "spa": "es",
+  "por": "pt",
+  "fra": "fr",
+  "ita": "it",
+  "ron": "ro",
+  "srp": "sr",
+}
+
 export function getAllImages(editor: Editor)
 {
   const json = editor.getJSON();
@@ -30,9 +43,9 @@ export function getAllImages(editor: Editor)
 }
 
 
-export async function upsert({ editor, title, author, reload = false, showLoaders = true, id, translations }: {
+export async function upsert({ editor, title, author, reload = false, showLoaders = true, id, translations, detectLanguage = true }: {
   translations: TranslationSportstacksSectionDataJSONSchema
-  | undefined, editor: Editor, title: string, author: AuthorsAuthorsMain, reload?: boolean, showLoaders?: boolean, id?: number
+  | undefined, detectLanguage: boolean, editor: Editor, title: string, author: AuthorsAuthorsMain, reload?: boolean, showLoaders?: boolean, id?: number
 })
 {
   const v = DOMPurify.sanitize(editor.getHTML());
@@ -40,7 +53,13 @@ export async function upsert({ editor, title, author, reload = false, showLoader
   const images = getAllImages(editor);
 
   const { seo, tags } = create_article_store.get();
+  let lang = "en";
+  if (detectLanguage)
+  {
+    const res = franc(editor.getText());
+    lang = francLangMap[res] || "en";
 
+  }
   const loadingId = showLoaders && infoMessages.add({ type: "loading", text: translations?.saving || "Saving article..." });
   const res = await postv2("/api/data/author/article", {
     content: v,
@@ -57,7 +76,7 @@ export async function upsert({ editor, title, author, reload = false, showLoader
   {
     infoMessages.remove(loadingId);
   }
-  if (!showLoaders) return res;
+  if (!showLoaders) return { ...res, lang };
   if (res.success)
   {
     infoMessages.add({ type: "success", text: translations?.article_saved || "Article saved!" });
