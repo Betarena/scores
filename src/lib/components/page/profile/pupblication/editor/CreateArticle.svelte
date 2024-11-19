@@ -41,7 +41,6 @@
   let title = "";
   let isSaving = false;
   let isSaved = false;
-  let lang = "";
   $: translations = (data as any).RESPONSE_PROFILE_DATA
     .sportstack2 as TranslationSportstacksSectionDataJSONSchema;
   $: init(article);
@@ -142,11 +141,9 @@
     isSaved = false;
     const res = await updateArticle();
     isSaving = false;
-    lang = res.lang;
     if (res.success) {
       isSaved = true;
     }
-
     if (res.id && !$page.url.searchParams.get("draft")) {
       id = res.id;
       const url = $page.url;
@@ -226,8 +223,6 @@
               <span class="dot">.</span><span class="dot">.</span><span
                 class="dot">.</span
               >
-              {:else if lang}
-              <span>{lang.toLocaleUpperCase()}</span>
             {/if}
           </div>
         {/if}

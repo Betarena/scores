@@ -14,7 +14,7 @@ export const load: LayoutServerLoad = (async ({ locals, fetch, params }) =>
   async function getSportsTacks(uid?: string)
   {
     if (!uid) return [];
-    const response = await fetch(`/api/data/author/sportstack?user=${uid}`);
+    const response = await fetch(`/api/data/author/sportstack?user=${uid}&limit=200`);
     const data = await response.json() as { sportstacks: AuthorsAuthorsMain[]; };
     return data.sportstacks;
   }

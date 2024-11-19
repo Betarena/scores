@@ -49,7 +49,7 @@
 	},
 	"dependencies": {
 		"@betarena/ad-engine": "0.0.51",
-		"@betarena/scores-lib": "4.0.30",
+		"@betarena/scores-lib": "4.0.29",
 		"@lukeed/uuid": "2.0.1",
 		"@metamask/sdk": "0.1.0",
 		"@moralisweb3/client-firebase-auth-utils": "2.18.4",
@@ -82,7 +82,6 @@
 		"express": "4.18.2",
 		"express-sslify": "1.2.0",
 		"firebase": "9.20.0",
-		"franc": "6.2.0",
 		"graphql-request": "5.1.0",
 		"graphql-subscriptions-client": "0.16.4",
 		"heroku-ssl-redirect": "0.1.1",
