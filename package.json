@@ -93,6 +93,7 @@
 		"moralis": "2.18.4",
 		"request-ip": "3.3.0",
 		"svelte-apexcharts": "1.0.2",
+		"svelte-easy-crop": "3.0.1",
 		"table": "6.8.1",
 		"ua-parser-js": "1.0.35",
 		"unique-username-generator": "1.1.3",

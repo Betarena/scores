@@ -32,6 +32,7 @@
   import { infoMessages } from "$lib/components/ui/infomessages/infomessages.js";
   import { goto, invalidateAll } from "$app/navigation";
   import type { Writable } from "svelte/store";
+  import CropperModal from "$lib/components/ui/Cropper/CropperModal.svelte";
 
   export let selectedSportstack: Writable<AuthorsAuthorsMain>;
   export let translations:
@@ -44,9 +45,10 @@
     fileInput: HTMLInputElement,
     files: HTMLInputElement["files"] | undefined,
     username = "",
-    modal_pic_crop_show: boolean = false,
-    profile_pic: string | undefined,
-    profile_crop_widget: ModalProfilePictureCrop;
+    profile_pic: string | undefined;
+
+  let image;
+  let showCropModal = false;
 
   $: translation = $page.data.RESPONSE_PROFILE_DATA?.sportstack;
   $: ({ viewportType } = $session);
@@ -63,6 +65,7 @@
   $: desc = about || "";
   $: name = username || "";
   $: avatar = initialAvatar || "";
+  $: url = permalink?.replace(/[^\w\s-]/gi, "") || "";
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -103,7 +106,7 @@
         selectedSportstack.update((prev) => {
           return {
             ...prev,
-            data: {...prev.data, avatar},
+            data: { ...prev.data, avatar },
             username: name,
             label: name,
             permalink,
@@ -113,14 +116,14 @@
         window.history.replaceState(
           {},
           "",
-          `/u/author/publication/${permalink}/${session.extract("lang")}${$page.url.search}`
+          `/u/author/publication/${permalink}/${session.extract("lang")}${
+            $page.url.search
+          }`
         );
-        invalidateAll()
+        invalidateAll();
       },
     });
   }
-
-  $: url = permalink?.replace(/[^\w\s-]/gi, "") || "";
 
   function showDeleteModal() {
     modalStore.set({
@@ -188,34 +191,32 @@
       fileInput.value = "";
       return;
     }
-    profile_crop_widget.load_picture(file);
-    modal_pic_crop_show = true;
+    let reader = new FileReader();
+    reader.onload = (e) => {
+      image = e.target.result;
+      showCropModal = true;
+      modalStore.set({
+        modal: true,
+        component: CropperModal,
+        props: {
+          image,
+          shape: "rect",
+          cb: setCropImage,
+          closeCb: () => {
+            fileInput.value = ""
+          }
+        },
+        show: true,
+      });
+    };
+    reader.readAsDataURL(file);
     files = undefined;
   }
 
-  /**
-   * @description
-   * closing off picture-crop;
-   * and reset files data;
-   */
-  function close_crop_pic(): void {
-    modal_pic_crop_show = false;
-    fileInput.value = "";
-  }
-
-  /**
-   * @description
-   * cropped picture upload;
-   * DOC: https://firebase.google.com/docs/storage/web/upload-files#upload_from_a_string
-   * @param
-   * { any } event
-   * @returns
-   * Promise < void >
-   */
-  async function upload_profile_picture(event): Promise<void> {
-    modal_pic_crop_show = false;
-    profile_pic = event?.detail?.img;
-    avatar = profile_pic;
+  function setCropImage(img) {
+    profile_pic = img;
+    avatar = img;
+    $modalStore.show = false;
   }
 </script>
 
@@ -229,15 +230,7 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<!--
-CROP PICTURE MODAL
--->
-<ModalProfilePictureCrop
-  bind:this={profile_crop_widget}
-  {modal_pic_crop_show}
-  on:toggle_delete_modal={() => close_crop_pic()}
-  on:upload_selected_img={(event) => upload_profile_picture(event)}
-/>
+
 <form
   method="POST"
   bind:this={form}
@@ -262,7 +255,8 @@ CROP PICTURE MODAL
     bind:value={name}
   >
     <span slot="error"
-      >{$page.data.RESPONSE_PROFILE_DATA.sportstack.alert || "The name is already in use."}</span
+      >{$page.data.RESPONSE_PROFILE_DATA.sportstack.alert ||
+        "The name is already in use."}</span
     >
   </Input>
 
@@ -316,7 +310,8 @@ CROP PICTURE MODAL
     name="about"
     label={translations?.description || "Description"}
     inputType="textarea"
-    placeholder={translations?.description_place_holder ||  "Write your description"}
+    placeholder={translations?.description_place_holder ||
+      "Write your description"}
     bind:value={desc}
   />
   <div class="button-wrapper">
