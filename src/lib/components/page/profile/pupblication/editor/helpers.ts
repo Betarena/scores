@@ -69,14 +69,11 @@ export async function upsert({ editor, title, author, reload = false, showLoader
     tags,
     seo,
     images,
+    lang,
     uid: author.uid,
-    status: "published"
   }) as any;
-  if (showLoaders && loadingId)
-  {
-    infoMessages.remove(loadingId);
-  }
   if (!showLoaders) return { ...res, lang };
+  infoMessages.remove(loadingId || 0);
   if (res.success)
   {
     infoMessages.add({ type: "success", text: translations?.article_saved || "Article saved!" });
