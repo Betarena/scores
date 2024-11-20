@@ -15,6 +15,7 @@ import { entryPageDataCompetition, entryPageDataFixture, entryPageDataPlayer } f
 
 import { checkNull } from '$lib/utils/miscellenous.js';
 
+import type { IPermalinkValidationResponse } from '$lib/types/types.response.js';
 import type { B_SAP_CTP_D, B_SAP_FP_D, B_SAP_PP_D } from '@betarena/scores-lib/types/v8/preload.scores.js';
 
 // #endregion ➤ 📦 Package Imports
@@ -86,11 +87,14 @@ export async function GET
   // ### TODO:
   // ### add player (page) sections into the mix of METHODS below;
 
-  // ### CHECK
-  // ### for target URL validity.
-  // ### NOTE:
-  // ### cache solution only.
-  const if_M_0: boolean =
+  // ╭─────
+  // │ CHECK:
+  // │ |: for target URL validity logic request.
+  // │ NOTE:
+  // │ |: cache solution only.
+  // ╰─────
+  if
+  (
     !checkNull(langUrl)
     || !checkNull(sportUrl)
     || !checkNull(countryUrl)
@@ -102,25 +106,22 @@ export async function GET
     || !checkNull(authorArticleUrl)
     || !checkNull(authorTagUrl)
     || !checkNull(authorUrl)
-
-    ;
-  if (if_M_0)
-  {
-    return await validUrlCheck
-      (
-        langUrl,
-        sportUrl,
-        countryUrl,
-        leagueUrl,
-        fixtureUrl,
-        playerUrl,
-        competitionMainUrl,
-        competitionUrl,
-        authorArticleUrl,
-        authorTagUrl,
-        authorUrl
-      );
-  }
+  )
+    return await checkPermalinkType
+    (
+      langUrl,
+      sportUrl,
+      countryUrl,
+      leagueUrl,
+      fixtureUrl,
+      playerUrl,
+      competitionMainUrl,
+      competitionUrl,
+      authorArticleUrl,
+      authorTagUrl,
+      authorUrl
+    );
+  ;
 
   // ### CHECK
   // ### for target data retrieve of page (home) MAIN SEO.
@@ -645,91 +646,228 @@ export async function GET
  * @author
  *  @migbash
  * @summary
- *  🟥 MAIN | 🔹 HELPER
+ *  - 🟥 MAIN
+ *  - 🔹 HELPER
  * @description
- *  📌 Validates for target `URL` validity.
+ *  📝 Validate for target `url` to be a `valid` AND/OR a `redirect`.
  * @param { stiring } langUrl
- *  Target `language` value.
+ *  ❔ **OPTIONAL** | Target `language` value.
  * @param { stiring } sportUrl
- *  Target `sport` value.
+ *  ❔ **OPTIONAL** | Target `sport` value.
  * @param { stiring } countryUrl
- *  Target `country` value.
+ *  ❔ **OPTIONAL** | Target `country` value.
  * @param { stiring } leagueUrl
- *  Target `league` value.
+ *  ❔ **OPTIONAL** | Target `league` value.
  * @param { stiring } fixtureUrl
- *  Target `fixture` value.
+ *  ❔ **OPTIONAL** | Target `fixture` value.
  * @param { stiring } playerUrl
- *  Target `player` value.
+ *  ❔ **OPTIONAL** | Target `player` value.
  * @param { stiring } competitionMainUrl
- *  Target `competition (lobby)` value.
+ *  ❔ **OPTIONAL** | Target `competition (lobby)` value.
  * @param { stiring } competitionUrl
- *  Target `competition (target)` value.
+ *  ❔ **OPTIONAL** | Target `competition (target)` value.
+ * @param { stiring } authorArticleUrl
+ *  ❔ **OPTIONAL** | Target `author article` value.
+ * @param { stiring } authorTagUrl
+ *  ❔ **OPTIONAL** | Target `author tag` value.
+ * @param { stiring } authorUrl
+ *  ❔ **OPTIONAL** | Target `author` value.
  * @returns { Promise < Response > }
+ *  📤 `Response` object.
  */
-async function validUrlCheck
-  (
-    langUrl: string,
-    sportUrl: string,
-    countryUrl: string,
-    leagueUrl: string,
-    fixtureUrl: string,
-    playerUrl: string,
-    competitionMainUrl: string,
-    competitionUrl: string,
-    authorArticleUrl: string,
-    authorTagUrl: string,
-    authorUrl: string
-
-  ): Promise<Response>
+async function checkPermalinkType
+(
+  langUrl: string,
+  sportUrl: string,
+  countryUrl: string,
+  leagueUrl: string,
+  fixtureUrl: string,
+  playerUrl: string,
+  competitionMainUrl: string,
+  competitionUrl: string,
+  authorArticleUrl: string,
+  authorTagUrl: string,
+  authorUrl: string
+): Promise < Response >
 {
-  const validUrl: number[] = [];
+  const
+    /**
+     * @description
+     * 📝 Valid URL segments.
+     */
+    listValidPermalinkComponent: number[] = [],
+    /**
+     * @description
+     * 📝 Is redirect permalink
+     */
+    objRedirect: IPermalinkValidationResponse['objRedirect'] = { isRedirect: false, strRedirectUrl: null }
+  ;
 
   if (langUrl)
-    validUrl.push(await new _Redis().rSISMEMBER(RedisKeys?.SAP_C_D_A9, langUrl) as number);
+    listValidPermalinkComponent.push
+    (
+      await new _Redis().rSISMEMBER
+        (
+          RedisKeys?.SAP_C_D_A9,
+          langUrl
+        )
+    );
   ;
   if (sportUrl)
-    validUrl.push(await new _Redis().rSISMEMBER(RedisKeys?.SAP_C_D_A10, `${langUrl}_${sportUrl}`) as number);
+    listValidPermalinkComponent.push
+    (
+      await new _Redis().rSISMEMBER
+      (
+        RedisKeys?.SAP_C_D_A10,
+        `${langUrl}_${sportUrl}`
+      )
+    );
   ;
   if (countryUrl)
-    validUrl.push(await new _Redis().rSISMEMBER(RedisKeys?.SAP_C_D_A11, `${langUrl}_${countryUrl}`) as number);
+    listValidPermalinkComponent.push
+    (
+      await new _Redis().rSISMEMBER
+      (
+        RedisKeys?.SAP_C_D_A11,
+        `${langUrl}_${countryUrl}`
+      )
+    );
   ;
   if (leagueUrl)
-    validUrl.push(await new _Redis().rSISMEMBER(RedisKeys?.SAP_C_D_A12, leagueUrl) as number);
+    listValidPermalinkComponent.push
+    (
+      await new _Redis().rSISMEMBER
+      (
+        RedisKeys?.SAP_C_D_A12,
+        leagueUrl
+      )
+    );
   ;
   if (fixtureUrl)
-    validUrl.push(await new _Redis().rSISMEMBER(RedisKeys?.SAP_C_D_A13, fixtureUrl) as number);
+    listValidPermalinkComponent.push
+    (await new _Redis().rSISMEMBER
+      (
+        RedisKeys?.SAP_C_D_A13,
+        fixtureUrl
+      )
+    );
   ;
   if (playerUrl)
-    validUrl.push(await new _Redis().rSISMEMBER(RedisKeys?.SAP_C_D_A14, playerUrl) as number);
+    listValidPermalinkComponent.push
+    (
+      await new _Redis().rSISMEMBER
+      (
+        RedisKeys?.SAP_C_D_A14,
+        playerUrl
+      )
+    );
   ;
   if (competitionMainUrl)
-    validUrl.push(await new _Redis().rSISMEMBER(RedisKeys?.SAP_C_D_A17, `${langUrl}_${competitionMainUrl}`) as number);
+    listValidPermalinkComponent.push
+    (
+      await new _Redis().rSISMEMBER
+      (
+        RedisKeys?.SAP_C_D_A17,
+        `${langUrl}_${competitionMainUrl}`
+      )
+    );
   ;
   if (competitionUrl)
-    validUrl.push(await new _Redis().rSISMEMBER(RedisKeys?.SAP_C_D_A19, `${competitionUrl}`) as number);
+    listValidPermalinkComponent.push
+    (
+      await new _Redis().rSISMEMBER
+      (
+        RedisKeys?.SAP_C_D_A19,
+        competitionUrl
+      )
+    );
   ;
   if (authorArticleUrl)
-    validUrl.push(await new _Redis().rSISMEMBER(RedisKeys?.SAP_C_D_A22, `${authorArticleUrl}`) as number);
-  ;
-  if (authorTagUrl)
-    validUrl.push(await new _Redis().rSISMEMBER(RedisKeys?.SAP_C_D_A23, `${authorTagUrl}`) as number);
-  if (authorUrl)
-    validUrl.push(await new _Redis().rSISMEMBER(RedisKeys?.SAP_C_D_A23, `${authorUrl}`) as number);
-
-  // ### [🐞]
-  console.debug
+  {
+    listValidPermalinkComponent.push
     (
-      `🔹 [var] ➤ validUrl ${validUrl}`
+      await new _Redis().rSISMEMBER
+      (
+        RedisKeys?.SAP_C_D_A22,
+        authorArticleUrl
+      )
     );
 
-  // ### CHECK
-  // ### for an invalid `url` segment.
-  const if_M_0: boolean =
-    validUrl.includes(0)
+    const
+      /**
+       * @description
+       * 📝 Data response (0).
+       */
+      dataRes0
+        = await new _Redis().rHGET
+        (
+          RedisKeys?.SAP_C_D_A35,
+          authorArticleUrl
+        )
     ;
-  if (if_M_0) return json(false);
 
-  return json(true);
+    if (dataRes0)
+    {
+      objRedirect.isRedirect = true;
+      objRedirect.strRedirectUrl = dataRes0 as string;
+    }
+  }
+  if (authorTagUrl)
+    listValidPermalinkComponent.push
+    (
+      await new _Redis().rSISMEMBER
+      (
+        RedisKeys?.SAP_C_D_A23,
+        authorTagUrl
+      )
+    );
+  ;
+  if (authorUrl)
+  {
+    listValidPermalinkComponent.push
+    (
+      await new _Redis().rSISMEMBER
+      (
+        RedisKeys?.SAP_C_D_A33,
+        authorUrl
+      )
+    );
+
+    const
+      /**
+       * @description
+       * 📝 Data response (0).
+       */
+      dataRes0
+        = await new _Redis().rHGET
+        (
+          RedisKeys?.SAP_C_D_A34,
+          authorUrl
+        )
+    ;
+
+    if (dataRes0)
+    {
+      objRedirect.isRedirect = true;
+      objRedirect.strRedirectUrl = dataRes0 as string;
+    }
+  }
+
+  // [🐞]
+  console.debug
+  (
+    `🔹 [var] ➤ listValidPermalinkComponent ${listValidPermalinkComponent}`,
+    `🔹 [var] ➤ objRedirect`,
+    objRedirect
+  );
+
+  return json
+  (
+    {
+      isValid: !listValidPermalinkComponent.includes(0),
+      objRedirect
+    } as IPermalinkValidationResponse
+  );
 }
 
 // ### TODO:
