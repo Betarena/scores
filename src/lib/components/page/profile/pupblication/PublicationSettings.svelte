@@ -148,7 +148,7 @@
       component: DeleteModal,
       props: {
         translations,
-        id: selectedSportstack.id,
+        id,
         deleteSportsTack: true,
         cb: deleteSportstack,
       },
@@ -262,7 +262,7 @@
     });
     const res = await fetch(`/api/data/author/sportstack`, {
       method: "DELETE",
-      body: JSON.stringify({ id, uid: selectedSportstack.uid }),
+      body: JSON.stringify({ id, uid: $selectedSportstack.uid }),
     });
     infoMessages.remove(loadingId);
     const data = await res.json();
