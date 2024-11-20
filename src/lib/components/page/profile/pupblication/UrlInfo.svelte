@@ -9,7 +9,6 @@
 
 <script lang="ts">
   import Lock from "$lib/components/ui/assets/lock.svelte";
-
   export let permalink = "";
 </script>
 

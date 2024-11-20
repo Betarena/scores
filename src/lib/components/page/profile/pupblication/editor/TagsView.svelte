@@ -8,22 +8,55 @@
 -->
 
 <script lang="ts">
+  // #region ➤ 📦 Package Imports
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  import { createEventDispatcher, onMount } from "svelte";
+  import { browser } from "$app/environment";
+  import { flip } from "svelte/animate";
+  import { fade } from "svelte/transition";
+  import { cubicInOut } from "svelte/easing";
+  import { get } from "$lib/api/utils.js";
+  import { create_article_store } from "./create_article.store.js";
+  import session from "$lib/store/session.js";
   import BackButton from "$lib/components/ui/BackButton.svelte";
   import Badge from "$lib/components/ui/Badge.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import Input from "$lib/components/ui/Input.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
-  import { create_article_store } from "./create_article.store.js";
-  import { flip } from "svelte/animate";
-  import { cubicInOut } from "svelte/easing";
-  import { fade } from "svelte/transition";
-  import session from "$lib/store/session.js";
   import XClose from "$lib/components/ui/infomessages/x-close.svelte";
-  import { get } from "$lib/api/utils.js";
-  import { browser } from "$app/environment";
-  import type { AuthorsTagsMain, TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
-  import { createEventDispatcher, onMount } from "svelte";
+  import type {
+    AuthorsTagsMain,
+    TranslationSportstacksSectionDataJSONSchema,
+  } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
 
+  // #endregion ➤ 📦 Package Imports
+
+  // #region ➤ 📌 VARIABLES
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
   export let translations:
     | TranslationSportstacksSectionDataJSONSchema
     | undefined;
@@ -36,7 +69,36 @@
 
   $: ({ viewportType } = $session);
 
+  // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
   $: if (browser) searchTags(search);
+
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
+
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
   function goBack() {
     dispatch("changeView", "preview");
@@ -45,18 +107,14 @@
   function select(tag) {
     if (selectedTags.length === 5) return;
     if (check(tag, selectedTags)) {
-      selectedTags = selectedTags.filter(
-        (t) => t !== tag
-      );
+      selectedTags = selectedTags.filter((t) => t !== tag);
       return;
     }
     selectedTags = [tag, ...selectedTags];
   }
 
   function deselect(tag) {
-    selectedTags = selectedTags.filter(
-      (t) => t !== tag
-    );
+    selectedTags = selectedTags.filter((t) => t !== tag);
   }
 
   function check(tag, selected) {
@@ -65,7 +123,9 @@
 
   function keyHandler(e) {
     if (e.detail.key === "Enter") {
-      const searchedTag = tags.find((tag) => tag.toLowerCase() === search.toLowerCase()) || search;
+      const searchedTag =
+        tags.find((tag) => tag.toLowerCase() === search.toLowerCase()) ||
+        search;
       select(searchedTag);
       search = "";
     }
@@ -76,17 +136,30 @@
     goBack();
   }
 
-
   async function searchTags(text: string) {
     const res = (await get(
       `/api/data/author/tags?search=${text}`
     )) as AuthorsTagsMain[];
-    tags = [...res.map(tag => tag.name as string)];
+    tags = [...res.map((tag) => tag.name as string)];
   }
+
+  // #endregion ➤ 🛠️ METHODS
+
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
   onMount(() => {
     selectedTags = $create_article_store.tags;
-  })
+  });
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
+
 </script>
 
 <!--
@@ -123,7 +196,8 @@
                 {/if}
               </div>
               <div class="info-desc">
-                {translations?.add_tags_description || `Add or change tags (up to 5) so readers know what your article
+                {translations?.add_tags_description ||
+                  `Add or change tags (up to 5) so readers know what your article
                 is about and also find it easier.`}
               </div>
             </div>
@@ -202,7 +276,9 @@
           full={viewportType !== "mobile"}
           on:click={goBack}>{translations?.go_back || "Go Back"}</Button
         >
-        <Button full={viewportType !== "mobile"} on:click={save}>{translations?.save || "Save"}</Button>
+        <Button full={viewportType !== "mobile"} on:click={save}
+          >{translations?.save || "Save"}</Button
+        >
       </div>
     </Container>
   </div>

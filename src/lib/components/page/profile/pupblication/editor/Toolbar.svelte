@@ -8,7 +8,26 @@
 -->
 
 <script lang="ts">
+  // #region ➤ 📦 Package Imports
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
   import { createEventDispatcher } from "svelte";
+  import { fly } from "svelte/transition";
+  import { Editor } from "@tiptap/core";
+  import { uploadImage } from "$lib/firebase/common.js";
+  import session from "$lib/store/session.js";
   import Add from "./icons/Add.svelte";
   import Arrow from "./icons/Arrow.svelte";
   import B from "./icons/B.svelte";
@@ -19,15 +38,13 @@
   import Q from "./icons/Q.svelte";
   import H from "./icons/H.svelte";
   import Upload from "./icons/Upload.svelte";
-  import session from "$lib/store/session.js";
-  import { fly } from "svelte/transition";
-  import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
-  import { Editor } from "@tiptap/core";
   import P from "./icons/P.svelte";
   import H2 from "./icons/H2.svelte";
   import H3 from "./icons/H3.svelte";
   import H4 from "./icons/H4.svelte";
-    import { uploadImage } from "$lib/firebase/common.js";
+  import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
+
+  // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
 
@@ -45,21 +62,20 @@
 
   export let editor: Editor;
   export let titleInFocus = false;
-  export let uploadUrl = ""
+  export let uploadUrl = "";
 
   let fileInput;
   let view = "full";
 
-  $: ({ viewportType } = $session);
+  const dispatch = createEventDispatcher();
 
-  $: view = viewportType !== "mobile" ? "full" : "first";
-
-  let headings = [
+  const headings = [
     { id: "p", label: "Normal text", icon: P },
     { id: 2, label: "Heading 2", icon: H2 },
     { id: 3, label: "Heading 3", icon: H3 },
     { id: 4, label: "Heading 4", icon: H4 },
   ];
+
   const toolbarButtons = {
     heading: {
       icon: H,
@@ -135,23 +151,30 @@
     second: [toolbarButtons.img, toolbarButtons.bulletList],
   };
 
+  $: ({ viewportType } = $session);
+
+  $: view = viewportType !== "mobile" ? "full" : "first";
+
   // #endregion ➤ 📌 VARIABLES
 
-  // #region ➤ 🛠️ METHODS
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'methods' that are to be           │
-  // │ and are expected to be used by 'this' .svelte file / component.        │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
   $: selectedHedings = editor?.isActive("heading")
     ? getCurrentHeading(editor)
     : headings[0];
 
-  const dispatch = createEventDispatcher();
-  // #endregion ➤ 📌 VARIABLES
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🛠️ METHODS
 
@@ -177,7 +200,7 @@
       return editor
         .chain()
         .focus()
-        .toggleHeading({ level: selectedHedings.id as number })
+        .toggleHeading({ level: selectedHedings.id as any })
         .run();
     }
     editor.chain().focus().setHeading({ level: node.id }).run();
@@ -199,8 +222,6 @@
     fileInput.click();
   }
 
-
-
   function changeView() {
     if (viewportType !== "mobile") return;
     view = view === "first" ? "second" : "first";
@@ -208,18 +229,20 @@
 
   async function handleFileChange(event) {
     const file = event.target.files[0];
-    if (!file) return
+    if (!file) return;
 
-  const reader = new FileReader();
-  reader.onload = async (e) => {
-    const fileContent = (e.target?.result || "") as string;
-    const url = await uploadImage(fileContent, `${uploadUrl}/${new Date().valueOf()}.png`);
-    editor.chain().focus().setImage({ src: url }).run();
-  };
-  reader.readAsDataURL(file);
-
-
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const fileContent = (e.target?.result || "") as string;
+      const url = await uploadImage(
+        fileContent,
+        `${uploadUrl}/${new Date().valueOf()}.png`
+      );
+      editor.chain().focus().setImage({ src: url }).run();
+    };
+    reader.readAsDataURL(file);
   }
+
   // #endregion ➤ 🛠️ METHODS
 </script>
 

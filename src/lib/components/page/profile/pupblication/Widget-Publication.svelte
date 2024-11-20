@@ -47,7 +47,7 @@
   } from "$lib/components/section/authors/page/helpers.js";
   import { articleFilterStore, type IArticleFilter } from "./editor/helpers.js";
   import { writable } from "svelte/store";
-    import { browser } from "$app/environment";
+  import { browser } from "$app/environment";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -66,11 +66,13 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let data: PageData;
-  $: ({ translate } = data);
-  $: ({ viewportType } = $session);
-  $: ({ theme } = { ...$userSettings });
-  $: translations = (data as any).RESPONSE_PROFILE_DATA
-    .sportstack2 as TranslationSportstacksSectionDataJSONSchema;
+
+  const viewMap = {
+    home: PublicationHome,
+    articles: PublicationArticles,
+    settings: PublicationSettings,
+  };
+
   let selectedSportstack = writable(
     {} as AuthorsAuthorsMain & { label: string }
   );
@@ -78,9 +80,31 @@
   let articles: Map<number, IArticle> = new Map();
   let recentArticles: Map<number, IArticle> = new Map();
   let recentLoading = false;
-  let sportstacks = [] as AuthorsAuthorsMain & { label: string }[];
+  let sportstacks = [] as( AuthorsAuthorsMain & { label: string })[];
   let nextPage = 0;
   let totalPageCount = 1;
+
+  $: ({ viewportType } = $session);
+  $: ({ theme } = { ...$userSettings });
+  $: translations = (data as any).RESPONSE_PROFILE_DATA
+    .sportstack2 as TranslationSportstacksSectionDataJSONSchema;
+
+  // #endregion ➤ 📌 VARIABLES
+
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
   $: if (data.sportstack instanceof Promise) {
     console.log("data.sportstack is a promise");
   } else {
@@ -100,6 +124,20 @@
     });
   }
 
+  $: tabs = [
+    { id: 1, label: translations?.home || "Home", view: "home" },
+    { id: 2, label: translations?.articles || "Articles", view: "articles" },
+    { id: 3, label: translations?.settings || "Settings", view: "settings" },
+  ];
+
+  $: view = $page.url.searchParams.get("view") || "home";
+  $: selected = tabs.find((tab) => tab.view === view) || tabs[0];
+
+  $: sportstacks = sportstacks.map((s) => {
+    if (s.id === $selectedSportstack.id) return {...$selectedSportstack, label: $selectedSportstack.data?.username || ""};
+    return { ...s, label: s.data?.username || "" };
+  });
+
   $: if (browser && $selectedSportstack) {
     getResentArticles()
   }
@@ -111,24 +149,20 @@
     filterArticles($articleFilterStore);
   }
 
-  $: sportstacks = sportstacks.map((s) => {
-    if (s.id === $selectedSportstack.id) return {...$selectedSportstack, label: $selectedSportstack.data?.username || ""};
-    return { ...s, label: s.data?.username || "" };
-  });
 
-  // #endregion ➤ 📌 VARIABLES
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
-  $: tabs = [
-    { id: 1, label: translations?.home || "Home", view: "home" },
-    { id: 2, label: translations?.articles || "Articles", view: "articles" },
-    { id: 3, label: translations?.settings || "Settings", view: "settings" },
-  ];
+  // #region ➤ 🛠️ METHODS
 
-  const viewMap = {
-    home: PublicationHome,
-    articles: PublicationArticles,
-    settings: PublicationSettings,
-  };
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
   function change(e) {
     const url = $page.url;
@@ -137,11 +171,19 @@
     view = e.detail.view;
   }
 
+  function deleteArticle(e) {
+    const id = e.detail;
+    articles.delete(id);
+    articles = new Map(articles);
+    recentArticles.delete(id);
+    recentArticles = new Map(recentArticles);
+  }
+
   async function selectSportstack(e) {
     const url = $page.url;
     const { permalink } = e.detail as AuthorsAuthorsMain;
     const lang = url.pathname.split("/").at(-1);
-    $selectedSportstack = e.detail as AuthorsAuthorsMain;
+    $selectedSportstack = e.detail as AuthorsAuthorsMain & { label: string };
     getArticles(0, $articleFilterStore);
     goto(`/u/author/publication/${permalink}/${lang}${url.search}`, {
       replaceState: true,
@@ -149,8 +191,7 @@
       keepFocus: true,
     });
   }
-  $: view = $page.url.searchParams.get("view") || "home";
-  $: selected = tabs.find((tab) => tab.view === view) || tabs[0];
+
 
   async function getArticles(page: number, filter: IArticleFilter) {
     const { status, sortBy } = filter;
@@ -219,13 +260,9 @@
     }
   }
 
-  function deleteArticle(e) {
-    const id = e.detail;
-    articles.delete(id);
-    articles = new Map(articles);
-    recentArticles.delete(id);
-    recentArticles = new Map(recentArticles);
-  }
+  // #endregion ➤ 🛠️ METHODS
+
+
 </script>
 
 <!--

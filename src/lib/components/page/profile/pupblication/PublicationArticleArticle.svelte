@@ -8,7 +8,23 @@
 -->
 
 <script lang="ts">
+  // #region ➤ 📦 Package Imports
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
   import { goto } from "$app/navigation";
+  import { createEventDispatcher, onDestroy } from "svelte";
   import type { IArticle } from "$lib/components/section/authors/common_ui/helpers.js";
   import ClipboardX from "$lib/components/ui/assets/clipboard-x.svelte";
   import Edit_02 from "$lib/components/ui/assets/edit-02.svelte";
@@ -18,18 +34,38 @@
   import { modalStore } from "$lib/store/modal.js";
   import session from "$lib/store/session.js";
   import userSettings from "$lib/store/user-settings.js";
-  import { createEventDispatcher, onDestroy } from "svelte";
+  import ClipboardCheck from "$lib/components/ui/assets/clipboard-check.svelte";
   import DeleteModal from "./DeleteModal.svelte";
   import { deleteArticle, publish } from "./editor/helpers.js";
   import PublicationAvatar from "./PublicationAvatar.svelte";
   import Unpublish from "./Unpublish.svelte";
   import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
-  import ClipboardCheck from "$lib/components/ui/assets/clipboard-check.svelte";
+
+  // #endregion ➤ 📦 Package Imports
+
+  // #region ➤ 📌 VARIABLES
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let article: IArticle;
   export let translations:
     | TranslationSportstacksSectionDataJSONSchema
     | undefined;
+
+  const dispatch = createEventDispatcher();
+
+  let publishedDate = "";
+  let actionMenu = false;
 
   $: ({ permalink, data, id, seo_details, status, author } = article);
   $: ({ title } = data || { title: "" });
@@ -37,17 +73,30 @@
   $: articlePreview = twitter_card.image;
   $: profile = $userSettings.user?.scores_user_data;
   $: isPublished = status === "published";
-  const dispatch = createEventDispatcher();
-  let publishedDate = "";
+  $: ({ viewportType } = $session);
+
+  // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
   $: if (article.published_date) {
     const date = new Date(article.published_date);
     publishedDate = `${date.getDate()}/${
       date.getMonth() + 1
     }/${date.getFullYear()}`;
   }
-  let actionMenu = false;
 
-  $: ({ viewportType } = $session);
   $: options = [
     {
       id: "edit",
@@ -55,8 +104,10 @@
       icon: Edit_02,
     },
     {
-      id: isPublished  ? "unpublish" : "publish",
-      label: isPublished ? translations?.unpublish || "Unpublish" : translations?.publish || "Publish",
+      id: isPublished ? "unpublish" : "publish",
+      label: isPublished
+        ? translations?.unpublish || "Unpublish"
+        : translations?.publish || "Publish",
       icon: isPublished ? ClipboardX : ClipboardCheck,
     },
     {
@@ -66,9 +117,34 @@
     },
   ];
 
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
+
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
   onDestroy(() => {
     actionMenu = false;
   });
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
   function click(e: CustomEvent<string>) {
     const action = e.detail;
@@ -88,10 +164,15 @@
         modalState.component = Unpublish;
         modalState.props = {
           cb: () => {
-            publish({ id, status: "unpublish", sportstack: author, translations });
+            publish({
+              id,
+              status: "unpublish",
+              sportstack: author,
+              translations,
+            });
             article.status = "unpublished";
           },
-          translations
+          translations,
         };
         break;
       case "delete":
@@ -102,12 +183,12 @@
               dispatch("deleteArticle", article.id);
             }
           },
-          translations
+          translations,
         };
         modalState.component = DeleteModal;
         break;
       case "publish":
-        publish({id, status: "publish", sportstack: author, translations});
+        publish({ id, status: "publish", sportstack: author, translations });
         article.status = "published";
       default:
         return;
@@ -119,6 +200,8 @@
     if (status !== "published") return;
     window.open(`/a/${permalink}`, "_blank");
   }
+
+  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--

@@ -65,6 +65,7 @@
   export let translations:
     | TranslationSportstacksSectionDataJSONSchema
     | undefined;
+
   let element;
   let titleInFocus = false;
   let vh = "1vh";

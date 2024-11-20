@@ -8,34 +8,73 @@
 -->
 
 <script lang="ts">
-  import type { PageData } from ".svelte-kit/types/src/routes/(scores)/u/author/article/edit/[...permalink]/[lang=lang]/$types.js";
+  // #region ➤ 📦 Package Imports
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  import { page } from "$app/stores";
+  import { browser } from "$app/environment";
+  import { goto } from "$app/navigation";
+  import { deleteArticle, publish, upsert } from "./helpers.js";
+  import { create_article_store } from "./create_article.store.js";
+  import { modalStore } from "$lib/store/modal.js";
+  import session from "$lib/store/session.js";
   import Editor from "./Editor.svelte";
   import XClose from "$lib/components/ui/assets/x-close.svelte";
   import BackButton from "$lib/components/ui/BackButton.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
-  import { modalStore } from "$lib/store/modal.js";
-  import type { AuthorsAuthorsMain, TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
-  import { page } from "$app/stores";
-  import { browser } from "$app/environment";
-  import { goto } from "$app/navigation";
-  import session from "$lib/store/session.js";
   import Unpublish from "../Unpublish.svelte";
   import DeleteModal from "../DeleteModal.svelte";
-  import { deleteArticle, publish, upsert } from "./helpers.js";
-  import { create_article_store } from "./create_article.store.js";
-    import PublishModal from "./PublishModal.svelte";
+  import PublishModal from "./PublishModal.svelte";
+  import type {
+    AuthorsAuthorsMain,
+    TranslationSportstacksSectionDataJSONSchema,
+  } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import type { PageData } from ".svelte-kit/types/src/routes/(scores)/u/author/article/edit/[...permalink]/[lang=lang]/$types.js";
+
+  // #endregion ➤ 📦 Package Imports
+
+  // #region ➤ 📌 VARIABLES
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
   export let data: PageData;
 
+  let options: (AuthorsAuthorsMain & { label: string })[] = [];
+  let selectedSportstack;
+  let contentEditor;
+
   $: ({ article, mapTag } = data);
-  $:({id, status} = article);
+  $: ({ id, status } = article);
   $: ({
     title: initTitle,
     content,
     featured_image,
   } = article.data || { title: "", content: "", featured_image: "", id: "" });
-  $: translations = (data as any).RESPONSE_PROFILE_DATA.sportstack2 as TranslationSportstacksSectionDataJSONSchema;
+  $: translations = (data as any).RESPONSE_PROFILE_DATA
+    .sportstack2 as TranslationSportstacksSectionDataJSONSchema;
 
   $: title = initTitle || "";
   $: if (featured_image && !content.includes(featured_image)) {
@@ -44,10 +83,23 @@
   $: uploadUrl = selectedSportstack
     ? `Betarena_Media/authors/authors_list/${selectedSportstack.id}/media`
     : "";
+  $: ({ viewportType } = $session);
 
-  let options: (AuthorsAuthorsMain & { label: string })[] = [];
-  let selectedSportstack;
-  let contentEditor;
+  // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
   $: if (data.sportstack instanceof Promise) {
     console.log("data.sportstack is a promise");
   } else {
@@ -77,7 +129,19 @@
     });
   }
 
-  $: ({ viewportType } = $session);
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
+
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
   function back() {
     history.back();
@@ -105,38 +169,67 @@
     modalStore.set(modalState);
   }
 
- async function unpublish() {
-   const res = await publish({id, translations, status: "unpublish", sportstack: selectedSportstack, redirect: false});
-   if(res.success) {
-    status = "unpublished";
-    article.status = status;
-   }
+  function save() {
+    upsert({
+      translations,
+      editor: contentEditor,
+      title,
+      id,
+      author: selectedSportstack,
+    });
+  }
+
+  async function unpublish() {
+    const res = await publish({
+      id,
+      translations,
+      status: "unpublish",
+      sportstack: selectedSportstack,
+      redirect: false,
+    });
+    if (res.success) {
+      status = "unpublished";
+      article.status = status;
+    }
   }
   async function deleteArticleWrapper() {
-   const res =  await deleteArticle(article, translations);
-   if(res.success) {
-
-     setTimeout(() =>
-     {
-       goto(`/u/author/publication/${article.author.permalink}/${session.extract('lang')}?view=articles`, { invalidateAll: true });
+    const res = await deleteArticle(article, translations);
+    if (res.success) {
+      setTimeout(() => {
+        goto(
+          `/u/author/publication/${article.author.permalink}/${session.extract(
+            "lang"
+          )}?view=articles`,
+          { invalidateAll: true }
+        );
       }, 500);
     }
   }
 
   async function publishClick() {
-   const res = await upsert({translations, editor: contentEditor, title, id, author: selectedSportstack, showLoaders: false});
-   if (res.success) {
-     const res2 = await publish({translations, id, status: "publish", sportstack: selectedSportstack});
-     $modalStore.show = false;
-     if(res2.success) {
-       status = "published";
-       article.status = status;
-     }
-   }
+    const res = await upsert({
+      translations,
+      editor: contentEditor,
+      title,
+      id,
+      author: selectedSportstack,
+      showLoaders: false,
+    });
+    if (res.success) {
+      const res2 = await publish({
+        translations,
+        id,
+        status: "publish",
+        sportstack: selectedSportstack,
+      });
+      $modalStore.show = false;
+      if (res2.success) {
+        status = "published";
+        article.status = status;
+      }
+    }
   }
-  function save() {
-    upsert({translations, editor: contentEditor, title, id, author: selectedSportstack});
-  }
+  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--
@@ -171,14 +264,17 @@
         <Button
           type="tertiary"
           destructive={true}
-          on:click={() => showModal("delete")}>{translations?.delete || "Delete Article"}</Button
+          on:click={() => showModal("delete")}
+          >{translations?.delete || "Delete Article"}</Button
         >
-        {#if status ==="published"}
-        <Button type="terlary-gray" on:click={() => showModal("unpublish")}
-          >{translations?.unpublish || "Unpublish"}</Button>
-          {:else}
+        {#if status === "published"}
+          <Button type="terlary-gray" on:click={() => showModal("unpublish")}
+            >{translations?.unpublish || "Unpublish"}</Button
+          >
+        {:else}
           <Button type="terlary-gray" on:click={save}
-            >{translations?.save || "Save"}</Button>
+            >{translations?.save || "Save"}</Button
+          >
         {/if}
         {#if viewportType === "desktop"}
           <Button
@@ -190,19 +286,27 @@
               $modalStore.modal = true;
               $modalStore.show = true;
               $modalStore.props = { cb: publishClick, translations };
-            }}>
-            {#if status ==="published"}
+            }}
+          >
+            {#if status === "published"}
               {translations?.update_publish || "Update & Publish"}
             {:else}
               {translations?.publish || "Publish"}
             {/if}
-            </Button
-          >
+          </Button>
         {/if}
       </div>
     </div>
   </Container>
-  <Editor {translations} {data} bind:contentEditor {uploadUrl} bind:title {content} {publishClick} />
+  <Editor
+    {translations}
+    {data}
+    bind:contentEditor
+    {uploadUrl}
+    bind:title
+    {content}
+    {publishClick}
+  />
 </div>
 
 <!--

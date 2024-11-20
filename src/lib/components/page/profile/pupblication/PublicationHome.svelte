@@ -8,19 +8,50 @@
 -->
 
 <script lang="ts">
+  // #region ➤ 📦 Package Imports
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  import { createEventDispatcher } from "svelte";
   import type { IArticle } from "$lib/components/section/authors/page/helpers.js";
   import Button from "$lib/components/ui/Button.svelte";
   import session from "$lib/store/session.js";
   import userSettings from "$lib/store/user-settings.js";
+  import EyeOffIcon from "$lib/components/ui/assets/eye-off-icon.svelte";
+  import PublicationArticleArticleLoader from "./PublicationArticleArticleLoader.svelte";
+  import PublicationArticleArticle from "./PublicationArticleArticle.svelte";
+  import type { Writable } from "svelte/store";
   import type {
     AuthorsAuthorsMain,
     TranslationSportstacksSectionDataJSONSchema,
   } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
-  import { createEventDispatcher } from "svelte";
-  import PublicationArticleArticleLoader from "./PublicationArticleArticleLoader.svelte";
-  import PublicationArticleArticle from "./PublicationArticleArticle.svelte";
-  import EyeOffIcon from "$lib/components/ui/assets/eye-off-icon.svelte";
-  import type { Writable } from "svelte/store";
+
+  // #endregion ➤ 📦 Package Imports
+
+  // #region ➤ 📌 VARIABLES
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let selectedSportstack: Writable<AuthorsAuthorsMain>;
   export let articles: Map<number, IArticle>;
@@ -28,13 +59,30 @@
   export let translations:
     | TranslationSportstacksSectionDataJSONSchema
     | undefined;
-  $: ({ viewportType } = $session);
 
   const dispatch = createEventDispatcher();
+
+  $: ({ viewportType } = $session);
+
+  // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
   function viewAll() {
     dispatch("changeView", { view: "articles" });
   }
+
+  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--

@@ -8,24 +8,72 @@
 -->
 
 <script lang="ts">
+  // #region ➤ 📦 Package Imports
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  import { createEventDispatcher, onMount } from "svelte";
+  import session from "$lib/store/session.js";
+  import { create_article_store } from "./create_article.store.js";
   import BackButton from "$lib/components/ui/BackButton.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import XClose from "$lib/components/ui/infomessages/x-close.svelte";
   import Input from "$lib/components/ui/Input.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
-  import session from "$lib/store/session.js";
-  import { createEventDispatcher, onMount } from "svelte";
-  import { create_article_store } from "./create_article.store.js";
   import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+
+  // #endregion ➤ 📦 Package Imports
+
+  // #region ➤ 📌 VARIABLES
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
   export let translations:
     | TranslationSportstacksSectionDataJSONSchema
     | undefined;
-  $: ({ viewportType } = $session);
 
-  $: ({ seo } = $create_article_store);
+  const dispatch = createEventDispatcher();
+
   let description = "";
   let title = "";
-  const dispatch = createEventDispatcher();
+
+  $: ({ viewportType } = $session);
+  $: ({ seo } = $create_article_store);
+
+  // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
   function goBack() {
     dispatch("changeView", "preview");
@@ -36,11 +84,24 @@
     goBack();
   }
 
+  // #endregion ➤ 🛠️ METHODS
+
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
   onMount(() => {
     title = seo.title || "";
     description = seo.description || "";
   });
-  $: console.log("translations", translations);
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
+
 </script>
 
 <!--
@@ -76,7 +137,8 @@
               {/if}
             </div>
             <div class="info-desc">
-              {translations?.seo_changes || `The changes made in the SEO details will affect how the article
+              {translations?.seo_changes ||
+                `The changes made in the SEO details will affect how the article
               appears in public laces like Betarena homepage and in subscribers’
               inboxes — not the contents of the story itself.`}
             </div>
@@ -86,8 +148,8 @@
       <div class="form-wrapper">
         <Input
           bind:value={title}
-          placeholder={translations?.title  || "Default title"}
-          label="{translations?.title || "SEO title"}"
+          placeholder={translations?.title || "Default title"}
+          label={translations?.title || "SEO title"}
         />
         <Input
           inputType="textarea"
@@ -105,7 +167,9 @@
           type="secondary-gray"
           on:click={goBack}>{translations?.go_back || "Go Back"}</Button
         >
-        <Button full={viewportType !== "mobile"} on:click={save}>{translations?.save || "Save"}</Button>
+        <Button full={viewportType !== "mobile"} on:click={save}
+          >{translations?.save || "Save"}</Button
+        >
       </div>
     </Container>
   </div>

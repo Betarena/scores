@@ -36,6 +36,7 @@
   import { submitWrapper } from "$lib/utils/sveltekitWrapper.js";
   import { goto } from "$app/navigation";
   import { mutateStringToPermalink } from "@betarena/scores-lib/dist/util/language.js";
+  export let data: PageData;
 
   // #endregion ➤ 📦 Package Imports
 
@@ -53,18 +54,54 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let data: PageData;
-
   let name = "";
   let inputError = false;
   let debounceTimer;
   let form: HTMLFormElement;
   $: translation = $page.data.RESPONSE_PROFILE_DATA?.sportstack;
+
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  $: name = name.replace(/[^\w\s]/gi, "");
+
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
+
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
 
   function debounceValidation(e: CustomEvent<string>) {
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(() => validateName(e.detail), 300); // 300ms debounce
+  }
+
+  function submit() {
+    return submitWrapper({
+      successMessage: "The publication was created successfully.",
+      cbAfter: gotoPublication,
+    });
   }
 
   async function validateName(val) {
@@ -83,13 +120,9 @@
     await goto(url);
   }
 
-  function submit() {
-    return submitWrapper({
-      successMessage: "The publication was created successfully.",
-      cbAfter: gotoPublication,
-    });
-  }
-  $: name = name.replace(/[^\w\s]/gi, "");
+  // #endregion ➤ 🛠️ METHODS
+
+
 </script>
 
 <!--

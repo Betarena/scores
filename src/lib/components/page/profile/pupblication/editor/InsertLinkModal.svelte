@@ -8,20 +8,63 @@
 -->
 
 <script lang="ts">
+  // #region ➤ 📦 Package Imports
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+  import { onMount } from "svelte";
+  import { scale } from "svelte/transition";
+  import { modalStore } from "$lib/store/modal.js";
   import Button from "$lib/components/ui/Button.svelte";
   import Input from "$lib/components/ui/Input.svelte";
-  import { modalStore } from "$lib/store/modal.js";
   import { Editor } from "@tiptap/core";
-    import { onMount } from "svelte";
-  import { scale } from "svelte/transition";
+
+  // #endregion ➤ 📦 Package Imports
+
+  // #region ➤ 📌 VARIABLES
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let linkState: { url: string; text: string };
   export let editor: Editor;
 
   let modal;
-  $: linkState.url = linkState?.url.toLowerCase();
-  let keyBoardHeight = `80px`;
   let top = `100vh`;
+
+  $: linkState.url = linkState?.url.toLowerCase();
+  // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
   function save() {
     const { url, text } = linkState;
@@ -47,25 +90,38 @@
     const isKeyboardOpen =
       (window.visualViewport?.height || 0) < window.innerHeight;
     if (isKeyboardOpen) {
-      keyboardHeight = window.innerHeight - window.visualViewport.height;
-      top = `${window.visualViewport.height / 2}px`;
+      top = `${(window.visualViewport?.height || 0) / 2}px`;
     } else {
       top = `50vh`;
     }
   }
   function updateModalPosition() {
     const scrollTop = window.scrollY;
-    top = `${window.visualViewport.height / 2 + scrollTop}px`;
+    top = `${(window.visualViewport?.height || 0) / 2 + scrollTop}px`;
   }
 
+  // #endregion ➤ 🛠️ METHODS
+
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
   onMount(() => {
-    updateModalPosition()
-    window?.getSelection()?.removeAllRanges()
+    updateModalPosition();
+    window?.getSelection()?.removeAllRanges();
   });
+
+  // #endregion ➤ 🛠️ METHODS
 </script>
 
-
-<svelte:window on:resize={updateViewportHeight} on:scroll={updateModalPosition}/>
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ 💠 Svelte Component HTML                                                         │
@@ -76,6 +132,10 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
+<svelte:window
+  on:resize={updateViewportHeight}
+  on:scroll={updateModalPosition}
+/>
 <div bind:this={modal} class="link-popup" style="top: {top}" in:scale out:scale>
   <Input
     bind:value={linkState.text}

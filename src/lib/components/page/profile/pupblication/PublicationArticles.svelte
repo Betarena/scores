@@ -8,22 +8,54 @@
 -->
 
 <script lang="ts">
+
+  // #region ➤ 📦 Package Imports
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  import { createEventDispatcher } from "svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
   import session from "$lib/store/session.js";
   import userSettings from "$lib/store/user-settings.js";
-  import type {
-    AuthorsAuthorsMain,
-    TranslationSportstacksSectionDataJSONSchema,
-  } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
-  import PublicationArticleArticle from "./PublicationArticleArticle.svelte";
   import type { IArticle } from "$lib/components/section/authors/common_ui/helpers.js";
   import PublicationArticleArticleLoader from "./PublicationArticleArticleLoader.svelte";
   import EyeOffIcon from "$lib/components/ui/assets/eye-off-icon.svelte";
   import PopupMenu from "$lib/components/ui/PopupMenu.svelte";
+  import PublicationArticleArticle from "./PublicationArticleArticle.svelte";
   import { articleFilterStore } from "./editor/helpers.js";
-  import { createEventDispatcher } from "svelte";
   import type { Writable } from "svelte/store";
+  import type {
+    AuthorsAuthorsMain,
+    TranslationSportstacksSectionDataJSONSchema,
+  } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+
+  // #endregion ➤ 📦 Package Imports
+
+  // #region ➤ 📌 VARIABLES
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let selectedSportstack: Writable<AuthorsAuthorsMain>;
   export let articles: Map<number, IArticle>;
@@ -33,8 +65,28 @@
     | TranslationSportstacksSectionDataJSONSchema
     | undefined;
 
+  const dispatch = createEventDispatcher();
+
   let showSortBy = false;
   let node;
+
+  $: ({ viewportType } = $session);
+
+  // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
   $: options = [
     {
       id: "all",
@@ -64,9 +116,21 @@
       label: translations?.last_edited || "Last edited",
     },
   ];
-  const dispatch = createEventDispatcher();
 
-  $: ({ viewportType } = $session);
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
+
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
   function changeFilter(e) {
     if (typeof e.detail === "number") return;
     $articleFilterStore.status = e.detail.id;
@@ -85,6 +149,9 @@
       dispatch("loadMore");
     }
   }
+
+  // #endregion ➤ 🛠️ METHODS
+
 </script>
 
 <!--

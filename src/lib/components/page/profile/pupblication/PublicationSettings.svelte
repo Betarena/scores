@@ -8,31 +8,61 @@
 -->
 
 <script lang="ts">
+  // #region ➤ 📦 Package Imports
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
   import { page } from "$app/stores";
   import { enhance } from "$app/forms";
+  import { goto, invalidateAll } from "$app/navigation";
   import Button from "$lib/components/ui/Button.svelte";
   import Input from "$lib/components/ui/Input.svelte";
   import session from "$lib/store/session.js";
+  import userSettings from "$lib/store/user-settings.js";
+  import { post } from "$lib/api/utils.js";
+  import { submitWrapper } from "$lib/utils/sveltekitWrapper.js";
+  import { dlog } from "$lib/utils/debug.js";
+  import { uploadImage } from "$lib/firebase/common.js";
+  import { infoMessages } from "$lib/components/ui/infomessages/infomessages.js";
+  import { modalStore } from "$lib/store/modal.js";
+  import CropperModal from "$lib/components/ui/Cropper/CropperModal.svelte";
+  import PublicationAvatar from "./PublicationAvatar.svelte";
+  import UrlInfo from "./UrlInfo.svelte";
+  import DeleteModal from "./DeleteModal.svelte";
+  import { mutateStringToPermalink } from "@betarena/scores-lib/dist/util/language.js";
+  import type { Writable } from "svelte/store";
   import type {
     AuthorsAuthorsDataJSONSchema,
     AuthorsAuthorsMain,
     TranslationSportstacksSectionDataJSONSchema,
   } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
-  import PublicationAvatar from "./PublicationAvatar.svelte";
-  import UrlInfo from "./UrlInfo.svelte";
-  import userSettings from "$lib/store/user-settings.js";
-  import { post } from "$lib/api/utils.js";
-  import { mutateStringToPermalink } from "@betarena/scores-lib/dist/util/language.js";
-  import { modalStore } from "$lib/store/modal.js";
-  import DeleteModal from "./DeleteModal.svelte";
-  import { submitWrapper } from "$lib/utils/sveltekitWrapper.js";
-  import ModalProfilePictureCrop from "../Modal-ProfilePictureCrop.svelte";
-  import { dlog } from "$lib/utils/debug.js";
-  import { uploadImage } from "$lib/firebase/common.js";
-  import { infoMessages } from "$lib/components/ui/infomessages/infomessages.js";
-  import { goto, invalidateAll } from "$app/navigation";
-  import type { Writable } from "svelte/store";
-  import CropperModal from "$lib/components/ui/Cropper/CropperModal.svelte";
+
+  // #endregion ➤ 📦 Package Imports
+
+  // #region ➤ 📌 VARIABLES
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let selectedSportstack: Writable<AuthorsAuthorsMain>;
   export let translations:
@@ -60,18 +90,117 @@
     avatar: initialAvatar,
   } = data as AuthorsAuthorsDataJSONSchema);
   $: ({ username: initialName } = data as AuthorsAuthorsDataJSONSchema);
-  $: permalink = mutateStringToPermalink(username);
 
   $: desc = about || "";
   $: name = username || "";
   $: avatar = initialAvatar || "";
-  $: url = permalink?.replace(/[^\w\s-]/gi, "") || "";
 
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  $: url = permalink?.replace(/[^\w\s-]/gi, "") || "";
+  $: permalink = mutateStringToPermalink(username);
+
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
+
+
+ // #region ➤ 🛠️ METHODS
+
+ // ╭────────────────────────────────────────────────────────────────────────╮
+ // │ NOTE:                                                                  │
+ // │ Please add inside 'this' region the 'methods' that are to be           │
+ // │ and are expected to be used by 'this' .svelte file / component.        │
+ // │ IMPORTANT                                                              │
+ // │ Please, structure the imports as follows:                              │
+ // │ 1. function (..)                                                       │
+ // │ 2. async function (..)                                                 │
+ // ╰────────────────────────────────────────────────────────────────────────╯
+
+
+
 
   function debounceValidation(e: CustomEvent<string>) {
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(() => validateName(e.detail), 300); // 300ms debounce
+  }
+
+  function setCropImage(img) {
+    profile_pic = img;
+    avatar = img;
+    $modalStore.show = false;
+  }
+
+  function showDeleteModal() {
+    modalStore.set({
+      modal: true,
+      component: DeleteModal,
+      props: {
+        translations,
+        id: selectedSportstack.id,
+        deleteSportsTack: true,
+        cb: deleteSportstack,
+      },
+      show: true,
+    });
+  }
+
+  function handleFileChange(event) {
+    const target = event.target as HTMLInputElement;
+    if (!target.files) return;
+    files = target.files;
+    const allowedFormats = [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+    ];
+    for (const file_ of files) {
+      // [🐞]
+      dlog(`${file_.name}: ${file_.size} ${typeof file_} type`, true);
+    }
+    const file = files[0];
+    if (!allowedFormats.includes(file.type)) {
+      alert("🔴 Invalid file format. Please upload a PNG, JPG or GIF file.");
+      fileInput.value = "";
+      return;
+    }
+    if (file.size > 10000000) {
+      alert("🔴 Uploaded picture is too large. Limit is 10MB.");
+      fileInput.value = "";
+      return;
+    }
+    let reader = new FileReader();
+    reader.onload = (e) => {
+      image = e.target?.result;
+      showCropModal = true;
+      modalStore.set({
+        modal: true,
+        component: CropperModal,
+        props: {
+          image,
+          shape: "rect",
+          cb: setCropImage,
+          closeCb: () => {
+            fileInput.value = "";
+          },
+        },
+        show: true,
+      });
+    };
+    reader.readAsDataURL(file);
+    files = undefined;
   }
 
   async function validateName(val) {
@@ -125,20 +254,6 @@
     });
   }
 
-  function showDeleteModal() {
-    modalStore.set({
-      modal: true,
-      component: DeleteModal,
-      props: {
-        translations,
-        id: selectedSportstack.id,
-        deleteSportsTack: true,
-        cb: deleteSportstack,
-      },
-      show: true,
-    });
-  }
-
   async function deleteSportstack() {
     $modalStore.show = false;
     const loadingId = infoMessages.add({
@@ -166,58 +281,10 @@
       });
     }
   }
-  function handleFileChange(event) {
-    const target = event.target as HTMLInputElement;
-    if (!target.files) return;
-    files = target.files;
-    const allowedFormats = [
-      "image/jpeg",
-      "image/png",
-      "image/gif",
-      "image/webp",
-    ];
-    for (const file_ of files) {
-      // [🐞]
-      dlog(`${file_.name}: ${file_.size} ${typeof file_} type`, true);
-    }
-    const file = files[0];
-    if (!allowedFormats.includes(file.type)) {
-      alert("🔴 Invalid file format. Please upload a PNG, JPG or GIF file.");
-      fileInput.value = "";
-      return;
-    }
-    if (file.size > 10000000) {
-      alert("🔴 Uploaded picture is too large. Limit is 10MB.");
-      fileInput.value = "";
-      return;
-    }
-    let reader = new FileReader();
-    reader.onload = (e) => {
-      image = e.target.result;
-      showCropModal = true;
-      modalStore.set({
-        modal: true,
-        component: CropperModal,
-        props: {
-          image,
-          shape: "rect",
-          cb: setCropImage,
-          closeCb: () => {
-            fileInput.value = ""
-          }
-        },
-        show: true,
-      });
-    };
-    reader.readAsDataURL(file);
-    files = undefined;
-  }
 
-  function setCropImage(img) {
-    profile_pic = img;
-    avatar = img;
-    $modalStore.show = false;
-  }
+
+ // #endregion ➤ 🛠️ METHODS
+
 </script>
 
 <!--
