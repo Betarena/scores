@@ -1,48 +1,81 @@
+// ╭──────────────────────────────────────────────────────────────────────────────────╮
+// │ 📌 High Order Overview                                                           │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ ➤ Code Format   // V.8.0                                                         │
+// │ ➤ Status        // 🔒 LOCKED                                                     │
+// │ ➤ Author(s)     // @migbash                                                      │
+// │ ➤ Maintainer(s) // @migbash                                                      │
+// │ ➤ Created on    // <date-created>                                                │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ 📝 Description                                                                   │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ Betarena (Module)
+// │ |: Configuration for Svelte/+Kit.
+// │ |: 🔗 read-more |:| https://kit.svelte.dev/docs/configuration
+// ╰──────────────────────────────────────────────────────────────────────────────────╯
+
+// #region ➤ 📦 Package Imports
+
 import node from '@sveltejs/adapter-node';
 import preprocess from 'svelte-preprocess';
+
+// #endregion ➤ 📦 Package Imports
 
 /**
  * @type {import('@sveltejs/kit').Config}
  */
-const config =
+export default
 {
+	// ╭─────
+  // │ IMPORTANT
+  // │ |: 🔗 read-more |:| https://kit.svelte.dev/docs/integrations#preprocessors
+  // ╰─────
+  preprocess: preprocess
+  (
+    {
+      scss:
+      {
+        prependData: `@import 'static/scss/themes/index.scss';`
+      }
+    }
+  ),
 
-	// ▓▓ SEE:
-  // ▓▓ https://github.com/sveltejs/svelte-preprocess
-  preprocess: preprocess({
-    scss: {
-      prependData: `@import 'static/scss/themes/index.scss';`
-  }}),
-
-  // ▓▓ SEE:
-  // ▓▓ https://kit.svelte.dev/docs/configuration
+  // ╭─────
+  // │ IMPORTANT
+  // │ |: 🔗 read-more |:| https://kit.svelte.dev/docs/configuration
+  // ╰─────
 	kit:
   {
-    serviceWorker: {
+    serviceWorker:
+    {
       register: false,
     },
     output:
     {
       preloadStrategy: 'modulepreload'
     },
-
 		adapter: node
     (
       {
-        // ▓▓ SEE:
-        // ▓▓ https://discord.com/channels/457912077277855764/1049973005675143219
-        // ▓▓ https://kit.svelte.dev/docs/adapter-node#options-precompress
+        // ╭─────
+        // │ IMPORTANT
+        // │ |: 🔗 read-more |:| https://discord.com/channels/457912077277855764/1049973005675143219
+        // │ |: 🔗 read-more |:| https://kit.svelte.dev/docs/adapter-node#options-precompress
+        // ╰─────
         precompress: true
       }
     ),
 
     // #region => CSP (CONFIG) (DISABLED) DOC: REF:[7]
 
-    // NOTE: 'none'	No URLs match.
-    // NOTE: 'self'	Refers to the origin site with the same scheme and port number.
-    // NOTE: 'unsafe-inline'	Allows the usage of inline scripts or styles.
-    // NOTE: 'unsafe-eval'	Allows the usage of eval in scripts.
-    // NOTE: 'strict-dynamic'	Informs the browser to trust scripts originating from a root trusted script.
+    // ╭─────
+    // │ NOTE:
+    // │ |: 'none' - No URLs match.
+    // │ |: 'self' - Refers to the origin site with the same scheme and port number.
+    // │ |: 'unsafe-inline' - Allows the usage of inline scripts or styles.
+    // │ |: 'unsafe-eval' - Allows the usage of eval in scripts.
+    // │ |: 'strict-dynamic' - Informs the browser to trust scripts originating from a root trusted script.
+    // ╰─────
 
     // csp: {
     //   // [ℹ] hash | nonce | auto
@@ -255,9 +288,11 @@ const config =
 
   },
 
-  // ▓▓ SEE:
-  // ▓▓ https://github.com/sveltejs/language-tools/issues/650
-  // ▓▓ https://github.com/sveltejs/language-tools/tree/master/packages/svelte-check
+  // ╭─────
+  // │ IMPORTANT
+  // │ |: 🔗 read-more |:| https://github.com/sveltejs/language-tools/issues/650
+  // │ |: 🔗 read-more |:| https://github.com/sveltejs/language-tools/tree/master/packages/svelte-check
+  // ╰─────
   onwarn:
   (
     warning,
@@ -271,5 +306,3 @@ const config =
   }
 
 };
-
-export default config;

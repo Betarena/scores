@@ -237,40 +237,6 @@ jobs:
 
   # ╭──────────────────────────────────────────────────────────────────╮
   # │ NOTE:                                                            │
-  # │ ➤ [3] auto-reset dev (branch) to main state.                     │
-  # ╰──────────────────────────────────────────────────────────────────╯
-
-  dev-branch-reset:
-    name: Git Reset Dev
-    needs: create-release
-    runs-on: ubuntu-22.04
-    steps:
-
-      - name: "STEP :|: checkout source code"
-        uses: actions/checkout@v4
-        with:
-          token: '${{ secrets.GH_TOKEN }}'
-          fetch-depth: 0
-          fetch-tags: true
-          ref: main
-
-      - name: "STEP :|: git config"
-        run: |
-          git config --local user.email "${{ secrets.GH_ORG_EMAIL }}"
-          git config --local user.name "${{ secrets.GH_ORG_NAME }}"
-
-      - name: "STEP :|: reset origin/dev branch"
-        run: |
-          # ▓ NOTE: ▓ IMPORTANT
-          git fetch
-          git checkout main
-          git pull origin main
-          git checkout dev
-          git reset --hard main
-          git push --force origin dev
-
-  # ╭──────────────────────────────────────────────────────────────────╮
-  # │ NOTE:                                                            │
   # │ ➤ [4] sentry JS sourcemap upload                                 │
   # ╰──────────────────────────────────────────────────────────────────╯
 
@@ -322,6 +288,7 @@ jobs:
           # [ℹ] Navigate to target project directory
           cd web/scores
           # [ℹ] Update the directory with latests changes
+          git stash
           git pull origin main
           # [ℹ] Run target makefile command
-          make update-scores-web
+          make docker-spin-start-production
