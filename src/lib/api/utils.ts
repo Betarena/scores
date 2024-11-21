@@ -35,7 +35,7 @@ export async function get
   _fetch: any = null,
   showTime: boolean = false,
   decompress: boolean = false,
-): Promise < T1 | null | undefined | unknown >
+): Promise<T1 | undefined>
 {
   // ### NOTE:
   // ### curcanavigate CORS issues
@@ -43,7 +43,6 @@ export async function get
 
   (_fetch ??= fetch)
 
-  console.log('endpoint',endpoint)
   endpoint = tryCatch(() => {return endpoint.replaceAll(' ', '')}) as string;
   endpoint = tryCatch(() => {return endpoint.replaceAll('\n', '')}) as string;
 
@@ -138,7 +137,7 @@ export async function post
   path: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   , data: any
-): Promise < T1 | null | undefined | unknown >
+): Promise < T1 | undefined >
 {
   return await tryCatchAsync
   (
@@ -241,6 +240,92 @@ export async function postv2
             path
             , {
               method: 'POST',
+              credentials: 'include',
+              body: JSON.stringify(data),
+              mode: 'cors',
+              headers:
+                {
+                  Accept: 'application/json',
+                  'Content-Type': 'application/json'
+                }
+            }
+          ),
+        /**
+         * @description
+         *  📣 Target `json` resonse from `endpoint`.
+         */
+        resJson = await res.json()
+      ;
+
+      if (!res.ok)
+
+        throw new Error
+        (
+          JSON.stringify(resJson) ?? 'network response was not ok'
+        );
+
+
+      return resJson;
+    }
+    , (
+      ex: unknown
+    ): IResponseError =>
+    {
+      // ▓ [🐞]
+      console.error(`💀 Unhandled :: ${ex}`);
+
+      return {
+        error: true,
+        errorLogs: ex
+      };
+    }
+  );
+}
+
+/**
+ * @author
+ *  @izobov
+ * @summary
+ *  - 🔹 HELPER
+ *  - 🟥 IMPORTANT
+ * @description
+ *  📣 PROXY Fetch type PUT
+ * @param { string } path
+ *  💠 Target `endpoint/url` to fetch data from.
+ * @param { any } data
+ *  💠 Target data to pass as `body`.
+ * @returns { Promise < T1 | null | undefined | unknown > }
+ *  📤 Returns an `unkown`.
+ */
+export async function put
+<
+  T1
+>
+(
+  path: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  , data: any
+): Promise < T1 | null | undefined | unknown | IResponseError >
+{
+  return await tryCatchAsync
+  <
+   T1
+  >
+  (
+    async (
+    ): Promise < T1 > =>
+    {
+      const
+        /**
+         * @description
+         *  📣 Target endpoint response.
+         */
+        res: Response
+          = await fetch
+          (
+            path
+            , {
+              method: 'PUT',
               credentials: 'include',
               body: JSON.stringify(data),
               mode: 'cors',

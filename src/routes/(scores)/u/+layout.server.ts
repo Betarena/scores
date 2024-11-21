@@ -25,33 +25,33 @@ import { dlogv2 } from '$lib/utils/debug.js';
  * @type {import('./$types').PageLoad}
  */
 export async function load
-(
-  event: ServerLoadEvent
-): Promise < any >
+  (
+    event: ServerLoadEvent
+  ): Promise<any>
 {
   const
     {
       langParam
     } = await event.parent()
-  ;
+    ;
 
   // [🐞]
   dlogv2
-  (
-    '🚏 checkpoint ➤ src/routes/(scores)/u/[view]/[lang=lang]/+page.server.ts',
-    [
-      `🔹 [var] ➤ langParam :|: ${langParam}`,
-    ],
-    true
-  );
+    (
+      '🚏 checkpoint ➤ src/routes/(scores)/u/[view]/[lang=lang]/+page.server.ts',
+      [
+        `🔹 [var] ➤ langParam :|: ${langParam}`,
+      ],
+      true
+    );
 
   return await main
-  (
-    event,
-    {
-      langParam
-    }
-  );
+    (
+      event,
+      {
+        langParam
+      }
+    );
 }
 
 // #endregion ➤ 🔄 LIFECYCLE [SVELTE]

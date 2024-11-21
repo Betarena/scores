@@ -18,6 +18,26 @@ export const
   routeIdPageProfile = '/(scores)/u/[view]/[lang=lang]',
   /**
    * @description
+   *  📣 Target `path` for **profile page**.
+   */
+  routeIdPageProfileAuthorCreate = '/(scores)/u/author/create/[lang=lang]',
+  /**
+   * @description
+   *  📣 Target `path` for **author publication page**.
+   */
+  routeIdPageProfilePublication = '/(scores)/u/author/publication/[permalink]/[lang=lang]',
+  /**
+   * @description
+   *  📣 Target `path` for **author publication page**.
+   */
+  routeIdPageProfileArticleCreation = '/(scores)/u/author/article/create/[lang=lang]',
+  /**
+   * @description
+   *  📣 Target `path` for **author publication page**.
+   */
+  routeIdPageProfileEditArticle = '/(scores)/u/author/article/edit/[...permalink]/[lang=lang]',
+  /**
+   * @description
    *  📣 Target `path` for **competition page**.
    */
   routeIdPageCompetitions = '/(scores)/[[lang=lang]]/[competitions=competitions]',

@@ -46,6 +46,9 @@
 
   import SvelteSeo from 'svelte-seo';
   import ArticleWidget from './articles/Article-Widget.svelte';
+  import Edit_02 from '$lib/components/ui/assets/edit-02.svelte';
+  import Button from '$lib/components/ui/Button.svelte';
+    import Edit_05 from '$lib/components/ui/assets/edit-05.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -141,6 +144,12 @@
 >
   <ArticleWidget />
 </section>
+<a class="create-article" class:tablet class:mobile href="/u/author/article/create/{$sessionStore.serverLang}">
+  <Button size={mobile ? "xl" : "xxl"} type="primary" icon_leading={true}>
+    <Edit_05 size={mobile ? "20" : "24"} color="var(--colors-base-white)" />
+  </Button>
+</a>
+
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -162,6 +171,7 @@
     section#content
     {
 
+      position: relative;
       width: fit-content;
       max-width: 100%;
       height: 100% !important;
@@ -263,6 +273,22 @@
           margin-top: 0;
         }
       }
+    }
+  }
+
+  .create-article {
+    position: fixed;
+    bottom: 34px;
+    transform: translateX(1226px);
+    &.tablet {
+      right: 34px;
+      transform: none;
+      bottom: 40px;
+    }
+    &.mobile {
+      right: 16px;
+      transform: none;
+      bottom: 100px;
     }
   }
 

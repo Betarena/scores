@@ -5,9 +5,10 @@ import userBetarenaSettings from '$lib/store/user-settings.js';
 import { dlog, dlogv2 } from '$lib/utils/debug.js';
 import { checkNull } from '$lib/utils/miscellenous.js';
 import { DataSnapshot, onValue, ref, type DatabaseReference, type Unsubscribe } from 'firebase/database';
+import { ref as storageRef, getDownloadURL, uploadString } from "firebase/storage"
 import { arrayRemove, arrayUnion, doc, DocumentReference, getDoc, increment, onSnapshot, updateDoc } from 'firebase/firestore';
 import { getTargetRealDbData } from './firebase.actions.js';
-import { db_firestore, db_real } from './init';
+import { db_firestore, db_real, storage } from './init';
 
 import type { FIRE_LNNS, FIRE_LNPI, FIREBASE_livescores_now, FIREBASE_odds } from '@betarena/scores-lib/types/firebase.js';
 import type { Page } from '@sveltejs/kit';
@@ -1241,17 +1242,10 @@ export async function updateButtonOrder
     uid = userBetarenaSettings.extract('uid') as string | undefined | null,
     /**
      * @description
-     * 📝 Data for `page`
-     */
-    page = sessionStore.extract<Page>('page') as Page,
-    /**
-     * @description
      * 📝 Conditional logic bundle simplification
      */
     if_M_0
-      = !checkNull(page.error)
-      || checkNull(page.route.id)
-      || !order
+      = !order
       || !uid
     ;
 
@@ -1262,8 +1256,6 @@ export async function updateButtonOrder
     (
       '🚏 checkpoint ➤ updateButtonOrder(..)',
       [
-        `🔹 [var] ➤ opts.isPageError :|: ${page.error}`,
-        `🔹 [var] ➤ opts.routeId :|: ${page.route.id}`,
         `🔹 [var] ➤ buttuns order :|: ${order}`,
         `🔹 [var] ➤ uid :|: ${uid}`,
       ],
@@ -1287,6 +1279,122 @@ export async function updateButtonOrder
       }
     );
   return;
+}
+
+/**
+ * @author
+ *  @izobov
+ * @summary
+ *  🟦 HELPER
+ * @description
+ *  📣 Update `user` highlighted sportstack
+ * @param { string } id
+ *  💠 **[required]** Following object
+ * @returns { Promise < void > }
+ */
+export async function updateHighlightedSpotstack
+  (
+    id: string
+  ): Promise<void>
+{
+  const
+    /**
+     * @description
+     * 📝 Data point
+     */
+    uid = userBetarenaSettings.extract('uid') as string | undefined | null,
+    /**
+     * @description
+     * 📝 Conditional logic bundle simplification
+     */
+    if_M_0
+      = !id
+      || !uid
+    ;
+
+  if (if_M_0) return;
+
+  // [🐞]
+  dlogv2
+    (
+      '🚏 checkpoint ➤ updateButtonOrder(..)',
+      [
+        `🔹 [var] ➤ sportstack id :|: ${id}`,
+        `🔹 [var] ➤ uid :|: ${uid}`,
+      ],
+      true
+    );
+
+  const
+    userRef = doc
+      (
+        db_firestore,
+        'betarena_users',
+        uid,
+      )
+    ;
+
+  await updateDoc
+    (
+      userRef,
+      {
+        highlights: {
+          sportstack: id
+        }
+      }
+    );
+  return;
+}
+
+/**
+ * @author
+ *  @izobov
+ * @summary
+ *  🟦 HELPER
+ * @description
+ *  📣 Uplaod images to firebase
+ * @param { string } img
+ *  💠 **[required]** file to upload
+ * @param { string } targetPath
+ *  💠 **[required]** target path to upload imange
+ * @returns { Promise < string > }
+ *  return url of uploaded image
+ */
+export async function uploadImage
+  (
+    img: string,
+    targetPath: string
+  ): Promise<string>
+{
+  const sRef = storageRef
+    (
+      storage,
+      targetPath
+    );
+  await uploadString
+    (
+      sRef,
+      img,
+      'data_url'
+    )
+
+  // [🐞]
+  dlog
+    (
+      '🟢 Uploaded file!'
+    );
+
+  // const url = await snapshot.ref.fullPath;
+  const url = await getDownloadURL(sRef);
+
+  // [🐞]
+  dlog
+    (
+      url,
+      true
+    );
+
+  return url;
 }
 
 /**

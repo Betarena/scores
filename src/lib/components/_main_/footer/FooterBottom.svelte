@@ -17,7 +17,7 @@
   import Legal_18ActionBet from "./assets/icon_redisign/legal-18-action-bet.svelte";
   import BegambleawareorgBlack from "./assets/icon_redisign/gamble_aware.svg";
   import BetarenaLogo from "./assets/betarena-logo-full.svg";
-  import { routeIdPageProfile } from "$lib/constants/paths.js";
+  import { routeIdPageProfile, routeIdPageProfileAuthorCreate, routeIdPageProfilePublication } from "$lib/constants/paths.js";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -62,7 +62,7 @@
   class:mobile
   class="dark-mode"
   class:desktop={isDesktop}
-  class:border={$page.route.id === routeIdPageProfile}
+  class:border={[routeIdPageProfile, routeIdPageProfileAuthorCreate, routeIdPageProfilePublication].includes($page.route.id || "")}
 >
   <div class="wrapper">
     {#if $sessionStore.viewportType !== "mobile"}

@@ -40,7 +40,7 @@ COMPONENT JS (w/ TS)
   ;
 
   let
-    profileTrs: B_PROF_T,
+    profileTrs: IProfileTrs,
     noWidgetData: boolean = true,
     files: HTMLInputElement['files'],
     fileInputElem: HTMLInputElement,

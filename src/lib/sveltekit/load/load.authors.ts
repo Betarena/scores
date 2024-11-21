@@ -12,9 +12,9 @@
 
 // #region ➤ 📦 Package Imports
 
-import { ServerLoadEvent } from '@sveltejs/kit';
+import { redirect, ServerLoadEvent } from '@sveltejs/kit';
 
-import { ERROR_CODE_INVALID, dlogv2 } from '$lib/utils/debug.js';
+import { dlogv2, ERROR_CODE_INVALID } from '$lib/utils/debug.js';
 import { preloadExitLogic, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/navigation.js';
 
 import type { B_SAP_D2 } from '@betarena/scores-lib/types/seo-pages.js';
@@ -60,31 +60,43 @@ export async function main
   const
     // ╭─────
     // │ NOTE:
-    // │ > 📣 Destruct `object`.
+    // │ |: Destructure `object`.
     // ╰─────
     {
       permalink
     } = event.params,
+    // ╭─────
+    // │ NOTE:
+    // │ |: Destructure `object`.
+    // ╰─────
+    {
+      isValid,
+      objRedirect
+    } = await promiseValidUrlCheck
+    (
+      event.fetch,
+      {
+        authorArticleUrl: permalink
+      }
+    ),
     /**
      * @description
-     *  📣 Validate **this** `url`.
-     */
-    isUrlValid
-      = await promiseValidUrlCheck
-      (
-        event.fetch,
-        {
-          authorArticleUrl: permalink
-        }
-      ),
-    /**
-     * @description
-     *  📣 `Data` object for target `route`.
+     *  📝 Initialize page response
      */
     response: any = {}
   ;
 
-  if (!isUrlValid)
+  // ╭──────────────────────────────────────────────────────────────────────────────────╮
+  // │ 📟 │ PERMALINK VALIDATION                                                        │
+  // ╰──────────────────────────────────────────────────────────────────────────────────╯
+
+  if (objRedirect.isRedirect && objRedirect.strRedirectUrl != null)
+    throw redirect
+    (
+      301,
+      `/a${objRedirect.strRedirectUrl}`
+    );
+  else if (!isValid)
     preloadExitLogic
     (
       0,
@@ -92,6 +104,10 @@ export async function main
       ERROR_CODE_INVALID
     );
   ;
+
+  // ╭──────────────────────────────────────────────────────────────────────────────────╮
+  // │ 🏗️ │ PAGE DATA BUNDLING                                                          │
+  // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
   [
     response.dataArticle,

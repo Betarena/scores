@@ -30,7 +30,7 @@
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlog } from '$lib/utils/debug.js';
 	import { viewport_change } from '$lib/utils/platform-functions.js';
-	import { PROF_U_competitionTitle } from '@betarena/scores-lib/dist/functions/func.profile.js';
+	import { PROF_U_competitionTitle } from '@betarena/scores-lib/dist/functions/v8/profile.main.js';
 	import { onMount } from 'svelte';
 
 	import WidgetTxHistLoader from './Widget-Comp-Hist-Loader.svelte';

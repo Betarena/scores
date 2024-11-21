@@ -21,6 +21,7 @@ COMPONENT JS (w/ TS)
 
 	import type { PROFILE_OPT } from '$lib/types/types.scores.js';
   import { fade, fly } from 'svelte/transition';
+  import { routeIdPageProfileAuthorCreate, routeIdPageProfilePublication } from '$lib/constants/paths.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -34,13 +35,13 @@ COMPONENT JS (w/ TS)
       'Dashboard',
       'Account Settings',
       'Settings',
+      'Author',
       'Investor',
       'Deposit',
       'Withdraw',
       'Transaction History',
       'Competitions History',
       'Scores',
-      'Author',
       'Logout'
     ]
   ;
@@ -100,6 +101,9 @@ COMPONENT JS (w/ TS)
     ;
     if (selectedMenuOpt == 'Competitions History')
       targetUrl = `/u/competition-history/${$userBetarenaSettings.lang}`
+    ;
+    if (selectedMenuOpt == 'Author')
+      targetUrl = `/u/author/${$userBetarenaSettings.lang}`
     ;
     if (selectedMenuOpt == "Logout") {
       logoutUser();
@@ -168,10 +172,16 @@ COMPONENT JS (w/ TS)
       case 'competition-history':
         selectedMenuOpt = 'Competitions History';
         break;
+      case 'author':
+        selectedMenuOpt = 'Author';
+        break;
       default:
         selectedMenuOpt = 'Dashboard';
         break;
     }
+
+    if([routeIdPageProfileAuthorCreate, routeIdPageProfilePublication].includes($page.route.id || ""))
+      selectedMenuOpt = 'Author';
 
 	}
 

@@ -74,29 +74,7 @@
   // │ as soon as 'this' .svelte file is ran.                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  onMount
-  (
-    () =>
-    {
-      document.body.classList.add
-      (
-        'disable-scroll'
-      );
-      return;
-    }
-  );
 
-  onDestroy
-  (
-    () =>
-    {
-      document.body.classList.remove
-      (
-        'disable-scroll'
-      );
-      return;
-    }
-  );
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
@@ -119,8 +97,10 @@
 │ > general modal backdrop.
 ╰─────
 -->
+<svelte:body  class="disable-scroll"/>
 <div
 	in:fade
+  out:fade
 	class=
   "
   {CNAME}

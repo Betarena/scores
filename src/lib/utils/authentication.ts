@@ -23,6 +23,7 @@ import { app, db_firestore } from '$lib/firebase/init.js';
 import { getCookie } from '$lib/store/cookie.js';
 import sessionStore from '$lib/store/session.js';
 import userBetarenaSettings from '$lib/store/user-settings.js';
+import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.betarena-user.js';
 import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
 import { AU_W_TAG, dlog, dlogv2, errlog } from './debug.js';
 import { initUser } from './user.js';
@@ -402,6 +403,17 @@ async function createFirestoreUser
           user.firebase_user_data?.uid!,
         ),
         JSON.parse(JSON.stringify(user.scores_user_data))
+      );
+
+      await new Betarena_User_Class().pingSportstackFirstCreation
+      (
+        {
+          query:
+          {
+            uid: user.firebase_user_data?.uid!
+          },
+          body: {}
+        }
       );
 
       return;

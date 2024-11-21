@@ -1,5 +1,6 @@
 import type { IPageAuthorArticleData, IPageAuthorTagData, IPageAuthorAuthorData, IPageAuthorTranslationDataFinal, IPageAuthorTagDataFinal } from "@betarena/scores-lib/types/v8/preload.authors.js";
 import { get } from "$lib/api/utils.js";
+import { dlogv2 } from "$lib/utils/debug.js";
 
 export interface IArticle extends IPageAuthorArticleData
 {
@@ -51,17 +52,17 @@ export async function fetchArticles({ permalink, lang, page, prevData, url }: { 
     `/api/data/author/tags?permalinkTag=${permalink}&page=${page}${lang ? `&lang=${lang}` : ""
     }`
   )) as ITagsWidgetData;
-  if (!res) return {next: (prevData || {}) as ITagsWidgetData ,  articles: []};
+  if (!res) return { next: (prevData || {}) as ITagsWidgetData, articles: [] };
   const prevMap = new Map(prevData?.mapArticle);
   const newArticles = res.mapArticle.filter(([id]) => !prevMap.has(id));
   const next =
-  {
-    ...res,
-    ...prevData,
-    mapArticle: [...(prevData?.mapArticle || []), ...newArticles],
-    mapAuthor: [...(prevData?.mapAuthor || []), ...res.mapAuthor],
-    mapTag: [...(prevData?.mapTag || []), ...res.mapTag],
-  } as ITagsWidgetData;
+    {
+      ...res,
+      ...prevData,
+      mapArticle: [...(prevData?.mapArticle || []), ...newArticles],
+      mapAuthor: [...(prevData?.mapAuthor || []), ...res.mapAuthor],
+      mapTag: [...(prevData?.mapTag || []), ...res.mapTag],
+    } as ITagsWidgetData;
   const articles = prepareArticles(newArticles, new Map(res.mapTag), new Map(res.mapAuthor));
   return { next, articles }
 }
@@ -79,9 +80,9 @@ export async function fetchArticles({ permalink, lang, page, prevData, url }: { 
    * @return { void }
    */
 export function readingTime
-(
-  text: string | null | undefined
-): number
+  (
+    text: string | null | undefined
+  ): number
 {
   if (text == null) return 0;
 
@@ -101,7 +102,7 @@ export function readingTime
      *  📣 Calcualted value for `reading time`.
     */
     time = Math.ceil(words / wpm)
-  ;
+    ;
 
   return time;
 }
@@ -122,4 +123,37 @@ export function userNameToUrlString(userName: string | undefined | null): string
 {
   if (!userName) return "";
   return userName.toLowerCase().replace(/ /g, "-");
+}
+
+
+export async function fetchArticlesBySportstack({ permalink = "", page = 0, options = {} }: {
+  permalink?: string; page?: number; options?: {
+    sortTitle?: 'desc' | 'asc';
+    sortPublishDate?: 'desc' | 'asc';
+    sortEditedDate?: 'desc' | 'asc';
+    status?: 'published' | 'unpublished' | 'draft' | 'all';
+  }
+})
+{
+  dlogv2(
+    "loadArticles(..) // START",
+    [`🔹 [var] ➤ page |:| ${page}`],
+    true
+  );
+  let /**
+   * @description
+   * 📝 URL to be requested.
+   */
+    url = `/api/data/author/sportstack?permalink=${permalink}&page=${page}`;
+  if (options)
+  {
+    Object.entries(options).forEach(([key, value]) => { url += `&${key}=${value}` });
+  }
+  const /**
+   * @description
+   * 📝 Data Response (0).
+   */
+    dataRes0 = (await get(url)) as ITagsWidgetData;
+  dlogv2("loadTagArticles(..) // END", [`🔹 [var] ➤ page |:| ${page}`], true);
+  return dataRes0;
 }

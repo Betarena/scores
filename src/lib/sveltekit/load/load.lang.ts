@@ -76,7 +76,7 @@ export async function main
      * @description
      *  📣 Validate **this** `url`.
      */
-    isUrlValid
+    { isValid: isUrlValid }
       = await promiseValidUrlCheck
       (
         event.fetch,
@@ -90,6 +90,8 @@ export async function main
      */
     response: any = {}
   ;
+
+  console.log('🔹 [var] ➤ isUrlValid :|: ', isUrlValid);
 
   if (!isUrlValid)
     // eslint-disable-next-line @typescript-eslint/no-throw-literal

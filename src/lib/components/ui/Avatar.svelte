@@ -32,7 +32,23 @@
      * @description
      * avatar size
      */
-    size = 38;
+    size: number | string = 38;
+
+    let numSize = 38;
+  $: styles = `height: ${numSize}px; width: ${numSize}px;`;
+  const sizeMap = {
+    xs: 24,
+    sm: 32,
+    md: 40,
+    lg: 48,
+    xl: 56,
+    xxl:64,
+  }
+  $: if (typeof size === "string") {
+    numSize = sizeMap[size] || 38;
+  } else {
+    numSize = size;
+  }
 
   const dispatch = createEventDispatcher();
 
@@ -49,17 +65,22 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<div class="avatar-wrapper"  on:click={() => dispatch("click")} style="height: {size}px; width: {size}px; {$$restProps.wrapStyle}">
+<div
+  class="avatar-wrapper"
+  on:click={() => dispatch("click")}
+  style="{styles}  {$$restProps.wrapStyle}"
+>
   {#if src}
     <div
       class="avatar-circle"
       {...$$restProps}
-      style="width: {size}px; height: {size}px;  background-image: url({src}); "
+      class:size
+      style="{styles}  background-image: url({src}); "
     />
   {:else if isLoogedIn}
-    <DefaultAvatar {size} />
+    <DefaultAvatar size={numSize} />
   {:else}
-    <LoggedoutAvatar {size} />
+    <LoggedoutAvatar size={numSize} />
   {/if}
 </div>
 

@@ -1,3 +1,7 @@
+<script>
+  export let color = "var(--text-color)";
+</script>
+
 <svg
   width="10"
   height="6"
@@ -8,7 +12,7 @@
   <path
     id="Path"
     d="M1 1L5 5L9 1"
-    stroke="var(--text-color)"
+    stroke={color}
     stroke-width="1.25"
     stroke-linecap="round"
     stroke-linejoin="round"

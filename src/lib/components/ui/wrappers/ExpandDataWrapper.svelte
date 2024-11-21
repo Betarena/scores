@@ -42,7 +42,8 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  export let data = [] as IPageAuthorTagData[];
+  export let data = [] as any[];
+  export let exapandOnClick = true;
   let /**
      * @description variables to controll tags visability
      */
@@ -108,6 +109,7 @@
   }
 
   function expandTags() {
+    if (!exapandOnClick) return;
     expanded = true;
     visibleData.set({ vd: data, countOfNotVisibleData: 0 });
   }

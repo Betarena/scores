@@ -4,7 +4,7 @@ import { json } from '@sveltejs/kit';
 import dotenv from 'dotenv';
 
 import { _GraphQL } from '@betarena/scores-lib/dist/classes/_graphql.js';
-import { UPROF_UP_ENTRY_0, UPROF_UP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.profile.js';
+import { UPROF_UP_ENTRY_0, UPROF_UP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/v8/profile.main.js';
 
 import { profileMutation0, type IProfileMutation0Out, type IProfileMutation0Var } from '@betarena/scores-lib/dist/graphql/query.profile.js';
 import type { B_H_TH } from '@betarena/scores-lib/types/_HASURA_.js';

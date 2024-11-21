@@ -18,7 +18,7 @@ import { error, redirect, type Page } from '@sveltejs/kit';
 import LZString from 'lz-string';
 
 import { get } from '$lib/api/utils.js';
-import { routeIdAuthorProfile, routeIdAuthorSubscribers, routeIdContent, routeIdPageAuthors, routeIdPageCompetition, routeIdPageCompetitionLobby, routeIdPageFixture, routeIdPageLeague, routeIdPagePlayer, routeIdPageProfile, routeIdPageTags, routeIdSportstack } from '$lib/constants/paths.js';
+import { routeIdAuthorProfile, routeIdAuthorSubscribers, routeIdContent, routeIdPageAuthors, routeIdPageCompetition, routeIdPageCompetitionLobby, routeIdPageFixture, routeIdPageLeague, routeIdPagePlayer, routeIdPageProfile, routeIdPageProfileArticleCreation, routeIdPageProfileAuthorCreate, routeIdPageProfileEditArticle, routeIdPageProfilePublication, routeIdPageTags, routeIdSportstack } from '$lib/constants/paths.js';
 import sessionStore from '$lib/store/session.js';
 import userBetarenaSettings from '$lib/store/user-settings.js';
 import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common';
@@ -26,6 +26,8 @@ import { PAGE_INVALID_MSG, dlogv2 } from './debug';
 import { dlog } from './debug.js';
 import { checkNull, tryCatch } from './miscellenous.js';
 import { gotoSW } from './sveltekitWrapper.js';
+
+import type { IPermalinkValidationResponse } from '$lib/types/types.response.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -156,7 +158,11 @@ export async function selectLanguage
 
   switch (page?.route.id)
   {
-  case routeIdPageProfile:
+    case routeIdPageProfile:
+    case routeIdPageProfilePublication:
+    case routeIdPageProfileArticleCreation:
+    case routeIdPageProfileEditArticle:
+    case routeIdPageProfileAuthorCreate:
   {
     const
       pastLangV2: string
@@ -169,7 +175,7 @@ export async function selectLanguage
         (
           `${pastLangV2}/`,
           `/${lang}`
-        )
+      ) + page.url.search
             ;
 
     // [🐞]
@@ -374,58 +380,72 @@ export async function selectLanguage
  *  - 🟦 HELPER
  *  - 🟥 IMPORTANT
  * @description
- *  📣 checks for `url` to be a `valid` or not.
+ *  📝 Validate for target `url` to be a `valid` AND/OR a `redirect`.
  * @example
- *  => promiseValidUrlCheck(.., langUrl: '/es');
- *  ==> true
- *  => promiseValidUrlCheck(.., sportUrl: '/football');
- *  ==> true
+ * [1]─────────────────────────────────────────────────────────────────────────────
+ *  promiseValidUrlCheck
+ *  (
+ *    langUrl: '/es'
+ *  );
+ *  ↳ DESCRIPTION :: Validates link for `lang` only, as well as checks for it being a redirect.
+ * [2]─────────────────────────────────────────────────────────────────────────────
+ *  promiseValidUrlCheck
+ *  (
+ *    langUrl: '/football'
+ *  );
+ *  ↳ DESCRIPTION :: Validates link for `football` only, as well as checks for it being a redirect.
+ * [X]─────────────────────────────────────────────────────────────────────────────
  * @param { fetch } fetch
- *  💠 **[required]** `fetch(..)` instance, supplied by `sveltekit`.
+ *  ❔ **OPTIONAL** | `fetch(..)` instance, supplied by `sveltekit`.
  * @param { Object } opts
- *  💠 **[required]** Method `options`.
+ *  ❔ **OPTIONAL** | Method options.
  * @param { string } opts.langUrl
- *  💠 **[required]** `lang` part of `url`.
+ *  ❔ **OPTIONAL** | `lang` part of `url`.
  * @param { string } opts.sportUrl
- *  💠 **[required]** `sport` part of `url`.
+ *  ❔ **OPTIONAL** | `sport` part of `url`.
  * @param { string } opts.countryUrl
- *  💠 **[required]** `country` part of `url`.
+ *  ❔ **OPTIONAL** | `country` part of `url`.
  * @param { string } opts.leagueUrl
- *  💠 **[required]** `league` part of `url`.
+ *  ❔ **OPTIONAL** | `league` part of `url`.
  * @param { string } opts.fixtureUrl
- *  💠 **[required]** `fixture` part of `url`.
+ *  ❔ **OPTIONAL** | `fixture` part of `url`.
  * @param { string } opts.playerUrl
- *  💠 **[required]** `player` part of `url`.
+ *  ❔ **OPTIONAL** | `player` part of `url`.
  * @param { string } opts.competitionMainUrl
- *  💠 **[required]** `competition (lobby)` part of `url`.
+ *  ❔ **OPTIONAL** | `competition (lobby)` part of `url`.
  * @param { string } opts.competitionUrl
- *  💠 **[required]** `competition (target)` part of `url`.
+ *  ❔ **OPTIONAL** | `competition (target)` part of `url`.
  * @param { string } opts.authorArticleUrl
- *  💠 **[required]** `auhtor (article)` part of `url`.
- * @returns { boolean }
- *  📤 A `boolean` where `true` siginifies that `url` is valid.
+ *  ❔ **OPTIONAL** | `auhtor (article)` part of `url`.
+ * @param { string } opts.authorTagsUrl
+ *  ❔ **OPTIONAL** | `auhtor (tags)` part of `url`.
+ * @param { string } opts.authorUrl
+ *  ❔ **OPTIONAL** | `auhtor (profile)` part of `url`.
+ * @returns { IPermalinkValidationResponse }
+ *  📤 | Return `object`, indicating the (1) validity and (2) redirect nature of the `url`.
  */
 export async function promiseValidUrlCheck
 (
   fetch: any,
   opts:
-      {
-        langUrl?: string,
-        sportUrl?: string,
-        countryUrl?: string,
-        leagueUrl?: string,
-        fixtureUrl?: string,
-        playerUrl?: string,
-        competitionMainUrl?: string,
-        competitionUrl?: string,
-        authorArticleUrl?: string,
-      authorTagsUrl?: string,
-      authorUrl?: string,
-      }
-): Promise<boolean>
+  {
+    langUrl?: string;
+    sportUrl?: string;
+    countryUrl?: string;
+    leagueUrl?: string;
+    fixtureUrl?: string;
+    playerUrl?: string;
+    competitionMainUrl?: string;
+    competitionUrl?: string;
+    authorArticleUrl?: string;
+    authorTagsUrl?: string;
+    authorUrl?: string;
+  }
+): Promise < IPermalinkValidationResponse >
 {
   // ╭─────
-  // │ CHECK :|: wether supplied `URL` combination is valid.
+  // │ CHECK:
+  // │ |: wether supplied `URL` combination is valid.
   // ╰─────
   const if_M_0
     // ╭─────
@@ -472,15 +492,14 @@ export async function promiseValidUrlCheck
     // │ CHECK :|: for 'author (profile)'.
     // ╰─────
     || opts.authorUrl
-
-    ;
+  ;
 
   // ╭─────
   // │ NOTE:
-  // │ > append to string, the parts of url we wish to validate.
+  // │ |: append to string, the parts of url we wish to validate.
   // ╰─────
+  let queryStr = '';
 
-  let queryStr: string = '';
   if (opts.langUrl) queryStr += `?langUrl=${opts.langUrl}`;
   if (opts.sportUrl) queryStr += `&sportUrl=${opts.sportUrl}`;
   if (opts.countryUrl) queryStr += `&countryUrl=${opts.countryUrl}`;
@@ -492,12 +511,11 @@ export async function promiseValidUrlCheck
   if (opts.authorArticleUrl) queryStr += `?authorArticleUrl=/${opts.authorArticleUrl}`;
   if (opts.authorTagsUrl) queryStr += `?authorTagUrl=/${opts.authorTagsUrl}`;
   if (opts.authorUrl) queryStr += `?authorUrl=/${opts.authorUrl}`;
-  console.warn("Validate URL: ", JSON.stringify(opts))
-  console.trace(opts)
+
   // [🐞]
   dlogv2
   (
-    'promiseValidUrlCheck(..)',
+    'promiseValidUrlCheck(..) // INSIGHT',
     [
       `🔹 [var] ➤ if_M_0 :|: ${if_M_0}`,
       `🔹 [var] ➤ queryStr :|: ${queryStr}`,
@@ -505,7 +523,9 @@ export async function promiseValidUrlCheck
     true
   );
 
-  if (!if_M_0) return false;
+  if (!if_M_0)
+    return { isValid: false, objRedirect: { isRedirect: false, strRedirectUrl: null } };
+  ;
 
   const
     /**
@@ -519,7 +539,7 @@ export async function promiseValidUrlCheck
         true,
         false
       )
-    ;
+  ;
 
   return response;
 }

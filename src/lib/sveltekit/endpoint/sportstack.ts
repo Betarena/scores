@@ -6,11 +6,13 @@
 import { _GraphQL } from '@betarena/scores-lib/dist/classes/_graphql.js';
 import { entryPageAuthorDataAndSeo, entryTargetDataAuthorSportstack } from '@betarena/scores-lib/dist/functions/v8/main.preload.authors.js'
 import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
-import { TableAuthorAuthorsMutation0, type ITableAuthorAuthorsMutation0Out, type ITableAuthorAuthorsMutation0Var } from "@betarena/scores-lib/dist/graphql/v8/table.authors.authors.js";
+import { ITableAuthorAuthorQuery3Out, ITableAuthorAuthorQuery3Var, ITableAuthorAuthorQuery4Out, ITableAuthorAuthorQuery4Var, TableAuthorAuthorQuery3, TableAuthorAuthorQuery4, TableAuthorAuthorsMutation0, type ITableAuthorAuthorsMutation0Out, type ITableAuthorAuthorsMutation0Var } from "@betarena/scores-lib/dist/graphql/v8/table.authors.authors.js";
 import type { IPageAuthorAuthorData, IPageAuthorProfileData, IPageAuthorSportstackData } from '@betarena/scores-lib/types/v8/preload.authors.js';
 import { json, type RequestEvent } from '@sveltejs/kit';
 import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.betarena-user.js';
 import type { IBetarenaUser } from '@betarena/scores-lib/types/_FIREBASE_.js';
+import { preloadExitLogic } from '$lib/utils/navigation.js';
+import { ERROR_CODE_INVALID } from '$lib/utils/debug.js';
 
 // ╭──────────────────────────────────────────────────────────────────╮
 // │ 🛠️ MAIN METHODS                                                  │
@@ -21,21 +23,30 @@ export async function main
     request: RequestEvent
   )
 {
-  return await tryCatchAsync
-    (
-      async (
-      ): Promise<Response> =>
-      {
+
         // ╭──────────────────────────────────────────────────────────────────╮
         // │ NOTE:                                                            │
         // │ 👇 :|: extract url query data.                                   │
         // ╰──────────────────────────────────────────────────────────────────╯
 
+        const searchParams = request.url.searchParams;
         const
-          page = request.url.searchParams.get('page') || 1,
-          permalink = request.url.searchParams.get('permalink') || "",
-          id = request.url.searchParams.get('id') || ""
+          page = searchParams.get('page') || 0,
+          permalink = searchParams.get('permalink') || "",
+          id = searchParams.get('id') || "",
+          user = searchParams.get('user'),
+          status = searchParams.get('status') || undefined,
+          sortTitle = searchParams.get('sortTitle') || undefined,
+          sortPublishDate = searchParams.get('sortPublishDate') || undefined,
+          sortEditedDate = searchParams.get('sortEditedDate') || undefined,
+          limitSearch = searchParams.get('limit') || undefined,
+          offsetSearch = searchParams.get('offset') || undefined
           ;
+
+  let limit, offset;
+
+  if (limitSearch) limit = Number(limitSearch);
+  if (offsetSearch) offset = Number(offsetSearch);
 
         // ╭──────────────────────────────────────────────────────────────────╮
         // │ NOTE:                                                            │
@@ -43,16 +54,30 @@ export async function main
         // │ TODO:                                                            │
         // │ Add cache logic.                                                 │
         // ╰──────────────────────────────────────────────────────────────────╯
+        if (user)
+        {
+          const data = await getSportstackByUserId(user, limit, offset);
+          return json(data)
+        }
+
         if (id)
         {
           const data = await fallbackDataGenerate1(id);
           return json(data || null);
         }
+        let options;
+
+        if (sortTitle || sortPublishDate || sortEditedDate || status) options = {};
+        if (sortTitle) options.sortTitle = sortTitle as 'desc' | 'asc';
+        if (sortPublishDate) options.sortPublishDate = sortPublishDate as 'desc' | 'asc';
+        if (sortEditedDate) options.sortEditedDate = sortEditedDate as 'desc' | 'asc';
+        if (status) options.filterStatus = status as 'published' | 'unpublished' | 'draft' | 'all';
 
         const data: IPageAuthorProfileData | undefined = await fallbackDataGenerate0
           (
             page,
-            permalink
+            permalink,
+            options
         )
           ;
         // ▓ [🐞]
@@ -74,25 +99,8 @@ export async function main
         return json
           (
             null
-          );
-      },
-      (
-        ex: unknown
-      ): Response =>
-      {
-        // ▓ [🐞]
-        console.error(`💀 Unhandled :: ${ex}`);
+        );
 
-        return json
-          (
-            null
-            , {
-              status: 400,
-              statusText: 'Uh-oh! There has been an error'
-            }
-          );
-      }
-    );
 }
 
 // ╭──────────────────────────────────────────────────────────────────╮
@@ -117,9 +125,18 @@ async function fallbackDataGenerate0
   (
     page: string | number,
     permalink: string,
-  ): Promise<IPageAuthorSportstackData | undefined>
+    optsQuery?: {
+      sortTitle?: 'desc' | 'asc';
+      sortPublishDate?: 'desc' | 'asc';
+      sortEditedDate?: 'desc' | 'asc';
+      filterStatus?: 'published' | 'unpublished' | 'draft' | 'all';
+    }
+): Promise<IPageAuthorSportstackData | undefined>
 {
-  const dataRes0: IPageAuthorProfileData = await entryTargetDataAuthorSportstack({ permalink, page: Number(page) });
+
+  const dataRes1 = await getSportstackByPermalink(permalink);
+  const dataRes0: IPageAuthorProfileData = await entryTargetDataAuthorSportstack({ permalink, page: Number(page), isUsingAuthorData: true, optsQuery });
+    (dataRes0 as any).sportstack = dataRes1?.sportstack;
   return dataRes0
 }
 
@@ -153,6 +170,69 @@ async function fallbackDataGenerate1
     return { ...data, owner: res.data[0] };
   }
   return
+}
+
+/**
+ * @author
+ *  @izobov
+ * @summary
+ *  🟦 HELPER
+ * @description
+ *  📣 Fallback data generation.
+ * @param { string } id
+ *  💠 Target `sportstacks` by user id
+ * @param { number } limit
+ *  💠  limit of authors per request.
+ * @param { number } offset
+ *  💠  count of skip sportstacks.
+ * @returns { Promise < AuthorsAuthorsObject > }
+ *  📤 Target `sportstacks` data.
+ */
+async function getSportstackByUserId
+  (
+    uid: string,
+    limit?: number,
+    offset?: number
+  )
+{
+  const type = !limit && !offset ? 'all' : 'pagination';
+  const ql = (await new _GraphQL().wrapQuery<ITableAuthorAuthorQuery4Var, ITableAuthorAuthorQuery4Out>(TableAuthorAuthorQuery4(type), {
+    uid,
+    limit,
+    offset
+  })) || [];
+  if (ql[0]?.authors_authors)
+  {
+    return { sportstacks: ql[0].authors_authors, count: ql[0].authors_authors_aggregate?.aggregate.count }
+  }
+  return { sportstacks: [], count: 0 };
+}
+
+/**
+ * @author
+ *  @izobov
+ * @summary
+ *  🟦 HELPER
+ * @description
+ *  📣 Fallback data generation.
+ * @param { string } id
+ *  💠 Target `sportstacks` by permalink
+ * @param { number } page
+ *  💠  page number.
+ * @returns { Promise < AuthorsAuthorsObject > }
+ *  📤 Target `sportstacks` data.
+ */
+export async function getSportstackByPermalink
+  (
+    permalink: string,
+  )
+{
+  const ql = (await new _GraphQL().wrapQuery<ITableAuthorAuthorQuery3Var, ITableAuthorAuthorQuery3Out>(TableAuthorAuthorQuery3, {
+    permalink
+  })) || [];
+  const sportstack = ql[0]?.authors_authors?.[0];
+  if (!sportstack) return preloadExitLogic(0, 'sportstack-permalink', ERROR_CODE_INVALID);
+  return { sportstacks: sportstack }
 }
 
 

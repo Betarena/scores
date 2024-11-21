@@ -114,7 +114,7 @@ export async function main
      * @description
      *  📣 Validate **this** `url`.
      */
-    isUrlValid
+    { isValid: isUrlValid }
       = await promiseValidUrlCheck
       (
         event.fetch,

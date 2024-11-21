@@ -23,8 +23,10 @@
     routeIdPageLeague,
     routeIdPagePlayer,
     routeIdPageProfile,
+    routeIdPageProfileAuthorCreate,
     routeIdPageTags,
     routeIdSportstack,
+    routeIdPageProfilePublication
   } from "$lib/constants/paths.js";
   import MobileHeaderRich from "./MobileHeaderRich.svelte";
   import Header from "./Header.svelte";
@@ -61,6 +63,8 @@
     routeIdPageCompetition,
     routeIdPageTags,
     routeIdPageProfile,
+    routeIdPageProfileAuthorCreate,
+    routeIdPageProfilePublication,
     routeIdPageAuthors,
     routeIdAuthorProfile,
     routeIdAuthorSubscribers,
@@ -159,7 +163,7 @@
     ? "none"
     : "var(--header-border)"}
 >
-  {#if currentPageRouteId !== "AuthorsPage"}
+  {#if !["ProfilePage","AuthorsPage"].includes(currentPageRouteId || "")}
     <div class="wave-wrapper">
       <img
         id=""

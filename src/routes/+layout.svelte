@@ -73,10 +73,14 @@
     routeIdContent,
     routeIdPageCompetitions,
     routeIdPageProfile,
+    routeIdPageProfileArticleCreation,
+    routeIdPageProfileEditArticle,
+    routeIdPageProfilePublication,
     routeIdScores,
   } from "$lib/constants/paths.js";
   import FooterRedisign from "$lib/components/_main_/footer/FooterRedisign.svelte";
   import ModalMain from "$lib/components/misc/modal/ModalMain.svelte";
+  import InfoMessages from "$lib/components/ui/infomessages/InfoMessages.svelte";
 
   // ╭─────
   // │ WARNING:
@@ -137,7 +141,12 @@
      *  📣 Holds target `component(s)` of dynamic nature.
      */
     dynamicComponentMap = new Map<IDynamicComponentMap, any>();
-  $: ({ currentPageRouteId, currentActiveModal, currentActiveToast, globalState } = {
+  $: ({
+    currentPageRouteId,
+    currentActiveModal,
+    currentActiveToast,
+    globalState,
+  } = {
     ...$sessionStore,
   });
   $: ispwa = globalState.has("IsPWA");
@@ -156,7 +165,7 @@
   $: deepReactListenStore2 = JSON.stringify($userBetarenaSettings);
 
   $: $sessionStore.serverLang = $page.data.langParam as string;
-  $: $sessionStore.page = $page;
+  $: if (browser) $sessionStore.page = $page;
 
   $: [VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1]] = viewportChangeV2(
     $sessionStore.windowWidth,
@@ -324,6 +333,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   beforeNavigate(async (): Promise<void> => {
+    if (!browser) return;
     // IMPORTANT
     $sessionStore.live_odds_fixture_target = null;
 
@@ -384,7 +394,7 @@
   });
 
   afterNavigate(async (e): Promise<void> => {
-    if(!browser) return;
+    if (!browser) return;
     sessionStore.updateData([["routeId", $page.route.id]]);
 
     // [🐞]
@@ -399,17 +409,20 @@
 
   //service worker init
   onMount(() => {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/progressier.js')
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .register("/progressier.js")
         .then((registration) => {
-          console.log('Service Worker registered with scope:', registration.scope);
+          console.log(
+            "Service Worker registered with scope:",
+            registration.scope
+          );
         })
         .catch((error) => {
-          console.error('Service Worker registration failed:', error);
+          console.error("Service Worker registration failed:", error);
         });
     }
   });
-
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 
@@ -489,6 +502,19 @@
       }
       )();
     </script> -->
+  <!-- <script type="text/javascript">
+      window.$crisp=[];
+      window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
+      (function()
+      {
+        d=document;
+        s=d.createElement("script");
+        s.src="https://client.crisp.chat/l.js";
+        s.async=1;
+        d.getElementsByTagName("head")[0].appendChild(s);
+      }
+      )();
+    </!-->
   <!-- <script type="text/javascript">
       window.$crisp=[];
       window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
@@ -642,14 +668,15 @@
     <!-- <EmailSubscribe /> -->
   {/if}
 
-  <HeaderRedesigned />
+  {#if ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle].includes($page.route.id )}
+     <HeaderRedesigned />
+  {/if}
 
   <main
     class:dark-background={theme == "Dark"}
     class:dark-mode={theme == "Dark"}
     class:light-mode={theme == "Light"}
-    class:standard={currentPageRouteId == null ||
-      currentPageRouteId == "ProfilePage"}
+    class:standard={currentPageRouteId == null }
     class:page-competition={currentPageRouteId == "CompetitionPage"}
     class:page-profile={currentPageRouteId == "ProfilePage"}
     class:page-authors={currentPageRouteId == "AuthorsPage"}
@@ -658,7 +685,7 @@
     class:tablet={VIEWPORT_TABLET_INIT[1]}
   >
     <slot />
-    {#if !ispwa || $page.route.id  === routeIdPageProfile }
+    {#if (!ispwa && ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle].includes($page.route.id || "")) || [routeIdPageProfile, routeIdPageProfilePublication].includes($page.route.id || "")}
       <FooterRedisign
         mobile={VIEWPORT_MOBILE_INIT[1]}
         tablet={VIEWPORT_TABLET_INIT[1]}
@@ -671,6 +698,7 @@
       tablet={VIEWPORT_TABLET_INIT[1]}
     />
   {/if}
+  <InfoMessages />
   <ModalMain />
 </div>
 
@@ -703,7 +731,8 @@
       background-color: var(--bg-color);
     }
 
-    &[data-page-id='Standard'], &[data-page-id='CompetitionPage'] {
+    &[data-page-id="Standard"],
+    &[data-page-id="CompetitionPage"] {
       background-color: red;
       &.light-mode {
         background-color: var(--whitev2);

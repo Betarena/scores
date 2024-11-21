@@ -155,6 +155,7 @@
   :global(.dark-mode) {
     .back-button-wrapper {
       background-color: #4b4b4bcc;
+
     }
   }
   .back-button-wrapper {
@@ -166,5 +167,9 @@
     border-radius: 100%;
     background-color: #4b4b4bcc;
     cursor: pointer;
+
+    &:hover {
+        background-color: var(--component-colors-utility-gray-utility-gray-600);
+      }
   }
 </style>
