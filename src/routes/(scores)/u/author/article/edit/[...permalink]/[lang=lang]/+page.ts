@@ -18,12 +18,7 @@ export const load = (async ({ fetch, params }) =>
         {
           authorArticleUrl: permalink
         }
-      ),
-    /**
-     * @description
-     *  📣 `Data` object for target `route`.
-     */
-    response: any = {}
+    )
     ;
 
   if (!isUrlValid)
