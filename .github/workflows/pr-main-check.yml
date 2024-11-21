@@ -78,6 +78,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          mode: exactly
+          mode: maximum
           count: 1
-          labels: 'semver:major, semver:minor, semver:patch'
+          labels: |
+            semver:patch
+            semver:minor
+            semver:major
