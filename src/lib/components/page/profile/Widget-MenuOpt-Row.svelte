@@ -118,7 +118,7 @@ COMPONENT JS (w/ TS)
 	): void
 	{
 	  const if_M_0: boolean
-      = ['Scores'].includes(MENU_OPT)
+      = ['Scores', "Withdraw"].includes(MENU_OPT)
     ;
 	  if (if_M_0) return;
 
@@ -194,11 +194,14 @@ COMPONENT JS (w/ TS)
   }
   else if (MENU_OPT == 'Withdraw')
   {
-    hoverMenuOptIconAlt = icon_withdraw_select;
-    selectedMenuOptIcon
-      = SELECTED_OPT == MENU_OPT
-        ? icon_withdraw_select
-        : icon_withdraw
+
+    hoverMenuOptIconAlt = icon_withdraw;
+    selectedMenuOptIcon = icon_withdraw;
+    // hoverMenuOptIconAlt = icon_withdraw_select;
+    // selectedMenuOptIcon
+    //   = SELECTED_OPT == MENU_OPT
+    //     ? icon_withdraw_select
+    //     : icon_withdraw
     ;
   }
   else if (MENU_OPT == 'Transaction History')
@@ -347,14 +350,16 @@ VIEW DESIGN - 2
     {
       !
       [
-        'Scores'
+        'Scores',
+        "Withdraw"
       ]
         .includes(MENU_OPT)
     }
 		class:cursor-not-allowed=
     {
       [
-        'Scores'
+        'Scores',
+        "Withdraw"
       ]
         .includes(MENU_OPT)
     }
@@ -384,7 +389,7 @@ VIEW DESIGN - 2
 			<img
 				src=
         {
-          (!isHoverMenuOptItem || ['Scores'].includes(MENU_OPT))
+          (!isHoverMenuOptItem || ['Scores', "Withdraw"].includes(MENU_OPT))
             ? selectedMenuOptIcon
             : hoverMenuOptIconAlt
         }
@@ -413,16 +418,16 @@ VIEW DESIGN - 2
 				class:color-grey-shade=
         {
           [
-            'Scores'
-
+            'Scores',
+            "Withdraw"
 				  ].includes(MENU_OPT)
         }
 				class:menu-opt-text=
         {
           !
           [
-            'Scores'
-
+            'Scores',
+            "Withdraw"
           ].includes(MENU_OPT)
         }
 			>

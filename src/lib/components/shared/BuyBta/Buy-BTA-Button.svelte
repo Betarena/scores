@@ -27,8 +27,6 @@
   import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
   import Button from "$lib/components/ui/Button.svelte";
   import { createEventDispatcher, onMount } from "svelte";
-  import { modalStore } from "$lib/store/modal.js";
-  import BuyBtaPopup from "./Buy-BTA-popup.svelte";
   import { get } from "$lib/api/utils.js";
   import buyOptionsTranslations from "./store"
   import sessionStore  from "$lib/store/session.js";
@@ -74,12 +72,8 @@
 
   function click() {
     dispatch("click");
-    if (popup) {
-      modalStore.update((s) => ({
-        show: true,
-        modal: true,
-        component: BuyBtaPopup as any,
-      }));
+    if (popup && browser) {
+      window.open("https://betarena.com/public-presale", "_blank");
     }
   }
 
