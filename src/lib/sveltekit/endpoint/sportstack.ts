@@ -11,7 +11,6 @@ import type { IPageAuthorAuthorData, IPageAuthorProfileData, IPageAuthorSportsta
 import { json, type RequestEvent } from '@sveltejs/kit';
 import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.betarena-user.js';
 import type { IBetarenaUser } from '@betarena/scores-lib/types/_FIREBASE_.js';
-import { ITableAuthorAuthorQuery2Out, ITableAuthorAuthorQuery2Var, TableAuthorAuthorQuery2 } from '@betarena/scores-lib/dist/graphql/v8/table.authors.authors.js';
 import { preloadExitLogic } from '$lib/utils/navigation.js';
 import { ERROR_CODE_INVALID } from '$lib/utils/debug.js';
 
@@ -46,8 +45,8 @@ export async function main
 
   let limit, offset;
 
-  if (limitSearch) limit = +limitSearch;
-  if (offsetSearch) offset = +offsetSearch;
+  if (limitSearch) limit = Number(limitSearch);
+  if (offsetSearch) offset = Number(offsetSearch);
 
         // ╭──────────────────────────────────────────────────────────────────╮
         // │ NOTE:                                                            │

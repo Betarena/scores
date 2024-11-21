@@ -5,7 +5,7 @@ import userBetarenaSettings from '$lib/store/user-settings.js';
 import { dlog, dlogv2 } from '$lib/utils/debug.js';
 import { checkNull } from '$lib/utils/miscellenous.js';
 import { DataSnapshot, onValue, ref, type DatabaseReference, type Unsubscribe } from 'firebase/database';
-import { ref as storageRef, deleteObject, getDownloadURL, uploadString } from "firebase/storage"
+import { ref as storageRef, getDownloadURL, uploadString } from "firebase/storage"
 import { arrayRemove, arrayUnion, doc, DocumentReference, getDoc, increment, onSnapshot, updateDoc } from 'firebase/firestore';
 import { getTargetRealDbData } from './firebase.actions.js';
 import { db_firestore, db_real, storage } from './init';

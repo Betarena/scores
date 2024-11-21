@@ -1,6 +1,6 @@
 import { Actions, fail } from '@sveltejs/kit';
 import { entryProfileTabAuthorSportstackUpsert, entryProfileTabAuthorValidateSportstackUsername } from '@betarena/scores-lib/dist/functions/v8/profile.main.js';
-import type { AuthorsAuthorsDataJSONSchema, AuthorsAuthorsMain } from '@betarena/scores-lib/types/v8/_HASURA-0.js';
+import type { AuthorsAuthorsMain } from '@betarena/scores-lib/types/v8/_HASURA-0.js';
 import { getSportstackByPermalink } from '$lib/sveltekit/endpoint/sportstack.js';
 
 export const actions: Actions = {
@@ -10,8 +10,9 @@ export const actions: Actions = {
 
     const { user } = locals;
     if (!user)
-      return fail(401, { error: true, message: 'Unauthorized', reason: 'No user in locals' });
     {
+      return fail(401, { error: true, message: 'Unauthorized', reason: 'No user in locals' });
+
     }
     const uid = JSON.parse(user)['user-uid'];
     if (!uid)
@@ -25,12 +26,12 @@ export const actions: Actions = {
       const formData = await request.formData();
       const dataObject = Object.fromEntries(formData.entries());
       const { id, username, about, permalink, avatar } = dataObject as { id: number } & AuthorsAuthorsMain["data"];
-      const s = await getSportstackByPermalink(permalink);
-      if (!s)
+      const isSportstackExist = await getSportstackByPermalink(permalink);
+      if (!isSportstackExist)
       {
         return fail(400, { error: true, message: "Sportstack dosen't exists" });
       }
-      const { sportstacks } = s;
+      const { sportstacks } = isSportstackExist;
       await entryProfileTabAuthorSportstackUpsert({
         id,
         uid,
@@ -56,8 +57,8 @@ export const actions: Actions = {
   {
     const { user } = locals;
     if (!user)
-      return fail(401, { error: true, message: 'Unauthorized', reason: 'No user in locals' });
     {
+      return fail(401, { error: true, message: 'Unauthorized', reason: 'No user in locals' });
     }
     const uid = JSON.parse(user)['user-uid'];
     if (!uid)

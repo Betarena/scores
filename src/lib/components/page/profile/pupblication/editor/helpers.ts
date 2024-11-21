@@ -35,16 +35,16 @@ export async function upsert({ editor, title, author, reload = false, showLoader
   | undefined, editor: Editor, title: string, author: AuthorsAuthorsMain, reload?: boolean, showLoaders?: boolean, id?: number
 })
 {
-  const v = DOMPurify.sanitize(editor.getHTML());
-  const t = DOMPurify.sanitize(title);
+  const sanitizedValue = DOMPurify.sanitize(editor.getHTML());
+  const sanitizedTitle = DOMPurify.sanitize(title);
   const images = getAllImages(editor);
 
   const { seo, tags } = create_article_store.get();
 
   const loadingId = showLoaders && infoMessages.add({ type: "loading", text: translations?.saving || "Saving article..." });
   const res = await postv2("/api/data/author/article", {
-    content: v,
-    title: t,
+    content: sanitizedValue,
+    title: sanitizedTitle,
     id,
     author_id: author.id,
     tags,
@@ -101,7 +101,7 @@ export async function publish({ id, status, sportstack, redirect = true, transla
   const loadingId = infoMessages.add({ type: "loading", text: translations?.saving || `${status} article...` });
   const res = await fetch(`/api/data/author/article`, {
     method: "PUT",
-    body: JSON.stringify({ id: id, status, uid: sportstack.uid })
+    body: JSON.stringify({ id, status, uid: sportstack.uid })
   });
   infoMessages.remove(loadingId);
   const data = await res.json();

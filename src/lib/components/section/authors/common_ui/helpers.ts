@@ -147,7 +147,7 @@ export async function fetchArticlesBySportstack({ permalink = "", page = 0, opti
     url = `/api/data/author/sportstack?permalink=${permalink}&page=${page}`;
   if (options)
   {
-    Object.entries(options).forEach(([key, value]) => url += `&${key}=${value}`);
+    Object.entries(options).forEach(([key, value]) => { url += `&${key}=${value}` });
   }
   const /**
    * @description

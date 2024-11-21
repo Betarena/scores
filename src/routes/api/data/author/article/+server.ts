@@ -49,7 +49,7 @@ export const POST: RequestHandler = async ({ request, locals }) =>
 {
   if (!locals.uid) throw error(401, { message: 'Unauthorized' } as App.Error);
   const body = await request.json();
-  let { content, title, author_id, images, id, seo, tags, uid, article, lang } = body;
+  const { content, title, author_id, images, id, seo, tags, uid, article, lang } = body;
 
   if (locals.uid !== uid) return json({ success: false, message: "Not an owner" });
   let data = article;

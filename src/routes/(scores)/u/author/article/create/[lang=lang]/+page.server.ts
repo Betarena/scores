@@ -15,7 +15,7 @@ export const load: PageLoad = async ({ url }) =>
   {
     if (id)
     {
-      const res = await entryProfileTabAuthorArticleDraftGet({ numArticleId: +id }) as any;
+      const res = await entryProfileTabAuthorArticleDraftGet({ numArticleId: Number(id) }) as any;
       article = res?.article || article;
     }
     return { article }

@@ -72,7 +72,7 @@ export async function gotoSW
  *  💠 [optional] Target `url` to navigate to.
  * @returns { Promise < void > }
  */
-export async function submitWrapper({ successMessage = "Success!", errorMessage = "An error occurred.", reset = false, cbAfter }: { successMessage?: string, errorMessage?: string, reset?: boolean, cbAfter?: ({ update, result }) => void } = {})
+export function submitWrapper({ successMessage = "Success!", errorMessage = "An error occurred.", reset = false, cbAfter }: { successMessage?: string, errorMessage?: string, reset?: boolean, cbAfter?: ({ update, result }) => void } = {})
 {
   const loadingId = infoMessages.add({
     type: "loading",
@@ -81,7 +81,6 @@ export async function submitWrapper({ successMessage = "Success!", errorMessage 
   return async (e) =>
   {
     infoMessages.remove(loadingId);
-    console.log("RESPONSE: ", e)
     if (e.result.type === "success")
     {
       infoMessages.add({
