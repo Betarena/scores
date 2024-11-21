@@ -78,6 +78,53 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          mode: exactly
+          mode: maximum
           count: 1
-          labels: 'semver:major, semver:minor, semver:patch'
+          labels: |
+            semver:patch
+            semver:minor
+            semver:major
+
+  # ╭──────────────────────────────────────────────────────────────────────────────────╮
+  # │ 💠 │ JOB | PULL-REQUEST FORMAT                                                   │
+  # ╰──────────────────────────────────────────────────────────────────────────────────╯
+
+  pull-request-format:
+    runs-on: ubuntu-22.04
+    name: 'JOB :|: pr format'
+    steps:
+
+      - name: 'STEP :|: checkout source code'
+        uses: actions/checkout@v4
+        with:
+          token: '${{ secrets.GH_TOKEN }}'
+          fetch-depth: 0
+          fetch-tags: true
+          ref: ${{ github.head_ref }}
+
+      - name: 'STEP :|: generate PR body'
+        id: testing
+        run: |
+          git fetch origin main:main
+          echo "$(git branch | cat)"
+          echo "$(git branch --show-current)"
+          git log main.. --format=%B | cat > ./temp-pr-body.md
+          echo "$(cat ./temp-pr-body.md)"
+
+      # ╭─────
+      # │ NOTE:
+      # │ |: Not recommended for use
+      # │ |: 🔗 read-more |:| https://github.blog/changelog/2022-10-11-github-actions-deprecating-save-state-and-set-output-commands/
+      # ╰─────
+      - uses: tzkhan/pr-update-action@v2
+        with:
+          repo-token: "${{ secrets.GH_TOKEN }}"
+          base-branch-regex: '.*'
+          head-branch-regex: '.*'
+          title-template: '%headbranch%'
+          title-update-action: 'replace'
+          title-uppercase-head-match: false
+          body-template: null
+            # $(git log main.. --format=%B | cat)
+          body-update-action: 'replace'
+          body-uppercase-base-match: false

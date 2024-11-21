@@ -536,32 +536,71 @@ heroku-target-bash:
 # │ 🐳 DOCKER                                                                        │
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-docker-start:
-	echo 'Starting PROD container'
-	docker-compose -f docker-compose.yml up -d
+.ONESHELL:
+docker-spin-start-production:
+	@
+	echo -e \
+		"\
+		\n╭──────────────────────────────────────────────────────────────────╮\
+		\n│ 🔴 │ (re)Start container(s) | Production                         │\
+		\n╰──────────────────────────────────────────────────────────────────╯"
+	#
+
+	BUILDKIT_PROGRESS=plain \
+		docker compose \
+		-f .docker/docker-compose.yml \
+		--env-file .env.docker \
+		up \
+		--build \
+		-d \
+		web-prod
+	#
 #
 
-docker-log-listen:
-	echo 'Starting PROD container'
-	docker-compose -f docker-compose.yml up
+.ONESHELL:
+docker-spin-start-ngnix:
+	@
+	echo -e \
+		"\
+		\n╭──────────────────────────────────────────────────────────────────╮\
+		\n│ 🔀 │ (re)Start container(s) | Nginx                              │\
+		\n╰──────────────────────────────────────────────────────────────────╯"
+	#
+
+	mkdir \
+		-p \
+		./.docker/nginx/logs/scores \
+		./.docker/nginx/logs/goaccess
+	#
+
+	BUILDKIT_PROGRESS=plain \
+		docker compose \
+		-f .docker/docker-compose.yml \
+		--env-file .env.docker \
+		up \
+		--build \
+		-d \
+		nginx goaccess
+	#
 #
 
-docker-update-scores-web:
-	echo 'Updating PROD Scores Web container...'
-	git pull origin main
-	# -docker rm $$(docker stop $$(docker ps -a -q --filter="name=scores_scores_web_1" --format="{{.ID}}"))
-	# -docker rmi $$(docker images -q scores_web)
-	# -docker rmi $$(docker images --filter "dangling=true" -q --no-trunc)
-	# docker-compose -f docker-compose.yml up -d
-	docker-compose -f docker-compose.yml up -d --build
-#
+.ONESHELL:
+docker-container-log-full-export:
+	@
+	echo -e \
+		"\
+		\n╭──────────────────────────────────────────────────────────────────╮\
+		\n│ 📜 │ Exporting docker container logs                             │\
+		\n╰──────────────────────────────────────────────────────────────────╯"
+	#
 
-docker-local-start:
-	echo 'Starting DEV - Docker Environment'
-	echo 'Removing Old DEV Logs'
-	-rm -r ./datalog/*
-	docker-compose -f docker-compose.dev.yml up
-	echo 'DEV Ready!'
+	mkdir -p ./.docker/export/$(date +%d-%m-%Y %H:%M:%S)
+
+	cp \
+		/var/lib/docker/containers/**/*-json.log \
+		/var/lib/docker/containers/**/local-logs*.log \
+		./.docker/export/$(date +%d-%m-%Y %H:%M:%S)
+	#
 #
 
 # ╭──────────────────────────────────────────────────────────────────────────────────╮
