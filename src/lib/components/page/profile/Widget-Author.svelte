@@ -17,6 +17,7 @@ COMPONENT JS (w/ TS)
   import { get } from "$lib/api/utils.js";
   import type { AuthorsAuthorsMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import PublicationCardLoader from "./PublicationCardLoader.svelte";
+  import EyeOffIcon from "$lib/components/ui/assets/eye-off-icon.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -30,6 +31,8 @@ COMPONENT JS (w/ TS)
   let limitOfArticles = 10;
   let totalPages = 0;
   let node;
+
+  $:console.log("TRANSLATIONS: ", profileTrs)
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -61,7 +64,7 @@ COMPONENT JS (w/ TS)
     if ($session.viewportType === "desktop" || !node || !showLoadButton) return;
     const rect = node.getBoundingClientRect();
     if (window.scrollY > rect.bottom - 20) {
-      loadMore()
+      loadMore();
     }
   }
 
@@ -150,6 +153,15 @@ COMPONENT JS (w/ TS)
         {#each Array(limitOfArticles) as _}
           <PublicationCardLoader />
         {/each}
+      {/if}
+      {#if !sportstacks?.length && !loading}
+        <div class="no-content">
+          <EyeOffIcon />
+          <p>
+            {profileTrs?.no_articles_available ||
+              "No publications available, start creating content today!"}
+          </p>
+        </div>
       {/if}
     </div>
     {#if showLoadButton && $session.viewportType === "desktop"}
@@ -245,6 +257,36 @@ COMPONENT JS (w/ TS)
       gap: var(--spacing-xl, 16px);
       flex: 1 0 0;
       align-self: stretch;
+      flex-grow: 1;
+      min-height: 300px;
+      // min-height: 100%;
+
+      .no-content {
+        height: max-content;
+        width: 100%;
+        display: flex;
+        flex-grow: 1;
+        gap: 45px;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        :global(svg) {
+          width: 32px;
+          height: 32px;
+        }
+        p {
+          margin: 0;
+          color: var(--colors-text-text-quaternary-500, #8c8c8c);
+          text-align: center;
+
+          /* Text md/Regular */
+          font-family: Roboto;
+          font-size: 14px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: 150%; /* 21px */
+        }
+      }
     }
 
     .load-more {
@@ -268,6 +310,7 @@ COMPONENT JS (w/ TS)
         }
       }
       .publications-wrapper {
+        min-height: 632px;
         gap: var(--spacing-3xl, 24px);
       }
     }
@@ -275,6 +318,7 @@ COMPONENT JS (w/ TS)
     &.desktop {
       gap: 24px;
       padding: 20px;
+
       .header {
         h2 {
           font-size: var(--Font-size-text-xl, 20px);
