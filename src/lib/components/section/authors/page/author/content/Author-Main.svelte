@@ -64,6 +64,7 @@
   import Button from '$lib/components/ui/Button.svelte';
   import session from '$lib/store/session.js';
   import { post } from '$lib/api/utils.js';
+  import { getUserById } from '$lib/firebase/common.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -137,6 +138,7 @@
      *  📣 **Local** component state
      */
     componentLocalState = new Set < IWidgetState >(),
+    author,
     /**
      * @description
      *  📣 Logic for calculating `published days ago`.
@@ -163,7 +165,8 @@
   $: monthTranslation = $page.data.monthTranslations as B_SAP_D2 | null | undefined;
   $: isSubscribed =  (user?.scores_user_data?.subscriptions?.sportstacks || []).includes(widgetData.author.id);
   $: isAuth = !!user;
-
+  $: ({author: sportstack} = widgetData);
+  $: getAuthor(sportstack?.uid);
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -179,6 +182,14 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
 
+  async function getAuthor(id: string) {
+    executeAnimation = false;
+    const [user] = await getUserById([id]);
+    author = user;
+    setTimeout(() => {
+      executeAnimation = true;
+    }, 100);
+  }
 
   async function subscribe() {
     if (!isAuth) {
@@ -259,13 +270,6 @@
   (
     () =>
     {
-      setTimeout
-      (
-        () =>
-        {
-          executeAnimation = true;
-        }, 100
-      );
 
       scrollTags(0);
 
@@ -322,7 +326,7 @@
     ╰─────
     -->
       <a
-      href="/a/sportstack/{userNameToUrlString(widgetData.author?.data?.username)}"
+      href="/a/user/{author?.usernamePermalink}"
       class=
       "
       row-space-start
@@ -342,9 +346,9 @@
       -->
       <img
         id='user-avatar'
-        src={widgetData.author?.data?.avatar ?? ''}
+        src={author?.profile_photo ?? ''}
         alt='user_avatar'
-        title={widgetData.author?.data?.username ?? ''}
+        title={author?.name ?? ''}
         loading='lazy'
         class=
         "
@@ -383,7 +387,7 @@
           ╰─────
           -->
           <a
-            href="/a/sportstack/{userNameToUrlString(widgetData.author?.data?.username)}"
+            href="/a/user/{author?.usernamePermalink}"
             class=
             "
             s-14
@@ -395,7 +399,7 @@
             author-name
             "
           >
-            {widgetData.author.data?.username ?? ''}
+            {author?.name ?? ''}
           </a>
 
           <!--
@@ -546,7 +550,7 @@
             m-t-12
             "
           >
-            {widgetData.author.data?.about ?? ''}
+            {author?.about ?? ''}
           </p>
         {/if}
 
@@ -639,114 +643,115 @@
       │ > article tags
       ╰─────
       -->
-      <div
-        id="tags-box"
-      >
-        <!--
-        ╭─────
-        │ > previous (button)
-        ╰─────
-        -->
-        {#if componentLocalState.has('PrevButtonShow')}
-          <div
-            id="tagScrollPrev"
-            class=
-            "
-            tagScrollButton
-            "
-            on:click=
-            {
-              () =>
-              {
-                scrollTags(1);
-                return;
-              }
-            }
-          >
-            <img
-              id=''
-              src={theme == 'Dark' ? iconArrowLeftDark : iconArrowLeftLight}
-              alt=''
-              title=''
-              loading='lazy'
-            />
-          </div>
-        {/if}
-
-        <!--
-        ╭─────
-        │ > article tags (inner)
-        ╰─────
-        -->
+      {#if widgetData.article.tags?.length}
         <div
-          id="tags-box-scroll"
-          bind:this={htmlElementScrollBox}
-          on:scroll=
-          {
-            () =>
-            {
-              scrollTags(0);
-              return;
-            }
-          }
+          id="tags-box"
         >
-          <!-- [🐞] -->
-          <!-- {#each [...widgetData.tags, ...widgetData.tags, ...widgetData.tags] as item} -->
-          {#each [...(widgetData.article.tags ?? [])] as item}
-            <a
+          <!--
+          ╭─────
+          │ > previous (button)
+          ╰─────
+          -->
+          {#if componentLocalState.has('PrevButtonShow')}
+            <div
+              id="tagScrollPrev"
               class=
               "
-              tag-pill
+              tagScrollButton
               "
-              href="/a/tag/{tagMap.get(item)?.permalink}"
+              on:click=
+              {
+                () =>
+                {
+                  scrollTags(1);
+                  return;
+                }
+              }
             >
-              <p
-                class=
-                "
-                s-14
-                w-400
-                color-black-2
-                no-wrap
-                "
-              >
-                {tagMap.get(item)?.name ?? ''}
-              </p>
-            </a>
-          {/each}
-        </div>
+              <img
+                id=''
+                src={theme == 'Dark' ? iconArrowLeftDark : iconArrowLeftLight}
+                alt=''
+                title=''
+                loading='lazy'
+              />
+            </div>
+          {/if}
 
-        <!--
-        ╭─────
-        │ > next (button)
-        ╰─────
-        -->
-        {#if componentLocalState.has('NextButtonShow')}
+          <!--
+          ╭─────
+          │ > article tags (inner)
+          ╰─────
+          -->
           <div
-            id="tagScrollNext"
-            class=
-            "
-            tagScrollButton
-            "
-            on:click=
+            id="tags-box-scroll"
+            bind:this={htmlElementScrollBox}
+            on:scroll=
             {
               () =>
               {
-                scrollTags(-1);
+                scrollTags(0);
                 return;
               }
             }
           >
-            <img
-              id=''
-              src={theme == 'Dark' ? iconArrowRightDark : iconArrowRightLight}
-              alt=''
-              title=''
-              loading='lazy'
-            />
+            <!-- [🐞] -->
+            <!-- {#each [...widgetData.tags, ...widgetData.tags, ...widgetData.tags] as item} -->
+            {#each [...(widgetData.article.tags ?? [])] as item}
+              <a
+                class=
+                "
+                tag-pill
+                "
+                href="/a/tag/{tagMap.get(item)?.permalink}"
+              >
+                <p
+                  class=
+                  "
+                  s-14
+                  w-400
+                  color-black-2
+                  no-wrap
+                  "
+                >
+                  {tagMap.get(item)?.name ?? ''}
+                </p>
+              </a>
+            {/each}
           </div>
-        {/if}
-      </div>
 
+          <!--
+          ╭─────
+          │ > next (button)
+          ╰─────
+          -->
+          {#if componentLocalState.has('NextButtonShow')}
+            <div
+              id="tagScrollNext"
+              class=
+              "
+              tagScrollButton
+              "
+              on:click=
+              {
+                () =>
+                {
+                  scrollTags(-1);
+                  return;
+                }
+              }
+            >
+              <img
+                id=''
+                src={theme == 'Dark' ? iconArrowRightDark : iconArrowRightLight}
+                alt=''
+                title=''
+                loading='lazy'
+              />
+            </div>
+          {/if}
+        </div>
+      {/if}
       <div class="sportstack-box {viewportType}">
         <a href="/a/sportstack/{userNameToUrlString(widgetData.author?.data?.username)}" class="sportstack-info">
           <SportstackAvatar src={widgetData.author?.data?.avatar ?? ''} size={viewportType === "mobile" ? 32 : 36} radius=" var(--radius-sm, 6px)"/>
@@ -989,6 +994,11 @@
           font-style: normal;
           font-weight: 500;
           line-height: var(--line-height-text-md, 24px); /* 171.429% */
+        }
+        &:hover {
+          span {
+            color: var(--primary) !important;
+          }
         }
 
       }
