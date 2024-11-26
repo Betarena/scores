@@ -61,7 +61,7 @@
   } from "../../helpers.js";
   import { page } from "$app/stores";
   import type { IArticle } from "../../../common_ui/helpers.js";
-    import { browser } from "$app/environment";
+  import { browser } from "$app/environment";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -144,8 +144,8 @@
   let currentTag: IPageAuthorTagData = {};
   let articles = [] as IArticle[];
   let prevTagName;
+  let pageNumber = 1;
   $: ({ totalArticlesCount } = widgetData);
-  $: pageNumber = Math.ceil(articles.length / 10);
   $: ({ serverLang } = $sessionStore);
   let translations: IPageAuthorTranslationDataFinal = {};
   /**
@@ -186,8 +186,10 @@
     authors = new Map(data.mapAuthor);
     articles = prepareArticles(data.mapArticle, tags, authors);
     currentTag = tags.get(data.tagId) as IPageAuthorTagData;
+    pageNumber = 1;
   }
   async function loadArticles() {
+    if (articles.length >= totalArticlesCount) return;
     pendingArticles = true;
     const res = await fetchArticles({
       permalink: currentTag.permalink,
@@ -197,6 +199,7 @@
     });
     articles = [...articles, ...res.articles];
     pendingArticles = false;
+    pageNumber++;
   }
 
   async function filter(e: CustomEvent<string>) {
