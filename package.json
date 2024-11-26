@@ -50,7 +50,7 @@
 	},
 	"dependencies": {
 		"@betarena/ad-engine": "0.0.51",
-		"@betarena/scores-lib": "4.0.36",
+		"@betarena/scores-lib": "4.0.37",
 		"@google-cloud/translate": "8.5.0",
 		"@lukeed/uuid": "2.0.1",
 		"@metamask/sdk": "0.1.0",
