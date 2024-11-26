@@ -164,6 +164,7 @@
   $: widgetDataTranslation = $page.data.translationArticle as IPageArticleTranslationDataFinal | null | undefined;
   $: monthTranslation = $page.data.monthTranslations as B_SAP_D2 | null | undefined;
   $: isSubscribed =  (user?.scores_user_data?.subscriptions?.sportstacks || []).includes(widgetData.author.id);
+  $: isSportstackOwner = user?.firebase_user_data?.uid === widgetData.author.uid;
   $: isAuth = !!user;
   $: ({author: sportstack} = widgetData);
   $: getAuthor(sportstack?.uid);
@@ -407,7 +408,7 @@
           │ > article author badges
           ╰─────
           -->
-          <div
+          <!-- <div
             class=
             "
             row-space-start
@@ -429,40 +430,7 @@
                 loading='lazy'
               />
             {/each}
-          </div>
-
-          <!--
-          ╭─────
-          │ > article (1) read time + (2) published days 💻 TABLET [+]
-          ╰─────
-          -->
-          {#if !VIEWPORT_MOBILE_INIT[1]}
-            <p
-              class=
-              "
-              s-12
-              color-black-3
-                dark-v1
-              "
-            >
-              {readingTime(widgetData.article.data?.content)}
-              <TranslationText
-                key={'uknown'}
-                text={widgetDataTranslation?.translation?.reading_time}
-                fallback={'mins'}
-              />
-              <span
-                class=
-                "
-                m-r-5
-                m-l-5
-                "
-              >
-              •
-              </span>
-              {timeAgo(widgetData.article.published_date, $page.data.translations.time_ago)}
-            </p>
-          {/if}
+          </div> -->
 
         </div>
 
@@ -489,151 +457,38 @@
             color-black-3
               dark-v1
             no-wrap
-            m-r-12
             "
           >
             {monthTranslation?.months?.[monthNames[new Date(widgetData.author?.data?.creation_date ?? '').getMonth()]]}
             {new Date(widgetData.author?.data?.creation_date ?? '').getDate()},
             {new Date(widgetData.author?.data?.creation_date ?? '').getFullYear()}
           </p>
-
-          <!--
-          ╭─────
-          │ > article author location
-          ╰─────
-          -->
-          {#if !VIEWPORT_MOBILE_INIT[1]}
-
-            <div
-              class=
-              "
-              row-space-start
-              "
-            >
-              <img
-                id=''
-                src={theme == 'Dark' ? icon_location_dark : icon_location}
-                alt={theme == 'Dark' ? icon_location_dark : icon_location}
-                title={theme == 'Dark' ? icon_location_dark : icon_location}
-                loading='lazy'
-                class=
-                "
-                m-r-5
-                "
-              />
-              <p
-                class=
-                "
-                s-12
-                color-black-3
-                  dark-v1
-                "
-              >
-                {widgetData.author?.data?.location ?? ''}
-              </p>
-            </div>
-          {/if}
-        </div>
-
-        <!--
-        ╭─────
-        │ > article author description / about 💻 TABLET [+]
-        ╰─────
-        -->
-        {#if !VIEWPORT_MOBILE_INIT[1]}
           <p
+          class=
+          "
+          s-12
+          color-black-3
+            dark-v1
+          no-wrap
+          "
+        >
+          <span
             class=
             "
-            s-12
-            color-black-3
-              dark-v1
-            m-t-12
+            m-r-5
+            m-l-5
             "
           >
-            {author?.about ?? ''}
-          </p>
-        {/if}
-
-        <!--
-        ╭─────
-        │ > [1] article (1) read time + (2) published days 💻 TABLET [+]
-        │ > [2] article author location
-        ╰─────
-        -->
-        {#if VIEWPORT_MOBILE_INIT[1]}
-          <div
-            class=
-            "
-            article-author-info
-            row-space-start
-            m-t-10
-            "
-          >
-
-            <div
-              class=
-              "
-              row-space-start
-              "
-            >
-              <img
-                id=''
-                src={theme == 'Dark' ? icon_location_dark : icon_location}
-                alt={theme == 'Dark' ? icon_location_dark : icon_location}
-                title={theme == 'Dark' ? icon_location_dark : icon_location}
-                loading='lazy'
-                class=
-                "
-                m-r-5
-                "
-              />
-              <p
-                class=
-                "
-                s-12
-                color-black-3
-                  dark-v1
-                "
-              >
-                {widgetData.author?.data?.location ?? ''}
-              </p>
-            </div>
-
-            <p
-              class=
-              "
-              s-12
-              color-black-3
-                dark-v1
-              no-wrap
-              m-l-16
-              "
-            >
-              {readingTime(widgetData.article.data?.content)}
-              <TranslationText
-                key={'uknown'}
-                text={widgetDataTranslation?.translation?.reading_time}
-                fallback={'mins'}
-              />
-              <span
-                class=
-                "
-                m-r-5
-                m-l-5
-                "
-              >
-              •
-              </span>
-              {publishDateAgo()}
-              <TranslationText
-                key={'uknown'}
-                text={widgetDataTranslation?.translation?.published_date_days}
-                fallback={'days'}
-              />
-            </p>
-
-          </div>
-        {/if}
+          •
+          </span>
+          {readingTime(widgetData.article.data?.content)}
+          <TranslationText
+            key={'uknown'}
+            text={widgetDataTranslation?.translation?.reading_time}
+            fallback={'mins'}
+          />
+        </p>
+        </div>
 
       </div>
 
@@ -757,15 +612,16 @@
           <SportstackAvatar src={widgetData.author?.data?.avatar ?? ''} size={viewportType === "mobile" ? 32 : 36} radius=" var(--radius-sm, 6px)"/>
           <span>{widgetData.author.data?.username || ""}</span>
         </a>
-        <Button on:click={subscribe} size="sm" type="{isSubscribed ? "secondary-gray" : "primary"}">
-          {#if isSubscribed}
-           {$page.data.translations.subscribed || "Subscribed"}
+        {#if !isSportstackOwner}
+          <Button on:click={subscribe} size="sm" type="{isSubscribed ? "secondary-gray" : "primary"}">
+            {#if isSubscribed}
+              {$page.data.translations.subscribed || "Subscribed"}
+            {:else}
+              {$page.data.translations.subscribe || "Subscribe"}
+            {/if}
+          </Button>
+        {/if}
 
-           {:else}
-           {$page.data.translations.subscribe || "Subscribe"}
-          {/if}
-
-        </Button>
       </div>
     </div>
 
@@ -979,6 +835,11 @@
       margin-block: var(--spacing-4xl, 32px);
       &.mobile {
         margin-block: var(--spacing-3xl, 24px);
+        :global(.button) {
+            font-size: var(--font-size-text-xs, 12px);
+            height: 32px;
+
+        }
       }
 
       .sportstack-info {
