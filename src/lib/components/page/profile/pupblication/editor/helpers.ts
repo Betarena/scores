@@ -40,7 +40,7 @@ export async function upsert({ editor, title, author, reload = false, showLoader
   const images = getAllImages(editor);
 
   const { seo, tags } = create_article_store.get();
-
+  const text_content = editor.getHTML();
   const loadingId = showLoaders && infoMessages.add({ type: "loading", text: translations?.saving || "Saving article..." });
   const res = await postv2("/api/data/author/article", {
     content: sanitizedValue,
@@ -51,6 +51,7 @@ export async function upsert({ editor, title, author, reload = false, showLoader
     seo,
     images,
     uid: author.uid,
+    text_content
   }) as any;
   if (showLoaders && loadingId)
   {

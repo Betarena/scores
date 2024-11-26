@@ -97,6 +97,7 @@
     gap: 16px;
     flex: 1 0 0;
     width: 100%;
+    max-height: max-content;
 
 
     &:hover {
@@ -127,7 +128,8 @@
       border-radius: var(--radius-xl, 12px);
       width: 100%;
       border: 1px solid #E6E6E6;
-      height: 104px;
+      max-height: 104px;
+      height: 100%;
 
       :global(.img) {
         border-top-left-radius: var(--radius-xl, 12px);
