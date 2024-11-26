@@ -84,11 +84,7 @@ COMPONENT JS (w/ TS)
     );
     loading = false;
     if (res?.sportstacks) {
-      sportstacks = [...sportstacks, ...res.sportstacks].sort((a, b) => {
-        return (
-          new Date(b.data?.creation_date) - new Date(a.data?.creation_date)
-        );
-      });
+      sportstacks = [...sportstacks, ...res.sportstacks];
       totalPages = Math.ceil(res.count / limitOfArticles);
     }
   }
