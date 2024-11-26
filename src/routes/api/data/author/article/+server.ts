@@ -75,7 +75,7 @@ export const POST: RequestHandler = async ({ request, locals }) =>
         opengraph: {
           description: seoDescription,
           images: images.map((image: string) => ({ url: image, alt: title, width: 120, height: 120 })),
-          locale: "en_US",
+          locale: lang,
           title: seoTitle,
           type: 'website',
           url: link,
