@@ -32,8 +32,6 @@ COMPONENT JS (w/ TS)
   let totalPages = 0;
   let node;
 
-  $:console.log("TRANSLATIONS: ", profileTrs)
-
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -158,7 +156,7 @@ COMPONENT JS (w/ TS)
         <div class="no-content">
           <EyeOffIcon />
           <p>
-            {profileTrs?.no_articles_available ||
+            {profileTrs?.no_publications_available ||
               "No publications available, start creating content today!"}
           </p>
         </div>
@@ -258,11 +256,11 @@ COMPONENT JS (w/ TS)
       flex: 1 0 0;
       align-self: stretch;
       flex-grow: 1;
-      min-height: 300px;
-      // min-height: 100%;
+      height: max-content;
 
       .no-content {
         height: max-content;
+        min-height: 300px;
         width: 100%;
         display: flex;
         flex-grow: 1;
@@ -310,8 +308,12 @@ COMPONENT JS (w/ TS)
         }
       }
       .publications-wrapper {
-        min-height: 632px;
+        // min-height: 632px;
         gap: var(--spacing-3xl, 24px);
+        .no-content  {
+          min-height: 632px;
+
+        }
       }
     }
 
