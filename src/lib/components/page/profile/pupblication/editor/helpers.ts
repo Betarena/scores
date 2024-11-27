@@ -39,7 +39,7 @@ export async function upsert({ editor, title, author, reload = false, showLoader
   const sanitizedTitle = DOMPurify.sanitize(title);
   const images = getAllImages(editor);
 
-  const { seo, tags } = create_article_store.get();
+  const { seo, tags, detectedLang } = create_article_store.get();
   const text_content = editor.getHTML();
   const loadingId = showLoaders && infoMessages.add({ type: "loading", text: translations?.saving || "Saving article..." });
   const res = await postv2("/api/data/author/article", {
@@ -51,11 +51,16 @@ export async function upsert({ editor, title, author, reload = false, showLoader
     seo,
     images,
     uid: author.uid,
-    text_content
+    text_content,
+    lang: detectedLang,
   }) as any;
   if (showLoaders && loadingId)
   {
     infoMessages.remove(loadingId);
+  }
+  if (res.success && res.detectedLang)
+  {
+    create_article_store.update(state => ({ ...state, detectedLang: res.detectedLang }));
   }
   if (!showLoaders) return res;
   if (res.success)

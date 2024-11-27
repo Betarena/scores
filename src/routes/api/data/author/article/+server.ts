@@ -51,11 +51,18 @@ export const POST: RequestHandler = async ({ request, locals }) =>
   {
     if (!locals.uid) throw error(401, { message: 'Unauthorized' } as App.Error);
     const body = await request.json();
-    const { content, title, author_id, images, id, seo, tags, uid, article, text_content } = body;
+    const { content, title, author_id, images = [], id, seo, tags, uid, article, text_content, lang: langByUser } = body;
 
     if (locals.uid !== uid) return json({ success: false, message: "Not an owner" });
     let data = article;
-    const lang = await identifyLanguage(text_content);
+    let detectedLang = await identifyLanguage(text_content);
+    const isDetectedPt = ["pt", "pt-BR", "pt-PT"].includes(detectedLang.lang);
+    const isUserPt = ["pt", "br"].includes(langByUser?.lang);
+    if (isUserPt && isDetectedPt)
+    {
+      detectedLang = langByUser;
+    }
+    const { lang, isoLang } = detectedLang;
     const seoTitle = seo.title || title;
     const seoDescription = seo.description || "";
     const permalink = mutateStringToPermalink(title);
@@ -70,12 +77,12 @@ export const POST: RequestHandler = async ({ request, locals }) =>
           title: seoTitle,
           image: images[0] || "",
           site: '@betarenasocial',
-          image_alt: "",
+          image_alt: images[0]?.split('/').pop() || "",
         },
         opengraph: {
           description: seoDescription,
           images: images.map((image: string) => ({ url: image, alt: title, width: 120, height: 120 })),
-          locale: lang,
+          locale: isoLang,
           title: seoTitle,
           type: 'website',
           url: link,
@@ -104,7 +111,7 @@ export const POST: RequestHandler = async ({ request, locals }) =>
 
 
     const articleId = await entryProfileTabAuthorArticleUpsert(data);
-    return json({ success: true, id: articleId });
+    return json({ success: true, id: articleId, detectedLang });
 
   } catch (e)
   {

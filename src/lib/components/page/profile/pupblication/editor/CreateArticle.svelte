@@ -148,6 +148,10 @@
         description: article.seo_details?.main_data.description || "",
       },
       view: "preview",
+      detectedLang: {
+        lang: article.lang || "en",
+        isoLang: article.seo_details?.opengraph.locale || "en_US"
+      }
     });
     title = article.data?.title || "";
     disablePublishButton =
