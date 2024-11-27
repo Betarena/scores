@@ -459,9 +459,10 @@
             no-wrap
             "
           >
-            {monthTranslation?.months?.[monthNames[new Date(widgetData.article?.published_date  ?? '').getMonth()]]}
+            <!-- {monthTranslation?.months?.[monthNames[new Date(widgetData.article?.published_date  ?? '').getMonth()]]}
             {new Date(widgetData.article?.published_date ?? '').getDate()},
-            {new Date(widgetData.article?.published_date  ?? '').getFullYear()}
+            {new Date(widgetData.article?.published_date  ?? '').getFullYear()} -->
+            {timeAgo(widgetData?.article?.published_date, $page.data.translations.time_ago)}
           </p>
           <p
           class=

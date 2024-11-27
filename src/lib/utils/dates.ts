@@ -506,7 +506,7 @@ export function breakdownDates
  * @return { string }
  *  📤 Target `string` .
  */
-export function timeAgo(datestring: string | null, translation
+export function timeAgo(datestring: string | null | undefined, translation
   = {} as TranslationAuthorPublicationDateDataTimeAgo): string
 {
   if (!datestring) return '';
