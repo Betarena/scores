@@ -202,7 +202,7 @@
     const json = contentEditor.getJSON();
     if (!json) return "";
     for (const node of json.content || []) {
-      if (node.type === "paragraph") {
+      if (node.type === "paragraph" && node.content) {
         return (node.content || []).map((n) => n.text).join(" ");
       }
     }

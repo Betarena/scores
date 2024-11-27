@@ -62,8 +62,8 @@
   $: ({ seo, detectedLang } = $create_article_store);
 
   $: radioButtons = [
-    { id: "pt_PT", value: "pt", label: "Portuguese Portugal" },
-    { id: "pt_BR", value: "br", label: "Portuguese Brazil" },
+    { id: "pt_PT", value: "pt", label: translations?.pt || "Portuguese Portugal" },
+    { id: "pt_BR", value: "br", label: translations?.["pt-br"] || "Portuguese Brazil" },
   ];
 
   // #endregion ➤ 📌 VARIABLES
@@ -171,7 +171,7 @@
 
         {#if ["pt", "br"].includes(detectedLang?.lang || "")}
           <div class="confirm-lang-box">
-            <span>Confirm the article language: </span>
+            <span>{translations?.lang_preference || "Confirm the article language"}: </span>
             <div class="checkboxes-wrapper">
               {#each radioButtons as radio}
                 <div
