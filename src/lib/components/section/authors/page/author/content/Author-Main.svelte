@@ -459,9 +459,9 @@
             no-wrap
             "
           >
-            {monthTranslation?.months?.[monthNames[new Date(widgetData.author?.data?.creation_date ?? '').getMonth()]]}
-            {new Date(widgetData.author?.data?.creation_date ?? '').getDate()},
-            {new Date(widgetData.author?.data?.creation_date ?? '').getFullYear()}
+            {monthTranslation?.months?.[monthNames[new Date(widgetData.article?.published_date  ?? '').getMonth()]]}
+            {new Date(widgetData.article?.published_date ?? '').getDate()},
+            {new Date(widgetData.article?.published_date  ?? '').getFullYear()}
           </p>
           <p
           class=
