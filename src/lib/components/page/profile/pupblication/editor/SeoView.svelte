@@ -171,7 +171,7 @@
 
         {#if ["pt", "br"].includes(detectedLang?.lang || "")}
           <div class="confirm-lang-box">
-            <span>{translations?.lang_preference || "Confirm the article language"}: </span>
+            <span>{translations?.lang_preference || "Confirm the article language:"} </span>
             <div class="checkboxes-wrapper">
               {#each radioButtons as radio}
                 <div
