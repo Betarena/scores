@@ -53,7 +53,7 @@ export const translationObject:
 const lanuagesMap = {
   "eng": { lang: "en", iso: "en_EN" },
   "spa": { lang: "es", iso: "es_ES" },
-  "por": { lang: "pt", iso: "pt_PT" },
+  "por": { lang: "br", iso: "pt_BR" },
   "fra": { lang: "fr", iso: "fr_FR" },
   "ita": { lang: "it", iso: "it_IT" },
   "ron": { lang: "ro", iso: "ro_RO" },

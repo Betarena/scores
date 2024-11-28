@@ -44,7 +44,7 @@ export async function upsert({ editor, title, author, reload = false, showLoader
   const text_content = editor.getHTML();
   const detectedLangFromText = detectLanguage(text_content);
   let locale = detectedLang;
-  const isNewPt = detectedLangFromText.lang === "pt";
+  const isNewPt = detectedLangFromText.lang === "br";
   const isPreviousPt = ["pt", "br"].includes(detectedLang?.lang || "");
   if ((detectedLangFromText.lang !== detectedLang?.lang && isNewPt !== isPreviousPt) || !detectedLang)
   {
@@ -149,4 +149,4 @@ export interface IArticleFilter
   status: 'published' | 'unpublished' | 'draft' | 'all',
   sortBy: "sortTitle" | "sortPublishDate" | "sortEditedDate"
 }
-export const articleFilterStore: Writable<IArticleFilter> = writable({ status: "all", sortBy: "sortEditedDate" });
+export const articleFilterStore: Writable<IArticleFilter> = writable({ status: "all", sortBy: "sortPublishDate" });

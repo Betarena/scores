@@ -77,7 +77,7 @@ export async function main
           search = request.url.searchParams.get('search')
           // hasura = request.url.searchParams.get('hasura'),
           ;
-        let lang: string | undefined = request.url.searchParams.get('lang') as string;
+        let lang: string | undefined = request.url.searchParams.get('lang') || undefined;
         if (lang === "all") lang = undefined;
         const  langUser: string | undefined =  await JSON.parse( request.locals.user || "")?.lang || "en";
 
@@ -188,6 +188,8 @@ async function fallbackDataGenerate0
     languageUser: string | undefined = undefined
   ): Promise<IPageAuthorTagDataFinal & { translations: IPageAuthorTranslationDataFinal }>
 {
+  console.log("calling entryTargetDataTag...");
+  console.log("permalink: ", permalinkTarget, "page:", page, "languageFilter: ", language, "languageUser: ", languageUser);
   const dataRes0: IPageAuthorTagDataFinal = await entryTargetDataTag({ permalinkTarget, page: Number(page), languageUser, languageFilter: language });
   const dataRes1 = await entryTargetDataAuthorTranslation({ language: "en", cacheCheck: true })
   return { ...dataRes0, translations: dataRes1[0].get("en")! };
