@@ -9,7 +9,7 @@ interface ICreateArticleStore
   view: "editor" | "preview",
   detectedLang?: {
     lang: string,
-    isoLang: string,
+    iso: string,
   },
 }
 function articleStore()

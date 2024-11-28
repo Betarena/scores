@@ -92,7 +92,7 @@
   function checkRadio(radio) {
     $create_article_store.detectedLang = {
       lang: radio.value,
-      isoLang: radio.id,
+      iso: radio.id,
     };
   }
   // #endregion ➤ 🛠️ METHODS
@@ -181,7 +181,7 @@
                   <div
                     class="radio-input"
                     class:active={$create_article_store.detectedLang
-                      ?.isoLang === radio.id}
+                      ?.iso === radio.id}
                   >
                     <div class="input-inset" />
                   </div>

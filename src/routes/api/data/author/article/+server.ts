@@ -50,18 +50,11 @@ export const POST: RequestHandler = async ({ request, locals }) =>
   {
     if (!locals.uid) throw error(401, { message: 'Unauthorized' } as App.Error);
     const body = await request.json();
-    const { content, title, author_id, images = [], id, seo, tags, uid, article, text_content, lang: langByUser } = body;
+    const { content, title, author_id, images = [], id, seo, tags, uid, article, locale } = body;
 
     if (locals.uid !== uid) return json({ success: false, message: "Not an owner" });
-    let data = article;
-    let detectedLang = { lang: "en", isoLang: "en_US" };
-    const isDetectedPt = ["pt", "pt-BR", "pt-PT"].includes(detectedLang.lang);
-    const isUserPt = ["pt", "br"].includes(langByUser?.lang);
-    if (isUserPt && isDetectedPt)
-    {
-      detectedLang = langByUser;
-    }
-    const { lang, isoLang } = detectedLang;
+
+    const { lang, iso } = locale;
     const seoTitle = seo.title || title;
     const seoDescription = seo.description || "";
     const permalink = mutateStringToPermalink(title);
@@ -83,7 +76,7 @@ export const POST: RequestHandler = async ({ request, locals }) =>
         opengraph: {
           description: seoDescription,
           images: images.map((image: string) => ({ url: image, alt: title, width: 120, height: 120 })),
-          locale: isoLang,
+          locale: iso,
           title: seoTitle,
           type: 'website',
           url: link,
@@ -104,7 +97,7 @@ export const POST: RequestHandler = async ({ request, locals }) =>
         seo_title: seoTitle,
       }
     });
-    return json({ success: true, id: articleId, detectedLang });
+    return json({ success: true, id: articleId });
 
   } catch (e)
   {
@@ -146,7 +139,7 @@ export const PUT: RequestHandler = async ({ locals, request }) =>
     await entryProfileTabAuthorArticleUpdateStatus({
       numArticleId: id,
       enumArticleNewStatus: status
-    })
+    });
     return json({ success: true });
 
   } catch (e)

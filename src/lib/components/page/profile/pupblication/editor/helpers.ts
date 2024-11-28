@@ -10,6 +10,7 @@ import session from "$lib/store/session.js";
 import type { AuthorsAuthorsMain, TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
 import { type Writable, writable } from "svelte/store";
 import type { IPageAuthorArticleData, IPageAuthorAuthorData } from "@betarena/scores-lib/types/v8/preload.authors.js";
+import { detectLanguage } from "$lib/utils/translation.js";
 export function getAllImages(editor: Editor)
 {
   const json = editor.getJSON();
@@ -41,6 +42,16 @@ export async function upsert({ editor, title, author, reload = false, showLoader
 
   const { seo, tags, detectedLang } = create_article_store.get();
   const text_content = editor.getHTML();
+  const detectedLangFromText = detectLanguage(text_content);
+  let locale = detectedLang;
+  const isNewPt = detectedLangFromText.lang === "pt";
+  const isPreviousPt = ["pt", "br"].includes(detectedLang?.lang || "");
+  if ((detectedLangFromText.lang !== detectedLang?.lang && isNewPt !== isPreviousPt) || !detectedLang)
+  {
+    create_article_store.update(state => ({ ...state, detectedLang: detectedLangFromText }));
+    locale = detectedLangFromText;
+  }
+
   const loadingId = showLoaders && infoMessages.add({ type: "loading", text: translations?.saving || "Saving article..." });
   const res = await postv2("/api/data/author/article", {
     content: sanitizedValue,
@@ -51,17 +62,13 @@ export async function upsert({ editor, title, author, reload = false, showLoader
     seo,
     images,
     uid: author.uid,
-    text_content,
-    lang: detectedLang,
+    locale,
   }) as any;
   if (showLoaders && loadingId)
   {
     infoMessages.remove(loadingId);
   }
-  if (res.success && res.detectedLang)
-  {
-    create_article_store.update(state => ({ ...state, detectedLang: res.detectedLang }));
-  }
+
   if (!showLoaders) return res;
   if (res.success)
   {
@@ -85,6 +92,7 @@ export async function deleteArticle(article: IArticle | IPageAuthorArticleData, 
 {
   modalStore.update(state => ({ ...state, show: false }));
   const loadingId = infoMessages.add({ type: "loading", text: translations?.deleting || "Deleting article..." });
+
   const res = await fetch(`/api/data/author/article`, {
     method: "DELETE",
     body: JSON.stringify({ id: article.id, uid: article.author.uid })

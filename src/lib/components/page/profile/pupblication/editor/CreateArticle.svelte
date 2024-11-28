@@ -73,7 +73,7 @@
   let isSaved = false;
 
   $: ({ article } = data);
-  $: id = article.id || 0;
+  $: id = article.id;
   $: translations = (data as any).RESPONSE_PROFILE_DATA
     .sportstack2 as TranslationSportstacksSectionDataJSONSchema;
 
@@ -150,7 +150,7 @@
       view: "preview",
       detectedLang: {
         lang: article.lang || "en",
-        isoLang: article.seo_details?.opengraph.locale || "en_US"
+        iso: article.seo_details?.opengraph.locale || "en_US"
       }
     });
     title = article.data?.title || "";
