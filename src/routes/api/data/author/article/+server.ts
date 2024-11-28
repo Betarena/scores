@@ -22,7 +22,6 @@ import { main } from '$lib/sveltekit/endpoint/author.article.js';
 import { error, RequestHandler, json } from '@sveltejs/kit';
 import { entryProfileTabAuthorArticleDelete, entryProfileTabAuthorArticleUpdateStatus, entryProfileTabAuthorArticleUpsert } from '@betarena/scores-lib/dist/functions/v8/profile.main.js';
 import { mutateStringToPermalink } from '@betarena/scores-lib/dist/util/language.js';
-import { identifyLanguage } from '$lib/utils/server_helpers/translation.js';
 
 // #endregion ➤ 📦 Package
 
@@ -55,7 +54,7 @@ export const POST: RequestHandler = async ({ request, locals }) =>
 
     if (locals.uid !== uid) return json({ success: false, message: "Not an owner" });
     let data = article;
-    let detectedLang = await identifyLanguage(text_content);
+    let detectedLang = { lang: "en", isoLang: "en_US" };
     const isDetectedPt = ["pt", "pt-BR", "pt-PT"].includes(detectedLang.lang);
     const isUserPt = ["pt", "br"].includes(langByUser?.lang);
     if (isUserPt && isDetectedPt)
@@ -67,10 +66,12 @@ export const POST: RequestHandler = async ({ request, locals }) =>
     const seoDescription = seo.description || "";
     const permalink = mutateStringToPermalink(title);
     const link = `https://scores.betarena.com/a/${permalink}`;
-    data = {
+
+    const articleId = await entryProfileTabAuthorArticleUpsert({
       author_id,
       lang,
       tags,
+      id,
       seo_details: {
         twitter_card: {
           description: seoDescription,
@@ -102,15 +103,7 @@ export const POST: RequestHandler = async ({ request, locals }) =>
         meta_description: seoDescription,
         seo_title: seoTitle,
       }
-    };
-
-    if (id)
-    {
-      data.id = id;
-    }
-
-
-    const articleId = await entryProfileTabAuthorArticleUpsert(data);
+    });
     return json({ success: true, id: articleId, detectedLang });
 
   } catch (e)
