@@ -117,21 +117,27 @@ export async function publish({ id, status, sportstack, redirect = true, transla
     method: "PUT",
     body: JSON.stringify({ id, status, uid: sportstack.uid })
   });
-  infoMessages.remove(loadingId);
   const data = await res.json();
   if (data.success)
   {
-    infoMessages.add({ type: "success", text: status === "publish" ? translations?.article_published || "Article published!" : translations?.article_unpublished || "Article unpublished!" });
-    if (redirect)
+    await setTimeout(() =>
     {
 
-      setTimeout(() =>
+      infoMessages.remove(loadingId);
+      infoMessages.add({ type: "success", text: status === "publish" ? translations?.article_published || "Article published!" : translations?.article_unpublished || "Article unpublished!" });
+      if (redirect)
       {
-        goto(`/u/author/publication/${sportstack.permalink}/${session.extract('lang')}?view=articles`);
-      })
-    }
+
+        setTimeout(() =>
+        {
+          goto(`/u/author/publication/${sportstack.permalink}/${session.extract('lang')}?view=articles`);
+        })
+      }
+    }, 1000 * 3)
+
   } else
   {
+    infoMessages.remove(loadingId);
     infoMessages.add({ type: "error", text: translations?.failed_save || `Failed to ${status} article` });
   }
   return data
