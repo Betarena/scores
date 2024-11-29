@@ -26,7 +26,7 @@ import type { ServerLoadEvent } from '@sveltejs/kit';
  */
 export async function load
 (
-  { params, fetch }: ServerLoadEvent
+  { params, fetch, locals }: ServerLoadEvent
 ): Promise < any >
 {
   // [🐞]
@@ -36,7 +36,7 @@ export async function load
     [],
     true
   );
-  return await main({ name: params.name, fetch })
+  return await main({ name: params.name, fetch, locals })
 }
 
 // #endregion ➤ 🔄 LIFECYCLE [SVELTE]

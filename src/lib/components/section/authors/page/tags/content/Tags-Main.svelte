@@ -194,11 +194,12 @@
     const res = await fetchArticles({
       permalink: currentTag.permalink,
       page: pageNumber,
-      lang: selectedLang,
+      lang: sessionStore.extract("lang"),
       prevData: {...widgetData, mapArticle: articles.map(a => ([a.id, a])) as [number, IPageAuthorArticleData][]},
     });
     articles = [...articles, ...res.articles];
     pendingArticles = false;
+    totalArticlesCount = res.totalArticlesCount;
     pageNumber++;
   }
 
@@ -218,6 +219,7 @@
       mapTag: [...widgetData.mapTag, ...res.mapTag],
     };
     reloadData(widgetData);
+    totalArticlesCount = res.totalArticlesCount;
     pendingArticles = false;
   }
   let prevLang;
@@ -228,6 +230,8 @@
       `/api/data/author/tags?translation=${lang}`
     )) as IPageAuthorTranslationDataFinal;
     translations = { ...res };
+    const ev = new CustomEvent("translations", { detail: lang });
+    filter(ev);
   }
 
   function scrollHandler() {
