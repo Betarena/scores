@@ -195,7 +195,7 @@
       permalink: currentTag.permalink,
       page: pageNumber,
       lang: selectedLang,
-      prevData: widgetData,
+      prevData: {...widgetData, mapArticle: articles.map(a => ([a.id, a])) as [number, IPageAuthorArticleData][]},
     });
     articles = [...articles, ...res.articles];
     pendingArticles = false;
