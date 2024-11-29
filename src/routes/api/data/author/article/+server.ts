@@ -117,7 +117,7 @@ export const DELETE: RequestHandler = async ({ request, locals }) =>
   if (locals.uid !== uid) return json({ success: false, message: "Not an owner" });
   try
   {
-    await entryProfileTabAuthorArticleDelete(id);
+    await entryProfileTabAuthorArticleDelete([id]);
     return json({ success: true });
 
   } catch (e)
@@ -136,11 +136,11 @@ export const PUT: RequestHandler = async ({ locals, request }) =>
   if (!id) return json({ success: false, message: "Bad request" });
   try
   {
-    await entryProfileTabAuthorArticleUpdateStatus({
+    const permalink = await entryProfileTabAuthorArticleUpdateStatus({
       numArticleId: id,
       enumArticleNewStatus: status
     });
-    return json({ success: true });
+    return json({ success: true, permalink });
 
   } catch (e)
   {

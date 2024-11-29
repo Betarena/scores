@@ -11,6 +11,7 @@ import type { AuthorsAuthorsMain, TranslationSportstacksSectionDataJSONSchema } 
 import { type Writable, writable } from "svelte/store";
 import type { IPageAuthorArticleData, IPageAuthorAuthorData } from "@betarena/scores-lib/types/v8/preload.authors.js";
 import { detectLanguage } from "$lib/utils/translation.js";
+import { promiseValidUrlCheck } from "$lib/utils/navigation.js";
 export function getAllImages(editor: Editor)
 {
   const json = editor.getJSON();
@@ -112,7 +113,7 @@ export async function deleteArticle(article: IArticle | IPageAuthorArticleData, 
 export async function publish({ id, status, sportstack, redirect = true, translations }: { translations: TranslationSportstacksSectionDataJSONSchema | undefined, id?: number, status: "publish" | "unpublish", sportstack: IPageAuthorAuthorData, redirect?: boolean })
 {
   modalStore.update(state => ({ ...state, show: false }));
-  const loadingId = infoMessages.add({ type: "loading", text: translations?.saving || `${status} article...` });
+  const loadingId = infoMessages.add({ type: "loading", text: translations?.saving || `${status} article...`, autoHide: false });
   const res = await fetch(`/api/data/author/article`, {
     method: "PUT",
     body: JSON.stringify({ id, status, uid: sportstack.uid })
@@ -120,20 +121,17 @@ export async function publish({ id, status, sportstack, redirect = true, transla
   const data = await res.json();
   if (data.success)
   {
-    await setTimeout(() =>
+    await checkArticle(data.permalink);
+    infoMessages.remove(loadingId);
+    infoMessages.add({ type: "success", text: status === "publish" ? translations?.article_published || "Article published!" : translations?.article_unpublished || "Article unpublished!" });
+    if (redirect)
     {
 
-      infoMessages.remove(loadingId);
-      infoMessages.add({ type: "success", text: status === "publish" ? translations?.article_published || "Article published!" : translations?.article_unpublished || "Article unpublished!" });
-      if (redirect)
+      setTimeout(() =>
       {
-
-        setTimeout(() =>
-        {
-          goto(`/u/author/publication/${sportstack.permalink}/${session.extract('lang')}?view=articles`);
-        })
-      }
-    }, 1000 * 3)
+        goto(`/u/author/publication/${sportstack.permalink}/${session.extract('lang')}?view=articles`);
+      }, 500);
+    }
 
   } else
   {
@@ -141,6 +139,23 @@ export async function publish({ id, status, sportstack, redirect = true, transla
     infoMessages.add({ type: "error", text: translations?.failed_save || `Failed to ${status} article` });
   }
   return data
+}
+
+function delay(ms: number)
+{
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function checkArticle(permalink: string)
+{
+  const check = await promiseValidUrlCheck(fetch, { authorArticleUrl: permalink });
+  if (check.isValid)
+  {
+    return true
+  }
+
+  await delay(1000 * 2);
+  return checkArticle(permalink);
 }
 
 
