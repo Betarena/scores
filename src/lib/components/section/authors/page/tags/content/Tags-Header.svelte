@@ -120,7 +120,7 @@
   $: showDescription = !mobile && tag.description;
   $: followedTags = (($userBetarenaSettings.user?.scores_user_data as any)
     ?.following?.tags || []) as (string | number)[];
-  $: isFollowed = followedTags.includes(tag.id);
+  $: isFollowed = followedTags.includes(tag?.id);
 
   /**
    * @summary

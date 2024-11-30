@@ -185,14 +185,15 @@
     tags = new Map(data.mapTag);
     authors = new Map(data.mapAuthor);
     articles = prepareArticles(data.mapArticle, tags, authors);
-    currentTag = tags.get(data.tagId) as IPageAuthorTagData;
+    currentTag = tags.get(data.tagId) as IPageAuthorTagData || {};
     pageNumber = 1;
   }
   async function loadArticles() {
+    if (!currentTag?.permalink) return;
     if (articles.length >= totalArticlesCount) return;
     pendingArticles = true;
     const res = await fetchArticles({
-      permalink: currentTag.permalink,
+      permalink: currentTag?.permalink,
       page: pageNumber,
       lang: sessionStore.extract("lang"),
       prevData: {...widgetData, mapArticle: articles.map(a => ([a.id, a])) as [number, IPageAuthorArticleData][]},
@@ -213,6 +214,7 @@
         selectedLang ? `&lang=${selectedLang}` : ""
       }`
     )) as IPageAuthorTagDataFinal;
+    if (!res) return pendingArticles = false;
     widgetData = {
       ...widgetData,
       ...res,
