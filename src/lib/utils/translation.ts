@@ -9,6 +9,7 @@
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
 // │ > Scores Translation Logic                                                       │
 // ╰──────────────────────────────────────────────────────────────────────────────────╯
+import { franc } from 'franc';
 
 /**
  * @author
@@ -47,4 +48,20 @@ export const translationObject:
   team: 'Team',
   pool_prize: 'Pool Prize',
   participants: 'participants'
+}
+
+const lanuagesMap = {
+  "eng": { lang: "en", iso: "en_EN" },
+  "spa": { lang: "es", iso: "es_ES" },
+  "por": { lang: "br", iso: "pt_BR" },
+  "fra": { lang: "fr", iso: "fr_FR" },
+  "ita": { lang: "it", iso: "it_IT" },
+  "ron": { lang: "ro", iso: "ro_RO" },
+  "srp": { lang: "sr", iso: "sr_RS" },
+}
+
+export function detectLanguage(text: string): { lang: string, iso: string }
+{
+  const langCode = franc(text);
+  return lanuagesMap[langCode] || lanuagesMap["eng"];
 }

@@ -73,7 +73,7 @@
   let isSaved = false;
 
   $: ({ article } = data);
-  $: id = article.id || 0;
+  $: id = article.id;
   $: translations = (data as any).RESPONSE_PROFILE_DATA
     .sportstack2 as TranslationSportstacksSectionDataJSONSchema;
 
@@ -148,6 +148,10 @@
         description: article.seo_details?.main_data.description || "",
       },
       view: "preview",
+      detectedLang: {
+        lang: article.lang || "en",
+        iso: article.seo_details?.opengraph.locale || "en_US"
+      }
     });
     title = article.data?.title || "";
     disablePublishButton =
@@ -198,7 +202,7 @@
     const json = contentEditor.getJSON();
     if (!json) return "";
     for (const node of json.content || []) {
-      if (node.type === "paragraph") {
+      if (node.type === "paragraph" && node.content) {
         return (node.content || []).map((n) => n.text).join(" ");
       }
     }

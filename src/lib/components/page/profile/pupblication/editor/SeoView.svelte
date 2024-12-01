@@ -59,7 +59,12 @@
   let title = "";
 
   $: ({ viewportType } = $session);
-  $: ({ seo } = $create_article_store);
+  $: ({ seo, detectedLang } = $create_article_store);
+
+  $: radioButtons = [
+    { id: "pt_PT", value: "pt", label: translations?.pt || "Portuguese Portugal" },
+    { id: "pt_BR", value: "br", label: translations?.["pt-br"] || "Portuguese Brazil" },
+  ];
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -84,6 +89,12 @@
     goBack();
   }
 
+  function checkRadio(radio) {
+    $create_article_store.detectedLang = {
+      lang: radio.value,
+      iso: radio.id,
+    };
+  }
   // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
@@ -101,7 +112,6 @@
   });
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
-
 </script>
 
 <!--
@@ -158,6 +168,29 @@
           placeholder={translations?.description_place_holder || "Description"}
           label={translations?.seo_descriptions || "SEO description"}
         />
+
+        {#if ["pt", "br"].includes(detectedLang?.lang || "")}
+          <div class="confirm-lang-box">
+            <span>{translations?.lang_preference || "Confirm the article language:"} </span>
+            <div class="checkboxes-wrapper">
+              {#each radioButtons as radio}
+                <div
+                  class="radio-button-wrapper"
+                  on:click={() => checkRadio(radio)}
+                >
+                  <div
+                    class="radio-input"
+                    class:active={$create_article_store.detectedLang
+                      ?.iso === radio.id}
+                  >
+                    <div class="input-inset" />
+                  </div>
+                  <div class="radio-label">{radio.label}</div>
+                </div>
+              {/each}
+            </div>
+          </div>
+        {/if}
       </div>
     </div>
     <Container style="height: unset">
@@ -263,6 +296,64 @@
           gap: 12px;
           flex: 1 0 0;
           align-self: stretch;
+
+          .confirm-lang-box {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-2xl, 20px);
+            color: var(--colors-text-text-secondary-700, #d2d2d2);
+
+            /* Text sm/Medium */
+            font-family: var(--font-family-font-family-body, Roboto);
+            font-size: var(--font-size-text-sm, 14px);
+            font-style: normal;
+            font-weight: 500;
+            line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+
+            .checkboxes-wrapper {
+              display: flex;
+              gap: var(--spacing-4xl, 32px);
+
+              .radio-button-wrapper {
+                display: flex;
+                gap: var(--spacing-lg, 12px);
+                align-items: center;
+                cursor:pointer;
+
+                .radio-input {
+                  display: flex;
+                  width: 16px;
+                  height: 16px;
+                  padding: 5px;
+                  flex-shrink: 0;
+                  justify-content: center;
+                  align-items: center;
+                  border-radius: var(--radius-full, 9999px);
+                  border: 1px solid var(--colors-border-border-primary, #6a6a6a);
+
+                  .input-inset {
+                    width: 6px;
+                    height: 6px;
+                    flex-shrink: 0;
+                    background-color: inherit;
+                    border-radius: var(--radius-full, 9999px);
+                  }
+                  &.active {
+                    background: var(
+                      --colors-background-bg-brand-solid,
+                      #f5620f
+                    );
+                    border: 1px solid
+                      var(--colors-background-bg-brand-solid, #6a6a6a);
+
+                    .input-inset {
+                      background: var(--colors-foreground-fg-white, #fff);
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
 

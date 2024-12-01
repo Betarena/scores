@@ -48,7 +48,7 @@ type PreloadPromise0 =
  */
 export async function main
 (
-  {name, fetch}
+  { name, fetch, locals }
 ): Promise < IPageAuthorTagDataFinal >
 {
   const
@@ -74,12 +74,14 @@ export async function main
       ERROR_CODE_INVALID
     );
   ;
+  const user = JSON.parse(locals.user);
   const [
     data
   ] = await fetchData
   (
     fetch,
     name,
+    user.lang
     );
 
   /**
@@ -122,6 +124,7 @@ async function fetchData
 (
   fetch: any,
   _name: string | undefined,
+  lang = "en"
 )
 {
   const
@@ -131,7 +134,7 @@ async function fetchData
      */
     urls0
       = [
-        `/api/data/author/tags?permalinkTag=${_name}`,
+        `/api/data/author/tags?permalinkTag=${_name}&lang=${lang}`,
        ],
 
     /**

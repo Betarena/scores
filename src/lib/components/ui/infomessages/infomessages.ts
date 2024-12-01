@@ -2,7 +2,7 @@ import { writable } from "svelte/store";
 
 interface IInfoMessage
 {
-  type: "success" | "error" | "loading", text: string, id?: number
+  type: "success" | "error" | "loading", text: string, id?: number, autoHide?: boolean
 }
 
 function messageInfo()
@@ -19,7 +19,11 @@ function messageInfo()
   {
     const id = new Date().getTime();
     update((old) => [{ ...message, id }, ...old]);
-    setTimeout(() => remove(id), 5000);
+    const { autoHide } = message;
+    if (autoHide === undefined || autoHide)
+    {
+      setTimeout(() => remove(id), 5000);
+    }
     return id
   }
 

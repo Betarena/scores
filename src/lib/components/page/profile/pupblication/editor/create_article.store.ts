@@ -1,5 +1,5 @@
 import { writable } from "svelte/store";
-interface CreateArticleStore
+interface ICreateArticleStore
 {
   tags: string[],
   seo: {
@@ -7,11 +7,15 @@ interface CreateArticleStore
     description: string,
   },
   view: "editor" | "preview",
+  detectedLang?: {
+    lang: string,
+    iso: string,
+  },
 }
 function articleStore()
 {
 
-  let state = {
+  let state: ICreateArticleStore = {
     tags: [] as string[],
     seo: {
       title: "",
@@ -20,11 +24,11 @@ function articleStore()
     view: "editor" as "editor" | "preview",
   }
 
-  const { subscribe, set, update } = writable<CreateArticleStore>(state);
+  const { subscribe, set, update } = writable<ICreateArticleStore>(state);
 
   subscribe((newState) =>
   {
-    state = { tags: newState.tags, seo: newState.seo, view: newState.view };
+    state = { tags: newState.tags, seo: newState.seo, view: newState.view, detectedLang: newState.detectedLang };
   })
 
   return {
