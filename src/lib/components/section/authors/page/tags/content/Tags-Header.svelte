@@ -120,7 +120,7 @@
   $: showDescription = !mobile && tag.description;
   $: followedTags = (($userBetarenaSettings.user?.scores_user_data as any)
     ?.following?.tags || []) as (string | number)[];
-  $: isFollowed = followedTags.includes(tag.id);
+  $: isFollowed = followedTags.includes(tag?.id);
 
   /**
    * @summary
@@ -224,7 +224,7 @@
       </div>
     </div>
     <div class="action-buttons" bind:clientWidth={buttonsWidth}>
-      {#if !mobile}
+      <!-- {#if !mobile}
         <SelectButton bind:value={filterValue} {options} let:currentValue>
           <div>
             <span>
@@ -241,7 +241,7 @@
             />
           </div>
         </SelectButton>
-      {/if}
+      {/if} -->
 
       <Button type={isFollowed ? "outline" : "primary"} on:click={follow}>
         <span>
@@ -271,7 +271,7 @@
 
 {#if mobile}
   <div class="mobile-selection">
-    <SelectButton bind:value={filterValue} {options} let:currentValue>
+    <!-- <SelectButton bind:value={filterValue} {options} let:currentValue>
       <div>
         <span>
           <TranslationText
@@ -286,7 +286,7 @@
           fallback={currentValue?.label}
         />
       </div>
-    </SelectButton>
+    </SelectButton> -->
   </div>
 {/if}
 

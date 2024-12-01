@@ -196,9 +196,9 @@
     </div>
     <div
       class="sort-by"
-      on:click|stopPropagation={() => (showSortBy = !showSortBy)}
+
     >
-      <div class="sort-button">
+      <div class="sort-button"  on:click|stopPropagation={() => (showSortBy = !showSortBy)}>
         <Button type="terlary-gray">
           <svg
             xmlns="http://www.w3.org/2000/svg"

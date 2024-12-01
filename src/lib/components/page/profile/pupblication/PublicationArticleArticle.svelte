@@ -163,14 +163,16 @@
       case "unpublish":
         modalState.component = Unpublish;
         modalState.props = {
-          cb: () => {
-            publish({
+          cb: async () => {
+            const data = await publish({
               id,
               status: "unpublish",
               sportstack: author,
               translations,
             });
-            article.status = "unpublished";
+            if (data.success) {
+              article.status = "unpublished";
+            }
           },
           translations,
         };
@@ -188,8 +190,11 @@
         modalState.component = DeleteModal;
         break;
       case "publish":
-        publish({ id, status: "publish", sportstack: author, translations });
-        article.status = "published";
+        publish({ id, status: "publish", sportstack: author, translations }).then(d => {
+           if (d.success) {
+            article.status = "published";
+           }
+        });
       default:
         return;
     }

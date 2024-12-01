@@ -63,7 +63,7 @@ export async function fetchArticles({ permalink, lang, page, prevData, url }: { 
     mapTag: [...(prevData?.mapTag || []), ...res.mapTag],
   } as ITagsWidgetData;
   const articles = prepareArticles(newArticles, new Map(res.mapTag), new Map(res.mapAuthor));
-  return { next, articles }
+  return { ...res, next, articles };
 }
 
 /**

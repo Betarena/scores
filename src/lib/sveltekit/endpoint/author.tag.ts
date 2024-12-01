@@ -77,7 +77,7 @@ export async function main
           search = request.url.searchParams.get('search')
           // hasura = request.url.searchParams.get('hasura'),
           ;
-        let lang: string | undefined = request.url.searchParams.get('lang') as string;
+        let lang: string | undefined = request.url.searchParams.get('lang') || undefined;
         if (lang === "all") lang = undefined;
         const  langUser: string | undefined =  await JSON.parse( request.locals.user || "")?.lang || "en";
 
