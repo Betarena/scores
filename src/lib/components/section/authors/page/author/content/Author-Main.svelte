@@ -60,6 +60,11 @@
   import type { IPageArticleTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.articles.js';
   import { readingTime } from '../../helpers.js';
   import { userNameToUrlString } from '../../../common_ui/helpers.js';
+  import SportstackAvatar from '$lib/components/ui/SportstackAvatar.svelte';
+  import Button from '$lib/components/ui/Button.svelte';
+  import session from '$lib/store/session.js';
+  import { post } from '$lib/api/utils.js';
+  import { getUserById } from '$lib/firebase/common.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -133,6 +138,7 @@
      *  📣 **Local** component state
      */
     componentLocalState = new Set < IWidgetState >(),
+    author,
     /**
      * @description
      *  📣 Logic for calculating `published days ago`.
@@ -146,8 +152,8 @@
     }
   ;
 
-  $: ({ theme } = { ...$userBetarenaSettings });
-  $: ({ windowWidth } = $sessionStore);
+  $: ({ theme, user } = { ...$userBetarenaSettings });
+  $: ({ windowWidth, viewportType } = $sessionStore);
   $: [ VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1] ]
     = viewportChangeV2
     (
@@ -157,7 +163,11 @@
     );
   $: widgetDataTranslation = $page.data.translationArticle as IPageArticleTranslationDataFinal | null | undefined;
   $: monthTranslation = $page.data.monthTranslations as B_SAP_D2 | null | undefined;
-
+  $: isSubscribed =  (user?.scores_user_data?.subscriptions?.sportstacks || []).includes(widgetData.author.id);
+  $: isSportstackOwner = user?.firebase_user_data?.uid === widgetData.author.uid;
+  $: isAuth = !!user;
+  $: ({author: sportstack} = widgetData);
+  $: getAuthor(sportstack?.uid);
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -171,6 +181,34 @@
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
+
+
+  async function getAuthor(id: string) {
+    executeAnimation = false;
+    const [user] = await getUserById([id]);
+    author = user;
+    setTimeout(() => {
+      executeAnimation = true;
+    }, 100);
+  }
+
+  async function subscribe() {
+    if (!isAuth) {
+      $session.currentActiveModal = "Auth_Modal";
+      return;
+    }
+    const id = widgetData.author.id;
+    userBetarenaSettings.updateData([
+      [
+        "user-subscriptions",
+        { target: "sportstacks", id, follow: !isSubscribed },
+      ],
+    ]);
+    await post("/api/data/author/sportstack", {
+      authorId: id,
+      subscribe: !isSubscribed,
+    });
+  }
 
   /**
    * @author
@@ -233,13 +271,6 @@
   (
     () =>
     {
-      setTimeout
-      (
-        () =>
-        {
-          executeAnimation = true;
-        }, 100
-      );
 
       scrollTags(0);
 
@@ -290,134 +321,17 @@
         {widgetData.article.data?.title ?? ''}
       </h1>
 
-      <!--
-      ╭─────
-      │ > article tags
-      ╰─────
-      -->
-      <div
-        id="tags-box"
-        class=
-        "
-        m-b-34
-        "
-      >
-        <!--
-        ╭─────
-        │ > previous (button)
-        ╰─────
-        -->
-        {#if componentLocalState.has('PrevButtonShow')}
-          <div
-            id="tagScrollPrev"
-            class=
-            "
-            tagScrollButton
-            "
-            on:click=
-            {
-              () =>
-              {
-                scrollTags(1);
-                return;
-              }
-            }
-          >
-            <img
-              id=''
-              src={theme == 'Dark' ? iconArrowLeftDark : iconArrowLeftLight}
-              alt=''
-              title=''
-              loading='lazy'
-            />
-          </div>
-        {/if}
-
-        <!--
-        ╭─────
-        │ > article tags (inner)
-        ╰─────
-        -->
-        <div
-          id="tags-box-scroll"
-          bind:this={htmlElementScrollBox}
-          on:scroll=
-          {
-            () =>
-            {
-              scrollTags(0);
-              return;
-            }
-          }
-        >
-          <!-- [🐞] -->
-          <!-- {#each [...widgetData.tags, ...widgetData.tags, ...widgetData.tags] as item} -->
-          {#each [...(widgetData.article.tags ?? [])] as item}
-            <a
-              class=
-              "
-              tag-pill
-              "
-              href="/a/tag/{tagMap.get(item)?.permalink}"
-            >
-              <p
-                class=
-                "
-                s-14
-                w-400
-                color-black-2
-                no-wrap
-                "
-              >
-                {tagMap.get(item)?.name ?? ''}
-              </p>
-            </a>
-          {/each}
-        </div>
-
-        <!--
-        ╭─────
-        │ > next (button)
-        ╰─────
-        -->
-        {#if componentLocalState.has('NextButtonShow')}
-          <div
-            id="tagScrollNext"
-            class=
-            "
-            tagScrollButton
-            "
-            on:click=
-            {
-              () =>
-              {
-                scrollTags(-1);
-                return;
-              }
-            }
-          >
-            <img
-              id=''
-              src={theme == 'Dark' ? iconArrowRightDark : iconArrowRightLight}
-              alt=''
-              title=''
-              loading='lazy'
-            />
-          </div>
-        {/if}
-      </div>
-    </div>
-    <!--
+       <!--
     ╭─────
     │ > article author box
     ╰─────
     -->
-    <a
-      href="/a/sportstack/{userNameToUrlString(widgetData.author?.data?.username)}"
+      <a
+      href="/a/user/{author?.usernamePermalink}"
       class=
       "
       row-space-start
-      m-b-24
+      m-b-16
       author-link
       "
       style=
@@ -433,9 +347,9 @@
       -->
       <img
         id='user-avatar'
-        src={widgetData.author?.data?.avatar ?? ''}
+        src={author?.profile_photo ?? ''}
         alt='user_avatar'
-        title={widgetData.author?.data?.username ?? ''}
+        title={author?.name ?? ''}
         loading='lazy'
         class=
         "
@@ -474,7 +388,7 @@
           ╰─────
           -->
           <a
-            href="/a/sportstack/{userNameToUrlString(widgetData.author?.data?.username)}"
+            href="/a/user/{author?.usernamePermalink}"
             class=
             "
             s-14
@@ -486,7 +400,7 @@
             author-name
             "
           >
-            {widgetData.author.data?.username ?? ''}
+            {author?.name ?? ''}
           </a>
 
           <!--
@@ -494,7 +408,7 @@
           │ > article author badges
           ╰─────
           -->
-          <div
+          <!-- <div
             class=
             "
             row-space-start
@@ -516,40 +430,7 @@
                 loading='lazy'
               />
             {/each}
-          </div>
-
-          <!--
-          ╭─────
-          │ > article (1) read time + (2) published days 💻 TABLET [+]
-          ╰─────
-          -->
-          {#if !VIEWPORT_MOBILE_INIT[1]}
-            <p
-              class=
-              "
-              s-12
-              color-black-3
-                dark-v1
-              "
-            >
-              {readingTime(widgetData.article.data?.content)}
-              <TranslationText
-                key={'uknown'}
-                text={widgetDataTranslation?.translation?.reading_time}
-                fallback={'mins'}
-              />
-              <span
-                class=
-                "
-                m-r-5
-                m-l-5
-                "
-              >
-              •
-              </span>
-              {timeAgo(widgetData.article.published_date, $page.data.translations.time_ago)}
-            </p>
-          {/if}
+          </div> -->
 
         </div>
 
@@ -576,155 +457,176 @@
             color-black-3
               dark-v1
             no-wrap
-            m-r-12
             "
           >
-            {monthTranslation?.months?.[monthNames[new Date(widgetData.article?.published_date  ?? '').getMonth()]]}
+            <!-- {monthTranslation?.months?.[monthNames[new Date(widgetData.article?.published_date  ?? '').getMonth()]]}
             {new Date(widgetData.article?.published_date ?? '').getDate()},
-            {new Date(widgetData.article?.published_date  ?? '').getFullYear()}
+            {new Date(widgetData.article?.published_date  ?? '').getFullYear()} -->
+            {timeAgo(widgetData?.article?.published_date, $page.data.translations.time_ago)}
           </p>
-
-          <!--
-          ╭─────
-          │ > article author location
-          ╰─────
-          -->
-          {#if !VIEWPORT_MOBILE_INIT[1]}
-
-            <div
-              class=
-              "
-              row-space-start
-              "
-            >
-              <img
-                id=''
-                src={theme == 'Dark' ? icon_location_dark : icon_location}
-                alt={theme == 'Dark' ? icon_location_dark : icon_location}
-                title={theme == 'Dark' ? icon_location_dark : icon_location}
-                loading='lazy'
-                class=
-                "
-                m-r-5
-                "
-              />
-              <p
-                class=
-                "
-                s-12
-                color-black-3
-                  dark-v1
-                "
-              >
-                {widgetData.author?.data?.location ?? ''}
-              </p>
-            </div>
-          {/if}
-        </div>
-
-        <!--
-        ╭─────
-        │ > article author description / about 💻 TABLET [+]
-        ╰─────
-        -->
-        {#if !VIEWPORT_MOBILE_INIT[1]}
           <p
+          class=
+          "
+          s-12
+          color-black-3
+            dark-v1
+          no-wrap
+          "
+        >
+          <span
             class=
             "
-            s-12
-            color-black-3
-              dark-v1
-            m-t-12
+            m-r-5
+            m-l-5
             "
           >
-            {widgetData.author.data?.about ?? ''}
-          </p>
-        {/if}
-
-        <!--
-        ╭─────
-        │ > [1] article (1) read time + (2) published days 💻 TABLET [+]
-        │ > [2] article author location
-        ╰─────
-        -->
-        {#if VIEWPORT_MOBILE_INIT[1]}
-          <div
-            class=
-            "
-            article-author-info
-            row-space-start
-            m-t-10
-            "
-          >
-
-            <div
-              class=
-              "
-              row-space-start
-              "
-            >
-              <img
-                id=''
-                src={theme == 'Dark' ? icon_location_dark : icon_location}
-                alt={theme == 'Dark' ? icon_location_dark : icon_location}
-                title={theme == 'Dark' ? icon_location_dark : icon_location}
-                loading='lazy'
-                class=
-                "
-                m-r-5
-                "
-              />
-              <p
-                class=
-                "
-                s-12
-                color-black-3
-                  dark-v1
-                "
-              >
-                {widgetData.author?.data?.location ?? ''}
-              </p>
-            </div>
-
-            <p
-              class=
-              "
-              s-12
-              color-black-3
-                dark-v1
-              no-wrap
-              m-l-16
-              "
-            >
-              {readingTime(widgetData.article.data?.content)}
-              <TranslationText
-                key={'uknown'}
-                text={widgetDataTranslation?.translation?.reading_time}
-                fallback={'mins'}
-              />
-              <span
-                class=
-                "
-                m-r-5
-                m-l-5
-                "
-              >
-              •
-              </span>
-              {publishDateAgo()}
-              <TranslationText
-                key={'uknown'}
-                text={widgetDataTranslation?.translation?.published_date_days}
-                fallback={'days'}
-              />
-            </p>
-
-          </div>
-        {/if}
+          •
+          </span>
+          {readingTime(widgetData.article.data?.content)}
+          <TranslationText
+            key={'uknown'}
+            text={widgetDataTranslation?.translation?.reading_time}
+            fallback={'mins'}
+          />
+        </p>
+        </div>
 
       </div>
 
     </a>
+      <!--
+      ╭─────
+      │ > article tags
+      ╰─────
+      -->
+      {#if widgetData.article.tags?.length}
+        <div
+          id="tags-box"
+        >
+          <!--
+          ╭─────
+          │ > previous (button)
+          ╰─────
+          -->
+          {#if componentLocalState.has('PrevButtonShow')}
+            <div
+              id="tagScrollPrev"
+              class=
+              "
+              tagScrollButton
+              "
+              on:click=
+              {
+                () =>
+                {
+                  scrollTags(1);
+                  return;
+                }
+              }
+            >
+              <img
+                id=''
+                src={theme == 'Dark' ? iconArrowLeftDark : iconArrowLeftLight}
+                alt=''
+                title=''
+                loading='lazy'
+              />
+            </div>
+          {/if}
+
+          <!--
+          ╭─────
+          │ > article tags (inner)
+          ╰─────
+          -->
+          <div
+            id="tags-box-scroll"
+            bind:this={htmlElementScrollBox}
+            on:scroll=
+            {
+              () =>
+              {
+                scrollTags(0);
+                return;
+              }
+            }
+          >
+            <!-- [🐞] -->
+            <!-- {#each [...widgetData.tags, ...widgetData.tags, ...widgetData.tags] as item} -->
+            {#each [...(widgetData.article.tags ?? [])] as item}
+              <a
+                class=
+                "
+                tag-pill
+                "
+                href="/a/tag/{tagMap.get(item)?.permalink}"
+              >
+                <p
+                  class=
+                  "
+                  s-14
+                  w-400
+                  color-black-2
+                  no-wrap
+                  "
+                >
+                  {tagMap.get(item)?.name ?? ''}
+                </p>
+              </a>
+            {/each}
+          </div>
+
+          <!--
+          ╭─────
+          │ > next (button)
+          ╰─────
+          -->
+          {#if componentLocalState.has('NextButtonShow')}
+            <div
+              id="tagScrollNext"
+              class=
+              "
+              tagScrollButton
+              "
+              on:click=
+              {
+                () =>
+                {
+                  scrollTags(-1);
+                  return;
+                }
+              }
+            >
+              <img
+                id=''
+                src={theme == 'Dark' ? iconArrowRightDark : iconArrowRightLight}
+                alt=''
+                title=''
+                loading='lazy'
+              />
+            </div>
+          {/if}
+        </div>
+      {/if}
+      <div class="sportstack-box {viewportType}">
+        <a href="/a/sportstack/{userNameToUrlString(widgetData.author?.data?.username)}" class="sportstack-info">
+          <SportstackAvatar src={widgetData.author?.data?.avatar ?? ''} size={viewportType === "mobile" ? 32 : 36} radius=" var(--radius-sm, 6px)"/>
+          <span>{widgetData.author.data?.username || ""}</span>
+        </a>
+        {#if !isSportstackOwner}
+          <Button on:click={subscribe} size="sm" type="{isSubscribed ? "secondary-gray" : "primary"}">
+            {#if isSubscribed}
+              {$page.data.translations.subscribed || "Subscribed"}
+            {:else}
+              {$page.data.translations.subscribe || "Subscribe"}
+            {/if}
+          </Button>
+        {/if}
+
+      </div>
+    </div>
+
+
   </div>
   <!--
   ╭─────
@@ -798,6 +700,8 @@
     {
       /* 🎨 style */
       overflow: hidden;
+      padding-block: var(--spacing-xl, 16px);
+      border-block: 1px solid var(--border-border-tertiary);
       position: relative;
 
       div#tags-box-scroll
@@ -922,6 +826,43 @@
       {
         filter: none;
         transform: none;
+      }
+    }
+
+    .sportstack-box {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-block: var(--spacing-4xl, 32px);
+      &.mobile {
+        margin-block: var(--spacing-3xl, 24px);
+        :global(.button) {
+            font-size: var(--font-size-text-xs, 12px);
+            height: 32px;
+
+        }
+      }
+
+      .sportstack-info {
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        span {
+          flex-grow: 1;
+          color: var(--colors-text-text-primary-900, #313131);
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-sm, 14px);
+          font-style: normal;
+          font-weight: 500;
+          line-height: var(--line-height-text-md, 24px); /* 171.429% */
+        }
+        &:hover {
+          span {
+            color: var(--primary) !important;
+          }
+        }
+
       }
     }
 

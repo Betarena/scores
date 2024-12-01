@@ -35,13 +35,13 @@ export const BetarenaUserHelper = new Betarena_User_Class();
  *  - 🟦 HELPER
  * @description
  *  📣 Retrieves `Firebase/Firestore` data for **current user**.
- * @param { string } uid
+ * @param { string [] } uid
  *  💠 **[required]** Target user **uid**.
  * @return { Promise < void > }
  */
 export async function getUserById
   (
-    uid: string
+    uid: string[]
   )
 {
   // [🐞]
@@ -51,24 +51,14 @@ export async function getUserById
       true
     );
 
-  const
-    docRef
-      = doc
-        (
-          db_firestore,
-          'betarena_users',
-          uid
-        ),
-    docSnap
-      = await getDoc
-        (
-          docRef
-        )
-    ;
-
-  if (!docSnap.exists()) return;
-
-  return docSnap.data();
+  const { success } = await BetarenaUserHelper.obtainPublicInformationTargetUsers({
+    query: {},
+    body: {
+      user_uids: uid
+    }
+  });
+  if (!success) return [];
+  return success.data
 }
 /**
  * @author

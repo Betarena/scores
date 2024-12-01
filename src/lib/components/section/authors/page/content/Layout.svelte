@@ -46,9 +46,9 @@
 
   import SvelteSeo from 'svelte-seo';
   import ArticleWidget from './articles/Article-Widget.svelte';
-  import Edit_02 from '$lib/components/ui/assets/edit-02.svelte';
   import Button from '$lib/components/ui/Button.svelte';
-    import Edit_05 from '$lib/components/ui/assets/edit-05.svelte';
+  import Edit_05 from '$lib/components/ui/assets/edit-05.svelte';
+    import userSettings from '$lib/store/user-settings.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -89,8 +89,33 @@
       VIEWPORT_TABLET_INIT[0]
     )
   ;
+  $: ({ user } = $userSettings);
+  $: isAuth = !!user;
 
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  function createArticle(e)
+  {
+    if (!isAuth) {
+      e.preventDefault();
+      $sessionStore.currentActiveModal = "Auth_Modal";
+      return;
+    }
+  }
+
+  // #endregion ➤ 🛠️ METHODS
 
 </script>
 
@@ -144,7 +169,7 @@
 >
   <ArticleWidget />
 </section>
-<a class="create-article" class:tablet class:mobile href="/u/author/article/create/{$sessionStore.serverLang}">
+<a class="create-article" class:tablet on:click={createArticle} class:mobile href="/u/author/article/create/{$sessionStore.serverLang}">
   <Button size={mobile ? "xl" : "xxl"} type="primary" icon_leading={true}>
     <Edit_05 size={mobile ? "20" : "24"} color="var(--colors-base-white)" />
   </Button>

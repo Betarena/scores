@@ -333,6 +333,7 @@
       --component-colors-components-buttons-secondary-button-secondary-fg,
       #525252
     );
+    box-sizing: border-box;
 
     border: 1px solid
       var(
@@ -372,6 +373,9 @@
       /* Shadows/shadow-xs */
       box-shadow: 0px 1px 2px 0px
         var(--colors-effects-shadows-shadow-xs, rgba(31, 31, 31, 0.05));
+    }
+    &.sm {
+      padding-block: calc(var(--spacing-md, 8px) - 1px);
     }
   }
 
