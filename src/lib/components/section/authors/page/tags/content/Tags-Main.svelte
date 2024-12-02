@@ -108,7 +108,7 @@
    *  📣 selected language in dropdown to
    * filter articles by language
    *    */
-  let selectedLang: string | null = "all";
+  let selectedLang: string | null = "en";
   /**
    * @description
    *  📣 array of articles that will be rendered
@@ -185,7 +185,7 @@
     tags = new Map(data.mapTag);
     authors = new Map(data.mapAuthor);
     articles = prepareArticles(data.mapArticle, tags, authors);
-    currentTag = tags.get(data.tagId) as IPageAuthorTagData || {};
+    currentTag = (tags.get(data.tagId) as IPageAuthorTagData) || {};
     pageNumber = 1;
   }
   async function loadArticles() {
@@ -195,8 +195,14 @@
     const res = await fetchArticles({
       permalink: currentTag?.permalink,
       page: pageNumber,
-      lang: sessionStore.extract("lang"),
-      prevData: {...widgetData, mapArticle: articles.map(a => ([a.id, a])) as [number, IPageAuthorArticleData][]},
+      lang: selectedLang,
+      prevData: {
+        ...widgetData,
+        mapArticle: articles.map((a) => [a.id, a]) as [
+          number,
+          IPageAuthorArticleData
+        ][],
+      },
     });
     articles = [...articles, ...res.articles];
     pendingArticles = false;
@@ -214,7 +220,7 @@
         selectedLang ? `&lang=${selectedLang}` : ""
       }`
     )) as IPageAuthorTagDataFinal;
-    if (!res) return pendingArticles = false;
+    if (!res) return (pendingArticles = false);
     widgetData = {
       ...widgetData,
       ...res,
@@ -232,8 +238,6 @@
       `/api/data/author/tags?translation=${lang}`
     )) as IPageAuthorTranslationDataFinal;
     translations = { ...res };
-    const ev = new CustomEvent("translations", { detail: lang });
-    filter(ev);
   }
 
   function scrollHandler() {
