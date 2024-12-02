@@ -14,7 +14,7 @@
   import SelectButton from "$lib/components/ui/SelectButton.svelte";
   import sessionStore from "$lib/store/session.js";
   import userBetarenaSettings from "$lib/store/user-settings.js";
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
   import ArrowDown from "./assets/arrow-down.svelte";
   import type {
     IPageAuthorTagData,
@@ -27,6 +27,7 @@
   import { subscribeTagFollowersListen } from "$lib/graphql/graphql.common.js";
   import { fade } from "svelte/transition";
   import { browser } from "$app/environment";
+  import userSettings from "$lib/store/user-settings.js";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -61,7 +62,7 @@
   export let mobile = false;
   export let tablet = false;
   export let totalArticlesCount = 0;
-  let filterValue = "all";
+  let filterValue = "en";
   let buttonsWidth: number;
   let tagStore: Writable<IPageAuthorTagData>;
   let titleHeight;
@@ -75,7 +76,6 @@
      */ // eslint-disable-next-line no-unused-vars
     CNAME: string = "<author⮕w⮕tags-content⮕header";
   $: options = [
-    { id: "all", label: translations.all },
     ...$page.data.B_NAV_T.langArray
       .map((lang) => ({
         id: lang,
@@ -174,6 +174,10 @@
     });
   }
   // #endregion ➤ 🛠️ METHODS
+
+  onMount(() => {
+    filterValue = userSettings.extract("lang") || "en";
+  })
 </script>
 
 <!--
@@ -224,7 +228,7 @@
       </div>
     </div>
     <div class="action-buttons" bind:clientWidth={buttonsWidth}>
-      <!-- {#if !mobile}
+      {#if !mobile}
         <SelectButton bind:value={filterValue} {options} let:currentValue>
           <div>
             <span>
@@ -241,7 +245,7 @@
             />
           </div>
         </SelectButton>
-      {/if} -->
+      {/if}
 
       <Button type={isFollowed ? "outline" : "primary"} on:click={follow}>
         <span>
@@ -271,7 +275,7 @@
 
 {#if mobile}
   <div class="mobile-selection">
-    <!-- <SelectButton bind:value={filterValue} {options} let:currentValue>
+    <SelectButton bind:value={filterValue} {options} let:currentValue>
       <div>
         <span>
           <TranslationText
@@ -286,7 +290,7 @@
           fallback={currentValue?.label}
         />
       </div>
-    </SelectButton> -->
+    </SelectButton>
   </div>
 {/if}
 
