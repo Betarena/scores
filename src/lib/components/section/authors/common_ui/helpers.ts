@@ -126,7 +126,10 @@ export function userNameToUrlString(userName: string | undefined | null): string
 }
 
 
-export async function fetchArticlesBySportstack({ permalink = "", page = 0, options = {} }: {
+export async function fetchArticlesBySportstack({ permalink = "", page = 0, options = {
+  sortPublishDate: "desc",
+  status: "published",
+} }: {
   permalink?: string; page?: number; options?: {
     sortTitle?: 'desc' | 'asc';
     sortPublishDate?: 'desc' | 'asc';

@@ -142,7 +142,7 @@
      * @description
      * 📝 current page number;
      */
-    currentPage = 1;
+    currentPage = 0;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -224,7 +224,7 @@
       mapAuthors = new Map();
       mapTags = new Map();
       mapArticlesMod = new Map();
-      currentPage = 1;
+      currentPage = 0;
     }
 
     mapArticles = new Map([...mapArticles, ...dataNew.mapArticle]);
