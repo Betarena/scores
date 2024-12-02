@@ -526,9 +526,9 @@ export function timeAgo(datestring: string | null | undefined, translation
   if (days < 1 && hours > 1) return thours?.replace("{hours}", `${hours}`) || `${hours} hour ago`;
   if (days === 1 ) return one_day || '1 day ago';
   if (days === 7) return one_week || '1 week ago';
-  if (days < 30 && !months) return `${days} day${days > 1 ? 's' : ''} ago`;
+  if (days < 30) return `${days} day${days > 1 ? 's' : ''} ago`;
   if (months === 1) return one_month || '1 month ago';
-  if (months > 1 && !years) return tmonths?.replace("{months}", `${months}`) || `${months} months ago`;
+  if (months < 12) return tmonths?.replace("{months}", `${months}`) || `${months} months ago`;
 
   return `${ddMMyyFormat(date.toDateString())} ${toZeroPrefixDateStr(date.getHours())}:${toZeroPrefixDateStr(date.getMinutes())}`;
 
