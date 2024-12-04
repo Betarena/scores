@@ -45,9 +45,9 @@ export default defineConfig
   {
     // ╭─────
     // │ NOTE: [🐞]
-    // │ ➤ [part-1] Testing for override of local .env for that of the dotenv-valut injected secrets.
+    // │ ➤ [1] Testing expected override of local '.env' for that of the 'dotenv-valut' injected secrets.
     // ╰─────
-    // console.log([JSON.stringify(process.env.VITE_ENV_TARGET)])
+    console.log(`📜 [1] Loaded using (file): ${process.env.VITE_ENV_TARGET}`);
 
     // ╭─────
     // │ NOTE: IMPORTANT
@@ -61,10 +61,21 @@ export default defineConfig
 
     // ╭─────
     // │ NOTE: [🐞]
-    // │ ➤ [part-2] Testing for override of local .env for that of the dotenv-valut injected secrets.
+    // │ ➤ [2] Testing expected override of local '.env' for that of the 'dotenv-valut' injected secrets.
     // ╰─────
-    // console.log([JSON.stringify(process.env.VITE_ENV_TARGET)])
-    // console.log([JSON.stringify(loadEnv(mode, process.cwd()))])
+    console.log(`📜 [2] Loaded using (file): ${process.env.VITE_ENV_TARGET}`);
+
+    // [🐞]
+    console.log
+    (
+      `
+      // ╭──────────────────────────────────────────────────────────────────────────────────╮
+      // │ 🔒 Loaded secrets ⬇️                                                             │
+      // ╰──────────────────────────────────────────────────────────────────────────────────╯
+      `.replaceAll('  ','')
+    );
+    // [🐞]
+    console.log(loadEnv(mode, process.cwd()));
 
     const
       /**
@@ -279,10 +290,13 @@ export default defineConfig
         {
           output:
           {
+            // ╭─────
+            // │ NOTE:
+            // │ ➤ [disabled]
+            // │ 🔗 read-more :|: https://github.com/vitejs/vite/discussions/9440#discussioncomment-5913798
+            // │ 🔗 read-more :|: https://stackoverflow.com/questions/68643743/separating-material-ui-in-vite-rollup-as-a-manual-chunk-to-reduce-chunk-size
+            // ╰─────
             // manualChunks: undefined
-
-            // 🔗 read-more :|: https://github.com/vitejs/vite/discussions/9440#discussioncomment-5913798
-            // 🔗 read-more :|: https://stackoverflow.com/questions/68643743/separating-material-ui-in-vite-rollup-as-a-manual-chunk-to-reduce-chunk-size
             manualChunks
             (
               id,
@@ -292,27 +306,20 @@ export default defineConfig
               // [🐞]
               // console.log(id);
 
-              /*
-                fs.appendFile
-                (
-                  './chunks-full.json',
-                  id,
-                  err =>
-                  {
-                    if (err) console.error(err);
-                  }
-                );
-
-                fs.appendFile
-                (
-                  './chunks-full.json',
-                  JSON.stringify(opt, null, 4),
-                  err =>
-                  {
-                    if (err) console.error(err);
-                  }
-                );
-              */
+              // fs.appendFile
+              // (
+              //   './chunks-full.json',
+              //   id,
+              //   // ╭─────
+              //   // │ NOTE:
+              //   // │ |: Alternative approach
+              //   // ╰─────
+              //   // JSON.stringify(opt, null, 4),
+              //   err =>
+              //   {
+              //     if (err) console.error(err);
+              //   }
+              // );
 
               // ╭─────
               // │ NOTE:
@@ -368,31 +375,31 @@ export default defineConfig
         }
       },
 
-      // 🔗 read-more :|: https://stackoverflow.com/questions/73205096/run-sveltekit-dev-with-https
-      /*
-        server:
-        {
-          https:
-          {
-            key: fs.readFileSync(`${__dirname}/cert/key.pem`),
-            cert: fs.readFileSync(`${__dirname}/cert/cert.pem`)
-          }
-        }
-      */
+      // ╭─────
+      // │ NOTE:
+      // │ ➤ [disabled]
+      // │ 🔗 read-more :|: https://stackoverflow.com/questions/73205096/run-sveltekit-dev-with-https
+      // ╰─────
+      // server:
+      // {
+      //   https:
+      //   {
+      //     key: fs.readFileSync(`${__dirname}/cert/key.pem`),
+      //     cert: fs.readFileSync(`${__dirname}/cert/cert.pem`)
+      //   }
+      // }
 
       // ╭─────
       // │ NOTE:
-      // │ ➤ (disabled) 'vitest' integration
+      // │ ➤ [disabled] 'vitest' integration
       // ╰─────
-      /*
-        test:
-        {
-          include: ['src/**//*.{test,spec}.{js,ts}'],
-          globals: true,
-          environment: 'jsdom',
-          // setupFiles: ["src/setuptest.js"],
-        }
-      */
+      // test:
+      // {
+      //   include: ['src/**//*.{test,spec}.{js,ts}'],
+      //   globals: true,
+      //   environment: 'jsdom',
+      //   // setupFiles: ["src/setuptest.js"],
+      // }
     }
   }
 );
