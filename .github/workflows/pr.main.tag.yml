@@ -10,12 +10,6 @@
 
 name: '⚡️ Bump│Publish│Reset│Release'
 
-env:
-  # MINOR_ARRAY: '["Minor", "MINOR"]' # TEST with arrays
-  PATCH_WORDING: 'PATCH,patch,fix,hotfix,add'
-  MINOR_WORDING: 'MINOR,minor,feat'
-  MAJOR_WORDING: 'MAJOR,major,BREAKING'
-
 'on':
   pull_request:
     types:
@@ -24,107 +18,6 @@ env:
       - main
 
 jobs:
-
-  # npm-version-bump-test:
-    # if: github.event.pull_request.merged == true
-    # runs-on: ubuntu-22.04
-    # steps:
-
-    # NOTE: anothrNick/github-tag-action
-    # NOTE: -> creates and bumps TAG version of the REPO
-    # NOTE: -> in PR, the SQUASH MERGE needs the #patch/#major/#minor to be in the "commit-merge" message
-    # NOTE: -> ✅ works!,
-    # NOTE: -> ❌ but does not update the `package.json` according to <version-type>
-    # region #1
-    # - uses: actions/checkout@v3
-    #   with:
-    #     ref: ${{ github.sha }}
-    #     fetch-depth: '0'
-    # - name: Bump version and push tag
-    #   # Don't use @master unless you're happy to test the latest version
-    #   uses: anothrNick/github-tag-action@1.61.0
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #     # (optional) - Tag version with v character.
-    #     WITH_V: true
-    #     # (optional) - Set initial version before bump. Default 0.0.0.
-    #     INITIAL_VERSION: 0.7.1
-    # endregion #1
-
-    # NOTE: phips28/gh-action-bump-version
-    # NOTE: [DESC] This Action bumps the version in package.json and pushes it back to the repo.
-    # NOTE: [DESC] It is meant to be used on every successful merge to master but you'll need to configure that workflow yourself.
-    # NOTE: -> uses version: that of the package.json for bump/update
-    # NOTE: -> ✅ & updates the package.json itself!;
-    # NOTE: -> ❌ but does not work on PR (closed) - cannot identify commit / messages from PR closed
-    # NOTE: -> ✅ works!
-    # region #2
-    # - name: 'Checkout source code'
-    #   uses: 'actions/checkout@v3'
-    #   with:
-    #     # ref: ${{ github.ref }}
-    #     # (add) ❌ not-working, no commit-messages detected
-    #     # fetch-depth: 0
-    #     # ref: ${{ github.sha }}
-    #     fetch-depth: 2
-    # - run: git checkout HEAD^
-    # - run: echo "GITHUB_EVENT_PATH - $GITHUB_EVENT_PATH"
-    # - run: cat $GITHUB_EVENT_PATH
-    # - name: 'cat package.json'
-    #   run: cat ./package.json
-    # - name: 'Automated Version Bump'
-    #   id: version-bump
-    #   uses: 'phips28/gh-action-bump-version@v9.1.0'
-    #   with:
-    #     tag-prefix: 'v'
-    #     target-branch: 'dev'
-    #     commit-message: 'CI: bumps version to {{version}} [skip ci] #minor'
-    #     major-wording:  'MAJOR,major'
-    #     minor-wording:  'MINOR,#minor,add,feat'
-    #     patch-wording:  'PATCH,patch,fixes,fix,chore,doc'
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #     GITHUB_EVENT_PATH: $GITHUB_EVENT_PATH
-    # - name: 'cat package.json'
-    #   run: cat ./package.json
-    # - name: 'Output Step'
-    #   env:
-    #     NEW_TAG: ${{ steps.version-bump.outputs.newTag }}
-    #   run: echo "new tag $NEW_TAG"
-    # endregion #2
-
-    # NOTE: jpb06/bump-package
-    # NOTE: -> tested with @v3 ❌ (not working)
-    # region #3
-    # - name: Check out repository code
-    #   uses: actions/checkout@v3
-    #   with:
-    #     # Disabling shallow clone is recommended for improving relevancy of reporting
-    #     fetch-depth: 0
-    # - name: Bump package version
-    #   id: bumping-version
-    #   uses: jpb06/bump-package@latest
-    #   with:
-    #     minor-keywords: feat,minor
-    #     patch-keywords: fix,chore,patch
-    #     should-default-to-patch: true
-    # endregion #3
-
-    # NOTE: maks-stupak/gh-action-bump-version
-    # NOTE: -> package.json version update;
-    # NOTE: -> tested with checkout@v2 & checkout@v3 ❌ (not working)
-    # region #4
-    # - name: 'Checkout source code'
-    #   uses: 'actions/checkout@v2'
-    # - name: Update version in package.json
-    #   uses: maks-stupak/gh-action-bump-version@v7.1.5
-    # endregion #4
-
-    # NOTE: ALTERNATIVE (#4)
-    # NOTE: -> exact copy of SAMPLE-EXAMPLE worklfow provided;
-    # NOTE: -> https://github.com/maks-stupak/gh-action-bump-version/blob/v7.1.5/.github/workflows/push.yml
-    # NOTE: -> ✅ works!, but does not update package.json of dev/main (target PR) only origin branch
-    # NOTE: -> ❌ limited in variables (custom-fork) - not what is needed;
 
   # ╭──────────────────────────────────────────────────────────────────╮
   # │ NOTE:                                                            │
@@ -167,7 +60,6 @@ jobs:
 
       - name: "STEP :|: check semver:patch"
         if: contains(github.event.pull_request.labels.*.name, 'semver:patch')
-        # if: '${{ contains(env.PATCH_WORDING, github.event.pull_request.title) }}'
         run: |
           npm version patch
 
