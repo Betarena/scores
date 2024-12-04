@@ -1,0 +1,32 @@
+# ╭──────────────────────────────────────────────────────────────────╮
+# │ 🐙 GITHUB ACIONS CI/CD WORKFLOW                                  │
+# ┣──────────────────────────────────────────────────────────────────┫
+# │ Responsible for:                                                 │
+# │ ➤ [1] auto-bump of project version.                              │
+# │ ➤ [2] auto-reset dev (branch) to main state.                     │
+# │ ➤ [3] auto-create release + tag of project.                      │
+# │ ➤ [4] auto-deploy project to target server.                      │
+# ╰──────────────────────────────────────────────────────────────────╯
+
+name: '⚡️ Bump│Publish│Reset│Release'
+
+'on':
+  push:
+
+jobs:
+
+  docker-image-build-and-push:
+    name: 🐳 Docker Image Build
+    runs-on: ubuntu-22.04
+    steps:
+
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref }}
+
+      - name: "STEP |:| build & publish docker image"
+        run: |
+          make docker-image-build
+          docker images
+          docker images betarena-scores --format "{{.ID}}"  --no-trunc --filter "label=project=Scores"
+  #
