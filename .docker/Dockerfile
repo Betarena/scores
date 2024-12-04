@@ -32,12 +32,20 @@ RUN \
   npm install -g npm@10.2.3 && \
   npm install --omit=optional --production --ignore-scripts
 #
+# [🐞]
+RUN ls -lha
 
 FROM base AS build
 COPY . /app
+COPY ./env/.env.docker.file /app/.env
 WORKDIR /app
 RUN apk add --no-cache python3 make g++
-RUN npm install -g npm@10.2.3 && npm i --omit=optional
+RUN \
+  npm install -g npm@10.2.3 && \
+  npm i --omit=optional
+#
+# [🐞]
+RUN ls -lha
 RUN npm run build
 RUN npm run "sveltekit|:|build"
 RUN npm run "server|:|build"
@@ -48,15 +56,41 @@ RUN npm run "server|:|build"
 
 FROM base AS final
 WORKDIR /app
-USER node:node
 COPY --from=prod-deps /app/node_modules node_modules/
 COPY --from=build /app/build build/
 COPY --from=build /app/dist/dual.instance.js dual.instance.js
 COPY --from=build /app/package.json /app/.env ./
+COPY --from=build /app/.scripts .scripts/
+# [🐞]
+RUN ls -lha
+
+RUN chmod +x .scripts/*.sh
 
 # ╭──────────────────────────────────────────────────────────────────────────────────╮
 # │ 🏗️ STEP 3 │ Code Deployment                                                      │
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
+LABEL \
+  authors="20924663+migbash@users.noreply.github.com" \
+  version="1.0.0" \
+  description="Betarena - Scores - Docker Image" \
+  organization="Betarena" \
+  project="Scores" \
+  type="frontend"
+#
+# HEALTHCHECK \
+#   --interval=30s \
+#   --timeout=5s \
+#   --retries=3 \
+#   # --start-interval=5s \
+#   --start-period=5s \
+#   CMD [ "/app/.scripts/docker.healthcheck.sh" ]
+#
+# RUN apk --no-cache add curl
+
 EXPOSE 5055
-CMD ["npm", "run", "sveltekit|:|start|:|docker"]
+ENTRYPOINT [ "/app/.scripts/docker.entrypoint.sh" ]
+# ╭─────
+# │ NOTE: |:| Alternative [1]
+# ╰─────
+# CMD ["npm", "run", "sveltekit|:|start|:|docker"]
