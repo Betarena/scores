@@ -20,9 +20,7 @@
 # set +o allexport
 
 # [🐞]
-echo "[docker.env.inject.sh] ENV: " $(env)
-# [🐞]
-echo "[docker.env.inject.sh] VITE_X_FIREBASE_DB_API_KEY: " $VITE_X_FIREBASE_DB_API_KEY
+echo "[docker.env.inject.sh] ENV:" $(env)
 
 # ╭─────
 # │ NOTE:
@@ -33,11 +31,13 @@ do
   key=$(echo $i | cut -d '=' -f 1)
   value=$(echo $i | cut -d '=' -f 2-)
   # [🐞]
-  echo "[docker.env.inject.sh] DYNAMIC ASSIGNING: " $key=$value
+  echo "[docker.env.inject.sh] ASSIGN:" $key=$value
 
-  key_original=${key/_X_/}
+  key_original=${key/_X_/_}
 
   export $key_original=$value
+
+  unset $key
 
   # ╭─────
   # │ NOTE:
@@ -57,6 +57,6 @@ do
 done
 
 # [🐞]
-echo "[docker.env.inject.sh] ENV: " $(env)
+echo "[docker.env.inject.sh] ENV:" $(env)
 # [🐞]
-echo "[docker.env.inject.sh] Done 🟩"
+echo "[docker.env.inject.sh] DONE 🟩"
