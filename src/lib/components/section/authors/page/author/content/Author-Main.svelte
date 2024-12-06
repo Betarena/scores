@@ -65,6 +65,7 @@
   import session from '$lib/store/session.js';
   import { post } from '$lib/api/utils.js';
   import { getUserById } from '$lib/firebase/common.js';
+  // import AdvertInterScroller  from './Advert-InterScroller.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -292,7 +293,8 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
+<img src="https://firebasestorage.googleapis.com/v0/b/betarena-ios.appspot.com/o/Betarena_Media%2Fads%2F0x1510ea733e1e81f9bcfcc4eabb5a2226d1a9f9ea18da9aea119ba28b8ed6be81%2FBRBet365DesktopCover1-min.png?alt=media&token=708502ce-179a-469a-8758-e9a94bb94217" class="descktop_ad" />
+<!-- <AdvertInterScroller containerSelector="#content" /> -->
 <div
   id="{CNAME}"
 >
@@ -671,6 +673,15 @@
 -->
 
 <style lang="scss">
+ .descktop_ad {
+  position: fixed;
+  right: 0;
+  max-height: 100%;
+  // z-index: -1;
+  top: 0;
+  // height: fit-content;
+  // width: fit-content;
+ }
 
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮

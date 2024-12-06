@@ -68,7 +68,7 @@
 
   // import '@betarena/ad-engine';
   // import WidgetAdEngine from '@betarena/ad-engine/src/lib/Widget-AdEngine.svelte';
-  import WidgetAdEngine from "@betarena/ad-engine";
+  // import {WidgetAdEngine }from "@betarena/ad-engine";
   import {
     routeIdContent,
     routeIdPageCompetitions,
@@ -625,11 +625,11 @@
   data-mode={ispwa ? "pwa" : "web"}
 >
   {#key $page.route.id}
-    <WidgetAdEngine
+    <!-- <WidgetAdEngine
       authorId={$page.data.dataArticle?.author?.id}
       authorArticleTagIds={$page.data.dataArticle?.article?.tags}
       isDarkTheme={theme == "Dark"}
-    />
+    /> -->
   {/key}
 
   <SplashScreen />
@@ -719,6 +719,9 @@
   ╰──────────────────────────────────────────────────────────────────────────────╯
   */
 
+  [data-page-id="AuthorsPage"]{
+    background-color: var(--bg-color);
+  }
   [data-page-id="AuthorsPage"][data-mode="pwa"] {
     background-color: var(--bg-color);
   }

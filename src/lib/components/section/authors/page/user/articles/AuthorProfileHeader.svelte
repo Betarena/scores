@@ -239,11 +239,11 @@
             <a
               class="username"
               on:click|stopPropagation
-              href="/a/user/{userNameToUrlString(follower.usernameLower)}"
+              href="/a/user/{userNameToUrlString(follower?.usernameLower)}"
             >
               <span>
                 {" "}
-                {`${follower.username}${
+                {`${follower?.username}${
                   index < subscribers_profiles.length - 1 ? "," : ""
                 }`}
               </span>
@@ -323,12 +323,12 @@
             <a
               class="owner"
               href="/a/user/{userNameToUrlString(
-                highlited_sportstack.owner.usernameLower
+                highlited_sportstack.owner?.usernameLower
               )}"
             >
               <TranslationText text={translations.by} fallback="By" />
               <span class="sportstack-owner-name">
-                 {highlited_sportstack.owner.username}
+                 {highlited_sportstack.owner?.username}
 
               </span>
             </a>

@@ -158,6 +158,7 @@
   id="header"
   class:sticky={$page.route.id === routeIdPageAuthors && isPWA && mobile}
   class:mobile
+  data-page-id={currentPageRouteId}
   class:dark-mode={currentPageRouteId !== "AuthorsPage"}
   style:border-bottom={$page.route.id === routeIdPageAuthors
     ? "none"
@@ -214,6 +215,9 @@
     align-items: center;
     background-color: var(--bg-color);
     position: relative;
+    &[data-page-id="AuthorsPage"] {
+      background-color: inherit
+    }
 
     &.sticky {
       position: sticky;
