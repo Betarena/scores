@@ -67,7 +67,7 @@
   import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
 
   // import '@betarena/ad-engine';
-  // import WidgetAdEngine from '@betarena/ad-engine/src/lib/Widget-AdEngine.svelte';
+  import WidgetAdEngine from '@betarena/ad-engine';
   // import {WidgetAdEngine }from "@betarena/ad-engine";
   import {
     routeIdContent,
@@ -625,11 +625,11 @@
   data-mode={ispwa ? "pwa" : "web"}
 >
   {#key $page.route.id}
-    <!-- <WidgetAdEngine
+    <WidgetAdEngine
       authorId={$page.data.dataArticle?.author?.id}
       authorArticleTagIds={$page.data.dataArticle?.article?.tags}
       isDarkTheme={theme == "Dark"}
-    /> -->
+    />
   {/key}
 
   <SplashScreen />

@@ -65,7 +65,7 @@
   import session from '$lib/store/session.js';
   import { post } from '$lib/api/utils.js';
   import { getUserById } from '$lib/firebase/common.js';
-  // import AdvertInterScroller  from './Advert-InterScroller.svelte';
+  import AdvertInterScroller  from './Advert-InterScroller.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -98,6 +98,7 @@
     | 'PrevButtonShow'
     | 'NextButtonShow'
   ;
+  let node
 
   const
     /**
@@ -293,8 +294,12 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<img src="https://firebasestorage.googleapis.com/v0/b/betarena-ios.appspot.com/o/Betarena_Media%2Fads%2F0x1510ea733e1e81f9bcfcc4eabb5a2226d1a9f9ea18da9aea119ba28b8ed6be81%2FBRBet365DesktopCover1-min.png?alt=media&token=708502ce-179a-469a-8758-e9a94bb94217" class="descktop_ad" />
-<!-- <AdvertInterScroller containerSelector="#content" /> -->
+<!-- <img src="https://firebasestorage.googleapis.com/v0/b/betarena-ios.appspot.com/o/Betarena_Media%2Fads%2F0x1510ea733e1e81f9bcfcc4eabb5a2226d1a9f9ea18da9aea119ba28b8ed6be81%2FBRBet365DesktopCover1-min.png?alt=media&token=708502ce-179a-469a-8758-e9a94bb94217" class="descktop_ad" /> -->
+
+{#if node}
+   <!-- content here -->
+   <AdvertInterScroller instanceNode={node} />
+{/if}
 <div
   id="{CNAME}"
 >
@@ -657,6 +662,8 @@
   -->
   <div
     id='content'
+    bind:this={node}
+    data-betarena-zone-id=2
   >
     {@html widgetData.article.data?.content}
   </div>
