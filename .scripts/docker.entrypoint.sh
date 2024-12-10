@@ -17,4 +17,4 @@
 
 source ./.scripts/docker.env.inject.sh
 
-npm run "sveltekit|:|start|:|docker"
+npm run "vite/start/docker"
