@@ -38,6 +38,7 @@ jobs:
           docker images betarena-scores --format "{{.ID}}"  --no-trunc --filter "label=project=Scores"
           echo "ENV_IMAGE_TAG_ID=$(docker images betarena-scores --format "{{.ID}}"  --no-trunc --filter "label=project=Scores")" >> $GITHUB_ENV
           # [🐞]
-          echo "${{ env.ENV_IMAGE_TAG }}"
-          make docker-image-publish-to-registry
+          echo "${{ env.ENV_IMAGE_TAG_ID }}"
+          make docker-image-publish-to-registry \
+            ENV_IMAGE_TAG_ID="${{ env.ENV_IMAGE_TAG_ID }}"
   #
