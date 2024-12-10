@@ -564,6 +564,60 @@ docker-image-build:
 #
 
 .ONESHELL:
+docker-image-publish-to-registry:
+	@
+	# ╭──────────────────────────────────────────────────────────────────╮
+	# │ NOTE: │ DESCRIPTION																						   │
+	# │ ➤ initialize docker instance (spin-up) used in local environment │
+	# │ ➤ comprising database initialization.                            │
+	# ╰──────────────────────────────────────────────────────────────────╯
+
+	echo \
+		"$(COLOUR_B)\
+		\n╭──────────────────────────────────────────────────────────────────╮\
+		\n│ 🐳 │ Creating Docker Image                                       │\
+		\n│ 	 │: DockerHub Account :: (ENV_DOCKER_HUB_USERNAME) \
+		\n│ 	 │: Docker ImageId :: (ENV_IMAGE_TAG_ID) \
+		\n╰──────────────────────────────────────────────────────────────────╯\
+		$(END_COLOUR)\n";
+	#
+
+	docker login \
+		-u $(ENV_DOCKER_HUB_USERNAME) \
+		-p $(ENV_DOCKER_HUB_PASSWORD) \
+		docker.io
+	#
+
+	# ╭─────
+	# │ NOTE:
+	# │ |: Docker Image Tagging (Version)
+	# ╰─────
+
+	docker tag \
+		$(ENV_IMAGE_TAG_ID) \
+		$(ENV_DOCKER_HUB_USERNAME)/betarena:scores-$(shell npm pkg get version --workspaces=false | tr -d \")
+	#
+
+	docker push \
+		$(ENV_DOCKER_HUB_USERNAME)/betarena:scores-$(shell npm pkg get version --workspaces=false | tr -d \")
+	#
+
+	# ╭─────
+	# │ NOTE:
+	# │ |: Docker Image Tagging (Latest)
+	# ╰─────
+
+	docker tag \
+		$(ENV_IMAGE_TAG_ID) \
+		$(ENV_DOCKER_HUB_USERNAME)/betarena:scores-latest
+	#
+
+	docker push \
+		$(ENV_DOCKER_HUB_USERNAME)/betarena:scores-latest
+	#
+#
+
+.ONESHELL:
 docker-spin-start-production:
 	@
 	echo -e \
