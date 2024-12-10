@@ -19,9 +19,6 @@ on:
       - unlabeled
       - synchronize
 
-env:
-  DOCKER_IMAGE: 'scores_web'
-
 jobs:
 
   # ╭──────────────────────────────────────────────────────────────────╮
@@ -30,7 +27,7 @@ jobs:
   # ╰──────────────────────────────────────────────────────────────────╯
 
   npm-build-check:
-    name: 🪀 NPM Build Check
+    name: JOB /:/ NPM check build
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
@@ -39,28 +36,19 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18.19.0
-      - name: '🏗️ Set npm version'
+      - name: 'STEP /:/ set npm version'
         run: |
           npm install -g npm@10.2.3
-      - name: 'create .env'
+      - name: 'STEP /:/ create .env'
         run: |
-          echo ${{ secrets.ENV_FILE }} | base64 -d > .env
-      - name: '🟩 Build npm'
+          cp ./env/.env.docker.file .env
+      - name: 'STEP /:/ build npm'
         env:
           NODE_OPTIONS: "--max-old-space-size=8192"
         run: |
           npm ci
           npm run build
-
-  # docker-image-build:
-  #   needs: npm-build-check
-  #   name: 🐳 Docker Image Build
-  #   runs-on: ubuntu-22.04
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - name: Build docker image
-  #       run: |
-  #         docker build . --file ./docker/prod.Dockerfile --tag ${{ env.DOCKER_IMAGE }}:$(date +%s)
+  #
 
   # ╭──────────────────────────────────────────────────────────────────╮
   # │ NOTE:                                                            │
@@ -68,12 +56,10 @@ jobs:
   # ╰──────────────────────────────────────────────────────────────────╯
 
   check-labels:
-    name: 'Check PR Labels'
+    name: 'JOB /:/ PR check labels'
     runs-on: ubuntu-22.04
     steps:
-
       - uses: actions/checkout@v3
-
       - uses: mheap/github-action-required-labels@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -84,25 +70,24 @@ jobs:
             semver:patch
             semver:minor
             semver:major
+  #
 
   # ╭──────────────────────────────────────────────────────────────────────────────────╮
   # │ 💠 │ JOB | PULL-REQUEST FORMAT                                                   │
   # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
   pull-request-format:
+    name: 'JOB /:/ pr format'
     runs-on: ubuntu-22.04
-    name: 'JOB :|: pr format'
     steps:
-
-      - name: 'STEP :|: checkout source code'
+      - name: 'STEP /:/ checkout source code'
         uses: actions/checkout@v4
         with:
           token: '${{ secrets.GH_TOKEN }}'
           fetch-depth: 0
           fetch-tags: true
           ref: ${{ github.head_ref }}
-
-      - name: 'STEP :|: generate PR body'
+      - name: 'STEP /:/ generate PR body'
         id: testing
         run: |
           git fetch origin main:main
@@ -110,7 +95,6 @@ jobs:
           echo "$(git branch --show-current)"
           git log main.. --format=%B | cat > ./temp-pr-body.md
           echo "$(cat ./temp-pr-body.md)"
-
       # ╭─────
       # │ NOTE:
       # │ |: Not recommended for use
@@ -128,3 +112,4 @@ jobs:
             # $(git log main.. --format=%B | cat)
           body-update-action: 'replace'
           body-uppercase-base-match: false
+  #

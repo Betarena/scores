@@ -181,7 +181,7 @@ jobs:
           # [🐞]
           docker images
           # [🐞]
-          docker images betarena-scores --format "{{.ID}}"  --no-trunc --filter "label=project=Scores"
+          docker images betarena-scores --format "{{.ID}}" --no-trunc --filter "label=project=Scores"
           echo "ENV_IMAGE_TAG_ID=$(docker images betarena-scores --format "{{.ID}}"  --no-trunc --filter "label=project=Scores")" >> $GITHUB_ENV
       - name: "STEP /:/ publish docker image"
         run: |
