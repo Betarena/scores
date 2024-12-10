@@ -582,10 +582,10 @@ docker-image-publish-to-registry:
 		$(END_COLOUR)\n";
 	#
 
-	docker login \
-		-u $(ENV_DOCKER_HUB_USERNAME) \
-		-p $(ENV_DOCKER_HUB_PASSWORD) \
-		docker.io
+	# docker login \
+	# 	-u $(ENV_DOCKER_HUB_USERNAME) \
+	# 	-p $(ENV_DOCKER_HUB_PASSWORD) \
+	# 	docker.io
 	#
 
 	# ╭─────
