@@ -29,16 +29,23 @@ jobs:
           username: ${{ secrets.ENV_DOCKER_HUB_USERNAME }}
           password: ${{ secrets.ENV_DOCKER_HUB_PASSWORD }}
 
-      - name: "STEP |:| build & publish docker image"
+      - name: "STEP |:| testing (1)"
         run: |
-          make docker-image-build
-          # [🐞]
-          docker images
-          # [🐞]
-          docker images betarena-scores --format "{{.ID}}"  --no-trunc --filter "label=project=Scores"
-          echo "ENV_IMAGE_TAG_ID=$(docker images betarena-scores --format "{{.ID}}"  --no-trunc --filter "label=project=Scores")" >> $GITHUB_ENV
-          # [🐞]
-          echo "${{ env.ENV_IMAGE_TAG_ID }}"
-          make docker-image-publish-to-registry \
-            ENV_IMAGE_TAG_ID="${{ env.ENV_IMAGE_TAG_ID }}"
+          make docker-test
+        env:
+          TEST_ENV_VALUE: "HELLO"
+          ENV_DOCKER_HUB_USERNAME: ${{ secrets.ENV_DOCKER_HUB_USERNAME }}
+
+      # - name: "STEP |:| build & publish docker image"
+      #   run: |
+      #     make docker-image-build
+      #     # [🐞]
+      #     docker images
+      #     # [🐞]
+      #     docker images betarena-scores --format "{{.ID}}"  --no-trunc --filter "label=project=Scores"
+      #     echo "ENV_IMAGE_TAG_ID=$(docker images betarena-scores --format "{{.ID}}"  --no-trunc --filter "label=project=Scores")" >> $GITHUB_ENV
+      #     # [🐞]
+      #     echo "${{ env.ENV_IMAGE_TAG_ID }}"
+      #     make docker-image-publish-to-registry \
+      #       ENV_IMAGE_TAG_ID="${{ env.ENV_IMAGE_TAG_ID }}"
   #

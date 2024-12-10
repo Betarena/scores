@@ -537,6 +537,14 @@ heroku-target-bash:
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 .ONESHELL:
+docker-test:
+	echo \
+		"$(TEST_ENV_VALUE)" \
+		"$(ENV_DOCKER_HUB_USERNAME)"
+	#
+#
+
+.ONESHELL:
 docker-image-build:
 	@
 	# ╭──────────────────────────────────────────────────────────────────╮
