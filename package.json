@@ -1,13 +1,13 @@
 {
 	"name": "betarena-scores-platform",
-	"version": "2.19.0",
+	"version": "2.19.1",
 	"description": "Betarena Official Scores Platform (PWA)",
 	"author": "migbash",
 	"license": "ISC",
 	"type": "module",
 	"engines": {
 		"node": "v18.19.0",
-    "npm": "10.2.3",
+		"npm": "10.2.3",
 		"pnpm": "9.11.0"
 	},
 	"engineStrict": true,
