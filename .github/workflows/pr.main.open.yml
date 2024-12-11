@@ -22,10 +22,9 @@ jobs:
   # ╰──────────────────────────────────────────────────────────────────╯
 
   add_comment:
-    name: 'Add (PR) Comment'
+    name: 'JOB /:/ PR add comment'
     runs-on: ubuntu-22.04
     steps:
-
       - uses: mshick/add-pr-comment@v1
         with:
           message: |

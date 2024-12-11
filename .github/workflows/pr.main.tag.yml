@@ -4,17 +4,12 @@
 # │ Responsible for:                                                 │
 # │ ➤ [1] auto-bump of project version.                              │
 # │ ➤ [2] auto-reset dev (branch) to main state.                     │
-# │ ➤ [3] auto-create release + tag of project.                      │
-# │ ➤ [4] auto-deploy project to target server.                      │
+# │ ➤ [3] [disabled] auto-create release + tag of project.           │
+# │ ➤ [5] build & publish docker image                               │
+# │ ➤ [6] [disabled] auto-deploy project to target server.           │
 # ╰──────────────────────────────────────────────────────────────────╯
 
-name: '⚡️ Bump│Publish│Reset│Release'
-
-env:
-  # MINOR_ARRAY: '["Minor", "MINOR"]' # TEST with arrays
-  PATCH_WORDING: 'PATCH,patch,fix,hotfix,add'
-  MINOR_WORDING: 'MINOR,minor,feat'
-  MAJOR_WORDING: 'MAJOR,major,BREAKING'
+name: '⚡️ Bump│Publish│Release'
 
 'on':
   pull_request:
@@ -24,107 +19,6 @@ env:
       - main
 
 jobs:
-
-  # npm-version-bump-test:
-    # if: github.event.pull_request.merged == true
-    # runs-on: ubuntu-22.04
-    # steps:
-
-    # NOTE: anothrNick/github-tag-action
-    # NOTE: -> creates and bumps TAG version of the REPO
-    # NOTE: -> in PR, the SQUASH MERGE needs the #patch/#major/#minor to be in the "commit-merge" message
-    # NOTE: -> ✅ works!,
-    # NOTE: -> ❌ but does not update the `package.json` according to <version-type>
-    # region #1
-    # - uses: actions/checkout@v3
-    #   with:
-    #     ref: ${{ github.sha }}
-    #     fetch-depth: '0'
-    # - name: Bump version and push tag
-    #   # Don't use @master unless you're happy to test the latest version
-    #   uses: anothrNick/github-tag-action@1.61.0
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #     # (optional) - Tag version with v character.
-    #     WITH_V: true
-    #     # (optional) - Set initial version before bump. Default 0.0.0.
-    #     INITIAL_VERSION: 0.7.1
-    # endregion #1
-
-    # NOTE: phips28/gh-action-bump-version
-    # NOTE: [DESC] This Action bumps the version in package.json and pushes it back to the repo.
-    # NOTE: [DESC] It is meant to be used on every successful merge to master but you'll need to configure that workflow yourself.
-    # NOTE: -> uses version: that of the package.json for bump/update
-    # NOTE: -> ✅ & updates the package.json itself!;
-    # NOTE: -> ❌ but does not work on PR (closed) - cannot identify commit / messages from PR closed
-    # NOTE: -> ✅ works!
-    # region #2
-    # - name: 'Checkout source code'
-    #   uses: 'actions/checkout@v3'
-    #   with:
-    #     # ref: ${{ github.ref }}
-    #     # (add) ❌ not-working, no commit-messages detected
-    #     # fetch-depth: 0
-    #     # ref: ${{ github.sha }}
-    #     fetch-depth: 2
-    # - run: git checkout HEAD^
-    # - run: echo "GITHUB_EVENT_PATH - $GITHUB_EVENT_PATH"
-    # - run: cat $GITHUB_EVENT_PATH
-    # - name: 'cat package.json'
-    #   run: cat ./package.json
-    # - name: 'Automated Version Bump'
-    #   id: version-bump
-    #   uses: 'phips28/gh-action-bump-version@v9.1.0'
-    #   with:
-    #     tag-prefix: 'v'
-    #     target-branch: 'dev'
-    #     commit-message: 'CI: bumps version to {{version}} [skip ci] #minor'
-    #     major-wording:  'MAJOR,major'
-    #     minor-wording:  'MINOR,#minor,add,feat'
-    #     patch-wording:  'PATCH,patch,fixes,fix,chore,doc'
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #     GITHUB_EVENT_PATH: $GITHUB_EVENT_PATH
-    # - name: 'cat package.json'
-    #   run: cat ./package.json
-    # - name: 'Output Step'
-    #   env:
-    #     NEW_TAG: ${{ steps.version-bump.outputs.newTag }}
-    #   run: echo "new tag $NEW_TAG"
-    # endregion #2
-
-    # NOTE: jpb06/bump-package
-    # NOTE: -> tested with @v3 ❌ (not working)
-    # region #3
-    # - name: Check out repository code
-    #   uses: actions/checkout@v3
-    #   with:
-    #     # Disabling shallow clone is recommended for improving relevancy of reporting
-    #     fetch-depth: 0
-    # - name: Bump package version
-    #   id: bumping-version
-    #   uses: jpb06/bump-package@latest
-    #   with:
-    #     minor-keywords: feat,minor
-    #     patch-keywords: fix,chore,patch
-    #     should-default-to-patch: true
-    # endregion #3
-
-    # NOTE: maks-stupak/gh-action-bump-version
-    # NOTE: -> package.json version update;
-    # NOTE: -> tested with checkout@v2 & checkout@v3 ❌ (not working)
-    # region #4
-    # - name: 'Checkout source code'
-    #   uses: 'actions/checkout@v2'
-    # - name: Update version in package.json
-    #   uses: maks-stupak/gh-action-bump-version@v7.1.5
-    # endregion #4
-
-    # NOTE: ALTERNATIVE (#4)
-    # NOTE: -> exact copy of SAMPLE-EXAMPLE worklfow provided;
-    # NOTE: -> https://github.com/maks-stupak/gh-action-bump-version/blob/v7.1.5/.github/workflows/push.yml
-    # NOTE: -> ✅ works!, but does not update package.json of dev/main (target PR) only origin branch
-    # NOTE: -> ❌ limited in variables (custom-fork) - not what is needed;
 
   # ╭──────────────────────────────────────────────────────────────────╮
   # │ NOTE:                                                            │
@@ -137,13 +31,13 @@ jobs:
     runs-on: ubuntu-22.04
     # ▓ NOTE:
     # ▓ > map a step output to a job output.
-    # ▓ > 🔗 read-more :|: https://docs.github.com/en/actions/using-jobs/defining-outputs-for-jobs
+    # ▓ > 🔗 read-more /:/ https://docs.github.com/en/actions/using-jobs/defining-outputs-for-jobs
     outputs:
       output1: ${{ steps.step1.outputs.bump_version_bool }}
       output2: ${{ steps.set-version.outputs.release_tag }}
     steps:
 
-      - name: "STEP :|: checkout source code"
+      - name: "STEP /:/ checkout source code"
         uses: actions/checkout@v4
         with:
           token: '${{ secrets.GH_TOKEN }}'
@@ -151,67 +45,64 @@ jobs:
           fetch-tags: true
           ref: main
 
-      - name: "STEP :|: git config"
+      - name: "STEP /:/ git config"
         run: |
           git config --local user.email "${{ secrets.GH_ORG_EMAIL }}"
           git config --local user.name "${{ secrets.GH_ORG_NAME }}"
 
-      - name: "STEP :|: node config"
+      - name: "STEP /:/ node config"
         uses: actions/setup-node@v3
         with:
           node-version: 18.19.0
 
-      - name: "STEP :|: npm config"
+      - name: "STEP /:/ npm config"
         run: |
           npm install -g npm@10.2.3
 
-      - name: "STEP :|: check semver:patch"
+      - name: "STEP /:/ check semver:patch"
         if: contains(github.event.pull_request.labels.*.name, 'semver:patch')
-        # if: '${{ contains(env.PATCH_WORDING, github.event.pull_request.title) }}'
         run: |
           npm version patch
 
-      - name: "STEP :|: check semver:minor"
+      - name: "STEP /:/ check semver:minor"
         if: contains(github.event.pull_request.labels.*.name, 'semver:minor')
-        # if: '${{ contains(env.MINOR_WORDING, github.event.pull_request.title) }}'
         run: |
           npm version minor
 
-      - name: "STEP :|: check semver:major"
+      - name: "STEP /:/ check semver:major"
         if: contains(github.event.pull_request.labels.*.name, 'semver:major')
-        # if: '${{ contains(env.MAJOR_WORDING, github.event.pull_request.title) }}'
         run: |
           npm version major
 
-      - name: "STEP :|: check version bump"
+      - name: "STEP /:/ check version bump"
         id: step1
-        # if: contains(github.event.pull_request.labels.*.name, 'major')
         if: ${{
             contains(github.event.pull_request.labels.*.name, 'semver:patch')
             || contains(github.event.pull_request.labels.*.name, 'semver:minor')
             || contains(github.event.pull_request.labels.*.name, 'semver:major')
           }}
-        # ▓ > 🔗 read-more :|: https://michaelcurrin.github.io/dev-cheatsheets/cheatsheets/ci-cd/github-actions/persist.html
-        # ▓ > 🔗 read-more :|: https://stackoverflow.com/questions/58177786/get-the-current-pushed-tag-in-github-actions
+        # ▓ > 🔗 read-more /:/ https://michaelcurrin.github.io/dev-cheatsheets/cheatsheets/ci-cd/github-actions/persist.html
+        # ▓ > 🔗 read-more /:/ https://stackoverflow.com/questions/58177786/get-the-current-pushed-tag-in-github-actions
         run: |
           echo "bump_version_bool=true" >> "$GITHUB_OUTPUT"
 
-      - name: "STEP :|: persist version bump"
+      - name: "STEP /:/ persist version bump"
         run: |
           git push origin main --follow-tags --force
 
-      - name: "STEP :|: set new version"
+      - name: "STEP /:/ set new version"
         id: set-version
         run: |
           npm pkg get version
           echo "release_tag=$(npm pkg get version --workspaces=false | tr -d \") ">> $GITHUB_OUTPUT
 
-      - name: "STEP :|: check output/set version"
+      - name: "STEP /:/ check output/set version"
         env:
           RELEASE_VERSION: ${{ steps.set-version.outputs.release_tag }}
         run: |
           echo $RELEASE_VERSION
           echo ${{ steps.set-version.outputs.release_tag }}
+  #
 
   # ╭──────────────────────────────────────────────────────────────────╮
   # │ NOTE:                                                            │
@@ -222,22 +113,23 @@ jobs:
     name: Git Create Release
     needs: npm-version-bump
     if: needs.npm-version-bump.outputs.output1 == 'true'
-    # ▓▓ (alternative) [#1]
+    # (alternative) [#1]
     env:
       RELEASE_TAG: ${{ needs.npm-version-bump.outputs.output2 }}
     runs-on: ubuntu-22.04
     steps:
       - uses: "marvinpinto/action-automatic-releases@latest"
-        # ▓▓ SEE:
-        # ▓▓ https://github.com/marketplace/actions/automatic-releases
+        # SEE:
+        # https://github.com/marketplace/actions/automatic-releases
         with:
           automatic_release_tag: "v${{ env.RELEASE_TAG }}"
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
+  #
 
   # ╭──────────────────────────────────────────────────────────────────╮
   # │ NOTE:                                                            │
-  # │ ➤ [4] sentry JS sourcemap upload                                 │
+  # │ ➤ [4] [disabled] sentry JS sourcemap upload                      │
   # ╰──────────────────────────────────────────────────────────────────╯
 
   sentry-sourcemap-deploy:
@@ -264,10 +156,44 @@ jobs:
         run: |
           npm install
           npm run build-2
+  #
 
   # ╭──────────────────────────────────────────────────────────────────╮
   # │ NOTE:                                                            │
-  # │ ➤ [5] auto-deploy project to target server.                      │
+  # │ ➤ [5] build & publish docker image                               │
+  # ╰──────────────────────────────────────────────────────────────────╯
+
+  docker-image-build-and-push:
+    name: 🐳 /:/ Docker Image Build & Publish
+    runs-on: ubuntu-22.04
+    needs: create-release
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref }}
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.ENV_DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.ENV_DOCKER_HUB_PASSWORD }}
+      - name: "STEP /:/ build docker image"
+        run: |
+          make docker-image-build
+          # [🐞]
+          docker images
+          # [🐞]
+          docker images betarena-scores --format "{{.ID}}" --no-trunc --filter "label=project=Scores"
+          echo "ENV_IMAGE_TAG_ID=$(docker images betarena-scores --format "{{.ID}}"  --no-trunc --filter "label=project=Scores")" >> $GITHUB_ENV
+      - name: "STEP /:/ publish docker image"
+        run: |
+          make docker-image-publish-to-registry
+        env:
+          ENV_IMAGE_TAG_ID: ${{ env.ENV_IMAGE_TAG_ID }}
+          ENV_DOCKER_HUB_USERNAME: ${{ secrets.ENV_DOCKER_HUB_USERNAME }}
+  #
+
+  # ╭──────────────────────────────────────────────────────────────────╮
+  # │ NOTE:                                                            │
+  # │ ➤ [6] [disabled] auto-deploy project to target server.           │
   # ╰──────────────────────────────────────────────────────────────────╯
 
   deploy:
@@ -292,3 +218,4 @@ jobs:
           git pull origin main
           # [ℹ] Run target makefile command
           make docker-spin-start-production
+  #
