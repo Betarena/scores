@@ -52,7 +52,6 @@
   import { dlog, dlogv2 } from "$lib/utils/debug";
   import { isPWA, viewportChangeV2 } from "$lib/utils/device.js";
 
-  import Footer from "$lib/components/_main_/footer/Footer.svelte";
   import HeaderRedesigned from "$lib/components/_main_/header_redisigned/HeaderRedesigned.svelte";
   import MobileMenu from "$lib/components/_main_/mobile-menu/MobileMenu.svelte";
   import SplashScreen from "$lib/components/misc/Splash-Screen.svelte";
@@ -68,19 +67,20 @@
 
   // import '@betarena/ad-engine';
   // import WidgetAdEngine from '@betarena/ad-engine/src/lib/Widget-AdEngine.svelte';
-  import WidgetAdEngine from "@betarena/ad-engine";
-  import {
-    routeIdContent,
-    routeIdPageCompetitions,
-    routeIdPageProfile,
-    routeIdPageProfileArticleCreation,
-    routeIdPageProfileEditArticle,
-    routeIdPageProfilePublication,
-    routeIdScores,
-  } from "$lib/constants/paths.js";
   import FooterRedisign from "$lib/components/_main_/footer/FooterRedisign.svelte";
   import ModalMain from "$lib/components/misc/modal/ModalMain.svelte";
   import InfoMessages from "$lib/components/ui/infomessages/InfoMessages.svelte";
+  import
+    {
+      routeIdContent,
+      routeIdPageCompetitions,
+      routeIdPageProfile,
+      routeIdPageProfileArticleCreation,
+      routeIdPageProfileEditArticle,
+      routeIdPageProfilePublication,
+      routeIdScores,
+    } from "$lib/constants/paths.js";
+  import WidgetAdEngine from "@betarena/ad-engine";
 
   // ╭─────
   // │ WARNING:
@@ -629,6 +629,7 @@
       authorId={$page.data.dataArticle?.author?.id}
       authorArticleTagIds={$page.data.dataArticle?.article?.tags}
       isDarkTheme={theme == "Dark"}
+      strTranslationTarget={lang}
     />
   {/key}
 
