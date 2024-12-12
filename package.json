@@ -7,8 +7,7 @@
 	"type": "module",
 	"engines": {
 		"node": "v18.19.0",
-		"npm": "10.2.3",
-		"pnpm": "9.11.0"
+		"npm": "10.2.3"
 	},
 	"engineStrict": true,
 	"scripts": {
