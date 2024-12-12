@@ -629,7 +629,7 @@
       authorId={$page.data.dataArticle?.author?.id}
       authorArticleTagIds={$page.data.dataArticle?.article?.tags}
       isDarkTheme={theme == "Dark"}
-      strTranslationTarget={lang}
+      strTranslationTarget={lang ?? 'en'}
     />
   {/key}
 
