@@ -62,7 +62,7 @@ export default
         // │ |: 🔗 read-more |:| https://discord.com/channels/457912077277855764/1049973005675143219
         // │ |: 🔗 read-more |:| https://kit.svelte.dev/docs/adapter-node#options-precompress
         // ╰─────
-        precompress: true
+        precompress: false
       }
     ),
 

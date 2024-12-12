@@ -5,7 +5,7 @@
 # │ ➤ [1] auto-commenting of project pull-request.                   │
 # ╰──────────────────────────────────────────────────────────────────╯
 
-name: '📌 Pull-Request Open'
+name: 'Pull-Request [to-main]'
 
 on:
   pull_request:
@@ -22,12 +22,16 @@ jobs:
   # ╰──────────────────────────────────────────────────────────────────╯
 
   add_comment:
-    name: 'JOB /:/ PR add comment'
+    name: '📝 JOB /:/ PR add comment'
     runs-on: ubuntu-22.04
     steps:
       - uses: mshick/add-pr-comment@v1
         with:
           message: |
             > [!IMPORTANT]
-            > Please set a versioning label of either `semver:patch`, `semver:minor`, or `semver:major` to **THIS** `Pull-Request`.
+            > Please set a label to **EITHER** `semver:patch`, `semver:minor`, or `semver:major` to **THIS** `Pull-Request`.
+            >
+            > If you are not sure which label to apply, please ask for help from a team member.
+            >
+            > **Ignore this message if this is a non `feature` OR `fix` change.**
           repo-token: ${{ secrets.GITHUB_TOKEN }}
