@@ -7,8 +7,7 @@
 	"type": "module",
 	"engines": {
 		"node": "v18.19.0",
-		"npm": "10.2.3",
-		"pnpm": "9.11.0"
+		"npm": "10.2.3"
 	},
 	"engineStrict": true,
 	"scripts": {
@@ -55,7 +54,7 @@
 		"vitest/coverage": "vitest run --coverage"
 	},
 	"dependencies": {
-		"@betarena/ad-engine": "0.0.65",
+		"@betarena/ad-engine": "0.0.67",
 		"@betarena/scores-lib": "4.0.40",
 		"@lukeed/uuid": "2.0.1",
 		"@metamask/sdk": "0.1.0",
