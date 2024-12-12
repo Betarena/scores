@@ -170,7 +170,7 @@ jobs:
           ref: ${{ github.ref }}
       - uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
       - name: "STEP /:/ build docker image"
         run: |
@@ -185,7 +185,7 @@ jobs:
           make docker-image-publish-to-registry
         env:
           ENV_IMAGE_TAG_ID: ${{ env.ENV_IMAGE_TAG_ID }}
-          ENV_DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          ENV_DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
   #
 
   # ╭──────────────────────────────────────────────────────────────────╮
