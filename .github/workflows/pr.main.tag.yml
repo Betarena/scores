@@ -2,14 +2,14 @@
 # │ 🐙 GITHUB ACIONS CI/CD WORKFLOW                                  │
 # ┣──────────────────────────────────────────────────────────────────┫
 # │ Responsible for:                                                 │
-# │ ➤ [1] auto-bump of project version.                              │
-# │ ➤ [2] auto-reset dev (branch) to main state.                     │
-# │ ➤ [3] [disabled] auto-create release + tag of project.           │
-# │ ➤ [5] build & publish docker image                               │
-# │ ➤ [6] [disabled] auto-deploy project to target server.           │
+# │ ➤ [1] 'auto-bump' & 'tag' project version.                       │
+# │ ➤ [2] auto-create release + tag of project.                      │
+# │ ➤ [3] [disabled] sentry JS sourcemap upload                      │
+# │ ➤ [4] build & publish docker image                               │
+# │ ➤ [5] [disabled] auto-deploy project to target server.           │
 # ╰──────────────────────────────────────────────────────────────────╯
 
-name: '⚡️ Bump│Publish│Release'
+name: '⚡️ Bump ➤ Publish ➤ Release'
 
 'on':
   pull_request:
@@ -22,7 +22,7 @@ jobs:
 
   # ╭──────────────────────────────────────────────────────────────────╮
   # │ NOTE:                                                            │
-  # │ ➤ [1] auto-bump of project version.                              │
+  # │ ➤ [1] 'auto-bump' & 'tag' project version.                       │
   # ╰──────────────────────────────────────────────────────────────────╯
 
   npm-version-bump:
@@ -129,7 +129,7 @@ jobs:
 
   # ╭──────────────────────────────────────────────────────────────────╮
   # │ NOTE:                                                            │
-  # │ ➤ [4] [disabled] sentry JS sourcemap upload                      │
+  # │ ➤ [3] [disabled] sentry JS sourcemap upload                      │
   # ╰──────────────────────────────────────────────────────────────────╯
 
   sentry-sourcemap-deploy:
@@ -147,9 +147,6 @@ jobs:
       - name: 'setup npm'
         run: |
           npm install -g npm@10.2.3
-      - name: 'create .env'
-        run: |
-          echo ${{ secrets.ENV_FILE }} | base64 -d > .env
       - name: 'build'
         env:
           NODE_OPTIONS: "--max-old-space-size=8192"
@@ -160,11 +157,11 @@ jobs:
 
   # ╭──────────────────────────────────────────────────────────────────╮
   # │ NOTE:                                                            │
-  # │ ➤ [5] build & publish docker image                               │
+  # │ ➤ [4] build & publish docker image                               │
   # ╰──────────────────────────────────────────────────────────────────╯
 
   docker-image-build-and-push:
-    name: 🐳 /:/ Docker Image Build & Publish
+    name: 🐳 JOB /:/ Docker Image Build & Publish
     runs-on: ubuntu-22.04
     needs: create-release
     steps:
@@ -173,8 +170,8 @@ jobs:
           ref: ${{ github.ref }}
       - uses: docker/login-action@v3
         with:
-          username: ${{ secrets.ENV_DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.ENV_DOCKER_HUB_PASSWORD }}
+          username: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
       - name: "STEP /:/ build docker image"
         run: |
           make docker-image-build
@@ -188,34 +185,31 @@ jobs:
           make docker-image-publish-to-registry
         env:
           ENV_IMAGE_TAG_ID: ${{ env.ENV_IMAGE_TAG_ID }}
-          ENV_DOCKER_HUB_USERNAME: ${{ secrets.ENV_DOCKER_HUB_USERNAME }}
+          ENV_DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_PASSWORD }}
   #
 
   # ╭──────────────────────────────────────────────────────────────────╮
   # │ NOTE:                                                            │
-  # │ ➤ [6] [disabled] auto-deploy project to target server.           │
+  # │ ➤ [5] [disabled] auto-deploy project to target server.           │
   # ╰──────────────────────────────────────────────────────────────────╯
 
   deploy:
-    name: 🚀 Deployment
+    name: 🚀 JOB /:/ Deployment
     if: false
-    needs: create-release
+    needs: docker-image-build-and-push
     runs-on: ubuntu-22.04
     steps:
-    - name: executing remote ssh commands using password
-      uses: appleboy/ssh-action@v0.1.7
-      # [ℹ] declaring ENV variables to be used in the project-CI/CD
-      with:
-        host: ${{secrets.WEB_SERVER_HOST}}
-        username: ${{secrets.WEB_SERVER_USERNAME}}
-        key: ${{secrets.WEB_SERVER_KEY}}
-        port: ${{secrets.WEB_SERVER_PORT}}
-        script: |
-          # [ℹ] Navigate to target project directory
-          cd web/scores
-          # [ℹ] Update the directory with latests changes
-          git stash
-          git pull origin main
-          # [ℹ] Run target makefile command
-          make docker-spin-start-production
+      - uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{secrets.SERVER_HOST}}
+          key: ${{secrets.SERVER_KEY}}
+          script: |
+            # [ℹ] Navigate to target project directory
+            cd web/scores
+            # [ℹ] Update the directory with latests changes
+            git stash
+            git pull origin main
+            # [ℹ] Run target makefile command
+            make docker-spin-start-production
   #
+#
