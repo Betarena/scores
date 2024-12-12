@@ -50,11 +50,14 @@ do
     # -exec sed -i "s|${key}|${value}|g" '{}' +
   #
   find /app/build \
-    -type f \( -name '*.js' -o -name '*.css' \) \
+    -type f \
     -exec sed \
     -i "s|${key}|${value}|g" '{}' +
   #
 done
+
+# [🐞]
+find /app/build -type f -exec grep -i "VITE_X" {} + | wc -l
 
 # [🐞]
 echo "[docker.env.inject.sh] ENV:" $(env)
