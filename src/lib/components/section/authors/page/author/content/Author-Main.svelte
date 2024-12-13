@@ -655,7 +655,7 @@
   -->
   <div
     id='content'
-    data-betarena-zone-id=2,3
+    data-betarena-zone-id=2,3,4
   >
     {@html widgetData.article.data?.content}
   </div>
