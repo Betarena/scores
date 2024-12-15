@@ -76,11 +76,6 @@
      * @augments EventDispatcher
     */
     , dispatch: EventDispatcher<any> = createEventDispatcher()
-    /**
-     * @description
-     *  📣 target environment being used.
-    */ // eslint-disable-next-line no-unused-vars
-    , targetAppEnv: string = import.meta.env.VITE_ENV_TARGET
   ;
 
   let

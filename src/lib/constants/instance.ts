@@ -1,36 +1,44 @@
 // ╭──────────────────────────────────────────────────────────────────────────────────╮
-// │ 📌 High Order Module  Overview                                                   │
+// │ 📌 High Order Overview                                                           │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
-// │ ➤ Internal Code Format │:│ V.8.0                                                 │
-// │ ➤ Status    │:│ 🔒 LOCKED                                                        │
-// │ ➤ Author(s) │:│ @migbash                                                         │
+// │ ➤ Code Format   // V.8.0                                                         │
+// │ ➤ Status        // 🔒 LOCKED                                                     │
+// │ ➤ Author(s)     // @migbash                                                      │
+// │ ➤ Maintainer(s) // @migbash                                                      │
+// │ ➤ Created on    // <date-created>                                                │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
 // │ 📝 Description                                                                   │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
-// │ Betarena (Module) ││ Instance Variables Definitions                              │
+// │ BETARENA (Module)
+// │ |: <insert-module-summary-here>
 // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-// #region ➤ 📦 Package Imports
-
-import { dev } from "$app/environment";
-
-// #endregion ➤ 📦 Package Imports
-
-// [🐞]
-// console.log('📦 [scores-lib] :: process.env.VITE_PROD_LOGS', process.env.VITE_PROD_LOGS);
+/* eslint-disable prefer-const */
 
 export const
   /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟦 HELPER
    * @description
-   * - 📝 `LOGS_SHOW_OVERRIDE` flag. `(default=false)`
-   * - IMPORTANT Turns off all 'debugging' console logs for 'scores'.
-   * - 📝 overrides (ADMIN) to show logs even in PROD.
-   * - 📝 Prevents logs display on `deployments`.
+   *  📝 Dynamic Instance Logic of Enviornment Variables
+   * @return { boolean | undefined }
+   *  📤 Retrieve Target instance/configuration value
    */
-  LOGS_SHOW_OVERRIDE =
-    import.meta.env.VITE_PROD_LOGS == undefined
-      ? dev
-      : import.meta.env.VITE_PROD_LOGS == 'false'
-        ? false
-        : true
+  getInstance
+    = (
+      strTargetInstance: 'logging' | undefined
+    ) =>
+    {
+      if (strTargetInstance === 'logging')
+        // import.meta.env.VITE_PROD_LOGS == undefined
+        //  ? dev
+        //  : import.meta.env.VITE_PROD_LOGS == 'false'
+        //    ? false
+        //    : true
+        return import.meta.env.VITE_PROD_LOGS === 'true';
+      ;
+      return;
+    }
 ;

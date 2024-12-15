@@ -602,7 +602,7 @@ docker-spin-start-production:
 	BUILDKIT_PROGRESS=plain \
 		docker compose \
 		-f .docker/docker-compose.yml \
-		--env-file .env.docker \
+		--env-file env/.env.docker.compose \
 		up \
 		--build \
 		-d \
@@ -629,7 +629,7 @@ docker-spin-start-ngnix:
 	BUILDKIT_PROGRESS=plain \
 		docker compose \
 		-f .docker/docker-compose.yml \
-		--env-file .env.docker \
+		--env-file env/.env.docker.compose \
 		up \
 		--build \
 		-d \

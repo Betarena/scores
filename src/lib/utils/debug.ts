@@ -19,7 +19,7 @@ import * as Sentry from '@sentry/browser';
 import { json } from '@sveltejs/kit';
 import chalk from 'chalk';
 
-import { LOGS_SHOW_OVERRIDE } from '$lib/constants/instance.js';
+import { getInstance } from '$lib/constants/instance.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -53,13 +53,7 @@ export const
 
 const
   // [🐞]
-  logPrefix = '🖥️  [scores] ::',
-  /**
-   * @description
-   *  - 📣 overrides all individual toggles for show/hide ALL logs.
-   *  - 📣 used for local development override of `logs`.
-   */
-  MASTER_DEBUG_TOGGLE: boolean = true
+  logPrefix = '🖥️  [scores] ::'
 ;
 
 export const
@@ -237,29 +231,7 @@ export function dlog
     style = 'background: #FF6133; color: black; border-radius: 1.5px; padding: 2.5px 2.5px;';
   ;
 
-  show = MASTER_DEBUG_TOGGLE && show;
-
-  const
-    if_M_0: boolean
-      = (LOGS_SHOW_OVERRIDE && show && style == undefined)
-      // ╭─────
-      // │ IMPORTANT
-      // │ > Force 'authentication' to show in production.
-      // ╰─────
-      || (targetLog == AU_W_TAG[0] && AU_W_TAG[1] && style == undefined),
-    if_M_1: boolean
-      = (LOGS_SHOW_OVERRIDE && typeof(msg) == 'string' && show && style != undefined)
-      // ╭─────
-      // │ IMPORTANT
-      // │ > Force 'authentication' to show in production.
-      // ╰─────
-      || (targetLog == AU_W_TAG[0] && AU_W_TAG[1] && typeof(msg) == 'string' && show && style != undefined)
-  ;
-
-  if (if_M_0)
-    console.debug(chalk.hex('#00FFFF')(`🖥️ [scores] :: ${msg}`));
-  ;
-  if (if_M_1)
+  if (getInstance('logging'))
     console.debug(chalk.hex('#00FFFF')(`🖥️ [scores] :: ${msg}`));
   ;
 
@@ -300,7 +272,7 @@ export function dlogv2
   // │ CHECK |:| for showing logs.
   // ╰─────
   const if_M_0: boolean
-    = (LOGS_SHOW_OVERRIDE && show)
+    = (getInstance('logging') && show)
       || (groupName.includes(AU_W_TAG[0]))
   ;
   if (!if_M_0) return;

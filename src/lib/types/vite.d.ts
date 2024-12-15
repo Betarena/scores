@@ -2,129 +2,166 @@
 
 interface ImportMetaEnv
 {
+  // ╭──────────────────────────────────────────────────────────────────────────────────╮
+  // │ 💠 │ MISCELLENOUS                                                                │
+  // ╰──────────────────────────────────────────────────────────────────────────────────╯
   /**
    * @description
-   * 📝 Logs Master / Admin override
+   * 📝 CONFIGURATION
+   *    Console Logs Toggle
    */
-  readonly VITE_PROD_LOGS?: string | undefined;
-
+  readonly VITE_PROD_LOGS?: 'false' | 'true' | undefined;
+  // ╭──────────────────────────────────────────────────────────────────────────────────╮
+  // │ 🔳 │ HASURA                                                                      │
+  // ╰──────────────────────────────────────────────────────────────────────────────────╯
   /**
    * @description
-   * 📝 Hasura GraphQL `url`
+   * 📝 SECRET
+   *    Hasura GraphQL `url`
    */
   readonly VITE_HASURA_DB_URL?: string | undefined;
   /**
    * @description
-   * 📝 Hasura WebSocket `url`
+   * 📝 SECRET
+   *    Hasura WebSocket `url`
    */
   readonly VITE_HASURA_DB_WSS?: string | undefined;
   /**
    * @description
-   * 📝 Hasura Database Access Token
+   * 📝 SECRET
+   *    Hasura Database Access Token
    */
   readonly VITE_HASURA_DB_TOKEN?: string | undefined;
-
+  // ╭──────────────────────────────────────────────────────────────────────────────────╮
+  // │ 🟨 │ FIREBASE                                                                    │
+  // ╰──────────────────────────────────────────────────────────────────────────────────╯
   /**
    * @description
-   * 📝 Firebase API Key for access to `Firebase Services`
+   * 📝 SECRET
+   *    Firebase API Key for access to `Firebase Services`
    */
   readonly VITE_FIREBASE_DB_API_KEY?: string | undefined;
   /**
    * @description
-   * 📝 Firebase Authentication Domain
+   * 📝 SECRET
+   *    Firebase Authentication Domain
    */
   readonly VITE_FIREBASE_DB_AUTH_DOMAIN?: string | undefined;
   /**
    * @description
-   * 📝 Firebase Project Name
+   * 📝 SECRET
+   *    Firebase Project Name
    */
   readonly VITE_FIREBASE_DB_PROJECT_ID?: string | undefined;
   /**
    * @description
-   * 📝 Firebase Project `url`
+   * 📝 SECRET
+   *    Firebase Project `url`
    */
   readonly VITE_FIREBASE_DB_DATABASE_URL?: string | undefined;
   /**
    * @description
-   * 📝 Firebase Storage Bucket
+   * 📝 SECRET
+   *    Firebase Storage Bucket
    */
   readonly VITE_FIREBASE_DB_STORAGE_BUCKET?: string | undefined;
   /**
    * @description
-   * 📝 Firebase Functions Host / Origin
+   * 📝 SECRET
+   *    Firebase Functions Host / Origin
    */
   readonly VITE_FIREBASE_FUNCTIONS_ORIGIN?: string | undefined;
   /**
    * @description
-   * 📝 Firebase Functions URL [1]
+   * 📝 SECRET
+   *    Firebase Functions URL [1]
    */
   readonly VITE_DISCORD_OAUTH_URL?: string | undefined;
   /**
    * @description
-   * 📝 Firebase Functions URL [1]
+   * 📝 SECRET
+   *    Firebase Functions URL [1]
    */
   readonly VITE_FIREBASE_FUNCTIONS_F_0?: string | undefined;
   /**
    * @description
-   * 📝 Firebase Functions URL [2]
+   * 📝 SECRET
+   *    Firebase Functions URL [2]
    */
   readonly VITE_FIREBASE_FUNCTIONS_F_1?: string | undefined;
-
+  // ╭──────────────────────────────────────────────────────────────────────────────────╮
+  // │ 🟥 │ REDIS                                                                       │
+  // ╰──────────────────────────────────────────────────────────────────────────────────╯
   /**
    * @description
-   * 📝 Redis Database Host
+   * 📝 SECRET
+   *    Redis Database Host
    */
   readonly VITE_REDIS_HOST?: string | undefined;
   /**
    * @description
-   * 📝 Redis Database Port Access
+   * 📝 SECRET
+   *    Redis Database Port Access
    */
   readonly VITE_REDIS_PORT?: string | undefined;
   /**
    * @description
-   * 📝 Redis Database Password
+   * 📝 SECRET
+   *    Redis Database Password
    */
   readonly VITE_REDIS_PASS?: string | undefined;
   /**
    * @description
-   * 📝 Redis Database Number for Scores Data
+   * 📝 SECRET
+   *    Redis Database Number for Scores Data
    */
   readonly VITE_REDIS_CACHE_DB?: string | undefined;
   /**
    * @description
-   * 📝 Redis Database Number for BullJs
+   * 📝 SECRET
+   *    Redis Database Number for BullJs
    */
   readonly VITE_REDIS_BULL_DB?: string | undefined;
-
+  // ╭──────────────────────────────────────────────────────────────────────────────────╮
+  // │ 🟪 │ SENTRY                                                                      │
+  // ╰──────────────────────────────────────────────────────────────────────────────────╯
   /**
    * @description
-   * 📝 Sentry `url`.
+   * 📝 CONFIGURATION
+   *    Sentry `url`.
    */
   readonly VITE_SENTRY_URL?: string | undefined;
   /**
    * @description
-   * 📝 Environment for Sentry (duplicate)
+   * 📝 CONFIGURATION
+   *    Environment for Sentry (duplicate)
    */
   readonly VITE_SENTRY_ENVIRONMENT?: 'production' | 'development' | 'local';
   /**
    * @description
-   * 📝 Environment for Sentry
+   * 📝 CONFIGURATION
+   *    Environment for Sentry
    */
   readonly SENTRY_ENVIRONMENT?: 'production' | 'development' | 'local';
   /**
    * @description
-   * 📝 Authentication Token for Sentry Actions
+   * 📝 CONFIGURATION
+   *    Authentication Token for Sentry Actions
    */
   readonly SENTRY_AUTH_TOKEN?: string;
   /**
    * @description
-   * 📝 action of `Sourcemap Upload` for Sentry
+   * 📝 CONFIGURATION
+   *    action of `Sourcemap Upload` for Sentry
    */
   readonly VITE_SENTRY_UPLOAD_SOURCEMAPS?: string;
-
+  // ╭──────────────────────────────────────────────────────────────────────────────────╮
+  // │ 🔳 │ WALLETCONNECT                                                               │
+  // ╰──────────────────────────────────────────────────────────────────────────────────╯
   /**
    * @description
-   * 📝 `walletconnect` project env
+   * 📝 SECRET
+   *    WalletConnect project env
    */
   readonly VITE_WALLETCONNECT_ID?: string
 }
