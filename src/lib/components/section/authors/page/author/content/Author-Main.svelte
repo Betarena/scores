@@ -295,6 +295,9 @@
 
 <div
   id="{CNAME}"
+  data-betarena-zone-id=4
+  class:dark-mode-1={theme == 'Dark'}
+  class:light-mode-1={theme == 'Light'}
 >
 
   <div class="article-header" class:reverse={VIEWPORT_MOBILE_INIT[1]}>
@@ -681,6 +684,19 @@
 
   div#author⮕w⮕author-content⮕main
   {
+    position: relative;
+    z-index: 1;
+
+    &.dark-mode-1
+    {
+      background-color: var(--dark-theme);
+    }
+
+    &.light-mode-1
+    {
+      background-color: var(--white);
+    }
+
     .author-link:hover {
       .author-name {
         color: var(--primary) !important;
