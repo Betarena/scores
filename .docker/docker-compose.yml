@@ -76,6 +76,7 @@ services:
   # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
   web-prod:
+    image: name4d/betarena:scores-latest
     # ╭─────
     # │ WARNING:
     # │ |: Does not work with 'deploy.replicas: [n]' configuration
