@@ -78,11 +78,6 @@
     */
     // eslint-disable-next-line no-unused-vars
     , VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
-    /**
-     * @description
-     *  📣 target environment being used.
-    */ // eslint-disable-next-line no-unused-vars
-    , targetAppEnv: string = import.meta.env.VITE_ENV_TARGET
   ;
 
   // #endregion ➤ 📌 VARIABLES
