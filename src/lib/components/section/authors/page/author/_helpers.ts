@@ -46,12 +46,6 @@ export function startArticleViewIncrement
     checkArticleViewIncrement
   );
 
-  window.addEventListener
-  (
-    'mousemove',
-    checkArticleViewIncrement
-  );
-
   return;
 }
 
@@ -90,12 +84,6 @@ export async function checkArticleViewIncrement
   window.removeEventListener
   (
     'scroll',
-    checkArticleViewIncrement
-  );
-
-  window.removeEventListener
-  (
-    'mousemove',
     checkArticleViewIncrement
   );
 
