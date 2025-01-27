@@ -179,6 +179,8 @@
     | "desktop";
   $sessionStore.fixturesTodayNum =
     navbarTranslationData?.scores_header_fixtures_information?.football ?? 0;
+  $sessionStore.userAgent = $page.data.userAgent as string ?? navigator.userAgent;
+
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -380,7 +382,7 @@
 
     // IMPORTANT
     sessionStore.updateData([
-      ["windowWidth", document.documentElement.clientWidth],
+      ["windowWidth", document.documentElement.clientWidth]
     ]);
     // IMPORTANT
     if (isPWA()) $sessionStore.globalState.add("IsPWA");
@@ -391,6 +393,8 @@
     if (adminSet)
       scoresAdminStore.toggleAdminState(adminSet == "true" ? true : false);
     return;
+
+
   });
 
   afterNavigate(async (e): Promise<void> => {

@@ -108,6 +108,11 @@ export interface ISessionStore
   isUserActive: boolean;
   /**
    * @description
+   * 📣 User `user-agent` data (Original Request).
+   */
+  userAgent: string;
+  /**
+   * @description
    *  📣 Current window `width`.
    */
   windowWidth: number;
