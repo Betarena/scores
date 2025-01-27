@@ -53,7 +53,10 @@ export async function load
     );
   */
   const res = await main(event);
-  event.depends("autthor:translations")
+  event.depends('autthor:translations')
+
+  res.userAgent = event.request.headers.get('user-agent');
+
   return res
 }
 
