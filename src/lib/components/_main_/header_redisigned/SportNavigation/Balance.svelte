@@ -106,10 +106,7 @@
           >
             {spliceBalanceDoubleZero(toDecimalFix(main_balance)) ?? "0.00"} BTA
           </span>
-          {#if isMobile}
-            <br />
-          {/if}
-          (${spliceBalanceDoubleZero(toDecimalFix(main_balance)) ?? "0.00"})
+
         </p>
       </div>
     </div>
