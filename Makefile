@@ -599,10 +599,13 @@ docker-spin-start-production:
 		\n╰──────────────────────────────────────────────────────────────────╯"
 	#
 
-	BUILDKIT_PROGRESS=plain \
-		docker compose \
+	cd .docker/
+	docker compose pull
+	cd ..
+
+	docker compose \
 		-f .docker/docker-compose.yml \
-		--env-file env/.env.docker.compose \
+		--env-file ./env/.env.docker.compose \
 		up \
 		--build \
 		-d \
@@ -629,7 +632,7 @@ docker-spin-start-ngnix:
 	BUILDKIT_PROGRESS=plain \
 		docker compose \
 		-f .docker/docker-compose.yml \
-		--env-file env/.env.docker.compose \
+		--env-file ./env/.env.docker.compose \
 		up \
 		--build \
 		-d \

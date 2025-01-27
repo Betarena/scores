@@ -16,7 +16,8 @@
       "recycle": true,
       "commands":
       [
-        "make dev-local-1-click"
+        "nvm use",
+        "npm run vite/dev/1-click/pnpm"
       ],
       "icon": "device-desktop",
       "color": "terminal.ansiCyan"
