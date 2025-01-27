@@ -21,7 +21,7 @@
 import { json, type RequestEvent } from '@sveltejs/kit';
 // import { dev } from '$app/environment';
 
-import { entryAuthorArticleTranslation } from '@betarena/scores-lib/dist/functions/v8/authors.articles.js';
+import { entryAuthorArticleTranslation, entryAuthorArticleViewsIncrement } from '@betarena/scores-lib/dist/functions/v8/authors.articles.js';
 import { entryTargetDataArticle } from '@betarena/scores-lib/dist/functions/v8/main.preload.authors.js';
 import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
 
@@ -62,7 +62,8 @@ export async function main
 
       const
         queryParamPermalink = request.url.searchParams.get('permalink'),
-        queryParamLanguage = request.url.searchParams.get('lang')
+        queryParamLanguage = request.url.searchParams.get('lang'),
+        queryParamArticleId = request.url.searchParams.get('articleId')
       ;
 
       // ╭──────────────────────────────────────────────────────────────────╮
@@ -154,6 +155,23 @@ export async function main
       // ╭──────────────────────────────────────────────────────────────────╮
       // │:| (default) data.                                                │
       // ╰──────────────────────────────────────────────────────────────────╯
+
+      if (queryParamArticleId)
+      {
+        const
+          /**
+           * @description
+           * 📝 Data Response.
+           */
+          data
+            = await entryAuthorArticleViewsIncrement
+            (
+              Number(queryParamArticleId),
+            )
+        ;
+
+        return json(null);
+      }
 
       return json
       (
