@@ -97,8 +97,6 @@
     () =>
     {
       // [🐞]
-      console.log($page.data);
-
       if (!isUserAgentBot() && browser)
         setTimeout
         (
