@@ -960,6 +960,8 @@
 		background-position: 20px 50%;
 		background-size: 20px 20px;
 		width: -webkit-fill-available;
+    width: -moz-available;
+    width: fill-available;
 		height: 44px;
 		outline: none;
 		font-size: 14px;
