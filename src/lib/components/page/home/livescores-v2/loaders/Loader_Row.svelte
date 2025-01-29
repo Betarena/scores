@@ -66,3 +66,9 @@
 			: 'fill: #F2F2F2;'}
 	/>
 </svg>
+
+<style>
+  svg {
+    max-width: 100%
+  }
+</style>

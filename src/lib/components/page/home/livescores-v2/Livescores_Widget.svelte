@@ -252,8 +252,6 @@
 </SeoBox>
 
 <!-- [🐞] -->
-<!-- <LivescoresLoader /> -->
-
 {#await widgetInit()}
   <!--
   ### NOTE:
@@ -273,6 +271,7 @@
   ### WARNING:
   ### Disable, if Standard Import is Enabled.
   -->
+
   <svelte:component
     this={LivescoresMainDynamic}
     WIDGET_DATA={widgetDataMain}
