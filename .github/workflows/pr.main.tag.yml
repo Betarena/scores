@@ -195,7 +195,6 @@ jobs:
 
   deploy:
     name: 🚀 JOB /:/ Deployment
-    if: false
     needs: docker-image-build-and-push
     runs-on: ubuntu-22.04
     steps:
@@ -204,12 +203,21 @@ jobs:
           host: ${{secrets.SERVER_HOST}}
           key: ${{secrets.SERVER_KEY}}
           script: |
-            # [ℹ] Navigate to target project directory
+            # ╭─────
+            # │ NOTE:
+            # │ ➤ [ℹ] Navigate to target project directory
+            # ╰─────
             cd web/scores
-            # [ℹ] Update the directory with latests changes
+            # ╭─────
+            # │ NOTE:
+            # │ ➤ Update the directory with latests changes
+            # ╰─────
             git stash
             git pull origin main
-            # [ℹ] Run target makefile command
+            # ╭─────
+            # │ NOTE:
+            # │ ➤ Run target makefile command
+            # ╰─────
             make docker-spin-start-production
   #
 #

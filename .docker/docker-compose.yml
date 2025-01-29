@@ -91,7 +91,7 @@ services:
     #   context: ../
     #   dockerfile: ./.docker/Dockerfile
     deploy:
-      replicas: ${BETARNA_SCORES__REPLICAS:-1}
+      replicas: ${BETARNA_SCORES__REPLICAS:-3}
     env_file: ../env/.env.docker.scores
     expose:
       - 3000

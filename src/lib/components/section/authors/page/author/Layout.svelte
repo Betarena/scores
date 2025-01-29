@@ -38,12 +38,16 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  import { browser } from '$app/environment';
   import { page } from '$app/stores';
+  import { onDestroy, onMount } from 'svelte';
 
   import SvelteSeo from 'svelte-seo';
   import AuthorWidget from './content/Author-Widget.svelte';
 
+  import { isUserAgentBot } from '$lib/utils/device.js';
   import { tryCatch } from '@betarena/scores-lib/dist/util/common.js';
+  import { startArticleViewIncrement } from './_helpers.js';
 
   import type { IPageAuhtorArticleDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
 
@@ -78,6 +82,48 @@
   $: pageSeo = $page.data.dataArticle as IPageAuhtorArticleDataFinal;
 
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  onMount
+  (
+    () =>
+    {
+      // [🐞]
+      if (!isUserAgentBot() && browser)
+        setTimeout
+        (
+          () =>
+          {
+            startArticleViewIncrement();
+          },
+          10000
+        );
+      ;
+
+      return;
+    }
+  );
+
+  onDestroy
+  (
+    () =>
+    {
+      // window.removeEventListener('scroll', checkArticleViewIncrement);
+      // window.removeEventListener('mousemove', checkArticleViewIncrement);
+
+      return;
+    }
+  );
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
 </script>
 

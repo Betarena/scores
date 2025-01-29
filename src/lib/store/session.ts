@@ -42,6 +42,7 @@ const
       page: null,
       deviceType: 'mobile',
       viewportType: "mobile",
+      userAgent: undefined,
       isUserActive: true,
       windowWidth: 0,
       firebaseListeners: [],
@@ -126,6 +127,7 @@ type IDataProp =
   | 'globalStateAdd'
   | 'globalStateRemove'
   | 'windowWidth'
+  | 'userAgent'
 ;
 
 /**
@@ -134,10 +136,12 @@ type IDataProp =
 type IDataGetProp =
   Extract < IDataProp,
     'lang' |
-    'routeId'
+    'routeId' |
+    'userAgent'
   >
   | 'globalState'
   | 'page'
+  | 'userAgent'
 ;
 
 // #endregion ➤ 📌 VARIABLES
@@ -425,6 +429,8 @@ function createLocalStore
             return sessionStoreObj.globalState as Typ1 | NullUndef;
           else if (dataPoint == 'page')
             return sessionStoreObj.page as Typ1 | NullUndef;
+          else if (dataPoint == 'userAgent')
+            return sessionStoreObj.userAgent as Typ1 | NullUndef;
           ;
           return;
         },

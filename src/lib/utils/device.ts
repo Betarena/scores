@@ -15,6 +15,7 @@
 import DeviceDetector from 'device-detector-js';
 import parser from 'ua-parser-js';
 
+import session from '$lib/store/session.js';
 import { dlog, dlogv2 } from '$lib/utils/debug';
 
 // #endregion ➤ 📦 Package Imports
@@ -194,4 +195,38 @@ export function viewportChangeV2
     isTabletView,
     isOtherView
   ];
+}
+
+/**
+ * @author
+ *  @migbash
+ * @summary
+ *  - 🔹 HELPER
+ * @description
+ *  📣 Determines wether `user-agent` is a `bot`.
+ * @param { string } userAgent
+ *  💠 **[required]** `user-agent` string.
+ * @returns { boolean }
+ *  📤 Wether `user-agent` is a `bot`.
+ */
+export function isUserAgentBot
+(
+): boolean
+{
+  const
+    /**
+     * @description
+     * 📣 `session` data.
+     */
+    strUserAgent = session.extract<string>('userAgent')
+  ;
+
+  if (!strUserAgent)
+  {
+    // [🐞]
+    console.error('No user agent found');
+    return false;
+  }
+
+  return /bot|googlebot|crawler|spider|robot|crawling/i.test(strUserAgent);
 }
