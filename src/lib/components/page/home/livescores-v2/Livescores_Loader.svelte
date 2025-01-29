@@ -47,17 +47,17 @@ COMPONENT JS (w/ TS)
 </script>
 
 <!-- ===============
-COMPONENT HTML 
+COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
 <div
   class="widget-component">
-  <LivescoresTopRow 
+  <LivescoresTopRow
     numOfFixtures={0}
     numOfFixturesLive={0}
   />
-  <div>
+  <div class="wrapper">
     {#each { length: 10 } as _, i}
       <div
         class="
@@ -76,6 +76,13 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 =================-->
 
 <style>
+div.widget-component {
+    overflow: hidden;
+  }
+  .wrapper {
+    max-width: 100%;
+    overflow: hidden
+  }
 
   :global(div.livescores-fixture-row-loader) {
     border-top: 1px solid var(--grey-color);
@@ -83,11 +90,13 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     padding-bottom: 10px;
     padding: 20px;
     text-align: center;
+    max-width: 100%;
+    overflow: hidden
   }
 
   /*
   =============
-  RESPONSIVNESS 
+  RESPONSIVNESS
   =============
   */
 
