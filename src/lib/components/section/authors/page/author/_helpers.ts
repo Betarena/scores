@@ -35,10 +35,10 @@ export function startArticleViewIncrement
 ): void
 {
   // [🐞]
-  console.log
-  (
-    '🚏 checkpoint ➤ startArticleViewIncrement(..)'
-  );
+  // console.log
+  // (
+  //   '🚏 checkpoint ➤ startArticleViewIncrement(..)'
+  // );
 
   window.addEventListener
   (
@@ -63,10 +63,10 @@ export async function checkArticleViewIncrement
   if (!browser) return;
 
   // [🐞]
-  console.log
-  (
-    '🚏 checkpoint ➤ checkArticleView(..)'
-  );
+  // console.log
+  // (
+  //   '🚏 checkpoint ➤ checkArticleView(..)'
+  // );
 
   const
     /**
@@ -77,7 +77,7 @@ export async function checkArticleViewIncrement
   ;
 
   // [🐞]
-  console.log('articleId', articleId);
+  // console.log('articleId', articleId);
 
   if (!articleId) return;
 
