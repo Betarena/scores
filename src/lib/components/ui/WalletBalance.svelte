@@ -58,10 +58,10 @@
     </div>
     <div class="info">
       <span class="amount">
-        {spliceBalanceDoubleZero(toDecimalFix(main_balance)) ?? "0.00"} BTA
+        {spliceBalanceDoubleZero(toDecimalFix(main_balance)) ?? "0.00"}
       </span>
-      <span class="currency"
-        >${spliceBalanceDoubleZero(toDecimalFix(main_balance)) ?? "0.00"}</span
+      <span class="amount"
+        >BTA</span
       >
     </div>
   </div>
