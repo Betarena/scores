@@ -145,8 +145,6 @@
     }
   );
 
-  console.log("WIDGET DATA MAIN: ", widgetDataMain);
-
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
 </script>
