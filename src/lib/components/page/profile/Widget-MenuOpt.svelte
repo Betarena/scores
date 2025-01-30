@@ -153,7 +153,6 @@ COMPONENT JS (w/ TS)
         selectedMenuOpt = 'Investor';
         break;
       case 'deposit':
-      case 'deposit':
           goto
         (
           `/u/dashboard/${$userBetarenaSettings.lang}`,
