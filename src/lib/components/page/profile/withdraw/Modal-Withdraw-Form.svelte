@@ -467,13 +467,13 @@ COMPONENT JS (w/ TS)
 <!--
 MAIN MODAL BACKGROUND BLUR
 -->
-{#if !isViewMobile}
+<!-- {#if !isViewMobile}
   <div
     id="{CNAME}⮕modal-bg-blur"
     on:click={() => toggleModal()}
     in:fade
   />
-{/if}
+{/if} -->
 
 <!--
 WITHDRAW SUCCESS ICON
@@ -1263,7 +1263,7 @@ MAIN WITHDRAW FORM FLOW WIDGET
 	div#profile⮕w⮕withdraw⮕modal⮕form⮕main
   {
     /* 📌 position */
-		position: fixed;
+		/* position: absolute; */
     z-index: 10000;
     right: 0;
     left: 0;

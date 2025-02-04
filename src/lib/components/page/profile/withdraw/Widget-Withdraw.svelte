@@ -8,6 +8,7 @@ COMPONENT JS (w/ TS)
 
 	import { page } from '$app/stores';
 	import { get } from '$lib/api/utils.js';
+  import Modal from '$lib/components/ui/Modal.svelte';
 
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
@@ -94,15 +95,14 @@ COMPONENT JS (w/ TS)
 COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
-
-{#if showWithdrawModalForm}
+<Modal bind:show={showWithdrawModalForm} style="padding: 0px">
   <ModalWithdrawForm
     data={RESPONSE_PROFILE_DATA?.withdraw_forms}
     {withdrawFormSelectId}
     {withdrawFormSelectLogo}
     on:toggleModal={() => showWithdrawModalForm = false}
   />
-{/if}
+</Modal>
 
 <!--
 MAIN DEPOST WIDGET
