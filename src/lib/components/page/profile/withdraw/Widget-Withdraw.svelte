@@ -177,23 +177,25 @@ MAIN DEPOST WIDGET
       >
 
       {#each WIDGET_DATA?.withdraw_opts ?? [] as item}
-        <div
-          title={item?.type ?? 'Withdraw Provider Option'}
-          class=
-          "
-          deposit-option-box
-          hover-transition-v-1
-          text-center
-          cursor-pointer
-          "
-          on:click={() => withdrawModalToggle(item?.form_id, ($userBetarenaSettings.theme == "Dark" ? item?.provider_logo_dark : item?.provider_logo))}
-        >
-          <img
-            src={$userBetarenaSettings.theme == "Dark" ? item?.provider_logo_dark : item?.provider_logo}
-            alt={item?.type}
-          />
-        </div>
-      {/each}
+        {#if !item.blacklist}
+          <div
+              title={item?.type ?? 'Withdraw Provider Option'}
+              class=
+              "
+              deposit-option-box
+              hover-transition-v-1
+              text-center
+              cursor-pointer
+              "
+              on:click={() => withdrawModalToggle(item?.form_id, ($userBetarenaSettings.theme == "Dark" ? item?.provider_logo_dark : item?.provider_logo))}
+            >
+              <img
+                src={$userBetarenaSettings.theme == "Dark" ? item?.provider_logo_dark : item?.provider_logo}
+                alt={item?.type}
+              />
+            </div>
+          {/if}
+        {/each}
 
     </div>
 
