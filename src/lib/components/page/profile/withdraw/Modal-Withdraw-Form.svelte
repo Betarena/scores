@@ -747,7 +747,12 @@ MAIN WITHDRAW FORM FLOW WIDGET
           BTA
       </p>
       {#if currentWithdrawStep > 1}
-        <p><img src="https://firebasestorage.googleapis.com/v0/b/betarena-ios.appspot.com/o/Betarena_Media%2Fforms_media%2Ficon_bta_form.png?alt=media&token=c454ca74-7ca6-4468-a2a2-bf5ba651dc07" /> </p>
+        <p class="withdraw-conversion">
+          <img src="https://firebasestorage.googleapis.com/v0/b/betarena-ios.appspot.com/o/Betarena_Media%2Fforms_media%2Ficon_bta_form.png?alt=media&token=c454ca74-7ca6-4468-a2a2-bf5ba651dc07" />
+         <span>
+           BTA
+         </span>
+        </p>
       {/if}
 
     </div>
@@ -898,6 +903,7 @@ MAIN WITHDRAW FORM FLOW WIDGET
                         disabled={crypto_opt?.is_beta}
                         autocomplete="off"
                         required
+                        checked={i == 0}
                         class=
                         "
                         color-black-2
@@ -1268,7 +1274,25 @@ MAIN WITHDRAW FORM FLOW WIDGET
 ### HINT: auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
 =================-->
 
-<style>
+<style lang="scss">
+
+  .withdraw-conversion {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 3px;
+
+    span {
+
+      color: var(--semi-black-night, #A8A8A8);
+      /* body/14px */
+      font-family: Roboto;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 150%; /* 21px */
+    }
+  }
 
 	div#profile⮕w⮕withdraw⮕modal⮕form⮕modal-bg-blur
   {
