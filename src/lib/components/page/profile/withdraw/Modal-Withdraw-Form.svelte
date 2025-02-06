@@ -78,14 +78,15 @@ COMPONENT JS (w/ TS)
     /** Modal Withdraw Form - Keeps track of input errors in withdraw fill out */
     withdrawTargetInputIdError: B_H_TRS_WF_FormField_Type,
     /** Modal Withdraw Form - Keeps track of target error display */
-    withdrawTargetInputErrorMsg: string
+    withdrawTargetInputErrorMsg: string,
+    withdrawAmount = ""
   ;
 
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
 
-	/**
+  /**
 	 * @description
    * bubbles up to parent event
 	 * to close (this) modal widget
@@ -738,8 +739,16 @@ MAIN WITHDRAW FORM FLOW WIDGET
         m-b-5
         "
       >
-        {spliceBalanceDoubleZero(toDecimalFix($userBetarenaSettings?.user?.scores_user_data?.main_balance)) ?? 0} BTA
+        {#if currentWithdrawStep > 1}
+          {withdrawAmount}
+        {:else}
+          {spliceBalanceDoubleZero(toDecimalFix($userBetarenaSettings?.user?.scores_user_data?.main_balance)) ?? 0}
+        {/if}
+          BTA
       </p>
+      {#if currentWithdrawStep > 1}
+        <p><img src="https://firebasestorage.googleapis.com/v0/b/betarena-ios.appspot.com/o/Betarena_Media%2Fforms_media%2Ficon_bta_form.png?alt=media&token=c454ca74-7ca6-4468-a2a2-bf5ba651dc07" /> </p>
+      {/if}
 
     </div>
 
@@ -940,21 +949,36 @@ MAIN WITHDRAW FORM FLOW WIDGET
               -->
               {#if form_item?.id != 'withdraw-crypto-opts'}
 
-                <input
-                  id={form_item?.id}
-                  name={form_item?.id}
-                  type={form_item?.type ?? 'text'}
-                  class:error={withdrawTargetInputIdError == form_item?.id}
-                  placeholder={form_item?.placeholder ?? ''}
-                  autocomplete="off"
-                  value=""
-                  required
-                  class=
-                  "
-                  color-black-2
-                  "
-                />
-
+                {#if form_item?.id != 'withdraw-amount'}
+                  <input
+                    id={form_item?.id}
+                    name={form_item?.id}
+                    type={form_item?.type ?? 'text'}
+                    class:error={withdrawTargetInputIdError == form_item?.id}
+                    placeholder={form_item?.placeholder ?? ''}
+                    autocomplete="off"
+                    required
+                    class=
+                    "
+                    color-black-2
+                    "
+                  />
+                {:else}
+                    <input
+                    id={form_item?.id}
+                    name={form_item?.id}
+                    type='text'
+                    class:error={withdrawTargetInputIdError == form_item?.id}
+                    placeholder={form_item?.placeholder ?? ''}
+                    autocomplete="off"
+                    required
+                    bind:value={withdrawAmount}
+                    class=
+                    "
+                    color-black-2
+                    "
+                  />
+                {/if}
                 <!--
                 WITHDRAW INPUT ERROR
                 -->
