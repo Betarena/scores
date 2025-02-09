@@ -28,7 +28,7 @@ export async function main
         // ╰──────────────────────────────────────────────────────────────────╯
 
         const
-          page = request.url.searchParams.get('page') || 1,
+          page = request.url.searchParams.get('page') || 0,
           uid = request.url.searchParams.get('uid') || ""
           ;
 
