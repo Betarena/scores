@@ -123,7 +123,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           color-grey
           minute-text
         "
-        class:single-min={INCIDENT_INFO?.minute <	10}
+        class:single-min={(INCIDENT_INFO?.minute || 1) <	10}
       >
         {INCIDENT_INFO?.minute}'
       </p>
@@ -427,7 +427,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 	div.incident-row.type-R .single-min
   {
 		margin-left: 16px !important;
-		margin-right: 4px;
+		margin-right: 0px !important;
 	}
 
   /*
