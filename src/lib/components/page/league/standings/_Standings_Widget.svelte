@@ -1855,9 +1855,6 @@
 	div.stand-view-opt-box:last-child {
 		border-radius: 0px 8px 8px 0px;
 	}
-	div.stand-view-opt-box.total_view_only {
-		border-radius: 8px !important;
-	}
 
 	/* old - table approach */
 	div#top-row-standings-head {
