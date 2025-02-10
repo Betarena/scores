@@ -1054,10 +1054,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   {
 		border-radius: 0px 8px 8px 0px;
 	}
-	div.stand-view-opt-box.total_view_only
-  {
-		border-radius: 8px !important;
-	}
+
 
 	#form-view-opt-box
   {
