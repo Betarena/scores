@@ -120,7 +120,7 @@ async function fetchData
      */
     urls0
       = [
-        `/api/data/author/sportstack?permalink=${_name}`
+        `/api/data/author/sportstack?permalink=${_name}&sortPublishDate=desc`
 
       ],
 
