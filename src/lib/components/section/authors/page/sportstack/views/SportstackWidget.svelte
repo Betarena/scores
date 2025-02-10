@@ -37,7 +37,6 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { browser } from "$app/environment";
   import { page } from "$app/stores";
   import type { IPageAuthorSportstackData } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";

@@ -40,7 +40,6 @@
   import { page } from "$app/stores";
 
   import sessionStore from "$lib/store/session.js";
-  import { viewportChangeV2 } from "$lib/utils/device.js";
   import { tryCatch } from "@betarena/scores-lib/dist/util/common.js";
 
   import SvelteSeo from "svelte-seo";
