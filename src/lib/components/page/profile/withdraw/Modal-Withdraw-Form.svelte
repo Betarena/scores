@@ -724,7 +724,7 @@ MAIN WITHDRAW FORM FLOW WIDGET
         color-black-2
         "
       >
-        {targetFormStep?.balance ?? 'Your Balance:'}
+        {targetFormData?.withdraw_form_steps?.[0]?.balance ?? 'Your Balance:'}
       </p>
 
       <!--
