@@ -28,6 +28,8 @@ jobs:
         with:
           host: ${{ secrets.SERVER_HOST }}
           key: ${{ secrets.SERVER_KEY }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          port: ${{ secrets.SERVER_PORT }}
           script: |
             # ╭─────
             # │ NOTE:
