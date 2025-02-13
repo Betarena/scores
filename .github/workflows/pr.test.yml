@@ -1,0 +1,38 @@
+# ╭──────────────────────────────────────────────────────────────────╮
+# │ 🐙 GITHUB ACIONS CI/CD WORKFLOW                                  │
+# ┣──────────────────────────────────────────────────────────────────┫
+# │ Responsible for:                                                 │
+# │ ➤ [1] check for correct build(s)                                 │
+# │ ➤ [2] build check of project as a Check PR Label                 │
+# ╰──────────────────────────────────────────────────────────────────╯
+
+name: 'Pull-Request [to-main]'
+
+on:
+  push:
+    branches:
+      - test-2
+
+jobs:
+
+  # ╭──────────────────────────────────────────────────────────────────╮
+  # │ NOTE:                                                            │
+  # │ ➤ [5] [disabled] auto-deploy project to target server.           │
+  # ╰──────────────────────────────────────────────────────────────────╯
+
+  deploy:
+    name: 🚀 JOB /:/ Deployment
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          key: ${{ secrets.SERVER_KEY }}
+          script: |
+            # ╭─────
+            # │ NOTE:
+            # │ ➤ [ℹ] Navigate to target project directory
+            # ╰─────
+            cd web/scores
+            ehco "Hello"
+  #
