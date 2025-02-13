@@ -9,7 +9,7 @@
 # │ ➤ [5] [disabled] auto-deploy project to target server.           │
 # ╰──────────────────────────────────────────────────────────────────╯
 
-name: '⚡️ Bump ➤ Publish ➤ Release'
+name: '⚡️ Bump ➔ Publish ➔ Release'
 
 'on':
   pull_request:
@@ -22,86 +22,72 @@ jobs:
 
   # ╭──────────────────────────────────────────────────────────────────╮
   # │ NOTE:                                                            │
-  # │ ➤ [1] 'auto-bump' & 'tag' project version.                       │
+  # │ ➤ (1) auto-bump & (2) 'tag' project version(s).                  │
   # ╰──────────────────────────────────────────────────────────────────╯
 
-  npm-version-bump:
-    name: NPM Version Bump
-    if: github.event.pull_request.merged == true
+  version-bump:
+    name: 🪜 JOB /:/ SemVer Bump Client
     runs-on: ubuntu-22.04
-    # ▓ NOTE:
-    # ▓ > map a step output to a job output.
-    # ▓ > 🔗 read-more /:/ https://docs.github.com/en/actions/using-jobs/defining-outputs-for-jobs
+    if:
+      ${{
+        (
+          contains(github.event.pull_request.labels.*.name, 'semver:patch')
+          || contains(github.event.pull_request.labels.*.name, 'semver:minor')
+          || contains(github.event.pull_request.labels.*.name, 'semver:major')
+        )
+        && github.event.pull_request.merged == true
+      }}
+    # ╭─────
+    # │ NOTE:
+    # │ |: map a step output to a job output.
+    # │ |: 🔗 read-more /:/ https://docs.github.com/en/actions/using-jobs/defining-outputs-for-jobs
+    # ╰─────
     outputs:
-      output1: ${{ steps.step1.outputs.bump_version_bool }}
-      output2: ${{ steps.set-version.outputs.release_tag }}
+      isVersionBumped: ${{ steps.step-check-version-bump.outputs.bump_version_bool }}
+      releaseTag: ${{ steps.step-check-version-bump.outputs.release_tag }}
     steps:
-
-      - name: "STEP /:/ checkout source code"
+      - name: 'STEP /:/ checkout source code'
         uses: actions/checkout@v4
         with:
           token: '${{ secrets.GH_TOKEN }}'
           fetch-depth: 0
           fetch-tags: true
           ref: main
-
-      - name: "STEP /:/ git config"
+      - name: 'STEP /:/ config git'
         run: |
           git config --local user.email "${{ secrets.GH_ORG_EMAIL }}"
           git config --local user.name "${{ secrets.GH_ORG_NAME }}"
-
-      - name: "STEP /:/ node config"
+          git config --local push.default current
+          git config --local pull.rebase false
+          # [🐞]
+          git branch
+      - name: 'STEP /:/ config node'
         uses: actions/setup-node@v3
         with:
           node-version: 18.19.0
-
-      - name: "STEP /:/ npm config"
+      - name: 'STEP /:/ config npm'
         run: |
           npm install -g npm@10.2.3
-
-      - name: "STEP /:/ check semver:patch"
-        if: contains(github.event.pull_request.labels.*.name, 'semver:patch')
+      - name: 'STEP /:/ check version bump'
+        id: step-check-version-bump
+        # ╭─────
+        # │ NOTE:
+        # │ |: 🔗 read-more /:/ https://michaelcurrin.github.io/dev-cheatsheets/cheatsheets/ci-cd/github-actions/persist.html
+        # │ |: 🔗 read-more /:/ https://stackoverflow.com/questions/58177786/get-the-current-pushed-tag-in-github-actions
+        # ╰─────
         run: |
-          npm version patch
-
-      - name: "STEP /:/ check semver:minor"
-        if: contains(github.event.pull_request.labels.*.name, 'semver:minor')
-        run: |
-          npm version minor
-
-      - name: "STEP /:/ check semver:major"
-        if: contains(github.event.pull_request.labels.*.name, 'semver:major')
-        run: |
-          npm version major
-
-      - name: "STEP /:/ check version bump"
-        id: step1
-        if: ${{
-            contains(github.event.pull_request.labels.*.name, 'semver:patch')
-            || contains(github.event.pull_request.labels.*.name, 'semver:minor')
-            || contains(github.event.pull_request.labels.*.name, 'semver:major')
-          }}
-        # ▓ > 🔗 read-more /:/ https://michaelcurrin.github.io/dev-cheatsheets/cheatsheets/ci-cd/github-actions/persist.html
-        # ▓ > 🔗 read-more /:/ https://stackoverflow.com/questions/58177786/get-the-current-pushed-tag-in-github-actions
-        run: |
-          echo "bump_version_bool=true" >> "$GITHUB_OUTPUT"
-
-      - name: "STEP /:/ persist version bump"
-        run: |
-          git push origin main --follow-tags --force
-
-      - name: "STEP /:/ set new version"
-        id: set-version
-        run: |
-          npm pkg get version
-          echo "release_tag=$(npm pkg get version --workspaces=false | tr -d \") ">> $GITHUB_OUTPUT
-
-      - name: "STEP /:/ check output/set version"
+          # [🐞]
+          echo "$IS_SEMVER_PATCH $IS_SEMVER_MINOR $IS_SEMVER_MAJOR"
+          [ $IS_SEMVER_PATCH == "true" ] && npm version patch
+          [ $IS_SEMVER_MINOR == "true" ] && npm version minor
+          [ $IS_SEMVER_MAJOR == "true" ] && npm version major
+          echo "bump_version_bool=true" >> $GITHUB_OUTPUT
+          echo "release_tag=$(npm pkg get version --workspaces=false | tr -d \")" >> $GITHUB_OUTPUT
+        shell: bash
         env:
-          RELEASE_VERSION: ${{ steps.set-version.outputs.release_tag }}
-        run: |
-          echo $RELEASE_VERSION
-          echo ${{ steps.set-version.outputs.release_tag }}
+          IS_SEMVER_PATCH: ${{ contains(github.event.pull_request.labels.*.name, 'semver:patch') }}
+          IS_SEMVER_MINOR: ${{ contains(github.event.pull_request.labels.*.name, 'semver:minor') }}
+          IS_SEMVER_MAJOR: ${{ contains(github.event.pull_request.labels.*.name, 'semver:major') }}
   #
 
   # ╭──────────────────────────────────────────────────────────────────╮
@@ -109,14 +95,12 @@ jobs:
   # │ ➤ [2] auto-create release + tag of project.                      │
   # ╰──────────────────────────────────────────────────────────────────╯
 
-  create-release:
-    name: Git Create Release
-    needs: npm-version-bump
-    if: needs.npm-version-bump.outputs.output1 == 'true'
-    # (alternative) [#1]
-    env:
-      RELEASE_TAG: ${{ needs.npm-version-bump.outputs.output2 }}
+  release-create:
+    name: 📜 JOB /:/ Create Release
     runs-on: ubuntu-22.04
+    needs: version-bump
+    env:
+      RELEASE_TAG: ${{ needs.version-bump.outputs.releaseTag }}
     steps:
       - uses: "marvinpinto/action-automatic-releases@latest"
         # SEE:
@@ -134,7 +118,7 @@ jobs:
 
   sentry-sourcemap-deploy:
     name: 🟣 Sentry sourcemap (artifacts) upload
-    needs: create-release
+    needs: release-create
     if: false
     runs-on: ubuntu-22.04
     steps:
@@ -163,7 +147,7 @@ jobs:
   docker-image-build-and-push:
     name: 🐳 JOB /:/ Docker Image Build & Publish
     runs-on: ubuntu-22.04
-    needs: create-release
+    needs: release-create
     steps:
       - uses: actions/checkout@v3
         with:
