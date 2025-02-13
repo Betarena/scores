@@ -36,5 +36,5 @@ jobs:
             # │ ➤ [ℹ] Navigate to target project directory
             # ╰─────
             cd web/scores
-            ehco "Hello"
+            echo "Hello"
   #
