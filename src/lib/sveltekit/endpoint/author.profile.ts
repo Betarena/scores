@@ -107,8 +107,13 @@ async function fallbackDataGenerate0
 {
   try
   {
-    const dataRes0: IPageAuthorProfileData = await entryTargetDataAuthorProfile({ uid, page: Number(page) });
-    return { ...dataRes0 };
+    const dataRes0: IPageAuthorProfileData = await entryTargetDataAuthorProfile({ uid, page: Number(page), optsQuery: { sortPublishDate: "desc"} });
+    const sorted = dataRes0.mapArticle.sort((a, b) => {
+      const dateA = a?.[1]?.published_date ? new Date(a[1].published_date).getTime() : 0;
+      const dateB = b?.[1]?.published_date ? new Date(b[1].published_date).getTime() : 0;
+      return dateB - dateA;
+    });
+    return { ...dataRes0, mapArticle: sorted };
   } catch (e)
   {
     console.trace(e)
