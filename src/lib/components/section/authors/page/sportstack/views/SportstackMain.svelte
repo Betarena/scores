@@ -40,7 +40,6 @@
   import { browser } from "$app/environment";
   import { page } from "$app/stores";
 
-  import { get } from "$lib/api/utils.js";
   import sessionStore from "$lib/store/session.js";
   import { dlogv2 } from "$lib/utils/debug.js";
 
@@ -54,7 +53,6 @@
   import {
     prepareArticlesMap,
     type IArticle,
-    type ITagsWidgetData,
   } from "../../helpers.js";
   import SportstackHeader from "./SportstackHeader.svelte";
   import FollowersList from "../../../common_ui/users_list/UsersList.svelte";
@@ -308,7 +306,7 @@
        * @description
        * 📝 Data Response (0).
        */
-      dataRes0 = (await fetchArticlesBySportstack({permalink, page}) );
+      dataRes0 = (await fetchArticlesBySportstack({permalink, page, options: {sortPublishDate: "desc"}}) );
     isLoadingArticles = false;
     updateData(dataRes0);
     currentPage = page;
