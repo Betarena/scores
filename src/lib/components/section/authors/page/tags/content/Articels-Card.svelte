@@ -28,7 +28,7 @@
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'variables' that are to be         │
-  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ and are expected to be used by 'this' .svelte file / component.        │=
   // │ IMPORTANT                                                              │
   // │ Please, structure the imports as follows:                              │
   // │ 1. export const / let [..]                                             │
@@ -204,8 +204,10 @@
 
       .preview {
         min-height: 100%;
-        max-height: 100%;
+        min-height: 100%;
         max-width: 360px;
+        height: 200px;
+        max-height: 200px;
         width: 100%;
         flex-shrink: 0;
 
@@ -213,7 +215,7 @@
           border-radius: 0px 12px 12px 0px;
           width: 100%;
           height: 100%;
-          object-fit: cover;
+          object-fit: fill;
         }
 
         &.tablet {

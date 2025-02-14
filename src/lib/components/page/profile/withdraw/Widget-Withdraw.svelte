@@ -8,6 +8,7 @@ COMPONENT JS (w/ TS)
 
 	import { page } from '$app/stores';
 	import { get } from '$lib/api/utils.js';
+  import Modal from '$lib/components/ui/Modal.svelte';
 
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
@@ -94,15 +95,14 @@ COMPONENT JS (w/ TS)
 COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
-
-{#if showWithdrawModalForm}
+<Modal bind:show={showWithdrawModalForm} style="padding: 0px">
   <ModalWithdrawForm
     data={RESPONSE_PROFILE_DATA?.withdraw_forms}
     {withdrawFormSelectId}
     {withdrawFormSelectLogo}
     on:toggleModal={() => showWithdrawModalForm = false}
   />
-{/if}
+</Modal>
 
 <!--
 MAIN DEPOST WIDGET
@@ -177,23 +177,25 @@ MAIN DEPOST WIDGET
       >
 
       {#each WIDGET_DATA?.withdraw_opts ?? [] as item}
-        <div
-          title={item?.type ?? 'Withdraw Provider Option'}
-          class=
-          "
-          deposit-option-box
-          hover-transition-v-1
-          text-center
-          cursor-pointer
-          "
-          on:click={() => withdrawModalToggle(item?.form_id, ($userBetarenaSettings.theme == "Dark" ? item?.provider_logo_dark : item?.provider_logo))}
-        >
-          <img
-            src={$userBetarenaSettings.theme == "Dark" ? item?.provider_logo_dark : item?.provider_logo}
-            alt={item?.type}
-          />
-        </div>
-      {/each}
+        {#if !item.blacklist}
+          <div
+              title={item?.type ?? 'Withdraw Provider Option'}
+              class=
+              "
+              deposit-option-box
+              hover-transition-v-1
+              text-center
+              cursor-pointer
+              "
+              on:click={() => withdrawModalToggle(item?.form_id, ($userBetarenaSettings.theme == "Dark" ? item?.provider_logo_dark : item?.provider_logo))}
+            >
+              <img
+                src={$userBetarenaSettings.theme == "Dark" ? item?.provider_logo_dark : item?.provider_logo}
+                alt={item?.type}
+              />
+            </div>
+          {/if}
+        {/each}
 
     </div>
 

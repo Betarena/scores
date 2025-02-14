@@ -21,6 +21,7 @@ COMPONENT JS (w/ TS)
   import LivescoresFixtureRow from './Livescores_Fixture_Row.svelte';
   import LivescoresTopRow from './Livescores_Top_Row.svelte';
   import LoaderRow from './loaders/Loader_Row.svelte';
+  import NoData from '$lib/components/ui/NoData.svelte';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -817,48 +818,55 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         <!--
         [ℹ] iterate over each non-empty-league-id's for selected_date
         -->
-        {#each [...fixturesGroupByDateLiveLeagueMap.entries()] as [leagueId, fixtureMap]}
-          <!--
-          [ℹ] league info (box)
-          -->
-          <a
-            href="{leagueMap.get(leagueId)?.urls[server_side_language].replace('https://scores.betarena.com','')}">
-            <div
-              class="
-                row-space-start
-                league-group
-              ">
-              <img
-                loading="lazy"
-                src={correctFlagGenerate(leagueId)}
-                on:error={(e) => (e.currentTarget.src = '/assets/flags/EN.svg')}
-                alt="default alt text"
-                class="m-r-15"
-                width="21"
-                height="16"
-              />
-              <p
+        {#if !fixturesGroupByDateLiveLeagueMap.size}
+        <div class="fixture-row no-data">
+          <NoData title={WIDGET_T_DATA.no_info?.title} text={`${WIDGET_T_DATA.no_info?.desc} ${WIDGET_T_DATA.no_info?.['sub-t']}`} />
+        </div>
+        {:else}
+          {#each [...fixturesGroupByDateLiveLeagueMap.entries()] as [leagueId, fixtureMap]}
+            <!--
+            [ℹ] league info (box)
+            -->
+            <a
+              href="{leagueMap.get(leagueId)?.urls[server_side_language].replace('https://scores.betarena.com','')}">
+              <div
                 class="
-                  s-14
-                  w-500
-                  color-black-2
+                  row-space-start
+                  league-group
                 ">
-                {leagueMap.get(leagueId)?.league_name}
-              </p>
-            </div>
-          </a>
-          <!--
-          [ℹ] fixtures (of league) (box)
-          -->
-          {#each [...fixtureMap.entries()] as [f_id, fixture]}
-              <!-- <p>[🐞] {fixture?.id}</p> -->
-              <LivescoresFixtureRow
-                FIXTURE_D={fixture}
-                {server_side_language}
-              />
-          {/each}
+                <img
+                  loading="lazy"
+                  src={correctFlagGenerate(leagueId)}
+                  on:error={(e) => (e.currentTarget.src = '/assets/flags/EN.svg')}
+                  alt="default alt text"
+                  class="m-r-15"
+                  width="21"
+                  height="16"
+                />
+                <p
+                  class="
+                    s-14
+                    w-500
+                    color-black-2
+                  ">
+                  {leagueMap.get(leagueId)?.league_name}
+                </p>
+              </div>
+            </a>
+            <!--
+            [ℹ] fixtures (of league) (box)
+            -->
+            {#each [...fixtureMap.entries()] as [f_id, fixture]}
+                <!-- <p>[🐞] {fixture?.id}</p> -->
+                <LivescoresFixtureRow
+                  FIXTURE_D={fixture}
+                  {server_side_language}
+                />
+            {/each}
 
         {/each}
+        {/if}
+
       </div>
 
       <!--
@@ -924,6 +932,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     border-top: 1px solid var(--grey-color);
   }
 
+  .no-data {
+    padding-top: 12px;
+    padding-bottom: -8px;
+    border-top: 1px solid var(--grey-color);
+  }
   /*
   =============
   RESPONSIVNESS
@@ -957,6 +970,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   */
 
   .dark-background-1 div.league-group,
+  .dark-background-1 .no-data,
   .dark-background-1 div#show-more-box {
     border-top: 1px solid var(--dark-theme-1-shade);
   }

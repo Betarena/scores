@@ -81,7 +81,7 @@
   $: isPWA = globalState.has("IsPWA");
 
   const BetarenaUsers = new Betarena_User_Class();
-  let currentPage = 1;
+  let currentPage = 0;
   let isLoadingSubscribers = false;
   let author_subscribers_profiles: BetarenaUser[] = [];
   let prevAuthorId = "";
@@ -298,8 +298,6 @@
     if (!dataRes0) return;
     return;
   }
-
-  $: console.log("DATA: ", widgetData)
 
   // #endregion ➤ 🛠️ METHODS
 </script>
