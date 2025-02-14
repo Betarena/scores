@@ -61,6 +61,7 @@
     routeIdPageCompetitionLobby,
     routeIdScores,
   } from "$lib/constants/paths.js";
+  import Circle from "./assets/circle.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -129,25 +130,36 @@
           ?.sports_content_title ?? "SPORTS CONTENT",
       route: routeIdContent,
     },
+    // {
+    //   id: "competitions",
+    //   icon: CupIcon,
+    //   url: generateUrlCompetitions(
+    //     $sessionStore.serverLang!,
+    //     $page.data.B_SAP_D3_CP_H
+    //   ),
+    //   type: "link",
+    //   label:
+    //     trsanslationData?.scores_header_translations?.section_links
+    //       ?.competitions_title ?? "COMPETITIONS",
+    //   route: routeIdPageCompetitionLobby,
+    // },
     {
-      id: "competitions",
-      icon: CupIcon,
-      url: generateUrlCompetitions(
-        $sessionStore.serverLang!,
-        $page.data.B_SAP_D3_CP_H
-      ),
+      id: "bta",
+      icon: Circle,
+      url: `/u/transaction-history/${lang}`,
       type: "link",
-      label:
-        trsanslationData?.scores_header_translations?.section_links
-          ?.competitions_title ?? "COMPETITIONS",
-      route: routeIdPageCompetitionLobby,
+      label: "BTA",
+      route: null,
     },
   ] as INavBtnData[];
 
   $: if (buttons_order && !dragStart) {
-    navButtonOrderList = buttons_order?.map((id) =>
-      navButtonOrderList.find((btn) => btn.id === id)
-    ).filter(Boolean);
+    const orderMap = new Map(buttons_order.map((id, index) => [id, index]));
+    navButtonOrderList = [...navButtonOrderList].sort((a, b) => {
+        const indexA = orderMap.has(a.id) ? orderMap.get(a.id)! : Infinity;
+        const indexB = orderMap.has(b.id) ? orderMap.get(b.id)! : Infinity;
+        return (indexA as number) - (indexB as number);
+    });
   }
 
   // // #endregion ➤ 📌 VARIABLES
@@ -233,7 +245,7 @@
   <div class="blured-container" />
   {#each [...navButtonOrderList] as { id, url, icon, type, route } (id)}
     {#if type === "link" && url}
-      {@const active = $page.route.id === route}
+      {@const active = $page.route.id === route || $page.url.pathname.includes(url)}
       <a href={url} class="item" class:active aria-label="link to {id}">
         <svelte:component this={icon} type={active ? "solid" : "outline"} />
       </a>

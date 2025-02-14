@@ -75,16 +75,16 @@
       isNew: false,
       newTxt: "New",
     },
-    {
-      id: "competitions",
-      key:[routeIdPageCompetitionLobby],
-      url: generateUrlCompetitions(serverLang!, $page.data.B_SAP_D3_CP_H),
-      navTxt:
-        translationData?.scores_header_translations?.section_links
-          ?.competitions_title ?? "COMPETITIONS",
-      isNew: false,
-      newTxt: "New",
-    },
+    // {
+    //   id: "competitions",
+    //   key:[routeIdPageCompetitionLobby],
+    //   url: generateUrlCompetitions(serverLang!, $page.data.B_SAP_D3_CP_H),
+    //   navTxt:
+    //     translationData?.scores_header_translations?.section_links
+    //       ?.competitions_title ?? "COMPETITIONS",
+    //   isNew: false,
+    //   newTxt: "New",
+    // },
   ] as INavBtnData[];
 
   $: if (buttons_order && !dragStart) {
