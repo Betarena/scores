@@ -78,14 +78,15 @@ COMPONENT JS (w/ TS)
     /** Modal Withdraw Form - Keeps track of input errors in withdraw fill out */
     withdrawTargetInputIdError: B_H_TRS_WF_FormField_Type,
     /** Modal Withdraw Form - Keeps track of target error display */
-    withdrawTargetInputErrorMsg: string
+    withdrawTargetInputErrorMsg: string,
+    withdrawAmount = ""
   ;
 
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
 
-	/**
+  /**
 	 * @description
    * bubbles up to parent event
 	 * to close (this) modal widget
@@ -467,13 +468,13 @@ COMPONENT JS (w/ TS)
 <!--
 MAIN MODAL BACKGROUND BLUR
 -->
-{#if !isViewMobile}
+<!-- {#if !isViewMobile}
   <div
     id="{CNAME}⮕modal-bg-blur"
     on:click={() => toggleModal()}
     in:fade
   />
-{/if}
+{/if} -->
 
 <!--
 WITHDRAW SUCCESS ICON
@@ -738,85 +739,21 @@ MAIN WITHDRAW FORM FLOW WIDGET
         m-b-5
         "
       >
-        {spliceBalanceDoubleZero(toDecimalFix($userBetarenaSettings?.user?.scores_user_data?.main_balance)) ?? 0} BTA
-      </p>
-
-      <!--
-      BALANCE IN USD / SELECTED CRYPTO ASSET
-      -->
-      <div
-        class=
-        "
-        row-space-center
-        "
-      >
-
-        <p
-          class=
-          "
-          s-14
-          color-grey
-          "
-        >
-          (${spliceBalanceDoubleZero(toDecimalFix($userBetarenaSettings?.user?.scores_user_data?.main_balance)) ?? 0})
-        </p>
-
-        <!--
-        WITHDRAW WITH CRYPTO
-        -->
-        {#if if_R_0}
-
-          <!--
-          CRPYTO CONVERT TO ICON
-          -->
-          <img
-            id=''
-            src={icon_arrow_right}
-            alt='arrow_right'
-            title='Withdraw to:'
-            loading='lazy'
-            width=20
-            height=20
-            class=
-            "
-            m-l-8
-            "
-          />
-
-          <!--
-          CRYPTO SELECTED FOR WITHDRAW LOGO
-          -->
-          <img
-            id=''
-            src={withdrawSelectCoinLogo}
-            alt='{withdrawObj?.asset}_logo'
-            title='{withdrawObj?.asset} Selected'
-            loading='lazy'
-            width=16
-            height=16
-            class=
-            "
-            m-l-8
-            "
-          />
-
-          <!--
-          CRYPTO SELETED FOR WITHDRAW NAME
-          -->
-          <p
-            class=
-            "
-            s-14
-            color-grey
-            m-l-8
-            "
-          >
-            {withdrawObj?.asset}
-          </p>
-
+        {#if currentWithdrawStep > 1}
+          {withdrawAmount}
+        {:else}
+          {spliceBalanceDoubleZero(toDecimalFix($userBetarenaSettings?.user?.scores_user_data?.main_balance)) ?? 0}
         {/if}
-
-      </div>
+          BTA
+      </p>
+      {#if currentWithdrawStep > 1}
+        <p class="withdraw-conversion">
+          <img src="https://firebasestorage.googleapis.com/v0/b/betarena-ios.appspot.com/o/Betarena_Media%2Fforms_media%2Ficon_bta_form.png?alt=media&token=c454ca74-7ca6-4468-a2a2-bf5ba651dc07" />
+         <span>
+           BTA
+         </span>
+        </p>
+      {/if}
 
     </div>
 
@@ -966,6 +903,7 @@ MAIN WITHDRAW FORM FLOW WIDGET
                         disabled={crypto_opt?.is_beta}
                         autocomplete="off"
                         required
+                        checked={i == 0}
                         class=
                         "
                         color-black-2
@@ -1017,21 +955,36 @@ MAIN WITHDRAW FORM FLOW WIDGET
               -->
               {#if form_item?.id != 'withdraw-crypto-opts'}
 
-                <input
-                  id={form_item?.id}
-                  name={form_item?.id}
-                  type={form_item?.type ?? 'text'}
-                  class:error={withdrawTargetInputIdError == form_item?.id}
-                  placeholder={form_item?.placeholder ?? ''}
-                  autocomplete="off"
-                  value=""
-                  required
-                  class=
-                  "
-                  color-black-2
-                  "
-                />
-
+                {#if form_item?.id != 'withdraw-amount'}
+                  <input
+                    id={form_item?.id}
+                    name={form_item?.id}
+                    type={form_item?.type ?? 'text'}
+                    class:error={withdrawTargetInputIdError == form_item?.id}
+                    placeholder={form_item?.placeholder ?? ''}
+                    autocomplete="off"
+                    required
+                    class=
+                    "
+                    color-black-2
+                    "
+                  />
+                {:else}
+                    <input
+                    id={form_item?.id}
+                    name={form_item?.id}
+                    type='text'
+                    class:error={withdrawTargetInputIdError == form_item?.id}
+                    placeholder={form_item?.placeholder ?? ''}
+                    autocomplete="off"
+                    required
+                    bind:value={withdrawAmount}
+                    class=
+                    "
+                    color-black-2
+                    "
+                  />
+                {/if}
                 <!--
                 WITHDRAW INPUT ERROR
                 -->
@@ -1321,7 +1274,25 @@ MAIN WITHDRAW FORM FLOW WIDGET
 ### HINT: auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
 =================-->
 
-<style>
+<style lang="scss">
+
+  .withdraw-conversion {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 3px;
+
+    span {
+
+      color: var(--semi-black-night, #A8A8A8);
+      /* body/14px */
+      font-family: Roboto;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 150%; /* 21px */
+    }
+  }
 
 	div#profile⮕w⮕withdraw⮕modal⮕form⮕modal-bg-blur
   {
@@ -1340,7 +1311,7 @@ MAIN WITHDRAW FORM FLOW WIDGET
 	div#profile⮕w⮕withdraw⮕modal⮕form⮕main
   {
     /* 📌 position */
-		position: fixed;
+		/* position: absolute; */
     z-index: 10000;
     right: 0;
     left: 0;

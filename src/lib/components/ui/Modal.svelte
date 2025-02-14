@@ -65,7 +65,7 @@
     {#if modal}
        <ModalBackdrop on:closeModal={() => (show = false)} />
       {/if}
-    <div in:chooseTransition={{ easing: cubicOut }} out:chooseTransition={{ easing: cubicIn, out: true }} class="modal-body {viewportType}" class:bottomOnMobile>
+    <div in:chooseTransition={{ easing: cubicOut }} out:chooseTransition={{ easing: cubicIn, out: true }} class="modal-body {viewportType}" class:bottomOnMobile style="{$$restProps.style}">
       <slot />
     </div>
   </div>
