@@ -819,8 +819,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         [ℹ] iterate over each non-empty-league-id's for selected_date
         -->
         {#if !fixturesGroupByDateLiveLeagueMap.size}
-        <div class="fixture-row">
-          <NoData />
+        <div class="fixture-row no-data">
+          <NoData title={WIDGET_T_DATA.no_info?.title} text={`${WIDGET_T_DATA.no_info?.desc} ${WIDGET_T_DATA.no_info?.['sub-t']}`} />
         </div>
         {:else}
           {#each [...fixturesGroupByDateLiveLeagueMap.entries()] as [leagueId, fixtureMap]}
@@ -932,6 +932,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     border-top: 1px solid var(--grey-color);
   }
 
+  .no-data {
+    padding-top: 12px;
+    padding-bottom: -8px;
+    border-top: 1px solid var(--grey-color);
+  }
   /*
   =============
   RESPONSIVNESS
@@ -965,6 +970,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   */
 
   .dark-background-1 div.league-group,
+  .dark-background-1 .no-data,
   .dark-background-1 div#show-more-box {
     border-top: 1px solid var(--dark-theme-1-shade);
   }
