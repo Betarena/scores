@@ -90,7 +90,7 @@
   $: if (buttons_order && !dragStart) {
     navButtonOrderList = buttons_order?.map((id) =>
       navButtonOrderList.find((btn) => btn.id === id)
-    ).filter(bt => bt);
+    ).filter(Boolean);
   }
 
   // #region ➤ 🛠️ METHODS

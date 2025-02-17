@@ -155,7 +155,6 @@
 
   $: if (buttons_order && !dragStart) {
     const orderMap = new Map(buttons_order.map((id, index) => [id, index]));
-
     navButtonOrderList = [...navButtonOrderList].sort((a, b) => {
         const indexA = orderMap.has(a.id) ? orderMap.get(a.id)! : Infinity;
         const indexB = orderMap.has(b.id) ? orderMap.get(b.id)! : Infinity;
