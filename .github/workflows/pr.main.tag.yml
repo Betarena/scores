@@ -81,8 +81,12 @@ jobs:
           [ $IS_SEMVER_PATCH == "true" ] && npm version patch
           [ $IS_SEMVER_MINOR == "true" ] && npm version minor
           [ $IS_SEMVER_MAJOR == "true" ] && npm version major
+          # ╭─────
+          # │ IMPORTANT
+          # ╰─────
           echo "bump_version_bool=true" >> $GITHUB_OUTPUT
           echo "release_tag=$(npm pkg get version --workspaces=false | tr -d \")" >> $GITHUB_OUTPUT
+          git push origin main --follow-tags
         shell: bash
         env:
           IS_SEMVER_PATCH: ${{ contains(github.event.pull_request.labels.*.name, 'semver:patch') }}
