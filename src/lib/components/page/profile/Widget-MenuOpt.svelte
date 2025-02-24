@@ -88,7 +88,7 @@ COMPONENT JS (w/ TS)
     ;
     if (selectedMenuOpt == "Deposit") {
       if (browser) {
-        window.open(`https://betarena.com/public-presale`, "_blank");
+        window.open(`https://app.uniswap.org/explore/tokens/polygon/0x2519dadb4a41438c85b7c3251c22f45f90c9e459`, "_blank");
       }
       selectedMenuOpt = "Dashboard";
       targetUrl = `/u/dashboard/${$userBetarenaSettings.lang}`;
