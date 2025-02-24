@@ -35,6 +35,8 @@ COMPONENT JS (w/ TS)
   import icon_logout_select from './assets/menu-opt/logout-selected.svg';
   import icon_settings2 from './assets/menu-opt/settings2.svg'
   import icon_settings2_select from './assets/menu-opt/settings2-select.svg'
+  import icon_buy from './assets/menu-opt/buy.svg'
+  import icon_buy_select from './assets/menu-opt/buy-selected.svg'
 
 	import type { PROFILE_OPT } from '$lib/types/types.scores.js';
 	import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
@@ -183,6 +185,15 @@ COMPONENT JS (w/ TS)
         : icon_investor
     ;
   }
+  else if (MENU_OPT == 'Buy')
+  {
+    hoverMenuOptIconAlt = icon_buy_select;
+    selectedMenuOptIcon
+      = SELECTED_OPT == MENU_OPT
+        ? icon_buy_select
+        : icon_buy
+    ;
+  }
   else if (MENU_OPT == 'Deposit')
   {
     hoverMenuOptIconAlt = icon_deposit_select;
@@ -299,6 +310,8 @@ VIEW DESIGN - 1
           {profileTrs.profile?.dashboard}
         {:else if MENU_OPT == 'Investor'}
           {profileTrs.profile?.investor ?? 'Investor'}
+        {:else if MENU_OPT == 'Buy'}
+          {profileTrs.profile?.buy ?? 'Buy'}
         {:else if MENU_OPT == 'Author'}
           {profileTrs.profile?.author ?? 'Author'}
         {:else if MENU_OPT == 'Scores'}
@@ -436,6 +449,8 @@ VIEW DESIGN - 2
           {profileTrs.profile?.author ?? 'Author'}
         {:else if MENU_OPT == 'Investor'}
           {profileTrs.profile?.investor ?? 'Investor'}
+        {:else if MENU_OPT == 'Buy'}
+          {profileTrs.profile?.buy ?? 'Buy'}
         {:else if MENU_OPT == 'Scores'}
           {profileTrs.profile?.scores ?? 'Scores'}
         {:else if MENU_OPT == 'Withdraw'}

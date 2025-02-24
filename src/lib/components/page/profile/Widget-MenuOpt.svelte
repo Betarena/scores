@@ -37,6 +37,7 @@ COMPONENT JS (w/ TS)
       'Settings',
       'Author',
       'Investor',
+      "Buy",
       'Deposit',
       'Withdraw',
       'Transaction History',
@@ -85,6 +86,9 @@ COMPONENT JS (w/ TS)
     ;
 		if (selectedMenuOpt == 'Investor')
       targetUrl = `/u/investor/${$userBetarenaSettings.lang}`
+    ;
+    if (selectedMenuOpt == 'Buy')
+      targetUrl = `/u/buy/${$userBetarenaSettings.lang}`
     ;
     if (selectedMenuOpt == "Deposit") {
       if (browser) {
@@ -151,6 +155,9 @@ COMPONENT JS (w/ TS)
         break;
       case 'investor':
         selectedMenuOpt = 'Investor';
+        break;
+      case 'buy':
+        selectedMenuOpt = 'Buy';
         break;
       case 'deposit':
           goto

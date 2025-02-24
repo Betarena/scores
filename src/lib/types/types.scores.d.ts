@@ -28,6 +28,7 @@ export type PROFILE_OPT =
   | 'Account Settings'
   | 'Settings'
   | 'Investor'
+  | 'Buy'
   | 'Deposit'
   | 'Withdraw'
   | 'Transaction History'

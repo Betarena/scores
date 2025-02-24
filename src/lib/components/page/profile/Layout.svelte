@@ -39,6 +39,7 @@
 	import WidgetInvestor from './investor/Widget-Investor.svelte';
   import WidgetAuthor from './Widget-Author.svelte';
   import WidgetPlatformSettings from '$lib/components/page/profile/Widget-PlatformSettings.svelte';
+  import WidgetBuy from './buy/Widget-Buy.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -121,6 +122,8 @@
         <WidgetDeposit />
       {:else if $page?.url?.pathname.includes('transaction-history')}
         <WidgetTxHist />
+      {:else if $page?.url?.pathname.includes('buy')}
+        <WidgetBuy />
       {:else if $page?.url?.pathname.includes('withdraw')}
         <WidgetWithdraw />
       {:else if $page?.url?.pathname.includes('competition-history')}
