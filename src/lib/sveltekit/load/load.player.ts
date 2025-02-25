@@ -288,20 +288,7 @@ async function fetchData
         `/api/data/main/seo-pages?player_id=${_playerId}&page=player&decompress`
       ],
       fetch
-    ) as IPreloadData0
-  ;
-
-  if (PAGE_DATA == null || PAGE_DATA.error != undefined)
-    preloadExitLogic
-    (
-      performance.now(),
-      'player',
-      400,
-      (PAGE_DATA?.error?.reason ?? PRELOAD_ERROR_MSG_PLAYER)
-    );
-  ;
-
-  const
+    ) as IPreloadData0,
     /**
      * @description
      *  📣 Target `country id`.
