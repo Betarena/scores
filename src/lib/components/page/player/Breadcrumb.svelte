@@ -1,137 +1,289 @@
-<!-- ===============
-COMPONENT JS (w/ TS)
-=================-->
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 📌 High Order Overview                                                           │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Code Format   // V.8.0                                                         │
+│ ➤ Status        // 🔒 LOCKED                                                     │
+│ ➤ Author(s)     // @migbash                                                      │
+│ ➤ Maintainer(s) // @migbash                                                      │
+│ ➤ Created on    // April 18th, 2023                                              │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ 📝 Description                                                                   │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ BETARENA (Module)
+│ |: Player Breadcrumbs Widget Entry Point
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 🟦 Svelte Component JS/TS                                                        │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
 
 <script lang="ts">
 
-  //#region ➤ [MAIN] Package Imports
-  // <-imports-go-here->
+  // #region ➤ 📦 Package Imports
 
-	import { page } from "$app/stores";
-	import sessionStore from "$lib/store/session.js";
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
-	import type {
-		B_SAP_D1,
-		B_SAP_PP_D,
-		B_SAP_PP_T
-	} from "@betarena/scores-lib/types/seo-pages";
+  import { browser } from '$app/environment';
+  import { page } from '$app/stores';
 
-	import BreadcrumbSingle from "./Breadcrumb-Single.svelte";
+	import sessionStore from '$lib/store/session.js';
+	import { mutateStringToPermalink } from '@betarena/scores-lib/dist/util/language.js';
 
-  //#endregion ➤ [MAIN] Package Imports
+	import BreadcrumbSingle from './Breadcrumb-Single.svelte';
 
-  //#region ➤ [VARIABLES]
+	import type { B_SAP_D1, B_SAP_D3, B_SAP_PP_D, B_SAP_PP_T } from '@betarena/scores-lib/types/v8/preload.scores.js';
 
-  // IMPORTANT
-  // (this) widget has access to the following PAGE data:
-  // [...]
-  // $page.data.PAGE_DATA: B_SAP_PP_D
-  // $page.data.B_SAP_D1: B_SAP_D1
-  // $page.data.PAGE_SEO: B_SAP_PP_T
-  // FIXME: remove cosnt data = [...] and fix the types issue with $page.data[...]
+  // #endregion ➤ 📦 Package Imports
 
-  let data: B_SAP_PP_D = $page.data.PAGE_DATA
-  let data_0: B_SAP_D1 = $page.data.B_SAP_D1
-  let data_1: B_SAP_PP_T = $page.data.PAGE_SEO
-  let league_url_split: [
-    /** sport target link */
-    string,
-    /** country target link */
-    string,
-    /** league target link */
-    string
-  ]
+  // #region ➤ 📌 VARIABLES
 
-  $: data = $page.data.PAGE_DATA
-  $: data_0 = $page.data.B_SAP_D1
-  $: data_1 = $page.data.PAGE_SEO
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
-  $: breadcrumb_lang_prefix =
-    $sessionStore?.serverLang == 'en'
-      ? `/`
-      : `/${$sessionStore?.serverLang}/`
+  let
+    /**
+     * @description
+     * 📝
+     */
+    isDataMissing = false,
+    /**
+     * @description
+     * 📝 Map for Breadcrumbs,
+     * |: key - string - breadcrumb name,
+     * |: value - string - breadcrumb link;
+     * @example
+     * |: mapBreadcrump.set('sport', '/football');
+     * |: mapBreadcrump.set('country', '/england');
+     * |: mapBreadcrump.set('league', '/premier-league');
+     * |: mapBreadcrump.set('player', '/player-name');
+     * |: mapBreadcrump.set('team', '/team-name');
+     */
+    mapBreadcrump = new Map<string, string>(),
   ;
 
-  $: country = data_0?.translations[$sessionStore?.serverLang];
-
-  // @ts-expect-error - it does return a 3 string array;
-  $: league_url_split = data?.alternate_data_2?.[$sessionStore?.serverLang]
-    ?.split
-    (
-      '/'
-    )
-    ?.filter
-    (
-      a =>
-        // remove {lang} string from URL;
-        a.length != 2
-    )
+  $: widgetPageData = $page.data.PAGE_DATA as B_SAP_PP_D | null | undefined;
+  $: objCountryTranslation = $page.data.B_SAP_D1 as B_SAP_D1 | null | undefined;
+  $: objSportTranslation = $page.data.B_SAP_D3 as B_SAP_D3 | null | undefined;
+  $: objPlayerSeo = $page.data.PAGE_SEO as B_SAP_PP_T | null | undefined;
+  $: ({ serverLang } = $sessionStore);
+  $: strLangPrefix
+    = serverLang == 'en'
+      ? '/'
+      : `/${serverLang}/`
+  ;
+  $: country = objCountryTranslation?.translations?.[serverLang ?? 'en'];
+  $: strBreadcrumbPlayer = objPlayerSeo?.main_data?.title
+    .replace(/{name}/g, widgetPageData?.data?.player_name ?? '')
+    .replace(/{team}/g, widgetPageData?.data?.team_name ?? '')
   ;
 
-  $: player_breadcrumb = data_1?.main_data?.title
-    .replace(/{name}/g, data?.data?.player_name)
-    .replace(/{team}/g, data?.data?.team_name)
-  ;
+  // #endregion ➤ 📌 VARIABLES
 
-  //#endregion ➤ [VARIABLES]
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟦 HELPER
+   * @description
+   *  📝
+   * @returns { void }
+   */
+  function helperGenerateUrl
+  (
+  ) : void
+  {
+    if (widgetPageData?.alternate_data_2 != undefined)
+    {
+      const
+        /**
+         * @description
+         */
+        listLeagueUrlStr
+          = widgetPageData.alternate_data_2[serverLang ?? 'en']
+            .split
+            (
+              '/'
+            )
+            // ╭─────
+            // │ NOTE:
+            // │ |: remove {lang} string from URL;
+            // ╰─────
+            .filter
+            (
+              a =>
+              {
+                return a.length != 2
+              }
+            )
+      ;
+
+      mapBreadcrump.set('sport', `${strLangPrefix}${listLeagueUrlStr[0]}`);
+      mapBreadcrump.set('country', `${strLangPrefix}${listLeagueUrlStr[0]}/${listLeagueUrlStr[1]}`);
+      mapBreadcrump.set('league', `${strLangPrefix}${listLeagueUrlStr[0]}/${listLeagueUrlStr[1]}/${listLeagueUrlStr[2]}`);
+
+      isDataMissing = false;
+    }
+    else
+    {
+      const
+        /**
+         * @description
+         */
+        strSportTranslation = mutateStringToPermalink(objSportTranslation?.[serverLang ?? 'en'] ?? ''),
+        /**
+         * @description
+         */
+        strCountryTranslation = mutateStringToPermalink(objCountryTranslation?.translations?.[serverLang ?? 'en'] ?? '')
+      ;
+
+      mapBreadcrump.set('sport', `${strLangPrefix}${strSportTranslation}`);
+      mapBreadcrump.set('country', `${strLangPrefix}${strSportTranslation}/${strCountryTranslation}`);
+      mapBreadcrump.set('league', `${strLangPrefix}`);
+
+      isDataMissing = true;
+    }
+    return;
+  }
+
+  // #endregion ➤ 🛠️ METHODS
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  $: if (browser && serverLang) helperGenerateUrl();
+
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
 </script>
 
-<!-- ===============
-COMPONENT HTML
-NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
-=================-->
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 💠 Svelte Component HTML                                                         │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
 
 <!--
-[ℹ] breadcrumbs component URL
+╭─────
+│ ➤ BreadCrumb Component for Player Page
+╰─────
 -->
 <div
   id="fpp-breadcrumb"
-  class="
-    row-space-start
-    m-b-20
+  class=
+  "
+  row-space-start
+  m-b-20
   "
 >
   <!--
-  [ℹ] sport
+  ╭─────
+  │ ➤ SPORT
+  ╰─────
   -->
-  <!-- TODO: correct transaltion -->
   <BreadcrumbSingle
-    href={`${breadcrumb_lang_prefix}${league_url_split[0]}`}
-    name={data_1?.football}
+    href={mapBreadcrump.get('sport')}
+    name={objPlayerSeo?.football}
   />
   <!--
-  [ℹ] country
+  ╭─────
+  │ ➤ COUNTRY
+  ╰─────
   -->
   <BreadcrumbSingle
-    href={`${breadcrumb_lang_prefix}${league_url_split[0]}/${league_url_split[1]}`}
+    href={mapBreadcrump.get('country')}
     name={country}
   />
   <!--
-  [ℹ] league_name
+  ╭─────
+  │ ➤ LEAGUE NAME
+  ╰─────
   -->
-  <BreadcrumbSingle
-    href={`${breadcrumb_lang_prefix}${league_url_split[0]}/${league_url_split[1]}/${league_url_split[2]}`}
-    name={data?.data?.league_name}
-  />
+  {#if !isDataMissing}
+    <BreadcrumbSingle
+      href={mapBreadcrump.get('league')}
+      name={widgetPageData?.data?.league_name}
+    />
+  {/if}
   <!--
-  [ℹ] player_name && team_name
+  ╭─────
+  │ ➤ PLAYER NAME & TEAM NAME
+  ╰─────
   -->
   <BreadcrumbSingle
-    name={`${player_breadcrumb}`}
+    name={`${strBreadcrumbPlayer}`}
     end={true}
     disable={true}
   />
 </div>
 
-<!-- ===============
-COMPONENT STYLE
-NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
-=================-->
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 🌊 Svelte Component CSS/SCSS                                                     │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
 
-<style>
+<style lang="scss">
 
-  #fpp-breadcrumb {
+  #fpp-breadcrumb
+  {
     overflow: hidden;
   }
 
