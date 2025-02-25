@@ -1,172 +1,165 @@
-<!-- ===============
-COMPONENT JS (w/ TS)
-=================-->
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 📌 High Order Overview                                                           │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Code Format   // V.8.0                                                         │
+│ ➤ Status        // 🔒 LOCKED                                                     │
+│ ➤ Author(s)     // @migbash                                                      │
+│ ➤ Maintainer(s) // @migbash                                                      │
+│ ➤ Created on    // April 18th, 2023                                              │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ 📝 Description                                                                   │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ BETARENA (Module)
+│ |: Player Fixtures Widget Entry Point
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 🟦 Svelte Component JS/TS                                                        │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
 
 <script lang="ts">
 
-  //#region ➤ [MAIN] Package Imports
-  // <-imports-go-here->
+  // #region ➤ 📦 Package Imports
 
-	import { get } from '$lib/api/utils';
-	import { viewport_change } from '$lib/utils/platform-functions';
-	import type { B_PPRO_D } from '@betarena/scores-lib/types/player-profile';
-	import { onMount } from 'svelte';
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
 	import { page } from '$app/stores';
+
+  import { get } from '$lib/api/utils';
+
 	import SeoBox from '$lib/components/SEO-Box.svelte';
-	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
 	import ProfileLoader from './Profile-Loader.svelte';
 	import ProfileMain from './Profile-Main.svelte';
 
-  //#endregion ➤ [MAIN] Package Imports
+	import { browser } from '$app/environment';
+	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
+	import type { B_PPRO_D } from '@betarena/scores-lib/types/player-profile';
+	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/v8/preload.scores.js';
 
-  //#region ➤ [VARIABLES]
+  // #endregion ➤ 📦 Package Imports
 
-  // ~~~~~~~~~~~~~~~~~~~~~
-  //  COMPONENT VARIABLES
-  // ~~~~~~~~~~~~~~~~~~~~~
+  // #region ➤ 📌 VARIABLES
 
-  let PAGE_DATA: B_SAP_PP_D = $page.data?.PAGE_DATA
-  $: PAGE_DATA = $page.data?.PAGE_DATA
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
-  // let WIDGET_S_DATA: any = $page.data?.LIVESCORES_V2_SEO
-  // $: WIDGET_S_DATA = $page.data?.LIVESCORES_V2_SEO
+  $: PAGE_DATA = $page.data.PAGE_DATA as B_SAP_PP_D | null | undefined
 
-  let WIDGET_DATA: B_PPRO_D
-  let NO_WIDGET_DATA: boolean = true // [ℹ] default (true)
-  
-  //#endregion ➤ [VARIABLES]
+  // #endregion ➤ 📌 VARIABLES
 
-  //#region ➤ [MAIN-METHODS]
+  // #region ➤ 🛠️ METHODS
 
-  // ~~~~~~~~~~~~~~~~~~~~~
-  //  COMPONENT METHODS
-  // ~~~~~~~~~~~~~~~~~~~~~
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
-  async function widgetInit(
-    // empty
-  ): Promise < B_PPRO_D > {
-    // [ℹ] get widget data (from cache)
-    WIDGET_DATA = await get(`/api/data/players/profile/?player_id=${PAGE_DATA?.data?.player_id}`) as B_PPRO_D;
-    const VALID_RESPONSE =
-      WIDGET_DATA == undefined
-    ;
-		// [ℹ] validation [#1]
-		if (VALID_RESPONSE) {
-      // dlog(`${LV2_W_H_TAG[0]} ❌ no data available!`);
-			NO_WIDGET_DATA = true;
-			return;
-		}
-    NO_WIDGET_DATA = false;
-    return WIDGET_DATA
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟩 MAIN
+   * @description
+   *  📣 main widget data loader
+   *  - ⚡️ (and) try..catch (error) handler
+   *  - ⚡️ (and) placeholder handler
+   * @returns { Promise < void > }
+   */
+  async function widgetInit
+  (
+  ): Promise < B_PPRO_D >
+  {
+    // IMPORTANT
+    if (!browser) return;
+
+    return await get
+    (
+      `/api/data/players/profile/?player_id=${PAGE_DATA?.data?.player_id}`
+    )!;
   }
 
-  // ~~~~~~~~~~~~~~~~~~~~~
-	// VIEWPORT CHANGES | IMPORTANT
-	// ~~~~~~~~~~~~~~~~~~~~~
-
-	const TABLET_VIEW = 1160;
-	const MOBILE_VIEW = 475;
-	let mobileExclusive, tabletExclusive: boolean = false;
-
-	onMount(async () => {
-		[tabletExclusive, mobileExclusive] =
-			viewport_change(TABLET_VIEW, MOBILE_VIEW);
-		window.addEventListener(
-			'resize',
-			function () {
-				[tabletExclusive, mobileExclusive] =
-					viewport_change(
-						TABLET_VIEW,
-						MOBILE_VIEW
-					);
-			}
-		);
-	});
-
-  //#endregion ➤ [METHODS]
-
-  //#region ➤ [ONE-OFF] [METHODS] [HELPER] [IF]
-
-  //#endregion ➤ [ONE-OFF] [METHODS] [IF]
-
-  //#region ➤ [REACTIVIY] [METHODS]
-
-  //#endregion ➤ [REACTIVIY] [METHODS]
-
-  //#region ➤ SvelteJS/SvelteKit [LIFECYCLE]
-
-  //#endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
+  // #endregion ➤ 🛠️ METHODS
 
 </script>
 
-<!-- ===================
-SVELTE INJECTION TAGS
-=================== -->
-
-<svelte:head>
-  <!-- <add> -->
-</svelte:head>
-
-<!-- ===============
-COMPONENT HTML 
-NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
-=================-->
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 💠 Svelte Component HTML                                                         │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
 
 <SeoBox>
-  <!-- 
-  player name
-  -->
   <h1>
     {PAGE_DATA?.data?.player_name}
   </h1>
 </SeoBox>
 
+<!-- [🐞] -->
 <!-- <ProfileLoader /> -->
 
-<!-- 
-[ℹ] main widget
--->
 {#await widgetInit()}
-  <!-- 
-  promise is pending 
+  <!--
+  ╭────────────────────────────────────────────────────────────────────────╮
+  │ NOTE :|: promise is pending                                            │
+  ╰────────────────────────────────────────────────────────────────────────╯
   -->
   <ProfileLoader />
-{:then data}
-  <!-- 
-  promise was fulfilled 
+{:then widgetData}
+  <!--
+  ╭────────────────────────────────────────────────────────────────────────╮
+  │ NOTE :|: promise is fulfilled                                          │
+  ╰────────────────────────────────────────────────────────────────────────╯
   -->
-  <ProfileMain 
-    {WIDGET_DATA}
+  <ProfileMain
+    WIDGET_DATA={widgetData}
   />
 {:catch error}
-  <!-- 
-  promise was rejected 
+  <!--
+  ╭────────────────────────────────────────────────────────────────────────╮
+  │ NOTE :|: promise is rejected                                           │
+  ╰────────────────────────────────────────────────────────────────────────╯
   -->
+  <WidgetNoData
+    WIDGET_TITLE={'TESTING'}
+    NO_DATA_TITLE={'TESTING'}
+    NO_DATA_DESC={'TESTING'}
+    version={2}
+  />
 {/await}
-
-<!-- ===============
-COMPONENT STYLE
-NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
-=================-->
-
-<style>
-
-  /*
-  =============
-  RESPONSIVNESS 
-  =============
-  */
-
-  @media only screen 
-    and (min-width: 726px) 
-    and (max-width: 1000px) {
-  }
-
-  /*
-  =============
-  DARK-THEME
-  =============
-  */
-
-</style>
