@@ -13,11 +13,11 @@
 // #region ➤ 📦 Package Imports
 
 import sessionStore from '$lib/store/session.js';
+import { checkNull } from '$lib/utils/miscellenous.js';
 import { dlog, dlogv2 } from './debug.js';
 import { removeDiacritics } from './languages.js';
-import { checkNull } from '$lib/utils/miscellenous.js';
 
-import type { B_SAP_CTP_D, B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
+import type { B_SAP_CTP_D, B_SAP_D3, B_SAP_PP_D } from '@betarena/scores-lib/types/v8/preload.scores.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -50,6 +50,55 @@ export function cleanUrl
   if (!url.startsWith('/')) url = '/'+url;
 
   return url;
+}
+
+/**
+ * @author
+ *  @migbash
+ * @summary
+ *  - 🟥 MAIN
+ *  - 🟦 HELPER
+ * @description
+ *  📣 Generates new url for when a `translation` switch occurs.
+ * @param { string } lang
+ *  💠 **[required]** **current** platform language.
+ * @param { B_SAP_D3 } data
+ *  💠 **[required]** alternative links for player.
+ * @returns { string }
+ *  📤 Generated **url**.
+ */
+export function generateUrlPlayer
+(
+  lang: string,
+  data: B_SAP_PP_D
+): string
+{
+  const
+    /**
+     * @description
+     * - 📌 New url for player.
+     */
+    newUrl
+      = `/${data.alternate_data?.[lang] ?? ''}`.replace
+      (
+        'https://scores.betarena.com',
+        ''
+      )
+  ;
+
+  // [🐞]
+  dlogv2
+  (
+    '🚏 checkpoint ➤ generateUrlPlayer(..) // INSIGHT',
+    [
+      `🔹 [var] ➤ lang :: ${lang}`,
+      `🔹 [var] ➤ competitionData :: ${JSON.stringify(data)}`,
+      `🔹 [var] ➤ newUrl :: ${newUrl}`,
+    ],
+    true
+  );
+
+  return newUrl;
 }
 
 /**
