@@ -1,212 +1,207 @@
 <!--
-====================
-This is an example .svelte
-component file, to give guidance on
-the structure that is employed across the project
-and how it should be layed-out.
-====================
-<COPY-THIS-FILE-INTO-YOUR-NEXT-COMPONENT>
-====================
-<❗️ REMOVE (THIS) COMMENT IN PRODUCTION>
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 📌 High Order Overview                                                           │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Code Format   // V.8.0                                                         │
+│ ➤ Status        // 🔒 LOCKED                                                     │
+│ ➤ Author(s)     // @migbash                                                      │
+│ ➤ Maintainer(s) // @migbash                                                      │
+│ ➤ Created on    // April 18th, 2023                                              │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ 📝 Description                                                                   │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ BETARENA (Module)
+│ |: Player Fixtures Widget Entry Point
+╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<!-- ===============
-COMPONENT JS (w/ TS)
-=================-->
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 🟦 Svelte Component JS/TS                                                        │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
 
 <script lang="ts">
 
-  //#region ➤ [MAIN] Package Imports
+  // #region ➤ 📦 Package Imports
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { page } from '$app/stores';
+
   import sessionStore from '$lib/store/session.js';
-  import { viewport_change } from '$lib/utils/platform-functions';
-  import { onMount } from 'svelte';
 
 	import SeoBox from '$lib/components/SEO-Box.svelte';
 	import FixturesLoader from './Fixtures-Loader.svelte';
 	import FixturesMain from './Fixtures-Main.svelte';
 
-  import type { B_PFIX_D, B_PFIX_T, PFIX_C_Fixture, PFIX_C_League } from '@betarena/scores-lib/types/player-fixtures';
-  import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
+  import { browser } from '$app/environment';
+  import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
+  import type { B_PFIX_D, PFIX_C_Fixture, PFIX_C_League } from '@betarena/scores-lib/types/player-fixtures';
+  import type { B_SAP_PP_D } from '@betarena/scores-lib/types/v8/preload.scores.js';
 
-  //#endregion ➤ [MAIN] Package Imports
+  // #endregion ➤ 📦 Package Imports
 
-  //#region ➤ [VARIABLES]
+  // #region ➤ 📌 VARIABLES
 
-  // ~~~~~~~~~~~~~~~~~~~~~
-  //  COMPONENT VARIABLES
-  // ~~~~~~~~~~~~~~~~~~~~~
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
-  let PAGE_DATA: B_SAP_PP_D = $page.data?.PAGE_DATA
-  let WIDGET_T_DATA: B_PFIX_T = $page.data?.B_PFIX_T
-  let WIDGET_S_DATA: B_PFIX_D = $page.data?.B_PFIX_D
+  $: widgetDataMain = $page.data.PAGE_DATA as B_SAP_PP_D | null | undefined;
+  $: widgetDataSeo = $page.data.B_PFIX_D as B_PFIX_D | null | undefined;
+  $: widgetDataTranslation = $page.data.B_PFIX_T as B_PFIX_T | null | undefined;
+  $: WIDGET_TITLE = widgetDataTranslation?.fixtures ?? 'Fixtures';
+  $: ({ serverLang } = $sessionStore);
 
-  $: PAGE_DATA = $page.data?.PAGE_DATA
-  $: WIDGET_T_DATA = $page.data?.B_PFIX_T
-  $: WIDGET_S_DATA = $page.data?.B_PFIX_D
-  $: WIDGET_TITLE = WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.fixtures || 'Fixtures' : 'Fixtures'
+  const
+    /**
+     * @description
+     * 📣 map of past fixtures
+    */
+    mapFixture = new Map(Object.entries(widgetDataSeo?.data?.past_fixtures?? [])) as Map <string, PFIX_C_Fixture[]>,
+    /**
+     * @description
+     * 📣 map of leagues
+    */
+    mapLeague = new Map(Object.entries(widgetDataSeo?.data?.leagues ?? [])) as unknown as Map <string, PFIX_C_League>
+  ;
 
-  const fixtureMap: Map <string, PFIX_C_Fixture[]> = new Map(Object.entries(WIDGET_S_DATA?.data?.past_fixtures)) as Map <string, PFIX_C_Fixture[]>;
-  const leagueMap: Map <string, PFIX_C_League> = new Map(Object.entries(WIDGET_S_DATA?.data?.leagues)) as unknown as Map <string, PFIX_C_League>;
+  // #endregion ➤ 📌 VARIABLES
 
+  // #region ➤ 🛠️ METHODS
 
-  let WIDGET_DATA: B_PFIX_D
-  let NO_WIDGET_DATA: boolean = true // [ℹ] default (true)
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
-  //#endregion ➤ [VARIABLES]
-
-  //#region ➤ [MAIN-METHODS]
-
-
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟩 MAIN
+   * @description
+   *  📣 main widget data loader
+   *  - ⚡️ (and) try..catch (error) handler
+   *  - ⚡️ (and) placeholder handler
+   * @returns { Promise < void > }
+   */
   async function widgetInit
   (
-    // empty
   ): Promise < B_PFIX_D >
   {
+    // IMPORTANT
+    if (!browser) return;
 
-    WIDGET_DATA = WIDGET_S_DATA
-
-    const VALID_RESPONSE =
-      WIDGET_DATA == undefined
-    ;
-
-		if (VALID_RESPONSE)
-    {
-      // dlog(`${LV2_W_H_TAG[0]} ❌ no data available!`);
-			NO_WIDGET_DATA = true;
-			return;
-		}
-
-    NO_WIDGET_DATA = false;
-    return WIDGET_DATA
+    return widgetDataSeo;
   }
 
-  // ~~~~~~~~~~~~~~~~~~~~~
-	// VIEWPORT CHANGES | IMPORTANT
-	// ~~~~~~~~~~~~~~~~~~~~~
-
-	const TABLET_VIEW = 1160;
-	const MOBILE_VIEW = 475;
-	let mobileExclusive, tabletExclusive: boolean = false;
-
-	onMount(async () => {
-		[tabletExclusive, mobileExclusive] =
-			viewport_change(TABLET_VIEW, MOBILE_VIEW);
-		window.addEventListener(
-			'resize',
-			function () {
-				[tabletExclusive, mobileExclusive] =
-					viewport_change(
-						TABLET_VIEW,
-						MOBILE_VIEW
-					);
-			}
-		);
-	});
-
-  //#endregion ➤ [METHODS]
-
-  //#region ➤ [ONE-OFF] [METHODS] [HELPER] [IF]
-
-  //#endregion ➤ [ONE-OFF] [METHODS] [IF]
-
-  //#region ➤ [REACTIVIY] [METHODS]
-
-  //#endregion ➤ [REACTIVIY] [METHODS]
-
-  //#region ➤ SvelteJS/SvelteKit [LIFECYCLE]
-
-  //#endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
+  // #endregion ➤ 🛠️ METHODS
 
 </script>
 
-<!-- ===================
-SVELTE INJECTION TAGS
-=================== -->
-
-<svelte:head>
-  <!-- <add> -->
-</svelte:head>
-
-<!-- ===============
-COMPONENT HTML
-NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
-=================-->
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 💠 Svelte Component HTML                                                         │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
 
 <SeoBox>
   <h2>
     {WIDGET_TITLE}
   </h2>
   <!--
-  FIXTURE LINKS
+  ╭─────
+  │ ➤ Fixture Links
+  ╰─────
   -->
-  {#if fixtureMap.size != 0}
-    {#each [...fixtureMap.entries()] || [] as [, fixtures]}
-      {#each fixtures as item}
-        <a href={item?.urls[$sessionStore?.serverLang]}>
-          {item?.urls[$sessionStore?.serverLang]}
+  {#each [...mapFixture.entries()] as [, fixtures]}
+    {#each fixtures as item}
+      {#if item.urls && serverLang}
+        <a href={item.urls[serverLang]}>
+          {item.urls[serverLang]}
         </a>
-      {/each}
+      {/if}
     {/each}
-  {/if}
+  {/each}
   <!--
-  LEAGUE LINKS
+  ╭─────
+  │ ➤ League Links
+  ╰─────
   -->
-  {#if leagueMap.size != 0}
-    {#each [...leagueMap.entries()] || [] as [key, league]}
-      <a href='https://scores.betarena.com/{league?.urls[$sessionStore?.serverLang]}'>
-        {`https://scores.betarena.com/${league?.urls[$sessionStore?.serverLang]}`}
+  {#if mapLeague.size != 0}
+    {#each [...mapLeague.entries()] as [, league]}
+      {#if league.urls && serverLang}
+      <a href='https://scores.betarena.com/{league.urls[serverLang]}'>
+        {`https://scores.betarena.com/${league.urls[serverLang]}`}
       </a>
+      {/if}
     {/each}
   {/if}
 </SeoBox>
 
+<!-- [🐞] -->
 <!-- <FixturesLoader /> -->
 
-<!--
-[ℹ] main widget
--->
 {#await widgetInit()}
   <!--
-  promise is pending
+  ╭────────────────────────────────────────────────────────────────────────╮
+  │ NOTE :|: promise is pending                                            │
+  ╰────────────────────────────────────────────────────────────────────────╯
   -->
   <FixturesLoader />
-{:then data}
+{:then widgetData}
   <!--
-  promise was fulfilled
+  ╭────────────────────────────────────────────────────────────────────────╮
+  │ NOTE :|: promise is fulfilled                                          │
+  ╰────────────────────────────────────────────────────────────────────────╯
   -->
   <FixturesMain
-    {WIDGET_DATA}
+    WIDGET_DATA={widgetData}
   />
 {:catch error}
   <!--
-  promise was rejected
+  ╭────────────────────────────────────────────────────────────────────────╮
+  │ NOTE :|: promise is rejected                                           │
+  ╰────────────────────────────────────────────────────────────────────────╯
   -->
+  <WidgetNoData
+    WIDGET_TITLE={'TESTING'}
+    NO_DATA_TITLE={'TESTING'}
+    NO_DATA_DESC={'TESTING'}
+    version={2}
+  />
 {/await}
-
-<!-- ===============
-COMPONENT STYLE
-NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
-=================-->
-
-<style>
-
-  /*
-  =============
-  RESPONSIVNESS
-  =============
-  */
-
-  @media only screen
-    and (min-width: 726px)
-    and (max-width: 1000px) {
-  }
-
-  /*
-  =============
-  DARK-THEME
-  =============
-  */
-
-</style>

@@ -1,21 +1,56 @@
-<!-- ===============
-COMPONENT JS (w/ TS)
-=================-->
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 📌 High Order Overview                                                           │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Code Format   // V.8.0                                                         │
+│ ➤ Status        // 🔒 LOCKED                                                     │
+│ ➤ Author(s)     // @migbash                                                      │
+│ ➤ Maintainer(s) // @migbash                                                      │
+│ ➤ Created on    // April 18th, 2023                                              │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ 📝 Description                                                                   │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ BETARENA (Module)
+│ |: Player Fixtures Widget Entry Point
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 🟦 Svelte Component JS/TS                                                        │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
 
 <script lang="ts">
 
-  //#region ➤ [MAIN] Package Imports
+  // #region ➤ 📦 Package Imports
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
 	import { browser } from '$app/environment';
 	import { goto, preloadData } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { onMount } from 'svelte';
 
 	import { onceTargetLivescoreNowFixtureGet, onceTargetPlayerIds, targetLivescoreNowFixtureListen, targetPlayerIdsListen } from '$lib/firebase/common';
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { dlog } from '$lib/utils/debug';
-	import { viewport_change } from '$lib/utils/platform-functions';
+	import { dlog, dlogv2 } from '$lib/utils/debug';
+	import { viewportChangeV2 } from '$lib/utils/device.js';
+	import { generateUrlPlayer } from '$lib/utils/string.js';
 
 	import SvelteSeo from 'svelte-seo';
 	import Breadcrumb from './Breadcrumb.svelte';
@@ -25,42 +60,80 @@ COMPONENT JS (w/ TS)
 	import StatisticsWidget from './statistics/Statistics-Widget.svelte';
 	import TeamWidget from './team/Team-Widget.svelte';
 
-  import type { B_SAP_PP_D, B_SAP_PP_T } from '@betarena/scores-lib/types/seo-pages';
+  import type { B_SAP_PP_D, B_SAP_PP_T } from '@betarena/scores-lib/types/v8/preload.scores.js';
 
-  //#endregion ➤ [MAIN] Package Imports
+  // #endregion ➤ 📦 Package Imports
 
-  //#region ➤ [VARIABLES]
+  // #region ➤ 📌 VARIABLES
 
-  // IMPORTANT
-  // (this) widget/component has access to the following PAGE data:
-  // [...]
-  // $page.data.PAGE_DATA: B_SAP_PP_D
-  // $page.data.B_SAP_D1: B_SAP_D1
-  // FIXME: remove cosnt data = [...] and fix the types issue with $page.data[...]
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
-  let data: B_SAP_PP_D = $page.data.PAGE_DATA;
-  let data_0: B_SAP_PP_T = $page.data.PAGE_SEO;
+  const
+    /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */ // eslint-disable-next-line no-unused-vars
+    CNAME: string = '<section-scope>⮕<type|w|c>⮕<unique-tag-name>⮕main',
+    /**
+     * @description
+     *  📣 threshold start + state for 📱 MOBILE
+     */ // eslint-disable-next-line no-unused-vars
+    VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 475, true ],
+    /**
+     * @description
+     *  📣 threshold start + state for 💻 TABLET
+     */ // eslint-disable-next-line no-unused-vars
+    VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
+  ;
 
-  const TABLET_VIEW = 1160;
-	const MOBILE_VIEW = 475;
+  $: objectPageData = $page.data.PAGE_DATA as B_SAP_PP_D | null | undefined;
+  $: objectPageDataSeo = $page.data.PAGE_SEO as B_SAP_PP_T | null | undefined;
 
-  const realDbPath1 = `livescores_now_player_ids/${data?.data?.player_id}`
-  const realDbPath2 = `livescores_now/`
+  const
+    /**
+     * @description
+     */
+    realDbPath1 = `livescores_now_player_ids/${objectPageData?.data?.player_id}`,
+    /**
+     * @description
+     */
+    realDbPath2 = 'livescores_now/'
+  ;
 
-  let mobileExclusive = false;
-  let tabletExclusive = false;
-  let current_lang: string = $sessionStore?.serverLang;
+  $: ({ lang } = $userBetarenaSettings);
+  $: ({ windowWidth, lang_intent, livescore_now_player_fixture, serverLang, isUserActive } = $sessionStore);
+  $: [ VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1] ]
+    = viewportChangeV2
+    (
+      windowWidth,
+      VIEWPORT_MOBILE_INIT[0],
+      VIEWPORT_TABLET_INIT[0],
+    )
+  ;
 
-  $: data = $page.data.PAGE_DATA
-  $: data_0 = $page.data.PAGE_SEO
+  // #endregion ➤ 📌 VARIABLES
 
-	$: refresh_lang = $userBetarenaSettings.lang;
-	$: lang_intent = $sessionStore.lang_intent;
-  $: liveFixtureId = $sessionStore?.livescore_now_player_fixture;
+  // #region ➤ 🛠️ METHODS
 
-  //#endregion ➤ [VARIABLES]
-
-  //#region ➤ [MAIN-METHODS]
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
   /**
    * @summary
@@ -87,237 +160,167 @@ COMPONENT JS (w/ TS)
   }
 
   /**
+   * @author
+   *  @migbash
    * @summary
-   * [MAIN]
+   *  🟥 MAIN
    * @description
-   * ➨ get target livescore fixture (data)
-   * ➨ instantiate livescore fixture (data) listener
-   * @returns
-   * void
+   *  📝 Kickstart Livescore Dataflow:
+   *    - get target livescore fixture (data)
+   *    - instantiate livescore fixture (data) listener
    */
   async function kickstartLivescore
   (
   ): Promise < void >
   {
-    // CHECK: Exit;
-    const if_M_0 =
-      $sessionStore?.livescore_now_player_fixture == undefined
-    ;
-    if (if_M_0) return;
+    if (!livescore_now_player_fixture) return;
 
-    const fixtureRealDbTarget = `${realDbPath2}${liveFixtureId}`;
+    const
+      /**
+       * @description
+       * 📣 target livescore fixture (data)
+      */
+      fixtureRealDbTarget = `${realDbPath2}${livescore_now_player_fixture}`
+    ;
 
     await onceTargetLivescoreNowFixtureGet
     (
       fixtureRealDbTarget
     );
 
-    let connectionRef = targetLivescoreNowFixtureListen
-    (
-      fixtureRealDbTarget
-    );
+    let
+      /**
+       * @description
+       * 📣 target livescore fixture (data) listener
+      */
+      connectionRef
+        = targetLivescoreNowFixtureListen
+        (
+          fixtureRealDbTarget
+        )
+      ;
   }
 
   /**
    * @summary
-   * [HELPER]
-   * @description
-   * identifies the target translated URL;
-   * @param
-   * {string} lang
-   * @returns
-   * a modified string
+   *  🔹 HELPER
+   * @param { string } newURL - Target new `URL` that is to be navigated to.
    */
-  function translated_url
+  async function handleTranslationNavigation
   (
-    lang: string
-  ): string
-  {
-    let new_url: string = data.alternate_data[lang];
-    // new_url = new_url.replace('https://scores.betarena.com','');
-    dlog(data.alternate_data, true)
-    if (new_url == undefined) return '/'
-    dlog(`new_url: /${new_url}`, true)
-    return `/${new_url}`;
-  }
-
-  /**
-   * @summary
-   * [HELPER]
-   * @description
-   * preload target URL;
-   * @param
-   * {string} new_url
-   * @returns
-   * void
-   */
-  async function preload_target_url
-  (
-    new_url: string
+    isPreload: boolean = true
   ): Promise < void >
   {
-    await preloadData(new_url)
-  }
+    let
+      /**
+       * @description
+       * 📝 New `URL` value
+       */
+      strNewUrl
+        = generateUrlPlayer
+        (
+          isPreload ? lang_intent : lang,
+          objectPageData
+        )
+    ;
 
-  // VIEWPORT CHANGES | IMPORTANT
-  function resizeAction
-  (
-  )
-  {
-    [
-      tabletExclusive,
-      mobileExclusive
-    ] =	viewport_change
+    // [🐞]
+    dlogv2
     (
-      TABLET_VIEW,
-      MOBILE_VIEW
+      '🚏 [checkpoint] ➤ handleTranslationNavigation(..) // START',
+      [
+        lang_intent,
+        lang,
+        serverLang,
+        objectPageData,
+        isPreload,
+        strNewUrl
+      ],
+      true
     );
-  }
 
-  /**
-   * @summary
-   * [MAIN]
-   * @description
-   * ➨ document (visibility-change) event listener;
-   * ➨ document (on-resize) event listener;
-   * @returns
-   * void
-   */
-  function addEventListeners
-  (
-  )
-  {
-    // NOTE: (on-visibility-change)
-    document.addEventListener
-    (
-      'visibilitychange',
-      async function
+    if (isPreload)
+      await preloadData(strNewUrl);
+    else if (serverLang != lang)
+      goto
       (
-      )
-      {
-        if (!document.hidden)
+        strNewUrl,
         {
-          // [🐞]
-          dlog
-          (
-            '🔵 user is active',
-            true
-          );
-          await kickstartPlayerFixtureCheck();
-          await kickstartLivescore();
+          replaceState: true
         }
-      }
-    );
-    // NOTE: (on-resize)
-    window.addEventListener
-    (
-			'resize',
-			function ()
-      {
-				resizeAction();
-			}
-		);
+      );
+    ;
+
+    return;
   }
-
-  //#endregion ➤ [METHODS]
-
-  //#region ➤ [ONE-OFF] [METHODS] [HELPER] [IF]
-
-  //#endregion ➤ [ONE-OFF] [METHODS] [IF]
-
-  //#region ➤ [REACTIVIY] [METHODS]
-
-  // [ℹ] (event-listen)
-  // [ℹ] lang (intent) change;
-  $: if
-  (
-    browser
-    && lang_intent
-  )
-  {
-    let newURL = translated_url(lang_intent)
-    dlog(`newURL (lang_intent): ${newURL}`, true)
-    preload_target_url(newURL)
-  }
-
-  // [ℹ] (event-listen)
-  // [ℹ] lang change;
-	$: if
-  (
-    browser
-    && current_lang != refresh_lang
-  )
-  {
-		current_lang = refresh_lang;
-		goto
-    (
-      translated_url
-      (
-        current_lang
-      ),
-      {
-        replaceState: true
-      }
-    );
-	}
-
-  $: if (liveFixtureId)
-  {
-    kickstartLivescore()
-  }
-
-  //#endregion ➤ [REACTIVIY] [METHODS]
-
-  //#region ➤ SvelteJS/SvelteKit [LIFECYCLE]
 
   /**
    * @summary
-   * [MAIN] [LIFECYCLE]
-   * @description
-   * ➨ kickstart livescore (player-ids) data GET + LISTEN;
-   * ➨ kickstart resize-action;
-   * ➨ kickstart (bundle) event-listeners;
-  */
-  onMount
+   */
+  async function restartDataFeed
   (
-    async() =>
-    {
-      await kickstartPlayerFixtureCheck();
-      await kickstartLivescore();
-      resizeAction();
-      addEventListeners();
-    }
-  );
+  ): Promise < void >
+  {
+    // [🐞]
+    dlog('🔥 restartDataFeed', true);
 
-  //#endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
+    await kickstartPlayerFixtureCheck();
+    await kickstartLivescore();
+
+    // [🐞]
+    dlog('🔥 restartDataFeed [DONE]', true);
+
+    return;
+  }
+
+  // #endregion ➤ 🛠️ METHODS
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  $: if (browser && isUserActive) restartDataFeed();
+
+  $: if (browser && lang_intent) handleTranslationNavigation(true);
+
+  $: if (browser && serverLang != lang) handleTranslationNavigation(false);
+
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
 </script>
 
-<!-- ===================
-SVELTE INJECTION TAGS
-=================== -->
-
 <!--
-[ℹ] Meta (SEO)
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 💉 Svelte Injection Tags                                                         │
+╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-{#if data_0}
+
+{#if objectPageDataSeo}
 	<SvelteSeo
-		title={data_0?.main_data?.title}
-		description={data_0?.main_data?.description}
-		keywords={data_0?.main_data?.keywords}
-		noindex={JSON.parse(data_0?.main_data?.noindex.toString())}
-		nofollow={JSON.parse(data_0?.main_data?.nofollow.toString())}
-		canonical={data_0?.main_data?.canonical}
-		twitter={data_0?.twitter_card}
-		openGraph={data_0?.opengraph}
+		title={objectPageDataSeo.main_data?.title}
+		description={objectPageDataSeo.main_data?.description}
+		keywords={objectPageDataSeo.main_data?.keywords}
+		noindex={JSON.parse(objectPageDataSeo.main_data?.noindex.toString())}
+		nofollow={JSON.parse(objectPageDataSeo.main_data?.nofollow.toString())}
+		canonical={objectPageDataSeo.main_data?.canonical}
+		twitter={objectPageDataSeo.twitter_card}
+		openGraph={objectPageDataSeo.opengraph}
 	/>
 {/if}
 
-
 <svelte:head>
-  {#if data_0}
-    {#each data_0?.hreflang as item}
-      {#each Object.entries(data?.alternate_data) as [lang, link]}
+  {#if objectPageDataSeo}
+    {#each objectPageDataSeo.hreflang ?? [] as item}
+      {#each Object.entries(objectPageData?.alternate_data ?? []) as [lang, link]}
         {#if item.link == lang}
           <!--
           [ℹ] Meta <link hreflang={...}>
@@ -353,26 +356,35 @@ SVELTE INJECTION TAGS
   {/if}
 </svelte:head>
 
-<!-- ===============
-COMPONENT HTML
-NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
-=================-->
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 💠 Svelte Component HTML                                                         │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
 
 <section
-  id="section-player-page">
-  {#if !$sessionStore.globalState.has("IsPWA")}
-     <Breadcrumb />
+  id="section-player-page"
+>
+
+  {#if !$sessionStore.globalState.has('IsPWA')}
+    <Breadcrumb />
   {/if}
-  <ProfileWidget/>
+
+  <ProfileWidget />
 
   <!--
   [ℹ] widgets
   [ℹ] MOBILE
   FIXME: update to have a single dynamic layout
   -->
-	{#if mobileExclusive || tabletExclusive}
+  {#if VIEWPORT_MOBILE_INIT[1] || VIEWPORT_TABLET_INIT[1]}
 
-    <div
+  <div
       id="widget-grid-display"
     >
       <!--
@@ -417,12 +429,17 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
 </section>
 
-<!-- ===============
-COMPONENT STYLE
-NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
-=================-->
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 🌊 Svelte Component CSS/SCSS                                                     │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
 
-<style>
+<style lang="scss">
 
   section#section-player-page {
     max-width: 1430px;
@@ -446,9 +463,9 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 	}
 
   /*
-  =============
-  RESPONSIVNESS
-  =============
+  ╭──────────────────────────────────────────────────────────────────────────────╮
+  │ ⚡️ RESPONSIVNESS                                                              │
+  ╰──────────────────────────────────────────────────────────────────────────────╯
   */
 
   @media only screen
@@ -486,11 +503,5 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
       ;
 		}
 	}
-
-  /*
-  =============
-  DARK-THEME
-  =============
-  */
 
 </style>
