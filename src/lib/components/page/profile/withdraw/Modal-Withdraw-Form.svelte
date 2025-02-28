@@ -334,7 +334,7 @@ COMPONENT JS (w/ TS)
 
     await post
     (
-      '/api/data/profile',
+      '/api/data/profile.main',
       withdrawObj
     );
 
