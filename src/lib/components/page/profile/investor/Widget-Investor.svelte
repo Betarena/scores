@@ -155,9 +155,9 @@
   {
     const response = await get
     (
-      `/api/data/profile?uid=${$userBetarenaSettings.user.firebase_user_data?.uid}`
-      // '/api/data/profile?uid=0x1510ea733e1e81f9bcfcc4eabb5a2226d1a9f9ea18da9aea119ba28b8ed6be81'
-      // '/api/data/profile?uid=Z4ebLuAuDqdOu4Wt6z6EfVn35js2'
+      `/api/data/profile.main?uid=${$userBetarenaSettings.user.firebase_user_data?.uid}`
+      // '/api/data/profile.main?uid=0x1510ea733e1e81f9bcfcc4eabb5a2226d1a9f9ea18da9aea119ba28b8ed6be81'
+      // '/api/data/profile.main?uid=Z4ebLuAuDqdOu4Wt6z6EfVn35js2'
     ) as IProfileData;
 
     widgetDataMain = response

@@ -94,7 +94,7 @@
 
     const response: B_PROF_D = await get
     (
-			`/api/data/profile?uid=${$userBetarenaSettings?.user?.firebase_user_data?.uid}`
+			`/api/data/profile.main?uid=${$userBetarenaSettings?.user?.firebase_user_data?.uid}`
 		);
 
     WIDGET_DATA = response

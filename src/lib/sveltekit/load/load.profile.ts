@@ -150,7 +150,7 @@ async function fetchData
       = [
         `/api/data/main/seo-pages?months=true&lang=${_lang}&decompress`,
         '/api/data/main/seo-pages?term=football&decompress',
-        `/api/data/profile?lang=${_lang}`,
+        `/api/data/profile.main?lang=${_lang}`,
         `/api/data/main/userguide?userguideId=2&lang=${_lang}`,
       ],
     /**

@@ -1348,7 +1348,7 @@
       result
         = await postv2
         (
-          '/api/data/profile'
+          '/api/data/profile.main'
           , txDepositData
         )
     ;
