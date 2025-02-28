@@ -25,11 +25,11 @@
 import { json, type RequestEvent } from '@sveltejs/kit';
 // import { dev } from '$app/environment';
 
+import { _GraphQL } from '@betarena/scores-lib/dist/classes/_graphql.js';
 import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.betarena-user.js';
 import { UPROF_UP_ENTRY_0, UPROF_UP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/v8/profile.main.js';
 import { IProfileMutation0Out, profileMutation0, type IProfileMutation0Var } from '@betarena/scores-lib/dist/graphql/query.profile.js';
 import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
-import { _GraphQL } from '@betarena/scores-lib/dist/classes/_graphql.js';
 
 import { API_DATA_ERROR_RESPONSE } from '$lib/utils/debug.js';
 
@@ -133,9 +133,8 @@ export async function main
       // │:| (output) fetch TARGET translation data.                        │
       // ╰──────────────────────────────────────────────────────────────────╯
 
-
       if (queryParamUid && method === 'POST')
-        helperDataGenerate_2(request);
+        await helperDataGenerate_2(request);
       ;
 
       // ╭──────────────────────────────────────────────────────────────────╮
@@ -192,7 +191,7 @@ async function helperDataGenerate_0
       )
   ;
 
-  return dataRes0?.[0];
+  return dataRes0[0];
 }
 
 /**
@@ -223,11 +222,11 @@ async function helperDataGenerate_1
       )
   ;
 
-  if (dataRes0?.[0]?.size == 0 || !dataRes0?.[0]?.has(lang))
+  if (dataRes0[0].size == 0 || !dataRes0[0].has(lang))
     return null;
   ;
 
-  return dataRes0?.[0]?.get(lang)!;
+  return dataRes0[0].get(lang)!;
 }
 
 /**
@@ -246,6 +245,8 @@ async function helperDataGenerate_2
   request: RequestEvent
 ): Promise < void >
 {
+  console.log('HERE-TESTING!');
+
   const
     /**
      * @description
@@ -273,7 +274,7 @@ async function helperDataGenerate_2
       )
   ;
 
-  if ((dataRes0?.success?.data?.[0]?.main_balance ?? 0) > 0)
+  if ((dataRes0.success.data[0]?.main_balance ?? 0) > 0)
     await new _GraphQL().wrapQuery
     <
       IProfileMutation0Var,
