@@ -311,7 +311,7 @@ async function helperDataGenerate_2
       )
   ;
 
-  if ((dataRes0.success.data[0]?.main_balance ?? 0) > (objRequestBody.quantity ?? 0))
+  if ((dataRes0.success.data[0]?.main_balance ?? 0) >= (objRequestBody.quantity ?? 0))
   {
     const
       /**
