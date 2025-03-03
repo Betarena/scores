@@ -8,14 +8,14 @@ COMPONENT JS (w/ TS)
 
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
-	import { get } from '$lib/api/utils.js';
+	import { onMount } from 'svelte';
 
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { daysInMonth, targetDate, toISOMod } from '$lib/utils/dates.js';
 	import { dlog } from '$lib/utils/debug.js';
 	import { viewport_change } from '$lib/utils/platform-functions.js';
-	import { onMount } from 'svelte';
+  import { get_v1 } from '$lib/utils/fetch.js';
 
 	import WidgetCalendar from './Widget-Calendar.svelte';
 	import WidgetTxHistLoader from './Widget-Tx-Hist-Loader.svelte';
@@ -27,6 +27,7 @@ COMPONENT JS (w/ TS)
 
 	import type { B_H_TH } from '@betarena/scores-lib/types/_HASURA_.js';
 	import type { B_PROF_D, B_PROF_T } from '@betarena/scores-lib/types/profile.js';
+  import type { IScoresEndpointProfileMain } from '$lib/types/endpoint.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -77,9 +78,19 @@ COMPONENT JS (w/ TS)
   {
 		// await sleep(3000);
 
-    const response: B_PROF_D = await get
+    const response = await get_v1
+    <
+      IScoresEndpointProfileMain['request']['query'],
+      IScoresEndpointProfileMain['response']
+    >
     (
-			`/api/data/profile.main?uid=${$userBetarenaSettings?.user?.firebase_user_data?.uid}`
+			{
+        endpoint: '/api/data/profile.main',
+        objParameters:
+        {
+          uid: $userBetarenaSettings?.user?.firebase_user_data?.uid
+        }
+      }
 		);
 
     WIDGET_DATA = response
