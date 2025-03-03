@@ -23,17 +23,15 @@
 // #region ➤ 📦 Package Imports
 
 import { json, type RequestEvent } from '@sveltejs/kit';
-// import { dev } from '$app/environment';
 
+import { API_DATA_ERROR_RESPONSE } from '$lib/utils/debug.js';
+import { _GraphQL } from '@betarena/scores-lib/dist/classes/_graphql.js';
 import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.betarena-user.js';
 import { UPROF_UP_ENTRY_0, UPROF_UP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/v8/profile.main.js';
 import { IProfileMutation0Out, profileMutation0, type IProfileMutation0Var } from '@betarena/scores-lib/dist/graphql/query.profile.js';
 import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
-import { _GraphQL } from '@betarena/scores-lib/dist/classes/_graphql.js';
 
-import { API_DATA_ERROR_RESPONSE } from '$lib/utils/debug.js';
-
-import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
+import type { IScoresEndpointProfileMain } from '$lib/types/endpoint.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -66,7 +64,7 @@ export async function main
     ): Promise < Response > =>
     {
       // ╭──────────────────────────────────────────────────────────────────╮
-      // │:| extract url query data.                                        │
+      // │:| extract request data.                                          │
       // ╰──────────────────────────────────────────────────────────────────╯
 
       const
@@ -78,74 +76,72 @@ export async function main
           request:
           {
             method
+          },
+          url:
+          {
+            searchParams
           }
         } = request,
-        queryParamLanguage = request.url.searchParams.get('lang'),
-        queryParamUid = request.url.searchParams.get('uid')
+        // ╭─────
+        // │ NOTE:
+        // │ |: Extract query parameters.
+        // │ |: following definition of :: IScoresEndpointProfileMain['request']
+        // ╰─────
+        queryParamLanguage = searchParams.get('lang'),
+        queryParamUid = searchParams.get('uid')
+      ;
+
+      let
+        /**
+         * @description
+         * 📝 Data Response.
+         */
+        // @ts-expect-error
+        dataRes0: IScoresEndpointProfileMain['response'] = {}
       ;
 
       // ╭──────────────────────────────────────────────────────────────────╮
-      // │:| (output) fetch TARGET article data.                            │
+      // │:| (GET) fetch TARGET user data.                                  │
       // ╰──────────────────────────────────────────────────────────────────╯
 
       if (queryParamUid && method === 'GET')
-      {
-        const
-          /**
-           * @description
-           */
-          dataRes0
-            = await helperDataGenerate_0
-            (
-              queryParamUid
-            )
-        ;
-
-        if (dataRes0 != undefined)
-          return json(dataRes0);
-        ;
-      }
-
-      // ╭──────────────────────────────────────────────────────────────────╮
-      // │:| (output) fetch TARGET translation data.                        │
-      // ╰──────────────────────────────────────────────────────────────────╯
-
-      if (queryParamLanguage && method === 'GET')
-      {
-        const
-          /**
-           * @description
-           * 📝 Data Response.
-           */
-          data
-            = await helperDataGenerate_1
-            (
-              queryParamLanguage
-            )
-        ;
-
-        if (data != undefined)
-          return json(data);
-        ;
-      }
-
-      // ╭──────────────────────────────────────────────────────────────────╮
-      // │:| (output) fetch TARGET translation data.                        │
-      // ╰──────────────────────────────────────────────────────────────────╯
-
-
-      if (queryParamUid && method === 'POST')
-        helperDataGenerate_2(request);
+        dataRes0 = await helperDataGenerate_0
+        (
+          queryParamUid
+        );
       ;
 
       // ╭──────────────────────────────────────────────────────────────────╮
-      // │:| (default) data.                                                │
+      // │:| (GET) fetch TARGET translation data.                           │
       // ╰──────────────────────────────────────────────────────────────────╯
 
-      return json
-      (
-        null
-      );
+      if (queryParamLanguage && method === 'GET')
+        dataRes0 = await helperDataGenerate_1
+        (
+          queryParamLanguage
+        );
+      ;
+
+      // ╭──────────────────────────────────────────────────────────────────╮
+      // │:| (POST) trigger user WITHDRAWAL action.                         │
+      // ╰──────────────────────────────────────────────────────────────────╯
+
+      if (queryParamUid && method === 'POST')
+        dataRes0 = await helperDataGenerate_2
+        (
+          request
+        );
+      ;
+
+      // ╭──────────────────────────────────────────────────────────────────╮
+      // │:| (default)                                                      │
+      // ╰──────────────────────────────────────────────────────────────────╯
+
+      if (dataRes0 != null && Object.keys(dataRes0).length === 0)
+        return API_DATA_ERROR_RESPONSE(1);
+      else
+        return json(dataRes0);
+      ;
     },
     (
       ex: unknown
@@ -170,17 +166,27 @@ export async function main
  * @summary
  *  🔷 HELPER
  * @description
- *  📝 fixture (lineup) widget main data (hasura) fallback;
+ *  📝 Helper logic for retrieving profile page User data.
  * @param { string } uid
- *  💠 Target `profile` uid.
- * @returns { Promise < IProfileData > }
+ *  ❗️ **REQUIRED** User profile uid.
+ * @returns { Promise < Response > }
+ *  📤 Final Data Response.
  */
 async function helperDataGenerate_0
 (
   uid: string
-): Promise < IProfileData >
+): Promise < IScoresEndpointProfileMain['response'] >
 {
   const
+    /**
+     * @description
+     * 📝 Data Response.
+     */
+    objResponse: IScoresEndpointProfileMain['response']
+      = {
+        status: 'success',
+        success: { data: {} }
+      },
     /**
      * @description
      * 📝 Data Response.
@@ -192,7 +198,15 @@ async function helperDataGenerate_0
       )
   ;
 
-  return dataRes0?.[0];
+  objResponse.success.data = dataRes0[0];
+
+  if (dataRes0[0] == null)
+  {
+    objResponse.status = 'error';
+    objResponse.error = { cause: 'No data found', log: [] };
+  }
+
+  return objResponse;
 }
 
 /**
@@ -201,17 +215,27 @@ async function helperDataGenerate_0
  * @summary
  *  🔷 HELPER
  * @description
- *  📝 featured betsites (widget) hasura TRANSLATION fetch;
+ *  📝 Helper logic for retrieving profile page 'translations'.
  * @param { string } lang
- *  💠 Target `profile` language.
+ *  ❗️ **REQUIRED** Langauge.
  * @returns { Promise < IProfileTrs > }
+ *  📤 Final Data Response.
  */
 async function helperDataGenerate_1
 (
   lang: string
-): Promise < IProfileTrs | null >
+): Promise < IScoresEndpointProfileMain['response'] >
 {
   const
+    /**
+     * @description
+     * 📝 Data Response.
+     */
+    objResponse: IScoresEndpointProfileMain['response']
+      = {
+        status: 'success',
+        success: { data: {} }
+      },
     /**
      * @description
      * 📝 Data Response.
@@ -223,11 +247,15 @@ async function helperDataGenerate_1
       )
   ;
 
-  if (dataRes0?.[0]?.size == 0 || !dataRes0?.[0]?.has(lang))
-    return null;
-  ;
+  objResponse.success.data = dataRes0[0].get(lang)!;
 
-  return dataRes0?.[0]?.get(lang)!;
+  if (dataRes0[0] == null || dataRes0[0].get(lang) == null)
+  {
+    objResponse.status = 'error';
+    objResponse.error = { cause: 'No data found', log: [] };
+  }
+
+  return objResponse;
 }
 
 /**
@@ -236,17 +264,27 @@ async function helperDataGenerate_1
  * @summary
  *  🟦 HELPER
  * @description
- *  📝 Fallback data generation.
+ *  📝 Helper logic for user requesting a Withdrawal action.
  * @param { RequestEvent } request
  *  ❗️ **REQUIRED** Request Event.
- * @returns { Promise < void > }
+ * @returns { Promise < Response > }
+ *  📤 Final Data Response.
  */
 async function helperDataGenerate_2
 (
   request: RequestEvent
-): Promise < void >
+): Promise < IScoresEndpointProfileMain['response'] >
 {
   const
+    /**
+     * @description
+     * 📝 Data Response.
+     */
+    objResponse: IScoresEndpointProfileMain['response']
+      = {
+        status: 'success',
+        success: { data: {} }
+      },
     /**
      * @description
      * 📝 Data Response.
@@ -273,21 +311,36 @@ async function helperDataGenerate_2
       )
   ;
 
-  if ((dataRes0?.success?.data?.[0]?.main_balance ?? 0) > 0)
-    await new _GraphQL().wrapQuery
-    <
-      IProfileMutation0Var,
-      IProfileMutation0Out
-    >
-    (
-      profileMutation0,
-      {
-        objects: objRequestBody
-      }
-    );
-  ;
+  if ((dataRes0.success.data[0]?.main_balance ?? 0) > (objRequestBody.quantity ?? 0))
+  {
+    const
+      /**
+       * @description
+       * 📝 Data Response.
+       */
+      dataRes1
+        = await new _GraphQL().wrapQuery
+        <
+          IProfileMutation0Var,
+          IProfileMutation0Out
+        >
+        (
+          profileMutation0,
+          {
+            objects: objRequestBody
+          }
+        )
+    ;
 
-  return;
+    objResponse.success.data = dataRes1[0];
+  }
+  else
+  {
+    objResponse.status = 'error';
+    objResponse.error = { cause: 'Invalid accounts fund amount', log: [] };
+  }
+
+  return objResponse;
 }
 
 // #endregion ➤ 🛠️ METHODS
