@@ -1287,7 +1287,7 @@ paths:
   # ===================
 
   # [UP] - User Profile
-  /api/data/profile:
+  /api/data/profile.main:
     get:
       parameters:
         - name: filter
@@ -1329,6 +1329,25 @@ paths:
         Optional extended description in CommonMark or HTML.
       tags:
         - User
+      parameters:
+        - name: filter
+          in: query
+          description:
+            Target player (main) SEO widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?uid=[...]
+              uid:
+                type: string
+                example: n65vqAoIH3b7lsU4zroxjHk0SSp2
+            additionalProperties: false
+            oneOf:
+              # data (main)
+              - required: [uid]
       requestBody:
         description:
           ⚠️❗️ IMPORTANT

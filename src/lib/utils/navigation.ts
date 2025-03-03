@@ -752,10 +752,14 @@ export async function promiseUrlsPreload
 (
   endpoints: string[],
   fetch: any,
-): Promise<any[]>
+): Promise < any[] >
 {
   const
-    data: any[]
+    /**
+     * @description
+     * 📝 Data response.
+     */
+    dataRes0: any[]
       = await Promise.all
       (
         endpoints
@@ -763,7 +767,7 @@ export async function promiseUrlsPreload
           (
             async (
               _url: string
-            ): Promise<any> =>
+            ): Promise < any > =>
             {
               const
                 // [🐞]
@@ -771,21 +775,30 @@ export async function promiseUrlsPreload
                 /**
                    * @description
                    */
-                response: Response = await fetch(_url),
+                response: Response = await fetch(_url)
+              ;
+
+              let
                 /**
-                   * @description
-                   */
-                resJson: any = await response.json(),
-                // [🐞]
-                t1: number = performance.now()
-                  ;
+                 * @description
+                 */
+                resJson: any = await response.json()
+              ;
+
+              // ╭─────
+              // │ NOTE:
+              // │ |: Continued legacy support for 'success' data.
+              // ╰─────
+              if (resJson?.success)
+                resJson = resJson.success.data;
+              ;
 
               // [🐞]
               dlogv2
               (
                 `🏹 FETCH (GET) (preload) ${_url} `,
                 [
-                  `⏱️ ${((t1 - t0) / 1000).toFixed(2)} sec`
+                  `⏱️ ${((performance.now() - t0) / 1000).toFixed(2)} sec`
                 ],
                 true,
                 undefined,
@@ -804,14 +817,14 @@ export async function promiseUrlsPreload
             }
           )
       )
-    ;
+  ;
 
   // [🐞]
   preloadInvelidDataDebug
   (
-    data,
+    dataRes0,
     endpoints,
   );
 
-  return data;
+  return dataRes0;
 }

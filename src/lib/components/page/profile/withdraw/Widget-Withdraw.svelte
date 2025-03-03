@@ -7,16 +7,18 @@ COMPONENT JS (w/ TS)
   // #region ➤ 📦 Package Imports
 
 	import { page } from '$app/stores';
-	import { get } from '$lib/api/utils.js';
-  import Modal from '$lib/components/ui/Modal.svelte';
 
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 
+  import { get_v1 } from '$lib/utils/fetch.js';
+
 	import WidgetTxHistLoader from '../tx-history/Widget-Tx-Hist-Loader.svelte';
 	import ModalWithdrawForm from './Modal-Withdraw-Form.svelte';
+  import Modal from '$lib/components/ui/Modal.svelte';
 
 	import type { B_PROF_D, B_PROF_T } from '@betarena/scores-lib/types/profile.js';
+  import type { IScoresEndpointProfileMain } from '$lib/types/endpoint.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -53,9 +55,19 @@ COMPONENT JS (w/ TS)
   {
 		// await sleep(3000);
 
-    const response: B_PROF_D = await get
+    const response = await get_v1
+    <
+      IScoresEndpointProfileMain['request']['query'],
+      IScoresEndpointProfileMain['response']
+    >
     (
-			`/api/data/profile?uid=${$userBetarenaSettings?.user?.firebase_user_data?.uid}`
+			{
+        endpoint: '/api/data/profile.main',
+        objParameters:
+        {
+          uid: $userBetarenaSettings?.user?.firebase_user_data?.uid
+        }
+      }
 		);
 
     WIDGET_DATA = response

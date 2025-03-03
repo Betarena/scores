@@ -29,7 +29,7 @@ COMPONENT JS (w/ TS)
   ;
 
   let
-    txStatus: 'C' | 'P' | 'F',
+    txStatus: 'C' | 'P' | 'F' | 'R',
     txStatusTranslation: string,
     txTypeIcon: string,
     isTxExtraInfo: boolean,
@@ -62,7 +62,8 @@ COMPONENT JS (w/ TS)
     // Identify Tx-Type.
 		if (tx_data?.status?.toLowerCase() == 'completed') txStatus = 'C';
 		if (['processing', 'pending'].includes(tx_data?.status?.toLowerCase())) txStatus = 'P';
-		if (tx_data?.status?.toLowerCase() == 'failed')	txStatus = 'F';
+		if (tx_data?.status?.toLowerCase() == 'failed' || tx_data?.status?.toLowerCase() == 'canceled')	txStatus = 'F';
+		if (tx_data?.status?.toLowerCase() == 'refunded') txStatus = 'R';
 
     // NOTE:
     // Identify Tx-Translation.
@@ -74,6 +75,12 @@ COMPONENT JS (w/ TS)
     ;
 		if (tx_data?.status?.toLowerCase() == 'failed')
       txStatusTranslation = txStatusTrans?.failed;
+    ;
+    if (tx_data?.status?.toLowerCase() == 'refunded')
+      txStatusTranslation = txStatusTrans?.refunded;
+    ;
+    if (tx_data?.status?.toLowerCase() == 'canceled')
+      txStatusTranslation = txStatusTrans?.canceled;
     ;
 	}
 
@@ -392,6 +399,8 @@ COMPONENT JS (w/ TS)
         class:completed={txStatus == 'C'}
         class:pending={txStatus == 'P'}
         class:failed={txStatus == 'F'}
+        class:refunded={txStatus == 'R'}
+        class:color-grey={txStatus == 'R'}
       >
         {txStatusTranslation ?? '-'}
       </p>
@@ -539,6 +548,11 @@ COMPONENT JS (w/ TS)
     /* 🎨 style */
     color: var(--status-red-night, #FF5959) !important;
     background: rgba(255, 89, 89, 0.10);
+  }
+  tr td p.tx-status-pill.refunded
+  {
+    /* 🎨 style */
+		background-color: var(--dark-theme-1-shade) !important;
   }
 
   tr div.tx-extra-info

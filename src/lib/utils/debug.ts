@@ -38,16 +38,48 @@ export const
   FIXTURE_PAGE_ERROR_MSG = 'Uh-oh! There has been a pre-load error (/fixture)',
   PRELOAD_ERROR_MSG_PLAYER = 'Uh-oh! There has been a pre-load error (/...player_fill)',
   LOG_PREFIX_HOOKS_S = '[HOOKS-SERVER] ::',
-  API_DATA_ERROR_RESPONSE = () =>
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🔹 HELPER
+   * @description
+   *  📝 Error message for `API` data response.
+   * @returns { Response }
+   *  📤 Response.
+   */
+  API_DATA_ERROR_RESPONSE = (
+    intType = 0
+  ) =>
   {
-    return json
-    (
-      null,
-      {
-        status: 400,
-        statusText: 'Uh-oh! There has been an error'
-      }
-    );
+    if (intType == 0)
+      return json
+      (
+        null,
+        {
+          status: 400,
+          statusText: 'Uh-oh! There has been an error'
+        }
+      );
+    else if (intType == 1)
+      return json
+      (
+        null,
+        {
+          status: 500,
+          statusText: 'Invalid Endpoint Condition'
+        }
+      );
+    else
+      return json
+      (
+        null,
+        {
+          status: 500,
+          statusText: 'Unknown Error'
+        }
+      );
+    ;
   }
 ;
 

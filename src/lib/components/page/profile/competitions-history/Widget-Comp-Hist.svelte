@@ -25,7 +25,7 @@
 
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
-	import { get } from '$lib/api/utils.js';
+  import { get_v1 } from '$lib/utils/fetch.js';
 
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlog } from '$lib/utils/debug.js';
@@ -40,6 +40,7 @@
 
 	import type { B_H_COMP_DATA } from '@betarena/scores-lib/types/_HASURA_.js';
 	import type { B_PROF_D, B_PROF_T } from '@betarena/scores-lib/types/profile.js';
+  import type { IScoresEndpointProfileMain } from '$lib/types/endpoint.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -92,9 +93,19 @@
 
 		// await sleep(3000);
 
-    const response: B_PROF_D = await get
+    const response = await get_v1
+    <
+      IScoresEndpointProfileMain['request']['query'],
+      IScoresEndpointProfileMain['response']
+    >
     (
-			`/api/data/profile?uid=${$userBetarenaSettings?.user?.firebase_user_data?.uid}`
+			{
+        endpoint: '/api/data/profile.main',
+        objParameters:
+        {
+          uid: $userBetarenaSettings?.user?.firebase_user_data?.uid
+        }
+      }
 		);
 
     WIDGET_DATA = response

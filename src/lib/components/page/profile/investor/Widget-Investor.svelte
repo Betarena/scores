@@ -24,13 +24,13 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
 	import { page } from '$app/stores';
-	import { get } from '$lib/api/utils.js';
 	import { viewport_change } from '$lib/utils/platform-functions';
 	import { onMount } from 'svelte';
   import { sleep } from '$lib/utils/miscellenous.js';
 
   import userBetarenaSettings from '$lib/store/user-settings.js';
   import { scoresProfileInvestorStore } from './_store.js';
+  import { get_v1 } from '$lib/utils/fetch.js';
 
 	import WidgetTxHistLoader from './../competitions-history/Widget-Comp-Hist-Loader.svelte';
 	import MainFaq from './FAQ-Main.svelte';
@@ -49,6 +49,7 @@
 	import ReferralsSteps from './Referrals.Steps.Main.svelte';
 
 	import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
+  import type { IScoresEndpointProfileMain } from '$lib/types/endpoint.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -153,12 +154,20 @@
   (
   ): Promise < IProfileData | null >
   {
-    const response = await get
+    const response = await get_v1
+    <
+      IScoresEndpointProfileMain['request']['query'],
+      IScoresEndpointProfileMain['response']
+    >
     (
-      `/api/data/profile?uid=${$userBetarenaSettings.user.firebase_user_data?.uid}`
-      // '/api/data/profile?uid=0x1510ea733e1e81f9bcfcc4eabb5a2226d1a9f9ea18da9aea119ba28b8ed6be81'
-      // '/api/data/profile?uid=Z4ebLuAuDqdOu4Wt6z6EfVn35js2'
-    ) as IProfileData;
+			{
+        endpoint: '/api/data/profile.main',
+        objParameters:
+        {
+          uid: $userBetarenaSettings?.user?.firebase_user_data?.uid
+        }
+      }
+		);
 
     widgetDataMain = response
 
