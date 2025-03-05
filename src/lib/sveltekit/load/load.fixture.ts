@@ -19,7 +19,7 @@
 
 import { ServerLoadEvent } from '@sveltejs/kit';
 
-import { ERROR_CODE_INVALID, dlog, dlogv2 } from '$lib/utils/debug';
+import { dlog, dlogv2 } from '$lib/utils/debug';
 import { tryCatch } from '$lib/utils/miscellenous.js';
 import { preloadExitLogic, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/navigation.js';
 
@@ -213,7 +213,7 @@ export async function main
     (
       t0,
       '[fixture=fixture]',
-      ERROR_CODE_INVALID
+      410
     );
   ;
 
