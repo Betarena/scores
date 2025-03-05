@@ -19,7 +19,7 @@
 
 import { ServerLoadEvent } from '@sveltejs/kit';
 
-import { ERROR_CODE_INVALID, FIXTURE_PAGE_ERROR_MSG, dlog, dlogv2 } from '$lib/utils/debug';
+import { ERROR_CODE_INVALID, dlog, dlogv2 } from '$lib/utils/debug';
 import { tryCatch } from '$lib/utils/miscellenous.js';
 import { preloadExitLogic, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/navigation.js';
 
@@ -346,8 +346,7 @@ async function fetchData
     (
       performance.now(),
       'fixture',
-      400,
-      FIXTURE_PAGE_ERROR_MSG
+      404
     );
     return [];
   }
