@@ -346,7 +346,7 @@ async function fetchData
     (
       performance.now(),
       'fixture',
-      404
+      410
     );
     return [];
   }
