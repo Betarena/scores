@@ -12,6 +12,9 @@
 
 // #region ➤ 📦 Package Imports
 
+import stringify from 'json-stringify-safe';
+import { serializeError } from 'serialize-error';
+
 import sessionStore from '$lib/store/session.js';
 import { checkNull } from '$lib/utils/miscellenous.js';
 import { dlog, dlogv2 } from './debug.js';
@@ -421,4 +424,40 @@ export function toDecimalFix
   ;
 
   return _value;
+}
+
+/**
+ * @author
+ *  @migbash
+ * @summary
+ *  🔹 HELPER
+ * @description
+ *  📝 Strigify `object`, with `circular dependency` cautionary handle.
+ * @param { any } obj
+ *  💠 **REQUIRED** Object to parse.
+ * @return { string }
+ *  📤 Parsed object as `string`.
+ */
+export function parseObject
+(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  obj: any
+): string
+{
+  try
+  {
+    if (obj instanceof Error)
+      return stringify(serializeError(obj));
+    else if (obj instanceof Map || obj instanceof Set)
+      return stringify([...obj]);
+    else if (typeof obj === 'string')
+      return obj;
+    else
+      return stringify(obj);
+    ;
+  }
+  catch (error)
+  {
+    return '';
+  }
 }

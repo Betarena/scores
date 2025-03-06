@@ -1,31 +1,58 @@
 // ╭──────────────────────────────────────────────────────────────────────────────────╮
-// │ 📌 High Order Component Overview                                                 │
+// │ 📌 High Order Overview                                                           │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
-// │ ➤ Internal Svelte Code Format // V.8.0                                           │
-// │ ➤ Status // 🔒 LOCKED                                                            │
-// │ ➤ Author(s) // @migbash                                                          │
+// │ ➤ Code Format   // V.8.0                                                         │
+// │ ➤ Status        // 🔒 LOCKED                                                     │
+// │ ➤ Author(s)     // @migbash                                                      │
+// │ ➤ Maintainer(s) // @migbash                                                      │
+// │ ➤ Created on    // <date-created>                                                │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
 // │ 📝 Description                                                                   │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
-// │ Betarena (Module) || Scores Debug Common Logic                                   │
+// │ BETARENA (Module)
+// │ |: Scores Debug Common Logic
 // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 /* eslint-disable no-console */
+/* eslint-disable camelcase */
 
 // #region ➤ 📦 Package Imports
 
 import { browser, dev } from '$app/environment';
 import * as Sentry from '@sentry/browser';
 import { json } from '@sveltejs/kit';
-import chalk from 'chalk';
+import chalk, { type ChalkInstance } from 'chalk';
 
 import { getInstance } from '$lib/constants/instance.js';
+import { parseObject } from './string.js';
 
 // #endregion ➤ 📦 Package Imports
 
-// #region ➤ 📌 VARIABLES
+// #region ➤ ⛩️ TYPES
 
 type DEBUG = [string, boolean, string]
+
+interface DEBUG_VALUE {
+  codeName: string;
+  show: boolean;
+  style: ChalkInstance;
+}
+
+type DEBUG_KEY =
+  | 'Hooks |'
+  | 'Preload |'
+  | 'Store |'
+  | 'Subscription | [SIDE-EFFECT]'
+  | 'Reactivity |'
+  | 'Fetch |'
+  | 'Unknown |'
+  | 'Interval |'
+  | 'Auth |'
+;
+
+// #endregion ➤ ⛩️ TYPES
+
+// #region ➤ 📌 VARIABLES
 
 export const
   PAGE_INVALID_MSG = 'Uh-oh! This page does not exist!',
@@ -196,7 +223,65 @@ export const
   // │ NOTE:
   // │ > Competition Page (debug)
   // ╰─────
-  COMP_HIGH_DEBUG: DEBUG = ['Highlights (COMP) |', true, 'background: black; color: yellow; border-radius: 1.5px;']
+  COMP_HIGH_DEBUG: DEBUG = ['Highlights (COMP) |', true, 'background: black; color: yellow; border-radius: 1.5px;'],
+  /**
+   * @description
+   * 📝 Debug defintion tags.
+   */
+  objectDebug
+    = new Map < DEBUG_KEY, DEBUG_VALUE >
+    (
+      [
+        // ╭─────
+        // │ NOTE: |:| Debugging for Svelte/+Kit
+        // ╰─────
+        [
+          'Hooks |',
+          { codeName: 'Hooks |', show: true, style: chalk.bgCyan.hex('#ffffff') }
+        ],
+        [
+          'Preload |',
+          { codeName: 'Preload |', show: true, style: chalk.hex('#f52891') }
+        ],
+        [
+          'Subscription | [SIDE-EFFECT]',
+          { codeName: 'Subscription | [SIDE-EFFECT]', show: true, style: chalk.hex('#ff6060') }
+        ],
+        [
+          'Store |',
+          { codeName: 'Store |', show: true, style: chalk.hex('#228B22') }
+        ],
+        [
+          'Reactivity |',
+          { codeName: 'Reactivity |', show: true, style: chalk.hex('#FF6133') }
+        ],
+        [
+          'Fetch |',
+          { codeName: 'Fetch |', show: true, style: chalk.hex('#C4FD00') }
+        ],
+        // ╭─────
+        // │ NOTE: |:| Debugging for General
+        // ╰─────
+        [
+          'Unknown |',
+          { codeName: 'Unknown |', show: true, style: chalk.hex('#f52891') }
+        ],
+        // ╭─────
+        // │ NOTE: |:| Debugging for JavaScript
+        // ╰─────
+        [
+          'Interval |',
+          { codeName: 'Interval |', show: true, style: chalk.bgBlack.hex('#FFFF00') }
+        ],
+        // ╭─────
+        // │ NOTE: |:| Debugging for Authentication
+        // ╰─────
+        [
+          'Auth |',
+          { codeName: 'Auth |', show: true, style: chalk.hex('#f52891') }
+        ]
+      ]
+    )
 ;
 
 // #endregion ➤ 📌 VARIABLES
@@ -204,6 +289,8 @@ export const
 // #region ➤ 🛠️ METHODS
 
 /**
+ * @deprecated
+ *  Use `log_v3(..)` instead.
  * @author
  *  @migbash
  * @summary
@@ -222,57 +309,28 @@ export const
 export function dlog
 (
   msg: string | object,
+  // eslint-disable-next-line no-unused-vars
   show?: boolean,
+  // eslint-disable-next-line no-unused-vars
   style?: string,
 ): void
 {
-  let
-    targetLog: string = undefined
-  ;
-
-  // ╭─────
-  // │ > Livescores V2 Logs
-  // ╰─────
-  if (typeof(msg) == 'string' && msg.includes(LV2_W_H_TAG[0]))
-  {
-    style = LV2_W_H_TAG[2];
-    show = LV2_W_H_TAG[1];
-  }
-
-  // ╭─────
-  // │ > Authentication Logs
-  // ╰─────
-  if (typeof(msg) == 'string' && msg.includes(AU_W_TAG[0]))
-  {
-    targetLog = AU_W_TAG[0];
-    style = AU_W_TAG[2];
-    show = AU_W_TAG[1];
-  }
-
-  // ╭─────
-  // │ > Hooks Logs
-  // ╰─────
-  if (typeof(msg) == 'string' && msg.includes('[H]'))
-    style = 'background: #00bce4; color: black; border-radius: 1.5px; padding: 2.5px 2.5px;';
-  ;
-
-  // ╭─────
-  // │ > Reactiviy Logs
-  // ╰─────
-  if (typeof(msg) == 'string' && msg.includes('[R]'))
-    style = 'background: #FF6133; color: black; border-radius: 1.5px; padding: 2.5px 2.5px;';
-  ;
-
-  if (getInstance('logging'))
-    console.debug(chalk.hex('#00FFFF')(`🖥️ [scores] :: ${msg}`));
-  ;
-
-  saveLogToFile(msg);
+  // [🐞]
+  log_v3
+  (
+    {
+      strGroupName: `${logPrefix} ${msg}`,
+      msgs: [],
+      closed: true
+    }
+  );
 
   return;
 }
 
 /**
+ * @deprecated
+ *  Use `log_v3(..)` instead.
  * @author
  *  @migbash
  * @summary
@@ -300,114 +358,140 @@ export function dlogv2
   closed: boolean = true,
 ): void
 {
-  // ╭─────
-  // │ CHECK |:| for showing logs.
-  // ╰─────
-  const if_M_0: boolean
-    = (getInstance('logging') && show)
-      || (groupName.includes(AU_W_TAG[0]))
-  ;
-  if (!if_M_0) return;
+  // [🐞]
+  log_v3
+  (
+    {
+      strGroupName: `${logPrefix} ${groupName}`,
+      msgs: msgs,
+      closed: closed
+    }
+  );
 
-  groupName = `${logPrefix} ${groupName}`;
+  return;
+}
 
-  // ╭─────
-  // │ > Authentication Logs
-  // ╰─────
-  if (groupName.includes(AU_W_TAG[0]))
+/**
+ * @author
+ *  @migbash
+ * @summary
+ *  🔹 HELPER
+ * @description
+ *  📝 General debuging wrapper.
+ * @param { object } opts
+ *  ❗️ **REQUIRED** Debug object.
+ * @param { string } opts.strGroupName
+ *  ❗️ **REQUIRED** Debug tag name.
+ * @param { unknown[] } [opts.msgs=[]]
+ *  ❗️ **REQUIRED** Debug message(s) to show.
+ * @param { boolean } [opts.closed=true]
+ *  ❗️ OPTIONAL Wether to keep group console logs closed/open by default.
+ * @return { void }
+ */
+export function log_v3
+(
+  opts:
   {
-    style = AU_W_TAG[2];
-    show = AU_W_TAG[1];
+    strGroupName: string,
+    msgs?: unknown[],
+    closed?: boolean,
+    timestamp?: boolean
   }
+): void
+{
+  opts.msgs = opts.msgs ?? [];
+  opts.closed = opts.closed ?? true;
+  opts.timestamp = opts.timestamp ?? true;
 
-  // ╭─────
-  // │ > Hooks Logs
-  // ╰─────
-  // if (groupName.includes('[H]'))
-  //   groupName = `${chalk.bgCyan(`${logPrefix} ${groupName}`)}`;
-  // ;
-
-  // ╭─────
-  // │ > Preload Logs
-  // ╰─────
-  if (groupName.includes('[PL]'))
-    groupName = `${chalk.hex('#f52891')(groupName)}`;
+  let
+    /**
+     * @description
+     * 📝 Default debug object.
+     */ // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    defaultDebug = objectDebug.get('Unknown |')!
   ;
 
   // ╭─────
-  // │ > Reactiviy Logs
+  // │ NOTE: |:| Loop through debug objects for details.
   // ╰─────
-  if (groupName.includes('[R]'))
-    groupName = `${chalk.hex('#FF6133')(groupName)}`;
+  for (const [debugKey, debugObj] of objectDebug)
+    if (opts.strGroupName.includes(debugKey))
+      defaultDebug = debugObj;
   ;
 
   // ╭─────
-  // │ > Fetch Logs
+  // │ CHECK |:| for showing logs
   // ╰─────
-  if (groupName.includes('🏹 FETCH'))
-    groupName = `${chalk.hex('#C4FD00')(groupName)}`;
+  if (!getInstance('logging') || !defaultDebug.show)
+    return;
   ;
-  if (groupName.includes('(preload)'))
-    groupName = `${chalk.green(groupName)}`;
+
+  if
+  (
+    parseObject(opts.msgs).includes('api/data/coinmarketcap')
+    || parseObject(opts.msgs).includes('https://pro-api.coinmarketcap.com/v1/cryptocurrency')
+    || parseObject(opts.msgs).includes('windowWidth')
+  )
+    return;
   ;
+
+  opts.strGroupName = `${logPrefix} ${opts.strGroupName}`;
+
+  if (opts.timestamp)
+    opts.strGroupName = `${new Date().toISOString()} ${opts.strGroupName}`;
+  ;
+
+  opts.strGroupName = defaultDebug.style(opts.strGroupName);
 
   // ╭─────
   // │ NOTE: |:| logs generation
   // ╰─────
-  if (!browser)
-    console.log(chalk.hex('#324ca8')(`${logPrefix}     ─────────────────────────`));
-  ;
-
   if (browser)
-    if (closed)
+  {
+    if (opts.msgs.length == 0)
+      console.log
+      (
+        opts.strGroupName
+      );
+    else if (opts.closed)
       console.groupCollapsed
       (
-        groupName
+        opts.strGroupName
       );
     else
       console.group
       (
-        groupName
+        opts.strGroupName
       );
+  }
   else
+  {
     console.log
     (
-      groupName
+      chalk.hex('#324ca8')(`${new Date().toISOString()} ${logPrefix} ──────────────────────────────────────────────────`)
     );
-  ;
-
-  saveLogToFile(groupName);
+    console.log
+    (
+      opts.strGroupName
+    );
+  }
 
   // ╭─────
-  // │ NOTE: |:| loop through all messages.
+  // │ NOTE: |:| loop through messages.
   // ╰─────
-  for (const m of msgs)
+  for (let msg of opts.msgs)
   {
-    let msg: unknown = m;
+    if (typeof msg == 'string')
+      // ╭─────
+      // │ NOTE: IMPORTANT |:| Skip logs with `[SKIP]` tag.
+      // ╰─────
+      if (msg.includes('[SKIP]'))
+        msg = '[SKIPPED]';
+      else if (msg.includes('[EMPTY]'))
+        continue;
+    ;
 
-    if (typeof m == 'string')
-    {
-      let
-        mStr: string
-      ;
-      mStr = m.replace(/\n/g, '');
-      mStr = m.replace(/\t/g, '');
-
-      if (mStr.includes('🔹 [var]') && mStr.includes('▓▓'))
-      {
-        const
-          tempMsg = mStr.split
-          (
-            '▓▓'
-          )
-        ;
-        msg = `${chalk.blue(tempMsg[0]) + chalk.hex('#444444')(tempMsg[1])}`;
-      }
-    }
-
-    console.debug(chalk.hex('#00FFFF')(`${logPrefix} ${msg}`));
-
-    saveLogToFile(msg);
+    console.debug(msg);
   }
 
   if (browser)
@@ -418,6 +502,8 @@ export function dlogv2
 }
 
 /**
+ * @deprecated
+ * Use `log_v3(..)` instead.
  * @author
  *  @migbash
  * @summary
@@ -435,9 +521,82 @@ export function errlog
 {
   console.error
   (
-
     chalk.bgRedBright(`❌ Error: ${msg}`)
   );
+  return;
+}
+
+/**
+ * @author
+ *  @migbash
+ * @summary
+ *  🔹 HELPER
+ * @description
+ *  📝 error console log platform to easily identify errors;
+ * @param { string } opts.strErrorMsg
+ *  💠 **REQUIRED** Message title
+ * @param { 'error' | 'warning' | 'handled' } [opts.isWarning='error']
+ *  💠 **OPTIONAL** Type of debug log.
+ * @param { Error } [opts.excpetion]
+ *  💠 **OPTIONAL** Exception generated.
+ * @returns { void }
+ */
+export function log_error_v1
+(
+  opts:
+  {
+    strErrorMsg: string,
+    type: 'error' | 'warning' | 'handled',
+    excpetion?: Error | string,
+  }
+): void
+{
+  const
+    /**
+     * @description
+     * 📝 Error message to display.
+     */
+    strMessage = parseObject(opts.strErrorMsg),
+    /**
+     * @description
+     * 📝 Error message details.
+     */
+    strMessageDetaill = parseObject(opts.excpetion)
+  ;
+
+  let
+    /**
+     * @description
+     * 📝 Final error message.
+     */
+    finalMessage = ''
+  ;
+
+  if (opts.type === 'handled')
+    finalMessage = '🟩 Known Error | 🟦 HANDLED ::';
+  else if (opts.type === 'warning')
+    finalMessage = '🟩 Known Error | ⚠️ WARNING ::';
+  else
+    finalMessage = '💀 Unknown Error | ❌ ERROR ::';
+  ;
+
+  if (opts.type === 'handled' || opts.type === 'warning')
+    console.warn
+    (
+      `${finalMessage} ${strMessage}`,
+      strMessageDetaill
+    );
+  else
+    console.error
+    (
+      `${finalMessage} ${strMessage}`,
+      strMessageDetaill
+    );
+  ;
+
+  // OPTIONAL
+  // console.trace(excpetion);
+
   return;
 }
 
