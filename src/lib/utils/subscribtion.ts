@@ -15,6 +15,7 @@
 
 // #region ➤ 📦 Package Imports
 
+import { getInstance } from '$lib/constants/instance.js';
 import { log_error_v1 } from './debug.js';
 import { handleError } from './miscellenous.js';
 import { parseObject } from './string.js';
@@ -38,6 +39,10 @@ export function initializeTopLevelConsoleController
     // eslint-disable-next-line no-console
     log = console.log,
     // eslint-disable-next-line no-console
+    groupCollapsed = console.groupCollapsed,
+    // eslint-disable-next-line no-console
+    group = console.group,
+    // eslint-disable-next-line no-console
     debug = console.debug,
     // eslint-disable-next-line no-console
     warn = console.warn,
@@ -51,7 +56,21 @@ export function initializeTopLevelConsoleController
     ...args
   ): void
   {
-    log(message, ...args);
+    if (getInstance('logging'))
+      log(message, ...args);
+    ;
+
+    return;
+  }
+
+  window.console.groupCollapsed = function
+  (
+    ...args
+  ): void
+  {
+    if (getInstance('logging'))
+      groupCollapsed( ...args);
+    ;
 
     return;
   }
@@ -62,11 +81,24 @@ export function initializeTopLevelConsoleController
     ...args
   ): void
   {
-    debug(message, ...args);
+    if (getInstance('logging'))
+      debug(message, ...args);
+    ;
 
     return;
   }
 
+  window.console.group = function
+  (
+    ...args
+  ): void
+  {
+    if (getInstance('logging'))
+      group(...args);
+    ;
+
+    return;
+  }
 
   window.console.warn = function
   (
