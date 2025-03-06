@@ -66,6 +66,7 @@
   import { mainDeepLinkCheck } from '$lib/utils/deeplink.js';
   import { isPWA, viewportChangeV2 } from '$lib/utils/device.js';
   import { setUserGeoLocation } from '$lib/utils/geo.js';
+  import { initializeTopLevelConsoleController } from '$lib/utils/subscribtion.js';
 
   import AuthMain from '$lib/components/_main_/auth/Auth-Main.svelte';
   import FooterRedisign from '$lib/components/_main_/footer/FooterRedisign.svelte';
@@ -83,7 +84,6 @@
   // import '@betarena/ad-engine';
   // import WidgetAdEngine from '@betarena/ad-engine/src/lib/Widget-AdEngine.svelte';
   import WidgetAdEngine from '@betarena/ad-engine';
-
 
   // ╭─────
   // │ WARNING:
@@ -206,7 +206,7 @@
   function _DEBUG_
   (
     reactDebug: 'Option1' | 'Option2' | 'Option3' | 'Option4'
-  ): void 
+  ): void
   {
     const
       /**
@@ -279,6 +279,14 @@
     scoresAdminStore.useLocalStorage();
     mainDeepLinkCheck();
   }
+
+  // ╭─────
+  // │ NOTE: CRITICAL
+  // │ │: Hijack the 'console' object.
+  // ╰─────
+  $: if (browser && document)
+    initializeTopLevelConsoleController();
+  ;
 
   // ╭─────
   // │ > 🔥 (3rd Party) Intercom Logic [show/hide]
