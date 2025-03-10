@@ -12,17 +12,15 @@
 
 // #region ➤ 📦 Package Imports
 
-import stringify from 'json-stringify-safe';
-import { serializeError } from 'serialize-error';
-
 import sessionStore from '$lib/store/session.js';
 import { checkNull } from '$lib/utils/miscellenous.js';
-import { dlog, dlogv2 } from './debug.js';
 import { removeDiacritics } from './languages.js';
 
 import type { B_SAP_CTP_D, B_SAP_D3, B_SAP_PP_D } from '@betarena/scores-lib/types/v8/preload.scores.js';
 
 // #endregion ➤ 📦 Package Imports
+
+// #region ➤ 🛠️ METHODS
 
 /**
  * @author
@@ -89,18 +87,6 @@ export function generateUrlPlayer
       )
   ;
 
-  // [🐞]
-  dlogv2
-  (
-    '🚏 checkpoint ➤ generateUrlPlayer(..) // INSIGHT',
-    [
-      `🔹 [var] ➤ lang :: ${lang}`,
-      `🔹 [var] ➤ competitionData :: ${JSON.stringify(data)}`,
-      `🔹 [var] ➤ newUrl :: ${newUrl}`,
-    ],
-    true
-  );
-
   return newUrl;
 }
 
@@ -143,18 +129,6 @@ export function generateUrlCompetitions
     ''
   );
 
-  // [🐞]
-  dlogv2
-  (
-    '🚏 checkpoint ➤ generateUrlCompetitions(..)',
-    [
-      `🔹 [var] ➤ lang :|: ${lang}`,
-      `🔹 [var] ➤ data :|: ${JSON.stringify(data)}`,
-      `🔹 [var] ➤ newUrl :|: ${newUrl}`,
-    ],
-    true
-  );
-
   if (checkNull(newUrl) || checkNull(competitionTerm)) return '/';
 
   return newUrl;
@@ -189,18 +163,6 @@ export function generateUrlCompetition
     ''
   );
 
-  // [🐞]
-  dlogv2
-  (
-    '🚏 checkpoint ➤ generateUrlCompetition(..)',
-    [
-      `🔹 [var] ➤ lang :|: ${lang}`,
-      `🔹 [var] ➤ competitionData :|: ${JSON.stringify(competitionData)}`,
-      `🔹 [var] ➤ newUrl :|: ${newUrl}`,
-    ],
-    true
-  );
-
   if (checkNull(newUrl)) return '/';
 
   return newUrl;
@@ -224,16 +186,6 @@ export function spliceBalanceDoubleZero
   value: string | NullUndef
 ): string | null
 {
-  // [🐞]
-  dlogv2
-  (
-    'spliceBalanceDoubleZero(..)',
-    [
-      `🔹 [var] ➤ value :|: ${value}`,
-    ],
-    false
-  );
-
   if (value == null) return null;
 
   if (value.includes('.00'))
@@ -393,13 +345,6 @@ export function toDecimalFix
   , removeDot00: boolean = true
 ): string
 {
-  // ### [🐞]
-  dlog
-  (
-    `🔹 [var] ➤ toDecimalFix(..) value : ${value}`,
-    false
-  );
-
   if (value == null) return '-';
 
   let _value: string  = value.toString();
@@ -426,38 +371,4 @@ export function toDecimalFix
   return _value;
 }
 
-/**
- * @author
- *  @migbash
- * @summary
- *  🔹 HELPER
- * @description
- *  📝 Strigify `object`, with `circular dependency` cautionary handle.
- * @param { any } obj
- *  💠 **REQUIRED** Object to parse.
- * @return { string }
- *  📤 Parsed object as `string`.
- */
-export function parseObject
-(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  obj: any
-): string
-{
-  try
-  {
-    if (obj instanceof Error)
-      return stringify(serializeError(obj));
-    else if (obj instanceof Map || obj instanceof Set)
-      return stringify([...obj]);
-    else if (typeof obj === 'string')
-      return obj;
-    else
-      return stringify(obj);
-    ;
-  }
-  catch (error)
-  {
-    return '';
-  }
-}
+// #endregion ➤ 🛠️ METHODS

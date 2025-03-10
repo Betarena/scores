@@ -1,39 +1,54 @@
 // ╭──────────────────────────────────────────────────────────────────────────────────╮
-// │ 📌 High Order Overview                                                           │
+// │ 📌 High Order Component Overview                                                 │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
-// │ ➤ Code Format   // V.8.0                                                         │
-// │ ➤ Status        // 🔒 LOCKED                                                     │
-// │ ➤ Author(s)     // @migbash                                                      │
-// │ ➤ Maintainer(s) // @migbash                                                      │
-// │ ➤ Created on    // <date-created>                                                │
+// │ ➤ Internal Svelte Code Format :|: V.8.0                                          │
+// │ ➤ Status :|: 🔒 LOCKED                                                           │
+// │ ➤ Author(s) :|: @migbash                                                         │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
 // │ 📝 Description                                                                   │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
-// │ BETARENA (Module)
-// │ |: <insert-module-summary-here>
+// │ > Scores String Logic                                                            │
 // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-/* eslint-disable prefer-const */
+// #region ➤ 📦 Package Imports
 
-export const
-  /**
-   * @author
-   *  @migbash
-   * @summary
-   *  🟦 HELPER
-   * @description
-   *  📝 Dynamic Instance Logic of Enviornment Variables
-   * @return { boolean | undefined }
-   *  📤 Retrieve Target instance/configuration value
-   */
-  getInstance
-    = (
-      strTargetInstance: 'logging' | undefined
-    ) =>
-    {
-      if (strTargetInstance === 'logging')
-        return `${import.meta.env.VITE_PROD_LOGS?.toString()}` === 'true';
-      ;
-      return;
-    }
-;
+import stringify from 'json-stringify-safe';
+import { serializeError } from 'serialize-error';
+
+// #endregion ➤ 📦 Package Imports
+
+/**
+ * @author
+ *  @migbash
+ * @summary
+ *  🔹 HELPER
+ * @description
+ *  📝 Strigify `object`, with `circular dependency` cautionary handle.
+ * @param { any } obj
+ *  💠 **REQUIRED** Object to parse.
+ * @return { string }
+ *  📤 Parsed object as `string`.
+ */
+export function parseObject
+(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  obj: any
+): string
+{
+  try
+  {
+    if (obj instanceof Error)
+      return stringify(serializeError(obj));
+    else if (obj instanceof Map || obj instanceof Set)
+      return stringify([...obj]);
+    else if (typeof obj === 'string')
+      return obj;
+    else
+      return stringify(obj);
+    ;
+  }
+  catch (error)
+  {
+    return '';
+  }
+}

@@ -10,7 +10,7 @@
 // │ 📝 Description                                                                   │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
 // │ BETARENA (Module)
-// │ |: Scores Debug Common Logic
+// │ |: Debugging logic for Scores.
 // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 /* eslint-disable no-console */
@@ -23,8 +23,9 @@ import * as Sentry from '@sentry/browser';
 import { json } from '@sveltejs/kit';
 import chalk, { type ChalkInstance } from 'chalk';
 
+import { mapErrorInstance } from '$lib/constants/error.js';
 import { getInstance } from '$lib/constants/instance.js';
-import { parseObject } from './string.js';
+import { parseObject } from './string.2.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -670,6 +671,44 @@ async function saveLogToFile
   // ;
 
   return;
+}
+
+/**
+ * @author
+ *  @migbash
+ * @summary
+ *  🔹 HELPER
+ * @param { string } strErrorMessage
+ *  ❗️ **REQUIRED** Error message to handle.
+ * @return { boolean }
+ *  📤 `Boolean` representing respective identified value state.
+ */
+export function handleError
+(
+  strErrorMessage: string
+): boolean
+{
+  // ╭─────
+  // │ NOTE: |:| Loop through error instance map and match error messages
+  // ╰─────
+  for (const [errorString, errorKey] of mapErrorInstance)
+    if (strErrorMessage.includes(errorString))
+    {
+      // [🐞]
+      log_error_v1
+      (
+        {
+          strErrorMsg: errorKey,
+          type: 'handled',
+          excpetion: strErrorMessage
+        }
+      );
+
+      return true;
+    }
+  ;
+
+  return false;
 }
 
 // #endregion ➤ 🛠️ METHODS

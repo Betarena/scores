@@ -1,3 +1,5 @@
+SHELL := /bin/bash
+
 # ╭──────────────────────────────────────────────────────────────────────────────────╮
 # │ 🐞 │ DEBUG    			    	  																			    					 │
 # │		 │ 🔗 read-more :|: https://xdevs.com/guide/color_serial/
@@ -599,6 +601,8 @@ docker-spin-start-production:
 		\n╰──────────────────────────────────────────────────────────────────╯"
 	#
 
+	${MAKE} docker-container-log-full-export
+
 	cd .docker/
 	docker compose pull
 	cd ..
@@ -650,14 +654,56 @@ docker-container-log-full-export:
 		\n╰──────────────────────────────────────────────────────────────────╯"
 	#
 
-	mkdir -p ./.docker/export/$(date +%d-%m-%Y %H:%M:%S)
+	TEMP_PATH=$$(date +%Y_%m_%d_%H_%M_%S)
+
+	mkdir -p ./.docker/export/$${TEMP_PATH}/
+
+	echo "Saving logs to: ./.docker/export/$${TEMP_PATH}"
+
+	# ╭─────
+	# │ NOTE:
+	# │ |: Export current docker container state to a file, for archive
+	# ╰─────
+
+	docker ps -a --format="table {{.ID}}\t{{.Image}}\t{{.Command}}\t{{.Status}}" --no-trunc >> ./.docker/export/$${TEMP_PATH}/docker.state.log
+
+	# ╭─────
+	# │ NOTE:
+	# │ |: Exporting all logs from 'scores' containers (replicas)
+	# ╰─────
+
+	for i in $$(docker ps --filter name=^betarena-scores-web-prod- --format="{{.ID}}" --no-trunc); do\
+		echo "Exporting logs for container: $$i";\
+		cp \
+			/var/lib/docker/containers/$${i}/local-logs/container.log \
+			./.docker/export/$${TEMP_PATH}/$${i}.log;\
+	done
+
+	# ╭─────
+	# │ NOTE:
+	# │ |: Exporting all logs from all other containers
+	# ╰─────
 
 	cp \
 		/var/lib/docker/containers/**/*-json.log \
-		/var/lib/docker/containers/**/local-logs*.log \
-		./.docker/export/$(date +%d-%m-%Y %H:%M:%S)
+		./.docker/export/$${TEMP_PATH}/
 	#
 #
+
+.ONESHELL:
+docker-service-nginx-log-export:
+	@
+	echo -e \
+		"\
+		\n╭──────────────────────────────────────────────────────────────────╮\
+		\n│ 📜 │ Exporting docker container logs                             │\
+		\n╰──────────────────────────────────────────────────────────────────╯"
+	#
+
+	cp ./.docker/nginx/logs/scores/access.log ./.docker/export/scores.access.log
+	truncate -s 0 ./.docker/nginx/logs/scores/access.log
+#
+
 
 # ╭──────────────────────────────────────────────────────────────────────────────────╮
 # │ 🟣 │ SENTRY                                                                      │
