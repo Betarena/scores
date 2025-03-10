@@ -32,12 +32,7 @@ export const
     ) =>
     {
       if (strTargetInstance === 'logging')
-        // import.meta.env.VITE_PROD_LOGS == undefined
-        //  ? dev
-        //  : import.meta.env.VITE_PROD_LOGS == 'false'
-        //    ? false
-        //    : true
-        return import.meta.env.VITE_PROD_LOGS === 'true';
+        return `${import.meta.env.VITE_PROD_LOGS?.toString()}` === 'true';
       ;
       return;
     }
