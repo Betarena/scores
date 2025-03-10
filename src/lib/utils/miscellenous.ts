@@ -10,8 +10,6 @@
 // │ Main Scores Platform Miscellenous Logic                                          │
 // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-import { mapErrorInstance } from '$lib/constants/error.js';
-import { log_error_v1 } from './debug.js';
 
 /**
  * @author
@@ -167,42 +165,4 @@ export const checkNull = (
   return value == undefined
     || value == null
   ;
-}
-
-/**
- * @author
- *  @migbash
- * @summary
- *  🔹 HELPER
- * @param { string } strErrorMessage
- *  ❗️ **REQUIRED** Error message to handle.
- * @return { boolean }
- *  📤 `Boolean` representing respective identified value state.
- */
-export function handleError
-(
-  strErrorMessage: string
-): boolean
-{
-  // ╭─────
-  // │ NOTE: |:| Loop through error instance map and match error messages
-  // ╰─────
-  for (const [errorString, errorKey] of mapErrorInstance)
-    if (strErrorMessage.includes(errorString))
-    {
-      // [🐞]
-      log_error_v1
-      (
-        {
-          strErrorMsg: errorKey,
-          type: 'handled',
-          excpetion: strErrorMessage
-        }
-      );
-
-      return true;
-    }
-  ;
-
-  return false;
 }

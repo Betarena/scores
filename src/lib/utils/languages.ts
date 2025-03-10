@@ -15,7 +15,6 @@
 // #region ➤ 📦 Package Imports
 
 import { routeIdAuthorProfile, routeIdAuthorSubscribers, routeIdContent, routeIdPageAuthors, routeIdPageTags, routeIdSportstack } from '$lib/constants/paths.js';
-import { dlogv2 } from '$lib/utils/debug';
 
 import type { Cookies } from '@sveltejs/kit';
 
@@ -79,20 +78,9 @@ export function detectPlatformLanguage
   // │ CHECK
   // │ > for authors page, apply custom logic.
   // ╰─────
-  if ([routeIdPageAuthors, routeIdPageTags, routeIdContent, routeIdAuthorProfile, routeIdAuthorSubscribers, routeIdSportstack].includes(opts.routeId || "") && typeof (cookieValue) == 'object')
+  if ([routeIdPageAuthors, routeIdPageTags, routeIdContent, routeIdAuthorProfile, routeIdAuthorSubscribers, routeIdSportstack].includes(opts.routeId || '') && typeof (cookieValue) == 'object')
     urlLang = (cookieValue.lang ?? 'en');
   ;
-
-  // [🐞]
-  dlogv2
-  (
-    'detectPlatformLanguage(..)',
-    [
-      `🔹 [var] ➤ cookieValue :|: ${JSON.stringify(cookieValue, null, 4)}`,
-      `🔹 [var] ➤ urlLang :|: ${urlLang}`,
-    ],
-    true
-  );
 
   return urlLang;
 }

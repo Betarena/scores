@@ -16,9 +16,8 @@
 // #region ➤ 📦 Package Imports
 
 import { getInstance } from '$lib/constants/instance.js';
-import { log_error_v1 } from './debug.js';
-import { handleError } from './miscellenous.js';
-import { parseObject } from './string.js';
+import { handleError, log_error_v1 } from './debug.js';
+import { parseObject } from './string.2.js';
 
 // #endregion ➤ 📦 Package Imports
 
