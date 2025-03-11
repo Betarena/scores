@@ -20,10 +20,9 @@ import * as Sentry from '@sentry/sveltekit';
 import { sequence } from '@sveltejs/kit/hooks';
 import cookie from 'cookie';
 
-import { ERROR_CODE_INVALID, LOG_PREFIX_HOOKS_S, PAGE_INVALID_MSG, dlog, errlog, log_v3 } from '$lib/utils/debug';
+import { ERROR_CODE_INVALID, LOG_PREFIX_HOOKS_S, PAGE_INVALID_MSG, dlog, dlogv2, errlog } from '$lib/utils/debug';
 import { platfrom_lang_ssr } from '$lib/utils/platform-functions';
 
-import { parseObject } from '$lib/utils/string.2.js';
 import type { Handle, HandleServerError } from '@sveltejs/kit';
 
 // #endregion ➤ 📦 Package Imports
@@ -31,8 +30,8 @@ import type { Handle, HandleServerError } from '@sveltejs/kit';
 // #region ➤ 💠 MISCELLANEOUS
 
 // ╭─────
-// │ CHECK:
-// │ |: disabling of Sentry on localhost
+// │ CHECK
+// │ > disabling of Sentry on localhost
 // ╰─────
 if (process.env.VITE_SENTRY_ENVIRONMENT != 'local')
 {
@@ -87,37 +86,26 @@ const customErrorHandler: HandleServerError = async (
 ): Promise < App.Error > =>
 {
   // [🐞]
+  // eslint-disable-next-line no-console
   errlog
   (
-    `${LOG_PREFIX_HOOKS_S} \n ${error} \n ${JSON.stringify(event)}`,
+    `${LOG_PREFIX_HOOKS_S} \n ${error} \n ${event}`,
   );
-
-  // [🐞]
-  // eslint-disable-next-line no-console
-  // console.trace(error);
-
+  console.trace(error)
   let
-    /**
-     * @description
-     * 📣 Error Message.
-     */
-    message = 'Whoops!',
-    /**
-     * @description
-     * 📣 Error Code.
-     */
-    errorId = 'x1'
+    errorMsg: string = 'Whoops!',
+    errorCode: string = 'x1'
   ;
 
   if (event.route.id == null)
   {
-    message = PAGE_INVALID_MSG;
-    errorId = ERROR_CODE_INVALID.toString();
+    errorMsg = PAGE_INVALID_MSG;
+    errorCode = ERROR_CODE_INVALID.toString();
   }
 
   return {
-    message,
-    errorId,
+    message: errorMsg,
+    errorId: errorCode,
   }
 }
 
@@ -127,9 +115,9 @@ const customErrorHandler: HandleServerError = async (
 
 export const handle: Handle = sequence
 (
-  /* Step [1] */
+  /* [1] Step */
   Sentry.sentryHandle(),
-  /* Step [2] */
+  /* [2] Step */
   async (
     {
       event,
@@ -150,9 +138,10 @@ export const handle: Handle = sequence
     ;
 
     // ╭──────────────────────────────────────────────────────────────────────────────────╮
-    // │ IMPORTANT WARNING:                                                               │
-    // │ |: Before 'endpoint' call/execute (below)                                        │
-    // │ |: Executed after to 'layout.server.ts'                                          │
+    // │ IMPORTANT                                                                        │
+    // │ > Before 'endpoint' call/execute (below)                                         │
+    // │ WARNING:                                                                         │
+    // │ > Executed after to 'layout.server.ts'                                           │
     // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
     const
@@ -178,8 +167,8 @@ export const handle: Handle = sequence
           theme: 'Dark',
           // ╭─────
           // │ NOTE:
-          // │ |: attempt to identify user IP from 'request',
-          // │ |: to preload data from 'server'.
+          // │ > attempt to identify user IP from 'request',
+          // │ > to preload data from 'server'.
           // ╰─────
           /*
             originIP:
@@ -202,13 +191,14 @@ export const handle: Handle = sequence
 
     // ╭─────
     // │ NOTE:
-    // │ |: assign 'locals' context from 'cookie' or, load defaults.
+    // │ > assign 'locals' context from 'cookie' or, load defaults.
     // ╰─────
     event.locals.betarenaUser = cookies.betarenaCookieLoggedIn ?? null;
 
     if (event.locals.betarenaUser)
+
       event.locals.uid = JSON.parse(event.locals.user)['user-uid'];
-    ;
+
 
     // 🔗 read-more :|: https://github.com/sveltejs/kit/issues/1046
     // if (event.url.searchParams.has('_method')) {
@@ -216,14 +206,15 @@ export const handle: Handle = sequence
     // }
 
     // ╭──────────────────────────────────────────────────────────────────────────────────╮
-    // │ IMPORTANT WARNING:                                                               │
-    // │ |: Actual 'endpoint' call/execute (below)                                        │
-    // │ |: Executed after to 'layout.server.ts'                                          │
+    // │ IMPORTANT                                                                        │
+    // │ > Actual 'endpoint' call/execute (below)                                         │
+    // │ WARNING:                                                                         │
+    // │ > Executed after to 'layout.server.ts'                                           │
     // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
     // ╭─────
     // │ NOTE:
-    // │ |: past use with cookies-template
+    // │ > past use with cookies-template
     // ╰─────
     // const response = await resolve(event);
 
@@ -266,16 +257,16 @@ export const handle: Handle = sequence
     ;
 
     // ╭──────────────────────────────────────────────────────────────────────────────────╮
-    // │ IMPORTANT WARNING:                                                               │
-    // │ |: After 'endpoint' call/execute                                                 │
+    // │ IMPORTANT                                                                        │
+    // │ > After 'endpoint' call/execute                                                  │
     // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
     // [🐞]
     // console.log('cookies.betarenaScoresCookie', cookies.betarenaScoresCookie);
 
     // ╭─────
-    // │ CHECK:
-    // │ |: for first time user visiting app, set cookie.
+    // │ CHECK
+    // │ > for first time user visiting app, set cookie.
     // ╰─────
     if (!cookies.betarenaScoresCookie)
     {
@@ -285,7 +276,6 @@ export const handle: Handle = sequence
         '🚏 checkpoint ➤ betarenaScoresCookie not found!',
         true
       );
-
       response.headers.set
       (
         'Set-Cookie',
@@ -303,19 +293,19 @@ export const handle: Handle = sequence
     }
 
     // [🐞]
-    log_v3
+    dlogv2
     (
-      {
-        strGroupName: `🚏 checkpoint ➤ Hooks | src/hooks.server.ts handle(..) | in ${((performance.now() - t0) / 1000).toFixed(5)} sec`,
-        msgs:
-        [
-          // ` 🔹 [var] ➤ event :: ${JSON.stringify(event.url.pathname)}`,
-          // ` 🔹 [var] ➤ event.route.id :: ${event.route.id}`,
-          // ` 🔹 [var] ➤ event.url.origin :: ${event.url.origin}`,
-          `🔹 [var] ➤ event.url :: ${event.url}`,
-          `${parseObject(event.locals) != '{}' ? `🔹 [var] ➤ event.locals :: ${parseObject(event.locals)}` : '[EMPTY]'}`
-        ],
-      }
+      `${LOG_PREFIX_HOOKS_S} 🚏 checkpoint ➤ src/hooks.server.ts handle(..)`,
+      [
+        // `${LOG_PREFIX_HOOKS_S} 🔹 [var] ➤ event :: ${JSON.stringify(event.url.pathname)}`,
+        `${LOG_PREFIX_HOOKS_S} 🔹 [var] ➤ event.url :: ${event.url}`,
+        // `${LOG_PREFIX_HOOKS_S} 🔹 [var] ➤ event.route.id :: ${event.route.id}`,
+        // `${LOG_PREFIX_HOOKS_S} 🔹 [var] ➤ event.url.origin :: ${event.url.origin}`,
+        `${LOG_PREFIX_HOOKS_S} 🔹 [var] ➤ event.locals.user :: ${event.locals.user}`,
+        `${LOG_PREFIX_HOOKS_S} 🔹 [var] ➤ event.locals.betarenaUser :: ${event.locals.betarenaUser}`,
+        `${LOG_PREFIX_HOOKS_S} ⏳ [timer] ➤ ${((performance.now() - t0) / 1000).toFixed(5)} sec`,
+      ],
+      true
     );
 
     return response;
@@ -324,12 +314,12 @@ export const handle: Handle = sequence
 
 // ╭─────
 // │ NOTE:
-// │ |: using Sentry with Custom Error Handler.
+// │ > using Sentry with Custom Error Handler.
 // ╰─────
 export const handleError: HandleServerError = Sentry.handleErrorWithSentry(customErrorHandler);
 // ╭─────
 // │ NOTE:
-// │ |: or, alternatively:
+// │ > or, alternatively:
 // ╰─────
 // export const handleError: HandleServerError = Sentry.handleErrorWithSentry();
 
