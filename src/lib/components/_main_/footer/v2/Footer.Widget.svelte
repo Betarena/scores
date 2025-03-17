@@ -11,7 +11,7 @@
 │ 📝 Description                                                                   │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ BETARENA (Module)                                                                │
-│ |: Scores Footer Sub-Component (v2)
+│ |: Scores Footer Component (v2)
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -43,14 +43,15 @@
 
   import { page } from '$app/stores';
 
-  import { routeIdPageProfile, routeIdPageProfileAuthorCreate, routeIdPageProfilePublication } from '$lib/constants/paths.js';
+  import { routeIdContent } from '$lib/constants/paths.js';
   import sessionStore from '$lib/store/session.js';
+  import { storeFooter } from './../_store.js';
 
-  import FooterNavigationBlock from './FooterNavigationBlock.svelte';
-  import SocialsBlock from './SocialsBlock.svelte';
-  import BetarenaLogo from './assets/betarena-logo-full.svg';
-  import BegambleawareorgBlack from './assets/icon_redisign/gamble_aware.svg';
-  import Legal18ActionBet from './assets/icon_redisign/legal-18-action-bet.svelte';
+  import SeoBox from '$lib/components/SEO-Box.svelte';
+  import FooterBottom from './View.Bottom.svelte';
+  import FooterSide from './View.Side.svelte';
+
+  import type { B_FOT_T } from '@betarena/scores-lib/types/types.main.footer.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -68,15 +69,92 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  const
+    /**
+     * @description
+     * 📝 List of paths for '<FooterSide />' toggle.
+     */
+    listStrFooterPaths
+      = [
+        routeIdContent
+      ]
+  ;
+
   $: ( { viewportType } = $sessionStore );
 
-  $: listStrLinkOrder
-    = (viewportType == 'tablet')
-      ? ['changelog', 'about', 'roadmap', 'status', 'terms', 'privacy']
-      : ['changelog', 'status', 'about', 'terms', 'roadmap', 'privacy']
+  $: objWidgetDataTranslation = $page.data.B_FOT_T as B_FOT_T;
+
+  $: mapLinks = new Map(
+    [
+      [
+        'changelog',
+        {
+          id: 'changelog',
+          label: objWidgetDataTranslation.terms.changelog,
+          href: objWidgetDataTranslation.links.changelog,
+        },
+      ],
+      [
+        'status',
+        {
+          id: 'status',
+          label: objWidgetDataTranslation.terms.status,
+          href: objWidgetDataTranslation.links.status,
+        },
+      ],
+      [
+        'about',
+        {
+          id: 'about',
+          label: objWidgetDataTranslation.terms.about_us,
+          href: objWidgetDataTranslation.links.about_us,
+        },
+      ],
+      [
+        'terms',
+        {
+          id: 'terms',
+          label: objWidgetDataTranslation.terms.terms,
+          href: objWidgetDataTranslation.links.terms,
+        },
+      ],
+      [
+        'roadmap',
+        {
+          id: 'roadmap',
+          label: objWidgetDataTranslation.terms.latest_news,
+          href: objWidgetDataTranslation.links.latest_news,
+        },
+      ],
+      [
+        'privacy',
+        {
+          id: 'privacy',
+          label: objWidgetDataTranslation.terms.privacy,
+          href: objWidgetDataTranslation.links.privacy,
+        },
+      ],
+    ])
   ;
 
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  $: storeFooter.updateData([['mapLinks', mapLinks]]);
+
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
 </script>
 
@@ -91,187 +169,45 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<footer
-  class="dark-mode"
-  class:mobile={viewportType === 'mobile'}
-  class:desktop={viewportType === 'desktop'}
-  class:border={[routeIdPageProfile, routeIdPageProfileAuthorCreate, routeIdPageProfilePublication].includes($page.route.id || '')}
->
-
-  <div
-    class="wrapper"
-  >
-
-    {#if viewportType !== 'mobile'}
-      <div
-        class="first-block"
-      >
-        <img
-          id=""
-          src={BetarenaLogo}
-          alt="BetarenaLogo"
-          title=""
-          loading="lazy"
-        />
-        {#if viewportType === 'desktop'}
-          <div
-            class="rights-block"
-          >
-            © 2021 Betarena All rights reserved <br />
-            Second Act, 18 Boulevard Montmartre Paris 75009
-          </div>
-        {/if}
-      </div>
-    {/if}
-
-    <div
-      class="central-block"
-    >
-      <SocialsBlock />
-      <div
-        class="nav-wrapper"
-      >
-        <FooterNavigationBlock
-          listStrLinkOrder={listStrLinkOrder}
-        />
-      </div>
-    </div>
-
-    <div
-      class="legal-block"
-    >
-
-      {#if viewportType !== 'desktop'}
-        <div
-          class="rights-block"
-        >
-          © 2021 Betarena All rights reserved <br />
-          Second Act, 18 Boulevard Montmartre Paris 75009
-        </div>
-      {/if}
-
-      <div
-        class="legal-images"
-      >
-        <Legal18ActionBet />
-        <img
-          id=""
-          src={BegambleawareorgBlack}
-          alt="BegambleawareorgBlack"
-          title=""
-          loading="lazy"
-        />
-      </div>
-    </div>
-
-  </div>
-
-</footer>
+<!--
+╭─────
+│ > Footer SEO
+╰─────
+-->
+<SeoBox>
+  <!--
+  ╭─────
+  │ > Social Links [1]
+  ╰─────
+  -->
+  <p>{objWidgetDataTranslation.links.latest_news}</p>
+  <p>{objWidgetDataTranslation.links.about_us}</p>
+  <p>{objWidgetDataTranslation.links.betting_tips}</p>
+  <p>{objWidgetDataTranslation.links.privacy}</p>
+  <p>{objWidgetDataTranslation.links.social_networks}</p>
+  <p>{objWidgetDataTranslation.links.terms}</p>
+  <p>{objWidgetDataTranslation.links.status}</p>
+  <p>{objWidgetDataTranslation.links.changelog}</p>
+  <!--
+  ╭─────
+  │ > Social Links [2]
+  ╰─────
+  -->
+  {#each Object.keys(objWidgetDataTranslation.links.social_networks) ?? [] as key}
+    <p>{objWidgetDataTranslation.links.social_networks[key]}</p>
+  {/each}
+</SeoBox>
 
 <!--
-╭──────────────────────────────────────────────────────────────────────────────────╮
-│ 🌊 Svelte Component CSS/SCSS                                                     │
-┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
-│         │ values by typing/CTRL+SPACE                                            │
-│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
-╰──────────────────────────────────────────────────────────────────────────────────╯
+╭─────
+│ > Footer Container
+╰─────
 -->
-
-<style lang="scss">
-
-  footer
-  {
-    display: flex;
-    background-color: var(--bg-color);
-    min-width: 100%;
-    flex-direction: column;
-    color: var(--text-color);
-
-    &.border
-    {
-      border-top: var(--border);
-    }
-
-    .wrapper
-    {
-      padding: 32px 34px;
-      padding-bottom: 128px;
-      max-width: 1430px;
-      width: 100%;
-      gap: 64px;
-      display: flex;
-      flex-direction: column;
-      margin: auto;
-
-      .nav-wrapper {
-        margin-top: 34px;
-      }
-    }
-
-    .legal-block
-    {
-      display: flex;
-      align-items: center;
-      gap: 24px;
-      justify-content: space-between;
-
-      .legal-images {
-        display: flex;
-        align-items: center;
-        gap: 24px;
-      }
-
-      .rights-block {
-        color: var(--text-color-second-dark);
-        font-size: 12px;
-      }
-    }
-
-    &.mobile
-    {
-      padding-bottom: 132px;
-      .wrapper {
-        padding: 40px 25px;
-        gap: 40px;
-      }
-      .nav-wrapper {
-        margin-top: 40px;
-      }
-
-      .legal-block {
-        flex-direction: column-reverse;
-        align-items: flex-start;
-        gap: 40px;
-      }
-    }
-
-    &.desktop
-    {
-      .wrapper {
-        flex-direction: row;
-        justify-content: space-between;
-        padding: 40px 32px;
-        padding-bottom: 85px;
-
-        .first-block {
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          color: var(--text-color-second-dark);
-          font-size: 12px;
-
-          img {
-            width: 151px;
-            height: 32px;
-          }
-        }
-
-        .legal-block {
-          align-items: flex-end;
-        }
-      }
-    }
-  }
-
-</style>
+{#if
+  viewportType === 'desktop'
+  && listStrFooterPaths.includes($page.route.id ?? '')
+}
+  <FooterSide />
+{:else}
+  <FooterBottom />
+{/if}

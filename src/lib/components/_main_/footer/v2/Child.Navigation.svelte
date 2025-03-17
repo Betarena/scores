@@ -11,7 +11,7 @@
 │ 📝 Description                                                                   │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ BETARENA (Module)                                                                │
-│ |: Scores Footer Component (v2)
+│ |: Scores Footer Sub-Component (v2)
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -41,17 +41,11 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { page } from '$app/stores';
-
-  import { routeIdContent } from '$lib/constants/paths.js';
   import sessionStore from '$lib/store/session.js';
-  import { storeFooter } from './_store.js';
 
-  import SeoBox from '$lib/components/SEO-Box.svelte';
-  import FooterBottom from './FooterBottom.svelte';
-  import FooterSide from './FooterSide.svelte';
+  import { storeFooter } from './../_store.js';
 
-  import type { B_FOT_T } from '@betarena/scores-lib/types/types.main.footer.js';
+  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -69,92 +63,36 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  const
+  export const
     /**
      * @description
-     * 📝 List of paths for '<FooterSide />' toggle.
+     *  📝 List order of link displayed
+     * @default
+     *  [ 'changelog', 'status', 'about', 'terms', 'roadmap', 'privacy' ]
      */
-    listStrFooterPaths
+    listStrLinkOrder
       = [
-        routeIdContent
+        'changelog',
+        'status',
+        'about',
+        'terms',
+        'roadmap',
+        'privacy'
       ]
   ;
 
-  $: ( { viewportType } = $sessionStore );
-
-  $: objWidgetDataTranslation = $page.data.B_FOT_T as B_FOT_T;
-
-  $: mapLinks = new Map(
-    [
-      [
-        'changelog',
-        {
-          id: 'changelog',
-          label: objWidgetDataTranslation.terms.changelog,
-          href: objWidgetDataTranslation.links.changelog,
-        },
-      ],
-      [
-        'status',
-        {
-          id: 'status',
-          label: objWidgetDataTranslation.terms.status,
-          href: objWidgetDataTranslation.links.status,
-        },
-      ],
-      [
-        'about',
-        {
-          id: 'about',
-          label: objWidgetDataTranslation.terms.about_us,
-          href: objWidgetDataTranslation.links.about_us,
-        },
-      ],
-      [
-        'terms',
-        {
-          id: 'terms',
-          label: objWidgetDataTranslation.terms.terms,
-          href: objWidgetDataTranslation.links.terms,
-        },
-      ],
-      [
-        'roadmap',
-        {
-          id: 'roadmap',
-          label: objWidgetDataTranslation.terms.latest_news,
-          href: objWidgetDataTranslation.links.latest_news,
-        },
-      ],
-      [
-        'privacy',
-        {
-          id: 'privacy',
-          label: objWidgetDataTranslation.terms.privacy,
-          href: objWidgetDataTranslation.links.privacy,
-        },
-      ],
-    ])
+  const
+    /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */ // eslint-disable-next-line no-unused-vars
+    CNAME: string = '<section-scope>⮕<type|w|c>⮕<unique-tag-name>⮕main'
   ;
 
+  $: ( { viewportType } = $sessionStore );
+  $: ( { mapLinks } = $storeFooter );
+
   // #endregion ➤ 📌 VARIABLES
-
-  // #region ➤ 🔥 REACTIVIY [SVELTE]
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'logic' that should run            │
-  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
-  // │ WARNING:                                                               │
-  // │ ❗️ Can go out of control.                                              │
-  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
-  // │ Please keep very close attention to these methods and                  │
-  // │ use them carefully.                                                    │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  $: storeFooter.updateData([['mapLinks', mapLinks]]);
-
-  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
 </script>
 
@@ -169,45 +107,54 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<!--
-╭─────
-│ > Footer SEO
-╰─────
--->
-<SeoBox>
-  <!--
-  ╭─────
-  │ > Social Links [1]
-  ╰─────
-  -->
-  <p>{objWidgetDataTranslation.links.latest_news}</p>
-  <p>{objWidgetDataTranslation.links.about_us}</p>
-  <p>{objWidgetDataTranslation.links.betting_tips}</p>
-  <p>{objWidgetDataTranslation.links.privacy}</p>
-  <p>{objWidgetDataTranslation.links.social_networks}</p>
-  <p>{objWidgetDataTranslation.links.terms}</p>
-  <p>{objWidgetDataTranslation.links.status}</p>
-  <p>{objWidgetDataTranslation.links.changelog}</p>
-  <!--
-  ╭─────
-  │ > Social Links [2]
-  ╰─────
-  -->
-  {#each Object.keys(objWidgetDataTranslation.links.social_networks) ?? [] as key}
-    <p>{objWidgetDataTranslation.links.social_networks[key]}</p>
+<div
+  class="navigation-block"
+  class:vertlical={viewportType === 'mobile'}
+>
+  {#each listStrLinkOrder as id}
+    {@const item = mapLinks.get(id)}
+
+    {#if item}
+      <a
+        href={item?.href}
+        target="_blank"
+        rel="external"
+      >
+        <TranslationText key={`${CNAME}/unknown`} text={item.label} />
+      </a>
+    {/if}
   {/each}
-</SeoBox>
+</div>
 
 <!--
-╭─────
-│ > Footer Container
-╰─────
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 🌊 Svelte Component CSS/SCSS                                                     │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
+╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-{#if
-  viewportType === 'desktop'
-  && listStrFooterPaths.includes($page.route.id ?? '')
-}
-  <FooterSide />
-{:else}
-  <FooterBottom />
-{/if}
+
+<style lang="scss">
+
+  .navigation-block
+  {
+    display: flex;
+    gap: 32px;
+
+    &.vertlical
+    {
+      display: grid;
+      row-gap: 8px;
+      grid-template-columns: auto auto;
+      font-weight: 500;
+    }
+
+    a:hover
+    {
+      color: var(--primary);
+    }
+  }
+
+</style>

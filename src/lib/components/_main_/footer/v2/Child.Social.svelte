@@ -41,10 +41,19 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import sessionStore from '$lib/store/session.js';
+  import { page } from '$app/stores';
+  import { onMount } from 'svelte';
 
   import TranslationText from '$lib/components/misc/Translation-Text.svelte';
-  import { storeFooter } from './_store.js';
+  import Discord from './../assets/icon_redisign/discord.svelte';
+  import Github from './../assets/icon_redisign/github.svelte';
+  import Linkedin from './../assets/icon_redisign/linkedin.svelte';
+  import Medium from './../assets/icon_redisign/medium.svelte';
+  import Telegram from './../assets/icon_redisign/telegram.svelte';
+  import X from './../assets/icon_redisign/x.svelte';
+
+  import type { B_H_SFOOTD_Social_Network } from '@betarena/scores-lib/types/_HASURA_.js';
+  import type { B_FOT_T } from '@betarena/scores-lib/types/types.main.footer.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -62,36 +71,93 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export const
-    /**
-     * @description
-     *  📝 List order of link displayed
-     * @default
-     *  [ 'changelog', 'status', 'about', 'terms', 'roadmap', 'privacy' ]
-     */
-    listStrLinkOrder
-      = [
-        'changelog',
-        'status',
-        'about',
-        'terms',
-        'roadmap',
-        'privacy'
-      ]
+  /**
+   * @description
+   *  📣 Component `Type`.
+   */
+  type IDynamicAssetMap =
+    | 'begambleawareorg'
+    | 'logoFull'
+    | 'legal18icon'
+    | 'discord'
+    | 'linkedin'
+    | 'medium'
+    | 'telegram'
+    | 'x'
+    | 'github'
   ;
 
   const
     /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
-     */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = '<section-scope>⮕<type|w|c>⮕<unique-tag-name>⮕main'
+     */
+    CNAME = 'global⮕footer⮕w⮕main-socials',
+    /**
+     * @description
+     *  📣 Dynamic import variable condition
+     */
+    isDynamicImport = true,
+    /**
+     * @description
+     *  📣 Target social media order.
+     */
+    socialNetworkOrder: B_H_SFOOTD_Social_Network[]
+      = [
+        'x',
+        'telegram',
+        'discord',
+        'medium',
+        'linkedin',
+        'github',
+      ]
   ;
 
-  $: ( { viewportType } = $sessionStore );
-  $: ( { mapLinks } = $storeFooter );
+  let
+    /**
+     * @description
+     *  📣 Holds target `component(s)` of dynamic nature.
+     */
+    dynamicAssetMap = new Map < IDynamicAssetMap, any > ()
+  ;
+
+  $: objWidgetDataTranslation = $page.data.B_FOT_T as B_FOT_T;
 
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  onMount
+  (
+    async () =>
+    {
+      if (isDynamicImport)
+      {
+        dynamicAssetMap.set('discord', Discord);
+        dynamicAssetMap.set('linkedin', Linkedin);
+        dynamicAssetMap.set('medium', Medium);
+        dynamicAssetMap.set('telegram', Telegram);
+        dynamicAssetMap.set('x', X);
+        dynamicAssetMap.set('github', Github);
+
+        dynamicAssetMap = dynamicAssetMap;
+      }
+
+      return;
+    }
+  );
+
+  // #endregion ➤ 🛠️ METHODS
 
 </script>
 
@@ -107,22 +173,33 @@
 -->
 
 <div
-  class="navigation-block"
-  class:vertlical={viewportType === 'mobile'}
+  class="follow-block"
 >
-  {#each listStrLinkOrder as id}
-    {@const item = mapLinks.get(id)}
+  <span
+    class="follow-text"
+  >
+    <TranslationText
+      key={`${CNAME}/unknown`}
+      text={objWidgetDataTranslation.terms.follow}
+      fallback={'Follow us'}
+    />
+  </span>
 
-    {#if item}
+  <div
+    class="socials-wrapper"
+  >
+    {#each socialNetworkOrder as key}
       <a
-        href={item?.href}
-        target="_blank"
+        class="social-icon"
         rel="external"
+        target="_blank"
+        aria-label="{key}"
+        href={objWidgetDataTranslation.links.social_networks[key]}
       >
-        <TranslationText key={`${CNAME}/unknown`} text={item.label} />
+        <svelte:component this={dynamicAssetMap.get(key)} />
       </a>
-    {/if}
-  {/each}
+    {/each}
+  </div>
 </div>
 
 <!--
@@ -137,22 +214,47 @@
 
 <style lang="scss">
 
-  .navigation-block
+  /*
+  ╭──────────────────────────────────────────────────────────────────────────────╮
+  │ 📲 MOBILE-FIRST                                                              │
+  ╰──────────────────────────────────────────────────────────────────────────────╯
+  */
+
+  .follow-block
   {
     display: flex;
-    gap: 32px;
+    flex-direction: column;
+    gap: 8px;
 
-    &.vertlical
+    .follow-text
     {
-      display: grid;
-      row-gap: 8px;
-      grid-template-columns: auto auto;
+      font-size: 12px;
       font-weight: 500;
+      text-transform: uppercase;
+      color: var(--text-color-second-dark);
     }
 
-    a:hover
+    .socials-wrapper
     {
-      color: var(--primary);
+      display: flex;
+      gap: 8px;
+
+      .social-icon
+      {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 8px;
+        border: var(--border);
+        transition: all 0.3s ease-in-out;
+
+        &:hover {
+          border: 1px solid var(--primary);
+          --icon-color: var(--text-color);
+        }
+      }
     }
   }
 

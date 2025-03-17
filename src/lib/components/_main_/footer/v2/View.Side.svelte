@@ -41,19 +41,14 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { page } from '$app/stores';
-  import { onMount } from 'svelte';
+  import userBetarenaSettings from '$lib/store/user-settings.js';
 
-  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
-  import Discord from './assets/icon_redisign/discord.svelte';
-  import Github from './assets/icon_redisign/github.svelte';
-  import Linkedin from './assets/icon_redisign/linkedin.svelte';
-  import Medium from './assets/icon_redisign/medium.svelte';
-  import Telegram from './assets/icon_redisign/telegram.svelte';
-  import X from './assets/icon_redisign/x.svelte';
-
-  import type { B_H_SFOOTD_Social_Network } from '@betarena/scores-lib/types/_HASURA_.js';
-  import type { B_FOT_T } from '@betarena/scores-lib/types/types.main.footer.js';
+  import BuyBtaButton from '$lib/components/shared/BuyBta/Buy-BTA-Button.svelte';
+  import WalletBalance from '$lib/components/ui/WalletBalance.svelte';
+  import BegambleawareorgBlack from './../assets/icon_redisign/begambleawareorg_black.png';
+  import Legal18ActionBet from './../assets/icon_redisign/legal-18-action-bet.svelte';
+  import FooterNavigationBlock from './Child.Navigation.svelte';
+  import SocialsBlock from './Child.Social.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -71,93 +66,18 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  /**
-   * @description
-   *  📣 Component `Type`.
-   */
-  type IDynamicAssetMap =
-    | 'begambleawareorg'
-    | 'logoFull'
-    | 'legal18icon'
-    | 'discord'
-    | 'linkedin'
-    | 'medium'
-    | 'telegram'
-    | 'x'
-    | 'github'
-  ;
-
   const
     /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
      */
-    CNAME = 'global⮕footer⮕w⮕main-socials',
-    /**
-     * @description
-     *  📣 Dynamic import variable condition
-     */
-    isDynamicImport = true,
-    /**
-     * @description
-     *  📣 Target social media order.
-     */
-    socialNetworkOrder: B_H_SFOOTD_Social_Network[]
-      = [
-        'x',
-        'telegram',
-        'discord',
-        'medium',
-        'linkedin',
-        'github',
-      ]
+    CNAME = 'global⮕footer⮕w⮕main'
   ;
 
-  let
-    /**
-     * @description
-     *  📣 Holds target `component(s)` of dynamic nature.
-     */
-    dynamicAssetMap = new Map < IDynamicAssetMap, any > ()
-  ;
-
-  $: objWidgetDataTranslation = $page.data.B_FOT_T as B_FOT_T;
+  $: ({ user } = $userBetarenaSettings);
+  $: isAuth = !!user;
 
   // #endregion ➤ 📌 VARIABLES
-
-  // #region ➤ 🛠️ METHODS
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'methods' that are to be           │
-  // │ and are expected to be used by 'this' .svelte file / component.        │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. function (..)                                                       │
-  // │ 2. async function (..)                                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  onMount
-  (
-    async () =>
-    {
-      if (isDynamicImport)
-      {
-        dynamicAssetMap.set('discord', Discord);
-        dynamicAssetMap.set('linkedin', Linkedin);
-        dynamicAssetMap.set('medium', Medium);
-        dynamicAssetMap.set('telegram', Telegram);
-        dynamicAssetMap.set('x', X);
-        dynamicAssetMap.set('github', Github);
-
-        dynamicAssetMap = dynamicAssetMap;
-      }
-
-      return;
-    }
-  );
-
-  // #endregion ➤ 🛠️ METHODS
 
 </script>
 
@@ -172,35 +92,61 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div
-  class="follow-block"
->
-  <span
-    class="follow-text"
-  >
-    <TranslationText
-      key={`${CNAME}/unknown`}
-      text={objWidgetDataTranslation.terms.follow}
-      fallback={'Follow us'}
-    />
-  </span>
+<!--
+╭─────
+│ > Fotter Container
+╰─────
+-->
+
+<footer>
 
   <div
-    class="socials-wrapper"
+    id="{CNAME}⮕inner"
   >
-    {#each socialNetworkOrder as key}
-      <a
-        class="social-icon"
-        rel="external"
-        target="_blank"
-        aria-label="{key}"
-        href={objWidgetDataTranslation.links.social_networks[key]}
+
+    {#if isAuth}
+      <div class="wallet">
+        <WalletBalance />
+        <BuyBtaButton popup={true} />
+      </div>
+    {/if}
+
+    <div
+      class="content"
+    >
+      <SocialsBlock />
+
+      <div
+        class="nav-block-wrap"
       >
-        <svelte:component this={dynamicAssetMap.get(key)} />
-      </a>
-    {/each}
+        <FooterNavigationBlock />
+      </div>
+
+      <div
+        class="legal-block"
+      >
+        <Legal18ActionBet />
+        <img
+          id=""
+          src={BegambleawareorgBlack}
+          alt="BegambleawareorgBlack"
+          title=""
+          loading="lazy"
+        />
+      </div>
+
+      <div
+        class="rights-block"
+      >
+        © 2021 Betarena All rights reserved <br />
+        Second Act, 18 Boulevard Montmartre Paris 75009
+      </div>
+
+    </div>
+
   </div>
-</div>
+
+</footer>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -220,40 +166,47 @@
   ╰──────────────────────────────────────────────────────────────────────────────╯
   */
 
-  .follow-block
+  footer
   {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    /* 🎨 style */
+    position: relative;
+    color: var(--text-color);
+    position: sticky;
+    position: -webkit-sticky;
+    top: 32px;
+    height: fit-content;
 
-    .follow-text
-    {
-      font-size: 12px;
-      font-weight: 500;
-      text-transform: uppercase;
-      color: var(--text-color-second-dark);
-    }
-
-    .socials-wrapper
+    .wallet
     {
       display: flex;
-      gap: 8px;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding-bottom: 32px;
+      margin-bottom: 32px;
+      border-bottom: var(--border);
+    }
 
-      .social-icon
+    .content
+    {
+      padding-bottom: 32px;
+
+      .nav-block-wrap
       {
-        width: 40px;
-        height: 40px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border-radius: 8px;
-        border: var(--border);
-        transition: all 0.3s ease-in-out;
+        padding: 40px 0;
+      }
 
-        &:hover {
-          border: 1px solid var(--primary);
-          --icon-color: var(--text-color);
-        }
+      .legal-block
+      {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        margin-bottom: 24px;
+      }
+      .rights-block
+      {
+        color: var(--text-color-second-dark);
+        font-size: 12px;
       }
     }
   }

@@ -69,7 +69,7 @@
   import { initializeTopLevelConsoleController } from '$lib/utils/subscribtion.js';
 
   import AuthMain from '$lib/components/_main_/auth/Auth-Main.svelte';
-  import FooterRedisign from '$lib/components/_main_/footer/FooterRedisign.svelte';
+  import FooterWidget from '$lib/components/_main_/footer/v2/Footer.Widget.svelte';
   import HeaderRedesigned from '$lib/components/_main_/header_redisigned/HeaderRedesigned.svelte';
   import MobileMenu from '$lib/components/_main_/mobile-menu/MobileMenu.svelte';
   import SplashScreen from '$lib/components/misc/Splash-Screen.svelte';
@@ -845,7 +845,7 @@
   >
     <slot />
     {#if (!ispwa && ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle].includes($page.route.id || '')) || [routeIdPageProfile, routeIdPageProfilePublication].includes($page.route.id || '')}
-      <FooterRedisign />
+      <FooterWidget />
     {/if}
   </main>
 

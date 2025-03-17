@@ -41,15 +41,16 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  import { page } from '$app/stores';
 
-  import userBetarenaSettings from '$lib/store/user-settings.js';
+  import { routeIdPageProfile, routeIdPageProfileAuthorCreate, routeIdPageProfilePublication } from '$lib/constants/paths.js';
+  import sessionStore from '$lib/store/session.js';
 
-  import BuyBtaButton from '$lib/components/shared/BuyBta/Buy-BTA-Button.svelte';
-  import WalletBalance from '$lib/components/ui/WalletBalance.svelte';
-  import BegambleawareorgBlack from './assets/icon_redisign/begambleawareorg_black.png';
-  import Legal18ActionBet from './assets/icon_redisign/legal-18-action-bet.svelte';
-  import FooterNavigationBlock from './FooterNavigationBlock.svelte';
-  import SocialsBlock from './SocialsBlock.svelte';
+  import FooterNavigationBlock from './Child.Navigation.svelte';
+  import SocialsBlock from './Child.Social.svelte';
+  import BetarenaLogo from './../assets/betarena-logo-full.svg';
+  import BegambleawareorgBlack from './../assets/icon_redisign/gamble_aware.svg';
+  import Legal18ActionBet from './../assets/icon_redisign/legal-18-action-bet.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -67,16 +68,13 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  const
-    /**
-     * @description
-     *  📣 `this` component **main** `id` and `data-testid` prefix.
-     */
-    CNAME = 'global⮕footer⮕w⮕main'
-  ;
+  $: ( { viewportType } = $sessionStore );
 
-  $: ({ user } = $userBetarenaSettings);
-  $: isAuth = !!user;
+  $: listStrLinkOrder
+    = (viewportType == 'tablet')
+      ? ['changelog', 'about', 'roadmap', 'status', 'terms', 'privacy']
+      : ['changelog', 'status', 'about', 'terms', 'roadmap', 'privacy']
+  ;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -93,38 +91,67 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<!--
-╭─────
-│ > Fotter Container
-╰─────
--->
-
-<footer>
+<footer
+  class="dark-mode"
+  class:mobile={viewportType === 'mobile'}
+  class:desktop={viewportType === 'desktop'}
+  class:border={[routeIdPageProfile, routeIdPageProfileAuthorCreate, routeIdPageProfilePublication].includes($page.route.id || '')}
+>
 
   <div
-    id="{CNAME}⮕inner"
+    class="wrapper"
   >
 
-    {#if isAuth}
-      <div class="wallet">
-        <WalletBalance />
-        <BuyBtaButton popup={true} />
+    {#if viewportType !== 'mobile'}
+      <div
+        class="first-block"
+      >
+        <img
+          id=""
+          src={BetarenaLogo}
+          alt="BetarenaLogo"
+          title=""
+          loading="lazy"
+        />
+        {#if viewportType === 'desktop'}
+          <div
+            class="rights-block"
+          >
+            © 2021 Betarena All rights reserved <br />
+            Second Act, 18 Boulevard Montmartre Paris 75009
+          </div>
+        {/if}
       </div>
     {/if}
 
     <div
-      class="content"
+      class="central-block"
     >
       <SocialsBlock />
-
       <div
-        class="nav-block-wrap"
+        class="nav-wrapper"
       >
-        <FooterNavigationBlock />
+        <FooterNavigationBlock
+          listStrLinkOrder={listStrLinkOrder}
+        />
       </div>
+    </div>
+
+    <div
+      class="legal-block"
+    >
+
+      {#if viewportType !== 'desktop'}
+        <div
+          class="rights-block"
+        >
+          © 2021 Betarena All rights reserved <br />
+          Second Act, 18 Boulevard Montmartre Paris 75009
+        </div>
+      {/if}
 
       <div
-        class="legal-block"
+        class="legal-images"
       >
         <Legal18ActionBet />
         <img
@@ -135,14 +162,6 @@
           loading="lazy"
         />
       </div>
-
-      <div
-        class="rights-block"
-      >
-        © 2021 Betarena All rights reserved <br />
-        Second Act, 18 Boulevard Montmartre Paris 75009
-      </div>
-
     </div>
 
   </div>
@@ -161,53 +180,96 @@
 
 <style lang="scss">
 
-  /*
-  ╭──────────────────────────────────────────────────────────────────────────────╮
-  │ 📲 MOBILE-FIRST                                                              │
-  ╰──────────────────────────────────────────────────────────────────────────────╯
-  */
-
   footer
   {
-    /* 🎨 style */
-    position: relative;
+    display: flex;
+    background-color: var(--bg-color);
+    min-width: 100%;
+    flex-direction: column;
     color: var(--text-color);
-    position: sticky;
-    position: -webkit-sticky;
-    top: 32px;
-    height: fit-content;
 
-    .wallet
+    &.border
+    {
+      border-top: var(--border);
+    }
+
+    .wrapper
+    {
+      padding: 32px 34px;
+      padding-bottom: 128px;
+      max-width: 1430px;
+      width: 100%;
+      gap: 64px;
+      display: flex;
+      flex-direction: column;
+      margin: auto;
+
+      .nav-wrapper {
+        margin-top: 34px;
+      }
+    }
+
+    .legal-block
     {
       display: flex;
       align-items: center;
+      gap: 24px;
       justify-content: space-between;
-      width: 100%;
-      padding-bottom: 32px;
-      margin-bottom: 32px;
-      border-bottom: var(--border);
-    }
 
-    .content
-    {
-      padding-bottom: 32px;
-
-      .nav-block-wrap
-      {
-        padding: 40px 0;
-      }
-
-      .legal-block
-      {
+      .legal-images {
         display: flex;
         align-items: center;
         gap: 24px;
-        margin-bottom: 24px;
       }
-      .rights-block
-      {
+
+      .rights-block {
         color: var(--text-color-second-dark);
         font-size: 12px;
+      }
+    }
+
+    &.mobile
+    {
+      padding-bottom: 132px;
+      .wrapper {
+        padding: 40px 25px;
+        gap: 40px;
+      }
+      .nav-wrapper {
+        margin-top: 40px;
+      }
+
+      .legal-block {
+        flex-direction: column-reverse;
+        align-items: flex-start;
+        gap: 40px;
+      }
+    }
+
+    &.desktop
+    {
+      .wrapper {
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 40px 32px;
+        padding-bottom: 85px;
+
+        .first-block {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          color: var(--text-color-second-dark);
+          font-size: 12px;
+
+          img {
+            width: 151px;
+            height: 32px;
+          }
+        }
+
+        .legal-block {
+          align-items: flex-end;
+        }
       }
     }
   }
