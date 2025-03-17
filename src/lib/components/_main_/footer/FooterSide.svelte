@@ -1,14 +1,17 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ 📌 High Order Component Overview                                                 │
+│ 📌 High Order Overview                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ Internal Svelte Code Format :|: V.8.0                                          │
-│ ➤ Status :|: 🔒 LOCKED                                                           │
-│ ➤ Author(s) :|: @izobov                                                         │
+│ ➤ Code Format   // V.8.0                                                         │
+│ ➤ Status        // 🔒 LOCKED                                                     │
+│ ➤ Author(s)     // @izobov                                                       │
+│ ➤ Maintainer(s) // @izobov @migbash                                              │
+│ ➤ Created on    // <date-created>                                                │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ 📝 Description                                                                   │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ Scores Footer Component                                                          │
+│ BETARENA (Module)                                                                │
+│ |: Scores Footer Sub-Component (v2)
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -17,12 +20,12 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
-	import Linkedin from './assets/icon_redisign/linkedin.svelte';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <script lang="ts">
+
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -38,17 +41,15 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import userBetarenaSettings from "$lib/store/user-settings.js"
 
-  import SeoBox from "$lib/components/SEO-Box.svelte";
+  import userBetarenaSettings from '$lib/store/user-settings.js';
 
-  import WalletBalance from "$lib/components/ui/WalletBalance.svelte";
-
-  import Legal_18ActionBet from "./assets/icon_redisign/legal-18-action-bet.svelte";
-  import BegambleawareorgBlack from "./assets/icon_redisign/begambleawareorg_black.png";
-  import SocialsBlock from "./SocialsBlock.svelte";
-  import FooterNavigationBlock from "./FooterNavigationBlock.svelte";
-  import BuyBtaButton from "$lib/components/shared/BuyBta/Buy-BTA-Button.svelte";
+  import BuyBtaButton from '$lib/components/shared/BuyBta/Buy-BTA-Button.svelte';
+  import WalletBalance from '$lib/components/ui/WalletBalance.svelte';
+  import BegambleawareorgBlack from './assets/icon_redisign/begambleawareorg_black.png';
+  import Legal18ActionBet from './assets/icon_redisign/legal-18-action-bet.svelte';
+  import FooterNavigationBlock from './FooterNavigationBlock.svelte';
+  import SocialsBlock from './SocialsBlock.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -66,17 +67,19 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  const /**
+  const
+    /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
      */
-    CNAME = "global⮕footer⮕w⮕main";
+    CNAME = 'global⮕footer⮕w⮕main'
+  ;
 
-  export let links, buyBTAText, translation;
-
-  $: ({user} = $userBetarenaSettings);
+  $: ({ user } = $userBetarenaSettings);
   $: isAuth = !!user;
+
   // #endregion ➤ 📌 VARIABLES
+
 </script>
 
 <!--
@@ -92,54 +95,38 @@
 
 <!--
 ╭─────
-│ > Footer SEO
-╰─────
--->
-<SeoBox>
-  <!--
-  ╭─────
-  │ > Social Links [1]
-  ╰─────
-  -->
-  <p>{translation.links.latest_news}</p>
-  <p>{translation.links.about_us}</p>
-  <p>{translation.links.betting_tips}</p>
-  <p>{translation.links.privacy}</p>
-  <p>{translation.links.social_networks}</p>
-  <p>{translation.links.terms}</p>
-  <p>{translation.links.status}</p>
-  <p>{translation.links.changelog}</p>
-  <!--
-  ╭─────
-  │ > Social Links [2]
-  ╰─────
-  -->
-  {#each Object.keys(translation.links.social_networks) ?? [] as key}
-    <p>{translation.links.social_networks[key]}</p>
-  {/each}
-</SeoBox>
-
-<!--
-╭─────
 │ > Fotter Container
 ╰─────
 -->
 
 <footer>
-  <div id="{CNAME}⮕inner">
+
+  <div
+    id="{CNAME}⮕inner"
+  >
+
     {#if isAuth}
       <div class="wallet">
         <WalletBalance />
         <BuyBtaButton popup={true} />
       </div>
     {/if}
-    <div class="content">
-      <SocialsBlock {translation} />
-      <div class="nav-block-wrap">
-        <FooterNavigationBlock {links} />
+
+    <div
+      class="content"
+    >
+      <SocialsBlock />
+
+      <div
+        class="nav-block-wrap"
+      >
+        <FooterNavigationBlock />
       </div>
-      <div class="legal-block">
-        <Legal_18ActionBet />
+
+      <div
+        class="legal-block"
+      >
+        <Legal18ActionBet />
         <img
           id=""
           src={BegambleawareorgBlack}
@@ -148,12 +135,18 @@
           loading="lazy"
         />
       </div>
-      <div class="rights-block">
+
+      <div
+        class="rights-block"
+      >
         © 2021 Betarena All rights reserved <br />
         Second Act, 18 Boulevard Montmartre Paris 75009
       </div>
+
     </div>
+
   </div>
+
 </footer>
 
 <!--
@@ -167,13 +160,15 @@
 -->
 
 <style lang="scss">
+
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
   │ 📲 MOBILE-FIRST                                                              │
   ╰──────────────────────────────────────────────────────────────────────────────╯
   */
 
-  footer {
+  footer
+  {
     /* 🎨 style */
     position: relative;
     color: var(--text-color);
@@ -182,7 +177,8 @@
     top: 32px;
     height: fit-content;
 
-    .wallet {
+    .wallet
+    {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -191,23 +187,29 @@
       margin-bottom: 32px;
       border-bottom: var(--border);
     }
-    .content {
+
+    .content
+    {
       padding-bottom: 32px;
 
-      .nav-block-wrap {
+      .nav-block-wrap
+      {
         padding: 40px 0;
       }
 
-      .legal-block {
+      .legal-block
+      {
         display: flex;
         align-items: center;
         gap: 24px;
         margin-bottom: 24px;
       }
-      .rights-block {
+      .rights-block
+      {
         color: var(--text-color-second-dark);
         font-size: 12px;
       }
     }
   }
+
 </style>

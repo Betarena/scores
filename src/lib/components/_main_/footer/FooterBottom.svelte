@@ -1,23 +1,32 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 📌 High Order Overview                                                           │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Code Format   // V.8.0                                                         │
+│ ➤ Status        // 🔒 LOCKED                                                     │
+│ ➤ Author(s)     // @izobov                                                       │
+│ ➤ Maintainer(s) // @izobov @migbash                                              │
+│ ➤ Created on    // <date-created>                                                │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ 📝 Description                                                                   │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ BETARENA (Module)                                                                │
+│ |: Scores Footer Sub-Component (v2)
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
-	import BegambleawareorgBlack from './assets/icon_redisign/begambleawareorg_black.svelte';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <script lang="ts">
+
   // #region ➤ 📦 Package Imports
-  import { page } from "$app/stores";
-  import sessionStore from "$lib/store/session.js";
-  import FooterNavigationBlock from "./FooterNavigationBlock.svelte";
-  import SocialsBlock from "./SocialsBlock.svelte";
-  import Legal_18ActionBet from "./assets/icon_redisign/legal-18-action-bet.svelte";
-  import BegambleawareorgBlack from "./assets/icon_redisign/gamble_aware.svg";
-  import BetarenaLogo from "./assets/betarena-logo-full.svg";
-  import { routeIdPageProfile, routeIdPageProfileAuthorCreate, routeIdPageProfilePublication } from "$lib/constants/paths.js";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -31,6 +40,17 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
+
+  import { page } from '$app/stores';
+
+  import { routeIdPageProfile, routeIdPageProfileAuthorCreate, routeIdPageProfilePublication } from '$lib/constants/paths.js';
+  import sessionStore from '$lib/store/session.js';
+
+  import FooterNavigationBlock from './FooterNavigationBlock.svelte';
+  import SocialsBlock from './SocialsBlock.svelte';
+  import BetarenaLogo from './assets/betarena-logo-full.svg';
+  import BegambleawareorgBlack from './assets/icon_redisign/gamble_aware.svg';
+  import Legal18ActionBet from './assets/icon_redisign/legal-18-action-bet.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -48,25 +68,44 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let mobile: boolean, tablet: boolean, translation, links;
-  $: linksOrder =
-    tablet && !mobile
-      ? ["changelog", "about", "roadmap", "status", "terms", "privacy"]
-      : ["changelog", "status", "about", "terms", "roadmap", "privacy"];
-  $: isDesktop = $sessionStore.viewportType === "desktop";
+  $: ( { viewportType } = $sessionStore );
+
+  $: listStrLinkOrder
+    = (viewportType == 'tablet')
+      ? ['changelog', 'about', 'roadmap', 'status', 'terms', 'privacy']
+      : ['changelog', 'status', 'about', 'terms', 'roadmap', 'privacy']
+  ;
 
   // #endregion ➤ 📌 VARIABLES
+
 </script>
 
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 💠 Svelte Component HTML                                                         │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
 <footer
-  class:mobile
   class="dark-mode"
-  class:desktop={isDesktop}
-  class:border={[routeIdPageProfile, routeIdPageProfileAuthorCreate, routeIdPageProfilePublication].includes($page.route.id || "")}
+  class:mobile={viewportType === 'mobile'}
+  class:desktop={viewportType === 'desktop'}
+  class:border={[routeIdPageProfile, routeIdPageProfileAuthorCreate, routeIdPageProfilePublication].includes($page.route.id || '')}
 >
-  <div class="wrapper">
-    {#if $sessionStore.viewportType !== "mobile"}
-      <div class="first-block">
+
+  <div
+    class="wrapper"
+  >
+
+    {#if viewportType !== 'mobile'}
+      <div
+        class="first-block"
+      >
         <img
           id=""
           src={BetarenaLogo}
@@ -74,33 +113,47 @@
           title=""
           loading="lazy"
         />
-        {#if isDesktop}
-          <div class="rights-block">
+        {#if viewportType === 'desktop'}
+          <div
+            class="rights-block"
+          >
             © 2021 Betarena All rights reserved <br />
             Second Act, 18 Boulevard Montmartre Paris 75009
           </div>
         {/if}
       </div>
     {/if}
-    <div class="central-block">
-      <SocialsBlock {translation} />
-      <div class="nav-wrapper">
+
+    <div
+      class="central-block"
+    >
+      <SocialsBlock />
+      <div
+        class="nav-wrapper"
+      >
         <FooterNavigationBlock
-          vertlical={tablet && mobile}
-          {links}
-          order={linksOrder}
+          listStrLinkOrder={listStrLinkOrder}
         />
       </div>
     </div>
-    <div class="legal-block">
-      {#if !isDesktop}
-        <div class="rights-block">
+
+    <div
+      class="legal-block"
+    >
+
+      {#if viewportType !== 'desktop'}
+        <div
+          class="rights-block"
+        >
           © 2021 Betarena All rights reserved <br />
           Second Act, 18 Boulevard Montmartre Paris 75009
         </div>
       {/if}
-      <div class="legal-images">
-        <Legal_18ActionBet />
+
+      <div
+        class="legal-images"
+      >
+        <Legal18ActionBet />
         <img
           id=""
           src={BegambleawareorgBlack}
@@ -110,7 +163,9 @@
         />
       </div>
     </div>
+
   </div>
+
 </footer>
 
 <!--
@@ -124,17 +179,22 @@
 -->
 
 <style lang="scss">
-  footer {
+
+  footer
+  {
     display: flex;
     background-color: var(--bg-color);
     min-width: 100%;
     flex-direction: column;
     color: var(--text-color);
 
-    &.border {
+    &.border
+    {
       border-top: var(--border);
     }
-    .wrapper {
+
+    .wrapper
+    {
       padding: 32px 34px;
       padding-bottom: 128px;
       max-width: 1430px;
@@ -149,7 +209,8 @@
       }
     }
 
-    .legal-block {
+    .legal-block
+    {
       display: flex;
       align-items: center;
       gap: 24px;
@@ -167,7 +228,8 @@
       }
     }
 
-    &.mobile {
+    &.mobile
+    {
       padding-bottom: 132px;
       .wrapper {
         padding: 40px 25px;
@@ -184,7 +246,8 @@
       }
     }
 
-    &.desktop {
+    &.desktop
+    {
       .wrapper {
         flex-direction: row;
         justify-content: space-between;
@@ -210,4 +273,5 @@
       }
     }
   }
+
 </style>

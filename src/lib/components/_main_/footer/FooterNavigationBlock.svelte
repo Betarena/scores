@@ -1,5 +1,22 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 📌 High Order Overview                                                           │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Code Format   // V.8.0                                                         │
+│ ➤ Status        // 🔒 LOCKED                                                     │
+│ ➤ Author(s)     // @izobov                                                       │
+│ ➤ Maintainer(s) // @izobov @migbash                                              │
+│ ➤ Created on    // <date-created>                                                │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ 📝 Description                                                                   │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ BETARENA (Module)                                                                │
+│ |: Scores Footer Sub-Component (v2)
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
@@ -8,7 +25,28 @@
 -->
 
 <script lang="ts">
-  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
+
+  // #region ➤ 📦 Package Imports
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  import sessionStore from '$lib/store/session.js';
+
+  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
+  import { storeFooter } from './_store.js';
+
+  // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
 
@@ -24,24 +62,63 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let vertlical = true,
-    links,
-    order = ["changelog", "status", "about", "terms", "roadmap", "privacy"];
+  export const
+    /**
+     * @description
+     *  📝 List order of link displayed
+     * @default
+     *  [ 'changelog', 'status', 'about', 'terms', 'roadmap', 'privacy' ]
+     */
+    listStrLinkOrder
+      = [
+        'changelog',
+        'status',
+        'about',
+        'terms',
+        'roadmap',
+        'privacy'
+      ]
+  ;
 
-  const /**
+  const
+    /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
      */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = "<section-scope>⮕<type|w|c>⮕<unique-tag-name>⮕main";
+    CNAME: string = '<section-scope>⮕<type|w|c>⮕<unique-tag-name>⮕main'
+  ;
+
+  $: ( { viewportType } = $sessionStore );
+  $: ( { mapLinks } = $storeFooter );
 
   // #endregion ➤ 📌 VARIABLES
+
 </script>
 
-<div class="navigation-block" class:vertlical>
-  {#each order as id}
-    {@const item = links.get(id)}
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 💠 Svelte Component HTML                                                         │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<div
+  class="navigation-block"
+  class:vertlical={viewportType === 'mobile'}
+>
+  {#each listStrLinkOrder as id}
+    {@const item = mapLinks.get(id)}
+
     {#if item}
-      <a href={item?.href} target="_blank" rel="external">
+      <a
+        href={item?.href}
+        target="_blank"
+        rel="external"
+      >
         <TranslationText key={`${CNAME}/unknown`} text={item.label} />
       </a>
     {/if}
@@ -59,19 +136,24 @@
 -->
 
 <style lang="scss">
-  .navigation-block {
+
+  .navigation-block
+  {
     display: flex;
     gap: 32px;
 
-    &.vertlical {
+    &.vertlical
+    {
       display: grid;
       row-gap: 8px;
       grid-template-columns: auto auto;
       font-weight: 500;
     }
 
-    a:hover {
+    a:hover
+    {
       color: var(--primary);
     }
   }
+
 </style>

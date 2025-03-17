@@ -1,14 +1,17 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ 📌 High Order Component Overview                                                 │
+│ 📌 High Order Overview                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ Internal Svelte Code Format :|: V.8.0                                          │
-│ ➤ Status :|: 🔒 LOCKED                                                           │
-│ ➤ Author(s) :|: @izobov                                                         │
+│ ➤ Code Format   // V.8.0                                                         │
+│ ➤ Status        // 🔒 LOCKED                                                     │
+│ ➤ Author(s)     // @izobov                                                       │
+│ ➤ Maintainer(s) // @izobov @migbash                                              │
+│ ➤ Created on    // <date-created>                                                │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ 📝 Description                                                                   │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ Scores Footer Component                                                          │
+│ BETARENA (Module)                                                                │
+│ |: Scores Footer Component (v2)
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -22,6 +25,7 @@
 -->
 
 <script lang="ts">
+
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -37,19 +41,17 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { page } from "$app/stores";
-  import { onMount } from "svelte";
+  import { page } from '$app/stores';
 
-  import sessionStore from "$lib/store/session.js";
+  import { routeIdContent } from '$lib/constants/paths.js';
+  import sessionStore from '$lib/store/session.js';
+  import { storeFooter } from './_store.js';
 
-  import SeoBox from "$lib/components/SEO-Box.svelte";
+  import SeoBox from '$lib/components/SEO-Box.svelte';
+  import FooterBottom from './FooterBottom.svelte';
+  import FooterSide from './FooterSide.svelte';
 
-  import type { B_FOT_T } from "@betarena/scores-lib/types/types.main.footer.js";
-  import FooterSide from "./FooterSide.svelte";
-  import FooterBottom from "./FooterBottom.svelte";
-  import { promiseUrlsPreload } from "$lib/utils/navigation.js";
-  import { browser } from "$app/environment";
-  import { routeIdContent } from "$lib/constants/paths.js";
+  import type { B_FOT_T } from '@betarena/scores-lib/types/types.main.footer.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -67,139 +69,93 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  /**
-   * @description
-   *  📣 Component `Type`.
-   */
-  type IDynamicAssetMap =
-    | "begambleawareorg"
-    | "logoFull"
-    | "legal18icon"
-    | "discord"
-    | "linkedin"
-    | "medium"
-    | "telegram"
-    | "x"
-    | "github";
-
-  export let mobile: boolean, tablet: boolean;
-
-  const sideFooter = [routeIdContent];
-
-  const /**
+  const
+    /**
      * @description
-     *  📣 Dynamic import variable condition
+     * 📝 List of paths for '<FooterSide />' toggle.
      */
-    useDynamicImport: boolean = true;
+    listStrFooterPaths
+      = [
+        routeIdContent
+      ]
+  ;
 
-  let /**
-     * @description
-     *  📣 Holds target `component(s)` of dynamic nature.
-     */
-    dynamicAssetMap = new Map<IDynamicAssetMap, any>();
-  $: ({ globalState } = $sessionStore);
+  $: ( { viewportType } = $sessionStore );
 
-  $: translation = $page.data.B_FOT_T as B_FOT_T;
-  $: if (browser) loadTranslations($sessionStore.serverLang);
-  $: linksMap = new Map([
+  $: objWidgetDataTranslation = $page.data.B_FOT_T as B_FOT_T;
+
+  $: mapLinks = new Map(
     [
-      "changelog",
-      {
-        id: "changelog",
-        label: translation.terms.changelog,
-        href: translation.links.changelog,
-      },
-    ],
-    [
-      "status",
-      {
-        id: "status",
-        label: translation.terms.status,
-        href: translation.links.status,
-      },
-    ],
-    [
-      "about",
-      {
-        id: "about",
-        label: translation.terms.about_us,
-        href: translation.links.about_us,
-      },
-    ],
-    [
-      "terms",
-      {
-        id: "terms",
-        label: translation.terms.terms,
-        href: translation.links.terms,
-      },
-    ],
-    [
-      "roadmap",
-      {
-        id: "roadmap",
-        label: translation.terms.latest_news,
-        href: translation.links.latest_news,
-      },
-    ],
-    [
-      "privacy",
-      {
-        id: "privacy",
-        label: translation.terms.privacy,
-        href: translation.links.privacy,
-      },
-    ],
-  ]);
-  $: buyBTAText =
-    $page.data.B_NAV_T?.scores_header_translations?.data?.cta_buy ?? "Buy BTA";
+      [
+        'changelog',
+        {
+          id: 'changelog',
+          label: objWidgetDataTranslation.terms.changelog,
+          href: objWidgetDataTranslation.links.changelog,
+        },
+      ],
+      [
+        'status',
+        {
+          id: 'status',
+          label: objWidgetDataTranslation.terms.status,
+          href: objWidgetDataTranslation.links.status,
+        },
+      ],
+      [
+        'about',
+        {
+          id: 'about',
+          label: objWidgetDataTranslation.terms.about_us,
+          href: objWidgetDataTranslation.links.about_us,
+        },
+      ],
+      [
+        'terms',
+        {
+          id: 'terms',
+          label: objWidgetDataTranslation.terms.terms,
+          href: objWidgetDataTranslation.links.terms,
+        },
+      ],
+      [
+        'roadmap',
+        {
+          id: 'roadmap',
+          label: objWidgetDataTranslation.terms.latest_news,
+          href: objWidgetDataTranslation.links.latest_news,
+        },
+      ],
+      [
+        'privacy',
+        {
+          id: 'privacy',
+          label: objWidgetDataTranslation.terms.privacy,
+          href: objWidgetDataTranslation.links.privacy,
+        },
+      ],
+    ])
+  ;
+
   // #endregion ➤ 📌 VARIABLES
 
-  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'logic' that should run            │
-  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
-  // │ as soon as 'this' .svelte file is ran.                                 │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  onMount(async () => {
-    if (useDynamicImport) {
-      dynamicAssetMap.set(
-        "begambleawareorg",
-        (await import("./assets/begambleawareorg_black.png")).default
-      );
-      dynamicAssetMap.set(
-        "logoFull",
-        (await import("./assets/betarena-logo-full.svg")).default
-      );
-      dynamicAssetMap.set(
-        "legal18icon",
-        (await import("./assets/legal-18-action-bet.png")).default
-      );
+  $: storeFooter.updateData([['mapLinks', mapLinks]]);
 
-      dynamicAssetMap = dynamicAssetMap;
-    }
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
-    return;
-  });
-  let prevLang;
-  async function loadTranslations(lang: string | undefined) {
-    if (!lang || prevLang === lang) return;
-    prevLang = lang;
-    const res = await promiseUrlsPreload(
-      [
-        `/api/data/main/footer?lang=${lang}&decompress`,
-        `/api/data/main/navbar?lang=${lang}&decompress`,
-      ],
-      fetch
-    );
-    translation = res[0];
-    buyBTAText = res[1]?.scores_header_translations?.data?.cta_buy ?? "Buy BTA";
-    return res;
-  }
-  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 
 <!--
@@ -224,32 +180,34 @@
   │ > Social Links [1]
   ╰─────
   -->
-  <p>{translation.links.latest_news}</p>
-  <p>{translation.links.about_us}</p>
-  <p>{translation.links.betting_tips}</p>
-  <p>{translation.links.privacy}</p>
-  <p>{translation.links.social_networks}</p>
-  <p>{translation.links.terms}</p>
-  <p>{translation.links.status}</p>
-  <p>{translation.links.changelog}</p>
+  <p>{objWidgetDataTranslation.links.latest_news}</p>
+  <p>{objWidgetDataTranslation.links.about_us}</p>
+  <p>{objWidgetDataTranslation.links.betting_tips}</p>
+  <p>{objWidgetDataTranslation.links.privacy}</p>
+  <p>{objWidgetDataTranslation.links.social_networks}</p>
+  <p>{objWidgetDataTranslation.links.terms}</p>
+  <p>{objWidgetDataTranslation.links.status}</p>
+  <p>{objWidgetDataTranslation.links.changelog}</p>
   <!--
   ╭─────
   │ > Social Links [2]
   ╰─────
   -->
-  {#each Object.keys(translation.links.social_networks) ?? [] as key}
-    <p>{translation.links.social_networks[key]}</p>
+  {#each Object.keys(objWidgetDataTranslation.links.social_networks) ?? [] as key}
+    <p>{objWidgetDataTranslation.links.social_networks[key]}</p>
   {/each}
 </SeoBox>
 
 <!--
 ╭─────
-│ > Fotter Container
+│ > Footer Container
 ╰─────
 -->
-
-{#if !mobile && !tablet && sideFooter.includes($page.route.id || "")}
-  <FooterSide links={linksMap} {buyBTAText} {translation} />
+{#if
+  viewportType === 'desktop'
+  && listStrFooterPaths.includes($page.route.id ?? '')
+}
+  <FooterSide />
 {:else}
-  <FooterBottom {mobile} {tablet} {translation} links={linksMap} />
+  <FooterBottom />
 {/if}
