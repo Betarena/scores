@@ -82,6 +82,14 @@
       ]
   ;
 
+  export let
+    /**
+     * @description
+     * 📝 Current viewport type
+     */
+    isArticleContentPage: boolean = false
+  ;
+
   const
     /**
      * @description
@@ -110,7 +118,7 @@
 
 <div
   class="navigation-block"
-  class:vertlical={viewportType === 'mobile'}
+  class:vertlical={viewportType === 'mobile' || (isArticleContentPage && viewportType === 'desktop')}
 >
   {#each listStrLinkOrder as id}
     {@const item = mapLinks.get(id)}

@@ -119,7 +119,9 @@
       <div
         class="nav-block-wrap"
       >
-        <FooterNavigationBlock />
+        <FooterNavigationBlock
+          isArticleContentPage={true}
+        />
       </div>
 
       <div
