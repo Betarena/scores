@@ -72,8 +72,8 @@
 
   $: listStrLinkOrder
     = (viewportType == 'tablet')
-      ? ['changelog', 'about', 'roadmap', 'status', 'terms', 'privacy']
-      : ['changelog', 'status', 'about', 'terms', 'roadmap', 'privacy']
+      ? ['changelog', 'about', 'roadmap', 'status', 'terms', 'privacy', 'gambleaware']
+      : ['changelog', 'status', 'about', 'terms', 'roadmap', 'privacy', 'gambleaware']
   ;
 
   // #endregion ➤ 📌 VARIABLES

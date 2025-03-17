@@ -134,6 +134,16 @@
           href: objWidgetDataTranslation.links.privacy,
         },
       ],
+      [
+        'gambleaware',
+        {
+          id: 'gambleaware',
+          // @ts-expect-error :: Has not been defined in the B_FOT_T type.
+          label: objWidgetDataTranslation.terms.gambleaware,
+          // @ts-expect-error :: Has not been defined in the B_FOT_T type.
+          href: objWidgetDataTranslation.links.gambleaware,
+        }
+      ]
     ])
   ;
 

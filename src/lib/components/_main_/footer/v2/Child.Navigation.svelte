@@ -77,7 +77,8 @@
         'about',
         'terms',
         'roadmap',
-        'privacy'
+        'privacy',
+        'gambleaware'
       ]
   ;
 
@@ -114,13 +115,16 @@
   {#each listStrLinkOrder as id}
     {@const item = mapLinks.get(id)}
 
-    {#if item}
+    {#if item?.label}
       <a
         href={item?.href}
         target="_blank"
         rel="external"
       >
-        <TranslationText key={`${CNAME}/unknown`} text={item.label} />
+        <TranslationText
+          key={`${CNAME}/unknown`}
+          text={item.label}
+        />
       </a>
     {/if}
   {/each}
