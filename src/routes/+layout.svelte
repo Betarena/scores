@@ -845,10 +845,7 @@
   >
     <slot />
     {#if (!ispwa && ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle].includes($page.route.id || '')) || [routeIdPageProfile, routeIdPageProfilePublication].includes($page.route.id || '')}
-      <FooterRedisign
-        mobile={VIEWPORT_MOBILE_INIT[1]}
-        tablet={VIEWPORT_TABLET_INIT[1]}
-      />
+      <FooterRedisign />
     {/if}
   </main>
 
