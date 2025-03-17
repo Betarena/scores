@@ -1,14 +1,17 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ 📌 High Order Component Overview                                                 │
+│ 📌 High Order Overview                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ Internal Svelte Code Format :|: V.8.0                                          │
-│ ➤ Status :|: 🔒 LOCKED                                                           │
-│ ➤ Author(s) :|: @izobov                                                         │
+│ ➤ Code Format   // V.8.0                                                         │
+│ ➤ Status        // 🔒 LOCKED                                                     │
+│ ➤ Author(s)     // @izobov                                                       │
+│ ➤ Maintainer(s) // @izobov @migbash                                              │
+│ ➤ Created on    // <date-created>                                                │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ 📝 Description                                                                   │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ Scores Footer Component                                                          │
+│ BETARENA (Module)                                                                │
+│ |: Scores Footer Component (v2)
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -17,12 +20,12 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
-	import Linkedin from './assets/icon_redisign/linkedin.svelte';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <script lang="ts">
+
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -38,17 +41,17 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import userBetarenaSettings from "$lib/store/user-settings.js"
+  import { page } from '$app/stores';
 
-  import SeoBox from "$lib/components/SEO-Box.svelte";
+  import { routeIdContent } from '$lib/constants/paths.js';
+  import sessionStore from '$lib/store/session.js';
+  import { storeFooter } from './../_store.js';
 
-  import WalletBalance from "$lib/components/ui/WalletBalance.svelte";
+  import SeoBox from '$lib/components/SEO-Box.svelte';
+  import FooterBottom from './View.Bottom.svelte';
+  import FooterSide from './View.Side.svelte';
 
-  import Legal_18ActionBet from "./assets/icon_redisign/legal-18-action-bet.svelte";
-  import BegambleawareorgBlack from "./assets/icon_redisign/begambleawareorg_black.png";
-  import SocialsBlock from "./SocialsBlock.svelte";
-  import FooterNavigationBlock from "./FooterNavigationBlock.svelte";
-  import BuyBtaButton from "$lib/components/shared/BuyBta/Buy-BTA-Button.svelte";
+  import type { B_FOT_T } from '@betarena/scores-lib/types/types.main.footer.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -66,17 +69,103 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  const /**
+  const
+    /**
      * @description
-     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     * 📝 List of paths for '<FooterSide />' toggle.
      */
-    CNAME = "global⮕footer⮕w⮕main";
+    listStrFooterPaths
+      = [
+        routeIdContent
+      ]
+  ;
 
-  export let links, buyBTAText, translation;
+  $: ( { viewportType } = $sessionStore );
 
-  $: ({user} = $userBetarenaSettings);
-  $: isAuth = !!user;
+  $: objWidgetDataTranslation = $page.data.B_FOT_T as B_FOT_T;
+
+  $: mapLinks = new Map(
+    [
+      [
+        'changelog',
+        {
+          id: 'changelog',
+          label: objWidgetDataTranslation.terms.changelog,
+          href: objWidgetDataTranslation.links.changelog,
+        },
+      ],
+      [
+        'status',
+        {
+          id: 'status',
+          label: objWidgetDataTranslation.terms.status,
+          href: objWidgetDataTranslation.links.status,
+        },
+      ],
+      [
+        'about',
+        {
+          id: 'about',
+          label: objWidgetDataTranslation.terms.about_us,
+          href: objWidgetDataTranslation.links.about_us,
+        },
+      ],
+      [
+        'terms',
+        {
+          id: 'terms',
+          label: objWidgetDataTranslation.terms.terms,
+          href: objWidgetDataTranslation.links.terms,
+        },
+      ],
+      [
+        'roadmap',
+        {
+          id: 'roadmap',
+          label: objWidgetDataTranslation.terms.latest_news,
+          href: objWidgetDataTranslation.links.latest_news,
+        },
+      ],
+      [
+        'privacy',
+        {
+          id: 'privacy',
+          label: objWidgetDataTranslation.terms.privacy,
+          href: objWidgetDataTranslation.links.privacy,
+        },
+      ],
+      [
+        'gambleaware',
+        {
+          id: 'gambleaware',
+          // @ts-expect-error :: Has not been defined in the B_FOT_T type.
+          label: objWidgetDataTranslation.terms.gambleaware,
+          // @ts-expect-error :: Has not been defined in the B_FOT_T type.
+          href: objWidgetDataTranslation.links.gambleaware,
+        }
+      ]
+    ])
+  ;
+
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  $: storeFooter.updateData([['mapLinks', mapLinks]]);
+
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
+
 </script>
 
 <!--
@@ -101,113 +190,34 @@
   │ > Social Links [1]
   ╰─────
   -->
-  <p>{translation.links.latest_news}</p>
-  <p>{translation.links.about_us}</p>
-  <p>{translation.links.betting_tips}</p>
-  <p>{translation.links.privacy}</p>
-  <p>{translation.links.social_networks}</p>
-  <p>{translation.links.terms}</p>
-  <p>{translation.links.status}</p>
-  <p>{translation.links.changelog}</p>
+  <p>{objWidgetDataTranslation.links.latest_news}</p>
+  <p>{objWidgetDataTranslation.links.about_us}</p>
+  <p>{objWidgetDataTranslation.links.betting_tips}</p>
+  <p>{objWidgetDataTranslation.links.privacy}</p>
+  <p>{objWidgetDataTranslation.links.social_networks}</p>
+  <p>{objWidgetDataTranslation.links.terms}</p>
+  <p>{objWidgetDataTranslation.links.status}</p>
+  <p>{objWidgetDataTranslation.links.changelog}</p>
   <!--
   ╭─────
   │ > Social Links [2]
   ╰─────
   -->
-  {#each Object.keys(translation.links.social_networks) ?? [] as key}
-    <p>{translation.links.social_networks[key]}</p>
+  {#each Object.keys(objWidgetDataTranslation.links.social_networks) ?? [] as key}
+    <p>{objWidgetDataTranslation.links.social_networks[key]}</p>
   {/each}
 </SeoBox>
 
 <!--
 ╭─────
-│ > Fotter Container
+│ > Footer Container
 ╰─────
 -->
-
-<footer>
-  <div id="{CNAME}⮕inner">
-    {#if isAuth}
-      <div class="wallet">
-        <WalletBalance />
-        <BuyBtaButton popup={true} />
-      </div>
-    {/if}
-    <div class="content">
-      <SocialsBlock {translation} />
-      <div class="nav-block-wrap">
-        <FooterNavigationBlock {links} />
-      </div>
-      <div class="legal-block">
-        <Legal_18ActionBet />
-        <img
-          id=""
-          src={BegambleawareorgBlack}
-          alt="BegambleawareorgBlack"
-          title=""
-          loading="lazy"
-        />
-      </div>
-      <div class="rights-block">
-        © 2021 Betarena All rights reserved <br />
-        Second Act, 18 Boulevard Montmartre Paris 75009
-      </div>
-    </div>
-  </div>
-</footer>
-
-<!--
-╭──────────────────────────────────────────────────────────────────────────────────╮
-│ 🌊 Svelte Component CSS/SCSS                                                     │
-┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
-│         │ values by typing/CTRL+SPACE                                            │
-│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
-╰──────────────────────────────────────────────────────────────────────────────────╯
--->
-
-<style lang="scss">
-  /*
-  ╭──────────────────────────────────────────────────────────────────────────────╮
-  │ 📲 MOBILE-FIRST                                                              │
-  ╰──────────────────────────────────────────────────────────────────────────────╯
-  */
-
-  footer {
-    /* 🎨 style */
-    position: relative;
-    color: var(--text-color);
-    position: sticky;
-    position: -webkit-sticky;
-    top: 32px;
-    height: fit-content;
-
-    .wallet {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 100%;
-      padding-bottom: 32px;
-      margin-bottom: 32px;
-      border-bottom: var(--border);
-    }
-    .content {
-      padding-bottom: 32px;
-
-      .nav-block-wrap {
-        padding: 40px 0;
-      }
-
-      .legal-block {
-        display: flex;
-        align-items: center;
-        gap: 24px;
-        margin-bottom: 24px;
-      }
-      .rights-block {
-        color: var(--text-color-second-dark);
-        font-size: 12px;
-      }
-    }
-  }
-</style>
+{#if
+  viewportType === 'desktop'
+  && listStrFooterPaths.includes($page.route.id ?? '')
+}
+  <FooterSide />
+{:else}
+  <FooterBottom />
+{/if}

@@ -1,14 +1,17 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ 📌 High Order Component Overview                                                 │
+│ 📌 High Order Overview                                                           │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ Internal Svelte Code Format :|: V.8.0                                          │
-│ ➤ Status :|: 🔒 LOCKED                                                           │
-│ ➤ Author(s) :|: @izobov                                                         │
+│ ➤ Code Format   // V.8.0                                                         │
+│ ➤ Status        // 🔒 LOCKED                                                     │
+│ ➤ Author(s)     // @izobov                                                       │
+│ ➤ Maintainer(s) // @izobov @migbash                                              │
+│ ➤ Created on    // <date-created>                                                │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ 📝 Description                                                                   │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ Scores Footer Component                                                          │
+│ BETARENA (Module)                                                                │
+│ |: Scores Footer Sub-Component (v2)
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -22,6 +25,7 @@
 -->
 
 <script lang="ts">
+
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -37,19 +41,14 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { page } from "$app/stores";
-  import { onMount } from "svelte";
+  import userBetarenaSettings from '$lib/store/user-settings.js';
 
-  import sessionStore from "$lib/store/session.js";
-
-  import SeoBox from "$lib/components/SEO-Box.svelte";
-
-  import type { B_FOT_T } from "@betarena/scores-lib/types/types.main.footer.js";
-  import FooterSide from "./FooterSide.svelte";
-  import FooterBottom from "./FooterBottom.svelte";
-  import { promiseUrlsPreload } from "$lib/utils/navigation.js";
-  import { browser } from "$app/environment";
-  import { routeIdContent } from "$lib/constants/paths.js";
+  import BuyBtaButton from '$lib/components/shared/BuyBta/Buy-BTA-Button.svelte';
+  import WalletBalance from '$lib/components/ui/WalletBalance.svelte';
+  import BegambleawareorgBlack from './../assets/icon_redisign/begambleawareorg_black.png';
+  import Legal18ActionBet from './../assets/icon_redisign/legal-18-action-bet.svelte';
+  import FooterNavigationBlock from './Child.Navigation.svelte';
+  import SocialsBlock from './Child.Social.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -67,139 +66,19 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  /**
-   * @description
-   *  📣 Component `Type`.
-   */
-  type IDynamicAssetMap =
-    | "begambleawareorg"
-    | "logoFull"
-    | "legal18icon"
-    | "discord"
-    | "linkedin"
-    | "medium"
-    | "telegram"
-    | "x"
-    | "github";
-
-  export let mobile: boolean, tablet: boolean;
-
-  const sideFooter = [routeIdContent];
-
-  const /**
+  const
+    /**
      * @description
-     *  📣 Dynamic import variable condition
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
      */
-    useDynamicImport: boolean = true;
+    CNAME = 'global⮕footer⮕w⮕main'
+  ;
 
-  let /**
-     * @description
-     *  📣 Holds target `component(s)` of dynamic nature.
-     */
-    dynamicAssetMap = new Map<IDynamicAssetMap, any>();
-  $: ({ globalState } = $sessionStore);
+  $: ({ user } = $userBetarenaSettings);
+  $: isAuth = !!user;
 
-  $: translation = $page.data.B_FOT_T as B_FOT_T;
-  $: if (browser) loadTranslations($sessionStore.serverLang);
-  $: linksMap = new Map([
-    [
-      "changelog",
-      {
-        id: "changelog",
-        label: translation.terms.changelog,
-        href: translation.links.changelog,
-      },
-    ],
-    [
-      "status",
-      {
-        id: "status",
-        label: translation.terms.status,
-        href: translation.links.status,
-      },
-    ],
-    [
-      "about",
-      {
-        id: "about",
-        label: translation.terms.about_us,
-        href: translation.links.about_us,
-      },
-    ],
-    [
-      "terms",
-      {
-        id: "terms",
-        label: translation.terms.terms,
-        href: translation.links.terms,
-      },
-    ],
-    [
-      "roadmap",
-      {
-        id: "roadmap",
-        label: translation.terms.latest_news,
-        href: translation.links.latest_news,
-      },
-    ],
-    [
-      "privacy",
-      {
-        id: "privacy",
-        label: translation.terms.privacy,
-        href: translation.links.privacy,
-      },
-    ],
-  ]);
-  $: buyBTAText =
-    $page.data.B_NAV_T?.scores_header_translations?.data?.cta_buy ?? "Buy BTA";
   // #endregion ➤ 📌 VARIABLES
 
-  // #region ➤ 🔄 LIFECYCLE [SVELTE]
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'logic' that should run            │
-  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
-  // │ as soon as 'this' .svelte file is ran.                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  onMount(async () => {
-    if (useDynamicImport) {
-      dynamicAssetMap.set(
-        "begambleawareorg",
-        (await import("./assets/begambleawareorg_black.png")).default
-      );
-      dynamicAssetMap.set(
-        "logoFull",
-        (await import("./assets/betarena-logo-full.svg")).default
-      );
-      dynamicAssetMap.set(
-        "legal18icon",
-        (await import("./assets/legal-18-action-bet.png")).default
-      );
-
-      dynamicAssetMap = dynamicAssetMap;
-    }
-
-    return;
-  });
-  let prevLang;
-  async function loadTranslations(lang: string | undefined) {
-    if (!lang || prevLang === lang) return;
-    prevLang = lang;
-    const res = await promiseUrlsPreload(
-      [
-        `/api/data/main/footer?lang=${lang}&decompress`,
-        `/api/data/main/navbar?lang=${lang}&decompress`,
-      ],
-      fetch
-    );
-    translation = res[0];
-    buyBTAText = res[1]?.scores_header_translations?.data?.cta_buy ?? "Buy BTA";
-    return res;
-  }
-  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 
 <!--
@@ -215,41 +94,123 @@
 
 <!--
 ╭─────
-│ > Footer SEO
-╰─────
--->
-<SeoBox>
-  <!--
-  ╭─────
-  │ > Social Links [1]
-  ╰─────
-  -->
-  <p>{translation.links.latest_news}</p>
-  <p>{translation.links.about_us}</p>
-  <p>{translation.links.betting_tips}</p>
-  <p>{translation.links.privacy}</p>
-  <p>{translation.links.social_networks}</p>
-  <p>{translation.links.terms}</p>
-  <p>{translation.links.status}</p>
-  <p>{translation.links.changelog}</p>
-  <!--
-  ╭─────
-  │ > Social Links [2]
-  ╰─────
-  -->
-  {#each Object.keys(translation.links.social_networks) ?? [] as key}
-    <p>{translation.links.social_networks[key]}</p>
-  {/each}
-</SeoBox>
-
-<!--
-╭─────
 │ > Fotter Container
 ╰─────
 -->
 
-{#if !mobile && !tablet && sideFooter.includes($page.route.id || "")}
-  <FooterSide links={linksMap} {buyBTAText} {translation} />
-{:else}
-  <FooterBottom {mobile} {tablet} {translation} links={linksMap} />
-{/if}
+<footer>
+
+  <div
+    id="{CNAME}⮕inner"
+  >
+
+    {#if isAuth}
+      <div class="wallet">
+        <WalletBalance />
+        <BuyBtaButton popup={true} />
+      </div>
+    {/if}
+
+    <div
+      class="content"
+    >
+      <SocialsBlock />
+
+      <div
+        class="nav-block-wrap"
+      >
+        <FooterNavigationBlock
+          isArticleContentPage={true}
+        />
+      </div>
+
+      <div
+        class="legal-block"
+      >
+        <Legal18ActionBet />
+        <img
+          id=""
+          src={BegambleawareorgBlack}
+          alt="BegambleawareorgBlack"
+          title=""
+          loading="lazy"
+        />
+      </div>
+
+      <div
+        class="rights-block"
+      >
+        © 2021 Betarena All rights reserved <br />
+        Second Act, 18 Boulevard Montmartre Paris 75009
+      </div>
+
+    </div>
+
+  </div>
+
+</footer>
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 🌊 Svelte Component CSS/SCSS                                                     │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<style lang="scss">
+
+  /*
+  ╭──────────────────────────────────────────────────────────────────────────────╮
+  │ 📲 MOBILE-FIRST                                                              │
+  ╰──────────────────────────────────────────────────────────────────────────────╯
+  */
+
+  footer
+  {
+    /* 🎨 style */
+    position: relative;
+    color: var(--text-color);
+    position: sticky;
+    position: -webkit-sticky;
+    top: 32px;
+    height: fit-content;
+
+    .wallet
+    {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding-bottom: 32px;
+      margin-bottom: 32px;
+      border-bottom: var(--border);
+    }
+
+    .content
+    {
+      padding-bottom: 32px;
+
+      .nav-block-wrap
+      {
+        padding: 40px 0;
+      }
+
+      .legal-block
+      {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        margin-bottom: 24px;
+      }
+      .rights-block
+      {
+        color: var(--text-color-second-dark);
+        font-size: 12px;
+      }
+    }
+  }
+
+</style>
