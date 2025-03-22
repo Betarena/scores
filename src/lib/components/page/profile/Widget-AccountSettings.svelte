@@ -1,698 +1,872 @@
-<!--===============
-COMPONENT JS (w/ TS)
-=================-->
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 📌 High Order Overview                                                           │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Code Format   // V.8.0                                                         │
+│ ➤ Status        // 🔒 LOCKED                                                     │
+│ ➤ Author(s)     // @migbash                                                      │
+│ ➤ Maintainer(s) // @migbash                                                      │
+│ ➤ Created on    // February 21st, 2023                                           │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ 📝 Description                                                                   │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ BETARENA (Module)
+│ |: User Profile :: Account Settings Widget
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 🟦 Svelte Component JS/TS                                                        │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
 
 <script lang="ts">
 
   // #region ➤ 📦 Package Imports
 
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { onMount } from 'svelte';
+
+	import purify from 'dompurify';
+	import { deleteUser } from 'firebase/auth';
+	import { collection, deleteDoc, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
+	import { deleteObject, getDownloadURL, ref, uploadString } from 'firebase/storage';
 
 	import { auth, db_firestore, storage } from '$lib/firebase/init';
+	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings, { type IDataProp } from '$lib/store/user-settings.js';
-	import { dlog, errlog } from '$lib/utils/debug';
-	import { viewport_change } from '$lib/utils/platform-functions';
-	import { deleteUser } from 'firebase/auth';
-	import { CollectionReference, Query, QuerySnapshot, collection, deleteDoc, doc, getDocs, query, updateDoc, where, type DocumentData } from 'firebase/firestore';
-	import { deleteObject, getDownloadURL, ref, uploadString } from 'firebase/storage';
-  import purify from 'dompurify';
+	import { dlog, errlog, log_v3 } from '$lib/utils/debug';
+	import { viewportChangeV2 } from '$lib/utils/device.js';
+	import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
 
 	import ModalConnectWallet from './Modal-ConnectWallet.svelte';
 	import ModalDeleteAccount from './Modal-DeleteAccount.svelte';
 	import ModalProfilePictureCrop from './Modal-ProfilePictureCrop.svelte';
 
+  import type { IBetarenaUser } from '@betarena/scores-lib/types/firebase/firestore.js';
   import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
 
-  const
-    TABLET_VIEW = 768,
-    MOBILE_VIEW = 767
-  ;
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
-	let
-    mobileExclusive: boolean = false,
-    tabletExclusive: boolean = false;
+  export let
+    /**
+     * @description
+     *  📣 threshold start + state for 📱 MOBILE
+     */ // eslint-disable-next-line no-unused-vars
+    VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 767, true ],
+    /**
+     * @description
+     *  📣 threshold start + state for 💻 TABLET
+     */ // eslint-disable-next-line no-unused-vars
+    VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 768, true ]
   ;
 
   let
-    profileTrs: IProfileTrs,
+    /**
+     * @description
+     * 📝
+     */
     noWidgetData: boolean = true,
+    /**
+     * @description
+     *  📝 Instance of `FileList`
+     * @ntoe
+     *  📝 `file` is of type `FileList`, not an Array.
+     * @see https://developer.mozilla.org/en-US/docs/Web/API/FileList
+     */
     files: HTMLInputElement['files'],
+    /**
+     * @description
+     * 📝
+     */
     fileInputElem: HTMLInputElement,
-    usernameInput: string = $userBetarenaSettings?.user?.scores_user_data?.username,
-    nameInput: string = $userBetarenaSettings?.user?.scores_user_data?.name || "",
-    aboutInput: string = $userBetarenaSettings?.user?.scores_user_data?.about || "",
-    usernameErrorMsg: string,
-    profilePicExists: boolean = false,
-    profile_wallet_connected: boolean = false,
-    processing: boolean = false,
-    showAccountDelModal: boolean = false,
-    showWalletModal: boolean = false,
-    modal_pic_crop_show: boolean = false,
-    profile_crop_widget: ModalProfilePictureCrop
+    /**
+     * @description
+     * 📝
+     */
+    usernameInput: string = $userBetarenaSettings.user?.scores_user_data?.username,
+    /**
+     * @description
+     * 📝
+     */
+    nameInput: string = $userBetarenaSettings.user?.scores_user_data?.name || '',
+    /**
+     * @description
+     * 📝
+     */
+    aboutInput: string = $userBetarenaSettings.user?.scores_user_data?.about || '',
+    /**
+     * @description
+     * 📝
+     */
+    usernameErrorMsg: string | undefined = undefined,
+    /**
+     * @description
+     * 📝
+     */
+    isProcessing = false,
+    /**
+     * @description
+     * 📝
+     */
+    isShowAccountDeletionModal = false,
+    /**
+     * @description
+     * 📝
+     */
+    isShowWalletModal = false,
+    /**
+     * @description
+     * 📝
+     */
+    isShowProfilePictureCropModal = false,
+    /**
+     * @description
+     * 📝
+     */
+    svelteComponentModalProfilePictureCrop: ModalProfilePictureCrop
   ;
 
-	$: profilePicExists =
-		$userBetarenaSettings?.user?.scores_user_data
-			?.profile_photo == undefined
-        ? false
-        : true
-  ;
-	$: profile_wallet_connected =
-		$userBetarenaSettings?.user?.scores_user_data
-			?.web3_wallet_addr == undefined
-        ? false
-        : true
-  ;
+  $: ( { windowWidth } = $sessionStore );
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
+
+  $: profilePicExists
+    = $userBetarenaSettings.user?.scores_user_data
+      ?.profile_photo == undefined
+      ? false
+      : true
+  ;
+  $: isWalletConnected
+    = $userBetarenaSettings.user?.scores_user_data
+      ?.web3_wallet_addr == undefined
+      ? false
+      : true
+  ;
+  $: [VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1]]
+    = viewportChangeV2
+    (
+      windowWidth,
+      VIEWPORT_MOBILE_INIT[0],
+      VIEWPORT_TABLET_INIT[0]
+    )
+  ;
 
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
 
-	/**
-	 * @description
-   * kickstarts the picture crop step;
-   * @returns
-   * { Promise < void > }
-	 */
-	async function profile_picture_select
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  async function selectUserProfilePicture
   (
   ): Promise < void >
   {
-		// NOTE: `file` is of type `FileList`, not an Array:
-		// DOC: https://developer.mozilla.org/en-US/docs/Web/API/FileList
-		for (const file_ of files)
-    {
+    // [🐞]
+    for (const file_ of files ?? [])
       // [🐞]
-			dlog
+      dlog
       (
-				`${file_.name}: ${file_.size} ${typeof file_} type`,
-				true
-			);
-		}
-
-    const if_M_0: boolean =
-      files[0].size >= 10000000
+        `${file_.name}: ${file_.size} ${typeof file_} type`,
+        true
+      );
     ;
-    if (if_M_0)
+
+    if (!files || files.length == 0)
+      return;
+    ;
+
+    // ╭─────
+    // │ NOTE:
+    // │ |: Limit file size to 10MB
+    // ╰─────
+    if (files[0].size >= 10000000)
     {
       alert
       (
-        "🔴 Uploaded picture is too large. Limit is 10MB."
+        'WARNING: Uploaded picture is too large. Limit is 10MB.'
       );
       files = undefined;
 
       return;
     }
 
-		profile_crop_widget.load_picture(files[0]);
-		modal_pic_crop_show = true;
+    svelteComponentModalProfilePictureCrop.load_picture(files[0]);
+    isShowProfilePictureCropModal = true;
     files = undefined;
 
-		return;
-	}
+    return;
+  }
 
-	/**
-	 * @description
-   * cropped picture upload;
-	 * DOC: https://firebase.google.com/docs/storage/web/upload-files#upload_from_a_string
-	 * @param
-   * { any } event
-   * @returns
-   * Promise < void >
-	 */
-	async function upload_profile_picture
+  async function updateUserProfilePicture
   (
-		event
-	): Promise < void >
+    event
+  ): Promise < void >
   {
-		modal_pic_crop_show = false;
-		const profile_pic = event?.detail?.img;
-
-		const storageRef = ref
-    (
-			storage,
-			`Users_data/${$userBetarenaSettings?.user?.firebase_user_data?.uid}/profile-pic.png`
-		);
-
-		// [ℹ] 'files' comes from the Blob or File API
-		uploadString
-    (
-			storageRef,
-			profile_pic,
-			'data_url'
-		).then
+    await tryCatchAsync
     (
       async (
-        snapshot
-      ) =>
+      ): Promise < void > =>
       {
         // [🐞]
-        dlog
+        log_v3
         (
-          '🟢 Uploaded file!'
-        );
-
-        const url = await snapshot.ref.fullPath;
-
-        // [🐞]
-        dlog
-        (
-          url,
-          true
-        );
-
-        getDownloadURL
-        (
-          storageRef
-        ).then
-        (
-          async (url_) => {
-            dlog(url_, true);
-            userBetarenaSettings.updateData
-            (
-              [
-                ['user-avatar', url_]
-
-              ]
-            );
-            // [ℹ] (update) from Firebase - Firestore
-            const userRef = doc(
-              db_firestore,
-              'betarena_users',
-              $userBetarenaSettings?.user
-                ?.firebase_user_data?.uid
-            );
-            await updateDoc(userRef, {
-              profile_photo: url_
-            });
+          {
+            strGroupName: 'updateUserProfilePicture(..)',
+            msgs:
+            [
+              '🔵 Updating profile picture...'
+            ]
           }
         );
-		  }
-    );
-	}
 
-	/**
-	 * @description
-   * removes the user's profile picture
-	 * from the loaclstorage, firestore, firebase-storage;
-   * @returns
-   * Promise < void >
-	 */
-	async function remove_picture
+        isShowProfilePictureCropModal = false;
+
+        const
+          /**
+           * @description
+           * 📝
+           */
+          instFirestoreDocRef
+            = doc
+            (
+              db_firestore,
+              'betarena_users',
+              $userBetarenaSettings.user?.firebase_user_data?.uid!
+            ),
+          /**
+           * @description
+           * 📝
+           */
+          instStorageDocRef
+            = ref
+            (
+              storage,
+              `Users_data/${$userBetarenaSettings.user?.firebase_user_data?.uid}/profile-pic.png`
+            ),
+          /**
+           * @description
+           * 📝
+           */
+          dataRes0
+            = await uploadString
+            (
+              instStorageDocRef,
+              event?.detail?.img,
+              'data_url'
+            ),
+          /**
+           * @description
+           * 📝
+           */
+          dataRes1
+            = await getDownloadURL
+            (
+              instStorageDocRef
+            )
+        ;
+
+        // [🐞]
+        log_v3
+        (
+          {
+            strGroupName: 'updateUserProfilePicture(..)',
+            msgs:
+            [
+              '🟢 Uploaded file!',
+              `🔗 ${dataRes0.ref.fullPath}`
+            ]
+          }
+        );
+
+        userBetarenaSettings.updateData
+        (
+          [
+            [ 'user-avatar', dataRes1 ]
+
+          ]
+        );
+
+        await updateDoc
+        (
+          instFirestoreDocRef,
+          {
+            profile_photo: dataRes1
+          } as Pick < IBetarenaUser, 'profile_photo' >
+        );
+
+        return;
+      }
+    );
+    return;
+  }
+
+  async function deleteUserProfilePicture
   (
   ): Promise < void >
   {
-		if (!profilePicExists) {
-			fileInputElem.click();
-			return;
-		}
-		dlog('🔵 Removing user profile picture...');
-		// [ℹ] remove from localStorage()
-		userBetarenaSettings.updateData
+    await tryCatchAsync
+    (
+      async (
+      ): Promise < void > =>
+      {
+        if (!profilePicExists)
+        {
+          fileInputElem.click();
+          return;
+        }
+
+        userBetarenaSettings.updateData
+        (
+          [
+            [ 'user-avatar', undefined ]
+          ]
+        );
+
+        const
+          /**
+           * @description
+           * 📝
+           */
+          instFirestoreDocRef
+            = doc
+            (
+              db_firestore,
+              'betarena_users',
+              $userBetarenaSettings.user?.firebase_user_data?.uid!
+            ),
+          /**
+           * @description
+           * 📝
+           */
+          instStorageDocRef
+            = ref
+            (
+              storage,
+              `Users_data/${$userBetarenaSettings.user?.firebase_user_data?.uid}/profile-pic.png`
+            )
+        ;
+
+        await updateDoc
+        (
+          instFirestoreDocRef,
+          {
+            profile_photo: null
+          } as Pick < IBetarenaUser, 'profile_photo' >
+        );
+
+        await deleteObject
+        (
+          instStorageDocRef
+        );
+      },
+    );
+    return;
+  }
+
+  async function updateUserProfileWallet
+  (
+    event: any
+  ): Promise < void >
+  {
+    isShowWalletModal = false;
+
+    const
+      /**
+       * @description
+       */
+      wallet
+        = event == null
+          ? null
+          : event?.detail?.wallet_id
+    ;
+
+    userBetarenaSettings.updateData
     (
       [
-        ['user-avatar',undefined]
+        [ 'user-wallet', wallet ]
       ]
-		);
-		// [ℹ] remove (update) from Firebase - Firestore
-		const userRef = doc(
-			db_firestore,
-			'betarena_users',
-			$userBetarenaSettings?.user
-				?.firebase_user_data?.uid
-		);
-		await updateDoc(userRef, {
-			profile_photo: null
-		});
-		// [ℹ] remove from Firebase - Storage
-		const desertRef = ref(
-			storage,
-			`Users_data/${$userBetarenaSettings?.user?.firebase_user_data?.uid}/profile-pic.png`
-		);
-		deleteObject(desertRef)
-			.then(() => {
-				dlog(
-					'ℹ️ removed from firebase - storage'
-				);
-			})
-			.catch((error) => {
-				errlog(error);
-			});
-		dlog('🟢 User picture removed', true);
-	}
+    );
 
-	/**
-	 * @description
-   * updates user's username on
-	 * firebase services; and localStorage
-   * @returns
-   * { Promise < void > }
-	 */
-	async function update_user
+    const
+      /**
+       * @description
+       * 📝
+       */
+      instFirestoreDocRef
+        = doc
+        (
+          db_firestore,
+          'betarena_users',
+          $userBetarenaSettings.user?.firebase_user_data?.uid!
+        )
+    ;
+
+    await updateDoc
+    (
+      instFirestoreDocRef,
+      {
+        wallet_id: wallet
+      }
+    );
+
+    return;
+  }
+
+  async function updateUserUsername
   (
   ): Promise < void >
   {
     // [🐞]
-    dlog("🔵 Updating username...");
+    log_v3
+    (
+      {
+        strGroupName: 'updateUserUsername(..)',
+        msgs:
+        [
+          '🔵 Updating user...'
+        ]
+      }
+    );
 
-    let data_to_update: any = {};
-    // [ℹ] (update) only if changes detected
-    if (
-      usernameInput != $userBetarenaSettings?.user?.scores_user_data?.username
-    ) {
-      data_to_update["username"] = usernameInput;
-    }
-    if (nameInput != $userBetarenaSettings?.user?.scores_user_data?.name) {
-      data_to_update["name"] = nameInput;
-    }
-    if (aboutInput != $userBetarenaSettings?.user?.scores_user_data?.about) {
-      data_to_update["about"] = aboutInput;
-    }
-    if (!Object.keys(data_to_update).length) {
-      dlog("🔴 No changes detected...", true);
+    let objDataToUpdate: any = {};
+
+    if (usernameInput != $userBetarenaSettings.user?.scores_user_data?.username)
+      objDataToUpdate.username = usernameInput;
+    ;
+    // @ts-expect-error - TODO:
+    if (nameInput != $userBetarenaSettings.user?.scores_user_data?.name)
+      objDataToUpdate.name = nameInput;
+    ;
+    // @ts-expect-error - TODO:
+    if (aboutInput != $userBetarenaSettings.user?.scores_user_data?.about)
+      objDataToUpdate.about = aboutInput;
+    ;
+
+    if (!Object.keys(objDataToUpdate).length)
+    {
+      dlog('🔴 No changes detected...', true);
       return;
     }
-    // [ℹ] validation [1]
-    const valid =
-      !data_to_update["username"] || (await username_update_validation());
-    if (!valid) {
-      dlog("🔴 Username is invalid...", true);
+
+    if (!(!objDataToUpdate.username || (await validateUsername())))
+    {
+      dlog('🔴 Username is invalid...', true);
       return;
     }
-    const betarena_updates: [IDataProp, any][] = [];
-    // [ℹ] sanitize data to prevent XSS
-    Object.keys(data_to_update).forEach((key) => {
-      let value = purify.sanitize(data_to_update[key]);
-      data_to_update[key] = value;
-      const betarena_key: IDataProp =
-        key === "username"
-          ? "user-name"
-          : key === "name"
-          ? "user-name2"
-          : "user-about";
-      betarena_updates.push([betarena_key, value]);
-    });
+
+    const listDataToUpdate: [IDataProp, any][] = [];
+
+    Object.keys(objDataToUpdate).forEach
+    (
+      (
+        key
+      ) =>
+      {
+        const
+          /**
+           * @description
+           * 📝
+           */
+          value = purify.sanitize(objDataToUpdate[key]),
+          /**
+           * @description
+           * 📝
+           */
+          keyMain: IDataProp
+            = key === 'username'
+              ? 'user-name'
+              : key === 'name'
+                ? 'user-name2'
+                : 'user-about'
+        ;
+        objDataToUpdate[key] = value;
+        listDataToUpdate.push([keyMain, value]);
+      }
+    );
 
     usernameErrorMsg = undefined;
-    // [ℹ] (update)from localStorage()
-    userBetarenaSettings.updateData(betarena_updates);
-    // [ℹ] (update)from Firebase - Firestore
-    const userRef = doc(
-      db_firestore,
-      "betarena_users",
-      $userBetarenaSettings?.user?.firebase_user_data?.uid
+
+    userBetarenaSettings.updateData(listDataToUpdate);
+
+    const
+      /**
+       * @description
+       * 📝
+       */
+      instFirestoreDocRef
+        = doc
+        (
+          db_firestore,
+          'betarena_users',
+          $userBetarenaSettings.user?.firebase_user_data?.uid!
+        )
+    ;
+
+    await updateDoc
+    (
+      instFirestoreDocRef,
+      objDataToUpdate
     );
-    await updateDoc(userRef, data_to_update);
 
-    dlog("🟢 Username updated", true);
-	}
+    return;
+  }
 
-  /**
-   * @summary
-   * 🔹 HELPER
-   * @author
-   * @migbash
-   * @description
-   * ➫ function to validate user input;
-   * ➫ returns boolean true/false;
-   * ➫ assigns appropiate 'error' message;
-   * @returns
-   * { Promise < boolean > } boolean
-   */
-  async function username_update_validation
+  async function validateUsername
   (
   ): Promise < boolean >
   {
     // [🐞]
-		dlog
+    log_v3
     (
-      '🔵 Validating username...',
-      true
-    );
+      {
+        strGroupName: 'validateUsername(..)',
+        msgs:
+        [
+          '🔵 Validating username...'
+        ]
+      }
+    )
 
-    let valid: boolean = true;
+    let
+      /**
+       * @description
+       */
+      valid = true
+    ;
 
-    // [ℹ] validation [1] - uniqueness
-    const usersDb: CollectionReference < DocumentData > = collection
-    (
-      db_firestore,
-      "betarena_users"
-    );
-    const queryUsername: Query < DocumentData > = query
-    (
-      usersDb,
-      where
-      (
-        "username",
-        "==",
-        usernameInput
-      )
-    );
-    const querySnapshot: QuerySnapshot < DocumentData > = await getDocs
-    (
+    const
+      /**
+       * @description
+       * 📝
+       */
+      usersDb
+        = collection
+        (
+          db_firestore,
+          'betarena_users'
+        ),
+      /**
+       * @description
+       * 📝
+       */
       queryUsername
-    );
-
-    // [🐞]
-    // DOC: https://firebase.google.com/docs/firestore/query-data/queries
-		dlog
-    (
-      querySnapshot,
-      false
-    );
+        = query
+        (
+          usersDb,
+          where
+          (
+            'username',
+            '==',
+            usernameInput
+          )
+        ),
+      /**
+       * @description
+       * 📝
+       */
+      querySnapshot
+        = await getDocs
+        (
+          queryUsername
+        )
+    ;
 
     if (querySnapshot.docs.length > 0)
     {
       valid = false
-      usernameErrorMsg = profileTrs?.profile?.userame_update_error_msg?.[0] ?? 'Username is already in use';
+      usernameErrorMsg = profileTrs.profile?.userame_update_error_msg?.[0] ?? 'Username is already in use';
     }
-    // [ℹ] validation [2] - length (min)
     if (usernameInput.length < 3)
     {
       valid = false;
-      usernameErrorMsg = profileTrs?.profile?.userame_update_error_msg?.[1] ?? 'Username must be greater than 3 characters';
+      usernameErrorMsg = profileTrs.profile?.userame_update_error_msg?.[1] ?? 'Username must be greater than 3 characters';
     }
-    // [ℹ] validation [3] - length (min)
     if (usernameInput.length > 15)
     {
       valid = false;
       usernameErrorMsg = 'Username must be less than 15 characters';
     }
-    // [ℹ] validation [4] - only-numbers
     if (/^\d+$/.test(usernameInput))
     {
       valid = false;
-      usernameErrorMsg = profileTrs?.profile?.userame_update_error_msg?.[2] ?? 'Username must not contain only numbers';
+      usernameErrorMsg = profileTrs.profile?.userame_update_error_msg?.[2] ?? 'Username must not contain only numbers';
     };
-    // [ℹ] validation [5] - has a space
     if (/\s/g.test(usernameInput))
     {
       valid = false;
-      usernameErrorMsg = profileTrs?.profile?.userame_update_error_msg?.[3] ?? 'Username must not contain spaces';
+      usernameErrorMsg = profileTrs.profile?.userame_update_error_msg?.[3] ?? 'Username must not contain spaces';
     }
-    // [ℹ] validation [6] - has special char
-    let format = /[ `!@#$%^&*()+\-=\[\]{};':"\\|,.<>\/?~]/;
+
+    const
+      /**
+       * @description
+       * 📝
+       */
+      format = /[ `!@#$%^&*()+\-=\[\]{};':"\\|,.<>\/?~]/
+    ;
+
     if (format.test(usernameInput))
     {
       valid = false;
-      usernameErrorMsg = profileTrs?.profile?.userame_update_error_msg?.[4] ?? 'Username cant have spaces or special characters';
+      usernameErrorMsg = profileTrs.profile?.userame_update_error_msg?.[4] ?? 'Username cant have spaces or special characters';
     }
 
     return valid;
   }
 
-	/**
-	 * @description
-   * updates user's wallet-web3 address on
-	 * firebase services; and localStorage
-   * @returns {Promise<void>}
-	 */
-  async function update_wallet
+  async function deleteUserProfilePermanently
   (
-    event: any
   ): Promise < void >
   {
     // [🐞]
-		dlog
+    log_v3
     (
-      '🔵 Updating wallet Web3...'
+      {
+        strGroupName: 'deleteUserProfilePermanently()',
+        msgs:
+        [
+          '🔴 Deleting user...'
+        ]
+      }
     );
 
-    showWalletModal = false;
+    isShowAccountDeletionModal = false;
 
-		const wallet =
-      event == null
-        ? null
-        : event?.detail?.wallet_id
+    await deleteUserProfilePicture();
+
+    await deleteDoc
+    (
+      doc
+      (
+        db_firestore,
+        'betarena_users',
+        $userBetarenaSettings.user?.firebase_user_data?.uid!
+      )
+    );
+
+    if (auth.currentUser)
+      await deleteUser(auth.currentUser);
     ;
 
-		userBetarenaSettings.updateData
+    userBetarenaSettings.updateData
     (
       [
-        ['user-wallet',wallet]
-      ]
-		);
-
-		// [ℹ] (update)from Firebase - Firestore
-		const userRef = doc
-    (
-			db_firestore,
-			'betarena_users',
-			$userBetarenaSettings?.user?.firebase_user_data?.uid
-		);
-		await updateDoc
-    (
-      userRef,
-      {
-			  wallet_id: wallet
-		  }
-    );
-
-    // [🐞]
-		dlog
-    (
-      '🟢 Wallet address updated',
-      true
-    );
-  }
-
-  /**
-	 * @description
-   * TODO:IMPORTANT
-   * update wallet address (+connect/disconnect)
-   * [🟢] connect to MetaMask and retrieve data.
-   * [🔵] update Firestore: wallet-id + providers for the target user.
-   * [❗️] display on Moralis/Users of request made.
-   */
-	async function connect_wallet
-  (
-  ): Promise < void >
-  {
-		// DOC: REF -> [1]
-		try
-    {
-      // [ℹ] validation [1]
-      if (profile_wallet_connected)
-      {
-        dlog
-        (
-          'Removing user wallet web3 connection...'
-        );
-        update_wallet(null)
-        return
-      }
-			processing = true;
-			showWalletModal = true;
-		}
-    catch (error)
-    {
-			errlog
-      (
-        `connect_wallet() error: ${error}`
-      );
-			processing = false;
-		}
-	}
-
-  // -> updates USERNAME
-  // TODO: only save image on CLICK-OF-THIS-BUTTON [?]
-	async function save_settings
-  (
-  ): Promise < void >
-  {
-    update_user()
-	}
-
-	/**
-	 * @description
-   * removes user's data from all sources:
-	 * firebase services; and clears up localstorage; redirects
-	 * to main page
-   * @returns
-   * Promise < void >
-	 */
-	async function delete_user
-  (
-  ): Promise < void >
-  {
-    // [🐞]
-		dlog
-    (
-      '🔵 Deleting user...',
-      true
-    );
-
-		showAccountDelModal = false;
-
-		// [ℹ] remove from Firebase - Storage
-		const desertRef = ref
-    (
-			storage,
-			`Users_data/${$userBetarenaSettings?.user?.firebase_user_data?.uid}/profile-pic.png`
-		);
-
-		deleteObject
-    (
-      desertRef
-    )
-    .then
-    (
-      () =>
-      {
-      // [🐞]
-      dlog
-      (
-        'ℹ️ Success - Profile picture removed'
-      );
-      }
-    )
-    .catch
-    (
-      (
-        error
-      ) =>
-      {
-        errlog(error);
-      }
-    );
-
-		// [ℹ] remove from Firebase - Firestore
-		// DOC: https://firebase.google.com/docs/firestore/manage-data/delete-data
-		await deleteDoc
-    (
-			doc
-      (
-				db_firestore,
-				'betarena_users',
-				$userBetarenaSettings?.user?.firebase_user_data?.uid
-			)
-		);
-
-		// [ℹ] remove from Firebase - Auth
-		// DOC: https://firebase.google.com/docs/auth/web/manage-users#delete_a_user
-		const user = auth.currentUser;
-
-		deleteUser(user)
-			.then(() => {
-				dlog('ℹ User deleted from Auth');
-			})
-			.catch((error) => {
-				errlog(error);
-			});
-		// [ℹ] from localStorage()
-		userBetarenaSettings.updateData
-    (
-      [
-        ['user-object',undefined]
+        [ 'user-object', undefined ]
       ]
     );
 
     // [🐞]
-		dlog
+    dlog
     (
       '🟢 User deleted',
       true
     );
 
-		goto
+    goto
     (
       '/',
       { replaceState: true }
     );
-	}
+  }
 
-  /**
-   * @description
-   * closing off picture-crop;
-   * and reset files data;
-   */
-  function close_crop_pic
+  async function helperConnectWeb3Wallet
+  (
+  ): Promise < void >
+  {
+    await tryCatchAsync
+    (
+      async (
+      ): Promise < void > =>
+      {
+        if (isWalletConnected)
+        {
+          dlog
+          (
+            'Removing user wallet web3 connection...'
+          );
+          updateUserProfileWallet(null)
+          return
+        }
+        isProcessing = true;
+        isShowWalletModal = true;
+      },
+      (
+        error
+      ) =>
+      {
+        errlog
+        (
+          `helperConnectWeb3Wallet() error: ${error}`
+        );
+        isProcessing = false;
+      }
+    );
+    return;
+  }
+
+  async function saveUserProfileChanges
+  (
+  ): Promise < void >
+  {
+    updateUserUsername();
+    return;
+  }
+
+  function helperClosePictureCropAction
   (
   ): void
   {
-    modal_pic_crop_show = false;
-    fileInputElem.value = "";
+    isShowProfilePictureCropModal = false;
+    fileInputElem.value = '';
   }
 
   // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
 
-  $: if (profileTrs != undefined) noWidgetData = false;
+  $: if (profileTrs != undefined)
+    noWidgetData = false;
+  ;
 
   $: if (files != undefined)
-  {
-    profile_picture_select();
-  }
+    selectUserProfilePicture();
+  ;
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
-  // #region ➤ 🔄 LIFECYCLE [SVELTE]
-
-	onMount(async () => {
-		[tabletExclusive, mobileExclusive] =
-			viewport_change(TABLET_VIEW, MOBILE_VIEW);
-		window.addEventListener(
-			'resize',
-			function () {
-				[tabletExclusive, mobileExclusive] =
-					viewport_change(
-						TABLET_VIEW,
-						MOBILE_VIEW
-					);
-			}
-		);
-	});
-
-  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
-
 </script>
 
-<!-- ===============
-### COMPONENT HTML
-### NOTE:
-### HINT: [HINT] use (CTRL+SPACE) to select a (class) (id) style
-=================-->
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 💠 Svelte Component HTML                                                         │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
 
 <!--
-DELETE ACTION MODAL
+[component]
+|: Delete Account Modal
 -->
-{#if showAccountDelModal}
+{#if isShowAccountDeletionModal}
   <ModalDeleteAccount
-    on:toggle_delete_modal={() =>	(showAccountDelModal = false)}
-    on:delete_account={() => delete_user()}
+    on:toggle_delete_modal=
+    {
+      () =>
+      {
+        isShowAccountDeletionModal = false;
+        return;
+      }
+    }
+    on:delete_account=
+    {
+      () =>
+      {
+        deleteUserProfilePermanently();
+        return;
+      }
+    }
   />
 {/if}
 
 <!--
-WALLET CONNECT ACTION CONFIRM
+[component]
+|: Wallet (web3) Connect Modal
 -->
-{#if showWalletModal}
+{#if isShowWalletModal}
 	<ModalConnectWallet
-		on:toggle_delete_modal={() =>	(showWalletModal = false)}
-		on:connect_wallet_action={(event) => update_wallet(event)}
+		on:toggle_delete_modal=
+    {
+      () =>
+      {
+        isShowWalletModal = false;
+        return;
+      }
+    }
+		on:connect_wallet_action=
+    {
+      (
+        event
+      ) =>
+      {
+        updateUserProfileWallet(event);
+        return;
+      }
+    }
 	/>
 {/if}
 
 <!--
-CROP PICTURE MODAL
+[component]
+|: Crop Profile Picture Modal
 -->
 <ModalProfilePictureCrop
-  bind:this={profile_crop_widget}
-  {modal_pic_crop_show}
-  on:toggle_delete_modal={() =>	close_crop_pic()}
-  on:upload_selected_img={(event) => upload_profile_picture(event)}
+  bind:this={svelteComponentModalProfilePictureCrop}
+  modal_pic_crop_show={isShowProfilePictureCropModal}
+  on:toggle_delete_modal=
+  {
+    () =>
+    {
+      helperClosePictureCropAction();
+      return;
+    }
+  }
+  on:upload_selected_img=
+  {
+    (
+      event
+    ) =>
+    {
+      updateUserProfilePicture(event);
+      return;
+    }
+  }
 />
 
 <!--
-MAIN SETTINGS WIDGET
+Profile Settings
 -->
 {#if !noWidgetData}
 
@@ -705,15 +879,16 @@ MAIN SETTINGS WIDGET
     WIDGET TITLE
     -->
     <h2
-      class="
-        w-500
-        s-20
-        m-b-24
-        color-black-2
+      class=
+      "
+      w-500
+      s-20
+      m-b-24
+      color-black-2
       "
       style="margin-top: 0px;"
     >
-      {profileTrs?.profile?.acc_settings}
+      {profileTrs.profile?.acc_settings}
     </h2>
 
     <!--
@@ -726,7 +901,7 @@ MAIN SETTINGS WIDGET
     <div
       class=
       {
-        !tabletExclusive
+        !VIEWPORT_TABLET_INIT[1]
           ? 'row-space-out m-b-24'
           : 'm-b-24'
       }
@@ -736,7 +911,7 @@ MAIN SETTINGS WIDGET
       PROFILE PHOTO - ROW
       -->
       <div
-        class:m-b-16={mobileExclusive}
+        class:m-b-16={VIEWPORT_MOBILE_INIT[1]}
       >
         <p
           class=
@@ -746,9 +921,9 @@ MAIN SETTINGS WIDGET
             color-black-2
             m-b-5
           "
-          class:m-b-6={mobileExclusive}
+          class:m-b-6={VIEWPORT_MOBILE_INIT[1]}
         >
-          {profileTrs?.profile?.profile_photo}
+          {profileTrs.profile?.profile_photo}
         </p>
         <span
           class=
@@ -758,7 +933,7 @@ MAIN SETTINGS WIDGET
             color-grey
           "
         >
-          {profileTrs?.profile?.profile_photo_desc}
+          {profileTrs.profile?.profile_photo_desc}
         </span>
       </div>
 
@@ -772,11 +947,11 @@ MAIN SETTINGS WIDGET
           s-14
           color-black-2
         "
-        on:click={() => remove_picture()}
+        on:click={() => {return deleteUserProfilePicture()}}
       >
         {!profilePicExists
-          ? profileTrs?.profile?.upload
-          : profileTrs?.profile?.remove}
+          ? profileTrs.profile?.upload
+          : profileTrs.profile?.remove}
       </button>
 
       <!--
@@ -791,7 +966,7 @@ MAIN SETTINGS WIDGET
           bind:this={fileInputElem}
           bind:files
           type="file"
-          disabled={processing}
+          disabled={isProcessing}
         />
       {/if}
 
@@ -806,7 +981,7 @@ MAIN SETTINGS WIDGET
     <div
       class=
       "
-        m-b-24
+      m-b-24
       "
     >
 
@@ -816,9 +991,10 @@ MAIN SETTINGS WIDGET
       [ℹ] username "required"
       -->
       <div
-        class="
-          row-space-start
-          m-b-16
+        class=
+        "
+        row-space-start
+        m-b-16
         "
       >
         <!--
@@ -849,7 +1025,7 @@ MAIN SETTINGS WIDGET
               color-black-2
             "
             >
-              {profileTrs?.profile?.username}
+              {profileTrs.profile?.username}
             </p>
             <!--
             [ℹ] name "required" text
@@ -860,7 +1036,7 @@ MAIN SETTINGS WIDGET
                 s-12
               "
             >
-              {profileTrs?.profile?.required_field}
+              {profileTrs.profile?.required_field}
             </p>
           </div>
           <!--
@@ -872,7 +1048,7 @@ MAIN SETTINGS WIDGET
               color-grey
             "
           >
-            {profileTrs?.profile?.name_desc}
+            {profileTrs.profile?.name_desc}
           </span>
         </div>
       </div>
@@ -882,7 +1058,7 @@ MAIN SETTINGS WIDGET
       -->
       <input
         type="text"
-        placeholder={profileTrs?.profile?.username}
+        placeholder={profileTrs.profile?.username}
         aria-placeholder="Username input here"
         aria-label="Username input"
         bind:value={usernameInput}
@@ -953,7 +1129,7 @@ MAIN SETTINGS WIDGET
               color-black-2
             "
             >
-              {profileTrs?.profile?.name_2}
+              {profileTrs.profile?.name_2}
             </p>
 
           </div>
@@ -966,7 +1142,7 @@ MAIN SETTINGS WIDGET
               color-grey
             "
           >
-            {profileTrs?.profile?.name_description}
+            {profileTrs.profile?.name_description}
           </span>
         </div>
       </div>
@@ -976,7 +1152,7 @@ MAIN SETTINGS WIDGET
       -->
       <input
         type="text"
-        placeholder={profileTrs?.profile?.name_2_form_field}
+        placeholder={profileTrs.profile?.name_2_form_field}
         aria-placeholder="Name input here"
         aria-label="Name input"
         bind:value={nameInput}
@@ -1032,7 +1208,7 @@ MAIN SETTINGS WIDGET
               color-black-2
             "
             >
-              {profileTrs?.profile?.about}
+              {profileTrs.profile?.about}
             </p>
           </div>
           <!--
@@ -1044,7 +1220,7 @@ MAIN SETTINGS WIDGET
               color-grey
             "
           >
-            {profileTrs?.profile?.about_description }
+            {profileTrs.profile?.about_description }
           </span>
         </div>
       </div>
@@ -1059,7 +1235,7 @@ MAIN SETTINGS WIDGET
         maxlength="256"
         cols="10"
         rows="3"
-        placeholder={profileTrs?.profile?.about_form_field }
+        placeholder={profileTrs.profile?.about_form_field }
         aria-placeholder="Username input here"
         aria-label="Username input"
         bind:value={aboutInput}
@@ -1079,7 +1255,7 @@ MAIN SETTINGS WIDGET
     <div
       class=
       {
-        !tabletExclusive
+        !VIEWPORT_TABLET_INIT[1]
           ? 'row-space-out m-b-24'
           : 'm-b-24'
       }
@@ -1087,7 +1263,7 @@ MAIN SETTINGS WIDGET
       <!--
       [ℹ] username text (box)
       -->
-      <div class:m-b-16={mobileExclusive}>
+      <div class:m-b-16={VIEWPORT_MOBILE_INIT[1]}>
         <p
           class="
             s-16
@@ -1095,9 +1271,9 @@ MAIN SETTINGS WIDGET
             color-black-2
             m-b-5
           "
-          class:m-b-6={mobileExclusive}
+          class:m-b-6={VIEWPORT_MOBILE_INIT[1]}
         >
-          {profileTrs?.profile?.crypto_title}
+          {profileTrs.profile?.crypto_title}
         </p>
         <span
           class="
@@ -1105,7 +1281,7 @@ MAIN SETTINGS WIDGET
             color-grey
           "
         >
-          {profileTrs?.profile?.crypto_desc}
+          {profileTrs.profile?.crypto_desc}
         </span>
       </div>
       <!--
@@ -1118,12 +1294,12 @@ MAIN SETTINGS WIDGET
           s-14
           color-black-2
         "
-        class:m-l-24={!tabletExclusive}
-        on:click={() => connect_wallet()}
+        class:m-l-24={!VIEWPORT_TABLET_INIT[1]}
+        on:click={() => {return helperConnectWeb3Wallet()}}
       >
-        {!profile_wallet_connected
-          ? profileTrs?.profile?.connect_wallet_title
-          : profileTrs?.profile?.disconnect_wallet_title}
+        {!isWalletConnected
+          ? profileTrs.profile?.connect_wallet_title
+          : profileTrs.profile?.disconnect_wallet_title}
       </button>
     </div>
 
@@ -1137,9 +1313,16 @@ MAIN SETTINGS WIDGET
         w-500
         s-14
       "
-      on:click={() => save_settings()}
+      on:click=
+      {
+        () =>
+        {
+          saveUserProfileChanges();
+          return;
+        }
+      }
     >
-      {profileTrs?.profile?.save}
+      {profileTrs.profile?.save}
     </button>
 
     <!--
@@ -1149,7 +1332,7 @@ MAIN SETTINGS WIDGET
       id="settings-hr-divider"
       class=
       {
-        !mobileExclusive
+        !VIEWPORT_MOBILE_INIT[1]
           ? 'm-t-20  m-b-20'
           : 'm-t-30 m-b-30'
       }
@@ -1164,7 +1347,7 @@ MAIN SETTINGS WIDGET
     <div
       class=
       {
-        !tabletExclusive
+        !VIEWPORT_TABLET_INIT[1]
           ? 'row-space-out m-b-24'
           : ''
       }
@@ -1174,7 +1357,7 @@ MAIN SETTINGS WIDGET
       [ℹ] delete text / desc
       -->
       <div
-        class:m-b-16={mobileExclusive}
+        class:m-b-16={VIEWPORT_MOBILE_INIT[1]}
       >
 
         <p
@@ -1184,9 +1367,9 @@ MAIN SETTINGS WIDGET
             w-500
             color-red-bright
           "
-          class:m-b-6={mobileExclusive}
+          class:m-b-6={VIEWPORT_MOBILE_INIT[1]}
         >
-          {profileTrs?.profile?.delete_account_title}
+          {profileTrs.profile?.delete_account_title}
         </p>
 
         <span
@@ -1196,7 +1379,7 @@ MAIN SETTINGS WIDGET
             color-grey
           "
         >
-          {profileTrs?.profile?.delete_desc}
+          {profileTrs.profile?.delete_desc}
         </span>
 
       </div>
@@ -1213,9 +1396,16 @@ MAIN SETTINGS WIDGET
           color-red-bright
           danger
         "
-        on:click={() => (showAccountDelModal = true)}
+        on:click=
+        {
+          () =>
+          {
+            isShowAccountDeletionModal = true;
+            return;
+          }
+        }
       >
-        {profileTrs?.profile?.delete_account_title}
+        {profileTrs.profile?.delete_account_title}
       </button>
 
     </div>
@@ -1224,13 +1414,17 @@ MAIN SETTINGS WIDGET
 
 {/if}
 
-<!-- ===============
-### COMPONENT STYLE
-### NOTE:
-### HINT: auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
-=================-->
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 🌊 Svelte Component CSS/SCSS                                                     │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
 
-<style>
+<style lang="scss">
 
 	/*
   profile [settings] widget
@@ -1255,7 +1449,8 @@ MAIN SETTINGS WIDGET
 		outline: none;
 		font-size: 14px;
 	}
-  textarea {
+  textarea
+  {
     height: 88px;
     padding: 20px 11px;
     resize: none;
@@ -1263,31 +1458,37 @@ MAIN SETTINGS WIDGET
     position: relative;
     white-space: normal !important;
   }
-  .textarea-wrapper {
+  .textarea-wrapper
+  {
     position: relative;
   }
-  .textarea-wrapper .counter {
+  .textarea-wrapper .counter
+  {
     position: absolute;
     bottom: 10px;
     right: 14px;
     font-size: 14px;
     color: var(--grey);
   }
-	input[type='text']:hover, textarea:hover
+	input[type='text']:hover,
+  textarea:hover
   {
 		border: 1px solid var(--grey);
 	}
-	input[type='text']:focus, textarea:focus
+	input[type='text']:focus,
+  textarea:focus
   {
 		border: 1px solid var(--dark-theme-1);
 	}
-	input[type='text'][placeholder], textarea[placeholder]
+	input[type='text'][placeholder],
+  textarea[placeholder]
   {
 		overflow: hidden;
 		white-space: nowrap;
 		text-overflow: ellipsis;
 	}
-  input[type='text'].input-error, textarea.input-error
+  input[type='text'].input-error,
+  textarea.input-error
   {
     border: 1px solid var(--red-bright) !important;
   }
@@ -1313,9 +1514,6 @@ MAIN SETTINGS WIDGET
 		border-radius: 32px;
 	}
 
-	/*
-  input - custom file upload
-  */
 	.custom-file-input
   {
 		opacity: 0;
@@ -1324,23 +1522,24 @@ MAIN SETTINGS WIDGET
 	}
 
 	/*
-  =============
-  RESPONSIVNESS
-  =============
+  ╭──────────────────────────────────────────────────────────────────────────────╮
+  │ ⚡️ RESPONSIVNESS                                                              │
+  ╰──────────────────────────────────────────────────────────────────────────────╯
   */
 
 	@media only screen
   and (min-width: 575px)
   {
-		button {
+		button
+    {
 			width: auto;
 		}
 	}
 
   /*
-  =============
-  DARK-THEME
-  =============
+  ╭──────────────────────────────────────────────────────────────────────────────╮
+  │ 🌒 DARK-THEME                                                                │
+  ╰──────────────────────────────────────────────────────────────────────────────╯
   */
 
   div#account-settings-widget-box.dark-background-1
@@ -1370,6 +1569,7 @@ MAIN SETTINGS WIDGET
   {
     border: 1px solid var(--dark-theme-1-2-shade) !important;
   }
+
   div#account-settings-widget-box.dark-background-1 input[type='text']:hover,
   div#account-settings-widget-box.dark-background-1 input[type='text']:focus,
   div#account-settings-widget-box.dark-background-1 textarea:focus
