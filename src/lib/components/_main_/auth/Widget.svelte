@@ -48,21 +48,21 @@
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { onDestroy, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
 	import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
 	import { getMoralisAuth } from '@moralisweb3/client-firebase-auth-utils';
 	import { signInWithMoralis } from '@moralisweb3/client-firebase-evm-auth';
-	import
-	  {
-	    GithubAuthProvider,
-	    GoogleAuthProvider,
-	    fetchSignInMethodsForEmail,
-	    sendSignInLinkToEmail,
-	    signInWithPopup,
-	    type ActionCodeSettings
-	  } from 'firebase/auth';
+  import
+  {
+    GithubAuthProvider,
+    GoogleAuthProvider,
+    fetchSignInMethodsForEmail,
+    sendSignInLinkToEmail,
+    signInWithPopup,
+    type ActionCodeSettings
+  } from 'firebase/auth';
 
 	import { app, auth } from '$lib/firebase/init';
 	import sessionStore from '$lib/store/session.js';
@@ -71,10 +71,10 @@
 	import { AU_W_TAG, dlog, dlogv2, errlog } from '$lib/utils/debug';
 	import { viewportChangeV2 } from '$lib/utils/device';
 	import { scoresAuthStore } from './_store.js';
+	import { toZeroPrefixDateStr } from '$lib/utils/dates.js';
 
   import ModalBackdrop from '$lib/components/misc/modal/Modal-Backdrop.svelte';
 
-	import { toZeroPrefixDateStr } from '$lib/utils/dates.js';
 	import type { IAuthTrs } from '@betarena/scores-lib/types/auth.js';
 
   // #endregion ➤ 📦 Package Imports
