@@ -68,7 +68,7 @@
   import { setUserGeoLocation } from '$lib/utils/geo.js';
   import { initializeTopLevelConsoleController } from '$lib/utils/subscribtion.js';
 
-  import AuthMain from '$lib/components/_main_/auth/Auth-Main.svelte';
+  import AuthMain from '$lib/components/_main_/auth/Widget.svelte';
   import FooterWidget from '$lib/components/_main_/footer/v2/Footer.Widget.svelte';
   import HeaderRedesigned from '$lib/components/_main_/header_redisigned/HeaderRedesigned.svelte';
   import MobileMenu from '$lib/components/_main_/mobile-menu/MobileMenu.svelte';
