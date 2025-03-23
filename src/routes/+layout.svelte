@@ -148,7 +148,7 @@
     dynamicComponentMap = new Map<IDynamicComponentMap, any>()
   ;
 
-  $: ({ currentPageRouteId, currentActiveModal, currentActiveToast, globalState } = { ...$sessionStore });
+  $: ({ currentPageRouteId, currentActiveModal, currentActiveToast, globalState, serverLang } = { ...$sessionStore });
   $: ({ theme } = { ...$userBetarenaSettings });
   $: ({ username, lang, competition_number } = { ...$userBetarenaSettings.user?.scores_user_data });
   $: ({ uid, email } = { ...$userBetarenaSettings.user?.firebase_user_data });
@@ -166,6 +166,7 @@
 
   $: $sessionStore.serverLang = $page.data.langParam as string;
   $: if (browser) $sessionStore.page = $page;
+  $: isInitliazed = false;
 
   $: [VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1]]
     = viewportChangeV2
@@ -272,10 +273,11 @@
   // ╭─────
   // │ > 🔥 Instant critical data initialization.
   // ╰─────
-  $: if (browser)
+  $: if (browser && !isInitliazed)
   {
     _DEBUG_('Option1');
-    userBetarenaSettings.useLocalStorage();
+    isInitliazed = true;
+    userBetarenaSettings.useLocalStorage(serverLang);
     scoresAdminStore.useLocalStorage();
     mainDeepLinkCheck();
   }

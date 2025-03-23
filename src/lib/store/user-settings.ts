@@ -147,6 +147,7 @@ function createLocalStore
        */
       useLocalStorage:
         (
+          strLang: string = 'en'
         ): void =>
         {
           let
@@ -162,15 +163,15 @@ function createLocalStore
           if (localStore == null)
             localStore
               = {
-              lang: 'en',
-              theme: 'Dark',
-              country_bookmaker: undefined,
-              geoJs: undefined,
-              user: undefined,
-              voted_fixtures: [],
-              userguide_id_opt_out: [],
-            }
-              ;
+                lang: strLang,
+                theme: 'Dark',
+                country_bookmaker: undefined,
+                geoJs: undefined,
+                user: undefined,
+                voted_fixtures: [],
+                userguide_id_opt_out: [],
+              }
+            ;
           ;
 
           // ╭─────
@@ -186,10 +187,14 @@ function createLocalStore
           // │ CHECK :|: for (non)-authenticated user logic.
           // ╰─────
           if (localStore.user)
+          {
             initUser();
+          }
           else
+          {
+            localStore.lang = strLang;
             logoutUser();
-          ;
+          }
 
           // ╭─────
           // │ CHECK :|: for (non)-authenticated user logic.
