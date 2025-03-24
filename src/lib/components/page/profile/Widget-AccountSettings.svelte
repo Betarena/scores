@@ -10,7 +10,7 @@
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ 📝 Description                                                                   │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
-│ BETARENA (Module)
+│ BETARENA (Module) :: User Profile :: Account Settings Widget                     │
 │ |: User Profile :: Account Settings Widget
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
@@ -41,26 +41,23 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 
-	import purify from 'dompurify';
-	import { deleteUser } from 'firebase/auth';
-	import { collection, deleteDoc, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
-	import { deleteObject, getDownloadURL, ref, uploadString } from 'firebase/storage';
+	import { getDownloadURL, ref, uploadString } from 'firebase/storage';
 
-	import { auth, db_firestore, storage } from '$lib/firebase/init';
+	import { storage } from '$lib/firebase/init';
+	import { storePageProfileSettings } from '$lib/store/page.profile.settings.js';
 	import sessionStore from '$lib/store/session.js';
-	import userBetarenaSettings, { type IDataProp } from '$lib/store/user-settings.js';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlog, errlog, log_v3 } from '$lib/utils/debug';
 	import { viewportChangeV2 } from '$lib/utils/device.js';
+	import { deleteUserProfile, updateUserProfileData } from '$lib/utils/user.js';
 	import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
 
 	import ModalConnectWallet from './Modal-ConnectWallet.svelte';
 	import ModalDeleteAccount from './Modal-DeleteAccount.svelte';
 	import ModalProfilePictureCrop from './Modal-ProfilePictureCrop.svelte';
 
-  import type { IBetarenaUser } from '@betarena/scores-lib/types/firebase/firestore.js';
   import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -130,16 +127,6 @@
      * @description
      * 📝
      */
-    usernameErrorMsg: string | undefined = undefined,
-    /**
-     * @description
-     * 📝
-     */
-    isProcessing = false,
-    /**
-     * @description
-     * 📝
-     */
     isShowAccountDeletionModal = false,
     /**
      * @description
@@ -159,7 +146,18 @@
   ;
 
   $: ( { windowWidth } = $sessionStore );
+  $: ( { globalState, globalStateErrors, globalStateErrorUsername } = $storePageProfileSettings );
+
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
+
+  $: [VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1]]
+    = viewportChangeV2
+    (
+      windowWidth,
+      VIEWPORT_MOBILE_INIT[0],
+      VIEWPORT_TABLET_INIT[0]
+    )
+  ;
 
   $: profilePicExists
     = $userBetarenaSettings.user?.scores_user_data
@@ -172,14 +170,6 @@
       ?.web3_wallet_addr == undefined
       ? false
       : true
-  ;
-  $: [VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1]]
-    = viewportChangeV2
-    (
-      windowWidth,
-      VIEWPORT_MOBILE_INIT[0],
-      VIEWPORT_TABLET_INIT[0]
-    )
   ;
 
   // #endregion ➤ 📌 VARIABLES
@@ -220,10 +210,12 @@
     // ╰─────
     if (files[0].size >= 10000000)
     {
+      // [🐞]
       alert
       (
         'WARNING: Uploaded picture is too large. Limit is 10MB.'
       );
+
       files = undefined;
 
       return;
@@ -253,7 +245,8 @@
             strGroupName: 'updateUserProfilePicture(..)',
             msgs:
             [
-              '🔵 Updating profile picture...'
+              '🟢 Updating user profile picture...',
+              `🔗 ${event?.detail?.img}`
             ]
           }
         );
@@ -261,17 +254,6 @@
         isShowProfilePictureCropModal = false;
 
         const
-          /**
-           * @description
-           * 📝
-           */
-          instFirestoreDocRef
-            = doc
-            (
-              db_firestore,
-              'betarena_users',
-              $userBetarenaSettings.user?.firebase_user_data?.uid!
-            ),
           /**
            * @description
            * 📝
@@ -308,29 +290,21 @@
         log_v3
         (
           {
-            strGroupName: 'updateUserProfilePicture(..)',
+            strGroupName: 'updateUserProfilePicture(..) // END',
             msgs:
             [
               '🟢 Uploaded file!',
-              `🔗 ${dataRes0.ref.fullPath}`
+              `🔗 ${dataRes0.ref.fullPath}`,
+              `🔗 ${dataRes1}`
             ]
           }
         );
 
-        userBetarenaSettings.updateData
+        await updateUserProfileData
         (
-          [
-            [ 'user-avatar', dataRes1 ]
-
-          ]
-        );
-
-        await updateDoc
-        (
-          instFirestoreDocRef,
           {
             profile_photo: dataRes1
-          } as Pick < IBetarenaUser, 'profile_photo' >
+          }
         );
 
         return;
@@ -343,369 +317,20 @@
   (
   ): Promise < void >
   {
-    await tryCatchAsync
-    (
-      async (
-      ): Promise < void > =>
-      {
-        if (!profilePicExists)
-        {
-          fileInputElem.click();
-          return;
-        }
-
-        userBetarenaSettings.updateData
-        (
-          [
-            [ 'user-avatar', undefined ]
-          ]
-        );
-
-        const
-          /**
-           * @description
-           * 📝
-           */
-          instFirestoreDocRef
-            = doc
-            (
-              db_firestore,
-              'betarena_users',
-              $userBetarenaSettings.user?.firebase_user_data?.uid!
-            ),
-          /**
-           * @description
-           * 📝
-           */
-          instStorageDocRef
-            = ref
-            (
-              storage,
-              `Users_data/${$userBetarenaSettings.user?.firebase_user_data?.uid}/profile-pic.png`
-            )
-        ;
-
-        await updateDoc
-        (
-          instFirestoreDocRef,
-          {
-            profile_photo: null
-          } as Pick < IBetarenaUser, 'profile_photo' >
-        );
-
-        await deleteObject
-        (
-          instStorageDocRef
-        );
-      },
-    );
-    return;
-  }
-
-  async function updateUserProfileWallet
-  (
-    event: any
-  ): Promise < void >
-  {
-    isShowWalletModal = false;
-
-    const
-      /**
-       * @description
-       */
-      wallet
-        = event == null
-          ? null
-          : event?.detail?.wallet_id
-    ;
-
-    userBetarenaSettings.updateData
-    (
-      [
-        [ 'user-wallet', wallet ]
-      ]
-    );
-
-    const
-      /**
-       * @description
-       * 📝
-       */
-      instFirestoreDocRef
-        = doc
-        (
-          db_firestore,
-          'betarena_users',
-          $userBetarenaSettings.user?.firebase_user_data?.uid!
-        )
-    ;
-
-    await updateDoc
-    (
-      instFirestoreDocRef,
-      {
-        wallet_id: wallet
-      }
-    );
-
-    return;
-  }
-
-  async function updateUserUsername
-  (
-  ): Promise < void >
-  {
-    // [🐞]
-    log_v3
-    (
-      {
-        strGroupName: 'updateUserUsername(..)',
-        msgs:
-        [
-          '🔵 Updating user...'
-        ]
-      }
-    );
-
-    let objDataToUpdate: any = {};
-
-    if (usernameInput != $userBetarenaSettings.user?.scores_user_data?.username)
-      objDataToUpdate.username = usernameInput;
-    ;
-    // @ts-expect-error - TODO:
-    if (nameInput != $userBetarenaSettings.user?.scores_user_data?.name)
-      objDataToUpdate.name = nameInput;
-    ;
-    // @ts-expect-error - TODO:
-    if (aboutInput != $userBetarenaSettings.user?.scores_user_data?.about)
-      objDataToUpdate.about = aboutInput;
-    ;
-
-    if (!Object.keys(objDataToUpdate).length)
+    if (!profilePicExists)
     {
-      dlog('🔴 No changes detected...', true);
+      fileInputElem.click();
       return;
     }
 
-    if (!(!objDataToUpdate.username || (await validateUsername())))
-    {
-      dlog('🔴 Username is invalid...', true);
-      return;
-    }
-
-    const listDataToUpdate: [IDataProp, any][] = [];
-
-    Object.keys(objDataToUpdate).forEach
+    updateUserProfileData
     (
-      (
-        key
-      ) =>
       {
-        const
-          /**
-           * @description
-           * 📝
-           */
-          value = purify.sanitize(objDataToUpdate[key]),
-          /**
-           * @description
-           * 📝
-           */
-          keyMain: IDataProp
-            = key === 'username'
-              ? 'user-name'
-              : key === 'name'
-                ? 'user-name2'
-                : 'user-about'
-        ;
-        objDataToUpdate[key] = value;
-        listDataToUpdate.push([keyMain, value]);
+        profile_photo: null
       }
-    );
-
-    usernameErrorMsg = undefined;
-
-    userBetarenaSettings.updateData(listDataToUpdate);
-
-    const
-      /**
-       * @description
-       * 📝
-       */
-      instFirestoreDocRef
-        = doc
-        (
-          db_firestore,
-          'betarena_users',
-          $userBetarenaSettings.user?.firebase_user_data?.uid!
-        )
-    ;
-
-    await updateDoc
-    (
-      instFirestoreDocRef,
-      objDataToUpdate
     );
 
     return;
-  }
-
-  async function validateUsername
-  (
-  ): Promise < boolean >
-  {
-    // [🐞]
-    log_v3
-    (
-      {
-        strGroupName: 'validateUsername(..)',
-        msgs:
-        [
-          '🔵 Validating username...'
-        ]
-      }
-    )
-
-    let
-      /**
-       * @description
-       */
-      valid = true
-    ;
-
-    const
-      /**
-       * @description
-       * 📝
-       */
-      usersDb
-        = collection
-        (
-          db_firestore,
-          'betarena_users'
-        ),
-      /**
-       * @description
-       * 📝
-       */
-      queryUsername
-        = query
-        (
-          usersDb,
-          where
-          (
-            'username',
-            '==',
-            usernameInput
-          )
-        ),
-      /**
-       * @description
-       * 📝
-       */
-      querySnapshot
-        = await getDocs
-        (
-          queryUsername
-        )
-    ;
-
-    if (querySnapshot.docs.length > 0)
-    {
-      valid = false
-      usernameErrorMsg = profileTrs.profile?.userame_update_error_msg?.[0] ?? 'Username is already in use';
-    }
-    if (usernameInput.length < 3)
-    {
-      valid = false;
-      usernameErrorMsg = profileTrs.profile?.userame_update_error_msg?.[1] ?? 'Username must be greater than 3 characters';
-    }
-    if (usernameInput.length > 15)
-    {
-      valid = false;
-      usernameErrorMsg = 'Username must be less than 15 characters';
-    }
-    if (/^\d+$/.test(usernameInput))
-    {
-      valid = false;
-      usernameErrorMsg = profileTrs.profile?.userame_update_error_msg?.[2] ?? 'Username must not contain only numbers';
-    };
-    if (/\s/g.test(usernameInput))
-    {
-      valid = false;
-      usernameErrorMsg = profileTrs.profile?.userame_update_error_msg?.[3] ?? 'Username must not contain spaces';
-    }
-
-    const
-      /**
-       * @description
-       * 📝
-       */
-      format = /[ `!@#$%^&*()+\-=\[\]{};':"\\|,.<>\/?~]/
-    ;
-
-    if (format.test(usernameInput))
-    {
-      valid = false;
-      usernameErrorMsg = profileTrs.profile?.userame_update_error_msg?.[4] ?? 'Username cant have spaces or special characters';
-    }
-
-    return valid;
-  }
-
-  async function deleteUserProfilePermanently
-  (
-  ): Promise < void >
-  {
-    // [🐞]
-    log_v3
-    (
-      {
-        strGroupName: 'deleteUserProfilePermanently()',
-        msgs:
-        [
-          '🔴 Deleting user...'
-        ]
-      }
-    );
-
-    isShowAccountDeletionModal = false;
-
-    await deleteUserProfilePicture();
-
-    await deleteDoc
-    (
-      doc
-      (
-        db_firestore,
-        'betarena_users',
-        $userBetarenaSettings.user?.firebase_user_data?.uid!
-      )
-    );
-
-    if (auth.currentUser)
-      await deleteUser(auth.currentUser);
-    ;
-
-    userBetarenaSettings.updateData
-    (
-      [
-        [ 'user-object', undefined ]
-      ]
-    );
-
-    // [🐞]
-    dlog
-    (
-      '🟢 User deleted',
-      true
-    );
-
-    goto
-    (
-      '/',
-      { replaceState: true }
-    );
   }
 
   async function helperConnectWeb3Wallet
@@ -719,44 +344,48 @@
       {
         if (isWalletConnected)
         {
-          dlog
+          // [🐞]
+          dlog('Removing user wallet web3 connection...');
+
+          updateUserProfileData
           (
-            'Removing user wallet web3 connection...'
+            {
+              wallet_id: null
+            }
           );
-          updateUserProfileWallet(null)
-          return
+
+          return;
         }
-        isProcessing = true;
+
+        storePageProfileSettings.updateData
+        (
+          [
+            [ 'globalStateAdd', 'Processing' ]
+          ]
+        );
+
         isShowWalletModal = true;
+
+        return;
       },
       (
         error
       ) =>
       {
-        errlog
+        // [🐞]
+        errlog(`helperConnectWeb3Wallet() error: ${error}`);
+
+        storePageProfileSettings.updateData
         (
-          `helperConnectWeb3Wallet() error: ${error}`
+          [
+            [ 'globalStateRemove', 'Processing' ]
+          ]
         );
-        isProcessing = false;
+
+        return;
       }
     );
     return;
-  }
-
-  async function saveUserProfileChanges
-  (
-  ): Promise < void >
-  {
-    updateUserUsername();
-    return;
-  }
-
-  function helperClosePictureCropAction
-  (
-  ): void
-  {
-    isShowProfilePictureCropModal = false;
-    fileInputElem.value = '';
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -804,7 +433,7 @@
     {
       () =>
       {
-        deleteUserProfilePermanently();
+        deleteUserProfile();
         return;
       }
     }
@@ -827,11 +456,16 @@
     }
 		on:connect_wallet_action=
     {
-      (
+      async (
         event
       ) =>
       {
-        updateUserProfileWallet(event);
+        await updateUserProfileData
+        (
+          {
+            wallet_id: event.detail.wallet_id
+          }
+        );
         return;
       }
     }
@@ -849,17 +483,18 @@
   {
     () =>
     {
-      helperClosePictureCropAction();
+      isShowProfilePictureCropModal = false;
+      fileInputElem.value = '';
       return;
     }
   }
   on:upload_selected_img=
   {
-    (
+    async (
       event
     ) =>
     {
-      updateUserProfilePicture(event);
+      await updateUserProfilePicture(event);
       return;
     }
   }
@@ -947,7 +582,14 @@ Profile Settings
           s-14
           color-black-2
         "
-        on:click={() => {return deleteUserProfilePicture()}}
+        on:click=
+        {
+          () =>
+          {
+            deleteUserProfilePicture();
+            return;
+          }
+        }
       >
         {!profilePicExists
           ? profileTrs.profile?.upload
@@ -966,7 +608,7 @@ Profile Settings
           bind:this={fileInputElem}
           bind:files
           type="file"
-          disabled={isProcessing}
+          disabled={globalState.has('Processing')}
         />
       {/if}
 
@@ -1062,20 +704,20 @@ Profile Settings
         aria-placeholder="Username input here"
         aria-label="Username input"
         bind:value={usernameInput}
-        class:input-error={usernameErrorMsg != undefined}
+        class:input-error={globalStateErrors.has('ErrorUsername')}
       />
 
       <!--
       <-conditional->
       [ℹ] error message input
       -->
-      {#if usernameErrorMsg}
+      {#if globalStateErrors.has('ErrorUsername')}
         <p
           class="
             s-14
             color-error
           ">
-          {usernameErrorMsg}
+          {globalStateErrorUsername}
         </p>
       {/if}
 
@@ -1239,7 +881,7 @@ Profile Settings
         aria-placeholder="Username input here"
         aria-label="Username input"
         bind:value={aboutInput}
-        class:input-error={usernameErrorMsg != undefined}
+        class:input-error={globalStateErrors.has('ErrorUsername')}
       />
       <span class="counter">{aboutInput.length}/256</span>
     </div>
@@ -1288,14 +930,22 @@ Profile Settings
       [ℹ] button action
       -->
       <button
-        class="
-          btn-hollow
-          w-500
-          s-14
-          color-black-2
+        class=
+        "
+        btn-hollow
+        w-500
+        s-14
+        color-black-2
         "
         class:m-l-24={!VIEWPORT_TABLET_INIT[1]}
-        on:click={() => {return helperConnectWeb3Wallet()}}
+        on:click=
+        {
+          () =>
+          {
+            helperConnectWeb3Wallet();
+            return;
+          }
+        }
       >
         {!isWalletConnected
           ? profileTrs.profile?.connect_wallet_title
@@ -1309,15 +959,22 @@ Profile Settings
     <button
       class=
       "
-        btn-primary-v2
-        w-500
-        s-14
+      btn-primary-v2
+      w-500
+      s-14
       "
       on:click=
       {
-        () =>
+        async () =>
         {
-          saveUserProfileChanges();
+          await updateUserProfileData
+          (
+            {
+              username: usernameInput,
+              name: nameInput,
+              about: aboutInput
+            }
+          );
           return;
         }
       }
