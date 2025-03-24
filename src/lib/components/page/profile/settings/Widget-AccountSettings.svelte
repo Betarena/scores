@@ -431,9 +431,10 @@
     }
     on:delete_account=
     {
-      () =>
+      async (
+      ) =>
       {
-        deleteUserProfile();
+        await deleteUserProfile();
         return;
       }
     }
