@@ -13,8 +13,8 @@ COMPONENT JS (w/ TS)
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlog, PR_P_STY, PR_P_TAG, PR_P_TOG } from '$lib/utils/debug';
 
-	import metamask_icon from './assets/metamask.svg';
-	import wallet from './assets/wallet.svg';
+	import metamask_icon from '../assets/metamask.svg';
+	import wallet from '../assets/wallet.svg';
 
   import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 

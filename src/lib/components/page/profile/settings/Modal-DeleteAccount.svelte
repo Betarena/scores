@@ -12,7 +12,7 @@ COMPONENT JS (w/ TS)
 
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 
-	import danger from './assets/alert.svg';
+	import danger from '../assets/alert.svg';
 
   import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 
