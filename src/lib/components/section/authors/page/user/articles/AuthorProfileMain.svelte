@@ -314,13 +314,13 @@
 <SeoBox>
   <h1>{author.name || author.username}</h1>
   <b>{author?.about}</b>
-  <a href={`${$page.url.origin}/a/user/${author.usernameLower}/subscribers`}>
+  <a href={`${$page.url.origin}/a/user/${author.usernamePermalink}/subscribers`}>
     subscribers
   </a>
-  <a href={`${$page.url.origin}/a/user/${author.usernameLower}/followers`}>
+  <a href={`${$page.url.origin}/a/user/${author.usernamePermalink}/followers`}>
     followers
   </a>
-  <a href={`${$page.url.origin}/a/user/${author.usernameLower}/following`}>
+  <a href={`${$page.url.origin}/a/user/${author.usernamePermalink}/following`}>
     following
   </a>
   {#each widgetData.mapArticle ?? [] as [_id, article]}
@@ -331,7 +331,7 @@
   {/each}
   {#each author_subscribers_profiles as profile}
     <h3>{profile?.name || profile?.username}</h3>
-    <a href="/a/user/${mutateStringToPermalink(profile?.usernameLower)}" />
+    <a href="/a/user/${mutateStringToPermalink(profile?.usernamePermalink)}" />
   {/each}
 </SeoBox>
 <svelte:window on:scroll={scrollHandler} />

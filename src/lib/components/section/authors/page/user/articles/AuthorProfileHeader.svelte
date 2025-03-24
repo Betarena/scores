@@ -257,7 +257,7 @@
             <a
               class="username"
               on:click|stopPropagation
-              href="/a/user/{mutateStringToPermalink(follower.usernameLower)}"
+              href="/a/user/{mutateStringToPermalink(follower.usernamePermalink)}"
             >
               <span>
                 {" "}
@@ -341,7 +341,7 @@
             <a
               class="owner"
               href="/a/user/{mutateStringToPermalink(
-                highlited_sportstack.owner.usernameLower
+                highlited_sportstack.owner.usernamePermalink
               )}"
             >
               <TranslationText text={translations.by} fallback="By" />

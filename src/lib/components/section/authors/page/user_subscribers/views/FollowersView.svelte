@@ -203,16 +203,16 @@
 -->
 <SeoBox>
   <h1>{author.name || author.username}</h1>
-  <a href={`${$page.url.origin}/a/user/${author.usernameLower}`}>
-    {author.usernameLower}
+  <a href={`${$page.url.origin}/a/user/${author.usernamePermalink}`}>
+    {author.usernamePermalink}
   </a>
-  <a href={`${$page.url.origin}/a/user/${author.usernameLower}/subscribers`}>
+  <a href={`${$page.url.origin}/a/user/${author.usernamePermalink}/subscribers`}>
     subscribers
   </a>
-  <a href={`${$page.url.origin}/a/user/${author.usernameLower}/followers`}>
+  <a href={`${$page.url.origin}/a/user/${author.usernamePermalink}/followers`}>
     followers
   </a>
-  <a href={`${$page.url.origin}/a/user/${author.usernameLower}/following`}>
+  <a href={`${$page.url.origin}/a/user/${author.usernamePermalink}/following`}>
     following
   </a>
 </SeoBox>
