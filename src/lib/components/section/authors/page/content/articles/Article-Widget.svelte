@@ -42,7 +42,6 @@
   import { page } from '$app/stores';
 
   import sessionStore from '$lib/store/session.js';
-  import { sleep } from '$lib/utils/miscellenous.js';
 
   import SeoBox from '$lib/components/SEO-Box.svelte';
   import Tabbar from '$lib/components/ui/Tabbar.svelte';
@@ -50,10 +49,10 @@
   import ArticleMain from './Article-Main.svelte';
 
   import { viewportChangeV2 } from '$lib/utils/device.js';
+  import { mutateStringToPermalink } from '@betarena/scores-lib/dist/util/language.js';
 
   import type { IPageAuthorTagDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
   import type { IPageAuthorTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.tags.js';
-  import { userNameToUrlString } from '../../../common_ui/helpers.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -160,8 +159,6 @@
     // IMPORTANT
     if (!browser) return;
 
-    // await sleep(1500);
-
     return;
   }
 
@@ -210,7 +207,7 @@
   {/each}
 
   {#each [...mapAuthors.entries()] as [_id, author]}
-  <a href="/a/user/{userNameToUrlString(author?.data?.username)}" >{author?.data?.username}</a>
+  <a href="/a/user/{mutateStringToPermalink(author?.data?.username)}" >{author?.data?.username}</a>
   {/each}
 </SeoBox>
 

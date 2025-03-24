@@ -8,28 +8,46 @@
 -->
 
 <script lang="ts">
-  // #region ➤ 📌 VARIABLES
 
-  import Avatar from "$lib/components/ui/Avatar.svelte";
-  import Button from "$lib/components/ui/Button.svelte";
-  import StackedAvatars from "$lib/components/ui/StackedAvatars.svelte";
-  import session from "$lib/store/session.js";
-  import type { BetarenaUser } from "$lib/types/types.user-settings.js";
-  import userSettings from "$lib/store/user-settings.js";
-  import { page } from "$app/stores";
-  import SportstackAvatar from "$lib/components/ui/SportstackAvatar.svelte";
-  import type { IPageAuthorAuthorData } from "@betarena/scores-lib/types/v8/preload.authors.js";
-  import type { IBetarenaUser } from "@betarena/scores-lib/types/_FIREBASE_.js";
-  import { userNameToUrlString } from "../../../common_ui/helpers.js";
-  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
-  import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
-  import ShareButton from "$lib/components/ui/ShareButton.svelte";
-  import { browser } from "$app/environment";
-  import {
-    BetarenaUserHelper,
-    listenRealTimeUserUpdates,
-  } from "$lib/firebase/common.js";
-  import { onDestroy } from "svelte";
+  // #region ➤ 📦 Package Imports
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  import { browser } from '$app/environment';
+  import { page } from '$app/stores';
+  import { onDestroy } from 'svelte';
+
+  import { mutateStringToPermalink } from '@betarena/scores-lib/dist/util/language.js';
+  import { BetarenaUserHelper, listenRealTimeUserUpdates } from '$lib/firebase/common.js';
+  import userSettings from '$lib/store/user-settings.js';
+  import session from '$lib/store/session.js';
+
+  import Avatar from '$lib/components/ui/Avatar.svelte';
+  import Button from '$lib/components/ui/Button.svelte';
+  import StackedAvatars from '$lib/components/ui/StackedAvatars.svelte';
+  import SportstackAvatar from '$lib/components/ui/SportstackAvatar.svelte';
+  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
+  import ShareButton from '$lib/components/ui/ShareButton.svelte';
+
+  import type { IBetarenaUser } from '@betarena/scores-lib/types/_FIREBASE_.js';
+  import type { IPageAuthorAuthorData } from '@betarena/scores-lib/types/v8/preload.authors.js';
+  import type { BetarenaUser } from '$lib/types/types.user-settings.js';
+  import type { IPageAuthorTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.tags.js';
+
+  // #endregion ➤ 📦 Package Imports
+
+  // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -239,7 +257,7 @@
             <a
               class="username"
               on:click|stopPropagation
-              href="/a/user/{userNameToUrlString(follower.usernameLower)}"
+              href="/a/user/{mutateStringToPermalink(follower.usernamePermalink)}"
             >
               <span>
                 {" "}
@@ -309,7 +327,7 @@
     {#if highlited_sportstack}
       <a
         class="sportstack"
-        href="/a/sportstack/{userNameToUrlString(
+        href="/a/sportstack/{mutateStringToPermalink(
           highlited_sportstack.data?.username
         )}"
       >
@@ -322,8 +340,8 @@
             <div class="name">{highlited_sportstack.data?.username}</div>
             <a
               class="owner"
-              href="/a/user/{userNameToUrlString(
-                highlited_sportstack.owner.usernameLower
+              href="/a/user/{mutateStringToPermalink(
+                highlited_sportstack.owner.usernamePermalink
               )}"
             >
               <TranslationText text={translations.by} fallback="By" />

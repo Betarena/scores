@@ -45,26 +45,24 @@
   import iconArrowLeftLight from './assets/icon-arrow-left-light.svg';
   import iconArrowRightDark from './assets/icon-arrow-right-dark.svg';
   import iconArrowRightLight from './assets/icon-arrow-right-light.svg';
-  import icon_location_dark from './assets/icon-location-dark.svg';
-  import icon_location from './assets/icon-location.svg';
 
   import sessionStore from '$lib/store/session.js';
   import userBetarenaSettings from '$lib/store/user-settings.js';
   import { monthNames, timeAgo } from '$lib/utils/dates.js';
   import { viewportChangeV2 } from '$lib/utils/device';
+  import { mutateStringToPermalink } from '@betarena/scores-lib/dist/util/language.js';
+  import { readingTime } from '../../helpers.js';
+  import { post } from '$lib/api/utils.js';
+  import { getUserById } from '$lib/firebase/common.js';
 
   import TranslationText from '$lib/components/misc/Translation-Text.svelte';
+  import SportstackAvatar from '$lib/components/ui/SportstackAvatar.svelte';
+  import Button from '$lib/components/ui/Button.svelte';
+  import session from '$lib/store/session.js';
 
   import type { B_SAP_D2 } from '@betarena/scores-lib/types/seo-pages.js';
   import type { IPageAuhtorArticleDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
   import type { IPageArticleTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.articles.js';
-  import { readingTime } from '../../helpers.js';
-  import { userNameToUrlString } from '../../../common_ui/helpers.js';
-  import SportstackAvatar from '$lib/components/ui/SportstackAvatar.svelte';
-  import Button from '$lib/components/ui/Button.svelte';
-  import session from '$lib/store/session.js';
-  import { post } from '$lib/api/utils.js';
-  import { getUserById } from '$lib/firebase/common.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -610,7 +608,7 @@
         </div>
       {/if}
       <div class="sportstack-box {viewportType}">
-        <a href="/a/sportstack/{userNameToUrlString(widgetData.author?.data?.username)}" class="sportstack-info">
+        <a href="/a/sportstack/{mutateStringToPermalink(widgetData.author?.data?.username)}" class="sportstack-info">
           <SportstackAvatar src={widgetData.author?.data?.avatar ?? ''} size={viewportType === "mobile" ? 32 : 36} radius=" var(--radius-sm, 6px)"/>
           <span>{widgetData.author.data?.username || ""}</span>
         </a>

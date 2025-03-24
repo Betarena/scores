@@ -43,13 +43,13 @@
 	import { onMount } from 'svelte';
 
   import { sleep } from '$lib/utils/miscellenous.js';
+  import { mutateStringToPermalink } from '@betarena/scores-lib/dist/util/language.js';
 
   import SeoBox from '$lib/components/SEO-Box.svelte';
   import AuthorLoader from './Author-Loader.svelte';
   import AuthorMain from './Author-Main.svelte';
 
   import type { IPageAuhtorArticleDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
-    import { userNameToUrlString } from '../../../common_ui/helpers.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -164,7 +164,7 @@
   <h1>{widgetDataMain?.article.data.title}</h1>
   {@html widgetDataMain?.article.data.content}
   <a
-      href="/a/sportstack/{userNameToUrlString(widgetDataMain?.author?.data?.username)}"
+      href="/a/sportstack/{mutateStringToPermalink(widgetDataMain?.author?.data?.username)}"
     >{widgetDataMain?.author?.data?.username}</a>
   {#each (widgetDataMain?.mapTag || []) as [_id, tag]}
    <a href="/a/tag/{tag.permalink}">{tag.name}</a>

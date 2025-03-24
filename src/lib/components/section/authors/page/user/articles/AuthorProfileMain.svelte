@@ -22,6 +22,7 @@
 -->
 
 <script lang="ts">
+
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -43,22 +44,19 @@
   import { get } from "$lib/api/utils.js";
   import sessionStore from "$lib/store/session.js";
   import { dlogv2 } from "$lib/utils/debug.js";
+  import { mutateStringToPermalink } from "@betarena/scores-lib/dist/util/language.js";
+  import userSettings from "$lib/store/user-settings.js";
+  import { Betarena_User_Class } from "@betarena/scores-lib/dist/classes/class.betarena-user.js";
 
   import Button from "$lib/components/ui/Button.svelte";
-  import {
-    type ITagsWidgetData,
-    type IArticle,
-    prepareArticlesMap,
-  } from "../../helpers.js";
+  import { type ITagsWidgetData, type IArticle, prepareArticlesMap } from "../../helpers.js";
   import AuthorProfileHeader from "./AuthorProfileHeader.svelte";
   import ArticlesList from "../../../common_ui/articles/ArticlesList.svelte";
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
-  import type { BetarenaUser } from "$lib/types/types.user-settings.js";
-  import { Betarena_User_Class } from "@betarena/scores-lib/dist/classes/class.betarena-user.js";
   import AuthorProfileHeaderLoader from "./AuthorProfileHeaderLoader.svelte";
-  import userSettings from "$lib/store/user-settings.js";
   import SeoBox from "$lib/components/SEO-Box.svelte";
-  import { userNameToUrlString } from "../../../common_ui/helpers.js";
+
+  import type { BetarenaUser } from "$lib/types/types.user-settings.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -316,13 +314,13 @@
 <SeoBox>
   <h1>{author.name || author.username}</h1>
   <b>{author?.about}</b>
-  <a href={`${$page.url.origin}/a/user/${author.usernameLower}/subscribers`}>
+  <a href={`${$page.url.origin}/a/user/${author.usernamePermalink}/subscribers`}>
     subscribers
   </a>
-  <a href={`${$page.url.origin}/a/user/${author.usernameLower}/followers`}>
+  <a href={`${$page.url.origin}/a/user/${author.usernamePermalink}/followers`}>
     followers
   </a>
-  <a href={`${$page.url.origin}/a/user/${author.usernameLower}/following`}>
+  <a href={`${$page.url.origin}/a/user/${author.usernamePermalink}/following`}>
     following
   </a>
   {#each widgetData.mapArticle ?? [] as [_id, article]}
@@ -333,7 +331,7 @@
   {/each}
   {#each author_subscribers_profiles as profile}
     <h3>{profile?.name || profile?.username}</h3>
-    <a href="/a/user/${userNameToUrlString(profile?.usernameLower)}" />
+    <a href="/a/user/${mutateStringToPermalink(profile?.usernamePermalink)}" />
   {/each}
 </SeoBox>
 <svelte:window on:scroll={scrollHandler} />

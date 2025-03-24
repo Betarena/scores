@@ -22,6 +22,7 @@
 -->
 
 <script lang="ts">
+
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -37,14 +38,16 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { page } from "$app/stores";
-  import { afterNavigate, beforeNavigate } from "$app/navigation";
+  import { page } from '$app/stores';
+  import { afterNavigate, beforeNavigate } from '$app/navigation';
 
-  import SeoBox from "$lib/components/SEO-Box.svelte";
-  import TagsLoader from "./Tags-Loader.svelte";
-  import TagsMain from "./Tags-Main.svelte";
-  import type { IPageAuthorArticleData, IPageAuthorTagData } from "@betarena/scores-lib/types/v8/preload.authors.js";
-  import { userNameToUrlString } from "../../../common_ui/helpers.js";
+  import { mutateStringToPermalink } from '@betarena/scores-lib/dist/util/language.js';
+
+  import SeoBox from '$lib/components/SEO-Box.svelte';
+  import TagsLoader from './Tags-Loader.svelte';
+  import TagsMain from './Tags-Main.svelte';
+
+  import type { IPageAuthorArticleData, IPageAuthorTagData } from '@betarena/scores-lib/types/v8/preload.authors.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -123,19 +126,24 @@
 
 <SeoBox>
   <h1>{tags.get(widgetDataMain.tagId)?.name}</h1>
+
   {#each [...tags.entries()] as [_id, tag]}
     <a href={`/a/tag/${tag.permalink}`}>{tag.name}</a>
   {/each}
+
   {#each widgetDataMain.mapArticle ?? [] as [_id, article]}
     <h2>{article?.data?.title}</h2>
     <a href={`${$page.url.origin}/a/${article?.permalink}`}
       >{article?.data?.title}</a
     >
   {/each}
+
   {#each [...mapAuthors.entries()] as [_id, author]}
-    <a href="/a/user/{userNameToUrlString(author?.data?.username)}"
-      >{author?.data?.username}</a
+    <a
+      href="/a/user/{mutateStringToPermalink(author?.data?.username)}"
     >
+      {author?.data?.username}
+    </a>
   {/each}
 </SeoBox>
 
