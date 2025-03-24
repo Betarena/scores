@@ -375,6 +375,8 @@ async function getFirestoreBetarenaUser
         /**
          * @description
          * 📝 Data Response (0)
+         * WARNING: Does not return `user` data, only `response`.
+         *  - Use `dataRes1` for `user` data, defined below.
          */
         dataRes0
           = await new Betarena_User_Class().createUser
@@ -414,7 +416,28 @@ async function getFirestoreBetarenaUser
         }
       );
 
-      return dataRes0.success.data;
+      if (dataRes0.error)
+        throw new Error(JSON.stringify(dataRes0.error));
+      ;
+
+      const
+        /**
+         * @description
+         * 📝 Target user document snapshot.
+         */
+        dataRes1
+          = await getDoc
+          (
+            doc
+            (
+              db_firestore,
+              'betarena_users',
+              uid!
+            )
+          )
+      ;
+
+      return dataRes1.data() as BetarenaUser;
     }
   );
 }
