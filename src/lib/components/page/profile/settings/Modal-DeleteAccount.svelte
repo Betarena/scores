@@ -22,7 +22,7 @@ COMPONENT JS (w/ TS)
 
 	const dispatch: EventDispatcher < any > = createEventDispatcher();
 
-  $: profileTrs = $page.data.profileTrs as IProfileTrs;
+  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
 
   // #endregion ➤ 📌 VARIABLES
 
