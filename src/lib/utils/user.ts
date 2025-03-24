@@ -28,7 +28,7 @@ import { dlogv2, log_v3 } from './debug.js';
 import { selectLanguage } from './navigation.js';
 import { gotoSW } from './sveltekitWrapper.js';
 
-import { db_firestore, storage } from '$lib/firebase/init.js';
+import { auth, db_firestore, storage } from '$lib/firebase/init.js';
 import { storePageProfileSettings } from '$lib/store/page.profile.settings.js';
 import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
 import { doc, updateDoc } from 'firebase/firestore';
@@ -553,21 +553,49 @@ export async function deleteUserProfile
         throw new Error('🔴 User not found...');
       ;
 
-      await new Betarena_User_Class().deleteUser
-      (
-        {
-          query:
-          {
-            firebaseAuthToken: (await objUser!.user?.firebase_user_data?.getIdToken())
-          },
-          body:
-          {
-            uid: objUser!.user?.firebase_user_data?.uid
-          }
-        }
-      );
+      const
+        /**
+         * @description
+         * 📝 Data Response (0)
+         */
+        dataRes0
+          = await new Betarena_User_Class().deleteUser
+          (
+            {
+              query:
+              {
+                firebaseAuthToken: (await auth.currentUser?.getIdToken()),
+                uid: objUser!.user?.firebase_user_data?.uid
+              },
+              body: {}
+            }
+          )
+      ;
+
+      if (dataRes0.error)
+        throw new Error(JSON.stringify(dataRes0.error));
+      ;
 
       await logoutUser();
+
+      return;
+    },
+    (
+      error: Error
+    ) =>
+    {
+      // [🐞]
+      log_v3
+      (
+        {
+          strGroupName: 'deleteUserProfile(..) // ERROR',
+          msgs:
+          [
+            '🔴 Error deleting user profile...',
+            error.message
+          ]
+        }
+      );
 
       return;
     }

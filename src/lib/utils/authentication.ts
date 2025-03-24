@@ -20,7 +20,7 @@ import { getMoralisAuth } from '@moralisweb3/client-firebase-auth-utils';
 import { signInWithMoralis } from '@moralisweb3/client-firebase-evm-auth';
 import { doc, getDoc } from 'firebase/firestore';
 
-import { app, db_firestore } from '$lib/firebase/init.js';
+import { app, auth, db_firestore } from '$lib/firebase/init.js';
 import { getCookie } from '$lib/store/cookie.js';
 import sessionStore from '$lib/store/session.js';
 import userBetarenaSettings from '$lib/store/user-settings.js';
@@ -382,7 +382,7 @@ async function getFirestoreBetarenaUser
             {
               query:
               {
-                firebaseAuthToken: (await objUser.firebase_user_data!.getIdToken())
+                firebaseAuthToken: (await auth.currentUser?.getIdToken())
               },
               body:
               {
