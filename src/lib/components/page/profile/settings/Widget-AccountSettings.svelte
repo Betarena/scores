@@ -461,6 +461,7 @@
         event
       ) =>
       {
+        isShowWalletModal = false;
         await updateUserProfileData
         (
           {
@@ -878,11 +879,10 @@ Profile Settings
         maxlength="256"
         cols="10"
         rows="3"
-        placeholder={profileTrs.profile?.about_form_field }
+        placeholder={profileTrs.profile?.about_form_field}
         aria-placeholder="Username input here"
         aria-label="Username input"
         bind:value={aboutInput}
-        class:input-error={globalStateErrors.has('ErrorUsername')}
       />
       <span class="counter">{aboutInput.length}/256</span>
     </div>
