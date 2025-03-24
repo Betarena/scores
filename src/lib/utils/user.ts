@@ -1,39 +1,74 @@
 // ╭──────────────────────────────────────────────────────────────────────────────────╮
-// │ 📌 High Order Component Overview                                                 │
+// │ 📌 High Order Overview                                                           │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
-// │ ➤ Internal Svelte Code Format :|: V.8.0                                          │
-// │ ➤ Status :|: 🔒 LOCKED                                                           │
-// │ ➤ Author(s) :|: @migbash                                                         │
+// │ ➤ Code Format   // V.8.0                                                         │
+// │ ➤ Status        // 🔒 LOCKED                                                     │
+// │ ➤ Author(s)     // @migbash                                                      │
+// │ ➤ Maintainer(s) // @migbash                                                      │
+// │ ➤ Created on    // <date-created>                                                │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
 // │ 📝 Description                                                                   │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
-// │ > Scores Authenticated User Common Logic                                         │
+// │ BETARENA (Module)                                                                │
+// │ |: Scores Authenticated User Common Logic
 // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 // #region ➤ 📦 Package Imports
+
+import purify from 'dompurify';
 
 import { post } from '$lib/api/utils.js';
 import { userBalanceListen, userDataFetch } from '$lib/firebase/common.js';
 import { delCookie, setCookie } from '$lib/store/cookie.js';
 import sessionStore from '$lib/store/session.js';
-import userBetarenaSettings from '$lib/store/user-settings.js';
-import { dlog, dlogv2 } from './debug.js';
+import userBetarenaSettings, { type IDataProp } from '$lib/store/user-settings.js';
+import { dlog } from '$lib/utils/debug.js';
+import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.betarena-user.js';
+import { dlogv2, log_v3 } from './debug.js';
 import { selectLanguage } from './navigation.js';
 import { gotoSW } from './sveltekitWrapper.js';
 
+import { db_firestore, storage } from '$lib/firebase/init.js';
+import { storePageProfileSettings } from '$lib/store/page.profile.settings.js';
+import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
+import { doc, updateDoc } from 'firebase/firestore';
+import { deleteObject, ref as refStorage } from 'firebase/storage';
+
 import type { IPageRouteId } from '$lib/types/types.session.js';
+import type { BetarenaUser } from '$lib/types/types.user-settings.js';
 
 // #endregion ➤ 📦 Package Imports
 
+// ╭──────────────────────────────────────────────────────────────────────────────────╮
+// │ 💠 │ USER AUTHENTICATION LIFECYCLE                                               │
+// ╰──────────────────────────────────────────────────────────────────────────────────╯
+
 /**
  * @author
- *  @migbash
+ *  @mbacharo
  * @summary
- *  🟦 HELPER
+ *  📝 Authentication Helper Logic
+ * @summary_tags
+ *  - ♦️ IMPORTANT
+ *  - 🔷 HELPER
+ * @error_handle_notice
+ *  🔰 HANDLED
+ *    │: Error is caught & handled.
  * @description
- *  - 📣 [1] Initialize an **authenticated** `user`.
- *  - 📣 [2] Sets `user` privilige cookie.
- *  - 📣 [3] Sets `user` data listeners.
+ *  📝 Login workflow for user.
+ *  - [1] Initialize an **authenticated** `user`.
+ *  - [2] Sets `user` privilige cookie.
+ *  - [3] Sets `user` data listeners.
+ * @example
+ *  [1]──────────────────────────────────────────────────────────────────
+ *  │ initUser();
+ *  ┣────────────────────────────────────────────────────────────────────
+ *  │ DESCRIPTION
+ *  │ : Initialize an **authenticated** `user`.
+ *  ┣────────────────────────────────────────────────────────────────────
+ *  │ OUTPUT
+ *  │ : void
+ *  [X]──────────────────────────────────────────────────────────────────
  * @return { Promise < void > }
  */
 export async function initUser
@@ -73,7 +108,8 @@ export async function initUser
   );
 
   // ╭─────
-  // │ TODO: :|: can be promoted to 'userDataFetch(..)' logic
+  // │ TODO:
+  // │ │: can be promoted to 'userDataFetch(..)' logic
   // ╰─────
   userBalanceListen
   (
@@ -82,7 +118,7 @@ export async function initUser
 
   // ╭─────
   // │ NOTE:
-  // │ > pesists latest user data to `CRISP`
+  // │ │: pesists latest user data to `CRISP`
   // ╰─────
   await post
   (
@@ -110,36 +146,50 @@ export async function initUser
 
 /**
  * @author
- *  @migbash
+ *  @mbacharo
  * @summary
- *  🟦 HELPER
+ *  📝 Authentication Helper Logic
+ * @summary_tags
+ *  - ♦️ IMPORTANT
+ *  - 🔷 HELPER
+ * @error_handle_notice
+ *  🔰 HANDLED
+ *    │: Error is caught & handled.
  * @description
+ *  📝 Logout workflow for user.
  *  - [1] 📣 **Logs-out** `user` from platform.
  *  - [2] ⚡️ Toggles respective `UI` changes.
  *  - [3] ⚡️ Deletes `cookies` for `user` privilidges.
- * @returns { Promise < void > }
+ * @example
+ *  [1]──────────────────────────────────────────────────────────────────
+ *  │ logoutUser();
+ *  ┣────────────────────────────────────────────────────────────────────
+ *  │ DESCRIPTION
+ *  │ : Logout workflow for user.
+ *  ┣────────────────────────────────────────────────────────────────────
+ *  │ OUTPUT
+ *  │ : void
+ *  [X]──────────────────────────────────────────────────────────────────
+ * @return { Promise < void > }
  */
 export async function logoutUser
 (
 ): Promise < void >
 {
   // [🐞]
-  dlog
-  (
-    '🚏 checkpoint ➤ logoutUser(..)',
-    true
-  );
+  dlog('🚏 checkpoint ➤ logoutUser(..) // START');
 
   const
     /**
      * @description
-     *  📣 **Authenticated User** `language` preference
+     *  📝 **Authenticated User** `language` preference
      */
     userLang = userBetarenaSettings.extract<string>('lang-user')
   ;
 
   // ╭─────
-  // │ CHECK :|: for 'user' already being non-authenticated.
+  // │ CHECK:
+  // | |: for 'user' already being 'non-authenticated'.
   // ╰─────
   // if (checkNull(userLang)) return;
 
@@ -147,17 +197,17 @@ export async function logoutUser
   const
     /**
      * @description
-     *  📣 Current page `routeId`
+     *  📝 Current page `routeId`
      */
     currentRouteId = sessionStore.extract<IPageRouteId>('routeId'),
     /**
      * @description
-     *  📣 Redirect `link` to navigate to as a consequence of _logout_
+     *  📝 Redirect `link` to navigate to as a consequence of _logout_
      */
     redirectLink = `/${userLang == 'en' || userLang == undefined ? '' : userLang}`
   ;
 
-  if (currentRouteId === "Standard" || currentRouteId === "ProfilePage")
+  if (currentRouteId === 'Standard' || currentRouteId === 'ProfilePage')
     await gotoSW
     (
       redirectLink,
@@ -170,8 +220,8 @@ export async function logoutUser
     [
       // ╭─────
       // │ NOTE: IMPORTANT
-      // │ > 'user-object' must be first, otherwise, 'language' will
-      // │ > trigger cascading 'user' logic, which should no longer exist.
+      // │ |: 'user-object' must be first, otherwise, 'language' will
+      // │ |: trigger cascading 'user' logic, which should no longer exist.
       // ╰─────
       ['user-object', undefined],
       ['lang', sessionStore.extract('lang')]
@@ -184,4 +234,342 @@ export async function logoutUser
   );
 
   return;
+}
+
+// ╭──────────────────────────────────────────────────────────────────────────────────╮
+// │ 📌 │ USER HELPER LOGIC                                                           │
+// ╰──────────────────────────────────────────────────────────────────────────────────╯
+
+/**
+ * @author
+ *  @mbacharo
+ * @summary
+ *  📝 Authentication Helper Logic
+ * @summary_tags
+ *  - ♦️ IMPORTANT
+ *  - 🔷 HELPER
+ * @error_handle_notice
+ *  🔰 HANDLED
+ *    │: Error is caught & handled.
+ * @description
+ *  📝 Update user profile data.
+ * @example
+ *  [1]──────────────────────────────────────────────────────────────────
+ *  │ updateUserProfileData
+ *  │ (
+ *  │   {
+ *  │     ...
+ *  │   } as BetarenaUser
+ *  │ );
+ *  ┣────────────────────────────────────────────────────────────────────
+ *  │ DESCRIPTION
+ *  │ : Update user profile data.
+ *  ┣────────────────────────────────────────────────────────────────────
+ *  │ OUTPUT
+ *  │ : void
+ *  [X]──────────────────────────────────────────────────────────────────
+ * @param { BetarenaUser } objUserNewData
+ *  ❗️ **REQUIRED** Object containing new user data.
+ * @return { Promise < void > }
+ */
+export async function updateUserProfileData
+(
+  objUserNewData: BetarenaUser
+): Promise < void >
+{
+  return await tryCatchAsync
+  (
+    async (
+    ) =>
+    {
+      const
+        /**
+         * @description
+         * 📝 User `object` instance (snapshot)
+         */
+        objUser = userBetarenaSettings.extractAll(),
+        /**
+         * @description
+         * 📝 User `object` for data properties to be updated.
+         */
+        objDataToUpdate: BetarenaUser = {}
+      ;
+
+      // [🐞]
+      log_v3
+      (
+        {
+          strGroupName: 'updateUserProfileData(..) // START',
+          msgs:
+          [
+            `🔹 [var] ➤ objUserNewData :|: ${JSON.stringify(objUserNewData)}`,
+            `🔹 [var] ➤ objUser :|: ${JSON.stringify(objUser)}`
+          ]
+        }
+      );
+
+      if (!objUser)
+        throw new Error('🔴 User not found...');
+      ;
+
+      // ╭─────
+      // │ NOTE:
+      // │ |: Check for changes in `user` data, to avoid unnecessary updates when no changes are detected.
+      // ╰─────
+
+      if (![objUser.user?.scores_user_data?.username, '', undefined].includes(objUserNewData.username))
+        objDataToUpdate.username = objUserNewData.username;
+      ;
+      if (![objUser.user?.scores_user_data?.name, '', undefined].includes(objUserNewData.name))
+        objDataToUpdate.name = objUserNewData.name;
+      ;
+      if (![objUser.user?.scores_user_data?.about, '', undefined].includes(objUserNewData.about))
+        objDataToUpdate.about = objUserNewData.about;
+      ;
+      if (![objUser.user?.scores_user_data?.wallet_id, '', undefined].includes(objUserNewData.wallet_id))
+        objDataToUpdate.wallet_id = objUserNewData.wallet_id;
+      ;
+      if (![objUser.user?.scores_user_data?.profile_photo, '', undefined].includes(objUserNewData.profile_photo))
+        objDataToUpdate.profile_photo = objUserNewData.profile_photo;
+      ;
+
+      if (Object.keys(objDataToUpdate).length == 0)
+      {
+        // [🐞]
+        dlog('🔴 No changes detected...');
+        return;
+      }
+
+      // ╭─────
+      // │ NOTE:
+      // │ |: Complenentary functions to handle updates to:
+      // │ |: - [1] username
+      // │ |: - [2] profile_picture
+      // ╰─────
+
+      async function _upsertProfileUsername
+      (
+      ): Promise < void >
+      {
+        // [🐞]
+        dlog('_upsertProfileUsername(..) // START');
+
+        const
+          /**
+           * @description
+           * 📝 Data Response (0)
+           */
+          dataRes0
+            = await new Betarena_User_Class().upsertUsername
+            (
+              {
+                query: {},
+                body:
+                {
+                  uid: objUser!.user?.firebase_user_data?.uid,
+                  newUsername: objDataToUpdate.username,
+                  isGenerateNew: false
+                }
+              }
+            )
+        ;
+
+        if (dataRes0.error)
+        {
+          // [🐞]
+          dlog('🔴 Username is invalid...');
+
+          storePageProfileSettings.updateData
+          (
+            [
+              [ 'globalSateErrorAdd', 'ErrorUsername' ],
+              [ 'globalStateErrorUsername', dataRes0.error.cause.validation ]
+            ]
+          );
+
+          throw new Error('🔴 Username is invalid...');
+        }
+      }
+
+      function _deleteProfilePicture
+      (
+      ): void
+      {
+        // [🐞]
+        dlog('_deleteProfilePicture(..) // START');
+
+        deleteObject
+        (
+          refStorage
+          (
+            storage,
+            `Users_data/${objUser?.user?.firebase_user_data?.uid}/profile-pic.png`
+          )
+        ).catch
+        (
+          (error) =>
+          {
+            dlog('🔴 Error deleting profile picture...', error);
+          }
+        );
+
+        return;
+      }
+
+      if (objDataToUpdate.username)
+        await _upsertProfileUsername();
+      ;
+      if (objDataToUpdate.profile_photo === null)
+        _deleteProfilePicture();
+      ;
+
+      const
+        /**
+         * @description
+         * 📝 List of data properties to update
+         */
+        listDataToUpdate: [IDataProp, any][] = []
+      ;
+
+      // ╭─────
+      // │ NOTE:
+      // │ |: Loop through the (1) `object` containing 'NEW' data and (2) update the `data` accordingly.
+      // ╰─────
+      for (const key in objDataToUpdate)
+      {
+        // [🐞]
+        // dlog(`🔹 [var] ➤ key :|: ${key}`);
+
+        if (key === 'username')
+          listDataToUpdate.push([ 'user-name', purify.sanitize(objDataToUpdate[key]) ]);
+        else if (key === 'name')
+          listDataToUpdate.push([ 'user-name2', purify.sanitize(objDataToUpdate[key]) ]);
+        else if (key === 'about')
+          listDataToUpdate.push([ 'user-about', purify.sanitize(objDataToUpdate[key]) ]);
+        else if (key === 'wallet_id')
+          listDataToUpdate.push([ 'user-wallet', objDataToUpdate[key] ]);
+        else if (key === 'profile_photo')
+          listDataToUpdate.push([ 'user-avatar', objDataToUpdate[key] ]);
+        ;
+      }
+
+      userBetarenaSettings.updateData(listDataToUpdate);
+
+      storePageProfileSettings.updateData
+      (
+        [
+          [ 'globalStateErrorUsername', null ],
+          [ 'globalStateErrorRemove', 'ErrorUsername' ],
+          [ 'globalStateAdd', 'ProfileUpdated' ]
+        ]
+      );
+
+      await updateDoc
+      (
+        doc
+        (
+          db_firestore,
+          'betarena_users',
+          objUser.user?.firebase_user_data?.uid!
+        ),
+        {
+          ...objDataToUpdate
+        }
+      );
+
+      // [🐞]
+      log_v3
+      (
+        {
+          strGroupName: 'updateUserProfileData(..) // END',
+          msgs:
+          [
+            `🔹 [var] ➤ listDataToUpdate :|: ${JSON.stringify(listDataToUpdate)}`,
+            `🔹 [var] ➤ objDataToUpdate :|: ${JSON.stringify(objDataToUpdate)}`
+          ]
+        }
+      );
+
+      return;
+    }
+  );
+}
+
+/**
+ * @author
+ *  @mbacharo
+ * @summary
+ *  📝 Authentication Helper Logic
+ * @summary_tags
+ *  - ♦️ IMPORTANT
+ *  - 🔷 HELPER
+ * @error_handle_notice
+ *  🔰 HANDLED
+ *    │: Error is caught & handled.
+ * @description
+ *  📝 Delete user profile data
+ * @example
+ *  [1]──────────────────────────────────────────────────────────────────
+ *  │ deleteUserProfile();
+ *  ┣────────────────────────────────────────────────────────────────────
+ *  │ DESCRIPTION
+ *  │ : Delete user profile data.
+ *  ┣────────────────────────────────────────────────────────────────────
+ *  │ OUTPUT
+ *  │ : void
+ *  [X]──────────────────────────────────────────────────────────────────
+ * @return { Promise < void > }
+ */
+export async function deleteUserProfile
+(
+): Promise < void >
+{
+  return await tryCatchAsync
+  (
+    async (
+    ) =>
+    {
+      const
+        /**
+         * @description
+         * 📝 User `object` instance (snapshot)
+         */
+        objUser = userBetarenaSettings.extractAll()
+      ;
+
+      // [🐞]
+      log_v3
+      (
+        {
+          strGroupName: 'deleteUserProfile(..) // START',
+          msgs:
+          [
+            `🔹 [var] ➤ objUser :|: ${JSON.stringify(objUser)}`
+          ]
+        }
+      );
+
+      if (!objUser)
+        throw new Error('🔴 User not found...');
+      ;
+
+      await new Betarena_User_Class().deleteUser
+      (
+        {
+          query:
+          {
+            firebaseAuthToken: (await objUser!.user?.firebase_user_data?.getIdToken())
+          },
+          body:
+          {
+            uid: objUser!.user?.firebase_user_data?.uid
+          }
+        }
+      );
+
+      await logoutUser();
+
+      return;
+    }
+  );
 }
