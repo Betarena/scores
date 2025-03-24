@@ -29,7 +29,7 @@
 
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 
-	import AccountSettingsBoard from '$lib/components/page/profile/Widget-AccountSettings.svelte';
+	import AccountSettingsBoard from '$lib/components/page/profile/settings/Widget-AccountSettings.svelte';
 	import DashboardWidget from '$lib/components/page/profile/Widget-Dashboard.svelte';
 	import UserMenu from '$lib/components/page/profile/Widget-MenuOpt.svelte';
 	import WidgetCompHist from '$lib/components/page/profile/competitions-history/Widget-Comp-Hist.svelte';

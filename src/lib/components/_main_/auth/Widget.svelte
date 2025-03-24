@@ -48,21 +48,21 @@
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { onDestroy, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
 	import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
 	import { getMoralisAuth } from '@moralisweb3/client-firebase-auth-utils';
 	import { signInWithMoralis } from '@moralisweb3/client-firebase-evm-auth';
-	import
-	  {
-	    GithubAuthProvider,
-	    GoogleAuthProvider,
-	    fetchSignInMethodsForEmail,
-	    sendSignInLinkToEmail,
-	    signInWithPopup,
-	    type ActionCodeSettings
-	  } from 'firebase/auth';
+  import
+  {
+    GithubAuthProvider,
+    GoogleAuthProvider,
+    fetchSignInMethodsForEmail,
+    sendSignInLinkToEmail,
+    signInWithPopup,
+    type ActionCodeSettings
+  } from 'firebase/auth';
 
 	import { app, auth } from '$lib/firebase/init';
 	import sessionStore from '$lib/store/session.js';
@@ -71,10 +71,10 @@
 	import { AU_W_TAG, dlog, dlogv2, errlog } from '$lib/utils/debug';
 	import { viewportChangeV2 } from '$lib/utils/device';
 	import { scoresAuthStore } from './_store.js';
+	import { toZeroPrefixDateStr } from '$lib/utils/dates.js';
 
   import ModalBackdrop from '$lib/components/misc/modal/Modal-Backdrop.svelte';
 
-	import { toZeroPrefixDateStr } from '$lib/utils/dates.js';
 	import type { IAuthTrs } from '@betarena/scores-lib/types/auth.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -172,9 +172,6 @@
         */
       } as ActionCodeSettings
   ;
-
-  // [🐞]
-	// inputEmail = 'migbashdev@gmail.com';
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -873,21 +870,19 @@
     async (
     ) =>
     {
-      iconList
-      = [
-          (await import('./assets/discord.svg')).default, // [0] discord_icon
-          (await import('./assets/email-verify.svg')).default, // [1] email_verify
-          (await import('./assets/error-alert.svg')).default, // [2] error_icon
-          (await import('./assets/github-dark.svg')).default, // [3] github_dark_icon
-          (await import('./assets/github.svg')).default, // [4] github_icon
-          (await import('./assets/google.svg')).default, // [5] google_icon
-          (await import('./assets/lodaer-anim-2.svg')).default, // [6] loader_animation
-          (await import('./assets/logo-auth.svg')).default, // [7] logo
-          (await import('./assets/logo-dark.svg')).default, // [8] logo_dark
-          (await import('./assets/metamask.svg')).default, // [9] metamask_icon
-          (await import('./assets/success-alert.svg')).default // [10] success_icon
-        ]
-      ;
+      iconList = [
+        (await import('./assets/discord.svg')).default, // [0] discord_icon
+        (await import('./assets/email-verify.svg')).default, // [1] email_verify
+        (await import('./assets/error-alert.svg')).default, // [2] error_icon
+        (await import('./assets/github-dark.svg')).default, // [3] github_dark_icon
+        (await import('./assets/github.svg')).default, // [4] github_icon
+        (await import('./assets/google.svg')).default, // [5] google_icon
+        (await import('./assets/lodaer-anim-2.svg')).default, // [6] loader_animation
+        (await import('./assets/logo-auth.svg')).default, // [7] logo
+        (await import('./assets/logo-dark.svg')).default, // [8] logo_dark
+        (await import('./assets/metamask.svg')).default, // [9] metamask_icon
+        (await import('./assets/success-alert.svg')).default // [10] success_icon
+      ];
       iconList = iconList;
 
       scoresAuthStore.updateData
@@ -898,15 +893,6 @@
       );
 
       return;
-    }
-  );
-
-  onDestroy
-  (
-    () =>
-    {
-      // @ts-expect-error
-      // clearInterval(interval1);
     }
   );
 

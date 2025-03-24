@@ -1,13 +1,16 @@
 // ╭──────────────────────────────────────────────────────────────────────────────────╮
-// │ 📌 High Order Component Overview                                                 │
+// │ 📌 High Order Overview                                                           │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
-// │ ➤ Internal Svelte Code Format :|: V.8.0                                          │
-// │ ➤ Status :|: 🔒 LOCKED                                                           │
-// │ ➤ Author(s) :|: @migbash                                                         │
+// │ ➤ Code Format   // V.8.0                                                         │
+// │ ➤ Status        // 🔒 LOCKED                                                     │
+// │ ➤ Author(s)     // @migbash                                                      │
+// │ ➤ Maintainer(s) // @migbash                                                      │
+// │ ➤ Created on    // 2024-07-01                                                    │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
 // │ 📝 Description                                                                   │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
-// │ > Main Scores Platform Authentication Logic                                      │
+// │ Betarena // TS.Module // Authentication
+// │ :| Main Scores Platform Authentication Logic
 // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 // #region ➤ 📦 Package Imports
@@ -15,21 +18,19 @@
 import { browser } from '$app/environment';
 import { getMoralisAuth } from '@moralisweb3/client-firebase-auth-utils';
 import { signInWithMoralis } from '@moralisweb3/client-firebase-evm-auth';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { generateUsername } from 'unique-username-generator';
+import { doc, getDoc } from 'firebase/firestore';
 
-import { post } from '$lib/api/utils.js';
-import { app, db_firestore } from '$lib/firebase/init.js';
+import { app, auth, db_firestore } from '$lib/firebase/init.js';
 import { getCookie } from '$lib/store/cookie.js';
 import sessionStore from '$lib/store/session.js';
 import userBetarenaSettings from '$lib/store/user-settings.js';
 import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.betarena-user.js';
 import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
-import { AU_W_TAG, dlog, dlogv2, errlog } from './debug.js';
+import { AU_W_TAG, dlog, log_v3 } from './debug.js';
 import { initUser } from './user.js';
 
 import type { BetarenaUser, IScoreUser } from '$lib/types/types.user-settings.js';
-import type { IAuthType } from '@betarena/scores-lib/types/_FIREBASE_.js';
+import type { IAuthType } from '@betarena/scores-lib/types/firebase/firestore.js';
 import type { User } from 'firebase/auth';
 
 // #endregion ➤ 📦 Package Imports
@@ -38,16 +39,37 @@ import type { User } from 'firebase/auth';
  * @author
  *  @migbash
  * @summary
- *  🟥 MAIN
+ *  📝 Authentication General :: Helper
+ * @summary_tags
+ *  - ♦️ IMPORTANT
+ *  - 🔷 HELPER
+ * @error_handle_notice
+ *  🔰 HANDLED
+ *    │: Error is caught & handled.
  * @description
- *  - 📣 Final `authentication` step.
- *  - 📣 Updates `stores`, `localStoreage` and `UI`.
+ *  📝 Final authentication step. Updates (1) `stores`, (2) `localStoreage` and (3) `UI`.
+ * @example
+ *  [1]──────────────────────────────────────────────────────────────────
+ *  │ successAuthComplete
+ *  │ (
+ *  │   'login',
+ *  │   firebaseUser,
+ *  │   '0x1234567890abcdef',
+ *  │   'email'
+ *  │ );
+ *  ┣────────────────────────────────────────────────────────────────────
+ *  │ DESCRIPTION
+ *  │ : Final authentication step.
+ *  ┣────────────────────────────────────────────────────────────────────
+ *  │ OUTPUT
+ *  │ : boolean
+ *  [X]──────────────────────────────────────────────────────────────────
  * @param { User } firebaseUser
- *  💠 **[required]** User `data`.
+ *  ❗️ **REQUIRED** User `data`.
  * @param { string } web3WalletAddress
  *  💠 [optional] User web3 wallet address.
  * @param { IAuthType } authProviderType
- *  💠 **[required]** User authetication option used.
+ *  ❗️ **REQUIRED** User authetication option used.
  * @return { Promise < boolean > }
  *  📤 Authentication terminal `state`.
  */
@@ -59,6 +81,9 @@ export async function successAuthComplete
   authProviderType?: IAuthType
 ): Promise < boolean >
 {
+  // ╭─────
+  // │ NOTE: IMPORTANT |:| Check for browser environment.
+  // ╰─────
   if (!browser) return false;
 
   return await tryCatchAsync
@@ -67,14 +92,18 @@ export async function successAuthComplete
     ): Promise < boolean > =>
     {
       // [🐞]
-      dlogv2
+      log_v3
       (
-        `${AU_W_TAG[0]} successAuthComplete(..)`,
-        [
-          `🔹 [var] ➤ firebaseUser :|: ${JSON.stringify(firebaseUser, null, 4)}`,
-          `🔹 [var] ➤ web3WalletAddress :|: ${JSON.stringify(web3WalletAddress, null, 4)}`,
-          `🔹 [var] ➤ authProviderType :|: ${JSON.stringify(authProviderType, null, 4)}`,
-        ]
+        {
+          strGroupName: '🚏 checkpoint ➤ successAuthComplete(..) // START',
+          msgs:
+          [
+            `🔹 [var] authType :: ${authType}`,
+            `🔹 [var] firebaseUser :: ${firebaseUser}`,
+            `🔹 [var] web3WalletAddress :: ${web3WalletAddress}`,
+            `🔹 [var] authProviderType :: ${authProviderType}`
+          ]
+        }
       );
 
       const
@@ -83,7 +112,7 @@ export async function successAuthComplete
          * 📝 Retrieve (or, create) BetarenaUser.
          */
         betarenaUser
-          = await userFirestore
+          = await getFirestoreBetarenaUser
           (
             firebaseUser?.uid!,
             firebaseUser!,
@@ -104,23 +133,32 @@ export async function successAuthComplete
       userBetarenaSettings.updateData
       (
         [
-          ['user-object', userObject]
+          [ 'user-object', userObject ]
         ]
       );
 
       sessionStore.updateData
       (
         [
-          ['currentToast', (authType == 'login' ? 'Auth_Success_L_Toast' : 'Auth_Success_R_Toast')],
-          ['currentModal', null]
+          [ 'currentToast', (authType == 'login' ? 'Auth_Success_L_Toast' : 'Auth_Success_R_Toast') ],
+          [ 'currentModal', null ]
         ]
       );
 
       initUser();
 
+      // [🐞]
+      log_v3
+      (
+        {
+          strGroupName: '🚏 checkpoint ➤ successAuthComplete(..) // END',
+          msgs: []
+        }
+      );
+
       return true;
     }
-  ) as boolean;
+  );
 }
 
 /**
@@ -129,13 +167,16 @@ export async function successAuthComplete
  * @summary
  *  🟥 MAIN
  * @description
- *  📣 Authenticates user with `Moralis Auth`.
+ *  📝 Authenticate user with `Moralis Auth`.
  * @return { Promise < void > }
  */
 export async function authWithMoralis
 (
 ): Promise < void >
 {
+  // ╭─────
+  // │ NOTE: IMPORTANT |:| Check for browser environment.
+  // ╰─────
   if (!browser) return;
 
   await tryCatchAsync
@@ -161,39 +202,32 @@ export async function authWithMoralis
         'wallet'
       );
 
-      // ▓ CHECK
-      // > for 'deep link' of invest box.
-      // if (investDepositIntent == 'true')
-      // {
-      //   // ▓ [🐞]
-      //   // alert('mavigating to invest-box');
+      // ╭─────
+      // │ NOTE: STASHED |:| Redirect to invest box if user has intent.
+      // ╰─────
+      /*
+        CHECK
+        > for 'deep link' of invest box.
+        if (investDepositIntent == 'true')
+        {
+          // [🐞]
+          // alert('mavigating to invest-box');
 
-      //   const targetUrl = `/u/investor/${$userBetarenaSettings.lang}`;
+          const targetUrl = `/u/investor/${$userBetarenaSettings.lang}`;
 
-      //   // ▓ [🐞]
-      //   console.log('targetUrl', targetUrl);
+          // [🐞]
+          console.log('targetUrl', targetUrl);
 
-      //   await goto
-      //   (
-      //     targetUrl,
-      //     {
-      //       replaceState: true
-      //     }
-      //   );
-      // }
+          await goto
+          (
+            targetUrl,
+            {
+              replaceState: true
+            }
+          );
+        }
+      */
 
-      return;
-    },
-    (
-      ex: unknown
-    ): void =>
-    {
-      // [🐞]
-      if (ex?.toString()?.includes('TypeError: null is not an object (evaluating \'signerOrProvider.call\')'))
-        console.info('❗️', '');
-      else
-        console.error('💀 Unhandled :: ex');
-      ;
       return;
     }
   );
@@ -201,35 +235,61 @@ export async function authWithMoralis
   return;
 }
 
+// ╭──────────────────────────────────────────────────────────────────────────────────╮
+// │ 💠 │ HELPER                                                                      │
+// ╰──────────────────────────────────────────────────────────────────────────────────╯
+
 /**
  * @author
  *  @migbash
  * @summary
- *  🟥 MAIN
- * @CUSTOM_TRY_CATCH
+ *  📝 Firebase Firestore :: Helper
+ * @summary_tags
+ *  - ♦️ IMPORTANT
+ *  - 🔷 HELPER
+ * @error_handle_notice
+ *  🔰 HANDLED
+ *    │: Error is caught & handled.
  * @description
- *  - 📣 Retrieve target user info from `Firebase/Firestore`.
- *  - 📣 _if `user` exists_, return user `data`.
- *  - 📣 _else_ create a new instance of user for Firestore.
+ *  📝 Retrieve **TARGET** `user` from Firebase Firestore.
+ * @example
+ *  [1]──────────────────────────────────────────────────────────────────
+ *  │ getFirestoreBetarenaUser
+ *  │ (
+ *  │   'uid-sample-1',
+ *  │   firebaseUser,
+ *  │   '0x1234567890abcdef',
+ *  │   'email'
+ *  │ );
+ *  ┣────────────────────────────────────────────────────────────────────
+ *  │ DESCRIPTION
+ *  │ : Retrieve target user info from Firestore.
+ *  ┣────────────────────────────────────────────────────────────────────
+ *  │ OUTPUT
+ *  │ : BetarenaUser | null
+ *  [X]──────────────────────────────────────────────────────────────────
  * @param { string } uid
- *  💠 **[required]** User uid.
+ *  ❗️ **REQUIRED** User uid.
  * @param { User } firebaseUser
- *  💠 **[required]** User `data`.
- * @param { string } web3WalletAddress
- *  💠 **[required]** User `web3` address.
+ *  ❗️ **REQUIRED** `Firebase/Authentication` data for respective `user`.
+ * @param { string | undefined } web3WalletAddress
+ *  ❗️ **REQUIRED** User `web3` address.
  * @param { IAuthType } authProviderType
- *  💠 **[required]** User authentication `provider` used.
+ *  ❗️ **REQUIRED** User authentication `provider` used.
  * @return { Promise < BetarenaUser | null > }
- *  📤 Target `user` (or, **new**) data.
+ *  📤 Target (or, **NEWLY CREATED**) `user` data.
  */
-async function userFirestore
+async function getFirestoreBetarenaUser
 (
   uid: string,
   firebaseUser: User,
-  web3WalletAddress: string,
+  web3WalletAddress: string | undefined,
   authProviderType: IAuthType,
 ): Promise < BetarenaUser | null >
 {
+  // ╭─────
+  // │ NOTE: IMPORTANT |:| Check for browser environment.
+  // ╰─────
   if (!browser) return null;
 
   return await tryCatchAsync
@@ -237,194 +297,147 @@ async function userFirestore
     async (
     ): Promise < BetarenaUser > =>
     {
-      const
-        docRef = doc
-        (
-          db_firestore,
-          'betarena_users',
-          uid!
-        ),
-        docSnap = await getDoc(docRef),
-        lang = sessionStore.extract<string>('lang')
-      ;
-
-      // ╭─────
-      // │ CHECK
-      // │ > for existing document (user).
-      // ╰─────
-      if (docSnap.exists())
-      {
-        // [🐞]
-        dlogv2
-        (
-          AU_W_TAG[0],
-          [
-            '🟢 Target UID exists',
-            `🟦 var: docSnap ${docSnap.data()}`
-          ]
-        );
-
-        return docSnap.data() as BetarenaUser;
-      }
-
       // [🐞]
-      dlogv2
-      (
-        AU_W_TAG[0],
-        [
-          '🔴 Target UID does not exists',
-          '🔵 Creating new BetarenaUser instance'
-        ]
-      );
-
-      const
-        /**
-         * @description
-         * 📝 **NEW** user instance.
-         */
-        scoresUserData: BetarenaUser
-          = {
-            lang,
-            registration_type: [authProviderType],
-            username: generateUsername('', 0, 10),
-            register_date: firebaseUser.metadata.creationTime,
-            profile_photo: firebaseUser.photoURL,
-            web3_wallet_addr: web3WalletAddress || undefined
-          },
-        /**
-         * @description
-         * 📝 **NEW** user instance.
-         */
-        userObject: IScoreUser
-          = {
-            firebase_user_data: firebaseUser,
-            scores_user_data: scoresUserData
-          }
-      ;
-
-      // ╭─────
-      // │ NOTE:
-      // │ > populate user data to firestore (DB)
-      // ╰─────
-      await createFirestoreUser(userObject);
-
-      return scoresUserData;
-    },
-    (
-      ex: unknown
-    ): null =>
-    {
-      // [🐞]
-      errlog(`❌ Error adding document: ${ex}`)
-
-      // [🐞]
-      if (ex?.toString()?.includes('TypeError: null is not an object (evaluating \'signerOrProvider.call\')'))
-        console.info('❗️', '');
-      else
-        console.error('💀 Unhandled :: ex');
-      ;
-
-      return null;
-    }
-  ) as BetarenaUser | null;
-}
-
-/**
- * @author
- *  @migbash
- * @summary
- *  🟥 MAIN
- * @description
- *  📣 Persist target **NEW** `user` to Firebase Firestore.
- * @param { IScoreUser } user
- *  💠 **[required]** Target **NEW** user `data` instance.
- * @return { Promise < void > }
- */
-async function createFirestoreUser
-(
-  user: IScoreUser
-): Promise < void >
-{
-  if (!browser) return;
-
-  return await tryCatchAsync
-  (
-    async (
-    ): Promise < void > =>
-    {
-      // [🐞]
-      dlog
-      (
-        `${AU_W_TAG[0]} 🔵 Persisting New User ${user.firebase_user_data?.uid} to Firestore`
-      );
-
-      const
-        cookie = getCookie
-        (
-          document.cookie
-        ),
-        cookieValue = cookie.betarenaScoresCookieReferralCode
-      ;
-
-      // ╭─────
-      // │ CHECK
-      // │ > for referral cookie presence on new users.
-      // ╰─────
-      if (cookieValue)
-      {
-        user!.scores_user_data!.referredBy = cookieValue;
-
-        // [🐞]
-        console.log('📣', user!.scores_user_data!.referredBy);
-
-        // ╭─────
-        // │ NOTE:
-        // │ > update referral creator with generated referral via firebase/functions.
-        // ╰─────
-        await post
-        (
-          `${import.meta.env.VITE_FIREBASE_FUNCTIONS_ORIGIN}/users/data/update/referral-success`,
-          // 'http://127.0.0.1:5001/betarena-ios/us-central1/api/users/data/update/referral-success'
-          {
-            referralId: cookieValue,
-            referredNewUserUid: user.firebase_user_data?.uid
-          }
-        );
-      }
-
-      user!.scores_user_data!.referralID = `REF${Math.random().toString().slice(2, 7)}`;
-
-      await setDoc
-      (
-        doc
-        (
-          db_firestore,
-          'betarena_users',
-          user.firebase_user_data?.uid!,
-        ),
-        JSON.parse(JSON.stringify(user.scores_user_data))
-      );
-
-      await new Betarena_User_Class().pingSportstackFirstCreation
+      log_v3
       (
         {
-          query:
-          {
-            uid: user.firebase_user_data?.uid!
-          },
-          body: {}
+          strGroupName: '🚏 checkpoint ➤ getFirestoreBetarenaUser(..) // START',
+          msgs:
+          [
+            `🔹 [var] user :: ${uid}`,
+            `🔹 [var] firebaseUser :: ${firebaseUser}`,
+            `🔹 [var] web3WalletAddress :: ${web3WalletAddress}`,
+            `🔹 [var] authProviderType :: ${authProviderType}`
+          ]
         }
       );
 
-      return;
-    },
-    (
-      ex: unknown
-    ): void =>
-    {
+      const
+        /**
+         * @description
+         * 📝 Target user document snapshot.
+         */
+        documentSnapshot
+          = await getDoc
+          (
+            doc
+            (
+              db_firestore,
+              'betarena_users',
+              uid!
+            )
+          )
+      ;
+
+      // ╭─────
+      // │ CHECK:
+      // │ |: for existing user & return respective user.
+      // ╰─────
+      if (documentSnapshot.exists())
+      {
+        // [🐞]
+        log_v3
+        (
+          {
+            strGroupName: '🚏 checkpoint ➤ getFirestoreBetarenaUser(..) // END',
+            msgs:
+            [
+              '🚏 checkpoint ➤ user exists',
+              `🔹 [var] documentSnapshot :: ${JSON.stringify(documentSnapshot.data(), null, 4)}`
+            ]
+          }
+        );
+
+        return documentSnapshot.data() as BetarenaUser;
+      }
+
+      // ╭─────
+      // │ NOTE:
+      // │ |: [else] create **NEW** user.
+      // ╰─────
+
+      const
+        /**
+         * @description
+         * 📝 Obejct **NEW** user instance.
+         */
+        objUser: IScoreUser
+          = {
+            firebase_user_data: firebaseUser,
+            scores_user_data: {
+              lang: sessionStore.extract<string>('lang'),
+              registration_type: [authProviderType],
+              register_date: firebaseUser.metadata.creationTime,
+              profile_photo: firebaseUser.photoURL,
+              web3_wallet_addr: web3WalletAddress
+            }
+          },
+        /**
+         * @description
+         * 📝 Data Response (0)
+         * WARNING: Does not return `user` data, only `response`.
+         *  - Use `dataRes1` for `user` data, defined below.
+         */
+        dataRes0
+          = await new Betarena_User_Class().createUser
+          (
+            {
+              query:
+              {
+                firebaseAuthToken: (await auth.currentUser?.getIdToken())
+              },
+              body:
+              {
+                uid: objUser.firebase_user_data!.uid,
+                lang: objUser.scores_user_data!.lang,
+                registration_type: objUser.scores_user_data!.registration_type,
+                register_date: objUser.scores_user_data!.register_date,
+                profile_photo: objUser.scores_user_data!.profile_photo,
+                web3_wallet_addr: objUser.scores_user_data!.web3_wallet_addr,
+                referredBy:
+                  getCookie
+                  (
+                    document.cookie
+                  ).betarenaScoresCookieReferralCode
+              }
+            }
+          )
+      ;
+
       // [🐞]
-      errlog(`❌ Error adding document: ${ex}`)
-      return;
+      log_v3
+      (
+        {
+          strGroupName: '🚏 checkpoint ➤ getFirestoreBetarenaUser(..) // END',
+          msgs:
+          [
+            `🔹 [var] dataRes0 :: ${JSON.stringify(dataRes0, null, 4)}`
+          ]
+        }
+      );
+
+      if (dataRes0.error)
+        throw new Error(JSON.stringify(dataRes0.error));
+      ;
+
+      const
+        /**
+         * @description
+         * 📝 Target user document snapshot.
+         */
+        dataRes1
+          = await getDoc
+          (
+            doc
+            (
+              db_firestore,
+              'betarena_users',
+              uid!
+            )
+          )
+      ;
+
+      return dataRes1.data() as BetarenaUser;
     }
-  ) as void;
+  );
 }
