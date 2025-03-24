@@ -1,17 +1,52 @@
-<!-- ===============
-COMPONENT JS (w/ TS)
-=================-->
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 📌 High Order Overview                                                           │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ Code Format   // V.8.0                                                         │
+│ ➤ Status        // 🔒 LOCKED                                                     │
+│ ➤ Author(s)     // @migbash                                                      │
+│ ➤ Maintainer(s) // @migbash                                                      │
+│ ➤ Created on    // February 21st, 2023                                           │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ 📝 Description                                                                   │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ BETARENA (Module) :: User Profile :: Account Settings Widget                     │
+│ |: User Profile :: Account Settings Widget
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 🟦 Svelte Component JS/TS                                                        │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
 
 <script lang="ts">
 
   // #region ➤ 📦 Package Imports
 
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
 	import { page } from '$app/stores';
-	import { createEventDispatcher, type EventDispatcher } from 'svelte';
+	import { createEventDispatcher } from 'svelte';
 	import { fade } from 'svelte/transition';
 
 	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { dlog, PR_P_STY, PR_P_TAG, PR_P_TOG } from '$lib/utils/debug';
+	import { dlog, log_v3 } from '$lib/utils/debug';
 
 	import metamask_icon from '../assets/metamask.svg';
 	import wallet from '../assets/wallet.svg';
@@ -22,7 +57,24 @@ COMPONENT JS (w/ TS)
 
   // #region ➤ 📌 VARIABLES
 
-	const dispatch: EventDispatcher < any > = createEventDispatcher();
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  const
+    /**
+     * @description
+     */
+    dispatch = createEventDispatcher()
+  ;
 
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
 
@@ -30,165 +82,239 @@ COMPONENT JS (w/ TS)
 
   // #region ➤ 🛠️ METHODS
 
-	/**
-	 * @description
-   * bubbles up to parent event
-	 * to close (this) modal widget
-	 */
-	function toggle_modal
-	(
-	): void
-	{
-	  dispatch('toggle_delete_modal');
-	}
+  async function connectWallet
+  (
+  ): Promise < void >
+  {
+    // ╭─────
+    // │ NOTE:
+    // │ |: Detecting for 'mobile' devices
+    // ╰─────
+    // if (typeof screen.orientation !== 'undefined')
+    // if (navigator?.userAgentData?.mobile)
+    if (/Mobi/i.test(window.navigator.userAgent))
+    {
+      // ╭─────
+      // │ NOTE:
+      // │ |: Navigate to MetaMask in-app browser
+      // ╰─────
+      // await goto('https://metamask.app.link/dapp/scores.betarena.com/?dappLogin=true') // ✅ works
+      // await goto('https://metamask.app.link/dapp/http://192.168.0.28:3050/') // ❌ does not work
+      // await goto('https://metamask.app.link/dapp/192.168.0.28:3050/?dappLogin=true') // ❌ does not work
+      window.open
+      (
+        `https://metamask.app.link/dapp/${$page.url.host}?metmaskAuth=true`,
+        '_self'
+      );
 
-	/**
-	 * @description
-   * connects the user to the platform using their
-   * MetaMask wallet; Dispatches event to parent to bubble up
-	 * to trigger target method;
-   * @returns { Promise<void> }
-	 */
-	async function connect_wallet_action
-	(
-	): Promise < void >
-	{
-	  // NOTE: detect mobile device
-	  // if (typeof screen.orientation !== 'undefined') {
-	  // if (navigator?.userAgentData?.mobile) {
-	  if (/Mobi/i.test(window.navigator.userAgent)) 
-	  {
-	    // [ℹ] navigate to MetaMask in-app browser
-	    // await goto('https://metamask.app.link/dapp/scores.betarena.com/?dappLogin=true') // ✅ works
-	    // await goto('https://metamask.app.link/dapp/http://192.168.0.28:3050/') // does not work
-	    // await goto('https://metamask.app.link/dapp/192.168.0.28:3050/?dappLogin=true') // does not work
-	    const dappUrl = $page.url.host
-	      ,metamaskAppDeepLink = `https://metamask.app.link/dapp/${dappUrl}?metmaskAuth=true`;
-	    window.open(metamaskAppDeepLink, '_self');
-	    toggle_modal()
-	    return
-	  }
-	  // [ℹ] restrict only to MetaMask (original)
-	  if (!providerDetect('isMetaMask')[0]) 
-	  {
-	    dlog('🔴 Moralis Auth not found!')
-	    alert('Please install the MetaMask Wallet Extension!')
-	    toggle_modal()
-	    return
-	  }
-	  const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
-	    ,account = accounts[0];
-	  dispatch('connect_wallet_action', {
-	    wallet_id: account
-	  });
-	}
+      dispatch('toggle_delete_modal');
 
-  	/**
-	 * Validates what Web3 wallet extension
-	 * is being used for the platform
-	 * @param walletType
-	 */
-	function providerDetect
-	(
-	  walletType:
-			| 'isMetaMask'
-			| 'isCoinbaseWallet'
-			| 'isBraveWallet'
-	): [boolean, any]
-	{
-	  // [ℹ] no ethereum wallet present
-	  if (!window.ethereum) 
+      return
+    }
 
-	    return [false, null];
-	  // throw new Error("No injected ethereum object.");
-		
+    // ╭─────
+    // │ NOTE:
+    // │ |: Restrict only to MetaMask (original)
+    // ╰─────
+    if (!providerDetect('isMetaMask')[0])
+    {
+      // [🐞]
+      dlog('🔴 Moralis Auth not found!');
+      // [🐞]
+      alert('Please install the MetaMask Wallet Extension!');
 
-	  // [ℹ] default provider (single) assign
-	  let target_wallet = undefined;
+      dispatch('toggle_delete_modal');
 
-	  // [ℹ] multiple provider(s) check true
-	  if (
-	    Array.isArray(window.ethereum.providers)
-	  ) 
-	  {
-	    if (walletType == 'isMetaMask') 
-	    {
-	      target_wallet
-					= window.ethereum.providers.find(
-					  (provider) =>
-					    {
-	            return provider[walletType]
-							&& provider?.isBraveWallet == undefined
-	          }
-	        );
-	    }
-	    // [ℹ] alternative
-	    // else {
-	    //   target_wallet = window.ethereum.providers.find((provider) => provider[walletType])
-	    // }
-	    dlog(`${PR_P_TAG} 🔵 More than 1 provider identified! ${window.ethereum.providers.length}`, PR_P_TOG, PR_P_STY)
-	    dlog(`${PR_P_TAG} target_wallet ${target_wallet}`, PR_P_TOG, PR_P_STY)
-	    dlog(`${PR_P_TAG} window.ethereum.providers ${window.ethereum.providers}`, PR_P_TOG, PR_P_STY)
-	  }
-	  else 
-	  {
-	    if (
-	      walletType == 'isMetaMask'
-				&& window.ethereum?.isBraveWallet
-					== undefined
-				&& window.ethereum?.isMetaMask
-					!= undefined
-				&& window.ethereum?.isMetaMask
-	    ) 
-	    {
-	      target_wallet
-					= window.ethereum[walletType];
-	    }
-	    // [ℹ] alternative
-	    // else {
-	    //   target_wallet = window.ethereum[walletType]
-	    // }
-	    dlog(`${PR_P_TAG} 🔵 1 provider identified! ${window.ethereum}`, PR_P_TOG, PR_P_STY)
-	    dlog(`${PR_P_TAG} target_wallet ${target_wallet}`, PR_P_TOG, PR_P_STY)
-	    dlog(`${PR_P_TAG} window.ethereum ${window.ethereum}`, PR_P_TOG, PR_P_STY)
-	  }
+      return
+    }
 
-	  // [ℹ] TARGET (THIS) single provider check true
-	  if (target_wallet != undefined) 
-	  {
-	    dlog(`${PR_P_TAG} 🟢 ${walletType} identified`, PR_P_TOG, PR_P_STY)
-	    // DOC: https://stackoverflow.com/questions/69377437/metamask-conflicting-with-coinbase-wallet
-	    // DOC: https://stackoverflow.com/questions/72613011/whenever-i-click-on-connect-metamask-button-why-it-connects-the-coinbase-wallet
-	    // DOC: https://stackoverflow.com/questions/68023651/how-to-connect-to-either-metamask-or-coinbase-wallet
-	    // DOC: https://github.com/MetaMask/metamask-extension/issues/13622
-	    // NOTE: conflicting use of CoinBaseWallet & MetaMask
-	    // NOTE: setting MetaMask as main wallet
-	    // NOTE: IMPORTANT causes issues with FireFox
-	    // target_wallet.request({ method: 'eth_requestAccounts' });
-	    // NOTE: Not working
-	    // window.ethereum.setSelectedProvider(target_wallet);
-	    // window.ethereum.request({
-	    //   method: 'wallet_requestPermissions',
-	    //   params: [{ eth_accounts: {}}]
-	    // });
-	    return [true, target_wallet];
-	  }
-	  else 
-	  {
-	    dlog(`${PR_P_TAG} 🔴 no target wallet (${walletType}) identified`, PR_P_TOG, PR_P_STY)
-	    return [false, null];
-	  }
-	}
+    const
+      /**
+       * @description
+       * 📝 List of 'web3' accounts detected
+       */
+      listWeb3Accounts: any[]
+        = await window.ethereum.request
+        (
+          {
+            method: 'eth_requestAccounts'
+          }
+        )
+    ;
+
+    dispatch
+    (
+      'connect_wallet_action',
+      {
+        wallet_id: listWeb3Accounts[0]
+      }
+    );
+
+    return;
+  }
+
+  function providerDetect
+  (
+    walletType:
+      | 'isMetaMask'
+      | 'isCoinbaseWallet'
+      | 'isBraveWallet'
+  ): [boolean, any]
+  {
+    // ╭─────
+    // │ NOTE:
+    // │ |: Detecting for NO Ethereum Wallet
+    // ╰─────
+    if (!window.ethereum)
+    // throw new Error("No injected ethereum object.");
+      return [false, null];
+    ;
+
+    let
+      /**
+       * @description
+       * 📝 Default provider (single) assign
+       */
+      target_wallet = undefined
+    ;
+
+    // ╭─────
+    // │ CHECK:
+    // │ |: for multiple 'wallet' providers detected
+    // ╰─────
+    if (Array.isArray(window.ethereum.providers))
+    {
+      if (walletType == 'isMetaMask')
+        target_wallet
+          = window.ethereum.providers.find
+          (
+            (provider) =>
+            {
+              return provider[walletType]
+              && provider?.isBraveWallet == undefined
+            }
+          )
+        ;
+      ;
+      // ╭─────
+      // │ NOTE:
+      // │ |: Alternative
+      // ╰─────
+      // else
+      // {
+      //   target_wallet = window.ethereum.providers.find((provider) => provider[walletType])
+      // }
+
+      // [🐞]
+      log_v3
+      (
+        {
+          strGroupName: '🚏 [checkpoint] :: Modal-ConnectWallet.svelte ➤ providerDetect(..) // INSIGHT',
+          msgs:
+          [
+            `🔵 More than 1 provider identified! ${window.ethereum.providers.length}`,
+            `target_wallet ${target_wallet}`,
+            `window.ethereum.providers ${window.ethereum.providers}`
+          ]
+        }
+      );
+    }
+    else
+    {
+      if
+      (
+        walletType == 'isMetaMask'
+        && window.ethereum?.isBraveWallet == undefined
+        && window.ethereum?.isMetaMask != undefined
+        && window.ethereum?.isMetaMask
+      )
+        target_wallet = window.ethereum[walletType];
+      ;
+      // ╭─────
+      // │ NOTE:
+      // │ |: Alternative
+      // ╰─────
+      // else
+      // {
+      //   target_wallet = window.ethereum[walletType]
+      // }
+
+      // [🐞]
+      log_v3
+      (
+        {
+          strGroupName: '🚏 [checkpoint] :: Modal-ConnectWallet.svelte ➤ providerDetect(..) // INSIGHT',
+          msgs:
+          [
+            `🔵 1 provider identified! ${window.ethereum}`,
+            `target_wallet ${target_wallet}`,
+            `window.ethereum ${window.ethereum}`
+          ]
+        }
+      );
+    }
+
+    // ╭─────
+    // │ CHECK:
+    // │ |: for 'target' wallet identified
+    // ╰─────
+    if (target_wallet != undefined)
+    {
+      // ╭─────
+      // │ NOTE:
+      // │ |: conflicting use of CoinBaseWallet & MetaMask
+      // │ |: setting MetaMask as main wallet
+      // │ IMPORTANT
+      // │ |: causes issues with FireFox
+      // ┣─────
+      // │ |: DOC: https://stackoverflow.com/questions/69377437/metamask-conflicting-with-coinbase-wallet
+      // │ |: DOC: https://stackoverflow.com/questions/72613011/whenever-i-click-on-connect-metamask-button-why-it-connects-the-coinbase-wallet
+      // │ |: DOC: https://stackoverflow.com/questions/68023651/how-to-connect-to-either-metamask-or-coinbase-wallet
+      // │ |: DOC: https://github.com/MetaMask/metamask-extension/issues/13622
+      // │ |: DOC: https://stackoverflow.com/questions/69377437/metamask-conflicting-with-coinbase-wallet
+      // ╰─────
+      // target_wallet.request({ method: 'eth_requestAccounts' });
+      // ╭─────
+      // │ NOTE:
+      // │ |: Not working
+      // ╰─────
+      // window.ethereum.setSelectedProvider(target_wallet);
+      // window.ethereum.request
+      // (
+      //  {
+      //    method: 'wallet_requestPermissions',
+      //    params: [{ eth_accounts: {}}]
+      //  }
+      // );
+
+      // [🐞]
+      dlog(`${target_wallet} identified`);
+
+      return [true, target_wallet];
+    }
+    else
+    {
+      // [🐞]
+      dlog(`No ${target_wallet} identified`);
+
+      return [false, null];
+    }
+  }
 
   // #endregion ➤ 🛠️ METHODS
 
 </script>
 
-<!-- ===============
-### COMPONENT HTML
-### NOTE:
-### HINT: [HINT] use (CTRL+SPACE) to select a (class) (id) style
-=================-->
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 💠 Svelte Component HTML                                                         │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
 
 <!--
 [ℹ] main modal widget (background blur)
@@ -214,7 +340,14 @@ COMPONENT JS (w/ TS)
 		class="cursor-pointer"
 		src="/assets/svg/close.svg"
 		alt="close-svg"
-		on:click={() => {return toggle_modal()}}
+		on:click=
+    {
+      () =>
+      {
+        dispatch('toggle_delete_modal');
+        return;
+      }
+    }
 	/>
 	<!--
   [ℹ] delete account icon (danger)
@@ -254,13 +387,21 @@ COMPONENT JS (w/ TS)
   -->
 	<button
     id="sign-in-metamask-btn"
-		class="
-      btn-hollow
-      w-500
-      s-14
-      color-black-2
+		class=
     "
-		on:click={() => {return connect_wallet_action()}}
+    btn-hollow
+    w-500
+    s-14
+    color-black-2
+    "
+		on:click=
+    {
+      () =>
+      {
+        connectWallet();
+        return;
+      }
+    }
 	>
     <img
       src="{metamask_icon}"
@@ -271,13 +412,17 @@ COMPONENT JS (w/ TS)
 	</button>
 </div>
 
-<!-- ===============
-### COMPONENT STYLE
-### NOTE:
-### HINT: auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
-=================-->
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 🌊 Svelte Component CSS/SCSS                                                     │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
 
-<style>
+<style lang="scss">
 
 	div#background-modal-blur
   {
@@ -332,9 +477,9 @@ COMPONENT JS (w/ TS)
   }
 
   /*
-  =============
-  RESPONSIVNESS
-  =============
+  ╭──────────────────────────────────────────────────────────────────────────────╮
+  │ ⚡️ RESPONSIVNESS                                                              │
+  ╰──────────────────────────────────────────────────────────────────────────────╯
   */
 
 	@media only screen
@@ -347,9 +492,9 @@ COMPONENT JS (w/ TS)
 	}
 
   /*
-  =============
-  DARK-THEME
-  =============
+  ╭──────────────────────────────────────────────────────────────────────────────╮
+  │ 🌒 DARK-THEME                                                                │
+  ╰──────────────────────────────────────────────────────────────────────────────╯
   */
 
   div#modal-delete-box.dark-background-1
@@ -361,4 +506,5 @@ COMPONENT JS (w/ TS)
   {
 		border: 1px solid var(--dark-theme-1-2-shade) !important;
   }
+
 </style>
