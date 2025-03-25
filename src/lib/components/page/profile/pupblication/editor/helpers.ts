@@ -21,13 +21,20 @@ export function getFirstImageWithSize(editor: Editor): Promise<{ src: string; wi
   const findFirstImage = (node) => {
     if (!firstImage && node.type === 'image') {
       firstImage = node.attrs.src;
+      return;
     }
     if (!firstImage && node.content) {
-      node.content.some(findFirstImage);
+      for (const child of node.content) {
+        findFirstImage(child);
+        if (firstImage) break;
+      }
     }
   };
 
-  json.content?.some(findFirstImage);
+  for (const node of json.content ?? []) {
+    findFirstImage(node);
+    if (firstImage) break;
+  }
 
   if (!firstImage) return Promise.resolve(null);
 
