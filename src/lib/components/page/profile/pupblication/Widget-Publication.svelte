@@ -47,7 +47,6 @@
   } from "$lib/components/section/authors/page/helpers.js";
   import { articleFilterStore, type IArticleFilter } from "./editor/helpers.js";
   import { writable } from "svelte/store";
-  import { browser } from "$app/environment";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -138,17 +137,17 @@
     return { ...s, label: s.data?.username || "" };
   });
 
-  $: if (browser && $selectedSportstack) {
-    getResentArticles()
-  }
-  $: if ($selectedSportstack?.permalink !== $page.params.permalink) {
+  let previousSportstack
+
+  $: if ($selectedSportstack && $selectedSportstack?.permalink !== previousSportstack?.permalink) {
+    previousSportstack = $selectedSportstack;
     getResentArticles();
+    updateArticles();
   }
 
   $: if ($articleFilterStore.status && $articleFilterStore.sortBy) {
     filterArticles($articleFilterStore);
   }
-
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
@@ -163,6 +162,10 @@
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
+
+  function updateArticles() {
+    filterArticles($articleFilterStore);
+  }
 
   function change(e) {
     const url = $page.url;
@@ -183,13 +186,13 @@
     const url = $page.url;
     const { permalink } = e.detail as AuthorsAuthorsMain;
     const lang = url.pathname.split("/").at(-1);
-    $selectedSportstack = e.detail as AuthorsAuthorsMain & { label: string };
-    getArticles(0, $articleFilterStore);
-    goto(`/u/author/publication/${permalink}/${lang}${url.search}`, {
+
+    await goto(`/u/author/publication/${permalink}/${lang}${url.search}`, {
       replaceState: true,
       noScroll: true,
       keepFocus: true,
     });
+    $selectedSportstack = e.detail as AuthorsAuthorsMain & { label: string };
   }
 
 
@@ -221,9 +224,9 @@
     try {
       const { data, nextArticles } = await getArticles(0, filter);
       totalPageCount = data.totalPageCount;
-      loadingArticles = false;
       articles = nextArticles;
       nextPage = 0;
+      loadingArticles = false;
     } catch (e) {
       loadingArticles = false;
     }
@@ -237,11 +240,11 @@
         nextPage,
         $articleFilterStore
       );
-      loadingArticles = false;
       if (data) {
         totalPageCount = data.totalPageCount;
         articles = new Map([...articles, ...nextArticles]);
       }
+      loadingArticles = false;
     }
   }
 
@@ -252,12 +255,12 @@
       status: "published",
       sortBy: "sortPublishDate",
     });
-    recentLoading = false;
     if (data) {
       recentArticles = nextArticles;
     } else {
       recentArticles = new Map();
     }
+    recentLoading = false;
   }
 
   // #endregion ➤ 🛠️ METHODS
