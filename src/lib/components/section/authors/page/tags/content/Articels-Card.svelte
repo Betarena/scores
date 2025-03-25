@@ -21,7 +21,8 @@
   import { fade } from "svelte/transition";
   import ExpandDataWrapper from "$lib/components/ui/wrappers/ExpandDataWrapper.svelte";
   import ScrollDataWrapper from "$lib/components/ui/wrappers/ScrollDataWrapper.svelte";
-  import { userNameToUrlString } from "../../../common_ui/helpers.js";
+
+  import { mutateStringToPermalink } from "@betarena/scores-lib/dist/util/language.js";
 
   // #region ➤ 📌 VARIABLES
 
@@ -94,13 +95,25 @@
         {title}
       </div>
     </a>
-    <a  href="/a/sportstack/{userNameToUrlString(username)}" class="author-wrapper">
-      <Avatar src={avatar} />
-      <div class="author-info">
-        <a href="/a/sportstack/{userNameToUrlString(username)}" class="author-name">{username}</a>
+
+    <a
+      href="/a/sportstack/{mutateStringToPermalink(username)}"
+      class="author-wrapper"
+    >
+      <Avatar
+        src={avatar}
+      />
+      <div
+        class="author-info"
+      >
+        <a
+          href="/a/sportstack/{mutateStringToPermalink(username)}"
+          class="author-name">{username}
+        </a>
         <div class="publication-date">{date}</div>
       </div>
     </a>
+
     <div class="tags-wrapper">
       {#if mobile || tablet}
         <ScrollDataWrapper data={tags_data} let:item={tag}>

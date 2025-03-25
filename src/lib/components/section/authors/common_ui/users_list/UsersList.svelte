@@ -59,8 +59,8 @@
 <SeoBox>
   {#each [...users] as [uid, user] (uid) }
     <h2>{user?.name || user.username}</h2>
-    <a href={`${$page.url.origin}/a/user/${user?.usernameLower}`}
-      >{user.usernameLower}</a
+    <a href={`${$page.url.origin}/a/user/${user?.usernamePermalink}`}
+      >{user.usernamePermalink}</a
     >
   {/each}
 </SeoBox>

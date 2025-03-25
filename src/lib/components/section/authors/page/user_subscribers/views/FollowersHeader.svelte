@@ -76,7 +76,7 @@
 <div class="wrapper {viewportType}" id={CNAME}>
   <div class="name-block">
     {#if !isPWA}
-      <a class="back-button" href="/a/user/{author.usernameLower}" aria-label="back to user profiel">
+      <a class="back-button" href="/a/user/{author.usernamePermalink}" aria-label="back to user profiel">
         <BackButton mode="back" custom_handler={true} />
       </a>
     {/if}

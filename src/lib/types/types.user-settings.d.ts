@@ -1,51 +1,24 @@
-import { IBetarenaUser } from "@betarena/scores-lib/types/_FIREBASE_.js";
+// ╭──────────────────────────────────────────────────────────────────────────────────╮
+// │ 📌 High Order Component Overview                                                 │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ ➤ Code Format   // V.8.0                                                         │
+// │ ➤ Status        // 🔒 LOCKED                                                     │
+// │ ➤ Author(s)     // @migbash                                                      │
+// │ ➤ Maintainer(s) // @migbash                                                      │
+// │ ➤ Created on    // March 5th, 2024                                               │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ 📝 Description                                                                   │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ Betarena // Types // User-Settings                                               │
+// │ :│ User-Settings Typescript Declaration
+// ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-/**
- * @author
- *  @migbash
- * @summary
- *  🔹 INTERFACE
- * @description
- *  📣 Interface for `localStorage` data.
- */
-export interface IUserSetting
-{
-  /**
-   * @description
-   *  📣 **Client/User** selected lang (overrides serverLang)
-   */
-	lang?: string;
-  /**
-   * @description
-   *  📣 **Client/User** selected theme
-   */
-	theme: 'Dark' | 'Light';
-  /**
-   * @description
-   *  📣 **Client/User** selected country bookmaker ISO2
-   */
-	country_bookmaker?: string;
-  /**
-   * @description
-   *  📣 **Client/User** geoJs object response data
-   */
-	geoJs?: GeoJsResponse;
-  /**
-   * @description
-   *  📣 **User** authenticated data object
-   */
-	user?: IScoreUser;
-  /**
-   * @description
-   *  📣 **Client/User** voted fixtures
-   */
-  voted_fixtures: Voted_Fixture[];
-  /**
-   * @description
-   *  📣 **Client/User** userguides opt-out
-   */
-  userguide_id_opt_out: number[] | undefined;
-}
+// #region ➤ 📦 Package Imports
+
+import type { IBetarenaUser } from "@betarena/scores-lib/types/firebase/firestore.js";
+import type { User } from "firebase/auth";
+
+// #endregion ➤ 📦 Package Imports
 
 /**
  * @author
@@ -66,14 +39,13 @@ export interface Voted_Fixture
  * @author
  *  @migbash
  * @summary
- *  🔹 TYPES
+ *  🔹 INTERFACE
  * @description
  *  📣 Interface for 'authenticated' users.
  */
 export interface BetarenaUser
 extends
-IBetarenaUser,
-Pick < IUserSetting, 'userguide_id_opt_out' >
+IBetarenaUser
 { }
 
 /**
@@ -96,4 +68,51 @@ export interface IScoreUser
    *  📣 **User** authenticated user critical data
    */
 	scores_user_data?: BetarenaUser;
+}
+
+/**
+ * @author
+ *  @migbash
+ * @summary
+ *  🔹 INTERFACE
+ * @description
+ *  📣 Interface for `localStorage` data.
+ */
+export interface IUserSetting
+{
+  /**
+   * @description
+   *  📣 **Client/User** selected lang (overrides serverLang)
+   */
+  lang?: string;
+  /**
+   * @description
+   *  📣 **Client/User** selected theme
+   */
+  theme: 'Dark' | 'Light';
+  /**
+   * @description
+   *  📣 **Client/User** selected country bookmaker ISO2
+   */
+  country_bookmaker?: string;
+  /**
+   * @description
+   *  📣 **Client/User** geoJs object response data
+   */
+  geoJs?: GeoJsResponse;
+  /**
+   * @description
+   *  📣 **User** authenticated data object
+   */
+  user?: IScoreUser;
+  /**
+   * @description
+   *  📣 **Client/User** voted fixtures
+   */
+  voted_fixtures: Voted_Fixture[];
+  /**
+   * @description
+   *  📣 **Client/User** userguides opt-out
+   */
+  userguide_id_opt_out: number[] | undefined;
 }

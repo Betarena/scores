@@ -24,24 +24,21 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import Avatar from '$lib/components/ui/Avatar.svelte';
-  import Tag from '$lib/components/ui/Tag.svelte';
-  import ExpandDataWrapper from '$lib/components/ui/wrappers/ExpandDataWrapper.svelte';
-  import ScrollDataWrapper from '$lib/components/ui/wrappers/ScrollDataWrapper.svelte';
-  import { timeAgo } from '$lib/utils/dates.js';
 
+  import { timeAgo } from '$lib/utils/dates.js';
   import { fade } from 'svelte/transition';
   import defaultAvatar from '../profile-avatar.svg';
-
-  import type {
-    IPageAuthorArticleData,
-    IPageAuthorAuthorData,
-    IPageAuthorTagData,
-  } from '@betarena/scores-lib/types/v8/preload.authors.js';
-  import type { IPageAuthorTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.tags.js';
   import { readingTime } from '../helpers.js';
+  import { mutateStringToPermalink } from '@betarena/scores-lib/dist/util/language.js';
+
+  import Tag from '$lib/components/ui/Tag.svelte';
+  import ExpandDataWrapper from '$lib/components/ui/wrappers/ExpandDataWrapper.svelte';
   import TranslationText from '$lib/components/misc/Translation-Text.svelte';
+  import ScrollDataWrapper from '$lib/components/ui/wrappers/ScrollDataWrapper.svelte';
   import SportstackAvatar from '$lib/components/ui/SportstackAvatar.svelte';
+
+  import type { IPageAuthorTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.tags.js';
+  import type { IPageAuthorArticleData, IPageAuthorAuthorData, IPageAuthorTagData } from '@betarena/scores-lib/types/v8/preload.authors.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -98,7 +95,6 @@
   });
   $: ({ images = [] } = seo_details?.opengraph || {});
   $: ({ title = "", content = "" } = data || {});
-  $: sportstackUrl = `/a/sportstack/${username.toLowerCase().replaceAll(' ', '-')}`;
   $: date = timeAgo(published_date, translations.time_ago);
   $: timeToRead =  readingTime(content)
   // #endregion ➤ 📌 VARIABLES
@@ -118,7 +114,7 @@
 
 <div class="card-wrapper" class:mobile class:tablet in:fade={{ duration: 500 }}>
   <div class="card-content">
-    <a href={sportstackUrl} class="author-wrapper">
+    <a href={`/a/sportstack/${mutateStringToPermalink(username)}`} class="author-wrapper">
       <SportstackAvatar src={avatar} size={32} />
       <div class="author-info">
         <div class="author-name">{username}</div>
