@@ -50,8 +50,8 @@ export const POST: RequestHandler = async ({ request, locals }) =>
   {
     if (!locals.uid) throw error(401, { message: 'Unauthorized' } as App.Error);
     const body = await request.json();
-    const { content, title, author_id, images = [], id, seo, tags, uid, locale } = body;
-
+    const { content, title, author_id, id, seo, tags, uid, locale } = body;
+    const image = (body.image || {}) as { src: string; width: number; height: number };
     if (locals.uid !== uid) return json({ success: false, message: "Not an owner" });
 
     const { lang, iso } = locale;
@@ -69,13 +69,13 @@ export const POST: RequestHandler = async ({ request, locals }) =>
         twitter_card: {
           description: seoDescription,
           title: seoTitle,
-          image: images[0] || "",
+          image: image.src || "",
           site: '@betarenasocial',
-          image_alt: images[0]?.split('/').pop() || "",
+          image_alt: image.src?.split('/').pop() || "",
         },
         opengraph: {
           description: seoDescription,
-          images: images.map((image: string) => ({ url: image, alt: title, width: 120, height: 120 })),
+          images: body.image? [{ url: image.src, alt: title, width: image.width, height: image.height }]: [],
           locale: iso,
           title: seoTitle,
           type: 'website',
