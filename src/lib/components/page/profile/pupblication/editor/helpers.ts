@@ -12,34 +12,42 @@ import { type Writable, writable } from "svelte/store";
 import type { IPageAuthorArticleData, IPageAuthorAuthorData } from "@betarena/scores-lib/types/v8/preload.authors.js";
 import { detectLanguage } from "$lib/utils/translation.js";
 import { promiseValidUrlCheck } from "$lib/utils/navigation.js";
-export function getAllImages(editor: Editor)
-{
+
+export function getFirstImageWithSize(editor: Editor): Promise<{ src: string; width: number; height: number } | null> {
   const json = editor.getJSON();
-  const images: string[] = [];
-  const findImages = (node) =>
-  {
-    if (node.type === 'image')
-    {
-      images.push(node.attrs.src);
+
+  let firstImage: string = "";
+
+  const findFirstImage = (node) => {
+    if (!firstImage && node.type === 'image') {
+      firstImage = node.attrs.src;
     }
-    if (node.content)
-    {
-      node.content.forEach(findImages);
+    if (!firstImage && node.content) {
+      node.content.some(findFirstImage);
     }
   };
-  json.content?.forEach(findImages);
-  return images;
+
+  json.content?.some(findFirstImage);
+
+  if (!firstImage) return Promise.resolve(null);
+
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.src = firstImage;
+    img.onload = () => resolve({ src: firstImage, width: img.naturalWidth, height: img.naturalHeight });
+    img.onerror = () => resolve(null);
+  });
 }
 
-
-export async function upsert({ editor, title, author, reload = false, showLoaders = true, id, translations }: {
+export async function
+  upsert({ editor, title, author, reload = false, showLoaders = true, id, translations }: {
   translations: TranslationSportstacksSectionDataJSONSchema
   | undefined, editor: Editor, title: string, author: AuthorsAuthorsMain, reload?: boolean, showLoaders?: boolean, id?: number
 })
 {
   const sanitizedValue = DOMPurify.sanitize(editor.getHTML());
   const sanitizedTitle = DOMPurify.sanitize(title);
-  const images = getAllImages(editor);
+  const image = await getFirstImageWithSize(editor);
 
   const { seo, tags, detectedLang } = create_article_store.get();
   const text_content = editor.getHTML();
@@ -61,7 +69,7 @@ export async function upsert({ editor, title, author, reload = false, showLoader
     author_id: author.id,
     tags,
     seo,
-    images,
+    image,
     uid: author.uid,
     locale,
   }) as any;
