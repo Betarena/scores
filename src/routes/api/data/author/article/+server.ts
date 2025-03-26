@@ -71,11 +71,11 @@ export const POST: RequestHandler = async ({ request, locals }) =>
           title: seoTitle,
           image: image.src || "",
           site: '@betarenasocial',
-          image_alt: image.src?.split('/').pop() || "",
+          image_alt: seoTitle,
         },
         opengraph: {
           description: seoDescription,
-          images: body.image? [{ url: image.src, alt: title, width: image.width, height: image.height }]: [],
+          images: body.image? [{ url: image.src, alt: seoTitle, width: image.width, height: image.height }]: [],
           locale: iso,
           title: seoTitle,
           type: 'website',
