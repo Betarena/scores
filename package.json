@@ -79,7 +79,7 @@
 		"chart.js": "4.4.1",
 		"colorthief": "2.4.0",
 		"compression": "1.7.4",
-		"cookie": "0.5.0",
+		"cookie": "0.7.0",
 		"cross-env": "7.0.3",
 		"device-detector-js": "3.0.3",
 		"dompurify": "3.1.6",
