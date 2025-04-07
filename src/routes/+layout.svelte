@@ -840,7 +840,7 @@
     class:standard={currentPageRouteId == null }
     class:page-competition={currentPageRouteId == 'CompetitionPage'}
     class:page-profile={currentPageRouteId == 'ProfilePage'}
-    class:page-authors={currentPageRouteId == 'AuthorsPage'}
+    class:page-authors={currentPageRouteId == 'AuthorsPage' || currentPageRouteId == "Standard"}
     class:page-content={$page.route.id === routeIdContent}
     class:mobile={VIEWPORT_MOBILE_INIT[1]}
     class:tablet={VIEWPORT_TABLET_INIT[1]}

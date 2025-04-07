@@ -163,7 +163,7 @@
     ? "none"
     : "var(--header-border)"}
 >
-  {#if !["ProfilePage","AuthorsPage"].includes(currentPageRouteId || "")}
+  {#if !["ProfilePage","AuthorsPage", "Standard"].includes(currentPageRouteId || "")}
     <div class="wave-wrapper">
       <img
         id=""
@@ -190,9 +190,9 @@
   {/if}
 
   {#if (currentPageRouteId === "Standard" || currentPageRouteId === "CompetitionPage") && (desktop || !isInnerPage)}
-    <SportsNavigationStandart />
+    <!-- <SportsNavigationStandart /> -->
   {:else if currentPageRouteId !== "AuthorsPage" && user && desktop}
-    <SportsNavigation />
+    <!-- <SportsNavigation /> -->
   {/if}
 </header>
 

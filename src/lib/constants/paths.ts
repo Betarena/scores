@@ -86,7 +86,8 @@ export const
    * @description
    *  📣 Target `path` for **personalized content  page**.
    */
-  routeIdContent = '/(authors)/a/content',
+  // routeIdContent = '/(authors)/a/content',
+  routeIdContent = '/(scores)/[[lang=lang]]',
 
   /**
    * @description

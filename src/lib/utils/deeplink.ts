@@ -65,31 +65,33 @@ export async function mainDeepLinkCheck
   if (page?.route.id === routeIdHome)
   {
     const lang = sessionStore.extract<string>('lang');
-    const [preferedPage] = userBetarenaSettings.extract<{buttons_order: string[]}>('user')?.buttons_order || ["scores"];
-    const translations = page.data.B_NAV_T as B_NAV_T | null | undefined;
-    switch (preferedPage) {
-      case "competitions":
-        revertUrl = generateUrlCompetitions(
-          lang || "",
-          page.data.B_SAP_D3_CP_H
-        );
-        break;
-      case "content":
-        revertUrl =
-        translations?.scores_header_translations?.section_links
-        ?.sports_content_url as string;
-        break;
-        case "scores":
-      default:
-        revertUrl = `/${lang === "en" ? "" : `${lang}/`}scores`;
-    }
-    goto
-    (
-      revertUrl,
-      {
-        replaceState: true
-      }
-    );
+    // const [preferedPage] = userBetarenaSettings.extract<{buttons_order: string[]}>('user')?.buttons_order || ["scores"];
+    // const translations = page.data.B_NAV_T as B_NAV_T | null | undefined;
+    // switch (preferedPage) {
+    //   case "competitions":
+    //     revertUrl = generateUrlCompetitions(
+    //       lang || "",
+    //       page.data.B_SAP_D3_CP_H
+    //     );
+    //     break;
+    //   case "content":
+    //     revertUrl =
+    //     translations?.scores_header_translations?.section_links
+    //     ?.sports_content_url as string;
+    //     break;
+    //     case "scores":
+    //   default:
+    //   }
+      revertUrl = `/${lang === "en" ? "" : `${lang}`}`;
+    const newUrl = new URL(revertUrl, window.location.origin);
+    window.history.replaceState({}, '', newUrl.toString());
+    // goto
+    // (
+    //   revertUrl,
+    //   {
+    //     replaceState: true
+    //   }
+    // );
   }
 
   return;

@@ -110,21 +110,21 @@
   $: isAuth = !!user;
   $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
   $: navButtonOrderList = [
-    {
-      id: "scores",
-      icon: StatisticIcon,
-      type: "link",
-      url: `${serverLang != "en" ? `/${serverLang}` : ""}/scores`,
-      label:
-        trsanslationData?.scores_header_translations?.section_links
-          ?.scores_title ?? "SCORES",
-      route: routeIdScores,
-    },
+    // {
+    //   id: "scores",
+    //   icon: StatisticIcon,
+    //   type: "link",
+    //   url: `${serverLang != "en" ? `/${serverLang}` : ""}/scores`,
+    //   label:
+    //     trsanslationData?.scores_header_translations?.section_links
+    //       ?.scores_title ?? "SCORES",
+    //   route: routeIdScores,
+    // },
     {
       id: "content",
       icon: DocumentsIcon,
       type: "link",
-      url: "/a/content",
+      url: "/",
       label:
         trsanslationData?.scores_header_translations?.section_links
           ?.sports_content_title ?? "SPORTS CONTENT",
@@ -268,7 +268,7 @@
       </a>
     {/if}
   </div>
-  <div
+  <!-- <div
     class="item"
     style="margin-top: 1px;"
     class:rotate={showPopup}
@@ -276,7 +276,7 @@
     on:click={(e) => buttonClick("more")}
   >
     <MenuSquareDotsIcon type={showPopup ? "solid" : "outline"} />
-  </div>
+  </div> -->
 
   {#if showPopup}
     <div class="popup" in:scale out:scale>
@@ -353,7 +353,7 @@
     position: fixed;
     bottom: 40px;
     height: 56px;
-    width: 340px;
+    width: auto;
     max-width: 95%;
     color: var(--text-color);
     box-shadow: var(--box-shadow);
