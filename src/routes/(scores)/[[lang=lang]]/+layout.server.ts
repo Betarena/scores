@@ -14,8 +14,7 @@ export const load = (async ({ parent, fetch, depends, params, url }) =>
   {
     throw redirect(301, '/');
   }
-  const data = await parent();
-  const { langParam } = data;
+  const langParam = params.lang || 'en';
   // [🐞]
   dlogv2
     (
@@ -28,7 +27,6 @@ export const load = (async ({ parent, fetch, depends, params, url }) =>
   const translations = await main({ langParam, fetch });
   depends("author:translations");
   return {
-    ...data,
     translations,
   };
 }) satisfies LayoutServerLoad;

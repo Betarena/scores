@@ -199,11 +199,13 @@
     dragStart = false;
   }
 
-  function buttonClick(id: string) {
+  function buttonClick(id: string, e?: MouseEvent) {
     switch (id) {
+      case "bta":
       case "profile":
         if (!isAuth) {
           $sessionStore.currentActiveModal = "Auth_Modal";
+          e?.preventDefault();
         }
         break;
       case "more":
@@ -246,7 +248,7 @@
   {#each [...navButtonOrderList] as { id, url, icon, type, route } (id)}
     {#if type === "link" && url}
       {@const active = $page.route.id === route || $page.url.pathname.includes(url)}
-      <a href={url} class="item" class:active aria-label="link to {id}">
+      <a href={url} class="item" on:click={(e) => buttonClick(id, e)} class:active aria-label="link to {id}">
         <svelte:component this={icon} type={active ? "solid" : "outline"} />
       </a>
     {:else}

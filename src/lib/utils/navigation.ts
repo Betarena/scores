@@ -13,7 +13,7 @@
 // #region ➤ 📦 Package Imports
 
 import { dev } from '$app/environment';
-import { invalidate, invalidateAll } from '$app/navigation';
+import { goto, invalidate, invalidateAll } from '$app/navigation';
 import { error, redirect, type Page } from '@sveltejs/kit';
 import LZString from 'lz-string';
 
@@ -199,6 +199,20 @@ export async function selectLanguage
     return;
   }
     case routeIdContent:
+    const newUrl = lang === 'en' ? '/' : `/${lang}`;
+      // [🐞]
+      dlogv2
+        (
+          '🚏 checkpoint ➤ selectLanguage(..) [x1]',
+          [
+            `🔹 [var] ➤ newURL :|: ${newUrl}`,
+          ],
+          true
+      );
+      window.history.replaceState({}, "", newUrl);
+      invalidate("author:translations");
+      await goto(newUrl,{replaceState: true});
+      return;
     case routeIdAuthorProfile:
     case routeIdAuthorSubscribers:
     case routeIdSportstack:
