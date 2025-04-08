@@ -141,7 +141,6 @@ export async function main
 async function fetchData
   (
     fetch: any,
-    _name: string | undefined,
     _lang: string
   )
 {

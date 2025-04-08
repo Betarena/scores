@@ -49,7 +49,6 @@ export async function mainDeepLinkCheck
   await checkMetaMaskDeepLink();
   await checkReferralLink();
   await checkOpenAuth();
-
   const
     /**
      * @description
