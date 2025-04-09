@@ -77,6 +77,11 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+
+  export let widgetData: IPageAuthorTagDataFinal & {
+    translations: IPageAuthorTranslationDataFinal;
+  } | undefined;
+
   const
     /**
      * @description
@@ -106,11 +111,6 @@
     )
   ;
 
-  $: widgetData = $page.data as IPageAuthorTagDataFinal & {
-    translations: IPageAuthorTranslationDataFinal;
-  } | undefined;
-  $: pageSeo = $page.data.seoTamplate;
-  $: translations = widgetData?.translations;
 
   /**
    * @description
@@ -482,12 +482,12 @@
   {#if categories.length}
     <Tabbar
       on:select={selectTag}
-      data={categories}
+      data={categories || []}
       selected={selectedTag}
       height={mobile ? 14 : 8}
       let:tab
     >
-    {tab.name}
+    {tab.name || "Forecasts"}
   </Tabbar>
   {/if}
 </div>
@@ -501,6 +501,7 @@
   class="content"
 >
   <div
+  id="inside"
     class="listArticlesMod"
   >
     {#each [...mapArticlesMod.entries()] as [id,article] (id)}
@@ -508,7 +509,7 @@
         {mobile}
         {article}
         {tablet}
-        {translations}
+        translations={$page.data.translations}
       />
     {/each}
 

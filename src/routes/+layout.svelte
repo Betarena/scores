@@ -177,9 +177,12 @@
     )
   ;
 
-  $sessionStore.deviceType       = $page.data.deviceType as 'mobile' | 'tablet' | 'desktop';
-  $sessionStore.fixturesTodayNum = navbarTranslationData?.scores_header_fixtures_information?.football ?? 0;
-  $sessionStore.userAgent        = $page.data.userAgent as string ?? navigator.userAgent;
+  onMount(() => {
+    $sessionStore.deviceType       = $page.data.deviceType as 'mobile' | 'tablet' | 'desktop';
+    $sessionStore.fixturesTodayNum = navbarTranslationData?.scores_header_fixtures_information?.football ?? 0;
+    $sessionStore.userAgent        = $page.data.userAgent as string ?? navigator.userAgent;
+  })
+
 
   // #endregion ➤ 📌 VARIABLES
 

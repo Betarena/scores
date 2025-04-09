@@ -49,6 +49,7 @@
   import Button from '$lib/components/ui/Button.svelte';
   import Edit_05 from '$lib/components/ui/assets/edit-05.svelte';
   import userSettings from '$lib/store/user-settings.js';
+  import type { PageData } from '.svelte-kit/types/src/routes/(scores)/[[lang=lang]]/$types.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -65,7 +66,7 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
+  export let data: PageData
   const
     /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
     // eslint-disable-next-line no-unused-vars
@@ -78,7 +79,7 @@
     VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
-  $: pageSeo = $page.data.seoTamplate;
+
   $: ({ windowWidth, globalState } = $sessionStore);
   $: isPWA = globalState.has('IsPWA');
   $: [mobile, tablet]
@@ -129,37 +130,40 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
-{#if pageSeo}
-  <SvelteSeo
-    title={pageSeo.main_data.title}
-    description={pageSeo.main_data.description}
-    keywords={pageSeo.main_data.keywords}
-    noindex=
-    {
-      tryCatch
-      (
-        () =>
-        {
-          return JSON.parse(pageSeo.main_data.noindex);
-        }
-      ) ?? false
-    }
-    nofollow=
-    {
-      tryCatch
-      (
-        () =>
-        {
-          return JSON.parse(pageSeo.main_data.nofollow);
-        }
-      ) ?? false
-    }
-    canonical={`${$page.url.origin}/a/content`}
-    twitter={pageSeo.twitter_card}
-    openGraph={pageSeo.opengraph}
-  />
-{/if}
+{#await data.page_data.content_data}
+  <!-- promise is pending -->
+{:then {seoTamplate}}
+  {#if seoTamplate}
+    <SvelteSeo
+      title={seoTamplate.main_data.title}
+      description={seoTamplate.main_data.description}
+      keywords={seoTamplate.main_data.keywords}
+      noindex=
+      {
+        tryCatch
+        (
+          () =>
+          {
+            return JSON.parse(seoTamplate.main_data.noindex);
+          }
+        ) ?? false
+      }
+      nofollow=
+      {
+        tryCatch
+        (
+          () =>
+          {
+            return JSON.parse(seoTamplate.main_data.nofollow);
+          }
+        ) ?? false
+      }
+      canonical={`${$page.url.origin}/a/content`}
+      twitter={seoTamplate.twitter_card}
+      openGraph={seoTamplate.opengraph}
+    />
+  {/if}
+{/await}
 
 <section
   id={CNAME}
@@ -167,7 +171,7 @@
   class:tablet
   class:pwa={isPWA}
 >
-  <ArticleWidget />
+  <ArticleWidget {data} />
 </section>
 <a class="create-article" class:tablet on:click={createArticle} class:mobile href="/u/author/article/create/{$sessionStore.serverLang}">
   <Button size={mobile ? "xl" : "xxl"} type="primary" icon_leading={true}>

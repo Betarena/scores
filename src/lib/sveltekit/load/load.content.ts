@@ -52,7 +52,7 @@ export async function main(
   parentData: {
     langParam: string;
   }
-): Promise<any> {
+) {
   /**
    * @description
    *  📣 Validate **this** `url`.
@@ -73,13 +73,8 @@ export async function main(
   //     ERROR_CODE_INVALID
   //   );
   // ;
-  const [
-    data,
-  ] = await fetchData
-    (
-      event.fetch,
-      parentData.langParam
-    );
+  const now = new Date().toString();
+  const res = await fetchData(event.fetch, parentData.langParam);
 
   /**
    * @description
@@ -87,9 +82,8 @@ export async function main(
    */
 
   const response = {
-    ...data
+    ...res,
   };
-
   // [🐞]
   dlogv2(
     "🚏 checkpoint ➤ src/routes/(authors)/a/content/+page.server.ts",
@@ -129,5 +123,5 @@ async function fetchData(fetch: any, _lang: string) {
      *  📣 Target `data` returned.
      */
     data0 = (await promiseUrlsPreload(urls0, fetch)) as PreloadPromise0;
-  return data0;
+  return data0[0] || {} as IPageAuthorTagDataFinal;
 }
