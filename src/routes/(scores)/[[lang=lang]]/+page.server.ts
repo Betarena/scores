@@ -14,6 +14,7 @@
 
 import { main } from '$lib/sveltekit/load/load.content';
 import { dlogv2 } from '$lib/utils/debug.js';
+import { detectPlatformLanguage } from '$lib/utils/languages.js';
 
 import type { ServerLoadEvent } from '@sveltejs/kit';
 
@@ -29,11 +30,12 @@ export async function load
   event: ServerLoadEvent
 ): Promise < any >
 {
-  const
-    {
-      langParam
-    } = await event.parent()
-  ;
+
+  const langParam = detectPlatformLanguage({
+    parameterLanguage: event.params.lang,
+    cookies: event.cookies,
+    routeId: event.route.id,
+  });
 
   // [🐞]
   dlogv2
@@ -45,7 +47,7 @@ export async function load
     true
   );
 
-  return await main
+  return main
   (
     event,
     {
