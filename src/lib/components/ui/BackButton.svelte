@@ -76,7 +76,6 @@
 
     if ((globalState.has("IsPWA") || mode === "back") && canGoBack){
       window.history.back();
-      invalidateAll();
       return;
     }
     let url = homepageURL;
