@@ -23,12 +23,8 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { goto } from "$app/navigation";
-  import { page } from "$app/stores";
+  import { goto, invalidateAll } from "$app/navigation";
   import sessionStore from "$lib/store/session.js";
-  import { generateUrlCompetitions } from "$lib/utils/string.js";
-  import userBetarenaSettings from "$lib/store/user-settings.js";
-  import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
   import { createEventDispatcher } from "svelte";
 
   // #endregion ➤ 📦 Package Imports
@@ -55,7 +51,6 @@
   const dispatch = createEventDispatcher();
   $: ({ globalState, serverLang = "en" } = $sessionStore);
   $: homepageURL = serverLang != "en" ? `/${serverLang}` : "/";
-  $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -76,26 +71,15 @@
       dispatch("click");
       return;
     }
-    if (globalState.has("IsPWA") || mode === "back")
-      return window.history.back();
-    const [preferedPage] = $userBetarenaSettings.user?.scores_user_data
-      ?.buttons_order || ["scores"];
-    let url: string;
-    switch (preferedPage) {
-      case "competitions":
-        url = generateUrlCompetitions(serverLang, $page.data.B_SAP_D3_CP_H);
-        break;
-      case "content":
-        url =
-          trsanslationData?.scores_header_translations?.section_links
-            ?.sports_content_url || "/";
-        break;
-      case "scores":
-      default:
-        url = homepageURL;
-        break;
-    }
 
+    const canGoBack = window.history.length > 1;
+
+    if ((globalState.has("IsPWA") || mode === "back") && canGoBack){
+      window.history.back();
+      invalidateAll();
+      return;
+    }
+    let url = homepageURL;
     goto(url);
     return;
   }

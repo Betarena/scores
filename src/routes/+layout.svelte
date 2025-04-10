@@ -384,31 +384,31 @@
   // │ as soon as 'this' .svelte file is ran.                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  beforeNavigate
-  (
-    async (): Promise<void> =>
-    {
-      if (!browser) return;
+  // beforeNavigate
+  // (
+  //   async (): Promise<void> =>
+  //   {
+  //     if (!browser) return;
 
-      // ╭─────
-      // │ NOTE: IMPORTANT
-      // │ |: Resetting the `live_odds_fixture_target` to `null`.
-      // ╰─────
-      $sessionStore.live_odds_fixture_target = null;
+  //     // ╭─────
+  //     // │ NOTE: IMPORTANT
+  //     // │ |: Resetting the `live_odds_fixture_target` to `null`.
+  //     // ╰─────
+  //     $sessionStore.live_odds_fixture_target = null;
 
-      /*
-        await firebaseAppDelete();
-        for (const iterator of $sessionStore?.firebaseListeners ?? [])
-          iterator();
-        $sessionStore.firebaseListeners = []
-        for (const iterator of $sessionStore?.grapqhQlWebSockets ?? [])
-          iterator();
-        $sessionStore.grapqhQlWebSockets = []
-      */
+  //     /*
+  //       await firebaseAppDelete();
+  //       for (const iterator of $sessionStore?.firebaseListeners ?? [])
+  //         iterator();
+  //       $sessionStore.firebaseListeners = []
+  //       for (const iterator of $sessionStore?.grapqhQlWebSockets ?? [])
+  //         iterator();
+  //       $sessionStore.grapqhQlWebSockets = []
+  //     */
 
-      return;
-    }
-  );
+  //     return;
+  //   }
+  // );
 
   onMount
   (
