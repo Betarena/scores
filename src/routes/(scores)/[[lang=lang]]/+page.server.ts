@@ -12,11 +12,10 @@
 
 // #region ➤ 📦 Package Imports
 
-import { main } from "$lib/sveltekit/load/load.content";
-import { dlogv2 } from "$lib/utils/debug.js";
-import { detectPlatformLanguage } from "$lib/utils/languages.js";
+import { main } from '$lib/sveltekit/load/load.content';
+import { dlogv2 } from '$lib/utils/debug.js';
 
-import type { ServerLoadEvent } from "@sveltejs/kit";
+import type { ServerLoadEvent } from '@sveltejs/kit';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -25,27 +24,34 @@ import type { ServerLoadEvent } from "@sveltejs/kit";
 /**
  * @type {import('./$types').PageLoad}
  */
-export async function load(event: ServerLoadEvent): Promise<any> {
-  const langParam = detectPlatformLanguage({
-    parameterLanguage: event.params.lang,
-    cookies: event.cookies,
-    routeId: event.route.id,
-  });
+export async function load
+(
+  event: ServerLoadEvent
+): Promise < any >
+{
+  const
+    {
+      langParam
+    } = await event.parent()
+  ;
 
   // [🐞]
-  dlogv2(
-    "🚏 checkpoint ➤ src/routes/(authors)/a/content/+page.server.ts",
-    [`🔹 [var] ➤ langParam :|: ${langParam}`],
+  dlogv2
+  (
+    '🚏 checkpoint ➤ src/routes/(authors)/a/content/+page.server.ts',
+    [
+      `🔹 [var] ➤ langParam :|: ${langParam}`,
+    ],
     true
   );
 
-  return {
-    page_data: {
-      content_data: main(event, {
-        langParam,
-      }),
+  return await main
+  (
+    event,
+    {
+      langParam
     }
-  };
+  );
 }
 
 // #endregion ➤ 🔄 LIFECYCLE [SVELTE]

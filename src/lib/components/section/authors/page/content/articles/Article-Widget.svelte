@@ -38,6 +38,8 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  import { browser } from '$app/environment';
+  import { page } from '$app/stores';
 
   import sessionStore from '$lib/store/session.js';
 
@@ -51,7 +53,6 @@
 
   import type { IPageAuthorTagDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
   import type { IPageAuthorTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.tags.js';
-  import type { PageData } from '.svelte-kit/types/src/routes/(scores)/[[lang=lang]]/$types.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -68,7 +69,7 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  export let data: PageData
+
   const
     /**
      * @description
@@ -86,7 +87,7 @@
      */ // eslint-disable-next-line no-unused-vars
     VIEWPORT_TABLET_INIT: [number, boolean] = [1160, true]
   ;
-  $: promiseData = data.page_data.content_data;
+
   $: ({ windowWidth } = $sessionStore);
   $: [mobile, tablet]
     = viewportChangeV2
@@ -96,18 +97,10 @@
       VIEWPORT_TABLET_INIT[0]
     )
   ;
-  let widgetData: IPageAuthorTagDataFinal & {
+
+  $: widgetData = $page.data as IPageAuthorTagDataFinal & {
     translations: IPageAuthorTranslationDataFinal;
   } | undefined;
-  $: data.page_data.content_data.then(
-    (data) => {
-      widgetData = data as IPageAuthorTagDataFinal & {
-        translations: IPageAuthorTranslationDataFinal;
-      };
-    }
-  );
-
-
   /**
    * @description
    * 📝 Interecpted data for `map` instance of `tag(s)`.
@@ -134,6 +127,42 @@
    */
   $: categories = selectedTag != undefined ? [selectedTag] : [];
 
+  // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟩 MAIN
+   * @description
+   *  📣 main widget data loader
+   *  - ⚡️ (and) try..catch (error) handler
+   *  - ⚡️ (and) placeholder handler
+   * @returns { Promise < void > }
+   */
+  async function widgetInit
+  (
+  ): Promise < void >
+  {
+    // IMPORTANT
+    if (!browser) return;
+
+    return;
+  }
+
+  // #endregion ➤ 🛠️ METHODS
 
 </script>
 
@@ -182,7 +211,7 @@
   {/each}
 </SeoBox>
 
-{#await promiseData}
+{#await widgetInit()}
   <!--
   ╭────────────────────────────────────────────────────────────────────────╮
   │ NOTE :|: promise is pending                                            │
@@ -191,21 +220,16 @@
   <div
     class="tabbar-wrapper"
   >
-
     {#if categories.length}
       <Tabbar
         data={categories}
         selected={selectedTag}
         height={mobile ? 14 : 8}
-        let:tab
-    >
-      {tab.name || "Forecasts"}
-    </Tabbar>
+      />
     {/if}
   </div>
 
   <div
-  id="outside"
     class="listArticlesMod"
   >
     {#each Array(10) as _item}
@@ -223,7 +247,7 @@
   ╰────────────────────────────────────────────────────────────────────────╯
   -->
 
-  <ArticleMain widgetData={data} />
+  <ArticleMain />
 
 {:catch error}
   <!--
