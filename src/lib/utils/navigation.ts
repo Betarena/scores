@@ -175,7 +175,9 @@ export async function selectLanguage(lang: string | NullUndef): Promise<void> {
         [`🔹 [var] ➤ newURL :|: ${newUrl}`],
         true
       );
-      window.history.replaceState({}, "", newUrl);
+      sessionStore.updateData([["lang", lang]]);
+      goto(newUrl, { replaceState: true });
+      break;
     case routeIdAuthorProfile:
     case routeIdAuthorSubscribers:
     case routeIdSportstack:
