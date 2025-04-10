@@ -82,15 +82,13 @@ export async function mainDeepLinkCheck
     //   default:
     //   }
       revertUrl = `/${lang === "en" ? "" : `${lang}`}`;
-    const newUrl = new URL(revertUrl, window.location.origin);
-    window.history.replaceState({}, '', newUrl.toString());
-    // goto
-    // (
-    //   revertUrl,
-    //   {
-    //     replaceState: true
-    //   }
-    // );
+    goto
+    (
+      revertUrl,
+      {
+        replaceState: true
+      }
+    );
   }
 
   return;
