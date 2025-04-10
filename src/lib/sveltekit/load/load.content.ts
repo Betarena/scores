@@ -53,27 +53,7 @@ export async function main(
     langParam: string;
   }
 ) {
-  /**
-   * @description
-   *  📣 Validate **this** `url`.
-   */
-  // isUrlValid
-  //   = await promiseValidUrlCheck
-  //   (
-  //     event.fetch,
-  //     {
-  //       authorTagsUrl: name
-  //     }
-  //   )
-  // if (!isUrlValid)
-  //   preloadExitLogic
-  //   (
-  //     0,
-  //     '(authors)/tag',
-  //     ERROR_CODE_INVALID
-  //   );
-  // ;
-  const now = new Date().toString();
+
   const res = await fetchData(event.fetch, parentData.langParam);
 
   /**

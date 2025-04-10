@@ -167,7 +167,7 @@ export async function selectLanguage(lang: string | NullUndef): Promise<void> {
 
       return;
     }
-    case routeIdContent:
+    case routeIdContent: {
       const newUrl = lang === "en" ? "/" : `/${lang}`;
       // [🐞]
       dlogv2(
@@ -178,6 +178,7 @@ export async function selectLanguage(lang: string | NullUndef): Promise<void> {
       sessionStore.updateData([["lang", lang]]);
       goto(newUrl, { replaceState: true });
       break;
+    }
     case routeIdAuthorProfile:
     case routeIdAuthorSubscribers:
     case routeIdSportstack:
@@ -295,7 +296,9 @@ export async function selectLanguage(lang: string | NullUndef): Promise<void> {
   // │ NOTE:
   // │ > Solution [2]
   // ╰─────
-  await gotoSW(newURL!, true);
+  if (newURL !== undefined) {
+    await gotoSW(newURL, true);
+  }
 
   return;
 }

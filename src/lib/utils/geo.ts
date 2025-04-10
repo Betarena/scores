@@ -12,14 +12,10 @@
 
 // #region ➤ 📦 Package Imports
 
-import { get } from '$lib/api/utils.js';
 import { getUserLocation, getUserLocationFromIP } from '$lib/geo-js/init.js';
-import sessionStore from '$lib/store/session.js';
 import userBetarenaSettings from '$lib/store/user-settings.js';
-import { dlogv2 } from './debug.js';
 
 import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
-import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 
 // #endregion ➤ 📦 Package Imports
 
