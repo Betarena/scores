@@ -3,4 +3,4 @@ Allow: /*.js
 Allow: /*.css
 Allow: /
 
-Sitemap: http://65.109.14.126:8500/static/sitemap-index.xml
+Sitemap: https://sitemap.betarena.com/static/sitemap/v2/sitemapindex.xml
