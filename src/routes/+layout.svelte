@@ -296,20 +296,7 @@
   // ╭─────
   // │ > 🔥 (3rd Party) Intercom Logic [show/hide]
   // ╰─────
-  // $: if (
-  //   (browser && currentPageRouteId == "ProfilePage") ||
-  //   currentPageRouteId == "CompetitionPage"
-  // ) {
-  //   const intercom: HTMLElement = document.getElementsByClassName(
-  //     "intercom-lightweight-app"
-  //   )[0] as unknown as HTMLElement;
-  //   if (intercom != undefined) intercom.style.display = "unset";
-  // } else if (browser && !currentPageRouteId) {
-  //   const intercom: HTMLElement = document.getElementsByClassName(
-  //     "intercom-lightweight-app"
-  //   )[0] as unknown as HTMLElement;
-  //   if (intercom != undefined) intercom.style.display = "none";
-  // }
+
   $: if (browser && $page.route.id == routeIdPageProfile)
   {
     const
@@ -384,31 +371,6 @@
   // │ as soon as 'this' .svelte file is ran.                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  // beforeNavigate
-  // (
-  //   async (): Promise<void> =>
-  //   {
-  //     if (!browser) return;
-
-  //     // ╭─────
-  //     // │ NOTE: IMPORTANT
-  //     // │ |: Resetting the `live_odds_fixture_target` to `null`.
-  //     // ╰─────
-  //     $sessionStore.live_odds_fixture_target = null;
-
-  //     /*
-  //       await firebaseAppDelete();
-  //       for (const iterator of $sessionStore?.firebaseListeners ?? [])
-  //         iterator();
-  //       $sessionStore.firebaseListeners = []
-  //       for (const iterator of $sessionStore?.grapqhQlWebSockets ?? [])
-  //         iterator();
-  //       $sessionStore.grapqhQlWebSockets = []
-  //     */
-
-  //     return;
-  //   }
-  // );
 
   onMount
   (
