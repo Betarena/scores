@@ -42,7 +42,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { browser } from '$app/environment';
-  import { afterNavigate, beforeNavigate } from '$app/navigation';
+  import { afterNavigate } from '$app/navigation';
   import { page } from '$app/stores';
   import { onMount } from 'svelte';
 
@@ -177,12 +177,8 @@
     )
   ;
 
-  onMount(() => {
-    $sessionStore.deviceType       = $page.data.deviceType as 'mobile' | 'tablet' | 'desktop';
-    $sessionStore.fixturesTodayNum = navbarTranslationData?.scores_header_fixtures_information?.football ?? 0;
-    $sessionStore.userAgent        = $page.data.userAgent as string ?? navigator.userAgent;
-  })
-
+  $sessionStore.deviceType       = $page.data.deviceType as 'mobile' | 'tablet' | 'desktop';
+  $sessionStore.userAgent        = $page.data.userAgent as string ?? navigator.userAgent;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -805,7 +801,7 @@
     class:standard={currentPageRouteId == null }
     class:page-competition={currentPageRouteId == 'CompetitionPage'}
     class:page-profile={currentPageRouteId == 'ProfilePage'}
-    class:page-authors={currentPageRouteId == 'AuthorsPage' || currentPageRouteId == "Standard"}
+    class:page-authors={currentPageRouteId == 'AuthorsPage' || currentPageRouteId == 'Standard'}
     class:page-content={$page.route.id === routeIdContent}
     class:mobile={VIEWPORT_MOBILE_INIT[1]}
     class:tablet={VIEWPORT_TABLET_INIT[1]}
