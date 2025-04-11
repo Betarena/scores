@@ -375,11 +375,15 @@ export async function selectLanguage
   // │ NOTE:
   // │ > Solution [2]
   // ╰─────
-  await gotoSW
-  (
-      newURL!,
+  if (typeof newURL == 'string')
+  {
+
+    await gotoSW
+    (
+      newURL,
       true
-  );
+    );
+  }
 
   return;
 }
