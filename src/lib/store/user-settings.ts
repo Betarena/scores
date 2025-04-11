@@ -24,7 +24,6 @@ import { writable } from 'svelte/store';
 import { updateButtonOrder, updateDataByKey, updateFollowing, updateHighlightedSpotstack, updateSelectLang } from '$lib/firebase/common.js';
 import sessionStore from '$lib/store/session.js';
 import { log_v3 } from '$lib/utils/debug.js';
-import { initSportbookData } from '$lib/utils/geo.js';
 import { initUser, logoutUser } from '$lib/utils/user.js';
 import { setCookie } from './cookie.js';
 
@@ -220,12 +219,6 @@ function createLocalStore
           // │ CHECK:
           // │ │: for (non)-authenticated user logic.
           // ╰─────
-          if (localStore.country_bookmaker)
-            initSportbookData
-            (
-              localStore.country_bookmaker
-            );
-          ;
 
           methods.setLocalStorage
           (
@@ -517,12 +510,6 @@ function createLocalStore
                 if (localStore.user?.scores_user_data)
                   data.push(['lang-user', dataPoint]);
                 ;
-                break;
-              }
-              case DataPropEnum.GEO_BOOKMAKER:
-              {
-                localStore.country_bookmaker = dataPoint;
-                initSportbookData(dataPoint);
                 break;
               }
               case DataPropEnum.THEME:

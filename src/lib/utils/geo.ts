@@ -12,14 +12,10 @@
 
 // #region ➤ 📦 Package Imports
 
-import { get } from '$lib/api/utils.js';
 import { getUserLocation, getUserLocationFromIP } from '$lib/geo-js/init.js';
-import sessionStore from '$lib/store/session.js';
 import userBetarenaSettings from '$lib/store/user-settings.js';
-import { dlogv2 } from './debug.js';
 
 import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
-import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -95,68 +91,6 @@ export async function setUserGeoLocation
     [
       ['geoJs', geoRes],
       ['geo-bookmaker', userGeo.toLocaleLowerCase()]
-    ]
-  );
-
-  return;
-}
-
-/**
- * @author
- *  @migbash
- * @summary
- *  - 🟦 HELPER
- *  - 🟥 IMPORTANT
- * @description
- *   📣 `fetch` target sportbook data, based on `client` geo-location.
- *  - (⚡️) Data gathered at page-level and set to svelte-stores.
- * NOTE: (*) best approach
- * TODO: (alt) can be moved to a layout-level [?]
- * TODO: (alt) can be moved to a header-level [?]
- * TODO: (alt) can be moved to a +server-level [⚠️]
- * @param { string } geoPos
- *  💠 **[required]** `geo-location`.
- * @returns { Promise < void > }
- */
-export async function initSportbookData
-(
-  geoPos: string | undefined
-): Promise < void >
-{
-  // [🐞]
-  dlogv2
-  (
-    'initSportbookData(..)',
-    [
-      `🔹 [var] ➤ geoPos :|: ${geoPos}`,
-    ],
-    false
-  );
-
-  const
-    dataRes0
-      = await get
-      (
-        `/api/data/main/sportbook?geoPos=${geoPos}`,
-        null,
-        true,
-        true
-      ) as B_SPT_D,
-    dataRes1
-      = await get
-      (
-        `/api/data/main/sportbook?all=true&geoPos=${geoPos}`,
-        null,
-        true,
-        true
-      ) as B_SPT_D[]
-  ;
-
-  sessionStore.updateData
-  (
-    [
-      ['sportbookMain', dataRes0],
-      ['sportbookList', dataRes1]
     ]
   );
 

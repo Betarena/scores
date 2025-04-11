@@ -20,14 +20,11 @@ import { isSignInWithEmailLink, signInWithCustomToken, signInWithEmailLink } fro
 import { auth } from '$lib/firebase/init.js';
 import { setCookie } from '$lib/store/cookie.js';
 import sessionStore from '$lib/store/session.js';
-import userBetarenaSettings from '$lib/store/user-settings.js';
 import { authWithMoralis, successAuthComplete } from './authentication.js';
 import { AU_W_TAG, dlog, dlogv2, errlog } from './debug.js';
 
 import type { Page } from '@sveltejs/kit';
 import { routeIdHome } from '$lib/constants/paths.js';
-import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
-import { generateUrlCompetitions } from './string.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -49,7 +46,6 @@ export async function mainDeepLinkCheck
   await checkMetaMaskDeepLink();
   await checkReferralLink();
   await checkOpenAuth();
-
   const
     /**
      * @description
@@ -65,24 +61,7 @@ export async function mainDeepLinkCheck
   if (page?.route.id === routeIdHome)
   {
     const lang = sessionStore.extract<string>('lang');
-    const [preferedPage] = userBetarenaSettings.extract<{buttons_order: string[]}>('user')?.buttons_order || ["scores"];
-    const translations = page.data.B_NAV_T as B_NAV_T | null | undefined;
-    switch (preferedPage) {
-      case "competitions":
-        revertUrl = generateUrlCompetitions(
-          lang || "",
-          page.data.B_SAP_D3_CP_H
-        );
-        break;
-      case "content":
-        revertUrl =
-        translations?.scores_header_translations?.section_links
-        ?.sports_content_url as string;
-        break;
-        case "scores":
-      default:
-        revertUrl = `/${lang === "en" ? "" : `${lang}/`}scores`;
-    }
+      revertUrl = `/${lang === "en" ? "" : `${lang}`}`;
     goto
     (
       revertUrl,

@@ -138,7 +138,7 @@
     </a>
   </div>
   {#if !pagesWihoutNav.includes($page.route.id || "")}
-    <HeaderNavigation {translationData} />
+    <!-- <HeaderNavigation {translationData} /> -->
   {/if}
 
   <div class="actions">

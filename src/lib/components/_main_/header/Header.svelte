@@ -189,15 +189,15 @@
    *  📣 Target navigation `button` data list.
    */
   $: navButtonOrderList = [
-    {
-      key: "scores",
-      url: `${serverLang != "en" ? `/${serverLang}` : ""}/scores`,
-      navTxt:
-        trsanslationData?.scores_header_translations?.section_links
-          ?.scores_title ?? "SCORES",
-      isNew: false,
-      newTxt: "New",
-    },
+    // {
+    //   key: "scores",
+    //   url: `${serverLang != "en" ? `/${serverLang}` : ""}/scores`,
+    //   navTxt:
+    //     trsanslationData?.scores_header_translations?.section_links
+    //       ?.scores_title ?? "SCORES",
+    //   isNew: false,
+    //   newTxt: "New",
+    // },
     {
       key: "content",
       url: trsanslationData?.scores_header_translations?.section_links

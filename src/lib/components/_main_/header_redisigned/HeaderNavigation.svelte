@@ -55,15 +55,15 @@
   $: isAuth = !!user;
   $: ({ serverLang } = $sessionStore);
   $: navButtonOrderList = [
-    {
-      id: "scores",
-      key: [routeIdScores, routeIdPageSport, routeIdPagePlayer],
-      url: `${serverLang !== "en" ? `/${serverLang}` : ""}/scores`,
-      navTxt:
-        translationData?.scores_header_translations?.section_links
-          ?.scores_title ?? "SCORES",
-      isNew: false,
-    },
+    // {
+    //   id: "scores",
+    //   key: [routeIdScores, routeIdPageSport, routeIdPagePlayer],
+    //   url: `${serverLang !== "en" ? `/${serverLang}` : ""}/scores`,
+    //   navTxt:
+    //     translationData?.scores_header_translations?.section_links
+    //       ?.scores_title ?? "SCORES",
+    //   isNew: false,
+    // },
     {
       id: "content",
       key: [routeIdContent],

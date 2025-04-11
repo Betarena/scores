@@ -48,7 +48,7 @@
   import ArticleWidget from './articles/Article-Widget.svelte';
   import Button from '$lib/components/ui/Button.svelte';
   import Edit_05 from '$lib/components/ui/assets/edit-05.svelte';
-    import userSettings from '$lib/store/user-settings.js';
+  import userSettings from '$lib/store/user-settings.js';
 
   // #endregion ➤ 📦 Package Imports
 

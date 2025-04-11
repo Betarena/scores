@@ -106,7 +106,6 @@ export async function main
       console.log(`🔴 ${error}`)
     }
   */
-
   const
     /**
      * @description
@@ -144,7 +143,6 @@ export async function main
   [
     response.B_NAV_T,
     response.B_FOT_T,
-    response.B_SAP_D3_CP_H,
     response.authTrs
   ] = await fetchData
   (
@@ -185,7 +183,6 @@ export async function main
       }
     );
   */
-
   return response;
 }
 
@@ -224,7 +221,6 @@ async function fetchData
       = [
         `/api/data/main/navbar?lang=${_lang}&decompress`,
         `/api/data/main/footer?lang=${_lang}&decompress`,
-        '/api/data/main/seo-pages?term=competitions&decompress',
         `/api/hasura/_main_/auth?lang=${_lang}`,
       ],
     /**
