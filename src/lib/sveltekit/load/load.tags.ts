@@ -74,7 +74,7 @@ export async function main
       ERROR_CODE_INVALID
     );
   ;
-  const user = JSON.parse(locals.user);
+  const user = JSON.parse(JSON.stringify(locals.user));
   const [
     data
   ] = await fetchData
