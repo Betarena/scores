@@ -55,7 +55,7 @@
   import {
     routeIdContent,
   } from "$lib/constants/paths.js";
-  import Circle from "./assets/circle.svelte";
+  import Sheets from "./assets/sheets.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -139,8 +139,8 @@
     // },
     {
       id: "bta",
-      icon: Circle,
-      url: `/u/transaction-history/${lang}`,
+      icon: Sheets,
+      url: `/u/author/${lang}`,
       type: "link",
       label: "BTA",
       route: null,
@@ -255,7 +255,7 @@
     {#if !isAuth}
       <UserIcon />
     {:else}
-      <a href="/u/author/{$userBetarenaSettings.lang}">
+      <a href="/u/dashboard/{$userBetarenaSettings.lang}">
         {#if profile_photo}
           <Avatar src={profile_photo} size={25} />
         {:else}
