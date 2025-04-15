@@ -44,24 +44,18 @@
   import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
   import sessionStore from "$lib/store/session.js";
   import userBetarenaSettings from "$lib/store/user-settings.js";
-  import { generateUrlCompetitions } from "$lib/utils/string";
   import { dndzone, dragHandle } from "svelte-dnd-action";
 
-  import StatisticIcon from "./assets/statisticicon.svelte";
   import DocumentsIcon from "./assets/documentsicon.svelte";
-  import CupIcon from "./assets/cupicon.svelte";
   import UserIcon from "./assets/usericon.svelte";
-  import MenuSquareDotsIcon from "./assets/menusquaredotsicon.svelte";
   import Dragicon from "./assets/dragicon.svelte";
 
   import type { SvelteComponent } from "svelte";
   import Avatar from "$lib/components/ui/Avatar.svelte";
   import {
     routeIdContent,
-    routeIdPageCompetitionLobby,
-    routeIdScores,
   } from "$lib/constants/paths.js";
-  import Circle from "./assets/circle.svelte";
+  import Sheets from "./assets/sheets.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -145,8 +139,8 @@
     // },
     {
       id: "bta",
-      icon: Circle,
-      url: `/u/transaction-history/${lang}`,
+      icon: Sheets,
+      url: `/u/author/${lang}`,
       type: "link",
       label: "BTA",
       route: null,
