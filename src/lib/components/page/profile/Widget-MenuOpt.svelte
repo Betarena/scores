@@ -36,12 +36,12 @@ COMPONENT JS (w/ TS)
       'Account Settings',
       'Settings',
       'Author',
-      'Investor',
+      // 'Investor',
       'Deposit',
       'Withdraw',
-      'Transaction History',
-      'Competitions History',
-      'Scores',
+      // 'Transaction History',
+      // 'Competitions History',
+      // 'Scores',
       'Logout'
     ]
   ;
@@ -151,6 +151,7 @@ COMPONENT JS (w/ TS)
         break;
       case 'investor':
         selectedMenuOpt = 'Investor';
+        goto(`/u/dashboard/${$userBetarenaSettings.lang}`, { replaceState: true });
         break;
       case 'deposit':
           goto
@@ -164,12 +165,14 @@ COMPONENT JS (w/ TS)
         break;
       case 'transaction-history':
         selectedMenuOpt = 'Transaction History';
+        goto(`/u/dashboard/${$userBetarenaSettings.lang}`, { replaceState: true });
         break;
       case 'withdraw':
         selectedMenuOpt = 'Withdraw';
         break;
       case 'competition-history':
         selectedMenuOpt = 'Competitions History';
+        goto(`/u/dashboard/${$userBetarenaSettings.lang}`, { replaceState: true });
         break;
       case 'author':
         selectedMenuOpt = 'Author';
