@@ -45,3 +45,5 @@ debug/
 
 **/.DS_Store
 **/._*
+.flaskenv*
+!.env.project
