@@ -56,6 +56,9 @@
     routeIdContent,
   } from "$lib/constants/paths.js";
   import Sheets from "./assets/sheets.svelte";
+  import Search from "./assets/search.svelte";
+  import { modalStore } from "$lib/store/modal.js";
+  import SearchModal from "$lib/components/section/search/Search.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -96,6 +99,7 @@
     CNAME = "global/w/mobile-menu";
 
   let showPopup = false;
+
   $: ({ serverLang } = $sessionStore);
   $: ({ profile_photo, buttons_order, lang } = {
     ...$userBetarenaSettings.user?.scores_user_data,
@@ -137,6 +141,13 @@
     //       ?.competitions_title ?? "COMPETITIONS",
     //   route: routeIdPageCompetitionLobby,
     // },
+    {
+      id: "search",
+      icon: Search,
+      type: "search",
+      label: "BTA",
+      route: null,
+    },
     {
       id: "bta",
       icon: Sheets,
@@ -195,6 +206,10 @@
 
   function buttonClick(id: string, e?: MouseEvent) {
     switch (id) {
+      case "search":
+        $modalStore.component = SearchModal;
+        $modalStore.show = true;
+        break
       case "bta":
       case "profile":
         if (!isAuth) {
@@ -247,7 +262,7 @@
       </a>
     {:else}
       <div class="item" on:click={() => buttonClick(id)}>
-        <svelte:component this={icon} />
+        <svelte:component this={icon}  />
       </div>
     {/if}
   {/each}
@@ -342,7 +357,7 @@
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
+    z-index: 4000;
   }
   .mobile-menu {
     display: flex;
@@ -356,7 +371,7 @@
     left: 50%;
     transform: translateX(-50%);
     border-radius: 56px;
-    z-index: 1000;
+    z-index: 4000;
     align-items: center;
     justify-content: space-between;
     gap: 40px;

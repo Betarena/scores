@@ -812,6 +812,8 @@
     {/if}
   </main>
 
+  <InfoMessages />
+  <ModalMain />
   {#if (VIEWPORT_MOBILE_INIT[1] || VIEWPORT_TABLET_INIT[1]) && [routeIdScores, routeIdPageCompetitions, routeIdContent].includes($page.route.id || '')}
     <MobileMenu
       mobile={VIEWPORT_MOBILE_INIT[1]}
@@ -819,9 +821,7 @@
     />
   {/if}
 
-  <InfoMessages />
 
-  <ModalMain />
 </div>
 
 <!--

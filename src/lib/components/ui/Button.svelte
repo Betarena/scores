@@ -43,6 +43,7 @@
       | "primary-outline"
       | "terlary-gray"
       | "tertiary"
+      | "link-color"
       | "subtle" = "primary";
 
   export let submit = false;
@@ -444,6 +445,20 @@
           #ea2b2b
         );
       }
+    }
+  }
+  .link-color {
+    padding: 0 !important;
+    background: inherit;
+    color: var(
+      --component-colors-components-buttons-tertiary-color-button-tertiary-color-fg,
+      #f5620f
+    );
+
+    &:hover,
+    &.hover {
+      color: var(--component-colors-components-buttons-tertiary-color-button-tertiary-color-fg_hover, #D4550C);
+
     }
   }
 </style>

@@ -34,6 +34,7 @@
   export let name = "";
   export let label = "";
   export let height = inputType === "textarea" ? "100px" : "44px";
+  export let node: HTMLInputElement | HTMLTextAreaElement | null = null;
   export let onInputValidation:
     | ((val: string | number) => boolean)
     | undefined = undefined;
@@ -48,6 +49,8 @@
     | { blur: HTMLInputElement }
     | { keydown: HTMLInputElement }
   >();
+
+  $: focus = false;
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -66,6 +69,12 @@
     e: any,
     type: "input" | "change" | "focus" | "blur" | "keydown"
   ) {
+    if (type === "focus") {
+      focus = true;
+    }
+    if (type === "blur") {
+      focus = false;
+    }
     if (["focus", "blur", "keydown"].includes(type)) {
       return dispatch(type, e);
     }
@@ -87,23 +96,30 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 <div class="field">
-  <label class="label" for={name}>
-    {#if $$slots.label || label}
-      <span class="label-text">
-        <slot name="label">{label}</slot>
-      </span>
-    {/if}
-    {#if requred}
-      <span class="required">*</span>
-    {/if}
-  </label>
-  <div class="input-wrapper" style="height: {height}">
+  {#if $$slots.label || label || requred}
+    <label class="label" for={name}>
+      {#if $$slots.label || label}
+        <span class="label-text">
+          <slot name="label">{label}</slot>
+        </span>
+      {/if}
+      {#if requred}
+        <span class="required">*</span>
+      {/if}
+    </label>
+  {/if}
+  <div class="input-wrapper" class:focus class:error style="height: {height}">
     {#if type === "leading-text"}
       <div class="leading-text">
         <slot name="leading-text" />
       </div>
     {/if}
-    <div class="input-element input-{type}" class:error>
+    <div
+      class="input-element input-{type}"
+      style={type === "leading-text" && $$slots["leading-text"]
+        ? "border-left: none"
+        : ""}
+    >
       {#if inputType === "textarea"}
         <textarea
           class=""
@@ -115,6 +131,7 @@
         />
       {:else}
         <input
+          bind:this={node}
           class=""
           type={inputType}
           {placeholder}
@@ -196,24 +213,15 @@
       /* Shadows/shadow-xs */
       box-shadow: 0px 1px 2px 0px
         var(--colors-effects-shadows-shadow-xs, rgba(255, 255, 255, 0));
-
+      border: 1px solid var(--colors-border-border-primary, #6a6a6a);
+      border-radius: var(--radius-md, 8px);
+      background: var(--colors-background-bg-primary, #fff);
       .input-element {
         display: flex;
         align-items: center;
         gap: var(--spacing-md, 8px);
         flex: 1 0 0;
         align-self: stretch;
-        border-radius: var(--radius-md, 8px);
-        border: 1px solid var(--colors-border-border-primary, #6a6a6a);
-
-        &.error {
-          border: 1px solid var(--colors-border-border-error_subtle, #f97066);
-        }
-
-        &.input-leading-text {
-          border-top-left-radius: 0;
-          border-bottom-left-radius: 0;
-        }
 
         input,
         textarea {
@@ -253,14 +261,15 @@
 
       .leading-text {
         max-height: 100%;
+        height: 100%;
         display: flex;
         padding: 10px var(--spacing-lg, 12px) 10px 14px;
         align-items: center;
-        border: 1px solid var(--colors-border-border-primary, #6a6a6a);
-        border-radius: var(--spacing-md, 8px);
-        border-top-right-radius: 0;
-        border-bottom-right-radius: 0;
-        border-right: none;
+        // border: 1px solid var(--colors-border-border-primary, #6a6a6a);
+        // border-radius: var(--spacing-md, 8px);
+        // border-top-right-radius: 0;
+        // border-bottom-right-radius: 0;
+        // border-right: none;
         user-select: none;
         color: var(--colors-foreground-fg-tertiary-600);
 
@@ -270,6 +279,12 @@
         font-style: normal;
         font-weight: 400;
         line-height: var(--Line-height-text-md, 24px); /* 150% */
+      }
+      &.focus {
+        border-color: var(--colors-border-border-brand);
+      }
+      &.error {
+        border: 1px solid var(--colors-border-border-error_subtle, #f97066);
       }
     }
 
