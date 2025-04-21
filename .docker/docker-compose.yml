@@ -39,7 +39,7 @@ services:
   #
 
   scores:
-    image: name4d/betarena:scores-latest
+    image: ${BETARNA_SCORES__DOCKER_IMAGE:-name4d/betarena:scores-latest}
     restart: always
     # ╭─────
     # │ NOTE:
