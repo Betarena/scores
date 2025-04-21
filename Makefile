@@ -681,7 +681,7 @@ docker-container-log-full-export:
 
 	PATH_OUTPUT=./.docker/.export/$$(date +%Y_%m_%d_%H_%M_%S)
 
-	mkdir -p ./.docker/export/$${PATH_OUTPUT}
+	mkdir -p $${PATH_OUTPUT}
 
 	echo "Saving logs to: $${PATH_OUTPUT}"
 
