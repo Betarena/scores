@@ -10,86 +10,22 @@
 # │ 📝 Description                                                                   │
 # ┣──────────────────────────────────────────────────────────────────────────────────┫
 # │ BETARENA (Module)
-# │ |: Docker Compose Configuration
+# │ |: Docker Compose Configuration for Cache - Sitemap Worker
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
-
-name: betarena-scores
 
 services:
 
   # ╭──────────────────────────────────────────────────────────────────────────────────╮
-  # │ 🟦 │ APPLICATION CONTAINER(s)                                                    │
+  # │ 🟦 │ CONTAINER(s) for :: APPLICATION                                             │
   # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
   nginx:
-    image: nginx:1.27.1
-    command: |
-      nginx -g "daemon off;"
-    logging:
-      driver: local
-      options:
-        max-size: 1g
-        max-file: 5
-    volumes:
-      - ./nginx/logs/scores:/var/log/nginx/scores:rw
-      - ./nginx/logs/goaccess:/var/log/nginx/goaccess:rw
-      - ./goaccess:/etc/nginx/html:ro
-    networks:
-      - loadbalancer
-  #
-
-  scores:
-    image: name4d/betarena:scores-latest
-    restart: always
-    # ╭─────
-    # │ NOTE:
-    # │ |: used for development purposes
-    # ╰─────
-    # build:
-    #   context: ../
-    #   dockerfile: ./.docker/Dockerfile
-    deploy:
-      replicas: ${BETARNA_SCORES__REPLICAS:-3}
-    env_file: ../env/.env.docker.scores
-    expose:
-      - 3000
-    # ╭─────
-    # │ NOTE:
-    # │ |: used for development purposes
-    # ╰─────
-    # ports:
-    #   - 3000:3000
-    logging:
-      driver: local
-      options:
-        max-size: 500m
-        max-file: 5
-    networks:
-      - loadbalancer
-  #
-
-  # ╭──────────────────────────────────────────────────────────────────────────────────╮
-  # │ 🧿 │ CONTAINER(s) for :: MONITORING                                              │
-  # ╰──────────────────────────────────────────────────────────────────────────────────╯
-
-  goaccess:
-    image: allinurl/goaccess:1.9.3
     ports:
-      - 7890:7890
+      - 80:80   # Scores
+      - 443:443 # Scores
+      - 8080:8080 # GoAccess
     volumes:
-      - ./nginx/logs/scores:/var/log/nginx:ro
-      - ./goaccess:/srv:rw
-    command: |
-      --config-file=/srv/goaccess.conf
-      --log-file=/var/log/nginx/access.log
-      --output=/srv/index.html
-      --ping-interval=5
-    depends_on:
-      - nginx
+      - ${HOME}/../etc/letsencrypt:/etc/letsencrypt:ro
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
   #
-#
-
-networks:
-  loadbalancer:
-    driver: bridge
 #

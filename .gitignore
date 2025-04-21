@@ -36,7 +36,8 @@ debug/
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 .docker/export
-.docker/goaccess/index.html
+.docker/docker-compose.output.yml
+.docker/goaccess/*.html
 .docker/nginx/logs
 
 # ╭──────────────────────────────────────────────────────────────────────────────────╮
