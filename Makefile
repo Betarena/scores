@@ -518,18 +518,25 @@ docker-image-build:
 	# │ ➤ create docker image for Betarena // Scores                     │
 	# ╰──────────────────────────────────────────────────────────────────╯
 
+	-dot_clean .
+
+	TEMP_VERSION=$(shell npm pkg get version --workspaces=false | tr -d \")
+
+	if [ "$(version)" = "temporary" ]; then\
+		TEMP_VERSION="temporary-$$(date +%Y-%m-%d.%H-%M-%S)";\
+	fi
+
 	echo \
 		"$(COLOUR_B)\
 		\n╭──────────────────────────────────────────────────────────────────╮\
 		\n│ 🐳 │ Building Docker Image                                       │\
+		\n│ ➤ version: $${TEMP_VERSION} \
 		\n╰──────────────────────────────────────────────────────────────────╯\
 		$(END_COLOUR)\n";
 	#
 
-	-dot_clean .
-
 	docker build \
-		-t betarena-scores:$(shell npm pkg get version --workspaces=false | tr -d \") \
+		-t betarena-worker:$${TEMP_VERSION} \
 		-f ./.docker/Dockerfile \
 		. \
 		--progress=plain
@@ -592,40 +599,45 @@ docker-image-publish-to-registry:
 #
 
 .ONESHELL:
-docker-spin-start-production:
+docker-compose-up:
 	@
+	# ╭──────────────────────────────────────────────────────────────────╮
+	# │ NOTE: │ DESCRIPTION																						   │
+	# │ ➤ initialize docker compose for  																 │
+	# │ ➤ Betarena // Scores (Frontend)  				  			          		   │
+	# ╰──────────────────────────────────────────────────────────────────╯
+
 	echo -e \
 		"\
 		\n╭──────────────────────────────────────────────────────────────────╮\
-		\n│ 🔴 │ (re)Start container(s) | Production                         │\
+		\n│ 🔀 │ (re)start container(s)                                      │\
+		\n│ ➤ type: $(type) \
+		\n│ ➤ services: $(services) \
+		\n│ ➤ DOCKER_IMAGE_CACHE_API: $(DOCKER_IMAGE_CACHE_API) \
 		\n╰──────────────────────────────────────────────────────────────────╯"
 	#
 
 	${MAKE} docker-container-log-full-export
 
-	cd .docker/
-	docker compose pull
-	cd ..
+	if [ "$(type)" = "prod" ]; then\
+		cd .docker/; \
+		docker compose pull scores; \
+		cd ..; \
+	fi
 
-	docker compose \
-		-f .docker/docker-compose.yml \
-		--env-file ./env/.env.docker.compose \
-		up \
-		--build \
-		-d \
-		web-prod
-	#
-#
-
-.ONESHELL:
-docker-spin-start-ngnix:
-	@
-	echo -e \
-		"\
-		\n╭──────────────────────────────────────────────────────────────────╮\
-		\n│ 🔀 │ (re)Start container(s) | Nginx                              │\
-		\n╰──────────────────────────────────────────────────────────────────╯"
-	#
+	if [ "$(DOCKER_IMAGE_CACHE_API)" != "name4d/betarena:scores-latest" ]; then\
+		echo -e \
+			"$(COLOR_R)\
+			\n╭──────────────────────────────────────────────────────────────────╮\
+			\n│ 🐳 │ WARNING:                                                    │\
+			\n│ ➤ Docker image is not set to 'name4d/betarena:scores-latest'     │\
+			\n│ ➤ Sleeping for 10 seconds                                        │\
+			\n┣──────────────────────────────────────────────────────────────────┫\
+			\n│ ➤ Please set the image to 'name4d/betarena:scores-latest'        │\
+			\n╰──────────────────────────────────────────────────────────────────╯\
+			$(END_COLOUR)\n";\
+		sleep 10; \
+	fi
 
 	mkdir \
 		-p \
@@ -633,15 +645,28 @@ docker-spin-start-ngnix:
 		./.docker/nginx/logs/goaccess
 	#
 
+	# [🐞]
+	docker compose \
+		-f .docker/docker-compose.yml \
+		-f .docker/.compose/compose.$(type).yml \
+		config \
+		> .docker/docker-compose.output.yml
+	#
+
 	BUILDKIT_PROGRESS=plain \
 		docker compose \
 		-f .docker/docker-compose.yml \
+		-f .docker/.compose/compose.$(type).yml \
 		--env-file ./env/.env.docker.compose \
 		up \
 		--build \
 		-d \
-		nginx goaccess
+		$(services)
 	#
+
+	if [ "$(type)" = "prod" ]; then\
+		docker rmi $$(docker images -f "dangling=true" -q); \
+	fi
 #
 
 .ONESHELL:
@@ -672,7 +697,7 @@ docker-container-log-full-export:
 	# │ |: Exporting all logs from 'scores' containers (replicas)
 	# ╰─────
 
-	for i in $$(docker ps --filter name=^betarena-scores-web-prod- --format="{{.ID}}" --no-trunc); do\
+	for i in $$(docker ps --filter name=^betarena-scores-scores- --format="{{.ID}}" --no-trunc); do\
 		echo "Exporting logs for container: $$i";\
 		cp \
 			/var/lib/docker/containers/$${i}/local-logs/container.log \
@@ -691,7 +716,7 @@ docker-container-log-full-export:
 #
 
 .ONESHELL:
-docker-service-nginx-log-export:
+docker-container-log-nginx-export:
 	@
 	echo -e \
 		"\
@@ -703,7 +728,6 @@ docker-service-nginx-log-export:
 	cp ./.docker/nginx/logs/scores/access.log ./.docker/export/scores.access.log
 	truncate -s 0 ./.docker/nginx/logs/scores/access.log
 #
-
 
 # ╭──────────────────────────────────────────────────────────────────────────────────╮
 # │ 🟣 │ SENTRY                                                                      │

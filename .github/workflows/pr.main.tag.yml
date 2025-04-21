@@ -208,6 +208,6 @@ jobs:
             # │ NOTE:
             # │ ➤ Run target makefile command
             # ╰─────
-            make docker-spin-start-production
+            make docker-compose-up type="prod"
   #
 #
