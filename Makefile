@@ -526,7 +526,7 @@ docker-image-build:
 		TEMP_VERSION="temporary-$$(date +%Y-%m-%d.%H-%M-%S)";\
 	fi
 
-	echo \
+	echo -e \
 		"$(COLOUR_B)\
 		\n╭──────────────────────────────────────────────────────────────────╮\
 		\n│ 🐳 │ Building Docker Image                                       │\
@@ -553,7 +553,7 @@ docker-image-publish-to-registry:
 	# │ ➤ comprising database initialization.                            │
 	# ╰──────────────────────────────────────────────────────────────────╯
 
-	echo \
+	echo -e \
 		"$(COLOUR_B)\
 		\n╭──────────────────────────────────────────────────────────────────╮\
 		\n│ 🐳 │ Creating Docker Image                                       │\
@@ -679,18 +679,18 @@ docker-container-log-full-export:
 		\n╰──────────────────────────────────────────────────────────────────╯"
 	#
 
-	TEMP_PATH=$$(date +%Y_%m_%d_%H_%M_%S)
+	PATH_OUTPUT=./.docker/.export/$$(date +%Y_%m_%d_%H_%M_%S)
 
-	mkdir -p ./.docker/export/$${TEMP_PATH}/
+	mkdir -p ./.docker/export/$${PATH_OUTPUT}
 
-	echo "Saving logs to: ./.docker/export/$${TEMP_PATH}"
+	echo "Saving logs to: $${PATH_OUTPUT}"
 
 	# ╭─────
 	# │ NOTE:
 	# │ |: Export current docker container state to a file, for archive
 	# ╰─────
 
-	docker ps -a --format="table {{.ID}}\t{{.Image}}\t{{.Command}}\t{{.Status}}" --no-trunc >> ./.docker/export/$${TEMP_PATH}/docker.state.log
+	docker ps -a --format="table {{.ID}}\t{{.Image}}\t{{.Command}}\t{{.Status}}" --no-trunc >> $${PATH_OUTPUT}/docker.state.log
 
 	# ╭─────
 	# │ NOTE:
@@ -701,7 +701,7 @@ docker-container-log-full-export:
 		echo "Exporting logs for container: $$i";\
 		cp \
 			/var/lib/docker/containers/$${i}/local-logs/container.log \
-			./.docker/export/$${TEMP_PATH}/$${i}.log;\
+			$${PATH_OUTPUT}/$${i}.log;\
 	done
 
 	# ╭─────
@@ -711,7 +711,7 @@ docker-container-log-full-export:
 
 	cp \
 		/var/lib/docker/containers/**/*-json.log \
-		./.docker/export/$${TEMP_PATH}/
+		$${PATH_OUTPUT}
 	#
 #
 
