@@ -82,12 +82,16 @@ services:
       - 7890:7890
     volumes:
       - ./nginx/logs/scores:/var/log/nginx:ro
-      - ./goaccess:/srv:rw
+      - ./goaccess:/var/www/goaccess:rw
     command: |
-      --config-file=/srv/goaccess.conf
+      --config-file=/var/www/goaccess/goaccess.conf
       --log-file=/var/log/nginx/access.log
-      --output=/srv/index.html
+      --log-format=COMBINED
+      --output=/var/www/goaccess/index.html
+      --real-time-html
       --ping-interval=5
+      --port=7890
+      --html-report-title="BetArena - Scores"
     depends_on:
       - nginx
   #
