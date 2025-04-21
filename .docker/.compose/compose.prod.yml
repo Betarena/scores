@@ -10,7 +10,7 @@
 # │ 📝 Description                                                                   │
 # ┣──────────────────────────────────────────────────────────────────────────────────┫
 # │ BETARENA (Module)
-# │ |: Docker Compose Configuration for Cache - Sitemap Worker
+# │ |: Docker Compose Configuration for Scores
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 services:
@@ -28,4 +28,69 @@ services:
       - ${HOME}/../etc/letsencrypt:/etc/letsencrypt:ro
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
   #
+
+  # ╭──────────────────────────────────────────────────────────────────────────────────╮
+  # │ 🧿 │ CONTAINER(s) for :: MONITORING                                              │
+  # ╰──────────────────────────────────────────────────────────────────────────────────╯
+
+  prometheus:
+    image: prom/prometheus:v2.52.0
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    volumes:
+      - ./prometheus/password.txt:/etc/prometheus/password.txt
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    expose:
+      - 9090
+    networks:
+      - monitoring
+  #
+
+  prometheus-node-exporter:
+    image: prom/node-exporter:v1.8.1
+    restart: unless-stopped
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    expose:
+      - 9100
+    networks:
+      - monitoring
+  #
+
+  portainer-agent:
+    image: portainer/agent:2.29.0
+    restart: always
+    ports:
+      - 9001:9001
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - type: bind
+        source: /var/lib/docker/volumes
+        target: /var/lib/docker/volumes
+        read_only: true
+        bind:
+          propagation: rslave
+  #
+#
+
+volumes:
+  prometheus-data: {}
+#
+
+networks:
+  monitoring:
+    driver: bridge
 #
