@@ -118,6 +118,7 @@
 		"@sveltejs/kit": "1.22.3",
 		"@testing-library/jest-dom": "5.16.5",
 		"@testing-library/svelte": "4.0.3",
+		"@types/cookie": "0.5.0",
 		"@types/express": "5.0.0",
 		"@types/json-stringify-safe": "5.0.3",
 		"@types/masonry-layout": "4.2.5",
