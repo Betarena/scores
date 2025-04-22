@@ -536,7 +536,7 @@ docker-image-build:
 	#
 
 	docker build \
-		-t betarena-worker:$${TEMP_VERSION} \
+		-t betarena-scores:$${TEMP_VERSION} \
 		-f ./.docker/Dockerfile \
 		. \
 		--progress=plain
