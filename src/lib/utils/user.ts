@@ -22,10 +22,9 @@ import { userBalanceListen, userDataFetch } from '$lib/firebase/common.js';
 import { delCookie, setCookie } from '$lib/store/cookie.js';
 import sessionStore from '$lib/store/session.js';
 import userBetarenaSettings, { type IDataProp } from '$lib/store/user-settings.js';
-import { dlog } from '$lib/utils/debug.js';
+import { dlog, log_v3 } from '$lib/utils/debug.js';
 import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.betarena-user.js';
 import { dlogv2 } from './debug.js';
-import { log_v3 } from '$lib/utils/debug.js';
 import { selectLanguage } from './navigation.js';
 import { gotoSW } from './sveltekitWrapper.js';
 
@@ -304,6 +303,14 @@ export async function logoutUser
     redirectLink = `/${lang == 'en' || lang == undefined ? '' : lang}`
   ;
 
+  if (['Standard', 'ProfilePage'].includes(currentPageRouteId ?? ''))
+    await gotoSW
+    (
+      redirectLink,
+      true
+    );
+  ;
+
   userBetarenaSettings.updateData
   (
     [
@@ -328,14 +335,6 @@ export async function logoutUser
   (
     'betarenaCookieLoggedIn'
   );
-
-  if (['Standard', 'ProfilePage'].includes(currentPageRouteId ?? ''))
-    await gotoSW
-    (
-      redirectLink,
-      true
-    );
-  ;
 
   return;
 }
