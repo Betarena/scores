@@ -93,9 +93,9 @@ export const
 
     if (['pt-BR'].includes(strLocale))
       return 'br';
-    else if (['pt, pt-PT, pt-AO, pt-MZ, pt-CV, pt-GW, pt-ST, pt-TL'].includes(strLocale))
+    else if (['pt', 'pt-PT', 'pt-AO', 'pt-MZ', 'pt-CV', 'pt-GW', 'pt-ST', 'pt-TL'].includes(strLocale))
       return 'pt';
-    else if(['es', 'es-ES', 'es-MX', 'es-AR', 'es-CO', 'es-CL', 'es-PE', 'es-VE', 'es-EC', 'es-GT', 'es-CU', 'es-UY', 'es-BO', 'es-DO', 'es-HN', 'es-NI', 'es-SV', 'es-PR', 'es-PA', 'es-PY'].includes(strLocale))
+    else if(['es', 'es-ES', 'es-MX', 'es-AR', 'es-CO', 'es-CL', 'es-PE', 'es-VE', 'es-EC', 'es-GT', 'es-CU', 'es-UY', 'es-BO', 'es-DO', 'es-HN', 'es-NI', 'es-SV', 'es-PR', 'es-PA', 'es-PY', 'es-419'].includes(strLocale))
       return 'es';
     else if (['fr', 'fr-FR', 'fr-BE', 'fr-CA', 'fr-CH', 'fr-LU', 'fr-CI', 'fr-MA', 'fr-SN', 'fr-CM', 'fr-TN', 'fr-DZ', 'fr-HT'].includes(strLocale))
       return 'fr';
