@@ -17,6 +17,7 @@
 
 import { performance } from 'perf_hooks';
 
+import { main as articleTrFetch } from '$lib/sveltekit/load/load.author.layout.js';
 import { ERROR_CODE_PRELOAD, LAYOUT_1_LANG_PAGE_ERROR_MSG, dlogv2 } from '$lib/utils/debug';
 import { detectDeviceWithUA } from '$lib/utils/device.js';
 import { detectPlatformLanguage } from '$lib/utils/languages.js';
@@ -101,6 +102,11 @@ interface IPreloadResponse
    *  📝 Target `data` returned.
    */
   authTrs?: IAuthTrs | undefined;
+  /**
+   * @description
+   *  📝 Target `data` returned.
+   */
+  translations?: unknown | undefined;
 }
 
 // #endregion ➤ ⛩️ TYPES
@@ -261,6 +267,26 @@ export async function main
       LAYOUT_1_LANG_PAGE_ERROR_MSG
     );
   ;
+
+  if (event.route.id == '/(scores)/[[lang=lang]]')
+  {
+    const
+      /**
+       * @description
+       * 📝 Target `urls` to be `fetched`.
+       */
+      dataRes0
+        = await articleTrFetch
+        (
+          event,
+          {
+            langParam: objResponse.langParam,
+          }
+        )
+    ;
+
+    objResponse.translations = dataRes0;
+  }
 
   // [🐞]
   dlogv2
