@@ -10,10 +10,8 @@
 # │ 📝 Description                                                                   │
 # ┣──────────────────────────────────────────────────────────────────────────────────┫
 # │ BETARENA (Module)
-# │ |: Docker Compose Configuration
+# │ |: Docker Compose Configuration for Scores
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
-
-name: betarena-scores
 
 services:
 
@@ -22,82 +20,77 @@ services:
   # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
   nginx:
-    image: nginx:1.27.1
-    command: |
-      nginx -g "daemon off;"
-    logging:
-      driver: local
-      options:
-        max-size: 1g
-        max-file: 5
+    ports:
+      - 80:80   # Scores
+      - 443:443 # Scores
+      - 8080:8080 # GoAccess
     volumes:
-      - ./nginx/logs/scores:/var/log/nginx/scores:rw
-      - ./nginx/logs/goaccess:/var/log/nginx/goaccess:rw
-      - ./goaccess:/etc/nginx/html:ro
-    networks:
-      - loadbalancer
-  #
-
-  scores:
-    image: ${BETARNA_SCORES__DOCKER_IMAGE:-name4d/betarena:scores-latest}
-    restart: always
-    # ╭─────
-    # │ NOTE:
-    # │ |: used for development purposes
-    # ╰─────
-    # build:
-    #   context: ../
-    #   dockerfile: ./.docker/Dockerfile
-    deploy:
-      replicas: ${BETARNA_SCORES__REPLICAS:-3}
-    env_file: ../env/.env.docker.scores
-    volumes:
-      - ../static/robots.txt:/app/build/client/robots.txt:ro
-      - ../static/sitemap.xml:/app/build/client/sitemap.xml:ro
-      # - ../.scripts:/app/.scripts:rw
-    expose:
-      - 3000
-    # ╭─────
-    # │ NOTE:
-    # │ |: used for development purposes
-    # ╰─────
-    # ports:
-    #   - 3000:3000
-    logging:
-      driver: local
-      options:
-        max-size: 500m
-        max-file: 5
-    networks:
-      - loadbalancer
+      - ${HOME}/../etc/letsencrypt:/etc/letsencrypt:ro
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
   #
 
   # ╭──────────────────────────────────────────────────────────────────────────────────╮
   # │ 🧿 │ CONTAINER(s) for :: MONITORING                                              │
   # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-  goaccess:
-    image: allinurl/goaccess:1.9.3
-    ports:
-      - 7890:7890
+  prometheus:
+    image: prom/prometheus:v2.52.0
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
     volumes:
-      - ./nginx/logs/scores:/var/log/nginx:ro
-      - ./goaccess:/var/www/goaccess:rw
-    command: |
-      --config-file=/var/www/goaccess/goaccess.conf
-      --log-file=/var/log/nginx/access.log
-      --log-format=COMBINED
-      --output=/var/www/goaccess/index.html
-      --real-time-html
-      --ping-interval=5
-      --port=7890
-      --html-report-title="BetArena - Scores"
-    depends_on:
-      - nginx
+      - ./prometheus/password.txt:/etc/prometheus/password.txt
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    expose:
+      - 9090
+    networks:
+      - monitoring
+  #
+
+  prometheus-node-exporter:
+    image: prom/node-exporter:v1.8.1
+    restart: unless-stopped
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    expose:
+      - 9100
+    networks:
+      - monitoring
+  #
+
+  portainer-agent:
+    image: portainer/agent:2.29.0
+    restart: always
+    ports:
+      - 9001:9001
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - type: bind
+        source: /var/lib/docker/volumes
+        target: /var/lib/docker/volumes
+        read_only: true
+        bind:
+          propagation: rslave
   #
 #
 
+volumes:
+  prometheus-data: {}
+#
+
 networks:
-  loadbalancer:
+  monitoring:
     driver: bridge
 #
