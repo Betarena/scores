@@ -26,7 +26,9 @@ import sessionStore from '$lib/store/session.js';
 import { log_v3 } from '$lib/utils/debug.js';
 import { initUser, logoutUser } from '$lib/utils/user.js';
 import { setCookie } from './cookie.js';
+import { parseObject } from '$lib/utils/string.2.js';
 
+import type { IBetarenaUserCookie } from '$lib/types/types.cookie.js';
 import type { BetarenaUser, IUserSetting, Voted_Fixture } from '$lib/types/types.user-settings.js';
 
 // #endregion ➤ 📦 Package Imports
@@ -462,7 +464,7 @@ function createLocalStore
             {
               strGroupName: '🚏 checkpoint ➤ Store | LocalStorage ➤ updateData(..) // START',
               msgs: [
-                `🔹 [var] ➤ data :|: ${data}`,
+                `🔹 [var] ➤ data :|: ${parseObject(data)}`,
               ],
               closed: true
             }
@@ -824,44 +826,18 @@ function createLocalStore
          *  │ OUTPUT
          *  │ : void
          *  [X]──────────────────────────────────────────────────────────────────
-         * @return { object }
+         * @return { IBetarenaUserCookie }
          *  📤 Main `data point(s)`.
          */
         extractUserDataSnapshot:
         (
-        ): object =>
+        ): IBetarenaUserCookie =>
         {
-          const
-            /**
-             * @description
-             * 📣 Target `localStorage` data.
-             */
-            localStore = methods.parseLocalStorage(),
-            /**
-             * @description
-             *  📣 Target `user` data.
-             */
-            data
-              = {
-                lang: localStore?.lang,
-                geo: localStore?.country_bookmaker,
-                user: undefined
-              }
-          ;
-
-          if (localStore?.theme)
-          {
-            document.body.classList.toggle('dark-mode', localStore.theme == 'Dark');
-            document.body.classList.toggle('light-mode', localStore.theme == 'Light');
+          return {
+            uid: userSettings.user?.firebase_user_data?.uid,
+            lang: userSettings.lang,
+            theme: userSettings.theme,
           }
-
-          if (localStore?.user)
-          {
-            data['user-uid'] = localStore.user.firebase_user_data?.uid;
-            data['lang-user'] = localStore.user.scores_user_data?.lang;
-          }
-
-          return data;
         },
 
         /**
@@ -887,9 +863,10 @@ function createLocalStore
          */
         extractAll:
         (
-        ): IUserSetting | NullUndef =>
+        ): IUserSetting =>
         {
-          return methods.parseLocalStorage();
+          // @ts-expect-error :: Emtpy object is not allowed, but returned nonetheless.
+          return methods.parseLocalStorage() ?? {};
         }
       }
   ;
