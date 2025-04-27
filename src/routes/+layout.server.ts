@@ -12,7 +12,7 @@
 
 // #region ➤ 📦 Package Imports
 
-import { main } from "$lib/sveltekit/load/load.layout.1.js";
+import { main } from "$lib/sveltekit/load/load.main.layout.js";
 import { main as articleTrFetch } from "$lib/sveltekit/load/load.author.layout.js";
 import { dlogv2 } from "$lib/utils/debug.js";
 import type { ServerLoadEvent } from "@sveltejs/kit";
