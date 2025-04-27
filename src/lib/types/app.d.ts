@@ -19,6 +19,29 @@ import type { IBetarenaUserCookie } from "./types.cookie.js";
 
 // #endregion ➤ 📦 Package Imports
 
+/**
+ * @description
+ * 📝 Pre-defined and expected logic side-effects.
+ */
+type ISettingsState =
+  // ╭─────
+  // │ NOTE: :: Widget is 'Processing' authentication (post-submit).
+  // ╰─────
+  | 'IsAnonymousNewBurner'
+  // ╭─────
+  // │ NOTE: :|: Widget is 'Processing' authentication (post-submit).
+  // ╰─────
+  | 'IsAnonymousNew'
+  // ╭─────
+  // │ NOTE: :|: Widget is 'Processing' authentication (post-submit).
+  // ╰─────
+  | 'IsAnonymousReturning'
+  // ╭─────
+  // │ NOTE: :|: Widget is 'Processing' authentication (post-submit).
+  // ╰─────
+  | 'IsBetarenaUser'
+;
+
 declare global
 {
 	namespace App
@@ -50,6 +73,10 @@ declare global
        * 📝 Locals override '<html lang=[..]>' value
        */
       strLocaleOverride?: string;
+      /**
+       * @description
+       */
+      setState?: Set < ISettingsState >;
 		}
   }
 }

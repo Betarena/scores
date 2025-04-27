@@ -3,6 +3,7 @@
 import type { B_H_COMP_DATA } from '@betarena/scores-lib/types/_HASURA_.js';
 import type { FIREBASE_livescores_now, FIREBASE_odds, FIRE_LNNS } from '@betarena/scores-lib/types/firebase.js';
 import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
+import type { Page } from '@sveltejs/kit';
 import type { Unsubscribe } from 'firebase/firestore';
 
 // #endregion ➤ 📦 Package Imports

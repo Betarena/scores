@@ -52,3 +52,30 @@ export function parseObject
     return '';
   }
 }
+
+/**
+ * @author
+ *  @migbash
+ * @summary
+ *  🔹 HELPER
+ * @description
+ *  📝 Convert `string` to `object`.
+ * @param { string | NullUndef } strObject
+ *  ❗️ **REQUIRED** String to parse.
+ * @return { T1 | null }
+ *  📤 Parsed string as JS object.
+ */
+export function stringToObject
+<
+  T1
+>
+(
+  strObject: string | NullUndef
+): T1 | null
+{
+  return JSON.parse
+  (
+    // @ts-expect-error :: <?>
+    strObject ?? null
+  );
+}

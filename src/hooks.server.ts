@@ -28,7 +28,7 @@ import cookie from 'cookie';
 
 import { ERROR_CODE_INVALID, PAGE_INVALID_MSG, dlog, errlog, log_v3 } from '$lib/utils/debug';
 import { platfrom_lang_ssr } from '$lib/utils/platform-functions';
-import { parseObject } from '$lib/utils/string.2.js';
+import { parseObject, stringToObject } from '$lib/utils/string.2.js';
 
 import type { IBetarenaUserCookie } from '$lib/types/types.cookie.js';
 import type { Handle, HandleServerError } from '@sveltejs/kit';
@@ -246,13 +246,18 @@ export const handle: Handle = sequence
       }
     );
 
-    event.locals.user = JSON.parse(cookies.betarenaScoresCookie ?? null) as IBetarenaUserCookie;
+    event.locals.setState = new Set();
 
     // ╭─────
     // │ CHECK:
     // │ |: for new visitor, set default values.
     // ╰─────
-    if (event.locals.user == undefined)
+    if (cookies.betarenaScoresCookie)
+    {
+      event.locals.user = stringToObject<IBetarenaUserCookie>(cookies.betarenaScoresCookie);
+      event.locals.setState?.add('IsAnonymousReturning');
+    }
+    else
     {
       // [🐞]
       log_v3
@@ -264,12 +269,24 @@ export const handle: Handle = sequence
       );
 
       event.locals.user = objUserDefaultCookie;
-      event.locals.user.lang = convertLocaleToLang(`${listLanguages[0].code}-${listLanguages[0].region}`);
+
+      if (event.url.pathname === '/' && event.route.id === '/(scores)/[[lang=lang]]')
+      {
+        event.locals.setState?.add('IsAnonymousNew');
+        event.locals.user.lang = convertLocaleToLang(`${listLanguages[0].code}-${listLanguages[0].region}`);
+      }
+      else
+      {
+        event.locals.setState?.add('IsAnonymousNewBurner');
+        event.locals.user.lang = event.params.lang ?? 'en';
+      }
     }
 
     if (cookies.betarenaCookieLoggedIn)
+    {
       event.locals.uid = event.locals.user.uid;
-    ;
+      event.locals.setState?.add('IsBetarenaUser');
+    }
 
     // 🔗 read-more :|: https://github.com/sveltejs/kit/issues/1046
     // if (event.url.searchParams.has('_method'))
