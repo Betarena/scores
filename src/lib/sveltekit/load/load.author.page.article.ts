@@ -1,13 +1,16 @@
 // ╭──────────────────────────────────────────────────────────────────────────────────╮
-// │ 📌 High Order Component Overview                                                 │
+// │ 📌 High Order Overview                                                           │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
-// │ ➤ Internal Svelte Code Format :|: V.8.0                                          │
-// │ ➤ Status :|: 🔒 LOCKED                                                           │
-// │ ➤ Author(s) :|: @migbash                                                         │
+// │ ➤ Code Format   // V.8.0                                                         │
+// │ ➤ Status        // 🔒 LOCKED                                                     │
+// │ ➤ Author(s)     // @migbash                                                      │
+// │ ➤ Maintainer(s) // @migbash                                                      │
+// │ ➤ Created on    // <date-created>                                                │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
 // │ 📝 Description                                                                   │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
-// │ Main Scores Platform Page Loader ('Client-Side')                                 │
+// │ BETARENA (Module)
+// │ |: <insert-module-summary-here>
 // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 // #region ➤ 📦 Package Imports
@@ -17,12 +20,27 @@ import { redirect, ServerLoadEvent } from '@sveltejs/kit';
 import { mapLangToLocaleAuthor } from '$lib/constants/instance.js';
 import { dlogv2, ERROR_CODE_INVALID } from '$lib/utils/debug.js';
 import { preloadExitLogic, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/navigation.js';
+import { parseObject } from '$lib/utils/string.2.js';
 
-import type { B_SAP_D2 } from '@betarena/scores-lib/types/seo-pages.js';
 import type { IPageAuhtorArticleDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
+import type { B_SAP_D2 } from '@betarena/scores-lib/types/v8/preload.scores.js';
 import type { IPageArticleTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.articles.js';
 
 // #endregion ➤ 📦 Package Imports
+
+// #region ➤ 📌 VARIABLES
+
+const
+  /**
+   * @description
+   * 📝 Debugging tag.
+   */
+  strDebugModule = 'src/routes/(authors)/a/[...permalink]/+page.server.ts'
+;
+
+// #endregion ➤ 📌 VARIABLES
+
+// #region ➤ ⛩️ TYPES
 
 /**
  * @author
@@ -30,7 +48,7 @@ import type { IPageArticleTranslationDataFinal } from '@betarena/scores-lib/type
  * @summary
  *  🔹 INTERFACE
  * @description
- *  📣 Target `types` for `_this_` page required at preload.
+ *  📝 Target `types` for `_this_` page required at preload.
  */
 type PreloadPromise0 =
 [
@@ -43,9 +61,39 @@ type PreloadPromise0 =
  * @author
  *  @migbash
  * @summary
- *  🟥 MAIN
+ *  🔹 INTERFACE
  * @description
- *  📣 Logic for `[[lang=lang]]` route data preload.
+ *  📝 Interface for `_this_` page required at preload.
+ */
+interface IPreloadResponse
+{
+  dataArticle?: IPageAuhtorArticleDataFinal;
+  translationArticle?: IPageArticleTranslationDataFinal;
+  monthTranslations?: B_SAP_D2;
+}
+
+// #endregion ➤ ⛩️ TYPES
+
+/**
+ * @author
+ *  @migbash
+ * @summary
+ *  ♦️ MAIN
+ * @description
+ *  📝 Logic for 'src/routes/(authors)/a/[...permalink]/+page.server.ts' route data preload.
+ * @example
+ *  [1]──────────────────────────────────────────────────────────────────
+ *  │ main
+ *  │ (
+ *  │   <-sveltekit-server-preload-event-instance->
+ *  │ );
+ *  ┣────────────────────────────────────────────────────────────────────
+ *  │ DESCRIPTION
+ *  │ : Main logic for route `src/routes/(authors)/a/[...permalink]/+page.server.ts` for respective data preload.
+ *  ┣────────────────────────────────────────────────────────────────────
+ *  │ OUTPUT
+ *  │ : Returns `data` for `_this_` preload.
+ *  [X]──────────────────────────────────────────────────────────────────
  * @return { Promise < {} > }
  *  📤 Respective `data` for _this_ route.
  */
@@ -56,8 +104,17 @@ export async function main
   {
     langParam: string
   }
-): Promise < {} >
+): Promise < IPreloadResponse >
 {
+  // [🐞]
+  dlogv2
+  (
+    `🚏 checkpoint ➤ ${strDebugModule} main(..) // START`,
+    [
+      `🔹 [var] ➤ parentData :|: ${parseObject(parentData)}`,
+    ]
+  );
+
   const
     // ╭─────
     // │ NOTE:
@@ -82,9 +139,9 @@ export async function main
     ),
     /**
      * @description
-     *  📝 Initialize page response
+     *  📝 Initialize page objResponse
      */
-    response: any = {}
+    objResponse: IPreloadResponse = {}
   ;
 
   // ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -111,13 +168,13 @@ export async function main
   // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
   [
-    response.dataArticle,
-    response.translationArticle,
-    response.monthTranslations,
+    objResponse.dataArticle,
+    objResponse.translationArticle,
+    objResponse.monthTranslations,
   ] = await fetchData
   (
     event.fetch,
-    permalink,
+    permalink!,
     parentData.langParam
   );
 
@@ -125,66 +182,79 @@ export async function main
   // │ NOTE: IMPORTANT
   // │ |: Necesssary to assign the article 'lang' to the 'html lang' attribute.
   // ╰─────
-  event.locals.strLocaleOverride = mapLangToLocaleAuthor.get(response?.dataArticle?.article?.lang ?? 'en');
+  event.locals.strLocaleOverride = mapLangToLocaleAuthor.get(objResponse.dataArticle?.article.lang ?? 'en');
 
   // [🐞]
   dlogv2
   (
-    '🚏 checkpoint ➤ src/routes/(authors)/a/[...permalink]/+page.server.ts',
+    `🚏 checkpoint ➤ ${strDebugModule}`,
     [
-      // `🔹 [var] ➤ response :|: ${JSON.stringify(response)}`,
-    ],
-    true
+      // `🔹 [var] ➤ objResponse :|: ${JSON.stringify(objResponse)}`,
+    ]
   );
 
-  return response;
+  return objResponse;
 }
 
 /**
  * @author
  *  @migbash
  * @summary
- *  🟦 HELPER
+ *  🔷 HELPER
  * @description
- *  📣 Fetches target data for `_this_` page.
+ *  📝 Fetches target data for `_this_` page.
+ * @example
+ *  [1]──────────────────────────────────────────────────────────────────
+ *  │ fetchData
+ *  │ (
+ *  │   <-sveltekit-fetch-instance->,
+ *  │   'es'
+ *  │ );
+ *  ┣────────────────────────────────────────────────────────────────────
+ *  │ DESCRIPTION
+ *  │ : Fetches target data for `_this_` page.
+ *  ┣────────────────────────────────────────────────────────────────────
+ *  │ OUTPUT
+ *  │ : Returns `data` for `_this_` page.
+ *  [X]──────────────────────────────────────────────────────────────────
  * @param { any } fetch
- *  💠 **[required]** Target instance of `fetch` object.
- * @param { string } _permalink
- *  💠 **[required]** Target `parmalink`.
- * @param { string } _lang
- *  💠 **[required]** Target `lang`.
+ *  ❗️ **REQUIRED** Instance of `fetch` object.
+ * @param { string } permalink
+ *  ❗️ **REQUIRED** `parmalink`.
+ * @param { string } lang
+ *  ❗️ **REQUIRED** Target `lang`.
  * @returns { Promise < IProfileData2 > }
  *  📤 Target `data` fetched.
  */
 async function fetchData
 (
   fetch: any,
-  _permalink: string,
-  _lang: string
+  permalink: string,
+  lang: string
 ): Promise < PreloadPromise0 >
 {
   const
     /**
      * @description
-     *  📣 Target `urls` to be `fetched`.
+     *  📝 Target `urls` to be `fetched`.
      */
-    urls0
+    listUrls
       = [
-        `/api/data/author/article?permalink=${_permalink}`,
-        `/api/data/author/article?lang=${_lang}`,
-        `/api/data/main/seo-pages?months=true&lang=${_lang}&decompress`,
+        `/api/data/author/article?permalink=${permalink}`,
+        `/api/data/author/article?lang=${lang}`,
+        `/api/data/main/seo-pages?months=true&lang=${lang}&decompress`,
       ],
     /**
      * @description
-     *  📣 Target `data` returned.
+     *  📝 Target `data` returned.
      */
-    data0
+    dataRes0
       = await promiseUrlsPreload
       (
-        urls0
-        , fetch
+        listUrls,
+        fetch
       ) as PreloadPromise0
   ;
 
-  return data0;
+  return dataRes0;
 }
