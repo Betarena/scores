@@ -10,10 +10,8 @@
 # │ 📝 Description                                                                   │
 # ┣──────────────────────────────────────────────────────────────────────────────────┫
 # │ BETARENA (Module)
-# │ |: Docker Compose Configuration
+# │ |: Docker Compose Configuration for Scores
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
-
-name: betarena-scores
 
 services:
 
@@ -22,82 +20,10 @@ services:
   # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
   nginx:
-    image: nginx:1.27.1
-    command: |
-      nginx -g "daemon off;"
-    logging:
-      driver: local
-      options:
-        max-size: 1g
-        max-file: 5
-    volumes:
-      - ./nginx/logs/scores:/var/log/nginx/scores:rw
-      - ./nginx/logs/goaccess:/var/log/nginx/goaccess:rw
-      - ./goaccess:/etc/nginx/html:ro
-    networks:
-      - loadbalancer
-  #
-
-  scores:
-    image: ${BETARNA_SCORES__DOCKER_IMAGE:-name4d/betarena:scores-latest}
-    restart: always
-    # ╭─────
-    # │ NOTE:
-    # │ |: used for development purposes
-    # ╰─────
-    # build:
-    #   context: ../
-    #   dockerfile: ./.docker/Dockerfile
-    deploy:
-      replicas: ${BETARNA_SCORES__REPLICAS:-3}
-    env_file: ../env/.env.docker.scores
-    volumes:
-      - ../static/robots.txt:/app/build/client/robots.txt:ro
-      - ../static/sitemap.xml:/app/build/client/sitemap.xml:ro
-      # - ../.scripts:/app/.scripts:rw
-    expose:
-      - 3000
-    # ╭─────
-    # │ NOTE:
-    # │ |: used for development purposes
-    # ╰─────
-    # ports:
-    #   - 3000:3000
-    logging:
-      driver: local
-      options:
-        max-size: 500m
-        max-file: 5
-    networks:
-      - loadbalancer
-  #
-
-  # ╭──────────────────────────────────────────────────────────────────────────────────╮
-  # │ 🧿 │ CONTAINER(s) for :: MONITORING                                              │
-  # ╰──────────────────────────────────────────────────────────────────────────────────╯
-
-  goaccess:
-    image: allinurl/goaccess:1.9.3
     ports:
-      - 7890:7890
+      - 8080:8080 # Scores
+      - 8081:8081 # GoAccess
     volumes:
-      - ./nginx/logs/scores:/var/log/nginx:ro
-      - ./goaccess:/var/www/goaccess:rw
-    command: |
-      --config-file=/var/www/goaccess/goaccess.conf
-      --log-file=/var/log/nginx/access.log
-      --log-format=COMBINED
-      --output=/var/www/goaccess/index.html
-      --real-time-html
-      --ping-interval=5
-      --port=7890
-      --html-report-title="BetArena - Scores"
-    depends_on:
-      - nginx
+      - ./nginx/nginx.dev.conf:/etc/nginx/nginx.conf:ro
   #
-#
-
-networks:
-  loadbalancer:
-    driver: bridge
 #
