@@ -218,15 +218,7 @@ export async function main
      */
     objResponse: IPreloadResponse
       = {
-        langParam:
-          detectPlatformLanguage
-          (
-            {
-              parameterLanguage: event.params.lang,
-              cookies: event.cookies,
-              routeId: event.route.id
-            }
-          ),
+        langParam: event.locals.user.lang!,
         deviceType:
           detectDeviceWithUA
           (
