@@ -83,6 +83,7 @@
 
   // import '@betarena/ad-engine';
   // import WidgetAdEngine from '@betarena/ad-engine/src/lib/Widget-AdEngine.svelte';
+  import { initiateSubscribtions } from '$lib/store/subscribtions.js';
   import WidgetAdEngine from '@betarena/ad-engine';
 
   // ╭─────
@@ -374,6 +375,9 @@
     ): Promise < void > =>
     {
       // initSentry();
+
+      // IMPORTANT CRITICAL
+      initiateSubscribtions();
 
       // ╭─────
       // │ NOTE:

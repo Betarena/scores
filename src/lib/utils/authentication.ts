@@ -145,8 +145,6 @@ export async function successAuthComplete
         ]
       );
 
-      initUser();
-
       // [🐞]
       log_v3
       (
