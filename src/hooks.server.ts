@@ -234,10 +234,26 @@ export const handle: Handle = sequence
     const
       /**
        * @description
+       * 📣 Method Response (0)
+       */
+      methodRes0
+        = platfrom_lang_ssr
+        (
+          event.route.id,
+          // @ts-expect-error
+          // ╭─────
+          // │ FIXME:
+          // │ > event.error does not exist in a hook
+          // ╰─────
+          event.error,
+          event.params.lang,
+        ),
+      /**
+       * @description
        *  📣 new with response of <html lang...>
        * @see https://github.com/sveltejs/kit/issues/3091
        */
-      response
+      dataRes0
         = await resolve
         (
           event,
@@ -249,21 +265,13 @@ export const handle: Handle = sequence
               }
             ): string =>
             {
-              return html.replace
-              (
-                '%lang%',
-                platfrom_lang_ssr
+              return html
+                .replace
                 (
-                  event.route.id,
-                  // @ts-expect-error
-                  // ╭─────
-                  // │ FIXME:
-                  // │ > event.error does not exist in a hook
-                  // ╰─────
-                  event.error,
-                  event.params.lang,
+                  '%lang%',
+                  event.locals.strLocaleOverride ?? methodRes0
                 )
-              )
+              ;
             }
           }
         )

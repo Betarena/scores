@@ -20,6 +20,7 @@ declare global
 			user: any;
       betarenaUser: any;
       uid?: string
+      strLocaleOverride?: string;
 		}
   }
 }

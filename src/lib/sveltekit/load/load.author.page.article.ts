@@ -14,6 +14,7 @@
 
 import { redirect, ServerLoadEvent } from '@sveltejs/kit';
 
+import { mapLangToLocaleAuthor } from '$lib/constants/instance.js';
 import { dlogv2, ERROR_CODE_INVALID } from '$lib/utils/debug.js';
 import { preloadExitLogic, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/navigation.js';
 
@@ -119,6 +120,12 @@ export async function main
     permalink,
     parentData.langParam
   );
+
+  // ╭─────
+  // │ NOTE: IMPORTANT
+  // │ |: Necesssary to assign the article 'lang' to the 'html lang' attribute.
+  // ╰─────
+  event.locals.strLocaleOverride = mapLangToLocaleAuthor.get(response?.dataArticle?.article?.lang ?? 'en');
 
   // [🐞]
   dlogv2

@@ -35,5 +35,26 @@ export const
         return `${import.meta.env.VITE_PROD_LOGS?.toString()}` === 'true';
       ;
       return;
-    }
+    },
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟦 HELPER
+   * @description
+   *  📝 Map declaration of 'language' to 'locale'.
+   */
+  mapLangToLocaleAuthor
+    = new Map < string, string > (
+      [
+        ['pt', 'pt-PT'],
+        ['br', 'pt-BR'],
+        ['ro', 'ro'],
+        ['sv', 'sv'],
+        ['it', 'it'],
+        ['en', 'en-US'],
+        ['fr', 'fr'],
+        ['es', 'es-ES'],
+      ]
+    )
 ;
