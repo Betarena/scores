@@ -79,7 +79,7 @@ export async function main
           ;
         let lang: string | undefined = request.url.searchParams.get('lang') || undefined;
         if (lang === "all") lang = undefined;
-        const  langUser: string | undefined =  await JSON.parse( request.locals.user || "")?.lang || "en";
+        const  langUser: string | undefined = request.locals.user?.lang;
 
 
 
@@ -221,12 +221,21 @@ export async function updateFollowers(
 {
   return await tryCatchAsync(async () =>
   {
-    const { locals: { user: userstring, betarenaUser }, request } = event;
-    const user = await JSON.parse(userstring)
-    if (!betarenaUser || betarenaUser === "false") return json(null);
+    const
+      {
+        locals:
+        {
+          uid
+        },
+        request
+      } = event
+    ;
+
+    if (!uid) return json(null);
+
     const { tagId, follow } = await request.json();
+
     const type = follow ? 'add' : 'delete';
-    const userUid = user['user-uid'];
 
     const data = await new _GraphQL().wrapQuery
       <
@@ -237,7 +246,7 @@ export async function updateFollowers(
         TableAuthorTagsMutation0(type)
         , {
           tagId,
-          userUid
+          userUid: uid
         }
       );
     return json({ success: true, tag: data });

@@ -1,28 +1,30 @@
 // ╭──────────────────────────────────────────────────────────────────────────────────╮
-// │ 📌 High Order Component Overview                                                 │
+// │ 📌 High Order Overview                                                           │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
-// │ ➤ Internal Svelte Code Format :|: V.8.0                                          │
-// │ ➤ Status :|: 🔒 LOCKED                                                           │
-// │ ➤ Author(s) :|: @migbash                                                         │
+// │ ➤ Code Format   // V.8.0                                                         │
+// │ ➤ Status        // 🔒 LOCKED                                                     │
+// │ ➤ Author(s)     // @migbash                                                      │
+// │ ➤ Maintainer(s) // @migbash                                                      │
+// │ ➤ Created on    // <date-created>                                                │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
 // │ 📝 Description                                                                   │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
-// │ Main Scores Platform Page Loader ('Client-Side')                                 │
+// │ BETARENA (Module)
+// │ |: <insert-module-summary-here>
 // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 // #region ➤ 📦 Package Imports
 
-import { main } from '$lib/sveltekit/load/load.authors.js';
-import { dlogv2 } from '$lib/utils/debug.js';
+import { main } from '$lib/sveltekit/load/load.author.page.article.js';
 
 import type { ServerLoadEvent } from '@sveltejs/kit';
 
 // #endregion ➤ 📦 Package Imports
 
-// #region ➤ 🔄 LIFECYCLE [SVELTE]
+// #region ➤ 🔄 LIFECYCLE - [SVELTE-KIT]
 
 /**
- * @type {import('./$types').PageLoad}
+ * @type {import('./$types').ServerLoadEvent}
  */
 export async function load
 (
@@ -30,20 +32,14 @@ export async function load
 ): Promise < any >
 {
   const
+    // ╭─────
+    // │ NOTE:
+    // │ │: Destructure `object`.
+    // ╰─────
     {
       langParam
     } = await event.parent()
   ;
-
-  // [🐞]
-  dlogv2
-  (
-    '🚏 checkpoint ➤ src/routes/(authors)/a/[...permalink]/+page.server.ts',
-    [
-      `🔹 [var] ➤ langParam :|: ${langParam}`,
-    ],
-    true
-  );
 
   return await main
   (
@@ -54,4 +50,4 @@ export async function load
   );
 }
 
-// #endregion ➤ 🔄 LIFECYCLE [SVELTE]
+// #endregion ➤ 🔄 LIFECYCLE - [SVELTE-KIT]

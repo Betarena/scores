@@ -42,7 +42,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { browser } from '$app/environment';
-  import { afterNavigate } from '$app/navigation';
+  import { afterNavigate, beforeNavigate } from '$app/navigation';
   import { page } from '$app/stores';
   import { onMount } from 'svelte';
 
@@ -83,6 +83,8 @@
 
   // import '@betarena/ad-engine';
   // import WidgetAdEngine from '@betarena/ad-engine/src/lib/Widget-AdEngine.svelte';
+  import { delCookie } from '$lib/store/cookie.js';
+  import { initiateSubscribtions } from '$lib/store/subscribtions.js';
   import WidgetAdEngine from '@betarena/ad-engine';
 
   // ╭─────
@@ -176,6 +178,8 @@
       VIEWPORT_TABLET_INIT[0]
     )
   ;
+
+  $: console.log('$page.data.setState', $page.data.setState);
 
   $sessionStore.deviceType       = $page.data.deviceType as 'mobile' | 'tablet' | 'desktop';
   $sessionStore.userAgent        = $page.data.userAgent as string ?? navigator.userAgent;
@@ -367,6 +371,46 @@
   // │ as soon as 'this' .svelte file is ran.                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  beforeNavigate
+  (
+    async (
+      _event
+    ): Promise < void > =>
+    {
+      const
+        /**
+         * @description
+         * 📣 Debug Helper
+        */
+        strDebugPrefix = '🚏 checkpoint ➤ src/routes/+layout.svelte beforeNavigate(..)'
+      ;
+
+      if (!browser) return;
+
+      // [🐞]
+      dlogv2
+      (
+        `${strDebugPrefix} // START`,
+        [
+          `🔹 [var] ➤ _event :|: ${JSON.stringify(_event)}`
+        ]
+      );
+
+      if ($page.data.setState?.has('IsAnonymousNewBurner'))
+      {
+        // [🐞]
+        dlogv2
+        (
+          `${strDebugPrefix} // IsAnonymousNewBurner`,
+          []
+        );
+
+        delCookie('betarenaScoresCookie');
+      }
+
+      return;
+    }
+  );
 
   onMount
   (
@@ -374,6 +418,9 @@
     ): Promise < void > =>
     {
       // initSentry();
+
+      // IMPORTANT CRITICAL
+      initiateSubscribtions();
 
       // ╭─────
       // │ NOTE:

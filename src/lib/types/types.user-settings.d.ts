@@ -16,7 +16,7 @@
 // #region ➤ 📦 Package Imports
 
 import type { IBetarenaUser } from "@betarena/scores-lib/types/firebase/firestore.js";
-import type { User } from "firebase/auth";
+import type { User } from "firebase/auth/dist/auth";
 
 // #endregion ➤ 📦 Package Imports
 
@@ -71,6 +71,18 @@ export interface IScoreUser
 }
 
 /**
+ * @description
+ * 📝 Pre-defined and expected logic side-effects.
+ */
+type ISideEffect =
+  | 'IsAnonymous'
+  | 'IsAnonymousNew'
+  | 'IsAuthenticated'
+  | 'LangUpdate'
+  | 'UserUpdateDataLanguage'
+;
+
+/**
  * @author
  *  @migbash
  * @summary
@@ -115,4 +127,15 @@ export interface IUserSetting
    *  📣 **Client/User** userguides opt-out
    */
   userguide_id_opt_out: number[] | undefined;
+
+  // ╭──────────────────────────────────────────────────────────────────────────────────╮
+  // │ 📌 │ DEFAULT                                                                     │
+  // ╰──────────────────────────────────────────────────────────────────────────────────╯
+
+  /**
+   * IMPORTANT CRITICAL
+   * @description
+   *  📝 Side-effects to be Triggered for Target.
+   */
+  _SIDE_EFFECTS_: Set < ISideEffect >;
 }

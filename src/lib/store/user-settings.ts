@@ -21,19 +21,19 @@
 
 import { writable } from 'svelte/store';
 
-import { updateButtonOrder, updateDataByKey, updateFollowing, updateHighlightedSpotstack, updateSelectLang } from '$lib/firebase/common.js';
-import sessionStore from '$lib/store/session.js';
+import { updateButtonOrder, updateDataByKey, updateFollowing, updateHighlightedSpotstack } from '$lib/firebase/common.js';
 import { log_v3 } from '$lib/utils/debug.js';
-import { initUser, logoutUser } from '$lib/utils/user.js';
 import { setCookie } from './cookie.js';
+import { parseObject } from '$lib/utils/string.2.js';
 
+import type { IBetarenaUserCookie } from '$lib/types/types.cookie.js';
 import type { BetarenaUser, IUserSetting, Voted_Fixture } from '$lib/types/types.user-settings.js';
 
 // #endregion ➤ 📦 Package Imports
 
 // #region ➤ 📌 VARIABLES
 
-const
+let
   /**
    * @description
    *  📣 Target `data` store.
@@ -46,7 +46,11 @@ const
       geoJs: undefined,
       user: undefined,
       voted_fixtures: [],
-      userguide_id_opt_out: []
+      userguide_id_opt_out: [],
+      // ╭──────────────────────────────────────────────────────────────────────────────────╮
+      // │ 📌 │ DEFAULT                                                                     │
+      // ╰──────────────────────────────────────────────────────────────────────────────────╯
+      _SIDE_EFFECTS_: new Set()
     }
 ;
 
@@ -171,9 +175,6 @@ function createLocalStore
             localStore = methods.parseLocalStorage()
           ;
 
-          // [🐞]
-          // console.log('localStore', localStore);
-
           // ╭─────
           // │ CHECK:
           // │ │: for absent localstorage object, create one.
@@ -188,37 +189,23 @@ function createLocalStore
                 user: undefined,
                 voted_fixtures: [],
                 userguide_id_opt_out: [],
+                _SIDE_EFFECTS_: new Set(['IsAnonymousNew'])
               }
             ;
           ;
 
-          // ╭─────
-          // │ NOTE: IMPORTANT
-          // │ ➤ force legacy users to have _this_ object data property.
-          // │ ➤ necessary for new logic to work better.
-          // ╰─────
-          if (localStore.userguide_id_opt_out == undefined)
-            localStore.userguide_id_opt_out = [];
-          ;
+          localStore = methods.validateLocalStorage
+          (
+            localStore
+          );
 
           // ╭─────
-          // │ CHECK:
-          // │ │: for (non)-authenticated user logic.
+          // │ NOTE:
+          // │ |: Initialize user data.
           // ╰─────
           if (localStore.user)
-          {
-            initUser();
-          }
-          else
-          {
-            localStore.lang = strLang;
-            logoutUser();
-          }
-
-          // ╭─────
-          // │ CHECK:
-          // │ │: for (non)-authenticated user logic.
-          // ╰─────
+            localStore._SIDE_EFFECTS_.add('IsAuthenticated');
+          ;
 
           methods.setLocalStorage
           (
@@ -226,6 +213,36 @@ function createLocalStore
           );
 
           return;
+        },
+
+        /**
+         * @author
+         *  @migbash
+         * @summary
+         *  - 🟥 MAIN
+         *  - 🔹 HELPER
+         *  - IMPORTANT
+         * @description
+         *   📝 Validates and patches up `localStorage` for errors and versioning migration.
+         */
+        validateLocalStorage:
+        (
+          data: IUserSetting
+        ): IUserSetting =>
+        {
+          // ╭─────
+          // │ CHECK :|: for absent localstorage._SIDE_EFFECTS_ (in earlier user versions)
+          // ╰─────
+          data._SIDE_EFFECTS_ = new Set();
+          // ╭─────
+          // │ NOTE: IMPORTANT
+          // │ │: force legacy users to have _this_ object data property.
+          // │ │: necessary for new logic to work better.
+          // ╰─────
+          if (data.userguide_id_opt_out == undefined)
+            data.userguide_id_opt_out = [];
+          ;
+          return data;
         },
 
         /**
@@ -312,6 +329,8 @@ function createLocalStore
               data
             )
           );
+
+          userSettings = data;
 
           set
           (
@@ -462,21 +481,25 @@ function createLocalStore
             {
               strGroupName: '🚏 checkpoint ➤ Store | LocalStorage ➤ updateData(..) // START',
               msgs: [
-                `🔹 [var] ➤ data :|: ${data}`,
+                `🔹 [var] ➤ data :|: ${parseObject(data)}`,
               ],
               closed: true
             }
           );
 
+          if (userSettings._SIDE_EFFECTS_.size > 0)
+          {
+            console.warn('[WARNING] ➤ userSettings._SIDE_EFFECTS_ is not empty, but no side-effects were triggered.', userSettings._SIDE_EFFECTS_);
+            userSettings._SIDE_EFFECTS_ = new Set();
+          }
+
           const
             /**
              * @description
-             * 📣 Target `localStorage` data.
+             * 📝 Follow-up action.
              */
-            localStore = methods.parseLocalStorage()
+            setSideEffects: IUserSetting['_SIDE_EFFECTS_'] = new Set()
           ;
-
-          if (!localStore) return;
 
           for (const iterator of data)
           {
@@ -488,7 +511,7 @@ function createLocalStore
               /**
                * @description
                */
-              scores_user = localStore.user?.scores_user_data
+              scores_user = userSettings.user?.scores_user_data
             ;
 
             let
@@ -506,16 +529,17 @@ function createLocalStore
             {
               case DataPropEnum.LANG:
               {
-                localStore.lang = dataPoint;
-                if (localStore.user?.scores_user_data)
+                userSettings.lang = dataPoint;
+                if (userSettings.user?.scores_user_data)
                   data.push(['lang-user', dataPoint]);
                 ;
+                setSideEffects.add('LangUpdate');
                 break;
               }
               case DataPropEnum.THEME:
               {
-                localStore.theme
-                  = localStore.theme == 'Dark'
+                userSettings.theme
+                  = userSettings.theme == 'Dark'
                     ? 'Light'
                     : 'Dark'
                 ;
@@ -525,27 +549,25 @@ function createLocalStore
               }
               case DataPropEnum.GEO_JS:
               {
-                localStore.geoJs = dataPoint;
+                userSettings.geoJs = dataPoint;
                 break;
               }
               case DataPropEnum.USER_OBJECT:
               {
-                localStore.user = dataPoint;
+                if (userSettings.user == undefined)
+                  setSideEffects.add('IsAuthenticated');
+                ;
+                userSettings.user = dataPoint;
                 if (dataPoint == undefined)
-                  sessionStore.updateData
-                  (
-                    [
-                      ['globalStateAdd', 'NotAuthenticated']
-                    ]
-                  );
+                  setSideEffects.add('IsAnonymous');
                 ;
                 break;
               }
               case DataPropEnum.USER_SCORES_DATA:
               {
-                (localStore.user ??= {});
+                (userSettings.user ??= {});
 
-                localStore.user.scores_user_data = dataPoint as BetarenaUser;
+                userSettings.user.scores_user_data = dataPoint as BetarenaUser;
 
                 // ╭─────
                 // │ CHECK:
@@ -553,18 +575,18 @@ function createLocalStore
                 // ╰─────
                 if
                 (
-                  localStore.user.scores_user_data.main_balance == undefined
-                  || isNaN(localStore.user.scores_user_data.main_balance)
+                  userSettings.user.scores_user_data.main_balance == undefined
+                  || isNaN(userSettings.user.scores_user_data.main_balance)
                 )
-                  localStore.user.scores_user_data.main_balance = 0;
+                  userSettings.user.scores_user_data.main_balance = 0;
                 ;
 
                 // ╭─────
                 // │ CHECK:
                 // │ │: for 'null' / non-empty value of `userguide_opt_out`.
                 // ╰─────
-                if (localStore.user.scores_user_data.userguide_id_opt_out != null)
-                  localStore.userguide_id_opt_out = localStore.user.scores_user_data.userguide_id_opt_out;
+                if (userSettings.user.scores_user_data.userguide_id_opt_out != null)
+                  userSettings.userguide_id_opt_out = userSettings.user.scores_user_data.userguide_id_opt_out;
                 ;
 
                 break;
@@ -583,7 +605,7 @@ function createLocalStore
               case DataPropEnum.LANG_USER:
               {
                 scores_user.lang = dataPoint;
-                updateSelectLang(dataPoint);
+                setSideEffects.add('UserUpdateDataLanguage');
                 break;
               }
               case DataPropEnum.USER_AVATAR:
@@ -729,9 +751,16 @@ function createLocalStore
             }
           }
 
+          // ╭─────
+          // │ IMPORTANT CRITICAL
+          // ╰─────
+          if (setSideEffects.size > 0)
+            userSettings._SIDE_EFFECTS_ = setSideEffects;
+          ;
+
           methods.setLocalStorage
           (
-            localStore
+            userSettings
           );
 
           setCookie
@@ -741,6 +770,28 @@ function createLocalStore
             30
           );
 
+          return;
+        },
+
+        /**
+         * @author
+         *  @migbash
+         * @summary
+         *  - 🔹 HELPER
+         *  - IMPORTANT
+         * @description
+         *  📝 Clear all side-effects.
+         * @return { void }
+         */
+        clearSideEffects:
+        (
+        ): void =>
+        {
+          userSettings._SIDE_EFFECTS_ = new Set();
+          set
+          (
+            userSettings
+          );
           return;
         },
 
@@ -824,44 +875,18 @@ function createLocalStore
          *  │ OUTPUT
          *  │ : void
          *  [X]──────────────────────────────────────────────────────────────────
-         * @return { object }
+         * @return { IBetarenaUserCookie }
          *  📤 Main `data point(s)`.
          */
         extractUserDataSnapshot:
         (
-        ): object =>
+        ): IBetarenaUserCookie =>
         {
-          const
-            /**
-             * @description
-             * 📣 Target `localStorage` data.
-             */
-            localStore = methods.parseLocalStorage(),
-            /**
-             * @description
-             *  📣 Target `user` data.
-             */
-            data
-              = {
-                lang: localStore?.lang,
-                geo: localStore?.country_bookmaker,
-                user: undefined
-              }
-          ;
-
-          if (localStore?.theme)
-          {
-            document.body.classList.toggle('dark-mode', localStore.theme == 'Dark');
-            document.body.classList.toggle('light-mode', localStore.theme == 'Light');
+          return {
+            uid: userSettings.user?.firebase_user_data?.uid,
+            lang: userSettings.lang,
+            theme: userSettings.theme,
           }
-
-          if (localStore?.user)
-          {
-            data['user-uid'] = localStore.user.firebase_user_data?.uid;
-            data['lang-user'] = localStore.user.scores_user_data?.lang;
-          }
-
-          return data;
         },
 
         /**
@@ -887,9 +912,10 @@ function createLocalStore
          */
         extractAll:
         (
-        ): IUserSetting | NullUndef =>
+        ): IUserSetting =>
         {
-          return methods.parseLocalStorage();
+          // @ts-expect-error :: Emtpy object is not allowed, but returned nonetheless.
+          return methods.parseLocalStorage() ?? {};
         }
       }
   ;

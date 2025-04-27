@@ -188,16 +188,26 @@ export function userBalanceListen
  * @returns { Promise < void > }
  */
 export async function updateSelectLang
-  (
-    lang: string
+(
 ): Promise<void>
 {
   const
-    /**
-     * @description
-     * 📝 Data point
-     */
-    uid = userBetarenaSettings.extract('uid') as string | undefined | null,
+    // ╭─────
+    // │ NOTE: |:| 📝 Destruct Data (localStorage)
+    // ╰─────
+    {
+      user:
+      {
+        firebase_user_data:
+        {
+          uid
+        } = {},
+        scores_user_data:
+        {
+          lang
+        } = {}
+      } = {}
+    } = userBetarenaSettings.extractAll(),
     /**
      * @description
      * 📝 Data for `page`

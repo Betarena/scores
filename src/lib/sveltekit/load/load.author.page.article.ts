@@ -15,11 +15,16 @@
 
 // #region ➤ 📦 Package Imports
 
-import { dlogv2 } from '$lib/utils/debug';
-import { promiseUrlsPreload } from '$lib/utils/navigation.js';
+import { redirect, ServerLoadEvent } from '@sveltejs/kit';
+
+import { mapLangToLocaleAuthor } from '$lib/constants/instance.js';
+import { dlogv2, ERROR_CODE_INVALID } from '$lib/utils/debug.js';
+import { preloadExitLogic, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/navigation.js';
 import { parseObject } from '$lib/utils/string.2.js';
 
-import type { ServerLoadEvent } from '@sveltejs/kit';
+import type { IPageAuhtorArticleDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
+import type { B_SAP_D2 } from '@betarena/scores-lib/types/v8/preload.scores.js';
+import type { IPageArticleTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.articles.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -30,7 +35,7 @@ const
    * @description
    * 📝 Debugging tag.
    */
-  strDebugModule = 'src/routes/(authors)/a/+layout.server.ts'
+  strDebugModule = 'src/routes/(authors)/a/[...permalink]/+page.server.ts'
 ;
 
 // #endregion ➤ 📌 VARIABLES
@@ -45,12 +50,11 @@ const
  * @description
  *  📝 Target `types` for `_this_` page required at preload.
  */
-type IPreloadData0 =
+type PreloadPromise0 =
 [
-  any,
-  any,
-  any,
-  any
+  IPageAuhtorArticleDataFinal | undefined,
+  IPageArticleTranslationDataFinal | undefined,
+  B_SAP_D2 | undefined
 ];
 
 /**
@@ -63,28 +67,12 @@ type IPreloadData0 =
  */
 interface IPreloadResponse
 {
-  /**
-   * @description
-   *  📝 Target `data` returned.
-   */
-  translations?: undefined;
-  /**
-   * @description
-   *  📝 Target `data` returned.
-   */
-  articleTranslation?: undefined;
-  /**
-   * @description
-   *  📝 Target `data` returned.
-   */
-  profile_translation?: undefined;
+  dataArticle?: IPageAuhtorArticleDataFinal;
+  translationArticle?: IPageArticleTranslationDataFinal;
+  monthTranslations?: B_SAP_D2;
 }
 
 // #endregion ➤ ⛩️ TYPES
-
-// ╭──────────────────────────────────────────────────────────────────────────────────╮
-// │ 🟥 │ LOGIC - MAIN                                                                │
-// ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 /**
  * @author
@@ -92,7 +80,7 @@ interface IPreloadResponse
  * @summary
  *  ♦️ MAIN
  * @description
- *  📝 Logic for 'src/routes/(authors)/a/+layout.server.ts' route data preload.
+ *  📝 Logic for 'src/routes/(authors)/a/[...permalink]/+page.server.ts' route data preload.
  * @example
  *  [1]──────────────────────────────────────────────────────────────────
  *  │ main
@@ -101,24 +89,18 @@ interface IPreloadResponse
  *  │ );
  *  ┣────────────────────────────────────────────────────────────────────
  *  │ DESCRIPTION
- *  │ : Main logic for route `src/routes/(authors)/a/+layout.server.ts` for respective data preload.
+ *  │ : Main logic for route `src/routes/(authors)/a/[...permalink]/+page.server.ts` for respective data preload.
  *  ┣────────────────────────────────────────────────────────────────────
  *  │ OUTPUT
  *  │ : Returns `data` for `_this_` preload.
  *  [X]──────────────────────────────────────────────────────────────────
- * @param { ServerLoadEvent } event
- *  ❗️ **REQUIRED** instance of `ServerLoadEvent` object.
- * @param { object } objParentPreloadData
- *  ❗️ **REQUIRED** instance of `object` containing `langParam`.
- * @param { string } objParentPreloadData.langParam
- *  ❗️ **REQUIRED** `langParam` for target language.
  * @return { Promise < {} > }
  *  📤 Respective `data` for _this_ route.
  */
 export async function main
 (
   event: ServerLoadEvent,
-  objParentPreloadData:
+  parentData:
   {
     langParam: string
   }
@@ -129,53 +111,83 @@ export async function main
   (
     `🚏 checkpoint ➤ ${strDebugModule} main(..) // START`,
     [
-      `🔹 [var] ➤ objParentPreloadData :|: ${parseObject(objParentPreloadData)}`,
+      `🔹 [var] ➤ parentData :|: ${parseObject(parentData)}`,
     ]
   );
 
-  let
+  const
+    // ╭─────
+    // │ NOTE:
+    // │ |: Destructure `object`.
+    // ╰─────
+    {
+      permalink
+    } = event.params,
+    // ╭─────
+    // │ NOTE:
+    // │ |: Destructure `object`.
+    // ╰─────
+    {
+      isValid,
+      objRedirect
+    } = await promiseValidUrlCheck
+    (
+      event.fetch,
+      {
+        authorArticleUrl: permalink
+      }
+    ),
     /**
      * @description
-     *  📝 Initialize page response
+     *  📝 Initialize page objResponse
      */
     objResponse: IPreloadResponse = {}
+  ;
+
+  // ╭──────────────────────────────────────────────────────────────────────────────────╮
+  // │ 📟 │ PERMALINK VALIDATION                                                        │
+  // ╰──────────────────────────────────────────────────────────────────────────────────╯
+
+  if (objRedirect.isRedirect && objRedirect.strRedirectUrl != null)
+    throw redirect
+    (
+      301,
+      `/a${objRedirect.strRedirectUrl}`
+    );
+  else if (!isValid)
+    preloadExitLogic
+    (
+      0,
+      '(authors)',
+      ERROR_CODE_INVALID
+    );
   ;
 
   // ╭──────────────────────────────────────────────────────────────────────────────────╮
   // │ 🏗️ │ PAGE DATA BUNDLING                                                          │
   // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-  // ╭─────
-  // │ NOTE:
-  // │ |: Destruct `object`.
-  // ╰─────
   [
-    objResponse.translations,
-    objResponse.articleTranslation,
-    objResponse.profile_translation
+    objResponse.dataArticle,
+    objResponse.translationArticle,
+    objResponse.monthTranslations,
   ] = await fetchData
   (
     event.fetch,
-    objParentPreloadData.langParam
+    permalink!,
+    parentData.langParam
   );
 
   // ╭─────
   // │ NOTE: IMPORTANT
-  // │ |: Requires flattening of first-level `object`, to prevent `undefined` values in page.
+  // │ |: Necesssary to assign the article 'lang' to the 'html lang' attribute.
   // ╰─────
-  objResponse = {
-    // @ts-expect-error :: expceted to be destructed for respective page data, the way it was structured.
-    ...objResponse.translations,
-    // @ts-expect-error :: expceted to be destructed for respective page data, the way it was structured.
-    ...objResponse.profile_translation,
-    // @ts-expect-error :: expceted to be destructed for respective page data, the way it was structured.
-    readingTime: objResponse.articleTranslation?.translation
-  };
+  event.locals.strLocaleOverride = mapLangToLocaleAuthor.get(objResponse.dataArticle?.article.lang ?? 'en');
 
   // [🐞]
   dlogv2
   (
-    `🚏 checkpoint ➤ ${strDebugModule} main(..) // END`,
+    `🚏 checkpoint ➤ ${strDebugModule}`,
     [
       // `🔹 [var] ➤ objResponse :|: ${JSON.stringify(objResponse)}`,
     ]
@@ -183,10 +195,6 @@ export async function main
 
   return objResponse;
 }
-
-// ╭──────────────────────────────────────────────────────────────────────────────────╮
-// │ 🟦 │ LOGIC - HELPER                                                              │
-// ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 /**
  * @author
@@ -211,28 +219,30 @@ export async function main
  *  [X]──────────────────────────────────────────────────────────────────
  * @param { any } fetch
  *  ❗️ **REQUIRED** Instance of `fetch` object.
+ * @param { string } permalink
+ *  ❗️ **REQUIRED** `parmalink`.
  * @param { string } lang
- *  ❗️ **REQUIRED** `lang`.
- * @returns { Promise < IPreloadData0 > }
+ *  ❗️ **REQUIRED** Target `lang`.
+ * @returns { Promise < IProfileData2 > }
  *  📤 Target `data` fetched.
  */
 async function fetchData
 (
   fetch: any,
+  permalink: string,
   lang: string
-): Promise < IPreloadData0 >
+): Promise < PreloadPromise0 >
 {
   const
     /**
      * @description
-     *  📝 Load translations for articles layout
+     *  📝 Target `urls` to be `fetched`.
      */
     listUrls
       = [
-        `/api/data/author/tags?translation=${lang}`,
+        `/api/data/author/article?permalink=${permalink}`,
         `/api/data/author/article?lang=${lang}`,
-        `/api/data/author/translations?lang=${lang}`
-
+        `/api/data/main/seo-pages?months=true&lang=${lang}&decompress`,
       ],
     /**
      * @description
@@ -243,7 +253,7 @@ async function fetchData
       (
         listUrls,
         fetch
-      ) as IPreloadData0
+      ) as PreloadPromise0
   ;
 
   return dataRes0;

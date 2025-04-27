@@ -1,28 +1,36 @@
 // ╭──────────────────────────────────────────────────────────────────────────────────╮
-// │ 📌 High Order Component Overview                                                 │
+// │ 📌 High Order Overview                                                           │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
-// │ ➤ Internal Svelte Code Format // V.8.0                                           │
-// │ ➤ Status // 🔒 LOCKED                                                            │
-// │ ➤ Author(s) // @migbash                                                          │
+// │ ➤ Code Format   // V.8.0                                                         │
+// │ ➤ Status        // 🔒 LOCKED                                                     │
+// │ ➤ Author(s)     // @migbash                                                      │
+// │ ➤ Maintainer(s) // @migbash                                                      │
+// │ ➤ Created on    // <date-created>                                                │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
 // │ 📝 Description                                                                   │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
-// │:│ Client Hooks (a.k.a SvelteKit Middleware)                                      │
-// │:│ 🔗 read-more :|: https://kit.svelte.dev/docs/hooks#server-hooks                │
-// │:│ NOTE: | WARNING:                                                               │
-// │:│ only applicable to load(..) lifecycle logic in +page[.server].ts files         │
+// │ │: Server Hooks (a.k.a SvelteKit Middleware)                                     │
+// │ │: NOTE: | WARNING:                                                              │
+// │ │: only applicable to 'load(..)' lifecycle logic in +page[.server].ts files      │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ │: 🔗 read-more :: https://kit.svelte.dev/docs/hooks#server-hooks                │
 // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 // #region ➤ 📦 Package Imports
 
-import { v4 as uuid } from '@lukeed/uuid';
+import { convertLocaleToLang } from '$lib/constants/instance.js';
+import { getCookie } from '$lib/store/cookie.js';
 import * as Sentry from '@sentry/sveltekit';
 import { sequence } from '@sveltejs/kit/hooks';
+import parserAccLang from 'accept-language-parser';
+import chalk from 'chalk';
 import cookie from 'cookie';
 
-import { ERROR_CODE_INVALID, LOG_PREFIX_HOOKS_S, PAGE_INVALID_MSG, dlog, dlogv2, errlog } from '$lib/utils/debug';
+import { ERROR_CODE_INVALID, PAGE_INVALID_MSG, dlog, errlog, log_v3 } from '$lib/utils/debug';
 import { platfrom_lang_ssr } from '$lib/utils/platform-functions';
+import { parseObject, stringToObject } from '$lib/utils/string.2.js';
 
+import type { IBetarenaUserCookie } from '$lib/types/types.cookie.js';
 import type { Handle, HandleServerError } from '@sveltejs/kit';
 
 // #endregion ➤ 📦 Package Imports
@@ -30,8 +38,8 @@ import type { Handle, HandleServerError } from '@sveltejs/kit';
 // #region ➤ 💠 MISCELLANEOUS
 
 // ╭─────
-// │ CHECK
-// │ > disabling of Sentry on localhost
+// │ CHECK:
+// │ |: disabling of Sentry on localhost
 // ╰─────
 if (process.env.VITE_SENTRY_ENVIRONMENT != 'local')
 {
@@ -57,8 +65,7 @@ if (process.env.VITE_SENTRY_ENVIRONMENT != 'local')
 // [🐞]
 dlog
 (
-  '🚏 checkpoint [H] ➤ src/hooks.server.ts',
-  true
+  '🚏 checkpoint [H] ➤ src/hooks.server.ts'
 );
 
 // #endregion ➤ 💠 MISCELLANEOUS
@@ -72,10 +79,8 @@ dlog
  *  🔹 HELPER
  * @description
  *  📝 Custom `Error` handle logic.
- *  NOTE:
- *  kept as an example.
- * @param param0
- *  `_inherited_types_`
+ * @param input
+ *  💠 **ALWAYS** `_inherited_types_`
  * @returns { HandleServerError }
  */
 const customErrorHandler: HandleServerError = async (
@@ -85,39 +90,58 @@ const customErrorHandler: HandleServerError = async (
   }
 ): Promise < App.Error > =>
 {
+  const
+    /**
+     * @description
+     * 📝 Error message.
+     */
+    objError: App.Error
+      = {
+        message: 'Whoops!',
+        errorId: 'x1',
+      }
+  ;
+
+  // ╭─────
+  // │ NOTE:
+  // │ |: Skip unwanted logging bloat of 'error', if 'error' is due to 'Not found' page.
+  // ╰─────
+  if (error instanceof Error && error.message.includes('Not found:'))
+    // [🐞]
+    errlog
+    (
+      `🚏 checkpoint ➤ Hooks | src/hooks.server.ts customErrorHandler(..)\n${error.message}`,
+    );
+  else
+    // [🐞]
+    errlog
+    (
+      `🚏 checkpoint ➤ Hooks | src/hooks.server.ts customErrorHandler(..)\n${error}\n${parseObject(event)}`,
+    );
+  ;
+
   // [🐞]
   // eslint-disable-next-line no-console
-  errlog
-  (
-    `${LOG_PREFIX_HOOKS_S} \n ${error} \n ${event}`,
-  );
-  console.trace(error)
-  let
-    errorMsg: string = 'Whoops!',
-    errorCode: string = 'x1'
-  ;
+  // console.trace(error);
 
   if (event.route.id == null)
   {
-    errorMsg = PAGE_INVALID_MSG;
-    errorCode = ERROR_CODE_INVALID.toString();
+    objError.message = PAGE_INVALID_MSG;
+    objError.errorId = ERROR_CODE_INVALID.toString();
   }
 
-  return {
-    message: errorMsg,
-    errorId: errorCode,
-  }
+  return objError;
 }
 
 // #endregion ➤ 🛠️ METHODS
 
-// #region ➤ 🔄 LIFECYCLE [SVELTE]
+// #region ➤ 🔄 LIFECYCLE - [HOOKS]
 
 export const handle: Handle = sequence
 (
-  /* [1] Step */
+  /* ─── Step [1] ─── */
   Sentry.sentryHandle(),
-  /* [2] Step */
+  /* ─── Step [2] ─── */
   async (
     {
       event,
@@ -125,50 +149,75 @@ export const handle: Handle = sequence
     }
   ): Promise < Response > =>
   {
+    // [🐞]
+    log_v3
+    (
+      {
+        strGroupName: '🚏 checkpoint ➤ Hooks | src/hooks.server.ts handle(..) // START',
+        msgs:
+        [
+          `🔹 [var] ➤ event.url :: ${event.url}`,
+          `${parseObject(event.locals) != '{}' ? `🔹 [var] ➤ event.locals :: ${parseObject(event.locals)}` : '[EMPTY]'}`
+        ],
+      }
+    );
+
     // ╭─────
     // │ NOTE:
-    // │ > attempt to identify user IP from 'request' (server-side)
-    // │ > 🔗 read-more :|: https://github.com/sveltejs/kit/issues/4873
+    // │ |: debug server endpoint
     // ╰─────
-    // const clientAddress = !prerendering ? await event.clientAddress : ''; // incorrect-IP
-    // const clientAddressv2 = !prerendering ? event : '' // no-working
-
     if (event.url.pathname == '/api/misc/debug')
       return await resolve(event);
     ;
 
     // ╭──────────────────────────────────────────────────────────────────────────────────╮
-    // │ IMPORTANT                                                                        │
-    // │ > Before 'endpoint' call/execute (below)                                         │
-    // │ WARNING:                                                                         │
-    // │ > Executed after to 'layout.server.ts'                                           │
+    // │ 🔄 LIFECYCLE - [1]                                                               │
+    // ┣──────────────────────────────────────────────────────────────────────────────────┫
+    // │ |: - Executes before calling 'endpoint'                                          │
+    // │ |: - Executes after 'layout.server.ts'                                           │
     // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
     const
       // [🐞]
       t0 = performance.now(),
+      // ╭─────
+      // │ NOTE:
+      // │ |: Destruct `object`.
+      // ╰─────
+      {
+        request:
+        {
+          headers: mapHeaders
+        }
+      } = event,
+      /**
+       * @description
+       * 📣 obtaining 'accept-language' from request headers.
+       */
+      listLanguages
+        = parserAccLang.parse(mapHeaders.get('accept-language') ?? ''),
       /**
        * @description
        *  📣 obtaining cookies from request headers.
        */
       cookies
-        = cookie.parse
+        = getCookie
         (
-          event.request.headers.get('cookie') ?? ''
+          mapHeaders.get('cookie')
         ),
       /**
        * @description
        *  📣 assign 'locals' context from 'cookie' or, load defaults.
        */
-      defaultLocals
+      objUserDefaultCookie: IBetarenaUserCookie
         = {
-          userid: uuid(),
+          uid: null,
           lang: 'en',
           theme: 'Dark',
           // ╭─────
           // │ NOTE:
-          // │ > attempt to identify user IP from 'request',
-          // │ > to preload data from 'server'.
+          // │ |: attempt to identify user IP from 'request',
+          // │ |: to preload data from 'server'.
           // ╰─────
           /*
             originIP:
@@ -185,46 +234,102 @@ export const handle: Handle = sequence
     ;
 
     // [🐞]
-    // console.log('cookies', cookies);
+    log_v3
+    (
+      {
+        strGroupName: '🚏 checkpoint ➤ Hooks | src/hooks.server.ts handle(..) // INSIGHT',
+        msgs:
+        [
+          `🔹 [var] ➤ listLanguages :: ${parseObject(listLanguages)}`,
+          `🔹 [var] ➤ cookies :: ${parseObject(cookies)}`,
+        ],
+      }
+    );
 
-    event.locals.user = cookies.betarenaScoresCookie ?? defaultLocals;
+    event.locals.setState = new Set();
 
     // ╭─────
-    // │ NOTE:
-    // │ > assign 'locals' context from 'cookie' or, load defaults.
+    // │ CHECK:
+    // │ |: for new visitor, set default values.
     // ╰─────
-    event.locals.betarenaUser = cookies.betarenaCookieLoggedIn ?? null;
+    if (cookies.betarenaScoresCookie)
+    {
+      event.locals.user = stringToObject<IBetarenaUserCookie>(cookies.betarenaScoresCookie);
+      event.locals.setState?.add('IsAnonymousReturning');
+    }
+    else
+    {
+      // [🐞]
+      log_v3
+      (
+        {
+          strGroupName: '🚏 checkpoint ➤ Hooks | src/hooks.server.ts handle(..) // [1] - user cookie not found, setting cookie',
+          msgs: [],
+        }
+      );
 
-    if (event.locals.betarenaUser)
+      event.locals.user = objUserDefaultCookie;
 
-      event.locals.uid = JSON.parse(event.locals.user)['user-uid'];
+      if (event.url.pathname === '/' && event.route.id === '/(scores)/[[lang=lang]]')
+      {
+        event.locals.setState?.add('IsAnonymousNew');
+        event.locals.user.lang = convertLocaleToLang(`${listLanguages[0].code}-${listLanguages[0].region}`);
+      }
+      else
+      {
+        event.locals.setState?.add('IsAnonymousNewBurner');
+        event.locals.user.lang = event.params.lang ?? 'en';
+      }
+    }
 
+    if (cookies.betarenaCookieLoggedIn)
+    {
+      event.locals.uid = event.locals.user.uid;
+      event.locals.setState?.add('IsBetarenaUser');
+    }
 
     // 🔗 read-more :|: https://github.com/sveltejs/kit/issues/1046
-    // if (event.url.searchParams.has('_method')) {
+    // if (event.url.searchParams.has('_method'))
+    // {
     // 	event.method = event.url.searchParams.get('_method').toUpperCase();
     // }
 
     // ╭──────────────────────────────────────────────────────────────────────────────────╮
-    // │ IMPORTANT                                                                        │
-    // │ > Actual 'endpoint' call/execute (below)                                         │
-    // │ WARNING:                                                                         │
-    // │ > Executed after to 'layout.server.ts'                                           │
+    // │ 🔄 LIFECYCLE - [2]                                                               │
+    // ┣──────────────────────────────────────────────────────────────────────────────────┫
+    // │ |: - Executes 'endpoint'                                                         │
+    // │ |: - Executes after 'layout.server.ts'                                           │
     // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
     // ╭─────
     // │ NOTE:
-    // │ > past use with cookies-template
+    // │ |: [archive] past use with cookies-template
     // ╰─────
     // const response = await resolve(event);
 
     const
       /**
        * @description
+       * 📣 Method Response (0)
+       */
+      methodRes0
+        = platfrom_lang_ssr
+        (
+          event.route.id,
+          // @ts-expect-error
+          // ╭─────
+          // │ FIXME:
+          // │ > event.error does not exist in a hook
+          // ╰─────
+          event.error,
+          event.params.lang,
+        ),
+      /**
+       * @description
        *  📣 new with response of <html lang...>
        * @see https://github.com/sveltejs/kit/issues/3091
        */
-      response
+      dataRes0
         = await resolve
         (
           event,
@@ -236,47 +341,45 @@ export const handle: Handle = sequence
               }
             ): string =>
             {
-              return html.replace
-              (
-                '%lang%',
-                platfrom_lang_ssr
+              return html
+                .replace
                 (
-                  event.route.id,
-                  // @ts-expect-error
-                  // ╭─────
-                  // │ FIXME:
-                  // │ > event.error does not exist in a hook
-                  // ╰─────
-                  event.error,
-                  event.params.lang,
+                  '%lang%',
+                  event.locals.strLocaleOverride ?? methodRes0
                 )
-              )
+              ;
             }
           }
         )
     ;
 
     // ╭──────────────────────────────────────────────────────────────────────────────────╮
-    // │ IMPORTANT                                                                        │
-    // │ > After 'endpoint' call/execute                                                  │
+    // │ 🔄 LIFECYCLE - [3]                                                               │
+    // ┣──────────────────────────────────────────────────────────────────────────────────┫
+    // │ |: - Executes 'endpoint'                                                         │
     // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-    // [🐞]
-    // console.log('cookies.betarenaScoresCookie', cookies.betarenaScoresCookie);
-
     // ╭─────
-    // │ CHECK
-    // │ > for first time user visiting app, set cookie.
+    // │ CHECK:
+    // │ |: new visitor, new cookie.
     // ╰─────
     if (!cookies.betarenaScoresCookie)
     {
       // [🐞]
-      dlog
+      log_v3
       (
-        '🚏 checkpoint ➤ betarenaScoresCookie not found!',
-        true
+        {
+          strGroupName: '🚏 checkpoint ➤ Hooks | src/hooks.server.ts handle(..) // [2] - setting cookie',
+          msgs:
+          [
+            `🔹 [var] ➤ event.locals.user :: ${parseObject(event.locals.user)}`,
+            `🔹 [var] ➤ event.locals.strLocaleOverride :: ${event.locals.strLocaleOverride}`,
+            `🔹 [var] ➤ event.url.pathname :: ${event.url.pathname}`,
+          ],
+        }
       );
-      response.headers.set
+
+      dataRes0.headers.set
       (
         'Set-Cookie',
         cookie.serialize
@@ -286,41 +389,61 @@ export const handle: Handle = sequence
           {
             path: '/',
             // httpOnly: true,
-            /* 1 week */ maxAge: 60 * 60 * 24 * 7
+            /* ─── 1 week ─── */
+            maxAge: 60 * 60 * 24 * 7
           }
         )
       );
     }
 
+    let
+      /**
+       * @description
+       * 📝 Execution time.
+       */
+      strExecutionTime = ((performance.now() - t0) / 1000).toFixed(5)
+    ;
+
+    if (parseFloat(strExecutionTime) > 1)
+      strExecutionTime = chalk.bgRed(`⚠️ ${strExecutionTime} sec`);
+    else
+      strExecutionTime = `${strExecutionTime} sec`;
+    ;
+
     // [🐞]
-    dlogv2
+    log_v3
     (
-      `${LOG_PREFIX_HOOKS_S} 🚏 checkpoint ➤ src/hooks.server.ts handle(..)`,
-      [
-        // `${LOG_PREFIX_HOOKS_S} 🔹 [var] ➤ event :: ${JSON.stringify(event.url.pathname)}`,
-        `${LOG_PREFIX_HOOKS_S} 🔹 [var] ➤ event.url :: ${event.url}`,
-        // `${LOG_PREFIX_HOOKS_S} 🔹 [var] ➤ event.route.id :: ${event.route.id}`,
-        // `${LOG_PREFIX_HOOKS_S} 🔹 [var] ➤ event.url.origin :: ${event.url.origin}`,
-        `${LOG_PREFIX_HOOKS_S} 🔹 [var] ➤ event.locals.user :: ${event.locals.user}`,
-        `${LOG_PREFIX_HOOKS_S} 🔹 [var] ➤ event.locals.betarenaUser :: ${event.locals.betarenaUser}`,
-        `${LOG_PREFIX_HOOKS_S} ⏳ [timer] ➤ ${((performance.now() - t0) / 1000).toFixed(5)} sec`,
-      ],
-      true
+      {
+        strGroupName: `🚏 checkpoint ➤ Hooks | src/hooks.server.ts handle(..) // END (${strExecutionTime})`,
+        msgs:
+        [
+          `🔹 [var] ➤ event.url :: ${event.url}`,
+          `${parseObject(event.locals) != '{}' ? `🔹 [var] ➤ event.locals :: ${parseObject(event.locals)}` : '[EMPTY]'}`,
+          // ╭─────
+          // │ NOTE:
+          // │ |: additional helpful logging.
+          // ╰─────
+          // `🔹 [var] ➤ event :: ${JSON.stringify(event.url.pathname)}`,
+          // `🔹 [var] ➤ event.route.id :: ${event.route.id}`,
+          // `🔹 [var] ➤ event.url.origin :: ${event.url.origin}`,
+          // `🔹 [var] ➤ event :: ${event.request.headers.get('accept-language')}`,
+        ],
+      }
     );
 
-    return response;
+    return dataRes0;
   }
 );
 
 // ╭─────
 // │ NOTE:
-// │ > using Sentry with Custom Error Handler.
+// │ │: using Sentry with Custom Error Handler.
 // ╰─────
 export const handleError: HandleServerError = Sentry.handleErrorWithSentry(customErrorHandler);
 // ╭─────
 // │ NOTE:
-// │ > or, alternatively:
+// │ │: or, alternatively:
 // ╰─────
 // export const handleError: HandleServerError = Sentry.handleErrorWithSentry();
 
-// #endregion ➤ 🔄 LIFECYCLE [SVELTE]
+// #endregion ➤ 🔄 LIFECYCLE - [HOOKS]

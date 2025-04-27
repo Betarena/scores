@@ -80,7 +80,7 @@ export function setCookie
  */
 export function getCookie
 (
-  cookiesInHeader: string
+  cookiesInHeader: string | NullUndef
 ): Record < string, string >
 {
   return cookie.parse

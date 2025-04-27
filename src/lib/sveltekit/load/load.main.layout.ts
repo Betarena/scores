@@ -15,10 +15,19 @@
 
 // #region ➤ 📦 Package Imports
 
-import { dlogv2 } from '$lib/utils/debug';
-import { promiseUrlsPreload } from '$lib/utils/navigation.js';
+import { performance } from 'perf_hooks';
+
+import { main as articleTrFetch } from '$lib/sveltekit/load/load.author.layout.js';
+import { ERROR_CODE_PRELOAD, LAYOUT_1_LANG_PAGE_ERROR_MSG, dlogv2 } from '$lib/utils/debug';
+import { detectDeviceWithUA } from '$lib/utils/device.js';
+import { detectPlatformLanguage } from '$lib/utils/languages.js';
+import { preloadExitLogic, promiseUrlsPreload } from '$lib/utils/navigation.js';
 import { parseObject } from '$lib/utils/string.2.js';
 
+import type { IAuthTrs } from '@betarena/scores-lib/types/auth.js';
+import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
+import type { B_FOT_T } from '@betarena/scores-lib/types/types.main.footer.js';
+import type { B_SAP_D3 } from '@betarena/scores-lib/types/v8/preload.scores.js';
 import type { ServerLoadEvent } from '@sveltejs/kit';
 
 // #endregion ➤ 📦 Package Imports
@@ -30,7 +39,7 @@ const
    * @description
    * 📝 Debugging tag.
    */
-  strDebugModule = 'src/routes/(authors)/a/+layout.server.ts'
+  strDebugModule = 'src/routes/+layout.server.ts'
 ;
 
 // #endregion ➤ 📌 VARIABLES
@@ -43,14 +52,14 @@ const
  * @summary
  *  🔹 INTERFACE
  * @description
- *  📝 Target `types` for `_this_` page required at preload.
+ *  📝 Type for `_this_` page required at preload.
  */
 type IPreloadData0 =
 [
-  any,
-  any,
-  any,
-  any
+  B_NAV_T | undefined,
+  B_FOT_T | undefined,
+  B_SAP_D3 | undefined,
+  IAuthTrs | undefined
 ];
 
 /**
@@ -65,19 +74,44 @@ interface IPreloadResponse
 {
   /**
    * @description
-   *  📝 Target `data` returned.
+   *  📝 Target `lang` identification
    */
-  translations?: undefined;
+  langParam: string;
+  /**
+   * @description
+   *  📝 Identify 'user-agent' object data, for target user 'device' type.
+   */
+  deviceType: string;
+  /**
+   * @description
+   * 📝 Target `urls` to be `fetched`.
+   */
+  userAgent: string | null;
   /**
    * @description
    *  📝 Target `data` returned.
    */
-  articleTranslation?: undefined;
+  B_NAV_T?: B_NAV_T | undefined;
   /**
    * @description
    *  📝 Target `data` returned.
    */
-  profile_translation?: undefined;
+  B_FOT_T?: B_FOT_T | undefined;
+  /**
+   * @description
+   *  📝 Target `data` returned.
+   */
+  authTrs?: IAuthTrs | undefined;
+  /**
+   * @description
+   *  📝 Target `data` returned.
+   */
+  translations?: unknown | undefined;
+  /**
+   * @description
+   *  📝 Target `data` returned.
+   */
+  setState?: unknown;
 }
 
 // #endregion ➤ ⛩️ TYPES
@@ -92,7 +126,7 @@ interface IPreloadResponse
  * @summary
  *  ♦️ MAIN
  * @description
- *  📝 Logic for 'src/routes/(authors)/a/+layout.server.ts' route data preload.
+ *  📝 Logic for route `src/routes/+layout.server.ts` for respective data preload.
  * @example
  *  [1]──────────────────────────────────────────────────────────────────
  *  │ main
@@ -101,27 +135,19 @@ interface IPreloadResponse
  *  │ );
  *  ┣────────────────────────────────────────────────────────────────────
  *  │ DESCRIPTION
- *  │ : Main logic for route `src/routes/(authors)/a/+layout.server.ts` for respective data preload.
+ *  │ : Main logic for route `src/routes/+layout.server.ts` for respective data preload.
  *  ┣────────────────────────────────────────────────────────────────────
  *  │ OUTPUT
  *  │ : Returns `data` for `_this_` preload.
  *  [X]──────────────────────────────────────────────────────────────────
  * @param { ServerLoadEvent } event
  *  ❗️ **REQUIRED** instance of `ServerLoadEvent` object.
- * @param { object } objParentPreloadData
- *  ❗️ **REQUIRED** instance of `object` containing `langParam`.
- * @param { string } objParentPreloadData.langParam
- *  ❗️ **REQUIRED** `langParam` for target language.
  * @return { Promise < {} > }
  *  📤 Respective `data` for _this_ route.
  */
 export async function main
 (
-  event: ServerLoadEvent,
-  objParentPreloadData:
-  {
-    langParam: string
-  }
+  event: ServerLoadEvent
 ): Promise < IPreloadResponse >
 {
   // [🐞]
@@ -129,16 +155,82 @@ export async function main
   (
     `🚏 checkpoint ➤ ${strDebugModule} main(..) // START`,
     [
-      `🔹 [var] ➤ objParentPreloadData :|: ${parseObject(objParentPreloadData)}`,
+      `🔹 [var] ➤ request.headers.get('user-agent') :: ${parseObject(event.request.headers)}`,
     ]
   );
 
-  let
+  // ╭─────
+  // │ NOTE:
+  // │ │: testing to identify 'users ip', from within load
+  // │ │: only works with deployment using '<node-server>.js'
+  // ╰─────
+  /*
+    try
+    {
+      // ╭─────
+      // │ NOTE:
+      // │ |: V1 | ❌ does not appear to work, breaks platform.
+      // ╰─────
+      // const response_IP = await fetch(`/getClientIP`, {..});
+      // const response_IP_3 = await fetch(`https://XXXX/getClientIP`, {..}
+      // console.log("🔵 response_IP: ", response_IP);
+
+      // ╭─────
+      // │ NOTE:
+      // │ |: V2 | ✅ works [?] but incorrect IP.
+      // ╰─────
+      // console.log("🔵 event: ", event);
+      // console.log("🔵 event.getClientAddress(): ", event?.getClientAddress());
+
+      // ╭─────
+      // │ NOTE:
+      // │ |: V3 | ❓ works [?] but incorrect IP
+      // ╰─────
+      // const response_IP_3 = await get(`/getClientIP`)
+      // console.log("🔵 response_IP_3: ", response_IP_3);
+    }
+    catch (error)
+    {
+      console.log(`🔴 ${error}`)
+    }
+
+    try
+    {
+      // ╭─────
+      // │ NOTE:
+      // │ |: V3 | ✅ works [?] only on when calling directly URL, not from .server.ts
+      // │ │: works when using the non +layout.ts/+page.ts file
+      // ╰─────
+      // const response_IP_2 = await get(`https://betarena-scores-platform.herokuapp.com/getClientIP`)
+      // OR:
+      // const response_IP_2 = await fetch(`http://betarena-scores-platform.herokuapp.com/getClientIP`, {
+      // 	  method: 'GET',
+      //   }
+      // ).then((r) => r.json())
+      // .catch((error) => { console.log(error) });
+      // console.log("🔵 response_IP_2: ", response_IP_2);
+    }
+    catch (error)
+    {
+      console.log(`🔴 ${error}`)
+    }
+  */
+
+  const
     /**
      * @description
-     *  📝 Initialize page response
+     *  📝 `Data` object for target `route`.
      */
-    objResponse: IPreloadResponse = {}
+    objResponse: IPreloadResponse
+      = {
+        langParam: event.locals.user.lang!,
+        deviceType:
+          detectDeviceWithUA
+          (
+            event.request.headers.get('user-agent') ?? ''
+          ),
+        userAgent: event.request.headers.get('user-agent')
+      }
   ;
 
   // ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -150,36 +242,75 @@ export async function main
   // │ |: Destruct `object`.
   // ╰─────
   [
-    objResponse.translations,
-    objResponse.articleTranslation,
-    objResponse.profile_translation
+    objResponse.B_NAV_T,
+    objResponse.B_FOT_T,
+    objResponse.authTrs
   ] = await fetchData
   (
     event.fetch,
-    objParentPreloadData.langParam
+    objResponse.langParam
   );
 
   // ╭─────
-  // │ NOTE: IMPORTANT
-  // │ |: Requires flattening of first-level `object`, to prevent `undefined` values in page.
+  // │ NOTE:
+  // │ |: check for 'undefined' values in critical data, causing exit logic.
   // ╰─────
-  objResponse = {
-    // @ts-expect-error :: expceted to be destructed for respective page data, the way it was structured.
-    ...objResponse.translations,
-    // @ts-expect-error :: expceted to be destructed for respective page data, the way it was structured.
-    ...objResponse.profile_translation,
-    // @ts-expect-error :: expceted to be destructed for respective page data, the way it was structured.
-    readingTime: objResponse.articleTranslation?.translation
-  };
+  if (objResponse.B_NAV_T == undefined || objResponse.B_FOT_T == undefined)
+    preloadExitLogic
+    (
+      performance.now(),
+      '[LAYOUT]',
+      ERROR_CODE_PRELOAD,
+      LAYOUT_1_LANG_PAGE_ERROR_MSG
+    );
+  ;
+
+  if (event.route.id == '/(scores)/[[lang=lang]]')
+  {
+    const
+      /**
+       * @description
+       * 📝 Target `urls` to be `fetched`.
+       */
+      dataRes0
+        = await articleTrFetch
+        (
+          event,
+          {
+            langParam: objResponse.langParam,
+          }
+        )
+    ;
+
+    objResponse.translations = dataRes0;
+  }
+
+  console.log('event.locals.setState', event.locals.setState);
+
+  objResponse.setState = event.locals.setState;
 
   // [🐞]
   dlogv2
   (
     `🚏 checkpoint ➤ ${strDebugModule} main(..) // END`,
     [
-      // `🔹 [var] ➤ objResponse :|: ${JSON.stringify(objResponse)}`,
+      // `🔹 [var] ➤ objResponse :|: ${objResponse}`,
     ]
   );
+
+  // ╭─────
+  // │ NOTE: | WARNING:
+  // │ │: commented out due to interferences
+  // │ │: with error logs and code-traces.
+  // ╰─────
+  /*
+    setHeaders
+    (
+      {
+        'cache-control': 'public, max-age=3600'
+      }
+    );
+  */
 
   return objResponse;
 }
@@ -210,11 +341,11 @@ export async function main
  *  │ : Returns `data` for `_this_` page.
  *  [X]──────────────────────────────────────────────────────────────────
  * @param { any } fetch
- *  ❗️ **REQUIRED** Instance of `fetch` object.
+ *  ❗️ **REQUIRED** instance of `fetch` object.
  * @param { string } lang
- *  ❗️ **REQUIRED** `lang`.
+ *  ❗️ **REQUIRED** `language`.
  * @returns { Promise < IPreloadData0 > }
- *  📤 Target `data` fetched.
+ *  📤 `Data` fetched.
  */
 async function fetchData
 (
@@ -225,14 +356,13 @@ async function fetchData
   const
     /**
      * @description
-     *  📝 Load translations for articles layout
+     *  📝 Target `urls` to be `fetched`.
      */
     listUrls
       = [
-        `/api/data/author/tags?translation=${lang}`,
-        `/api/data/author/article?lang=${lang}`,
-        `/api/data/author/translations?lang=${lang}`
-
+        `/api/data/main/navbar?lang=${lang}&decompress`,
+        `/api/data/main/footer?lang=${lang}&decompress`,
+        `/api/hasura/_main_/auth?lang=${lang}`,
       ],
     /**
      * @description
