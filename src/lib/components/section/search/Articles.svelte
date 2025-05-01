@@ -11,9 +11,11 @@
   // #region ➤ 📦 Package Imports
   import { page } from "$app/stores";
   import session from "$lib/store/session.js";
+  import { infiniteScroll } from "$lib/utils/infinityScroll.js";
+  import { createEventDispatcher } from "svelte";
   import ArticleCard from "../authors/common_ui/articles/Article-Card.svelte";
-  import  search_store  from "./search_store.js";
-
+  import ArticleLoader from "../authors/common_ui/articles/Article-Loader.svelte";
+  import search_store from "./search_store.js";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -44,12 +46,36 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  const dispatch = createEventDispatcher();
+
   $: ({ viewportType } = $session);
   $: articles = $search_store.articles.data || new Map();
+  $: ({ loading } = $search_store.articles);
   $: mobile = viewportType === "mobile";
   $: tablet = viewportType === "tablet";
   $: ({ translations } = $page.data);
   // #endregion ➤ 📌 VARIABLES
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  function loadMore() {
+    if (loading) return;
+    dispatch("loadMore", {
+      type: "articles",
+      page: $search_store.articles.page + 1,
+    });
+  }
+
+  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--
@@ -62,7 +88,39 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
+<div class="wrapper" use:infiniteScroll={{ loadMore, hasMore: true, loading }}>
+  {#if articles.size > 0}
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {#each [...articles.entries()] as [id, article] (id)}
+        <ArticleCard {mobile} {article} {tablet} {translations} />
+      {/each}
+    </div>
+  {/if}
 
-{#each [...articles.entries()] as [id, article] (id)}
-  <ArticleCard {mobile} {article} {tablet} {translations} />
-{/each}
+  {#if loading}
+    {#each Array(10) as _}
+      <ArticleLoader {mobile} {tablet} />
+    {/each}
+  {/if}
+</div>
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 🌊 Svelte Component CSS/SCSS                                                     │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<style lang="scss">
+  .wrapper {
+    flex-grow: 1;
+    max-height: 100%;
+    min-height: 100%;
+    overflow: auto;
+    padding-bottom: 100px;
+    background: var(--colors-background-bg-main);
+  }
+</style>

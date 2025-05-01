@@ -32,6 +32,8 @@
   import UsersList from "../authors/common_ui/users_list/UsersList.svelte";
   import search_store from "./search_store.js";
   import type { IBetarenaUser } from "@betarena/scores-lib/types/_FIREBASE_.js";
+  import ArticleLoader from "../authors/common_ui/articles/Article-Loader.svelte";
+  import LoaderBadge from "$lib/components/ui/loaders/LoaderBadge.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -96,9 +98,15 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 <div class="wrapper {viewportType}">
-  {#if users.size}
+  {#if users.size || $search_store.users.loading}
     <div class="section">
-      <UsersList users={firstThreeUsers} size="lg" {translations} />
+      <UsersList
+        users={firstThreeUsers}
+        limit={3}
+        size="lg"
+        {translations}
+        loading={$search_store.users.loading && !firstThreeUsers.size}
+      />
       {#if users.size > 3}
         <div class="button-wrapp">
           <Button
@@ -111,10 +119,12 @@
       {/if}
     </div>
   {/if}
-  {#if sportstacks.size}
+  {#if sportstacks.size || $search_store.sportstacks.loading}
     <div class="section">
       <SportsTackList
         size="lg"
+        limit={3}
+        loading={$search_store.sportstacks.loading && !firstThreeSportstacks.size}
         sportstacks={firstThreeSportstacks}
         {translations}
       />
@@ -130,16 +140,22 @@
       {/if}
     </div>
   {/if}
-  {#if $search_store.tags.data.size}
+  {#if $search_store.tags.data.size || $search_store.tags.loading}
     <div class="section">
       <div class="tags_wrapper">
-        {#each [...$search_store.tags.data.entries()] as [id, tag] (id)}
-          <Badge>{tag}</Badge>
-        {/each}
+        {#if $search_store.tags.loading && !$search_store.tags.data.size}
+          {#each Array(10) as _item}
+             <LoaderBadge />
+          {/each}
+        {:else}
+           {#each [...$search_store.tags.data.entries()] as [id, tag] (id)}
+             <Badge>{tag}</Badge>
+           {/each}
+        {/if}
       </div>
     </div>
   {/if}
-  {#if articles.size}
+  {#if articles.size || $search_store.articles.loading}
     <div class="section">
       <div class="articles-wrapper">
         {#each [...firstThreeArticles.entries()] as [id, article] (id)}
@@ -154,6 +170,11 @@
               on:click={() => viewMore("posts")}>View more</Button
             >
           </div>
+        {/if}
+        {#if !firstThreeArticles.size && $search_store.articles.loading}
+          {#each Array(10) as _item}
+            <ArticleLoader {mobile} {tablet} />
+          {/each}
         {/if}
       </div>
     </div>

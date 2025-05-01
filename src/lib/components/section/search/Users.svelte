@@ -34,6 +34,18 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
+<div class="wrapper">
+  <UsersList {users} size="lg" {translations}/>
+</div>
 
-<UsersList {users} size="lg" {translations}/>
 
+<style lang="scss">
+  .wrapper {
+    flex-grow: 1;
+    max-height: 100%;
+    min-height: 100%;
+    overflow: auto;
+    padding-bottom: 100px;
+    background: var(--colors-background-bg-main);
+  }
+</style>

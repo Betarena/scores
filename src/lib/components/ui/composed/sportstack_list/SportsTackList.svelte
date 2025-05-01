@@ -32,6 +32,7 @@
     translations: IPageAuthorTranslationDataFinal,
     loading = false,
     size: number | string = 40,
+    limit = 10,
     emptyMessage = "";
 
   const /**
@@ -78,8 +79,8 @@
   {/if}
   {#if loading}
     <div class="list-wrapper">
-      {#each new Array(10) as _item}
-        <ListSportsTackLoader />
+      {#each new Array(limit) as _item}
+        <ListSportsTackLoader {size} />
       {/each}
     </div>
   {/if}

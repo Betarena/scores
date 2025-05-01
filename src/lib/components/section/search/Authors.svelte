@@ -1,6 +1,8 @@
 <script>
   import { page } from "$app/stores";
   import SportsTackList from "$lib/components/ui/composed/sportstack_list/SportsTackList.svelte";
+  import { infiniteScroll } from "$lib/utils/infinityScroll";
+  import { createEventDispatcher } from "svelte";
   import  search_store  from "./search_store";
 
   // #region ➤ 📌 VARIABLES
@@ -17,12 +19,35 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-
+  const dispatch = createEventDispatcher();
 
   $: ({ translations } = $page.data);
   $: sportstacks = $search_store.sportstacks.data || new Map();
+  $: ({ loading } = $search_store.sportstacks);
 
   // #endregion ➤ 📌 VARIABLES
+
+   // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  function loadMore() {
+    if (loading) return;
+    dispatch("loadMore", {
+      type: "sportstacks",
+      page: $search_store.sportstacks.page + 1
+    });
+  }
+
+  // #endregion ➤ 🛠️ METHODS
 </script>
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -34,6 +59,28 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
+<div class="wrapper" use:infiniteScroll={{ loadMore, hasMore: true, loading }}>
+  <SportsTackList {sportstacks} {translations} {loading} size="lg"/>
+</div>
 
-<SportsTackList {sportstacks} {translations}/>
 
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 🌊 Svelte Component CSS/SCSS                                                     │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<style lang="scss">
+  .wrapper {
+    flex-grow: 1;
+    max-height: 100%;
+    min-height: 100%;
+    overflow: auto;
+    padding-bottom: 100px;
+    background: var(--colors-background-bg-main);
+  }
+</style>

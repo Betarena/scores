@@ -41,11 +41,12 @@
   import Users from "./Users.svelte";
   import userSettings from "$lib/store/user-settings.js";
   import Authors from "./Authors.svelte";
-  import  search_store  from "./search_store.js";
+  import search_store from "./search_store.js";
   import Highlights from "./Highlights.svelte";
+  import { debounce } from "$lib/utils/fetch.js";
+  import { beforeNavigate } from "$app/navigation";
 
   // #endregion ➤ 📦 Package Imports
-
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
@@ -62,21 +63,33 @@
       articles: {
         page: 0,
         data: new Map(),
+        loading: false,
+        total: 0,
       },
       sportstacks: {
         page: 0,
         data: new Map(),
+        loading: false,
+        total: 0,
       },
       users: {
         page: 0,
         data: new Map(),
+        loading: false,
+        total: 0,
       },
       tags: {
         page: 0,
         data: new Map(),
+        loading: false,
+        total: 0,
       },
     };
   });
+
+  beforeNavigate(() => {
+    $modalStore.show = false;
+  })
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
@@ -143,10 +156,8 @@
   $: isInputInFocus = false;
   $: selectedTab = tabs[0];
 
-  $: usersSearch({ search });
-  $: authorSearch({ search });
-  $: tagsSearch({ search });
-  $: articlesSearch({ search });
+  const debouncedSearch = debounce(doSearch, 500);
+  $: debouncedSearch(search);
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
   // #region ➤ 🛠️ METHODS
@@ -176,18 +187,27 @@
         localStorage.getItem("searchHistory") || "[]"
       );
       const storageSet: string[] = [...storageHistory];
+      const searched_before = storageSet.find(
+        (history) => history.toLocaleLowerCase() === search.toLocaleLowerCase()
+      );
+      if(searched_before) {
+        storageSet.splice(storageSet.indexOf(searched_before), 1);
+      }
       if (
-        search &&
-        !storageSet.find(
-          (history) =>
-            history.toLocaleLowerCase() === search.toLocaleLowerCase()
-        )
+        search
       ) {
         const nextHistory = [search, ...storageSet];
         localStorage.setItem("searchHistory", JSON.stringify(nextHistory));
         searchHistory = [...nextHistory];
       }
     }, 100);
+  }
+
+  function doSearch(value: string) {
+    usersSearch({ search: value, page: 0 });
+    authorSearch({ search: value, page: 0 });
+    tagsSearch({ search: value, page: 0 });
+    articlesSearch({ search: value, page: 0 });
   }
 
   function changeTab(e: CustomEvent) {
@@ -209,10 +229,18 @@
     limit?: number;
   }) {
     if (!search) {
-      $search_store.sportstacks.data = new Map();
-      $search_store.sportstacks.page = 0;
-      return
+      $search_store.sportstacks = {
+        data: new Map(),
+        page: 0,
+        loading: false,
+        total: 0,
+      };
+      return;
     }
+    if (!page) {
+      $search_store.sportstacks.data = new Map();
+    }
+    $search_store.sportstacks.loading = true;
     let url = `/api/data/search/authors?search=${search}`;
     if (page) {
       url += `&page=${page}`;
@@ -229,7 +257,17 @@
         r.authors.map((author) => [author.id, author])
       );
       $search_store.sportstacks.page = 0;
+    } else {
+      const newMap = new Map(
+        r.authors.map((author) => [author.id, author])
+      ) as Map<string, any>;
+      $search_store.sportstacks.data = new Map([
+        ...$search_store.sportstacks.data,
+        ...newMap,
+      ]);
+      $search_store.sportstacks.page = page;
     }
+    $search_store.sportstacks.loading = false;
   }
 
   async function tagsSearch({
@@ -242,10 +280,18 @@
     limit?: number;
   }) {
     if (!search) {
-      $search_store.tags.data = new Map();
-      $search_store.tags.page = 0;
-      return
+      $search_store.tags = {
+        data: new Map(),
+        page: 0,
+        loading: false,
+        total: 0,
+      };
+      return;
     }
+    if (!page) {
+      $search_store.tags.data = new Map();
+    }
+    $search_store.tags.loading = true;
     let url = `/api/data/search/tags?search=${search}`;
     if (page) {
       url += `&page=${page}`;
@@ -261,8 +307,17 @@
         r.tags.map((tag) => [tag.id, tag.name])
       );
       $search_store.tags.page = 0;
+    } else {
+      const newMap = new Map(
+        r.tags.map((tag) => [tag.id, tag.name])
+      ) as Map<number, any>;
+      $search_store.tags.data = new Map([
+        ...$search_store.tags.data,
+        ...newMap,
+      ]);
+      $search_store.tags.page = page;
     }
-    // tags = ;
+    $search_store.tags.loading = false;
   }
 
   async function articlesSearch({
@@ -275,10 +330,18 @@
     limit?: number;
   }) {
     if (!search) {
-      $search_store.articles.data = new Map();
-      $search_store.articles.page = 0;
+      $search_store.articles = {
+        data: new Map(),
+        page: 0,
+        loading: false,
+        total: 0,
+      };
       return;
     }
+    if (!page) {
+      $search_store.articles.data = new Map();
+    }
+    $search_store.articles.loading = true;
     let url = `/api/data/search/articles?search=${search}`;
     if (page) {
       url += `&page=${page}`;
@@ -301,8 +364,23 @@
         ])
       );
       $search_store.articles.page = 0;
+    } else {
+      const newMap = new Map(
+        r.articles.map((article) => [
+          article.id,
+          {
+            ...article,
+            author: article.authors__authors__id__nested,
+          },
+        ])
+      ) as Map<string, any>;
+      $search_store.articles.data = new Map([
+        ...$search_store.articles.data,
+        ...newMap,
+      ]);
+      $search_store.articles.page = page;
     }
-    // ta
+    $search_store.articles.loading = false;
   }
 
   async function usersSearch({
@@ -319,21 +397,46 @@
       $search_store.users.page = 0;
       return;
     }
+    if (!page) {
+      $search_store.users.data = new Map();
+    }
+    $search_store.users.loading = true;
     const users_data = await searchUsers(search);
     if (!users_data) {
       return ($search_store.users = {
         data: new Map(),
         page: 0,
+        loading: false,
+        total: 0,
       });
     }
     const users_map = new Map(users_data.map((user) => [user.id, user]));
     users_map.delete(ctx_user?.firebase_user_data?.uid || "");
-    $search_store.users.data =  users_map;
-    $search_store.users.page = 0
+    $search_store.users.data = users_map;
+    $search_store.users.page = 0;
+    $search_store.users.loading = false;
+    $search_store.users.total = users_data.length;
+  }
+
+  function loadMore(e: CustomEvent) {
+    const { page, type } = e.detail;
+    switch (type) {
+      case "users":
+        usersSearch({ search, page });
+        break;
+      case "sportstacks":
+        authorSearch({ search, page });
+        break;
+      case "articles":
+        articlesSearch({ search, page });
+        break;
+      case "tags":
+        tagsSearch({ search, page });
+        break;
+    }
   }
 
   // #endregion ➤ 🛠️ METHODS
-
 </script>
 
 <!--
@@ -446,7 +549,11 @@
       </div>
     {/if}
     {#if search && viewMap[selectedTab.id]}
-      <svelte:component this={viewMap[selectedTab.id]} on:changeTab={changeTab} />
+      <svelte:component
+        this={viewMap[selectedTab.id]}
+        on:changeTab={changeTab}
+        on:loadMore={loadMore}
+      />
     {/if}
   </div>
   <div
