@@ -16,6 +16,7 @@
   import ArticleCard from "../authors/common_ui/articles/Article-Card.svelte";
   import ArticleLoader from "../authors/common_ui/articles/Article-Loader.svelte";
   import search_store from "./search_store.js";
+  import NoResults from "./NoResults.svelte";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -89,18 +90,22 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 <div class="wrapper" use:infiniteScroll={{ loadMore, hasMore: true, loading }}>
-  {#if articles.size > 0}
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {#each [...articles.entries()] as [id, article] (id)}
-        <ArticleCard {mobile} {article} {tablet} {translations} />
-      {/each}
-    </div>
-  {/if}
+  {#if articles.size || $search_store.articles.loading}
+    {#if articles.size > 0}
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {#each [...articles.entries()] as [id, article] (id)}
+          <ArticleCard {mobile} {article} {tablet} {translations} />
+        {/each}
+      </div>
+    {/if}
 
-  {#if loading}
-    {#each Array(10) as _}
-      <ArticleLoader {mobile} {tablet} />
-    {/each}
+    {#if loading}
+      {#each Array(10) as _}
+        <ArticleLoader {mobile} {tablet} />
+      {/each}
+    {/if}
+  {:else}
+    <NoResults />
   {/if}
 </div>
 

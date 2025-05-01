@@ -3,7 +3,8 @@
   import SportsTackList from "$lib/components/ui/composed/sportstack_list/SportsTackList.svelte";
   import { infiniteScroll } from "$lib/utils/infinityScroll";
   import { createEventDispatcher } from "svelte";
-  import  search_store  from "./search_store";
+  import search_store from "./search_store";
+  import NoResults from "./NoResults.svelte";
 
   // #region ➤ 📌 VARIABLES
 
@@ -27,7 +28,7 @@
 
   // #endregion ➤ 📌 VARIABLES
 
-   // #region ➤ 🛠️ METHODS
+  // #region ➤ 🛠️ METHODS
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -43,12 +44,13 @@
     if (loading) return;
     dispatch("loadMore", {
       type: "sportstacks",
-      page: $search_store.sportstacks.page + 1
+      page: $search_store.sportstacks.page + 1,
     });
   }
 
   // #endregion ➤ 🛠️ METHODS
 </script>
+
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ 💠 Svelte Component HTML                                                         │
@@ -60,9 +62,12 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 <div class="wrapper" use:infiniteScroll={{ loadMore, hasMore: true, loading }}>
-  <SportsTackList {sportstacks} {translations} {loading} size="lg"/>
+  {#if sportstacks.size || $search_store.sportstacks.loading}
+    <SportsTackList {sportstacks} {translations} {loading} size="lg" />
+  {:else}
+    <NoResults />
+  {/if}
 </div>
-
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { page } from "$app/stores";
   import UsersList from "../authors/common_ui/users_list/UsersList.svelte";
+  import NoResults from "./NoResults.svelte";
   import  search_store  from "./search_store";
   import type { IBetarenaUser } from "@betarena/scores-lib/types/_FIREBASE_.js";
 
@@ -35,7 +36,11 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 <div class="wrapper">
-  <UsersList {users} size="lg" {translations}/>
+  {#if users.size || $search_store.users.loading}
+    <UsersList {users} size="lg" {translations}/>
+  {:else}
+    <NoResults/>
+  {/if}
 </div>
 
 

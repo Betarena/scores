@@ -635,7 +635,7 @@
           justify-content: space-between;
           background: none;
           .suggestion-text {
-            color: var(--colors-base-white, #fff);
+            color: var(--text-color);
 
             /* Text md/Regular */
             font-family: var(--font-family-font-family-body, Roboto);
@@ -690,7 +690,7 @@
           gap: 16px;
 
           .search-title {
-            color: var(--colors-base-white, #fff);
+            color: var(--text-color);
 
             /* Text lg/Semibold */
             font-family: var(--font-family-font-family-body, Roboto);
@@ -704,7 +704,7 @@
             padding: 0;
             display: flex;
             justify-content: start;
-            color: var(--colors-base-white, #fff);
+            color: var(--text-color);
 
             /* Text md/Regular */
             font-family: var(--font-family-font-family-body, Roboto);
