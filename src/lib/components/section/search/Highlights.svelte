@@ -22,13 +22,17 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
-  import Avatar from "$lib/components/ui/Avatar.svelte";
+  import { page } from "$app/stores";
+  import Badge from "$lib/components/ui/Badge.svelte";
   import Button from "$lib/components/ui/Button.svelte";
+  import SportsTackList from "$lib/components/ui/composed/sportstack_list/SportsTackList.svelte";
   import session from "$lib/store/session.js";
-  import userSettings from "$lib/store/user-settings.js";
-  import type { BetarenaUser } from "$lib/types/types.user-settings.js";
-  import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
+  import { createEventDispatcher } from "svelte";
+  import ArticleCard from "../authors/common_ui/articles/Article-Card.svelte";
+  import UsersList from "../authors/common_ui/users_list/UsersList.svelte";
+  import search_store from "./search_store.js";
+  import type { IBetarenaUser } from "@betarena/scores-lib/types/_FIREBASE_.js";
+
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -44,18 +48,22 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
-  export let user: BetarenaUser, translations: IPageAuthorTranslationDataFinal;
-  export let size: number | string = 40;
-
+  const dispatch = createEventDispatcher();
   $: ({ viewportType } = $session);
-  $: ({ user: ctx } = $userSettings);
-  $: ({ uid, username, name, profile_photo, usernamePermalink } = user);
-  $: isAuth = !!ctx;
-  $: isFollow = !!(ctx?.scores_user_data.following?.authors || []).includes(
-    uid
+  $: articles = $search_store.articles.data || new Map();
+  $: users = ($search_store.users.data || new Map()) as Map<
+    string,
+    IBetarenaUser
+  >;
+  $: sportstacks = $search_store.sportstacks.data || new Map();
+  $: firstThreeUsers = new Map(Array.from(users.entries()).slice(0, 3));
+  $: firstThreeArticles = new Map(Array.from(articles.entries()).slice(0, 3));
+  $: firstThreeSportstacks = new Map(
+    Array.from(sportstacks.entries()).slice(0, 3)
   );
-
+  $: mobile = viewportType === "mobile";
+  $: tablet = viewportType === "tablet";
+  $: ({ translations } = $page.data);
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -70,14 +78,8 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function handleClick() {
-    if (!isAuth) {
-      $session.currentActiveModal = "Auth_Modal";
-      return;
-    }
-    userSettings.updateData([
-      ["user-following", { target: "authors", id: uid, follow: !isFollow }],
-    ]);
+  function viewMore(id: string) {
+    dispatch("changeTab", { id });
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -93,19 +95,68 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
-<div class="list-item {viewportType}">
-  <a href="/a/user/{usernamePermalink}" class="user-info">
-    <Avatar {size} wrapStyle="border: 1px solid #1D1D1D" src={profile_photo} />
-    <div class="useer-name">{name || username}</div>
-  </a>
-  {#if uid !== ctx?.firebase_user_data?.uid}
-    <Button type={isFollow ? "subtle" : "primary"} style="padding:10px 16px; font-size: 14px; height:{size === "lg" ? "36px" : "32px"}; min-width: 72px " on:click={handleClick}>
-      <TranslationText
-        text={translations[isFollow ? "following" : "follow"]}
-        fallback={isFollow ? "Following" : "Follow"}
+<div class="wrapper {viewportType}">
+  {#if users.size}
+    <div class="section">
+      <UsersList users={firstThreeUsers} size="lg" {translations} />
+      {#if users.size > 3}
+        <div class="button-wrapp">
+          <Button
+            size="md"
+            full={true}
+            type="secondary-gray"
+            on:click={() => viewMore("users")}>View more</Button
+          >
+        </div>
+      {/if}
+    </div>
+  {/if}
+  {#if sportstacks.size}
+    <div class="section">
+      <SportsTackList
+        size="lg"
+        sportstacks={firstThreeSportstacks}
+        {translations}
       />
-    </Button>
+      {#if sportstacks.size > 3}
+        <div class="button-wrapp">
+          <Button
+            size="md"
+            full={true}
+            type="secondary-gray"
+            on:click={() => viewMore("sportstacks")}>View more</Button
+          >
+        </div>
+      {/if}
+    </div>
+  {/if}
+  {#if $search_store.tags.data.size}
+    <div class="section">
+      <div class="tags_wrapper">
+        {#each [...$search_store.tags.data.entries()] as [id, tag] (id)}
+          <Badge>{tag}</Badge>
+        {/each}
+      </div>
+    </div>
+  {/if}
+  {#if articles.size}
+    <div class="section">
+      <div class="articles-wrapper">
+        {#each [...firstThreeArticles.entries()] as [id, article] (id)}
+          <ArticleCard {mobile} {article} {tablet} {translations} />
+        {/each}
+        {#if articles.size > 3}
+          <div class="button-wrapp">
+            <Button
+              size="md"
+              full={true}
+              type="secondary-gray"
+              on:click={() => viewMore("posts")}>View more</Button
+            >
+          </div>
+        {/if}
+      </div>
+    </div>
   {/if}
 </div>
 
@@ -120,36 +171,47 @@
 -->
 
 <style lang="scss">
-  .list-item {
+  .wrapper {
     display: flex;
-    padding-block: 16px;
-    border-bottom: var(--header-border);
-    justify-content: space-between;
-    gap: 20px;
-    align-items: center;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 100%;
+    max-height: 100%;
+    overflow: auto;
 
-    .user-info {
+    .section {
       display: flex;
-      justify-content: start;
-      flex-grow: 1;
-      align-items: center;
-      gap: 12px;
-      color: var(--text-color);
-      font-family: Roboto;
-      font-size: 16px;
-      font-style: normal;
-      font-weight: 500;
-      line-height: 24px; /* 150% */
-
-      &:hover {
-        color: var(--primary);
+      flex-direction: column;
+      background: var(--colors-background-bg-main);
+      width: 100%;
+      .button-wrapp {
+        width: 100%;
+        display: flex;
+        padding-bottom: 16px;
+        padding-inline: 16px;
+      }
+      &:last-of-type {
+        padding-bottom: 84px;
+        flex-grow: 1;
       }
     }
 
-    &.mobile {
+    .tags_wrapper {
       padding: 16px;
-      padding-block: 8px;
-      border-bottom: none;
+      display: flex;
+      flex-wrap: wrap;
+      background: var(--colors-background-bg-main);
+      gap: 16px 10px;
+    }
+    .articles-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding-top: 16px;
+      background: var(--colors-background-bg-main);
+      :global(.card-wrapper) {
+        padding-block: 0;
+      }
     }
   }
 </style>

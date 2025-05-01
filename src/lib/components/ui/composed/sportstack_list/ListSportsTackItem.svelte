@@ -8,13 +8,28 @@
 -->
 
 <script lang="ts">
+  // #region ➤ 📦 Package Imports
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
+  import Button from "$lib/components/ui/Button.svelte";
   import session from "$lib/store/session.js";
-  import type { IBetarenaUser } from "@betarena/scores-lib/types/_FIREBASE_.js";
-  import ListUserItem from "./ListUserItem.svelte";
+  import userSettings from "$lib/store/user-settings.js";
   import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
-  import ListUserLoader from "./ListUserLoader.svelte";
-  import SeoBox from "$lib/components/SEO-Box.svelte";
-  import { page } from "$app/stores";
+  import SportstackAvatar from "../../SportstackAvatar.svelte";
+  // #endregion ➤ 📦 Package Imports
+
   // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -29,21 +44,43 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let users: Map<string, IBetarenaUser> = new Map(),
-    translations: IPageAuthorTranslationDataFinal,
-    loading = false,
-    size: number | string = 40,
-    emptyMessage = "";
-
-  const /**
-     * @description
-     *  📣 `this` component **main** `id` and `data-testid` prefix.
-     */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = "author⮕followers⮕list";
+  export let user: any, translations: IPageAuthorTranslationDataFinal;
+  export let size: number | string = 40;
 
   $: ({ viewportType } = $session);
+  $: ({ user: ctx } = $userSettings);
+  $: ({  username, name, avatar } = user.data);
+  $: ({ permalink, id } = user);
+  $: isAuth = !!ctx;
+  $: isFollow = !!(ctx?.scores_user_data?.subscriptions?.sportstacks || []).includes(
+    id
+  );
 
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  function handleClick() {
+    if (!isAuth) {
+      $session.currentActiveModal = "Auth_Modal";
+      return;
+    }
+    userSettings.updateData([
+      ["user-subscriptions", { target: "sportstacks", id, follow: !isFollow }],
+    ]);
+  }
+
+  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--
@@ -56,33 +93,19 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<SeoBox>
-  {#each [...users] as [uid, user] (uid) }
-    <h2>{user?.name || user.username}</h2>
-    <a href={`${$page.url.origin}/a/user/${user?.usernamePermalink}`}
-      >{user.usernamePermalink}</a
-    >
-  {/each}
-</SeoBox>
 
-<div class="wrapper {viewportType}" id={CNAME}>
-  {#if !users.size && emptyMessage && !loading}
-    <div class="empty">
-      {emptyMessage}
-    </div>
-  {:else}
-    <div class="list-wrapper">
-      {#each [...users] as [uid, user] (uid)}
-        <ListUserItem {user} {size} {translations} />
-      {/each}
-    </div>
-  {/if}
-  {#if loading}
-    <div class="list-wrapper">
-      {#each new Array(10) as _item}
-        <ListUserLoader />
-      {/each}
-    </div>
+<div class="list-item {viewportType}">
+  <a href="/a/sportstack/{permalink}" class="user-info">
+    <SportstackAvatar {size} src={avatar}/>
+    <div class="user-name">{name || username}</div>
+  </a>
+  {#if id !== ctx?.firebase_user_data?.uid}
+    <Button type={isFollow ? "subtle" : "primary"} style="padding:10px 16px; font-size: 14px; height:{size === "lg" ? "36px" : "32px"}; min-width: 72px " on:click={handleClick}>
+      <TranslationText
+        text={translations[isFollow ? "following" : "follow"]}
+        fallback={isFollow ? "Following" : "Follow"}
+      />
+    </Button>
   {/if}
 </div>
 
@@ -97,30 +120,36 @@
 -->
 
 <style lang="scss">
-  .wrapper {
+  .list-item {
     display: flex;
-    padding-block: 8px;
+    padding-block: 16px;
+    border-bottom: var(--header-border);
+    justify-content: space-between;
+    gap: 20px;
+    align-items: center;
 
-    flex-direction: column;
-    background-color: var(--bg-color);
-
-    .list-wrapper {
+    .user-info {
       display: flex;
-      flex-direction: column;
+      justify-content: start;
+      flex-grow: 1;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-color);
+      font-family: Roboto;
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 24px; /* 150% */
+
+      &:hover {
+        color: var(--primary);
+      }
     }
 
-    .empty {
-      flex-grow: 1;
-      width: 100%;
-      height: 100%;
-      background-color: var(--bg-color);
-      font-weight: 600;
-      color: var(--text-color-second);
-      font-size: var(--text-size-2xl);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-top: 10px;
+    &.mobile {
+      padding: 16px;
+      padding-block: 8px;
+      border-bottom: none;
     }
   }
 </style>

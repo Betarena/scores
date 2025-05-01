@@ -25,20 +25,60 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  import { fade, fly, scale } from "svelte/transition";
+  import { fade, fly } from "svelte/transition";
   import { cubicOut, quadIn, quadOut } from "svelte/easing";
   import session from "$lib/store/session.js";
   import Input from "$lib/components/ui/Input.svelte";
   import Tabbar from "$lib/components/ui/Tabbar.svelte";
   import type { ITab } from "$lib/components/ui/types.js";
   import Button from "$lib/components/ui/Button.svelte";
-  import { onMount, tick } from "svelte";
+  import { onMount } from "svelte";
   import ArrowCirlcleBrokenRight from "$lib/components/ui/assets/arrow-cirlcle-broken-right.svelte";
-  import { flip } from "svelte/animate";
   import XClose from "$lib/components/ui/assets/x-close.svelte";
   import { modalStore } from "$lib/store/modal.js";
+  import { searchUsers } from "$lib/firebase/search.js";
+  import Articles from "./Articles.svelte";
+  import Users from "./Users.svelte";
+  import userSettings from "$lib/store/user-settings.js";
+  import Authors from "./Authors.svelte";
+  import  search_store  from "./search_store.js";
+  import Highlights from "./Highlights.svelte";
 
   // #endregion ➤ 📦 Package Imports
+
+
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  onMount(() => {
+    searchHistory = JSON.parse(localStorage.getItem("searchHistory") || "[]");
+    $search_store = {
+      articles: {
+        page: 0,
+        data: new Map(),
+      },
+      sportstacks: {
+        page: 0,
+        data: new Map(),
+      },
+      users: {
+        page: 0,
+        data: new Map(),
+      },
+      tags: {
+        page: 0,
+        data: new Map(),
+      },
+    };
+  });
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
   // #region ➤ 📌 VARIABLES
 
@@ -53,8 +93,6 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
-  // #endregion ➤ 📌 VARIABLES
 
   const tabs: ITab[] = [
     {
@@ -76,6 +114,16 @@
   ];
   let inputNode: null | HTMLInputElement | HTMLTextAreaElement = null;
   let skipBlur = false;
+
+  const viewMap = {
+    posts: Articles,
+    users: Users,
+    sportstacks: Authors,
+    highlights: Highlights,
+  };
+
+  // #endregion ➤ 📌 VARIABLES
+
   // #region ➤ 🔥 REACTIVIY [SVELTE]
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -90,8 +138,15 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   $: search = "";
   $: ({ viewportType } = $session);
+  $: ({ user: ctx_user } = $userSettings);
   $: searchHistory = [] as string[];
   $: isInputInFocus = false;
+  $: selectedTab = tabs[0];
+
+  $: usersSearch({ search });
+  $: authorSearch({ search });
+  $: tagsSearch({ search });
+  $: articlesSearch({ search });
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
   // #region ➤ 🛠️ METHODS
@@ -110,7 +165,7 @@
     isInputInFocus = true;
   }
 
-  async function inputBlur() {
+  function inputBlur() {
     setTimeout(() => {
       if (skipBlur) {
         skipBlur = false;
@@ -135,22 +190,150 @@
     }, 100);
   }
 
+  function changeTab(e: CustomEvent) {
+    const tabId = e.detail.id;
+    const tab = tabs.find((tab) => tab.id === tabId);
+    if (!tab) {
+      return;
+    }
+    selectedTab = tab;
+  }
+
+  async function authorSearch({
+    search,
+    page,
+    limit,
+  }: {
+    search: string;
+    page?: number;
+    limit?: number;
+  }) {
+    if (!search) {
+      $search_store.sportstacks.data = new Map();
+      $search_store.sportstacks.page = 0;
+      return
+    }
+    let url = `/api/data/search/authors?search=${search}`;
+    if (page) {
+      url += `&page=${page}`;
+    }
+    if (limit) {
+      url += `&limit=${limit}`;
+    }
+    const res = await fetch(url);
+    // const r = await res.json();
+    // authors = new Map(r.authors.map((author) => [author.id, author]));
+    const r = await res.json();
+    if (!page) {
+      $search_store.sportstacks.data = new Map(
+        r.authors.map((author) => [author.id, author])
+      );
+      $search_store.sportstacks.page = 0;
+    }
+  }
+
+  async function tagsSearch({
+    search,
+    page,
+    limit,
+  }: {
+    search: string;
+    page?: number;
+    limit?: number;
+  }) {
+    if (!search) {
+      $search_store.tags.data = new Map();
+      $search_store.tags.page = 0;
+      return
+    }
+    let url = `/api/data/search/tags?search=${search}`;
+    if (page) {
+      url += `&page=${page}`;
+    }
+    if (limit) {
+      url += `&limit=${limit}`;
+    }
+
+    const res = await fetch(url);
+    const r = await res.json();
+    if (!page) {
+      $search_store.tags.data = new Map(
+        r.tags.map((tag) => [tag.id, tag.name])
+      );
+      $search_store.tags.page = 0;
+    }
+    // tags = ;
+  }
+
+  async function articlesSearch({
+    search,
+    page,
+    limit,
+  }: {
+    search: string;
+    page?: number;
+    limit?: number;
+  }) {
+    if (!search) {
+      $search_store.articles.data = new Map();
+      $search_store.articles.page = 0;
+      return;
+    }
+    let url = `/api/data/search/articles?search=${search}`;
+    if (page) {
+      url += `&page=${page}`;
+    }
+    if (limit) {
+      url += `&limit=${limit}`;
+    }
+
+    const res = await fetch(url);
+    // const r = await res.json();
+    const r = await res.json();
+    if (!page) {
+      $search_store.articles.data = new Map(
+        r.articles.map((article) => [
+          article.id,
+          {
+            ...article,
+            author: article.authors__authors__id__nested,
+          },
+        ])
+      );
+      $search_store.articles.page = 0;
+    }
+    // ta
+  }
+
+  async function usersSearch({
+    search,
+    page,
+    limit,
+  }: {
+    search: string;
+    page?: number;
+    limit?: number;
+  }) {
+    if (!search) {
+      $search_store.users.data = new Map();
+      $search_store.users.page = 0;
+      return;
+    }
+    const users_data = await searchUsers(search);
+    if (!users_data) {
+      return ($search_store.users = {
+        data: new Map(),
+        page: 0,
+      });
+    }
+    const users_map = new Map(users_data.map((user) => [user.id, user]));
+    users_map.delete(ctx_user?.firebase_user_data?.uid || "");
+    $search_store.users.data =  users_map;
+    $search_store.users.page = 0
+  }
+
   // #endregion ➤ 🛠️ METHODS
 
-  // #region ➤ 🔄 LIFECYCLE [SVELTE]
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'logic' that should run            │
-  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
-  // │ as soon as 'this' .svelte file is ran.                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  onMount(() => {
-    searchHistory = JSON.parse(localStorage.getItem("searchHistory") || "[]");
-  });
-
-  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 
 <!--
@@ -171,7 +354,12 @@
     out:fly={{ x: 0, y: -100, duration: 400, easing: quadIn }}
   >
     <div class="input-wrapper">
-      <button class="search-close" on:click={() => {$modalStore.show = false}}>
+      <button
+        class="search-close"
+        on:click={() => {
+          $modalStore.show = false;
+        }}
+      >
         <XClose />
       </button>
       <Input
@@ -203,10 +391,15 @@
     <!-- content here -->
     {#if !isInputInFocus}
       <div class="tabbar">
-        <Tabbar type="button_gray" size="sm" data={tabs} />
+        <Tabbar
+          type="button_gray"
+          size="sm"
+          data={tabs}
+          bind:selected={selectedTab}
+        />
       </div>
-      {:else}
-        <div class="empty-tabbar"></div>
+    {:else}
+      <div class="empty-tabbar" />
     {/if}
   </div>
   {#if search && isInputInFocus}
@@ -237,7 +430,7 @@
     {:else if !search && isInputInFocus && searchHistory.length}
       <div class="search-history">
         <div class="search-title">Recent</div>
-        {#each searchHistory as text}
+        {#each searchHistory.slice(0, 10) as text}
           <button
             class="recent-search-item"
             on:click={() => {
@@ -251,6 +444,9 @@
           </button>
         {/each}
       </div>
+    {/if}
+    {#if search && viewMap[selectedTab.id]}
+      <svelte:component this={viewMap[selectedTab.id]} on:changeTab={changeTab} />
     {/if}
   </div>
   <div
@@ -278,6 +474,7 @@
     &.tablet {
       width: 100vw;
       height: 100vh;
+      overflow: hidden;
       display: flex;
       flex-direction: column;
       gap: 8px;
@@ -346,18 +543,22 @@
         }
       }
       .search-results {
-        flex-grow: 1;
         width: 100%;
-        background: var(--colors-background-bg-main);
-        padding-top: 16px;
+        flex-grow: 1;
+        overflow: hidden;
 
         .search-message-wrapper {
+          background: var(--colors-background-bg-main);
+          overflow-y: auto;
+          flex-grow: 1;
           width: 100%;
+          height: 100%;
           display: flex;
           justify-content: center;
           align-items: flex-start;
           gap: var(--spacing-xs, 4px);
           align-self: stretch;
+          padding-top: 16px;
 
           .message-text {
             color: var(--colors-text-text-tertiary-600, #6a6a6a);
@@ -371,10 +572,14 @@
           }
         }
         .search-history {
+          background: var(--colors-background-bg-main);
+          overflow-y: auto;
+          flex-grow: 1;
           padding: 16px;
           display: flex;
           flex-direction: column;
           width: 100%;
+          height: 100%;
           gap: 16px;
 
           .search-title {

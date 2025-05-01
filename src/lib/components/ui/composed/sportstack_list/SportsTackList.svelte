@@ -9,12 +9,11 @@
 
 <script lang="ts">
   import session from "$lib/store/session.js";
-  import type { IBetarenaUser } from "@betarena/scores-lib/types/_FIREBASE_.js";
-  import ListUserItem from "./ListUserItem.svelte";
   import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
-  import ListUserLoader from "./ListUserLoader.svelte";
   import SeoBox from "$lib/components/SEO-Box.svelte";
   import { page } from "$app/stores";
+  import ListSportsTackItem from "./ListSportsTackItem.svelte";
+  import ListSportsTackLoader from "./ListSportsTackLoader.svelte";
   // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -29,7 +28,7 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let users: Map<string, IBetarenaUser> = new Map(),
+  export let sportstacks = new Map(),
     translations: IPageAuthorTranslationDataFinal,
     loading = false,
     size: number | string = 40,
@@ -57,7 +56,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 <SeoBox>
-  {#each [...users] as [uid, user] (uid) }
+  {#each [...sportstacks] as [uid, user] (uid) }
     <h2>{user?.name || user.username}</h2>
     <a href={`${$page.url.origin}/a/user/${user?.usernamePermalink}`}
       >{user.usernamePermalink}</a
@@ -66,21 +65,21 @@
 </SeoBox>
 
 <div class="wrapper {viewportType}" id={CNAME}>
-  {#if !users.size && emptyMessage && !loading}
+  {#if !sportstacks.size && emptyMessage && !loading}
     <div class="empty">
       {emptyMessage}
     </div>
   {:else}
     <div class="list-wrapper">
-      {#each [...users] as [uid, user] (uid)}
-        <ListUserItem {user} {size} {translations} />
+      {#each [...sportstacks] as [uid, user] (uid)}
+        <ListSportsTackItem {user} {size} {translations} />
       {/each}
     </div>
   {/if}
   {#if loading}
     <div class="list-wrapper">
       {#each new Array(10) as _item}
-        <ListUserLoader />
+        <ListSportsTackLoader />
       {/each}
     </div>
   {/if}
