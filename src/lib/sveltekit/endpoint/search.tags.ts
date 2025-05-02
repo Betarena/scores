@@ -1,7 +1,7 @@
 import { json, RequestHandler } from "@sveltejs/kit";
-import {searchTags} from "../../../../../../../scores-lib/src/functions/v8/search.js"
+import { searchTags } from "../../../../../scores-lib/src/functions/v8/search.js";
 
-export const GET: RequestHandler = async ({url}) => {
+export const TagsSearchEndpoint: RequestHandler = async ({url}) => {
   const text = url.searchParams.get('search') || '';
   const page = url.searchParams.get('page') || '0';
   const limit = url.searchParams.get('limit') || '10';

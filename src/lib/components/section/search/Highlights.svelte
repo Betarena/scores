@@ -34,6 +34,7 @@
   import type { IBetarenaUser } from "@betarena/scores-lib/types/_FIREBASE_.js";
   import ArticleLoader from "../authors/common_ui/articles/Article-Loader.svelte";
   import LoaderBadge from "$lib/components/ui/loaders/LoaderBadge.svelte";
+  import NoResults from "./NoResults.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -83,7 +84,6 @@
   function viewMore(id: string) {
     dispatch("changeTab", { id });
   }
-
   // #endregion ➤ 🛠️ METHODS
 </script>
 
@@ -98,86 +98,95 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 <div class="wrapper {viewportType}">
-  {#if users.size || $search_store.users.loading}
+  {#if !users.size && !$search_store.users.loading && !articles.size && !$search_store.articles.loading && !sportstacks.size && !$search_store.sportstacks.loading && !$search_store.tags.data.size && !$search_store.tags.loading}
     <div class="section">
-      <UsersList
-        users={firstThreeUsers}
-        limit={3}
-        size="lg"
-        {translations}
-        loading={$search_store.users.loading && !firstThreeUsers.size}
-      />
-      {#if users.size > 3}
-        <div class="button-wrapp">
-          <Button
-            size="md"
-            full={true}
-            type="secondary-gray"
-            on:click={() => viewMore("users")}>View more</Button
-          >
-        </div>
-      {/if}
+      <NoResults />
     </div>
-  {/if}
-  {#if sportstacks.size || $search_store.sportstacks.loading}
-    <div class="section">
-      <SportsTackList
-        size="lg"
-        limit={3}
-        loading={$search_store.sportstacks.loading && !firstThreeSportstacks.size}
-        sportstacks={firstThreeSportstacks}
-        {translations}
-      />
-      {#if sportstacks.size > 3}
-        <div class="button-wrapp">
-          <Button
-            size="md"
-            full={true}
-            type="secondary-gray"
-            on:click={() => viewMore("sportstacks")}>View more</Button
-          >
-        </div>
-      {/if}
-    </div>
-  {/if}
-  {#if $search_store.tags.data.size || $search_store.tags.loading}
-    <div class="section">
-      <div class="tags_wrapper">
-        {#if $search_store.tags.loading && !$search_store.tags.data.size}
-          {#each Array(10) as _item}
-             <LoaderBadge />
-          {/each}
-        {:else}
-           {#each [...$search_store.tags.data.entries()] as [id, tag] (id)}
-             <Badge>{tag}</Badge>
-           {/each}
-        {/if}
-      </div>
-    </div>
-  {/if}
-  {#if articles.size || $search_store.articles.loading}
-    <div class="section">
-      <div class="articles-wrapper">
-        {#each [...firstThreeArticles.entries()] as [id, article] (id)}
-          <ArticleCard {mobile} {article} {tablet} {translations} />
-        {/each}
-        {#if articles.size > 3}
+  {:else}
+    {#if users.size || $search_store.users.loading}
+      <div class="section">
+        <UsersList
+          users={firstThreeUsers}
+          limit={3}
+          size="lg"
+          {translations}
+          loading={$search_store.users.loading && !firstThreeUsers.size}
+        />
+        {#if users.size > 3}
           <div class="button-wrapp">
             <Button
               size="md"
               full={true}
               type="secondary-gray"
-              on:click={() => viewMore("posts")}>View more</Button
+              on:click={() => viewMore("users")}>View more</Button
             >
           </div>
         {/if}
-        {#if !firstThreeArticles.size && $search_store.articles.loading}
-          {#each Array(10) as _item}
-            <ArticleLoader {mobile} {tablet} />
-          {/each}
+      </div>
+    {/if}
+    {#if sportstacks.size || $search_store.sportstacks.loading}
+      <div class="section">
+        <SportsTackList
+          size="lg"
+          limit={3}
+          loading={$search_store.sportstacks.loading &&
+            !firstThreeSportstacks.size}
+          sportstacks={firstThreeSportstacks}
+          {translations}
+        />
+        {#if sportstacks.size > 3}
+          <div class="button-wrapp">
+            <Button
+              size="md"
+              full={true}
+              type="secondary-gray"
+              on:click={() => viewMore("sportstacks")}>View more</Button
+            >
+          </div>
         {/if}
       </div>
-    </div>
+    {/if}
+    {#if $search_store.tags.data.size || $search_store.tags.loading}
+      <div class="section">
+        <div class="tags_wrapper">
+          {#if $search_store.tags.loading && !$search_store.tags.data.size}
+            {#each Array(10) as _item}
+              <LoaderBadge />
+            {/each}
+          {:else}
+            {#each [...$search_store.tags.data.entries()] as [id, tag] (id)}
+              <a href="a/tag/{tag.permalink}">
+                <Badge>{tag.name}</Badge>
+              </a>
+            {/each}
+          {/if}
+        </div>
+      </div>
+    {/if}
+    {#if articles.size || $search_store.articles.loading}
+      <div class="section">
+        <div class="articles-wrapper">
+          {#each [...firstThreeArticles.entries()] as [id, article] (id)}
+            <ArticleCard {mobile} {article} {tablet} {translations} />
+          {/each}
+          {#if articles.size > 3}
+            <div class="button-wrapp">
+              <Button
+                size="md"
+                full={true}
+                type="secondary-gray"
+                on:click={() => viewMore("posts")}>View more</Button
+              >
+            </div>
+          {/if}
+          {#if !firstThreeArticles.size && $search_store.articles.loading}
+            {#each Array(10) as _item}
+              <ArticleLoader {mobile} {tablet} />
+            {/each}
+          {/if}
+        </div>
+      </div>
+    {/if}
   {/if}
 </div>
 

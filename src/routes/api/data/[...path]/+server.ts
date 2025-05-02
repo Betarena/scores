@@ -25,6 +25,9 @@ import { main as EndpointProfileMain } from '$lib/sveltekit/endpoint/profile.mai
 import { API_DATA_ERROR_RESPONSE } from '$lib/utils/debug.js';
 
 import type { RequestHandler } from '@sveltejs/kit';
+import { ArticlesSearchEndpoint } from '$lib/sveltekit/endpoint/search.articles.js';
+import { TagsSearchEndpoint } from '$lib/sveltekit/endpoint/search.tags.js';
+import { AuthorsSearchEndpoint } from '$lib/sveltekit/endpoint/search.authors.js';
 
 // #endregion ➤ 📦 Package
 
@@ -33,6 +36,13 @@ import type { RequestHandler } from '@sveltejs/kit';
 // ╰─────
 dotenv.config();
 
+const getEndpointsMap = {
+  'profile.main': EndpointProfileMain,
+  'search.articles': ArticlesSearchEndpoint,
+  'search.tags': TagsSearchEndpoint,
+  'search.authors': AuthorsSearchEndpoint
+}
+type EndPointsMapKeys = keyof typeof getEndpointsMap;
 export const GET: RequestHandler = async (
   request
 ): Promise < Response > =>
@@ -42,19 +52,14 @@ export const GET: RequestHandler = async (
   // ╰──────────────────────────────────────────────────────────────────╯
 
   const
-    queryParamPath = request.params.path as
-      | 'profile.main'
-  ;
+    queryParamPath = request.params.path as EndPointsMapKeys;
 
   // ╭──────────────────────────────────────────────────────────────────╮
   // │:| endpoint handler data.                                         │
   // ╰──────────────────────────────────────────────────────────────────╯
 
-  if (queryParamPath == 'profile.main')
-    return await EndpointProfileMain
-    (
-      request
-    );
+  if (getEndpointsMap[queryParamPath])
+    return await getEndpointsMap[queryParamPath](request) as Response;
   ;
 
   return API_DATA_ERROR_RESPONSE();

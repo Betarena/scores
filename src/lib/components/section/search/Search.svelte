@@ -241,7 +241,7 @@
       $search_store.sportstacks.data = new Map();
     }
     $search_store.sportstacks.loading = true;
-    let url = `/api/data/search/authors?search=${search}`;
+    let url = `/api/data/search.authors?search=${search}`;
     if (page) {
       url += `&page=${page}`;
     }
@@ -292,7 +292,7 @@
       $search_store.tags.data = new Map();
     }
     $search_store.tags.loading = true;
-    let url = `/api/data/search/tags?search=${search}`;
+    let url = `/api/data/search.tags?search=${search}`;
     if (page) {
       url += `&page=${page}`;
     }
@@ -304,12 +304,12 @@
     const r = await res.json();
     if (!page) {
       $search_store.tags.data = new Map(
-        r.tags.map((tag) => [tag.id, tag.name])
+        r.tags.map((tag) => [tag.id, tag])
       );
       $search_store.tags.page = 0;
     } else {
       const newMap = new Map(
-        r.tags.map((tag) => [tag.id, tag.name])
+        r.tags.map((tag) => [tag.id, tag])
       ) as Map<number, any>;
       $search_store.tags.data = new Map([
         ...$search_store.tags.data,
@@ -342,7 +342,7 @@
       $search_store.articles.data = new Map();
     }
     $search_store.articles.loading = true;
-    let url = `/api/data/search/articles?search=${search}`;
+    let url = `/api/data/search.articles?search=${search}`;
     if (page) {
       url += `&page=${page}`;
     }
@@ -505,7 +505,7 @@
       <div class="empty-tabbar" />
     {/if}
   </div>
-  {#if search && isInputInFocus}
+  <!-- {#if search && isInputInFocus}
     <div
       class="search-suggestions"
       in:fade={{ duration: 400, easing: quadOut }}
@@ -519,7 +519,7 @@
         </button>
       {/each}
     </div>
-  {/if}
+  {/if} -->
   <div
     class="search-results"
     in:fly={{ x: 0, y: 500, duration: 400, easing: quadOut }}
