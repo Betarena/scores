@@ -1,5 +1,5 @@
+import { searchTags } from "@betarena/scores-lib/dist/functions/v8/search.js";
 import { json, RequestHandler } from "@sveltejs/kit";
-import { searchTags } from "../../../../../scores-lib/src/functions/v8/search.js";
 
 export const TagsSearchEndpoint: RequestHandler = async ({url}) => {
   const text = url.searchParams.get('search') || '';
