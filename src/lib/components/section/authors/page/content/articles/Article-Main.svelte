@@ -583,7 +583,7 @@
         style=
         "
         {
-          strStateSelectedFeed != (item.id === 0 ? 'home' : 'forecast')
+          strStateSelectedFeed === (item.id === 0 ? 'home' : 'forecast')
             ? 'background-color: #313131; color: #F5620F;'
             : 'color: #8C8C8C;'
         }
