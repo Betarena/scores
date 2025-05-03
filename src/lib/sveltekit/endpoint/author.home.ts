@@ -1,22 +1,142 @@
-// ╭──────────────────────────────────────────────────────────────────╮
-// │ 📑 DESCRIPTION                                                   │
-// │ :|: Author Content Data Endpoint                                 │
-// ╰──────────────────────────────────────────────────────────────────╯
+// ╭──────────────────────────────────────────────────────────────────────────────────╮
+// │ 📌 High Order Overview                                                           │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ ➤ Code Format // V.8.0                                                           │
+// │ ➤ Status      // 🔒 LOCKED                                                       │
+// │ ➤ Author(s)   // @migbash                                                        │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ 📝 Description                                                                   │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ Betarena (Module) ││ (Author) Article Data Endpoint                              │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ 📌 NOTE                                                                          │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ 1. no logs allowed, including those custom 'debug' logs.                         │
+// ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-// import { checkNull } from '$lib/utils/miscellenous.js';
-// import { getAuthorArticleTranslation } from '@betarena/scores-lib/dist/functions/v8/authors.articles.js';
-import { _GraphQL } from '@betarena/scores-lib/dist/classes/_graphql.js';
-import { entryTargetDataAuthorHome } from '@betarena/scores-lib/dist/functions/v8/main.preload.authors.js'
-import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
-// import type { IArticleTranslation } from '@betarena/scores-lib/types/types.authors.articles.js';
-import type { IPageAuthorTagDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
+// #region ➤ 📦 Package Imports
+
 import { json, type RequestEvent } from '@sveltejs/kit';
+
+import { API_DATA_ERROR_RESPONSE } from '$lib/utils/debug.js';
+import { entryTargetDataAuthorHome } from '@betarena/scores-lib/dist/functions/v8/main.preload.authors.js';
+import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
+
 import type { AuthorsSEODetailsDataJSONSchema } from '@betarena/scores-lib/types/v8/_HASURA-0.js';
+import type { IPageAuthorTagDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
+
+// #endregion ➤ 📦 Package Imports
 
 // ╭──────────────────────────────────────────────────────────────────╮
-// │ 🛠️ MAIN METHODS                                                  │
+// │ 🛠️ │ MAIN METHODS                                                │
 // ╰──────────────────────────────────────────────────────────────────╯
-function covertSEOTemplate(data: IPageAuthorTagDataFinal, url): AuthorsSEODetailsDataJSONSchema
+
+/**
+ * @author
+ *  @migbash
+ * @summary
+ *  🟥 MAIN
+ * @description
+ *  📝 (Author) Article Data Endpoint handler.
+ * @param { RequestEvent } request
+ *  💠 **[required]** Request Event.
+ * @returns { Promise < Response > }
+ *  📤 Response.
+ */
+export async function main
+(
+  request: RequestEvent
+): Promise < Response >
+{
+  return await tryCatchAsync
+  (
+    async (
+    ): Promise < Response > =>
+    {
+      // ╭──────────────────────────────────────────────────────────────────╮
+      // │:| extract url query data.                                        │
+      // ╰──────────────────────────────────────────────────────────────────╯
+
+      const
+        queryLanguage = request.url.searchParams.get('lang') ?? "",
+        queryParamPage = request.url.searchParams.get('page') ?? 0,
+        queryUserFollowingTagIds = request.url.searchParams.get('followingTags'),
+        queryTypeQuery = request.url.searchParams.get('type')
+      ;
+
+      // ╭──────────────────────────────────────────────────────────────────╮
+      // │:| (output) fetch TARGET article data.                            │
+      // ╰──────────────────────────────────────────────────────────────────╯
+
+      if (queryLanguage)
+      {
+        const
+          /**
+           * @description
+           * 📝 Data Response.
+           */
+          data
+            = await entryTargetDataAuthorHome
+            (
+              {
+                language: (queryLanguage === "all" ? undefined : queryLanguage),
+                page: Number(queryParamPage),
+                // @ts-expect-error
+                strTypeQuery: queryTypeQuery ?? 'forecast',
+                listIntTagIdsExluded: [1673, 1648, 1676, 1650, 1681, 1668, 1680, 1093],
+                userFollowingTagIds: queryUserFollowingTagIds
+                  ?.split(',')
+                  ?.map
+                  (
+                    id =>
+                    {
+                      return parseInt(id);
+                    }
+                  )
+                ,
+              }
+            )
+        ;
+
+        if (data.seoTamplate)
+          data.seoTamplate =
+          {
+            ...covertSEOTemplate(data, request.url.origin)
+          };
+        ;
+
+        if (data != undefined)
+          return json(data);
+        ;
+      }
+
+      return json
+      (
+        null
+      );
+    },
+    (
+      ex: unknown
+    ): Response =>
+    {
+      // [🐞]
+      // eslint-disable-next-line no-console
+      console.error(ex);
+
+      return API_DATA_ERROR_RESPONSE();
+    }
+  );
+}
+
+// ╭──────────────────────────────────────────────────────────────────╮
+// │ 🛠️ │ MAIN HELPER METHODS                                         │
+// ╰──────────────────────────────────────────────────────────────────╯
+
+function covertSEOTemplate
+(
+  data: IPageAuthorTagDataFinal,
+  url
+): AuthorsSEODetailsDataJSONSchema
 {
   const { seoTamplate } = data;
   if (!seoTamplate) return seoTamplate as any;
@@ -34,111 +154,4 @@ function covertSEOTemplate(data: IPageAuthorTagDataFinal, url): AuthorsSEODetail
     },
   };
   return newSeo;
-}
-export async function main
-  (
-    request: RequestEvent
-  )
-{
-  return await tryCatchAsync
-    (
-      async (
-      ): Promise<Response> =>
-      {
-        // ╭──────────────────────────────────────────────────────────────────╮
-        // │ NOTE:                                                            │
-        // │ 👇 :|: extract url query data.                                   │
-        // ╰──────────────────────────────────────────────────────────────────╯
-
-        const
-          page = request.url.searchParams.get('page') || 0
-
-          // hasura = request.url.searchParams.get('hasura'),
-          ;
-        let followingTags: string | number[] | null = request.url.searchParams.get('followingTags');
-        let lang: string | undefined = request.url.searchParams.get('lang') || "" as string;
-        if (lang === "all") lang = undefined;
-        if (followingTags) followingTags = followingTags.split(',').map(id => parseInt(id));
-        // ╭──────────────────────────────────────────────────────────────────╮
-        // │ NOTE:                                                            │
-        // │ 👇 :|: extract target article data.                              │
-        // │ TODO:                                                            │
-        // │ Add cache logic.                                                 │
-        // ╰──────────────────────────────────────────────────────────────────╯
-        if (lang)
-        {
-          const data: IPageAuthorTagDataFinal = await fallbackDataGenerate0
-            (
-              page,
-              followingTags as number [],
-              lang
-            ),
-            loadType = 'HASURA'
-            ;
-          // ▓ [🐞]
-          console.log(`📌 loaded [FSCR] with: ${loadType}`)
-          if (data.seoTamplate)
-          {
-            data.seoTamplate = { ...covertSEOTemplate(data, request.url.origin) };
-          }
-          if (data != undefined) return json(data);
-        }
-
-        // ╭──────────────────────────────────────────────────────────────────╮
-        // │ NOTE:                                                            │
-        // │ 👇 :|: extract target article translation.                       │
-        // │ TODO:                                                            │
-        // │ Add cache logic.                                                 │
-        // ╰──────────────────────────────────────────────────────────────────╯
-
-
-        return json
-          (
-            null
-          );
-      },
-      (
-        ex: unknown
-      ): Response =>
-      {
-        // ▓ [🐞]
-        console.error(`💀 Unhandled :: ${ex}`);
-
-        return json
-          (
-            null
-            , {
-              status: 400,
-              statusText: 'Uh-oh! There has been an error'
-            }
-          );
-      }
-    );
-}
-
-// ╭──────────────────────────────────────────────────────────────────╮
-// │ 🛠️ MAIN HELPER METHODS                                           │
-// ╰──────────────────────────────────────────────────────────────────╯
-
-/**
- * @author
- *  @migbash
- * @summary
- *  🟦 HELPER
- * @description
- *  📣 Fallback data generation.
- * @param { string } permalink
- *  💠 Target `article` link (permalink).
- * @returns { Promise < IArticleData > }
- *  📤 Target `article` data.
- */
-async function fallbackDataGenerate0
-  (
-    page: string | number,
-    userFollowingTagIds: number[] = [],
-    language: string | undefined = undefined
-  ): Promise<IPageAuthorTagDataFinal>
-{
-  const dataRes0: IPageAuthorTagDataFinal = await entryTargetDataAuthorHome({userFollowingTagIds, page: Number(page), language });
-  return { ...dataRes0 };
 }

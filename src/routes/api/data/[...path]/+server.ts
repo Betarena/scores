@@ -21,6 +21,7 @@
 
 import dotenv from 'dotenv';
 
+import { main as EndpointAuthorHome } from '$lib/sveltekit/endpoint/author.home.js';
 import { main as EndpointProfileMain } from '$lib/sveltekit/endpoint/profile.main.js';
 import { API_DATA_ERROR_RESPONSE } from '$lib/utils/debug.js';
 
@@ -44,6 +45,7 @@ export const GET: RequestHandler = async (
   const
     queryParamPath = request.params.path as
       | 'profile.main'
+      | 'author.home'
   ;
 
   // ╭──────────────────────────────────────────────────────────────────╮
@@ -52,6 +54,11 @@ export const GET: RequestHandler = async (
 
   if (queryParamPath == 'profile.main')
     return await EndpointProfileMain
+    (
+      request
+    );
+  else if (queryParamPath == 'author.home')
+    return await EndpointAuthorHome
     (
       request
     );
