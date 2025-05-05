@@ -3,7 +3,7 @@
 // │ ➤ Read the 'terminals.example.json' for detailed example of a configuration file
 // ╰─────
 {
-  "autorun": true,
+  "autorun": false,
   "autokill": true,
   "terminals":
   [
