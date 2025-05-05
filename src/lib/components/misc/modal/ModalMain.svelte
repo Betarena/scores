@@ -62,7 +62,7 @@
 
 <style lang="scss">
   .modal-content {
-    z-index: 4000;
+    z-index: 4001;
     position: fixed;
     top: 0;
     left: 0;

@@ -598,7 +598,7 @@
       .search-wrapper {
         width: 100%;
         padding-inline: 15px;
-        padding-top: 61px;
+        padding-top: 20px;
         background: var(--colors-background-bg-main);
 
         .input-wrapper {
