@@ -38,6 +38,7 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  import { browser } from '$app/environment';
   import { page } from '$app/stores';
 
   import { get } from '$lib/api/utils.js';
@@ -52,7 +53,7 @@
 
   import { prepareArticlesMap, type IArticle, type ITagsWidgetData } from '../../helpers.js';
 
-  import { browser } from '$app/environment';
+  import type { IPageTranslationHomeDataFinal } from '@betarena/scores-lib/types/v8/core.translation.js';
   import type { IPageAuthorTagDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -77,6 +78,10 @@
      * @description
      */
     objAuthorContentForecast?: IPageAuthorTagDataFinal;
+    /**
+     * @description
+     */
+    objGeneralHomeTranslation?: IPageTranslationHomeDataFinal;
   }
 
   // #endregion ➤ ⛩️ TYPES
@@ -158,11 +163,6 @@
         >(),
     /**
      * @description
-     * 📝 `Map` data for `article(s)`, ready for frontend consumption.
-     */
-    mapArticlesMod =  new Map < number, IArticle >(),
-    /**
-     * @description
      * 📝 `List` data for `tag(s)`, ready for frontend consumption.
      */
     listFeedViews: IPageAuthorTagDataFinal['mapTag'][0][1][]
@@ -195,8 +195,7 @@
       ...(objPageDataWidget.objAuthorContentHome?.mapAuthor ?? []),
       ...(objPageDataWidget.objAuthorContentForecast?.mapAuthor ?? [])
     ]
-  )
-  ;
+  );
   /**
    * @description
    * 📝 Interecpted data for `map` instance of `article(s)`.
@@ -207,8 +206,7 @@
       ...(objPageDataWidget.objAuthorContentHome?.mapArticle ?? []),
       ...(objPageDataWidget.objAuthorContentForecast?.mapArticle ?? [])
     ]
-  )
-  ;
+  );
   /**
    * @description
    * 📝 Interecpted data for `map` instance of `tag(s)`.
@@ -219,20 +217,29 @@
       ...(objPageDataWidget.objAuthorContentHome?.mapTag ?? []),
       ...(objPageDataWidget.objAuthorContentForecast?.mapTag ?? [])
     ]
-  )
-  ;
+  );
 
   $: if (objPageDataWidget.objAuthorContentForecast?.tagId && mapTags.size > 0 && listFeedViews.length === 1)
     listFeedViews.push(mapTags.get(objPageDataWidget.objAuthorContentForecast.tagId));
   ;
 
   $: if (browser)
-    // @ts-expect-error :: <?>
-    updateData(objPageDataWidget.objAuthorContentHome, true);
-  ;
+  {
+    helperReInitializeData
+    (
+      // @ts-expect-error :: <?>
+      objPageDataWidget.objAuthorContentHome,
+      'home'
+    );
+    helperReInitializeData
+    (
+      // @ts-expect-error :: <?>
+      objPageDataWidget.objAuthorContentForecast,
+      'forecast'
+    );
+  }
 
   $: if (globalState.has('Authenticated') || globalState.has('NotAuthenticated'))
-
     listFeedViews = listFeedViews.map
     (
       (
@@ -242,19 +249,19 @@
         if (item.id === 0 && globalState.has('Authenticated'))
           return {
             ...item,
-            name: 'My Feed'
+            name: objPageDataWidget.objGeneralHomeTranslation?.translation?.for_you ?? 'For you'
           }
         else if (item.id === 0 && globalState.has('NotAuthenticated'))
           return {
             ...item,
-            name: 'Home'
+            name: objPageDataWidget.objGeneralHomeTranslation?.translation?.home ?? 'Home'
           }
           ;
 
         return item;
       }
     );
-
+  ;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -276,38 +283,97 @@
    * @summary
    *  🟦 HELPER
    * @description
-   *  📝 Selects `tag`.
-   * @return { void }
+   *  📝 Update data for 'content' page.
+   * @param { ITagsWidgetData } objDataNew
+   *  ❗️ **REQUIRED** New data instance.
+   * @param { null | 'home' | 'forecast' } [_strStateSelectedFeed=null]
+   *  ❔ **OPTIONAL** State selected feed.
+   * @param { number } [intCurrentPage=0]
+   *  ❗️ **OPTIONAL** Current page.
+   * @returns { void }
    */
-  function selectFeed
+  function helperReInitializeData
   (
+    objDataNew: ITagsWidgetData,
+    _strStateSelectedFeed: null | 'home' | 'forecast' = null,
+    intCurrentPage: number = 0
   ): void
   {
+    _strStateSelectedFeed ??= strStateSelectedFeed;
+
     // [🐞]
-    log_v3
+    dlogv2
     (
+      '🚏 checkpoint ➤ Article-Main.helperReInitializeData(..) // START',
+      [
+        // `🔹 [var] ➤ objDataNew :: ${JSON.stringify(objDataNew)}`,
+        `🔹 [var] ➤ strStateSelectedFeed :: ${strStateSelectedFeed}`,
+        `🔹 [var] ➤ _strStateSelectedFeed :: ${_strStateSelectedFeed}`,
+      ]
+    );
+
+    // ╭─────
+    // │ NOTE:
+    // │ |: Inject 'new' data into `mapArticles`, `mapAuthors` and `mapTags`.
+    // ╰─────
+    mapArticles = new Map([...mapArticles, ...objDataNew.mapArticle]);
+    mapAuthors = new Map([...mapAuthors, ...objDataNew.mapAuthor]);
+    mapTags = new Map([...mapTags, ...objDataNew.mapTag]);
+
+    const
+      /**
+       * @description
+       * 📝 `Map` article generated from OLD data.
+       */
+      mapOldArticlesMod: Map < number, IArticle > = mapTagSelectData.get(_strStateSelectedFeed)?.mapArticlesMod ?? new Map(),
+      /**
+       * @description
+       * 📝 `Map` article generated from NEW data.
+       */
+      mapNewArticlesMod
+        = prepareArticlesMap
+        (
+          new Map(objDataNew.mapArticle),
+          new Map(objDataNew.mapTag),
+          new Map(objDataNew.mapAuthor),
+        )
+    ;
+
+    mapTagSelectData.set
+    (
+      _strStateSelectedFeed,
       {
-        strGroupName: '🚏 checkpoint ➤ selectFeed(..) // START',
-        msgs:
-        [
-          `🔹 [var] ➤ strStateSelectedFeed :: ${strStateSelectedFeed}`
-        ]
+        ...objDataNew,
+        // ╭─────
+        // │ NOTE: IMPORTANT
+        // │ |: Override properties
+        // ╰─────
+        mapArticlesMod: new Map([...mapOldArticlesMod, ...mapNewArticlesMod]),
+        currentPage: intCurrentPage,
+        totalArticlesCount: objDataNew.totalArticlesCount,
       }
     );
 
-    mapArticlesMod = new Map();
+    // ╭─────
+    // │ NOTE: IMPORTANT
+    // │ |: Reinitialize `mapTagSelectData` with new data.
+    // ╰─────
+    mapTagSelectData = mapTagSelectData;
 
-    if (!mapTagSelectData.has(strStateSelectedFeed))
-      loadTagArticles();
-    else
-      mapArticlesMod = mapTagSelectData.get(strStateSelectedFeed)?.mapArticlesMod ?? new Map();
-    ;
+    isStateLoadingArticles = false;
 
     // [🐞]
     log_v3
     (
       {
-        strGroupName: '🚏 checkpoint ➤ selectFeed(..) // END'
+        strGroupName: '🚏 checkpoint ➤ Article-Main.helperReInitializeData(..) // END',
+        msgs:
+        [
+          `🔹 [var] ➤ mapTagSelectData.keys :: ${JSON.stringify([...mapTagSelectData.keys()])}`,
+          `🔹 [var] ➤ mapTagSelectData.size :: ${mapTagSelectData.size}`,
+          `🔹 [var] ➤ mapOldArticlesMod.size :: ${mapOldArticlesMod.size}`,
+          `🔹 [var] ➤ mapNewArticlesMod.size :: ${mapNewArticlesMod.size}`,
+        ]
       }
     );
 
@@ -320,75 +386,34 @@
    * @summary
    *  🟦 HELPER
    * @description
-   *  📝 Update data for 'content' page.
-   * @param { ITagsWidgetData } dataNew
-   *  💠 **REQUIRED** New data instance.
-   * @returns { void }
+   *  📝 Selects target feed `tag`.
+   * @return { void }
    */
-  function updateData
+  function helperSelectFeed
   (
-    dataNew: ITagsWidgetData,
-    reset: boolean = false
   ): void
   {
     // [🐞]
-    dlogv2
+    log_v3
     (
-      '🚏 checkpoint ➤ updateData(..) // START',
-      [
-        `🔹 [var] ➤ reset :: ${reset}`,
-        `🔹 [var] ➤ dataNew :: ${JSON.stringify(dataNew)}`,
-      ]
+      {
+        strGroupName: '🚏 checkpoint ➤ helperSelectFeed(..) // START',
+        msgs:
+        [
+          `🔹 [var] ➤ strStateSelectedFeed :: ${strStateSelectedFeed}`
+        ]
+      }
     );
 
-    if (reset)
-    {
-      mapArticles = new Map();
-      mapAuthors = new Map();
-      mapTags = new Map();
-      mapTagSelectData = new Map();
-      mapArticlesMod = new Map();
-    }
-
-    const
-      /**
-       * @description
-       * 📝 `Map` article generated from NEW data.
-       */
-      mapNewArticlesMod
-        = prepareArticlesMap
-        (
-          new Map(dataNew.mapArticle),
-          new Map(dataNew.mapTag),
-          new Map(dataNew.mapAuthor),
-        )
-    ;
-
-    mapArticles = new Map([...mapArticles, ...dataNew.mapArticle]);
-    mapAuthors = new Map([...mapAuthors, ...dataNew.mapAuthor]);
-    mapTags = new Map([...mapTags, ...dataNew.mapTag]);
-    mapArticlesMod = new Map([...mapArticlesMod, ...mapNewArticlesMod]);
-
     if (!mapTagSelectData.has(strStateSelectedFeed))
-      mapTagSelectData.set
-      (
-        strStateSelectedFeed,
-        {
-          ...dataNew,
-          mapArticlesMod,
-          currentPage: 0,
-          totalArticlesCount: dataNew.totalArticlesCount,
-        }
-      );
+      helperLoadTagArticles();
     ;
-
-    isStateLoadingArticles = false;
 
     // [🐞]
     log_v3
     (
       {
-        strGroupName: '🚏 checkpoint ➤ updateData(..) // END'
+        strGroupName: '🚏 checkpoint ➤ helperSelectFeed(..) // END'
       }
     );
 
@@ -404,7 +429,7 @@
    *  📝 Check for instance of loading more articles.
    * @return { Promise < void > }
    */
-  async function loadMore
+  async function helperTryLoadMore
   (
   ): Promise < void >
   {
@@ -412,7 +437,7 @@
     log_v3
     (
       {
-        strGroupName: '🚏 checkpoint ➤ loadMore(..) // START',
+        strGroupName: '🚏 checkpoint ➤ helperTryLoadMore(..) // START',
       }
     );
 
@@ -430,7 +455,7 @@
       || ((objSelectedFeed.mapArticlesMod.size || 0) === objSelectedFeed.totalArticlesCount)
     ) return;
 
-    await loadTagArticles
+    await helperLoadTagArticles
     (
       (objSelectedFeed.currentPage + 1)
     );
@@ -439,7 +464,7 @@
     log_v3
     (
       {
-        strGroupName: '🚏 checkpoint ➤ loadMore(..) // END',
+        strGroupName: '🚏 checkpoint ➤ helperTryLoadMore(..) // END',
       }
     );
 
@@ -454,10 +479,10 @@
    * @description
    *  📝 Load tag articles.
    * @param { number } [page=0]
-   *  💠 **REQUIRED** Number page to request.
+   *  ❔ **OPTIONAL** Number page to request.
    * @return { Promise < void > }
    */
-  async function loadTagArticles
+  async function helperLoadTagArticles
   (
     page: number = 0
   ): Promise < void >
@@ -465,7 +490,7 @@
     // [🐞]
     dlogv2
     (
-      '🚏 checkpoint ➤ loadTagArticles(..) // START',
+      '🚏 checkpoint ➤ helperLoadTagArticles(..) // START',
       [
         `🔹 [var] ➤ page :: ${page}`,
       ]
@@ -497,25 +522,19 @@
         )!
     ;
 
-    updateData(dataRes0);
+    helperReInitializeData
+    (
+      // @ts-expect-error :: <?>
+      dataRes0,
+      null,
+      page
+    );
 
     // [🐞]
     log_v3
     (
       {
-        strGroupName: '🚏 checkpoint ➤ loadTagArticles(..) // END',
-      }
-    );
-
-    if (!dataRes0) return;
-
-    mapTagSelectData.set
-    (
-      strStateSelectedFeed,
-      {
-        ...dataRes0,
-        mapArticlesMod,
-        currentPage: page,
+        strGroupName: '🚏 checkpoint ➤ Article-Main.helperLoadTagArticles(..) // END',
       }
     );
 
@@ -542,10 +561,12 @@
   {
     () =>
     {
-      if (!globalState.has('IsPWA') && (VIEWPORT_MOBILE_INIT[1] || VIEWPORT_TABLET_INIT[1])) return;
+      if (!globalState.has('IsPWA') && (VIEWPORT_MOBILE_INIT[1] || VIEWPORT_TABLET_INIT[1]))
+        return;
+      ;
 
       if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 5)
-        loadMore();
+        helperTryLoadMore();
       ;
 
       return;
@@ -597,7 +618,7 @@
                 ? 'home'
                 : 'forecast'
             ;
-            selectFeed();
+            helperSelectFeed();
             return;
           }
         }
@@ -619,7 +640,7 @@
   <div
     class="listArticlesMod"
   >
-    {#each [...mapArticlesMod.entries()] as [id,article] (id)}
+    {#each [...(mapTagSelectData.get(strStateSelectedFeed)?.mapArticlesMod.entries() ?? [])] as [id,article] (id)}
       <ArticleCard
         mobile={VIEWPORT_MOBILE_INIT[1]}
         tablet={VIEWPORT_TABLET_INIT[1]}
@@ -637,9 +658,9 @@
     {/if}
   </div>
 
-  {#if (VIEWPORT_TABLET_INIT[1] || VIEWPORT_MOBILE_INIT[1]) && !globalState.has('IsPWA') && mapArticlesMod.size}
+  {#if (VIEWPORT_TABLET_INIT[1] || VIEWPORT_MOBILE_INIT[1]) && !globalState.has('IsPWA') && (mapTagSelectData.get(strStateSelectedFeed)?.mapArticlesMod ?? new Map).size}
     <div class="load-more">
-      <Button type="outline" on:click={loadMore}>Load More</Button>
+      <Button type="outline" on:click={helperTryLoadMore}>Load More</Button>
     </div>
   {/if}
 </div>

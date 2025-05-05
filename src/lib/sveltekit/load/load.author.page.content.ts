@@ -22,6 +22,7 @@ import { promiseUrlsPreload } from "$lib/utils/navigation.js";
 import { parseObject } from "$lib/utils/string.2.js";
 
 import type { IPageAuthorTagDataFinal } from "@betarena/scores-lib/types/v8/preload.authors.js";
+import type { IPageTranslationHomeDataFinal } from "@betarena/scores-lib/types/v8/core.translation.js";
 
 // #endregion ➤ 📦 Package Imports
 
@@ -51,6 +52,7 @@ type PreloadPromise0 =
 [
   IPageAuthorTagDataFinal | undefined,
   IPageAuthorTagDataFinal | undefined,
+  IPageTranslationHomeDataFinal | undefined
 ];
 
 /**
@@ -71,6 +73,10 @@ interface IPreloadResponse
    * @description
    */
   objAuthorContentForecast?: IPageAuthorTagDataFinal;
+  /**
+   * @description
+   */
+  objGeneralHomeTranslation?: IPageTranslationHomeDataFinal;
 }
 
 // #endregion ➤ ⛩️ TYPES
@@ -144,7 +150,8 @@ export async function main
   // ╰─────
   [
     objResponse.objAuthorContentHome,
-    objResponse.objAuthorContentForecast
+    objResponse.objAuthorContentForecast,
+    objResponse.objGeneralHomeTranslation
   ] = await fetchData
   (
     event.fetch,
@@ -209,7 +216,8 @@ async function fetchData
     listUrls
       = [
         `/api/data/author.home?lang=${_lang}&type=home`,
-        `/api/data/author.home?lang=${_lang}`
+        `/api/data/author.home?lang=${_lang}`,
+        `/api/data/translation?lang=${_lang}`
       ],
     /**
      * @description
