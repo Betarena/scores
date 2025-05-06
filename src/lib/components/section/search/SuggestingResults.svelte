@@ -22,13 +22,16 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
-  import Avatar from "$lib/components/ui/Avatar.svelte";
+  import { page } from "$app/stores";
   import Button from "$lib/components/ui/Button.svelte";
+  import SportsTackList from "$lib/components/ui/composed/sportstack_list/SportsTackList.svelte";
   import session from "$lib/store/session.js";
-  import userSettings from "$lib/store/user-settings.js";
-  import type { BetarenaUser } from "$lib/types/types.user-settings.js";
-  import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
+  import { createEventDispatcher } from "svelte";
+  import UsersList from "../authors/common_ui/users_list/UsersList.svelte";
+  import search_store from "./search_store.js";
+  import type { IBetarenaUser } from "@betarena/scores-lib/types/_FIREBASE_.js";
+  import NoResults from "./NoResults.svelte";
+
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -44,19 +47,18 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
-  export let user: BetarenaUser, translations: IPageAuthorTranslationDataFinal;
-  export let size: number | string = 40;
-  export let action_button= true;
-
+  const dispatch = createEventDispatcher();
   $: ({ viewportType } = $session);
-  $: ({ user: ctx } = $userSettings);
-  $: ({ uid, username, name, profile_photo, usernamePermalink } = user);
-  $: isAuth = !!ctx;
-  $: isFollow = !!(ctx?.scores_user_data.following?.authors || []).includes(
-    uid
+  $: users = ($search_store.users.data || new Map()) as Map<
+    string,
+    IBetarenaUser
+  >;
+  $: sportstacks = $search_store.sportstacks.data || new Map();
+  $: firstThreeUsers = new Map(Array.from(users.entries()).slice(0, 5));
+  $: firstThreeSportstacks = new Map(
+    Array.from(sportstacks.entries()).slice(0, 5)
   );
-
+  $: ({ translations } = $page.data);
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -71,16 +73,9 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function handleClick() {
-    if (!isAuth) {
-      $session.currentActiveModal = "Auth_Modal";
-      return;
-    }
-    userSettings.updateData([
-      ["user-following", { target: "authors", id: uid, follow: !isFollow }],
-    ]);
+  function viewMore(id: string) {
+    dispatch("changeTab", { id });
   }
-
   // #endregion ➤ 🛠️ METHODS
 </script>
 
@@ -94,19 +89,43 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
-<div class="list-item {viewportType}">
-  <a href="/a/user/{usernamePermalink}" class="user-info">
-    <Avatar {size} wrapStyle="border: 1px solid #1D1D1D" src={profile_photo} />
-    <div class="useer-name">{name || username}</div>
-  </a>
-  {#if action_button && uid !== ctx?.firebase_user_data?.uid}
-    <Button type={isFollow ? "subtle" : "primary"} style="padding:10px 16px; font-size: 14px; height:{size === "lg" ? "36px" : "32px"}; min-width: 72px " on:click={handleClick}>
-      <TranslationText
-        text={translations[isFollow ? "following" : "follow"]}
-        fallback={isFollow ? "Following" : "Follow"}
-      />
-    </Button>
+<div class="wrapper {viewportType}">
+  {#if !users.size && !$search_store.users.loading && !sportstacks.size && !$search_store.sportstacks.loading}
+    <div class="section">
+      <NoResults />
+    </div>
+  {:else}
+    <div class="section">
+      {#if users.size || $search_store.users.loading}
+        <UsersList
+          users={firstThreeUsers}
+          limit={5}
+          size="lg"
+          action_button={false}
+          {translations}
+          loading={$search_store.users.loading && !firstThreeUsers.size}
+        />
+      {/if}
+      {#if sportstacks.size || $search_store.sportstacks.loading}
+        <SportsTackList
+          size="lg"
+          limit={3}
+          action_button={false}
+          loading={$search_store.sportstacks.loading &&
+            !firstThreeSportstacks.size}
+          sportstacks={firstThreeSportstacks}
+          {translations}
+        />
+      {/if}
+      <div class="button-wrapp">
+        <Button
+          size="md"
+          full={true}
+          type="secondary-gray"
+          on:click={() => viewMore("highlights")}>View more</Button
+        >l
+      </div>
+    </div>
   {/if}
 </div>
 
@@ -121,36 +140,47 @@
 -->
 
 <style lang="scss">
-  .list-item {
+  .wrapper {
     display: flex;
-    padding-block: 16px;
-    border-bottom: var(--header-border);
-    justify-content: space-between;
-    gap: 20px;
-    align-items: center;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 100%;
+    max-height: 100%;
+    overflow: auto;
 
-    .user-info {
+    .section {
       display: flex;
-      justify-content: start;
-      flex-grow: 1;
-      align-items: center;
-      gap: 12px;
-      color: var(--text-color);
-      font-family: Roboto;
-      font-size: 16px;
-      font-style: normal;
-      font-weight: 500;
-      line-height: 24px; /* 150% */
-
-      &:hover {
-        color: var(--primary);
+      flex-direction: column;
+      background: var(--colors-background-bg-main);
+      width: 100%;
+      .button-wrapp {
+        width: 100%;
+        display: flex;
+        padding-bottom: 16px;
+        padding-inline: 16px;
+      }
+      &:last-of-type {
+        padding-bottom: 84px;
+        flex-grow: 1;
       }
     }
 
-    &.mobile {
+    .tags_wrapper {
       padding: 16px;
-      padding-block: 8px;
-      border-bottom: none;
+      display: flex;
+      flex-wrap: wrap;
+      background: var(--colors-background-bg-main);
+      gap: 16px 10px;
+    }
+    .articles-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding-top: 16px;
+      background: var(--colors-background-bg-main);
+      :global(.card-wrapper) {
+        padding-block: 0;
+      }
     }
   }
 </style>

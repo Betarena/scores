@@ -45,6 +45,7 @@
   import Highlights from "./Highlights.svelte";
   import { debounce } from "$lib/utils/fetch.js";
   import { beforeNavigate } from "$app/navigation";
+  import SuggestingResults from "./SuggestingResults.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -557,9 +558,6 @@
             class="recent-search-item"
             on:click={() => {
               search = text;
-              inputNode?.focus();
-              inputNode?.setSelectionRange(search.length, search.length);
-              skipBlur = true;
             }}
           >
             {text}
@@ -567,7 +565,10 @@
         {/each}
       </div>
     {/if}
-    {#if search && viewMap[selectedTab.id]}
+    {#if search && isInputInFocus}
+      <SuggestingResults />
+    {/if}
+    {#if search && viewMap[selectedTab.id] && !isInputInFocus}
       <svelte:component
         this={viewMap[selectedTab.id]}
         on:changeTab={changeTab}

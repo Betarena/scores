@@ -41,7 +41,8 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  export let size: number | string = 40
+  export let size: number | string = 40;
+  export let action_button = true;
   let numSize = 40;
   $: ({ viewportType } = $session);
   const sizeMap = {
@@ -76,7 +77,9 @@
     <LoaderAvatar size={numSize} />
     <LoaderLine width={70} />
   </div>
-  <LoaderButton width={75} height={32}/>
+  {#if action_button}
+     <LoaderButton width={75} height={32}/>
+  {/if}
 </div>
 
 <!--

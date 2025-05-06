@@ -34,6 +34,7 @@
     loading = false,
     size: number | string = 40,
     limit = 10,
+    action_button= true,
     emptyMessage = "";
 
   const /**
@@ -74,14 +75,14 @@
   {:else}
     <div class="list-wrapper">
       {#each [...users] as [uid, user] (uid)}
-        <ListUserItem {user} {size} {translations} />
+        <ListUserItem {user} {size} {translations} {action_button} />
       {/each}
     </div>
   {/if}
   {#if loading}
     <div class="list-wrapper">
       {#each new Array(limit) as _item}
-        <ListUserLoader />
+        <ListUserLoader  {action_button} {size}/>
       {/each}
     </div>
   {/if}

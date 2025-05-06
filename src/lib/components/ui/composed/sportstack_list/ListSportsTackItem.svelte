@@ -46,6 +46,7 @@
 
   export let user: any, translations: IPageAuthorTranslationDataFinal;
   export let size: number | string = 40;
+  export let action_button= true;
 
   $: ({ viewportType } = $session);
   $: ({ user: ctx } = $userSettings);
@@ -99,7 +100,7 @@
     <SportstackAvatar {size} src={avatar}/>
     <div class="user-name">{name || username}</div>
   </a>
-  {#if id !== ctx?.firebase_user_data?.uid}
+  {#if id !== ctx?.firebase_user_data?.uid && action_button}
     <Button type={isFollow ? "subtle" : "primary"} style="padding:10px 16px; font-size: 14px; height:{size === "lg" ? "36px" : "32px"}; min-width: 72px " on:click={handleClick}>
       <TranslationText
         text={translations[isFollow ? "following" : "follow"]}
