@@ -44,9 +44,8 @@
   import { browser } from '$app/environment';
   import { afterNavigate, beforeNavigate } from '$app/navigation';
   import { page } from '$app/stores';
-  import { onMount } from 'svelte';
-
   import * as Sentry from '@sentry/sveltekit';
+  import { onMount } from 'svelte';
 
   import { post } from '$lib/api/utils.js';
   import
@@ -60,12 +59,15 @@
       routeIdScores,
     } from '$lib/constants/paths.js';
   import { scoresAdminStore } from '$lib/store/admin.js';
+  import { delCookie } from '$lib/store/cookie.js';
   import sessionStore from '$lib/store/session.js';
+  import { initiateSubscribtions } from '$lib/store/subscribtions.js';
   import userBetarenaSettings from '$lib/store/user-settings.js';
   import { dlog, dlogv2 } from '$lib/utils/debug';
   import { mainDeepLinkCheck } from '$lib/utils/deeplink.js';
   import { isPWA, viewportChangeV2 } from '$lib/utils/device.js';
   import { setUserGeoLocation } from '$lib/utils/geo.js';
+  import { parseObject } from '$lib/utils/string.2.js';
   import { initializeTopLevelConsoleController } from '$lib/utils/subscribtion.js';
 
   import AuthMain from '$lib/components/_main_/auth/Widget.svelte';
@@ -83,13 +85,11 @@
 
   // import '@betarena/ad-engine';
   // import WidgetAdEngine from '@betarena/ad-engine/src/lib/Widget-AdEngine.svelte';
-  import { delCookie } from '$lib/store/cookie.js';
-  import { initiateSubscribtions } from '$lib/store/subscribtions.js';
   import WidgetAdEngine from '@betarena/ad-engine';
 
   // ╭─────
   // │ WARNING:
-  // │ Disable, if Dynamic Import is Enabled.
+  // │ |: Disable, if Dynamic Import is Enabled.
   // ╰─────
   // import OfflineAlert from '$lib/components/Offline-Alert.svelte';
   // import PlatformAlert from '$lib/components/Platform-Alert.svelte';
@@ -97,11 +97,25 @@
 
   // ╭─────
   // │ NOTE:
-  // │ moved to static/
+  // │ |: moved to static/
   // ╰─────
   // import '../app.css';
 
   // #endregion ➤ 📦 Package Imports
+
+  // #region ➤ 📌 TYPES
+
+  /**
+   * @description
+   *  📣 Component `Type`.
+   */
+   type IDynamicComponentMap =
+    | 'OfflineAlertDynamic'
+    | 'PlatformAlertDynamic'
+    | 'EmailSubscribeDynamic'
+  ;
+
+  // #endregion ➤ 📌 TYPES
 
   // #region ➤ 📌 VARIABLES
 
@@ -117,37 +131,56 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  /**
-   * @description
-   *  📣 Component `Type`.
-   */
-  type IDynamicComponentMap =
-    | 'OfflineAlertDynamic'
-    | 'PlatformAlertDynamic'
-    | 'EmailSubscribeDynamic'
-  ;
-
   const
     /**
      * @description
-     *  📣 Dynamic import variable condition
+     * 📝 (required) component state object
      */
-    useDynamicImport = true,
-    /**
-     * @description
-     *  📣 threshold start + state for 📱 MOBILE
-     */ // eslint-disable-next-line no-unused-vars
-    VIEWPORT_MOBILE_INIT: [number, boolean] = [575, true],
-    /**
-     * @description
-     *  📣 threshold start + state for 💻 TABLET
-     */ // eslint-disable-next-line no-unused-vars
-    VIEWPORT_TABLET_INIT: [number, boolean] = [1160, true],
-    /**
-     * @description
-     *  📣 Holds target `component(s)` of dynamic nature.
-     */
-    dynamicComponentMap = new Map<IDynamicComponentMap, any>()
+    objComponentStandardState
+      = {
+        /**
+         * @description
+         * 📝 Holds target `component(s)` of viewport configuration.
+         */
+        viewport:
+          {
+            mobile:
+            {
+              threshold: 575,
+              state: true,
+            },
+            tablet:
+            {
+              threshold: 1160,
+              state: true,
+            }
+          },
+        /**
+         * @description
+         * 📝 Holds target `component(s)` of dynamic nature.
+         */
+        mapStrDebugPreifix: new Map
+          <
+            'beforeNavigate' | 'afterNavigate',
+            string
+          >
+          (
+            [
+              [ 'beforeNavigate', '🚏 checkpoint ➤ src/routes/+layout.svelte beforeNavigate(..)' ],
+              [ 'afterNavigate', '🚏 checkpoint ➤ src/routes/+layout.svelte afterNavigate(..)' ]
+            ]
+          ),
+        /**
+         * @description
+         * 📝 Holds target `component(s)` of dynamic nature.
+         */
+        isDynamicImport: true,
+        /**
+         * @description
+         *  📝 Holds target `component(s)` of dynamic nature.
+         */
+        mapComponentDynamicLoading: new Map < IDynamicComponentMap, any >()
+      }
   ;
 
   $: ({ currentPageRouteId, currentActiveModal, currentActiveToast, globalState, serverLang } = { ...$sessionStore });
@@ -155,110 +188,32 @@
   $: ({ username, lang, competition_number } = { ...$userBetarenaSettings.user?.scores_user_data });
   $: ({ uid, email } = { ...$userBetarenaSettings.user?.firebase_user_data });
 
-  $: ispwa = globalState.has('IsPWA');
-
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   $: navbarTranslationData = ($page.data.B_NAV_T ?? {}) as
     | B_NAV_T
     | null
     | undefined
   ;
-  $: deepReactListenStore1 = JSON.stringify($sessionStore);
-  $: deepReactListenStore2 = JSON.stringify($userBetarenaSettings);
+  $: deepReactListenStore1 = parseObject($sessionStore);
+  $: deepReactListenStore2 = parseObject($userBetarenaSettings);
 
   $: $sessionStore.serverLang = $page.data.langParam as string;
   $: if (browser) $sessionStore.page = $page;
   $: isInitliazed = false;
 
-  $: [VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1]]
+  $: [ objComponentStandardState.viewport.mobile.state, objComponentStandardState.viewport.tablet.state]
     = viewportChangeV2
     (
       $sessionStore.windowWidth,
-      VIEWPORT_MOBILE_INIT[0],
-      VIEWPORT_TABLET_INIT[0]
+      objComponentStandardState.viewport.mobile.threshold,
+      objComponentStandardState.viewport.tablet.threshold
     )
   ;
 
-  $: console.log('$page.data.setState', $page.data.setState);
-
-  $sessionStore.deviceType       = $page.data.deviceType as 'mobile' | 'tablet' | 'desktop';
-  $sessionStore.userAgent        = $page.data.userAgent as string ?? navigator.userAgent;
+  $sessionStore.deviceType = $page.data.deviceType as 'mobile' | 'tablet' | 'desktop';
+  $sessionStore.userAgent  = $page.data.userAgent as string ?? navigator.userAgent;
 
   // #endregion ➤ 📌 VARIABLES
-
-  // #region ➤ 🛠️ METHODS
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'methods' that are to be           │
-  // │ and are expected to be used by 'this' .svelte file / component.        │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. function (..)                                                       │
-  // │ 2. async function (..)                                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  /**
-   * @author
-   *  @migbash
-   * @summary
-   *  [🐞]
-   * @description
-   *  📣 Debug Helper
-   * @param reactDebug
-   */
-  function _DEBUG_
-  (
-    reactDebug: 'Option1' | 'Option2' | 'Option3' | 'Option4'
-  ): void
-  {
-    const
-      /**
-       * @description
-       */
-      prefix: string = '🚏 checkpoint [R] ➤ src/routes/(scores)/layout.svelte'
-    ;
-    // [🐞]
-    if (reactDebug == 'Option1')
-      dlog(`${prefix} if_COD_1`, true);
-    else if (reactDebug == 'Option2')
-      dlog(`${prefix} if_COD_2`, true);
-    else if (reactDebug == 'Option3')
-      dlog(`${prefix} if_COD_3`, true);
-    else
-      dlog(`${prefix} if_R_CS43`, true);
-    return;
-  }
-
-  /**
-   * @author
-   *  @migbash
-   * @summary
-   *  🟦 HELPER
-   * @description
-   *  📣 Updates **Betarena User** for their `Firestore` and `CRISP` data.
-   * @return { Promise < void > }
-   */
-  async function updateFirestoreAndCrisp
-  (
-  ): Promise < void >
-  {
-    if (!browser || $userBetarenaSettings.user == undefined)
-      return;
-    ;
-
-    await post
-    (
-      `${import.meta.env.VITE_FIREBASE_FUNCTIONS_ORIGIN}${import.meta.env.VITE_FIREBASE_FUNCTIONS_F_1}`,
-      {
-        user_uids: [$userBetarenaSettings.user.firebase_user_data?.uid],
-      }
-    );
-
-    return;
-  }
-
-  // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
 
@@ -274,11 +229,12 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   // ╭─────
-  // │ > 🔥 Instant critical data initialization.
+  // │ NOTE: IMPORTANT CRITICAL
+  // │ │: [instant] [once]
+  // │ │: Instant critical data initialization.
   // ╰─────
   $: if (browser && !isInitliazed)
   {
-    _DEBUG_('Option1');
     isInitliazed = true;
     userBetarenaSettings.useLocalStorage(serverLang);
     scoresAdminStore.useLocalStorage();
@@ -286,7 +242,7 @@
   }
 
   // ╭─────
-  // │ NOTE: CRITICAL
+  // │ NOTE: IMPORTANT CRITICAL
   // │ │: Hijack the 'console' object.
   // ╰─────
   $: if (browser && document)
@@ -294,9 +250,9 @@
   ;
 
   // ╭─────
-  // │ > 🔥 (3rd Party) Intercom Logic [show/hide]
+  // │ NOTE: IMPORTANT CRITICAL
+  // │ |: [3rd-party] Intercom Logic [show/hide]
   // ╰─────
-
   $: if (browser && $page.route.id == routeIdPageProfile)
   {
     const
@@ -315,30 +271,33 @@
     const
       /**
        * @description
+       * 📝 HTLMElement instance of 'Intercom'
        */
-      intercom: HTMLElement = document.getElementsByClassName('intercom-lightweight-app')[0] as unknown as HTMLElement
+      instanceIntercom = document.getElementsByClassName('intercom-lightweight-app')[0] as unknown as HTMLElement
     ;
 
-    if (intercom != undefined)
-      intercom.style.display = 'none';
+    if (instanceIntercom)
+      instanceIntercom.style.display = 'none';
     ;
   }
 
   // ╭─────
-  // │ > 🔥 (3rd Party) Intercom Data Persistance [show/hide]
+  // │ NOTE: IMPORTANT CRITICAL
+  // │ |: [3rd-party] Intercom Data Persistance
   // ╰─────
   $: if (browser && (deepReactListenStore1 || deepReactListenStore2))
   {
-    _DEBUG_('Option4');
-    window.intercomSettings = {
-      api_base: 'https://api-iam.intercom.io',
-      app_id: 'yz9qn6p3',
-      name: username ?? '',
-      email: email ?? `${uid}-unkown@gmail.com`,
-      uid,
-      lang: lang ?? 'en',
-      competition_number: competition_number ?? 0,
-    };
+    window.intercomSettings
+      = {
+        api_base: 'https://api-iam.intercom.io',
+        app_id: 'yz9qn6p3',
+        name: username ?? '',
+        email: email ?? `${uid}-unkown@gmail.com`,
+        uid,
+        lang: lang ?? 'en',
+        competition_number: competition_number ?? 0,
+      }
+    ;
 
     // [🐞]
     Sentry.setContext
@@ -351,6 +310,7 @@
   }
 
   $: if (browser)
+    // eslint-disable-next-line new-cap
     window.Intercom
     (
       'update',
@@ -371,47 +331,6 @@
   // │ as soon as 'this' .svelte file is ran.                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  beforeNavigate
-  (
-    async (
-      _event
-    ): Promise < void > =>
-    {
-      const
-        /**
-         * @description
-         * 📣 Debug Helper
-        */
-        strDebugPrefix = '🚏 checkpoint ➤ src/routes/+layout.svelte beforeNavigate(..)'
-      ;
-
-      if (!browser) return;
-
-      // [🐞]
-      dlogv2
-      (
-        `${strDebugPrefix} // START`,
-        [
-          `🔹 [var] ➤ _event :|: ${JSON.stringify(_event)}`
-        ]
-      );
-
-      if ($page.data.setState?.has('IsAnonymousNewBurner'))
-      {
-        // [🐞]
-        dlogv2
-        (
-          `${strDebugPrefix} // IsAnonymousNewBurner`,
-          []
-        );
-
-        delCookie('betarenaScoresCookie');
-      }
-
-      return;
-    }
-  );
-
   onMount
   (
     async (
@@ -419,16 +338,57 @@
     {
       // initSentry();
 
-      // IMPORTANT CRITICAL
+      // ╭─────
+      // │ IMPORTANT CRITICAL
+      // ╰─────
       initiateSubscribtions();
+
+      if ('serviceWorker' in navigator)
+        navigator.serviceWorker
+          .register
+          (
+            '/progressier.js'
+          )
+          .then
+          (
+            (
+              registration
+            ) =>
+            {
+              // [🐞]
+              // eslint-disable-next-line no-console
+              console.log
+              (
+                'Service Worker registered with scope:',
+                registration.scope
+              );
+            }
+          )
+          .catch
+          (
+            (
+              error
+            ) =>
+            {
+              // [🐞]
+              // eslint-disable-next-line no-console
+              console.error
+              (
+                'Service Worker registration failed:',
+                error
+              );
+            }
+          )
+        ;
+      ;
 
       // ╭─────
       // │ NOTE:
       // │ |: Dynamic Import Logic
       // ╰─────
-      if (useDynamicImport)
+      if (objComponentStandardState.isDynamicImport)
       {
-        dynamicComponentMap.set
+        objComponentStandardState.mapComponentDynamicLoading.set
         (
           'OfflineAlertDynamic',
           (
@@ -439,7 +399,7 @@
           ).default
         );
 
-        dynamicComponentMap.set
+        objComponentStandardState.mapComponentDynamicLoading.set
         (
           'PlatformAlertDynamic',
           (
@@ -450,7 +410,7 @@
           ).default
         );
 
-        dynamicComponentMap.set
+        objComponentStandardState.mapComponentDynamicLoading.set
         (
           'EmailSubscribeDynamic',
           (
@@ -464,14 +424,12 @@
 
       // ╭─────
       // │ NOTE: IMPORTANT
-      // │ ➤ |: Set initial values of 'windowWidth'.
+      // │ |: Set initial values of 'windowWidth'.
       // ╰─────
       sessionStore.updateData
       (
         [
-          [
-            'windowWidth', document.documentElement.clientWidth
-          ]
+          ['windowWidth', document.documentElement.clientWidth]
         ]
       );
 
@@ -502,44 +460,39 @@
     }
   );
 
-  onMount
+  beforeNavigate
   (
-    () =>
+    async (
+      _event
+    ): Promise < void > =>
     {
-      if ('serviceWorker' in navigator)
-        navigator.serviceWorker
-          .register('/progressier.js')
-          .then
-          (
-            (
-              registration
-            ) =>
-            {
-              // [🐞]
-              // eslint-disable-next-line no-console
-              console.log
-              (
-                'Service Worker registered with scope:',
-                registration.scope
-              );
-            }
-          )
-          .catch
-          (
-            (
-              error
-            ) =>
-            {
-              // [🐞]
-              // eslint-disable-next-line no-console
-              console.error
-              (
-                'Service Worker registration failed:',
-                error
-              );
-            }
-          );
-      ;
+      if (!browser) return;
+
+      // [🐞]
+      dlogv2
+      (
+        `${objComponentStandardState.mapStrDebugPreifix.get('beforeNavigate')} // START`,
+        [
+          `🔹 [var] ➤ _event :: ${JSON.stringify(_event)}`
+        ]
+      );
+
+      if ($page.data.setState?.has('IsAnonymousNewBurner'))
+      {
+        // [🐞]
+        dlogv2
+        (
+          `${objComponentStandardState.mapStrDebugPreifix.get('beforeNavigate')} // IsAnonymousNewBurner`,
+          []
+        );
+
+        delCookie
+        (
+          'betarenaScoresCookie'
+        );
+      }
+
+      return;
     }
   );
 
@@ -554,9 +507,7 @@
       sessionStore.updateData
       (
         [
-          [
-            'routeId', $page.route.id
-          ]
+          ['routeId', $page.route.id]
         ]
       );
 
@@ -564,8 +515,9 @@
       dlogv2
       (
         '🚏 checkpoint ➤ src/routes/+layout.svelte afterNavigate(..)',
-        [`🔹 [var] ➤ e.from :|: ${JSON.stringify(e)}`],
-        true
+        [
+          `🔹 [var] ➤ e.from :|: ${JSON.stringify(e)}`
+        ]
       );
 
       return;
@@ -583,150 +535,47 @@
 -->
 
 <svelte:head>
-  <!--
-  HELPDESK PLUGIN
-  -->
-
-  <!-- <script type="text/javascript">
-      window.$crisp=[];
-      window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
-      (function()
-      {
-        d=document;
-        s=d.createElement("script");
-        s.src="https://client.crisp.chat/l.js";
-        s.async=1;
-        d.getElementsByTagName("head")[0].appendChild(s);
-      }
-      )();
-    </script> -->
-  <!-- <script type="text/javascript">
-      window.$crisp=[];
-      window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
-      (function()
-      {
-        d=document;
-        s=d.createElement("script");
-        s.src="https://client.crisp.chat/l.js";
-        s.async=1;
-        d.getElementsByTagName("head")[0].appendChild(s);
-      }
-      )();
-    </script> -->
-  <!-- <script type="text/javascript">
-      window.$crisp=[];
-      window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
-      (function()
-      {
-        d=document;
-        s=d.createElement("script");
-        s.src="https://client.crisp.chat/l.js";
-        s.async=1;
-        d.getElementsByTagName("head")[0].appendChild(s);
-      }
-      )();
-    </script> -->
-  <!-- <script type="text/javascript">
-      window.$crisp=[];
-      window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
-      (function()
-      {
-        d=document;
-        s=d.createElement("script");
-        s.src="https://client.crisp.chat/l.js";
-        s.async=1;
-        d.getElementsByTagName("head")[0].appendChild(s);
-      }
-      )();
-    </script> -->
-  <!-- <script type="text/javascript">
-      window.$crisp=[];
-      window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
-      (function()
-      {
-        d=document;
-        s=d.createElement("script");
-        s.src="https://client.crisp.chat/l.js";
-        s.async=1;
-        d.getElementsByTagName("head")[0].appendChild(s);
-      }
-      )();
-    </script> -->
-  <!-- <script type="text/javascript">
-      window.$crisp=[];
-      window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
-      (function()
-      {
-        d=document;
-        s=d.createElement("script");
-        s.src="https://client.crisp.chat/l.js";
-        s.async=1;
-        d.getElementsByTagName("head")[0].appendChild(s);
-      }
-      )();
-    </!-->
-  <!-- <script type="text/javascript">
-      window.$crisp=[];
-      window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
-      (function()
-      {
-        d=document;
-        s=d.createElement("script");
-        s.src="https://client.crisp.chat/l.js";
-        s.async=1;
-        d.getElementsByTagName("head")[0].appendChild(s);
-      }
-      )();
-    </!-->
-  <!-- <script type="text/javascript">
-      window.$crisp=[];
-      window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
-      (function()
-      {
-        d=document;
-        s=d.createElement("script");
-        s.src="https://client.crisp.chat/l.js";
-        s.async=1;
-        d.getElementsByTagName("head")[0].appendChild(s);
-      }
-      )();
-    </!-->
-
   <script>
     // We pre-filled your app ID in the widget URL: 'https://widget.intercom.io/widget/yz9qn6p3'
-    (function () {
-      var w = window;
-      var ic = w.Intercom;
-      if (typeof ic === "function") {
-        ic("reattach_activator");
-        ic("update", w.intercomSettings);
-      } else {
-        var d = document;
-        var i = function () {
-          i.c(arguments);
-        };
-        i.q = [];
-        i.c = function (args) {
-          i.q.push(args);
-        };
-        w.Intercom = i;
-        var l = function () {
-          var s = d.createElement("script");
-          s.type = "text/javascript";
-          s.async = true;
-          s.src = "https://widget.intercom.io/widget/yz9qn6p3";
-          var x = d.getElementsByTagName("script")[0];
-          x.parentNode.insertBefore(s, x);
-        };
-        if (document.readyState === "complete") {
-          l();
-        } else if (w.attachEvent) {
-          w.attachEvent("onload", l);
-        } else {
-          w.addEventListener("load", l, false);
+    (
+      function ()
+      {
+        var w = window;
+        var ic = w.Intercom;
+        if (typeof ic === "function")
+        {
+          ic("reattach_activator");
+          ic("update", w.intercomSettings);
+        }
+        else
+        {
+          var d = document;
+          var i = function () {
+            i.c(arguments);
+          };
+          i.q = [];
+          i.c = function (args) {
+            i.q.push(args);
+          };
+          w.Intercom = i;
+          var l = function () {
+            var s = d.createElement("script");
+            s.type = "text/javascript";
+            s.async = true;
+            s.src = "https://widget.intercom.io/widget/yz9qn6p3";
+            var x = d.getElementsByTagName("script")[0];
+            x.parentNode.insertBefore(s, x);
+          };
+          if (document.readyState === "complete") {
+            l();
+          } else if (w.attachEvent) {
+            w.attachEvent("onload", l);
+          } else {
+            w.addEventListener("load", l, false);
+          }
         }
       }
-    })();
+    )();
   </script>
 </svelte:head>
 
@@ -737,10 +586,7 @@
     {
       if (!document.hidden)
       {
-        // [🐞]
-        dlog('🔵 user is active', true);
         $sessionStore.isUserActive = true;
-        updateFirestoreAndCrisp();
         return;
       }
       $sessionStore.isUserActive = false;
@@ -757,16 +603,16 @@
       sessionStore.updateData
       (
         [
-          [
-            'windowWidth',
-            document.documentElement.clientWidth
-          ],
+          ['windowWidth', document.documentElement.clientWidth],
         ]
       );
+
       if (isPWA())
         $sessionStore.globalState.add('IsPWA');
       else
         $sessionStore.globalState.delete('IsPWA');
+      ;
+
       return;
     }
   }
@@ -790,7 +636,7 @@
   class:light-mode={theme == 'Light'}
   class:page-content={$page.route.id === routeIdContent}
   data-page-id={currentPageRouteId}
-  data-mode={ispwa ? 'pwa' : 'web'}
+  data-mode={globalState.has('IsPWA') ? 'pwa' : 'web'}
 >
   {#key $page.route.id}
     <WidgetAdEngine
@@ -811,34 +657,40 @@
     <ToastAuth />
   {/if}
 
-  {#if $scoresAdminStore.admin}
+  <!-- {#if $scoresAdminStore.admin} -->
     <DevInfoBox />
-  {/if}
+  <!-- {/if} -->
 
   {#if currentActiveModal == 'GeneralPlatform_Error'}
     <ModalError />
   {/if}
 
-  {#if useDynamicImport}
-    <svelte:component this={dynamicComponentMap.get('OfflineAlertDynamic')} />
+  {#if objComponentStandardState.isDynamicImport}
+    <svelte:component
+      this={objComponentStandardState.mapComponentDynamicLoading.get('OfflineAlertDynamic')}
+    />
   {:else}
     <!-- <OfflineAlert /> -->
   {/if}
 
-  {#if useDynamicImport}
-    <svelte:component this={dynamicComponentMap.get('PlatformAlertDynamic')} />
+  {#if objComponentStandardState.isDynamicImport}
+    <svelte:component
+      this={objComponentStandardState.mapComponentDynamicLoading.get('PlatformAlertDynamic')}
+    />
   {:else}
     <!-- <PlatformAlert /> -->
   {/if}
 
-  {#if useDynamicImport}
-    <svelte:component this={dynamicComponentMap.get('EmailSubscribeDynamic')} />
+  {#if objComponentStandardState.isDynamicImport}
+    <svelte:component
+      this={objComponentStandardState.mapComponentDynamicLoading.get('EmailSubscribeDynamic')}
+    />
   {:else}
     <!-- <EmailSubscribe /> -->
   {/if}
 
   {#if ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle].includes($page.route.id )}
-     <HeaderRedesigned />
+    <HeaderRedesigned />
   {/if}
 
   <main
@@ -850,19 +702,30 @@
     class:page-profile={currentPageRouteId == 'ProfilePage'}
     class:page-authors={currentPageRouteId == 'AuthorsPage' || currentPageRouteId == 'Standard'}
     class:page-content={$page.route.id === routeIdContent}
-    class:mobile={VIEWPORT_MOBILE_INIT[1]}
-    class:tablet={VIEWPORT_TABLET_INIT[1]}
+    class:mobile={objComponentStandardState.viewport.mobile.state}
+    class:tablet={objComponentStandardState.viewport.tablet.state}
   >
     <slot />
-    {#if (!ispwa && ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle].includes($page.route.id || '')) || [routeIdPageProfile, routeIdPageProfilePublication].includes($page.route.id || '')}
+
+    {#if
+      (
+        !globalState.has('IsPWA')
+        && ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle].includes($page.route.id || '')
+      )
+      || [routeIdPageProfile, routeIdPageProfilePublication].includes($page.route.id || '')
+    }
       <FooterWidget />
     {/if}
+
   </main>
 
-  {#if (VIEWPORT_MOBILE_INIT[1] || VIEWPORT_TABLET_INIT[1]) && [routeIdScores, routeIdPageCompetitions, routeIdContent].includes($page.route.id || '')}
+  {#if
+    (objComponentStandardState.viewport.mobile.state || objComponentStandardState.viewport.tablet.state)
+    && [routeIdScores, routeIdPageCompetitions, routeIdContent].includes($page.route.id || '')
+  }
     <MobileMenu
-      mobile={VIEWPORT_MOBILE_INIT[1]}
-      tablet={VIEWPORT_TABLET_INIT[1]}
+      mobile={objComponentStandardState.viewport.mobile.state}
+      tablet={objComponentStandardState.viewport.tablet.state}
     />
   {/if}
 
