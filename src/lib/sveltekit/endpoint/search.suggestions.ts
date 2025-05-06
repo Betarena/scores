@@ -1,4 +1,4 @@
-import { getSuggestions, updateSuggestPopularity } from "../../../../../scores-lib/src/functions/v8/search.js";
+import { getSuggestions, updateSuggestPopularity } from "@betarena/scores-lib/dist/functions/v8/search.js";
 import { json, RequestHandler } from "@sveltejs/kit";
 
 export const SuggestionsSearchEndpoint: RequestHandler = async ({ url }) => {
