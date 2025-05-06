@@ -285,8 +285,6 @@ export async function main
     objResponse.translations = dataRes0;
   }
 
-  console.log('event.locals.setState', event.locals.setState);
-
   objResponse.setState = event.locals.setState;
 
   // [🐞]
