@@ -278,7 +278,11 @@ export const handle: Handle = sequence
       if (event.url.pathname === '/' && event.route.id === '/(scores)/[[lang=lang]]')
       {
         event.locals.setState.add('IsAnonymousNew');
-        event.locals.user.lang = convertLocaleToLang(`${listLanguages[0].code}-${listLanguages[0].region}`);
+        if (listLanguages.length > 0 && listLanguages[0].code && listLanguages[0].region)
+          event.locals.user.lang = convertLocaleToLang(`${listLanguages[0].code}-${listLanguages[0].region}`);
+        else
+          event.locals.user.lang = 'en';
+        ;
       }
       else
       {
