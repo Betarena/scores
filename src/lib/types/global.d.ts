@@ -12,17 +12,22 @@ interface Window
 {
   /**
    * @description
-   *  📣 `window` | `document` global Google Analytics Methods access.
+   *  📣 `window` | `document` - global Google Analytics Methods access.
    */ // eslint-disable-next-line @typescript-eslint/no-explicit-any
 	gtag: any;
   /**
    * @description
-   *  📣 `window` | `document` global Ethereum (MetaMask) Methods access.
+   *  📣 `window` | `document` - global Ethereum (MetaMask) Methods access.
    */ // eslint-disable-next-line @typescript-eslint/no-explicit-any
 	ethereum: any;
   /**
    * @description
-   *  📣 `window` | `document` global Intercom Properties access.
+   * 📣 `window` | `document` - Intercom instance
+   */
+  Intercom: any;
+  /**
+   * @description
+   *  📣 `window` | `document` - global Intercom Properties access.
    */
   intercomSettings:
   {

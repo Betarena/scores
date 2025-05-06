@@ -155,7 +155,7 @@
         }
       ) ?? false
     }
-    canonical={`${$page.url.origin}/a/content`}
+    canonical={`${$page.url.origin}${$page.url.pathname}`}
     twitter={pageSeo.twitter_card}
     openGraph={pageSeo.opengraph}
   />

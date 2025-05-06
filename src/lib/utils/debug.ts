@@ -238,7 +238,7 @@ export const
         // ╰─────
         [
           'Hooks |',
-          { codeName: 'Hooks |', show: true, style: chalk.bgCyan.hex('#ffffff') }
+          { codeName: 'Hooks |', show: true, style: chalk.cyan }
         ],
         [
           'Preload |',
@@ -320,7 +320,7 @@ export function dlog
   log_v3
   (
     {
-      strGroupName: `${logPrefix} ${msg}`,
+      strGroupName: `${msg}`,
       msgs: [],
       closed: true
     }
@@ -363,7 +363,7 @@ export function dlogv2
   log_v3
   (
     {
-      strGroupName: `${logPrefix} ${groupName}`,
+      strGroupName: `${groupName}`,
       msgs: msgs,
       closed: closed
     }
@@ -413,7 +413,8 @@ export function log_v3
   ;
 
   // ╭─────
-  // │ NOTE: |:| Loop through debug objects for details.
+  // │ NOTE:
+  // │ │: loop through debug objects for details.
   // ╰─────
   for (const [debugKey, debugObj] of objectDebug)
     if (opts.strGroupName.includes(debugKey))
@@ -421,7 +422,8 @@ export function log_v3
   ;
 
   // ╭─────
-  // │ CHECK |:| for showing logs
+  // │ CHECK
+  // │ │: for showing logs
   // ╰─────
   if (!getInstance('logging') || !defaultDebug.show)
     return;
@@ -436,16 +438,19 @@ export function log_v3
     return;
   ;
 
-  opts.strGroupName = `${logPrefix} ${opts.strGroupName}`;
-
-  if (opts.timestamp)
-    opts.strGroupName = `${new Date().toISOString()} ${opts.strGroupName}`;
+  const
+    /**
+     * @description
+     * 📝 Debug tag name.
+     */
+    _strLogPrefix = chalk.hex('#324ca8')(`${new Date().toISOString()} ${logPrefix}`)
   ;
 
-  opts.strGroupName = defaultDebug.style(opts.strGroupName);
+  opts.strGroupName = `${_strLogPrefix} ${defaultDebug.style(opts.strGroupName)}`;
 
   // ╭─────
-  // │ NOTE: |:| logs generation
+  // │ NOTE:
+  // │ │: log message generation, depending on the (browser/server) environment.
   // ╰─────
   if (browser)
   {
@@ -469,7 +474,7 @@ export function log_v3
   {
     console.log
     (
-      chalk.hex('#324ca8')(`${new Date().toISOString()} ${logPrefix} ──────────────────────────────────────────────────`)
+      `${_strLogPrefix} ──────────────────────────────────────────────────`
     );
     console.log
     (
@@ -478,7 +483,8 @@ export function log_v3
   }
 
   // ╭─────
-  // │ NOTE: |:| loop through messages.
+  // │ NOTE:
+  // │ │: loop through debug messages.
   // ╰─────
   for (let msg of opts.msgs)
   {
@@ -490,6 +496,10 @@ export function log_v3
         msg = '[SKIPPED]';
       else if (msg.includes('[EMPTY]'))
         continue;
+    ;
+
+    if (!browser)
+      msg = `${_strLogPrefix} ${defaultDebug.style(msg)}`;
     ;
 
     console.debug(msg);

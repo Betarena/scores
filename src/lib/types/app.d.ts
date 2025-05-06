@@ -25,19 +25,34 @@ import type { IBetarenaUserCookie } from "./types.cookie.js";
  */
 type ISettingsState =
   // ╭─────
-  // │ NOTE: :: Widget is 'Processing' authentication (post-submit).
+  // │ NOTE:
+  // │ |: User is a:
+  // │ |: [1] first-time visitor (or, using new device),
+  // │ |: [2] accesing the 'homepage' from a target language, not '/' path.
+  // ┣─────
+  // │ |: user data (cookie) is DELETED at the end of the user session.
   // ╰─────
   | 'IsAnonymousNewBurner'
   // ╭─────
-  // │ NOTE: :|: Widget is 'Processing' authentication (post-submit).
+  // │ NOTE:
+  // │ |: User is a:
+  // │ |: [1] first-time visitor (or, using new device),
+  // │ |: [2] accesing the 'homepage' from '/' path.
+  // ┣─────
+  // │ |: user data (cookie) is SET permanently.
   // ╰─────
   | 'IsAnonymousNew'
   // ╭─────
-  // │ NOTE: :|: Widget is 'Processing' authentication (post-submit).
+  // │ NOTE:
+  // │ |: User is a:
+  // │ |: [1] returning visitor (or, using same device),
   // ╰─────
   | 'IsAnonymousReturning'
   // ╭─────
-  // │ NOTE: :|: Widget is 'Processing' authentication (post-submit).
+  // │ NOTE:
+  // │ |: User is a:
+  // │ |: [1] returning visitor (or, using same device),
+  // │ |: [2] is a Betarena user.
   // ╰─────
   | 'IsBetarenaUser'
 ;
@@ -75,6 +90,7 @@ declare global
       strLocaleOverride?: string;
       /**
        * @description
+       * 📝 State of currest request expressed as a 'Set()'
        */
       setState?: Set < ISettingsState >;
 		}

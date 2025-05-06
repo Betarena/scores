@@ -35,7 +35,11 @@ export default
     {
       scss:
       {
-        prependData: `@import 'static/scss/themes/index.scss';`
+        // ╭─────
+        // │ NOTE:
+        // │ 🔗 read-more :: https://stackoverflow.com/a/64309854
+        // ╰─────
+        prependData: `@import '//static/scss/themes/index.scss';`
       }
     }
   ),

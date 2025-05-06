@@ -250,13 +250,18 @@ export const handle: Handle = sequence
 
     // ╭─────
     // │ CHECK:
-    // │ |: for new visitor, set default values.
+    // │ |: [0] for existing visitor, re-set cookie values.
     // ╰─────
     if (cookies.betarenaScoresCookie)
     {
+      // @ts-expect-error :: <?>
       event.locals.user = stringToObject<IBetarenaUserCookie>(cookies.betarenaScoresCookie);
-      event.locals.setState?.add('IsAnonymousReturning');
+      event.locals.setState.add('IsAnonymousReturning');
     }
+    // ╭─────
+    // │ NOTE:
+    // │ |: [1] for new visitor, set default values.
+    // ╰─────
     else
     {
       // [🐞]
@@ -272,23 +277,34 @@ export const handle: Handle = sequence
 
       if (event.url.pathname === '/' && event.route.id === '/(scores)/[[lang=lang]]')
       {
-        event.locals.setState?.add('IsAnonymousNew');
-        event.locals.user.lang = convertLocaleToLang(`${listLanguages[0].code}-${listLanguages[0].region}`);
+        event.locals.setState.add('IsAnonymousNew');
+        if (listLanguages.length > 0 && listLanguages[0].code && listLanguages[0].region)
+          event.locals.user.lang = convertLocaleToLang(`${listLanguages[0].code}-${listLanguages[0].region}`);
+        else
+          event.locals.user.lang = 'en';
+        ;
       }
       else
       {
-        event.locals.setState?.add('IsAnonymousNewBurner');
+        event.locals.setState.add('IsAnonymousNewBurner');
         event.locals.user.lang = event.params.lang ?? 'en';
       }
     }
 
+    // ╭─────
+    // │ CHECK:
+    // │ |: [0] for authenticated user, update 'locals' values.
+    // ╰─────
     if (cookies.betarenaCookieLoggedIn)
     {
       event.locals.uid = event.locals.user.uid;
-      event.locals.setState?.add('IsBetarenaUser');
+      event.locals.setState.add('IsBetarenaUser');
     }
 
-    // 🔗 read-more :|: https://github.com/sveltejs/kit/issues/1046
+    // ╭─────
+    // │ NOTE:
+    // │ 🔗 read-more :|: https://github.com/sveltejs/kit/issues/1046
+    // ╰─────
     // if (event.url.searchParams.has('_method'))
     // {
     // 	event.method = event.url.searchParams.get('_method').toUpperCase();
@@ -360,41 +376,24 @@ export const handle: Handle = sequence
     // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
     // ╭─────
-    // │ CHECK:
-    // │ |: new visitor, new cookie.
+    // │ NOTE:
+    // │ |: (re)set cookie.
     // ╰─────
-    if (!cookies.betarenaScoresCookie)
-    {
-      // [🐞]
-      log_v3
+    dataRes0.headers.set
+    (
+      'Set-Cookie',
+      cookie.serialize
       (
+        'betarenaScoresCookie',
+        parseObject(event.locals.user),
         {
-          strGroupName: '🚏 checkpoint ➤ Hooks | src/hooks.server.ts handle(..) // [2] - setting cookie',
-          msgs:
-          [
-            `🔹 [var] ➤ event.locals.user :: ${parseObject(event.locals.user)}`,
-            `🔹 [var] ➤ event.locals.strLocaleOverride :: ${event.locals.strLocaleOverride}`,
-            `🔹 [var] ➤ event.url.pathname :: ${event.url.pathname}`,
-          ],
+          path: '/',
+          // httpOnly: true,
+          /* ─── 1 week ─── */
+          maxAge: 60 * 60 * 24 * 7
         }
-      );
-
-      dataRes0.headers.set
-      (
-        'Set-Cookie',
-        cookie.serialize
-        (
-          'betarenaScoresCookie',
-          JSON.stringify(event.locals.user),
-          {
-            path: '/',
-            // httpOnly: true,
-            /* ─── 1 week ─── */
-            maxAge: 60 * 60 * 24 * 7
-          }
-        )
-      );
-    }
+      )
+    );
 
     let
       /**
@@ -404,6 +403,10 @@ export const handle: Handle = sequence
       strExecutionTime = ((performance.now() - t0) / 1000).toFixed(5)
     ;
 
+    // ╭─────
+    // │ NOTE:
+    // │ |: metrics for performance.
+    // ╰─────
     if (parseFloat(strExecutionTime) > 1)
       strExecutionTime = chalk.bgRed(`⚠️ ${strExecutionTime} sec`);
     else
@@ -423,9 +426,7 @@ export const handle: Handle = sequence
           // │ NOTE:
           // │ |: additional helpful logging.
           // ╰─────
-          // `🔹 [var] ➤ event :: ${JSON.stringify(event.url.pathname)}`,
           // `🔹 [var] ➤ event.route.id :: ${event.route.id}`,
-          // `🔹 [var] ➤ event.url.origin :: ${event.url.origin}`,
           // `🔹 [var] ➤ event :: ${event.request.headers.get('accept-language')}`,
         ],
       }
