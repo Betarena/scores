@@ -28,6 +28,7 @@ import type { RequestHandler } from '@sveltejs/kit';
 import { ArticlesSearchEndpoint } from '$lib/sveltekit/endpoint/search.articles.js';
 import { TagsSearchEndpoint } from '$lib/sveltekit/endpoint/search.tags.js';
 import { AuthorsSearchEndpoint } from '$lib/sveltekit/endpoint/search.authors.js';
+import { SuggestionsPostEndpoint, SuggestionsSearchEndpoint } from '$lib/sveltekit/endpoint/search.suggestions.js';
 
 // #endregion ➤ 📦 Package
 
@@ -40,7 +41,8 @@ const getEndpointsMap = {
   'profile.main': EndpointProfileMain,
   'search.articles': ArticlesSearchEndpoint,
   'search.tags': TagsSearchEndpoint,
-  'search.authors': AuthorsSearchEndpoint
+  'search.authors': AuthorsSearchEndpoint,
+  "search.suggestions": SuggestionsSearchEndpoint
 }
 type EndPointsMapKeys = keyof typeof getEndpointsMap;
 export const GET: RequestHandler = async (
@@ -65,6 +67,12 @@ export const GET: RequestHandler = async (
   return API_DATA_ERROR_RESPONSE();
 }
 
+const postEndpointsMap = {
+  'profile.main': EndpointProfileMain,
+  "search.suggestions": SuggestionsPostEndpoint
+}
+type PostEndPointsMapKeys = keyof typeof postEndpointsMap;
+
 export const POST: RequestHandler = async (
   request
 ): Promise < Response > =>
@@ -88,6 +96,14 @@ export const POST: RequestHandler = async (
       request
     );
   ;
+
+  if (queryParamPath == 'search.suggestions')
+    return await SuggestionsPostEndpoint
+    (
+      request
+    );
+  ;
+
 
   return API_DATA_ERROR_RESPONSE();
 }

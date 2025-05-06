@@ -89,7 +89,7 @@
 
   beforeNavigate(() => {
     $modalStore.show = false;
-  })
+  });
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
@@ -127,6 +127,7 @@
   ];
   let inputNode: null | HTMLInputElement | HTMLTextAreaElement = null;
   let skipBlur = false;
+  let suggestions: any[] = [];
 
   const viewMap = {
     posts: Articles,
@@ -158,6 +159,7 @@
 
   const debouncedSearch = debounce(doSearch, 500);
   $: debouncedSearch(search);
+  $: getSuggestions(search);
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
   // #region ➤ 🛠️ METHODS
@@ -190,12 +192,10 @@
       const searched_before = storageSet.find(
         (history) => history.toLocaleLowerCase() === search.toLocaleLowerCase()
       );
-      if(searched_before) {
+      if (searched_before) {
         storageSet.splice(storageSet.indexOf(searched_before), 1);
       }
-      if (
-        search
-      ) {
+      if (search) {
         const nextHistory = [search, ...storageSet];
         localStorage.setItem("searchHistory", JSON.stringify(nextHistory));
         searchHistory = [...nextHistory];
@@ -217,6 +217,23 @@
       return;
     }
     selectedTab = tab;
+  }
+
+  async function getSuggestions(text: string) {
+    const url = `/api/data/search.suggestions?search=${search}`;
+    const res = await fetch(url);
+    const r = await res.json();
+    suggestions = r.suggestions;
+  }
+
+  async function suggestClick(suggest: string) {
+    const url = `/api/data/search.suggestions`;
+    search = suggest;
+    inputBlur();
+    await fetch(url, {
+      method: "POST",
+      body: JSON.stringify({ suggest }),
+    });
   }
 
   async function authorSearch({
@@ -303,14 +320,13 @@
     const res = await fetch(url);
     const r = await res.json();
     if (!page) {
-      $search_store.tags.data = new Map(
-        r.tags.map((tag) => [tag.id, tag])
-      );
+      $search_store.tags.data = new Map(r.tags.map((tag) => [tag.id, tag]));
       $search_store.tags.page = 0;
     } else {
-      const newMap = new Map(
-        r.tags.map((tag) => [tag.id, tag])
-      ) as Map<number, any>;
+      const newMap = new Map(r.tags.map((tag) => [tag.id, tag])) as Map<
+        number,
+        any
+      >;
       $search_store.tags.data = new Map([
         ...$search_store.tags.data,
         ...newMap,
@@ -505,21 +521,24 @@
       <div class="empty-tabbar" />
     {/if}
   </div>
-  <!-- {#if search && isInputInFocus}
+  {#if search && isInputInFocus && suggestions.length}
     <div
       class="search-suggestions"
       in:fade={{ duration: 400, easing: quadOut }}
     >
-      {#each ["Sportstack", "Forecasts", "Predictions"] as item}
-        <button class="suggest-item">
-          <div class="suggestion-text">{item}</div>
+      {#each suggestions as suggest}
+        <button
+          class="suggest-item"
+          on:click={() => suggestClick(suggest.suggestion)}
+        >
+          <div class="suggestion-text">{suggest.suggestion}</div>
           <div class="suggest-icon">
             <ArrowCirlcleBrokenRight />
           </div>
         </button>
       {/each}
     </div>
-  {/if} -->
+  {/if}
   <div
     class="search-results"
     in:fly={{ x: 0, y: 500, duration: 400, easing: quadOut }}
@@ -579,6 +598,9 @@
   .search-container {
     &.mobile,
     &.tablet {
+      position: fixed;
+      top: 0;
+      left: 0;
       width: 100vw;
       height: 100vh;
       overflow: hidden;
