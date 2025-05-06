@@ -47,7 +47,6 @@
   import * as Sentry from '@sentry/sveltekit';
   import { onMount } from 'svelte';
 
-  import { post } from '$lib/api/utils.js';
   import
     {
       routeIdContent,
@@ -63,7 +62,7 @@
   import sessionStore from '$lib/store/session.js';
   import { initiateSubscribtions } from '$lib/store/subscribtions.js';
   import userBetarenaSettings from '$lib/store/user-settings.js';
-  import { dlog, dlogv2 } from '$lib/utils/debug';
+  import { dlogv2 } from '$lib/utils/debug';
   import { mainDeepLinkCheck } from '$lib/utils/deeplink.js';
   import { isPWA, viewportChangeV2 } from '$lib/utils/device.js';
   import { setUserGeoLocation } from '$lib/utils/geo.js';
@@ -657,9 +656,9 @@
     <ToastAuth />
   {/if}
 
-  <!-- {#if $scoresAdminStore.admin} -->
+  {#if $scoresAdminStore.admin}
     <DevInfoBox />
-  <!-- {/if} -->
+  {/if}
 
   {#if currentActiveModal == 'GeneralPlatform_Error'}
     <ModalError />
