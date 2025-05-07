@@ -247,8 +247,7 @@
       url += `&limit=${limit}`;
     }
     const res = await fetch(url);
-    // const r = await res.json();
-    // authors = new Map(r.authors.map((author) => [author.id, author]));
+
     const r = await res.json();
     if (!page) {
       $search_store.sportstacks.data = new Map(
@@ -348,7 +347,6 @@
     }
 
     const res = await fetch(url);
-    // const r = await res.json();
     const r = await res.json();
     if (!page) {
       $search_store.articles.data = new Map(
@@ -488,8 +486,7 @@
         </svg>
       </Input>
     </div>
-    <!-- content here -->
-    {#if !isInputInFocus}
+    {#if !isInputInFocus && search}
       <div class="tabbar">
         <Tabbar
           type="button_gray"
@@ -525,12 +522,12 @@
     in:fly={{ x: 0, y: 500, duration: 400, easing: quadOut }}
     out:fly={{ x: 0, y: 500, duration: 400, easing: quadIn }}
   >
-    {#if (!search && !isInputInFocus) || (isInputInFocus && !search && !searchHistory.length)}
+    {#if !search && !searchHistory.length}
       <div class="search-message-wrapper">
         <Button type="link-color" classname="light-mode">Search for</Button>
         <div class="message-text">posts, users and Sportstacks</div>
       </div>
-    {:else if !search && isInputInFocus && searchHistory.length}
+    {:else if !search && searchHistory.length}
       <div class="search-history">
         <div class="search-title">Recent</div>
         {#each searchHistory.slice(0, 10) as text}
