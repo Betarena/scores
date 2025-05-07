@@ -60,32 +60,7 @@
 
   onMount(() => {
     searchHistory = JSON.parse(localStorage.getItem("searchHistory") || "[]");
-    $search_store = {
-      articles: {
-        page: 0,
-        data: new Map(),
-        loading: false,
-        total: 0,
-      },
-      sportstacks: {
-        page: 0,
-        data: new Map(),
-        loading: false,
-        total: 0,
-      },
-      users: {
-        page: 0,
-        data: new Map(),
-        loading: false,
-        total: 0,
-      },
-      tags: {
-        page: 0,
-        data: new Map(),
-        loading: false,
-        total: 0,
-      },
-    };
+    skipMountSearch = true;
   });
 
   beforeNavigate(() => {
@@ -129,6 +104,7 @@
   let inputNode: null | HTMLInputElement | HTMLTextAreaElement = null;
   let skipBlur = false;
   let suggestions: any[] = [];
+  let skipMountSearch = true;
 
   const viewMap = {
     posts: Articles,
@@ -151,7 +127,7 @@
   // │ Please keep very close attention to these methods and                  │
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  $: search = "";
+  $: search = $search_store.search;
   $: ({ viewportType } = $session);
   $: ({ user: ctx_user } = $userSettings);
   $: searchHistory = [] as string[];
@@ -205,6 +181,10 @@
   }
 
   function doSearch(value: string) {
+    if (skipMountSearch) {
+      skipMountSearch = false;
+      return;
+    }
     usersSearch({ search: value, page: 0 });
     authorSearch({ search: value, page: 0 });
     tagsSearch({ search: value, page: 0 });
@@ -229,7 +209,7 @@
 
   async function suggestClick(suggest: string) {
     const url = `/api/data/search.suggestions`;
-    search = suggest;
+    $search_store.search = suggest;
     inputBlur();
     await fetch(url, {
       method: "POST",
@@ -485,7 +465,7 @@
       <Input
         bind:node={inputNode}
         type="leading-text"
-        bind:value={search}
+        bind:value={$search_store.search}
         placeholder="Search"
         on:focus={inputFocus}
         on:blur={inputBlur}
@@ -557,7 +537,7 @@
           <button
             class="recent-search-item"
             on:click={() => {
-              search = text;
+              $search_store.search = text;
             }}
           >
             {text}

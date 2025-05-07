@@ -12,7 +12,9 @@ const search_store: Writable<{
   users: ISection;
   sportstacks: ISection;
   tags: ISection;
+  search: string
 }> = writable({
+  search: "",
   articles: {
     page: 0,
     data: new Map(),
