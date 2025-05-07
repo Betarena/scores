@@ -31,28 +31,7 @@ import type { BetarenaUser, IUserSetting } from '$lib/types/types.user-settings.
 
 // #endregion ➤ 📦 Package Imports
 
-// #region ➤ 📌 VARIABLES
-
-let
-  /**
-   * @description
-   *  📣 Target `data` store.
-   */
-  userSettings: IUserSetting
-    = {
-      lang: 'en',
-      theme: 'Dark',
-      country_bookmaker: undefined,
-      geoJs: undefined,
-      user: undefined,
-      voted_fixtures: [],
-      userguide_id_opt_out: [],
-      // ╭──────────────────────────────────────────────────────────────────────────────────╮
-      // │ 📌 │ DEFAULT                                                                     │
-      // ╰──────────────────────────────────────────────────────────────────────────────────╯
-      _SIDE_EFFECTS_: new Set()
-    }
-;
+// #region ➤ ⛩️ TYPES
 
 export type IDataProp =
   | 'lang'
@@ -73,6 +52,7 @@ export type IDataProp =
   | 'user-buttons-order'
   | 'user-subscriptions'
   | 'user-highlighted-sportstack'
+  | 'history-preference-articles-content-feed'
 ;
 
 enum DataPropEnum
@@ -95,7 +75,37 @@ enum DataPropEnum
   USER_SUBSCRIPTION = 'user-subscriptions',
   USER_BUTTONS_ORDER = 'user-buttons-order',
   USER_HIGHLIGHTED_SPORTSTACK = 'user-highlighted-sportstack',
+  HISTORY_PREFERENCE_ARTICLES_CONTENT_FEED = 'history-preference-articles-content-feed'
 }
+
+// #endregion ➤ ⛩️ TYPES
+
+// #region ➤ 📌 VARIABLES
+
+let
+  /**
+   * @description
+   *  📣 Target `data` store.
+   */
+  userSettings: IUserSetting
+    = {
+      lang: 'en',
+      theme: 'Dark',
+      country_bookmaker: undefined,
+      geoJs: undefined,
+      user: undefined,
+      voted_fixtures: [],
+      userguide_id_opt_out: [],
+      objHistory:
+      {
+        strContentSelectFeed: 'home'
+      },
+      // ╭──────────────────────────────────────────────────────────────────────────────────╮
+      // │ 📌 │ DEFAULT                                                                     │
+      // ╰──────────────────────────────────────────────────────────────────────────────────╯
+      _SIDE_EFFECTS_: new Set()
+    }
+;
 
 // #endregion ➤ 📌 VARIABLES
 
@@ -189,6 +199,10 @@ function createLocalStore
                 user: undefined,
                 voted_fixtures: [],
                 userguide_id_opt_out: [],
+                objHistory:
+                {
+                  strContentSelectFeed: 'home'
+                },
                 _SIDE_EFFECTS_: new Set(['IsAnonymousNew'])
               }
             ;
@@ -219,9 +233,8 @@ function createLocalStore
          * @author
          *  @migbash
          * @summary
-         *  - 🟥 MAIN
+         *  - 🟥 IMPORTANT CRITICAL
          *  - 🔹 HELPER
-         *  - IMPORTANT
          * @description
          *   📝 Validates and patches up `localStorage` for errors and versioning migration.
          */
@@ -242,6 +255,12 @@ function createLocalStore
           if (data.userguide_id_opt_out == undefined)
             data.userguide_id_opt_out = [];
           ;
+          // ╭─────
+          // │ NOTE: IMPORTANT
+          // │ │: force legacy users to have _this_ object data property.
+          // │ │: necessary for new logic to work better.
+          // ╰─────
+          data.objHistory = data.objHistory ?? { strContentSelectFeed: 'home' };
           return data;
         },
 
@@ -398,6 +417,7 @@ function createLocalStore
           // ╰─────
           if (userSettings._SIDE_EFFECTS_.size > 0)
           {
+            // eslint-disable-next-line no-console
             console.warn('[WARNING] ➤ userSettings._SIDE_EFFECTS_ is not empty, but no side-effects were triggered.', userSettings._SIDE_EFFECTS_);
             userSettings._SIDE_EFFECTS_ = new Set();
           }
@@ -507,6 +527,11 @@ function createLocalStore
                   userSettings.userguide_id_opt_out = userSettings.user.scores_user_data.userguide_id_opt_out;
                 ;
 
+                break;
+              }
+              case DataPropEnum.HISTORY_PREFERENCE_ARTICLES_CONTENT_FEED:
+              {
+                userSettings.objHistory.strContentSelectFeed = dataPoint as IUserSetting['objHistory']['strContentSelectFeed'];
                 break;
               }
               default: break;
