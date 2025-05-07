@@ -16,6 +16,10 @@ export async function searchUsers(search: string)
     fuse = new Fuse(users_list, {
       keys: ['usernameLower'],
       threshold: 0.3,
+      distance: 100,
+      location: 0,
+      ignoreLocation: true,
+      minMatchCharLength: 2
     });
   }
   if (!search) return [];
