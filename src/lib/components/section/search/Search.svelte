@@ -59,7 +59,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   onMount(() => {
-    searchHistory = JSON.parse(localStorage.getItem("searchHistory") || "[]");
+    searchHistory = JSON.parse(localStorage.getItem("searchHistory") || "[]").slice(0, 5);
     skipMountSearch = true;
   });
 
