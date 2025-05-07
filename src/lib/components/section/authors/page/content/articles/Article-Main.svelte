@@ -122,8 +122,9 @@
   // │ 💠 │ STORES ACCESS                                                               │
   // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-  $: ({ windowWidth, globalState } = $sessionStore);
-  $: ({ user: { scores_user_data: { following: { tags } = {} } = {} } = {} } = $userBetarenaSettings);
+  $: ({ windowWidth, globalState, serverLang } = $sessionStore);
+  // $: ({ user } = $userBetarenaSettings);
+  $: ({ user: { scores_user_data: { following: { tags } = {} } = {} } = {}, objHistory: { strContentSelectFeed } } = $userBetarenaSettings);
   $: [ VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1] ]
     = viewportChangeV2
     (
@@ -177,12 +178,7 @@
      * @description
      * 📝 State UI for `Loading Articles`.
      */
-    isStateLoadingArticles = true,
-    /**
-     * @description
-     * 📝 State UI for `selected` tag.
-     */
-    strStateSelectedFeed: 'home' | 'forecast' = 'home'
+    isStateLoadingArticles = true
   ;
 
   /**
@@ -239,30 +235,6 @@
     );
   }
 
-  $: if (globalState.has('Authenticated') || globalState.has('NotAuthenticated'))
-    listFeedViews = listFeedViews.map
-    (
-      (
-        item
-      ) =>
-      {
-        if (item.id === 0 && globalState.has('Authenticated'))
-          return {
-            ...item,
-            name: objPageDataWidget.objGeneralHomeTranslation?.translation?.for_you ?? 'For you'
-          }
-        else if (item.id === 0 && globalState.has('NotAuthenticated'))
-          return {
-            ...item,
-            name: objPageDataWidget.objGeneralHomeTranslation?.translation?.home ?? 'Home'
-          }
-          ;
-
-        return item;
-      }
-    );
-  ;
-
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -299,7 +271,7 @@
     intCurrentPage: number = 0
   ): void
   {
-    _strStateSelectedFeed ??= strStateSelectedFeed;
+    _strStateSelectedFeed ??= strContentSelectFeed;
 
     // [🐞]
     dlogv2
@@ -307,7 +279,7 @@
       '🚏 checkpoint ➤ Article-Main.helperReInitializeData(..) // START',
       [
         // `🔹 [var] ➤ objDataNew :: ${JSON.stringify(objDataNew)}`,
-        `🔹 [var] ➤ strStateSelectedFeed :: ${strStateSelectedFeed}`,
+        `🔹 [var] ➤ strContentSelectFeed :: ${strContentSelectFeed}`,
         `🔹 [var] ➤ _strStateSelectedFeed :: ${_strStateSelectedFeed}`,
       ]
     );
@@ -400,12 +372,12 @@
         strGroupName: '🚏 checkpoint ➤ helperSelectFeed(..) // START',
         msgs:
         [
-          `🔹 [var] ➤ strStateSelectedFeed :: ${strStateSelectedFeed}`
+          `🔹 [var] ➤ strContentSelectFeed :: ${strContentSelectFeed}`
         ]
       }
     );
 
-    if (!mapTagSelectData.has(strStateSelectedFeed))
+    if (!mapTagSelectData.has(strContentSelectFeed))
       helperLoadTagArticles();
     ;
 
@@ -446,7 +418,7 @@
        * @description
        * 📝 Selected 'tag' tab data.
        */
-      objSelectedFeed = mapTagSelectData.get(strStateSelectedFeed)
+      objSelectedFeed = mapTagSelectData.get(strContentSelectFeed)
     ;
 
     if
@@ -503,7 +475,7 @@
        * @description
        * 📝 URL to be requested.
        */
-      url = `/api/data/author.home?&lang=${$sessionStore.serverLang}&page=${page}&type=${strStateSelectedFeed}`
+      url = `/api/data/author.home?&lang=${serverLang}&page=${page}&type=${strContentSelectFeed}`
     ;
 
     if (tags?.length)
@@ -604,7 +576,7 @@
         style=
         "
         {
-          strStateSelectedFeed === (item.id === 0 ? 'home' : 'forecast')
+          strContentSelectFeed === (item.id === 0 ? 'home' : 'forecast')
             ? 'background-color: #313131; color: #F5620F;'
             : 'color: #8C8C8C;'
         }
@@ -613,17 +585,31 @@
         {
           () =>
           {
-            strStateSelectedFeed
+            strContentSelectFeed
               = item.id === 0
                 ? 'home'
                 : 'forecast'
             ;
+            userBetarenaSettings.updateData
+            (
+              [
+                ['history-preference-articles-content-feed', strContentSelectFeed]
+              ]
+            );
             helperSelectFeed();
             return;
           }
         }
       >
-        {item.name}
+        {#if item.id === 0 && globalState.has('Authenticated')}
+        <!-- {#if item.id === 0 && user} -->
+          {objPageDataWidget.objGeneralHomeTranslation?.translation?.for_you ?? 'For you'}
+        {:else if item.id === 0 && globalState.has('NotAuthenticated')}
+        <!-- {#if item.id === 0} -->
+          {objPageDataWidget.objGeneralHomeTranslation?.translation?.home ?? 'Home'}
+        {:else}
+          {item.name}
+        {/if}
       </Button>
     {/each}
   {/if}
@@ -640,7 +626,7 @@
   <div
     class="listArticlesMod"
   >
-    {#each [...(mapTagSelectData.get(strStateSelectedFeed)?.mapArticlesMod.entries() ?? [])] as [id,article] (id)}
+    {#each [...(mapTagSelectData.get(strContentSelectFeed)?.mapArticlesMod.entries() ?? [])] as [id,article] (id)}
       <ArticleCard
         mobile={VIEWPORT_MOBILE_INIT[1]}
         tablet={VIEWPORT_TABLET_INIT[1]}
@@ -658,7 +644,7 @@
     {/if}
   </div>
 
-  {#if (VIEWPORT_TABLET_INIT[1] || VIEWPORT_MOBILE_INIT[1]) && !globalState.has('IsPWA') && (mapTagSelectData.get(strStateSelectedFeed)?.mapArticlesMod ?? new Map).size}
+  {#if (VIEWPORT_TABLET_INIT[1] || VIEWPORT_MOBILE_INIT[1]) && !globalState.has('IsPWA') && (mapTagSelectData.get(strContentSelectFeed)?.mapArticlesMod ?? new Map).size}
     <div class="load-more">
       <Button type="outline" on:click={helperTryLoadMore}>Load More</Button>
     </div>
