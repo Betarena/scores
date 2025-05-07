@@ -222,10 +222,14 @@ export async function selectLanguage
       (
         '🚏 checkpoint ➤ selectLanguage(..) // CONDITION [x1.0]',
         [
+          `🔹 [var] ➤ page.url.pathname :: ${page.url.pathname}`,
+          `🔹 [var] ➤ page.url.search :: ${page.url.search}`,
           `🔹 [var] ➤ strLangOld2 :: ${strLangOld2}`,
           `🔹 [var] ➤ strUrlNew :: ${strUrlNew}`,
         ]
       );
+
+      await invalidateAll();
 
       await gotoSW
       (
