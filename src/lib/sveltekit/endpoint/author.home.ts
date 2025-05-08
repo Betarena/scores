@@ -83,7 +83,7 @@ export async function main
                 page: Number(queryParamPage),
                 // @ts-expect-error
                 strTypeQuery: queryTypeQuery ?? 'forecast',
-                listIntTagIdsExluded: [1673, 1648, 1676, 1650, 1681, 1668, 1680, 1093],
+                listIntTagIdsExluded: [1673, 1648, 1676, 1650, 1681, 1668, 1680, 1093, 7132, 12366],
                 userFollowingTagIds: queryUserFollowingTagIds
                   ?.split(',')
                   ?.map
