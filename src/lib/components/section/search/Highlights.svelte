@@ -232,6 +232,8 @@
       flex-wrap: wrap;
       background: var(--colors-background-bg-main);
       gap: 16px 10px;
+      overflow: hidden;
+      max-height: calc((26px + 16px) * 3 + 16px) ;
     }
     .articles-wrapper {
       display: flex;
