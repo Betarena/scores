@@ -58,6 +58,7 @@
       routeIdPageProfileEditArticle,
       routeIdPageProfilePublication,
       routeIdScores,
+      routeIdSearch,
     } from '$lib/constants/paths.js';
   import { scoresAdminStore } from '$lib/store/admin.js';
   import sessionStore from '$lib/store/session.js';
@@ -790,7 +791,7 @@
     <!-- <EmailSubscribe /> -->
   {/if}
 
-  {#if ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle].includes($page.route.id )}
+  {#if ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle, routeIdSearch].includes($page.route.id )}
      <HeaderRedesigned />
   {/if}
 

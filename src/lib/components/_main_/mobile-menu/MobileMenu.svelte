@@ -144,8 +144,9 @@
     {
       id: "search",
       icon: Search,
-      type: "search",
-      label: "BTA",
+      type: "link",
+      url: `/search`,
+      label: "Search",
       route: null,
     },
     {
@@ -206,10 +207,6 @@
 
   function buttonClick(id: string, e?: MouseEvent) {
     switch (id) {
-      case "search":
-        $modalStore.component = SearchModal;
-        $modalStore.show = true;
-        break
       case "bta":
       case "profile":
         if (!isAuth) {

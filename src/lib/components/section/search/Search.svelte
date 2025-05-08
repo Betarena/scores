@@ -35,7 +35,6 @@
   import { onMount } from "svelte";
   import ArrowCirlcleBrokenRight from "$lib/components/ui/assets/arrow-cirlcle-broken-right.svelte";
   import XClose from "$lib/components/ui/assets/x-close.svelte";
-  import { modalStore } from "$lib/store/modal.js";
   import { searchUsers } from "$lib/firebase/search.js";
   import Articles from "./Articles.svelte";
   import Users from "./Users.svelte";
@@ -44,7 +43,6 @@
   import search_store from "./search_store.js";
   import Highlights from "./Highlights.svelte";
   import { debounce } from "$lib/utils/fetch.js";
-  import { beforeNavigate } from "$app/navigation";
   import SuggestingResults from "./SuggestingResults.svelte";
 
   // #endregion ➤ 📦 Package Imports
@@ -61,10 +59,6 @@
   onMount(() => {
     searchHistory = JSON.parse(localStorage.getItem("searchHistory") || "[]").slice(0, 5);
     skipMountSearch = true;
-  });
-
-  beforeNavigate(() => {
-    $modalStore.show = false;
   });
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
@@ -448,14 +442,14 @@
 <div class="search-container {viewportType}">
   <div
     class="search-wrapper"
-    in:fly={{ x: 0, y: -100, duration: 400, easing: quadOut }}
-    out:fly={{ x: 0, y: -100, duration: 400, easing: quadIn }}
+    in:fly={{ x: 0, y: -100, duration: 600, easing: quadOut }}
+    out:fly={{ x: 0, y: -150, duration: 600, easing: quadOut }}
   >
     <div class="input-wrapper">
       <button
         class="search-close"
         on:click={() => {
-          $modalStore.show = false;
+          history.back();
         }}
       >
         <XClose />
@@ -502,7 +496,6 @@
   {#if search && isInputInFocus && suggestions.length}
     <div
       class="search-suggestions"
-      in:fade={{ duration: 400, easing: quadOut }}
     >
       {#each suggestions as suggest}
         <button
@@ -519,8 +512,8 @@
   {/if}
   <div
     class="search-results"
-    in:fly={{ x: 0, y: 500, duration: 400, easing: quadOut }}
-    out:fly={{ x: 0, y: 500, duration: 400, easing: quadIn }}
+    in:fly={{ x: 0, y: 750, duration: 600, easing: quadOut }}
+    out:fly={{ x: 0, y: 750, duration: 600, easing: quadOut }}
   >
     {#if !search && !searchHistory.length}
       <div class="search-message-wrapper">
@@ -556,7 +549,7 @@
   <div
     class="search-bg"
     in:fade={{
-      duration: viewportType !== "desktop" ? 400 : 0,
+      duration: viewportType !== "desktop" ? 200 : 0,
       easing: cubicOut,
     }}
   />
@@ -585,6 +578,7 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
+      z-index: 4001;
       .search-bg {
         position: absolute;
         top: 0;
