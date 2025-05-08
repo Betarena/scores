@@ -8,7 +8,7 @@
 -->
 
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher } from 'svelte';
 
   // #region ➤ 📌 VARIABLES
 
@@ -26,9 +26,9 @@
 
   export let width: number | string = 200,
     height: number | string = 50,
-    classname: string = "",
+    classname: string = '',
     full = false,
-    href = "";
+    href = '';
   export let disabled = false;
 
   export let /**
@@ -36,17 +36,18 @@
      *  button styles: primary | outline
      */ // eslint-disable-next-line no-unused-vars
     type:
-      | "primary"
-      | "outline"
-      | "secondary"
-      | "secondary-gray"
-      | "primary-outline"
-      | "terlary-gray"
-      | "tertiary"
-      | "subtle" = "primary";
+      | 'primary'
+      | 'outline'
+      | 'secondary'
+      | 'secondary-gray'
+      | 'primary-outline'
+      | 'terlary-gray'
+      | 'tertiary'
+      | 'tertiary-v2'
+      | 'subtle' = 'primary';
 
   export let submit = false;
-  export let size: "lg" | "md" | "sm" | "xl" | "xxl" = "lg";
+  export let size: 'lg' | 'md' | 'sm' | 'xl' | 'xxl' = 'lg';
   export let destructive = false;
   export let icon_leading = false;
 
@@ -73,16 +74,17 @@
     class:disabled
     class:icon_leading
     {...$$restProps}
-    type={submit ? "submit" : "button"}
+    type={submit ? 'submit' : 'button'}
     class:hover
     class:destructive
-    on:mouseenter={() => (hover = true)}
-    on:mouseleave={() => (hover = false)}
-    on:touchend={() => (hover = false)}
-    on:mouseup={() => (hover = false)}
-    on:click={() => {
+    on:mouseenter={() => {return (hover = true)}}
+    on:mouseleave={() => {return (hover = false)}}
+    on:touchend={() => {return (hover = false)}}
+    on:mouseup={() => {return (hover = false)}}
+    on:click={() =>
+    {
       if (disabled) return;
-      dispatch("click");
+      dispatch('click');
       hover = false;
     }}
   >
@@ -95,16 +97,17 @@
     class:disabled
     class:icon_leading
     {...$$restProps}
-    type={submit ? "submit" : "button"}
+    type={submit ? 'submit' : 'button'}
     class:hover
     class:destructive
-    on:mouseenter={() => (hover = true)}
-    on:mouseleave={() => (hover = false)}
-    on:touchend={() => (hover = false)}
-    on:mouseup={() => (hover = false)}
-    on:click={() => {
+    on:mouseenter={() => {return (hover = true)}}
+    on:mouseleave={() => {return (hover = false)}}
+    on:touchend={() => {return (hover = false)}}
+    on:mouseup={() => {return (hover = false)}}
+    on:click={() =>
+    {
       if (disabled) return;
-      dispatch("click");
+      dispatch('click');
       hover = false;
     }}
   >
@@ -444,6 +447,31 @@
           #ea2b2b
         );
       }
+    }
+  }
+
+  .tertiary-v2
+  {
+    background: inherit;
+
+    color: #8C8C8C;
+
+    &.selected
+    {
+      background-color: #313131;
+      color: #f5620f;
+    }
+
+    &:hover,
+    &.hover
+    {
+      background-color: #313131;
+      color: #d4550c !important;
+    }
+
+    &:focus
+    {
+      box-shadow: 0px 0px 0px 2px black, 0px 0px 0px 4px #F5620F;
     }
   }
 </style>

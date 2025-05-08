@@ -572,14 +572,18 @@
     {#each listFeedViews as item}
       <Button
         full={true}
-        type="tertiary"
-        style=
+        type="tertiary-v2"
+        classname=
         "
         {
           strContentSelectFeed === (item.id === 0 ? 'home' : 'forecast')
-            ? 'background-color: #313131; color: #F5620F;'
-            : 'color: #8C8C8C;'
+            ? 'selected'
+            : ''
         }
+        "
+        style=
+        "
+        height: 36px;
         "
         on:click=
         {
@@ -635,7 +639,7 @@
     {/each}
 
     {#if isStateLoadingArticles}
-      {#each Array(10) as _item}
+      {#each { length: 10 } as _}
         <ArticleLoader
           mobile={VIEWPORT_MOBILE_INIT[1]}
           tablet={VIEWPORT_TABLET_INIT[1]}
@@ -644,7 +648,11 @@
     {/if}
   </div>
 
-  {#if (VIEWPORT_TABLET_INIT[1] || VIEWPORT_MOBILE_INIT[1]) && !globalState.has('IsPWA') && (mapTagSelectData.get(strContentSelectFeed)?.mapArticlesMod ?? new Map).size}
+  {#if
+    (VIEWPORT_TABLET_INIT[1] || VIEWPORT_MOBILE_INIT[1])
+    && !globalState.has('IsPWA')
+    && (mapTagSelectData.get(strContentSelectFeed)?.mapArticlesMod ?? new Map).size
+  }
     <div class="load-more">
       <Button type="outline" on:click={helperTryLoadMore}>Load More</Button>
     </div>
