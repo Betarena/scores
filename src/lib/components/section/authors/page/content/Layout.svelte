@@ -287,6 +287,7 @@
 
         .tabbar-wrapper {
           padding: 0px 16px;
+          padding-bottom: 11px;
         }
 
         .listArticlesMod {
