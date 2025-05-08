@@ -333,10 +333,13 @@
         gap: 12px;
 
         .title {
-          line-height: 24px;
           padding-right: 16px;
           -webkit-line-clamp: 3;
           height: 72px;
+          font-size: var(--font-size-text-md, 16px);
+          font-style: normal;
+          font-weight: 500;
+          line-height: var(--line-height-text-md, 24px)
         }
         .author-wrapper {
           padding-right: 16px;
