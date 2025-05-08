@@ -19,7 +19,9 @@ export async function searchUsers(search: string) {
   }
   if (!search) return [];
   const trySearch = (q: string) =>
-    fuse?.search<{ item: (typeof users_list)[0] }>(q).map((r) => r.item) || [];
+    fuse?.search<{
+      [x: string]: any; item: (typeof users_list)[0]
+}>(q).map((r) => ({...r.item, uid: r.item?.id})) || [];
 
   let results = trySearch(search);
 
