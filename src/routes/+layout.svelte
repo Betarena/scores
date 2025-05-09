@@ -42,7 +42,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { browser } from '$app/environment';
-  import { afterNavigate } from '$app/navigation';
+  import { afterNavigate, beforeNavigate } from '$app/navigation';
   import { page } from '$app/stores';
   import { onMount } from 'svelte';
 
@@ -85,6 +85,7 @@
   // import '@betarena/ad-engine';
   // import WidgetAdEngine from '@betarena/ad-engine/src/lib/Widget-AdEngine.svelte';
   import WidgetAdEngine from '@betarena/ad-engine';
+  import history_store from '$lib/utils/history.js';
 
   // ╭─────
   // │ WARNING:
@@ -496,6 +497,13 @@
       ;
     }
   );
+
+
+  beforeNavigate(({from}) => {
+    if (!from) return;
+    const {url} = from;
+    $history_store.push(url.pathname);
+  })
 
   afterNavigate
   (

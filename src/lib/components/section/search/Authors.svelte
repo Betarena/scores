@@ -61,9 +61,9 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<div class="wrapper" use:infiniteScroll={{ loadMore, hasMore: true, loading }}>
+<div class="wrapper" use:infiniteScroll={{ loadMore, hasMore: !!$search_store.sportstacks.next_page_count, loading }}>
   {#if sportstacks.size || $search_store.sportstacks.loading}
-    <SportsTackList {sportstacks} {translations} {loading} size="lg" />
+    <SportsTackList {sportstacks} {translations} {loading} size="lg"  limit={$search_store.sportstacks.next_page_count}/>
   {:else}
     <NoResults />
   {/if}

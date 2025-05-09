@@ -4,7 +4,8 @@ interface ISection {
   page: number;
   data: Map<number | string, any>;
   loading: boolean;
-  total: number;
+  total?: number;
+  next_page_count?: number;
 }
 
 const search_store: Writable<{

@@ -44,6 +44,8 @@
   import Highlights from "./Highlights.svelte";
   import { debounce } from "$lib/utils/fetch.js";
   import SuggestingResults from "./SuggestingResults.svelte";
+  import { preloadData } from "$app/navigation";
+  import history_store from "$lib/utils/history.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -59,6 +61,8 @@
   onMount(() => {
     searchHistory = JSON.parse(localStorage.getItem("searchHistory") || "[]").slice(0, 5);
     skipMountSearch = true;
+    const prevPage = $history_store.at(-1) || "/";
+    preloadData(prevPage)
   });
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
@@ -245,12 +249,12 @@
     const r = await res.json();
     if (!page) {
       $search_store.sportstacks.data = new Map(
-        r.authors.map((author) => [author.id, author])
+        r.data.map((author) => [author.id, author])
       );
       $search_store.sportstacks.page = 0;
     } else {
       const newMap = new Map(
-        r.authors.map((author) => [author.id, author])
+        r.data.map((author) => [author.id, author])
       ) as Map<string, any>;
       $search_store.sportstacks.data = new Map([
         ...$search_store.sportstacks.data,
@@ -258,6 +262,7 @@
       ]);
       $search_store.sportstacks.page = page;
     }
+    $search_store.sportstacks.next_page_count = r.next_page_count;
     $search_store.sportstacks.loading = false;
   }
 
@@ -344,7 +349,7 @@
     const r = await res.json();
     if (!page) {
       $search_store.articles.data = new Map(
-        r.articles.map((article) => [
+        r.data.map((article) => [
           article.id,
           {
             ...article,
@@ -355,7 +360,7 @@
       $search_store.articles.page = 0;
     } else {
       const newMap = new Map(
-        r.articles.map((article) => [
+        r.data.map((article) => [
           article.id,
           {
             ...article,
@@ -369,6 +374,7 @@
       ]);
       $search_store.articles.page = page;
     }
+    $search_store.articles.next_page_count = r.next_page_count;
     $search_store.articles.loading = false;
   }
 

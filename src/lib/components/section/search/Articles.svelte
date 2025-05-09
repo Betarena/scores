@@ -89,7 +89,7 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<div class="wrapper" use:infiniteScroll={{ loadMore, hasMore: true, loading }}>
+<div class="wrapper" use:infiniteScroll={{ loadMore, hasMore: !!$search_store.articles.next_page_count, loading }}>
   {#if articles.size || $search_store.articles.loading}
     {#if articles.size > 0}
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -100,7 +100,7 @@
     {/if}
 
     {#if loading}
-      {#each Array(10) as _}
+      {#each Array($search_store.articles.next_page_count) as _}
         <ArticleLoader {mobile} {tablet} />
       {/each}
     {/if}
