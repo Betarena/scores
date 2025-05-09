@@ -7,5 +7,5 @@ export const AuthorsSearchEndpoint: RequestHandler = async ({url}) => {
   const limit = url.searchParams.get('limit') || '10';
   const offset = parseInt(page) * parseInt(limit);
   const result = await searchAuthors({text, offset, limit: parseInt(limit)})
-  return json({authors: result})
+  return json(result)
 };

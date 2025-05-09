@@ -8,5 +8,5 @@ export const ArticlesSearchEndpoint: RequestHandler = async ({url, locals}) => {
   const offset = parseInt(page) * parseInt(limit);
   const lang = locals.user ? JSON.parse(locals.user).lang : "en";
   const result = await searchArticles({ text, offset, limit: parseInt(limit), lang });
-  return json({articles: result})
+  return json(result)
 };
