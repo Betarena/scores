@@ -164,12 +164,16 @@
         >(),
     /**
      * @description
-     * 📝 `List` data for `tag(s)`, ready for frontend consumption.
+     * 📝 `Map` data for `tag(s)`, ready for frontend consumption.
      */
-    listFeedViews: IPageAuthorTagDataFinal['mapTag'][0][1][]
-      = [
-        { id: 0, name: 'Home' }
-      ],
+    mapFeedViews
+      = new Map (
+        [
+          [
+            'home', { id: 0, name: 'Home' }
+          ]
+        ]
+      ),
 
     // ╭──────────────────────────────────────────────────────────────────────────────────╮
     // │ 💠 │ STATUS STATE                                                                │
@@ -215,9 +219,21 @@
     ]
   );
 
-  $: if (objPageDataWidget.objAuthorContentForecast?.tagId && mapTags.size > 0 && listFeedViews.length === 1)
-    listFeedViews.push(mapTags.get(objPageDataWidget.objAuthorContentForecast.tagId));
-  ;
+  $: if (objPageDataWidget.objAuthorContentForecast?.tagId && mapTags.size > 0)
+  {
+    mapFeedViews.set
+    (
+      'forecast',
+      {
+        id: objPageDataWidget.objAuthorContentForecast.tagId,
+        name: mapTags.get(objPageDataWidget.objAuthorContentForecast.tagId)?.name ?? ''
+      }
+    );
+    // ╭─────
+    // │ IMPORTANT CRITICAL
+    // ╰─────
+    mapFeedViews = mapFeedViews;
+  }
 
   $: if (browser)
   {
@@ -570,14 +586,14 @@
   }
   "
 >
-  {#if listFeedViews.length}
+  {#if mapFeedViews.size > 0}
     <!--
     ╭─────
     │ NOTE:
     │ |:
     ╰─────
     -->
-    {#each listFeedViews as item}
+    {#each [...mapFeedViews.entries()] as [, item]}
       <Button
         full={true}
         type="tertiary-v2"
