@@ -225,13 +225,17 @@
     (
       // @ts-expect-error :: <?>
       objPageDataWidget.objAuthorContentHome,
-      'home'
+      'home',
+      0,
+      true
     );
     helperReInitializeData
     (
       // @ts-expect-error :: <?>
       objPageDataWidget.objAuthorContentForecast,
-      'forecast'
+      'forecast',
+      0,
+      true
     );
   }
 
@@ -268,7 +272,8 @@
   (
     objDataNew: ITagsWidgetData,
     _strStateSelectedFeed: null | 'home' | 'forecast' = null,
-    intCurrentPage: number = 0
+    intCurrentPage: number = 0,
+    isReset: boolean = false
   ): void
   {
     _strStateSelectedFeed ??= strContentSelectFeed;
@@ -297,7 +302,10 @@
        * @description
        * 📝 `Map` article generated from OLD data.
        */
-      mapOldArticlesMod: Map < number, IArticle > = mapTagSelectData.get(_strStateSelectedFeed)?.mapArticlesMod ?? new Map(),
+      mapOldArticlesMod: Map < number, IArticle >
+        = isReset
+          ? new Map()
+          : (mapTagSelectData.get(_strStateSelectedFeed)?.mapArticlesMod ?? new Map()),
       /**
        * @description
        * 📝 `Map` article generated from NEW data.
