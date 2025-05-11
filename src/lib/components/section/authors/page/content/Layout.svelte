@@ -228,7 +228,7 @@
         display: flex;
         align-items: start;
         gap: 16px;
-        width: 824px;
+        // width: 824px;
         font-size: var(--text-size-m);
 
         .add-icon
