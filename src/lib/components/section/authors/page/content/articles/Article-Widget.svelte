@@ -44,17 +44,44 @@
   import sessionStore from '$lib/store/session.js';
 
   import SeoBox from '$lib/components/SEO-Box.svelte';
-  import Tabbar from '$lib/components/ui/Tabbar.svelte';
   import ArticleLoader from './Article-Loader.svelte';
   import ArticleMain from './Article-Main.svelte';
 
   import { viewportChangeV2 } from '$lib/utils/device.js';
   import { mutateStringToPermalink } from '@betarena/scores-lib/dist/util/language.js';
 
+  import type { IPageTranslationHomeDataFinal } from '@betarena/scores-lib/types/v8/core.translation.js';
   import type { IPageAuthorTagDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
-  import type { IPageAuthorTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.tags.js';
 
   // #endregion ➤ 📦 Package Imports
+
+  // #region ➤ ⛩️ TYPES
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🔹 INTERFACE
+   * @description
+   *  📝 Interface for `_this_` page required at preload.
+   */
+  interface IPreloadResponse
+  {
+    /**
+     * @description
+     */
+    objAuthorContentHome?: IPageAuthorTagDataFinal;
+    /**
+     * @description
+     */
+    objAuthorContentForecast?: IPageAuthorTagDataFinal;
+    /**
+     * @description
+     */
+    objGeneralHomeTranslation?: IPageTranslationHomeDataFinal;
+  }
+
+  // #endregion ➤ ⛩️ TYPES
 
   // #region ➤ 📌 VARIABLES
 
@@ -88,8 +115,12 @@
     VIEWPORT_TABLET_INIT: [number, boolean] = [1160, true]
   ;
 
+  // ╭──────────────────────────────────────────────────────────────────────────────────╮
+  // │ 💠 │ STORES ACCESS                                                               │
+  // ╰──────────────────────────────────────────────────────────────────────────────────╯
+
   $: ({ windowWidth } = $sessionStore);
-  $: [mobile, tablet]
+  $: [ VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1] ]
     = viewportChangeV2
     (
       windowWidth,
@@ -98,34 +129,11 @@
     )
   ;
 
-  $: widgetData = $page.data as IPageAuthorTagDataFinal & {
-    translations: IPageAuthorTranslationDataFinal;
-  } | undefined;
-  /**
-   * @description
-   * 📝 Interecpted data for `map` instance of `tag(s)`.
-   */
-  $: mapTags = new Map(widgetData?.mapTag ?? []);
-  /**
-   * @description
-   * 📝 Interecpted data for `map` instance of `author(s)`.
-   */
-  $: mapAuthors = new Map(widgetData?.mapAuthor ?? []);
-  /**
-   * @description
-   * 📝 Interecpted data for `map` instance of `article(s)`.
-   */
-  $: mapArticles = new Map(widgetData?.mapArticle ?? []);
-  /**
-   * @description
-   * 📝 Currently selected tag data.
-   */
-  $: selectedTag = mapTags.get(widgetData?.tagId ?? 0);
-  /**
-   * @description
-   * 📝 Categories avaialble.
-   */
-  $: categories = selectedTag != undefined ? [selectedTag] : [];
+  // ╭──────────────────────────────────────────────────────────────────────────────────╮
+  // │ 💠 │ WIDGET ACCESS                                                               │
+  // ╰──────────────────────────────────────────────────────────────────────────────────╯
+
+  $: ( { objAuthorContentHome, objAuthorContentForecast } = ($page.data as IPreloadResponse) );
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -178,36 +186,55 @@
 -->
 
 <SeoBox>
-  <h1>{selectedTag?.name}</h1>
 
   <!--
-  ╭─────
-  │ > Loop through articles
-  ╰─────
+  ╭──────────────────────────────────────────────────────────────────────────────────╮
+  │ 💠 │ AUTHOR - HOME FEED SEO                                                      │
+  ╰──────────────────────────────────────────────────────────────────────────────────╯
   -->
-  {#each [...mapArticles.entries()] as [, article]}
-    <h2>
-      {article.data?.title}
-    </h2>
-    <a>{article.a}</a>
-    <a
-      href={`/a/${article.permalink}`}
-    >
-      {article.data?.title}
-    </a>
+
+  <h1>Home</h1>
+
+  {#each (objAuthorContentHome?.mapArticle ?? []) as [, article]}
+    <h2>{article.data?.title}</h2>
+    <a href={`/a/${article.permalink}`}>{article.data?.title}</a>
   {/each}
 
-  <!--
-  ╭─────
-  │ > Loop through tags
-  ╰─────
-  -->
-  {#each [...mapTags.entries()] as [_id, tag]}
+  {#each (objAuthorContentHome?.mapTag ?? []) as [, tag]}
     <a href={`/a/tag/${tag.permalink}`}>{tag.name}</a>
   {/each}
 
-  {#each [...mapAuthors.entries()] as [_id, author]}
-  <a href="/a/user/{mutateStringToPermalink(author?.data?.username)}" >{author?.data?.username}</a>
+  {#each (objAuthorContentHome?.mapAuthor ?? []) as [, author]}
+    {#if author.data?.username}
+      <a href="/a/user/{mutateStringToPermalink(author.data.username)}">
+        {author.data.username}
+      </a>
+    {/if}
+  {/each}
+
+  <!--
+  ╭──────────────────────────────────────────────────────────────────────────────────╮
+  │ 💠 │ AUTHOR - FORECAST FEED SEO                                                  │
+  ╰──────────────────────────────────────────────────────────────────────────────────╯
+  -->
+
+  <h1>{(new Map(objAuthorContentForecast?.mapTag ?? [])).get(objAuthorContentForecast?.tagId ?? 0)?.name}</h1>
+
+  {#each (objAuthorContentForecast?.mapArticle ?? []) as [, article]}
+    <h2>{article.data?.title}</h2>
+    <a href={`/a/${article.permalink}`}>{article.data?.title}</a>
+  {/each}
+
+  {#each (objAuthorContentForecast?.mapTag ?? []) as [, tag]}
+    <a href={`/a/tag/${tag.permalink}`}>{tag.name}</a>
+  {/each}
+
+  {#each (objAuthorContentForecast?.mapAuthor ?? []) as [, author]}
+    {#if author.data?.username}
+      <a href="/a/user/{mutateStringToPermalink(author.data.username)}">
+        {author.data.username}
+      </a>
+    {/if}
   {/each}
 </SeoBox>
 
@@ -218,24 +245,12 @@
   ╰────────────────────────────────────────────────────────────────────────╯
   -->
   <div
-    class="tabbar-wrapper"
-  >
-    {#if categories.length}
-      <Tabbar
-        data={categories}
-        selected={selectedTag}
-        height={mobile ? 14 : 8}
-      />
-    {/if}
-  </div>
-
-  <div
     class="listArticlesMod"
   >
     {#each Array(10) as _item}
       <ArticleLoader
-        {mobile}
-        {tablet}
+        mobile={VIEWPORT_MOBILE_INIT[1]}
+        tablet={VIEWPORT_TABLET_INIT[1]}
       />
     {/each}
   </div>
