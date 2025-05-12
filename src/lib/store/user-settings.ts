@@ -23,11 +23,11 @@ import { writable } from 'svelte/store';
 
 import { updateButtonOrder, updateDataByKey, updateFollowing, updateHighlightedSpotstack } from '$lib/firebase/common.js';
 import { log_v3 } from '$lib/utils/debug.js';
-import { setCookie } from './cookie.js';
 import { parseObject } from '$lib/utils/string.2.js';
+import { setCookie } from './cookie.js';
 
 import type { IBetarenaUserCookie } from '$lib/types/types.cookie.js';
-import type { BetarenaUser, IUserSetting, Voted_Fixture } from '$lib/types/types.user-settings.js';
+import type { BetarenaUser, IUserSetting } from '$lib/types/types.user-settings.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -324,7 +324,7 @@ function createLocalStore
           localStorage.setItem
           (
             key,
-            JSON.stringify
+            parseObject
             (
               data
             )
@@ -347,103 +347,9 @@ function createLocalStore
         /**
          * @author
          *  @migbash
-         * @summary
-         *  🔹 HELPER
-         * @description
-         *  📝 Updates `userguides-op-out` preference.
-         * @param { number } id
-         *  ❗️ **REQUIRED** Target **uiserguide** `id`.
-         * @returns { void }
-         */
-        updateToggleUserGuideOpt:
-        (
-          id: number
-        ): void =>
-        {
-          const
-            /**
-             * @description
-             * 📝 Target `localStorage` data.
-             */
-            localStore = methods.parseLocalStorage()
-          ;
-
-          if (!localStore) return;
-
-          if (localStore.userguide_id_opt_out?.includes(id))
-            localStore.userguide_id_opt_out
-              = localStore.userguide_id_opt_out
-                .filter
-                (
-                  x => { return x != id }
-                )
-            ;
-          else
-            localStore.userguide_id_opt_out?.push(id);
-          ;
-
-          localStore.userguide_id_opt_out = [...new Set(localStore.userguide_id_opt_out)];
-
-          methods.setLocalStorage
-          (
-            localStore
-          );
-        },
-
-        /**
-         * @author
-         *  @migbash
-         * @summary
-         *  - ♦️ IMPORTANT
-         *  - 🔹 HELPER
-         * @description
-         *  📝 Update `user` with target vote casting.
-         * @param { Voted_Fixture } vote
-         *  ❗️ **REQUIRED** **Latest** `user` vote data.
-         * @return { void }
-         */
-        addToVotes:
-        (
-          vote: Voted_Fixture
-        ): void =>
-        {
-          const
-            /**
-             * @description
-             * 📝 Target `localStorage` data.
-             */
-            localStore = methods.parseLocalStorage()
-          ;
-
-          if (!localStore) return;
-
-          if (localStore.voted_fixtures == undefined)
-            localStore.voted_fixtures = [];
-          ;
-
-          localStore.voted_fixtures.push
-          (
-            vote
-          );
-
-          // ╭─────
-          // │ NOTE:
-          // │ > Approach Num.2
-          // ╰─────
-          methods.setLocalStorage
-          (
-            localStore
-          );
-
-          return;
-        },
-
-        /**
-         * @author
-         *  @migbash
          * @summary_tags
-         *  - ♦️ IMPORTANT
          *  - 🔹 HELPER
+         *  - ♦️ IMPORTANT & CRITICAL
          * @error_handle_notice
          *  🔰 HANDLED
          *    │: Error is caught & handled.
@@ -481,12 +387,15 @@ function createLocalStore
             {
               strGroupName: '🚏 checkpoint ➤ Store | LocalStorage ➤ updateData(..) // START',
               msgs: [
-                `🔹 [var] ➤ data :|: ${parseObject(data)}`,
+                `🔹 [var] ➤ data :: ${parseObject(data)}`,
               ],
               closed: true
             }
           );
 
+          // ╭─────
+          // │ IMPORTANT CRITICAL
+          // ╰─────
           if (userSettings._SIDE_EFFECTS_.size > 0)
           {
             console.warn('[WARNING] ➤ userSettings._SIDE_EFFECTS_ is not empty, but no side-effects were triggered.', userSettings._SIDE_EFFECTS_);
@@ -498,9 +407,18 @@ function createLocalStore
              * @description
              * 📝 Follow-up action.
              */
-            setSideEffects: IUserSetting['_SIDE_EFFECTS_'] = new Set()
+            setSideEffects: IUserSetting['_SIDE_EFFECTS_'] = new Set(),
+            /**
+             * @description
+             * 📝 Target `localStorage` data.
+             */
+            objOldDataSnapshot = methods.extractUserDataSnapshot()
           ;
 
+          // ╭─────
+          // │ NOTE:
+          // │ |: Loop through data to update.
+          // ╰─────
           for (const iterator of data)
           {
             const
@@ -763,12 +681,18 @@ function createLocalStore
             userSettings
           );
 
-          setCookie
-          (
-            'betarenaScoresCookie',
-            JSON.stringify(methods.extractUserDataSnapshot()),
-            30
-          );
+          // ╭─────
+          // │ NOTE:
+          // │ |: Update cookie data, if necessary.
+          // ╰─────
+          if (parseObject(objOldDataSnapshot) != parseObject(methods.extractUserDataSnapshot()))
+            setCookie
+            (
+              'betarenaScoresCookie',
+              parseObject(methods.extractUserDataSnapshot()),
+              30
+            );
+          ;
 
           return;
         },
@@ -778,7 +702,7 @@ function createLocalStore
          *  @migbash
          * @summary
          *  - 🔹 HELPER
-         *  - IMPORTANT
+         *  - ♦️ IMPORTANT & CRITICAL
          * @description
          *  📝 Clear all side-effects.
          * @return { void }

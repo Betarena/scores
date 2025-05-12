@@ -48,7 +48,7 @@ import type { BetarenaUser } from '$lib/types/types.user-settings.js';
  * @summary
  *  📝 Authentication Helper Logic
  * @summary_tags
- *  - ♦️ IMPORTANT
+ *  - ♦️ IMPORTANT CRITICAL
  *  - 🔷 HELPER
  * @state_side_effect
  *  🔥 Triggered by 'side-effect' of `userBetarenaSettings`.
@@ -56,7 +56,7 @@ import type { BetarenaUser } from '$lib/types/types.user-settings.js';
  *  🔰 HANDLED
  *    │: Error is caught & handled.
  * @description
- *  📝 Login workflow for user.
+ *  📝 Login workflow for user:
  *  - [1] Initialize an **authenticated** `user`.
  *  - [2] Sets `user` privilige cookie.
  *  - [3] Sets `user` data listeners.
@@ -72,7 +72,7 @@ import type { BetarenaUser } from '$lib/types/types.user-settings.js';
  *  [X]──────────────────────────────────────────────────────────────────
  * @return { Promise < void > }
  */
-export async function initUser
+export async function helperUserInitialize
 (
 ): Promise < void >
 {
@@ -98,26 +98,28 @@ export async function initUser
   // [🐞]
   dlogv2
   (
-    '🚏 checkpoint ➤ initUser(..) // START',
+    '🚏 checkpoint ➤ user.initUser(..) // START',
     [
       `🔹 [var] ➤ uid :: ${uid}`,
       `🔹 [var] ➤ lang :: ${lang}`
-    ],
-    true
+    ]
   );
 
   if (!uid) return;
+
+  sessionStore.updateData
+  (
+    [
+      ['globalStateAdd', 'Authenticated'],
+      ['globalStateAdd', 'AuthenticatedAndInitialized']
+    ]
+  );
 
   setCookie
   (
     'betarenaCookieLoggedIn',
     'true',
     30
-  );
-
-  await userDataFetch
-  (
-    uid
   );
 
   // ╭─────
@@ -129,26 +131,15 @@ export async function initUser
     uid
   );
 
+  await userDataFetch
+  (
+    uid
+  );
+
   // ╭─────
-  // │ NOTE:
-  // │ │: pesists latest user data to `CRISP`
+  // │ TODO:
+  // │ |: Needs to be uopdated to used the latest 'userDataFetch(..)' retrieved data, not doing this at the moment.
   // ╰─────
-  await post
-  (
-    `${import.meta.env.VITE_FIREBASE_FUNCTIONS_ORIGIN}${import.meta.env.VITE_FIREBASE_FUNCTIONS_F_1}`,
-    {
-      user_uids: [uid]
-    }
-  );
-
-  sessionStore.updateData
-  (
-    [
-      ['globalStateAdd', 'Authenticated'],
-      ['globalStateAdd', 'AuthenticatedAndInitialized']
-    ]
-  );
-
   selectLanguage
   (
     lang
@@ -162,7 +153,7 @@ export async function initUser
  * @param type
  * @returns
  */
-export async function userAnonymous
+export async function herlperUserAnonymousInitialize
 (
   type: 'initialize' = 'initialize'
 ): Promise < void >

@@ -96,7 +96,9 @@ export async function selectLanguage
   // │ CHECK:
   // │ |: for server language is the same as the selected language.
   // ╰─────
-  if (serverLang == strNewLangSelected || !strNewLangSelected) return;
+  if (serverLang == strNewLangSelected || !strNewLangSelected)
+    return;
+  ;
 
   // [🐞]
   dlogv2
@@ -134,11 +136,10 @@ export async function selectLanguage
   // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
   // ╭─────
-  // │ CHECK:
+  // │ CHECK: [exit]
   // │ │: on 'error', navigate back to homepage.
-  // │ │: [exit]
   // ╰─────
-  if (!checkNull(page?.error))
+  if (!checkNull(page.error))
   {
     const
       strNewUrl = strNewLangSelected == 'en' ? '/' : `/${strNewLangSelected}`
@@ -164,9 +165,8 @@ export async function selectLanguage
   }
 
   // ╭─────
-  // │ CHECK:
+  // │ CHECK: [exit]
   // │ │: handle 'special' routes that already self-manage their navigation
-  // │ │: [exit]
   // ╰─────
   if
   (
@@ -176,13 +176,13 @@ export async function selectLanguage
       routeIdPagePlayer,
       routeIdPageCompetitionLobby,
       routeIdPageCompetition
-    ].includes(page?.route.id ?? '')
+    ].includes(page.route.id ?? '')
   )
   {
     // [🐞]
     dlog
     (
-      `🚏 checkpoint ➤ selectLanguage(..) if_M_1 page?.route?.id: ${page?.route.id} [exit]`,
+      `🚏 checkpoint ➤ selectLanguage(..) if_M_1 page?.route?.id: ${page.route.id} [exit]`,
       true
     );
 
@@ -190,11 +190,10 @@ export async function selectLanguage
   }
 
   // ╭─────
-  // │ CHECK:
+  // │ CHECK: [exit][?]
   // │ │: handle 'special' routes that already self-manage their navigation
-  // │ │: [exit]
   // ╰─────
-  switch (page?.route.id)
+  switch (page.route.id)
   {
     case routeIdPageProfile:
     case routeIdPageProfilePublication:
@@ -207,26 +206,15 @@ export async function selectLanguage
          * @description
          * 📝 past/previous lang option.
          */
-        pastLangV2
+        strLangOld2
           = pastLang == '/'
             ? '/en'
             : pastLang,
         /**
          * @description
-         * 📝 temporary URL.
-         */
-        tempUrl = `${page.url.pathname}/`,
-        /**
-         * @description
          * 📝 new URL.
          */
-        newURL
-          = tempUrl
-            .replace
-            (
-              `${pastLangV2}/`,
-              `/${strNewLangSelected}`
-            ) + page.url.search
+        strUrlNew = `${page.url.pathname}/`.replace(`${strLangOld2}/`, `/${strNewLangSelected}`) + page.url.search
       ;
 
       // [🐞]
@@ -234,15 +222,18 @@ export async function selectLanguage
       (
         '🚏 checkpoint ➤ selectLanguage(..) // CONDITION [x1.0]',
         [
-          `🔹 [var] ➤ pastLangV2 :: ${pastLangV2}`,
-          `🔹 [var] ➤ tempUrl :: ${tempUrl}`,
-          `🔹 [var] ➤ newURL :: ${newURL}`,
+          `🔹 [var] ➤ page.url.pathname :: ${page.url.pathname}`,
+          `🔹 [var] ➤ page.url.search :: ${page.url.search}`,
+          `🔹 [var] ➤ strLangOld2 :: ${strLangOld2}`,
+          `🔹 [var] ➤ strUrlNew :: ${strUrlNew}`,
         ]
       );
 
+      await invalidateAll();
+
       await gotoSW
       (
-        newURL,
+        strUrlNew,
         true
       );
 
@@ -250,14 +241,23 @@ export async function selectLanguage
     }
     case routeIdContent:
     {
-      const newUrl = strNewLangSelected === 'en' ? '/' : `/${strNewLangSelected}`;
+      const
+        /**
+         * @description
+         * 📝 past/previous lang option.
+         */
+        strUrlNew
+          = strNewLangSelected === 'en'
+            ? '/'
+            : `/${strNewLangSelected}`
+      ;
 
       // [🐞]
       dlogv2
       (
         '🚏 checkpoint ➤ selectLanguage(..) // CONDITION [x1.1]',
         [
-          `🔹 [var] ➤ newURL :: ${newUrl}`
+          `🔹 [var] ➤ strUrlNew :: ${strUrlNew}`
         ],
       );
 
@@ -265,7 +265,7 @@ export async function selectLanguage
 
       await gotoSW
       (
-        newUrl,
+        strUrlNew,
         true
       );
 
@@ -282,16 +282,9 @@ export async function selectLanguage
         [],
       );
 
-      sessionStore.updateData
-      (
-        [
-          ['lang', strNewLangSelected]
-        ]
-      );
-
       invalidate('author:translations');
 
-      return
+      return;
     }
     case routeIdPageTags:
     {
@@ -300,13 +293,6 @@ export async function selectLanguage
       (
         '🚏 checkpoint ➤ selectLanguage(..) // CONDITION [x2.1]',
         [],
-      );
-
-      sessionStore.updateData
-      (
-        [
-          ['lang', strNewLangSelected]
-        ]
       );
 
       invalidateAll();
@@ -324,111 +310,10 @@ export async function selectLanguage
 
       invalidateAll();
 
-      sessionStore.updateData
-      (
-        [
-          ['lang', strNewLangSelected]
-        ]
-      );
-
       return;
     }
     default: break;
   }
-
-  // ╭──────────────────────────────────────────────────────────────────────────────────╮
-  // │ 🔰 │ STANDARD PAGE ROUTES                                                        │
-  // ╰──────────────────────────────────────────────────────────────────────────────────╯
-
-  const
-    /**
-     * @description
-     *  📣 count number of slashes URL.
-     */
-    countSlash: number = (page?.url.pathname.split('/')?.length ?? 0) - 1
-  ;
-
-  let
-    /**
-     * @description
-     *  📣 NEW `url` to be navigatated to.
-     */
-    newURL: string | undefined
-  ;
-
-  // ╭─────
-  // │ NOTE:
-  // │ │: maybe [?]
-  // ╰─────
-  // prefetch(`/`);
-
-  // ╭─────
-  // │ CHECK:
-  // │ │: for 'EN' naviagtion.
-  // ╰─────
-  if (strNewLangSelected == 'en' && pastLang != '/')
-    // ╭─────
-    // │ NOTE:
-    // │ │: replace path-name accordingly for 'EN', first occurance.
-    // ╰─────
-    newURL
-      = countSlash == 1
-        ? page?.url.pathname.replace(pastLang, '/')
-        : page?.url.pathname.replace(pastLang, '')
-    ;
-  // ╭─────
-  // │ CHECK:
-  // │ │: for incoming from an 'EN' (/) route.
-  // ╰─────
-  else if (strNewLangSelected != 'en' && pastLang == '/')
-    // ╭─────
-    // │ NOTE:
-    // │ │: replace path-name accordingly for "<lang>" - first occurance.
-    // ╰─────
-    newURL
-       = page?.url.pathname !== '/'
-        ? page?.url.pathname.replace(pastLang, `/${strNewLangSelected}/`)
-        : page.url.pathname.replace(pastLang, `/${strNewLangSelected}`)
-    ;
-  // ╭─────
-  // │ CHECK:
-  // │ │: for incoming from an 'non-EN' (/<lang>) route.
-  // ╰─────
-  else if (strNewLangSelected != 'en' && pastLang != '/')
-    // ╭─────
-    // │ NOTE:
-    // │ │: replace path-name accordingly for "<lang>" - first occurance.
-    // ╰─────
-    newURL
-      = page?.url.pathname.replace(pastLang, `/${strNewLangSelected}`)
-    ;
-  ;
-
-  // [🐞]
-  dlogv2
-  (
-    '🚏 checkpoint ➤ selectLanguage(..) // END',
-    [
-      `🔹 [var] ➤ newURL :: ${newURL}`,
-    ]
-  );
-
-  // ╭─────
-  // │ NOTE:
-  // │ │: Solution [1]
-  // ╰─────
-  // window.history.replaceState({}, "NewPage", newURL);
-  // ╭─────
-  // │ NOTE:
-  // │ │: Solution [2]
-  // ╰─────
-  if (typeof newURL == 'string')
-    await gotoSW
-    (
-      newURL,
-      true
-    );
-  ;
 
   return;
 }

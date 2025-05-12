@@ -21,7 +21,7 @@ import sessionStore from '$lib/store/session.js';
 import userBetarenaSettings from '$lib/store/user-settings.js';
 import { log_v3 } from '$lib/utils/debug.js';
 import { parseObject } from '$lib/utils/string.2.js';
-import { initUser, logoutUser, userAnonymous } from '$lib/utils/user.js';
+import { helperUserInitialize, logoutUser, herlperUserAnonymousInitialize } from '$lib/utils/user.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -98,7 +98,7 @@ export function initiateSubscribtions
         ;
 
         if (store._SIDE_EFFECTS_.has('IsAnonymousNew'))
-          userAnonymous();
+          herlperUserAnonymousInitialize();
         ;
 
         if (store._SIDE_EFFECTS_.has('IsAnonymous'))
@@ -106,7 +106,7 @@ export function initiateSubscribtions
         ;
 
         if (store._SIDE_EFFECTS_.has('IsAuthenticated'))
-          initUser();
+          helperUserInitialize();
         ;
 
         if (store._SIDE_EFFECTS_.has('UserUpdateDataLanguage'))
