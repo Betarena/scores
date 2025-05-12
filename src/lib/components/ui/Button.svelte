@@ -454,24 +454,25 @@
   {
     background: inherit;
 
-    color: #8C8C8C;
+    color: var(--colors-foreground-fg-quaternary);
 
     &.selected
     {
-      background-color: #313131;
-      color: #f5620f;
+      background: var(--colors-background-bg-brand-primary_alt);
+      color: var(--colors-text-text-brand-tertiary);
     }
 
     &:hover,
     &.hover
     {
-      background-color: #313131;
+      background: var(--colors-background-bg-brand-primary_alt);
       color: #d4550c !important;
     }
 
     &:focus
     {
-      box-shadow: 0px 0px 0px 2px black, 0px 0px 0px 4px #F5620F;
+      box-shadow: 0px 0px 0px 2px var(--colors-background-bg-primary), 0px 0px 0px 4px var(--colors-effects-focus-rings-focus-ring);
     }
   }
+
 </style>
