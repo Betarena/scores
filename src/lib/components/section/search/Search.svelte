@@ -46,6 +46,7 @@
   import SuggestingResults from "./SuggestingResults.svelte";
   import { preloadData } from "$app/navigation";
   import history_store from "$lib/utils/history.js";
+  import { page } from "$app/stores";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -81,24 +82,6 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  const tabs: ITab[] = [
-    {
-      id: "highlights",
-      label: "Highlights",
-    },
-    {
-      id: "posts",
-      label: "Posts",
-    },
-    {
-      id: "users",
-      label: "Users",
-    },
-    {
-      id: "sportstacks",
-      label: "Sportstacks",
-    },
-  ];
   let inputNode: null | HTMLInputElement | HTMLTextAreaElement = null;
   let skipBlur = false;
   let suggestions: any[] = [];
@@ -131,6 +114,27 @@
   $: searchHistory = [] as string[];
   $: isInputInFocus = false;
   $: selectedTab = tabs[0];
+
+  $: ({search_translations, translations} = $page.data);
+
+  $: tabs = [
+    {
+      id: "highlights",
+      label:  search_translations.highlights || "Highlights",
+    },
+    {
+      id: "posts",
+      label: translations.posts || "Posts",
+    },
+    {
+      id: "users",
+      label: search_translations.users || "Users",
+    },
+    {
+      id: "sportstacks",
+      label: search_translations.sportstacks || "Sportstacks",
+    },
+  ] as ITab[];
 
   const debouncedSearch = debounce(doSearch, 500);
   $: debouncedSearch(search);
@@ -380,8 +384,7 @@
 
   async function usersSearch({
     search,
-    page,
-    limit,
+    page
   }: {
     search: string;
     page?: number;
@@ -405,7 +408,7 @@
         total: 0,
       });
     }
-    const users_map = new Map(users_data.map((user) => [user.id, user]));
+    const users_map = new Map(users_data.map((user) => [user.uid, user]));
     users_map.delete(ctx_user?.firebase_user_data?.uid || "");
     $search_store.users.data = users_map;
     $search_store.users.page = 0;
@@ -464,7 +467,7 @@
         bind:node={inputNode}
         type="leading-text"
         bind:value={$search_store.search}
-        placeholder="Search"
+        placeholder={search_translations.search||"Search"}
         on:focus={inputFocus}
         on:blur={inputBlur}
       >
@@ -523,12 +526,12 @@
   >
     {#if !search && !searchHistory.length}
       <div class="search-message-wrapper">
-        <Button type="link-color" classname="light-mode">Search for</Button>
-        <div class="message-text">posts, users and Sportstacks</div>
+        <Button type="link-color" classname="light-mode">{search_translations.search_for ||  "Search for"}</Button>
+        <div class="message-text">{ search_translations.posts_users_sportstacks || "posts, users and Sportstacks"}</div>
       </div>
     {:else if !search && searchHistory.length}
       <div class="search-history">
-        <div class="search-title">Recent</div>
+        <div class="search-title">{search_translations.recent || "Recent"}</div>
         {#each searchHistory.slice(0, 10) as text}
           <button
             class="recent-search-item"

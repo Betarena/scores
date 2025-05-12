@@ -139,15 +139,16 @@ export async function main
         deviceType
       }
   ;
-
   [
     response.B_NAV_T,
     response.B_FOT_T,
-    response.authTrs
+    response.authTrs,
+    response.search_translations
   ] = await fetchData
   (
     event.fetch,
-    langParam
+    langParam,
+    JSON.parse(event.cookies.get('betarenaScoresCookie') ?? '{}')?.lang || langParam
   );
 
   if (response.B_NAV_T == undefined || response.B_FOT_T == undefined)
@@ -203,7 +204,8 @@ export async function main
 async function fetchData
 (
   fetch: any,
-  _lang: string
+  _lang: string,
+  user_lang: string
 ): Promise < IPreloadData0 >
 {
   // [🐞]
@@ -222,6 +224,7 @@ async function fetchData
         `/api/data/main/navbar?lang=${_lang}&decompress`,
         `/api/data/main/footer?lang=${_lang}&decompress`,
         `/api/hasura/_main_/auth?lang=${_lang}`,
+        `/api/data/translations?lang=${user_lang}&table=search`
       ],
     /**
      * @description

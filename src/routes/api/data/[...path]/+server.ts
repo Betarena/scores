@@ -29,6 +29,7 @@ import { ArticlesSearchEndpoint } from '$lib/sveltekit/endpoint/search.articles.
 import { TagsSearchEndpoint } from '$lib/sveltekit/endpoint/search.tags.js';
 import { AuthorsSearchEndpoint } from '$lib/sveltekit/endpoint/search.authors.js';
 import { SuggestionsPostEndpoint, SuggestionsSearchEndpoint } from '$lib/sveltekit/endpoint/search.suggestions.js';
+import { GetTranslations } from '$lib/sveltekit/endpoint/translations.js';
 
 // #endregion ➤ 📦 Package
 
@@ -42,7 +43,8 @@ const getEndpointsMap = {
   'search.articles': ArticlesSearchEndpoint,
   'search.tags': TagsSearchEndpoint,
   'search.authors': AuthorsSearchEndpoint,
-  "search.suggestions": SuggestionsSearchEndpoint
+  "search.suggestions": SuggestionsSearchEndpoint,
+  'translations': GetTranslations
 }
 type EndPointsMapKeys = keyof typeof getEndpointsMap;
 export const GET: RequestHandler = async (

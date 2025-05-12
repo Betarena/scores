@@ -63,11 +63,10 @@ export async function load(event: ServerLoadEvent): Promise<any> {
     langParam,
     fetch: event.fetch,
   });
-
   res.userAgent = event.request.headers.get("user-agent");
   return {
     ...res,
-    translations: artcile_translations,
+    translations: {...artcile_translations, ...(res as any).search_translations},
   };
 }
 

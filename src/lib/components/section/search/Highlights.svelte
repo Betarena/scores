@@ -118,7 +118,7 @@
               size="md"
               full={true}
               type="secondary-gray"
-              on:click={() => viewMore("users")}>View more</Button
+              on:click={() => viewMore("users")}>{translations.view_more || "View more" }</Button
             >
           </div>
         {/if}
@@ -140,7 +140,7 @@
               size="md"
               full={true}
               type="secondary-gray"
-              on:click={() => viewMore("sportstacks")}>View more</Button
+              on:click={() => viewMore("sportstacks")}>{translations.view_more || "View more" }</Button
             >
           </div>
         {/if}
@@ -175,7 +175,7 @@
                 size="md"
                 full={true}
                 type="secondary-gray"
-                on:click={() => viewMore("posts")}>View more</Button
+                on:click={() => viewMore("posts")}>{translations.view_more || "View more" }</Button
               >
             </div>
           {/if}
