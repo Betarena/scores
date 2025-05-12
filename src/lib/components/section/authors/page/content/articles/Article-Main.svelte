@@ -138,7 +138,7 @@
   // │ 💠 │ WIDGET ACCESS                                                               │
   // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-  $: objPageDataWidget = $page.data as IPreloadResponse;
+  $: ( { objAuthorContentHome, objAuthorContentForecast, objGeneralHomeTranslation } = ($page.data as IPreloadResponse) );
 
   // ╭──────────────────────────────────────────────────────────────────────────────────╮
   // │ 💠 │ WIDGET VARIABLES                                                            │
@@ -192,8 +192,8 @@
   $: mapAuthors = new Map
   (
     [
-      ...(objPageDataWidget.objAuthorContentHome?.mapAuthor ?? []),
-      ...(objPageDataWidget.objAuthorContentForecast?.mapAuthor ?? [])
+      ...(objAuthorContentHome?.mapAuthor ?? []),
+      ...(objAuthorContentForecast?.mapAuthor ?? [])
     ]
   );
   /**
@@ -203,8 +203,8 @@
   $: mapArticles = new Map
   (
     [
-      ...(objPageDataWidget.objAuthorContentHome?.mapArticle ?? []),
-      ...(objPageDataWidget.objAuthorContentForecast?.mapArticle ?? [])
+      ...(objAuthorContentHome?.mapArticle ?? []),
+      ...(objAuthorContentForecast?.mapArticle ?? [])
     ]
   );
   /**
@@ -214,33 +214,33 @@
   $: mapTags = new Map
   (
     [
-      ...(objPageDataWidget.objAuthorContentHome?.mapTag ?? []),
-      ...(objPageDataWidget.objAuthorContentForecast?.mapTag ?? [])
+      ...(objAuthorContentHome?.mapTag ?? []),
+      ...(objAuthorContentForecast?.mapTag ?? [])
     ]
   );
 
-  $: if (objPageDataWidget.objAuthorContentForecast?.tagId && mapTags.size > 0)
-  {
-    mapFeedViews.set
-    (
-      'forecast',
-      {
-        id: objPageDataWidget.objAuthorContentForecast.tagId,
-        name: mapTags.get(objPageDataWidget.objAuthorContentForecast.tagId)?.name ?? ''
-      }
-    );
-    // ╭─────
-    // │ IMPORTANT CRITICAL
-    // ╰─────
-    mapFeedViews = mapFeedViews;
-  }
+  // ╭─────
+  // │ CHECK:
+  // │ |: for 'forecast' data presence & inject into 'mapFeedViews'.
+  // ╰─────
+  $: if (objAuthorContentForecast?.tagId && mapTags.size > 0)
+    reactivityXZY_1();
+  ;
 
   $: if (browser)
   {
+    // [🐞]
+    log_v3
+    (
+      {
+        strGroupName: '🚏 checkpoint ➤ Article-Main.svelte XYZ-1 // START',
+      }
+    );
+
     helperReInitializeData
     (
       // @ts-expect-error :: <?>
-      objPageDataWidget.objAuthorContentHome,
+      objAuthorContentHome,
       'home',
       0,
       true
@@ -248,7 +248,7 @@
     helperReInitializeData
     (
       // @ts-expect-error :: <?>
-      objPageDataWidget.objAuthorContentForecast,
+      objAuthorContentForecast,
       'forecast',
       0,
       true
@@ -268,6 +268,47 @@
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
+
+  /**
+   * @author
+   *  <-insert-author->
+   * @summary
+   *  🔥 REACTIVITY
+   * @description
+   *  📝 Reactivity for `mapFeedViews` data.
+   * @return { void }
+   */
+  function reactivityXZY_1
+  (
+  ): void
+  {
+    // [🐞]
+    log_v3
+    (
+      {
+        strGroupName: '🚏 checkpoint ➤ Article-Main.svelte reactivityXZY_1(..) // START',
+      }
+    );
+
+    if (!objAuthorContentForecast)
+      return;
+    ;
+
+    mapFeedViews.set
+    (
+      'forecast',
+      {
+        id: objAuthorContentForecast.tagId,
+        name: mapTags.get(objAuthorContentForecast.tagId)?.name ?? ''
+      }
+    );
+    // ╭─────
+    // │ IMPORTANT CRITICAL
+    // ╰─────
+    mapFeedViews = mapFeedViews;
+
+    return;
+  }
 
   /**
    * @author
@@ -302,6 +343,8 @@
         // `🔹 [var] ➤ objDataNew :: ${JSON.stringify(objDataNew)}`,
         `🔹 [var] ➤ strContentSelectFeed :: ${strContentSelectFeed}`,
         `🔹 [var] ➤ _strStateSelectedFeed :: ${_strStateSelectedFeed}`,
+        `🔹 [var] ➤ intCurrentPage :: ${intCurrentPage}`,
+        `🔹 [var] ➤ isReset :: ${isReset}`,
       ]
     );
 
@@ -631,10 +674,10 @@
       >
         {#if item.id === 0 && globalState.has('Authenticated')}
         <!-- {#if item.id === 0 && user} -->
-          {objPageDataWidget.objGeneralHomeTranslation?.translation?.for_you ?? 'For you'}
+          {objGeneralHomeTranslation?.translation?.for_you ?? 'For you'}
         {:else if item.id === 0 && globalState.has('NotAuthenticated')}
         <!-- {#if item.id === 0} -->
-          {objPageDataWidget.objGeneralHomeTranslation?.translation?.home ?? 'Home'}
+          {objGeneralHomeTranslation?.translation?.home ?? 'Home'}
         {:else}
           {item.name}
         {/if}
