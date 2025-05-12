@@ -375,6 +375,32 @@
           new Map(objDataNew.mapArticle),
           new Map(objDataNew.mapTag),
           new Map(objDataNew.mapAuthor),
+        ),
+      /**
+       * @description
+       * 📝 `Map` article generated from OLD + NEW data.
+       */
+      mapArticlesMod
+        = new Map
+        (
+          [
+            ...mapOldArticlesMod,
+            ...mapNewArticlesMod
+          ].sort
+          (
+            (
+              a,
+              b
+            ) =>
+            {
+              const
+                aDate = new Date(a[1].published_date ?? '').getTime(),
+                bDate = new Date(b[1].published_date ?? '').getTime()
+              ;
+
+              return (aDate > bDate ? -1 : 1);
+            }
+          )
         )
     ;
 
@@ -387,7 +413,7 @@
         // │ NOTE: IMPORTANT
         // │ |: Override properties
         // ╰─────
-        mapArticlesMod: new Map([...mapOldArticlesMod, ...mapNewArticlesMod]),
+        mapArticlesMod,
         currentPage: intCurrentPage,
         totalArticlesCount: objDataNew.totalArticlesCount,
       }
