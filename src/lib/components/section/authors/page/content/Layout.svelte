@@ -78,7 +78,7 @@
     VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
-  $: pageSeo = $page.data.seoTamplate;
+  $: pageSeo = $page.data.objAuthorContentHome.seoTamplate;
   $: ({ windowWidth, globalState } = $sessionStore);
   $: isPWA = globalState.has('IsPWA');
   $: [mobile, tablet]
