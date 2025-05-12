@@ -58,7 +58,7 @@ do
   # │ NOTE:
   # │ |: Replace ALL occurences of the '$key' in:
   # │ |: [1] (disabled) All Files
-  # │ |: [2] All Files with '.js' and '.css' extension
+  # │ |: [2] All Files with '.js,.css' extension. Ignore '.txt' and '.xml' files as these are mounted and don't contain secret values.
   # ┣─────
   # │ https://www.unix.com/shell-programming-and-scripting/268208-problems-ampersand-sed-command.html
   # ┣─────
@@ -72,6 +72,8 @@ do
   #
   find build \
     -type f \
+    ! -name '*.txt' \
+    ! -name '*.xml' \
     -exec sed \
     -i "s|${key}|${value_adjusted}|g" '{}' +
   #
