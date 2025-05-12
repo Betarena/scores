@@ -228,7 +228,7 @@
         display: flex;
         align-items: start;
         gap: 16px;
-        width: 824px;
+        // width: 824px;
         font-size: var(--text-size-m);
 
         .add-icon
@@ -287,6 +287,7 @@
 
         .tabbar-wrapper {
           padding: 0px 16px;
+          padding-bottom: 11px;
         }
 
         .listArticlesMod {

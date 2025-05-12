@@ -127,6 +127,18 @@ export interface IUserSetting
    *  📣 **Client/User** userguides opt-out
    */
   userguide_id_opt_out: number[] | undefined;
+  /**
+   * @description
+   *  📣 **Client/User** userguides opt-in
+   */
+  objHistory:
+  {
+    /**
+     * @description
+     * 📣 **Client/User** selected history
+     */
+    strContentSelectFeed: 'home' | 'forecast';
+  }
 
   // ╭──────────────────────────────────────────────────────────────────────────────────╮
   // │ 📌 │ DEFAULT                                                                     │
