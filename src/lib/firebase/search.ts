@@ -25,10 +25,10 @@ export async function searchUsers(search: string) {
 
   let results = trySearch(search);
 
-  let q = search;
-  while (results.length < 4 && q.length > 1) {
-    q = q.slice(0, -1);
-    results = trySearch(q);
+  let query = search;
+  while (results.length < 4 && query.length > 1) {
+    query = query.slice(0, -1);
+    results = trySearch(query);
   }
   return results;
 }
