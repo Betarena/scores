@@ -30,7 +30,6 @@
   import session from "$lib/store/session.js";
   import Input from "$lib/components/ui/Input.svelte";
   import Tabbar from "$lib/components/ui/Tabbar.svelte";
-  import type { ITab } from "$lib/components/ui/types.js";
   import Button from "$lib/components/ui/Button.svelte";
   import { onMount } from "svelte";
   import ArrowCirlcleBrokenRight from "$lib/components/ui/assets/arrow-cirlcle-broken-right.svelte";
@@ -42,11 +41,12 @@
   import Authors from "./Authors.svelte";
   import search_store from "./search_store.js";
   import Highlights from "./Highlights.svelte";
-  import { debounce } from "$lib/utils/fetch.js";
   import SuggestingResults from "./SuggestingResults.svelte";
   import { preloadData } from "$app/navigation";
-  import history_store from "$lib/utils/history.js";
+  import history_store from "$lib/store/history.js";
   import { page } from "$app/stores";
+  import { debounce } from "$lib/utils/miscellenous.js";
+  import type { ITab } from "$lib/types.js";
 
   // #endregion ➤ 📦 Package Imports
 

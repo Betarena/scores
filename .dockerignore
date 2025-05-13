@@ -44,4 +44,3 @@ env/placeholder/
 !.env.vault
 !.env.docker.file
 .flaskenv*
-!.env.project

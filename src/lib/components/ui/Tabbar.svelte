@@ -8,9 +8,8 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 <script lang="ts">
+  import type { ITab } from "$lib/types.js";
   import { createEventDispatcher, tick } from "svelte";
-  import TranslationText from "../misc/Translation-Text.svelte";
-  import type { ITab } from "./types.js";
 
   // #region ➤ 📌 VARIABLES
 

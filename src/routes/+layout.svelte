@@ -86,7 +86,7 @@
   // import '@betarena/ad-engine';
   // import WidgetAdEngine from '@betarena/ad-engine/src/lib/Widget-AdEngine.svelte';
   import WidgetAdEngine from '@betarena/ad-engine';
-  import history_store from '$lib/utils/history.js';
+  import history_store from '$lib/store/history.js';
 
   // ╭─────
   // │ WARNING:
