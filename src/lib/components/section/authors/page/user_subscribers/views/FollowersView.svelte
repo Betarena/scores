@@ -85,7 +85,7 @@
     rawData = {
       subscribers: (author?.subscribed_by || []).reverse(),
       followers: (author?.followed_by || []).reverse(),
-      following: (author?.following.authors || []).reverse(),
+      following: (author?.following?.authors ?? []).reverse(),
     };
     profileLoading = true;
     subscribeOnUserChanges(prevAuthorId);
