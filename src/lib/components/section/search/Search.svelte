@@ -495,7 +495,8 @@
           type="button_gray"
           size="sm"
           data={tabs}
-          bind:selected={selectedTab}
+          on:select={(e) => selectedTab = e.detail}
+          selected={selectedTab}
         />
       </div>
     {:else}
