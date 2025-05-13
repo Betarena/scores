@@ -1,48 +1,52 @@
 // ╭──────────────────────────────────────────────────────────────────────────────────╮
-// │ 📌 High Order Component Overview                                                 │
+// │ 📌 High Order Overview                                                           │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
-// │ ➤ Internal Svelte Code Format :|: V.8.0                                          │
-// │ ➤ Status :|: 🔒 LOCKED                                                           │
-// │ ➤ Author(s) :|: @migbash                                                         │
+// │ ➤ Code Format   // V.8.0                                                         │
+// │ ➤ Status        // 🔒 LOCKED                                                     │
+// │ ➤ Author(s)     // @migbash                                                      │
+// │ ➤ Maintainer(s) // @migbash                                                      │
+// │ ➤ Created on    // <date-created>                                                │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
 // │ 📝 Description                                                                   │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
-// │ Main Scores Platform Page Loader (Server-Side)                                   │
+// │ BETARENA (Module)
+// │ |: <insert-module-summary-here>
 // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 // #region ➤ 📦 Package Imports
 
-import { main } from "$lib/sveltekit/load/load.layout.1.js";
-import { main as articleTrFetch } from "$lib/sveltekit/load/load.author.layout.js";
-import { dlogv2 } from "$lib/utils/debug.js";
-import type { ServerLoadEvent } from "@sveltejs/kit";
-import { detectPlatformLanguage } from "$lib/utils/languages.js";
+import { main } from '$lib/sveltekit/load/load.main.layout.js';
+
+import type { ServerLoadEvent } from '@sveltejs/kit';
 
 // #endregion ➤ 📦 Package Imports
 
-// #region ➤ 🔄 LIFECYCLE [SVELTE]
+// #region ➤ 🔄 LIFECYCLE - [SVELTE-KIT]
 
 /**
- * @type {import('./$types').PageLoad}
+ * @type {import('./$types').ServerLoadEvent}
  */
-export async function load(event: ServerLoadEvent): Promise<any> {
-  // [🐞]
-  dlogv2(
-    "🚏 checkpoint ➤ src/routes/+layout.server.ts",
-    [
-      `🔹 [var] ➤ request.headers.get('user-agent') :|: ${JSON.stringify(
-        [...event.request.headers.entries()],
-        null,
-        4
-      )}`,
-    ],
-    false
-  );
+export async function load
+(
+  event: ServerLoadEvent
+): Promise < any >
+{
+  const
+    /**
+     * @description
+     * 📝 Method Response (0)
+     */
+    methodRes0
+      = await main
+      (
+        event
+      )
+  ;
 
   // ╭─────
-  // │ NOTE: | WARNING:
-  // │ > commented out due to interferences
-  // │ > with error logs and code-traces.
+  // │ NOTE: WARNING:
+  // │ │: commented out due to interferences
+  // │ │: with error logs and code-traces.
   // ╰─────
   /*
     setHeaders
@@ -52,22 +56,8 @@ export async function load(event: ServerLoadEvent): Promise<any> {
       }
     );
   */
-  const langParam = detectPlatformLanguage({
-    parameterLanguage: event.params.lang,
-    cookies: event.cookies,
-    routeId: event.route.id,
-  });
-  const res = await main(event);
-  event.depends("autthor:translations");
-  const artcile_translations = await articleTrFetch({
-    langParam,
-    fetch: event.fetch,
-  });
-  res.userAgent = event.request.headers.get("user-agent");
-  return {
-    ...res,
-    translations: {...artcile_translations, ...(res as any).search_translations},
-  };
+
+  return methodRes0;
 }
 
-// #endregion ➤ 🔄 LIFECYCLE [SVELTE]
+// #endregion ➤ 🔄 LIFECYCLE - [SVELTE-KIT]

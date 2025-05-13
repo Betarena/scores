@@ -22,9 +22,9 @@ import { userBalanceListen, userDataFetch } from '$lib/firebase/common.js';
 import { delCookie, setCookie } from '$lib/store/cookie.js';
 import sessionStore from '$lib/store/session.js';
 import userBetarenaSettings, { type IDataProp } from '$lib/store/user-settings.js';
-import { dlog } from '$lib/utils/debug.js';
+import { dlog, log_v3 } from '$lib/utils/debug.js';
 import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.betarena-user.js';
-import { dlogv2, log_v3 } from './debug.js';
+import { dlogv2 } from './debug.js';
 import { selectLanguage } from './navigation.js';
 import { gotoSW } from './sveltekitWrapper.js';
 
@@ -34,7 +34,6 @@ import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
 import { doc, updateDoc } from 'firebase/firestore';
 import { deleteObject, ref as refStorage } from 'firebase/storage';
 
-import type { IPageRouteId } from '$lib/types/types.session.js';
 import type { BetarenaUser } from '$lib/types/types.user-settings.js';
 
 // #endregion ➤ 📦 Package Imports
@@ -49,13 +48,15 @@ import type { BetarenaUser } from '$lib/types/types.user-settings.js';
  * @summary
  *  📝 Authentication Helper Logic
  * @summary_tags
- *  - ♦️ IMPORTANT
+ *  - ♦️ IMPORTANT CRITICAL
  *  - 🔷 HELPER
+ * @state_side_effect
+ *  🔥 Triggered by 'side-effect' of `userBetarenaSettings`.
  * @error_handle_notice
  *  🔰 HANDLED
  *    │: Error is caught & handled.
  * @description
- *  📝 Login workflow for user.
+ *  📝 Login workflow for user:
  *  - [1] Initialize an **authenticated** `user`.
  *  - [2] Sets `user` privilige cookie.
  *  - [3] Sets `user` data listeners.
@@ -71,40 +72,54 @@ import type { BetarenaUser } from '$lib/types/types.user-settings.js';
  *  [X]──────────────────────────────────────────────────────────────────
  * @return { Promise < void > }
  */
-export async function initUser
+export async function helperUserInitialize
 (
 ): Promise < void >
 {
   const
-    /**
-     * @description
-     * 📝 Data point
-     */
-    uid = userBetarenaSettings.extract<string>('uid')
+    // ╭─────
+    // │ NOTE: |:| 📝 Destruct Data (localStorage)
+    // ╰─────
+    {
+      user:
+      {
+        firebase_user_data:
+        {
+          uid
+        } = {},
+        scores_user_data:
+        {
+          lang
+        } = {}
+      } = {}
+    } = userBetarenaSettings.extractAll()
   ;
 
   // [🐞]
   dlogv2
   (
-    '🚏 checkpoint ➤ initUser(..)',
+    '🚏 checkpoint ➤ user.initUser(..) // START',
     [
-      `🔹 [var] ➤ uid :|: ${uid}`,
-    ],
-    true
+      `🔹 [var] ➤ uid :: ${uid}`,
+      `🔹 [var] ➤ lang :: ${lang}`
+    ]
   );
 
   if (!uid) return;
+
+  sessionStore.updateData
+  (
+    [
+      ['globalStateAdd', 'Authenticated'],
+      ['globalStateAdd', 'AuthenticatedAndInitialized']
+    ]
+  );
 
   setCookie
   (
     'betarenaCookieLoggedIn',
     'true',
     30
-  );
-
-  await userDataFetch
-  (
-    uid
   );
 
   // ╭─────
@@ -116,30 +131,80 @@ export async function initUser
     uid
   );
 
-  // ╭─────
-  // │ NOTE:
-  // │ │: pesists latest user data to `CRISP`
-  // ╰─────
-  await post
+  await userDataFetch
   (
-    `${import.meta.env.VITE_FIREBASE_FUNCTIONS_ORIGIN}${import.meta.env.VITE_FIREBASE_FUNCTIONS_F_1}`,
+    uid
+  );
+
+  // ╭─────
+  // │ TODO:
+  // │ |: Needs to be uopdated to used the latest 'userDataFetch(..)' retrieved data, not doing this at the moment.
+  // ╰─────
+  selectLanguage
+  (
+    lang
+  );
+
+  return;
+}
+
+/**
+ * @description
+ * @param type
+ * @returns
+ */
+export async function herlperUserAnonymousInitialize
+(
+  type: 'initialize' = 'initialize'
+): Promise < void >
+{
+  const
+    // ╭─────
+    // │ NOTE: |:| 📝 Destruct Data (localStorage)
+    // ╰─────
     {
-      user_uids: [uid]
+      lang
+    } = userBetarenaSettings.extractAll(),
+    // ╭─────
+    // │ NOTE: |:| 📝 Destruct Data (localStorage)
+    // ╰─────
+    {
+      currentPageRouteId
+    } = sessionStore.extractAll(),
+    /**
+     * @description
+     *  📝 Redirect `link` to navigate to as a consequence of _logout_
+     */
+    redirectLink = `/${lang == 'en' || lang == undefined ? '' : lang}`
+  ;
+
+  // [🐞]
+  log_v3
+  (
+    {
+      strGroupName: '🚏 checkpoint ➤ userAnonymous(..) // START',
+      msgs:
+      [
+        `🔹 [var] ➤ lang :: ${lang}`,
+        `🔹 [var] ➤ currentPageRouteId :: ${currentPageRouteId}`,
+        `🔹 [var] ➤ redirectLink :: ${redirectLink}`,
+      ]
     }
   );
 
-  sessionStore.updateData
+  async function _initializeAnonymous
   (
-    [
-      ['globalStateAdd', 'Authenticated'],
-      ['globalStateAdd', 'AuthenticatedAndInitialized']
-    ]
-  );
+  ): Promise < void >
+  {
+    // [🐞]
+    dlog('_initializeAnonymous(..) // START');
 
-  selectLanguage
-  (
-    userBetarenaSettings.extract<string>('lang-user')
-  );
+    await selectLanguage(lang);
+
+    return;
+  }
+
+  await _initializeAnonymous();
 
   return;
 }
@@ -152,6 +217,8 @@ export async function initUser
  * @summary_tags
  *  - ♦️ IMPORTANT
  *  - 🔷 HELPER
+ * @state_side_effect
+ *  🔥 Triggered by 'side-effect' of `userBetarenaSettings`.
  * @error_handle_notice
  *  🔰 HANDLED
  *    │: Error is caught & handled.
@@ -176,38 +243,58 @@ export async function logoutUser
 (
 ): Promise < void >
 {
-  // [🐞]
-  dlog('🚏 checkpoint ➤ logoutUser(..) // START');
-
   const
-    /**
-     * @description
-     *  📝 **Authenticated User** `language` preference
-     */
-    userLang = userBetarenaSettings.extract<string>('lang-user')
+    // ╭─────
+    // │ NOTE: |:| 📝 Destruct Data (localStorage)
+    // ╰─────
+    {
+      user:
+      {
+        scores_user_data:
+        {
+          lang
+        } = {}
+      } = {}
+    } = userBetarenaSettings.extractAll(),
+    // ╭─────
+    // │ NOTE: |:| 📝 Destruct Data (localStorage)
+    // ╰─────
+    {
+      currentPageRouteId,
+      serverLang
+    } = sessionStore.extractAll()
   ;
+
+  // [🐞]
+  log_v3
+  (
+    {
+      strGroupName: '🚏 checkpoint ➤ logoutUser(..) // START',
+      msgs:
+      [
+        `🔹 [var] ➤ lang :: ${lang}`,
+        `🔹 [var] ➤ serverLang :: ${serverLang}`,
+        `🔹 [var] ➤ currentPageRouteId :: ${currentPageRouteId}`
+      ]
+    }
+  );
 
   // ╭─────
   // │ CHECK:
-  // | |: for 'user' already being 'non-authenticated'.
+  // │ │: for 'user' already being 'non-authenticated'.
   // ╰─────
-  // if (checkNull(userLang)) return;
+  // if (checkNull(lang)) return;
 
   // eslint-disable-next-line one-var
   const
     /**
      * @description
-     *  📝 Current page `routeId`
-     */
-    currentRouteId = sessionStore.extract<IPageRouteId>('routeId'),
-    /**
-     * @description
      *  📝 Redirect `link` to navigate to as a consequence of _logout_
      */
-    redirectLink = `/${userLang == 'en' || userLang == undefined ? '' : userLang}`
+    redirectLink = `/${lang == 'en' || lang == undefined ? '' : lang}`
   ;
 
-  if (currentRouteId === 'Standard' || currentRouteId === 'ProfilePage')
+  if (['Standard', 'ProfilePage'].includes(currentPageRouteId ?? ''))
     await gotoSW
     (
       redirectLink,
@@ -224,7 +311,14 @@ export async function logoutUser
       // │ |: trigger cascading 'user' logic, which should no longer exist.
       // ╰─────
       ['user-object', undefined],
-      ['lang', sessionStore.extract('lang')]
+      ['lang', serverLang]
+    ]
+  );
+
+  sessionStore.updateData
+  (
+    [
+      ['globalStateAdd', 'NotAuthenticated']
     ]
   );
 
@@ -403,7 +497,7 @@ export async function updateUserProfileData
           refStorage
           (
             storage,
-            `Users_data/${objUser?.user?.firebase_user_data?.uid}/profile-pic.png`
+            `Users_data/${objUser.user?.firebase_user_data?.uid}/profile-pic.png`
           )
         ).catch
         (

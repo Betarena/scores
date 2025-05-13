@@ -21,6 +21,8 @@
 
 import dotenv from 'dotenv';
 
+import { main as EndpointAuthorHome } from '$lib/sveltekit/endpoint/author.home.js';
+import { main as EdnpointTranslation } from '$lib/sveltekit/endpoint/main.translation.js';
 import { main as EndpointProfileMain } from '$lib/sveltekit/endpoint/profile.main.js';
 import { API_DATA_ERROR_RESPONSE } from '$lib/utils/debug.js';
 
@@ -40,11 +42,13 @@ dotenv.config();
 
 const getEndpointsMap = {
   'profile.main': EndpointProfileMain,
+  'author.home': EndpointAuthorHome,
   'search.articles': ArticlesSearchEndpoint,
   'search.tags': TagsSearchEndpoint,
   'search.authors': AuthorsSearchEndpoint,
   "search.suggestions": SuggestionsSearchEndpoint,
-  'translations': GetTranslations
+  'translations': GetTranslations,
+  'translation':EdnpointTranslation
 }
 type EndPointsMapKeys = keyof typeof getEndpointsMap;
 export const GET: RequestHandler = async (
@@ -85,27 +89,17 @@ export const POST: RequestHandler = async (
 
   const
     queryParamPath = request.params.path as
-      | 'profile.main'
+     PostEndPointsMapKeys
   ;
 
   // ╭──────────────────────────────────────────────────────────────────╮
   // │:| endpoint handler data.                                         │
   // ╰──────────────────────────────────────────────────────────────────╯
 
-  if (queryParamPath == 'profile.main')
-    return await EndpointProfileMain
-    (
-      request
-    );
-  ;
-
-  if (queryParamPath == 'search.suggestions')
-    return await SuggestionsPostEndpoint
-    (
-      request
-    );
-  ;
-
+  if (postEndpointsMap[queryParamPath])
+  {
+    return await postEndpointsMap[queryParamPath](request)
+  }
 
   return API_DATA_ERROR_RESPONSE();
 }

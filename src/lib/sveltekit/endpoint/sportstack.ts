@@ -257,12 +257,21 @@ export async function updateSubscribers(
 {
   return await tryCatchAsync(async () =>
   {
-    const { locals: { user: userstring, betarenaUser }, request } = event;
-    const user = await JSON.parse(userstring)
-    if (!betarenaUser || betarenaUser === "false") return json(null);
+    const
+      {
+        locals:
+        {
+          uid
+        },
+        request
+      } = event
+    ;
+
+    if (!uid) return json(null);
+
     const { authorId, subscribe } = await request.json();
     const type = subscribe ? 'add' : 'delete';
-    const userUid = user['user-uid'];
+
     const data = await new _GraphQL().wrapQuery
       <
         ITableAuthorAuthorsMutation0Var
@@ -272,7 +281,7 @@ export async function updateSubscribers(
         TableAuthorAuthorsMutation0(type)
         , {
           authorId,
-          userUid
+          userUid: uid
         }
       );
     return json({ success: true, author: data });

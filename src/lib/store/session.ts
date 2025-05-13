@@ -19,20 +19,22 @@ import { clientTimezoneDate, targetDate } from '$lib/utils/dates.js';
 import { writable } from 'svelte/store';
 
 import { routeIdAuthorProfile, routeIdAuthorSubscribers, routeIdContent, routeIdPageAuthors, routeIdPageCompetitions, routeIdPageProfile, routeIdPageProfileAuthorCreate, routeIdPageProfilePublication, routeIdPageTags, routeIdSportstack } from '$lib/constants/paths.js';
-import { dlogv2 } from '$lib/utils/debug.js';
+import { dlogv2, log_v3 } from '$lib/utils/debug.js';
+import { viewportChangeV2 } from '$lib/utils/device.js';
+
 import type { IPageRouteId, ISessionStore } from '$lib/types/types.session.js';
 import type { B_H_COMP_DATA } from '@betarena/scores-lib/types/_HASURA_.js';
 import type { FIREBASE_livescores_now, FIREBASE_odds, FIRE_LNNS } from '@betarena/scores-lib/types/firebase.js';
-import { viewportChangeV2 } from '$lib/utils/device.js';
+import { parseObject } from '$lib/utils/string.2.js';
 
 // #endregion ➤ 📦 Package Imports
 
 // #region ➤ 📌 VARIABLES
 
-const mobileBreakpoint = 575;
-const tabletBreakpoint = 1160;
+const mobileBreakpoint = 575,
+  tabletBreakpoint = 1160,
 
-const
+
   /**
    *
    */
@@ -41,7 +43,7 @@ const
       globalState: new Set(),
       page: null,
       deviceType: 'mobile',
-      viewportType: "mobile",
+      viewportType: 'mobile',
       userAgent: undefined,
       isUserActive: true,
       windowWidth: 0,
@@ -50,7 +52,7 @@ const
       currentActiveModal: null,
       currentActiveToast: null,
       currentAdminToggle: null,
-      currentPageRouteId: null,
+      currentPageRouteId: 'Standard',
 
       // ### NOTE:
       // ### variables for show/hide.
@@ -195,6 +197,23 @@ function createLocalStore
           data: [IDataProp, any][]
         ): void =>
         {
+          // [🐞]
+          log_v3
+          (
+            {
+              strGroupName: '🚏 checkpoint ➤ Store | SessionStorage ➤ updateData(..) // START',
+              msgs: [
+                `🔹 [var] ➤ data :|: ${parseObject(data)}`,
+              ],
+              closed: true
+            }
+          );
+
+          // ╭─────
+          // │ NOTE:
+          // │ │: loop through data.
+          // │ │: update sessionStoreObj.
+          // ╰─────
           for (const iterator of data)
           {
             const
@@ -434,6 +453,34 @@ function createLocalStore
           ;
           return;
         },
+
+        /**
+         * @author
+         *  @migbash
+         * @summary
+         *  - ♦️ IMPORTANT
+         *  - 🔹 HELPER
+         * @description
+         *  📝 Extracts all data.
+         * @example
+         *  [1]──────────────────────────────────────────────────────────────────
+         *  │ extractAll();
+         *  ┣────────────────────────────────────────────────────────────────────
+         *  │ DESCRIPTION
+         *  │ : Retrieves all data.
+         *  ┣────────────────────────────────────────────────────────────────────
+         *  │ OUTPUT
+         *  │ : ISessionStore | NullUndef
+         *  [X]──────────────────────────────────────────────────────────────────
+         * @returns { ISessionStore | NullUndef }
+         *  📤 All data.
+         */
+        extractAll:
+        (
+        ): ISessionStore =>
+        {
+          return sessionStoreObj;
+        }
       }
   ;
 

@@ -44,24 +44,47 @@
   import { get } from '$lib/api/utils.js';
   import sessionStore from '$lib/store/session.js';
   import userBetarenaSettings from '$lib/store/user-settings.js';
-  import { dlogv2 } from '$lib/utils/debug.js';
+  import { dlogv2, log_v3 } from '$lib/utils/debug.js';
   import { viewportChangeV2 } from '$lib/utils/device.js';
 
   import Button from '$lib/components/ui/Button.svelte';
-  import Tabbar from '$lib/components/ui/Tabbar.svelte';
   import ArticleCard from '../../../common_ui/articles/Article-Card.svelte';
   import ArticleLoader from './Article-Loader.svelte';
 
-  import type {
-    IPageAuthorArticleData,
-    IPageAuthorAuthorData,
-    IPageAuthorTagData,
-    IPageAuthorTagDataFinal
-  } from '@betarena/scores-lib/types/v8/preload.authors.js';
-  import type { IPageAuthorTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.tags.js';
   import { prepareArticlesMap, type IArticle, type ITagsWidgetData } from '../../helpers.js';
 
+  import type { IPageTranslationHomeDataFinal } from '@betarena/scores-lib/types/v8/core.translation.js';
+  import type { IPageAuthorTagDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
+
   // #endregion ➤ 📦 Package Imports
+
+  // #region ➤ ⛩️ TYPES
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🔹 INTERFACE
+   * @description
+   *  📝 Interface for `_this_` page required at preload.
+   */
+  interface IPreloadResponse
+  {
+    /**
+     * @description
+     */
+    objAuthorContentHome?: IPageAuthorTagDataFinal;
+    /**
+     * @description
+     */
+    objAuthorContentForecast?: IPageAuthorTagDataFinal;
+    /**
+     * @description
+     */
+    objGeneralHomeTranslation?: IPageTranslationHomeDataFinal;
+  }
+
+  // #endregion ➤ ⛩️ TYPES
 
   // #region ➤ 📌 VARIABLES
 
@@ -95,9 +118,14 @@
     VIEWPORT_TABLET_INIT: [number, boolean] = [1160, true]
   ;
 
-  $: ({ windowWidth, globalState } = $sessionStore);
-  $: isPWA = globalState.has('IsPWA');
-  $: [mobile, tablet]
+  // ╭──────────────────────────────────────────────────────────────────────────────────╮
+  // │ 💠 │ STORES ACCESS                                                               │
+  // ╰──────────────────────────────────────────────────────────────────────────────────╯
+
+  $: ({ windowWidth, globalState, serverLang } = $sessionStore);
+  // $: ({ user } = $userBetarenaSettings);
+  $: ({ user: { scores_user_data: { following: { tags } = {} } = {} } = {}, objHistory: { strContentSelectFeed } } = $userBetarenaSettings);
+  $: [ VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1] ]
     = viewportChangeV2
     (
       windowWidth,
@@ -106,41 +134,20 @@
     )
   ;
 
-  $: widgetData = $page.data as IPageAuthorTagDataFinal & {
-    translations: IPageAuthorTranslationDataFinal;
-  } | undefined;
-  $: pageSeo = $page.data.seoTamplate;
-  $: translations = widgetData?.translations;
+  // ╭──────────────────────────────────────────────────────────────────────────────────╮
+  // │ 💠 │ WIDGET ACCESS                                                               │
+  // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-  /**
-   * @description
-   * 📝 Interecpted data for `map` instance of `author(s)`.
-   */
-  $: mapAuthors = new Map(widgetData?.mapAuthor ?? []);
-  /**
-   * @description
-   * 📝 Interecpted data for `map` instance of `tag(s)`.
-   */
-  $: mapTags = new Map(widgetData?.mapTag ?? []);
-  /**
-   * @description
-   * 📝 Interecpted data for `map` instance of `article(s)`.
-   */
-  $: mapArticles = new Map(widgetData?.mapArticle ?? []);
-  /**
-   * @description
-   * 📝 Currently selected tag data.
-   */
-  $: selectedTag = mapTags.get(widgetData?.tagId ?? 0);
-  /**
-   * @description
-   * 📝 Categories avaialble.
-   */
-  $: categories = selectedTag != undefined ? [selectedTag] : [];
+  $: ( { objAuthorContentHome, objAuthorContentForecast, objGeneralHomeTranslation } = ($page.data as IPreloadResponse) );
 
-  $: if (browser) updateData(widgetData ?? {} as ITagsWidgetData, true);
+  // ╭──────────────────────────────────────────────────────────────────────────────────╮
+  // │ 💠 │ WIDGET VARIABLES                                                            │
+  // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
   let
+    // ╭──────────────────────────────────────────────────────────────────────────────────╮
+    // │ 💠 │ STANDARD VARIABLES                                                          │
+    // ╰──────────────────────────────────────────────────────────────────────────────────╯
     /**
      * @description
      * 📝 `Map` where, `key=tagId` and `value=tagData`.
@@ -148,24 +155,105 @@
     mapTagSelectData
       = new Map
         <
-          number,
+          'home' | 'forecast',
           ITagsWidgetData &
           {
             mapArticlesMod: Map < number, IArticle >;
-            currentPage: number
+            currentPage: number;
           }
         >(),
     /**
      * @description
-     * 📝 State UI for `Loading Articles`.
+     * 📝 `Map` data for `tag(s)`, ready for frontend consumption.
      */
-    isLoadingArticles = true,
+    mapFeedViews
+      = new Map (
+        [
+          [
+            'home', { id: 0, name: 'Home' }
+          ]
+        ]
+      ),
+
+    // ╭──────────────────────────────────────────────────────────────────────────────────╮
+    // │ 💠 │ STATUS STATE                                                                │
+    // ╰──────────────────────────────────────────────────────────────────────────────────╯
     /**
      * @description
-     * 📝 `Map` data for `article(s)`, ready for frontend consumption.
+     * 📝 State UI for `Loading Articles`.
      */
-    mapArticlesMod =  new Map < number, IArticle >(),
+    isStateLoadingArticles = true
   ;
+
+  /**
+   * @description
+   * 📝 Interecpted data for `map` instance of `author(s)`.
+   */
+  $: mapAuthors = new Map
+  (
+    [
+      ...(objAuthorContentHome?.mapAuthor ?? []),
+      ...(objAuthorContentForecast?.mapAuthor ?? [])
+    ]
+  );
+  /**
+   * @description
+   * 📝 Interecpted data for `map` instance of `article(s)`.
+   */
+  $: mapArticles = new Map
+  (
+    [
+      ...(objAuthorContentHome?.mapArticle ?? []),
+      ...(objAuthorContentForecast?.mapArticle ?? [])
+    ]
+  );
+  /**
+   * @description
+   * 📝 Interecpted data for `map` instance of `tag(s)`.
+   */
+  $: mapTags = new Map
+  (
+    [
+      ...(objAuthorContentHome?.mapTag ?? []),
+      ...(objAuthorContentForecast?.mapTag ?? [])
+    ]
+  );
+
+  // ╭─────
+  // │ CHECK:
+  // │ |: for 'forecast' data presence & inject into 'mapFeedViews'.
+  // ╰─────
+  $: if (objAuthorContentForecast?.tagId && mapTags.size > 0)
+    reactivityXZY_1();
+  ;
+
+  $: if (browser)
+  {
+    // [🐞]
+    log_v3
+    (
+      {
+        strGroupName: '🚏 checkpoint ➤ Article-Main.svelte XYZ-1 // START',
+      }
+    );
+
+    helperReInitializeData
+    (
+      // @ts-expect-error :: <?>
+      objAuthorContentHome,
+      'home',
+      0,
+      true
+    );
+    helperReInitializeData
+    (
+      // @ts-expect-error :: <?>
+      objAuthorContentForecast,
+      'forecast',
+      0,
+      true
+    );
+  }
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -185,36 +273,39 @@
    * @author
    *  <-insert-author->
    * @summary
-   *  🟦 HELPER
+   *  🔥 REACTIVITY
    * @description
-   *  📝 Selects `tag`.
-   * @param { CustomEvent<IPageAuthorTagData> } e
-   *  💠 **REQUIRED** Event argument.
-   * @returns { void }
+   *  📝 Reactivity for `mapFeedViews` data.
+   * @return { void }
    */
-  function selectTag
+  function reactivityXZY_1
   (
-    e: CustomEvent<IPageAuthorTagData>
   ): void
   {
     // [🐞]
-    dlogv2
+    log_v3
     (
-      'selectTag(..)',
-      [
-        `🔹 [var] ➤ e :|: ${e}`,
-      ],
-      true
+      {
+        strGroupName: '🚏 checkpoint ➤ Article-Main.svelte reactivityXZY_1(..) // START',
+      }
     );
 
-    selectedTag = e.detail;
-    mapArticlesMod = new Map();
-
-    if (!mapTagSelectData.has(selectedTag.id ?? 0))
-      loadTagArticles();
-    else
-      mapArticlesMod = mapTagSelectData.get(selectedTag.id ?? 0)?.mapArticlesMod ?? new Map();
+    if (!objAuthorContentForecast)
+      return;
     ;
+
+    mapFeedViews.set
+    (
+      'forecast',
+      {
+        id: objAuthorContentForecast.tagId,
+        name: mapTags.get(objAuthorContentForecast.tagId)?.name ?? ''
+      }
+    );
+    // ╭─────
+    // │ IMPORTANT CRITICAL
+    // ╰─────
+    mapFeedViews = mapFeedViews;
 
     return;
   }
@@ -226,40 +317,54 @@
    *  🟦 HELPER
    * @description
    *  📝 Update data for 'content' page.
-   * @param { ITagsWidgetData } dataNew
-   *  💠 **REQUIRED** New data instance.
+   * @param { ITagsWidgetData } objDataNew
+   *  ❗️ **REQUIRED** New data instance.
+   * @param { null | 'home' | 'forecast' } [_strStateSelectedFeed=null]
+   *  ❔ **OPTIONAL** State selected feed.
+   * @param { number } [intCurrentPage=0]
+   *  ❗️ **OPTIONAL** Current page.
    * @returns { void }
    */
-  function updateData
+  function helperReInitializeData
   (
-    dataNew: ITagsWidgetData,
-    reset: boolean = false
+    objDataNew: ITagsWidgetData,
+    _strStateSelectedFeed: null | 'home' | 'forecast' = null,
+    intCurrentPage: number = 0,
+    isReset: boolean = false
   ): void
   {
+    _strStateSelectedFeed ??= strContentSelectFeed;
+
     // [🐞]
     dlogv2
     (
-      'updateData(..) // START',
+      '🚏 checkpoint ➤ Article-Main.helperReInitializeData(..) // START',
       [
-        `🔹 [var] ➤ dataNew :|: ${dataNew}`,
-      ],
-      true
+        // `🔹 [var] ➤ objDataNew :: ${JSON.stringify(objDataNew)}`,
+        `🔹 [var] ➤ strContentSelectFeed :: ${strContentSelectFeed}`,
+        `🔹 [var] ➤ _strStateSelectedFeed :: ${_strStateSelectedFeed}`,
+        `🔹 [var] ➤ intCurrentPage :: ${intCurrentPage}`,
+        `🔹 [var] ➤ isReset :: ${isReset}`,
+      ]
     );
 
-    if (reset)
-    {
-      mapArticles = new Map();
-      mapAuthors = new Map();
-      mapTags = new Map();
-      mapTagSelectData = new Map();
-      mapArticlesMod = new Map();
-    }
-
-    mapArticles = new Map([...mapArticles, ...dataNew.mapArticle]);
-    mapAuthors = new Map([...mapAuthors, ...dataNew.mapAuthor]);
-    mapTags = new Map([...mapTags, ...dataNew.mapTag]);
+    // ╭─────
+    // │ NOTE:
+    // │ |: Inject 'new' data into `mapArticles`, `mapAuthors` and `mapTags`.
+    // ╰─────
+    mapArticles = new Map([...mapArticles, ...objDataNew.mapArticle]);
+    mapAuthors = new Map([...mapAuthors, ...objDataNew.mapAuthor]);
+    mapTags = new Map([...mapTags, ...objDataNew.mapTag]);
 
     const
+      /**
+       * @description
+       * 📝 `Map` article generated from OLD data.
+       */
+      mapOldArticlesMod: Map < number, IArticle >
+        = isReset
+          ? new Map()
+          : (mapTagSelectData.get(_strStateSelectedFeed)?.mapArticlesMod ?? new Map()),
       /**
        * @description
        * 📝 `Map` article generated from NEW data.
@@ -267,35 +372,74 @@
       mapNewArticlesMod
         = prepareArticlesMap
         (
-          new Map(dataNew.mapArticle),
-          new Map(dataNew.mapTag),
-          new Map(dataNew.mapAuthor),
+          new Map(objDataNew.mapArticle),
+          new Map(objDataNew.mapTag),
+          new Map(objDataNew.mapAuthor),
+        ),
+      /**
+       * @description
+       * 📝 `Map` article generated from OLD + NEW data.
+       */
+      mapArticlesMod
+        = new Map
+        (
+          [
+            ...mapOldArticlesMod,
+            ...mapNewArticlesMod
+          ].sort
+          (
+            (
+              a,
+              b
+            ) =>
+            {
+              const
+                aDate = new Date(a[1].published_date ?? '').getTime(),
+                bDate = new Date(b[1].published_date ?? '').getTime()
+              ;
+
+              return (aDate > bDate ? -1 : 1);
+            }
+          )
         )
     ;
 
-    mapArticlesMod = new Map([...mapArticlesMod, ...mapNewArticlesMod]);
+    mapTagSelectData.set
+    (
+      _strStateSelectedFeed,
+      {
+        ...objDataNew,
+        // ╭─────
+        // │ NOTE: IMPORTANT
+        // │ |: Override properties
+        // ╰─────
+        mapArticlesMod,
+        currentPage: intCurrentPage,
+        totalArticlesCount: objDataNew.totalArticlesCount,
+      }
+    );
 
-    if (!mapTagSelectData.has(dataNew.tagId))
-      mapTagSelectData.set
-      (
-        dataNew.tagId,
-        {
-          ...dataNew,
-          mapArticlesMod,
-          currentPage: 0,
-          totalArticlesCount: dataNew.totalArticlesCount,
-        }
-      );
-    ;
+    // ╭─────
+    // │ NOTE: IMPORTANT
+    // │ |: Reinitialize `mapTagSelectData` with new data.
+    // ╰─────
+    mapTagSelectData = mapTagSelectData;
 
-    isLoadingArticles = false;
+    isStateLoadingArticles = false;
 
     // [🐞]
-    dlogv2
+    log_v3
     (
-      'updateData(..) // END',
-      [ ],
-      true
+      {
+        strGroupName: '🚏 checkpoint ➤ Article-Main.helperReInitializeData(..) // END',
+        msgs:
+        [
+          `🔹 [var] ➤ mapTagSelectData.keys :: ${JSON.stringify([...mapTagSelectData.keys()])}`,
+          `🔹 [var] ➤ mapTagSelectData.size :: ${mapTagSelectData.size}`,
+          `🔹 [var] ➤ mapOldArticlesMod.size :: ${mapOldArticlesMod.size}`,
+          `🔹 [var] ➤ mapNewArticlesMod.size :: ${mapNewArticlesMod.size}`,
+        ]
+      }
     );
 
     return;
@@ -307,18 +451,36 @@
    * @summary
    *  🟦 HELPER
    * @description
-   *  📝 Custom handler for scroll logic.
+   *  📝 Selects target feed `tag`.
    * @return { void }
    */
-  function scrollHandler
+  function helperSelectFeed
   (
   ): void
   {
-    if (!isPWA && (mobile || tablet)) return;
+    // [🐞]
+    log_v3
+    (
+      {
+        strGroupName: '🚏 checkpoint ➤ helperSelectFeed(..) // START',
+        msgs:
+        [
+          `🔹 [var] ➤ strContentSelectFeed :: ${strContentSelectFeed}`
+        ]
+      }
+    );
 
-    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 5)
-      loadMore();
+    if (!mapTagSelectData.has(strContentSelectFeed))
+      helperLoadTagArticles();
     ;
+
+    // [🐞]
+    log_v3
+    (
+      {
+        strGroupName: '🚏 checkpoint ➤ helperSelectFeed(..) // END'
+      }
+    );
 
     return;
   }
@@ -332,16 +494,16 @@
    *  📝 Check for instance of loading more articles.
    * @return { Promise < void > }
    */
-  async function loadMore
+  async function helperTryLoadMore
   (
   ): Promise < void >
   {
     // [🐞]
-    dlogv2
+    log_v3
     (
-      'loadMore(..)',
-      [ ],
-      true
+      {
+        strGroupName: '🚏 checkpoint ➤ helperTryLoadMore(..) // START',
+      }
     );
 
     const
@@ -349,19 +511,26 @@
        * @description
        * 📝 Selected 'tag' tab data.
        */
-      dataTag = mapTagSelectData.get(selectedTag?.id ?? 0),
-      /**
-       * @description
-       * 📝 Article length.
-       */
-      length = dataTag?.mapArticlesMod.size || 0
+      objSelectedFeed = mapTagSelectData.get(strContentSelectFeed)
     ;
 
-    if (!selectedTag || !dataTag || length === dataTag.totalArticlesCount) return;
-
-    loadTagArticles
+    if
     (
-      dataTag.currentPage + 1
+      !objSelectedFeed
+      || ((objSelectedFeed.mapArticlesMod.size || 0) === objSelectedFeed.totalArticlesCount)
+    ) return;
+
+    await helperLoadTagArticles
+    (
+      (objSelectedFeed.currentPage + 1)
+    );
+
+    // [🐞]
+    log_v3
+    (
+      {
+        strGroupName: '🚏 checkpoint ➤ helperTryLoadMore(..) // END',
+      }
     );
 
     return;
@@ -375,10 +544,10 @@
    * @description
    *  📝 Load tag articles.
    * @param { number } [page=0]
-   *  💠 **REQUIRED** Number page to request.
+   *  ❔ **OPTIONAL** Number page to request.
    * @return { Promise < void > }
    */
-  async function loadTagArticles
+  async function helperLoadTagArticles
   (
     page: number = 0
   ): Promise < void >
@@ -386,34 +555,25 @@
     // [🐞]
     dlogv2
     (
-      'loadTagArticles(..) // START',
+      '🚏 checkpoint ➤ helperLoadTagArticles(..) // START',
       [
-        `🔹 [var] ➤ page |:| ${page}`,
-      ],
-      true
+        `🔹 [var] ➤ page :: ${page}`,
+      ]
     );
 
-    const
-      /**
-       * @description
-       * 📝 Following tags.
-       */
-      followingTags = $userBetarenaSettings.user?.scores_user_data?.following?.tags
-    ;
+    isStateLoadingArticles = true;
 
     let
       /**
        * @description
        * 📝 URL to be requested.
        */
-      url = `/api/data/author/content?&lang=${$sessionStore.serverLang}&page=${page}`
+      url = `/api/data/author.home?&lang=${serverLang}&page=${page}&type=${strContentSelectFeed}`
     ;
 
-    if (followingTags?.length)
-      url += `&followingTags=${followingTags.join(',')}`;
+    if (tags?.length)
+      url += `&followingTags=${tags.join(',')}`;
     ;
-
-    isLoadingArticles = true;
 
     const
       /**
@@ -424,30 +584,22 @@
         = await get
         (
           url
-        ) as ITagsWidgetData
+        )!
     ;
 
-    updateData(dataRes0);
-
-    // [🐞]
-    dlogv2
+    helperReInitializeData
     (
-      'loadTagArticles(..) // END',
-      [
-        `🔹 [var] ➤ page |:| ${page}`,
-      ],
-      true
+      // @ts-expect-error :: <?>
+      dataRes0,
+      null,
+      page
     );
 
-    if (!dataRes0) return;
-
-    mapTagSelectData.set
+    // [🐞]
+    log_v3
     (
-      selectedTag.id!,
       {
-        ...dataRes0,
-        mapArticlesMod,
-        currentPage: page,
+        strGroupName: '🚏 checkpoint ➤ Article-Main.helperLoadTagArticles(..) // END',
       }
     );
 
@@ -469,7 +621,23 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<svelte:window on:scroll={scrollHandler} />
+<svelte:window
+  on:scroll=
+  {
+    () =>
+    {
+      if (!globalState.has('IsPWA') && (VIEWPORT_MOBILE_INIT[1] || VIEWPORT_TABLET_INIT[1]))
+        return;
+      ;
+
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 5)
+        helperTryLoadMore();
+      ;
+
+      return;
+    }
+  }
+/>
 
 <!--
 ╭─────
@@ -478,17 +646,69 @@
 -->
 <div
   class="tabbar-wrapper"
+  style=
+  "
+  {
+    VIEWPORT_MOBILE_INIT[1]
+      ? 'width: 100% !important;'
+      : ''
+  }
+  "
 >
-  {#if categories.length}
-    <Tabbar
-      on:select={selectTag}
-      data={categories}
-      selected={selectedTag}
-      height={mobile ? 14 : 8}
-      let:tab
-    >
-    {tab.name}
-  </Tabbar>
+  {#if mapFeedViews.size > 0}
+    <!--
+    ╭─────
+    │ NOTE:
+    │ |:
+    ╰─────
+    -->
+    {#each [...mapFeedViews.entries()] as [, item]}
+      <Button
+        full={true}
+        type="button-brand"
+        classname=
+        "
+        {
+          strContentSelectFeed === (item.id === 0 ? 'home' : 'forecast')
+            ? 'selected'
+            : ''
+        }
+        "
+        style=
+        "
+        height: 36px;
+        "
+        on:click=
+        {
+          () =>
+          {
+            strContentSelectFeed
+              = item.id === 0
+                ? 'home'
+                : 'forecast'
+            ;
+            userBetarenaSettings.updateData
+            (
+              [
+                ['history-preference-articles-content-feed', strContentSelectFeed]
+              ]
+            );
+            helperSelectFeed();
+            return;
+          }
+        }
+      >
+        {#if item.id === 0 && globalState.has('Authenticated')}
+        <!-- {#if item.id === 0 && user} -->
+          {objGeneralHomeTranslation?.translation?.for_you ?? 'For you'}
+        {:else if item.id === 0 && globalState.has('NotAuthenticated')}
+        <!-- {#if item.id === 0} -->
+          {objGeneralHomeTranslation?.translation?.home ?? 'Home'}
+        {:else}
+          {item.name}
+        {/if}
+      </Button>
+    {/each}
   {/if}
 </div>
 
@@ -503,28 +723,53 @@
   <div
     class="listArticlesMod"
   >
-    {#each [...mapArticlesMod.entries()] as [id,article] (id)}
+    {#each [...(mapTagSelectData.get(strContentSelectFeed)?.mapArticlesMod.entries() ?? [])] as [id,article] (id)}
       <ArticleCard
-        {mobile}
+        mobile={VIEWPORT_MOBILE_INIT[1]}
+        tablet={VIEWPORT_TABLET_INIT[1]}
         {article}
-        {tablet}
-        {translations}
       />
     {/each}
 
-    {#if isLoadingArticles}
-      {#each Array(10) as _item}
+    {#if isStateLoadingArticles}
+      {#each { length: 10 } as _}
         <ArticleLoader
-          {mobile}
-          {tablet}
+          mobile={VIEWPORT_MOBILE_INIT[1]}
+          tablet={VIEWPORT_TABLET_INIT[1]}
         />
       {/each}
     {/if}
   </div>
 
-  {#if (tablet || mobile) && !isPWA && mapArticlesMod.size}
+  {#if
+    (VIEWPORT_TABLET_INIT[1] || VIEWPORT_MOBILE_INIT[1])
+    && !globalState.has('IsPWA')
+    && (mapTagSelectData.get(strContentSelectFeed)?.mapArticlesMod ?? new Map).size
+  }
     <div class="load-more">
-      <Button type="outline" on:click={loadMore}>Load More</Button>
+      <Button type="outline" on:click={helperTryLoadMore}>Load More</Button>
     </div>
   {/if}
 </div>
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 🌊 Svelte Component CSS/SCSS                                                     │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<style lang="scss">
+
+  :global
+  {
+    div.tabbar-wrapper button
+    {
+      font-size: var(--Font-size-text-sm, 14px) !important;
+    }
+  }
+
+</style>

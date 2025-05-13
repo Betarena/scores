@@ -24,6 +24,7 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  import { page } from '$app/stores';
 
   import { timeAgo } from '$lib/utils/dates.js';
   import { fade } from 'svelte/transition';
@@ -67,10 +68,6 @@
      */
     article: IArticle,
     /**
-     * @description translations
-     */
-    translations: IPageAuthorTranslationDataFinal,
-    /**
      * @description tablet view
      */
     tablet = false,
@@ -79,6 +76,8 @@
      */
     mobile = false
   ;
+
+  $: translations = ($page.data?.translations) as IPageAuthorTranslationDataFinal;
 
   $: ({
     permalink,

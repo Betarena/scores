@@ -1,24 +1,28 @@
-import { Actions, fail } from '@sveltejs/kit';
+import { getSportstackByPermalink } from '$lib/sveltekit/endpoint/sportstack.js';
 import { entryProfileTabAuthorSportstackUpsert, entryProfileTabAuthorValidateSportstackUsername } from '@betarena/scores-lib/dist/functions/v8/profile.main.js';
 import type { AuthorsAuthorsMain } from '@betarena/scores-lib/types/v8/_HASURA-0.js';
-import { getSportstackByPermalink } from '$lib/sveltekit/endpoint/sportstack.js';
+import { Actions, fail } from '@sveltejs/kit';
 
 export const actions: Actions = {
 
   update: async ({ request, locals }) =>
   {
+    const
+      // ╭─────
+      // │ NOTE:
+      // │ |: Destruct `object`.
+      // ╰─────
+      {
+        user:
+        {
+          uid
+        }
+      } = locals
+    ;
 
-    const { user } = locals;
-    if (!user)
-    {
-      return fail(401, { error: true, message: 'Unauthorized', reason: 'No user in locals' });
-
-    }
-    const uid = JSON.parse(user)['user-uid'];
     if (!uid)
-    {
       return fail(401, { error: true, message: 'Unauthorized', reason: 'No uid' });
-    }
+    ;
 
     try
     {
@@ -55,16 +59,23 @@ export const actions: Actions = {
 
   create: async ({ request, locals }) =>
   {
-    const { user } = locals;
-    if (!user)
-    {
-      return fail(401, { error: true, message: 'Unauthorized', reason: 'No user in locals' });
-    }
-    const uid = JSON.parse(user)['user-uid'];
+    const
+      // ╭─────
+      // │ NOTE:
+      // │ |: Destruct `object`.
+      // ╰─────
+      {
+        user:
+        {
+          uid
+        }
+      } = locals
+    ;
+
     if (!uid)
-    {
       return fail(401, { error: true, message: 'Unauthorized', reason: 'No uid' });
-    }
+    ;
+
     const data = await request.formData();
     const name = data.get('name') as string;
     if (!name)

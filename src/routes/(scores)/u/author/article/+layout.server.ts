@@ -1,10 +1,12 @@
 import type { AuthorsAuthorsMain } from '@betarena/scores-lib/types/v8/_HASURA-0.js';
-import { _GraphQL } from '@betarena/scores-lib/dist/classes/_graphql.js';
-import type { PageServerLoad } from '../create/[lang=lang]/$types.js';
 
 export const load = (({ locals, fetch }) =>
 {
-  const uid = locals.uid
+  const
+    {
+      uid
+    } = locals
+  ;
 
   async function getSportsTacks(uid?: string)
   {
@@ -17,4 +19,4 @@ export const load = (({ locals, fetch }) =>
   return {
     sportstacks: getSportsTacks(uid)
   };
-}) satisfies PageServerLoad;
+})

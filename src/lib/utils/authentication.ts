@@ -27,7 +27,6 @@ import userBetarenaSettings from '$lib/store/user-settings.js';
 import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.betarena-user.js';
 import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
 import { AU_W_TAG, dlog, log_v3 } from './debug.js';
-import { initUser } from './user.js';
 
 import type { BetarenaUser, IScoreUser } from '$lib/types/types.user-settings.js';
 import type { IAuthType } from '@betarena/scores-lib/types/firebase/firestore.js';
@@ -144,8 +143,6 @@ export async function successAuthComplete
           [ 'currentModal', null ]
         ]
       );
-
-      initUser();
 
       // [🐞]
       log_v3

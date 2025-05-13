@@ -18,6 +18,7 @@ import { preloadExitLogic, promiseUrlsPreload, promiseValidUrlCheck } from '$lib
 import type { IPageAuthorTagDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
 import type { B_SAP_D2 } from '@betarena/scores-lib/types/v8/preload.scores.js';
 import type { IPageAuthorTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.tags.js';
+import type { ServerLoadEvent } from '@sveltejs/kit';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -48,7 +49,7 @@ type PreloadPromise0 =
  */
 export async function main
 (
-  { name, fetch, locals }
+  { name, fetch, locals }: {name: string, fetch: any, locals: ServerLoadEvent['locals']},
 ): Promise < IPageAuthorTagDataFinal >
 {
   const
@@ -74,17 +75,17 @@ export async function main
       ERROR_CODE_INVALID
     );
   ;
-  const user = JSON.parse(JSON.stringify(locals.user));
   const [
-    data
-  ] = await fetchData
-  (
-    fetch,
-    name,
-    user.lang
-    );
+      data
+    ] = await fetchData
+    (
+      fetch,
+      name,
+      locals.user.lang
+    )
+  ;
 
-  /**
+    /**
      * @description
      *  📣 `Data` object for target `route`.
      */

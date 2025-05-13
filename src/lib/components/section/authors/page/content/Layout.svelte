@@ -78,7 +78,7 @@
     VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
-  $: pageSeo = $page.data.seoTamplate;
+  $: pageSeo = $page.data.objAuthorContentHome.seoTamplate;
   $: ({ windowWidth, globalState } = $sessionStore);
   $: isPWA = globalState.has('IsPWA');
   $: [mobile, tablet]
@@ -155,7 +155,7 @@
         }
       ) ?? false
     }
-    canonical={`${$page.url.origin}/a/content`}
+    canonical={`${$page.url.origin}${$page.url.pathname}`}
     twitter={pageSeo.twitter_card}
     openGraph={pageSeo.opengraph}
   />
@@ -228,7 +228,7 @@
         display: flex;
         align-items: start;
         gap: 16px;
-        width: 824px;
+        // width: 824px;
         font-size: var(--text-size-m);
 
         .add-icon
@@ -287,6 +287,7 @@
 
         .tabbar-wrapper {
           padding: 0px 16px;
+          padding-bottom: 11px;
         }
 
         .listArticlesMod {

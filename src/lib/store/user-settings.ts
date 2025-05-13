@@ -21,34 +21,17 @@
 
 import { writable } from 'svelte/store';
 
-import { updateButtonOrder, updateDataByKey, updateFollowing, updateHighlightedSpotstack, updateSelectLang } from '$lib/firebase/common.js';
-import sessionStore from '$lib/store/session.js';
+import { updateButtonOrder, updateDataByKey, updateFollowing, updateHighlightedSpotstack } from '$lib/firebase/common.js';
 import { log_v3 } from '$lib/utils/debug.js';
-import { initUser, logoutUser } from '$lib/utils/user.js';
+import { parseObject } from '$lib/utils/string.2.js';
 import { setCookie } from './cookie.js';
 
-import type { BetarenaUser, IUserSetting, Voted_Fixture } from '$lib/types/types.user-settings.js';
+import type { IBetarenaUserCookie } from '$lib/types/types.cookie.js';
+import type { BetarenaUser, IUserSetting } from '$lib/types/types.user-settings.js';
 
 // #endregion ➤ 📦 Package Imports
 
-// #region ➤ 📌 VARIABLES
-
-const
-  /**
-   * @description
-   *  📣 Target `data` store.
-   */
-  userSettings: IUserSetting
-    = {
-      lang: 'en',
-      theme: 'Dark',
-      country_bookmaker: undefined,
-      geoJs: undefined,
-      user: undefined,
-      voted_fixtures: [],
-      userguide_id_opt_out: []
-    }
-;
+// #region ➤ ⛩️ TYPES
 
 export type IDataProp =
   | 'lang'
@@ -69,6 +52,7 @@ export type IDataProp =
   | 'user-buttons-order'
   | 'user-subscriptions'
   | 'user-highlighted-sportstack'
+  | 'history-preference-articles-content-feed'
 ;
 
 enum DataPropEnum
@@ -91,7 +75,37 @@ enum DataPropEnum
   USER_SUBSCRIPTION = 'user-subscriptions',
   USER_BUTTONS_ORDER = 'user-buttons-order',
   USER_HIGHLIGHTED_SPORTSTACK = 'user-highlighted-sportstack',
+  HISTORY_PREFERENCE_ARTICLES_CONTENT_FEED = 'history-preference-articles-content-feed'
 }
+
+// #endregion ➤ ⛩️ TYPES
+
+// #region ➤ 📌 VARIABLES
+
+let
+  /**
+   * @description
+   *  📣 Target `data` store.
+   */
+  userSettings: IUserSetting
+    = {
+      lang: 'en',
+      theme: 'Dark',
+      country_bookmaker: undefined,
+      geoJs: undefined,
+      user: undefined,
+      voted_fixtures: [],
+      userguide_id_opt_out: [],
+      objHistory:
+      {
+        strContentSelectFeed: 'home'
+      },
+      // ╭──────────────────────────────────────────────────────────────────────────────────╮
+      // │ 📌 │ DEFAULT                                                                     │
+      // ╰──────────────────────────────────────────────────────────────────────────────────╯
+      _SIDE_EFFECTS_: new Set()
+    }
+;
 
 // #endregion ➤ 📌 VARIABLES
 
@@ -171,9 +185,6 @@ function createLocalStore
             localStore = methods.parseLocalStorage()
           ;
 
-          // [🐞]
-          // console.log('localStore', localStore);
-
           // ╭─────
           // │ CHECK:
           // │ │: for absent localstorage object, create one.
@@ -188,37 +199,27 @@ function createLocalStore
                 user: undefined,
                 voted_fixtures: [],
                 userguide_id_opt_out: [],
+                objHistory:
+                {
+                  strContentSelectFeed: 'home'
+                },
+                _SIDE_EFFECTS_: new Set(['IsAnonymousNew'])
               }
             ;
           ;
 
-          // ╭─────
-          // │ NOTE: IMPORTANT
-          // │ ➤ force legacy users to have _this_ object data property.
-          // │ ➤ necessary for new logic to work better.
-          // ╰─────
-          if (localStore.userguide_id_opt_out == undefined)
-            localStore.userguide_id_opt_out = [];
-          ;
+          localStore = methods.validateLocalStorage
+          (
+            localStore
+          );
 
           // ╭─────
-          // │ CHECK:
-          // │ │: for (non)-authenticated user logic.
+          // │ NOTE:
+          // │ |: Initialize user data.
           // ╰─────
           if (localStore.user)
-          {
-            initUser();
-          }
-          else
-          {
-            localStore.lang = strLang;
-            logoutUser();
-          }
-
-          // ╭─────
-          // │ CHECK:
-          // │ │: for (non)-authenticated user logic.
-          // ╰─────
+            localStore._SIDE_EFFECTS_.add('IsAuthenticated');
+          ;
 
           methods.setLocalStorage
           (
@@ -226,6 +227,41 @@ function createLocalStore
           );
 
           return;
+        },
+
+        /**
+         * @author
+         *  @migbash
+         * @summary
+         *  - 🟥 IMPORTANT CRITICAL
+         *  - 🔹 HELPER
+         * @description
+         *   📝 Validates and patches up `localStorage` for errors and versioning migration.
+         */
+        validateLocalStorage:
+        (
+          data: IUserSetting
+        ): IUserSetting =>
+        {
+          // ╭─────
+          // │ CHECK :|: for absent localstorage._SIDE_EFFECTS_ (in earlier user versions)
+          // ╰─────
+          data._SIDE_EFFECTS_ = new Set();
+          // ╭─────
+          // │ NOTE: IMPORTANT
+          // │ │: force legacy users to have _this_ object data property.
+          // │ │: necessary for new logic to work better.
+          // ╰─────
+          if (data.userguide_id_opt_out == undefined)
+            data.userguide_id_opt_out = [];
+          ;
+          // ╭─────
+          // │ NOTE: IMPORTANT
+          // │ │: force legacy users to have _this_ object data property.
+          // │ │: necessary for new logic to work better.
+          // ╰─────
+          data.objHistory = data.objHistory ?? { strContentSelectFeed: 'home' };
+          return data;
         },
 
         /**
@@ -307,11 +343,13 @@ function createLocalStore
           localStorage.setItem
           (
             key,
-            JSON.stringify
+            parseObject
             (
               data
             )
           );
+
+          userSettings = data;
 
           set
           (
@@ -328,103 +366,9 @@ function createLocalStore
         /**
          * @author
          *  @migbash
-         * @summary
-         *  🔹 HELPER
-         * @description
-         *  📝 Updates `userguides-op-out` preference.
-         * @param { number } id
-         *  ❗️ **REQUIRED** Target **uiserguide** `id`.
-         * @returns { void }
-         */
-        updateToggleUserGuideOpt:
-        (
-          id: number
-        ): void =>
-        {
-          const
-            /**
-             * @description
-             * 📝 Target `localStorage` data.
-             */
-            localStore = methods.parseLocalStorage()
-          ;
-
-          if (!localStore) return;
-
-          if (localStore.userguide_id_opt_out?.includes(id))
-            localStore.userguide_id_opt_out
-              = localStore.userguide_id_opt_out
-                .filter
-                (
-                  x => { return x != id }
-                )
-            ;
-          else
-            localStore.userguide_id_opt_out?.push(id);
-          ;
-
-          localStore.userguide_id_opt_out = [...new Set(localStore.userguide_id_opt_out)];
-
-          methods.setLocalStorage
-          (
-            localStore
-          );
-        },
-
-        /**
-         * @author
-         *  @migbash
-         * @summary
-         *  - ♦️ IMPORTANT
-         *  - 🔹 HELPER
-         * @description
-         *  📝 Update `user` with target vote casting.
-         * @param { Voted_Fixture } vote
-         *  ❗️ **REQUIRED** **Latest** `user` vote data.
-         * @return { void }
-         */
-        addToVotes:
-        (
-          vote: Voted_Fixture
-        ): void =>
-        {
-          const
-            /**
-             * @description
-             * 📝 Target `localStorage` data.
-             */
-            localStore = methods.parseLocalStorage()
-          ;
-
-          if (!localStore) return;
-
-          if (localStore.voted_fixtures == undefined)
-            localStore.voted_fixtures = [];
-          ;
-
-          localStore.voted_fixtures.push
-          (
-            vote
-          );
-
-          // ╭─────
-          // │ NOTE:
-          // │ > Approach Num.2
-          // ╰─────
-          methods.setLocalStorage
-          (
-            localStore
-          );
-
-          return;
-        },
-
-        /**
-         * @author
-         *  @migbash
          * @summary_tags
-         *  - ♦️ IMPORTANT
          *  - 🔹 HELPER
+         *  - ♦️ IMPORTANT & CRITICAL
          * @error_handle_notice
          *  🔰 HANDLED
          *    │: Error is caught & handled.
@@ -462,22 +406,39 @@ function createLocalStore
             {
               strGroupName: '🚏 checkpoint ➤ Store | LocalStorage ➤ updateData(..) // START',
               msgs: [
-                `🔹 [var] ➤ data :|: ${data}`,
+                `🔹 [var] ➤ data :: ${parseObject(data)}`,
               ],
               closed: true
             }
           );
 
+          // ╭─────
+          // │ IMPORTANT CRITICAL
+          // ╰─────
+          if (userSettings._SIDE_EFFECTS_.size > 0)
+          {
+            // eslint-disable-next-line no-console
+            console.warn('[WARNING] ➤ userSettings._SIDE_EFFECTS_ is not empty, but no side-effects were triggered.', userSettings._SIDE_EFFECTS_);
+            userSettings._SIDE_EFFECTS_ = new Set();
+          }
+
           const
             /**
              * @description
-             * 📣 Target `localStorage` data.
+             * 📝 Follow-up action.
              */
-            localStore = methods.parseLocalStorage()
+            setSideEffects: IUserSetting['_SIDE_EFFECTS_'] = new Set(),
+            /**
+             * @description
+             * 📝 Target `localStorage` data.
+             */
+            objOldDataSnapshot = methods.extractUserDataSnapshot()
           ;
 
-          if (!localStore) return;
-
+          // ╭─────
+          // │ NOTE:
+          // │ |: Loop through data to update.
+          // ╰─────
           for (const iterator of data)
           {
             const
@@ -488,7 +449,7 @@ function createLocalStore
               /**
                * @description
                */
-              scores_user = localStore.user?.scores_user_data
+              scores_user = userSettings.user?.scores_user_data
             ;
 
             let
@@ -506,16 +467,17 @@ function createLocalStore
             {
               case DataPropEnum.LANG:
               {
-                localStore.lang = dataPoint;
-                if (localStore.user?.scores_user_data)
+                userSettings.lang = dataPoint;
+                if (userSettings.user?.scores_user_data)
                   data.push(['lang-user', dataPoint]);
                 ;
+                setSideEffects.add('LangUpdate');
                 break;
               }
               case DataPropEnum.THEME:
               {
-                localStore.theme
-                  = localStore.theme == 'Dark'
+                userSettings.theme
+                  = userSettings.theme == 'Dark'
                     ? 'Light'
                     : 'Dark'
                 ;
@@ -525,27 +487,25 @@ function createLocalStore
               }
               case DataPropEnum.GEO_JS:
               {
-                localStore.geoJs = dataPoint;
+                userSettings.geoJs = dataPoint;
                 break;
               }
               case DataPropEnum.USER_OBJECT:
               {
-                localStore.user = dataPoint;
+                if (userSettings.user == undefined)
+                  setSideEffects.add('IsAuthenticated');
+                ;
+                userSettings.user = dataPoint;
                 if (dataPoint == undefined)
-                  sessionStore.updateData
-                  (
-                    [
-                      ['globalStateAdd', 'NotAuthenticated']
-                    ]
-                  );
+                  setSideEffects.add('IsAnonymous');
                 ;
                 break;
               }
               case DataPropEnum.USER_SCORES_DATA:
               {
-                (localStore.user ??= {});
+                (userSettings.user ??= {});
 
-                localStore.user.scores_user_data = dataPoint as BetarenaUser;
+                userSettings.user.scores_user_data = dataPoint as BetarenaUser;
 
                 // ╭─────
                 // │ CHECK:
@@ -553,20 +513,25 @@ function createLocalStore
                 // ╰─────
                 if
                 (
-                  localStore.user.scores_user_data.main_balance == undefined
-                  || isNaN(localStore.user.scores_user_data.main_balance)
+                  userSettings.user.scores_user_data.main_balance == undefined
+                  || isNaN(userSettings.user.scores_user_data.main_balance)
                 )
-                  localStore.user.scores_user_data.main_balance = 0;
+                  userSettings.user.scores_user_data.main_balance = 0;
                 ;
 
                 // ╭─────
                 // │ CHECK:
                 // │ │: for 'null' / non-empty value of `userguide_opt_out`.
                 // ╰─────
-                if (localStore.user.scores_user_data.userguide_id_opt_out != null)
-                  localStore.userguide_id_opt_out = localStore.user.scores_user_data.userguide_id_opt_out;
+                if (userSettings.user.scores_user_data.userguide_id_opt_out != null)
+                  userSettings.userguide_id_opt_out = userSettings.user.scores_user_data.userguide_id_opt_out;
                 ;
 
+                break;
+              }
+              case DataPropEnum.HISTORY_PREFERENCE_ARTICLES_CONTENT_FEED:
+              {
+                userSettings.objHistory.strContentSelectFeed = dataPoint as IUserSetting['objHistory']['strContentSelectFeed'];
                 break;
               }
               default: break;
@@ -583,7 +548,7 @@ function createLocalStore
               case DataPropEnum.LANG_USER:
               {
                 scores_user.lang = dataPoint;
-                updateSelectLang(dataPoint);
+                setSideEffects.add('UserUpdateDataLanguage');
                 break;
               }
               case DataPropEnum.USER_AVATAR:
@@ -729,18 +694,53 @@ function createLocalStore
             }
           }
 
+          // ╭─────
+          // │ IMPORTANT CRITICAL
+          // ╰─────
+          if (setSideEffects.size > 0)
+            userSettings._SIDE_EFFECTS_ = setSideEffects;
+          ;
+
           methods.setLocalStorage
           (
-            localStore
+            userSettings
           );
 
-          setCookie
+          // ╭─────
+          // │ NOTE:
+          // │ |: Update cookie data, if necessary.
+          // ╰─────
+          if (parseObject(objOldDataSnapshot) != parseObject(methods.extractUserDataSnapshot()))
+            setCookie
+            (
+              'betarenaScoresCookie',
+              parseObject(methods.extractUserDataSnapshot()),
+              30
+            );
+          ;
+
+          return;
+        },
+
+        /**
+         * @author
+         *  @migbash
+         * @summary
+         *  - 🔹 HELPER
+         *  - ♦️ IMPORTANT & CRITICAL
+         * @description
+         *  📝 Clear all side-effects.
+         * @return { void }
+         */
+        clearSideEffects:
+        (
+        ): void =>
+        {
+          userSettings._SIDE_EFFECTS_ = new Set();
+          set
           (
-            'betarenaScoresCookie',
-            JSON.stringify(methods.extractUserDataSnapshot()),
-            30
+            userSettings
           );
-
           return;
         },
 
@@ -824,44 +824,18 @@ function createLocalStore
          *  │ OUTPUT
          *  │ : void
          *  [X]──────────────────────────────────────────────────────────────────
-         * @return { object }
+         * @return { IBetarenaUserCookie }
          *  📤 Main `data point(s)`.
          */
         extractUserDataSnapshot:
         (
-        ): object =>
+        ): IBetarenaUserCookie =>
         {
-          const
-            /**
-             * @description
-             * 📣 Target `localStorage` data.
-             */
-            localStore = methods.parseLocalStorage(),
-            /**
-             * @description
-             *  📣 Target `user` data.
-             */
-            data
-              = {
-                lang: localStore?.lang,
-                geo: localStore?.country_bookmaker,
-                user: undefined
-              }
-          ;
-
-          if (localStore?.theme)
-          {
-            document.body.classList.toggle('dark-mode', localStore.theme == 'Dark');
-            document.body.classList.toggle('light-mode', localStore.theme == 'Light');
+          return {
+            uid: userSettings.user?.firebase_user_data?.uid,
+            lang: userSettings.lang,
+            theme: userSettings.theme,
           }
-
-          if (localStore?.user)
-          {
-            data['user-uid'] = localStore.user.firebase_user_data?.uid;
-            data['lang-user'] = localStore.user.scores_user_data?.lang;
-          }
-
-          return data;
         },
 
         /**
@@ -887,9 +861,10 @@ function createLocalStore
          */
         extractAll:
         (
-        ): IUserSetting | NullUndef =>
+        ): IUserSetting =>
         {
-          return methods.parseLocalStorage();
+          // @ts-expect-error :: Emtpy object is not allowed, but returned nonetheless.
+          return methods.parseLocalStorage() ?? {};
         }
       }
   ;

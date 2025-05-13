@@ -4,8 +4,8 @@ import { json, RequestHandler } from "@sveltejs/kit";
 
 export const GetTranslations: RequestHandler = async ({ url }) => {
   const language = url.searchParams.get("lang") || "";
-  const table = (url.searchParams.get("table") || "") as any;
-  const result = await entrySchemeTranslation({language, table});  console.log("TRANSLATIONS: ", language, result);
-  const translations = {...result[0].get(language).translation}
+  const table = (url.searchParams.get("table") || "") as "search";
+  const result = await entrySchemeTranslation({language, table});
+  const translations = {...result[0]?.get(language)?.translation}
   return json(translations);
 };

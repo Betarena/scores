@@ -15,11 +15,14 @@
 
 // #region ➤ 📦 Package Imports
 
-import { dlogv2 } from '$lib/utils/debug';
-import { promiseUrlsPreload } from '$lib/utils/navigation.js';
-import { parseObject } from '$lib/utils/string.2.js';
+import type { ServerLoadEvent } from "@sveltejs/kit";
 
-import type { ServerLoadEvent } from '@sveltejs/kit';
+import { dlogv2 } from "$lib/utils/debug.js";
+import { promiseUrlsPreload } from "$lib/utils/navigation.js";
+import { parseObject } from "$lib/utils/string.2.js";
+
+import type { IPageAuthorTagDataFinal } from "@betarena/scores-lib/types/v8/preload.authors.js";
+import type { IPageTranslationHomeDataFinal } from "@betarena/scores-lib/types/v8/core.translation.js";
 
 // #endregion ➤ 📦 Package Imports
 
@@ -43,14 +46,13 @@ const
  * @summary
  *  🔹 INTERFACE
  * @description
- *  📝 Target `types` for `_this_` page required at preload.
+ *  📣 Target `types` for `_this_` page required at preload.
  */
-type IPreloadData0 =
+type PreloadPromise0 =
 [
-  any,
-  any,
-  any,
-  any
+  IPageAuthorTagDataFinal | undefined,
+  IPageAuthorTagDataFinal | undefined,
+  IPageTranslationHomeDataFinal | undefined
 ];
 
 /**
@@ -65,19 +67,16 @@ interface IPreloadResponse
 {
   /**
    * @description
-   *  📝 Target `data` returned.
    */
-  translations?: undefined;
+  objAuthorContentHome?: IPageAuthorTagDataFinal;
   /**
    * @description
-   *  📝 Target `data` returned.
    */
-  articleTranslation?: undefined;
+  objAuthorContentForecast?: IPageAuthorTagDataFinal;
   /**
    * @description
-   *  📝 Target `data` returned.
    */
-  profile_translation?: undefined;
+  objGeneralHomeTranslation?: IPageTranslationHomeDataFinal;
 }
 
 // #endregion ➤ ⛩️ TYPES
@@ -120,7 +119,7 @@ export async function main
   event: ServerLoadEvent,
   objParentPreloadData:
   {
-    langParam: string
+    langParam: string;
   }
 ): Promise < IPreloadResponse >
 {
@@ -129,7 +128,7 @@ export async function main
   (
     `🚏 checkpoint ➤ ${strDebugModule} main(..) // START`,
     [
-      `🔹 [var] ➤ objParentPreloadData :|: ${parseObject(objParentPreloadData)}`,
+      `🔹 [var] ➤ objParentPreloadData :: ${parseObject(objParentPreloadData)}`,
     ]
   );
 
@@ -150,34 +149,21 @@ export async function main
   // │ |: Destruct `object`.
   // ╰─────
   [
-    objResponse.translations,
-    objResponse.articleTranslation,
-    objResponse.profile_translation
+    objResponse.objAuthorContentHome,
+    objResponse.objAuthorContentForecast,
+    objResponse.objGeneralHomeTranslation
   ] = await fetchData
   (
     event.fetch,
     objParentPreloadData.langParam
   );
 
-  // ╭─────
-  // │ NOTE: IMPORTANT
-  // │ |: Requires flattening of first-level `object`, to prevent `undefined` values in page.
-  // ╰─────
-  objResponse = {
-    // @ts-expect-error :: expceted to be destructed for respective page data, the way it was structured.
-    ...objResponse.translations,
-    // @ts-expect-error :: expceted to be destructed for respective page data, the way it was structured.
-    ...objResponse.profile_translation,
-    // @ts-expect-error :: expceted to be destructed for respective page data, the way it was structured.
-    readingTime: objResponse.articleTranslation?.translation
-  };
-
   // [🐞]
   dlogv2
   (
     `🚏 checkpoint ➤ ${strDebugModule} main(..) // END`,
     [
-      // `🔹 [var] ➤ objResponse :|: ${JSON.stringify(objResponse)}`,
+      // `🔹 [var] ➤ objResponse :: ${JSON.stringify(objResponse)}`,
     ]
   );
 
@@ -192,7 +178,7 @@ export async function main
  * @author
  *  @migbash
  * @summary
- *  🔷 HELPER
+ *  🟦 HELPER
  * @description
  *  📝 Fetches target data for `_this_` page.
  * @example
@@ -211,16 +197,16 @@ export async function main
  *  [X]──────────────────────────────────────────────────────────────────
  * @param { any } fetch
  *  ❗️ **REQUIRED** Instance of `fetch` object.
- * @param { string } lang
- *  ❗️ **REQUIRED** `lang`.
- * @returns { Promise < IPreloadData0 > }
+ * @param { string } _lang
+ *  ❗️ **REQUIRED** Target `lang`.
+ * @returns { Promise < IProfileData2 > }
  *  📤 Target `data` fetched.
  */
 async function fetchData
 (
   fetch: any,
-  lang: string
-): Promise < IPreloadData0 >
+  _lang: string
+): Promise < PreloadPromise0 >
 {
   const
     /**
@@ -229,21 +215,20 @@ async function fetchData
      */
     listUrls
       = [
-        `/api/data/author/tags?translation=${lang}`,
-        `/api/data/author/article?lang=${lang}`,
-        `/api/data/author/translations?lang=${lang}`
-
+        `/api/data/author.home?lang=${_lang}&type=home`,
+        `/api/data/author.home?lang=${_lang}`,
+        `/api/data/translation?lang=${_lang}`
       ],
     /**
      * @description
-     *  📝 Target `data` returned.
+     *  📣 Target `data` returned.
      */
-    dataRes0
-      = await promiseUrlsPreload
+    dataRes0 =
+      await promiseUrlsPreload
       (
         listUrls,
         fetch
-      ) as IPreloadData0
+      ) as PreloadPromise0
   ;
 
   return dataRes0;

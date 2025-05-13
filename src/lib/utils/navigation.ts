@@ -13,8 +13,8 @@
 // #region ➤ 📦 Package Imports
 
 import { dev } from '$app/environment';
-import { goto, invalidate, invalidateAll } from '$app/navigation';
-import { error, redirect, type Page } from '@sveltejs/kit';
+import { invalidate, invalidateAll } from '$app/navigation';
+import { error, redirect } from '@sveltejs/kit';
 import LZString from 'lz-string';
 
 import { get } from '$lib/api/utils.js';
@@ -35,105 +35,138 @@ import type { IPermalinkValidationResponse } from '$lib/types/types.response.js'
  * @author
  *  @migbash
  * @summary
- *  - 📌 MAIN
- *  - 🟥 IMPORTANT
+ *  ♦️ IMPORTANT
  * @description
- *  - 📣 [1] Updates platform **language** selection.
- *  - 📣 [2] Manages platform **navigation** for correct **language** switch.
- * @param { string | NullUndef } lang
- *  💠 **[required]** New `selected` language.
+ *  - 📝 [1] Updates platform **language** selection.
+ *  - 📝 [2] Manages platform **navigation** for correct **language** switch.
+ * @example
+ *  [1]──────────────────────────────────────────────────────────────────
+ *  │ selectLanguage
+ *  │ (
+ *  │   'es'
+ *  │ );
+ *  ┣────────────────────────────────────────────────────────────────────
+ *  │ DESCRIPTION
+ *  │ : Updates language selection for (1) user & (2) platform.
+ *  ┣────────────────────────────────────────────────────────────────────
+ *  │ OUTPUT
+ *  │ : NaN
+ *  [X]──────────────────────────────────────────────────────────────────
+ * @param { string | NullUndef } strNewLangSelected
+ *  ❗️ **REQUIRED** New `selected` language.
  * @return { Promise < void > }
  */
 export async function selectLanguage
 (
-  lang: string | NullUndef
-): Promise<void>
+  strNewLangSelected: string | NullUndef
+): Promise < void >
 {
-  if (sessionStore.extract('lang') == lang || !lang) return;
-
-  userBetarenaSettings.updateData
-  (
-    [
-      ['lang', lang]
-    ]
-  );
-
   const
+    // ╭─────
+    // │ NOTE: |:| 📝 Destruct Data (localStorage)
+    // ╰─────
+    {
+      lang: strLangUserSaved,
+      user:
+      {
+        scores_user_data:
+        {
+          lang: strLangBetarenaUserSaved
+        } = {}
+      } = {}
+    } = userBetarenaSettings.extractAll(),
+    // ╭─────
+    // │ NOTE: |:| 📝 Destruct Data (localStorage)
+    // ╰─────
+    {
+      serverLang,
+      page
+    } = sessionStore.extractAll(),
     /**
      * @description
-     *  📣 Past/previous lang option.
+     *  📝 past/previous lang option.
      */
-    pastLang: string
-      = sessionStore.extract('lang') == 'en'
+    pastLang
+      = serverLang == 'en'
         ? '/'
-        : `/${sessionStore.extract('lang')}`,
-    /**
-     * @description
-     * 📝 Data for `page`
-     */
-    page = sessionStore.extract<Page>('page')
-    ;
+        : `/${serverLang}`
+  ;
+
+  // ╭─────
+  // │ CHECK:
+  // │ |: for server language is the same as the selected language.
+  // ╰─────
+  if (serverLang == strNewLangSelected || !strNewLangSelected)
+    return;
+  ;
 
   // [🐞]
   dlogv2
   (
     '🚏 checkpoint ➤ selectLanguage(..)',
     [
-      `🔹 [var] ➤ $userBetarenaSettings.lang: ${userBetarenaSettings.extract('lang-user')}`,
-      `🔹 [var] ➤ $sessionStore?.serverLang: ${sessionStore.extract('lang')}`,
-      `🔹 [var] ➤ lang: ${lang}`,
+      `🔹 [var] ➤ strNewLangSelected :: ${strNewLangSelected}`,
       `🔹 [var] ➤ pastLang: ${pastLang}`,
-      `🔹 [var] ➤ $page.route.id: ${page?.route.id}`
+      `🔹 [var] ➤ serverLang :: ${serverLang}`,
+      `🔹 [var] ➤ strLangUserSaved: ${strLangUserSaved}`,
+      `🔹 [var] ➤ strLangBetarenaUserSaved: ${strLangBetarenaUserSaved}`,
     ],
     true
   );
 
+  userBetarenaSettings.updateData
+  (
+    [
+      ['lang', strNewLangSelected]
+    ]
+  );
+
   // ╭─────
   // │ NOTE:
-  // │ > Update <html {lang}> in platform <DOCTYPE>.
+  // │ │: Update <html {lang}> in platform <DOCTYPE>.
   // ╰─────
   document.documentElement.setAttribute
   (
     'lang',
-    (lang == 'br' ? 'pt-BR' : lang)
+    (strNewLangSelected == 'br' ? 'pt-BR' : strNewLangSelected)
   );
 
+  // ╭──────────────────────────────────────────────────────────────────────────────────╮
+  // │ 💠 │ SPECIAL PAGE ROUTES                                                         │
+  // ╰──────────────────────────────────────────────────────────────────────────────────╯
+
   // ╭─────
-  // │ CHECK
-  // │ > on 'error', navigate back to homepage.
+  // │ CHECK: [exit]
+  // │ │: on 'error', navigate back to homepage.
   // ╰─────
-  if (!checkNull(page?.error))
+  if (!checkNull(page.error))
   {
     const
-      targetUrl: string
-        = lang == 'en'
-          ? '/'
-          : `/${lang}`
-      ;
+      strNewUrl = strNewLangSelected == 'en' ? '/' : `/${strNewLangSelected}`
+    ;
 
     // [🐞]
     dlogv2
     (
-      '🚏 checkpoint ➤ selectLanguage(..) [x0]',
+      '🚏 checkpoint ➤ selectLanguage(..) // CONDITION [x0]',
       [
-        `🔹 [var] ➤ targetUrl :|: ${targetUrl}`,
-      ],
-      true
+        `🔹 [var] ➤ strNewUrl :|: ${strNewUrl}`,
+      ]
     );
 
     if (dev) return;
 
     await gotoSW
     (
-      targetUrl
+      strNewUrl
     );
 
     return;
   }
 
   // ╭─────
-  // │ CHECK
-  // │ > handle 'special' routes that already self-manage navigation
+  // │ CHECK: [exit]
+  // │ │: handle 'special' routes that already self-manage their navigation
   // ╰─────
   if
   (
@@ -143,246 +176,143 @@ export async function selectLanguage
       routeIdPagePlayer,
       routeIdPageCompetitionLobby,
       routeIdPageCompetition
-    ].includes(page?.route.id ?? '')
+    ].includes(page.route.id ?? '')
   )
   {
     // [🐞]
     dlog
     (
-      `🚏 checkpoint ➤ selectLanguage(..) if_M_1 page?.route?.id: ${page?.route.id} [exit]`,
+      `🚏 checkpoint ➤ selectLanguage(..) if_M_1 page?.route?.id: ${page.route.id} [exit]`,
       true
     );
 
     return;
   }
 
-  switch (page?.route.id)
+  // ╭─────
+  // │ CHECK: [exit][?]
+  // │ │: handle 'special' routes that already self-manage their navigation
+  // ╰─────
+  switch (page.route.id)
   {
     case routeIdPageProfile:
     case routeIdPageProfilePublication:
     case routeIdPageProfileArticleCreation:
     case routeIdPageProfileEditArticle:
     case routeIdPageProfileAuthorCreate:
-  {
-    const
-      pastLangV2: string
-              = pastLang == '/'
-                ? '/en'
-                : pastLang,
-      tempUrl: string = `${page.url.pathname}/`,
-      newURL: string = tempUrl
-        .replace
-        (
-          `${pastLangV2}/`,
-          `/${lang}`
-      ) + page.url.search
-            ;
+    {
+      const
+        /**
+         * @description
+         * 📝 past/previous lang option.
+         */
+        strLangOld2
+          = pastLang == '/'
+            ? '/en'
+            : pastLang,
+        /**
+         * @description
+         * 📝 new URL.
+         */
+        strUrlNew = `${page.url.pathname}/`.replace(`${strLangOld2}/`, `/${strNewLangSelected}`) + page.url.search
+      ;
 
-    // [🐞]
-    dlogv2
-    (
-      '🚏 checkpoint ➤ selectLanguage(..) [x1]',
-      [
-        `🔹 [var] ➤ pastLangV2 :|: ${pastLangV2}`,
-        `🔹 [var] ➤ tempUrl :|: ${tempUrl}`,
-        `🔹 [var] ➤ newURL :|: ${newURL}`,
-      ],
-      true
-    );
-
-    await gotoSW
-    (
-      newURL,
-      true
-    );
-
-    return;
-  }
-    case routeIdContent: {
-      const newUrl = lang === 'en' ? '/' : `/${lang}`;
       // [🐞]
-      dlogv2(
-        '🚏 checkpoint ➤ selectLanguage(..) [x1]',
-        [`🔹 [var] ➤ newURL :|: ${newUrl}`],
+      dlogv2
+      (
+        '🚏 checkpoint ➤ selectLanguage(..) // CONDITION [x1.0]',
+        [
+          `🔹 [var] ➤ page.url.pathname :: ${page.url.pathname}`,
+          `🔹 [var] ➤ page.url.search :: ${page.url.search}`,
+          `🔹 [var] ➤ strLangOld2 :: ${strLangOld2}`,
+          `🔹 [var] ➤ strUrlNew :: ${strUrlNew}`,
+        ]
+      );
+
+      await invalidateAll();
+
+      await gotoSW
+      (
+        strUrlNew,
         true
       );
-      sessionStore.updateData([['lang', lang]]);
-      goto(newUrl, { replaceState: true });
-      break;
+
+      return;
+    }
+    case routeIdContent:
+    {
+      const
+        /**
+         * @description
+         * 📝 past/previous lang option.
+         */
+        strUrlNew
+          = strNewLangSelected === 'en'
+            ? '/'
+            : `/${strNewLangSelected}`
+      ;
+
+      // [🐞]
+      dlogv2
+      (
+        '🚏 checkpoint ➤ selectLanguage(..) // CONDITION [x1.1]',
+        [
+          `🔹 [var] ➤ strUrlNew :: ${strUrlNew}`
+        ],
+      );
+
+      await invalidateAll();
+
+      await gotoSW
+      (
+        strUrlNew,
+        true
+      );
+
+      return;
     }
     case routeIdAuthorProfile:
     case routeIdAuthorSubscribers:
     case routeIdSportstack:
+    {
       //[🐞]
       dlogv2
-        (
-          '🚏 checkpoint ➤ selectLanguage(..) [x2]',
-          [
-          ],
-          true
-        );
+      (
+        '🚏 checkpoint ➤ selectLanguage(..) // CONDITION [x2.0]',
+        [],
+      );
 
-      sessionStore.updateData
-        (
-          [
-            ['lang', lang]
-          ]
-        );
-      invalidate("author:translations")
-      return
+      invalidate('author:translations');
+
+      return;
+    }
     case routeIdPageTags:
+    {
+      //[🐞]
+      dlogv2
+      (
+        '🚏 checkpoint ➤ selectLanguage(..) // CONDITION [x2.1]',
+        [],
+      );
 
-    //[🐞]
-    dlogv2
-    (
-      '🚏 checkpoint ➤ selectLanguage(..) [x2]',
-      [
-      ],
-      true
-    );
-
-    sessionStore.updateData
-    (
-      [
-        ['lang', lang]
-      ]
-    );
       invalidateAll();
 
-    return;
-  case routeIdPageAuthors:
-  {
-    //[🐞]
-    dlogv2
-    (
-      '🚏 checkpoint ➤ selectLanguage(..) [x2]',
-      [
-      ],
-      true
-    );
+      return;
+    }
+    case routeIdPageAuthors:
+    {
+      //[🐞]
+      dlogv2
+      (
+        '🚏 checkpoint ➤ selectLanguage(..) // CONDITION [x2.2]',
+        [],
+      );
 
-    invalidateAll();
+      invalidateAll();
 
-    sessionStore.updateData
-    (
-      [
-        ['lang', lang]
-      ]
-    );
-
-    return;
-  }
-  default: break;
-  }
-
-  // ╭─────
-  // │ NOTE:
-  // │ > continue standard navigation switch.
-  // ╰─────
-
-  const
-    /**
-     * @description
-     *  📣 count number of slashes URL.
-     */
-    countSlash: number = (page?.url.pathname.split('/')?.length ?? 0) - 1
-    ;
-
-  let
-    /**
-     * @description
-     *  📣 NEW `url` to be navigatated to.
-     */
-    newURL: string | undefined
-    ;
-
-  // ╭─────
-  // │ NOTE:
-  // │ > maybe [?]
-  // ╰─────
-  // prefetch(`/`);
-
-  // ╭─────
-  // │ CHECK
-  // │ > for 'EN' naviagtion.
-  // ╰─────
-  if (lang == 'en' && pastLang != '/')
-    // ╭─────
-    // │ NOTE:
-    // │ > replace path-name accordingly for 'EN', first occurance.
-    // ╰─────
-    newURL
-      = countSlash == 1
-        ? page?.url.pathname.replace(pastLang, '/')
-        : page?.url.pathname.replace(pastLang, '')
-    ;
-  // ╭─────
-  // │ CHECK
-  // │ > for incoming from an 'EN' (/) route.
-  // ╰─────
-  else if (lang != 'en' && pastLang == '/')
-    // ╭─────
-    // │ NOTE:
-    // │ > replace path-name accordingly for "<lang>" - first occurance.
-    // ╰─────
-    newURL
-       = page?.url.pathname !== '/'
-        ? page?.url.pathname.replace(pastLang, `/${lang}/`)
-        : page.url.pathname.replace(pastLang, `/${lang}`)
-    ;
-  // ╭─────
-  // │ CHECK
-  // │ > for incoming from an 'non-EN' (/<lang>) route.
-  // ╰─────
-  else if (lang != 'en' && pastLang != '/')
-    // ╭─────
-    // │ NOTE:
-    // │ > replace path-name accordingly for "<lang>" - first occurance.
-    // ╰─────
-    newURL
-      = page?.url.pathname.replace(pastLang, `/${lang}`)
-    ;
-  ;
-
-  // ╭─────
-  // │ NOTE:
-  // │ > update URL breadcrumb.
-  // ╰─────
-
-  // [🐞]
-  dlogv2
-  (
-    '🚏 checkpoint ➤ selectLanguage(..) [x3]',
-    [
-      `🔹 [var] ➤ newURL :|: ${newURL}`,
-    ],
-    true
-  );
-
-  // sessionStore.updateData
-  // (
-  //   [
-  //     ['lang', lang]
-  //   ]
-  // );
-
-  // ╭─────
-  // │ NOTE:
-  // │ > Solution [1]
-  // ╰─────
-  // window.history.replaceState({}, "NewPage", newURL);
-  // ╭─────
-  // │ NOTE:
-  // │ > Solution [2]
-  // ╰─────
-  if (typeof newURL == 'string')
-  {
-
-    await gotoSW
-    (
-      newURL,
-      true
-    );
+      return;
+    }
+    default: break;
   }
 
   return;
