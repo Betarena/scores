@@ -23,12 +23,11 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
-  import Avatar from "$lib/components/ui/Avatar.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import session from "$lib/store/session.js";
   import userSettings from "$lib/store/user-settings.js";
-  import type { BetarenaUser } from "$lib/types/types.user-settings.js";
   import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
+  import SportstackAvatar from "../../SportstackAvatar.svelte";
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -45,16 +44,17 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let user: BetarenaUser, translations: IPageAuthorTranslationDataFinal;
+  export let user: any, translations: IPageAuthorTranslationDataFinal;
   export let size: number | string = 40;
   export let action_button= true;
 
   $: ({ viewportType } = $session);
   $: ({ user: ctx } = $userSettings);
-  $: ({ uid, username, name, profile_photo, usernamePermalink } = user);
+  $: ({  username, name, avatar } = user.data);
+  $: ({ permalink, id } = user);
   $: isAuth = !!ctx;
-  $: isFollow = !!(ctx?.scores_user_data.following?.authors || []).includes(
-    uid
+  $: isFollow = !!(ctx?.scores_user_data?.subscriptions?.sportstacks || []).includes(
+    id
   );
 
   // #endregion ➤ 📌 VARIABLES
@@ -77,7 +77,7 @@
       return;
     }
     userSettings.updateData([
-      ["user-following", { target: "authors", id: uid, follow: !isFollow }],
+      ["user-subscriptions", { target: "sportstacks", id, follow: !isFollow }],
     ]);
   }
 
@@ -96,11 +96,11 @@
 -->
 
 <div class="list-item {viewportType}">
-  <a href="/a/user/{usernamePermalink}" class="user-info">
-    <Avatar {size} wrapStyle="border: 1px solid #1D1D1D" src={profile_photo} />
-    <div class="useer-name">{name || username}</div>
+  <a href="/a/sportstack/{permalink}" class="user-info">
+    <SportstackAvatar {size} src={avatar}/>
+    <div class="user-name">{name || username}</div>
   </a>
-  {#if action_button && uid !== ctx?.firebase_user_data?.uid}
+  {#if id !== ctx?.firebase_user_data?.uid && action_button}
     <Button type={isFollow ? "subtle" : "primary"} style="padding:10px 16px; font-size: 14px; height:{size === "lg" ? "36px" : "32px"}; min-width: 72px " on:click={handleClick}>
       <TranslationText
         text={translations[isFollow ? "following" : "follow"]}

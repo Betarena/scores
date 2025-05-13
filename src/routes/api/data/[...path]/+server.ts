@@ -27,6 +27,11 @@ import { main as EndpointProfileMain } from '$lib/sveltekit/endpoint/profile.mai
 import { API_DATA_ERROR_RESPONSE } from '$lib/utils/debug.js';
 
 import type { RequestHandler } from '@sveltejs/kit';
+import { ArticlesSearchEndpoint } from '$lib/sveltekit/endpoint/search.articles.js';
+import { TagsSearchEndpoint } from '$lib/sveltekit/endpoint/search.tags.js';
+import { AuthorsSearchEndpoint } from '$lib/sveltekit/endpoint/search.authors.js';
+import { SuggestionsPostEndpoint, SuggestionsSearchEndpoint } from '$lib/sveltekit/endpoint/search.suggestions.js';
+import { GetTranslations } from '$lib/sveltekit/endpoint/translations.js';
 
 // #endregion ➤ 📦 Package
 
@@ -35,6 +40,17 @@ import type { RequestHandler } from '@sveltejs/kit';
 // ╰─────
 dotenv.config();
 
+const getEndpointsMap = {
+  'profile.main': EndpointProfileMain,
+  'author.home': EndpointAuthorHome,
+  'search.articles': ArticlesSearchEndpoint,
+  'search.tags': TagsSearchEndpoint,
+  'search.authors': AuthorsSearchEndpoint,
+  "search.suggestions": SuggestionsSearchEndpoint,
+  'translations': GetTranslations,
+  'translation':EdnpointTranslation
+}
+type EndPointsMapKeys = keyof typeof getEndpointsMap;
 export const GET: RequestHandler = async (
   request
 ): Promise < Response > =>
@@ -44,35 +60,24 @@ export const GET: RequestHandler = async (
   // ╰──────────────────────────────────────────────────────────────────╯
 
   const
-    queryParamPath = request.params.path as
-      | 'profile.main'
-      | 'author.home'
-      | 'translation'
-  ;
+    queryParamPath = request.params.path as EndPointsMapKeys;
 
   // ╭──────────────────────────────────────────────────────────────────╮
   // │:| endpoint handler data.                                         │
   // ╰──────────────────────────────────────────────────────────────────╯
 
-  if (queryParamPath == 'profile.main')
-    return await EndpointProfileMain
-    (
-      request
-    );
-  else if (queryParamPath == 'author.home')
-    return await EndpointAuthorHome
-    (
-      request
-    );
-  else if (queryParamPath == 'translation')
-    return await EdnpointTranslation
-    (
-      request
-    );
+  if (getEndpointsMap[queryParamPath])
+    return await getEndpointsMap[queryParamPath](request) as Response;
   ;
 
   return API_DATA_ERROR_RESPONSE();
 }
+
+const postEndpointsMap = {
+  'profile.main': EndpointProfileMain,
+  "search.suggestions": SuggestionsPostEndpoint
+}
+type PostEndPointsMapKeys = keyof typeof postEndpointsMap;
 
 export const POST: RequestHandler = async (
   request
@@ -84,19 +89,17 @@ export const POST: RequestHandler = async (
 
   const
     queryParamPath = request.params.path as
-      | 'profile.main'
+     PostEndPointsMapKeys
   ;
 
   // ╭──────────────────────────────────────────────────────────────────╮
   // │:| endpoint handler data.                                         │
   // ╰──────────────────────────────────────────────────────────────────╯
 
-  if (queryParamPath == 'profile.main')
-    return await EndpointProfileMain
-    (
-      request
-    );
-  ;
+  if (postEndpointsMap[queryParamPath])
+  {
+    return await postEndpointsMap[queryParamPath](request)
+  }
 
   return API_DATA_ERROR_RESPONSE();
 }

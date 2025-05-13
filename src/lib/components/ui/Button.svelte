@@ -43,7 +43,8 @@
       | 'primary-outline'
       | 'terlary-gray'
       | 'tertiary'
-      | 'tertiary-v2'
+      | 'button-brand'
+      | 'link-color'
       | 'subtle' = 'primary';
 
   export let submit = false;
@@ -449,8 +450,22 @@
       }
     }
   }
+  .link-color {
+    padding: 0 !important;
+    background: inherit;
+    color: var(
+      --component-colors-components-buttons-tertiary-color-button-tertiary-color-fg,
+      #f5620f
+    );
 
-  .tertiary-v2
+    &:hover,
+    &.hover {
+      color: var(--component-colors-components-buttons-tertiary-color-button-tertiary-color-fg_hover, #D4550C);
+
+    }
+  }
+
+  .button-brand
   {
     background: inherit;
 

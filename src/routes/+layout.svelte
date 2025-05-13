@@ -56,6 +56,7 @@
       routeIdPageProfileEditArticle,
       routeIdPageProfilePublication,
       routeIdScores,
+      routeIdSearch,
     } from '$lib/constants/paths.js';
   import { scoresAdminStore } from '$lib/store/admin.js';
   import { delCookie } from '$lib/store/cookie.js';
@@ -85,6 +86,7 @@
   // import '@betarena/ad-engine';
   // import WidgetAdEngine from '@betarena/ad-engine/src/lib/Widget-AdEngine.svelte';
   import WidgetAdEngine from '@betarena/ad-engine';
+  import history_store from '$lib/store/history.js';
 
   // ╭─────
   // │ WARNING:
@@ -495,6 +497,13 @@
     }
   );
 
+
+  beforeNavigate(({from}) => {
+    if (!from) return;
+    const {url} = from;
+    $history_store.push(url.pathname);
+  })
+
   afterNavigate
   (
     async (
@@ -688,7 +697,7 @@
     <!-- <EmailSubscribe /> -->
   {/if}
 
-  {#if ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle].includes($page.route.id )}
+  {#if ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle, routeIdSearch].includes($page.route.id )}
     <HeaderRedesigned />
   {/if}
 
@@ -728,9 +737,7 @@
     />
   {/if}
 
-  <InfoMessages />
 
-  <ModalMain />
 </div>
 
 <!--

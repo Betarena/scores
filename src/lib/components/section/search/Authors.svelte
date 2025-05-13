@@ -1,33 +1,54 @@
-<!--
-╭──────────────────────────────────────────────────────────────────────────────────╮
-│ 🟦 Svelte Component JS/TS                                                        │
-┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
-│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
-╰──────────────────────────────────────────────────────────────────────────────────╯
--->
-
 <script>
-  // #region ➤ 📦 Package Imports
+  import { page } from "$app/stores";
+  import SportsTackList from "$lib/components/ui/composed/sportstack_list/SportsTackList.svelte";
+  import { infiniteScroll } from "$lib/utils/infinityScroll";
+  import { createEventDispatcher } from "svelte";
+  import search_store from "./search_store";
+  import NoResults from "./NoResults.svelte";
+
+  // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'imports' that are required        │
-  // │ by 'this' .svelte file is ran.                                         │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
   // │ IMPORTANT                                                              │
   // │ Please, structure the imports as follows:                              │
-  // │ 1. svelte/sveltekit imports                                            │
-  // │ 2. project-internal files and logic                                    │
-  // │ 3. component import(s)                                                 │
-  // │ 4. assets import(s)                                                    │
-  // │ 5. type(s) imports(s)                                                  │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  import { modalStore } from "$lib/store/modal";
-  import ModalBackdrop from "./Modal-Backdrop.svelte";
 
-  // #endregion ➤ 📦 Package Imports
+  const dispatch = createEventDispatcher();
 
+  $: ({ translations } = $page.data);
+  $: sportstacks = $search_store.sportstacks.data || new Map();
+  $: ({ loading } = $search_store.sportstacks);
 
+  // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  function loadMore() {
+    if (loading) return;
+    dispatch("loadMore", {
+      type: "sportstacks",
+      page: $search_store.sportstacks.page + 1,
+    });
+  }
+
+  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--
@@ -40,15 +61,13 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
-{#if $modalStore.modal &&  $modalStore.show}
-  <ModalBackdrop on:closeModal={() => ($modalStore.show = false)} />
-{/if}
-{#if $modalStore.show && $modalStore.component}
-  <div class="modal-content">
-    <svelte:component this={$modalStore.component} {...$modalStore.props} />
-  </div>
-{/if}
+<div class="wrapper" use:infiniteScroll={{ loadMore, hasMore: !!$search_store.sportstacks.next_page_count, loading }}>
+  {#if sportstacks.size || $search_store.sportstacks.loading}
+    <SportsTackList {sportstacks} {translations} {loading} size="lg"  limit={$search_store.sportstacks.next_page_count}/>
+  {:else}
+    <NoResults />
+  {/if}
+</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -61,7 +80,12 @@
 -->
 
 <style lang="scss">
-  .modal-content {
-    z-index: 4001;
+  .wrapper {
+    flex-grow: 1;
+    max-height: 100%;
+    min-height: 100%;
+    overflow: auto;
+    padding-bottom: 100px;
+    background: var(--colors-background-bg-main);
   }
 </style>

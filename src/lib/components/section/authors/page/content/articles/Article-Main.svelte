@@ -665,7 +665,7 @@
     {#each [...mapFeedViews.entries()] as [, item]}
       <Button
         full={true}
-        type="tertiary-v2"
+        type="button-brand"
         classname=
         "
         {

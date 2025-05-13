@@ -7,27 +7,10 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<script>
-  // #region ➤ 📦 Package Imports
+<script lang="ts">
+  import { page } from "$app/stores";
 
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'imports' that are required        │
-  // │ by 'this' .svelte file is ran.                                         │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. svelte/sveltekit imports                                            │
-  // │ 2. project-internal files and logic                                    │
-  // │ 3. component import(s)                                                 │
-  // │ 4. assets import(s)                                                    │
-  // │ 5. type(s) imports(s)                                                  │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-  import { modalStore } from "$lib/store/modal";
-  import ModalBackdrop from "./Modal-Backdrop.svelte";
-
-  // #endregion ➤ 📦 Package Imports
-
-
+  $: ({ search_translations } = $page.data);
 </script>
 
 <!--
@@ -40,15 +23,12 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
-{#if $modalStore.modal &&  $modalStore.show}
-  <ModalBackdrop on:closeModal={() => ($modalStore.show = false)} />
-{/if}
-{#if $modalStore.show && $modalStore.component}
-  <div class="modal-content">
-    <svelte:component this={$modalStore.component} {...$modalStore.props} />
-  </div>
-{/if}
+<div class="no-results">
+  <span class="highlighted-text">
+    {search_translations.no_results || "No Results"}</span
+  >
+  <span>{search_translations.try_other_search_term ||  "try other search term" }</span>
+</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -61,7 +41,22 @@
 -->
 
 <style lang="scss">
-  .modal-content {
-    z-index: 4001;
+  .no-results {
+    color: var(--colors-text-text-tertiary-600, #6a6a6a);
+    /* Text md/Regular */
+    font-family: var(--font-family-font-family-body, Roboto);
+    font-size: var(--font-size-text-md, 16px);
+    font-style: normal;
+    font-weight: 400;
+    line-height: var(--line-height-text-md, 24px); /* 150% */
+
+    display: flex;
+    justify-content: center;
+    padding-block: 16px;
+    gap: 4px;
+
+    .highlighted-text {
+      color: var(--colors-brand-500);
+    }
   }
 </style>

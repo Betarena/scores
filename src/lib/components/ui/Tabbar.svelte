@@ -8,8 +8,8 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 <script lang="ts">
+  import type { ITab } from "$lib/types.js";
   import { createEventDispatcher, tick } from "svelte";
-  import TranslationText from "../misc/Translation-Text.svelte";
 
   // #region ➤ 📌 VARIABLES
 
@@ -24,18 +24,12 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  interface ITab {
-    id: string | number;
-    name?: string;
-    label: string;
-    [key: string]: any;
-  }
 
   export let data = [] as ITab[];
   export let selected = null as ITab | null;
   export let height = 14;
   export let translations: { [key: string]: string } = {};
-  export let type: "underline" | "button_border" = "underline";
+  export let type: "underline" | "button_border" | "button_brand" | "button_gray"= "underline";
   export let size: "sm" | "md" | undefined = undefined;
   let activeNode: HTMLElement;
   let tabbarNode: HTMLElement;
@@ -243,6 +237,55 @@
       }
     }
 
+    &.button_gray {
+      .tab-item {
+        display: flex;
+        height: 44px;
+        padding: var(--spacing-md, 8px) var(--spacing-lg, 12px);
+        justify-content: center;
+        align-items: center;
+        gap: var(--spacing-md, 8px);
+
+        border-radius: var(--radius-sm, 6px);
+
+        color: var(--colors-text-text-quaternary-500, #727171);
+
+        /* Text md/Semibold */
+        font-family: var(--Font-family-font-family-body, Roboto);
+        font-size: var(--Font-size-text-md, 16px);
+        font-style: normal;
+        font-weight: 600;
+        line-height: var(--Line-height-text-md, 24px); /* 150% */
+      }
+
+      .selected {
+        display: flex;
+        height: 44px;
+        padding: var(--spacing-md, 8px) var(--spacing-lg, 12px);
+        justify-content: center;
+        align-items: center;
+        gap: var(--spacing-md, 8px);
+
+        border-radius: var(--radius-sm, 6px);
+        background: var(--colors-background-bg-primary_alt, #fff);
+
+        /* Shadows/shadow-sm */
+        box-shadow: 0px 1px 3px 0px
+            var(--colors-effects-shadows-shadow-sm_01, rgba(31, 31, 31, 0.1)),
+          0px 1px 2px 0px
+            var(--colors-effects-shadows-shadow-sm_02, rgba(31, 31, 31, 0.06));
+
+        color: var(--colors-text-text-secondary, #525252);
+
+        /* Text md/Semibold */
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-md, 16px);
+        font-style: normal;
+        font-weight: 600;
+        line-height: var(--line-height-text-md, 24px); /* 150% */
+      }
+    }
+
     &.md {
       gap: var(--spacing-lg, 12px);
       .tab-item {
@@ -259,6 +302,23 @@
         font-style: normal;
         font-weight: 600;
         line-height: var(--line-height-text-md, 24px); /* 150% */
+      }
+    }
+    &.sm {
+      .tab-item {
+        display: inline-flex;
+        height: 36px;
+        padding: var(--spacing-md, 8px) var(--spacing-lg, 12px);
+        justify-content: center;
+        align-items: center;
+        gap: var(--spacing-md, 8px);
+        flex-shrink: 0;
+
+        font-family: var(--Font-family-font-family-body, Roboto);
+        font-size: var(--Font-size-text-sm, 14px);
+        font-style: normal;
+        font-weight: 600;
+        line-height: var(--Line-height-text-sm, 20px); /* 142.857% */
       }
     }
   }

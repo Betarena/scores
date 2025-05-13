@@ -8,29 +8,12 @@
 -->
 
 <script lang="ts">
-  // #region ➤ 📦 Package Imports
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'imports' that are required        │
-  // │ by 'this' .svelte file is ran.                                         │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. svelte/sveltekit imports                                            │
-  // │ 2. project-internal files and logic                                    │
-  // │ 3. component import(s)                                                 │
-  // │ 4. assets import(s)                                                    │
-  // │ 5. type(s) imports(s)                                                  │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
-  import Avatar from "$lib/components/ui/Avatar.svelte";
-  import Button from "$lib/components/ui/Button.svelte";
   import session from "$lib/store/session.js";
-  import userSettings from "$lib/store/user-settings.js";
-  import type { BetarenaUser } from "$lib/types/types.user-settings.js";
   import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
-  // #endregion ➤ 📦 Package Imports
-
+  import SeoBox from "$lib/components/SEO-Box.svelte";
+  import { page } from "$app/stores";
+  import ListSportsTackItem from "./ListSportsTackItem.svelte";
+  import ListSportsTackLoader from "./ListSportsTackLoader.svelte";
   // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -45,43 +28,23 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let user: BetarenaUser, translations: IPageAuthorTranslationDataFinal;
-  export let size: number | string = 40;
-  export let action_button= true;
+  export let sportstacks = new Map(),
+    translations: IPageAuthorTranslationDataFinal,
+    loading = false,
+    size: number | string = 40,
+    limit = 10,
+    action_button = true,
+    emptyMessage = "";
+
+  const /**
+     * @description
+     *  📣 `this` component **main** `id` and `data-testid` prefix.
+     */ // eslint-disable-next-line no-unused-vars
+    CNAME: string = "author⮕followers⮕list";
 
   $: ({ viewportType } = $session);
-  $: ({ user: ctx } = $userSettings);
-  $: ({ uid, username, name, profile_photo, usernamePermalink } = user);
-  $: isAuth = !!ctx;
-  $: isFollow = !!(ctx?.scores_user_data.following?.authors || []).includes(
-    uid
-  );
 
   // #endregion ➤ 📌 VARIABLES
-
-  // #region ➤ 🛠️ METHODS
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'methods' that are to be           │
-  // │ and are expected to be used by 'this' .svelte file / component.        │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. function (..)                                                       │
-  // │ 2. async function (..)                                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  function handleClick() {
-    if (!isAuth) {
-      $session.currentActiveModal = "Auth_Modal";
-      return;
-    }
-    userSettings.updateData([
-      ["user-following", { target: "authors", id: uid, follow: !isFollow }],
-    ]);
-  }
-
-  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--
@@ -94,19 +57,33 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
+<SeoBox>
+  {#each [...sportstacks] as [uid, user] (uid) }
+    <h2>{user?.name || user.username}</h2>
+    <a href={`${$page.url.origin}/a/user/${user?.usernamePermalink}`}
+      >{user.usernamePermalink}</a
+    >
+  {/each}
+</SeoBox>
 
-<div class="list-item {viewportType}">
-  <a href="/a/user/{usernamePermalink}" class="user-info">
-    <Avatar {size} wrapStyle="border: 1px solid #1D1D1D" src={profile_photo} />
-    <div class="useer-name">{name || username}</div>
-  </a>
-  {#if action_button && uid !== ctx?.firebase_user_data?.uid}
-    <Button type={isFollow ? "subtle" : "primary"} style="padding:10px 16px; font-size: 14px; height:{size === "lg" ? "36px" : "32px"}; min-width: 72px " on:click={handleClick}>
-      <TranslationText
-        text={translations[isFollow ? "following" : "follow"]}
-        fallback={isFollow ? "Following" : "Follow"}
-      />
-    </Button>
+<div class="wrapper {viewportType}" id={CNAME}>
+  {#if !sportstacks.size && emptyMessage && !loading}
+    <div class="empty">
+      {emptyMessage}
+    </div>
+  {:else}
+    <div class="list-wrapper">
+      {#each [...sportstacks] as [uid, user] (uid)}
+        <ListSportsTackItem {user} {size} {translations} {action_button}/>
+      {/each}
+    </div>
+  {/if}
+  {#if loading}
+    <div class="list-wrapper">
+      {#each new Array(limit) as _item}
+        <ListSportsTackLoader {size} {action_button} />
+      {/each}
+    </div>
   {/if}
 </div>
 
@@ -121,36 +98,30 @@
 -->
 
 <style lang="scss">
-  .list-item {
+  .wrapper {
     display: flex;
-    padding-block: 16px;
-    border-bottom: var(--header-border);
-    justify-content: space-between;
-    gap: 20px;
-    align-items: center;
+    padding-block: 8px;
 
-    .user-info {
+    flex-direction: column;
+    background-color: var(--bg-color);
+
+    .list-wrapper {
       display: flex;
-      justify-content: start;
-      flex-grow: 1;
-      align-items: center;
-      gap: 12px;
-      color: var(--text-color);
-      font-family: Roboto;
-      font-size: 16px;
-      font-style: normal;
-      font-weight: 500;
-      line-height: 24px; /* 150% */
-
-      &:hover {
-        color: var(--primary);
-      }
+      flex-direction: column;
     }
 
-    &.mobile {
-      padding: 16px;
-      padding-block: 8px;
-      border-bottom: none;
+    .empty {
+      flex-grow: 1;
+      width: 100%;
+      height: 100%;
+      background-color: var(--bg-color);
+      font-weight: 600;
+      color: var(--text-color-second);
+      font-size: var(--text-size-2xl);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 10px;
     }
   }
 </style>

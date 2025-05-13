@@ -9,6 +9,14 @@
 
 <script lang="ts">
   // #region ➤ 📦 Package Imports
+  import { page } from "$app/stores";
+  import session from "$lib/store/session.js";
+  import { infiniteScroll } from "$lib/utils/infinityScroll.js";
+  import { createEventDispatcher } from "svelte";
+  import ArticleCard from "../authors/common_ui/articles/Article-Card.svelte";
+  import ArticleLoader from "../authors/common_ui/articles/Article-Loader.svelte";
+  import search_store from "./search_store.js";
+  import NoResults from "./NoResults.svelte";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -22,13 +30,7 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
-  import Avatar from "$lib/components/ui/Avatar.svelte";
-  import Button from "$lib/components/ui/Button.svelte";
-  import session from "$lib/store/session.js";
-  import userSettings from "$lib/store/user-settings.js";
-  import type { BetarenaUser } from "$lib/types/types.user-settings.js";
-  import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
+
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -45,20 +47,15 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let user: BetarenaUser, translations: IPageAuthorTranslationDataFinal;
-  export let size: number | string = 40;
-  export let action_button= true;
+  const dispatch = createEventDispatcher();
 
   $: ({ viewportType } = $session);
-  $: ({ user: ctx } = $userSettings);
-  $: ({ uid, username, name, profile_photo, usernamePermalink } = user);
-  $: isAuth = !!ctx;
-  $: isFollow = !!(ctx?.scores_user_data.following?.authors || []).includes(
-    uid
-  );
-
+  $: articles = $search_store.articles.data || new Map();
+  $: ({ loading } = $search_store.articles);
+  $: mobile = viewportType === "mobile";
+  $: tablet = viewportType === "tablet";
+  $: ({ translations } = $page.data);
   // #endregion ➤ 📌 VARIABLES
-
   // #region ➤ 🛠️ METHODS
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -71,14 +68,12 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function handleClick() {
-    if (!isAuth) {
-      $session.currentActiveModal = "Auth_Modal";
-      return;
-    }
-    userSettings.updateData([
-      ["user-following", { target: "authors", id: uid, follow: !isFollow }],
-    ]);
+  function loadMore() {
+    if (loading) return;
+    dispatch("loadMore", {
+      type: "articles",
+      page: $search_store.articles.page + 1,
+    });
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -94,19 +89,23 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
+<div class="wrapper" use:infiniteScroll={{ loadMore, hasMore: !!$search_store.articles.next_page_count, loading }}>
+  {#if articles.size || $search_store.articles.loading}
+    {#if articles.size > 0}
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {#each [...articles.entries()] as [id, article] (id)}
+          <ArticleCard {mobile} {article} {tablet} {translations} />
+        {/each}
+      </div>
+    {/if}
 
-<div class="list-item {viewportType}">
-  <a href="/a/user/{usernamePermalink}" class="user-info">
-    <Avatar {size} wrapStyle="border: 1px solid #1D1D1D" src={profile_photo} />
-    <div class="useer-name">{name || username}</div>
-  </a>
-  {#if action_button && uid !== ctx?.firebase_user_data?.uid}
-    <Button type={isFollow ? "subtle" : "primary"} style="padding:10px 16px; font-size: 14px; height:{size === "lg" ? "36px" : "32px"}; min-width: 72px " on:click={handleClick}>
-      <TranslationText
-        text={translations[isFollow ? "following" : "follow"]}
-        fallback={isFollow ? "Following" : "Follow"}
-      />
-    </Button>
+    {#if loading}
+      {#each Array($search_store.articles.next_page_count) as _}
+        <ArticleLoader {mobile} {tablet} />
+      {/each}
+    {/if}
+  {:else}
+    <NoResults />
   {/if}
 </div>
 
@@ -121,36 +120,12 @@
 -->
 
 <style lang="scss">
-  .list-item {
-    display: flex;
-    padding-block: 16px;
-    border-bottom: var(--header-border);
-    justify-content: space-between;
-    gap: 20px;
-    align-items: center;
-
-    .user-info {
-      display: flex;
-      justify-content: start;
-      flex-grow: 1;
-      align-items: center;
-      gap: 12px;
-      color: var(--text-color);
-      font-family: Roboto;
-      font-size: 16px;
-      font-style: normal;
-      font-weight: 500;
-      line-height: 24px; /* 150% */
-
-      &:hover {
-        color: var(--primary);
-      }
-    }
-
-    &.mobile {
-      padding: 16px;
-      padding-block: 8px;
-      border-bottom: none;
-    }
+  .wrapper {
+    flex-grow: 1;
+    max-height: 100%;
+    min-height: 100%;
+    overflow: auto;
+    padding-bottom: 100px;
+    background: var(--colors-background-bg-main);
   }
 </style>
