@@ -1,5 +1,5 @@
 import { _GraphQL } from "@betarena/scores-lib/dist/classes/_graphql.js";
-import { entrySchemeTranslation } from "../../../../../scores-lib/src/functions/v8/translation.js";
+import { entrySchemeTranslation } from "@betarena/scores-lib/dist/functions/v8/translation.js";
 import { json, RequestHandler } from "@sveltejs/kit";
 
 export const GetTranslations: RequestHandler = async ({ url }) => {
