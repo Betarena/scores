@@ -35,7 +35,6 @@
   import AssetBetarenaLogoFull from "./assets/asset-betarena-logo-full.svelte";
   import Avatar from "$lib/components/ui/Avatar.svelte";
   import { scoresNavbarStore } from "./_store.js";
-  import HeaderNavigation from "./HeaderNavigation.svelte";
   import { promiseUrlsPreload } from "$lib/utils/navigation.js";
   import {
     routeIdAuthorProfile,
@@ -44,6 +43,7 @@
     routeIdPageTags,
     routeIdSportstack,
   } from "$lib/constants/paths.js";
+  import Input from "$lib/components/ui/Input.svelte";
 
   // #endregion ➤ 📦 Package Imports
   // #region ➤ 📌 VARIABLES
@@ -142,6 +142,7 @@
   {/if}
 
   <div class="actions">
+    <Input />
     <HeaderCLang />
     <HeaderCTheme />
     {#if !isAuth}

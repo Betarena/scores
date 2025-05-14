@@ -33,8 +33,6 @@
   import { page } from "$app/stores";
   import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
   import MobileHeaderSmall from "./MobileHeaderSmall.svelte";
-  import SportsNavigation from "./SportNavigation/SportsNavigation.svelte";
-  import SportsNavigationStandart from "./SportNavigation/SportsNavigationStandart.svelte";
   import TabletWave from "./assets/wave-bg-tablet.svg";
   import DesktopWave from "./assets/wave-bg-desktop.svg";
   import MobileWave from "./assets/wave-bg-mobile.svg";
