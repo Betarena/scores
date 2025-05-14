@@ -726,6 +726,8 @@
     {/if}
 
   </main>
+  <InfoMessages />
+  <ModalMain />
 
   {#if
     (objComponentStandardState.viewport.mobile.state || objComponentStandardState.viewport.tablet.state)
