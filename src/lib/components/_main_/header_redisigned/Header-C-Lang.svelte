@@ -200,9 +200,6 @@
       m-r-5
       uppercase
       "
-      class:color-white={currentPageRouteId != "AuthorsPage" || theme == "Dark"}
-      class:color-black-2={currentPageRouteId == "AuthorsPage" &&
-        theme == "Light"}
     >
       {serverLang}
     </p>
@@ -292,10 +289,13 @@
   div#lang-container {
     /* 📌 position */
     position: relative;
+    p {
+      color: var(--text-color);
+    }
 
     div.selected-language-btn {
       /* 🎨 style */
-      color: #ffffff;
+      color: var(--text-color);
       outline: none;
       border: none;
       padding: 5px 12px;

@@ -18,7 +18,7 @@
 import { clientTimezoneDate, targetDate } from '$lib/utils/dates.js';
 import { writable } from 'svelte/store';
 
-import { routeIdAuthorProfile, routeIdAuthorSubscribers, routeIdContent, routeIdPageAuthors, routeIdPageCompetitions, routeIdPageProfile, routeIdPageProfileAuthorCreate, routeIdPageProfilePublication, routeIdPageTags, routeIdSportstack } from '$lib/constants/paths.js';
+import { routeIdAuthorProfile, routeIdAuthorSubscribers, routeIdContent, routeIdPageAuthors, routeIdPageCompetitions, routeIdPageProfile, routeIdPageProfileAuthorCreate, routeIdPageProfilePublication, routeIdPageTags, routeIdSearch, routeIdSportstack } from '$lib/constants/paths.js';
 import { dlogv2, log_v3 } from '$lib/utils/debug.js';
 import { viewportChangeV2 } from '$lib/utils/device.js';
 
@@ -241,7 +241,8 @@ function createLocalStore
                 routeIdContent,
                 routeIdAuthorProfile,
                 routeIdSportstack,
-                routeIdAuthorSubscribers
+                routeIdAuthorSubscribers,
+                routeIdSearch
               ].includes(dataPoint))
                 customRouteId = 'AuthorsPage';
               ;

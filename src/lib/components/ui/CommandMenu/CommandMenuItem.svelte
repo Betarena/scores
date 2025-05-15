@@ -1,11 +1,13 @@
-<script>
-  import { page } from "$app/stores";
-  import SportsTackList from "$lib/components/ui/composed/sportstack_list/SportsTackList.svelte";
-  import { infiniteScroll } from "$lib/utils/infinityScroll";
-  import search_store from '$lib/store/search_store'
-  import { createEventDispatcher } from "svelte";
-  import NoResults from "./NoResults.svelte";
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 🟦 Svelte Component JS/TS                                                        │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
 
+<script lang="ts">
   // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -20,35 +22,11 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  const dispatch = createEventDispatcher();
-
-  $: ({ translations } = $page.data);
-  $: sportstacks = $search_store.sportstacks.data || new Map();
-  $: ({ loading } = $search_store.sportstacks);
+  export let textType = "default";
+  export let text = "";
+  export let supportingText = "";
 
   // #endregion ➤ 📌 VARIABLES
-
-  // #region ➤ 🛠️ METHODS
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'methods' that are to be           │
-  // │ and are expected to be used by 'this' .svelte file / component.        │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. function (..)                                                       │
-  // │ 2. async function (..)                                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  function loadMore() {
-    if (loading) return;
-    dispatch("loadMore", {
-      type: "sportstacks",
-      page: $search_store.sportstacks.page + 1,
-    });
-  }
-
-  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--
@@ -61,12 +39,22 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<div class="wrapper" use:infiniteScroll={{ loadMore, hasMore: !!$search_store.sportstacks.next_page_count, loading }}>
-  {#if sportstacks.size || $search_store.sportstacks.loading}
-    <SportsTackList includePermalink={true} {sportstacks} {translations} {loading} size="lg"  limit={$search_store.sportstacks.next_page_count}/>
-  {:else}
-    <NoResults />
-  {/if}
+<div class="item-wrapper">
+  <div class="content">
+    {#if $$slots}
+      <div class="icon">
+        <slot />
+      </div>
+    {/if}
+    <div class="text-content">
+      <span class="main-text">
+        {text}
+      </span>
+      <span class="support-text">
+        {supportingText}
+      </span>
+    </div>
+  </div>
 </div>
 
 <!--
@@ -80,12 +68,58 @@
 -->
 
 <style lang="scss">
-  .wrapper {
-    flex-grow: 1;
-    max-height: 100%;
-    min-height: 100%;
-    overflow: auto;
-    padding-bottom: 100px;
-    background: var(--colors-background-bg-main);
+  .item-wrapper {
+    display: flex;
+    padding: var(--spacing-xxs, 2px) var(--spacing-md, 8px);
+    align-items: center;
+    gap: var(--spacing-md, 8px);
+    cursor: pointer;
+    width: 100%;
+
+    .content {
+      display: flex;
+      padding: var(--spacing-md, 8px) var(--spacing-md, 8px)
+        var(--spacing-md, 8px) 10px;
+      align-items: center;
+      gap: var(--spacing-md, 8px);
+      flex: 1 0 0;
+
+      border-radius: var(--radius-md, 8px);
+
+      &:hover {
+        background: var(--colors-background-bg-primary_hover, #fbfbfb);
+      }
+      .icon {
+        color: var(--colors-foreground-fg-quaternary-500);
+      }
+      .text-content {
+        display: flex;
+        align-items: baseline;
+        gap: var(--spacing-md, 8px);
+        flex: 1 0 0;
+
+        .main-text {
+          color: var(--colors-text-text-primary, #313131);
+
+          /* Text sm/Medium */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-sm, 14px);
+          font-style: normal;
+          font-weight: 500;
+          line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+        }
+
+        .support-text {
+          color: var(--colors-text-text-tertiary-600, #6a6a6a);
+
+          /* Text sm/Regular */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-sm, 14px);
+          font-style: normal;
+          font-weight: 400;
+          line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+        }
+      }
+    }
   }
 </style>

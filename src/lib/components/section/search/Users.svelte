@@ -2,7 +2,7 @@
   import { page } from "$app/stores";
   import UsersList from "../authors/common_ui/users_list/UsersList.svelte";
   import NoResults from "./NoResults.svelte";
-  import  search_store  from "./search_store";
+  import  search_store  from "$lib/store/search_store.js";
   import type { IBetarenaUser } from "@betarena/scores-lib/types/_FIREBASE_.js";
 
   // #region ➤ 📌 VARIABLES
@@ -37,7 +37,7 @@
 -->
 <div class="wrapper">
   {#if users.size || $search_store.users.loading}
-    <UsersList {users} size="lg" {translations}/>
+    <UsersList includePermalink={true} {users} size="lg" {translations}/>
   {:else}
     <NoResults/>
   {/if}
