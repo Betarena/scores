@@ -18,6 +18,7 @@ import { error, redirect } from '@sveltejs/kit';
 import LZString from 'lz-string';
 
 import { get } from '$lib/api/utils.js';
+import { mapLangToLocaleAuthor } from '$lib/constants/instance.js';
 import { routeIdAuthorProfile, routeIdAuthorSubscribers, routeIdContent, routeIdPageAuthors, routeIdPageCompetition, routeIdPageCompetitionLobby, routeIdPageFixture, routeIdPageLeague, routeIdPagePlayer, routeIdPageProfile, routeIdPageProfileArticleCreation, routeIdPageProfileAuthorCreate, routeIdPageProfileEditArticle, routeIdPageProfilePublication, routeIdPageTags, routeIdSportstack } from '$lib/constants/paths.js';
 import sessionStore from '$lib/store/session.js';
 import userBetarenaSettings from '$lib/store/user-settings.js';
@@ -122,13 +123,13 @@ export async function selectLanguage
   );
 
   // ╭─────
-  // │ NOTE:
+  // │ NOTE: IMPORTANT
   // │ │: Update <html {lang}> in platform <DOCTYPE>.
   // ╰─────
   document.documentElement.setAttribute
   (
     'lang',
-    (strNewLangSelected == 'br' ? 'pt-BR' : strNewLangSelected)
+    mapLangToLocaleAuthor.get(strNewLangSelected) ?? 'en'
   );
 
   // ╭──────────────────────────────────────────────────────────────────────────────────╮

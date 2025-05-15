@@ -130,36 +130,37 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-{#if pageSeo}
-  <SvelteSeo
-    title={pageSeo.main_data.title}
-    description={pageSeo.main_data.description}
-    keywords={pageSeo.main_data.keywords}
-    noindex=
-    {
-      tryCatch
-      (
-        () =>
-        {
-          return JSON.parse(pageSeo.main_data.noindex);
-        }
-      ) ?? false
-    }
-    nofollow=
-    {
-      tryCatch
-      (
-        () =>
-        {
-          return JSON.parse(pageSeo.main_data.nofollow);
-        }
-      ) ?? false
-    }
-    canonical={`${$page.url.origin}${$page.url.pathname}`}
-    twitter={pageSeo.twitter_card}
-    openGraph={pageSeo.opengraph}
-  />
-{/if}
+<svelte:head>
+  <title>{pageSeo.main_data.title}</title>
+</svelte:head>
+
+<SvelteSeo
+  description={pageSeo.main_data.description}
+  keywords={pageSeo.main_data.keywords}
+  noindex=
+  {
+    tryCatch
+    (
+      () =>
+      {
+        return JSON.parse(pageSeo.main_data.noindex);
+      }
+    ) ?? false
+  }
+  nofollow=
+  {
+    tryCatch
+    (
+      () =>
+      {
+        return JSON.parse(pageSeo.main_data.nofollow);
+      }
+    ) ?? false
+  }
+  canonical={`${$page.url.origin}${$page.url.pathname}`}
+  twitter={pageSeo.twitter_card}
+  openGraph={pageSeo.opengraph}
+/>
 
 <section
   id={CNAME}
