@@ -43,7 +43,7 @@
 
   import { page } from '$app/stores';
 
-  import { routeIdContent } from '$lib/constants/paths.js';
+  import { routeIdContent, routeIdSearch } from '$lib/constants/paths.js';
   import sessionStore from '$lib/store/session.js';
   import { storeFooter } from './../_store.js';
 
@@ -76,7 +76,8 @@
      */
     listStrFooterPaths
       = [
-        routeIdContent
+        routeIdContent,
+        routeIdSearch
       ]
   ;
 

@@ -41,6 +41,7 @@
     routeIdAuthorSubscribers,
     routeIdPageAuthors,
     routeIdPageTags,
+    routeIdSearch,
     routeIdSportstack,
   } from "$lib/constants/paths.js";
   import session from "$lib/store/session.js";
@@ -144,7 +145,7 @@
   {/if}
 
   <div class="actions">
-    {#if viewportType === "desktop"}
+    {#if viewportType === "desktop" && $page.route.id !== routeIdSearch}
        <HeaderSearch />
     {/if}
     <HeaderCLang />

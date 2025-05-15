@@ -60,10 +60,12 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   onMount(() => {
-    searchHistory = JSON.parse(localStorage.getItem("searchHistory") || "[]").slice(0, 5);
+    searchHistory = JSON.parse(
+      localStorage.getItem("searchHistory") || "[]"
+    ).slice(0, 5);
     skipMountSearch = $session.viewportType !== "desktop";
     const prevPage = $history_store.at(-1) || "/";
-    preloadData(prevPage)
+    preloadData(prevPage);
   });
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
@@ -110,17 +112,17 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   $: search = $search_store.search;
   $: ({ viewportType } = $session);
-  $: ({ user: ctx_user } = $userSettings);
+  $: ({ user: ctx_user, theme } = $userSettings);
   $: searchHistory = [] as string[];
   $: isInputInFocus = false;
   $: selectedTab = tabs[0];
 
-  $: ({search_translations, translations} = $page.data);
+  $: ({ search_translations, translations } = $page.data);
 
   $: tabs = [
     {
       id: "highlights",
-      label:  search_translations.highlights || "Highlights",
+      label: search_translations.highlights || "Highlights",
     },
     {
       id: "posts",
@@ -384,7 +386,7 @@
 
   async function usersSearch({
     search,
-    page
+    page,
   }: {
     search: string;
     page?: number;
@@ -448,7 +450,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="search-container {viewportType}">
+<div class="search-container {viewportType} {theme}">
   <div
     class="search-wrapper"
     in:fly={{ x: 0, y: -100, duration: 600, easing: quadOut }}
@@ -467,7 +469,7 @@
         bind:node={inputNode}
         type="leading-text"
         bind:value={$search_store.search}
-        placeholder={search_translations.search||"Search"}
+        placeholder={search_translations.search || "Search"}
         on:focus={inputFocus}
         on:blur={inputBlur}
       >
@@ -495,7 +497,7 @@
           type="button_gray"
           size="sm"
           data={tabs}
-          on:select={(e) => selectedTab = e.detail}
+          on:select={(e) => (selectedTab = e.detail)}
           selected={selectedTab}
         />
       </div>
@@ -504,9 +506,7 @@
     {/if}
   </div>
   {#if search && isInputInFocus && suggestions.length}
-    <div
-      class="search-suggestions"
-    >
+    <div class="search-suggestions">
       {#each suggestions as suggest}
         <button
           class="suggest-item"
@@ -527,8 +527,13 @@
   >
     {#if !search && !searchHistory.length}
       <div class="search-message-wrapper">
-        <Button type="link-color" classname="light-mode">{search_translations.search_for ||  "Search for"}</Button>
-        <div class="message-text">{ search_translations.posts_users_sportstacks || "posts, users and Sportstacks"}</div>
+        <Button type="link-color" classname="light-mode"
+          >{search_translations.search_for || "Search for"}</Button
+        >
+        <div class="message-text">
+          {search_translations.posts_users_sportstacks ||
+            "posts, users and Sportstacks"}
+        </div>
       </div>
     {:else if !search && searchHistory.length}
       <div class="search-history">
@@ -556,13 +561,15 @@
       />
     {/if}
   </div>
-  <div
-    class="search-bg"
-    in:fade={{
-      duration: viewportType !== "desktop" ? 200 : 0,
-      easing: cubicOut,
-    }}
-  />
+  {#if viewportType === "mobile"}
+    <div
+      class="search-bg"
+      in:fade={{
+        duration: 200,
+        easing: cubicOut,
+      }}
+    />
+  {/if}
 </div>
 
 <!--
@@ -577,155 +584,185 @@
 
 <style lang="scss">
   .search-container {
-    &.mobile,
-    &.tablet {
-      position: fixed;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 4001;
+    .search-bg {
+      position: absolute;
       top: 0;
       left: 0;
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
+      width: 100%;
+      height: 100%;
+      background: var(--layout-bg-color);
+      z-index: -1;
+    }
+
+    .search-wrapper {
+      width: 100%;
+      padding-inline: 15px;
+      padding-top: 20px;
+      background: var(--colors-background-bg-main);
+
+      .input-wrapper {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        gap: 14px;
+        .search-close {
+          background: none;
+          padding: 0;
+        }
+        :global(.field) {
+          width: 100%;
+        }
+      }
+      .tabbar {
+        padding-block: 20px;
+      }
+      .empty-tabbar {
+        height: 20px;
+      }
+    }
+    .search-suggestions {
       display: flex;
+      padding: 16px;
+      gap: 16px;
+      background: var(--colors-background-bg-main);
       flex-direction: column;
-      gap: 8px;
-      z-index: 4001;
-      .search-bg {
-        position: absolute;
-        top: 0;
-        left: 0;
+      width: 100%;
+      .suggest-item {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: none;
+        .suggestion-text {
+          color: var(--text-color);
+
+          /* Text md/Regular */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-md, 16px);
+          font-style: normal;
+          font-weight: 400;
+          line-height: var(--line-height-text-md, 24px); /* 150% */
+        }
+        .suggest-icon {
+          color: var(--colors-brand-500);
+        }
+      }
+    }
+    .search-results {
+      width: 100%;
+      flex-grow: 1;
+      overflow: hidden;
+
+      .search-message-wrapper {
+        background: var(--colors-background-bg-main);
+        overflow-y: auto;
+        flex-grow: 1;
         width: 100%;
         height: 100%;
-        background: var(--layout-bg-color);
-        z-index: -1;
-      }
-
-      .search-wrapper {
-        width: 100%;
-        padding-inline: 15px;
-        padding-top: 20px;
-        background: var(--colors-background-bg-main);
-
-        .input-wrapper {
-          display: flex;
-          width: 100%;
-          align-items: center;
-          gap: 14px;
-          .search-close {
-            background: none;
-            padding: 0;
-          }
-          :global(.field) {
-            width: 100%;
-          }
-        }
-        .tabbar {
-          padding-block: 20px;
-        }
-        .empty-tabbar {
-          height: 20px;
-        }
-      }
-      .search-suggestions {
         display: flex;
-        padding: 16px;
-        gap: 16px;
+        justify-content: center;
+        align-items: flex-start;
+        gap: var(--spacing-xs, 4px);
+        align-self: stretch;
+        padding-top: 16px;
+
+        .message-text {
+          color: var(--colors-text-text-tertiary-600, #6a6a6a);
+
+          /* Text md/Regular */
+          font-family: var(--Font-family-font-family-body, Roboto);
+          font-size: var(--Font-size-text-md, 16px);
+          font-style: normal;
+          font-weight: 400;
+          line-height: var(--Line-height-text-md, 24px); /* 150% */
+        }
+      }
+      .search-history {
         background: var(--colors-background-bg-main);
+        overflow-y: auto;
+        flex-grow: 1;
+        padding: 16px;
+        display: flex;
         flex-direction: column;
         width: 100%;
-        .suggest-item {
-          width: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
+        height: 100%;
+        gap: 16px;
+
+        .search-title {
+          color: var(--text-color);
+
+          /* Text lg/Semibold */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-lg, 18px);
+          font-style: normal;
+          font-weight: 600;
+          line-height: var(--line-height-text-lg, 28px); /* 155.556% */
+        }
+        .recent-search-item {
           background: none;
-          .suggestion-text {
-            color: var(--text-color);
+          padding: 0;
+          display: flex;
+          justify-content: start;
+          color: var(--text-color);
 
-            /* Text md/Regular */
-            font-family: var(--font-family-font-family-body, Roboto);
-            font-size: var(--font-size-text-md, 16px);
-            font-style: normal;
-            font-weight: 400;
-            line-height: var(--line-height-text-md, 24px); /* 150% */
-          }
-          .suggest-icon {
-            color: var(--colors-brand-500);
+          /* Text md/Regular */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-md, 16px);
+          font-style: normal;
+          font-weight: 400;
+          line-height: var(--line-height-text-md, 24px); /* 150% */
+
+          &:hover {
+            color: var(
+              --component-colors-components-buttons-tertiary-color-button-tertiary-color-fg_hover,
+              #d4550c
+            );
           }
         }
       }
-      .search-results {
-        width: 100%;
-        flex-grow: 1;
-        overflow: hidden;
+    }
+    :global(.list-item) {
+      border-bottom: 0;
+    }
 
-        .search-message-wrapper {
-          background: var(--colors-background-bg-main);
-          overflow-y: auto;
-          flex-grow: 1;
-          width: 100%;
-          height: 100%;
-          display: flex;
-          justify-content: center;
-          align-items: flex-start;
-          gap: var(--spacing-xs, 4px);
-          align-self: stretch;
-          padding-top: 16px;
-
-          .message-text {
-            color: var(--colors-text-text-tertiary-600, #6a6a6a);
-
-            /* Text md/Regular */
-            font-family: var(--Font-family-font-family-body, Roboto);
-            font-size: var(--Font-size-text-md, 16px);
-            font-style: normal;
-            font-weight: 400;
-            line-height: var(--Line-height-text-md, 24px); /* 150% */
-          }
-        }
-        .search-history {
-          background: var(--colors-background-bg-main);
-          overflow-y: auto;
-          flex-grow: 1;
-          padding: 16px;
-          display: flex;
-          flex-direction: column;
-          width: 100%;
-          height: 100%;
-          gap: 16px;
-
-          .search-title {
-            color: var(--text-color);
-
-            /* Text lg/Semibold */
-            font-family: var(--font-family-font-family-body, Roboto);
-            font-size: var(--font-size-text-lg, 18px);
-            font-style: normal;
-            font-weight: 600;
-            line-height: var(--line-height-text-lg, 28px); /* 155.556% */
-          }
-          .recent-search-item {
-            background: none;
-            padding: 0;
-            display: flex;
-            justify-content: start;
-            color: var(--text-color);
-
-            /* Text md/Regular */
-            font-family: var(--font-family-font-family-body, Roboto);
-            font-size: var(--font-size-text-md, 16px);
-            font-style: normal;
-            font-weight: 400;
-            line-height: var(--line-height-text-md, 24px); /* 150% */
-
-            &:hover {
-              color: var(
-                --component-colors-components-buttons-tertiary-color-button-tertiary-color-fg_hover,
-                #d4550c
-              );
-            }
-          }
+    &.desktop,
+    &.tablet {
+      position: relative;
+      flex-grow: 1;
+      height: 100%;
+      z-index: 0;
+      background-color: unset;
+      max-width: 832px;
+      &.Dark {
+        :global(.input-wrapper:not(.focus)) {
+          border: 1px solid transparent;
         }
       }
+      .search-wrapper {
+        padding: 0;
+      }
+      .search-suggestions,
+      .search-history {
+        padding: 0;
+      }
+    }
+    &.tablet {
+      padding: 26px 34px;
+      padding-top: 32px;
+      padding-bottom: 0 !important;
+      margin: 0 !important;
+      width: 100%;
+      max-width: 100%;
     }
   }
 </style>

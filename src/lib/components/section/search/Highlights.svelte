@@ -111,6 +111,7 @@
           size="lg"
           {translations}
           loading={$search_store.users.loading && !firstThreeUsers.size}
+          includePermalink={true}
         />
         {#if users.size > 3}
           <div class="button-wrapp">
@@ -133,6 +134,7 @@
             !firstThreeSportstacks.size}
           sportstacks={firstThreeSportstacks}
           {translations}
+          includePermalink={true}
         />
         {#if sportstacks.size > 3}
           <div class="button-wrapp">
@@ -241,8 +243,15 @@
       gap: 16px;
       padding-top: 16px;
       background: var(--colors-background-bg-main);
+    }
+    &.mobile {
       :global(.card-wrapper) {
         padding-block: 0;
+      }
+    }
+    &:not(.mobile) {
+      .button-wrapp {
+        padding-inline: 0;
       }
     }
   }

@@ -144,7 +144,7 @@
         localStorage.setItem("searchHistory", JSON.stringify(nextHistory));
         searchHistory = [...nextHistory];
       }
-    }, 200);
+    }, 300);
   }
 
   function doSearch(value: string) {

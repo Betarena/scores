@@ -37,7 +37,7 @@
 -->
 <div class="wrapper">
   {#if users.size || $search_store.users.loading}
-    <UsersList {users} size="lg" {translations}/>
+    <UsersList includePermalink={true} {users} size="lg" {translations}/>
   {:else}
     <NoResults/>
   {/if}

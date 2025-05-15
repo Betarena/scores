@@ -642,7 +642,7 @@
   id="app-root-layout"
   class:dark-mode={theme == 'Dark'}
   class:light-mode={theme == 'Light'}
-  class:page-content={$page.route.id === routeIdContent}
+  class:page-content={[routeIdContent, routeIdSearch].includes($page.route.id || "")}
   data-page-id={currentPageRouteId}
   data-mode={globalState.has('IsPWA') ? 'pwa' : 'web'}
 >
@@ -697,7 +697,7 @@
     <!-- <EmailSubscribe /> -->
   {/if}
 
-  {#if ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle, routeIdSearch].includes($page.route.id )}
+  {#if ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle, routeIdSearch].includes($page.route.id || "" ) || ($page.route.id === routeIdSearch && $sessionStore.viewportType !== "mobile") }
     <HeaderRedesigned />
   {/if}
 
@@ -706,10 +706,9 @@
     class:dark-mode={theme == 'Dark'}
     class:light-mode={theme == 'Light'}
     class:standard={currentPageRouteId == null }
-    class:page-competition={currentPageRouteId == 'CompetitionPage'}
     class:page-profile={currentPageRouteId == 'ProfilePage'}
-    class:page-authors={currentPageRouteId == 'AuthorsPage' || currentPageRouteId == 'Standard'}
-    class:page-content={$page.route.id === routeIdContent}
+    class:page-authors={currentPageRouteId == 'AuthorsPage' || currentPageRouteId == 'Standard' || $page.route.id === routeIdSearch }
+    class:page-content={[routeIdContent, routeIdSearch].includes($page.route.id || "")}
     class:mobile={objComponentStandardState.viewport.mobile.state}
     class:tablet={objComponentStandardState.viewport.tablet.state}
   >
@@ -772,7 +771,6 @@
 
     &[data-page-id="Standard"],
     &[data-page-id="CompetitionPage"] {
-      background-color: red;
       &.light-mode {
         background-color: var(--whitev2);
       }

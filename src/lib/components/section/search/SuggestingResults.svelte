@@ -103,6 +103,7 @@
           size="lg"
           action_button={false}
           {translations}
+          includePermalink={true}
           loading={$search_store.users.loading && !firstThreeUsers.size}
         />
       {/if}
@@ -115,6 +116,7 @@
             !firstThreeSportstacks.size}
           sportstacks={firstThreeSportstacks}
           {translations}
+          includePermalink={true}
         />
       {/if}
       <div class="button-wrapp">

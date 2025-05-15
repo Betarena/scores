@@ -46,16 +46,17 @@
 
   export let user: any, translations: IPageAuthorTranslationDataFinal;
   export let size: number | string = 40;
-  export let action_button= true;
+  export let action_button = true;
+  export let includePermalink = false;
 
   $: ({ viewportType } = $session);
   $: ({ user: ctx } = $userSettings);
-  $: ({  username, name, avatar } = user.data);
+  $: ({ username, name, avatar } = user.data);
   $: ({ permalink, id } = user);
   $: isAuth = !!ctx;
-  $: isFollow = !!(ctx?.scores_user_data?.subscriptions?.sportstacks || []).includes(
-    id
-  );
+  $: isFollow = !!(
+    ctx?.scores_user_data?.subscriptions?.sportstacks || []
+  ).includes(id);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -97,11 +98,22 @@
 
 <div class="list-item {viewportType}">
   <a href="/a/sportstack/{permalink}" class="user-info">
-    <SportstackAvatar {size} src={avatar}/>
-    <div class="user-name">{name || username}</div>
+    <SportstackAvatar {size} src={avatar} />
+    <div class="name-wrapp">
+      <div class="user-name">{name || username}</div>
+      {#if includePermalink}
+        <div class="user-permalink">@{permalink}</div>
+      {/if}
+    </div>
   </a>
   {#if id !== ctx?.firebase_user_data?.uid && action_button}
-    <Button type={isFollow ? "subtle" : "primary"} style="padding:10px 16px; font-size: 14px; height:{size === "lg" ? "36px" : "32px"}; min-width: 72px " on:click={handleClick}>
+    <Button
+      type={isFollow ? "subtle" : "primary"}
+      style="padding:10px 16px; font-size: 14px; height:{size === 'lg'
+        ? '36px'
+        : '32px'}; min-width: 72px "
+      on:click={handleClick}
+    >
       <TranslationText
         text={translations[isFollow ? "following" : "follow"]}
         fallback={isFollow ? "Following" : "Follow"}
@@ -144,6 +156,22 @@
 
       &:hover {
         color: var(--primary);
+      }
+
+      .name-wrapp {
+        display: flex;
+        flex-direction: column;
+
+        .user-permalink {
+          color: var(--colors-text-text-tertiary-600, #8c8c8c);
+
+          /* Text xs/Regular */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-xs, 12px);
+          font-style: normal;
+          font-weight: 400;
+          line-height: var(--line-height-text-xs, 18px); /* 150% */
+        }
       }
     }
 

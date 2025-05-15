@@ -2,8 +2,8 @@
   import { page } from "$app/stores";
   import SportsTackList from "$lib/components/ui/composed/sportstack_list/SportsTackList.svelte";
   import { infiniteScroll } from "$lib/utils/infinityScroll";
+  import search_store from '$lib/store/search_store'
   import { createEventDispatcher } from "svelte";
-  import search_store from "$lib/store/search_store.js";
   import NoResults from "./NoResults.svelte";
 
   // #region ➤ 📌 VARIABLES
@@ -63,7 +63,7 @@
 -->
 <div class="wrapper" use:infiniteScroll={{ loadMore, hasMore: !!$search_store.sportstacks.next_page_count, loading }}>
   {#if sportstacks.size || $search_store.sportstacks.loading}
-    <SportsTackList {sportstacks} {translations} {loading} size="lg"  limit={$search_store.sportstacks.next_page_count}/>
+    <SportsTackList includePermalink={true} {sportstacks} {translations} {loading} size="lg"  limit={$search_store.sportstacks.next_page_count}/>
   {:else}
     <NoResults />
   {/if}
