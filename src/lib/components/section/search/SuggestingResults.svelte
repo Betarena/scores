@@ -28,7 +28,7 @@
   import session from "$lib/store/session.js";
   import { createEventDispatcher } from "svelte";
   import UsersList from "../authors/common_ui/users_list/UsersList.svelte";
-  import search_store from "./search_store.js";
+  import search_store from "$lib/store/search_store.js";
   import type { IBetarenaUser } from "@betarena/scores-lib/types/_FIREBASE_.js";
   import NoResults from "./NoResults.svelte";
 
@@ -123,7 +123,7 @@
           full={true}
           type="secondary-gray"
           on:click={() => viewMore("highlights")}>View more</Button
-        >l
+        >
       </div>
     </div>
   {/if}

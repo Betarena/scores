@@ -2,7 +2,7 @@
   import { page } from "$app/stores";
   import UsersList from "../authors/common_ui/users_list/UsersList.svelte";
   import NoResults from "./NoResults.svelte";
-  import  search_store  from "./search_store";
+  import  search_store  from "$lib/store/search_store.js";
   import type { IBetarenaUser } from "@betarena/scores-lib/types/_FIREBASE_.js";
 
   // #region ➤ 📌 VARIABLES

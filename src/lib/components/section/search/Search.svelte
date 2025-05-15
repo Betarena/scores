@@ -39,7 +39,7 @@
   import Users from "./Users.svelte";
   import userSettings from "$lib/store/user-settings.js";
   import Authors from "./Authors.svelte";
-  import search_store from "./search_store.js";
+  import search_store from "$lib/store/search_store.js";
   import Highlights from "./Highlights.svelte";
   import SuggestingResults from "./SuggestingResults.svelte";
   import { preloadData } from "$app/navigation";
@@ -61,7 +61,7 @@
 
   onMount(() => {
     searchHistory = JSON.parse(localStorage.getItem("searchHistory") || "[]").slice(0, 5);
-    skipMountSearch = true;
+    skipMountSearch = $session.viewportType !== "desktop";
     const prevPage = $history_store.at(-1) || "/";
     preloadData(prevPage)
   });

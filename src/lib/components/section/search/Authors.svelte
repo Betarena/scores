@@ -3,7 +3,7 @@
   import SportsTackList from "$lib/components/ui/composed/sportstack_list/SportsTackList.svelte";
   import { infiniteScroll } from "$lib/utils/infinityScroll";
   import { createEventDispatcher } from "svelte";
-  import search_store from "./search_store";
+  import search_store from "$lib/store/search_store.js";
   import NoResults from "./NoResults.svelte";
 
   // #region ➤ 📌 VARIABLES

@@ -30,7 +30,7 @@
   import { createEventDispatcher } from "svelte";
   import ArticleCard from "../authors/common_ui/articles/Article-Card.svelte";
   import UsersList from "../authors/common_ui/users_list/UsersList.svelte";
-  import search_store from "./search_store.js";
+  import search_store from "$lib/store/search_store.js";
   import type { IBetarenaUser } from "@betarena/scores-lib/types/_FIREBASE_.js";
   import ArticleLoader from "../authors/common_ui/articles/Article-Loader.svelte";
   import LoaderBadge from "$lib/components/ui/loaders/LoaderBadge.svelte";

@@ -43,7 +43,8 @@
     routeIdPageTags,
     routeIdSportstack,
   } from "$lib/constants/paths.js";
-  import Input from "$lib/components/ui/Input.svelte";
+  import session from "$lib/store/session.js";
+  import HeaderSearch from "./HeaderSearch.svelte";
 
   // #endregion ➤ 📦 Package Imports
   // #region ➤ 📌 VARIABLES
@@ -69,6 +70,7 @@
   $: isAuth = !!user;
   $: ({ profile_photo } = { ...$userBetarenaSettings.user?.scores_user_data });
   $: loadTranslations(serverLang);
+   $: ({viewportType} = $session)
 
   const pagesWihoutNav = [
     routeIdPageTags,
@@ -142,7 +144,9 @@
   {/if}
 
   <div class="actions">
-    <Input />
+    {#if viewportType === "desktop"}
+       <HeaderSearch />
+    {/if}
     <HeaderCLang />
     <HeaderCTheme />
     {#if !isAuth}
@@ -154,12 +158,12 @@
         />
       </Button>
     {:else}
-      <a href="/u/dashboard/{$userBetarenaSettings.lang}" class="avatar-wrapper" on:click|stopPropagation>
-        <Avatar
-          src={profile_photo}
-          size={44}
-          isLoogedIn={isAuth}
-        />
+      <a
+        href="/u/dashboard/{$userBetarenaSettings.lang}"
+        class="avatar-wrapper"
+        on:click|stopPropagation
+      >
+        <Avatar src={profile_photo} size={44} isLoogedIn={isAuth} />
       </a>
     {/if}
   </div>
