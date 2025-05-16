@@ -129,7 +129,7 @@
     &:not(.mobile){
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 21px;
     }
   }
 </style>

@@ -253,6 +253,31 @@
       .button-wrapp {
         padding-inline: 0;
       }
+      gap: 21px;
+      :global(.list-wrapper) {
+        gap: 21px;
+      }
+      :global(.list-item) {
+        padding-block: 0;
+      }
+      .section {
+        padding-block: 0;
+        gap: 21px;
+
+        .button-wrapp {
+          padding-bottom: 0;
+        }
+        :global(.wrapper) {
+          padding-block: 0;
+        }
+      }
+      .tags_wrapper  {
+        padding-inline: 0;
+      }
+      .articles-wrapper {
+        gap: 21px;
+        padding-top: 0;
+      }
     }
   }
 </style>

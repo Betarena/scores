@@ -53,12 +53,13 @@
     string,
     IBetarenaUser
   >;
+  $: count = viewportType !== "desktop" ? 5 : 3;
   $: sportstacks = $search_store.sportstacks.data || new Map();
-  $: firstThreeUsers = new Map(Array.from(users.entries()).slice(0, 5));
+  $: firstThreeUsers = new Map(Array.from(users.entries()).slice(0, count));
   $: firstThreeSportstacks = new Map(
-    Array.from(sportstacks.entries()).slice(0, 5)
+    Array.from(sportstacks.entries()).slice(0, count)
   );
-  $: ({ translations } = $page.data);
+  $: ({ translations, search_translations } = $page.data);
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -99,7 +100,7 @@
       {#if users.size || $search_store.users.loading}
         <UsersList
           users={firstThreeUsers}
-          limit={5}
+          limit={count}
           size="lg"
           action_button={false}
           {translations}
@@ -110,7 +111,7 @@
       {#if sportstacks.size || $search_store.sportstacks.loading}
         <SportsTackList
           size="lg"
-          limit={3}
+          limit={count}
           action_button={false}
           loading={$search_store.sportstacks.loading &&
             !firstThreeSportstacks.size}
@@ -124,7 +125,7 @@
           size="md"
           full={true}
           type="secondary-gray"
-          on:click={() => viewMore("highlights")}>View more</Button
+          on:click={() => viewMore("highlights")}>{search_translations.view_more || "View more"}</Button
         >
       </div>
     </div>
@@ -182,6 +183,36 @@
       background: var(--colors-background-bg-main);
       :global(.card-wrapper) {
         padding-block: 0;
+      }
+    }
+    &:not(.mobile) {
+      .button-wrapp {
+        padding-inline: 0;
+      }
+      gap: 21px;
+      :global(.list-wrapper) {
+        gap: 21px;
+      }
+      :global(.list-item) {
+        padding-block: 0;
+      }
+      .section {
+        padding-block: 0;
+        gap: 21px;
+
+        .button-wrapp {
+          padding-bottom: 0;
+        }
+        :global(.wrapper) {
+          padding-block: 0;
+        }
+      }
+      .tags_wrapper  {
+        padding-inline: 0;
+      }
+      .articles-wrapper {
+        gap: 21px;
+        padding-top: 0;
       }
     }
   }
