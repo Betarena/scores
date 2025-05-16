@@ -32,8 +32,6 @@
   import { page } from "$app/stores";
   import CommandMenuItem from "$lib/components/ui/CommandMenu/CommandMenuItem.svelte";
   import type { IBetarenaUser } from "@betarena/scores-lib/types/firebase/firestore.js";
-  import UsersList from "$lib/components/section/authors/common_ui/users_list/UsersList.svelte";
-  import SportsTackList from "$lib/components/ui/composed/sportstack_list/SportsTackList.svelte";
   import Avatar from "$lib/components/ui/Avatar.svelte";
   import SportstackAvatar from "$lib/components/ui/SportstackAvatar.svelte";
   import Button from "$lib/components/ui/Button.svelte";
@@ -57,7 +55,7 @@
   const debouncedSearch = debounce(doSearch, 500);
   let suggestions: any[] = [];
   let skipMountSearch = true;
-  $: ({ search_translations, translations } = $page.data);
+  $: ({ search_translations } = $page.data);
   $: ({ user: ctx_user, theme } = $userSettings);
   $: search = $search_store.search;
   $: searchHistory = [] as string[];
@@ -262,7 +260,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="search-wrapper {theme}">
+<div class="search-wrapper {theme}" class:focus={isInputInFocus}>
   <Input
     height="40px"
     type="leading-text"
@@ -353,7 +351,7 @@
             size="md"
             type="secondary-gray"
             classname="light-mode"
-            href="/search">+ {translations.view_more || "View more"}</Button
+            href="/search">+ {search_translations.view_more || "View more"}</Button
           >
         </div>
       {/if}
@@ -377,6 +375,11 @@
     width: 295px;
     height: 40px;
     margin-right: -5px;
+    transition: width 0.3s ease-out;
+
+    &.focus {
+      width: 440px;
+    }
     &:global(.input-wrapper) {
       height: 40px !important;
     }
