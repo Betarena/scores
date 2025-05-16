@@ -10,6 +10,7 @@
 <script lang="ts">
   import type { ITab } from "$lib/types.js";
   import { createEventDispatcher, tick } from "svelte";
+  import ScrollDataWrapper from "./wrappers/ScrollDataWrapper.svelte";
 
   // #region ➤ 📌 VARIABLES
 
@@ -29,7 +30,11 @@
   export let selected = null as ITab | null;
   export let height = 14;
   export let translations: { [key: string]: string } = {};
-  export let type: "underline" | "button_border" | "button_brand" | "button_gray"= "underline";
+  export let type:
+    | "underline"
+    | "button_border"
+    | "button_brand"
+    | "button_gray" = "underline";
   export let size: "sm" | "md" | undefined = undefined;
   export let fullWidth = false;
   let activeNode: HTMLElement;
@@ -112,8 +117,13 @@
   // #endregion ➤ 🛠️ METHODS
 </script>
 
-<div class="tabbar {type} {size}" class:full={fullWidth} bind:this={tabbarNode} {...$$restProps}>
-  {#each data as item, i (item.id)}
+<div
+  class="tabbar {type} {size}"
+  class:full={fullWidth}
+  bind:this={tabbarNode}
+  {...$$restProps}
+>
+  <ScrollDataWrapper {data} let:item>
     <div
       class="tab-item"
       style="margin-bottom: {type === 'underline' ? height : 0}px;"
@@ -123,7 +133,7 @@
     >
       <slot tab={item}>{item.label}</slot>
     </div>
-  {/each}
+  </ScrollDataWrapper>
   {#if type === "underline"}
     {#key translations}
       <div class="active" bind:this={activeNode} />
@@ -236,7 +246,7 @@
         font-weight: 600;
         line-height: var(--line-height-text-md, 24px); /* 150% */
       }
-       &.full {
+      &.full {
         .tab-item {
           padding: var(--spacing-md, 8px) var(--spacing-lg, 12px);
         }
@@ -307,7 +317,7 @@
           var(--spacing-lg, 12px) var(--spacing-xs, 4px);
         justify-content: center;
         align-items: center;
-        margin-bottom: 0!important;
+        margin-bottom: 0 !important;
 
         font-family: var(--font-family-font-family-body, Roboto);
         font-size: var(--font-size-text-md, 16px);
@@ -332,7 +342,6 @@
         font-weight: 600;
         line-height: var(--line-height-text-sm, 20px); /* 142.857% */
       }
-
     }
 
     &.full {
@@ -341,6 +350,5 @@
         flex-grow: 1;
       }
     }
-
   }
 </style>
