@@ -31,6 +31,7 @@
   export let translations: { [key: string]: string } = {};
   export let type: "underline" | "button_border" | "button_brand" | "button_gray"= "underline";
   export let size: "sm" | "md" | undefined = undefined;
+  export let fullWidth = false;
   let activeNode: HTMLElement;
   let tabbarNode: HTMLElement;
   const dispatch = createEventDispatcher();
@@ -111,7 +112,7 @@
   // #endregion ➤ 🛠️ METHODS
 </script>
 
-<div class="tabbar {type} {size}" bind:this={tabbarNode} {...$$restProps}>
+<div class="tabbar {type} {size}" class:full={fullWidth} bind:this={tabbarNode} {...$$restProps}>
   {#each data as item, i (item.id)}
     <div
       class="tab-item"
@@ -202,11 +203,11 @@
         color: var(--colors-text-text-quaternary-500, #727171);
 
         /* Text md/Semibold */
-        font-family: var(--Font-family-font-family-body, Roboto);
-        font-size: var(--Font-size-text-md, 16px);
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-md, 16px);
         font-style: normal;
         font-weight: 600;
-        line-height: var(--Line-height-text-md, 24px); /* 150% */
+        line-height: var(--line-height-text-md, 24px); /* 150% */
       }
 
       .selected {
@@ -234,6 +235,11 @@
         font-style: normal;
         font-weight: 600;
         line-height: var(--line-height-text-md, 24px); /* 150% */
+      }
+       &.full {
+        .tab-item {
+          padding: var(--spacing-md, 8px) var(--spacing-lg, 12px);
+        }
       }
     }
 
@@ -251,11 +257,11 @@
         color: var(--colors-text-text-quaternary-500, #727171);
 
         /* Text md/Semibold */
-        font-family: var(--Font-family-font-family-body, Roboto);
-        font-size: var(--Font-size-text-md, 16px);
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-md, 16px);
         font-style: normal;
         font-weight: 600;
-        line-height: var(--Line-height-text-md, 24px); /* 150% */
+        line-height: var(--line-height-text-md, 24px); /* 150% */
       }
 
       .selected {
@@ -283,6 +289,12 @@
         font-style: normal;
         font-weight: 600;
         line-height: var(--line-height-text-md, 24px); /* 150% */
+      }
+
+      &.full {
+        .tab-item {
+          padding: var(--spacing-md, 8px) var(--spacing-lg, 12px);
+        }
       }
     }
 
@@ -314,12 +326,21 @@
         gap: var(--spacing-md, 8px);
         flex-shrink: 0;
 
-        font-family: var(--Font-family-font-family-body, Roboto);
-        font-size: var(--Font-size-text-sm, 14px);
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-sm, 14px);
         font-style: normal;
         font-weight: 600;
-        line-height: var(--Line-height-text-sm, 20px); /* 142.857% */
+        line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+      }
+
+    }
+
+    &.full {
+      gap: var(--spacing-xs, 4px);
+      .tab-item {
+        flex-grow: 1;
       }
     }
+
   }
 </style>

@@ -453,8 +453,18 @@
 <div class="search-container {viewportType} {theme}">
   <div
     class="search-wrapper"
-    in:fly={{ x: 0, y: -100, duration: viewportType !== "desktop" ? 600 : 0, easing: quadOut }}
-    out:fly={{ x: 0, y: -150, duration: viewportType !== "desktop" ? 600 : 0, easing: quadOut }}
+    in:fly={{
+      x: 0,
+      y: -100,
+      duration: viewportType !== "desktop" ? 600 : 0,
+      easing: quadOut,
+    }}
+    out:fly={{
+      x: 0,
+      y: -150,
+      duration: viewportType !== "desktop" ? 600 : 0,
+      easing: quadOut,
+    }}
   >
     <div class="input-wrapper">
       <button
@@ -496,6 +506,7 @@
         <Tabbar
           type="button_gray"
           size="sm"
+          fullWidth={viewportType !== "mobile"}
           data={tabs}
           on:select={(e) => (selectedTab = e.detail)}
           selected={selectedTab}
@@ -522,8 +533,18 @@
   {/if}
   <div
     class="search-results"
-    in:fly={{ x: 0, y: 750, duration: viewportType !== "desktop" ? 600 : 0, easing: quadOut }}
-    out:fly={{ x: 0, y: 750, duration: viewportType !== "desktop" ? 600 : 0, easing: quadOut }}
+    in:fly={{
+      x: 0,
+      y: 750,
+      duration: viewportType !== "desktop" ? 600 : 0,
+      easing: quadOut,
+    }}
+    out:fly={{
+      x: 0,
+      y: 750,
+      duration: viewportType !== "desktop" ? 600 : 0,
+      easing: quadOut,
+    }}
   >
     {#if !search && !searchHistory.length}
       <div class="search-message-wrapper">
@@ -743,10 +764,15 @@
       z-index: 0;
       background-color: unset;
       max-width: 832px;
+      gap: 21px;
       &.Dark {
         :global(.input-wrapper:not(.focus)) {
           border: 1px solid transparent;
         }
+      }
+      .tabbar {
+        padding-block: 0;
+        margin-top: 21px;
       }
       .search-wrapper {
         padding: 0;
@@ -754,6 +780,27 @@
       .search-suggestions,
       .search-history {
         padding: 0;
+        gap: 21px;
+        .suggestion-text,
+        .recent-search-item {
+          /* Text lg/Regular */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-lg, 18px);
+          font-style: normal;
+          font-weight: 400;
+          line-height: var(--line-height-text-lg, 28px); /* 155.556% */
+        }
+        .search-title {
+          /* Text xl/Semibold */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-xl, 20px);
+          font-style: normal;
+          font-weight: 600;
+          line-height: var(--line-height-text-xl, 30px); /* 150% */
+        }
+      }
+      .empty-tabbar {
+        height: 0;
       }
     }
     &.tablet {

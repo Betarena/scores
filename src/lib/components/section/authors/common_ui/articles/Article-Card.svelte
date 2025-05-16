@@ -114,7 +114,7 @@
 <div class="card-wrapper" class:mobile class:tablet in:fade={{ duration: 500 }}>
   <div class="card-content">
     <a href={`/a/sportstack/${mutateStringToPermalink(username)}`} class="author-wrapper">
-      <SportstackAvatar src={avatar} size={32} />
+      <SportstackAvatar src={avatar} size={ !mobile ? "md" : "sm"} />
       <div class="author-info">
         <div class="author-name">{username}</div>
         <div class="publication-date">
@@ -265,7 +265,7 @@
         max-width: 100%;
         height: max-content;
         font-family: Inter;
-        font-size: var(--text-size-l);
+        font-size: var(--font-size-text-xl, 20px);
         font-style: normal;
         font-weight: 600;
         line-height: 28px;

@@ -2,8 +2,9 @@
   import { page } from "$app/stores";
   import UsersList from "../authors/common_ui/users_list/UsersList.svelte";
   import NoResults from "./NoResults.svelte";
-  import  search_store  from "$lib/store/search_store.js";
+  import search_store from "$lib/store/search_store.js";
   import type { IBetarenaUser } from "@betarena/scores-lib/types/_FIREBASE_.js";
+  import session from "$lib/store/session.js";
 
   // #region ➤ 📌 VARIABLES
 
@@ -19,12 +20,16 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-
-  $: users = ($search_store.users.data || new Map()) as Map<string, IBetarenaUser>;
+  $: users = ($search_store.users.data || new Map()) as Map<
+    string,
+    IBetarenaUser
+  >;
   $: ({ translations } = $page.data);
+  $: ({ viewportType } = $session);
 
   // #endregion ➤ 📌 VARIABLES
 </script>
+
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ 💠 Svelte Component HTML                                                         │
@@ -35,14 +40,13 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<div class="wrapper">
+<div class="wrapper {viewportType}">
   {#if users.size || $search_store.users.loading}
-    <UsersList includePermalink={true} {users} size="lg" {translations}/>
+    <UsersList includePermalink={true} {users} size="lg" {translations} />
   {:else}
-    <NoResults/>
+    <NoResults />
   {/if}
 </div>
-
 
 <style lang="scss">
   .wrapper {
@@ -52,5 +56,14 @@
     overflow: auto;
     padding-bottom: 100px;
     background: var(--colors-background-bg-main);
+
+    &:not(.mobile) {
+      :global(.list-wrapper) {
+        gap: 21px;
+      }
+      :global(.list-item) {
+        padding-block: 0;
+      }
+    }
   }
 </style>
