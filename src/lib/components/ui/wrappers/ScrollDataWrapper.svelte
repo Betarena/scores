@@ -250,6 +250,7 @@ $: if(htmlElementScrollBox)  {
     /* 🎨 style */
     overflow: hidden;
     position: relative;
+    width: 100%;
 
     div#tags-box-scroll {
       /* 🎨 style */
