@@ -453,8 +453,8 @@
 <div class="search-container {viewportType} {theme}">
   <div
     class="search-wrapper"
-    in:fly={{ x: 0, y: -100, duration: 600, easing: quadOut }}
-    out:fly={{ x: 0, y: -150, duration: 600, easing: quadOut }}
+    in:fly={{ x: 0, y: -100, duration: viewportType !== "desktop" ? 600 : 0, easing: quadOut }}
+    out:fly={{ x: 0, y: -150, duration: viewportType !== "desktop" ? 600 : 0, easing: quadOut }}
   >
     <div class="input-wrapper">
       <button
@@ -522,8 +522,8 @@
   {/if}
   <div
     class="search-results"
-    in:fly={{ x: 0, y: 750, duration: 600, easing: quadOut }}
-    out:fly={{ x: 0, y: 750, duration: 600, easing: quadOut }}
+    in:fly={{ x: 0, y: 750, duration: viewportType !== "desktop" ? 600 : 0, easing: quadOut }}
+    out:fly={{ x: 0, y: 750, duration: viewportType !== "desktop" ? 600 : 0, easing: quadOut }}
   >
     {#if !search && !searchHistory.length}
       <div class="search-message-wrapper">
