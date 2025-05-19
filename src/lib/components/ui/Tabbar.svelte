@@ -272,6 +272,11 @@
         font-style: normal;
         font-weight: 600;
         line-height: var(--line-height-text-md, 24px); /* 150% */
+
+        &:hover {
+          background: var(--colors-background-bg-primary_hover, #FBFBFB);
+          color: var(--colors-text-text-secondary-700, #525252);
+        }
       }
 
       .selected {
