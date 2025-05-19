@@ -119,7 +119,7 @@
               size="md"
               full={true}
               type="secondary-gray"
-              on:click={() => viewMore("users")}>{translations.view_more || "View more" }</Button
+              on:click={() => viewMore("users")}>{translations?.view_more || "View more" }</Button
             >
           </div>
         {/if}
@@ -142,7 +142,7 @@
               size="md"
               full={true}
               type="secondary-gray"
-              on:click={() => viewMore("sportstacks")}>{translations.view_more || "View more" }</Button
+              on:click={() => viewMore("sportstacks")}>{translations?.view_more || "View more" }</Button
             >
           </div>
         {/if}
@@ -169,7 +169,7 @@
       <div class="section">
         <div class="articles-wrapper">
           {#each [...firstThreeArticles.entries()] as [id, article] (id)}
-            <ArticleCard {mobile} {article} {tablet} {translations} />
+            <ArticleCard {mobile} {article} {tablet} />
           {/each}
           {#if articles.size > 3}
             <div class="button-wrapp">
@@ -177,7 +177,7 @@
                 size="md"
                 full={true}
                 type="secondary-gray"
-                on:click={() => viewMore("posts")}>{translations.view_more || "View more" }</Button
+                on:click={() => viewMore("posts")}>{translations?.view_more || "View more" }</Button
               >
             </div>
           {/if}

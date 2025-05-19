@@ -117,7 +117,7 @@
   $: isInputInFocus = false;
   $: selectedTab = tabs[0];
 
-  $: ({ search_translations, translations } = $page.data);
+  $: ({ search_translations, translations = {} } = $page.data);
 
   $: tabs = [
     {
@@ -449,150 +449,153 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
-<div class="search-container {viewportType} {theme}">
-  <div
-    class="search-wrapper"
-    in:fly={{
-      x: 0,
-      y: -100,
-      duration: viewportType !== "desktop" ? 600 : 0,
-      easing: quadOut,
-    }}
-    out:fly={{
-      x: 0,
-      y: -150,
-      duration: viewportType !== "desktop" ? 600 : 0,
-      easing: quadOut,
-    }}
-  >
-    <div class="input-wrapper">
-      <button
-        class="search-close"
-        on:click={() => {
-          history.back();
-        }}
-      >
-        <XClose />
-      </button>
-      <Input
-        bind:node={inputNode}
-        type="leading-text"
-        bind:value={$search_store.search}
-        placeholder={search_translations.search || "Search"}
-        on:focus={inputFocus}
-        on:blur={inputBlur}
-        height="40px"
-      >
-        <svg
-          slot="leading-text"
-          xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
-          viewBox="0 0 20 20"
-          fill="none"
-        >
-          <path
-            d="M17.5 17.5L12.5001 12.5M14.1667 8.33333C14.1667 11.555 11.555 14.1667 8.33333 14.1667C5.11167 14.1667 2.5 11.555 2.5 8.33333C2.5 5.11167 5.11167 2.5 8.33333 2.5C11.555 2.5 14.1667 5.11167 14.1667 8.33333Z"
-            stroke="currentColor"
-            stroke-width="1.66667"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
-      </Input>
-    </div>
-    {#if !isInputInFocus && search}
-      <div class="tabbar">
-        <Tabbar
-          type="button_gray"
-          size="sm"
-          fullWidth={viewportType !== "mobile"}
-          data={tabs}
-          on:select={(e) => (selectedTab = e.detail)}
-          selected={selectedTab}
-        />
-      </div>
-    {:else}
-      <div class="empty-tabbar" />
-    {/if}
-  </div>
-  {#if search && isInputInFocus && suggestions.length}
-    <div class="search-suggestions">
-      {#each suggestions as suggest}
+{#if translations}
+  <div class="search-container {viewportType} {theme}">
+    <div
+      class="search-wrapper"
+      in:fly={{
+        x: 0,
+        y: -100,
+        duration: viewportType !== "desktop" ? 600 : 0,
+        easing: quadOut,
+      }}
+      out:fly={{
+        x: 0,
+        y: -150,
+        duration: viewportType !== "desktop" ? 600 : 0,
+        easing: quadOut,
+      }}
+    >
+      <div class="input-wrapper">
         <button
-          class="suggest-item"
-          on:click={() => suggestClick(suggest.suggestion)}
+          class="search-close"
+          on:click={() => {
+            history.back();
+          }}
         >
-          <div class="suggestion-text">{suggest.suggestion}</div>
-          <div class="suggest-icon">
-            <ArrowCirlcleBrokenRight />
-          </div>
+          <XClose />
         </button>
-      {/each}
-    </div>
-  {/if}
-  <div
-    class="search-results"
-    in:fly={{
-      x: 0,
-      y: 750,
-      duration: viewportType !== "desktop" ? 600 : 0,
-      easing: quadOut,
-    }}
-    out:fly={{
-      x: 0,
-      y: 750,
-      duration: viewportType !== "desktop" ? 600 : 0,
-      easing: quadOut,
-    }}
-  >
-    {#if !search && !searchHistory.length}
-      <div class="search-message-wrapper">
-        <Button type="link-color" classname="light-mode"
-          >{search_translations.search_for || "Search for"}</Button
+        <Input
+          bind:node={inputNode}
+          type="leading-text"
+          bind:value={$search_store.search}
+          placeholder={search_translations.search || "Search"}
+          on:focus={inputFocus}
+          on:blur={inputBlur}
+          height="40px"
         >
-        <div class="message-text">
-          {search_translations.posts_users_sportstacks ||
-            "posts, users and Sportstacks"}
-        </div>
-      </div>
-    {:else if !search && searchHistory.length}
-      <div class="search-history">
-        <div class="search-title">{search_translations.recent || "Recent"}</div>
-        {#each searchHistory.slice(0, 10) as text}
-          <button
-            class="recent-search-item"
-            on:click={() => {
-              $search_store.search = text;
-            }}
+          <svg
+            slot="leading-text"
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
           >
-            {text}
+            <path
+              d="M17.5 17.5L12.5001 12.5M14.1667 8.33333C14.1667 11.555 11.555 14.1667 8.33333 14.1667C5.11167 14.1667 2.5 11.555 2.5 8.33333C2.5 5.11167 5.11167 2.5 8.33333 2.5C11.555 2.5 14.1667 5.11167 14.1667 8.33333Z"
+              stroke="currentColor"
+              stroke-width="1.66667"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </Input>
+      </div>
+      {#if !isInputInFocus && search}
+        <div class="tabbar">
+          <Tabbar
+            type="button_gray"
+            size="sm"
+            fullWidth={viewportType !== "mobile"}
+            data={tabs}
+            on:select={(e) => (selectedTab = e.detail)}
+            selected={selectedTab}
+          />
+        </div>
+      {:else}
+        <div class="empty-tabbar" />
+      {/if}
+    </div>
+    {#if search && isInputInFocus && suggestions.length}
+      <div class="search-suggestions">
+        {#each suggestions as suggest}
+          <button
+            class="suggest-item"
+            on:click={() => suggestClick(suggest.suggestion)}
+          >
+            <div class="suggestion-text">{suggest.suggestion}</div>
+            <div class="suggest-icon">
+              <ArrowCirlcleBrokenRight />
+            </div>
           </button>
         {/each}
       </div>
     {/if}
-    {#if search && isInputInFocus}
-      <SuggestingResults />
-    {/if}
-    {#if search && viewMap[selectedTab.id] && !isInputInFocus}
-      <svelte:component
-        this={viewMap[selectedTab.id]}
-        on:changeTab={changeTab}
-        on:loadMore={loadMore}
+    <div
+      class="search-results"
+      in:fly={{
+        x: 0,
+        y: 750,
+        duration: viewportType !== "desktop" ? 600 : 0,
+        easing: quadOut,
+      }}
+      out:fly={{
+        x: 0,
+        y: 750,
+        duration: viewportType !== "desktop" ? 600 : 0,
+        easing: quadOut,
+      }}
+    >
+      {#if !search && !searchHistory.length}
+        <div class="search-message-wrapper">
+          <Button type="link-color" classname="light-mode"
+            >{search_translations.search_for || "Search for"}</Button
+          >
+          <div class="message-text">
+            {search_translations.posts_users_sportstacks ||
+              "posts, users and Sportstacks"}
+          </div>
+        </div>
+      {:else if !search && searchHistory.length}
+        <div class="search-history">
+          <div class="search-title">
+            {search_translations.recent || "Recent"}
+          </div>
+          {#each searchHistory.slice(0, 10) as text}
+            <button
+              class="recent-search-item"
+              on:click={() => {
+                $search_store.search = text;
+              }}
+            >
+              {text}
+            </button>
+          {/each}
+        </div>
+      {/if}
+      {#if search && isInputInFocus}
+        <SuggestingResults />
+      {/if}
+      {#if search && viewMap[selectedTab.id] && !isInputInFocus}
+        <svelte:component
+          this={viewMap[selectedTab.id]}
+          on:changeTab={changeTab}
+          on:loadMore={loadMore}
+        />
+      {/if}
+    </div>
+    {#if viewportType === "mobile"}
+      <div
+        class="search-bg"
+        in:fade={{
+          duration: 200,
+          easing: cubicOut,
+        }}
       />
     {/if}
   </div>
-  {#if viewportType === "mobile"}
-    <div
-      class="search-bg"
-      in:fade={{
-        duration: 200,
-        easing: cubicOut,
-      }}
-    />
-  {/if}
-</div>
+{/if}
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮

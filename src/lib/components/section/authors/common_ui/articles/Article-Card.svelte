@@ -77,7 +77,7 @@
     mobile = false
   ;
 
-  $: translations = ($page.data?.translations) as IPageAuthorTranslationDataFinal;
+  $: translations = ($page.data?.translations || {}) as IPageAuthorTranslationDataFinal;
 
   $: ({
     permalink,
