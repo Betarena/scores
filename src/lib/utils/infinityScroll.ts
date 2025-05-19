@@ -60,6 +60,7 @@ export function infiniteScroll(
   let { threshold = 100, loadMore, hasMore, loading } = options;
 
   let scrollContainer: HTMLElement | Window = getScrollParent(node) ?? window;
+  scrollContainer.scroll({top: 0})
 
   const attach = (c: HTMLElement | Window) =>
     c.addEventListener("scroll", onScroll);
