@@ -768,7 +768,8 @@
   {
     div.tabbar-wrapper button
     {
-      font-size: var(--Font-size-text-sm, 14px) !important;
+
+      font-size: var(--font-size-text-sm, 14px) !important;
     }
   }
 
