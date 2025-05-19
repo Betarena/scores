@@ -482,6 +482,7 @@
         placeholder={search_translations.search || "Search"}
         on:focus={inputFocus}
         on:blur={inputBlur}
+        height="40px"
       >
         <svg
           slot="leading-text"

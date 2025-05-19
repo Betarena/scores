@@ -296,7 +296,7 @@
           0px 1px 2px 0px
             var(--colors-effects-shadows-shadow-sm_02, rgba(31, 31, 31, 0.06));
 
-        color: var(--colors-text-text-secondary, #525252);
+        color: var(--colors-text-text-secondary-700, #525252);
 
         /* Text md/Semibold */
         font-family: var(--font-family-font-family-body, Roboto);
