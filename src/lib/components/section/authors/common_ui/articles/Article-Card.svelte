@@ -279,29 +279,31 @@
 
         }
 
-        &-info {
+         &-info {
           display: flex;
           flex-direction: column;
-          gap: 4px;
           color: var(--text-color-second, #ccc);
 
           .publication-date {
-            color: var(--text-color-second-dark, #8c8c8c);
-            font-family: Roboto;
-            font-size: var(--text-size-xs);
+            color: var(--colors-text-text-tertiary-600, #8c8c8c);
+            /* Text xs/Regular */
+            font-family: var(--font-family-font-family-body, Roboto);
+            font-size: var(--font-size-text-xs, 12px);
             font-style: normal;
             font-weight: 400;
-            line-height: 12px;
+            line-height: var(--line-height-text-xs, 18px); /* 150% */
           }
         }
 
         &-name {
-          color: var(--text-color);
-          font-family: Inter;
-          font-size: var(--text-size-s);
+          color: var(--colors-ext-text-primary, #fbfbfb);
+
+          /* Text sm/Semibold */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-sm, 14px);
           font-style: normal;
-          font-weight: 500;
-          line-height: 20px;
+          font-weight: 600;
+          line-height: var(--line-height-text-sm, 20px); /* 142.857% */
           &:hover {
             color: var(--primary);
           }
