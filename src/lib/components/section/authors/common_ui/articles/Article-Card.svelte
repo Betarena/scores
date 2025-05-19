@@ -191,7 +191,7 @@
     width: 824px;
     gap: 56px;
     border-radius: 12px;
-    padding: 24px;
+    padding: 20px;
     box-sizing: border-box;
     justify-content: space-between;
     background: var(--bg-color-second);
@@ -275,7 +275,7 @@
         &-wrapper {
           display: flex;
           gap: 12px;
-          align-items: start;
+          align-items: center;
 
         }
 
