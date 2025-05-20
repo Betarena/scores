@@ -58,6 +58,11 @@
   // │ as soon as 'this' .svelte file is ran.                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  // DESCRIPTION:
+  // In mobile and tablet views, search should be performed only based on user input.
+  // When navigating back to the search page, previous search results must already be loaded.
+  // For desktop, the search functionality should be expanded compared to the header search,
+  // making it appropriate to perform a repeated search (to find tags and articles).
   onMount(() => {
     skipMountSearch = $session.viewportType !== "desktop";
     const prevPage = $history_store.at(-1) || "/";
