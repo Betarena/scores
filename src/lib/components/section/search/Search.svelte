@@ -3,10 +3,7 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
-	import { flip } from 'svelte/animate';
-	import { flip } from 'svelte/animate';
-	import { fade } from 'svelte/transition';
-│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
+│
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -46,7 +43,9 @@
   import history_store from "$lib/store/history.js";
   import { page } from "$app/stores";
   import { debounce } from "$lib/utils/miscellenous.js";
+  import { get } from "$lib/api/utils.js";
   import type { ITab } from "$lib/types.js";
+  import type { ISearchSuggestion } from "$lib/types/types.search.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -60,9 +59,6 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   onMount(() => {
-    searchHistory = JSON.parse(
-      localStorage.getItem("searchHistory") || "[]"
-    ).slice(0, 5);
     skipMountSearch = $session.viewportType !== "desktop";
     const prevPage = $history_store.at(-1) || "/";
     preloadData(prevPage);
@@ -86,7 +82,7 @@
 
   let inputNode: null | HTMLInputElement | HTMLTextAreaElement = null;
   let skipBlur = false;
-  let suggestions: any[] = [];
+  let suggestions: ISearchSuggestion[] = [];
   let skipMountSearch = true;
 
   const viewMap = {
@@ -110,10 +106,10 @@
   // │ Please keep very close attention to these methods and                  │
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  $: search = $search_store.search;
+  $: ({ search } = $search_store);
   $: ({ viewportType } = $session);
   $: ({ user: ctx_user, theme } = $userSettings);
-  $: searchHistory = [] as string[];
+  $: searchHistory = ($userSettings.searchHistory || []).slice(0, 5);
   $: isInputInFocus = false;
   $: selectedTab = tabs[0];
 
@@ -166,9 +162,7 @@
         return;
       }
       isInputInFocus = false;
-      const storageHistory = JSON.parse(
-        localStorage.getItem("searchHistory") || "[]"
-      );
+      const storageHistory = $userSettings.searchHistory || [];
       const storageSet: string[] = [...storageHistory];
       const searched_before = storageSet.find(
         (history) => history.toLocaleLowerCase() === search.toLocaleLowerCase()
@@ -178,8 +172,7 @@
       }
       if (search) {
         const nextHistory = [search, ...storageSet];
-        localStorage.setItem("searchHistory", JSON.stringify(nextHistory));
-        searchHistory = [...nextHistory];
+        userSettings.updateData([["search_history", nextHistory]]);
       }
     }, 100);
   }
@@ -250,17 +243,16 @@
     if (limit) {
       url += `&limit=${limit}`;
     }
-    const res = await fetch(url);
+    const res =  await get<{data: any[], next_page_count: number}>(url);
 
-    const r = await res.json();
     if (!page) {
       $search_store.sportstacks.data = new Map(
-        r.data.map((author) => [author.id, author])
+        (res?.data || []).map((author) => [author.id, author])
       );
       $search_store.sportstacks.page = 0;
     } else {
       const newMap = new Map(
-        r.data.map((author) => [author.id, author])
+        (res?.data || []).map((author) => [author.id, author])
       ) as Map<string, any>;
       $search_store.sportstacks.data = new Map([
         ...$search_store.sportstacks.data,
@@ -268,7 +260,7 @@
       ]);
       $search_store.sportstacks.page = page;
     }
-    $search_store.sportstacks.next_page_count = r.next_page_count;
+    $search_store.sportstacks.next_page_count = res?.next_page_count;
     $search_store.sportstacks.loading = false;
   }
 
@@ -302,13 +294,12 @@
       url += `&limit=${limit}`;
     }
 
-    const res = await fetch(url);
-    const r = await res.json();
+    const res = await get<{tags: any[], next_page_count: number}>(url)
     if (!page) {
-      $search_store.tags.data = new Map(r.tags.map((tag) => [tag.id, tag]));
+      $search_store.tags.data = new Map((res?.tags || []).map((tag) => [tag.id, tag]));
       $search_store.tags.page = 0;
     } else {
-      const newMap = new Map(r.tags.map((tag) => [tag.id, tag])) as Map<
+      const newMap = new Map((res?.tags || []).map((tag) => [tag.id, tag])) as Map<
         number,
         any
       >;
@@ -351,11 +342,10 @@
       url += `&limit=${limit}`;
     }
 
-    const res = await fetch(url);
-    const r = await res.json();
+    const res = await get<{data: any[], next_page_count: number}>(url);
     if (!page) {
       $search_store.articles.data = new Map(
-        r.data.map((article) => [
+        (res?.data || []).map((article) => [
           article.id,
           {
             ...article,
@@ -366,7 +356,7 @@
       $search_store.articles.page = 0;
     } else {
       const newMap = new Map(
-        r.data.map((article) => [
+        (res?.data || []).map((article) => [
           article.id,
           {
             ...article,
@@ -380,7 +370,7 @@
       ]);
       $search_store.articles.page = page;
     }
-    $search_store.articles.next_page_count = r.next_page_count;
+    $search_store.articles.next_page_count = res?.next_page_count;
     $search_store.articles.loading = false;
   }
 

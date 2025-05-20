@@ -3,7 +3,7 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
-│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
+│
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -28,13 +28,14 @@
   import search_store from "$lib/store/search_store.js";
   import userSettings from "$lib/store/user-settings.js";
   import { debounce } from "$lib/utils/miscellenous.js";
-  import { onMount } from "svelte";
   import { page } from "$app/stores";
   import CommandMenuItem from "$lib/components/ui/CommandMenu/CommandMenuItem.svelte";
   import type { IBetarenaUser } from "@betarena/scores-lib/types/firebase/firestore.js";
   import Avatar from "$lib/components/ui/Avatar.svelte";
   import SportstackAvatar from "$lib/components/ui/SportstackAvatar.svelte";
   import Button from "$lib/components/ui/Button.svelte";
+  import type { ISearchSuggestion } from "$lib/types/types.search.js";
+  import { get } from "$lib/api/utils.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -53,12 +54,11 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   const debouncedSearch = debounce(doSearch, 500);
-  let suggestions: any[] = [];
-  let skipMountSearch = true;
+  let suggestions: ISearchSuggestion[] = [];
   $: ({ search_translations } = $page.data);
   $: ({ user: ctx_user, theme } = $userSettings);
-  $: search = $search_store.search;
-  $: searchHistory = [] as string[];
+  $: ({ search } = $search_store);
+  $: searchHistory = ($userSettings.searchHistory || []).slice(0, 5);
   $: isInputInFocus = false;
   $: users = ($search_store.users.data || new Map()) as Map<
     string,
@@ -69,7 +69,6 @@
   $: firstThreeSportstacks = new Map(
     Array.from(sportstacks.entries()).slice(0, 3)
   );
-
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -90,24 +89,6 @@
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
-  // #region ➤ 🔄 LIFECYCLE [SVELTE]
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'logic' that should run            │
-  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
-  // │ as soon as 'this' .svelte file is ran.                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  onMount(() => {
-    searchHistory = JSON.parse(
-      localStorage.getItem("searchHistory") || "[]"
-    ).slice(0, 5);
-    skipMountSearch = true;
-  });
-
-  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
-
   // #region ➤ 🛠️ METHODS
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -127,9 +108,7 @@
   function inputBlur() {
     setTimeout(() => {
       isInputInFocus = false;
-      const storageHistory = JSON.parse(
-        localStorage.getItem("searchHistory") || "[]"
-      );
+      const storageHistory = $userSettings.searchHistory || [];
       const storageSet: string[] = [...storageHistory];
       const searched_before = storageSet.find(
         (history) => history.toLocaleLowerCase() === search.toLocaleLowerCase()
@@ -139,26 +118,21 @@
       }
       if (search) {
         const nextHistory = [search, ...storageSet];
-        localStorage.setItem("searchHistory", JSON.stringify(nextHistory));
-        searchHistory = [...nextHistory];
+        userSettings.updateData([["search_history", nextHistory]]);
       }
     }, 300);
   }
 
   function doSearch(value: string) {
-    if (skipMountSearch) {
-      skipMountSearch = false;
-      return;
-    }
     usersSearch({ search: value, page: 0 });
     authorSearch({ search: value, page: 0 });
   }
 
   async function getSuggestions(text: string) {
-    const url = `/api/data/search.suggestions?search=${search}`;
-    const res = await fetch(url);
-    const r = await res.json();
-    suggestions = r.suggestions;
+    const res = await get<{
+      suggestions: ISearchSuggestion[];
+    }>(`/api/data/search.suggestions?search=${search}`);
+    suggestions = res?.suggestions || [];
   }
 
   async function authorSearch({
@@ -190,17 +164,16 @@
     if (limit) {
       url += `&limit=${limit}`;
     }
-    const res = await fetch(url);
+    const res = await get<{data: any[], next_page_count: number}>(url);
 
-    const r = await res.json();
     if (!page) {
       $search_store.sportstacks.data = new Map(
-        r.data.map((author) => [author.id, author])
+        (res?.data || []).map((author) => [author.id, author])
       );
       $search_store.sportstacks.page = 0;
     } else {
       const newMap = new Map(
-        r.data.map((author) => [author.id, author])
+        res?.data.map((author) => [author.id, author])
       ) as Map<string, any>;
       $search_store.sportstacks.data = new Map([
         ...$search_store.sportstacks.data,
@@ -208,7 +181,7 @@
       ]);
       $search_store.sportstacks.page = page;
     }
-    $search_store.sportstacks.next_page_count = r.next_page_count;
+    $search_store.sportstacks.next_page_count = res?.next_page_count;
     $search_store.sportstacks.loading = false;
   }
 
@@ -351,7 +324,8 @@
             size="md"
             type="secondary-gray"
             classname="light-mode"
-            href="/search">+ {search_translations.view_more || "View more"}</Button
+            href="/search"
+            >+ {search_translations.view_more || "View more"}</Button
           >
         </div>
       {/if}
