@@ -36,6 +36,7 @@
   import Button from "$lib/components/ui/Button.svelte";
   import type { ISearchSuggestion } from "$lib/types/types.search.js";
   import { get } from "$lib/api/utils.js";
+  import { goto } from "$app/navigation";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -123,6 +124,14 @@
     }, 300);
   }
 
+  function handleKeyDown(e) {
+    const event = e.detail;
+    if (event.key === "Enter") {
+      event.preventDefault();
+      goto("/search");
+    }
+  }
+
   function doSearch(value: string) {
     usersSearch({ search: value, page: 0 });
     authorSearch({ search: value, page: 0 });
@@ -132,7 +141,13 @@
     const res = await get<{
       suggestions: ISearchSuggestion[];
     }>(`/api/data/search.suggestions?search=${search}`);
-    suggestions = res?.suggestions || [];
+    let filtered = res?.suggestions.filter(
+      (sug: ISearchSuggestion) => sug.suggestion !== search
+    ) || [];
+    if (filtered.length > 4) {
+      filtered = filtered.slice(0, 4);
+    }
+   suggestions = [{suggestion: search, source: "input"}, ...filtered];
   }
 
   async function authorSearch({
@@ -241,6 +256,7 @@
     bind:value={$search_store.search}
     on:focus={inputFocus}
     on:blur={inputBlur}
+    on:keydown={handleKeyDown}
   >
     <svg
       slot="leading-text"
