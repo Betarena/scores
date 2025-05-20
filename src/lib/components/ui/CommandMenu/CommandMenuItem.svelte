@@ -8,26 +8,6 @@
 -->
 
 <script lang="ts">
-  // #region ➤ 📦 Package Imports
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'imports' that are required        │
-  // │ by 'this' .svelte file is ran.                                         │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. svelte/sveltekit imports                                            │
-  // │ 2. project-internal files and logic                                    │
-  // │ 3. component import(s)                                                 │
-  // │ 4. assets import(s)                                                    │
-  // │ 5. type(s) imports(s)                                                  │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-  import LoaderButton from "$lib/components/ui/loaders/LoaderButton.svelte";
-  import LoaderAvatar from "$lib/components/ui/loaders/LoaderAvatar.svelte";
-  import LoaderLine from "$lib/components/ui/loaders/LoaderLine.svelte";
-  import session from "$lib/store/session.js";
-  // #endregion ➤ 📦 Package Imports
-
   // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -41,24 +21,11 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  export let size: number | string = 40;
-  export let action_button = true;
-  export let includePermalink = false;
-  let numSize = 40;
-  $: ({ viewportType } = $session);
-  const sizeMap = {
-    xs: 24,
-    sm: 32,
-    md: 40,
-    lg: 48,
-    xl: 56,
-    xxl: 64,
-  };
-  $: if (typeof size === "string") {
-    numSize = sizeMap[size] || 38;
-  } else {
-    numSize = size;
-  }
+
+  export let textType = "default";
+  export let text = "";
+  export let supportingText = "";
+
   // #endregion ➤ 📌 VARIABLES
 </script>
 
@@ -72,22 +39,22 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
-<div class="list-item {viewportType}">
-  <div class="user-info">
-    <LoaderAvatar size={numSize} />
-    <div class="name-wrapp">
-      <LoaderLine width={70} height={10} />
-      {#if includePermalink}
-        <div class="permalink">
-          <LoaderLine width={35} height={10} />
-        </div>
-      {/if}
+<div class="item-wrapper">
+  <div class="content">
+    {#if $$slots}
+      <div class="icon">
+        <slot />
+      </div>
+    {/if}
+    <div class="text-content">
+      <span class="main-text">
+        {text}
+      </span>
+      <span class="support-text">
+        {supportingText}
+      </span>
     </div>
   </div>
-  {#if action_button}
-    <LoaderButton width={75} height={32} />
-  {/if}
 </div>
 
 <!--
@@ -101,44 +68,58 @@
 -->
 
 <style lang="scss">
-  .list-item {
+  .item-wrapper {
     display: flex;
-    padding-block: 16px;
-    border-bottom: var(--header-border);
-    justify-content: space-between;
-    gap: 20px;
+    padding: var(--spacing-xxs, 2px) var(--spacing-md, 8px);
     align-items: center;
+    gap: var(--spacing-md, 8px);
+    cursor: pointer;
+    width: 100%;
 
-    .user-info {
+    .content {
       display: flex;
-      justify-content: start;
-      flex-grow: 1;
+      padding: var(--spacing-md, 8px) var(--spacing-md, 8px)
+        var(--spacing-md, 8px) 10px;
       align-items: center;
-      gap: 12px;
-      color: var(--text-color);
-      font-family: Roboto;
-      font-size: 16px;
-      font-style: normal;
-      font-weight: 500;
-      line-height: 24px; /* 150% */
+      gap: var(--spacing-md, 8px);
+      flex: 1 0 0;
+
+      border-radius: var(--radius-md, 8px);
 
       &:hover {
-        color: var(--primary);
+        background: var(--colors-background-bg-primary_hover, #fbfbfb);
       }
-      .name-wrapp {
+      .icon {
+        color: var(--colors-foreground-fg-quaternary-500);
+      }
+      .text-content {
         display: flex;
-        flex-direction: column;
-        gap: 1px;
-        .permalink {
-          height: 10px;
+        align-items: baseline;
+        gap: var(--spacing-md, 8px);
+        flex: 1 0 0;
+
+        .main-text {
+          color: var(--colors-text-text-primary, #313131);
+
+          /* Text sm/Medium */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-sm, 14px);
+          font-style: normal;
+          font-weight: 500;
+          line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+        }
+
+        .support-text {
+          color: var(--colors-text-text-tertiary-600, #6a6a6a);
+
+          /* Text sm/Regular */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-sm, 14px);
+          font-style: normal;
+          font-weight: 400;
+          line-height: var(--line-height-text-sm, 20px); /* 142.857% */
         }
       }
-    }
-
-    &.mobile {
-      padding: 16px;
-      padding-block: 8px;
-      border-bottom: none;
     }
   }
 </style>

@@ -23,7 +23,7 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { onMount, afterUpdate, tick } from "svelte";
+  import { onMount, onDestroy } from "svelte";
   import { writable } from "svelte/store";
   import type { IPageAuthorTagData } from "@betarena/scores-lib/types/v8/preload.authors.js";
 
@@ -42,31 +42,35 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  export let data = [] as any[];
-  export let exapandOnClick = true;
-  let /**
-     * @description variables to controll tags visability
-     */
-    wrapWidth,
-    wrapNode,
-    countOfNotVisibleData = 0,
-    expanded = false,
-    prevDataIds = ""
-    ;
-  $: reset(wrapNode, data);
-  const visibleData = writable({
-    vd: [...data] as any[],
+
+  export let data = [] as IPageAuthorTagData[];
+  export let expandOnClick = true;
+  let wrapNode: HTMLElement;
+  let wrapWidth = 0;
+  let expanded = false;
+  let prevDataIds = "";
+
+  const visibleData = writable<{
+    vd: IPageAuthorTagData[];
+    countOfNotVisibleData: number;
+  }>({
+    vd: [...data],
     countOfNotVisibleData: 0,
   });
 
-  const breakpointsMap = new Map<number, any>();
+  // cache of item widths (+ gap)
+  let itemWidths: number[] = [];
+  const gap = 4;
 
-  const /**
-     * @description
-     *  📣 `this` component **main** `id` and `data-testid` prefix.
-     */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = "ui⮕expand-data-wrapper";
+  // measured widths for +1 and +11 using same slot
+  let widthOne = 0;
+  let widthMany = 0;
+
+  let ro: ResizeObserver;
+  let resizeTimer: ReturnType<typeof setTimeout>;
+
   // #endregion ➤ 📌 VARIABLES
+
   // #region ➤ 🛠️ METHODS
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -77,59 +81,58 @@
   // │ Please, structure the imports as follows:                              │
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
-  // ╰───
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function reset(node, data) {
-    if (!node || data.map((d) => d.id).join(",") === prevDataIds) return;
-    prevDataIds = data.map((d) => d.id).join(",");
-    visibleData.set({ vd: [...data], countOfNotVisibleData: 0 });
-    requestAnimationFrame(() => {
-      calculateBreakpoints(node, data);
-      resize();
-    })
+  /** Measure item widths and count-slot widths for 1 and multi hidden */
+  function computeWidths() {
+    if (!wrapNode) return;
+    const items = Array.from(wrapNode.children).filter(
+      (el) => !(el as HTMLElement).classList.contains("measure-container")
+    ) as HTMLElement[];
+    // take only actual items
+    itemWidths = items.slice(0, data.length).map((el) => el.offsetWidth + gap);
+    const counts = wrapNode.querySelector(".measure-container");
+    if (!counts) return;
+    const counts_width = (Array.from(counts.children) as HTMLElement[]).map(
+      (el) => el.offsetWidth + gap
+    );
+    // measure +1 and +11 via slot fallback
+    widthOne = counts_width[0];
+    widthMany = counts_width[1];
   }
-  function resize() {
-    if (!wrapNode || !wrapWidth || expanded || !breakpointsMap.set) return;
-    const breakpoints = Array.from(breakpointsMap.keys());
-    const closestBreakpoint = breakpoints.find((bp, i) => wrapWidth >= bp && (i + 1 === breakpoints.length || wrapWidth < breakpoints[i + 1]));
-    if (!closestBreakpoint || !breakpointsMap.has(closestBreakpoint)) {
+
+  /** Adjust visible items such that count indicator fully fits */
+  async function applyResize() {
+    if (expanded) {
+      visibleData.set({ vd: data, countOfNotVisibleData: 0 });
       return;
     }
-    const index = breakpointsMap.get(closestBreakpoint);
-    if (index === $visibleData.vd.length) return;
-    const vd = data.slice(0, index);
-    const countOfNotVisibleData = data.length - vd.length;
-    visibleData.set({ vd, countOfNotVisibleData });
-  }
+    if (!wrapWidth || !itemWidths.length) return;
 
+    let visibleCount = data.length;
+    let total = 0;
+    let hidden = 0;
 
-  function getItemWidth(node, index) {
-    const item = node.children[index];
-    return item ? item.offsetWidth : 0;
+    while (visibleCount > 0) {
+      total =
+        itemWidths.slice(0, visibleCount).reduce((a, b) => a + b, 0) - gap;
+      let indicatorW = 0;
+      if (hidden === 1) indicatorW = widthOne + gap;
+      else if (hidden > 9) indicatorW = widthMany + gap;
+      if (total + indicatorW + gap <= wrapWidth) break;
+      visibleCount--;
+      hidden++;
+    }
+    visibleData.set({
+      vd: data.slice(0, visibleCount),
+      countOfNotVisibleData: data.length - visibleCount,
+    });
   }
 
   function expandTags() {
-    if (!exapandOnClick) return;
+    if (!expandOnClick) return;
     expanded = true;
     visibleData.set({ vd: data, countOfNotVisibleData: 0 });
-  }
-
-  function calculateBreakpoints(node, data) {
-    let totalWidth = 0;
-    let maxVisibleItems = 0;
-    const gap = 4;
-
-    for (let i = 0; i < data.length; i++) {
-      const itemWidth = getItemWidth(node, i);
-      let nextItemWidth = totalWidth + itemWidth;
-      if (i !== data.length - 1) {
-        const hidden = data.length - i - 1;
-        nextItemWidth += hidden > 9 ? 50 : 40;
-      }
-      totalWidth += itemWidth + gap;
-      breakpointsMap.set(nextItemWidth,  i + 1);
-    }
-    return maxVisibleItems;
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -142,40 +145,86 @@
   // │ immediately and as part of the 'lifecycle' of svelteJs,                │
   // │ as soon as 'this' .svelte file is ran.                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
-  afterUpdate(() => {
-    resize();
+  onMount(() => {
+    ro = new ResizeObserver((entries) => {
+      wrapWidth = entries[0].contentRect.width;
+      clearTimeout(resizeTimer);
+      computeWidths();
+      resizeTimer = setTimeout(applyResize, 50);
+    });
+    ro.observe(wrapNode);
+    return () => ro.disconnect();
   });
+  onDestroy(() => ro.disconnect());
+
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  $: {
+    const ids = data.map((d) => d.id).join(",");
+    if (ids !== prevDataIds) {
+      prevDataIds = ids;
+      expanded = false;
+      visibleData.set({ vd: [...data], countOfNotVisibleData: 0 });
+      computeWidths();
+      applyResize();
+    }
+  }
+
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 </script>
 
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 💠 Svelte Component HTML                                                         │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
 <div
-  id={CNAME}
+  id="ui⮕expand-data-wrapper"
   class="wrapper"
   class:expanded
-  bind:clientWidth={wrapWidth}
   bind:this={wrapNode}
 >
-  {#if countOfNotVisibleData}
-    <div on:click={expandTags}>
-      <slot id="expand-wrapper-count" name="count" count={countOfNotVisibleData}
-        >+{countOfNotVisibleData}</slot
-      >
-    </div>
-  {/if}
   {#each $visibleData.vd as item}
     <slot name="item" class="expand-wrapper-item" {item}>{item.title}</slot>
   {/each}
+
   {#if $visibleData.countOfNotVisibleData > 0}
-    <div on:click={expandTags}>
-      <slot
-        id="expand-wrapper-count"
-        name="count"
-        count={$visibleData.countOfNotVisibleData}
-        >+{$visibleData.countOfNotVisibleData}</slot
-      >
+    <div
+      on:click={expandTags}
+    >
+      <slot name="count" count={$visibleData.countOfNotVisibleData}>
+        +{$visibleData.countOfNotVisibleData}
+      </slot>
     </div>
   {/if}
+
+  <!-- hidden measure slots: reuse slot count with different count values -->
+  <div
+    class="measure-container"
+    style="visibility:hidden;position:absolute;pointer-events:none;white-space:nowrap;"
+  >
+    <slot name="count" count={1}>+1</slot>
+    <slot name="count" count={11}>+11</slot>
+  </div>
 </div>
 
 <!--
@@ -195,7 +244,7 @@
     max-width: 100%;
     overflow: hidden;
     row-gap: 7px;
-
+    position: relative;
     &.expanded {
       flex-wrap: wrap;
     }

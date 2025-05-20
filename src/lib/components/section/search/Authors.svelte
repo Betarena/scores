@@ -2,9 +2,10 @@
   import { page } from "$app/stores";
   import SportsTackList from "$lib/components/ui/composed/sportstack_list/SportsTackList.svelte";
   import { infiniteScroll } from "$lib/utils/infinityScroll";
+  import search_store from "$lib/store/search_store";
   import { createEventDispatcher } from "svelte";
-  import search_store from "./search_store";
   import NoResults from "./NoResults.svelte";
+  import session from "$lib/store/session";
 
   // #region ➤ 📌 VARIABLES
 
@@ -25,6 +26,7 @@
   $: ({ translations } = $page.data);
   $: sportstacks = $search_store.sportstacks.data || new Map();
   $: ({ loading } = $search_store.sportstacks);
+  $: ({ viewportType } = $session);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -61,9 +63,23 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<div class="wrapper" use:infiniteScroll={{ loadMore, hasMore: !!$search_store.sportstacks.next_page_count, loading }}>
+<div
+  class="wrapper {viewportType}"
+  use:infiniteScroll={{
+    loadMore,
+    hasMore: !!$search_store.sportstacks.next_page_count,
+    loading,
+  }}
+>
   {#if sportstacks.size || $search_store.sportstacks.loading}
-    <SportsTackList {sportstacks} {translations} {loading} size="lg"  limit={$search_store.sportstacks.next_page_count}/>
+    <SportsTackList
+      includePermalink={true}
+      {sportstacks}
+      {translations}
+      {loading}
+      size="lg"
+      limit={$search_store.sportstacks.next_page_count}
+    />
   {:else}
     <NoResults />
   {/if}
@@ -87,5 +103,14 @@
     overflow: auto;
     padding-bottom: 100px;
     background: var(--colors-background-bg-main);
+
+    &:not(.mobile) {
+      :global(.list-wrapper) {
+        gap: 21px;
+      }
+      :global(.list-item) {
+        padding-block: 0;
+      }
+    }
   }
 </style>

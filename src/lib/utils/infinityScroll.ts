@@ -59,8 +59,29 @@ export function infiniteScroll(
 ) {
   let { threshold = 100, loadMore, hasMore, loading } = options;
 
+  let scrollContainer: HTMLElement | Window = getScrollParent(node) ?? window;
+  scrollContainer.scroll({top: 0})
+
+  const attach = (c: HTMLElement | Window) =>
+    c.addEventListener("scroll", onScroll);
+  const detach = (c: HTMLElement | Window) =>
+    c.removeEventListener("scroll", onScroll);
+
   function onScroll() {
-    const { scrollHeight, scrollTop, clientHeight } = node;
+    let scrollHeight: number;
+    let scrollTop: number;
+    let clientHeight: number;
+
+    if (scrollContainer instanceof Window) {
+      scrollHeight = document.documentElement.scrollHeight;
+      scrollTop = window.scrollY;
+      clientHeight = window.innerHeight;
+    } else {
+      scrollHeight = scrollContainer.scrollHeight;
+      scrollTop = scrollContainer.scrollTop;
+      clientHeight = scrollContainer.clientHeight;
+    }
+
     if (
       scrollHeight - scrollTop - clientHeight <= threshold &&
       hasMore &&
@@ -70,24 +91,44 @@ export function infiniteScroll(
     }
   }
 
-  node.addEventListener('scroll', onScroll);
+  attach(scrollContainer);
+  setTimeout(onScroll, 0);
 
   return {
-    /**
-     * Update the action when its parameters change.
-     */
     update(newOpts: InfiniteScrollOptions) {
       threshold = newOpts.threshold ?? threshold;
-      loadMore  = newOpts.loadMore;
-      hasMore   = newOpts.hasMore;
-      loading   = newOpts.loading;
+      loadMore = newOpts.loadMore;
+      hasMore = newOpts.hasMore;
+      loading = newOpts.loading;
+
+      const newContainer = getScrollParent(node) ?? window;
+      if (newContainer !== scrollContainer) {
+        detach(scrollContainer);
+        scrollContainer = newContainer;
+        attach(scrollContainer);
+      }
+
+      setTimeout(onScroll, 0);
     },
 
-    /**
-     * Cleanup the scroll listener when the element is destroyed.
-     */
     destroy() {
-      node.removeEventListener('scroll', onScroll);
-    }
+      detach(scrollContainer);
+    },
   };
+}
+
+function getScrollParent(element: HTMLElement): HTMLElement | null {
+  let el: HTMLElement | null = element;
+  while (el && el !== document.body) {
+    const style = getComputedStyle(el);
+    const overflowY = style.overflowY;
+    const canScroll = /(auto|scroll)/.test(overflowY);
+    const hasScrollbar = el.scrollHeight > el.clientHeight;
+
+    if (canScroll && hasScrollbar) {
+      return el;
+    }
+    el = el.parentElement;
+  }
+  return null;
 }

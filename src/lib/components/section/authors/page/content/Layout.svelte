@@ -288,6 +288,7 @@
 
         .tabbar-wrapper {
           padding: 0px 16px;
+          padding-top: 4px;
           padding-bottom: 11px;
         }
 

@@ -3,10 +3,7 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
-	import { flip } from 'svelte/animate';
-	import { flip } from 'svelte/animate';
-	import { fade } from 'svelte/transition';
-│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
+│
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
@@ -39,14 +36,16 @@
   import Users from "./Users.svelte";
   import userSettings from "$lib/store/user-settings.js";
   import Authors from "./Authors.svelte";
-  import search_store from "./search_store.js";
+  import search_store from "$lib/store/search_store.js";
   import Highlights from "./Highlights.svelte";
   import SuggestingResults from "./SuggestingResults.svelte";
   import { preloadData } from "$app/navigation";
   import history_store from "$lib/store/history.js";
   import { page } from "$app/stores";
   import { debounce } from "$lib/utils/miscellenous.js";
+  import { get } from "$lib/api/utils.js";
   import type { ITab } from "$lib/types.js";
+  import type { ISearchSuggestion } from "$lib/types/types.search.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -59,11 +58,15 @@
   // │ as soon as 'this' .svelte file is ran.                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  // DESCRIPTION:
+  // In mobile and tablet views, search should be performed only based on user input.
+  // When navigating back to the search page, previous search results must already be loaded.
+  // For desktop, the search functionality should be expanded compared to the header search,
+  // making it appropriate to perform a repeated search (to find tags and articles).
   onMount(() => {
-    searchHistory = JSON.parse(localStorage.getItem("searchHistory") || "[]").slice(0, 5);
-    skipMountSearch = true;
+    skipMountSearch = $session.viewportType !== "desktop";
     const prevPage = $history_store.at(-1) || "/";
-    preloadData(prevPage)
+    preloadData(prevPage);
   });
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
@@ -84,7 +87,7 @@
 
   let inputNode: null | HTMLInputElement | HTMLTextAreaElement = null;
   let skipBlur = false;
-  let suggestions: any[] = [];
+  let suggestions: ISearchSuggestion[] = [];
   let skipMountSearch = true;
 
   const viewMap = {
@@ -108,19 +111,19 @@
   // │ Please keep very close attention to these methods and                  │
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  $: search = $search_store.search;
+  $: ({ search } = $search_store);
   $: ({ viewportType } = $session);
-  $: ({ user: ctx_user } = $userSettings);
-  $: searchHistory = [] as string[];
+  $: ({ user: ctx_user, theme } = $userSettings);
+  $: searchHistory = ($userSettings.searchHistory || []).slice(0, 5);
   $: isInputInFocus = false;
   $: selectedTab = tabs[0];
 
-  $: ({search_translations, translations} = $page.data);
+  $: ({ search_translations, translations = {} } = $page.data);
 
   $: tabs = [
     {
       id: "highlights",
-      label:  search_translations.highlights || "Highlights",
+      label: search_translations.highlights || "Highlights",
     },
     {
       id: "posts",
@@ -164,9 +167,7 @@
         return;
       }
       isInputInFocus = false;
-      const storageHistory = JSON.parse(
-        localStorage.getItem("searchHistory") || "[]"
-      );
+      const storageHistory = $userSettings.searchHistory || [];
       const storageSet: string[] = [...storageHistory];
       const searched_before = storageSet.find(
         (history) => history.toLocaleLowerCase() === search.toLocaleLowerCase()
@@ -176,8 +177,7 @@
       }
       if (search) {
         const nextHistory = [search, ...storageSet];
-        localStorage.setItem("searchHistory", JSON.stringify(nextHistory));
-        searchHistory = [...nextHistory];
+        userSettings.updateData([["search_history", nextHistory]]);
       }
     }, 100);
   }
@@ -248,17 +248,16 @@
     if (limit) {
       url += `&limit=${limit}`;
     }
-    const res = await fetch(url);
+    const res =  await get<{data: any[], next_page_count: number}>(url);
 
-    const r = await res.json();
     if (!page) {
       $search_store.sportstacks.data = new Map(
-        r.data.map((author) => [author.id, author])
+        (res?.data || []).map((author) => [author.id, author])
       );
       $search_store.sportstacks.page = 0;
     } else {
       const newMap = new Map(
-        r.data.map((author) => [author.id, author])
+        (res?.data || []).map((author) => [author.id, author])
       ) as Map<string, any>;
       $search_store.sportstacks.data = new Map([
         ...$search_store.sportstacks.data,
@@ -266,7 +265,7 @@
       ]);
       $search_store.sportstacks.page = page;
     }
-    $search_store.sportstacks.next_page_count = r.next_page_count;
+    $search_store.sportstacks.next_page_count = res?.next_page_count;
     $search_store.sportstacks.loading = false;
   }
 
@@ -300,13 +299,12 @@
       url += `&limit=${limit}`;
     }
 
-    const res = await fetch(url);
-    const r = await res.json();
+    const res = await get<{tags: any[], next_page_count: number}>(url)
     if (!page) {
-      $search_store.tags.data = new Map(r.tags.map((tag) => [tag.id, tag]));
+      $search_store.tags.data = new Map((res?.tags || []).map((tag) => [tag.id, tag]));
       $search_store.tags.page = 0;
     } else {
-      const newMap = new Map(r.tags.map((tag) => [tag.id, tag])) as Map<
+      const newMap = new Map((res?.tags || []).map((tag) => [tag.id, tag])) as Map<
         number,
         any
       >;
@@ -349,11 +347,10 @@
       url += `&limit=${limit}`;
     }
 
-    const res = await fetch(url);
-    const r = await res.json();
+    const res = await get<{data: any[], next_page_count: number}>(url);
     if (!page) {
       $search_store.articles.data = new Map(
-        r.data.map((article) => [
+        (res?.data || []).map((article) => [
           article.id,
           {
             ...article,
@@ -364,7 +361,7 @@
       $search_store.articles.page = 0;
     } else {
       const newMap = new Map(
-        r.data.map((article) => [
+        (res?.data || []).map((article) => [
           article.id,
           {
             ...article,
@@ -378,13 +375,13 @@
       ]);
       $search_store.articles.page = page;
     }
-    $search_store.articles.next_page_count = r.next_page_count;
+    $search_store.articles.next_page_count = res?.next_page_count;
     $search_store.articles.loading = false;
   }
 
   async function usersSearch({
     search,
-    page
+    page,
   }: {
     search: string;
     page?: number;
@@ -447,123 +444,153 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
-<div class="search-container {viewportType}">
-  <div
-    class="search-wrapper"
-    in:fly={{ x: 0, y: -100, duration: 600, easing: quadOut }}
-    out:fly={{ x: 0, y: -150, duration: 600, easing: quadOut }}
-  >
-    <div class="input-wrapper">
-      <button
-        class="search-close"
-        on:click={() => {
-          history.back();
-        }}
-      >
-        <XClose />
-      </button>
-      <Input
-        bind:node={inputNode}
-        type="leading-text"
-        bind:value={$search_store.search}
-        placeholder={search_translations.search||"Search"}
-        on:focus={inputFocus}
-        on:blur={inputBlur}
-      >
-        <svg
-          slot="leading-text"
-          xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
-          viewBox="0 0 20 20"
-          fill="none"
-        >
-          <path
-            d="M17.5 17.5L12.5001 12.5M14.1667 8.33333C14.1667 11.555 11.555 14.1667 8.33333 14.1667C5.11167 14.1667 2.5 11.555 2.5 8.33333C2.5 5.11167 5.11167 2.5 8.33333 2.5C11.555 2.5 14.1667 5.11167 14.1667 8.33333Z"
-            stroke="currentColor"
-            stroke-width="1.66667"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
-      </Input>
-    </div>
-    {#if !isInputInFocus && search}
-      <div class="tabbar">
-        <Tabbar
-          type="button_gray"
-          size="sm"
-          data={tabs}
-          on:select={(e) => selectedTab = e.detail}
-          selected={selectedTab}
-        />
-      </div>
-    {:else}
-      <div class="empty-tabbar" />
-    {/if}
-  </div>
-  {#if search && isInputInFocus && suggestions.length}
+{#if translations}
+  <div class="search-container {viewportType} {theme}">
     <div
-      class="search-suggestions"
+      class="search-wrapper"
+      in:fly={{
+        x: 0,
+        y: -100,
+        duration: viewportType !== "desktop" ? 600 : 0,
+        easing: quadOut,
+      }}
+      out:fly={{
+        x: 0,
+        y: -150,
+        duration: viewportType !== "desktop" ? 600 : 0,
+        easing: quadOut,
+      }}
     >
-      {#each suggestions as suggest}
+      <div class="input-wrapper">
         <button
-          class="suggest-item"
-          on:click={() => suggestClick(suggest.suggestion)}
+          class="search-close"
+          on:click={() => {
+            history.back();
+          }}
         >
-          <div class="suggestion-text">{suggest.suggestion}</div>
-          <div class="suggest-icon">
-            <ArrowCirlcleBrokenRight />
-          </div>
+          <XClose />
         </button>
-      {/each}
-    </div>
-  {/if}
-  <div
-    class="search-results"
-    in:fly={{ x: 0, y: 750, duration: 600, easing: quadOut }}
-    out:fly={{ x: 0, y: 750, duration: 600, easing: quadOut }}
-  >
-    {#if !search && !searchHistory.length}
-      <div class="search-message-wrapper">
-        <Button type="link-color" classname="light-mode">{search_translations.search_for ||  "Search for"}</Button>
-        <div class="message-text">{ search_translations.posts_users_sportstacks || "posts, users and Sportstacks"}</div>
-      </div>
-    {:else if !search && searchHistory.length}
-      <div class="search-history">
-        <div class="search-title">{search_translations.recent || "Recent"}</div>
-        {#each searchHistory.slice(0, 10) as text}
-          <button
-            class="recent-search-item"
-            on:click={() => {
-              $search_store.search = text;
-            }}
+        <Input
+          bind:node={inputNode}
+          type="leading-text"
+          bind:value={$search_store.search}
+          placeholder={search_translations.search || "Search"}
+          on:focus={inputFocus}
+          on:blur={inputBlur}
+          height="40px"
+        >
+          <svg
+            slot="leading-text"
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
           >
-            {text}
+            <path
+              d="M17.5 17.5L12.5001 12.5M14.1667 8.33333C14.1667 11.555 11.555 14.1667 8.33333 14.1667C5.11167 14.1667 2.5 11.555 2.5 8.33333C2.5 5.11167 5.11167 2.5 8.33333 2.5C11.555 2.5 14.1667 5.11167 14.1667 8.33333Z"
+              stroke="currentColor"
+              stroke-width="1.66667"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </Input>
+      </div>
+      {#if !isInputInFocus && search}
+        <div class="tabbar">
+          <Tabbar
+            type="button_gray"
+            size="sm"
+            fullWidth={viewportType !== "mobile"}
+            data={tabs}
+            on:select={(e) => (selectedTab = e.detail)}
+            selected={selectedTab}
+          />
+        </div>
+      {:else}
+        <div class="empty-tabbar" />
+      {/if}
+    </div>
+    {#if search && isInputInFocus && suggestions.length}
+      <div class="search-suggestions">
+        {#each suggestions as suggest}
+          <button
+            class="suggest-item"
+            on:click={() => suggestClick(suggest.suggestion)}
+          >
+            <div class="suggestion-text">{suggest.suggestion}</div>
+            <div class="suggest-icon">
+              <ArrowCirlcleBrokenRight />
+            </div>
           </button>
         {/each}
       </div>
     {/if}
-    {#if search && isInputInFocus}
-      <SuggestingResults />
-    {/if}
-    {#if search && viewMap[selectedTab.id] && !isInputInFocus}
-      <svelte:component
-        this={viewMap[selectedTab.id]}
-        on:changeTab={changeTab}
-        on:loadMore={loadMore}
+    <div
+      class="search-results"
+      in:fly={{
+        x: 0,
+        y: 750,
+        duration: viewportType !== "desktop" ? 600 : 0,
+        easing: quadOut,
+      }}
+      out:fly={{
+        x: 0,
+        y: 750,
+        duration: viewportType !== "desktop" ? 600 : 0,
+        easing: quadOut,
+      }}
+    >
+      {#if !search && !searchHistory.length}
+        <div class="search-message-wrapper">
+          <Button type="link-color" classname="light-mode"
+            >{search_translations.search_for || "Search for"}</Button
+          >
+          <div class="message-text">
+            {search_translations.posts_users_sportstacks ||
+              "posts, users and Sportstacks"}
+          </div>
+        </div>
+      {:else if !search && searchHistory.length}
+        <div class="search-history">
+          <div class="search-title">
+            {search_translations.recent || "Recent"}
+          </div>
+          {#each searchHistory.slice(0, 10) as text}
+            <button
+              class="recent-search-item"
+              on:click={() => {
+                $search_store.search = text;
+              }}
+            >
+              {text}
+            </button>
+          {/each}
+        </div>
+      {/if}
+      {#if search && isInputInFocus}
+        <SuggestingResults />
+      {/if}
+      {#if search && viewMap[selectedTab.id] && !isInputInFocus}
+        <svelte:component
+          this={viewMap[selectedTab.id]}
+          on:changeTab={changeTab}
+          on:loadMore={loadMore}
+        />
+      {/if}
+    </div>
+    {#if viewportType === "mobile"}
+      <div
+        class="search-bg"
+        in:fade={{
+          duration: 200,
+          easing: cubicOut,
+        }}
       />
     {/if}
   </div>
-  <div
-    class="search-bg"
-    in:fade={{
-      duration: viewportType !== "desktop" ? 200 : 0,
-      easing: cubicOut,
-    }}
-  />
-</div>
+{/if}
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -577,155 +604,211 @@
 
 <style lang="scss">
   .search-container {
-    &.mobile,
-    &.tablet {
-      position: fixed;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 4001;
+    .search-bg {
+      position: absolute;
       top: 0;
       left: 0;
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
+      width: 100%;
+      height: 100%;
+      background: var(--layout-bg-color);
+      z-index: -1;
+    }
+
+    .search-wrapper {
+      width: 100%;
+      padding-inline: 15px;
+      padding-top: 20px;
+      background: var(--colors-background-bg-main);
+
+      .input-wrapper {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        gap: 14px;
+        .search-close {
+          background: none;
+          padding: 0;
+        }
+        :global(.field) {
+          width: 100%;
+        }
+      }
+      .tabbar {
+        padding-block: 20px;
+      }
+      .empty-tabbar {
+        height: 20px;
+      }
+    }
+    .search-suggestions {
       display: flex;
+      padding: 16px;
+      gap: 16px;
+      background: var(--colors-background-bg-main);
       flex-direction: column;
-      gap: 8px;
-      z-index: 4001;
-      .search-bg {
-        position: absolute;
-        top: 0;
-        left: 0;
+      width: 100%;
+      .suggest-item {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: none;
+        .suggestion-text {
+          color: var(--text-color);
+
+          /* Text md/Regular */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-md, 16px);
+          font-style: normal;
+          font-weight: 400;
+          line-height: var(--line-height-text-md, 24px); /* 150% */
+        }
+        .suggest-icon {
+          color: var(--colors-brand-500);
+        }
+      }
+    }
+    .search-results {
+      width: 100%;
+      flex-grow: 1;
+      overflow: hidden;
+
+      .search-message-wrapper {
+        background: var(--colors-background-bg-main);
+        overflow-y: auto;
+        flex-grow: 1;
         width: 100%;
         height: 100%;
-        background: var(--layout-bg-color);
-        z-index: -1;
-      }
-
-      .search-wrapper {
-        width: 100%;
-        padding-inline: 15px;
-        padding-top: 20px;
-        background: var(--colors-background-bg-main);
-
-        .input-wrapper {
-          display: flex;
-          width: 100%;
-          align-items: center;
-          gap: 14px;
-          .search-close {
-            background: none;
-            padding: 0;
-          }
-          :global(.field) {
-            width: 100%;
-          }
-        }
-        .tabbar {
-          padding-block: 20px;
-        }
-        .empty-tabbar {
-          height: 20px;
-        }
-      }
-      .search-suggestions {
         display: flex;
-        padding: 16px;
-        gap: 16px;
+        justify-content: center;
+        align-items: flex-start;
+        gap: var(--spacing-xs, 4px);
+        align-self: stretch;
+        padding-top: 16px;
+
+        .message-text {
+          color: var(--colors-text-text-tertiary-600, #6a6a6a);
+
+          /* Text md/Regular */
+          font-family: var(--Font-family-font-family-body, Roboto);
+          font-size: var(--Font-size-text-md, 16px);
+          font-style: normal;
+          font-weight: 400;
+          line-height: var(--Line-height-text-md, 24px); /* 150% */
+        }
+      }
+      .search-history {
         background: var(--colors-background-bg-main);
+        overflow-y: auto;
+        flex-grow: 1;
+        padding: 16px;
+        display: flex;
         flex-direction: column;
         width: 100%;
-        .suggest-item {
-          width: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
+        height: 100%;
+        gap: 16px;
+
+        .search-title {
+          color: var(--text-color);
+
+          /* Text lg/Semibold */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-lg, 18px);
+          font-style: normal;
+          font-weight: 600;
+          line-height: var(--line-height-text-lg, 28px); /* 155.556% */
+        }
+        .recent-search-item {
           background: none;
-          .suggestion-text {
-            color: var(--text-color);
+          padding: 0;
+          display: flex;
+          justify-content: start;
+          color: var(--text-color);
 
-            /* Text md/Regular */
-            font-family: var(--font-family-font-family-body, Roboto);
-            font-size: var(--font-size-text-md, 16px);
-            font-style: normal;
-            font-weight: 400;
-            line-height: var(--line-height-text-md, 24px); /* 150% */
-          }
-          .suggest-icon {
-            color: var(--colors-brand-500);
+          /* Text md/Regular */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-md, 16px);
+          font-style: normal;
+          font-weight: 400;
+          line-height: var(--line-height-text-md, 24px); /* 150% */
+
+          &:hover {
+            color: var(
+              --component-colors-components-buttons-tertiary-color-button-tertiary-color-fg_hover,
+              #d4550c
+            );
           }
         }
       }
-      .search-results {
-        width: 100%;
-        flex-grow: 1;
-        overflow: hidden;
+    }
+    :global(.list-item) {
+      border-bottom: 0;
+    }
 
-        .search-message-wrapper {
-          background: var(--colors-background-bg-main);
-          overflow-y: auto;
-          flex-grow: 1;
-          width: 100%;
-          height: 100%;
-          display: flex;
-          justify-content: center;
-          align-items: flex-start;
-          gap: var(--spacing-xs, 4px);
-          align-self: stretch;
-          padding-top: 16px;
-
-          .message-text {
-            color: var(--colors-text-text-tertiary-600, #6a6a6a);
-
-            /* Text md/Regular */
-            font-family: var(--Font-family-font-family-body, Roboto);
-            font-size: var(--Font-size-text-md, 16px);
-            font-style: normal;
-            font-weight: 400;
-            line-height: var(--Line-height-text-md, 24px); /* 150% */
-          }
-        }
-        .search-history {
-          background: var(--colors-background-bg-main);
-          overflow-y: auto;
-          flex-grow: 1;
-          padding: 16px;
-          display: flex;
-          flex-direction: column;
-          width: 100%;
-          height: 100%;
-          gap: 16px;
-
-          .search-title {
-            color: var(--text-color);
-
-            /* Text lg/Semibold */
-            font-family: var(--font-family-font-family-body, Roboto);
-            font-size: var(--font-size-text-lg, 18px);
-            font-style: normal;
-            font-weight: 600;
-            line-height: var(--line-height-text-lg, 28px); /* 155.556% */
-          }
-          .recent-search-item {
-            background: none;
-            padding: 0;
-            display: flex;
-            justify-content: start;
-            color: var(--text-color);
-
-            /* Text md/Regular */
-            font-family: var(--font-family-font-family-body, Roboto);
-            font-size: var(--font-size-text-md, 16px);
-            font-style: normal;
-            font-weight: 400;
-            line-height: var(--line-height-text-md, 24px); /* 150% */
-
-            &:hover {
-              color: var(
-                --component-colors-components-buttons-tertiary-color-button-tertiary-color-fg_hover,
-                #d4550c
-              );
-            }
-          }
+    &.desktop,
+    &.tablet {
+      position: relative;
+      flex-grow: 1;
+      height: 100%;
+      z-index: 0;
+      background-color: unset;
+      max-width: 832px;
+      gap: 21px;
+      &.Dark {
+        :global(.input-wrapper:not(.focus)) {
+          border: 1px solid transparent;
         }
       }
+      .tabbar {
+        padding-block: 0;
+        margin-top: 21px;
+      }
+      .search-wrapper {
+        padding: 0;
+      }
+      .search-suggestions,
+      .search-history {
+        padding: 0;
+        gap: 21px;
+        .suggestion-text,
+        .recent-search-item {
+          /* Text lg/Regular */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-lg, 18px);
+          font-style: normal;
+          font-weight: 400;
+          line-height: var(--line-height-text-lg, 28px); /* 155.556% */
+        }
+        .search-title {
+          /* Text xl/Semibold */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-xl, 20px);
+          font-style: normal;
+          font-weight: 600;
+          line-height: var(--line-height-text-xl, 30px); /* 150% */
+        }
+      }
+      .empty-tabbar {
+        height: 0;
+      }
+    }
+    &.tablet {
+      padding: 26px 34px;
+      padding-top: 32px;
+      padding-bottom: 0 !important;
+      margin: 0 !important;
+      width: 100%;
+      max-width: 100%;
     }
   }
 </style>

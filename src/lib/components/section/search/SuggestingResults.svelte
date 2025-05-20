@@ -28,7 +28,7 @@
   import session from "$lib/store/session.js";
   import { createEventDispatcher } from "svelte";
   import UsersList from "../authors/common_ui/users_list/UsersList.svelte";
-  import search_store from "./search_store.js";
+  import search_store from "$lib/store/search_store.js";
   import type { IBetarenaUser } from "@betarena/scores-lib/types/_FIREBASE_.js";
   import NoResults from "./NoResults.svelte";
 
@@ -53,12 +53,13 @@
     string,
     IBetarenaUser
   >;
+  $: count = viewportType !== "desktop" ? 5 : 3;
   $: sportstacks = $search_store.sportstacks.data || new Map();
-  $: firstThreeUsers = new Map(Array.from(users.entries()).slice(0, 5));
+  $: firstThreeUsers = new Map(Array.from(users.entries()).slice(0, count));
   $: firstThreeSportstacks = new Map(
-    Array.from(sportstacks.entries()).slice(0, 5)
+    Array.from(sportstacks.entries()).slice(0, count)
   );
-  $: ({ translations } = $page.data);
+  $: ({ translations, search_translations } = $page.data);
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -99,22 +100,24 @@
       {#if users.size || $search_store.users.loading}
         <UsersList
           users={firstThreeUsers}
-          limit={5}
+          limit={count}
           size="lg"
           action_button={false}
           {translations}
+          includePermalink={true}
           loading={$search_store.users.loading && !firstThreeUsers.size}
         />
       {/if}
       {#if sportstacks.size || $search_store.sportstacks.loading}
         <SportsTackList
           size="lg"
-          limit={3}
+          limit={count}
           action_button={false}
           loading={$search_store.sportstacks.loading &&
             !firstThreeSportstacks.size}
           sportstacks={firstThreeSportstacks}
           {translations}
+          includePermalink={true}
         />
       {/if}
       <div class="button-wrapp">
@@ -122,8 +125,8 @@
           size="md"
           full={true}
           type="secondary-gray"
-          on:click={() => viewMore("highlights")}>View more</Button
-        >l
+          on:click={() => viewMore("highlights")}>{search_translations.view_more || "View more"}</Button
+        >
       </div>
     </div>
   {/if}
@@ -180,6 +183,36 @@
       background: var(--colors-background-bg-main);
       :global(.card-wrapper) {
         padding-block: 0;
+      }
+    }
+    &:not(.mobile) {
+      .button-wrapp {
+        padding-inline: 0;
+      }
+      gap: 21px;
+      :global(.list-wrapper) {
+        gap: 21px;
+      }
+      :global(.list-item) {
+        padding-block: 0;
+      }
+      .section {
+        padding-block: 0;
+        gap: 21px;
+
+        .button-wrapp {
+          padding-bottom: 0;
+        }
+        :global(.wrapper) {
+          padding-block: 0;
+        }
+      }
+      .tags_wrapper  {
+        padding-inline: 0;
+      }
+      .articles-wrapper {
+        gap: 21px;
+        padding-top: 0;
       }
     }
   }

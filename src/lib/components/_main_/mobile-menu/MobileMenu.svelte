@@ -55,8 +55,6 @@
   import { routeIdContent } from "$lib/constants/paths.js";
   import Sheets from "./assets/sheets.svelte";
   import Search from "./assets/search.svelte";
-  import { modalStore } from "$lib/store/modal.js";
-  import SearchModal from "$lib/components/section/search/Search.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -98,7 +96,6 @@
 
   let showPopup = false;
 
-  $: ({ serverLang } = $sessionStore);
   $: ({ profile_photo, buttons_order, lang } = {
     ...$userBetarenaSettings.user?.scores_user_data,
   });
@@ -251,7 +248,6 @@
   <div class="blured-container" />
   {#each [...navButtonOrderList] as { id, url, icon, type, route } (id)}
     {#if type === "link" && url}
-      {#if id !== "search" || mobile}
         {@const active =
           $page.route.id === route || $page.url.pathname.includes(url)}
         <a
@@ -263,7 +259,6 @@
         >
           <svelte:component this={icon} type={active ? "solid" : "outline"} />
         </a>
-      {/if}
     {:else}
       <div class="item" on:click={() => buttonClick(id)}>
         <svelte:component this={icon} />

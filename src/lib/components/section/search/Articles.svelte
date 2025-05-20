@@ -15,7 +15,7 @@
   import { createEventDispatcher } from "svelte";
   import ArticleCard from "../authors/common_ui/articles/Article-Card.svelte";
   import ArticleLoader from "../authors/common_ui/articles/Article-Loader.svelte";
-  import search_store from "./search_store.js";
+  import search_store from "$lib/store/search_store.js";
   import NoResults from "./NoResults.svelte";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -89,14 +89,12 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<div class="wrapper" use:infiniteScroll={{ loadMore, hasMore: !!$search_store.articles.next_page_count, loading }}>
+<div class="wrapper {viewportType}" use:infiniteScroll={{ loadMore, hasMore: !!$search_store.articles.next_page_count, loading }}>
   {#if articles.size || $search_store.articles.loading}
     {#if articles.size > 0}
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {#each [...articles.entries()] as [id, article] (id)}
-          <ArticleCard {mobile} {article} {tablet} {translations} />
+          <ArticleCard {mobile} {article} {tablet} />
         {/each}
-      </div>
     {/if}
 
     {#if loading}
@@ -127,5 +125,11 @@
     overflow: auto;
     padding-bottom: 100px;
     background: var(--colors-background-bg-main);
+
+    &:not(.mobile){
+      display: flex;
+      flex-direction: column;
+      gap: 21px;
+    }
   }
 </style>
