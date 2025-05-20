@@ -206,7 +206,13 @@
     const url = `/api/data/search.suggestions?search=${search}`;
     const res = await fetch(url);
     const r = await res.json();
-    suggestions = r.suggestions;
+    let filtered = r?.suggestions.filter(
+      (sug: ISearchSuggestion) => sug.suggestion !== search
+    ) || [];
+    if (filtered.length > 4) {
+      filtered = filtered.slice(0, 4);
+    }
+   suggestions = [{suggestion: search, source: "input"}, ...filtered];
   }
 
   async function suggestClick(suggest: string) {
