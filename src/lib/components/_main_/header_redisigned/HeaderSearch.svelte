@@ -140,7 +140,7 @@
   async function getSuggestions(text: string) {
     const res = await get<{
       suggestions: ISearchSuggestion[];
-    }>(`/api/data/search.suggestions?search=${search}`);
+    }>(`/api/data/search.suggestions?search=${encodeURIComponent(search)}`);
     let filtered = res?.suggestions.filter(
       (sug: ISearchSuggestion) => sug.suggestion !== search
     ) || [];

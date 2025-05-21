@@ -341,7 +341,6 @@ export const handle: Handle = sequence
           event.params.lang,
         );
 
-      console.log('TESTING', mapLangToLocaleAuthor.get(event.locals.strLocaleOverride ?? methodRes0) ?? 'en')
 
       const
       /**

@@ -203,7 +203,7 @@
   }
 
   async function getSuggestions(text: string) {
-    const url = `/api/data/search.suggestions?search=${search}`;
+    const url = `/api/data/search.suggestions?search=${encodeURIComponent(search)}`;
     const res = await fetch(url);
     const r = await res.json();
     let filtered = r?.suggestions.filter(
@@ -247,7 +247,7 @@
       $search_store.sportstacks.data = new Map();
     }
     $search_store.sportstacks.loading = true;
-    let url = `/api/data/search.authors?search=${search}`;
+    let url = `/api/data/search.authors?search=${encodeURIComponent(search)}`;
     if (page) {
       url += `&page=${page}`;
     }
@@ -297,7 +297,7 @@
       $search_store.tags.data = new Map();
     }
     $search_store.tags.loading = true;
-    let url = `/api/data/search.tags?search=${search}`;
+    let url = `/api/data/search.tags?search=${encodeURIComponent(search)}`;
     if (page) {
       url += `&page=${page}`;
     }
@@ -345,7 +345,7 @@
       $search_store.articles.data = new Map();
     }
     $search_store.articles.loading = true;
-    let url = `/api/data/search.articles?search=${search}`;
+    let url = `/api/data/search.articles?search=${encodeURIComponent(search)}`;
     if (page) {
       url += `&page=${page}`;
     }
