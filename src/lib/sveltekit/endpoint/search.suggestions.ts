@@ -2,7 +2,7 @@ import { getSuggestions, updateSuggestPopularity } from "@betarena/scores-lib/di
 import { json, RequestHandler } from "@sveltejs/kit";
 
 export const SuggestionsSearchEndpoint: RequestHandler = async ({ url }) => {
-  const text = url.searchParams.get("search") || "";
+  const text = decodeURIComponent(url.searchParams.get("search") || "");
   const limit = url.searchParams.get("limit") || "5";
   const result = await getSuggestions({
     text,
