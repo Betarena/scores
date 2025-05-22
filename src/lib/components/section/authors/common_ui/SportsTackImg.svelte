@@ -7,7 +7,11 @@
 
 <div
   class="sportstack-image"
-  style="background: url({getOptimizedImageUrl({ strImageUrl: src })}) lightgray -10.166px -9.798px / 143.179% 143.179% no-repeat;"
+  style=
+  "
+  background: url({getOptimizedImageUrl({ strImageUrl: src })}) lightgray -10.166px -9.798px / 143.179% 143.179% no-repeat;
+  background-image: url({getOptimizedImageUrl({ strImageUrl: src })});
+  "
 />
 
 <style>
@@ -16,7 +20,6 @@
     height: 48px;
     border-radius: 4px;
     object-fit: cover;
-    background-image: url(src);
     background-repeat: no-repeat;
     background-size: cover;
   }

@@ -748,7 +748,9 @@ MAIN WITHDRAW FORM FLOW WIDGET
       </p>
       {#if currentWithdrawStep > 1}
         <p class="withdraw-conversion">
-          <img src="https://firebasestorage.googleapis.com/v0/b/betarena-ios.appspot.com/o/Betarena_Media%2Fforms_media%2Ficon_bta_form.png?alt=media&token=c454ca74-7ca6-4468-a2a2-bf5ba651dc07" />
+          <img
+            src={getOptimizedImageUrl({ strImageUrl:  "https://firebasestorage.googleapis.com/v0/b/betarena-ios.appspot.com/o/Betarena_Media%2Fforms_media%2Ficon_bta_form.png?alt=media&token=c454ca74-7ca6-4468-a2a2-bf5ba651dc07" })}
+          />
          <span>
            BTA
          </span>
