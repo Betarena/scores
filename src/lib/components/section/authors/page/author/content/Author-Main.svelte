@@ -657,7 +657,23 @@
     id='content'
     data-betarena-zone-id=2,3
   >
-    {@html widgetData.article.data?.content}
+    {@html
+      widgetData.article.data?.content.replaceAll
+      (
+        /<img[^>]+src="([^">]+)"/g,
+        (
+          match,
+          src
+        ) =>
+        {
+          return match.replace
+          (
+            src,
+            getOptimizedImageUrl({ strImageUrl: src, intQuality: 90, intWidth: 1500 })
+          );
+        }
+      )
+    }
   </div>
 </div>
 

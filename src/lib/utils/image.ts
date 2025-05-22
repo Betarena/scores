@@ -37,8 +37,8 @@ export function getOptimizedImageUrl
 (
   {
     strImageUrl,
-    intWidth = 500,
-    intQuality = 15,
+    intWidth = 1000,
+    intQuality = 90,
     strFitType = 'cover'
   }:
   {
