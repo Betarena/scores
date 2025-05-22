@@ -44,6 +44,7 @@
     TranslationSportstacksSectionDataJSONSchema,
   } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import type { PageData } from ".svelte-kit/types/src/routes/(scores)/u/author/article/edit/[...permalink]/[lang=lang]/$types.js";
+  import { getOptimizedImageUrl } from "$lib/utils/image.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -78,7 +79,7 @@
 
   $: title = initTitle || "";
   $: if (featured_image && !content.includes(featured_image)) {
-    content = `<img src="${featured_image}" alt="${title}" />${content}`;
+    content = `<img src="${getOptimizedImageUrl({ strImageUrl: featured_image })}" alt="${title}" />${content}`;
   }
   $: uploadUrl = selectedSportstack
     ? `Betarena_Media/authors/authors_list/${selectedSportstack.id}/media`

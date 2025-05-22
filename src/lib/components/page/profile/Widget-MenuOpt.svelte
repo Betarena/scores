@@ -22,6 +22,7 @@ COMPONENT JS (w/ TS)
 	import type { PROFILE_OPT } from '$lib/types/types.scores.js';
   import { fade, fly } from 'svelte/transition';
   import { routeIdPageProfileAuthorCreate, routeIdPageProfilePublication } from '$lib/constants/paths.js';
+  import { getOptimizedImageUrl } from '$lib/utils/image.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -247,7 +248,11 @@ COMPONENT JS (w/ TS)
     -->
 		<img
 			id="menu-summary-profile-picture"
-			src={$userBetarenaSettings?.user?.scores_user_data?.profile_photo || profile_avatar}
+			src={
+        $userBetarenaSettings?.user?.scores_user_data?.profile_photo != undefined
+          ? getOptimizedImageUrl({ strImageUrl: $userBetarenaSettings?.user?.scores_user_data?.profile_photo })
+          : profile_avatar
+      }
 			alt="Profile Icon"
 			title="Profile Icon"
 			aria-label="Profile Icon"

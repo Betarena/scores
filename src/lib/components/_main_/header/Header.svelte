@@ -55,6 +55,7 @@
     generateUrlCompetitions,
     spliceBalanceDoubleZero,
   } from "$lib/utils/string";
+  import { getOptimizedImageUrl } from "$lib/utils/image.js";
 
   import SeoBox from "$lib/components/SEO-Box.svelte";
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
@@ -906,7 +907,7 @@
               id="user-profile-picture"
               data-testid="{CNAME}/user-avatar"
               loading="lazy"
-              src={profile_photo ?? dynamicAssetMap.get("profile_avatar")}
+              src={profile_photo != undefined ? getOptimizedImageUrl({ strImageUrl: profile_photo }) : dynamicAssetMap.get("profile_avatar")}
               alt="profile_avatar"
               title="Profile Picture"
               on:click={() => {

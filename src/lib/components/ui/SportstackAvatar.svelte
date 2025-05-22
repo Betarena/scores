@@ -13,6 +13,7 @@
   import { createEventDispatcher } from "svelte";
   import DefaultAvatar from "./assets/default-avatar.svelte";
   import ImgPlaceholder from "./assets/img-placeholder.svelte";
+  import { getOptimizedImageUrl } from "$lib/utils/image.js";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -67,12 +68,26 @@
   <div
     on:click={() => dispatch("click")}
     class="sportstack-image"
-    style="background: url({src}) center center / cover no-repeat; {styles} border-radius: {radius}"
+    style=
+    "
+    background: url({getOptimizedImageUrl({ strImageUrl: src })}) center center / cover no-repeat;
+    background-image: url({getOptimizedImageUrl({ strImageUrl: src })});
+    {styles}
+    border-radius: {radius};
+    "
   />
 {:else}
   <div
-    class="img empty"
-    style=" {styles} border-radius: {radius}"
+    class=
+    "
+    img
+    empty
+    "
+    style="
+    {styles}
+    border-radius: {radius};
+    background-image: url({getOptimizedImageUrl({ strImageUrl: src })});
+    "
   >
     <ImgPlaceholder size={numSize / 2} />
   </div>
@@ -95,7 +110,6 @@
     height: 48px;
     border-radius: 4px;
     object-fit: contain;
-    background-image: url(src);
     background-repeat: no-repeat;
     background-size: cover;
   }
