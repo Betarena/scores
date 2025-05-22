@@ -54,6 +54,7 @@
   import { readingTime } from '../../helpers.js';
   import { post } from '$lib/api/utils.js';
   import { getUserById } from '$lib/firebase/common.js';
+  import { getOptimizedImageUrl } from '$lib/utils/image.js';
 
   import TranslationText from '$lib/components/misc/Translation-Text.svelte';
   import SportstackAvatar from '$lib/components/ui/SportstackAvatar.svelte';
@@ -346,7 +347,7 @@
       -->
       <img
         id='user-avatar'
-        src={author?.profile_photo ?? ''}
+        src={getOptimizedImageUrl({ strImageUrl: author?.profile_photo ?? '' })}
         alt='user_avatar'
         title={author?.name ?? ''}
         loading='lazy'
@@ -637,7 +638,7 @@
 
     <img
       id='preview-banner'
-      src={widgetData.article.seo_details?.twitter_card.image}
+      src={getOptimizedImageUrl({ strImageUrl: widgetData.article.seo_details?.twitter_card.image })}
       alt={widgetData.article.seo_details?.twitter_card.image_alt}
       title={widgetData.article.data?.title}
       loading='lazy'
