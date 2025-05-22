@@ -13,6 +13,8 @@
 // │ |: Image module handler
 // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
+import { log_v3 } from './debug.js';
+
 /**
  * @author
  *  @migbash
@@ -36,7 +38,7 @@
 export function getOptimizedImageUrl
 (
   {
-    strImageUrl,
+    strImageUrl = '',
     intWidth = 1000,
     intQuality = 90,
     strFitType = 'cover'
@@ -54,11 +56,43 @@ export function getOptimizedImageUrl
      * @description
      * 📝 Encode the image URL to make it safe for use in a query string.
      */
-    encoded = encodeURIComponent
-    (
-      strImageUrl
-    )
+    encoded =
+      encodeURIComponent
+      (
+        (
+          strImageUrl !== decodeURIComponent(strImageUrl)
+          ?
+            strImageUrl.replace
+            (
+              /&amp;/g,
+              '&'
+            )
+          : decodeURIComponent
+            (
+              strImageUrl.replace
+              (
+                /&amp;/g,
+                '&'
+              )
+            )
+        )
+      )
   ;
+
+  // [🐞]
+  log_v3
+  (
+    {
+      strGroupName: '🚏 checkpoint ➤ getOptimizedImageUrl(..) // START',
+      msgs: [
+        `🔹 [var] ➤ strImageUrl ${strImageUrl}`,
+        `🔹 [var] ➤ intWidth ${intWidth}`,
+        `🔹 [var] ➤ intQuality ${intQuality}`,
+        `🔹 [var] ➤ strFitType ${strFitType}`,
+        `🔹 [var] ➤ encoded ${encoded}`
+      ],
+    }
+  );
 
   return `https://img.betarena.com?src=${encoded}&w=${intWidth}&q=${intQuality}&fit=${strFitType}`;
 }
