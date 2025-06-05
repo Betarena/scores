@@ -51,8 +51,8 @@
 
   $: ({ viewportType } = $session);
   $: ({ user: ctx } = $userSettings);
-  $: ({ username, name, avatar } = user.data);
-  $: ({ permalink, id } = user);
+  $: ({ username, name, avatar,  } = user.data);
+  $: ({ permalink, id, uid } = user);
   $: isAuth = !!ctx;
   $: isFollow = !!(
     ctx?.scores_user_data?.subscriptions?.sportstacks || []
@@ -106,7 +106,7 @@
       {/if}
     </div>
   </a>
-  {#if id !== ctx?.firebase_user_data?.uid && action_button}
+  {#if uid!== ctx?.firebase_user_data?.uid && action_button}
     <Button
       type={isFollow ? "subtle" : "primary"}
       style="padding:10px 16px; font-size: 14px; height:{size === 'lg'

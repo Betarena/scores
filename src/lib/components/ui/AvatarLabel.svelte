@@ -30,7 +30,9 @@
   <Avatar src={avatar} {size} />
   <div class="info">
     <div class="name">{name}</div>
-    <div class="label">{label}</div>
+    <div class="label">
+      <slot name="label">{label}</slot>
+    </div>
   </div>
 </div>
 
@@ -56,7 +58,7 @@
       align-items: flex-start;
 
       .name {
-        color: var(--colors-text-text-secondary-700, #525252);
+        color: var(--colors-text-text-primary, #000);
         font-family: var(--font-family-font-family-body, Roboto);
         font-size: 10px;
         font-style: normal;
