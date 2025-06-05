@@ -24,7 +24,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { createEventDispatcher, onMount } from "svelte";
-  import { Editor } from "@tiptap/core";
+  import { Editor, mergeAttributes } from "@tiptap/core";
   import StarterKit from "@tiptap/starter-kit";
   import Placeholder from "@tiptap/extension-placeholder";
   import BubbleMenu from "@tiptap/extension-bubble-menu";
@@ -88,6 +88,38 @@
   }
 
   const dispatch = createEventDispatcher();
+
+  const ImageWithStyle = Image.extend({
+		addAttributes() {
+			return {
+				...this.parent?.(),
+				style: {
+					default: null,
+					parseHTML: (element) => (element as HTMLElement).getAttribute('style'),
+					renderHTML: (attrs) => {
+						return { style: attrs.style };
+					}
+				}
+			};
+		},
+		parseHTML() {
+			return [
+				{
+					tag: 'img[src]',
+					getAttrs: (dom) => ({
+						src: (dom as HTMLImageElement).getAttribute('src'),
+						alt: (dom as HTMLImageElement).getAttribute('alt'),
+						title: (dom as HTMLImageElement).getAttribute('title'),
+						style: (dom as HTMLImageElement).getAttribute('style')
+					})
+				}
+			];
+		},
+		renderHTML({ HTMLAttributes }) {
+			return ['img', mergeAttributes(HTMLAttributes)];
+		}
+	});
+
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -173,8 +205,9 @@
         Placeholder.configure({
           placeholder: translations?.create_sports_content || "Create your sports content",
         }),
-        Image.configure({
+        ImageWithStyle.configure({
           base64: true,
+          inline: true
         }),
         BubbleMenu.configure({
           element: bmenu,
