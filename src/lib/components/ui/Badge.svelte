@@ -8,7 +8,7 @@
 -->
 
 <script lang="ts">
-    import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher } from "svelte";
 
   // #region ➤ 📌 VARIABLES
 
@@ -27,6 +27,7 @@
   export let size: "sm" | "md" | "lg" | "xl" | "xxl" = "md";
   export let color: "gray" | "error" | "brand" | undefined = "gray";
   export let active: boolean = false;
+  export let link = "";
 
   const dispatch = createEventDispatcher();
 
@@ -44,10 +45,28 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="badge {size} {color}" class:active {...$$restProps} on:click={() => dispatch("click")}>
-  <slot name="icon" />
-  <slot />
-</div>
+{#if link}
+  <a
+    href={link}
+    class="badge {size} {color}"
+    class:active
+    {...$$restProps}
+    on:click={() => dispatch("click")}
+  >
+    <slot name="icon" />
+    <slot />
+  </a>
+{:else}
+  <div
+    class="badge {size} {color}"
+    class:active
+    {...$$restProps}
+    on:click={() => dispatch("click")}
+  >
+    <slot name="icon" />
+    <slot />
+  </div>
+{/if}
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -148,6 +167,27 @@
         );
         color: var(--component-colors-utility-gray-utility-gray-800, #3b3b3b);
       }
+    }
+  }
+  a.badge {
+    &.gray:hover {
+      border: 1px solid
+        var(--component-colors-utility-gray-utility-gray-200, #ededed);
+      background: var(
+        --component-colors-utility-gray-utility-gray-200,
+        #ededed
+      );
+      color: var(--component-colors-utility-gray-utility-gray-800, #3b3b3b);
+    }
+    &.brand:hover {
+      border: 1px solid
+        var(--component-colors-utility-brand-utility-brand-500, #ae460b);
+      color: var(--colors-text-text-white, #fff);
+
+      background: var(
+        --component-colors-utility-brand-utility-brand-500,
+        #fef5f0
+      );
     }
   }
 </style>
