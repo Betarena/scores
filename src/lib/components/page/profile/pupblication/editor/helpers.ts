@@ -52,7 +52,10 @@ export async function
   | undefined, editor: Editor, title: string, author: AuthorsAuthorsMain, reload?: boolean, showLoaders?: boolean, id?: number
 })
 {
-  const sanitizedValue = DOMPurify.sanitize(editor.getHTML());
+  const config = {
+			ADD_ATTR: ['style', 'target']
+		};
+  const sanitizedValue = DOMPurify.sanitize(editor.getHTML(), config);
   const sanitizedTitle = DOMPurify.sanitize(title);
   const image = await getFirstImageWithSize(editor);
 
