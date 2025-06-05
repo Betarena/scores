@@ -257,7 +257,7 @@
         {widgetData.article.data?.title ?? ''}
       </h1>
 
-      <a href='/a/user/{author?.usernamePermalink}'>
+      <a href='/a/user/{author?.usernamePermalink}' class="user-box" class:animate={executeAnimation}>
         <AvatarLabel
           size='lg'
           avatar={author?.profile_photo ?? ''}
@@ -373,6 +373,23 @@
           font-weight: 600;
           line-height: var(--line-height-display-lg, 60px); /* 125% */
           letter-spacing: -0.96px;
+        }
+      }
+      .user-box {
+
+        :global(.avatar-wrapper) {
+            transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: blur(40px);
+            transform: scaleX(1.1) scaleY(1.1);
+
+        }
+
+        &.animate {
+          :global(.avatar-wrapper) {
+              filter: none;
+              transform: none;
+
+          }
         }
       }
       .tags-wrapper {

@@ -49,6 +49,7 @@
   import { startArticleViewIncrement } from './_helpers.js';
 
   import type { IPageAuhtorArticleDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
+  import session from '$lib/store/session.js';
 
   // #endregion ➤ 📦 Package Imports
 
