@@ -55,7 +55,6 @@
   import AvatarLabel from '$lib/components/ui/AvatarLabel.svelte';
   import Badge from '$lib/components/ui/Badge.svelte';
   import ListSportsTackItem from '$lib/components/ui/composed/sportstack_list/ListSportsTackItem.svelte';
-  import ScrollDataWrapper from "$lib/components/ui/wrappers/ScrollDataWrapper.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -281,12 +280,12 @@
       </a>
 
       {#if widgetData.article.tags?.length}
-        <div class="tags-wrapper">
-          <ScrollDataWrapper data={Array.from(tagMap)} let:item>
-            <Badge size="lg" color="gray" link="/a/tag/{item[1].permalink}"
-              >{item[1].name}</Badge
+        <div class='tags-wrapper'>
+          {#each Array.from(tagMap) as [tagId, tag] (tagId)}
+            <Badge size='lg' color='gray' link='/a/tag/{tag.permalink}'
+              >{tag.name}</Badge
             >
-          </ScrollDataWrapper>
+          {/each}
         </div>
       {/if}
     </div>
@@ -394,12 +393,8 @@
         }
       }
       .tags-wrapper {
-        max-width: 100%;
         display: flex;
         gap: 10px;
-        :global(.badge) {
-          flex-shrink: 0;
-        }
       }
     }
     .sportstack-box {
@@ -419,24 +414,16 @@
       :global {
         color: var(--colors-text-text-primary-900, #fff);
 
-        &:first-child {
-          margin-top: 0;
-          * {
-            margin-top: 0 !important;
-          }
-        }
-
         img {
           /* 🎨 style */
           object-fit: cover;
           max-width: 100%;
           width: 100%;
-          margin-bottom: 48px !important;
           border-radius: var(--radius-xl, 12px);
-          margin-top: 48px !important;
-        }
-        a img {
-          margin: 0 !important;
+          // margin-left: -16px;
+          // margin-right: -16px;
+          // width: -webkit-fill-available;
+          // width: -moz-available;
         }
 
         @mixin header {
@@ -466,8 +453,6 @@
           font-weight: 500;
           line-height: var(--line-height-display-xs, 32px);
           position: relative;
-          padding-bottom: var(--spacing-4xl, 32px);
-          margin-bottom: 48px;
 
           p {
             font-style: italic;
@@ -568,31 +553,11 @@
           }
         }
       }
-      .tags-wrapper {
-        max-width: 100vw;
-        width: 100vw;
-      }
       #content {
         :global {
           @mixin header {
             /* 🎨 style */
             margin: 40px 0 20px 0;
-          }
-
-          &:first-child {
-            margin-top: 0;
-            * {
-              margin-top: 0 !important;
-            }
-          }
-
-          img {
-            margin-bottom: 40px !important;
-            margin-top: 40px !important;
-          }
-
-          a img {
-            margin: 0 !important;
           }
 
           blockquote {
@@ -603,7 +568,6 @@
             font-style: italic;
             font-weight: 500;
             line-height: var(--line-height-text-xl, 30px); /* 150% */
-            margin-bottom: 40px;
 
             p {
               font-size: var(--font-size-text-xl, 20px);
@@ -612,12 +576,6 @@
               line-height: var(--line-height-text-xl, 30px); /* 150% */
             }
           }
-
-          @mixin header {
-            /* 🎨 style */
-            margin: 26px 0 10px 0;
-          }
-
           h2 {
             font-size: var(--font-size-display-xs, 24px);
             line-height: var(--line-height-display-xs, 32px); /* 133.333% */

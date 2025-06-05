@@ -154,7 +154,6 @@
 
 <header
   id="header"
-  class:custom-bg={$page.route.id === routeIdPageAuthors}
   class:sticky={$page.route.id === routeIdPageAuthors && isPWA && mobile}
   class:mobile
   class:dark-mode={currentPageRouteId !== "AuthorsPage"}
@@ -213,10 +212,6 @@
     align-items: center;
     background-color: var(--bg-color);
     position: relative;
-    &.custom-bg {
-      background-color: var(--colors-background-bg-primary);
-      border: none;
-    }
 
     &.sticky {
       position: sticky;
