@@ -37,11 +37,13 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
+  import sessionStore from "$lib/store/session.js";
 
-  import sessionStore from '$lib/store/session.js';
-  import { viewportChangeV2 } from '$lib/utils/device';
-
-  import AuthorLoaderMain from './loaders/Author-Loader-Main.svelte';
+  import LoaderLine from "$lib/components/ui/loaders/LoaderLine.svelte";
+  import LoaderAvatarLabel from "$lib/components/ui/loaders/LoaderAvatarLabel.svelte";
+  import LoaderBadge from "$lib/components/ui/loaders/LoaderBadge.svelte";
+  import ListSportsTackLoader from "$lib/components/ui/composed/sportstack_list/ListSportsTackLoader.svelte";
+  import LoaderImage from "$lib/components/ui/loaders/LoaderImage.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -59,39 +61,12 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  const
-    /**
+  const /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
-    */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = 'author⮕w⮕article-loader⮕main'
-  ;
-
-  let
-    /**
-     * @description
-     *  📣 threshold start + state for 📱 MOBILE
-    */ // eslint-disable-next-line no-unused-vars
-    VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ],
-    /**
-     * @description
-     *  📣 threshold start + state for 💻 TABLET
-    */ // eslint-disable-next-line no-unused-vars
-    VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
-  ;
-
-  $: ({ windowWidth } = $sessionStore);
-  $: [ VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1] ]
-    = viewportChangeV2
-    (
-      windowWidth,
-      VIEWPORT_MOBILE_INIT[0],
-      VIEWPORT_TABLET_INIT[0],
-    );
-  ;
-
-  // #endregion ➤ 📌 VARIABLES
-
+     */ // eslint-disable-next-line no-unused-vars
+    CNAME: string = "author⮕w⮕author-content⮕main";
+  $: ({ viewportType } = $sessionStore);
 </script>
 
 <!--
@@ -105,114 +80,68 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div
-  id="{CNAME}"
->
-  <!--
-  ╭─────
-  │ > article author box loader 📱 MOBILE
-  ╰─────
-  -->
-  {#if VIEWPORT_MOBILE_INIT[1]}
-    <AuthorLoaderMain
-      option={'ArticleAuthorBlockVariant3'}
-      clazz={'m-b-32'}
-    />
-  {/if}
-
-  <!--
-  ╭─────
-  │ > top title loader
-  ╰─────
-  -->
-  <div
-    id="title-box"
-    class=
-    "
-    m-b-34
-    "
-  >
-    {#each [676, 464, 676] as item}
-      <AuthorLoaderMain
-        option={'ArticleTitleVariant1'}
-        width={item}
-      />
-    {/each}
-  </div>
-
-  <!--
-  ╭─────
-  │ > badge loader
-  ╰─────
-  -->
-  <div
-    id="badge-box"
-    class=
-    "
-    m-b-32
-    "
-  >
-    {#each [68, 104, 87, 68] as item}
-      <AuthorLoaderMain
-        option={'ArticleBadgeVariant1'}
-        width={item}
-      />
-    {/each}
-  </div>
-
-  <!--
-  ╭─────
-  │ > article author box loader 💻 TABLET + 🖥️ LAPTOP
-  ╰─────
-  -->
-  {#if !VIEWPORT_MOBILE_INIT[1]}
-    <AuthorLoaderMain
-      option=
-      {
-        (VIEWPORT_TABLET_INIT[1] ? 'ArticleAuthorBlockVariant2' : 'ArticleAuthorBlockVariant1')
-      }
-      clazz=
-      {
-        !VIEWPORT_MOBILE_INIT[1] ? 'm-b-26' : 'm-b-32'
-      }
-    />
-  {/if}
-
-  <!--
-  ╭─────
-  │ > article preveiw loader
-  ╰─────
-  -->
-  <AuthorLoaderMain
-    option={'ArticlePreviewBlock'}
-    clazz={'m-b-24'}
-  />
-
-  {#each { length: 2 } as _, i}
-
-    {#if i > 0}
-      <!--
-      ╭─────
-      │ > article preveiw text loader
-      ╰─────
-      -->
-      <AuthorLoaderMain
-        option={'ArticleSubTitle'}
-        clazz={'m-b-16'}
-      />
-    {/if}
-
+<div id={CNAME} data-betarena-zone-id="4" class={viewportType}>
+  <div class="article-header">
     <!--
     ╭─────
-    │ > article preveiw text loader
+    │ > article title
     ╰─────
     -->
-    <AuthorLoaderMain
-      option={'ArticlePeviewText'}
-      clazz={'m-b-40'}
-    />
-  {/each}
+    <div class="article-title">
+      <div class="title">
+        <LoaderLine width="70%" height={viewportType === "mobile" ? "25px" : "32px"} />
+        <LoaderLine width="100%" height={viewportType === "mobile" ? "25px" : "32px"} />
+        <LoaderLine width="80%" height={viewportType === "mobile" ? "25px" : "32px"} />
+      </div>
 
+      <div class="user-box">
+        <LoaderAvatarLabel size="lg" />
+      </div>
+
+      <div class="tags-wrapper">
+        {#each Array(3) as _}
+          <LoaderBadge />
+        {/each}
+      </div>
+    </div>
+  </div>
+
+  <div class="sportstack-box">
+    <ListSportsTackLoader size="lg" action_button={true} />
+  </div>
+
+  <!--
+  ╭─────
+  │ > article text
+  ╰─────
+  -->
+  <div id="content" data-betarena-zone-id="2,3">
+    <LoaderImage width="100%" />
+    <div class="content-loader">
+      <div class="section">
+        {#each ["30%", "90%", "95%", "80%", "100%", "85%", "90%", "70%", "10%"] as item, index}
+          {#if !index}
+          <div class="h">
+            <LoaderLine width={item} height={"25px"} />
+          </div>
+          {:else}
+            <LoaderLine width={item} height={"16px"} />
+          {/if}
+        {/each}
+      </div>
+      <div class="section">
+        {#each ["30%", "90%", "95%", "80%", "100%", "85%", "90%", "70%", "10%"] as item, index}
+          {#if !index}
+          <div class="h">
+            <LoaderLine width={item} height={"25px"} />
+          </div>
+          {:else}
+            <LoaderLine width={item} height={"16px"} />
+          {/if}
+        {/each}
+      </div>
+    </div>
+  </div>
 </div>
 
 <!--
@@ -226,65 +155,89 @@
 -->
 
 <style lang="scss">
-
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
   │ 📲 MOBILE-FIRST                                                              │
   ╰──────────────────────────────────────────────────────────────────────────────╯
   */
 
-  div#author⮕w⮕article-loader⮕main
-  {
-    div#title-box
-    {
-      /* 🎨 style */
-      display: grid;
-      gap: 16px;
-    }
+  div#author⮕w⮕author-content⮕main {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: var(--width-xl, 768px);
+    margin: auto;
+    gap: var(--spacing-7xl, 64px);
 
-    div#badge-box
-    {
-      /* 🎨 style */
-      display: grid;
-      grid-auto-flow: column;
-      gap: 6px;
-      width: fit-content;
-    }
+    .article-header {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-4xl, 32px);
 
-    // IMPORTANT
-    :global
-    {
-      svg#ArticlePreviewBlock
-      {
-        margin-left: -16px;
-        margin-right: -16px;
-        width: -webkit-fill-available;
+      .article-title {
+        display: flex;
+        max-width: var(--width-xl, 768px);
+        flex-direction: column;
+        align-items: center;
+        gap: var(--spacing-3xl, 24px);
+        .title {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 16px;
+        }
+      }
+      .tags-wrapper {
+        display: flex;
+        gap: 10px;
       }
     }
-  }
+    .sportstack-box {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
 
-  /*
-  ╭──────────────────────────────────────────────────────────────────────────────╮
-  │ ⚡️ RESPONSIVNESS                                                              │
-  ╰──────────────────────────────────────────────────────────────────────────────╯
-  */
+      :global(.list-item) {
+        padding: 0;
+        border: none;
+        width: 100%;
+      }
+    }
 
-  @media only screen
-  and (min-width: 560px)
-  {
-    div#author⮕w⮕article-loader⮕main
-    {
-      // IMPORTANT
-      :global
-      {
-        svg#ArticlePreviewBlock
-        {
-          margin-left: 0;
-          margin-right: 0;
-          width: -webkit-fill-available;
+    .section {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 30px;
+
+      .h{
+        margin-top: 32px;
+        margin-bottom: 16px;
+      }
+    }
+
+    //   /*
+    // ╭──────────────────────────────────────────────────────────────────────────────╮
+    // │ ⚡️ RESPONSIVNESS                                                              │
+    // ╰──────────────────────────────────────────────────────────────────────────────╯
+    // */
+
+    &.tablet,
+    &.mobile {
+      max-width: 100%;
+
+      .article-header {
+        .article-title {
+          max-width: 100%;
         }
       }
     }
-  }
 
+    &.mobile {
+      gap: var(--spacing-6xl, 48px);
+    }
+  }
 </style>

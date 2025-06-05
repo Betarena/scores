@@ -257,7 +257,7 @@
         {widgetData.article.data?.title ?? ''}
       </h1>
 
-      <a href='/a/user/{author?.usernamePermalink}'>
+      <a href='/a/user/{author?.usernamePermalink}' class="user-box" class:animate={executeAnimation}>
         <AvatarLabel
           size='lg'
           avatar={author?.profile_photo ?? ''}
@@ -375,6 +375,23 @@
           letter-spacing: -0.96px;
         }
       }
+      .user-box {
+
+        :global(.avatar-wrapper) {
+            transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: blur(40px);
+            transform: scaleX(1.1) scaleY(1.1);
+
+        }
+
+        &.animate {
+          :global(.avatar-wrapper) {
+              filter: none;
+              transform: none;
+
+          }
+        }
+      }
       .tags-wrapper {
         display: flex;
         gap: 10px;
@@ -418,7 +435,6 @@
 
         a {
           /* 🎨 style */
-          text-decoration: underline !important;
           color: var(--primary) !important;
           font-weight: 500;
           width: fit-content !important;
@@ -437,6 +453,7 @@
           font-weight: 500;
           line-height: var(--line-height-display-xs, 32px);
           position: relative;
+
           p {
             font-style: italic;
             font-family: var(--font-family-font-family-display, Roboto);
@@ -484,10 +501,10 @@
 
           /* Text xl/Regular */
           font-family: var(--font-family-font-family-body, Roboto);
-          font-size: var(--font-size-text-xl, 20px);
+          font-size: var(--font-size-text-lg, 18px);
           font-style: normal;
           font-weight: 400;
-          line-height: var(--line-height-text-xl, 30px); /* 150% */
+          line-height: var(--line-height-text-lg, 28px); /* 155.556% */
           margin: 1em 0;
 
           section {
