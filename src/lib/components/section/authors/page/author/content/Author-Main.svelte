@@ -42,18 +42,14 @@
 
 
   import sessionStore from '$lib/store/session.js';
-  import userBetarenaSettings from '$lib/store/user-settings.js';
   import { timeAgo } from '$lib/utils/dates.js';
   import { viewportChangeV2 } from '$lib/utils/device';
   import { readingTime } from '../../helpers.js';
-  import { post } from '$lib/api/utils.js';
   import { getUserById } from '$lib/firebase/common.js';
   import { getOptimizedImageUrl } from '$lib/utils/image.js';
 
   import TranslationText from '$lib/components/misc/Translation-Text.svelte';
-  import session from '$lib/store/session.js';
 
-  import type { B_SAP_D2 } from '@betarena/scores-lib/types/seo-pages.js';
   import type { IPageAuhtorArticleDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
   import type { IPageArticleTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.articles.js';
   import AvatarLabel from '$lib/components/ui/AvatarLabel.svelte';
@@ -130,21 +126,8 @@
      *  📣 **Local** component state
      */
     componentLocalState = new Set < IWidgetState >(),
-    author,
-    /**
-     * @description
-     *  📣 Logic for calculating `published days ago`.
-    */
-    publishDateAgo = () =>
-    {
-      const
-        differenceInDays = Math.ceil(((new Date().getTime() - new Date(widgetData.article.published_date).getTime()) / 1000) / ( 3600 * 24 ));
-      ;
-      return differenceInDays;
-    }
-  ;
+    author  ;
 
-  $: ({ theme, user } = { ...$userBetarenaSettings });
   $: ({ windowWidth, viewportType } = $sessionStore);
   $: [ VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1] ]
     = viewportChangeV2
@@ -154,10 +137,6 @@
       VIEWPORT_TABLET_INIT[0],
     );
   $: widgetDataTranslation = $page.data.translationArticle as IPageArticleTranslationDataFinal | null | undefined;
-  $: monthTranslation = $page.data.monthTranslations as B_SAP_D2 | null | undefined;
-  $: isSubscribed =  (user?.scores_user_data?.subscriptions?.sportstacks || []).includes(widgetData.author.id);
-  $: isSportstackOwner = user?.firebase_user_data?.uid === widgetData.author.uid;
-  $: isAuth = !!user;
   $: ({author: sportstack} = widgetData);
   $: getAuthor(sportstack?.uid);
   // #endregion ➤ 📌 VARIABLES
@@ -184,23 +163,6 @@
     }, 100);
   }
 
-  async function subscribe() {
-    if (!isAuth) {
-      $session.currentActiveModal = "Auth_Modal";
-      return;
-    }
-    const id = widgetData.author.id;
-    userBetarenaSettings.updateData([
-      [
-        "user-subscriptions",
-        { target: "sportstacks", id, follow: !isSubscribed },
-      ],
-    ]);
-    await post("/api/data/author/sportstack", {
-      authorId: id,
-      subscribe: !isSubscribed,
-    });
-  }
 
   /**
    * @author
@@ -326,35 +288,6 @@
           {/each}
         </div>
       {/if}
-
-      <!-- <div class='sportstack-box {viewportType}'>
-        <a
-          href='/a/sportstack/{mutateStringToPermalink(
-            widgetData.author?.data?.username
-          )}'
-          class='sportstack-info'
-        >
-          <SportstackAvatar
-            src={widgetData.author?.data?.avatar ?? ''}
-            size={viewportType === 'mobile' ? 32 : 36}
-            radius=' var(--radius-sm, 6px)'
-          />
-          <span>{widgetData.author.data?.username || ''}</span>
-        </a>
-        {#if !isSportstackOwner}
-          <Button
-            on:click={subscribe}
-            size='sm'
-            type={isSubscribed ? 'secondary-gray' : 'primary'}
-          >
-            {#if isSubscribed}
-              {$page.data.translations.subscribed || 'Subscribed'}
-            {:else}
-              {$page.data.translations.subscribe || 'Subscribe'}
-            {/if}
-          </Button>
-        {/if}
-      </div> -->
     </div>
   </div>
 
