@@ -22,7 +22,6 @@
 -->
 
 <script lang="ts">
-
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -70,16 +69,10 @@
   const
     /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
     // eslint-disable-next-line no-unused-vars
-    CNAME: string = 'section⮕g⮕authors⮕main',
-    /** @description 📣 threshold start + state for 📱 MOBILE */
-    // eslint-disable-next-line no-unused-vars
-    VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ],
-    /** @description 📣 threshold start + state for 💻 TABLET */
-    // eslint-disable-next-line no-unused-vars
-    VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
-  ;
+    CNAME: string = 'section⮕g⮕authors⮕main'  ;
 
   $: pageSeo = $page.data.dataArticle as IPageAuhtorArticleDataFinal;
+  $: ({ viewportType } = $session);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -124,7 +117,6 @@
   );
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
-
 </script>
 
 <!--
@@ -152,10 +144,7 @@
 {/if}
 
 <div class="section-wrapper">
-  <section
-    class:mobile={VIEWPORT_MOBILE_INIT[1]}
-    id={CNAME}
-  >
+  <section class={viewportType} id={CNAME}>
     <AuthorWidget />
   </section>
 </div>
@@ -171,7 +160,6 @@
 -->
 
 <style lang="scss">
-
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
   │ 📲 MOBILE-FIRST                                                              │
@@ -181,25 +169,25 @@
   .section-wrapper {
     width: 100%;
     height: 100%;
-    background-color: var(--bg-color);
+    background-color: var(--colors-background-bg-primary);
   }
 
-  section
-  {
+  section {
     /* 🎨 style */
     margin: auto;
     max-width: var(--container-max-width-desktop);
     padding: 0px var(--container-padding-desktop, 32px);
+    padding-top: var(--container-padding-desktop, 32px);
 
     &.dark-mode,
-    body:has(&.dark-mode)
-    {
+    body:has(&.dark-mode) {
       /* 🎨 style */
       background-color: var(--dark-theme);
     }
 
     &.mobile {
-      padding: 0px var(--container-padding-mobile, 16px)
+      padding: 0px var(--container-padding-mobile, 16px);
+      padding-top: var(--container-padding-mobile, 16px);
     }
   }
 
