@@ -188,13 +188,18 @@
   {
     /* 🎨 style */
     margin: auto;
-    max-width: 836px;
+    max-width: var(--container-max-width-desktop);
+    padding: 0px var(--container-padding-desktop, 32px);
 
     &.dark-mode,
     body:has(&.dark-mode)
     {
       /* 🎨 style */
       background-color: var(--dark-theme);
+    }
+
+    &.mobile {
+      padding: 0px var(--container-padding-mobile, 16px)
     }
   }
 
