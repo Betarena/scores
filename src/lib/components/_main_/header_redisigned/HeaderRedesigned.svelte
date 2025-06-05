@@ -213,10 +213,6 @@
     align-items: center;
     background-color: var(--bg-color);
     position: relative;
-    &.custom-bg {
-      background-color: var(--colors-background-bg-primary);
-      border: none;
-    }
 
     &.sticky {
       position: sticky;
@@ -225,6 +221,11 @@
       width: 100%;
       background: initial;
     }
+    &.custom-bg {
+      background-color: var(--colors-background-bg-primary);
+      border: none;
+    }
+
 
     .empty-nav {
       box-sizing: border-box;

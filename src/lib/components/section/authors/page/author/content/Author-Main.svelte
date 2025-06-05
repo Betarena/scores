@@ -396,6 +396,7 @@
       .tags-wrapper {
         max-width: 100%;
         display: flex;
+        justify-content: center;
         gap: 10px;
         :global(.badge) {
           flex-shrink: 0;
@@ -567,10 +568,6 @@
             letter-spacing: -0.72px;
           }
         }
-      }
-      .tags-wrapper {
-        max-width: 100vw;
-        width: 100vw;
       }
       #content {
         :global {
