@@ -161,7 +161,7 @@
     }, 100);
   }
 
-  $: if (widgetData.article.data?.content) {
+  $: if (widgetData.article.data?.content && contentContainer) {
     tick().then(loadTweets);
   }
 
@@ -291,7 +291,7 @@
   │ > article text
   ╰─────
   -->
-  <div id='content' data-betarena-zone-id='2,3'>
+  <div id='content' data-betarena-zone-id='2,3' bind:this={contentContainer}>
     {@html widgetData.article.data?.content.replaceAll(
       /<img[^>]+src='([^'>]+)'/g,
       (match, src) => {
