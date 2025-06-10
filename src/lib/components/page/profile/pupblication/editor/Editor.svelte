@@ -3,6 +3,7 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
@@ -24,7 +25,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { createEventDispatcher, onMount } from "svelte";
-  import { Editor, mergeAttributes } from "@tiptap/core";
+  import { Editor, mergeAttributes, Node } from "@tiptap/core";
   import StarterKit from "@tiptap/starter-kit";
   import Placeholder from "@tiptap/extension-placeholder";
   import BubbleMenu from "@tiptap/extension-bubble-menu";
@@ -40,6 +41,9 @@
   import InsertLinkModal from "./InsertLinkModal.svelte";
   import PublishModal from "./PublishModal.svelte";
   import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import { Plugin } from "prosemirror-state";
+  import LoaderImage from "$lib/components/ui/loaders/LoaderImage.svelte";
+  import userSettings from "$lib/store/user-settings.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -75,7 +79,7 @@
   let bmenu;
   let linkState = { url: "", text: "" };
   let textareaNode;
-  let editor
+  let editor;
 
   $: if ($modalStore.show) {
     linkInsertModal = false;
@@ -120,6 +124,125 @@
 		}
 	});
 
+  const Tweet = Node.create({
+    name: "tweet",
+    group: "block",
+    atom: true,
+    selectable: true,
+
+    addAttributes() {
+      return {
+        src: { default: null },
+        theme: { default: "dark" },
+      };
+    },
+
+    parseHTML() {
+      return [
+        {
+          tag: "blockquote.twitter-tweet",
+          getAttrs: (el: HTMLElement) => {
+            const src =
+              el.getAttribute("src") ??
+              el.querySelector<HTMLAnchorElement>("a[href]")?.href;
+            const theme = $userSettings.theme === "Dark" ? "dark" : "light";
+            return { src, theme };
+          },
+        },
+      ];
+    },
+
+    renderHTML({ HTMLAttributes }) {
+      return [
+        "blockquote",
+        mergeAttributes(HTMLAttributes, { class: "twitter-tweet" }),
+        ["a", { href: HTMLAttributes.src }, ""],
+      ];
+    },
+
+    addNodeView() {
+      return ({ node }) => {
+        const { src, theme } = node.attrs;
+        const container = document.createElement("blockquote");
+        container.classList.add("twitter-tweet");
+        container.setAttribute("data-theme", theme);
+        container.style.minHeight = "200px";
+        container.style.position = "relative";
+
+        const loaderWrapper = document.createElement("div");
+        loaderWrapper.style.cssText = `
+          width: 100%; height: 400px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        `;
+        container.appendChild(loaderWrapper);
+
+        new LoaderImage({
+          target: loaderWrapper,
+          props: {
+            width: "70%",
+            height: "100%",
+            borderRadius: 12,
+          },
+        });
+
+        const tweetId = extractTweetId(src);
+        if (!tweetId) {
+          loaderWrapper.remove();
+          container.textContent = "Invalid Tweet URL";
+          return { dom: container };
+        }
+
+        const render = () => {
+          window.twttr.widgets
+            .createTweet(tweetId, container, {
+              conversation: "none",
+              align: "center",
+              theme,
+            })
+            .then(() => {
+              loaderWrapper.remove();
+            })
+            .catch(() => {
+              loaderWrapper.remove();
+              container.innerHTML = `<a href="${src}" target="_blank">${src}</a>`;
+            });
+        };
+
+        if (window.twttr?.widgets) {
+          render();
+        } else {
+          window.addEventListener("twttr:loaded", render, { once: true });
+        }
+
+        return { dom: container };
+      };
+    },
+
+    addProseMirrorPlugins() {
+      return [
+        new Plugin({
+          props: {
+            handlePaste(view, event) {
+              const text = event.clipboardData?.getData("text/plain") || "";
+              const match = text.match(
+                /^https:\/\/(?:twitter|x)\.com\/[^/]+\/status\/\d+/
+              );
+              if (match) {
+                const node = view.state.schema.nodes.tweet.create({
+                  src: match[0],
+                });
+                view.dispatch(view.state.tr.replaceSelectionWith(node));
+                return true;
+              }
+              return false;
+            },
+          },
+        }),
+      ];
+    },
+  });
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -197,17 +320,19 @@
       element: element,
       content: content || "",
       extensions: [
+        Tweet,
         StarterKit,
         Link.configure({
           openOnClick: false,
           linkOnPaste: true,
         }),
         Placeholder.configure({
-          placeholder: translations?.create_sports_content || "Create your sports content",
+          placeholder:
+            translations?.create_sports_content || "Create your sports content",
         }),
         ImageWithStyle.configure({
           base64: true,
-          inline: true
+          inline: true,
         }),
         BubbleMenu.configure({
           element: bmenu,
@@ -272,15 +397,14 @@
       onFocus: () => {
         titleInFocus = false;
       },
-      onUpdate: ({editor}) => {
+      onUpdate: ({ editor }) => {
         dispatch("update", { editor, title });
-      }
+      },
     });
     contentEditor = editor;
 
     // Update the viewport height on mount
     updateViewportHeight();
-
 
     // Listen for viewport changes (e.g., when the keyboard appears)
     window.visualViewport?.addEventListener("resize", updateViewportHeight);
@@ -311,6 +435,10 @@
     };
     modalStore.set(modal);
   }
+  function extractTweetId(url: string): string | null {
+    const m = url.match(/status\/(\d+)/);
+    return m ? m[1] : null;
+  }
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
@@ -325,6 +453,13 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
+<svelte:head>
+  <script
+    async
+    src="https://platform.twitter.com/widgets.js"
+    charset="utf-8"
+  ></script>
+</svelte:head>
 <div bind:this={bmenu} class="link-popup" style="z-index: 3!important;">
   <LinkPopup
     {editor}
@@ -361,7 +496,7 @@
         bind:this={textareaNode}
         class="title"
         bind:value={title}
-        placeholder="{translations?.title_required || "Title (required)"}"
+        placeholder={translations?.title_required || "Title (required)"}
         on:keydown={handleKeyDown}
         on:focus={() => (titleInFocus = true)}
       />
@@ -505,7 +640,7 @@
           outline: none !important;
         }
 
-        :global(blockquote) {
+        :global(blockquote:not(.twitter-tweet)) {
           border-left: 4px solid var(--component-colors-alpha-alpha-black-40);
           padding-left: var(--spacing-lg, 12px);
         }

@@ -54,13 +54,13 @@ export async function
 {
   const config = {
 			ADD_ATTR: ['style', 'target']
-		};
-  const sanitizedValue = DOMPurify.sanitize(editor.getHTML(), config);
+  };
+  const text_content = editor.getHTML();
+  const sanitizedValue = DOMPurify.sanitize(text_content, config);
   const sanitizedTitle = DOMPurify.sanitize(title);
   const image = await getFirstImageWithSize(editor);
 
   const { seo, tags, detectedLang } = create_article_store.get();
-  const text_content = editor.getHTML();
   const detectedLangFromText = detectLanguage(text_content);
   let locale = detectedLang;
   const isNewPt = detectedLangFromText.lang === "br";

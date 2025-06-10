@@ -38,7 +38,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { page } from '$app/stores';
-  import { onMount } from 'svelte';
+  import { onMount, tick } from 'svelte';
 
 
   import sessionStore from '$lib/store/session.js';
@@ -56,6 +56,8 @@
   import Badge from '$lib/components/ui/Badge.svelte';
   import ListSportsTackItem from '$lib/components/ui/composed/sportstack_list/ListSportsTackItem.svelte';
   import ScrollDataWrapper from "$lib/components/ui/wrappers/ScrollDataWrapper.svelte";
+  import LoaderImage  from "$lib/components/ui/loaders/LoaderImage.svelte";
+  import userSettings from "$lib/store/user-settings.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -119,15 +121,10 @@
     executeAnimation = false,
     /**
      * @description
-     *  📣 Target `HTMLELement` for **Article Tags**.
+     *  📣 Target `HTMLELement` for **Content*.
      */
-    htmlElementScrollBox: HTMLElement,
-    /**
-     * @description
-     *  📣 **Local** component state
-     */
-    componentLocalState = new Set < IWidgetState >(),
-    author  ;
+    contentContainer: HTMLElement,
+    author;
 
   $: ({ windowWidth, viewportType } = $sessionStore);
   $: [ VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1] ]
@@ -164,75 +161,62 @@
     }, 100);
   }
 
-
-  /**
-   * @author
-   *  @migbash
-   * @summary
-   *  🟦 HELPER
-   * @description
-   *  📣 Scrolls `tags` in a target `direction`.
-   * @param { -1 | 1 | 0 } direction
-   *  💠 **[required]** Target `direction` to _scroll_.
-   * @return { void }
-   */
-  function scrollTags
-  (
-    direction: -1 | 1 | 0
-  ): void
-  {
-    if (direction == -1)
-      htmlElementScrollBox.scrollBy({ behavior: 'smooth', left: 250, top: 0 });
-    else if (direction == 1)
-      htmlElementScrollBox.scrollBy({ behavior: 'smooth', left: -250, top: 0 });
-    ;
-
-    // [🐞]
-    // console.log('htmlElementScrollBox.scrollLeft', htmlElementScrollBox.scrollLeft);
-    // console.log('htmlElementScrollBox.offsetWidth', htmlElementScrollBox.offsetWidth);
-    // console.log('htmlElementScrollBox.scrollWidth', htmlElementScrollBox.scrollWidth);
-
-    if (htmlElementScrollBox.scrollLeft == 0)
-      componentLocalState.delete('PrevButtonShow');
-    else
-      componentLocalState.add('PrevButtonShow');
-    ;
-
-    if ((htmlElementScrollBox.scrollLeft + htmlElementScrollBox.offsetWidth + 5) > htmlElementScrollBox.scrollWidth)
-      componentLocalState.delete('NextButtonShow');
-    else
-      componentLocalState.add('NextButtonShow');
-    ;
-
-    componentLocalState = componentLocalState;
-
-    return;
+  $: if (widgetData.article.data?.content) {
+    tick().then(loadTweets);
   }
 
-  // #endregion ➤ 🛠️ METHODS
-
-  // #region ➤ 🔄 LIFECYCLE [SVELTE]
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'logic' that should run            │
-  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
-  // │ as soon as 'this' .svelte file is ran.                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  onMount
-  (
-    () =>
-    {
-
-      scrollTags(0);
-
+  async function loadTweets() {
+    if (!window.twttr?.widgets?.createTweet) {
+      setTimeout(loadTweets, 200);
       return;
     }
-  );
 
-  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
+    const blocks = Array.from(
+      contentContainer.querySelectorAll("blockquote.twitter-tweet")
+    ) as HTMLQuoteElement[];
 
+    for (const block of blocks) {
+      const a = block.querySelector<HTMLAnchorElement>("a[href]");
+      if (!a) continue;
+
+      const match = a.href.match(/status\/(\d+)/);
+      if (!match) continue;
+      const tweetId = match[1];
+
+      block.innerHTML = "";
+      const loaderWrapper = document.createElement("div");
+      loaderWrapper.style.cssText = `
+          width: 100%; height: 400px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+      `;
+      block.appendChild(loaderWrapper);
+
+      const loaderComponent = new LoaderImage({
+        target: loaderWrapper,
+        props: {
+          width: "70%",
+          height: "100%",
+          borderRadius: 12,
+        },
+      });
+
+      try {
+        await window.twttr.widgets.createTweet(tweetId, block, {
+          conversation: "none",
+          align: "center",
+          theme: $userSettings.theme === 'Dark' ? 'dark' : 'light',
+        });
+      } catch (err) {
+        console.error("Ошибка рендера твита", err);
+      } finally {
+        loaderComponent.$destroy();
+        loaderWrapper.remove();
+      }
+    }
+  }
+  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--
@@ -456,7 +440,7 @@
           display: initial;
         }
 
-        blockquote {
+        blockquote:not(.twitter-tweet) {
           margin: 0;
           border-left: 2px solid var(--colors-foreground-fg-brand-primary-500);
           font-style: italic;
