@@ -200,6 +200,7 @@
               conversation: "none",
               align: "center",
               theme,
+              width: viewportType === "mobile" ? 350 : 550
             })
             .then(() => {
               loaderWrapper.remove();
@@ -645,6 +646,13 @@
           padding-left: var(--spacing-lg, 12px);
         }
 
+        :global(.twitter-tweet) {
+          margin-top: 40px !important;
+          margin-bottom: 40px !important;
+          margin-inline: auto !important;
+          padding-left: 0;
+        }
+
         :global(a) {
           text-decoration: underline !important;
           display: initial;
@@ -793,6 +801,12 @@
           height: 54px;
         }
       }
+      :global(.twitter-tweet) {
+          margin-top: 48px !important;
+          margin-bottom: 48px !important;
+          margin-inline: auto !important;
+          padding-left: 0;
+        }
     }
     &.mobile {
       .editor-wrapper {
@@ -801,6 +815,7 @@
           font-size: 24px;
         }
       }
+
     }
   }
 </style>

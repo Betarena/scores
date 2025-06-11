@@ -21,7 +21,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<script lang='ts'>
+<script lang="ts">
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -37,26 +37,25 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { page } from '$app/stores';
-  import { onMount, tick } from 'svelte';
+  import { page } from "$app/stores";
+  import { onMount, tick } from "svelte";
 
+  import sessionStore from "$lib/store/session.js";
+  import { timeAgo } from "$lib/utils/dates.js";
+  import { viewportChangeV2 } from "$lib/utils/device";
+  import { readingTime } from "../../helpers.js";
+  import { getUserById } from "$lib/firebase/common.js";
+  import { getOptimizedImageUrl } from "$lib/utils/image.js";
 
-  import sessionStore from '$lib/store/session.js';
-  import { timeAgo } from '$lib/utils/dates.js';
-  import { viewportChangeV2 } from '$lib/utils/device';
-  import { readingTime } from '../../helpers.js';
-  import { getUserById } from '$lib/firebase/common.js';
-  import { getOptimizedImageUrl } from '$lib/utils/image.js';
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
 
-  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
-
-  import type { IPageAuhtorArticleDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
-  import type { IPageArticleTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.articles.js';
-  import AvatarLabel from '$lib/components/ui/AvatarLabel.svelte';
-  import Badge from '$lib/components/ui/Badge.svelte';
-  import ListSportsTackItem from '$lib/components/ui/composed/sportstack_list/ListSportsTackItem.svelte';
+  import type { IPageAuhtorArticleDataFinal } from "@betarena/scores-lib/types/v8/preload.authors.js";
+  import type { IPageArticleTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.articles.js";
+  import AvatarLabel from "$lib/components/ui/AvatarLabel.svelte";
+  import Badge from "$lib/components/ui/Badge.svelte";
+  import ListSportsTackItem from "$lib/components/ui/composed/sportstack_list/ListSportsTackItem.svelte";
   import ScrollDataWrapper from "$lib/components/ui/wrappers/ScrollDataWrapper.svelte";
-  import LoaderImage  from "$lib/components/ui/loaders/LoaderImage.svelte";
+  import LoaderImage from "$lib/components/ui/loaders/LoaderImage.svelte";
   import userSettings from "$lib/store/user-settings.js";
 
   // #endregion ➤ 📦 Package Imports
@@ -84,32 +83,24 @@
    * @description
    *  📣 Component interface.
    */
-  type IWidgetState =
-    | 'PrevButtonShow'
-    | 'NextButtonShow'
-  ;
+  type IWidgetState = "PrevButtonShow" | "NextButtonShow";
 
-  const
-    /**
+  const /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
      */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = 'author⮕w⮕author-content⮕main',
+    CNAME: string = "author⮕w⮕author-content⮕main",
     /**
      * @description
      *  📣 threshold start + state for 📱 MOBILE
      */ // eslint-disable-next-line no-unused-vars
-    VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ],
+    VIEWPORT_MOBILE_INIT: [number, boolean] = [575, true],
     /**
      * @description
      *  📣 threshold start + state for 💻 TABLET
      */ // eslint-disable-next-line no-unused-vars
-    VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
-  ;
-
-
-  let
-    /**
+    VIEWPORT_TABLET_INIT: [number, boolean] = [1160, true];
+  let /**
      * @description
      *  📣 Target data `map`.
      */
@@ -127,15 +118,16 @@
     author;
 
   $: ({ windowWidth, viewportType } = $sessionStore);
-  $: [ VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1] ]
-    = viewportChangeV2
-    (
-      windowWidth,
-      VIEWPORT_MOBILE_INIT[0],
-      VIEWPORT_TABLET_INIT[0],
-    );
-  $: widgetDataTranslation = $page.data.translationArticle as IPageArticleTranslationDataFinal | null | undefined;
-  $: ({author: sportstack} = widgetData);
+  $: [VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1]] = viewportChangeV2(
+    windowWidth,
+    VIEWPORT_MOBILE_INIT[0],
+    VIEWPORT_TABLET_INIT[0]
+  );
+  $: widgetDataTranslation = $page.data.translationArticle as
+    | IPageArticleTranslationDataFinal
+    | null
+    | undefined;
+  $: ({ author: sportstack } = widgetData);
   $: getAuthor(sportstack?.uid);
   // #endregion ➤ 📌 VARIABLES
 
@@ -150,7 +142,6 @@
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
 
   async function getAuthor(id: string) {
     executeAnimation = false;
@@ -206,7 +197,8 @@
         await window.twttr.widgets.createTweet(tweetId, block, {
           conversation: "none",
           align: "center",
-          theme: $userSettings.theme === 'Dark' ? 'dark' : 'light',
+          theme: $userSettings.theme === "Dark" ? "dark" : "light",
+          width: $sessionStore.viewportType === "mobile" ? 350 : 550,
         });
       } catch (err) {
         console.error("Ошибка рендера твита", err);
@@ -230,25 +222,29 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div id={CNAME} data-betarena-zone-id='4' class={viewportType}>
-  <div class='article-header'>
+<div id={CNAME} data-betarena-zone-id="4" class={viewportType}>
+  <div class="article-header">
     <!--
     ╭─────
     │ > article title
     ╰─────
     -->
-    <div class='article-title'>
-      <h1 class='title'>
-        {widgetData.article.data?.title ?? ''}
+    <div class="article-title">
+      <h1 class="title">
+        {widgetData.article.data?.title ?? ""}
       </h1>
 
-      <a href='/a/user/{author?.usernamePermalink}' class="user-box" class:animate={executeAnimation}>
+      <a
+        href="/a/user/{author?.usernamePermalink}"
+        class="user-box"
+        class:animate={executeAnimation}
+      >
         <AvatarLabel
-          size='lg'
-          avatar={author?.profile_photo ?? ''}
-          name={author?.name ?? author?.username ?? ''}
+          size="lg"
+          avatar={author?.profile_photo ?? ""}
+          name={author?.name ?? author?.username ?? ""}
         >
-          <div slot='label'>
+          <div slot="label">
             {timeAgo(
               widgetData?.article?.published_date,
               $page.data.translations.time_ago
@@ -256,9 +252,9 @@
             •
             {readingTime(widgetData.article.data?.content)}
             <TranslationText
-              key={'uknown'}
+              key={"uknown"}
               text={widgetDataTranslation?.translation?.reading_time}
-              fallback={'mins'}
+              fallback={"mins"}
             />
           </div>
         </AvatarLabel>
@@ -276,12 +272,12 @@
     </div>
   </div>
 
-  <div class='sportstack-box'>
+  <div class="sportstack-box">
     <ListSportsTackItem
       translations={$page.data.translations}
       includePermalink={true}
       user={widgetData.author}
-      size='lg'
+      size="lg"
       action_button={true}
     />
   </div>
@@ -291,7 +287,7 @@
   │ > article text
   ╰─────
   -->
-  <div id='content' data-betarena-zone-id='2,3' bind:this={contentContainer}>
+  <div id="content" data-betarena-zone-id="2,3" bind:this={contentContainer}>
     {@html widgetData.article.data?.content.replaceAll(
       /<img[^>]+src='([^'>]+)'/g,
       (match, src) => {
@@ -318,7 +314,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<style lang='scss'>
+<style lang="scss">
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
   │ 📲 MOBILE-FIRST                                                              │
@@ -361,19 +357,16 @@
         }
       }
       .user-box {
-
         :global(.avatar-wrapper) {
-            transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
-            filter: blur(40px);
-            transform: scaleX(1.1) scaleY(1.1);
-
+          transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+          filter: blur(40px);
+          transform: scaleX(1.1) scaleY(1.1);
         }
 
         &.animate {
           :global(.avatar-wrapper) {
-              filter: none;
-              transform: none;
-
+            filter: none;
+            transform: none;
           }
         }
       }
@@ -416,14 +409,18 @@
           object-fit: cover;
           max-width: 100%;
           width: 100%;
-          margin-bottom: 48px !important;
           border-radius: var(--radius-xl, 12px);
-          margin-top: 48px !important;
         }
         a img {
           margin: 0 !important;
         }
 
+        .twitter-tweet {
+          margin-top: 48px !important;
+          margin-bottom: 48px !important;
+          margin-inline: auto !important;
+          padding-left: 0;
+        }
         @mixin header {
           /* 🎨 style */
           margin: 32px 0 16px 0;
@@ -465,7 +462,7 @@
 
           &:before {
             font-family: Arial;
-            content: '\201C';
+            content: "\201C";
             color: var(--colors-text-text-primary-900, #fff);
             font-size: 1em;
             position: absolute;
@@ -473,7 +470,7 @@
             top: 0px;
           }
           &:after {
-            content: '';
+            content: "";
           }
         }
 
@@ -571,12 +568,18 @@
             margin-bottom: 40px !important;
             margin-top: 40px !important;
           }
+          .twitter-tweet {
+            margin-bottom: 40px !important;
+            margin-top: 40px !important;
+            margin-inline: auto !important;
+            padding-left: 0;
+          }
 
           a img {
             margin: 0 !important;
           }
 
-          blockquote {
+          blockquote:not(.twitter-tweet) {
             padding-left: var(--spacing-xl, 16px);
 
             /* Text md/Regular */
