@@ -177,7 +177,7 @@
       block.innerHTML = "";
       const loaderWrapper = document.createElement("div");
       loaderWrapper.style.cssText = `
-          width: 100%; height: 400px;
+          width: 100%;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -187,8 +187,8 @@
       const loaderComponent = new LoaderImage({
         target: loaderWrapper,
         props: {
-          width: "70%",
-          height: "100%",
+          width: $sessionStore.viewportType === "mobile" ? 350 : 550,
+          height: "400px",
           borderRadius: 12,
         },
       });
@@ -200,14 +200,16 @@
           theme: $userSettings.theme === "Dark" ? "dark" : "light",
           width: $sessionStore.viewportType === "mobile" ? 350 : 550,
         });
-      } catch (err) {
-        console.error("Ошибка рендера твита", err);
-      } finally {
-        loaderComponent.$destroy();
         loaderWrapper.remove();
+        loaderComponent.$destroy();
+      } catch (err) {
+      } finally {
+        loaderWrapper.remove();
+        loaderComponent.$destroy();
       }
     }
   }
+
   // #endregion ➤ 🛠️ METHODS
 </script>
 
@@ -287,21 +289,23 @@
   │ > article text
   ╰─────
   -->
-  <div id="content" data-betarena-zone-id="2,3" bind:this={contentContainer}>
-    {@html widgetData.article.data?.content.replaceAll(
-      /<img[^>]+src='([^'>]+)'/g,
-      (match, src) => {
-        return match.replace(
-          src,
-          getOptimizedImageUrl({
-            strImageUrl: src,
-            intQuality: 90,
-            intWidth: 1500,
-          })
-        );
-      }
-    )}
-  </div>
+  {#key $userSettings.theme}
+    <div id="content" data-betarena-zone-id="2,3" bind:this={contentContainer}>
+      {@html widgetData.article.data?.content.replaceAll(
+        /<img[^>]+src='([^'>]+)'/g,
+        (match, src) => {
+          return match.replace(
+            src,
+            getOptimizedImageUrl({
+              strImageUrl: src,
+              intQuality: 90,
+              intWidth: 1500,
+            })
+          );
+        }
+      )}
+    </div>
+  {/key}
 </div>
 
 <!--
@@ -415,11 +419,15 @@
           margin: 0 !important;
         }
 
-        .twitter-tweet {
+        blockquote.twitter-tweet {
           margin-top: 48px !important;
           margin-bottom: 48px !important;
           margin-inline: auto !important;
           padding-left: 0;
+
+          .twitter-tweet-rendered {
+            margin: 0  auto !important;
+          }
         }
         @mixin header {
           /* 🎨 style */
@@ -568,11 +576,14 @@
             margin-bottom: 40px !important;
             margin-top: 40px !important;
           }
-          .twitter-tweet {
-            margin-bottom: 40px !important;
+          blockquote.twitter-tweet {
+            margin-bottom: 10px !important;
             margin-top: 40px !important;
             margin-inline: auto !important;
             padding-left: 0;
+            .twitter-tweet-rendered {
+              margin: 0  auto !important;
+            }
           }
 
           a img {
