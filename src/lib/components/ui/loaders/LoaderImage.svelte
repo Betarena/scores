@@ -27,7 +27,7 @@
   preserveAspectRatio="none"
 >
   <rect
-    {width}
+    width="100%"
     {height}
     {style}
     rx={borderRadiusString}
