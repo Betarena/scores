@@ -43,6 +43,7 @@
   import H3 from "./icons/H3.svelte";
   import H4 from "./icons/H4.svelte";
   import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
+  import { TextSelection } from "prosemirror-state";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -233,13 +234,45 @@
     const id = new Date().valueOf();
     const reader = new FileReader();
     editor
-    .chain()
-    .focus()
-    .insertContent({
-      type: 'imageWithPlaceholder',
-      attrs: { id, loading: true, src: '' },
+  .chain()
+  .focus()
+  .insertContent({
+    type: 'imageWithPlaceholder',
+    attrs: { id, loading: true, src: '' },
+  })
+  .command(({ tr, schema }) => {
+    let pos: number | null = null
+    let nodeSize = 0
+
+    tr.doc.descendants((node, offset) => {
+      if (node.type.name === 'imageWithPlaceholder' && node.attrs.id === id) {
+        pos = offset
+        nodeSize = node.nodeSize
+        return false
+      }
+      return true
     })
-    .run()
+
+    if (pos === null) {
+      return false
+    }
+
+    const docSize = tr.doc.content.size
+    const afterPos = pos + nodeSize
+
+    if (afterPos < docSize) {
+      const resolved = tr.doc.resolve(afterPos)
+      tr.setSelection(TextSelection.near(resolved))
+    } else {
+      const paragraph = schema.nodes.paragraph.createAndFill()!
+      tr.insert(afterPos, paragraph)
+      const resolved = tr.doc.resolve(afterPos + 1)
+      tr.setSelection(TextSelection.near(resolved))
+    }
+
+    return true
+  })
+  .run()
     reader.onload = async (e) => {
       const fileContent = (e.target?.result || "") as string;
       const url = await uploadImage(
