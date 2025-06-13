@@ -230,15 +230,35 @@
   async function handleFileChange(event) {
     const file = event.target.files[0];
     if (!file) return;
-
+    const id = new Date().valueOf();
     const reader = new FileReader();
+    editor
+    .chain()
+    .focus()
+    .insertContent({
+      type: 'imageWithPlaceholder',
+      attrs: { id, loading: true, src: '' },
+    })
+    .run()
     reader.onload = async (e) => {
       const fileContent = (e.target?.result || "") as string;
       const url = await uploadImage(
         fileContent,
         `${uploadUrl}/${new Date().valueOf()}.png`
       );
-      editor.chain().focus().setImage({ src: url }).run();
+      editor.chain().focus().command(({ tr }) => {
+      tr.doc.descendants((node, pos) => {
+        if (node.type.name === 'imageWithPlaceholder' &&
+            node.attrs.id === id) {
+          tr.setNodeMarkup(pos, undefined, {
+            id,
+            loading: false,
+            src: url,
+          })
+        }
+      })
+      return tr
+    }).run()
     };
     reader.readAsDataURL(file);
   }
