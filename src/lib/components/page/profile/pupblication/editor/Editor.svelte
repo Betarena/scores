@@ -45,7 +45,6 @@
   import LoaderImage from "$lib/components/ui/loaders/LoaderImage.svelte";
   import userSettings from "$lib/store/user-settings.js";
 
-
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -94,110 +93,116 @@
 
   const dispatch = createEventDispatcher();
 
- const ImageWithPlaceholder = Image.extend({
-  name: 'imageWithPlaceholder',
+  const ImageWithPlaceholder = Image.extend({
+    name: "imageWithPlaceholder",
 
-  addAttributes() {
-    return {
-      ...this.parent?.(),
-      id: { default: null },
-      loading: { default: false },
-      style: {
-        default: null,
-        parseHTML: (element) => (element as HTMLElement).getAttribute('style'),
-        renderHTML: attrs => {return {style: attrs.style}}
-      }
-    }
-  },
+    addAttributes() {
+      return {
+        ...this.parent?.(),
+        id: { default: null },
+        loading: { default: false },
+        style: {
+          default: null,
+          parseHTML: (element) =>
+            (element as HTMLElement).getAttribute("style"),
+          renderHTML: (attrs) => {
+            return { style: attrs.style };
+          },
+        },
+      };
+    },
 
-  parseHTML() {
-    return [
-      {
-        tag: 'span[data-placeholder-image]',
-        getAttrs: el => ({
-          id: el.getAttribute('data-id'),
-          loading: el.getAttribute('data-loading') === 'true',
-          style: el.getAttribute('style'),
-        }),
-      },
-      {
-        tag: 'img[src]',
-        getAttrs: dom => ({
-          src: dom.getAttribute('src'),
-          alt: dom.getAttribute('alt'),
-          title: dom.getAttribute('title'),
-          style: dom.getAttribute('style'),
-          loading: false,
-          id: null,
-        }),
-      },
-    ]
-  },
-
-  renderHTML({ HTMLAttributes }) {
-    if (HTMLAttributes.loading) {
+    parseHTML() {
       return [
-        'span',
+        {
+          tag: "span[data-placeholder-image]",
+          getAttrs: (el) => ({
+            id: el.getAttribute("data-id"),
+            loading: el.getAttribute("data-loading") === "true",
+            style: el.getAttribute("style"),
+          }),
+        },
+        {
+          tag: "img[src]",
+          getAttrs: (dom) => ({
+            src: dom.getAttribute("src"),
+            alt: dom.getAttribute("alt"),
+            title: dom.getAttribute("title"),
+            style: dom.getAttribute("style"),
+            loading: false,
+            id: null,
+          }),
+        },
+      ];
+    },
+
+    renderHTML({ HTMLAttributes }) {
+      if (HTMLAttributes.loading) {
+        return [
+          "span",
+          mergeAttributes(HTMLAttributes, {
+            "data-placeholder-image": "",
+            "data-id": HTMLAttributes.id,
+            "data-loading": "true",
+          }),
+        ];
+      }
+      return [
+        "img",
         mergeAttributes(HTMLAttributes, {
-          'data-placeholder-image': '',
-          'data-id': HTMLAttributes.id,
-          'data-loading': 'true',
+          src: HTMLAttributes.src,
+          alt: HTMLAttributes.alt,
+          title: HTMLAttributes.title,
+          style: HTMLAttributes.style,
         }),
-      ]
-    }
-    return [
-      'img',
-      mergeAttributes(HTMLAttributes, {
-        src: HTMLAttributes.src,
-        alt: HTMLAttributes.alt,
-        title: HTMLAttributes.title,
-        style: HTMLAttributes.style,
-      }),
-    ]
-  },
+      ];
+    },
 
-  addNodeView() {
-    return ({ node }) => {
-      const { loading, src, alt, title, style } = node.attrs
-      const dom = loading
-        ? document.createElement('div')
-        : document.createElement('img')
+    addNodeView() {
+      return ({ node }) => {
+        const { loading, src, alt, title, style } = node.attrs;
+        const dom = loading
+          ? document.createElement("div")
+          : document.createElement("img");
 
-      if (loading) {
-        dom.setAttribute('data-placeholder-image', '')
-        if (node.attrs.id) dom.setAttribute('data-id', node.attrs.id)
-        dom.setAttribute('data-loading', 'true')
-        if (style) dom.setAttribute('style', style)
-         const loaderWrapper = document.createElement("div");
-        loaderWrapper.style.cssText = `
+        if (loading) {
+          dom.setAttribute("data-placeholder-image", "");
+          if (node.attrs.id) dom.setAttribute("data-id", node.attrs.id);
+          dom.setAttribute("data-loading", "true");
+          if (style) dom.setAttribute("style", style);
+          const loaderWrapper = document.createElement("div");
+          loaderWrapper.style.cssText = `
           width: 100%; height: 400px;
           display: flex;
           align-items: center;
           justify-content: center;
         `;
-        dom.appendChild(loaderWrapper);
+          dom.appendChild(loaderWrapper);
 
-        new LoaderImage({
-          target: loaderWrapper,
-          props: {
-            width: "100%",
-            height: "100%",
-            borderRadius: 12,
-          },
-        });
+          new LoaderImage({
+            target: loaderWrapper,
+            props: {
+              width: "100%",
+              height: "100%",
+              borderRadius: 12,
+            },
+          });
 
-        new LoaderImage({ target: dom, props: { width: '100%', height: 'auto', borderRadius: 8 } })
-      } else {
-        dom.setAttribute('src', src)
-        if (alt) dom.setAttribute('alt', alt)
-        if (title) dom.setAttribute('title', title)
-        if (style) dom.setAttribute('style', style)
-      }
+          new LoaderImage({
+            target: dom,
+            props: { width: "100%", height: "auto", borderRadius: 8 },
+          });
+        } else {
+          dom.setAttribute("src", src);
+          if (alt) dom.setAttribute("alt", alt);
+          if (title) dom.setAttribute("title", title);
+          if (style) dom.setAttribute("style", style);
+        }
 
-      return { dom }
-    }
-  },
-})
+        return { dom };
+      };
+    },
+  });
 
   const Tweet = Node.create({
     name: "tweet",
@@ -275,7 +280,7 @@
               conversation: "none",
               align: "center",
               theme,
-              width: viewportType === "mobile" ? 350 : 550
+              width: viewportType === "mobile" ? 350 : 550,
             })
             .then(() => {
               loaderWrapper.remove();
@@ -345,7 +350,16 @@
       keyBoardHeight = `80px`;
     }
     if (editor) {
-      editor.commands.scrollIntoView();
+      const { state, view } = editor;
+      const { from } = state.selection;
+      const { node: domNode } = view.domAtPos(from);
+      if (domNode instanceof HTMLElement) {
+        domNode.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+          inline: "nearest",
+        });
+      }
     }
   }
 
@@ -879,10 +893,10 @@
         }
       }
       :global(.twitter-tweet) {
-          margin-top: 48px !important;
-          margin-bottom: 48px !important;
-          margin-inline: auto !important;
-          padding-left: 0;
+        margin-top: 48px !important;
+        margin-bottom: 48px !important;
+        margin-inline: auto !important;
+        padding-left: 0;
       }
       :global([data-placeholder-image]) {
         width: 100%;
@@ -896,7 +910,6 @@
           font-size: 24px;
         }
       }
-
     }
   }
 </style>
