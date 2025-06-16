@@ -370,18 +370,6 @@
   async function handleResize() {
     updateViewportHeight();
     editor.commands.scrollIntoView();
-     setTimeout(() => {
-        const { state, view } = editor;
-        const { from } = state.selection;
-        const { node: domNode } = view.domAtPos(from);
-        if (domNode instanceof HTMLElement) {
-          domNode.scrollIntoView({
-            behavior: "smooth",
-            block: "start",
-            inline: "nearest",
-          });
-        }
-      }, 300)
   }
 
   function handleKeyDown(event) {
@@ -637,7 +625,7 @@
 
 </div>
  {#if editor && viewportType !== "desktop"}
-    <div class="toolbar-wrapper" style="bottom: {keyBoardHeight};" on:mousedown|preventDefault  on:touchstart|preventDefault >
+    <div class="toolbar-wrapper" style="bottom: {keyBoardHeight};" >
       <Toolbar
         {editor}
         {uploadUrl}

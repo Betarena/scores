@@ -381,6 +381,8 @@
           class="button"
           class:disabled={titleInFocus}
           class:active={editor.isActive(id)}
+          on:mousedown|preventDefault
+          on:touchstart|preventDefault
           on:click={cb}
         >
           {#if id === "img"}
