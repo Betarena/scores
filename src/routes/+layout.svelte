@@ -45,7 +45,7 @@
   import { afterNavigate, beforeNavigate } from '$app/navigation';
   import { page } from '$app/stores';
   import * as Sentry from '@sentry/sveltekit';
-  import { onMount } from 'svelte';
+  import { onDestroy, onMount } from 'svelte';
 
   import
     {
@@ -332,12 +332,17 @@
   // │ as soon as 'this' .svelte file is ran.                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  onDestroy(() => {
+       window.visualViewport?.removeEventListener('resize', updateVh);
+  })
+
   onMount
   (
     async (
     ): Promise < void > =>
     {
-      updateVh()
+      updateVh();
+      window.visualViewport?.addEventListener('resize', updateVh);
       // initSentry();
 
       // ╭─────
