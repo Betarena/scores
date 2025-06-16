@@ -319,6 +319,8 @@
         hide_default_launcher: currentPageRouteId != 'ProfilePage',
       }
     );
+    updateVh();
+    window.visualViewport?.addEventListener('resize', updateVh);
   ;
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
@@ -333,7 +335,8 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   onDestroy(() => {
-       window.visualViewport?.removeEventListener('resize', updateVh);
+    if (!browser) return
+    window?.visualViewport?.removeEventListener('resize', updateVh);
   })
 
   onMount
@@ -341,8 +344,6 @@
     async (
     ): Promise < void > =>
     {
-      updateVh();
-      window.visualViewport?.addEventListener('resize', updateVh);
       // initSentry();
 
       // ╭─────
@@ -541,7 +542,8 @@
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
   function updateVh() {
-    const vh = (window.visualViewport?.height || window.innerHeight) * 0.01;
+    if (!browser) return;
+    const vh = (window?.visualViewport?.height || window?.innerHeight) * 0.01;
     document.body.style.setProperty('--vh', `${vh}px`);
   }
 
@@ -620,7 +622,6 @@
   {
     () =>
     {
-      updateVh();
       sessionStore.updateData
       (
         [
