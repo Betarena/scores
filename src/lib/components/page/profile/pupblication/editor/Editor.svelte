@@ -3,6 +3,7 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+	import { ScrollIntoView } from '@tiptap/extension-scroll-into-view';
 
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
@@ -350,17 +351,19 @@
       keyBoardHeight = `80px`;
     }
     if (editor) {
-      await tick();
-      const { state, view } = editor;
-      const { from } = state.selection;
-      const { node: domNode } = view.domAtPos(from);
-      if (domNode instanceof HTMLElement) {
-        domNode.scrollIntoView({
-          behavior: "auto",
-          block: "start",
-          inline: "nearest",
-        });
-      }
+      editor.commands.ScrollIntoView();
+      setTimeout(() => {
+        const { state, view } = editor;
+        const { from } = state.selection;
+        const { node: domNode } = view.domAtPos(from);
+        if (domNode instanceof HTMLElement) {
+          domNode.scrollIntoView({
+            behavior: "auto",
+            block: "start",
+            inline: "nearest",
+          });
+        }
+      }, 300)
     }
   }
 
