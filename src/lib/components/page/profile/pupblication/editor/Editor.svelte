@@ -513,6 +513,18 @@
       onUpdate: ({ editor }) => {
         dispatch("update", { editor, title });
       },
+      onSelectionUpdate: ({editor}) => {
+        const { state, view } = editor;
+        const { from } = state.selection;
+        const { node: domNode } = view.domAtPos(from);
+        if (domNode instanceof HTMLElement) {
+          domNode.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+            inline: "nearest",
+          });
+        }
+      }
     });
     contentEditor = editor;
 
