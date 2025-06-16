@@ -310,7 +310,7 @@
     );
   }
 
-  $: if (browser)
+  $: if (browser){
     // eslint-disable-next-line new-cap
     window.Intercom
     (
@@ -320,8 +320,8 @@
       }
     );
     updateVh();
-    window.visualViewport?.addEventListener('resize', updateVh);
-  ;
+    window?.visualViewport?.addEventListener('resize', updateVh);
+  }
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
