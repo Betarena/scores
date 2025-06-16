@@ -514,16 +514,17 @@
         dispatch("update", { editor, title });
       },
       onSelectionUpdate: ({editor}) => {
-        const { state, view } = editor;
-        const { from } = state.selection;
-        const { node: domNode } = view.domAtPos(from);
-        if (domNode instanceof HTMLElement) {
-          domNode.scrollIntoView({
-            behavior: "smooth",
-            block: "start",
-            inline: "nearest",
-          });
-        }
+        editor.commands.scrollIntoView();
+        // const { state, view } = editor;
+        // const { from } = state.selection;
+        // const { node: domNode } = view.domAtPos(from);
+        // if (domNode instanceof HTMLElement) {
+        //   domNode.scrollIntoView({
+        //     behavior: "smooth",
+        //     block: "start",
+        //     inline: "nearest",
+        //   });
+        // }
       }
     });
     contentEditor = editor;
@@ -636,7 +637,7 @@
 
 </div>
  {#if editor && viewportType !== "desktop"}
-    <div class="toolbar-wrapper" style="bottom: {keyBoardHeight};">
+    <div class="toolbar-wrapper" style="bottom: {keyBoardHeight};" on:mousedown|preventDefault  on:touchstart|preventDefault >
       <Toolbar
         {editor}
         {uploadUrl}
@@ -645,10 +646,9 @@
       />
     </div>
   {/if}
-  {#if viewportType !== "desktop"}
+  {#if viewportType !== "desktop" && !isKeyboardOpen}
     <div
       class="button-container"
-      style={isKeyboardOpen ? "visibility: hidden;" : ""}
     >
       <Container>
         <Button
