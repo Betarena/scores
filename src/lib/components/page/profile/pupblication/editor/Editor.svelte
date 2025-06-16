@@ -24,7 +24,7 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { createEventDispatcher, onMount } from "svelte";
+  import { createEventDispatcher, onMount, tick } from "svelte";
   import { Editor, mergeAttributes, Node } from "@tiptap/core";
   import StarterKit from "@tiptap/starter-kit";
   import Placeholder from "@tiptap/extension-placeholder";
@@ -339,7 +339,7 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function updateViewportHeight() {
+  async function updateViewportHeight() {
     // toogleLinkPopup(false)
     vh = `${(window.visualViewport?.height || 0) * 0.01}px`;
     isKeyboardOpen = (window.visualViewport?.height || 0) < window.innerHeight;
@@ -350,6 +350,7 @@
       keyBoardHeight = `80px`;
     }
     if (editor) {
+      await tick();
       const { state, view } = editor;
       const { from } = state.selection;
       const { node: domNode } = view.domAtPos(from);
