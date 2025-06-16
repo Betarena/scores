@@ -337,6 +337,7 @@
     async (
     ): Promise < void > =>
     {
+      updateVh()
       // initSentry();
 
       // ╭─────
@@ -534,6 +535,11 @@
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
+  function updateVh() {
+    const vh = (window.visualViewport?.height || window.innerHeight) * 0.01;
+    document.body.style.setProperty('--vh', `${vh}px`);
+  }
+
 </script>
 
 <!--
@@ -609,6 +615,7 @@
   {
     () =>
     {
+      updateVh();
       sessionStore.updateData
       (
         [
@@ -767,7 +774,7 @@
   .app-wrapper {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    min-height: calc(var(--vh)*100);
     &.page-content {
       background-color: var(--bg-color);
     }

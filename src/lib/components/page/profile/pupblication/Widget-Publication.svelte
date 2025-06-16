@@ -409,7 +409,7 @@
       gap: var(--spacing-3xl, 24px);
       flex-grow: 1;
       align-self: stretch;
-      min-height: calc(100vh - 56px - 22px - 5px);
+      min-height: calc(var(--vh, 1vh) * 100 - 56px - 22px - 5px);
       padding-bottom: 22px;
 
       .header-wrapper {
@@ -467,7 +467,7 @@
       gap: var(--spacing-2xl, 20px);
       padding-top: var(--spacing-5xl, 40px);
       padding-bottom: 72px;
-      min-height: calc(100vh - 128px);
+      min-height: calc(var(--vh, 1vh) * 100 - 128px);
 
       .menu {
         flex-shrink: 0;
@@ -545,7 +545,7 @@
       gap: var(--spacing-2xl, 20px);
       padding-top: var(--spacing-5xl, 40px);
       padding-bottom: 72px;
-      min-height: calc(100vh - 128px);
+      min-height: calc(var(--vh, 1vh) * 100 - 128px);
 
       #publication-home {
         min-height: unset;

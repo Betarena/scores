@@ -633,7 +633,9 @@
     </div>
   </Container>
 
-  {#if editor && viewportType !== "desktop"}
+
+</div>
+ {#if editor && viewportType !== "desktop"}
     <div class="toolbar-wrapper" style="bottom: {keyBoardHeight};">
       <Toolbar
         {editor}
@@ -663,8 +665,6 @@
       </Container>
     </div>
   {/if}
-</div>
-
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ 🌊 Svelte Component CSS/SCSS                                                     │
@@ -684,6 +684,8 @@
     flex-direction: column;
     justify-content: flex-end;
     overscroll-behavior: contain;
+    overflow: auto;
+    flex-grow: 1;
 
     :global(.tippy-tooltip[data-out-of-boundaries]) {
       display: none;
@@ -700,9 +702,7 @@
       width: 100%;
       gap: var(--spacing-lg, 12px);
       justify-content: flex-end;
-      padding-bottom: calc(
-        80px + 12px + 69px
-      ); // button height + padding + toolbar height
+      padding-bottom: 16px; // button height + padding + toolbar height
 
       .title {
         border: none;
@@ -813,70 +813,7 @@
       }
     }
 
-    .toolbar-wrapper {
-      width: 100%;
-      display: flex;
-      position: fixed;
-      z-index: 100;
-      padding: var(--spacing-lg, 12px) var(--spacing-none, 0px);
-      flex-direction: column;
-      background-color: var(--colors-background-bg-main);
-      align-items: flex-start;
-      gap: 10px;
-      align-self: stretch;
-      border-top: 1px solid var(--colors-border-border-secondary, #3b3b3b);
-      .toolbar {
-        width: 100%;
-        display: flex;
-        padding-inline: var(--spacing-md, 8px);
-        gap: var(--spacing-xxs, 2px);
-        justify-content: center;
-        .button {
-          height: max-content;
-          border-radius: var(--radius-md, 8px);
-          height: 44px;
-          width: 44px;
-          &.active {
-            background-color: var(
-              --component-colors-components-buttons-primary-button-primary-bg
-            );
-            :global(path) {
-              fill: var(--colors-base-white) !important;
-            }
-          }
-          &.disabled {
-            // background-color: ;
-            background: var(--colors-background-bg-disabled, #f7f7f7);
-            :global(path) {
-              fill: var(--colors-foreground-fg-disabled, #8c8c8c) !important;
-            }
-          }
-        }
-        .link-button {
-          position: relative;
 
-          .link-popup {
-            position: absolute;
-            top: -10px;
-            left: 0;
-            width: fit-content;
-            height: fit-content;
-            z-index: 100;
-            transform: translate(-50%, -100%);
-
-            display: flex;
-            flex-direction: column;
-            gap: var(--spacing-lg, 6px);
-
-            border-radius: var(--radius-md);
-            box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.24);
-            z-index: 1;
-            padding: var(--spacing-lg) var(--spacing-sm, 6px);
-            background: var(--colors-background-bg-active);
-          }
-        }
-      }
-    }
     .button-container {
       display: flex;
       width: 100%;
@@ -945,4 +882,68 @@
       }
     }
   }
+  .toolbar-wrapper {
+      width: 100%;
+      display: flex;
+      // position: fixed;
+      z-index: 100;
+      padding: var(--spacing-lg, 12px) var(--spacing-none, 0px);
+      flex-direction: column;
+      background-color: var(--colors-background-bg-main);
+      align-items: flex-start;
+      gap: 10px;
+      align-self: stretch;
+      border-top: 1px solid var(--colors-border-border-secondary, #3b3b3b);
+      .toolbar {
+        width: 100%;
+        display: flex;
+        padding-inline: var(--spacing-md, 8px);
+        gap: var(--spacing-xxs, 2px);
+        justify-content: center;
+        .button {
+          height: max-content;
+          border-radius: var(--radius-md, 8px);
+          height: 44px;
+          width: 44px;
+          &.active {
+            background-color: var(
+              --component-colors-components-buttons-primary-button-primary-bg
+            );
+            :global(path) {
+              fill: var(--colors-base-white) !important;
+            }
+          }
+          &.disabled {
+            // background-color: ;
+            background: var(--colors-background-bg-disabled, #f7f7f7);
+            :global(path) {
+              fill: var(--colors-foreground-fg-disabled, #8c8c8c) !important;
+            }
+          }
+        }
+        .link-button {
+          position: relative;
+
+          .link-popup {
+            position: absolute;
+            top: -10px;
+            left: 0;
+            width: fit-content;
+            height: fit-content;
+            z-index: 100;
+            transform: translate(-50%, -100%);
+
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-lg, 6px);
+
+            border-radius: var(--radius-md);
+            box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.24);
+            z-index: 1;
+            padding: var(--spacing-lg) var(--spacing-sm, 6px);
+            background: var(--colors-background-bg-active);
+          }
+        }
+      }
+    }
 </style>

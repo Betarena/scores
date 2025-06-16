@@ -79,7 +79,9 @@
 
   $: title = initTitle || "";
   $: if (featured_image && !content.includes(featured_image)) {
-    content = `<img src="${getOptimizedImageUrl({ strImageUrl: featured_image })}" alt="${title}" />${content}`;
+    content = `<img src="${getOptimizedImageUrl({
+      strImageUrl: featured_image,
+    })}" alt="${title}" />${content}`;
   }
   $: uploadUrl = selectedSportstack
     ? `Betarena_Media/authors/authors_list/${selectedSportstack.id}/media`
@@ -244,7 +246,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 <div class="edit-article-wrapper">
-  <Container hFull={false} clazz="sticky">
+  <Container hFull={false} clazz={viewportType === "desktop" ? "sticky" : ""}>
     <div class="header {viewportType}">
       <div on:click={back}>
         {#if viewportType === "mobile"}
@@ -325,9 +327,10 @@
     display: flex;
     flex-direction: column;
     padding-bottom: 20px;
-    height: 100vh;
+    height: calc(var(--vh, 1vh) * 100);
+    max-height: calc(var(--vh, 1vh) * 100);
     background-color: var(--colors-background-bg-main);
-    overflow: auto;
+    overflow: hidden;
     &::-webkit-scrollbar {
       width: 8px;
     }
