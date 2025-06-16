@@ -350,21 +350,38 @@
     } else {
       keyBoardHeight = `80px`;
     }
-    if (editor) {
-      editor.commands.ScrollIntoView();
-      setTimeout(() => {
+    // if (editor) {
+    //   editor.commands.ScrollIntoView();
+    //   setTimeout(() => {
+    //     const { state, view } = editor;
+    //     const { from } = state.selection;
+    //     const { node: domNode } = view.domAtPos(from);
+    //     if (domNode instanceof HTMLElement) {
+    //       domNode.scrollIntoView({
+    //         behavior: "auto",
+    //         block: "start",
+    //         inline: "nearest",
+    //       });
+    //     }
+    //   }, 300)
+    // }
+  }
+
+  async function handleResize() {
+    updateViewportHeight();
+    editor.commands.scrollIntoView();
+     setTimeout(() => {
         const { state, view } = editor;
         const { from } = state.selection;
         const { node: domNode } = view.domAtPos(from);
         if (domNode instanceof HTMLElement) {
           domNode.scrollIntoView({
-            behavior: "auto",
+            behavior: "smooth",
             block: "start",
             inline: "nearest",
           });
         }
       }, 300)
-    }
   }
 
   function handleKeyDown(event) {
@@ -503,7 +520,7 @@
     updateViewportHeight();
 
     // Listen for viewport changes (e.g., when the keyboard appears)
-    window.visualViewport?.addEventListener("resize", updateViewportHeight);
+    window.visualViewport?.addEventListener("resize", handleResize);
     window.visualViewport?.addEventListener("scroll", updateViewportHeight);
     window.addEventListener("scroll", updateToolbarPosition);
     return () => {
@@ -511,7 +528,7 @@
       // Clean up the event listener
       window.visualViewport?.removeEventListener(
         "resize",
-        updateViewportHeight
+        handleResize
       );
       window.removeEventListener("scroll", updateToolbarPosition);
       window.visualViewport?.removeEventListener(
