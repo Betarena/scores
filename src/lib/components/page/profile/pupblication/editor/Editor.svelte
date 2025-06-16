@@ -45,6 +45,7 @@
   import LoaderImage from "$lib/components/ui/loaders/LoaderImage.svelte";
   import userSettings from "$lib/store/user-settings.js";
 
+
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -343,6 +344,9 @@
     } else {
       keyBoardHeight = `80px`;
     }
+    if (editor) {
+      editor.commands.scrollIntoView();
+    }
   }
 
   function handleKeyDown(event) {
@@ -372,7 +376,6 @@
     }
   }
   function toogleLinkPopup(show?: boolean) {
-    // debugger
     if (show !== undefined && show === linkInsertModal) return;
     linkInsertModal = show ?? !linkInsertModal;
     editor.view.updateState(editor.view.state);
