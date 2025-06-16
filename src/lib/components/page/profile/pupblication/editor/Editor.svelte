@@ -355,7 +355,7 @@
       const { node: domNode } = view.domAtPos(from);
       if (domNode instanceof HTMLElement) {
         domNode.scrollIntoView({
-          behavior: "smooth",
+          behavior: "auto",
           block: "start",
           inline: "nearest",
         });
