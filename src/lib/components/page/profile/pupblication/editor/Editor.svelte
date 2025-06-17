@@ -543,6 +543,7 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
+<svelte:window on:scroll|preventDefault on:wheel|preventDefault/>
 <svelte:head>
   <script
     async

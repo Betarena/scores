@@ -337,7 +337,7 @@
     height: 100vh;
     overflow: auto;
     height: calc(var(--vh, 1vh) * 100);
-    transition: --vh 0.25s ease-out;
+    transition: height 0.25s ease-out;
     max-height: calc(var(--vh, 1vh) * 100);
     overflow: hidden;
     background-color: var(--colors-background-bg-main);
