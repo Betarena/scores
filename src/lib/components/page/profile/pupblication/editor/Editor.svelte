@@ -350,26 +350,12 @@
     } else {
       keyBoardHeight = `80px`;
     }
-    // if (editor) {
-    //   editor.commands.ScrollIntoView();
-    //   setTimeout(() => {
-    //     const { state, view } = editor;
-    //     const { from } = state.selection;
-    //     const { node: domNode } = view.domAtPos(from);
-    //     if (domNode instanceof HTMLElement) {
-    //       domNode.scrollIntoView({
-    //         behavior: "auto",
-    //         block: "start",
-    //         inline: "nearest",
-    //       });
-    //     }
-    //   }, 300)
-    // }
   }
 
   async function handleResize() {
     updateViewportHeight();
     editor.commands.scrollIntoView();
+    window.scrollTo(0, 0)
   }
 
   function handleKeyDown(event) {
@@ -615,7 +601,7 @@
 
 </div>
  {#if editor && viewportType !== "desktop"}
-    <div class="toolbar-wrapper" style="bottom: {keyBoardHeight};" >
+    <div class="toolbar-wrapper">
       <Toolbar
         {editor}
         {uploadUrl}
