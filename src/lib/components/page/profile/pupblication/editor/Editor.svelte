@@ -355,7 +355,7 @@
   async function handleResize() {
     updateViewportHeight();
     editor.commands.scrollIntoView();
-    window.scrollTo(0, 0)
+    window.scrollTo(0, 0);
   }
 
   function handleKeyDown(event) {
@@ -389,6 +389,45 @@
     linkInsertModal = show ?? !linkInsertModal;
     editor.view.updateState(editor.view.state);
     editor.commands.focus();
+    shouldShow();
+  }
+
+  function shouldShow() {
+    const isLink = editor.isActive("link");
+
+    if (!linkInsertModal && !isLink) return false;
+    let url = "";
+    let text = "";
+    if (isLink) {
+      const linkAttrs = editor.getAttributes("link");
+      url = linkAttrs.href;
+      const { from } = editor.view.state.selection;
+      let linkNode = editor.state.doc.nodeAt(from);
+      if (
+        !linkNode ||
+        !linkNode.marks.some((mark) => mark.type.name === "link")
+      ) {
+        linkNode = editor.state.doc.nodeAt(from - 1);
+      }
+
+      text = linkNode?.textContent || "";
+    } else {
+      const { from, to } = editor.state.selection;
+      text = editor.state.doc.textBetween(from, to, " ");
+    }
+    linkState = { url, text };
+    if (!isLink) {
+      const modal = {
+        show: true,
+        component: InsertLinkModal,
+        modal: true,
+        props: { linkState, editor },
+      };
+      modalStore.set(modal);
+
+      return false;
+    }
+    return isLink;
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -487,10 +526,9 @@
       onUpdate: ({ editor }) => {
         dispatch("update", { editor, title });
       },
-      onSelectionUpdate: ({editor}) => {
+      onSelectionUpdate: ({ editor }) => {
         editor.commands.scrollIntoView();
-        // window.scrollTo(0, 0);
-      }
+      },
     });
     contentEditor = editor;
 
@@ -544,7 +582,6 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<svelte:window on:scroll|preventDefault on:wheel|preventDefault/>
 <svelte:head>
   <script
     async
@@ -779,7 +816,6 @@
       }
     }
 
-
     .button-container {
       display: flex;
       width: 100%;
@@ -852,67 +888,67 @@
     }
   }
   .toolbar-wrapper {
+    width: 100%;
+    display: flex;
+    // position: fixed;
+    z-index: 100;
+    padding: var(--spacing-lg, 12px) var(--spacing-none, 0px);
+    flex-direction: column;
+    background-color: var(--colors-background-bg-main);
+    align-items: flex-start;
+    gap: 10px;
+    align-self: stretch;
+    border-top: 1px solid var(--colors-border-border-secondary, #3b3b3b);
+    .toolbar {
       width: 100%;
       display: flex;
-      // position: fixed;
-      z-index: 100;
-      padding: var(--spacing-lg, 12px) var(--spacing-none, 0px);
-      flex-direction: column;
-      background-color: var(--colors-background-bg-main);
-      align-items: flex-start;
-      gap: 10px;
-      align-self: stretch;
-      border-top: 1px solid var(--colors-border-border-secondary, #3b3b3b);
-      .toolbar {
-        width: 100%;
-        display: flex;
-        padding-inline: var(--spacing-md, 8px);
-        gap: var(--spacing-xxs, 2px);
-        justify-content: center;
-        .button {
-          height: max-content;
-          border-radius: var(--radius-md, 8px);
-          height: 44px;
-          width: 44px;
-          &.active {
-            background-color: var(
-              --component-colors-components-buttons-primary-button-primary-bg
-            );
-            :global(path) {
-              fill: var(--colors-base-white) !important;
-            }
-          }
-          &.disabled {
-            // background-color: ;
-            background: var(--colors-background-bg-disabled, #f7f7f7);
-            :global(path) {
-              fill: var(--colors-foreground-fg-disabled, #8c8c8c) !important;
-            }
+      padding-inline: var(--spacing-md, 8px);
+      gap: var(--spacing-xxs, 2px);
+      justify-content: center;
+      .button {
+        height: max-content;
+        border-radius: var(--radius-md, 8px);
+        height: 44px;
+        width: 44px;
+        &.active {
+          background-color: var(
+            --component-colors-components-buttons-primary-button-primary-bg
+          );
+          :global(path) {
+            fill: var(--colors-base-white) !important;
           }
         }
-        .link-button {
-          position: relative;
-
-          .link-popup {
-            position: absolute;
-            top: -10px;
-            left: 0;
-            width: fit-content;
-            height: fit-content;
-            z-index: 100;
-            transform: translate(-50%, -100%);
-
-            display: flex;
-            flex-direction: column;
-            gap: var(--spacing-lg, 6px);
-
-            border-radius: var(--radius-md);
-            box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.24);
-            z-index: 1;
-            padding: var(--spacing-lg) var(--spacing-sm, 6px);
-            background: var(--colors-background-bg-active);
+        &.disabled {
+          // background-color: ;
+          background: var(--colors-background-bg-disabled, #f7f7f7);
+          :global(path) {
+            fill: var(--colors-foreground-fg-disabled, #8c8c8c) !important;
           }
         }
       }
+      .link-button {
+        position: relative;
+
+        .link-popup {
+          position: absolute;
+          top: -10px;
+          left: 0;
+          width: fit-content;
+          height: fit-content;
+          z-index: 100;
+          transform: translate(-50%, -100%);
+
+          display: flex;
+          flex-direction: column;
+          gap: var(--spacing-lg, 6px);
+
+          border-radius: var(--radius-md);
+          box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.24);
+          z-index: 1;
+          padding: var(--spacing-lg) var(--spacing-sm, 6px);
+          background: var(--colors-background-bg-active);
+        }
+      }
     }
+  }
 </style>
