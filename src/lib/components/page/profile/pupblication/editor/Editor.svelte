@@ -189,10 +189,10 @@
             },
           });
 
-          new LoaderImage({
-            target: dom,
-            props: { width: "100%", height: "auto", borderRadius: 8 },
-          });
+          // new LoaderImage({
+          //   target: dom,
+          //   props: { width: "100%", height: "auto", borderRadius: 8 },
+          // });
         } else {
           dom.setAttribute("src", src);
           if (alt) dom.setAttribute("alt", alt);
