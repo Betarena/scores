@@ -489,6 +489,7 @@
       },
       onSelectionUpdate: ({editor}) => {
         editor.commands.scrollIntoView();
+        // window.scrollTo(0, 0);
       }
     });
     contentEditor = editor;
@@ -647,7 +648,7 @@
   .editor {
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
+    justify-content: flex-start;
     overscroll-behavior: contain;
     overflow: auto;
     flex-grow: 1;
@@ -800,6 +801,9 @@
     }
 
     &.desktop {
+      overflow: unset;
+      height: 100%;
+      flex-grow: unset;
       // max-height: 95vh;
       :global(.sticky-toolbar) {
         position: sticky;

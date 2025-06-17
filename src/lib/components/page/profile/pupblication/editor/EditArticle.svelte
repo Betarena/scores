@@ -245,7 +245,7 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<div class="edit-article-wrapper">
+<div class="edit-article-wrapper {viewportType}">
   <Container hFull={false} clazz={viewportType === "desktop" ? "sticky" : ""}>
     <div class="header {viewportType}">
       <div on:click={back}>
@@ -398,6 +398,12 @@
     }
     .editor-wrapper {
       flex-grow: 1;
+    }
+
+    &.desktop {
+      max-height: unset;
+      height: 100vh;
+      overflow: auto;
     }
   }
 </style>
