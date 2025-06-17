@@ -277,6 +277,7 @@
 
       <DropDownInput
         {options}
+        class= {isSaving || isSaved ? "fixed-width" : ""}
         value={selectedSportstack}
         on:change={selectSportstack}
       />
@@ -374,6 +375,10 @@
         flex-grow: 1;
         align-items: center;
         justify-content: center;
+      }
+      :global(.field.fixed-width) {
+        max-width: 50%;
+        width: 100%;
       }
 
       .saving-state {

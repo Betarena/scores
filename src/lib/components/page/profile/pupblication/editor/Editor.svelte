@@ -598,7 +598,7 @@
     on:hide={() => toogleLinkPopup(false)}
   />
 </div>
-
+<div class="bg"></div>
 <div
   id="editor"
   class="editor {viewportType}"
@@ -679,6 +679,13 @@
 -->
 
 <style lang="scss">
+  .bg {
+    z-index: -1;
+    background-color: var(--colors-background-bg-main);
+    height: 100vh;
+    width: 100vh;
+    position: fixed;
+  }
   .link-popup {
     z-index: 2 !important;
   }
