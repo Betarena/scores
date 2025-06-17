@@ -328,6 +328,7 @@
     flex-direction: column;
     padding-bottom: 20px;
     height: calc(var(--vh, 1vh) * 100);
+    transition: --vh 0.25s ease-out;
     max-height: calc(var(--vh, 1vh) * 100);
     background-color: var(--colors-background-bg-main);
     overflow: hidden;
@@ -396,7 +397,7 @@
       }
     }
     .editor-wrapper {
-      flex-grow: 1; // Эта часть будет прокручиваться
+      flex-grow: 1;
     }
   }
 </style>

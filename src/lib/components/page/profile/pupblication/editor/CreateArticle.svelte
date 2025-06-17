@@ -265,7 +265,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 <div class="create-article-wrapper">
-  <Container hFull={false} clazz="sticky">
+  <Container hFull={false} clazz={viewportType === "desktop" ? "sticky" : ""}>
     <div class="header {viewportType}">
       <div on:click={back}>
         {#if viewportType === "mobile"}
@@ -336,6 +336,10 @@
     padding-bottom: 20px;
     height: 100vh;
     overflow: auto;
+    height: calc(var(--vh, 1vh) * 100);
+    transition: --vh 0.25s ease-out;
+    max-height: calc(var(--vh, 1vh) * 100);
+    overflow: hidden;
     background-color: var(--colors-background-bg-main);
     &::-webkit-scrollbar {
       width: 8px;
@@ -457,7 +461,7 @@
       }
     }
     .editor-wrapper {
-      flex-grow: 1; // Эта часть будет прокручиваться
+      flex-grow: 1;
     }
   }
 </style>

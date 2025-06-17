@@ -503,16 +503,6 @@
       },
       onSelectionUpdate: ({editor}) => {
         editor.commands.scrollIntoView();
-        // const { state, view } = editor;
-        // const { from } = state.selection;
-        // const { node: domNode } = view.domAtPos(from);
-        // if (domNode instanceof HTMLElement) {
-        //   domNode.scrollIntoView({
-        //     behavior: "smooth",
-        //     block: "start",
-        //     inline: "nearest",
-        //   });
-        // }
       }
     });
     contentEditor = editor;
