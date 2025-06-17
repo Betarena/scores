@@ -335,7 +335,6 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   onDestroy(() => {
-    if (!browser) return
     window?.visualViewport?.removeEventListener('resize', updateVh);
   })
 
