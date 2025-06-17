@@ -45,7 +45,7 @@
   import { afterNavigate, beforeNavigate } from '$app/navigation';
   import { page } from '$app/stores';
   import * as Sentry from '@sentry/sveltekit';
-  import { onMount } from 'svelte';
+  import { onDestroy, onMount } from 'svelte';
 
   import
     {
@@ -310,7 +310,7 @@
     );
   }
 
-  $: if (browser)
+  $: if (browser){
     // eslint-disable-next-line new-cap
     window.Intercom
     (
@@ -319,7 +319,9 @@
         hide_default_launcher: currentPageRouteId != 'ProfilePage',
       }
     );
-  ;
+    updateVh();
+    window?.visualViewport?.addEventListener('resize', updateVh);
+  }
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
@@ -331,6 +333,11 @@
   // │ immediately and as part of the 'lifecycle' of svelteJs,                │
   // │ as soon as 'this' .svelte file is ran.                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
+
+  onDestroy(() => {
+    if (!browser) return
+    window?.visualViewport?.removeEventListener('resize', updateVh);
+  })
 
   onMount
   (
@@ -533,6 +540,12 @@
   );
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
+
+  function updateVh() {
+    if (!browser) return;
+    const vh = (window?.visualViewport?.height || window?.innerHeight) * 0.01;
+    document.body.style.setProperty('--vh', `${vh}px`);
+  }
 
 </script>
 
@@ -767,7 +780,7 @@
   .app-wrapper {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    min-height: calc(var(--vh)*100);
     &.page-content {
       background-color: var(--bg-color);
     }

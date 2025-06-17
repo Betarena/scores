@@ -129,6 +129,7 @@
       class="input-element"
       class:focus
       class:error
+      on:mousedown|preventDefault
       on:click|stopPropagation={() => {
         modal = !modal;
         focus = true;
@@ -166,6 +167,7 @@
         {#each options as option (option.id)}
           <div class="list-item-wrapper">
             <div
+              on:mousedown|preventDefault
               on:click={() => select(option)}
               class="list-item"
               class:active={option.id === value?.id}

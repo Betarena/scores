@@ -264,8 +264,8 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<div class="create-article-wrapper">
-  <Container hFull={false} clazz="sticky">
+<div class="create-article-wrapper {viewportType}">
+  <Container hFull={false} clazz={viewportType === "desktop" ? "sticky" : ""}>
     <div class="header {viewportType}">
       <div on:click={back}>
         {#if viewportType === "mobile"}
@@ -277,6 +277,7 @@
 
       <DropDownInput
         {options}
+        class= {isSaving || isSaved ? "fixed-width" : ""}
         value={selectedSportstack}
         on:change={selectSportstack}
       />
@@ -336,6 +337,11 @@
     padding-bottom: 20px;
     height: 100vh;
     overflow: auto;
+    height: calc(var(--vh, 1vh) * 100);
+    transition: height 0.25s ease-out;
+    max-height: calc(var(--vh, 1vh) * 100);
+    min-height: calc(var(--vh, 1vh) * 100);
+    overflow: hidden;
     background-color: var(--colors-background-bg-main);
     &::-webkit-scrollbar {
       width: 8px;
@@ -369,6 +375,10 @@
         flex-grow: 1;
         align-items: center;
         justify-content: center;
+      }
+      :global(.field.fixed-width) {
+        max-width: 50%;
+        width: 100%;
       }
 
       .saving-state {
@@ -457,7 +467,12 @@
       }
     }
     .editor-wrapper {
-      flex-grow: 1; // Эта часть будет прокручиваться
+      flex-grow: 1;
+    }
+    &.desktop {
+      max-height: unset;
+      height: 100vh;
+      overflow: auto;
     }
   }
 </style>
