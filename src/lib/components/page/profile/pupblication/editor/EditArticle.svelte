@@ -329,6 +329,7 @@
     padding-bottom: 20px;
     height: calc(var(--vh, 1vh) * 100);
     max-height: calc(var(--vh, 1vh) * 100);
+    min-height: calc(var(--vh, 1vh) * 100);
     transition: height 0.5s ease-out;
     background-color: var(--colors-background-bg-main);
     overflow: hidden;

@@ -339,6 +339,7 @@
     height: calc(var(--vh, 1vh) * 100);
     transition: height 0.25s ease-out;
     max-height: calc(var(--vh, 1vh) * 100);
+    min-height: calc(var(--vh, 1vh) * 100);
     overflow: hidden;
     background-color: var(--colors-background-bg-main);
     &::-webkit-scrollbar {
