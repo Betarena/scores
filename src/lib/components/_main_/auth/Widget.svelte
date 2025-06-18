@@ -46,7 +46,6 @@
   // ╰─────
 
 	import { browser } from '$app/environment';
-	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
@@ -352,14 +351,14 @@
    *  🟥 MAIN
    * @description
    *  📣 sign-in/sign-up user using Google OAuth2 **target** `provider`.
-   * @param { 'google' | 'github' } authOpt
+   * @param { 'google' } authOpt
    *  💠 **[required]** Target `authentication` process.
    * @see https://firebase.google.com/docs/auth/web/google-signin
    * @return { Promise < void > }
    */
   async function authenticateGoogleAuth20
   (
-    authOpt: 'google' | 'github'
+    authOpt: 'google' = 'google',
   ): Promise < void >
   {
     if (!browser) return;
@@ -384,11 +383,7 @@
           provider: null | GithubAuthProvider | GoogleAuthProvider = null
         ;
 
-        if (authOpt == 'google')
-          provider = new GoogleAuthProvider();
-        else
-          provider = new GithubAuthProvider();
-        ;
+        provider = new GoogleAuthProvider();
 
         const
           result
@@ -594,85 +589,6 @@
         );
         // [🐞]
         errlog(`❌ Email (MagicLink) Auth error: ${ex}`)
-        return;
-      }
-    );
-
-    return;
-  }
-
-  /**
-   * @author
-   *  @migbash
-   * @summary
-   *  🟥 MAIN
-   * @description
-   *  - 📣 sign-in/up user using Discrod Link.
-   *  - 📣 initiates `deep link` event listen for user.
-   * @return { Promise < void > }
-   */
-  async function authenticateWithDiscord
-  (
-  ): Promise < void >
-  {
-    if (!browser) return;
-
-    await tryCatchAsync
-    (
-      async (
-      ): Promise < void > =>
-      {
-        scoresAuthStore.updateData
-        (
-          [
-            ['globalStateAdd', 'Processing']
-          ]
-        );
-
-        const
-          /**
-           * @description
-           * 📝 Target `callback` url
-           */
-          callbackAuthUrl: string = $page.url.origin,
-          /**
-           * @description
-           * 📝 Target `discord` url for `OAuth2.0`
-           */
-          discordOAuthUrl = import.meta.env.VITE_DISCORD_OAUTH_URL,
-          /**
-           * @description
-           * 📝 Target `url` navigation
-           */
-          finalUrlNav = `${discordOAuthUrl}?redirect_url=${callbackAuthUrl}`
-        ;
-
-        // [🐞]
-        dlog
-        (
-          `${AU_W_TAG[0]} callbackAuthUrl: ${callbackAuthUrl}`
-        );
-
-        // ╭─────
-        // │ NOTE:
-        // │ > initiate discord OAuth2
-        // ╰─────
-        await goto(finalUrlNav);
-
-        return;
-      }
-      , (
-        ex: unknown
-      ): void =>
-      {
-        scoresAuthStore.updateData
-        (
-          [
-            ['globalStateRemove', 'Processing']
-          ]
-        );
-        // [🐞]
-        errlog(ex as string);
         return;
       }
     );
@@ -1546,57 +1462,6 @@
         />
       </button>
 
-      <!--
-      ╭─────
-      │ > Discord
-      ╰─────
-      -->
-      <button
-        class=
-        "
-        btn-auth-opt
-        "
-        on:click=
-        {
-          () =>
-          {
-            return authenticateWithDiscord()
-          }
-        }
-      >
-        <img
-          src={iconList[0]}
-          alt="Discord Icon"
-          title="Discord Icon"
-        />
-      </button>
-
-      <!--
-      ╭─────
-      │ > GitHub
-      ╰─────
-      -->
-      <button
-        class=
-        "
-        btn-auth-opt
-        "
-        on:click=
-        {
-          () =>
-          {
-            authenticateGoogleAuth20('github');
-            return;
-          }
-        }
-      >
-        <img
-          src={$userBetarenaSettings.theme ==	'Dark' ? iconList[3] : iconList[4]}
-          alt="Github Icon"
-          title="Github Icon"
-        />
-      </button>
-
     </div>
 
     <!--
@@ -1895,6 +1760,7 @@
         border: 1px solid #e6e6e6 !important;
         border-radius: 60px;
         margin-right: 12px;
+        width: 100%;
       }
       button.btn-auth-opt:hover
       {
