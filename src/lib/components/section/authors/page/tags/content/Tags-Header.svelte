@@ -177,6 +177,7 @@
 
   onMount(() => {
     filterValue = userSettings.extract("lang") || "en";
+    return () => subscribtion && subscribtion.unsubscribe();
   })
 </script>
 

@@ -26,6 +26,7 @@
   import userSettings from "$lib/store/user-settings.js";
   import type { IBetarenaUser } from "@betarena/scores-lib/types/_FIREBASE_.js";
   import { listenRealTimeUserUpdates } from "$lib/firebase/common.js";
+  import { onDestroy } from "svelte";
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'variables' that are to be         │
@@ -74,6 +75,8 @@
   $: isPWA = globalState.has("IsPWA");
   $: currentData = displayedData[selectedOption];
   $: noUsers = !currentData?.size;
+
+  // #endregion ➤ 📌 VARIABLES
   $: if (browser && prevAuthorId !== author?.uid) {
     prevAuthorId = author?.uid;
     displayedData = {
@@ -170,7 +173,6 @@
     });
   }
 
-  // #endregion ➤ 📌 VARIABLES
 
   /**
    * @author
@@ -189,6 +191,20 @@
     return;
   }
 
+// #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+// ╭────────────────────────────────────────────────────────────────────────╮
+// │ NOTE:                                                                  │
+// │ Please add inside 'this' region the 'logic' that should run            │
+// │ immediately and as part of the 'lifecycle' of svelteJs,                │
+// │ as soon as 'this' .svelte file is ran.                                 │
+// ╰────────────────────────────────────────────────────────────────────────╯
+
+  onDestroy(() => {
+    if(unsubscribe) unsubscribe();
+  })
+
+// #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 
 <!--
