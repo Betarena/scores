@@ -1597,7 +1597,6 @@
 		position: fixed;
 		z-index: 10000;
 		margin: auto;
-		width: fit-content;
 		right: 0;
 		left: 0;
 		bottom: 0;
@@ -1809,7 +1808,8 @@
   {
 		#global⮕w⮕auth⮕main
     {
-			width: 328px;
+			min-width: 328px;
+			max-width: 328px;
 		}
 	}
 
