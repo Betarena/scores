@@ -53,24 +53,24 @@
 	import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
 	import { getMoralisAuth } from '@moralisweb3/client-firebase-auth-utils';
 	import { signInWithMoralis } from '@moralisweb3/client-firebase-evm-auth';
-  import
-  {
-    GithubAuthProvider,
-    GoogleAuthProvider,
-    fetchSignInMethodsForEmail,
-    sendSignInLinkToEmail,
-    signInWithPopup,
-    type ActionCodeSettings
-  } from 'firebase/auth';
+	import
+	  {
+	    GithubAuthProvider,
+	    GoogleAuthProvider,
+	    fetchSignInMethodsForEmail,
+	    sendSignInLinkToEmail,
+	    signInWithPopup,
+	    type ActionCodeSettings
+	  } from 'firebase/auth';
 
 	import { app, auth } from '$lib/firebase/init';
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { successAuthComplete } from '$lib/utils/authentication.js';
+	import { toZeroPrefixDateStr } from '$lib/utils/dates.js';
 	import { AU_W_TAG, dlog, dlogv2, errlog } from '$lib/utils/debug';
 	import { viewportChangeV2 } from '$lib/utils/device';
 	import { scoresAuthStore } from './_store.js';
-	import { toZeroPrefixDateStr } from '$lib/utils/dates.js';
 
   import ModalBackdrop from '$lib/components/misc/modal/Modal-Backdrop.svelte';
 
@@ -1425,44 +1425,39 @@
 
     <!--
     ╭─────
-    │ > authentication box
+    │ > Google
     ╰─────
     -->
-    <div
-      id="oauth-box"
+    <button
+      id="google"
       class=
       "
-      row-space-out
+      btn-auth-opt
       "
+      on:click=
+      {
+        () =>
+        {
+          authenticateGoogleAuth20('google');
+          return;
+        }
+      }
     >
-
-      <!--
-      ╭─────
-      │ > Google
-      ╰─────
-      -->
-      <button
+      <img
+        src={iconList[5]}
+        alt="Google Icon"
+        title="Google Icon"
+      />
+      <p
         class=
         "
-        btn-auth-opt
+        w-500
+        color-black-2
         "
-        on:click=
-        {
-          () =>
-          {
-            authenticateGoogleAuth20('google');
-            return;
-          }
-        }
       >
-        <img
-          src={iconList[5]}
-          alt="Google Icon"
-          title="Google Icon"
-        />
-      </button>
-
-    </div>
+        Google
+      </p>
+    </button>
 
     <!--
     ╭─────
@@ -1751,27 +1746,6 @@
       }
     }
 
-    div#oauth-box
-    {
-      button.btn-auth-opt
-      {
-        padding: 12px 32px;
-        background: #ffffff;
-        border: 1px solid #e6e6e6 !important;
-        border-radius: 60px;
-        margin-right: 12px;
-        width: 100%;
-      }
-      button.btn-auth-opt:hover
-      {
-        border: 1px solid #f5620f !important;
-      }
-      button.btn-auth-opt:last-child
-      {
-        margin-right: unset;
-      }
-    }
-
     div#web3-divider-box
     {
       margin: 16px 0;
@@ -1789,17 +1763,18 @@
       }
     }
 
-    button#metamask.btn-auth-opt
+    button.btn-auth-opt
     {
       padding: 12px 32px;
       background: #ffffff;
       border: 1px solid #e6e6e6 !important;
       border-radius: 60px;
       margin-right: 12px;
+      width: 100%;
 
       &:hover
       {
-        border: 1px solid #f5620f !important;
+        border: 1px solid #f5620f;
       }
       p
       {
@@ -1881,19 +1856,17 @@
       background: var(--dark-theme-1-2-shade);
     }
 
-    div#oauth-box button.btn-auth-opt
-    , button#metamask.btn-auth-opt
+    button.btn-auth-opt
     {
       /* 🎨 style */
       border: 1px solid var(--dark-theme-1-2-shade) !important;
-      background: var(--dark-theme-1)
-    }
+      background: var(--dark-theme-1) !important;
 
-    div#oauth-box button.btn-auth-opt:hover
-    , button#metamask.btn-auth-opt:hover
-    {
-      /* 🎨 style */
-      border: 1px solid var(--primary) !important;
+      &:hover
+      {
+        /* 🎨 style */
+        border: 1px solid var(--primary) !important;
+      }
     }
 	}
 
