@@ -24,7 +24,6 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import Input from "$lib/components/ui/Input.svelte";
-  import { searchUsers } from "$lib/firebase/search.js";
   import search_store from "$lib/store/search_store.js";
   import userSettings from "$lib/store/user-settings.js";
   import { debounce } from "$lib/utils/miscellenous.js";
@@ -37,6 +36,7 @@
   import type { ISearchSuggestion } from "$lib/types/types.search.js";
   import { get } from "$lib/api/utils.js";
   import { goto } from "$app/navigation";
+  import { Betarena_User_Class } from "@betarena/scores-lib/dist/classes/class.betarena-user.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -217,7 +217,20 @@
       $search_store.users.data = new Map();
     }
     $search_store.users.loading = true;
-    const users_data = await searchUsers(search);
+
+    const users_data = await new Betarena_User_Class().getUsersByFuzzySearch
+    (
+      {
+        query:
+        {
+          searchTerm: search,
+        },
+        body: {}
+      }
+    )
+
+    console.log("users_data", users_data);
+
     if (!users_data) {
       return ($search_store.users = {
         data: new Map(),
@@ -226,8 +239,8 @@
         total: 0,
       });
     }
-    const users_map = new Map(users_data.map((user) => [user.uid, user]));
-    users_map.delete(ctx_user?.firebase_user_data?.uid || "");
+    const users_map = new Map(users_data.success.data.listUsers.map((user) => [user.username, user]));
+    users_map.delete(ctx_user?.scores_user_data?.username || "");
     $search_store.users.data = users_map;
     $search_store.users.page = 0;
     $search_store.users.loading = false;
