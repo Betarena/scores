@@ -419,7 +419,7 @@
           margin: 0 !important;
         }
 
-        blockquote.twitter-tweet {
+        blockquote.twitter-tweet, &.embed {
           margin-top: 48px !important;
           margin-bottom: 48px !important;
           margin-inline: auto !important;
@@ -576,7 +576,7 @@
             margin-bottom: 40px !important;
             margin-top: 40px !important;
           }
-          blockquote.twitter-tweet {
+          blockquote.twitter-tweet, &.embed {
             margin-bottom: 10px !important;
             margin-top: 40px !important;
             margin-inline: auto !important;

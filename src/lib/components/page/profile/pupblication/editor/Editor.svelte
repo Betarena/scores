@@ -25,13 +25,12 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { createEventDispatcher, onMount, tick } from "svelte";
-  import { Editor, mergeAttributes, Node } from "@tiptap/core";
+  import { createEventDispatcher, onMount } from "svelte";
+  import { Editor } from "@tiptap/core";
   import StarterKit from "@tiptap/starter-kit";
   import Placeholder from "@tiptap/extension-placeholder";
   import BubbleMenu from "@tiptap/extension-bubble-menu";
   import Link from "@tiptap/extension-link";
-  import Image from "@tiptap/extension-image";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import { modalStore } from "$lib/store/modal.js";
@@ -42,9 +41,7 @@
   import InsertLinkModal from "./InsertLinkModal.svelte";
   import PublishModal from "./PublishModal.svelte";
   import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
-  import { Plugin } from "prosemirror-state";
-  import LoaderImage from "$lib/components/ui/loaders/LoaderImage.svelte";
-  import userSettings from "$lib/store/user-settings.js";
+  import { Tweet, ImageWithPlaceholder, YouTube } from "./editor_nodes.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -94,232 +91,7 @@
 
   const dispatch = createEventDispatcher();
 
-  const ImageWithPlaceholder = Image.extend({
-    name: "imageWithPlaceholder",
 
-    addAttributes() {
-      return {
-        ...this.parent?.(),
-        id: { default: null },
-        loading: { default: false },
-        style: {
-          default: null,
-          parseHTML: (element) =>
-            (element as HTMLElement).getAttribute("style"),
-          renderHTML: (attrs) => {
-            return { style: attrs.style };
-          },
-        },
-      };
-    },
-
-    parseHTML() {
-      return [
-        {
-          tag: "span[data-placeholder-image]",
-          getAttrs: (el) => ({
-            id: el.getAttribute("data-id"),
-            loading: el.getAttribute("data-loading") === "true",
-            style: el.getAttribute("style"),
-          }),
-        },
-        {
-          tag: "img[src]",
-          getAttrs: (dom) => ({
-            src: dom.getAttribute("src"),
-            alt: dom.getAttribute("alt"),
-            title: dom.getAttribute("title"),
-            style: dom.getAttribute("style"),
-            loading: false,
-            id: null,
-          }),
-        },
-      ];
-    },
-
-    renderHTML({ HTMLAttributes }) {
-      if (HTMLAttributes.loading) {
-        return [
-          "span",
-          mergeAttributes(HTMLAttributes, {
-            "data-placeholder-image": "",
-            "data-id": HTMLAttributes.id,
-            "data-loading": "true",
-          }),
-        ];
-      }
-      return [
-        "img",
-        mergeAttributes(HTMLAttributes, {
-          src: HTMLAttributes.src,
-          alt: HTMLAttributes.alt,
-          title: HTMLAttributes.title,
-          style: HTMLAttributes.style,
-        }),
-      ];
-    },
-
-    addNodeView() {
-      return ({ node }) => {
-        const { loading, src, alt, title, style } = node.attrs;
-        const dom = loading
-          ? document.createElement("div")
-          : document.createElement("img");
-
-        if (loading) {
-          dom.setAttribute("data-placeholder-image", "");
-          if (node.attrs.id) dom.setAttribute("data-id", node.attrs.id);
-          dom.setAttribute("data-loading", "true");
-          if (style) dom.setAttribute("style", style);
-          const loaderWrapper = document.createElement("div");
-          loaderWrapper.style.cssText = `
-          width: 100%; height: 400px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        `;
-          dom.appendChild(loaderWrapper);
-
-          new LoaderImage({
-            target: loaderWrapper,
-            props: {
-              width: "100%",
-              height: "100%",
-              borderRadius: 12,
-            },
-          });
-        } else {
-          dom.setAttribute("src", src);
-          if (alt) dom.setAttribute("alt", alt);
-          if (title) dom.setAttribute("title", title);
-          if (style) dom.setAttribute("style", style);
-        }
-
-        return { dom };
-      };
-    },
-  });
-
-  const Tweet = Node.create({
-    name: "tweet",
-    group: "block",
-    atom: true,
-    selectable: true,
-
-    addAttributes() {
-      return {
-        src: { default: null },
-        theme: { default: "dark" },
-      };
-    },
-
-    parseHTML() {
-      return [
-        {
-          tag: "blockquote.twitter-tweet",
-          getAttrs: (el: HTMLElement) => {
-            const src =
-              el.getAttribute("src") ??
-              el.querySelector<HTMLAnchorElement>("a[href]")?.href;
-            const theme = $userSettings.theme === "Dark" ? "dark" : "light";
-            return { src, theme };
-          },
-        },
-      ];
-    },
-
-    renderHTML({ HTMLAttributes }) {
-      return [
-        "blockquote",
-        mergeAttributes(HTMLAttributes, { class: "twitter-tweet" }),
-        ["a", { href: HTMLAttributes.src }, ""],
-      ];
-    },
-
-    addNodeView() {
-      return ({ node }) => {
-        const { src, theme } = node.attrs;
-        const container = document.createElement("blockquote");
-        container.classList.add("twitter-tweet");
-        container.setAttribute("data-theme", theme);
-        container.style.minHeight = "200px";
-        container.style.position = "relative";
-
-        const loaderWrapper = document.createElement("div");
-        loaderWrapper.style.cssText = `
-          width: 100%; height: 400px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        `;
-        container.appendChild(loaderWrapper);
-
-        new LoaderImage({
-          target: loaderWrapper,
-          props: {
-            width: "70%",
-            height: "100%",
-            borderRadius: 12,
-          },
-        });
-
-        const tweetId = extractTweetId(src);
-        if (!tweetId) {
-          loaderWrapper.remove();
-          container.textContent = "Invalid Tweet URL";
-          return { dom: container };
-        }
-
-        const render = () => {
-          window.twttr.widgets
-            .createTweet(tweetId, container, {
-              conversation: "none",
-              align: "center",
-              theme,
-              width: viewportType === "mobile" ? 350 : 550,
-            })
-            .then(() => {
-              loaderWrapper.remove();
-            })
-            .catch(() => {
-              loaderWrapper.remove();
-              container.innerHTML = `<a href="${src}" target="_blank">${src}</a>`;
-            });
-        };
-
-        if (window.twttr?.widgets) {
-          render();
-        } else {
-          window.addEventListener("twttr:loaded", render, { once: true });
-        }
-
-        return { dom: container };
-      };
-    },
-
-    addProseMirrorPlugins() {
-      return [
-        new Plugin({
-          props: {
-            handlePaste(view, event) {
-              const text = event.clipboardData?.getData("text/plain") || "";
-              const match = text.match(
-                /^https:\/\/(?:twitter|x)\.com\/[^/]+\/status\/\d+/
-              );
-              if (match) {
-                const node = view.state.schema.nodes.tweet.create({
-                  src: match[0],
-                });
-                view.dispatch(view.state.tr.replaceSelectionWith(node));
-                return true;
-              }
-              return false;
-            },
-          },
-        }),
-      ];
-    },
-  });
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -340,7 +112,7 @@
     vh = `${(window.visualViewport?.height || 0) * 0.01}px`;
     isKeyboardOpen = (window.visualViewport?.height || 0) < window.innerHeight;
     if (isKeyboardOpen) {
-      const keyboardHeight = window.innerHeight - window.visualViewport.height;
+      const keyboardHeight = window.innerHeight - (window.visualViewport?.height || 0);
       keyBoardHeight = `${keyboardHeight}px`;
     } else {
       keyBoardHeight = `80px`;
@@ -441,6 +213,7 @@
       element: element,
       content: content || "",
       extensions: [
+        YouTube,
         Tweet,
         StarterKit,
         Link.configure({
@@ -470,7 +243,7 @@
                 },
               ],
             },
-            appendTo: document.querySelector(".editor-wrapper"),
+            appendTo: document.querySelector(".editor-wrapper") as Element,
           },
           shouldShow: ({ editor }) => {
             const isLink = editor.isActive("link");
@@ -559,10 +332,6 @@
     };
     modalStore.set(modal);
   }
-  function extractTweetId(url: string): string | null {
-    const m = url.match(/status\/(\d+)/);
-    return m ? m[1] : null;
-  }
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
@@ -616,7 +385,7 @@
   >
     <div class="editor-wrapper" id="parent">
       <textarea
-        on:input={(e) => dispatch("update", { editor, title: e.target.value })}
+        on:input={(e) => dispatch("update", { editor, title: e.target?.value })}
         bind:this={textareaNode}
         class="title"
         bind:value={title}
@@ -775,7 +544,7 @@
           padding-left: var(--spacing-lg, 12px);
         }
 
-        :global(.twitter-tweet) {
+        :global(.twitter-tweet), :global(.embed) {
           margin-top: 40px !important;
           margin-bottom: 40px !important;
           margin-inline: auto !important;
@@ -869,7 +638,7 @@
           height: 54px;
         }
       }
-      :global(.twitter-tweet) {
+      :global(.twitter-tweet), :global(.embed) {
         margin-top: 48px !important;
         margin-bottom: 48px !important;
         margin-inline: auto !important;

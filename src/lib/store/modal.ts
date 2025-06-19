@@ -1,11 +1,13 @@
 import type { SvelteComponent } from "svelte";
 import { writable, type Writable } from "svelte/store";
 
+type ComponentType<Props extends Record<string, any> = Record<string, any>> = new (...args: any) => SvelteComponent<Props>;
+
 interface IModalStore
 {
   show: boolean;
   modal: boolean;
-  component: SvelteComponent | null;
+  component: ComponentType | null;
   props?: any,
 }
 
