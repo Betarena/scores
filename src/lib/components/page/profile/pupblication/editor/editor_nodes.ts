@@ -342,7 +342,8 @@ export const YouTube = Node.create({
 
   addProseMirrorPlugins() {
     const YT_REGEX =
-      /^(https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/))([\w-]{11})(?:[^\s]*)$/;
+  /^(https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/))([\w-]{11})(?:[?&][^\s]*)?$/;
+
     return [
       new Plugin({
         props: {
@@ -369,9 +370,14 @@ function extractTweetId(url: string): string | null {
 
 /* --- helpers --- */
 function normalizeYouTubeSrc(url: string): string {
-  // https://youtu.be/<id> → https://www.youtube.com/embed/<id>
-  const idMatch =
-    url.match(/youtu\.be\/(\w{11})/) || url.match(/v=([\\w-]{11})/);
-  const id = idMatch?.[1];
-  return id ? `https://www.youtube.com/embed/${id}` : url;
+  //  a) https://youtu.be/ID?xyz
+  const short = url.match(/youtu\.be\/([\w-]{11})/)
+  if (short) return `https://www.youtube.com/embed/${short[1]}`
+
+  //  b) https://www.youtube.com/watch?v=ID&anything
+  const watch = url.match(/[?&]v=([\w-]{11})/)
+  if (watch) return `https://www.youtube.com/embed/${watch[1]}`
+
+  //  c) уже embed-формат или что-то другое — оставляем как есть
+  return url
 }
