@@ -46,7 +46,6 @@
   // ╰─────
 
 	import { browser } from '$app/environment';
-	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
@@ -54,24 +53,24 @@
 	import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
 	import { getMoralisAuth } from '@moralisweb3/client-firebase-auth-utils';
 	import { signInWithMoralis } from '@moralisweb3/client-firebase-evm-auth';
-  import
-  {
-    GithubAuthProvider,
-    GoogleAuthProvider,
-    fetchSignInMethodsForEmail,
-    sendSignInLinkToEmail,
-    signInWithPopup,
-    type ActionCodeSettings
-  } from 'firebase/auth';
+	import
+	  {
+	    GithubAuthProvider,
+	    GoogleAuthProvider,
+	    fetchSignInMethodsForEmail,
+	    sendSignInLinkToEmail,
+	    signInWithPopup,
+	    type ActionCodeSettings
+	  } from 'firebase/auth';
 
 	import { app, auth } from '$lib/firebase/init';
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { successAuthComplete } from '$lib/utils/authentication.js';
+	import { toZeroPrefixDateStr } from '$lib/utils/dates.js';
 	import { AU_W_TAG, dlog, dlogv2, errlog } from '$lib/utils/debug';
 	import { viewportChangeV2 } from '$lib/utils/device';
 	import { scoresAuthStore } from './_store.js';
-	import { toZeroPrefixDateStr } from '$lib/utils/dates.js';
 
   import ModalBackdrop from '$lib/components/misc/modal/Modal-Backdrop.svelte';
 
@@ -352,14 +351,14 @@
    *  🟥 MAIN
    * @description
    *  📣 sign-in/sign-up user using Google OAuth2 **target** `provider`.
-   * @param { 'google' | 'github' } authOpt
+   * @param { 'google' } authOpt
    *  💠 **[required]** Target `authentication` process.
    * @see https://firebase.google.com/docs/auth/web/google-signin
    * @return { Promise < void > }
    */
   async function authenticateGoogleAuth20
   (
-    authOpt: 'google' | 'github'
+    authOpt: 'google' = 'google',
   ): Promise < void >
   {
     if (!browser) return;
@@ -384,11 +383,7 @@
           provider: null | GithubAuthProvider | GoogleAuthProvider = null
         ;
 
-        if (authOpt == 'google')
-          provider = new GoogleAuthProvider();
-        else
-          provider = new GithubAuthProvider();
-        ;
+        provider = new GoogleAuthProvider();
 
         const
           result
@@ -594,85 +589,6 @@
         );
         // [🐞]
         errlog(`❌ Email (MagicLink) Auth error: ${ex}`)
-        return;
-      }
-    );
-
-    return;
-  }
-
-  /**
-   * @author
-   *  @migbash
-   * @summary
-   *  🟥 MAIN
-   * @description
-   *  - 📣 sign-in/up user using Discrod Link.
-   *  - 📣 initiates `deep link` event listen for user.
-   * @return { Promise < void > }
-   */
-  async function authenticateWithDiscord
-  (
-  ): Promise < void >
-  {
-    if (!browser) return;
-
-    await tryCatchAsync
-    (
-      async (
-      ): Promise < void > =>
-      {
-        scoresAuthStore.updateData
-        (
-          [
-            ['globalStateAdd', 'Processing']
-          ]
-        );
-
-        const
-          /**
-           * @description
-           * 📝 Target `callback` url
-           */
-          callbackAuthUrl: string = $page.url.origin,
-          /**
-           * @description
-           * 📝 Target `discord` url for `OAuth2.0`
-           */
-          discordOAuthUrl = import.meta.env.VITE_DISCORD_OAUTH_URL,
-          /**
-           * @description
-           * 📝 Target `url` navigation
-           */
-          finalUrlNav = `${discordOAuthUrl}?redirect_url=${callbackAuthUrl}`
-        ;
-
-        // [🐞]
-        dlog
-        (
-          `${AU_W_TAG[0]} callbackAuthUrl: ${callbackAuthUrl}`
-        );
-
-        // ╭─────
-        // │ NOTE:
-        // │ > initiate discord OAuth2
-        // ╰─────
-        await goto(finalUrlNav);
-
-        return;
-      }
-      , (
-        ex: unknown
-      ): void =>
-      {
-        scoresAuthStore.updateData
-        (
-          [
-            ['globalStateRemove', 'Processing']
-          ]
-        );
-        // [🐞]
-        errlog(ex as string);
         return;
       }
     );
@@ -1509,95 +1425,39 @@
 
     <!--
     ╭─────
-    │ > authentication box
+    │ > Google
     ╰─────
     -->
-    <div
-      id="oauth-box"
+    <button
+      id="google"
       class=
       "
-      row-space-out
+      btn-auth-opt
       "
+      on:click=
+      {
+        () =>
+        {
+          authenticateGoogleAuth20('google');
+          return;
+        }
+      }
     >
-
-      <!--
-      ╭─────
-      │ > Google
-      ╰─────
-      -->
-      <button
+      <img
+        src={iconList[5]}
+        alt="Google Icon"
+        title="Google Icon"
+      />
+      <p
         class=
         "
-        btn-auth-opt
+        w-500
+        color-black-2
         "
-        on:click=
-        {
-          () =>
-          {
-            authenticateGoogleAuth20('google');
-            return;
-          }
-        }
       >
-        <img
-          src={iconList[5]}
-          alt="Google Icon"
-          title="Google Icon"
-        />
-      </button>
-
-      <!--
-      ╭─────
-      │ > Discord
-      ╰─────
-      -->
-      <button
-        class=
-        "
-        btn-auth-opt
-        "
-        on:click=
-        {
-          () =>
-          {
-            return authenticateWithDiscord()
-          }
-        }
-      >
-        <img
-          src={iconList[0]}
-          alt="Discord Icon"
-          title="Discord Icon"
-        />
-      </button>
-
-      <!--
-      ╭─────
-      │ > GitHub
-      ╰─────
-      -->
-      <button
-        class=
-        "
-        btn-auth-opt
-        "
-        on:click=
-        {
-          () =>
-          {
-            authenticateGoogleAuth20('github');
-            return;
-          }
-        }
-      >
-        <img
-          src={$userBetarenaSettings.theme ==	'Dark' ? iconList[3] : iconList[4]}
-          alt="Github Icon"
-          title="Github Icon"
-        />
-      </button>
-
-    </div>
+        Google
+      </p>
+    </button>
 
     <!--
     ╭─────
@@ -1737,7 +1597,6 @@
 		position: fixed;
 		z-index: 10000;
 		margin: auto;
-		width: fit-content;
 		right: 0;
 		left: 0;
 		bottom: 0;
@@ -1886,26 +1745,6 @@
       }
     }
 
-    div#oauth-box
-    {
-      button.btn-auth-opt
-      {
-        padding: 12px 32px;
-        background: #ffffff;
-        border: 1px solid #e6e6e6 !important;
-        border-radius: 60px;
-        margin-right: 12px;
-      }
-      button.btn-auth-opt:hover
-      {
-        border: 1px solid #f5620f !important;
-      }
-      button.btn-auth-opt:last-child
-      {
-        margin-right: unset;
-      }
-    }
-
     div#web3-divider-box
     {
       margin: 16px 0;
@@ -1923,17 +1762,18 @@
       }
     }
 
-    button#metamask.btn-auth-opt
+    button.btn-auth-opt
     {
       padding: 12px 32px;
       background: #ffffff;
       border: 1px solid #e6e6e6 !important;
       border-radius: 60px;
       margin-right: 12px;
+      width: 100%;
 
       &:hover
       {
-        border: 1px solid #f5620f !important;
+        border: 1px solid #f5620f;
       }
       p
       {
@@ -1968,7 +1808,8 @@
   {
 		#global⮕w⮕auth⮕main
     {
-			width: 328px;
+			min-width: 328px;
+			max-width: 328px;
 		}
 	}
 
@@ -2015,19 +1856,17 @@
       background: var(--dark-theme-1-2-shade);
     }
 
-    div#oauth-box button.btn-auth-opt
-    , button#metamask.btn-auth-opt
+    button.btn-auth-opt
     {
       /* 🎨 style */
       border: 1px solid var(--dark-theme-1-2-shade) !important;
-      background: var(--dark-theme-1)
-    }
+      background: var(--dark-theme-1) !important;
 
-    div#oauth-box button.btn-auth-opt:hover
-    , button#metamask.btn-auth-opt:hover
-    {
-      /* 🎨 style */
-      border: 1px solid var(--primary) !important;
+      &:hover
+      {
+        /* 🎨 style */
+        border: 1px solid var(--primary) !important;
+      }
     }
 	}
 
