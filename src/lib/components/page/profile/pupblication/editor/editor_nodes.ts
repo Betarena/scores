@@ -327,8 +327,8 @@ export const YouTube = Node.create({
         "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
       );
       iframe.style.width = "100%";
-      iframe.style.height = "315px";
-      iframe.style.display = "none"; // пока не загрузится
+      iframe.style.aspectRatio  = '16 / 9'
+      iframe.style.display = "none";
 
       iframe.onload = () => {
         loaderWrapper.remove();
