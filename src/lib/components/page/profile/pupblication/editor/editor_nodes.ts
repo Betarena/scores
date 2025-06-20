@@ -303,7 +303,6 @@ export const YouTube = Node.create({
       container.style.minHeight = "200px";
       container.classList.add("embed");
 
-      // 1) прелоадер
       const loaderWrapper = document.createElement("div");
       loaderWrapper.style.cssText = `
         width: 100%; height: 315px;
@@ -317,7 +316,6 @@ export const YouTube = Node.create({
         props: { width: "100%", height: "100%", borderRadius: 12 },
       });
 
-      // 2) создаём iframe
       const iframe = document.createElement("iframe");
       iframe.setAttribute("src", normalizeYouTubeSrc(src));
       iframe.setAttribute("frameborder", "0");
@@ -364,8 +362,8 @@ export const YouTube = Node.create({
 });
 
 function extractTweetId(url: string): string | null {
-  const m = url.match(/status\/(\d+)/);
-  return m ? m[1] : null;
+  const match = url.match(/status\/(\d+)/);
+  return match ? match[1] : null;
 }
 
 /* --- helpers --- */
@@ -378,6 +376,5 @@ function normalizeYouTubeSrc(url: string): string {
   const watch = url.match(/[?&]v=([\w-]{11})/)
   if (watch) return `https://www.youtube.com/embed/${watch[1]}`
 
-  //  c) уже embed-формат или что-то другое — оставляем как есть
   return url
 }
