@@ -424,6 +424,7 @@
           margin-bottom: 48px !important;
           margin-inline: auto !important;
           padding-left: 0;
+          display: block;
 
           .twitter-tweet-rendered {
             margin: 0  auto !important;
