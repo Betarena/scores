@@ -27,7 +27,7 @@ export function getFirstImageWithSize(
   let firstImage: string = "";
 
   const findFirstImage = (node) => {
-    if (!firstImage && node.type === "image") {
+    if (!firstImage && ["imageWithPlaceholder", "image"].includes(node.type)) {
       firstImage = node.attrs.src;
       return;
     }
