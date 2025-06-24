@@ -87,6 +87,7 @@
   // import WidgetAdEngine from '@betarena/ad-engine/src/lib/Widget-AdEngine.svelte';
   import WidgetAdEngine from '@betarena/ad-engine';
   import history_store from '$lib/store/history.js';
+  import AndroidPwaBanner from '$lib/components/AndroidPWABanner.svelte';
 
   // ╭─────
   // │ WARNING:
@@ -344,6 +345,7 @@
     async (
     ): Promise < void > =>
     {
+
       // initSentry();
 
       // ╭─────
@@ -755,6 +757,7 @@
 
 </div>
 
+<AndroidPwaBanner />
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ 🌊 Svelte Component CSS/SCSS                                                     │
