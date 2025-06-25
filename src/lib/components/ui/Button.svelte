@@ -30,6 +30,7 @@
     full = false,
     href = '';
   export let disabled = false;
+  export let blank = false;
 
   export let /**
      * @description
@@ -76,6 +77,7 @@
     class:icon_leading
     {...$$restProps}
     type={submit ? 'submit' : 'button'}
+    target="{blank ? "_blank":"_self"}"
     class:hover
     class:destructive
     on:mouseenter={() => {return (hover = true)}}

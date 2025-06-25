@@ -230,3 +230,34 @@ export function isUserAgentBot
 
   return /bot|googlebot|crawler|spider|robot|crawling/i.test(strUserAgent);
 }
+
+/**
+ * @author
+ * @izobov
+ * @summary
+ *  - 🔹 HELPER
+ * @description
+ *  📣 Determines if the app is installed as a PWA.
+ * @returns { boolean }
+ *  📤 Wether the app is installed as a PWA.
+ */
+export function isAppInstalled(): boolean {
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+  const isIOSStandalone = (window.navigator as any).standalone === true;
+  const isTWA = document.referrer.startsWith('android-app://');
+  return isStandalone || isIOSStandalone || isTWA;
+}
+
+/**
+ * @author
+ * @izobov
+ * @summary
+ *  - 🔹 HELPER
+ * @description
+ *  📣 Determines if the device is an Android device.
+ * @returns { boolean }
+ *  📤 Wether the device is an Android device.
+ */
+export function isAndroid(): boolean {
+  return /android/i.test(navigator.userAgent);
+}
