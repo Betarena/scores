@@ -56,6 +56,7 @@
 	"dependencies": {
 		"@betarena/ad-engine": "0.0.70",
 		"@betarena/scores-lib": "4.3.3",
+		"@capacitor/core": "7.4.0",
 		"@lukeed/uuid": "2.0.1",
 		"@metamask/sdk": "0.1.0",
 		"@moralisweb3/client-firebase-auth-utils": "2.18.4",
@@ -114,6 +115,7 @@
 		"xml-formatter": "2.6.1"
 	},
 	"devDependencies": {
+		"@capacitor/cli": "6.1.2",
 		"@commitlint/cli": "17.8.1",
 		"@commitlint/config-conventional": "17.8.1",
 		"@playwright/test": "1.36.1",
