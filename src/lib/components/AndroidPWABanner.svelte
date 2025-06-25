@@ -136,7 +136,7 @@
     <div class="text-wrapper">
       <div class="title">{translation?.title ||  "Betarena - Sports"}</div>
       <div class="description">
-        {translation?.description || "Latest updates <br /> on sports."}
+        {translation?.subtitle || "Latest updates on sports."}
       </div>
     </div>
     <div class="button">
@@ -212,6 +212,7 @@
       }
       .description {
         color: var(--colors-text-text-tertiary-600, #8c8c8c);
+        max-width: 100px;
 
         /* Text md/Regular */
         font-family: var(--font-family-font-family-body, Roboto);
