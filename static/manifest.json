@@ -15,6 +15,14 @@
 			"purpose": "any maskable"
 		}
 	],
+  "related_applications": [
+    {
+      "platform": "play",
+      "id": "com.betarena.scores",
+      "url": "https://play.google.com/store/apps/details?id=com.betarena.scores"
+    }
+  ],
+  "prefer_related_applications": true,
 	"background_color": "#292929",
 	"display": "standalone",
   "start_url": "/",

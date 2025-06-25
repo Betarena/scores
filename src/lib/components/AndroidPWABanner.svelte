@@ -27,7 +27,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { onMount } from "svelte";
-  import { isAndroid, isAppInstalled } from "$lib/utils/device.js";
+  import { isAndroid, isAppInstalled, isPWA } from "$lib/utils/device.js";
   import userSettings from "$lib/store/user-settings.js";
   import { fly } from "svelte/transition";
   import XClose from "./ui/assets/x-close.svelte";
@@ -71,10 +71,17 @@
   // │ as soon as 'this' .svelte file is ran.                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  onMount(() => {
-    if (typeof window !== "undefined" && isAndroid()) {
-      if (isAppInstalled()) {
-        showOpenAppBanner = true;
+  onMount(async() => {
+    const android = isAndroid();
+    if (typeof window !== "undefined" && android && !isPWA()) {
+      if ("getInstalledRelatedApps" in navigator) {
+        const getRelated = navigator.getInstalledRelatedApps as any;
+        const related = await getRelated();
+        showInstallBanner = related.some(
+          (app) => app.id === "com.betarena.scores"
+        );
+        showOpenAppBanner != showInstallBanner
+
       } else {
         showInstallBanner = true;
       }
@@ -115,7 +122,7 @@
 -->
 
 {#if showInstallBanner || showOpenAppBanner}
-<div class="pwa-banner {theme}" in:fly>
+<div class="pwa-banner {theme === "Dark" ? "dark-mode" : "light-mode"}" in:fly>
   <button on:click={close}>
     <XClose size={17} color=" var(--colors-text-text-tertiary-600, #8c8c8c)" />
   </button>
@@ -127,14 +134,20 @@
     </div>
   </div>
   <div class="button">
-
     {#if showOpenAppBanner}
-    <Button href={intentUrl} style="width:max-content" blank={true} type="link-color">OPEN</Button>
+      <Button
+        href={intentUrl}
+        style="width:max-content"
+        blank={true}
+        type="link-color">OPEN</Button
+      >
     {:else}
-    <Button href={playStoreUrl} blank={true} type="link-color">INSTALL</Button>
+      <Button href={playStoreUrl} blank={true} type="link-color">INSTALL</Button
+      >
     {/if}
   </div>
 </div>
+
 {/if}
 
 <!--
