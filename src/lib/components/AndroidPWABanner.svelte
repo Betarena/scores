@@ -224,6 +224,10 @@
       display: flex;
       align-items: center;
       justify-content: end;
+
+      :global(.link-color) {
+        color: var(--colors-brand-500, #F5620F);
+      }
     }
   }
 </style>
