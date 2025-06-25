@@ -76,10 +76,10 @@
     if (typeof window !== "undefined" && android && !isPWA()) {
       if ("getInstalledRelatedApps" in navigator) {
         const related = await (navigator as any).getInstalledRelatedApps();
-        showInstallBanner = related.some(
+        showOpenAppBanner = related.some(
           (app) => app.id === "com.betarena.scores"
         );
-        showOpenAppBanner = !showInstallBanner;
+        showInstallBanner = !showOpenAppBanner;
       } else {
         showInstallBanner = true;
       }
