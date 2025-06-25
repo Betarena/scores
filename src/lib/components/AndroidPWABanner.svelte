@@ -71,17 +71,15 @@
   // │ as soon as 'this' .svelte file is ran.                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  onMount(async() => {
+  onMount(async () => {
     const android = isAndroid();
     if (typeof window !== "undefined" && android && !isPWA()) {
       if ("getInstalledRelatedApps" in navigator) {
-        const getRelated = navigator.getInstalledRelatedApps as any;
-        const related = await getRelated();
+        const related = await (navigator as any).getInstalledRelatedApps();
         showInstallBanner = related.some(
           (app) => app.id === "com.betarena.scores"
         );
-        showOpenAppBanner != showInstallBanner
-
+        showOpenAppBanner = !showInstallBanner;
       } else {
         showInstallBanner = true;
       }
@@ -122,32 +120,38 @@
 -->
 
 {#if showInstallBanner || showOpenAppBanner}
-<div class="pwa-banner {theme === "Dark" ? "dark-mode" : "light-mode"}" in:fly>
-  <button on:click={close}>
-    <XClose size={17} color=" var(--colors-text-text-tertiary-600, #8c8c8c)" />
-  </button>
-  <div class="logo" style="background-image: url({Icon});" />
-  <div class="text-wrapper">
-    <div class="title">Betarena - Sports</div>
-    <div class="description">
-      Latest updates <br /> on sports.
+  <div
+    class="pwa-banner {theme === 'Dark' ? 'dark-mode' : 'light-mode'}"
+    in:fly
+  >
+    <button on:click={close}>
+      <XClose
+        size={17}
+        color=" var(--colors-text-text-tertiary-600, #8c8c8c)"
+      />
+    </button>
+    <div class="logo" style="background-image: url({Icon});" />
+    <div class="text-wrapper">
+      <div class="title">Betarena - Sports</div>
+      <div class="description">
+        Latest updates <br /> on sports.
+      </div>
+    </div>
+    <div class="button">
+      {#if showOpenAppBanner}
+        <Button
+          href={intentUrl}
+          style="width:max-content"
+          blank={true}
+          type="link-color">OPEN</Button
+        >
+      {:else}
+        <Button href={playStoreUrl} blank={true} type="link-color"
+          >INSTALL</Button
+        >
+      {/if}
     </div>
   </div>
-  <div class="button">
-    {#if showOpenAppBanner}
-      <Button
-        href={intentUrl}
-        style="width:max-content"
-        blank={true}
-        type="link-color">OPEN</Button
-      >
-    {:else}
-      <Button href={playStoreUrl} blank={true} type="link-color">INSTALL</Button
-      >
-    {/if}
-  </div>
-</div>
-
 {/if}
 
 <!--
