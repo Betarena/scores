@@ -33,6 +33,7 @@
   import XClose from "./ui/assets/x-close.svelte";
   import Button from "./ui/Button.svelte";
   import Icon from "$lib/components/ui/assets/Icon-app.png";
+  import { page } from "$app/stores";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -59,6 +60,7 @@
     "intent://betarena.com/#Intent;package=com.betarena.scores;scheme=https;end;";
 
   $: ({ theme } = $userSettings);
+  $: ({app_install_translations: translation} = $page.data)
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -132,9 +134,9 @@
     </button>
     <div class="logo" style="background-image: url({Icon});" />
     <div class="text-wrapper">
-      <div class="title">Betarena - Sports</div>
+      <div class="title">{translation?.title ||  "Betarena - Sports"}</div>
       <div class="description">
-        Latest updates <br /> on sports.
+        {translation?.description || "Latest updates <br /> on sports."}
       </div>
     </div>
     <div class="button">
@@ -143,11 +145,11 @@
           href={intentUrl}
           style="width:max-content"
           blank={true}
-          type="link-color">OPEN</Button
+          type="link-color">{translation?.open || "OPEN"} </Button
         >
       {:else}
         <Button href={playStoreUrl} blank={true} type="link-color"
-          >INSTALL</Button
+          >{translation?.install || "INSTALL"} </Button
         >
       {/if}
     </div>

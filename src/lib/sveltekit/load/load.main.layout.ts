@@ -58,6 +58,7 @@ type IPreloadData0 =
   B_NAV_T | undefined,
   B_FOT_T | undefined,
   IAuthTrs | undefined,
+  TranslationSearchDataJSONSchema | undefined,
   TranslationSearchDataJSONSchema | undefined
 ];
 
@@ -117,6 +118,7 @@ interface IPreloadResponse
    *  📝 Translations for `search`.
    */
   search_translations?: TranslationSearchDataJSONSchema;
+  app_install_translations?: TranslationSearchDataJSONSchema;
 }
 
 // #endregion ➤ ⛩️ TYPES
@@ -250,7 +252,8 @@ export async function main
     objResponse.B_NAV_T,
     objResponse.B_FOT_T,
     objResponse.authTrs,
-    objResponse.search_translations
+    objResponse.search_translations,
+    objResponse.app_install_translations
   ] = await fetchData
   (
     event.fetch,
@@ -366,7 +369,8 @@ async function fetchData
         `/api/data/main/navbar?lang=${lang}&decompress`,
         `/api/data/main/footer?lang=${lang}&decompress`,
         `/api/hasura/_main_/auth?lang=${lang}`,
-        `/api/data/translations?lang=${lang}&table=search`
+        `/api/data/translations?lang=${lang}&table=search`,
+        `/api/data/translations?lang=${lang}&table=app_install`
       ],
     /**
      * @description
