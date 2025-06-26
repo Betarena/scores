@@ -121,7 +121,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<!-- {#if showInstallBanner || showOpenAppBanner} -->
+{#if showInstallBanner || showOpenAppBanner}
   <div
     class="pwa-banner {theme === 'Dark' ? 'dark-mode' : 'light-mode'}"
     in:fly
@@ -153,7 +153,7 @@
       {/if}
     </div>
   </div>
-<!-- {/if} -->
+{/if}
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
