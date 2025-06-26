@@ -194,9 +194,12 @@
     .logo {
       width: 68px;
       height: 68px;
+      flex-shrink: 0;
     }
 
     .text-wrapper {
+      flex-grow: 1;
+
       // display: flex;
       // flex-d
       .title {
@@ -221,10 +224,10 @@
       }
     }
     .button {
-      flex-grow: 1;
       display: flex;
       align-items: center;
       justify-content: end;
+      flex-shrink: 0;
 
       :global(.link-color) {
         color: var(--colors-brand-500, #F5620F);
