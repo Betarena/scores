@@ -27,7 +27,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { onMount } from "svelte";
-  import { isAndroid, isAppInstalled, isPWA } from "$lib/utils/device.js";
+  import { isAndroid, isPWA } from "$lib/utils/device.js";
   import userSettings from "$lib/store/user-settings.js";
   import { fly } from "svelte/transition";
   import XClose from "./ui/assets/x-close.svelte";
@@ -144,7 +144,6 @@
         <Button
           href={intentUrl}
           style="width:max-content"
-          blank={true}
           type="link-color">{translation?.open || "OPEN"} </Button
         >
       {:else}
@@ -212,7 +211,6 @@
       }
       .description {
         color: var(--colors-text-text-tertiary-600, #8c8c8c);
-        max-width: 100px;
 
         /* Text md/Regular */
         font-family: var(--font-family-font-family-body, Roboto);
