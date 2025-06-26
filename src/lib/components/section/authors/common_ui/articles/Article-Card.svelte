@@ -296,7 +296,7 @@
         }
 
         &-name {
-          color: var(--colors-ext-text-primary, #fbfbfb);
+          color: var(--colors-text-text-primary, #fbfbfb);
 
           /* Text sm/Semibold */
           font-family: var(--font-family-font-family-body, Roboto);
