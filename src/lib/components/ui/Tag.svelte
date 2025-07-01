@@ -56,7 +56,7 @@
   class:active
   on:click={() => dispatch("click")}
 >
-  <span class="w-400 color-black-2 no-wrap">
+  <span class="w-400  no-wrap">
     <slot />
   </span>
 </div>
