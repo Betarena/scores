@@ -25,7 +25,14 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let size: "sm" | "md" | "lg" | "xl" | "xxl" = "md";
-  export let color: "gray" | "error" | "brand" | undefined = "gray";
+  export let color:
+    | "gray"
+    | "error"
+    | "brand"
+    | "success"
+    | "warning"
+    | "orange"
+    | undefined = "gray";
   export let active: boolean = false;
   export let link = "";
 
@@ -167,6 +174,40 @@
         );
         color: var(--component-colors-utility-gray-utility-gray-800, #3b3b3b);
       }
+    }
+
+    &.success {
+      color: var(
+        --component-colors-utility-success-utility-success-700,
+        #067647
+      );
+      border: 1px solid
+        var(--component-colors-utility-success-utility-success-200, #abefc6);
+      background: var(
+        --component-colors-utility-success-utility-success-50,
+        #ecfdf3
+      );
+    }
+    &.warning {
+      color: var(
+        --component-colors-utility-warning-utility-warning-700,
+        #b54708
+      );
+      border: 1px solid
+        var(--component-colors-utility-warning-utility-warning-200, #fedf89);
+      background: var(
+        --component-colors-utility-warning-utility-warning-50,
+        #fffaeb
+      );
+    }
+    &.orange {
+      color: var(--component-colors-utility-orange-utility-orange-700, #b93815);
+      border: 1px solid
+        var(--component-colors-utility-orange-utility-orange-200, #f9dbaf);
+      background: var(
+        --component-colors-utility-orange-utility-orange-50,
+        #fef6ee
+      );
     }
   }
   a.badge {
