@@ -471,12 +471,12 @@
   {
     background: inherit;
 
-    color: var(--colors-foreground-fg-quaternary);
+    color: var(--colors-text-text-quaternary-500);
 
     &.selected
     {
       background: var(--colors-background-bg-brand-primary_alt);
-      color: var(--colors-text-text-brand-tertiary);
+      color: var(--colors-brand-500);
     }
 
     &:hover,
