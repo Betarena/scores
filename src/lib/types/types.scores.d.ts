@@ -35,4 +35,5 @@ export type PROFILE_OPT =
   | 'Scores'
   | 'Author'
   | 'Logout'
+  | 'Partners'
 ;
