@@ -287,7 +287,7 @@ VIEW DESIGN - 1
         "
         w-400
         s-16
-        color-black-2
+        current-option
         no-wrap
         "
 			>
@@ -529,6 +529,9 @@ VIEW DESIGN - 2
   {
 		color: var(--dark-theme) !important;
 	}
+  p.selected,.current-option {
+    color: var(--text-color)
+  }
 
 	/*
   =============
