@@ -321,8 +321,23 @@
       color: var(--colors-text-text-secondary-700, #FBFBFB);
 
     &.hover {
-      background: var(--primary, #f5620f);
-      color: var(--white-day, #fff);
+      color: var(--colors-text-text-secondary_hover, #d2d2d2);
+
+      border: 1px solid var(--colors-border-border-primary, #525252) !important;
+      background: var(--colors-background-bg-primary_hover, #3b3b3b);
+
+      box-shadow: 0px 0px 0px 1px
+          var(
+            --colors-effects-shadows-shadow-skeumorphic-inner-border,
+            rgba(12, 14, 18, 0.18)
+          )
+          inset,
+        0px -2px 0px 0px var(
+            --colors-effects-shadows-shadow-skeumorphic-inner,
+            rgba(12, 14, 18, 0.05)
+          ) inset,
+        0px 1px 2px 0px
+          var(--colors-effects-shadows-shadow-xs, rgba(255, 255, 255, 0));
     }
 
     &.destructive {
