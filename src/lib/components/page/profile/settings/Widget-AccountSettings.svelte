@@ -521,7 +521,7 @@ Profile Settings
       w-500
       s-20
       m-b-24
-      color-black-2
+      text-color
       "
       style="margin-top: 0px;"
     >
@@ -555,7 +555,7 @@ Profile Settings
           "
             s-16
             w-500
-            color-black-2
+            text-color
             m-b-5
           "
           class:m-b-6={VIEWPORT_MOBILE_INIT[1]}
@@ -582,7 +582,7 @@ Profile Settings
           btn-hollow
           w-500
           s-14
-          color-black-2
+          text-color
         "
         on:click=
         {
@@ -666,7 +666,7 @@ Profile Settings
               s-16
               w-500
               m-r-6
-              color-black-2
+              text-color
             "
             >
               {profileTrs.profile?.username}
@@ -770,7 +770,7 @@ Profile Settings
               s-16
               w-500
               m-r-6
-              color-black-2
+              text-color
             "
             >
               {profileTrs.profile?.name_2}
@@ -849,7 +849,7 @@ Profile Settings
               s-16
               w-500
               m-r-6
-              color-black-2
+              text-color
             "
             >
               {profileTrs.profile?.about}
@@ -911,7 +911,7 @@ Profile Settings
           class="
             s-16
             w-500
-            color-black-2
+            text-color
             m-b-5
           "
           class:m-b-6={VIEWPORT_MOBILE_INIT[1]}
@@ -936,7 +936,7 @@ Profile Settings
         btn-hollow
         w-500
         s-14
-        color-black-2
+        text-color
         "
         class:m-l-24={!VIEWPORT_TABLET_INIT[1]}
         on:click=
@@ -1093,6 +1093,10 @@ Profile Settings
 		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
 		border-radius: 12px;
 		padding: 20px;
+
+    .text-color {
+      color: var(--text-color);
+    }
 	}
 
 	input[type='text'], textarea

@@ -287,7 +287,7 @@ VIEW DESIGN - 1
         "
         w-400
         s-16
-        color-black-2
+        current-option
         no-wrap
         "
 			>
@@ -411,7 +411,7 @@ VIEW DESIGN - 2
         s-16
         "
 				class:color-grey={SELECTED_OPT != MENU_OPT}
-				class:color-black-2={SELECTED_OPT == MENU_OPT}
+				class:selected={SELECTED_OPT == MENU_OPT}
 				class:color-grey-shade=
         {
           [
@@ -517,6 +517,7 @@ VIEW DESIGN - 2
   {
 		border-right: 4px solid var(--primary);
 		background: rgba(245, 98, 15, 0.1);
+    color: var(--text-color);
 	}
 	div.profile-menu-opt p.menu-opt-not-available
   {
@@ -528,6 +529,9 @@ VIEW DESIGN - 2
   {
 		color: var(--dark-theme) !important;
 	}
+  p.selected,.current-option {
+    color: var(--text-color)
+  }
 
 	/*
   =============
