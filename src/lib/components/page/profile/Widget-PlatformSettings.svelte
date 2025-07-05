@@ -97,7 +97,6 @@ PLATFORM SETTINGS WIDGET
         w-500
         s-20
         m-b-24
-        color-black-2
       "
       style="margin-top: 0px;"
     >
@@ -151,7 +150,7 @@ PLATFORM SETTINGS WIDGET
               s-16
               w-500
               m-r-6
-              color-black-2
+              label
             "
             >
               {profileTrs?.profile?.theme || "Theme"}
@@ -164,6 +163,7 @@ PLATFORM SETTINGS WIDGET
             class="
               s-14
               color-grey
+              sub-title
             "
           >
             {profileTrs?.profile?.theme_desc ||
@@ -219,7 +219,7 @@ PLATFORM SETTINGS WIDGET
               s-16
               w-500
               m-r-6
-              color-black-2
+              label
             "
             >
               {profileTrs?.profile?.lang || "Language"}
@@ -274,7 +274,7 @@ PLATFORM SETTINGS WIDGET
 ### HINT: auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
 =================-->
 
-<style>
+<style lang="scss">
   /*
   profile [settings] widget
   */
@@ -283,6 +283,13 @@ PLATFORM SETTINGS WIDGET
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
     border-radius: 12px;
     padding: 20px;
+
+    h2 {
+      color: var(--text-color);
+    }
+    .label {
+      color: var(--text-color);
+    }
   }
   :global(#platform-settings-widget-box .language-input button) {
     /* white theme/gray */

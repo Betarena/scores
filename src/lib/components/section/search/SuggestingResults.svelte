@@ -124,7 +124,7 @@
         <Button
           size="md"
           full={true}
-          type="secondary-gray"
+          type="secondary"
           on:click={() => viewMore("highlights")}>{search_translations.view_more || "View more"}</Button
         >
       </div>

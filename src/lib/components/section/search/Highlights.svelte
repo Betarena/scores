@@ -118,7 +118,7 @@
             <Button
               size="md"
               full={true}
-              type="secondary-gray"
+              type="secondary"
               on:click={() => viewMore("users")}>{translations?.view_more || "View more" }</Button
             >
           </div>
@@ -141,7 +141,7 @@
             <Button
               size="md"
               full={true}
-              type="secondary-gray"
+              type="secondary"
               on:click={() => viewMore("sportstacks")}>{translations?.view_more || "View more" }</Button
             >
           </div>
@@ -176,7 +176,7 @@
               <Button
                 size="md"
                 full={true}
-                type="secondary-gray"
+                type="secondary"
                 on:click={() => viewMore("posts")}>{translations?.view_more || "View more" }</Button
               >
             </div>

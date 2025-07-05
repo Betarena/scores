@@ -184,6 +184,11 @@
         mapComponentDynamicLoading: new Map < IDynamicComponentMap, any >()
       }
   ;
+  /**
+   * @description
+   *  📝 Page unsubscribe to remove inside onDestroy.
+   */
+  let page_unsub: () => void;
 
   $: ({ currentPageRouteId, currentActiveModal, currentActiveToast, globalState, serverLang } = { ...$sessionStore });
   $: ({ theme } = { ...$userBetarenaSettings });
@@ -289,7 +294,7 @@
   // ╰─────
   $: if (browser && (deepReactListenStore1 || deepReactListenStore2))
   {
-    window.intercomSettings
+    const intercomSettings
       = {
         api_base: 'https://api-iam.intercom.io',
         app_id: 'yz9qn6p3',
@@ -300,7 +305,18 @@
         competition_number: competition_number ?? 0,
       }
     ;
+    window.intercomSettings = intercomSettings
+    window.Intercom?.("boot", {
+      ...intercomSettings,
+      hide_default_launcher: true
+    });
 
+    page_unsub = page.subscribe(() => {
+      window.Intercom?.('update', {
+        hide_default_launcher: $sessionStore.currentPageRouteId !== "ProfilePage",
+        last_request_at: Math.floor(Date.now() / 1000)
+      })
+    })
     // [🐞]
     Sentry.setContext
     (
@@ -338,6 +354,7 @@
   onDestroy(() => {
     if (!browser) return
     window?.visualViewport?.removeEventListener('resize', updateVh);
+    page_unsub?.();
   })
 
   onMount
