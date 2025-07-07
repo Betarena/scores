@@ -112,7 +112,7 @@
     <div class="partners-sections">
       {#each partners as partner}
 
-        <PartnerCard {partner} {submissions}/>
+        <PartnerCard {partner} bind:submissions/>
       {/each}
     </div>
   </div>
