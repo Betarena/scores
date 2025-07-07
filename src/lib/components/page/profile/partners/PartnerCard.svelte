@@ -18,7 +18,6 @@
     PartnersPartnersListMain,
   } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import RegistrationModal from "./RegistrationModal.svelte";
-  import { profile } from "console";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
