@@ -62,6 +62,6 @@
 
 <style lang="scss">
   .modal-content {
-    z-index: 4000;
+    z-index: 4001;
   }
 </style>

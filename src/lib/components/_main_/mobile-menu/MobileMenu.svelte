@@ -52,10 +52,9 @@
 
   import type { SvelteComponent } from "svelte";
   import Avatar from "$lib/components/ui/Avatar.svelte";
-  import {
-    routeIdContent,
-  } from "$lib/constants/paths.js";
+  import { routeIdContent } from "$lib/constants/paths.js";
   import Sheets from "./assets/sheets.svelte";
+  import Search from "./assets/search.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -96,7 +95,7 @@
     CNAME = "global/w/mobile-menu";
 
   let showPopup = false;
-  $: ({ serverLang } = $sessionStore);
+
   $: ({ profile_photo, buttons_order, lang } = {
     ...$userBetarenaSettings.user?.scores_user_data,
   });
@@ -138,6 +137,14 @@
     //   route: routeIdPageCompetitionLobby,
     // },
     {
+      id: "search",
+      icon: Search,
+      type: "link",
+      url: `/search`,
+      label: "Search",
+      route: null,
+    },
+    {
       id: "bta",
       icon: Sheets,
       url: `/u/author/${lang}`,
@@ -150,9 +157,9 @@
   $: if (buttons_order && !dragStart) {
     const orderMap = new Map(buttons_order.map((id, index) => [id, index]));
     navButtonOrderList = [...navButtonOrderList].sort((a, b) => {
-        const indexA = orderMap.has(a.id) ? orderMap.get(a.id)! : Infinity;
-        const indexB = orderMap.has(b.id) ? orderMap.get(b.id)! : Infinity;
-        return (indexA as number) - (indexB as number);
+      const indexA = orderMap.has(a.id) ? orderMap.get(a.id)! : Infinity;
+      const indexB = orderMap.has(b.id) ? orderMap.get(b.id)! : Infinity;
+      return (indexA as number) - (indexB as number);
     });
   }
 
@@ -241,10 +248,17 @@
   <div class="blured-container" />
   {#each [...navButtonOrderList] as { id, url, icon, type, route } (id)}
     {#if type === "link" && url}
-      {@const active = $page.route.id === route || $page.url.pathname.includes(url)}
-      <a href={url} class="item" on:click={(e) => buttonClick(id, e)} class:active aria-label="link to {id}">
-        <svelte:component this={icon} type={active ? "solid" : "outline"} />
-      </a>
+        {@const active =
+          $page.route.id === route || $page.url.pathname.includes(url)}
+        <a
+          href={url}
+          class="item"
+          on:click={(e) => buttonClick(id, e)}
+          class:active
+          aria-label="link to {id}"
+        >
+          <svelte:component this={icon} type={active ? "solid" : "outline"} />
+        </a>
     {:else}
       <div class="item" on:click={() => buttonClick(id)}>
         <svelte:component this={icon} />
@@ -295,7 +309,10 @@
             style="gap: 10px; outline:none"
             animate:flip={{ duration: 300 }}
           >
-            <a href={url} class="mobile-dnd-list-item" style="
+            <a
+              href={url}
+              class="mobile-dnd-list-item"
+              style="
               gap: 10px;
             flex-grow: 1;
             height: 100%;
@@ -303,7 +320,8 @@
             align-items: center;
             justify-content: start;
 
-            ">
+            "
+            >
               <div style="width: 24px;">
                 <svelte:component this={icon} />
               </div>
@@ -342,7 +360,7 @@
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
+    z-index: 4000;
   }
   .mobile-menu {
     display: flex;
@@ -356,7 +374,7 @@
     left: 50%;
     transform: translateX(-50%);
     border-radius: 56px;
-    z-index: 1000;
+    z-index: 4000;
     align-items: center;
     justify-content: space-between;
     gap: 40px;

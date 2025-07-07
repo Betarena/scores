@@ -35,15 +35,17 @@
   import AssetBetarenaLogoFull from "./assets/asset-betarena-logo-full.svelte";
   import Avatar from "$lib/components/ui/Avatar.svelte";
   import { scoresNavbarStore } from "./_store.js";
-  import HeaderNavigation from "./HeaderNavigation.svelte";
   import { promiseUrlsPreload } from "$lib/utils/navigation.js";
   import {
     routeIdAuthorProfile,
     routeIdAuthorSubscribers,
     routeIdPageAuthors,
     routeIdPageTags,
+    routeIdSearch,
     routeIdSportstack,
   } from "$lib/constants/paths.js";
+  import session from "$lib/store/session.js";
+  import HeaderSearch from "./HeaderSearch.svelte";
 
   // #endregion ➤ 📦 Package Imports
   // #region ➤ 📌 VARIABLES
@@ -69,6 +71,7 @@
   $: isAuth = !!user;
   $: ({ profile_photo } = { ...$userBetarenaSettings.user?.scores_user_data });
   $: loadTranslations(serverLang);
+   $: ({viewportType} = $session)
 
   const pagesWihoutNav = [
     routeIdPageTags,
@@ -142,6 +145,9 @@
   {/if}
 
   <div class="actions">
+    {#if viewportType === "desktop" && ![routeIdSearch, routeIdPageAuthors].includes( $page.route.id || "")}
+       <HeaderSearch />
+    {/if}
     <HeaderCLang />
     <HeaderCTheme />
     {#if !isAuth}
@@ -153,12 +159,12 @@
         />
       </Button>
     {:else}
-      <a href="/u/dashboard/{$userBetarenaSettings.lang}" class="avatar-wrapper" on:click|stopPropagation>
-        <Avatar
-          src={profile_photo}
-          size={44}
-          isLoogedIn={isAuth}
-        />
+      <a
+        href="/u/dashboard/{$userBetarenaSettings.lang}"
+        class="avatar-wrapper"
+        on:click|stopPropagation
+      >
+        <Avatar src={profile_photo} size={44} isLoogedIn={isAuth} />
       </a>
     {/if}
   </div>

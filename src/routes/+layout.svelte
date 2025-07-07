@@ -45,7 +45,7 @@
   import { afterNavigate, beforeNavigate } from '$app/navigation';
   import { page } from '$app/stores';
   import * as Sentry from '@sentry/sveltekit';
-  import { onMount } from 'svelte';
+  import { onDestroy, onMount } from 'svelte';
 
   import
     {
@@ -56,6 +56,7 @@
       routeIdPageProfileEditArticle,
       routeIdPageProfilePublication,
       routeIdScores,
+      routeIdSearch,
     } from '$lib/constants/paths.js';
   import { scoresAdminStore } from '$lib/store/admin.js';
   import { delCookie } from '$lib/store/cookie.js';
@@ -85,6 +86,8 @@
   // import '@betarena/ad-engine';
   // import WidgetAdEngine from '@betarena/ad-engine/src/lib/Widget-AdEngine.svelte';
   import WidgetAdEngine from '@betarena/ad-engine';
+  import history_store from '$lib/store/history.js';
+  import AndroidPwaBanner from '$lib/components/AndroidPWABanner.svelte';
 
   // ╭─────
   // │ WARNING:
@@ -181,6 +184,11 @@
         mapComponentDynamicLoading: new Map < IDynamicComponentMap, any >()
       }
   ;
+  /**
+   * @description
+   *  📝 Page unsubscribe to remove inside onDestroy.
+   */
+  let page_unsub: () => void;
 
   $: ({ currentPageRouteId, currentActiveModal, currentActiveToast, globalState, serverLang } = { ...$sessionStore });
   $: ({ theme } = { ...$userBetarenaSettings });
@@ -286,7 +294,7 @@
   // ╰─────
   $: if (browser && (deepReactListenStore1 || deepReactListenStore2))
   {
-    window.intercomSettings
+    const intercomSettings
       = {
         api_base: 'https://api-iam.intercom.io',
         app_id: 'yz9qn6p3',
@@ -297,7 +305,18 @@
         competition_number: competition_number ?? 0,
       }
     ;
+    window.intercomSettings = intercomSettings
+    window.Intercom?.("boot", {
+      ...intercomSettings,
+      hide_default_launcher: true
+    });
 
+    page_unsub = page.subscribe(() => {
+      window.Intercom?.('update', {
+        hide_default_launcher: $sessionStore.currentPageRouteId !== "ProfilePage",
+        last_request_at: Math.floor(Date.now() / 1000)
+      })
+    })
     // [🐞]
     Sentry.setContext
     (
@@ -308,7 +327,7 @@
     );
   }
 
-  $: if (browser)
+  $: if (browser){
     // eslint-disable-next-line new-cap
     window.Intercom
     (
@@ -317,7 +336,9 @@
         hide_default_launcher: currentPageRouteId != 'ProfilePage',
       }
     );
-  ;
+    updateVh();
+    window?.visualViewport?.addEventListener('resize', updateVh);
+  }
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
@@ -330,11 +351,18 @@
   // │ as soon as 'this' .svelte file is ran.                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  onDestroy(() => {
+    if (!browser) return
+    window?.visualViewport?.removeEventListener('resize', updateVh);
+    page_unsub?.();
+  })
+
   onMount
   (
     async (
     ): Promise < void > =>
     {
+
       // initSentry();
 
       // ╭─────
@@ -495,6 +523,13 @@
     }
   );
 
+
+  beforeNavigate(({from}) => {
+    if (!from) return;
+    const {url} = from;
+    $history_store.push(url.pathname);
+  })
+
   afterNavigate
   (
     async (
@@ -525,6 +560,12 @@
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
+  function updateVh() {
+    if (!browser) return;
+    const vh = (window?.visualViewport?.height || window?.innerHeight) * 0.01;
+    document.body.style.setProperty('--vh', `${vh}px`);
+  }
+
 </script>
 
 <!--
@@ -534,6 +575,7 @@
 -->
 
 <svelte:head>
+  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
   <script>
     // We pre-filled your app ID in the widget URL: 'https://widget.intercom.io/widget/yz9qn6p3'
     (
@@ -633,7 +675,7 @@
   id="app-root-layout"
   class:dark-mode={theme == 'Dark'}
   class:light-mode={theme == 'Light'}
-  class:page-content={$page.route.id === routeIdContent}
+  class:page-content={[routeIdContent, routeIdSearch].includes($page.route.id || "")}
   data-page-id={currentPageRouteId}
   data-mode={globalState.has('IsPWA') ? 'pwa' : 'web'}
 >
@@ -688,7 +730,7 @@
     <!-- <EmailSubscribe /> -->
   {/if}
 
-  {#if ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle].includes($page.route.id )}
+  {#if ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle, routeIdSearch].includes($page.route.id || "" ) || ($page.route.id === routeIdSearch && $sessionStore.viewportType !== "mobile") }
     <HeaderRedesigned />
   {/if}
 
@@ -697,10 +739,9 @@
     class:dark-mode={theme == 'Dark'}
     class:light-mode={theme == 'Light'}
     class:standard={currentPageRouteId == null }
-    class:page-competition={currentPageRouteId == 'CompetitionPage'}
     class:page-profile={currentPageRouteId == 'ProfilePage'}
-    class:page-authors={currentPageRouteId == 'AuthorsPage' || currentPageRouteId == 'Standard'}
-    class:page-content={$page.route.id === routeIdContent}
+    class:page-authors={currentPageRouteId == 'AuthorsPage' || currentPageRouteId == 'Standard' || $page.route.id === routeIdSearch }
+    class:page-content={[routeIdContent, routeIdSearch].includes($page.route.id || "")}
     class:mobile={objComponentStandardState.viewport.mobile.state}
     class:tablet={objComponentStandardState.viewport.tablet.state}
   >
@@ -717,6 +758,8 @@
     {/if}
 
   </main>
+  <InfoMessages />
+  <ModalMain />
 
   {#if
     (objComponentStandardState.viewport.mobile.state || objComponentStandardState.viewport.tablet.state)
@@ -728,11 +771,10 @@
     />
   {/if}
 
-  <InfoMessages />
 
-  <ModalMain />
 </div>
 
+<AndroidPwaBanner />
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ 🌊 Svelte Component CSS/SCSS                                                     │
@@ -758,14 +800,13 @@
   .app-wrapper {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    min-height: calc(var(--vh)*100);
     &.page-content {
       background-color: var(--bg-color);
     }
 
     &[data-page-id="Standard"],
     &[data-page-id="CompetitionPage"] {
-      background-color: red;
       &.light-mode {
         background-color: var(--whitev2);
       }

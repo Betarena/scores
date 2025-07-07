@@ -26,7 +26,7 @@
   import LoaderAvatar from "$lib/components/ui/loaders/LoaderAvatar.svelte";
   import LoaderLine from "$lib/components/ui/loaders/LoaderLine.svelte";
   import session from "$lib/store/session.js";
-    // #endregion ➤ 📦 Package Imports
+  // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
 
@@ -41,9 +41,24 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
+  export let size: number | string = 40;
+  export let action_button = true;
+  export let includePermalink = false;
+  let numSize = 40;
   $: ({ viewportType } = $session);
-
+  const sizeMap = {
+    xs: 24,
+    sm: 32,
+    md: 40,
+    lg: 48,
+    xl: 56,
+    xxl: 64,
+  };
+  $: if (typeof size === "string") {
+    numSize = sizeMap[size] || 38;
+  } else {
+    numSize = size;
+  }
   // #endregion ➤ 📌 VARIABLES
 </script>
 
@@ -60,10 +75,19 @@
 
 <div class="list-item {viewportType}">
   <div class="user-info">
-    <LoaderAvatar size={40} />
-    <LoaderLine width={70} />
+    <LoaderAvatar size={numSize} />
+    <div class="name-wrapp">
+      <LoaderLine width={70} height={10} />
+      {#if includePermalink}
+        <div class="permalink">
+          <LoaderLine width={35} height={10} />
+        </div>
+      {/if}
+    </div>
   </div>
-  <LoaderButton width={75} height={32}/>
+  {#if action_button}
+    <LoaderButton width={75} height={32} />
+  {/if}
 </div>
 
 <!--
@@ -100,6 +124,15 @@
 
       &:hover {
         color: var(--primary);
+      }
+
+      .name-wrapp {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+        .permalink {
+          height: 10px;
+        }
       }
     }
 

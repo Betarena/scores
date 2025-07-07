@@ -8,7 +8,7 @@
 -->
 
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
+  import { createEventDispatcher } from "svelte";
 
   // #region ➤ 📌 VARIABLES
 
@@ -26,28 +26,30 @@
 
   export let width: number | string = 200,
     height: number | string = 50,
-    classname: string = '',
+    classname: string = "",
     full = false,
-    href = '';
+    href = "";
   export let disabled = false;
+  export let blank = false;
 
   export let /**
      * @description
      *  button styles: primary | outline
      */ // eslint-disable-next-line no-unused-vars
     type:
-      | 'primary'
-      | 'outline'
-      | 'secondary'
-      | 'secondary-gray'
-      | 'primary-outline'
-      | 'terlary-gray'
-      | 'tertiary'
-      | 'tertiary-v2'
-      | 'subtle' = 'primary';
+      | "primary"
+      | "outline"
+      | "secondary"
+      | "secondary-gray"
+      | "primary-outline"
+      | "terlary-gray"
+      | "tertiary"
+      | "button-brand"
+      | "link-color"
+      | "subtle" = "primary";
 
   export let submit = false;
-  export let size: 'lg' | 'md' | 'sm' | 'xl' | 'xxl' = 'lg';
+  export let size: "lg" | "md" | "sm" | "xl" | "xxl" = "lg";
   export let destructive = false;
   export let icon_leading = false;
 
@@ -74,17 +76,25 @@
     class:disabled
     class:icon_leading
     {...$$restProps}
-    type={submit ? 'submit' : 'button'}
+    type={submit ? "submit" : "button"}
+    target={blank ? "_blank" : "_self"}
     class:hover
     class:destructive
-    on:mouseenter={() => {return (hover = true)}}
-    on:mouseleave={() => {return (hover = false)}}
-    on:touchend={() => {return (hover = false)}}
-    on:mouseup={() => {return (hover = false)}}
-    on:click={() =>
-    {
+    on:mouseenter={() => {
+      return (hover = true);
+    }}
+    on:mouseleave={() => {
+      return (hover = false);
+    }}
+    on:touchend={() => {
+      return (hover = false);
+    }}
+    on:mouseup={() => {
+      return (hover = false);
+    }}
+    on:click={() => {
       if (disabled) return;
-      dispatch('click');
+      dispatch("click");
       hover = false;
     }}
   >
@@ -97,17 +107,24 @@
     class:disabled
     class:icon_leading
     {...$$restProps}
-    type={submit ? 'submit' : 'button'}
+    type={submit ? "submit" : "button"}
     class:hover
     class:destructive
-    on:mouseenter={() => {return (hover = true)}}
-    on:mouseleave={() => {return (hover = false)}}
-    on:touchend={() => {return (hover = false)}}
-    on:mouseup={() => {return (hover = false)}}
-    on:click={() =>
-    {
+    on:mouseenter={() => {
+      return (hover = true);
+    }}
+    on:mouseleave={() => {
+      return (hover = false);
+    }}
+    on:touchend={() => {
+      return (hover = false);
+    }}
+    on:mouseup={() => {
+      return (hover = false);
+    }}
+    on:click={() => {
       if (disabled) return;
-      dispatch('click');
+      dispatch("click");
       hover = false;
     }}
   >
@@ -286,12 +303,41 @@
   }
 
   .secondary {
-    background-color: var(--button-secondary-bg);
-    color: var(--text-color);
+    border: 1px solid var(--colors-border-border-primary, #525252) !important;
+    background: var(--colors-background-bg-primary, #1f1f1f);
+    /* Shadows/shadow-xs-skeuomorphic */
+    box-shadow: 0px 0px 0px 1px
+        var(
+          --colors-effects-shadows-shadow-skeumorphic-inner-border,
+          rgba(12, 14, 18, 0.18)
+        )
+        inset,
+      0px -2px 0px 0px var(
+          --colors-effects-shadows-shadow-skeumorphic-inner,
+          rgba(12, 14, 18, 0.05)
+        ) inset,
+      0px 1px 2px 0px
+        var(--colors-effects-shadows-shadow-xs, rgba(255, 255, 255, 0));
+      color: var(--colors-text-text-secondary-700, #FBFBFB);
 
     &.hover {
-      background: var(--primary, #f5620f);
-      color: var(--white-day, #fff);
+      color: var(--colors-text-text-secondary_hover, #d2d2d2);
+
+      border: 1px solid var(--colors-border-border-primary, #525252) !important;
+      background: var(--colors-background-bg-primary_hover, #3b3b3b);
+
+      box-shadow: 0px 0px 0px 1px
+          var(
+            --colors-effects-shadows-shadow-skeumorphic-inner-border,
+            rgba(12, 14, 18, 0.18)
+          )
+          inset,
+        0px -2px 0px 0px var(
+            --colors-effects-shadows-shadow-skeumorphic-inner,
+            rgba(12, 14, 18, 0.05)
+          ) inset,
+        0px 1px 2px 0px
+          var(--colors-effects-shadows-shadow-xs, rgba(255, 255, 255, 0));
     }
 
     &.destructive {
@@ -449,30 +495,42 @@
       }
     }
   }
+  .link-color {
+    padding: 0 !important;
+    background: inherit;
+    color: var(
+      --component-colors-components-buttons-tertiary-color-button-tertiary-color-fg,
+      #f5620f
+    );
 
-  .tertiary-v2
-  {
+    &:hover,
+    &.hover {
+      color: var(
+        --component-colors-components-buttons-tertiary-color-button-tertiary-color-fg_hover,
+        #d4550c
+      );
+    }
+  }
+
+  .button-brand {
     background: inherit;
 
-    color: var(--colors-foreground-fg-quaternary);
+    color: var(--colors-text-text-quaternary-500);
 
-    &.selected
-    {
+    &.selected {
       background: var(--colors-background-bg-brand-primary_alt);
-      color: var(--colors-text-text-brand-tertiary);
+      color: var(--colors-brand-500);
     }
 
     &:hover,
-    &.hover
-    {
+    &.hover {
       background: var(--colors-background-bg-brand-primary_alt);
       color: #d4550c !important;
     }
 
-    &:focus
-    {
-      box-shadow: 0px 0px 0px 2px var(--colors-background-bg-primary), 0px 0px 0px 4px var(--colors-effects-focus-rings-focus-ring);
+    &:focus {
+      box-shadow: 0px 0px 0px 2px var(--colors-background-bg-primary),
+        0px 0px 0px 4px var(--colors-effects-focus-rings-focus-ring);
     }
   }
-
 </style>

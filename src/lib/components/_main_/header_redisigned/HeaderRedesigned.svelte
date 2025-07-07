@@ -33,8 +33,6 @@
   import { page } from "$app/stores";
   import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
   import MobileHeaderSmall from "./MobileHeaderSmall.svelte";
-  import SportsNavigation from "./SportNavigation/SportsNavigation.svelte";
-  import SportsNavigationStandart from "./SportNavigation/SportsNavigationStandart.svelte";
   import TabletWave from "./assets/wave-bg-tablet.svg";
   import DesktopWave from "./assets/wave-bg-desktop.svg";
   import MobileWave from "./assets/wave-bg-mobile.svg";
@@ -156,6 +154,7 @@
 
 <header
   id="header"
+  class:custom-bg={$page.route.id === routeIdPageAuthors}
   class:sticky={$page.route.id === routeIdPageAuthors && isPWA && mobile}
   class:mobile
   class:dark-mode={currentPageRouteId !== "AuthorsPage"}
@@ -222,6 +221,11 @@
       width: 100%;
       background: initial;
     }
+    &.custom-bg {
+      background-color: var(--colors-background-bg-primary);
+      border: none;
+    }
+
 
     .empty-nav {
       box-sizing: border-box;

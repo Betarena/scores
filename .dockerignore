@@ -43,3 +43,4 @@ env/placeholder/
 .sentryclirc
 !.env.vault
 !.env.docker.file
+.flaskenv*

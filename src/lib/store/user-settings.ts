@@ -53,6 +53,7 @@ export type IDataProp =
   | 'user-subscriptions'
   | 'user-highlighted-sportstack'
   | 'history-preference-articles-content-feed'
+  | 'search_history'
 ;
 
 enum DataPropEnum
@@ -75,7 +76,8 @@ enum DataPropEnum
   USER_SUBSCRIPTION = 'user-subscriptions',
   USER_BUTTONS_ORDER = 'user-buttons-order',
   USER_HIGHLIGHTED_SPORTSTACK = 'user-highlighted-sportstack',
-  HISTORY_PREFERENCE_ARTICLES_CONTENT_FEED = 'history-preference-articles-content-feed'
+  HISTORY_PREFERENCE_ARTICLES_CONTENT_FEED = 'history-preference-articles-content-feed',
+  SEARCH_HISTORY = 'search_history'
 }
 
 // #endregion ➤ ⛩️ TYPES
@@ -99,7 +101,8 @@ let
       objHistory:
       {
         strContentSelectFeed: 'home'
-      },
+    },
+      searchHistory: [],
       // ╭──────────────────────────────────────────────────────────────────────────────────╮
       // │ 📌 │ DEFAULT                                                                     │
       // ╰──────────────────────────────────────────────────────────────────────────────────╯
@@ -199,6 +202,7 @@ function createLocalStore
                 user: undefined,
                 voted_fixtures: [],
                 userguide_id_opt_out: [],
+                searchHistory: [],
                 objHistory:
                 {
                   strContentSelectFeed: 'home'
@@ -533,6 +537,11 @@ function createLocalStore
               {
                 userSettings.objHistory.strContentSelectFeed = dataPoint as IUserSetting['objHistory']['strContentSelectFeed'];
                 break;
+                }
+              case DataPropEnum.SEARCH_HISTORY:
+              {
+                userSettings.searchHistory = dataPoint as IUserSetting['searchHistory'];
+                break;
               }
               default: break;
             }
@@ -801,6 +810,8 @@ function createLocalStore
             return localStore?.user?.firebase_user_data?.uid as Typ1 | NullUndef;
           else if (dataPoint === 'user')
             return localStore?.user?.scores_user_data as Typ1 | NullUndef;
+          else if (dataPoint === 'search')
+            return localStore?.user?.scores_user_data?.search as Typ1 | NullUndef
           ;
 
           return;

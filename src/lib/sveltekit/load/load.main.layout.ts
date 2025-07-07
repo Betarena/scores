@@ -20,15 +20,14 @@ import { performance } from 'perf_hooks';
 import { main as articleTrFetch } from '$lib/sveltekit/load/load.author.layout.js';
 import { ERROR_CODE_PRELOAD, LAYOUT_1_LANG_PAGE_ERROR_MSG, dlogv2 } from '$lib/utils/debug';
 import { detectDeviceWithUA } from '$lib/utils/device.js';
-import { detectPlatformLanguage } from '$lib/utils/languages.js';
 import { preloadExitLogic, promiseUrlsPreload } from '$lib/utils/navigation.js';
 import { parseObject } from '$lib/utils/string.2.js';
 
 import type { IAuthTrs } from '@betarena/scores-lib/types/auth.js';
 import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
 import type { B_FOT_T } from '@betarena/scores-lib/types/types.main.footer.js';
-import type { B_SAP_D3 } from '@betarena/scores-lib/types/v8/preload.scores.js';
 import type { ServerLoadEvent } from '@sveltejs/kit';
+import type { TranslationSearchDataJSONSchema } from '@betarena/scores-lib/types/v8/_HASURA-0.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -58,8 +57,9 @@ type IPreloadData0 =
 [
   B_NAV_T | undefined,
   B_FOT_T | undefined,
-  B_SAP_D3 | undefined,
-  IAuthTrs | undefined
+  IAuthTrs | undefined,
+  TranslationSearchDataJSONSchema | undefined,
+  TranslationSearchDataJSONSchema | undefined
 ];
 
 /**
@@ -112,6 +112,13 @@ interface IPreloadResponse
    *  📝 Target `data` returned.
    */
   setState?: unknown;
+
+    /**
+   * @description
+   *  📝 Translations for `search`.
+   */
+  search_translations?: TranslationSearchDataJSONSchema;
+  app_install_translations?: TranslationSearchDataJSONSchema;
 }
 
 // #endregion ➤ ⛩️ TYPES
@@ -244,7 +251,9 @@ export async function main
   [
     objResponse.B_NAV_T,
     objResponse.B_FOT_T,
-    objResponse.authTrs
+    objResponse.authTrs,
+    objResponse.search_translations,
+    objResponse.app_install_translations
   ] = await fetchData
   (
     event.fetch,
@@ -264,8 +273,7 @@ export async function main
       LAYOUT_1_LANG_PAGE_ERROR_MSG
     );
   ;
-
-  if (event.route.id == '/(scores)/[[lang=lang]]')
+  if (['/(scores)/[[lang=lang]]', '/(scores)/search'].includes( event.route.id || ""))
   {
     const
       /**
@@ -361,6 +369,8 @@ async function fetchData
         `/api/data/main/navbar?lang=${lang}&decompress`,
         `/api/data/main/footer?lang=${lang}&decompress`,
         `/api/hasura/_main_/auth?lang=${lang}`,
+        `/api/data/translations?lang=${lang}&table=search`,
+        `/api/data/translations?lang=${lang}&table=app_install`
       ],
     /**
      * @description

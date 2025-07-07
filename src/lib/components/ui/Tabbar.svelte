@@ -8,8 +8,9 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 <script lang="ts">
+  import type { ITab } from "$lib/types.js";
   import { createEventDispatcher, tick } from "svelte";
-  import TranslationText from "../misc/Translation-Text.svelte";
+  import ScrollDataWrapper from "./wrappers/ScrollDataWrapper.svelte";
 
   // #region ➤ 📌 VARIABLES
 
@@ -24,19 +25,18 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  interface ITab {
-    id: string | number;
-    name?: string;
-    label: string;
-    [key: string]: any;
-  }
 
   export let data = [] as ITab[];
   export let selected = null as ITab | null;
   export let height = 14;
   export let translations: { [key: string]: string } = {};
-  export let type: "underline" | "button_border" = "underline";
+  export let type:
+    | "underline"
+    | "button_border"
+    | "button_brand"
+    | "button_gray" = "underline";
   export let size: "sm" | "md" | undefined = undefined;
+  export let fullWidth = false;
   let activeNode: HTMLElement;
   let tabbarNode: HTMLElement;
   const dispatch = createEventDispatcher();
@@ -117,8 +117,13 @@
   // #endregion ➤ 🛠️ METHODS
 </script>
 
-<div class="tabbar {type} {size}" bind:this={tabbarNode} {...$$restProps}>
-  {#each data as item, i (item.id)}
+<div
+  class="tabbar {type} {size}"
+  class:full={fullWidth}
+  bind:this={tabbarNode}
+  {...$$restProps}
+>
+  <ScrollDataWrapper {data} let:item>
     <div
       class="tab-item"
       style="margin-bottom: {type === 'underline' ? height : 0}px;"
@@ -128,7 +133,7 @@
     >
       <slot tab={item}>{item.label}</slot>
     </div>
-  {/each}
+  </ScrollDataWrapper>
   {#if type === "underline"}
     {#key translations}
       <div class="active" bind:this={activeNode} />
@@ -208,11 +213,11 @@
         color: var(--colors-text-text-quaternary-500, #727171);
 
         /* Text md/Semibold */
-        font-family: var(--Font-family-font-family-body, Roboto);
-        font-size: var(--Font-size-text-md, 16px);
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-md, 16px);
         font-style: normal;
         font-weight: 600;
-        line-height: var(--Line-height-text-md, 24px); /* 150% */
+        line-height: var(--line-height-text-md, 24px); /* 150% */
       }
 
       .selected {
@@ -241,6 +246,71 @@
         font-weight: 600;
         line-height: var(--line-height-text-md, 24px); /* 150% */
       }
+      &.full {
+        .tab-item {
+          padding: var(--spacing-md, 8px) var(--spacing-lg, 12px);
+        }
+      }
+    }
+
+    &.button_gray {
+      .tab-item {
+        display: flex;
+        height: 44px;
+        padding: var(--spacing-md, 8px) var(--spacing-lg, 12px);
+        justify-content: center;
+        align-items: center;
+        gap: var(--spacing-md, 8px);
+
+        border-radius: var(--radius-sm, 6px);
+
+        color: var(--colors-text-text-quaternary-500, #727171);
+
+        /* Text md/Semibold */
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-md, 16px);
+        font-style: normal;
+        font-weight: 600;
+        line-height: var(--line-height-text-md, 24px); /* 150% */
+
+        &:hover {
+          background: var(--colors-background-bg-primary_hover, #FBFBFB);
+          color: var(--colors-text-text-secondary-700, #525252);
+        }
+      }
+
+      .selected {
+        display: flex;
+        height: 44px;
+        padding: var(--spacing-md, 8px) var(--spacing-lg, 12px);
+        justify-content: center;
+        align-items: center;
+        gap: var(--spacing-md, 8px);
+
+        border-radius: var(--radius-sm, 6px);
+        background: var(--colors-background-bg-primary_alt, #fff);
+
+        /* Shadows/shadow-sm */
+        box-shadow: 0px 1px 3px 0px
+            var(--colors-effects-shadows-shadow-sm_01, rgba(31, 31, 31, 0.1)),
+          0px 1px 2px 0px
+            var(--colors-effects-shadows-shadow-sm_02, rgba(31, 31, 31, 0.06));
+
+        color: var(--colors-text-text-secondary-700, #525252);
+
+        /* Text md/Semibold */
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-md, 16px);
+        font-style: normal;
+        font-weight: 600;
+        line-height: var(--line-height-text-md, 24px); /* 150% */
+      }
+
+      &.full {
+        .tab-item {
+          padding: var(--spacing-md, 8px) var(--spacing-lg, 12px);
+        }
+      }
     }
 
     &.md {
@@ -252,13 +322,37 @@
           var(--spacing-lg, 12px) var(--spacing-xs, 4px);
         justify-content: center;
         align-items: center;
-        margin-bottom: 0!important;
+        margin-bottom: 0 !important;
 
         font-family: var(--font-family-font-family-body, Roboto);
         font-size: var(--font-size-text-md, 16px);
         font-style: normal;
         font-weight: 600;
         line-height: var(--line-height-text-md, 24px); /* 150% */
+      }
+    }
+    &.sm {
+      .tab-item {
+        display: inline-flex;
+        height: 36px;
+        padding: var(--spacing-md, 8px) var(--spacing-lg, 12px);
+        justify-content: center;
+        align-items: center;
+        gap: var(--spacing-md, 8px);
+        flex-shrink: 0;
+
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-sm, 14px);
+        font-style: normal;
+        font-weight: 600;
+        line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+      }
+    }
+
+    &.full {
+      gap: var(--spacing-xs, 4px);
+      .tab-item {
+        flex-grow: 1;
       }
     }
   }

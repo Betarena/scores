@@ -9,7 +9,6 @@
 
 <script lang="ts">
   import session from "$lib/store/session.js";
-  import type { BetarenaUser } from "$lib/types/types.user-settings.js";
   import type { IBetarenaUser } from "@betarena/scores-lib/types/_FIREBASE_.js";
   import ListUserItem from "./ListUserItem.svelte";
   import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
@@ -33,6 +32,10 @@
   export let users: Map<string, IBetarenaUser> = new Map(),
     translations: IPageAuthorTranslationDataFinal,
     loading = false,
+    size: number | string = 40,
+    limit = 10,
+    action_button= true,
+    includePermalink = false,
     emptyMessage = "";
 
   const /**
@@ -73,14 +76,14 @@
   {:else}
     <div class="list-wrapper">
       {#each [...users] as [uid, user] (uid)}
-        <ListUserItem {user} {translations} />
+        <ListUserItem {includePermalink} {user} {size} {translations} {action_button} />
       {/each}
     </div>
   {/if}
   {#if loading}
     <div class="list-wrapper">
-      {#each new Array(10) as _item}
-        <ListUserLoader />
+      {#each new Array(limit) as _item}
+        <ListUserLoader {includePermalink}  {action_button} {size}/>
       {/each}
     </div>
   {/if}
@@ -99,7 +102,7 @@
 <style lang="scss">
   .wrapper {
     display: flex;
-    padding-top: 8px;
+    padding-block: 8px;
 
     flex-direction: column;
     background-color: var(--bg-color);

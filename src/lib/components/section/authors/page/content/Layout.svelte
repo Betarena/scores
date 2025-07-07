@@ -78,7 +78,7 @@
     VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
   ;
 
-  $: pageSeo = $page.data.seoTamplate;
+  $: pageSeo = $page.data.objAuthorContentHome.seoTamplate;
   $: ({ windowWidth, globalState } = $sessionStore);
   $: isPWA = globalState.has('IsPWA');
   $: [mobile, tablet]
@@ -130,36 +130,37 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-{#if pageSeo}
-  <SvelteSeo
-    title={pageSeo.main_data.title}
-    description={pageSeo.main_data.description}
-    keywords={pageSeo.main_data.keywords}
-    noindex=
-    {
-      tryCatch
-      (
-        () =>
-        {
-          return JSON.parse(pageSeo.main_data.noindex);
-        }
-      ) ?? false
-    }
-    nofollow=
-    {
-      tryCatch
-      (
-        () =>
-        {
-          return JSON.parse(pageSeo.main_data.nofollow);
-        }
-      ) ?? false
-    }
-    canonical={`${$page.url.origin}${$page.url.pathname}`}
-    twitter={pageSeo.twitter_card}
-    openGraph={pageSeo.opengraph}
-  />
-{/if}
+<svelte:head>
+  <title>{pageSeo.main_data.title}</title>
+</svelte:head>
+
+<SvelteSeo
+  description={pageSeo.main_data.description}
+  keywords={pageSeo.main_data.keywords}
+  noindex=
+  {
+    tryCatch
+    (
+      () =>
+      {
+        return JSON.parse(pageSeo.main_data.noindex);
+      }
+    ) ?? false
+  }
+  nofollow=
+  {
+    tryCatch
+    (
+      () =>
+      {
+        return JSON.parse(pageSeo.main_data.nofollow);
+      }
+    ) ?? false
+  }
+  canonical={`${$page.url.origin}${$page.url.pathname}`}
+  twitter={pageSeo.twitter_card}
+  openGraph={pageSeo.opengraph}
+/>
 
 <section
   id={CNAME}
@@ -287,6 +288,7 @@
 
         .tabbar-wrapper {
           padding: 0px 16px;
+          padding-top: 4px;
           padding-bottom: 11px;
         }
 

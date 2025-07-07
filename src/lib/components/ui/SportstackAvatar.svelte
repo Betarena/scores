@@ -13,6 +13,7 @@
   import { createEventDispatcher } from "svelte";
   import DefaultAvatar from "./assets/default-avatar.svelte";
   import ImgPlaceholder from "./assets/img-placeholder.svelte";
+  import { getOptimizedImageUrl } from "$lib/utils/image.js";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -31,9 +32,23 @@
      * @description
      * avatar size
      */
-    size = 48,
+    size: number | string = 48,
     radius = "4px";
-
+  let numSize = 48;
+  $: styles = `height: ${numSize}px; width: ${numSize}px;`;
+  const sizeMap = {
+    xs: 24,
+    sm: 32,
+    md: 40,
+    lg: 48,
+    xl: 56,
+    xxl: 64,
+  };
+  $: if (typeof size === "string") {
+    numSize = sizeMap[size] || 38;
+  } else {
+    numSize = size;
+  }
   const dispatch = createEventDispatcher();
 
   // #endregion ➤ 📌 VARIABLES
@@ -53,14 +68,28 @@
   <div
     on:click={() => dispatch("click")}
     class="sportstack-image"
-    style="background: url({src}) center center / cover no-repeat; width: {size}px; height: {size}px; border-radius: {radius}"
+    style=
+    "
+    background: url({getOptimizedImageUrl({ strImageUrl: src })}) center center / cover no-repeat;
+    background-image: url({getOptimizedImageUrl({ strImageUrl: src })});
+    {styles}
+    border-radius: {radius};
+    "
   />
 {:else}
   <div
-    class="img empty"
-    style=" width: {size}px; height: {size}px; border-radius: {radius}"
+    class=
+    "
+    img
+    empty
+    "
+    style="
+    {styles}
+    border-radius: {radius};
+    background-image: url({getOptimizedImageUrl({ strImageUrl: src })});
+    "
   >
-    <ImgPlaceholder size={size/2} />
+    <ImgPlaceholder size={numSize / 2} />
   </div>
 {/if}
 
@@ -81,7 +110,6 @@
     height: 48px;
     border-radius: 4px;
     object-fit: contain;
-    background-image: url(src);
     background-repeat: no-repeat;
     background-size: cover;
   }

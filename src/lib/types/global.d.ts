@@ -17,6 +17,11 @@ interface Window
 	gtag: any;
   /**
    * @description
+   *  📣 `window` | `document` - global Facebook/Meta Tag Manager Methods access.
+   */ // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  fbq: any;
+  /**
+   * @description
    *  📣 `window` | `document` - global Ethereum (MetaMask) Methods access.
    */ // eslint-disable-next-line @typescript-eslint/no-explicit-any
 	ethereum: any;

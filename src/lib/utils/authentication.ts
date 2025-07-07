@@ -434,6 +434,8 @@ async function getFirestoreBetarenaUser
           )
       ;
 
+      window?.fbq('track', 'CompleteRegistration');
+
       return dataRes1.data() as BetarenaUser;
     }
   );

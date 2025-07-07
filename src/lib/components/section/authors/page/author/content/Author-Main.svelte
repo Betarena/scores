@@ -22,7 +22,6 @@
 -->
 
 <script lang="ts">
-
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -38,31 +37,26 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { page } from '$app/stores';
-  import { onMount } from 'svelte';
+  import { page } from "$app/stores";
+  import { onMount, tick } from "svelte";
 
-  import iconArrowLeftDark from './assets/icon-arrow-left-dark.svg';
-  import iconArrowLeftLight from './assets/icon-arrow-left-light.svg';
-  import iconArrowRightDark from './assets/icon-arrow-right-dark.svg';
-  import iconArrowRightLight from './assets/icon-arrow-right-light.svg';
+  import sessionStore from "$lib/store/session.js";
+  import { timeAgo } from "$lib/utils/dates.js";
+  import { viewportChangeV2 } from "$lib/utils/device";
+  import { readingTime } from "../../helpers.js";
+  import { getUserById } from "$lib/firebase/common.js";
+  import { getOptimizedImageUrl } from "$lib/utils/image.js";
 
-  import sessionStore from '$lib/store/session.js';
-  import userBetarenaSettings from '$lib/store/user-settings.js';
-  import { monthNames, timeAgo } from '$lib/utils/dates.js';
-  import { viewportChangeV2 } from '$lib/utils/device';
-  import { mutateStringToPermalink } from '@betarena/scores-lib/dist/util/language.js';
-  import { readingTime } from '../../helpers.js';
-  import { post } from '$lib/api/utils.js';
-  import { getUserById } from '$lib/firebase/common.js';
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
 
-  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
-  import SportstackAvatar from '$lib/components/ui/SportstackAvatar.svelte';
-  import Button from '$lib/components/ui/Button.svelte';
-  import session from '$lib/store/session.js';
-
-  import type { B_SAP_D2 } from '@betarena/scores-lib/types/seo-pages.js';
-  import type { IPageAuhtorArticleDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
-  import type { IPageArticleTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.articles.js';
+  import type { IPageAuhtorArticleDataFinal } from "@betarena/scores-lib/types/v8/preload.authors.js";
+  import type { IPageArticleTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.articles.js";
+  import AvatarLabel from "$lib/components/ui/AvatarLabel.svelte";
+  import Badge from "$lib/components/ui/Badge.svelte";
+  import ListSportsTackItem from "$lib/components/ui/composed/sportstack_list/ListSportsTackItem.svelte";
+  import ScrollDataWrapper from "$lib/components/ui/wrappers/ScrollDataWrapper.svelte";
+  import LoaderImage from "$lib/components/ui/loaders/LoaderImage.svelte";
+  import userSettings from "$lib/store/user-settings.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -80,43 +74,33 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let
-    /**
+  export let /**
      * @augments IPageAuhtorArticleDataFinal
      */
-    widgetData: IPageAuhtorArticleDataFinal
-  ;
+    widgetData: IPageAuhtorArticleDataFinal;
 
   /**
    * @description
    *  📣 Component interface.
    */
-  type IWidgetState =
-    | 'PrevButtonShow'
-    | 'NextButtonShow'
-  ;
+  type IWidgetState = "PrevButtonShow" | "NextButtonShow";
 
-  const
-    /**
+  const /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
      */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = 'author⮕w⮕author-content⮕main',
+    CNAME: string = "author⮕w⮕author-content⮕main",
     /**
      * @description
      *  📣 threshold start + state for 📱 MOBILE
      */ // eslint-disable-next-line no-unused-vars
-    VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ],
+    VIEWPORT_MOBILE_INIT: [number, boolean] = [575, true],
     /**
      * @description
      *  📣 threshold start + state for 💻 TABLET
      */ // eslint-disable-next-line no-unused-vars
-    VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ]
-  ;
-
-
-  let
-    /**
+    VIEWPORT_TABLET_INIT: [number, boolean] = [1160, true];
+  let /**
      * @description
      *  📣 Target data `map`.
      */
@@ -128,43 +112,22 @@
     executeAnimation = false,
     /**
      * @description
-     *  📣 Target `HTMLELement` for **Article Tags**.
+     *  📣 Target `HTMLELement` for **Content*.
      */
-    htmlElementScrollBox: HTMLElement,
-    /**
-     * @description
-     *  📣 **Local** component state
-     */
-    componentLocalState = new Set < IWidgetState >(),
-    author,
-    /**
-     * @description
-     *  📣 Logic for calculating `published days ago`.
-    */
-    publishDateAgo = () =>
-    {
-      const
-        differenceInDays = Math.ceil(((new Date().getTime() - new Date(widgetData.article.published_date).getTime()) / 1000) / ( 3600 * 24 ));
-      ;
-      return differenceInDays;
-    }
-  ;
+    contentContainer: HTMLElement,
+    author;
 
-  $: ({ theme, user } = { ...$userBetarenaSettings });
   $: ({ windowWidth, viewportType } = $sessionStore);
-  $: [ VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1] ]
-    = viewportChangeV2
-    (
-      windowWidth,
-      VIEWPORT_MOBILE_INIT[0],
-      VIEWPORT_TABLET_INIT[0],
-    );
-  $: widgetDataTranslation = $page.data.translationArticle as IPageArticleTranslationDataFinal | null | undefined;
-  $: monthTranslation = $page.data.monthTranslations as B_SAP_D2 | null | undefined;
-  $: isSubscribed =  (user?.scores_user_data?.subscriptions?.sportstacks || []).includes(widgetData.author.id);
-  $: isSportstackOwner = user?.firebase_user_data?.uid === widgetData.author.uid;
-  $: isAuth = !!user;
-  $: ({author: sportstack} = widgetData);
+  $: [VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1]] = viewportChangeV2(
+    windowWidth,
+    VIEWPORT_MOBILE_INIT[0],
+    VIEWPORT_TABLET_INIT[0]
+  );
+  $: widgetDataTranslation = $page.data.translationArticle as
+    | IPageArticleTranslationDataFinal
+    | null
+    | undefined;
+  $: ({ author: sportstack } = widgetData);
   $: getAuthor(sportstack?.uid);
   // #endregion ➤ 📌 VARIABLES
 
@@ -180,7 +143,6 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-
   async function getAuthor(id: string) {
     executeAnimation = false;
     const [user] = await getUserById([id]);
@@ -190,92 +152,65 @@
     }, 100);
   }
 
-  async function subscribe() {
-    if (!isAuth) {
-      $session.currentActiveModal = "Auth_Modal";
-      return;
-    }
-    const id = widgetData.author.id;
-    userBetarenaSettings.updateData([
-      [
-        "user-subscriptions",
-        { target: "sportstacks", id, follow: !isSubscribed },
-      ],
-    ]);
-    await post("/api/data/author/sportstack", {
-      authorId: id,
-      subscribe: !isSubscribed,
-    });
+  $: if (widgetData.article.data?.content && contentContainer) {
+    tick().then(loadTweets);
   }
 
-  /**
-   * @author
-   *  @migbash
-   * @summary
-   *  🟦 HELPER
-   * @description
-   *  📣 Scrolls `tags` in a target `direction`.
-   * @param { -1 | 1 | 0 } direction
-   *  💠 **[required]** Target `direction` to _scroll_.
-   * @return { void }
-   */
-  function scrollTags
-  (
-    direction: -1 | 1 | 0
-  ): void
-  {
-    if (direction == -1)
-      htmlElementScrollBox.scrollBy({ behavior: 'smooth', left: 250, top: 0 });
-    else if (direction == 1)
-      htmlElementScrollBox.scrollBy({ behavior: 'smooth', left: -250, top: 0 });
-    ;
+  async function loadTweets() {
+    if (!window.twttr?.widgets?.createTweet) {
+      setTimeout(loadTweets, 200);
+      return;
+    }
 
-    // [🐞]
-    // console.log('htmlElementScrollBox.scrollLeft', htmlElementScrollBox.scrollLeft);
-    // console.log('htmlElementScrollBox.offsetWidth', htmlElementScrollBox.offsetWidth);
-    // console.log('htmlElementScrollBox.scrollWidth', htmlElementScrollBox.scrollWidth);
+    const blocks = Array.from(
+      contentContainer.querySelectorAll("blockquote.twitter-tweet")
+    ) as HTMLQuoteElement[];
 
-    if (htmlElementScrollBox.scrollLeft == 0)
-      componentLocalState.delete('PrevButtonShow');
-    else
-      componentLocalState.add('PrevButtonShow');
-    ;
+    for (const block of blocks) {
+      const a = block.querySelector<HTMLAnchorElement>("a[href]");
+      if (!a) continue;
 
-    if ((htmlElementScrollBox.scrollLeft + htmlElementScrollBox.offsetWidth + 5) > htmlElementScrollBox.scrollWidth)
-      componentLocalState.delete('NextButtonShow');
-    else
-      componentLocalState.add('NextButtonShow');
-    ;
+      const match = a.href.match(/status\/(\d+)/);
+      if (!match) continue;
+      const tweetId = match[1];
 
-    componentLocalState = componentLocalState;
+      block.innerHTML = "";
+      const loaderWrapper = document.createElement("div");
+      loaderWrapper.style.cssText = `
+          width: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+      `;
+      block.appendChild(loaderWrapper);
 
-    return;
+      const loaderComponent = new LoaderImage({
+        target: loaderWrapper,
+        props: {
+          width: $sessionStore.viewportType === "mobile" ? 350 : 550,
+          height: "400px",
+          borderRadius: 12,
+        },
+      });
+
+      try {
+        await window.twttr.widgets.createTweet(tweetId, block, {
+          conversation: "none",
+          align: "center",
+          theme: $userSettings.theme === "Dark" ? "dark" : "light",
+          width: $sessionStore.viewportType === "mobile" ? 350 : 550,
+        });
+        loaderWrapper.remove();
+        loaderComponent.$destroy();
+      } catch (err) {
+      } finally {
+        loaderWrapper.remove();
+        loaderComponent.$destroy();
+      }
+    }
   }
 
   // #endregion ➤ 🛠️ METHODS
-
-  // #region ➤ 🔄 LIFECYCLE [SVELTE]
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'logic' that should run            │
-  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
-  // │ as soon as 'this' .svelte file is ran.                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  onMount
-  (
-    () =>
-    {
-
-      scrollTags(0);
-
-      return;
-    }
-  );
-
-  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
-
 </script>
 
 <!--
@@ -289,375 +224,88 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div
-  id="{CNAME}"
-  data-betarena-zone-id=4
-  class:dark-mode-1={theme == 'Dark'}
-  class:light-mode-1={theme == 'Light'}
->
-
-  <div class="article-header" class:reverse={VIEWPORT_MOBILE_INIT[1]}>
-  <!--
-  ╭─────
-  │ > article title
-  ╰─────
-  -->
-    <div class="article-title">
-      <h1
-        class=
-        "
-        {!VIEWPORT_MOBILE_INIT[1] ? 's-38' : 's-24'}
-        w-500
-        m-b-32
-        color-black-2
-        m-0
-        "
-        style=
-        "
-        {!VIEWPORT_MOBILE_INIT[1] ? 'line-height: 54px;' : 'line-height: 36px;'}
-        "
-      >
-        {widgetData.article.data?.title ?? ''}
-      </h1>
-
-       <!--
+<div id={CNAME} data-betarena-zone-id="4" class={viewportType}>
+  <div class="article-header">
+    <!--
     ╭─────
-    │ > article author box
+    │ > article title
     ╰─────
     -->
+    <div class="article-title">
+      <h1 class="title">
+        {widgetData.article.data?.title ?? ""}
+      </h1>
+
       <a
-      href="/a/user/{author?.usernamePermalink}"
-      class=
-      "
-      row-space-start
-      m-b-16
-      author-link
-      "
-      style=
-      "
-      align-items: flex-start;
-      "
-    >
-
-      <!--
-      ╭─────
-      │ > article author avatar
-      ╰─────
-      -->
-      <img
-        id='user-avatar'
-        src={author?.profile_photo ?? ''}
-        alt='user_avatar'
-        title={author?.name ?? ''}
-        loading='lazy'
-        class=
-        "
-        m-r-12
-        effect
-        "
+        href="/a/user/{author?.usernamePermalink}"
+        class="user-box"
         class:animate={executeAnimation}
-        style=
-        "
-        {VIEWPORT_MOBILE_INIT[1] ? 'width: 34px; height: 34px' : ''}
-        "
-      />
-
-      <!--
-      ╭─────
-      │ > article author further information
-      ╰─────
-      -->
-      <div>
-
-        <!--
-        ╭─────
-        │ > article author main info
-        ╰─────
-        -->
-        <div
-          class=
-          "
-          row-space-start
-          width-auto
-          "
+      >
+        <AvatarLabel
+          size="lg"
+          avatar={author?.profile_photo ?? ""}
+          name={author?.name ?? author?.username ?? ""}
         >
-          <!--
-          ╭─────
-          │ > article author name
-          ╰─────
-          -->
-          <a
-            href="/a/user/{author?.usernamePermalink}"
-            class=
-            "
-            s-14
-            w-600
-            color-black-2
-            m-r-8
-            no-wrap
-
-            author-name
-            "
-          >
-            {author?.name ?? ''}
-          </a>
-
-          <!--
-          ╭─────
-          │ > article author badges
-          ╰─────
-          -->
-          <!-- <div
-            class=
-            "
-            row-space-start
-            width-auto
-            m-r-16
-            "
-            style=
-            "
-            max-width: 16px;
-            max-height: 16px;
-            "
-          >
-            {#each widgetData.author?.badges ?? [] as item}
-              <img
-                id=''
-                src={item?.image ?? ''}
-                alt={item?.description ?? ''}
-                title={item?.description ?? ''}
-                loading='lazy'
-              />
-            {/each}
-          </div> -->
-
-        </div>
-
-        <!--
-        ╭─────
-        │ > article author extra info
-        ╰─────
-        -->
-        <div
-          class=
-          "
-          row-space-start
-          "
-        >
-          <!--
-          ╭─────
-          │ > article author creation date
-          ╰─────
-          -->
-          <p
-            class=
-            "
-            s-12
-            color-black-3
-              dark-v1
-            no-wrap
-            "
-          >
-            <!-- {monthTranslation?.months?.[monthNames[new Date(widgetData.article?.published_date  ?? '').getMonth()]]}
-            {new Date(widgetData.article?.published_date ?? '').getDate()},
-            {new Date(widgetData.article?.published_date  ?? '').getFullYear()} -->
-            {timeAgo(widgetData?.article?.published_date, $page.data.translations.time_ago)}
-          </p>
-          <p
-          class=
-          "
-          s-12
-          color-black-3
-            dark-v1
-          no-wrap
-          "
-        >
-          <span
-            class=
-            "
-            m-r-5
-            m-l-5
-            "
-          >
-          •
-          </span>
-          {readingTime(widgetData.article.data?.content)}
-          <TranslationText
-            key={'uknown'}
-            text={widgetDataTranslation?.translation?.reading_time}
-            fallback={'mins'}
-          />
-        </p>
-        </div>
-
-      </div>
-
-    </a>
-      <!--
-      ╭─────
-      │ > article tags
-      ╰─────
-      -->
-      {#if widgetData.article.tags?.length}
-        <div
-          id="tags-box"
-        >
-          <!--
-          ╭─────
-          │ > previous (button)
-          ╰─────
-          -->
-          {#if componentLocalState.has('PrevButtonShow')}
-            <div
-              id="tagScrollPrev"
-              class=
-              "
-              tagScrollButton
-              "
-              on:click=
-              {
-                () =>
-                {
-                  scrollTags(1);
-                  return;
-                }
-              }
-            >
-              <img
-                id=''
-                src={theme == 'Dark' ? iconArrowLeftDark : iconArrowLeftLight}
-                alt=''
-                title=''
-                loading='lazy'
-              />
-            </div>
-          {/if}
-
-          <!--
-          ╭─────
-          │ > article tags (inner)
-          ╰─────
-          -->
-          <div
-            id="tags-box-scroll"
-            bind:this={htmlElementScrollBox}
-            on:scroll=
-            {
-              () =>
-              {
-                scrollTags(0);
-                return;
-              }
-            }
-          >
-            <!-- [🐞] -->
-            <!-- {#each [...widgetData.tags, ...widgetData.tags, ...widgetData.tags] as item} -->
-            {#each [...(widgetData.article.tags ?? [])] as item}
-              <a
-                class=
-                "
-                tag-pill
-                "
-                href="/a/tag/{tagMap.get(item)?.permalink}"
-              >
-                <p
-                  class=
-                  "
-                  s-14
-                  w-400
-                  color-black-2
-                  no-wrap
-                  "
-                >
-                  {tagMap.get(item)?.name ?? ''}
-                </p>
-              </a>
-            {/each}
+          <div slot="label">
+            {timeAgo(
+              widgetData?.article?.published_date,
+              $page.data.translations.time_ago
+            )}
+            •
+            {readingTime(widgetData.article.data?.content)}
+            <TranslationText
+              key={"uknown"}
+              text={widgetDataTranslation?.translation?.reading_time}
+              fallback={"mins"}
+            />
           </div>
+        </AvatarLabel>
+      </a>
 
-          <!--
-          ╭─────
-          │ > next (button)
-          ╰─────
-          -->
-          {#if componentLocalState.has('NextButtonShow')}
-            <div
-              id="tagScrollNext"
-              class=
-              "
-              tagScrollButton
-              "
-              on:click=
-              {
-                () =>
-                {
-                  scrollTags(-1);
-                  return;
-                }
-              }
+      {#if widgetData.article.tags?.length}
+        <div class="tags-wrapper">
+          <ScrollDataWrapper data={Array.from(tagMap)} let:item>
+            <Badge size="lg" color="gray" link="/a/tag/{item[1].permalink}"
+              >{item[1].name}</Badge
             >
-              <img
-                id=''
-                src={theme == 'Dark' ? iconArrowRightDark : iconArrowRightLight}
-                alt=''
-                title=''
-                loading='lazy'
-              />
-            </div>
-          {/if}
+          </ScrollDataWrapper>
         </div>
       {/if}
-      <div class="sportstack-box {viewportType}">
-        <a href="/a/sportstack/{mutateStringToPermalink(widgetData.author?.data?.username)}" class="sportstack-info">
-          <SportstackAvatar src={widgetData.author?.data?.avatar ?? ''} size={viewportType === "mobile" ? 32 : 36} radius=" var(--radius-sm, 6px)"/>
-          <span>{widgetData.author.data?.username || ""}</span>
-        </a>
-        {#if !isSportstackOwner}
-          <Button on:click={subscribe} size="sm" type="{isSubscribed ? "secondary-gray" : "primary"}">
-            {#if isSubscribed}
-              {$page.data.translations.subscribed || "Subscribed"}
-            {:else}
-              {$page.data.translations.subscribe || "Subscribe"}
-            {/if}
-          </Button>
-        {/if}
-
-      </div>
     </div>
-
-
   </div>
-  <!--
-  ╭─────
-  │ > article banner
-  ╰─────
-    src="https://pbs.twimg.com/media/F5rQ5FPWkAASrF4.jpg:large"
-  -->
-  {#if widgetData.article.seo_details?.twitter_card.image && !widgetData.article.data?.content.includes("<img")}
 
-    <img
-      id='preview-banner'
-      src={widgetData.article.seo_details?.twitter_card.image}
-      alt={widgetData.article.seo_details?.twitter_card.image_alt}
-      title={widgetData.article.data?.title}
-      loading='lazy'
-      class=
-      "
-      m-b-24
-      "
+  <div class="sportstack-box">
+    <ListSportsTackItem
+      translations={$page.data.translations}
+      includePermalink={true}
+      user={widgetData.author}
+      size="lg"
+      action_button={true}
     />
-  {/if}
+  </div>
+
   <!--
   ╭─────
   │ > article text
   ╰─────
   -->
-  <div
-    id='content'
-    data-betarena-zone-id=2,3
-  >
-    {@html widgetData.article.data?.content}
-  </div>
+  {#key $userSettings.theme}
+    <div id="content" data-betarena-zone-id="2,3" bind:this={contentContainer}>
+      {@html widgetData.article.data?.content.replaceAll(
+        /<img[^>]+src='([^'>]+)'/g,
+        (match, src) => {
+          return match.replace(
+            src,
+            getOptimizedImageUrl({
+              strImageUrl: src,
+              intQuality: 90,
+              intWidth: 1500,
+            })
+          );
+        }
+      )}
+    </div>
+  {/key}
 </div>
 
 <!--
@@ -671,247 +319,126 @@
 -->
 
 <style lang="scss">
-
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
   │ 📲 MOBILE-FIRST                                                              │
   ╰──────────────────────────────────────────────────────────────────────────────╯
   */
 
-  div#author⮕w⮕author-content⮕main
-  {
+  div#author⮕w⮕author-content⮕main {
     position: relative;
     z-index: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: var(--width-xl, 768px);
+    margin: auto;
+    gap: var(--spacing-7xl, 64px);
 
-    &.dark-mode-1
-    {
-      background-color: var(--dark-theme);
-    }
-
-    &.light-mode-1
-    {
-      background-color: var(--white);
-    }
-
-    .author-link:hover {
-      .author-name {
-        color: var(--primary) !important;
-      }
-    }
-    &.reverse {
-      padding-top: 12px;
-    }
-    .article-header.reverse {
+    .article-header {
       display: flex;
-      flex-direction: column-reverse;
-    }
-    .article-author-info {
-      margin-left: -44px;
-    }
-    max-width: 676px;
-    div#tags-box
-    {
-      /* 🎨 style */
-      overflow: hidden;
-      padding-block: var(--spacing-xl, 16px);
-      border-block: 1px solid var(--border-border-tertiary);
-      position: relative;
+      flex-direction: column;
+      gap: var(--spacing-4xl, 32px);
 
-      div#tags-box-scroll
-      {
-        /* 🎨 style */
-        overflow-x: scroll;
-        overflow-y: hidden;
+      .article-title {
         display: flex;
-        gap: 10px;
-        /* Hide scrollbar for IE, Edge and Firefox */
-        -ms-overflow-style: none; /* IE and Edge */
-        scrollbar-width: none; /* Firefox */
-
-        &::-webkit-scrollbar
-        {
-          /* Hide scrollbar for Chrome, Safari and Opera */
-          display: none;
-        }
-
-        a.tag-pill
-        {
-          /* 🎨 style */
-          min-height: 26px;
-          height: 26px;
-          max-height: 26px;
-          padding: 3px 12px;
-          border-radius: 100px;
-          background-color: var(--grey-color);
-          cursor: pointer;
-
-          &:hover
-          {
-            /* 🎨 style */
-            background-color: var(--primary) !important;
-
-            p
-            {
-              /* 🎨 style */
-              color: var(--white) !important;
-            }
-          }
-        }
-      }
-
-      div.tagScrollButton
-      {
-        /* 🎨 style */
-        position: absolute;
-        width: 50px;
-        z-index: 5;
-        bottom: 0;
-        top: 0;
-        margin: auto;
-        height: inherit;
-        cursor: pointer;
-
-        &#tagScrollPrev
-        {
-          /* 🎨 style */
-          left: -1px;
-          background: linear-gradient(90deg, #FFFFFF 25.69%, rgba(255, 255, 255, 0) 100%);
-
-          img
-          {
-            /* 📌 position */
-            left: 5px;
-          }
-        }
-
-        &#tagScrollNext
-        {
-          /* 🎨 style */
-          right: -1px;
-          text-align: right;
-          background: linear-gradient(270deg, #FFFFFF 25.69%, rgba(255, 255, 255, 0) 100%);
-
-          img
-          {
-            /* 📌 position */
-            right: 5px;
-          }
-        }
-
-        img
-        {
-          /* 🎨 style */
-          position: absolute;
-          z-index: 5;
-          bottom: 0;
-          top: 0;
-          margin: auto;
-        }
-      }
-    }
-
-    img#preview-banner
-    {
-      /* 🎨 style */
-      max-height: 352px;
-      object-fit: cover;
-      margin-left: -16px;
-      margin-right: -16px;
-      width: -webkit-fill-available;
-      width: -moz-available;
-    }
-
-    img#user-avatar
-    {
-      /* 🎨 style */
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-
-      &.effect
-      {
-        transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
-        filter: blur(40px);
-        transform: scaleX(1.1) scaleY(1.1);
-      }
-
-      &.animate
-      {
-        filter: none;
-        transform: none;
-      }
-    }
-
-    .sportstack-box {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-block: var(--spacing-4xl, 32px);
-      &.mobile {
-        margin-block: var(--spacing-3xl, 24px);
-        :global(.button) {
-            font-size: var(--font-size-text-xs, 12px);
-            height: 32px;
-
-        }
-      }
-
-      .sportstack-info {
-        flex-grow: 1;
-        display: flex;
+        max-width: var(--width-xl, 768px);
+        flex-direction: column;
         align-items: center;
-        gap: 16px;
-        span {
-          flex-grow: 1;
-          color: var(--colors-text-text-primary-900, #313131);
-          font-family: var(--font-family-font-family-body, Roboto);
-          font-size: var(--font-size-text-sm, 14px);
+        gap: var(--spacing-3xl, 24px);
+        align-self: stretch;
+        .title {
+          margin: 0;
+          color: var(--colors-text-text-primary-900, #fff);
+          text-align: center;
+
+          /* Display lg/Semibold */
+          font-family: var(--font-family-font-family-display, Roboto);
+          font-size: var(--font-size-display-lg, 48px);
           font-style: normal;
-          font-weight: 500;
-          line-height: var(--line-height-text-md, 24px); /* 171.429% */
+          font-weight: 600;
+          line-height: var(--line-height-display-lg, 60px); /* 125% */
+          letter-spacing: -0.96px;
         }
-        &:hover {
-          span {
-            color: var(--primary) !important;
-          }
+      }
+      .user-box {
+        :global(.avatar-wrapper) {
+          transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+          filter: blur(40px);
+          transform: scaleX(1.1) scaleY(1.1);
         }
 
+        &.animate {
+          :global(.avatar-wrapper) {
+            filter: none;
+            transform: none;
+          }
+        }
+      }
+      .tags-wrapper {
+        max-width: 100%;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        :global(.badge) {
+          flex-shrink: 0;
+        }
+      }
+    }
+    .sportstack-box {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+
+      :global(.list-item) {
+        padding: 0;
+        border: none;
+        width: 100%;
       }
     }
 
-    div#content
-    {
+    #content {
       // ▓ IMPORTANT
-      :global
-      {
-        *
-        {
-          /* 🎨 style */
-          color: var(--dark-theme);
+      :global {
+        color: var(--colors-text-text-primary-900, #fff);
+
+        &:first-child {
+          margin-top: 0;
+          * {
+            margin-top: 0 !important;
+          }
         }
 
         img {
           /* 🎨 style */
-          max-height: 352px;
           object-fit: cover;
-          margin-left: -16px;
-          margin-right: -16px;
-          width: -webkit-fill-available;
-          width: -moz-available;
+          max-width: 100%;
+          width: 100%;
+          border-radius: var(--radius-xl, 12px);
+        }
+        a img {
+          margin: 0 !important;
         }
 
-        @mixin header
-        {
+        blockquote.twitter-tweet, &.embed {
+          margin-top: 48px !important;
+          margin-bottom: 48px !important;
+          margin-inline: auto !important;
+          padding-left: 0;
+          display: block;
+
+          .twitter-tweet-rendered {
+            margin: 0  auto !important;
+          }
+        }
+        @mixin header {
           /* 🎨 style */
-          line-height: 32px;
-          font-weight: 800;
-          margin: 40px 0 16px 0;
+          margin: 32px 0 16px 0;
+          font-style: normal;
+          font-weight: 600;
         }
 
-        a
-        {
+        a {
           /* 🎨 style */
-          text-decoration: underline !important;
           color: var(--primary) !important;
           font-weight: 500;
           width: fit-content !important;
@@ -919,226 +446,194 @@
           display: initial;
         }
 
-        p
-        {
-          /* 🎨 style */
-          font-size: 18px;
-          line-height: 28px;
-          color: var(--dark-theme);
-          margin-bottom: 20px;
-          font-weight: 400;
+        blockquote:not(.twitter-tweet) {
+          margin: 0;
+          border-left: 2px solid var(--colors-foreground-fg-brand-primary-500);
+          font-style: italic;
+          padding-left: var(--spacing-2xl, 20px);
+          font-family: var(--font-family-font-family-display, Roboto);
+          font-size: var(--font-size-display-xs, 24px);
+          font-style: italic;
+          font-weight: 500;
+          line-height: var(--line-height-display-xs, 32px);
+          position: relative;
+          padding-bottom: var(--spacing-4xl, 32px);
+          margin-bottom: 48px;
+
+          p {
+            font-style: italic;
+            font-family: var(--font-family-font-family-display, Roboto);
+            font-size: var(--font-size-display-xs, 24px);
+            font-style: italic;
+            font-weight: 500;
+            line-height: var(--line-height-display-xs, 32px);
+          }
+
+          &:before {
+            font-family: Arial;
+            content: "\201C";
+            color: var(--colors-text-text-primary-900, #fff);
+            font-size: 1em;
+            position: absolute;
+            left: 6px;
+            top: 0px;
+          }
+          &:after {
+            content: "";
+          }
         }
 
-        h2
-        {
+        h2 {
           /* 🎨 style */
           @include header;
-          font-size: 24px;
+
+          /* Display sm/Semibold */
+          font-size: var(--font-size-display-sm, 30px);
+          line-height: var(--line-height-display-sm, 38px); /* 126.667% */
         }
 
         h3,
         h4,
-        h5
-        {
+        h5 {
           /* 🎨 style */
           @include header;
-          font-size: 20px;
-        }
 
-        section
-        {
-          /* 🎨 style */
-          all: unset;
+          /* Display xs/Semibold */
+          font-size: var(--font-size-display-xs, 24px);
+          line-height: var(--line-height-display-xs, 32px); /* 133.333% */
+        }
+        p {
+          color: var(--colors-text-text-primary-900, #fff);
+
+          /* Text xl/Regular */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-lg, 18px);
+          font-style: normal;
+          font-weight: 400;
+          line-height: var(--line-height-text-lg, 28px); /* 155.556% */
+          margin: 1em 0;
+
+          section {
+            /* 🎨 style */
+            all: unset;
+          }
         }
       }
     }
-  }
 
-  /*
-  ╭──────────────────────────────────────────────────────────────────────────────╮
-  │ ⚡️ RESPONSIVNESS                                                              │
-  ╰──────────────────────────────────────────────────────────────────────────────╯
-  */
+    //   /*
+    // ╭──────────────────────────────────────────────────────────────────────────────╮
+    // │ ⚡️ RESPONSIVNESS                                                              │
+    // ╰──────────────────────────────────────────────────────────────────────────────╯
+    // */
 
-  @media only screen
-  and (min-width: 560px)
-  {
-    div#author⮕w⮕author-content⮕main
-    {
-      img#preview-banner
-      {
-        /* 🎨 style */
-        margin-left: 0;
-        margin-right: 0;
-        width: -webkit-fill-available;
+    &.tablet,
+    &.mobile {
+      max-width: 100%;
+
+      .article-header {
+        .article-title {
+          max-width: 100%;
+        }
       }
-
-      div#content
-      {
-        // ▓ IMPORTANT
-        :global
-        {
-
-
-          @mixin header
-          {
+      #content {
+        :global {
+          @mixin header {
             /* 🎨 style */
-            line-height: 32px;
-            font-weight: 700;
-            margin: 40px 0 16px 0;
+            margin: 40px 0 20px 0;
+          }
+        }
+      }
+    }
+
+    &.mobile {
+      gap: var(--spacing-6xl, 48px);
+      .article-header {
+        .article-title {
+          .title {
+            font-size: var(--font-size-display-md, 36px);
+            font-style: normal;
+            font-weight: 600;
+            line-height: var(--line-height-display-md, 44px); /* 122.222% */
+            letter-spacing: -0.72px;
+          }
+        }
+      }
+      #content {
+        :global {
+          @mixin header {
+            /* 🎨 style */
+            margin: 40px 0 20px 0;
           }
 
+          &:first-child {
+            margin-top: 0;
+            * {
+              margin-top: 0 !important;
+            }
+          }
 
           img {
-            /* 🎨 style */
-            margin-left: 0;
-            margin-right: 0;
-            width: -webkit-fill-available;
+            margin-bottom: 40px !important;
+            margin-top: 40px !important;
+          }
+          blockquote.twitter-tweet, &.embed {
+            margin-bottom: 10px !important;
+            margin-top: 40px !important;
+            margin-inline: auto !important;
+            padding-left: 0;
+            .twitter-tweet-rendered {
+              margin: 0  auto !important;
+            }
           }
 
-          p
-          {
-            /* 🎨 style */
-            line-height: 30px;
-            font-weight: 400;
+          a img {
+            margin: 0 !important;
           }
 
-          ul {
-            font-size: 18px;
+          blockquote:not(.twitter-tweet) {
+            padding-left: var(--spacing-xl, 16px);
+
+            /* Text md/Regular */
+            font-size: var(--font-size-text-xl, 20px);
+            font-style: italic;
+            font-weight: 500;
+            line-height: var(--line-height-text-xl, 30px); /* 150% */
+            margin-bottom: 40px;
+
+            p {
+              font-size: var(--font-size-text-xl, 20px);
+              font-style: italic;
+              font-weight: 500;
+              line-height: var(--line-height-text-xl, 30px); /* 150% */
+            }
+          }
+
+          @mixin header {
+            /* 🎨 style */
+            margin: 26px 0 10px 0;
+          }
+
+          h2 {
+            font-size: var(--font-size-display-xs, 24px);
+            line-height: var(--line-height-display-xs, 32px); /* 133.333% */
+          }
+          h3,
+          h4,
+          h5 {
+            /* Text xl/Semibold */
+            font-size: var(--font-size-text-xl, 20px);
             font-style: normal;
-            font-weight: 400;
-            line-height: 32px; /* 160% */
+            font-weight: 600;
+            line-height: var(--line-height-text-xl, 30px); /* 150% */
           }
-          h2
-          {
-            /* 🎨 style */
-            @include header;
-            font-size: 24px;
-          }
-
-          h3
-          , h5
-          {
-            /* 🎨 style */
-            @include header;
-            font-size: 20px;
-          }
-
-          section.faq-container
-          {
-            /* 🎨 style */
-            padding: 0;
+          p {
+            /* Text md/Regular */
+            font-size: var(--font-size-text-md, 16px);
+            line-height: var(--line-height-text-md, 24px); /* 150% */
           }
         }
       }
     }
   }
-
-  @media only screen
-  and (min-width: 1160px)
-  {
-    div#author⮕w⮕author-content⮕main
-    {
-      div#content
-      {
-        // ▓ IMPORTANT
-        :global
-        {
-          @mixin header
-          {
-            /* 🎨 style */
-            line-height: 32px;
-            font-weight: 700;
-            margin: 40px 0 16px 0;
-          }
-
-          p
-          {
-            /* 🎨 style */
-            font-size: 18px;
-            line-height: 32px;
-            font-weight: 300;
-          }
-
-          ul {
-            font-weight: 300;
-            font-size: 20px
-          }
-
-          h2
-          {
-            /* 🎨 style */
-            @include header;
-            font-size: 24px;
-          }
-
-          h3
-          , h5
-          {
-            /* 🎨 style */
-            @include header;
-            font-size: 20px;
-          }
-
-          section.faq-container
-          {
-            /* 🎨 style */
-            padding: 0;
-          }
-        }
-      }
-    }
-  }
-
-  /*
-  ╭──────────────────────────────────────────────────────────────────────────────╮
-  │ 🌒 DARK-THEME                                                                │
-  ╰──────────────────────────────────────────────────────────────────────────────╯
-  */
-
-  .dark-mode
-  {
-    div#author⮕w⮕author-content⮕main
-    {
-      div#tags-box
-      {
-        div#tags-box-scroll
-        {
-          a.tag-pill
-          {
-            /* 🎨 style */
-            background-color: var(--dark-theme-1);
-          }
-        }
-
-        div.tagScrollButton
-        {
-          &#tagScrollPrev
-          {
-            /* 🎨 style */
-            background: linear-gradient(90deg, #292929 25.69%, rgba(41, 41, 41, 0) 100%);
-          }
-
-          &#tagScrollNext
-          {
-            background: linear-gradient(270deg, #292929 25.69%, rgba(41, 41, 41, 0) 100%);
-          }
-        }
-      }
-
-      div#content
-      {
-        // IMPORTANT
-        :global
-        {
-          *
-          {
-            /* 🎨 style */
-            color: var(--white);
-          }
-        }
-      }
-    }
-  }
-
 </style>

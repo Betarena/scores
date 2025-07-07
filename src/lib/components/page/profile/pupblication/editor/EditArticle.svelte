@@ -44,6 +44,7 @@
     TranslationSportstacksSectionDataJSONSchema,
   } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import type { PageData } from ".svelte-kit/types/src/routes/(scores)/u/author/article/edit/[...permalink]/[lang=lang]/$types.js";
+  import { getOptimizedImageUrl } from "$lib/utils/image.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -78,7 +79,9 @@
 
   $: title = initTitle || "";
   $: if (featured_image && !content.includes(featured_image)) {
-    content = `<img src="${featured_image}" alt="${title}" />${content}`;
+    content = `<img src="${getOptimizedImageUrl({
+      strImageUrl: featured_image,
+    })}" alt="${title}" />${content}`;
   }
   $: uploadUrl = selectedSportstack
     ? `Betarena_Media/authors/authors_list/${selectedSportstack.id}/media`
@@ -242,8 +245,8 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<div class="edit-article-wrapper">
-  <Container hFull={false} clazz="sticky">
+<div class="edit-article-wrapper {viewportType}">
+  <Container hFull={false} clazz={viewportType === "desktop" ? "sticky" : ""}>
     <div class="header {viewportType}">
       <div on:click={back}>
         {#if viewportType === "mobile"}
@@ -324,9 +327,12 @@
     display: flex;
     flex-direction: column;
     padding-bottom: 20px;
-    height: 100vh;
+    height: calc(var(--vh, 1vh) * 100);
+    max-height: calc(var(--vh, 1vh) * 100);
+    min-height: calc(var(--vh, 1vh) * 100);
+    transition: height 0.5s ease-out;
     background-color: var(--colors-background-bg-main);
-    overflow: auto;
+    overflow: hidden;
     &::-webkit-scrollbar {
       width: 8px;
     }
@@ -392,7 +398,13 @@
       }
     }
     .editor-wrapper {
-      flex-grow: 1; // Эта часть будет прокручиваться
+      flex-grow: 1;
+    }
+
+    &.desktop {
+      max-height: unset;
+      height: 100vh;
+      overflow: auto;
     }
   }
 </style>

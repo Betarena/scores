@@ -1,6 +1,6 @@
 {
 	"name": "betarena-scores-platform",
-	"version": "3.2.0",
+	"version": "3.4.1",
 	"description": "Betarena Official Scores Platform (PWA)",
 	"author": "migbash",
 	"license": "ISC",
@@ -17,9 +17,10 @@
 		"build": "npm run 'vite/build'",
 		"test": "pnpm run playwright/integration && pnpm run playwright/unit",
 		"__VITE__": "────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────",
-		"vite/dev": "npm run svelte-kit-sync && cross-env NODE_OPTIONS='-r dotenv/config' vite dev --port 3050 --force",
-		"vite/dev/debug": "npm run svelte-kit-sync && cross-env NODE_OPTIONS='--inspect' vite dev --port 3050",
-		"vite/dev/1-click": "npm run clean/dev && npm run sass-watch & npm run vite/dev",
+		"vite/dev": "cross-env NODE_OPTIONS=\"-r dotenv/config\" vite dev --host --port 3050 --force",
+		"vite/dev/debug": "cross-env NODE_OPTIONS='--inspect' vite dev --host --port 3050",
+		"vite/dev/1-click/npm": "rimraf .svelte-kit && rimraf node_modules/.vite && npm-run-all --parallel sass-watch vite/dev",
+		"vite/dev/1-click/pnpm": "rm -rf ./.svelte-kit/ && rm -rf node_modules/.vite && pnpm run sass-watch & pnpm run 'vite/dev'",
 		"vite/staging": "pnpm run vite/dev -- --mode staging",
 		"vite/build": "cross-env NODE_OPTIONS='-r dotenv/config --max-old-space-size=8192' vite build",
 		"vite/preview": "vite preview --host --port 4173",
@@ -58,7 +59,7 @@
 	},
 	"dependencies": {
 		"@betarena/ad-engine": "0.0.70",
-		"@betarena/scores-lib": "4.2.4",
+		"@betarena/scores-lib": "4.3.5",
 		"@lukeed/uuid": "2.0.1",
 		"@metamask/sdk": "0.1.0",
 		"@moralisweb3/client-firebase-auth-utils": "2.18.4",
@@ -94,6 +95,7 @@
 		"express-sslify": "1.2.0",
 		"firebase": "9.20.0",
 		"franc": "6.2.0",
+		"fuse.js": "7.1.0",
 		"graphql-request": "5.1.0",
 		"graphql-subscriptions-client": "0.16.4",
 		"heroku-ssl-redirect": "0.1.1",
@@ -103,6 +105,7 @@
 		"lz-string": "1.5.0",
 		"masonry-layout": "4.2.2",
 		"moralis": "2.18.4",
+		"prosemirror-state": "1.4.3",
 		"request-ip": "3.3.0",
 		"serialize-error": "11.0.3",
 		"svelte-apexcharts": "1.0.2",
@@ -140,6 +143,7 @@
 		"is-ci": "3.0.1",
 		"jsdom": "22.1.0",
 		"node-fetch": "3.3.2",
+		"npm-run-all": "4.1.5",
 		"prettier": "2.8.8",
 		"prettier-plugin-svelte": "2.10.1",
 		"sass": "1.69.5",
@@ -166,7 +170,7 @@
 		]
 	},
 	"validate-branch-name": {
-		"pattern": "^(master|main|develop|dev){1}$|^(feature|fix|hotfix|release|refactor|chore).+$",
+		"pattern": "^(master|main|develop|dev|test){1}$|^(feature|fix|hotfix|release|refactor|chore).+$",
 		"errorMsg": "❌ Uh-oh! Please check package.json > validate-branch-name for allowed branch names!"
 	}
 }

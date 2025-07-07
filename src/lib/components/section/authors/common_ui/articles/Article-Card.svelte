@@ -38,7 +38,7 @@
   import ScrollDataWrapper from '$lib/components/ui/wrappers/ScrollDataWrapper.svelte';
   import SportstackAvatar from '$lib/components/ui/SportstackAvatar.svelte';
 
-  import type { IPageAuthorTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.tags.js';
+  import { getOptimizedImageUrl } from '$lib/utils/image.js';
   import type { IPageAuthorArticleData, IPageAuthorAuthorData, IPageAuthorTagData } from '@betarena/scores-lib/types/v8/preload.authors.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -77,7 +77,7 @@
     mobile = false
   ;
 
-  $: translations = ($page.data?.translations) as IPageAuthorTranslationDataFinal;
+  $: translations = ($page.data?.translations || {}) as IPageAuthorTranslationDataFinal;
 
   $: ({
     permalink,
@@ -114,7 +114,7 @@
 <div class="card-wrapper" class:mobile class:tablet in:fade={{ duration: 500 }}>
   <div class="card-content">
     <a href={`/a/sportstack/${mutateStringToPermalink(username)}`} class="author-wrapper">
-      <SportstackAvatar src={avatar} size={32} />
+      <SportstackAvatar src={avatar} size={ !mobile ? "md" : "sm"} />
       <div class="author-info">
         <div class="author-name">{username}</div>
         <div class="publication-date">
@@ -169,7 +169,7 @@
   </div>
   {#if images[0]?.url}
     <a href="/a/{permalink}" class="preview" class:tablet class:mobile>
-      <img src={images[0]?.url} alt={images[0].alt} srcset="" />
+      <img src={getOptimizedImageUrl({ strImageUrl: images[0]?.url })} alt={images[0].alt} srcset="" />
     </a>
   {/if}
 </div>
@@ -191,7 +191,7 @@
     width: 824px;
     gap: 56px;
     border-radius: 12px;
-    padding: 24px;
+    padding: 20px;
     box-sizing: border-box;
     justify-content: space-between;
     background: var(--bg-color-second);
@@ -265,7 +265,7 @@
         max-width: 100%;
         height: max-content;
         font-family: Inter;
-        font-size: var(--text-size-l);
+        font-size: var(--font-size-text-xl, 20px);
         font-style: normal;
         font-weight: 600;
         line-height: 28px;
@@ -275,33 +275,35 @@
         &-wrapper {
           display: flex;
           gap: 12px;
-          align-items: start;
+          align-items: center;
 
         }
 
-        &-info {
+         &-info {
           display: flex;
           flex-direction: column;
-          gap: 4px;
           color: var(--text-color-second, #ccc);
 
           .publication-date {
-            color: var(--text-color-second-dark, #8c8c8c);
-            font-family: Roboto;
-            font-size: var(--text-size-xs);
+            color: var(--colors-text-text-tertiary-600, #8c8c8c);
+            /* Text xs/Regular */
+            font-family: var(--font-family-font-family-body, Roboto);
+            font-size: var(--font-size-text-xs, 12px);
             font-style: normal;
             font-weight: 400;
-            line-height: 12px;
+            line-height: var(--line-height-text-xs, 18px); /* 150% */
           }
         }
 
         &-name {
-          color: var(--text-color);
-          font-family: Inter;
-          font-size: var(--text-size-s);
+          color: var(--colors-text-text-primary-900, #fbfbfb);
+
+          /* Text sm/Semibold */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-sm, 14px);
           font-style: normal;
-          font-weight: 500;
-          line-height: 20px;
+          font-weight: 600;
+          line-height: var(--line-height-text-sm, 20px); /* 142.857% */
           &:hover {
             color: var(--primary);
           }
@@ -332,10 +334,13 @@
         gap: 12px;
 
         .title {
-          line-height: 24px;
           padding-right: 16px;
           -webkit-line-clamp: 3;
           height: 72px;
+          font-size: var(--font-size-text-md, 16px);
+          font-style: normal;
+          font-weight: 500;
+          line-height: var(--line-height-text-md, 24px)
         }
         .author-wrapper {
           padding-right: 16px;

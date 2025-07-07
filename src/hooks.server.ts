@@ -18,7 +18,7 @@
 
 // #region ➤ 📦 Package Imports
 
-import { convertLocaleToLang } from '$lib/constants/instance.js';
+import { convertLocaleToLang, mapLangToLocaleAuthor } from '$lib/constants/instance.js';
 import { getCookie } from '$lib/store/cookie.js';
 import * as Sentry from '@sentry/sveltekit';
 import { sequence } from '@sveltejs/kit/hooks';
@@ -288,6 +288,10 @@ export const handle: Handle = sequence
       {
         event.locals.setState.add('IsAnonymousNewBurner');
         event.locals.user.lang = event.params.lang ?? 'en';
+
+        if (event.url.searchParams.get('lang'))
+          event.locals.user.lang = event.url.searchParams.get('lang') ?? 'en';
+        ;
       }
     }
 
@@ -340,6 +344,9 @@ export const handle: Handle = sequence
           event.error,
           event.params.lang,
         ),
+
+
+      
       /**
        * @description
        *  📣 new with response of <html lang...>
@@ -361,7 +368,8 @@ export const handle: Handle = sequence
                 .replace
                 (
                   '%lang%',
-                  event.locals.strLocaleOverride ?? methodRes0
+                  mapLangToLocaleAuthor.get(event.locals.strLocaleOverride ?? methodRes0) ?? 'en'
+
                 )
               ;
             }

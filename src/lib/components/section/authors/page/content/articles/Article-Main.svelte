@@ -665,7 +665,7 @@
     {#each [...mapFeedViews.entries()] as [, item]}
       <Button
         full={true}
-        type="tertiary-v2"
+        type="button-brand"
         classname=
         "
         {
@@ -768,7 +768,8 @@
   {
     div.tabbar-wrapper button
     {
-      font-size: var(--Font-size-text-sm, 14px) !important;
+
+      font-size: var(--font-size-text-sm, 14px) !important;
     }
   }
 

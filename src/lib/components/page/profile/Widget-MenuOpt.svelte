@@ -22,6 +22,7 @@ COMPONENT JS (w/ TS)
 	import type { PROFILE_OPT } from '$lib/types/types.scores.js';
   import { fade, fly } from 'svelte/transition';
   import { routeIdPageProfileAuthorCreate, routeIdPageProfilePublication } from '$lib/constants/paths.js';
+  import { getOptimizedImageUrl } from '$lib/utils/image.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -247,7 +248,11 @@ COMPONENT JS (w/ TS)
     -->
 		<img
 			id="menu-summary-profile-picture"
-			src={$userBetarenaSettings?.user?.scores_user_data?.profile_photo || profile_avatar}
+			src={
+        $userBetarenaSettings?.user?.scores_user_data?.profile_photo != undefined
+          ? getOptimizedImageUrl({ strImageUrl: $userBetarenaSettings?.user?.scores_user_data?.profile_photo })
+          : profile_avatar
+      }
 			alt="Profile Icon"
 			title="Profile Icon"
 			aria-label="Profile Icon"
@@ -267,7 +272,7 @@ COMPONENT JS (w/ TS)
       "
       s-20
       w-500
-      color-black-2
+      user-name
       "
 		>
 			{$userBetarenaSettings?.user?.scores_user_data?.username}
@@ -397,7 +402,7 @@ COMPONENT JS (w/ TS)
 ### HINT: auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
 =================-->
 
-<style>
+<style lang="scss">
 
 	div#background-area-close
   {
@@ -416,6 +421,10 @@ COMPONENT JS (w/ TS)
 		background: #ffffff;
 		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
 		border-radius: 12px;
+
+    .user-name {
+      color: var(--text-color)
+    }
 	}
 
 	div#profile-menu-widget-container	> div#profile-main-row
