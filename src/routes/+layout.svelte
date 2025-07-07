@@ -363,7 +363,6 @@
     ): Promise < void > =>
     {
 
-      // initSentry();
 
       // ╭─────
       // │ IMPORTANT CRITICAL
