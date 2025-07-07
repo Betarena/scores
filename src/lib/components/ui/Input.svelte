@@ -9,7 +9,7 @@
 
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import DOMPurify from "dompurify";
+  import { sanitize } from "$lib/utils/purify.js";
 
   // #region ➤ 📌 VARIABLES
 
@@ -78,11 +78,12 @@
     if (["focus", "blur", "keydown"].includes(type)) {
       return dispatch(type, e);
     }
-    value = DOMPurify.sanitize(e.currentTarget.value);
+    value = sanitize(e.currentTarget.value);
     dispatch(type, value);
   }
 
   // #endregion ➤ 🛠️ METHODS
+
 </script>
 
 <!--

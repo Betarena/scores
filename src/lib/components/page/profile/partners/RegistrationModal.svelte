@@ -31,11 +31,15 @@
   import Banner1 from "../assets/partner-banner/banner-registration-1.png";
   import Banner2 from "../assets/partner-banner/banner-registration-2.png";
   import { cubicIn, cubicOut } from "svelte/easing";
-  import type { PartnersPartnerRegistrationSubmissionsMain, PartnersPartnersListMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import type {
+    PartnersPartnerRegistrationSubmissionsMain,
+    PartnersPartnersListMain,
+  } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import { onMount } from "svelte";
   import { post } from "$lib/api/utils.js";
   import userSettings from "$lib/store/user-settings.js";
   import { modalStore } from "$lib/store/modal.js";
+  import { infoMessages } from "$lib/components/ui/infomessages/infomessages.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -54,12 +58,15 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let partner: PartnersPartnersListMain;
-  export let updateSubmissions: (submission: PartnersPartnerRegistrationSubmissionsMain) => void;
+  export let updateSubmissions: (
+    submission: PartnersPartnerRegistrationSubmissionsMain
+  ) => void;
   $: ({ profile } = $page.data.RESPONSE_PROFILE_DATA);
   let step = 1;
   let value = "";
   let loading = false;
-
+  let inputError = false;
+  let buttonDisabled = true;
   $: stepText = [
     {
       title: profile.first_step_register || "First Step: Register (NT)",
@@ -98,8 +105,7 @@
       window.Intercom("update", {
         hide_default_launcher: false,
       });
-
-    }
+    };
   });
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
@@ -119,22 +125,42 @@
   async function submit() {
     try {
       loading = true;
-      const {user}= userSettings.extractAll();
-      const res =  await post<{submission: PartnersPartnerRegistrationSubmissionsMain}>("/api/data/partners", {
+      const { user } = userSettings.extractAll();
+      const res = await post<{
+        submission: PartnersPartnerRegistrationSubmissionsMain;
+        ok: boolean;
+      }>("/api/data/partners", {
         partner,
         input: value,
-        wallet: user?.scores_user_data?.web3_wallet_addr
+        wallet: user?.scores_user_data?.web3_wallet_addr,
       });
       if (res?.submission) {
-        updateSubmissions(res.submission)
+        updateSubmissions(res.submission);
       }
-      $modalStore.show = false;
+
+        infoMessages.add({
+          type: res?.ok ? "success" : "error",
+          text: res?.ok ? profile?.success || "Success!" : profile?.error || "Error",
+        });
+
+      $modalStore.show = !res?.ok;
       loading = false;
-    } catch(e) {
+    } catch (e) {
       loading = false;
     }
   }
 
+  function onInputValidation(e) {
+    const val = e.detail;
+    if (val && `${val}`.length < 4) {
+      buttonDisabled = true;
+      inputError = true;
+      return;
+    }
+    buttonDisabled = false;
+    0;
+    inputError = false;
+  }
 
   // #endregion ➤ 🛠️ METHODS
 </script>
@@ -188,12 +214,24 @@
     </div>
   {:else}
     <div class="input-wrapper">
-      <Input bind:value placeholder="Username or Email" />
-      <Button full={true} type="primary" on:click={submit} disabled={!value || loading}>
+      <Input
+        bind:value
+        placeholder="Username or Email"
+        on:input={onInputValidation}
+        error={inputError}
+      >
+        <span slot="error">Minimum 4 chars</span>
+      </Input>
+      <Button
+        full={true}
+        type="primary"
+        on:click={submit}
+        disabled={!value || loading || buttonDisabled}
+      >
         {#if loading}
           Loading...
         {:else}
-           {profile.submit || "Submit"}
+          {profile.submit || "Submit"}
         {/if}
       </Button>
     </div>

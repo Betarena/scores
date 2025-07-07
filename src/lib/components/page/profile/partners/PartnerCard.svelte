@@ -63,10 +63,10 @@
   function updateSubmissions(
     submission: PartnersPartnerRegistrationSubmissionsMain
   ) {
-    if (submissions.has(submission.id)) {
-      submissions.delete(submission.id);
+    if (submissions.has(submission.partner_id)) {
+      submissions.delete(submission.partner_id);
     }
-    submissions.set(submission.id, submission);
+    submissions.set(submission.partner_id, submission);
     submissions = new Map(submissions);
   }
 
@@ -181,10 +181,13 @@
         gap: 2px;
         flex: 1 0 0;
         flex-wrap: wrap;
+        width: 100%;
 
         .name-row {
           display: flex;
           gap: 2px;
+          width: 100%;
+          justify-content: space-between;
 
           .name {
             width: 205px;
