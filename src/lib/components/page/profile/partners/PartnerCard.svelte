@@ -18,6 +18,7 @@
     PartnersPartnersListMain,
   } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import RegistrationModal from "./RegistrationModal.svelte";
+  import { page } from "$app/stores";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -37,6 +38,7 @@
   > = new Map();
 
   $: ({ status } = submissions.get(partner.id) || {});
+  $: ({ profile } = $page.data.RESPONSE_PROFILE_DATA);
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -89,11 +91,17 @@
       <div class="name-row">
         <span class="name">{partner.name}</span>
         {#if status === "pending"}
-          <Badge color="orange" size="sm">Pending (NT)</Badge>
+          <Badge color="orange" size="sm"
+            >{profile.pending || "Pending (NT)"}</Badge
+          >
         {:else if status === "approved"}
-          <Badge color="success" size="sm">Approved (NT)</Badge>
+          <Badge color="success" size="sm"
+            >{profile.approved || "Approved (NT)"}</Badge
+          >
         {:else if status === "failed"}
-          <Badge color="error" size="sm">Failed (NT)</Badge>
+          <Badge color="error" size="sm"
+            >{profile.failed || "Failed (NT)"}</Badge
+          >
         {/if}
       </div>
       <div class="description">{partner.data?.bonus_description}</div>
@@ -101,16 +109,16 @@
   </div>
   {#if !status}
     <Button full={true} type="primary" size="md" on:click={showModal}
-      >GET 100 BTA FREE!</Button
+      >{profile.get_100_bta_free || "GET 100 BTA FREE!"}</Button
     >
   {:else}
     <Button full={true} disabled={true}>
       {#if status === "pending"}
-        PENDING REVIEW (NT)
+        {profile.pending_review || "PENDING REVIEW (NT)"}
       {:else if status === "approved"}
-        100 BTA RECEIVED (NT)
+        {profile["100_bta_received"] || "100 BTA RECEIVED (NT)"}
       {:else if status === "failed"}
-        UNAFFILIATED (NT)
+        {profile.unaffiliated || "UNAFFILIATED (NT)"}
       {/if}
     </Button>
   {/if}
