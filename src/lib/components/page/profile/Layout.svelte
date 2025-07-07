@@ -39,6 +39,7 @@
 	import WidgetInvestor from './investor/Widget-Investor.svelte';
   import WidgetAuthor from './Widget-Author.svelte';
   import WidgetPlatformSettings from '$lib/components/page/profile/Widget-PlatformSettings.svelte';
+  import Partners from './partners/Partners.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -117,6 +118,8 @@
 				<DashboardWidget />
       {:else if $page?.url?.pathname.includes('investor')}
 				<WidgetInvestor />
+      {:else if $page?.url?.pathname.includes('partners')}
+				<Partners />
       {:else if $page?.url?.pathname.includes('deposit')}
         <WidgetDeposit />
       {:else if $page?.url?.pathname.includes('transaction-history')}

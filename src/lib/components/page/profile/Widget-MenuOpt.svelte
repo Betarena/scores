@@ -37,6 +37,7 @@ COMPONENT JS (w/ TS)
       'Account Settings',
       'Settings',
       'Author',
+      'Partners',
       // 'Investor',
       'Deposit',
       'Withdraw',
@@ -86,6 +87,9 @@ COMPONENT JS (w/ TS)
     ;
 		if (selectedMenuOpt == 'Investor')
       targetUrl = `/u/investor/${$userBetarenaSettings.lang}`
+    ;
+		if (selectedMenuOpt == 'Partners')
+      targetUrl = `/u/partners/${$userBetarenaSettings.lang}`
     ;
     if (selectedMenuOpt == "Deposit") {
       if (browser) {
@@ -177,6 +181,9 @@ COMPONENT JS (w/ TS)
         break;
       case 'author':
         selectedMenuOpt = 'Author';
+        break;
+      case 'partners':
+        selectedMenuOpt = 'Partners';
         break;
       default:
         selectedMenuOpt = 'Dashboard';
