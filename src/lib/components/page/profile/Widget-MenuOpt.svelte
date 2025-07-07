@@ -279,7 +279,7 @@ COMPONENT JS (w/ TS)
       "
       s-20
       w-500
-      color-black-2
+      user-name
       "
 		>
 			{$userBetarenaSettings?.user?.scores_user_data?.username}
@@ -409,7 +409,7 @@ COMPONENT JS (w/ TS)
 ### HINT: auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
 =================-->
 
-<style>
+<style lang="scss">
 
 	div#background-area-close
   {
@@ -428,6 +428,10 @@ COMPONENT JS (w/ TS)
 		background: #ffffff;
 		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
 		border-radius: 12px;
+
+    .user-name {
+      color: var(--text-color)
+    }
 	}
 
 	div#profile-menu-widget-container	> div#profile-main-row
