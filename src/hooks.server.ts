@@ -288,6 +288,10 @@ export const handle: Handle = sequence
       {
         event.locals.setState.add('IsAnonymousNewBurner');
         event.locals.user.lang = event.params.lang ?? 'en';
+
+        if (event.url.searchParams.get('lang'))
+          event.locals.user.lang = event.url.searchParams.get('lang') ?? 'en';
+        ;
       }
     }
 
@@ -339,10 +343,10 @@ export const handle: Handle = sequence
           // ╰─────
           event.error,
           event.params.lang,
-        );
+        ),
 
 
-      const
+      
       /**
        * @description
        *  📣 new with response of <html lang...>
