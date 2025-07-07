@@ -63,10 +63,10 @@
   function updateSubmissions(
     submission: PartnersPartnerRegistrationSubmissionsMain
   ) {
-    if (submissions.has(submission.id)) {
-      submissions.delete(submission.id);
+    if (submissions.has(submission.partner_id)) {
+      submissions.delete(submission.partner_id);
     }
-    submissions.set(submission.id, submission);
+    submissions.set(submission.partner_id, submission);
     submissions = new Map(submissions);
   }
 
