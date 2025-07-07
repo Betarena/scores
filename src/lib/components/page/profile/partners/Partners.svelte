@@ -72,12 +72,10 @@
           `/api/data/partners.submissions?uid=${user?.firebase_user_data?.uid}`
         ),
       ]);
-      debugger
       partners = res?.partners || [];
       res2?.partners_submissions.forEach(submission => {
         submissions.set(submission.partner_id, submission);
       });
-      console.log(partners)
       submissions = new Map(submissions)
       loading = false;
     } catch (e) {
