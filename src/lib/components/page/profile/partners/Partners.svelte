@@ -97,7 +97,7 @@
 -->
 
 <div id="partners-section" class="partners-wrapper">
-  <h2>{profile.earn_with_partners || "Earn BTA with our partners (NT)"}</h2>
+  <h2>{profile.earn_bta_with_our_partners || "Earn BTA with our partners (NT)"}</h2>
 
   <div class="content">
     <div class="description">
@@ -105,7 +105,7 @@
         >{profile.how_to_earn || "How to Earn (NT)"}</span
       >
       <p class="description-text">
-        {profile.earn_description ||
+        {profile.earn_bta_tokens ||
           "Earn BTA tokens by registering, depositing, and betting on our partner platforms. Register through the provided links to be eligible for rewards.(NT)"}
       </p>
     </div>
@@ -120,7 +120,7 @@
   <div class="requirements">
     <div>{profile.requirements || `Requirements*`}</div>
     <div>
-      {profile.requirements_descr ||
+      {profile.to_receive_bta ||
         `To receive the BTA, you need to register with at least one of our partners using our links, make a minimum deposit of $10, and place at least one bet. Once these requirements are met, you can claim the BTA. (NT)`}
     </div>
   </div>

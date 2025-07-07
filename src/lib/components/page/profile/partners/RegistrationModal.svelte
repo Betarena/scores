@@ -31,10 +31,11 @@
   import Banner1 from "../assets/partner-banner/banner-registration-1.png";
   import Banner2 from "../assets/partner-banner/banner-registration-2.png";
   import { cubicIn, cubicOut } from "svelte/easing";
-  import type { PartnersPartnersListMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import type { PartnersPartnerRegistrationSubmissionsMain, PartnersPartnersListMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import { onMount } from "svelte";
   import { post } from "$lib/api/utils.js";
   import userSettings from "$lib/store/user-settings.js";
+  import { modalStore } from "$lib/store/modal.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -61,18 +62,18 @@
 
   $: stepText = [
     {
-      title: profile.partner_registration_step_1 || "First Step: Register (NT)",
+      title: profile.first_step_register || "First Step: Register (NT)",
       link: profile.here || "here (NT)",
       subtitle:
-        profile.partner_registration_step_1_description ||
+        profile.after_register_next_step ||
         "After registering move to the next step (NT)",
     },
     {
       title:
-        profile.partner_registration_step_2 ||
+        profile.second_step_fill_details ||
         "Second Step: Fill the details (NT)",
       subtitle:
-        profile.partner_registration_step_2_description ||
+        profile.add_username_or_email ||
         "Add the username or email used in the partners website (NT)",
     },
   ];
@@ -119,13 +120,16 @@
     try {
       loading = true;
       const {user}= userSettings.extractAll();
-      const res =  await post("/api/data/partners", {
+      const res =  await post<{submission: PartnersPartnerRegistrationSubmissionsMain}>("/api/data/partners", {
         partner,
         input: value,
         wallet: user?.scores_user_data?.web3_wallet_addr
       });
-
-      loading = false
+      if (res?.submission) {
+        updateSubmissions(res.submission)
+      }
+      $modalStore.show = false;
+      loading = false;
     } catch(e) {
       loading = false;
     }
