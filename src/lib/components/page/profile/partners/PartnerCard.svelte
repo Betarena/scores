@@ -181,10 +181,13 @@
         gap: 2px;
         flex: 1 0 0;
         flex-wrap: wrap;
+        width: 100%;
 
         .name-row {
           display: flex;
           gap: 2px;
+          width: 100%;
+          justify-content: space-between;
 
           .name {
             width: 205px;
