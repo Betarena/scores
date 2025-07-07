@@ -40,6 +40,7 @@
 - [🛠 Contributing](#-contributing)
 - [💗 Support](#-support)
 - [📌 License](#-license)
+- [🗺 Overview](#-overview)
 </details>
 
 ## About
@@ -91,3 +92,8 @@ This project is licensed under the MIT license. Feel free to edit and distribute
 
 See [LICENSE](LICENSE) for more information.
 
+## 🗺 Overview
+
+Below is a graphical representation of the project in its most up-to-date state for better understanding of key features and architectural structure implied:
+
+![Alt text](.assets/overview.png)
