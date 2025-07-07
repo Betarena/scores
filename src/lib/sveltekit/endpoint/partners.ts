@@ -1,5 +1,5 @@
 import { json, RequestHandler } from "@sveltejs/kit";
-import {getPartners, getPartnersSubmissions, insertPartnerSubmission} from "../../../../../scores-lib/src/functions/v8/partners.js"
+import {getPartners, getPartnersSubmissions, insertPartnerSubmission} from "@betarena/scores-lib/dist/functions/v8/partners.js"
 
 export const GetPartners: RequestHandler = async ({ url }) => {
   const geo = url.searchParams.get("geo");
