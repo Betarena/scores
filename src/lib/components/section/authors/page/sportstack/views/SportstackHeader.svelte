@@ -158,7 +158,7 @@
     display: flex;
     flex-direction: column;
     gap: 24px;
-    background-color: var(--bg-color);
+    background-color: var(--colors-background-bg-primary);
     width: 100%;
     font-family: Roboto;
     --text-button-size: 14px;

@@ -509,7 +509,7 @@ Profile Settings
 
   <div
     id="account-settings-widget-box"
-    class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+    class:dark={$userBetarenaSettings.theme == 'Dark'}
   >
 
     <!--
@@ -1089,7 +1089,7 @@ Profile Settings
   */
 	div#account-settings-widget-box
   {
-		background: #ffffff;
+		background: var(--colors-background-bg-secondary, #232323);
 		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
 		border-radius: 12px;
 		padding: 20px;
@@ -1140,7 +1140,7 @@ Profile Settings
 	input[type='text']:focus,
   textarea:focus
   {
-		border: 1px solid var(--dark-theme-1);
+		border: 1px solid var(--colors-background-bg-secondary, #232323);
 	}
 	input[type='text'][placeholder],
   textarea[placeholder]
@@ -1204,38 +1204,38 @@ Profile Settings
   ╰──────────────────────────────────────────────────────────────────────────────╯
   */
 
-  div#account-settings-widget-box.dark-background-1
+  div#account-settings-widget-box.dark
   {
-		box-shadow: inset 0px 1px 0px var(--dark-theme-1-shade) !important;
-		background-color: var(--dark-theme-1) !important;
+		// box-shadow: inset 0px 1px 0px var(--dark-theme-1-shade) !important;
+		background-color: var(--colors-background-bg-secondary, #232323);
 	}
 
-  div#account-settings-widget-box.dark-background-1 input[type='text'], div#account-settings-widget-box.dark-background-1 textarea
+  div#account-settings-widget-box.dark input[type='text'], div#account-settings-widget-box.dark textarea
   {
-    background: var(--dark-theme-1);
+    background: var(--colors-background-bg-secondary, #232323);
     border: 1px solid var(--dark-theme-1-2-shade);
     color: var(--white)
   }
 
-  div#account-settings-widget-box.dark-background-1 div#settings-hr-divider
+  div#account-settings-widget-box.dark div#settings-hr-divider
   {
     background-color: var(--dark-theme-1-2-shade);
   }
 
-  div#account-settings-widget-box.dark-background-1 p.required-pill-tag
+  div#account-settings-widget-box.dark p.required-pill-tag
   {
     color: var(--primary-fade)
   }
 
-  div#account-settings-widget-box.dark-background-1 button.btn-hollow.danger
+  div#account-settings-widget-box.dark button.btn-hollow.danger
   {
     border: 1px solid var(--dark-theme-1-2-shade) !important;
   }
 
-  div#account-settings-widget-box.dark-background-1 input[type='text']:hover,
-  div#account-settings-widget-box.dark-background-1 input[type='text']:focus,
-  div#account-settings-widget-box.dark-background-1 textarea:focus
-  div#account-settings-widget-box.dark-background-1 textarea:hover
+  div#account-settings-widget-box.dark input[type='text']:hover,
+  div#account-settings-widget-box.dark input[type='text']:focus,
+  div#account-settings-widget-box.dark textarea:focus
+  div#account-settings-widget-box.dark textarea:hover
   {
     border: 1px solid var(--dark-theme-1-3-shade)!important;
   }

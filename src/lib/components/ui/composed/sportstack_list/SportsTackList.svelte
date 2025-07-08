@@ -104,7 +104,7 @@
     padding-block: 8px;
 
     flex-direction: column;
-    background-color: var(--bg-color);
+    background-color: var(--colors-background-bg-primary);
 
     .list-wrapper {
       display: flex;
@@ -115,7 +115,7 @@
       flex-grow: 1;
       width: 100%;
       height: 100%;
-      background-color: var(--bg-color);
+      background-color: var(--colors-background-bg-primary);
       font-weight: 600;
       color: var(--text-color-second);
       font-size: var(--text-size-2xl);

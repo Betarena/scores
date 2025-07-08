@@ -239,7 +239,7 @@
 
       &.active {
         --icon-fill: var(--text-color);
-        --icon-dot-color: var(--bg-color);
+        --icon-dot-color: var(--colors-background-bg-primary);
         --outline-color: "none";
       }
     }

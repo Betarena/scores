@@ -273,7 +273,7 @@
   .wrapper {
     display: flex;
     flex-direction: column;
-    background-color: var(--bg-color);
+    background-color: var(--colors-background-bg-primary);
 
     .load-more {
       display: flex;
@@ -286,7 +286,7 @@
       flex-direction: column;
       align-items: center;
       gap: 20px;
-      background: var(--bg-color);
+      background: var(--colors-background-bg-primary);
       flex-grow: 1;
       padding-top: 80px;
 

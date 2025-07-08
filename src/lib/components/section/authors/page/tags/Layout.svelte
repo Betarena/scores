@@ -145,7 +145,7 @@
     border-bottom: var(--section-border);
     padding-bottom: 80px !important;
     padding-top: 48px;
-    background-color: var(--bg-color);
+    background-color: var(--colors-background-bg-primary);
 
     &.mobile {
       border-top: none;

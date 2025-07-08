@@ -375,7 +375,6 @@ VIEW DESIGN - 2
     }
 		on:mouseenter={() => {return (isHoverMenuOptItem = true)}}
 		on:mouseleave={() => {return (isHoverMenuOptItem = false)}}
-    class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
   >
 
 		<!--
@@ -542,7 +541,7 @@ VIEW DESIGN - 2
 	}
 	div.profile-menu-opt:hover p.menu-opt-text
   {
-		color: var(--dark-theme) !important;
+		color: var(--text-color) !important;
 	}
   p.selected,.current-option {
     color: var(--text-color)

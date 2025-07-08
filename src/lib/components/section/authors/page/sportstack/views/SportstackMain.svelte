@@ -456,7 +456,7 @@
     display: flex;
     justify-content: center;
     padding: 34px 0;
-    background: var(--bg-color);
+    background: var(--colors-background-bg-primary);
   }
 
   .no-articles {
@@ -464,7 +464,7 @@
     flex-direction: column;
     align-items: center;
     gap: 20px;
-    background: var(--bg-color);
+    background: var(--colors-background-bg-primary);
     flex-grow: 1;
     padding-top: 80px;
 

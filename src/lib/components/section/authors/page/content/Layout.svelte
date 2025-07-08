@@ -202,7 +202,7 @@
       max-width: 100%;
       height: 100% !important;
       min-height: 100% !important;
-      background: var(--bg-color);
+      background: var(--colors-background-bg-primary);
       display: flex;
       flex-direction: column;
       gap: 24px;
@@ -225,7 +225,7 @@
       .tabbar-wrapper
       {
         width: 100%;
-        background-color: var(--bg-color);
+        background-color: var(--colors-background-bg-primary);
         display: flex;
         align-items: start;
         gap: 16px;
@@ -251,7 +251,7 @@
         display: flex;
         justify-content: center;
         padding: 34px 0;
-        background: var(--bg-color);
+        background: var(--colors-background-bg-primary);
       }
 
       &.tablet

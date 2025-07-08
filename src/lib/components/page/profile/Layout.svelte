@@ -157,6 +157,8 @@
     padding-top: 0 !important;
     padding-bottom: 72px !important;
     align-items: start;
+    background: var(--colors-background-bg-primary);
+
   }
 
 	/*

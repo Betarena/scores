@@ -227,7 +227,7 @@
 
     &.mobile {
       flex-direction: row-reverse;
-      background: var(--bg-color);
+      background: var(--colors-background-bg-primary);
       gap: 16px;
       border-radius: 0;
       padding: 20px 16px;

@@ -40,7 +40,7 @@ COMPONENT JS (w/ TS)
 
 <div
   id="dashboard-widget-container"
-  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+  class:dark={$userBetarenaSettings.theme == 'Dark'}
 >
 	<!--
   [ℹ] widget not available
@@ -276,16 +276,16 @@ COMPONENT JS (w/ TS)
   =============
   */
 
-  div#dashboard-widget-container.dark-background-1
+  div#dashboard-widget-container.dark
   {
 		box-shadow: inset 0px 1px 0px var(--dark-theme-1-shade) !important;
 		background-color: var(--dark-theme-1) !important;
 	}
 
-  div#dashboard-widget-container.dark-background-1 div#background-modal-blur
+  div#dashboard-widget-container.dark div#background-modal-blur
   {
-    background: rgba(75, 75, 75, 0.7);
-    backdrop-filter: blur(4px);
+    background-color: rgba(35, 35, 35, 0.685) ;
+   backdrop-filter: blur(4px);
   }
 
 </style>
