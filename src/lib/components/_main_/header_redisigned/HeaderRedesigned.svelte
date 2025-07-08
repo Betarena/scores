@@ -154,6 +154,7 @@
 
 <header
   id="header"
+  class={viewportType}
   class:custom-bg={$page.route.id === routeIdPageAuthors}
   class:sticky={$page.route.id === routeIdPageAuthors && isPWA && mobile}
   class:mobile
@@ -211,8 +212,12 @@
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    background-color: var(--colors-background-bg-secondary);
+    background-color: var(--colors-background-bg-primary);
     position: relative;
+    &.desktop {
+      background-color: var(--colors-background-bg-secondary);
+
+    }
 
     &.sticky {
       position: sticky;
