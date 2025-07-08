@@ -793,7 +793,7 @@
   */
 
   [data-page-id="AuthorsPage"][data-mode="pwa"] {
-    background-color: var(--bg-color);
+    background-color: var(--colors-background-bg-primary);
   }
 
   .app-wrapper {
@@ -801,7 +801,7 @@
     flex-direction: column;
     min-height: calc(var(--vh)*100);
     &.page-content {
-      background-color: var(--bg-color);
+      background-color: var(--colors-background-bg-primary);
     }
 
     &[data-page-id="Standard"],

@@ -37,7 +37,7 @@
      */
 
     deep = 14,
-    bgColor = "var(--bg-color)";
+    bgColor = "var(--colors-background-bg-primary)";
 
   // #endregion ➤ 📌 VARIABLES
 </script>

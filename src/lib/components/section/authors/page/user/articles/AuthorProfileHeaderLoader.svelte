@@ -140,7 +140,7 @@
     gap: 60px;
     justify-content: space-between;
     padding-bottom: 12px;
-    background-color: var(--bg-color);
+    background-color: var(--colors-background-bg-primary);
     --text-button-size: 14px;
 
     &.mobile {

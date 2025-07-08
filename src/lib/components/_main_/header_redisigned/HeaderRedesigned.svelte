@@ -211,7 +211,7 @@
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    background-color: var(--bg-color);
+    background-color: var(--colors-background-bg-primary);
     position: relative;
 
     &.sticky {

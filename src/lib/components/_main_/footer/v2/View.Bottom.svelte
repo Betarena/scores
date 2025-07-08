@@ -183,7 +183,7 @@
   footer
   {
     display: flex;
-    background-color: var(--bg-color);
+    background-color: var(--colors-background-bg-primary);
     min-width: 100%;
     flex-direction: column;
     color: var(--text-color);
