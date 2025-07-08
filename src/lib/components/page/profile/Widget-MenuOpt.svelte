@@ -426,7 +426,7 @@ COMPONENT JS (w/ TS)
   {
 		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
 		border-radius: 12px;
-    background: var(--Colors-Background-bg-secondary, #232323);
+    background: var(--colors-background-bg-secondary, #232323);
 
     .user-name {
       color: var(--text-color)
@@ -460,7 +460,7 @@ COMPONENT JS (w/ TS)
 		bottom: 0;
 		right: 0;
 		width: 100%;
-		 background: var(--Colors-Background-bg-secondary, #232323);
+		 background: var(--colors-background-bg-secondary, #232323);
 		box-shadow: 0px 4px 16px rgb(0 0 0 / 8%);
 		border-radius: 16px 16px 0px 0px;
 		padding: 12px 0 5px 0;
@@ -487,7 +487,7 @@ COMPONENT JS (w/ TS)
 			right: 12.5%;
 			z-index: 10000;
 			width: 260px;
-			background: var(--Colors-Background-bg-secondary, #232323);
+			background: var(--colors-background-bg-secondary, #232323);
 			box-shadow: 0px 4px 16px rgb(0 0 0 / 8%);
 			border-radius: 16px;
 			overflow: hidden;
@@ -513,12 +513,12 @@ COMPONENT JS (w/ TS)
   div#profile-menu-widget-container.dark-background-1
   {
 		box-shadow: inset 0px 1px 0px var(--dark-theme-1-shade) !important;
-		background: var(--Colors-Background-bg-secondary, #232323);
+		background: var(--colors-background-bg-secondary, #232323);
 	}
 
   div#profile-menu-widget-container.dark-background-1 div#dropdown-menu-opt-mobile
   {
-    background: var(--Colors-Background-bg-secondary, #232323);
+    background: var(--colors-background-bg-secondary, #232323);
   }
 
 </style>
