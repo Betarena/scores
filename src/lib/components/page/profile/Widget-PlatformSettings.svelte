@@ -87,7 +87,7 @@ PLATFORM SETTINGS WIDGET
 {#if !noWidgetData}
   <div
     id="platform-settings-widget-box"
-    class:dark-background-1={$userBetarenaSettings.theme == "Dark"}
+    class:dark={$userBetarenaSettings.theme == "Dark"}
   >
     <!--
     WIDGET TITLE
@@ -324,13 +324,13 @@ PLATFORM SETTINGS WIDGET
   =============
   */
 
-  div#platform-settings-widget-box.dark-background-1 {
-    box-shadow: inset 0px 1px 0px var(--dark-theme-1-shade) !important;
-    background-color: var(--dark-theme-1) !important;
+  div#platform-settings-widget-box.dark {
+    // box-shadow: inset 0px 1px 0px var(--dark-theme-1-shade) !important;
+    background-color: var(--colors-background-bg-secondary, #232323);
   }
 
   :global(
-      div#platform-settings-widget-box.dark-background-1 .language-input button
+      div#platform-settings-widget-box.dark .language-input button
     ) {
     border: 1px solid var(--dark-theme-1-2-shade) !important;
   }
@@ -341,8 +341,8 @@ PLATFORM SETTINGS WIDGET
     border: 1px solid var(--text-color) !important;
   }
   :global(
-      div#platform-settings-widget-box.dark-background-1 .language-input button:hover,
-      div#platform-settings-widget-box.dark-background-1 .language-input button:focus
+      div#platform-settings-widget-box.dark .language-input button:hover,
+      div#platform-settings-widget-box.dark .language-input button:focus
     ) {
     border: 1px solid var(--dark-theme-1-3-shade)!important;
   }

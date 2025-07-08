@@ -734,7 +734,6 @@
   {/if}
 
   <main
-    class:dark-background={theme == 'Dark'}
     class:dark-mode={theme == 'Dark'}
     class:light-mode={theme == 'Light'}
     class:standard={currentPageRouteId == null }
@@ -821,6 +820,7 @@
     /* 🎨 style */
     width: 100%;
     max-width: 100%;
+    background: var(--colors-background-bg-primary);
 
     &.standard {
       &::before {

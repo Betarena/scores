@@ -375,7 +375,6 @@ VIEW DESIGN - 2
     }
 		on:mouseenter={() => {return (isHoverMenuOptItem = true)}}
 		on:mouseleave={() => {return (isHoverMenuOptItem = false)}}
-    class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
   >
 
 		<!--
