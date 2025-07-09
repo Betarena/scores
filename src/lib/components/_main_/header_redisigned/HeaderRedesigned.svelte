@@ -159,9 +159,7 @@
   class:sticky={$page.route.id === routeIdPageAuthors && isPWA && mobile}
   class:mobile
   class:dark-mode={currentPageRouteId !== "AuthorsPage"}
-  style:border-bottom={$page.route.id === routeIdPageAuthors
-    ? "none"
-    : "var(--header-border)"}
+
 >
   {#if !["ProfilePage","AuthorsPage", "Standard"].includes(currentPageRouteId || "")}
     <div class="wave-wrapper">
