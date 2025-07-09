@@ -102,7 +102,7 @@
     min-height: 100%;
     overflow: auto;
     padding-bottom: 100px;
-    background: var(--colors-background-bg-main);
+    background: var(--colors-background-bg-secondary);
 
     &:not(.mobile) {
       :global(.list-wrapper) {

@@ -154,7 +154,7 @@
     .section {
       display: flex;
       flex-direction: column;
-      background: var(--colors-background-bg-main);
+      background: var(--colors-background-bg-secondary);
       width: 100%;
       .button-wrapp {
         width: 100%;
@@ -172,7 +172,7 @@
       padding: 16px;
       display: flex;
       flex-wrap: wrap;
-      background: var(--colors-background-bg-main);
+      background: var(--colors-background-bg-secondary);
       gap: 16px 10px;
     }
     .articles-wrapper {
@@ -180,7 +180,7 @@
       flex-direction: column;
       gap: 16px;
       padding-top: 16px;
-      background: var(--colors-background-bg-main);
+      background: var(--colors-background-bg-secondary);
       :global(.card-wrapper) {
         padding-block: 0;
       }

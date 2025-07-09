@@ -643,7 +643,7 @@
       width: 100%;
       padding-inline: 15px;
       padding-top: 20px;
-      background: var(--colors-background-bg-main);
+      background: var(--colors-background-bg-secondary);
 
       .input-wrapper {
         display: flex;
@@ -669,7 +669,7 @@
       display: flex;
       padding: 16px;
       gap: 16px;
-      background: var(--colors-background-bg-main);
+      background: var(--colors-background-bg-secondary);
       flex-direction: column;
       width: 100%;
       .suggest-item {
@@ -699,7 +699,7 @@
       overflow: hidden;
 
       .search-message-wrapper {
-        background: var(--colors-background-bg-main);
+        background: var(--colors-background-bg-secondary);
         overflow-y: auto;
         flex-grow: 1;
         width: 100%;
@@ -723,7 +723,7 @@
         }
       }
       .search-history {
-        background: var(--colors-background-bg-main);
+        background: var(--colors-background-bg-secondary);
         overflow-y: auto;
         flex-grow: 1;
         padding: 16px;
@@ -779,6 +779,8 @@
       background-color: unset;
       max-width: 832px;
       gap: 21px;
+      background: transparent;
+
       &.Dark {
         :global(.input-wrapper:not(.focus)) {
           border: 1px solid transparent;
@@ -790,10 +792,12 @@
       }
       .search-wrapper {
         padding: 0;
+        background: transparent;
       }
       .search-suggestions,
       .search-history {
         padding: 0;
+        background: transparent;
         gap: 21px;
         .suggestion-text,
         .recent-search-item {
