@@ -329,7 +329,7 @@ COMPONENT JS (w/ TS)
         in:fly={{ y: 600, duration: 700 }}
         out:fly={{ y: 600, duration: 700 }}
       >
-				{#each PROFILE_MENU_OPT as item}\
+				{#each PROFILE_MENU_OPT as item}
           {#if item !== "Partners" || partners_visibility}
              <MenuOptRow
                VIEW_OPT={2}
