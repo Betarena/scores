@@ -24,6 +24,7 @@
 
   import { mutateStringToPermalink } from "@betarena/scores-lib/dist/util/language.js";
   import { getOptimizedImageUrl } from "$lib/utils/image.js";
+  import Badge from "$lib/components/ui/Badge.svelte";
 
   // #region ➤ 📌 VARIABLES
 
@@ -118,28 +119,28 @@
     <div class="tags-wrapper">
       {#if mobile || tablet}
         <ScrollDataWrapper data={tags_data} let:item={tag}>
-          <a
-            href="/a/tag/{tag?.permalink}"
+          <div
+            class="tag"
             data-sveltekit-preload-data="hover"
             in:fade={{ duration: 500 }}
           >
-            <Tag>{tag?.name}</Tag>
-          </a>
+            <Badge link="/a/tag/{tag?.permalink}" size="lg" color="gray">{tag?.name}</Badge>
+          </div>
         </ScrollDataWrapper>
       {:else}
         <ExpandDataWrapper data={tags_data}>
           <slot slot="item" let:item={tag}>
-            <a
-              href="/a/tag/{tag?.permalink}"
+            <div
+              class="tag"
               data-sveltekit-preload-data="hover"
               in:fade={{ duration: 500 }}
             >
-              <Tag>{tag?.name}</Tag>
-            </a>
+              <Badge link="/a/tag/{tag?.permalink}" size="lg" color="gray">{tag?.name}</Badge>
+            </div>
           </slot>
           <slot slot="count" let:count
             ><div in:fade={{ duration: 500 }}>
-              <Tag>+{count}</Tag>
+              <Badge size="lg" color="gray">+{count}</Badge>
             </div></slot
           >
         </ExpandDataWrapper>
@@ -172,7 +173,7 @@
       border-radius: 12px;
       box-sizing: border-box;
       justify-content: space-between;
-      background: var(--bg-color-second);
+      background: var(--colors-background-bg-brand-primary_alt);
 
       &.mobile {
         flex-direction: column-reverse;
@@ -256,6 +257,9 @@
         max-width: 100%;
         --text-button-size: var(--text-size-s);
         --gradient-color-rgb: var(--bg-color-second-rgb-consts);
+        .tag {
+            flex-shrink: 0;
+          }
 
         &.expanded {
           flex-wrap: wrap;
