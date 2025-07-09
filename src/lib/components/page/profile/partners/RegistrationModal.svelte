@@ -27,7 +27,7 @@
   import Button from "$lib/components/ui/Button.svelte";
   import Input from "$lib/components/ui/Input.svelte";
   import PaginationDots from "$lib/components/ui/PaginationDots.svelte";
-  import { fly } from "svelte/transition";
+  import { fly, scale } from "svelte/transition";
   import Banner1 from "../assets/partner-banner/banner-registration-1.png";
   import Banner2 from "../assets/partner-banner/banner-registration-2.png";
   import { cubicIn, cubicOut } from "svelte/easing";
@@ -40,6 +40,7 @@
   import userSettings from "$lib/store/user-settings.js";
   import { modalStore } from "$lib/store/modal.js";
   import { infoMessages } from "$lib/components/ui/infomessages/infomessages.js";
+  import session from "$lib/store/session.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -62,6 +63,7 @@
     submission: PartnersPartnerRegistrationSubmissionsMain
   ) => void;
   $: ({ profile } = $page.data.RESPONSE_PROFILE_DATA);
+  $: ({viewportType} = $session)
   let step = 1;
   let value = "";
   let loading = false;
@@ -162,6 +164,13 @@
     inputError = false;
   }
 
+   function chooseTransition(node, { easing, out = false }) {
+    if (viewportType === "mobile") {
+      return fly(node, { y: 600, duration: out ? 900 : 700, easing });
+    }
+    return scale(node, { duration: out ? 400 : 700, easing });
+  }
+
   // #endregion ➤ 🛠️ METHODS
 </script>
 
@@ -177,9 +186,9 @@
 -->
 
 <div
-  class="registration-modal"
-  in:fly={{ duration: 700, y: 600, easing: cubicOut }}
-  out:fly={{ duration: 700, y: 600, easing: cubicIn }}
+  class="registration-modal {viewportType}"
+  in:chooseTransition={{ easing: cubicOut }}
+  out:chooseTransition={{ easing: cubicIn, out: true }}
 >
   <div class="image-wrapp">
     <div
@@ -344,6 +353,16 @@
       align-items: flex-start;
       gap: var(--spacing-4xl, 32px);
       align-self: stretch;
+    }
+
+    &.desktop {
+      width: 375px;
+      max-width: 400px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: var(--radius-2xl, 16px);
+      bottom: unset;
     }
   }
 </style>
