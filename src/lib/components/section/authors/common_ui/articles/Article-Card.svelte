@@ -194,7 +194,7 @@
     padding: 20px;
     box-sizing: border-box;
     justify-content: space-between;
-    background: var(--colors-background-bg-brand-primary_alt);
+    background: var(--colors-background-bg-secondary);
     align-items: start;
 
 
