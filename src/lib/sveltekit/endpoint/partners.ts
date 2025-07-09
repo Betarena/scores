@@ -4,6 +4,7 @@ import {
   getPartnersSubmissions,
   insertPartnerSubmission,
 } from "@betarena/scores-lib/dist/functions/v8/partners.js";
+import {getActivePartnersGeo} from "../../../../../scores-lib/src/functions/v8/partners.js"
 
 export const GetPartners: RequestHandler = async ({ url }) => {
   const geo = url.searchParams.get("geo") || "en";
@@ -44,3 +45,18 @@ export const PostPartnerSubmission: RequestHandler = async ({
     return json({ ok: false }, { status: 500 });
   }
 };
+
+
+export const GetPartnersVisibility: RequestHandler = async ({ url }) => {
+  const geo = url.searchParams.get("geo") || "en";
+  try
+  {
+    const data = await getActivePartnersGeo({ geo });
+    const partners_visibility = data[0]?.active ?? true;
+    return json({partners_visibility})
+  } catch (e)
+  {
+    return json({partners_visibility: false})
+  }
+
+}
