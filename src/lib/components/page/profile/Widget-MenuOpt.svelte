@@ -23,6 +23,7 @@ COMPONENT JS (w/ TS)
   import { fade, fly } from 'svelte/transition';
   import { routeIdPageProfileAuthorCreate, routeIdPageProfilePublication } from '$lib/constants/paths.js';
   import { getOptimizedImageUrl } from '$lib/utils/image.js';
+  import { get } from '$lib/api/utils.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -50,7 +51,8 @@ COMPONENT JS (w/ TS)
 
   let
     mobileExclusive: boolean,
-    tabletExclusive: boolean = false
+    tabletExclusive: boolean = false,
+    partners_visibility: boolean = false
   ;
 
 	let
@@ -195,6 +197,13 @@ COMPONENT JS (w/ TS)
 
 	}
 
+  $: if(browser && $userBetarenaSettings.geoJs) {
+      get<{partners_visibility: boolean}>(`/api/data/partners.visibility?geo=${$userBetarenaSettings.geoJs.country_code}`).then(data => {
+        partners_visibility = data?.partners_visibility || false
+      })
+
+  }
+
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
@@ -212,6 +221,7 @@ COMPONENT JS (w/ TS)
 					);
 			}
 		);
+
 	});
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
@@ -319,15 +329,17 @@ COMPONENT JS (w/ TS)
         in:fly={{ y: 600, duration: 700 }}
         out:fly={{ y: 600, duration: 700 }}
       >
-				{#each PROFILE_MENU_OPT as item}
-					<MenuOptRow
-						VIEW_OPT={2}
-						MENU_OPT={item}
-						SELECTED_OPT={selectedMenuOpt}
-						{mobileExclusive}
-						{tabletExclusive}
-						on:select_opt_trigger={(e) =>	update_selected_opt(e)}
-					/>
+				{#each PROFILE_MENU_OPT as item}\
+          {#if item !== "Partners" || partners_visibility}
+             <MenuOptRow
+               VIEW_OPT={2}
+               MENU_OPT={item}
+               SELECTED_OPT={selectedMenuOpt}
+               {mobileExclusive}
+               {tabletExclusive}
+               on:select_opt_trigger={(e) =>	update_selected_opt(e)}
+             />
+          {/if}
 				{/each}
 			</div>
 		{/if}
@@ -362,14 +374,16 @@ COMPONENT JS (w/ TS)
 			{#if showDropdown}
 				<div id="dropdown-menu-opt-tablet">
 					{#each PROFILE_MENU_OPT as item}
-						<MenuOptRow
-							VIEW_OPT={2}
-							MENU_OPT={item}
-							SELECTED_OPT={selectedMenuOpt}
-							{mobileExclusive}
-							{tabletExclusive}
-							on:select_opt_trigger={(e) =>	update_selected_opt(e)}
-						/>
+           {#if item !== "Partners" || partners_visibility}
+              <MenuOptRow
+                VIEW_OPT={2}
+                MENU_OPT={item}
+                SELECTED_OPT={selectedMenuOpt}
+                {mobileExclusive}
+                {tabletExclusive}
+                on:select_opt_trigger={(e) =>	update_selected_opt(e)}
+              />
+            {/if}
 					{/each}
 				</div>
 			{/if}
@@ -387,6 +401,7 @@ COMPONENT JS (w/ TS)
     -->
 		<div>
 			{#each PROFILE_MENU_OPT as item}
+       {#if item !== "Partners" || partners_visibility}
 				<MenuOptRow
 					VIEW_OPT={2}
 					MENU_OPT={item}
@@ -395,6 +410,7 @@ COMPONENT JS (w/ TS)
 					{tabletExclusive}
 					on:select_opt_trigger={(e) =>	update_selected_opt(e)}
 				/>
+        {/if}
 			{/each}
 		</div>
 

@@ -148,7 +148,7 @@
 		align-items: center;
 		justify-items: center;
     /* 🎨 style */
-		background-color: #292929;
+		background: var(--colors-background-bg-primary);
 	}
 
 </style>
