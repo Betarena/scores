@@ -85,7 +85,7 @@
 -->
 
 <div class="partner-wrapper">
-  <div class="info">
+  <a href={partner.data?.register_link} target="_blank" class="info">
     <img class="logo" src={partner.data?.image} />
     <div class="text-wrapper">
       <div class="name-row">
@@ -106,7 +106,7 @@
       </div>
       <div class="description">{partner.data?.bonus_description}</div>
     </div>
-  </div>
+  </a>
   {#if !status}
     <Button full={true} type="primary" size="md" on:click={showModal}
       >{profile.get_100_bta_free || "GET 100 BTA FREE!"}</Button
@@ -217,6 +217,10 @@
           font-weight: 400;
           line-height: var(--line-height-text-sm, 20px); /* 142.857% */
         }
+      }
+
+      &:hover .text-wrapper .name-row .name {
+        color: var( --colors-brand-500);
       }
     }
   }
