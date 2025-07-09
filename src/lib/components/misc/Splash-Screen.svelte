@@ -132,7 +132,7 @@
 <svelte:head>
   <meta
     name="theme-color"
-    content="#1F1F1FFF"
+    content="#1f1f1f"
     />
 </svelte:head>
 
