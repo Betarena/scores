@@ -4627,7 +4627,7 @@ body {
   --component-colors-alpha-alpha-black-80: rgba(255, 255, 255, 0.800000011920929);
   --component-colors-alpha-alpha-black-90: rgba(255, 255, 255, 0.8999999761581421);
   --component-colors-alpha-alpha-black-100: rgba(255, 255, 255, 1);
-  --component-colors-utility-gray-utility-gray-50: var(--colors-gray-900);
+  --component-colors-utility-gray-utility-gray-50: var(--colors-gray-dark-mode-900);
   --component-colors-components-app-store-badges-app-store-badge-border: var(--colors-base-white);
   --component-colors-components-application-navigation-nav-item-button-icon-fg: var(--colors-gray-400);
   --component-colors-components-application-navigation-nav-item-button-icon-fg_active: var(--colors-gray-200);
@@ -5375,7 +5375,7 @@ body {
   --component-colors-alpha-alpha-black-80: rgba(0, 0, 0, 0.800000011920929);
   --component-colors-alpha-alpha-black-90: rgba(0, 0, 0, 0.8999999761581421);
   --component-colors-alpha-alpha-black-100: rgba(0, 0, 0, 1);
-  --component-colors-utility-gray-utility-gray-50: var(--colors-gray-50);
+  --component-colors-utility-gray-utility-gray-50: var(--colors-gray-light-mode-50);
   --component-colors-components-app-store-badges-app-store-badge-border: rgba(166, 166, 166, 1);
   --component-colors-components-application-navigation-nav-item-button-icon-fg: var(--colors-gray-500);
   --component-colors-components-application-navigation-nav-item-button-icon-fg_active: var(--colors-gray-700);
