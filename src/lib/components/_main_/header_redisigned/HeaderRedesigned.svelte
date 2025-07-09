@@ -67,7 +67,6 @@
     routeIdAuthorProfile,
     routeIdAuthorSubscribers,
     routeIdSportstack,
-    routeIdPageAuthors,
   ];
   $: isInnerPage = simpleMobileHeaderRoutes.includes($page.route.id || "");
   $: ({ currentPageRouteId, viewportType, globalState } =
@@ -220,7 +219,7 @@
       top: 0;
       z-index: 2;
       width: 100%;
-      background: initial;
+      background: transparent;
     }
     &.custom-bg {
       background-color: var(--colors-background-bg-primary);
