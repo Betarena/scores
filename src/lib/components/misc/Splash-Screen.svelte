@@ -129,6 +129,12 @@
 │ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
+<svelte:head>
+  <meta
+    name="theme-color"
+    content="#1F1F1FFF"
+    />
+</svelte:head>
 
 <style lang="scss">
 
