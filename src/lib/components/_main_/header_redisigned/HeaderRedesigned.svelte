@@ -155,10 +155,8 @@
 <header
   id="header"
   class={viewportType}
-  class:custom-bg={$page.route.id === routeIdPageAuthors}
   class:sticky={$page.route.id === routeIdPageAuthors && isPWA && mobile}
   class:mobile
-  class:dark-mode={currentPageRouteId !== "AuthorsPage"}
 
 >
   {#if !["ProfilePage","AuthorsPage", "Standard"].includes(currentPageRouteId || "")}

@@ -355,7 +355,7 @@
       align-self: stretch;
     }
 
-    &.desktop {
+    &:not(.mobile) {
       width: 375px;
       max-width: 400px;
       top: 50%;
