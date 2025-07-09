@@ -574,6 +574,11 @@
 -->
 
 <svelte:head>
+    <meta
+      name="theme-color"
+      content="var(--colors-background-bg-primary)"
+    />
+
   <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
   <script>
     // We pre-filled your app ID in the widget URL: 'https://widget.intercom.io/widget/yz9qn6p3'

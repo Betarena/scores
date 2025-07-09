@@ -19,6 +19,7 @@
   } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import RegistrationModal from "./RegistrationModal.svelte";
   import { page } from "$app/stores";
+  import session from "$lib/store/session.js";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -39,6 +40,7 @@
 
   $: ({ status } = submissions.get(partner.id) || {});
   $: ({ profile } = $page.data.RESPONSE_PROFILE_DATA);
+  $: ({viewportType} = $session);
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -84,7 +86,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="partner-wrapper">
+<div class="partner-wrapper {viewportType}">
   <a href={partner.data?.register_link} target="_blank" class="info">
     <img class="logo" src={partner.data?.image} />
     <div class="text-wrapper">
@@ -221,6 +223,18 @@
 
       &:hover .text-wrapper .name-row .name {
         color: var( --colors-brand-500);
+      }
+    }
+
+    &.desktop {
+      &:nth-of-type(-n+2) {
+        border-top: none;
+        padding-top: var(--spacing-lg, 12px);
+      }
+
+      &:nth-last-of-type(-n+2) {
+        border-bottom: none;
+        padding-bottom: var(--spacing-lg, 12px);
       }
     }
   }

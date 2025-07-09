@@ -28,8 +28,12 @@
   import PartnerCard from "./PartnerCard.svelte";
   import { get } from "$lib/api/utils.js";
   import userSettings from "$lib/store/user-settings.js";
-  import type { PartnersPartnerRegistrationSubmissionsMain, PartnersPartnersListMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import type {
+    PartnersPartnerRegistrationSubmissionsMain,
+    PartnersPartnersListMain,
+  } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import { getUserLocation } from "$lib/geo-js/init.js";
+  import session from "$lib/store/session.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -48,8 +52,12 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   let loading = false;
   let partners: PartnersPartnersListMain[] = [];
-  let submissions: Map<PartnersPartnerRegistrationSubmissionsMain['id'], PartnersPartnerRegistrationSubmissionsMain> = new Map();
+  let submissions: Map<
+    PartnersPartnerRegistrationSubmissionsMain["id"],
+    PartnersPartnerRegistrationSubmissionsMain
+  > = new Map();
   $: ({ profile } = $page.data.RESPONSE_PROFILE_DATA);
+  $: ({ viewportType } = $session);
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
@@ -64,21 +72,23 @@
   onMount(async () => {
     loading = true;
     try {
-      const geoJs = await getUserLocation()
+      const geoJs = await getUserLocation();
       const { user } = userSettings.extractAll();
       const [res, res2] = await Promise.all([
-        get<{ partners: PartnersPartnersListMain[]}>(
+        get<{ partners: PartnersPartnersListMain[] }>(
           `/api/data/partners?geo=${geoJs.country_code}`
         ),
-        get<{partners_submissions: PartnersPartnerRegistrationSubmissionsMain[]}>(
+        get<{
+          partners_submissions: PartnersPartnerRegistrationSubmissionsMain[];
+        }>(
           `/api/data/partners.submissions?uid=${user?.firebase_user_data?.uid}`
         ),
       ]);
       partners = res?.partners || [];
-      res2?.partners_submissions.forEach(submission => {
+      res2?.partners_submissions.forEach((submission) => {
         submissions.set(submission.partner_id, submission);
       });
-      submissions = new Map(submissions)
+      submissions = new Map(submissions);
       loading = false;
     } catch (e) {
       loading = false;
@@ -98,8 +108,10 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div id="partners-section" class="partners-wrapper">
-  <h2>{profile.earn_bta_with_our_partners || "Earn BTA with our partners (NT)"}</h2>
+<div id="partners-section" class="partners-wrapper {viewportType}">
+  <h2>
+    {profile.earn_bta_with_our_partners || "Earn BTA with our partners (NT)"}
+  </h2>
 
   <div class="content">
     <div class="description">
@@ -113,8 +125,7 @@
     </div>
     <div class="partners-sections">
       {#each partners as partner}
-
-        <PartnerCard {partner} bind:submissions/>
+        <PartnerCard {partner} bind:submissions />
       {/each}
     </div>
   </div>
@@ -200,6 +211,33 @@
       font-style: normal;
       font-weight: 500;
       line-height: var(--line-height-text-xs, 18px); /* 150% */
+    }
+
+    &.tablet {
+      padding: 20px;
+      border-radius: 12px;
+      background: var(--colors-background-bg-secondary, #232323);
+       width: 100%;
+      /* shadow/gray */
+      box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
+    }
+
+    &.desktop {
+      max-width: 1024px;
+      width: 100%;
+      padding: 20px;
+      border-radius: 12px;
+      background: var(--colors-background-bg-secondary, #232323);
+      /* shadow/gray */
+      box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
+      h2 {
+        font-size: var(--font-size-text-xl, 20px);
+      }
+      .partners-sections {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0 20px;
+      }
     }
   }
 </style>
