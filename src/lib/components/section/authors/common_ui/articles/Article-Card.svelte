@@ -140,6 +140,7 @@
       {#if mobile}
         <ScrollDataWrapper showArrows={false} data={tags_data} let:item={tag}>
           <div
+            class="tag"
             data-sveltekit-preload-data="hover"
             in:fade={{ duration: 500 }}
           >
@@ -150,6 +151,7 @@
         <ExpandDataWrapper data={tags_data}>
           <slot slot="item" let:item={tag}>
             <div
+              class="tag"
               data-sveltekit-preload-data="hover"
               in:fade={{ duration: 500 }}
             >
@@ -247,6 +249,9 @@
         --text-button-size: var(--text-size-s);
         --gradient-color-rgb: var(--bg-color-second-rgb-consts);
         margin-top: 4px;
+        .tag {
+            flex-shrink: 0;
+          }
 
         &.expanded {
           flex-wrap: wrap;
