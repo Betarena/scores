@@ -29,6 +29,7 @@
   import { get } from "$lib/api/utils.js";
   import userSettings from "$lib/store/user-settings.js";
   import type { PartnersPartnerRegistrationSubmissionsMain, PartnersPartnersListMain } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import { getUserLocation } from "$lib/geo-js/init.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -63,7 +64,8 @@
   onMount(async () => {
     loading = true;
     try {
-      const { geoJs, user } = userSettings.extractAll();
+      const geoJs = await getUserLocation()
+      const { user } = userSettings.extractAll();
       const [res, res2] = await Promise.all([
         get<{ partners: PartnersPartnersListMain[]}>(
           `/api/data/partners?geo=${geoJs.country_code}`
