@@ -574,10 +574,16 @@
 -->
 
 <svelte:head>
+  {#if theme === "Dark"}
+  <meta
+    name="theme-color"
+    content="#1F1F1FFF"
+    />
+    {:else}
     <meta
       name="theme-color"
-      content="var(--colors-background-bg-primary)"
-    />
+      content="#ffffff" />
+  {/if}
 
   <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
   <script>
