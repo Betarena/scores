@@ -200,6 +200,10 @@ COMPONENT JS (w/ TS)
   $: if(browser && $userBetarenaSettings.geoJs) {
       get<{partners_visibility: boolean}>(`/api/data/partners.visibility?geo=${$userBetarenaSettings.geoJs.country_code}`).then(data => {
         partners_visibility = data?.partners_visibility || false
+        if (!partners_visibility && selectedMenuOpt === 'Partners') {
+          selectedMenuOpt = 'Dashboard';
+          goto(`/u/dashboard/${$userBetarenaSettings.lang}`, { replaceState: true });
+        }
       })
 
   }
