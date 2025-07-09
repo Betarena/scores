@@ -64,6 +64,7 @@
   ) => void;
   $: ({ profile } = $page.data.RESPONSE_PROFILE_DATA);
   $: ({viewportType} = $session)
+  $: console.log("TRNALSTIONS: ", profile)
   let step = 1;
   let value = "";
   let loading = false;
@@ -225,11 +226,11 @@
     <div class="input-wrapper">
       <Input
         bind:value
-        placeholder="Username or Email"
+        placeholder={profile.add_username_or_email || "Username or Email"}
         on:input={onInputValidation}
         error={inputError}
       >
-        <span slot="error">Minimum 4 chars</span>
+        <span slot="error">{profile.minimum_4_chars || "Minimum 4 chars"}</span>
       </Input>
       <Button
         full={true}
@@ -238,7 +239,7 @@
         disabled={!value || loading || buttonDisabled}
       >
         {#if loading}
-          Loading...
+          {profile.loading || "Loading..."}
         {:else}
           {profile.submit || "Submit"}
         {/if}
