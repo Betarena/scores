@@ -52,7 +52,7 @@ export const GetPartnersVisibility: RequestHandler = async ({ url }) => {
   try
   {
     const data = await getActivePartnersGeo({ geo });
-    const partners_visibility = data[0]?.active ?? true;
+    const partners_visibility = data?.[0]?.show_partners ?? true;
     return json({partners_visibility})
   } catch (e)
   {
