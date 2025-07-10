@@ -129,7 +129,6 @@
     try {
       loading = true;
       const { user } = userSettings.extractAll();
-      alert(JSON.stringify({input: value, partner}))
       const res = await post<{
         submission: PartnersPartnerRegistrationSubmissionsMain;
         ok: boolean;
@@ -138,20 +137,17 @@
         input: value,
         wallet: user?.scores_user_data?.web3_wallet_addr,
       });
-      alert(JSON.stringify(res))
       if (res?.submission) {
         updateSubmissions(res.submission);
       }
         infoMessages.add({
           type: res?.ok ? "success" : "error",
           text: res?.ok ? profile?.success || "Success!" : profile?.error || "Error",
-          // text: res?.ok ? profile?.success || "Success!" : profile?.error || "Error",
         });
 
       $modalStore.show = !res?.ok;
       loading = false;
     } catch (e) {
-      alert(JSON.stringify(e))
       loading = false;
     }
   }
