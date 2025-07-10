@@ -134,7 +134,7 @@
       content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta
     name="theme-color"
-    content="#1f1f1f"
+    content="#ff0303"
     />
 </svelte:head>
 
@@ -156,7 +156,7 @@
 		align-items: center;
 		justify-items: center;
     /* 🎨 style */
-    background: #1f1f1f;
+    background: #ff0303;
 	}
 
 </style>
