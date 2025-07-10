@@ -1090,7 +1090,6 @@ Profile Settings
 	div#account-settings-widget-box
   {
 		background: var(--colors-background-bg-secondary, #232323);
-		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
 		border-radius: 12px;
 		padding: 20px;
 

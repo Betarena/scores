@@ -218,8 +218,6 @@
       border-radius: 12px;
       background: var(--colors-background-bg-secondary, #232323);
        width: 100%;
-      /* shadow/gray */
-      box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
     }
 
     &.desktop {
@@ -228,8 +226,6 @@
       padding: 20px;
       border-radius: 12px;
       background: var(--colors-background-bg-secondary, #232323);
-      /* shadow/gray */
-      box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
       h2 {
         font-size: var(--font-size-text-xl, 20px);
       }

@@ -175,7 +175,7 @@ COMPONENT JS (w/ TS)
   {
 		position: relative;
 		background: #ffffff;
-		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
+		/* box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08); */
 		border-radius: 12px;
 		padding: 20px;
 		overflow: hidden;
