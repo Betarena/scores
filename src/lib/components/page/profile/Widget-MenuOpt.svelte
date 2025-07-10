@@ -444,7 +444,6 @@ COMPONENT JS (w/ TS)
 
 	div#profile-menu-widget-container
   {
-		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
 		border-radius: 12px;
     background: var(--colors-background-bg-secondary, #232323);
 

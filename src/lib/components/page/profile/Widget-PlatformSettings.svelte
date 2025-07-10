@@ -279,8 +279,7 @@ PLATFORM SETTINGS WIDGET
   profile [settings] widget
   */
   div#platform-settings-widget-box {
-    background: #ffffff;
-    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
+    background: var(--colors-background-bg-secondary, #232323);
     border-radius: 12px;
     padding: 20px;
 
