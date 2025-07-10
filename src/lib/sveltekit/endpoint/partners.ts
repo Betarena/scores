@@ -31,7 +31,7 @@ export const PostPartnerSubmission: RequestHandler = async ({
 }) => {
   const { partner, input, wallet } = await request.json();
   if (!user.uid) {
-    return json({ ok: false }, { status: 501 });
+    return json({error: {text: "no user uid", user}, ok: false }, { status: 501 });
   }
   try {
     const submission = await insertPartnerSubmission({
@@ -42,7 +42,7 @@ export const PostPartnerSubmission: RequestHandler = async ({
     });
     return json({ submission, ok: true }, { status: 200 });
   } catch (e) {
-    return json({ ok: false }, { status: 500 });
+    return json({ error: e, ok: false }, { status: 500 });
   }
 };
 
