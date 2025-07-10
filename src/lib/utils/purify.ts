@@ -24,5 +24,6 @@ export function getPurify()
 export function sanitize(val: string)
 {
   const purify = getPurify();
-  return purify.sanitize(val, { SAFE_FOR_TEMPLATES: true })
+  const out = purify.sanitize(val, { SAFE_FOR_TEMPLATES: true });
+  return typeof out === 'string' ? out : out.toString()
 }

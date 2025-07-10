@@ -154,7 +154,7 @@
 		align-items: center;
 		justify-items: center;
     /* 🎨 style */
-		background: "#1F1F1FFF"; //  #f7813f
+    background: #1F1F1FFF;
 	}
 
 </style>
