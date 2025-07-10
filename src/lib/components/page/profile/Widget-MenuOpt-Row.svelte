@@ -33,8 +33,10 @@ COMPONENT JS (w/ TS)
 	import icon_withdraw from './assets/menu-opt/withdraw.svg';
   import icon_logout from './assets/menu-opt/logout.svg';
   import icon_logout_select from './assets/menu-opt/logout-selected.svg';
-  import icon_settings2 from './assets/menu-opt/settings2.svg'
-  import icon_settings2_select from './assets/menu-opt/settings2-select.svg'
+  import icon_settings2 from './assets/menu-opt/settings2.svg';
+  import icon_settings2_select from './assets/menu-opt/settings2-select.svg';
+  import icon_partner from './assets/menu-opt/partners.svg';
+  import icon_partner_selected from './assets/menu-opt/partners-selected.svg';
 
 	import type { PROFILE_OPT } from '$lib/types/types.scores.js';
 	import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
@@ -230,6 +232,15 @@ COMPONENT JS (w/ TS)
     ;
 
   }
+  else if (MENU_OPT == 'Partners') {
+    hoverMenuOptIconAlt = icon_partner_selected;
+    selectedMenuOptIcon
+    = SELECTED_OPT == MENU_OPT
+    ? icon_partner_selected
+    : icon_partner
+    ;
+
+  }
   else if (MENU_OPT == 'Scores')
     selectedMenuOptIcon = icon_calendar;
   else if (MENU_OPT == 'Logout')
@@ -301,6 +312,8 @@ VIEW DESIGN - 1
           {profileTrs.profile?.investor ?? 'Investor'}
         {:else if MENU_OPT == 'Author'}
           {profileTrs.profile?.author ?? 'Author'}
+        {:else if MENU_OPT == 'Partners'}
+          {profileTrs.profile?.partners ?? 'Partners'}
         {:else if MENU_OPT == 'Scores'}
           {profileTrs.profile?.scores ?? 'Scores'}
         {:else if MENU_OPT == 'Withdraw'}
@@ -362,7 +375,6 @@ VIEW DESIGN - 2
     }
 		on:mouseenter={() => {return (isHoverMenuOptItem = true)}}
 		on:mouseleave={() => {return (isHoverMenuOptItem = false)}}
-    class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
   >
 
 		<!--
@@ -436,6 +448,8 @@ VIEW DESIGN - 2
           {profileTrs.profile?.author ?? 'Author'}
         {:else if MENU_OPT == 'Investor'}
           {profileTrs.profile?.investor ?? 'Investor'}
+        {:else if MENU_OPT == 'Partners'}
+          {profileTrs.profile?.partners ?? 'Partners'}
         {:else if MENU_OPT == 'Scores'}
           {profileTrs.profile?.scores ?? 'Scores'}
         {:else if MENU_OPT == 'Withdraw'}
@@ -527,7 +541,7 @@ VIEW DESIGN - 2
 	}
 	div.profile-menu-opt:hover p.menu-opt-text
   {
-		color: var(--dark-theme) !important;
+		color: var(--text-color) !important;
 	}
   p.selected,.current-option {
     color: var(--text-color)

@@ -1,31 +1,14 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ 📌 High Order Overview                                                           │
-┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ Code Format   // V.8.0                                                         │
-│ ➤ Status        // 🔒 LOCKED                                                     │
-│ ➤ Author(s)     // @izobov                                                       │
-│ ➤ Maintainer(s) // @izobov @migbash                                              │
-│ ➤ Created on    // <date-created>                                                │
-┣──────────────────────────────────────────────────────────────────────────────────┫
-│ 📝 Description                                                                   │
-┣──────────────────────────────────────────────────────────────────────────────────┫
-│ BETARENA (Module)                                                                │
-│ |: Scores Footer Sub-Component (v2)
-╰──────────────────────────────────────────────────────────────────────────────────╯
--->
-
-<!--
-╭──────────────────────────────────────────────────────────────────────────────────╮
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+	import { json } from '@sveltejs/kit';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <script lang="ts">
-
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -40,17 +23,17 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
-  import { page } from '$app/stores';
-
-  import { routeIdPageProfile, routeIdPageProfileAuthorCreate, routeIdPageProfilePublication } from '$lib/constants/paths.js';
-  import sessionStore from '$lib/store/session.js';
-
-  import FooterNavigationBlock from './Child.Navigation.svelte';
-  import SocialsBlock from './Child.Social.svelte';
-  import BetarenaLogo from './../assets/betarena-logo-full.svg';
-  import BegambleawareorgBlack from './../assets/icon_redisign/gamble_aware.svg';
-  import Legal18ActionBet from './../assets/icon_redisign/legal-18-action-bet.svelte';
+  import { page } from "$app/stores";
+  import { onMount } from "svelte";
+  import PartnerCard from "./PartnerCard.svelte";
+  import { get } from "$lib/api/utils.js";
+  import userSettings from "$lib/store/user-settings.js";
+  import type {
+    PartnersPartnerRegistrationSubmissionsMain,
+    PartnersPartnersListMain,
+  } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import { getUserLocation } from "$lib/geo-js/init.js";
+  import session from "$lib/store/session.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -67,17 +50,51 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
-  $: ( { viewportType } = $sessionStore );
-
-  $: listStrLinkOrder
-    = (viewportType == 'tablet')
-      ? ['changelog', 'about', 'roadmap', 'status', 'terms', 'privacy', 'gambleaware']
-      : ['changelog', 'status', 'about', 'terms', 'roadmap', 'privacy', 'gambleaware']
-  ;
-
+  let loading = false;
+  let partners: PartnersPartnersListMain[] = [];
+  let submissions: Map<
+    PartnersPartnerRegistrationSubmissionsMain["id"],
+    PartnersPartnerRegistrationSubmissionsMain
+  > = new Map();
+  $: ({ profile } = $page.data.RESPONSE_PROFILE_DATA);
+  $: ({ viewportType } = $session);
   // #endregion ➤ 📌 VARIABLES
 
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  onMount(async () => {
+    loading = true;
+    try {
+      const geoJs = await getUserLocation();
+      const { user } = userSettings.extractAll();
+      const [res, res2] = await Promise.all([
+        get<{ partners: PartnersPartnersListMain[] }>(
+          `/api/data/partners?geo=${geoJs.country_code}`
+        ),
+        get<{
+          partners_submissions: PartnersPartnerRegistrationSubmissionsMain[];
+        }>(
+          `/api/data/partners.submissions?uid=${user?.firebase_user_data?.uid}`
+        ),
+      ]);
+      partners = res?.partners || [];
+      res2?.partners_submissions.forEach((submission) => {
+        submissions.set(submission.partner_id, submission);
+      });
+      submissions = new Map(submissions);
+      loading = false;
+    } catch (e) {
+      loading = false;
+    }
+  });
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 
 <!--
@@ -91,82 +108,36 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<footer
-  class="dark-mode"
-  class:mobile={viewportType === 'mobile'}
-  class:desktop={viewportType === 'desktop'}
-  class:border={[routeIdPageProfile, routeIdPageProfileAuthorCreate, routeIdPageProfilePublication].includes($page.route.id || '')}
->
+<div id="partners-section" class="partners-wrapper {viewportType}">
+  <h2>
+    {profile.earn_bta_with_our_partners || "Earn BTA with our partners (NT)"}
+  </h2>
 
-  <div
-    class="wrapper"
-  >
-
-    {#if viewportType !== 'mobile'}
-      <div
-        class="first-block"
+  <div class="content">
+    <div class="description">
+      <span class="description-title"
+        >{profile.how_to_earn || "How to Earn (NT)"}</span
       >
-        <img
-          id=""
-          src={BetarenaLogo}
-          alt="BetarenaLogo"
-          title=""
-          loading="lazy"
-        />
-        {#if viewportType === 'desktop'}
-          <div
-            class="rights-block"
-          >
-            © 2021 Betarena All rights reserved <br />
-            Second Act, 18 Boulevard Montmartre Paris 75009
-          </div>
-        {/if}
-      </div>
-    {/if}
-
-    <div
-      class="central-block"
-    >
-      <SocialsBlock />
-      <div
-        class="nav-wrapper"
-      >
-        <FooterNavigationBlock
-          listStrLinkOrder={listStrLinkOrder}
-        />
-      </div>
+      <p class="description-text">
+        {profile.earn_bta_tokens ||
+          "Earn BTA tokens by registering, depositing, and betting on our partner platforms. Register through the provided links to be eligible for rewards.(NT)"}
+      </p>
     </div>
-
-    <div
-      class="legal-block"
-    >
-
-      {#if viewportType !== 'desktop'}
-        <div
-          class="rights-block"
-        >
-          © 2021 Betarena All rights reserved <br />
-          Second Act, 18 Boulevard Montmartre Paris 75009
-        </div>
-      {/if}
-
-      <div
-        class="legal-images"
-      >
-        <Legal18ActionBet />
-        <img
-          id=""
-          src={BegambleawareorgBlack}
-          alt="BegambleawareorgBlack"
-          title=""
-          loading="lazy"
-        />
-      </div>
+    <div class="partners-sections">
+      {#each partners as partner}
+        <PartnerCard {partner} bind:submissions />
+      {/each}
     </div>
-
   </div>
 
-</footer>
+  <div class="requirements">
+    <div>{profile.requirements || `Requirements*`}</div>
+    <div>
+      {profile.to_receive_bta ||
+        `To receive the BTA, you need to register with at least one of our partners using our links, make a minimum deposit of $10, and place at least one bet. Once these requirements are met, you can claim the BTA. (NT)`}
+    </div>
+  </div>
+</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -179,99 +150,90 @@
 -->
 
 <style lang="scss">
-
-  footer
-  {
+  .partners-wrapper {
     display: flex;
-    background-color: var(--colors-background-bg-primary);
-    min-width: 100%;
     flex-direction: column;
-    color: var(--text-color);
+    gap: 24px;
 
-    &.border
-    {
-      border-top: var(--border);
+    h2 {
+      color: var(--colors-text-text-primary-900, #fff);
+      margin: 0;
+      /* Text xl/Semibold */
+      font-family: var(--font-family-font-family-body, Roboto);
+      font-size: var(--font-size-text-xl, 20px);
+      font-style: normal;
+      font-weight: 600;
+      line-height: var(--line-height-text-xl, 30px); /* 150% */
     }
-
-    .wrapper
-    {
-      padding: 32px 34px;
-      padding-bottom: 128px;
-      max-width: 1430px;
-      width: 100%;
-      gap: 64px;
+    .content {
       display: flex;
       flex-direction: column;
-      margin: auto;
-
-      .nav-wrapper {
-        margin-top: 34px;
-      }
+      gap: 16px;
     }
-
-    .legal-block
-    {
+    .description {
       display: flex;
-      align-items: center;
-      gap: 24px;
-      justify-content: space-between;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--spacing-xxs, 2px);
+      align-self: stretch;
 
-      .legal-images {
-        display: flex;
-        align-items: center;
-        gap: 24px;
-      }
+      .description-title {
+        color: var(--colors-text-text-secondary-700);
 
-      .rights-block {
-        color: var(--text-color-second-dark);
-        font-size: 12px;
+        /* Text sm/Semibold */
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-sm, 14px);
+        font-style: normal;
+        font-weight: 600;
+        line-height: var(--line-height-text-sm, 20px); /* 142.857% */
       }
-    }
+      .description-text {
+        color: var(--colors-text-text-tertiary-600, #8c8c8c);
 
-    &.mobile
-    {
-      padding-bottom: 132px;
-      .wrapper {
-        padding: 40px 25px;
-        gap: 40px;
-      }
-      .nav-wrapper {
-        margin-top: 40px;
-      }
-
-      .legal-block {
-        flex-direction: column-reverse;
-        align-items: flex-start;
-        gap: 40px;
+        /* Text md/Regular */
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-md, 16px);
+        font-style: normal;
+        font-weight: 400;
+        line-height: var(--line-height-text-md, 24px); /* 150% */
       }
     }
 
-    &.desktop
-    {
-      .wrapper {
-        flex-direction: row;
-        justify-content: space-between;
-        padding: 40px 32px;
-        padding-bottom: 85px;
+    .requirements {
+      color: var(--colors-text-text-primary-900, #fff);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
 
-        .first-block {
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          color: var(--text-color-second-dark);
-          font-size: 12px;
+      /* Text xs/Medium */
+      font-family: var(--font-family-font-family-body, Roboto);
+      font-size: var(--font-size-text-xs, 12px);
+      font-style: normal;
+      font-weight: 500;
+      line-height: var(--line-height-text-xs, 18px); /* 150% */
+    }
 
-          img {
-            width: 151px;
-            height: 32px;
-          }
-        }
+    &.tablet {
+      padding: 20px;
+      border-radius: 12px;
+      background: var(--colors-background-bg-secondary, #232323);
+       width: 100%;
+    }
 
-        .legal-block {
-          align-items: flex-end;
-        }
+    &.desktop {
+      max-width: 1024px;
+      width: 100%;
+      padding: 20px;
+      border-radius: 12px;
+      background: var(--colors-background-bg-secondary, #232323);
+      h2 {
+        font-size: var(--font-size-text-xl, 20px);
+      }
+      .partners-sections {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0 20px;
       }
     }
   }
-
 </style>

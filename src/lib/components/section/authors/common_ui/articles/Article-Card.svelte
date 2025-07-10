@@ -32,7 +32,6 @@
   import { readingTime } from '../helpers.js';
   import { mutateStringToPermalink } from '@betarena/scores-lib/dist/util/language.js';
 
-  import Tag from '$lib/components/ui/Tag.svelte';
   import ExpandDataWrapper from '$lib/components/ui/wrappers/ExpandDataWrapper.svelte';
   import TranslationText from '$lib/components/misc/Translation-Text.svelte';
   import ScrollDataWrapper from '$lib/components/ui/wrappers/ScrollDataWrapper.svelte';
@@ -40,6 +39,7 @@
 
   import { getOptimizedImageUrl } from '$lib/utils/image.js';
   import type { IPageAuthorArticleData, IPageAuthorAuthorData, IPageAuthorTagData } from '@betarena/scores-lib/types/v8/preload.authors.js';
+  import Badge from '$lib/components/ui/Badge.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -139,28 +139,28 @@
     <div class="tags-wrapper">
       {#if mobile}
         <ScrollDataWrapper showArrows={false} data={tags_data} let:item={tag}>
-          <a
-            href="/a/tag/{tag?.permalink}"
+          <div
+            class="tag"
             data-sveltekit-preload-data="hover"
             in:fade={{ duration: 500 }}
           >
-            <Tag>{tag?.name}</Tag>
-          </a>
+            <Badge link="/a/tag/{tag?.permalink}" size="lg" color="gray">{tag?.name}</Badge>
+          </div>
         </ScrollDataWrapper>
       {:else}
         <ExpandDataWrapper data={tags_data}>
           <slot slot="item" let:item={tag}>
-            <a
-              href="/a/tag/{tag?.permalink}"
+            <div
+              class="tag"
               data-sveltekit-preload-data="hover"
               in:fade={{ duration: 500 }}
             >
-              <Tag>{tag?.name}</Tag>
-            </a>
+              <Badge size="lg" color="gray" link="/a/tag/{tag?.permalink}">{tag?.name}</Badge>
+            </div>
           </slot>
           <slot slot="count" let:count
             ><div in:fade={{ duration: 500 }}>
-              <Tag>+{count}</Tag>
+              <Badge size="lg" color="gray">+{count}</Badge>
             </div></slot
           >
         </ExpandDataWrapper>
@@ -194,7 +194,7 @@
     padding: 20px;
     box-sizing: border-box;
     justify-content: space-between;
-    background: var(--bg-color-second);
+    background: var(--colors-background-bg-secondary);
     align-items: start;
 
 
@@ -249,6 +249,9 @@
         --text-button-size: var(--text-size-s);
         --gradient-color-rgb: var(--bg-color-second-rgb-consts);
         margin-top: 4px;
+        .tag {
+            flex-shrink: 0;
+          }
 
         &.expanded {
           flex-wrap: wrap;
@@ -323,7 +326,7 @@
 
     &.mobile {
       flex-direction: row-reverse;
-      background: var(--bg-color);
+      background: var(--colors-background-bg-primary);
       gap: 16px;
       border-radius: 0;
       padding: 20px 16px;

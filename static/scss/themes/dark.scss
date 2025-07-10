@@ -546,7 +546,7 @@
   --component-colors-alpha-alpha-black-80: rgba(255, 255, 255, 0.800000011920929);
   --component-colors-alpha-alpha-black-90: rgba(255, 255, 255, 0.8999999761581421);
   --component-colors-alpha-alpha-black-100: rgba(255, 255, 255, 1);
-  --component-colors-utility-gray-utility-gray-50: var(--colors-gray-900);
+  --component-colors-utility-gray-utility-gray-50: var(--colors-gray-dark-mode-900);;
   --component-colors-components-app-store-badges-app-store-badge-border: var(--colors-base-white);
   --component-colors-components-application-navigation-nav-item-button-icon-fg: var(--colors-gray-400);
   --component-colors-components-application-navigation-nav-item-button-icon-fg_active: var(--colors-gray-200);
@@ -733,7 +733,7 @@
   --colors-background-bg-primary_alt: var(--colors-background-bg-secondary);
   --colors-background-bg-primary_hover: var(--colors-gray-800);
   --colors-background-bg-primary-solid: var(--colors-background-bg-secondary);
-  --colors-background-bg-secondary: var(--colors-gray-900);
+  --colors-background-bg-secondary: var(--colors-gray-dark-mode-900);
   --colors-background-bg-secondary_alt: var(--colors-background-bg-primary);
   --colors-background-bg-secondary_hover: var(--colors-gray-800);
   --colors-background-bg-secondary_subtle: var(--colors-gray-900);
@@ -760,6 +760,7 @@
   --colors-background-bg-success-primary: var(--colors-success-500);
   --colors-background-bg-success-secondary: var(--colors-success-600);
   --colors-background-bg-success-solid: var(--colors-success-600);
+
 
 
   --colors-foreground-fg-brand-primary-500: var(--colors-base-white);

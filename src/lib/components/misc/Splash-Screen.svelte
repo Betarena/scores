@@ -129,6 +129,14 @@
 │ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
+<svelte:head>
+  <meta name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta
+    name="theme-color"
+    content="#1f1f1f"
+    />
+</svelte:head>
 
 <style lang="scss">
 
@@ -137,7 +145,7 @@
     /* 📌 position */
 		position: fixed;
 		top: 0;
-		bottom: 0;
+		height: 100vh;
 		right: 0;
 		left: 0;
 		z-index: 50000;
@@ -148,7 +156,7 @@
 		align-items: center;
 		justify-items: center;
     /* 🎨 style */
-		background-color: #292929;
+    background: #1f1f1f;
 	}
 
 </style>

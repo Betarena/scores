@@ -124,12 +124,19 @@
     min-height: 100%;
     overflow: auto;
     padding-bottom: 100px;
-    background: var(--colors-background-bg-main);
+    background: transparent;
 
     &:not(.mobile){
       display: flex;
       flex-direction: column;
       gap: 21px;
+    }
+
+    &.mobile {
+      background: var(--colors-background-bg-secondary);
+      :global(.card-wrapper) {
+        background: var(--colors-background-bg-secondary);
+      }
     }
   }
 </style>

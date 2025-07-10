@@ -50,12 +50,10 @@
   import
     {
       routeIdContent,
-      routeIdPageCompetitions,
       routeIdPageProfile,
       routeIdPageProfileArticleCreation,
       routeIdPageProfileEditArticle,
       routeIdPageProfilePublication,
-      routeIdScores,
       routeIdSearch,
     } from '$lib/constants/paths.js';
   import { scoresAdminStore } from '$lib/store/admin.js';
@@ -363,7 +361,6 @@
     ): Promise < void > =>
     {
 
-      // initSentry();
 
       // ╭─────
       // │ IMPORTANT CRITICAL
@@ -575,6 +572,17 @@
 -->
 
 <svelte:head>
+  {#if theme === "Dark"}
+  <meta
+    name="theme-color"
+    content="#1f1f1f"
+    />
+  {:else}
+    <meta
+      name="theme-color"
+      content="#ffffff" />
+  {/if}
+
   <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
   <script>
     // We pre-filled your app ID in the widget URL: 'https://widget.intercom.io/widget/yz9qn6p3'
@@ -735,7 +743,6 @@
   {/if}
 
   <main
-    class:dark-background={theme == 'Dark'}
     class:dark-mode={theme == 'Dark'}
     class:light-mode={theme == 'Light'}
     class:standard={currentPageRouteId == null }
@@ -763,7 +770,7 @@
 
   {#if
     (objComponentStandardState.viewport.mobile.state || objComponentStandardState.viewport.tablet.state)
-    && [routeIdScores, routeIdPageCompetitions, routeIdContent].includes($page.route.id || '')
+    && ![routeIdSearch, routeIdPageProfile].includes($page.route.id || '')
   }
     <MobileMenu
       mobile={objComponentStandardState.viewport.mobile.state}
@@ -794,7 +801,7 @@
   */
 
   [data-page-id="AuthorsPage"][data-mode="pwa"] {
-    background-color: var(--bg-color);
+    background-color: var(--colors-background-bg-primary);
   }
 
   .app-wrapper {
@@ -802,7 +809,7 @@
     flex-direction: column;
     min-height: calc(var(--vh)*100);
     &.page-content {
-      background-color: var(--bg-color);
+      background-color: var(--colors-background-bg-primary);
     }
 
     &[data-page-id="Standard"],
@@ -822,6 +829,7 @@
     /* 🎨 style */
     width: 100%;
     max-width: 100%;
+    background: var(--colors-background-bg-primary);
 
     &.standard {
       &::before {

@@ -35,6 +35,7 @@
   width: 100%;
   padding-inline: 16px;
 
+
   &.tablet {
     padding-inline: 34px;
   }

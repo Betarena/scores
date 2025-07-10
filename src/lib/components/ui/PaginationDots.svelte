@@ -8,27 +8,6 @@
 -->
 
 <script lang="ts">
-  // #region ➤ 📦 Package Imports
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'imports' that are required        │
-  // │ by 'this' .svelte file is ran.                                         │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. svelte/sveltekit imports                                            │
-  // │ 2. project-internal files and logic                                    │
-  // │ 3. component import(s)                                                 │
-  // │ 4. assets import(s)                                                    │
-  // │ 5. type(s) imports(s)                                                  │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-  import ArticleCard from "./Article-Card.svelte";
-  import ArticleLoader from "./Article-Loader.svelte";
-  import session from "$lib/store/session.js";
-  import type { IArticle } from "../helpers.js";
-
-  // #endregion ➤ 📦 Package Imports
-
   // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -43,18 +22,9 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let articles: Map<string | number, IArticle> = new Map(),
-    isLoadingArticles = false,
-    translations = {};
+  export let count = 2;
+  export let active = 1;
 
-  const /**
-     * @description
-     *  📣 `this` component **main** `id` and `data-testid` prefix.
-     */ // eslint-disable-next-line no-unused-vars
-    CNAME: string = "author⮕articles⮕list";
-  $: ({ viewportType } = $session);
-  $: mobile = viewportType === "mobile";
-  $: tablet = viewportType === "tablet";
   // #endregion ➤ 📌 VARIABLES
 </script>
 
@@ -68,21 +38,10 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
-<div class="listArticlesMod {viewportType}" id={CNAME}>
-  {#if articles.size}
-    {#each [...articles.entries()] as [key, article] (key)}
-      <ArticleCard {mobile} {article} {tablet} {translations} />
-    {/each}
-  {:else if !isLoadingArticles}
-    <div class="no-data">No articles yet</div>
-  {/if}
-
-  {#if isLoadingArticles}
-    {#each Array(10) as _item}
-      <ArticleLoader {mobile} {tablet} />
-    {/each}
-  {/if}
+<div class="dots-wrapper">
+  {#each Array(count) as _item, index}
+    <div class="dot" class:active={(index + 1) === active} on:click={() => active = index + 1}/>
+  {/each}
 </div>
 
 <!--
@@ -96,27 +55,21 @@
 -->
 
 <style lang="scss">
-  .listArticlesMod {
+  .dots-wrapper {
     display: flex;
-    flex-direction: column;
-    gap: 24px;
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing-xl, 16px);
 
-    &.mobile {
-      margin-top: 0;
-      gap: 8px;
-    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: var(--radius-full, 9999px);
+      background: var(--colors-background-bg-quaternary, #525252);
 
-    .no-data {
-      flex-grow: 1;
-      width: 100%;
-      height: 100%;
-      background-color: var(--colors-background-bg-primary);
-      font-weight: 600;
-      color: var(--text-color-second);
-      font-size: var(--text-size-2xl);
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      &.active {
+        background: var(--colors-foreground-fg-brand-primary_alt, #d2d2d2);
+      }
     }
   }
 </style>

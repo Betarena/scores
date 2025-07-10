@@ -23,6 +23,7 @@ COMPONENT JS (w/ TS)
   import { fade, fly } from 'svelte/transition';
   import { routeIdPageProfileAuthorCreate, routeIdPageProfilePublication } from '$lib/constants/paths.js';
   import { getOptimizedImageUrl } from '$lib/utils/image.js';
+  import { get } from '$lib/api/utils.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -37,6 +38,7 @@ COMPONENT JS (w/ TS)
       'Account Settings',
       'Settings',
       'Author',
+      'Partners',
       // 'Investor',
       'Deposit',
       'Withdraw',
@@ -49,7 +51,8 @@ COMPONENT JS (w/ TS)
 
   let
     mobileExclusive: boolean,
-    tabletExclusive: boolean = false
+    tabletExclusive: boolean = false,
+    partners_visibility: boolean = false
   ;
 
 	let
@@ -86,6 +89,9 @@ COMPONENT JS (w/ TS)
     ;
 		if (selectedMenuOpt == 'Investor')
       targetUrl = `/u/investor/${$userBetarenaSettings.lang}`
+    ;
+		if (selectedMenuOpt == 'Partners')
+      targetUrl = `/u/partners/${$userBetarenaSettings.lang}`
     ;
     if (selectedMenuOpt == "Deposit") {
       if (browser) {
@@ -178,6 +184,9 @@ COMPONENT JS (w/ TS)
       case 'author':
         selectedMenuOpt = 'Author';
         break;
+      case 'partners':
+        selectedMenuOpt = 'Partners';
+        break;
       default:
         selectedMenuOpt = 'Dashboard';
         break;
@@ -187,6 +196,17 @@ COMPONENT JS (w/ TS)
       selectedMenuOpt = 'Author';
 
 	}
+
+  $: if(browser && $userBetarenaSettings.geoJs) {
+      get<{partners_visibility: boolean}>(`/api/data/partners.visibility?geo=${$userBetarenaSettings.geoJs.country_code}`).then(data => {
+        partners_visibility = data?.partners_visibility || false
+        if (!partners_visibility && selectedMenuOpt === 'Partners') {
+          selectedMenuOpt = 'Dashboard';
+          goto(`/u/dashboard/${$userBetarenaSettings.lang}`, { replaceState: true });
+        }
+      })
+
+  }
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
@@ -205,6 +225,7 @@ COMPONENT JS (w/ TS)
 					);
 			}
 		);
+
 	});
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
@@ -228,7 +249,6 @@ COMPONENT JS (w/ TS)
 	id="profile-menu-widget-container"
   data-testid="profile/menu-widget/outer"
 	class:row-space-out={tabletExclusive && !mobileExclusive}
-  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
 >
 
 	<!--
@@ -314,14 +334,16 @@ COMPONENT JS (w/ TS)
         out:fly={{ y: 600, duration: 700 }}
       >
 				{#each PROFILE_MENU_OPT as item}
-					<MenuOptRow
-						VIEW_OPT={2}
-						MENU_OPT={item}
-						SELECTED_OPT={selectedMenuOpt}
-						{mobileExclusive}
-						{tabletExclusive}
-						on:select_opt_trigger={(e) =>	update_selected_opt(e)}
-					/>
+          {#if item !== "Partners" || partners_visibility}
+             <MenuOptRow
+               VIEW_OPT={2}
+               MENU_OPT={item}
+               SELECTED_OPT={selectedMenuOpt}
+               {mobileExclusive}
+               {tabletExclusive}
+               on:select_opt_trigger={(e) =>	update_selected_opt(e)}
+             />
+          {/if}
 				{/each}
 			</div>
 		{/if}
@@ -356,14 +378,16 @@ COMPONENT JS (w/ TS)
 			{#if showDropdown}
 				<div id="dropdown-menu-opt-tablet">
 					{#each PROFILE_MENU_OPT as item}
-						<MenuOptRow
-							VIEW_OPT={2}
-							MENU_OPT={item}
-							SELECTED_OPT={selectedMenuOpt}
-							{mobileExclusive}
-							{tabletExclusive}
-							on:select_opt_trigger={(e) =>	update_selected_opt(e)}
-						/>
+           {#if item !== "Partners" || partners_visibility}
+              <MenuOptRow
+                VIEW_OPT={2}
+                MENU_OPT={item}
+                SELECTED_OPT={selectedMenuOpt}
+                {mobileExclusive}
+                {tabletExclusive}
+                on:select_opt_trigger={(e) =>	update_selected_opt(e)}
+              />
+            {/if}
 					{/each}
 				</div>
 			{/if}
@@ -381,6 +405,7 @@ COMPONENT JS (w/ TS)
     -->
 		<div>
 			{#each PROFILE_MENU_OPT as item}
+       {#if item !== "Partners" || partners_visibility}
 				<MenuOptRow
 					VIEW_OPT={2}
 					MENU_OPT={item}
@@ -389,6 +414,7 @@ COMPONENT JS (w/ TS)
 					{tabletExclusive}
 					on:select_opt_trigger={(e) =>	update_selected_opt(e)}
 				/>
+        {/if}
 			{/each}
 		</div>
 
@@ -418,9 +444,8 @@ COMPONENT JS (w/ TS)
 
 	div#profile-menu-widget-container
   {
-		background: #ffffff;
-		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
 		border-radius: 12px;
+    background: var(--colors-background-bg-secondary, #232323);
 
     .user-name {
       color: var(--text-color)
@@ -454,7 +479,7 @@ COMPONENT JS (w/ TS)
 		bottom: 0;
 		right: 0;
 		width: 100%;
-		background-color: var(--white);
+		 background: var(--colors-background-bg-secondary, #232323);
 		box-shadow: 0px 4px 16px rgb(0 0 0 / 8%);
 		border-radius: 16px 16px 0px 0px;
 		padding: 12px 0 5px 0;
@@ -481,7 +506,7 @@ COMPONENT JS (w/ TS)
 			right: 12.5%;
 			z-index: 10000;
 			width: 260px;
-			background-color: var(--white);
+			background: var(--colors-background-bg-secondary, #232323);
 			box-shadow: 0px 4px 16px rgb(0 0 0 / 8%);
 			border-radius: 16px;
 			overflow: hidden;
@@ -507,12 +532,12 @@ COMPONENT JS (w/ TS)
   div#profile-menu-widget-container.dark-background-1
   {
 		box-shadow: inset 0px 1px 0px var(--dark-theme-1-shade) !important;
-		background-color: var(--dark-theme-1) !important;
+		background: var(--colors-background-bg-secondary, #232323);
 	}
 
   div#profile-menu-widget-container.dark-background-1 div#dropdown-menu-opt-mobile
   {
-    background-color: var(--dark-theme-1);
+    background: var(--colors-background-bg-secondary, #232323);
   }
 
 </style>

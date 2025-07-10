@@ -166,7 +166,7 @@ export async function post
          *  📣
          */
         resJson: unknown = await res.json()
-      ;
+        ;
 
       if (!res.ok)
 

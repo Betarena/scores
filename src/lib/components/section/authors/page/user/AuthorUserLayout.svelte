@@ -139,7 +139,7 @@
     padding-top: 3px;
   }
   section {
-    background-color: var(--bg-color);
+    background-color: var(--colors-background-bg-primary);
     width: 100%;
     height: 100%;
     &.mobile {

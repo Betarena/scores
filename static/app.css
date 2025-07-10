@@ -3551,11 +3551,12 @@ body {
   --colors-gray-dark-mode-200: #EDEDEDFF;
   --colors-gray-dark-mode-300: #D2D2D2FF;
   --colors-gray-dark-mode-400: #8C8C8CFF;
-  --colors-gray-dark-mode-500: #727171FF;
+  --colors-gray-dark-mode-500:
+  #727171FF;
   --colors-gray-dark-mode-600: #6A6A6AFF;
   --colors-gray-dark-mode-700: #525252FF;
   --colors-gray-dark-mode-800: #3B3B3BFF;
-  --colors-gray-dark-mode-900: #313131FF;
+  --colors-gray-dark-mode-900: #232323;
   --colors-gray-dark-mode-950: #1F1F1FFF;
   --colors-gray-dark-mode-alpha-25: #FFFFFFFA;
   --colors-gray-dark-mode-alpha-50: #FFFFFFF5;
@@ -4627,7 +4628,7 @@ body {
   --component-colors-alpha-alpha-black-80: rgba(255, 255, 255, 0.800000011920929);
   --component-colors-alpha-alpha-black-90: rgba(255, 255, 255, 0.8999999761581421);
   --component-colors-alpha-alpha-black-100: rgba(255, 255, 255, 1);
-  --component-colors-utility-gray-utility-gray-50: var(--colors-gray-900);
+  --component-colors-utility-gray-utility-gray-50: var(--colors-gray-dark-mode-900);
   --component-colors-components-app-store-badges-app-store-badge-border: var(--colors-base-white);
   --component-colors-components-application-navigation-nav-item-button-icon-fg: var(--colors-gray-400);
   --component-colors-components-application-navigation-nav-item-button-icon-fg_active: var(--colors-gray-200);
@@ -4814,7 +4815,7 @@ body {
   --colors-background-bg-primary_alt: var(--colors-background-bg-secondary);
   --colors-background-bg-primary_hover: var(--colors-gray-800);
   --colors-background-bg-primary-solid: var(--colors-background-bg-secondary);
-  --colors-background-bg-secondary: var(--colors-gray-900);
+  --colors-background-bg-secondary: var(--colors-gray-dark-mode-900);
   --colors-background-bg-secondary_alt: var(--colors-background-bg-primary);
   --colors-background-bg-secondary_hover: var(--colors-gray-800);
   --colors-background-bg-secondary_subtle: var(--colors-gray-900);
@@ -5375,7 +5376,7 @@ body {
   --component-colors-alpha-alpha-black-80: rgba(0, 0, 0, 0.800000011920929);
   --component-colors-alpha-alpha-black-90: rgba(0, 0, 0, 0.8999999761581421);
   --component-colors-alpha-alpha-black-100: rgba(0, 0, 0, 1);
-  --component-colors-utility-gray-utility-gray-50: var(--colors-gray-50);
+  --component-colors-utility-gray-utility-gray-50: var(--colors-gray-light-mode-50);
   --component-colors-components-app-store-badges-app-store-badge-border: rgba(166, 166, 166, 1);
   --component-colors-components-application-navigation-nav-item-button-icon-fg: var(--colors-gray-500);
   --component-colors-components-application-navigation-nav-item-button-icon-fg_active: var(--colors-gray-700);
@@ -5562,7 +5563,7 @@ body {
   --colors-background-bg-primary_alt: var(--colors-base-white);
   --colors-background-bg-primary_hover: var(--colors-gray-50);
   --colors-background-bg-primary-solid: var(--colors-gray-950);
-  --colors-background-bg-secondary: var(--colors-gray-50);
+  --colors-background-bg-secondary: var(--colors-gray-light-mode-50);
   --colors-background-bg-secondary_alt: var(--colors-gray-50);
   --colors-background-bg-secondary_hover: var(--colors-gray-100);
   --colors-background-bg-secondary_subtle: var(--colors-gray-25);

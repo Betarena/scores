@@ -493,7 +493,7 @@
 
 
 //BTA2.0
-   --colors-text-text-primary: var(--colors-gray-900);
+    --colors-text-text-primary: var(--colors-gray-900);
   --colors-text-text-primary_on-brand: var(--colors-base-white);
   --colors-text-text-secondary: var(--colors-gray-700);
   --colors-text-text-secondary_hover: var(--colors-gray-800);
@@ -544,7 +544,7 @@
   --component-colors-alpha-alpha-black-80: rgba(0, 0, 0, 0.800000011920929);
   --component-colors-alpha-alpha-black-90: rgba(0, 0, 0, 0.8999999761581421);
   --component-colors-alpha-alpha-black-100: rgba(0, 0, 0, 1);
-  --component-colors-utility-gray-utility-gray-50: var(--colors-gray-50);
+  --component-colors-utility-gray-utility-gray-50: var(--colors-gray-light-mode-50);
   --component-colors-components-app-store-badges-app-store-badge-border: rgba(166, 166, 166, 1);
   --component-colors-components-application-navigation-nav-item-button-icon-fg: var(--colors-gray-500);
   --component-colors-components-application-navigation-nav-item-button-icon-fg_active: var(--colors-gray-700);
@@ -731,7 +731,7 @@
   --colors-background-bg-primary_alt: var(--colors-base-white);
   --colors-background-bg-primary_hover: var(--colors-gray-50);
   --colors-background-bg-primary-solid: var(--colors-gray-950);
-  --colors-background-bg-secondary: var(--colors-gray-50);
+  --colors-background-bg-secondary: var(--colors-gray-light-mode-50);
   --colors-background-bg-secondary_alt: var(--colors-gray-50);
   --colors-background-bg-secondary_hover: var(--colors-gray-100);
   --colors-background-bg-secondary_subtle: var(--colors-gray-25);

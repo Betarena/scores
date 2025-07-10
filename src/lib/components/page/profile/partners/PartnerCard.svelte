@@ -8,33 +8,18 @@
 -->
 
 <script lang="ts">
-  // #region ➤ 📦 Package Imports
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'imports' that are required        │
-  // │ by 'this' .svelte file is ran.                                         │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. svelte/sveltekit imports                                            │
-  // │ 2. project-internal files and logic                                    │
-  // │ 3. component import(s)                                                 │
-  // │ 4. assets import(s)                                                    │
-  // │ 5. type(s) imports(s)                                                  │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-  import { page } from "$app/stores";
-  import Button from "$lib/components/ui/Button.svelte";
-  import SportsTackList from "$lib/components/ui/composed/sportstack_list/SportsTackList.svelte";
-  import session from "$lib/store/session.js";
-  import { createEventDispatcher } from "svelte";
-  import UsersList from "../authors/common_ui/users_list/UsersList.svelte";
-  import search_store from "$lib/store/search_store.js";
-  import type { IBetarenaUser } from "@betarena/scores-lib/types/_FIREBASE_.js";
-  import NoResults from "./NoResults.svelte";
-
-  // #endregion ➤ 📦 Package Imports
-
   // #region ➤ 📌 VARIABLES
+
+  import Badge from "$lib/components/ui/Badge.svelte";
+  import Button from "$lib/components/ui/Button.svelte";
+  import { modalStore } from "$lib/store/modal.js";
+  import type {
+    PartnersPartnerRegistrationSubmissionsMain,
+    PartnersPartnersListMain,
+  } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import RegistrationModal from "./RegistrationModal.svelte";
+  import { page } from "$app/stores";
+  import session from "$lib/store/session.js";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -47,19 +32,15 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  const dispatch = createEventDispatcher();
-  $: ({ viewportType } = $session);
-  $: users = ($search_store.users.data || new Map()) as Map<
-    string,
-    IBetarenaUser
-  >;
-  $: count = viewportType !== "desktop" ? 5 : 3;
-  $: sportstacks = $search_store.sportstacks.data || new Map();
-  $: firstThreeUsers = new Map(Array.from(users.entries()).slice(0, count));
-  $: firstThreeSportstacks = new Map(
-    Array.from(sportstacks.entries()).slice(0, count)
-  );
-  $: ({ translations, search_translations } = $page.data);
+  export let partner: PartnersPartnersListMain;
+  export let submissions: Map<
+    PartnersPartnerRegistrationSubmissionsMain["id"],
+    PartnersPartnerRegistrationSubmissionsMain
+  > = new Map();
+
+  $: ({ status } = submissions.get(partner.id) || {});
+  $: ({ profile } = $page.data.RESPONSE_PROFILE_DATA);
+  $: ({viewportType} = $session);
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -74,9 +55,23 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function viewMore(id: string) {
-    dispatch("changeTab", { id });
+  function showModal() {
+    $modalStore.modal = true;
+    $modalStore.component = RegistrationModal;
+    $modalStore.show = true;
+    $modalStore.props = { partner, updateSubmissions };
   }
+
+  function updateSubmissions(
+    submission: PartnersPartnerRegistrationSubmissionsMain
+  ) {
+    if (submissions.has(submission.partner_id)) {
+      submissions.delete(submission.partner_id);
+    }
+    submissions.set(submission.partner_id, submission);
+    submissions = new Map(submissions);
+  }
+
   // #endregion ➤ 🛠️ METHODS
 </script>
 
@@ -90,45 +85,44 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<div class="wrapper {viewportType}">
-  {#if !users.size && !$search_store.users.loading && !sportstacks.size && !$search_store.sportstacks.loading}
-    <div class="section">
-      <NoResults />
-    </div>
-  {:else}
-    <div class="section">
-      {#if users.size || $search_store.users.loading}
-        <UsersList
-          users={firstThreeUsers}
-          limit={count}
-          size="lg"
-          action_button={false}
-          {translations}
-          includePermalink={true}
-          loading={$search_store.users.loading && !firstThreeUsers.size}
-        />
-      {/if}
-      {#if sportstacks.size || $search_store.sportstacks.loading}
-        <SportsTackList
-          size="lg"
-          limit={count}
-          action_button={false}
-          loading={$search_store.sportstacks.loading &&
-            !firstThreeSportstacks.size}
-          sportstacks={firstThreeSportstacks}
-          {translations}
-          includePermalink={true}
-        />
-      {/if}
-      <div class="button-wrapp">
-        <Button
-          size="md"
-          full={true}
-          type="secondary"
-          on:click={() => viewMore("highlights")}>{search_translations.view_more || "View more"}</Button
-        >
+
+<div class="partner-wrapper {viewportType}">
+  <a href={partner.data?.register_link} target="_blank" class="info">
+    <img class="logo" src={partner.data?.image} />
+    <div class="text-wrapper">
+      <div class="name-row">
+        <span class="name">{partner.name}</span>
+        {#if status === "pending"}
+          <Badge color="orange" size="sm"
+            >{profile.pending || "Pending (NT)"}</Badge
+          >
+        {:else if status === "approved"}
+          <Badge color="success" size="sm"
+            >{profile.approved || "Approved (NT)"}</Badge
+          >
+        {:else if status === "failed"}
+          <Badge color="error" size="sm"
+            >{profile.failed || "Failed (NT)"}</Badge
+          >
+        {/if}
       </div>
+      <div class="description">{partner.data?.bonus_description}</div>
     </div>
+  </a>
+  {#if !status}
+    <Button full={true} type="primary" size="md" on:click={showModal}
+      >{profile.get_100_bta_free || "GET 100 BTA FREE!"}</Button
+    >
+  {:else}
+    <Button full={true} disabled={true}>
+      {#if status === "pending"}
+        {profile.pending_review || "PENDING REVIEW (NT)"}
+      {:else if status === "approved"}
+        {profile["100_bta_received"] || "100 BTA RECEIVED (NT)"}
+      {:else if status === "failed"}
+        {profile.unaffiliated || "UNAFFILIATED (NT)"}
+      {/if}
+    </Button>
   {/if}
 </div>
 
@@ -143,91 +137,104 @@
 -->
 
 <style lang="scss">
-  .wrapper {
+  .partner-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    min-height: 100%;
-    max-height: 100%;
-    overflow: auto;
+    gap: 16px;
+    padding-block: 16px;
+    border-top: 1px solid var(--colors-border-border-secondary, #3b3b3b);
 
-    .section {
-      display: flex;
-      flex-direction: column;
-      background: var(--colors-background-bg-secondary);
-      width: 100%;
-      .button-wrapp {
-        width: 100%;
-        display: flex;
-        padding-bottom: 16px;
-        padding-inline: 16px;
-      }
-      &:last-of-type {
-        padding-bottom: 84px;
-        flex-grow: 1;
-      }
+    &:first-of-type {
+      border-top: none;
+      padding-top: var(--spacing-lg, 12px);
+    }
+    &:last-of-type {
+      padding-bottom: var(--spacing-lg, 12px);
     }
 
-    .tags_wrapper {
-      padding: 16px;
+    .info {
       display: flex;
-      flex-wrap: wrap;
-      background: var(--colors-background-bg-secondary);
-      gap: 16px 10px;
-    }
-    .articles-wrapper {
-      display: flex;
-      flex-direction: column;
+      height: 65px;
+      padding: 16px 0px;
+      align-items: center;
       gap: 16px;
-      padding-top: 16px;
-      background: var(--colors-background-bg-secondary);
-      :global(.card-wrapper) {
-        padding-block: 0;
+      align-self: stretch;
+
+      .logo {
+        display: flex;
+        width: 52px;
+        height: 52px;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+
+        border-radius: var(--radius-md, 8px);
+        border: 1px solid var(--colors-border-border-secondary, #3b3b3b);
+
+        /* Shadows/shadow-xs */
+        box-shadow: 0px 1px 2px 0px
+          var(--colors-effects-shadows-shadow-xs, rgba(255, 255, 255, 0));
+      }
+
+      .text-wrapper {
+        display: flex;
+        align-items: flex-start;
+        align-content: flex-start;
+        gap: 2px;
+        flex: 1 0 0;
+        flex-wrap: wrap;
+        width: 100%;
+
+        .name-row {
+          display: flex;
+          gap: 2px;
+          width: 100%;
+          justify-content: space-between;
+
+          .name {
+            width: 205px;
+            color: var(--colors-text-text-primary-900, #fff);
+
+            /* Text md/Semibold */
+            font-family: var(--font-family-font-family-body, Roboto);
+            font-size: var(--font-size-text-md, 16px);
+            font-style: normal;
+            font-weight: 600;
+            line-height: var(--line-height-text-md, 24px); /* 150% */
+          }
+        }
+        .description {
+          display: -webkit-box;
+          width: 198px;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 2;
+          overflow: hidden;
+          color: var(--colors-text-text-tertiary-600, #8c8c8c);
+          text-overflow: ellipsis;
+
+          /* Text sm/Regular */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-sm, 14px);
+          font-style: normal;
+          font-weight: 400;
+          line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+        }
+      }
+
+      &:hover .text-wrapper .name-row .name {
+        color: var( --colors-brand-500);
       }
     }
-    &:not(.mobile) {
-      .button-wrapp {
-        padding-inline: 0;
-      }
-      gap: 21px;
-      :global(.list-wrapper) {
-        gap: 21px;
-      }
-      :global(.list-item) {
-        padding-block: 0;
-      }
-      .section {
-        padding-block: 0;
-        gap: 21px;
 
-        .button-wrapp {
-          padding-bottom: 0;
-        }
-        :global(.wrapper) {
-          padding-block: 0;
-        }
+    &.desktop {
+      &:nth-of-type(-n+2) {
+        border-top: none;
+        padding-top: var(--spacing-lg, 12px);
       }
-      .tags_wrapper  {
-        padding-inline: 0;
-      }
-      .articles-wrapper {
-        gap: 21px;
-        padding-top: 0;
-      }
-    }
 
-     &.mobile {
-      :global(.card-wrapper) {
-        padding-block: 0;
-      }
-      .section {
-        :global(.wrapper) {
-          background: var(--colors-background-bg-secondary);
-        }
-        :global(.card-wrapper) {
-          background: var(--colors-background-bg-secondary);
-        }
-
+      &:nth-last-of-type(-n+2) {
+        border-bottom: none;
+        padding-bottom: var(--spacing-lg, 12px);
       }
     }
   }

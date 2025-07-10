@@ -32,6 +32,7 @@ import { TagsSearchEndpoint } from '$lib/sveltekit/endpoint/search.tags.js';
 import { AuthorsSearchEndpoint } from '$lib/sveltekit/endpoint/search.authors.js';
 import { SuggestionsPostEndpoint, SuggestionsSearchEndpoint } from '$lib/sveltekit/endpoint/search.suggestions.js';
 import { GetTranslations } from '$lib/sveltekit/endpoint/translations.js';
+import { GetPartners, GetPartnersSubmissions, GetPartnersVisibility, PostPartnerSubmission } from '$lib/sveltekit/endpoint/partners.js';
 
 // #endregion ➤ 📦 Package
 
@@ -48,7 +49,10 @@ const getEndpointsMap = {
   'search.authors': AuthorsSearchEndpoint,
   "search.suggestions": SuggestionsSearchEndpoint,
   'translations': GetTranslations,
-  'translation':EdnpointTranslation
+  'translation': EdnpointTranslation,
+  'partners.submissions': GetPartnersSubmissions,
+  'partners.visibility': GetPartnersVisibility,
+  'partners': GetPartners,
 }
 type EndPointsMapKeys = keyof typeof getEndpointsMap;
 export const GET: RequestHandler = async (
@@ -75,7 +79,8 @@ export const GET: RequestHandler = async (
 
 const postEndpointsMap = {
   'profile.main': EndpointProfileMain,
-  "search.suggestions": SuggestionsPostEndpoint
+  "search.suggestions": SuggestionsPostEndpoint,
+  'partners': PostPartnerSubmission
 }
 type PostEndPointsMapKeys = keyof typeof postEndpointsMap;
 
