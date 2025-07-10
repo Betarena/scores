@@ -50,11 +50,13 @@
   import
     {
       routeIdContent,
+      routeIdPageAuthors,
       routeIdPageCompetitions,
       routeIdPageProfile,
       routeIdPageProfileArticleCreation,
       routeIdPageProfileEditArticle,
       routeIdPageProfilePublication,
+      routeIdPageTags,
       routeIdScores,
       routeIdSearch,
     } from '$lib/constants/paths.js';
@@ -772,7 +774,7 @@
 
   {#if
     (objComponentStandardState.viewport.mobile.state || objComponentStandardState.viewport.tablet.state)
-    && [routeIdScores, routeIdPageCompetitions, routeIdContent].includes($page.route.id || '')
+    && [routeIdScores, routeIdPageCompetitions, routeIdContent, routeIdPageAuthors, routeIdPageTags].includes($page.route.id || '')
   }
     <MobileMenu
       mobile={objComponentStandardState.viewport.mobile.state}
