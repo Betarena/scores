@@ -288,7 +288,7 @@
         gap: var(--spacing-md, 8px);
 
         border-radius: var(--radius-sm, 6px);
-        background: var(--colors-background-bg-primary_alt, #fff);
+        background: var(--colors-background-bg-active, #3B3B3B);
 
         /* Shadows/shadow-sm */
         box-shadow: 0px 1px 3px 0px

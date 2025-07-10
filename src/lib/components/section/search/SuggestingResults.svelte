@@ -215,5 +215,20 @@
         padding-top: 0;
       }
     }
+
+     &.mobile {
+      :global(.card-wrapper) {
+        padding-block: 0;
+      }
+      .section {
+        :global(.wrapper) {
+          background: var(--colors-background-bg-secondary);
+        }
+        :global(.card-wrapper) {
+          background: var(--colors-background-bg-secondary);
+        }
+
+      }
+    }
   }
 </style>

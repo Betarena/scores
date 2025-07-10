@@ -54,9 +54,14 @@
     justify-content: center;
     padding-block: 16px;
     gap: 4px;
+    background: transparent;
 
     .highlighted-text {
       color: var(--colors-brand-500);
+    }
+
+    &.mobile {
+      background: var(--colors-background-bg-secondary);
     }
   }
 </style>
