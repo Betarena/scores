@@ -132,7 +132,7 @@
 <svelte:head>
   <meta
     name="theme-color"
-    content=" #f7813f"
+    content="#1F1F1FFF"
     />
 </svelte:head>
 
@@ -154,7 +154,7 @@
 		align-items: center;
 		justify-items: center;
     /* 🎨 style */
-		background: var(--colors-brand-400); //  #f7813f
+		background: "#1F1F1FFF"; //  #f7813f
 	}
 
 </style>
