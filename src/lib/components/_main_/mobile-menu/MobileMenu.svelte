@@ -122,9 +122,10 @@
       icon: DocumentsIcon,
       type: "link",
       url: "/",
-      label:
-        trsanslationData?.scores_header_translations?.section_links
-          ?.sports_content_title ?? "SPORTS CONTENT",
+      label: "Home",
+      // label:
+      //   trsanslationData?.scores_header_translations?.section_links
+      //     ?.sports_content_title ?? "SPORTS CONTENT",
       route: routeIdContent,
     },
     // {
