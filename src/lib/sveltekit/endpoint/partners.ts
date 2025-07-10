@@ -29,7 +29,7 @@ export const PostPartnerSubmission: RequestHandler = async ({
   locals: { user },
   request,
 }) => {
-  const { partner, input, wallet } = await request.json();
+  const { partner, input } = await request.json();
   if (!user.uid) {
     return json({error: {text: "no user uid", user}, ok: false }, { status: 501 });
   }
