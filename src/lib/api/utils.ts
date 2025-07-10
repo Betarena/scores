@@ -166,7 +166,9 @@ export async function post
          *  📣
          */
         resJson: unknown = await res.json()
-      ;
+        ;
+      alert(`GET RES: ${JSON.stringify(res)}`)
+      alert(`GET JSON: ${JSON.stringify(resJson)}`)
 
       if (!res.ok)
 
@@ -189,6 +191,7 @@ export async function post
       //   console.error('💀 Unhandled :: ex');
 
       // ▓ [🐞]
+      alert(JSON.stringify(ex))
       console.error(`💀 Unhandled :: ${ex}`);
 
       return null;
