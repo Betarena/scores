@@ -137,11 +137,10 @@
         input: value,
         wallet: user?.scores_user_data?.web3_wallet_addr,
       });
+      alert(JSON.stringify(res))
       if (res?.submission) {
         updateSubmissions(res.submission);
       }
-      if (!res?.ok) alert(JSON.stringify(res?.error))
-      alert()
         infoMessages.add({
           type: res?.ok ? "success" : "error",
           text: res?.ok ? profile?.success || "Success!" : profile?.error || "Error",
