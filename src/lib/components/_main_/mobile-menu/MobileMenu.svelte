@@ -50,11 +50,14 @@
   import UserIcon from "./assets/usericon.svelte";
   import Dragicon from "./assets/dragicon.svelte";
 
-  import type { SvelteComponent } from "svelte";
+  import { type SvelteComponent } from "svelte";
   import Avatar from "$lib/components/ui/Avatar.svelte";
   import { routeIdContent } from "$lib/constants/paths.js";
   import Sheets from "./assets/sheets.svelte";
   import Search from "./assets/search.svelte";
+  import Partners from "./assets/partners.svelte";
+  import { browser } from "$app/environment";
+  import { get } from '$lib/api/utils.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -83,6 +86,7 @@
     type: "link" | "button";
     label?: string;
     dragable?: boolean;
+    hidden?: boolean;
     route?: string;
   }
 
@@ -118,9 +122,10 @@
       icon: DocumentsIcon,
       type: "link",
       url: "/",
-      label:
-        trsanslationData?.scores_header_translations?.section_links
-          ?.sports_content_title ?? "SPORTS CONTENT",
+      label: "Home",
+      // label:
+      //   trsanslationData?.scores_header_translations?.section_links
+      //     ?.sports_content_title ?? "SPORTS CONTENT",
       route: routeIdContent,
     },
     // {
@@ -150,6 +155,15 @@
       url: `/u/author/${lang}`,
       type: "link",
       label: "BTA",
+      route: null,
+    },
+    {
+      id: "partners",
+      icon: Partners,
+      url: `/u/partners/${lang}`,
+      type: "link",
+      hidden: true,
+      label: "Partners",
       route: null,
     },
   ] as INavBtnData[];
@@ -203,6 +217,7 @@
   function buttonClick(id: string, e?: MouseEvent) {
     switch (id) {
       case "bta":
+      case "partners":
       case "profile":
         if (!isAuth) {
           $sessionStore.currentActiveModal = "Auth_Modal";
@@ -223,7 +238,32 @@
     draggedElement.style.setProperty("--icon-color", "var(--text-color)");
   }
 
+  function updateVisibility() {
+    get<{partners_visibility: boolean}>(`/api/data/partners.visibility?geo=${$userBetarenaSettings.geoJs.country_code}`).then(data => {
+      const partners_visibility = data?.partners_visibility || false
+      const partners = navButtonOrderList.find(({id}) => id === "partners");
+      if (partners) {
+          partners.hidden = !partners_visibility;
+          navButtonOrderList = [...navButtonOrderList];
+        }
+    })
+  }
+
   // #endregion ➤ 🛠️ METHODS
+
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+   $: if(browser && $userBetarenaSettings.geoJs) {
+      updateVisibility();
+    }
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 
 <!--
@@ -246,8 +286,9 @@
 {/if}
 <div id={CNAME} class="mobile-menu" class:mobile class:tablet>
   <div class="blured-container" />
-  {#each [...navButtonOrderList] as { id, url, icon, type, route } (id)}
-    {#if type === "link" && url}
+  {#each [...navButtonOrderList] as { id, url, icon, type, route, hidden } (id)}
+    {#if !hidden}
+      {#if type === "link" && url}
         {@const active =
           $page.route.id === route || $page.url.pathname.includes(url)}
         <a
@@ -259,10 +300,11 @@
         >
           <svelte:component this={icon} type={active ? "solid" : "outline"} />
         </a>
-    {:else}
-      <div class="item" on:click={() => buttonClick(id)}>
-        <svelte:component this={icon} />
-      </div>
+      {:else}
+        <div class="item" on:click={() => buttonClick(id)}>
+          <svelte:component this={icon} />
+        </div>
+      {/if}
     {/if}
   {/each}
   <div class="item" on:click={() => buttonClick("profile")}>

@@ -50,12 +50,10 @@
   import
     {
       routeIdContent,
-      routeIdPageCompetitions,
       routeIdPageProfile,
       routeIdPageProfileArticleCreation,
       routeIdPageProfileEditArticle,
       routeIdPageProfilePublication,
-      routeIdScores,
       routeIdSearch,
     } from '$lib/constants/paths.js';
   import { scoresAdminStore } from '$lib/store/admin.js';
@@ -772,7 +770,7 @@
 
   {#if
     (objComponentStandardState.viewport.mobile.state || objComponentStandardState.viewport.tablet.state)
-    && [routeIdScores, routeIdPageCompetitions, routeIdContent].includes($page.route.id || '')
+    && ![routeIdSearch, routeIdPageProfile].includes($page.route.id || '')
   }
     <MobileMenu
       mobile={objComponentStandardState.viewport.mobile.state}

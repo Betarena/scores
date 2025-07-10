@@ -97,7 +97,7 @@ html {
 
 body {
   color: var(--black);
-  background-color: #1f1f1f;
+  background-color: var(--whitev2);
   margin: 0 !important;
   font-family: Roboto;
   font-size: 14px;
