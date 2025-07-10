@@ -574,7 +574,7 @@
 -->
 
 <svelte:head>
-  {#if theme === "Dark"}
+  <!-- {#if theme === "Dark"}
   <meta
     name="theme-color"
     content="#1f1f1f"
@@ -583,7 +583,7 @@
     <meta
       name="theme-color"
       content="#ffffff" />
-  {/if}
+  {/if} -->
 
   <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
   <script>
