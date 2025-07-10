@@ -189,7 +189,6 @@ export async function post
       //   console.error('💀 Unhandled :: ex');
 
       // ▓ [🐞]
-      alert(JSON.stringify(ex))
       console.error(`💀 Unhandled :: ${ex}`);
 
       return null;
