@@ -141,7 +141,6 @@
         updateSubmissions(res.submission);
       }
       if (!res?.ok) alert(JSON.stringify(res?.error))
-      alert()
         infoMessages.add({
           type: res?.ok ? "success" : "error",
           text: res?.ok ? profile?.success || "Success!" : profile?.error || "Error",
