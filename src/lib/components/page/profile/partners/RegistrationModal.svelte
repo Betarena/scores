@@ -140,15 +140,18 @@
       if (res?.submission) {
         updateSubmissions(res.submission);
       }
-
+      if (!res?.ok) alert(JSON.stringify(res?.error))
+      alert()
         infoMessages.add({
           type: res?.ok ? "success" : "error",
           text: res?.ok ? profile?.success || "Success!" : profile?.error || "Error",
+          // text: res?.ok ? profile?.success || "Success!" : profile?.error || "Error",
         });
 
       $modalStore.show = !res?.ok;
       loading = false;
     } catch (e) {
+      alert(JSON.stringify(e))
       loading = false;
     }
   }
