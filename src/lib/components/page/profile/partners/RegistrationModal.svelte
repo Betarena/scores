@@ -129,6 +129,7 @@
     try {
       loading = true;
       const { user } = userSettings.extractAll();
+      alert(JSON.stringify({input: value, partner}))
       const res = await post<{
         submission: PartnersPartnerRegistrationSubmissionsMain;
         ok: boolean;
