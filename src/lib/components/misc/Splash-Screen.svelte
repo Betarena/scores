@@ -154,8 +154,7 @@
 		align-items: center;
 		justify-items: center;
     /* 🎨 style */
-		background: "#ff0000";
-		// background: var(--colors-background-bg-primary);
+		background: var(--colors-brand-400);
 	}
 
 </style>
