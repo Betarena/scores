@@ -665,7 +665,7 @@
     z-index: 100;
     padding: var(--spacing-lg, 12px) var(--spacing-none, 0px);
     flex-direction: column;
-    background-color: var(--colors-background-bg-main);
+    background-color: var(--colors-background-bg-primary);
     align-items: flex-start;
     gap: 10px;
     align-self: stretch;

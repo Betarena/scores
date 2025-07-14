@@ -770,7 +770,7 @@
 
   {#if
     (objComponentStandardState.viewport.mobile.state || objComponentStandardState.viewport.tablet.state)
-    && ![routeIdSearch, routeIdPageProfile].includes($page.route.id || '')
+    && ![routeIdSearch, routeIdPageProfile, routeIdPageProfileEditArticle, routeIdPageProfileArticleCreation].includes($page.route.id || '')
   }
     <MobileMenu
       mobile={objComponentStandardState.viewport.mobile.state}

@@ -1,5 +1,5 @@
 <script lang="ts">
-  export let color: string = 'var(--icon-color)';
+  export let color: string = 'var(--colors-foreground-fg-quaternary-400)';
   export const contrastColor: string = 'var(--icon-contrast-color)';
   export let type: "outline" | "solid" = "outline";
 
