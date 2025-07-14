@@ -486,7 +486,9 @@ async function checkOpenAuth
          * @description
          * 📝 Data for `page`.
          */
-        isAuthForm = page?.url.searchParams.get('authForm')
+        isAuthForm
+          = page?.url.searchParams.get('authForm')
+          || page?.url.searchParams.get('authform')
       ;
 
       if (isAuthForm != 'true') return;
