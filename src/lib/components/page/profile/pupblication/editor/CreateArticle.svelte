@@ -342,7 +342,7 @@
     max-height: calc(var(--vh, 1vh) * 100);
     min-height: calc(var(--vh, 1vh) * 100);
     overflow: hidden;
-    background-color: var(--colors-background-bg-main);
+    background-color: var(--colors-background-bg-primary);
     &::-webkit-scrollbar {
       width: 8px;
     }
