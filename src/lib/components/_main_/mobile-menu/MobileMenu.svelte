@@ -46,9 +46,9 @@
   import userBetarenaSettings from "$lib/store/user-settings.js";
   import { dndzone, dragHandle } from "svelte-dnd-action";
 
-  import DocumentsIcon from "./assets/documentsicon.svelte";
   import UserIcon from "./assets/usericon.svelte";
   import Dragicon from "./assets/dragicon.svelte";
+  import Home from "./assets/home.svelte";
 
   import { type SvelteComponent } from "svelte";
   import Avatar from "$lib/components/ui/Avatar.svelte";
@@ -119,7 +119,7 @@
     // },
     {
       id: "content",
-      icon: DocumentsIcon,
+      icon: Home,
       type: "link",
       url: "/",
       label: "Home",
