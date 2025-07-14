@@ -290,7 +290,7 @@
     {#if !hidden}
       {#if type === "link" && url}
         {@const active =
-          $page.route.id === route || $page.url.pathname.includes(url)}
+          $page.route.id === route}
         <a
           href={url}
           class="item"
@@ -298,7 +298,7 @@
           class:active
           aria-label="link to {id}"
         >
-          <svelte:component this={icon} type={active ? "solid" : "outline"} />
+          <svelte:component this={icon} color={active ? "var(--colors-text-text-primary-900)" : "var(--colors-foreground-fg-quaternary-400)"} type={active ? "solid" : "outline"} />
         </a>
       {:else}
         <div class="item" on:click={() => buttonClick(id)}>
