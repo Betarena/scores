@@ -261,6 +261,7 @@ export const YouTube = Node.create({
   addAttributes() {
     return {
       src: { default: null },
+      className: { default: "" },
     };
   },
 
@@ -268,39 +269,37 @@ export const YouTube = Node.create({
     return [
       {
         tag: 'iframe[src*="youtube.com"]',
-        getAttrs: (el) => ({ src: el.getAttribute("src") }),
+        getAttrs: (el) => ({ src: el.getAttribute("src"), className: el.className   }),
       },
       {
         tag: 'iframe[src*="youtu.be"]',
-        getAttrs: (el) => ({ src: el.getAttribute("src") }),
+        getAttrs: (el) => ({ src: el.getAttribute("src"), className: el.className   }),
       },
     ];
   },
 
   renderHTML({ HTMLAttributes }) {
     const safeSrc = normalizeYouTubeSrc(HTMLAttributes.src);
-    const shorts = isYouTubeShorts(HTMLAttributes.src);
+    const shorts = HTMLAttributes.className?.includes("shorts") || isYouTubeShorts(HTMLAttributes.src);
 
     return [
       "iframe",
       mergeAttributes(HTMLAttributes, {
         class: `embed ${shorts ? 'youtube-shorts' : ''}`,
         src: safeSrc,
-        width: shorts ? "50%" : "100%",
         frameborder: "0",
         allow:
           "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture",
         allowfullscreen: "true",
-        style: `aspect-ratio: ${shorts ? "9/16" : "16 / 9"};`,
       }),
     ];
   },
 
   addNodeView() {
     return ({ node }) => {
-      const { src } = node.attrs;
+      const { src, className } = node.attrs;
       const container = document.createElement("div");
-      const shorts = isYouTubeShorts(src);
+      const shorts = className?.includes("shorts") || isYouTubeShorts(src);
       container.style.position = "relative";
       container.style.minHeight = "200px";
       container.classList.add("embed");
@@ -312,6 +311,7 @@ export const YouTube = Node.create({
       const loaderWrapper = document.createElement("div");
       loaderWrapper.style.cssText = `
         width: ${shorts ? '50%' : '100%'};
+        min-width: 350px;
         aspect-ratio: ${shorts ? '9/16' : '16/9'};
         display: flex;
         align-items: center;
@@ -331,8 +331,6 @@ export const YouTube = Node.create({
         "allow",
         "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
       );
-      iframe.style.width = shorts ? "50%" : "100%";
-      iframe.style.aspectRatio = shorts ? '9/16' : '16/9';
       iframe.style.display = "none";
 
       iframe.onload = () => {
