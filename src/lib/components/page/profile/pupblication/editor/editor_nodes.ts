@@ -279,18 +279,19 @@ export const YouTube = Node.create({
 
   renderHTML({ HTMLAttributes }) {
     const safeSrc = normalizeYouTubeSrc(HTMLAttributes.src);
+    const shorts = isYouTubeShorts(HTMLAttributes.src);
 
     return [
       "iframe",
       mergeAttributes(HTMLAttributes, {
-        class: "embed",
+        class: `embed ${shorts ? 'youtube-shorts' : ''}`,
         src: safeSrc,
-        width: "100%",
+        width: shorts ? "50%" : "100%",
         frameborder: "0",
         allow:
           "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture",
         allowfullscreen: "true",
-        style: "aspect-ratio: 16 / 9;",
+        style: `aspect-ratio: ${shorts ? "9/16" : "16 / 9"};`,
       }),
     ];
   },
@@ -299,13 +300,19 @@ export const YouTube = Node.create({
     return ({ node }) => {
       const { src } = node.attrs;
       const container = document.createElement("div");
+      const shorts = isYouTubeShorts(src);
       container.style.position = "relative";
       container.style.minHeight = "200px";
       container.classList.add("embed");
+      if (shorts)
+      {
+        container.classList.add('youtube-shorts');
+      }
 
       const loaderWrapper = document.createElement("div");
       loaderWrapper.style.cssText = `
-        width: 100%; height: 315px;
+        width: ${shorts ? '50%' : '100%'};
+        aspect-ratio: ${shorts ? '9/16' : '16/9'};
         display: flex;
         align-items: center;
         justify-content: center;
@@ -324,8 +331,8 @@ export const YouTube = Node.create({
         "allow",
         "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
       );
-      iframe.style.width = "100%";
-      iframe.style.aspectRatio  = '16 / 9'
+      iframe.style.width = shorts ? "50%" : "100%";
+      iframe.style.aspectRatio = shorts ? '9/16' : '16/9';
       iframe.style.display = "none";
 
       iframe.onload = () => {
@@ -340,7 +347,7 @@ export const YouTube = Node.create({
 
   addProseMirrorPlugins() {
     const YT_REGEX =
-  /^(https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/))([\w-]{11})(?:[?&][^\s]*)?$/;
+  /^(https?:\/\/(?:www\.)?(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/))([\w-]{11})(?:[?&][^\s]*)?$/;
 
     return [
       new Plugin({
@@ -372,9 +379,17 @@ function normalizeYouTubeSrc(url: string): string {
   const short = url.match(/youtu\.be\/([\w-]{11})/)
   if (short) return `https://www.youtube.com/embed/${short[1]}`
 
-  //  b) https://www.youtube.com/watch?v=ID&anything
+  // b) https://www.youtube.com/shorts/ID
+  const shorts = url.match(/youtube\.com\/shorts\/([\w-]{11})/);
+  if (shorts) return `https://www.youtube.com/embed/${shorts[1]}`;
+
+  // с) https://www.youtube.com/watch?v=ID&anything
   const watch = url.match(/[?&]v=([\w-]{11})/)
   if (watch) return `https://www.youtube.com/embed/${watch[1]}`
 
   return url
+}
+
+function isYouTubeShorts(url: string): boolean {
+  return /(?:https?:\/\/)?(?:www\.)?youtube\.com\/shorts\/[\w-]{11}/.test(url);
 }

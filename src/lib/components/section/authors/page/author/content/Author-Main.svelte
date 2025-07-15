@@ -430,6 +430,11 @@
             margin: 0  auto !important;
           }
         }
+
+        .youtube-shorts {
+          display: flex;
+          justify-content: center;
+        }
         @mixin header {
           /* 🎨 style */
           margin: 32px 0 16px 0;
