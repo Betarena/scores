@@ -346,6 +346,7 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
+
 <svelte:head>
   <script
     async
@@ -353,6 +354,20 @@
     charset="utf-8"
   ></script>
 </svelte:head>
+
+{#if viewportType === "desktop"}
+  <Container clazz="sticky-toolbar " hFull={false}>
+    <div class="toolbar-wrapper desktop-toolbar">
+      <Toolbar
+        {uploadUrl}
+        {editor}
+        bind:titleInFocus
+        on:showLinkPopup={() => toogleLinkPopup(true)}
+      />
+    </div>
+  </Container>
+{/if}
+
 <div bind:this={bmenu} class="link-popup" style="z-index: 3!important;">
   <LinkPopup
     {editor}
@@ -362,24 +377,12 @@
     on:hide={() => toogleLinkPopup(false)}
   />
 </div>
-<div class="bg"></div>
+<div class="bg" />
 <div
   id="editor"
   class="editor {viewportType}"
   style="--vh: {vh}; --h:{isKeyboardOpen ? '0px' : `calc(-34px - 40px)`}"
 >
-  {#if viewportType === "desktop"}
-    <Container clazz="sticky-toolbar" hFull={false}>
-      <div class="toolbar-wrapper">
-        <Toolbar
-          {uploadUrl}
-          {editor}
-          bind:titleInFocus
-          on:showLinkPopup={() => toogleLinkPopup(true)}
-        />
-      </div>
-    </Container>
-  {/if}
   <Container
     style="display: flex; flex-direction: column; flex-grow: 1; max-height: 100%; height: 100%"
   >
@@ -400,38 +403,35 @@
       />
     </div>
   </Container>
-
-
 </div>
- {#if editor && viewportType !== "desktop"}
-    <div class="toolbar-wrapper">
-      <Toolbar
-        {editor}
-        {uploadUrl}
-        bind:titleInFocus
-        on:showLinkPopup={() => toogleLinkPopup(true)}
-      />
-    </div>
-  {/if}
-  {#if viewportType !== "desktop" && !isKeyboardOpen}
-    <div
-      class="button-container"
-    >
-      <Container>
-        <Button
-          type="primary"
-          full={true}
-          disabled={!title || editor?.getText().trim().split(/\s+/).length < 50}
-          on:click={() => {
-            $modalStore.component = PublishModal;
-            $modalStore.modal = true;
-            $modalStore.show = true;
-            $modalStore.props = { cb: publishClick, translations };
-          }}>{translations?.publish || "Publish"}</Button
-        >
-      </Container>
-    </div>
-  {/if}
+{#if editor && viewportType !== "desktop"}
+  <div class="toolbar-wrapper">
+    <Toolbar
+      {editor}
+      {uploadUrl}
+      bind:titleInFocus
+      on:showLinkPopup={() => toogleLinkPopup(true)}
+    />
+  </div>
+{/if}
+{#if viewportType !== "desktop" && !isKeyboardOpen}
+  <div class="button-container">
+    <Container>
+      <Button
+        type="primary"
+        full={true}
+        disabled={!title || editor?.getText().trim().split(/\s+/).length < 50}
+        on:click={() => {
+          $modalStore.component = PublishModal;
+          $modalStore.modal = true;
+          $modalStore.show = true;
+          $modalStore.props = { cb: publishClick, translations };
+        }}>{translations?.publish || "Publish"}</Button
+      >
+    </Container>
+  </div>
+{/if}
+
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ 🌊 Svelte Component CSS/SCSS                                                     │
@@ -544,7 +544,8 @@
           padding-left: var(--spacing-lg, 12px);
         }
 
-        :global(.twitter-tweet), :global(.embed) {
+        :global(.twitter-tweet),
+        :global(.embed) {
           margin-top: 40px !important;
           margin-bottom: 40px !important;
           margin-inline: auto !important;
@@ -612,21 +613,8 @@
       height: 100%;
       flex-grow: unset;
       // max-height: 95vh;
-      :global(.sticky-toolbar) {
-        position: sticky;
-        top: 104px;
-        z-index: 10000;
-      }
+
       .toolbar-wrapper {
-        background-color: var(--colors-background-bg-main);
-        padding: var(--spacing-lg, 12px) var(--spacing-none, 0px);
-        flex-direction: column;
-        align-items: flex-start;
-        position: static;
-        gap: 10px;
-        z-index: 1000;
-        align-self: stretch;
-        border-bottom: 1px solid var(--colors-border-border-secondary, #3b3b3b);
       }
       .editor-wrapper {
         padding-top: var(--spacing-lg, 12px);
@@ -638,7 +626,8 @@
           height: 54px;
         }
       }
-      :global(.twitter-tweet), :global(.embed) {
+      :global(.twitter-tweet),
+      :global(.embed) {
         margin-top: 48px !important;
         margin-bottom: 48px !important;
         margin-inline: auto !important;
@@ -721,5 +710,21 @@
         }
       }
     }
+  }
+  :global(.sticky-toolbar) {
+    position: sticky;
+    top: 104px;
+    z-index: 10000;
+  }
+  .desktop-toolbar {
+    background-color: var(--colors-background-bg-primary);
+    padding: var(--spacing-lg, 12px) var(--spacing-none, 0px);
+    flex-direction: column;
+    align-items: flex-start;
+    position: static;
+    gap: 10px;
+    z-index: 1000;
+    align-self: stretch;
+    border-bottom: 1px solid var(--colors-border-border-secondary, #3b3b3b);
   }
 </style>

@@ -192,6 +192,7 @@
   $: ({ theme } = { ...$userBetarenaSettings });
   $: ({ username, lang, competition_number } = { ...$userBetarenaSettings.user?.scores_user_data });
   $: ({ uid, email } = { ...$userBetarenaSettings.user?.firebase_user_data });
+  $: ({ route: { id: pageRouteId } } = $page);
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   $: navbarTranslationData = ($page.data.B_NAV_T ?? {}) as
@@ -220,6 +221,25 @@
 
   // #endregion ➤ 📌 VARIABLES
 
+  // #region ➤ 🛠️ METHODS
+
+  /**
+   * @description
+   */
+  async function herlperPreMountInitialize
+  (
+  ): Promise < void >
+  {
+    isInitliazed = true;
+    userBetarenaSettings.useLocalStorage(serverLang);
+    scoresAdminStore.useLocalStorage();
+    await mainDeepLinkCheck();
+
+    return;
+  }
+
+  // #endregion ➤ 🛠️ METHODS
+
   // #region ➤ 🔥 REACTIVIY [SVELTE]
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -239,12 +259,12 @@
   // │ │: Instant critical data initialization.
   // ╰─────
   $: if (browser && !isInitliazed)
-  {
-    isInitliazed = true;
-    userBetarenaSettings.useLocalStorage(serverLang);
-    scoresAdminStore.useLocalStorage();
+    herlperPreMountInitialize();
+  ;
+
+  $: if (browser && pageRouteId)
     mainDeepLinkCheck();
-  }
+  ;
 
   // ╭─────
   // │ NOTE: IMPORTANT CRITICAL
