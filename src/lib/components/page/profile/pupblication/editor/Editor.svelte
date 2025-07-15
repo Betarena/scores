@@ -551,6 +551,10 @@
           margin-inline: auto !important;
           padding-left: 0;
         }
+        :global(.youtube-shorts) {
+          display: flex;
+          justify-content: center;
+        }
 
         :global(a) {
           text-decoration: underline !important;
