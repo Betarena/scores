@@ -123,7 +123,7 @@
     padding: 24px;
     box-sizing: border-box;
     justify-content: space-between;
-    background: var(--bg-color-second);
+    background: var(--colors-background-bg-secondary);
     align-items: start;
 
     a {
