@@ -359,7 +359,7 @@
       position: sticky !important;
       top: 0;
       z-index: 10001;
-      background-color: var(--colors-background-bg-main);
+      background-color: var(--colors-background-bg-primary);
     }
     .header {
       display: flex;
