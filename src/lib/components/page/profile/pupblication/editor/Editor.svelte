@@ -551,6 +551,22 @@
           margin-inline: auto !important;
           padding-left: 0;
         }
+        :global(.youtube-shorts) {
+          display: flex;
+          justify-content: center;
+
+        }
+        :global(.embed iframe) {
+            width: 100%;
+            aspect-ratio: 16/9;
+
+        }
+
+        :global(.youtube-shorts iframe) {
+            width: 50%;
+            aspect-ratio: 9/16;
+
+         }
 
         :global(a) {
           text-decoration: underline !important;
@@ -633,6 +649,7 @@
         margin-inline: auto !important;
         padding-left: 0;
       }
+
       :global([data-placeholder-image]) {
         width: 100%;
         height: 400px !important;
@@ -643,6 +660,9 @@
         .title {
           line-height: 36px;
           font-size: 24px;
+        }
+        :global(.youtube-shorts iframe) {
+            width: 100%;
         }
       }
     }

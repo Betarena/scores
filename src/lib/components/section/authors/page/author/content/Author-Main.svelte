@@ -430,6 +430,18 @@
             margin: 0  auto !important;
           }
         }
+
+        iframe.embed {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+        }
+
+        iframe.youtube-shorts {
+          display: flex;
+          justify-content: center;
+          aspect-ratio: 9 / 16;
+          width: 50%
+        }
         @mixin header {
           /* 🎨 style */
           margin: 32px 0 16px 0;
@@ -631,6 +643,10 @@
             /* Text md/Regular */
             font-size: var(--font-size-text-md, 16px);
             line-height: var(--line-height-text-md, 24px); /* 150% */
+          }
+
+          iframe.youtube-shorts {
+            width: 100%;
           }
         }
       }
