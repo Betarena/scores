@@ -157,9 +157,7 @@
             {/each}
           {:else}
             {#each [...$search_store.tags.data.entries()] as [id, tag] (id)}
-              <a href="a/tag/{tag.permalink}">
-                <Badge>{tag.name}</Badge>
-              </a>
+                <Badge link="a/tag/{tag.permalink}">{tag.name}</Badge>
             {/each}
           {/if}
         </div>
