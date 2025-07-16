@@ -30,6 +30,8 @@
   import BackButton from "$lib/components/ui/BackButton.svelte";
   import Avatar from "$lib/components/ui/Avatar.svelte";
   import { createEventDispatcher } from "svelte";
+  import Button from "$lib/components/ui/Button.svelte";
+  import { page } from "$app/stores";
 
   // #endregion ➤ 📦 Package Imports
   // #region ➤ 📌 VARIABLES
@@ -52,6 +54,7 @@
   $: isAuth = !!user;
   $: ({ profile_photo } = { ...$userBetarenaSettings.user?.scores_user_data });
   $: isPWA = globalState.has("IsPWA");
+  $: ({scores_header_translations} = $page.data.B_NAV_T)
 
   const /**
      * @description
@@ -95,12 +98,16 @@
 
   <div class="actions">
     <div class="avatar-wrapper" on:click|stopPropagation>
-      <Avatar
-        src={profile_photo}
-        size={32}
-        isLoogedIn={isAuth}
-        on:click={() => dispatch("avatarClick")}
-      />
+      {#if isAuth}
+        <Avatar
+          src={profile_photo}
+          size={32}
+          isLoogedIn={isAuth}
+          on:click={() => dispatch("avatarClick")}
+        />
+      {:else}
+          <Button classname="sign-in" on:click={signIn} size="sm">{scores_header_translations.sign_in || "Sign in"}</Button>
+      {/if}
     </div>
   </div>
 </div>
@@ -126,7 +133,7 @@
     flex-wrap: wrap;
 
     &.mobile {
-      padding: 12px 16px;
+      padding: 10px 14px;
     }
 
     .logo-full {
