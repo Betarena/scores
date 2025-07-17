@@ -112,23 +112,7 @@
   $: if (data.sportstack instanceof Promise) {
     console.log("data.sportstack is a promise");
   } else {
-    if (!data.sportstack?.length) {
-      goto(`/u/author/create/${userSettings.extractAll().lang}`, {replaceState: true})
-      return
-    }
-    options = data.sportstacks.map((s) => {
-      const sportstack = { ...s, label: s.data?.username || "" };
-      if (sportstack.permalink === $page.url.searchParams.get("sportstack")) {
-        selectedSportstack = sportstack;
-      }
-      return sportstack;
-    });
-    if (!selectedSportstack && browser) {
-      selectedSportstack = options[0];
-      const { url } = $page;
-      url.searchParams.set("sportstack", selectedSportstack.permalink);
-      goto(url, { replaceState: true, noScroll: true, keepFocus: true });
-    }
+    setOptions(data);
   }
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
@@ -165,6 +149,26 @@
 
   function back() {
     history.back();
+  }
+
+  function setOptions(data: PageData) {
+    if (!data.sportstack?.length) {
+      goto(`/u/author/create/${userSettings.extractAll().lang}`, {replaceState: true})
+      return
+    }
+    options = data.sportstacks?.map((s) => {
+      const sportstack = { ...s, label: s.data?.username || "" };
+      if (sportstack.permalink === $page.url.searchParams.get("sportstack")) {
+        selectedSportstack = sportstack;
+      }
+      return sportstack;
+    });
+    if (!selectedSportstack && browser) {
+      selectedSportstack = options[0];
+      const { url } = $page;
+      url.searchParams.set("sportstack", selectedSportstack.permalink);
+      goto(url, { replaceState: true, noScroll: true, keepFocus: true });
+    }
   }
 
   function selectSportstack(e) {
