@@ -786,7 +786,7 @@ Profile Settings
               color-grey
             "
           >
-            {profileTrs.profile?.name_description}
+            {profileTrs.profile?.main_name_desc}
           </span>
         </div>
       </div>
