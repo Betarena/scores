@@ -43,6 +43,7 @@
     TranslationSportstacksSectionDataJSONSchema,
   } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import type { PageData } from ".svelte-kit/types/src/routes/(scores)/u/author/article/create/[lang=lang]/$types.js";
+  import userSettings from "$lib/store/user-settings.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -111,6 +112,10 @@
   $: if (data.sportstack instanceof Promise) {
     console.log("data.sportstack is a promise");
   } else {
+    if (!data.sportstack?.length) {
+      goto(`/u/author/create/${userSettings.extractAll().lang}`, {replaceState: true})
+      return
+    }
     options = data.sportstacks.map((s) => {
       const sportstack = { ...s, label: s.data?.username || "" };
       if (sportstack.permalink === $page.url.searchParams.get("sportstack")) {
