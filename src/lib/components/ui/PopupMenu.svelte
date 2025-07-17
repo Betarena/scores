@@ -11,6 +11,7 @@
   import { createEventDispatcher, onMount } from "svelte";
   import { activePopup } from "./stores/menu-popup.js";
     import { scale } from "svelte/transition";
+  import { articleFilterStore } from "../page/profile/pupblication/editor/helpers.js";
 
   export let show = false;
   export let options: { id: string; icon?: any; label: string }[] = [];
@@ -76,7 +77,7 @@
 {#if show}
   <div class="menu"  out:scale on:click|stopPropagation bind:this={menuNode}>
     {#each options as item}
-      <div class="menu-item {item.id}" on:click={() => click(item.id)}>
+      <div class="menu-item {item.id}" class:active={$articleFilterStore.sortBy === item.id} on:click={() => click(item.id)}>
         <div class="content">
           <div class="icon"><svelte:component this={item.icon} /></div>
           <div class="label">{item.label}</div>
@@ -133,7 +134,7 @@
         font-weight: 500;
         line-height: var(--line-height-text-sm, 20px); /* 142.857% */
       }
-      &:hover {
+      &:hover, &.active {
         .content {
           border-radius: var(--radius-sm, 6px);
           background: var(--colors-background-bg-primary_hover, #3b3b3b);
