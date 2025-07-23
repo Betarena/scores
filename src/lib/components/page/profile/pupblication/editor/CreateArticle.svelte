@@ -152,7 +152,8 @@
   }
 
   function setOptions(data: PageData) {
-    if (!data.sportstack?.length) {
+    console.log("DATA: ", data)
+    if (!data.sportstacks?.length) {
       goto(`/u/author/create/${userSettings.extractAll().lang}`, {replaceState: true})
       return
     }
