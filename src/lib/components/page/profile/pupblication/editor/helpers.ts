@@ -88,6 +88,7 @@ export async function upsert({
       "class",
       "style",
       "loading",
+      "alt",
       "referrerpolicy",
     ],
     FORBID_ATTR: ["srcdoc"],
