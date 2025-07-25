@@ -50,7 +50,7 @@ export const ImageWithPlaceholder = Image.extend({
       {
         tag: "a[href] > img",
         getAttrs: (imgNode) => {
-          const parent = (imgNode as HTMLElement).parentElement!;
+          const parent = (imgNode as HTMLElement).parentElement as HTMLElement;
           return {
             src: (imgNode as HTMLElement).getAttribute("src"),
             alt: (imgNode as HTMLElement).getAttribute("alt"),
@@ -156,12 +156,12 @@ export const ImageWithPlaceholder = Image.extend({
         });
       } else {
         if (link) {
-          const a = document.createElement("a");
-          a.setAttribute("href", link);
-          a.setAttribute("target", "_blank");
-          a.addEventListener("click", (e) => e.preventDefault());
-          a.appendChild(img);
-          dom = a;
+          const linkNode = document.createElement("a");
+          linkNode.setAttribute("href", link);
+          linkNode.setAttribute("target", "_blank");
+          linkNode.addEventListener("click", (e) => e.preventDefault());
+          linkNode.appendChild(img);
+          dom = linkNode;
         } else {
           dom = img;
         }
