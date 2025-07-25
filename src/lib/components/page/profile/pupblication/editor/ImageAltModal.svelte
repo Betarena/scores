@@ -46,6 +46,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let alt: string = "";
+  export let link: string = "";
   export let editor: Editor;
 
   let modal;
@@ -66,12 +67,37 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   function save() {
-    if (!alt) return hide();
     editor
       .chain()
       .focus()
-      .updateAttributes("imageWithPlaceholder", { alt })
+      .command(({ state, tr }) => {
+        let foundPos: number | null = null;
+
+        tr.doc.descendants((node, pos) => {
+          if (node.type.name === "imageWithPlaceholder") {
+            foundPos = pos;
+            return false;
+          }
+          return true;
+        });
+
+        if (foundPos === null) return false;
+
+        const oldNode = state.doc.nodeAt(foundPos);
+        if (!oldNode) return false;
+
+        const newNode = state.schema.nodes.imageWithPlaceholder.create({
+          ...oldNode.attrs,
+          alt,
+          link: link || null,
+        });
+
+        tr.replaceWith(foundPos, foundPos + 1, newNode);
+
+        return true;
+      })
       .run();
+
     hide();
   }
 
@@ -130,11 +156,8 @@
   on:scroll={updateModalPosition}
 />
 <div bind:this={modal} class="link-popup" style="top: {top}" in:scale out:scale>
-  <Input
-    bind:value={alt}
-    placeholder="Enter alt text"
-    label="Image Alt"
-  />
+  <Input bind:value={link} placeholder="Enter url" label="Image link" />
+  <Input bind:value={alt} placeholder="Enter alt text" label="Image Alt" />
   <div class="buttons">
     <Button type="secondary-gray" size="sm" on:click={hide}>Cancel</Button>
     <Button size="sm" on:click={save}>Save</Button>

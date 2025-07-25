@@ -4,6 +4,7 @@ import Image from "@tiptap/extension-image";
 import userSettings from "$lib/store/user-settings.js";
 import { Plugin } from "prosemirror-state";
 import session from "$lib/store/session.js";
+import type { DOMOutputSpec } from "@tiptap/pm/model";
 
 declare global {
   interface Window {
@@ -32,6 +33,8 @@ export const ImageWithPlaceholder = Image.extend({
       ...this.parent?.(),
       id: { default: null },
       loading: { default: false },
+      link: { default: null },
+      alt: { default: null },
       style: {
         default: null,
         parseHTML: (element) => (element as HTMLElement).getAttribute("style"),
@@ -44,6 +47,20 @@ export const ImageWithPlaceholder = Image.extend({
 
   parseHTML() {
     return [
+      {
+        tag: "a[href] > img",
+        getAttrs: (imgNode) => {
+          const parent = (imgNode as HTMLElement).parentElement!;
+          return {
+            src: (imgNode as HTMLElement).getAttribute("src"),
+            alt: (imgNode as HTMLElement).getAttribute("alt"),
+            title: (imgNode as HTMLElement).getAttribute("title"),
+            style: (imgNode as HTMLElement).getAttribute("style"),
+            loading: false,
+            link: parent.getAttribute("href"),
+          };
+        },
+      },
       {
         tag: "span[data-placeholder-image]",
         getAttrs: (el) => ({
@@ -67,6 +84,13 @@ export const ImageWithPlaceholder = Image.extend({
   },
 
   renderHTML({ HTMLAttributes }) {
+    const imgAttrs = mergeAttributes({
+      src: HTMLAttributes.src,
+      alt: HTMLAttributes.alt,
+      title: HTMLAttributes.title,
+      style: HTMLAttributes.style,
+    });
+
     if (HTMLAttributes.loading) {
       return [
         "span",
@@ -77,38 +101,51 @@ export const ImageWithPlaceholder = Image.extend({
         }),
       ];
     }
-    return [
-      "img",
-      mergeAttributes(HTMLAttributes, {
-        src: HTMLAttributes.src,
-        alt: HTMLAttributes.alt,
-        title: HTMLAttributes.title,
-        style: HTMLAttributes.style,
-      }),
-    ];
+
+    const imgNode: DOMOutputSpec = ["img", imgAttrs];
+
+    if (HTMLAttributes.link) {
+      return [
+        "a",
+        {
+          href: HTMLAttributes.link,
+          target: "_blank",
+          rel: "noopener",
+        },
+        imgNode,
+      ];
+    }
+
+    return imgNode;
   },
 
   addNodeView() {
     return ({ node }) => {
-      const { loading, src, alt, title, style } = node.attrs;
-      const dom = loading
-        ? document.createElement("div")
-        : document.createElement("img");
+      const { loading, src, alt, title, style, link } = node.attrs;
+
+      const img = document.createElement("img");
+      img.setAttribute("src", src);
+      if (alt) img.setAttribute("alt", alt);
+      if (title) img.setAttribute("title", title);
+      if (style) img.setAttribute("style", style);
+
+      let dom: HTMLElement;
 
       if (loading) {
+        dom = document.createElement("div");
         dom.setAttribute("data-placeholder-image", "");
         if (node.attrs.id) dom.setAttribute("data-id", node.attrs.id);
         dom.setAttribute("data-loading", "true");
         if (style) dom.setAttribute("style", style);
+
         const loaderWrapper = document.createElement("div");
         loaderWrapper.style.cssText = `
-          width: 100%; height: 400px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        `;
+        width: 100%; height: 400px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      `;
         dom.appendChild(loaderWrapper);
-
         new LoaderImage({
           target: loaderWrapper,
           props: {
@@ -118,13 +155,29 @@ export const ImageWithPlaceholder = Image.extend({
           },
         });
       } else {
-        dom.setAttribute("src", src);
-        if (alt) dom.setAttribute("alt", alt);
-        if (title) dom.setAttribute("title", title);
-        if (style) dom.setAttribute("style", style);
+        if (link) {
+          const a = document.createElement("a");
+          a.setAttribute("href", link);
+          a.setAttribute("target", "_blank");
+          a.addEventListener("click", (e) => e.preventDefault());
+          a.appendChild(img);
+          dom = a;
+        } else {
+          dom = img;
+        }
       }
 
-      return { dom };
+      return {
+        dom,
+        update(updatedNode) {
+          const prevLink = node.attrs.link;
+          const newLink = updatedNode.attrs.link;
+
+          if (prevLink !== newLink) return false;
+
+          return true;
+        },
+      };
     };
   },
 });
