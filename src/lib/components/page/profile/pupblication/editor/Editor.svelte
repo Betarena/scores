@@ -248,13 +248,15 @@
           shouldShow: ({ editor }) => {
             const isLink = editor.isActive("link");
             if (editor.isActive("imageWithPlaceholder")) {
+              const {alt = "", link = ""} = editor.getAttributes("imageWithPlaceholder")
               const modal = {
                 show: true,
                 component: ImageAltModal,
                 modal: true,
-                props: { alt: editor.getAttributes("imageWithPlaceholder").alt || "", editor },
+                props: { alt, link,  editor },
               };
               modalStore.set(modal);
+              return false
             }
             if (!linkInsertModal && !isLink) return false;
             let url = "";
