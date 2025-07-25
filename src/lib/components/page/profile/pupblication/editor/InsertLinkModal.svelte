@@ -28,6 +28,7 @@
   import Button from "$lib/components/ui/Button.svelte";
   import Input from "$lib/components/ui/Input.svelte";
   import { Editor } from "@tiptap/core";
+  import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -47,6 +48,7 @@
 
   export let linkState: { url: string; text: string };
   export let editor: Editor;
+  export let translations: TranslationSportstacksSectionDataJSONSchema;
 
   let modal;
   let top = `100vh`;
@@ -139,13 +141,19 @@
 <div bind:this={modal} class="link-popup" style="top: {top}" in:scale out:scale>
   <Input
     bind:value={linkState.text}
-    placeholder="Enter link text"
-    label="Text"
+    placeholder={translations.enter_link_text || "Enter link text"}
+    label={translations.text || "Text"}
   />
-  <Input bind:value={linkState.url} placeholder="Enter url" label="URL" />
+  <Input
+    bind:value={linkState.url}
+    placeholder={translations.enter_url || "Enter url"}
+    label={translations.url || "URL"}
+  />
   <div class="buttons">
-    <Button type="secondary-gray" size="sm" on:click={hide}>Cancel</Button>
-    <Button size="sm" on:click={save}>Save</Button>
+    <Button type="secondary-gray" size="sm" on:click={hide}
+      >{translations.cancel || "Cancel"}</Button
+    >
+    <Button size="sm" on:click={save}>{translations.save || "Save"}</Button>
   </div>
 </div>
 
