@@ -169,13 +169,8 @@ export const ImageWithPlaceholder = Image.extend({
 
       return {
         dom,
-        update(updatedNode) {
-          const prevLink = node.attrs.link;
-          const newLink = updatedNode.attrs.link;
-
-          if (prevLink !== newLink) return false;
-
-          return true;
+        update() {
+          return false
         },
       };
     };

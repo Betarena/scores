@@ -28,6 +28,7 @@
   import Button from "$lib/components/ui/Button.svelte";
   import Input from "$lib/components/ui/Input.svelte";
   import { Editor } from "@tiptap/core";
+  import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -47,6 +48,7 @@
 
   export let alt: string = "";
   export let link: string = "";
+  export let translations: TranslationSportstacksSectionDataJSONSchema;
   export let editor: Editor;
 
   let modal;
@@ -100,7 +102,6 @@
 
     hide();
   }
-
   function hide() {
     $modalStore.show = false;
   }
@@ -156,11 +157,11 @@
   on:scroll={updateModalPosition}
 />
 <div bind:this={modal} class="link-popup" style="top: {top}" in:scale out:scale>
-  <Input bind:value={link} placeholder="Enter url" label="Image link" />
-  <Input bind:value={alt} placeholder="Enter alt text" label="Image Alt" />
+  <Input bind:value={link} placeholder={translations.enter_url || "Enter url"} label={translations.image_link || "Image link"} />
+  <Input bind:value={alt} placeholder={translations.enter_alt_text || "Enter alt text"} label={translations.image_alt ||"Image Alt"} />
   <div class="buttons">
-    <Button type="secondary-gray" size="sm" on:click={hide}>Cancel</Button>
-    <Button size="sm" on:click={save}>Save</Button>
+    <Button type="secondary-gray" size="sm" on:click={hide}>{translations.cancel || "Cancel" }</Button>
+    <Button size="sm" on:click={save}>{translations.save || "Save"}</Button>
   </div>
 </div>
 

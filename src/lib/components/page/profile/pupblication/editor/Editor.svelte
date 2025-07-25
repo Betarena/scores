@@ -188,7 +188,7 @@
         show: true,
         component: InsertLinkModal,
         modal: true,
-        props: { linkState, editor },
+        props: { linkState, editor, translations },
       };
       modalStore.set(modal);
 
@@ -253,7 +253,7 @@
                 show: true,
                 component: ImageAltModal,
                 modal: true,
-                props: { alt, link,  editor },
+                props: { alt, link,  editor, translations },
               };
               modalStore.set(modal);
               return false
@@ -285,7 +285,7 @@
                 show: true,
                 component: InsertLinkModal,
                 modal: true,
-                props: { linkState, editor },
+                props: { linkState, editor, translations },
               };
               modalStore.set(modal);
 
@@ -336,7 +336,7 @@
       show: true,
       component: InsertLinkModal,
       modal: true,
-      props: { linkState, editor },
+      props: { linkState, editor, translations },
     };
     modalStore.set(modal);
   }
