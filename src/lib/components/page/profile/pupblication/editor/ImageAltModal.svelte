@@ -29,6 +29,7 @@
   import Input from "$lib/components/ui/Input.svelte";
   import { Editor } from "@tiptap/core";
   import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import { TextSelection } from "prosemirror-state";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -96,6 +97,17 @@
 
         tr.replaceWith(foundPos, foundPos + 1, newNode);
 
+        const after = foundPos + newNode.nodeSize;
+        const resolved = tr.doc.resolve(after);
+
+        if (!resolved.nodeAfter) {
+          const paragraph = state.schema.nodes.paragraph.create();
+          tr.insert(after, paragraph);
+        }
+
+        const finalResolved = tr.doc.resolve(after + 1);
+        tr.setSelection(TextSelection.near(finalResolved));
+
         return true;
       })
       .run();
@@ -157,10 +169,20 @@
   on:scroll={updateModalPosition}
 />
 <div bind:this={modal} class="link-popup" style="top: {top}" in:scale out:scale>
-  <Input bind:value={link} placeholder={translations.enter_url || "Enter url"} label={translations.image_link || "Image link"} />
-  <Input bind:value={alt} placeholder={translations.enter_alt_text || "Enter alt text"} label={translations.image_alt ||"Image Alt"} />
+  <Input
+    bind:value={link}
+    placeholder={translations.enter_url || "Enter url"}
+    label={translations.image_link || "Image link"}
+  />
+  <Input
+    bind:value={alt}
+    placeholder={translations.enter_alt_text || "Enter alt text"}
+    label={translations.image_alt || "Image Alt"}
+  />
   <div class="buttons">
-    <Button type="secondary-gray" size="sm" on:click={hide}>{translations.cancel || "Cancel" }</Button>
+    <Button type="secondary-gray" size="sm" on:click={hide}
+      >{translations.cancel || "Cancel"}</Button
+    >
     <Button size="sm" on:click={save}>{translations.save || "Save"}</Button>
   </div>
 </div>
