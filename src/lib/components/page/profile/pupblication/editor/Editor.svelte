@@ -42,6 +42,7 @@
   import PublishModal from "./PublishModal.svelte";
   import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import { Tweet, ImageWithPlaceholder, YouTube } from "./editor_nodes.js";
+  import ImageAltModal from "./ImageAltModal.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -91,8 +92,6 @@
 
   const dispatch = createEventDispatcher();
 
-
-
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -112,7 +111,8 @@
     vh = `${(window.visualViewport?.height || 0) * 0.01}px`;
     isKeyboardOpen = (window.visualViewport?.height || 0) < window.innerHeight;
     if (isKeyboardOpen) {
-      const keyboardHeight = window.innerHeight - (window.visualViewport?.height || 0);
+      const keyboardHeight =
+        window.innerHeight - (window.visualViewport?.height || 0);
       keyBoardHeight = `${keyboardHeight}px`;
     } else {
       keyBoardHeight = `80px`;
@@ -188,7 +188,7 @@
         show: true,
         component: InsertLinkModal,
         modal: true,
-        props: { linkState, editor },
+        props: { linkState, editor, translations },
       };
       modalStore.set(modal);
 
@@ -247,7 +247,17 @@
           },
           shouldShow: ({ editor }) => {
             const isLink = editor.isActive("link");
-
+            if (editor.isActive("imageWithPlaceholder")) {
+              const {alt = "", link = ""} = editor.getAttributes("imageWithPlaceholder")
+              const modal = {
+                show: true,
+                component: ImageAltModal,
+                modal: true,
+                props: { alt, link,  editor, translations },
+              };
+              modalStore.set(modal);
+              return false
+            }
             if (!linkInsertModal && !isLink) return false;
             let url = "";
             let text = "";
@@ -269,12 +279,13 @@
               text = editor.state.doc.textBetween(from, to, " ");
             }
             linkState = { url, text };
+
             if (!isLink) {
               const modal = {
                 show: true,
                 component: InsertLinkModal,
                 modal: true,
-                props: { linkState, editor },
+                props: { linkState, editor, translations },
               };
               modalStore.set(modal);
 
@@ -310,10 +321,7 @@
     return () => {
       editor?.destroy();
       // Clean up the event listener
-      window.visualViewport?.removeEventListener(
-        "resize",
-        handleResize
-      );
+      window.visualViewport?.removeEventListener("resize", handleResize);
       window.removeEventListener("scroll", updateToolbarPosition);
       window.visualViewport?.removeEventListener(
         "scroll",
@@ -328,7 +336,7 @@
       show: true,
       component: InsertLinkModal,
       modal: true,
-      props: { linkState, editor },
+      props: { linkState, editor, translations },
     };
     modalStore.set(modal);
   }
@@ -554,19 +562,16 @@
         :global(.youtube-shorts) {
           display: flex;
           justify-content: center;
-
         }
         :global(.embed iframe) {
-            width: 100%;
-            aspect-ratio: 16/9;
-
+          width: 100%;
+          aspect-ratio: 16/9;
         }
 
         :global(.youtube-shorts iframe) {
-            width: 50%;
-            aspect-ratio: 9/16;
-
-         }
+          width: 50%;
+          aspect-ratio: 9/16;
+        }
 
         :global(a) {
           text-decoration: underline !important;
@@ -662,7 +667,7 @@
           font-size: 24px;
         }
         :global(.youtube-shorts iframe) {
-            width: 100%;
+          width: 100%;
         }
       }
     }

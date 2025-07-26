@@ -29,6 +29,7 @@
   import Input from "$lib/components/ui/Input.svelte";
   import { Editor } from "@tiptap/core";
   import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import { TextSelection } from "prosemirror-state";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -46,14 +47,14 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let linkState: { url: string; text: string };
-  export let editor: Editor;
+  export let alt: string = "";
+  export let link: string = "";
   export let translations: TranslationSportstacksSectionDataJSONSchema;
+  export let editor: Editor;
 
   let modal;
   let top = `100vh`;
 
-  $: linkState.url = linkState?.url.toLowerCase();
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -69,26 +70,55 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   function save() {
-    const { url, text } = linkState;
-    if (!url) return hide();
     editor
       .chain()
       .focus()
-      .extendMarkRange("link")
-      .deleteSelection()
-      .setLink({ href: url })
-      .insertContent(text || url)
+      .command(({ state, tr }) => {
+        let foundPos: number | null = null;
+
+        tr.doc.descendants((node, pos) => {
+          if (node.type.name === "imageWithPlaceholder") {
+            foundPos = pos;
+            return false;
+          }
+          return true;
+        });
+
+        if (foundPos === null) return false;
+
+        const oldNode = state.doc.nodeAt(foundPos);
+        if (!oldNode) return false;
+
+        const newNode = state.schema.nodes.imageWithPlaceholder.create({
+          ...oldNode.attrs,
+          alt,
+          link: link || null,
+        });
+
+        tr.replaceWith(foundPos, foundPos + 1, newNode);
+
+        const after = foundPos + newNode.nodeSize;
+        const resolved = tr.doc.resolve(after);
+
+        if (!resolved.nodeAfter) {
+          const paragraph = state.schema.nodes.paragraph.create();
+          tr.insert(after, paragraph);
+        }
+
+        const finalResolved = tr.doc.resolve(after + 1);
+        tr.setSelection(TextSelection.near(finalResolved));
+
+        return true;
+      })
       .run();
 
     hide();
   }
-
   function hide() {
     $modalStore.show = false;
   }
 
   function updateViewportHeight() {
-    // toogleLinkPopup(false)
     const isKeyboardOpen =
       (window.visualViewport?.height || 0) < window.innerHeight;
     if (isKeyboardOpen) {
@@ -140,14 +170,14 @@
 />
 <div bind:this={modal} class="link-popup" style="top: {top}" in:scale out:scale>
   <Input
-    bind:value={linkState.text}
-    placeholder={translations.enter_link_text || "Enter link text"}
-    label={translations.text || "Text"}
+    bind:value={link}
+    placeholder={translations.enter_url || "Enter url"}
+    label={translations.image_link || "Image link"}
   />
   <Input
-    bind:value={linkState.url}
-    placeholder={translations.enter_url || "Enter url"}
-    label={translations.url || "URL"}
+    bind:value={alt}
+    placeholder={translations.enter_alt_text || "Enter alt text"}
+    label={translations.image_alt || "Image Alt"}
   />
   <div class="buttons">
     <Button type="secondary-gray" size="sm" on:click={hide}
