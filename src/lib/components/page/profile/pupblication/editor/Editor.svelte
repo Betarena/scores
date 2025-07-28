@@ -251,9 +251,12 @@
             const positionsToCheck = [from, from - 1];
 
             for (const pos of positionsToCheck) {
-              const node = state.doc.nodeAt(pos);
+                const domNode = editor.view.nodeDOM(pos);
+                const node = state.doc.nodeAt(pos);
 
-              if (node?.type.name === "imageWithPlaceholder") {
+                if (node?.type.name === "imageWithPlaceholder" &&
+                (domNode?.parentElement?.tagName !== "A" ||
+                domNode?.parentElement?.getAttribute("data-image-placeholder") === "true")) {
                 const { alt = "", link = "" } = node.attrs;
                 const modal = {
                   show: true,

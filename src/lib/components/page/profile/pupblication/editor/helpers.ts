@@ -90,6 +90,7 @@ export async function upsert({
       "loading",
       "alt",
       "referrerpolicy",
+      "data-image-placeholder"
     ],
     FORBID_ATTR: ["srcdoc"],
     FORBID_TAGS: ["script"],
