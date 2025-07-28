@@ -169,9 +169,10 @@ export const ImageWithPlaceholder = Image.extend({
 
       return {
         dom,
-        update() {
+        update: () =>
+        {
           return false
-        },
+        }
       };
     };
   },
@@ -317,23 +318,31 @@ export const YouTube = Node.create({
     return [
       {
         tag: 'iframe[src*="youtube.com"]',
-        getAttrs: (el) => ({ src: el.getAttribute("src"), className: el.className   }),
+        getAttrs: (el) => ({
+          src: el.getAttribute("src"),
+          className: el.className,
+        }),
       },
       {
         tag: 'iframe[src*="youtu.be"]',
-        getAttrs: (el) => ({ src: el.getAttribute("src"), className: el.className   }),
+        getAttrs: (el) => ({
+          src: el.getAttribute("src"),
+          className: el.className,
+        }),
       },
     ];
   },
 
   renderHTML({ HTMLAttributes }) {
     const safeSrc = normalizeYouTubeSrc(HTMLAttributes.src);
-    const shorts = HTMLAttributes.className?.includes("shorts") || isYouTubeShorts(HTMLAttributes.src);
+    const shorts =
+      HTMLAttributes.className?.includes("shorts") ||
+      isYouTubeShorts(HTMLAttributes.src);
 
     return [
       "iframe",
       mergeAttributes(HTMLAttributes, {
-        class: `embed ${shorts ? 'youtube-shorts' : ''}`,
+        class: `embed ${shorts ? "youtube-shorts" : ""}`,
         src: safeSrc,
         frameborder: "0",
         allow:
@@ -351,16 +360,15 @@ export const YouTube = Node.create({
       container.style.position = "relative";
       container.style.minHeight = "200px";
       container.classList.add("embed");
-      if (shorts)
-      {
-        container.classList.add('youtube-shorts');
+      if (shorts) {
+        container.classList.add("youtube-shorts");
       }
 
       const loaderWrapper = document.createElement("div");
       loaderWrapper.style.cssText = `
-        width: ${shorts ? '50%' : '100%'};
+        width: ${shorts ? "50%" : "100%"};
         min-width: 350px;
-        aspect-ratio: ${shorts ? '9/16' : '16/9'};
+        aspect-ratio: ${shorts ? "9/16" : "16/9"};
         display: flex;
         align-items: center;
         justify-content: center;
@@ -393,7 +401,7 @@ export const YouTube = Node.create({
 
   addProseMirrorPlugins() {
     const YT_REGEX =
-  /^(https?:\/\/(?:www\.)?(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/))([\w-]{11})(?:[?&][^\s]*)?$/;
+      /^(https?:\/\/(?:www\.)?(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/))([\w-]{11})(?:[?&][^\s]*)?$/;
 
     return [
       new Plugin({
@@ -422,18 +430,18 @@ function extractTweetId(url: string): string | null {
 /* --- helpers --- */
 function normalizeYouTubeSrc(url: string): string {
   //  a) https://youtu.be/ID?xyz
-  const short = url.match(/youtu\.be\/([\w-]{11})/)
-  if (short) return `https://www.youtube.com/embed/${short[1]}`
+  const short = url.match(/youtu\.be\/([\w-]{11})/);
+  if (short) return `https://www.youtube.com/embed/${short[1]}`;
 
   // b) https://www.youtube.com/shorts/ID
   const shorts = url.match(/youtube\.com\/shorts\/([\w-]{11})/);
   if (shorts) return `https://www.youtube.com/embed/${shorts[1]}`;
 
   // с) https://www.youtube.com/watch?v=ID&anything
-  const watch = url.match(/[?&]v=([\w-]{11})/)
-  if (watch) return `https://www.youtube.com/embed/${watch[1]}`
+  const watch = url.match(/[?&]v=([\w-]{11})/);
+  if (watch) return `https://www.youtube.com/embed/${watch[1]}`;
 
-  return url
+  return url;
 }
 
 function isYouTubeShorts(url: string): boolean {
