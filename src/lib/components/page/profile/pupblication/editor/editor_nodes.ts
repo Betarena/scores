@@ -48,7 +48,7 @@ export const ImageWithPlaceholder = Image.extend({
   parseHTML() {
     return [
       {
-        tag: "a[href] > img",
+        tag: "a[data-image-placeholder] > img",
         getAttrs: (imgNode) => {
           const parent = (imgNode as HTMLElement).parentElement as HTMLElement;
           return {
@@ -111,6 +111,7 @@ export const ImageWithPlaceholder = Image.extend({
           href: HTMLAttributes.link,
           target: "_blank",
           rel: "noopener",
+          "data-image-placeholder": "true",
         },
         imgNode,
       ];
@@ -159,6 +160,7 @@ export const ImageWithPlaceholder = Image.extend({
           const linkNode = document.createElement("a");
           linkNode.setAttribute("href", link);
           linkNode.setAttribute("target", "_blank");
+          linkNode.setAttribute("data-image-placeholder", "true");
           linkNode.addEventListener("click", (e) => e.preventDefault());
           linkNode.appendChild(img);
           dom = linkNode;
