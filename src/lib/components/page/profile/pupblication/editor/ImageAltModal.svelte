@@ -30,6 +30,7 @@
   import { Editor } from "@tiptap/core";
   import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import { TextSelection } from "prosemirror-state";
+  import { Node } from "@tiptap/pm/model";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -48,6 +49,8 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let alt: string = "";
+  export let node: Node;
+  export let pos: number;
   export let link: string = "";
   export let translations: TranslationSportstacksSectionDataJSONSchema;
   export let editor: Editor;
@@ -73,41 +76,21 @@
     editor
       .chain()
       .focus()
-      .command(({ state, tr }) => {
-        let foundPos: number | null = null;
-
-        tr.doc.descendants((node, pos) => {
-          if (node.type.name === "imageWithPlaceholder") {
-            foundPos = pos;
-            return false;
-          }
-          return true;
-        });
-
-        if (foundPos === null) return false;
-
-        const oldNode = state.doc.nodeAt(foundPos);
+      .command(({ state, tr, dispatch }) => {
+        const oldNode = state.doc.nodeAt(pos);
         if (!oldNode) return false;
 
-        const newNode = state.schema.nodes.imageWithPlaceholder.create({
+        tr.setNodeMarkup(pos, undefined, {
           ...oldNode.attrs,
           alt,
           link: link || null,
         });
 
-        tr.replaceWith(foundPos, foundPos + 1, newNode);
-
-        const after = foundPos + newNode.nodeSize;
-        const resolved = tr.doc.resolve(after);
-
-        if (!resolved.nodeAfter) {
-          const paragraph = state.schema.nodes.paragraph.create();
-          tr.insert(after, paragraph);
-        }
-
-        const finalResolved = tr.doc.resolve(after + 1);
+        const posAfter = pos + oldNode.nodeSize;
+        const finalResolved = tr.doc.resolve(posAfter + 1);
         tr.setSelection(TextSelection.near(finalResolved));
-
+        if (!dispatch) return false;
+        dispatch(tr);
         return true;
       })
       .run();
