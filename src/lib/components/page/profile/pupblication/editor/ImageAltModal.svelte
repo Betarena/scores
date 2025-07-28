@@ -85,7 +85,19 @@
           alt,
           link: link || null,
         });
+        return true;
+      })
+      .run();
 
+    hide();
+  }
+  function hide() {
+    editor
+      .chain()
+      .focus()
+      .command(({ state, tr, dispatch }) => {
+        const oldNode = state.doc.nodeAt(pos);
+        if (!oldNode) return false;
         const posAfter = pos + oldNode.nodeSize;
         const finalResolved = tr.doc.resolve(posAfter + 1);
         tr.setSelection(TextSelection.near(finalResolved));
@@ -94,10 +106,6 @@
         return true;
       })
       .run();
-
-    hide();
-  }
-  function hide() {
     $modalStore.show = false;
   }
 
