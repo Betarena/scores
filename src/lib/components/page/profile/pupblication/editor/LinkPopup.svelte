@@ -22,8 +22,8 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  import { createEventDispatcher } from "svelte";
   import { Editor } from "@tiptap/core";
+  import { createEventDispatcher } from "svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -68,7 +68,7 @@
   }
 
   function remove() {
-    editor.chain().focus().extendMarkRange("link").unsetLink().run();
+    dispatch("remove");
     hide();
   }
 

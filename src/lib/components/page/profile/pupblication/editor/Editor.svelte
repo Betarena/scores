@@ -25,23 +25,23 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { createEventDispatcher, onMount } from "svelte";
-  import { Editor } from "@tiptap/core";
-  import StarterKit from "@tiptap/starter-kit";
-  import Placeholder from "@tiptap/extension-placeholder";
-  import BubbleMenu from "@tiptap/extension-bubble-menu";
-  import Container from "$lib/components/ui/wrappers/Container.svelte";
   import Button from "$lib/components/ui/Button.svelte";
+  import Container from "$lib/components/ui/wrappers/Container.svelte";
   import { modalStore } from "$lib/store/modal.js";
   import session from "$lib/store/session.js";
-  import Toolbar from "./Toolbar.svelte";
-  import LinkPopup from "./LinkPopup.svelte";
   import type { PageData } from ".svelte-kit/types/src/routes/(scores)/u/author/article/create/[lang=lang]/$types.js";
-  import InsertLinkModal from "./InsertLinkModal.svelte";
-  import PublishModal from "./PublishModal.svelte";
   import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
-  import { Tweet, ImageWithPlaceholder, YouTube, SafeLink } from "./editor_nodes.js";
+  import { Editor } from "@tiptap/core";
+  import BubbleMenu from "@tiptap/extension-bubble-menu";
+  import Placeholder from "@tiptap/extension-placeholder";
+  import StarterKit from "@tiptap/starter-kit";
+  import { createEventDispatcher, onMount } from "svelte";
+  import { ImageWithPlaceholder, SafeLink, Tweet, YouTube } from "./editor_nodes.js";
   import ImageAltModal from "./ImageAltModal.svelte";
+  import InsertLinkModal from "./InsertLinkModal.svelte";
+  import LinkPopup from "./LinkPopup.svelte";
+  import PublishModal from "./PublishModal.svelte";
+  import Toolbar from "./Toolbar.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -151,6 +151,7 @@
     }
   }
   function toogleLinkPopup(show?: boolean) {
+    if (isImageLink()) return;
     if (show !== undefined && show === linkInsertModal) return;
     linkInsertModal = show ?? !linkInsertModal;
     editor.view.updateState(editor.view.state);
@@ -248,28 +249,20 @@
             const isLink = editor.isActive("link");
             const { from } = state.selection;
             const positionsToCheck = [from, from - 1];
-
+            let url = "";
+            let text = "";
             for (const pos of positionsToCheck) {
-                const domNode = editor.view.nodeDOM(pos);
-                const node = state.doc.nodeAt(pos);
+              const node = state.doc.nodeAt(pos);
 
-                if (node?.type.name === "imageWithPlaceholder" &&
-                (domNode?.parentElement?.tagName !== "A" ||
-                domNode?.parentElement?.getAttribute("data-image-placeholder") === "true")) {
-                const { alt = "", link = "" } = node.attrs;
-                const modal = {
-                  show: true,
-                  component: ImageAltModal,
-                  modal: true,
-                  props: { alt, link, pos, node, editor, translations },
-                };
-                modalStore.set(modal);
-                return false;
+              if (
+                node?.type.name === "imageWithPlaceholder" &&
+                node.attrs.link
+              ) {
+                linkState = { url: node.attrs.link, text: "" };
+                return true;
               }
             }
             if (!linkInsertModal && !isLink) return false;
-            let url = "";
-            let text = "";
             if (isLink) {
               const linkAttrs = editor.getAttributes("link");
               url = linkAttrs.href;
@@ -339,7 +332,37 @@
     };
   });
 
+  function isImageLink(showModal = true) {
+    const state = editor.view.state;
+    const { from } = state.selection;
+    const positionsToCheck = [from, from - 1];
+
+    for (const pos of positionsToCheck) {
+      const domNode = editor.view.nodeDOM(pos);
+      const node = state.doc.nodeAt(pos);
+
+      if (
+        node?.type.name === "imageWithPlaceholder" &&
+        (domNode?.parentElement?.tagName !== "A" ||
+          domNode?.parentElement?.getAttribute("data-image-placeholder") ===
+            "true")
+      ) {
+        const { alt = "", link = "" } = node.attrs;
+        if (!showModal) return pos;
+        const modal = {
+          show: true,
+          component: ImageAltModal,
+          modal: true,
+          props: { alt, link, pos, node, editor, translations },
+        };
+        modalStore.set(modal);
+        return true;
+      }
+    }
+  }
+
   function showInsertLinkModal() {
+    if (isImageLink()) return;
     linkInsertModal = true;
     const modal = {
       show: true,
@@ -348,6 +371,28 @@
       props: { linkState, editor, translations },
     };
     modalStore.set(modal);
+  }
+
+  function removeLink() {
+    const pos = isImageLink(false);
+    if (pos) {
+      editor
+        .chain()
+        .focus()
+        .command(({ state, tr }) => {
+          const oldNode = state.doc.nodeAt(pos);
+          if (!oldNode) return false;
+
+          tr.setNodeMarkup(pos, undefined, {
+            ...oldNode.attrs,
+            link: null,
+          });
+          return true;
+        })
+        .run();
+    } else {
+      editor.chain().focus().extendMarkRange("link").unsetLink().run();
+    }
   }
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
@@ -391,6 +436,7 @@
     show={linkInsertModal}
     {linkState}
     on:edit={showInsertLinkModal}
+    on:remove={removeLink}
     on:hide={() => toogleLinkPopup(false)}
   />
 </div>

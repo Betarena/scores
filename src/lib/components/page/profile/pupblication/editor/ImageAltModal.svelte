@@ -22,15 +22,15 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  import { onMount } from "svelte";
-  import { scale } from "svelte/transition";
-  import { modalStore } from "$lib/store/modal.js";
   import Button from "$lib/components/ui/Button.svelte";
   import Input from "$lib/components/ui/Input.svelte";
-  import { Editor } from "@tiptap/core";
+  import { modalStore } from "$lib/store/modal.js";
   import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
-  import { TextSelection } from "prosemirror-state";
+  import { Editor } from "@tiptap/core";
   import { Node } from "@tiptap/pm/model";
+  import { TextSelection } from "prosemirror-state";
+  import { onMount } from "svelte";
+  import { scale } from "svelte/transition";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -76,7 +76,7 @@
     editor
       .chain()
       .focus()
-      .command(({ state, tr, dispatch }) => {
+      .command(({ state, tr }) => {
         const oldNode = state.doc.nodeAt(pos);
         if (!oldNode) return false;
 
@@ -165,11 +165,11 @@
     placeholder={translations.enter_url || "Enter url"}
     label={translations.image_link || "Image link"}
   />
-  <Input
+  <!-- <Input
     bind:value={alt}
     placeholder={translations.enter_alt_text || "Enter alt text"}
     label={translations.image_alt || "Image Alt"}
-  />
+  /> -->
   <div class="buttons">
     <Button type="secondary-gray" size="sm" on:click={hide}
       >{translations.cancel || "Cancel"}</Button
