@@ -8,8 +8,8 @@
 -->
 
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
   import { sanitize } from "$lib/utils/purify.js";
+  import { createEventDispatcher } from "svelte";
 
   // #region ➤ 📌 VARIABLES
 
@@ -26,7 +26,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let requred: boolean = false;
-  export let inputType: "text" | "number" | "password" | "textarea" = "text";
+  export let inputType: "text" | "number" | "password" | "textarea" | "email" = "text";
   export let error = false;
   export let placeholder = "";
   export let type: "input" | "leading-text" = "input";
