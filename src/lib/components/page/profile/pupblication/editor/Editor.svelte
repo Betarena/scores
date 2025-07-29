@@ -30,7 +30,6 @@
   import StarterKit from "@tiptap/starter-kit";
   import Placeholder from "@tiptap/extension-placeholder";
   import BubbleMenu from "@tiptap/extension-bubble-menu";
-  import Link from "@tiptap/extension-link";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import { modalStore } from "$lib/store/modal.js";
@@ -41,7 +40,7 @@
   import InsertLinkModal from "./InsertLinkModal.svelte";
   import PublishModal from "./PublishModal.svelte";
   import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
-  import { Tweet, ImageWithPlaceholder, YouTube } from "./editor_nodes.js";
+  import { Tweet, ImageWithPlaceholder, YouTube, SafeLink } from "./editor_nodes.js";
   import ImageAltModal from "./ImageAltModal.svelte";
 
   // #endregion ➤ 📦 Package Imports
@@ -216,10 +215,6 @@
         YouTube,
         Tweet,
         StarterKit,
-        Link.configure({
-          openOnClick: false,
-          linkOnPaste: true,
-        }),
         Placeholder.configure({
           placeholder:
             translations?.create_sports_content || "Create your sports content",
@@ -227,6 +222,10 @@
         ImageWithPlaceholder.configure({
           base64: true,
           inline: true,
+        }),
+        SafeLink.configure({
+          openOnClick: false,
+          linkOnPaste: true,
         }),
         BubbleMenu.configure({
           element: bmenu,
