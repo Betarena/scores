@@ -3,6 +3,7 @@ import LoaderImage from "$lib/components/ui/loaders/LoaderImage.svelte";
 import Image from "@tiptap/extension-image";
 import userSettings from "$lib/store/user-settings.js";
 import { Plugin } from "prosemirror-state";
+import Link from "@tiptap/extension-link";
 import session from "$lib/store/session.js";
 import type { DOMOutputSpec } from "@tiptap/pm/model";
 
@@ -177,6 +178,22 @@ export const ImageWithPlaceholder = Image.extend({
         }
       };
     };
+  },
+});
+
+export const SafeLink = Link.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+    };
+  },
+
+  parseHTML() {
+    return [
+      {
+        tag: 'a[href]:not([data-image-placeholder])',
+      },
+    ];
   },
 });
 
