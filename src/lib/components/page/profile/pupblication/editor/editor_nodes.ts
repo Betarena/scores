@@ -1,11 +1,11 @@
-import { mergeAttributes, Node } from "@tiptap/core";
 import LoaderImage from "$lib/components/ui/loaders/LoaderImage.svelte";
-import Image from "@tiptap/extension-image";
-import userSettings from "$lib/store/user-settings.js";
-import { Plugin } from "prosemirror-state";
-import Link from "@tiptap/extension-link";
 import session from "$lib/store/session.js";
+import userSettings from "$lib/store/user-settings.js";
+import { mergeAttributes, Node } from "@tiptap/core";
+import Image from "@tiptap/extension-image";
+import Link from "@tiptap/extension-link";
 import type { DOMOutputSpec } from "@tiptap/pm/model";
+import { Plugin } from "prosemirror-state";
 
 declare global {
   interface Window {
@@ -111,7 +111,7 @@ export const ImageWithPlaceholder = Image.extend({
         {
           href: HTMLAttributes.link,
           target: "_blank",
-          rel: "noopener",
+          rel: "noopener noreferrer nofollow",
           "data-image-placeholder": "true",
         },
         imgNode,
@@ -163,6 +163,7 @@ export const ImageWithPlaceholder = Image.extend({
           linkNode.setAttribute("target", "_blank");
           linkNode.setAttribute("data-image-placeholder", "true");
           linkNode.addEventListener("click", (e) => e.preventDefault());
+          linkNode.setAttribute("rel", "noopener noreferrer nofollow")
           linkNode.appendChild(img);
           dom = linkNode;
         } else {
