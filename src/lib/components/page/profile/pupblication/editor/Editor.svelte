@@ -657,6 +657,9 @@
           max-width: 100%;
           width: 100%;
           height: auto;
+          user-select: none;
+          -webkit-user-select: none;
+          touch-action: manipulation;
         }
         &::selection {
           z-index: 0;
