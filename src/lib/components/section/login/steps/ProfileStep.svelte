@@ -1,6 +1,11 @@
 <script lang="ts">
+  import { scoresAuthStore } from "$lib/components/_main_/auth/_store";
   import GridBg from "$lib/components/shared/backround-patterns/GridBG.svelte";
+  import Avatar from "$lib/components/ui/Avatar.svelte";
   import Button from "$lib/components/ui/Button.svelte";
+  import Input from "$lib/components/ui/Input.svelte";
+  import SectionLabel from "$lib/components/ui/SectionLabel.svelte";
+  import Uploader from "$lib/components/ui/Uploader.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
   import { loginStore } from "../login-store";
 
@@ -18,12 +23,8 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
   let confirmPhoneNumber = "";
-  let length = 4;
-  let isValid = false;
-
-  let hiddenInput: HTMLInputElement;
-  let value = "";
-  let isInFocus = false;
+  $: ({ email, isLogin, password, name, avatar } = $loginStore);
+  $: ({ globalState } = $scoresAuthStore);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -53,24 +54,6 @@
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
-  function focus() {
-    hiddenInput?.focus();
-    isInFocus = true;
-  }
-
-  function handleInput(e: Event) {
-    value = (e.target as HTMLInputElement).value
-      .replace(/\D/g, "")
-      .slice(0, length);
-    if (value.length === length) isValid = true;
-  }
-
-  function handleKeydown(e: KeyboardEvent) {
-    if (e.key === "Backspace" && !hiddenInput.value) {
-      value = value.slice(0, -1);
-    }
-  }
   // #endregion ➤ 🛠️ METHODS
 </script>
 
@@ -97,8 +80,8 @@
         fill="none"
       >
         <path
-          d="M14.5 20.4166H14.5117M10.0667 25.6666H18.9333C20.2401 25.6666 20.8935 25.6666 21.3927 25.4123C21.8317 25.1886 22.1887 24.8316 22.4124 24.3926C22.6667 23.8934 22.6667 23.24 22.6667 21.9333V6.06658C22.6667 4.7598 22.6667 4.1064 22.4124 3.60727C22.1887 3.16823 21.8317 2.81127 21.3927 2.58757C20.8935 2.33325 20.2401 2.33325 18.9333 2.33325H10.0667C8.75989 2.33325 8.10649 2.33325 7.60737 2.58757C7.16832 2.81127 6.81137 3.16823 6.58766 3.60727C6.33334 4.1064 6.33334 4.7598 6.33334 6.06659V21.9333C6.33334 23.24 6.33334 23.8934 6.58766 24.3926C6.81137 24.8316 7.16832 25.1886 7.60737 25.4123C8.10649 25.6666 8.75989 25.6666 10.0667 25.6666ZM15.0833 20.4166C15.0833 20.7388 14.8222 20.9999 14.5 20.9999C14.1778 20.9999 13.9167 20.7388 13.9167 20.4166C13.9167 20.0944 14.1778 19.8333 14.5 19.8333C14.8222 19.8333 15.0833 20.0944 15.0833 20.4166Z"
-          stroke="currentColor"
+          d="M23.8333 24.5C23.8333 22.8718 23.8333 22.0578 23.6324 21.3953C23.1799 19.9039 22.0128 18.7367 20.5213 18.2843C19.8589 18.0833 19.0448 18.0833 17.4167 18.0833H11.5833C9.95517 18.0833 9.14109 18.0833 8.47866 18.2843C6.98719 18.7367 5.82004 19.9039 5.3676 21.3953C5.16666 22.0578 5.16666 22.8718 5.16666 24.5M19.75 8.75C19.75 11.6495 17.3995 14 14.5 14C11.6005 14 9.24999 11.6495 9.24999 8.75C9.24999 5.8505 11.6005 3.5 14.5 3.5C17.3995 3.5 19.75 5.8505 19.75 8.75Z"
+          stroke="#D2D2D2"
           stroke-width="2"
           stroke-linecap="round"
           stroke-linejoin="round"
@@ -109,48 +92,34 @@
   <Container hFull={false}>
     <div class="form">
       <div class="header">
-        <h2>Check your phone</h2>
-        <p class="subtitle">We sent a verification code to your phone</p>
+        <h2>Profile</h2>
+        <p class="subtitle">Set up your profile</p>
       </div>
       <div class="form-body">
-        <input
-          bind:this={hiddenInput}
-          type="tel"
-          inputmode="numeric"
-          pattern="\d*"
-          autocomplete="one-time-code"
-          on:input={handleInput}
-          on:keydown={handleKeydown}
-          on:blur={() => (isInFocus = false)}
-          class="otp-hidden"
+        <Input
+          label="Name"
+          bind:value={$loginStore.name}
+          required={true}
+          placeholder="First and Last Name"
         />
 
-        <div class="otp-wrapper" on:click|stopPropagation={focus}>
-          {#each Array(length) as _, i}
-            <div
-              on:click={focus}
-              class:filled={value[i]}
-              class="otp-box {isInFocus && i === value.length ? 'current' : ''}"
-            >
-              {value[i] ?? "0"}
-            </div>
-          {/each}
+        <div class="profile-photo-wrapper">
+          <SectionLabel
+            text="This will be displayed on your profile."
+            title="Your photo"
+          />
+          <Avatar size="xxl" src={$loginStore.avatar} />
+          <Uploader bind:avatar={$loginStore.avatar}/>
         </div>
         <Button
           full={true}
           size="lg"
-          disabled={!isValid}
+          disabled={!name}
           on:click={() => {
             $loginStore.currentStep += 1;
-          }}>Verify</Button
+          }}>Continue</Button
         >
       </div>
-    </div>
-  </Container>
-  <Container hFull={false}>
-    <div class="support-text">
-      <span>Didn’t receive the code?</span>
-      <span class="resend">Click to resend</span>
     </div>
   </Container>
 </div>
@@ -260,94 +229,16 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: var(--spacing-3xl, 24px);
+        gap: var(--spacing-4xl, 32px);
         align-self: stretch;
 
-        .otp-hidden {
-          position: absolute;
-          opacity: 0;
-          pointer-events: none;
-          height: 0;
-          width: 0;
-        }
-        .otp-wrapper {
+        .profile-photo-wrapper {
           display: flex;
-          gap: 8px;
-
-          .otp-box {
-            display: flex;
-            width: 64px;
-            min-height: 64px;
-            padding: var(--spacing-xxs, 2px) var(--spacing-md, 8px);
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: var(--spacing-md, 8px);
-            transition: border-color 0.2s;
-
-            border-radius: var(--radius-lg, 10px);
-            border: 1px solid var(--colors-border-border-primary, #d2d2d2);
-            background: var(--colors-background-bg-primary, #fff);
-
-            /* Shadows/shadow-xs */
-            box-shadow: 0 1px 2px 0
-              var(--colors-effects-shadows-shadow-xs, rgba(10, 13, 18, 0.05));
-
-            color: var(--colors-text-text-placeholder_subtle, #d2d2d2);
-
-            text-align: center;
-
-            /* Display lg/Medium */
-            font-family: var(--font-family-font-family-display, Roboto);
-            font-size: var(--font-size-display-lg, 48px);
-            font-style: normal;
-            font-weight: 500;
-            line-height: var(--line-height-display-lg, 60px); /* 125% */
-            letter-spacing: -0.96px;
-
-            &.current {
-              border: 2px solid var(--colors-border-border-brand, #f5620f);
-              background: var(--colors-background-bg-primary, #fff);
-              box-shadow: 0 1px 2px 0
-                  var(
-                    --colors-effects-shadows-shadow-xs,
-                    rgba(10, 13, 18, 0.05)
-                  ),
-                0 0 0 2px var(--colors-background-bg-primary, #fff),
-                0 0 0 4px var(--colors-effects-focus-rings-focus-ring, #f5620f);
-            }
-            &.filled {
-              border-radius: var(--radius-lg, 10px);
-              border: 2px solid var(--colors-border-border-brand, #f7813f);
-
-              color: var(--colors-text-text-brand-tertiary_alt, #fbfbfb);
-            }
-          }
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 20px;
+          align-self: stretch;
         }
-      }
-    }
-    .support-text {
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      gap: var(--spacing-xs, 4px);
-      align-self: stretch;
-
-      color: var(--colors-text-text-tertiary-600, #8c8c8c);
-
-      /* Text sm/Regular */
-      font-family: var(--font-family-font-family-body, Roboto);
-      font-size: var(--font-size-text-sm, 14px);
-      font-style: normal;
-      font-weight: 400;
-      line-height: var(--line-height-text-sm, 20px); /* 142.857% */
-
-      .resend {
-        color: var(--colors-text-text-brand-secondary-700, #d2d2d2);
-
-        /* Text sm/Semibold */
-        font-style: normal;
-        font-weight: 600;
       }
     }
   }

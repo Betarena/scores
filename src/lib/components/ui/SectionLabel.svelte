@@ -8,31 +8,6 @@
 -->
 
 <script lang="ts">
-  import Button from "$lib/components/ui/Button.svelte";
-  import session from "$lib/store/session";
-  import { loginStore } from "./login-store";
-  import EmailStep from "./steps/EmailStep.svelte";
-  import PasswordStep from "./steps/PasswordStep.svelte";
-  import PhoneStep from "./steps/PhoneStep.svelte";
-  import ProfileStep from "./steps/ProfileStep.svelte";
-
-  // #region ➤ 📦 Package Imports
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'imports' that are required        │
-  // │ by 'this' .svelte file is ran.                                         │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. svelte/sveltekit imports                                            │
-  // │ 2. project-internal files and logic                                    │
-  // │ 3. component import(s)                                                 │
-  // │ 4. assets import(s)                                                    │
-  // │ 5. type(s) imports(s)                                                  │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  // #endregion ➤ 📦 Package Imports
-
   // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -46,15 +21,10 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
-  $: ({ viewportType } = $session);
-  $: ({ currentStep } = $loginStore);
-  const stepMap = {
-    0: EmailStep,
-    1: PasswordStep,
-    2: PhoneStep,
-    3: ProfileStep,
-  };
+  export let title = "";
+  export let text = "";
+  export let required = false;
+  export let help = false;
 
   // #endregion ➤ 📌 VARIABLES
 </script>
@@ -70,42 +40,46 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="login-wrapper {viewportType}">
-  {#if currentStep}
-    <!-- content here -->
-    <div class="back-button">
-      <Button
-        type="secondary"
-        size="sm"
-        on:click={() => ($loginStore.currentStep -= 1)}
-      >
+<div class="section-label-wrapper">
+  {#if title || required || help}
+    <dev class="title">
+      {#if title}
+        <span>{title}</span>
+      {/if}
+      {#if required}
+        <span class="reqiered">*</span>
+      {/if}
+      {#if help}
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
-          viewBox="0 0 20 20"
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
           fill="none"
-          class="arrow"
         >
-          <path
-            d="M15.8333 9.99996H4.16666M4.16666 9.99996L9.99999 15.8333M4.16666 9.99996L9.99999 4.16663"
-            stroke="currentColor"
-            stroke-width="1.66667"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
+          <g clip-path="url(#clip0_14766_248)">
+            <path
+              d="M6.06004 5.99998C6.21678 5.55442 6.52614 5.17872 6.93334 4.9394C7.34055 4.70009 7.8193 4.61261 8.28483 4.69245C8.75035 4.7723 9.17259 5.01433 9.47676 5.37567C9.78093 5.737 9.94741 6.19433 9.94671 6.66665C9.94671 7.99998 7.94671 8.66665 7.94671 8.66665M8.00004 11.3333H8.00671M14.6667 7.99998C14.6667 11.6819 11.6819 14.6666 8.00004 14.6666C4.31814 14.6666 1.33337 11.6819 1.33337 7.99998C1.33337 4.31808 4.31814 1.33331 8.00004 1.33331C11.6819 1.33331 14.6667 4.31808 14.6667 7.99998Z"
+              stroke="currentColor"
+              stroke-width="1.33333"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </g>
+          <defs>
+            <clipPath id="clip0_14766_248">
+              <rect width="16" height="16" fill="white" />
+            </clipPath>
+          </defs>
         </svg>
-      </Button>
-    </div>
-  {/if}
-  <svelte:component this={stepMap[currentStep]}/>
-  {#if currentStep}
-    <div class="pagination-wrapper">
-      {#each Object.keys(stepMap).slice(1) as step}
-        <div class="step-tab" class:active={Number(step) === currentStep} />
-      {/each}
-    </div>
+        <!-- content here -->
+      {/if}
+    </dev>
+
     <!-- content here -->
+  {/if}
+  {#if text}
+    <span class="text">{text}</span>
   {/if}
 </div>
 
@@ -120,47 +94,44 @@
 -->
 
 <style lang="scss">
-  .login-wrapper {
-    width: 100%;
-    height: 100vh;
-    background: var(--colors-background-bg-primary, #1f1f1f);
-    position: fixed;
-    top: 0;
-    left: 0;
+  .section-label-wrapper {
+    display: flex;
+    width: 280px;
+    min-width: 200px;
+    max-width: 280px;
+    flex-direction: column;
+    align-items: flex-start;
 
-    .back-button {
-      position: absolute;
-      left: 16px;
-      top: 19px;
-      z-index: 2;
-      :global(.button) {
-        padding: var(--spacing-md, 8px);
+    .title {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xxs, 2px);
+      /* Text sm/Semibold */
+      font-family: var(--font-family-font-family-body, Roboto);
+      font-size: var(--font-size-text-sm, 14px);
+      font-style: normal;
+      font-weight: 600;
+      line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+
+      span {
+        color: var(--colors-text-text-secondary-700, #525252);
       }
-      .arrow {
+      .required {
+        color: var(--colors-text-text-brand-tertiary-600, #d4550c);
+      }
+      svg {
         color: var(--colors-foreground-fg-quaternary-400);
       }
     }
-    .pagination-wrapper {
-      padding: 0 var(--container-padding-mobile, 16px);
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: var(--spacing-lg, 12px);
-      position: fixed;
-      bottom: 35px;
-      left: 0;
-      z-index: 2;
+    .text {
+      color: var(--colors-text-text-tertiary-600, #6a6a6a);
 
-      .step-tab {
-        height: 8px;
-        flex: 1 0 0;
-        border-radius: var(--radius-full, 9999px);
-        background: var(--colors-background-bg-quaternary, #525252);
-        &.active {
-          background: var(--colors-foreground-fg-brand-primary_alt, #d2d2d2);
-        }
-      }
+      /* Text sm/Regular */
+      font-family: var(--font-family-font-family-body, Roboto);
+      font-size: var(--font-size-text-sm, 14px);
+      font-style: normal;
+      font-weight: 400;
+      line-height: var(--line-height-text-sm, 20px); /* 142.857% */
     }
   }
 </style>

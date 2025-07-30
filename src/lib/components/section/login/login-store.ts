@@ -3,5 +3,8 @@ import { writable } from "svelte/store";
 export const loginStore = writable({
     email: "",
     isLogin: false,
-    password: ""
+    password: "",
+    name: "",
+    currentStep: 3,
+    avatar: ""
 })

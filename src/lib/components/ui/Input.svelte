@@ -25,7 +25,7 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let requred: boolean = false;
+  export let required: boolean = false;
   export let inputType: "text" | "number" | "password" | "textarea" | "email" = "text";
   export let error = false;
   export let placeholder = "";
@@ -97,14 +97,14 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 <div class="field">
-  {#if $$slots.label || label || requred}
+  {#if $$slots.label || label || required}
     <label class="label" for={name}>
       {#if $$slots.label || label}
         <span class="label-text">
           <slot name="label">{label}</slot>
         </span>
       {/if}
-      {#if requred}
+      {#if required}
         <span class="required">*</span>
       {/if}
     </label>

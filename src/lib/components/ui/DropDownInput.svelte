@@ -8,8 +8,7 @@
 -->
 
 <script lang="ts">
-  import { createEventDispatcher, onMount, tick } from "svelte";
-  import ArrowDown from "./assets/arrow-down.svelte";
+  import { createEventDispatcher, tick } from "svelte";
 
   // #region ➤ 📌 VARIABLES
 
@@ -29,7 +28,7 @@
     label: string;
     [key: string]: any;
   }
-  export let requred: boolean = false;
+  export let required: boolean = false;
   export let inputType = "text";
   export let error = false;
   export let placeholder = "";
@@ -114,12 +113,12 @@
       <option value={option}>{option.label}</option>
     {/each}
   </select>
-  {#if $$slots.label || requred}
+  {#if $$slots.label || required}
     <label class="label" for={name}>
       <span class="label-text">
         <slot name="label" />
       </span>
-      {#if requred}
+      {#if required}
         <span class="required">*</span>
       {/if}
     </label>

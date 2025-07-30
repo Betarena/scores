@@ -13,7 +13,6 @@
   import { createEventDispatcher } from "svelte";
   import DefaultAvatar from "./assets/default-avatar.svelte";
   import LoggedoutAvatar from "./assets/loggedout-avatar.svelte";
-  import { getOptimizedImageUrl } from "$lib/utils/image.js";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -76,7 +75,7 @@
       class="avatar-circle"
       {...$$restProps}
       class:size
-      style="{styles} background-image: url({getOptimizedImageUrl({ strImageUrl: src })}); "
+      style="{styles} --img-url: url({src}); "
     />
   {:else if isLoogedIn}
     <DefaultAvatar size={numSize} />
@@ -108,5 +107,6 @@
     background-image: url(src);
     background-repeat: no-repeat;
     background-size: cover;
+    background: var(--img-url) lightgray 50% / cover no-repeat;
   }
 </style>

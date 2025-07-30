@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { scoresAuthStore } from "$lib/components/_main_/auth/_store";
   import CircleBg from "$lib/components/shared/backround-patterns/CircleBG.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import Input from "$lib/components/ui/Input.svelte";
@@ -19,11 +18,8 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  export let currentStep = 0;
-
   let confirmPassword = "";
-  $: ({ email, isLogin, password } = $loginStore);
-  $: ({ globalState } = $scoresAuthStore);
+  $: ({ password } = $loginStore);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -113,7 +109,9 @@
           full={true}
           size="lg"
           disabled={!isValid}
-          on:click={() => currentStep++}>Continue</Button
+          on:click={() => {
+            $loginStore.currentStep += 1;
+          }}>Continue</Button
         >
       </div>
     </div></Container

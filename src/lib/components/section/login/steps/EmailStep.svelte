@@ -30,7 +30,6 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  export let currentStep = 0;
 
   let password = "";
   $: ({ email, isLogin } = $loginStore);
@@ -164,7 +163,7 @@
             size="lg"
             disabled={!email}
             on:click={() => {
-              currentStep = currentStep + 1;
+              $loginStore.currentStep += 1
             }}>Get started</Button
           >
         {/if}

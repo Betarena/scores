@@ -23,30 +23,30 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { page } from "$app/stores";
   import { enhance } from "$app/forms";
   import { goto, invalidateAll } from "$app/navigation";
+  import { page } from "$app/stores";
+  import { post } from "$lib/api/utils.js";
   import Button from "$lib/components/ui/Button.svelte";
+  import CropperModal from "$lib/components/ui/Cropper/CropperModal.svelte";
+  import { infoMessages } from "$lib/components/ui/infomessages/infomessages.js";
   import Input from "$lib/components/ui/Input.svelte";
+  import { uploadImage } from "$lib/firebase/common.js";
+  import { modalStore } from "$lib/store/modal.js";
   import session from "$lib/store/session.js";
   import userSettings from "$lib/store/user-settings.js";
-  import { post } from "$lib/api/utils.js";
-  import { submitWrapper } from "$lib/utils/sveltekitWrapper.js";
   import { dlog } from "$lib/utils/debug.js";
-  import { uploadImage } from "$lib/firebase/common.js";
-  import { infoMessages } from "$lib/components/ui/infomessages/infomessages.js";
-  import { modalStore } from "$lib/store/modal.js";
-  import CropperModal from "$lib/components/ui/Cropper/CropperModal.svelte";
-  import PublicationAvatar from "./PublicationAvatar.svelte";
-  import UrlInfo from "./UrlInfo.svelte";
-  import DeleteModal from "./DeleteModal.svelte";
+  import { submitWrapper } from "$lib/utils/sveltekitWrapper.js";
   import { mutateStringToPermalink } from "@betarena/scores-lib/dist/util/language.js";
-  import type { Writable } from "svelte/store";
   import type {
     AuthorsAuthorsDataJSONSchema,
     AuthorsAuthorsMain,
     TranslationSportstacksSectionDataJSONSchema,
   } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import type { Writable } from "svelte/store";
+  import DeleteModal from "./DeleteModal.svelte";
+  import PublicationAvatar from "./PublicationAvatar.svelte";
+  import UrlInfo from "./UrlInfo.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -317,7 +317,7 @@
     label={translations?.name || "Name"}
     placeholder={translation?.default_name || "Default name"}
     on:input={debounceValidation}
-    requred={true}
+    required={true}
     error={inputError}
     bind:value={name}
   >
