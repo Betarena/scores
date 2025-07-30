@@ -11,6 +11,7 @@
   import Button from "$lib/components/ui/Button.svelte";
   import session from "$lib/store/session";
   import { loginStore } from "./login-store";
+  import CountryStep from "./steps/CountryStep.svelte";
   import EmailStep from "./steps/EmailStep.svelte";
   import PasswordStep from "./steps/PasswordStep.svelte";
   import PhoneStep from "./steps/PhoneStep.svelte";
@@ -54,6 +55,7 @@
     1: PasswordStep,
     2: PhoneStep,
     3: ProfileStep,
+    4: CountryStep
   };
 
   // #endregion ➤ 📌 VARIABLES

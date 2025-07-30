@@ -34,9 +34,11 @@
   export let placeholder = "";
   export let value: IOption | undefined = undefined;
   export let name = "";
+  export let label = "";
   export let textKey = "label";
   export let options: IOption[] = [];
   export let checkIcon = true;
+  export let infoText = "";
   export let onInputValidation:
     | ((val: string | number) => boolean)
     | undefined = undefined;
@@ -113,10 +115,10 @@
       <option value={option}>{option.label}</option>
     {/each}
   </select>
-  {#if $$slots.label || required}
+  {#if $$slots.label || required || label}
     <label class="label" for={name}>
       <span class="label-text">
-        <slot name="label" />
+        <slot name="label">{label}</slot>
       </span>
       {#if required}
         <span class="required">*</span>
@@ -135,11 +137,18 @@
         top = false;
       }}
     >
-      {#if value}
-        <slot name="option" option={value}>{value[textKey]}</slot>
-      {:else}
-        <slot name="placeholder" />
+      {#if $$slots.icon}
+        <div class="icon">
+          <slot name="icon"><!-- optional fallback --></slot>
+        </div>
       {/if}
+      <div class="text">
+        {#if value}
+          <slot name="option" option={value}>{value[textKey]}</slot>
+        {:else}
+          <slot name="placeholder" />
+        {/if}
+      </div>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="20"
@@ -198,7 +207,7 @@
       </div>
     </div>
   </div>
-  {#if $$slots.error || $$slots.info}
+  {#if $$slots.error || $$slots.info || infoText}
     <div class="field-info">
       {#if error}
         <span class="error">
@@ -206,7 +215,7 @@
         </span>
       {:else}
         <span class="info">
-          <slot name="info" />
+          <slot name="info">{infoText}</slot>
         </span>
       {/if}
     </div>
@@ -236,7 +245,7 @@
       gap: var(--spacing-xxs, 2px);
 
       .label-text {
-        color: var(--colors-text-text-secondary);
+        color: var(--colors-text-text-secondary-700, #fbfbfb);
 
         /* Text sm/Medium */
         font-family: var(--font-family-font-family-body, Roboto);
@@ -266,7 +275,15 @@
       /* Shadows/shadow-xs */
       box-shadow: 0px 1px 2px 0px
         var(--colors-effects-shadows-shadow-xs, rgba(255, 255, 255, 0));
-
+      .icon {
+        margin-right: var(--spacing-md, 8px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .text {
+        flex-grow: 1;
+      }
       .input-element {
         display: flex;
         padding: 10px 14px;
