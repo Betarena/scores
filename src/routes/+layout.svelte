@@ -47,15 +47,14 @@
   import * as Sentry from '@sentry/sveltekit';
   import { onDestroy, onMount } from 'svelte';
 
-  import
-    {
-      routeIdContent,
-      routeIdPageProfile,
-      routeIdPageProfileArticleCreation,
-      routeIdPageProfileEditArticle,
-      routeIdPageProfilePublication,
-      routeIdSearch,
-    } from '$lib/constants/paths.js';
+  import {
+    routeIdContent,
+    routeIdPageProfile,
+    routeIdPageProfileArticleCreation,
+    routeIdPageProfileEditArticle,
+    routeIdPageProfilePublication,
+    routeIdSearch,
+  } from '$lib/constants/paths.js';
   import { scoresAdminStore } from '$lib/store/admin.js';
   import { delCookie } from '$lib/store/cookie.js';
   import sessionStore from '$lib/store/session.js';
@@ -80,12 +79,13 @@
   import InfoMessages from '$lib/components/ui/infomessages/InfoMessages.svelte';
 
   import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
-
   // import '@betarena/ad-engine';
   // import WidgetAdEngine from '@betarena/ad-engine/src/lib/Widget-AdEngine.svelte';
-  import WidgetAdEngine from '@betarena/ad-engine';
-  import history_store from '$lib/store/history.js';
   import AndroidPwaBanner from '$lib/components/AndroidPWABanner.svelte';
+  import Login from '$lib/components/section/login/Login.svelte';
+  import history_store from '$lib/store/history.js';
+  import { modalStore } from '$lib/store/modal';
+  import WidgetAdEngine from '@betarena/ad-engine';
 
   // ╭─────
   // │ WARNING:
@@ -381,7 +381,8 @@
     ): Promise < void > =>
     {
 
-
+      $modalStore.component = Login;
+      $modalStore.show = true;
       // ╭─────
       // │ IMPORTANT CRITICAL
       // ╰─────
