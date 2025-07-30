@@ -23,27 +23,27 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { createEventDispatcher } from "svelte";
-  import { fly } from "svelte/transition";
-  import { Editor } from "@tiptap/core";
+  import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
   import { uploadImage } from "$lib/firebase/common.js";
   import session from "$lib/store/session.js";
+  import { Editor } from "@tiptap/core";
+  import { TextSelection } from "prosemirror-state";
+  import { createEventDispatcher } from "svelte";
+  import { fly } from "svelte/transition";
   import Add from "./icons/Add.svelte";
   import Arrow from "./icons/Arrow.svelte";
   import B from "./icons/B.svelte";
+  import H from "./icons/H.svelte";
+  import H2 from "./icons/H2.svelte";
+  import H3 from "./icons/H3.svelte";
+  import H4 from "./icons/H4.svelte";
   import I from "./icons/I.svelte";
   import L from "./icons/L.svelte";
   import List from "./icons/List.svelte";
   import NumList from "./icons/NumList.svelte";
-  import Q from "./icons/Q.svelte";
-  import H from "./icons/H.svelte";
-  import Upload from "./icons/Upload.svelte";
   import P from "./icons/P.svelte";
-  import H2 from "./icons/H2.svelte";
-  import H3 from "./icons/H3.svelte";
-  import H4 from "./icons/H4.svelte";
-  import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
-  import { TextSelection } from "prosemirror-state";
+  import Q from "./icons/Q.svelte";
+  import Upload from "./icons/Upload.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -228,6 +228,24 @@
     view = view === "first" ? "second" : "first";
   }
 
+  function isActive(editor: Editor, id: string) {
+    if (id === "link" && editor.isActive("imageWithPlaceholder")) {
+      const state = editor.view.state;
+      const { from } = state.selection;
+      const positionsToCheck = [from, from - 1];
+
+      for (const pos of positionsToCheck) {
+        const node = state.doc.nodeAt(pos);
+
+        return (
+          node?.type.name === "imageWithPlaceholder" &&
+         node.attrs.link
+        );
+      }
+    }
+    return editor.isActive(id);
+  }
+
   async function handleFileChange(event) {
     const file = event.target.files[0];
     if (!file) return;
@@ -380,7 +398,7 @@
           in:fly={{ x: -100, duration: 200 }}
           class="button"
           class:disabled={titleInFocus}
-          class:active={editor.isActive(id)}
+          class:active={isActive(editor, id)}
           on:mousedown|preventDefault
           on:click={cb}
         >

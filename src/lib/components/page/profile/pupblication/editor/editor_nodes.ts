@@ -1,9 +1,11 @@
-import { mergeAttributes, Node } from "@tiptap/core";
 import LoaderImage from "$lib/components/ui/loaders/LoaderImage.svelte";
-import Image from "@tiptap/extension-image";
-import userSettings from "$lib/store/user-settings.js";
-import { Plugin } from "prosemirror-state";
 import session from "$lib/store/session.js";
+import userSettings from "$lib/store/user-settings.js";
+import { mergeAttributes, Node } from "@tiptap/core";
+import Image from "@tiptap/extension-image";
+import Link from "@tiptap/extension-link";
+import type { DOMOutputSpec } from "@tiptap/pm/model";
+import { Plugin } from "prosemirror-state";
 
 declare global {
   interface Window {
@@ -32,6 +34,8 @@ export const ImageWithPlaceholder = Image.extend({
       ...this.parent?.(),
       id: { default: null },
       loading: { default: false },
+      link: { default: null },
+      alt: { default: null },
       style: {
         default: null,
         parseHTML: (element) => (element as HTMLElement).getAttribute("style"),
@@ -44,6 +48,20 @@ export const ImageWithPlaceholder = Image.extend({
 
   parseHTML() {
     return [
+      {
+        tag: "a[data-image-placeholder] > img",
+        getAttrs: (imgNode) => {
+          const parent = (imgNode as HTMLElement).parentElement as HTMLElement;
+          return {
+            src: (imgNode as HTMLElement).getAttribute("src"),
+            alt: (imgNode as HTMLElement).getAttribute("alt"),
+            title: (imgNode as HTMLElement).getAttribute("title"),
+            style: (imgNode as HTMLElement).getAttribute("style"),
+            loading: false,
+            link: parent.getAttribute("href"),
+          };
+        },
+      },
       {
         tag: "span[data-placeholder-image]",
         getAttrs: (el) => ({
@@ -67,6 +85,13 @@ export const ImageWithPlaceholder = Image.extend({
   },
 
   renderHTML({ HTMLAttributes }) {
+    const imgAttrs = mergeAttributes({
+      src: HTMLAttributes.src,
+      alt: HTMLAttributes.alt,
+      title: HTMLAttributes.title,
+      style: HTMLAttributes.style,
+    });
+
     if (HTMLAttributes.loading) {
       return [
         "span",
@@ -77,38 +102,52 @@ export const ImageWithPlaceholder = Image.extend({
         }),
       ];
     }
-    return [
-      "img",
-      mergeAttributes(HTMLAttributes, {
-        src: HTMLAttributes.src,
-        alt: HTMLAttributes.alt,
-        title: HTMLAttributes.title,
-        style: HTMLAttributes.style,
-      }),
-    ];
+
+    const imgNode: DOMOutputSpec = ["img", imgAttrs];
+
+    if (HTMLAttributes.link) {
+      return [
+        "a",
+        {
+          href: HTMLAttributes.link,
+          target: "_blank",
+          rel: "noopener noreferrer nofollow",
+          "data-image-placeholder": "true",
+        },
+        imgNode,
+      ];
+    }
+
+    return imgNode;
   },
 
   addNodeView() {
     return ({ node }) => {
-      const { loading, src, alt, title, style } = node.attrs;
-      const dom = loading
-        ? document.createElement("div")
-        : document.createElement("img");
+      const { loading, src, alt, title, style, link } = node.attrs;
+
+      const img = document.createElement("img");
+      img.setAttribute("src", src);
+      if (alt) img.setAttribute("alt", alt);
+      if (title) img.setAttribute("title", title);
+      if (style) img.setAttribute("style", style);
+
+      let dom: HTMLElement;
 
       if (loading) {
+        dom = document.createElement("div");
         dom.setAttribute("data-placeholder-image", "");
         if (node.attrs.id) dom.setAttribute("data-id", node.attrs.id);
         dom.setAttribute("data-loading", "true");
         if (style) dom.setAttribute("style", style);
+
         const loaderWrapper = document.createElement("div");
         loaderWrapper.style.cssText = `
-          width: 100%; height: 400px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        `;
+        width: 100%; height: 400px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      `;
         dom.appendChild(loaderWrapper);
-
         new LoaderImage({
           target: loaderWrapper,
           props: {
@@ -118,14 +157,44 @@ export const ImageWithPlaceholder = Image.extend({
           },
         });
       } else {
-        dom.setAttribute("src", src);
-        if (alt) dom.setAttribute("alt", alt);
-        if (title) dom.setAttribute("title", title);
-        if (style) dom.setAttribute("style", style);
+        if (link) {
+          const linkNode = document.createElement("a");
+          linkNode.setAttribute("href", link);
+          linkNode.setAttribute("target", "_blank");
+          linkNode.setAttribute("data-image-placeholder", "true");
+          linkNode.addEventListener("click", (e) => e.preventDefault());
+          linkNode.setAttribute("rel", "noopener noreferrer nofollow")
+          linkNode.appendChild(img);
+          dom = linkNode;
+        } else {
+          dom = img;
+        }
       }
 
-      return { dom };
+      return {
+        dom,
+        update: () =>
+        {
+          return false
+        }
+      };
     };
+  },
+});
+
+export const SafeLink = Link.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+    };
+  },
+
+  parseHTML() {
+    return [
+      {
+        tag: 'a[href]:not([data-image-placeholder])',
+      },
+    ];
   },
 });
 
@@ -269,23 +338,31 @@ export const YouTube = Node.create({
     return [
       {
         tag: 'iframe[src*="youtube.com"]',
-        getAttrs: (el) => ({ src: el.getAttribute("src"), className: el.className   }),
+        getAttrs: (el) => ({
+          src: el.getAttribute("src"),
+          className: el.className,
+        }),
       },
       {
         tag: 'iframe[src*="youtu.be"]',
-        getAttrs: (el) => ({ src: el.getAttribute("src"), className: el.className   }),
+        getAttrs: (el) => ({
+          src: el.getAttribute("src"),
+          className: el.className,
+        }),
       },
     ];
   },
 
   renderHTML({ HTMLAttributes }) {
     const safeSrc = normalizeYouTubeSrc(HTMLAttributes.src);
-    const shorts = HTMLAttributes.className?.includes("shorts") || isYouTubeShorts(HTMLAttributes.src);
+    const shorts =
+      HTMLAttributes.className?.includes("shorts") ||
+      isYouTubeShorts(HTMLAttributes.src);
 
     return [
       "iframe",
       mergeAttributes(HTMLAttributes, {
-        class: `embed ${shorts ? 'youtube-shorts' : ''}`,
+        class: `embed ${shorts ? "youtube-shorts" : ""}`,
         src: safeSrc,
         frameborder: "0",
         allow:
@@ -303,16 +380,15 @@ export const YouTube = Node.create({
       container.style.position = "relative";
       container.style.minHeight = "200px";
       container.classList.add("embed");
-      if (shorts)
-      {
-        container.classList.add('youtube-shorts');
+      if (shorts) {
+        container.classList.add("youtube-shorts");
       }
 
       const loaderWrapper = document.createElement("div");
       loaderWrapper.style.cssText = `
-        width: ${shorts ? '50%' : '100%'};
+        width: ${shorts ? "50%" : "100%"};
         min-width: 350px;
-        aspect-ratio: ${shorts ? '9/16' : '16/9'};
+        aspect-ratio: ${shorts ? "9/16" : "16/9"};
         display: flex;
         align-items: center;
         justify-content: center;
@@ -345,7 +421,7 @@ export const YouTube = Node.create({
 
   addProseMirrorPlugins() {
     const YT_REGEX =
-  /^(https?:\/\/(?:www\.)?(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/))([\w-]{11})(?:[?&][^\s]*)?$/;
+      /^(https?:\/\/(?:www\.)?(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/))([\w-]{11})(?:[?&][^\s]*)?$/;
 
     return [
       new Plugin({
@@ -374,18 +450,18 @@ function extractTweetId(url: string): string | null {
 /* --- helpers --- */
 function normalizeYouTubeSrc(url: string): string {
   //  a) https://youtu.be/ID?xyz
-  const short = url.match(/youtu\.be\/([\w-]{11})/)
-  if (short) return `https://www.youtube.com/embed/${short[1]}`
+  const short = url.match(/youtu\.be\/([\w-]{11})/);
+  if (short) return `https://www.youtube.com/embed/${short[1]}`;
 
   // b) https://www.youtube.com/shorts/ID
   const shorts = url.match(/youtube\.com\/shorts\/([\w-]{11})/);
   if (shorts) return `https://www.youtube.com/embed/${shorts[1]}`;
 
   // с) https://www.youtube.com/watch?v=ID&anything
-  const watch = url.match(/[?&]v=([\w-]{11})/)
-  if (watch) return `https://www.youtube.com/embed/${watch[1]}`
+  const watch = url.match(/[?&]v=([\w-]{11})/);
+  if (watch) return `https://www.youtube.com/embed/${watch[1]}`;
 
-  return url
+  return url;
 }
 
 function isYouTubeShorts(url: string): boolean {
