@@ -1,8 +1,7 @@
 <script lang="ts">
   import { scoresAuthStore } from "$lib/components/_main_/auth/_store";
-  import CircleBg from "$lib/components/shared/backround-patterns/CircleBG.svelte";
+  import GridBg from "$lib/components/shared/backround-patterns/GridBG.svelte";
   import Button from "$lib/components/ui/Button.svelte";
-  import Input from "$lib/components/ui/Input.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
   import { loginStore } from "../login-store";
 
@@ -21,7 +20,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   export let currentStep = 0;
 
-  let confirmPassword = "";
+  let confirmPhoneNumber = "";
   $: ({ email, isLogin, password } = $loginStore);
   $: ({ globalState } = $scoresAuthStore);
 
@@ -40,8 +39,6 @@
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  $: isValid = password && password.length > 7 && password === confirmPassword;
-
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🛠️ METHODS
@@ -57,6 +54,32 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   // #endregion ➤ 🛠️ METHODS
+
+  export let length = 4;
+  export let autofocus = false;
+  let isValid = false;
+
+  let hiddenInput: HTMLInputElement;
+  let value = "";
+  let isInFocus = false;
+
+  function focus() {
+    hiddenInput?.focus();
+    isInFocus = true;
+  }
+
+  function handleInput(e: Event) {
+    value = (e.target as HTMLInputElement).value
+      .replace(/\D/g, "")
+      .slice(0, length);
+    if (value.length === length) isValid = true;
+  }
+
+  function handleKeydown(e: KeyboardEvent) {
+    if (e.key === "Backspace" && !hiddenInput.value) {
+      value = value.slice(0, -1);
+    }
+  }
 </script>
 
 <!--
@@ -70,19 +93,19 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="password-step">
+<div class="phone-step">
   <div class="logo-wrapper">
-    <div class="bg"><CircleBg /></div>
-    <div class="key-icon">
+    <div class="bg"><GridBg /></div>
+    <div class="phone-icon">
       <svg
+        xmlns="http://www.w3.org/2000/svg"
         width="29"
         height="28"
         viewBox="0 0 29 28"
         fill="none"
-        xmlns="http://www.w3.org/2000/svg"
       >
         <path
-          d="M20.3333 10.4999C20.3333 9.9028 20.1055 9.30568 19.6499 8.85008C19.1943 8.39447 18.5972 8.16667 18 8.16667M18 17.5C21.866 17.5 25 14.366 25 10.5C25 6.63401 21.866 3.5 18 3.5C14.134 3.5 11 6.63401 11 10.5C11 10.8193 11.0214 11.1336 11.0628 11.4415C11.1309 11.948 11.1649 12.2013 11.142 12.3615C11.1181 12.5284 11.0877 12.6184 11.0055 12.7655C10.9265 12.9068 10.7873 13.046 10.509 13.3243L4.54673 19.2866C4.34496 19.4884 4.24407 19.5893 4.17192 19.707C4.10795 19.8114 4.06081 19.9252 4.03224 20.0442C4 20.1785 4 20.3212 4 20.6065V22.6333C4 23.2867 4 23.6134 4.12716 23.863C4.23901 24.0825 4.41749 24.261 4.63701 24.3728C4.88657 24.5 5.21327 24.5 5.86667 24.5H8.66667V22.1667H11V19.8333H13.3333L15.1757 17.991C15.454 17.7127 15.5932 17.5735 15.7345 17.4945C15.8816 17.4123 15.9716 17.3819 16.1385 17.358C16.2987 17.3351 16.552 17.3691 17.0585 17.4372C17.3664 17.4786 17.6807 17.5 18 17.5Z"
+          d="M14.5 20.4166H14.5117M10.0667 25.6666H18.9333C20.2401 25.6666 20.8935 25.6666 21.3927 25.4123C21.8317 25.1886 22.1887 24.8316 22.4124 24.3926C22.6667 23.8934 22.6667 23.24 22.6667 21.9333V6.06658C22.6667 4.7598 22.6667 4.1064 22.4124 3.60727C22.1887 3.16823 21.8317 2.81127 21.3927 2.58757C20.8935 2.33325 20.2401 2.33325 18.9333 2.33325H10.0667C8.75989 2.33325 8.10649 2.33325 7.60737 2.58757C7.16832 2.81127 6.81137 3.16823 6.58766 3.60727C6.33334 4.1064 6.33334 4.7598 6.33334 6.06659V21.9333C6.33334 23.24 6.33334 23.8934 6.58766 24.3926C6.81137 24.8316 7.16832 25.1886 7.60737 25.4123C8.10649 25.6666 8.75989 25.6666 10.0667 25.6666ZM15.0833 20.4166C15.0833 20.7388 14.8222 20.9999 14.5 20.9999C14.1778 20.9999 13.9167 20.7388 13.9167 20.4166C13.9167 20.0944 14.1778 19.8333 14.5 19.8333C14.8222 19.8333 15.0833 20.0944 15.0833 20.4166Z"
           stroke="currentColor"
           stroke-width="2"
           stroke-linecap="round"
@@ -91,33 +114,51 @@
       </svg>
     </div>
   </div>
-  <Container>
+  <Container hFull={false}>
     <div class="form">
       <div class="header">
-        <h2>Choose a password</h2>
-        <p class="subtitle">Must be at least 8 characters.</p>
+        <h2>Check your phone</h2>
+        <p class="subtitle">We sent a verification code to your phone</p>
       </div>
       <div class="form-body">
-        <input type="email" value={$loginStore.email} hidden />
-        <Input
-          inputType="password"
-          placeholder="Choose a password"
-          bind:value={$loginStore.password}
+        <input
+          bind:this={hiddenInput}
+          type="tel"
+          inputmode="numeric"
+          pattern="\d*"
+          autocomplete="one-time-code"
+          on:input={handleInput}
+          on:keydown={handleKeydown}
+          on:blur={() => (isInFocus = false)}
+          class="otp-hidden"
         />
-        <Input
-          inputType="password"
-          bind:value={confirmPassword}
-          placeholder="Confirm password"
-        />
+
+        <div class="otp-wrapper" on:click|stopPropagation={focus}>
+          {#each Array(length) as _, i}
+            <div
+              on:click={focus}
+              class:filled={value[i]}
+              class="otp-box {isInFocus && i === value.length ? 'current' : ''}"
+            >
+              {value[i] ?? "0"}
+            </div>
+          {/each}
+        </div>
         <Button
           full={true}
           size="lg"
           disabled={!isValid}
-          on:click={() => currentStep++}>Continue</Button
+          on:click={() => currentStep++}>Verify</Button
         >
       </div>
-    </div></Container
-  >
+    </div>
+  </Container>
+  <Container hFull={false}>
+    <div class="support-text">
+      <span>Didn’t receive the code?</span>
+      <span class="resend">Click to resend</span>
+    </div>
+  </Container>
 </div>
 
 <!--
@@ -131,7 +172,7 @@
 -->
 
 <style lang="scss">
-  .password-step {
+  .phone-step {
     width: 100%;
     height: 100%;
     display: flex;
@@ -154,7 +195,7 @@
         top: 50%;
         transform: translate(50%, -50%);
       }
-      .key-icon {
+      .phone-icon {
         display: flex;
         width: 56px;
         height: 56px;
@@ -227,6 +268,92 @@
         align-items: center;
         gap: var(--spacing-3xl, 24px);
         align-self: stretch;
+
+        .otp-hidden {
+          position: absolute;
+          opacity: 0;
+          pointer-events: none;
+          height: 0;
+          width: 0;
+        }
+        .otp-wrapper {
+          display: flex;
+          gap: 8px;
+
+          .otp-box {
+            display: flex;
+            width: 64px;
+            min-height: 64px;
+            padding: var(--spacing-xxs, 2px) var(--spacing-md, 8px);
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: var(--spacing-md, 8px);
+            transition: border-color 0.2s;
+
+            border-radius: var(--radius-lg, 10px);
+            border: 1px solid var(--colors-border-border-primary, #d2d2d2);
+            background: var(--colors-background-bg-primary, #fff);
+
+            /* Shadows/shadow-xs */
+            box-shadow: 0 1px 2px 0
+              var(--colors-effects-shadows-shadow-xs, rgba(10, 13, 18, 0.05));
+
+            color: var(--colors-text-text-placeholder_subtle, #d2d2d2);
+
+            text-align: center;
+
+            /* Display lg/Medium */
+            font-family: var(--font-family-font-family-display, Roboto);
+            font-size: var(--font-size-display-lg, 48px);
+            font-style: normal;
+            font-weight: 500;
+            line-height: var(--line-height-display-lg, 60px); /* 125% */
+            letter-spacing: -0.96px;
+
+            &.current {
+              border: 2px solid var(--colors-border-border-brand, #f5620f);
+              background: var(--colors-background-bg-primary, #fff);
+              box-shadow: 0 1px 2px 0
+                  var(
+                    --colors-effects-shadows-shadow-xs,
+                    rgba(10, 13, 18, 0.05)
+                  ),
+                0 0 0 2px var(--colors-background-bg-primary, #fff),
+                0 0 0 4px var(--colors-effects-focus-rings-focus-ring, #f5620f);
+            }
+            &.filled {
+              border-radius: var(--radius-lg, 10px);
+              border: 2px solid var(--colors-border-border-brand, #f7813f);
+
+              color: var(--colors-text-text-brand-tertiary_alt, #fbfbfb);
+            }
+          }
+        }
+      }
+    }
+    .support-text {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: var(--spacing-xs, 4px);
+      align-self: stretch;
+
+      color: var(--colors-text-text-tertiary-600, #8c8c8c);
+
+      /* Text sm/Regular */
+      font-family: var(--font-family-font-family-body, Roboto);
+      font-size: var(--font-size-text-sm, 14px);
+      font-style: normal;
+      font-weight: 400;
+      line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+
+      .resend {
+        color: var(--colors-text-text-brand-secondary-700, #d2d2d2);
+
+        /* Text sm/Semibold */
+        font-style: normal;
+        font-weight: 600;
       }
     }
   }

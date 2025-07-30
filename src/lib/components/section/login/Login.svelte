@@ -12,6 +12,7 @@
   import session from "$lib/store/session";
   import EmailStep from "./steps/EmailStep.svelte";
   import PasswordStep from "./steps/PasswordStep.svelte";
+  import PhoneStep from "./steps/PhoneStep.svelte";
 
   // #region ➤ 📦 Package Imports
 
@@ -45,11 +46,11 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   $: ({ viewportType } = $session);
-  let currentStep = 0;
+  let currentStep = 2;
   const stepMap = {
     0: EmailStep,
     1: PasswordStep,
-    2: "",
+    2: PhoneStep,
     3: "",
   };
 
