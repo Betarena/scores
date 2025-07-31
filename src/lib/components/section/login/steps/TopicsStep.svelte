@@ -1,7 +1,9 @@
 <script lang="ts">
-  import GridBg from "$lib/components/shared/backround-patterns/GridBG.svelte";
+  import CircleBg from "$lib/components/shared/backround-patterns/CircleBG.svelte";
+  import Badge from "$lib/components/ui/Badge.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
+  import IconTopics from "../icons/IconTopics.svelte";
   import { loginStore } from "../login-store";
 
   // #region ➤ 📌 VARIABLES
@@ -17,13 +19,28 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  let confirmPhoneNumber = "";
-  let length = 4;
-  
 
-  let hiddenInput: HTMLInputElement;
-  let value = "";
-  let isInFocus = false;
+  const topics = [
+    "Soccer",
+    "Goals",
+    "Basketball",
+    "Tennis",
+    "Baseball",
+    "Hockey",
+    "Golf",
+    "Cricket",
+    "Rugby",
+    "Swimming",
+    "Cycling",
+    "Volleyball",
+    "Table Tennis",
+    "Badminton",
+    "Lacrosse",
+    "Rowing",
+    "Boxing",
+  ];
+
+  let selectedTopics: string[] = [];
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -39,7 +56,7 @@
   // │ Please keep very close attention to these methods and                  │
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  $: isValid = value.length === length;
+
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🛠️ METHODS
@@ -54,30 +71,20 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function focus() {
-    hiddenInput?.focus();
-    isInFocus = true;
-  }
-
-  function handleInput(e: Event) {
-    value = (e.target as HTMLInputElement).value
-      .replace(/\D/g, "")
-      .slice(0, length);
-    if (value.length === length) isValid = true;
-  }
-
-
-  function handleKeydown(e: KeyboardEvent) {
-    if (e.key === "Backspace" && !hiddenInput.value) {
-      value = value.slice(0, -1);
+  function toggleTopic(topic: string) {
+    if (selectedTopics.includes(topic)) {
+      selectedTopics = selectedTopics.filter((t) => t !== topic);
+    } else {
+      selectedTopics = [...selectedTopics, topic];
     }
   }
+
   // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ 💠 Svelte Component HTML                                                  d       │
+│ 💠 Svelte Component HTML                                                         │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
 │         │ imported from './static/app.css'                                       │
@@ -86,73 +93,41 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="phone-step">
+<div class="topics-step">
   <div class="logo-wrapper">
-    <div class="bg"><GridBg /></div>
-    <div class="phone-icon">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="29"
-        height="28"
-        viewBox="0 0 29 28"
-        fill="none"
-      >
-        <path
-          d="M14.5 20.4166H14.5117M10.0667 25.6666H18.9333C20.2401 25.6666 20.8935 25.6666 21.3927 25.4123C21.8317 25.1886 22.1887 24.8316 22.4124 24.3926C22.6667 23.8934 22.6667 23.24 22.6667 21.9333V6.06658C22.6667 4.7598 22.6667 4.1064 22.4124 3.60727C22.1887 3.16823 21.8317 2.81127 21.3927 2.58757C20.8935 2.33325 20.2401 2.33325 18.9333 2.33325H10.0667C8.75989 2.33325 8.10649 2.33325 7.60737 2.58757C7.16832 2.81127 6.81137 3.16823 6.58766 3.60727C6.33334 4.1064 6.33334 4.7598 6.33334 6.06659V21.9333C6.33334 23.24 6.33334 23.8934 6.58766 24.3926C6.81137 24.8316 7.16832 25.1886 7.60737 25.4123C8.10649 25.6666 8.75989 25.6666 10.0667 25.6666ZM15.0833 20.4166C15.0833 20.7388 14.8222 20.9999 14.5 20.9999C14.1778 20.9999 13.9167 20.7388 13.9167 20.4166C13.9167 20.0944 14.1778 19.8333 14.5 19.8333C14.8222 19.8333 15.0833 20.0944 15.0833 20.4166Z"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-      </svg>
+    <div class="bg"><CircleBg /></div>
+    <div class="icon-wrapper">
+      <IconTopics />
     </div>
   </div>
   <Container hFull={false}>
     <div class="form">
       <div class="header">
-        <h2>Check your phone</h2>
-        <p class="subtitle">We sent a verification code to your phone</p>
+        <h2>Follow Topics</h2>
+        <p class="subtitle">Follow at least 3 topics</p>
       </div>
       <div class="form-body">
-        <input
-          bind:this={hiddenInput}
-          bind:value
-          type="tel"
-          inputmode="numeric"
-          pattern="\d*"
-          autocomplete="one-time-code"
-          on:input={handleInput}
-          on:keydown={handleKeydown}
-          on:blur={() => (isInFocus = false)}
-          class="otp-hidden"
-        />
-
-        <div class="otp-wrapper" on:click|stopPropagation={focus}>
-          {#each Array(length) as _, i}
-            <div
-              on:click={focus}
-              class:filled={value[i]}
-              class="otp-box {isInFocus && i === value.length ? 'current' : ''}"
+        <div class="topics-grid">
+          {#each topics as topic}
+            <Badge
+              size="lg"
+              color={selectedTopics.includes(topic) ? "brand" : "gray"}
+              active={false}
+              on:click={() => toggleTopic(topic)}
             >
-              {value[i] ?? "0"}
-            </div>
+              {topic}
+            </Badge>
           {/each}
         </div>
         <Button
           full={true}
           size="lg"
-          disabled={!isValid}
+          disabled={selectedTopics.length < 3}
           on:click={() => {
             $loginStore.currentStep += 1;
-          }}>Verify</Button
+          }}>Continue</Button
         >
       </div>
-    </div>
-  </Container>
-  <Container hFull={false}>
-    <div class="support-text">
-      <span>Didn’t receive the code?</span>
-      <span class="resend">Click to resend</span>
     </div>
   </Container>
 </div>
@@ -168,7 +143,7 @@
 -->
 
 <style lang="scss">
-  .phone-step {
+  .topics-step {
     width: 100%;
     height: 100%;
     display: flex;
@@ -191,7 +166,7 @@
         top: 50%;
         transform: translate(50%, -50%);
       }
-      .phone-icon {
+      .icon-wrapper {
         display: flex;
         width: 56px;
         height: 56px;
@@ -262,94 +237,18 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: var(--spacing-3xl, 24px);
+        gap: var(--spacing-4xl, 32px);
         align-self: stretch;
 
-        .otp-hidden {
-          position: absolute;
-          opacity: 0;
-          pointer-events: none;
-          height: 0;
-          width: 0;
-        }
-        .otp-wrapper {
+        .topics-grid {
           display: flex;
-          gap: 8px;
-
-          .otp-box {
-            display: flex;
-            width: 64px;
-            min-height: 64px;
-            padding: var(--spacing-xxs, 2px) var(--spacing-md, 8px);
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: var(--spacing-md, 8px);
-            transition: border-color 0.2s;
-
-            border-radius: var(--radius-lg, 10px);
-            border: 1px solid var(--colors-border-border-primary, #d2d2d2);
-            background: var(--colors-background-bg-primary, #fff);
-
-            /* Shadows/shadow-xs */
-            box-shadow: 0 1px 2px 0
-              var(--colors-effects-shadows-shadow-xs, rgba(10, 13, 18, 0.05));
-
-            color: var(--colors-text-text-placeholder_subtle, #d2d2d2);
-
-            text-align: center;
-
-            /* Display lg/Medium */
-            font-family: var(--font-family-font-family-display, Roboto);
-            font-size: var(--font-size-display-lg, 48px);
-            font-style: normal;
-            font-weight: 500;
-            line-height: var(--line-height-display-lg, 60px); /* 125% */
-            letter-spacing: -0.96px;
-
-            &.current {
-              border: 2px solid var(--colors-border-border-brand, #f5620f);
-              background: var(--colors-background-bg-primary, #fff);
-              box-shadow: 0 1px 2px 0
-                  var(
-                    --colors-effects-shadows-shadow-xs,
-                    rgba(10, 13, 18, 0.05)
-                  ),
-                0 0 0 2px var(--colors-background-bg-primary, #fff),
-                0 0 0 4px var(--colors-effects-focus-rings-focus-ring, #f5620f);
-            }
-            &.filled {
-              border-radius: var(--radius-lg, 10px);
-              border: 2px solid var(--colors-border-border-brand, #f7813f);
-
-              color: var(--colors-text-text-brand-tertiary_alt, #fbfbfb);
-            }
-          }
+          padding: 10px 0;
+          align-items: center;
+          align-content: center;
+          gap: 10px;
+          align-self: stretch;
+          flex-wrap: wrap;
         }
-      }
-    }
-    .support-text {
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      gap: var(--spacing-xs, 4px);
-      align-self: stretch;
-
-      color: var(--colors-text-text-tertiary-600, #8c8c8c);
-
-      /* Text sm/Regular */
-      font-family: var(--font-family-font-family-body, Roboto);
-      font-size: var(--font-size-text-sm, 14px);
-      font-style: normal;
-      font-weight: 400;
-      line-height: var(--line-height-text-sm, 20px); /* 142.857% */
-
-      .resend {
-        color: var(--colors-text-text-brand-secondary-700, #d2d2d2);
-
-        /* Text sm/Semibold */
-        font-style: normal;
-        font-weight: 600;
       }
     }
   }

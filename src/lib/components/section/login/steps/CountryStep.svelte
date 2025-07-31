@@ -67,7 +67,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="phone-step">
+<div class="country-step">
   <div class="logo-wrapper">
     <div class="bg"><GridBg /></div>
     <div class="icon-wrapper">

@@ -102,6 +102,7 @@
   .wrapper {
     display: flex;
     padding-block: 8px;
+    width: 100%;
 
     flex-direction: column;
     background-color: var(--colors-background-bg-primary);

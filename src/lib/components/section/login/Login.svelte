@@ -17,6 +17,7 @@
   import PhoneStep from "./steps/PhoneStep.svelte";
   import ProfileStep from "./steps/ProfileStep.svelte";
   import SportstackStep from "./steps/SportstackStep.svelte";
+  import TopicsStep from "./steps/TopicsStep.svelte";
 
   // #region ➤ 📦 Package Imports
 
@@ -57,7 +58,8 @@
     2: PhoneStep,
     3: ProfileStep,
     4: CountryStep,
-    5: SportstackStep
+    5: SportstackStep,
+    6: TopicsStep
   };
 
   // #endregion ➤ 📌 VARIABLES

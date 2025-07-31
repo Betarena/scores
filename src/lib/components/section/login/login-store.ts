@@ -5,6 +5,6 @@ export const loginStore = writable({
     isLogin: false,
     password: "",
     name: "",
-    currentStep: 5,
+    currentStep: 6,
     avatar: ""
 })

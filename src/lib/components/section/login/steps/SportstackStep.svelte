@@ -6,7 +6,6 @@
   import Container from "$lib/components/ui/wrappers/Container.svelte";
   import { loginStore } from "../login-store";
 
-  
   // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -21,8 +20,9 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  $: ({objAuthorContentForecast: {mapAuthor}} = $page.data);
-  $: sportstacks = mapAuthor.map(s => s[1]);
+  $: ({
+    objAuthorContentForecast: { mapAuthor: sportstacks },
+  } = $page.data);
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -65,9 +65,9 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="phone-step">
+<div class="sportstack-step">
   <div class="logo-wrapper">
-    <div class="bg"><CircleBg/></div>
+    <div class="bg"><CircleBg /></div>
     <div class="icon-wrapper">
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -93,7 +93,7 @@
         <p class="subtitle">Follow at least 3 publications</p>
       </div>
       <div class="form-body">
-        <SportsTackList  {sportstacks} />
+        <SportsTackList {sportstacks} />
         <Button
           full={true}
           size="lg"
@@ -213,6 +213,14 @@
         align-items: center;
         gap: var(--spacing-4xl, 32px);
         align-self: stretch;
+
+        :global(.list-wrapper ) {
+
+            padding-block: 0;
+        }
+        :global(.list-item) {
+          padding-inline: 0;
+        }
       }
     }
   }
