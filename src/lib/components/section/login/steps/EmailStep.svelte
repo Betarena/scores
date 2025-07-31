@@ -133,7 +133,7 @@
 
 <div class="email-step">
   <div class="logo-wrapper">
-    <div class="bg"><CircleBg /></div>
+    <div class="bg"><CircleBg animation="ripple" duration={10}  /></div>
     <img src="/assets/svg/logo-betarena.svg" alt="Betarena Logo" />
   </div>
   <Container>

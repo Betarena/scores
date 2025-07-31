@@ -68,7 +68,7 @@
 
 <div class="password-step">
   <div class="logo-wrapper">
-    <div class="bg"><CircleBg /></div>
+    <div class="bg"><CircleBg animation="grow" duration={11}/></div>
     <div class="key-icon">
       <svg
         width="29"
