@@ -14,6 +14,7 @@
   import CountryStep from "./steps/CountryStep.svelte";
   import EmailStep from "./steps/EmailStep.svelte";
   import PasswordStep from "./steps/PasswordStep.svelte";
+  import PhoneCodeStep from "./steps/PhoneCodeStep.svelte";
   import PhoneStep from "./steps/PhoneStep.svelte";
   import ProfileStep from "./steps/ProfileStep.svelte";
   import SportstackStep from "./steps/SportstackStep.svelte";
@@ -56,10 +57,11 @@
     0: EmailStep,
     1: PasswordStep,
     2: PhoneStep,
-    3: ProfileStep,
-    4: CountryStep,
-    5: SportstackStep,
-    6: TopicsStep
+    3: PhoneCodeStep,
+    4: ProfileStep,
+    5: CountryStep,
+    6: SportstackStep,
+    7: TopicsStep
   };
 
   // #endregion ➤ 📌 VARIABLES
@@ -133,6 +135,7 @@
     position: fixed;
     top: 0;
     left: 0;
+
 
     .back-button {
       position: absolute;

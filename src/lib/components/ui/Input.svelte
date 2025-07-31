@@ -26,7 +26,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let required: boolean = false;
-  export let inputType: "text" | "number" | "password" | "textarea" | "email" = "text";
+  export let inputType: HTMLInputElement["type"] | "textarea" = "text";
   export let error = false;
   export let placeholder = "";
   export let type: "input" | "leading-text" = "input";
@@ -195,7 +195,7 @@
         line-height: var(--line-height-text-sm, 20px); /* 142.857% */
       }
       .required {
-        color: var(--colors-brand-5);
+        color: var(--colors-text-text-brand-tertiary-600, #d2d2d2);
         /* Text sm/Medium */
         font-family: var(--font-family-font-family-body, Roboto);
         font-size: var(--font-size-text-sm, 14px);
