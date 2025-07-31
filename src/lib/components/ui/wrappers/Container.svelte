@@ -3,6 +3,7 @@
   export let clazz = "";
   export let hFull = true;
 </script>
+
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ 💠 Svelte Component HTML                                                         │
@@ -14,9 +15,12 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-
-<div {...$$restProps} class="container-wrapper {$session.viewportType}  {clazz}" class:hFull >
-  <slot/>
+<div
+  {...$$restProps}
+  class="container-wrapper {$session.viewportType}  {clazz}"
+  class:hFull
+>
+  <slot />
 </div>
 
 <!--
@@ -30,25 +34,22 @@
 -->
 
 <style lang="scss">
+  .container-wrapper {
+    width: 100%;
+    padding: 0 var(--container-padding-mobile, 16px);
 
-.container-wrapper {
-  width: 100%;
-  padding-inline: 16px;
+    &.tablet {
+      padding-inline: 34px;
+    }
 
+    &.desktop {
+      max-width: 1430px;
+      margin-inline: auto;
+      padding-inline: 34px;
+    }
 
-  &.tablet {
-    padding-inline: 34px;
+    &.hFull {
+      height: 100%;
+    }
   }
-
-  &.desktop {
-    max-width: 1430px;
-    margin-inline: auto;
-    padding-inline: 34px;
-  }
-
-  &.hFull {
-    height: 100%;
-  }
-}
-
 </style>

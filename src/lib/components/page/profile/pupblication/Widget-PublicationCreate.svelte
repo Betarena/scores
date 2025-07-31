@@ -23,19 +23,19 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  import { enhance } from "$app/forms";
+  import { goto } from "$app/navigation";
+  import { page } from "$app/stores";
+  import { post } from "$lib/api/utils.js";
   import Button from "$lib/components/ui/Button.svelte";
   import Input from "$lib/components/ui/Input.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
-  import userSettings from "$lib/store/user-settings.js";
-  import type { PageData } from ".svelte-kit/types/src/routes/(scores)/u/author/create/[lang=lang]/$types.js";
   import session from "$lib/store/session.js";
-  import WidgetMenuOpt from "../Widget-MenuOpt.svelte";
-  import { post } from "$lib/api/utils.js";
-  import { page } from "$app/stores";
-  import { enhance } from "$app/forms";
+  import userSettings from "$lib/store/user-settings.js";
   import { submitWrapper } from "$lib/utils/sveltekitWrapper.js";
-  import { goto } from "$app/navigation";
+  import type { PageData } from ".svelte-kit/types/src/routes/(scores)/u/author/create/[lang=lang]/$types.js";
   import { mutateStringToPermalink } from "@betarena/scores-lib/dist/util/language.js";
+  import WidgetMenuOpt from "../Widget-MenuOpt.svelte";
   export let data: PageData;
 
   // #endregion ➤ 📦 Package Imports
@@ -177,7 +177,7 @@
             placeholder={translation?.default_name || "default_sportstack"}
             on:input={debounceValidation}
             error={inputError}
-            requred={true}
+            required={true}
             bind:value={name}
           >
             <span slot="label">URL</span>

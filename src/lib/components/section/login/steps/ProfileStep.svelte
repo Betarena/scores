@@ -1,0 +1,245 @@
+<script lang="ts">
+  import { scoresAuthStore } from "$lib/components/_main_/auth/_store";
+  import GridBg from "$lib/components/shared/backround-patterns/GridBG.svelte";
+  import Avatar from "$lib/components/ui/Avatar.svelte";
+  import Button from "$lib/components/ui/Button.svelte";
+  import Input from "$lib/components/ui/Input.svelte";
+  import SectionLabel from "$lib/components/ui/SectionLabel.svelte";
+  import Uploader from "$lib/components/ui/Uploader.svelte";
+  import Container from "$lib/components/ui/wrappers/Container.svelte";
+  import { loginStore } from "../login-store";
+
+  // #region ➤ 📌 VARIABLES
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+  let confirmPhoneNumber = "";
+  $: ({ email, isLogin, password, name, avatar } = $loginStore);
+  $: ({ globalState } = $scoresAuthStore);
+
+  // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
+
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+  // #endregion ➤ 🛠️ METHODS
+</script>
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 💠 Svelte Component HTML                                                  d       │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<div class="phone-step">
+  <div class="logo-wrapper">
+    <div class="bg"><GridBg /></div>
+    <div class="phone-icon">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="29"
+        height="28"
+        viewBox="0 0 29 28"
+        fill="none"
+      >
+        <path
+          d="M23.8333 24.5C23.8333 22.8718 23.8333 22.0578 23.6324 21.3953C23.1799 19.9039 22.0128 18.7367 20.5213 18.2843C19.8589 18.0833 19.0448 18.0833 17.4167 18.0833H11.5833C9.95517 18.0833 9.14109 18.0833 8.47866 18.2843C6.98719 18.7367 5.82004 19.9039 5.3676 21.3953C5.16666 22.0578 5.16666 22.8718 5.16666 24.5M19.75 8.75C19.75 11.6495 17.3995 14 14.5 14C11.6005 14 9.24999 11.6495 9.24999 8.75C9.24999 5.8505 11.6005 3.5 14.5 3.5C17.3995 3.5 19.75 5.8505 19.75 8.75Z"
+          stroke="#D2D2D2"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </div>
+  </div>
+  <Container hFull={false}>
+    <div class="form">
+      <div class="header">
+        <h2>Profile</h2>
+        <p class="subtitle">Set up your profile</p>
+      </div>
+      <div class="form-body">
+        <Input
+          label="Name"
+          bind:value={$loginStore.name}
+          required={true}
+          placeholder="First and Last Name"
+        />
+
+        <div class="profile-photo-wrapper">
+          <SectionLabel
+            text="This will be displayed on your profile."
+            title="Your photo"
+          />
+          <Avatar size="xxl" src={$loginStore.avatar} />
+          <Uploader bind:avatar={$loginStore.avatar}/>
+        </div>
+        <Button
+          full={true}
+          size="lg"
+          disabled={!name}
+          on:click={() => {
+            $loginStore.currentStep += 1;
+          }}>Continue</Button
+        >
+      </div>
+    </div>
+  </Container>
+</div>
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 🌊 Svelte Component CSS/SCSS                                                     │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<style lang="scss">
+  .phone-step {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+    position: relative;
+    padding: var(--spacing-6xl, 48px) 0;
+    gap: var(--spacing-4xl, 32px);
+
+    .logo-wrapper {
+      display: flex;
+      justify-content: center;
+      height: max-content;
+      position: relative;
+      .bg {
+        position: absolute;
+        z-index: -1;
+        right: 50%;
+        top: 50%;
+        transform: translate(50%, -50%);
+      }
+      .phone-icon {
+        display: flex;
+        width: 56px;
+        height: 56px;
+        padding: 14px;
+        justify-content: center;
+        align-items: center;
+        aspect-ratio: 1/1;
+        border-radius: var(--spacing-lg, 12px);
+        border: 1px solid var(--colors-border-border-primary, #525252);
+        background: var(--colors-background-bg-primary, #1f1f1f);
+
+        /* Shadows/shadow-xs-skeuomorphic */
+        box-shadow: 0 0 0 1px
+            var(
+              --colors-effects-shadows-shadow-skeumorphic-inner-border,
+              rgba(12, 14, 18, 0.18)
+            )
+            inset,
+          0 -2px 0 0 var(
+              --colors-effects-shadows-shadow-skeumorphic-inner,
+              rgba(12, 14, 18, 0.05)
+            ) inset,
+          0 1px 2px 0
+            var(--colors-effects-shadows-shadow-xs, rgba(255, 255, 255, 0));
+        color: var(--colors-foreground-fg-secondary-700);
+        svg {
+          width: 28px;
+          height: 28px;
+        }
+      }
+    }
+    .form {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-4xl, 32px);
+      .header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--spacing-md, 8px);
+        justify-content: center;
+        h2 {
+          color: var(--colors-text-text-primary-900, #fff);
+          text-align: center;
+          margin: 0;
+
+          /* Display xs/Semibold */
+          font-family: var(--font-family-font-family-display, Roboto);
+          font-size: var(--font-size-display-xs, 24px);
+          font-style: normal;
+          font-weight: 600;
+          line-height: var(--line-height-display-xs, 32px); /* 133.333% */
+        }
+        .subtitle {
+          color: var(--colors-text-text-tertiary-600, #8c8c8c);
+          text-align: center;
+
+          /* Text md/Regular */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-md, 16px);
+          font-style: normal;
+          font-weight: 400;
+          line-height: var(--line-height-text-md, 24px); /* 150% */
+        }
+      }
+
+      .form-body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--spacing-4xl, 32px);
+        align-self: stretch;
+
+        .profile-photo-wrapper {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 20px;
+          align-self: stretch;
+        }
+      }
+    }
+  }
+</style>
