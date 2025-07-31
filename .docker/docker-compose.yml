@@ -52,8 +52,13 @@ services:
       replicas: ${BETARNA_SCORES__REPLICAS:-3}
     env_file: ../env/.env.docker.scores
     volumes:
-      - ../static/robots.txt:/app/build/client/robots.txt:ro
-      - ../static/sitemap.xml:/app/build/client/sitemap.xml:ro
+      - ./scores/robots.txt:/app/build/client/robots.txt:ro
+      - ./scores/sitemap.xml:/app/build/client/sitemap.xml:ro
+      # ╭─────
+      # │ NOTE: WARNING:
+      # │ |: This volume is used to share scripts between the host and the container.
+      # │ |: Enable it only if you need to run scripts from the host.
+      # ╰─────
       # - ../.scripts:/app/.scripts:rw
     expose:
       - 3000
