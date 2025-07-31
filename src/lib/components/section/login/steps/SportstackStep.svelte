@@ -1,11 +1,12 @@
 <script lang="ts">
-  import GridBg from "$lib/components/shared/backround-patterns/GridBG.svelte";
+  import { page } from "$app/stores";
+  import CircleBg from "$lib/components/shared/backround-patterns/CircleBG.svelte";
   import Button from "$lib/components/ui/Button.svelte";
-  import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
+  import SportsTackList from "$lib/components/ui/composed/sportstack_list/SportsTackList.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
-  import IconGlobe from "../icons/IconGlobe.svelte";
   import { loginStore } from "../login-store";
 
+  
   // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -20,11 +21,8 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  const country = [
-    { id: 1, label: "Portugal" },
-    { id: 2, label: "Brazil" },
-  ];
-
+  $: ({objAuthorContentForecast: {mapAuthor}} = $page.data);
+  $: sportstacks = mapAuthor.map(s => s[1]);
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -69,23 +67,33 @@
 
 <div class="phone-step">
   <div class="logo-wrapper">
-    <div class="bg"><GridBg /></div>
+    <div class="bg"><CircleBg/></div>
     <div class="icon-wrapper">
-      <IconGlobe />
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="29"
+        height="28"
+        viewBox="0 0 29 28"
+        fill="none"
+      >
+        <path
+          d="M14.5 18.0833H9.25001C7.62185 18.0833 6.80777 18.0833 6.14534 18.2843C4.65387 18.7367 3.48672 19.9039 3.03429 21.3953C2.83334 22.0578 2.83334 22.8718 2.83334 24.5M22.6667 24.5V17.5M19.1667 21H26.1667M17.4167 8.75C17.4167 11.6495 15.0662 14 12.1667 14C9.26718 14 6.91668 11.6495 6.91668 8.75C6.91668 5.8505 9.26718 3.5 12.1667 3.5C15.0662 3.5 17.4167 5.8505 17.4167 8.75Z"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
     </div>
   </div>
   <Container hFull={false}>
     <div class="form">
       <div class="header">
-        <h2>Select Country</h2>
-        <p class="subtitle">Where are you from?</p>
+        <h2>Follow Sportstacks</h2>
+        <p class="subtitle">Follow at least 3 publications</p>
       </div>
       <div class="form-body">
-        <DropDownInput label="Country" options={country} placeholder="Select your country" infoText="Select your country to customise your feed">
-          <span slot="icon" class="select-icon">
-            <IconGlobe />
-          </span>
-        </DropDownInput>
+        <SportsTackList  {sportstacks} />
         <Button
           full={true}
           size="lg"
@@ -109,7 +117,7 @@
 -->
 
 <style lang="scss">
-  .country-step {
+  .sportstack-step {
     width: 100%;
     height: 100%;
     display: flex;
@@ -205,13 +213,6 @@
         align-items: center;
         gap: var(--spacing-4xl, 32px);
         align-self: stretch;
-
-        .select-icon {
-          color: var(--colors-foreground-fg-quaternary-400);
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
       }
     }
   }

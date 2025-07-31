@@ -16,6 +16,7 @@
   import PasswordStep from "./steps/PasswordStep.svelte";
   import PhoneStep from "./steps/PhoneStep.svelte";
   import ProfileStep from "./steps/ProfileStep.svelte";
+  import SportstackStep from "./steps/SportstackStep.svelte";
 
   // #region ➤ 📦 Package Imports
 
@@ -55,7 +56,8 @@
     1: PasswordStep,
     2: PhoneStep,
     3: ProfileStep,
-    4: CountryStep
+    4: CountryStep,
+    5: SportstackStep
   };
 
   // #endregion ➤ 📌 VARIABLES

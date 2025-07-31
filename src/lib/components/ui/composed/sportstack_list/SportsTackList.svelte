@@ -8,10 +8,10 @@
 -->
 
 <script lang="ts">
+  import { page } from "$app/stores";
+  import SeoBox from "$lib/components/SEO-Box.svelte";
   import session from "$lib/store/session.js";
   import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
-  import SeoBox from "$lib/components/SEO-Box.svelte";
-  import { page } from "$app/stores";
   import ListSportsTackItem from "./ListSportsTackItem.svelte";
   import ListSportsTackLoader from "./ListSportsTackLoader.svelte";
   // #region ➤ 📌 VARIABLES
@@ -29,7 +29,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let sportstacks = new Map(),
-    translations: IPageAuthorTranslationDataFinal,
+    translations = { } as IPageAuthorTranslationDataFinal,
     loading = false,
     size: number | string = 40,
     limit = 10,
