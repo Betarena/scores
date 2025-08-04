@@ -2,7 +2,7 @@
   import GridBg from "$lib/components/shared/backround-patterns/GridBG.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
-  import { linkPhoneToUser, verifyPhoneCode } from "$lib/firebase/firebase.actions";
+  import { verifyPhoneCode } from "$lib/firebase/firebase.actions";
   import { loginStore } from "../login-store";
 
   // #region ➤ 📌 VARIABLES
@@ -85,9 +85,10 @@
     errorMessage = "";
     
     try {
-      await verifyPhoneCode(confirmationResult, value);
+      const credentials = await verifyPhoneCode(confirmationResult, value);
+      console.log("credentials: ", credentials)
 
-      await linkPhoneToUser(phoneNumber, recaptchaVerifier)
+      // await linkPhoneToUser(phoneNumber, recaptchaVerifier)
       
       // Phone verification successful - move to next step
       $loginStore.currentStep += 1;
@@ -145,6 +146,11 @@
   }
 
   // #endregion ➤ 🛠️ METHODS
+
+  $: if(hiddenInput) {
+    hiddenInput.focus();
+    isInFocus = true;
+  }
 </script>
 
 <!--
