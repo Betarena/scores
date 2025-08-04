@@ -1,3 +1,4 @@
+import type { ConfirmationResult, RecaptchaVerifier } from "firebase/auth";
 import { writable } from "svelte/store";
 
 export const loginStore = writable({
@@ -5,6 +6,9 @@ export const loginStore = writable({
     isLogin: false,
     password: "",
     name: "",
-    currentStep: 0,
-    avatar: ""
+    currentStep: 2,
+    avatar: "",
+    phoneNumber: "",
+    confirmationResult: null as ConfirmationResult | null,
+    recaptchaVerifier: null as RecaptchaVerifier | null
 })

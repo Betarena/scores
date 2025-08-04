@@ -32,8 +32,16 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   let password = "";
+  let errorMessage = "";
   $: ({ email, isLogin } = $loginStore);
   $: ({ globalState } = $scoresAuthStore);
+
+  let disableButton = true;
+  let emailError = false;
+
+  $: if (!email) {
+    emailError = false;
+  }
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -48,6 +56,20 @@
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
+
+
+  function validateEmail(email: string): boolean {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && email) {
+      errorMessage = "Invalid email address";
+      emailError = true;
+      return true;
+    }
+    if (email) {
+      disableButton = false;
+    }
+    emailError = false;
+    return false;
+  }
 
   /**
    * @author
@@ -145,9 +167,17 @@
       <div class="form-body">
         <Input
           inputType="email"
+          error={emailError}
+          on:change={() => validateEmail($loginStore.email)}
           placeholder="Enter your email"
           bind:value={$loginStore.email}
-        />
+        > 
+          <span slot="error">
+            {#if emailError}
+              {errorMessage}
+            {/if}
+          </span>
+        </Input>
         {#if isLogin}
           <Input
             inputType="password"
@@ -161,7 +191,7 @@
           <Button
             full={true}
             size="lg"
-            disabled={!email}
+            disabled={disableButton}
             on:click={() => {
               $loginStore.currentStep += 1
             }}>Get started</Button

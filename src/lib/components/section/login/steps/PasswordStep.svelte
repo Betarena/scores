@@ -3,6 +3,7 @@
   import Button from "$lib/components/ui/Button.svelte";
   import Input from "$lib/components/ui/Input.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
+  import { registerUser } from "$lib/firebase/firebase.actions";
   import { loginStore } from "../login-store";
 
   // #region ➤ 📌 VARIABLES
@@ -19,7 +20,12 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
   let confirmPassword = "";
-  $: ({ password } = $loginStore);
+  let isLoading = false;
+  let errorMessage = "";
+  $: ({ password, email, name } = $loginStore);
+  let mainPasswordError = ""
+  let confirmPasswordError = ""
+  $: disableButton = !!mainPasswordError || !!confirmPasswordError || !password || !confirmPassword || password !== confirmPassword;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -36,7 +42,6 @@
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  $: isValid = password && password.length > 7 && password === confirmPassword;
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
@@ -51,6 +56,62 @@
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
+
+
+  function validatePassword(password: string): boolean {
+    if (password.length < 8) {
+      mainPasswordError = "Password must be at least 8 characters";
+      return false;
+    }
+    mainPasswordError = "";
+    return true;
+  }
+
+  function validateConfirmPassword(password: string): boolean {
+    if (password !== $loginStore.password) {
+      confirmPasswordError = "Passwords do not match";
+      return false;
+    }
+    confirmPasswordError = "";
+    return true;
+  }
+
+  async function handleRegistration() {
+    if ( isLoading || !!mainPasswordError || !!confirmPasswordError) return;
+    
+    isLoading = true;
+    errorMessage = "";
+    
+    try {
+      await registerUser(email, password);
+      $loginStore.currentStep += 1;
+    } catch (error: any) {
+      console.error('Registration error:', error);
+      
+      // Handle specific Firebase Auth errors
+      switch (error.code) {
+        case 'auth/email-already-in-use':
+          errorMessage = 'This email is already registered. Please use a different email or try signing in.';
+          break;
+        case 'auth/invalid-email':
+          errorMessage = 'Please enter a valid email address.';
+          break;
+        case 'auth/weak-password':
+          errorMessage = 'Password is too weak. Please choose a stronger password.';
+          break;
+        case 'auth/operation-not-allowed':
+          errorMessage = 'Email/password accounts are not enabled. Please contact support.';
+          break;
+        case 'auth/network-request-failed':
+          errorMessage = 'Network error. Please check your internet connection and try again.';
+          break;
+        default:
+          errorMessage = 'Registration failed. Please try again.';
+      }
+    } finally {
+      isLoading = false;
+    }
+  }
 
   // #endregion ➤ 🛠️ METHODS
 </script>
@@ -97,22 +158,29 @@
         <input type="email" value={$loginStore.email} hidden />
         <Input
           inputType="password"
+          error={!!mainPasswordError}
           placeholder="Choose a password"
           bind:value={$loginStore.password}
-        />
+          on:change={() => validatePassword($loginStore.password)}
+        >
+          <span slot="error">{mainPasswordError}</span>
+        </Input>
         <Input
           inputType="password"
           bind:value={confirmPassword}
           placeholder="Confirm password"
-        />
+          error={!!confirmPasswordError}
+          on:change={() => validateConfirmPassword(confirmPassword)}
+        >
+          <span slot="error">{confirmPasswordError}</span>
+        </Input>
         <Button
           full={true}
           size="lg"
-          disabled={!isValid}
-          on:click={() => {
-            $loginStore.currentStep += 1;
-          }}>Continue</Button
-        >
+          disabled={disableButton}
+          on:click={handleRegistration}>
+          {isLoading ? 'Creating account...' : 'Create account'}
+        </Button>
       </div>
     </div></Container
   >

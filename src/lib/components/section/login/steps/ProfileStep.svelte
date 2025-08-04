@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { scoresAuthStore } from "$lib/components/_main_/auth/_store";
   import GridBg from "$lib/components/shared/backround-patterns/GridBG.svelte";
   import Avatar from "$lib/components/ui/Avatar.svelte";
   import Button from "$lib/components/ui/Button.svelte";
@@ -7,6 +6,10 @@
   import SectionLabel from "$lib/components/ui/SectionLabel.svelte";
   import Uploader from "$lib/components/ui/Uploader.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
+  import { uploadProfileAvatar } from "$lib/firebase/firebase.actions";
+  import { log_v3 } from "$lib/utils/debug";
+  import { updateUserProfileData } from "$lib/utils/user.js";
+  import { tryCatchAsync } from "@betarena/scores-lib/dist/util/common.js";
   import { loginStore } from "../login-store";
 
   // #region ➤ 📌 VARIABLES
@@ -22,9 +25,11 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  let confirmPhoneNumber = "";
-  $: ({ email, isLogin, password, name, avatar } = $loginStore);
-  $: ({ globalState } = $scoresAuthStore);
+
+  let isLoading = false;
+  let errorMessage = "";
+
+  $: ({ name, avatar } = $loginStore);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -53,7 +58,50 @@
   // │ Please, structure the imports as follows:                              │
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
+  // ╰───────────────────────────────────────────────────────────────╯
+
+
+  async function uploadProfilePicture(e: CustomEvent<string>): Promise<void> {
+    const img = e.detail;
+    await tryCatchAsync(async (): Promise<void> => {
+      log_v3({
+        strGroupName: "uploadProfilePicture(..)",
+        msgs: [
+          "🟢 Uploading profile picture...",
+          `🔗 ${img}`
+        ],
+      });
+
+      const avatar = await uploadProfileAvatar(img);
+      $loginStore.avatar = avatar;
+    });
+  }
+
+  async function handleContinue(): Promise<void> {
+    if (!name || isLoading) {
+      return;
+    }
+
+    isLoading = true;
+    errorMessage = "";
+
+    try {
+      // Update user profile data
+      await updateUserProfileData({
+        name: name,
+        profile_photo: avatar || null,
+      });
+
+      // Move to next step
+      $loginStore.currentStep += 1;
+    } catch (error: any) {
+      console.error("Profile update error:", error);
+      errorMessage = "Failed to update profile. Please try again.";
+    } finally {
+      isLoading = false;
+    }
+  }
+
   // #endregion ➤ 🛠️ METHODS
 </script>
 
@@ -68,10 +116,10 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="phone-step">
+<div class="profile-step">
   <div class="logo-wrapper">
     <div class="bg"><GridBg /></div>
-    <div class="phone-icon">
+    <div class="profile-icon">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="29"
@@ -109,16 +157,16 @@
             title="Your photo"
           />
           <Avatar size="xxl" src={$loginStore.avatar} />
-          <Uploader bind:avatar={$loginStore.avatar}/>
+          <Uploader bind:avatar={$loginStore.avatar} on:upload={uploadProfilePicture} />
         </div>
         <Button
           full={true}
           size="lg"
-          disabled={!name}
-          on:click={() => {
-            $loginStore.currentStep += 1;
-          }}>Continue</Button
+          disabled={!name || isLoading}
+          on:click={handleContinue}
         >
+          {isLoading ? "Updating..." : "Continue"}
+        </Button>
       </div>
     </div>
   </Container>
@@ -135,7 +183,7 @@
 -->
 
 <style lang="scss">
-  .phone-step {
+  .profile-step {
     width: 100%;
     height: 100%;
     display: flex;
@@ -158,7 +206,7 @@
         top: 50%;
         transform: translate(50%, -50%);
       }
-      .phone-icon {
+      .profile-icon {
         display: flex;
         width: 56px;
         height: 56px;

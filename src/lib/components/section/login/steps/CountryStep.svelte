@@ -3,6 +3,7 @@
   import Button from "$lib/components/ui/Button.svelte";
   import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
+  import { updateUserProfileData } from "$lib/utils/user";
   import IconGlobe from "../icons/IconGlobe.svelte";
   import { loginStore } from "../login-store";
 
@@ -24,6 +25,7 @@
     { id: 1, label: "Portugal" },
     { id: 2, label: "Brazil" },
   ];
+  let value: { id: number | string; label: string } | null = null;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -53,6 +55,16 @@
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
+
+  async function saveCountrySelection() {
+    try {
+      await updateUserProfileData({ country: value?.label });
+      $loginStore.currentStep += 1;
+    } catch (error) {
+      console.error("Failed to update country in profile:", error);
+    }
+  }
+
   // #endregion ➤ 🛠️ METHODS
 </script>
 
@@ -81,17 +93,16 @@
         <p class="subtitle">Where are you from?</p>
       </div>
       <div class="form-body">
-        <DropDownInput label="Country" options={country} placeholder="Select your country" infoText="Select your country to customise your feed">
+        <DropDownInput bind:value label="Country" options={country} placeholder="Select your country" infoText="Select your country to customise your feed">
           <span slot="icon" class="select-icon">
             <IconGlobe />
           </span>
         </DropDownInput>
         <Button
           full={true}
+          disabled = {!value}
           size="lg"
-          on:click={() => {
-            $loginStore.currentStep += 1;
-          }}>Continue</Button
+          on:click={saveCountrySelection}>Continue</Button
         >
       </div>
     </div>

@@ -17,7 +17,6 @@
 
 import purify from 'dompurify';
 
-import { post } from '$lib/api/utils.js';
 import { userBalanceListen, userDataFetch } from '$lib/firebase/common.js';
 import { delCookie, setCookie } from '$lib/store/cookie.js';
 import sessionStore from '$lib/store/session.js';
@@ -411,28 +410,17 @@ export async function updateUserProfileData
       // │ |: Check for changes in `user` data, to avoid unnecessary updates when no changes are detected.
       // ╰─────
 
-      if (![objUser.user?.scores_user_data?.username, '', undefined].includes(objUserNewData.username))
-        objDataToUpdate.username = objUserNewData.username;
-      ;
-      if (![objUser.user?.scores_user_data?.name, '', undefined].includes(objUserNewData.name))
-        objDataToUpdate.name = objUserNewData.name;
-      ;
-      if (![objUser.user?.scores_user_data?.about, '', undefined].includes(objUserNewData.about))
-        objDataToUpdate.about = objUserNewData.about;
-      ;
-      if (![objUser.user?.scores_user_data?.wallet_id, '', undefined].includes(objUserNewData.wallet_id))
-        objDataToUpdate.wallet_id = objUserNewData.wallet_id;
-      ;
-      if (![objUser.user?.scores_user_data?.profile_photo, '', undefined].includes(objUserNewData.profile_photo))
-        objDataToUpdate.profile_photo = objUserNewData.profile_photo;
-      ;
+        Object.keys(objUserNewData).forEach(key => {
+          if (![objUser.user?.scores_user_data?.[key], '', undefined].includes(objUserNewData[key])) {
+            objDataToUpdate[key] = objUserNewData[key];
+          }
+        });
 
-      if (Object.keys(objDataToUpdate).length == 0)
-      {
-        // [🐞]
-        dlog('🔴 No changes detected...');
-        return;
-      }
+        if (Object.keys(objDataToUpdate).length == 0) {
+          // [🐞]
+          dlog('🔴 No changes detected...');
+          return;
+        }
 
       // ╭─────
       // │ NOTE:
@@ -525,27 +513,35 @@ export async function updateUserProfileData
         listDataToUpdate: [IDataProp, any][] = []
       ;
 
-      // ╭─────
-      // │ NOTE:
-      // │ |: Loop through the (1) `object` containing 'NEW' data and (2) update the `data` accordingly.
-      // ╰─────
-      for (const key in objDataToUpdate)
-      {
-        // [🐞]
-        // dlog(`🔹 [var] ➤ key :|: ${key}`);
-
-        if (key === 'username')
-          listDataToUpdate.push([ 'user-name', purify.sanitize(objDataToUpdate[key]) ]);
-        else if (key === 'name')
-          listDataToUpdate.push([ 'user-name2', purify.sanitize(objDataToUpdate[key]) ]);
-        else if (key === 'about')
-          listDataToUpdate.push([ 'user-about', purify.sanitize(objDataToUpdate[key]) ]);
-        else if (key === 'wallet_id')
-          listDataToUpdate.push([ 'user-wallet', objDataToUpdate[key] ]);
-        else if (key === 'profile_photo')
-          listDataToUpdate.push([ 'user-avatar', objDataToUpdate[key] ]);
-        ;
-      }
+        // ╭─────
+        // │ NOTE:
+        // │ |: Loop through the (1) `object` containing 'NEW' data and (2) update the `data` accordingly.
+        // ╰─────
+        const keyMap = {
+          "username": "user-name",
+          'name': "user-name2",
+          'about': 'user-about',
+          'wallet_id': 'user-wallet',
+          'profile_photo': 'user-avatar'
+        }
+        for (const key in objDataToUpdate) {
+          const val = !['user-wallet', 'user-avatar'].includes(key) ?
+            purify.sanitize(objDataToUpdate[key]) : objDataToUpdate[key];
+          listDataToUpdate.push([keyMap[key] || key, val]);
+          // [🐞]
+          // dlog(`🔹 [var] ➤ key :|: ${key}`);
+          // if (key === 'username')
+          //   listDataToUpdate.push(['user-name', purify.sanitize(objDataToUpdate[key])]);
+          // else if (key === 'name')
+          //   listDataToUpdate.push(['user-name2', purify.sanitize(objDataToUpdate[key])]);
+          // else if (key === 'about')
+          //   listDataToUpdate.push(['user-about', purify.sanitize(objDataToUpdate[key])]);
+          // else if (key === 'wallet_id')
+          //   listDataToUpdate.push(['user-wallet', objDataToUpdate[key]]);
+          // else if (key === 'profile_photo')
+          //   listDataToUpdate.push(['user-avatar', objDataToUpdate[key]]);
+          // ;
+        }
 
       userBetarenaSettings.updateData(listDataToUpdate);
 

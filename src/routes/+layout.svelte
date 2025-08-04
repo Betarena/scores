@@ -76,13 +76,12 @@
   import ModalError from '$lib/components/misc/modal/Modal-Error.svelte';
   import ModalMain from '$lib/components/misc/modal/ModalMain.svelte';
   import ToastAuth from '$lib/components/misc/toast/Toast-Auth/Toast-Auth.svelte';
+  import Login from '$lib/components/section/login/Login.svelte';
   import InfoMessages from '$lib/components/ui/infomessages/InfoMessages.svelte';
-
   import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
-  // import '@betarena/ad-engine';
+// import '@betarena/ad-engine';
   // import WidgetAdEngine from '@betarena/ad-engine/src/lib/Widget-AdEngine.svelte';
   import AndroidPwaBanner from '$lib/components/AndroidPWABanner.svelte';
-  import Login from '$lib/components/section/login/Login.svelte';
   import history_store from '$lib/store/history.js';
   import { modalStore } from '$lib/store/modal';
   import WidgetAdEngine from '@betarena/ad-engine';

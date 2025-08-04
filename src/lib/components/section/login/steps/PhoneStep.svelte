@@ -1,10 +1,12 @@
 <script lang="ts">
-  import CircleBg from "$lib/components/shared/backround-patterns/CircleBG.svelte";
-  import Button from "$lib/components/ui/Button.svelte";
-  import Input from "$lib/components/ui/Input.svelte";
-  import Container from "$lib/components/ui/wrappers/Container.svelte";
-  import IconPhoneVerification from "../icons/IconPhoneVerification.svelte";
-  import { loginStore } from "../login-store";
+	import CircleBg from "$lib/components/shared/backround-patterns/CircleBG.svelte";
+	import Button from "$lib/components/ui/Button.svelte";
+	import Input from "$lib/components/ui/Input.svelte";
+	import Container from "$lib/components/ui/wrappers/Container.svelte";
+	import { sendPhoneVerificationCode } from "$lib/firebase/firebase.actions";
+	import IconPhoneVerification from "../icons/IconPhoneVerification.svelte";
+	import { loginStore } from "../login-store";
+	import { countries } from './CountryCodes';
 
   // #region ➤ 📌 VARIABLES
 
@@ -21,19 +23,11 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   let phoneNumber = "";
-  let selectedCountry = "US";
-
-  const countries = [
-    { code: "US", name: "United States", flag: "🇺🇸" },
-    { code: "GB", name: "United Kingdom", flag: "🇬🇧" },
-    { code: "DE", name: "Germany", flag: "🇩🇪" },
-    { code: "FR", name: "France", flag: "🇫🇷" },
-    { code: "ES", name: "Spain", flag: "🇪🇸" },
-    { code: "IT", name: "Italy", flag: "🇮🇹" },
-    { code: "CA", name: "Canada", flag: "🇨🇦" },
-    { code: "AU", name: "Australia", flag: "🇦🇺" },
-  ];
-
+  let isLoading = false;
+  let errorMessage = "";
+  let countryCodes = countries.map((c, index) => ({id: `${c.code}_${index}`, label: `${c.code} ${c.dial_code}`, ...c}));
+  let selectedCountryCode = countryCodes[0];
+  $: ({ recaptchaVerifier } = $loginStore);
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -49,6 +43,9 @@
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  $: fullPhoneNumber = phoneNumber;
+  $: isValidPhone = phoneNumber.trim().length >= 10;
+
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🛠️ METHODS
@@ -63,10 +60,59 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function sendVerificationCode() {
-    // Здесь будет логика отправки кода верификации
-    console.log("Sending verification code to:", phoneNumber);
-    $loginStore.currentStep += 1;
+  async function sendVerificationCode() {
+    if (!isValidPhone || isLoading || !recaptchaVerifier) return;
+
+    isLoading = true;
+    errorMessage = "";
+
+    try {
+      // Render reCAPTCHA
+      await recaptchaVerifier.render();
+
+      // Send verification code
+      $loginStore.confirmationResult = await sendPhoneVerificationCode(
+        fullPhoneNumber,
+        recaptchaVerifier
+      );
+
+      // Store phone number in login store
+      $loginStore.phoneNumber = fullPhoneNumber;
+
+      // Move to next step
+      $loginStore.currentStep += 1;
+    } catch (error: any) {
+      console.error("Phone verification error:", error);
+
+      // Handle specific Firebase Auth errors
+      switch (error.code) {
+        case "auth/invalid-phone-number":
+          errorMessage = "Please enter a valid phone number.";
+          break;
+        case "auth/missing-phone-number":
+          errorMessage = "Please enter your phone number.";
+          break;
+        case "auth/quota-exceeded":
+          errorMessage =
+            "Too many verification attempts. Please try again later.";
+          break;
+        case "auth/operation-not-allowed":
+          errorMessage =
+            "Phone authentication is not enabled. Please contact support.";
+          break;
+        case "auth/network-request-failed":
+          errorMessage =
+            "Network error. Please check your internet connection and try again.";
+          break;
+        case "auth/too-many-requests":
+          errorMessage = "Too many requests. Please try again later.";
+          break;
+        default:
+          errorMessage = "Failed to send verification code. Please try again.";
+      }
+    } finally {
+      isLoading = false;
+    }
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -103,17 +149,19 @@
           placeholder="+1 (555) 000-0000"
           bind:value={phoneNumber}
           required={true}
+          error={!!errorMessage}
           name="phone"
         >
+          <span slot="error">{errorMessage}</span>
           <span slot="info">Phone number to receive the code</span>
         </Input>
         <Button
           full={true}
           size="lg"
-          disabled={!phoneNumber.trim()}
+          disabled={!isValidPhone || isLoading}
           on:click={sendVerificationCode}
         >
-          Send verification code
+          {isLoading ? "Sending code..." : "Send verification code"}
         </Button>
       </div>
     </div>
@@ -235,7 +283,7 @@
           gap: var(--spacing-xs, 4px);
         }
 
-        :global(.country-selector select)  {
+        :global(.country-selector select) {
           background: transparent;
           border: none;
           color: var(--colors-text-text-primary-900, #fff);
@@ -247,12 +295,12 @@
           padding-right: var(--spacing-lg, 12px);
         }
 
-        :global(.country-selector select option)  {
+        :global(.country-selector select option) {
           background: var(--colors-background-bg-secondary, #2a2a2a);
           color: var(--colors-text-text-primary-900, #fff);
         }
 
-        :global(.country-selector .chevron-down)  {
+        :global(.country-selector .chevron-down) {
           color: var(--colors-text-text-tertiary-600, #8c8c8c);
           position: absolute;
           right: 0;
@@ -261,4 +309,4 @@
       }
     }
   }
-</style> 
+</style>

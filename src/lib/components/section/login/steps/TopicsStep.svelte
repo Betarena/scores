@@ -3,6 +3,8 @@
   import Badge from "$lib/components/ui/Badge.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
+  import userSettings from "$lib/store/user-settings";
+  import userBetarenaSettings from "$lib/store/user-settings.js";
   import IconTopics from "../icons/IconTopics.svelte";
   import { loginStore } from "../login-store";
 
@@ -19,7 +21,8 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
+  $: ({ user: { scores_user_data } = { scores_user_data: {} } } =
+    $userSettings);
   const topics = [
     "Soccer",
     "Goals",
@@ -40,7 +43,7 @@
     "Boxing",
   ];
 
-  let selectedTopics: string[] = [];
+  $: selectedTopics = scores_user_data?.following?.tags || [];
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -72,11 +75,10 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   function toggleTopic(topic: string) {
-    if (selectedTopics.includes(topic)) {
-      selectedTopics = selectedTopics.filter((t) => t !== topic);
-    } else {
-      selectedTopics = [...selectedTopics, topic];
-    }
+    const follow = !selectedTopics.includes(topic);
+    userBetarenaSettings.updateData([
+      ["user-following", { target: "tags", id: topic, follow }],
+    ]);
   }
 
   // #endregion ➤ 🛠️ METHODS

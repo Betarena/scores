@@ -4,6 +4,7 @@
   import Button from "$lib/components/ui/Button.svelte";
   import SportsTackList from "$lib/components/ui/composed/sportstack_list/SportsTackList.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
+  import userSettings from "$lib/store/user-settings";
   import { loginStore } from "../login-store";
 
   // #region ➤ 📌 VARIABLES
@@ -23,6 +24,7 @@
   $: ({
     objAuthorContentForecast: { mapAuthor: sportstacks },
   } = $page.data);
+  $: ({user: {scores_user_data} = {scores_user_data: {}}} = $userSettings);
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -97,6 +99,7 @@
         <Button
           full={true}
           size="lg"
+          disabled={(scores_user_data?.subscriptions?.sportstacks?.length || 0) < 3}
           on:click={() => {
             $loginStore.currentStep += 1;
           }}>Continue</Button

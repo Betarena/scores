@@ -110,7 +110,7 @@
     </label>
   {/if}
   <div class="input-wrapper" class:focus class:error style="height: {height}">
-    {#if type === "leading-text"}
+    {#if type === "leading-text" || $$slots["leading-text"]}
       <div class="leading-text">
         <slot name="leading-text" />
       </div>

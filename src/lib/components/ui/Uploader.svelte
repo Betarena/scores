@@ -10,6 +10,7 @@
 <script lang="ts">
   import CropperModal from "$lib/components/ui/Cropper/CropperModal.svelte";
   import { dlog } from "$lib/utils/debug";
+  import { createEventDispatcher } from "svelte";
 
   // #region ➤ 📌 VARIABLES
 
@@ -32,8 +33,8 @@
     profile_pic: string | undefined;
 
   let image: string | ArrayBuffer | null | undefined;
-  let showCropModal = false;
   let modal = false;
+  const dispatch = createEventDispatcher();
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -53,6 +54,7 @@
     profile_pic = img;
     avatar = img;
     modal = false
+    dispatch("upload", img);
   }
 
   function handleFileChange(event) {
@@ -83,7 +85,6 @@
     let reader = new FileReader();
     reader.onload = (e) => {
       image = e.target?.result;
-      showCropModal = true;
       modal = true;
     };
     reader.readAsDataURL(file);

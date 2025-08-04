@@ -1,5 +1,20 @@
-import { db_real } from '$lib/firebase/init';
-import { child, get, onValue, ref } from 'firebase/database';
+import { PUBLIC_RECAPTCHA_SITE_KEY } from '$env/static/public';
+import { auth, db_real, storage } from '$lib/firebase/init';
+import { log_v3 } from '$lib/utils/debug';
+import { updateUserProfileData } from '$lib/utils/user';
+import {
+  createUserWithEmailAndPassword,
+  PhoneAuthProvider,
+  RecaptchaVerifier,
+  signInWithEmailAndPassword,
+  signInWithPhoneNumber,
+
+  type AuthError,
+  type ConfirmationResult,
+  type UserCredential
+} from 'firebase/auth';
+import { child, get, onValue } from 'firebase/database';
+import { getDownloadURL, ref, uploadString } from 'firebase/storage';
 
 /**
  * @summary
@@ -58,4 +73,205 @@ export async function realDbHeartBeat
       }
     }
   );
+}
+
+/**
+ * @summary
+ * [AUTH]
+ * @description
+ * Register a new user with email and password
+ * @param
+ * {string} email - User's email address
+ * {string} password - User's password
+ * @returns
+ * Promise<UserCredential> on success, throws AuthError on failure
+ */
+export async function registerUser(
+  email: string,
+  password: string
+): Promise<UserCredential> {
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    return userCredential;
+  } catch (error) {
+    throw error as AuthError;
+  }
+}
+
+/**
+ * @summary
+ * [AUTH]
+ * @description
+ * Sign in existing user with email and password
+ * @param
+ * {string} email - User's email address
+ * {string} password - User's password
+ * @returns
+ * Promise<UserCredential> on success, throws AuthError on failure
+ */
+export async function signInUser(
+  email: string,
+  password: string
+): Promise<UserCredential> {
+  try {
+    return await signInWithEmailAndPassword(auth, email, password);
+  } catch (error) {
+    throw error as AuthError;
+  }
+}
+
+/**
+ * @summary
+ * [PHONE AUTH]
+ * @description
+ * Initialize reCAPTCHA verifier for phone authentication
+ * @param
+ * {string} containerId - ID of the container element for reCAPTCHA
+ * @returns
+ * RecaptchaVerifier instance
+ */
+export function initializeRecaptcha(containerId: string): RecaptchaVerifier {
+  return new RecaptchaVerifier(containerId, {
+    size: 'invisible',
+    siteKey: PUBLIC_RECAPTCHA_SITE_KEY,
+    callback: () => {
+      console.log('reCAPTCHA solved');
+    },
+    'expired-callback': () => {
+      console.log('reCAPTCHA expired');
+    }
+  }, auth);
+}
+
+/**
+ * @summary
+ * [PHONE AUTH]
+ * @description
+ * Send verification code to phone number
+ * @param
+ * {string} phoneNumber - Phone number in international format (e.g., +1234567890)
+ * @param
+ * {RecaptchaVerifier} recaptchaVerifier - reCAPTCHA verifier instance
+ * @returns
+ * Promise<ConfirmationResult> on success, throws AuthError on failure
+ */
+export async function sendPhoneVerificationCode(
+  phoneNumber: string,
+  recaptchaVerifier: RecaptchaVerifier
+): Promise<ConfirmationResult> {
+  try {
+    return await signInWithPhoneNumber(auth, phoneNumber, recaptchaVerifier);
+  } catch (error) {
+    throw error as AuthError;
+  }
+}
+
+/**
+ * @summary
+ * [PHONE AUTH]
+ * @description
+ * Verify phone number with SMS code
+ * @param
+ * {ConfirmationResult} confirmationResult - Result from sendPhoneVerificationCode
+ * {string} code - SMS verification code
+ * @returns
+ * Promise<UserCredential> on success, throws AuthError on failure
+ */
+export async function verifyPhoneCode(
+  confirmationResult: ConfirmationResult,
+  code: string
+): Promise<UserCredential> {
+  try {
+    return await confirmationResult.confirm(code);
+  } catch (error) {
+    throw error as AuthError;
+  }
+}
+
+/**
+ * @summary
+ * [PHONE AUTH]
+ * @description
+ * Link phone number to existing user account
+ * @param
+ * {string} phoneNumber - Phone number in international format
+ * {RecaptchaVerifier} recaptchaVerifier - reCAPTCHA verifier instance
+ * @returns
+ * Promise<ConfirmationResult> on success, throws AuthError on failure
+ */
+export async function linkPhoneToUser(
+  phoneNumber: string,
+  recaptchaVerifier: RecaptchaVerifier
+): Promise<ConfirmationResult> {
+  try {
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+      throw new Error('No user is currently signed in');
+    }
+    
+    const phoneAuthProvider = new PhoneAuthProvider(auth);
+    const verificationId = await phoneAuthProvider.verifyPhoneNumber(
+      phoneNumber,
+      recaptchaVerifier
+    );
+    
+    // Note: This is a simplified version. In a real implementation,
+    // you would need to handle the verification ID and confirmation
+    // in a more complex way
+    return await signInWithPhoneNumber(auth, phoneNumber, recaptchaVerifier);
+  } catch (error) {
+    throw error as AuthError;
+  }
+}
+
+/**
+ * @summary
+ * [STORAGE]
+ * @description
+ * Upload a profile avatar to Firebase Storage
+ * @param
+ * {string} img - Image data URL
+ * @returns
+ * Promise<string> on success, throws error on failure
+ */
+export async function uploadProfileAvatar(img: string) {
+  const user = auth.currentUser;
+  if (!user) {
+    throw new Error('No user is currently signed in');
+  }
+
+  try {
+
+    const instStorageDocRef = ref(
+      storage,
+      `Users_data/${user.uid}/profile-pic.png`
+    );
+    
+    const dataRes0 = await uploadString(
+      instStorageDocRef,
+      img,
+      'data_url'
+    ); 
+
+    const dataRes1 = await getDownloadURL(instStorageDocRef);
+
+    // [🐞]
+    log_v3(
+      {
+        strGroupName: 'updateUserProfilePicture(..) // END',
+        msgs:
+        [
+          '🟢 Uploaded file!',
+          `🔗 ${dataRes0.ref.fullPath}`,
+          `🔗 ${dataRes1}`
+        ]
+      }
+    );
+
+    await updateUserProfileData({ profile_photo: dataRes1 });
+
+    return dataRes1;
+  } catch (error) {
+    throw error;
+  }
 }

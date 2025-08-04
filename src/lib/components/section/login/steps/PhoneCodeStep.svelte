@@ -2,6 +2,7 @@
   import GridBg from "$lib/components/shared/backround-patterns/GridBG.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
+  import { linkPhoneToUser, verifyPhoneCode } from "$lib/firebase/firebase.actions";
   import { loginStore } from "../login-store";
 
   // #region ➤ 📌 VARIABLES
@@ -18,8 +19,9 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
   let confirmPhoneNumber = "";
-  let length = 4;
-  
+  let length = 6; // Firebase SMS codes are typically 6 digits
+  let isLoading = false;
+  let errorMessage = "";
 
   let hiddenInput: HTMLInputElement;
   let value = "";
@@ -40,6 +42,8 @@
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
   $: isValid = value.length === length;
+  $: ({phoneNumber, confirmationResult, recaptchaVerifier} = $loginStore);
+  
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🛠️ METHODS
@@ -63,15 +67,83 @@
     value = (e.target as HTMLInputElement).value
       .replace(/\D/g, "")
       .slice(0, length);
-    if (value.length === length) isValid = true;
+    if (value.length === length) {
+      handleVerifyCode();
+    }
   }
-
 
   function handleKeydown(e: KeyboardEvent) {
     if (e.key === "Backspace" && !hiddenInput.value) {
       value = value.slice(0, -1);
     }
   }
+
+  async function handleVerifyCode() {
+    if (!isValid || isLoading || !confirmationResult || !recaptchaVerifier) return;
+    
+    isLoading = true;
+    errorMessage = "";
+    
+    try {
+      await verifyPhoneCode(confirmationResult, value);
+
+      await linkPhoneToUser(phoneNumber, recaptchaVerifier)
+      
+      // Phone verification successful - move to next step
+      $loginStore.currentStep += 1;
+      
+    } catch (error: any) {
+      console.error('Phone code verification error:', error);
+      
+      // Handle specific Firebase Auth errors
+      switch (error.code) {
+        case 'auth/invalid-verification-code':
+          errorMessage = 'Invalid verification code. Please check and try again.';
+          break;
+        case 'auth/missing-verification-code':
+          errorMessage = 'Please enter the verification code.';
+          break;
+        case 'auth/code-expired':
+          errorMessage = 'Verification code has expired. Please request a new one.';
+          break;
+        case 'auth/too-many-requests':
+          errorMessage = 'Too many attempts. Please try again later.';
+          break;
+        case 'auth/network-request-failed':
+          errorMessage = 'Network error. Please check your internet connection and try again.';
+          break;
+        default:
+          errorMessage = 'Failed to verify code. Please try again.';
+      }
+      
+      // Clear the input for retry
+      value = "";
+      hiddenInput.value = "";
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  async function resendCode() {
+    if (isLoading) return;
+    
+    isLoading = true;
+    errorMessage = "";
+    
+    try {
+      // This would need to be implemented to resend the code
+      // For now, we'll just show a message
+      console.log('Resending code to:', phoneNumber);
+      // You would call sendPhoneVerificationCode again here
+      
+    } catch (error: any) {
+      console.error('Resend code error:', error);
+      errorMessage = 'Failed to resend code. Please try again.';
+    } finally {
+      isLoading = false;
+    }
+  }
+
   // #endregion ➤ 🛠️ METHODS
 </script>
 
@@ -141,18 +213,22 @@
         <Button
           full={true}
           size="lg"
-          disabled={!isValid}
-          on:click={() => {
-            $loginStore.currentStep += 1;
-          }}>Verify</Button
-        >
+          disabled={!isValid || isLoading}
+          on:click={handleVerifyCode}>
+          {isLoading ? 'Verifying...' : 'Verify'}
+        </Button>
       </div>
     </div>
   </Container>
   <Container hFull={false}>
     <div class="support-text">
-      <span>Didn’t receive the code?</span>
-      <span class="resend">Click to resend</span>
+      <span>Didn't receive the code?</span>
+      <button 
+        class="resend" 
+        disabled={isLoading}
+        on:click={resendCode}>
+        Click to resend
+      </button>
     </div>
   </Container>
 </div>
@@ -345,11 +421,26 @@
       line-height: var(--line-height-text-sm, 20px); /* 142.857% */
 
       .resend {
+        background: none;
+        border: none;
         color: var(--colors-text-text-brand-secondary-700, #d2d2d2);
-
-        /* Text sm/Semibold */
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-sm, 14px);
         font-style: normal;
         font-weight: 600;
+        cursor: pointer;
+        padding: 0;
+        text-decoration: underline;
+        text-underline-offset: 2px;
+
+        &:hover:not(:disabled) {
+          color: var(--colors-text-text-brand-secondary-600, #b3b3b3);
+        }
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
       }
     }
   }

@@ -10,6 +10,7 @@
 <script lang="ts">
   // #region ➤ 📌 VARIABLES
 
+  import { getOptimizedImageUrl } from "$lib/utils/image";
   import { createEventDispatcher } from "svelte";
   import DefaultAvatar from "./assets/default-avatar.svelte";
   import LoggedoutAvatar from "./assets/loggedout-avatar.svelte";
@@ -75,7 +76,7 @@
       class="avatar-circle"
       {...$$restProps}
       class:size
-      style="{styles} --img-url: url({src}); "
+      style="{styles} background-image: url({getOptimizedImageUrl({ strImageUrl: src })}); "
     />
   {:else if isLoogedIn}
     <DefaultAvatar size={numSize} />
@@ -104,9 +105,9 @@
     height: 38px;
     border-radius: 100%;
 
-    background-image: url(src);
+    // background-image: url(src);
     background-repeat: no-repeat;
     background-size: cover;
-    background: var(--img-url) lightgray 50% / cover no-repeat;
+    // background: var(--img-url) lightgray 50% / cover no-repeat;
   }
 </style>

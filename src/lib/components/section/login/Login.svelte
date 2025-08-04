@@ -8,8 +8,12 @@
 -->
 
 <script lang="ts">
+  import { PUBLIC_RECAPTCHA_SITE_KEY } from "$env/static/public";
   import Button from "$lib/components/ui/Button.svelte";
+  import { initializeRecaptcha } from "$lib/firebase/firebase.actions";
   import session from "$lib/store/session";
+  import userSettings from "$lib/store/user-settings";
+  import { onMount } from "svelte";
   import { loginStore } from "./login-store";
   import CountryStep from "./steps/CountryStep.svelte";
   import EmailStep from "./steps/EmailStep.svelte";
@@ -53,6 +57,7 @@
 
   $: ({ viewportType } = $session);
   $: ({ currentStep } = $loginStore);
+  $: user = $userSettings.user?.scores_user_data;
   const stepMap = {
     0: EmailStep,
     1: PasswordStep,
@@ -61,10 +66,27 @@
     4: ProfileStep,
     5: CountryStep,
     6: SportstackStep,
-    7: TopicsStep
+    7: TopicsStep,
   };
 
+  $: if (user) {
+    $loginStore.avatar = user.profile_photo || "";
+    $loginStore.name = user.name || "";
+  }
+
   // #endregion ➤ 📌 VARIABLES
+
+  onMount(() => {
+    // Initialize reCAPTCHA when component mounts
+    try {
+      const recaptcha = initializeRecaptcha(
+        "recaptcha-container"
+      );
+      $loginStore.recaptchaVerifier =  recaptcha;
+    } catch (error) {
+      console.error("Failed to initialize reCAPTCHA:", error);
+    }
+  });
 </script>
 
 <!--
@@ -78,6 +100,22 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
+<svelte:head>
+  <script
+    src="https://www.google.com/recaptcha/enterprise.js?render={PUBLIC_RECAPTCHA_SITE_KEY}"
+  ></script>
+  <script>
+    function onClick(e) {
+      e.preventDefault();
+      grecaptcha.enterprise.ready(async () => {
+        const token = await grecaptcha.enterprise.execute(
+          PUBLIC_RECAPTCHA_SITE_KEY,
+          { action: "LOGIN" }
+        );
+      });
+    }
+  </script>
+</svelte:head>
 <div class="login-wrapper {viewportType}">
   {#if currentStep}
     <!-- content here -->
@@ -106,15 +144,17 @@
       </Button>
     </div>
   {/if}
-  <svelte:component this={stepMap[currentStep]}/>
+  <svelte:component this={stepMap[currentStep]} />
   {#if currentStep}
     <div class="pagination-wrapper">
       {#each Object.keys(stepMap).slice(1) as step}
         <div class="step-tab" class:active={Number(step) === currentStep} />
       {/each}
     </div>
-    <!-- content here -->
   {/if}
+
+  <!-- Hidden reCAPTCHA container -->
+  <div id="recaptcha-container" style="display: none;" />
 </div>
 
 <!--
@@ -135,7 +175,6 @@
     position: fixed;
     top: 0;
     left: 0;
-
 
     .back-button {
       position: absolute;
