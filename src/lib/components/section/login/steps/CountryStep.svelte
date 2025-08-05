@@ -93,7 +93,7 @@
         <p class="subtitle">Where are you from?</p>
       </div>
       <div class="form-body">
-        <DropDownInput bind:value label="Country" options={country} placeholder="Select your country" infoText="Select your country to customise your feed">
+        <DropDownInput searchable={true} bind:value label="Country" options={country} placeholder="Select your country" infoText="Select your country to customise your feed">
           <span slot="icon" class="select-icon">
             <IconGlobe />
           </span>

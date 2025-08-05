@@ -89,8 +89,7 @@
     errorMessage = "";
 
     try {
-      const credentials = await verifyPhoneCode(confirmationResult, value);
-      
+      await verifyPhoneCode(confirmationResult, value);
       // Phone verification successful - move to next step
       $loginStore.currentStep += 1;
     } catch (error: any) {

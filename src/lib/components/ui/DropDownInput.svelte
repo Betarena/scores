@@ -45,6 +45,8 @@
   export let onChangeValidation:
     | ((val: string | number) => boolean)
     | undefined = undefined;
+  export let searchable: boolean = false;
+  export let searchPlaceholder: string = "Search...";
 
   const dispatch = createEventDispatcher<{ change: IOption }>();
 
@@ -52,6 +54,14 @@
   let focus = false;
   let dropDownNode;
   let top = false;
+  let searchInput: HTMLInputElement;
+  let searchTerm = "";
+
+  $: filteredOptions = searchable && searchTerm 
+    ? options.filter(option => 
+        option[textKey].toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : options;
 
   $: if (modal && dropDownNode) {
     tick().then(() => {
@@ -75,6 +85,7 @@
   function select(option: IOption) {
     value = option;
     dispatch("change", value);
+    searchTerm = "";
     hide();
   }
 
@@ -82,6 +93,18 @@
     modal = false;
     focus = false;
     top = false;
+    searchTerm = "";
+  }
+
+  function show() {
+    modal = true;
+    focus = true;
+    top = false;
+    if (searchable && searchInput) {
+      tick().then(() => {
+        searchInput.focus();
+      });
+    }
   }
 
   function adjustDropdownPosition() {
@@ -132,9 +155,11 @@
       class:error
       on:mousedown|preventDefault
       on:click|stopPropagation={() => {
-        modal = !modal;
-        focus = true;
-        top = false;
+        if (modal) {
+          hide();
+        } else {
+          show();
+        }
       }}
     >
       {#if $$slots.icon}
@@ -146,7 +171,9 @@
         {#if value}
           <slot name="option" option={value}>{value[textKey]}</slot>
         {:else}
-          <slot name="placeholder" />
+          <span class="placeholder">
+            <slot name="placeholder">{placeholder}</slot>
+          </span>
         {/if}
       </div>
       <svg
@@ -172,7 +199,35 @@
       class:top
     >
       <div class="inner-wrrapper">
-        {#each options as option (option.id)}
+        {#if searchable}
+          <div class="search-wrapper">
+            <input
+              bind:this={searchInput}
+              bind:value={searchTerm}
+              type="text"
+              class="search-input"
+              placeholder={searchPlaceholder}
+              on:click|stopPropagation
+              on:keydown={(e) => {
+                if (e.key === 'Escape') {
+                  hide();
+                } else if (e.key === 'ArrowDown' && filteredOptions.length > 0) {
+                  e.preventDefault();
+                  // Focus on first option or implement keyboard navigation
+                } else if (e.key === 'Enter' && filteredOptions.length === 1) {
+                  e.preventDefault();
+                  select(filteredOptions[0]);
+                }
+              }}
+            />
+          </div>
+        {/if}
+        {#if filteredOptions.length === 0 && searchTerm}
+          <div class="no-results">
+            <span>No results</span>
+          </div>
+        {/if}
+        {#each filteredOptions as option (option.id)}
           <div class="list-item-wrapper">
             <div
               on:mousedown|preventDefault
@@ -397,6 +452,44 @@
         flex-direction: column;
         width: fit-content;
         width: 100%;
+
+        .search-wrapper {
+          padding: var(--spacing-sm, 6px);
+          border-bottom: 1px solid var(--colors-border-border-primary, #6a6a6a);
+          margin-bottom: var(--spacing-xs, 4px);
+
+          .search-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--colors-border-border-primary, #6a6a6a);
+            border-radius: var(--radius-sm, 6px);
+            background: var(--colors-background-bg-primary, #fff);
+            color: var(--colors-text-text-primary-900, #fbfbfb);
+            font-family: var(--font-family-font-family-body, Roboto);
+            font-size: var(--font-size-text-sm, 14px);
+            font-weight: 400;
+            line-height: var(--line-height-text-sm, 20px);
+            outline: none;
+
+            &:focus {
+              border-color: var(--colors-border-border-brand, #f5620f);
+            }
+
+            &::placeholder {
+              color: var(--colors-text-text-tertiary, #8c8c8c);
+            }
+          }
+        }
+
+        .no-results {
+          padding: 12px 16px;
+          text-align: center;
+          color: var(--colors-text-text-tertiary, #8c8c8c);
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-sm, 14px);
+          font-style: italic;
+          line-height: var(--line-height-text-sm, 20px);
+        }
       }
 
       &::-webkit-scrollbar {
