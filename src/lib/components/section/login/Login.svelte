@@ -11,7 +11,6 @@
   import { PUBLIC_RECAPTCHA_SITE_KEY } from "$env/static/public";
   import Button from "$lib/components/ui/Button.svelte";
   import { initializeRecaptcha } from "$lib/firebase/firebase.actions";
-  import { auth } from "$lib/firebase/init";
   import session from "$lib/store/session";
   import userSettings from "$lib/store/user-settings";
   import { onMount } from "svelte";
@@ -88,7 +87,6 @@
       console.error("Failed to initialize reCAPTCHA:", error);
     }
   });
-  $: console.log("USER: ", $userSettings.user, auth)
 </script>
 
 <!--

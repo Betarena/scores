@@ -2,7 +2,11 @@
   import GridBg from "$lib/components/shared/backround-patterns/GridBG.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
-  import { verifyPhoneCode } from "$lib/firebase/firebase.actions";
+  import {
+    sendPhoneVerificationCode,
+    verifyPhoneCode,
+  } from "$lib/firebase/firebase.actions";
+  import { RecaptchaVerifier } from "firebase/auth";
   import { loginStore } from "../login-store";
 
   // #region ➤ 📌 VARIABLES
@@ -18,7 +22,6 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  let confirmPhoneNumber = "";
   let length = 6; // Firebase SMS codes are typically 6 digits
   let isLoading = false;
   let errorMessage = "";
@@ -42,8 +45,8 @@
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
   $: isValid = value.length === length;
-  $: ({phoneNumber, confirmationResult, recaptchaVerifier} = $loginStore);
-  
+  $: ({ confirmationResult, recaptchaVerifier } = $loginStore);
+
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🛠️ METHODS
@@ -79,44 +82,48 @@
   }
 
   async function handleVerifyCode() {
-    if (!isValid || isLoading || !confirmationResult || !recaptchaVerifier) return;
-    
+    if (!isValid || isLoading || !confirmationResult || !recaptchaVerifier)
+      return;
+
     isLoading = true;
     errorMessage = "";
-    
+
     try {
       const credentials = await verifyPhoneCode(confirmationResult, value);
-      console.log("credentials: ", credentials)
-
-      // await linkPhoneToUser(phoneNumber, recaptchaVerifier)
       
       // Phone verification successful - move to next step
       $loginStore.currentStep += 1;
-      
     } catch (error: any) {
-      console.error('Phone code verification error:', error);
-      
+      console.error("Phone code verification error:", error);
+
       // Handle specific Firebase Auth errors
       switch (error.code) {
-        case 'auth/invalid-verification-code':
-          errorMessage = 'Invalid verification code. Please check and try again.';
+        case "auth/invalid-verification-code":
+          errorMessage =
+            "Invalid verification code. Please check and try again.";
           break;
-        case 'auth/missing-verification-code':
-          errorMessage = 'Please enter the verification code.';
+        case "auth/missing-verification-code":
+          errorMessage = "Please enter the verification code.";
           break;
-        case 'auth/code-expired':
-          errorMessage = 'Verification code has expired. Please request a new one.';
+        case "auth/code-expired":
+          errorMessage =
+            "Verification code has expired. Please request a new one.";
           break;
-        case 'auth/too-many-requests':
-          errorMessage = 'Too many attempts. Please try again later.';
+        case "auth/too-many-requests":
+          errorMessage = "Too many attempts. Please try again later.";
           break;
-        case 'auth/network-request-failed':
-          errorMessage = 'Network error. Please check your internet connection and try again.';
+        case "auth/network-request-failed":
+          errorMessage =
+            "Network error. Please check your internet connection and try again.";
+          break;
+        case "auth/provider-already-linked":
+          errorMessage =
+            "This phone number is already linked to another account.";
           break;
         default:
-          errorMessage = 'Failed to verify code. Please try again.';
+          errorMessage = "Failed to verify code. Please try again.";
       }
-      
+
       // Clear the input for retry
       value = "";
       hiddenInput.value = "";
@@ -127,19 +134,41 @@
 
   async function resendCode() {
     if (isLoading) return;
-    
+
     isLoading = true;
     errorMessage = "";
-    
+
     try {
-      // This would need to be implemented to resend the code
-      // For now, we'll just show a message
-      console.log('Resending code to:', phoneNumber);
-      // You would call sendPhoneVerificationCode again here
-      
+      $loginStore.confirmationResult = await sendPhoneVerificationCode(
+        $loginStore.phoneNumber,
+        $loginStore.recaptchaVerifier as RecaptchaVerifier
+      );
     } catch (error: any) {
-      console.error('Resend code error:', error);
-      errorMessage = 'Failed to resend code. Please try again.';
+      switch (error.code) {
+        case "auth/invalid-phone-number":
+          errorMessage = "Please enter a valid phone number.";
+          break;
+        case "auth/missing-phone-number":
+          errorMessage = "Please enter your phone number.";
+          break;
+        case "auth/quota-exceeded":
+          errorMessage =
+            "Too many verification attempts. Please try again later.";
+          break;
+        case "auth/operation-not-allowed":
+          errorMessage =
+            "Phone authentication is not enabled. Please contact support.";
+          break;
+        case "auth/network-request-failed":
+          errorMessage =
+            "Network error. Please check your internet connection and try again.";
+          break;
+        case "auth/too-many-requests":
+          errorMessage = "Too many requests. Please try again later.";
+          break;
+        default:
+          errorMessage = "Failed to send verification code. Please try again.";
+      }
     } finally {
       isLoading = false;
     }
@@ -147,7 +176,7 @@
 
   // #endregion ➤ 🛠️ METHODS
 
-  $: if(hiddenInput) {
+  $: if (hiddenInput) {
     hiddenInput.focus();
     isInFocus = true;
   }
@@ -204,24 +233,31 @@
           on:blur={() => (isInFocus = false)}
           class="otp-hidden"
         />
-
-        <div class="otp-wrapper" on:click|stopPropagation={focus}>
-          {#each Array(length) as _, i}
-            <div
-              on:click={focus}
-              class:filled={value[i]}
-              class="otp-box {isInFocus && i === value.length ? 'current' : ''}"
-            >
-              {value[i] ?? "0"}
-            </div>
-          {/each}
+        <div class="otp-wrapper">
+          <div class="otp-box-wrapper" on:click|stopPropagation={focus}>
+            {#each Array(length) as _, i}
+              <div
+                on:click={focus}
+                class:filled={value[i]}
+                class="otp-box {isInFocus && i === value.length
+                  ? 'current'
+                  : ''}"
+              >
+                {value[i] ?? "0"}
+              </div>
+            {/each}
+          </div>
+          {#if errorMessage}
+            <span class="error">{errorMessage}</span>
+          {/if}
         </div>
         <Button
           full={true}
           size="lg"
           disabled={!isValid || isLoading}
-          on:click={handleVerifyCode}>
-          {isLoading ? 'Verifying...' : 'Verify'}
+          on:click={handleVerifyCode}
+        >
+          {isLoading ? "Verifying..." : "Verify"}
         </Button>
       </div>
     </div>
@@ -229,10 +265,7 @@
   <Container hFull={false}>
     <div class="support-text">
       <span>Didn't receive the code?</span>
-      <button 
-        class="resend" 
-        disabled={isLoading}
-        on:click={resendCode}>
+      <button class="resend" disabled={isLoading} on:click={resendCode}>
         Click to resend
       </button>
     </div>
@@ -356,56 +389,72 @@
         }
         .otp-wrapper {
           display: flex;
-          gap: 8px;
-
-          .otp-box {
+          flex-direction: column;
+          gap: var(--spacing-md, 6px);
+          .otp-box-wrapper {
             display: flex;
-            width: 64px;
-            min-height: 64px;
-            padding: var(--spacing-xxs, 2px) var(--spacing-md, 8px);
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: var(--spacing-md, 8px);
-            transition: border-color 0.2s;
+            gap: 8px;
 
-            border-radius: var(--radius-lg, 10px);
-            border: 1px solid var(--colors-border-border-primary, #d2d2d2);
-            background: var(--colors-background-bg-primary, #fff);
+            .otp-box {
+              display: flex;
+              width: 64px;
+              min-height: 64px;
+              padding: var(--spacing-xxs, 2px) var(--spacing-md, 8px);
+              flex-direction: column;
+              justify-content: center;
+              align-items: center;
+              gap: var(--spacing-md, 8px);
+              transition: border-color 0.2s;
 
-            /* Shadows/shadow-xs */
-            box-shadow: 0 1px 2px 0
-              var(--colors-effects-shadows-shadow-xs, rgba(10, 13, 18, 0.05));
-
-            color: var(--colors-text-text-placeholder_subtle, #d2d2d2);
-
-            text-align: center;
-
-            /* Display lg/Medium */
-            font-family: var(--font-family-font-family-display, Roboto);
-            font-size: var(--font-size-display-lg, 48px);
-            font-style: normal;
-            font-weight: 500;
-            line-height: var(--line-height-display-lg, 60px); /* 125% */
-            letter-spacing: -0.96px;
-
-            &.current {
-              border: 2px solid var(--colors-border-border-brand, #f5620f);
-              background: var(--colors-background-bg-primary, #fff);
-              box-shadow: 0 1px 2px 0
-                  var(
-                    --colors-effects-shadows-shadow-xs,
-                    rgba(10, 13, 18, 0.05)
-                  ),
-                0 0 0 2px var(--colors-background-bg-primary, #fff),
-                0 0 0 4px var(--colors-effects-focus-rings-focus-ring, #f5620f);
-            }
-            &.filled {
               border-radius: var(--radius-lg, 10px);
-              border: 2px solid var(--colors-border-border-brand, #f7813f);
+              border: 1px solid var(--colors-border-border-primary, #d2d2d2);
+              background: var(--colors-background-bg-primary, #fff);
 
-              color: var(--colors-text-text-brand-tertiary_alt, #fbfbfb);
+              /* Shadows/shadow-xs */
+              box-shadow: 0 1px 2px 0
+                var(--colors-effects-shadows-shadow-xs, rgba(10, 13, 18, 0.05));
+
+              color: var(--colors-text-text-placeholder_subtle, #d2d2d2);
+
+              text-align: center;
+
+              /* Display lg/Medium */
+              font-family: var(--font-family-font-family-display, Roboto);
+              font-size: var(--font-size-display-lg, 48px);
+              font-style: normal;
+              font-weight: 500;
+              line-height: var(--line-height-display-lg, 60px); /* 125% */
+              letter-spacing: -0.96px;
+
+              &.current {
+                border: 2px solid var(--colors-border-border-brand, #f5620f);
+                background: var(--colors-background-bg-primary, #fff);
+                box-shadow: 0 1px 2px 0
+                    var(
+                      --colors-effects-shadows-shadow-xs,
+                      rgba(10, 13, 18, 0.05)
+                    ),
+                  0 0 0 2px var(--colors-background-bg-primary, #fff),
+                  0 0 0 4px
+                    var(--colors-effects-focus-rings-focus-ring, #f5620f);
+              }
+              &.filled {
+                border-radius: var(--radius-lg, 10px);
+                border: 2px solid var(--colors-border-border-brand, #f7813f);
+
+                color: var(--colors-text-text-brand-tertiary_alt, #fbfbfb);
+              }
             }
+          }
+          .error {
+            color: var(--colors-text-text-error-primary-600, #f97066);
+
+            /* Text sm/Regular */
+            font-family: var(--Font-family-font-family-body, Roboto);
+            font-size: var(--Font-size-text-sm, 14px);
+            font-style: normal;
+            font-weight: 400;
+            line-height: var(--Line-height-text-sm, 20px); /* 142.857% */
           }
         }
       }
