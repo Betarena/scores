@@ -4,6 +4,7 @@ import { log_v3 } from '$lib/utils/debug';
 import { updateUserProfileData } from '$lib/utils/user';
 import {
   createUserWithEmailAndPassword,
+  linkWithCredential,
   PhoneAuthProvider,
   RecaptchaVerifier,
   signInWithEmailAndPassword,
@@ -182,43 +183,17 @@ export async function verifyPhoneCode(
   code: string
 ): Promise<UserCredential> {
   try {
-    return await confirmationResult.confirm(code);
-  } catch (error) {
-    throw error as AuthError;
-  }
-}
-
-/**
- * @summary
- * [PHONE AUTH]
- * @description
- * Link phone number to existing user account
- * @param
- * {string} phoneNumber - Phone number in international format
- * {RecaptchaVerifier} recaptchaVerifier - reCAPTCHA verifier instance
- * @returns
- * Promise<ConfirmationResult> on success, throws AuthError on failure
- */
-export async function linkPhoneToUser(
-  phoneNumber: string,
-  recaptchaVerifier: RecaptchaVerifier
-): Promise<ConfirmationResult> {
-  try {
-    const currentUser = auth.currentUser;
+     const currentUser = auth.currentUser;
     if (!currentUser) {
       throw new Error('No user is currently signed in');
     }
-    
-    const phoneAuthProvider = new PhoneAuthProvider(auth);
-    const verificationId = await phoneAuthProvider.verifyPhoneNumber(
-      phoneNumber,
-      recaptchaVerifier
+
+    // Create phone credential
+    const credential = PhoneAuthProvider.credential(
+      confirmationResult.verificationId,
+      code
     );
-    
-    // Note: This is a simplified version. In a real implementation,
-    // you would need to handle the verification ID and confirmation
-    // in a more complex way
-    return await signInWithPhoneNumber(auth, phoneNumber, recaptchaVerifier);
+    return await linkWithCredential(currentUser, credential);
   } catch (error) {
     throw error as AuthError;
   }
