@@ -8,22 +8,6 @@
 -->
 
 <script lang="ts">
-  import { PUBLIC_RECAPTCHA_SITE_KEY } from "$env/static/public";
-  import Button from "$lib/components/ui/Button.svelte";
-  import { initializeRecaptcha } from "$lib/firebase/firebase.actions";
-  import session from "$lib/store/session";
-  import userSettings from "$lib/store/user-settings";
-  import { onMount } from "svelte";
-  import { loginStore } from "./login-store";
-  import CountryStep from "./steps/CountryStep.svelte";
-  import EmailStep from "./steps/EmailStep.svelte";
-  import PasswordStep from "./steps/PasswordStep.svelte";
-  import PhoneCodeStep from "./steps/PhoneCodeStep.svelte";
-  import PhoneStep from "./steps/PhoneStep.svelte";
-  import ProfileStep from "./steps/ProfileStep.svelte";
-  import SportstackStep from "./steps/SportstackStep.svelte";
-  import TopicsStep from "./steps/TopicsStep.svelte";
-
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -38,7 +22,22 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
+  import { PUBLIC_RECAPTCHA_SITE_KEY } from "$env/static/public";
+  import { get } from "$lib/api/utils";
+  import Button from "$lib/components/ui/Button.svelte";
+  import { initializeRecaptcha } from "$lib/firebase/firebase.actions";
+  import session from "$lib/store/session";
+  import userSettings from "$lib/store/user-settings";
+  import { onMount } from "svelte";
+  import { loginStore } from "./login-store";
+  import CountryStep from "./steps/CountryStep.svelte";
+  import EmailStep from "./steps/EmailStep.svelte";
+  import PasswordStep from "./steps/PasswordStep.svelte";
+  import PhoneCodeStep from "./steps/PhoneCodeStep.svelte";
+  import PhoneStep from "./steps/PhoneStep.svelte";
+  import ProfileStep from "./steps/ProfileStep.svelte";
+  import SportstackStep from "./steps/SportstackStep.svelte";
+  import TopicsStep from "./steps/TopicsStep.svelte";
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -76,17 +75,52 @@
 
   // #endregion ➤ 📌 VARIABLES
 
+  // #region ➤ 🛠️ METHODS
+  
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+  
+  async function getInitData() {
+    const response = await get<{data: Record<string, string>[]}>('api/data/login');
+    if (response?.data) {
+      loginStore.update(v => ({
+        ...v,
+        translations: {...response.data[0]},
+        countries: {...response.data[1]}
+      }))
+    }
+  }
+  
+  // #endregion ➤ 🛠️ METHODS
+
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
   onMount(() => {
     // Initialize reCAPTCHA when component mounts
     try {
-      const recaptcha = initializeRecaptcha(
-        "recaptcha-container"
-      );
-      $loginStore.recaptchaVerifier =  recaptcha;
+      const recaptcha = initializeRecaptcha("recaptcha-container");
+      $loginStore.recaptchaVerifier = recaptcha;
+      getInitData();
     } catch (error) {
       console.error("Failed to initialize reCAPTCHA:", error);
     }
   });
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 
 <!--

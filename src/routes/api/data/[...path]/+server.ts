@@ -22,17 +22,18 @@
 import dotenv from 'dotenv';
 
 import { main as EndpointAuthorHome } from '$lib/sveltekit/endpoint/author.home.js';
-import { main as EdnpointTranslation } from '$lib/sveltekit/endpoint/main.translation.js';
+import { main as EndpointTranslation } from '$lib/sveltekit/endpoint/main.translation.js';
 import { main as EndpointProfileMain } from '$lib/sveltekit/endpoint/profile.main.js';
 import { API_DATA_ERROR_RESPONSE } from '$lib/utils/debug.js';
 
-import type { RequestHandler } from '@sveltejs/kit';
+import { GetLoginData } from '$lib/sveltekit/endpoint/login';
+import { GetPartners, GetPartnersSubmissions, GetPartnersVisibility, PostPartnerSubmission } from '$lib/sveltekit/endpoint/partners.js';
 import { ArticlesSearchEndpoint } from '$lib/sveltekit/endpoint/search.articles.js';
-import { TagsSearchEndpoint } from '$lib/sveltekit/endpoint/search.tags.js';
 import { AuthorsSearchEndpoint } from '$lib/sveltekit/endpoint/search.authors.js';
 import { SuggestionsPostEndpoint, SuggestionsSearchEndpoint } from '$lib/sveltekit/endpoint/search.suggestions.js';
+import { TagsSearchEndpoint } from '$lib/sveltekit/endpoint/search.tags.js';
 import { GetTranslations } from '$lib/sveltekit/endpoint/translations.js';
-import { GetPartners, GetPartnersSubmissions, GetPartnersVisibility, PostPartnerSubmission } from '$lib/sveltekit/endpoint/partners.js';
+import type { RequestHandler } from '@sveltejs/kit';
 
 // #endregion ➤ 📦 Package
 
@@ -49,10 +50,11 @@ const getEndpointsMap = {
   'search.authors': AuthorsSearchEndpoint,
   "search.suggestions": SuggestionsSearchEndpoint,
   'translations': GetTranslations,
-  'translation': EdnpointTranslation,
+  'translation': EndpointTranslation,
   'partners.submissions': GetPartnersSubmissions,
   'partners.visibility': GetPartnersVisibility,
   'partners': GetPartners,
+  "login": GetLoginData
 }
 type EndPointsMapKeys = keyof typeof getEndpointsMap;
 export const GET: RequestHandler = async (

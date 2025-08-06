@@ -6,9 +6,11 @@ export const loginStore = writable({
     isLogin: false,
     password: "",
     name: "",
-    currentStep: 3,
+    currentStep: 5,
     avatar: "",
     phoneNumber: "",
     confirmationResult: null as ConfirmationResult | null,
-    recaptchaVerifier: null as RecaptchaVerifier | null
+    recaptchaVerifier: null as RecaptchaVerifier | null,
+    translations: {} as Record<string, string>,
+    countries: {} as Record<string, string>,
 })

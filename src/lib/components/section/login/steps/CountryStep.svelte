@@ -1,8 +1,10 @@
 <script lang="ts">
+  import { browser } from "$app/environment";
   import GridBg from "$lib/components/shared/backround-patterns/GridBG.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
+  import userSettings from "$lib/store/user-settings";
   import { updateUserProfileData } from "$lib/utils/user";
   import IconGlobe from "../icons/IconGlobe.svelte";
   import { loginStore } from "../login-store";
@@ -21,10 +23,11 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  const country = [
-    { id: 1, label: "Portugal" },
-    { id: 2, label: "Brazil" },
-  ];
+  $: country = Object.entries($loginStore.countries).map(([id, label]) => ({
+    id,
+    label
+  }));
+  
   let value: { id: number | string; label: string } | null = null;
 
   // #endregion ➤ 📌 VARIABLES
@@ -43,6 +46,12 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
+
+  $: if (browser && country.length && !value && $userSettings.geoJs) {
+    const user_location = $userSettings.geoJs.country;
+    value = country.find(c => c.id === user_location) || null;
+  }
+    
 
   // #region ➤ 🛠️ METHODS
 

@@ -198,7 +198,7 @@
       bind:this={dropDownNode}
       class:top
     >
-      <div class="inner-wrrapper">
+      <div class="inner-wrapper">
         {#if searchable}
           <div class="search-wrapper">
             <input
@@ -227,45 +227,47 @@
             <span>No results</span>
           </div>
         {/if}
-        {#each filteredOptions as option (option.id)}
-          <div class="list-item-wrapper">
-            <div
-              on:mousedown|preventDefault
-              on:click={() => select(option)}
-              class="list-item"
-              class:active={option.id === value?.id}
-            >
-              {#if !$$slots["option-list-item"]}
-                <slot name="option" {option}>
-                  {option[textKey]}
-
-                  {#if checkIcon && option.id === value?.id}
-                    <svg
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M20 6L9 17L4 12"
-                        stroke="var( --colors-foreground-fg-brand-primary)"
-                        stroke-width="1.66"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>
-                  {/if}
-                </slot>
-                {:else}
-                  <slot name="option-list-item" {option}>
+        <div class="list-wrapper">
+          {#each filteredOptions as option (option.id)}
+            <div class="list-item-wrapper">
+              <div
+                on:mousedown|preventDefault
+                on:click={() => select(option)}
+                class="list-item"
+                class:active={option.id === value?.id}
+              >
+                {#if !$$slots["option-list-item"]}
+                  <slot name="option" {option}>
                     {option[textKey]}
 
+                    {#if checkIcon && option.id === value?.id}
+                      <svg
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M20 6L9 17L4 12"
+                          stroke="var( --colors-foreground-fg-brand-primary)"
+                          stroke-width="1.66"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    {/if}
                   </slot>
-              {/if}
+                  {:else}
+                    <slot name="option-list-item" {option}>
+                      {option[textKey]}
+
+                    </slot>
+                {/if}
+              </div>
             </div>
-          </div>
-        {/each}
+          {/each}
+        </div>
       </div>
     </div>
   </div>
@@ -445,9 +447,9 @@
       align-items: flex-start;
       align-self: stretch;
 
-      .inner-wrrapper {
+      .inner-wrapper {
         height: 100%;
-        overflow: auto;
+        overflow: hidden;
         display: flex;
         flex-direction: column;
         width: fit-content;
@@ -489,6 +491,15 @@
           font-size: var(--font-size-text-sm, 14px);
           font-style: italic;
           line-height: var(--line-height-text-sm, 20px);
+        }
+        .list-wrapper {
+          flex-grow: 1;
+          display: flex;
+          flex-direction: column;
+          width: fit-content;
+          width: 100%;
+          overflow-y: auto;
+          min-height: 0;
         }
       }
 
