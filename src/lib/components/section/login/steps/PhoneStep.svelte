@@ -1,13 +1,15 @@
 <script lang="ts">
-	import CircleBg from "$lib/components/shared/backround-patterns/CircleBG.svelte";
-	import Button from "$lib/components/ui/Button.svelte";
-	import Input from "$lib/components/ui/Input.svelte";
-	import Container from "$lib/components/ui/wrappers/Container.svelte";
-	import { sendPhoneVerificationCode } from "$lib/firebase/firebase.actions";
-	import IconPhoneVerification from "../icons/IconPhoneVerification.svelte";
-	import { loginStore } from "../login-store";
-	import { countries } from './CountryCodes';
-
+  import { browser } from "$app/environment";
+  import CircleBg from "$lib/components/shared/backround-patterns/CircleBG.svelte";
+  import Button from "$lib/components/ui/Button.svelte";
+  import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
+  import Input from "$lib/components/ui/Input.svelte";
+  import Container from "$lib/components/ui/wrappers/Container.svelte";
+  import { sendPhoneVerificationCode } from "$lib/firebase/firebase.actions";
+  import userSettings from "$lib/store/user-settings";
+  import IconPhoneVerification from "../icons/IconPhoneVerification.svelte";
+  import { loginStore } from "../login-store";
+  import { countries } from './CountryCodes';
   // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -25,8 +27,14 @@
   let phoneNumber = "";
   let isLoading = false;
   let errorMessage = "";
-  let countryCodes = countries.map((c, index) => ({id: `${c.code}_${index}`, label: `${c.code} ${c.dial_code}`, ...c}));
-  let selectedCountryCode = countryCodes[0];
+  let countryCodes = countries.map((c, index) => ({
+    id: `${c.code}_${index}`, 
+    label: `${c.name} (${c.dial_code})`, 
+    dial_code: c.dial_code,
+    code: c.code,
+    name: c.name
+  }));
+  let selectedCountryCode = countryCodes.find(c => c.dial_code === "+1") || countryCodes[0];
   $: ({ recaptchaVerifier } = $loginStore);
   // #endregion ➤ 📌 VARIABLES
 
@@ -43,10 +51,14 @@
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  $: fullPhoneNumber = phoneNumber;
   $: isValidPhone = phoneNumber.trim().length >= 10;
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
+
+  $: if (browser && countryCodes.length  && $userSettings.geoJs) {
+    const user_location = $userSettings.geoJs.country_code;
+    selectedCountryCode = countryCodes.find(c => c.code === user_location) || countryCodes[0];
+  }
 
   // #region ➤ 🛠️ METHODS
 
@@ -60,6 +72,12 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  function focus() {
+    if (!phoneNumber && selectedCountryCode.dial_code) {
+      phoneNumber = selectedCountryCode.dial_code
+    }
+  }
+
   async function sendVerificationCode() {
     if (!isValidPhone || isLoading || !recaptchaVerifier) return;
 
@@ -72,12 +90,12 @@
 
       // Send verification code
       $loginStore.confirmationResult = await sendPhoneVerificationCode(
-        fullPhoneNumber,
+        phoneNumber,
         recaptchaVerifier
       );
 
       // Store phone number in login store
-      $loginStore.phoneNumber = fullPhoneNumber;
+      $loginStore.phoneNumber = phoneNumber;
 
       // Move to next step
       $loginStore.currentStep += 1;
@@ -146,12 +164,38 @@
         <Input
           label="Phone number"
           inputType="tel"
-          placeholder="+1 (555) 000-0000"
+          placeholder= {`${selectedCountryCode.dial_code || "+1"} (555) 000-0000`}
           bind:value={phoneNumber}
+          on:focus={focus}
           required={true}
           error={!!errorMessage}
           name="phone"
         >
+          <div slot="leading-text" class="country-code">
+            <DropDownInput
+              value={selectedCountryCode}
+              options={countryCodes}
+              on:change={(e) => {
+                const nextCode = e.detail;
+                if (phoneNumber.startsWith(selectedCountryCode.dial_code)) {
+                  phoneNumber = phoneNumber.replace(selectedCountryCode.dial_code, nextCode.dial_code);
+                }
+                selectedCountryCode = e.detail;
+              }}
+              name="country-code"
+              searchable={true}
+              searchPlaceholder="Search country..."
+              class="country-selector"
+            >
+              <span slot="input-option" let:option class="country-option">
+                <span class="country-name">{option?.code}</span>
+              </span>
+              <span slot="option" let:option class="country-option">
+                <span class="country-name">{option.name}</span>
+                <div class="country-code">{option.dial_code}</div>
+              </span>
+            </DropDownInput>
+          </div>
           <span slot="error">{errorMessage}</span>
           <span slot="info">Phone number to receive the code</span>
         </Input>
@@ -275,37 +319,54 @@
         align-items: center;
         gap: var(--spacing-4xl, 32px);
         align-self: stretch;
-
-        :global(.country-selector) {
-          position: relative;
-          display: flex;
-          align-items: center;
-          gap: var(--spacing-xs, 4px);
+        :global(.leading-text) {
+          padding: 0;
         }
-
-        :global(.country-selector select) {
-          background: transparent;
+        :global(.leading-text  .input-element) {
           border: none;
-          color: var(--colors-text-text-primary-900, #fff);
-          font-family: var(--font-family-font-family-body, Roboto);
-          font-size: var(--font-size-text-sm, 14px);
-          font-weight: 500;
-          outline: none;
-          cursor: pointer;
-          padding-right: var(--spacing-lg, 12px);
         }
 
-        :global(.country-selector select option) {
-          background: var(--colors-background-bg-secondary, #2a2a2a);
-          color: var(--colors-text-text-primary-900, #fff);
+        :global(.select-dropdown) {
+          min-width: 200px;
+          left: 0;
+          transform: translateX(0);
+        }
+        .country-option {
+          width: 100%;
+          display: flex;
+          justify-content: space-between;
         }
 
-        :global(.country-selector .chevron-down) {
-          color: var(--colors-text-text-tertiary-600, #8c8c8c);
-          position: absolute;
-          right: 0;
-          pointer-events: none;
-        }
+        // :global(.country-selector) {
+        //   position: relative;
+        //   display: flex;
+        //   align-items: center;
+        //   gap: var(--spacing-xs, 4px);
+        // }
+
+        // :global(.country-selector select) {
+        //   background: transparent;
+        //   border: none;
+        //   color: var(--colors-text-text-primary-900, #fff);
+        //   font-family: var(--font-family-font-family-body, Roboto);
+        //   font-size: var(--font-size-text-sm, 14px);
+        //   font-weight: 500;
+        //   outline: none;
+        //   cursor: pointer;
+        //   padding-right: var(--spacing-lg, 12px);
+        // }
+
+        // :global(.country-selector select option) {
+        //   background: var(--colors-background-bg-secondary, #2a2a2a);
+        //   color: var(--colors-text-text-primary-900, #fff);
+        // }
+
+        // :global(.country-selector .chevron-down) {
+        //   color: var(--colors-text-text-tertiary-600, #8c8c8c);
+        //   position: absolute;
+        //   right: 0;
+        //   pointer-events: none;
+        // }
       }
     }
   }

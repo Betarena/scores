@@ -6,16 +6,17 @@
   import Input from "$lib/components/ui/Input.svelte";
   import SocialButton from "$lib/components/ui/SocialButton.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
-  import { auth } from "$lib/firebase/init";
   import { successAuthComplete } from "$lib/utils/authentication";
   import { AU_W_TAG, dlog, errlog } from "$lib/utils/debug";
   import { tryCatchAsync } from "@betarena/scores-lib/dist/util/common";
   import {
     GithubAuthProvider,
     GoogleAuthProvider,
+    signInWithEmailAndPassword,
     signInWithPopup,
   } from "firebase/auth";
   import { loginStore } from "../login-store";
+  import { auth } from "./../../../../firebase/init.ts";
 
   // #region ➤ 📌 VARIABLES
 
@@ -38,9 +39,20 @@
 
   let disableButton = true;
   let emailError = false;
+  let loginError = "";
 
   $: if (!email) {
     emailError = false;
+  }
+
+  // Clear login error when switching between login/register modes
+  $: if (isLogin !== undefined) {
+    loginError = "";
+  }
+
+  // Clear login error when password changes
+  $: if (password) {
+    loginError = "";
   }
 
   // #endregion ➤ 📌 VARIABLES
@@ -56,7 +68,6 @@
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
 
   function validateEmail(email: string): boolean {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && email) {
@@ -98,7 +109,7 @@
            */
           provider: null | GithubAuthProvider | GoogleAuthProvider = null;
         provider = new GoogleAuthProvider();
-
+        disableButton = true;
         const result = await signInWithPopup(auth, provider),
           user = result.user;
         // [🐞]
@@ -114,9 +125,10 @@
             undefined,
             authOpt
           );
+        disableButton = false;
         if (!setp0Res) throw new Error();
         else scoresAuthStore.updateData([["globalStateRemove", "Processing"]]);
-        return;
+        $loginStore.currentStep += 1;
       },
       (ex: unknown | any): void => {
         scoresAuthStore.updateData([["globalStateRemove", "Processing"]]);
@@ -139,6 +151,68 @@
     return;
   }
 
+  async function login() {
+    try {
+      disableButton = true;
+      loginError = ""; // Clear previous errors
+
+      const credentials = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      await successAuthComplete("login", credentials.user, undefined);
+      disableButton = false;
+    } catch (error: any) {
+     
+
+      // Handle specific Firebase Auth errors
+      switch (error.code) {
+        case "auth/user-not-found":
+          loginError = "No account found with this email address.";
+          break;
+        case "auth/wrong-password":
+        case "auth/invalid-credential":
+        case "auth/invalid-login-credentials":
+          loginError = "Invalid email or password. Please try again.";
+          break;
+        case "auth/invalid-email":
+          loginError = "Please enter a valid email address.";
+          emailError = true;
+          break;
+        case "auth/user-disabled":
+          loginError =
+            "This account has been disabled. Please contact support.";
+          break;
+        case "auth/too-many-requests":
+          loginError = "Too many failed attempts. Please try again later.";
+          break;
+        case "auth/network-request-failed":
+          loginError =
+            "Network error. Please check your connection and try again.";
+          break;
+        case "auth/multi-factor-auth-required":
+          // Handle multi-factor authentication if needed
+          loginError =
+            "Multi-factor authentication required. Please complete the additional verification.";
+          break;
+        case "auth/operation-not-allowed":
+          loginError =
+            "Email/password sign-in is not enabled. Please contact support.";
+          break;
+        case "auth/weak-password":
+          loginError =
+            "Password is too weak. Please choose a stronger password.";
+          break;
+        default:
+          // Fallback for any other errors
+          loginError =
+            error.message || "An unexpected error occurred. Please try again.";
+          console.error("Login error:", error);
+      }
+    }
+    disableButton = false;
+  }
   // #endregion ➤ 🛠️ METHODS
 </script>
 
@@ -155,7 +229,7 @@
 
 <div class="email-step">
   <div class="logo-wrapper">
-    <div class="bg"><CircleBg animation="ripple" duration={10}  /></div>
+    <div class="bg"><CircleBg animation="ripple" duration={10} /></div>
     <img src="/assets/svg/logo-betarena.svg" alt="Betarena Logo" />
   </div>
   <Container>
@@ -167,11 +241,11 @@
       <div class="form-body">
         <Input
           inputType="email"
-          error={emailError}
+          error={emailError || !!loginError}
           on:change={() => validateEmail($loginStore.email)}
           placeholder="Enter your email"
           bind:value={$loginStore.email}
-        > 
+        >
           <span slot="error">
             {#if emailError}
               {errorMessage}
@@ -182,10 +256,20 @@
           <Input
             inputType="password"
             bind:value={password}
+            error={!!loginError}
             placeholder="Enter your password"
-          />
-          <Button full={true} size="lg" disabled={!email || !password}
-            >Sing in</Button
+          >
+            <div slot="error">
+              {#if loginError}
+                {loginError}
+              {/if}
+            </div>
+          </Input>
+          <Button
+            full={true}
+            size="lg"
+            on:click={login}
+            disabled={disableButton || !email || !password}>Sign in</Button
           >
         {:else}
           <Button
@@ -193,7 +277,7 @@
             size="lg"
             disabled={disableButton}
             on:click={() => {
-              $loginStore.currentStep += 1
+              $loginStore.currentStep += 1;
             }}>Get started</Button
           >
         {/if}
@@ -208,7 +292,10 @@
           on:click={() => authenticateGoogleAuth20()}
         />
       </div>
-      <div class="login-option" on:click={() => (isLogin = !isLogin)}>
+      <div
+        class="login-option"
+        on:click={() => ($loginStore.isLogin = !$loginStore.isLogin)}
+      >
         <span class="text"
           >{isLogin ? "Don't have an account?" : "Already have an account?"}
         </span>

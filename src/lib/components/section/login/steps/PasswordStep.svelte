@@ -4,6 +4,7 @@
   import Input from "$lib/components/ui/Input.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
   import { registerUser } from "$lib/firebase/firebase.actions";
+  import { successAuthComplete } from "$lib/utils/authentication";
   import { loginStore } from "../login-store";
 
   // #region ➤ 📌 VARIABLES
@@ -83,7 +84,8 @@
     errorMessage = "";
     
     try {
-      await registerUser(email, password);
+      const credentials = await registerUser(email, password);
+      await successAuthComplete("register", credentials.user);
       $loginStore.currentStep += 1;
     } catch (error: any) {
       console.error('Registration error:', error);

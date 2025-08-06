@@ -57,11 +57,12 @@
   let searchInput: HTMLInputElement;
   let searchTerm = "";
 
-  $: filteredOptions = searchable && searchTerm 
-    ? options.filter(option => 
-        option[textKey].toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    : options;
+  $: filteredOptions =
+    searchable && searchTerm
+      ? options.filter((option) =>
+          option[textKey].toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      : options;
 
   $: if (modal && dropDownNode) {
     tick().then(() => {
@@ -169,7 +170,11 @@
       {/if}
       <div class="text">
         {#if value}
-          <slot name="option" option={value}>{value[textKey]}</slot>
+          {#if $$slots["input-option"]}
+            <slot name="input-option" option={value}>{value[textKey]}</slot>
+          {:else}
+            <slot name="option" option={value}>{value[textKey]}</slot>
+          {/if}
         {:else}
           <span class="placeholder">
             <slot name="placeholder">{placeholder}</slot>
@@ -209,12 +214,15 @@
               placeholder={searchPlaceholder}
               on:click|stopPropagation
               on:keydown={(e) => {
-                if (e.key === 'Escape') {
+                if (e.key === "Escape") {
                   hide();
-                } else if (e.key === 'ArrowDown' && filteredOptions.length > 0) {
+                } else if (
+                  e.key === "ArrowDown" &&
+                  filteredOptions.length > 0
+                ) {
                   e.preventDefault();
                   // Focus on first option or implement keyboard navigation
-                } else if (e.key === 'Enter' && filteredOptions.length === 1) {
+                } else if (e.key === "Enter" && filteredOptions.length === 1) {
                   e.preventDefault();
                   select(filteredOptions[0]);
                 }
@@ -258,11 +266,10 @@
                       </svg>
                     {/if}
                   </slot>
-                  {:else}
-                    <slot name="option-list-item" {option}>
-                      {option[textKey]}
-
-                    </slot>
+                {:else}
+                  <slot name="option-list-item" {option}>
+                    {option[textKey]}
+                  </slot>
                 {/if}
               </div>
             </div>
