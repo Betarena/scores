@@ -26,13 +26,14 @@ import { main as EdnpointTranslation } from '$lib/sveltekit/endpoint/main.transl
 import { main as EndpointProfileMain } from '$lib/sveltekit/endpoint/profile.main.js';
 import { API_DATA_ERROR_RESPONSE } from '$lib/utils/debug.js';
 
-import type { RequestHandler } from '@sveltejs/kit';
+import { PostAuthorRecommendations } from '$lib/sveltekit/endpoint/author.recommendations';
+import { GetPartners, GetPartnersSubmissions, GetPartnersVisibility, PostPartnerSubmission } from '$lib/sveltekit/endpoint/partners.js';
 import { ArticlesSearchEndpoint } from '$lib/sveltekit/endpoint/search.articles.js';
-import { TagsSearchEndpoint } from '$lib/sveltekit/endpoint/search.tags.js';
 import { AuthorsSearchEndpoint } from '$lib/sveltekit/endpoint/search.authors.js';
 import { SuggestionsPostEndpoint, SuggestionsSearchEndpoint } from '$lib/sveltekit/endpoint/search.suggestions.js';
+import { TagsSearchEndpoint } from '$lib/sveltekit/endpoint/search.tags.js';
 import { GetTranslations } from '$lib/sveltekit/endpoint/translations.js';
-import { GetPartners, GetPartnersSubmissions, GetPartnersVisibility, PostPartnerSubmission } from '$lib/sveltekit/endpoint/partners.js';
+import type { RequestHandler } from '@sveltejs/kit';
 
 // #endregion ➤ 📦 Package
 
@@ -80,7 +81,8 @@ export const GET: RequestHandler = async (
 const postEndpointsMap = {
   'profile.main': EndpointProfileMain,
   "search.suggestions": SuggestionsPostEndpoint,
-  'partners': PostPartnerSubmission
+  'partners': PostPartnerSubmission,
+  "authors.recommendations": PostAuthorRecommendations
 }
 type PostEndPointsMapKeys = keyof typeof postEndpointsMap;
 
