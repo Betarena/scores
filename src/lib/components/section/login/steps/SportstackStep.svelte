@@ -1,10 +1,12 @@
 <script lang="ts">
-  import { page } from "$app/stores";
+  import { post } from "$lib/api/utils";
   import CircleBg from "$lib/components/shared/backround-patterns/CircleBG.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import SportsTackList from "$lib/components/ui/composed/sportstack_list/SportsTackList.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
   import userSettings from "$lib/store/user-settings";
+  import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags";
+  import { onMount } from "svelte";
   import { loginStore } from "../login-store";
 
   // #region ➤ 📌 VARIABLES
@@ -21,10 +23,10 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  $: ({
-    objAuthorContentForecast: { mapAuthor: sportstacks },
-  } = $page.data);
-  $: ({user: {scores_user_data} = {scores_user_data: {}}} = $userSettings);
+  let sportstacks: Map<string, IPageAuthorTranslationDataFinal> = new Map();
+  let loading = false;
+  $: ({ user: { scores_user_data } = { scores_user_data: {} } } =
+    $userSettings);
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -54,6 +56,35 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
   // #endregion ➤ 🛠️ METHODS
+
+  async function fetchSuggestedSportstacks() {
+    loading = true;
+    const res = await post<{
+      data: { authors: IPageAuthorTranslationDataFinal[] };
+    }>("/api/data/authors.recommendations", {
+      user: scores_user_data,
+      country: scores_user_data?.country || $loginStore.country,
+    });
+    if (res?.data?.authors)
+      sportstacks = new Map(
+        res?.data.authors.map((author) => [author.id, author])
+      );
+    loading = false;
+  }
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  onMount(() => {
+    fetchSuggestedSportstacks();
+  });
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 
 <!--
@@ -95,11 +126,12 @@
         <p class="subtitle">Follow at least 3 publications</p>
       </div>
       <div class="form-body">
-        <SportsTackList {sportstacks} />
+        <SportsTackList {sportstacks} {loading} limit={5} />
         <Button
           full={true}
           size="lg"
-          disabled={(scores_user_data?.subscriptions?.sportstacks?.length || 0) < 3}
+          disabled={(scores_user_data?.subscriptions?.sportstacks?.length ||
+            0) < 3}
           on:click={() => {
             $loginStore.currentStep += 1;
           }}>Continue</Button
@@ -217,9 +249,8 @@
         gap: var(--spacing-4xl, 32px);
         align-self: stretch;
 
-        :global(.list-wrapper ) {
-
-            padding-block: 0;
+        :global(.list-wrapper) {
+          padding-block: 0;
         }
         :global(.list-item) {
           padding-inline: 0;

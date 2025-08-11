@@ -67,7 +67,9 @@
 
   async function saveCountrySelection() {
     try {
-      await updateUserProfileData({ country: value?.label });
+      const country = value?.id;
+      await updateUserProfileData({ country });
+      $loginStore.country = country as string;
       $loginStore.currentStep += 1;
     } catch (error) {
       console.error("Failed to update country in profile:", error);

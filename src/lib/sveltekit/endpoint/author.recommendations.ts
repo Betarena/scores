@@ -1,5 +1,5 @@
-import { getRecommendedAuthors } from "@betarena/scores-lib/dist/functions/v8/authors.profile";
 import { json, RequestHandler } from "@sveltejs/kit";
+import { getRecommendedAuthors } from "../../../../../scores-lib/src/functions/v8/authors.profile";
 
 export const PostAuthorRecommendations: RequestHandler = async ({ request }) => {
   try {
@@ -7,7 +7,6 @@ export const PostAuthorRecommendations: RequestHandler = async ({ request }) => 
     console.log('Received request for author recommendations:', { lang, user, country });
     // For now, using mock data. Replace with actual implementation when library is built.
     const recommendedAuthors = await getRecommendedAuthors({ country, lang: lang || user.language, user });
-
     return json({
       success: true,
       data: {
