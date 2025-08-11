@@ -42,13 +42,27 @@ export function cleanUrl
 {
   if (url == null) return '';
 
-  url = url.replace
-  (
-    'https://scores.betarena.com',
-    ''
-  );
+  url = url
+    .replace
+    (
+      'https://scores.betarena.com',
+      ''
+    )
+    .replace
+    (
+      'https://betarena.com',
+      ''
+    )
+    .replace
+    (
+      'https://www.betarena.com',
+      ''
+    )
+  ;
 
-  if (!url.startsWith('/')) url = '/'+url;
+  if (!url.startsWith('/'))
+    url = '/'+url;
+  ;
 
   return url;
 }

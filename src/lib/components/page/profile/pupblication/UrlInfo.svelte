@@ -27,7 +27,7 @@
     <Lock color="var(--colors-foreground-fg-brand-primary)" />
   </div>
   <span class="text">
-    https://scores.betarena.com/a/sportstack/{permalink}
+    https://betarena.com/a/sportstack/{permalink}
   </span>
 </div>
 
