@@ -32,6 +32,7 @@ import { ArticlesSearchEndpoint } from '$lib/sveltekit/endpoint/search.articles.
 import { AuthorsSearchEndpoint } from '$lib/sveltekit/endpoint/search.authors.js';
 import { SuggestionsPostEndpoint, SuggestionsSearchEndpoint } from '$lib/sveltekit/endpoint/search.suggestions.js';
 import { TagsSearchEndpoint } from '$lib/sveltekit/endpoint/search.tags.js';
+import { PostTagsRecommendations } from '$lib/sveltekit/endpoint/tags.recommendations';
 import { GetTranslations } from '$lib/sveltekit/endpoint/translations.js';
 import type { RequestHandler } from '@sveltejs/kit';
 
@@ -82,7 +83,8 @@ const postEndpointsMap = {
   'profile.main': EndpointProfileMain,
   "search.suggestions": SuggestionsPostEndpoint,
   'partners': PostPartnerSubmission,
-  "authors.recommendations": PostAuthorRecommendations
+  "authors.recommendations": PostAuthorRecommendations,
+  "tags.recommendations": PostTagsRecommendations
 }
 type PostEndPointsMapKeys = keyof typeof postEndpointsMap;
 
