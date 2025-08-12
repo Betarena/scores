@@ -215,7 +215,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding-bottom: 40px;
+    padding-bottom: 55px;
 
     .content {
       flex-grow: 1;
