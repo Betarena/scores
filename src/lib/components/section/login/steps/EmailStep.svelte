@@ -7,6 +7,7 @@
   import SocialButton from "$lib/components/ui/SocialButton.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
   import { auth } from "$lib/firebase/init";
+  import { modalStore } from "$lib/store/modal";
   import { successAuthComplete } from "$lib/utils/authentication";
   import { AU_W_TAG, dlog, errlog } from "$lib/utils/debug";
   import { tryCatchAsync } from "@betarena/scores-lib/dist/util/common";
@@ -305,7 +306,7 @@
   >
 </div>
 
-<div class="quest-wrapper">
+<div class="quest-wrapper" on:click={() => {$modalStore.show = false}}>
   <span class="text"> Skip and continue as </span>
   <div class="quest">Guest</div>
 </div>
@@ -446,7 +447,7 @@
   }
   .quest-wrapper {
     position: fixed;
-    bottom: 55px;
+    bottom: 40px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;

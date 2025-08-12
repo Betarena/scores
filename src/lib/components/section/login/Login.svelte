@@ -215,7 +215,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding-bottom: 55px;
+    padding-bottom: 40px;
 
     .content {
       flex-grow: 1;
@@ -234,7 +234,7 @@
       }
     }
     .pagination-wrapper {
-      padding: 0 var(--container-padding-mobile, 16px);
+      padding: 10px var(--container-padding-mobile, 16px);
       width: 100%;
       display: flex;
       justify-content: center;
