@@ -45,6 +45,7 @@
 
   import TagsWidget from "./content/Tags-Widget.svelte";
   import { tryCatch } from "@betarena/scores-lib/dist/util/common.js";
+  import { helperExpectedCanonicalUrl } from "$lib/utils/string.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -110,7 +111,7 @@
     nofollow={tryCatch(() => {
       return JSON.parse(pageSeo.main_data.nofollow);
     }) ?? false}
-    canonical={`${$page.url.origin}/a/tag/${pageSeo.main_data.canonical}`}
+    canonical={helperExpectedCanonicalUrl(`${$page.url.origin}/a/tag/${pageSeo.main_data.canonical}`)}
     twitter={pageSeo.twitter_card}
     openGraph={pageSeo.opengraph}
   />

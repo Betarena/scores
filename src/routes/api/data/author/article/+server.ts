@@ -58,7 +58,7 @@ export const POST: RequestHandler = async ({ request, locals }) =>
     const seoTitle = seo.title || title;
     const seoDescription = seo.description || "";
     const permalink = mutateStringToPermalink(title);
-    const link = `https://scores.betarena.com/a/${permalink}`;
+    const link = `https://betarena.com/a/${permalink}`;
 
     const articleId = await entryProfileTabAuthorArticleUpsert({
       author_id,
