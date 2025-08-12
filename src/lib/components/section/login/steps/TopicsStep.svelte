@@ -61,7 +61,7 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function toggleTopic(topic: string) {
+  function toggleTopic(topic: number) {
     const follow = !selectedTopics.includes(topic);
     userBetarenaSettings.updateData([
       ["user-following", { target: "tags", id: topic, follow }],
