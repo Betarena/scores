@@ -65,11 +65,28 @@
       user: scores_user_data,
       country: scores_user_data?.country || $loginStore.country,
     });
-    if (res?.data?.authors)
-      sportstacks = new Map(
-        res?.data.authors.map((author) => [author.id, author])
-      );
     loading = false;
+    if (!res?.data?.authors) return;
+    sportstacks = new Map(
+      res?.data.authors.map((author) => [author.id, author])
+    );
+    const officialSportstack = res?.data?.authors.find(
+      (author) => author.actionButton === false
+    );
+    if (officialSportstack) followDefaultSportstack(officialSportstack);
+  }
+
+  async function followDefaultSportstack(
+    author: IPageAuthorTranslationDataFinal
+  ) {
+    if (scores_user_data?.subscriptions?.sportstacks?.includes(author.id))
+      return;
+    userSettings.updateData([
+      [
+        "user-subscriptions",
+        { target: "sportstacks", id: author.id, follow: true },
+      ],
+    ]);
   }
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
 

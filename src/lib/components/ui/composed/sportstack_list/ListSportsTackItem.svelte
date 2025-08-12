@@ -106,7 +106,7 @@
       {/if}
     </div>
   </a>
-  {#if uid!== ctx?.firebase_user_data?.uid && action_button}
+  {#if uid!== ctx?.firebase_user_data?.uid && (user.actionButton ?? action_button)}
     <Button
       type={isFollow ? "subtle" : "primary"}
       style="padding:10px 16px; font-size: 14px; height:{size === 'lg'

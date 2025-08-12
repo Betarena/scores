@@ -1,10 +1,14 @@
 <script lang="ts">
+  import { post } from "$lib/api/utils";
   import CircleBg from "$lib/components/shared/backround-patterns/CircleBG.svelte";
   import Badge from "$lib/components/ui/Badge.svelte";
   import Button from "$lib/components/ui/Button.svelte";
+  import LoaderBadge from "$lib/components/ui/loaders/LoaderBadge.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
   import userSettings from "$lib/store/user-settings";
   import userBetarenaSettings from "$lib/store/user-settings.js";
+  import type { AuthorsTagsMain } from "@betarena/scores-lib/types/v8/_HASURA-0";
+  import { onMount } from "svelte";
   import IconTopics from "../icons/IconTopics.svelte";
   import { loginStore } from "../login-store";
 
@@ -23,25 +27,8 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   $: ({ user: { scores_user_data } = { scores_user_data: {} } } =
     $userSettings);
-  const topics = [
-    "Soccer",
-    "Goals",
-    "Basketball",
-    "Tennis",
-    "Baseball",
-    "Hockey",
-    "Golf",
-    "Cricket",
-    "Rugby",
-    "Swimming",
-    "Cycling",
-    "Volleyball",
-    "Table Tennis",
-    "Badminton",
-    "Lacrosse",
-    "Rowing",
-    "Boxing",
-  ];
+  let tags: AuthorsTagsMain[] = [];
+  let loading = false;
 
   $: selectedTopics = scores_user_data?.following?.tags || [];
 
@@ -81,7 +68,35 @@
     ]);
   }
 
+  async function fetchSuggestedTags() {
+    loading = true;
+    const res = await post<{
+      data: { tags: AuthorsTagsMain[] };
+    }>("/api/data/tags.recommendations", {
+      user: scores_user_data,
+      country: scores_user_data?.country || $loginStore.country,
+    });
+    loading = false;
+    if (!res?.data?.tags) return;
+    tags = res?.data.tags || [];
+  }
+
   // #endregion ➤ 🛠️ METHODS
+
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  onMount(() => {
+    fetchSuggestedTags();
+  });
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 
 <!--
@@ -110,16 +125,22 @@
       </div>
       <div class="form-body">
         <div class="topics-grid">
-          {#each topics as topic}
-            <Badge
-              size="lg"
-              color={selectedTopics.includes(topic) ? "brand" : "gray"}
-              active={false}
-              on:click={() => toggleTopic(topic)}
-            >
-              {topic}
-            </Badge>
-          {/each}
+          {#if loading}
+                {#each Array(20) as _item}
+                <LoaderBadge width={58 + Math.floor(Math.random() * (120 - 58 + 1))} />
+              {/each}
+          {:else}
+             {#each tags as tag}
+               <Badge
+                 size="lg"
+                 color={selectedTopics.includes(tag.id) ? "brand" : "gray"}
+                 active={false}
+                 on:click={() => toggleTopic(tag.id)}
+               >
+                 {tag.name}
+               </Badge>
+             {/each}
+          {/if}
         </div>
         <Button
           full={true}
