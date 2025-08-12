@@ -6,6 +6,7 @@
   import Input from "$lib/components/ui/Input.svelte";
   import SocialButton from "$lib/components/ui/SocialButton.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
+  import { auth } from "$lib/firebase/init";
   import { successAuthComplete } from "$lib/utils/authentication";
   import { AU_W_TAG, dlog, errlog } from "$lib/utils/debug";
   import { tryCatchAsync } from "@betarena/scores-lib/dist/util/common";
@@ -16,7 +17,6 @@
     signInWithPopup,
   } from "firebase/auth";
   import { loginStore } from "../login-store";
-  import { auth } from "./../../../../firebase/init.ts";
 
   // #region ➤ 📌 VARIABLES
 
