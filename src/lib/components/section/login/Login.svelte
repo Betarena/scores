@@ -178,7 +178,7 @@
       </Button>
     </div>
   {/if}
-  <div class="contet">
+  <div class="content">
 
     <svelte:component this={stepMap[currentStep]} />
   </div>
@@ -207,7 +207,8 @@
 <style lang="scss">
   .login-wrapper {
     width: 100%;
-    height: 100vh;
+    height: 100%;
+    max-height: 100vh;
     background: var(--colors-background-bg-primary, #1f1f1f);
     position: fixed;
     top: 0;
@@ -236,6 +237,7 @@
       padding: 0 var(--container-padding-mobile, 16px);
       padding-bottom: 40px;
       width: 100%;
+      flex-shrink: 0;
       display: flex;
       justify-content: center;
       align-items: center;
