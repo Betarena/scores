@@ -178,7 +178,10 @@
       </Button>
     </div>
   {/if}
-  <svelte:component this={stepMap[currentStep]} />
+  <div class="contet">
+
+    <svelte:component this={stepMap[currentStep]} />
+  </div>
   {#if currentStep}
     <div class="pagination-wrapper">
       {#each Object.keys(stepMap).slice(1) as step}
@@ -209,6 +212,14 @@
     position: fixed;
     top: 0;
     left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-bottom: 40px;
+
+    .content {
+      flex-grow: 1;
+    }
 
     .back-button {
       position: absolute;
@@ -229,10 +240,6 @@
       justify-content: center;
       align-items: center;
       gap: var(--spacing-lg, 12px);
-      position: fixed;
-      bottom: 35px;
-      left: 0;
-      z-index: 2;
 
       .step-tab {
         height: 8px;

@@ -446,7 +446,7 @@
   }
   .quest-wrapper {
     position: fixed;
-    bottom: 22px;
+    bottom: 40px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
