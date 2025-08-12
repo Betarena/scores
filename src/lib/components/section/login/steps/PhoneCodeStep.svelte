@@ -7,6 +7,7 @@
     verifyPhoneCode,
   } from "$lib/firebase/firebase.actions";
   import { RecaptchaVerifier } from "firebase/auth";
+  import { onMount } from "svelte";
   import { loginStore } from "../login-store";
 
   // #region ➤ 📌 VARIABLES
@@ -23,12 +24,13 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
   let length = 6; // Firebase SMS codes are typically 6 digits
+
   let isLoading = false;
   let errorMessage = "";
+  let resentMessage = "";
 
-  let hiddenInput: HTMLInputElement;
-  let value = "";
-  let isInFocus = false;
+  let otpInputs: HTMLInputElement[] = [];
+  let currentFocus = 0;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -44,6 +46,7 @@
   // │ Please keep very close attention to these methods and                  │
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
+  $: value = otpInputs.map((input) => input?.value || "").join("");
   $: isValid = value.length === length;
   $: ({ confirmationResult, recaptchaVerifier } = $loginStore);
 
@@ -61,23 +64,74 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function focus() {
-    hiddenInput?.focus();
-    isInFocus = true;
+  function focusInput(index: number) {
+    if (otpInputs[index]) {
+      otpInputs[index].focus();
+      currentFocus = index;
+    }
   }
 
-  function handleInput(e: Event) {
-    value = (e.target as HTMLInputElement).value
-      .replace(/\D/g, "")
-      .slice(0, length);
-    if (value.length === length) {
+  function handleInputChange(e: Event, index: number) {
+    const input = e.target as HTMLInputElement;
+    const value = input.value.replace(/\D/g, "");
+
+    if (value.length > 1) {
+      // Handle paste or multiple characters
+      const digits = value.slice(0, length);
+      for (let i = 0; i < length; i++) {
+        if (otpInputs[i]) {
+          otpInputs[i].value = digits[i] || "";
+        }
+      }
+      // Focus on the last filled input or next empty
+      const nextIndex = Math.min(digits.length, length - 1);
+      focusInput(nextIndex);
+    } else {
+      input.value = value;
+      if (value && index < length - 1) {
+        focusInput(index + 1);
+      }
+    }
+
+    // Check if code is complete
+    const currentValue = otpInputs.map((inp) => inp?.value || "").join("");
+    if (currentValue.length === length) {
       handleVerifyCode();
     }
   }
 
-  function handleKeydown(e: KeyboardEvent) {
-    if (e.key === "Backspace" && !hiddenInput.value) {
-      value = value.slice(0, -1);
+  function handleKeyDown(e: KeyboardEvent, index: number) {
+    if (e.key === "Backspace") {
+      const input = e.target as HTMLInputElement;
+      if (!input.value && index > 0) {
+        focusInput(index - 1);
+      }
+    } else if (e.key === "ArrowLeft" && index > 0) {
+      e.preventDefault();
+      focusInput(index - 1);
+    } else if (e.key === "ArrowRight" && index < length - 1) {
+      e.preventDefault();
+      focusInput(index + 1);
+    }
+  }
+
+  function handlePaste(e: ClipboardEvent, index: number) {
+    e.preventDefault();
+    const pasted = (e.clipboardData?.getData("text") || "")
+      .replace(/\D/g, "")
+      .slice(0, length);
+    if (pasted) {
+      for (let i = 0; i < length; i++) {
+        if (otpInputs[i]) {
+          otpInputs[i].value = pasted[i] || "";
+        }
+      }
+      const nextIndex = Math.min(pasted.length, length - 1);
+      focusInput(nextIndex);
+
+      if (pasted.length === length) {
+        handleVerifyCode();
+      }
     }
   }
 
@@ -124,8 +178,10 @@
       }
 
       // Clear the input for retry
-      value = "";
-      hiddenInput.value = "";
+      otpInputs.forEach((input) => {
+        if (input) input.value = "";
+      });
+      focusInput(0);
     } finally {
       isLoading = false;
     }
@@ -136,12 +192,19 @@
 
     isLoading = true;
     errorMessage = "";
+    resentMessage = "";
 
     try {
       $loginStore.confirmationResult = await sendPhoneVerificationCode(
         $loginStore.phoneNumber,
         $loginStore.recaptchaVerifier as RecaptchaVerifier
       );
+      resentMessage = "The code has been resent.";
+      // Clear inputs and focus first field
+      otpInputs.forEach((input) => {
+        if (input) input.value = "";
+      });
+      focusInput(0);
     } catch (error: any) {
       switch (error.code) {
         case "auth/invalid-phone-number":
@@ -175,10 +238,20 @@
 
   // #endregion ➤ 🛠️ METHODS
 
-  $: if (hiddenInput) {
-    hiddenInput.focus();
-    isInFocus = true;
-  }
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  onMount(() => {
+    focusInput(0);
+  });
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 
 <!--
@@ -220,30 +293,23 @@
         <p class="subtitle">We sent a verification code to your phone</p>
       </div>
       <div class="form-body">
-        <input
-          bind:this={hiddenInput}
-          bind:value
-          type="tel"
-          inputmode="numeric"
-          pattern="\d*"
-          autocomplete="one-time-code"
-          on:input={handleInput}
-          on:keydown={handleKeydown}
-          on:blur={() => (isInFocus = false)}
-          class="otp-hidden"
-        />
         <div class="otp-wrapper">
-          <div class="otp-box-wrapper" on:click|stopPropagation={focus}>
+          <div class="otp-box-wrapper">
             {#each Array(length) as _, i}
-              <div
-                on:click={focus}
-                class:filled={value[i]}
-                class="otp-box {isInFocus && i === value.length
-                  ? 'current'
-                  : ''}"
-              >
-                {value[i] ?? "0"}
-              </div>
+              <input
+                bind:this={otpInputs[i]}
+                type="tel"
+                inputmode="numeric"
+                pattern="\d"
+                maxlength="1"
+                placeholder="0"
+                autocomplete="one-time-code"
+                class="otp-box {currentFocus === i ? 'current' : ''}"
+                on:input={(e) => handleInputChange(e, i)}
+                on:keydown={(e) => handleKeyDown(e, i)}
+                on:paste={(e) => handlePaste(e, i)}
+                on:focus={() => (currentFocus = i)}
+              />
             {/each}
           </div>
           {#if errorMessage}
@@ -263,10 +329,15 @@
   </Container>
   <Container hFull={false}>
     <div class="support-text">
-      <span>Didn't receive the code?</span>
-      <button class="resend" disabled={isLoading} on:click={resendCode}>
-        Click to resend
-      </button>
+      <div class="resend-wrapper">
+        <span>Didn't receive the code?</span>
+        <button class="resend" disabled={isLoading} on:click={resendCode}>
+          Click to resend
+        </button>
+      </div>
+      {#if resentMessage}
+        <div class="resent-message">{resentMessage}</div>
+      {/if}
     </div>
   </Container>
 </div>
@@ -395,14 +466,11 @@
             gap: 8px;
 
             .otp-box {
-              display: flex;
               width: 64px;
               min-height: 64px;
               padding: var(--spacing-xxs, 2px) var(--spacing-md, 8px);
-              flex-direction: column;
-              justify-content: center;
-              align-items: center;
-              gap: var(--spacing-md, 8px);
+              border: none;
+              outline: none;
               transition: border-color 0.2s;
 
               border-radius: var(--radius-lg, 10px);
@@ -413,7 +481,8 @@
               box-shadow: 0 1px 2px 0
                 var(--colors-effects-shadows-shadow-xs, rgba(10, 13, 18, 0.05));
 
-              color: var(--colors-text-text-placeholder_subtle, #d2d2d2);
+              color: var(--colors-text-text-primary-900, #000);
+              caret-color: var(--colors-border-border-brand, #f5620f);
 
               text-align: center;
 
@@ -425,6 +494,7 @@
               line-height: var(--line-height-display-lg, 60px); /* 125% */
               letter-spacing: -0.96px;
 
+              &:focus,
               &.current {
                 border: 2px solid var(--colors-border-border-brand, #f5620f);
                 background: var(--colors-background-bg-primary, #fff);
@@ -437,11 +507,22 @@
                   0 0 0 4px
                     var(--colors-effects-focus-rings-focus-ring, #f5620f);
               }
-              &.filled {
-                border-radius: var(--radius-lg, 10px);
-                border: 2px solid var(--colors-border-border-brand, #f7813f);
 
-                color: var(--colors-text-text-brand-tertiary_alt, #fbfbfb);
+              &:placeholder-shown {
+                color: var(--colors-text-text-placeholder_subtle, #d2d2d2);
+              }
+
+              // Убираем стрелки у input[type="number"] в Chrome/Safari
+              &::-webkit-outer-spin-button,
+              &::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+              }
+
+              // Убираем стрелки у input[type="number"] в Firefox
+              &[type="number"] {
+                appearance: textfield;
+                -moz-appearance: textfield;
               }
             }
           }
@@ -460,8 +541,9 @@
     }
     .support-text {
       display: flex;
+      flex-direction: column;
       justify-content: center;
-      align-items: flex-start;
+      align-items: center;
       gap: var(--spacing-xs, 4px);
       align-self: stretch;
 
@@ -473,6 +555,13 @@
       font-style: normal;
       font-weight: 400;
       line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+
+      .resend-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: var(--spacing-xs, 4px);
+      }
 
       .resend {
         background: none;
@@ -495,6 +584,17 @@
           opacity: 0.5;
           cursor: not-allowed;
         }
+      }
+
+      .resent-message {
+        color: var(--colors-text-text-success-primary-600, #12b76a);
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-sm, 14px);
+        font-style: normal;
+        font-weight: 500;
+        line-height: var(--line-height-text-sm, 20px);
+        text-align: center;
+        margin-top: var(--spacing-xs, 4px);
       }
     }
   }

@@ -6,7 +6,7 @@ export const loginStore = writable({
     isLogin: false,
     password: "",
     name: "",
-    currentStep: 7,
+    currentStep: 3,
     avatar: "",
     phoneNumber: "",
     confirmationResult: null as ConfirmationResult | null,
