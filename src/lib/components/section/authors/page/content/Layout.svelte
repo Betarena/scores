@@ -49,6 +49,7 @@
   import Button from '$lib/components/ui/Button.svelte';
   import Edit_05 from '$lib/components/ui/assets/edit-05.svelte';
   import userSettings from '$lib/store/user-settings.js';
+  import { helperExpectedCanonicalUrl } from '$lib/utils/string.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -157,7 +158,7 @@
       }
     ) ?? false
   }
-  canonical={`${$page.url.origin}${$page.url.pathname}`}
+  canonical={helperExpectedCanonicalUrl(`${$page.url.origin}${$page.url.pathname}`)}
   twitter={pageSeo.twitter_card}
   openGraph={pageSeo.opengraph}
 />

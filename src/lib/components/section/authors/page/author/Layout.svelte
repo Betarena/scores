@@ -50,6 +50,7 @@
 
   import type { IPageAuhtorArticleDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
   import session from '$lib/store/session.js';
+  import { helperExpectedCanonicalUrl } from '$lib/utils/string.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -138,7 +139,7 @@
 		keywords={pageSeo.article.seo_details?.main_data.keywords}
 		noindex={ tryCatch(() => {return JSON.parse(pageSeo.article.seo_details?.main_data.noindex)}) ?? false }
 		nofollow={ tryCatch(() => {return JSON.parse(pageSeo.article.seo_details?.main_data.nofollow)}) ?? false }
-		canonical={pageSeo.article.seo_details?.main_data.canonical}
+		canonical={helperExpectedCanonicalUrl(pageSeo.article.seo_details?.main_data.canonical)}
 		twitter={pageSeo.article.seo_details?.twitter_card}
 		openGraph={pageSeo.article.seo_details?.opengraph}
 	/>

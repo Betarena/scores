@@ -70,6 +70,34 @@ export function cleanUrl
 /**
  * @author
  *  @migbash
+ * @description
+ *  📣 Helper to generate expected canonical url.
+ * @param url
+ *  💠 **[required]** **url** to be cleaned.
+ * @return { string }
+ *  📤 Cleaned `string` url
+ */
+export function helperExpectedCanonicalUrl
+(
+  url: string | NullUndef
+): string
+{
+  if (url == null) return '';
+
+  url = url
+    .replace
+    (
+      'https://scores.betarena.com',
+      'https://betarena.com'
+    )
+  ;
+
+  return url;
+}
+
+/**
+ * @author
+ *  @migbash
  * @summary
  *  - 🟥 MAIN
  *  - 🟦 HELPER
