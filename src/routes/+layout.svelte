@@ -265,6 +265,9 @@
     mainDeepLinkCheck();
   ;
 
+  $: if ($userBetarenaSettings.user?.firebase_user_data?.uid) {
+      
+  }
   // ╭─────
   // │ NOTE: IMPORTANT CRITICAL
   // │ │: Hijack the 'console' object.

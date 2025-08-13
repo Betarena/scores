@@ -23,10 +23,10 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
   import { browser } from "$app/environment";
-  import { PUBLIC_RECAPTCHA_SITE_KEY } from "$env/static/public";
   import { get } from "$lib/api/utils";
   import Button from "$lib/components/ui/Button.svelte";
   import { initializeRecaptcha } from "$lib/firebase/firebase.actions";
+  import { modalStore } from "$lib/store/modal";
   import session from "$lib/store/session";
   import userSettings from "$lib/store/user-settings";
   import { onMount } from "svelte";
@@ -111,6 +111,9 @@
     if (!firebase_user_data?.phoneNumber) {
       steps.push(PhoneStep, PhoneCodeStep);
     }
+    if (!scores_user_data?.name) {
+      steps.push(ProfileStep);
+    }
     if (!scores_user_data?.country) {
       steps.push(CountryStep);
     }
@@ -119,6 +122,9 @@
     }
     if ((scores_user_data?.following?.tags?.length || 0) < 3) {
       steps.push(TopicsStep);
+    }
+    if (!steps.length) {
+      $modalStore.show = false;
     }
     let nexSteps: Record<string, typeof EmailStep> = {}
     steps.forEach((component, index) => (nexSteps[index] = component));
@@ -159,6 +165,9 @@
     } catch (error) {
       console.error("Failed to initialize reCAPTCHA:", error);
     }
+    return () => {
+      $loginStore.recaptchaVerifier?.clear();
+    }
   });
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
@@ -175,22 +184,6 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<svelte:head>
-  <script
-    src="https://www.google.com/recaptcha/enterprise.js?render={PUBLIC_RECAPTCHA_SITE_KEY}"
-  ></script>
-  <script>
-    function onClick(e) {
-      e.preventDefault();
-      grecaptcha.enterprise.ready(async () => {
-        const token = await grecaptcha.enterprise.execute(
-          PUBLIC_RECAPTCHA_SITE_KEY,
-          { action: "LOGIN" }
-        );
-      });
-    }
-  </script>
-</svelte:head>
 <div class="login-wrapper {viewportType}">
   {#if currentStep}
     <!-- content here -->
@@ -231,7 +224,7 @@
   {/if}
 
   <!-- Hidden reCAPTCHA container -->
-  <div id="recaptcha-container" style="display: none;" />
+  <div id="recaptcha-container" />
 </div>
 
 <!--
