@@ -49,7 +49,6 @@
   $: value = otpInputs.map((input) => input?.value || "").join("");
   $: isValid = value.length === length;
   $: ({ confirmationResult, recaptchaVerifier } = $loginStore);
-  $: console.log(value, isValid, length, otpInputs);
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 

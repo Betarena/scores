@@ -22,6 +22,7 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
+  import { browser } from "$app/environment";
   import { PUBLIC_RECAPTCHA_SITE_KEY } from "$env/static/public";
   import { get } from "$lib/api/utils";
   import Button from "$lib/components/ui/Button.svelte";
@@ -57,26 +58,35 @@
   $: ({ viewportType } = $session);
   $: ({ currentStep } = $loginStore);
   $: user = $userSettings.user?.scores_user_data;
-  const stepMap = {
+  let defaultSteps = [
+    EmailStep,
+    PasswordStep,
+    PhoneStep,
+    PhoneCodeStep,
+    ProfileStep,
+    CountryStep,
+    SportstackStep,
+    TopicsStep,
+  ];
+  let stepMap: Record<string, typeof EmailStep> = {
     0: EmailStep,
-    1: PasswordStep,
-    2: PhoneStep,
-    3: PhoneCodeStep,
-    4: ProfileStep,
-    5: CountryStep,
-    6: SportstackStep,
-    7: TopicsStep,
   };
+
+  defaultSteps.forEach((component, index) => (stepMap[index] = component));
 
   $: if (user) {
     $loginStore.avatar = user.profile_photo || "";
     $loginStore.name = user.name || "";
   }
 
+  $: if (browser && $userSettings.user?.firebase_user_data?.uid) {
+    updateSteps();
+  }
+
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
-  
+
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'methods' that are to be           │
@@ -86,18 +96,49 @@
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  
+
+  function updateSteps() {
+    if (!$userSettings.user) return;
+    let steps: Array<typeof PasswordStep> = [];
+    const { scores_user_data, firebase_user_data } = $userSettings.user;
+    if (
+      !firebase_user_data?.providerData.find(
+        (provider) => provider.providerId === "password"
+      )
+    ) {
+      steps.push(PasswordStep);
+    }
+    if (!firebase_user_data?.phoneNumber) {
+      steps.push(PhoneStep, PhoneCodeStep);
+    }
+    if (!scores_user_data?.country) {
+      steps.push(CountryStep);
+    }
+    if ((scores_user_data?.subscriptions?.sportstacks?.length || 0) < 3) {
+      steps.push(SportstackStep);
+    }
+    if ((scores_user_data?.following?.tags?.length || 0) < 3) {
+      steps.push(TopicsStep);
+    }
+    let nexSteps: Record<string, typeof EmailStep> = {}
+    steps.forEach((component, index) => (nexSteps[index] = component));
+    stepMap = { ...nexSteps };
+    $loginStore.currentStep = 0;
+  }
+
   async function getInitData() {
-    const response = await get<{data: Record<string, string>[]}>('api/data/login');
+    const response = await get<{ data: Record<string, string>[] }>(
+      "api/data/login"
+    );
     if (response?.data) {
-      loginStore.update(v => ({
+      loginStore.update((v) => ({
         ...v,
-        translations: {...response.data[0]},
-        countries: {...response.data[1]}
-      }))
+        translations: { ...response.data[0] },
+        countries: { ...response.data[1] },
+      }));
     }
   }
-  
+
   // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
@@ -179,10 +220,9 @@
     </div>
   {/if}
   <div class="content">
-
     <svelte:component this={stepMap[currentStep]} />
   </div>
-  {#if currentStep}
+  {#if currentStep || stepMap[0] !== EmailStep}
     <div class="pagination-wrapper">
       {#each Object.keys(stepMap).slice(1) as step}
         <div class="step-tab" class:active={Number(step) === currentStep} />
