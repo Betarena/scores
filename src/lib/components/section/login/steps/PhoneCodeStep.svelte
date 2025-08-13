@@ -49,6 +49,7 @@
   $: value = otpInputs.map((input) => input?.value || "").join("");
   $: isValid = value.length === length;
   $: ({ confirmationResult, recaptchaVerifier } = $loginStore);
+  $: console.log(value, isValid, length, otpInputs);
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
@@ -73,11 +74,11 @@
 
   function handleInputChange(e: Event, index: number) {
     const input = e.target as HTMLInputElement;
-    const value = input.value.replace(/\D/g, "");
+    const v = input.value.replace(/\D/g, "");
 
-    if (value.length > 1) {
+    if (v.length > 1) {
       // Handle paste or multiple characters
-      const digits = value.slice(0, length);
+      const digits = v.slice(0, length);
       for (let i = 0; i < length; i++) {
         if (otpInputs[i]) {
           otpInputs[i].value = digits[i] || "";
@@ -87,14 +88,15 @@
       const nextIndex = Math.min(digits.length, length - 1);
       focusInput(nextIndex);
     } else {
-      input.value = value;
-      if (value && index < length - 1) {
+      input.value = v;
+      if (v && index < length - 1) {
         focusInput(index + 1);
       }
     }
 
     // Check if code is complete
     const currentValue = otpInputs.map((inp) => inp?.value || "").join("");
+    value = currentValue;
     if (currentValue.length === length) {
       handleVerifyCode();
     }
