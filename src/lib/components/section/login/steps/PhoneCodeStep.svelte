@@ -6,6 +6,7 @@
     sendPhoneVerificationCode,
     verifyPhoneCode,
   } from "$lib/firebase/firebase.actions";
+  import { successAuthComplete } from "$lib/utils/authentication";
   import { RecaptchaVerifier } from "firebase/auth";
   import { onMount } from "svelte";
   import { loginStore } from "../login-store";
@@ -144,7 +145,8 @@
     errorMessage = "";
 
     try {
-      await verifyPhoneCode(confirmationResult, value);
+     const credentials = await verifyPhoneCode(confirmationResult, value);
+     successAuthComplete("login", credentials.user, undefined);
       // Phone verification successful - move to next step
       $loginStore.currentStep += 1;
     } catch (error: any) {
