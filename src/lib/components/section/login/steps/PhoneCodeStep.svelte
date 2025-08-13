@@ -310,6 +310,9 @@
                 on:paste={(e) => handlePaste(e, i)}
                 on:focus={() => (currentFocus = i)}
               />
+              {#if i === 2}
+                <div class="splitter">-</div>
+              {/if}
             {/each}
           </div>
           {#if errorMessage}
@@ -461,13 +464,38 @@
           display: flex;
           flex-direction: column;
           gap: var(--spacing-md, 6px);
+
           .otp-box-wrapper {
             display: flex;
-            gap: 8px;
+            gap: var(--spacing-md, 8px);
+            height: 59px;
+            justify-content: center;
+            align-items: center;
+
+            .splitter {
+              color: var(--colors-text-text-placeholder_subtle, #525252);
+              text-align: center;
+              vertical-align: middle;
+
+              /* Display xl/Medium */
+              font-family: var(--font-family-font-family-display, Roboto);
+              font-size: var(--font-size-display-xl, 60px);
+              font-style: normal;
+              font-weight: 500;
+              line-height: var(--line-height-display-xl, 72px); /* 120% */
+              letter-spacing: -1.2px;
+
+              display: flex;
+              width: 28px;
+
+              flex-direction: column;
+              justify-content: center;
+              flex-shrink: 0;
+            }
 
             .otp-box {
-              width: 64px;
-              min-height: 64px;
+              width: 46px;
+              height: 46px;
               padding: var(--spacing-xxs, 2px) var(--spacing-md, 8px);
               border: none;
               outline: none;
