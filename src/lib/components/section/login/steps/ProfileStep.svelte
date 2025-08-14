@@ -10,6 +10,7 @@
   import { log_v3 } from "$lib/utils/debug";
   import { updateUserProfileData } from "$lib/utils/user.js";
   import { tryCatchAsync } from "@betarena/scores-lib/dist/util/common.js";
+  import { onMount } from "svelte";
   import { loginStore } from "../login-store";
 
   // #region ➤ 📌 VARIABLES
@@ -29,7 +30,8 @@
   let isLoading = false;
   let errorMessage = "";
 
-  $: ({ name, avatar } = $loginStore);
+  let name = "";
+  let avatar = "";
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -60,21 +62,24 @@
   // │ 2. async function (..)                                                 │
   // ╰───────────────────────────────────────────────────────────────╯
 
-
   async function uploadProfilePicture(e: CustomEvent<string>): Promise<void> {
     const img = e.detail;
     await tryCatchAsync(async (): Promise<void> => {
       log_v3({
         strGroupName: "uploadProfilePicture(..)",
-        msgs: [
-          "🟢 Uploading profile picture...",
-          `🔗 ${img}`
-        ],
+        msgs: ["🟢 Uploading profile picture...", `🔗 ${img}`],
       });
 
-      const avatar = await uploadProfileAvatar(img);
-      $loginStore.avatar = avatar;
+      await uploadProfileAvatar(img);
+      $loginStore.avatar = img;
+      avatar = img;
     });
+  }
+
+  async function updateUserName() {
+    if (!name) return;
+
+    await updateUserProfileData({ name });
   }
 
   async function handleContinue(): Promise<void> {
@@ -88,8 +93,7 @@
     try {
       // Update user profile data
       await updateUserProfileData({
-        name: name,
-        profile_photo: avatar || null,
+        name: name
       });
 
       // Move to next step
@@ -103,8 +107,22 @@
   }
 
   // #endregion ➤ 🛠️ METHODS
-</script>
 
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+  
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  onMount(() => {
+    name = $loginStore.name;
+    avatar = $loginStore.avatar;
+  });
+  
+</script>
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ 💠 Svelte Component HTML                                                  d       │
@@ -146,8 +164,9 @@
       <div class="form-body">
         <Input
           label="Name"
-          bind:value={$loginStore.name}
+          bind:value={name}
           required={true}
+          on:blur={updateUserName}
           placeholder="First and Last Name"
         />
 
@@ -156,8 +175,11 @@
             text="This will be displayed on your profile."
             title="Your photo"
           />
-          <Avatar size="xxl" src={$loginStore.avatar} />
-          <Uploader bind:avatar={$loginStore.avatar} on:upload={uploadProfilePicture} />
+          <Avatar size="xxl" src={avatar} />
+          <Uploader
+            bind:avatar={avatar}
+            on:upload={uploadProfilePicture}
+          />
         </div>
         <Button
           full={true}

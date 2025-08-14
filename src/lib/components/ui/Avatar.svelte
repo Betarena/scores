@@ -76,7 +76,7 @@
       class="avatar-circle"
       {...$$restProps}
       class:size
-      style="{styles} background-image: url({getOptimizedImageUrl({ strImageUrl: src })}); "
+      style="{styles} background-image: url({!src.startsWith("data") ? getOptimizedImageUrl({ strImageUrl: src }) : src}); "
     />
   {:else if isLoogedIn}
     <DefaultAvatar size={numSize} />
