@@ -143,7 +143,7 @@
         <p class="subtitle">Follow at least 3 publications</p>
       </div>
       <div class="form-body">
-        <SportsTackList {sportstacks} {loading} limit={5} />
+        <SportsTackList {sportstacks} includeAbout={true} {loading} limit={5} />
         <Button
           full={true}
           size="lg"

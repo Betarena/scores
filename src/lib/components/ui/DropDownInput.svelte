@@ -475,7 +475,7 @@
             background: var(--colors-background-bg-primary, #fff);
             color: var(--colors-text-text-primary-900, #fbfbfb);
             font-family: var(--font-family-font-family-body, Roboto);
-            font-size: var(--font-size-text-sm, 14px);
+            font-size: 16px;
             font-weight: 400;
             line-height: var(--line-height-text-sm, 20px);
             outline: none;

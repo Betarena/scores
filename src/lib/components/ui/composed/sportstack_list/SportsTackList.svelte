@@ -34,7 +34,7 @@
     size: number | string = 40,
     limit = 10,
     action_button = true,
-    includePermalink = false,
+    includeAbout = false,
     emptyMessage = "";
 
   const /**
@@ -75,14 +75,14 @@
   {:else}
     <div class="list-wrapper">
       {#each [...sportstacks] as [uid, user] (uid)}
-        <ListSportsTackItem {includePermalink} {user} {size} {translations} {action_button}/>
+        <ListSportsTackItem {includeAbout} {user} {size} {translations} {action_button}/>
       {/each}
     </div>
   {/if}
   {#if loading}
     <div class="list-wrapper">
       {#each new Array(limit) as _item}
-        <ListSportsTackLoader {includePermalink} {size} {action_button} />
+        <ListSportsTackLoader includePermalink={includeAbout} {size} {action_button} />
       {/each}
     </div>
   {/if}
