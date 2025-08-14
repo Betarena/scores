@@ -25,17 +25,10 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   import { page } from "$app/stores";
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
-  import sessionStore from "$lib/store/session.js";
-  import userBetarenaSettings from "$lib/store/user-settings.js";
-  import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
-  import Button from "$lib/components/ui/Button.svelte";
-  import { translationObject } from "$lib/utils/translation.js";
-  import HeaderCLang from "./Header-C-Lang.svelte";
-  import HeaderCTheme from "./Header-C-Theme.svelte";
-  import AssetBetarenaLogoFull from "./assets/asset-betarena-logo-full.svelte";
+  import Login from "$lib/components/section/login/Login.svelte";
+  import { loginStore } from "$lib/components/section/login/login-store";
   import Avatar from "$lib/components/ui/Avatar.svelte";
-  import { scoresNavbarStore } from "./_store.js";
-  import { promiseUrlsPreload } from "$lib/utils/navigation.js";
+  import Button from "$lib/components/ui/Button.svelte";
   import {
     routeIdAuthorProfile,
     routeIdAuthorSubscribers,
@@ -44,8 +37,17 @@
     routeIdSearch,
     routeIdSportstack,
   } from "$lib/constants/paths.js";
-  import session from "$lib/store/session.js";
+  import { modalStore } from "$lib/store/modal";
+  import { default as session, default as sessionStore } from "$lib/store/session.js";
+  import userBetarenaSettings from "$lib/store/user-settings.js";
+  import { promiseUrlsPreload } from "$lib/utils/navigation.js";
+  import { translationObject } from "$lib/utils/translation.js";
+  import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
+  import HeaderCLang from "./Header-C-Lang.svelte";
+  import HeaderCTheme from "./Header-C-Theme.svelte";
   import HeaderSearch from "./HeaderSearch.svelte";
+  import { scoresNavbarStore } from "./_store.js";
+  import AssetBetarenaLogoFull from "./assets/asset-betarena-logo-full.svelte";
 
   // #endregion ➤ 📦 Package Imports
   // #region ➤ 📌 VARIABLES
@@ -101,7 +103,9 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   function signIn() {
-    $sessionStore.currentActiveModal = "Auth_Modal";
+    $loginStore.isExistedUser = false;
+    $modalStore.component = Login;
+    $modalStore.show = true;
     return;
   }
 
