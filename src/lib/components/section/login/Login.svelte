@@ -127,8 +127,8 @@
     ) {
       // steps.push(PasswordStep);
     }
-    if (!firebase_user_data?.phoneNumber) {
-      // steps.push(PhoneStep, PhoneCodeStep);
+    if (!firebase_user_data?.phoneNumber && new Date(scores_user_data?.register_date || "").valueOf() > new Date(2025, 7, 13).valueOf()) {
+      steps.push(PhoneStep, PhoneCodeStep);
     }
     if (!scores_user_data?.name) {
       steps.push(ProfileStep);
