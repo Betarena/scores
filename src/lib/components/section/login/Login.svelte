@@ -79,7 +79,7 @@
     $loginStore.name = user.name || "";
   }
 
-  $: if (browser && $userSettings.user?.firebase_user_data?.uid) {
+  $: if (browser && $loginStore.isExistedUser) {
     updateSteps();
   }
 
@@ -106,10 +106,10 @@
         (provider) => provider.providerId === "password"
       )
     ) {
-      steps.push(PasswordStep);
+      // steps.push(PasswordStep);
     }
     if (!firebase_user_data?.phoneNumber) {
-      steps.push(PhoneStep, PhoneCodeStep);
+      // steps.push(PhoneStep, PhoneCodeStep);
     }
     if (!scores_user_data?.name) {
       steps.push(ProfileStep);
@@ -125,8 +125,9 @@
     }
     if (!steps.length) {
       $modalStore.show = false;
+      return;
     }
-    let nexSteps: Record<string, typeof EmailStep> = {}
+    let nexSteps: Record<string, typeof EmailStep> = {};
     steps.forEach((component, index) => (nexSteps[index] = component));
     stepMap = { ...nexSteps };
     $loginStore.currentStep = 0;
@@ -143,6 +144,10 @@
         countries: { ...response.data[1] },
       }));
     }
+  }
+
+  function loginWithGoogle() {
+    updateSteps();
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -162,12 +167,13 @@
       const recaptcha = initializeRecaptcha("recaptcha-container");
       $loginStore.recaptchaVerifier = recaptcha;
       getInitData();
+      updateSteps();
     } catch (error) {
       console.error("Failed to initialize reCAPTCHA:", error);
     }
     return () => {
       $loginStore.recaptchaVerifier?.clear();
-    }
+    };
   });
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
@@ -186,7 +192,6 @@
 
 <div class="login-wrapper {viewportType}">
   {#if currentStep}
-    <!-- content here -->
     <div class="back-button">
       <Button
         type="secondary"
@@ -213,7 +218,10 @@
     </div>
   {/if}
   <div class="content">
-    <svelte:component this={stepMap[currentStep]} />
+    <svelte:component
+      this={stepMap[currentStep]}
+      on:loginWithGoogle={loginWithGoogle}
+    />
   </div>
   {#if currentStep || stepMap[0] !== EmailStep}
     <div class="pagination-wrapper">

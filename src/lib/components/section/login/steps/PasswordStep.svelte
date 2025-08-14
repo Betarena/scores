@@ -85,6 +85,7 @@
     
     try {
       const credentials = await registerUser(email, password);
+      $loginStore.isExistedUser = false;
       await successAuthComplete("register", credentials.user);
       $loginStore.currentStep += 1;
     } catch (error: any) {

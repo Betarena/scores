@@ -82,6 +82,7 @@
 // import '@betarena/ad-engine';
   // import WidgetAdEngine from '@betarena/ad-engine/src/lib/Widget-AdEngine.svelte';
   import AndroidPwaBanner from '$lib/components/AndroidPWABanner.svelte';
+  import { loginStore } from '$lib/components/section/login/login-store';
   import { auth } from '$lib/firebase/init';
   import history_store from '$lib/store/history.js';
   import { modalStore } from '$lib/store/modal';
@@ -234,7 +235,10 @@
     isInitliazed = true;
     userBetarenaSettings.useLocalStorage(serverLang);
     if (auth.currentUser) {
-      successAuthComplete("login", auth.currentUser, undefined)
+      successAuthComplete("login", auth.currentUser, undefined);
+      $loginStore.isExistedUser = true;
+      $modalStore.component = Login;
+      $modalStore.show = true;
     }
     auth.currentUser
     scoresAdminStore.useLocalStorage();

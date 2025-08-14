@@ -17,6 +17,7 @@
     signInWithEmailAndPassword,
     signInWithPopup,
   } from "firebase/auth";
+  import { createEventDispatcher } from "svelte";
   import { loginStore } from "../login-store";
 
   // #region ➤ 📌 VARIABLES
@@ -41,6 +42,7 @@
   let disableButton = true;
   let emailError = false;
   let loginError = "";
+  const dispatch = createEventDispatcher();
 
   $: if (!email) {
     emailError = false;
@@ -130,6 +132,7 @@
         if (!setp0Res) throw new Error();
         else scoresAuthStore.updateData([["globalStateRemove", "Processing"]]);
         $loginStore.currentStep += 1;
+        dispatch("loginWithGoogle");
       },
       (ex: unknown | any): void => {
         scoresAuthStore.updateData([["globalStateRemove", "Processing"]]);
@@ -162,6 +165,7 @@
         email,
         password
       );
+      $loginStore.isExistedUser = true
       await successAuthComplete("login", credentials.user, undefined);
       disableButton = false;
     } catch (error: any) {
