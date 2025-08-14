@@ -85,6 +85,25 @@
 
   // #endregion ➤ 📌 VARIABLES
 
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+  
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+  
+  $: if ($loginStore.currentStep >= Object.keys(stepMap).length) {
+    $modalStore.show = false;
+  }
+  
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
+
   // #region ➤ 🛠️ METHODS
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -223,9 +242,9 @@
       on:loginWithGoogle={loginWithGoogle}
     />
   </div>
-  {#if currentStep || stepMap[0] !== EmailStep}
+  {#if stepMap[0] !== EmailStep}
     <div class="pagination-wrapper">
-      {#each Object.keys(stepMap).slice(1) as step}
+      {#each Object.keys(stepMap) as step}
         <div class="step-tab" class:active={Number(step) === currentStep} />
       {/each}
     </div>
