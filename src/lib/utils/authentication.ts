@@ -366,7 +366,9 @@ async function getFirestoreBetarenaUser
               registration_type: [authProviderType],
               register_date: firebaseUser.metadata.creationTime,
               profile_photo: firebaseUser.photoURL,
-              web3_wallet_addr: web3WalletAddress
+              web3_wallet_addr: web3WalletAddress,
+              subscriptions: {},
+              following: {}
             }
           },
         /**

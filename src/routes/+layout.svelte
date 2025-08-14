@@ -86,7 +86,6 @@
   import { auth } from '$lib/firebase/init';
   import history_store from '$lib/store/history.js';
   import { modalStore } from '$lib/store/modal';
-  import { successAuthComplete } from '$lib/utils/authentication';
   import WidgetAdEngine from '@betarena/ad-engine';
 
   // ╭─────
@@ -235,12 +234,11 @@
     isInitliazed = true;
     userBetarenaSettings.useLocalStorage(serverLang);
     if (auth.currentUser) {
-      successAuthComplete("login", auth.currentUser, undefined);
+      // successAuthComplete("login", auth.currentUser, undefined);
       $loginStore.isExistedUser = true;
       $modalStore.component = Login;
       $modalStore.show = true;
     }
-    auth.currentUser
     scoresAdminStore.useLocalStorage();
     await mainDeepLinkCheck();
 
