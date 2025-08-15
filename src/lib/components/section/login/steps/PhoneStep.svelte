@@ -5,8 +5,9 @@
   import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
   import Input from "$lib/components/ui/Input.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
-  import { sendPhoneVerificationCode } from "$lib/firebase/firebase.actions";
+  import { initializeRecaptcha, sendPhoneVerificationCode } from "$lib/firebase/firebase.actions";
   import userSettings from "$lib/store/user-settings";
+  import { onMount } from "svelte";
   import IconPhoneVerification from "../icons/IconPhoneVerification.svelte";
   import { loginStore } from "../login-store";
   import { countries } from './CountryCodes';
@@ -134,6 +135,26 @@
   }
 
   // #endregion ➤ 🛠️ METHODS
+
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+  
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  onMount(() => {
+     try {
+      const recaptcha = initializeRecaptcha("recaptcha-container");
+      $loginStore.recaptchaVerifier = recaptcha;
+    } catch (error) {
+      console.error("Failed to initialize reCAPTCHA:", error);
+    }
+  });
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 
 <!--

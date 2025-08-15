@@ -25,11 +25,10 @@
   import { browser } from "$app/environment";
   import { get } from "$lib/api/utils";
   import Button from "$lib/components/ui/Button.svelte";
-  import { initializeRecaptcha } from "$lib/firebase/firebase.actions";
   import { modalStore } from "$lib/store/modal";
   import session from "$lib/store/session";
   import userSettings from "$lib/store/user-settings";
-  import { onMount } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import { loginStore } from "./login-store";
   import CountryStep from "./steps/CountryStep.svelte";
   import EmailStep from "./steps/EmailStep.svelte";
@@ -181,19 +180,13 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   onMount(() => {
-    // Initialize reCAPTCHA when component mounts
-    try {
-      const recaptcha = initializeRecaptcha("recaptcha-container");
-      $loginStore.recaptchaVerifier = recaptcha;
-      getInitData();
-      updateSteps();
-    } catch (error) {
-      console.error("Failed to initialize reCAPTCHA:", error);
-    }
-    return () => {
-      $loginStore.recaptchaVerifier?.clear();
-    };
+    getInitData();
+    updateSteps();
   });
+
+  onDestroy(() => {
+    $loginStore.recaptchaVerifier?.clear();
+  })
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
@@ -250,8 +243,6 @@
     </div>
   {/if}
 
-  <!-- Hidden reCAPTCHA container -->
-  <div id="recaptcha-container" />
 </div>
 
 <!--
