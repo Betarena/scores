@@ -147,6 +147,7 @@
 
   onMount(() => {
      try {
+      if ($loginStore.recaptchaVerifier) return;
       const recaptcha = initializeRecaptcha("recaptcha-container");
       $loginStore.recaptchaVerifier = recaptcha;
     } catch (error) {
