@@ -16,8 +16,6 @@
 // #region ➤ 📦 Package Imports
 
 import { browser } from '$app/environment';
-import { getMoralisAuth } from '@moralisweb3/client-firebase-auth-utils';
-import { signInWithMoralis } from '@moralisweb3/client-firebase-evm-auth';
 import { doc, getDoc } from 'firebase/firestore';
 
 import { app, auth, db_firestore } from '$lib/firebase/init.js';
@@ -175,59 +173,6 @@ export async function authWithMoralis
   // │ NOTE: IMPORTANT |:| Check for browser environment.
   // ╰─────
   if (!browser) return;
-
-  await tryCatchAsync
-  (
-    async (
-    ): Promise < void > =>
-    {
-      const
-        moralisAuth = getMoralisAuth(app),
-        moralisAuthInstance = await signInWithMoralis(moralisAuth)
-      ;
-
-      // [🐞]
-      dlog
-      (
-        `${AU_W_TAG[0]} 🟢 Moralis Auth`
-      );
-
-      await successAuthComplete
-      (
-        moralisAuthInstance.credentials.user,
-        moralisAuthInstance.credentials.user.displayName!,
-        'wallet'
-      );
-
-      // ╭─────
-      // │ NOTE: STASHED |:| Redirect to invest box if user has intent.
-      // ╰─────
-      /*
-        CHECK
-        > for 'deep link' of invest box.
-        if (investDepositIntent == 'true')
-        {
-          // [🐞]
-          // alert('mavigating to invest-box');
-
-          const targetUrl = `/u/investor/${$userBetarenaSettings.lang}`;
-
-          // [🐞]
-          console.log('targetUrl', targetUrl);
-
-          await goto
-          (
-            targetUrl,
-            {
-              replaceState: true
-            }
-          );
-        }
-      */
-
-      return;
-    }
-  );
 
   return;
 }
