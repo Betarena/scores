@@ -37,8 +37,6 @@
   let password = "";
   let errorMessage = "";
   $: ({ email, isLogin } = $loginStore);
-  $: ({ globalState } = $scoresAuthStore);
-
   let disableButton = true;
   let emailError = false;
   let loginError = "";
@@ -234,7 +232,7 @@
 
 <div class="email-step">
   <div class="logo-wrapper">
-    <div class="bg"><CircleBg animation="ripple" duration={10} /></div>
+    <div class="bg"><CircleBg animation="grow" duration={10} /></div>
     <img src="/assets/svg/logo-betarena.svg" alt="Betarena Logo" />
   </div>
   <Container>

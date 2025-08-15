@@ -236,7 +236,7 @@
       on:loginWithGoogle={loginWithGoogle}
     />
   </div>
-  {#if stepMap[0] !== EmailStep}
+  {#if stepMap[0] !== EmailStep || currentStep }
     <div class="pagination-wrapper">
       {#each Object.keys(stepMap) as step}
         <div class="step-tab" class:active={Number(step) === currentStep} />
@@ -304,6 +304,20 @@
         &.active {
           background: var(--colors-foreground-fg-brand-primary_alt, #d2d2d2);
         }
+      }
+    }
+
+    &.tablet {
+      .content {
+        max-width: calc(343px + 68px); // padding compensation
+        width: 100%;
+        margin: 0 auto;
+      }
+      .pagination-wrapper {
+        max-width: calc(343px + 68px); // padding compensation
+        width: 100%;
+        margin: 0 auto;
+        padding-bottom: 147px;
       }
     }
   }

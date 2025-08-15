@@ -117,7 +117,7 @@
 
 <div class="sportstack-step">
   <div class="logo-wrapper">
-    <div class="bg"><CircleBg /></div>
+    <div class="bg"><CircleBg animation="grow" /></div>
     <div class="icon-wrapper">
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -271,6 +271,7 @@
         }
         :global(.list-item) {
           padding-inline: 0;
+          border: none;
         }
       }
     }

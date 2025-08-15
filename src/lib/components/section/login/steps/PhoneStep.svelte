@@ -171,7 +171,7 @@
 
 <div class="phone-verification-step">
   <div class="logo-wrapper">
-    <div class="bg"><CircleBg /></div>
+    <div class="bg"><CircleBg animation="grow" /></div>
     <div class="icon-wrapper">
       <IconPhoneVerification />
     </div>
