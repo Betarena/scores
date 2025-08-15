@@ -1,4 +1,3 @@
-import { PUBLIC_RECAPTCHA_SITE_KEY } from '$env/static/public';
 import { auth, db_real, storage } from '$lib/firebase/init';
 import { log_v3 } from '$lib/utils/debug';
 import { updateUserProfileData } from '$lib/utils/user';
@@ -132,9 +131,8 @@ export async function signInUser(
  * RecaptchaVerifier instance
  */
 export function initializeRecaptcha(containerId: string): RecaptchaVerifier {
-  return new RecaptchaVerifier(containerId, {
+  return new RecaptchaVerifier(auth, containerId, {
     size: 'invisible',
-    siteKey: PUBLIC_RECAPTCHA_SITE_KEY,
     callback: () => {
       console.log('reCAPTCHA solved');
     },
