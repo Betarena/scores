@@ -86,9 +86,6 @@
     errorMessage = "";
 
     try {
-      // Render reCAPTCHA
-      await recaptchaVerifier.render();
-
       // Send verification code
       $loginStore.confirmationResult = await sendPhoneVerificationCode(
         phoneNumber,

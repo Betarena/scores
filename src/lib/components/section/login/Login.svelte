@@ -244,7 +244,7 @@
     </div>
   {/if}
 
-<div id="recaptcha-container" style="display: none;"> </div>
+<div id="recaptcha-container"> </div>
 </div>
 
 <!--
