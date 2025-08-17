@@ -102,7 +102,11 @@ export async function main
   event: ServerLoadEvent,
   parentData:
   {
-    langParam: string
+    langParam: string;
+    config:
+    {
+      url: string;
+    }
   }
 ): Promise < IPreloadResponse >
 {
@@ -177,6 +181,13 @@ export async function main
     permalink!,
     parentData.langParam
   );
+
+  objResponse.dataArticle ??= JSON.parse
+  (
+		JSON.stringify(  objResponse.dataArticle)
+      ?.replace('scores.betarena.com', parentData?.config?.url ?? 'betarena.com')
+      ?.replace('{url}', parentData?.config?.url ?? 'betarena.com')
+	);
 
   // ╭─────
   // │ NOTE: IMPORTANT
