@@ -182,11 +182,11 @@ export async function main
     parentData.langParam
   );
 
-  objResponse.dataArticle ??= JSON.parse
+  objResponse.dataArticle = JSON.parse
   (
-		JSON.stringify(  objResponse.dataArticle)
-      ?.replace('scores.betarena.com', parentData?.config?.url ?? 'betarena.com')
-      ?.replace('{url}', parentData?.config?.url ?? 'betarena.com')
+		JSON.stringify(objResponse.dataArticle)
+      ?.replaceAll('scores.betarena.com', parentData?.config?.url ?? 'betarena.com')
+      ?.replaceAll('{url}', parentData?.config?.url ?? 'betarena.com')
 	);
 
   // ╭─────
