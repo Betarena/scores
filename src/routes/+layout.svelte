@@ -42,13 +42,14 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { browser } from '$app/environment';
-  import { afterNavigate, beforeNavigate } from '$app/navigation';
+  import { afterNavigate, beforeNavigate, goto } from '$app/navigation';
   import { page } from '$app/stores';
   import * as Sentry from '@sentry/sveltekit';
   import { onDestroy, onMount } from 'svelte';
 
   import {
     routeIdContent,
+    routeIdLogin,
     routeIdPageProfile,
     routeIdPageProfileArticleCreation,
     routeIdPageProfileEditArticle,
@@ -355,8 +356,7 @@
   }
 
   $: if (currentActiveModal === "Auth_Modal") {
-    $modalStore.component = Login;
-    $modalStore.show = true;
+    goto('/login', {replaceState: true});
   }
 
   $: if (browser){
@@ -395,8 +395,7 @@
     ): Promise < void > =>
     {
 
-      $modalStore.component = Login;
-      $modalStore.show = true;
+      goto('/login', {replaceState: true});
       // ╭─────
       // │ IMPORTANT CRITICAL
       // ╰─────
@@ -773,7 +772,7 @@
     <!-- <EmailSubscribe /> -->
   {/if}
 
-  {#if ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle, routeIdSearch].includes($page.route.id || "" ) || ($page.route.id === routeIdSearch && $sessionStore.viewportType !== "mobile") }
+  {#if ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle, routeIdSearch, routeIdLogin].includes($page.route.id || "" ) || ($page.route.id === routeIdSearch && $sessionStore.viewportType !== "mobile") }
     <HeaderRedesigned />
   {/if}
 
@@ -792,7 +791,7 @@
     {#if
       (
         !globalState.has('IsPWA')
-        && ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle].includes($page.route.id || '')
+        && ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle, routeIdLogin].includes($page.route.id || '')
       )
       || [routeIdPageProfile, routeIdPageProfilePublication].includes($page.route.id || '')
     }
@@ -805,7 +804,7 @@
 
   {#if
     (objComponentStandardState.viewport.mobile.state || objComponentStandardState.viewport.tablet.state)
-    && ![routeIdSearch, routeIdPageProfile, routeIdPageProfileEditArticle, routeIdPageProfileArticleCreation].includes($page.route.id || '')
+    && ![routeIdSearch, routeIdPageProfile, routeIdPageProfileEditArticle, routeIdPageProfileArticleCreation, routeIdLogin].includes($page.route.id || '')
   }
     <MobileMenu
       mobile={objComponentStandardState.viewport.mobile.state}

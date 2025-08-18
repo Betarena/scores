@@ -1,5 +1,6 @@
 <script lang="ts">
   import { browser } from "$app/environment";
+  import { goto } from "$app/navigation";
   import { scoresAuthStore } from "$lib/components/_main_/auth/_store";
   import CircleBg from "$lib/components/shared/backround-patterns/CircleBG.svelte";
   import Button from "$lib/components/ui/Button.svelte";
@@ -7,7 +8,6 @@
   import SocialButton from "$lib/components/ui/SocialButton.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
   import { auth } from "$lib/firebase/init";
-  import { modalStore } from "$lib/store/modal";
   import { successAuthComplete } from "$lib/utils/authentication";
   import { AU_W_TAG, dlog, errlog } from "$lib/utils/debug";
   import { tryCatchAsync } from "@betarena/scores-lib/dist/util/common";
@@ -306,12 +306,12 @@
       </div>
     </div></Container
   >
+  <div class="quest-wrapper" on:click={() => goto("/")}>
+    <span class="text"> Skip and continue as </span>
+    <div class="quest">Guest</div>
+  </div>
 </div>
 
-<div class="quest-wrapper" on:click={() => {$modalStore.show = false}}>
-  <span class="text"> Skip and continue as </span>
-  <div class="quest">Guest</div>
-</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -448,7 +448,7 @@
     }
   }
   .quest-wrapper {
-    position: fixed;
+    position: absolute;
     bottom: 40px;
     left: 50%;
     transform: translateX(-50%);

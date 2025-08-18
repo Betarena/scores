@@ -85,7 +85,7 @@
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
-  
+
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'logic' that should run            │
@@ -96,11 +96,11 @@
   // │ Please keep very close attention to these methods and                  │
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  
+
   $: if ($loginStore.currentStep >= Object.keys(stepMap).length) {
     $modalStore.show = false;
   }
-  
+
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🛠️ METHODS
@@ -126,7 +126,11 @@
     ) {
       // steps.push(PasswordStep);
     }
-    if (!firebase_user_data?.phoneNumber && new Date(scores_user_data?.register_date || "").valueOf() > new Date(2025, 7, 13).valueOf()) {
+    if (
+      !firebase_user_data?.phoneNumber &&
+      new Date(scores_user_data?.register_date || "").valueOf() >
+        new Date(2025, 7, 13).valueOf()
+    ) {
       steps.push(PhoneStep, PhoneCodeStep);
     }
     if (!scores_user_data?.name) {
@@ -142,7 +146,7 @@
       steps.push(TopicsStep);
     }
     if (!steps.length) {
-      $modalStore.show = false;
+      history.back();
       return;
     }
     let nexSteps: Record<string, typeof EmailStep> = {};
@@ -186,7 +190,7 @@
 
   onDestroy(() => {
     $loginStore.recaptchaVerifier?.clear();
-  })
+  });
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
@@ -202,48 +206,52 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="login-wrapper {viewportType}">
-  {#if currentStep}
-    <div class="back-button">
-      <Button
-        type="secondary"
-        size="sm"
-        on:click={() => ($loginStore.currentStep -= 1)}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
-          viewBox="0 0 20 20"
-          fill="none"
-          class="arrow"
-        >
-          <path
-            d="M15.8333 9.99996H4.16666M4.16666 9.99996L9.99999 15.8333M4.16666 9.99996L9.99999 4.16663"
-            stroke="currentColor"
-            stroke-width="1.66667"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
-      </Button>
-    </div>
-  {/if}
-  <div class="content">
-    <svelte:component
-      this={stepMap[currentStep]}
-      on:loginWithGoogle={loginWithGoogle}
-    />
-  </div>
-  {#if stepMap[0] !== EmailStep || currentStep }
-    <div class="pagination-wrapper">
-      {#each Object.keys(stepMap) as step}
-        <div class="step-tab" class:active={Number(step) === currentStep} />
-      {/each}
-    </div>
-  {/if}
+<div class="login-page {viewportType}">
+  <div class="desktop-side-pagination-wrapper" />
 
-<div id="recaptcha-container"> </div>
+  <div class="login-wrapper {viewportType}">
+    {#if currentStep}
+      <div class="back-button">
+        <Button
+          type="secondary"
+          size="sm"
+          on:click={() => ($loginStore.currentStep -= 1)}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+            class="arrow"
+          >
+            <path
+              d="M15.8333 9.99996H4.16666M4.16666 9.99996L9.99999 15.8333M4.16666 9.99996L9.99999 4.16663"
+              stroke="currentColor"
+              stroke-width="1.66667"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </Button>
+      </div>
+    {/if}
+    <div class="content">
+      <svelte:component
+        this={stepMap[currentStep]}
+        on:loginWithGoogle={loginWithGoogle}
+      />
+    </div>
+    {#if stepMap[0] !== EmailStep || currentStep}
+      <div class="pagination-wrapper">
+        {#each Object.keys(stepMap) as step}
+          <div class="step-tab" class:active={Number(step) === currentStep} />
+        {/each}
+      </div>
+    {/if}
+
+    <div id="recaptcha-container" />
+  </div>
 </div>
 
 <!--
@@ -257,14 +265,35 @@
 -->
 
 <style lang="scss">
-  .login-wrapper {
+  .login-page {
+    display: flex;
     width: 100%;
+    height: 100vh;
+    .desktop-side-pagination-wrapper {
+      display: none;
+    }
+    &.desktop {
+      .desktop-side-pagination-wrapper {
+        display: flex;
+        max-width: 440px;
+        width: 440px;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex: 1 0 0;
+        align-self: stretch;
+        background: var(--colors-background-bg-brand-section, #232323);
+      }
+      :global(.container-wrapper) {
+        max-width: calc(360px + 68px); // compensate inline paddings 
+      }
+    }
+  }
+  .login-wrapper {
+    flex-grow: 1;
     height: 100%;
     max-height: 100vh;
     background: var(--colors-background-bg-primary, #1f1f1f);
-    position: fixed;
-    top: 0;
-    left: 0;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -317,6 +346,12 @@
         width: 100%;
         margin: 0 auto;
         padding-bottom: 147px;
+      }
+    }
+
+    &.desktop {
+      .pagination-wrapper {
+        display: none;
       }
     }
   }

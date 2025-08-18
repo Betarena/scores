@@ -585,15 +585,11 @@
               &:placeholder-shown {
                 color: var(--colors-text-text-placeholder_subtle, #d2d2d2);
               }
-
-              // Убираем стрелки у input[type="number"] в Chrome/Safari
               &::-webkit-outer-spin-button,
               &::-webkit-inner-spin-button {
                 -webkit-appearance: none;
                 margin: 0;
               }
-
-              // Убираем стрелки у input[type="number"] в Firefox
               &[type="number"] {
                 appearance: textfield;
                 -moz-appearance: textfield;
