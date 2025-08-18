@@ -65,6 +65,8 @@ export default defineConfig
     // ╰─────
     console.log(`📜 [2] Loaded using (file): ${process.env.VITE_ENV_TARGET}`);
 
+    console.log('process.env.CI_GITHUB_DEPLOYMENT_STAGING', process.env.CI_GITHUB_DEPLOYMENT_STAGING);
+
     if (process.env.CI_GITHUB_DEPLOYMENT_STAGING)
     {
       console.log('📜 [3] Loaded using (file): .env.ci-github-deployment-staging');
