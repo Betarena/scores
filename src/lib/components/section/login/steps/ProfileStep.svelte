@@ -221,14 +221,17 @@
       justify-content: center;
       height: max-content;
       position: relative;
+      width: 100%;
+      z-index: 0;
       .bg {
         position: absolute;
-        z-index: -1;
+        z-index: 0;
         right: 50%;
         top: 50%;
         transform: translate(50%, -50%);
       }
       .profile-icon {
+        z-index: 1;
         display: flex;
         width: 56px;
         height: 56px;
@@ -261,6 +264,8 @@
       }
     }
     .form {
+      position: relative;
+      z-index: 1;
       display: flex;
       flex-direction: column;
       gap: var(--spacing-4xl, 32px);

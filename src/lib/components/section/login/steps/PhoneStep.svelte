@@ -258,9 +258,12 @@
       justify-content: center;
       height: max-content;
       position: relative;
+      width: 100%;
+      z-index: 0;
       .bg {
         position: absolute;
-        z-index: -1;
+        z-index: 0;
+        overflow-x: hidden;
         right: 50%;
         top: 50%;
         transform: translate(50%, -50%);
@@ -270,6 +273,7 @@
         width: 56px;
         height: 56px;
         padding: 14px;
+        z-index: 1;
         justify-content: center;
         align-items: center;
         aspect-ratio: 1/1;
@@ -298,6 +302,8 @@
       }
     }
     .form {
+      position: relative;
+      z-index: 1;
       display: flex;
       flex-direction: column;
       gap: var(--spacing-4xl, 32px);

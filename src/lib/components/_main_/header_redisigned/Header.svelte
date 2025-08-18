@@ -25,8 +25,6 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   import { page } from "$app/stores";
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
-  import Login from "$lib/components/section/login/Login.svelte";
-  import { loginStore } from "$lib/components/section/login/login-store";
   import Avatar from "$lib/components/ui/Avatar.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import {
@@ -37,7 +35,6 @@
     routeIdSearch,
     routeIdSportstack,
   } from "$lib/constants/paths.js";
-  import { modalStore } from "$lib/store/modal";
   import { default as session, default as sessionStore } from "$lib/store/session.js";
   import userBetarenaSettings from "$lib/store/user-settings.js";
   import { promiseUrlsPreload } from "$lib/utils/navigation.js";
@@ -103,9 +100,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   function signIn() {
-    $loginStore.isExistedUser = false;
-    $modalStore.component = Login;
-    $modalStore.show = true;
+    $sessionStore.currentActiveModal = "Auth_Modal";
     return;
   }
 

@@ -300,6 +300,8 @@
 
     .content {
       flex-grow: 1;
+      max-width: 100vw;
+      overflow-x: hidden;
     }
 
     .back-button {
@@ -339,7 +341,9 @@
       .content {
         max-width: calc(343px + 68px); // padding compensation
         width: 100%;
+        max-width: 100%;
         margin: 0 auto;
+        overflow-x: hidden;
       }
       .pagination-wrapper {
         max-width: calc(343px + 68px); // padding compensation

@@ -340,9 +340,11 @@
       justify-content: center;
       height: max-content;
       position: relative;
+      width: 100%;
+      z-index: 0;
       .bg {
         position: absolute;
-        z-index: -1;
+        z-index: 0;
         right: 50%;
         top: 50%;
         transform: translate(50%, -50%);
@@ -355,6 +357,7 @@
     .form {
       display: flex;
       flex-direction: column;
+      z-index: 1;
       gap: var(--spacing-4xl, 32px);
       .header {
         display: flex;
