@@ -183,7 +183,6 @@ export async function verifyPhoneCode(
   try {
      const currentUser = auth.currentUser;
     if (!currentUser) {
-      alert("No user")
       throw new Error('No user is currently signed in');
     }
     // Create phone credential
@@ -194,7 +193,6 @@ export async function verifyPhoneCode(
     return await linkWithCredential(currentUser, credential);
   } catch (error) {
     
-    alert("Firebase error:", error.message)
     throw error as AuthError;
   }
 }

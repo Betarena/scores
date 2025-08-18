@@ -209,6 +209,7 @@
       });
       focusInput(0);
     } catch (error: any) {
+      console.error("Phone code verification error:", error);
       switch (error.code) {
         case "auth/invalid-phone-number":
           errorMessage = "Please enter a valid phone number.";
