@@ -74,24 +74,33 @@
 
   function handleInputChange(e: Event, index: number) {
     const input = e.target as HTMLInputElement;
-    const v = input.value.replace(/\D/g, "");
-
-    if (v.length > 1) {
-      // Handle paste or multiple characters
-      const digits = v.slice(0, length);
+    let inputValue = input.value;
+    
+    // Handle iOS SMS autofill
+    if (inputValue.length > 1) {
+      
+      const digits = inputValue.replace(/\D/g, "").slice(0, length);
+      
       for (let i = 0; i < length; i++) {
         if (otpInputs[i]) {
           otpInputs[i].value = digits[i] || "";
         }
       }
-      // Focus on the last filled input or next empty
+      
       const nextIndex = Math.min(digits.length, length - 1);
       focusInput(nextIndex);
-    } else {
-      input.value = v;
-      if (v && index < length - 1) {
-        focusInput(index + 1);
+      
+      if (digits.length === length) {
+        handleVerifyCode();
       }
+      return;
+    }
+
+    const v = inputValue.replace(/\D/g, "");
+    input.value = v;
+    
+    if (v && index < length - 1) {
+      focusInput(index + 1);
     }
 
     // Check if code is complete
@@ -114,6 +123,26 @@
     } else if (e.key === "ArrowRight" && index < length - 1) {
       e.preventDefault();
       focusInput(index + 1);
+    }
+  }
+
+  function handleHiddenInputChange(e: Event) {
+    const input = e.target as HTMLInputElement;
+    const code = input.value.replace(/\D/g, '').slice(0, length);
+    if (code.length >= 1) {
+      for (let i = 0; i < length; i++) {
+        if (otpInputs[i]) {
+          otpInputs[i].value = code[i] || '';
+        }
+      }
+      const nextIndex = Math.min(code.length - 1, length - 1);
+      focusInput(nextIndex);
+      
+      input.value = '';
+      
+      if (code.length === length) {
+        handleVerifyCode();
+      }
     }
   }
 
@@ -173,6 +202,10 @@
             "Network error. Please check your internet connection and try again.";
           break;
         case "auth/provider-already-linked":
+          errorMessage =
+            "This phone number is already linked to another account.";
+          break;
+        case "auth/account-exists-with-different-credential":
           errorMessage =
             "This phone number is already linked to another account.";
           break;
@@ -298,16 +331,25 @@
       </div>
       <div class="form-body">
         <div class="otp-wrapper">
+          <input
+            type="tel"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            maxlength="6"
+            pattern="[0-9]{6}"
+            class="otp-hidden"
+            on:input={handleHiddenInputChange}
+          />
           <div class="otp-box-wrapper">
             {#each Array(length) as _, i}
               <input
                 bind:this={otpInputs[i]}
                 type="tel"
                 inputmode="numeric"
-                pattern="\d"
-                maxlength="1"
+                pattern="[0-9]*"
+                maxlength={i === 0 ? 6 : 1}
                 placeholder="0"
-                autocomplete="one-time-code"
+                autocomplete={i === 0 ? "one-time-code" : "off"}
                 class="otp-box {currentFocus === i ? 'current' : ''}"
                 on:input={(e) => handleInputChange(e, i)}
                 on:keydown={(e) => handleKeyDown(e, i)}
