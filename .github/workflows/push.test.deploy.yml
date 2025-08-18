@@ -27,6 +27,8 @@ jobs:
       url: https://betarena-scores-platform.herokuapp.com/
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref }}
       - name: 'STEP /:/ install heroku-cli'
         run: |
           curl https://cli-assets.heroku.com/install.sh | sh
@@ -38,6 +40,5 @@ jobs:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_email: ${{ env.gitAuthorEmail }}
           heroku_app_name: "betarena-scores-platform"
-          branch: "test"
   #
 #
