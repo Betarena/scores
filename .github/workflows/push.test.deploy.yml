@@ -40,5 +40,7 @@ jobs:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_email: ${{ env.gitAuthorEmail }}
           heroku_app_name: "betarena-scores-platform"
+        env:
+          CI_GITHUB_DEPLOYMENT_STAGING: "true"
   #
 #
