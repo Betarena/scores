@@ -193,6 +193,7 @@ export async function verifyPhoneCode(
     );
     return await linkWithCredential(currentUser, credential);
   } catch (error) {
+    
     alert("Firebase error:", error.message)
     throw error as AuthError;
   }
