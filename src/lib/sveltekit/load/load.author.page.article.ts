@@ -185,8 +185,8 @@ export async function main
   objResponse.dataArticle = JSON.parse
   (
 		JSON.stringify(objResponse.dataArticle)
-      ?.replaceAll('scores.betarena.com', parentData?.config?.url ?? 'betarena.com')
-      ?.replaceAll('{url}', parentData?.config?.url ?? 'betarena.com')
+      ?.replaceAll('scores.betarena.com', parentData?.config?.url)
+      ?.replaceAll('{url}', parentData?.config?.url)
 	);
 
   // ╭─────
