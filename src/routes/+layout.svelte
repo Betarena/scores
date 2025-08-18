@@ -67,7 +67,6 @@
   import { parseObject } from '$lib/utils/string.2.js';
   import { initializeTopLevelConsoleController } from '$lib/utils/subscribtion.js';
 
-  import AuthMain from '$lib/components/_main_/auth/Widget.svelte';
   import FooterWidget from '$lib/components/_main_/footer/v2/Footer.Widget.svelte';
   import HeaderRedesigned from '$lib/components/_main_/header_redisigned/HeaderRedesigned.svelte';
   import MobileMenu from '$lib/components/_main_/mobile-menu/MobileMenu.svelte';
@@ -353,6 +352,11 @@
         ...userBetarenaSettings.extractUserDataSnapshot(),
       }
     );
+  }
+
+  $: if (currentActiveModal === "Auth_Modal") {
+    $modalStore.component = Login;
+    $modalStore.show = true;
   }
 
   $: if (browser){
@@ -728,10 +732,10 @@
   {/key}
 
   <SplashScreen />
-
+<!-- 
   {#if currentActiveModal == 'Auth_Modal'}
     <AuthMain />
-  {/if}
+  {/if} -->
 
   {#if currentActiveToast != null}
     <ToastAuth />

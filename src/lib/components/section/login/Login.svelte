@@ -116,7 +116,6 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   function updateSteps() {
-    return
     if (!$userSettings.user) return;
     let steps: Array<typeof PasswordStep> = [];
     const { scores_user_data, firebase_user_data } = $userSettings.user;
