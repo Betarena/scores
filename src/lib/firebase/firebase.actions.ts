@@ -139,7 +139,7 @@ export function initializeRecaptcha(containerId: string): RecaptchaVerifier {
     'expired-callback': () => {
       console.log('reCAPTCHA expired');
     }
-  }, auth);
+  });
 }
 
 /**
