@@ -118,7 +118,12 @@ export const
   routeIdHome = '/(scores)/[[lang=lang]]',
  /**
    * @description
-   *  📣 Target `path` for **home  page**.
+   *  📣 Target `path` for **search**.
    */
-  routeIdSearch = '/(scores)/search'
+  routeIdSearch = '/(scores)/search',
+ /**
+   * @description
+   *  📣 Target `path` for **login**.
+   */
+  routeIdLogin = '/(scores)/login'
   ;

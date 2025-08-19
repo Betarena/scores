@@ -10,11 +10,6 @@
 <script lang="ts">
   // #region ➤ 📌 VARIABLES
 
-  import { getOptimizedImageUrl } from "$lib/utils/image";
-  import { createEventDispatcher } from "svelte";
-  import DefaultAvatar from "./assets/default-avatar.svelte";
-  import LoggedoutAvatar from "./assets/loggedout-avatar.svelte";
-
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'variables' that are to be         │
@@ -26,32 +21,10 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
-  export let src: string | null = "",
-    isLoogedIn = false,
-    /**
-     * @description
-     * avatar size
-     */
-    size: number | string = 38;
-
-    let numSize = 38;
-  $: styles = `height: ${numSize}px; width: ${numSize}px;`;
-  const sizeMap = {
-    xs: 24,
-    sm: 32,
-    md: 40,
-    lg: 48,
-    xl: 56,
-    xxl:64,
-  }
-  $: if (typeof size === "string") {
-    numSize = sizeMap[size] || 38;
-  } else {
-    numSize = size;
-  }
-
-  const dispatch = createEventDispatcher();
+  export let title = "";
+  export let text = "";
+  export let required = false;
+  export let help = false;
 
   // #endregion ➤ 📌 VARIABLES
 </script>
@@ -66,22 +39,47 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<div
-  class="avatar-wrapper"
-  on:click={() => dispatch("click")}
-  style="{styles}  {$$restProps.wrapStyle}"
->
-  {#if src}
-    <div
-      class="avatar-circle"
-      {...$$restProps}
-      class:size
-      style="{styles} background-image: url({!src.startsWith("data") ? getOptimizedImageUrl({ strImageUrl: src }) : src}); "
-    />
-  {:else if isLoogedIn}
-    <DefaultAvatar size={numSize} />
-  {:else}
-    <LoggedoutAvatar size={numSize} />
+
+<div class="section-label-wrapper">
+  {#if title || required || help}
+    <dev class="title">
+      {#if title}
+        <span>{title}</span>
+      {/if}
+      {#if required}
+        <span class="reqiered">*</span>
+      {/if}
+      {#if help}
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          fill="none"
+        >
+          <g clip-path="url(#clip0_14766_248)">
+            <path
+              d="M6.06004 5.99998C6.21678 5.55442 6.52614 5.17872 6.93334 4.9394C7.34055 4.70009 7.8193 4.61261 8.28483 4.69245C8.75035 4.7723 9.17259 5.01433 9.47676 5.37567C9.78093 5.737 9.94741 6.19433 9.94671 6.66665C9.94671 7.99998 7.94671 8.66665 7.94671 8.66665M8.00004 11.3333H8.00671M14.6667 7.99998C14.6667 11.6819 11.6819 14.6666 8.00004 14.6666C4.31814 14.6666 1.33337 11.6819 1.33337 7.99998C1.33337 4.31808 4.31814 1.33331 8.00004 1.33331C11.6819 1.33331 14.6667 4.31808 14.6667 7.99998Z"
+              stroke="currentColor"
+              stroke-width="1.33333"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </g>
+          <defs>
+            <clipPath id="clip0_14766_248">
+              <rect width="16" height="16" fill="white" />
+            </clipPath>
+          </defs>
+        </svg>
+        <!-- content here -->
+      {/if}
+    </dev>
+
+    <!-- content here -->
+  {/if}
+  {#if text}
+    <span class="text">{text}</span>
   {/if}
 </div>
 
@@ -96,18 +94,44 @@
 -->
 
 <style lang="scss">
-  .avatar-wrapper {
-    border-radius: 50%;
-    overflow: hidden;
-  }
-  .avatar-circle {
-    width: 38px;
-    height: 38px;
-    border-radius: 100%;
+  .section-label-wrapper {
+    display: flex;
+    width: 280px;
+    min-width: 200px;
+    max-width: 280px;
+    flex-direction: column;
+    align-items: flex-start;
 
-    // background-image: url(src);
-    background-repeat: no-repeat;
-    background-size: cover;
-    // background: var(--img-url) lightgray 50% / cover no-repeat;
+    .title {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xxs, 2px);
+      /* Text sm/Semibold */
+      font-family: var(--font-family-font-family-body, Roboto);
+      font-size: var(--font-size-text-sm, 14px);
+      font-style: normal;
+      font-weight: 600;
+      line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+
+      span {
+        color: var(--colors-text-text-secondary-700, #525252);
+      }
+      .required {
+        color: var(--colors-text-text-brand-tertiary-600, #d4550c);
+      }
+      svg {
+        color: var(--colors-foreground-fg-quaternary-400);
+      }
+    }
+    .text {
+      color: var(--colors-text-text-tertiary-600, #6a6a6a);
+
+      /* Text sm/Regular */
+      font-family: var(--font-family-font-family-body, Roboto);
+      font-size: var(--font-size-text-sm, 14px);
+      font-style: normal;
+      font-weight: 400;
+      line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+    }
   }
 </style>

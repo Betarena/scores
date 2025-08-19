@@ -10,11 +10,6 @@
 <script lang="ts">
   // #region ➤ 📌 VARIABLES
 
-  import { getOptimizedImageUrl } from "$lib/utils/image";
-  import { createEventDispatcher } from "svelte";
-  import DefaultAvatar from "./assets/default-avatar.svelte";
-  import LoggedoutAvatar from "./assets/loggedout-avatar.svelte";
-
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'variables' that are to be         │
@@ -26,32 +21,12 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
+  export let company: "Google" = "Google";
+  export let full = false;
 
-  export let src: string | null = "",
-    isLoogedIn = false,
-    /**
-     * @description
-     * avatar size
-     */
-    size: number | string = 38;
-
-    let numSize = 38;
-  $: styles = `height: ${numSize}px; width: ${numSize}px;`;
-  const sizeMap = {
-    xs: 24,
-    sm: 32,
-    md: 40,
-    lg: 48,
-    xl: 56,
-    xxl:64,
-  }
-  $: if (typeof size === "string") {
-    numSize = sizeMap[size] || 38;
-  } else {
-    numSize = size;
-  }
-
-  const dispatch = createEventDispatcher();
+  let iconsMap = {
+    Google: "/assets/svg/social/google.svg",
+  };
 
   // #endregion ➤ 📌 VARIABLES
 </script>
@@ -66,24 +41,15 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<div
-  class="avatar-wrapper"
-  on:click={() => dispatch("click")}
-  style="{styles}  {$$restProps.wrapStyle}"
->
-  {#if src}
-    <div
-      class="avatar-circle"
-      {...$$restProps}
-      class:size
-      style="{styles} background-image: url({!src.startsWith("data") ? getOptimizedImageUrl({ strImageUrl: src }) : src}); "
-    />
-  {:else if isLoogedIn}
-    <DefaultAvatar size={numSize} />
-  {:else}
-    <LoggedoutAvatar size={numSize} />
+
+<button class="social-button" class:full on:click>
+  {#if iconsMap[company]}
+    <img src={iconsMap[company]} alt={company} title="" loading="lazy" />
   {/if}
-</div>
+  <span>
+    {`Sign in ${company ? `with ${company}` : ""}`}
+  </span>
+</button>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -96,18 +62,70 @@
 -->
 
 <style lang="scss">
-  .avatar-wrapper {
-    border-radius: 50%;
-    overflow: hidden;
-  }
-  .avatar-circle {
-    width: 38px;
-    height: 38px;
-    border-radius: 100%;
+  .social-button {
+    display: inline-flex;
+    padding: 10px var(--spacing-xl, 16px);
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing-lg, 12px);
+    border-radius: var(--radius-md, 8px);
+    border: 1px solid var(--colors-border-border-primary, #d2d2d2) !important;
+    background: var(--colors-background-bg-primary, #fff);
 
-    // background-image: url(src);
-    background-repeat: no-repeat;
-    background-size: cover;
-    // background: var(--img-url) lightgray 50% / cover no-repeat;
+    /* Shadows/shadow-xs-skeuomorphic */
+    box-shadow: 0 0 0 1px
+        var(
+          --colors-effects-shadows-shadow-skeumorphic-inner-border,
+          rgba(10, 13, 18, 0.18)
+        )
+        inset,
+      0 -2px 0 0 var(
+          --colors-effects-shadows-shadow-skeumorphic-inner,
+          rgba(10, 13, 18, 0.05)
+        ) inset,
+      0 1px 2px 0
+        var(--colors-effects-shadows-shadow-xs, rgba(10, 13, 18, 0.05));
+
+    span {
+      color: var(--colors-text-text-secondary-700, #525252);
+
+      font-family: var(--font-family-font-family-body, Roboto);
+      font-size: var(--font-size-text-md, 16px);
+      font-style: normal;
+      font-weight: 600;
+      line-height: var(--line-height-text-md, 24px); /* 150% */
+    }
+    img {
+      width: 24px;
+      height: 24px;
+      aspect-ratio: 1/1;
+    }
+    &:hover {
+      background: var(--colors-background-bg-primary_hover, #fbfbfb);
+
+      span {
+        color: var(--colors-text-text-secondary_hover);
+      }
+    }
+
+    &:focus {
+      box-shadow: 0 0 0 1px
+          var(
+            --colors-effects-shadows-shadow-skeumorphic-inner-border,
+            rgba(10, 13, 18, 0.18)
+          )
+          inset,
+        0 -2px 0 0 var(
+            --colors-effects-shadows-shadow-skeumorphic-inner,
+            rgba(10, 13, 18, 0.05)
+          ) inset,
+        0 1px 2px 0
+          var(--colors-effects-shadows-shadow-xs, rgba(10, 13, 18, 0.05)),
+        0 0 0 2px var(--colors-background-bg-primary, #fff),
+        0 0 0 4px var(--colors-effects-focus-rings-focus-ring, #f5620f);
+    }
+    &.full {
+        width: 100%;
+    }
   }
 </style>

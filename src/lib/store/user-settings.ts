@@ -54,6 +54,7 @@ export type IDataProp =
   | 'user-highlighted-sportstack'
   | 'history-preference-articles-content-feed'
   | 'search_history'
+  | 'country'
 ;
 
 enum DataPropEnum
@@ -77,7 +78,8 @@ enum DataPropEnum
   USER_BUTTONS_ORDER = 'user-buttons-order',
   USER_HIGHLIGHTED_SPORTSTACK = 'user-highlighted-sportstack',
   HISTORY_PREFERENCE_ARTICLES_CONTENT_FEED = 'history-preference-articles-content-feed',
-  SEARCH_HISTORY = 'search_history'
+  SEARCH_HISTORY = 'search_history',
+  COUNTRY = "country"
 }
 
 // #endregion ➤ ⛩️ TYPES
@@ -698,6 +700,10 @@ function createLocalStore
                 scores_user.highlights.sportstack = dataPoint as string;
                 updateHighlightedSpotstack(dataPoint as string);
                 break;
+                }
+                
+              case DataPropEnum.COUNTRY: {
+                scores_user.country = dataPoint  
               }
               default: break
             }

@@ -318,7 +318,7 @@
         ) inset,
       0px 1px 2px 0px
         var(--colors-effects-shadows-shadow-xs, rgba(255, 255, 255, 0));
-      color: var(--colors-text-text-secondary-700, #FBFBFB);
+    color: var(--colors-text-text-secondary-700, #fbfbfb);
 
     &.hover {
       color: var(--colors-text-text-secondary_hover, #d2d2d2);
@@ -375,6 +375,19 @@
           #ea2b2b
         );
       }
+    }
+
+    &.disabled {
+      border-radius: var(--radius-md, 8px);
+      border: 1px solid var(--colors-border-border-disabled_subtle, #ededed);
+      background: var(--colors-background-bg-primary, #fff);
+
+      /* Shadows/shadow-xs */
+      box-shadow: 0 1px 2px 0
+        var(--colors-effects-shadows-shadow-xs, rgba(31, 31, 31, 0.05));
+
+
+      color: var(--colors-foreground-fg-disabled, #8C8C8C);
     }
   }
   .secondary-gray {

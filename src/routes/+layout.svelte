@@ -42,20 +42,20 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { browser } from '$app/environment';
-  import { afterNavigate, beforeNavigate } from '$app/navigation';
+  import { afterNavigate, beforeNavigate, goto } from '$app/navigation';
   import { page } from '$app/stores';
   import * as Sentry from '@sentry/sveltekit';
   import { onDestroy, onMount } from 'svelte';
 
-  import
-    {
-      routeIdContent,
-      routeIdPageProfile,
-      routeIdPageProfileArticleCreation,
-      routeIdPageProfileEditArticle,
-      routeIdPageProfilePublication,
-      routeIdSearch,
-    } from '$lib/constants/paths.js';
+  import {
+    routeIdContent,
+    routeIdLogin,
+    routeIdPageProfile,
+    routeIdPageProfileArticleCreation,
+    routeIdPageProfileEditArticle,
+    routeIdPageProfilePublication,
+    routeIdSearch,
+  } from '$lib/constants/paths.js';
   import { scoresAdminStore } from '$lib/store/admin.js';
   import { delCookie } from '$lib/store/cookie.js';
   import sessionStore from '$lib/store/session.js';
@@ -68,7 +68,6 @@
   import { parseObject } from '$lib/utils/string.2.js';
   import { initializeTopLevelConsoleController } from '$lib/utils/subscribtion.js';
 
-  import AuthMain from '$lib/components/_main_/auth/Widget.svelte';
   import FooterWidget from '$lib/components/_main_/footer/v2/Footer.Widget.svelte';
   import HeaderRedesigned from '$lib/components/_main_/header_redisigned/HeaderRedesigned.svelte';
   import MobileMenu from '$lib/components/_main_/mobile-menu/MobileMenu.svelte';
@@ -78,14 +77,13 @@
   import ModalMain from '$lib/components/misc/modal/ModalMain.svelte';
   import ToastAuth from '$lib/components/misc/toast/Toast-Auth/Toast-Auth.svelte';
   import InfoMessages from '$lib/components/ui/infomessages/InfoMessages.svelte';
-
   import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
-
-  // import '@betarena/ad-engine';
+// import '@betarena/ad-engine';
   // import WidgetAdEngine from '@betarena/ad-engine/src/lib/Widget-AdEngine.svelte';
-  import WidgetAdEngine from '@betarena/ad-engine';
-  import history_store from '$lib/store/history.js';
   import AndroidPwaBanner from '$lib/components/AndroidPWABanner.svelte';
+  import { auth } from '$lib/firebase/init';
+  import history_store from '$lib/store/history.js';
+  import WidgetAdEngine from '@betarena/ad-engine';
 
   // ╭─────
   // │ WARNING:
@@ -232,6 +230,10 @@
   {
     isInitliazed = true;
     userBetarenaSettings.useLocalStorage(serverLang);
+    if (auth.currentUser) {
+      // successAuthComplete("login", auth.currentUser, undefined);
+      $sessionStore.currentActiveModal = "Auth_Modal";
+    }
     scoresAdminStore.useLocalStorage();
     await mainDeepLinkCheck();
 
@@ -266,6 +268,9 @@
     mainDeepLinkCheck();
   ;
 
+  $: if ($userBetarenaSettings.user?.firebase_user_data?.uid) {
+      
+  }
   // ╭─────
   // │ NOTE: IMPORTANT CRITICAL
   // │ │: Hijack the 'console' object.
@@ -345,6 +350,10 @@
     );
   }
 
+  $: if (currentActiveModal === "Auth_Modal") {
+    goto('/login', {replaceState: true});
+  }
+
   $: if (browser){
     // eslint-disable-next-line new-cap
     window.Intercom
@@ -374,14 +383,14 @@
     window?.visualViewport?.removeEventListener('resize', updateVh);
     page_unsub?.();
   })
-
+  
   onMount
   (
     async (
     ): Promise < void > =>
     {
 
-
+      goto('/login', {replaceState: true});
       // ╭─────
       // │ IMPORTANT CRITICAL
       // ╰─────
@@ -717,10 +726,10 @@
   {/key}
 
   <SplashScreen />
-
+<!-- 
   {#if currentActiveModal == 'Auth_Modal'}
     <AuthMain />
-  {/if}
+  {/if} -->
 
   {#if currentActiveToast != null}
     <ToastAuth />
@@ -758,7 +767,7 @@
     <!-- <EmailSubscribe /> -->
   {/if}
 
-  {#if ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle, routeIdSearch].includes($page.route.id || "" ) || ($page.route.id === routeIdSearch && $sessionStore.viewportType !== "mobile") }
+  {#if ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle, routeIdSearch, routeIdLogin].includes($page.route.id || "" ) || ($page.route.id === routeIdSearch && $sessionStore.viewportType !== "mobile") }
     <HeaderRedesigned />
   {/if}
 
@@ -777,7 +786,7 @@
     {#if
       (
         !globalState.has('IsPWA')
-        && ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle].includes($page.route.id || '')
+        && ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle, routeIdLogin].includes($page.route.id || '')
       )
       || [routeIdPageProfile, routeIdPageProfilePublication].includes($page.route.id || '')
     }
@@ -790,7 +799,7 @@
 
   {#if
     (objComponentStandardState.viewport.mobile.state || objComponentStandardState.viewport.tablet.state)
-    && ![routeIdSearch, routeIdPageProfile, routeIdPageProfileEditArticle, routeIdPageProfileArticleCreation].includes($page.route.id || '')
+    && ![routeIdSearch, routeIdPageProfile, routeIdPageProfileEditArticle, routeIdPageProfileArticleCreation, routeIdLogin].includes($page.route.id || '')
   }
     <MobileMenu
       mobile={objComponentStandardState.viewport.mobile.state}

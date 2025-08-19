@@ -22,22 +22,24 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
-  import { enhance } from "$app/forms";
-  import { goto } from "$app/navigation";
-  import { page } from "$app/stores";
-  import { post } from "$lib/api/utils.js";
+  import { browser } from "$app/environment";
+  import { get } from "$lib/api/utils";
   import Button from "$lib/components/ui/Button.svelte";
-  import Input from "$lib/components/ui/Input.svelte";
-  import Container from "$lib/components/ui/wrappers/Container.svelte";
-  import session from "$lib/store/session.js";
-  import userSettings from "$lib/store/user-settings.js";
-  import { submitWrapper } from "$lib/utils/sveltekitWrapper.js";
-  import type { PageData } from ".svelte-kit/types/src/routes/(scores)/u/author/create/[lang=lang]/$types.js";
-  import { mutateStringToPermalink } from "@betarena/scores-lib/dist/util/language.js";
-  import WidgetMenuOpt from "../Widget-MenuOpt.svelte";
-  export let data: PageData;
-
+  import StepBase from "$lib/components/ui/StepBase.svelte";
+  import { modalStore } from "$lib/store/modal";
+  import session from "$lib/store/session";
+  import userSettings from "$lib/store/user-settings";
+  import { onDestroy, onMount } from "svelte";
+  import { loginStore } from "./login-store";
+  import LogoImg from "./LogoImg.svelte";
+  import CountryStep from "./steps/CountryStep.svelte";
+  import EmailStep from "./steps/EmailStep.svelte";
+  import PasswordStep from "./steps/PasswordStep.svelte";
+  import PhoneCodeStep from "./steps/PhoneCodeStep.svelte";
+  import PhoneStep from "./steps/PhoneStep.svelte";
+  import ProfileStep from "./steps/ProfileStep.svelte";
+  import SportstackStep from "./steps/SportstackStep.svelte";
+  import TopicsStep from "./steps/TopicsStep.svelte";
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -54,11 +56,33 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  let name = "";
-  let inputError = false;
-  let debounceTimer;
-  let form: HTMLFormElement;
-  $: translation = $page.data.RESPONSE_PROFILE_DATA?.sportstack;
+  $: ({ viewportType } = $session);
+  $: ({ currentStep } = $loginStore);
+  $: user = $userSettings.user?.scores_user_data;
+  let defaultSteps = [
+    EmailStep,
+    PasswordStep,
+    PhoneStep,
+    PhoneCodeStep,
+    ProfileStep,
+    CountryStep,
+    SportstackStep,
+    TopicsStep,
+  ];
+  let stepMap: Record<string, typeof EmailStep> = {
+    0: EmailStep,
+  };
+
+  defaultSteps.forEach((component, index) => (stepMap[index] = component));
+
+  $: if (user) {
+    $loginStore.avatar = user.profile_photo || "";
+    $loginStore.name = user.name || "";
+  }
+
+  $: if (browser && $loginStore.isExistedUser) {
+    updateSteps();
+  }
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -75,7 +99,9 @@
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  $: name = name.replace(/[^\w\s]/gi, "");
+  $: if ($loginStore.currentStep >= Object.keys(stepMap).length) {
+    $modalStore.show = false;
+  }
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
@@ -91,38 +117,84 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-
-  function debounceValidation(e: CustomEvent<string>) {
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(() => validateName(e.detail), 300); // 300ms debounce
+  function updateSteps() {
+    if (!$userSettings.user) return;
+    let steps: Array<typeof PasswordStep> = [];
+    const { scores_user_data, firebase_user_data } = $userSettings.user;
+    if (
+      !firebase_user_data?.providerData.find(
+        (provider) => provider.providerId === "password"
+      )
+    ) {
+      // steps.push(PasswordStep);
+    }
+    if (
+      !firebase_user_data?.phoneNumber &&
+      new Date(scores_user_data?.register_date || "").valueOf() >
+        new Date(2025, 7, 13).valueOf()
+    ) {
+      steps.push(PhoneStep, PhoneCodeStep);
+    }
+    if (!scores_user_data?.name) {
+      steps.push(ProfileStep);
+    }
+    if (!scores_user_data?.country) {
+      steps.push(CountryStep);
+    }
+    if ((scores_user_data?.subscriptions?.sportstacks?.length || 0) < 3) {
+      steps.push(SportstackStep);
+    }
+    if ((scores_user_data?.following?.tags?.length || 0) < 3) {
+      steps.push(TopicsStep);
+    }
+    if (!steps.length) {
+      history.back();
+      return;
+    }
+    let nexSteps: Record<string, typeof EmailStep> = {};
+    steps.forEach((component, index) => (nexSteps[index] = component));
+    stepMap = { ...nexSteps };
+    $loginStore.currentStep = 0;
   }
 
-  function submit() {
-    return submitWrapper({
-      successMessage: "The publication was created successfully.",
-      cbAfter: gotoPublication,
-    });
-  }
-
-  async function validateName(val) {
-    if (!val) return (inputError = false);
-    const res = await post<{ isValid: boolean | undefined }>(
-      "/api/data/author/sportstack/validate",
-      { name: val }
+  async function getInitData() {
+    const response = await get<{ data: Record<string, string>[] }>(
+      "api/data/login"
     );
-    inputError = !res?.isValid ?? false;
+    if (response?.data) {
+      loginStore.update((v) => ({
+        ...v,
+        translations: { ...response.data[0] },
+        countries: { ...response.data[1] },
+      }));
+    }
   }
 
-  async function gotoPublication(e) {
-    if (e.result.type !== "success") return;
-    const permalink = mutateStringToPermalink(name);
-    const url = `/u/author/publication/${permalink}/${userSettings.extract("lang")}`;
-    await goto(url);
+  function loginWithGoogle() {
+    updateSteps();
   }
 
   // #endregion ➤ 🛠️ METHODS
 
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  onMount(() => {
+    getInitData();
+    updateSteps();
+  });
+
+  onDestroy(() => {
+    $loginStore.recaptchaVerifier?.clear();
+  });
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 
 <!--
@@ -136,76 +208,65 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<Container>
-  <form
-    class="publication-create-wrapper {$session.viewportType}"
-    method="POST"
-    bind:this={form}
-    action="/api/data/author/sportstack?/create"
-    use:enhance={submit}
-  >
-    {#if $session.viewportType === "desktop"}
-      <div class="menu">
-        <WidgetMenuOpt />
+<div class="login-page {viewportType}">
+  <div class="desktop-side-pagination-wrapper">
+    <div class="side-content">
+      <div class="logo">
+        <LogoImg />
       </div>
-    {/if}
-    <div id="publication-create" class={$session.viewportType}>
-      <div class="header-wrapper">
-        <div class="header">
-          <h2>{translation?.create || "Publication Create"}</h2>
-          <p>
-            {translation?.description ||
-              "Lorem ipsum dolor sit amet consectetur. Turpis sed et proin commodo."}
-          </p>
-        </div>
-        <div class="buttons-header">
-          <a data-sveltekit-replacestate href="/u/author/{$userSettings.lang}">
-            <Button full={true} type="outline"
-              >{translation?.cancel || "Cancel"}</Button
-            >
-          </a>
-          <Button submit={true} disabled={inputError}
-            >{translation?.save || "Save"}</Button
-          >
-        </div>
-      </div>
-      <div class="form">
-        <div class="form-controls">
-          <Input
-            name="name"
-            type="leading-text"
-            placeholder={translation?.default_name || "default_sportstack"}
-            on:input={debounceValidation}
-            error={inputError}
-            required={true}
-            bind:value={name}
-          >
-            <span slot="label">URL</span>
-            <span slot="leading-text">sportstack/</span>
-            <span slot="error"
-              >{translation.alert || "The name is already in use."}</span
-            >
-            <span slot="info"
-              >{translation.message ||
-                "You can change the name later if you wish."}</span
-            >
-          </Input>
-        </div>
-
-        <div class="buttons">
-          <a href="/u/author/{$userSettings.lang}">
-            <Button full={true} type="secondary-gray"
-              >{translation?.cancel || "Cancel"}</Button
-            >
-          </a>
-          <Button submit={true} disabled={inputError}
-            >{translation?.save || "Save"}</Button
-          >
-        </div>
+      <div class="steps-wrapper">
+        <StepBase title="Your details" step={1} color="brand" checked={currentStep > 0} active={true} description="Please provide your email" />
+        <StepBase title="Choose a password" step={2} color="brand" checked={currentStep > 1} active={currentStep === 1}   description="Choose a secure password" />
+        <StepBase title="Verify your phone number" color="brand"  step={3} active={[2,3].includes(currentStep)} checked={currentStep > 3}  description="Confirm your phone" />
+        <StepBase title="Profile" step={4} active={currentStep > 4} color="brand" description="Setting up your profile"/>
       </div>
     </div>
-  </form>
-</Container>
+  </div>
+
+  <div class="login-wrapper {viewportType}">
+    {#if currentStep}
+      <div class="back-button">
+        <Button
+          type="secondary"
+          size="sm"
+          on:click={() => ($loginStore.currentStep -= 1)}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+            class="arrow"
+          >
+            <path
+              d="M15.8333 9.99996H4.16666M4.16666 9.99996L9.99999 15.8333M4.16666 9.99996L9.99999 4.16663"
+              stroke="currentColor"
+              stroke-width="1.66667"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </Button>
+      </div>
+    {/if}
+    <div class="content">
+      <svelte:component
+        this={stepMap[currentStep]}
+        on:loginWithGoogle={loginWithGoogle}
+      />
+    </div>
+    {#if stepMap[0] !== EmailStep || currentStep}
+      <div class="pagination-wrapper">
+        {#each Object.keys(stepMap) as step}
+          <div class="step-tab" class:active={Number(step) === currentStep} />
+        {/each}
+      </div>
+    {/if}
+
+    <div id="recaptcha-container" />
+  </div>
+</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -218,155 +279,124 @@
 -->
 
 <style lang="scss">
-  #publication-create {
+  .login-page {
     display: flex;
-    padding: var(--spacing-none, 0px);
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--spacing-3xl, 24px);
-    flex: 1 0 0;
-    align-self: stretch;
-    min-height: calc(var(--vh, 1vh) * 100 - 56px - 22px - 5px);
-    padding-bottom: 22px;
+    width: 100%;
+    height: 100vh;
+    .desktop-side-pagination-wrapper {
+      display: none;
 
-    .header-wrapper {
-      .header {
+      .side-content {
         display: flex;
+        padding: var(--spacing-4xl, 32px) var(--spacing-4xl, 32px) 0
+          var(--spacing-4xl, 32px);
         flex-direction: column;
         align-items: flex-start;
-        gap: var(--spacing-xs, 4px);
+        gap: var(--spacing-8xl, 80px);
         align-self: stretch;
-        h2 {
-          color: var(--colors-text-text-primary-900, #fbfbfb);
-          margin: 0;
 
-          /* Display xs/Semibold */
-          font-family: var(--Font-family-font-family-display, Roboto);
-          font-size: var(--Font-size-display-xs, 24px);
-          font-style: normal;
-          font-weight: 600;
-          line-height: var(--Line-height-display-xs, 32px); /* 133.333% */
+        .logo {
+          color: var(--colors-text-text-primary_on-brand, #fbfbfb);
         }
-        p {
-          color: var(--colors-text-text-tertiary-600, #8c8c8c);
 
-          /* Text md/Regular */
-          font-family: var(--Font-family-font-family-body, Roboto);
-          font-size: var(--Font-size-text-md, 16px);
-          font-style: normal;
-          font-weight: 400;
-          line-height: var(--Line-height-text-md, 24px); /* 150% */
-        }
-      }
-
-      .buttons-header {
-        display: none;
-      }
-    }
-
-    .form {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: var(--spacing-2xl, 20px);
-      flex: 1 0 0;
-      flex-grow: 1;
-      align-self: stretch;
-      .form-controls {
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-        align-self: stretch;
-        .label {
+        .steps-wrapper {
           display: flex;
+          padding-right: var(--spacing-4xl, 32px);
           flex-direction: column;
-          height: max-content;
-          input {
-            border: 1px solid red;
-            width: 100%;
-            background-color: white;
+          align-items: flex-start;
+          align-self: stretch;
+          color: var(--colors-border-border-brand_alt);
+
+          :global(.connecter-wrapper) {
+            padding-bottom: 0;
           }
         }
       }
-      .buttons {
-        display: flex;
-        align-items: flex-start;
-        gap: var(--spacing-lg, 12px);
-        align-self: stretch;
-        a,
-        :global(button) {
-          flex-grow: 1;
-        }
-      }
     }
-
-    :global(.button) {
-      padding: 10px var(--spacing-xl, 16px);
-
-      font-size: var(--font-size-text-md, 16px);
-      font-style: normal;
-      font-weight: 500;
-      line-height: var(--line-height-text-md, 24px); /* 150% */
-      max-height: 44px;
-    }
-
     &.desktop {
-      padding: var(--spacing-2xl, 20px);
-      min-height: unset;
-
-      .header-wrapper {
+      .desktop-side-pagination-wrapper {
         display: flex;
-        gap: 24px;
-        width: 100%;
-
-        .buttons-header {
-          display: flex;
-          flex-grow: 1;
-          align-items: start;
-          justify-content: end;
-          width: 50%;
-          gap: var(--spacing-lg, 12px);
-          a {
-            height: 44px;
-            width: max-content;
-          }
-        }
-        .header {
-          width: 50%;
-          flex-grow: 1;
-          h2 {
-            font-size: var(--font-size-text-xl, 20px);
-            font-style: normal;
-            font-weight: 600;
-            line-height: var(--line-height-text-xl, 30px); /* 150% */
-          }
-        }
+        max-width: 440px;
+        width: 440px;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex: 1 0 0;
+        align-self: stretch;
+        background: var(--colors-background-bg-brand-section, #232323);
       }
-
-      .form {
-        height: max-content;
-        .buttons {
-          display: none;
-        }
+      :global(.container-wrapper) {
+        max-width: calc(360px + 68px); // compensate inline paddings
       }
     }
   }
+  .login-wrapper {
+    flex-grow: 1;
+    height: 100%;
+    max-height: 100vh;
+    background: var(--colors-background-bg-primary, #1f1f1f);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 
-  .publication-create-wrapper {
-    margin-top: 24px;
+    .content {
+      flex-grow: 1;
+      max-width: 100vw;
+      overflow-x: hidden;
+    }
+
+    .back-button {
+      position: absolute;
+      left: 16px;
+      top: 19px;
+      z-index: 2;
+      :global(.button) {
+        padding: var(--spacing-md, 8px);
+      }
+      .arrow {
+        color: var(--colors-foreground-fg-quaternary-400);
+      }
+    }
+    .pagination-wrapper {
+      padding: 0 var(--container-padding-mobile, 16px);
+      padding-bottom: 40px;
+      width: 100%;
+      flex-shrink: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: var(--spacing-lg, 12px);
+
+      .step-tab {
+        height: 8px;
+        flex: 1 0 0;
+        border-radius: var(--radius-full, 9999px);
+        background: var(--colors-background-bg-quaternary, #525252);
+        &.active {
+          background: var(--colors-foreground-fg-brand-primary_alt, #d2d2d2);
+        }
+      }
+    }
+
+    &.tablet {
+      .content {
+        max-width: calc(343px + 68px); // padding compensation
+        width: 100%;
+        max-width: 100%;
+        margin: 0 auto;
+        overflow-x: hidden;
+      }
+      .pagination-wrapper {
+        max-width: calc(343px + 68px); // padding compensation
+        width: 100%;
+        margin: 0 auto;
+        padding-bottom: 147px;
+      }
+    }
 
     &.desktop {
-      margin-top: 0;
-      display: flex;
-      align-items: start;
-      gap: var(--spacing-2xl, 20px);
-      padding-top: var(--spacing-5xl, 40px);
-      padding-bottom: 72px;
-      min-height: calc(var(--vh, 1vh) * 100 - 128px);
-
-      .menu {
-        flex-shrink: 0;
-        min-width: 328px;
+      .pagination-wrapper {
+        display: none;
       }
     }
   }

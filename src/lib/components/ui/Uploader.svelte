@@ -8,27 +8,9 @@
 -->
 
 <script lang="ts">
-  // #region ➤ 📦 Package Imports
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'imports' that are required        │
-  // │ by 'this' .svelte file is ran.                                         │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. svelte/sveltekit imports                                            │
-  // │ 2. project-internal files and logic                                    │
-  // │ 3. component import(s)                                                 │
-  // │ 4. assets import(s)                                                    │
-  // │ 5. type(s) imports(s)                                                  │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
-  import Button from "$lib/components/ui/Button.svelte";
-  import session from "$lib/store/session.js";
-  import userSettings from "$lib/store/user-settings.js";
-  import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
-  import SportstackAvatar from "../../SportstackAvatar.svelte";
-  // #endregion ➤ 📦 Package Imports
+  import CropperModal from "$lib/components/ui/Cropper/CropperModal.svelte";
+  import { dlog } from "$lib/utils/debug";
+  import { createEventDispatcher } from "svelte";
 
   // #region ➤ 📌 VARIABLES
 
@@ -44,19 +26,15 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let user: any, translations: IPageAuthorTranslationDataFinal;
-  export let size: number | string = 40;
-  export let action_button = true;
-  export let includeAbout = false;
+  export let avatar = "";
+  export let translations = {} as Record<string, string>;
+  let fileInput: HTMLInputElement,
+    files: HTMLInputElement["files"] | undefined,
+    profile_pic: string | undefined;
 
-  $: ({ viewportType } = $session);
-  $: ({ user: ctx } = $userSettings);
-  $: ({ username, name, avatar, about } = user.data);
-  $: ({ permalink, id, uid } = user);
-  $: isAuth = !!ctx;
-  $: isFollow = !!(
-    ctx?.scores_user_data?.subscriptions?.sportstacks || []
-  ).includes(id);
+  let image: string | ArrayBuffer | null | undefined;
+  let modal = false;
+  const dispatch = createEventDispatcher();
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -72,14 +50,45 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function handleClick() {
-    if (!isAuth) {
-      $session.currentActiveModal = "Auth_Modal";
+  function setCropImage(img) {
+    profile_pic = img;
+    avatar = img;
+    modal = false
+    dispatch("upload", img);
+  }
+
+  function handleFileChange(event) {
+    const target = event.target as HTMLInputElement;
+    if (!target.files) return;
+    files = target.files;
+    const allowedFormats = [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+    ];
+    for (const file_ of files) {
+      // [🐞]
+      dlog(`${file_.name}: ${file_.size} ${typeof file_} type`, true);
+    }
+    const file = files[0];
+    if (!allowedFormats.includes(file.type)) {
+      alert("🔴 Invalid file format. Please upload a PNG, JPG or GIF file.");
+      fileInput.value = "";
       return;
     }
-    userSettings.updateData([
-      ["user-subscriptions", { target: "sportstacks", id, follow: !isFollow }],
-    ]);
+    if (file.size > 10000000) {
+      alert("🔴 Uploaded picture is too large. Limit is 10MB.");
+      fileInput.value = "";
+      return;
+    }
+    let reader = new FileReader();
+    reader.onload = (e) => {
+      image = e.target?.result;
+      modal = true;
+    };
+    reader.readAsDataURL(file);
+    files = undefined;
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -96,34 +105,57 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="list-item {viewportType}">
-  <a href="/a/sportstack/{permalink}" class="user-info">
-    <div class="avatar-wrapper">
-      <SportstackAvatar {size} src={avatar} />
-    </div>
-    <div class="name-wrapp">
-      <div class="user-name">{name || username}</div>
-      {#if includeAbout}
-        <div class="user-about">{about}</div>
-      {/if}
-    </div>
-  </a>
-  {#if uid!== ctx?.firebase_user_data?.uid && action_button}
-    <Button
-      disabled={!user.actionButton}
-      type={isFollow ? "secondary" : "primary"}
-      style="padding:10px 16px; font-size: 14px; height:{size === 'lg'
-        ? '36px'
-        : '32px'}; min-width: 72px "
-      on:click={handleClick}
+<div class="file-uploader" on:click={() => fileInput.click()}>
+  <input
+    type="file"
+    class="hidden-input"
+    bind:this={fileInput}
+    on:change={handleFileChange}
+    accept=".jpg, .jpeg, .png, .gif, .webp"
+  />
+  <div class="upload-icon">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      viewBox="0 0 20 20"
+      fill="none"
     >
-      <TranslationText
-        text={translations[isFollow ? "following" : "follow"]}
-        fallback={isFollow ? "Following" : "Follow"}
+      <path
+        d="M6.66675 13.3333L10.0001 10M10.0001 10L13.3334 13.3333M10.0001 10V17.5M16.6667 13.9524C17.6847 13.1117 18.3334 11.8399 18.3334 10.4167C18.3334 7.88536 16.2814 5.83333 13.7501 5.83333C13.568 5.83333 13.3976 5.73833 13.3052 5.58145C12.2185 3.73736 10.2121 2.5 7.91675 2.5C4.46497 2.5 1.66675 5.29822 1.66675 8.75C1.66675 10.4718 2.36295 12.0309 3.48921 13.1613"
+        stroke="#D2D2D2"
+        stroke-width="1.66667"
+        stroke-linecap="round"
+        stroke-linejoin="round"
       />
-    </Button>
-  {/if}
+    </svg>
+  </div>
+  <div class="upload-info">
+    <div class="upload-title">
+      <span class="upload-action">
+        {translations?.upload_thumbnail_action || "Click to upload"}</span
+      >
+      {translations?.upload_thumbnail || "or drag and drop"}
+    </div>
+    <div class="upload-file-type">
+      PNG, JPG {translations?.or || "or"} GIF ({translations?.max || "max"}.
+      800x400px)
+    </div>
+  </div>
 </div>
+
+{#if modal && typeof image === "string"}
+  <div class="modal">
+    <CropperModal
+      {image}
+      shape="rect"
+      cb={setCropImage}
+      closeCb={() => {
+        fileInput.value = "";
+      }}
+    />
+  </div>
+{/if}
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -136,61 +168,107 @@
 -->
 
 <style lang="scss">
-  .list-item {
+  .modal {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    z-index: 100000000000;
+    background-color: rgba(0, 0, 0, 0.5);
     display: flex;
-    padding-block: 16px;
-    border-bottom: var(--header-border);
-    justify-content: space-between;
-    gap: 20px;
-    align-items: start;
+    justify-content: center;
+    align-items: center;
+  }
+  .file-uploader {
+    display: flex;
+    padding: var(--spacing-xl, 16px) var(--spacing-3xl, 24px);
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-lg, 12px);
+    align-self: stretch;
+    cursor: pointer;
 
-    .user-info {
+    border-radius: var(--radius-xl, 12px);
+    border: 1px solid var(--colors-border-border-secondary, #ededed);
+    background: var(--colors-background-bg-primary, #fff);
+
+    &:hover {
+      background-color: var(--colors-background-bg-secondary_hover);
+    }
+
+    .hidden-input {
+      display: none;
+    }
+
+    .upload-icon {
       display: flex;
-      justify-content: start;
-      flex-grow: 1;
-      align-items: start;
-      gap: 12px;
-      color: var(--text-color);
-      font-family: Roboto;
-      font-size: 16px;
-      font-style: normal;
-      font-weight: 500;
-      line-height: 24px; /* 150% */
-      .avatar-wrapper {
-        flex-shrink: 0;
-      }
+      width: 40px;
+      height: 40px;
+      padding: 10px;
+      justify-content: center;
+      align-items: center;
 
-      &:hover {
-        color: var(--primary);
-      }
+      border-radius: var(--radius-md, 8px);
+      border: 1px solid
+        var(
+          --component-colors-components-icons-featured-icons-modern-featured-icon-modern-border,
+          #525252
+        );
 
-      .name-wrapp {
-        display: flex;
-        flex-direction: column;
+      /* Shadows/shadow-xs-skeuomorphic */
+      box-shadow: 0px 0px 0px 1px
+          var(
+            --colors-effects-shadows-shadow-skeumorphic-inner-border,
+            rgba(31, 31, 31, 0.18)
+          )
+          inset,
+        0px -2px 0px 0px var(
+            --colors-effects-shadows-shadow-skeumorphic-inner,
+            rgba(31, 31, 31, 0.05)
+          ) inset,
+        0px 1px 2px 0px
+          var(--colors-effects-shadows-shadow-xs, rgba(255, 255, 255, 0));
 
-        .user-name {
-          line-height: var(--Line-height-text-sm, 20px); /* 142.857% */
-        }
-        .user-about {
-            color: var(--colors-text-text-tertiary-600, #8c8c8c);
-            font-family: var(--font-family-font-family-body, Roboto);
-            font-size: var(--font-size-text-xs, 12px);
-            font-style: normal;
-            font-weight: 400;
-            line-height: var(--line-height-text-xs, 18px); /* 150% */
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+      path {
+        stroke: var(--colors-foreground-fg-secondary);
       }
     }
 
-    &.mobile {
-      padding: 16px;
-      padding-block: 8px;
-      border-bottom: none;
+    .upload-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-xs, 4px);
+      align-self: stretch;
+      color: var(--colors-text-text-tertiary-600, #6a6a6a);
+
+      /* Text sm/Regular */
+      font-family: var(--font-family-font-family-body, Roboto);
+      font-size: var(--font-size-text-sm, 14px);
+      font-style: normal;
+      font-weight: 400;
+      line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+
+      .upload-action {
+        color: var(--colors-text-text-brand-secondary-700, #ae460b);
+
+        /* Text sm/Semibold */
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-sm, 14px);
+        font-style: normal;
+        font-weight: 600;
+        line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+      }
+
+      .upload-file-type {
+        color: var(--colors-text-text-tertiary-600, #8c8c8c);
+
+        /* Text xs/Regular */
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-xs, 12px);
+        font-style: normal;
+        font-weight: 400;
+        line-height: var(--line-height-text-xs, 18px); /* 150% */
+      }
     }
   }
 </style>

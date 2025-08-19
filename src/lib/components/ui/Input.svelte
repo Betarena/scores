@@ -8,8 +8,8 @@
 -->
 
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
   import { sanitize } from "$lib/utils/purify.js";
+  import { createEventDispatcher } from "svelte";
 
   // #region ➤ 📌 VARIABLES
 
@@ -25,8 +25,8 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let requred: boolean = false;
-  export let inputType: "text" | "number" | "password" | "textarea" = "text";
+  export let required: boolean = false;
+  export let inputType: HTMLInputElement["type"] | "textarea" = "text";
   export let error = false;
   export let placeholder = "";
   export let type: "input" | "leading-text" = "input";
@@ -97,20 +97,20 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 <div class="field">
-  {#if $$slots.label || label || requred}
+  {#if $$slots.label || label || required}
     <label class="label" for={name}>
       {#if $$slots.label || label}
         <span class="label-text">
           <slot name="label">{label}</slot>
         </span>
       {/if}
-      {#if requred}
+      {#if required}
         <span class="required">*</span>
       {/if}
     </label>
   {/if}
   <div class="input-wrapper" class:focus class:error style="height: {height}">
-    {#if type === "leading-text"}
+    {#if type === "leading-text" || $$slots["leading-text"]}
       <div class="leading-text">
         <slot name="leading-text" />
       </div>
@@ -195,7 +195,7 @@
         line-height: var(--line-height-text-sm, 20px); /* 142.857% */
       }
       .required {
-        color: var(--colors-brand-5);
+        color: var(--colors-text-text-brand-tertiary-600, #d2d2d2);
         /* Text sm/Medium */
         font-family: var(--font-family-font-family-body, Roboto);
         font-size: var(--font-size-text-sm, 14px);

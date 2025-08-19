@@ -8,8 +8,7 @@
 -->
 
 <script lang="ts">
-  import { createEventDispatcher, onMount, tick } from "svelte";
-  import ArrowDown from "./assets/arrow-down.svelte";
+  import { createEventDispatcher, tick } from "svelte";
 
   // #region ➤ 📌 VARIABLES
 
@@ -29,21 +28,25 @@
     label: string;
     [key: string]: any;
   }
-  export let requred: boolean = false;
+  export let required: boolean = false;
   export let inputType = "text";
   export let error = false;
   export let placeholder = "";
-  export let value: IOption | undefined = undefined;
+  export let value: IOption | undefined | null = undefined;
   export let name = "";
+  export let label = "";
   export let textKey = "label";
   export let options: IOption[] = [];
   export let checkIcon = true;
+  export let infoText = "";
   export let onInputValidation:
     | ((val: string | number) => boolean)
     | undefined = undefined;
   export let onChangeValidation:
     | ((val: string | number) => boolean)
     | undefined = undefined;
+  export let searchable: boolean = false;
+  export let searchPlaceholder: string = "Search...";
 
   const dispatch = createEventDispatcher<{ change: IOption }>();
 
@@ -51,6 +54,15 @@
   let focus = false;
   let dropDownNode;
   let top = false;
+  let searchInput: HTMLInputElement;
+  let searchTerm = "";
+
+  $: filteredOptions =
+    searchable && searchTerm
+      ? options.filter((option) =>
+          option[textKey].toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      : options;
 
   $: if (modal && dropDownNode) {
     tick().then(() => {
@@ -74,6 +86,7 @@
   function select(option: IOption) {
     value = option;
     dispatch("change", value);
+    searchTerm = "";
     hide();
   }
 
@@ -81,6 +94,18 @@
     modal = false;
     focus = false;
     top = false;
+    searchTerm = "";
+  }
+
+  function show() {
+    modal = true;
+    focus = true;
+    top = false;
+    if (searchable && searchInput) {
+      tick().then(() => {
+        searchInput.focus();
+      });
+    }
   }
 
   function adjustDropdownPosition() {
@@ -114,12 +139,12 @@
       <option value={option}>{option.label}</option>
     {/each}
   </select>
-  {#if $$slots.label || requred}
+  {#if $$slots.label || required || label}
     <label class="label" for={name}>
       <span class="label-text">
-        <slot name="label" />
+        <slot name="label">{label}</slot>
       </span>
-      {#if requred}
+      {#if required}
         <span class="required">*</span>
       {/if}
     </label>
@@ -131,16 +156,31 @@
       class:error
       on:mousedown|preventDefault
       on:click|stopPropagation={() => {
-        modal = !modal;
-        focus = true;
-        top = false;
+        if (modal) {
+          hide();
+        } else {
+          show();
+        }
       }}
     >
-      {#if value}
-        <slot name="option" option={value}>{value[textKey]}</slot>
-      {:else}
-        <slot name="placeholder" />
+      {#if $$slots.icon}
+        <div class="icon">
+          <slot name="icon"><!-- optional fallback --></slot>
+        </div>
       {/if}
+      <div class="text">
+        {#if value}
+          {#if $$slots["input-option"]}
+            <slot name="input-option" option={value}>{value[textKey]}</slot>
+          {:else}
+            <slot name="option" option={value}>{value[textKey]}</slot>
+          {/if}
+        {:else}
+          <span class="placeholder">
+            <slot name="placeholder">{placeholder}</slot>
+          </span>
+        {/if}
+      </div>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="20"
@@ -163,43 +203,82 @@
       bind:this={dropDownNode}
       class:top
     >
-      <div class="inner-wrrapper">
-        {#each options as option (option.id)}
-          <div class="list-item-wrapper">
-            <div
-              on:mousedown|preventDefault
-              on:click={() => select(option)}
-              class="list-item"
-              class:active={option.id === value?.id}
-            >
-              <slot name="option" {option}>
-                {option[textKey]}
-
-                {#if checkIcon && option.id === value?.id}
-                  <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M20 6L9 17L4 12"
-                      stroke="var( --colors-foreground-fg-brand-primary)"
-                      stroke-width="1.66"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                {/if}
-              </slot>
-            </div>
+      <div class="inner-wrapper">
+        {#if searchable}
+          <div class="search-wrapper">
+            <input
+              bind:this={searchInput}
+              bind:value={searchTerm}
+              type="text"
+              class="search-input"
+              placeholder={searchPlaceholder}
+              on:click|stopPropagation
+              on:keydown={(e) => {
+                if (e.key === "Escape") {
+                  hide();
+                } else if (
+                  e.key === "ArrowDown" &&
+                  filteredOptions.length > 0
+                ) {
+                  e.preventDefault();
+                  // Focus on first option or implement keyboard navigation
+                } else if (e.key === "Enter" && filteredOptions.length === 1) {
+                  e.preventDefault();
+                  select(filteredOptions[0]);
+                }
+              }}
+            />
           </div>
-        {/each}
+        {/if}
+        {#if filteredOptions.length === 0 && searchTerm}
+          <div class="no-results">
+            <span>No results</span>
+          </div>
+        {/if}
+        <div class="list-wrapper">
+          {#each filteredOptions as option (option.id)}
+            <div class="list-item-wrapper">
+              <div
+                on:mousedown|preventDefault
+                on:click={() => select(option)}
+                class="list-item"
+                class:active={option.id === value?.id}
+              >
+                {#if !$$slots["option-list-item"]}
+                  <slot name="option" {option}>
+                    {option[textKey]}
+
+                    {#if checkIcon && option.id === value?.id}
+                      <svg
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M20 6L9 17L4 12"
+                          stroke="var( --colors-foreground-fg-brand-primary)"
+                          stroke-width="1.66"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    {/if}
+                  </slot>
+                {:else}
+                  <slot name="option-list-item" {option}>
+                    {option[textKey]}
+                  </slot>
+                {/if}
+              </div>
+            </div>
+          {/each}
+        </div>
       </div>
     </div>
   </div>
-  {#if $$slots.error || $$slots.info}
+  {#if $$slots.error || $$slots.info || infoText}
     <div class="field-info">
       {#if error}
         <span class="error">
@@ -207,7 +286,7 @@
         </span>
       {:else}
         <span class="info">
-          <slot name="info" />
+          <slot name="info">{infoText}</slot>
         </span>
       {/if}
     </div>
@@ -237,7 +316,7 @@
       gap: var(--spacing-xxs, 2px);
 
       .label-text {
-        color: var(--colors-text-text-secondary);
+        color: var(--colors-text-text-secondary-700, #fbfbfb);
 
         /* Text sm/Medium */
         font-family: var(--font-family-font-family-body, Roboto);
@@ -267,7 +346,15 @@
       /* Shadows/shadow-xs */
       box-shadow: 0px 1px 2px 0px
         var(--colors-effects-shadows-shadow-xs, rgba(255, 255, 255, 0));
-
+      .icon {
+        margin-right: var(--spacing-md, 8px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .text {
+        flex-grow: 1;
+      }
       .input-element {
         display: flex;
         padding: 10px 14px;
@@ -367,13 +454,60 @@
       align-items: flex-start;
       align-self: stretch;
 
-      .inner-wrrapper {
+      .inner-wrapper {
         height: 100%;
-        overflow: auto;
+        overflow: hidden;
         display: flex;
         flex-direction: column;
         width: fit-content;
         width: 100%;
+
+        .search-wrapper {
+          padding: var(--spacing-sm, 6px);
+          border-bottom: 1px solid var(--colors-border-border-primary, #6a6a6a);
+          margin-bottom: var(--spacing-xs, 4px);
+
+          .search-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--colors-border-border-primary, #6a6a6a);
+            border-radius: var(--radius-sm, 6px);
+            background: var(--colors-background-bg-primary, #fff);
+            color: var(--colors-text-text-primary-900, #fbfbfb);
+            font-family: var(--font-family-font-family-body, Roboto);
+            font-size: 16px;
+            font-weight: 400;
+            line-height: var(--line-height-text-sm, 20px);
+            outline: none;
+
+            &:focus {
+              border-color: var(--colors-border-border-brand, #f5620f);
+            }
+
+            &::placeholder {
+              color: var(--colors-text-text-tertiary, #8c8c8c);
+            }
+          }
+        }
+
+        .no-results {
+          padding: 12px 16px;
+          text-align: center;
+          color: var(--colors-text-text-tertiary, #8c8c8c);
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-sm, 14px);
+          font-style: italic;
+          line-height: var(--line-height-text-sm, 20px);
+        }
+        .list-wrapper {
+          flex-grow: 1;
+          display: flex;
+          flex-direction: column;
+          width: fit-content;
+          width: 100%;
+          overflow-y: auto;
+          min-height: 0;
+        }
       }
 
       &::-webkit-scrollbar {
