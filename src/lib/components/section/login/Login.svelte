@@ -73,6 +73,14 @@
     0: EmailStep,
   };
 
+  let defaultDesktopSteps = {
+    email: { title: "Your details", description: "Please provide your email", steps: [EmailStep] },
+    password: { title: "Choose a password", description: "Choose a secure password", steps: [PasswordStep] },
+    phone: { title: "Verify your phone", description: "Confirm your phone", steps: [PhoneStep, PhoneCodeStep] },
+    profile: { title: "Profile", description: "Setting up your profile", steps: [ProfileStep, CountryStep, SportstackStep, TopicsStep] },
+  }
+  let desktopStepsGrouped = Object.values(defaultDesktopSteps)
+
   defaultSteps.forEach((component, index) => (stepMap[index] = component));
 
   $: if (user) {
@@ -120,6 +128,8 @@
   function updateSteps() {
     if (!$userSettings.user) return;
     let steps: Array<typeof PasswordStep> = [];
+    let newDesktopSteps: typeof desktopStepsGrouped = [];
+    let profileSteps: Array<typeof ProfileStep> = [];
     const { scores_user_data, firebase_user_data } = $userSettings.user;
     if (
       !firebase_user_data?.providerData.find(
@@ -133,19 +143,27 @@
       new Date(scores_user_data?.register_date || "").valueOf() >
         new Date(2025, 7, 13).valueOf()
     ) {
+      newDesktopSteps.push(defaultDesktopSteps.phone)
       steps.push(PhoneStep, PhoneCodeStep);
     }
     if (!scores_user_data?.name) {
+      profileSteps.push(ProfileStep);
       steps.push(ProfileStep);
     }
     if (!scores_user_data?.country) {
+      profileSteps.push(CountryStep);
       steps.push(CountryStep);
     }
     if ((scores_user_data?.subscriptions?.sportstacks?.length || 0) < 3) {
+      profileSteps.push(SportstackStep);
       steps.push(SportstackStep);
     }
     if ((scores_user_data?.following?.tags?.length || 0) < 3) {
+      profileSteps.push(TopicsStep);
       steps.push(TopicsStep);
+    }
+    if (profileSteps.length) {
+      newDesktopSteps.push({...defaultDesktopSteps.profile, steps: profileSteps});
     }
     if (!steps.length) {
       history.back();
@@ -153,6 +171,7 @@
     }
     let nexSteps: Record<string, typeof EmailStep> = {};
     steps.forEach((component, index) => (nexSteps[index] = component));
+    desktopStepsGrouped = newDesktopSteps;
     stepMap = { ...nexSteps };
     $loginStore.currentStep = 0;
   }
@@ -215,10 +234,11 @@
         <LogoImg />
       </div>
       <div class="steps-wrapper">
-        <StepBase title="Your details" step={1} color="brand" checked={currentStep > 0} active={true} description="Please provide your email" />
-        <StepBase title="Choose a password" step={2} color="brand" checked={currentStep > 1} active={currentStep === 1}   description="Choose a secure password" />
-        <StepBase title="Verify your phone number" color="brand"  step={3} active={[2,3].includes(currentStep)} checked={currentStep > 3}  description="Confirm your phone" />
-        <StepBase title="Profile" step={4} active={currentStep > 4} color="brand" description="Setting up your profile"/>
+        {#each desktopStepsGrouped as group, step_index (step_index)}
+          {@const stepsBefore = desktopStepsGrouped.slice(0, Number(step_index)).reduce((acc, curr) => acc + curr.steps.length, 0)}
+          <StepBase  title={group.title} step={Number(step_index) + 1 } color="brand" checked={stepsBefore + group.steps.length <= currentStep} active={currentStep >= stepsBefore && currentStep < stepsBefore + group.steps.length} description={group.description} />
+        {/each}
+        
       </div>
     </div>
   </div>

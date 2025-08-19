@@ -439,6 +439,7 @@
           line-height: var(--line-height-text-sm, 20px); /* 142.857% */
         }
         .option {
+          cursor: pointer;
           color: var(--colors-text-text-brand-secondary-700, #d2d2d2);
 
           /* Text sm/Semibold */
@@ -452,6 +453,7 @@
     }
   }
   .quest-wrapper {
+    cursor: pointer;
     position: absolute;
     bottom: 40px;
     left: 50%;
