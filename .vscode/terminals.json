@@ -17,7 +17,7 @@
       "commands":
       [
         "nvm use",
-        "npm run vite/dev/1-click/pnpm"
+        "npm run vite/dev/1-click"
       ],
       "icon": "device-desktop",
       "color": "terminal.ansiCyan"
