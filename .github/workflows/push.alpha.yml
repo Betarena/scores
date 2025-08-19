@@ -1,0 +1,42 @@
+# ╭──────────────────────────────────────────────────────────────────╮
+# │ 🐙 GITHUB ACIONS CI/CD WORKFLOW                                  │
+# ┣──────────────────────────────────────────────────────────────────┫
+# │ Responsible for:                                                 │
+# ╰──────────────────────────────────────────────────────────────────╯
+
+name: '(aplha) server check'
+
+on:
+  push:
+    branches:
+      - test-2
+#
+
+jobs:
+
+  server-check:
+    name: 🕵️‍♂️ JOB /:/ Inspect Server
+    runs-on: ubuntu-22.04
+    steps:
+      - name: STEP // configure ssh access
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_KEY" > ~/.ssh/server.key
+          chmod 600 ~/.ssh/server.key
+          cat >> ~/.ssh/config <<END
+          Host server
+            HostName $SSH_HOST
+            User $SSH_USER
+            IdentityFile ~/.ssh/server.key
+            StrictHostKeyChecking no
+          END
+        env:
+          SSH_USER: ${{ secrets.SERVER_USERNAME }}
+          SSH_KEY: ${{ secrets.SERVER_KEY }}
+          SSH_HOST: ${{ secrets.SERVER_HOST }}
+      - name: STEP // check project structure (on server)
+        id: ssh-get
+        run: echo "::set-output name=MY_OUTPUT::$(ssh server 'whoami')"'
+      - run: 'echo "Result from SSH: ${{ steps.ssh-get.outputs.MY_OUTPUT}}"'
+  #
+#
