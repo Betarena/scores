@@ -54,7 +54,8 @@
     routeIdPageProfileArticleCreation,
     routeIdPageProfileEditArticle,
     routeIdPageProfilePublication,
-    routeIdSearch,
+    routeIdRegister,
+    routeIdSearch
   } from '$lib/constants/paths.js';
   import { scoresAdminStore } from '$lib/store/admin.js';
   import { delCookie } from '$lib/store/cookie.js';
@@ -350,8 +351,9 @@
     );
   }
 
-  $: if (currentActiveModal === "Auth_Modal") {
-    goto('/login', {replaceState: true});
+  $: if (currentActiveModal === "Auth_Modal"&& $page.route.id !== routeIdLogin) {
+    
+    goto('/register', {replaceState: true});
   }
 
   $: if (browser){
@@ -390,7 +392,9 @@
     ): Promise < void > =>
     {
 
-      goto('/login', {replaceState: true});
+      if($page.route.id !== routeIdLogin) {
+        goto('/register', {replaceState: true});
+      }
       // ╭─────
       // │ IMPORTANT CRITICAL
       // ╰─────
@@ -767,7 +771,7 @@
     <!-- <EmailSubscribe /> -->
   {/if}
 
-  {#if ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle, routeIdSearch, routeIdLogin].includes($page.route.id || "" ) || ($page.route.id === routeIdSearch && $sessionStore.viewportType !== "mobile") }
+  {#if ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle, routeIdSearch, routeIdLogin, routeIdRegister].includes($page.route.id || "" ) || ($page.route.id === routeIdSearch && $sessionStore.viewportType !== "mobile") }
     <HeaderRedesigned />
   {/if}
 
@@ -786,7 +790,7 @@
     {#if
       (
         !globalState.has('IsPWA')
-        && ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle, routeIdLogin].includes($page.route.id || '')
+        && ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle, routeIdLogin, routeIdRegister].includes($page.route.id || '')
       )
       || [routeIdPageProfile, routeIdPageProfilePublication].includes($page.route.id || '')
     }
@@ -799,7 +803,7 @@
 
   {#if
     (objComponentStandardState.viewport.mobile.state || objComponentStandardState.viewport.tablet.state)
-    && ![routeIdSearch, routeIdPageProfile, routeIdPageProfileEditArticle, routeIdPageProfileArticleCreation, routeIdLogin].includes($page.route.id || '')
+    && ![routeIdSearch, routeIdPageProfile, routeIdPageProfileEditArticle, routeIdPageProfileArticleCreation, routeIdLogin, routeIdRegister].includes($page.route.id || '')
   }
     <MobileMenu
       mobile={objComponentStandardState.viewport.mobile.state}

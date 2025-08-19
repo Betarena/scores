@@ -111,6 +111,7 @@
         default:
           errorMessage = 'Registration failed. Please try again.';
       }
+      confirmPasswordError = errorMessage;
     } finally {
       isLoading = false;
     }
