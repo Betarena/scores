@@ -12,6 +12,7 @@
   import { AU_W_TAG, dlog, errlog } from "$lib/utils/debug";
   import { tryCatchAsync } from "@betarena/scores-lib/dist/util/common";
   import {
+    fetchSignInMethodsForEmail,
     GithubAuthProvider,
     GoogleAuthProvider,
     signInWithEmailAndPassword,
@@ -70,11 +71,23 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function validateEmail(email: string): boolean {
+  async function validateEmail(email: string): Promise<boolean> {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && email) {
       errorMessage = "Invalid email address";
       emailError = true;
       return true;
+    }
+    try {
+      const methods = await fetchSignInMethodsForEmail(auth, email);
+      if (methods.length && !isLogin) {
+        errorMessage = "Email is already in use, try logging in instead.";
+        emailError = true;
+        disableButton = true;
+        return true;
+      }
+    } catch {
+      emailError = true;
+      errorMessage = "Email validation failed";
     }
     if (email) {
       disableButton = false;
@@ -245,6 +258,9 @@
         <Input
           inputType="email"
           error={emailError || !!loginError}
+          on:keydown={(e) => {
+            emailError = false;
+          }}
           on:change={() => validateEmail($loginStore.email)}
           placeholder="Enter your email"
           bind:value={$loginStore.email}
