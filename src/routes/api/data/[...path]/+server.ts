@@ -22,6 +22,7 @@
 import dotenv from 'dotenv';
 
 import { main as EndpointAuthorHome } from '$lib/sveltekit/endpoint/author.home.js';
+import { main as EndpointMainCore } from '$lib/sveltekit/endpoint/main.config.js';
 import { main as EdnpointTranslation } from '$lib/sveltekit/endpoint/main.translation.js';
 import { main as EndpointProfileMain } from '$lib/sveltekit/endpoint/profile.main.js';
 import { API_DATA_ERROR_RESPONSE } from '$lib/utils/debug.js';
@@ -42,6 +43,7 @@ import { GetPartners, GetPartnersSubmissions, GetPartnersVisibility, PostPartner
 dotenv.config();
 
 const getEndpointsMap = {
+  'main.config': EndpointMainCore,
   'profile.main': EndpointProfileMain,
   'author.home': EndpointAuthorHome,
   'search.articles': ArticlesSearchEndpoint,

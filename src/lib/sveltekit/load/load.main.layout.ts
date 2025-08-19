@@ -84,6 +84,14 @@ interface IPreloadResponse
   deviceType: string;
   /**
    * @description
+   * 📝 Target `config` object data.
+   */
+  config:
+  {
+    url: string;
+  };
+  /**
+   * @description
    * 📝 Target `urls` to be `fetched`.
    */
   userAgent: string | null;
@@ -223,6 +231,8 @@ export async function main
     }
   */
 
+  console.log('TEMPORARY USER-AGENT', event.request.headers.get('user-agent'))
+
   const
     /**
      * @description
@@ -249,6 +259,7 @@ export async function main
   // │ |: Destruct `object`.
   // ╰─────
   [
+    objResponse.config,
     objResponse.B_NAV_T,
     objResponse.B_FOT_T,
     objResponse.authTrs,
@@ -366,6 +377,7 @@ async function fetchData
      */
     listUrls
       = [
+        `/api/data/main.config`,
         `/api/data/main/navbar?lang=${lang}&decompress`,
         `/api/data/main/footer?lang=${lang}&decompress`,
         `/api/hasura/_main_/auth?lang=${lang}`,

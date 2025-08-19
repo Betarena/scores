@@ -8,8 +8,14 @@
 -->
 
 <script lang="ts">
-  import Lock from "$lib/components/ui/assets/lock.svelte";
-  export let permalink = "";
+
+  import { page } from '$app/stores';
+  import Lock from '$lib/components/ui/assets/lock.svelte';
+
+  export let permalink = '';
+
+  $: ({ config } = $page.data as { config: { url: string } });
+
 </script>
 
 <!--
@@ -27,7 +33,7 @@
     <Lock color="var(--colors-foreground-fg-brand-primary)" />
   </div>
   <span class="text">
-    https://betarena.com/a/sportstack/{permalink}
+    {config.url}/a/sportstack/{permalink}
   </span>
 </div>
 
