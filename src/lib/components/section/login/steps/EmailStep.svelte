@@ -355,6 +355,7 @@
       }
     }
     .form {
+      position: relative;
       display: flex;
       flex-direction: column;
       z-index: 1;
