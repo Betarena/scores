@@ -25,11 +25,13 @@
   import { browser } from "$app/environment";
   import { get } from "$lib/api/utils";
   import Button from "$lib/components/ui/Button.svelte";
+  import StepBase from "$lib/components/ui/StepBase.svelte";
   import { modalStore } from "$lib/store/modal";
   import session from "$lib/store/session";
   import userSettings from "$lib/store/user-settings";
   import { onDestroy, onMount } from "svelte";
   import { loginStore } from "./login-store";
+  import LogoImg from "./LogoImg.svelte";
   import CountryStep from "./steps/CountryStep.svelte";
   import EmailStep from "./steps/EmailStep.svelte";
   import PasswordStep from "./steps/PasswordStep.svelte";
@@ -207,7 +209,19 @@
 -->
 
 <div class="login-page {viewportType}">
-  <div class="desktop-side-pagination-wrapper" />
+  <div class="desktop-side-pagination-wrapper">
+    <div class="side-content">
+      <div class="logo">
+        <LogoImg />
+      </div>
+      <div class="steps-wrapper">
+        <StepBase title="Your details" step={1} color="brand" checked={currentStep > 0} active={true} description="Please provide your email" />
+        <StepBase title="Choose a password" step={2} color="brand" checked={currentStep > 1} active={currentStep === 1}   description="Choose a secure password" />
+        <StepBase title="Verify your phone number" color="brand"  step={3} active={[2,3].includes(currentStep)} checked={currentStep > 3}  description="Confirm your phone" />
+        <StepBase title="Profile" step={4} active={currentStep > 4} color="brand" description="Setting up your profile"/>
+      </div>
+    </div>
+  </div>
 
   <div class="login-wrapper {viewportType}">
     {#if currentStep}
@@ -271,6 +285,33 @@
     height: 100vh;
     .desktop-side-pagination-wrapper {
       display: none;
+
+      .side-content {
+        display: flex;
+        padding: var(--spacing-4xl, 32px) var(--spacing-4xl, 32px) 0
+          var(--spacing-4xl, 32px);
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-8xl, 80px);
+        align-self: stretch;
+
+        .logo {
+          color: var(--colors-text-text-primary_on-brand, #fbfbfb);
+        }
+
+        .steps-wrapper {
+          display: flex;
+          padding-right: var(--spacing-4xl, 32px);
+          flex-direction: column;
+          align-items: flex-start;
+          align-self: stretch;
+          color: var(--colors-border-border-brand_alt);
+
+          :global(.connecter-wrapper) {
+            padding-bottom: 0;
+          }
+        }
+      }
     }
     &.desktop {
       .desktop-side-pagination-wrapper {
@@ -285,7 +326,7 @@
         background: var(--colors-background-bg-brand-section, #232323);
       }
       :global(.container-wrapper) {
-        max-width: calc(360px + 68px); // compensate inline paddings 
+        max-width: calc(360px + 68px); // compensate inline paddings
       }
     }
   }
