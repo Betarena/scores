@@ -36,7 +36,7 @@ jobs:
           SSH_HOST: ${{ secrets.SERVER_HOST }}
       - name: STEP // check project structure (on server)
         id: ssh-get
-        run: echo "::set-output name=MY_OUTPUT::$(ssh server 'whoami')"
+        run: echo "::set-output name=MY_OUTPUT::$(ssh server 'pwd')"
       - run: 'echo "Result from SSH: ${{ steps.ssh-get.outputs.MY_OUTPUT}}"'
   #
 #
