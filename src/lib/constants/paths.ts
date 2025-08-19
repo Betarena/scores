@@ -123,6 +123,11 @@ export const
   routeIdSearch = '/(scores)/search',
  /**
    * @description
+   *  📣 Target `path` for **register**.
+   */
+  routeIdRegister = '/(scores)/register',
+ /**
+   * @description
    *  📣 Target `path` for **login**.
    */
   routeIdLogin = '/(scores)/login'

@@ -166,6 +166,12 @@
     return;
   }
 
+  function switchMode() {
+    let path = isLogin ? "/register" : "/login";
+    // Navigate to the new path
+    goto(path, {replaceState: true});
+  }
+
   async function login() {
     try {
       disableButton = true;
@@ -313,7 +319,7 @@
       </div>
       <div
         class="login-option"
-        on:click={() => ($loginStore.isLogin = !$loginStore.isLogin)}
+        on:click={switchMode}
       >
         <span class="text"
           >{isLogin ? "Don't have an account?" : "Already have an account?"}
