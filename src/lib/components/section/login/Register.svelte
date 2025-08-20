@@ -37,6 +37,7 @@
   import PhoneCodeStep from "./steps/PhoneCodeStep.svelte";
   import PhoneStep from "./steps/PhoneStep.svelte";
   import ProfileStep from "./steps/ProfileStep.svelte";
+  import ReadyToPublish from "./steps/ReadyToPublish.svelte";
   import SportstackStep from "./steps/SportstackStep.svelte";
   import TopicsStep from "./steps/TopicsStep.svelte";
   // #endregion ➤ 📦 Package Imports
@@ -67,6 +68,7 @@
     CountryStep,
     SportstackStep,
     TopicsStep,
+    ReadyToPublish
   ];
   let stepMap: Record<string, typeof EmailStep> = {
     0: EmailStep,
@@ -257,7 +259,7 @@
         on:loginWithGoogle={loginWithGoogle}
       />
     </div>
-    {#if stepMap[0] !== EmailStep || currentStep}
+    {#if stepMap[0] !== EmailStep || currentStep && stepMap[currentStep] !== ReadyToPublish}
       <div class="pagination-wrapper">
         {#each Object.keys(stepMap) as step}
           <div class="step-tab" class:active={Number(step) === currentStep} />
