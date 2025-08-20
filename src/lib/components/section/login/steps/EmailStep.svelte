@@ -4,6 +4,7 @@
   import { scoresAuthStore } from "$lib/components/_main_/auth/_store";
   import CircleBg from "$lib/components/shared/backround-patterns/CircleBG.svelte";
   import Button from "$lib/components/ui/Button.svelte";
+  import Checkbox from "$lib/components/ui/Checkbox.svelte";
   import Input from "$lib/components/ui/Input.svelte";
   import SocialButton from "$lib/components/ui/SocialButton.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
@@ -169,7 +170,7 @@
   function switchMode() {
     let path = isLogin ? "/register" : "/login";
     // Navigate to the new path
-    goto(path, {replaceState: true});
+    goto(path, { replaceState: true });
   }
 
   async function login() {
@@ -182,12 +183,11 @@
         email,
         password
       );
-      $loginStore.isExistedUser = true
+      $loginStore.isExistedUser = true;
       await successAuthComplete("login", credentials.user, undefined);
       disableButton = false;
+      goto('/', { replaceState: true });
     } catch (error: any) {
-     
-
       // Handle specific Firebase Auth errors
       switch (error.code) {
         case "auth/user-not-found":
@@ -290,6 +290,10 @@
               {/if}
             </div>
           </Input>
+          <div class="forgot-password">
+            <Checkbox title="Remember for 30 days" />
+            <Button type="link-color" size="md" on:click={() => {$loginStore.currentStep += 1}}>Forgot password?</Button>
+          </div>
           <Button
             full={true}
             size="lg"
@@ -317,10 +321,7 @@
           on:click={() => authenticateGoogleAuth20()}
         />
       </div>
-      <div
-        class="login-option"
-        on:click={switchMode}
-      >
+      <div class="login-option" on:click={switchMode}>
         <span class="text"
           >{isLogin ? "Don't have an account?" : "Already have an account?"}
         </span>
@@ -333,7 +334,6 @@
     <div class="quest">Guest</div>
   </div>
 </div>
-
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -419,6 +419,23 @@
         align-items: center;
         gap: var(--spacing-3xl, 24px);
         align-self: stretch;
+
+        .forgot-password {
+          display: flex;
+          width: 100%;
+          justify-content: space-between;
+
+          .forgot {
+            color: var(--colors-text-text-brand-secondary-700, #d2d2d2);
+
+            /* Text sm/Semibold */
+            font-family: var(--font-family-font-family-body, Roboto);
+            font-size: var(--font-size-text-sm, 14px);
+            font-style: normal;
+            font-weight: 600;
+            line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+          }
+        }
 
         .or-wrapper {
           display: flex;
