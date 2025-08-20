@@ -168,6 +168,8 @@ export const handle: Handle = sequence
     // ╰─────
     if (event.url.pathname == '/api/misc/debug')
       return await resolve(event);
+    else if (event.url.pathname == '/api/data/main.config' && event.url.searchParams.has('type') && event.url.searchParams.get('type') === 'hooks.server')
+      return await resolve(event);
     ;
 
     // ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -207,6 +209,19 @@ export const handle: Handle = sequence
         ),
       /**
        * @description
+       * 📣 fetch 'main.config' data.
+       */
+      dataRes2 = await event.fetch
+        (
+          `/api/data/main.config?type=hooks.server`
+        ),
+      /**
+       * @description
+       * 📣 fetch 'main.config' data (v2).
+       */
+      dataRes20 = (await dataRes2.json()),
+      /**
+       * @description
        *  📣 assign 'locals' context from 'cookie' or, load defaults.
        */
       objUserDefaultCookie: IBetarenaUserCookie
@@ -242,11 +257,13 @@ export const handle: Handle = sequence
         [
           `🔹 [var] ➤ listLanguages :: ${parseObject(listLanguages)}`,
           `🔹 [var] ➤ cookies :: ${parseObject(cookies)}`,
+          `🔹 [var] ➤ dataRes20 :: ${parseObject(dataRes20)}`,
         ],
       }
     );
 
     event.locals.setState = new Set();
+    event.locals.metadata ??= { domain: dataRes20.url };
 
     // ╭─────
     // │ CHECK:
@@ -344,9 +361,6 @@ export const handle: Handle = sequence
           event.error,
           event.params.lang,
         ),
-
-
-      
       /**
        * @description
        *  📣 new with response of <html lang...>

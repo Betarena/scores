@@ -205,11 +205,9 @@
   {/each}
 
   {#each (objAuthorContentHome?.mapAuthor ?? []) as [, author]}
-    {#if author.data?.username}
-      <a href="/a/user/{mutateStringToPermalink(author.data.username)}">
-        {author.data.username}
-      </a>
-    {/if}
+    <a href="/a/sportstack/{author.permalink}">
+      {author.permalink}
+    </a>
   {/each}
 
   <!--
@@ -230,11 +228,9 @@
   {/each}
 
   {#each (objAuthorContentForecast?.mapAuthor ?? []) as [, author]}
-    {#if author.data?.username}
-      <a href="/a/user/{mutateStringToPermalink(author.data.username)}">
-        {author.data.username}
-      </a>
-    {/if}
+    <a href="/a/sportstack/{author.permalink}">
+      {author.permalink}
+    </a>
   {/each}
 </SeoBox>
 
