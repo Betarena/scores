@@ -20,7 +20,11 @@ import { entryProfileTabAuthorSearchTag } from '@betarena/scores-lib/dist/functi
 // ╭──────────────────────────────────────────────────────────────────╮
 // │ 🛠️ MAIN METHODS                                                  │
 // ╰──────────────────────────────────────────────────────────────────╯
-function covertSEOTemplate(data: IPageAuthorTagDataFinal): AuthorsSEODetailsDataJSONSchema
+function covertSEOTemplate
+(
+  data: IPageAuthorTagDataFinal,
+  domain: string | undefined
+): AuthorsSEODetailsDataJSONSchema
 {
   const { seoTamplate, tagId, mapTag } = data;
   const currentTag = mapTag.find(([id]) => id === tagId);
@@ -36,11 +40,11 @@ function covertSEOTemplate(data: IPageAuthorTagDataFinal): AuthorsSEODetailsData
       description,
       title: main_data.title.replaceAll("{name}", name),
       keywords: name,
-      canonical: `https://betarena.com/a/tag/${permalink}`,
+      canonical: `https://${domain}/a/tag/${permalink}`,
     },
     opengraph: {
       ...opengraph,
-      url: `https://betarena.com/a/tag/${permalink}`,
+      url: `https://${domain}/a/tag/${permalink}`,
       description,
       images: opengraph.images.map((img) => ({ ...img, alt: name })),
       title: opengraph.title.replaceAll("{name}", name),
@@ -71,6 +75,12 @@ export async function main
         // ╰──────────────────────────────────────────────────────────────────╯
 
         const
+          {
+            locals:
+            {
+              metadata
+            },
+          } = request,
           permalinkTag = request.url.searchParams.get('permalinkTag'),
           page = request.url.searchParams.get('page') || 0,
           translation = request.url.searchParams.get('translation'),
@@ -112,7 +122,7 @@ export async function main
           console.log(`📌 loaded [FSCR] with: ${loadType}`)
           if (data.seoTamplate)
           {
-            data.seoTamplate = { ...covertSEOTemplate(data) };
+            data.seoTamplate = { ...covertSEOTemplate(data, metadata?.domain) };
           }
           if (data != undefined) return json(data);
         }
