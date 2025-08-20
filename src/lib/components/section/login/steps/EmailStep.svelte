@@ -46,6 +46,7 @@
   let loginError = "";
   let disableButton = !email || !validateEmail(email);
   const dispatch = createEventDispatcher();
+  let timer;
 
   $: if (!email) {
     emailError = false;
@@ -80,6 +81,12 @@
       disableButton = true;
       return false;
     }
+    if(timer) {
+      clearTimeout(timer);
+    }
+    timer = setTimeout(() => {
+      validateOnBlur();
+    }, 200);
     emailError = false;
     return true;
   }
@@ -274,7 +281,6 @@
       </div>
       <div class="form-body">
         <Input
-          on:blur={() => validateOnBlur()}
           inputType="email"
           error={emailError || !!loginError}
           placeholder="Enter your email"
