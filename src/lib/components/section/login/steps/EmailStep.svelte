@@ -78,6 +78,7 @@
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && email) {
       errorMessage = "Invalid email address";
       emailError = true;
+      disableButton = true;
       return true;
     }
     try {
@@ -272,7 +273,7 @@
           on:keydown={(e) => {
             emailError = false;
           }}
-          on:change={() => validateEmail($loginStore.email)}
+          on:blur={() => validateEmail($loginStore.email)}
           placeholder="Enter your email"
           bind:value={$loginStore.email}
         >
