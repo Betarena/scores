@@ -335,7 +335,7 @@
   .login-wrapper {
     flex-grow: 1;
     height: 100%;
-    max-height: 100vh;
+    max-height: 100%;
     background: var(--colors-background-bg-primary, #1f1f1f);
     display: flex;
     flex-direction: column;
