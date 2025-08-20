@@ -41,9 +41,10 @@
   let password = "";
   let errorMessage = "";
   $: ({ email, isLogin } = $loginStore);
-  let disableButton = true;
+  $: isValidEmail = email && validateEmail(email);
   let emailError = false;
   let loginError = "";
+  let disableButton = !email || !validateEmail(email);
   const dispatch = createEventDispatcher();
 
   $: if (!email) {
@@ -76,11 +77,20 @@
 
   async function validateEmail(email: string): Promise<boolean> {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && email) {
+      disableButton = true;
+      return false;
+    }
+    emailError = false;
+    return true;
+  }
+
+  async function validateOnBlur() {
+    if (!isValidEmail) {
       errorMessage = "Invalid email address";
       emailError = true;
       disableButton = true;
-      return true;
-    }
+      return;
+    };
     try {
       const methods = await fetchSignInMethodsForEmail(auth, email);
       if (methods.length && !isLogin) {
@@ -93,11 +103,7 @@
       emailError = true;
       errorMessage = "Email validation failed";
     }
-    if (email) {
-      disableButton = false;
-    }
-    emailError = false;
-    return false;
+    disableButton = false;
   }
 
   /**
@@ -268,12 +274,9 @@
       </div>
       <div class="form-body">
         <Input
+          on:blur={() => validateOnBlur()}
           inputType="email"
           error={emailError || !!loginError}
-          on:keydown={(e) => {
-            emailError = false;
-          }}
-          on:blur={() => validateEmail($loginStore.email)}
           placeholder="Enter your email"
           bind:value={$loginStore.email}
         >
@@ -367,7 +370,8 @@
   .email-step {
     width: 100%;
     height: 100%;
-    max-height: 100vh;
+    max-height: 100%;
+    min-height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -377,7 +381,7 @@
     gap: var(--spacing-4xl, 32px);
 
     :global(.container-wrapper) {
-      flex-grow: 1;
+      flex-grow: 0;
     }
     .logo-wrapper {
       display: flex;
@@ -520,7 +524,7 @@
     justify-content: center;
     align-items: flex-end;
     gap: var(--spacing-xs, 4px);
-
+  margin-top: auto;
     /* Text sm/Regular */
     font-family: var(--font-family-font-family-body, Roboto);
     font-size: var(--font-size-text-sm, 14px);
