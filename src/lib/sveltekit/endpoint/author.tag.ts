@@ -36,11 +36,11 @@ function covertSEOTemplate(data: IPageAuthorTagDataFinal): AuthorsSEODetailsData
       description,
       title: main_data.title.replaceAll("{name}", name),
       keywords: name,
-      canonical: permalink,
+      canonical: `https://betarena.com/a/tag/${permalink}`,
     },
     opengraph: {
       ...opengraph,
-      url: permalink,
+      url: `https://betarena.com/a/tag/${permalink}`,
       description,
       images: opengraph.images.map((img) => ({ ...img, alt: name })),
       title: opengraph.title.replaceAll("{name}", name),
