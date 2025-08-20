@@ -76,6 +76,7 @@
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && email) {
       errorMessage = "Invalid email address";
       emailError = true;
+      disableButton = true;
       return true;
     }
     try {
@@ -254,7 +255,7 @@
     <div class="bg"><CircleBg animation="grow" duration={10} /></div>
     <img src="/assets/svg/logo-betarena.svg" alt="Betarena Logo" />
   </div>
-  <Container>
+  <Container hFull={false}>
     <div class="form">
       <div class="header">
         <h2>Welcome to Betarena</h2>
@@ -267,7 +268,7 @@
           on:keydown={(e) => {
             emailError = false;
           }}
-          on:change={() => validateEmail($loginStore.email)}
+          on:blur={() => validateEmail($loginStore.email)}
           placeholder="Enter your email"
           bind:value={$loginStore.email}
         >
@@ -356,6 +357,10 @@
     position: relative;
     padding: var(--spacing-6xl, 48px) 0;
     gap: var(--spacing-4xl, 32px);
+
+    :global(.container-wrapper) {
+      flex-grow: 1;
+    }
 
     .logo-wrapper {
       display: flex;
@@ -492,11 +497,6 @@
     }
   }
   .quest-wrapper {
-    cursor: pointer;
-    position: absolute;
-    bottom: 40px;
-    left: 50%;
-    transform: translateX(-50%);
     display: flex;
     width: 343px;
     justify-content: center;

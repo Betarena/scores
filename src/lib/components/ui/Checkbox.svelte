@@ -4,8 +4,8 @@
   export let description = "";
 </script>
 
-<div class="checkbox-wrapper" class:centered={!description}>
-  <label class="custom-checkbox">
+<label class="checkbox-wrapper" class:centered={!description}>
+  <div class="custom-checkbox">
     <input type="checkbox" bind:checked />
     <span class="checkmark">
       <svg
@@ -25,12 +25,12 @@
         />
       </svg>
     </span>
-  </label>
+  </div>
   <div class="text-wrapper">
     <div class="title">{title}</div>
     <div class="description">{description}</div>
   </div>
-</div>
+</label>
 
 <style lang="scss">
   .checkbox-wrapper {

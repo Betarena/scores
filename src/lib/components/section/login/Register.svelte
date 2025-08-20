@@ -185,6 +185,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   onMount(() => {
+    $loginStore.currentStep = 0;
     $loginStore.isLogin = false;
     getInitData();
     updateSteps();
