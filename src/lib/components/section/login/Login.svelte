@@ -28,6 +28,7 @@
   import { onMount } from "svelte";
   import { loginStore } from "./login-store";
   import EmailStep from "./steps/EmailStep.svelte";
+  import ResetPassword from "./steps/ResetPassword.svelte";
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -49,9 +50,11 @@
   $: user = $userSettings.user?.scores_user_data;
   let defaultSteps = [
     EmailStep,
+    ResetPassword
   ];
   let stepMap: Record<string, typeof EmailStep> = {
     0: EmailStep,
+    1: ResetPassword
   };
 
   // #endregion ➤ 📌 VARIABLES
