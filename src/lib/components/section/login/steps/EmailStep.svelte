@@ -1,6 +1,6 @@
 <script lang="ts">
   import { browser } from "$app/environment";
-  import { goto } from "$app/navigation";
+  import { preloadData } from "$app/navigation";
   import { scoresAuthStore } from "$lib/components/_main_/auth/_store";
   import CircleBg from "$lib/components/shared/backround-patterns/CircleBG.svelte";
   import Button from "$lib/components/ui/Button.svelte";
@@ -9,8 +9,10 @@
   import SocialButton from "$lib/components/ui/SocialButton.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
   import { auth } from "$lib/firebase/init";
+  import session from "$lib/store/session";
   import { successAuthComplete } from "$lib/utils/authentication";
   import { AU_W_TAG, dlog, errlog } from "$lib/utils/debug";
+  import { gotoSW } from "$lib/utils/sveltekitWrapper";
   import { tryCatchAsync } from "@betarena/scores-lib/dist/util/common";
   import {
     fetchSignInMethodsForEmail,
@@ -19,7 +21,7 @@
     signInWithEmailAndPassword,
     signInWithPopup,
   } from "firebase/auth";
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
   import { loginStore } from "../login-store";
 
   // #region ➤ 📌 VARIABLES
@@ -170,7 +172,7 @@
   function switchMode() {
     let path = isLogin ? "/register" : "/login";
     // Navigate to the new path
-    goto(path, { replaceState: true });
+    gotoSW(path, true);
   }
 
   async function login() {
@@ -186,7 +188,7 @@
       $loginStore.isExistedUser = true;
       await successAuthComplete("login", credentials.user, undefined);
       disableButton = false;
-      goto('/', { replaceState: true });
+      gotoSW("/", true);
     } catch (error: any) {
       // Handle specific Firebase Auth errors
       switch (error.code) {
@@ -236,6 +238,10 @@
     disableButton = false;
   }
   // #endregion ➤ 🛠️ METHODS
+
+  onMount(() => {
+    preloadData("/")
+  })
 </script>
 
 <!--
@@ -248,13 +254,12 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
 <div class="email-step">
   <div class="logo-wrapper">
     <div class="bg"><CircleBg animation="grow" duration={10} /></div>
     <img src="/assets/svg/logo-betarena.svg" alt="Betarena Logo" />
   </div>
-  <Container>
+  <Container hFull={false}>
     <div class="form">
       <div class="header">
         <h2>Welcome to Betarena</h2>
@@ -292,7 +297,13 @@
           </Input>
           <div class="forgot-password">
             <Checkbox title="Remember for 30 days" />
-            <Button type="link-color" size="md" on:click={() => {$loginStore.currentStep += 1}}>Forgot password?</Button>
+            <Button
+              type="link-color"
+              size="md"
+              on:click={() => {
+                $loginStore.currentStep += 1;
+              }}>Forgot password?</Button
+            >
           </div>
           <Button
             full={true}
@@ -329,7 +340,13 @@
       </div>
     </div></Container
   >
-  <div class="quest-wrapper" on:click={() => goto("/")}>
+  <div
+    class="quest-wrapper"
+    on:click={() => {
+      $session.currentActiveModal = null;
+      gotoSW("/", true);
+    }}
+  >
     <span class="text"> Skip and continue as </span>
     <div class="quest">Guest</div>
   </div>
@@ -349,6 +366,7 @@
   .email-step {
     width: 100%;
     height: 100%;
+    max-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -357,6 +375,9 @@
     padding: var(--spacing-6xl, 48px) 0;
     gap: var(--spacing-4xl, 32px);
 
+    :global(.container-wrapper) {
+      flex-grow: 1;
+    }
     .logo-wrapper {
       display: flex;
       justify-content: center;
@@ -493,14 +514,10 @@
   }
   .quest-wrapper {
     cursor: pointer;
-    position: absolute;
-    bottom: 40px;
-    left: 50%;
-    transform: translateX(-50%);
     display: flex;
     width: 343px;
     justify-content: center;
-    align-items: flex-start;
+    align-items: flex-end;
     gap: var(--spacing-xs, 4px);
 
     /* Text sm/Regular */

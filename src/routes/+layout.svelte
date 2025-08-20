@@ -42,7 +42,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { browser } from '$app/environment';
-  import { afterNavigate, beforeNavigate, goto } from '$app/navigation';
+  import { afterNavigate, beforeNavigate } from '$app/navigation';
   import { page } from '$app/stores';
   import * as Sentry from '@sentry/sveltekit';
   import { onDestroy, onMount } from 'svelte';
@@ -84,6 +84,7 @@
   import AndroidPwaBanner from '$lib/components/AndroidPWABanner.svelte';
   import { auth } from '$lib/firebase/init';
   import history_store from '$lib/store/history.js';
+  import { gotoSW } from '$lib/utils/sveltekitWrapper';
   import WidgetAdEngine from '@betarena/ad-engine';
 
   // ╭─────
@@ -351,9 +352,8 @@
     );
   }
 
-  $: if (currentActiveModal === "Auth_Modal"&& $page.route.id !== routeIdLogin) {
-    
-    goto('/register', {replaceState: true});
+  $: if (currentActiveModal === "Auth_Modal"&& ![routeIdLogin, routeIdRegister].includes($page.route.id || "")) {
+    gotoSW('/register', true);
   }
 
   $: if (browser){
@@ -393,7 +393,7 @@
     {
 
       if($page.route.id !== routeIdLogin) {
-        goto('/register', {replaceState: true});
+        gotoSW('/register',  true);
       }
       // ╭─────
       // │ IMPORTANT CRITICAL
