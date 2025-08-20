@@ -284,7 +284,7 @@
   .login-page {
     display: flex;
     width: 100%;
-    height: 100vh;
+    max-height: 100vh;
     .desktop-side-pagination-wrapper {
       display: none;
 
