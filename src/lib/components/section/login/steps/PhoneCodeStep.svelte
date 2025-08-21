@@ -6,6 +6,7 @@
     sendPhoneVerificationCode,
     verifyPhoneCode,
   } from "$lib/firebase/firebase.actions";
+  import session from "$lib/store/session";
   import { successAuthComplete } from "$lib/utils/authentication";
   import { RecaptchaVerifier } from "firebase/auth";
   import { onMount } from "svelte";
@@ -50,6 +51,7 @@
   $: value = otpInputs.map((input) => input?.value || "").join("");
   $: isValid = value.length === length;
   $: ({ confirmationResult, recaptchaVerifier } = $loginStore);
+  $: ({ viewportType } = $session);
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
@@ -302,9 +304,9 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="phone-step">
+<div class="phone-step {viewportType}">
   <div class="logo-wrapper">
-    <div class="bg"><GridBg /></div>
+    <div class="bg"><GridBg size={viewportType === "desktop" ? "768" : "468"} /></div>
     <div class="phone-icon">
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -410,7 +412,6 @@
     align-items: center;
     justify-content: start;
     position: relative;
-    padding: var(--spacing-6xl, 48px) 0;
     gap: var(--spacing-4xl, 32px);
 
     .logo-wrapper {
@@ -670,6 +671,21 @@
         line-height: var(--line-height-text-sm, 20px);
         text-align: center;
         margin-top: var(--spacing-xs, 4px);
+      }
+    }
+
+    &.desktop {
+      .form {
+        .header {
+          gap: var(--spacing-lg, 12px);
+
+          h2 {
+            font-size: var(--font-size-display-sm, 30px);
+            font-style: normal;
+            font-weight: 600;
+            line-height: var(--line-height-display-sm, 38px); /* 126.667% */
+          }
+        }
       }
     }
   }

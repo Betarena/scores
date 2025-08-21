@@ -4,6 +4,7 @@
   import Button from "$lib/components/ui/Button.svelte";
   import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
+  import session from "$lib/store/session";
   import userSettings from "$lib/store/user-settings";
   import { updateUserProfileData } from "$lib/utils/user";
   import IconGlobe from "../icons/IconGlobe.svelte";
@@ -22,7 +23,7 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
+  $: ({ viewportType } = $session);
   $: country = Object.entries($loginStore.countries).map(([id, label]) => ({
     id,
     label
@@ -90,9 +91,9 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="country-step">
+<div class="country-step {viewportType}">
   <div class="logo-wrapper">
-    <div class="bg"><GridBg /></div>
+    <div class="bg"><GridBg size={viewportType === "desktop" ? "768" : "468"} /></div>
     <div class="icon-wrapper">
       <IconGlobe />
     </div>
@@ -139,7 +140,6 @@
     align-items: center;
     justify-content: start;
     position: relative;
-    padding: var(--spacing-6xl, 48px) 0;
     gap: var(--spacing-4xl, 32px);
 
     .logo-wrapper {
@@ -238,6 +238,21 @@
           display: flex;
           justify-content: center;
           align-items: center;
+        }
+      }
+    }
+
+    &.desktop {
+      .form {
+        .header {
+          gap: var(--spacing-lg, 12px);
+
+          h2 {
+            font-size: var(--font-size-display-sm, 30px);
+            font-style: normal;
+            font-weight: 600;
+            line-height: var(--line-height-display-sm, 38px); /* 126.667% */
+          }
         }
       }
     }

@@ -22,7 +22,6 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  import Button from "$lib/components/ui/Button.svelte";
   import session from "$lib/store/session";
   import userSettings from "$lib/store/user-settings";
   import { onMount } from "svelte";
@@ -88,32 +87,6 @@
 <div class="login-page {viewportType}">
 
   <div class="login-wrapper {viewportType}">
-    {#if currentStep}
-      <div class="back-button">
-        <Button
-          type="secondary"
-          size="sm"
-          on:click={() => ($loginStore.currentStep -= 1)}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 20 20"
-            fill="none"
-            class="arrow"
-          >
-            <path
-              d="M15.8333 9.99996H4.16666M4.16666 9.99996L9.99999 15.8333M4.16666 9.99996L9.99999 4.16663"
-              stroke="currentColor"
-              stroke-width="1.66667"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </Button>
-      </div>
-    {/if}
     <div class="content">
       <svelte:component
         this={stepMap[currentStep]}
@@ -142,6 +115,11 @@
       :global(.container-wrapper) {
         max-width: calc(360px + 68px); // compensate inline paddings
       }
+      .login-wrapper {
+        .content {
+          padding: var(--spacing-11xl, 160px) 0 var(--spacing-9xl, 96px) 0;
+        }
+      }
     }
   }
   .login-wrapper {
@@ -156,6 +134,7 @@
     .content {
       flex-grow: 1;
       max-width: 100vw;
+      padding: var(--spacing-6xl, 48px) 0;
       overflow-x: hidden;
     }
 

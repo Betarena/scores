@@ -4,6 +4,7 @@
   import Button from "$lib/components/ui/Button.svelte";
   import SportsTackList from "$lib/components/ui/composed/sportstack_list/SportsTackList.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
+  import session from "$lib/store/session";
   import userSettings from "$lib/store/user-settings";
   import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags";
   import { onMount } from "svelte";
@@ -27,6 +28,7 @@
   let loading = false;
   $: ({ user: { scores_user_data } = { scores_user_data: {} } } =
     $userSettings);
+  $: ({ viewportType } = $session);
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -115,9 +117,9 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="sportstack-step">
+<div class="sportstack-step {viewportType}">
   <div class="logo-wrapper">
-    <div class="bg"><CircleBg animation="grow" /></div>
+    <div class="bg"><CircleBg size={viewportType === "desktop" ? "768" : "468"} animation="grow" /></div>
     <div class="icon-wrapper">
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -177,7 +179,6 @@
     align-items: center;
     justify-content: start;
     position: relative;
-    padding: var(--spacing-6xl, 48px) 0;
     gap: var(--spacing-4xl, 32px);
 
     .logo-wrapper {
@@ -277,6 +278,21 @@
         :global(.list-item) {
           padding-inline: 0;
           border: none;
+        }
+      }
+    }
+
+    &.desktop {
+      .form {
+        .header {
+          gap: var(--spacing-lg, 12px);
+
+          h2 {
+            font-size: var(--font-size-display-sm, 30px);
+            font-style: normal;
+            font-weight: 600;
+            line-height: var(--line-height-display-sm, 38px); /* 126.667% */
+          }
         }
       }
     }

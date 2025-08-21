@@ -46,6 +46,7 @@
       | "tertiary"
       | "button-brand"
       | "link-color"
+      | "link-gray"
       | "subtle" = "primary";
 
   export let submit = false;
@@ -522,6 +523,17 @@
         --component-colors-components-buttons-tertiary-color-button-tertiary-color-fg_hover,
         #d4550c
       );
+    }
+  }
+
+  .link-gray {
+    padding: 0 !important;
+    cursor: pointer;
+    background: inherit;
+    color: var(--colors-text-text-tertiary-600, #8C8C8C);
+    &:hover, &.hover {
+      color: var(--colors-text-text-tertiary_hover, #D2D2D2);
+      text-decoration: underline;
     }
   }
 

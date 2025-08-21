@@ -6,6 +6,7 @@
   import Input from "$lib/components/ui/Input.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
   import { initializeRecaptcha, sendPhoneVerificationCode } from "$lib/firebase/firebase.actions";
+  import session from "$lib/store/session";
   import userSettings from "$lib/store/user-settings";
   import { onMount } from "svelte";
   import IconPhoneVerification from "../icons/IconPhoneVerification.svelte";
@@ -37,6 +38,7 @@
   }));
   let selectedCountryCode = countryCodes.find(c => c.dial_code === "+1") || countryCodes[0];
   $: ({ recaptchaVerifier } = $loginStore);
+  $: ({ viewportType } = $session);
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -166,9 +168,9 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="phone-verification-step">
+<div class="phone-verification-step {viewportType}">
   <div class="logo-wrapper">
-    <div class="bg"><CircleBg animation="grow" /></div>
+    <div class="bg"><CircleBg size={viewportType === "desktop" ? "768" : "468"} animation="grow" /></div>
     <div class="icon-wrapper">
       <IconPhoneVerification />
     </div>
@@ -250,7 +252,6 @@
     align-items: center;
     justify-content: start;
     position: relative;
-    padding: var(--spacing-6xl, 48px) 0;
     gap: var(--spacing-4xl, 32px);
 
     .logo-wrapper {
@@ -361,37 +362,21 @@
           display: flex;
           justify-content: space-between;
         }
+      }
+    }
 
-        // :global(.country-selector) {
-        //   position: relative;
-        //   display: flex;
-        //   align-items: center;
-        //   gap: var(--spacing-xs, 4px);
-        // }
+     &.desktop {
+      .form {
+        .header {
+          gap: var(--spacing-lg, 12px);
 
-        // :global(.country-selector select) {
-        //   background: transparent;
-        //   border: none;
-        //   color: var(--colors-text-text-primary-900, #fff);
-        //   font-family: var(--font-family-font-family-body, Roboto);
-        //   font-size: var(--font-size-text-sm, 14px);
-        //   font-weight: 500;
-        //   outline: none;
-        //   cursor: pointer;
-        //   padding-right: var(--spacing-lg, 12px);
-        // }
-
-        // :global(.country-selector select option) {
-        //   background: var(--colors-background-bg-secondary, #2a2a2a);
-        //   color: var(--colors-text-text-primary-900, #fff);
-        // }
-
-        // :global(.country-selector .chevron-down) {
-        //   color: var(--colors-text-text-tertiary-600, #8c8c8c);
-        //   position: absolute;
-        //   right: 0;
-        //   pointer-events: none;
-        // }
+          h2 {
+            font-size: var(--font-size-display-sm, 30px);
+            font-style: normal;
+            font-weight: 600;
+            line-height: var(--line-height-display-sm, 38px); /* 126.667% */
+          }
+        }
       }
     }
   }
