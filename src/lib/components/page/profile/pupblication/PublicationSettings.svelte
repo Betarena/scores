@@ -78,8 +78,8 @@
     profile_pic: string | undefined;
 
   let image;
-  let showCropModal = false;
 
+  $: descriptionError = desc.length >= 200;
   $: translation = $page.data.RESPONSE_PROFILE_DATA?.sportstack;
   $: ({ viewportType } = $session);
   $: ({ theme } = { ...$userSettings });
@@ -184,7 +184,6 @@
     let reader = new FileReader();
     reader.onload = (e) => {
       image = e.target?.result;
-      showCropModal = true;
       modalStore.set({
         modal: true,
         component: CropperModal,
@@ -377,14 +376,18 @@
     name="about"
     label={translations?.description || "Description"}
     inputType="textarea"
+    error={descriptionError}
     placeholder={translations?.description_place_holder ||
       "Write your description"}
     bind:value={desc}
-  />
+  >
+  <span slot="error">Max 200 chars</span>
+
+</Input>
   <div class="button-wrapper">
     <Button
       type="primary"
-      disabled={!name}
+      disabled={!name || descriptionError}
       submit={true}
       full={viewportType === "mobile"}>{translations?.save || "Save"}</Button
     >

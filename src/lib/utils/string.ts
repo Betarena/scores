@@ -42,13 +42,55 @@ export function cleanUrl
 {
   if (url == null) return '';
 
-  url = url.replace
-  (
-    'https://scores.betarena.com',
-    ''
-  );
+  url = url
+    .replace
+    (
+      'https://scores.betarena.com',
+      ''
+    )
+    .replace
+    (
+      'https://betarena.com',
+      ''
+    )
+    .replace
+    (
+      'https://www.betarena.com',
+      ''
+    )
+  ;
 
-  if (!url.startsWith('/')) url = '/'+url;
+  if (!url.startsWith('/'))
+    url = '/'+url;
+  ;
+
+  return url;
+}
+
+/**
+ * @author
+ *  @migbash
+ * @description
+ *  📣 Helper to generate expected canonical url.
+ * @param url
+ *  💠 **[required]** **url** to be cleaned.
+ * @return { string }
+ *  📤 Cleaned `string` url
+ */
+export function helperExpectedCanonicalUrl
+(
+  url: string | NullUndef
+): string
+{
+  if (url == null) return '';
+
+  url = url
+    .replace
+    (
+      'https://scores.betarena.com',
+      'https://betarena.com'
+    )
+  ;
 
   return url;
 }

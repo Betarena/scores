@@ -44,6 +44,7 @@
 
   import SvelteSeo from "svelte-seo";
   import AuthorUserWidget from "./views/SportstackWidget.svelte";
+  import { helperExpectedCanonicalUrl } from "$lib/utils/string.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -108,7 +109,7 @@
         }
       ) ?? false
     }
-    canonical={$page.url.href}
+    canonical={helperExpectedCanonicalUrl($page.url.href)}
     twitter={pageSeo.twitter_card}
     openGraph={pageSeo.opengraph}
   />

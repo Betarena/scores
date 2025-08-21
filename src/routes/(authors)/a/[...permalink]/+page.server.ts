@@ -37,7 +37,9 @@ export async function load
     // │ │: Destructure `object`.
     // ╰─────
     {
-      langParam
+      langParam,
+      config
+
     } = await event.parent()
   ;
 
@@ -45,7 +47,8 @@ export async function load
   (
     event,
     {
-      langParam
+      langParam,
+      config
     }
   );
 }

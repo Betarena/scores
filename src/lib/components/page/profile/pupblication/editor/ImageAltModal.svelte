@@ -1,19 +1,5 @@
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ 📌 High Order Component Overview                                                 │
-┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ Internal Svelte Code Format :|: V.8.0                                          │
-│ ➤ Status :|: 🔒 LOCKED                                                           │
-│ ➤ Author(s) :|: @izobov                                                         │
-┣──────────────────────────────────────────────────────────────────────────────────┫
-│ 📝 Description                                                                   │
-┣──────────────────────────────────────────────────────────────────────────────────┫
-│ Scores Authors Tags Layout                                                    │
-╰──────────────────────────────────────────────────────────────────────────────────╯
--->
-
-<!--
-╭──────────────────────────────────────────────────────────────────────────────────╮
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
@@ -36,16 +22,15 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
-  import sessionStore from "$lib/store/session.js";
-  import { viewportChangeV2 } from "$lib/utils/device";
-  import { page } from "$app/stores";
-
-  import SvelteSeo from "svelte-seo";
-
-  import TagsWidget from "./content/Tags-Widget.svelte";
-  import { tryCatch } from "@betarena/scores-lib/dist/util/common.js";
-  import { helperExpectedCanonicalUrl } from "$lib/utils/string.js";
+  import Button from "$lib/components/ui/Button.svelte";
+  import Input from "$lib/components/ui/Input.svelte";
+  import { modalStore } from "$lib/store/modal.js";
+  import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import { Editor } from "@tiptap/core";
+  import { Node } from "@tiptap/pm/model";
+  import { TextSelection } from "prosemirror-state";
+  import { onMount } from "svelte";
+  import { scale } from "svelte/transition";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -63,30 +48,101 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let data
-  const /**
-     * @description
-     *  📣 threshold start + state for 📱 MOBILE
-     */ // eslint-disable-next-line no-unused-vars
-    VIEWPORT_MOBILE_INIT: [number, boolean] = [575, true],
-    /**
-     * @description
-     *  📣 threshold start + state for 💻 TABLET
-     */ // eslint-disable-next-line no-unused-vars
-    VIEWPORT_TABLET_INIT: [number, boolean] = [1160, true],
-    /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
-    // eslint-disable-next-line no-unused-vars
-    CNAME: string = "section⮕g⮕authors⮕tag";
+  export let alt: string = "";
+  export let node: Node;
+  export let pos: number;
+  export let link: string = "";
+  export let translations: TranslationSportstacksSectionDataJSONSchema;
+  export let editor: Editor;
 
-  $: ({ windowWidth } = $sessionStore);
-  $: [VIEWPORT_MOBILE_INIT[1]] = viewportChangeV2(
-    windowWidth,
-    VIEWPORT_MOBILE_INIT[0],
-    VIEWPORT_TABLET_INIT[0]
-  );
-  $: pageSeo = data.seoTamplate;
+  let modal;
+  let top = `100vh`;
 
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  function save() {
+    editor
+      .chain()
+      .focus()
+      .command(({ state, tr }) => {
+        const oldNode = state.doc.nodeAt(pos);
+        if (!oldNode) return false;
+
+        tr.setNodeMarkup(pos, undefined, {
+          ...oldNode.attrs,
+          alt,
+          link: link || null,
+        });
+        return true;
+      })
+      .run();
+
+    hide();
+  }
+  function hide() {
+    editor
+      .chain()
+      .focus()
+      .command(({ state, tr, dispatch }) => {
+        const oldNode = state.doc.nodeAt(pos);
+        if (!oldNode) return false;
+        const posAfter = pos + oldNode.nodeSize;
+        const finalResolved = tr.doc.resolve(posAfter + 1);
+        tr.setSelection(TextSelection.near(finalResolved));
+        if (!dispatch) return false;
+        dispatch(tr);
+        return true;
+      })
+      .run();
+    $modalStore.show = false;
+  }
+
+  function updateViewportHeight() {
+    const isKeyboardOpen =
+      (window.visualViewport?.height || 0) < window.innerHeight;
+    if (isKeyboardOpen) {
+      top = `${(window.visualViewport?.height || 0) / 2}px`;
+    } else {
+      top = `50vh`;
+    }
+  }
+  function updateModalPosition() {
+    const scrollTop = window.scrollY;
+    top = `${(window.visualViewport?.height || 0) / 2 + scrollTop}px`;
+  }
+
+  // #endregion ➤ 🛠️ METHODS
+
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  onMount(() => {
+    updateModalPosition();
+    window?.getSelection()?.removeAllRanges();
+  });
+
+  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--
@@ -99,29 +155,28 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
-{#if pageSeo}
-  <SvelteSeo
-    title={pageSeo.main_data.title}
-    description={pageSeo.main_data.description}
-    keywords={pageSeo.main_data.keywords}
-    noindex={tryCatch(() => {
-      return JSON.parse(pageSeo.main_data.noindex);
-    }) ?? false}
-    nofollow={tryCatch(() => {
-      return JSON.parse(pageSeo.main_data.nofollow);
-    }) ?? false}
-    canonical={helperExpectedCanonicalUrl(`${$page.url.origin}/a/tag/${pageSeo.main_data.canonical}`)}
-    twitter={pageSeo.twitter_card}
-    openGraph={pageSeo.opengraph}
+<svelte:window
+  on:resize={updateViewportHeight}
+  on:scroll={updateModalPosition}
+/>
+<div bind:this={modal} class="link-popup" style="top: {top}" in:scale out:scale>
+  <Input
+    bind:value={link}
+    placeholder={translations.enter_url || "Enter url"}
+    label={translations.image_link || "Image link"}
   />
-{/if}
-
-<section id={CNAME} class:mobile={VIEWPORT_MOBILE_INIT[1]}>
-  <div class="main-content">
-    <TagsWidget {data} />
+  <!-- <Input
+    bind:value={alt}
+    placeholder={translations.enter_alt_text || "Enter alt text"}
+    label={translations.image_alt || "Image Alt"}
+  /> -->
+  <div class="buttons">
+    <Button type="secondary-gray" size="sm" on:click={hide}
+      >{translations.cancel || "Cancel"}</Button
+    >
+    <Button size="sm" on:click={save}>{translations.save || "Save"}</Button>
   </div>
-</section>
+</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -134,38 +189,34 @@
 -->
 
 <style lang="scss">
-  /*
-  ╭──────────────────────────────────────────────────────────────────────────────╮
-  │ 📲 MOBILE-FIRST                                                              │
-  ╰──────────────────────────────────────────────────────────────────────────────╯
-  */
+  .link-popup {
+    display: flex;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--colors-background-bg-active);
+    padding: var(--spacing-lg) var(--spacing-sm, 6px);
+    gap: var(--spacing-lg, 6px);
+    border-radius: var(--radius-md);
+    background: var(--colors-background-bg-primary, #fff);
+    box-shadow: 0px 20px 24px -4px var(--colors-effects-shadows-shadow-xl_01, rgba(255, 255, 255, 0)),
+      0px 8px 8px -4px var(--colors-effects-shadows-shadow-xl_02, rgba(255, 255, 255, 0));
 
-  section {
-    width: 100%;
-    border-top: var(--section-border);
-    border-bottom: var(--section-border);
-    padding-bottom: 80px !important;
-    padding-top: 48px;
-    background-color: var(--colors-background-bg-primary);
-
-    &.mobile {
-      border-top: none;
-      padding: 0;
-      padding-top: 16px;
+    .buttons {
+      display: flex;
+      gap: var(--spacing-sm, 6px);
+      justify-content: flex-end;
     }
-
-    .main-content {
-      /* 🎨 style */
-      margin: auto;
-      max-width: 872px;
+    padding: var(--spacing-xl);
+    flex-direction: column;
+    .buttons {
+      justify-content: flex-start;
       width: 100%;
-      padding-left: 0;
-      padding-right: 0;
-    }
-    &.dark-mode,
-    body:has(&.dark-mode) {
-      /* 🎨 style */
-      background-color: var(--dark-theme);
+      :global(.button) {
+        flex-grow: 1;
+        flex-basis: 0;
+      }
     }
   }
 </style>

@@ -108,6 +108,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   function updateSteps() {
+    return
     if (!$userSettings.user) return;
     let steps: Array<typeof PasswordStep> = [];
     let newDesktopSteps: typeof desktopStepsGrouped = [];
@@ -187,6 +188,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   onMount(() => {
+    $loginStore.currentStep = 0;
     $loginStore.isLogin = false;
     getInitData();
     updateSteps();
@@ -285,7 +287,7 @@
   .login-page {
     display: flex;
     width: 100%;
-    height: 100vh;
+    height: 100dvh;
     .desktop-side-pagination-wrapper {
       display: none;
 
@@ -336,7 +338,7 @@
   .login-wrapper {
     flex-grow: 1;
     height: 100%;
-    max-height: 100vh;
+    max-height: 100%;
     background: var(--colors-background-bg-primary, #1f1f1f);
     display: flex;
     flex-direction: column;

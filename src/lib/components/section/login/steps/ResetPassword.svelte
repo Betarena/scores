@@ -24,7 +24,7 @@
   let password = "";
   let errorMessage = "";
   $: ({ email, isLogin } = $loginStore);
-  let disableButton = true;
+  $: disableButton = !email || !validateEmail(email);
   let emailError = false;
   let loginError = "";
   let isSent = false;
@@ -57,30 +57,32 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  async function validateEmail(email: string): Promise<boolean> {
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && email) {
-      errorMessage = "Invalid email address";
-      emailError = true;
-      return true;
-    }
-    if (email) {
-      disableButton = false;
+  function validateEmail(email: string): boolean {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && email) {      
+      return false;
     }
     emailError = false;
-    return false;
+    return true;
   }
 
+  function validateOnBlur() {
+    const isInvalid = validateEmail(email);
+    if (!isInvalid) {
+      errorMessage = "Invalid email address";
+      emailError = true;
+    }
+  }
   async function reset() {
     try {
-      sendPasswordResetEmail(auth, email)
-        .then(() => {})
-        .catch((error) => {
-          // An error occurred
-          errorMessage = error.message;
-          emailError = true;
-        });
+      disableButton = true;
+      await sendPasswordResetEmail(auth, email);
+      isSent = true;
+      disableButton = false;
       // Show success message or navigate to another step
     } catch (e) {
+      disableButton = false;
+      emailError = true;
+      errorMessage = e.message;
       // Handle errors
     }
   }
@@ -131,10 +133,7 @@
           label="Email"
           required={true}
           error={emailError || !!loginError}
-          on:keydown={(e) => {
-            emailError = false;
-          }}
-          on:change={() => validateEmail($loginStore.email)}
+          on:blur={() => validateOnBlur()}
           placeholder="Enter your email"
           bind:value={$loginStore.email}
         >

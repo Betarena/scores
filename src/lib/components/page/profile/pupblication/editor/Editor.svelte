@@ -25,23 +25,23 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { createEventDispatcher, onMount } from "svelte";
-  import { Editor } from "@tiptap/core";
-  import StarterKit from "@tiptap/starter-kit";
-  import Placeholder from "@tiptap/extension-placeholder";
-  import BubbleMenu from "@tiptap/extension-bubble-menu";
-  import Link from "@tiptap/extension-link";
-  import Container from "$lib/components/ui/wrappers/Container.svelte";
   import Button from "$lib/components/ui/Button.svelte";
+  import Container from "$lib/components/ui/wrappers/Container.svelte";
   import { modalStore } from "$lib/store/modal.js";
   import session from "$lib/store/session.js";
-  import Toolbar from "./Toolbar.svelte";
-  import LinkPopup from "./LinkPopup.svelte";
   import type { PageData } from ".svelte-kit/types/src/routes/(scores)/u/author/article/create/[lang=lang]/$types.js";
-  import InsertLinkModal from "./InsertLinkModal.svelte";
-  import PublishModal from "./PublishModal.svelte";
   import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
-  import { Tweet, ImageWithPlaceholder, YouTube } from "./editor_nodes.js";
+  import { Editor } from "@tiptap/core";
+  import BubbleMenu from "@tiptap/extension-bubble-menu";
+  import Placeholder from "@tiptap/extension-placeholder";
+  import StarterKit from "@tiptap/starter-kit";
+  import { createEventDispatcher, onMount } from "svelte";
+  import { ImageWithPlaceholder, SafeLink, Tweet, YouTube } from "./editor_nodes.js";
+  import ImageAltModal from "./ImageAltModal.svelte";
+  import InsertLinkModal from "./InsertLinkModal.svelte";
+  import LinkPopup from "./LinkPopup.svelte";
+  import PublishModal from "./PublishModal.svelte";
+  import Toolbar from "./Toolbar.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -91,8 +91,6 @@
 
   const dispatch = createEventDispatcher();
 
-
-
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -112,7 +110,8 @@
     vh = `${(window.visualViewport?.height || 0) * 0.01}px`;
     isKeyboardOpen = (window.visualViewport?.height || 0) < window.innerHeight;
     if (isKeyboardOpen) {
-      const keyboardHeight = window.innerHeight - (window.visualViewport?.height || 0);
+      const keyboardHeight =
+        window.innerHeight - (window.visualViewport?.height || 0);
       keyBoardHeight = `${keyboardHeight}px`;
     } else {
       keyBoardHeight = `80px`;
@@ -152,6 +151,7 @@
     }
   }
   function toogleLinkPopup(show?: boolean) {
+    if (isImageLink()) return;
     if (show !== undefined && show === linkInsertModal) return;
     linkInsertModal = show ?? !linkInsertModal;
     editor.view.updateState(editor.view.state);
@@ -188,7 +188,7 @@
         show: true,
         component: InsertLinkModal,
         modal: true,
-        props: { linkState, editor },
+        props: { linkState, editor, translations },
       };
       modalStore.set(modal);
 
@@ -216,10 +216,6 @@
         YouTube,
         Tweet,
         StarterKit,
-        Link.configure({
-          openOnClick: false,
-          linkOnPaste: true,
-        }),
         Placeholder.configure({
           placeholder:
             translations?.create_sports_content || "Create your sports content",
@@ -227,6 +223,10 @@
         ImageWithPlaceholder.configure({
           base64: true,
           inline: true,
+        }),
+        SafeLink.configure({
+          openOnClick: false,
+          linkOnPaste: true,
         }),
         BubbleMenu.configure({
           element: bmenu,
@@ -245,12 +245,24 @@
             },
             appendTo: document.querySelector(".editor-wrapper") as Element,
           },
-          shouldShow: ({ editor }) => {
+          shouldShow: ({ editor, state }) => {
             const isLink = editor.isActive("link");
-
-            if (!linkInsertModal && !isLink) return false;
+            const { from } = state.selection;
+            const positionsToCheck = [from, from - 1];
             let url = "";
             let text = "";
+            for (const pos of positionsToCheck) {
+              const node = state.doc.nodeAt(pos);
+
+              if (
+                node?.type.name === "imageWithPlaceholder" &&
+                node.attrs.link
+              ) {
+                linkState = { url: node.attrs.link, text: "" };
+                return true;
+              }
+            }
+            if (!linkInsertModal && !isLink) return false;
             if (isLink) {
               const linkAttrs = editor.getAttributes("link");
               url = linkAttrs.href;
@@ -269,12 +281,13 @@
               text = editor.state.doc.textBetween(from, to, " ");
             }
             linkState = { url, text };
+
             if (!isLink) {
               const modal = {
                 show: true,
                 component: InsertLinkModal,
                 modal: true,
-                props: { linkState, editor },
+                props: { linkState, editor, translations },
               };
               modalStore.set(modal);
 
@@ -310,10 +323,7 @@
     return () => {
       editor?.destroy();
       // Clean up the event listener
-      window.visualViewport?.removeEventListener(
-        "resize",
-        handleResize
-      );
+      window.visualViewport?.removeEventListener("resize", handleResize);
       window.removeEventListener("scroll", updateToolbarPosition);
       window.visualViewport?.removeEventListener(
         "scroll",
@@ -322,15 +332,67 @@
     };
   });
 
+  function isImageLink(showModal = true) {
+    const state = editor.view.state;
+    const { from } = state.selection;
+    const positionsToCheck = [from, from - 1];
+
+    for (const pos of positionsToCheck) {
+      const domNode = editor.view.nodeDOM(pos);
+      const node = state.doc.nodeAt(pos);
+
+      if (
+        node?.type.name === "imageWithPlaceholder" &&
+        (domNode?.parentElement?.tagName !== "A" ||
+          domNode?.parentElement?.getAttribute("data-image-placeholder") ===
+            "true")
+      ) {
+        const { alt = "", link = "" } = node.attrs;
+        if (!showModal) return pos;
+        const modal = {
+          show: true,
+          component: ImageAltModal,
+          modal: true,
+          props: { alt, link, pos, node, editor, translations },
+        };
+        modalStore.set(modal);
+        return true;
+      }
+    }
+  }
+
   function showInsertLinkModal() {
+    if (isImageLink()) return;
     linkInsertModal = true;
     const modal = {
       show: true,
       component: InsertLinkModal,
       modal: true,
-      props: { linkState, editor },
+      props: { linkState, editor, translations },
     };
     modalStore.set(modal);
+  }
+
+  function removeLink() {
+    const pos = isImageLink(false);
+    if (pos) {
+      editor
+        .chain()
+        .focus()
+        .command(({ state, tr }) => {
+          const oldNode = state.doc.nodeAt(pos);
+          if (!oldNode) return false;
+
+          tr.setNodeMarkup(pos, undefined, {
+            ...oldNode.attrs,
+            link: null,
+          });
+          return true;
+        })
+        .run();
+    } else {
+      editor.chain().focus().extendMarkRange("link").unsetLink().run();
+    }
   }
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
@@ -374,6 +436,7 @@
     show={linkInsertModal}
     {linkState}
     on:edit={showInsertLinkModal}
+    on:remove={removeLink}
     on:hide={() => toogleLinkPopup(false)}
   />
 </div>
@@ -554,19 +617,16 @@
         :global(.youtube-shorts) {
           display: flex;
           justify-content: center;
-
         }
         :global(.embed iframe) {
-            width: 100%;
-            aspect-ratio: 16/9;
-
+          width: 100%;
+          aspect-ratio: 16/9;
         }
 
         :global(.youtube-shorts iframe) {
-            width: 50%;
-            aspect-ratio: 9/16;
-
-         }
+          width: 50%;
+          aspect-ratio: 9/16;
+        }
 
         :global(a) {
           text-decoration: underline !important;
@@ -597,6 +657,9 @@
           max-width: 100%;
           width: 100%;
           height: auto;
+          user-select: none;
+          -webkit-user-select: none;
+          touch-action: manipulation;
         }
         &::selection {
           z-index: 0;
@@ -662,7 +725,7 @@
           font-size: 24px;
         }
         :global(.youtube-shorts iframe) {
-            width: 100%;
+          width: 100%;
         }
       }
     }
