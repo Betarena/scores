@@ -136,7 +136,7 @@
   .login-page {
     display: flex;
     width: 100%;
-    height: 100vh;
+    height: 100dvh;
 
     &.desktop {
       :global(.container-wrapper) {
