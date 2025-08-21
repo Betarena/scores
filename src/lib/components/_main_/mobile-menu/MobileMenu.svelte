@@ -284,105 +284,108 @@
     on:click|preventDefault={() => (showPopup = false)}
   />
 {/if}
-<div id={CNAME} class="mobile-menu" class:mobile class:tablet>
-  <div class="blured-container" />
-  {#each [...navButtonOrderList] as { id, url, icon, type, route, hidden } (id)}
-    {#if !hidden}
-      {#if type === "link" && url}
-        {@const active =
-          $page.route.id === route}
-        <a
-          href={url}
-          class="item"
-          on:click={(e) => buttonClick(id, e)}
-          class:active
-          aria-label="link to {id}"
-        >
-          <svelte:component this={icon} color={active ? "var(--colors-text-text-primary-900)" : "var(--colors-foreground-fg-quaternary-400)"} type={active ? "solid" : "outline"} />
-        </a>
-      {:else}
-        <div class="item" on:click={() => buttonClick(id)}>
-          <svelte:component this={icon} />
-        </div>
-      {/if}
-    {/if}
-  {/each}
-  <div class="item" on:click={() => buttonClick("profile")}>
-    {#if !isAuth}
-      <UserIcon />
-    {:else}
-      <a href="/u/dashboard/{$userBetarenaSettings.lang}">
-        {#if profile_photo}
-          <Avatar src={profile_photo} size={25} />
+{#if browser}
+  <div id={CNAME} class="mobile-menu" class:mobile class:tablet>
+    <div class="blured-container" />
+    {#each [...navButtonOrderList] as { id, url, icon, type, route, hidden } (id)}
+      {#if !hidden}
+        {#if type === "link" && url}
+          {@const active =
+            $page.route.id === route}
+          <a
+            href={url}
+            class="item"
+            on:click={(e) => buttonClick(id, e)}
+            class:active
+            aria-label="link to {id}"
+          >
+            <svelte:component this={icon} color={active ? "var(--colors-text-text-primary-900)" : "var(--colors-foreground-fg-quaternary-400)"} type={active ? "solid" : "outline"} />
+          </a>
         {:else}
-          <UserIcon />
+          <div class="item" on:click={() => buttonClick(id)}>
+            <svelte:component this={icon} />
+          </div>
         {/if}
-      </a>
+      {/if}
+    {/each}
+    <div class="item" on:click={() => buttonClick("profile")}>
+      {#if !isAuth}
+        <UserIcon />
+      {:else}
+        <a href="/u/dashboard/{$userBetarenaSettings.lang}">
+          {#if profile_photo}
+            <Avatar src={profile_photo} size={25} />
+          {:else}
+            <UserIcon />
+          {/if}
+        </a>
+      {/if}
+    </div>
+    <!-- <div
+      class="item"
+      style="margin-top: 1px;"
+      class:rotate={showPopup}
+      class:active={showPopup}
+      on:click={(e) => buttonClick("more")}
+    >
+      <MenuSquareDotsIcon type={showPopup ? "solid" : "outline"} />
+    </div> -->
+
+    {#if showPopup}
+      <div class="popup" in:scale out:scale>
+        <div class="blured-container" />
+        <div
+          class="popup-list"
+          use:dndzone={{
+            items: navButtonOrderList,
+            flipDurationMs: 300,
+            dropTargetClasses: ["drag-item"],
+            morphDisabled: true,
+            transformDraggedElement,
+          }}
+          on:consider={handleDndConsider}
+          on:finalize={handleDndFinalize}
+        >
+          {#each navButtonOrderList as { icon, label, id, url } (id)}
+            <div
+              class="list-item"
+              style="gap: 10px; outline:none"
+              animate:flip={{ duration: 300 }}
+            >
+              <a
+                href={url}
+                class="mobile-dnd-list-item"
+                style="
+                gap: 10px;
+              flex-grow: 1;
+              height: 100%;
+              display: flex;
+              align-items: center;
+              justify-content: start;
+
+              "
+              >
+                <div style="width: 24px;">
+                  <svelte:component this={icon} />
+                </div>
+                <span class="label" style="flex-grow: 1;">{label}</span>
+              </a>
+              <div
+                use:dragHandle
+                aria-label="drag-handle for {label}"
+                class="drag-icon"
+                style="width: 24px;"
+              >
+                <Dragicon />
+              </div>
+            </div>
+          {/each}
+        </div>
+      </div>
     {/if}
   </div>
-  <!-- <div
-    class="item"
-    style="margin-top: 1px;"
-    class:rotate={showPopup}
-    class:active={showPopup}
-    on:click={(e) => buttonClick("more")}
-  >
-    <MenuSquareDotsIcon type={showPopup ? "solid" : "outline"} />
-  </div> -->
+{/if}
 
-  {#if showPopup}
-    <div class="popup" in:scale out:scale>
-      <div class="blured-container" />
-      <div
-        class="popup-list"
-        use:dndzone={{
-          items: navButtonOrderList,
-          flipDurationMs: 300,
-          dropTargetClasses: ["drag-item"],
-          morphDisabled: true,
-          transformDraggedElement,
-        }}
-        on:consider={handleDndConsider}
-        on:finalize={handleDndFinalize}
-      >
-        {#each navButtonOrderList as { icon, label, id, url } (id)}
-          <div
-            class="list-item"
-            style="gap: 10px; outline:none"
-            animate:flip={{ duration: 300 }}
-          >
-            <a
-              href={url}
-              class="mobile-dnd-list-item"
-              style="
-              gap: 10px;
-            flex-grow: 1;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: start;
-
-            "
-            >
-              <div style="width: 24px;">
-                <svelte:component this={icon} />
-              </div>
-              <span class="label" style="flex-grow: 1;">{label}</span>
-            </a>
-            <div
-              use:dragHandle
-              aria-label="drag-handle for {label}"
-              class="drag-icon"
-              style="width: 24px;"
-            >
-              <Dragicon />
-            </div>
-          </div>
-        {/each}
-      </div>
-    </div>
-  {/if}
-</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
