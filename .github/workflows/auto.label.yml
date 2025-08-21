@@ -5,7 +5,10 @@
 name: '♻️ sync labels'
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - chore/miscellenous/draft/3
+#
 
 jobs:
 
@@ -15,5 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: srealmoreno/label-sync-action@v2
+        with:
+          clean-labels: true
   #
 #
