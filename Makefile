@@ -1,4 +1,5 @@
 SHELL := /bin/bash
+include env/.env.docker.compose
 
 # ╭──────────────────────────────────────────────────────────────────────────────────╮
 # │ 🐞 │ DEBUG    			    	  																			    					 │
@@ -467,6 +468,18 @@ heroku-target-bash:
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 .ONESHELL:
+docker-info:
+	@
+	# ╭──────────────────────────────────────────────────────────────────╮
+	# │ NOTE: │ DESCRIPTION																						   │
+	# │ ➤ use docker to check version information.                       │
+	# ╰──────────────────────────────────────────────────────────────────╯
+
+	docker --version
+	docker compose version
+#
+
+.ONESHELL:
 docker-image-build:
 	@
 	# ╭──────────────────────────────────────────────────────────────────╮
@@ -474,18 +487,19 @@ docker-image-build:
 	# │ ➤ create docker image for Betarena // Scores                     │
 	# ╰──────────────────────────────────────────────────────────────────╯
 
-	-dot_clean .
+	TEMP_VERSION=""
 
-	TEMP_VERSION=$(shell npm pkg get version --workspaces=false | tr -d \")
-
-	if [ "$(version)" = "temporary" ]; then\
+	if [[ "$(version)" = "temporary" || ! -x "$(shell command -v npm)" ]]; then \
 		TEMP_VERSION="temporary-$$(date +%Y-%m-%d.%H-%M-%S)";\
+	else \
+		TEMP_VERSION=$(shell npm pkg get version --workspaces=false | tr -d \");\
 	fi
 
 	echo -e \
 		"$(COLOUR_B)\
 		\n╭──────────────────────────────────────────────────────────────────╮\
 		\n│ 🐳 │ Building Docker Image                                       │\
+		\n┣──────────────────────────────────────────────────────────────────┫\
 		\n│ ➤ version: $${TEMP_VERSION} \
 		\n╰──────────────────────────────────────────────────────────────────╯\
 		$(END_COLOUR)\n";
@@ -567,9 +581,11 @@ docker-compose-up:
 		"\
 		\n╭──────────────────────────────────────────────────────────────────╮\
 		\n│ 🔀 │ (re)start container(s)                                      │\
+		\n┣──────────────────────────────────────────────────────────────────┫\
 		\n│ ➤ type: $(type) \
 		\n│ ➤ services: $(services) \
-		\n│ ➤ DOCKER_IMAGE_CACHE_API: $(DOCKER_IMAGE_CACHE_API) \
+		\n│ ➤ BETARNA_SCORES__DOCKER_IMAGE: $(BETARNA_SCORES__DOCKER_IMAGE) \
+		\n│ ➤ BETARNA_SCORES__REPLICAS: $(BETARNA_SCORES__REPLICAS) \
 		\n╰──────────────────────────────────────────────────────────────────╯"
 	#
 
@@ -581,11 +597,12 @@ docker-compose-up:
 		cd ..; \
 	fi
 
-	if [ "$(DOCKER_IMAGE_CACHE_API)" != "name4d/betarena:scores-latest" ]; then\
+	if [ "$(BETARNA_SCORES__DOCKER_IMAGE)" != "name4d/betarena:scores-latest" ]; then\
 		echo -e \
 			"$(COLOR_R)\
 			\n╭──────────────────────────────────────────────────────────────────╮\
 			\n│ 🐳 │ WARNING:                                                    │\
+		  \n┣──────────────────────────────────────────────────────────────────┫\
 			\n│ ➤ Docker image is not set to 'name4d/betarena:scores-latest'     │\
 			\n│ ➤ Sleeping for 10 seconds                                        │\
 			\n┣──────────────────────────────────────────────────────────────────┫\
@@ -628,6 +645,12 @@ docker-compose-up:
 .ONESHELL:
 docker-container-log-full-export:
 	@
+	# ╭──────────────────────────────────────────────────────────────────╮
+	# │ NOTE: │ DESCRIPTION																						   │
+	# │ ➤ export logs from currently running containers, as means of     │
+	# │   troubleshooting and debugging. 								                 │
+	# ╰──────────────────────────────────────────────────────────────────╯
+
 	echo -e \
 		"\
 		\n╭──────────────────────────────────────────────────────────────────╮\
@@ -689,8 +712,10 @@ docker-container-log-nginx-export:
 # │ 💠 // MISCELLANOUS                                                               │
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
+.ONESHELL:
 help:
-	@echo "\nTARGETS:\n"
-	@make -qpRr | egrep -e '^[a-z].*:$$' | sed -e 's~:~~g' | sort
-	@echo ""
+	@
+	echo "\nTARGETS:\n"
+	make -qpRr | egrep -e '^[a-z].*:$$' | sed -e 's~:~~g' | sort
+	echo ""
 #
