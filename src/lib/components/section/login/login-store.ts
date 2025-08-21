@@ -16,3 +16,11 @@ export const loginStore = writable({
     countries: {} as Record<string, string>,
     isExistedUser: false
 })
+export const loginSportstackStore = writable({
+    domain: "",
+    currentStep: 1,
+    sportstack: {
+        id: "",
+        permalink: ""
+    }
+})

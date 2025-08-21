@@ -22,22 +22,20 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  import { browser } from "$app/environment";
-  import { get } from "$lib/api/utils";
   import Button from "$lib/components/ui/Button.svelte";
   import StepBase from "$lib/components/ui/StepBase.svelte";
   import session from "$lib/store/session";
   import userSettings from "$lib/store/user-settings";
-  import { onDestroy, onMount } from "svelte";
-  import { loginStore } from "./login-store";
+  import { onMount } from "svelte";
+  import { loginSportstackStore } from "./login-store";
   import LogoImg from "./LogoImg.svelte";
   import CountryStep from "./steps/CountryStep.svelte";
-  import EmailStep from "./steps/EmailStep.svelte";
-  import PasswordStep from "./steps/PasswordStep.svelte";
   import PhoneCodeStep from "./steps/PhoneCodeStep.svelte";
   import PhoneStep from "./steps/PhoneStep.svelte";
   import ProfileStep from "./steps/ProfileStep.svelte";
   import ReadyToPublish from "./steps/ReadyToPublish.svelte";
+  import SportstackDomainStep from "./steps/SportstackDomainStep.svelte";
+  import SportstackProfileStep from "./steps/SportstackProfileStep.svelte";
   import SportstackStep from "./steps/SportstackStep.svelte";
   import TopicsStep from "./steps/TopicsStep.svelte";
   // #endregion ➤ 📦 Package Imports
@@ -57,41 +55,40 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   $: ({ viewportType } = $session);
-  $: ({ currentStep } = $loginStore);
+  $: ({ currentStep } = $loginSportstackStore);
   $: user = $userSettings.user?.scores_user_data;
-  let defaultSteps = [
-    EmailStep,
-    PasswordStep,
-    PhoneStep,
-    PhoneCodeStep,
-    ProfileStep,
-    CountryStep,
-    SportstackStep,
-    TopicsStep,
-    ReadyToPublish
-  ];
-  let stepMap: Record<string, typeof EmailStep> = {
-    0: EmailStep,
+    let defaultSteps = [
+        SportstackDomainStep,
+        SportstackProfileStep
+    ];
+  let stepMap: Record<string, typeof SportstackDomainStep> = {
+    0: SportstackDomainStep,
+    1: SportstackProfileStep
   };
 
   let defaultDesktopSteps = {
-    email: { title: "Your details", description: "Please provide your email", steps: [EmailStep] },
-    password: { title: "Choose a password", description: "Choose a secure password", steps: [PasswordStep] },
-    phone: { title: "Verify your phone", description: "Confirm your phone", steps: [PhoneStep, PhoneCodeStep] },
-    profile: { title: "Profile", description: "Setting up your profile", steps: [ProfileStep, CountryStep, SportstackStep, TopicsStep] },
-  }
-  let desktopStepsGrouped = Object.values(defaultDesktopSteps)
-
-  defaultSteps.forEach((component, index) => (stepMap[index] = component));
-
-  $: if (user) {
-    $loginStore.avatar = user.profile_photo || "";
-    $loginStore.name = user.name || "";
-  }
-
-  $: if (browser && $loginStore.isExistedUser) {
-    updateSteps();
-  }
+    email: {
+      title: "Your details",
+      description: "Please provide your email",
+      steps: [SportstackDomainStep],
+    },
+    password: {
+      title: "Choose a password",
+      description: "Choose a secure password",
+      steps: [SportstackProfileStep],
+    },
+    phone: {
+      title: "Verify your phone",
+      description: "Confirm your phone",
+      steps: [PhoneStep, PhoneCodeStep],
+    },
+    profile: {
+      title: "Profile",
+      description: "Setting up your profile",
+      steps: [ProfileStep, CountryStep, SportstackStep, TopicsStep],
+    },
+  };
+  let desktopStepsGrouped = Object.values(defaultDesktopSteps);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -107,74 +104,70 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function updateSteps() {
-    return
-    if (!$userSettings.user) return;
-    let steps: Array<typeof PasswordStep> = [];
-    let newDesktopSteps: typeof desktopStepsGrouped = [];
-    let profileSteps: Array<typeof ProfileStep> = [];
-    const { scores_user_data, firebase_user_data } = $userSettings.user;
-    if (
-      !firebase_user_data?.providerData.find(
-        (provider) => provider.providerId === "password"
-      )
-    ) {
-      // steps.push(PasswordStep);
-    }
-    if (
-      !firebase_user_data?.phoneNumber &&
-      new Date(scores_user_data?.register_date || "").valueOf() >
-        new Date(2025, 7, 13).valueOf()
-    ) {
-      newDesktopSteps.push(defaultDesktopSteps.phone)
-      steps.push(PhoneStep, PhoneCodeStep);
-    }
-    if (!scores_user_data?.name) {
-      profileSteps.push(ProfileStep);
-      steps.push(ProfileStep);
-    }
-    if (!scores_user_data?.country) {
-      profileSteps.push(CountryStep);
-      steps.push(CountryStep);
-    }
-    if ((scores_user_data?.subscriptions?.sportstacks?.length || 0) < 3) {
-      profileSteps.push(SportstackStep);
-      steps.push(SportstackStep);
-    }
-    if ((scores_user_data?.following?.tags?.length || 0) < 3) {
-      profileSteps.push(TopicsStep);
-      steps.push(TopicsStep);
-    }
-    if (profileSteps.length) {
-      newDesktopSteps.push({...defaultDesktopSteps.profile, steps: profileSteps});
-    }
-    if (!steps.length) {
-      history.back();
-      return;
-    }
-    let nexSteps: Record<string, typeof EmailStep> = {};
-    steps.forEach((component, index) => (nexSteps[index] = component));
-    desktopStepsGrouped = newDesktopSteps;
-    stepMap = { ...nexSteps };
-    $loginStore.currentStep = 0;
-  }
+  //   function updateSteps() {
+  //     return
+  //     if (!$userSettings.user) return;
+  //     let steps: Array<typeof PasswordStep> = [];
+  //     let newDesktopSteps: typeof desktopStepsGrouped = [];
+  //     let profileSteps: Array<typeof ProfileStep> = [];
+  //     const { scores_user_data, firebase_user_data } = $userSettings.user;
+  //     if (
+  //       !firebase_user_data?.providerData.find(
+  //         (provider) => provider.providerId === "password"
+  //       )
+  //     ) {
+  //       // steps.push(PasswordStep);
+  //     }
+  //     if (
+  //       !firebase_user_data?.phoneNumber &&
+  //       new Date(scores_user_data?.register_date || "").valueOf() >
+  //         new Date(2025, 7, 13).valueOf()
+  //     ) {
+  //       newDesktopSteps.push(defaultDesktopSteps.phone)
+  //       steps.push(PhoneStep, PhoneCodeStep);
+  //     }
+  //     if (!scores_user_data?.name) {
+  //       profileSteps.push(ProfileStep);
+  //       steps.push(ProfileStep);
+  //     }
+  //     if (!scores_user_data?.country) {
+  //       profileSteps.push(CountryStep);
+  //       steps.push(CountryStep);
+  //     }
+  //     if ((scores_user_data?.subscriptions?.sportstacks?.length || 0) < 3) {
+  //       profileSteps.push(SportstackStep);
+  //       steps.push(SportstackStep);
+  //     }
+  //     if ((scores_user_data?.following?.tags?.length || 0) < 3) {
+  //       profileSteps.push(TopicsStep);
+  //       steps.push(TopicsStep);
+  //     }
+  //     if (profileSteps.length) {
+  //       newDesktopSteps.push({...defaultDesktopSteps.profile, steps: profileSteps});
+  //     }
+  //     if (!steps.length) {
+  //       history.back();
+  //       return;
+  //     }
+  //     let nexSteps: Record<string, typeof EmailStep> = {};
+  //     steps.forEach((component, index) => (nexSteps[index] = component));
+  //     desktopStepsGrouped = newDesktopSteps;
+  //     stepMap = { ...nexSteps };
+  //     $loginStore.currentStep = 0;
+  //   }
 
-  async function getInitData() {
-    const response = await get<{ data: Record<string, string>[] }>(
-      "api/data/login"
-    );
-    if (response?.data) {
-      loginStore.update((v) => ({
-        ...v,
-        translations: { ...response.data[0] },
-        countries: { ...response.data[1] },
-      }));
-    }
-  }
-
-  function loginWithGoogle() {
-    updateSteps();
-  }
+  //   async function getInitData() {
+  //     const response = await get<{ data: Record<string, string>[] }>(
+  //       "api/data/login"
+  //     );
+  //     if (response?.data) {
+  //       loginStore.update((v) => ({
+  //         ...v,
+  //         translations: { ...response.data[0] },
+  //         countries: { ...response.data[1] },
+  //       }));
+  //     }
+  //   }
 
   // #endregion ➤ 🛠️ METHODS
 
@@ -188,14 +181,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   onMount(() => {
-    $loginStore.currentStep = 0;
-    $loginStore.isLogin = false;
-    getInitData();
-    updateSteps();
-  });
-
-  onDestroy(() => {
-    $loginStore.recaptchaVerifier?.clear();
+    // $loginStore.currentStep = 0;
   });
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
@@ -220,10 +206,19 @@
       </div>
       <div class="steps-wrapper">
         {#each desktopStepsGrouped as group, step_index (step_index)}
-          {@const stepsBefore = desktopStepsGrouped.slice(0, Number(step_index)).reduce((acc, curr) => acc + curr.steps.length, 0)}
-          <StepBase  title={group.title} step={Number(step_index) + 1 } color="brand" checked={stepsBefore + group.steps.length <= currentStep} active={currentStep >= stepsBefore && currentStep < stepsBefore + group.steps.length} description={group.description} />
+          {@const stepsBefore = desktopStepsGrouped
+            .slice(0, Number(step_index))
+            .reduce((acc, curr) => acc + curr.steps.length, 0)}
+          <StepBase
+            title={group.title}
+            step={Number(step_index) + 1}
+            color="brand"
+            checked={stepsBefore + group.steps.length <= currentStep}
+            active={currentStep >= stepsBefore &&
+              currentStep < stepsBefore + group.steps.length}
+            description={group.description}
+          />
         {/each}
-        
       </div>
     </div>
   </div>
@@ -234,7 +229,7 @@
         <Button
           type="secondary"
           size="sm"
-          on:click={() => ($loginStore.currentStep -= 1)}
+          on:click={() => ($loginSportstackStore.currentStep -= 1)}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -256,18 +251,13 @@
       </div>
     {/if}
     <div class="content">
-      <svelte:component
-        this={stepMap[currentStep]}
-        on:loginWithGoogle={loginWithGoogle}
-      />
+      <svelte:component this={stepMap[currentStep]} />
     </div>
-    {#if stepMap[0] !== EmailStep || currentStep && stepMap[currentStep] !== ReadyToPublish}
-      <div class="pagination-wrapper">
-        {#each Object.keys(stepMap) as step}
-          <div class="step-tab" class:active={Number(step) === currentStep} />
-        {/each}
-      </div>
-    {/if}
+    <div class="pagination-wrapper">
+      {#each Object.keys(stepMap) as step}
+        <div class="step-tab" class:active={Number(step) === currentStep} />
+      {/each}
+    </div>
 
     <div id="recaptcha-container" />
   </div>

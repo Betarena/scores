@@ -1,7 +1,7 @@
 import { getSportstackByPermalink } from '$lib/sveltekit/endpoint/sportstack.js';
-import { entryProfileTabAuthorSportstackUpsert, entryProfileTabAuthorValidateSportstackUsername } from '@betarena/scores-lib/dist/functions/v8/profile.main.js';
 import type { AuthorsAuthorsMain } from '@betarena/scores-lib/types/v8/_HASURA-0.js';
 import { Actions, fail } from '@sveltejs/kit';
+import { entryProfileTabAuthorSportstackUpsert, entryProfileTabAuthorValidateSportstackUsername } from '../../../../../../../scores-lib/src/functions/v8/profile.main';
 
 export const actions: Actions = {
 
@@ -91,7 +91,7 @@ export const actions: Actions = {
     {
 
 
-      await entryProfileTabAuthorSportstackUpsert({
+      const data = await entryProfileTabAuthorSportstackUpsert({
         uid,
         data: {
           about: "",
@@ -102,7 +102,7 @@ export const actions: Actions = {
           location: ""
         }
       });
-      return { success: true, message: 'Sportstack created' };
+      return { success: true, message: 'Sportstack created', data };
     } catch (e)
     {
       return fail(500, { error: true, message: 'Internal server error' });
