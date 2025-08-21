@@ -134,6 +134,7 @@
     .content {
       flex-grow: 1;
       max-width: 100vw;
+      padding: var(--spacing-6xl, 48px) 0;
       overflow-x: hidden;
     }
 

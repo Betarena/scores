@@ -153,7 +153,14 @@
           </div>
         </Input>
 
-        {#if isSent}
+        {#if !isSent}
+          <Button
+            full={true}
+            size="lg"
+            disabled={disableButton}
+            on:click={reset}>Set reset link</Button
+          >
+          {/if}
           <Button
             type="link-color"
             on:click={() => {
@@ -179,15 +186,6 @@
               <span> Back to log in </span>
             </div>
           </Button>
-          <!-- content here -->
-        {:else}
-          <Button
-            full={true}
-            size="lg"
-            disabled={disableButton}
-            on:click={reset}>Set reset link</Button
-          >
-        {/if}
       </div>
     </div>
   </Container>
