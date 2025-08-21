@@ -41,6 +41,7 @@
   let password = "";
   let errorMessage = "";
   $: ({ email, isLogin } = $loginStore);
+  $: ({ viewportType } = $session);
   $: isValidEmail = email && validateEmail(email);
   let emailError = false;
   let loginError = "";
@@ -81,7 +82,7 @@
       disableButton = true;
       return false;
     }
-    if(timer) {
+    if (timer) {
       clearTimeout(timer);
     }
     timer = setTimeout(() => {
@@ -97,7 +98,7 @@
       emailError = true;
       disableButton = true;
       return;
-    };
+    }
     try {
       const methods = await fetchSignInMethodsForEmail(auth, email);
       if (methods.length && !isLogin) {
@@ -254,8 +255,8 @@
   // #endregion ➤ 🛠️ METHODS
 
   onMount(() => {
-    preloadData("/")
-  })
+    preloadData("/");
+  });
 </script>
 
 <!--
@@ -268,9 +269,9 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<div class="email-step">
+<div class="email-step {viewportType}">
   <div class="logo-wrapper">
-    <div class="bg"><CircleBg animation="grow" duration={10} /></div>
+    <div class="bg"><CircleBg size={viewportType === "desktop" ? "768" : "468"} animation="grow" duration={10} /></div>
     <img src="/assets/svg/logo-betarena.svg" alt="Betarena Logo" />
   </div>
   <Container hFull={false}>
@@ -381,7 +382,6 @@
     align-items: center;
     justify-content: start;
     position: relative;
-    padding: var(--spacing-6xl, 48px) 0;
     gap: var(--spacing-4xl, 32px);
 
     :global(.container-wrapper) {
@@ -520,6 +520,21 @@
         }
       }
     }
+
+    &.desktop {
+      .form {
+        .header {
+          gap: var(--spacing-lg, 12px);
+
+          h2 {
+            font-size: var(--font-size-display-sm, 30px);
+            font-style: normal;
+            font-weight: 600;
+            line-height: var(--line-height-display-sm, 38px); /* 126.667% */
+          }
+        }
+      }
+    }
   }
   .quest-wrapper {
     cursor: pointer;
@@ -528,7 +543,7 @@
     justify-content: center;
     align-items: flex-end;
     gap: var(--spacing-xs, 4px);
-  margin-top: auto;
+    margin-top: auto;
     /* Text sm/Regular */
     font-family: var(--font-family-font-family-body, Roboto);
     font-size: var(--font-size-text-sm, 14px);

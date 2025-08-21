@@ -7,6 +7,7 @@
   import Uploader from "$lib/components/ui/Uploader.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
   import { uploadProfileAvatar } from "$lib/firebase/firebase.actions";
+  import session from "$lib/store/session";
   import { log_v3 } from "$lib/utils/debug";
   import { updateUserProfileData } from "$lib/utils/user.js";
   import { tryCatchAsync } from "@betarena/scores-lib/dist/util/common.js";
@@ -32,6 +33,8 @@
 
   let name = "";
   let avatar = "";
+
+  $: ({ viewportType } = $session);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -134,9 +137,9 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="profile-step">
+<div class="profile-step {viewportType}">
   <div class="logo-wrapper">
-    <div class="bg"><GridBg /></div>
+    <div class="bg"><GridBg size={viewportType === "desktop" ? "768" : "468"} /></div>
     <div class="profile-icon">
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -213,7 +216,6 @@
     align-items: center;
     justify-content: start;
     position: relative;
-    padding: var(--spacing-6xl, 48px) 0;
     gap: var(--spacing-4xl, 32px);
 
     .logo-wrapper {
@@ -313,6 +315,21 @@
           align-items: flex-start;
           gap: 20px;
           align-self: stretch;
+        }
+      }
+    }
+
+    &.desktop {
+      .form {
+        .header {
+          gap: var(--spacing-lg, 12px);
+
+          h2 {
+            font-size: var(--font-size-display-sm, 30px);
+            font-style: normal;
+            font-weight: 600;
+            line-height: var(--line-height-display-sm, 38px); /* 126.667% */
+          }
         }
       }
     }

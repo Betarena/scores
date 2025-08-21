@@ -1,10 +1,11 @@
 <script>
   export let color = "var(--colors-border-border-secondary)";
+  export let size = "480"; // size of the SVG, can be adjusted as needed  
 </script>
 
 <svg
-  width="480"
-  height="480"
+  width={size}
+  height={size}
   viewBox="0 0 480 480"
   fill="none"
   xmlns="http://www.w3.org/2000/svg"

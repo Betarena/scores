@@ -73,12 +73,28 @@
   };
 
   let defaultDesktopSteps = {
-    email: { title: "Your details", description: "Please provide your email", steps: [EmailStep] },
-    password: { title: "Choose a password", description: "Choose a secure password", steps: [PasswordStep] },
-    phone: { title: "Verify your phone", description: "Confirm your phone", steps: [PhoneStep, PhoneCodeStep] },
-    profile: { title: "Profile", description: "Setting up your profile", steps: [ProfileStep, CountryStep, SportstackStep, TopicsStep] },
-  }
-  let desktopStepsGrouped = Object.values(defaultDesktopSteps)
+    email: {
+      title: "Your details",
+      description: "Please provide your email",
+      steps: [EmailStep],
+    },
+    password: {
+      title: "Choose a password",
+      description: "Choose a secure password",
+      steps: [PasswordStep],
+    },
+    phone: {
+      title: "Verify your phone",
+      description: "Confirm your phone",
+      steps: [PhoneStep, PhoneCodeStep],
+    },
+    profile: {
+      title: "Profile",
+      description: "Setting up your profile",
+      steps: [ProfileStep, CountryStep, SportstackStep, TopicsStep],
+    },
+  };
+  let desktopStepsGrouped = Object.values(defaultDesktopSteps);
 
   defaultSteps.forEach((component, index) => (stepMap[index] = component));
 
@@ -106,7 +122,6 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   function updateSteps() {
-    return
     if (!$userSettings.user) return;
     let steps: Array<typeof PasswordStep> = [];
     let newDesktopSteps: typeof desktopStepsGrouped = [];
@@ -124,7 +139,7 @@
       new Date(scores_user_data?.register_date || "").valueOf() >
         new Date(2025, 7, 13).valueOf()
     ) {
-      newDesktopSteps.push(defaultDesktopSteps.phone)
+      newDesktopSteps.push(defaultDesktopSteps.phone);
       steps.push(PhoneStep, PhoneCodeStep);
     }
     if (!scores_user_data?.name) {
@@ -144,7 +159,10 @@
       steps.push(TopicsStep);
     }
     if (profileSteps.length) {
-      newDesktopSteps.push({...defaultDesktopSteps.profile, steps: profileSteps});
+      newDesktopSteps.push({
+        ...defaultDesktopSteps.profile,
+        steps: profileSteps,
+      });
     }
     if (!steps.length) {
       history.back();
@@ -218,10 +236,19 @@
       </div>
       <div class="steps-wrapper">
         {#each desktopStepsGrouped as group, step_index (step_index)}
-          {@const stepsBefore = desktopStepsGrouped.slice(0, Number(step_index)).reduce((acc, curr) => acc + curr.steps.length, 0)}
-          <StepBase  title={group.title} step={Number(step_index) + 1 } color="brand" checked={stepsBefore + group.steps.length <= currentStep} active={currentStep >= stepsBefore && currentStep < stepsBefore + group.steps.length} description={group.description} />
+          {@const stepsBefore = desktopStepsGrouped
+            .slice(0, Number(step_index))
+            .reduce((acc, curr) => acc + curr.steps.length, 0)}
+          <StepBase
+            title={group.title}
+            step={Number(step_index) + 1}
+            color="brand"
+            checked={stepsBefore + group.steps.length <= currentStep}
+            active={currentStep >= stepsBefore &&
+              currentStep < stepsBefore + group.steps.length}
+            description={group.description}
+          />
         {/each}
-        
       </div>
     </div>
   </div>
@@ -331,75 +358,81 @@
       :global(.container-wrapper) {
         max-width: calc(360px + 68px); // compensate inline paddings
       }
-    }
-  }
-  .login-wrapper {
-    flex-grow: 1;
-    height: 100%;
-    max-height: 100%;
-    background: var(--colors-background-bg-primary, #1f1f1f);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-
-    .content {
-      flex-grow: 1;
-      max-width: 100vw;
-      overflow-x: hidden;
-    }
-
-    .back-button {
-      position: absolute;
-      left: 16px;
-      top: 19px;
-      z-index: 2;
-      :global(.button) {
-        padding: var(--spacing-md, 8px);
-      }
-      .arrow {
-        color: var(--colors-foreground-fg-quaternary-400);
-      }
-    }
-    .pagination-wrapper {
-      padding: 0 var(--container-padding-mobile, 16px);
-      padding-bottom: 40px;
-      width: 100%;
-      flex-shrink: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: var(--spacing-lg, 12px);
-
-      .step-tab {
-        height: 8px;
-        flex: 1 0 0;
-        border-radius: var(--radius-full, 9999px);
-        background: var(--colors-background-bg-quaternary, #525252);
-        &.active {
-          background: var(--colors-foreground-fg-brand-primary_alt, #d2d2d2);
+      .login-wrapper {
+        .content {
+          padding: var(--spacing-11xl, 160px) 0 var(--spacing-9xl, 96px) 0;
         }
       }
     }
+    .login-wrapper {
+      flex-grow: 1;
+      height: 100%;
+      max-height: 100%;
+      background: var(--colors-background-bg-primary, #1f1f1f);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
 
-    &.tablet {
       .content {
-        max-width: calc(343px + 68px); // padding compensation
-        width: 100%;
-        max-width: 100%;
-        margin: 0 auto;
+        flex-grow: 1;
+        max-width: 100vw;
         overflow-x: hidden;
+        padding: var(--spacing-6xl, 48px) 0;
       }
-      .pagination-wrapper {
-        max-width: calc(343px + 68px); // padding compensation
-        width: 100%;
-        margin: 0 auto;
-        padding-bottom: 147px;
-      }
-    }
 
-    &.desktop {
+      .back-button {
+        position: absolute;
+        left: 16px;
+        top: 19px;
+        z-index: 2;
+        :global(.button) {
+          padding: var(--spacing-md, 8px);
+        }
+        .arrow {
+          color: var(--colors-foreground-fg-quaternary-400);
+        }
+      }
       .pagination-wrapper {
-        display: none;
+        padding: 0 var(--container-padding-mobile, 16px);
+        padding-bottom: 40px;
+        width: 100%;
+        flex-shrink: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: var(--spacing-lg, 12px);
+
+        .step-tab {
+          height: 8px;
+          flex: 1 0 0;
+          border-radius: var(--radius-full, 9999px);
+          background: var(--colors-background-bg-quaternary, #525252);
+          &.active {
+            background: var(--colors-foreground-fg-brand-primary_alt, #d2d2d2);
+          }
+        }
+      }
+
+      &.tablet {
+        .content {
+          max-width: calc(343px + 68px); // padding compensation
+          width: 100%;
+          max-width: 100%;
+          margin: 0 auto;
+          overflow-x: hidden;
+        }
+        .pagination-wrapper {
+          max-width: calc(343px + 68px); // padding compensation
+          width: 100%;
+          margin: 0 auto;
+          padding-bottom: 147px;
+        }
+      }
+
+      &.desktop {
+        .pagination-wrapper {
+          display: none;
+        }
       }
     }
   }

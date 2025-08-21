@@ -5,6 +5,7 @@
   import Button from "$lib/components/ui/Button.svelte";
   import LoaderBadge from "$lib/components/ui/loaders/LoaderBadge.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
+  import session from "$lib/store/session";
   import userSettings from "$lib/store/user-settings";
   import userBetarenaSettings from "$lib/store/user-settings.js";
   import type { AuthorsTagsMain } from "@betarena/scores-lib/types/v8/_HASURA-0";
@@ -29,6 +30,7 @@
     $userSettings);
   let tags: AuthorsTagsMain[] = [];
   let loading = false;
+  $: ({ viewportType } = $session);
 
   $: selectedTopics = scores_user_data?.following?.tags || [];
 
@@ -110,9 +112,9 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="topics-step">
+<div class="topics-step {viewportType}">
   <div class="logo-wrapper">
-    <div class="bg"><CircleBg animation="grow" /></div>
+    <div class="bg"><CircleBg size={viewportType === "desktop" ? "768" : "468"} animation="grow" /></div>
     <div class="icon-wrapper">
       <IconTopics />
     </div>
@@ -174,7 +176,6 @@
     align-items: center;
     justify-content: start;
     position: relative;
-    padding: var(--spacing-6xl, 48px) 0;
     gap: var(--spacing-4xl, 32px);
 
     .logo-wrapper {
@@ -276,6 +277,21 @@
           gap: 10px;
           align-self: stretch;
           flex-wrap: wrap;
+        }
+      }
+    }
+
+    &.desktop {
+      .form {
+        .header {
+          gap: var(--spacing-lg, 12px);
+
+          h2 {
+            font-size: var(--font-size-display-sm, 30px);
+            font-style: normal;
+            font-weight: 600;
+            line-height: var(--line-height-display-sm, 38px); /* 126.667% */
+          }
         }
       }
     }

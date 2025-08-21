@@ -4,6 +4,7 @@
   import Input from "$lib/components/ui/Input.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
   import { auth } from "$lib/firebase/init";
+  import session from "$lib/store/session";
   import { sendPasswordResetEmail } from "firebase/auth";
   import { loginStore } from "../login-store";
 
@@ -24,6 +25,7 @@
   let password = "";
   let errorMessage = "";
   $: ({ email, isLogin } = $loginStore);
+  $: ({ viewportType } = $session);
   $: disableButton = !email || !validateEmail(email);
   let emailError = false;
   let loginError = "";
@@ -100,9 +102,9 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="reset-password-step">
+<div class="reset-password-step {viewportType}">
   <div class="logo-wrapper">
-    <div class="bg"><GridBg /></div>
+    <div class="bg"><GridBg size={viewportType === "desktop" ? "768" : "468"} /></div>
     <div class="key-icon">
       <svg
         width="29"
@@ -210,7 +212,6 @@
     align-items: center;
     justify-content: start;
     position: relative;
-    padding: var(--spacing-6xl, 48px) 0;
     gap: var(--spacing-4xl, 32px);
 
     .logo-wrapper {
@@ -318,6 +319,20 @@
       }
       .success-info {
         color: var(--colors-text-text-success-primary-600, #fff);
+      }
+    }
+     &.desktop {
+      .form {
+        .header {
+          gap: var(--spacing-lg, 12px);
+
+          h2 {
+            font-size: var(--font-size-display-sm, 30px);
+            font-style: normal;
+            font-weight: 600;
+            line-height: var(--line-height-display-sm, 38px); /* 126.667% */
+          }
+        }
       }
     }
   }
