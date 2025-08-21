@@ -106,6 +106,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   function updateSteps() {
+    return
     if (!$userSettings.user) return;
     let steps: Array<typeof PasswordStep> = [];
     let newDesktopSteps: typeof desktopStepsGrouped = [];
@@ -284,7 +285,7 @@
   .login-page {
     display: flex;
     width: 100%;
-    max-height: 100vh;
+    height: 100dvh;
     .desktop-side-pagination-wrapper {
       display: none;
 
