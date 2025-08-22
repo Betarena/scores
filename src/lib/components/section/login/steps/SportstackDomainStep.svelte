@@ -5,7 +5,8 @@
   import Button from "$lib/components/ui/Button.svelte";
   import Input from "$lib/components/ui/Input.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
-  import { submitWrapper } from '$lib/utils/sveltekitWrapper.js';
+  import session from "$lib/store/session";
+  import { submitWrapper } from "$lib/utils/sveltekitWrapper.js";
   import IconLink from "../icons/IconLink.svelte";
   import { loginSportstackStore } from "../login-store.js";
 
@@ -26,6 +27,7 @@
   let inputError = false;
   $: name = $loginSportstackStore.domain.replace(/[^\w\s]/gi, "");
   let disabled = true;
+  $: ({ viewportType } = $session);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -65,8 +67,8 @@
       successMessage: "The publication was created successfully.",
       cbAfter: (e) => {
         $loginSportstackStore.sportstack = {
-          ...e.result.data
-        }
+          ...e.result.data,
+        };
         $loginSportstackStore.currentStep += 1;
       },
     });
@@ -86,9 +88,11 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="country-step">
+<div class="country-step {viewportType}">
   <div class="logo-wrapper">
-    <div class="bg"><GridBg /></div>
+    <div class="bg">
+      <GridBg size={viewportType === "desktop" ? "768" : "468"} />
+    </div>
     <div class="icon-wrapper">
       <IconLink />
     </div>
@@ -119,14 +123,7 @@
           <span slot="error">"The name is already in use."</span>
         </Input>
 
-        <Button
-          full={true}
-          {disabled}
-          size="lg"
-          submit={true}
-        >
-          Continue
-        </Button>
+        <Button full={true} {disabled} size="lg" submit={true}>Continue</Button>
       </form>
     </div>
   </Container>
@@ -151,7 +148,6 @@
     align-items: center;
     justify-content: start;
     position: relative;
-    padding: var(--spacing-6xl, 48px) 0;
     gap: var(--spacing-4xl, 32px);
 
     .logo-wrapper {
@@ -250,6 +246,21 @@
           display: flex;
           justify-content: center;
           align-items: center;
+        }
+      }
+    }
+
+    &.desktop {
+      .form {
+        .header {
+          gap: var(--spacing-lg, 12px);
+
+          h2 {
+            font-size: var(--font-size-display-sm, 30px);
+            font-style: normal;
+            font-weight: 600;
+            line-height: var(--line-height-display-sm, 38px); /* 126.667% */
+          }
         }
       }
     }

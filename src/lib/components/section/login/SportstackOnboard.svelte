@@ -66,6 +66,8 @@
     1: SportstackProfileStep
   };
 
+  $: console.log("currentStep: ", currentStep)
+
   let defaultDesktopSteps = {
     email: {
       title: "Your details",
@@ -180,7 +182,9 @@
   // │ as soon as 'this' .svelte file is ran.                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+
   onMount(() => {
+    debugger
     // $loginStore.currentStep = 0;
   });
 
@@ -323,6 +327,11 @@
       :global(.container-wrapper) {
         max-width: calc(360px + 68px); // compensate inline paddings
       }
+      .login-wrapper {
+        .content {
+          padding: var(--spacing-11xl, 160px) 0 var(--spacing-9xl, 96px) 0;
+        }
+      }
     }
   }
   .login-wrapper {
@@ -338,6 +347,7 @@
       flex-grow: 1;
       max-width: 100vw;
       overflow-x: hidden;
+      padding: var(--spacing-6xl, 48px) 0;
     }
 
     .back-button {

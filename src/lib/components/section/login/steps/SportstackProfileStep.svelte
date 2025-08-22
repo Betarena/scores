@@ -1,14 +1,16 @@
 <script lang="ts">
+  import { enhance } from "$app/forms";
   import GridBg from "$lib/components/shared/backround-patterns/GridBG.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import SectionLabel from "$lib/components/ui/SectionLabel.svelte";
   import SportstackAvatar from "$lib/components/ui/SportstackAvatar.svelte";
   import Uploader from "$lib/components/ui/Uploader.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
-  import { updateUserProfileData } from "$lib/utils/user.js";
-  import { onMount } from "svelte";
+  import { uploadImage } from "$lib/firebase/common";
+  import session from "$lib/store/session";
+  import { submitWrapper } from "$lib/utils/sveltekitWrapper";
   import IconImg from "../icons/IconImg.svelte";
-  import { loginStore } from "../login-store";
+  import { loginSportstackStore } from "../login-store";
 
   // #region ➤ 📌 VARIABLES
 
@@ -26,10 +28,14 @@
 
   let isLoading = false;
   let errorMessage = "";
+  let form: HTMLFormElement
+  let button: HTMLButtonElement
 
-  let name = "";
   let avatar = "";
-
+  // $: ({sportstack: {id = 3454, permalink = "cnn2"}} = $loginSportstackStore)
+  $: ({ viewportType } = $session);
+  const id = 3454;
+  const permalink = "cnn2";
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -61,12 +67,15 @@
 
   async function uploadProfilePicture(e: CustomEvent<string>): Promise<void> {
     const img = e.detail;
-    // await tryCatchAsync(async (): Promise<void> => {
-    //   log_v3({
-    //     strGroupName: "uploadProfilePicture(..)",
-    //     msgs: ["🟢 Uploading profile picture...", `🔗 ${img}`],
-    //   });
-
+    avatar = "";
+    debugger
+    // if (!id) return;
+    avatar = await uploadImage(
+        img,
+        `Betarena_Media/authors/authors_list/3454/avatars/3454.png`
+        // `Betarena_Media/authors/authors_list/${id}/avatars/${id}.png`
+      );
+    button.click();
     //   await uploadProfileAvatar(img);
     //   $loginStore.avatar = img;
     //   avatar = img;
@@ -74,7 +83,7 @@
   }
 
   async function handleContinue(): Promise<void> {
-    if (!name || isLoading) {
+    if (isLoading) {
       return;
     }
 
@@ -83,12 +92,12 @@
 
     try {
       // Update user profile data
-      await updateUserProfileData({
-        name: name
-      });
+      // await updateUserProfileData({
+      //   name: name,
+      // });
 
       // Move to next step
-      $loginStore.currentStep += 1;
+      $loginSportstackStore.currentStep += 1;
     } catch (error: any) {
       console.error("Profile update error:", error);
       errorMessage = "Failed to update profile. Please try again.";
@@ -97,10 +106,23 @@
     }
   }
 
+   async function submit(e) {
+    e.data.append("avatar", avatar);
+    for (const [key, value] of e.data.entries()) {
+      console.log(`${key}:`, value);
+    }
+    debugger
+
+    return submitWrapper({
+      successMessage:
+        "The publication was updated successfully."
+    });
+  }
+
   // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
-  
+
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'logic' that should run            │
@@ -108,12 +130,8 @@
   // │ as soon as 'this' .svelte file is ran.                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  onMount(() => {
-    name = $loginStore.name;
-    avatar = $loginStore.avatar;
-  });
-  
 </script>
+
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ 💠 Svelte Component HTML                                                  d       │
@@ -125,9 +143,11 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="profile-step">
+<div class="profile-step {viewportType}">
   <div class="logo-wrapper">
-    <div class="bg"><GridBg /></div>
+    <div class="bg">
+      <GridBg size={viewportType === "desktop" ? "768" : "468"} />
+    </div>
     <div class="profile-icon">
       <IconImg />
     </div>
@@ -138,28 +158,31 @@
         <h2>Sportstack Avatar</h2>
         <p class="subtitle">Choose a profile picture</p>
       </div>
-      <div class="form-body">
-
+      <form class="form-body"  
+        method="POST"
+        bind:this={form}
+        use:enhance={submit}
+        action="/api/data/author/sportstack?/update"
+      >
+        <button bind:this={button} hidden type="submit"></button>
+        <input type="hidden" id="id" name="id" value={id} />
+        <input type="hidden" id="permalink" name="permalink" value={permalink} />
+        <input type="hidden" id="username" name="username" value={permalink} />
+        <input type="hidden" id="about" name="about" value="" />
         <div class="profile-photo-wrapper">
-          <SectionLabel
-            title="Your publication Avatar"
-            text="Upload Avatar"
-          />
+          <SectionLabel title="Your publication Avatar" text="Upload Avatar" />
           <SportstackAvatar size="xxl" src={avatar} />
-          <Uploader
-            bind:avatar={avatar}
-            on:upload={uploadProfilePicture}
-          />
+          <Uploader bind:avatar on:upload={uploadProfilePicture} />
         </div>
         <Button
           full={true}
           size="lg"
-          disabled={!name || isLoading}
+          disabled={isLoading}
           on:click={handleContinue}
         >
           {isLoading ? "Updating..." : "Continue"}
         </Button>
-      </div>
+      </form>
     </div>
   </Container>
 </div>
@@ -183,7 +206,6 @@
     align-items: center;
     justify-content: start;
     position: relative;
-    padding: var(--spacing-6xl, 48px) 0;
     gap: var(--spacing-4xl, 32px);
 
     .logo-wrapper {
@@ -283,6 +305,20 @@
           align-items: flex-start;
           gap: 20px;
           align-self: stretch;
+        }
+      }
+    }
+    &.desktop {
+      .form {
+        .header {
+          gap: var(--spacing-lg, 12px);
+
+          h2 {
+            font-size: var(--font-size-display-sm, 30px);
+            font-style: normal;
+            font-weight: 600;
+            line-height: var(--line-height-display-sm, 38px); /* 126.667% */
+          }
         }
       }
     }

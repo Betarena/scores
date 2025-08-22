@@ -55,7 +55,7 @@
 	},
 	"dependencies": {
 		"@betarena/ad-engine": "0.0.70",
-		"@betarena/scores-lib": "4.6.0",
+		"@betarena/scores-lib": "4.6.1",
 		"@lukeed/uuid": "2.0.1",
 		"@metamask/sdk": "0.1.0",
 		"@playwright/test": "1.36.1",
