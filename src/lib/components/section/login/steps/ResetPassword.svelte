@@ -162,7 +162,8 @@
           >
           {/if}
           <Button
-            type="link-color"
+            type="link-gray"
+            size="md"
             on:click={() => {
               $loginStore.currentStep = 0;
             }}
