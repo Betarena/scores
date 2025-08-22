@@ -23,11 +23,12 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
   import { browser } from "$app/environment";
-  import { get } from "$lib/api/utils";
+  import { page } from "$app/stores";
   import Button from "$lib/components/ui/Button.svelte";
   import StepBase from "$lib/components/ui/StepBase.svelte";
   import session from "$lib/store/session";
   import userSettings from "$lib/store/user-settings";
+  import type { PageData } from ".svelte-kit/types/src/routes/(scores)/[[lang=lang]]/(auth)/register/$types";
   import { onDestroy, onMount } from "svelte";
   import { loginStore } from "./login-store";
   import LogoImg from "./LogoImg.svelte";
@@ -175,17 +176,24 @@
     $loginStore.currentStep = 0;
   }
 
+
   async function getInitData() {
-    const response = await get<{ data: Record<string, string>[] }>(
-      "api/data/login"
-    );
-    if (response?.data) {
-      loginStore.update((v) => ({
-        ...v,
-        translations: { ...response.data[0] },
-        countries: { ...response.data[1] },
-      }));
-    }
+    // const response = await get<{ data: Record<string, string>[] }>(
+    //   "api/data/login"
+    // );
+    // if (response?.data) {
+    //   loginStore.update((v) => ({
+    //     ...v,
+    //     translations: { ...response.data[0] },
+    //     countries: { ...response.data[1] },
+    //   }));
+    // }
+    const data = $page.data as PageData;
+    loginStore.update((v) => ({
+      ...v,
+      translations: {...data.auth_translations.data[0], ...data.auth_translations.data[1]},
+      countries: {...data.auth_translations.data[3]},
+    }))
   }
 
   function loginWithGoogle() {

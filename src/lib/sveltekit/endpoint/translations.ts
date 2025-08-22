@@ -1,6 +1,6 @@
-import { entrySchemeTranslation } from "@betarena/scores-lib/dist/functions/v8/translation.js";
 import type { TranslationSchema } from "@betarena/scores-lib/types/v8/core.translation.js";
 import { json, RequestHandler } from "@sveltejs/kit";
+import { entrySchemeTranslation } from "../../../../../scores-lib/src/functions/v8/translation";
 
 export const GetTranslations: RequestHandler = async ({ url }) => {
   const language = url.searchParams.get("lang") || "";
