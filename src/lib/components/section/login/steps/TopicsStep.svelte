@@ -135,6 +135,7 @@
              {#each tags as tag}
                <Badge
                  size="lg"
+                 hover={true}
                  color={selectedTopics.includes(tag.id) ? "brand" : "gray"}
                  active={false}
                  on:click={() => toggleTopic(tag.id)}

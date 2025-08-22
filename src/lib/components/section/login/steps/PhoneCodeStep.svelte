@@ -568,10 +568,10 @@
 
               /* Display lg/Medium */
               font-family: var(--font-family-font-family-display, Roboto);
-              font-size: var(--font-size-display-lg, 48px);
+              font-size: var(--font-size-display-sm, 30px);
               font-style: normal;
               font-weight: 500;
-              line-height: var(--line-height-display-lg, 60px); /* 125% */
+              line-height: var(--line-height-display-sm, 38px); /* 126.667% */
               letter-spacing: -0.96px;
 
               &:focus,
