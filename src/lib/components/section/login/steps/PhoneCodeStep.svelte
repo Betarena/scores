@@ -179,6 +179,9 @@
      const credentials = await verifyPhoneCode(confirmationResult, value);
      successAuthComplete("login", credentials.user, undefined);
       // Phone verification successful - move to next step
+      if (!$loginStore.verifiedSteps.includes("phone")) {
+        $loginStore.verifiedSteps.push("phone");
+      }
       $loginStore.currentStep += 1;
     } catch (error: any) {
       console.error("Phone code verification error:", error);

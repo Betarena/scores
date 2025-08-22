@@ -119,7 +119,12 @@
 
 <div class="sportstack-step {viewportType}">
   <div class="logo-wrapper">
-    <div class="bg"><CircleBg size={viewportType === "desktop" ? "768" : "468"} animation="grow" /></div>
+    <div class="bg">
+      <CircleBg
+        size={viewportType === "desktop" ? "768" : "468"}
+        animation="grow"
+      />
+    </div>
     <div class="icon-wrapper">
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -152,6 +157,9 @@
           disabled={(scores_user_data?.subscriptions?.sportstacks?.length ||
             0) < 3}
           on:click={() => {
+            if (!$loginStore.verifiedSteps.includes("follow_sportstack")) {
+              $loginStore.verifiedSteps.push("follow_sportstack");
+            }
             $loginStore.currentStep += 1;
           }}>Continue</Button
         >

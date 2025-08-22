@@ -75,22 +75,26 @@
 
   let defaultDesktopSteps = {
     email: {
+      id: "email",
       title: "Your details",
       description: "Please provide your email",
       steps: [EmailStep],
     },
     password: {
+      id: "password",
       title: "Choose a password",
       description: "Choose a secure password",
       steps: [PasswordStep],
     },
     phone: {
       title: "Verify your phone",
+      id: "phone",
       description: "Confirm your phone",
       steps: [PhoneStep, PhoneCodeStep],
     },
     profile: {
       title: "Profile",
+      id: "profile",
       description: "Setting up your profile",
       steps: [ProfileStep, CountryStep],
     },
@@ -98,11 +102,13 @@
       title: "Follow Sportstacks",
       description: "Follow your favorite publications",
       steps: [SportstackStep],
+      id: "follow_sportstack"
     },
     follow_topics: {
       title: "Follow Topics",
       description: "Follow your favorite topics",
       steps: [TopicsStep],
+      id: "follow_tags"
     },
   };
   let desktopStepsGrouped = Object.values(defaultDesktopSteps);
@@ -138,6 +144,7 @@
     let newDesktopSteps: typeof desktopStepsGrouped = [];
     let profileSteps: Array<typeof ProfileStep> = [];
     const { scores_user_data, firebase_user_data } = $userSettings.user;
+    $loginStore.verifiedSteps = ["email", "password"]
     if (
       !firebase_user_data?.providerData.find(
         (provider) => provider.providerId === "password"
@@ -250,14 +257,19 @@
           {@const stepsBefore = desktopStepsGrouped
             .slice(0, Number(step_index))
             .reduce((acc, curr) => acc + curr.steps.length, 0)}
+            {@const isStepBeforeVerified = !step_index || $loginStore.verifiedSteps.includes(desktopStepsGrouped[step_index - 1].id)}
+            {@const isStepVerified =  $loginStore.verifiedSteps.includes(group.id)}
           <StepBase
             on:click={() => {
-              $loginStore.currentStep = stepsBefore;
+              if(isStepBeforeVerified || isStepVerified) {
+                $loginStore.currentStep = stepsBefore;
+              }
             }}
             title={group.title}
             step={Number(step_index) + 1}
             color="brand"
-            checked={stepsBefore + group.steps.length <= currentStep}
+            available={isStepBeforeVerified || isStepVerified}
+            checked={$loginStore.verifiedSteps.includes(group.id)}
             active={currentStep >= stepsBefore &&
               currentStep < stepsBefore + group.steps.length}
             description={group.description}

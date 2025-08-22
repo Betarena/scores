@@ -150,6 +150,9 @@
           size="lg"
           disabled={selectedTopics.length < 3}
           on:click={() => {
+            if (!$loginStore.verifiedSteps.includes("follow_tags")) {
+              $loginStore.verifiedSteps.push("follow_tags");
+            }
             $loginStore.currentStep += 1;
           }}>Continue</Button
         >

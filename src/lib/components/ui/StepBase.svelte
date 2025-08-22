@@ -48,6 +48,7 @@
   export let active = false;
   export let isLastStep = false;
   export let color: "success" | "brand" = "success";
+  export let available = false;
 
   const dispatch = createEventDispatcher()
   // #endregion ➤ 📌 VARIABLES
@@ -64,10 +65,10 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="step-base {size}" class:active={active || checked} on:click={() => dispatch("click")}>
+<div class="step-base {size}" class:active={active || checked} class:available on:click={() => dispatch("click")}>
   <div class="connecter-wrapper">
     <div class="check {color}">
-      {#if checked}
+      {#if checked && !active}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="10"
@@ -129,6 +130,8 @@
     width: 344px;
     align-items: flex-start;
     opacity: 0.6;
+    cursor: default;
+    
 
     .connecter-wrapper {
       display: flex;
@@ -189,29 +192,48 @@
       }
     }
 
+    &.available {
+      opacity: 1;
+      cursor: pointer;
+        .check {
+          border: 1px solid  var(--colors-text-text-tertiary-600, #6a6a6a);
+          .number {
+            color: var(--colors-text-text-tertiary-600, #6a6a6a);
+          }
+        }
+        .text-wrapper {
+          .title {
+            color: var(--colors-text-text-secondary-700, #525252);
+          }
+          .description {
+            color: var(--colors-text-text-tertiary-600, #6a6a6a);
+          }
+        }
+    }
+
     &.active {
       opacity: 1;
-      .check {
-        background: var(--bg);
-        border: none;
-        &.brand {
-          background: var(--colors-background-bg-brand-solid, #f5620f);
+        .check {
+          background: var(--bg);
+          border: none;
+          &.brand {
+            background: var(--colors-background-bg-brand-solid, #f5620f);
+          }
+          &.success {
+            background-color: var(--colors-background-bg-success-solid, #079455);
+          }
+          .number {
+            color: var(--colors-text-text-white, #fff);
+          }
         }
-        &.success {
-          background-color: var(--colors-background-bg-success-solid, #079455);
+        .text-wrapper {
+          .title {
+            color: var(--colors-text-text-secondary-700, #525252);
+          }
+          .description {
+            color: var(--colors-text-text-tertiary-600, #6a6a6a);
+          }
         }
-        .number {
-          color: var(--colors-text-text-white, #fff);
-        }
-      }
-      .text-wrapper {
-        .title {
-          color: var(--colors-text-text-secondary-700, #525252);
-        }
-        .description {
-          color: var(--colors-text-text-tertiary-600, #6a6a6a);
-        }
-      }
     }
 
     &.md {

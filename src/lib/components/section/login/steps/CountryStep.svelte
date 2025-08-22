@@ -71,6 +71,9 @@
       const country = value?.id;
       await updateUserProfileData({ country });
       $loginStore.country = country as string;
+      if (!$loginStore.verifiedSteps.includes("profile")) {
+        $loginStore.verifiedSteps.push("profile");
+      }
       $loginStore.currentStep += 1;
     } catch (error) {
       console.error("Failed to update country in profile:", error);

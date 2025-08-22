@@ -328,6 +328,9 @@
             size="lg"
             disabled={disableButton}
             on:click={() => {
+              if (!$loginStore.verifiedSteps.includes("email")) {
+                $loginStore.verifiedSteps.push("email")
+              }
               $loginStore.currentStep += 1;
             }}>Get started</Button
           >

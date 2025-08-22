@@ -26,9 +26,14 @@
   let errorMessage = "";
   $: ({ password, email, name } = $loginStore);
   $: ({ viewportType } = $session);
-  let mainPasswordError = ""
-  let confirmPasswordError = ""
-  $: disableButton = !!mainPasswordError || !!confirmPasswordError || !password || !confirmPassword || password !== confirmPassword;
+  let mainPasswordError = "";
+  let confirmPasswordError = "";
+  $: disableButton =
+    !!mainPasswordError ||
+    !!confirmPasswordError ||
+    !password ||
+    !confirmPassword ||
+    password !== confirmPassword;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -45,7 +50,6 @@
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🛠️ METHODS
@@ -59,7 +63,6 @@
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
 
   function validatePassword(password: string): boolean {
     if (password.length < 8) {
@@ -80,38 +83,45 @@
   }
 
   async function handleRegistration() {
-    if ( isLoading || !!mainPasswordError || !!confirmPasswordError) return;
-    
+    if (isLoading || !!mainPasswordError || !!confirmPasswordError) return;
+
     isLoading = true;
     errorMessage = "";
-    
+
     try {
       const credentials = await registerUser(email, password);
       $loginStore.isExistedUser = false;
       await successAuthComplete("register", credentials.user);
+      if (!$loginStore.verifiedSteps.includes("password")) {
+        $loginStore.verifiedSteps.push("password");
+      }
       $loginStore.currentStep += 1;
     } catch (error: any) {
-      console.error('Registration error:', error);
-      
+      console.error("Registration error:", error);
+
       // Handle specific Firebase Auth errors
       switch (error.code) {
-        case 'auth/email-already-in-use':
-          errorMessage = 'This email is already registered. Please use a different email or try signing in.';
+        case "auth/email-already-in-use":
+          errorMessage =
+            "This email is already registered. Please use a different email or try signing in.";
           break;
-        case 'auth/invalid-email':
-          errorMessage = 'Please enter a valid email address.';
+        case "auth/invalid-email":
+          errorMessage = "Please enter a valid email address.";
           break;
-        case 'auth/weak-password':
-          errorMessage = 'Password is too weak. Please choose a stronger password.';
+        case "auth/weak-password":
+          errorMessage =
+            "Password is too weak. Please choose a stronger password.";
           break;
-        case 'auth/operation-not-allowed':
-          errorMessage = 'Email/password accounts are not enabled. Please contact support.';
+        case "auth/operation-not-allowed":
+          errorMessage =
+            "Email/password accounts are not enabled. Please contact support.";
           break;
-        case 'auth/network-request-failed':
-          errorMessage = 'Network error. Please check your internet connection and try again.';
+        case "auth/network-request-failed":
+          errorMessage =
+            "Network error. Please check your internet connection and try again.";
           break;
         default:
-          errorMessage = 'Registration failed. Please try again.';
+          errorMessage = "Registration failed. Please try again.";
       }
       confirmPasswordError = errorMessage;
     } finally {
@@ -135,7 +145,13 @@
 
 <div class="password-step {viewportType}">
   <div class="logo-wrapper">
-    <div class="bg"><CircleBg size={viewportType === "desktop" ? "768" : "468"} animation="grow" duration={11}/></div>
+    <div class="bg">
+      <CircleBg
+        size={viewportType === "desktop" ? "768" : "468"}
+        animation="grow"
+        duration={11}
+      />
+    </div>
     <div class="key-icon">
       <svg
         width="29"
@@ -184,8 +200,9 @@
           full={true}
           size="lg"
           disabled={disableButton}
-          on:click={handleRegistration}>
-          {isLoading ? 'Creating account...' : 'Create account'}
+          on:click={handleRegistration}
+        >
+          {isLoading ? "Creating account..." : "Create account"}
         </Button>
       </div>
     </div></Container
