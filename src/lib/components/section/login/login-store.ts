@@ -14,5 +14,6 @@ export const loginStore = writable({
     translations: {} as Record<string, string>,
     country: "",
     countries: {} as Record<string, string>,
-    isExistedUser: false
+    isExistedUser: false,
+    verifiedSteps: [] as string[]
 })
