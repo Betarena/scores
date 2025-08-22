@@ -65,7 +65,7 @@
       data: { authors: IPageAuthorTranslationDataFinal[] };
     }>("/api/data/authors.recommendations", {
       user: scores_user_data,
-      country: scores_user_data?.country || $loginStore.country,
+      country: scores_user_data?.country || $loginStore.country || "USA",
     });
     loading = false;
     if (!res?.data?.authors) return;

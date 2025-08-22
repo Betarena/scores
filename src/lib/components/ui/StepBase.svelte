@@ -8,6 +8,24 @@
 -->
 
 <script lang="ts">
+  // #region ➤ 📦 Package Imports
+  
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+  import { createEventDispatcher } from "svelte";
+  
+  // #endregion ➤ 📦 Package Imports
+
   // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -30,6 +48,8 @@
   export let active = false;
   export let isLastStep = false;
   export let color: "success" | "brand" = "success";
+
+  const dispatch = createEventDispatcher()
   // #endregion ➤ 📌 VARIABLES
 </script>
 
@@ -44,7 +64,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="step-base {size}" class:active={active || checked}>
+<div class="step-base {size}" class:active={active || checked} on:click={() => dispatch("click")}>
   <div class="connecter-wrapper">
     <div class="check {color}">
       {#if checked}

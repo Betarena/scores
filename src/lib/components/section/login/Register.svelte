@@ -251,6 +251,9 @@
             .slice(0, Number(step_index))
             .reduce((acc, curr) => acc + curr.steps.length, 0)}
           <StepBase
+            on:click={() => {
+              $loginStore.currentStep = stepsBefore;
+            }}
             title={group.title}
             step={Number(step_index) + 1}
             color="brand"
@@ -266,7 +269,7 @@
   </div>
 
   <div class="login-wrapper {viewportType}">
-    {#if currentStep}
+    {#if currentStep && viewportType !== "desktop"}
       <div class="back-button">
         <Button
           type="secondary"
