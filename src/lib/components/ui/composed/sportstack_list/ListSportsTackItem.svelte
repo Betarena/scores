@@ -110,7 +110,7 @@
   </a>
   {#if uid!== ctx?.firebase_user_data?.uid && action_button}
     <Button
-      disabled={!user.actionButton}
+      disabled={user.actionButton === false}
       type={isFollow ? "secondary" : "primary"}
       style="padding:10px 16px; font-size: 14px; height:{size === 'lg'
         ? '36px'
@@ -118,8 +118,8 @@
       on:click={handleClick}
     >
       <TranslationText
-        text={translations[isFollow ? "following" : "follow"]}
-        fallback={isFollow ? "Following" : "Follow"}
+        text={translations[isFollow ? "subscribed" : "subscribe"]}
+        fallback={isFollow ? "Subscribed" : "Subscribe"}
       />
     </Button>
   {/if}
@@ -143,6 +143,9 @@
     justify-content: space-between;
     gap: 20px;
     align-items: start;
+    :global(.button) {
+      flex-shrink: 0;
+    }
 
     .user-info {
       display: flex;

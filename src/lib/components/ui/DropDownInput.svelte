@@ -343,6 +343,7 @@
       height: 44px;
       cursor: pointer;
       position: relative;
+      background: var(--colors-background-bg-primary, #fff);
       /* Shadows/shadow-xs */
       box-shadow: 0px 1px 2px 0px
         var(--colors-effects-shadows-shadow-xs, rgba(255, 255, 255, 0));
