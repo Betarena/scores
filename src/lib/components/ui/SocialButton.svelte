@@ -21,11 +21,12 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  export let company: "Google" = "Google";
+  export let company: "Google" | "Metamask" = "Google";
   export let full = false;
 
   let iconsMap = {
     Google: "/assets/svg/social/google.svg",
+    Metamask: "/assets/svg/social/metamask.png",
   };
 
   // #endregion ➤ 📌 VARIABLES

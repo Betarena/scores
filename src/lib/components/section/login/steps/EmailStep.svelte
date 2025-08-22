@@ -342,6 +342,13 @@
           full={true}
           on:click={() => authenticateGoogleAuth20()}
         />
+        {#if isLogin}
+          <SocialButton
+            company="Metamask"
+            full={true}
+            on:click={() => authenticateGoogleAuth20()}
+          />
+        {/if}
       </div>
       <div class="login-option" on:click={switchMode}>
         <span class="text"

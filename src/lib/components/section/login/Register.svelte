@@ -92,7 +92,17 @@
     profile: {
       title: "Profile",
       description: "Setting up your profile",
-      steps: [ProfileStep, CountryStep, SportstackStep, TopicsStep],
+      steps: [ProfileStep, CountryStep],
+    },
+    follow_sportstack: {
+      title: "Follow Sportstacks",
+      description: "Follow your favorite publications",
+      steps: [SportstackStep],
+    },
+    follow_topics: {
+      title: "Follow Topics",
+      description: "Follow your favorite topics",
+      steps: [TopicsStep],
     },
   };
   let desktopStepsGrouped = Object.values(defaultDesktopSteps);
@@ -152,10 +162,11 @@
       steps.push(CountryStep);
     }
     if ((scores_user_data?.subscriptions?.sportstacks?.length || 0) < 3) {
-      profileSteps.push(SportstackStep);
+      newDesktopSteps.push(defaultDesktopSteps.follow_sportstack);
       steps.push(SportstackStep);
     }
     if ((scores_user_data?.following?.tags?.length || 0) < 3) {
+      newDesktopSteps.push(defaultDesktopSteps.follow_topics);
       profileSteps.push(TopicsStep);
       steps.push(TopicsStep);
     }
@@ -176,24 +187,16 @@
     $loginStore.currentStep = 0;
   }
 
-
   async function getInitData() {
-    // const response = await get<{ data: Record<string, string>[] }>(
-    //   "api/data/login"
-    // );
-    // if (response?.data) {
-    //   loginStore.update((v) => ({
-    //     ...v,
-    //     translations: { ...response.data[0] },
-    //     countries: { ...response.data[1] },
-    //   }));
-    // }
     const data = $page.data as PageData;
     loginStore.update((v) => ({
       ...v,
-      translations: {...data.auth_translations.data[0], ...data.auth_translations.data[1]},
-      countries: {...data.auth_translations.data[3]},
-    }))
+      translations: {
+        ...data.auth_translations.data[0],
+        ...data.auth_translations.data[1],
+      },
+      countries: { ...data.auth_translations.data[3] },
+    }));
   }
 
   function loginWithGoogle() {
@@ -258,6 +261,7 @@
           />
         {/each}
       </div>
+      <div class="footer">© Betarena 2025</div>
     </div>
   </div>
 
@@ -323,15 +327,16 @@
     height: 100dvh;
     .desktop-side-pagination-wrapper {
       display: none;
-
+      
       .side-content {
         display: flex;
         padding: var(--spacing-4xl, 32px) var(--spacing-4xl, 32px) 0
-          var(--spacing-4xl, 32px);
+        var(--spacing-4xl, 32px);
         flex-direction: column;
         align-items: flex-start;
         gap: var(--spacing-8xl, 80px);
         align-self: stretch;
+        height: 100%;
 
         .logo {
           color: var(--colors-text-text-primary_on-brand, #fbfbfb);
@@ -348,6 +353,25 @@
           :global(.connecter-wrapper) {
             padding-bottom: 0;
           }
+        }
+
+        .footer {
+          margin-top: auto;
+          display: flex;
+          height: 96px;
+          padding: var(--spacing-4xl, 32px);
+          justify-content: center;
+          align-items: flex-end;
+          align-self: stretch;
+
+          color: var(--colors-text-text-tertiary_on-brand, #8c8c8c);
+
+          /* Text sm/Regular */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-sm, 14px);
+          font-style: normal;
+          font-weight: 400;
+          line-height: var(--line-height-text-sm, 20px); /* 142.857% */
         }
       }
     }
