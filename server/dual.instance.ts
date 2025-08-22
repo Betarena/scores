@@ -17,6 +17,8 @@
 // #region ➤ 📦 Package Imports
 
 import express from 'express';
+import { utils as ethersUtils } from 'ethers';
+import admin from 'firebase-admin';
 
 // @ts-expect-error :: 🐞
 import { handler } from './build/handler.js';
@@ -46,6 +48,25 @@ console.log(`🔹 [var] :: VITE_HASURA_DB_TOKEN ${process.env?.VITE_HASURA_DB_TO
 
 // #endregion ➤ 📌 VARIABLES
 
+// Initialize Express JSON middleware
+app.use(express.json());
+
+// Initialize Firebase Admin SDK
+if (!admin.apps.length)
+{
+  const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT;
+  if (serviceAccount)
+  {
+    admin.initializeApp({
+      credential: admin.credential.cert(JSON.parse(serviceAccount))
+    });
+  }
+  else
+  {
+    console.warn('FIREBASE_SERVICE_ACCOUNT environment variable is not set.');
+  }
+}
+
 // ╭──────────────────────────────────────────────────────────────────╮
 // │ 🛠️ │ INTIAILIZATION (MISC.)                                      │
 // ╰──────────────────────────────────────────────────────────────────╯
@@ -55,6 +76,26 @@ console.log(`🔹 [var] :: VITE_HASURA_DB_TOKEN ${process.env?.VITE_HASURA_DB_TO
 // │ :| Let SvelteKit handle everything else,
 // │ :| including serving prerendered pages and static assets.
 // ╰─────
+// Authentication route for SIWE
+app.post('/auth/siwe', async (req, res) =>
+{
+  try
+  {
+    const { message, signature } = req.body ?? {};
+    if (!message || !signature)
+      return res.status(400).json({ error: 'Missing message or signature' });
+
+    const walletAddress = ethersUtils.verifyMessage(message, signature);
+    const token = await admin.auth().createCustomToken(walletAddress, { walletAddress });
+    return res.json({ token });
+  }
+  catch (err)
+  {
+    console.error(err);
+    return res.status(400).json({ error: 'Invalid signature' });
+  }
+});
+
 app.use(handler);
 
 // ╭──────────────────────────────────────────────────────────────────╮

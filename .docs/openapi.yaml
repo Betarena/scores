@@ -21,6 +21,32 @@ servers:
 
 paths:
 
+  /auth/siwe:
+    post:
+      tags:
+        - Auth
+      summary:
+        Exchange a SIWE signature for a Firebase custom token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  description: Signed SIWE message
+                signature:
+                  type: string
+                  description: Signature from the wallet
+              required:
+                - message
+                - signature
+      responses:
+        '200':
+          description: Firebase custom token minted
+
   # ===================
   # LAYOUT
   # ===================
