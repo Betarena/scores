@@ -50,7 +50,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   $: value = otpInputs.map((input) => input?.value || "").join("");
   $: isValid = value.length === length;
-  $: ({ confirmationResult, recaptchaVerifier } = $loginStore);
+  $: ({ confirmationResult, recaptchaVerifier, translations } = $loginStore);
   $: ({ viewportType } = $session);
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
@@ -179,6 +179,9 @@
      const credentials = await verifyPhoneCode(confirmationResult, value);
      successAuthComplete("login", credentials.user, undefined);
       // Phone verification successful - move to next step
+      if (!$loginStore.verifiedSteps.includes("phone")) {
+        $loginStore.verifiedSteps.push("phone");
+      }
       $loginStore.currentStep += 1;
     } catch (error: any) {
       console.error("Phone code verification error:", error);
@@ -328,8 +331,8 @@
   <Container hFull={false}>
     <div class="form">
       <div class="header">
-        <h2>Check your phone</h2>
-        <p class="subtitle">We sent a verification code to your phone</p>
+        <h2>{translations.check_phone || "Check your phone"}</h2>
+        <p class="subtitle">{translations.verification_sent || "We sent a verification code to your phone"}</p>
       </div>
       <div class="form-body">
         <div class="otp-wrapper">
@@ -373,7 +376,7 @@
           disabled={!isValid || isLoading}
           on:click={handleVerifyCode}
         >
-          {isLoading ? "Verifying..." : "Verify"}
+          {isLoading ? translations.processing || "Verifying..." : translations.verify || "Verify"}
         </Button>
       </div>
     </div>
@@ -381,9 +384,9 @@
   <Container hFull={false}>
     <div class="support-text">
       <div class="resend-wrapper">
-        <span>Didn't receive the code?</span>
+        <span>{translations.didnt_receive_code ||  "Didn't receive the code?"}</span>
         <button class="resend" disabled={isLoading} on:click={resendCode}>
-          Click to resend
+          {translations.click_resend || "Click to resend"}
         </button>
       </div>
       {#if resentMessage}
@@ -568,10 +571,10 @@
 
               /* Display lg/Medium */
               font-family: var(--font-family-font-family-display, Roboto);
-              font-size: var(--font-size-display-lg, 48px);
+              font-size: var(--font-size-display-sm, 30px);
               font-style: normal;
               font-weight: 500;
-              line-height: var(--line-height-display-lg, 60px); /* 125% */
+              line-height: var(--line-height-display-sm, 38px); /* 126.667% */
               letter-spacing: -0.96px;
 
               &:focus,

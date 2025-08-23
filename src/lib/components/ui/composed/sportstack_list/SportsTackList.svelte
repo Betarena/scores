@@ -29,7 +29,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   export let sportstacks = new Map(),
-    translations = { } as IPageAuthorTranslationDataFinal,
+    translations = { } as Partial<IPageAuthorTranslationDataFinal>,
     loading = false,
     size: number | string = 40,
     limit = 10,

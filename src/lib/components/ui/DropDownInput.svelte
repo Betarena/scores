@@ -343,6 +343,7 @@
       height: 44px;
       cursor: pointer;
       position: relative;
+      background: var(--colors-background-bg-primary, #fff);
       /* Shadows/shadow-xs */
       box-shadow: 0px 1px 2px 0px
         var(--colors-effects-shadows-shadow-xs, rgba(255, 255, 255, 0));
@@ -370,7 +371,7 @@
         text-overflow: ellipsis;
         /* Text md/Medium */
         font-family: var(--font-family-font-family-body, Roboto);
-        font-size: var(--font-size-text-md, 16px);
+        font-size: var(--font-size-text-sm, 16px);
         font-style: normal;
         font-weight: 500;
         line-height: var(--line-height-text-md, 24px); /* 150% */

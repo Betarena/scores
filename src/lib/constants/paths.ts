@@ -125,10 +125,10 @@ export const
    * @description
    *  📣 Target `path` for **register**.
    */
-  routeIdRegister = '/(scores)/register',
+  routeIdRegister = '/(scores)/[[lang=lang]]/(auth)/register',
  /**
    * @description
    *  📣 Target `path` for **login**.
    */
-  routeIdLogin = '/(scores)/login'
+  routeIdLogin = '/(scores)/[[lang=lang]]/(auth)/login'
   ;

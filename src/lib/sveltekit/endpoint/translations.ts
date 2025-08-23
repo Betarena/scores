@@ -1,4 +1,4 @@
-import { entrySchemeTranslation } from "@betarena/scores-lib/dist/functions/v8/translation.js";
+import { entrySchemeTranslation } from "@betarena/scores-lib/dist/functions/v8/translation";
 import type { TranslationSchema } from "@betarena/scores-lib/types/v8/core.translation.js";
 import { json, RequestHandler } from "@sveltejs/kit";
 

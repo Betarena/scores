@@ -37,7 +37,7 @@
     name: c.name
   }));
   let selectedCountryCode = countryCodes.find(c => c.dial_code === "+1") || countryCodes[0];
-  $: ({ recaptchaVerifier } = $loginStore);
+  $: ({ recaptchaVerifier, translations } = $loginStore);
   $: ({ viewportType } = $session);
   // #endregion ➤ 📌 VARIABLES
 
@@ -114,10 +114,6 @@
           errorMessage =
             "Too many verification attempts. Please try again later.";
           break;
-        case "auth/operation-not-allowed":
-          errorMessage =
-            "Phone authentication is not enabled. Please contact support.";
-          break;
         case "auth/network-request-failed":
           errorMessage =
             "Network error. Please check your internet connection and try again.";
@@ -178,12 +174,12 @@
   <Container hFull={false}>
     <div class="form">
       <div class="header">
-        <h2>Verify your phone number</h2>
-        <p class="subtitle">A code will be sent to your phone</p>
+        <h2>{translations.verify_phone || "Verify your phone number"}</h2>
+        <p class="subtitle">{translations.code_sent || "A code will be sent to your phone"}</p>
       </div>
       <div class="form-body">
         <Input
-          label="Phone number"
+          label={translations.phone_number || "Phone number"}
           inputType="tel"
           placeholder= {`${selectedCountryCode.dial_code || "+1"} (555) 000-0000`}
           bind:value={phoneNumber}
@@ -218,7 +214,7 @@
             </DropDownInput>
           </div>
           <span slot="error">{errorMessage}</span>
-          <span slot="info">Phone number to receive the code</span>
+          <span slot="info">{translations.phone_number_help ||  "Phone number to receive the code"}</span>
         </Input>
         <Button
           full={true}
@@ -226,7 +222,7 @@
           disabled={!isValidPhone || isLoading}
           on:click={sendVerificationCode}
         >
-          {isLoading ? "Sending code..." : "Send verification code"}
+          {isLoading ? translations.sending_code || "Sending code..." : translations.send_verification_code || "Send verification code"}
         </Button>
       </div>
     </div>
@@ -347,9 +343,19 @@
         align-self: stretch;
         :global(.leading-text) {
           padding: 0;
+          max-height: 100%;
+          border-top-left-radius: var(--radius-md, 8px);
+          border-bottom-left-radius: var(--radius-md, 8px);
         }
         :global(.leading-text  .input-element) {
           border: none;
+        }
+
+        :global(.leading-text .input-wrapper) {
+          height: 100%;
+          max-height: 42px;
+          border-top-left-radius: var(--radius-md, 8px);
+          border-bottom-left-radius: var(--radius-md, 8px);
         }
 
         :global(.select-dropdown) {

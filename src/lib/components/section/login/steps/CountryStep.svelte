@@ -28,8 +28,37 @@
     id,
     label
   }));
+  $: ({translations} = $loginStore)
   
   let value: { id: number | string; label: string } | null = null;
+
+  const COUNTRY_MAPPINGS = {
+    // Spanish-speaking countries
+    'spain': 'es', 'argentina': 'es', 'mexico': 'es', 'chile': 'es',
+    'colombia': 'es', 'peru': 'es', 'venezuela': 'es', 'ecuador': 'es',
+    'guatemala': 'es', 'cuba': 'es', 'bolivia': 'es', 'dominican republic': 'es',
+    'honduras': 'es', 'paraguay': 'es', 'el salvador': 'es', 'nicaragua': 'es',
+    'costa rica': 'es', 'panama': 'es', 'uruguay': 'es', 'equatorial guinea': 'es',
+    // Brazilian
+    'brazil': 'br',
+    // Portuguese-speaking (excluding Brazil)
+    'portugal': 'pt', 'angola': 'pt', 'mozambique': 'pt',
+    'guinea-bissau': 'pt', 'cape verde': 'pt', 'sao tome and principe': 'pt',
+    'timor-leste': 'pt',
+    // Italian-speaking countries
+    'italy': 'it', 'san marino': 'it', 'vatican city': 'it',
+    // French-speaking countries
+    'france': 'fr', 'canada': 'fr', 'belgium': 'fr',
+    'senegal': 'fr', 'ivory coast': 'fr', 'mali': 'fr', 'burkina faso': 'fr',
+    'niger': 'fr', 'madagascar': 'fr', 'cameroon': 'fr', 'haiti': 'fr',
+    'monaco': 'fr', 'luxembourg': 'fr',
+    // Swedish-speaking countries
+    'sweden': 'se',
+    // Romanian-speaking countries
+    'romania': 'ro', 'moldova': 'ro',
+
+    // 
+  } as const
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -68,9 +97,13 @@
 
   async function saveCountrySelection() {
     try {
-      const country = value?.id;
-      await updateUserProfileData({ country });
+      const country = value?.id as string;
+      if (!country) return;
+      await updateUserProfileData({ country, lang: COUNTRY_MAPPINGS[country.toLowerCase()] || "en" });
       $loginStore.country = country as string;
+      if (!$loginStore.verifiedSteps.includes("profile")) {
+        $loginStore.verifiedSteps.push("profile");
+      }
       $loginStore.currentStep += 1;
     } catch (error) {
       console.error("Failed to update country in profile:", error);
@@ -101,8 +134,8 @@
   <Container hFull={false}>
     <div class="form">
       <div class="header">
-        <h2>Select Country</h2>
-        <p class="subtitle">Where are you from?</p>
+        <h2>{translations.select_country || "Select Country"}</h2>
+        <p class="subtitle">{translations.where_are_you_from || "Where are you from?"}</p>
       </div>
       <div class="form-body">
         <DropDownInput searchable={true} bind:value label="Country" options={country} placeholder="Select your country" infoText="Select your country to customise your feed">
@@ -114,7 +147,7 @@
           full={true}
           disabled = {!value}
           size="lg"
-          on:click={saveCountrySelection}>Continue</Button
+          on:click={saveCountrySelection}>{translations.continue || "Continue"}</Button
         >
       </div>
     </div>

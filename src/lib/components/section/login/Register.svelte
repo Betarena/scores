@@ -23,11 +23,14 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
   import { browser } from "$app/environment";
-  import { get } from "$lib/api/utils";
+  import { page } from "$app/stores";
   import Button from "$lib/components/ui/Button.svelte";
   import StepBase from "$lib/components/ui/StepBase.svelte";
   import session from "$lib/store/session";
   import userSettings from "$lib/store/user-settings";
+  import { gotoSW } from "$lib/utils/sveltekitWrapper";
+  import { updateUserProfileData } from "$lib/utils/user";
+  import type { PageData } from ".svelte-kit/types/src/routes/(scores)/[[lang=lang]]/(auth)/register/$types";
   import { onDestroy, onMount } from "svelte";
   import { loginStore } from "./login-store";
   import LogoImg from "./LogoImg.svelte";
@@ -57,7 +60,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   $: ({ viewportType } = $session);
-  $: ({ currentStep } = $loginStore);
+  $: ({ currentStep, translations } = $loginStore);
   $: user = $userSettings.user?.scores_user_data;
   let defaultSteps = [
     EmailStep,
@@ -74,29 +77,45 @@
     0: EmailStep,
   };
 
-  let defaultDesktopSteps = {
+  $: defaultDesktopSteps = {
     email: {
-      title: "Your details",
-      description: "Please provide your email",
+      id: "email",
+      title: translations.your_details || "Your details",
+      description: translations.provide_email || "Please provide your email",
       steps: [EmailStep],
     },
     password: {
-      title: "Choose a password",
-      description: "Choose a secure password",
+      id: "password",
+      title: translations.choose_password || "Choose a password",
+      description: translations.choose_secure_password || "Choose a secure password",
       steps: [PasswordStep],
     },
     phone: {
-      title: "Verify your phone",
-      description: "Confirm your phone",
+      title: translations.verify_phone || "Verify your phone",
+      id: "phone",
+      description: translations.verify_phone || "Confirm your phone",
       steps: [PhoneStep, PhoneCodeStep],
     },
     profile: {
-      title: "Profile",
-      description: "Setting up your profile",
-      steps: [ProfileStep, CountryStep, SportstackStep, TopicsStep],
+      title: translations.profile || "Profile",
+      id: "profile",
+      description: translations.set_up_profile || "Setting up your profile",
+      steps: [ProfileStep, CountryStep],
+    },
+    follow_sportstack: {
+      title: translations.follow_sportstacks || "Follow Sportstacks",
+      description:  translations.follow_favorite_publications || "Follow your favorite publications",
+      steps: [SportstackStep],
+      id: "follow_sportstack"
+    },
+    follow_topics: {
+      title: translations.follow_topics || "Follow Topics",
+      description: translations.follow_favorite_topics || "Follow your favorite topics",
+      steps: [TopicsStep],
+      id: "follow_tags"
     },
   };
-  let desktopStepsGrouped = Object.values(defaultDesktopSteps);
+  $: desktopStepsGrouped = Object.values(defaultDesktopSteps || {});
 
   defaultSteps.forEach((component, index) => (stepMap[index] = component));
 
@@ -123,12 +142,13 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function updateSteps() {
+  async function updateSteps() {
     if (!$userSettings.user) return;
     let steps: Array<typeof PasswordStep> = [];
     let newDesktopSteps: typeof desktopStepsGrouped = [];
     let profileSteps: Array<typeof ProfileStep> = [];
     const { scores_user_data, firebase_user_data } = $userSettings.user;
+    $loginStore.verifiedSteps = ["email", "password"]
     if (
       !firebase_user_data?.providerData.find(
         (provider) => provider.providerId === "password"
@@ -153,10 +173,11 @@
       steps.push(CountryStep);
     }
     if ((scores_user_data?.subscriptions?.sportstacks?.length || 0) < 3) {
-      profileSteps.push(SportstackStep);
+      newDesktopSteps.push(defaultDesktopSteps.follow_sportstack);
       steps.push(SportstackStep);
     }
     if ((scores_user_data?.following?.tags?.length || 0) < 3) {
+      newDesktopSteps.push(defaultDesktopSteps.follow_topics);
       profileSteps.push(TopicsStep);
       steps.push(TopicsStep);
     }
@@ -167,7 +188,9 @@
       });
     }
     if (!steps.length) {
-      history.back();
+      updateUserProfileData({ verified: true });
+      
+      history.length > 1 ? history.back() : gotoSW("/", true);
       return;
     }
     let nexSteps: Record<string, typeof EmailStep> = {};
@@ -178,16 +201,15 @@
   }
 
   async function getInitData() {
-    const response = await get<{ data: Record<string, string>[] }>(
-      "api/data/login"
-    );
-    if (response?.data) {
-      loginStore.update((v) => ({
-        ...v,
-        translations: { ...response.data[0] },
-        countries: { ...response.data[1] },
-      }));
-    }
+    const data = $page.data as PageData;
+    loginStore.update((v) => ({
+      ...v,
+      translations: {
+        ...data.auth_translations.data[0],
+        ...data.auth_translations.data[1],
+      },
+      countries: { ...data.auth_translations.data[2] },
+    }));
   }
 
   function loginWithGoogle() {
@@ -241,17 +263,26 @@
           {@const stepsBefore = desktopStepsGrouped
             .slice(0, Number(step_index))
             .reduce((acc, curr) => acc + curr.steps.length, 0)}
+            {@const isStepBeforeVerified = !step_index || $loginStore.verifiedSteps.includes(desktopStepsGrouped[step_index - 1].id)}
+            {@const isStepVerified =  $loginStore.verifiedSteps.includes(group.id)}
           <StepBase
+            on:click={() => {
+              if(isStepBeforeVerified || isStepVerified) {
+                $loginStore.currentStep = stepsBefore;
+              }
+            }}
             title={group.title}
             step={Number(step_index) + 1}
             color="brand"
-            checked={stepsBefore + group.steps.length <= currentStep}
+            available={isStepBeforeVerified || isStepVerified}
+            checked={$loginStore.verifiedSteps.includes(group.id)}
             active={currentStep >= stepsBefore &&
               currentStep < stepsBefore + group.steps.length}
             description={group.description}
           />
         {/each}
       </div>
+      <div class="footer">© Betarena 2025</div>
     </div>
   </div>
 
@@ -317,15 +348,16 @@
     height: 100dvh;
     .desktop-side-pagination-wrapper {
       display: none;
-
+      
       .side-content {
         display: flex;
         padding: var(--spacing-4xl, 32px) var(--spacing-4xl, 32px) 0
-          var(--spacing-4xl, 32px);
+        var(--spacing-4xl, 32px);
         flex-direction: column;
         align-items: flex-start;
         gap: var(--spacing-8xl, 80px);
         align-self: stretch;
+        height: 100%;
 
         .logo {
           color: var(--colors-text-text-primary_on-brand, #fbfbfb);
@@ -342,6 +374,25 @@
           :global(.connecter-wrapper) {
             padding-bottom: 0;
           }
+        }
+
+        .footer {
+          margin-top: auto;
+          display: flex;
+          height: 96px;
+          padding: var(--spacing-4xl, 32px);
+          justify-content: center;
+          align-items: flex-end;
+          align-self: stretch;
+
+          color: var(--colors-text-text-tertiary_on-brand, #8c8c8c);
+
+          /* Text sm/Regular */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-sm, 14px);
+          font-style: normal;
+          font-weight: 400;
+          line-height: var(--line-height-text-sm, 20px); /* 142.857% */
         }
       }
     }

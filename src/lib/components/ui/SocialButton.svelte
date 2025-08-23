@@ -21,11 +21,12 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  export let company: "Google" = "Google";
+  export let company: "Google" | "Metamask" = "Google";
   export let full = false;
 
   let iconsMap = {
     Google: "/assets/svg/social/google.svg",
+    Metamask: "/assets/svg/social/metamask.png",
   };
 
   // #endregion ➤ 📌 VARIABLES
@@ -47,7 +48,9 @@
     <img src={iconsMap[company]} alt={company} title="" loading="lazy" />
   {/if}
   <span>
-    {`Sign in ${company ? `with ${company}` : ""}`}
+    <slot>
+      {`Sign in ${company ? `with ${company}` : ""}`}
+    </slot>
   </span>
 </button>
 
