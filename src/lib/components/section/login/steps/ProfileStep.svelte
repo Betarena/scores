@@ -35,6 +35,7 @@
   let avatar = "";
 
   $: ({ viewportType } = $session);
+  $: ({translations}= $loginStore)
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -161,25 +162,30 @@
   <Container hFull={false}>
     <div class="form">
       <div class="header">
-        <h2>Profile</h2>
-        <p class="subtitle">Set up your profile</p>
+        <h2>{translations.profile || "Profile"}</h2>
+        <p class="subtitle">{translations.set_up_profile ||  "Set up your profile"}</p>
       </div>
       <div class="form-body">
         <Input
-          label="Name"
+          label={translations.name || "Name"} 
           bind:value={name}
           required={true}
           on:blur={updateUserName}
-          placeholder="First and Last Name"
+          placeholder={translations.first_last_name || "First and Last Name"}
         />
 
         <div class="profile-photo-wrapper">
           <SectionLabel
-            text="This will be displayed on your profile."
-            title="Your photo"
+            text= {translations.photo_displayed || "This will be displayed on your profile."}
+            title={translations.your_photo || "Your photo"}
           />
           <Avatar size="xxl" src={avatar} />
           <Uploader
+            translations={{
+              upload_thumbnail_action: translations.click_upload,
+              upload_thumbnail: translations.or_drag_drop,
+              or: translations.or
+            }}
             bind:avatar={avatar}
             on:upload={uploadProfilePicture}
           />
@@ -190,7 +196,7 @@
           disabled={!name || isLoading}
           on:click={handleContinue}
         >
-          {isLoading ? "Updating..." : "Continue"}
+          {isLoading ? translations.processing || "Updating..." : translations.continue || "Continue"}
         </Button>
       </div>
     </div>

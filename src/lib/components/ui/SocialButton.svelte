@@ -48,7 +48,9 @@
     <img src={iconsMap[company]} alt={company} title="" loading="lazy" />
   {/if}
   <span>
-    {`Sign in ${company ? `with ${company}` : ""}`}
+    <slot>
+      {`Sign in ${company ? `with ${company}` : ""}`}
+    </slot>
   </span>
 </button>
 

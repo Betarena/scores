@@ -59,7 +59,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   $: ({ viewportType } = $session);
-  $: ({ currentStep } = $loginStore);
+  $: ({ currentStep, translations } = $loginStore);
   $: user = $userSettings.user?.scores_user_data;
   let defaultSteps = [
     EmailStep,
@@ -75,45 +75,45 @@
     0: EmailStep,
   };
 
-  let defaultDesktopSteps = {
+  $: defaultDesktopSteps = {
     email: {
       id: "email",
-      title: "Your details",
-      description: "Please provide your email",
+      title: translations.your_details || "Your details",
+      description: translations.provide_email || "Please provide your email",
       steps: [EmailStep],
     },
     password: {
       id: "password",
-      title: "Choose a password",
-      description: "Choose a secure password",
+      title: translations.choose_password || "Choose a password",
+      description: translations.choose_secure_password || "Choose a secure password",
       steps: [PasswordStep],
     },
     phone: {
-      title: "Verify your phone",
+      title: translations.verify_phone || "Verify your phone",
       id: "phone",
-      description: "Confirm your phone",
+      description: translations.verify_phone || "Confirm your phone",
       steps: [PhoneStep, PhoneCodeStep],
     },
     profile: {
-      title: "Profile",
+      title: translations.profile || "Profile",
       id: "profile",
-      description: "Setting up your profile",
+      description: translations.set_up_profile || "Setting up your profile",
       steps: [ProfileStep, CountryStep],
     },
     follow_sportstack: {
-      title: "Follow Sportstacks",
-      description: "Follow your favorite publications",
+      title: translations.follow_sportstacks || "Follow Sportstacks",
+      description:  translations.follow_favorite_publications || "Follow your favorite publications",
       steps: [SportstackStep],
       id: "follow_sportstack"
     },
     follow_topics: {
-      title: "Follow Topics",
-      description: "Follow your favorite topics",
+      title: translations.follow_topics || "Follow Topics",
+      description: translations.follow_favorite_topics || "Follow your favorite topics",
       steps: [TopicsStep],
       id: "follow_tags"
     },
   };
-  let desktopStepsGrouped = Object.values(defaultDesktopSteps);
+  $: desktopStepsGrouped = Object.values(defaultDesktopSteps || {});
 
   defaultSteps.forEach((component, index) => (stepMap[index] = component));
 

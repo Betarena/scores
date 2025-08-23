@@ -28,6 +28,7 @@
     id,
     label
   }));
+  $: ({translations} = $loginStore)
   
   let value: { id: number | string; label: string } | null = null;
 
@@ -133,8 +134,8 @@
   <Container hFull={false}>
     <div class="form">
       <div class="header">
-        <h2>Select Country</h2>
-        <p class="subtitle">Where are you from?</p>
+        <h2>{translations.select_country || "Select Country"}</h2>
+        <p class="subtitle">{translations.where_are_you_from || "Where are you from?"}</p>
       </div>
       <div class="form-body">
         <DropDownInput searchable={true} bind:value label="Country" options={country} placeholder="Select your country" infoText="Select your country to customise your feed">
@@ -146,7 +147,7 @@
           full={true}
           disabled = {!value}
           size="lg"
-          on:click={saveCountrySelection}>Continue</Button
+          on:click={saveCountrySelection}>{translations.continue || "Continue"}</Button
         >
       </div>
     </div>

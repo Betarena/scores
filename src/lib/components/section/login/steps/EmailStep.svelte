@@ -40,7 +40,7 @@
 
   let password = "";
   let errorMessage = "";
-  $: ({ email, isLogin } = $loginStore);
+  $: ({ email, isLogin, translations } = $loginStore);
   $: ({ viewportType } = $session);
   $: isValidEmail = email && validateEmail(email);
   let emailError = false;
@@ -160,7 +160,15 @@
         disableButton = false;
         if (!setp0Res) throw new Error();
         else scoresAuthStore.updateData([["globalStateRemove", "Processing"]]);
-        $loginStore.currentStep += 1;
+        if ($loginStore.isLogin) {
+          if (history.length) {
+            history.back();
+          } else {
+            gotoSW("/", true);
+          }
+        } else {
+          $loginStore.currentStep += 1;
+        }
         dispatch("loginWithGoogle");
       },
       (ex: unknown | any): void => {
@@ -230,19 +238,6 @@
           loginError =
             "Network error. Please check your connection and try again.";
           break;
-        case "auth/multi-factor-auth-required":
-          // Handle multi-factor authentication if needed
-          loginError =
-            "Multi-factor authentication required. Please complete the additional verification.";
-          break;
-        case "auth/operation-not-allowed":
-          loginError =
-            "Email/password sign-in is not enabled. Please contact support.";
-          break;
-        case "auth/weak-password":
-          loginError =
-            "Password is too weak. Please choose a stronger password.";
-          break;
         default:
           // Fallback for any other errors
           loginError =
@@ -271,20 +266,28 @@
 -->
 <div class="email-step {viewportType}">
   <div class="logo-wrapper">
-    <div class="bg"><CircleBg size={viewportType === "desktop" ? "768" : "468"} animation="grow" duration={10} /></div>
+    <div class="bg">
+      <CircleBg
+        size={viewportType === "desktop" ? "768" : "468"}
+        animation="grow"
+        duration={10}
+      />
+    </div>
     <img src="/assets/svg/logo-betarena.svg" alt="Betarena Logo" />
   </div>
   <Container hFull={false}>
     <div class="form">
       <div class="header">
-        <h2>Welcome to Betarena</h2>
-        <p class="subtitle">Join the home of sports media creators.</p>
+        <h2>{translations.welcome_to_betarena || "Welcome to Betarena"}</h2>
+        <p class="subtitle">
+          {translations.join_home || "Join the home of sports media creators."}
+        </p>
       </div>
       <div class="form-body">
         <Input
           inputType="email"
           error={emailError || !!loginError}
-          placeholder="Enter your email"
+          placeholder={translations.enter_email || "Enter your email"}
           bind:value={$loginStore.email}
         >
           <span slot="error">
@@ -298,7 +301,7 @@
             inputType="password"
             bind:value={password}
             error={!!loginError}
-            placeholder="Enter your password"
+            placeholder={translations.enter_password || "Enter your password"}
           >
             <div slot="error">
               {#if loginError}
@@ -307,20 +310,20 @@
             </div>
           </Input>
           <div class="forgot-password">
-            <Checkbox title="Remember for 30 days" />
+            <Checkbox title={translations.remember_me|| "Remember for 30 days"} />
             <Button
               type="link-color"
               size="md"
               on:click={() => {
                 $loginStore.currentStep += 1;
-              }}>Forgot password?</Button
+              }}>{translations.forgot_password || "Forgot password?"}</Button
             >
           </div>
           <Button
             full={true}
             size="lg"
             on:click={login}
-            disabled={disableButton || !email || !password}>Sign in</Button
+            disabled={disableButton || !email || !password}>{translations.log_in || "Log in"}</Button
           >
         {:else}
           <Button
@@ -329,35 +332,43 @@
             disabled={disableButton}
             on:click={() => {
               if (!$loginStore.verifiedSteps.includes("email")) {
-                $loginStore.verifiedSteps.push("email")
+                $loginStore.verifiedSteps.push("email");
               }
               $loginStore.currentStep += 1;
-            }}>Get started</Button
+            }}>{translations.get_started || "Get started"}</Button
           >
         {/if}
         <div class="or-wrapper">
           <div class="line" />
-          <span>OR</span>
+          <span>{translations.or || "OR"}</span>
           <div class="line" />
         </div>
         <SocialButton
           company="Google"
           full={true}
           on:click={() => authenticateGoogleAuth20()}
-        />
+        >
+          {#if isLogin}
+            {translations.sign_in_google || "Sign in with Google"}
+          {:else}
+            {translations.sign_up_google || "Sign up with Google"}
+          {/if}
+      </SocialButton>
         {#if isLogin}
           <SocialButton
             company="Metamask"
             full={true}
             on:click={() => authenticateGoogleAuth20()}
-          />
+          >
+            {translations.sign_in_metamask || "Sign in with Metamask"}
+          </SocialButton>
         {/if}
       </div>
       <div class="login-option" on:click={switchMode}>
         <span class="text"
-          >{isLogin ? "Don't have an account?" : "Already have an account?"}
+          >{isLogin ? translations.no_account || "Don't have an account?" : translations.already_have_account || "Already have an account?"}
         </span>
-        <span class="option">{isLogin ? "Sign up" : "Log in"} </span>
+        <span class="option">{isLogin ? translations.sign_up || "Sign up" : translations.log_in || "Log in"} </span>
       </div>
     </div></Container
   >
@@ -368,8 +379,8 @@
       gotoSW("/", true);
     }}
   >
-    <span class="text"> Skip and continue as </span>
-    <div class="quest">Guest</div>
+    <span class="text">{translations.skip_continue_as || "Skip and continue as "} </span>
+    <div class="quest">{translations.guest || "Guest"}</div>
   </div>
 </div>
 

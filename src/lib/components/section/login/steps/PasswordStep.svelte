@@ -24,7 +24,7 @@
   let confirmPassword = "";
   let isLoading = false;
   let errorMessage = "";
-  $: ({ password, email, name } = $loginStore);
+  $: ({ password, email, translations } = $loginStore);
   $: ({ viewportType } = $session);
   let mainPasswordError = "";
   let confirmPasswordError = "";
@@ -108,14 +108,6 @@
         case "auth/invalid-email":
           errorMessage = "Please enter a valid email address.";
           break;
-        case "auth/weak-password":
-          errorMessage =
-            "Password is too weak. Please choose a stronger password.";
-          break;
-        case "auth/operation-not-allowed":
-          errorMessage =
-            "Email/password accounts are not enabled. Please contact support.";
-          break;
         case "auth/network-request-failed":
           errorMessage =
             "Network error. Please check your internet connection and try again.";
@@ -173,15 +165,15 @@
   <Container>
     <div class="form">
       <div class="header">
-        <h2>Choose a password</h2>
-        <p class="subtitle">Must be at least 8 characters.</p>
+        <h2>{translations.choose_password || "Choose a password"}</h2>
+        <p class="subtitle">{translations.must_be_8_characters || "Must be at least 8 characters."}</p>
       </div>
       <div class="form-body">
         <input type="email" value={$loginStore.email} hidden />
         <Input
           inputType="password"
           error={!!mainPasswordError}
-          placeholder="Choose a password"
+          placeholder= {translations.choose_password || "Choose a password"}
           bind:value={$loginStore.password}
           on:change={() => validatePassword($loginStore.password)}
         >
@@ -190,7 +182,7 @@
         <Input
           inputType="password"
           bind:value={confirmPassword}
-          placeholder="Confirm password"
+          placeholder={translations.confirm_password || "Confirm password"}
           error={!!confirmPasswordError}
           on:change={() => validateConfirmPassword(confirmPassword)}
         >
@@ -202,7 +194,7 @@
           disabled={disableButton}
           on:click={handleRegistration}
         >
-          {isLoading ? "Creating account..." : "Create account"}
+          {isLoading ?  translations.processing || "Processing..." : translations.continue || "Continue"}
         </Button>
       </div>
     </div></Container

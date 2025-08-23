@@ -31,7 +31,7 @@
   let tags: AuthorsTagsMain[] = [];
   let loading = false;
   $: ({ viewportType } = $session);
-
+  $: ({translations} = $loginStore)
   $: selectedTopics = scores_user_data?.following?.tags || [];
 
   // #endregion ➤ 📌 VARIABLES
@@ -122,8 +122,8 @@
   <Container hFull={false}>
     <div class="form">
       <div class="header">
-        <h2>Follow Topics</h2>
-        <p class="subtitle">Follow at least 3 topics</p>
+        <h2>{translations.follow_topics || "Follow Topics"}</h2>
+        <p class="subtitle">{translations.follow_at_least_3_topics || "Follow at least 3 topics"}</p>
       </div>
       <div class="form-body">
         <div class="topics-grid">
@@ -154,7 +154,7 @@
               $loginStore.verifiedSteps.push("follow_tags");
             }
             $loginStore.currentStep += 1;
-          }}>Continue</Button
+          }}>{translations.continue || "Continue"}</Button
         >
       </div>
     </div>

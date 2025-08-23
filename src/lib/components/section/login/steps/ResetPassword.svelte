@@ -24,7 +24,7 @@
 
   let password = "";
   let errorMessage = "";
-  $: ({ email, isLogin } = $loginStore);
+  $: ({ email, isLogin, translations } = $loginStore);
   $: ({ viewportType } = $session);
   $: disableButton = !email || !validateEmail(email);
   let emailError = false;
@@ -126,17 +126,17 @@
   <Container>
     <div class="form">
       <div class="header">
-        <h2>Forgot password?</h2>
-        <p class="subtitle">No worries, we’ll send you reset instructions.</p>
+        <h2>{translations.forgot_password || "Forgot password?"}</h2>
+        <p class="subtitle">{translations.no_worries || "No worries, we’ll send you reset instructions."}</p>
       </div>
       <div class="form-body">
         <Input
           inputType="email"
-          label="Email"
+          label={translations.email || "Email"}
           required={true}
           error={emailError || !!loginError}
           on:blur={() => validateOnBlur()}
-          placeholder="Enter your email"
+          placeholder={translations.enter_email || "Enter your email"}
           bind:value={$loginStore.email}
         >
           <span slot="error">
@@ -147,7 +147,7 @@
           <div slot="info">
             {#if isSent}
               <span class="success-info">
-                A reset link has been sent to your email.
+                {translations.reset_link_sent || "A reset link has been sent to your email."}
               </span>
             {/if}
           </div>
@@ -158,7 +158,7 @@
             full={true}
             size="lg"
             disabled={disableButton}
-            on:click={reset}>Set reset link</Button
+            on:click={reset}>{translations.send_reset_link || "Set reset link"}</Button
           >
           {/if}
           <Button
@@ -184,7 +184,7 @@
                   stroke-linejoin="round"
                 />
               </svg>
-              <span> Back to log in </span>
+              <span>{translations.back_to_login || "Back to log in"}</span>
             </div>
           </Button>
       </div>

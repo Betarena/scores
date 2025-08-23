@@ -44,7 +44,7 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let user: any, translations: IPageAuthorTranslationDataFinal;
+  export let user: any, translations: Partial<IPageAuthorTranslationDataFinal>;
   export let size: number | string = 40;
   export let action_button = true;
   export let includeAbout = false;

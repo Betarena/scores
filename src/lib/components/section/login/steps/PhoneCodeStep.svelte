@@ -50,7 +50,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   $: value = otpInputs.map((input) => input?.value || "").join("");
   $: isValid = value.length === length;
-  $: ({ confirmationResult, recaptchaVerifier } = $loginStore);
+  $: ({ confirmationResult, recaptchaVerifier, translations } = $loginStore);
   $: ({ viewportType } = $session);
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
@@ -331,8 +331,8 @@
   <Container hFull={false}>
     <div class="form">
       <div class="header">
-        <h2>Check your phone</h2>
-        <p class="subtitle">We sent a verification code to your phone</p>
+        <h2>{translations.check_phone || "Check your phone"}</h2>
+        <p class="subtitle">{translations.verification_sent || "We sent a verification code to your phone"}</p>
       </div>
       <div class="form-body">
         <div class="otp-wrapper">
@@ -376,7 +376,7 @@
           disabled={!isValid || isLoading}
           on:click={handleVerifyCode}
         >
-          {isLoading ? "Verifying..." : "Verify"}
+          {isLoading ? translations.processing || "Verifying..." : translations.verify || "Verify"}
         </Button>
       </div>
     </div>
@@ -384,9 +384,9 @@
   <Container hFull={false}>
     <div class="support-text">
       <div class="resend-wrapper">
-        <span>Didn't receive the code?</span>
+        <span>{translations.didnt_receive_code ||  "Didn't receive the code?"}</span>
         <button class="resend" disabled={isLoading} on:click={resendCode}>
-          Click to resend
+          {translations.click_resend || "Click to resend"}
         </button>
       </div>
       {#if resentMessage}

@@ -1,3 +1,4 @@
+import type { TranslationAuthenticationDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0";
 import type { ConfirmationResult, RecaptchaVerifier } from "firebase/auth";
 import { writable } from "svelte/store";
 
@@ -11,7 +12,7 @@ export const loginStore = writable({
     phoneNumber: "",
     confirmationResult: null as ConfirmationResult | null,
     recaptchaVerifier: null as RecaptchaVerifier | null,
-    translations: {} as Record<string, string>,
+    translations: {} as TranslationAuthenticationDataJSONSchema,
     country: "",
     countries: {} as Record<string, string>,
     isExistedUser: false,
