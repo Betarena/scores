@@ -1,7 +1,7 @@
 <script>
   export let color = "var(--colors-border-border-secondary)";
   export let animation = "none"; // "none", "ripple", "grow"
-  export let duration = 7; // seconds - increased for grow animation
+  export let duration = 15; // seconds - increased for grow animation
   export let delay = 0; // seconds
   export let size = "480"; // size of the SVG, can be adjusted as needed  
 </script>

@@ -242,7 +242,7 @@
           font-size: var(--Font-size-text-md, 16px);
           font-style: normal;
           font-weight: 400;
-          line-height: var(--Line-height-text-md, 24px); /* 150% */
+          line-height: var(--line-height-text-md, 24px); /* 150% */
 
           &:-webkit-autofill,
           &:-internal-autofill-selected {

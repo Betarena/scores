@@ -347,9 +347,19 @@
         align-self: stretch;
         :global(.leading-text) {
           padding: 0;
+          max-height: 100%;
+          border-top-left-radius: var(--radius-md, 8px);
+          border-bottom-left-radius: var(--radius-md, 8px);
         }
         :global(.leading-text  .input-element) {
           border: none;
+        }
+
+        :global(.leading-text .input-wrapper) {
+          height: 100%;
+          max-height: 42px;
+          border-top-left-radius: var(--radius-md, 8px);
+          border-bottom-left-radius: var(--radius-md, 8px);
         }
 
         :global(.select-dropdown) {
