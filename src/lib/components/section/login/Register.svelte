@@ -28,6 +28,8 @@
   import StepBase from "$lib/components/ui/StepBase.svelte";
   import session from "$lib/store/session";
   import userSettings from "$lib/store/user-settings";
+  import { gotoSW } from "$lib/utils/sveltekitWrapper";
+  import { updateUserProfileData } from "$lib/utils/user";
   import type { PageData } from ".svelte-kit/types/src/routes/(scores)/[[lang=lang]]/(auth)/register/$types";
   import { onDestroy, onMount } from "svelte";
   import { loginStore } from "./login-store";
@@ -138,7 +140,7 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function updateSteps() {
+  async function updateSteps() {
     if (!$userSettings.user) return;
     let steps: Array<typeof PasswordStep> = [];
     let newDesktopSteps: typeof desktopStepsGrouped = [];
@@ -184,7 +186,9 @@
       });
     }
     if (!steps.length) {
-      history.back();
+      updateUserProfileData({ verified: true });
+      
+      history.length > 1 ? history.back() : gotoSW("/", true);
       return;
     }
     let nexSteps: Record<string, typeof EmailStep> = {};

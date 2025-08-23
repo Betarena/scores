@@ -31,6 +31,34 @@
   
   let value: { id: number | string; label: string } | null = null;
 
+  const COUNTRY_MAPPINGS = {
+    // Spanish-speaking countries
+    'spain': 'es', 'argentina': 'es', 'mexico': 'es', 'chile': 'es',
+    'colombia': 'es', 'peru': 'es', 'venezuela': 'es', 'ecuador': 'es',
+    'guatemala': 'es', 'cuba': 'es', 'bolivia': 'es', 'dominican republic': 'es',
+    'honduras': 'es', 'paraguay': 'es', 'el salvador': 'es', 'nicaragua': 'es',
+    'costa rica': 'es', 'panama': 'es', 'uruguay': 'es', 'equatorial guinea': 'es',
+    // Brazilian
+    'brazil': 'br',
+    // Portuguese-speaking (excluding Brazil)
+    'portugal': 'pt', 'angola': 'pt', 'mozambique': 'pt',
+    'guinea-bissau': 'pt', 'cape verde': 'pt', 'sao tome and principe': 'pt',
+    'timor-leste': 'pt',
+    // Italian-speaking countries
+    'italy': 'it', 'san marino': 'it', 'vatican city': 'it',
+    // French-speaking countries
+    'france': 'fr', 'canada': 'fr', 'belgium': 'fr',
+    'senegal': 'fr', 'ivory coast': 'fr', 'mali': 'fr', 'burkina faso': 'fr',
+    'niger': 'fr', 'madagascar': 'fr', 'cameroon': 'fr', 'haiti': 'fr',
+    'monaco': 'fr', 'luxembourg': 'fr',
+    // Swedish-speaking countries
+    'sweden': 'se',
+    // Romanian-speaking countries
+    'romania': 'ro', 'moldova': 'ro',
+
+    // 
+  } as const
+
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -68,8 +96,9 @@
 
   async function saveCountrySelection() {
     try {
-      const country = value?.id;
-      await updateUserProfileData({ country });
+      const country = value?.id as string;
+      if (!country) return;
+      await updateUserProfileData({ country, lang: COUNTRY_MAPPINGS[country.toLowerCase()] || "en" });
       $loginStore.country = country as string;
       if (!$loginStore.verifiedSteps.includes("profile")) {
         $loginStore.verifiedSteps.push("profile");

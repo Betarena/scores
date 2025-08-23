@@ -353,7 +353,11 @@
   }
 
   $: if (currentActiveModal === "Auth_Modal"&& ![routeIdLogin, routeIdRegister].includes($page.route.id || "")) {
-    gotoSW('/register', true);
+    gotoSW('/login', true);
+  }
+
+  $: if($userBetarenaSettings.user?.scores_user_data && !$userBetarenaSettings.user?.scores_user_data.verified) {
+    gotoSW("/register", true);
   }
 
   $: if (browser){
@@ -392,9 +396,6 @@
     ): Promise < void > =>
     {
 
-      if($page.route.id !== routeIdLogin) {
-        gotoSW('/register',  true);
-      }
       // ╭─────
       // │ IMPORTANT CRITICAL
       // ╰─────
