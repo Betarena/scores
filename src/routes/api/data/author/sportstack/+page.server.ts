@@ -5,8 +5,7 @@ import { entryProfileTabAuthorSportstackUpsert, entryProfileTabAuthorValidateSpo
 
 export const actions: Actions = {
 
-  update: async ({ request, locals }) =>
-  {
+  update: async ({ request, locals }) => {
     const
       // ╭─────
       // │ NOTE:
@@ -18,47 +17,46 @@ export const actions: Actions = {
           uid
         }
       } = locals
-    ;
+      ;
 
     if (!uid)
       return fail(401, { error: true, message: 'Unauthorized', reason: 'No uid' });
     ;
 
-    try
-    {
+    try {
 
       const formData = await request.formData();
       const dataObject = Object.fromEntries(formData.entries());
-      const { id, username, about, permalink, avatar } = dataObject as { id: number } & AuthorsAuthorsMain["data"];
+      const {id, username, about, permalink, avatar } = dataObject as { id: number } & AuthorsAuthorsMain["data"];
       const isSportstackExist = await getSportstackByPermalink(permalink);
-      if (!isSportstackExist)
-      {
+      if (!isSportstackExist) {
         return fail(400, { error: true, message: "Sportstack dosen't exists" });
       }
       const { sportstacks } = isSportstackExist;
-      await entryProfileTabAuthorSportstackUpsert({
-        id,
+      const updated_sportstack = {
+        id: sportstacks.id,
         uid,
         data: {
           badges: [],
           location: "",
+          about: "",
+          username: sportstacks.permalink || "",
           ...sportstacks.data,
           creation_date: new Date(sportstacks.data.creation_date),
-          about,
-          avatar,
-          username,
+          ...(about && { about }),
+          ...(avatar && { avatar }),
+          ...(username && { username }),
         }
-      });
-      return { success: true, message: 'Sportstack created' };
-    } catch (e)
-    {
+      }
+      const data = await entryProfileTabAuthorSportstackUpsert(updated_sportstack);
+      return { success: true, message: 'Sportstack created', data };
+    } catch (e) {
       console.log("error: ", e);
       return fail(500, { error: true, message: 'Internal server error' });
     }
   },
 
-  create: async ({ request, locals }) =>
-  {
+  create: async ({ request, locals }) => {
     const
       // ╭─────
       // │ NOTE:
@@ -70,7 +68,7 @@ export const actions: Actions = {
           uid
         }
       } = locals
-    ;
+      ;
 
     if (!uid)
       return fail(401, { error: true, message: 'Unauthorized', reason: 'No uid' });
@@ -78,17 +76,14 @@ export const actions: Actions = {
 
     const data = await request.formData();
     const name = data.get('name') as string;
-    if (!name)
-    {
+    if (!name) {
       return fail(400, { error: true, message: 'Name is required' });
     }
     const isMatched = await entryProfileTabAuthorValidateSportstackUsername({ username: name });
-    if (isMatched)
-    {
+    if (isMatched) {
       return fail(400, { error: true, message: 'Name is already taken' });
     }
-    try
-    {
+    try {
 
 
       const data = await entryProfileTabAuthorSportstackUpsert({
@@ -103,8 +98,7 @@ export const actions: Actions = {
         }
       });
       return { success: true, message: 'Sportstack created', data };
-    } catch (e)
-    {
+    } catch (e) {
       return fail(500, { error: true, message: 'Internal server error' });
     }
   }

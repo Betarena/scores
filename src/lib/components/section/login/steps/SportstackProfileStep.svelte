@@ -68,6 +68,7 @@
     avatar = img;
     const id = $loginStore.sportstack.id;
     // if (!id) return;
+    isLoading = true;
     avatar = await uploadImage(
       img,
       `Betarena_Media/authors/authors_list/${id}/avatars/${id}.png`
@@ -87,6 +88,7 @@
     return submitWrapper({
       successMessage: "The publication was updated successfully.",
       cbAfter: (e) => {
+        isLoading = false
         $loginStore.sportstack = {
           ...e.result.data.data,
         };
@@ -147,8 +149,7 @@
           name="permalink"
           value={permalink}
         />
-        <input type="hidden" id="username" name="username" value={permalink} />
-        <input type="hidden" id="about" name="about" value="" />
+        <input type="hidden" id="permalink" name="permalink" value={permalink} />
         <div class="profile-photo-wrapper">
           <SectionLabel title="Your publication Avatar" text="Upload Avatar" />
           <SportstackAvatar size="xxl" src={avatar} />
@@ -157,7 +158,7 @@
         <Button
           full={true}
           size="lg"
-          disabled={isLoading}
+          disabled={isLoading || !$loginStore.sportstack.data?.avatar}
           on:click={handleContinue}
         >
           {isLoading ? "Updating..." : "Continue"}

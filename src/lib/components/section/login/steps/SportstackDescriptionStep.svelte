@@ -4,7 +4,6 @@
   import Button from "$lib/components/ui/Button.svelte";
   import Input from "$lib/components/ui/Input.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
-  import { uploadImage } from "$lib/firebase/common";
   import session from "$lib/store/session";
   import { submitWrapper } from "$lib/utils/sveltekitWrapper";
   import IconFolder from "../icons/IconFolder.svelte";
@@ -60,30 +59,12 @@
   // │ 2. async function (..)                                                 │
   // ╰───────────────────────────────────────────────────────────────╯
 
-  async function uploadProfilePicture(e: CustomEvent<string>): Promise<void> {
-    const img = e.detail;
-    $loginStore.sportstack_img = img
-    avatar = "";
-    // if (!id) return;
-    avatar = await uploadImage(
-        img,
-        `Betarena_Media/authors/authors_list/3454/avatars/3454.png`
-        // `Betarena_Media/authors/authors_list/${id}/avatars/${id}.png`
-      );
-    button.click();
-    //   await uploadProfileAvatar(img);
-    //   $loginStore.avatar = img;
-    //   avatar = img;
-    // });
-  }
-
    async function submit(e) {
     return submitWrapper({
       successMessage:
         "The publication was updated successfully.",
         cbAfter: (e) => {
-          console.log(e) 
-          debugger
+          $loginStore.currentStep += 1;
         }
     });
   }
@@ -134,19 +115,15 @@
         action="/api/data/author/sportstack?/update"
       >
         <button bind:this={button} style="display: none" hidden type="submit"></button>
-        <input type="hidden" id="id" name="id" value={id} />
         <input type="hidden" id="permalink" name="permalink" value={permalink} />
-        <input type="hidden" id="username" name="username" value={permalink} />
-        <input type="hidden" id="avatar" name="avatar" value={$loginStore.sportstack.data?.avatar} />
-        <Input inputType="textarea" name="about" label="Description" bind:value={$loginStore.sportstack.data?.about} />
+        <Input inputType="textarea" name="about" label="Description" bind:value={$loginStore.sportstack.data.about} />
         <Button
           full={true}
           submit={true}
           size="lg"
-          bind:value={$loginStore.sportstack.data?.about}
-          disabled={isLoading}
+          disabled={!$loginStore.sportstack.data?.about}
         >
-          {isLoading ? "Updating..." : "Continue"}
+          {isLoading ? "Updating..." : "Create Publication"}
         </Button>
       </form>
     </div>

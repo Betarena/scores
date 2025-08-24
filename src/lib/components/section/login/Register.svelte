@@ -40,6 +40,7 @@
   import PhoneCodeStep from "./steps/PhoneCodeStep.svelte";
   import PhoneStep from "./steps/PhoneStep.svelte";
   import ProfileStep from "./steps/ProfileStep.svelte";
+  import ReadyToCreate from "./steps/ReadyToCreate.svelte";
   import ReadyToPublish from "./steps/ReadyToPublish.svelte";
   import SportstackDescriptionStep from "./steps/SportstackDescriptionStep.svelte";
   import SportstackDomainStep from "./steps/SportstackDomainStep.svelte";
@@ -77,7 +78,8 @@
     ReadyToPublish,
     SportstackDomainStep,
     SportstackProfileStep,
-    SportstackDescriptionStep
+    SportstackDescriptionStep,
+    ReadyToCreate
   ];
   let stepMap: Record<string, typeof EmailStep> = {
     0: EmailStep,
@@ -300,7 +302,7 @@
   </div>
 
   <div class="login-wrapper {viewportType}">
-    {#if currentStep && stepMap[currentStep] !== ReadyToPublish}
+    {#if currentStep && ![ReadyToPublish, ReadyToCreate].includes(stepMap[currentStep])}
       <div class="back-button">
         <Button
           type="secondary"
@@ -326,13 +328,13 @@
         </Button>
       </div>
     {/if}
-    <div class="content" class:no-padding={stepMap[currentStep] === ReadyToPublish}>
+    <div class="content" class:no-padding={[ReadyToPublish, ReadyToCreate].includes(stepMap[currentStep])}>
       <svelte:component
         this={stepMap[currentStep]}
         on:loginWithGoogle={loginWithGoogle}
       />
     </div>
-    {#if stepMap[0] !== EmailStep || currentStep && stepMap[currentStep] !== ReadyToPublish}
+    {#if stepMap[0] !== EmailStep || currentStep && ![ReadyToPublish, ReadyToCreate].includes(stepMap[currentStep])}
       <div class="pagination-wrapper">
         {#each Object.keys(stepMap) as step}
           <div class="step-tab" class:active={Number(step) === currentStep} />
