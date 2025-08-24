@@ -54,7 +54,10 @@
           <p>Create your first article and start sharing with the community.</p>
         </div>
         <div class="actions">
-          <Button size="xl" type="primary" full={true} on:click={() => $loginStore.currentStep += 1}
+          <Button size="xl" type="primary" full={true} on:click={() => {
+            $session.currentActiveModal = null;
+            gotoSW(`/u/author/article/create/en?sportstack=${$loginStore.sportstack.permalink}`, true)
+          }}
             >Create First Article</Button
           >
           <Button size="xl" type="secondary" full={true} on:click={() => {

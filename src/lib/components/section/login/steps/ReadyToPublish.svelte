@@ -30,6 +30,8 @@
   import img from "../assets/publish.png";
   import { loginStore } from "../login-store";
 
+  $: ({ viewportType } = $session);
+
   // #endregion ➤ 📦 Package Imports
 </script>
 
@@ -43,27 +45,46 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
-<div class="ready-to-publish">
-  <img id="" src={img} alt="ready to publish" title="" loading="lazy" />
-  <div class="text-wrapper">
-    <Container>
-      <div class="content">
-        <div class="heading-wrapper">
-          <h2>Ready to publish?</h2>
-          <p>Create your own Sportstack and start building your brand.</p>
+<div class="ready-to-publish-wrapper {viewportType}">
+  <div class="side-banner">
+    <img
+      id=''
+      src=''
+      alt=''
+      title=''
+      loading='lazy'
+    />
+  </div>
+  <div class="ready-to-publish ">
+    <img id="" src={img} alt="ready to publish" title="" loading="lazy" />
+    <div class="text-wrapper">
+      <Container>
+        <div class="content">
+          <div class="heading-wrapper">
+            <h2>Ready to publish?</h2>
+            <p>Create your own Sportstack and start building your brand.</p>
+          </div>
+          <div class="actions">
+            <Button
+              size="xl"
+              type="primary"
+              full={true}
+              on:click={() => ($loginStore.currentStep += 1)}
+              >Create Publication</Button
+            >
+            <Button
+              size="xl"
+              type="secondary"
+              full={true}
+              on:click={() => {
+                $session.currentActiveModal = null;
+                gotoSW("/", true);
+              }}>Skip for now</Button
+            >
+          </div>
         </div>
-        <div class="actions">
-          <Button size="xl" type="primary" full={true} on:click={() => $loginStore.currentStep += 1}
-            >Create Publication</Button
-          >
-          <Button size="xl" type="secondary" full={true} on:click={() => {
-            $session.currentActiveModal = null;
-            gotoSW("/", true)
-          }}>Skip for now</Button>
-        </div>
-      </div>
-    </Container>
+      </Container>
+    </div>
   </div>
 </div>
 
@@ -78,65 +99,67 @@
 -->
 
 <style lang="scss">
-  .ready-to-publish {
-    height: 100%;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-
-    img {
+  .ready-to-publish-wrapper {
+    .ready-to-publish {
+      height: 100%;
       width: 100%;
-    }
-    .text-wrapper {
-      :global(.container-wrapper) {
-        padding-top: 54px;
-        padding-bottom: 24px;
+      display: flex;
+      flex-direction: column;
+
+      img {
+        width: 100%;
       }
-
-      .content {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: var(--spacing-4xl, 32px);
-        flex: 1 0 0;
-        align-self: stretch;
-
-        .heading-wrapper {
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
-          gap: var(--spacing-xl, 16px);
-          align-self: stretch;
-
-          h2 {
-            color: var(--colors-text-text-primary-900, #fff);
-            margin: 0;
-
-            /* Display sm/Semibold */
-            font-family: var(--Font-family-font-family-display, Roboto);
-            font-size: var(--Font-size-display-sm, 30px);
-            font-style: normal;
-            font-weight: 600;
-            line-height: var(--Line-height-display-sm, 38px); /* 126.667% */
-          }
-          p {
-            color: var(--colors-text-text-tertiary-600, #8c8c8c);
-            margin: 0;
-            /* Text md/Regular */
-            font-family: var(--Font-family-font-family-body, Roboto);
-            font-size: var(--Font-size-text-md, 16px);
-            font-style: normal;
-            font-weight: 400;
-            line-height: var(--Line-height-text-md, 24px); /* 150% */
-          }
+      .text-wrapper {
+        :global(.container-wrapper) {
+          padding-top: 54px;
+          padding-bottom: 24px;
         }
 
-        .actions {
+        .content {
           display: flex;
           flex-direction: column;
           align-items: flex-start;
-          gap: var(--spacing-lg, 12px);
+          gap: var(--spacing-4xl, 32px);
+          flex: 1 0 0;
           align-self: stretch;
+
+          .heading-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: var(--spacing-xl, 16px);
+            align-self: stretch;
+
+            h2 {
+              color: var(--colors-text-text-primary-900, #fff);
+              margin: 0;
+
+              /* Display sm/Semibold */
+              font-family: var(--Font-family-font-family-display, Roboto);
+              font-size: var(--Font-size-display-sm, 30px);
+              font-style: normal;
+              font-weight: 600;
+              line-height: var(--Line-height-display-sm, 38px); /* 126.667% */
+            }
+            p {
+              color: var(--colors-text-text-tertiary-600, #8c8c8c);
+              margin: 0;
+              /* Text md/Regular */
+              font-family: var(--Font-family-font-family-body, Roboto);
+              font-size: var(--Font-size-text-md, 16px);
+              font-style: normal;
+              font-weight: 400;
+              line-height: var(--Line-height-text-md, 24px); /* 150% */
+            }
+          }
+
+          .actions {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: var(--spacing-lg, 12px);
+            align-self: stretch;
+          }
         }
       }
     }

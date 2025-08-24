@@ -82,7 +82,6 @@
 // import '@betarena/ad-engine';
   // import WidgetAdEngine from '@betarena/ad-engine/src/lib/Widget-AdEngine.svelte';
   import AndroidPwaBanner from '$lib/components/AndroidPWABanner.svelte';
-  import { auth } from '$lib/firebase/init';
   import history_store from '$lib/store/history.js';
   import { gotoSW } from '$lib/utils/sveltekitWrapper';
   import WidgetAdEngine from '@betarena/ad-engine';
@@ -232,10 +231,6 @@
   {
     isInitliazed = true;
     userBetarenaSettings.useLocalStorage(serverLang);
-    if (auth.currentUser) {
-      // successAuthComplete("login", auth.currentUser, undefined);
-      $sessionStore.currentActiveModal = "Auth_Modal";
-    }
     scoresAdminStore.useLocalStorage();
     await mainDeepLinkCheck();
 

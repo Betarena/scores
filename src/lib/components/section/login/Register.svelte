@@ -79,7 +79,7 @@
     SportstackDomainStep,
     SportstackProfileStep,
     SportstackDescriptionStep,
-    ReadyToCreate
+    ReadyToCreate,
   ];
   let stepMap: Record<string, typeof EmailStep> = {
     0: EmailStep,
@@ -95,7 +95,8 @@
     password: {
       id: "password",
       title: translations.choose_password || "Choose a password",
-      description: translations.choose_secure_password || "Choose a secure password",
+      description:
+        translations.choose_secure_password || "Choose a secure password",
       steps: [PasswordStep],
     },
     phone: {
@@ -112,22 +113,31 @@
     },
     follow_sportstack: {
       title: translations.follow_sportstacks || "Follow Sportstacks",
-      description:  translations.follow_favorite_publications || "Follow your favorite publications",
+      description:
+        translations.follow_favorite_publications ||
+        "Follow your favorite publications",
       steps: [SportstackStep],
-      id: "follow_sportstack"
+      id: "follow_sportstack",
     },
     follow_topics: {
-        title: translations.follow_topics || "Follow Topics",
-        description: translations.follow_favorite_topics || "Follow your favorite topics",
-        steps: [TopicsStep],
-        id: "follow_tags"
+      title: translations.follow_topics || "Follow Topics",
+      description:
+        translations.follow_favorite_topics || "Follow your favorite topics",
+      steps: [TopicsStep],
+      id: "follow_tags",
     },
     publication: {
       title: translations.create_publication || "Create Publication",
-      description: translations.create_publication_description || "Create a new publication",
-      steps: [SportstackDomainStep, SportstackProfileStep, SportstackDescriptionStep],
-      id: "publication"
-    }
+      description:
+        translations.create_publication_description ||
+        "Create a new publication",
+      steps: [
+        SportstackDomainStep,
+        SportstackProfileStep,
+        SportstackDescriptionStep,
+      ],
+      id: "publication",
+    },
   };
   $: desktopStepsGrouped = Object.values(defaultDesktopSteps || {});
 
@@ -163,7 +173,7 @@
     let newDesktopSteps: typeof desktopStepsGrouped = [];
     let profileSteps: Array<typeof ProfileStep> = [];
     const { scores_user_data, firebase_user_data } = $userSettings.user;
-    $loginStore.verifiedSteps = ["email", "password"]
+    $loginStore.verifiedSteps = ["email", "password"];
     if (
       !firebase_user_data?.providerData.find(
         (provider) => provider.providerId === "password"
@@ -268,38 +278,46 @@
 -->
 
 <div class="login-page {viewportType}">
-  <div class="desktop-side-pagination-wrapper">
-    <div class="side-content">
-      <div class="logo">
-        <LogoImg />
+  {#if viewportType === "desktop" && ![ReadyToCreate, ReadyToPublish].includes(stepMap[currentStep])}
+      <div class="desktop-side-pagination-wrapper">
+        <div class="side-content">
+          <div class="logo">
+            <LogoImg />
+          </div>
+          <div class="steps-wrapper">
+            {#each desktopStepsGrouped as group, step_index (step_index)}
+              {@const stepsBefore = desktopStepsGrouped
+                .slice(0, Number(step_index))
+                .reduce((acc, curr) => acc + curr.steps.length, 0)}
+              {@const isStepBeforeVerified =
+                !step_index ||
+                $loginStore.verifiedSteps.includes(
+                  desktopStepsGrouped[step_index - 1].id
+                )}
+              {@const isStepVerified = $loginStore.verifiedSteps.includes(
+                group.id
+              )}
+              <StepBase
+                on:click={() => {
+                  if (isStepBeforeVerified || isStepVerified) {
+                    $loginStore.currentStep = stepsBefore;
+                  }
+                }}
+                title={group.title}
+                step={Number(step_index) + 1}
+                color="brand"
+                available={isStepBeforeVerified || isStepVerified}
+                checked={$loginStore.verifiedSteps.includes(group.id)}
+                active={currentStep >= stepsBefore &&
+                  currentStep < stepsBefore + group.steps.length}
+                description={group.description}
+              />
+            {/each}
+          </div>
+          <div class="footer">© Betarena 2025</div>
+        </div>
       </div>
-      <div class="steps-wrapper">
-        {#each desktopStepsGrouped as group, step_index (step_index)}
-          {@const stepsBefore = desktopStepsGrouped
-            .slice(0, Number(step_index))
-            .reduce((acc, curr) => acc + curr.steps.length, 0)}
-            {@const isStepBeforeVerified = !step_index || $loginStore.verifiedSteps.includes(desktopStepsGrouped[step_index - 1].id)}
-            {@const isStepVerified =  $loginStore.verifiedSteps.includes(group.id)}
-          <StepBase
-            on:click={() => {
-              if(isStepBeforeVerified || isStepVerified) {
-                $loginStore.currentStep = stepsBefore;
-              }
-            }}
-            title={group.title}
-            step={Number(step_index) + 1}
-            color="brand"
-            available={isStepBeforeVerified || isStepVerified}
-            checked={$loginStore.verifiedSteps.includes(group.id)}
-            active={currentStep >= stepsBefore &&
-              currentStep < stepsBefore + group.steps.length}
-            description={group.description}
-          />
-        {/each}
-      </div>
-      <div class="footer">© Betarena 2025</div>
-    </div>
-  </div>
+  {/if}
 
   <div class="login-wrapper {viewportType}">
     {#if currentStep && ![ReadyToPublish, ReadyToCreate].includes(stepMap[currentStep])}
@@ -328,15 +346,20 @@
         </Button>
       </div>
     {/if}
-    <div class="content" class:no-padding={[ReadyToPublish, ReadyToCreate].includes(stepMap[currentStep])}>
+    <div
+      class="content"
+      class:no-padding={[ReadyToPublish, ReadyToCreate].includes(
+        stepMap[currentStep]
+      )}
+    >
       <svelte:component
         this={stepMap[currentStep]}
         on:loginWithGoogle={loginWithGoogle}
       />
     </div>
-    {#if stepMap[0] !== EmailStep || currentStep && ![ReadyToPublish, ReadyToCreate].includes(stepMap[currentStep])}
+    {#if stepMap[0] !== EmailStep || (currentStep && ![ReadyToPublish, ReadyToCreate].includes(stepMap[currentStep]))}
       <div class="pagination-wrapper">
-        {#each Object.keys(stepMap) as step}
+        {#each Object.entries(stepMap).filter(([_step, component]) => ![ReadyToCreate, ReadyToPublish].includes(component)) as step}
           <div class="step-tab" class:active={Number(step) === currentStep} />
         {/each}
       </div>
@@ -363,11 +386,11 @@
     height: 100dvh;
     .desktop-side-pagination-wrapper {
       display: none;
-      
+
       .side-content {
         display: flex;
         padding: var(--spacing-4xl, 32px) var(--spacing-4xl, 32px) 0
-        var(--spacing-4xl, 32px);
+          var(--spacing-4xl, 32px);
         flex-direction: column;
         align-items: flex-start;
         gap: var(--spacing-8xl, 80px);
