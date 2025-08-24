@@ -105,24 +105,22 @@
       // Handle specific Firebase Auth errors
       switch (error.code) {
         case "auth/invalid-phone-number":
-          errorMessage = "Please enter a valid phone number.";
+          errorMessage = translations['auth/invalid-phone-number'] || "Please enter a valid phone number.";
           break;
         case "auth/missing-phone-number":
-          errorMessage = "Please enter your phone number.";
+          errorMessage = translations['auth/missing-phone-number'] || "Please enter your phone number.";
           break;
         case "auth/quota-exceeded":
-          errorMessage =
-            "Too many verification attempts. Please try again later.";
+          errorMessage = translations['auth/quota-exceeded'] || "Too many verification attempts. Please try again later.";
           break;
         case "auth/network-request-failed":
-          errorMessage =
-            "Network error. Please check your internet connection and try again.";
+          errorMessage = translations['auth/network-request-failed'] || "Network error. Please check your internet connection and try again.";
           break;
         case "auth/too-many-requests":
-          errorMessage = "Too many requests. Please try again later.";
+          errorMessage = translations['auth/too-many-requests'] || "Too many requests. Please try again later.";
           break;
         default:
-          errorMessage = "Failed to send verification code. Please try again.";
+          errorMessage = translations['auth/failed-to-send-code'] || "Failed to send verification code. Please try again.";
       }
     } finally {
       isLoading = false;

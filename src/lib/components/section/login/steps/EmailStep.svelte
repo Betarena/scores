@@ -216,32 +216,32 @@
       // Handle specific Firebase Auth errors
       switch (error.code) {
         case "auth/user-not-found":
-          loginError = "No account found with this email address.";
+          loginError = translations["auth/user-not-found"] || "No account found with this email address.";
           break;
         case "auth/wrong-password":
         case "auth/invalid-credential":
         case "auth/invalid-login-credentials":
-          loginError = "Invalid email or password. Please try again.";
+          loginError = translations["auth/wrong-credentials"] || "Invalid email or password. Please try again.";
           break;
         case "auth/invalid-email":
-          loginError = "Please enter a valid email address.";
+          loginError = translations["auth/invalid-email"] || "Please enter a valid email address.";
           emailError = true;
           break;
         case "auth/user-disabled":
           loginError =
-            "This account has been disabled. Please contact support.";
+            translations["auth/user-disabled"] || "This account has been disabled. Please contact support.";
           break;
         case "auth/too-many-requests":
-          loginError = "Too many failed attempts. Please try again later.";
+          loginError = translations["auth/too-many-requests"] || "Too many failed attempts. Please try again later.";
           break;
         case "auth/network-request-failed":
           loginError =
-            "Network error. Please check your connection and try again.";
+            translations["auth/network-request-failed"] || "Network error. Please check your connection and try again.";
           break;
         default:
           // Fallback for any other errors
           loginError =
-            error.message || "An unexpected error occurred. Please try again.";
+            translations["auth/network-request-failed"] || "An unexpected error occurred. Please try again.";
           console.error("Login error:", error);
       }
     }
