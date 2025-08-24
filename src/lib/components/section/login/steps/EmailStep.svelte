@@ -1,6 +1,7 @@
 <script lang="ts">
   import { browser } from "$app/environment";
   import { preloadData } from "$app/navigation";
+  import { page } from "$app/stores";
   import { scoresAuthStore } from "$lib/components/_main_/auth/_store";
   import CircleBg from "$lib/components/shared/backround-patterns/CircleBG.svelte";
   import Button from "$lib/components/ui/Button.svelte";
@@ -9,6 +10,7 @@
   import SocialButton from "$lib/components/ui/SocialButton.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
   import { auth } from "$lib/firebase/init";
+  import history_store from "$lib/store/history";
   import session from "$lib/store/session";
   import { successAuthComplete } from "$lib/utils/authentication";
   import { AU_W_TAG, dlog, errlog } from "$lib/utils/debug";
@@ -161,13 +163,9 @@
         if (!setp0Res) throw new Error();
         else scoresAuthStore.updateData([["globalStateRemove", "Processing"]]);
         if ($loginStore.isLogin) {
-          if (history.length) {
-            history.back();
-          } else {
-            gotoSW("/", true);
-          }
-        } else {
-          $loginStore.currentStep += 1;
+          const history = $history_store;
+          const prev_path = history.pop();
+          gotoSW(prev_path || "/", true);
         }
         dispatch("loginWithGoogle");
       },
@@ -193,7 +191,12 @@
   }
 
   function switchMode() {
-    let path = isLogin ? "/register" : "/login";
+    const lang = $page.params.lang;
+    let path = '';
+    if (lang) {
+      path += `/${lang}`;
+    }
+    path += isLogin ? "/register" : "/login";
     // Navigate to the new path
     gotoSW(path, true);
   }

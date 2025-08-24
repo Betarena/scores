@@ -20,6 +20,8 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+	import { helperUserInitialize } from '$lib/utils/user.js';
+	import { successAuthComplete } from '$lib/utils/authentication.js';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
@@ -82,8 +84,10 @@
 // import '@betarena/ad-engine';
   // import WidgetAdEngine from '@betarena/ad-engine/src/lib/Widget-AdEngine.svelte';
   import AndroidPwaBanner from '$lib/components/AndroidPWABanner.svelte';
+  import { auth } from '$lib/firebase/init';
   import history_store from '$lib/store/history.js';
   import { gotoSW } from '$lib/utils/sveltekitWrapper';
+  import { helperUserInitialize } from '$lib/utils/user';
   import WidgetAdEngine from '@betarena/ad-engine';
 
   // ╭─────
@@ -232,6 +236,9 @@
     isInitliazed = true;
     userBetarenaSettings.useLocalStorage(serverLang);
     scoresAdminStore.useLocalStorage();
+    if (auth.currentUser) {
+      helperUserInitialize()
+    }
     await mainDeepLinkCheck();
 
     return;
@@ -345,11 +352,11 @@
   }
 
   $: if (currentActiveModal === "Auth_Modal"&& ![routeIdLogin, routeIdRegister].includes($page.route.id || "")) {
-    gotoSW('/login', true);
+    gotoSW(`/${$page.params.lang}/login`, true);
   }
 
   $: if($userBetarenaSettings.user?.scores_user_data && !$userBetarenaSettings.user?.scores_user_data.verified) {
-    gotoSW("/register", true);
+    gotoSW(`/${$page.params.lang}/register`, true);
   }
 
   $: if (browser){

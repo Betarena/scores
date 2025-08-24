@@ -6,6 +6,7 @@
   import { registerUser } from "$lib/firebase/firebase.actions";
   import session from "$lib/store/session";
   import { successAuthComplete } from "$lib/utils/authentication";
+  import { updateUserProfileData } from "$lib/utils/user";
   import { loginStore } from "../login-store";
 
   // #region ➤ 📌 VARIABLES
@@ -95,6 +96,7 @@
       if (!$loginStore.verifiedSteps.includes("password")) {
         $loginStore.verifiedSteps.push("password");
       }
+      updateUserProfileData({registration_type: ["email"]})
       $loginStore.currentStep += 1;
     } catch (error: any) {
       console.error("Registration error:", error);
