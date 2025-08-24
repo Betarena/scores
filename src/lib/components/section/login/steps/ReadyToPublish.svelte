@@ -25,8 +25,10 @@
 
   import Button from "$lib/components/ui/Button.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
+  import session from "$lib/store/session";
   import { gotoSW } from "$lib/utils/sveltekitWrapper";
   import img from "../assets/publish.png";
+  import { loginStore } from "../login-store";
 
   // #endregion ➤ 📦 Package Imports
 </script>
@@ -52,10 +54,13 @@
           <p>Create your own Sportstack and start building your brand.</p>
         </div>
         <div class="actions">
-          <Button size="xl" type="primary" full={true} on:click={() => gotoSW("/register?sportstack", true)}
+          <Button size="xl" type="primary" full={true} on:click={() => $loginStore.currentStep += 1}
             >Create Publication</Button
           >
-          <Button size="xl" type="secondary" full={true} on:click={() => gotoSW("/", true)}>Skip for now</Button>
+          <Button size="xl" type="secondary" full={true} on:click={() => {
+            $session.currentActiveModal = null;
+            gotoSW("/", true)
+          }}>Skip for now</Button>
         </div>
       </div>
     </Container>

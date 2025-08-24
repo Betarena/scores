@@ -8,7 +8,7 @@
   import session from "$lib/store/session";
   import { submitWrapper } from "$lib/utils/sveltekitWrapper.js";
   import IconLink from "../icons/IconLink.svelte";
-  import { loginSportstackStore } from "../login-store.js";
+  import { loginStore } from "../login-store";
 
   // #region ➤ 📌 VARIABLES
 
@@ -25,7 +25,6 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   let debounceTimer;
   let inputError = false;
-  $: name = $loginSportstackStore.domain.replace(/[^\w\s]/gi, "");
   let disabled = true;
   $: ({ viewportType } = $session);
 
@@ -62,14 +61,15 @@
     console.log("Input error:", inputError);
   }
 
-  function submit(e) {
+  function submit() {
     return submitWrapper({
       successMessage: "The publication was created successfully.",
       cbAfter: (e) => {
-        $loginSportstackStore.sportstack = {
-          ...e.result.data,
+        if(e.result.type !== "success") return;
+        $loginStore.sportstack = {
+          ...e.result.data.data,
         };
-        $loginSportstackStore.currentStep += 1;
+        $loginStore.currentStep += 1;
       },
     });
   }
@@ -117,7 +117,7 @@
           error={inputError}
           required={true}
           label="Username"
-          bind:value={$loginSportstackStore.domain}
+          bind:value={$loginStore.sportstack.permalink}
         >
           <span slot="leading-text">sportstack/</span>
           <span slot="error">"The name is already in use."</span>

@@ -41,6 +41,9 @@
   import PhoneStep from "./steps/PhoneStep.svelte";
   import ProfileStep from "./steps/ProfileStep.svelte";
   import ReadyToPublish from "./steps/ReadyToPublish.svelte";
+  import SportstackDescriptionStep from "./steps/SportstackDescriptionStep.svelte";
+  import SportstackDomainStep from "./steps/SportstackDomainStep.svelte";
+  import SportstackProfileStep from "./steps/SportstackProfileStep.svelte";
   import SportstackStep from "./steps/SportstackStep.svelte";
   import TopicsStep from "./steps/TopicsStep.svelte";
   // #endregion ➤ 📦 Package Imports
@@ -71,7 +74,10 @@
     CountryStep,
     SportstackStep,
     TopicsStep,
-    ReadyToPublish
+    ReadyToPublish,
+    SportstackDomainStep,
+    SportstackProfileStep,
+    SportstackDescriptionStep
   ];
   let stepMap: Record<string, typeof EmailStep> = {
     0: EmailStep,
@@ -109,11 +115,17 @@
       id: "follow_sportstack"
     },
     follow_topics: {
-      title: translations.follow_topics || "Follow Topics",
-      description: translations.follow_favorite_topics || "Follow your favorite topics",
-      steps: [TopicsStep],
-      id: "follow_tags"
+        title: translations.follow_topics || "Follow Topics",
+        description: translations.follow_favorite_topics || "Follow your favorite topics",
+        steps: [TopicsStep],
+        id: "follow_tags"
     },
+    publication: {
+      title: translations.create_publication || "Create Publication",
+      description: translations.create_publication_description || "Create a new publication",
+      steps: [SportstackDomainStep, SportstackProfileStep, SportstackDescriptionStep],
+      id: "publication"
+    }
   };
   $: desktopStepsGrouped = Object.values(defaultDesktopSteps || {});
 
@@ -143,6 +155,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   async function updateSteps() {
+    return;
     if (!$userSettings.user) return;
     let steps: Array<typeof PasswordStep> = [];
     let newDesktopSteps: typeof desktopStepsGrouped = [];
@@ -189,7 +202,7 @@
     }
     if (!steps.length) {
       updateUserProfileData({ verified: true });
-      
+      $session.currentActiveModal = null;
       history.length > 1 ? history.back() : gotoSW("/", true);
       return;
     }
@@ -313,7 +326,7 @@
         </Button>
       </div>
     {/if}
-    <div class="content">
+    <div class="content" class:no-padding={stepMap[currentStep] === ReadyToPublish}>
       <svelte:component
         this={stepMap[currentStep]}
         on:loginWithGoogle={loginWithGoogle}
@@ -431,6 +444,10 @@
         max-width: 100vw;
         overflow-x: hidden;
         padding: var(--spacing-6xl, 48px) 0;
+
+        &.no-padding {
+          padding: 0;
+        }
       }
 
       .back-button {

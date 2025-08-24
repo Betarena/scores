@@ -1,4 +1,4 @@
-import type { TranslationAuthenticationDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0";
+import type { AuthorsAuthorsMain, TranslationAuthenticationDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0";
 import type { ConfirmationResult, RecaptchaVerifier } from "firebase/auth";
 import { writable } from "svelte/store";
 
@@ -7,7 +7,7 @@ export const loginStore = writable({
     isLogin: false,
     password: "",
     name: "",
-    currentStep: 8,
+    currentStep: 11,
     avatar: "",
     phoneNumber: "",
     confirmationResult: null as ConfirmationResult | null,
@@ -16,5 +16,13 @@ export const loginStore = writable({
     country: "",
     countries: {} as Record<string, string>,
     isExistedUser: false,
-    verifiedSteps: [] as string[]
+    verifiedSteps: [] as string[],
+    sportstack: {
+       permalink: "",
+        data: {
+            about: "",
+            avatar: ""
+       }
+    } as Partial<AuthorsAuthorsMain>,
+    sportstack_img: ""
 })

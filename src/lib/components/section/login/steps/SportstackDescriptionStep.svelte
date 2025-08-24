@@ -2,14 +2,12 @@
   import { enhance } from "$app/forms";
   import GridBg from "$lib/components/shared/backround-patterns/GridBG.svelte";
   import Button from "$lib/components/ui/Button.svelte";
-  import SectionLabel from "$lib/components/ui/SectionLabel.svelte";
-  import SportstackAvatar from "$lib/components/ui/SportstackAvatar.svelte";
-  import Uploader from "$lib/components/ui/Uploader.svelte";
+  import Input from "$lib/components/ui/Input.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
   import { uploadImage } from "$lib/firebase/common";
   import session from "$lib/store/session";
   import { submitWrapper } from "$lib/utils/sveltekitWrapper";
-  import IconImg from "../icons/IconImg.svelte";
+  import IconFolder from "../icons/IconFolder.svelte";
   import { loginStore } from "../login-store";
 
   // #region ➤ 📌 VARIABLES
@@ -27,11 +25,11 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   let isLoading = false;
-  let form: HTMLFormElement;
-  let button: HTMLButtonElement;
+  let errorMessage = "";
+  let form: HTMLFormElement
+  let button: HTMLButtonElement
 
-  let avatar = "";
-  $: ({ id = 0, permalink = "" } = $loginStore.sportstack);
+  $: ({id = 0, permalink = ""} = $loginStore.sportstack)
   $: ({ viewportType } = $session);
   // #endregion ➤ 📌 VARIABLES
 
@@ -64,33 +62,29 @@
 
   async function uploadProfilePicture(e: CustomEvent<string>): Promise<void> {
     const img = e.detail;
-    $loginStore.sportstack_img = img;
-    avatar = img;
-    const id = $loginStore.sportstack.id;
+    $loginStore.sportstack_img = img
+    avatar = "";
     // if (!id) return;
     avatar = await uploadImage(
-      img,
-      `Betarena_Media/authors/authors_list/${id}/avatars/${id}.png`
-    );
+        img,
+        `Betarena_Media/authors/authors_list/3454/avatars/3454.png`
+        // `Betarena_Media/authors/authors_list/${id}/avatars/${id}.png`
+      );
     button.click();
+    //   await uploadProfileAvatar(img);
+    //   $loginStore.avatar = img;
+    //   avatar = img;
+    // });
   }
 
-  async function handleContinue(): Promise<void> {
-    if (isLoading) {
-      return;
-    }
-    $loginStore.currentStep += 1;
-  }
-
-  async function submit(e) {
-    e.data.append("avatar", avatar);
+   async function submit(e) {
     return submitWrapper({
-      successMessage: "The publication was updated successfully.",
-      cbAfter: (e) => {
-        $loginStore.sportstack = {
-          ...e.result.data.data,
-        };
-      },
+      successMessage:
+        "The publication was updated successfully.",
+        cbAfter: (e) => {
+          console.log(e) 
+          debugger
+        }
     });
   }
 
@@ -104,6 +98,7 @@
   // │ immediately and as part of the 'lifecycle' of svelteJs,                │
   // │ as soon as 'this' .svelte file is ran.                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
+
 </script>
 
 <!--
@@ -123,42 +118,33 @@
       <GridBg size={viewportType === "desktop" ? "768" : "468"} />
     </div>
     <div class="profile-icon">
-      <IconImg />
+      <IconFolder />
     </div>
   </div>
   <Container hFull={false}>
     <div class="form">
       <div class="header">
-        <h2>Sportstack Avatar</h2>
-        <p class="subtitle">Choose a profile picture</p>
+        <h2>Sportstack Description</h2>
+        <p class="subtitle">Tell us about your Sportstack</p>
       </div>
-      <form
-        class="form-body"
+      <form class="form-body"  
         method="POST"
         bind:this={form}
         use:enhance={submit}
         action="/api/data/author/sportstack?/update"
       >
-        <button bind:this={button} style="display: none" hidden type="submit" />
+        <button bind:this={button} style="display: none" hidden type="submit"></button>
         <input type="hidden" id="id" name="id" value={id} />
-        <input
-          type="hidden"
-          id="permalink"
-          name="permalink"
-          value={permalink}
-        />
+        <input type="hidden" id="permalink" name="permalink" value={permalink} />
         <input type="hidden" id="username" name="username" value={permalink} />
-        <input type="hidden" id="about" name="about" value="" />
-        <div class="profile-photo-wrapper">
-          <SectionLabel title="Your publication Avatar" text="Upload Avatar" />
-          <SportstackAvatar size="xxl" src={avatar} />
-          <Uploader bind:avatar on:upload={uploadProfilePicture} />
-        </div>
+        <input type="hidden" id="avatar" name="avatar" value={$loginStore.sportstack.data?.avatar} />
+        <Input inputType="textarea" name="about" label="Description" bind:value={$loginStore.sportstack.data?.about} />
         <Button
           full={true}
+          submit={true}
           size="lg"
+          bind:value={$loginStore.sportstack.data?.about}
           disabled={isLoading}
-          on:click={handleContinue}
         >
           {isLoading ? "Updating..." : "Continue"}
         </Button>
