@@ -188,8 +188,8 @@
     }
     if (!steps.length) {
       updateUserProfileData({ verified: true });
-      const history = $history_store;
-      const prev_path = history.pop();
+      const history = $history_store.reverse();
+      const prev_path = history.find(path => !path.includes("login") && !path.includes("register"));
       gotoSW(prev_path || "/", true);
       return;
     }

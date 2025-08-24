@@ -352,11 +352,23 @@
   }
 
   $: if (currentActiveModal === "Auth_Modal"&& ![routeIdLogin, routeIdRegister].includes($page.route.id || "")) {
-    gotoSW(`/${$page.params.lang}/login`, true);
+    const lang = $page.params.lang || $userBetarenaSettings.lang;
+    let path = "";
+    if(lang && lang !== "en") {
+      path += `/${lang}`
+    }
+    path += "/login"
+    gotoSW(path, true);
   }
 
   $: if($userBetarenaSettings.user?.scores_user_data && !$userBetarenaSettings.user?.scores_user_data.verified) {
-    gotoSW(`/${$page.params.lang}/register`, true);
+    const lang = $page.params.lang || $userBetarenaSettings.lang;
+    let path = "";
+    if(lang && lang !== "en") {
+      path += `/${lang}`
+    }
+    path += "/register"
+    gotoSW(path, true);
   }
 
   $: if (browser){

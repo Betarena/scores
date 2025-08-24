@@ -163,8 +163,8 @@
         if (!setp0Res) throw new Error();
         else scoresAuthStore.updateData([["globalStateRemove", "Processing"]]);
         if ($loginStore.isLogin) {
-          const history = $history_store;
-          const prev_path = history.pop();
+          const history = $history_store.reverse();
+          const prev_path = history.find(path => !path.includes("login") && !path.includes("register"));
           gotoSW(prev_path || "/", true);
         }
         dispatch("loginWithGoogle");
@@ -198,7 +198,7 @@
     }
     path += isLogin ? "/register" : "/login";
     // Navigate to the new path
-    gotoSW(path, true);
+    gotoSW(path);
   }
 
   async function login() {
