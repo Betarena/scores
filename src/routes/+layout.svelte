@@ -245,13 +245,13 @@
   }
 
   function redirectToOnBoard(register = true) {
-    const lang = $page.params.lang || $userBetarenaSettings.lang;
+    const lang = $userBetarenaSettings.lang || $page.params.lang ;
     let path = "";
     if(lang && lang !== "en") {
       path += `/${lang}`
     }
     path += register ? "/register" : "/login";
-    gotoSW(path, true);
+    gotoSW(path);
   }
   // #endregion ➤ 🛠️ METHODS
 
