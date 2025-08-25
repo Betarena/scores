@@ -26,6 +26,7 @@
   import { page } from "$app/stores";
   import Button from "$lib/components/ui/Button.svelte";
   import StepBase from "$lib/components/ui/StepBase.svelte";
+  import history_store from "$lib/store/history";
   import session from "$lib/store/session";
   import userSettings from "$lib/store/user-settings";
   import { gotoSW } from "$lib/utils/sveltekitWrapper";
@@ -214,8 +215,9 @@
     }
     if (!steps.length) {
       updateUserProfileData({ verified: true });
-      $session.currentActiveModal = null;
-      history.length > 1 ? history.back() : gotoSW("/", true);
+      const history = $history_store.reverse();
+      const prev_path = history.find(path => !path.includes("login") && !path.includes("register"));
+      gotoSW(prev_path || "/", true);
       return;
     }
     let nexSteps: Record<string, typeof EmailStep> = {};
@@ -238,7 +240,9 @@
   }
 
   function loginWithGoogle() {
+    updateUserProfileData({registration_type: ["google"]})
     updateSteps();
+    $loginStore.currentStep = 2;
   }
 
   // #endregion ➤ 🛠️ METHODS

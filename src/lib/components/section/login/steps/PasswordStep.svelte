@@ -6,6 +6,7 @@
   import { registerUser } from "$lib/firebase/firebase.actions";
   import session from "$lib/store/session";
   import { successAuthComplete } from "$lib/utils/authentication";
+  import { updateUserProfileData } from "$lib/utils/user";
   import { loginStore } from "../login-store";
 
   // #region ➤ 📌 VARIABLES
@@ -95,6 +96,7 @@
       if (!$loginStore.verifiedSteps.includes("password")) {
         $loginStore.verifiedSteps.push("password");
       }
+      updateUserProfileData({registration_type: ["email"]})
       $loginStore.currentStep += 1;
     } catch (error: any) {
       console.error("Registration error:", error);
@@ -102,18 +104,16 @@
       // Handle specific Firebase Auth errors
       switch (error.code) {
         case "auth/email-already-in-use":
-          errorMessage =
-            "This email is already registered. Please use a different email or try signing in.";
+          errorMessage = translations["auth/email-already-in-use"] || "This email is already registered. Please use a different email or try signing in.";
           break;
         case "auth/invalid-email":
-          errorMessage = "Please enter a valid email address.";
+          errorMessage = translations["auth/invalid-email"] || "Please enter a valid email address.";
           break;
         case "auth/network-request-failed":
-          errorMessage =
-            "Network error. Please check your internet connection and try again.";
+          errorMessage = translations["auth/network-request-failed"] || "Network error. Please check your internet connection and try again.";
           break;
         default:
-          errorMessage = "Registration failed. Please try again.";
+          errorMessage = translations["auth/registration_failed"] || "Registration failed. Please try again.";
       }
       confirmPasswordError = errorMessage;
     } finally {

@@ -325,7 +325,8 @@ export async function logoutUser
   (
     'betarenaCookieLoggedIn'
   );
-
+  delCookie('betarenaScoresCookie');
+  auth.signOut();
   return;
 }
 

@@ -184,38 +184,39 @@
       }
       $loginStore.currentStep += 1;
     } catch (error: any) {
-      console.error("Phone code verification error:", error);
 
       // Handle specific Firebase Auth errors
       switch (error.code) {
         case "auth/invalid-verification-code":
-          errorMessage =
+          errorMessage = translations["auth/invalid-verification-code"] ||
             "Invalid verification code. Please check and try again.";
           break;
         case "auth/missing-verification-code":
-          errorMessage = "Please enter the verification code.";
+          errorMessage = translations["auth/missing-verification-code"] ||
+            "Please enter the verification code.";
           break;
         case "auth/code-expired":
-          errorMessage =
+          errorMessage = translations["auth/code-expired"] ||
             "Verification code has expired. Please request a new one.";
           break;
         case "auth/too-many-requests":
-          errorMessage = "Too many attempts. Please try again later.";
+          errorMessage = translations["auth/too-many-requests"] ||
+            "Too many attempts. Please try again later.";
           break;
         case "auth/network-request-failed":
-          errorMessage =
+          errorMessage = translations["auth/network-request-failed"] ||
             "Network error. Please check your internet connection and try again.";
           break;
         case "auth/provider-already-linked":
-          errorMessage =
+          errorMessage = translations["auth/provider-already-linked"] ||
             "This phone number is already linked to another account.";
           break;
         case "auth/account-exists-with-different-credential":
-          errorMessage =
+          errorMessage = translations["auth/provider-already-linked"]  ||
             "This phone number is already linked to another account.";
           break;
         default:
-          errorMessage = "Failed to verify code. Please try again.";
+          errorMessage = translations["auth/failed-to-verify"] || "Failed to verify code. Please try again.";
       }
 
       // Clear the input for retry

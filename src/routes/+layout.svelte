@@ -20,6 +20,8 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+	import { helperUserInitialize } from '$lib/utils/user.js';
+	import { successAuthComplete } from '$lib/utils/authentication.js';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
@@ -84,6 +86,7 @@
   import AndroidPwaBanner from '$lib/components/AndroidPWABanner.svelte';
   import history_store from '$lib/store/history.js';
   import { gotoSW } from '$lib/utils/sveltekitWrapper';
+  import { helperUserInitialize } from '$lib/utils/user';
   import WidgetAdEngine from '@betarena/ad-engine';
 
   // ╭─────
@@ -232,6 +235,9 @@
     isInitliazed = true;
     userBetarenaSettings.useLocalStorage(serverLang);
     scoresAdminStore.useLocalStorage();
+    if (auth.currentUser) {
+      helperUserInitialize()
+    }
     await mainDeepLinkCheck();
 
     return;
@@ -265,9 +271,6 @@
     mainDeepLinkCheck();
   ;
 
-  $: if ($userBetarenaSettings.user?.firebase_user_data?.uid) {
-      
-  }
   // ╭─────
   // │ NOTE: IMPORTANT CRITICAL
   // │ │: Hijack the 'console' object.
@@ -348,11 +351,23 @@
   }
 
   $: if (currentActiveModal === "Auth_Modal"&& ![routeIdLogin, routeIdRegister].includes($page.route.id || "")) {
-    gotoSW('/login', true);
+    const lang = $page.params.lang || $userBetarenaSettings.lang;
+    let path = "";
+    if(lang && lang !== "en") {
+      path += `/${lang}`
+    }
+    path += "/login"
+    gotoSW(path, true);
   }
 
   $: if($userBetarenaSettings.user?.scores_user_data && !$userBetarenaSettings.user?.scores_user_data.verified) {
-    gotoSW("/register", true);
+    const lang = $page.params.lang || $userBetarenaSettings.lang;
+    let path = "";
+    if(lang && lang !== "en") {
+      path += `/${lang}`
+    }
+    path += "/register"
+    gotoSW(path, true);
   }
 
   $: if (browser){

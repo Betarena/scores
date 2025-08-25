@@ -1,6 +1,7 @@
 <script lang="ts">
   import { browser } from "$app/environment";
   import { preloadData } from "$app/navigation";
+  import { page } from "$app/stores";
   import { scoresAuthStore } from "$lib/components/_main_/auth/_store";
   import CircleBg from "$lib/components/shared/backround-patterns/CircleBG.svelte";
   import Button from "$lib/components/ui/Button.svelte";
@@ -9,6 +10,7 @@
   import SocialButton from "$lib/components/ui/SocialButton.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
   import { auth } from "$lib/firebase/init";
+  import history_store from "$lib/store/history";
   import session from "$lib/store/session";
   import { successAuthComplete } from "$lib/utils/authentication";
   import { AU_W_TAG, dlog, errlog } from "$lib/utils/debug";
@@ -161,13 +163,9 @@
         if (!setp0Res) throw new Error();
         else scoresAuthStore.updateData([["globalStateRemove", "Processing"]]);
         if ($loginStore.isLogin) {
-          if (history.length) {
-            history.back();
-          } else {
-            gotoSW("/", true);
-          }
-        } else {
-          $loginStore.currentStep += 1;
+          const history = $history_store.reverse();
+          const prev_path = history.find(path => !path.includes("login") && !path.includes("register"));
+          gotoSW(prev_path || "/", true);
         }
         dispatch("loginWithGoogle");
       },
@@ -193,9 +191,14 @@
   }
 
   function switchMode() {
-    let path = isLogin ? "/register" : "/login";
+    const lang = $page.params.lang;
+    let path = '';
+    if (lang) {
+      path += `/${lang}`;
+    }
+    path += isLogin ? "/register" : "/login";
     // Navigate to the new path
-    gotoSW(path, true);
+    gotoSW(path);
   }
 
   async function login() {
@@ -216,32 +219,32 @@
       // Handle specific Firebase Auth errors
       switch (error.code) {
         case "auth/user-not-found":
-          loginError = "No account found with this email address.";
+          loginError = translations["auth/user-not-found"] || "No account found with this email address.";
           break;
         case "auth/wrong-password":
         case "auth/invalid-credential":
         case "auth/invalid-login-credentials":
-          loginError = "Invalid email or password. Please try again.";
+          loginError = translations["auth/wrong-credentials"] || "Invalid email or password. Please try again.";
           break;
         case "auth/invalid-email":
-          loginError = "Please enter a valid email address.";
+          loginError = translations["auth/invalid-email"] || "Please enter a valid email address.";
           emailError = true;
           break;
         case "auth/user-disabled":
           loginError =
-            "This account has been disabled. Please contact support.";
+            translations["auth/user-disabled"] || "This account has been disabled. Please contact support.";
           break;
         case "auth/too-many-requests":
-          loginError = "Too many failed attempts. Please try again later.";
+          loginError = translations["auth/too-many-requests"] || "Too many failed attempts. Please try again later.";
           break;
         case "auth/network-request-failed":
           loginError =
-            "Network error. Please check your connection and try again.";
+            translations["auth/network-request-failed"] || "Network error. Please check your connection and try again.";
           break;
         default:
           // Fallback for any other errors
           loginError =
-            error.message || "An unexpected error occurred. Please try again.";
+            translations["auth/network-request-failed"] || "An unexpected error occurred. Please try again.";
           console.error("Login error:", error);
       }
     }
