@@ -42,7 +42,7 @@
 - name: 'status:review'
   color: '#15E5F8'
   description:
-    'In a passive-active state. Being inspected and checked.'
+    '[Status] :: passive-active state, being inspected and checked.'
   aliases:
     [
       '⏳ [ST] validating',
@@ -61,7 +61,7 @@
 - name: 'priority:high'
   color: '#A3F20A'
   description:
-    'Something that needs attention and accelerated resolving'
+    '[Priority] :: high attention and accelerated resolving needed.'
   aliases:
     [
       '📣 [A] high priority',
@@ -71,9 +71,9 @@
 #
 
 - name: 'priority:urgent'
-  color: '#823526'
+  color: '#EE4B2B'
   description:
-    'An urgent action needed on something'
+    '[Priority] :: super urgent resolving needed.'
   aliases: [ '🚨 [A] urgent' ]
 #
 
@@ -84,7 +84,7 @@
 - name: 'section:frontend'
   color: '#D1BD3B'
   description:
-    'section for frontend related issues'
+    '[Section] :: frontend related issues.'
   aliases: [ '🎨 Frontend' ]
 #
 
@@ -95,14 +95,14 @@
 - name: 'type:documentation'
   color: '#FBCA04'
   description:
-    'semver bump of type :|: patch'
+    '[Type] :: documentation related issues.'
   aliases: [ 'documentation' ]
 #
 
 - name: 'type:bug'
-  color: '#d73a4a'
+  color: '#DC143C'
   description:
-    'Something is not working. Needs to be looked at.'
+    '[Type] :: something is not working as expected.'
   aliases:
     [
       '🐞 [A] bug',
@@ -116,7 +116,7 @@
 - name: 'type:enhancement'
   color: '#a2eeef'
   description:
-    'New feature or request'
+    '[Type] :: new feature or request'
   aliases:
     [
       '🌟 [A] enhancement',
@@ -128,7 +128,7 @@
 - name: 'type:optimization'
   color: '#FF5F1F'
   description:
-    'Improvement, optimazation of (1) throttle, (2) speed related issues.'
+    '[Type] :: improvement, optimazation of (1) throttle, (2) speed related issues.'
   aliases:
     [
       'ℹ️ [T] optimization',
@@ -140,7 +140,7 @@
 - name: 'type:3rd-party'
   color: '#FF5F1F'
   description:
-    'Issues related to 3rd party services, modules, libraries, APIs.'
+    '[Type] :: issues related to 3rd party services, modules, libraries, APIs.'
   aliases:
     [
       '🔵 [I] sportmonks',
@@ -157,17 +157,17 @@
 - name: 'semver:patch'
   color: '#FBCA04'
   description:
-    'semver bump of type :|: patch'
+    '[CI] :: semver bump of type PATCH'
 #
 
 - name: 'semver:minor'
   color: '#FBCA04'
   description:
-    'semver bump of type :|: minor'
+    '[CI] :: semver bump of type MINOR'
 #
 
 - name: 'semver:major'
   color: '#FBCA04'
   description:
-    'semver bump of type :|: major'
+    '[CI] :: semver bump of type MAJOR'
 #
