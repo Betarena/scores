@@ -324,7 +324,7 @@
   {/if}
 
   <div class="login-wrapper {viewportType}">
-    {#if currentStep && ![ReadyToPublish, ReadyToCreate].includes(stepMap[currentStep])}
+    {#if viewportType !=="desktop" && currentStep && ![ReadyToPublish, ReadyToCreate].includes(stepMap[currentStep])}
       <div class="back-button">
         <Button
           type="secondary"

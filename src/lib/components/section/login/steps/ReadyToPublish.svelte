@@ -28,6 +28,7 @@
   import session from "$lib/store/session";
   import { gotoSW } from "$lib/utils/sveltekitWrapper";
   import img from "../assets/publish.png";
+  import img_desktop from "../assets/publish_desktop.png";
   import { loginStore } from "../login-store";
 
   $: ({ viewportType } = $session);
@@ -46,17 +47,22 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 <div class="ready-to-publish-wrapper {viewportType}">
-  <div class="side-banner">
-    <img
-      id=''
-      src=''
-      alt=''
-      title=''
-      loading='lazy'
-    />
-  </div>
-  <div class="ready-to-publish ">
-    <img id="" src={img} alt="ready to publish" title="" loading="lazy" />
+  {#if viewportType === "desktop"}
+    <div class="side-banner" style="background-image: url({img_desktop});">
+      <div class="cta">
+        <div class="side-text-wrapper">
+          <h2>Start turning your ideas into reality.</h2>
+          <p>
+            Create your own publication and get full access to all features.
+          </p>
+        </div>
+      </div>
+    </div>
+  {/if}
+  <div class="ready-to-publish">
+    {#if viewportType !== "desktop"}
+      <img id="" src={img} alt="ready to publish" title="" loading="lazy" />
+    {/if}
     <div class="text-wrapper">
       <Container>
         <div class="content">
@@ -100,6 +106,67 @@
 
 <style lang="scss">
   .ready-to-publish-wrapper {
+    display: flex;
+    height: 100vh;
+    .side-banner {
+      width: 720px;
+      flex-shrink: 0;
+      max-height: 100vh;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      background-position: center;
+      background-size: cover;
+
+      .cta {
+        z-index: 1;
+        display: flex;
+        width: 720px;
+        padding: var(--spacing-9xl, 96px) var(--spacing-7xl, 64px);
+        padding-top: calc(
+          80px + var(--spacing-4xl, 32px) + var(--spacing-9xl, 96px)
+        );
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: var(--spacing-4xl, 32px);
+
+        .side-text-wrapper {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: var(--spacing-2xl, 20px);
+          align-self: stretch;
+
+          h2 {
+            margin: 0;
+            color: var(--colors-text-text-white, #fff);
+
+            /* Display xl/Semibold */
+            font-family: var(--font-family-font-family-display, Roboto);
+            font-size: var(--font-size-display-xl, 60px);
+            font-style: normal;
+            font-weight: 600;
+            line-height: var(--line-height-display-xl, 72px); /* 120% */
+            letter-spacing: -1.2px;
+          }
+
+          p {
+            width: 100%;
+            color: var(--colors-text-text-white, #fff);
+            text-align: start;
+            /* Text lg/Medium */
+            font-family: var(--font-family-font-family-body, Roboto);
+            font-size: var(--font-size-text-lg, 18px);
+            font-style: normal;
+            font-weight: 500;
+            line-height: var(--line-height-text-lg, 28px); /* 155.556% */
+          }
+        }
+      }
+    }
+
     .ready-to-publish {
       height: 100%;
       width: 100%;
@@ -142,6 +209,7 @@
               line-height: var(--Line-height-display-sm, 38px); /* 126.667% */
             }
             p {
+              max-width: var(--width-sm, 480px);
               color: var(--colors-text-text-tertiary-600, #8c8c8c);
               margin: 0;
               /* Text md/Regular */
@@ -159,6 +227,56 @@
             align-items: flex-start;
             gap: var(--spacing-lg, 12px);
             align-self: stretch;
+          }
+        }
+      }
+    }
+
+    &.desktop {
+      .ready-to-publish {
+        height: 100%;
+        width: 100%;
+        padding-inline: 60px;
+        justify-content: center;
+        align-items: center;
+        .text-wrapper {
+          width: 100%;
+          max-width: 610px;
+          margin: auto;
+          :global(.container-wrapper) {
+            padding: 0;
+            width: 100%;
+            margin: 0;
+            max-width: 100%;
+          }
+          .content {
+            width: 100%;
+            gap: var(--spacing-6xl, 48px);
+
+            .heading-wrapper {
+              gap: var(--spacing-3xl, 24px);
+              h2 {
+                color: var(--colors-text-text-primary-900, #fff);
+
+                /* Display xl/Semibold */
+                font-family: var(--font-family-font-family-display, Roboto);
+                font-size: var(--font-size-display-xl, 60px);
+                font-style: normal;
+                font-weight: 600;
+                line-height: var(--line-height-display-xl, 72px); /* 120% */
+                letter-spacing: -1.2px;
+              }
+              p {
+                color: var(--colors-text-text-tertiary-600, #8c8c8c);
+
+                /* Text xl/Regular */
+                font-family: var(--Font-family-font-family-body, Roboto);
+                font-size: var(--Font-size-text-xl, 20px);
+                font-style: normal;
+                font-weight: 400;
+                line-height: var(--Line-height-text-xl, 30px); /* 150% */
+              }
+            }
           }
         }
       }
