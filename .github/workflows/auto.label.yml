@@ -18,7 +18,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: srealmoreno/label-sync-action@v2
-        with:
-          clean-labels: true
+        # with:
+        # ╭─────
+        # │ NOTE: WARNING: IMPORTANT CRITICAL
+        # │ |:
+        # ╰─────
+        #   clean-labels: true
   #
 #
