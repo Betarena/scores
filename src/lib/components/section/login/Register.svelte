@@ -206,9 +206,8 @@
       ...v,
       translations: {
         ...data.auth_translations.data[0],
-        ...data.auth_translations.data[1],
       },
-      countries: { ...data.auth_translations.data[2] },
+      countries: { ...data.auth_translations.data[1] },
     }));
   }
 
