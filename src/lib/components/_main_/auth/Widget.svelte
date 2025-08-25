@@ -63,7 +63,7 @@
 	    type ActionCodeSettings
 	  } from 'firebase/auth';
 
-	import { app, auth } from '$lib/firebase/init';
+	import { app, auth, instanceFirebaseFunctions } from '$lib/firebase/init';
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { successAuthComplete } from '$lib/utils/authentication.js';
@@ -690,7 +690,14 @@
         }
 
         const
-          moralisAuth = getMoralisAuth(app),
+          moralisAuth = getMoralisAuth
+          (
+            app,
+            {
+              auth,
+              functions: instanceFirebaseFunctions
+            }
+          ),
           moralisAuthInstance = await signInWithMoralis(moralisAuth)
         ;
 

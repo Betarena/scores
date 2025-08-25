@@ -20,7 +20,7 @@ import { getMoralisAuth } from '@moralisweb3/client-firebase-auth-utils';
 import { signInWithMoralis } from '@moralisweb3/client-firebase-evm-auth';
 import { doc, getDoc } from 'firebase/firestore';
 
-import { app, auth, db_firestore } from '$lib/firebase/init.js';
+import { app, auth, db_firestore, instanceFirebaseFunctions } from '$lib/firebase/init.js';
 import { getCookie } from '$lib/store/cookie.js';
 import sessionStore from '$lib/store/session.js';
 import userBetarenaSettings from '$lib/store/user-settings.js';
@@ -182,7 +182,14 @@ export async function authWithMoralis
     ): Promise < void > =>
     {
       const
-        moralisAuth = getMoralisAuth(app),
+        moralisAuth = getMoralisAuth
+          (
+            app,
+            {
+              auth,
+              functions: instanceFirebaseFunctions
+            }
+          ),
         moralisAuthInstance = await signInWithMoralis(moralisAuth)
       ;
 

@@ -4,6 +4,7 @@ import { deleteApp, getApp, getApps, initializeApp, type FirebaseApp, type Fireb
 import { getAuth, type Auth } from 'firebase/auth';
 import { Database, enableLogging, getDatabase } from 'firebase/database';
 import { Firestore, getFirestore } from 'firebase/firestore';
+import { getFunctions } from "firebase/functions";
 import { getStorage, type FirebaseStorage } from 'firebase/storage';
 
 // #endregion ➤ 📦 Package Imports
@@ -68,6 +69,13 @@ export const storage: FirebaseStorage = getStorage(app);
  *  📌 Initialize Firebase Cloud Firestore.
  */
 export const db_firestore: Firestore = getFirestore(app);
+/**
+ * @author
+ *  @migbash
+ * @description
+ *  📌 Initialize Firebase Cloud Functions.
+ */
+export const instanceFirebaseFunctions = getFunctions(app);
 
 // #endregion version-1 (init)
 
