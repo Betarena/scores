@@ -41,7 +41,15 @@
   color: '#15E5F8'
   description:
     'In a passive-active state. Being inspected and checked.'
-  aliases: [ '⏳ [ST] validating', '🔄 [ST] background' ]
+  aliases:
+    [
+      '⏳ [ST] validating',
+      '🔄 [ST] background',
+      # ARCHIVED / LEGACY
+      'validating',
+      '🔄 background',
+      'hold'
+    ]
 #
 
 # ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -52,7 +60,12 @@
   color: '#A3F20A'
   description:
     'Something that needs attention and accelerated resolving'
-  aliases: [ '📣 [A] high priority' ]
+  aliases:
+    [
+      '📣 [A] high priority',
+      # ARCHIVED / LEGACY
+      'high priority'
+    ]
 #
 
 - name: 'priority:urgent'
@@ -88,21 +101,38 @@
   color: '#d73a4a'
   description:
     'Something is not working. Needs to be looked at.'
-  aliases: [ '🐞 [A] bug', '💻 [TD] Desktop', '📱 [TD] Mobile / Tablet' ]
+  aliases:
+    [
+      '🐞 [A] bug',
+      '💻 [TD] Desktop',
+      '📱 [TD] Mobile / Tablet',
+      # ARCHIVED / LEGACY
+      'bug'
+    ]
 #
 
 - name: 'type:enhancement'
   color: '#a2eeef'
   description:
     'New feature or request'
-  aliases: [ '🌟 [A] enhancement' ]
+  aliases:
+    [
+      '🌟 [A] enhancement',
+      # ARCHIVED / LEGACY
+      'enhancement'
+    ]
 #
 
 - name: 'type:optimization'
   color: '#FF5F1F'
   description:
     'Improvement, optimazation of (1) throttle, (2) speed related issues.'
-  aliases: [ 'ℹ️ [T] optimization' ]
+  aliases:
+    [
+      'ℹ️ [T] optimization',
+      # ARCHIVED / LEGACY
+      'optimization'
+    ]
 #
 
 # ╭──────────────────────────────────────────────────────────────────────────────────╮

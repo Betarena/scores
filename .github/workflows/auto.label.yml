@@ -20,8 +20,8 @@ jobs:
       - uses: srealmoreno/label-sync-action@v2
         # with:
         # ╭─────
-        # │ NOTE: WARNING: IMPORTANT CRITICAL
-        # │ |:
+        # │ NOTE: WARNING:
+        # │ |: This will delete any labels not defined in the config file.
         # ╰─────
         #   clean-labels: true
   #
