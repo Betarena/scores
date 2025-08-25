@@ -52,6 +52,13 @@ We are building the first open-source live results and statistics platform with 
 
 See the `.docs/` directory for more (1) information about the project, (2) it's quirks, (3) code-style, (4) how to setup development, and more.
 
+### SIWE Authentication
+
+The middleware exposes a `POST /auth/siwe` endpoint that verifies an Ethereum
+signature and returns a Firebase custom token. Set the `FIREBASE_SERVICE_ACCOUNT`
+environment variable with the Firebase Admin SDK service account JSON to enable
+this flow.
+
 ## 🚦 Roadmap
 
 See the open issues for a list of proposed features (and known issues).
