@@ -192,7 +192,7 @@
 
   $: ({ currentPageRouteId, currentActiveModal, currentActiveToast, globalState, serverLang } = { ...$sessionStore });
   $: ({ theme } = { ...$userBetarenaSettings });
-  $: ({ username, lang, competition_number } = { ...$userBetarenaSettings.user?.scores_user_data });
+  $: ({ username, lang, competition_number, verified } = { ...$userBetarenaSettings.user?.scores_user_data });
   $: ({ uid, email } = { ...$userBetarenaSettings.user?.firebase_user_data });
   $: ({ route: { id: pageRouteId } } = $page);
 
@@ -243,6 +243,15 @@
     return;
   }
 
+  function redirectToOnBoard(register = true) {
+    const lang = $userBetarenaSettings.lang || $page.params.lang ;
+    let path = "";
+    if(lang && lang !== "en") {
+      path += `/${lang}`
+    }
+    path += register ? "/register" : "/login";
+    gotoSW(path);
+  }
   // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -351,23 +360,11 @@
   }
 
   $: if (currentActiveModal === "Auth_Modal"&& ![routeIdLogin, routeIdRegister].includes($page.route.id || "")) {
-    const lang = $page.params.lang || $userBetarenaSettings.lang;
-    let path = "";
-    if(lang && lang !== "en") {
-      path += `/${lang}`
-    }
-    path += "/login"
-    gotoSW(path, true);
+    redirectToOnBoard(false);
   }
 
-  $: if($userBetarenaSettings.user?.scores_user_data && !$userBetarenaSettings.user?.scores_user_data.verified) {
-    const lang = $page.params.lang || $userBetarenaSettings.lang;
-    let path = "";
-    if(lang && lang !== "en") {
-      path += `/${lang}`
-    }
-    path += "/register"
-    gotoSW(path, true);
+  $: if(![routeIdLogin, routeIdRegister].includes($page.route.id || "") && uid && !verified) {
+   redirectToOnBoard()
   }
 
   $: if (browser){

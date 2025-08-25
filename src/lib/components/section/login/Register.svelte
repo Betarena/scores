@@ -65,8 +65,9 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   $: ({ viewportType } = $session);
-  $: ({ currentStep, translations } = $loginStore);
+  $: ({ currentStep } = $loginStore);
   $: user = $userSettings.user?.scores_user_data;
+  $: translations = $page.data.auth_translations.data[0];
   let defaultSteps = [
     EmailStep,
     PasswordStep,
@@ -229,14 +230,8 @@
 
   async function getInitData() {
     const data = $page.data as PageData;
-    loginStore.update((v) => ({
-      ...v,
-      translations: {
-        ...data.auth_translations.data[0],
-        ...data.auth_translations.data[1],
-      },
-      countries: { ...data.auth_translations.data[2] },
-    }));
+    $loginStore.translations = { ...data.auth_translations.data[0] };
+    $loginStore.countries = { ...data.auth_translations.data[1] };
   }
 
   function loginWithGoogle() {

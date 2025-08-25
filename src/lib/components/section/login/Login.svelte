@@ -22,8 +22,9 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
+  import { page } from "$app/stores";
   import session from "$lib/store/session";
-  import userSettings from "$lib/store/user-settings";
+  import type { PageData } from ".svelte-kit/types/src/routes/(scores)/[[lang=lang]]/(auth)/login/$types";
   import { onMount } from "svelte";
   import { loginStore } from "./login-store";
   import EmailStep from "./steps/EmailStep.svelte";
@@ -46,14 +47,9 @@
 
   $: ({ viewportType } = $session);
   $: ({ currentStep } = $loginStore);
-  $: user = $userSettings.user?.scores_user_data;
-  let defaultSteps = [
-    EmailStep,
-    ResetPassword
-  ];
-  let stepMap: Record<string, typeof EmailStep> = {
+  let stepMap = {
     0: EmailStep,
-    1: ResetPassword
+    1: ResetPassword,
   };
 
   // #endregion ➤ 📌 VARIABLES
@@ -69,6 +65,14 @@
   onMount(() => {
     $loginStore.currentStep = 0;
     $loginStore.isLogin = true;
+    const data = $page.data as PageData;
+    loginStore.update((v) => ({
+      ...v,
+      translations: {
+        ...data.auth_translations.data[0],
+      },
+      countries: { ...data.auth_translations.data[1] },
+    }));
   });
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
@@ -85,12 +89,9 @@
 -->
 
 <div class="login-page {viewportType}">
-
   <div class="login-wrapper {viewportType}">
     <div class="content">
-      <svelte:component
-        this={stepMap[currentStep]}
-      />
+      <svelte:component this={stepMap[currentStep]} />
     </div>
   </div>
 </div>

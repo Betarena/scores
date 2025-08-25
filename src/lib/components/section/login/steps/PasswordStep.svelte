@@ -96,7 +96,7 @@
       if (!$loginStore.verifiedSteps.includes("password")) {
         $loginStore.verifiedSteps.push("password");
       }
-      updateUserProfileData({registration_type: ["email"]})
+      updateUserProfileData({ registration_type: ["email"] });
       $loginStore.currentStep += 1;
     } catch (error: any) {
       console.error("Registration error:", error);
@@ -104,16 +104,24 @@
       // Handle specific Firebase Auth errors
       switch (error.code) {
         case "auth/email-already-in-use":
-          errorMessage = translations["auth/email-already-in-use"] || "This email is already registered. Please use a different email or try signing in.";
+          errorMessage =
+            translations["auth/email-already-in-use"] ||
+            "This email is already registered. Please use a different email or try signing in.";
           break;
         case "auth/invalid-email":
-          errorMessage = translations["auth/invalid-email"] || "Please enter a valid email address.";
+          errorMessage =
+            translations["auth/invalid-email"] ||
+            "Please enter a valid email address.";
           break;
         case "auth/network-request-failed":
-          errorMessage = translations["auth/network-request-failed"] || "Network error. Please check your internet connection and try again.";
+          errorMessage =
+            translations["auth/network-request-failed"] ||
+            "Network error. Please check your internet connection and try again.";
           break;
         default:
-          errorMessage = translations["auth/registration_failed"] || "Registration failed. Please try again.";
+          errorMessage =
+            translations["auth/registration_failed"] ||
+            "Registration failed. Please try again.";
       }
       confirmPasswordError = errorMessage;
     } finally {
@@ -166,14 +174,17 @@
     <div class="form">
       <div class="header">
         <h2>{translations.choose_password || "Choose a password"}</h2>
-        <p class="subtitle">{translations.must_be_8_characters || "Must be at least 8 characters."}</p>
+        <p class="subtitle">
+          {translations.must_be_8_characters ||
+            "Must be at least 8 characters."}
+        </p>
       </div>
       <div class="form-body">
         <input type="email" value={$loginStore.email} hidden />
         <Input
           inputType="password"
           error={!!mainPasswordError}
-          placeholder= {translations.choose_password || "Choose a password"}
+          placeholder={translations.choose_password || "Choose a password"}
           bind:value={$loginStore.password}
           on:change={() => validatePassword($loginStore.password)}
         >
@@ -194,7 +205,9 @@
           disabled={disableButton}
           on:click={handleRegistration}
         >
-          {isLoading ?  translations.processing || "Processing..." : translations.continue || "Continue"}
+          {isLoading
+            ? translations.processing || "Processing..."
+            : translations.continue || "Continue"}
         </Button>
       </div>
     </div></Container
@@ -327,6 +340,13 @@
             line-height: var(--line-height-display-sm, 38px); /* 126.667% */
           }
         }
+      }
+    }
+
+    &.tablet {
+      .form {
+        max-width: 343px;
+        margin: 0 auto;
       }
     }
   }

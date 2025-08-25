@@ -29,7 +29,7 @@
   $: ({ user: { scores_user_data } = { scores_user_data: {} } } =
     $userSettings);
   $: ({ viewportType } = $session);
-  $: ({translations} = $loginStore)
+  $: ({ translations } = $loginStore);
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -147,11 +147,20 @@
   <Container hFull={false}>
     <div class="form">
       <div class="header">
-        <h2>{translations.follow_sportstacks ||  "Follow Sportstacks"}</h2>
-        <p class="subtitle">{translations.follow_at_least_3_publications || "Follow at least 3 publications"}</p>
+        <h2>{translations.follow_sportstacks || "Follow Sportstacks"}</h2>
+        <p class="subtitle">
+          {translations.follow_at_least_3_publications ||
+            "Follow at least 3 publications"}
+        </p>
       </div>
       <div class="form-body">
-        <SportsTackList {sportstacks} {translations} includeAbout={true} {loading} limit={5} />
+        <SportsTackList
+          {sportstacks}
+          {translations}
+          includeAbout={true}
+          {loading}
+          limit={5}
+        />
         <Button
           full={true}
           size="lg"
@@ -303,6 +312,13 @@
             line-height: var(--line-height-display-sm, 38px); /* 126.667% */
           }
         }
+      }
+    }
+
+    &.tablet {
+      .form {
+        max-width: 343px;
+        margin: 0 auto;
       }
     }
   }
