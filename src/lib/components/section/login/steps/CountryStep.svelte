@@ -138,7 +138,7 @@
         <p class="subtitle">{translations.where_are_you_from || "Where are you from?"}</p>
       </div>
       <div class="form-body">
-        <DropDownInput searchable={true} bind:value label="Country" options={country} placeholder={translations.search_country || "Select your country"} infoText="Select your country to customise your feed">
+        <DropDownInput searchable={true} bind:value label="Country" options={country} placeholder={translations.search_country || "Select your country"} infoText={translations.customise_feed || "Select your country to customise your feed"}>
           <span slot="icon" class="select-icon">
             <IconGlobe />
           </span>
