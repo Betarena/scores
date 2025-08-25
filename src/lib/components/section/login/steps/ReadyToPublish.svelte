@@ -8,6 +8,7 @@
 -->
 
 <script lang="ts">
+  import { page } from "$app/stores";
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -27,13 +28,53 @@
   import Container from "$lib/components/ui/wrappers/Container.svelte";
   import session from "$lib/store/session";
   import { gotoSW } from "$lib/utils/sveltekitWrapper";
+  import { updateUserProfileData } from "$lib/utils/user";
   import img from "../assets/publish.png";
   import img_desktop from "../assets/publish_desktop.png";
+  import img_tablet from "../assets/publish_tablet.png";
   import { loginStore } from "../login-store";
 
-  $: ({ viewportType } = $session);
-
+  
   // #endregion ➤ 📦 Package Imports
+  
+  // #region ➤ 📌 VARIABLES
+  
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+  
+  $: ({ viewportType } = $session);
+  $: translations = $page.data.auth_translations.data[0];
+  
+  // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🛠️ METHODS
+  
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+  
+  async function skip() {
+    updateUserProfileData({ verified: true });
+    $session.currentActiveModal = null;
+    gotoSW("/", true);
+  }
+  
+  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--
@@ -51,9 +92,9 @@
     <div class="side-banner" style="background-image: url({img_desktop});">
       <div class="cta">
         <div class="side-text-wrapper">
-          <h2>Start turning your ideas into reality.</h2>
+          <h2>{translations.start_tuning ||  "Start turning your ideas into reality."}</h2>
           <p>
-            Create your own publication and get full access to all features.
+            {translations.create_own_publication || "Create your own publication and get full access to all features."}
           </p>
         </div>
       </div>
@@ -61,14 +102,14 @@
   {/if}
   <div class="ready-to-publish">
     {#if viewportType !== "desktop"}
-      <img id="" src={img} alt="ready to publish" title="" loading="lazy" />
+      <img id="" src={viewportType === "tablet" ? img_tablet : img} alt="ready to publish" title="" loading="lazy" />
     {/if}
     <div class="text-wrapper">
       <Container>
         <div class="content">
           <div class="heading-wrapper">
-            <h2>Ready to publish?</h2>
-            <p>Create your own Sportstack and start building your brand.</p>
+            <h2>{translations.ready_to_publish || "Ready to publish?"}</h2>
+            <p>{translations.create_sportstack || "Create your own Sportstack and start building your brand."}</p>
           </div>
           <div class="actions">
             <Button
@@ -76,16 +117,13 @@
               type="primary"
               full={true}
               on:click={() => ($loginStore.currentStep += 1)}
-              >Create Publication</Button
+              >{translations.create_publication || "Create Publication"}</Button
             >
             <Button
               size="xl"
               type="secondary"
               full={true}
-              on:click={() => {
-                $session.currentActiveModal = null;
-                gotoSW("/", true);
-              }}>Skip for now</Button
+              on:click={skip}>{translations.skip_for_now || "Skip for now"}</Button
             >
           </div>
         </div>
@@ -279,6 +317,24 @@
             }
           }
         }
+      }
+    }
+
+    &.tablet {
+      .text-wrapper {
+        flex-grow: 1;
+      }
+      :global(.container-wrapper) {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center !important;
+        align-items: center !important;
+      }
+      .content {
+        max-width: 343px;
+        max-height: max-content;
+        margin: auto;
       }
     }
   }

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
+  import { page } from "$app/stores";
   import GridBg from "$lib/components/shared/backround-patterns/GridBG.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import SectionLabel from "$lib/components/ui/SectionLabel.svelte";
@@ -33,6 +34,8 @@
   let avatar = "";
   $: ({ id = 0, permalink = "" } = $loginStore.sportstack);
   $: ({ viewportType } = $session);
+  $: translations = $page.data.auth_translations.data[0];
+
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -131,8 +134,8 @@
   <Container hFull={false}>
     <div class="form">
       <div class="header">
-        <h2>Sportstack Avatar</h2>
-        <p class="subtitle">Choose a profile picture</p>
+        <h2>{translations.sportstack_avatar || "Sportstack Avatar"}</h2>
+        <p class="subtitle">{translations.choose_profile_picture || "Choose a profile picture"}</p>
       </div>
       <form
         class="form-body"
@@ -151,7 +154,7 @@
         />
         <input type="hidden" id="permalink" name="permalink" value={permalink} />
         <div class="profile-photo-wrapper">
-          <SectionLabel title="Your publication Avatar" text="Upload Avatar" />
+          <SectionLabel title={translations.your_publication_avatar || "Your publication Avatar"} text={translations.upload_avatar || "Upload Avatar"} />
           <SportstackAvatar size="xxl" src={avatar} />
           <Uploader bind:avatar on:upload={uploadProfilePicture} />
         </div>
@@ -161,7 +164,7 @@
           disabled={isLoading || !$loginStore.sportstack.data?.avatar}
           on:click={handleContinue}
         >
-          {isLoading ? "Updating..." : "Continue"}
+          {isLoading ? translations.processing || "Updating..." : translations.continue || "Continue"}
         </Button>
       </form>
     </div>
@@ -301,6 +304,13 @@
             line-height: var(--line-height-display-sm, 38px); /* 126.667% */
           }
         }
+      }
+    }
+
+    &.tablet {
+      .form {
+        max-width: 343px;
+        margin: 0 auto;
       }
     }
   }

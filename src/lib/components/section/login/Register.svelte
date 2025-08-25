@@ -134,9 +134,11 @@
         translations.create_publication_description ||
         "Create a new publication",
       steps: [
+        ReadyToPublish,
         SportstackDomainStep,
         SportstackProfileStep,
         SportstackDescriptionStep,
+        ReadyToCreate
       ],
       id: "publication",
     },
@@ -169,7 +171,6 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   async function updateSteps() {
-    return;
     if (!$userSettings.user) return;
     let steps: Array<typeof PasswordStep> = [];
     let newDesktopSteps: typeof desktopStepsGrouped = [];
@@ -215,12 +216,14 @@
       });
     }
     if (!steps.length) {
-      updateUserProfileData({ verified: true });
+      await updateUserProfileData({ verified: true });
       const history = $history_store.reverse();
       const prev_path = history.find(path => !path.includes("login") && !path.includes("register"));
       gotoSW(prev_path || "/", true);
       return;
     }
+    newDesktopSteps.push(defaultDesktopSteps.publication);
+    steps.push(ReadyToPublish, SportstackDomainStep, SportstackProfileStep, SportstackDescriptionStep, ReadyToCreate)
     let nexSteps: Record<string, typeof EmailStep> = {};
     steps.forEach((component, index) => (nexSteps[index] = component));
     desktopStepsGrouped = newDesktopSteps;
@@ -252,7 +255,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   onMount(() => {
-    // $loginStore.currentStep = 0;
+    $loginStore.currentStep = 0;
     $loginStore.isLogin = false;
     getInitData();
     updateSteps();
@@ -358,8 +361,10 @@
     </div>
     {#if stepMap[0] !== EmailStep || (currentStep && ![ReadyToPublish, ReadyToCreate].includes(stepMap[currentStep]))}
       <div class="pagination-wrapper">
-        {#each Object.entries(stepMap).filter(([_step, component]) => ![ReadyToCreate, ReadyToPublish].includes(component)) as step}
-          <div class="step-tab" class:active={Number(step) === currentStep} />
+        {#each Object.entries(stepMap) as step, index}
+        {#if ![ReadyToCreate, ReadyToPublish].includes(step[1])}
+           <div class="step-tab" class:active={Number(index) === currentStep} />
+        {/if}
         {/each}
       </div>
     {/if}

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
+  import { page } from "$app/stores";
   import GridBg from "$lib/components/shared/backround-patterns/GridBG.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import Input from "$lib/components/ui/Input.svelte";
@@ -24,12 +25,14 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   let isLoading = false;
-  let errorMessage = "";
   let form: HTMLFormElement
   let button: HTMLButtonElement
 
   $: ({id = 0, permalink = ""} = $loginStore.sportstack)
   $: ({ viewportType } = $session);
+  $: translations = $page.data.auth_translations.data[0];
+  $: about = $loginStore.sportstack.data?.about || "";
+
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -105,8 +108,8 @@
   <Container hFull={false}>
     <div class="form">
       <div class="header">
-        <h2>Sportstack Description</h2>
-        <p class="subtitle">Tell us about your Sportstack</p>
+        <h2>{translations.sportstack_description || "Sportstack Description"}</h2>
+        <p class="subtitle">{translations.tell_us_about_sportstack || "Tell us about your Sportstack"}</p>
       </div>
       <form class="form-body"  
         method="POST"
@@ -123,7 +126,7 @@
           size="lg"
           disabled={!$loginStore.sportstack.data?.about}
         >
-          {isLoading ? "Updating..." : "Create Publication"}
+          {isLoading ? translations.processing || "Updating..." : translations.create_publication || "Create Publication"}
         </Button>
       </form>
     </div>
@@ -263,6 +266,13 @@
             line-height: var(--line-height-display-sm, 38px); /* 126.667% */
           }
         }
+      }
+    }
+
+    &.tablet {
+      .form {
+        max-width: 343px;
+        margin: 0 auto;
       }
     }
   }

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
+  import { page } from "$app/stores";
   import { post } from "$lib/api/utils.js";
   import GridBg from "$lib/components/shared/backround-patterns/GridBG.svelte";
   import Button from "$lib/components/ui/Button.svelte";
@@ -27,6 +28,7 @@
   let inputError = false;
   let disabled = true;
   $: ({ viewportType } = $session);
+  $: translations = $page.data.auth_translations.data[0];
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -100,8 +102,8 @@
   <Container hFull={false}>
     <div class="form">
       <div class="header">
-        <h2>Sportstack Domain</h2>
-        <p class="subtitle">Choose your Sportstack handle</p>
+        <h2>{translations.sportstack_domain ||"Sportstack Domain"}</h2>
+        <p class="subtitle">{translations.choose_handle || "Choose your Sportstack handle"}</p>
       </div>
       <form
         class="form-body"
@@ -120,10 +122,10 @@
           bind:value={$loginStore.sportstack.permalink}
         >
           <span slot="leading-text">sportstack/</span>
-          <span slot="error">"The name is already in use."</span>
+          <span slot="error">{translations.the_name_in_use || "The name is already in use."}</span>
         </Input>
 
-        <Button full={true} {disabled} size="lg" submit={true}>Continue</Button>
+        <Button full={true} {disabled} size="lg" submit={true}>{translations.continue || "Continue"}</Button>
       </form>
     </div>
   </Container>
@@ -262,6 +264,13 @@
             line-height: var(--line-height-display-sm, 38px); /* 126.667% */
           }
         }
+      }
+    }
+
+    &.tablet {
+      .form {
+        max-width: 343px;
+        margin: 0 auto;
       }
     }
   }
