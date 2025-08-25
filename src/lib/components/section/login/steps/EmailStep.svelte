@@ -164,7 +164,9 @@
         else scoresAuthStore.updateData([["globalStateRemove", "Processing"]]);
         if ($loginStore.isLogin) {
           const history = $history_store.reverse();
-          const prev_path = history.find(path => !path.includes("login") && !path.includes("register"));
+          const prev_path = history.find(
+            (path) => !path.includes("login") && !path.includes("register")
+          );
           gotoSW(prev_path || "/", true);
         }
         dispatch("loginWithGoogle");
@@ -192,7 +194,7 @@
 
   function switchMode() {
     const lang = $page.params.lang;
-    let path = '';
+    let path = "";
     if (lang) {
       path += `/${lang}`;
     }
@@ -219,32 +221,43 @@
       // Handle specific Firebase Auth errors
       switch (error.code) {
         case "auth/user-not-found":
-          loginError = translations["auth/user-not-found"] || "No account found with this email address.";
+          loginError =
+            translations["auth/user-not-found"] ||
+            "No account found with this email address.";
           break;
         case "auth/wrong-password":
         case "auth/invalid-credential":
         case "auth/invalid-login-credentials":
-          loginError = translations["auth/wrong-credentials"] || "Invalid email or password. Please try again.";
+          loginError =
+            translations["auth/wrong-credentials"] ||
+            "Invalid email or password. Please try again.";
           break;
         case "auth/invalid-email":
-          loginError = translations["auth/invalid-email"] || "Please enter a valid email address.";
+          loginError =
+            translations["auth/invalid-email"] ||
+            "Please enter a valid email address.";
           emailError = true;
           break;
         case "auth/user-disabled":
           loginError =
-            translations["auth/user-disabled"] || "This account has been disabled. Please contact support.";
+            translations["auth/user-disabled"] ||
+            "This account has been disabled. Please contact support.";
           break;
         case "auth/too-many-requests":
-          loginError = translations["auth/too-many-requests"] || "Too many failed attempts. Please try again later.";
+          loginError =
+            translations["auth/too-many-requests"] ||
+            "Too many failed attempts. Please try again later.";
           break;
         case "auth/network-request-failed":
           loginError =
-            translations["auth/network-request-failed"] || "Network error. Please check your connection and try again.";
+            translations["auth/network-request-failed"] ||
+            "Network error. Please check your connection and try again.";
           break;
         default:
           // Fallback for any other errors
           loginError =
-            translations["auth/network-request-failed"] || "An unexpected error occurred. Please try again.";
+            translations["auth/network-request-failed"] ||
+            "An unexpected error occurred. Please try again.";
           console.error("Login error:", error);
       }
     }
@@ -313,7 +326,9 @@
             </div>
           </Input>
           <div class="forgot-password">
-            <Checkbox title={translations.remember_me|| "Remember for 30 days"} />
+            <Checkbox
+              title={translations.remember_me || "Remember for 30 days"}
+            />
             <Button
               type="link-color"
               size="md"
@@ -326,7 +341,8 @@
             full={true}
             size="lg"
             on:click={login}
-            disabled={disableButton || !email || !password}>{translations.log_in || "Log in"}</Button
+            disabled={disableButton || !email || !password}
+            >{translations.log_in || "Log in"}</Button
           >
         {:else}
           <Button
@@ -356,7 +372,7 @@
           {:else}
             {translations.sign_up_google || "Sign up with Google"}
           {/if}
-      </SocialButton>
+        </SocialButton>
         {#if isLogin}
           <SocialButton
             company="Metamask"
@@ -369,9 +385,15 @@
       </div>
       <div class="login-option" on:click={switchMode}>
         <span class="text"
-          >{isLogin ? translations.no_account || "Don't have an account?" : translations.already_have_account || "Already have an account?"}
+          >{isLogin
+            ? translations.no_account || "Don't have an account?"
+            : translations.already_have_account || "Already have an account?"}
         </span>
-        <span class="option">{isLogin ? translations.sign_up || "Sign up" : translations.log_in || "Log in"} </span>
+        <span class="option"
+          >{isLogin
+            ? translations.sign_up || "Sign up"
+            : translations.log_in || "Log in"}
+        </span>
       </div>
     </div></Container
   >
@@ -382,7 +404,9 @@
       gotoSW("/", true);
     }}
   >
-    <span class="text">{translations.skip_continue_as || "Skip and continue as "} </span>
+    <span class="text"
+      >{translations.skip_continue_as || "Skip and continue as "}
+    </span>
     <div class="quest">{translations.guest || "Guest"}</div>
   </div>
 </div>
@@ -557,6 +581,12 @@
             line-height: var(--line-height-display-sm, 38px); /* 126.667% */
           }
         }
+      }
+    }
+    &.tablet {
+      .form {
+        max-width: 343px;
+        margin: 0 auto;
       }
     }
   }

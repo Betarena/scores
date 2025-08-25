@@ -289,5 +289,11 @@
         }
       }
     }
+     &.tablet {
+      .form {
+        max-width: 343px;
+        margin: 0 auto;
+      }
+    }
   }
 </style>

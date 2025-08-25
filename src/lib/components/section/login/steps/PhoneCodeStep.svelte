@@ -77,21 +77,20 @@
   function handleInputChange(e: Event, index: number) {
     const input = e.target as HTMLInputElement;
     let inputValue = input.value;
-    
+
     // Handle iOS SMS autofill
     if (inputValue.length > 1) {
-      
       const digits = inputValue.replace(/\D/g, "").slice(0, length);
-      
+
       for (let i = 0; i < length; i++) {
         if (otpInputs[i]) {
           otpInputs[i].value = digits[i] || "";
         }
       }
-      
+
       const nextIndex = Math.min(digits.length, length - 1);
       focusInput(nextIndex);
-      
+
       if (digits.length === length) {
         handleVerifyCode();
       }
@@ -100,7 +99,7 @@
 
     const v = inputValue.replace(/\D/g, "");
     input.value = v;
-    
+
     if (v && index < length - 1) {
       focusInput(index + 1);
     }
@@ -130,18 +129,18 @@
 
   function handleHiddenInputChange(e: Event) {
     const input = e.target as HTMLInputElement;
-    const code = input.value.replace(/\D/g, '').slice(0, length);
+    const code = input.value.replace(/\D/g, "").slice(0, length);
     if (code.length >= 1) {
       for (let i = 0; i < length; i++) {
         if (otpInputs[i]) {
-          otpInputs[i].value = code[i] || '';
+          otpInputs[i].value = code[i] || "";
         }
       }
       const nextIndex = Math.min(code.length - 1, length - 1);
       focusInput(nextIndex);
-      
-      input.value = '';
-      
+
+      input.value = "";
+
       if (code.length === length) {
         handleVerifyCode();
       }
@@ -176,47 +175,55 @@
     errorMessage = "";
 
     try {
-     const credentials = await verifyPhoneCode(confirmationResult, value);
-     successAuthComplete("login", credentials.user, undefined);
+      const credentials = await verifyPhoneCode(confirmationResult, value);
+      successAuthComplete("login", credentials.user, undefined);
       // Phone verification successful - move to next step
       if (!$loginStore.verifiedSteps.includes("phone")) {
         $loginStore.verifiedSteps.push("phone");
       }
       $loginStore.currentStep += 1;
     } catch (error: any) {
-
       // Handle specific Firebase Auth errors
       switch (error.code) {
         case "auth/invalid-verification-code":
-          errorMessage = translations["auth/invalid-verification-code"] ||
+          errorMessage =
+            translations["auth/invalid-verification-code"] ||
             "Invalid verification code. Please check and try again.";
           break;
         case "auth/missing-verification-code":
-          errorMessage = translations["auth/missing-verification-code"] ||
+          errorMessage =
+            translations["auth/missing-verification-code"] ||
             "Please enter the verification code.";
           break;
         case "auth/code-expired":
-          errorMessage = translations["auth/code-expired"] ||
+          errorMessage =
+            translations["auth/code-expired"] ||
             "Verification code has expired. Please request a new one.";
           break;
         case "auth/too-many-requests":
-          errorMessage = translations["auth/too-many-requests"] ||
+          errorMessage =
+            translations["auth/too-many-requests"] ||
             "Too many attempts. Please try again later.";
           break;
         case "auth/network-request-failed":
-          errorMessage = translations["auth/network-request-failed"] ||
+          errorMessage =
+            translations["auth/network-request-failed"] ||
             "Network error. Please check your internet connection and try again.";
           break;
         case "auth/provider-already-linked":
-          errorMessage = translations["auth/provider-already-linked"] ||
+          errorMessage =
+            translations["auth/provider-already-linked"] ||
             "This phone number is already linked to another account.";
           break;
         case "auth/account-exists-with-different-credential":
-          errorMessage = translations["auth/provider-already-linked"]  ||
+          errorMessage =
+            translations["auth/provider-already-linked"] ||
             "This phone number is already linked to another account.";
           break;
         default:
-          errorMessage = translations["auth/failed-to-verify"] || "Failed to verify code. Please try again.";
+          errorMessage =
+            translations["auth/failed-to-verify"] ||
+            "Failed to verify code. Please try again.";
       }
 
       // Clear the input for retry
@@ -310,7 +317,9 @@
 
 <div class="phone-step {viewportType}">
   <div class="logo-wrapper">
-    <div class="bg"><GridBg size={viewportType === "desktop" ? "768" : "468"} /></div>
+    <div class="bg">
+      <GridBg size={viewportType === "desktop" ? "768" : "468"} />
+    </div>
     <div class="phone-icon">
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -333,7 +342,10 @@
     <div class="form">
       <div class="header">
         <h2>{translations.check_phone || "Check your phone"}</h2>
-        <p class="subtitle">{translations.verification_sent || "We sent a verification code to your phone"}</p>
+        <p class="subtitle">
+          {translations.verification_sent ||
+            "We sent a verification code to your phone"}
+        </p>
       </div>
       <div class="form-body">
         <div class="otp-wrapper">
@@ -377,7 +389,9 @@
           disabled={!isValid || isLoading}
           on:click={handleVerifyCode}
         >
-          {isLoading ? translations.processing || "Verifying..." : translations.verify || "Verify"}
+          {isLoading
+            ? translations.processing || "Verifying..."
+            : translations.verify || "Verify"}
         </Button>
       </div>
     </div>
@@ -385,7 +399,9 @@
   <Container hFull={false}>
     <div class="support-text">
       <div class="resend-wrapper">
-        <span>{translations.didnt_receive_code ||  "Didn't receive the code?"}</span>
+        <span
+          >{translations.didnt_receive_code || "Didn't receive the code?"}</span
+        >
         <button class="resend" disabled={isLoading} on:click={resendCode}>
           {translations.click_resend || "Click to resend"}
         </button>
@@ -690,6 +706,13 @@
             line-height: var(--line-height-display-sm, 38px); /* 126.667% */
           }
         }
+      }
+    }
+
+    &.tablet {
+      .form {
+        max-width: 343px;
+        margin: 0 auto;
       }
     }
   }

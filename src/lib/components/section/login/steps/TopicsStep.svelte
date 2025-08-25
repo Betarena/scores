@@ -31,7 +31,7 @@
   let tags: AuthorsTagsMain[] = [];
   let loading = false;
   $: ({ viewportType } = $session);
-  $: ({translations} = $loginStore)
+  $: ({ translations } = $loginStore);
   $: selectedTopics = scores_user_data?.following?.tags || [];
 
   // #endregion ➤ 📌 VARIABLES
@@ -114,7 +114,12 @@
 
 <div class="topics-step {viewportType}">
   <div class="logo-wrapper">
-    <div class="bg"><CircleBg size={viewportType === "desktop" ? "768" : "468"} animation="grow" /></div>
+    <div class="bg">
+      <CircleBg
+        size={viewportType === "desktop" ? "768" : "468"}
+        animation="grow"
+      />
+    </div>
     <div class="icon-wrapper">
       <IconTopics />
     </div>
@@ -123,26 +128,30 @@
     <div class="form">
       <div class="header">
         <h2>{translations.follow_topics || "Follow Topics"}</h2>
-        <p class="subtitle">{translations.follow_at_least_3_topics || "Follow at least 3 topics"}</p>
+        <p class="subtitle">
+          {translations.follow_at_least_3_topics || "Follow at least 3 topics"}
+        </p>
       </div>
       <div class="form-body">
         <div class="topics-grid">
           {#if loading}
-                {#each Array(20) as _item}
-                <LoaderBadge width={58 + Math.floor(Math.random() * (120 - 58 + 1))} />
-              {/each}
+            {#each Array(20) as _item}
+              <LoaderBadge
+                width={58 + Math.floor(Math.random() * (120 - 58 + 1))}
+              />
+            {/each}
           {:else}
-             {#each tags as tag}
-               <Badge
-                 size="lg"
-                 hover={true}
-                 color={selectedTopics.includes(tag.id) ? "brand" : "gray"}
-                 active={false}
-                 on:click={() => toggleTopic(tag.id)}
-               >
-                 {tag.name}
-               </Badge>
-             {/each}
+            {#each tags as tag}
+              <Badge
+                size="lg"
+                hover={true}
+                color={selectedTopics.includes(tag.id) ? "brand" : "gray"}
+                active={false}
+                on:click={() => toggleTopic(tag.id)}
+              >
+                {tag.name}
+              </Badge>
+            {/each}
           {/if}
         </div>
         <Button
@@ -297,6 +306,13 @@
             line-height: var(--line-height-display-sm, 38px); /* 126.667% */
           }
         }
+      }
+    }
+
+    &.tablet {
+      .form {
+        max-width: 343px;
+        margin: 0 auto;
       }
     }
   }

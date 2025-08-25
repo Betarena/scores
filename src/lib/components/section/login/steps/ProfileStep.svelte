@@ -35,7 +35,7 @@
   let avatar = "";
 
   $: ({ viewportType } = $session);
-  $: ({translations}= $loginStore)
+  $: ({ translations } = $loginStore);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -97,7 +97,7 @@
     try {
       // Update user profile data
       await updateUserProfileData({
-        name: name
+        name: name,
       });
 
       // Move to next step
@@ -113,7 +113,7 @@
   // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
-  
+
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'logic' that should run            │
@@ -125,8 +125,8 @@
     name = $loginStore.name;
     avatar = $loginStore.avatar;
   });
-  
 </script>
+
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ 💠 Svelte Component HTML                                                  d       │
@@ -140,7 +140,9 @@
 
 <div class="profile-step {viewportType}">
   <div class="logo-wrapper">
-    <div class="bg"><GridBg size={viewportType === "desktop" ? "768" : "468"} /></div>
+    <div class="bg">
+      <GridBg size={viewportType === "desktop" ? "768" : "468"} />
+    </div>
     <div class="profile-icon">
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -163,11 +165,13 @@
     <div class="form">
       <div class="header">
         <h2>{translations.profile || "Profile"}</h2>
-        <p class="subtitle">{translations.set_up_profile ||  "Set up your profile"}</p>
+        <p class="subtitle">
+          {translations.set_up_profile || "Set up your profile"}
+        </p>
       </div>
       <div class="form-body">
         <Input
-          label={translations.name || "Name"} 
+          label={translations.name || "Name"}
           bind:value={name}
           required={true}
           on:blur={updateUserName}
@@ -176,7 +180,8 @@
 
         <div class="profile-photo-wrapper">
           <SectionLabel
-            text= {translations.photo_displayed || "This will be displayed on your profile."}
+            text={translations.photo_displayed ||
+              "This will be displayed on your profile."}
             title={translations.your_photo || "Your photo"}
           />
           <Avatar size="xxl" src={avatar} />
@@ -184,9 +189,9 @@
             translations={{
               upload_thumbnail_action: translations.click_upload,
               upload_thumbnail: translations.or_drag_drop,
-              or: translations.or
+              or: translations.or,
             }}
-            bind:avatar={avatar}
+            bind:avatar
             on:upload={uploadProfilePicture}
           />
         </div>
@@ -196,7 +201,9 @@
           disabled={!name || isLoading}
           on:click={handleContinue}
         >
-          {isLoading ? translations.processing || "Updating..." : translations.continue || "Continue"}
+          {isLoading
+            ? translations.processing || "Updating..."
+            : translations.continue || "Continue"}
         </Button>
       </div>
     </div>
@@ -337,6 +344,13 @@
             line-height: var(--line-height-display-sm, 38px); /* 126.667% */
           }
         }
+      }
+    }
+
+    &.tablet {
+      .form {
+        max-width: 343px;
+        margin: 0 auto;
       }
     }
   }

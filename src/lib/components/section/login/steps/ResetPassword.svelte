@@ -60,7 +60,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   function validateEmail(email: string): boolean {
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && email) {      
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && email) {
       return false;
     }
     emailError = false;
@@ -104,7 +104,9 @@
 
 <div class="reset-password-step {viewportType}">
   <div class="logo-wrapper">
-    <div class="bg"><GridBg size={viewportType === "desktop" ? "768" : "468"} /></div>
+    <div class="bg">
+      <GridBg size={viewportType === "desktop" ? "768" : "468"} />
+    </div>
     <div class="key-icon">
       <svg
         width="29"
@@ -127,7 +129,10 @@
     <div class="form">
       <div class="header">
         <h2>{translations.forgot_password || "Forgot password?"}</h2>
-        <p class="subtitle">{translations.no_worries || "No worries, we’ll send you reset instructions."}</p>
+        <p class="subtitle">
+          {translations.no_worries ||
+            "No worries, we’ll send you reset instructions."}
+        </p>
       </div>
       <div class="form-body">
         <Input
@@ -147,7 +152,8 @@
           <div slot="info">
             {#if isSent}
               <span class="success-info">
-                {translations.reset_link_sent || "A reset link has been sent to your email."}
+                {translations.reset_link_sent ||
+                  "A reset link has been sent to your email."}
               </span>
             {/if}
           </div>
@@ -158,35 +164,36 @@
             full={true}
             size="lg"
             disabled={disableButton}
-            on:click={reset}>{translations.send_reset_link || "Set reset link"}</Button
+            on:click={reset}
+            >{translations.send_reset_link || "Set reset link"}</Button
           >
-          {/if}
-          <Button
-            type="link-gray"
-            size="md"
-            on:click={() => {
-              $loginStore.currentStep = 0;
-            }}
-          >
-            <div class="back-button">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 20 20"
-                fill="none"
-              >
-                <path
-                  d="M15.8333 10.0003H4.16663M4.16663 10.0003L9.99996 15.8337M4.16663 10.0003L9.99996 4.16699"
-                  stroke="currentColor"
-                  stroke-width="1.66667"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-              <span>{translations.back_to_login || "Back to log in"}</span>
-            </div>
-          </Button>
+        {/if}
+        <Button
+          type="link-gray"
+          size="md"
+          on:click={() => {
+            $loginStore.currentStep = 0;
+          }}
+        >
+          <div class="back-button">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 20 20"
+              fill="none"
+            >
+              <path
+                d="M15.8333 10.0003H4.16663M4.16663 10.0003L9.99996 15.8337M4.16663 10.0003L9.99996 4.16699"
+                stroke="currentColor"
+                stroke-width="1.66667"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <span>{translations.back_to_login || "Back to log in"}</span>
+          </div>
+        </Button>
       </div>
     </div>
   </Container>
@@ -320,7 +327,7 @@
         color: var(--colors-text-text-success-primary-600, #fff);
       }
     }
-     &.desktop {
+    &.desktop {
       .form {
         .header {
           gap: var(--spacing-lg, 12px);
@@ -332,6 +339,13 @@
             line-height: var(--line-height-display-sm, 38px); /* 126.667% */
           }
         }
+      }
+    }
+
+    &.tablet {
+      .form {
+        max-width: 343px;
+        margin: 0 auto;
       }
     }
   }
