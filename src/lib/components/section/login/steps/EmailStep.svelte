@@ -60,6 +60,8 @@
     loginError = "";
   }
 
+  $: console.log("Translations: ", translations)
+
   // Clear login error when password changes
   $: if (password) {
     loginError = "";
@@ -296,9 +298,9 @@
   <Container hFull={false}>
     <div class="form">
       <div class="header">
-        <h2>{translations.welcome_to_betarena || "Welcome to Betarena"}</h2>
+        <h2>{isLogin ? translations.welcome_back || "Welcome back" : translations.welcome_to_betarena || "Welcome to Betarena"}</h2>
         <p class="subtitle">
-          {translations.join_home || "Join the home of sports media creators."}
+          {isLogin ? translations.enter_details || "Please enter your details." : translations.join_home || "Join the home of sports media creators."}
         </p>
       </div>
       <div class="form-body">
