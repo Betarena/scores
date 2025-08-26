@@ -98,7 +98,11 @@
 -->
 
 <div class="list-item {viewportType}">
-  <a href="/a/sportstack/{permalink}"on:click={(e) => {!href && e.preventDefault()}} class="user-info">
+  <svelte:element
+    this={href ? "a" : "div"}
+    href={href ? `/a/sportstack/${permalink}` : null}
+    class="user-info"
+  >
     <div class="avatar-wrapper">
       <SportstackAvatar {size} src={avatar} />
     </div>
@@ -108,8 +112,8 @@
         <div class="user-about">{about}</div>
       {/if}
     </div>
-  </a>
-  {#if uid!== ctx?.firebase_user_data?.uid && action_button}
+  </svelte:element>
+  {#if uid !== ctx?.firebase_user_data?.uid && action_button}
     <Button
       disabled={user.actionButton === false}
       type={isFollow ? "secondary" : "primary"}
@@ -176,17 +180,17 @@
           line-height: var(--Line-height-text-sm, 20px); /* 142.857% */
         }
         .user-about {
-            color: var(--colors-text-text-tertiary-600, #8c8c8c);
-            font-family: var(--font-family-font-family-body, Roboto);
-            font-size: var(--font-size-text-xs, 12px);
-            font-style: normal;
-            font-weight: 400;
-            line-height: var(--line-height-text-xs, 18px); /* 150% */
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            text-overflow: ellipsis;
+          color: var(--colors-text-text-tertiary-600, #8c8c8c);
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-xs, 12px);
+          font-style: normal;
+          font-weight: 400;
+          line-height: var(--line-height-text-xs, 18px); /* 150% */
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
       }
     }

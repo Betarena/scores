@@ -182,6 +182,7 @@
         $loginStore.verifiedSteps.push("phone");
       }
       $loginStore.recaptchaVerifier?.clear();
+      $loginStore.recaptchaVerifier = null;
       $loginStore.currentStep += 1;
     } catch (error: any) {
       // Handle specific Firebase Auth errors

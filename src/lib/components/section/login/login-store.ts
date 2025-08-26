@@ -11,7 +11,7 @@ export const loginStore = writable({
     avatar: "",
     phoneNumber: "",
     confirmationResult: null as ConfirmationResult | null,
-    recaptchaVerifier: null as RecaptchaVerifier | null,
+    recaptchaVerifier: undefined as RecaptchaVerifier | null | undefined,
     translations: {} as TranslationAuthenticationDataJSONSchema,
     country: "",
     countries: {} as Record<string, string>,
