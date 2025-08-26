@@ -185,8 +185,16 @@ export async function main
   objResponse.dataArticle = JSON.parse
   (
 		JSON.stringify(objResponse.dataArticle)
+      // ╭─────
+      // │ NOTE:
+      // │ |: [LEGACY] Replace all instances of 'scores.betarena.com' with the parent config URL.
+      // ╰─────
       ?.replaceAll('scores.betarena.com', parentData?.config?.url)
-      ?.replaceAll('{url}', parentData?.config?.url)
+      // ╭─────
+      // │ NOTE:
+      // │ |: Replace all instances of '{url}' with the parent config URL.
+      // ╰─────
+      ?.replaceAll('{url}', `https://${parentData?.config?.url}`)
 	);
 
   // ╭─────

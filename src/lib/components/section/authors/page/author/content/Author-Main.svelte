@@ -292,7 +292,7 @@
   {#key $userSettings.theme}
     <div id="content" data-betarena-zone-id="2,3" bind:this={contentContainer}>
       {@html widgetData.article.data?.content.replaceAll(
-        /<img[^>]+src='([^'>]+)'/g,
+        /<img[^>]+src=["']([^"'>]+)["']/g,
         (match, src) => {
           return match.replace(
             src,

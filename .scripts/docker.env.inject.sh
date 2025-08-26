@@ -12,7 +12,11 @@
 # │ 📝 Description                                                                   │
 # ┣──────────────────────────────────────────────────────────────────────────────────┫
 # │ BETARENA (Module)
-# │ |: <insert-module-summary-here>
+# │ |: Injects the environment variables into the VITE build files,
+# │ |: by replacing the 'VITE_X_' with 'VITE_'.
+# │ |: This is done to ensure that the environment variables are available in the
+# │ |: production build, and that the 'VITE_' variables are not exposed.
+# │ |: The script is executed during the 'docker build' process.
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 # set -o allexport
@@ -54,7 +58,9 @@ do
   # │ NOTE:
   # │ |: Replace ALL occurences of the '$key' in:
   # │ |: [1] (disabled) All Files
-  # │ |: [2] All Files with '.js' and '.css' extension
+  # │ |: [2] All Files with '.js,.css' extension. Ignore '.txt' and '.xml' files as these are mounted and don't contain secret values.
+  # ┣─────
+  # │ https://www.unix.com/shell-programming-and-scripting/268208-problems-ampersand-sed-command.html
   # ┣─────
   # │ NOTE:
   # │ |: [1] 'gsed' is used instead of 'sed' to support MacOS
@@ -66,6 +72,8 @@ do
   #
   find build \
     -type f \
+    ! -name '*.txt' \
+    ! -name '*.xml' \
     -exec sed \
     -i "s|${key}|${value_adjusted}|g" '{}' +
   #

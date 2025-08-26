@@ -93,6 +93,18 @@ declare global
        * 📝 State of currest request expressed as a 'Set()'
        */
       setState?: Set < ISettingsState >;
+      /**
+       * @description
+       * 📝 Current request language
+       */
+      metadata?:
+      {
+        /**
+         * @description
+         * 📝 Set domain value
+         */
+        domain?: string;
+      }
 		}
   }
 }

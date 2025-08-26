@@ -67,20 +67,20 @@ export default defineConfig
 
     console.log('process.env.CI_GITHUB_DEPLOYMENT_STAGING', process.env.CI_GITHUB_DEPLOYMENT_STAGING);
 
-    if (process.env.CI_GITHUB_DEPLOYMENT_STAGING)
+    if (process.env.CI_GITHUB_DEPLOYMENT_STAGING == undefined)
     {
       console.log('📜 [3] Loaded using (file): .env.ci-github-deployment-staging');
-      // // [🐞]
-      // console.log
-      // (
-      //   `
-      //   // ╭──────────────────────────────────────────────────────────────────────────────────╮
-      //   // │ 🔒 Loaded secrets ⬇️                                                             │
-      //   // ╰──────────────────────────────────────────────────────────────────────────────────╯
-      //   `.replaceAll('  ','')
-      // );
-      // // [🐞]
-      // console.log(loadEnv(mode, process.cwd()));
+      // [🐞]
+      console.log
+      (
+        `
+        // ╭──────────────────────────────────────────────────────────────────────────────────╮
+        // │ 🔒 Loaded secrets ⬇️                                                             │
+        // ╰──────────────────────────────────────────────────────────────────────────────────╯
+        `.replaceAll('  ','')
+      );
+      // [🐞]
+      console.log(loadEnv(mode, process.cwd()));
     }
 
     const

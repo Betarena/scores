@@ -9,13 +9,15 @@
   import Input from "$lib/components/ui/Input.svelte";
   import SocialButton from "$lib/components/ui/SocialButton.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
-  import { auth } from "$lib/firebase/init";
+  import { app, auth, instanceFirebaseFunctions } from "$lib/firebase/init";
   import history_store from "$lib/store/history";
   import session from "$lib/store/session";
   import { successAuthComplete } from "$lib/utils/authentication";
-  import { AU_W_TAG, dlog, errlog } from "$lib/utils/debug";
+  import { AU_W_TAG, dlog, dlogv2, errlog } from "$lib/utils/debug";
   import { gotoSW } from "$lib/utils/sveltekitWrapper";
   import { tryCatchAsync } from "@betarena/scores-lib/dist/util/common";
+  import { getMoralisAuth } from '@moralisweb3/client-firebase-auth-utils';
+  import { signInWithMoralis } from '@moralisweb3/client-firebase-evm-auth';
   import {
     fetchSignInMethodsForEmail,
     GithubAuthProvider,
@@ -167,6 +169,7 @@
           const prev_path = history.find(
             (path) => !path.includes("login") && !path.includes("register")
           );
+          $session.currentActiveModal = null;
           gotoSW(prev_path || "/", true);
         }
         dispatch("loginWithGoogle");
@@ -185,6 +188,331 @@
         // [🐞]
         errlog(`❌ Google auth error: ${ex}`);
 
+        return;
+      }
+    );
+
+    return;
+  }
+
+  function providerDetect
+  (
+    walletType: 'isMetaMask' | 'isCoinbaseWallet' | 'isBraveWallet'
+  ): [ boolean, any ]
+  {
+    // ╭─────
+    // │ CHECK :|: no ethereum wallet detected.
+    // ╰─────
+    if (!window.ethereum)
+    {
+      // [🐞]
+      dlog
+      (
+        `${AU_W_TAG[0]} 🛑 - window.ethereum is ${window.ethereum}`
+      );
+
+      // ╭─────
+      // │ NOTE:
+      // │ > or, throw new Error("No injected ethereum object.");
+      // ╰─────
+      return [
+        false,
+        null
+      ];
+    }
+
+    let
+      /**
+       * @description
+       * 📝 Wallet selected by `user`.
+      */
+      targetSelectWallet = undefined
+    ;
+
+    // ╭─────
+    // │ CHECK :|: for multiple wallets owned/visible by client/user.
+    // ╰─────
+    if (Array.isArray(window.ethereum?.providers))
+    {
+      if (walletType == 'isMetaMask')
+        targetSelectWallet = window.ethereum?.providers
+          ?.find
+          (
+            (
+              provider
+            ) =>
+            {
+              return provider?.[walletType] && provider?.isBraveWallet == undefined
+            }
+          )
+        ;
+      ;
+      // [🐞]
+      dlogv2
+      (
+        AU_W_TAG[0],
+        [
+          `🟦 Multiple wallet providers identified: ${window.ethereum?.providers?.length}`,
+          `🟦 var: targetSelectWallet ${targetSelectWallet}`,
+          `🟦 var: window.ethereum.providers ${window.ethereum?.providers}`
+        ]
+      );
+    }
+    else
+    {
+      const if_M_0: boolean
+        = walletType == 'isMetaMask'
+        && window.ethereum?.isBraveWallet == undefined
+        && window.ethereum?.isMetaMask != undefined
+        && window.ethereum?.isMetaMask
+      ;
+      if (if_M_0) targetSelectWallet = window.ethereum?.[walletType];
+
+      // [🐞]
+      dlogv2
+      (
+        `${AU_W_TAG[0]}`,
+        [
+          `🟦 Single provider identified! ${window.ethereum}`,
+          `🟦 var: targetSelectWallet ${targetSelectWallet}`,
+          `🟦 var: window.ethereum ${window.ethereum}`
+        ]
+      );
+    }
+
+    // ╭─────
+    // │ CHECK :|: for absent selected wallet.
+    // ╰─────
+    if (targetSelectWallet == undefined)
+    {
+      // [🐞]
+      dlog
+      (
+        `${AU_W_TAG[0]} 🔴 no target wallet (${walletType}) identified`
+      );
+
+      return [
+        false,
+        null
+      ];
+    }
+
+    // [🐞]
+    dlog
+    (
+      `${AU_W_TAG[0]} 🟢 ${walletType} identified`
+    );
+
+    // ╭─────
+    // │ NOTE: WARNING: IMPORTANT CRITICAL
+    // │ > conflicting use of CoinBaseWallet and MetaMask on client/users browser.
+    // │ > Setting MetaMask as main wallet.
+    // ╰─────
+
+    // ╭─────
+    // │ WARNING:
+    // │ > (👇) causes issues with FireFox
+    // ╰─────
+    // targetSelectWallet.request({ method: 'eth_requestAccounts' });
+
+    // ╭─────
+    // │ NOTE:
+    // │ > (👇) Not working
+    // ╰─────
+    // window.ethereum.setSelectedProvider(targetSelectWallet);
+    // window.ethereum.request
+    // ({
+    //   method: 'wallet_requestPermissions',
+    //   params: [{ eth_accounts: {}}]
+    // });
+
+    return [
+      true,
+      targetSelectWallet
+    ];
+  }
+
+
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🟥 MAIN
+   * @description
+   *  - 📣 sign-in/up user using Web3 MetaMask (using MoralisAPI).
+   *  - 📣 NOTE: only MetaMask extension supported.
+   * @see https://firebase.google.com/docs/auth/web/email-link-auth?hl=en&authuser=0
+   * @return { Promise < void > }
+   */
+  async function authenticateWithMetamask
+  (
+  ): Promise < void >
+  {
+    if (!browser) return;
+
+    await tryCatchAsync
+    (
+      async (
+      ): Promise < void > =>
+      {
+        scoresAuthStore.updateData
+        (
+          [
+            ['globalStateAdd', 'Processing']
+          ]
+        );
+
+        // ╭─────
+        // │ CHECK:
+        // │ > mobile device.
+        // ╰─────
+        const if_M_0: boolean
+          // ╭─────
+          // │ NOTE: WARNING:
+          // │ > unreliable, does not work correcrlty at times
+          // ╰─────
+          // typeof screen.orientation !== 'undefined'
+          // navigator?.userAgentData?.mobile
+          = /Mobi/i.test(window.navigator.userAgent)
+          && window.ethereum == null
+        ;
+        if (if_M_0)
+        {
+          // ╭─────
+          // │ CHECK:
+          // │ > navigate to MetaMask in-app browser.
+          // ╰─────
+          // await goto('https://metamask.app.link/dapp/scores.betarena.com/?dappLogin=true') // ✅ works
+          // await goto('https://metamask.app.link/dapp/http://192.168.0.28:3050/') // ❌ does not work
+          // await goto('https://metamask.app.link/dapp/192.168.0.28:3050/?dappLogin=true') // ❌ does not work
+          const
+            dappUrl = $page.url.host,
+            metamaskAppDeepLink = `https://metamask.app.link/dapp/${dappUrl}?metmaskAuth=true`
+          ;
+          window.open(metamaskAppDeepLink, '_self');
+          scoresAuthStore.updateData
+          (
+            [
+              ['globalStateRemove', 'Processing']
+            ]
+          );
+          return;
+        }
+
+        // ╭─────
+        // │ CHECK:
+        // │ > metaMask is NOT present, exit.
+        // ╰─────
+        if (!providerDetect('isMetaMask')[0])
+        {
+          // [🐞]
+          dlog
+          (
+            `${AU_W_TAG[0]} 🔴 Moralis Auth not found!`
+          );
+
+          // [🐞]
+          alert
+          (
+            'Please install the MetaMask Wallet Extension!'
+          );
+
+          scoresAuthStore.updateData
+          (
+            [
+              ['globalStateRemove', 'Processing']
+            ]
+          );
+          return;
+        }
+
+        const
+          moralisAuth = getMoralisAuth
+          (
+            app,
+            {
+              auth,
+              functions: instanceFirebaseFunctions
+            }
+          ),
+          moralisAuthInstance = await signInWithMoralis(moralisAuth)
+        ;
+
+        // ╭─────
+        // │ NOTE: TEST
+        // │ > Moralis Authentication [TEST]
+        // │ FIXME:
+        // │ > create walletConnect provider.
+        // │ > ❌ Not Working
+        // │ > WalletConnectProvider error DOC: REF: [10]
+        // ╰─────
+        /*
+          const provider = new WalletConnectProvider({
+            infuraId: "a523c408585b0f7c88a7df7a9d70dfe6",
+          });
+          await provider.enable();
+          const moralisAuthInstance = await signInWithMoralis(moralisAuth, {
+            provider: new Web3Provider(provider)
+          });
+        */
+
+        // ╭─────
+        // │ NOTE:
+        // │ > MetaMask SDK [TEST]
+        // │ > 🟩 Working | Disabled
+        // ╰─────
+        /*
+          const MMSDK = new MetaMaskSDK
+          (
+            {
+              useDeeplink: false,
+              communicationLayerPreference: "socket",
+              enableDebug: true,
+              shouldShimWeb3: false,
+              showQRCode: true,
+            }
+          )
+          const ethereum = MMSDK.getProvider() // You can also access via window.ethereum
+          await ethereum.request({ method: 'eth_requestAccounts', params: [] })
+          // .then(r => console.log(r));
+          .then(r => alert(r));
+          // - needs to be redirected back to the APP for 2nd SIGN MESSAGE...
+        */
+
+        // [🐞]
+        dlog
+        (
+          `${AU_W_TAG[0]} 🟢 Moralis Auth`
+        );
+
+        await successAuthComplete
+        (
+          authTypeSelect,
+          moralisAuthInstance.credentials.user,
+          moralisAuthInstance.credentials.user.displayName!,
+          'wallet'
+        );
+        const history = $history_store.reverse();
+          const prev_path = history.find(
+            (path) => !path.includes("login") && !path.includes("register")
+          );
+          $session.currentActiveModal = null;
+          gotoSW(prev_path || "/", true);
+        return;
+      },
+      (
+        ex: unknown
+      ): void =>
+      {
+        scoresAuthStore.updateData
+        (
+          [
+            ['globalStateRemove', 'Processing']
+          ]
+        );
+        // [🐞]
+        errlog(`❌ Moralis Auth error: ${ex}`);
         return;
       }
     );
@@ -377,7 +705,7 @@
           <SocialButton
             company="Metamask"
             full={true}
-            on:click={() => authenticateGoogleAuth20()}
+            on:click={() => authenticateWithMetamask()}
           >
             {translations.sign_in_metamask || "Sign in with Metamask"}
           </SocialButton>
