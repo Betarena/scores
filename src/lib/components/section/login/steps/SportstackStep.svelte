@@ -9,6 +9,7 @@
   import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags";
   import { onMount } from "svelte";
   import { loginStore } from "../login-store";
+  import LogoutText from "./LogoutText.svelte";
 
   // #region ➤ 📌 VARIABLES
 
@@ -177,6 +178,9 @@
       </div>
     </div>
   </Container>
+   {#if $loginStore.isExistedUser && !$loginStore.currentStep}
+    <LogoutText />
+  {/if}
 </div>
 
 <!--

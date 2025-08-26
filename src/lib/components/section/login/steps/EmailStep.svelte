@@ -531,7 +531,7 @@
     }
     path += isLogin ? "/register" : "/login";
     // Navigate to the new path
-    gotoSW(path);
+    gotoSW(path, true);
   }
 
   async function login() {

@@ -9,6 +9,7 @@
   import { updateUserProfileData } from "$lib/utils/user";
   import IconGlobe from "../icons/IconGlobe.svelte";
   import { loginStore } from "../login-store";
+  import LogoutText from "./LogoutText.svelte";
 
   // #region ➤ 📌 VARIABLES
 
@@ -152,6 +153,9 @@
       </div>
     </div>
   </Container>
+   {#if $loginStore.isExistedUser && !$loginStore.currentStep}
+    <LogoutText />
+  {/if}
 </div>
 
 <!--

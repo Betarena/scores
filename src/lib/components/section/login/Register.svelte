@@ -233,6 +233,7 @@
       SportstackDescriptionStep,
       ReadyToCreate
     );
+    $loginStore.isExistedUser = true;
     let nexSteps: Record<string, typeof EmailStep> = {};
     steps.forEach((component, index) => (nexSteps[index] = component));
     desktopStepsGrouped = newDesktopSteps;
@@ -400,7 +401,8 @@
   .login-page {
     display: flex;
     width: 100%;
-    height: 100dvh;
+    min-height: 100dvh;
+    height: 100%;
     .desktop-side-pagination-wrapper {
       display: none;
 
@@ -473,6 +475,7 @@
       }
     }
     .login-wrapper {
+      min-height: 100dvh;
       flex-grow: 1;
       height: 100%;
       max-height: 100%;
@@ -482,6 +485,7 @@
       justify-content: space-between;
 
       .content {
+        flex-shrink: 0;
         flex-grow: 1;
         max-width: 100vw;
         overflow-x: hidden;

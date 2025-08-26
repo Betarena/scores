@@ -13,6 +13,7 @@
   import { tryCatchAsync } from "@betarena/scores-lib/dist/util/common.js";
   import { onMount } from "svelte";
   import { loginStore } from "../login-store";
+  import LogoutText from "./LogoutText.svelte";
 
   // #region ➤ 📌 VARIABLES
 
@@ -208,6 +209,9 @@
       </div>
     </div>
   </Container>
+   {#if $loginStore.isExistedUser && !$loginStore.currentStep}
+    <LogoutText />
+  {/if}
 </div>
 
 <!--

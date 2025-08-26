@@ -12,6 +12,7 @@
   import IconPhoneVerification from "../icons/IconPhoneVerification.svelte";
   import { loginStore } from "../login-store";
   import { countries } from './CountryCodes';
+  import LogoutText from "./LogoutText.svelte";
   // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -225,6 +226,9 @@
       </div>
     </div>
   </Container>
+  {#if $loginStore.isExistedUser && !$loginStore.currentStep}
+    <LogoutText />
+  {/if}
 </div>
 
 <!--

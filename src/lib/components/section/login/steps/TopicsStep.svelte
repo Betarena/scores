@@ -12,6 +12,7 @@
   import { onMount } from "svelte";
   import IconTopics from "../icons/IconTopics.svelte";
   import { loginStore } from "../login-store";
+  import LogoutText from "./LogoutText.svelte";
 
   // #region ➤ 📌 VARIABLES
 
@@ -168,6 +169,9 @@
       </div>
     </div>
   </Container>
+   {#if $loginStore.isExistedUser && !$loginStore.currentStep}
+    <LogoutText />
+  {/if}
 </div>
 
 <!--
