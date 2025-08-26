@@ -76,7 +76,6 @@
     gotoSW("/", true);
     loading = false
   }
-  
   // #endregion ➤ 🛠️ METHODS
 </script>
 
@@ -111,7 +110,7 @@
       <Container>
         <div class="content">
           <div class="heading-wrapper">
-            <h2>{translations.ready_to_publish || "Ready to publish?"}</h2>
+            <h2>{translations.ready_publish || "Ready to publish?"}</h2>
             <p>{translations.create_sportstack || "Create your own Sportstack and start building your brand."}</p>
           </div>
           <div class="actions">

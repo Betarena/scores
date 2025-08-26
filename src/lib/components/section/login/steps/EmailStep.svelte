@@ -157,7 +157,8 @@
             isLogin ? "login" : "register",
             user,
             undefined,
-            authOpt
+            authOpt,
+            false
           );
         disableButton = false;
         if (!setp0Res) throw new Error();
@@ -167,6 +168,7 @@
           const prev_path = history.find(
             (path) => !path.includes("login") && !path.includes("register")
           );
+          $session.currentActiveModal = null;
           gotoSW(prev_path || "/", true);
         }
         dispatch("loginWithGoogle");
@@ -214,7 +216,7 @@
         password
       );
       $loginStore.isExistedUser = true;
-      await successAuthComplete("login", credentials.user, undefined);
+      await successAuthComplete("login", credentials.user, undefined, undefined, false);
       disableButton = false;
       gotoSW("/", true);
     } catch (error: any) {
