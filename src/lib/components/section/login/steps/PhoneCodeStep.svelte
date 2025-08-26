@@ -181,6 +181,7 @@
       if (!$loginStore.verifiedSteps.includes("phone")) {
         $loginStore.verifiedSteps.push("phone");
       }
+      $loginStore.recaptchaVerifier?.clear();
       $loginStore.currentStep += 1;
     } catch (error: any) {
       // Handle specific Firebase Auth errors

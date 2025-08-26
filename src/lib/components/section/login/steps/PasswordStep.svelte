@@ -92,7 +92,7 @@
     try {
       const credentials = await registerUser(email, password);
       $loginStore.isExistedUser = false;
-      await successAuthComplete("register", credentials.user);
+      await successAuthComplete("register", credentials.user, undefined, undefined, false);
       if (!$loginStore.verifiedSteps.includes("password")) {
         $loginStore.verifiedSteps.push("password");
       }

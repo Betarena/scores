@@ -48,6 +48,7 @@
   export let size: number | string = 40;
   export let action_button = true;
   export let includeAbout = false;
+  export let href = true;
 
   $: ({ viewportType } = $session);
   $: ({ user: ctx } = $userSettings);
@@ -97,7 +98,7 @@
 -->
 
 <div class="list-item {viewportType}">
-  <a href="/a/sportstack/{permalink}" class="user-info">
+  <a href="/a/sportstack/{permalink}"on:click={(e) => {!href && e.preventDefault()}} class="user-info">
     <div class="avatar-wrapper">
       <SportstackAvatar {size} src={avatar} />
     </div>

@@ -18,13 +18,13 @@
 import { browser } from '$app/environment';
 import { doc, getDoc } from 'firebase/firestore';
 
-import { app, auth, db_firestore } from '$lib/firebase/init.js';
+import { auth, db_firestore } from '$lib/firebase/init.js';
 import { getCookie } from '$lib/store/cookie.js';
 import sessionStore from '$lib/store/session.js';
 import userBetarenaSettings from '$lib/store/user-settings.js';
 import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.betarena-user.js';
 import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
-import { AU_W_TAG, dlog, log_v3 } from './debug.js';
+import { log_v3 } from './debug.js';
 
 import type { BetarenaUser, IScoreUser } from '$lib/types/types.user-settings.js';
 import type { IAuthType } from '@betarena/scores-lib/types/firebase/firestore.js';
@@ -75,7 +75,8 @@ export async function successAuthComplete
   authType: 'login' | 'register',
   firebaseUser?: User,
   web3WalletAddress?: string,
-  authProviderType?: IAuthType
+  authProviderType?: IAuthType,
+  show_popup?: boolean
 ): Promise < boolean >
 {
   // ╭─────
@@ -133,14 +134,15 @@ export async function successAuthComplete
           [ 'user-object', userObject ]
         ]
       );
-
-      sessionStore.updateData
-      (
-        [
-          [ 'currentToast', (authType == 'login' ? 'Auth_Success_L_Toast' : 'Auth_Success_R_Toast') ],
-          [ 'currentModal', null ]
-        ]
-      );
+      if (show_popup !== false) {
+        sessionStore.updateData
+        (
+          [
+            [ 'currentToast', (authType == 'login' ? 'Auth_Success_L_Toast' : 'Auth_Success_R_Toast') ],
+            [ 'currentModal', null ]
+          ]
+        );
+      }
 
       // [🐞]
       log_v3

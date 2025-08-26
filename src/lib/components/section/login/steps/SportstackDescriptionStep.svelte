@@ -31,7 +31,6 @@
   $: ({id = 0, permalink = ""} = $loginStore.sportstack)
   $: ({ viewportType } = $session);
   $: translations = $page.data.auth_translations.data[0];
-  $: about = $loginStore.sportstack.data?.about || "";
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -124,7 +123,6 @@
           full={true}
           submit={true}
           size="lg"
-          disabled={!$loginStore.sportstack.data?.about}
         >
           {isLoading ? translations.processing || "Updating..." : translations.create_publication || "Create Publication"}
         </Button>
