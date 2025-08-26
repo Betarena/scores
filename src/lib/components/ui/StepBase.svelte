@@ -212,7 +212,7 @@
     }
 
     &.active {
-      opacity: 1;
+      // opacity: 1;
         .check {
           background: var(--bg);
           border: none;

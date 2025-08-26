@@ -309,16 +309,20 @@
             {@const isStepVerified = $loginStore.verifiedSteps.includes(
               group.id
             )}
+            {@const isNotAllowedToNavigate = ["email", "password"].includes(group.id) && $userSettings.user}
+
             <StepBase
               on:click={() => {
-                if (isStepBeforeVerified || isStepVerified) {
+                if (isNotAllowedToNavigate) return
+                if (isStepBeforeVerified || (isStepVerified && ![EmailStep, PasswordStep].includes(group.steps[0]))) {
+                
                   $loginStore.currentStep = stepsBefore;
                 }
               }}
               title={group.title}
               step={Number(step_index) + 1}
               color="brand"
-              available={isStepBeforeVerified || isStepVerified}
+              available={!isNotAllowedToNavigate  && (isStepBeforeVerified || isStepVerified)}
               checked={$loginStore.verifiedSteps.includes(group.id)}
               active={currentStep >= stepsBefore &&
                 currentStep < stepsBefore + group.steps.length}
