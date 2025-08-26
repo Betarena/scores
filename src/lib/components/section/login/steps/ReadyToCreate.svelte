@@ -172,14 +172,16 @@
       max-height: 100vh;
       position: relative;
       display: flex;
+      background-color: #131313;
       flex-direction: column;
-      justify-content: flex-end;
-      background-position: center;
-      background-size: cover;
+      justify-content: flex-start;
+      background-size: contain;
+      background-repeat: no-repeat;
 
       .cta {
         z-index: 1;
         display: flex;
+        margin-top: 450px;
         width: 720px;
         padding: var(--spacing-9xl, 96px) var(--spacing-7xl, 64px);
         padding-top: calc(
