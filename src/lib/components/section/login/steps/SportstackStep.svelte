@@ -157,6 +157,7 @@
         <SportsTackList
           {sportstacks}
           {translations}
+          href={false}
           includeAbout={true}
           {loading}
           limit={5}

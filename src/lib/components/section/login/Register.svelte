@@ -138,7 +138,7 @@
         SportstackDomainStep,
         SportstackProfileStep,
         SportstackDescriptionStep,
-        ReadyToCreate
+        ReadyToCreate,
       ],
       id: "publication",
     },
@@ -218,13 +218,21 @@
     if (!steps.length) {
       await updateUserProfileData({ verified: true });
       const history = $history_store.reverse();
-      const prev_path = history.find(path => !path.includes("login") && !path.includes("register"));
-      
+      const prev_path = history.find(
+        (path) => !path.includes("login") && !path.includes("register")
+      );
+      $session.currentActiveModal = null;
       gotoSW(prev_path || "/", true);
       return;
     }
     newDesktopSteps.push(defaultDesktopSteps.publication);
-    steps.push(ReadyToPublish, SportstackDomainStep, SportstackProfileStep, SportstackDescriptionStep, ReadyToCreate)
+    steps.push(
+      ReadyToPublish,
+      SportstackDomainStep,
+      SportstackProfileStep,
+      SportstackDescriptionStep,
+      ReadyToCreate
+    );
     let nexSteps: Record<string, typeof EmailStep> = {};
     steps.forEach((component, index) => (nexSteps[index] = component));
     desktopStepsGrouped = newDesktopSteps;
@@ -239,7 +247,7 @@
   }
 
   function loginWithGoogle() {
-    updateUserProfileData({registration_type: ["google"]})
+    updateUserProfileData({ registration_type: ["google"] });
     updateSteps();
     $loginStore.currentStep = 2;
   }
@@ -282,48 +290,48 @@
 
 <div class="login-page {viewportType}">
   {#if viewportType === "desktop" && ![ReadyToCreate, ReadyToPublish].includes(stepMap[currentStep])}
-      <div class="desktop-side-pagination-wrapper">
-        <div class="side-content">
-          <div class="logo">
-            <LogoImg />
-          </div>
-          <div class="steps-wrapper">
-            {#each desktopStepsGrouped as group, step_index (step_index)}
-              {@const stepsBefore = desktopStepsGrouped
-                .slice(0, Number(step_index))
-                .reduce((acc, curr) => acc + curr.steps.length, 0)}
-              {@const isStepBeforeVerified =
-                !step_index ||
-                $loginStore.verifiedSteps.includes(
-                  desktopStepsGrouped[step_index - 1].id
-                )}
-              {@const isStepVerified = $loginStore.verifiedSteps.includes(
-                group.id
-              )}
-              <StepBase
-                on:click={() => {
-                  if (isStepBeforeVerified || isStepVerified) {
-                    $loginStore.currentStep = stepsBefore;
-                  }
-                }}
-                title={group.title}
-                step={Number(step_index) + 1}
-                color="brand"
-                available={isStepBeforeVerified || isStepVerified}
-                checked={$loginStore.verifiedSteps.includes(group.id)}
-                active={currentStep >= stepsBefore &&
-                  currentStep < stepsBefore + group.steps.length}
-                description={group.description}
-              />
-            {/each}
-          </div>
-          <div class="footer">© Betarena 2025</div>
+    <div class="desktop-side-pagination-wrapper">
+      <div class="side-content">
+        <div class="logo">
+          <LogoImg />
         </div>
+        <div class="steps-wrapper">
+          {#each desktopStepsGrouped as group, step_index (step_index)}
+            {@const stepsBefore = desktopStepsGrouped
+              .slice(0, Number(step_index))
+              .reduce((acc, curr) => acc + curr.steps.length, 0)}
+            {@const isStepBeforeVerified =
+              !step_index ||
+              $loginStore.verifiedSteps.includes(
+                desktopStepsGrouped[step_index - 1].id
+              )}
+            {@const isStepVerified = $loginStore.verifiedSteps.includes(
+              group.id
+            )}
+            <StepBase
+              on:click={() => {
+                if (isStepBeforeVerified || isStepVerified) {
+                  $loginStore.currentStep = stepsBefore;
+                }
+              }}
+              title={group.title}
+              step={Number(step_index) + 1}
+              color="brand"
+              available={isStepBeforeVerified || isStepVerified}
+              checked={$loginStore.verifiedSteps.includes(group.id)}
+              active={currentStep >= stepsBefore &&
+                currentStep < stepsBefore + group.steps.length}
+              description={group.description}
+            />
+          {/each}
+        </div>
+        <div class="footer">© Betarena 2025</div>
       </div>
+    </div>
   {/if}
 
   <div class="login-wrapper {viewportType}">
-    {#if viewportType !=="desktop" && currentStep && ![ReadyToPublish, ReadyToCreate].includes(stepMap[currentStep])}
+    {#if viewportType !== "desktop" && currentStep && ![ReadyToPublish, ReadyToCreate].includes(stepMap[currentStep])}
       <div class="back-button">
         <Button
           type="secondary"
@@ -363,14 +371,18 @@
     {#if stepMap[0] !== EmailStep || (currentStep && ![ReadyToPublish, ReadyToCreate].includes(stepMap[currentStep]))}
       <div class="pagination-wrapper">
         {#each Object.entries(stepMap) as step, index}
-        {#if ![ReadyToCreate, ReadyToPublish].includes(step[1])}
-           <div class="step-tab" class:active={Number(index) === currentStep} />
-        {/if}
+          {#if ![ReadyToCreate, ReadyToPublish].includes(step[1])}
+            <div
+              class="step-tab"
+              class:active={Number(index) === currentStep}
+            />
+          {/if}
         {/each}
       </div>
     {/if}
-
-    <div id="recaptcha-container" />
+    {#if $loginStore.recaptchaVerifier !== null}
+      <div id="recaptcha-container" />
+    {/if}
   </div>
 </div>
 

@@ -27,7 +27,7 @@
   $: country = Object.entries($loginStore.countries).map(([id, label]) => ({
     id,
     label
-  }));
+  })).sort((a, b) => a.label.localeCompare(b.label));
   $: ({translations} = $loginStore)
   
   let value: { id: number | string; label: string } | null = null;

@@ -35,6 +35,7 @@
     limit = 10,
     action_button = true,
     includeAbout = false,
+    href = true,
     emptyMessage = "";
 
   const /**
@@ -75,7 +76,7 @@
   {:else}
     <div class="list-wrapper">
       {#each [...sportstacks] as [uid, user] (uid)}
-        <ListSportsTackItem {includeAbout} {user} {size} {translations} {action_button}/>
+        <ListSportsTackItem {href} {includeAbout} {user} {size} {translations} {action_button}/>
       {/each}
     </div>
   {/if}

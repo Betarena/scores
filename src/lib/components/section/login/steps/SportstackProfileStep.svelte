@@ -161,7 +161,7 @@
         <Button
           full={true}
           size="lg"
-          disabled={isLoading || !$loginStore.sportstack.data?.avatar}
+          disabled={isLoading}
           on:click={handleContinue}
         >
           {isLoading ? translations.processing || "Updating..." : translations.continue || "Continue"}
