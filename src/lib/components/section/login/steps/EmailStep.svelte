@@ -488,7 +488,7 @@
 
         await successAuthComplete
         (
-          authTypeSelect,
+          $loginStore.isLogin ? 'login' : 'register',
           moralisAuthInstance.credentials.user,
           moralisAuthInstance.credentials.user.displayName!,
           'wallet'
