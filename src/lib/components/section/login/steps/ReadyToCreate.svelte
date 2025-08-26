@@ -8,8 +8,9 @@
 -->
 
 <script lang="ts">
+  import { preloadCode } from "$app/navigation";
   import { page } from "$app/stores";
-  // #region ➤ 📦 Package Imports
+// #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -51,6 +52,7 @@
 
   $: ({ viewportType } = $session);
   $: translations = $page.data.auth_translations.data[0];
+  let loading = false;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -67,11 +69,12 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   async function finish(redirectTo = "/") {
-    updateUserProfileData({ verified: true });
+    loading = true
+    preloadCode(redirectTo)
+    await updateUserProfileData({ verified: true });
     $session.currentActiveModal = null;
     gotoSW(redirectTo, true);
   }
-
   // #endregion ➤ 🛠️ METHODS
 </script>
 
@@ -90,7 +93,10 @@
     <div class="side-banner" style="background-image: url({img_desktop});">
       <div class="cta">
         <div class="side-text-wrapper">
-          <h2>{translations.start_creating || "Start creating your sports content"}</h2>
+          <h2>
+            {translations.start_creating ||
+              "Start creating your sports content"}
+          </h2>
           <p>
             {translations.start_earning || "Start earning from your work"}
           </p>
@@ -100,7 +106,13 @@
   {/if}
   <div class="ready-to-create">
     {#if viewportType !== "desktop"}
-      <img id="" src={viewportType === "tablet" ? img_tablet : img} alt="ready to publish" title="" loading="lazy" />
+      <img
+        id=""
+        src={viewportType === "tablet" ? img_tablet : img}
+        alt="ready to publish"
+        title=""
+        loading="lazy"
+      />
     {/if}
     <div class="text-wrapper">
       <Container>
@@ -108,21 +120,29 @@
           <div class="heading-wrapper">
             <h2>{translations.ready_create || "Ready to create?"}</h2>
             <p>
-              {translations.create_first_article || "Create your first article and start sharing with the community."}
+              {translations.create_first_article ||
+                "Create your first article and start sharing with the community."}
             </p>
           </div>
           <div class="actions">
             <Button
               size="xl"
               type="primary"
+              disabled={loading}
               full={true}
               on:click={() => {
-                finish(
-                  `/u/author/article/create/en?sportstack=${$loginStore.sportstack.permalink}`
-                );
-              }}>{translations.create_first_article_cta || "Create First Article"}</Button
+                finish(`/u/author/article/create/en?sportstack=${$loginStore
+                .sportstack.permalink}`);
+              }}
+              >{translations.create_first_article_cta ||
+                "Create First Article"}</Button
             >
-            <Button size="xl" type="secondary" full={true} on:click={() => finish()}
+            <Button
+              size="xl"
+              type="secondary"
+              disabled={loading}
+              full={true}
+              on:click={() => finish('/')}
               >{translations.skip_for_now || "Skip for now"}</Button
             >
           </div>
@@ -317,7 +337,7 @@
         }
       }
     }
-     &.tablet {
+    &.tablet {
       .text-wrapper {
         flex-grow: 1;
       }

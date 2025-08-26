@@ -84,6 +84,7 @@
 // import '@betarena/ad-engine';
   // import WidgetAdEngine from '@betarena/ad-engine/src/lib/Widget-AdEngine.svelte';
   import AndroidPwaBanner from '$lib/components/AndroidPWABanner.svelte';
+  import { auth } from '$lib/firebase/init';
   import history_store from '$lib/store/history.js';
   import { gotoSW } from '$lib/utils/sveltekitWrapper';
   import { helperUserInitialize } from '$lib/utils/user';

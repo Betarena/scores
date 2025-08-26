@@ -55,6 +55,7 @@ export type IDataProp =
   | 'history-preference-articles-content-feed'
   | 'search_history'
   | 'country'
+  | 'verified'
 ;
 
 enum DataPropEnum
@@ -79,7 +80,8 @@ enum DataPropEnum
   USER_HIGHLIGHTED_SPORTSTACK = 'user-highlighted-sportstack',
   HISTORY_PREFERENCE_ARTICLES_CONTENT_FEED = 'history-preference-articles-content-feed',
   SEARCH_HISTORY = 'search_history',
-  COUNTRY = "country"
+  COUNTRY = "country",
+  VERIFIED = "verified"
 }
 
 // #endregion ➤ ⛩️ TYPES
@@ -704,6 +706,10 @@ function createLocalStore
                 
               case DataPropEnum.COUNTRY: {
                 scores_user.country = dataPoint  
+                break
+              }
+              case DataPropEnum.VERIFIED: {
+                scores_user.verified = dataPoint  
               }
               default: break
             }

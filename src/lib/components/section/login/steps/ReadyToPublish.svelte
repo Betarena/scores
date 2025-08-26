@@ -53,6 +53,7 @@
   
   $: ({ viewportType } = $session);
   $: translations = $page.data.auth_translations.data[0];
+  let loading = false;
   
   // #endregion ➤ 📌 VARIABLES
 
@@ -69,9 +70,11 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   
   async function skip() {
-    updateUserProfileData({ verified: true });
+    loading = true
+    await updateUserProfileData({ verified: true });
     $session.currentActiveModal = null;
     gotoSW("/", true);
+    loading = false
   }
   
   // #endregion ➤ 🛠️ METHODS
@@ -116,6 +119,7 @@
               size="xl"
               type="primary"
               full={true}
+              disabled={loading}
               on:click={() => ($loginStore.currentStep += 1)}
               >{translations.create_publication || "Create Publication"}</Button
             >
@@ -123,6 +127,7 @@
               size="xl"
               type="secondary"
               full={true}
+              disabled={loading}
               on:click={skip}>{translations.skip_for_now || "Skip for now"}</Button
             >
           </div>

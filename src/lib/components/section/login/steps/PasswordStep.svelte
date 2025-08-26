@@ -202,7 +202,7 @@
         <Button
           full={true}
           size="lg"
-          disabled={disableButton}
+          disabled={disableButton || isLoading}
           on:click={handleRegistration}
         >
           {isLoading
