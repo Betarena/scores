@@ -29,7 +29,7 @@
 		"vite/start/heroku": "node server-heroku.js",
 		"vite/start/docker": "cross-env NODE_OPTIONS='-r dotenv/config' node dual.instance.js",
 		"__DEPENDENCY__": "────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────",
-		"npm/init": "rm -rf node_modules && npm install",
+		"npm/init": "npm run clean/node_modules && npm install",
 		"npm/pkg/next/@betarena/scores-lib": "npm i @betarena/scores-lib@latest",
 		"npm/pkg/link/@betarena/scores-lib": "npm link @betarena/scores-lib && npm ls --link --global",
 		"npm/pkg/next/@betarena/ad-engine": "npm i @betarena/ad-engine@latest",

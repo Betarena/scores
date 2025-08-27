@@ -65,9 +65,9 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   $: ({ viewportType } = $session);
-  $: ({ currentStep } = $loginStore);
-  $: user = $userSettings.user?.scores_user_data;
-  $: translations = $page.data.auth_translations.data[0];
+  $: ({ currentStep, isExistedUser } = $loginStore);
+  $: ({ scores_user_data: user } = $userSettings.user || {});
+  $: ([translations] = $page.data.auth_translations.data);
   let defaultSteps = [
     EmailStep,
     PasswordStep,
@@ -152,7 +152,7 @@
     $loginStore.name = user.name || "";
   }
 
-  $: if (browser && $loginStore.isExistedUser) {
+  $: if (browser && isExistedUser) {
     updateSteps();
   }
 

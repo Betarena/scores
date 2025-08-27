@@ -165,7 +165,6 @@ interface ImportMetaEnv
    */
   readonly VITE_WALLETCONNECT_ID?: string
 
-  readonly PUBLIC_RECAPTCHA_SITE_KEY?: string;
 }
 
 interface ImportMeta

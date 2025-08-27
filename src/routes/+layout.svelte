@@ -20,8 +20,6 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
-	import { helperUserInitialize } from '$lib/utils/user.js';
-	import { successAuthComplete } from '$lib/utils/authentication.js';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
@@ -360,12 +358,12 @@
     );
   }
 
-  $: if (currentActiveModal === "Auth_Modal"&& ![routeIdLogin, routeIdRegister].includes($page.route.id || "")) {
+  $: if (currentActiveModal === "Auth_Modal"&& ![routeIdLogin, routeIdRegister].includes(pageRouteId|| "")) {
     redirectToOnBoard(false);
   }
 
-  $: if(![routeIdLogin, routeIdRegister].includes($page.route.id || "") && uid && !verified) {
-   redirectToOnBoard()
+  $: if(![routeIdLogin, routeIdRegister].includes(pageRouteId|| "") && uid && !verified) {
+    redirectToOnBoard();
   }
 
   $: if (browser){

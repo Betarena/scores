@@ -325,7 +325,6 @@ export async function logoutUser
   (
     'betarenaCookieLoggedIn'
   );
-  delCookie('betarenaScoresCookie');
   auth.signOut();
   return;
 }
@@ -418,6 +417,7 @@ export async function updateUserProfileData
         });
 
         if (Object.keys(objDataToUpdate).length == 0) {
+          dlog('🔴 No changes detected...')
           return;
         }
 
@@ -525,23 +525,12 @@ export async function updateUserProfileData
         }
         for (const key in objDataToUpdate) {
           if (Object.prototype.hasOwnProperty.call(objDataToUpdate, key)) {
+            // [🐞]
+            dlog(`🔹 [var] ➤ key :|: ${key}`);
             const val = !['user-wallet', 'user-avatar'].includes(key) ?
               purify.sanitize(objDataToUpdate[key]) : objDataToUpdate[key];
             listDataToUpdate.push([keyMap[key] || key, val]);
           }
-          // [🐞]
-          // dlog(`🔹 [var] ➤ key :|: ${key}`);
-          // if (key === 'username')
-          //   listDataToUpdate.push(['user-name', purify.sanitize(objDataToUpdate[key])]);
-          // else if (key === 'name')
-          //   listDataToUpdate.push(['user-name2', purify.sanitize(objDataToUpdate[key])]);
-          // else if (key === 'about')
-          //   listDataToUpdate.push(['user-about', purify.sanitize(objDataToUpdate[key])]);
-          // else if (key === 'wallet_id')
-          //   listDataToUpdate.push(['user-wallet', objDataToUpdate[key]]);
-          // else if (key === 'profile_photo')
-          //   listDataToUpdate.push(['user-avatar', objDataToUpdate[key]]);
-          // ;
         }
 
       userBetarenaSettings.updateData(listDataToUpdate);
