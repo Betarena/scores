@@ -57,8 +57,8 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
   
-  function click() {
-    logoutUser()
+  async function click() {
+    await logoutUser();
     $session.currentActiveModal = null;
     gotoSW("/", true);
   }

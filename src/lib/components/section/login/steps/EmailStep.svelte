@@ -546,6 +546,7 @@
       );
       $loginStore.isExistedUser = true;
       await successAuthComplete("login", credentials.user, undefined, undefined, false);
+      $session.currentActiveModal = null;
       disableButton = false;
       gotoSW("/", true);
     } catch (error: any) {
