@@ -94,7 +94,7 @@
       $loginStore.isExistedUser = false;
       await successAuthComplete("register", credentials.user, undefined, undefined, false);
       if (!$loginStore.verifiedSteps.includes("password")) {
-        $loginStore.verifiedSteps.push("password");
+        $loginStore.verifiedSteps.push("email","password");
       }
       updateUserProfileData({ registration_type: ["email"] });
       $loginStore.currentStep += 1;

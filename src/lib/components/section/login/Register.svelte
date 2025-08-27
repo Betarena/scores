@@ -293,7 +293,13 @@
   {#if viewportType === "desktop" && ![ReadyToCreate, ReadyToPublish].includes(stepMap[currentStep])}
     <div class="desktop-side-pagination-wrapper">
       <div class="side-content">
-        <div class="logo">
+        <div
+          class="logo"
+          on:click={() => {
+            $session.currentActiveModal = null;
+            gotoSW("/", true)
+          }}
+        >
           <LogoImg />
         </div>
         <div class="steps-wrapper">
@@ -309,20 +315,25 @@
             {@const isStepVerified = $loginStore.verifiedSteps.includes(
               group.id
             )}
-            {@const isNotAllowedToNavigate = ["email", "password"].includes(group.id) && $userSettings.user}
+            {@const isNotAllowedToNavigate =
+              ["email", "password"].includes(group.id) && $userSettings.user}
 
             <StepBase
               on:click={() => {
-                if (isNotAllowedToNavigate) return
-                if (isStepBeforeVerified || (isStepVerified && ![EmailStep, PasswordStep].includes(group.steps[0]))) {
-                
+                if (isNotAllowedToNavigate) return;
+                if (
+                  isStepBeforeVerified ||
+                  (isStepVerified &&
+                    ![EmailStep, PasswordStep].includes(group.steps[0]))
+                ) {
                   $loginStore.currentStep = stepsBefore;
                 }
               }}
               title={group.title}
               step={Number(step_index) + 1}
               color="brand"
-              available={!isNotAllowedToNavigate  && (isStepBeforeVerified || isStepVerified)}
+              available={!isNotAllowedToNavigate &&
+                (isStepBeforeVerified || isStepVerified)}
               checked={$loginStore.verifiedSteps.includes(group.id)}
               active={currentStep >= stepsBefore &&
                 currentStep < stepsBefore + group.steps.length}
@@ -421,6 +432,7 @@
         height: 100%;
 
         .logo {
+          cursor: pointer;
           color: var(--colors-text-text-primary_on-brand, #fbfbfb);
         }
 
