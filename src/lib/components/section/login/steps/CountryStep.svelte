@@ -25,11 +25,12 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
   $: ({ viewportType } = $session);
-  $: country = Object.entries($loginStore.countries).map(([id, label]) => ({
+  $: ({geoJs: { country: user_location }} = $userSettings)
+  $: ({translations, countries} = $loginStore)
+  $: country = Object.entries(countries).map(([id, label]) => ({
     id,
     label
   })).sort((a, b) => a.label.localeCompare(b.label));
-  $: ({translations} = $loginStore)
   
   let value: { id: number | string; label: string } | null = null;
 
@@ -76,13 +77,12 @@
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
-
-  $: if (browser && country.length && !value && $userSettings.geoJs) {
-    const user_location = $userSettings.geoJs.country;
+  $: if (browser && country.length && !value && user_location) {
     value = country.find(c => c.id === user_location) || null;
   }
     
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
+
 
   // #region ➤ 🛠️ METHODS
 

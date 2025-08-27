@@ -1,4 +1,19 @@
 <script lang="ts">
+  // #region ➤ 📦 Package Imports
+  
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+  
   import { post } from "$lib/api/utils";
   import CircleBg from "$lib/components/shared/backround-patterns/CircleBG.svelte";
   import Badge from "$lib/components/ui/Badge.svelte";
@@ -13,6 +28,8 @@
   import IconTopics from "../icons/IconTopics.svelte";
   import { loginStore } from "../login-store";
   import LogoutText from "./LogoutText.svelte";
+    
+  // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
 

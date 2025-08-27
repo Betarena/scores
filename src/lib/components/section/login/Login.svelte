@@ -27,7 +27,7 @@
   import type { PageData } from ".svelte-kit/types/src/routes/(scores)/[[lang=lang]]/(auth)/login/$types";
   import { onMount } from "svelte";
   import { loginStore } from "./login-store";
-  import EmailStep from "./steps/EmailStep.svelte";
+  import LoginStep from "./steps/LoginStep.svelte";
   import ResetPassword from "./steps/ResetPassword.svelte";
   // #endregion ➤ 📦 Package Imports
 
@@ -48,7 +48,7 @@
   $: ({ viewportType } = $session);
   $: ({ currentStep } = $loginStore);
   let stepMap = {
-    0: EmailStep,
+    0: LoginStep,
     1: ResetPassword,
   };
 

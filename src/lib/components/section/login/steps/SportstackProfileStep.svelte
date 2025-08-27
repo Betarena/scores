@@ -1,4 +1,19 @@
 <script lang="ts">
+  // #region ➤ 📦 Package Imports
+  
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+  
   import { enhance } from "$app/forms";
   import { page } from "$app/stores";
   import GridBg from "$lib/components/shared/backround-patterns/GridBG.svelte";
@@ -12,6 +27,8 @@
   import { submitWrapper } from "$lib/utils/sveltekitWrapper";
   import IconImg from "../icons/IconImg.svelte";
   import { loginStore } from "../login-store";
+    
+  // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
 

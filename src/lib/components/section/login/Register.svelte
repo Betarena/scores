@@ -36,7 +36,7 @@
   import { loginStore } from "./login-store";
   import LogoImg from "./LogoImg.svelte";
   import CountryStep from "./steps/CountryStep.svelte";
-  import EmailStep from "./steps/EmailStep.svelte";
+  import LoginStep from "./steps/LoginStep.svelte";
   import PasswordStep from "./steps/PasswordStep.svelte";
   import PhoneCodeStep from "./steps/PhoneCodeStep.svelte";
   import PhoneStep from "./steps/PhoneStep.svelte";
@@ -69,7 +69,7 @@
   $: ({ scores_user_data: user } = $userSettings.user || {});
   $: ([translations] = $page.data.auth_translations.data);
   let defaultSteps = [
-    EmailStep,
+    LoginStep,
     PasswordStep,
     PhoneStep,
     PhoneCodeStep,
@@ -83,8 +83,8 @@
     SportstackDescriptionStep,
     ReadyToCreate,
   ];
-  let stepMap: Record<string, typeof EmailStep> = {
-    0: EmailStep,
+  let stepMap: Record<string, typeof LoginStep> = {
+    0: LoginStep,
   };
 
   $: defaultDesktopSteps = {
@@ -92,7 +92,7 @@
       id: "email",
       title: translations.your_details || "Your details",
       description: translations.provide_email || "Please provide your email",
-      steps: [EmailStep],
+      steps: [LoginStep],
     },
     password: {
       id: "password",
@@ -234,7 +234,7 @@
       ReadyToCreate
     );
     $loginStore.isExistedUser = true;
-    let nexSteps: Record<string, typeof EmailStep> = {};
+    let nexSteps: Record<string, typeof LoginStep> = {};
     steps.forEach((component, index) => (nexSteps[index] = component));
     desktopStepsGrouped = newDesktopSteps;
     stepMap = { ...nexSteps };
@@ -324,7 +324,7 @@
                 if (
                   isStepBeforeVerified ||
                   (isStepVerified &&
-                    ![EmailStep, PasswordStep].includes(group.steps[0]))
+                    ![LoginStep, PasswordStep].includes(group.steps[0]))
                 ) {
                   $loginStore.currentStep = stepsBefore;
                 }
@@ -384,7 +384,7 @@
         on:loginWithGoogle={loginWithGoogle}
       />
     </div>
-    {#if stepMap[0] !== EmailStep || (currentStep && ![ReadyToPublish, ReadyToCreate].includes(stepMap[currentStep]))}
+    {#if stepMap[0] !== LoginStep || (currentStep && ![ReadyToPublish, ReadyToCreate].includes(stepMap[currentStep]))}
       <div class="pagination-wrapper">
         {#each Object.entries(stepMap) as step, index}
           {#if ![ReadyToCreate, ReadyToPublish].includes(step[1])}

@@ -35,7 +35,7 @@
     routeIdSearch,
     routeIdSportstack,
   } from "$lib/constants/paths.js";
-  import { default as session, default as sessionStore } from "$lib/store/session.js";
+  import session from "$lib/store/session.js";
   import userBetarenaSettings from "$lib/store/user-settings.js";
   import { promiseUrlsPreload } from "$lib/utils/navigation.js";
   import { translationObject } from "$lib/utils/translation.js";
@@ -60,7 +60,6 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  $: ({ serverLang } = $sessionStore);
 
   $: translationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
   $: homepageURL = serverLang != "en" ? `/${serverLang}` : "/";
@@ -70,7 +69,7 @@
   $: isAuth = !!user;
   $: ({ profile_photo } = { ...$userBetarenaSettings.user?.scores_user_data });
   $: loadTranslations(serverLang);
-   $: ({viewportType} = $session)
+   $: ({viewportType, serverLang} = $session)
 
   const pagesWihoutNav = [
     routeIdPageTags,
@@ -100,7 +99,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   function signIn() {
-    $sessionStore.currentActiveModal = "Auth_Modal";
+    $session.currentActiveModal = "Auth_Modal";
     return;
   }
 

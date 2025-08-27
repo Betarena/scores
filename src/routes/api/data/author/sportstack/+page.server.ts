@@ -39,13 +39,11 @@ export const actions: Actions = {
         data: {
           badges: [],
           location: "",
-          about: "",
-          username: sportstacks.permalink || "",
           ...sportstacks.data,
-          creation_date: new Date(sportstacks.data.creation_date),
-          ...(about && { about }),
-          ...(avatar && { avatar }),
-          ...(username && { username }),
+          creation_date: new Date((sportstacks.data!).creation_date),
+          about: about ?? sportstacks.data?.about ?? "",
+          avatar: avatar ?? sportstacks.data?.avatar ?? "",
+          username: username ?? sportstacks.data?.username ?? sportstacks.permalink ?? "",
         }
       }
       const data = await entryProfileTabAuthorSportstackUpsert(updated_sportstack);
