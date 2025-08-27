@@ -27,7 +27,7 @@ export const actions: Actions = {
 
       const formData = await request.formData();
       const dataObject = Object.fromEntries(formData.entries());
-      const {id, username, about, permalink, avatar } = dataObject as { id: number } & AuthorsAuthorsMain["data"];
+      const {username, about, permalink, avatar } = dataObject as { id: number } & AuthorsAuthorsMain["data"];
       const isSportstackExist = await getSportstackByPermalink(permalink);
       if (!isSportstackExist) {
         return fail(400, { error: true, message: "Sportstack dosen't exists" });

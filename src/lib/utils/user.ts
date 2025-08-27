@@ -418,8 +418,6 @@ export async function updateUserProfileData
         });
 
         if (Object.keys(objDataToUpdate).length == 0) {
-          // [🐞]
-          dlog('🔴 No changes detected...');
           return;
         }
 
@@ -526,9 +524,11 @@ export async function updateUserProfileData
           'profile_photo': 'user-avatar'
         }
         for (const key in objDataToUpdate) {
-          const val = !['user-wallet', 'user-avatar'].includes(key) ?
-            purify.sanitize(objDataToUpdate[key]) : objDataToUpdate[key];
-          listDataToUpdate.push([keyMap[key] || key, val]);
+          if (Object.prototype.hasOwnProperty.call(objDataToUpdate, key)) {
+            const val = !['user-wallet', 'user-avatar'].includes(key) ?
+              purify.sanitize(objDataToUpdate[key]) : objDataToUpdate[key];
+            listDataToUpdate.push([keyMap[key] || key, val]);
+          }
           // [🐞]
           // dlog(`🔹 [var] ➤ key :|: ${key}`);
           // if (key === 'username')

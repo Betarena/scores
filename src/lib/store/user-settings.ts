@@ -709,7 +709,8 @@ function createLocalStore
                 break
               }
               case DataPropEnum.VERIFIED: {
-                scores_user.verified = dataPoint  
+                scores_user.verified = dataPoint;
+                break;
               }
               default: break
             }

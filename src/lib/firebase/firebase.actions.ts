@@ -1,5 +1,5 @@
 import { auth, db_real, storage } from '$lib/firebase/init';
-import { log_v3 } from '$lib/utils/debug';
+import { log_error_v1, log_v3 } from '$lib/utils/debug';
 import { updateUserProfileData } from '$lib/utils/user';
 import {
   createUserWithEmailAndPassword,
@@ -245,6 +245,7 @@ export async function uploadProfileAvatar(img: string) {
 
     return dataRes1;
   } catch (error) {
+    log_error_v1({strErrorMsg: "uploadProfileAvatar error: " + error.message, type: "error"});
     throw error;
   }
 }
