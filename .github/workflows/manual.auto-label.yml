@@ -5,14 +5,23 @@
 name: '♻️ sync labels'
 
 on:
-  push:
-    branches:
-      - chore/miscellenous/draft/3
+  # ╭─────
+  # │ NOTE:
+  # │ |: Debugging / Testing only
+  # ╰─────
+  # push:
+  #   branches:
+  #     - chore/miscellenous/draft/3
+  # ╭─────
+  # │ NOTE:
+  # │ |: Manual trigger from GitHub UI
+  # ╰─────
+  workflow_dispatch:
 #
 
 jobs:
 
-  auto-repository-label-sync:
+  repository-auto-label-sync:
     name: ♻️ JOB - Sync labels
     runs-on: ubuntu-22.04
     steps:
