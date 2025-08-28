@@ -246,6 +246,9 @@
       path += `/${lang}`
     }
     path += register ? "/register" : "/login";
+    if(register && uid) {
+      $loginStore.isExistedUser = true;
+    }
     await gotoSW(path);
   }
   // #endregion ➤ 🛠️ METHODS
@@ -357,7 +360,6 @@
 
 
   $: if(![routeIdLogin, routeIdRegister].includes(pageRouteId|| "") && uid && !verified && isInitializationFinished) {
-    $loginStore.isExistedUser = true;
     redirectToOnBoard();
   }
 
