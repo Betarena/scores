@@ -12,7 +12,7 @@
 	"engineStrict": true,
 	"scripts": {
 		"__NPM-LIFECYCLE__": "────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────",
-		"prepare": "is-ci || husky install",
+		"prepare": "is-ci || husky install && npm run svelte-kit-sync",
 		"start": "npm run 'vite/start'",
 		"build": "npm run 'vite/build'",
 		"test": "pnpm run playwright/integration && pnpm run playwright/unit",
@@ -34,7 +34,7 @@
 		"npm/pkg/link/@betarena/scores-lib": "npm link @betarena/scores-lib && npm ls --link --global",
 		"npm/pkg/next/@betarena/ad-engine": "npm i @betarena/ad-engine@latest",
 		"npm/pkg/link/@betarena/ad-engine": "npm link @betarena/ad-engine && npm ls --link --global",
-		"pnpm/init": "rm -rf node_modules && pnpm import && pnpm install",
+		"pnpm/init": "npm run clean/node_modules && pnpm import && pnpm install",
 		"pnpm/pkg/link/@betarena/scores-lib": "pnpm link --global @betarena/scores-lib",
 		"pnpm/pkg/link/@betarena/ad-engine": "pnpm link --global @betarena/ad-engine",
 		"__ALTERNATIVE__": "────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────",
