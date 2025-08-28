@@ -18,7 +18,7 @@
 import purify from 'dompurify';
 
 import { userBalanceListen, userDataFetch } from '$lib/firebase/common.js';
-import { delCookie, setCookie } from '$lib/store/cookie.js';
+import { setCookie } from '$lib/store/cookie.js';
 import sessionStore from '$lib/store/session.js';
 import userBetarenaSettings, { type IDataProp } from '$lib/store/user-settings.js';
 import { dlog, log_v3 } from '$lib/utils/debug.js';
@@ -321,10 +321,6 @@ export async function logoutUser
     ]
   );
 
-  delCookie
-  (
-    'betarenaCookieLoggedIn'
-  );
   auth.signOut();
   return;
 }
