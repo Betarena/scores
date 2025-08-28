@@ -287,7 +287,7 @@
   // │ NOTE: IMPORTANT CRITICAL
   // │ |: [3rd-party] Intercom Logic [show/hide]
   // ╰─────
-  $: if (browser && $page.route.id == routeIdPageProfile)
+  $: if (browser && pageRouteId == routeIdPageProfile)
   {
     const
       /**
@@ -392,7 +392,7 @@
     window?.visualViewport?.removeEventListener('resize', updateVh);
     page_unsub?.();
   })
-  
+
   onMount
   (
     async (
@@ -575,7 +575,7 @@
       sessionStore.updateData
       (
         [
-          ['routeId', $page.route.id]
+          ['routeId', pageRouteId]
         ]
       );
 
@@ -720,11 +720,11 @@
   id="app-root-layout"
   class:dark-mode={theme == 'Dark'}
   class:light-mode={theme == 'Light'}
-  class:page-content={[routeIdContent, routeIdSearch].includes($page.route.id || "")}
+  class:page-content={[routeIdContent, routeIdSearch].includes(pageRouteId || "")}
   data-page-id={currentPageRouteId}
   data-mode={globalState.has('IsPWA') ? 'pwa' : 'web'}
 >
-  {#key $page.route.id}
+  {#key pageRouteId}
     <WidgetAdEngine
       authorId={$page.data.dataArticle?.author?.id}
       authorArticleTagIds={$page.data.dataArticle?.article?.tags}
@@ -734,7 +734,7 @@
   {/key}
 
   <SplashScreen />
-<!-- 
+<!--
   {#if currentActiveModal == 'Auth_Modal'}
     <AuthMain />
   {/if} -->
@@ -775,7 +775,7 @@
     <!-- <EmailSubscribe /> -->
   {/if}
 
-  {#if ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle, routeIdSearch, routeIdLogin, routeIdRegister].includes($page.route.id || "" ) || ($page.route.id === routeIdSearch && $sessionStore.viewportType !== "mobile") }
+  {#if ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle, routeIdSearch, routeIdLogin, routeIdRegister].includes(pageRouteId || "" ) || (pageRouteId === routeIdSearch && $sessionStore.viewportType !== "mobile") }
     <HeaderRedesigned />
   {/if}
 
@@ -784,8 +784,8 @@
     class:light-mode={theme == 'Light'}
     class:standard={currentPageRouteId == null }
     class:page-profile={currentPageRouteId == 'ProfilePage'}
-    class:page-authors={currentPageRouteId == 'AuthorsPage' || currentPageRouteId == 'Standard' || $page.route.id === routeIdSearch }
-    class:page-content={[routeIdContent, routeIdSearch].includes($page.route.id || "")}
+    class:page-authors={currentPageRouteId == 'AuthorsPage' || currentPageRouteId == 'Standard' || pageRouteId === routeIdSearch }
+    class:page-content={[routeIdContent, routeIdSearch].includes(pageRouteId || "")}
     class:mobile={objComponentStandardState.viewport.mobile.state}
     class:tablet={objComponentStandardState.viewport.tablet.state}
   >
@@ -794,9 +794,9 @@
     {#if
       (
         !globalState.has('IsPWA')
-        && ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle, routeIdLogin, routeIdRegister].includes($page.route.id || '')
+        && ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle, routeIdLogin, routeIdRegister].includes(pageRouteId || '')
       )
-      || [routeIdPageProfile, routeIdPageProfilePublication].includes($page.route.id || '')
+      || [routeIdPageProfile, routeIdPageProfilePublication].includes(pageRouteId || '')
     }
       <FooterWidget />
     {/if}
@@ -807,7 +807,7 @@
 
   {#if
     (objComponentStandardState.viewport.mobile.state || objComponentStandardState.viewport.tablet.state)
-    && ![routeIdSearch, routeIdPageProfile, routeIdPageProfileEditArticle, routeIdPageProfileArticleCreation, routeIdLogin, routeIdRegister].includes($page.route.id || '')
+    && ![routeIdSearch, routeIdPageProfile, routeIdPageProfileEditArticle, routeIdPageProfileArticleCreation, routeIdLogin, routeIdRegister].includes(pageRouteId || '')
   }
     <MobileMenu
       mobile={objComponentStandardState.viewport.mobile.state}
