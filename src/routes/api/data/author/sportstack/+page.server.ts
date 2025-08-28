@@ -40,7 +40,7 @@ export const actions: Actions = {
           badges: [],
           location: "",
           ...sportstacks.data,
-          creation_date: new Date((sportstacks.data!).creation_date),
+          creation_date: new Date(sportstacks.data?.creation_date || new Date()),
           about: about ?? sportstacks.data?.about ?? "",
           avatar: avatar ?? sportstacks.data?.avatar ?? "",
           username: username ?? sportstacks.data?.username ?? sportstacks.permalink ?? "",
