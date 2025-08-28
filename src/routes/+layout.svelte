@@ -82,6 +82,7 @@
 // import '@betarena/ad-engine';
   // import WidgetAdEngine from '@betarena/ad-engine/src/lib/Widget-AdEngine.svelte';
   import AndroidPwaBanner from '$lib/components/AndroidPWABanner.svelte';
+  import { loginStore } from '$lib/components/section/login/login-store';
   import history_store from '$lib/store/history.js';
   import { gotoSW } from '$lib/utils/sveltekitWrapper';
   import WidgetAdEngine from '@betarena/ad-engine';
@@ -205,6 +206,7 @@
   $: $sessionStore.serverLang = $page.data.langParam as string;
   $: if (browser) $sessionStore.page = $page;
   $: isInitliazed = false;
+  $: isInitializationFinished = false;
 
   $: [ objComponentStandardState.viewport.mobile.state, objComponentStandardState.viewport.tablet.state]
     = viewportChangeV2
@@ -233,18 +235,18 @@
     userBetarenaSettings.useLocalStorage(serverLang);
     scoresAdminStore.useLocalStorage();
     await mainDeepLinkCheck();
-
+    isInitializationFinished= true
     return;
   }
 
-  function redirectToOnBoard(register = true) {
+  async function redirectToOnBoard(register = true) {
     const lang = $userBetarenaSettings.lang || $page.params.lang ;
     let path = "";
     if(lang && lang !== "en") {
       path += `/${lang}`
     }
     path += register ? "/register" : "/login";
-    gotoSW(path);
+    await gotoSW(path);
   }
   // #endregion ➤ 🛠️ METHODS
 
@@ -268,10 +270,6 @@
   // ╰─────
   $: if (browser && !isInitliazed)
     herlperPreMountInitialize();
-  ;
-
-  $: if (browser && pageRouteId)
-    mainDeepLinkCheck();
   ;
 
   // ╭─────
@@ -357,7 +355,9 @@
     redirectToOnBoard(false);
   }
 
-  $: if(![routeIdLogin, routeIdRegister].includes(pageRouteId|| "") && uid && !verified) {
+
+  $: if(![routeIdLogin, routeIdRegister].includes(pageRouteId|| "") && uid && !verified && isInitializationFinished) {
+    $loginStore.isExistedUser = true;
     redirectToOnBoard();
   }
 
