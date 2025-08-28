@@ -8,12 +8,11 @@
 -->
 
 <script lang="ts">
-  import Modal from "../Modal.svelte";
+  import { modalStore } from "$lib/store/modal.js";
   import Cropper from "svelte-easy-crop";
-  import { getCroppedImg } from "./canvasUtils";
   import XClose from "../assets/x-close.svelte";
   import Button from "../Button.svelte";
-  import { modalStore } from "$lib/store/modal.js";
+  import { getCroppedImg } from "./canvasUtils";
 
   export let shape: "rect" | "round" = "rect";
   export let image = "";

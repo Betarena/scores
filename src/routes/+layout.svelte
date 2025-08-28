@@ -47,15 +47,16 @@
   import * as Sentry from '@sentry/sveltekit';
   import { onDestroy, onMount } from 'svelte';
 
-  import
-    {
-      routeIdContent,
-      routeIdPageProfile,
-      routeIdPageProfileArticleCreation,
-      routeIdPageProfileEditArticle,
-      routeIdPageProfilePublication,
-      routeIdSearch,
-    } from '$lib/constants/paths.js';
+  import {
+    routeIdContent,
+    routeIdLogin,
+    routeIdPageProfile,
+    routeIdPageProfileArticleCreation,
+    routeIdPageProfileEditArticle,
+    routeIdPageProfilePublication,
+    routeIdRegister,
+    routeIdSearch
+  } from '$lib/constants/paths.js';
   import { scoresAdminStore } from '$lib/store/admin.js';
   import { delCookie } from '$lib/store/cookie.js';
   import sessionStore from '$lib/store/session.js';
@@ -68,7 +69,6 @@
   import { parseObject } from '$lib/utils/string.2.js';
   import { initializeTopLevelConsoleController } from '$lib/utils/subscribtion.js';
 
-  import AuthMain from '$lib/components/_main_/auth/Widget.svelte';
   import FooterWidget from '$lib/components/_main_/footer/v2/Footer.Widget.svelte';
   import HeaderRedesigned from '$lib/components/_main_/header_redisigned/HeaderRedesigned.svelte';
   import MobileMenu from '$lib/components/_main_/mobile-menu/MobileMenu.svelte';
@@ -78,14 +78,14 @@
   import ModalMain from '$lib/components/misc/modal/ModalMain.svelte';
   import ToastAuth from '$lib/components/misc/toast/Toast-Auth/Toast-Auth.svelte';
   import InfoMessages from '$lib/components/ui/infomessages/InfoMessages.svelte';
-
   import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
-
-  // import '@betarena/ad-engine';
+// import '@betarena/ad-engine';
   // import WidgetAdEngine from '@betarena/ad-engine/src/lib/Widget-AdEngine.svelte';
-  import WidgetAdEngine from '@betarena/ad-engine';
-  import history_store from '$lib/store/history.js';
   import AndroidPwaBanner from '$lib/components/AndroidPWABanner.svelte';
+  import { loginStore } from '$lib/components/section/login/login-store';
+  import history_store from '$lib/store/history.js';
+  import { gotoSW } from '$lib/utils/sveltekitWrapper';
+  import WidgetAdEngine from '@betarena/ad-engine';
 
   // ╭─────
   // │ WARNING:
@@ -190,7 +190,7 @@
 
   $: ({ currentPageRouteId, currentActiveModal, currentActiveToast, globalState, serverLang } = { ...$sessionStore });
   $: ({ theme } = { ...$userBetarenaSettings });
-  $: ({ username, lang, competition_number } = { ...$userBetarenaSettings.user?.scores_user_data });
+  $: ({ username, lang, competition_number, verified } = { ...$userBetarenaSettings.user?.scores_user_data });
   $: ({ uid, email } = { ...$userBetarenaSettings.user?.firebase_user_data });
   $: ({ route: { id: pageRouteId } } = $page);
 
@@ -206,6 +206,7 @@
   $: $sessionStore.serverLang = $page.data.langParam as string;
   $: if (browser) $sessionStore.page = $page;
   $: isInitliazed = false;
+  $: isInitializationFinished = false;
 
   $: [ objComponentStandardState.viewport.mobile.state, objComponentStandardState.viewport.tablet.state]
     = viewportChangeV2
@@ -234,10 +235,22 @@
     userBetarenaSettings.useLocalStorage(serverLang);
     scoresAdminStore.useLocalStorage();
     await mainDeepLinkCheck();
-
+    isInitializationFinished= true
     return;
   }
 
+  async function redirectToOnBoard(register = true) {
+    const lang = $userBetarenaSettings.lang || $page.params.lang ;
+    let path = "";
+    if(lang && lang !== "en") {
+      path += `/${lang}`
+    }
+    path += register ? "/register" : "/login";
+    if(register && uid) {
+      $loginStore.isExistedUser = true;
+    }
+    await gotoSW(path);
+  }
   // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -262,10 +275,6 @@
     herlperPreMountInitialize();
   ;
 
-  $: if (browser && pageRouteId)
-    mainDeepLinkCheck();
-  ;
-
   // ╭─────
   // │ NOTE: IMPORTANT CRITICAL
   // │ │: Hijack the 'console' object.
@@ -278,7 +287,7 @@
   // │ NOTE: IMPORTANT CRITICAL
   // │ |: [3rd-party] Intercom Logic [show/hide]
   // ╰─────
-  $: if (browser && $page.route.id == routeIdPageProfile)
+  $: if (browser && pageRouteId == routeIdPageProfile)
   {
     const
       /**
@@ -345,6 +354,15 @@
     );
   }
 
+  $: if (currentActiveModal === "Auth_Modal"&& ![routeIdLogin, routeIdRegister].includes(pageRouteId|| "")) {
+    redirectToOnBoard(false);
+  }
+
+
+  $: if(![routeIdLogin, routeIdRegister].includes(pageRouteId|| "") && uid && !verified && isInitializationFinished) {
+    redirectToOnBoard();
+  }
+
   $: if (browser){
     // eslint-disable-next-line new-cap
     window.Intercom
@@ -380,7 +398,6 @@
     async (
     ): Promise < void > =>
     {
-
 
       // ╭─────
       // │ IMPORTANT CRITICAL
@@ -558,7 +575,7 @@
       sessionStore.updateData
       (
         [
-          ['routeId', $page.route.id]
+          ['routeId', pageRouteId]
         ]
       );
 
@@ -703,11 +720,11 @@
   id="app-root-layout"
   class:dark-mode={theme == 'Dark'}
   class:light-mode={theme == 'Light'}
-  class:page-content={[routeIdContent, routeIdSearch].includes($page.route.id || "")}
+  class:page-content={[routeIdContent, routeIdSearch].includes(pageRouteId || "")}
   data-page-id={currentPageRouteId}
   data-mode={globalState.has('IsPWA') ? 'pwa' : 'web'}
 >
-  {#key $page.route.id}
+  {#key pageRouteId}
     <WidgetAdEngine
       authorId={$page.data.dataArticle?.author?.id}
       authorArticleTagIds={$page.data.dataArticle?.article?.tags}
@@ -717,10 +734,10 @@
   {/key}
 
   <SplashScreen />
-
+<!--
   {#if currentActiveModal == 'Auth_Modal'}
     <AuthMain />
-  {/if}
+  {/if} -->
 
   {#if currentActiveToast != null}
     <ToastAuth />
@@ -758,7 +775,7 @@
     <!-- <EmailSubscribe /> -->
   {/if}
 
-  {#if ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle, routeIdSearch].includes($page.route.id || "" ) || ($page.route.id === routeIdSearch && $sessionStore.viewportType !== "mobile") }
+  {#if ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle, routeIdSearch, routeIdLogin, routeIdRegister].includes(pageRouteId || "" ) || (pageRouteId === routeIdSearch && $sessionStore.viewportType !== "mobile") }
     <HeaderRedesigned />
   {/if}
 
@@ -767,8 +784,8 @@
     class:light-mode={theme == 'Light'}
     class:standard={currentPageRouteId == null }
     class:page-profile={currentPageRouteId == 'ProfilePage'}
-    class:page-authors={currentPageRouteId == 'AuthorsPage' || currentPageRouteId == 'Standard' || $page.route.id === routeIdSearch }
-    class:page-content={[routeIdContent, routeIdSearch].includes($page.route.id || "")}
+    class:page-authors={currentPageRouteId == 'AuthorsPage' || currentPageRouteId == 'Standard' || pageRouteId === routeIdSearch }
+    class:page-content={[routeIdContent, routeIdSearch].includes(pageRouteId || "")}
     class:mobile={objComponentStandardState.viewport.mobile.state}
     class:tablet={objComponentStandardState.viewport.tablet.state}
   >
@@ -777,9 +794,9 @@
     {#if
       (
         !globalState.has('IsPWA')
-        && ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle].includes($page.route.id || '')
+        && ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle, routeIdLogin, routeIdRegister].includes(pageRouteId || '')
       )
-      || [routeIdPageProfile, routeIdPageProfilePublication].includes($page.route.id || '')
+      || [routeIdPageProfile, routeIdPageProfilePublication].includes(pageRouteId || '')
     }
       <FooterWidget />
     {/if}
@@ -790,7 +807,7 @@
 
   {#if
     (objComponentStandardState.viewport.mobile.state || objComponentStandardState.viewport.tablet.state)
-    && ![routeIdSearch, routeIdPageProfile, routeIdPageProfileEditArticle, routeIdPageProfileArticleCreation].includes($page.route.id || '')
+    && ![routeIdSearch, routeIdPageProfile, routeIdPageProfileEditArticle, routeIdPageProfileArticleCreation, routeIdLogin, routeIdRegister].includes(pageRouteId || '')
   }
     <MobileMenu
       mobile={objComponentStandardState.viewport.mobile.state}

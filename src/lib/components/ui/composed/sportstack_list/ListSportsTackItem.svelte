@@ -44,14 +44,15 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let user: any, translations: IPageAuthorTranslationDataFinal;
+  export let user: any, translations: Partial<IPageAuthorTranslationDataFinal>;
   export let size: number | string = 40;
   export let action_button = true;
-  export let includePermalink = false;
+  export let includeAbout = false;
+  export let href = true;
 
   $: ({ viewportType } = $session);
   $: ({ user: ctx } = $userSettings);
-  $: ({ username, name, avatar,  } = user.data);
+  $: ({ username, name, avatar, about } = user.data);
   $: ({ permalink, id, uid } = user);
   $: isAuth = !!ctx;
   $: isFollow = !!(
@@ -97,26 +98,33 @@
 -->
 
 <div class="list-item {viewportType}">
-  <a href="/a/sportstack/{permalink}" class="user-info">
-    <SportstackAvatar {size} src={avatar} />
+  <svelte:element
+    this={href ? "a" : "div"}
+    href={href ? `/a/sportstack/${permalink}` : null}
+    class="user-info"
+  >
+    <div class="avatar-wrapper">
+      <SportstackAvatar {size} src={avatar} />
+    </div>
     <div class="name-wrapp">
       <div class="user-name">{name || username}</div>
-      {#if includePermalink}
-        <div class="user-permalink">@{permalink}</div>
+      {#if includeAbout}
+        <div class="user-about">{about}</div>
       {/if}
     </div>
-  </a>
-  {#if uid!== ctx?.firebase_user_data?.uid && action_button}
+  </svelte:element>
+  {#if uid !== ctx?.firebase_user_data?.uid && action_button}
     <Button
-      type={isFollow ? "subtle" : "primary"}
+      disabled={user.actionButton === false}
+      type={isFollow ? "secondary" : "primary"}
       style="padding:10px 16px; font-size: 14px; height:{size === 'lg'
         ? '36px'
         : '32px'}; min-width: 72px "
       on:click={handleClick}
     >
       <TranslationText
-        text={translations[isFollow ? "following" : "follow"]}
-        fallback={isFollow ? "Following" : "Follow"}
+        text={translations[isFollow ? "subscribed" : "subscribe"]}
+        fallback={isFollow ? "Subscribed" : "Subscribe"}
       />
     </Button>
   {/if}
@@ -139,13 +147,16 @@
     border-bottom: var(--header-border);
     justify-content: space-between;
     gap: 20px;
-    align-items: center;
+    align-items: start;
+    :global(.button) {
+      flex-shrink: 0;
+    }
 
     .user-info {
       display: flex;
       justify-content: start;
       flex-grow: 1;
-      align-items: center;
+      align-items: start;
       gap: 12px;
       color: var(--text-color);
       font-family: Roboto;
@@ -153,6 +164,9 @@
       font-style: normal;
       font-weight: 500;
       line-height: 24px; /* 150% */
+      .avatar-wrapper {
+        flex-shrink: 0;
+      }
 
       &:hover {
         color: var(--primary);
@@ -162,15 +176,21 @@
         display: flex;
         flex-direction: column;
 
-        .user-permalink {
+        .user-name {
+          line-height: var(--Line-height-text-sm, 20px); /* 142.857% */
+        }
+        .user-about {
           color: var(--colors-text-text-tertiary-600, #8c8c8c);
-
-          /* Text xs/Regular */
           font-family: var(--font-family-font-family-body, Roboto);
           font-size: var(--font-size-text-xs, 12px);
           font-style: normal;
           font-weight: 400;
           line-height: var(--line-height-text-xs, 18px); /* 150% */
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
       }
     }

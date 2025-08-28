@@ -38,25 +38,25 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { page } from "$app/stores";
-  import { onMount, tick } from "svelte";
+  import { tick } from "svelte";
 
+  import { getUserById } from "$lib/firebase/common.js";
   import sessionStore from "$lib/store/session.js";
   import { timeAgo } from "$lib/utils/dates.js";
   import { viewportChangeV2 } from "$lib/utils/device";
-  import { readingTime } from "../../helpers.js";
-  import { getUserById } from "$lib/firebase/common.js";
   import { getOptimizedImageUrl } from "$lib/utils/image.js";
+  import { readingTime } from "../../helpers.js";
 
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
 
-  import type { IPageAuhtorArticleDataFinal } from "@betarena/scores-lib/types/v8/preload.authors.js";
-  import type { IPageArticleTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.articles.js";
   import AvatarLabel from "$lib/components/ui/AvatarLabel.svelte";
   import Badge from "$lib/components/ui/Badge.svelte";
   import ListSportsTackItem from "$lib/components/ui/composed/sportstack_list/ListSportsTackItem.svelte";
-  import ScrollDataWrapper from "$lib/components/ui/wrappers/ScrollDataWrapper.svelte";
   import LoaderImage from "$lib/components/ui/loaders/LoaderImage.svelte";
+  import ScrollDataWrapper from "$lib/components/ui/wrappers/ScrollDataWrapper.svelte";
   import userSettings from "$lib/store/user-settings.js";
+  import type { IPageAuhtorArticleDataFinal } from "@betarena/scores-lib/types/v8/preload.authors.js";
+  import type { IPageArticleTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.articles.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -277,7 +277,7 @@
   <div class="sportstack-box">
     <ListSportsTackItem
       translations={$page.data.translations}
-      includePermalink={true}
+      includeAbout={true}
       user={widgetData.author}
       size="lg"
       action_button={true}
