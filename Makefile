@@ -1,5 +1,5 @@
 SHELL := /bin/bash
-include env/.env.docker.compose
+-include env/.env.docker.compose
 
 # ╭──────────────────────────────────────────────────────────────────────────────────╮
 # │ 🐞 │ DEBUG    			    	  																			    					 │
@@ -589,7 +589,7 @@ docker-compose-up:
 		\n╰──────────────────────────────────────────────────────────────────╯"
 	#
 
-	${MAKE} docker-container-log-full-export
+	${MAKE} docker-container-export-logs-all
 
 	if [ "$(type)" = "prod" ]; then\
 		cd .docker/; \
@@ -643,7 +643,7 @@ docker-compose-up:
 #
 
 .ONESHELL:
-docker-container-log-full-export:
+docker-container-export-logs-all:
 	@
 	# ╭──────────────────────────────────────────────────────────────────╮
 	# │ NOTE: │ DESCRIPTION																						   │
@@ -695,7 +695,7 @@ docker-container-log-full-export:
 #
 
 .ONESHELL:
-docker-container-log-nginx-export:
+docker-container-export-logs-nginx:
 	@
 	echo -e \
 		"\
