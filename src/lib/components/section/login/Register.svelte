@@ -147,7 +147,6 @@
   $: desktopStepsGrouped = Object.values(defaultDesktopSteps || {});
 
   defaultSteps.forEach((component, index) => (stepMap[index] = component));
-  $: console.log("USER: ", $userSettings.user);
   $: if (user) {
     $loginStore.avatar = user.profile_photo || "";
     $loginStore.name = user.name || "";
