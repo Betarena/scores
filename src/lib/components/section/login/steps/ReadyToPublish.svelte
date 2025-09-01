@@ -222,8 +222,7 @@
       }
       .text-wrapper {
         :global(.container-wrapper) {
-          padding-top: 54px;
-          padding-bottom: 24px;
+          padding-block: 24px;
         }
 
         .content {
