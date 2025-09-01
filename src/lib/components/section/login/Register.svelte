@@ -26,6 +26,7 @@
   import { page } from "$app/stores";
   import Button from "$lib/components/ui/Button.svelte";
   import StepBase from "$lib/components/ui/StepBase.svelte";
+  import { auth } from "$lib/firebase/init";
   import history_store from "$lib/store/history";
   import session from "$lib/store/session";
   import userSettings from "$lib/store/user-settings";
