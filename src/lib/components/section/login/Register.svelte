@@ -36,6 +36,7 @@
   import { loginStore } from "./login-store";
   import LogoImg from "./LogoImg.svelte";
   import CountryStep from "./steps/CountryStep.svelte";
+  import EmailStep from "./steps/EmailStep.svelte";
   import LoginStep from "./steps/LoginStep.svelte";
   import PasswordStep from "./steps/PasswordStep.svelte";
   import PhoneCodeStep from "./steps/PhoneCodeStep.svelte";
@@ -185,8 +186,8 @@
       // steps.push(PasswordStep);
     }
     if (firebase_user_data && !firebase_user_data.email) {
-      newDesktopSteps.push(defaultDesktopSteps.email);
-      steps.push(LoginStep);
+      newDesktopSteps.push({...defaultDesktopSteps.email, steps: [EmailStep]});
+      steps.push(EmailStep);
     } else {
       $loginStore.verifiedSteps.push("email");
     }
