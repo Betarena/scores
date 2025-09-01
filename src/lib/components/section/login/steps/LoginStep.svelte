@@ -24,6 +24,7 @@
     GoogleAuthProvider,
     signInWithEmailAndPassword,
     signInWithPopup,
+    updateEmail,
   } from "firebase/auth";
   import { createEventDispatcher, onMount } from "svelte";
   import { loginStore } from "../login-store";
@@ -61,7 +62,6 @@
   $: if (isLogin !== undefined) {
     loginError = "";
   }
-
 
   // Clear login error when password changes
   $: if (password) {
@@ -545,7 +545,13 @@
         password
       );
       $loginStore.isExistedUser = true;
-      await successAuthComplete("login", credentials.user, undefined, undefined, false);
+      await successAuthComplete(
+        "login",
+        credentials.user,
+        undefined,
+        undefined,
+        false
+      );
       $session.currentActiveModal = null;
       disableButton = false;
       gotoSW("/", true);
@@ -595,6 +601,22 @@
     }
     disableButton = false;
   }
+
+  async function updateUserEmail() {
+    disableButton = true;
+    if (auth.currentUser && !auth.currentUser.email) {
+      try {
+        await updateEmail(auth.currentUser, email);
+      } catch (error) {
+        console.error("Error updating email:", error);
+      }
+    }
+
+    if (!$loginStore.verifiedSteps.includes("email")) {
+      $loginStore.verifiedSteps.push("email");
+    }
+    $loginStore.currentStep += 1;
+  }
   // #endregion ➤ 🛠️ METHODS
 
   onMount(() => {
@@ -626,9 +648,16 @@
   <Container hFull={false}>
     <div class="form">
       <div class="header">
-        <h2>{isLogin ? translations.welcome_back || "Welcome back" : translations.welcome_to_betarena || "Welcome to Betarena"}</h2>
+        <h2>
+          {isLogin
+            ? translations.welcome_back || "Welcome back"
+            : translations.welcome_to_betarena || "Welcome to Betarena"}
+        </h2>
         <p class="subtitle">
-          {isLogin ? translations.enter_details || "Please enter your details." : translations.join_home || "Join the home of sports media creators."}
+          {isLogin
+            ? translations.enter_details || "Please enter your details."
+            : translations.join_home ||
+              "Join the home of sports media creators."}
         </p>
       </div>
       <div class="form-body">
@@ -682,10 +711,7 @@
             size="lg"
             disabled={disableButton}
             on:click={() => {
-              if (!$loginStore.verifiedSteps.includes("email")) {
-                $loginStore.verifiedSteps.push("email");
-              }
-              $loginStore.currentStep += 1;
+              updateUserEmail();
             }}>{translations.get_started || "Get started"}</Button
           >
         {/if}

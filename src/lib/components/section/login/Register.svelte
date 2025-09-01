@@ -176,13 +176,19 @@
     let newDesktopSteps: typeof desktopStepsGrouped = [];
     let profileSteps: Array<typeof ProfileStep> = [];
     const { scores_user_data, firebase_user_data } = $userSettings.user;
-    $loginStore.verifiedSteps = ["email", "password"];
+    $loginStore.verifiedSteps = ["password"];
     if (
       !firebase_user_data?.providerData.find(
         (provider) => provider.providerId === "password"
       )
     ) {
       // steps.push(PasswordStep);
+    }
+    if (firebase_user_data && !firebase_user_data.email) {
+      newDesktopSteps.push(defaultDesktopSteps.email);
+      steps.push(LoginStep);
+    } else {
+      $loginStore.verifiedSteps.push("email");
     }
     if (
       !firebase_user_data?.phoneNumber &&
