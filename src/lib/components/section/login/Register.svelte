@@ -187,7 +187,7 @@
     if (
       !firebase_user_data?.phoneNumber &&
       new Date(scores_user_data?.register_date || "").valueOf() >
-        new Date(2025, 7, 13).valueOf()
+        new Date(2025, 7, 29).valueOf()
     ) {
       newDesktopSteps.push(defaultDesktopSteps.phone);
       steps.push(PhoneStep, PhoneCodeStep);
@@ -206,14 +206,21 @@
     }
     if ((scores_user_data?.following?.tags?.length || 0) < 3) {
       newDesktopSteps.push(defaultDesktopSteps.follow_topics);
-      profileSteps.push(TopicsStep);
       steps.push(TopicsStep);
     }
     if (profileSteps.length) {
-      newDesktopSteps.push({
+      const phoneStepIndex = newDesktopSteps.findIndex(
+        (step) => step.id === "phone"
+      );
+      const profileStep = {
         ...defaultDesktopSteps.profile,
         steps: profileSteps,
-      });
+      };
+      if (phoneStepIndex !== -1) {
+        newDesktopSteps.splice(phoneStepIndex + 1, 0, profileStep);
+      } else {
+        newDesktopSteps.unshift(profileStep);
+      }
     }
     if (!steps.length) {
       await updateUserProfileData({ verified: true });
