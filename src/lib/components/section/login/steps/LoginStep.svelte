@@ -493,7 +493,8 @@
           $loginStore.isLogin ? 'login' : 'register',
           moralisAuthInstance.credentials.user,
           moralisAuthInstance.credentials.user.displayName!,
-          'wallet'
+          'wallet',
+          false
         );
         const history = $history_store.reverse();
           const prev_path = history.find(
