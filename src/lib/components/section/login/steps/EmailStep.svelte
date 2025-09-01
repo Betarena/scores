@@ -12,6 +12,7 @@
   } from "firebase/auth";
   import { onMount } from "svelte";
   import { loginStore } from "../login-store";
+  import LogoutText from "./LogoutText.svelte";
 
   // #region ➤ 📌 VARIABLES
 
@@ -27,29 +28,17 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  let password = "";
   let errorMessage = "";
   $: ({ email, isLogin, translations } = $loginStore);
   $: ({ viewportType } = $session);
   $: isValidEmail = email && validateEmail(email);
   let emailError = false;
-  let loginError = "";
   let isEmailSent = false;
   let disableButton = !email || !validateEmail(email);
   let timer;
 
   $: if (!email) {
     emailError = false;
-  }
-
-  // Clear login error when switching between login/register modes
-  $: if (isLogin !== undefined) {
-    loginError = "";
-  }
-
-  // Clear login error when password changes
-  $: if (password) {
-    loginError = "";
   }
 
   // #endregion ➤ 📌 VARIABLES
@@ -112,26 +101,24 @@
         disableButton = false
       } catch (error: any) {
         console.error("Error updating email:", error);
-
+        emailError = true;
         switch (error.code) {
           case "auth/invalid-email":
-            loginError =
+            errorMessage =
               translations["auth/invalid-email"] || "Invalid email address.";
-            emailError = true;
             break;
           case "auth/email-already-in-use":
-            loginError =
+            errorMessage =
               translations["auth/email-already-in-use"] ||
               "This email is already in use.";
-            emailError = true;
             break;
           case "auth/requires-recent-login":
-            loginError =
+            errorMessage =
               translations["auth/requires-recent-login"] ||
               "Please re-authenticate to update your email.";
             break;
           default:
-            loginError =
+            errorMessage =
               translations["auth/update-email-failed"] ||
               "Failed to update email. Please try again.";
         }
@@ -186,7 +173,7 @@
       <div class="form-body">
         <Input
           inputType="email"
-          error={emailError || !!loginError}
+          error={emailError}
           placeholder={translations.enter_email || "Enter your email"}
           bind:value={$loginStore.email}
         >
@@ -232,6 +219,9 @@
           "Verification email sent. Please check your inbox and verify the email address."}
       </span>
     </div>
+  {/if}
+  {#if $loginStore.isExistedUser && !$loginStore.currentStep}
+    <LogoutText />
   {/if}
 </div>
 
