@@ -62,7 +62,6 @@
     loginError = "";
   }
 
-  $: console.log("Translations: ", translations)
 
   // Clear login error when password changes
   $: if (password) {

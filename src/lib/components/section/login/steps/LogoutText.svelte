@@ -99,6 +99,7 @@
 
 <style lang="scss">
   .quest-wrapper {
+    z-index: 1;
     cursor: pointer;
     display: flex;
     width: 343px;
