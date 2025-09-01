@@ -23,8 +23,7 @@
     GithubAuthProvider,
     GoogleAuthProvider,
     signInWithEmailAndPassword,
-    signInWithPopup,
-    updateEmail,
+    signInWithPopup
   } from "firebase/auth";
   import { createEventDispatcher, onMount } from "svelte";
   import { loginStore } from "../login-store";
@@ -602,21 +601,6 @@
     disableButton = false;
   }
 
-  async function updateUserEmail() {
-    disableButton = true;
-    if (auth.currentUser && !auth.currentUser.email) {
-      try {
-        await updateEmail(auth.currentUser, email);
-      } catch (error) {
-        console.error("Error updating email:", error);
-      }
-    }
-
-    if (!$loginStore.verifiedSteps.includes("email")) {
-      $loginStore.verifiedSteps.push("email");
-    }
-    $loginStore.currentStep += 1;
-  }
   // #endregion ➤ 🛠️ METHODS
 
   onMount(() => {
@@ -711,7 +695,10 @@
             size="lg"
             disabled={disableButton}
             on:click={() => {
-              updateUserEmail();
+              if (!$loginStore.verifiedSteps.includes("email")) {
+                $loginStore.verifiedSteps.push("email");
+              }
+              $loginStore.currentStep += 1;
             }}>{translations.get_started || "Get started"}</Button
           >
         {/if}
