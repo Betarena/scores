@@ -220,6 +220,8 @@
   $sessionStore.deviceType = $page.data.deviceType as 'mobile' | 'tablet' | 'desktop';
   $sessionStore.userAgent  = $page.data.userAgent as string ?? navigator.userAgent;
 
+  $: console.log("USER: ", $userBetarenaSettings.user)
+
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
