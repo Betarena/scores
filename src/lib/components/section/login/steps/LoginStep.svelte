@@ -495,13 +495,7 @@
           'wallet',
           false
         );
-        const history = $history_store.reverse();
-          const prev_path = history.find(
-            (path) => !path.includes("login") && !path.includes("register")
-          );
-          $session.currentActiveModal = null;
-          gotoSW(prev_path || "/", true);
-        return;
+        switchMode();
       },
       (
         ex: unknown
