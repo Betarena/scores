@@ -5,13 +5,16 @@
   import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
   import Input from "$lib/components/ui/Input.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
-  import { initializeRecaptcha, sendPhoneVerificationCode } from "$lib/firebase/firebase.actions";
+  import {
+    initializeRecaptcha,
+    sendPhoneVerificationCode,
+  } from "$lib/firebase/firebase.actions";
   import session from "$lib/store/session";
   import userSettings from "$lib/store/user-settings";
   import { onMount } from "svelte";
   import IconPhoneVerification from "../icons/IconPhoneVerification.svelte";
   import { loginStore } from "../login-store";
-  import { countries } from './CountryCodes';
+  import { countries } from "./CountryCodes";
   import LogoutText from "./LogoutText.svelte";
   // #region ➤ 📌 VARIABLES
 
@@ -31,13 +34,14 @@
   let isLoading = false;
   let errorMessage = "";
   let countryCodes = countries.map((c, index) => ({
-    id: `${c.code}_${index}`, 
-    label: `${c.name} (${c.dial_code})`, 
+    id: `${c.code}_${index}`,
+    label: `${c.name} (${c.dial_code})`,
     dial_code: c.dial_code,
     code: c.code,
-    name: c.name
+    name: c.name,
   }));
-  let selectedCountryCode = countryCodes.find(c => c.dial_code === "+1") || countryCodes[0];
+  let selectedCountryCode =
+    countryCodes.find((c) => c.dial_code === "+1") || countryCodes[0];
   $: ({ recaptchaVerifier, translations } = $loginStore);
   $: ({ viewportType } = $session);
   // #endregion ➤ 📌 VARIABLES
@@ -55,13 +59,14 @@
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  $: isValidPhone = phoneNumber.trim().length >= 10;
+  $: isValidPhone = phoneNumber.trim().length >= 7;
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
-  $: if (browser && countryCodes.length  && $userSettings.geoJs) {
+  $: if (browser && countryCodes.length && $userSettings.geoJs) {
     const user_location = $userSettings.geoJs.country_code;
-    selectedCountryCode = countryCodes.find(c => c.code === user_location) || countryCodes[0];
+    selectedCountryCode =
+      countryCodes.find((c) => c.code === user_location) || countryCodes[0];
   }
 
   // #region ➤ 🛠️ METHODS
@@ -77,9 +82,9 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   function focus() {
-    if (!phoneNumber && selectedCountryCode.dial_code) {
-      phoneNumber = selectedCountryCode.dial_code
-    }
+    // if (!phoneNumber && selectedCountryCode.dial_code) {
+    //   phoneNumber = selectedCountryCode.dial_code
+    // }
   }
 
   async function sendVerificationCode() {
@@ -89,14 +94,21 @@
     errorMessage = "";
 
     try {
+      let phone = phoneNumber;
+      if (
+        !phone.startsWith(selectedCountryCode.dial_code) &&
+        !phone.startsWith("+")
+      ) {
+        phone = `${selectedCountryCode.dial_code}${phoneNumber}`;
+      }
       // Send verification code
       $loginStore.confirmationResult = await sendPhoneVerificationCode(
-        phoneNumber,
+        phone,
         recaptchaVerifier
       );
 
       // Store phone number in login store
-      $loginStore.phoneNumber = phoneNumber;
+      $loginStore.phoneNumber = phone;
 
       // Move to next step
       $loginStore.currentStep += 1;
@@ -106,22 +118,34 @@
       // Handle specific Firebase Auth errors
       switch (error.code) {
         case "auth/invalid-phone-number":
-          errorMessage = translations['auth/invalid-phone-number'] || "Please enter a valid phone number.";
+          errorMessage =
+            translations["auth/invalid-phone-number"] ||
+            "Please enter a valid phone number.";
           break;
         case "auth/missing-phone-number":
-          errorMessage = translations['auth/missing-phone-number'] || "Please enter your phone number.";
+          errorMessage =
+            translations["auth/missing-phone-number"] ||
+            "Please enter your phone number.";
           break;
         case "auth/quota-exceeded":
-          errorMessage = translations['auth/quota-exceeded'] || "Too many verification attempts. Please try again later.";
+          errorMessage =
+            translations["auth/quota-exceeded"] ||
+            "Too many verification attempts. Please try again later.";
           break;
         case "auth/network-request-failed":
-          errorMessage = translations['auth/network-request-failed'] || "Network error. Please check your internet connection and try again.";
+          errorMessage =
+            translations["auth/network-request-failed"] ||
+            "Network error. Please check your internet connection and try again.";
           break;
         case "auth/too-many-requests":
-          errorMessage = translations['auth/too-many-requests'] || "Too many requests. Please try again later.";
+          errorMessage =
+            translations["auth/too-many-requests"] ||
+            "Too many requests. Please try again later.";
           break;
         default:
-          errorMessage = translations['auth/failed-to-send-code'] || "Failed to send verification code. Please try again.";
+          errorMessage =
+            translations["auth/failed-to-send-code"] ||
+            "Failed to send verification code. Please try again.";
       }
     } finally {
       isLoading = false;
@@ -131,7 +155,7 @@
   // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
-  
+
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'logic' that should run            │
@@ -140,7 +164,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   onMount(() => {
-     try {
+    try {
       if ($loginStore.recaptchaVerifier) return;
       const recaptcha = initializeRecaptcha("recaptcha-container");
       $loginStore.recaptchaVerifier = recaptcha;
@@ -165,7 +189,12 @@
 
 <div class="phone-verification-step {viewportType}">
   <div class="logo-wrapper">
-    <div class="bg"><CircleBg size={viewportType === "desktop" ? "768" : "468"} animation="grow" /></div>
+    <div class="bg">
+      <CircleBg
+        size={viewportType === "desktop" ? "768" : "468"}
+        animation="grow"
+      />
+    </div>
     <div class="icon-wrapper">
       <IconPhoneVerification />
     </div>
@@ -174,13 +203,17 @@
     <div class="form">
       <div class="header">
         <h2>{translations.verify_phone || "Verify your phone number"}</h2>
-        <p class="subtitle">{translations.code_sent || "A code will be sent to your phone"}</p>
+        <p class="subtitle">
+          {translations.code_sent || "A code will be sent to your phone"}
+        </p>
       </div>
       <div class="form-body">
         <Input
           label={translations.phone_number || "Phone number"}
           inputType="tel"
-          placeholder= {`${selectedCountryCode.dial_code || "+1"} (555) 000-0000`}
+          placeholder={`${
+            selectedCountryCode.dial_code || "+1"
+          } (555) 000-0000`}
           bind:value={phoneNumber}
           on:focus={focus}
           required={true}
@@ -194,7 +227,10 @@
               on:change={(e) => {
                 const nextCode = e.detail;
                 if (phoneNumber.startsWith(selectedCountryCode.dial_code)) {
-                  phoneNumber = phoneNumber.replace(selectedCountryCode.dial_code, nextCode.dial_code);
+                  phoneNumber = phoneNumber.replace(
+                    selectedCountryCode.dial_code,
+                    nextCode.dial_code
+                  );
                 }
                 selectedCountryCode = e.detail;
               }}
@@ -204,7 +240,16 @@
               class="country-selector"
             >
               <span slot="input-option" let:option class="country-option">
-                <span class="country-name">{option?.code}</span>
+                <span class="country-name"
+                  >
+                  <span>
+                    {option?.code}
+                  </span>
+
+                  <span>
+                    {option?.dial_code}
+                  </span></span
+                >
               </span>
               <span slot="option" let:option class="country-option">
                 <span class="country-name">{option.name}</span>
@@ -213,7 +258,10 @@
             </DropDownInput>
           </div>
           <span slot="error">{errorMessage}</span>
-          <span slot="info">{translations.phone_number_help ||  "Phone number to receive the code"}</span>
+          <span slot="info"
+            >{translations.phone_number_help ||
+              "Phone number to receive the code"}</span
+          >
         </Input>
         <Button
           full={true}
@@ -221,7 +269,9 @@
           disabled={!isValidPhone || isLoading}
           on:click={sendVerificationCode}
         >
-          {isLoading ? translations.sending_code || "Sending code..." : translations.send_verification_code || "Send verification code"}
+          {isLoading
+            ? translations.sending_code || "Sending code..."
+            : translations.send_verification_code || "Send verification code"}
         </Button>
       </div>
     </div>
@@ -349,7 +399,7 @@
           border-top-left-radius: var(--radius-md, 8px);
           border-bottom-left-radius: var(--radius-md, 8px);
         }
-        :global(.leading-text  .input-element) {
+        :global(.leading-text .input-element) {
           border: none;
         }
 
@@ -370,10 +420,16 @@
           display: flex;
           justify-content: space-between;
         }
+
+        .country-name {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
       }
     }
 
-     &.desktop {
+    &.desktop {
       .form {
         .header {
           gap: var(--spacing-lg, 12px);
