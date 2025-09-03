@@ -211,9 +211,7 @@
         <Input
           label={translations.phone_number || "Phone number"}
           inputType="tel"
-          placeholder={`${
-            selectedCountryCode.dial_code || "+1"
-          } (555) 000-0000`}
+          placeholder={`555 000-0000`}
           bind:value={phoneNumber}
           on:focus={focus}
           required={true}
