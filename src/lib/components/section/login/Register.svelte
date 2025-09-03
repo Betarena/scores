@@ -409,7 +409,7 @@
         {/each}
       </div>
     {/if}
-    {#if $loginStore.recaptchaVerifier !== null}
+    {#if $loginStore.recaptchaVerifier !== null && [PhoneStep, PhoneCodeStep].includes(stepMap[currentStep])}
       <div id="recaptcha-container" />
     {/if}
   </div>
