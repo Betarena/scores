@@ -194,13 +194,12 @@
       background-repeat: no-repeat;
       .sidebar-bg {
         width: 100%;
-        max-height: 70%;
+        max-height: 55%;
         object-fit: cover;
-        object-position: top;
+        object-position: center;
       }
 
       .cta-wrapper {
-        transform: translateY(-52%);
         z-index: 1;
         display: flex;
         flex-direction: column;
@@ -209,14 +208,16 @@
         gap: var(--spacing-4xl, 32px);
         align-self: stretch;
         padding: var(--spacing-9xl, 96px) var(--spacing-7xl, 64px);
-        padding-top: calc(
-          80px + var(--spacing-4xl, 32px) + var(--spacing-9xl, 96px)
-        );
+        padding-top: 40px;
+      }
+      .star-img {
+        margin-inline: auto;
       }
       .cta {
         z-index: 1;
         display: flex;
         width: 592px;
+        margin-inline: auto;
         flex-direction: column;
         justify-content: center;
         align-items: center;
