@@ -213,7 +213,8 @@
       .cta {
         z-index: 1;
         display: flex;
-        width: 592px;
+        max-width: 592px;
+        width: 100%;
         flex-direction: column;
         justify-content: center;
         align-items: center;
