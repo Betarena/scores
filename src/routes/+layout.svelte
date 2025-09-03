@@ -83,6 +83,7 @@
   // import WidgetAdEngine from '@betarena/ad-engine/src/lib/Widget-AdEngine.svelte';
   import AndroidPwaBanner from '$lib/components/AndroidPWABanner.svelte';
   import { loginStore } from '$lib/components/section/login/login-store';
+  import { auth } from '$lib/firebase/init';
   import history_store from '$lib/store/history.js';
   import { gotoSW } from '$lib/utils/sveltekitWrapper';
   import WidgetAdEngine from '@betarena/ad-engine';
@@ -220,6 +221,7 @@
   $sessionStore.deviceType = $page.data.deviceType as 'mobile' | 'tablet' | 'desktop';
   $sessionStore.userAgent  = $page.data.userAgent as string ?? navigator.userAgent;
 
+  $: console.log("USER: ", $userBetarenaSettings.user, auth.currentUser)
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS

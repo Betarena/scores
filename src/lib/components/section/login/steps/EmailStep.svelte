@@ -98,7 +98,7 @@
       try {
         await verifyBeforeUpdateEmail(auth.currentUser, email);
         isEmailSent = true;
-        disableButton = false
+        disableButton = false;
       } catch (error: any) {
         console.error("Error updating email:", error);
         emailError = true;
@@ -125,6 +125,29 @@
 
         disableButton = false;
       }
+    }
+  }
+
+  async function continueClick() {
+    if (!auth.currentUser) return;
+    try {
+      await auth.currentUser.getIdToken(true);
+      await auth.currentUser.reload();
+      console.log("user: ", auth.currentUser);
+      // debugger;
+      if (!auth.currentUser.emailVerified) {
+        errorMessage =
+          translations.email_not_verified ||
+          "Please verify your email before continuing. Check your inbox and click the verification link.";
+        return;
+      }
+      if (!$loginStore.verifiedSteps.includes("email")) {
+        $loginStore.verifiedSteps.push("email");
+      }
+      $loginStore.currentStep += 1;
+    } catch (e) {
+      console.error("Error fetching user data:", e);
+      debugger;
     }
   }
   // #endregion ➤ 🛠️ METHODS
@@ -189,6 +212,7 @@
             size="lg"
             disabled={disableButton}
             on:click={() => {
+              // continueClick();
               updateUserEmail();
             }}
           >
@@ -200,10 +224,7 @@
             size="lg"
             disabled={disableButton}
             on:click={() => {
-              if (!$loginStore.verifiedSteps.includes("email")) {
-                $loginStore.verifiedSteps.push("email");
-              }
-              $loginStore.currentStep += 1;
+              continueClick();
             }}
           >
             {translations.continue || "Continue"}
