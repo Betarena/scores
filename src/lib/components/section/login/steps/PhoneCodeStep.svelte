@@ -182,6 +182,12 @@
         $loginStore.verifiedSteps.push("phone");
       }
       $loginStore.recaptchaVerifier?.clear();
+      const container = document.getElementById("recaptcha-container");
+      if (container) {
+        container.innerHTML = "";
+        container.style.display = "none";
+        container.remove();
+      }
       $loginStore.recaptchaVerifier = null;
       $loginStore.currentStep += 1;
     } catch (error: any) {
