@@ -93,7 +93,7 @@
     <div class="side-banner">
       <img
         id=""
-        src="https://firebasestorage.googleapis.com/v0/b/betarena-ios.appspot.com/o/Betarena_Media%2Fgeneral%2Fsportstacks_1-min.png?alt=media&token=92e7eb7d-8025-4686-8a25-989c9335a5dc"
+        src="https://firebasestorage.googleapis.com/v0/b/betarena-ios.appspot.com/o/Betarena_Media%2Fgeneral%2Fresized%2Farticlle_v1-min_1200x1200.webp?alt=media&token=547cece2-2830-4f00-9edb-16d84558a633"
         alt=""
         title=""
         loading="lazy"
