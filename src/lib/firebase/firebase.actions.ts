@@ -144,6 +144,24 @@ export function initializeRecaptcha(containerId: string): RecaptchaVerifier {
 
 /**
  * @summary
+ * Remove reCAPTCHA verifier for phone authentication
+ * @description
+ * Remove reCAPTCHA verifier for phone authentication
+ * @param
+ * {string} containerId - ID of the container element for reCAPTCHA
+
+ */
+export function clearRecaptcha(containerId: string): void {
+  const container = document.getElementById(containerId);
+  if (container) {
+    container.innerHTML = "";
+    container.style.display = "none";
+    container.remove();
+  }
+}
+
+/**
+ * @summary
  * [PHONE AUTH]
  * @description
  * Send verification code to phone number

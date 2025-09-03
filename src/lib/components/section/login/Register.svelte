@@ -26,6 +26,7 @@
   import { page } from "$app/stores";
   import Button from "$lib/components/ui/Button.svelte";
   import StepBase from "$lib/components/ui/StepBase.svelte";
+  import { clearRecaptcha } from "$lib/firebase/firebase.actions";
   import history_store from "$lib/store/history";
   import session from "$lib/store/session";
   import userSettings from "$lib/store/user-settings";
@@ -65,7 +66,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   $: ({ viewportType } = $session);
-  $: ({ currentStep, isExistedUser } = $loginStore);
+  $: ({ currentStep, isExistedUser, verifiedSteps, recaptchaVerifier } = $loginStore);
   $: ({ scores_user_data: user } = $userSettings.user || {});
   $: ([translations] = $page.data.auth_translations.data);
   let defaultSteps = [
@@ -146,7 +147,6 @@
   $: desktopStepsGrouped = Object.values(defaultDesktopSteps || {});
 
   defaultSteps.forEach((component, index) => (stepMap[index] = component));
-
   $: if (user) {
     $loginStore.avatar = user.profile_photo || "";
     $loginStore.name = user.name || "";
@@ -157,7 +157,25 @@
   }
 
   // #endregion ➤ 📌 VARIABLES
+// #region ➤ 🔥 REACTIVIY [SVELTE]
 
+// ╭────────────────────────────────────────────────────────────────────────╮
+// │ NOTE:                                                                  │
+// │ Please add inside 'this' region the 'logic' that should run            │
+// │ immediately and/or reactively for 'this' .svelte file is ran.          │
+// │ WARNING:                                                               │
+// │ ❗️ Can go out of control.                                              │
+// │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+// │ Please keep very close attention to these methods and                  │
+// │ use them carefully.                                                    │
+// ╰────────────────────────────────────────────────────────────────────────╯
+$: if (verifiedSteps.includes("phone")) {
+  // Phone verification step is completed
+  clearRecaptcha("recaptcha-container");
+}
+
+
+// #endregion ➤ 🔥 REACTIVIY [SVELTE]
   // #region ➤ 🛠️ METHODS
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -176,7 +194,7 @@
     let newDesktopSteps: typeof desktopStepsGrouped = [];
     let profileSteps: Array<typeof ProfileStep> = [];
     const { scores_user_data, firebase_user_data } = $userSettings.user;
-    $loginStore.verifiedSteps = ["email", "password"];
+    $loginStore.verifiedSteps = ["password"];
     if (
       !firebase_user_data?.providerData.find(
         (provider) => provider.providerId === "password"
@@ -184,10 +202,17 @@
     ) {
       // steps.push(PasswordStep);
     }
+    if (firebase_user_data && !firebase_user_data.email) {
+      // newDesktopSteps.push({...defaultDesktopSteps.email, steps: [EmailStep]});
+      // steps.push(EmailStep);
+      $loginStore.verifiedSteps.push("email");
+    } else {
+      $loginStore.verifiedSteps.push("email");
+    }
     if (
       !firebase_user_data?.phoneNumber &&
       new Date(scores_user_data?.register_date || "").valueOf() >
-        new Date(2025, 7, 13).valueOf()
+        new Date(2025, 7, 29).valueOf()
     ) {
       newDesktopSteps.push(defaultDesktopSteps.phone);
       steps.push(PhoneStep, PhoneCodeStep);
@@ -206,14 +231,21 @@
     }
     if ((scores_user_data?.following?.tags?.length || 0) < 3) {
       newDesktopSteps.push(defaultDesktopSteps.follow_topics);
-      profileSteps.push(TopicsStep);
       steps.push(TopicsStep);
     }
     if (profileSteps.length) {
-      newDesktopSteps.push({
+      const phoneStepIndex = newDesktopSteps.findIndex(
+        (step) => step.id === "phone"
+      );
+      const profileStep = {
         ...defaultDesktopSteps.profile,
         steps: profileSteps,
-      });
+      };
+      if (phoneStepIndex !== -1) {
+        newDesktopSteps.splice(phoneStepIndex + 1, 0, profileStep);
+      } else {
+        newDesktopSteps.unshift(profileStep);
+      }
     }
     if (!steps.length) {
       await updateUserProfileData({ verified: true });
@@ -273,6 +305,7 @@
 
   onDestroy(() => {
     $loginStore.recaptchaVerifier?.clear();
+    clearRecaptcha("recaptcha-container");
   });
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
@@ -396,7 +429,7 @@
         {/each}
       </div>
     {/if}
-    {#if $loginStore.recaptchaVerifier !== null}
+    {#if $loginStore.recaptchaVerifier !== null && [PhoneStep, PhoneCodeStep].includes(stepMap[currentStep])}
       <div id="recaptcha-container" />
     {/if}
   </div>

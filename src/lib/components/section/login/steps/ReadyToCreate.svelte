@@ -31,8 +31,8 @@
   import { gotoSW } from "$lib/utils/sveltekitWrapper";
   import { updateUserProfileData } from "$lib/utils/user";
   import img from "../assets/create.png";
-  import img_desktop from "../assets/create_desktop.png";
   import img_tablet from "../assets/create_tablet.png";
+  import img_stars from "../assets/Stars.png";
   import { loginStore } from "../login-store";
   // #endregion ➤ 📦 Package Imports
 
@@ -69,8 +69,8 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   async function finish(redirectTo = "/") {
-    loading = true
-    preloadCode(redirectTo)
+    loading = true;
+    preloadCode(redirectTo);
     await updateUserProfileData({ verified: true });
     $session.currentActiveModal = null;
     gotoSW(redirectTo, true);
@@ -90,16 +90,29 @@
 -->
 <div class="ready-to-create-wrapper {viewportType}">
   {#if viewportType === "desktop"}
-    <div class="side-banner" style="background-image: url({img_desktop});">
-      <div class="cta">
-        <div class="side-text-wrapper">
-          <h2>
-            {translations.start_creating ||
-              "Start creating your sports content"}
-          </h2>
-          <p>
-            {translations.start_earning || "Start earning from your work"}
-          </p>
+    <div class="side-banner">
+      <img
+        id=""
+        src="https://firebasestorage.googleapis.com/v0/b/betarena-ios.appspot.com/o/Betarena_Media%2Fgeneral%2Fresized%2Farticlle_v1-min_1200x1200.webp?alt=media&token=547cece2-2830-4f00-9edb-16d84558a633"
+        alt=""
+        title=""
+        loading="lazy"
+        class="sidebar-bg"
+      />
+      <div class="cta-wrapper">
+        <div class="star-img">
+          <img id="" src={img_stars} alt="" title="" loading="lazy" />
+        </div>
+        <div class="cta">
+          <div class="side-text-wrapper">
+            <h2>
+              {translations.start_creating ||
+                "Start creating your sports content"}
+            </h2>
+            <p>
+              {translations.start_earning || "Start earning from your work"}
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -131,8 +144,9 @@
               disabled={loading}
               full={true}
               on:click={() => {
-                finish(`/u/author/article/create/en?sportstack=${$loginStore
-                .sportstack.permalink}`);
+                finish(
+                  `/u/author/article/create/en?sportstack=${$loginStore.sportstack.permalink}`
+                );
               }}
               >{translations.create_first_article_cta ||
                 "Create First Article"}</Button
@@ -142,7 +156,7 @@
               type="secondary"
               disabled={loading}
               full={true}
-              on:click={() => finish('/')}
+              on:click={() => finish("/")}
               >{translations.skip_for_now || "Skip for now"}</Button
             >
           </div>
@@ -167,8 +181,9 @@
     display: flex;
     height: 100vh;
     .side-banner {
-      width: 720px;
+      width: 50%;
       flex-shrink: 0;
+
       max-height: 100vh;
       position: relative;
       display: flex;
@@ -177,16 +192,33 @@
       justify-content: flex-start;
       background-size: contain;
       background-repeat: no-repeat;
+      .sidebar-bg {
+        width: 100%;
+        max-height: 55%;
+        object-fit: cover;
+        object-position: center;
+      }
 
+      .cta-wrapper {
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        gap: var(--spacing-4xl, 32px);
+        align-self: stretch;
+        padding: var(--spacing-9xl, 96px) var(--spacing-7xl, 64px);
+        padding-top: 40px;
+      }
+      .star-img {
+        margin-inline: auto;
+      }
       .cta {
         z-index: 1;
         display: flex;
-        margin-top: 450px;
-        width: 720px;
-        padding: var(--spacing-9xl, 96px) var(--spacing-7xl, 64px);
-        padding-top: calc(
-          80px + var(--spacing-4xl, 32px) + var(--spacing-9xl, 96px)
-        );
+        max-width: 592px;
+        width: 100%;
+        margin-inline: auto;
         flex-direction: column;
         justify-content: center;
         align-items: center;
@@ -237,8 +269,7 @@
       }
       .text-wrapper {
         :global(.container-wrapper) {
-          padding-top: 54px;
-          padding-bottom: 24px;
+          padding-block: 24px;
         }
 
         .content {

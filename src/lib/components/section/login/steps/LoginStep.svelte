@@ -23,7 +23,7 @@
     GithubAuthProvider,
     GoogleAuthProvider,
     signInWithEmailAndPassword,
-    signInWithPopup,
+    signInWithPopup
   } from "firebase/auth";
   import { createEventDispatcher, onMount } from "svelte";
   import { loginStore } from "../login-store";
@@ -61,8 +61,6 @@
   $: if (isLogin !== undefined) {
     loginError = "";
   }
-
-  $: console.log("Translations: ", translations)
 
   // Clear login error when password changes
   $: if (password) {
@@ -494,15 +492,10 @@
           $loginStore.isLogin ? 'login' : 'register',
           moralisAuthInstance.credentials.user,
           moralisAuthInstance.credentials.user.displayName!,
-          'wallet'
+          'wallet',
+          false
         );
-        const history = $history_store.reverse();
-          const prev_path = history.find(
-            (path) => !path.includes("login") && !path.includes("register")
-          );
-          $session.currentActiveModal = null;
-          gotoSW(prev_path || "/", true);
-        return;
+        switchMode();
       },
       (
         ex: unknown
@@ -545,7 +538,13 @@
         password
       );
       $loginStore.isExistedUser = true;
-      await successAuthComplete("login", credentials.user, undefined, undefined, false);
+      await successAuthComplete(
+        "login",
+        credentials.user,
+        undefined,
+        undefined,
+        false
+      );
       $session.currentActiveModal = null;
       disableButton = false;
       gotoSW("/", true);
@@ -595,6 +594,7 @@
     }
     disableButton = false;
   }
+
   // #endregion ➤ 🛠️ METHODS
 
   onMount(() => {
@@ -626,9 +626,16 @@
   <Container hFull={false}>
     <div class="form">
       <div class="header">
-        <h2>{isLogin ? translations.welcome_back || "Welcome back" : translations.welcome_to_betarena || "Welcome to Betarena"}</h2>
+        <h2>
+          {isLogin
+            ? translations.welcome_back || "Welcome back"
+            : translations.welcome_to_betarena || "Welcome to Betarena"}
+        </h2>
         <p class="subtitle">
-          {isLogin ? translations.enter_details || "Please enter your details." : translations.join_home || "Join the home of sports media creators."}
+          {isLogin
+            ? translations.enter_details || "Please enter your details."
+            : translations.join_home ||
+              "Join the home of sports media creators."}
         </p>
       </div>
       <div class="form-body">

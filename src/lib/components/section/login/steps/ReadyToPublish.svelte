@@ -30,15 +30,14 @@
   import { gotoSW } from "$lib/utils/sveltekitWrapper";
   import { updateUserProfileData } from "$lib/utils/user";
   import img from "../assets/publish.png";
-  import img_desktop from "../assets/publish_desktop.png";
   import img_tablet from "../assets/publish_tablet.png";
+  import img_stars from "../assets/Stars.png";
   import { loginStore } from "../login-store";
 
-  
   // #endregion ➤ 📦 Package Imports
-  
+
   // #region ➤ 📌 VARIABLES
-  
+
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'variables' that are to be         │
@@ -50,15 +49,15 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  
+
   $: ({ viewportType } = $session);
   $: translations = $page.data.auth_translations.data[0];
   let loading = false;
-  
+
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
-  
+
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'methods' that are to be           │
@@ -68,13 +67,13 @@
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  
+
   async function skip() {
-    loading = true
+    loading = true;
     await updateUserProfileData({ verified: true });
     $session.currentActiveModal = null;
     gotoSW("/", true);
-    loading = false
+    loading = false;
   }
   // #endregion ➤ 🛠️ METHODS
 </script>
@@ -91,27 +90,54 @@
 -->
 <div class="ready-to-publish-wrapper {viewportType}">
   {#if viewportType === "desktop"}
-    <div class="side-banner" style="background-image: url({img_desktop});">
-      <div class="cta">
-        <div class="side-text-wrapper">
-          <h2>{translations.start_tuning ||  "Start turning your ideas into reality."}</h2>
-          <p>
-            {translations.create_own_publication || "Create your own publication and get full access to all features."}
-          </p>
+    <div class="side-banner">
+      <img
+        id=""
+        src="https://firebasestorage.googleapis.com/v0/b/betarena-ios.appspot.com/o/Betarena_Media%2Fgeneral%2Fsportstacks_1-min.png?alt=media&token=92e7eb7d-8025-4686-8a25-989c9335a5dc"
+        alt=""
+        title=""
+        loading="lazy"
+        class="sidebar-bg"
+      />
+      <div class="cta-wrapper">
+        <div class="star-img">
+          <img id="" src={img_stars} alt="" title="" loading="lazy" />
+        </div>
+
+        <div class="cta">
+          <div class="side-text-wrapper">
+            <h2>
+              {translations.start_tuning ||
+                "Start turning your ideas into reality."}
+            </h2>
+            <p>
+              {translations.create_own_publication ||
+                "Create your own publication and get full access to all features."}
+            </p>
+          </div>
         </div>
       </div>
     </div>
   {/if}
   <div class="ready-to-publish">
     {#if viewportType !== "desktop"}
-      <img id="" src={viewportType === "tablet" ? img_tablet : img} alt="ready to publish" title="" loading="lazy" />
+      <img
+        id=""
+        src={viewportType === "tablet" ? img_tablet : img}
+        alt="ready to publish"
+        title=""
+        loading="lazy"
+      />
     {/if}
     <div class="text-wrapper">
       <Container>
         <div class="content">
           <div class="heading-wrapper">
             <h2>{translations.ready_publish || "Ready to publish?"}</h2>
-            <p>{translations.create_sportstack || "Create your own Sportstack and start building your brand."}</p>
+            <p>
+              {translations.create_sportstack ||
+                "Create your own Sportstack and start building your brand."}
+            </p>
           </div>
           <div class="actions">
             <Button
@@ -127,7 +153,8 @@
               type="secondary"
               full={true}
               disabled={loading}
-              on:click={skip}>{translations.skip_for_now || "Skip for now"}</Button
+              on:click={skip}
+              >{translations.skip_for_now || "Skip for now"}</Button
             >
           </div>
         </div>
@@ -151,8 +178,9 @@
     display: flex;
     height: 100vh;
     .side-banner {
-      width: 720px;
+      width: 50%;
       flex-shrink: 0;
+
       max-height: 100vh;
       position: relative;
       display: flex;
@@ -161,16 +189,32 @@
       justify-content: flex-start;
       background-size: contain;
       background-repeat: no-repeat;
+      .sidebar-bg {
+        width: 100%;
+        max-height: 70%;
+        object-fit: cover;
+        object-position: top;
+      }
 
-      .cta {
+      .cta-wrapper {
+        transform: translateY(-52%);
         z-index: 1;
         display: flex;
-        margin-top: 450px;
-        width: 720px;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        gap: var(--spacing-4xl, 32px);
+        align-self: stretch;
         padding: var(--spacing-9xl, 96px) var(--spacing-7xl, 64px);
         padding-top: calc(
           80px + var(--spacing-4xl, 32px) + var(--spacing-9xl, 96px)
         );
+      }
+      .cta {
+        z-index: 1;
+        display: flex;
+        max-width: 592px;
+        width: 100%;
         flex-direction: column;
         justify-content: center;
         align-items: center;
@@ -222,8 +266,7 @@
       }
       .text-wrapper {
         :global(.container-wrapper) {
-          padding-top: 54px;
-          padding-bottom: 24px;
+          padding-block: 24px;
         }
 
         .content {

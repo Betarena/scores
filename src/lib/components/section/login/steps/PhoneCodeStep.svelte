@@ -4,7 +4,7 @@
   import Container from "$lib/components/ui/wrappers/Container.svelte";
   import {
     sendPhoneVerificationCode,
-    verifyPhoneCode,
+    verifyPhoneCode
   } from "$lib/firebase/firebase.actions";
   import session from "$lib/store/session";
   import { successAuthComplete } from "$lib/utils/authentication";
@@ -179,9 +179,8 @@
       successAuthComplete("login", credentials.user, undefined);
       // Phone verification successful - move to next step
       if (!$loginStore.verifiedSteps.includes("phone")) {
-        $loginStore.verifiedSteps.push("phone");
+        $loginStore.verifiedSteps = [...$loginStore.verifiedSteps, "phone"];
       }
-      $loginStore.recaptchaVerifier?.clear();
       $loginStore.recaptchaVerifier = null;
       $loginStore.currentStep += 1;
     } catch (error: any) {
