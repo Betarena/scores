@@ -96,7 +96,7 @@
       if (!$loginStore.verifiedSteps.includes("password")) {
         $loginStore.verifiedSteps.push("email","password");
       }
-      updateUserProfileData({ registration_type: ["email"] });
+      updateUserProfileData({ registration_type: ["email"], email });
       $loginStore.currentStep += 1;
     } catch (error: any) {
       console.error("Registration error:", error);
