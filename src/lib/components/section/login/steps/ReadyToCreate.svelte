@@ -97,6 +97,7 @@
         alt=""
         title=""
         loading="lazy"
+        class="sidebar-bg"
       />
       <div class="cta-wrapper">
         <div class="star-img">
@@ -191,8 +192,11 @@
       justify-content: flex-start;
       background-size: contain;
       background-repeat: no-repeat;
-      img {
+      .sidebar-bg {
         width: 100%;
+        max-height: 70%;
+        object-fit: cover;
+        object-position: top;
       }
 
       .cta-wrapper {
