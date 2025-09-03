@@ -3,6 +3,7 @@
   import Button from "$lib/components/ui/Button.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
   import {
+    clearRecaptcha,
     sendPhoneVerificationCode,
     verifyPhoneCode,
   } from "$lib/firebase/firebase.actions";
@@ -179,15 +180,9 @@
       successAuthComplete("login", credentials.user, undefined);
       // Phone verification successful - move to next step
       if (!$loginStore.verifiedSteps.includes("phone")) {
-        $loginStore.verifiedSteps.push("phone");
+        $loginStore.verifiedSteps = [...$loginStore.verifiedSteps, "phone"];
       }
-      $loginStore.recaptchaVerifier?.clear();
-      const container = document.getElementById("recaptcha-container");
-      if (container) {
-        container.innerHTML = "";
-        container.style.display = "none";
-        container.remove();
-      }
+      clearRecaptcha("recaptcha-container");
       $loginStore.recaptchaVerifier = null;
       $loginStore.currentStep += 1;
     } catch (error: any) {
