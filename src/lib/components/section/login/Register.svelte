@@ -26,6 +26,7 @@
   import { page } from "$app/stores";
   import Button from "$lib/components/ui/Button.svelte";
   import StepBase from "$lib/components/ui/StepBase.svelte";
+  import { clearRecaptcha } from "$lib/firebase/firebase.actions";
   import history_store from "$lib/store/history";
   import session from "$lib/store/session";
   import userSettings from "$lib/store/user-settings";
@@ -65,7 +66,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   $: ({ viewportType } = $session);
-  $: ({ currentStep, isExistedUser } = $loginStore);
+  $: ({ currentStep, isExistedUser, verifiedSteps, recaptchaVerifier } = $loginStore);
   $: ({ scores_user_data: user } = $userSettings.user || {});
   $: ([translations] = $page.data.auth_translations.data);
   let defaultSteps = [
@@ -156,7 +157,25 @@
   }
 
   // #endregion ➤ 📌 VARIABLES
+// #region ➤ 🔥 REACTIVIY [SVELTE]
 
+// ╭────────────────────────────────────────────────────────────────────────╮
+// │ NOTE:                                                                  │
+// │ Please add inside 'this' region the 'logic' that should run            │
+// │ immediately and/or reactively for 'this' .svelte file is ran.          │
+// │ WARNING:                                                               │
+// │ ❗️ Can go out of control.                                              │
+// │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+// │ Please keep very close attention to these methods and                  │
+// │ use them carefully.                                                    │
+// ╰────────────────────────────────────────────────────────────────────────╯
+$: if (verifiedSteps.includes("phone")) {
+  // Phone verification step is completed
+  clearRecaptcha("recaptcha-container");
+}
+
+
+// #endregion ➤ 🔥 REACTIVIY [SVELTE]
   // #region ➤ 🛠️ METHODS
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -286,6 +305,7 @@
 
   onDestroy(() => {
     $loginStore.recaptchaVerifier?.clear();
+    clearRecaptcha("recaptcha-container");
   });
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
