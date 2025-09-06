@@ -50,6 +50,7 @@
   import {
     routeIdContent,
     routeIdLogin,
+    routeIdPageAuthors,
     routeIdPageProfile,
     routeIdPageProfileArticleCreation,
     routeIdPageProfileEditArticle,
@@ -537,6 +538,9 @@
           `🔹 [var] ➤ _event :: ${JSON.stringify(_event)}`
         ]
       );
+
+      document.getElementById('global⮕widget⮕betarenaAdEngine⮕main')?.remove()
+      document.getElementById('global⮕widget⮕betarenaAdEngine⮕main')?.remove()
 
       if ($page.data.setState?.has('IsAnonymousNewBurner'))
       {
