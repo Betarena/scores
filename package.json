@@ -58,7 +58,7 @@
 		"vitest/coverage": "vitest run --coverage"
 	},
 	"dependencies": {
-		"@betarena/ad-engine": "0.0.71",
+		"@betarena/ad-engine": "0.0.72",
 		"@betarena/scores-lib": "4.6.8",
 		"@lukeed/uuid": "2.0.1",
 		"@metamask/sdk": "0.1.0",
