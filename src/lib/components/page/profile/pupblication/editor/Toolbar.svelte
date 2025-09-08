@@ -124,6 +124,9 @@
       cb: () => toggle("undo"),
       id: "undo",
     },
+    widgets: {
+      id: "widget"
+    }
   };
 
   let selectedHedings = headings[0];
