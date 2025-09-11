@@ -9,6 +9,7 @@
 
 <script lang="ts">
   import session from "$lib/store/session";
+  import userSettings from "$lib/store/user-settings";
 // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -51,10 +52,11 @@
   };
 
   $: ({ user } = $userSettings);
+  $: ({ viewportType } = $session);
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
-  
+
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'methods' that are to be           │
@@ -64,9 +66,7 @@
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  
-  
-  
+
   function signIn() {
     $session.currentActiveModal = "Auth_Modal";
   }
@@ -84,7 +84,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="card-wrapper disabled" class:disabled={!user}>
+<div class="card-wrapper disabled {viewportType}" class:disabled={!user}>
   <div class="header">
     <WidgetIcon>
       <svg
@@ -111,26 +111,31 @@
     <div class="title">AI Prediction</div>
     <div class="market">1X2 Market</div>
   </div>
-
-  <div class="markets">
-    {#each Object.entries(probabilities) as [team, { coefficient, probability }]}
-      <PredictionMetric
-        type={team === "draw" ? "green" : "normal"}
-        number={team === "home" ? 1 : team === "draw" ? "X" : 2}
-        {coefficient}
-        {probability}
-      />
-    {/each}
-  </div>
-  <div class="logo-text">
-    <div class="name">AI Suggestion Analysis</div>
-    <div class="description">
-      Based on recent performances and head-to-head records, a draw is the most
-      likely outcome. Both teams have shown strong defensive capabilities, and
-      key offensive players are currently out with injuries, limiting their
-      scoring potential.
+  <div class="body-wrapper">
+    <div class="content-wrapper">
+      <div class="markets">
+        {#each Object.entries(probabilities) as [team, { coefficient, probability }]}
+          <PredictionMetric
+            type={team === "draw" ? "green" : "normal"}
+            number={team === "home" ? 1 : team === "draw" ? "X" : 2}
+            {coefficient}
+            {probability}
+          />
+        {/each}
+      </div>
+      <div class="logo-text">
+        <div class="name">AI Suggestion Analysis</div>
+        <div class="description">
+          Based on recent performances and head-to-head records, a draw is the
+          most likely outcome. Both teams have shown strong defensive
+          capabilities, and key offensive players are currently out with
+          injuries, limiting their scoring potential.
+        </div>
+      </div>
     </div>
+    <div class="ads-widget">Here will be ads integration</div>
   </div>
+
   {#if !user}
     <div class="disabled-overlay">
       <div class="header-preview">
@@ -206,7 +211,7 @@
     position: relative;
     margin-inline: auto;
     display: flex;
-    width: 343px;
+    width: 100%;
     padding: var(--spacing-3xl, 24px);
     flex-direction: column;
     justify-content: center;
@@ -265,45 +270,63 @@
         line-height: var(--Line-height-text-sm, 20px); /* 142.857% */
       }
     }
-    .markets {
-      display: flex;
-      height: 90px;
-      padding-right: 1px;
-      justify-content: center;
-      align-items: flex-start;
-      gap: var(--spacing-lg, 12px);
-      align-self: stretch;
-    }
-    .logo-text {
+    .body-wrapper {
+      width: 100%;
+      flex-grow: 1;
       display: flex;
       flex-direction: column;
-      align-items: flex-start;
-      gap: var(--spacing-lg, 12px);
-      align-self: stretch;
+      gap: 20px;
+      .content-wrapper {
+        width: 100%;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        .markets {
+          display: flex;
+          height: 90px;
+          padding-right: 1px;
+          justify-content: center;
+          align-items: flex-start;
+          gap: var(--spacing-lg, 12px);
+          align-self: stretch;
+        }
+        .logo-text {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: var(--spacing-lg, 12px);
+          align-self: stretch;
 
-      .name {
-        align-self: stretch;
-        color: var(--colors-text-text-primary-900, #fff);
+          .name {
+            align-self: stretch;
+            color: var(--colors-text-text-primary-900, #fff);
 
-        /* Text lg/Semibold */
-        font-family: var(--Font-family-font-family-body, Roboto);
-        font-size: var(--Font-size-text-lg, 18px);
-        font-style: normal;
-        font-weight: 600;
-        line-height: var(--Line-height-text-lg, 28px); /* 155.556% */
+            /* Text lg/Semibold */
+            font-family: var(--Font-family-font-family-body, Roboto);
+            font-size: var(--Font-size-text-lg, 18px);
+            font-style: normal;
+            font-weight: 600;
+            line-height: var(--Line-height-text-lg, 28px); /* 155.556% */
+          }
+          .description {
+            align-self: stretch;
+            color: var(--colors-text-text-primary-900, #fff);
+
+            /* Text md/Regular */
+            font-family: var(--Font-family-font-family-body, Roboto);
+            font-size: var(--Font-size-text-md, 16px);
+            font-style: normal;
+            font-weight: 400;
+            line-height: var(--Line-height-text-md, 24px); /* 150% */
+          }
+        }
       }
-      .description {
-        align-self: stretch;
-        color: var(--colors-text-text-primary-900, #fff);
-
-        /* Text md/Regular */
-        font-family: var(--Font-family-font-family-body, Roboto);
-        font-size: var(--Font-size-text-md, 16px);
-        font-style: normal;
-        font-weight: 400;
-        line-height: var(--Line-height-text-md, 24px); /* 150% */
+      .ads-widget {
+        display: none;
       }
     }
+
     &.disabled {
       > :not(.disabled-overlay):not(.header-preview) {
         filter: blur(5.5px);
@@ -311,73 +334,94 @@
       .header-preview .market {
         filter: blur(5.5px);
       }
-    }
-    .disabled-overlay {
-      padding: var(--spacing-3xl, 24px);
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background: var(
-        --component-colors-alpha-alpha-white-60,
-        rgba(12, 14, 18, 0.6)
-      );
-      border-radius: var(--radius-xl, 12px);
-      z-index: 1;
-
-      .lock-screen {
+      .disabled-overlay {
+        padding: var(--spacing-3xl, 24px);
         position: absolute;
-        display: flex;
-        width: 313px;
-        height: 240px;
-        flex-direction: column;
-        align-items: flex-start;
-        flex-shrink: 0;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        border-radius: var(--radius-2xl, 16px);
-        border: 1px solid var(--colors-border-border-secondary_alt, #3b3b3b);
+        width: 100%;
+        height: 100%;
         background: var(
-          --component-colors-alpha-alpha-white-70,
-          rgba(12, 14, 18, 0.7)
+          --component-colors-alpha-alpha-white-60,
+          rgba(12, 14, 18, 0.6)
         );
+        border-radius: var(--radius-xl, 12px);
+        z-index: 1;
 
-        .lock-screen-header {
+        .lock-screen {
+          position: absolute;
           display: flex;
-          padding: var(--spacing-3xl, 24px) var(--spacing-3xl, 24px) 0
-            var(--spacing-3xl, 24px);
+          width: 313px;
+          height: 240px;
           flex-direction: column;
           align-items: flex-start;
-          gap: var(--spacing-3xl, 24px);
-          align-self: stretch;
-          .heading-icon {
+          flex-shrink: 0;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          border-radius: var(--radius-2xl, 16px);
+          border: 1px solid var(--colors-border-border-secondary_alt, #3b3b3b);
+          background: var(
+            --component-colors-alpha-alpha-white-70,
+            rgba(12, 14, 18, 0.7)
+          );
+
+          .lock-screen-header {
             display: flex;
+            padding: var(--spacing-3xl, 24px) var(--spacing-3xl, 24px) 0
+              var(--spacing-3xl, 24px);
             flex-direction: column;
-            align-items: center;
-            gap: var(--spacing-xl, 16px);
+            align-items: flex-start;
+            gap: var(--spacing-3xl, 24px);
             align-self: stretch;
+            .heading-icon {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              gap: var(--spacing-xl, 16px);
+              align-self: stretch;
 
-            .heading {
-              color: var(--colors-text-text-brand-secondary-700, #d2d2d2);
-              text-align: center;
+              .heading {
+                color: var(--colors-text-text-brand-secondary-700, #d2d2d2);
+                text-align: center;
 
-              /* Text xl/Semibold */
-              font-family: var(--font-family-font-family-body, Roboto);
-              font-size: var(--font-size-text-xl, 20px);
-              font-style: normal;
-              font-weight: 600;
-              line-height: var(--line-height-text-xl, 30px); /* 150% */
+                /* Text xl/Semibold */
+                font-family: var(--font-family-font-family-body, Roboto);
+                font-size: var(--font-size-text-xl, 20px);
+                font-style: normal;
+                font-weight: 600;
+                line-height: var(--line-height-text-xl, 30px); /* 150% */
+              }
             }
           }
-        }
 
-        .footer {
+          .footer {
+            display: flex;
+            padding: var(--spacing-3xl, 24px);
+            flex-direction: column;
+            align-items: flex-start;
+            gap: var(--spacing-3xl, 24px);
+            align-self: stretch;
+          }
+        }
+      }
+    }
+
+    &.desktop {
+      .body-wrapper {
+        flex-direction: row;
+        gap: 13px;
+        .ads-widget {
+          border-radius: var(--radius-xl, 12px);
+          border: 2px solid var(--colors-vorder-border-disabled, #525252);
+          background: var(--colors-background-bg-secondary, #232323);
+
+          /* Shadows/shadow-xs */
+          box-shadow: 0 1px 2px 0
+            var(--colors-effects-shadows-shadow-xs, rgba(255, 255, 255, 0));
+          width: 268px;
+          flex-shrink: 0;
           display: flex;
-          padding: var(--spacing-3xl, 24px);
-          flex-direction: column;
-          align-items: flex-start;
-          gap: var(--spacing-3xl, 24px);
-          align-self: stretch;
+          justify-content: center;
+          align-items: center;
         }
       }
     }
