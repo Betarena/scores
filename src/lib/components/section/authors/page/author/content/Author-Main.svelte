@@ -118,6 +118,10 @@
     contentContainer: HTMLElement,
     author;
 
+  const widgetsMap = {
+    1: AiPredictorWidget,
+  };
+
   $: ({ windowWidth, viewportType } = $sessionStore);
   $: [VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1]] = viewportChangeV2(
     windowWidth,
@@ -130,6 +134,7 @@
     | undefined;
   $: ({ author: sportstack } = widgetData);
   $: getAuthor(sportstack?.uid);
+  $: insertWidgets(contentContainer);
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -143,6 +148,31 @@
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
+
+  function insertWidgets(container: HTMLElement) {
+    if (!contentContainer) return;
+    const widget_targets = container.querySelectorAll("[data-widget-id]");
+
+    widget_targets.forEach((target) => {
+      const widget_id = target.getAttribute("data-widget-id") || "";
+      const widget = widgetsMap[widget_id];
+      if (!widget) return;
+      const props = {};
+      Array.from(target.attributes).forEach((attr) => {
+        if (attr.name.startsWith("data-")) {
+          const propName = attr.name
+            .replace("data-", "")
+            .replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
+
+          props[propName] = attr.value;
+        }
+      });
+      new widget({
+        target: target as HTMLElement,
+        props,
+      });
+    });
+  }
 
   async function getAuthor(id: string) {
     executeAnimation = false;
@@ -421,7 +451,8 @@
           margin: 0 !important;
         }
 
-        blockquote.twitter-tweet, &.embed {
+        blockquote.twitter-tweet,
+        &.embed {
           margin-top: 48px !important;
           margin-bottom: 48px !important;
           margin-inline: auto !important;
@@ -429,20 +460,20 @@
           display: block;
 
           .twitter-tweet-rendered {
-            margin: 0  auto !important;
+            margin: 0 auto !important;
           }
         }
 
         iframe.embed {
-            width: 100%;
-            aspect-ratio: 16 / 9;
+          width: 100%;
+          aspect-ratio: 16 / 9;
         }
 
         iframe.youtube-shorts {
           display: flex;
           justify-content: center;
           aspect-ratio: 9 / 16;
-          width: 50%
+          width: 50%;
         }
         @mixin header {
           /* 🎨 style */
@@ -591,13 +622,14 @@
             margin-bottom: 40px !important;
             margin-top: 40px !important;
           }
-          blockquote.twitter-tweet, &.embed {
+          blockquote.twitter-tweet,
+          &.embed {
             margin-bottom: 10px !important;
             margin-top: 40px !important;
             margin-inline: auto !important;
             padding-left: 0;
             .twitter-tweet-rendered {
-              margin: 0  auto !important;
+              margin: 0 auto !important;
             }
           }
 
