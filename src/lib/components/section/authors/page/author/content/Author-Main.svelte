@@ -54,6 +54,7 @@
   import ListSportsTackItem from "$lib/components/ui/composed/sportstack_list/ListSportsTackItem.svelte";
   import LoaderImage from "$lib/components/ui/loaders/LoaderImage.svelte";
   import ScrollDataWrapper from "$lib/components/ui/wrappers/ScrollDataWrapper.svelte";
+  import AiPredictorWidget from "$lib/components/widgets/AiPredictorWidget.svelte";
   import userSettings from "$lib/store/user-settings.js";
   import type { IPageAuhtorArticleDataFinal } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import type { IPageArticleTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.articles.js";
@@ -291,6 +292,7 @@
   -->
   {#key $userSettings.theme}
     <div id="content" data-betarena-zone-id="2,3" bind:this={contentContainer}>
+      <AiPredictorWidget />
       {@html widgetData.article.data?.content.replaceAll(
         /<img[^>]+src=["']([^"'>]+)["']/g,
         (match, src) => {
