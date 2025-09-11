@@ -67,6 +67,7 @@
     display: flex;
     width: 90px;
     height: 90px;
+    flex-grow: 1;
     flex-shrink: 0;
     padding: var(--spacing-2xl, 20px) var(--spacing-xl, 16px);
     flex-direction: column;
