@@ -8,6 +8,8 @@
 -->
 
 <script lang="ts">
+  import session from "$lib/store/session";
+
   // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -26,6 +28,8 @@
   export let coefficient: string | number = 0;
   export let probability = "0%";
   export let type: "normal" | "green" = "normal";
+
+  $: ({viewportType} = $session)
   // #endregion ➤ 📌 VARIABLES
 </script>
 
@@ -39,7 +43,7 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<div class="metric-wrapper {type}">
+<div class="metric-wrapper {type} {viewportType}">
   <div class="heading-number">
     <div class="number-badge">
       <div class="number-change">
@@ -63,11 +67,12 @@
 
 <style lang="scss">
   .metric-wrapper {
-  margin-inline: auto;
     display: flex;
     width: 90px;
     height: 90px;
     flex-grow: 1;
+    max-width: 122px;
+    height: auto;
     flex-shrink: 0;
     padding: var(--spacing-2xl, 20px) var(--spacing-xl, 16px);
     flex-direction: column;
@@ -156,6 +161,9 @@
       /* Shadows/shadow-xs */
       box-shadow: 0 1px 2px 0
         var(--colors-effects-shadows-shadow-xs, rgba(255, 255, 255, 0));
+    }
+    &.mobile {
+      height: 90px;
     }
   }
 </style>
