@@ -282,14 +282,14 @@
         flex-grow: 1;
         flex-shrink: 0;
         max-width: calc(122px * 3 + 20px * 2);
-        margin: auto;
+        // margin: auto;
         display: flex;
         flex-direction: column;
         gap: 20px;
         .markets {
           display: flex;
           padding-right: 1px;
-          justify-content: center;
+          justify-content: flex-start;
           align-items: flex-start;
           gap: var(--spacing-lg, 12px);
           align-self: stretch;
@@ -409,6 +409,7 @@
     }
 
     &.desktop {
+      padding-block: 18px;
       .body-wrapper {
         flex-direction: row;
         gap: 13px;
