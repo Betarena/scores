@@ -3,9 +3,8 @@
   import Button from "$lib/components/ui/Button.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
   import {
-    clearRecaptcha,
     sendPhoneVerificationCode,
-    verifyPhoneCode,
+    verifyPhoneCode
   } from "$lib/firebase/firebase.actions";
   import session from "$lib/store/session";
   import { successAuthComplete } from "$lib/utils/authentication";
@@ -182,7 +181,6 @@
       if (!$loginStore.verifiedSteps.includes("phone")) {
         $loginStore.verifiedSteps = [...$loginStore.verifiedSteps, "phone"];
       }
-      clearRecaptcha("recaptcha-container");
       $loginStore.recaptchaVerifier = null;
       $loginStore.currentStep += 1;
     } catch (error: any) {
