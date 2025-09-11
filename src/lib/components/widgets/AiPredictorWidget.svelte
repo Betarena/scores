@@ -133,7 +133,7 @@
         </div>
       </div>
     </div>
-    <div class="ads-widget">Here will be ads integration</div>
+    <!-- <div class="ads-widget">Here will be ads integration</div> -->
   </div>
 
   {#if !user}
@@ -273,18 +273,21 @@
     .body-wrapper {
       width: 100%;
       flex-grow: 1;
+      flex-shrink: 0;
       display: flex;
       flex-direction: column;
       gap: 20px;
       .content-wrapper {
         width: 100%;
         flex-grow: 1;
+        flex-shrink: 0;
+        max-width: calc(122px * 3 + 20px * 2);
+        margin: auto;
         display: flex;
         flex-direction: column;
         gap: 20px;
         .markets {
           display: flex;
-          height: 90px;
           padding-right: 1px;
           justify-content: center;
           align-items: flex-start;
@@ -312,7 +315,7 @@
           .description {
             align-self: stretch;
             color: var(--colors-text-text-primary-900, #fff);
-
+            max-width: 366px;
             /* Text md/Regular */
             font-family: var(--Font-family-font-family-body, Roboto);
             font-size: var(--Font-size-text-md, 16px);
