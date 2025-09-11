@@ -8,8 +8,8 @@
 -->
 
 <script lang="ts">
-  import userSettings from "$lib/store/user-settings";
-  // #region ➤ 📦 Package Imports
+  import session from "$lib/store/session";
+// #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -52,6 +52,25 @@
 
   $: ({ user } = $userSettings);
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🛠️ METHODS
+  
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+  
+  
+  
+  function signIn() {
+    $session.currentActiveModal = "Auth_Modal";
+  }
+  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--
@@ -164,7 +183,7 @@
             </div>
           </div>
           <div class="footer">
-            <Button full={true}>Register now</Button>
+            <Button on:click={signIn} full={true}>Register now</Button>
           </div>
         </div>
       </div>
@@ -302,6 +321,7 @@
         --component-colors-alpha-alpha-white-60,
         rgba(12, 14, 18, 0.6)
       );
+      border-radius: var(--radius-xl, 12px);
       z-index: 1;
 
       .lock-screen {
@@ -322,10 +342,6 @@
           rgba(12, 14, 18, 0.7)
         );
 
-        /* Shadows/shadow-lg */
-        box-shadow: 0 12px 16px -4px var(--colors-effects-shadows-shadow-lg_01, rgba(255, 255, 255, 0)),
-          0 4px 6px -2px var(--colors-effects-shadows-shadow-lg_02, rgba(255, 255, 255, 0)),
-          0 2px 2px -1px var(--colors-effects-shadows-shadow-lg_03, rgba(255, 255, 255, 0));
         .lock-screen-header {
           display: flex;
           padding: var(--spacing-3xl, 24px) var(--spacing-3xl, 24px) 0
