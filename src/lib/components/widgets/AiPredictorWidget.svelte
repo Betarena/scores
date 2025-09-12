@@ -413,12 +413,27 @@
       padding-block: 18px;
 
       .body-wrapper {
-        flex-direction: row;
+        // flex-direction: row;
+        width: 100% !important;
+        flex-shrink: 0;
         gap: 13px;
-        .content-wrapper .markets {
-          width: 391px;
-          height: 104px;
-        }
+        .content-wrapper {
+          flex-direction: row;
+          width: 100% !important;
+          flex-shrink: 0;
+          .markets {
+            width: 347px;
+            height: 104px;
+            flex-shrink: 0;
+          }
+          .logo-text {
+            flex-grow: 1;
+            flex-shrink: 0;
+            .description {
+              width: 100%;
+            }
+          }
+        } 
         .ads-widget {
           border-radius: var(--radius-xl, 12px);
           border: 2px solid var(--colors-vorder-border-disabled, #525252);
