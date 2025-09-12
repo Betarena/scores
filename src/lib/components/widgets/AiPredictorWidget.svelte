@@ -25,6 +25,7 @@
   import { get } from "$lib/api/utils";
   import session from "$lib/store/session";
   import userSettings from "$lib/store/user-settings";
+  import type { WidgetsAIPredictionMain } from "@betarena/scores-lib/types/v8/_HASURA-0";
   import { onMount } from "svelte";
   import Button from "../ui/Button.svelte";
   import FeaturedIcon from "../ui/FeaturedIcon.svelte";
@@ -78,15 +79,16 @@
 
   async function fetchWidgetData() {
     loading = true;
-    const res = (await get(
+    const res = await get<{data: WidgetsAIPredictionMain }>(
       `/api/data/widgets.ai-prediction?id=${aiPredictionId}`
-    )) as any;
-    const data = res.data[0];
-    odds = data.match_odds.sort(
+    );
+    if (!res) return
+    const data = res.data;
+    odds = data.match_odds?.sort(
       (a, b) => parseFloat(a.sortOrder) - parseFloat(b.sortOrder)
     );
-    selectedTeam = data.label;
-    content = data.generated_response;
+    selectedTeam = data.label || "";
+    content = data.generated_response || "";
     loading = false;
   }
   // #endregion ➤ 🛠️ METHODS

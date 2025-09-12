@@ -1,6 +1,6 @@
+import { getAiPredictionWidgetData } from '@betarena/scores-lib/dist/functions/v8/widgets/ai-predictions';
 import type { RequestHandler } from "@sveltejs/kit";
 import { json } from "@sveltejs/kit";
-import { getAiPredictionWidgetData } from '../../../../../../scores-lib/src/functions/v8/widgets/ai-predictions';
 
 export const GetAiPredictionWidgetData: RequestHandler = async ({ url, locals, fetch }) => {
     if (!locals.user?.uid) {
