@@ -69,7 +69,7 @@
   .metric-wrapper {
     display: flex;
     width: 90px;
-    height: 90px;
+    height: 100%;
     flex-grow: 1;
     max-width: 122px;
     height: auto;
@@ -161,9 +161,6 @@
       /* Shadows/shadow-xs */
       box-shadow: 0 1px 2px 0
         var(--colors-effects-shadows-shadow-xs, rgba(255, 255, 255, 0));
-    }
-    &.mobile {
-      height: 90px;
     }
   }
 </style>

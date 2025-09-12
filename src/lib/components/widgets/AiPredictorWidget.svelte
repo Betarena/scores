@@ -291,6 +291,7 @@
           padding-right: 1px;
           justify-content: flex-start;
           align-items: flex-start;
+          height: 90px;
           gap: var(--spacing-lg, 12px);
           align-self: stretch;
         }
@@ -410,9 +411,14 @@
 
     &.desktop {
       padding-block: 18px;
+
       .body-wrapper {
         flex-direction: row;
         gap: 13px;
+        .content-wrapper .markets {
+          width: 391px;
+          height: 104px;
+        }
         .ads-widget {
           border-radius: var(--radius-xl, 12px);
           border: 2px solid var(--colors-vorder-border-disabled, #525252);
@@ -427,6 +433,12 @@
           justify-content: center;
           align-items: center;
         }
+      }
+    }
+    &.tablet {
+      .body-wrapper .content-wrapper .markets {
+        width: 378px;
+        height: 104px;
       }
     }
   }
