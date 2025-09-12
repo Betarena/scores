@@ -27,9 +27,11 @@
   export let number: string | number = 0;
   export let coefficient: string | number = 0;
   export let probability = "0%";
-  export let type: "normal" | "green" = "normal";
+  export let selected = false;
+  export let loading = false;
 
-  $: ({viewportType} = $session)
+  $: type = selected && !loading ? "green" : "normal";
+  $: ({ viewportType } = $session);
   // #endregion ➤ 📌 VARIABLES
 </script>
 
@@ -43,7 +45,7 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<div class="metric-wrapper {type} {viewportType}">
+<div class="metric-wrapper {type} {viewportType}" class:loading>
   <div class="heading-number">
     <div class="number-badge">
       <div class="number-change">
@@ -69,7 +71,7 @@
   .metric-wrapper {
     display: flex;
     width: 90px;
-    height: 90px;
+    height: 100%;
     flex-grow: 1;
     max-width: 122px;
     height: auto;
@@ -87,6 +89,7 @@
     /* Shadows/shadow-xs */
     box-shadow: 0 1px 2px 0
       var(--colors-effects-shadows-shadow-xs, rgba(255, 255, 255, 0));
+
     .heading-number {
       display: flex;
       width: 66px;
@@ -162,8 +165,9 @@
       box-shadow: 0 1px 2px 0
         var(--colors-effects-shadows-shadow-xs, rgba(255, 255, 255, 0));
     }
-    &.mobile {
-      height: 90px;
+
+    &.loading {
+      filter: blur(5.5px);
     }
   }
 </style>

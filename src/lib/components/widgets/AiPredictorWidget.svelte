@@ -8,9 +8,7 @@
 -->
 
 <script lang="ts">
-  import session from "$lib/store/session";
-  import userSettings from "$lib/store/user-settings";
-// #region ➤ 📦 Package Imports
+  // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -24,11 +22,16 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
+  import { get } from "$lib/api/utils";
+  import session from "$lib/store/session";
+  import userSettings from "$lib/store/user-settings";
+  import type { WidgetsAIPredictionMain } from "@betarena/scores-lib/types/v8/_HASURA-0";
+  import { onMount } from "svelte";
   import Button from "../ui/Button.svelte";
   import FeaturedIcon from "../ui/FeaturedIcon.svelte";
+  import LoaderLine from "../ui/loaders/LoaderLine.svelte";
   import PredictionMetric from "./PredictionMetric.svelte";
   import WidgetIcon from "./WidgetIcon.svelte";
-
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -45,12 +48,15 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let probabilities = {
-    home: { coefficient: "2.50", probability: "40%" },
-    draw: { coefficient: "3.20", probability: "35%" },
-    away: { coefficient: "3.00", probability: "25%" },
-  };
-
+  export let aiPredictionId = 2;
+  let odds = [
+    { coefficient: "2.50", probability: "40%" },
+    { coefficient: "3.20", probability: "35%" },
+    { coefficient: "3.00", probability: "25%" },
+  ];
+  let loading = false;
+  let content = "";
+  let selectedTeam = "Draw";
   $: ({ user } = $userSettings);
   $: ({ viewportType } = $session);
   // #endregion ➤ 📌 VARIABLES
@@ -70,7 +76,37 @@
   function signIn() {
     $session.currentActiveModal = "Auth_Modal";
   }
+
+  async function fetchWidgetData() {
+    loading = true;
+    const res = await get<{data: WidgetsAIPredictionMain }>(
+      `/api/data/widgets.ai-prediction?id=${aiPredictionId}`
+    );
+    if (!res) return
+    const data = res.data;
+    odds = data.match_odds?.sort(
+      (a, b) => parseFloat(a.sortOrder) - parseFloat(b.sortOrder)
+    );
+    selectedTeam = data.label || "";
+    content = data.generated_response || "";
+    loading = false;
+  }
   // #endregion ➤ 🛠️ METHODS
+
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  onMount(() => {
+    fetchWidgetData();
+  });
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 
 <!--
@@ -114,22 +150,27 @@
   <div class="body-wrapper">
     <div class="content-wrapper">
       <div class="markets">
-        {#each Object.entries(probabilities) as [team, { coefficient, probability }]}
+        {#each odds as odd}
           <PredictionMetric
-            type={team === "draw" ? "green" : "normal"}
-            number={team === "home" ? 1 : team === "draw" ? "X" : 2}
-            {coefficient}
-            {probability}
+            {loading}
+            selected={odd.label === selectedTeam}
+            number={odd.label === "Draw" ? "X" : odd.label === "Home" ? 1 : 2}
+            coefficient={odd.value}
+            probability={odd.probability}
           />
         {/each}
       </div>
       <div class="logo-text">
         <div class="name">AI Suggestion Analysis</div>
         <div class="description">
-          Based on recent performances and head-to-head records, a draw is the
-          most likely outcome. Both teams have shown strong defensive
-          capabilities, and key offensive players are currently out with
-          injuries, limiting their scoring potential.
+          {#if loading}
+             <LoaderLine width="90%"/>
+             <LoaderLine width="75%"/>
+             <LoaderLine width="80%"/>
+             <LoaderLine width="70%"/>
+          {:else}
+             {content}
+          {/if}
         </div>
       </div>
     </div>
@@ -291,6 +332,7 @@
           padding-right: 1px;
           justify-content: flex-start;
           align-items: flex-start;
+          height: 90px;
           gap: var(--spacing-lg, 12px);
           align-self: stretch;
         }
@@ -410,9 +452,29 @@
 
     &.desktop {
       padding-block: 18px;
+
       .body-wrapper {
-        flex-direction: row;
+        // flex-direction: row;
+        width: 100% !important;
+        flex-shrink: 0;
         gap: 13px;
+        .content-wrapper {
+          flex-direction: row;
+          width: 100% !important;
+          flex-shrink: 0;
+          .markets {
+            width: 347px;
+            height: 104px;
+            flex-shrink: 0;
+          }
+          .logo-text {
+            flex-grow: 1;
+            flex-shrink: 0;
+            .description {
+              width: 100%;
+            }
+          }
+        }
         .ads-widget {
           border-radius: var(--radius-xl, 12px);
           border: 2px solid var(--colors-vorder-border-disabled, #525252);
@@ -427,6 +489,12 @@
           justify-content: center;
           align-items: center;
         }
+      }
+    }
+    &.tablet {
+      .body-wrapper .content-wrapper .markets {
+        width: 378px;
+        height: 104px;
       }
     }
   }
