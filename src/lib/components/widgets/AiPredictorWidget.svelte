@@ -23,12 +23,13 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
   import { get } from "$lib/api/utils";
+  import Button from "$lib/components/ui/Button.svelte";
+  import FeaturedIcon from "$lib/components/ui/FeaturedIcon.svelte";
+  import Loaderline from "$lib/components/ui/loaders/LoaderLine.svelte";
   import session from "$lib/store/session";
+  import userSettings from "$lib/store/user-settings";
   import type { WidgetsAIPredictionMain } from "@betarena/scores-lib/types/v8/_HASURA-0";
   import { onMount } from "svelte";
-  import Button from "../ui/Button.svelte";
-  import FeaturedIcon from "../ui/FeaturedIcon.svelte";
-  import Loaderline from "../ui/loaders/Loaderline.svelte";
   import PredictionMetric from "./PredictionMetric.svelte";
   import WidgetIcon from "./WidgetIcon.svelte";
   // #endregion ➤ 📦 Package Imports
