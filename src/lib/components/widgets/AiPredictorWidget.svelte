@@ -22,7 +22,6 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  import { page } from "$app/stores";
   import { get } from "$lib/api/utils";
   import session from "$lib/store/session";
   import userSettings from "$lib/store/user-settings";
@@ -30,7 +29,7 @@
   import { onMount } from "svelte";
   import Button from "../ui/Button.svelte";
   import FeaturedIcon from "../ui/FeaturedIcon.svelte";
-  import LoaderLine from "../ui/loaders/LoaderLine.svelte";
+  import Loaderline from "../ui/loaders/Loaderline.svelte";
   import PredictionMetric from "./PredictionMetric.svelte";
   import WidgetIcon from "./WidgetIcon.svelte";
   // #endregion ➤ 📦 Package Imports
@@ -58,7 +57,6 @@
   let loading = false;
   let content = "";
   let selectedTeam = "Draw";
-  $: ({widget_translations = { }} = $page.data)
   $: ({ user } = $userSettings);
   $: ({ viewportType } = $session);
   // #endregion ➤ 📌 VARIABLES
@@ -146,8 +144,8 @@
         />
       </svg>
     </WidgetIcon>
-    <div class="title">{widget_translations.ai_prediction || "AI Prediction"}</div>
-    <div class="market">{widget_translations.market || "1X2 Market"}</div>
+    <div class="title">AI Prediction</div>
+    <div class="market">1X2 Market</div>
   </div>
   <div class="body-wrapper">
     <div class="content-wrapper">
@@ -163,13 +161,13 @@
         {/each}
       </div>
       <div class="logo-text">
-        <div class="name">{widget_translations.ai_suggestion_analysis || "AI Suggestion Analysis"}</div>
+        <div class="name">AI Suggestion Analysis</div>
         <div class="description">
           {#if loading}
-             <LoaderLine width="90%"/>
-             <LoaderLine width="75%"/>
-             <LoaderLine width="80%"/>
-             <LoaderLine width="70%"/>
+             <Loaderline width="90%"/>
+             <Loaderline width="75%"/>
+             <Loaderline width="80%"/>
+             <Loaderline width="70%"/>
           {:else}
              {content}
           {/if}
@@ -204,7 +202,7 @@
             />
           </svg>
         </WidgetIcon>
-        <div class="title">{widget_translations.ai_prediction || "AI Prediction"}</div>
+        <div class="title">AI Prediction</div>
         <div class="lock-screen">
           <div class="lock-screen-header">
             <div class="heading-icon">
@@ -226,12 +224,12 @@
                 </svg>
               </FeaturedIcon>
               <div class="heading">
-                {widget_translations.register_to_unlock || "Register to unlock the AI betting suggestion"}
+                Register to unlock the AI betting suggestion
               </div>
             </div>
           </div>
           <div class="footer">
-            <Button on:click={signIn} full={true}>{widget_translations.register_now || "Register now"}</Button>
+            <Button on:click={signIn} full={true}>Register now</Button>
           </div>
         </div>
       </div>
@@ -282,14 +280,14 @@
         flex: 1 0 0;
 
         /* Text lg/Semibold */
-        font-family: var(--Font-family-font-family-body, Roboto);
-        font-size: var(--Font-size-text-lg, 18px);
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-lg, 18px);
         font-style: normal;
         font-weight: 600;
-        line-height: var(--Line-height-text-lg, 28px); /* 155.556% */
+        line-height: var(--line-height-text-lg, 28px); /* 155.556% */
 
         background: var(
-          --Gradient-Linear-70,
+          --gradient-linear-70,
           linear-gradient(135deg, #f49062 0%, #fd371f 100%)
         );
         background-clip: text;
@@ -306,11 +304,11 @@
         color: var(--colors-text-text-tertiary-600, #8c8c8c);
 
         /* Text sm/Regular */
-        font-family: var(--Font-family-font-family-body, Roboto);
-        font-size: var(--Font-size-text-sm, 14px);
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-sm, 14px);
         font-style: normal;
         font-weight: 400;
-        line-height: var(--Line-height-text-sm, 20px); /* 142.857% */
+        line-height: var(--line-height-text-sm, 20px); /* 142.857% */
       }
     }
     .body-wrapper {
@@ -350,22 +348,22 @@
             color: var(--colors-text-text-primary-900, #fff);
 
             /* Text lg/Semibold */
-            font-family: var(--Font-family-font-family-body, Roboto);
-            font-size: var(--Font-size-text-lg, 18px);
+            font-family: var(--font-family-font-family-body, Roboto);
+            font-size: var(--font-size-text-lg, 18px);
             font-style: normal;
             font-weight: 600;
-            line-height: var(--Line-height-text-lg, 28px); /* 155.556% */
+            line-height: var(--line-height-text-lg, 28px); /* 155.556% */
           }
           .description {
             align-self: stretch;
             color: var(--colors-text-text-primary-900, #fff);
             max-width: 366px;
             /* Text md/Regular */
-            font-family: var(--Font-family-font-family-body, Roboto);
-            font-size: var(--Font-size-text-md, 16px);
+            font-family: var(--font-family-font-family-body, Roboto);
+            font-size: var(--font-size-text-md, 16px);
             font-style: normal;
             font-weight: 400;
-            line-height: var(--Line-height-text-md, 24px); /* 150% */
+            line-height: var(--line-height-text-md, 24px); /* 150% */
           }
         }
       }
