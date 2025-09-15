@@ -22,6 +22,7 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
+  import { page } from "$app/stores";
   import { get } from "$lib/api/utils";
   import session from "$lib/store/session";
   import userSettings from "$lib/store/user-settings";
@@ -57,6 +58,7 @@
   let loading = false;
   let content = "";
   let selectedTeam = "Draw";
+  $: ({widget_translations = { }} = $page.data)
   $: ({ user } = $userSettings);
   $: ({ viewportType } = $session);
   // #endregion ➤ 📌 VARIABLES
@@ -144,8 +146,8 @@
         />
       </svg>
     </WidgetIcon>
-    <div class="title">AI Prediction</div>
-    <div class="market">1X2 Market</div>
+    <div class="title">{widget_translations.ai_prediction || "AI Prediction"}</div>
+    <div class="market">{widget_translations.market || "1X2 Market"}</div>
   </div>
   <div class="body-wrapper">
     <div class="content-wrapper">
@@ -161,7 +163,7 @@
         {/each}
       </div>
       <div class="logo-text">
-        <div class="name">AI Suggestion Analysis</div>
+        <div class="name">{widget_translations.ai_suggestion_analysis || "AI Suggestion Analysis"}</div>
         <div class="description">
           {#if loading}
              <LoaderLine width="90%"/>
@@ -202,7 +204,7 @@
             />
           </svg>
         </WidgetIcon>
-        <div class="title">AI Prediction</div>
+        <div class="title">{widget_translations.ai_prediction || "AI Prediction"}</div>
         <div class="lock-screen">
           <div class="lock-screen-header">
             <div class="heading-icon">
@@ -224,12 +226,12 @@
                 </svg>
               </FeaturedIcon>
               <div class="heading">
-                Register to unlock the AI betting suggestion
+                {widget_translations.register_to_unlock || "Register to unlock the AI betting suggestion"}
               </div>
             </div>
           </div>
           <div class="footer">
-            <Button on:click={signIn} full={true}>Register now</Button>
+            <Button on:click={signIn} full={true}>{widget_translations.register_now || "Register now"}</Button>
           </div>
         </div>
       </div>
