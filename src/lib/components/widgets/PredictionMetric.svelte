@@ -74,7 +74,6 @@
     height: 100%;
     flex-grow: 1;
     max-width: 122px;
-    height: auto;
     flex-shrink: 0;
     padding: var(--spacing-2xl, 20px) var(--spacing-xl, 16px);
     flex-direction: column;
