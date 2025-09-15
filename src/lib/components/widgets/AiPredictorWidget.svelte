@@ -24,7 +24,6 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   import { get } from "$lib/api/utils";
   import session from "$lib/store/session";
-  import userSettings from "$lib/store/user-settings";
   import type { WidgetsAIPredictionMain } from "@betarena/scores-lib/types/v8/_HASURA-0";
   import { onMount } from "svelte";
   import Button from "../ui/Button.svelte";
@@ -408,6 +407,7 @@
             --component-colors-alpha-alpha-white-70,
             rgba(12, 14, 18, 0.7)
           );
+          box-shadow: 0 12px 16px -4px var(--colors-effects-shadows-shadow-lg_01, rgba(10, 13, 18, 0.08)), 0 4px 6px -2px var(--colors-effects-shadows-shadow-lg_02, rgba(10, 13, 18, 0.03)), 0 2px 2px -1px var(--colors-effects-shadows-shadow-lg_03, rgba(10, 13, 18, 0.04));
 
           .lock-screen-header {
             display: flex;

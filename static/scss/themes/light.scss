@@ -530,7 +530,7 @@
   --component-colors-alpha-alpha-white-40: rgba(255, 255, 255, 0.4000000059604645);
   --component-colors-alpha-alpha-white-50: rgba(255, 255, 255, 0.5);
   --component-colors-alpha-alpha-white-60: rgba(255, 255, 255, 0.6000000238418579);
-  --component-colors-alpha-alpha-white-70: rgba(255, 255, 255, 0.699999988079071);
+  --component-colors-alpha-alpha-white-70: rgba(255, 255, 255, 0.7);
   --component-colors-alpha-alpha-white-80: rgba(255, 255, 255, 0.800000011920929);
   --component-colors-alpha-alpha-white-90: rgba(255, 255, 255, 0.8999999761581421);
   --component-colors-alpha-alpha-white-100: rgba(255, 255, 255, 1);
@@ -736,7 +736,7 @@
   --colors-background-bg-secondary_hover: var(--colors-gray-100);
   --colors-background-bg-secondary_subtle: var(--colors-gray-25);
   --colors-background-bg-secondary-solid: var(--colors-gray-600);
-  --colors-background-bg-tertiary: var(--colors-gray-100);
+  --colors-background-bg-tertiary: var(--colors-gray-light-mode-100);
   --colors-background-bg-quaternary: var(--colors-gray-200);
   --colors-background-bg-active: var(--colors-gray-50);
   --colors-background-bg-disabled: var(--colors-gray-100);
