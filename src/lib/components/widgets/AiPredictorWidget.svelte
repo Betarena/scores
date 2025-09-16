@@ -28,7 +28,7 @@
   import Loaderline from "$lib/components/ui/loaders/LoaderLine.svelte";
   import session from "$lib/store/session";
   import userSettings from "$lib/store/user-settings";
-  import type { WidgetsAIPredictionMain } from "@betarena/scores-lib/types/v8/_HASURA-0";
+  import type { TranslationWidgetAipredictionDataJSONSchema, WidgetsAIPredictionMain } from "@betarena/scores-lib/types/v8/_HASURA-0";
   import { onMount } from "svelte";
   import PredictionMetric from "./PredictionMetric.svelte";
   import WidgetIcon from "./WidgetIcon.svelte";
@@ -57,9 +57,28 @@
   let loading = false;
   let content = "";
   let selectedTeam = "Draw";
+  let translations = {} as TranslationWidgetAipredictionDataJSONSchema;
   $: ({ user } = $userSettings);
+  $: ({ serverLang } = $session);
   $: ({ viewportType } = $session);
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+  
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+  
+  $: fetchWidgetData(serverLang);
+  
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🛠️ METHODS
 
@@ -77,18 +96,20 @@
     $session.currentActiveModal = "Auth_Modal";
   }
 
-  async function fetchWidgetData() {
+  async function fetchWidgetData(serverLang) {
     loading = true;
-    const res = await get<{data: WidgetsAIPredictionMain }>(
-      `/api/data/widgets.ai-prediction?id=${aiPredictionId}`
-    );
-    if (!res) return
-    const data = res.data;
-    odds = data.match_odds?.sort(
+    const res = await get<{
+      widget_data: WidgetsAIPredictionMain;
+      widget_translations: TranslationWidgetAipredictionDataJSONSchema;
+    }>(`/api/data/widgets.ai-prediction?id=${aiPredictionId}&lang=${serverLang}`);
+    if (!res) return;
+    const { widget_data, widget_translations } = res;
+    translations = widget_translations || {};
+    odds = widget_data.match_odds?.sort(
       (a, b) => parseFloat(a.sortOrder) - parseFloat(b.sortOrder)
     );
-    selectedTeam = data.label || "";
-    content = data.generated_response || "";
+    selectedTeam = widget_data.label || "";
+    content = widget_data.generated_response || "";
     loading = false;
   }
   // #endregion ➤ 🛠️ METHODS
@@ -103,7 +124,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   onMount(() => {
-    fetchWidgetData();
+    fetchWidgetData(serverLang);
   });
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
@@ -144,8 +165,8 @@
         />
       </svg>
     </WidgetIcon>
-    <div class="title">AI Prediction</div>
-    <div class="market">1X2 Market</div>
+    <div class="title">{translations.ai_prediction || "AI Prediction"}</div>
+    <div class="market">{translations.market_1x2 || "1X2 Market"}</div>
   </div>
   <div class="body-wrapper">
     <div class="content-wrapper">
@@ -161,15 +182,17 @@
         {/each}
       </div>
       <div class="logo-text">
-        <div class="name">AI Suggestion Analysis</div>
+        <div class="name">
+          {translations.ai_suggestion_analysis || "AI Suggestion Analysis"}
+        </div>
         <div class="description">
           {#if loading}
-             <Loaderline width="90%"/>
-             <Loaderline width="75%"/>
-             <Loaderline width="80%"/>
-             <Loaderline width="70%"/>
+            <Loaderline width="90%" />
+            <Loaderline width="75%" />
+            <Loaderline width="80%" />
+            <Loaderline width="70%" />
           {:else}
-             {content}
+            {content}
           {/if}
         </div>
       </div>
@@ -202,7 +225,7 @@
             />
           </svg>
         </WidgetIcon>
-        <div class="title">AI Prediction</div>
+        <div class="title">{translations.ai_prediction || "AI Prediction"}</div>
         <div class="lock-screen">
           <div class="lock-screen-header">
             <div class="heading-icon">
@@ -224,12 +247,14 @@
                 </svg>
               </FeaturedIcon>
               <div class="heading">
-                Register to unlock the AI betting suggestion
+                {translations.register_to_unlock || "Register to unlock"}
               </div>
             </div>
           </div>
           <div class="footer">
-            <Button on:click={signIn} full={true}>Register now</Button>
+            <Button on:click={signIn} full={true}
+              >{translations.register_now || "Register now"}</Button
+            >
           </div>
         </div>
       </div>
@@ -408,9 +433,11 @@
           border: 1px solid var(--colors-border-border-secondary_alt, #3b3b3b);
           background: var(
             --component-colors-alpha-alpha-white-70,
-            rgba(255, 255, 255, 0.70)
+            rgba(255, 255, 255, 0.7)
           );
-          box-shadow: 0 12px 16px -4px var(--colors-effects-shadows-shadow-lg_01, rgba(10, 13, 18, 0.08)), 0 4px 6px -2px var(--colors-effects-shadows-shadow-lg_02, rgba(10, 13, 18, 0.03)), 0 2px 2px -1px var(--colors-effects-shadows-shadow-lg_03, rgba(10, 13, 18, 0.04));
+          box-shadow: 0 12px 16px -4px var(--colors-effects-shadows-shadow-lg_01, rgba(10, 13, 18, 0.08)),
+            0 4px 6px -2px var(--colors-effects-shadows-shadow-lg_02, rgba(10, 13, 18, 0.03)),
+            0 2px 2px -1px var(--colors-effects-shadows-shadow-lg_03, rgba(10, 13, 18, 0.04));
 
           .lock-screen-header {
             display: flex;
@@ -492,11 +519,10 @@
           justify-content: center;
           align-items: center;
         }
-
       }
       .disabled-overlay {
         padding-block: 18px;
-      } 
+      }
     }
     &.tablet {
       .body-wrapper .content-wrapper .markets {
