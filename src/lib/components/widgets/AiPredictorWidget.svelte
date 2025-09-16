@@ -382,6 +382,8 @@
       .disabled-overlay {
         padding: var(--spacing-3xl, 24px);
         position: absolute;
+        top: 0;
+        left: 0;
         width: 100%;
         height: 100%;
         background: var(
@@ -406,7 +408,7 @@
           border: 1px solid var(--colors-border-border-secondary_alt, #3b3b3b);
           background: var(
             --component-colors-alpha-alpha-white-70,
-            rgba(12, 14, 18, 0.7)
+            rgba(255, 255, 255, 0.70)
           );
           box-shadow: 0 12px 16px -4px var(--colors-effects-shadows-shadow-lg_01, rgba(10, 13, 18, 0.08)), 0 4px 6px -2px var(--colors-effects-shadows-shadow-lg_02, rgba(10, 13, 18, 0.03)), 0 2px 2px -1px var(--colors-effects-shadows-shadow-lg_03, rgba(10, 13, 18, 0.04));
 
@@ -490,7 +492,11 @@
           justify-content: center;
           align-items: center;
         }
+
       }
+      .disabled-overlay {
+        padding-block: 18px;
+      } 
     }
     &.tablet {
       .body-wrapper .content-wrapper .markets {
