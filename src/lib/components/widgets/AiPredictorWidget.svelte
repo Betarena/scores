@@ -321,7 +321,6 @@
       }
       .market {
         display: flex;
-        width: 72px;
         height: 40px;
         flex-direction: column;
         justify-content: center;
