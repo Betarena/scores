@@ -166,7 +166,7 @@
       </svg>
     </WidgetIcon>
     <div class="title">{translations.ai_prediction || "AI Prediction"}</div>
-    <div class="market">{translations.market_1x2 || "1X2 Market"}</div>
+    <div class="market">{translations.market || "1X2 Market"}</div>
   </div>
   <div class="body-wrapper">
     <div class="content-wrapper">
