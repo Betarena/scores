@@ -218,28 +218,13 @@
   }
 
   .primary {
-    background: var(
-      --component-colors-components-buttons-primary-button-primary-bg,
-      #f5620f
-    );
-
-    /* Shadows/shadow-xs */
-    box-shadow: 0px 1px 2px 0px
-      var(--colors-effects-shadows-shadow-xs, rgba(31, 31, 31, 0.05));
-
-    color: var(
-      --component-colors-components-buttons-primary-button-primary-fg,
-      #fff
-    );
-
+   
+    color: var(--colors-text-text-white, #FFF);
+    background: var(--colors-background-bg-brand-solid, #F5620F);
+    border: 2px solid var(--gradient-skeuemorphic-gradient-border, rgba(255, 255, 255, 0.12));
+    box-shadow: 0 0 0 1px var(--colors-effects-shadows-shadow-skeumorphic-inner-border, rgba(12, 14, 18, 0.18)) inset, 0 -2px 0 0 var(--colors-effects-shadows-shadow-skeumorphic-inner, rgba(12, 14, 18, 0.05)) inset, 0 1px 2px 0 var(--colors-effects-shadows-shadow-xs, rgba(255, 255, 255, 0.00));
     &.hover {
-      background: var(
-        --component-colors-components-иuttons-зrimary-button-primary-bg_hover,
-        #f7813f
-      );
-      /* Shadows/shadow-xs */
-      box-shadow: 0px 1px 2px 0px
-        var(--colors-effects-shadows-shadow-xs, rgba(31, 31, 31, 0.05));
+     background: var(--colors-background-bg-brand-solid_hover, #F5620F);
     }
 
     &.disabled {

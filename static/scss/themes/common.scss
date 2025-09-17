@@ -784,7 +784,7 @@ body {
   --colors-yellow-950: #542C0DFF;
 
 
-   --colors-base-white: #ffffff;
+   --colors-base-white: #FFFFFF;
   --colors-base-black: #000000;
   --colors-base-transparent: #ffffff00;
   --colors-gray-25: #fcfcfd;
@@ -978,4 +978,9 @@ body {
   --font-size-display-lg: 48px;
   --font-size-display-xl: 60px;
   --font-size-display-2xl: 72px;
+}
+
+/* 6. Gradients - Value */
+:root {
+--gradient-skeuemorphic-gradient-border: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.00) 100%);
 }

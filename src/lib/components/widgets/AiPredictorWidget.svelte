@@ -23,13 +23,16 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
   import { get } from "$lib/api/utils";
-  import Button from "$lib/components/ui/Button.svelte";
-  import FeaturedIcon from "$lib/components/ui/FeaturedIcon.svelte";
   import Loaderline from "$lib/components/ui/loaders/LoaderLine.svelte";
   import session from "$lib/store/session";
   import userSettings from "$lib/store/user-settings";
-  import type { TranslationWidgetAipredictionDataJSONSchema, WidgetsAIPredictionMain } from "@betarena/scores-lib/types/v8/_HASURA-0";
+  import type {
+    TranslationWidgetAipredictionDataJSONSchema,
+    WidgetsAIPredictionMain,
+  } from "@betarena/scores-lib/types/v8/_HASURA-0";
   import { onMount } from "svelte";
+  import Button from "../ui/Button.svelte";
+  import FeaturedIcon from "../ui/FeaturedIcon.svelte";
   import PredictionMetric from "./PredictionMetric.svelte";
   import WidgetIcon from "./WidgetIcon.svelte";
   // #endregion ➤ 📦 Package Imports
@@ -64,7 +67,7 @@
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
-  
+
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'logic' that should run            │
@@ -75,9 +78,9 @@
   // │ Please keep very close attention to these methods and                  │
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  
+
   $: fetchWidgetData(serverLang);
-  
+
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🛠️ METHODS
@@ -99,17 +102,21 @@
   async function fetchWidgetData(serverLang) {
     loading = true;
     const res = await get<{
-      widget_data: WidgetsAIPredictionMain;
+      widget_data: WidgetsAIPredictionMain | null;
       widget_translations: TranslationWidgetAipredictionDataJSONSchema;
-    }>(`/api/data/widgets.ai-prediction?id=${aiPredictionId}&lang=${serverLang}`);
+    }>(
+      `/api/data/widgets.ai-prediction?id=${aiPredictionId}&lang=${serverLang}`
+    );
     if (!res) return;
     const { widget_data, widget_translations } = res;
     translations = widget_translations || {};
-    odds = widget_data.match_odds?.sort(
-      (a, b) => parseFloat(a.sortOrder) - parseFloat(b.sortOrder)
-    );
-    selectedTeam = widget_data.label || "";
-    content = widget_data.generated_response || "";
+    if (widget_data) {
+      odds = widget_data?.match_odds?.sort(
+        (a, b) => parseFloat(a.sortOrder) - parseFloat(b.sortOrder)
+      );
+      selectedTeam = widget_data?.label || "";
+      content = widget_data?.generated_response || "";
+    }
     loading = false;
   }
   // #endregion ➤ 🛠️ METHODS
@@ -226,37 +233,37 @@
           </svg>
         </WidgetIcon>
         <div class="title">{translations.ai_prediction || "AI Prediction"}</div>
-        <div class="lock-screen">
-          <div class="lock-screen-header">
-            <div class="heading-icon">
-              <FeaturedIcon type="gray">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="25"
-                  height="24"
-                  viewBox="0 0 25 24"
-                  fill="none"
-                >
-                  <path
-                    d="M17.5 10V8C17.5 5.23858 15.2614 3 12.5 3C9.73858 3 7.5 5.23858 7.5 8V10M12.5 14.5V16.5M9.3 21H15.7C17.3802 21 18.2202 21 18.862 20.673C19.4265 20.3854 19.8854 19.9265 20.173 19.362C20.5 18.7202 20.5 17.8802 20.5 16.2V14.8C20.5 13.1198 20.5 12.2798 20.173 11.638C19.8854 11.0735 19.4265 10.6146 18.862 10.327C18.2202 10 17.3802 10 15.7 10H9.3C7.61984 10 6.77976 10 6.13803 10.327C5.57354 10.6146 5.1146 11.0735 4.82698 11.638C4.5 12.2798 4.5 13.1198 4.5 14.8V16.2C4.5 17.8802 4.5 18.7202 4.82698 19.362C5.1146 19.9265 5.57354 20.3854 6.13803 20.673C6.77976 21 7.61984 21 9.3 21Z"
-                    stroke="var(--component colors-components-icons-featured icons-featured-icon-light-fg-gray)"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
-              </FeaturedIcon>
-              <div class="heading">
-                {translations.register_to_unlock || "Register to unlock"}
-              </div>
-            </div>
-          </div>
-          <div class="footer">
-            <Button on:click={signIn} full={true}
-              >{translations.register_now || "Register now"}</Button
+      </div>
+    </div>
+    <div class="lock-screen">
+      <div class="lock-screen-header">
+        <div class="heading-icon">
+          <FeaturedIcon type="gray">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="25"
+              height="24"
+              viewBox="0 0 25 24"
+              fill="none"
             >
+              <path
+                d="M17.5 10V8C17.5 5.23858 15.2614 3 12.5 3C9.73858 3 7.5 5.23858 7.5 8V10M12.5 14.5V16.5M9.3 21H15.7C17.3802 21 18.2202 21 18.862 20.673C19.4265 20.3854 19.8854 19.9265 20.173 19.362C20.5 18.7202 20.5 17.8802 20.5 16.2V14.8C20.5 13.1198 20.5 12.2798 20.173 11.638C19.8854 11.0735 19.4265 10.6146 18.862 10.327C18.2202 10 17.3802 10 15.7 10H9.3C7.61984 10 6.77976 10 6.13803 10.327C5.57354 10.6146 5.1146 11.0735 4.82698 11.638C4.5 12.2798 4.5 13.1198 4.5 14.8V16.2C4.5 17.8802 4.5 18.7202 4.82698 19.362C5.1146 19.9265 5.57354 20.3854 6.13803 20.673C6.77976 21 7.61984 21 9.3 21Z"
+                stroke="var(--component colors-components-icons-featured icons-featured-icon-light-fg-gray)"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </FeaturedIcon>
+          <div class="heading">
+            {translations.register_to_unlock || "Register to unlock"}
           </div>
         </div>
+      </div>
+      <div class="footer">
+        <Button on:click={signIn} full={true}
+          >{translations.register_now || "Register now"}</Button
+        >
       </div>
     </div>
   {/if}
@@ -397,7 +404,7 @@
     }
 
     &.disabled {
-      > :not(.disabled-overlay):not(.header-preview) {
+      > :not(.disabled-overlay):not(.header-preview):not(.lock-screen) {
         filter: blur(5.5px);
       }
       .header-preview .market {
@@ -416,65 +423,65 @@
         );
         border-radius: var(--radius-xl, 12px);
         z-index: 1;
+      }
+      .lock-screen {
+        position: absolute;
+        display: flex;
+        width: 313px;
+        z-index: 2;
+        filter: blur(0px);
+        flex-direction: column;
+        align-items: flex-start;
+        flex-shrink: 0;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: var(--radius-2xl, 16px);
+        border: 1px solid var(--colors-border-border-secondary_alt, #3b3b3b);
+        background: var(
+          --component-colors-alpha-alpha-white-70,
+          rgba(255, 255, 255, 0.7)
+        );
+        box-shadow: 0 12px 16px -4px var(--colors-effects-shadows-shadow-lg_01, rgba(10, 13, 18, 0.08)),
+          0 4px 6px -2px var(--colors-effects-shadows-shadow-lg_02, rgba(10, 13, 18, 0.03)),
+          0 2px 2px -1px var(--colors-effects-shadows-shadow-lg_03, rgba(10, 13, 18, 0.04));
 
-        .lock-screen {
-          position: absolute;
+        .lock-screen-header {
           display: flex;
-          width: 313px;
-          height: 240px;
+          padding: var(--spacing-3xl, 24px) var(--spacing-3xl, 24px) 0
+            var(--spacing-3xl, 24px);
           flex-direction: column;
           align-items: flex-start;
-          flex-shrink: 0;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          border-radius: var(--radius-2xl, 16px);
-          border: 1px solid var(--colors-border-border-secondary_alt, #3b3b3b);
-          background: var(
-            --component-colors-alpha-alpha-white-70,
-            rgba(255, 255, 255, 0.7)
-          );
-          box-shadow: 0 12px 16px -4px var(--colors-effects-shadows-shadow-lg_01, rgba(10, 13, 18, 0.08)),
-            0 4px 6px -2px var(--colors-effects-shadows-shadow-lg_02, rgba(10, 13, 18, 0.03)),
-            0 2px 2px -1px var(--colors-effects-shadows-shadow-lg_03, rgba(10, 13, 18, 0.04));
-
-          .lock-screen-header {
+          gap: var(--spacing-3xl, 24px);
+          align-self: stretch;
+          .heading-icon {
             display: flex;
-            padding: var(--spacing-3xl, 24px) var(--spacing-3xl, 24px) 0
-              var(--spacing-3xl, 24px);
             flex-direction: column;
-            align-items: flex-start;
-            gap: var(--spacing-3xl, 24px);
+            align-items: center;
+            gap: var(--spacing-xl, 16px);
             align-self: stretch;
-            .heading-icon {
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              gap: var(--spacing-xl, 16px);
-              align-self: stretch;
 
-              .heading {
-                color: var(--colors-text-text-brand-secondary-700, #d2d2d2);
-                text-align: center;
+            .heading {
+              color: var(--colors-text-text-brand-secondary-700, #d2d2d2);
+              text-align: center;
 
-                /* Text xl/Semibold */
-                font-family: var(--font-family-font-family-body, Roboto);
-                font-size: var(--font-size-text-xl, 20px);
-                font-style: normal;
-                font-weight: 600;
-                line-height: var(--line-height-text-xl, 30px); /* 150% */
-              }
+              /* Text xl/Semibold */
+              font-family: var(--font-family-font-family-body, Roboto);
+              font-size: var(--font-size-text-xl, 20px);
+              font-style: normal;
+              font-weight: 600;
+              line-height: var(--line-height-text-xl, 30px); /* 150% */
             }
           }
+        }
 
-          .footer {
-            display: flex;
-            padding: var(--spacing-3xl, 24px);
-            flex-direction: column;
-            align-items: flex-start;
-            gap: var(--spacing-3xl, 24px);
-            align-self: stretch;
-          }
+        .footer {
+          display: flex;
+          padding: var(--spacing-3xl, 24px);
+          flex-direction: column;
+          align-items: flex-start;
+          gap: var(--spacing-3xl, 24px);
+          align-self: stretch;
         }
       }
     }
