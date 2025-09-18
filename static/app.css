@@ -3905,7 +3905,7 @@ body {
   --colors-yellow-800: #854A0EFF;
   --colors-yellow-900: #713B12FF;
   --colors-yellow-950: #542C0DFF;
-  --colors-base-white: #ffffff;
+  --colors-base-white: #FFFFFF;
   --colors-base-black: #000000;
   --colors-base-transparent: #ffffff00;
   --colors-gray-25: #fcfcfd;
@@ -4095,6 +4095,11 @@ body {
   --font-size-display-lg: 48px;
   --font-size-display-xl: 60px;
   --font-size-display-2xl: 72px;
+}
+
+/* 6. Gradients - Value */
+:root {
+  --gradient-skeuemorphic-gradient-border: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.00) 100%);
 }
 
 .dark-mode {
@@ -4311,7 +4316,6 @@ body {
   --component-colors-alpha-alpha-white-40: #0C0E1266;
   --component-colors-alpha-alpha-white-50: #0C0E1280;
   --component-colors-alpha-alpha-white-60: #0C0E1299;
-  --component-colors-alpha-alpha-white-70: #0C0E12B2;
   --component-colors-alpha-alpha-white-80: #0C0E12CC;
   --component-colors-alpha-alpha-white-90: #0C0E12E5;
   --component-colors-alpha-alpha-white-100: var(--colors-gray-dark-mode-950);
@@ -4554,7 +4558,6 @@ body {
   --colors-background-bg-brand-primary_alt: var(--colors-background-bg-secondary);
   --colors-background-bg-brand-secondary: var(--colors-brand-600);
   --colors-background-bg-brand-solid: var(--colors-brand-600);
-  --colors-background-bg-brand-solid_hover: var(--colors-brand-500);
   --colors-background-bg-brand-section: var(--colors-background-bg-secondary);
   --colors-background-bg-brand-section_subtle: var(--colors-background-bg-primary);
   --colors-background-bg-error-primary: var(--colors-error-950);
@@ -5057,7 +5060,6 @@ body {
   --component-colors-alpha-alpha-white-40: #FFFFFF66;
   --component-colors-alpha-alpha-white-50: #FFFFFF80;
   --component-colors-alpha-alpha-white-60: #FFFFFF99;
-  --component-colors-alpha-alpha-white-70: #FFFFFFB2;
   --component-colors-alpha-alpha-white-80: #FFFFFFCC;
   --component-colors-alpha-alpha-white-90: #FFFFFFE5;
   --component-colors-alpha-alpha-white-100: #FFFFFFFF;
@@ -5300,7 +5302,6 @@ body {
   --colors-background-bg-brand-primary_alt: var(--colors-brand-50);
   --colors-background-bg-brand-secondary: var(--colors-brand-100);
   --colors-background-bg-brand-solid: var(--colors-brand-600);
-  --colors-background-bg-brand-solid_hover: var(--colors-brand-700);
   --colors-background-bg-brand-section: var(--colors-brand-800);
   --colors-background-bg-brand-section_subtle: var(--colors-brand-700);
   --colors-background-bg-error-primary: var(--colors-error-50);

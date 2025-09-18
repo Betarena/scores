@@ -322,7 +322,6 @@
   -->
   {#key $userSettings.theme}
     <div id="content" data-betarena-zone-id="2,3" bind:this={contentContainer}>
-      <AiPredictorWidget />
       {@html widgetData.article.data?.content.replaceAll(
         /<img[^>]+src=["']([^"'>]+)["']/g,
         (match, src) => {
