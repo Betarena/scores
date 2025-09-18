@@ -442,6 +442,115 @@ export const YouTube = Node.create({
   },
 });
 
+export const WidgetNode = Node.create({
+    name: 'widget',
+    group: 'block',
+    atom: true,
+    selectable: false,
+
+    addAttributes() {
+        return {
+            'data-widget-id': {
+                default: null,
+                parseHTML: element => element.getAttribute('data-widget-id'),
+                renderHTML: attributes => {
+                    if (!attributes['data-widget-id']) {
+                        return {};
+                    }
+                    return {
+                        'data-widget-id': attributes['data-widget-id'],
+                    };
+                },
+            },
+            dataAttributes: {
+                default: {},
+                parseHTML: element => {
+                    const dataAttrs: Record<string, string> = {};
+                    Array.from((element as HTMLElement).attributes).forEach(attr => {
+                        if (attr.name.startsWith('data-')) {
+                            dataAttrs[attr.name] = attr.value;
+                        }
+                    });
+                    return dataAttrs;
+                },
+                renderHTML: attributes => {
+                    return attributes.dataAttributes || {};
+                },
+            },
+            tagName: {
+                default: 'div',
+                parseHTML: element => (element as HTMLElement).tagName.toLowerCase(),
+                renderHTML: () => ({}),
+            },
+            innerHTML: {
+                default: '',
+                parseHTML: element => (element as HTMLElement).innerHTML,
+                renderHTML: () => ({}),
+            }
+        };
+    },
+
+    parseHTML() {
+        return [
+            {
+                tag: '[data-widget-id]',
+                getAttrs: element => {
+                    const el = element as HTMLElement;
+                    const widgetId = el.getAttribute('data-widget-id');
+                    
+                    if (!widgetId) return false;
+
+                    const dataAttributes: Record<string, string> = {};
+                    Array.from(el.attributes).forEach(attr => {
+                        if (attr.name.startsWith('data-')) {
+                            dataAttributes[attr.name] = attr.value;
+                        }
+                    });
+
+                    return {
+                        'data-widget-id': widgetId,
+                        dataAttributes,
+                        tagName: el.tagName.toLowerCase(),
+                        innerHTML: el.innerHTML
+                    };
+                },
+            },
+        ];
+    },
+
+    renderHTML({ HTMLAttributes }) {
+        const tagName = 'div';
+        
+        const attrs = mergeAttributes(HTMLAttributes)
+        
+        return [tagName, attrs];
+    },
+
+    addNodeView() {
+        return ({ node }) => {
+            const element = document.createElement('div');
+            element.style.width = '100%';
+            element.style.height = '60px';
+            element.style.borderRadius = '8px';
+            element.style.backgroundColor = '#2d2d2d';
+            element.style.display = 'flex';
+            element.style.justifyContent = "center"
+            element.style.alignItems = "center"
+            element.innerHTML = `Here will be widget with id: ${node.attrs['data-widget-id']} prediction-id:${node.attrs.dataAttributes['data-ai-prediction-id']}`;
+            
+            Object.entries(node.attrs.dataAttributes || {}).forEach(([key, value]) => {
+                element.setAttribute(key, `${value}`);
+            });
+
+            return { 
+                dom: element,
+                update: () => false,
+                ignoreMutation: () => true
+            };
+        };
+    },
+});
+
 function extractTweetId(url: string): string | null {
   const match = url.match(/status\/(\d+)/);
   return match ? match[1] : null;
