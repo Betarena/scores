@@ -53,9 +53,9 @@
 
   export let aiPredictionId = 2;
   let odds = [
-    { coefficient: "2.50", probability: "40%" },
-    { coefficient: "3.20", probability: "35%" },
-    { coefficient: "3.00", probability: "25%" },
+    { value: "2.50", probability: "40%", label: "Home" },
+    { value: "3.10", probability: "30%", label: "Draw" },
+    { value: "3.20", probability: "35%", label: "Away" },
   ];
   let loading = false;
   let content = "";
@@ -222,7 +222,6 @@
         </div>
       </div>
     </div>
-    <!-- <div class="ads-widget">Here will be ads integration</div> -->
   </div>
 
   {#if !user}
