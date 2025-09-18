@@ -99,6 +99,26 @@
     $session.currentActiveModal = "Auth_Modal";
   }
 
+  function getOrder({
+    sort_order,
+    label,
+  }: {
+    sort_order?: number;
+    label: string;
+  }) {
+    if (sort_order) return sort_order;
+    switch (label) {
+      case "Home":
+        return 1;
+      case "Draw":
+        return 2;
+      case "Away":
+        return 3;
+      default:
+        return 1;
+    }
+  }
+
   async function fetchWidgetData(serverLang) {
     loading = true;
     const res = await get<{
@@ -111,9 +131,7 @@
     const { widget_data, widget_translations } = res;
     translations = widget_translations || {};
     if (widget_data) {
-      odds = widget_data?.match_odds?.sort(
-        (a, b) => parseFloat(a.sortOrder) - parseFloat(b.sortOrder)
-      );
+      odds = widget_data?.match_odds?.sort((a, b) => getOrder(a) - getOrder(b));
       selectedTeam = widget_data?.label || "";
       content = widget_data?.generated_response || "";
     }
