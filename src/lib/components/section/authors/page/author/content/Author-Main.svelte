@@ -184,6 +184,11 @@
           props[propName] = attr.value;
         }
       });
+       const prevElement = target.previousElementSibling as HTMLElement;
+        if (prevElement) {
+          prevElement.style.marginBottom = "0";
+        }
+    
       new widget({
         target: target as HTMLElement,
         props,
@@ -543,7 +548,19 @@
             content: "";
           }
         }
-
+        [data-widget-id] {
+          margin-top: 48px;
+          margin-bottom: 32px;
+      
+          + * {
+            margin-top: 0 !important;
+          }
+          
+          * + & {
+            margin-bottom: 0 !important;
+          }
+        }
+       
         h2 {
           /* 🎨 style */
           @include header;
@@ -669,6 +686,10 @@
               font-weight: 500;
               line-height: var(--line-height-text-xl, 30px); /* 150% */
             }
+          }
+          [data-widget-id] {
+            margin-top: 48px;
+            margin-bottom: 48px;
           }
 
           @mixin header {
