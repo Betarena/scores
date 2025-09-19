@@ -212,7 +212,7 @@
           {translations.ai_suggestion_analysis || "AI Suggestion Analysis"}
         </div>
         <div class="description">
-          {#if loading || !user}
+          {#if loading }
             <Loaderline width="90%" />
             <Loaderline width="75%" />
             <Loaderline width="80%" />
