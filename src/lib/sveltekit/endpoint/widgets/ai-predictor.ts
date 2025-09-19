@@ -11,5 +11,5 @@ export const GetAiPredictionWidgetData: RequestHandler = async ({ url, locals, f
         return json({ message: "Prediction ID is required" }, { status: 400 });
     }
     const [widget, translations] = await Promise.all([getAiPredictionWidgetData({ id: Number(id) }), fetch(`/api/data/translations?table=widget_aiprediction&lang=${lang}&lang_type=String`)]);
-    return json({ widget_data: user.uid ? widget.data : null, widget_translations: await translations.json() });
+    return json({ widget_data: widget.data, widget_translations: await translations.json() });
 };
