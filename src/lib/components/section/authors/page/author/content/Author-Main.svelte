@@ -54,6 +54,7 @@
   import ListSportsTackItem from "$lib/components/ui/composed/sportstack_list/ListSportsTackItem.svelte";
   import LoaderImage from "$lib/components/ui/loaders/LoaderImage.svelte";
   import ScrollDataWrapper from "$lib/components/ui/wrappers/ScrollDataWrapper.svelte";
+  import AiPredictorWidget from "$lib/components/widgets/AiPredictorWidget.svelte";
   import userSettings from "$lib/store/user-settings.js";
   import type { IPageAuhtorArticleDataFinal } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import type { IPageArticleTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.articles.js";
@@ -117,6 +118,10 @@
     contentContainer: HTMLElement,
     author;
 
+  const widgetsMap = {
+    1: AiPredictorWidget,
+  };
+
   $: ({ windowWidth, viewportType } = $sessionStore);
   $: [VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1]] = viewportChangeV2(
     windowWidth,
@@ -128,8 +133,26 @@
     | null
     | undefined;
   $: ({ author: sportstack } = widgetData);
-  $: getAuthor(sportstack?.uid);
+  
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+  
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+  
+  $: getAuthor(sportstack?.uid);
+  $: insertWidgets(contentContainer);
+  
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🛠️ METHODS
 
@@ -142,6 +165,36 @@
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
+
+  function insertWidgets(container: HTMLElement) {
+    if (!contentContainer) return;
+    const widget_targets = container.querySelectorAll("[data-widget-id]");
+
+    widget_targets.forEach((target) => {
+      const widget_id = target.getAttribute("data-widget-id") || "";
+      const widget = widgetsMap[widget_id];
+      if (!widget) return;
+      const props = {};
+      Array.from(target.attributes).forEach((attr) => {
+        if (attr.name.startsWith("data-")) {
+          const propName = attr.name
+            .replace("data-", "")
+            .replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
+
+          props[propName] = attr.value;
+        }
+      });
+       const prevElement = target.previousElementSibling as HTMLElement;
+        if (prevElement) {
+          prevElement.style.marginBottom = "0";
+        }
+    
+      new widget({
+        target: target as HTMLElement,
+        props,
+      });
+    });
+  }
 
   async function getAuthor(id: string) {
     executeAnimation = false;
@@ -419,7 +472,8 @@
           margin: 0 !important;
         }
 
-        blockquote.twitter-tweet, &.embed {
+        blockquote.twitter-tweet,
+        &.embed {
           margin-top: 48px !important;
           margin-bottom: 48px !important;
           margin-inline: auto !important;
@@ -427,20 +481,20 @@
           display: block;
 
           .twitter-tweet-rendered {
-            margin: 0  auto !important;
+            margin: 0 auto !important;
           }
         }
 
         iframe.embed {
-            width: 100%;
-            aspect-ratio: 16 / 9;
+          width: 100%;
+          aspect-ratio: 16 / 9;
         }
 
         iframe.youtube-shorts {
           display: flex;
           justify-content: center;
           aspect-ratio: 9 / 16;
-          width: 50%
+          width: 50%;
         }
         @mixin header {
           /* 🎨 style */
@@ -494,7 +548,19 @@
             content: "";
           }
         }
-
+        [data-widget-id] {
+          margin-top: 48px;
+          margin-bottom: 32px;
+      
+          + * {
+            margin-top: 0 !important;
+          }
+          
+          * + & {
+            margin-bottom: 0 !important;
+          }
+        }
+       
         h2 {
           /* 🎨 style */
           @include header;
@@ -579,23 +645,24 @@
           }
 
           &:first-child {
-            margin-top: 0;
+            margin-top: 0 !important;
             * {
               margin-top: 0 !important;
             }
           }
 
-          img {
-            margin-bottom: 40px !important;
-            margin-top: 40px !important;
+          p:has(img:only-child) {
+            margin-bottom: 40px;
+            margin-top: 40px;
           }
-          blockquote.twitter-tweet, &.embed {
+          blockquote.twitter-tweet,
+          &.embed {
             margin-bottom: 10px !important;
             margin-top: 40px !important;
             margin-inline: auto !important;
             padding-left: 0;
             .twitter-tweet-rendered {
-              margin: 0  auto !important;
+              margin: 0 auto !important;
             }
           }
 
@@ -619,6 +686,10 @@
               font-weight: 500;
               line-height: var(--line-height-text-xl, 30px); /* 150% */
             }
+          }
+          [data-widget-id] {
+            margin-top: 48px;
+            margin-bottom: 48px;
           }
 
           @mixin header {
