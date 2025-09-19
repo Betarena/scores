@@ -3,7 +3,6 @@ import type { RequestHandler } from "@sveltejs/kit";
 import { json } from "@sveltejs/kit";
 
 export const GetAiPredictionWidgetData: RequestHandler = async ({ url, locals, fetch }) => {
-    const { user } = locals;
 
     const id = url.searchParams.get("id");
     const lang = url.searchParams.get("lang") || locals.user.lang || "en";
