@@ -132,7 +132,8 @@
     translations = widget_translations || {};
     if (widget_data) {
       odds = widget_data?.match_odds?.sort((a, b) => getOrder(a) - getOrder(b));
-      selectedTeam = widget_data?.label || "";
+      const label = widget_data?.label?.toLowerCase() || "";
+      selectedTeam = label.includes("home") ? "Home" : label.includes("away") ? "Away" : "Draw";
       content = widget_data?.generated_response || "";
     }
     loading = false;
