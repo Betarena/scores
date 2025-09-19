@@ -212,7 +212,7 @@
           {translations.ai_suggestion_analysis || "AI Suggestion Analysis"}
         </div>
         <div class="description">
-          {#if loading}
+          {#if loading || !user}
             <Loaderline width="90%" />
             <Loaderline width="75%" />
             <Loaderline width="80%" />
@@ -422,6 +422,10 @@
     }
 
     &.disabled {
+      min-height: 400px;
+      &.desktop {
+        min-height: 350px;
+      }
       > :not(.disabled-overlay):not(.header-preview):not(.lock-screen) {
         filter: blur(5.5px);
       }
