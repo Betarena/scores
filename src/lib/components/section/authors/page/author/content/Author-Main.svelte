@@ -645,15 +645,15 @@
           }
 
           &:first-child {
-            margin-top: 0;
+            margin-top: 0 !important;
             * {
               margin-top: 0 !important;
             }
           }
 
-          img {
-            margin-bottom: 40px !important;
-            margin-top: 40px !important;
+          p:has(img:only-child) {
+            margin-bottom: 40px;
+            margin-top: 40px;
           }
           blockquote.twitter-tweet,
           &.embed {
