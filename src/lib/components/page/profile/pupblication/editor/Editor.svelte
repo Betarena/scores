@@ -113,8 +113,10 @@
       const keyboardHeight =
         window.innerHeight - (window.visualViewport?.height || 0);
       keyBoardHeight = `${keyboardHeight}px`;
+      document.body.classList.add("disable-scroll");
     } else {
       keyBoardHeight = `80px`;
+      document.body.classList.remove("disable-scroll");
     }
   }
 
