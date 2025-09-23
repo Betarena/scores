@@ -1,23 +1,23 @@
-import { Editor } from "@tiptap/core";
-import DOMPurify from "dompurify";
-import { postv2 } from "$lib/api/utils.js";
-import { modalStore } from "$lib/store/modal.js";
-import { infoMessages } from "$lib/components/ui/infomessages/infomessages.js";
-import { create_article_store } from "./create_article.store.js";
-import type { IArticle } from "$lib/components/section/authors/page/helpers.js";
 import { goto } from "$app/navigation";
+import { postv2 } from "$lib/api/utils.js";
+import type { IArticle } from "$lib/components/section/authors/page/helpers.js";
+import { infoMessages } from "$lib/components/ui/infomessages/infomessages.js";
+import { modalStore } from "$lib/store/modal.js";
 import session from "$lib/store/session.js";
+import { promiseValidUrlCheck } from "$lib/utils/navigation.js";
+import { detectLanguage } from "$lib/utils/translation.js";
 import type {
   AuthorsAuthorsMain,
   TranslationSportstacksSectionDataJSONSchema,
 } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
-import { type Writable, writable } from "svelte/store";
 import type {
   IPageAuthorArticleData,
   IPageAuthorAuthorData,
 } from "@betarena/scores-lib/types/v8/preload.authors.js";
-import { detectLanguage } from "$lib/utils/translation.js";
-import { promiseValidUrlCheck } from "$lib/utils/navigation.js";
+import { Editor } from "@tiptap/core";
+import DOMPurify from "dompurify";
+import { type Writable, writable } from "svelte/store";
+import { create_article_store } from "./create_article.store.js";
 
 export function getFirstImageWithSize(
   editor: Editor
@@ -59,6 +59,14 @@ export function getFirstImageWithSize(
   });
 }
 
+function allowedIframe(url: string) {
+  const youtube = /^(https?:)?\/\/(www\.)?(youtube\.com|youtu\.be)\//.test(url);
+  const inst =
+  /^(https?:\/\/)?(?:www\.|m\.)?instagram\.com\/(?:p|reel|reels|tv)\/[A-Za-z0-9_-]+(?:[/?#&].*)?$/i
+      .test(url);
+  return youtube || inst
+}
+
 export async function upsert({
   editor,
   title,
@@ -98,7 +106,7 @@ export async function upsert({
   DOMPurify.addHook("uponSanitizeElement", (node, data) => {
     if (data.tagName === "iframe") {
       const src = (node as HTMLIFrameElement).getAttribute("src") ?? "";
-      const ok = /^(https?:)?\/\/(www\.)?(youtube\.com|youtu\.be)\//.test(src);
+      const ok = allowedIframe(src);
       if (!ok) {
         (node.parentNode as Node)?.removeChild(node);
       }

@@ -362,7 +362,7 @@ export const YouTube = Node.create({
     return [
       "iframe",
       mergeAttributes(HTMLAttributes, {
-        class: `embed ${shorts ? "youtube-shorts" : ""}`,
+        class: `embed youtube ${shorts ? "youtube-shorts" : ""}`,
         src: safeSrc,
         frameborder: "0",
         allow:
@@ -551,6 +551,138 @@ export const WidgetNode = Node.create({
     },
 });
 
+
+export const Instagram = Node.create({
+  name: 'instagram',
+  group: 'block',
+  atom: true,
+  selectable: true,
+
+  addAttributes() {
+    return {
+      src: { default: null },
+      hideCaption: { default: false },
+      theme: { default: 'dark' },
+      className: { default: '' },
+    }
+  },
+
+  parseHTML() {
+    return [
+      {
+        tag: 'iframe[src*="instagram.com"]',
+        getAttrs: (el: Element) => {
+          const src = (el as HTMLIFrameElement).getAttribute('src') || ''
+          return {
+            src,
+            className: (el as HTMLElement).className,
+            hideCaption: /[?&]hidecaption=true/i.test(src),
+          }
+        },
+      },
+      {
+        tag: 'blockquote.instagram-media',
+        getAttrs: (el: Element) => {
+          const permalink =
+            (el as HTMLElement).getAttribute('data-instgrm-permalink') ||
+            (el as HTMLElement).querySelector<HTMLAnchorElement>('a[href]')?.href
+          const hasCaption = (el as HTMLElement).hasAttribute('data-instgrm-captioned')
+          return {
+            src: permalink ?? null,
+            className: (el as HTMLElement).className,
+            hideCaption: !hasCaption,
+          }
+        },
+      },
+    ]
+  },
+
+  renderHTML({ HTMLAttributes }) {
+    const safeSrc = normalizeInstagramSrc(HTMLAttributes.src, {
+      hideCaption: HTMLAttributes.hideCaption,
+    })
+    const isReel = /\/reel\//i.test(HTMLAttributes.src)
+
+    return [
+      'iframe',
+      mergeAttributes(HTMLAttributes, {
+        class: `embed instagram ${isReel ? 'instagram-reel' : ''} ${themeClass(HTMLAttributes.theme)}`,
+        src: safeSrc,
+        frameborder: '0',
+        allow: 'autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share',
+        allowfullscreen: 'true',
+        loading: 'lazy',
+        width: '100%',
+        height: isReel ? '800' : '800px',
+      }),
+    ]
+  },
+
+  addNodeView() {
+    return ({ node }) => {
+      const { src, className, hideCaption, theme } = node.attrs as {
+        src: string; className?: string; hideCaption?: boolean; theme?: string
+      }
+      const isReel = className?.includes('instagram-reel') || /\/reel\//i.test(src)
+
+      const container = document.createElement('div')
+      container.classList.add('embed', 'instagram')
+      if (isReel) container.classList.add('instagram-reel')
+      container.classList.add(themeClass(theme))     // ← влияет на внешний фон/рамку
+      container.style.position = 'relative'
+      container.style.minHeight = '200px'
+
+      // loader
+      const loaderWrapper = document.createElement('div')
+      loaderWrapper.style.cssText = `
+        width: 100%;
+        aspect-ratio: ${isReel ? '9 / 16' : '1 / 1'};
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      `
+      container.appendChild(loaderWrapper)
+      new LoaderImage({ target: loaderWrapper, props: { width: '100%', height: '100%', borderRadius: 12 } })
+
+      // iframe
+      const iframe = document.createElement('iframe')
+      iframe.setAttribute('src', normalizeInstagramSrc(src, { hideCaption }))
+      iframe.setAttribute('frameborder', '0')
+      iframe.setAttribute('allowfullscreen', 'true')
+      iframe.setAttribute('allow', 'autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share')
+      iframe.style.width = '100%'
+      ;(iframe.style as any).aspectRatio = isReel ? '9 / 16' : '1 / 1'
+      iframe.style.display = 'none'
+
+      iframe.onload = () => {
+        loaderWrapper.remove()
+        iframe.style.display = 'block'
+      }
+
+      container.appendChild(iframe)
+      return { dom: container }
+    }
+  },
+
+  addProseMirrorPlugins() {
+    const IG_REGEX = /^(https?:\/\/(?:www\.)?instagram\.com\/(p|reel|tv)\/([A-Za-z0-9_-]+))(?:[/?#&].*)?$/i
+    return [
+      new Plugin({
+        props: {
+          handlePaste(view, event) {
+            const text = event.clipboardData?.getData('text/plain')?.trim() ?? ''
+            const m = text.match(IG_REGEX)
+            if (!m) return false
+            const node = view.state.schema.nodes.instagram.create({ src: m[0] })
+            view.dispatch(view.state.tr.replaceSelectionWith(node))
+            return true
+          },
+        },
+      }),
+    ]
+  },
+})
+
 function extractTweetId(url: string): string | null {
   const match = url.match(/status\/(\d+)/);
   return match ? match[1] : null;
@@ -575,4 +707,21 @@ function normalizeYouTubeSrc(url: string): string {
 
 function isYouTubeShorts(url: string): boolean {
   return /(?:https?:\/\/)?(?:www\.)?youtube\.com\/shorts\/[\w-]{11}/.test(url);
+}
+
+
+function normalizeInstagramSrc(url: string, opts?: { hideCaption?: boolean }) {
+  const m = url.match(/instagram\.com\/(p|reel|tv)\/([A-Za-z0-9_-]+)/i)
+  if (!m) return url
+  const base = `https://www.instagram.com/${m[1].toLowerCase()}/${m[2]}/embed`
+  const params = new URLSearchParams()
+  // if (opts?.hideCaption) params.set('hidecaption', 'true')
+  params.set('omitscript', 'true')
+  return `${base}?${params.toString()}`
+}
+
+function themeClass(theme?: string) {
+  if (theme === 'dark') return 'theme-dark'
+  if (theme === 'light') return 'theme-light'
+  return 'theme-auto'
 }

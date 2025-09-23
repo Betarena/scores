@@ -36,7 +36,14 @@
   import Placeholder from "@tiptap/extension-placeholder";
   import StarterKit from "@tiptap/starter-kit";
   import { createEventDispatcher, onMount } from "svelte";
-  import { ImageWithPlaceholder, SafeLink, Tweet, WidgetNode, YouTube } from "./editor_nodes.js";
+  import {
+    ImageWithPlaceholder,
+    Instagram,
+    SafeLink,
+    Tweet,
+    WidgetNode,
+    YouTube,
+  } from "./editor_nodes.js";
   import ImageAltModal from "./ImageAltModal.svelte";
   import InsertLinkModal from "./InsertLinkModal.svelte";
   import LinkPopup from "./LinkPopup.svelte";
@@ -215,6 +222,7 @@
       extensions: [
         WidgetNode,
         YouTube,
+        Instagram,
         Tweet,
         StarterKit,
         Placeholder.configure({
