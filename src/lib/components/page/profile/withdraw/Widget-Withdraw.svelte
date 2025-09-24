@@ -13,12 +13,12 @@ COMPONENT JS (w/ TS)
 
   import { get_v1 } from '$lib/utils/fetch.js';
 
+	import Modal from '$lib/components/ui/Modal.svelte';
 	import WidgetTxHistLoader from '../tx-history/Widget-Tx-Hist-Loader.svelte';
 	import ModalWithdrawForm from './Modal-Withdraw-Form.svelte';
-  import Modal from '$lib/components/ui/Modal.svelte';
 
+	import type { IScoresEndpointProfileMain } from '$lib/types/endpoint.js';
 	import type { B_PROF_D, B_PROF_T } from '@betarena/scores-lib/types/profile.js';
-  import type { IScoresEndpointProfileMain } from '$lib/types/endpoint.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -42,6 +42,7 @@ COMPONENT JS (w/ TS)
   ;
 
   $: RESPONSE_PROFILE_DATA = $page.data?.RESPONSE_PROFILE_DATA ?? { };
+  $: ({ viewportType } = $sessionStore);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -107,7 +108,7 @@ COMPONENT JS (w/ TS)
 COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
-<Modal bind:show={showWithdrawModalForm} style="padding: 0px">
+<Modal bind:show={showWithdrawModalForm} style="padding: 0px; {viewportType == 'mobile' ? 'transform: unset; left: 0; top: 0; height: 100vh' : ''}">
   <ModalWithdrawForm
     data={RESPONSE_PROFILE_DATA?.withdraw_forms}
     {withdrawFormSelectId}

@@ -7,24 +7,22 @@ COMPONENT JS (w/ TS)
   // #region ➤ 📦 Package Imports
 
 	import { createEventDispatcher, onMount, type EventDispatcher } from 'svelte';
-	import { fade } from 'svelte/transition';
 
 	import { post } from '$lib/api/utils.js';
 	import { userUpdateBalance } from '$lib/firebase/common.js';
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { viewport_change } from '$lib/utils/platform-functions.js';
-  import { toDecimalFix } from '$lib/utils/string.js';
+	import { spliceBalanceDoubleZero, toDecimalFix } from '$lib/utils/string.js';
 	import * as EmailValidator from 'email-validator';
 	import * as ibantools from 'ibantools';
-	import { spliceBalanceDoubleZero } from '$lib/utils/string.js';
 
 	import icon_arrow_left from '../assets/arrow-left.svg';
-	import icon_arrow_right from '../assets/arrow-right.svg';
 	import icon_check from '../assets/check.svg';
 	import icon_withdraw_white_mobile from '../assets/withdraw-white-mobile.svg';
 	import icon_withdraw from '../assets/withdraw.svg';
 
+  import { getOptimizedImageUrl } from '$lib/utils/image';
   import type { B_H_TH, B_H_TRS_WF, B_H_TRS_WF_FormField_Type, B_H_TRS_WF_FormOptFlow, B_H_TRS_WF_WithdrawFormStep } from '@betarena/scores-lib/types/_HASURA_.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -749,6 +747,8 @@ MAIN WITHDRAW FORM FLOW WIDGET
       {#if currentWithdrawStep > 1}
         <p class="withdraw-conversion">
           <img
+            width=16
+            height=16
             src={getOptimizedImageUrl({ strImageUrl:  "https://firebasestorage.googleapis.com/v0/b/betarena-ios.appspot.com/o/Betarena_Media%2Fforms_media%2Ficon_bta_form.png?alt=media&token=c454ca74-7ca6-4468-a2a2-bf5ba651dc07" })}
           />
          <span>
@@ -1331,7 +1331,7 @@ MAIN WITHDRAW FORM FLOW WIDGET
     padding-top: 45px;
     text-align: -webkit-center;
     text-align: -moz-center;
-    overflow-y: scroll;
+    overflow-y: auto;
     padding-top: 85px;
     padding-bottom: 150px;
 	}
@@ -1339,6 +1339,7 @@ MAIN WITHDRAW FORM FLOW WIDGET
   {
     /* 📌 position */
     top: 233px;
+    position: absolute;
     /* 🎨 style */
     height: auto;
     gap: 20px;
