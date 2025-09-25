@@ -220,7 +220,7 @@
         profile_pic,
         `Betarena_Media/authors/authors_list/${id}/avatars/${id}.png`
       );
-      e.data.append("avatar", avatar);
+      (e.data as FormData).set("avatar", avatar)
     }
 
     return submitWrapper({
