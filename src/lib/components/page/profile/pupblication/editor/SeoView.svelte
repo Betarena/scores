@@ -23,15 +23,15 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { createEventDispatcher, onMount } from "svelte";
-  import session from "$lib/store/session.js";
-  import { create_article_store } from "./create_article.store.js";
   import BackButton from "$lib/components/ui/BackButton.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import XClose from "$lib/components/ui/infomessages/x-close.svelte";
   import Input from "$lib/components/ui/Input.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
+  import session from "$lib/store/session.js";
   import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import { createEventDispatcher, onMount } from "svelte";
+  import { create_article_store } from "./create_article.store.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -226,6 +226,7 @@
     display: flex;
     flex-direction: column;
     height: 100vh;
+    max-height: 100vh;
     padding-bottom: 34px;
 
     .header {
