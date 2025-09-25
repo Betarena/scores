@@ -133,8 +133,6 @@
     try {
       await auth.currentUser.getIdToken(true);
       await auth.currentUser.reload();
-      console.log("user: ", auth.currentUser);
-      // debugger;
       if (!auth.currentUser.emailVerified) {
         errorMessage =
           translations.email_not_verified ||
