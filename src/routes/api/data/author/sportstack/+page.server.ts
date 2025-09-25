@@ -49,7 +49,7 @@ export const actions: Actions = {
       const data = await entryProfileTabAuthorSportstackUpsert(updated_sportstack);
       return { success: true, message: 'Sportstack created', data };
     } catch (e) {
-      console.log("error: ", e);
+      console.log("Update Publication error: ", e);
       return fail(500, { error: true, message: 'Internal server error' });
     }
   },
