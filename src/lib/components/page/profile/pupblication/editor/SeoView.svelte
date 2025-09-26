@@ -244,7 +244,7 @@
       flex-direction: column;
       align-items: center;
       gap: var(--spacing-2xl, 20px);
-      flex: 1 1 auto;
+      flex-grow: 1;
       min-height: 0; 
       align-self: stretch;
 
@@ -253,6 +253,7 @@
         flex-direction: column;
         gap: var(--spacing-xl, 16px);
         flex-grow: 1;
+        flex-shrink: 1;
 
         .content-header-border {
           border-bottom: 1px solid
@@ -364,7 +365,7 @@
         align-items: flex-start;
         gap: 20px;
         align-self: stretch;
-
+        
         :global(.button) {
           flex-grow: 1;
           flex-shrink: 0;
