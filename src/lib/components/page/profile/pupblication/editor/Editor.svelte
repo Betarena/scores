@@ -409,7 +409,7 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
+<svelte:body  class="disable-scroll"/>
 <svelte:head>
   <script
     async
