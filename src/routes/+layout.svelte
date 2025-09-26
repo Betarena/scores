@@ -466,7 +466,7 @@
           (
             await import
             (
-              '$lib/components/misc/banner/Banner-Offline-Alert.svelte'
+              '$lib/components/misc/banner/Banner-Platform-Alert.svelte'
             )
           ).default
         );
