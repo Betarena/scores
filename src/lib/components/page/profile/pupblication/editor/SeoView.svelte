@@ -244,7 +244,8 @@
       flex-direction: column;
       align-items: center;
       gap: var(--spacing-2xl, 20px);
-      flex: 1 0 0;
+      flex: 1 1 auto;
+      min-height: 0; 
       align-self: stretch;
 
       .content {
