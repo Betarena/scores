@@ -519,11 +519,11 @@
 <style lang="scss">
   .bg {
     z-index: -1;
-    // background-color: var(--colors-background-bg-main);
-    background-color: red;
-    height: 100vh;
+    background-color: var(--colors-background-bg-main);
+    height: calc(var(--vh, 1vh) * 100);
+    max-height: calc(var(--vh, 1vh) * 100);
     width: 100vh;
-    // overflow: hidden;
+    overflow: hidden;
     position: fixed;
   }
   .link-popup {
