@@ -23,24 +23,24 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { createEventDispatcher, onMount } from "svelte";
   import { browser } from "$app/environment";
-  import { flip } from "svelte/animate";
-  import { fade } from "svelte/transition";
-  import { cubicInOut } from "svelte/easing";
   import { get } from "$lib/api/utils.js";
-  import { create_article_store } from "./create_article.store.js";
-  import session from "$lib/store/session.js";
   import BackButton from "$lib/components/ui/BackButton.svelte";
   import Badge from "$lib/components/ui/Badge.svelte";
   import Button from "$lib/components/ui/Button.svelte";
+  import XClose from "$lib/components/ui/infomessages/x-close.svelte";
   import Input from "$lib/components/ui/Input.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
-  import XClose from "$lib/components/ui/infomessages/x-close.svelte";
+  import session from "$lib/store/session.js";
   import type {
     AuthorsTagsMain,
     TranslationSportstacksSectionDataJSONSchema,
   } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import { createEventDispatcher, onMount } from "svelte";
+  import { flip } from "svelte/animate";
+  import { cubicInOut } from "svelte/easing";
+  import { fade } from "svelte/transition";
+  import { create_article_store } from "./create_article.store.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -301,7 +301,8 @@
     top: 0;
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: calc(var(--vh, 1vh) * 100);
+    max-height: calc(var(--vh, 1vh) * 100);
     padding-bottom: 34px;
 
     *::-webkit-scrollbar {
