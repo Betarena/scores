@@ -180,6 +180,35 @@ export const ImageWithPlaceholder = Image.extend({
       };
     };
   },
+  addProseMirrorPlugins() {
+    const IMG_EXT_RE = /\.(png|jpe?g|gif|webp|avif|svg)(?:[?#].*)?$/i;
+    const nodeName = this.name || "image";
+
+    return [
+      new Plugin({
+        props: {
+          handlePaste(view, event: ClipboardEvent) {
+            const text = event.clipboardData?.getData("text/plain")?.trim() ?? "";
+            if (!text) return false;
+
+            if (IMG_EXT_RE.test(text)) {
+              event.preventDefault();
+
+              const nodeType = view.state.schema.nodes[nodeName] || view.state.schema.nodes.image;
+              if (!nodeType) return false;
+
+              const node = nodeType.create({ src: text });
+              const tr = view.state.tr.replaceSelectionWith(node);
+              view.dispatch(tr.scrollIntoView());
+              return true;
+            }
+
+            return false;
+          },
+        },
+      }),
+    ];
+  },
 });
 
 export const SafeLink = Link.extend({
