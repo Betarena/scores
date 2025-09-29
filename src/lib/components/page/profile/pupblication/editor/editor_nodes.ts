@@ -190,6 +190,9 @@ export const ImageWithPlaceholder = Image.extend({
             const clipboard = event.clipboardData;
             dumpClipboard(clipboard!);
             if (!clipboard) return false;
+            alert(clipboard.getData("text/plain"))
+            alert(clipboard.getData("text/uri-list"))
+            alert(clipboard.getData("text/html"))
             // ✅ 1) Проверяем через items (особенно для iOS)
             for (let i = 0; i < clipboard.items.length; i++) {
               const item = clipboard.items[i];
