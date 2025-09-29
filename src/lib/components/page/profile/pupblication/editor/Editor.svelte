@@ -419,7 +419,7 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<svelte:window style="overflow-y: hidden;" on:scroll|preventDefault={() => {}} />
+<svelte:body class="disable-scroll"/>
 <svelte:head>
   <script
     async
@@ -517,6 +517,11 @@
 -->
 
 <style lang="scss">
+  body.disable-scroll {
+    overflow: hidden !important;
+    touch-action: none !important;
+    -webkit-overflow-scrolling: auto !important;
+  }
   .bg {
     z-index: -1;
     background-color: var(--colors-background-bg-main);
