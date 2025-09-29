@@ -190,17 +190,22 @@ export const ImageWithPlaceholder = Image.extend({
             const clipboard = event.clipboardData;
             dumpClipboard(clipboard!);
             if (!clipboard) return false;
-            const uri = clipboard.getData("text/uri-list");
-              if (uri) {
-                const IMG_EXT_RE = /\.(png|jpe?g|gif|webp|avif|svg)$/i;
-                if (IMG_EXT_RE.test(uri)) {
+            const uriList = clipboard.getData("text/uri-list");
+            if (uriList) {
+              // На iOS Safari text/uri-list может содержать несколько строк (uri + комментарии)
+              const uris = uriList.split(/\r?\n/).filter(l => l && !l.startsWith("#"));
+              for (const uri of uris) {
+                const cleanUri = uri.trim();
+                if (IMG_EXT_RE.test(cleanUri)) {
                   event.preventDefault();
-                  const nodeType = view.state.schema.nodes.image;
-                  const node = nodeType.create({ src: uri });
+                  const nodeType = view.state.schema.nodes[nodeName] || view.state.schema.nodes.image;
+                  if (!nodeType) return false;
+                  const node = nodeType.create({ src: cleanUri });
                   view.dispatch(view.state.tr.replaceSelectionWith(node).scrollIntoView());
                   return true;
                 }
               }
+            }
             // ✅ 1) Проверяем через items (особенно для iOS)
             for (let i = 0; i < clipboard.items.length; i++) {
               const item = clipboard.items[i];
@@ -267,12 +272,12 @@ function dumpClipboard(dt: DataTransfer) {
 
   try {
     const html = dt.getData('text/html');
-    if (html) out.push('text/html[0..120]: ' + html.slice(0,120));
-  } catch {}
+    if (html) out.push('text/html[0..120]: ' + html.slice(0, 120));
+  } catch { }
   try {
     const txt = dt.getData('text/plain');
     if (txt) out.push('text/plain: ' + txt);
-  } catch {}
+  } catch { }
 
   alert(out.join('\n'));
 }
@@ -745,7 +750,7 @@ export const Instagram = Node.create({
       iframe.setAttribute('allowfullscreen', 'true')
       iframe.setAttribute('allow', 'autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share')
       iframe.style.width = '100%'
-      ;(iframe.style as any).aspectRatio = isReel ? '9 / 16' : '1 / 1'
+        ; (iframe.style as any).aspectRatio = isReel ? '9 / 16' : '1 / 1'
       iframe.style.display = 'none'
 
       iframe.onload = () => {
