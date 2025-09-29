@@ -457,6 +457,7 @@
           flex-grow: 1;
           flex-shrink: 0;
           flex-basis: 0;
+          height: 44px;
         }
       }
     }
