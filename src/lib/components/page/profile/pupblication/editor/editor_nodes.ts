@@ -239,6 +239,12 @@ export const ImageWithPlaceholder = Image.extend({
                     insertImageNode(view, url);
                     isImageHandled = true;
                     break;
+                  } else {
+                     const nodeType = view.state.schema.nodes.link;
+                      if (!nodeType) return;
+
+                      const node = nodeType.create({ href: url });
+                      view.dispatch(view.state.tr.replaceSelectionWith(node).scrollIntoView());
                   }
                 }
 
@@ -254,18 +260,13 @@ export const ImageWithPlaceholder = Image.extend({
                 }
               }
 
-              // 3. Если асинхронное чтение не нашло ничего, но мы уже вызвали preventDefault
-              // (чтобы избежать двойной вставки), нам нужно вставить исходный plain text
-              // или HTML, если он есть, чтобы не потерять контент.
+              
               if (!isImageHandled && shouldAttemptAsyncRead) {
-                // Этот сценарий крайне редок, т.к. должен быть либо uri-list, либо image/
-                // В большинстве случаев просто ничего не вставляем, т.к.
-                // браузер не должен был вставлять текст по умолчанию.
+
               }
 
             } catch (err) {
               console.warn('Async clipboard read failed:', err);
-              // Если чтение не удалось, мы уже предотвратили вставку.
             }
           };
 
@@ -300,6 +301,9 @@ export const ImageWithPlaceholder = Image.extend({
                   insertImageNode(view, objectUrl);
                   return true;
                 }
+              }
+              if (item.type === "text/uri-list") {
+                event.preventDefault();
               }
             }
 
