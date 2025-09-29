@@ -190,7 +190,17 @@ export const ImageWithPlaceholder = Image.extend({
             const clipboard = event.clipboardData;
             dumpClipboard(clipboard!);
             if (!clipboard) return false;
-
+            const uri = clipboard.getData("text/uri-list");
+              if (uri) {
+                const IMG_EXT_RE = /\.(png|jpe?g|gif|webp|avif|svg)$/i;
+                if (IMG_EXT_RE.test(uri)) {
+                  event.preventDefault();
+                  const nodeType = view.state.schema.nodes.image;
+                  const node = nodeType.create({ src: uri });
+                  view.dispatch(view.state.tr.replaceSelectionWith(node).scrollIntoView());
+                  return true;
+                }
+              }
             // ✅ 1) Проверяем через items (особенно для iOS)
             for (let i = 0; i < clipboard.items.length; i++) {
               const item = clipboard.items[i];
