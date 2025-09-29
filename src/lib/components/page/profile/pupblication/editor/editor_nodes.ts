@@ -5,7 +5,8 @@ import { mergeAttributes, Node } from "@tiptap/core";
 import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
 import type { DOMOutputSpec } from "@tiptap/pm/model";
-import { Plugin } from "prosemirror-state";
+import { EditorView } from "@tiptap/pm/view";
+import { Plugin, PluginKey } from "prosemirror-state";
 
 declare global {
   interface Window {
@@ -24,6 +25,15 @@ declare global {
       };
     };
   }
+}
+
+function insertImageNode(view: EditorView, src: string) {
+  if (!src) return;
+  const nodeType = view.state.schema.nodes.imageWithPlaceholder || view.state.schema.nodes.image;
+  if (!nodeType) return;
+
+  const node = nodeType.create({ src: src });
+  view.dispatch(view.state.tr.replaceSelectionWith(node).scrollIntoView());
 }
 
 export const ImageWithPlaceholder = Image.extend({
@@ -181,60 +191,102 @@ export const ImageWithPlaceholder = Image.extend({
   },
   addProseMirrorPlugins() {
     const IMG_EXT_RE = /\.(png|jpe?g|gif|webp|avif|svg)/i;
-    const nodeName = this.name || "image";
 
     return [
+    // async plugin to handle image and URI strings from the clipboard
+      new Plugin({
+        key: new PluginKey("asyncImagePaste"),
+        view: (view) => {
+          const handleAsyncPaste = async (event: ClipboardEvent) => {
+            const shouldAttemptAsyncRead = event.clipboardData?.types.includes('text/uri-list') ||
+              (event.clipboardData?.items && Array.from(event.clipboardData.items).some(item => item.type.startsWith('image/')));
+
+            if (shouldAttemptAsyncRead) {
+              event.preventDefault();
+            } else if (event.clipboardData?.getData("text/plain")) {
+              return;
+            }
+
+            if (!navigator.clipboard || !navigator.clipboard.read) return;
+
+            try {
+              const clipboardContents = await navigator.clipboard.read();
+              let isImageHandled = false;
+
+              for (const item of clipboardContents) {
+                let url = "";
+
+                if (item.types.includes('text/uri-list')) {
+                  const uriListBlob = await item.getType('text/uri-list');
+                  const uriListText = await uriListBlob.text();
+                  url = uriListText.split('\n')[0].trim();
+                  if (url && IMG_EXT_RE.test(url)) {
+                    insertImageNode(view, url);
+                    isImageHandled = true;
+                    break;
+                  } else {
+                    const nodeType = view.state.schema.nodes.link;
+                    if (!nodeType) return;
+
+                    const node = nodeType.create({ href: url });
+                    view.dispatch(view.state.tr.replaceSelectionWith(node).scrollIntoView());
+                  }
+                }
+
+                const imageType = item.types.find(type => type.startsWith('image/'));
+                if (imageType) {
+                  const blob = await item.getType(imageType);
+                  const objectUrl = URL.createObjectURL(blob);
+
+                  insertImageNode(view, objectUrl);
+                  isImageHandled = true;
+                  break;
+                }
+              }
+
+
+              if (!isImageHandled && shouldAttemptAsyncRead) {
+
+              }
+
+            } catch (err) {
+              console.warn('Async clipboard read failed:', err);
+            }
+          };
+
+          view.dom.addEventListener('paste', handleAsyncPaste);
+
+          return {
+            update: () => { },
+            destroy: () => {
+              view.dom.removeEventListener('paste', handleAsyncPaste);
+            }
+          };
+        }
+      }),
+
       new Plugin({
         props: {
           handlePaste(view, event: ClipboardEvent) {
             const clipboard = event.clipboardData;
             if (!clipboard) return false;
 
-            // ✅ 1) Проверяем через items (особенно для iOS)
             for (let i = 0; i < clipboard.items.length; i++) {
               const item = clipboard.items[i];
               if (item.type.startsWith("image/")) {
                 const file = item.getAsFile();
                 if (file) {
+                  event.preventDefault();
                   const objectUrl = URL.createObjectURL(file);
-                  const nodeType = view.state.schema.nodes[nodeName] || view.state.schema.nodes.image;
-                  if (!nodeType) return false;
-
-                  event.preventDefault();
-                  const node = nodeType.create({ src: objectUrl });
-                  view.dispatch(view.state.tr.replaceSelectionWith(node).scrollIntoView());
+                  insertImageNode(view, objectUrl);
                   return true;
                 }
               }
-            }
-
-            // ✅ 2) если это text/html (копирование через «Copy» → Safari вставляет <a> или <img>)
-            const html = clipboard.getData("text/html")?.trim();
-            if (html) {
-              const doc = new DOMParser().parseFromString(html, "text/html");
-              const imgEl = doc.querySelector("img");
-              if (imgEl) {
-                const src = imgEl.getAttribute("src");
-                if (src) {
-                  event.preventDefault();
-                  const nodeType = view.state.schema.nodes[nodeName] || view.state.schema.nodes.image;
-                  const node = nodeType.create({ src });
-                  view.dispatch(view.state.tr.replaceSelectionWith(node).scrollIntoView());
-                  return true;
-                }
+              if (item.type === "text/uri-list") {
+                event.preventDefault();
+                return true
               }
             }
-
-            // ✅ 3) fallback: text/plain с url
-            const text = clipboard.getData("text/plain");
-            if (text && IMG_EXT_RE.test(text)) {
-              event.preventDefault();
-              const nodeType = view.state.schema.nodes[nodeName] || view.state.schema.nodes.image;
-              const node = nodeType.create({ src: text });
-              view.dispatch(view.state.tr.replaceSelectionWith(node).scrollIntoView());
-              return true;
-            }
-
             return false;
           }
         },
