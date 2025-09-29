@@ -188,6 +188,7 @@ export const ImageWithPlaceholder = Image.extend({
         props: {
           handlePaste(view, event: ClipboardEvent) {
             const clipboard = event.clipboardData;
+            alert(`CLIPBOARD: ${JSON.stringify(clipboard)}`);
             if (!clipboard) return false;
 
             // ✅ 1) Проверяем через items (особенно для iOS)
