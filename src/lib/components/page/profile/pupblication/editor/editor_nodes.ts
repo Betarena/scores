@@ -27,17 +27,13 @@ declare global {
   }
 }
 
-
-const IMAGE_PASTE_PLUGIN_KEY = new PluginKey("asyncImagePaste");
-
-// Вспомогательная функция для вставки узла (чтобы избежать дублирования кода)
 function insertImageNode(view: EditorView, src: string) {
-    if (!src) return;
-    const nodeType = view.state.schema.nodes.imageWithPlaceholder || view.state.schema.nodes.image;
-    if (!nodeType) return;
+  if (!src) return;
+  const nodeType = view.state.schema.nodes.imageWithPlaceholder || view.state.schema.nodes.image;
+  if (!nodeType) return;
 
-    const node = nodeType.create({ src: src });
-    view.dispatch(view.state.tr.replaceSelectionWith(node).scrollIntoView());
+  const node = nodeType.create({ src: src });
+  view.dispatch(view.state.tr.replaceSelectionWith(node).scrollIntoView());
 }
 
 export const ImageWithPlaceholder = Image.extend({
@@ -197,32 +193,22 @@ export const ImageWithPlaceholder = Image.extend({
     const IMG_EXT_RE = /\.(png|jpe?g|gif|webp|avif|svg)/i;
 
     return [
-      // =================================================================
-      // 1. Асинхронный плагин (для обхода ограничений iOS)
-      // =================================================================
+    // async plugin to handle image and URI strings from the clipboard
       new Plugin({
         key: new PluginKey("asyncImagePaste"),
         view: (view) => {
           const handleAsyncPaste = async (event: ClipboardEvent) => {
-            // 1. Проверяем, ожидаем ли мы потенциальную вставку изображения (text/uri-list или image/*).
-            // ВАЖНО: Мы делаем это синхронно!
             const shouldAttemptAsyncRead = event.clipboardData?.types.includes('text/uri-list') ||
               (event.clipboardData?.items && Array.from(event.clipboardData.items).some(item => item.type.startsWith('image/')));
 
-            // Если мы ожидаем изображение, сразу предотвращаем стандартную вставку,
-            // чтобы браузер не вставил URL как текст.
             if (shouldAttemptAsyncRead) {
-              event.preventDefault(); // <-- СИНХРОННЫЙ preventDefault
+              event.preventDefault();
             } else if (event.clipboardData?.getData("text/plain")) {
-              // Если есть только plain text (но не image/ или uri-list),
-              // мы позволяем синхронному плагину handlePaste обработать его.
               return;
             }
 
-            // Если нет Async Clipboard API, выходим, но уже после (возможно, лишнего) preventDefault.
             if (!navigator.clipboard || !navigator.clipboard.read) return;
 
-            // 2. Асинхронное чтение
             try {
               const clipboardContents = await navigator.clipboard.read();
               let isImageHandled = false;
@@ -230,7 +216,6 @@ export const ImageWithPlaceholder = Image.extend({
               for (const item of clipboardContents) {
                 let url = "";
 
-                // 2.1) text/uri-list (ваш случай)
                 if (item.types.includes('text/uri-list')) {
                   const uriListBlob = await item.getType('text/uri-list');
                   const uriListText = await uriListBlob.text();
@@ -240,15 +225,14 @@ export const ImageWithPlaceholder = Image.extend({
                     isImageHandled = true;
                     break;
                   } else {
-                     const nodeType = view.state.schema.nodes.link;
-                      if (!nodeType) return;
+                    const nodeType = view.state.schema.nodes.link;
+                    if (!nodeType) return;
 
-                      const node = nodeType.create({ href: url });
-                      view.dispatch(view.state.tr.replaceSelectionWith(node).scrollIntoView());
+                    const node = nodeType.create({ href: url });
+                    view.dispatch(view.state.tr.replaceSelectionWith(node).scrollIntoView());
                   }
                 }
 
-                // 2.2) Прямой файл изображения
                 const imageType = item.types.find(type => type.startsWith('image/'));
                 if (imageType) {
                   const blob = await item.getType(imageType);
@@ -260,7 +244,6 @@ export const ImageWithPlaceholder = Image.extend({
                 }
               }
 
-              
               if (!isImageHandled && shouldAttemptAsyncRead) {
 
               }
@@ -281,16 +264,12 @@ export const ImageWithPlaceholder = Image.extend({
         }
       }),
 
-      // =================================================================
-      // 2. Синхронный плагин (ваш оригинальный handlePaste)
-      // =================================================================
       new Plugin({
         props: {
           handlePaste(view, event: ClipboardEvent) {
             const clipboard = event.clipboardData;
             if (!clipboard) return false;
 
-            // 1) files (drag/drop или copy)
             for (let i = 0; i < clipboard.items.length; i++) {
               const item = clipboard.items[i];
               if (item.type.startsWith("image/")) {
@@ -307,30 +286,6 @@ export const ImageWithPlaceholder = Image.extend({
                 return true
               }
             }
-
-            // 2) text/html
-            const html = clipboard.getData("text/html")?.trim();
-            if (html) {
-              const doc = new DOMParser().parseFromString(html, "text/html");
-              const imgEl = doc.querySelector("img");
-              if (imgEl?.src) {
-                event.preventDefault();
-                insertImageNode(view, imgEl.src);
-                return true;
-              }
-            }
-
-            // 3) fallback: text/plain (Для прямых ссылок, скопированных как текст)
-            const text = clipboard.getData("text/plain");
-            if (text && IMG_EXT_RE.test(text)) {
-              // !!! ВАЖНО: Пропускаем, если мы уже обрабатывали text/uri-list
-              // в асинхронном плагине, но т.к. он синхронно вызывал preventDefault,
-              // этот блок не должен сработать, если была URI-ссылка.
-              event.preventDefault();
-              insertImageNode(view, text);
-              return true;
-            }
-
             return false;
           }
         },
