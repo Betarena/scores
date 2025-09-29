@@ -188,71 +188,41 @@ export const ImageWithPlaceholder = Image.extend({
         props: {
           handlePaste(view, event: ClipboardEvent) {
             const clipboard = event.clipboardData;
-            dumpClipboard(clipboard!);
             if (!clipboard) return false;
-            alert(clipboard.getData("text/plain"))
-            alert(clipboard.getData("text/uri-list"))
-            alert(clipboard.getData("text/html"))
-            // ✅ 1) Проверяем через items (особенно для iOS)
+
+            // 1) iOS Safari: text/uri-list
             for (let i = 0; i < clipboard.items.length; i++) {
               const item = clipboard.items[i];
-              alert(`item[${i}]: kind=${item.kind} type=${item.type} `);
-
-              // 1) текстовый список URI (iOS может класть ссылку сюда)
               if (item.type === "text/uri-list") {
-                // getAsString асинхронный, поэтому вставку делаем в callback
-                item.getAsString((s) => {
-                  const text = s?.trim();
-                  if (!text) return;
+                event.preventDefault(); // блокируем дефолтную вставку ссылки
 
-                  // собрать кандидатов как раньше
-                  const candidates: string[] = [text];
-                  try {
-                    const u = new URL(text);
-                    candidates.push(u.pathname || "");
-                    candidates.push(u.href || "");
-                    u.searchParams.forEach((value, key) => {
-                      try {
-                        const dec = decodeURIComponent(value);
-                        candidates.push(dec);
-                        candidates.push(`${key}=${dec}`);
-                      } catch {
-                        candidates.push(value);
-                        candidates.push(`${key}=${value}`);
-                      }
-                    });
-                    const srcParam = u.searchParams.get("src");
-                    if (srcParam) {
-                      try { candidates.push(decodeURIComponent(srcParam)); } catch { candidates.push(srcParam); }
-                    }
-                    const imgParam = u.searchParams.get("img");
-                    if (imgParam) {
-                      try { candidates.push(decodeURIComponent(imgParam)); } catch { candidates.push(imgParam); }
-                    }
-                  } catch {
-                    // не URL — ничего дополнительного
-                  }
+                item.getAsString((uri) => {
+                  if (!uri) return;
+                  const clean = uri.trim();
+                  if (!IMG_EXT_RE.test(clean)) return;
 
-                  const found = candidates.find((t) => IMG_EXT_RE.test(t));
-                  if (!found) return;
-
-                  const nodeType = view.state.schema.nodes[nodeName] || view.state.schema.nodes.image;
+                  const nodeType = view.state.schema.nodes.image;
                   if (!nodeType) return;
 
-                  event.preventDefault();
-                  const node = nodeType.create({ src: text });
+                  const node = nodeType.create({ src: clean });
                   view.dispatch(view.state.tr.replaceSelectionWith(node).scrollIntoView());
                 });
-                return true;
+
+                return true; // важно вернуть true, иначе браузер вставит ссылку
               }
+            }
+
+            // 2) files (drag/drop или copy)
+            for (let i = 0; i < clipboard.items.length; i++) {
+              const item = clipboard.items[i];
               if (item.type.startsWith("image/")) {
                 const file = item.getAsFile();
                 if (file) {
+                  event.preventDefault();
                   const objectUrl = URL.createObjectURL(file);
-                  const nodeType = view.state.schema.nodes[nodeName] || view.state.schema.nodes.image;
+                  const nodeType = view.state.schema.nodes.image;
                   if (!nodeType) return false;
 
-                  event.preventDefault();
                   const node = nodeType.create({ src: objectUrl });
                   view.dispatch(view.state.tr.replaceSelectionWith(node).scrollIntoView());
                   return true;
@@ -260,29 +230,25 @@ export const ImageWithPlaceholder = Image.extend({
               }
             }
 
-            // ✅ 2) если это text/html (копирование через «Copy» → Safari вставляет <a> или <img>)
+            // 3) text/html
             const html = clipboard.getData("text/html")?.trim();
             if (html) {
               const doc = new DOMParser().parseFromString(html, "text/html");
               const imgEl = doc.querySelector("img");
-              if (imgEl) {
-                const src = imgEl.getAttribute("src");
-                if (src) {
-                  event.preventDefault();
-                  const nodeType = view.state.schema.nodes[nodeName] || view.state.schema.nodes.image;
-                  const node = nodeType.create({ src });
-                  view.dispatch(view.state.tr.replaceSelectionWith(node).scrollIntoView());
-                  return true;
-                }
+              if (imgEl?.src) {
+                event.preventDefault();
+                const nodeType = view.state.schema.nodes.image;
+                const node = nodeType.create({ src: imgEl.src });
+                view.dispatch(view.state.tr.replaceSelectionWith(node).scrollIntoView());
+                return true;
               }
             }
 
-            // ✅ 3) fallback: text/plain с url
+            // 4) fallback: text/plain
             const text = clipboard.getData("text/plain");
-            const url = clipboard.getData("text/uri")
             if (text && IMG_EXT_RE.test(text)) {
               event.preventDefault();
-              const nodeType = view.state.schema.nodes[nodeName] || view.state.schema.nodes.image;
+              const nodeType = view.state.schema.nodes.image;
               const node = nodeType.create({ src: text });
               view.dispatch(view.state.tr.replaceSelectionWith(node).scrollIntoView());
               return true;
