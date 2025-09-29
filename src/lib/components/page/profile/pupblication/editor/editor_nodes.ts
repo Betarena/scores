@@ -190,27 +190,58 @@ export const ImageWithPlaceholder = Image.extend({
             const clipboard = event.clipboardData;
             dumpClipboard(clipboard!);
             if (!clipboard) return false;
-            const uriList = clipboard.getData("URL");
-            alert(uriList)
-            if (uriList) {
-              // На iOS Safari text/uri-list может содержать несколько строк (uri + комментарии)
-              const uris = uriList.split(/\r?\n/).filter(l => l && !l.startsWith("#"));
-              for (const uri of uris) {
-                const cleanUri = uri.trim();
-                if (IMG_EXT_RE.test(cleanUri)) {
-                  event.preventDefault();
-                  const nodeType = view.state.schema.nodes[nodeName] || view.state.schema.nodes.image;
-                  if (!nodeType) return false;
-                  const node = nodeType.create({ src: cleanUri });
-                  view.dispatch(view.state.tr.replaceSelectionWith(node).scrollIntoView());
-                  return true;
-                }
-              }
-            }
             // ✅ 1) Проверяем через items (особенно для iOS)
             for (let i = 0; i < clipboard.items.length; i++) {
               const item = clipboard.items[i];
               alert(`item[${i}]: kind=${item.kind} type=${item.type} `);
+
+              // 1) текстовый список URI (iOS может класть ссылку сюда)
+              if (item.type === "text/uri-list") {
+                // getAsString асинхронный, поэтому вставку делаем в callback
+                item.getAsString((s) => {
+                  const text = s?.trim();
+                  if (!text) return;
+
+                  // собрать кандидатов как раньше
+                  const candidates: string[] = [text];
+                  try {
+                    const u = new URL(text);
+                    candidates.push(u.pathname || "");
+                    candidates.push(u.href || "");
+                    u.searchParams.forEach((value, key) => {
+                      try {
+                        const dec = decodeURIComponent(value);
+                        candidates.push(dec);
+                        candidates.push(`${key}=${dec}`);
+                      } catch {
+                        candidates.push(value);
+                        candidates.push(`${key}=${value}`);
+                      }
+                    });
+                    const srcParam = u.searchParams.get("src");
+                    if (srcParam) {
+                      try { candidates.push(decodeURIComponent(srcParam)); } catch { candidates.push(srcParam); }
+                    }
+                    const imgParam = u.searchParams.get("img");
+                    if (imgParam) {
+                      try { candidates.push(decodeURIComponent(imgParam)); } catch { candidates.push(imgParam); }
+                    }
+                  } catch {
+                    // не URL — ничего дополнительного
+                  }
+
+                  const found = candidates.find((t) => IMG_EXT_RE.test(t));
+                  if (!found) return;
+
+                  const nodeType = view.state.schema.nodes[nodeName] || view.state.schema.nodes.image;
+                  if (!nodeType) return;
+
+                  event.preventDefault();
+                  const node = nodeType.create({ src: text });
+                  view.dispatch(view.state.tr.replaceSelectionWith(node).scrollIntoView());
+                });
+                return true;
+              }
               if (item.type.startsWith("image/")) {
                 const file = item.getAsFile();
                 if (file) {
@@ -245,6 +276,7 @@ export const ImageWithPlaceholder = Image.extend({
 
             // ✅ 3) fallback: text/plain с url
             const text = clipboard.getData("text/plain");
+            const url = clipboard.getData("text/uri")
             if (text && IMG_EXT_RE.test(text)) {
               event.preventDefault();
               const nodeType = view.state.schema.nodes[nodeName] || view.state.schema.nodes.image;
