@@ -188,7 +188,7 @@ export const ImageWithPlaceholder = Image.extend({
         props: {
           handlePaste(view, event: ClipboardEvent) {
             const clipboard = event.clipboardData;
-            alert(`CLIPBOARD: ${JSON.stringify(clipboard)}`);
+            dumpClipboard(clipboard!);
             if (!clipboard) return false;
 
             // ✅ 1) Проверяем через items (особенно для iOS)
@@ -243,7 +243,29 @@ export const ImageWithPlaceholder = Image.extend({
     ];
   },
 });
+function dumpClipboard(dt: DataTransfer) {
+  let out: any[] = [];
+  out.push('types: ' + Array.from(dt.types ?? []).join(', '));
+  out.push('files.length: ' + (dt.files?.length ?? 0));
+  out.push('items.length: ' + (dt.items?.length ?? 0));
 
+  // первые 2 item-типа
+  for (let i = 0; i < Math.min(dt.items?.length ?? 0, 3); i++) {
+    const it = dt.items[i];
+    out.push(`item[${i}]: kind=${it.kind} type=${it.type}`);
+  }
+
+  try {
+    const html = dt.getData('text/html');
+    if (html) out.push('text/html[0..120]: ' + html.slice(0,120));
+  } catch {}
+  try {
+    const txt = dt.getData('text/plain');
+    if (txt) out.push('text/plain: ' + txt);
+  } catch {}
+
+  alert(out.join('\n'));
+}
 export const SafeLink = Link.extend({
   addAttributes() {
     return {
