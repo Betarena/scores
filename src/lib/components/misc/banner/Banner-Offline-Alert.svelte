@@ -125,7 +125,7 @@
     >
       <TranslationText
         key={`${CNAME}/banner-offline-alert`}
-        text={null}
+        text={'Warning there is no connection to the internet you are using the website in offline mode'}
         fallback={'Warning there is no connection to the internet you are using the website in offline mode'}
       />
     </p>
