@@ -173,15 +173,14 @@ export const ImageWithPlaceholder = Image.extend({
 
       return {
         dom,
-        update: () =>
-        {
+        update: () => {
           return false
         }
       };
     };
   },
   addProseMirrorPlugins() {
-    const IMG_EXT_RE = /\.(png|jpe?g|gif|webp|avif|svg)(?:[?#].*)?$/i;
+    const IMG_EXT_RE = /\.(png|jpe?g|gif|webp|avif|svg)/i;
     const nodeName = this.name || "image";
 
     return [
@@ -191,19 +190,55 @@ export const ImageWithPlaceholder = Image.extend({
             const text = event.clipboardData?.getData("text/plain")?.trim() ?? "";
             if (!text) return false;
 
-            if (IMG_EXT_RE.test(text)) {
-              event.preventDefault();
+            const candidates: string[] = [text];
+            try {
+              const u = new URL(text);
+              candidates.push(u.pathname || "");
+              candidates.push(u.href || "");
 
-              const nodeType = view.state.schema.nodes[nodeName] || view.state.schema.nodes.image;
-              if (!nodeType) return false;
+              u.searchParams.forEach((value, key) => {
+                try {
+                  const dec = decodeURIComponent(value);
+                  candidates.push(dec);
+                  candidates.push(`${key}=${dec}`);
+                } catch {
+                  candidates.push(value);
+                  candidates.push(`${key}=${value}`);
+                }
+              });
 
-              const node = nodeType.create({ src: text });
-              const tr = view.state.tr.replaceSelectionWith(node);
-              view.dispatch(tr.scrollIntoView());
-              return true;
+              const srcParam = u.searchParams.get("src");
+              if (srcParam) {
+                try {
+                  candidates.push(decodeURIComponent(srcParam));
+                } catch {
+                  candidates.push(srcParam);
+                }
+              }
+              const imgParam = u.searchParams.get("img");
+              if (imgParam) {
+                try {
+                  candidates.push(decodeURIComponent(imgParam));
+                } catch {
+                  candidates.push(imgParam);
+                }
+              }
+            } catch {
+              // not a url
             }
 
-            return false;
+            const found = candidates.find((s) => IMG_EXT_RE.test(s));
+            if (!found) return false;
+
+            event.preventDefault();
+
+            const nodeType =
+              view.state.schema.nodes[nodeName] || view.state.schema.nodes.image;
+            if (!nodeType) return false;
+
+            const node = nodeType.create({ src: text });
+            view.dispatch(view.state.tr.replaceSelectionWith(node).scrollIntoView());
+            return true;
           },
         },
       }),
@@ -472,112 +507,112 @@ export const YouTube = Node.create({
 });
 
 export const WidgetNode = Node.create({
-    name: 'widget',
-    group: 'block',
-    atom: true,
-    selectable: false,
+  name: 'widget',
+  group: 'block',
+  atom: true,
+  selectable: false,
 
-    addAttributes() {
-        return {
-            'data-widget-id': {
-                default: null,
-                parseHTML: element => element.getAttribute('data-widget-id'),
-                renderHTML: attributes => {
-                    if (!attributes['data-widget-id']) {
-                        return {};
-                    }
-                    return {
-                        'data-widget-id': attributes['data-widget-id'],
-                    };
-                },
-            },
-            dataAttributes: {
-                default: {},
-                parseHTML: element => {
-                    const dataAttrs: Record<string, string> = {};
-                    Array.from((element as HTMLElement).attributes).forEach(attr => {
-                        if (attr.name.startsWith('data-')) {
-                            dataAttrs[attr.name] = attr.value;
-                        }
-                    });
-                    return dataAttrs;
-                },
-                renderHTML: attributes => {
-                    return attributes.dataAttributes || {};
-                },
-            },
-            tagName: {
-                default: 'div',
-                parseHTML: element => (element as HTMLElement).tagName.toLowerCase(),
-                renderHTML: () => ({}),
-            },
-            innerHTML: {
-                default: '',
-                parseHTML: element => (element as HTMLElement).innerHTML,
-                renderHTML: () => ({}),
+  addAttributes() {
+    return {
+      'data-widget-id': {
+        default: null,
+        parseHTML: element => element.getAttribute('data-widget-id'),
+        renderHTML: attributes => {
+          if (!attributes['data-widget-id']) {
+            return {};
+          }
+          return {
+            'data-widget-id': attributes['data-widget-id'],
+          };
+        },
+      },
+      dataAttributes: {
+        default: {},
+        parseHTML: element => {
+          const dataAttrs: Record<string, string> = {};
+          Array.from((element as HTMLElement).attributes).forEach(attr => {
+            if (attr.name.startsWith('data-')) {
+              dataAttrs[attr.name] = attr.value;
             }
-        };
-    },
+          });
+          return dataAttrs;
+        },
+        renderHTML: attributes => {
+          return attributes.dataAttributes || {};
+        },
+      },
+      tagName: {
+        default: 'div',
+        parseHTML: element => (element as HTMLElement).tagName.toLowerCase(),
+        renderHTML: () => ({}),
+      },
+      innerHTML: {
+        default: '',
+        parseHTML: element => (element as HTMLElement).innerHTML,
+        renderHTML: () => ({}),
+      }
+    };
+  },
 
-    parseHTML() {
-        return [
-            {
-                tag: '[data-widget-id]',
-                getAttrs: element => {
-                    const el = element as HTMLElement;
-                    const widgetId = el.getAttribute('data-widget-id');
-                    
-                    if (!widgetId) return false;
+  parseHTML() {
+    return [
+      {
+        tag: '[data-widget-id]',
+        getAttrs: element => {
+          const el = element as HTMLElement;
+          const widgetId = el.getAttribute('data-widget-id');
 
-                    const dataAttributes: Record<string, string> = {};
-                    Array.from(el.attributes).forEach(attr => {
-                        if (attr.name.startsWith('data-')) {
-                            dataAttributes[attr.name] = attr.value;
-                        }
-                    });
+          if (!widgetId) return false;
 
-                    return {
-                        'data-widget-id': widgetId,
-                        dataAttributes,
-                        tagName: el.tagName.toLowerCase(),
-                        innerHTML: el.innerHTML
-                    };
-                },
-            },
-        ];
-    },
+          const dataAttributes: Record<string, string> = {};
+          Array.from(el.attributes).forEach(attr => {
+            if (attr.name.startsWith('data-')) {
+              dataAttributes[attr.name] = attr.value;
+            }
+          });
 
-    renderHTML({ HTMLAttributes }) {
-        const tagName = 'div';
-        
-        const attrs = mergeAttributes(HTMLAttributes)
-        
-        return [tagName, attrs];
-    },
+          return {
+            'data-widget-id': widgetId,
+            dataAttributes,
+            tagName: el.tagName.toLowerCase(),
+            innerHTML: el.innerHTML
+          };
+        },
+      },
+    ];
+  },
 
-    addNodeView() {
-        return ({ node }) => {
-            const element = document.createElement('div');
-            element.style.width = '100%';
-            element.style.height = '60px';
-            element.style.borderRadius = '8px';
-            element.style.backgroundColor = '#2d2d2d';
-            element.style.display = 'flex';
-            element.style.justifyContent = "center"
-            element.style.alignItems = "center"
-            element.innerHTML = `Here will be widget with id: ${node.attrs['data-widget-id']} prediction-id:${node.attrs.dataAttributes['data-ai-prediction-id']}`;
-            
-            Object.entries(node.attrs.dataAttributes || {}).forEach(([key, value]) => {
-                element.setAttribute(key, `${value}`);
-            });
+  renderHTML({ HTMLAttributes }) {
+    const tagName = 'div';
 
-            return { 
-                dom: element,
-                update: () => false,
-                ignoreMutation: () => true
-            };
-        };
-    },
+    const attrs = mergeAttributes(HTMLAttributes)
+
+    return [tagName, attrs];
+  },
+
+  addNodeView() {
+    return ({ node }) => {
+      const element = document.createElement('div');
+      element.style.width = '100%';
+      element.style.height = '60px';
+      element.style.borderRadius = '8px';
+      element.style.backgroundColor = '#2d2d2d';
+      element.style.display = 'flex';
+      element.style.justifyContent = "center"
+      element.style.alignItems = "center"
+      element.innerHTML = `Here will be widget with id: ${node.attrs['data-widget-id']} prediction-id:${node.attrs.dataAttributes['data-ai-prediction-id']}`;
+
+      Object.entries(node.attrs.dataAttributes || {}).forEach(([key, value]) => {
+        element.setAttribute(key, `${value}`);
+      });
+
+      return {
+        dom: element,
+        update: () => false,
+        ignoreMutation: () => true
+      };
+    };
+  },
 });
 
 function extractTweetId(url: string): string | null {
