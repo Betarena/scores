@@ -187,7 +187,66 @@ export const ImageWithPlaceholder = Image.extend({
       new Plugin({
         props: {
           handlePaste(view, event: ClipboardEvent) {
-            const text = event.clipboardData?.getData("text/plain")?.trim() ?? "";
+            const clipboard = event.clipboardData;
+            if (!clipboard) return false;
+
+            if (clipboard.files && clipboard.files.length > 0) {
+              for (let i = 0; i < clipboard.files.length; i++) {
+                const file = clipboard.files[i];
+                if (file.type.startsWith("image/")) {
+                  const objectUrl = URL.createObjectURL(file);
+                  const nodeType = view.state.schema.nodes[nodeName] || view.state.schema.nodes.image;
+                  if (!nodeType) return false;
+                  event.preventDefault();
+                  const node = nodeType.create({ src: objectUrl });
+                  view.dispatch(view.state.tr.replaceSelectionWith(node).scrollIntoView());
+                  return true;
+                }
+              }
+            }
+
+            const html = clipboard.getData("text/html")?.trim();
+            if (html) {
+              try {
+                const doc = new DOMParser().parseFromString(html, "text/html");
+                const imgEl = doc.querySelector("a img") || doc.querySelector("img");
+                if (imgEl) {
+                  const src = imgEl.getAttribute("src") || imgEl.getAttribute("data-src");
+                  if (src) {
+                    const nodeType = view.state.schema.nodes[nodeName] || view.state.schema.nodes.image;
+                    if (!nodeType) return false;
+                    event.preventDefault();
+                    const node = nodeType.create({ src });
+                    view.dispatch(view.state.tr.replaceSelectionWith(node).scrollIntoView());
+                    return true;
+                  }
+                }
+                const anchor = doc.querySelector("a[href]");
+                if (anchor) {
+                  const href = anchor.getAttribute("href") || "";
+                  const candidates: string[] = [href];
+                  try {
+                    const u = new URL(href);
+                    u.searchParams.forEach((v) => {
+                      try { candidates.push(decodeURIComponent(v)); } catch { candidates.push(v); }
+                    });
+                  } catch {}
+                  if (candidates.find(s => IMG_EXT_RE.test(s))) {
+                    const nodeType = view.state.schema.nodes[nodeName] || view.state.schema.nodes.image;
+                    if (!nodeType) return false;
+                    event.preventDefault();
+                    const node = nodeType.create({ src: href });
+                    view.dispatch(view.state.tr.replaceSelectionWith(node).scrollIntoView());
+                    return true;
+                  }
+                }
+              } catch {
+                // invalid html
+              }
+            }
+
+            // 3) text/plain: fallback
+            const text = clipboard.getData("text/plain")?.trim() ?? "";
             if (!text) return false;
 
             const candidates: string[] = [text];
@@ -195,7 +254,6 @@ export const ImageWithPlaceholder = Image.extend({
               const u = new URL(text);
               candidates.push(u.pathname || "");
               candidates.push(u.href || "");
-
               u.searchParams.forEach((value, key) => {
                 try {
                   const dec = decodeURIComponent(value);
@@ -206,22 +264,13 @@ export const ImageWithPlaceholder = Image.extend({
                   candidates.push(`${key}=${value}`);
                 }
               });
-
               const srcParam = u.searchParams.get("src");
               if (srcParam) {
-                try {
-                  candidates.push(decodeURIComponent(srcParam));
-                } catch {
-                  candidates.push(srcParam);
-                }
+                try { candidates.push(decodeURIComponent(srcParam)); } catch { candidates.push(srcParam); }
               }
               const imgParam = u.searchParams.get("img");
               if (imgParam) {
-                try {
-                  candidates.push(decodeURIComponent(imgParam));
-                } catch {
-                  candidates.push(imgParam);
-                }
+                try { candidates.push(decodeURIComponent(imgParam)); } catch { candidates.push(imgParam); }
               }
             } catch {
               // not a url
@@ -231,11 +280,8 @@ export const ImageWithPlaceholder = Image.extend({
             if (!found) return false;
 
             event.preventDefault();
-
-            const nodeType =
-              view.state.schema.nodes[nodeName] || view.state.schema.nodes.image;
+            const nodeType = view.state.schema.nodes[nodeName] || view.state.schema.nodes.image;
             if (!nodeType) return false;
-
             const node = nodeType.create({ src: text });
             view.dispatch(view.state.tr.replaceSelectionWith(node).scrollIntoView());
             return true;
