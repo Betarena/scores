@@ -510,7 +510,8 @@
   .bg {
     z-index: -1;
     background-color: var(--colors-background-bg-main);
-    height: 100vh;
+    height: calc(var(--vh, 1vh) * 100);
+    max-height: calc(var(--vh, 1vh) * 100);
     width: 100vh;
     position: fixed;
   }
