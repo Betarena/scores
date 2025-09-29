@@ -5,7 +5,8 @@ import { mergeAttributes, Node } from "@tiptap/core";
 import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
 import type { DOMOutputSpec } from "@tiptap/pm/model";
-import { Plugin } from "prosemirror-state";
+import { EditorView } from "@tiptap/pm/view";
+import { Plugin, PluginKey } from "prosemirror-state";
 
 declare global {
   interface Window {
@@ -25,6 +26,21 @@ declare global {
     };
   }
 }
+
+
+const IMAGE_PASTE_PLUGIN_KEY = new PluginKey("asyncImagePaste");
+
+// Вспомогательная функция для вставки узла (чтобы избежать дублирования кода)
+function insertImageNode(view: EditorView, src: string) {
+    if (!src) return;
+    // Используем ваше имя ноды: imageWithPlaceholder
+    const nodeType = view.state.schema.nodes.imageWithPlaceholder || view.state.schema.nodes.image;
+    if (!nodeType) return;
+
+    const node = nodeType.create({ src: src });
+    view.dispatch(view.state.tr.replaceSelectionWith(node).scrollIntoView());
+}
+
 
 export const ImageWithPlaceholder = Image.extend({
   name: "imageWithPlaceholder",
@@ -179,87 +195,132 @@ export const ImageWithPlaceholder = Image.extend({
       };
     };
   },
-  addProseMirrorPlugins() {
-    const IMG_EXT_RE = /\.(png|jpe?g|gif|webp|avif|svg)/i;
-    const nodeName = this.name || "image";
+ addProseMirrorPlugins() {
+        const IMG_EXT_RE = /\.(png|jpe?g|gif|webp|avif|svg)/i;
 
-    return [
-      new Plugin({
-        props: {
-          handlePaste(view, event: ClipboardEvent) {
-            const clipboard = event.clipboardData;
-            if (!clipboard) return false;
+        return [
+            // =================================================================
+            // 1. Асинхронный плагин (для обхода ограничений iOS, использует DOM Listener)
+            // =================================================================
+            new Plugin({
+                key: IMAGE_PASTE_PLUGIN_KEY,
+                view: (view) => {
+                    // Асинхронный обработчик, который вызывается при вставке
+                    const handleAsyncPaste = async (event: ClipboardEvent) => {
+                        // Если уже есть синхронные данные, не мешаем (но на iOS их часто нет)
+                        if (event.clipboardData?.items.length && event.clipboardData.getData("text/html")) {
+                            return;
+                        }
 
-            // 1) iOS Safari: text/uri-list
-            for (let i = 0; i < clipboard.items.length; i++) {
-              const item = clipboard.items[i];
-              if (item.type === "text/uri-list") {
-                event.preventDefault(); // блокируем дефолтную вставку ссылки
+                        // Проверяем поддержку Async Clipboard API
+                        if (!navigator.clipboard || !navigator.clipboard.read) return;
+                        
+                        // Если вставка инициирована, пытаемся асинхронно получить данные
+                        try {
+                            const clipboardContents = await navigator.clipboard.read();
+                            let isImageHandled = false;
 
-                item.getAsString((uri) => {
-                  if (!uri) return;
-                  const clean = uri.trim();
-                  if (!IMG_EXT_RE.test(clean)) return;
+                            for (const item of clipboardContents) {
+                                // 1.1) text/uri-list (ваш случай)
+                                if (item.types.includes('text/uri-list')) {
+                                    const uriListBlob = await item.getType('text/uri-list');
+                                    const uriListText = await uriListBlob.text();
+                                    const url = uriListText.split('\n')[0].trim();
 
-                  const nodeType = view.state.schema.nodes.image;
-                  if (!nodeType) return;
+                                    if (url && IMG_EXT_RE.test(url)) {
+                                        event.preventDefault();
+                                        insertImageNode(view, url);
+                                        isImageHandled = true;
+                                        break;
+                                    }
+                                }
 
-                  const node = nodeType.create({ src: clean });
-                  view.dispatch(view.state.tr.replaceSelectionWith(node).scrollIntoView());
-                });
+                                // 1.2) Прямой файл изображения
+                                const imageType = item.types.find(type => type.startsWith('image/'));
+                                if (imageType) {
+                                    const blob = await item.getType(imageType);
+                                    const objectUrl = URL.createObjectURL(blob);
+                                    
+                                    event.preventDefault();
+                                    insertImageNode(view, objectUrl);
+                                    isImageHandled = true;
+                                    break;
+                                }
+                            }
+                            // Если мы успешно вставили изображение асинхронно, предотвращаем стандартную вставку
+                            if (isImageHandled) {
+                                event.preventDefault();
+                            }
+                        } catch (err) {
+                            // Ошибка доступа (например, пользователь отказал в разрешении)
+                            console.warn('Async clipboard read failed:', err);
+                        }
+                    };
 
-                return true; // важно вернуть true, иначе браузер вставит ссылку
-              }
-            }
+                    view.dom.addEventListener('paste', handleAsyncPaste);
 
-            // 2) files (drag/drop или copy)
-            for (let i = 0; i < clipboard.items.length; i++) {
-              const item = clipboard.items[i];
-              if (item.type.startsWith("image/")) {
-                const file = item.getAsFile();
-                if (file) {
-                  event.preventDefault();
-                  const objectUrl = URL.createObjectURL(file);
-                  const nodeType = view.state.schema.nodes.image;
-                  if (!nodeType) return false;
-
-                  const node = nodeType.create({ src: objectUrl });
-                  view.dispatch(view.state.tr.replaceSelectionWith(node).scrollIntoView());
-                  return true;
+                    return {
+                        update: () => {},
+                        destroy: () => {
+                            view.dom.removeEventListener('paste', handleAsyncPaste);
+                        }
+                    };
                 }
-              }
-            }
+            }),
 
-            // 3) text/html
-            const html = clipboard.getData("text/html")?.trim();
-            if (html) {
-              const doc = new DOMParser().parseFromString(html, "text/html");
-              const imgEl = doc.querySelector("img");
-              if (imgEl?.src) {
-                event.preventDefault();
-                const nodeType = view.state.schema.nodes.image;
-                const node = nodeType.create({ src: imgEl.src });
-                view.dispatch(view.state.tr.replaceSelectionWith(node).scrollIntoView());
-                return true;
-              }
-            }
+            // =================================================================
+            // 2. Синхронный плагин (ваш оригинальный handlePaste)
+            //    Используется для файлов, HTML и как запасной вариант.
+            // =================================================================
+            new Plugin({
+                props: {
+                    handlePaste(view, event: ClipboardEvent) {
+                        const clipboard = event.clipboardData;
+                        if (!clipboard) return false;
+                        
+                        // ВАЖНО: Мы удалили нерабочий асинхронный блок 1) text/uri-list
+                        // и теперь полагаемся на АСИНХРОННЫЙ плагин для iOS.
 
-            // 4) fallback: text/plain
-            const text = clipboard.getData("text/plain");
-            if (text && IMG_EXT_RE.test(text)) {
-              event.preventDefault();
-              const nodeType = view.state.schema.nodes.image;
-              const node = nodeType.create({ src: text });
-              view.dispatch(view.state.tr.replaceSelectionWith(node).scrollIntoView());
-              return true;
-            }
+                        // 1) files (drag/drop или copy) - ваш оригинальный Блок 2
+                        for (let i = 0; i < clipboard.items.length; i++) {
+                            const item = clipboard.items[i];
+                            if (item.type.startsWith("image/")) {
+                                const file = item.getAsFile();
+                                if (file) {
+                                    event.preventDefault();
+                                    const objectUrl = URL.createObjectURL(file);
+                                    insertImageNode(view, objectUrl); // Используем общую функцию
+                                    return true;
+                                }
+                            }
+                        }
 
-            return false;
-          }
-        },
-      }),
-    ];
-  },
+                        // 2) text/html - ваш оригинальный Блок 3
+                        const html = clipboard.getData("text/html")?.trim();
+                        if (html) {
+                            const doc = new DOMParser().parseFromString(html, "text/html");
+                            const imgEl = doc.querySelector("img");
+                            if (imgEl?.src) {
+                                event.preventDefault();
+                                insertImageNode(view, imgEl.src); // Используем общую функцию
+                                return true;
+                            }
+                        }
+
+                        // 3) fallback: text/plain - ваш оригинальный Блок 4
+                        const text = clipboard.getData("text/plain");
+                        if (text && IMG_EXT_RE.test(text)) {
+                            event.preventDefault();
+                            insertImageNode(view, text); // Используем общую функцию
+                            return true;
+                        }
+
+                        return false;
+                    }
+                },
+            }),
+        ];
+    },
 });
 function dumpClipboard(dt: DataTransfer) {
   let out: any[] = [];
