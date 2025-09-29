@@ -190,7 +190,7 @@ export const ImageWithPlaceholder = Image.extend({
             const clipboard = event.clipboardData;
             dumpClipboard(clipboard!);
             if (!clipboard) return false;
-            const uriList = clipboard.getData("text/uri-list");
+            const uriList = clipboard.getData("URL");
             alert(uriList)
             if (uriList) {
               // На iOS Safari text/uri-list может содержать несколько строк (uri + комментарии)
