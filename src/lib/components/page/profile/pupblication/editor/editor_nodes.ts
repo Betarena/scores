@@ -210,6 +210,7 @@ export const ImageWithPlaceholder = Image.extend({
             // ✅ 1) Проверяем через items (особенно для iOS)
             for (let i = 0; i < clipboard.items.length; i++) {
               const item = clipboard.items[i];
+              alert(`item[${i}]: kind=${item.kind} type=${item.type} `);
               if (item.type.startsWith("image/")) {
                 const file = item.getAsFile();
                 if (file) {
