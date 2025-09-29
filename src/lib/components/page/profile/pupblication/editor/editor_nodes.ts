@@ -304,6 +304,7 @@ export const ImageWithPlaceholder = Image.extend({
               }
               if (item.type === "text/uri-list") {
                 event.preventDefault();
+                return true
               }
             }
 
