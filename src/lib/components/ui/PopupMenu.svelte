@@ -8,16 +8,17 @@
 -->
 
 <script lang="ts">
-  import { createEventDispatcher, onMount } from "svelte";
-  import { activePopup } from "./stores/menu-popup.js";
-    import { scale } from "svelte/transition";
+  import { createEventDispatcher, onMount, tick } from "svelte";
+  import { scale } from "svelte/transition";
   import { articleFilterStore } from "../page/profile/pupblication/editor/helpers.js";
+  import { activePopup } from "./stores/menu-popup.js";
 
   export let show = false;
   export let options: { id: string; icon?: any; label: string }[] = [];
 
   let menuNode: HTMLElement;
   let root: HTMLElement;
+  let parentElement: HTMLElement;
 
   const dispatch = createEventDispatcher();
 
@@ -28,9 +29,13 @@
 
   function adjustMenuPosition() {
     if (menuNode) {
-      const parentElement = menuNode.parentElement;
+      if(!parentElement) {
+        parentElement = menuNode.parentElement as HTMLElement;
+        tick().then(() => {
+          adjustMenuPosition();
+        });
+      }
       if (!parentElement) return;
-
       const parentRect = parentElement.getBoundingClientRect();
       const rect = menuNode.getBoundingClientRect();
       const viewportWidth = document.documentElement.clientWidth;
