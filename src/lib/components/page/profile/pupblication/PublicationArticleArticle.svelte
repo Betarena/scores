@@ -387,7 +387,7 @@
         position: absolute;
         display: flex;
         z-index: 2;
-        left: calc(46px + 82px);
+        right: calc(-46px - 82px);
         top: 50%;
         transform: translateY(-50%);
       }
@@ -396,7 +396,8 @@
       display: flex;
       align-items: center;
       gap: 16px;
-
+      flex-grow: 1;
+      overflow: visible;
       .img {
         flex-shrink: 0;
         object-fit: contain;
@@ -413,7 +414,7 @@
         justify-content: center;
         align-items: flex-start;
         flex-grow: 1;
-        overflow: hidden;
+        overflow: visible;
         height: 100%;
         gap: var(--spacing-md, 8px);
 
