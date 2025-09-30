@@ -225,8 +225,8 @@
     top: 0;
     display: flex;
     flex-direction: column;
-    height: calc(var(--vh, 1vh) * 100);
-    max-height: calc(var(--vh, 1vh) * 100);
+    height: 100dvh;
+    max-height: 100dvh;
     padding-bottom: 34px;
 
     .header {
