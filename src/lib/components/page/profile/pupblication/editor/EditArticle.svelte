@@ -327,9 +327,9 @@
     display: flex;
     flex-direction: column;
     padding-bottom: 20px;
-    height: 100dvh;
-    max-height: 100dvh;
-    min-height: 100dvh;
+    height: calc(var(--vh, 1vh) * 100);
+    max-height: calc(var(--vh, 1vh) * 100);
+    min-height: calc(var(--vh, 1vh) * 100);
     transition: height 0.5s ease-out;
     background-color: var(--colors-background-bg-primary);
     overflow: hidden;
