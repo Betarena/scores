@@ -15,7 +15,7 @@
 import { goto } from '$app/navigation';
 import { infoMessages } from '$lib/components/ui/infomessages/infomessages.js';
 
-import { dlogv2 } from './debug.js';
+import { dlogv2, log_v3 } from './debug.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -80,25 +80,34 @@ export function submitWrapper({ successMessage = "Success!", errorMessage = "An 
   });
   return async (e) =>
   {
-    infoMessages.remove(loadingId);
-    if (e.result.type === "success")
-    {
-      infoMessages.add({
-        type: "success",
-        text: successMessage,
-      });
-    } else
-    {
+    try {
+
+      infoMessages.remove(loadingId);
+      if (e.result.type === "success") {
+        infoMessages.add({
+          type: "success",
+          text: successMessage,
+        });
+      } else {
+        infoMessages.add({
+          type: "error",
+          text: errorMessage,
+        });
+      }
+      // Set invalidateAll to false if you don't want to reload page data when submitting
+      if (cbAfter) {
+        await cbAfter(e);
+      }
+      e.update({ invalidateAll: false, reset });
+    } catch (e) {      
+      log_v3({
+        strGroupName: "Fetch error",
+        msgs: [e.message]
+      })
       infoMessages.add({
         type: "error",
-        text: errorMessage,
-      });
+        text: errorMessage
+      })
     }
-    // Set invalidateAll to false if you don't want to reload page data when submitting
-    if (cbAfter)
-    {
-      await cbAfter(e);
-    }
-    e.update({ invalidateAll: false, reset });
   };
 }
