@@ -32,7 +32,7 @@ function insertImageNode(view: EditorView, src: string) {
   const nodeType = view.state.schema.nodes.imageWithPlaceholder || view.state.schema.nodes.image;
   if (!nodeType) return;
 
-  const node = nodeType.create({ src: src });
+  const node = nodeType.create({ src });
   view.dispatch(view.state.tr.replaceSelectionWith(node).scrollIntoView());
 }
 
@@ -244,11 +244,6 @@ export const ImageWithPlaceholder = Image.extend({
                 }
               }
 
-
-              if (!isImageHandled && shouldAttemptAsyncRead) {
-
-              }
-
             } catch (err) {
               console.warn('Async clipboard read failed:', err);
             }
@@ -257,7 +252,6 @@ export const ImageWithPlaceholder = Image.extend({
           view.dom.addEventListener('paste', handleAsyncPaste);
 
           return {
-            update: () => { },
             destroy: () => {
               view.dom.removeEventListener('paste', handleAsyncPaste);
             }
@@ -271,20 +265,19 @@ export const ImageWithPlaceholder = Image.extend({
             const clipboard = event.clipboardData;
             if (!clipboard) return false;
 
-            for (let i = 0; i < clipboard.items.length; i++) {
-              const item = clipboard.items[i];
+            for (const item of clipboard.items) {
               if (item.type.startsWith("image/")) {
-                const file = item.getAsFile();
-                if (file) {
-                  event.preventDefault();
-                  const objectUrl = URL.createObjectURL(file);
-                  insertImageNode(view, objectUrl);
-                  return true;
-                }
+              const file = item.getAsFile();
+              if (file) {
+                event.preventDefault();
+                const objectUrl = URL.createObjectURL(file);
+                insertImageNode(view, objectUrl);
+                return true;
+              }
               }
               if (item.type === "text/uri-list") {
-                event.preventDefault();
-                return true
+              event.preventDefault();
+              return true;
               }
             }
             return false;
