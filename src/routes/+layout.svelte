@@ -596,8 +596,13 @@
 
   function updateVh() {
     if (!browser) return;
-    const vh = (window?.visualViewport?.height || window?.innerHeight) * 0.01;
-    document.body.style.setProperty('--vh', `${vh}px`);
+
+    const vv = window.visualViewport;
+    const height = vv && (vv.height < window.innerHeight)
+      ? vv.height + vv.offsetTop
+      : window.innerHeight;
+
+    document.body.style.setProperty("--vh", `${height * 0.01}px`);
   }
 
 </script>
