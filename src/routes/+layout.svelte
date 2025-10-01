@@ -595,12 +595,17 @@
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
   function updateVh() {
-    if (!browser) return;
-
     const vv = window.visualViewport;
-    const height = vv && (vv.height < window.innerHeight)
+    if (!browser || !vv) return;
+
+    const effectiveHeight = vv.height + vv.offsetTop;
+    const isKeyboardOpen = window.innerHeight - effectiveHeight > 100; // ← ключевой фикс
+
+    
+    const height = isKeyboardOpen
       ? vv.height + vv.offsetTop
       : window.innerHeight;
+    
 
     document.body.style.setProperty("--vh", `${height * 0.01}px`);
   }
