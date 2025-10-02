@@ -107,8 +107,13 @@
 
   async function updateViewportHeight() {
     // toogleLinkPopup(false)
-    vh = `${(window.visualViewport?.height || 0) * 0.01}px`;
-    isKeyboardOpen = (window.visualViewport?.height || 0) < window.innerHeight;
+    const vv = window.visualViewport;
+    if (!vv) return;
+
+    vh = `${vv.height * 0.01}px`;
+    const effectiveHeight = vv.height + vv.offsetTop;
+    isKeyboardOpen = window.innerHeight - effectiveHeight > 100; // ← ключевой фикс
+
     if (isKeyboardOpen) {
       const keyboardHeight =
         window.innerHeight - (window.visualViewport?.height || 0);
@@ -409,7 +414,7 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
+<svelte:body class="disable-scroll"/>
 <svelte:head>
   <script
     async
@@ -507,6 +512,11 @@
 -->
 
 <style lang="scss">
+  body.disable-scroll {
+    overflow: hidden !important;
+    touch-action: none !important;
+    -webkit-overflow-scrolling: auto !important;
+  }
   .bg {
     z-index: -1;
     background-color: var(--colors-background-bg-main);

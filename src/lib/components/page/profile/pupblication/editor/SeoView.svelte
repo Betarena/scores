@@ -23,15 +23,15 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { createEventDispatcher, onMount } from "svelte";
-  import session from "$lib/store/session.js";
-  import { create_article_store } from "./create_article.store.js";
   import BackButton from "$lib/components/ui/BackButton.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import XClose from "$lib/components/ui/infomessages/x-close.svelte";
   import Input from "$lib/components/ui/Input.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
+  import session from "$lib/store/session.js";
   import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import { createEventDispatcher, onMount } from "svelte";
+  import { create_article_store } from "./create_article.store.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -225,7 +225,8 @@
     top: 0;
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: 100dvh;
+    max-height: 100dvh;
     padding-bottom: 34px;
 
     .header {
@@ -243,7 +244,8 @@
       flex-direction: column;
       align-items: center;
       gap: var(--spacing-2xl, 20px);
-      flex: 1 0 0;
+      flex-grow: 1;
+      min-height: 0; 
       align-self: stretch;
 
       .content {
@@ -251,6 +253,7 @@
         flex-direction: column;
         gap: var(--spacing-xl, 16px);
         flex-grow: 1;
+        flex-shrink: 1;
 
         .content-header-border {
           border-bottom: 1px solid
@@ -362,11 +365,12 @@
         align-items: flex-start;
         gap: 20px;
         align-self: stretch;
-
+        
         :global(.button) {
           flex-grow: 1;
           flex-shrink: 0;
           flex-basis: 0;
+          height: 44px;
         }
       }
     }

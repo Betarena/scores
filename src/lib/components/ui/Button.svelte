@@ -168,6 +168,7 @@
     border-radius: var(--radius-md, 8px);
 
     &.lg {
+      height: 44px;
       padding: 10px calc(var(--spacing-xl, 16px) + var(--spacing-xxs, 2px));
       font-size: var(--font-size-text-md, 16px);
       font-style: normal;
@@ -221,7 +222,7 @@
    
     color: var(--colors-text-text-white, #FFF);
     background: var(--colors-background-bg-brand-solid, #F5620F);
-    border: 2px solid var(--gradient-skeuemorphic-gradient-border, rgba(255, 255, 255, 0.12));
+    border: 2px solid var(--gradient-skeuemorphic-gradient-border, rgba(255, 255, 255, 0.12)) !important;
     box-shadow: 0 0 0 1px var(--colors-effects-shadows-shadow-skeumorphic-inner-border, rgba(12, 14, 18, 0.18)) inset, 0 -2px 0 0 var(--colors-effects-shadows-shadow-skeumorphic-inner, rgba(12, 14, 18, 0.05)) inset, 0 1px 2px 0 var(--colors-effects-shadows-shadow-xs, rgba(255, 255, 255, 0.00));
     &.hover {
      background: var(--colors-background-bg-brand-solid_hover, #F5620F);
@@ -381,8 +382,6 @@
       --component-colors-components-buttons-secondary-button-secondary-fg,
       #525252
     );
-    box-sizing: border-box;
-
     border: 1px solid
       var(
         --component-colors-components-buttons-secondary-button-secondary-border,
@@ -395,7 +394,7 @@
     /* Shadows/shadow-xs */
     box-shadow: 0px 1px 2px 0px
       var(--colors-effects-shadows-shadow-xs, rgba(31, 31, 31, 0.05));
-
+    box-sizing: border-box !important;
     &.hover {
       color: var(
         --component-colors-components-buttons-secondary-button-secondary-fg_hover,
