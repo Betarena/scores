@@ -211,7 +211,6 @@ export const ImageWithPlaceholder = Image.extend({
 
             try {
               const clipboardContents = await navigator.clipboard.read();
-              let isImageHandled = false;
 
               for (const item of clipboardContents) {
                 let url = "";
@@ -222,7 +221,6 @@ export const ImageWithPlaceholder = Image.extend({
                   url = uriListText.split('\n')[0].trim();
                   if (url && IMG_EXT_RE.test(url)) {
                     insertImageNode(view, url);
-                    isImageHandled = true;
                     break;
                   } else {
                     const nodeType = view.state.schema.nodes.link;
@@ -239,7 +237,6 @@ export const ImageWithPlaceholder = Image.extend({
                   const objectUrl = URL.createObjectURL(blob);
 
                   insertImageNode(view, objectUrl);
-                  isImageHandled = true;
                   break;
                 }
               }
