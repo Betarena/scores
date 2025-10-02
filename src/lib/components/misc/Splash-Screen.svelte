@@ -145,7 +145,7 @@
     /* 📌 position */
 		position: fixed;
 		top: 0;
-		height: 100vh;
+		height: 100dvh;
 		right: 0;
 		left: 0;
 		z-index: 50000;
