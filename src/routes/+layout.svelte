@@ -854,7 +854,7 @@
   .app-wrapper {
     display: flex;
     flex-direction: column;
-    min-height: calc(var(--vh)*100);
+    min-height: 100dvh;
     &.page-content {
       background-color: var(--colors-background-bg-primary);
     }
