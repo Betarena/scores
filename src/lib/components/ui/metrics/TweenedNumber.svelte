@@ -3,12 +3,13 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+	import { toDecimalFix } from '$lib/utils/string.js';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <script lang="ts">
-
+  import { tweened } from "svelte/motion";
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -23,14 +24,11 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  import Save from "$lib/components/ui/assets/save.svelte";
-  import Button from "$lib/components/ui/Button.svelte";
-  import FeaturedIcon from "$lib/components/ui/FeaturedIcon.svelte";
-  import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
-  import ModalWrapper from "./ModalWrapper.svelte";
+
+  import { onMount } from "svelte";
+  import { cubicOut } from "svelte/easing";
 
   // #endregion ➤ 📦 Package Imports
-
   // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -44,12 +42,50 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
+  export let number = 0;
+  export let toDecimalFix = 0;
 
-  export let id = "";
-  export let cb;
-  export let translations:
-    | TranslationSportstacksSectionDataJSONSchema
-    | undefined;
+  const tweenedNumber = tweened(0, {
+    duration: 800,
+    easing: cubicOut,
+  });
+
+  // element binding for intersection observer
+  let container: HTMLElement | null = null;
+  let inView = false;
+  // store latest value while out of view
+  let pendingValue = number;
+
+  // when component mounts, observe visibility
+  let io: IntersectionObserver | null = null;
+  onMount(() => {
+    io = new IntersectionObserver(
+      (entries) => {
+        const e = entries[0];
+        if (!e) return;
+        if (e.isIntersecting) {
+          inView = true;
+          // animate to the latest known value when entering view
+          tweenedNumber.set(pendingValue);
+        } else {
+          inView = false;
+        }
+      },
+      { threshold: 0.15 }
+    );
+
+    if (container) io.observe(container);
+    return () => {
+      container && io?.unobserve(container);
+      io = null;
+    };
+  });
+
+  // react to external value changes: if in view animate immediately, otherwise store
+  $: if (number !== undefined) {
+    pendingValue = number;
+    if (inView) tweenedNumber.set(number);
+  }
 
   // #endregion ➤ 📌 VARIABLES
 </script>
@@ -60,38 +96,10 @@
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
 │         │ imported from './static/app.css'                                       │
-│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│ ➤ HINT: │ access custom betarena Scores VScode Snippets by typing emmet-like     │
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
+<span bind:this={container}>{$tweenedNumber.toFixed(toDecimalFix)}</span>
 
-<ModalWrapper
-  title={translations?.unbublish_confirmation || "Are you sure you want to unpublish?"}
-  actionButton={translations?.unpublish  || "Unpublish"}
-  cancel={translations?.cancel || "Cancel"}
->
-  <div slot="header-icon">
-    <FeaturedIcon size="lg" color="brand"><Save /></FeaturedIcon>
-  </div>
-  <div slot="action-button" class=" action-button">
-    <Button full={true} on:click={cb}>{translations?.unpublish || "Unpublish"} </Button>
-  </div>
-</ModalWrapper>
-
-
-<!--
-╭──────────────────────────────────────────────────────────────────────────────────╮
-│ 🌊 Svelte Component CSS/SCSS                                                     │
-┣──────────────────────────────────────────────────────────────────────────────────┫
-│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
-│         │ values by typing/CTRL+SPACE                                            │
-│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
-╰──────────────────────────────────────────────────────────────────────────────────╯
--->
-
-<style lang="scss">
-  .action-button {
-    width: 100%;
-  }
-</style>

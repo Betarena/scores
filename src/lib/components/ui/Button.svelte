@@ -184,6 +184,8 @@
       padding: 10px calc(14px + var(--spacing-xxs, 2px));
       &.icon_leading {
         padding: 10px;
+        height: 40px;
+        width: 40px;
       }
     }
 

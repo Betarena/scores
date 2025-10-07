@@ -27,8 +27,8 @@
   import Trash_01 from "$lib/components/ui/assets/trash-01.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import FeaturedIcon from "$lib/components/ui/FeaturedIcon.svelte";
-  import ModalWrapper from "./ModalWrapper.svelte";
   import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import ModalWrapper from "./ModalWrapper.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -72,7 +72,7 @@
 
 <ModalWrapper title={translations?.delete || "Delete"} actionButton={translations?.delete || "Delete"} cancel= {translations?.cancel || "Cancel"}>
   <div slot="header-icon">
-    <FeaturedIcon size="lg" type="error"><Trash_01 /></FeaturedIcon>
+    <FeaturedIcon size="lg" color="error"><Trash_01 /></FeaturedIcon>
   </div>
   <div slot="text">
      {translations?.delete_confirmation || "Are you sure you want to delete ?"}.

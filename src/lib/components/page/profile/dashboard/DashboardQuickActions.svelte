@@ -8,9 +8,18 @@
 -->
 
 <script lang="ts">
-  export let size: "sm" | "md" | "lg" | "xl" = "md";
-  export let color: "brand" | "gray" | "error" | "warning" | "sucess" = "brand";
-  export let type: "modern" | "light" = "light";
+  import Button from "$lib/components/ui/Button.svelte";
+  import CreditCardUpload from "../assets/dashboard/CreditCardUpload.svelte";
+  import DepositIcon from "../assets/dashboard/DepositIcon.svelte";
+  import InviteFriends from "../assets/dashboard/InviteFriends.svelte";
+  import PencilLineIcon from "../assets/dashboard/PencilLineIcon.svelte";
+
+  const actions = [
+    { icon: DepositIcon, id: "deposit", label: "Add Funds" },
+    { icon: PencilLineIcon, id: "publish", label: "Publish Article" },
+    { icon: CreditCardUpload, id: "withdraw", label: "Withdraw" },
+    { icon: InviteFriends, id: "friends", label: "Invite Friends" },
+  ];
 </script>
 
 <!--
@@ -24,8 +33,18 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="featured-icon {size} {color} {type}">
-  <slot />
+<div id="dashboard-quick-actions">
+  <div class="title">Actions</div>
+  <div class="actions">
+    {#each actions as action}
+      <Button type="secondary">
+        <div class="action">
+          <svelte:component this={action.icon} />
+          {action.label}
+        </div>
+      </Button>
+    {/each}
+  </div>
 </div>
 
 <!--
@@ -39,114 +58,48 @@
 -->
 
 <style lang="scss">
-  .featured-icon {
+  #dashboard-quick-actions {
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
     flex-shrink: 0;
-    border-radius: var(--radius-full, 9999px);
+    width: 100%;
+    align-self: stretch;
 
-    &.sm {
-      width: 32px;
-      height: 32px;
-      padding: 8px;
-      :global(svg) {
-        width: 16px;
-        height: 16px;
-      }
-    }
+    .title {
+      color: var(--colors-text-text-secondary-700, #fbfbfb);
 
-    &.md {
-      width: 40px;
-      height: 40px;
-      padding: 10px;
-      :global(svg) {
-        width: 20px;
-        height: 20px;
-      }
+      /* Text lg/Semibold */
+      font-family: var(--font-family-font-family-body, Roboto);
+      font-size: var(--font-size-text-lg, 18px);
+      font-style: normal;
+      font-weight: 600;
+      line-height: var(--line-height-text-lg, 28px); /* 155.556% */
     }
-    &.lg {
-      width: 48px;
-      height: 48px;
-      padding: 12px;
-      :global(svg) {
-        width: 24px;
-        height: 24px;
-      }
-    }
-    &.xl {
-      width: 56px;
-      height: 56px;
-      padding: 14px;
-      :global(svg) {
-        width: 28px;
-        height: 28px;
-      }
-    }
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: var(--spacing-lg, 12px);
+      width: 100%;
 
-    &.brand {
-      background: var(--colors-background-bg-brand-secondary, #feece2);
-      :global(path) {
-        stroke: var(
-          --component-colors-components-icons-featured-icons-light-featured-icon-light-fg-brand
-        ) !important;
+      :global(.button) {
+        height: 101px;
       }
-    }
-
-    &.gray {
-      background: var(--colors-background-bg-tertiary, #f7f7f7);
-      :global(path) {
-        stroke: var(
-          --component-colors-components-icons-featured-icons-light-featured-icon-light-fg-gray
-        ) !important;
-      }
-
-      &.modern {
-        border-radius: var(--radius-md, 8px);
-        border: 1px solid var(--colors-border-border-primary, #d2d2d2);
-        background: var(--colors-background-bg-primary, #fff);
-        color: var(--colors-foreground-fg-secondary-700);
-        /* Shadows/shadow-xs-skeuomorphic */
-        box-shadow: 0 0 0 1px
-            var(
-              --colors-effects-shadows-shadow-skeumorphic-inner-border,
-              rgba(10, 13, 18, 0.18)
-            )
-            inset,
-          0 -2px 0 0 var(
-              --colors-effects-shadows-shadow-skeumorphic-inner,
-              rgba(10, 13, 18, 0.05)
-            ) inset,
-          0 1px 2px 0
-            var(--colors-effects-shadows-shadow-xs, rgba(10, 13, 18, 0.05));
-        :global(path) {
-          stroke: var(--colors-foreground-fg-secondary-700) !important;
+      .action {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: var(--spacing-sm, 6px);
+        flex: 1 0 0;
+        align-self: stretch;
+        
+      
+        :global(svg) {
+          width: 20px;
+          height: 20px;
         }
-      }
-    }
-
-    &.error {
-      background: var(--colors-background-bg-error-secondary, #fee4e2);
-      :global(path) {
-        stroke: var(
-          --component-colors-components-icons-featured-icons-light-featured-icon-light-fg-error
-        ) !important;
-      }
-    }
-    &.warning {
-      background: var(--colors-background-bg-warning-secondary, #fef0c7);
-      :global(path) {
-        stroke: var(
-          --component-colors-components-icons-featured-icons-light-featured-icon-light-fg-warning
-        ) !important;
-      }
-    }
-    &.sucess {
-      background: var(--colors-background-bg-success-secondary, #dcfae6);
-      :global(path) {
-        stroke: var(
-          --component-colors-components-icons-featured-icons-light-featured-icon-light-fg-success
-        ) !important;
       }
     }
   }
