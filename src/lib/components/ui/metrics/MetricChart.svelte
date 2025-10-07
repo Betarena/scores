@@ -8,7 +8,6 @@
 -->
 
 <script lang="ts">
-
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -23,14 +22,11 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  import Save from "$lib/components/ui/assets/save.svelte";
-  import Button from "$lib/components/ui/Button.svelte";
-  import FeaturedIcon from "$lib/components/ui/FeaturedIcon.svelte";
-  import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
-  import ModalWrapper from "./ModalWrapper.svelte";
+
+  import Change from "./Change.svelte";
+  import TweenedNumber from "./TweenedNumber.svelte";
 
   // #endregion ➤ 📦 Package Imports
-
   // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -44,12 +40,12 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
-  export let id = "";
-  export let cb;
-  export let translations:
-    | TranslationSportstacksSectionDataJSONSchema
-    | undefined;
+  export let text = "";
+  export let number = 0;
+  export let change = 6.2;
+  export let menu = false;
+  export let supportText = "";
+  export let animation = false;
 
   // #endregion ➤ 📌 VARIABLES
 </script>
@@ -60,25 +56,42 @@
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
 │         │ imported from './static/app.css'                                       │
-│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│ ➤ HINT: │ access custom betarena Scores VScode Snippets by typing emmet-like     │
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
-
-<ModalWrapper
-  title={translations?.unbublish_confirmation || "Are you sure you want to unpublish?"}
-  actionButton={translations?.unpublish  || "Unpublish"}
-  cancel={translations?.cancel || "Cancel"}
->
-  <div slot="header-icon">
-    <FeaturedIcon size="lg" color="brand"><Save /></FeaturedIcon>
+<div class="metric-chart-1">
+  <div class="text-wrapper">
+    <div class="title">
+      {text}
+      <!-- menu not implemented yet -->
+      {#if menu}
+        <!-- content here -->
+      {/if}
+    </div>
   </div>
-  <div slot="action-button" class=" action-button">
-    <Button full={true} on:click={cb}>{translations?.unpublish || "Unpublish"} </Button>
+  <div class="data-chart-wrapper">
+    <div class="data-wrapper">
+      <div class="number">
+        <slot name="number">
+          {#if animation}
+            <TweenedNumber {number} toDecimalFix={2}/>
+          {:else}
+            {number}
+          {/if}
+        </slot>
+      </div>
+      <div class="change-wrapper">
+        <Change {change} type="first" />
+        {#if supportText}
+          <span class="support-text">{supportText}</span>
+        {/if}
+      </div>
+    </div>
+    <!-- charts are not implemented yet -->
+    <!-- <div class="chart-wrapper"></div> -->
   </div>
-</ModalWrapper>
-
+</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -86,12 +99,89 @@
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
 │         │ values by typing/CTRL+SPACE                                            │
-│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
+│ ➤ HINT: │ access custom betarena Scores CSS VScode Snippets by typing 'style...' │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <style lang="scss">
-  .action-button {
+  .metric-chart-1 {
+    display: flex;
+    flex-direction: column;
+    max-width: 343px;
     width: 100%;
+    padding: var(--spacing-2xl, 20px);
+    align-items: flex-start;
+    gap: var(--spacing-2xl, 20px);
+    border-radius: var(--radius-xl, 12px);
+
+    border: 1px solid var(--colors-border-border-secondary, #ededed);
+    background: var(--colors-background-bg-primary, #fff);
+
+    /* Shadows/shadow-xs */
+    box-shadow: 0 1px 2px 0
+      var(--colors-effects-shadows-shadow-xs, rgba(10, 13, 18, 0.05));
+
+    .text-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--spacing-md, 8px);
+      flex: 1 0 0;
+
+      .title {
+        color: var(--colors-text-text-primary-900, #000);
+        /* Text md/Semibold */
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-md, 16px);
+        font-style: normal;
+        font-weight: 600;
+        line-height: var(--line-height-text-md, 24px); /* 150% */
+      }
+    }
+    .data-chart-wrapper {
+      display: flex;
+      align-items: flex-end;
+      gap: var(--spacing-xl, 16px);
+      align-self: stretch;
+
+      .data-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-lg, 12px);
+        flex: 1 0 0;
+
+        .number {
+          color: var(--colors-text-text-primary-900, #000);
+
+          /* Display sm/Semibold */
+          font-family: var(--font-family-font-family-display, Roboto);
+          font-size: var(--font-size-display-sm, 30px);
+          font-style: normal;
+          font-weight: 600;
+          line-height: var(--line-height-display-sm, 38px); /* 126.667% */
+        }
+
+        .change-wrapper {
+          display: flex;
+          align-items: center;
+          gap: var(--spacing-md, 8px);
+          align-self: stretch;
+
+          .support-text {
+            overflow: hidden;
+            color: var(--colors-text-text-tertiary-600, #6a6a6a);
+            text-overflow: ellipsis;
+
+            /* Text sm/Medium */
+            font-family: var(--font-family-font-family-body, Roboto);
+            font-size: var(--font-size-text-sm, 14px);
+            font-style: normal;
+            font-weight: 500;
+            line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+          }
+        }
+      }
+    }
   }
 </style>

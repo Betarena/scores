@@ -8,7 +8,6 @@
 -->
 
 <script lang="ts">
-
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -23,11 +22,8 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  import Save from "$lib/components/ui/assets/save.svelte";
-  import Button from "$lib/components/ui/Button.svelte";
-  import FeaturedIcon from "$lib/components/ui/FeaturedIcon.svelte";
-  import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
-  import ModalWrapper from "./ModalWrapper.svelte";
+
+  import Avatar from "$lib/components/ui/Avatar.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -45,13 +41,22 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let id = "";
-  export let cb;
-  export let translations:
-    | TranslationSportstacksSectionDataJSONSchema
-    | undefined;
+  export let avatar: string;
+  export let name = "";
+  export let text = "";
 
+  const dotHeight = 3;
+  const dotGap = 3;
+  let dotsCount = 0;
+  let connectorDiv: HTMLDivElement;
+  let contentDiv: HTMLDivElement;
   // #endregion ➤ 📌 VARIABLES
+
+  $: if (connectorDiv && contentDiv) {
+    const contentHeight = contentDiv.clientHeight;
+    const dotsHeight = contentHeight - connectorDiv.clientHeight;
+    dotsCount = Math.floor(dotsHeight / (dotHeight + dotGap));
+  }
 </script>
 
 <!--
@@ -64,21 +69,25 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
-
-<ModalWrapper
-  title={translations?.unbublish_confirmation || "Are you sure you want to unpublish?"}
-  actionButton={translations?.unpublish  || "Unpublish"}
-  cancel={translations?.cancel || "Cancel"}
->
-  <div slot="header-icon">
-    <FeaturedIcon size="lg" color="brand"><Save /></FeaturedIcon>
+<div class="activity-feed-item">
+  <div class="avatar-wrapper" bind:this={connectorDiv}>
+    <Avatar size="lg" src={null} />
+    <div class="timeline-connector-wrapper" >
+      {#each Array(dotsCount) as _item}
+        <div class="timeline-connector" />
+      {/each}
+    </div>
   </div>
-  <div slot="action-button" class=" action-button">
-    <Button full={true} on:click={cb}>{translations?.unpublish || "Unpublish"} </Button>
+  <div class="body-wrapper" bind:this={contentDiv}>
+    <div class="data-wrapper">
+      <div class="name">{name}</div>
+      <div class="text">
+        <slot name="text">{text}</slot>
+      </div>
+    </div>
+    <slot name="footer" />
   </div>
-</ModalWrapper>
-
+</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -91,7 +100,81 @@
 -->
 
 <style lang="scss">
-  .action-button {
+  .activity-feed-item {
+    display: flex;
     width: 100%;
+    max-width: 360px;
+    align-items: stretch;
+    gap: var(--spacing-lg, 12px);
+    min-height: fit-content;
+
+    .avatar-wrapper {
+      flex: 0 0 auto; 
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      height: 100%;
+      min-height: 100%;
+      gap: var(--spacing-sm, 6px);
+
+      .timeline-connector-wrapper {
+        flex-grow: 1;
+        flex-shrink: 0;
+        height: 100%;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        align-items: center;
+        gap: 3px;
+
+        .timeline-connector {
+          flex-shrink: 0;
+          width: 3px;
+          height: 3px;
+          border-radius: 999px;
+          background-color: var(--colors-border-border-primary, #d2d2d2);
+        }
+      }
+    }
+    .body-wrapper {
+      display: flex;
+      padding-bottom: var(--spacing-4xl, 32px);
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--spacing-lg, 12px);
+      flex: 1 0 0;
+
+      .data-wrapper {
+        display: flex;
+        flex-direction: column;
+
+        .name {
+          display: flex;
+          align-items: center;
+          gap: var(--spacing-md, 8px);
+          align-self: stretch;
+
+          color: var(--colors-text-text-secondary-700, #525252);
+
+          /* Text sm/Medium */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-sm, 14px);
+          font-style: normal;
+          font-weight: 500;
+          line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+        }
+        .text {
+          color: var(--colors-text-text-tertiary-600, #6a6a6a);
+
+          /* Text sm/Regular */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-sm, 14px);
+          font-style: normal;
+          font-weight: 400;
+          line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+        }
+      }
+    }
   }
 </style>

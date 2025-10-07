@@ -8,29 +8,6 @@
 -->
 
 <script lang="ts">
-
-  // #region ➤ 📦 Package Imports
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'imports' that are required        │
-  // │ by 'this' .svelte file is ran.                                         │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. svelte/sveltekit imports                                            │
-  // │ 2. project-internal files and logic                                    │
-  // │ 3. component import(s)                                                 │
-  // │ 4. assets import(s)                                                    │
-  // │ 5. type(s) imports(s)                                                  │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-  import Save from "$lib/components/ui/assets/save.svelte";
-  import Button from "$lib/components/ui/Button.svelte";
-  import FeaturedIcon from "$lib/components/ui/FeaturedIcon.svelte";
-  import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
-  import ModalWrapper from "./ModalWrapper.svelte";
-
-  // #endregion ➤ 📦 Package Imports
-
   // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -45,13 +22,27 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let id = "";
-  export let cb;
-  export let translations:
-    | TranslationSportstacksSectionDataJSONSchema
-    | undefined;
-
+  export let group: { id: string; label: string }[] = [];
+  export let selected;
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  function click(item) {
+    selected = item;
+  }
+
+  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--
@@ -65,20 +56,17 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-
-<ModalWrapper
-  title={translations?.unbublish_confirmation || "Are you sure you want to unpublish?"}
-  actionButton={translations?.unpublish  || "Unpublish"}
-  cancel={translations?.cancel || "Cancel"}
->
-  <div slot="header-icon">
-    <FeaturedIcon size="lg" color="brand"><Save /></FeaturedIcon>
-  </div>
-  <div slot="action-button" class=" action-button">
-    <Button full={true} on:click={cb}>{translations?.unpublish || "Unpublish"} </Button>
-  </div>
-</ModalWrapper>
-
+<div class="button-group">
+  {#each group as button}
+    <div
+      class="base-button"
+      class:current={selected?.id === button.id}
+      on:click={() => click(button)}
+    >
+      {button.label}
+    </div>
+  {/each}
+</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -91,7 +79,83 @@
 -->
 
 <style lang="scss">
-  .action-button {
-    width: 100%;
+  .button-group {
+    display: inline-flex;
+    align-items: flex-start;
+    border: 1px solid var(--colors-border-border-primary, #d2d2d2);
+    border-radius: var(--radius-md, 8px);
+    /* Shadows/shadow-xs-skeuomorphic */
+    box-shadow: 0 0 0 1px
+        var(
+          --colors-effects-shadows-shadow-skeumorphic-inner-border,
+          rgba(10, 13, 18, 0.18)
+        )
+        inset,
+      0 -2px 0 0 var(
+          --colors-effects-shadows-shadow-skeumorphic-inner,
+          rgba(10, 13, 18, 0.05)
+        ) inset,
+      0 1px 2px 0
+        var(--colors-effects-shadows-shadow-xs, rgba(10, 13, 18, 0.05));
+
+    .base-button {
+      display: inline-flex;
+      min-height: 40px;
+      padding: var(--spacing-md, 8px) var(--spacing-xl, 16px);
+      justify-content: center;
+      align-items: center;
+      gap: var(--spacing-sm, 6px);
+
+      border-right: 1px solid var(--colors-border-border-primary, #d2d2d2);
+      background: var(--colors-background-bg-primary, #fff);
+
+      color: var(--colors-text-text-secondary-700, #525252);
+
+      /* Text sm/Semibold */
+      font-family: var(--font-family-font-family-body, Roboto);
+      font-size: var(--font-size-text-sm, 14px);
+      font-style: normal;
+      font-weight: 600;
+      line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+
+      &:hover {
+        background: var(--colors-background-bg-primary_hover, #fbfbfb);
+        color: var(--colors-text-text-secondary_hover, #3b3b3b);
+      }
+      &:focus,
+      &:focus-within {
+        box-shadow: 0 0 0 2px var(--colors-background-bg-primary, #fff),
+          0 0 0 4px var(--colors-effects-focus-rings-focus-ring, #f5620f);
+      }
+
+      &.disabled {
+        color: var(--colors-text-text-disabled, #727171);
+      }
+
+      &.current {
+        background: var(--colors-background-bg-active, #fbfbfb);
+        &:focus,
+        &:focus-within {
+          background: var(--colors-background-bg-active, #fbfbfb);
+          color: var(--colors-text-text-secondary_hover, #3b3b3b);
+          box-shadow: 0 0 0 2px var(--colors-background-bg-primary, #fff),
+            0 0 0 4px var(--colors-effects-focus-rings-focus-ring, #f5620f);
+        }
+
+        &.disabled {
+          background: var(--colors-background-bg-disabled_subtle, #fbfbfb);
+        }
+      }
+
+      &:last-child {
+        border-right: none;
+        border-top-right-radius: var(--radius-md, 8px);
+        border-bottom-right-radius: var(--radius-md, 8px);
+      }
+      &:first-child {
+        border-top-left-radius: var(--radius-md, 8px);
+        border-bottom-left-radius: var(--radius-md, 8px);
+      }
+    }
   }
 </style>
