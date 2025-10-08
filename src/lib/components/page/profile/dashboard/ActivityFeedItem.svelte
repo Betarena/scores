@@ -71,9 +71,9 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 <div class="activity-feed-item">
-  <div class="avatar-wrapper" bind:this={connectorDiv}>
+  <div class="activity-avatar-wrapper" bind:this={connectorDiv}>
     <Avatar size="lg" src={null} />
-    <div class="timeline-connector-wrapper" >
+    <div class="timeline-connector-wrapper">
       {#each Array(dotsCount) as _item}
         <div class="timeline-connector" />
       {/each}
@@ -109,15 +109,17 @@
     gap: var(--spacing-lg, 12px);
     min-height: fit-content;
 
-    .avatar-wrapper {
-      flex: 0 0 auto; 
+    .activity-avatar-wrapper {
+      flex: 0 0 auto;
       display: flex;
       flex-direction: column;
       align-items: stretch;
       height: 100%;
       min-height: 100%;
       gap: var(--spacing-sm, 6px);
-
+      :global(.avatar-wrapper) {
+        flex-shrink: 0;
+      }
       .timeline-connector-wrapper {
         flex-grow: 1;
         flex-shrink: 0;
