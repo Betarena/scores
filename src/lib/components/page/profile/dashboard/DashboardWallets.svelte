@@ -154,18 +154,16 @@
         </svg>
         <div class="balance" slot="number">
           <span class="amount"><TweenedNumber number={23} /> BTA</span>
-          {#if viewportType === "mobile"}
-            <div class="usd">$<TweenedNumber number={12} /></div>
-          {/if}
+          <div class="usd">$<TweenedNumber number={12} /></div>
         </div>
       </MetricItem4>
       <div class="progress-wrapper">
-        <div class="progress-text">
-          {#if viewportType === "mobile"}
+        {#if viewportType === "mobile"}
+          <div class="progress-text">
             <div class="text"><TweenedNumber number={23} /> BTA</div>
             <div class="supporting-text">$50/$500</div>
-          {/if}
-        </div>
+          </div>
+        {/if}
         <Progress value={45} />
         {#if viewportType !== "mobile"}
           <div class="supporting-text">$50/$500</div>
@@ -228,9 +226,9 @@
         box-shadow: 0 1px 2px 0
           var(--colors-effects-shadows-shadow-xs, rgba(255, 255, 255, 0));
 
-        &.selected {
-          border: 1px solid var(--colors-border-border-brand, #f7813f);
-        }
+        // &.selected {
+          // border: 1px solid var(--colors-border-border-brand, #f7813f);
+        // }
 
         :global(.metric-4) {
           border: none;
@@ -238,7 +236,6 @@
           box-shadow: none;
         }
       }
-
 
       :global(.metric-4 .text-wrapper) {
         gap: 0;
@@ -360,6 +357,14 @@
           position: relative;
           gap: 12px;
         }
+        .rewards {
+          gap: 12px;
+
+          .progress-wrapper {
+            align-items: end;
+            gap: 12px;
+          }
+        }
         .amount {
           font-size: var(--font-size-display-xs, 24px);
           font-style: normal;
@@ -375,12 +380,6 @@
           line-height: var(--line-height-text-sm, 20px);
         }
         :global(.metric-4 .change-wrapper) {
-          position: absolute;
-          top: var(--spacing-2xl, 20px);
-          right: var(--spacing-2xl, 20px);
-          transform: translateY(5%);
-        }
-        :global(.rewards .metric-4 .change-wrapper) {
           position: absolute;
           top: 0;
           right: 0;

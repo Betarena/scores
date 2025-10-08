@@ -25,6 +25,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
   import MetricChart from "$lib/components/ui/metrics/MetricChart.svelte";
+  import session from "$lib/store/session";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -42,6 +43,7 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  $: ({viewportType}= $session)
   const options = [
     { id: 1, label: "All" },
     { id: 2, label: "Not All" },
@@ -67,7 +69,7 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<div id="dashboard-engagement">
+<div id="dashboard-engagement" class="{viewportType}">
   <div class="title-wrapper">
     <div class="title">Engagement</div>
     <div class="dropdown">
@@ -128,6 +130,18 @@
       align-items: flex-start;
       gap: 20px;
       align-self: stretch;
+    }
+    &:not(.mobile) {
+      .title-wrapper {
+        flex-direction: column;
+        gap: 12px;
+        align-items: start;
+        height: fit-content;
+
+        .dropdown {
+          width: 100%;
+        }
+      }
     }
   }
 </style>
