@@ -25,6 +25,7 @@
 
   import { page } from "$app/stores";
 
+  import session from "$lib/store/session";
   import type { IProfileTrs } from "@betarena/scores-lib/types/types.profile.js";
   import DashboardActivity from "./dashboard/DashboardActivity.svelte";
   import DashboardEarnings from "./dashboard/DashboardEarnings.svelte";
@@ -38,6 +39,7 @@
   // #region ➤ 📌 VARIABLES
 
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
+  $: ({ viewportType } = $session);
 
   // #endregion ➤ 📌 VARIABLES
 </script>
@@ -53,13 +55,30 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div id="dashboard-widget-container">
-  <DashboardWallets />
-  <DashboardEngagement />
-  <DashboardEarnings />
-  <DashboardTopArticles />
-  <DashboardActivity />
-  <DashboardQuickActions />
+<div id="dashboard-widget-container" class={viewportType}>
+  {#if viewportType !== "mobile"}
+    <div class="title">Dashboard</div>
+
+    <div class="sections-wrapper">
+      <div class="section-left">
+        <DashboardWallets />
+        <DashboardEarnings />
+        <DashboardTopArticles />
+      </div>
+      <div class="section-right">
+        <DashboardEngagement />
+        <DashboardActivity />
+        <DashboardQuickActions />
+      </div>
+    </div>
+  {:else}
+    <DashboardWallets />
+    <DashboardEngagement />
+    <DashboardEarnings />
+    <DashboardTopArticles />
+    <DashboardActivity />
+    <DashboardQuickActions />
+  {/if}
 </div>
 
 <!--
@@ -77,10 +96,45 @@
     height: 100%;
     min-height: 500px;
     width: 100%;
-    
 
     display: flex;
     flex-direction: column;
     gap: var(--spacing-3xl, 24px);
+
+    &:not(.mobile) {
+      border-radius: 12px;
+      background: var(--colors-background-bg-secondary, #232323);
+      background: #232323;
+      padding: var(--spacing-2xl, 20px);
+      gap: var(--spacing-2xl, 20px);
+      .title {
+        color: var(--colors-text-text-primary-900, #fff);
+
+        /* Text xl/Semibold */
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-xl, 20px);
+        font-style: normal;
+        font-weight: 600;
+        line-height: var(--line-height-text-xl, 30px); /* 150% */
+      }
+
+      .sections-wrapper {
+        display: flex;
+        gap: var(--spacing-2xl, 20px);
+        .section-left {
+          max-width: 637px;
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          gap: var(--spacing-2xl, 20px);
+        }
+        .section-right {
+          flex-grow: 1;
+          display: flex;
+          flex-direction: column;
+          gap: var(--spacing-2xl, 20px);
+        }
+      }
+    }
   }
 </style>

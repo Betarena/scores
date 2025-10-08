@@ -44,6 +44,7 @@
   export let avatar: string;
   export let name = "";
   export let text = "";
+  export let connector = true;
 
   const dotHeight = 3;
   const dotGap = 3;
@@ -52,7 +53,7 @@
   let contentDiv: HTMLDivElement;
   // #endregion ➤ 📌 VARIABLES
 
-  $: if (connectorDiv && contentDiv) {
+  $: if (connectorDiv && contentDiv && connector) {
     const contentHeight = contentDiv.clientHeight;
     const dotsHeight = contentHeight - connectorDiv.clientHeight;
     dotsCount = Math.floor(dotsHeight / (dotHeight + dotGap));
