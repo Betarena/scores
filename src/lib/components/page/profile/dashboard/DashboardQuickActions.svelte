@@ -40,7 +40,9 @@
       <Button type="secondary">
         <div class="action">
           <svelte:component this={action.icon} />
-          {action.label}
+          <span class="action-label">
+            {action.label}
+          </span>
         </div>
       </Button>
     {/each}
@@ -86,17 +88,19 @@
 
       :global(.button) {
         height: 101px;
+        min-width: 0;
       }
       .action {
         display: flex;
         justify-content: center;
         align-items: center;
         gap: var(--spacing-sm, 6px);
-        flex: 1 0 0;
+        flex: 1 1 0;
+        min-width: 0;
         align-self: stretch;
-        
       
         :global(svg) {
+          flex-shrink: 0;
           width: 20px;
           height: 20px;
         }
