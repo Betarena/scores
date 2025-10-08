@@ -14,8 +14,9 @@
   import ButtonGroup from "$lib/components/ui/ButtonGroup.svelte";
   import Change from "$lib/components/ui/metrics/Change.svelte";
   import TweenedNumber from "$lib/components/ui/metrics/TweenedNumber.svelte";
-  import Chart from 'chart.js/auto';
-  import { onDestroy, onMount } from 'svelte';
+  import session from "$lib/store/session";
+  import Chart from "chart.js/auto";
+  import { onDestroy, onMount } from "svelte";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -54,7 +55,7 @@
   ];
 
   $: selectedOption = options[0];
-  $: console.log("SELECTED: ", selectedOption);
+  $: ({ viewportType } = $session);
 
   let canvas: HTMLCanvasElement | null = null;
   let chart: Chart | null = null;
@@ -62,50 +63,52 @@
   // sample datasets for different ranges (mocked to match the attached image shape)
   const dataSets = {
     year: {
-      labels: ['Jan','Mar','May','Jul','Sep','Nov','Dec'],
-      data: [10, 12, 15, 13, 16, 17, 18]
+      labels: ["Jan", "Mar", "May", "Jul", "Sep", "Nov", "Dec"],
+      data: [10, 12, 15, 13, 16, 17, 18],
     },
     month: {
-      labels: ['1','6','12','18','24','30'],
-      data: [8,9,11,12,12.5,13.2]
+      labels: ["1", "6", "12", "18", "24", "30"],
+      data: [8, 9, 11, 12, 12.5, 13.2],
     },
     week: {
-      labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
-      data: [11,11.2,11.8,12.1,12.0,12.4,12.8]
+      labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+      data: [11, 11.2, 11.8, 12.1, 12.0, 12.4, 12.8],
     },
     day: {
-      labels: ['00','04','08','12','16','20','24'],
-      data: [12.0,11.8,11.6,12.2,12.4,12.6,13.0]
-    }
+      labels: ["00", "04", "08", "12", "16", "20", "24"],
+      data: [12.0, 11.8, 11.6, 12.2, 12.4, 12.6, 13.0],
+    },
   };
 
   function createChart(rangeId: string) {
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     // create gradient fill to mimic the dark area under the line
     const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height || 150);
-    gradient.addColorStop(0, 'rgba(255,122,45,0.18)');
-    gradient.addColorStop(1, 'rgba(0,0,0,0.05)');
+    gradient.addColorStop(0, "rgba(255,122,45,0.18)");
+    gradient.addColorStop(1, "rgba(0,0,0,0.05)");
 
     const chosen = dataSets[rangeId] ?? dataSets.year;
 
     const config = {
-      type: 'line' as const,
+      type: "line" as const,
       data: {
         labels: chosen.labels,
-        datasets: [{
-          label: 'Earnings',
-          data: chosen.data,
-          borderColor: '#F7813F',
-          backgroundColor: gradient,
-          fill: true,
-          tension: 0.3,
-          pointRadius: 0,
-          pointHoverRadius: 4
-        }]
+        datasets: [
+          {
+            label: "Earnings",
+            data: chosen.data,
+            borderColor: "#F7813F",
+            backgroundColor: gradient,
+            fill: true,
+            tension: 0.3,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+          },
+        ],
       },
       options: {
         responsive: true,
@@ -113,41 +116,45 @@
         // enable a smooth draw animation and gentle transitions on update
         animation: {
           duration: 900,
-          easing: 'easeOutQuart'
+          easing: "easeOutQuart",
         },
         transitions: {
           show: {
             animations: {
               x: { from: 0 },
-              y: { from: 0 }
-            }
+              y: { from: 0 },
+            },
           },
           active: {
             animations: {
-              x: { duration: 600, easing: 'easeOutCubic' },
-              y: { duration: 600, easing: 'easeOutCubic' }
-            }
-          }
+              x: { duration: 600, easing: "easeOutCubic" },
+              y: { duration: 600, easing: "easeOutCubic" },
+            },
+          },
         },
         plugins: {
           legend: { display: false },
-          tooltip: { enabled: false }
+          tooltip: { enabled: false },
         },
         scales: {
           x: {
             grid: { display: false },
-            ticks: { color: '#8C8C8C', maxRotation: 0 }
+            ticks: { color: "#8C8C8C", maxRotation: 0 },
           },
           y: {
-            grid: { color: '#3B3B3B' },
-            ticks: { display: false }
-          }
-        }
-      }
+            grid: { color: "#3B3B3B" },
+            ticks: { display: false },
+          },
+        },
+      },
     };
 
     if (chart) {
-      try { chart.destroy(); } catch (e) { /* ignore */ }
+      try {
+        chart.destroy();
+      } catch (e) {
+        /* ignore */
+      }
       chart = null;
     }
 
@@ -160,7 +167,11 @@
 
   onDestroy(() => {
     if (chart) {
-      try { chart.destroy(); } catch (e) { /* ignore */ }
+      try {
+        chart.destroy();
+      } catch (e) {
+        /* ignore */
+      }
       chart = null;
     }
   });
@@ -175,13 +186,11 @@
     if (chart.options) {
       // slightly shorten animation for updates
       // @ts-ignore
-      chart.options.animation = { duration: 650, easing: 'easeOutCubic' };
+      chart.options.animation = { duration: 650, easing: "easeOutCubic" };
     }
     chart.update();
   }
   // #endregion ➤ 📌 VARIABLES
-
-  
 </script>
 
 <!--
@@ -194,42 +203,44 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<div id="dashboard-earnings">
+<div id="dashboard-earnings" class={viewportType}>
   <div class="title">Earnings</div>
-  <div class="buttons-wrapper">
-    <ButtonGroup group={options} bind:selected={selectedOption} />
-    <Button size="md" type="secondary" icon_leading={true}>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="20"
-        height="20"
-        viewBox="0 0 20 20"
-        fill="none"
-      >
-        <path
-          d="M5 10H15M2.5 5H17.5M7.5 15H12.5"
-          stroke="#6A6A6A"
-          stroke-width="1.66667"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-      </svg>
-    </Button>
-  </div>
-  <div class="chart-section">
+  <div class="buttons-text-wrapper">
+    <div class="buttons-wrapper">
+      <ButtonGroup group={options} bind:selected={selectedOption} />
+      <Button size="md" type="secondary" icon_leading={true}>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 20 20"
+          fill="none"
+        >
+          <path
+            d="M5 10H15M2.5 5H17.5M7.5 15H12.5"
+            stroke="#6A6A6A"
+            stroke-width="1.66667"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </Button>
+    </div>
     <div class="chart-text">
       <div class="mrr">MRR</div>
       <div class="number-badge-wrapper">
         <div class="numbers-data">
           <span class="bta">BTA</span>
           <div class="numbers">
-            <div class="amount"><TweenedNumber number={1800}  /></div>
+            <div class="amount"><TweenedNumber number={1800} /></div>
             <div class="usd">$125</div>
           </div>
         </div>
         <Change type="second" change={7.2} />
       </div>
     </div>
+  </div>
+  <div class="chart-section">
     <div class="chart">
       <canvas bind:this={canvas} />
     </div>
@@ -265,30 +276,26 @@
       font-weight: 600;
       line-height: var(--line-height-text-lg, 28px); /* 155.556% */
     }
-    .buttons-wrapper {
+    .buttons-text-wrapper {
       display: flex;
-      align-items: center;
       gap: 12px;
-      align-self: stretch;
-    }
-    .chart-section {
-      display: flex;
-      padding: 0 var(--spacing-none, 0);
       flex-direction: column;
-      align-items: flex-start;
-      gap: 24px;
-      align-self: stretch;
-
-  .chart-text {
+      .buttons-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        align-self: stretch;
+      }
+      .chart-text {
         display: flex;
         flex-direction: column;
         align-items: flex-start;
         gap: 8px;
         align-self: stretch;
-
+  
         .mrr {
           color: var(--colors-text-text-tertiary-600, #8c8c8c);
-
+  
           /* Text sm/Medium */
           font-family: var(--font-family-font-family-body, Roboto);
           font-size: var(--font-size-text-sm, 14px);
@@ -301,16 +308,16 @@
           align-items: flex-start;
           gap: 8px;
           align-self: stretch;
-
+  
           .numbers-data {
             display: flex;
             align-items: flex-start;
             gap: 2px;
-
+  
             .bta {
               color: var(--colors-text-text-primary-900, #fff);
               padding-top: 2px;
-
+  
               /* Text xl/Medium */
               font-family: var(--font-family-font-family-body, Roboto);
               font-size: var(--font-size-text-xl, 20px);
@@ -324,7 +331,7 @@
               align-items: baseline;
               .amount {
                 color: var(--colors-text-text-primary-900, #fff);
-
+  
                 /* Display md/Semibold */
                 font-family: var(--font-family-font-family-display, Roboto);
                 font-size: var(--font-size-display-md, 36px);
@@ -333,10 +340,10 @@
                 line-height: var(--line-height-display-md, 44px); /* 122.222% */
                 letter-spacing: -0.72px;
               }
-
+  
               .usd {
                 color: var(--colors-text-text-tertiary-600, #8c8c8c);
-
+  
                 /* Display xs/Bold */
                 font-family: var(--font-family-font-family-display, Roboto);
                 font-size: var(--font-size-display-xs, 24px);
@@ -348,10 +355,36 @@
           }
         }
       }
+    }
+    .chart-section {
+      display: flex;
+      padding: 0 var(--spacing-none, 0);
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+      align-self: stretch;
+
       .chart {
+        margin-top: 12px;
         width: 100%;
         height: 110px; /* fixed height to match compact sparkline-like chart */
         position: relative;
+      }
+    }
+
+    &:not(.mobile) {
+      .title {
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-lg, 18px);
+        font-style: normal;
+        font-weight: 600;
+        line-height: var(--line-height-text-lg, 28px); /* 155.556% */
+      }
+      .buttons-text-wrapper {
+        width: 100%;
+        flex-direction: row-reverse;
+        justify-content: space-between;
+        gap: 32px;
       }
     }
   }

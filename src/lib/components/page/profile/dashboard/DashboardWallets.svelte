@@ -29,6 +29,7 @@
   import MetricItem4 from "$lib/components/ui/metrics/MetricItem4.svelte";
   import TweenedNumber from "$lib/components/ui/metrics/TweenedNumber.svelte";
   import Progress from "$lib/components/ui/Progress.svelte";
+  import session from "$lib/store/session";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -47,6 +48,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   let selectedWallet = "spending";
+  $: ({ viewportType } = $session);
   // #endregion ➤ 📌 VARIABLES
 </script>
 
@@ -61,7 +63,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div id="dashboard-wallets">
+<div id="dashboard-wallets" class={viewportType}>
   <div class="title">
     <TranslationText fallback="Wallets" text="Wallets" />
   </div>
@@ -151,20 +153,32 @@
           />
         </svg>
         <div class="balance" slot="number">
-          <span class="amount"><TweenedNumber number={23}/> BTA</span>
-          <div class="usd">$<TweenedNumber number={12}/></div>
+          <span class="amount"><TweenedNumber number={23} /> BTA</span>
+          {#if viewportType === "mobile"}
+            <div class="usd">$<TweenedNumber number={12} /></div>
+          {/if}
         </div>
       </MetricItem4>
       <div class="progress-wrapper">
-        <div class="progress-text"> 
-          <div class="text"><TweenedNumber number={23}/> BTA</div>
-          <div class="supporting-text">$50/$500</div>
+        <div class="progress-text">
+          {#if viewportType === "mobile"}
+            <div class="text"><TweenedNumber number={23} /> BTA</div>
+            <div class="supporting-text">$50/$500</div>
+          {/if}
         </div>
         <Progress value={45} />
+        {#if viewportType !== "mobile"}
+          <div class="supporting-text">$50/$500</div>
+        {/if}
       </div>
-      <Button full={true} type="primary" disabled={true}>Withdraw</Button>
+      {#if viewportType === "mobile"}
+        <Button full={true} type="primary" disabled={true}>Withdraw</Button>
+      {/if}
     </div>
   </div>
+  {#if viewportType !== "mobile"}
+    <Button full={true} type="primary" disabled={true}>Withdraw</Button>
+  {/if}
 </div>
 
 <!--
@@ -204,14 +218,27 @@
       gap: 12px;
       align-self: stretch;
       .wallet {
+        background: var(--colors-background-bg-primary, #fff);
         width: 100%;
-      }
+        box-sizing: border-box;
+        padding: var(--spacing-2xl, 20px) var(--spacing-xl, 16px);
+        border: 1px solid var(--colors-border-border-secondary, #3b3b3b);
 
-      .selected {
-        :global(.metric-4) {
+        border-radius: var(--radius-xl, 12px);
+        box-shadow: 0 1px 2px 0
+          var(--colors-effects-shadows-shadow-xs, rgba(255, 255, 255, 0));
+
+        &.selected {
           border: 1px solid var(--colors-border-border-brand, #f7813f);
         }
+
+        :global(.metric-4) {
+          border: none;
+          padding: 0;
+          box-shadow: none;
+        }
       }
+
 
       :global(.metric-4 .text-wrapper) {
         gap: 0;
@@ -247,7 +274,7 @@
       }
       .rewards {
         border: 1px solid var(--colors-border-border-secondary, #3b3b3b);
-        padding: var(--spacing-2xl, 20px) var(--spacing-xl, 16px);
+
         border-radius: var(--radius-xl, 12px);
         box-shadow: 0 1px 2px 0
           var(--colors-effects-shadows-shadow-xs, rgba(255, 255, 255, 0));
@@ -291,17 +318,73 @@
               font-weight: 500;
               line-height: var(--line-height-text-sm, 20px); /* 142.857% */
             }
-            .supporting-text {
-              color: var(--colors-text-text-tertiary-600, #8c8c8c);
-
-              /* Text sm/Regular */
-              font-family: var(--font-family-font-family-body, Roboto);
-              font-size: var(--font-size-text-sm, 14px);
-              font-style: normal;
-              font-weight: 400;
-              line-height: var(--line-height-text-sm, 20px); /* 142.857% */
-            }
           }
+          .supporting-text {
+            color: var(--colors-text-text-tertiary-600, #8c8c8c);
+
+            /* Text sm/Regular */
+            font-family: var(--font-family-font-family-body, Roboto);
+            font-size: var(--font-size-text-sm, 14px);
+            font-style: normal;
+            font-weight: 400;
+            line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+          }
+        }
+      }
+    }
+
+    &:not(.mobile) {
+      .title {
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-lg, 18px);
+        font-style: normal;
+        font-weight: 600;
+        line-height: var(--line-height-text-lg, 28px); /* 155.556% */
+      }
+      .wallets {
+        flex-direction: row;
+        align-items: stretch;
+        gap: 12px;
+        max-width: 100%;
+
+        .wallet {
+          height: 100%;
+          width: auto;
+          flex: 1 1 0;
+          min-width: 0;
+        }
+        :global(.metric-4) {
+          flex-direction: column;
+          height: 100%;
+          max-width: 100%;
+          position: relative;
+          gap: 12px;
+        }
+        .amount {
+          font-size: var(--font-size-display-xs, 24px);
+          font-style: normal;
+          font-weight: 600;
+          line-height: var(--line-height-display-xs, 32px); /* 133.333% */
+        }
+        .usd {
+          /* Text sm/Bold */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-sm, 14px);
+          font-style: normal;
+          font-weight: 700;
+          line-height: var(--line-height-text-sm, 20px);
+        }
+        :global(.metric-4 .change-wrapper) {
+          position: absolute;
+          top: var(--spacing-2xl, 20px);
+          right: var(--spacing-2xl, 20px);
+          transform: translateY(5%);
+        }
+        :global(.rewards .metric-4 .change-wrapper) {
+          position: absolute;
+          top: 0;
+          right: 0;
+          transform: translateY(5%);
         }
       }
     }

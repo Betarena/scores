@@ -17,7 +17,6 @@
     { avatar: null, name: "User Name", amount: 10 },
     { avatar: null, name: "User Name", amount: 10 },
     { avatar: null, name: "User Name", amount: 10 },
-    { avatar: null, name: "User Name", amount: 10 },
   ];
 </script>
 
@@ -34,8 +33,8 @@
 <div id="dashboard-activity">
   <div class="title">Activity</div>
   <div class="activity-list">
-    {#each users as user}
-      <ActivityFeedItem avatar={user.avatar} name={user.name}>
+    {#each users as user, index}
+      <ActivityFeedItem avatar={user.avatar} name={user.name} connector={index !== users.length - 1}>
         <div class="shared" slot="text">
           Shared
           <span class="amount">
@@ -104,6 +103,10 @@
           font-weight: 500;
           line-height: var(--line-height-text-sm, 20px);
         }
+      }
+
+      :global(.activity-feed-item:last-child .body-wrapper) {
+        padding-bottom: 0;
       }
     }
   }
