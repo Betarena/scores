@@ -367,7 +367,7 @@
       .chart {
         margin-top: 12px;
         width: 100%;
-        height: 110px; /* fixed height to match compact sparkline-like chart */
+        height: 200px; /* fixed height to match compact sparkline-like chart */
         position: relative;
       }
     }
@@ -385,6 +385,9 @@
         flex-direction: row-reverse;
         justify-content: space-between;
         gap: 32px;
+      }
+      .chart {
+        height: 240px;
       }
     }
   }

@@ -101,6 +101,7 @@
     .base-button {
       display: inline-flex;
       min-height: 40px;
+      cursor: pointer;
       padding: var(--spacing-md, 8px) var(--spacing-xl, 16px);
       justify-content: center;
       align-items: center;

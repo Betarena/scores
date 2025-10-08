@@ -71,8 +71,10 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 <div class="activity-feed-item">
-  <div class="activity-avatar-wrapper" bind:this={connectorDiv}>
-    <Avatar size="lg" src={null} />
+  <div class="activity-avatar-wrapper" >
+    <div bind:this={connectorDiv}>
+      <Avatar size="lg" src={null} />
+    </div>
     <div class="timeline-connector-wrapper">
       {#each Array(dotsCount) as _item}
         <div class="timeline-connector" />
@@ -116,13 +118,13 @@
       align-items: stretch;
       height: 100%;
       min-height: 100%;
-      gap: var(--spacing-sm, 6px);
+      gap: var(--spacing-xxs, 6px);
       :global(.avatar-wrapper) {
         flex-shrink: 0;
       }
       .timeline-connector-wrapper {
         flex-grow: 1;
-        flex-shrink: 0;
+        flex-shrink: 1;
         height: 100%;
         width: 100%;
         display: flex;
