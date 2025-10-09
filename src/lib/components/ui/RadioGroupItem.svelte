@@ -3,45 +3,29 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
-	
-	import { modalStore } from './../../../store/modal.ts';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <script lang="ts">
-  // #region ➤ 📦 Package Imports
+  // #region ➤ 📌 VARIABLES
+
+  import Checkbox from "./Checkbox.svelte";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'imports' that are required        │
-  // │ by 'this' .svelte file is ran.                                         │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
   // │ IMPORTANT                                                              │
   // │ Please, structure the imports as follows:                              │
-  // │ 1. svelte/sveltekit imports                                            │
-  // │ 2. project-internal files and logic                                    │
-  // │ 3. component import(s)                                                 │
-  // │ 4. assets import(s)                                                    │
-  // │ 5. type(s) imports(s)                                                  │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
-  import { page } from "$app/stores";
-
-  import session from "$lib/store/session";
-  import type { IProfileTrs } from "@betarena/scores-lib/types/types.profile.js";
-  import DashboardActivity from "./dashboard/DashboardActivity.svelte";
-  import DashboardEarnings from "./dashboard/DashboardEarnings.svelte";
-  import DashboardEngagement from "./dashboard/DashboardEngagement.svelte";
-  import DashboardQuickActions from "./dashboard/DashboardQuickActions.svelte";
-  import DashboardTopArticles from "./dashboard/DashboardTopArticles.svelte";
-  import DashboardWallets from "./dashboard/DashboardWallets.svelte";
-
-  // #endregion ➤ 📦 Package Imports
-
-  // #region ➤ 📌 VARIABLES
-
-  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
-  $: ({ viewportType } = $session);
+  export let selected = false;
+  export let disabled = false;
+  export let size: "sm" = "sm";
 
   // #endregion ➤ 📌 VARIABLES
 </script>
@@ -56,31 +40,14 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
-<div id="dashboard-widget-container" class={viewportType}>
-  {#if viewportType !== "mobile"}
-    <div class="title">Dashboard</div>
-
-    <div class="sections-wrapper">
-      <div class="section-left">
-        <DashboardWallets />
-        <DashboardEarnings />
-        <DashboardTopArticles />
-      </div>
-      <div class="section-right">
-        <DashboardEngagement />
-        <DashboardActivity />
-        <DashboardQuickActions />
-      </div>
-    </div>
-  {:else}
-    <DashboardWallets />
-    <DashboardEngagement />
-    <DashboardEarnings />
-    <DashboardTopArticles />
-    <DashboardActivity />
-    <DashboardQuickActions />
-  {/if}
+<div class="radio-group-item {size}" class:selected class:disabled on:click={() => (selected = !selected)} tabindex="0">
+  <div class="content">
+    <slot>
+        <slot name="icon"></slot>
+        <slot name="content"></slot>
+    </slot>
+  </div>
+  <Checkbox bind:checked={selected} />
 </div>
 
 <!--
@@ -94,49 +61,45 @@
 -->
 
 <style lang="scss">
-  #dashboard-widget-container {
-    height: 100%;
-    min-height: 500px;
-    width: 100%;
+  .radio-group-item {
+    border-radius: var(--radius-xl, 12px);
+    border: 1px solid var(--colors-border-border-secondary, #ededed);
+    background: var(--colors-background-bg-primary, #fff);
 
     display: flex;
-    flex-direction: column;
-    gap: var(--spacing-3xl, 24px);
-
-    &:not(.mobile) {
-      border-radius: 12px;
-      background: var(--colors-background-bg-secondary, #232323);
-      background: #232323;
-      padding: var(--spacing-2xl, 20px);
-      gap: var(--spacing-2xl, 20px);
-      .title {
-        color: var(--colors-text-text-primary-900, #fff);
-
-        /* Text xl/Semibold */
-        font-family: var(--font-family-font-family-body, Roboto);
-        font-size: var(--font-size-text-xl, 20px);
-        font-style: normal;
-        font-weight: 600;
-        line-height: var(--line-height-text-xl, 30px); /* 150% */
-      }
-
-      .sections-wrapper {
-        display: flex;
-        gap: var(--spacing-2xl, 20px);
-        .section-left {
-          max-width: 637px;
-          width: 100%;
-          display: flex;
-          flex-direction: column;
-          gap: var(--spacing-2xl, 20px);
-        }
-        .section-right {
-          flex-grow: 1;
-          display: flex;
-          flex-direction: column;
-          gap: var(--spacing-2xl, 20px);
-        }
-      }
+    align-items: flex-start;
+    &.selected {
+      border: 2px solid var(--colors-border-border-brand, #f5620f);
     }
+    &.disabled {
+      border: 1px solid var(--colors-border-border-disabled_subtle, #ededed);
+      background: var(--colors-background-bg-disabled_subtle, #fbfbfb);
+      pointer-events: none;
+    }
+
+    &:hover {
+      background: var(--colors-background-bg-primary, #fff);
+    }
+    &:focus,
+    &:focus-within {
+      box-shadow: 0 0 0 2px var(--colors-background-bg-primary, #fff),
+        0 0 0 4px var(--colors-effects-focus-rings-focus-ring, #f5620f);
+    }
+
+    .content {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--spacing-lg, 12px);
+      flex: 1 0 0;
+    }
+
+    &.sm {
+      gap: var(--spacing-xs, 4px);
+      max-width: 343px;
+      width: 100%;
+      padding: var(--spacing-xl, 16px);
+    }
+
+    
   }
 </style>

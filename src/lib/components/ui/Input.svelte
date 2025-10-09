@@ -30,7 +30,7 @@
   export let error = false;
   export let placeholder = "";
   export let type: "input" | "leading-text" = "input";
-  export let value = "";
+  export let value: string | number = "";
   export let name = "";
   export let label = "";
   export let height = inputType === "textarea" ? "100px" : "44px";
@@ -83,7 +83,6 @@
   }
 
   // #endregion ➤ 🛠️ METHODS
-
 </script>
 
 <!--
@@ -146,6 +145,11 @@
         />
       {/if}
     </div>
+    {#if $$slots["extra"]}
+      <div class="extra">
+        <slot  name="extra"><!-- optional fallback --></slot>
+      </div>
+    {/if}
   </div>
   {#if $$slots.error || $$slots.info}
     <div class="field-info">
@@ -280,6 +284,21 @@
         font-style: normal;
         font-weight: 400;
         line-height: var(--Line-height-text-md, 24px); /* 150% */
+      }
+
+      .extra {
+        display: flex;
+        padding: var(--spacing-md, 8px) var(--spacing-lg, 12px);
+        align-items: center;
+        gap: var(--spacing-xxs, 2px);
+        color: var(--colors-text-text-tertiary-600, #6A6A6A);
+
+        /* Text md/Regular */
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-md, 16px);
+        font-style: normal;
+        font-weight: 400;
+        line-height: var(--line-height-text-md, 24px); /* 150% */
       }
       &.focus {
         border-color: var(--colors-border-border-brand);
