@@ -3,6 +3,7 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+	import VisaIcon from './../../../ui/assets/VisaIcon.svelte';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
@@ -24,12 +25,8 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import Button from "$lib/components/ui/Button.svelte";
-  import { modalStore } from "$lib/store/modal";
-  import CreditCardUpload from "../../../ui/assets/CreditCardUpload.svelte";
-  import DepositIcon from "../../../ui/assets/DepositIcon.svelte";
-  import InviteFriends from "../../../ui/assets/Friends.svelte";
-  import PencilLineIcon from "../../../ui/assets/PencilLineIcon.svelte";
-  import DepositModal from './../deposit/DepositModal.svelte';
+  import Input from "$lib/components/ui/Input.svelte";
+  import { depositStore } from "./deposit-store";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -46,15 +43,33 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
-  const actions = [
-    { icon: DepositIcon, id: "deposit", label: "Add Funds" },
-    { icon: PencilLineIcon, id: "publish", label: "Publish Article" },
-    { icon: CreditCardUpload, id: "withdraw", label: "Withdraw" },
-    { icon: InviteFriends, id: "friends", label: "Invite Friends" },
+  export let buttonDisabled;
+  const buttons = [
+    { label: "$9.99", value: 9.99 },
+    { label: "$19.99", value: 19.99 },
+    { label: "$49.99", value: 49.99 },
+    { label: "Custom", value: "" },
   ];
 
+  let inputNode: HTMLInputElement;
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  $: buttonDisabled = !$depositStore.amount;
+
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🛠️ METHODS
 
@@ -68,15 +83,10 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function click(id: string) {
-    switch (id) {
-      case "deposit":
-        modalStore.set({
-          component: DepositModal,
-          show: true,
-          modal: true,
-        });
-        break;
+  function click(button: { label: string; value: string | number }) {
+    $depositStore.amount = button.value;
+    if (button.label === "Custom") {
+      inputNode.focus();
     }
   }
 
@@ -94,20 +104,32 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div id="dashboard-quick-actions">
-  <div class="title">Actions</div>
-  <div class="actions">
-    {#each actions as action}
-      <Button type="secondary" on:click={() => click(action.id)}>
-        <div class="action">
-          <svelte:component this={action.icon} />
-          <span class="action-label">
-            {action.label}
-          </span>
-        </div>
+<div class="deposit-amount-wrapper">
+  <div class="header">
+    <div class="title">Add Funds</div>
+  </div>
+  <Input
+    label="Choose the amount to add"
+    bind:node={inputNode}
+    bind:value={$depositStore.amount}
+    required={true}
+  >
+    <span slot="leading-text">$</span>
+    <span slot="extra">USD</span>
+  </Input>
+  <div class="buttons-grid">
+    {#each buttons as button}
+      <Button
+        type="secondary"
+        on:click={() => click(button)}
+        full={true}
+        size="md"
+      >
+        {button.label}
       </Button>
     {/each}
   </div>
+  <div class="rate">≈ 112.3 BTA @ $0.089/BTA : Live rate from Uniswap</div>
 </div>
 
 <!--
@@ -121,51 +143,50 @@
 -->
 
 <style lang="scss">
-  #dashboard-quick-actions {
+  .deposit-amount-wrapper {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 12px;
-    flex-shrink: 0;
-    width: 100%;
+    gap: var(--spacing-lg, 12px);
     align-self: stretch;
+    width: 100%;
 
-    .title {
-      color: var(--colors-text-text-secondary-700, #fbfbfb);
+    .header {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      align-self: stretch;
 
-      /* Text lg/Semibold */
-      font-family: var(--font-family-font-family-body, Roboto);
-      font-size: var(--font-size-text-lg, 18px);
-      font-style: normal;
-      font-weight: 600;
-      line-height: var(--line-height-text-lg, 28px); /* 155.556% */
+      .title {
+        color: var(--colors-text-text-primary-900, #fff);
+
+        /* Text xl/Semibold */
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-xl, 20px);
+        font-style: normal;
+        font-weight: 600;
+        line-height: var(--line-height-text-xl, 30px); /* 150% */
+      }
     }
-    .actions {
+    .buttons-grid {
       display: grid;
+      width: 100%;
+      gap: var(--spacing-lg, 12px);
       grid-template-columns: 1fr 1fr;
       grid-template-rows: 1fr 1fr;
-      gap: var(--spacing-lg, 12px);
+    }
+    .rate {
       width: 100%;
+      text-align: center;
+      color: var(--colors-text-text-tertiary-600, #8c8c8c);
+      text-align: center;
 
-      :global(.button) {
-        height: 101px;
-        min-width: 0;
-      }
-      .action {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: var(--spacing-sm, 6px);
-        flex: 1 1 0;
-        min-width: 0;
-        align-self: stretch;
-
-        :global(svg) {
-          flex-shrink: 0;
-          width: 20px;
-          height: 20px;
-        }
-      }
+      /* Text xs/Regular */
+      font-family: var(--font-family-font-family-body, Roboto);
+      font-size: var(--font-size-text-xs, 12px);
+      font-style: normal;
+      font-weight: 400;
+      line-height: var(--line-height-text-xs, 18px); /* 150% */
     }
   }
 </style>

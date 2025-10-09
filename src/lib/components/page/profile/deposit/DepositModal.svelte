@@ -3,6 +3,7 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+	import Header from './../../../_main_/header/Header.svelte';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
@@ -23,13 +24,16 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  import ArrowLeftIcon from "$lib/components/ui/assets/ArrowLeftIcon.svelte";
   import Button from "$lib/components/ui/Button.svelte";
+  import Progress from "$lib/components/ui/Progress.svelte";
   import { modalStore } from "$lib/store/modal";
-  import CreditCardUpload from "../../../ui/assets/CreditCardUpload.svelte";
-  import DepositIcon from "../../../ui/assets/DepositIcon.svelte";
-  import InviteFriends from "../../../ui/assets/Friends.svelte";
-  import PencilLineIcon from "../../../ui/assets/PencilLineIcon.svelte";
-  import DepositModal from './../deposit/DepositModal.svelte';
+  import { onMount } from "svelte";
+  import DepositAmount from "./DepositAmount.svelte";
+  import DepositConfirmation from "./DepositConfirmation.svelte";
+  import DepositOptions from "./DepositOptions.svelte";
+  import DepositRevolut from "./DepositRevolut.svelte";
+  import DepositSuccess from "./DepositSuccess.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -47,12 +51,38 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  const actions = [
-    { icon: DepositIcon, id: "deposit", label: "Add Funds" },
-    { icon: PencilLineIcon, id: "publish", label: "Publish Article" },
-    { icon: CreditCardUpload, id: "withdraw", label: "Withdraw" },
-    { icon: InviteFriends, id: "friends", label: "Invite Friends" },
+  const steps = [
+    {
+      component: DepositOptions,
+      buttonText: "Continue",
+      buttonSupportText: "Funds will be added after confirmation.",
+    },
+    {
+      component: DepositAmount,
+      buttonText: "Continue",
+      buttonSupportText: "Funds appear after confirmation",
+    },
+    {
+      component: DepositRevolut,
+      buttonText: "Proceed to Payment",
+      buttonSupportText: "Redirecting to Revolut secure checkout",
+    },
+    {
+      component: DepositConfirmation,
+      buttonText: "Go to Dashboard",
+      buttonSupportText: "",
+    },
+    {
+      component: DepositSuccess,
+      buttonText: "Go to Dashboard",
+      buttonSupportText: "",
+    },
   ];
+  let currentStep = 0;
+  let buttonDisabled = false;
+
+  $: lastStep = currentStep === steps.length - 1;
+  $: progress = ((currentStep + 1) / steps.length) * 100;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -68,19 +98,41 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function click(id: string) {
-    switch (id) {
-      case "deposit":
-        modalStore.set({
-          component: DepositModal,
-          show: true,
-          modal: true,
-        });
-        break;
+  function handleContinueClick() {
+    if (lastStep) {
+      $modalStore.show = false;
+      return
     }
+    currentStep = currentStep + 1;
   }
 
+  function back() {
+    if (!currentStep) {
+      $modalStore.show = false;
+      return;
+    }
+    currentStep = currentStep - 1;
+  }
   // #endregion ➤ 🛠️ METHODS
+
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  onMount(() => {
+    document.body.classList.add("disable-scroll");
+
+    return () => {
+      document.body.classList.remove("disable-scroll");
+    };
+  });
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 
 <!--
@@ -93,20 +145,50 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
-<div id="dashboard-quick-actions">
-  <div class="title">Actions</div>
-  <div class="actions">
-    {#each actions as action}
-      <Button type="secondary" on:click={() => click(action.id)}>
-        <div class="action">
-          <svelte:component this={action.icon} />
-          <span class="action-label">
-            {action.label}
-          </span>
-        </div>
-      </Button>
-    {/each}
+<svelte:body class="disable-scroll" />
+<div id="deposit-modal">
+  <div class="header">
+    {#if !lastStep}
+      <div class="icon" on:click={back}>
+        <ArrowLeftIcon />
+      </div>
+    {/if}
+    {#if !lastStep}
+      <div class="steps">
+        Step {currentStep + 1} of {steps.length}
+      </div>
+    {:else}
+      <div class="add-funds">Add Funds</div>
+    {/if}
+  </div>
+  {#if !lastStep}
+    <Progress animation={true} value={progress} />
+  {/if}
+  <div class="section-wrapper">
+    {#if steps[currentStep]}
+      <svelte:component
+        this={steps[currentStep].component}
+        bind:buttonDisabled
+      />
+    {/if}
+  </div>
+  <div class="footer">
+    <Button full={true} on:click={handleContinueClick} disabled={buttonDisabled}
+      >{steps[currentStep].buttonText}</Button
+    >
+    {#if lastStep}
+      <Button
+        full={true}
+        type="secondary"
+        on:click={() => {
+          currentStep = 0;
+        }}
+        disabled={buttonDisabled}>Add More Funds</Button
+      >
+    {/if}
+    {#if steps[currentStep].buttonSupportText}
+      <span class="footer-text">{steps[currentStep].buttonSupportText}</span>
+    {/if}
   </div>
 </div>
 
@@ -121,50 +203,85 @@
 -->
 
 <style lang="scss">
-  #dashboard-quick-actions {
+  #deposit-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
     display: flex;
+    width: 100dvw;
+    height: 100dvh;
+    padding: 0 var(--spacing-xl, 16px) var(--spacing-xl, 16px)
+      var(--spacing-xl, 16px);
     flex-direction: column;
     align-items: flex-start;
-    gap: 12px;
+    gap: var(--spacing-3xl, 24px);
     flex-shrink: 0;
-    width: 100%;
-    align-self: stretch;
 
-    .title {
-      color: var(--colors-text-text-secondary-700, #fbfbfb);
+    background: var(--colors-background-bg-primary, #1f1f1f);
 
-      /* Text lg/Semibold */
-      font-family: var(--font-family-font-family-body, Roboto);
-      font-size: var(--font-size-text-lg, 18px);
-      font-style: normal;
-      font-weight: 600;
-      line-height: var(--line-height-text-lg, 28px); /* 155.556% */
-    }
-    .actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      grid-template-rows: 1fr 1fr;
-      gap: var(--spacing-lg, 12px);
+    .header {
+      display: flex;
+      padding: 18px 4px;
       width: 100%;
+      justify-content: space-between;
+      align-items: center;
+      align-self: stretch;
 
-      :global(.button) {
-        height: 101px;
-        min-width: 0;
+      .icon {
+        color: var(--colors-foreground-fg-primary-900);
+        cursor: pointer;
       }
-      .action {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: var(--spacing-sm, 6px);
-        flex: 1 1 0;
-        min-width: 0;
-        align-self: stretch;
+      .steps {
+        flex-grow: 1;
+        color: var(--colors-text-text-tertiary-600, #8c8c8c);
+        text-align: center;
 
-        :global(svg) {
-          flex-shrink: 0;
-          width: 20px;
-          height: 20px;
-        }
+        /* Text md/Medium */
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-md, 16px);
+        font-style: normal;
+        font-weight: 500;
+        line-height: var(--line-height-text-md, 24px); /* 150% */
+      }
+      .add-funds {
+        color: var(--colors-text-text-primary-900, #fff);
+        text-align: center;
+        flex-grow: 1;
+
+        /* Text md/Medium */
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-md, 16px);
+        font-style: normal;
+        font-weight: 500;
+        line-height: var(--line-height-text-md, 24px); /* 150% */
+      }
+    }
+    .section-wrapper {
+      width: 100%;
+    }
+
+    .footer {
+      width: 100%;
+      display: flex;
+      padding: 0 0 var(--spacing-none, 0) 0;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 16px;
+      flex: 1 0 0;
+      align-self: stretch;
+
+      .footer-text {
+        color: var(--colors-text-text-tertiary-600, #8c8c8c);
+        text-align: center;
+
+        /* Text sm/Medium */
+        font-family: var(--Font-family-font-family-body, Roboto);
+        font-size: var(--Font-size-text-sm, 14px);
+        font-style: normal;
+        font-weight: 500;
+        line-height: var(--Line-height-text-sm, 20px); /* 142.857% */
       }
     }
   }

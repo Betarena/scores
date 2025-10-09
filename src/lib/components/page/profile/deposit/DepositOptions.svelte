@@ -3,47 +3,20 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
-	
-	import { modalStore } from './../../../store/modal.ts';
+	import VisaIcon from './../../../ui/assets/VisaIcon.svelte';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <script lang="ts">
-  // #region ➤ 📦 Package Imports
+  import BitcoinCardIcon from "$lib/components/ui/assets/BitcoinCardIcon.svelte";
+  import VisaIcon from "$lib/components/ui/assets/VisaIcon.svelte";
+  import RadioGroupItem from "$lib/components/ui/RadioGroupItem.svelte";
 
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'imports' that are required        │
-  // │ by 'this' .svelte file is ran.                                         │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. svelte/sveltekit imports                                            │
-  // │ 2. project-internal files and logic                                    │
-  // │ 3. component import(s)                                                 │
-  // │ 4. assets import(s)                                                    │
-  // │ 5. type(s) imports(s)                                                  │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  import { page } from "$app/stores";
-
-  import session from "$lib/store/session";
-  import type { IProfileTrs } from "@betarena/scores-lib/types/types.profile.js";
-  import DashboardActivity from "./dashboard/DashboardActivity.svelte";
-  import DashboardEarnings from "./dashboard/DashboardEarnings.svelte";
-  import DashboardEngagement from "./dashboard/DashboardEngagement.svelte";
-  import DashboardQuickActions from "./dashboard/DashboardQuickActions.svelte";
-  import DashboardTopArticles from "./dashboard/DashboardTopArticles.svelte";
-  import DashboardWallets from "./dashboard/DashboardWallets.svelte";
-
-  // #endregion ➤ 📦 Package Imports
-
-  // #region ➤ 📌 VARIABLES
-
-  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
-  $: ({ viewportType } = $session);
-
-  // #endregion ➤ 📌 VARIABLES
+  export let buttonDisabled;
+  
+  let checked = true;
+  $: buttonDisabled = !checked;
 </script>
 
 <!--
@@ -57,30 +30,27 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div id="dashboard-widget-container" class={viewportType}>
-  {#if viewportType !== "mobile"}
-    <div class="title">Dashboard</div>
-
-    <div class="sections-wrapper">
-      <div class="section-left">
-        <DashboardWallets />
-        <DashboardEarnings />
-        <DashboardTopArticles />
+<div class="deposit-options-wrapper">
+  <div class="header">
+    <div class="title">Add Funds to Your Spending Wallet</div>
+    <div class="description">Choose how you want to buy BTA</div>
+  </div>
+  <div class="options">
+    <RadioGroupItem bind:selected={checked}>
+      <div slot="icon"><VisaIcon /></div>
+      <div slot="content" class="option-content">
+        <div class="option-title">Credit Card (Revolut)</div>
+        <div class="option-description">Instant purchase with Visa/Master</div>
       </div>
-      <div class="section-right">
-        <DashboardEngagement />
-        <DashboardActivity />
-        <DashboardQuickActions />
+    </RadioGroupItem>
+    <RadioGroupItem disabled={true}>
+      <div slot="icon"><BitcoinCardIcon /></div>
+      <div slot="content" class="option-content">
+        <div class="option-title">Crypto Transfer</div>
+        <div class="option-description">Send USDT, USDC, or POL</div>
       </div>
-    </div>
-  {:else}
-    <DashboardWallets />
-    <DashboardEngagement />
-    <DashboardEarnings />
-    <DashboardTopArticles />
-    <DashboardActivity />
-    <DashboardQuickActions />
-  {/if}
+    </RadioGroupItem>
+  </div>
 </div>
 
 <!--
@@ -94,21 +64,20 @@
 -->
 
 <style lang="scss">
-  #dashboard-widget-container {
-    height: 100%;
-    min-height: 500px;
-    width: 100%;
-
+  .deposit-options-wrapper {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-3xl, 24px);
+    align-items: flex-start;
+    gap: var(--spacing-lg, 12px);
+    align-self: stretch;
+    width: 100%;
 
-    &:not(.mobile) {
-      border-radius: 12px;
-      background: var(--colors-background-bg-secondary, #232323);
-      background: #232323;
-      padding: var(--spacing-2xl, 20px);
-      gap: var(--spacing-2xl, 20px);
+    .header {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      align-self: stretch;
+
       .title {
         color: var(--colors-text-text-primary-900, #fff);
 
@@ -120,21 +89,50 @@
         line-height: var(--line-height-text-xl, 30px); /* 150% */
       }
 
-      .sections-wrapper {
+      .description {
+        color: var(--colors-text-text-tertiary-600, #8c8c8c);
+
+        /* Text md/Regular */
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-md, 16px);
+        font-style: normal;
+        font-weight: 400;
+        line-height: var(--line-height-text-md, 24px); /* 150% */
+      }
+    }
+    .options {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--spacing-lg, 12px);
+      align-self: stretch;
+      width: 100%;
+      .option-content {
         display: flex;
-        gap: var(--spacing-2xl, 20px);
-        .section-left {
-          max-width: 637px;
-          width: 100%;
-          display: flex;
-          flex-direction: column;
-          gap: var(--spacing-2xl, 20px);
+        flex-direction: column;
+        align-items: flex-start;
+        align-self: stretch;
+
+        .option-title {
+          color: var(--colors-text-text-secondary-700, #fbfbfb);
+
+          /* Text sm/Medium */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-sm, 14px);
+          font-style: normal;
+          font-weight: 500;
+          line-height: var(--line-height-text-sm, 20px); /* 142.857% */
         }
-        .section-right {
-          flex-grow: 1;
-          display: flex;
-          flex-direction: column;
-          gap: var(--spacing-2xl, 20px);
+
+        .option-description {
+          color: var(--colors-text-text-tertiary-600, #8c8c8c);
+
+          /* Text sm/Regular */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-sm, 14px);
+          font-style: normal;
+          font-weight: 400;
+          line-height: var(--line-height-text-sm, 20px); /* 142.857% */
         }
       }
     }
