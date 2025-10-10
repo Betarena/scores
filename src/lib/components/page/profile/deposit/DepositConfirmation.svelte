@@ -97,9 +97,9 @@
     <div class="title">Transaction in Progress</div>
   </div>
   <div class="steps-wrapper"> 
-    <StepBase isLastStep={true} color="success" checked={true} title="Payment Received" available={true}/>
-    <StepBase isLastStep={true} color="success" checked={true} title="Awaiting Confirmation" available={true}/>
-    <StepBase isLastStep={true} step={3} color="success" checked={false} title="Funds will appear in your wallet soon" available={false}/>
+    <StepBase includeConnector={true} type="circle" color="success" checked={true} title="Payment Received" available={true}/>
+    <StepBase includeConnector={true} type="circle" color="success" checked={true} title="Awaiting Confirmation" available={true}/>
+    <StepBase includeConnector={true} type="circle" color="success" checked={false} title="Funds will appear in your wallet soon" available={false}/>
   </div>
 </div>
 
