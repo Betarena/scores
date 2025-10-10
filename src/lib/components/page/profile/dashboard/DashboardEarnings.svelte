@@ -56,6 +56,9 @@
 
   $: selectedOption = options[0];
   $: ({ viewportType } = $session);
+  $: if (viewportType) {
+    createChart(selectedOption.id)
+  }
 
   let canvas: HTMLCanvasElement | null = null;
   let chart: Chart | null = null;
@@ -63,8 +66,8 @@
   // sample datasets for different ranges (mocked to match the attached image shape)
   const dataSets = {
     year: {
-      labels: ["Jan", "Mar", "May", "Jul", "Sep", "Nov", "Dec"],
-      data: [10, 12, 15, 13, 16, 17, 18],
+      labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+      data: [10, 11, 12, 13, 15, 14, 13, 16, 17, 16.5, 17, 18],
     },
     month: {
       labels: ["1", "6", "12", "18", "24", "30"],
@@ -87,7 +90,8 @@
     if (!ctx) return;
 
     // create gradient fill to mimic the dark area under the line
-    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height || 150);
+    const height = canvas.clientHeight || 150;
+    const gradient = ctx.createLinearGradient(0, 0, 0, height);
     gradient.addColorStop(0, "rgba(255,122,45,0.18)");
     gradient.addColorStop(1, "rgba(0,0,0,0.05)");
 
@@ -113,6 +117,9 @@
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        layout: {
+          padding: 0
+        },
         // enable a smooth draw animation and gentle transitions on update
         animation: {
           duration: 900,
@@ -139,11 +146,12 @@
         scales: {
           x: {
             grid: { display: false },
-            ticks: { color: "#8C8C8C", maxRotation: 0 },
+            offset: false,
+            ticks: { color: "#8C8C8C", maxRotation: 0, padding: 0 },
           },
           y: {
             grid: { color: "#3B3B3B" },
-            ticks: { display: false },
+            ticks: { display: false, padding: 0 },
           },
         },
       },
@@ -383,8 +391,14 @@
       .buttons-text-wrapper {
         width: 100%;
         flex-direction: row-reverse;
+        flex-wrap: wrap-reverse;
         justify-content: space-between;
         gap: 32px;
+        .chart-text {
+          flex-shrink: 1;
+          flex-grow: 1;
+          max-width: 100%;
+        }
       }
       .chart {
         height: 240px;

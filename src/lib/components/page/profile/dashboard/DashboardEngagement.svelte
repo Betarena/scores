@@ -43,16 +43,15 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  $: ({viewportType}= $session)
+  $: ({ viewportType } = $session);
   const options = [
     { id: 1, label: "All" },
     { id: 2, label: "Not All" },
   ];
 
-
   const engagements = [
     { label: "Subscribers", count: 20.8, change: 12 },
-    { label: "Views",  count: 26.4, change: -2 },
+    { label: "Views", count: 26.4, change: -2 },
   ];
 
   let selectedOption = options[0];
@@ -69,7 +68,7 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<div id="dashboard-engagement" class="{viewportType}">
+<div id="dashboard-engagement" class={viewportType}>
   <div class="title-wrapper">
     <div class="title">Engagement</div>
     <div class="dropdown">
@@ -77,8 +76,8 @@
     </div>
   </div>
   <div class="metrics-wrappers">
-    {#each engagements as {label, count, change}}
-      <MetricChart text={label} number={count} animation = {true} change={change} />
+    {#each engagements as { label, count, change }}
+      <MetricChart text={label} number={count} animation={true} {change} />
     {/each}
   </div>
 </div>
@@ -103,11 +102,14 @@
     align-self: stretch;
     .title-wrapper {
       display: flex;
-      height: 40px;
       align-items: center;
       gap: var(--spacing-none, 0);
       flex-shrink: 0;
       align-self: stretch;
+      flex-direction: column;
+      gap: 12px;
+      align-items: start;
+      height: fit-content;
       .title {
         color: var(--colors-text-text-secondary-700, #fbfbfb);
         flex: 1 0 0;
@@ -121,6 +123,7 @@
 
       .dropdown {
         flex: 1 0 0;
+        width: 100%;
       }
     }
 
@@ -129,18 +132,14 @@
       justify-content: center;
       align-items: flex-start;
       gap: 20px;
+      min-width: 0;
       align-self: stretch;
     }
     &:not(.mobile) {
-      .title-wrapper {
-        flex-direction: column;
-        gap: 12px;
-        align-items: start;
-        height: fit-content;
-
-        .dropdown {
-          width: 100%;
-        }
+       min-width: 0;
+      :global(.metric-chart-1) {
+        flex: 1 1 0;
+        min-width: 0;
       }
     }
   }

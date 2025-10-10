@@ -125,13 +125,17 @@
         gap: var(--spacing-2xl, 20px);
         .section-left {
           max-width: 637px;
-          width: 100%;
+          min-width: 450px;
+          flex-shrink: 1;
+          flex-grow: 1;
           display: flex;
           flex-direction: column;
           gap: var(--spacing-2xl, 20px);
         }
         .section-right {
           flex-grow: 1;
+          flex-shrink: 1;
+          min-width: 265px;
           display: flex;
           flex-direction: column;
           gap: var(--spacing-2xl, 20px);

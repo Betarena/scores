@@ -3,6 +3,7 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+	
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
@@ -22,14 +23,13 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
+  import CreditCardUpload from '$lib/components/ui/assets/CreditCardUpload.svelte';
+  import DepositIcon from '$lib/components/ui/assets/DepositIcon.svelte';
+  import InviteFriends from '$lib/components/ui/assets/Friends.svelte';
+  import PencilLineIcon from '$lib/components/ui/assets/PencilLineIcon.svelte';
   import Button from "$lib/components/ui/Button.svelte";
   import { modalStore } from "$lib/store/modal";
-  import CreditCardUpload from "../../../ui/assets/CreditCardUpload.svelte";
-  import DepositIcon from "../../../ui/assets/DepositIcon.svelte";
-  import InviteFriends from "../../../ui/assets/Friends.svelte";
-  import PencilLineIcon from "../../../ui/assets/PencilLineIcon.svelte";
-  import DepositModal from './../deposit/DepositModal.svelte';
+  import DepositModal from "./../deposit/DepositModal.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -126,8 +126,9 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
-    flex-shrink: 0;
+    flex-shrink: 1;
     width: 100%;
+    min-width: 0;
     align-self: stretch;
 
     .title {
@@ -142,10 +143,10 @@
     }
     .actions {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      grid-template-rows: 1fr 1fr;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
       gap: var(--spacing-lg, 12px);
       width: 100%;
+      min-width: 0;
 
       :global(.button) {
         height: 101px;
@@ -159,6 +160,12 @@
         flex: 1 1 0;
         min-width: 0;
         align-self: stretch;
+
+        .label {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
 
         :global(svg) {
           flex-shrink: 0;

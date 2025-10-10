@@ -90,7 +90,7 @@
 <div class="deposit-confirmation-wrapper">
   <div class="header">
     <div class="animation">
-      <DotLottieSvelte src="/assets/lottie/Waiting.lottie" loop autoplay />
+      <DotLottieSvelte src="/assets/lottie/Success.lottie" loop autoplay />
     </div>
     <div class="title">Funds Added Successfully!</div>
   </div>
