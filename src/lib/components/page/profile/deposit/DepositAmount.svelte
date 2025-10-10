@@ -188,7 +188,7 @@
       width: 100%;
       gap: var(--spacing-lg, 12px);
       grid-template-columns: 1fr 1fr;
-      grid-template-rows: 1fr 1fr;
+      grid-template-rows: 1fr 46px;
     }
     .rate {
       width: 100%;

@@ -91,7 +91,7 @@
   let buttonDisabled = false;
 
   $: ({ user } = $userSettings);
-  $: ({viewportType} = $session)
+  $: ({ viewportType } = $session);
   $: lastStep = currentStep === steps.length - 1;
   $: progress = ((currentStep + 1) / steps.length) * 100;
   $: ({ failed, rate, amount, revolut } = $depositStore);
@@ -153,13 +153,14 @@
   }
 
   function retry(retryPayment = true) {
-    const proceedIndex = steps.findIndex(step => step.id ===  (retryPayment ? "proceed" : "options"));
+    const proceedIndex = steps.findIndex(
+      (step) => step.id === (retryPayment ? "proceed" : "options")
+    );
     currentStep = proceedIndex;
     $depositStore.failed = false;
     $depositStore.revolut = {};
     buttonDisabled = false;
   }
-
 
   async function getRates() {
     if (rate) return;
@@ -205,33 +206,36 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 <svelte:body class="disable-scroll" />
-<div id="deposit-modal" class="{viewportType}">
+<div id="deposit-modal" class={viewportType}>
   {#if !failed}
-    <div class="header">
+    <div class="header-wrapper">
+      <div class="header">
+        {#if !lastStep}
+          <div class="icon" on:click={back}>
+            <ArrowLeftIcon />
+          </div>
+        {/if}
+        {#if !lastStep}
+          <div class="steps">
+            Step {currentStep + 1} of {steps.length}
+          </div>
+        {:else}
+          <div class="add-funds">Add Funds</div>
+        {/if}
+      </div>
       {#if !lastStep}
-        <div class="icon" on:click={back}>
-          <ArrowLeftIcon />
-        </div>
-      {/if}
-      {#if !lastStep}
-        <div class="steps">
-          Step {currentStep + 1} of {steps.length}
-        </div>
-      {:else}
-        <div class="add-funds">Add Funds</div>
+        <Progress animation={true} value={progress} />
       {/if}
     </div>
-    {:else}
-    <div class="header-empty"></div>
+  {:else}
+    <div class="header-empty" />
   {/if}
-  {#if !lastStep && !failed}
-    <Progress animation={true} value={progress} />
-  {/if}
+
   <div class="section-wrapper">
     {#if failed}
-       <DepositFailed />
-    {:else if  steps[currentStep]}
-       <svelte:component
+      <DepositFailed />
+    {:else if steps[currentStep]}
+      <svelte:component
         this={steps[currentStep].component}
         bind:buttonDisabled
       />
@@ -239,25 +243,32 @@
   </div>
   <div class="footer">
     {#if failed}
-      <Button type="primary" on:click={() => retry(true)} destructive={true} full={true}>Retry Payment</Button>
+      <Button
+        type="primary"
+        on:click={() => retry(true)}
+        destructive={true}
+        full={true}>Retry Payment</Button
+      >
       <!-- <Button type="secondary" on:click={chooseAnotherMethod} destructive={true} full={true}>Choose Another Method</Button> -->
     {:else}
-       <Button full={true} on:click={handleContinueClick} disabled={buttonDisabled}
-         >{steps[currentStep].buttonText}</Button
-       >
-       {#if lastStep}
-         <Button
-           full={true}
-           type="secondary"
-           on:click={() => {
-             currentStep = 0;
-           }}
-           disabled={buttonDisabled}>Add More Funds</Button
-         >
-       {/if}
-       {#if steps[currentStep].buttonSupportText}
-         <span class="footer-text">{steps[currentStep].buttonSupportText}</span>
-       {/if}
+      <Button
+        full={true}
+        on:click={handleContinueClick}
+        disabled={buttonDisabled}>{steps[currentStep].buttonText}</Button
+      >
+      {#if lastStep}
+        <Button
+          full={true}
+          type="secondary"
+          on:click={() => {
+            currentStep = 0;
+          }}
+          disabled={buttonDisabled}>Add More Funds</Button
+        >
+      {/if}
+      {#if steps[currentStep].buttonSupportText}
+        <span class="footer-text">{steps[currentStep].buttonSupportText}</span>
+      {/if}
     {/if}
   </div>
 </div>
@@ -289,7 +300,11 @@
     flex-shrink: 0;
 
     background: var(--colors-background-bg-primary, #1f1f1f);
-
+    .header-wrapper {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
     .header {
       display: flex;
       padding: 18px 4px;
@@ -371,7 +386,8 @@
       background: var(--colors-background-bg-secondary, #232323);
 
       /* Shadows/shadow-xl */
-      box-shadow: 0 20px 24px -4px var(--colors-effects-shadows-shadow-xl_01, rgba(255, 255, 255, 0.00)), 0 8px 8px -4px var(--colors-effects-shadows-shadow-xl_02, rgba(255, 255, 255, 0.00));
+      box-shadow: 0 20px 24px -4px var(--colors-effects-shadows-shadow-xl_01, rgba(255, 255, 255, 0)),
+        0 8px 8px -4px var(--colors-effects-shadows-shadow-xl_02, rgba(255, 255, 255, 0));
     }
   }
 </style>
