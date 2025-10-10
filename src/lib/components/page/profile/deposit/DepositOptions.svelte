@@ -9,7 +9,6 @@
 -->
 
 <script lang="ts">
-  import BitcoinCardIcon from "$lib/components/ui/assets/BitcoinCardIcon.svelte";
   import VisaIcon from "$lib/components/ui/assets/VisaIcon.svelte";
   import RadioGroupItem from "$lib/components/ui/RadioGroupItem.svelte";
 
@@ -17,6 +16,9 @@
   
   let checked = true;
   $: buttonDisabled = !checked;
+  $: if (!checked) {
+    checked = true;
+  }
 </script>
 
 <!--
@@ -43,13 +45,13 @@
         <div class="option-description">Instant purchase with Visa/Master</div>
       </div>
     </RadioGroupItem>
-    <RadioGroupItem disabled={true}>
+    <!-- <RadioGroupItem disabled={true}>
       <div slot="icon"><BitcoinCardIcon /></div>
       <div slot="content" class="option-content">
         <div class="option-title">Crypto Transfer</div>
         <div class="option-description">Send USDT, USDC, or POL</div>
       </div>
-    </RadioGroupItem>
+    </RadioGroupItem> -->
   </div>
 </div>
 
@@ -107,6 +109,10 @@
       gap: var(--spacing-lg, 12px);
       align-self: stretch;
       width: 100%;
+
+      :global(.radio-group-item) {
+        max-width: 100%;
+      }
       .option-content {
         display: flex;
         flex-direction: column;

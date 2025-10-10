@@ -242,8 +242,8 @@
           height: 100%;
 
           /* Text md/Regular */
-          font-family: var(--Font-family-font-family-body, Roboto);
-          font-size: var(--Font-size-text-md, 16px);
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-md, 16px);
           font-style: normal;
           font-weight: 400;
           line-height: var(--line-height-text-md, 24px); /* 150% */
@@ -279,11 +279,11 @@
         color: var(--colors-foreground-fg-tertiary-600);
 
         /* Text md/Regular */
-        font-family: var(--Font-family-font-family-body, Roboto);
-        font-size: var(--Font-size-text-md, 16px);
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-md, 16px);
         font-style: normal;
         font-weight: 400;
-        line-height: var(--Line-height-text-md, 24px); /* 150% */
+        line-height: var(--line-height-text-md, 24px); /* 150% */
       }
 
       .extra {
@@ -313,22 +313,22 @@
         color: var(--colors-text-text-tertiary-600, #8c8c8c);
 
         /* Text sm/Regular */
-        font-family: var(--Font-family-font-family-body, Roboto);
-        font-size: var(--Font-size-text-sm, 14px);
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-sm, 14px);
         font-style: normal;
         font-weight: 400;
-        line-height: var(--Line-height-text-sm, 20px); /* 142.857% */
+        line-height: var(--line-height-text-sm, 20px); /* 142.857% */
       }
 
       .error {
         color: var(--colors-text-text-error-primary-600, #f97066);
 
         /* Text sm/Regular */
-        font-family: var(--Font-family-font-family-body, Roboto);
-        font-size: var(--Font-size-text-sm, 14px);
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-sm, 14px);
         font-style: normal;
         font-weight: 400;
-        line-height: var(--Line-height-text-sm, 20px); /* 142.857% */
+        line-height: var(--line-height-text-sm, 20px); /* 142.857% */
       }
     }
   }

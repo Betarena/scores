@@ -119,17 +119,25 @@
   </Input>
   <div class="buttons-grid">
     {#each buttons as button}
-      <Button
-        type="secondary"
-        on:click={() => click(button)}
-        full={true}
-        size="md"
-      >
-        {button.label}
-      </Button>
+      <div class="button-wrapper">
+        <Button
+          type="secondary"
+          on:click={() => click(button)}
+          full={true}
+          size="md"
+        >
+          {button.label}
+        </Button>
+      </div>
     {/each}
   </div>
-  <div class="rate">≈ 112.3 BTA @ $0.089/BTA : Live rate from Uniswap</div>
+  {#if $depositStore.rate}
+    <div class="rate">
+      ≈ {$depositStore.rate * (Number($depositStore.amount) || 0)} BTA @ ${(
+        1 / $depositStore.rate
+      ).toFixed(4)}/BTA : Live rate from Uniswap
+    </div>
+  {/if}
 </div>
 
 <!--
@@ -167,6 +175,13 @@
         font-weight: 600;
         line-height: var(--line-height-text-xl, 30px); /* 150% */
       }
+    }
+    :global(.leading-text) {
+      padding-right: 0 !important;
+      transform: translateY(1px);
+    }
+    :global(.input-input input) {
+      padding-left: var(--spacing-md, 8px) !important;
     }
     .buttons-grid {
       display: grid;

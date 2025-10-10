@@ -3,7 +3,6 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
-	import Header from './../../../_main_/header/Header.svelte';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
@@ -27,8 +26,11 @@
   import ArrowLeftIcon from "$lib/components/ui/assets/ArrowLeftIcon.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import Progress from "$lib/components/ui/Progress.svelte";
+  import { BetarenaUserHelper } from "$lib/firebase/common";
   import { modalStore } from "$lib/store/modal";
+  import userSettings from "$lib/store/user-settings";
   import { onMount } from "svelte";
+  import { depositStore } from "./deposit-store";
   import DepositAmount from "./DepositAmount.svelte";
   import DepositConfirmation from "./DepositConfirmation.svelte";
   import DepositOptions from "./DepositOptions.svelte";
@@ -53,26 +55,31 @@
 
   const steps = [
     {
+      id: "options",
       component: DepositOptions,
       buttonText: "Continue",
       buttonSupportText: "Funds will be added after confirmation.",
     },
     {
+      id: "amount",
       component: DepositAmount,
       buttonText: "Continue",
       buttonSupportText: "Funds appear after confirmation",
     },
     {
+      id: "proceed",
       component: DepositRevolut,
       buttonText: "Proceed to Payment",
       buttonSupportText: "Redirecting to Revolut secure checkout",
     },
     {
+      id: "confirmation",
       component: DepositConfirmation,
       buttonText: "Go to Dashboard",
       buttonSupportText: "",
     },
     {
+      id: "success",
       component: DepositSuccess,
       buttonText: "Go to Dashboard",
       buttonSupportText: "",
@@ -81,9 +88,9 @@
   let currentStep = 0;
   let buttonDisabled = false;
 
+  $: ({user} = $userSettings)
   $: lastStep = currentStep === steps.length - 1;
   $: progress = ((currentStep + 1) / steps.length) * 100;
-
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -98,10 +105,22 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function handleContinueClick() {
+  async function handleContinueClick() {
     if (lastStep) {
       $modalStore.show = false;
       return
+    }
+    if (steps[currentStep].id === "proceed") {
+      if (!$depositStore.amount || !user?.firebase_user_data)  {
+        currentStep -= 1;
+        return
+      };
+      const {uid, email} = user.firebase_user_data;
+      const res = await BetarenaUserHelper.getRevolutCheckoutUrl({query: {}, body: {intFiatAmount: Number($depositStore.amount), intFiatCurrency: "USD", strUid: uid, email: email || undefined}})
+      if(res?.success) {
+        $depositStore.orderId = res.success.data.orderId;
+        window.open(res.success.data.checkoutUrl, "_blank");
+      }
     }
     currentStep = currentStep + 1;
   }
@@ -112,6 +131,14 @@
       return;
     }
     currentStep = currentStep - 1;
+  }
+
+  async function getRates() {
+    if ($depositStore.rate) return;
+    const res = await BetarenaUserHelper.getBtaTokenPriceQuote({ query: {strAmount: '1', strCurrency: 'USD'}, body: {} });
+    if(res?.success) {
+      $depositStore.rate = res.success.data.intBtaEstimate
+    }
   }
   // #endregion ➤ 🛠️ METHODS
 
@@ -126,6 +153,7 @@
 
   onMount(() => {
     document.body.classList.add("disable-scroll");
+    getRates();
 
     return () => {
       document.body.classList.remove("disable-scroll");
