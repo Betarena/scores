@@ -63,6 +63,7 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
+    min-width: 0;
     flex-shrink: 0;
     align-self: stretch;
 
