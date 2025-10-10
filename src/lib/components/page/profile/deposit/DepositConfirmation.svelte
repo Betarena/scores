@@ -44,6 +44,8 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   export let buttonDisabled;
 
+  $: ({status} = $depositStore)
+
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -60,6 +62,11 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   $: buttonDisabled = !$depositStore.amount;
+
+  $: checkboxState = {
+    received: ["PAID_PENDING"].includes(status || ""),
+    confirmation: ["APPROVED"].includes(status || "")
+  }
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
@@ -97,8 +104,8 @@
     <div class="title">Transaction in Progress</div>
   </div>
   <div class="steps-wrapper"> 
-    <StepBase includeConnector={true} type="circle" color="success" checked={true} title="Payment Received" available={true}/>
-    <StepBase includeConnector={true} type="circle" color="success" checked={true} title="Awaiting Confirmation" available={true}/>
+    <StepBase includeConnector={true} type="circle" color="success" checked={checkboxState.received} title="Payment Received" available={checkboxState.received}/>
+    <StepBase includeConnector={true} type="circle" color="success" checked={checkboxState.confirmation} title="Awaiting Confirmation" available={checkboxState.confirmation}/>
     <StepBase includeConnector={true} type="circle" color="success" checked={false} title="Funds will appear in your wallet soon" available={false}/>
   </div>
 </div>

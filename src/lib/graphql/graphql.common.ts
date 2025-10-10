@@ -4,11 +4,12 @@ import sessionStore from '$lib/store/session.js';
 import { B_C_COMP_M_Q_D_S, B_C_COMP_M_Q_D_ST } from "@betarena/scores-lib/dist/graphql/query.competitions.js";
 import { SubscriptionClient } from "graphql-subscriptions-client";
 
+import { TableAuthorTagsSubscription0, type ITableAuthorTagsSubscription0Out } from '@betarena/scores-lib/dist/graphql/v8/table.authors.tags.js';
+import { ITablePublicTransactionHistorySubscription1Var, TablePublicTransactionHistorySubscription1, type ITablePublicTransactionHistorySubscription1Out } from '@betarena/scores-lib/dist/graphql/v8/table.public.transaction_history';
 import type { B_H_COMP_DATA } from "@betarena/scores-lib/types/_HASURA_.js";
 import type { B_H_COMP_HIGH_Q } from "@betarena/scores-lib/types/types.competition.highlights.js";
-import { TableAuthorTagsSubscription0, type ITableAuthorTagsSubscription0Out } from '@betarena/scores-lib/dist/graphql/v8/table.authors.tags.js';
-import type { Writable } from 'svelte/store';
 import type { IPageAuthorTagData } from '@betarena/scores-lib/types/v8/preload.authors.js';
+import type { Writable } from 'svelte/store';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -382,6 +383,131 @@ export  function subscribeTagFollowersListen
                 (tagStoreData) =>
                 {
                   return {...tagStoreData, followers: data.authors_tags_by_pk?.followers};
+                }
+              );
+          }
+        },
+      }
+    );
+
+
+  sessionStore?.updateData
+    (
+      [
+        ['graphqlListeners', subscription?.unsubscribe]
+      ]
+  );
+  return subscription;
+}
+
+/**
+ * @summary
+ * 🔹 HELPER | IMPORTANT
+ *
+ * @description
+ * 📌 Listens/Subsribes to changes in transaction history by revolut ID.
+ *
+ * @param revolutId: string
+ * 💠 **[required]** `revolut` ID to subscribe.
+ * @param depositStore: Writable<IPageTransactionData>
+ * 💠 **[required]** `depositStore` store to update.
+ * @returns
+ * `void`
+ */
+export  function subscribeRevolutTransactionListen
+  (
+    revolutId: string,
+    depositStore: Writable<{
+      amount: number | string,
+      rate: number | null,
+      failed?: boolean,
+      status?: string,
+    }>
+  ): {unsubscribe: () => void}
+{
+  // get ready
+  const GRAPHQL_ENDPOINT = import.meta.env?.VITE_HASURA_DB_WSS ?? '';
+
+  const query: string = TablePublicTransactionHistorySubscription1;
+  const variables: ITablePublicTransactionHistorySubscription1Var = {jsonFilter: {revolut: {id: revolutId}}};
+
+  // ### NOTE:
+  // ### set up the client, which can be reused
+  const client = new SubscriptionClient
+    (
+      GRAPHQL_ENDPOINT,
+      {
+        reconnect: true,
+        // ### NOTE:
+        // ### per-authors-documentation:
+        // ### only connect when there is a query
+        lazy: true,
+        connectionParams:
+        {
+          // ### IMPORTANT
+          headers:
+          {
+            'x-hasura-admin-secret': import.meta.env?.VITE_HASURA_DB_TOKEN ?? ''
+          },
+        },
+        connectionCallback:
+          (
+            error
+          ): void =>
+          {
+            error && console.error(error);
+          },
+      }
+    );
+
+  // ### NOTE:
+  // ### per-authors-documentation:
+  // ### make the actual request.
+  // client.request
+  // (
+  //   {
+  //     query
+  //   }
+  // );
+
+  // ### NOTE:
+  // ### per-authors-documentation:
+  // ### the above doesn't do much though.
+
+  // ### NOTE:
+  // ### per-authors-documentation:
+  // ### call subscription.unsubscribe() later to clean up
+  const subscription = client
+    .request
+    (
+      {
+        query,
+        variables
+      }
+    )
+    // ### NOTE:
+    // ### so lets actually do something with the response
+    .subscribe
+    (
+      {
+        next
+          (
+            {
+              data
+            }: { data: ITablePublicTransactionHistorySubscription1Out; }
+          ): void
+        {
+          if (data)
+          {
+            console.log("We got something!", data);
+
+            // ### NOTE:
+            // ### update tag store.
+            depositStore.update
+              (
+                (depositStoreData) =>
+                {
+                  return {...depositStoreData, status: data.transaction_history?.[0]?.status};
                 }
               );
           }

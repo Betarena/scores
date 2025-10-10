@@ -27,6 +27,7 @@
   import Button from "$lib/components/ui/Button.svelte";
   import Progress from "$lib/components/ui/Progress.svelte";
   import { BetarenaUserHelper } from "$lib/firebase/common";
+  import { subscribeRevolutTransactionListen } from "$lib/graphql/graphql.common";
   import { modalStore } from "$lib/store/modal";
   import session from "$lib/store/session";
   import userSettings from "$lib/store/user-settings";
@@ -87,6 +88,7 @@
       buttonSupportText: "",
     },
   ];
+  let unsubscribe: (() => void) | null = null;
   let currentStep = 0;
   let buttonDisabled = false;
 
@@ -94,8 +96,27 @@
   $: ({ viewportType } = $session);
   $: lastStep = currentStep === steps.length - 1;
   $: progress = ((currentStep + 1) / steps.length) * 100;
-  $: ({ failed, rate, amount, revolut } = $depositStore);
+  $: ({ failed, rate, amount, revolut, status } = $depositStore);
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+  
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+  
+  $: if (status === "failed" && !failed) {
+    $depositStore.failed = true;
+  }
+  
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🛠️ METHODS
 
@@ -134,11 +155,13 @@
         },
       });
       if (res?.success) {
+        const orderId = res.success.data.orderId;
         $depositStore.revolut = {
-          orderId: res.success.data.orderId,
+          orderId,
           checkoutUrl: res.success.data.checkoutUrl,
         };
         window.open(res.success.data.checkoutUrl, "_blank");
+        unsubscribe = subscribeRevolutTransactionListen(orderId, depositStore).unsubscribe;
       }
     }
     currentStep = currentStep + 1;
@@ -153,6 +176,10 @@
   }
 
   function retry(retryPayment = true) {
+    if(unsubscribe) {
+      unsubscribe();
+      unsubscribe = null;
+    }
     const proceedIndex = steps.findIndex(
       (step) => step.id === (retryPayment ? "proceed" : "options")
     );
@@ -189,6 +216,7 @@
 
     return () => {
       document.body.classList.remove("disable-scroll");
+      if (unsubscribe) unsubscribe()
     };
   });
 
