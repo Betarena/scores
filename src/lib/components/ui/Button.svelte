@@ -378,6 +378,10 @@
 
       color: var(--colors-foreground-fg-disabled, #8C8C8C);
     }
+
+    &:focus, &:focus-within {
+      box-shadow: 0 0 0 1px var(--colors-effects-shadows-shadow-skeumorphic-inner-border, rgba(12, 14, 18, 0.18)) inset, 0 -2px 0 0 var(--colors-effects-shadows-shadow-skeumorphic-inner, rgba(12, 14, 18, 0.05)) inset, 0 1px 2px 0 var(--colors-effects-shadows-shadow-xs, rgba(255, 255, 255, 0.00)), 0 0 0 2px var(--colors-background-bg-primary, #1F1F1F), 0 0 0 4px var(--colors-effects-focus-rings-focus-ring, #F5620F)
+    }
   }
   .secondary-gray {
     color: var(
