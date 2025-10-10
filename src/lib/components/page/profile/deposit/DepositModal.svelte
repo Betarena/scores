@@ -28,6 +28,7 @@
   import Progress from "$lib/components/ui/Progress.svelte";
   import { BetarenaUserHelper } from "$lib/firebase/common";
   import { modalStore } from "$lib/store/modal";
+  import session from "$lib/store/session";
   import userSettings from "$lib/store/user-settings";
   import { onMount } from "svelte";
   import { depositStore } from "./deposit-store";
@@ -90,6 +91,7 @@
   let buttonDisabled = false;
 
   $: ({ user } = $userSettings);
+  $: ({viewportType} = $session)
   $: lastStep = currentStep === steps.length - 1;
   $: progress = ((currentStep + 1) / steps.length) * 100;
   $: ({ failed, rate, amount, revolut } = $depositStore);
@@ -203,7 +205,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 <svelte:body class="disable-scroll" />
-<div id="deposit-modal">
+<div id="deposit-modal" class="{viewportType}">
   {#if !failed}
     <div class="header">
       {#if !lastStep}
@@ -355,6 +357,21 @@
         font-weight: 500;
         line-height: var(--Line-height-text-sm, 20px); /* 142.857% */
       }
+    }
+
+    &:not(.mobile) {
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      height: 558px;
+      max-width: 565px;
+      bottom: unset;
+      transform: translate(-50%, -50%);
+      border-radius: var(--radius-xl, 12px);
+      background: var(--colors-background-bg-secondary, #232323);
+
+      /* Shadows/shadow-xl */
+      box-shadow: 0 20px 24px -4px var(--colors-effects-shadows-shadow-xl_01, rgba(255, 255, 255, 0.00)), 0 8px 8px -4px var(--colors-effects-shadows-shadow-xl_02, rgba(255, 255, 255, 0.00));
     }
   }
 </style>

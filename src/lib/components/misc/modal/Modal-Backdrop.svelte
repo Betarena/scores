@@ -32,7 +32,7 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { createEventDispatcher, onDestroy, onMount, type EventDispatcher } from 'svelte';
+  import { createEventDispatcher, type EventDispatcher } from 'svelte';
   import { fade } from 'svelte/transition';
 
   // #endregion ➤ 📦 Package Imports
@@ -144,7 +144,8 @@
     /* 🎨 style */
     height: 100%;
     width: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    background: var(--component-colors-alpha-alpha-white-50, rgba(12, 14, 18, 0.50));
+    backdrop-filter: blur(7.5px);
   }
 
 </style>
