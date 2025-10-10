@@ -33,6 +33,7 @@
   import { depositStore } from "./deposit-store";
   import DepositAmount from "./DepositAmount.svelte";
   import DepositConfirmation from "./DepositConfirmation.svelte";
+  import DepositFailed from "./DepositFailed.svelte";
   import DepositOptions from "./DepositOptions.svelte";
   import DepositRevolut from "./DepositRevolut.svelte";
   import DepositSuccess from "./DepositSuccess.svelte";
@@ -88,9 +89,10 @@
   let currentStep = 0;
   let buttonDisabled = false;
 
-  $: ({user} = $userSettings)
+  $: ({ user } = $userSettings);
   $: lastStep = currentStep === steps.length - 1;
   $: progress = ((currentStep + 1) / steps.length) * 100;
+  $: ({ failed, rate, amount, revolut } = $depositStore);
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -108,17 +110,32 @@
   async function handleContinueClick() {
     if (lastStep) {
       $modalStore.show = false;
-      return
+      return;
     }
     if (steps[currentStep].id === "proceed") {
-      if (!$depositStore.amount || !user?.firebase_user_data)  {
+      if (!amount || !user?.firebase_user_data) {
         currentStep -= 1;
-        return
-      };
-      const {uid, email} = user.firebase_user_data;
-      const res = await BetarenaUserHelper.getRevolutCheckoutUrl({query: {}, body: {intFiatAmount: Number($depositStore.amount), intFiatCurrency: "USD", strUid: uid, email: email || undefined}})
-      if(res?.success) {
-        $depositStore.orderId = res.success.data.orderId;
+        return;
+      }
+      if (revolut.checkoutUrl) {
+        window.open(revolut.checkoutUrl, "_blank");
+        return;
+      }
+      const { uid, email } = user.firebase_user_data;
+      const res = await BetarenaUserHelper.getRevolutCheckoutUrl({
+        query: {},
+        body: {
+          intFiatAmount: Number(amount),
+          intFiatCurrency: "USD",
+          strUid: uid,
+          email: email || undefined,
+        },
+      });
+      if (res?.success) {
+        $depositStore.revolut = {
+          orderId: res.success.data.orderId,
+          checkoutUrl: res.success.data.checkoutUrl,
+        };
         window.open(res.success.data.checkoutUrl, "_blank");
       }
     }
@@ -133,11 +150,23 @@
     currentStep = currentStep - 1;
   }
 
+  function retry(retryPayment = true) {
+    const proceedIndex = steps.findIndex(step => step.id ===  (retryPayment ? "proceed" : "options"));
+    currentStep = proceedIndex;
+    $depositStore.failed = false;
+    $depositStore.revolut = {};
+    buttonDisabled = false;
+  }
+
+
   async function getRates() {
-    if ($depositStore.rate) return;
-    const res = await BetarenaUserHelper.getBtaTokenPriceQuote({ query: {strAmount: '1', strCurrency: 'USD'}, body: {} });
-    if(res?.success) {
-      $depositStore.rate = res.success.data.intBtaEstimate
+    if (rate) return;
+    const res = await BetarenaUserHelper.getBtaTokenPriceQuote({
+      query: { strAmount: "1", strCurrency: "USD" },
+      body: {},
+    });
+    if (res?.success) {
+      $depositStore.rate = res.success.data.intBtaEstimate;
     }
   }
   // #endregion ➤ 🛠️ METHODS
@@ -175,47 +204,58 @@
 -->
 <svelte:body class="disable-scroll" />
 <div id="deposit-modal">
-  <div class="header">
-    {#if !lastStep}
-      <div class="icon" on:click={back}>
-        <ArrowLeftIcon />
-      </div>
-    {/if}
-    {#if !lastStep}
-      <div class="steps">
-        Step {currentStep + 1} of {steps.length}
-      </div>
+  {#if !failed}
+    <div class="header">
+      {#if !lastStep}
+        <div class="icon" on:click={back}>
+          <ArrowLeftIcon />
+        </div>
+      {/if}
+      {#if !lastStep}
+        <div class="steps">
+          Step {currentStep + 1} of {steps.length}
+        </div>
+      {:else}
+        <div class="add-funds">Add Funds</div>
+      {/if}
+    </div>
     {:else}
-      <div class="add-funds">Add Funds</div>
-    {/if}
-  </div>
-  {#if !lastStep}
+    <div class="header-empty"></div>
+  {/if}
+  {#if !lastStep && !failed}
     <Progress animation={true} value={progress} />
   {/if}
   <div class="section-wrapper">
-    {#if steps[currentStep]}
-      <svelte:component
+    {#if failed}
+       <DepositFailed />
+    {:else if  steps[currentStep]}
+       <svelte:component
         this={steps[currentStep].component}
         bind:buttonDisabled
       />
     {/if}
   </div>
   <div class="footer">
-    <Button full={true} on:click={handleContinueClick} disabled={buttonDisabled}
-      >{steps[currentStep].buttonText}</Button
-    >
-    {#if lastStep}
-      <Button
-        full={true}
-        type="secondary"
-        on:click={() => {
-          currentStep = 0;
-        }}
-        disabled={buttonDisabled}>Add More Funds</Button
-      >
-    {/if}
-    {#if steps[currentStep].buttonSupportText}
-      <span class="footer-text">{steps[currentStep].buttonSupportText}</span>
+    {#if failed}
+      <Button type="primary" on:click={() => retry(true)} destructive={true} full={true}>Retry Payment</Button>
+      <!-- <Button type="secondary" on:click={chooseAnotherMethod} destructive={true} full={true}>Choose Another Method</Button> -->
+    {:else}
+       <Button full={true} on:click={handleContinueClick} disabled={buttonDisabled}
+         >{steps[currentStep].buttonText}</Button
+       >
+       {#if lastStep}
+         <Button
+           full={true}
+           type="secondary"
+           on:click={() => {
+             currentStep = 0;
+           }}
+           disabled={buttonDisabled}>Add More Funds</Button
+         >
+       {/if}
+       {#if steps[currentStep].buttonSupportText}
+         <span class="footer-text">{steps[currentStep].buttonSupportText}</span>
+       {/if}
     {/if}
   </div>
 </div>
@@ -255,6 +295,10 @@
       justify-content: space-between;
       align-items: center;
       align-self: stretch;
+
+      &-empty {
+        height: 60px;
+      }
 
       .icon {
         color: var(--colors-foreground-fg-primary-900);
