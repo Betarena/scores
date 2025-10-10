@@ -294,6 +294,7 @@
     height: 100dvh;
     padding: 0 var(--spacing-xl, 16px) var(--spacing-xl, 16px)
       var(--spacing-xl, 16px);
+      padding-bottom: var(--spacing-4xl, 32px);
     flex-direction: column;
     align-items: flex-start;
     gap: var(--spacing-3xl, 24px);
@@ -384,6 +385,8 @@
       transform: translate(-50%, -50%);
       border-radius: var(--radius-xl, 12px);
       background: var(--colors-background-bg-secondary, #232323);
+      padding: 0 var(--spacing-xl, 16px) var(--spacing-xl, 16px)
+      var(--spacing-xl, 16px);
 
       /* Shadows/shadow-xl */
       box-shadow: 0 20px 24px -4px var(--colors-effects-shadows-shadow-xl_01, rgba(255, 255, 255, 0)),
