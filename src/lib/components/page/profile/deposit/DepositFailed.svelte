@@ -24,7 +24,6 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
   import { DotLottieSvelte } from "@lottiefiles/dotlottie-svelte";
-  import { depositStore } from "./deposit-store";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -41,7 +40,6 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  export let buttonDisabled;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -57,8 +55,6 @@
   // │ Please keep very close attention to these methods and                  │
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
-  buttonDisabled = false;
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
@@ -91,13 +87,12 @@
 <div class="deposit-confirmation-wrapper">
   <div class="header">
     <div class="animation">
-      <DotLottieSvelte src="/assets/lottie/Success.lottie" loop autoplay />
+      <DotLottieSvelte src="/assets/lottie/Failed.lottie" loop autoplay />
     </div>
-    <div class="title">Funds Added Successfully!</div>
+    <div class="title">Transaction Failed</div>
   </div>
   <div class="text">
-    You added ${$depositStore.amount}  {$depositStore.rate ?  `(≈${(Number($depositStore.amount) * $depositStore.rate).toFixed(2)} BTA)`: ""} . After approval your funds will be available
-    to your Spending Wallet.
+    We couldn't process your payment. Please try again or use another method.
   </div>
 </div>
 

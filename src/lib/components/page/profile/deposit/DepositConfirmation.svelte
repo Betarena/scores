@@ -25,6 +25,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   import StepBase from "$lib/components/ui/StepBase.svelte";
   import { DotLottieSvelte } from "@lottiefiles/dotlottie-svelte";
+  import { depositStore } from "./deposit-store";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -58,7 +59,7 @@
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  buttonDisabled = false;
+  $: buttonDisabled = !$depositStore.amount;
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
