@@ -89,16 +89,15 @@
     },
   ];
   let unsubscribe: (() => void) | null = null;
-  let currentStep = 0;
   let buttonDisabled = false;
-
+  
   $: ({ user } = $userSettings);
   $: ({ viewportType } = $session);
   $: lastStep = currentStep === steps.length - 1;
   $: progress = ((currentStep + 1) / steps.length) * 100;
   $: ({ rate, amount, revolut, status } = $depositStore);
-  // $: failed = status === "failed"
-  let failed = false
+  $: failed = status === "failed";
+  let currentStep = $depositStore.revolut.checkoutUrl ? steps.findIndex(step => step.id === "confirmation") : 0;
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -113,7 +112,10 @@
   // │ Please keep very close attention to these methods and                  │
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
+  $: if (["completed", "approved"].includes(status || "")) {
+    const successStep = steps.findIndex(step => step.id === "success");
+    currentStep = successStep;
+  }
   
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
@@ -212,6 +214,10 @@
   onMount(() => {
     document.body.classList.add("disable-scroll");
     getRates();
+    const {orderId} = $depositStore.revolut || {}
+    if (orderId && !unsubscribe) {
+      unsubscribe = subscribeRevolutTransactionListen(orderId, depositStore).unsubscribe;
+    }
 
     return () => {
       document.body.classList.remove("disable-scroll");

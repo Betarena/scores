@@ -44,7 +44,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   export let buttonDisabled;
 
-  $: ({status} = $depositStore)
+  $: ({status, revolut} = $depositStore)
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -64,8 +64,9 @@
   $: buttonDisabled = !$depositStore.amount;
 
   $: checkboxState = {
-    received: ["PAID_PENDING"].includes(status || ""),
-    confirmation: ["APPROVED"].includes(status || "")
+    received: !!revolut?.checkoutUrl,
+    confirmation: !!(status && !["refunded", "failed", "canceled"].includes(status || "")),
+    completed: !!(status && !["refunded", "failed", "canceled"].includes(status || ""))
   }
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
@@ -104,9 +105,9 @@
     <div class="title">Transaction in Progress</div>
   </div>
   <div class="steps-wrapper"> 
-    <StepBase includeConnector={true} type="circle" color="success" checked={checkboxState.received} title="Payment Received" available={checkboxState.received}/>
+    <StepBase includeConnector={true} type="circle" color="success" checked={checkboxState.received} title="Payment Submitted" available={checkboxState.received}/>
     <StepBase includeConnector={true} type="circle" color="success" checked={checkboxState.confirmation} title="Awaiting Confirmation" available={checkboxState.confirmation}/>
-    <StepBase includeConnector={true} type="circle" color="success" checked={false} title="Funds will appear in your wallet soon" available={false}/>
+    <StepBase includeConnector={true} type="circle" color="success" checked={checkboxState.completed} title="Funds will appear in your wallet soon" available={checkboxState.completed}/>
   </div>
 </div>
 
