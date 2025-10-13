@@ -123,6 +123,8 @@
       .sections-wrapper {
         display: flex;
         gap: var(--spacing-2xl, 20px);
+        flex-wrap: wrap;
+
         .section-left {
           max-width: 637px;
           min-width: 450px;

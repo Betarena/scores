@@ -64,9 +64,9 @@
   $: buttonDisabled = !$depositStore.amount;
 
   $: checkboxState = {
-    received: !!revolut?.checkoutUrl,
-    confirmation: !!(status && !["refunded", "failed", "canceled"].includes(status || "")),
-    completed: !!(status && !["refunded", "failed", "canceled"].includes(status || ""))
+    received: status === "pending",
+    confirmation: status === "completed",
+    completed: status === "completed"
   }
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
