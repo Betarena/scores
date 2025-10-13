@@ -16,7 +16,7 @@
   import TweenedNumber from "$lib/components/ui/metrics/TweenedNumber.svelte";
   import session from "$lib/store/session";
   import Chart from "chart.js/auto";
-  import { onDestroy, onMount } from "svelte";
+  import { onDestroy, onMount, tick } from "svelte";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -57,16 +57,32 @@
   $: selectedOption = options[0];
   $: ({ viewportType } = $session);
   $: if (viewportType) {
-    createChart(selectedOption.id)
+    createChart(selectedOption.id);
   }
 
   let canvas: HTMLCanvasElement | null = null;
   let chart: Chart | null = null;
+  let chartContainer: HTMLElement | null = null;
+  let resizeTimer: ReturnType<typeof setTimeout> | null = null;
+  let isResizing = false;
 
   // sample datasets for different ranges (mocked to match the attached image shape)
   const dataSets = {
     year: {
-      labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+      labels: [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ],
       data: [10, 11, 12, 13, 15, 14, 13, 16, 17, 16.5, 17, 18],
     },
     month: {
@@ -83,9 +99,9 @@
     },
   };
 
-  function createChart(rangeId: string) {
+  async function createChart(rangeId: string) {
     if (!canvas) return;
-
+    await tick();
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
@@ -115,10 +131,9 @@
         ],
       },
       options: {
-        responsive: true,
         maintainAspectRatio: false,
         layout: {
-          padding: 0
+          padding: 0,
         },
         // enable a smooth draw animation and gentle transitions on update
         animation: {
@@ -169,19 +184,37 @@
     chart = new Chart(ctx, config as any);
   }
 
+  function handleResize(){
+      if (!isResizing) {
+        isResizing = true;
+        if (chart) {
+          try { chart.destroy(); } catch (e) { /* ignore */ }
+          chart = null;
+        }
+      }
+
+      if (resizeTimer) clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        isResizing = false;
+        createChart(selectedOption.id);
+        resizeTimer = null;
+      }, 150);
+    };
   onMount(() => {
     createChart(selectedOption.id);
   });
 
   onDestroy(() => {
     if (chart) {
-      try {
-        chart.destroy();
-      } catch (e) {
-        /* ignore */
-      }
+      try { chart.destroy(); } catch (e) { /* ignore */ }
       chart = null;
     }
+
+    if (resizeTimer) {
+      clearTimeout(resizeTimer);
+      resizeTimer = null;
+    }
+    isResizing = false;
   });
 
   $: if (chart && selectedOption) {
@@ -211,6 +244,7 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
+<svelte:window  on:resize={handleResize}/>
 <div id="dashboard-earnings" class={viewportType}>
   <div class="title">Earnings</div>
   <div class="buttons-text-wrapper">
@@ -249,7 +283,7 @@
     </div>
   </div>
   <div class="chart-section">
-    <div class="chart">
+    <div class="chart" bind:this={chartContainer}>
       <canvas bind:this={canvas} />
     </div>
   </div>
@@ -300,10 +334,10 @@
         align-items: flex-start;
         gap: 8px;
         align-self: stretch;
-  
+
         .mrr {
           color: var(--colors-text-text-tertiary-600, #8c8c8c);
-  
+
           /* Text sm/Medium */
           font-family: var(--font-family-font-family-body, Roboto);
           font-size: var(--font-size-text-sm, 14px);
@@ -316,16 +350,16 @@
           align-items: flex-start;
           gap: 8px;
           align-self: stretch;
-  
+
           .numbers-data {
             display: flex;
             align-items: flex-start;
             gap: 2px;
-  
+
             .bta {
               color: var(--colors-text-text-primary-900, #fff);
               padding-top: 2px;
-  
+
               /* Text xl/Medium */
               font-family: var(--font-family-font-family-body, Roboto);
               font-size: var(--font-size-text-xl, 20px);
@@ -339,7 +373,7 @@
               align-items: baseline;
               .amount {
                 color: var(--colors-text-text-primary-900, #fff);
-  
+
                 /* Display md/Semibold */
                 font-family: var(--font-family-font-family-display, Roboto);
                 font-size: var(--font-size-display-md, 36px);
@@ -348,10 +382,10 @@
                 line-height: var(--line-height-display-md, 44px); /* 122.222% */
                 letter-spacing: -0.72px;
               }
-  
+
               .usd {
                 color: var(--colors-text-text-tertiary-600, #8c8c8c);
-  
+
                 /* Display xs/Bold */
                 font-family: var(--font-family-font-family-display, Roboto);
                 font-size: var(--font-size-display-xs, 24px);
@@ -377,6 +411,10 @@
         width: 100%;
         height: 200px; /* fixed height to match compact sparkline-like chart */
         position: relative;
+        canvas {
+          width: 100% !important;
+          height: 100% !important;
+        }
       }
     }
 
