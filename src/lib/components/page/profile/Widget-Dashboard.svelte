@@ -126,15 +126,15 @@
         flex-wrap: wrap;
 
         .section-left {
-          max-width: 637px;
+          flex: 3 1 450px;
+          // max-width: 637px;
           min-width: 450px;
-          flex-shrink: 1;
-          flex-grow: 1;
           display: flex;
           flex-direction: column;
           gap: var(--spacing-2xl, 20px);
         }
         .section-right {
+          max-width: 100%;
           flex-grow: 1;
           flex-shrink: 1;
           min-width: 265px;
@@ -142,6 +142,7 @@
           flex-direction: column;
           gap: var(--spacing-2xl, 20px);
         }
+        
       }
     }
   }

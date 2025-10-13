@@ -141,6 +141,9 @@
         flex: 1 1 0;
         min-width: 0;
       }
+      .metrics-wrappers{
+        justify-content: flex-start;
+      }
     }
   }
 </style>
