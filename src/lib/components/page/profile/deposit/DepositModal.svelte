@@ -96,7 +96,9 @@
   $: ({ viewportType } = $session);
   $: lastStep = currentStep === steps.length - 1;
   $: progress = ((currentStep + 1) / steps.length) * 100;
-  $: ({ failed, rate, amount, revolut, status } = $depositStore);
+  $: ({ rate, amount, revolut, status } = $depositStore);
+  // $: failed = status === "failed"
+  let failed = false
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -111,10 +113,7 @@
   // │ Please keep very close attention to these methods and                  │
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  
-  $: if (status === "failed" && !failed) {
-    $depositStore.failed = true;
-  }
+
   
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
@@ -155,7 +154,7 @@
         },
       });
       if (res?.success) {
-        const orderId = res.success.data.orderId;
+        const orderId = (res.success.data as any).orderId;
         $depositStore.revolut = {
           orderId,
           checkoutUrl: res.success.data.checkoutUrl,
@@ -184,7 +183,7 @@
       (step) => step.id === (retryPayment ? "proceed" : "options")
     );
     currentStep = proceedIndex;
-    $depositStore.failed = false;
+    $depositStore.status = "";
     $depositStore.revolut = {};
     buttonDisabled = false;
   }

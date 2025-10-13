@@ -3,7 +3,6 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
-	import VisaIcon from './../../../ui/assets/VisaIcon.svelte';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
@@ -26,6 +25,7 @@
 
   import Button from "$lib/components/ui/Button.svelte";
   import Input from "$lib/components/ui/Input.svelte";
+  import { onMount } from "svelte";
   import { depositStore } from "./deposit-store";
 
   // #endregion ➤ 📦 Package Imports
@@ -44,7 +44,7 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
   export let buttonDisabled;
-  const buttons = [
+  const buttons: { label: string; value: string | number }[] = [
     { label: "$9.99", value: 9.99 },
     { label: "$19.99", value: 19.99 },
     { label: "$49.99", value: 49.99 },
@@ -52,7 +52,7 @@
   ];
 
   let inputNode: HTMLInputElement;
-  let activeButton;
+  let activeButton = buttons[0];
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -68,7 +68,7 @@
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  $: buttonDisabled = !$depositStore.amount;
+  $: buttonDisabled = !$depositStore.amount || Number($depositStore.amount) < 9.99;
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
@@ -92,7 +92,33 @@
     activeButton = button;
   }
 
+  function setMinimum() {
+    if (
+      !$depositStore.amount ||
+      Number($depositStore.amount) < 9.99 ||
+      isNaN(Number($depositStore.amount))
+    ) {
+      click(buttons[0]);
+    }
+  }
   // #endregion ➤ 🛠️ METHODS
+
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+  
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+  
+  onMount(() => {
+    if(!$depositStore.amount) {
+      click(buttons[0]);
+    }
+  });
+  
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 
 <!--
@@ -114,6 +140,7 @@
     label="Choose the amount to add"
     bind:node={inputNode}
     bind:value={$depositStore.amount}
+    on:blur={setMinimum}
     required={true}
   >
     <span slot="leading-text">$</span>
@@ -193,7 +220,9 @@
       grid-template-rows: 1fr 46px;
 
       .active {
-        box-shadow: 0 0 0 1px var(--colors-effects-shadows-shadow-skeumorphic-inner-border, rgba(12, 14, 18, 0.18)) inset, 0 -2px 0 0 var(--colors-effects-shadows-shadow-skeumorphic-inner, rgba(12, 14, 18, 0.05)) inset, 0 1px 2px 0 var(--colors-effects-shadows-shadow-xs, rgba(255, 255, 255, 0.00)), 0 0 0 2px var(--colors-background-bg-primary, #1F1F1F), 0 0 0 4px var(--colors-effects-focus-rings-focus-ring, #F5620F)
+        :global(.button) {
+          box-shadow: 0 0 0 1px var(--colors-effects-shadows-shadow-skeumorphic-inner-border, rgba(12, 14, 18, 0.18)) inset, 0 -2px 0 0 var(--colors-effects-shadows-shadow-skeumorphic-inner, rgba(12, 14, 18, 0.05)) inset, 0 1px 2px 0 var(--colors-effects-shadows-shadow-xs, rgba(255, 255, 255, 0.00)), 0 0 0 2px var(--colors-background-bg-primary, #1F1F1F), 0 0 0 4px var(--colors-effects-focus-rings-focus-ring, #F5620F)
+        }
       }
     }
     .rate {

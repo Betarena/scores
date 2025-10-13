@@ -5,7 +5,7 @@ import { B_C_COMP_M_Q_D_S, B_C_COMP_M_Q_D_ST } from "@betarena/scores-lib/dist/g
 import { SubscriptionClient } from "graphql-subscriptions-client";
 
 import { TableAuthorTagsSubscription0, type ITableAuthorTagsSubscription0Out } from '@betarena/scores-lib/dist/graphql/v8/table.authors.tags.js';
-import { ITablePublicTransactionHistorySubscription1Var, TablePublicTransactionHistorySubscription1, type ITablePublicTransactionHistorySubscription1Out } from '@betarena/scores-lib/dist/graphql/v8/table.public.transaction_history';
+import { TablePublicTransactionHistorySubscription1, type ITablePublicTransactionHistorySubscription1Out, type ITablePublicTransactionHistorySubscription1Var } from '@betarena/scores-lib/dist/graphql/v8/table.public.transaction_history';
 import type { B_H_COMP_DATA } from "@betarena/scores-lib/types/_HASURA_.js";
 import type { B_H_COMP_HIGH_Q } from "@betarena/scores-lib/types/types.competition.highlights.js";
 import type { IPageAuthorTagData } from '@betarena/scores-lib/types/v8/preload.authors.js';

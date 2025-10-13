@@ -7,6 +7,5 @@ export const depositStore = writable<{
         orderId?: string,
         checkoutUrl?: string
     }
-    failed: boolean,
     status?: string,
-}>({ amount: 0, rate: null, failed: false, revolut: { }, })
+}>({ amount: 0, rate: null, revolut: { }, })
