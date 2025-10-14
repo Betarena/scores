@@ -23,9 +23,7 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  import CreditCardUpload from "$lib/components/ui/assets/CreditCardUpload.svelte";
   import DepositIcon from "$lib/components/ui/assets/DepositIcon.svelte";
-  import InviteFriends from "$lib/components/ui/assets/Friends.svelte";
   import PencilLineIcon from "$lib/components/ui/assets/PencilLineIcon.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import { modalStore } from "$lib/store/modal";
@@ -56,13 +54,13 @@
       label: "Publish Article",
       href: `/u/author/article/create/${lang}`,
     },
-    {
-      icon: CreditCardUpload,
-      id: "withdraw",
-      label: "Withdraw",
-      href: `/u/withdraw/${lang}`,
-    },
-    { icon: InviteFriends, id: "friends", label: "Invite Friends" },
+    // {
+    //   icon: CreditCardUpload,
+    //   id: "withdraw",
+    //   label: "Withdraw",
+    //   href: `/u/withdraw/${lang}`,
+    // },
+    // { icon: InviteFriends, id: "friends", label: "Invite Friends" },
   ];
 
   // #endregion ➤ 📌 VARIABLES
