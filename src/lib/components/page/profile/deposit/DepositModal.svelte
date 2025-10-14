@@ -90,18 +90,20 @@
   ];
   let unsubscribe: (() => void) | null = null;
   let buttonDisabled = false;
-  
+
   $: ({ user } = $userSettings);
   $: ({ viewportType } = $session);
   $: lastStep = currentStep === steps.length - 1;
   $: progress = ((currentStep + 1) / steps.length) * 100;
   $: ({ rate, amount, revolut, status } = $depositStore);
   $: failed = ["failed", "declined"].includes(status || "");
-  let currentStep = $depositStore.revolut.checkoutUrl ? steps.findIndex(step => step.id === "confirmation") : 0;
+  let currentStep = $depositStore.revolut.checkoutUrl
+    ? steps.findIndex((step) => step.id === "confirmation")
+    : 0;
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
-  
+
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'logic' that should run            │
@@ -113,10 +115,10 @@
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
   $: if (["completed", "approved", "captured"].includes(status || "")) {
-    const successStep = steps.findIndex(step => step.id === "success");
+    const successStep = steps.findIndex((step) => step.id === "success");
     currentStep = successStep;
   }
-  
+
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🛠️ METHODS
@@ -146,7 +148,14 @@
         window.open(revolut.checkoutUrl, "_blank");
         return;
       }
+      let popup: Window | null = null;
+      try {
+        popup = window.open("", "_blank");
+      } catch (e) {
+        popup = null;
+      }
       const { uid, email } = user.firebase_user_data;
+      currentStep = currentStep + 1;
       const res = await BetarenaUserHelper.getRevolutCheckoutUrl({
         query: {},
         body: {
@@ -158,17 +167,30 @@
       });
       if (res?.success) {
         const orderId = (res.success.data as any).orderId;
+        const checkoutUrl = res.success.data.checkoutUrl;
         $depositStore.revolut = {
           orderId,
-          checkoutUrl: res.success.data.checkoutUrl,
+          checkoutUrl,
         };
-        window.open(res.success.data.checkoutUrl, "_blank");
-        unsubscribe = subscribeRevolutTransactionListen(orderId, depositStore).unsubscribe;
+        if (popup && !popup.closed) {
+          try {
+            popup.location.href = checkoutUrl;
+          } catch (err) {
+            popup = window.open(checkoutUrl, "_blank");
+          }
+        } else {
+          window.open(checkoutUrl, "_blank");
+        }
+        unsubscribe = subscribeRevolutTransactionListen(
+          orderId,
+          depositStore
+        ).unsubscribe;
       }
+      return
     }
     if (stepId === "confirmation" || stepId === "success") {
       $modalStore.show = false;
-      return
+      return;
     }
     currentStep = currentStep + 1;
   }
@@ -182,7 +204,7 @@
   }
 
   function retry(retryPayment = true) {
-    if(unsubscribe) {
+    if (unsubscribe) {
       unsubscribe();
       unsubscribe = null;
     }
@@ -219,14 +241,17 @@
   onMount(() => {
     document.body.classList.add("disable-scroll");
     getRates();
-    const {orderId} = $depositStore.revolut || {}
+    const { orderId } = $depositStore.revolut || {};
     if (orderId && !unsubscribe) {
-      unsubscribe = subscribeRevolutTransactionListen(orderId, depositStore).unsubscribe;
+      unsubscribe = subscribeRevolutTransactionListen(
+        orderId,
+        depositStore
+      ).unsubscribe;
     }
 
     return () => {
       document.body.classList.remove("disable-scroll");
-      if (unsubscribe) unsubscribe()
+      if (unsubscribe) unsubscribe();
     };
   });
 
@@ -330,7 +355,7 @@
     height: 100dvh;
     padding: 0 var(--spacing-xl, 16px) var(--spacing-xl, 16px)
       var(--spacing-xl, 16px);
-      padding-bottom: var(--spacing-4xl, 32px);
+    padding-bottom: var(--spacing-4xl, 32px);
     flex-direction: column;
     align-items: flex-start;
     gap: var(--spacing-3xl, 24px);
@@ -422,7 +447,7 @@
       border-radius: var(--radius-xl, 12px);
       background: var(--colors-background-bg-secondary, #232323);
       padding: 0 var(--spacing-xl, 16px) var(--spacing-xl, 16px)
-      var(--spacing-xl, 16px);
+        var(--spacing-xl, 16px);
 
       /* Shadows/shadow-xl */
       box-shadow: 0 20px 24px -4px var(--colors-effects-shadows-shadow-xl_01, rgba(255, 255, 255, 0)),
