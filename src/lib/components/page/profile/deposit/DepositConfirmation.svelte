@@ -65,8 +65,8 @@
 
   $: checkboxState = {
     received: status === "processing",
-    confirmation: status === "processing",
-    completed: status === "completed"
+    confirmation: status === "captured",
+    completed: status === "captured" || status === "completed"
   }
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
