@@ -23,12 +23,13 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  import CreditCardUpload from '$lib/components/ui/assets/CreditCardUpload.svelte';
-  import DepositIcon from '$lib/components/ui/assets/DepositIcon.svelte';
-  import InviteFriends from '$lib/components/ui/assets/Friends.svelte';
-  import PencilLineIcon from '$lib/components/ui/assets/PencilLineIcon.svelte';
+  import CreditCardUpload from "$lib/components/ui/assets/CreditCardUpload.svelte";
+  import DepositIcon from "$lib/components/ui/assets/DepositIcon.svelte";
+  import InviteFriends from "$lib/components/ui/assets/Friends.svelte";
+  import PencilLineIcon from "$lib/components/ui/assets/PencilLineIcon.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import { modalStore } from "$lib/store/modal";
+  import userSettings from "$lib/store/user-settings";
   import DepositModal from "./../deposit/DepositModal.svelte";
 
   // #endregion ➤ 📦 Package Imports
@@ -46,11 +47,21 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
-  const actions = [
+  $: ({ lang } = $userSettings);
+  $: actions = [
     { icon: DepositIcon, id: "deposit", label: "Add Funds" },
-    { icon: PencilLineIcon, id: "publish", label: "Publish Article" },
-    { icon: CreditCardUpload, id: "withdraw", label: "Withdraw" },
+    {
+      icon: PencilLineIcon,
+      id: "publish",
+      label: "Publish Article",
+      href: `/u/author/article/create/${lang}`,
+    },
+    {
+      icon: CreditCardUpload,
+      id: "withdraw",
+      label: "Withdraw",
+      href: `/u/withdraw/${lang}`,
+    },
     { icon: InviteFriends, id: "friends", label: "Invite Friends" },
   ];
 
@@ -98,7 +109,11 @@
   <div class="title">Actions</div>
   <div class="actions">
     {#each actions as action}
-      <Button type="secondary" on:click={() => click(action.id)}>
+      <Button
+        type="secondary"
+        href={action.href}
+        on:click={() => click(action.id)}
+      >
         <div class="action">
           <svelte:component this={action.icon} />
           <span class="action-label">
@@ -143,7 +158,7 @@
     }
     .actions {
       display: grid;
-      grid-template-columns: repeat(2, 1fr); ;
+      grid-template-columns: repeat(2, 1fr);
       gap: var(--spacing-lg, 12px);
       width: 100%;
       min-width: 0;

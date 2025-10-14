@@ -240,6 +240,17 @@
 
   onMount(() => {
     document.body.classList.add("disable-scroll");
+     const
+      /**
+       * @description
+       * 📝 HTLMElement instance of 'Intercom'
+       */
+      instanceIntercom = document.getElementsByClassName('intercom-lightweight-app')[0] as unknown as HTMLElement
+    ;
+    const prevIntercomState = instanceIntercom?.style.display;
+    if (instanceIntercom)
+      instanceIntercom.style.display = 'none';
+    ;
     getRates();
     const { orderId } = $depositStore.revolut || {};
     if (orderId && !unsubscribe) {
@@ -251,6 +262,7 @@
 
     return () => {
       document.body.classList.remove("disable-scroll");
+      instanceIntercom.style.display = prevIntercomState || "unset";
       if (unsubscribe) unsubscribe();
     };
   });
@@ -273,7 +285,7 @@
   {#if !failed}
     <div class="header-wrapper">
       <div class="header">
-        {#if !lastStep}
+        {#if !["success", "confirmation"].includes(steps[currentStep].id || "")}
           <div class="icon" on:click={back}>
             <ArrowLeftIcon />
           </div>
