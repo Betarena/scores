@@ -96,7 +96,7 @@
   $: lastStep = currentStep === steps.length - 1;
   $: progress = ((currentStep + 1) / steps.length) * 100;
   $: ({ rate, amount, revolut, status } = $depositStore);
-  $: failed = status === "failed";
+  $: failed = ["failed", "declined"].includes(status || "");
   let currentStep = $depositStore.revolut.checkoutUrl ? steps.findIndex(step => step.id === "confirmation") : 0;
   // #endregion ➤ 📌 VARIABLES
 
@@ -136,7 +136,8 @@
       $modalStore.show = false;
       return;
     }
-    if (steps[currentStep].id === "proceed") {
+    const stepId = steps[currentStep].id;
+    if (stepId === "proceed") {
       if (!amount || !user?.firebase_user_data) {
         currentStep -= 1;
         return;
@@ -164,6 +165,10 @@
         window.open(res.success.data.checkoutUrl, "_blank");
         unsubscribe = subscribeRevolutTransactionListen(orderId, depositStore).unsubscribe;
       }
+    }
+    if (stepId === "confirmation" || stepId === "success") {
+      $modalStore.show = false;
+      return
     }
     currentStep = currentStep + 1;
   }
@@ -289,13 +294,11 @@
         on:click={handleContinueClick}
         disabled={buttonDisabled}>{steps[currentStep].buttonText}</Button
       >
-      {#if lastStep}
+      {#if steps[currentStep].id === "success"}
         <Button
           full={true}
           type="secondary"
-          on:click={() => {
-            currentStep = 0;
-          }}
+          on:click={() => retry(false)}
           disabled={buttonDisabled}>Add More Funds</Button
         >
       {/if}

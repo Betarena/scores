@@ -64,8 +64,8 @@
   $: buttonDisabled = !$depositStore.amount;
 
   $: checkboxState = {
-    received: status === "pending",
-    confirmation: status === "completed",
+    received: status === "processing",
+    confirmation: status === "processing",
     completed: status === "completed"
   }
 

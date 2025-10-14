@@ -5,7 +5,7 @@ import { B_C_COMP_M_Q_D_S, B_C_COMP_M_Q_D_ST } from "@betarena/scores-lib/dist/g
 import { SubscriptionClient } from "graphql-subscriptions-client";
 
 import { TableAuthorTagsSubscription0, type ITableAuthorTagsSubscription0Out } from '@betarena/scores-lib/dist/graphql/v8/table.authors.tags.js';
-import { TablePublicTransactionHistorySubscription1, type ITablePublicTransactionHistorySubscription1Out, type ITablePublicTransactionHistorySubscription1Var } from '@betarena/scores-lib/dist/graphql/v8/table.public.transaction_history';
+import { TableTransactionsTransactionQueueSubscription0, type ITableTransactionsTransactionQueueSubscription0Out, type ITableTransactionsTransactionQueueSubscription0Var } from '@betarena/scores-lib/dist/graphql/v8/table.transactions.transaction_queue.js';
 import type { B_H_COMP_DATA } from "@betarena/scores-lib/types/_HASURA_.js";
 import type { B_H_COMP_HIGH_Q } from "@betarena/scores-lib/types/types.competition.highlights.js";
 import type { IPageAuthorTagData } from '@betarena/scores-lib/types/v8/preload.authors.js';
@@ -428,8 +428,8 @@ export  function subscribeRevolutTransactionListen
   // get ready
   const GRAPHQL_ENDPOINT = import.meta.env?.VITE_HASURA_DB_WSS ?? '';
 
-  const query: string = TablePublicTransactionHistorySubscription1;
-  const variables: ITablePublicTransactionHistorySubscription1Var = {jsonFilter: {revolut: {id: revolutId}}};
+  const query: string = TableTransactionsTransactionQueueSubscription0;
+  const variables: ITableTransactionsTransactionQueueSubscription0Var = {refId: revolutId};
 
   // ### NOTE:
   // ### set up the client, which can be reused
@@ -494,7 +494,7 @@ export  function subscribeRevolutTransactionListen
           (
             {
               data
-            }: { data: ITablePublicTransactionHistorySubscription1Out; }
+            }: { data: ITableTransactionsTransactionQueueSubscription0Out; }
           ): void
         {
           if (data)
@@ -507,7 +507,10 @@ export  function subscribeRevolutTransactionListen
               (
                 (depositStoreData) =>
                 {
-                  return {...depositStoreData, status: data.transaction_history?.[0]?.status};
+                  const queue = data?.transactions_transaction_queue;
+                  const queue_data = queue?.[0].data;
+                  const status = queue_data?.payments?.length ? queue_data.payments.at(-1).state : queue_data?.state
+                  return {...depositStoreData, status};
                 }
               );
           }

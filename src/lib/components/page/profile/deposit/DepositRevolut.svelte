@@ -43,7 +43,6 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   export let buttonDisabled;
 
-  let inputNode: HTMLInputElement;
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -74,7 +73,7 @@
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
+  $: console.log("RATE:", $depositStore.rate);
   // #endregion ➤ 🛠️ METHODS
 </script>
 
@@ -99,10 +98,16 @@
         <div class="label">Amount</div>
         <div class="data-value">${$depositStore.amount}</div>
       </div>
-      <div class="data-field">
-        <div class="label">Estimated BTA</div>
-        <div class="data-value">112.3</div>
-      </div>
+      {#if $depositStore.rate}
+        <div class="data-field">
+          <div class="label">Estimated BTA</div>
+          <div class="data-value">
+            {(
+              Number($depositStore.amount) * Number($depositStore.rate)
+            ).toFixed(6)}
+          </div>
+        </div>
+      {/if}
       <div class="data-field">
         <div class="label">Payment</div>
         <div class="data-value">Credit Card (Visa/Master)</div>
