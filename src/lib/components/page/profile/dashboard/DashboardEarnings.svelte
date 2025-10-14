@@ -126,7 +126,9 @@
             fill: true,
             tension: 0.3,
             pointRadius: 0,
-            pointHoverRadius: 4,
+            pointHoverRadius: 6,
+            pointBackgroundColor: "#F7813F",
+            pointHoverBorderWidth: 0,
           },
         ],
       },
@@ -134,6 +136,10 @@
         maintainAspectRatio: false,
         layout: {
           padding: 0,
+        },
+        interaction: {
+          mode: "nearest",
+          intersect: false,
         },
         // enable a smooth draw animation and gentle transitions on update
         animation: {
@@ -154,19 +160,63 @@
             },
           },
         },
-        plugins: {
-          legend: { display: false },
-          tooltip: { enabled: false },
-        },
         scales: {
           x: {
-            grid: { display: false },
+            grid: {
+              display: false,
+              drawBorder: false,
+            },
             offset: false,
             ticks: { color: "#8C8C8C", maxRotation: 0, padding: 0 },
           },
           y: {
-            grid: { color: "#3B3B3B" },
-            ticks: { display: false, padding: 0 },
+            grid: {
+              color: "rgba(140,140,140,0.16)", 
+              drawBorder: false,
+              tickLength: 6,
+            },
+            ticks: {
+              display: true,
+              color: "#8C8C8C",
+              padding: 6,
+              maxTicksLimit: 6,
+              callback: (value: any) => {
+                const num = Number(value);
+                if (Number.isNaN(num)) return String(value);
+                return `$${num % 1 === 0 ? num : num.toFixed(0)}`;
+              },
+            },
+            beginAtZero: false,
+          },
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            enabled: true,
+            backgroundColor: "rgba(20,20,20,0.95)",
+            titleColor: "#FFFFFF",
+            bodyColor: "#FFFFFF",
+            padding: 8,
+            displayColors: false,
+            caretSize: 6,
+            cornerRadius: 6,
+            callbacks: {
+              title: (items: any[]) => {
+                return items && items.length
+                  ? String(items[0].label ?? "")
+                  : "";
+              },
+              label: (context: any) => {
+                const raw =
+                  context.parsed && typeof context.parsed.y !== "undefined"
+                    ? context.parsed.y
+                    : context.formattedValue;
+                const num = Number(raw);
+                if (Number.isNaN(num)) return String(raw);
+                const formatted = num % 1 === 0 ? String(num) : num.toFixed(2);
+                return `${formatted}`;
+              },
+            },
           },
         },
       },
@@ -184,29 +234,37 @@
     chart = new Chart(ctx, config as any);
   }
 
-  function handleResize(){
-      if (!isResizing) {
-        isResizing = true;
-        if (chart) {
-          try { chart.destroy(); } catch (e) { /* ignore */ }
-          chart = null;
+  function handleResize() {
+    if (!isResizing) {
+      isResizing = true;
+      if (chart) {
+        try {
+          chart.destroy();
+        } catch (e) {
+          /* ignore */
         }
+        chart = null;
       }
+    }
 
-      if (resizeTimer) clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(() => {
-        isResizing = false;
-        createChart(selectedOption.id);
-        resizeTimer = null;
-      }, 150);
-    };
+    if (resizeTimer) clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      isResizing = false;
+      createChart(selectedOption.id);
+      resizeTimer = null;
+    }, 150);
+  }
   onMount(() => {
     createChart(selectedOption.id);
   });
 
   onDestroy(() => {
     if (chart) {
-      try { chart.destroy(); } catch (e) { /* ignore */ }
+      try {
+        chart.destroy();
+      } catch (e) {
+        /* ignore */
+      }
       chart = null;
     }
 
@@ -244,7 +302,7 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<svelte:window  on:resize={handleResize}/>
+<svelte:window on:resize={handleResize} />
 <div id="dashboard-earnings" class={viewportType}>
   <div class="title">Earnings</div>
   <div class="buttons-text-wrapper">
