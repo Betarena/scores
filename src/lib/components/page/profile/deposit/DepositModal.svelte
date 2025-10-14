@@ -112,7 +112,7 @@
   // │ Please keep very close attention to these methods and                  │
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  $: if (["completed", "approved"].includes(status || "")) {
+  $: if (["completed", "approved", "captured"].includes(status || "")) {
     const successStep = steps.findIndex(step => step.id === "success");
     currentStep = successStep;
   }
