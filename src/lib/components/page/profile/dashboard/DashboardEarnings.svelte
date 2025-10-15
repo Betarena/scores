@@ -83,7 +83,7 @@
         "Nov",
         "Dec",
       ],
-      data: [10, 11, 12, 13, 15, 14, 13, 16, 17, 16.5, 17, 18],
+      data: [10, 11, 12, 13, 15, 14, 13, 16, 17, 16.5, 17, 11],
     },
     month: {
       labels: ["1", "6", "12", "18", "24", "30"],
@@ -113,6 +113,50 @@
 
     const chosen = dataSets[rangeId] ?? dataSets.year;
 
+    // compute suggested max to leave top padding above highest point
+    const maxVal = Math.max(...chosen.data);
+    const suggestedMax = maxVal + Math.max(1, maxVal * 0.06); // +6% or at least +1
+
+    // index of "current" (последней) точки
+    const lastIndex = Math.max(0, chosen.data.length - 1);
+    const currentValue = chosen.data[lastIndex];
+
+    // per-point radii / colors so only current point is highlighted
+    const pointRadii = chosen.data.map((_, i) => (i === lastIndex ? 6 : 0));
+    const pointBg = chosen.data.map((_, i) =>
+      i === lastIndex ? "#FFFFFF" : "#F7813F"
+    );
+    const pointBorder = chosen.data.map((_, i) =>
+      i === lastIndex ? "#F7813F" : "#F7813F"
+    );
+    const pointBorderWidth = chosen.data.map((_, i) =>
+      i === lastIndex ? 2 : 0
+    );
+
+    // small plugin to draw dashed horizontal line at current point
+    const currentPointPlugin = {
+      id: "currentPointLine",
+      afterDatasetsDraw(chart: any) {
+        const meta = chart.getDatasetMeta(0);
+        if (!meta || !meta.data || !meta.data.length) return;
+        const el = meta.data[lastIndex];
+        if (!el) return;
+        const y = el.y; // pixel y coord of last point
+        const { left, right, top, bottom } = chart.chartArea;
+        const ctx = chart.ctx;
+        ctx.save();
+        ctx.beginPath();
+        ctx.setLineDash([6, 4]);
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = "rgba(247,129,63,0.5)";
+        // draw line across chart plotting area (not over labels)
+        ctx.moveTo(left, y + 0.5);
+        ctx.lineTo(right, y + 0.5);
+        ctx.stroke();
+        ctx.restore();
+      },
+    };
+
     const config = {
       type: "line" as const,
       data: {
@@ -125,13 +169,16 @@
             backgroundColor: gradient,
             fill: true,
             tension: 0.3,
-            pointRadius: 0,
+            pointRadius: pointRadii,
             pointHoverRadius: 6,
-            pointBackgroundColor: "#F7813F",
+            pointBackgroundColor: pointBg,
             pointHoverBorderWidth: 0,
+            pointBorderColor: pointBorder,
+            pointBorderWidth: pointBorderWidth,
           },
         ],
       },
+      plugins: [currentPointPlugin],
       options: {
         maintainAspectRatio: false,
         layout: {
@@ -171,7 +218,7 @@
           },
           y: {
             grid: {
-              color: "rgba(140,140,140,0.16)", 
+              color: "rgba(140,140,140,0.16)",
               drawBorder: false,
               tickLength: 6,
             },
@@ -187,6 +234,7 @@
               },
             },
             beginAtZero: false,
+            suggestedMax
           },
         },
         plugins: {
