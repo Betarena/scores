@@ -64,9 +64,9 @@
   $: buttonDisabled = !$depositStore.amount;
 
   $: checkboxState = {
-    received: status === "processing",
-    confirmation: status === "captured",
-    completed: status === "captured" || status === "completed"
+    received: ["processing", "captured", "completed", "authorisation_started"].includes(status || ""),
+    confirmation: ["captured", "completed", "authorisation_started"].includes(status || ""),
+    completed: ["captured", "completed"].includes(status || "")
   }
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]

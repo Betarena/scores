@@ -9,8 +9,6 @@
 -->
 
 <script lang="ts">
-  import { depositStore } from "./deposit-store";
-
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -25,7 +23,8 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
+  import session from "$lib/store/session";
+  import { depositStore } from "./deposit-store";
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -43,38 +42,11 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   export let buttonDisabled;
 
-  // #endregion ➤ 📌 VARIABLES
-
-  // #region ➤ 🔥 REACTIVIY [SVELTE]
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'logic' that should run            │
-  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
-  // │ WARNING:                                                               │
-  // │ ❗️ Can go out of control.                                              │
-  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
-  // │ Please keep very close attention to these methods and                  │
-  // │ use them carefully.                                                    │
-  // ╰────────────────────────────────────────────────────────────────────────╯
+  $: ({ viewportType } = $session);
 
   buttonDisabled = false;
 
-  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
-
-  // #region ➤ 🛠️ METHODS
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'methods' that are to be           │
-  // │ and are expected to be used by 'this' .svelte file / component.        │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. function (..)                                                       │
-  // │ 2. async function (..)                                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-  $: console.log("RATE:", $depositStore.rate);
-  // #endregion ➤ 🛠️ METHODS
+  // #endregion ➤ 📌 VARIABLES
 </script>
 
 <!--
@@ -88,7 +60,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="deposit-proccessor-wrapper">
+<div class="deposit-proccessor-wrapper {viewportType}">
   <div class="header">
     <div class="title">Pay with Revolut</div>
   </div>
@@ -171,6 +143,8 @@
     .data-wrapper {
       display: flex;
       gap: var(--spacing-lg, 12px);
+      width: 100%;
+      justify-content: space-between;
       .data {
         display: flex;
         flex-grow: 1;
@@ -207,6 +181,18 @@
       }
       .logo {
         color: var(--colors-foreground-fg-primary-900, #fff);
+      }
+    }
+
+    &:not(.mobile) {
+      .data {
+        max-width: 359px;
+        width: 100%;
+      }
+      .logo {
+        flex-grow: 1;
+        display: flex;
+        justify-content: start;
       }
     }
   }

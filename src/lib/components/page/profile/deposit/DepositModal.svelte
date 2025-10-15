@@ -90,6 +90,7 @@
   ];
   let unsubscribe: (() => void) | null = null;
   let buttonDisabled = false;
+  let timer;
 
   $: ({ user } = $userSettings);
   $: ({ viewportType } = $session);
@@ -119,6 +120,9 @@
     currentStep = successStep;
   }
 
+  $: if (status === "authorisation_started") {
+    startTimer();
+  }
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🛠️ METHODS
@@ -132,6 +136,14 @@
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
+
+  function startTimer() {
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => {
+      if (status !== "authorisation_started") return;
+      $depositStore.status = "failed";
+    }, 4 * 60 * 1000);
+  }
 
   async function handleContinueClick() {
     if (lastStep) {
@@ -186,7 +198,7 @@
           depositStore
         ).unsubscribe;
       }
-      return
+      return;
     }
     if (stepId === "confirmation" || stepId === "success") {
       $modalStore.show = false;
@@ -240,17 +252,15 @@
 
   onMount(() => {
     document.body.classList.add("disable-scroll");
-     const
-      /**
+    const /**
        * @description
        * 📝 HTLMElement instance of 'Intercom'
        */
-      instanceIntercom = document.getElementsByClassName('intercom-lightweight-app')[0] as unknown as HTMLElement
-    ;
+      instanceIntercom = document.getElementsByClassName(
+        "intercom-lightweight-app"
+      )[0] as unknown as HTMLElement;
     const prevIntercomState = instanceIntercom?.style.display;
-    if (instanceIntercom)
-      instanceIntercom.style.display = 'none';
-    ;
+    if (instanceIntercom) instanceIntercom.style.display = "none";
     getRates();
     const { orderId } = $depositStore.revolut || {};
     if (orderId && !unsubscribe) {
@@ -464,6 +474,11 @@
       /* Shadows/shadow-xl */
       box-shadow: 0 20px 24px -4px var(--colors-effects-shadows-shadow-xl_01, rgba(255, 255, 255, 0)),
         0 8px 8px -4px var(--colors-effects-shadows-shadow-xl_02, rgba(255, 255, 255, 0));
+
+      .header {
+        height: 48px;
+        padding: var(--spacing-2xl, 20px) 4px;
+      }
     }
   }
 </style>
