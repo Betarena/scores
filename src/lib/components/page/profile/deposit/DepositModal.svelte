@@ -120,7 +120,7 @@
     currentStep = successStep;
   }
 
-  $: if (status === "authorisation_started") {
+  $: if (["processing", "pending"].includes(status || "")) {
     startTimer();
   }
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
@@ -140,7 +140,7 @@
   function startTimer() {
     if (timer) clearTimeout(timer);
     timer = setTimeout(() => {
-      if (status !== "authorisation_started") return;
+      if (!status || !["processing", "pending"].includes(status || "")) return;
       $depositStore.status = "failed";
     }, 4 * 60 * 1000);
   }
