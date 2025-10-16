@@ -7,7 +7,7 @@ COMPONENT JS (w/ TS)
   // #region ➤ 📦 Package Imports
 
 	import { toISOMod } from '$lib/utils/dates.js';
-  import { toDecimalFix } from '$lib/utils/string.js';
+	import { toDecimalFix } from '$lib/utils/string.js';
 
 	import icon_arrow_down from '../assets/arrow-down.svg';
 	import icon_arrow_up from '../assets/arrow-up.svg';
@@ -90,7 +90,7 @@ COMPONENT JS (w/ TS)
    */
   $: if (tx_data?.type)
   {
-		if ((['deposit', 'investment'] as B_H_TH_Type[]).includes(tx_data?.type)) txTypeIcon = icon_deposit;
+		if ((['deposit', 'investment', "credit"] as B_H_TH_Type[]).includes(tx_data?.type)) txTypeIcon = icon_deposit;
 		if ((['Withdraw', 'tge', 'vesting'] as B_H_TH_Type[]).includes(tx_data?.type)) txTypeIcon = icon_withdraw;
   }
 
