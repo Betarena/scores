@@ -23,6 +23,7 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
+  import session from "$lib/store/session";
   import { DotLottieSvelte } from "@lottiefiles/dotlottie-svelte";
   import { depositStore } from "./deposit-store";
 
@@ -42,6 +43,8 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
   export let buttonDisabled;
+
+  $: ({viewportType} = $session)
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -88,7 +91,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="deposit-confirmation-wrapper">
+<div class="deposit-confirmation-wrapper {viewportType}">
   <div class="header">
     <div class="animation">
       <DotLottieSvelte src="/assets/lottie/Success.lottie" loop autoplay />
@@ -155,6 +158,13 @@
       font-style: normal;
       font-weight: 600;
       line-height: var(--line-height-text-md, 24px); /* 150% */
+    }
+
+    &:not(.mobile) {
+      align-items: center;
+      .text {
+        width: 343px;
+      }
     }
   }
 </style>

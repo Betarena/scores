@@ -23,6 +23,7 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
+  import session from "$lib/store/session";
   import { DotLottieSvelte } from "@lottiefiles/dotlottie-svelte";
 
   // #endregion ➤ 📦 Package Imports
@@ -41,6 +42,7 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  $: ({viewportType} = $session)
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -84,7 +86,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="deposit-confirmation-wrapper">
+<div class="deposit-confirmation-wrapper {viewportType}">
   <div class="header">
     <div class="animation">
       <DotLottieSvelte src="/assets/lottie/Failed.lottie" loop autoplay />
@@ -150,6 +152,13 @@
       font-style: normal;
       font-weight: 600;
       line-height: var(--line-height-text-md, 24px); /* 150% */
+    }
+
+    &:not(.mobile) {
+      align-items: center;
+      .text {
+        width: 343px;
+      }
     }
   }
 </style>
