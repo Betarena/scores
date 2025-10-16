@@ -11,6 +11,8 @@ import LZString from 'lz-string';
 
 import { LNAV_L_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.main.navbar.js';
 
+import { _Redis } from '@betarena/scores-lib/dist/classes/_redis';
+import * as RedisKeys from '@betarena/scores-lib/dist/constant/redis.js';
 import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
 
 // #endregion ➤ 📦 Package Imports
