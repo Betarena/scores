@@ -106,7 +106,6 @@
     &:not(.mobile) {
       border-radius: 12px;
       background: var(--colors-background-bg-secondary, #232323);
-      background: #232323;
       padding: var(--spacing-2xl, 20px);
       gap: var(--spacing-2xl, 20px);
       .title {
