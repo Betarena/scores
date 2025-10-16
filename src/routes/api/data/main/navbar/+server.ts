@@ -9,9 +9,7 @@ import { json } from '@sveltejs/kit';
 import dotenv from 'dotenv';
 import LZString from 'lz-string';
 
-import { _Redis } from '@betarena/scores-lib/dist/classes/_redis.js';
-import * as RedisKeys from '@betarena/scores-lib/dist/constant/redis.js';
-import { LNAV_L_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.main.navbar.js';
+import { LNAV_L_ENTRY_1 } from '../../../../../../../scores-lib/src/functions/func.main.navbar.js';
 
 import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
 

@@ -106,7 +106,7 @@ export async function main
         ;
 
         if (data != undefined)
-          data.mapArticle = data.mapArticle?.map(([id, article]) => ([id, {...article, data: {...article.data, content: ""}}])) as any;
+          data.mapArticle = data.mapArticle?.map(([id, article]) => ([id, {...article, data: {...article.data, content: "", seo_title: ""}}])) as any;
           return json(data);
         ;
       }
