@@ -17,6 +17,7 @@
   import session from "$lib/store/session";
   import Chart from "chart.js/auto";
   import { onDestroy, onMount, tick } from "svelte";
+  import WidgetCalendar from "../tx-history/Widget-Calendar.svelte";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -53,6 +54,12 @@
     { id: "week", label: "7d" },
     { id: "day", label: "24h" },
   ];
+  let showDatepicker = false;
+  let selectedDate = new Date();
+  let dateRange = {
+    to: new Date(),
+    from: new Date(),
+  };
 
   $: selectedOption = options[0];
   $: ({ viewportType } = $session);
@@ -67,7 +74,7 @@
   let isResizing = false;
 
   // sample datasets for different ranges (mocked to match the attached image shape)
-  const dataSets = {
+  $: dataSets = {
     year: {
       labels: [
         "Jan",
@@ -97,7 +104,40 @@
       labels: ["00", "04", "08", "12", "16", "20", "24"],
       data: [12.0, 11.8, 11.6, 12.2, 12.4, 12.6, 13.0],
     },
+    custom: generateRandomForRange(dateRange)
   };
+
+  function generateRandomForRange(range: { from: Date; to: Date }) {
+    const from = new Date(range.from);
+    const to = new Date(range.to);
+    const msDiff = Math.max(0, to.getTime() - from.getTime());
+    // number of points: at least 6, at most 30
+    const days = Math.max(1, Math.ceil(msDiff / (24 * 60 * 60 * 1000)));
+    const points = Math.min(30, Math.max(6, days));
+    const labels: string[] = [];
+    const data: number[] = [];
+
+    // starting baseline and gentle random walk
+    let value = 10 + Math.random() * 6; // base between 10..16
+    for (let i = 0; i < points; i++) {
+      // jitter + slight upward drift
+      value = Math.max(
+        1,
+        value + (Math.random() - 0.45) * 1.4 + (i / points) * 0.4
+      );
+      data.push(parseFloat(value.toFixed(2)));
+      const t =
+        points === 1
+          ? from.getTime()
+          : from.getTime() + Math.round((msDiff * i) / (points - 1 || 1));
+      const d = new Date(t);
+      // label as "DD.MM" for readability
+      labels.push(`${d.getDate()}.${d.getMonth() + 1}`);
+    }
+
+    return { labels, data };
+  }
+
 
   async function createChart(rangeId: string) {
     if (!canvas) return;
@@ -117,7 +157,7 @@
     const maxVal = Math.max(...chosen.data);
     const suggestedMax = maxVal + Math.max(1, maxVal * 0.06); // +6% or at least +1
 
-    // index of "current" (последней) точки
+    // index of "current"
     const lastIndex = Math.max(0, chosen.data.length - 1);
     const currentValue = chosen.data[lastIndex];
 
@@ -234,7 +274,7 @@
               },
             },
             beginAtZero: false,
-            suggestedMax
+            suggestedMax,
           },
         },
         plugins: {
@@ -356,7 +396,15 @@
   <div class="buttons-text-wrapper">
     <div class="buttons-wrapper">
       <ButtonGroup group={options} bind:selected={selectedOption} />
-      <Button size="md" type="secondary" icon_leading={true}>
+      <Button
+        size="md"
+        type="secondary"
+        icon_leading={true}
+        on:click={() => {
+          showDatepicker = !showDatepicker
+          selectedOption = {id: "custom", label: "custom"}
+          }}
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="20"
@@ -373,6 +421,13 @@
           />
         </svg>
       </Button>
+      {#if showDatepicker}
+        <WidgetCalendar
+          bind:show={showDatepicker}
+          bind:dateSelect={selectedDate}
+          bind:dateRange
+        />
+      {/if}
     </div>
     <div class="chart-text">
       <div class="mrr">MRR</div>
@@ -429,6 +484,7 @@
       gap: 12px;
       flex-direction: column;
       .buttons-wrapper {
+        position: relative;
         display: flex;
         align-items: center;
         gap: 12px;

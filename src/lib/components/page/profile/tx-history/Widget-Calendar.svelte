@@ -24,6 +24,10 @@ COMPONENT JS (w/ TS)
 
   // #region ➤ 📌 VARIABLES
 
+  export let dateSelect
+  export let dateRange
+  export let show = false;
+
   interface monthWeekObject
   {
     weekStart: number,
@@ -42,7 +46,7 @@ COMPONENT JS (w/ TS)
   let
     numberOfMonthWeeks: number,
     monthWeeksArray: monthWeekObject[] = [],
-    tempDate: Date = $sessionStore?.userTxHistDateSelect ?? $sessionStore.userTxHistFilterDateRange.to ?? new Date(),
+    tempDate: Date = dateSelect ?? dateRange.to ?? new Date(),
     selectedDays: [Date?, Date?] = [],
     B_SAP_D2: B_SAP_D2 = $page.data?.B_SAP_D2
   ;
@@ -305,10 +309,10 @@ COMPONENT JS (w/ TS)
     // ◾️ NOTE:
     // ◾️ Set 'dates' for: last selected custom date,
     // ◾️ and the overall 'custom' range.
-    $sessionStore.userTxHistDateSelect = new Date(newDate);
-    tempDate = $sessionStore.userTxHistDateSelect;
+    dateSelect = new Date(newDate);
+    tempDate = dateSelect;
 
-    $sessionStore.userTxHistFilterDateRange =
+    dateRange =
     {
       from: new Date(selectedDays[1]),
       to: new Date(selectedDays[0])
@@ -385,8 +389,8 @@ COMPONENT JS (w/ TS)
 
     selectedDays =
     [
-      $sessionStore.userTxHistFilterDateRange.to,
-      $sessionStore.userTxHistFilterDateRange.from
+      dateRange.to,
+      dateRange.from
     ]
   }
 
@@ -395,7 +399,7 @@ COMPONENT JS (w/ TS)
   // #region ➤ 🚏 ONE-OFF CONDITIONS
 
   const if_O_0: boolean =
-    $sessionStore.userTxHistFilterDateRange != undefined
+    dateRange != undefined
   ;
   if (if_O_0)
   {
@@ -420,7 +424,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
 <div
   id="profile/widget/calendar-pop-up/backdrop"
-  on:click={() => $sessionStore.userTxShowCalendar = false}
+  on:click={() => show = false}
 />
 
 <div
