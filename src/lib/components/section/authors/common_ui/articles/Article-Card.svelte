@@ -27,19 +27,19 @@
   import { page } from '$app/stores';
 
   import { timeAgo } from '$lib/utils/dates.js';
-  import { fade } from 'svelte/transition';
-  import defaultAvatar from '../profile-avatar.svg';
-  import { readingTime } from '../helpers.js';
   import { mutateStringToPermalink } from '@betarena/scores-lib/dist/util/language.js';
+  import { fade } from 'svelte/transition';
+  import { readingTime } from '../helpers.js';
+  import defaultAvatar from '../profile-avatar.svg';
 
-  import ExpandDataWrapper from '$lib/components/ui/wrappers/ExpandDataWrapper.svelte';
   import TranslationText from '$lib/components/misc/Translation-Text.svelte';
-  import ScrollDataWrapper from '$lib/components/ui/wrappers/ScrollDataWrapper.svelte';
   import SportstackAvatar from '$lib/components/ui/SportstackAvatar.svelte';
+  import ExpandDataWrapper from '$lib/components/ui/wrappers/ExpandDataWrapper.svelte';
+  import ScrollDataWrapper from '$lib/components/ui/wrappers/ScrollDataWrapper.svelte';
 
+  import Badge from '$lib/components/ui/Badge.svelte';
   import { getOptimizedImageUrl } from '$lib/utils/image.js';
   import type { IPageAuthorArticleData, IPageAuthorAuthorData, IPageAuthorTagData } from '@betarena/scores-lib/types/v8/preload.authors.js';
-  import Badge from '$lib/components/ui/Badge.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -95,7 +95,7 @@
   $: ({ images = [] } = seo_details?.opengraph || {});
   $: ({ title = "", content = "" } = data || {});
   $: date = timeAgo(published_date, translations.time_ago);
-  $: timeToRead =  readingTime(content)
+  $: timeToRead =  content && readingTime(content)
   // #endregion ➤ 📌 VARIABLES
 
 </script>
