@@ -97,7 +97,6 @@
   $: date = timeAgo(published_date, translations.time_ago);
   $: timeToRead =  content && readingTime(content)
   // #endregion ➤ 📌 VARIABLES
-$: console.log("IMG: ", featured_image)
 </script>
 
 <!--
