@@ -93,11 +93,11 @@
     avatar: defaultAvatar,
   });
   $: ({ images = [] } = seo_details?.opengraph || {});
-  $: ({ title = "", content = "" } = data || {});
+  $: ({ title = "", content = "", featured_image } = data || {});
   $: date = timeAgo(published_date, translations.time_ago);
   $: timeToRead =  content && readingTime(content)
   // #endregion ➤ 📌 VARIABLES
-
+$: console.log("IMG: ", featured_image)
 </script>
 
 <!--
@@ -167,9 +167,9 @@
       {/if}
     </div>
   </div>
-  {#if images[0]?.url}
+  {#if images[0]?.url || featured_image}
     <a href="/a/{permalink}" class="preview" class:tablet class:mobile>
-      <img src={getOptimizedImageUrl({ strImageUrl: images[0]?.url })} alt={images[0].alt} srcset="" />
+      <img src={getOptimizedImageUrl({ strImageUrl: images[0]?.url || featured_image })} alt={images[0]?.alt || title} srcset="" />
     </a>
   {/if}
 </div>
