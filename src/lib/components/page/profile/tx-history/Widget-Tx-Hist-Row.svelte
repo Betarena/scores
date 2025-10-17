@@ -36,13 +36,11 @@ COMPONENT JS (w/ TS)
     txExtraInfoStruct =
     {
       'type': 'type',
-      // FIXME: missing 'description' from 'translation'
-      'description': '',
+      'description': 'description',
       'asset': 'asset',
       'Gateway': 'gateway',
-      // FIXME: missing 'amount' from 'translation'
-      'quantity': 'quantity',
-      'amount': 'bta',
+      'amount': 'quantity',
+      'quantity': 'bta',
       'payment_processor_fee': 'fee'
     },
     walletAddrTrunc: string
@@ -238,20 +236,20 @@ COMPONENT JS (w/ TS)
     </td>
 
     <!--
-    TX QUANTITY (BTA)
+    TX AMOUNT ($)
     -->
     <td>
       <p>
-        ${tx_data?.quantity}
+        ${tx_data?.amount}
       </p>
     </td>
 
     <!--
-    TX AMOUNT (of asset)
+    TX QUANTITY (BTA)
     -->
     <td>
       <p>
-        {toDecimalFix(tx_data?.amount ?? 0, 2, false, false)}
+        {toDecimalFix(tx_data?.quantity ?? 0, 2, false, false)}
       </p>
     </td>
 
@@ -356,7 +354,7 @@ COMPONENT JS (w/ TS)
         "
       >
         <p>
-          ${tx_data?.quantity ?? '-'}
+          ${tx_data?.amount ?? '-'}
         </p>
         <p
           class=
@@ -365,7 +363,7 @@ COMPONENT JS (w/ TS)
           color-grey
           "
         >
-          {toDecimalFix(tx_data?.amount ?? 0, 2, false, false)} BTA
+          {toDecimalFix(tx_data?.quantity ?? 0, 2, false, false)} BTA
         </p>
       </div>
     </td>
@@ -458,7 +456,7 @@ COMPONENT JS (w/ TS)
             color-black-2
             "
           >
-            {['payment_processor_fee', 'quantity'].includes(item[0]) ? '$' : ''}{tx_data?.[item[0]] ?? '-'}
+            {['payment_processor_fee', 'amount'].includes(item[0]) ? '$' : ''}{tx_data?.[item[0]] ?? '-'}
           </p>
         </div>
       {/each}
