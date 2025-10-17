@@ -26,9 +26,8 @@
   import DepositIcon from "$lib/components/ui/assets/DepositIcon.svelte";
   import PencilLineIcon from "$lib/components/ui/assets/PencilLineIcon.svelte";
   import Button from "$lib/components/ui/Button.svelte";
-  import { modalStore } from "$lib/store/modal";
   import userSettings from "$lib/store/user-settings";
-  import DepositModal from "./../deposit/DepositModal.svelte";
+  import { showDepositModal } from "../deposit/showDeposit";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -80,11 +79,7 @@
   function click(id: string) {
     switch (id) {
       case "deposit":
-        modalStore.set({
-          component: DepositModal,
-          show: true,
-          modal: true,
-        });
+        showDepositModal();
         break;
     }
   }

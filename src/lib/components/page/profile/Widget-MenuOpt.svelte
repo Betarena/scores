@@ -24,6 +24,7 @@ COMPONENT JS (w/ TS)
 	import type { PROFILE_OPT } from '$lib/types/types.scores.js';
 	import { getOptimizedImageUrl } from '$lib/utils/image.js';
 	import { fade, fly } from 'svelte/transition';
+	import { showDepositModal } from './deposit/showDeposit';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -94,9 +95,7 @@ COMPONENT JS (w/ TS)
       targetUrl = `/u/partners/${$userBetarenaSettings.lang}`
     ;
     if (selectedMenuOpt == "Deposit") {
-      if (browser) {
-        window.open(`https://app.uniswap.org/explore/tokens/polygon/0x2519dadb4a41438c85b7c3251c22f45f90c9e459`, "_blank");
-      }
+      showDepositModal();
       selectedMenuOpt = "Dashboard";
       targetUrl = `/u/dashboard/${$userBetarenaSettings.lang}`;
     }
