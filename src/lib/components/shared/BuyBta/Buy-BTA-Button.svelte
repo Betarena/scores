@@ -23,14 +23,15 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { page } from "$app/stores";
-  import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
-  import Button from "$lib/components/ui/Button.svelte";
-  import { createEventDispatcher, onMount } from "svelte";
-  import { get } from "$lib/api/utils.js";
-  import buyOptionsTranslations from "./store"
-  import sessionStore  from "$lib/store/session.js";
   import { browser } from "$app/environment";
+  import { page } from "$app/stores";
+  import { get } from "$lib/api/utils.js";
+  import { showDepositModal } from "$lib/components/page/profile/deposit/showDeposit";
+  import Button from "$lib/components/ui/Button.svelte";
+  import sessionStore from "$lib/store/session.js";
+  import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
+  import { createEventDispatcher } from "svelte";
+  import buyOptionsTranslations from "./store";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -72,9 +73,7 @@
 
   function click() {
     dispatch("click");
-    if (popup && browser) {
-      window.open("https://app.uniswap.org/explore/tokens/polygon/0x2519dadb4a41438c85b7c3251c22f45f90c9e459", "_blank");
-    }
+    showDepositModal();
   }
 
   async function fetchOptions(lang?: string) {
