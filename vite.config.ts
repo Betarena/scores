@@ -16,10 +16,13 @@
 // #region ➤ 📦 Package Imports
 
 import { sentrySvelteKit } from "@sentry/sveltekit";
+import { partytownVite } from '@builder.io/partytown/utils';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { table } from 'table';
-import { loadEnv } from "vite";
 import { defineConfig } from 'vitest/config';
+import { loadEnv } from "vite";
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import { dependencies, version } from './package.json';
 
@@ -32,6 +35,8 @@ import { dependencies, version } from './package.json';
 // import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
 
 // #endregion ➤ 📦 Package Imports
+
+const projectRootDir = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig
 (
@@ -156,6 +161,13 @@ export default defineConfig
               uploadSourceMaps: process.env?.VITE_SENTRY_UPLOAD_SOURCEMAPS as unknown as string == 'true' ? true : false
             },
             autoUploadSourceMaps: process.env?.VITE_SENTRY_UPLOAD_SOURCEMAPS as unknown as string == 'true' ? true : false
+          }
+        ),
+
+        partytownVite
+        (
+          {
+            dest: join(projectRootDir, 'static', '~partytown')
           }
         ),
 
