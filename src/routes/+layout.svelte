@@ -184,12 +184,6 @@
       }
   ;
   const
-    /**
-     * @description
-     *  📝 Stores generated Partytown snippet which already includes the script
-     *  element so the browser can execute it correctly when injected via
-     *  {@html ...}.
-     */
     partytownForwardSnippet = partytownSnippet
     (
       {
