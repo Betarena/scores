@@ -184,11 +184,6 @@
       }
   ;
   const
-    /**
-     * @description
-     *  📝 Stores generated Partytown snippet markup, including the surrounding
-     *  `<script>` element provided by Partytown.
-     */
     partytownForwardSnippet = partytownSnippet
     (
       {
@@ -205,7 +200,7 @@
         ],
         lib: '/~partytown/'
       }
-    ),
+    )
   ;
   /**
    * @description
