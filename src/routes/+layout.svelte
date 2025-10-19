@@ -45,6 +45,7 @@
   import { afterNavigate, beforeNavigate } from '$app/navigation';
   import { page } from '$app/stores';
   import * as Sentry from '@sentry/sveltekit';
+  import { partytownSnippet } from '@builder.io/partytown/integration';
   import { onDestroy, onMount } from 'svelte';
 
   import {
@@ -181,6 +182,36 @@
          */
         mapComponentDynamicLoading: new Map < IDynamicComponentMap, any >()
       }
+  ;
+  const
+    /**
+     * @description
+     *  📝 Stores generated Partytown snippet source code which is later wrapped
+     *  in a `<script>` element prior to injecting it into the document head.
+     */
+    partytownForwardSnippet = partytownSnippet
+    (
+      {
+        forward:
+        [
+          'dataLayer.push',
+          'fbq',
+          'gtag',
+          'lintrk',
+          'posthog.capture',
+          'posthog.identify',
+          'posthog.group',
+          'posthog.people.set'
+        ],
+        lib: '/~partytown/'
+      }
+    ),
+    /**
+     * @description
+     *  📝 Provides the full `<script>` markup required by Partytown so that the
+     *  snippet executes instead of rendering as plain text.
+     */
+    partytownForwardScript = `<script>${partytownForwardSnippet}</script>`
   ;
   /**
    * @description
@@ -619,6 +650,8 @@
 -->
 
 <svelte:head>
+  {@html partytownForwardScript}
+
   {#if theme === "Dark"}
   <meta
     name="theme-color"
@@ -630,7 +663,7 @@
       content="#ffffff" />
   {/if}
 
-  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+  <script async charset="utf-8" src="https://platform.twitter.com/widgets.js" type="text/partytown"></script>
   <script>
     // We pre-filled your app ID in the widget URL: 'https://widget.intercom.io/widget/yz9qn6p3'
     (
