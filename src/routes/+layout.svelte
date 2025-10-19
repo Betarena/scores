@@ -45,6 +45,7 @@
   import { afterNavigate, beforeNavigate } from '$app/navigation';
   import { page } from '$app/stores';
   import * as Sentry from '@sentry/sveltekit';
+  import { partytownSnippet } from '@builder.io/partytown/integration';
   import { onDestroy, onMount } from 'svelte';
 
   import {
@@ -182,6 +183,59 @@
         mapComponentDynamicLoading: new Map < IDynamicComponentMap, any >()
       }
   ;
+  const
+    /**
+     * @description
+     *  📝 Stores generated Partytown snippet markup, including the surrounding
+     *  `<script>` element provided by Partytown.
+     */
+    partytownForwardSnippet = partytownSnippet
+    (
+      {
+        forward:
+        [
+          'dataLayer.push',
+          'fbq',
+          'gtag',
+          'lintrk',
+          'posthog.capture',
+          'posthog.identify',
+          'posthog.group',
+          'posthog.people.set'
+        ],
+        lib: '/~partytown/'
+      }
+    ),
+  ;
+
+  /**
+   * @description
+   *  🛠 Ensures the Partytown forward snippet executes by creating a `<script>`
+   *  node and appending it to the document head. Injecting the markup via
+   *  `{@html}` does not execute the script, so we manually recreate the DOM
+   *  element here.
+   */
+  const ensurePartytownForwarder = (): void =>
+  {
+    if (!browser) return;
+
+    if (document.querySelector('script[data-partytown-forward]')) return;
+
+    const parser = document.createElement('div');
+    parser.innerHTML = partytownForwardSnippet;
+
+    const generatedScript = parser.querySelector('script');
+    if (!generatedScript) return;
+
+    const forwarder = document.createElement('script');
+    forwarder.dataset.partytownForward = 'true';
+    forwarder.textContent = generatedScript.textContent ?? '';
+
+    for (const name of generatedScript.getAttributeNames())
+      forwarder.setAttribute(name, generatedScript.getAttribute(name) ?? '');
+
+    document.head.appendChild(forwarder);
+  };
   /**
    * @description
    *  📝 Page unsubscribe to remove inside onDestroy.
@@ -398,6 +452,7 @@
     async (
     ): Promise < void > =>
     {
+      ensurePartytownForwarder();
 
       // ╭─────
       // │ IMPORTANT CRITICAL
@@ -619,6 +674,7 @@
 -->
 
 <svelte:head>
+
   {#if theme === "Dark"}
   <meta
     name="theme-color"
@@ -630,7 +686,7 @@
       content="#ffffff" />
   {/if}
 
-  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+  <script async charset="utf-8" src="https://platform.twitter.com/widgets.js" type="text/partytown"></script>
   <script>
     // We pre-filled your app ID in the widget URL: 'https://widget.intercom.io/widget/yz9qn6p3'
     (

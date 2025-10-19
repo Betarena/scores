@@ -40,7 +40,7 @@
   import { dlog } from '$lib/utils/debug.js';
   import { toDecimalFix } from '$lib/utils/string.js';
   import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
-  import { Chart, registerables, type ChartItem } from 'chart.js';
+  import type { Chart as ChartJS, ChartItem } from 'chart.js';
 
   import icon_bta_token from '../assets/price-tier/icon-bta-token.svg';
 
@@ -53,7 +53,10 @@
 
   // #endregion ➤ 📦 Package Imports
 
-  Chart.register(...registerables);
+  type ChartModule = typeof import('chart.js');
+
+  let chartModule: ChartModule | null = null;
+  let chartModulePromise: Promise<ChartModule> | null = null;
 
   // #region ➤ 📌 VARIABLES
 
@@ -140,12 +143,12 @@
          * @description
          *  📣 stores target `chart` instance (1).
         */
-        chartInstance: Chart | null;
+        chartInstance: ChartJS | null;
         /**
          * @description
          *  📣 stores target `chart` instance (2).
         */
-      chartInstance2: Chart | null;
+      chartInstance2: ChartJS | null;
         /**
          * @description
          *  📣 stores target `chart` scroll action (lock).
@@ -585,15 +588,48 @@
    * @description
    *  📣 Generates target `user` investment monthly cahrt GUI.
    */
-  function generateTargetChart
-  (
-  ): void
+  async function loadChartModule
+  (): Promise<ChartModule | null>
   {
-    tryCatchAsync
+    if (!browser)
+      return null;
+
+    if (chartModule)
+      return chartModule;
+
+    if (!chartModulePromise)
+    {
+      chartModulePromise = import('chart.js')
+        .then
+        (
+          (module): ChartModule =>
+          {
+            module.Chart.register(...module.registerables);
+            chartModule = module;
+            return module;
+          }
+        );
+    }
+
+    return chartModulePromise;
+  }
+
+  async function generateTargetChart
+  (
+  ): Promise<void>
+  {
+    return tryCatchAsync
     (
       async (
       ): Promise < void > =>
       {
+        const module = await loadChartModule();
+
+        if (!module)
+          return;
+
+        const { Chart } = module;
+
         const
           canvas = document.getElementById('valueChart') as HTMLCanvasElement
           , canvasHover = document.getElementById('constChart') as HTMLCanvasElement
@@ -816,8 +852,6 @@
         return;
       }
     );
-
-    return;
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -837,7 +871,7 @@
     ): Promise < void > =>
     {
       addEventListeners();
-      generateTargetChart();
+      await generateTargetChart();
       return;
     }
   );
