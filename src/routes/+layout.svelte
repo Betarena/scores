@@ -186,10 +186,11 @@
   const
     /**
      * @description
-     *  📝 Stores generated Partytown snippet wrapped in a script tag so the
-     *  browser executes it instead of rendering the raw JavaScript source.
+     *  📝 Stores generated Partytown snippet which already includes the script
+     *  element so the browser can execute it correctly when injected via
+     *  {@html ...}.
      */
-    partytownForwardSnippet = `<script>${partytownSnippet
+    partytownForwardSnippet = partytownSnippet
     (
       {
         forward:
@@ -205,7 +206,7 @@
         ],
         lib: '/~partytown/'
       }
-    )}</script>`
+    )
   ;
   /**
    * @description
