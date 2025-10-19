@@ -184,6 +184,11 @@
       }
   ;
   const
+    /**
+     * @description
+     *  📝 Stores generated Partytown snippet markup, including the surrounding
+     *  `<script>` element provided by Partytown.
+     */
     partytownForwardSnippet = partytownSnippet
     (
       {
@@ -200,8 +205,37 @@
         ],
         lib: '/~partytown/'
       }
-    )
+    ),
   ;
+
+  /**
+   * @description
+   *  🛠 Ensures the Partytown forward snippet executes by creating a `<script>`
+   *  node and appending it to the document head. Injecting the markup via
+   *  `{@html}` does not execute the script, so we manually recreate the DOM
+   *  element here.
+   */
+  const ensurePartytownForwarder = (): void =>
+  {
+    if (!browser) return;
+
+    if (document.querySelector('script[data-partytown-forward]')) return;
+
+    const parser = document.createElement('div');
+    parser.innerHTML = partytownForwardSnippet;
+
+    const generatedScript = parser.querySelector('script');
+    if (!generatedScript) return;
+
+    const forwarder = document.createElement('script');
+    forwarder.dataset.partytownForward = 'true';
+    forwarder.textContent = generatedScript.textContent ?? '';
+
+    for (const name of generatedScript.getAttributeNames())
+      forwarder.setAttribute(name, generatedScript.getAttribute(name) ?? '');
+
+    document.head.appendChild(forwarder);
+  };
   /**
    * @description
    *  📝 Page unsubscribe to remove inside onDestroy.
@@ -418,6 +452,7 @@
     async (
     ): Promise < void > =>
     {
+      ensurePartytownForwarder();
 
       // ╭─────
       // │ IMPORTANT CRITICAL
@@ -639,7 +674,6 @@
 -->
 
 <svelte:head>
-  {@html partytownForwardSnippet}
 
   {#if theme === "Dark"}
   <meta
