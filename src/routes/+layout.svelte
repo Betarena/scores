@@ -184,10 +184,6 @@
       }
   ;
   const
-    /**
-     * @description
-     *  📝 Stores generated Partytown snippet.
-     */
     partytownForwardSnippet = partytownSnippet
     (
       {
