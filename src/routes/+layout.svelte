@@ -186,8 +186,8 @@
   const
     /**
      * @description
-     *  📝 Stores generated Partytown snippet source code which is later wrapped
-     *  in a `<script>` element prior to injecting it into the document head.
+     *  📝 Stores generated Partytown snippet markup, including the surrounding
+     *  `<script>` element provided by Partytown.
      */
     partytownForwardSnippet = partytownSnippet
     (
@@ -206,12 +206,6 @@
         lib: '/~partytown/'
       }
     ),
-    /**
-     * @description
-     *  📝 Provides the full `<script>` markup required by Partytown so that the
-     *  snippet executes instead of rendering as plain text.
-     */
-    partytownForwardScript = `<script>${partytownForwardSnippet}</script>`
   ;
   /**
    * @description
@@ -650,7 +644,7 @@
 -->
 
 <svelte:head>
-  {@html partytownForwardScript}
+  {@html partytownForwardSnippet}
 
   {#if theme === "Dark"}
   <meta
