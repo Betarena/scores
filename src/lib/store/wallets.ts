@@ -20,10 +20,8 @@ let unsub: () => void;
 async function initWalletStore(uid: string) {
     if (unsub) unsub();
     const ref = doc(db_firestore, 'betarena_users', uid);
-    debugger
     const snap = await getDoc(ref)
     const user_data = snap.data() ?? {};
-    debugger
     const now = new Date().toISOString();
     walletStore.set({
         primary: { available: Number(user_data.main_balance ?? 0), updatedAt: now },

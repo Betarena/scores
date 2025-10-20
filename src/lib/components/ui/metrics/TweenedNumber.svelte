@@ -9,7 +9,7 @@
 -->
 
 <script lang="ts">
-  import { tweened } from "svelte/motion";
+
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -25,8 +25,10 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  import { toDecimalFix } from "$lib/utils/string";
   import { onMount } from "svelte";
   import { cubicOut } from "svelte/easing";
+  import { tweened } from "svelte/motion";
 
   // #endregion ➤ 📦 Package Imports
   // #region ➤ 📌 VARIABLES
@@ -42,9 +44,9 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  export let number = 0;
-  export let toDecimalFix = 0;
-
+  export let number: number = 0;
+  export let fixNumber = 0;
+  export let needsToFormat: boolean = true;
   const tweenedNumber = tweened(0, {
     duration: 800,
     easing: cubicOut,
@@ -54,7 +56,7 @@
   let container: HTMLElement | null = null;
   let inView = false;
   // store latest value while out of view
-  let pendingValue = number;
+  let pendingValue: number = 0;
 
   // when component mounts, observe visibility
   let io: IntersectionObserver | null = null;
@@ -88,6 +90,26 @@
   }
 
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🛠️ METHODS
+  
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+  
+  function format(num) {
+    if (!needsToFormat) return num.toString(fixNumber);
+    return toDecimalFix(num, 2, true, true, true)
+  }
+  
+  // #endregion ➤ 🛠️ METHODS
+  
 </script>
 
 <!--
@@ -101,5 +123,5 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<span bind:this={container}>{$tweenedNumber.toFixed(toDecimalFix)}</span>
+<span bind:this={container}>{format($tweenedNumber)}</span>
 

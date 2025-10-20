@@ -95,8 +95,8 @@
           />
         </svg>
         <div class="balance" slot="number">
-          <span class="amount">{primary.available.toFixed(0)} BTA</span>
-          <div class="usd">$12</div>
+          <span class="amount"><TweenedNumber number={primary.available} needsToFormat={true} /> BTA</span>
+          <span class="usd">$<TweenedNumber number={primary.available / $session.btaUsdRate} needsToFormat={true} /></span>
         </div>
       </MetricItem4>
     </div>
@@ -125,8 +125,8 @@
           />
         </svg>
         <div class="balance" slot="number">
-          <span class="amount">{spending.available.toFixed(0)} BTA</span>
-          <div class="usd">$12</div>
+          <span class="amount"><TweenedNumber number={spending.available} needsToFormat={true} /> BTA</span>
+         <span class="usd">$<TweenedNumber number={spending.available / $session.btaUsdRate} needsToFormat={true} /></span>
         </div>
       </MetricItem4>
     </div>
@@ -156,19 +156,19 @@
         </svg>
         <div class="balance" slot="number">
           <span class="amount"><TweenedNumber number={rewards.available} /> BTA</span>
-          <div class="usd">$<TweenedNumber number={12} /></div>
+          <div class="usd">$<TweenedNumber number={rewards.available / $session.btaUsdRate} /></div>
         </div>
       </MetricItem4>
       <div class="progress-wrapper">
         {#if viewportType === "mobile"}
           <div class="progress-text">
             <div class="text"><TweenedNumber number={rewards.available} /> BTA</div>
-            <div class="supporting-text">$50/$500</div>
+            <div class="supporting-text">$<TweenedNumber number={rewards.available / $session.btaUsdRate} />/$500</div>
           </div>
         {/if}
-        <Progress value={45} />
+        <Progress value={(rewards.available * 100) / 500} />
         {#if viewportType !== "mobile"}
-          <div class="supporting-text">$50/$500</div>
+          <div class="supporting-text">$<TweenedNumber number={rewards.available / $session.btaUsdRate} />/$500</div>
         {/if}
       </div>
       {#if viewportType === "mobile"}

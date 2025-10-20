@@ -376,6 +376,8 @@ export function formatNumberWithCommas
  *  💠 **[optional]** Wether to perform a `round-up` or not, `deafult = false`.
  * @param { boolean } [removeDot00=true]
  *  💠 **[optional]** Wether to perform a `.00` removal from number (clean), `deafult = true`.
+ * @param { boolean } [shortenThousands=false]
+ *  💠 **[optional]** Whether to shorten large numbers using suffixes (e.g. 1234 => 1.2k). When true, numbers >= 1000 are formatted with k, M, etc., otherwise full numeric string is returned.
  * @returns { string }
  *  📤 Mutated value, adjusted for decimal places.
  */
@@ -385,32 +387,59 @@ export function toDecimalFix
   , dPlaces: number = 2
   , noRoundUp: boolean = false
   , removeDot00: boolean = true
+  , shortenThousands: boolean = false
 ): string
 {
   if (value == null) return '-';
+  const num = Number(value);
+  if (Number.isNaN(num)) return '-';
 
-  let _value: string  = value.toString();
+  const suffixes = ['', 'k', 'M', 'B', 'T', 'P', 'E'];
 
-  if (noRoundUp && _value.includes('.'))
-    _value = _value
-      .slice
-      (
-        0,
-        (_value.indexOf('.')) + (dPlaces + 1)
-      );
-  ;
+  const stripDotZeros = (s: string) =>
+    removeDot00 ? s.replace(/\.0+$/, '') : s;
 
-  _value = parseFloat(_value).toFixed(dPlaces);
+  // SHORTENING path (1 234 -> 1.2k)
+  if (shortenThousands && Math.abs(num) >= 1000) {
+    const abs = Math.abs(num);
+    const idx = Math.min(Math.floor(Math.log10(abs) / 3), suffixes.length - 1);
+    const scale = Math.pow(1000, idx);
+    let scaled = num / scale;
+    const mult = Math.pow(10, dPlaces);
 
-  if (removeDot00)
-    _value = _value.replace
-    (
-      '.00',
-      ''
-    );
-  ;
+    if (noRoundUp) {
+      scaled = num >= 0
+        ? Math.floor(scaled * mult) / mult
+        : Math.ceil(scaled * mult) / mult;
+    } else {
+      // normal rounding
+      scaled = Number(scaled.toFixed(dPlaces));
+    }
 
-  return _value;
+    let out = scaled.toFixed(dPlaces);
+    out = stripDotZeros(out);
+    return `${out}${suffixes[idx]}`;
+  }
+
+  // NORMAL formatting path
+  const mult = Math.pow(10, dPlaces);
+  let resultNum: number;
+
+  if (noRoundUp) {
+    resultNum = num >= 0 ? Math.floor(num * mult) / mult : Math.ceil(num * mult) / mult;
+    // Ensure minimal decimals if needed (e.g. 1 -> "1.00" when dPlaces=2 and removeDot00=false)
+    let out = resultNum.toString();
+    if (!out.includes('.') && dPlaces > 0) out = resultNum.toFixed(dPlaces);
+    else if (out.includes('.')) {
+      const decimals = out.split('.')[1].length;
+      if (decimals < dPlaces) out = resultNum.toFixed(dPlaces);
+    }
+    out = stripDotZeros(out);
+    return out;
+  } else {
+    const out = stripDotZeros(num.toFixed(dPlaces));
+    return out;
+  }
 }
 
 // #endregion ➤ 🛠️ METHODS

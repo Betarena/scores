@@ -75,7 +75,7 @@
       <div class="number">
         <slot name="number">
           {#if animation}
-            <TweenedNumber {number} toDecimalFix={2}/>
+            <TweenedNumber {number} fixNumber={2}/>
           {:else}
             {number}
           {/if}
