@@ -27,8 +27,10 @@
 
   import { page } from "$app/stores";
 
+  import { BetarenaUserHelper } from "$lib/firebase/common";
   import session from "$lib/store/session";
   import type { IProfileTrs } from "@betarena/scores-lib/types/types.profile.js";
+  import { onMount } from "svelte";
   import DashboardActivity from "./dashboard/DashboardActivity.svelte";
   import DashboardEarnings from "./dashboard/DashboardEarnings.svelte";
   import DashboardEngagement from "./dashboard/DashboardEngagement.svelte";
@@ -44,6 +46,28 @@
   $: ({ viewportType } = $session);
 
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+  
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+  
+  onMount(() => {
+	BetarenaUserHelper.getBtaTokenPriceQuote({
+      query: { strAmount: "1", strCurrency: "USD" },
+      body: {},
+    }).then(res => {
+		if (res.success) {
+			$session.btaUsdRate = res.success.data.intBtaEstimate;
+		}
+	})
+  })
+  
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 
 <!--

@@ -23,9 +23,9 @@ import { dlogv2, log_v3 } from '$lib/utils/debug.js';
 import { viewportChangeV2 } from '$lib/utils/device.js';
 
 import type { IPageRouteId, ISessionStore } from '$lib/types/types.session.js';
+import { parseObject } from '$lib/utils/string.2.js';
 import type { B_H_COMP_DATA } from '@betarena/scores-lib/types/_HASURA_.js';
 import type { FIREBASE_livescores_now, FIREBASE_odds, FIRE_LNNS } from '@betarena/scores-lib/types/firebase.js';
-import { parseObject } from '$lib/utils/string.2.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -53,6 +53,7 @@ const mobileBreakpoint = 575,
       currentActiveToast: null,
       currentAdminToggle: null,
       currentPageRouteId: 'Standard',
+      btaUsdRate: 0,
 
       // ### NOTE:
       // ### variables for show/hide.
@@ -130,6 +131,7 @@ type IDataProp =
   | 'globalStateRemove'
   | 'windowWidth'
   | 'userAgent'
+  | "btaRate"
 ;
 
 /**
@@ -364,6 +366,9 @@ function createLocalStore
               sessionStoreObj.windowWidth = dataPoint;
               const [isMobile, isTablet] = viewportChangeV2(dataPoint, mobileBreakpoint, tabletBreakpoint);
               sessionStoreObj.viewportType = dataPoint && isMobile ? 'mobile' : isTablet ? 'tablet' : 'desktop';
+            }
+            else if (dataTarget === "btaRate") {
+              sessionStoreObj.btaUsdRate = dataPoint;
             }
           }
 

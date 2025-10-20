@@ -305,5 +305,12 @@ export interface ISessionStore
    *  📣 Defines the type of device being used for viewing.
    * Can take the values 'mobile', 'tablet', 'desktop', or null if the device type is not determined.
    */
-  viewportType: "mobile" | "tablet" | "desktop" |  null;
+  viewportType: "mobile" | "tablet" | "desktop" | null;
+  
+   /**
+   * @description
+   *  📣 Exchange rate: amount of BTA tokens equivalent to 1 USD.
+   *  Example: 1 USD = X BTA
+   */
+  btaUsdRate: number;
 }
