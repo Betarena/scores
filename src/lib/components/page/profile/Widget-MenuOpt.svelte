@@ -13,17 +13,18 @@ COMPONENT JS (w/ TS)
 
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { viewport_change } from '$lib/utils/platform-functions';
-  import { logoutUser } from '$lib/utils/user.js';
+	import { logoutUser } from '$lib/utils/user.js';
 
 	import MenuOptRow from './Widget-MenuOpt-Row.svelte';
 
 	import profile_avatar from './assets/profile-avatar.svg';
 
+	import { get } from '$lib/api/utils.js';
+	import { routeIdPageProfileAuthorCreate, routeIdPageProfilePublication } from '$lib/constants/paths.js';
 	import type { PROFILE_OPT } from '$lib/types/types.scores.js';
-  import { fade, fly } from 'svelte/transition';
-  import { routeIdPageProfileAuthorCreate, routeIdPageProfilePublication } from '$lib/constants/paths.js';
-  import { getOptimizedImageUrl } from '$lib/utils/image.js';
-  import { get } from '$lib/api/utils.js';
+	import { getOptimizedImageUrl } from '$lib/utils/image.js';
+	import { fade, fly } from 'svelte/transition';
+	import { showDepositModal } from './deposit/showDeposit';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -42,7 +43,7 @@ COMPONENT JS (w/ TS)
       // 'Investor',
       'Deposit',
       'Withdraw',
-      // 'Transaction History',
+      'Transaction History',
       // 'Competitions History',
       // 'Scores',
       'Logout'
@@ -94,9 +95,7 @@ COMPONENT JS (w/ TS)
       targetUrl = `/u/partners/${$userBetarenaSettings.lang}`
     ;
     if (selectedMenuOpt == "Deposit") {
-      if (browser) {
-        window.open(`https://app.uniswap.org/explore/tokens/polygon/0x2519dadb4a41438c85b7c3251c22f45f90c9e459`, "_blank");
-      }
+      showDepositModal();
       selectedMenuOpt = "Dashboard";
       targetUrl = `/u/dashboard/${$userBetarenaSettings.lang}`;
     }
@@ -172,7 +171,6 @@ COMPONENT JS (w/ TS)
         break;
       case 'transaction-history':
         selectedMenuOpt = 'Transaction History';
-        goto(`/u/dashboard/${$userBetarenaSettings.lang}`, { replaceState: true });
         break;
       case 'withdraw':
         selectedMenuOpt = 'Withdraw';

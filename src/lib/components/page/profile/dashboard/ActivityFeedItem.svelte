@@ -3,8 +3,6 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
-	
-	import { modalStore } from './../../../store/modal.ts';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
@@ -25,25 +23,41 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { page } from "$app/stores";
-
-  import session from "$lib/store/session";
-  import type { IProfileTrs } from "@betarena/scores-lib/types/types.profile.js";
-  import DashboardActivity from "./dashboard/DashboardActivity.svelte";
-  import DashboardEarnings from "./dashboard/DashboardEarnings.svelte";
-  import DashboardEngagement from "./dashboard/DashboardEngagement.svelte";
-  import DashboardQuickActions from "./dashboard/DashboardQuickActions.svelte";
-  import DashboardTopArticles from "./dashboard/DashboardTopArticles.svelte";
-  import DashboardWallets from "./dashboard/DashboardWallets.svelte";
+  import Avatar from "$lib/components/ui/Avatar.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
 
-  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
-  $: ({ viewportType } = $session);
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
+  export let avatar: string;
+  export let name = "";
+  export let text = "";
+  export let connector = true;
+
+  const dotHeight = 3;
+  const dotGap = 3;
+  let dotsCount = 0;
+  let connectorDiv: HTMLDivElement;
+  let contentDiv: HTMLDivElement;
   // #endregion ➤ 📌 VARIABLES
+
+  $: if (connectorDiv && contentDiv && connector) {
+    const contentHeight = contentDiv.clientHeight;
+    const dotsHeight = contentHeight - connectorDiv.clientHeight;
+    dotsCount = Math.floor(dotsHeight / (dotHeight + dotGap));
+  }
 </script>
 
 <!--
@@ -56,31 +70,26 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
-<div id="dashboard-widget-container" class={viewportType}>
-  {#if viewportType !== "mobile"}
-    <div class="title">Dashboard</div>
-
-    <div class="sections-wrapper">
-      <div class="section-left">
-        <DashboardWallets />
-        <DashboardEarnings />
-        <DashboardTopArticles />
-      </div>
-      <div class="section-right">
-        <DashboardEngagement />
-        <DashboardActivity />
-        <DashboardQuickActions />
+<div class="activity-feed-item">
+  <div class="activity-avatar-wrapper" >
+    <div bind:this={connectorDiv}>
+      <Avatar size="lg" src={null} />
+    </div>
+    <div class="timeline-connector-wrapper">
+      {#each Array(dotsCount) as _item}
+        <div class="timeline-connector" />
+      {/each}
+    </div>
+  </div>
+  <div class="body-wrapper" bind:this={contentDiv}>
+    <div class="data-wrapper">
+      <div class="name">{name}</div>
+      <div class="text">
+        <slot name="text">{text}</slot>
       </div>
     </div>
-  {:else}
-    <DashboardWallets />
-    <DashboardEngagement />
-    <DashboardEarnings />
-    <DashboardTopArticles />
-    <DashboardActivity />
-    <DashboardQuickActions />
-  {/if}
+    <slot name="footer" />
+  </div>
 </div>
 
 <!--
@@ -94,54 +103,82 @@
 -->
 
 <style lang="scss">
-  #dashboard-widget-container {
-    height: 100%;
-    min-height: 500px;
-    width: 100%;
-
+  .activity-feed-item {
     display: flex;
-    flex-direction: column;
-    gap: var(--spacing-3xl, 24px);
+    width: 100%;
+    max-width: 360px;
+    align-items: stretch;
+    gap: var(--spacing-lg, 12px);
+    min-height: fit-content;
 
-    &:not(.mobile) {
-      border-radius: 12px;
-      background: var(--colors-background-bg-secondary, #232323);
-      padding: var(--spacing-2xl, 20px);
-      gap: var(--spacing-2xl, 20px);
-      .title {
-        color: var(--colors-text-text-primary-900, #fff);
-
-        /* Text xl/Semibold */
-        font-family: var(--font-family-font-family-body, Roboto);
-        font-size: var(--font-size-text-xl, 20px);
-        font-style: normal;
-        font-weight: 600;
-        line-height: var(--line-height-text-xl, 30px); /* 150% */
+    .activity-avatar-wrapper {
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      height: 100%;
+      min-height: 100%;
+      gap: var(--spacing-xxs, 6px);
+      :global(.avatar-wrapper) {
+        flex-shrink: 0;
       }
-
-      .sections-wrapper {
+      .timeline-connector-wrapper {
+        flex-grow: 1;
+        flex-shrink: 1;
+        height: 100%;
+        width: 100%;
         display: flex;
-        gap: var(--spacing-2xl, 20px);
-        flex-wrap: wrap;
+        flex-direction: column;
+        justify-content: start;
+        align-items: center;
+        gap: 3px;
 
-        .section-left {
-          flex: 3 1 450px;
-          // max-width: 637px;
-          min-width: 450px;
-          display: flex;
-          flex-direction: column;
-          gap: var(--spacing-2xl, 20px);
+        .timeline-connector {
+          flex-shrink: 0;
+          width: 3px;
+          height: 3px;
+          border-radius: 999px;
+          background-color: var(--colors-border-border-primary, #d2d2d2);
         }
-        .section-right {
-          max-width: 100%;
-          flex-grow: 1;
-          flex-shrink: 1;
-          min-width: 265px;
+      }
+    }
+    .body-wrapper {
+      display: flex;
+      padding-bottom: var(--spacing-4xl, 32px);
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--spacing-lg, 12px);
+      flex: 1 0 0;
+
+      .data-wrapper {
+        display: flex;
+        flex-direction: column;
+
+        .name {
           display: flex;
-          flex-direction: column;
-          gap: var(--spacing-2xl, 20px);
+          align-items: center;
+          gap: var(--spacing-md, 8px);
+          align-self: stretch;
+
+          color: var(--colors-text-text-secondary-700, #525252);
+
+          /* Text sm/Medium */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-sm, 14px);
+          font-style: normal;
+          font-weight: 500;
+          line-height: var(--line-height-text-sm, 20px); /* 142.857% */
         }
-        
+        .text {
+          color: var(--colors-text-text-tertiary-600, #6a6a6a);
+
+          /* Text sm/Regular */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-sm, 14px);
+          font-style: normal;
+          font-weight: 400;
+          line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+        }
       }
     }
   }

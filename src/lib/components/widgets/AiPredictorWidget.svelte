@@ -256,7 +256,7 @@
     <div class="lock-screen">
       <div class="lock-screen-header">
         <div class="heading-icon">
-          <FeaturedIcon type="gray">
+          <FeaturedIcon color="gray">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="25"

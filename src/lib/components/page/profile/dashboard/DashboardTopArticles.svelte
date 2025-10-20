@@ -8,9 +8,12 @@
 -->
 
 <script lang="ts">
-  export let size: "sm" | "md" | "lg" | "xl" = "md";
-  export let color: "brand" | "gray" | "error" | "warning" | "sucess" = "brand";
-  export let type: "modern" | "light" = "light";
+
+    const articles = [
+        {title: "The Outermost House", tips: 123},
+        {title: "Northern Farm", tips: 86},
+        {title: "Northern Farm", tips: 86},
+    ]
 </script>
 
 <!--
@@ -23,9 +26,17 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
-<div class="featured-icon {size} {color} {type}">
-  <slot />
+<div id="dashboard-top-articles">
+  <div class="title">Top Articles by Tips</div>
+  <div class="articles-wrapper">
+    {#each articles as article}
+        <div class="article">
+            <div class="title">{article.title}</div>
+            <div class="tips">{article.tips} Tips</div>
+        </div>
+         <!-- content here -->
+    {/each}    
+</div>
 </div>
 
 <!--
@@ -39,114 +50,66 @@
 -->
 
 <style lang="scss">
-  .featured-icon {
+  #dashboard-top-articles {
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
     flex-shrink: 0;
-    border-radius: var(--radius-full, 9999px);
+    width: 100%;
+    align-self: stretch;
 
-    &.sm {
-      width: 32px;
-      height: 32px;
-      padding: 8px;
-      :global(svg) {
-        width: 16px;
-        height: 16px;
-      }
-    }
+    .title {
+      color: var(--colors-text-text-secondary-700, #fbfbfb);
 
-    &.md {
-      width: 40px;
-      height: 40px;
-      padding: 10px;
-      :global(svg) {
-        width: 20px;
-        height: 20px;
-      }
+      /* Text lg/Semibold */
+      font-family: var(--font-family-font-family-body, Roboto);
+      font-size: var(--font-size-text-lg, 18px);
+      font-style: normal;
+      font-weight: 600;
+      line-height: var(--line-height-text-lg, 28px); /* 155.556% */
     }
-    &.lg {
-      width: 48px;
-      height: 48px;
-      padding: 12px;
-      :global(svg) {
-        width: 24px;
-        height: 24px;
-      }
-    }
-    &.xl {
-      width: 56px;
-      height: 56px;
-      padding: 14px;
-      :global(svg) {
-        width: 28px;
-        height: 28px;
-      }
-    }
+    .articles-wrapper {
+      display: flex;
+      padding: 0 var(--spacing-none, 0);
+      flex-direction: column;
+      align-items: flex-start;
+      flex-shrink: 0;
+      width: 100%;
+      align-self: stretch;
 
-    &.brand {
-      background: var(--colors-background-bg-brand-secondary, #feece2);
-      :global(path) {
-        stroke: var(
-          --component-colors-components-icons-featured-icons-light-featured-icon-light-fg-brand
-        ) !important;
-      }
-    }
-
-    &.gray {
-      background: var(--colors-background-bg-tertiary, #f7f7f7);
-      :global(path) {
-        stroke: var(
-          --component-colors-components-icons-featured-icons-light-featured-icon-light-fg-gray
-        ) !important;
-      }
-
-      &.modern {
-        border-radius: var(--radius-md, 8px);
-        border: 1px solid var(--colors-border-border-primary, #d2d2d2);
-        background: var(--colors-background-bg-primary, #fff);
-        color: var(--colors-foreground-fg-secondary-700);
-        /* Shadows/shadow-xs-skeuomorphic */
-        box-shadow: 0 0 0 1px
-            var(
-              --colors-effects-shadows-shadow-skeumorphic-inner-border,
-              rgba(10, 13, 18, 0.18)
-            )
-            inset,
-          0 -2px 0 0 var(
-              --colors-effects-shadows-shadow-skeumorphic-inner,
-              rgba(10, 13, 18, 0.05)
-            ) inset,
-          0 1px 2px 0
-            var(--colors-effects-shadows-shadow-xs, rgba(10, 13, 18, 0.05));
-        :global(path) {
-          stroke: var(--colors-foreground-fg-secondary-700) !important;
+      .article {
+        padding-block: var(--spacing-lg, 12px);
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+        align-self: stretch;
+        border-top: 1px dashed var(--colors-border-border-primary, #525252);
+        &:last-child {
+            border-bottom: 1px dashed var(--colors-border-border-primary, #525252);
         }
-      }
-    }
 
-    &.error {
-      background: var(--colors-background-bg-error-secondary, #fee4e2);
-      :global(path) {
-        stroke: var(
-          --component-colors-components-icons-featured-icons-light-featured-icon-light-fg-error
-        ) !important;
-      }
-    }
-    &.warning {
-      background: var(--colors-background-bg-warning-secondary, #fef0c7);
-      :global(path) {
-        stroke: var(
-          --component-colors-components-icons-featured-icons-light-featured-icon-light-fg-warning
-        ) !important;
-      }
-    }
-    &.sucess {
-      background: var(--colors-background-bg-success-secondary, #dcfae6);
-      :global(path) {
-        stroke: var(
-          --component-colors-components-icons-featured-icons-light-featured-icon-light-fg-success
-        ) !important;
+        .title {
+          color: var(--colors-text-text-secondary-700, #fbfbfb);
+
+          /* Text sm/Semibold */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-sm, 14px);
+          font-style: normal;
+          font-weight: 600;
+          line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+        }
+        .tips {
+          color: var(--colors-text-text-tertiary-600, #8c8c8c);
+
+          /* Text sm/Regular */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-sm, 14px);
+          font-style: normal;
+          font-weight: 400;
+          line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+        }
       }
     }
   }

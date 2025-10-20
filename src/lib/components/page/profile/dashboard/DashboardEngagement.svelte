@@ -4,7 +4,6 @@
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
 	
-	import { modalStore } from './../../../store/modal.ts';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
@@ -24,25 +23,38 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
-  import { page } from "$app/stores";
-
+  import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
+  import MetricChart from "$lib/components/ui/metrics/MetricChart.svelte";
   import session from "$lib/store/session";
-  import type { IProfileTrs } from "@betarena/scores-lib/types/types.profile.js";
-  import DashboardActivity from "./dashboard/DashboardActivity.svelte";
-  import DashboardEarnings from "./dashboard/DashboardEarnings.svelte";
-  import DashboardEngagement from "./dashboard/DashboardEngagement.svelte";
-  import DashboardQuickActions from "./dashboard/DashboardQuickActions.svelte";
-  import DashboardTopArticles from "./dashboard/DashboardTopArticles.svelte";
-  import DashboardWallets from "./dashboard/DashboardWallets.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
 
-  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
-  $: ({ viewportType } = $session);
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
+  $: ({ viewportType } = $session);
+  const options = [
+    { id: 1, label: "All" },
+    { id: 2, label: "Not All" },
+  ];
+
+  const engagements = [
+    { label: "Subscribers", count: 20.8, change: 12 },
+    { label: "Views", count: 26.4, change: -2 },
+  ];
+
+  let selectedOption = options[0];
   // #endregion ➤ 📌 VARIABLES
 </script>
 
@@ -56,31 +68,18 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
-<div id="dashboard-widget-container" class={viewportType}>
-  {#if viewportType !== "mobile"}
-    <div class="title">Dashboard</div>
-
-    <div class="sections-wrapper">
-      <div class="section-left">
-        <DashboardWallets />
-        <DashboardEarnings />
-        <DashboardTopArticles />
-      </div>
-      <div class="section-right">
-        <DashboardEngagement />
-        <DashboardActivity />
-        <DashboardQuickActions />
-      </div>
+<div id="dashboard-engagement" class={viewportType}>
+  <div class="title-wrapper">
+    <div class="title">Engagement</div>
+    <div class="dropdown">
+      <DropDownInput checkIcon={true} {options} bind:value={selectedOption} />
     </div>
-  {:else}
-    <DashboardWallets />
-    <DashboardEngagement />
-    <DashboardEarnings />
-    <DashboardTopArticles />
-    <DashboardActivity />
-    <DashboardQuickActions />
-  {/if}
+  </div>
+  <div class="metrics-wrappers">
+    {#each engagements as { label, count, change }}
+      <MetricChart text={label} number={count} animation={true} {change} />
+    {/each}
+  </div>
 </div>
 
 <!--
@@ -94,54 +93,56 @@
 -->
 
 <style lang="scss">
-  #dashboard-widget-container {
-    height: 100%;
-    min-height: 500px;
-    width: 100%;
-
+  #dashboard-engagement {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-3xl, 24px);
-
-    &:not(.mobile) {
-      border-radius: 12px;
-      background: var(--colors-background-bg-secondary, #232323);
-      padding: var(--spacing-2xl, 20px);
-      gap: var(--spacing-2xl, 20px);
+    align-items: flex-start;
+    gap: 12px;
+    flex-shrink: 0;
+    align-self: stretch;
+    .title-wrapper {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-none, 0);
+      flex-shrink: 0;
+      align-self: stretch;
+      flex-direction: column;
+      gap: 12px;
+      align-items: start;
+      height: fit-content;
       .title {
-        color: var(--colors-text-text-primary-900, #fff);
-
-        /* Text xl/Semibold */
+        color: var(--colors-text-text-secondary-700, #fbfbfb);
+        flex: 1 0 0;
+        /* Text lg/Semibold */
         font-family: var(--font-family-font-family-body, Roboto);
-        font-size: var(--font-size-text-xl, 20px);
+        font-size: var(--font-size-text-lg, 18px);
         font-style: normal;
         font-weight: 600;
-        line-height: var(--line-height-text-xl, 30px); /* 150% */
+        line-height: var(--line-height-text-lg, 28px); /* 155.556% */
       }
 
-      .sections-wrapper {
-        display: flex;
-        gap: var(--spacing-2xl, 20px);
-        flex-wrap: wrap;
+      .dropdown {
+        flex: 1 0 0;
+        width: 100%;
+      }
+    }
 
-        .section-left {
-          flex: 3 1 450px;
-          // max-width: 637px;
-          min-width: 450px;
-          display: flex;
-          flex-direction: column;
-          gap: var(--spacing-2xl, 20px);
-        }
-        .section-right {
-          max-width: 100%;
-          flex-grow: 1;
-          flex-shrink: 1;
-          min-width: 265px;
-          display: flex;
-          flex-direction: column;
-          gap: var(--spacing-2xl, 20px);
-        }
-        
+    .metrics-wrappers {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 20px;
+      min-width: 0;
+      align-self: stretch;
+    }
+    &:not(.mobile) {
+       min-width: 0;
+      :global(.metric-chart-1) {
+        flex: 1 1 0;
+        min-width: 0;
+      }
+      .metrics-wrappers{
+        justify-content: flex-start;
       }
     }
   }

@@ -3,14 +3,22 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+	import VisaIcon from './../../../ui/assets/VisaIcon.svelte';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <script lang="ts">
-  export let size: "sm" | "md" | "lg" | "xl" = "md";
-  export let color: "brand" | "gray" | "error" | "warning" | "sucess" = "brand";
-  export let type: "modern" | "light" = "light";
+  import VisaIcon from "$lib/components/ui/assets/VisaIcon.svelte";
+  import RadioGroupItem from "$lib/components/ui/RadioGroupItem.svelte";
+
+  export let buttonDisabled;
+  
+  let checked = true;
+  $: buttonDisabled = !checked;
+  $: if (!checked) {
+    checked = true;
+  }
 </script>
 
 <!--
@@ -24,8 +32,27 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="featured-icon {size} {color} {type}">
-  <slot />
+<div class="deposit-options-wrapper">
+  <div class="header">
+    <div class="title">Add Funds to Your Spending Wallet</div>
+    <div class="description">Choose how you want to buy BTA</div>
+  </div>
+  <div class="options">
+    <RadioGroupItem bind:selected={checked}>
+      <div slot="icon"><VisaIcon /></div>
+      <div slot="content" class="option-content">
+        <div class="option-title">Credit Card (Revolut)</div>
+        <div class="option-description">Instant purchase with Visa/Master</div>
+      </div>
+    </RadioGroupItem>
+    <!-- <RadioGroupItem disabled={true}>
+      <div slot="icon"><BitcoinCardIcon /></div>
+      <div slot="content" class="option-content">
+        <div class="option-title">Crypto Transfer</div>
+        <div class="option-description">Send USDT, USDC, or POL</div>
+      </div>
+    </RadioGroupItem> -->
+  </div>
 </div>
 
 <!--
@@ -39,114 +66,80 @@
 -->
 
 <style lang="scss">
-  .featured-icon {
+  .deposit-options-wrapper {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-shrink: 0;
-    border-radius: var(--radius-full, 9999px);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-lg, 12px);
+    align-self: stretch;
+    width: 100%;
 
-    &.sm {
-      width: 32px;
-      height: 32px;
-      padding: 8px;
-      :global(svg) {
-        width: 16px;
-        height: 16px;
-      }
-    }
+    .header {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      align-self: stretch;
 
-    &.md {
-      width: 40px;
-      height: 40px;
-      padding: 10px;
-      :global(svg) {
-        width: 20px;
-        height: 20px;
-      }
-    }
-    &.lg {
-      width: 48px;
-      height: 48px;
-      padding: 12px;
-      :global(svg) {
-        width: 24px;
-        height: 24px;
-      }
-    }
-    &.xl {
-      width: 56px;
-      height: 56px;
-      padding: 14px;
-      :global(svg) {
-        width: 28px;
-        height: 28px;
-      }
-    }
+      .title {
+        color: var(--colors-text-text-primary-900, #fff);
 
-    &.brand {
-      background: var(--colors-background-bg-brand-secondary, #feece2);
-      :global(path) {
-        stroke: var(
-          --component-colors-components-icons-featured-icons-light-featured-icon-light-fg-brand
-        ) !important;
-      }
-    }
-
-    &.gray {
-      background: var(--colors-background-bg-tertiary, #f7f7f7);
-      :global(path) {
-        stroke: var(
-          --component-colors-components-icons-featured-icons-light-featured-icon-light-fg-gray
-        ) !important;
+        /* Text xl/Semibold */
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-xl, 20px);
+        font-style: normal;
+        font-weight: 600;
+        line-height: var(--line-height-text-xl, 30px); /* 150% */
       }
 
-      &.modern {
-        border-radius: var(--radius-md, 8px);
-        border: 1px solid var(--colors-border-border-primary, #d2d2d2);
-        background: var(--colors-background-bg-primary, #fff);
-        color: var(--colors-foreground-fg-secondary-700);
-        /* Shadows/shadow-xs-skeuomorphic */
-        box-shadow: 0 0 0 1px
-            var(
-              --colors-effects-shadows-shadow-skeumorphic-inner-border,
-              rgba(10, 13, 18, 0.18)
-            )
-            inset,
-          0 -2px 0 0 var(
-              --colors-effects-shadows-shadow-skeumorphic-inner,
-              rgba(10, 13, 18, 0.05)
-            ) inset,
-          0 1px 2px 0
-            var(--colors-effects-shadows-shadow-xs, rgba(10, 13, 18, 0.05));
-        :global(path) {
-          stroke: var(--colors-foreground-fg-secondary-700) !important;
+      .description {
+        color: var(--colors-text-text-tertiary-600, #8c8c8c);
+
+        /* Text md/Regular */
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-md, 16px);
+        font-style: normal;
+        font-weight: 400;
+        line-height: var(--line-height-text-md, 24px); /* 150% */
+      }
+    }
+    .options {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--spacing-lg, 12px);
+      align-self: stretch;
+      width: 100%;
+
+      :global(.radio-group-item) {
+        max-width: 100%;
+      }
+      .option-content {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        align-self: stretch;
+
+        .option-title {
+          color: var(--colors-text-text-secondary-700, #fbfbfb);
+
+          /* Text sm/Medium */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-sm, 14px);
+          font-style: normal;
+          font-weight: 500;
+          line-height: var(--line-height-text-sm, 20px); /* 142.857% */
         }
-      }
-    }
 
-    &.error {
-      background: var(--colors-background-bg-error-secondary, #fee4e2);
-      :global(path) {
-        stroke: var(
-          --component-colors-components-icons-featured-icons-light-featured-icon-light-fg-error
-        ) !important;
-      }
-    }
-    &.warning {
-      background: var(--colors-background-bg-warning-secondary, #fef0c7);
-      :global(path) {
-        stroke: var(
-          --component-colors-components-icons-featured-icons-light-featured-icon-light-fg-warning
-        ) !important;
-      }
-    }
-    &.sucess {
-      background: var(--colors-background-bg-success-secondary, #dcfae6);
-      :global(path) {
-        stroke: var(
-          --component-colors-components-icons-featured-icons-light-featured-icon-light-fg-success
-        ) !important;
+        .option-description {
+          color: var(--colors-text-text-tertiary-600, #8c8c8c);
+
+          /* Text sm/Regular */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-sm, 14px);
+          font-style: normal;
+          font-weight: 400;
+          line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+        }
       }
     }
   }
