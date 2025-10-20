@@ -22,6 +22,7 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
+  import { post } from "$lib/api/utils";
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import session from "$lib/store/session.js";
@@ -73,7 +74,7 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function handleClick() {
+  async function handleClick() {
     if (!isAuth) {
       $session.currentActiveModal = "Auth_Modal";
       return;
@@ -81,6 +82,10 @@
     userSettings.updateData([
       ["user-subscriptions", { target: "sportstacks", id, follow: !isFollow }],
     ]);
+    await post("/api/data/author/sportstack", {
+      authorId: id,
+      subscribe: !isFollow,
+    });
   }
 
   // #endregion ➤ 🛠️ METHODS
