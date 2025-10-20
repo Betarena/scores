@@ -100,14 +100,19 @@
   async function followDefaultSportstack(
     author: IPageAuthorTranslationDataFinal
   ) {
-    if (scores_user_data?.subscriptions?.sportstacks?.includes(author.id))
+    const id = author.id
+    if (scores_user_data?.subscriptions?.sportstacks?.includes(id))
       return;
     userSettings.updateData([
       [
         "user-subscriptions",
-        { target: "sportstacks", id: author.id, follow: true },
+        { target: "sportstacks", id, follow: true },
       ],
     ]);
+    await post("/api/data/author/sportstack", {
+      authorId: id,
+      subscribe: true,
+    });
   }
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
