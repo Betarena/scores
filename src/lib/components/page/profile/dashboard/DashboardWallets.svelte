@@ -30,6 +30,7 @@
   import TweenedNumber from "$lib/components/ui/metrics/TweenedNumber.svelte";
   import Progress from "$lib/components/ui/Progress.svelte";
   import session from "$lib/store/session";
+  import { walletStore } from "$lib/store/wallets";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -49,7 +50,8 @@
 
   let selectedWallet = "spending";
   $: ({ viewportType } = $session);
-  // #endregion ➤ 📌 VARIABLES
+  $: ({ spending, rewards, primary } = $walletStore);
+// #endregion ➤ 📌 VARIABLES
 </script>
 
 <!--
@@ -93,7 +95,7 @@
           />
         </svg>
         <div class="balance" slot="number">
-          <span class="amount">23 BTA</span>
+          <span class="amount">{primary.available.toFixed(0)} BTA</span>
           <div class="usd">$12</div>
         </div>
       </MetricItem4>
@@ -123,7 +125,7 @@
           />
         </svg>
         <div class="balance" slot="number">
-          <span class="amount">23 BTA</span>
+          <span class="amount">{spending.available.toFixed(0)} BTA</span>
           <div class="usd">$12</div>
         </div>
       </MetricItem4>
@@ -153,14 +155,14 @@
           />
         </svg>
         <div class="balance" slot="number">
-          <span class="amount"><TweenedNumber number={23} /> BTA</span>
+          <span class="amount"><TweenedNumber number={rewards.available} /> BTA</span>
           <div class="usd">$<TweenedNumber number={12} /></div>
         </div>
       </MetricItem4>
       <div class="progress-wrapper">
         {#if viewportType === "mobile"}
           <div class="progress-text">
-            <div class="text"><TweenedNumber number={23} /> BTA</div>
+            <div class="text"><TweenedNumber number={rewards.available} /> BTA</div>
             <div class="supporting-text">$50/$500</div>
           </div>
         {/if}

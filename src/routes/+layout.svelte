@@ -84,6 +84,7 @@
   import AndroidPwaBanner from '$lib/components/AndroidPWABanner.svelte';
   import { loginStore } from '$lib/components/section/login/login-store';
   import history_store from '$lib/store/history.js';
+  import { initWalletStore } from '$lib/store/wallets';
   import { gotoSW } from '$lib/utils/sveltekitWrapper';
   import WidgetAdEngine from '@betarena/ad-engine';
 
@@ -374,6 +375,10 @@
     );
     updateVh();
     window?.visualViewport?.addEventListener('resize', updateVh);
+  }
+
+  $: if (browser && uid) {
+    initWalletStore(uid);
   }
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]

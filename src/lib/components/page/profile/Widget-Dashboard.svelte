@@ -125,7 +125,7 @@
         flex-wrap: wrap;
 
         .section-left {
-          flex: 3 1 450px;
+          flex: 4 1 450px;
           // max-width: 637px;
           min-width: 450px;
           display: flex;
