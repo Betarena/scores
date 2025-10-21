@@ -141,7 +141,7 @@
         selectedWallet = "rewards";
       }}
     >
-      <MetricItem4 text="Rewards" change={rewards.growthPct || 0}>
+      <MetricItem4 text="Rewards" change={rewards.growthPct}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="22"

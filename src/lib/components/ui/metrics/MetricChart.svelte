@@ -42,7 +42,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   export let text = "";
   export let number = 0;
-  export let change = 6.2;
+  export let change: number | undefined;
   export let menu = false;
   export let supportText = "";
   export let animation = false;
