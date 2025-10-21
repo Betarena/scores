@@ -42,7 +42,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   export let text = "";
   export let number = "";
-  export let change = 6.2;
+  export let change: number | undefined;
   export let menu = false;
 
   // #endregion ➤ 📌 VARIABLES
@@ -76,7 +76,7 @@
           {number}
         </slot>
       </div>
-        <Change {change} type="third" />
+      <Change {change} type="third" />
     </div>
   </div>
 </div>

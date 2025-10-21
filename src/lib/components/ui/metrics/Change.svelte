@@ -40,10 +40,10 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let change = 0;
+  export let change: number | undefined;
   export let type: "first" | "second" | "third" = "third";
 
-  $: positive = change >= 0;
+  $: positive = change === undefined || change >= 0;
   // #endregion ➤ 📌 VARIABLES
 </script>
 
@@ -163,7 +163,13 @@
     {/if}
     <!-- content here -->
   {/if}
-  <span class="text"><TweenedNumber number={change} fixNumber={0} needsToFormat={false}/>%</span>
+  <span class="text">
+    {#if change}
+      <TweenedNumber number={change} fixNumber={0} needsToFormat={false} />%
+    {:else}
+      -
+    {/if}
+  </span>
 </div>
 
 <!--

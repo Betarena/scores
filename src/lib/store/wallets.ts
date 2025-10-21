@@ -48,7 +48,7 @@ async function initWalletStore(uid: string) {
                 growthPct: pct(spendingChange, spendingPast),
                 updatedAt: now
             },
-            rewards: { available: 0, updatedAt: now, growthPct: 0 }, // frozen for now
+            rewards: { available: 0, updatedAt: now }, // frozen for now
             loaded: true
         });
     }, (err) => {

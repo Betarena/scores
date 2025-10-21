@@ -34,7 +34,11 @@
   <div class="title">Activity</div>
   <div class="activity-list">
     {#each users as user, index}
-      <ActivityFeedItem avatar={user.avatar} name={user.name} connector={index !== users.length - 1}>
+      <ActivityFeedItem
+        avatar={user.avatar}
+        name={user.name}
+        connector={index !== users.length - 1}
+      >
         <div class="shared" slot="text">
           Shared
           <span class="amount">
@@ -44,8 +48,13 @@
         </div>
       </ActivityFeedItem>
     {/each}
-    <div class="no-activity">
-      No activity
+    <div class="empty-state">
+      <div class="empty-text-wrapper">
+        <div class="empty-title">No activity</div>
+        <div class="empty-text">
+          When users give your content an award, you'll find it right here!
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -114,13 +123,43 @@
       }
     }
 
-    .no-activity {
+    .empty-state {
       display: flex;
-      height: 400px;
-      width: 100%;
-      color: var(--colors-text-text-tertiary-600, #6a6a6a);;
       justify-content: center;
       align-items: center;
+      align-self: stretch;
+      width: 100%;
+      .empty-text-wrapper {
+        display: flex;
+        max-width: 352px;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--spacing-xs, 4px);
+        align-self: stretch;
+
+        .empty-title {
+          color: var(--colors-text-text-primary-900, #fff);
+          text-align: center;
+
+          /* Text md/Semibold */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-md, 16px);
+          font-style: normal;
+          font-weight: 600;
+          line-height: var(--line-height-text-md, 24px); /* 150% */
+        }
+        .empty-text {
+          color: var(--colors-text-text-tertiary-600, #8c8c8c);
+          text-align: center;
+
+          /* Text sm/Regular */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-sm, 14px);
+          font-style: normal;
+          font-weight: 400;
+          line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+        }
+      }
     }
   }
 </style>
