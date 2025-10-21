@@ -5,7 +5,7 @@ import { type Writable, writable } from "svelte/store";
 type Wallet = { available: number; growthPct?: number; trend?: 'up' | 'down' | 'flat'; updatedAt?: string };
 
 const pct = (change = 0, past = 0) =>
-    past > 0 ? (change / past) * 100 : 0;
+   Number(( past > 0 ? (change / past) * 100 : 0).toFixed(0));
 
 interface WalletStoreData {
     primary: Wallet;
