@@ -43,7 +43,7 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  $: ({available} = $walletStore.primary)
+  $: ({primary, spending} = $walletStore)
 
   // #endregion ➤ 📌 VARIABLES
 </script>
@@ -59,7 +59,7 @@
     </div>
     <div class="info">
       <span class="amount">
-        {spliceBalanceDoubleZero(toDecimalFix(available)) ?? "0.00"}
+        {spliceBalanceDoubleZero(toDecimalFix(primary.available + spending.available)) ?? "0.00"}
       </span>
       <span class="amount"
         >BTA</span
