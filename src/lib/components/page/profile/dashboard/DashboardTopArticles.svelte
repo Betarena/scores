@@ -10,9 +10,9 @@
 <script lang="ts">
 
     const articles = [
-        {title: "The Outermost House", tips: 123},
-        {title: "Northern Farm", tips: 86},
-        {title: "Northern Farm", tips: 86},
+        // {title: "The Outermost House", tips: 123},
+        // {title: "Northern Farm", tips: 86},
+        // {title: "Northern Farm", tips: 86},
     ]
 </script>
 
@@ -35,7 +35,10 @@
             <div class="tips">{article.tips} Tips</div>
         </div>
          <!-- content here -->
-    {/each}    
+    {/each}
+    <div class="no-data">
+      No data
+    </div> 
 </div>
 </div>
 
@@ -111,6 +114,14 @@
           line-height: var(--line-height-text-sm, 20px); /* 142.857% */
         }
       }
+    }
+     .no-data {
+      display: flex;
+      height: 200px;
+      width: 100%;
+      color: var(--colors-text-text-tertiary-600, #6a6a6a);;
+      justify-content: center;
+      align-items: center;
     }
   }
 </style>

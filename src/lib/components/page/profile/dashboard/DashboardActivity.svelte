@@ -11,12 +11,12 @@
   import ActivityFeedItem from "./ActivityFeedItem.svelte";
 
   const users = [
-    { avatar: null, name: "User Name", amount: 10 },
-    { avatar: null, name: "User Name", amount: 10 },
-    { avatar: null, name: "User Name", amount: 10 },
-    { avatar: null, name: "User Name", amount: 10 },
-    { avatar: null, name: "User Name", amount: 10 },
-    { avatar: null, name: "User Name", amount: 10 },
+    // { avatar: null, name: "User Name", amount: 10 },
+    // { avatar: null, name: "User Name", amount: 10 },
+    // { avatar: null, name: "User Name", amount: 10 },
+    // { avatar: null, name: "User Name", amount: 10 },
+    // { avatar: null, name: "User Name", amount: 10 },
+    // { avatar: null, name: "User Name", amount: 10 },
   ];
 </script>
 
@@ -44,6 +44,9 @@
         </div>
       </ActivityFeedItem>
     {/each}
+    <div class="no-activity">
+      No activity
+    </div>
   </div>
 </div>
 
@@ -71,11 +74,11 @@
       color: var(--colors-text-text-secondary-700, #fbfbfb);
 
       /* Text lg/Semibold */
-      font-family: var(--Font-family-font-family-body, Roboto);
-      font-size: var(--Font-size-text-lg, 18px);
+      font-family: var(--font-family-font-family-body, Roboto);
+      font-size: var(--font-size-text-lg, 18px);
       font-style: normal;
       font-weight: 600;
-      line-height: var(--Line-height-text-lg, 28px); /* 155.556% */
+      line-height: var(--line-height-text-lg, 28px); /* 155.556% */
     }
     .activity-list {
       display: flex;
@@ -109,6 +112,15 @@
       :global(.activity-feed-item:last-child .body-wrapper) {
         padding-bottom: 0;
       }
+    }
+
+    .no-activity {
+      display: flex;
+      height: 400px;
+      width: 100%;
+      color: var(--colors-text-text-tertiary-600, #6a6a6a);;
+      justify-content: center;
+      align-items: center;
     }
   }
 </style>
