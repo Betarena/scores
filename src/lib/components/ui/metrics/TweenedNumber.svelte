@@ -104,7 +104,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   
   function format(num) {
-    if (!needsToFormat) return num.toString(fixNumber);
+    if (!needsToFormat) return num.toFixed(fixNumber);
     return toDecimalFix(num, 2, true, true, true)
   }
   

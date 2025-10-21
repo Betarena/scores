@@ -8,6 +8,24 @@
 -->
 
 <script lang="ts">
+  // #region ➤ 📦 Package Imports
+  
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+  
+  import TweenedNumber from "./TweenedNumber.svelte";
+  
+  // #endregion ➤ 📦 Package Imports
   // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -145,7 +163,7 @@
     {/if}
     <!-- content here -->
   {/if}
-  <span class="text">{change}%</span>
+  <span class="text"><TweenedNumber number={change} fixNumber={0} needsToFormat={false}/>%</span>
 </div>
 
 <!--
