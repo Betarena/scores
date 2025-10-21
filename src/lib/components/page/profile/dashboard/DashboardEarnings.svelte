@@ -90,19 +90,23 @@
         "Nov",
         "Dec",
       ],
-      data: [10, 11, 12, 13, 15, 14, 13, 16, 17, 16.5, 17, 11],
+      data: []
+      // data: [10, 11, 12, 13, 15, 14, 13, 16, 17, 16.5, 17, 11],
     },
     month: {
       labels: ["1", "6", "12", "18", "24", "30"],
-      data: [8, 9, 11, 12, 12.5, 13.2],
+      // data: [8, 9, 11, 12, 12.5, 13.2],
+      data: []
     },
     week: {
       labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-      data: [11, 11.2, 11.8, 12.1, 12.0, 12.4, 12.8],
+      // data: [11, 11.2, 11.8, 12.1, 12.0, 12.4, 12.8],
+      data: []
     },
     day: {
       labels: ["00", "04", "08", "12", "16", "20", "24"],
-      data: [12.0, 11.8, 11.6, 12.2, 12.4, 12.6, 13.0],
+      // data: [12.0, 11.8, 11.6, 12.2, 12.4, 12.6, 13.0],
+      data: [],
     },
     custom: generateRandomForRange(dateRange)
   };
@@ -135,7 +139,7 @@
       labels.push(`${d.getDate()}.${d.getMonth() + 1}`);
     }
 
-    return { labels, data };
+    return { labels, data: [] };
   }
 
 
@@ -435,13 +439,13 @@
         <div class="numbers-data">
           <span class="bta">BTA</span>
           <div class="numbers">
-            <div class="amount"><TweenedNumber fixNumber={1} number={1800}  /></div>
+            <div class="amount"><TweenedNumber fixNumber={1} number={0}  /></div>
             {#if $session.btaUsdRate}
-               <div class="usd">$<TweenedNumber fixNumber={1} number={1800 / $session.btaUsdRate} /></div>
+               <div class="usd">$<TweenedNumber fixNumber={1} number={0 / $session.btaUsdRate} /></div>
             {/if}
           </div>
         </div>
-        <Change type="second" change={7.2} />
+        <Change type="second" change={0} />
       </div>
     </div>
   </div>

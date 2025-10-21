@@ -50,8 +50,8 @@
   ];
 
   const engagements = [
-    { label: "Subscribers", count: 20.8, change: 12 },
-    { label: "Views", count: 26.4, change: -2 },
+    { label: "Subscribers", count: 0, change: 0 },
+    { label: "Views", count: 0, change: 0 },
   ];
 
   let selectedOption = options[0];
