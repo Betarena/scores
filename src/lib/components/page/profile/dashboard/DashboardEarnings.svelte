@@ -436,7 +436,9 @@
           <span class="bta">BTA</span>
           <div class="numbers">
             <div class="amount"><TweenedNumber number={1800} /></div>
-            <div class="usd">$125</div>
+            {#if $session.btaUsdRate}
+               <div class="usd">$<TweenedNumber number={1800 / $session.btaUsdRate} /></div>
+            {/if}
           </div>
         </div>
         <Change type="second" change={7.2} />

@@ -368,6 +368,8 @@ export function formatNumberWithCommas
  * toDecimalFix(20.204343, 4, true)
  * // returns 20.2043
  * toDecimalFix(20.204343, 4, true, false)
+ * // returns 2.8k
+ * toDecimalFix(2800, 1, true, false, true)
  * @param { number | null } value
  *  💠 **[required]** Value to mutate for decimal places.
  * @param { number } [dPlaces=2]
@@ -390,14 +392,17 @@ export function toDecimalFix
   , shortenThousands: boolean = false
 ): string
 {
-  if (value == null) return '-';
+   if (value == null) return '-';
   const num = Number(value);
   if (Number.isNaN(num)) return '-';
 
   const suffixes = ['', 'k', 'M', 'B', 'T', 'P', 'E'];
 
-  const stripDotZeros = (s: string) =>
-    removeDot00 ? s.replace(/\.0+$/, '') : s;
+  const stripDotZeros = (s: string) => {
+    if (!removeDot00) return s;
+    // remove trailing zeros after decimal, keep significant decimals, remove decimal point if empty
+    return s.replace(/(\.\d*?[1-9])0+$/,'$1').replace(/\.0+$/,'');
+  };
 
   // SHORTENING path (1 234 -> 1.2k)
   if (shortenThousands && Math.abs(num) >= 1000) {
@@ -412,7 +417,6 @@ export function toDecimalFix
         ? Math.floor(scaled * mult) / mult
         : Math.ceil(scaled * mult) / mult;
     } else {
-      // normal rounding
       scaled = Number(scaled.toFixed(dPlaces));
     }
 
@@ -423,18 +427,9 @@ export function toDecimalFix
 
   // NORMAL formatting path
   const mult = Math.pow(10, dPlaces);
-  let resultNum: number;
-
   if (noRoundUp) {
-    resultNum = num >= 0 ? Math.floor(num * mult) / mult : Math.ceil(num * mult) / mult;
-    // Ensure minimal decimals if needed (e.g. 1 -> "1.00" when dPlaces=2 and removeDot00=false)
-    let out = resultNum.toString();
-    if (!out.includes('.') && dPlaces > 0) out = resultNum.toFixed(dPlaces);
-    else if (out.includes('.')) {
-      const decimals = out.split('.')[1].length;
-      if (decimals < dPlaces) out = resultNum.toFixed(dPlaces);
-    }
-    out = stripDotZeros(out);
+    const resultNum = num >= 0 ? Math.floor(num * mult) / mult : Math.ceil(num * mult) / mult;
+    let out = removeDot00 ? stripDotZeros(resultNum.toFixed(dPlaces)) : resultNum.toFixed(dPlaces);
     return out;
   } else {
     const out = stripDotZeros(num.toFixed(dPlaces));

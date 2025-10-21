@@ -42,14 +42,13 @@ async function initWalletStore(uid: string) {
         const spendingPast = Number(spending.past_balance ?? 0);
         const now = new Date().toISOString();
         walletStore.set({
-            primary: { available: mainAvailable, updatedAt: now },
+            primary: { available: mainAvailable, updatedAt: now, growthPct: pct(mainAvailable - (user_data.main_balance ?? 0), user_data.main_balance ?? 0) },
             spending: {
                 available: spendingAvailable,
                 growthPct: pct(spendingChange, spendingPast),
-                trend: spendingChange > 0 ? 'up' : spendingChange < 0 ? 'down' : 'flat',
                 updatedAt: now
             },
-            rewards: { available: 0, updatedAt: now }, // frozen for now
+            rewards: { available: 0, updatedAt: now, growthPct: 0 }, // frozen for now
             loaded: true
         });
     }, (err) => {
