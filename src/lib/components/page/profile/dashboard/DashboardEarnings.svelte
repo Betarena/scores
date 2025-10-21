@@ -435,9 +435,9 @@
         <div class="numbers-data">
           <span class="bta">BTA</span>
           <div class="numbers">
-            <div class="amount"><TweenedNumber number={1800} /></div>
+            <div class="amount"><TweenedNumber fixNumber={1} number={1800}  /></div>
             {#if $session.btaUsdRate}
-               <div class="usd">$<TweenedNumber number={1800 / $session.btaUsdRate} /></div>
+               <div class="usd">$<TweenedNumber fixNumber={1} number={1800 / $session.btaUsdRate} /></div>
             {/if}
           </div>
         </div>

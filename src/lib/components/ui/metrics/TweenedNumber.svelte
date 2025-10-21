@@ -105,7 +105,7 @@
   
   function format(num) {
     if (!needsToFormat) return num.toFixed(fixNumber);
-    return toDecimalFix(num, 2, true, true, true)
+    return toDecimalFix(num, fixNumber, true, true, true)
   }
   
   // #endregion ➤ 🛠️ METHODS

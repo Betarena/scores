@@ -95,9 +95,9 @@
           />
         </svg>
         <div class="balance" slot="number">
-          <span class="amount"><TweenedNumber number={primary.available} needsToFormat={true} /> BTA</span>
+          <span class="amount"><TweenedNumber fixNumber={1} number={primary.available} needsToFormat={true}  /> BTA</span>
           {#if $session.btaUsdRate}
-             <span class="usd">$<TweenedNumber number={primary.available / $session.btaUsdRate} needsToFormat={true} /></span>
+             <span class="usd">$<TweenedNumber fixNumber={1} number={primary.available / $session.btaUsdRate} needsToFormat={true} /></span>
           {/if}
         </div>
       </MetricItem4>
@@ -127,9 +127,9 @@
           />
         </svg>
         <div class="balance" slot="number">
-          <span class="amount"><TweenedNumber number={spending.available} needsToFormat={true} /> BTA</span>
+          <span class="amount"><TweenedNumber fixNumber={1} number={spending.available} needsToFormat={true} /> BTA</span>
           {#if $session.btaUsdRate}
-             <span class="usd">$<TweenedNumber number={spending.available / $session.btaUsdRate} needsToFormat={true} /></span>
+             <span class="usd">$<TweenedNumber fixNumber={1} number={spending.available / $session.btaUsdRate} needsToFormat={true} /></span>
           {/if}
         </div>
       </MetricItem4>
@@ -159,22 +159,22 @@
           />
         </svg>
         <div class="balance" slot="number">
-          <span class="amount"><TweenedNumber number={rewards.available} /> BTA</span>
+          <span class="amount"><TweenedNumber fixNumber={1} number={rewards.available} /> BTA</span>
           {#if $session.btaUsdRate}
-             <div class="usd">$<TweenedNumber number={rewards.available / $session.btaUsdRate} /></div>
+             <div class="usd">$<TweenedNumber fixNumber={1} number={rewards.available / $session.btaUsdRate} /></div>
           {/if}
         </div>
       </MetricItem4>
       <div class="progress-wrapper">
         {#if viewportType === "mobile"}
           <div class="progress-text">
-            <div class="text"><TweenedNumber number={rewards.available} /> BTA</div>
-            <div class="supporting-text">$<TweenedNumber number={(rewards.available / $session.btaUsdRate) || 0} />/$500</div>
+            <div class="text"><TweenedNumber fixNumber={1} number={rewards.available} /> BTA</div>
+            <div class="supporting-text">$<TweenedNumber fixNumber={1} number={(rewards.available / $session.btaUsdRate) || 0} />/$500</div>
           </div>
         {/if}
         <Progress value={(rewards.available * 100) / 500} />
         {#if viewportType !== "mobile"}
-          <div class="supporting-text">$<TweenedNumber number={(rewards.available / $session.btaUsdRate) || 0} />/$500</div>
+          <div class="supporting-text">$<TweenedNumber fixNumber={1} number={(rewards.available / $session.btaUsdRate) || 0} />/$500</div>
         {/if}
       </div>
       {#if viewportType === "mobile"}
