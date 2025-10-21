@@ -366,12 +366,16 @@
           gap: 12px;
         }
         .rewards {
-          gap: 12px;
+          gap: 0px;
 
           .progress-wrapper {
             align-items: end;
             gap: 12px;
           }
+        }
+        .balance {
+          flex-direction: column;
+          gap: 0;
         }
         .amount {
           font-size: var(--font-size-display-xs, 24px);
@@ -380,6 +384,7 @@
           line-height: var(--line-height-display-xs, 32px); /* 133.333% */
         }
         .usd {
+          margin-top: -2px;
           /* Text sm/Bold */
           font-family: var(--font-family-font-family-body, Roboto);
           font-size: var(--font-size-text-sm, 14px);
