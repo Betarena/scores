@@ -47,7 +47,7 @@
   $: translations = ($page.data.RESPONSE_PROFILE_DATA as IProfileTrs).profile;
   $: ({ viewportType } = $session);
   $: options = [
-    { id: 1, label: translations?.all || "All" },
+    { id: 1, label: translations?.all_sportstacks || "All" },
     // { id: 2, label: "Not All" },
   ];
 
