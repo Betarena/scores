@@ -23,6 +23,8 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
+  import { page } from "$app/stores";
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
   import session from "$lib/store/session";
   import { DotLottieSvelte } from "@lottiefiles/dotlottie-svelte";
   import { depositStore } from "./deposit-store";
@@ -44,7 +46,8 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   export let buttonDisabled;
 
-  $: ({viewportType} = $session)
+  $: ({ viewportType } = $session);
+  $: ({ deposit_translations = {} } = $page.data);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -96,11 +99,15 @@
     <div class="animation">
       <DotLottieSvelte src="/assets/lottie/Success.lottie" loop autoplay />
     </div>
-    <div class="title">Funds Added Successfully!</div>
+    <div class="title"><TranslationText fallback="Funds Added Successfully!" text={deposit_translations.funds_added_successfully} /></div>
   </div>
   <div class="text">
-    You added ${$depositStore.amount}  {$depositStore.rate ?  `(≈${(Number($depositStore.amount) * $depositStore.rate).toFixed(2)} BTA)`: ""} . After approval your funds will be available
-    to your Spending Wallet.
+    <TranslationText fallback="You added" text={deposit_translations.you_added_amount} /> {$depositStore.amount}
+    {$depositStore.rate
+      ? `(≈${(Number($depositStore.amount) * $depositStore.rate).toFixed(
+          2
+        )} BTA)`
+      : ""} . <TranslationText fallback="After approval your funds will be available to your Spending Wallet." text={deposit_translations.after_approval_funds_available} />
   </div>
 </div>
 

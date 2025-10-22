@@ -9,16 +9,50 @@
 -->
 
 <script lang="ts">
+  // #region ➤ 📦 Package Imports
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+  import { page } from "$app/stores";
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
   import VisaIcon from "$lib/components/ui/assets/VisaIcon.svelte";
   import RadioGroupItem from "$lib/components/ui/RadioGroupItem.svelte";
 
+  // #endregion ➤ 📦 Package Imports
+
+  // #region ➤ 📌 VARIABLES
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
   export let buttonDisabled;
-  
+
   let checked = true;
   $: buttonDisabled = !checked;
   $: if (!checked) {
     checked = true;
   }
+  $: ({ deposit_translations = {} } = $page.data);
+
+  // #endregion ➤ 📌 VARIABLES
 </script>
 
 <!--
@@ -34,15 +68,35 @@
 
 <div class="deposit-options-wrapper">
   <div class="header">
-    <div class="title">Add Funds to Your Spending Wallet</div>
-    <div class="description">Choose how you want to buy BTA</div>
+    <div class="title">
+      <TranslationText
+        fallback="Add Funds to Your Spending Wallet"
+        text={deposit_translations.add_funds_to_spending_wallet}
+      />
+    </div>
+    <div class="description">
+      <TranslationText
+        fallback="Choose how you want to buy BTA"
+        text={deposit_translations.choose_how}
+      />
+    </div>
   </div>
   <div class="options">
     <RadioGroupItem bind:selected={checked}>
       <div slot="icon"><VisaIcon /></div>
       <div slot="content" class="option-content">
-        <div class="option-title">Credit Card (Revolut)</div>
-        <div class="option-description">Instant purchase with Visa/Master</div>
+        <div class="option-title">
+          <TranslationText
+            fallback="Credit Card (Revolut)"
+            text={deposit_translations.credit_card_revolut}
+          />
+        </div>
+        <div class="option-description">
+          <TranslationText
+            fallback="Instant purchase with Visa/Master"
+            text={deposit_translations.instant_purchase_visa_master}
+          />
+        </div>
       </div>
     </RadioGroupItem>
     <!-- <RadioGroupItem disabled={true}>

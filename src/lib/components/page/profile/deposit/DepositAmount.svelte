@@ -23,6 +23,8 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  import { page } from "$app/stores";
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import Input from "$lib/components/ui/Input.svelte";
   import { onMount } from "svelte";
@@ -44,15 +46,17 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
   export let buttonDisabled;
-  const buttons: { label: string; value: string | number }[] = [
+
+  $: ({ deposit_translations = {} } = $page.data);
+  $: buttons = [
     { label: "$9.99", value: 9.99 },
     { label: "$19.99", value: 19.99 },
     { label: "$49.99", value: 49.99 },
-    { label: "Custom", value: "" },
-  ];
+    { label: deposit_translations.custom || "Custom", value: "" },
+  ] as { label: string; value: string | number }[];
+  $: activeButton = buttons[0];
 
   let inputNode: HTMLInputElement;
-  let activeButton = buttons[0];
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -68,7 +72,8 @@
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  $: buttonDisabled = !$depositStore.amount || Number($depositStore.amount) < 9.99;
+  $: buttonDisabled =
+    !$depositStore.amount || Number($depositStore.amount) < 9.99;
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
@@ -104,20 +109,20 @@
   // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
-  
+
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'logic' that should run            │
   // │ immediately and as part of the 'lifecycle' of svelteJs,                │
   // │ as soon as 'this' .svelte file is ran.                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  
+
   onMount(() => {
-    if(!$depositStore.amount) {
+    if (!$depositStore.amount) {
       click(buttons[0]);
     }
   });
-  
+
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 
@@ -134,10 +139,15 @@
 
 <div class="deposit-amount-wrapper">
   <div class="header">
-    <div class="title">Add Funds</div>
+    <div class="title">
+      <TranslationText
+        fallback="Add Funds"
+        text={deposit_translations.add_funds}
+      />
+    </div>
   </div>
   <Input
-    label="Choose the amount to add"
+    label={deposit_translations.choose_amount || "Choose the amount to add"}
     bind:node={inputNode}
     bind:value={$depositStore.amount}
     on:blur={setMinimum}
@@ -162,9 +172,12 @@
   </div>
   {#if $depositStore.rate}
     <div class="rate">
-      ≈ {$depositStore.rate * (Number($depositStore.amount) || 0)} BTA @ ${(
+      ≈ {$depositStore.rate * (Number($depositStore.amount) || 0)} BTA ${(
         1 / $depositStore.rate
-      ).toFixed(4)}/BTA : Live rate from Uniswap
+      ).toFixed(4)}/BTA : <TranslationText
+        fallback="Live rate from Uniswap"
+        text={deposit_translations.live_rate}
+      />
     </div>
   {/if}
 </div>
@@ -221,7 +234,20 @@
 
       .active {
         :global(.button) {
-          box-shadow: 0 0 0 1px var(--colors-effects-shadows-shadow-skeumorphic-inner-border, rgba(12, 14, 18, 0.18)) inset, 0 -2px 0 0 var(--colors-effects-shadows-shadow-skeumorphic-inner, rgba(12, 14, 18, 0.05)) inset, 0 1px 2px 0 var(--colors-effects-shadows-shadow-xs, rgba(255, 255, 255, 0.00)), 0 0 0 2px var(--colors-background-bg-primary, #1F1F1F), 0 0 0 4px var(--colors-effects-focus-rings-focus-ring, #F5620F)
+          box-shadow: 0 0 0 1px
+              var(
+                --colors-effects-shadows-shadow-skeumorphic-inner-border,
+                rgba(12, 14, 18, 0.18)
+              )
+              inset,
+            0 -2px 0 0 var(
+                --colors-effects-shadows-shadow-skeumorphic-inner,
+                rgba(12, 14, 18, 0.05)
+              ) inset,
+            0 1px 2px 0
+              var(--colors-effects-shadows-shadow-xs, rgba(255, 255, 255, 0)),
+            0 0 0 2px var(--colors-background-bg-primary, #1f1f1f),
+            0 0 0 4px var(--colors-effects-focus-rings-focus-ring, #f5620f);
         }
       }
     }

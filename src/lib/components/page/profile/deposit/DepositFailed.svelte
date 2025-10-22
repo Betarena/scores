@@ -23,9 +23,12 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
+  import { page } from "$app/stores";
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
   import session from "$lib/store/session";
   import { DotLottieSvelte } from "@lottiefiles/dotlottie-svelte";
-
+  import { onDestroy } from "svelte";
+  import { depositStore } from "./deposit-store";
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -41,38 +44,24 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
-  $: ({viewportType} = $session)
+  $: ({ deposit_translations = {}} = $page.data);
+  $: ({ viewportType } = $session);
   // #endregion ➤ 📌 VARIABLES
 
-  // #region ➤ 🔥 REACTIVIY [SVELTE]
-
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+  
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'logic' that should run            │
-  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
-  // │ WARNING:                                                               │
-  // │ ❗️ Can go out of control.                                              │
-  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
-  // │ Please keep very close attention to these methods and                  │
-  // │ use them carefully.                                                    │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
-  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
-
-  // #region ➤ 🛠️ METHODS
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'methods' that are to be           │
-  // │ and are expected to be used by 'this' .svelte file / component.        │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. function (..)                                                       │
-  // │ 2. async function (..)                                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  // #endregion ➤ 🛠️ METHODS
+  
+  onDestroy(() => {
+    $depositStore.revolut = {};
+  })
+  
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 
 <!--
@@ -91,10 +80,18 @@
     <div class="animation">
       <DotLottieSvelte src="/assets/lottie/Failed.lottie" loop autoplay />
     </div>
-    <div class="title">Transaction Failed</div>
+    <div class="title">
+      <TranslationText
+        fallback="Transaction Failed"
+        text={deposit_translations.transaction_failed}
+      />
+    </div>
   </div>
   <div class="text">
-    We couldn't process your payment. Please try again or use another method.
+    <TranslationText
+      fallback="We couldn't process your payment. Please try again or use another method."
+      text={deposit_translations.payment_failed}
+    />
   </div>
 </div>
 

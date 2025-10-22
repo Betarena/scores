@@ -135,7 +135,6 @@
     opacity: 0.6;
     cursor: default;
     overflow: hidden;
-    aspect-ratio: 1/1;
     
 
     .connecter-wrapper {

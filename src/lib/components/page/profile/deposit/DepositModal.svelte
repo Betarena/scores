@@ -23,6 +23,8 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  import { page } from "$app/stores";
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
   import ArrowLeftIcon from "$lib/components/ui/assets/ArrowLeftIcon.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import Progress from "$lib/components/ui/Progress.svelte";
@@ -56,51 +58,57 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  const steps = [
-    {
-      id: "options",
-      component: DepositOptions,
-      buttonText: "Continue",
-      buttonSupportText: "Funds will be added after confirmation.",
-    },
-    {
-      id: "amount",
-      component: DepositAmount,
-      buttonText: "Continue",
-      buttonSupportText: "Funds appear after confirmation",
-    },
-    {
-      id: "proceed",
-      component: DepositRevolut,
-      buttonText: "Proceed to Payment",
-      buttonSupportText: "Redirecting to Revolut secure checkout",
-    },
-    {
-      id: "confirmation",
-      component: DepositConfirmation,
-      buttonText: "Go to Dashboard",
-      buttonSupportText: "",
-    },
-    {
-      id: "success",
-      component: DepositSuccess,
-      buttonText: "Go to Dashboard",
-      buttonSupportText: "",
-    },
-  ];
   let unsubscribe: (() => void) | null = null;
   let buttonDisabled = false;
   let timer;
 
+  $: ({ deposit_translations = {} } = $page.data);
   $: ({ user } = $userSettings);
   $: ({ viewportType } = $session);
   $: lastStep = currentStep === steps.length - 1;
   $: progress = ((currentStep + 1) / steps.length) * 100;
   $: ({ rate, amount, revolut, status } = $depositStore);
   $: failed = ["failed", "declined"].includes(status || "");
-  let currentStep = $depositStore.revolut.checkoutUrl
+  $: currentStep = $depositStore.revolut.checkoutUrl
     ? steps.findIndex((step) => step.id === "confirmation")
     : 0;
+  $: steps = [
+    {
+      id: "options",
+      component: DepositOptions,
+      buttonText: deposit_translations?.continue || "Continue",
+      buttonSupportText:
+        deposit_translations?.funds_added ||
+        "Funds will be added after confirmation.",
+    },
+    {
+      id: "amount",
+      component: DepositAmount,
+      buttonText: deposit_translations?.continue || "Continue",
+      buttonSupportText:
+        deposit_translations?.funds_appear || "Funds appear after confirmation",
+    },
+    {
+      id: "proceed",
+      component: DepositRevolut,
+      buttonText: deposit_translations?.proceed_payment || "Proceed to Payment",
+      buttonSupportText:
+        deposit_translations?.redirecting_to_revolut ||
+        "Redirecting to Revolut secure checkout",
+    },
+    {
+      id: "confirmation",
+      component: DepositConfirmation,
+      buttonText: deposit_translations?.go_to_dashboard || "Go to Dashboard",
+      buttonSupportText: "",
+    },
+    {
+      id: "success",
+      component: DepositSuccess,
+      buttonText: deposit_translations?.go_to_dashboard || "Go to Dashboard",
+      buttonSupportText: "",
+    },
+  ];
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -302,10 +310,21 @@
         {/if}
         {#if !lastStep}
           <div class="steps">
-            Step {currentStep + 1} of {steps.length}
+            {#if deposit_translations.steps_of}
+              {deposit_translations.steps_of
+                .replace("{current}", String(currentStep + 1))
+                .replace("{steps}", String(steps.length))}
+            {:else}
+               Step {currentStep + 1} of {steps.length}
+            {/if}
           </div>
         {:else}
-          <div class="add-funds">Add Funds</div>
+          <div class="add-funds">
+            <TranslationText
+              fallback="Add Funds"
+              text={deposit_translations.add_funds}
+            />
+          </div>
         {/if}
       </div>
       {#if !lastStep}
@@ -332,7 +351,12 @@
         type="primary"
         on:click={() => retry(true)}
         destructive={true}
-        full={true}>Retry Payment</Button
+        full={true}
+      >
+        <TranslationText
+          fallback="Retry Payment"
+          text={deposit_translations.retry_payment}
+        /></Button
       >
       <!-- <Button type="secondary" on:click={chooseAnotherMethod} destructive={true} full={true}>Choose Another Method</Button> -->
     {:else}
@@ -346,7 +370,11 @@
           full={true}
           type="secondary"
           on:click={() => retry(false)}
-          disabled={buttonDisabled}>Add More Funds</Button
+          disabled={buttonDisabled}
+          ><TranslationText
+            fallback="Add More Funds"
+            text={deposit_translations.add_more_funds}
+          /></Button
         >
       {/if}
       {#if steps[currentStep].buttonSupportText}
