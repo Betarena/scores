@@ -15,7 +15,7 @@ interface WalletStoreData {
     error?: string;
 }
 
-let walletStore: Writable<WalletStoreData> = writable({ primary: { available: 0 }, spending: { available: 0 }, rewards: { available: 0 }, loaded: false });
+const walletStore: Writable<WalletStoreData> = writable({ primary: { available: 0 }, spending: { available: 0 }, rewards: { available: 0 }, loaded: false });
 let unsub: () => void;
 async function initWalletStore(uid: string) {
     if (unsub) unsub();
