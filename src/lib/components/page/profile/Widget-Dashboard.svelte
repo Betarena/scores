@@ -44,7 +44,6 @@
 
   $: translations = ($page.data.RESPONSE_PROFILE_DATA as IProfileTrs).profile;
   $: ({ viewportType } = $session);
-  $: console.log("TRANSLATIONS: ", translations)
   let timer: ReturnType<typeof setInterval>;
 
   // #endregion ➤ 📌 VARIABLES

@@ -23,6 +23,8 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
+  import { page } from "$app/stores";
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
   import session from "$lib/store/session";
   import { depositStore } from "./deposit-store";
   // #endregion ➤ 📦 Package Imports
@@ -42,6 +44,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   export let buttonDisabled;
 
+  $: ({ deposit_translations = {} } = $page.data);
   $: ({ viewportType } = $session);
 
   buttonDisabled = false;
@@ -62,17 +65,32 @@
 
 <div class="deposit-proccessor-wrapper {viewportType}">
   <div class="header">
-    <div class="title">Pay with Revolut</div>
+    <div class="title">
+      <TranslationText
+        fallback="Pay with Revolut"
+        text={deposit_translations.pay_with_revolut}
+      />
+    </div>
   </div>
   <div class="data-wrapper">
     <div class="data">
       <div class="data-field">
-        <div class="label">Amount</div>
+        <div class="label">
+          <TranslationText
+            fallback="Amount"
+            text={deposit_translations.amount}
+          />
+        </div>
         <div class="data-value">${$depositStore.amount}</div>
       </div>
       {#if $depositStore.rate}
         <div class="data-field">
-          <div class="label">Estimated BTA</div>
+          <div class="label">
+            <TranslationText
+              fallback="Estimated BTA"
+              text={deposit_translations.estimated_bta}
+            />
+          </div>
           <div class="data-value">
             {(
               Number($depositStore.amount) * Number($depositStore.rate)
@@ -81,8 +99,18 @@
         </div>
       {/if}
       <div class="data-field">
-        <div class="label">Payment</div>
-        <div class="data-value">Credit Card (Visa/Master)</div>
+        <div class="label">
+          <TranslationText
+            fallback="Payment"
+            text={deposit_translations.payment}
+          />
+        </div>
+        <div class="data-value">
+          <TranslationText
+            fallback="Credit Card (Visa/Master)"
+            text={deposit_translations.credit_card_visa_master}
+          />
+        </div>
       </div>
     </div>
     <div class="logo">

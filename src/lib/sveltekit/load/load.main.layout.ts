@@ -26,8 +26,8 @@ import { parseObject } from '$lib/utils/string.2.js';
 import type { IAuthTrs } from '@betarena/scores-lib/types/auth.js';
 import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
 import type { B_FOT_T } from '@betarena/scores-lib/types/types.main.footer.js';
+import type { TranslationAppInstallDataJSONSchema, TranslationDepositDataJSONSchema, TranslationSearchDataJSONSchema } from '@betarena/scores-lib/types/v8/_HASURA-0.js';
 import type { ServerLoadEvent } from '@sveltejs/kit';
-import type { TranslationSearchDataJSONSchema } from '@betarena/scores-lib/types/v8/_HASURA-0.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -59,7 +59,8 @@ type IPreloadData0 =
   B_FOT_T | undefined,
   IAuthTrs | undefined,
   TranslationSearchDataJSONSchema | undefined,
-  TranslationSearchDataJSONSchema | undefined
+  TranslationAppInstallDataJSONSchema | undefined,
+  TranslationDepositDataJSONSchema | undefined
 ];
 
 /**
@@ -126,7 +127,8 @@ interface IPreloadResponse
    *  📝 Translations for `search`.
    */
   search_translations?: TranslationSearchDataJSONSchema;
-  app_install_translations?: TranslationSearchDataJSONSchema;
+  app_install_translations?: TranslationAppInstallDataJSONSchema;
+  deposit_translations?: TranslationDepositDataJSONSchema;
 }
 
 // #endregion ➤ ⛩️ TYPES
@@ -264,7 +266,9 @@ export async function main
     objResponse.B_FOT_T,
     objResponse.authTrs,
     objResponse.search_translations,
-    objResponse.app_install_translations
+    objResponse.app_install_translations,
+    objResponse.deposit_translations
+
   ] = await fetchData
   (
     event.fetch,
@@ -382,7 +386,8 @@ async function fetchData
         `/api/data/main/footer?lang=${lang}&decompress`,
         `/api/hasura/_main_/auth?lang=${lang}`,
         `/api/data/translations?lang=${lang}&table=search`,
-        `/api/data/translations?lang=${lang}&table=app_install`
+        `/api/data/translations?lang=${lang}&table=app_install`,
+        `/api/data/translations?lang=${lang}&table=deposit&lang_type=String`
       ],
     /**
      * @description

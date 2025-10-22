@@ -23,6 +23,8 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
+  import { page } from "$app/stores";
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
   import StepBase from "$lib/components/ui/StepBase.svelte";
   import { DotLottieSvelte } from "@lottiefiles/dotlottie-svelte";
   import { depositStore } from "./deposit-store";
@@ -44,7 +46,8 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   export let buttonDisabled;
 
-  $: ({status, revolut} = $depositStore)
+  $: ({status} = $depositStore);
+  $: ({deposit_translations = {}} = $page.data)
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -102,12 +105,12 @@
     <div class="animation">
       <DotLottieSvelte src="/assets/lottie/Waiting.lottie" loop autoplay />
     </div>
-    <div class="title">Transaction in Progress</div>
+    <div class="title"> <TranslationText fallback="Transaction in Progress" text={deposit_translations.transaction_in_progress} /></div>
   </div>
   <div class="steps-wrapper"> 
-    <StepBase includeConnector={true} type="circle" color="success" checked={checkboxState.received} title="Payment Submitted" available={checkboxState.received}/>
-    <StepBase includeConnector={true} type="circle" color="success" checked={checkboxState.confirmation} title="Awaiting Confirmation" available={checkboxState.confirmation}/>
-    <StepBase includeConnector={true} type="circle" color="success" checked={checkboxState.completed} title="Funds will appear in your wallet soon" available={checkboxState.completed}/>
+    <StepBase includeConnector={true} type="circle" color="success" checked={checkboxState.received} title={deposit_translations.payment_submitted || "Payment Submitted"} available={checkboxState.received}/>
+    <StepBase includeConnector={true} type="circle" color="success" checked={checkboxState.confirmation} title={deposit_translations.awaiting_confirmation || "Awaiting Confirmation"} available={checkboxState.confirmation}/>
+    <StepBase includeConnector={true} type="circle" color="success" checked={checkboxState.completed} title={deposit_translations.funds_appear_soon || "Funds will appear in your wallet soon"} available={checkboxState.completed}/>
   </div>
 </div>
 
