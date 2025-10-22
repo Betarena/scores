@@ -42,8 +42,9 @@
 
   // #region ➤ 📌 VARIABLES
 
-  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
+  $: translations = ($page.data.RESPONSE_PROFILE_DATA as IProfileTrs).profile;
   $: ({ viewportType } = $session);
+  $: console.log("TRANSLATIONS: ", translations)
   let timer: ReturnType<typeof setInterval>;
 
   // #endregion ➤ 📌 VARIABLES
@@ -109,7 +110,7 @@
 
 <div id="dashboard-widget-container" class={viewportType}>
   {#if viewportType !== "mobile"}
-    <div class="title">Dashboard</div>
+    <div class="title">{translations?.dashboard || "Dashboard"}</div>
 
     <div class="sections-wrapper">
       <div class="section-left">

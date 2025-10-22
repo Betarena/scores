@@ -10,11 +10,14 @@
 <script lang="ts">
   // #region ➤ 📦 Package Imports
 
+  import { page } from "$app/stores";
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import ButtonGroup from "$lib/components/ui/ButtonGroup.svelte";
   import Change from "$lib/components/ui/metrics/Change.svelte";
   import TweenedNumber from "$lib/components/ui/metrics/TweenedNumber.svelte";
   import session from "$lib/store/session";
+  import type { IProfileTrs } from "@betarena/scores-lib/types/types.profile";
   import Chart from "chart.js/auto";
   import { onDestroy, onMount, tick } from "svelte";
   import WidgetCalendar from "../tx-history/Widget-Calendar.svelte";
@@ -47,7 +50,7 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
+  $: translations = ($page.data.RESPONSE_PROFILE_DATA as IProfileTrs).profile;
   const options = [
     { id: "year", label: "12m" },
     { id: "month", label: "30d" },
@@ -90,25 +93,25 @@
         "Nov",
         "Dec",
       ],
-      data: []
+      data: [],
       // data: [10, 11, 12, 13, 15, 14, 13, 16, 17, 16.5, 17, 11],
     },
     month: {
       labels: ["1", "6", "12", "18", "24", "30"],
       // data: [8, 9, 11, 12, 12.5, 13.2],
-      data: []
+      data: [],
     },
     week: {
       labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
       // data: [11, 11.2, 11.8, 12.1, 12.0, 12.4, 12.8],
-      data: []
+      data: [],
     },
     day: {
       labels: ["00", "04", "08", "12", "16", "20", "24"],
       // data: [12.0, 11.8, 11.6, 12.2, 12.4, 12.6, 13.0],
       data: [],
     },
-    custom: generateRandomForRange(dateRange)
+    custom: generateRandomForRange(dateRange),
   };
 
   function generateRandomForRange(range: { from: Date; to: Date }) {
@@ -141,7 +144,6 @@
 
     return { labels, data: [] };
   }
-
 
   async function createChart(rangeId: string) {
     if (!canvas) return;
@@ -396,7 +398,7 @@
 -->
 <svelte:window on:resize={handleResize} />
 <div id="dashboard-earnings" class={viewportType}>
-  <div class="title">Earnings</div>
+  <div class="title"><TranslationText fallback="Earnings" text={translations?.earnings} /></div>
   <div class="buttons-text-wrapper">
     <div class="buttons-wrapper">
       <ButtonGroup group={options} bind:selected={selectedOption} />
@@ -405,9 +407,9 @@
         type="secondary"
         icon_leading={true}
         on:click={() => {
-          showDatepicker = !showDatepicker
-          selectedOption = {id: "custom", label: "custom"}
-          }}
+          showDatepicker = !showDatepicker;
+          selectedOption = { id: "custom", label: "custom" };
+        }}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -434,14 +436,19 @@
       {/if}
     </div>
     <div class="chart-text">
-      <div class="mrr">MRR</div>
+      <div class="mrr"><TranslationText fallback="MRR" text={translations?.mrr} /></div>
       <div class="number-badge-wrapper">
         <div class="numbers-data">
           <span class="bta">BTA</span>
           <div class="numbers">
-            <div class="amount"><TweenedNumber fixNumber={1} number={0}  /></div>
+            <div class="amount"><TweenedNumber fixNumber={1} number={0} /></div>
             {#if $session.btaUsdRate}
-               <div class="usd">$<TweenedNumber fixNumber={1} number={0 / $session.btaUsdRate} /></div>
+              <div class="usd">
+                $<TweenedNumber
+                  fixNumber={1}
+                  number={0 / $session.btaUsdRate}
+                />
+              </div>
             {/if}
           </div>
         </div>

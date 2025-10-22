@@ -8,12 +8,46 @@
 -->
 
 <script lang="ts">
+  // #region ➤ 📦 Package Imports
 
-    const articles = [
-        // {title: "The Outermost House", tips: 123},
-        // {title: "Northern Farm", tips: 86},
-        // {title: "Northern Farm", tips: 86},
-    ]
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+  import { page } from "$app/stores";
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
+  import type { IProfileTrs } from "@betarena/scores-lib/types/types.profile";
+
+  // #endregion ➤ 📦 Package Imports
+  // #region ➤ 📌 VARIABLES
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  $: translations = ($page.data.RESPONSE_PROFILE_DATA as IProfileTrs).profile;
+  const articles = [
+    // {title: "The Outermost House", tips: 123},
+    // {title: "Northern Farm", tips: 86},
+    // {title: "Northern Farm", tips: 86},
+  ];
+  // #endregion ➤ 📌 VARIABLES
 </script>
 
 <!--
@@ -27,24 +61,39 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 <div id="dashboard-top-articles">
-  <div class="title">Top Articles by Tips</div>
+  <div class="title">
+    <TranslationText
+      fallback="Top Articles by Tips"
+      text={translations?.topArticlesByTips}
+    />
+  </div>
   <div class="articles-wrapper">
     {#each articles as article}
-        <div class="article">
-            <div class="title">{article.title}</div>
-            <div class="tips">{article.tips} Tips</div>
+      <div class="article">
+        <div class="title">{article.title}</div>
+        <div class="tips">
+          {article.tips}
+          <TranslationText fallback="Tips" text={translations?.tips} />
         </div>
-         <!-- content here -->
+      </div>
     {/each}
     <div class="empty-state">
       <div class="empty-text-wrapper">
-        <div class="empty-title">No articles found</div>
+        <div class="empty-title">
+          <TranslationText
+            fallback="No articles found"
+            text={translations?.noArticles}
+          />
+        </div>
         <div class="empty-text">
-          This section exclusively features award-winning articles.
+          <TranslationText
+            fallback="This section exclusively features award-winning articles."
+            text={translations?.noArticlesText}
+          />
         </div>
       </div>
     </div>
-</div>
+  </div>
 </div>
 
 <!--
@@ -95,7 +144,7 @@
         align-self: stretch;
         border-top: 1px dashed var(--colors-border-border-primary, #525252);
         &:last-child {
-            border-bottom: 1px dashed var(--colors-border-border-primary, #525252);
+          border-bottom: 1px dashed var(--colors-border-border-primary, #525252);
         }
 
         .title {
@@ -120,7 +169,7 @@
         }
       }
     }
-     .empty-state {
+    .empty-state {
       display: flex;
       justify-content: center;
       align-items: center;

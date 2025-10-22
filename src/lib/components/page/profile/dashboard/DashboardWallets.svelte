@@ -9,6 +9,7 @@
 -->
 
 <script lang="ts">
+  import { page } from "$app/stores";
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -31,6 +32,7 @@
   import Progress from "$lib/components/ui/Progress.svelte";
   import session from "$lib/store/session";
   import { walletStore } from "$lib/store/wallets";
+  import type { IProfileTrs } from "@betarena/scores-lib/types/types.profile";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -49,9 +51,10 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   let selectedWallet = "spending";
+  $: translations = ($page.data.RESPONSE_PROFILE_DATA as IProfileTrs).profile;
   $: ({ viewportType } = $session);
   $: ({ spending, rewards, primary } = $walletStore);
-// #endregion ➤ 📌 VARIABLES
+  // #endregion ➤ 📌 VARIABLES
 </script>
 
 <!--
@@ -67,7 +70,7 @@
 
 <div id="dashboard-wallets" class={viewportType}>
   <div class="title">
-    <TranslationText fallback="Wallets" text="Wallets" />
+    <TranslationText fallback="Wallets" text={translations?.wallets} />
   </div>
   <div class="wallets">
     <div
@@ -77,7 +80,10 @@
         selectedWallet = "primary";
       }}
     >
-      <MetricItem4 text="Primary" change={primary.growthPct || 0}>
+      <MetricItem4
+        text={translations?.primary || "Primary"}
+        change={primary.growthPct || 0}
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -95,9 +101,21 @@
           />
         </svg>
         <div class="balance" slot="number">
-          <span class="amount"><TweenedNumber fixNumber={1} number={primary.available} needsToFormat={true}  /> BTA</span>
+          <span class="amount"
+            ><TweenedNumber
+              fixNumber={1}
+              number={primary.available}
+              needsToFormat={true}
+            /> BTA</span
+          >
           {#if $session.btaUsdRate}
-             <span class="usd">$<TweenedNumber fixNumber={1} number={primary.available / $session.btaUsdRate} needsToFormat={true} /></span>
+            <span class="usd"
+              >$<TweenedNumber
+                fixNumber={1}
+                number={primary.available / $session.btaUsdRate}
+                needsToFormat={true}
+              /></span
+            >
           {/if}
         </div>
       </MetricItem4>
@@ -109,7 +127,10 @@
         selectedWallet = "spending";
       }}
     >
-      <MetricItem4 text="Spending" change={spending.growthPct || 0}>
+      <MetricItem4
+        text={translations?.spending || "Spending"}
+        change={spending.growthPct || 0}
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -127,9 +148,21 @@
           />
         </svg>
         <div class="balance" slot="number">
-          <span class="amount"><TweenedNumber fixNumber={1} number={spending.available} needsToFormat={true} /> BTA</span>
+          <span class="amount"
+            ><TweenedNumber
+              fixNumber={1}
+              number={spending.available}
+              needsToFormat={true}
+            /> BTA</span
+          >
           {#if $session.btaUsdRate}
-             <span class="usd">$<TweenedNumber fixNumber={1} number={spending.available / $session.btaUsdRate} needsToFormat={true} /></span>
+            <span class="usd"
+              >$<TweenedNumber
+                fixNumber={1}
+                number={spending.available / $session.btaUsdRate}
+                needsToFormat={true}
+              /></span
+            >
           {/if}
         </div>
       </MetricItem4>
@@ -141,7 +174,10 @@
         selectedWallet = "rewards";
       }}
     >
-      <MetricItem4 text="Rewards" change={rewards.growthPct}>
+      <MetricItem4
+        text={translations?.rewards || "Rewards"}
+        change={rewards.growthPct}
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="22"
@@ -159,31 +195,54 @@
           />
         </svg>
         <div class="balance" slot="number">
-          <span class="amount"><TweenedNumber fixNumber={1} number={rewards.available} /> BTA</span>
+          <span class="amount"
+            ><TweenedNumber fixNumber={1} number={rewards.available} /> BTA</span
+          >
           {#if $session.btaUsdRate}
-             <div class="usd">$<TweenedNumber fixNumber={1} number={rewards.available / $session.btaUsdRate} /></div>
+            <div class="usd">
+              $<TweenedNumber
+                fixNumber={1}
+                number={rewards.available / $session.btaUsdRate}
+              />
+            </div>
           {/if}
         </div>
       </MetricItem4>
       <div class="progress-wrapper">
         {#if viewportType === "mobile"}
           <div class="progress-text">
-            <div class="text"><TweenedNumber fixNumber={1} number={rewards.available} /> BTA</div>
-            <div class="supporting-text">$<TweenedNumber fixNumber={1} number={(rewards.available / $session.btaUsdRate) || 0} />/$500</div>
+            <div class="text">
+              <TweenedNumber fixNumber={1} number={rewards.available} /> BTA
+            </div>
+            <div class="supporting-text">
+              $<TweenedNumber
+                fixNumber={1}
+                number={rewards.available / $session.btaUsdRate || 0}
+              />/$500
+            </div>
           </div>
         {/if}
         <Progress value={(rewards.available * 100) / 500} />
         {#if viewportType !== "mobile"}
-          <div class="supporting-text">$<TweenedNumber fixNumber={1} number={(rewards.available / $session.btaUsdRate) || 0} />/$500</div>
+          <div class="supporting-text">
+            $<TweenedNumber
+              fixNumber={1}
+              number={rewards.available / $session.btaUsdRate || 0}
+            />/$500
+          </div>
         {/if}
       </div>
       {#if viewportType === "mobile"}
-        <Button full={true} type="primary" disabled={true}>Withdraw</Button>
+        <Button full={true} type="primary" disabled={true}
+          >{translations?.withdraw || "Withdraw"}</Button
+        >
       {/if}
     </div>
   </div>
   {#if viewportType !== "mobile"}
-    <Button full={true} type="primary" disabled={true}>Withdraw</Button>
+    <Button full={true} type="primary" disabled={true}
+      >{translations?.withdraw || "Withdraw"}</Button
+    >
   {/if}
 </div>
 
@@ -235,7 +294,7 @@
           var(--colors-effects-shadows-shadow-xs, rgba(255, 255, 255, 0));
 
         // &.selected {
-          // border: 1px solid var(--colors-border-border-brand, #f7813f);
+        // border: 1px solid var(--colors-border-border-brand, #f7813f);
         // }
 
         :global(.metric-4) {
