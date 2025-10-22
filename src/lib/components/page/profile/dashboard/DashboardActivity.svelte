@@ -8,8 +8,40 @@
 -->
 
 <script lang="ts">
+  // #region ➤ 📦 Package Imports
+  
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+  import { page } from "$app/stores";
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
+  import type { IProfileTrs } from "@betarena/scores-lib/types/types.profile";
   import ActivityFeedItem from "./ActivityFeedItem.svelte";
 
+  // #endregion ➤ 📦 Package Imports
+  // #region ➤ 📌 VARIABLES
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+  $: translations = ($page.data.RESPONSE_PROFILE_DATA as IProfileTrs).profile;
   const users = [
     // { avatar: null, name: "User Name", amount: 10 },
     // { avatar: null, name: "User Name", amount: 10 },
@@ -18,6 +50,8 @@
     // { avatar: null, name: "User Name", amount: 10 },
     // { avatar: null, name: "User Name", amount: 10 },
   ];
+
+  // #endregion ➤ 📌 VARIABLES
 </script>
 
 <!--
@@ -31,7 +65,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 <div id="dashboard-activity">
-  <div class="title">Activity</div>
+  <div class="title"><TranslationText fallback="Activity" text={translations?.activity} /></div>
   <div class="activity-list">
     {#each users as user, index}
       <ActivityFeedItem
@@ -40,6 +74,7 @@
         connector={index !== users.length - 1}
       >
         <div class="shared" slot="text">
+          <TranslationText fallback="Shared" text={translations?.shared} />
           Shared
           <span class="amount">
             {user.amount}
@@ -50,9 +85,10 @@
     {/each}
     <div class="empty-state">
       <div class="empty-text-wrapper">
-        <div class="empty-title">No activity</div>
+        <div class="empty-title"><TranslationText fallback="No activity" text={translations?.noActivity} /></div>
         <div class="empty-text">
-          When users give your content an award, you'll find it right here!
+          <TranslationText fallback="When users give your content an award, you'll find it right here!" text={translations?.noActivityText} />
+          
         </div>
       </div>
     </div>

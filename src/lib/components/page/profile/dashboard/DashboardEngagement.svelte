@@ -23,10 +23,12 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
+  import { page } from "$app/stores";
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
   import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
   import MetricChart from "$lib/components/ui/metrics/MetricChart.svelte";
   import session from "$lib/store/session";
-
+  import type { IProfileTrs } from "@betarena/scores-lib/types/types.profile";
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -42,16 +44,16 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
+  $: translations = ($page.data.RESPONSE_PROFILE_DATA as IProfileTrs).profile;
   $: ({ viewportType } = $session);
   const options = [
     { id: 1, label: "All" },
     { id: 2, label: "Not All" },
   ];
 
-  const engagements = [
-    { label: "Subscribers", count: 0, change: 0 },
-    { label: "Views", count: 0, change: 0 },
+  $: engagements = [
+    { label: translations?.subscribers || "Subscribers", count: 0, change: 0 },
+    { label: translations?.views || "Views", count: 0, change: 0 },
   ];
 
   let selectedOption = options[0];
@@ -70,7 +72,7 @@
 -->
 <div id="dashboard-engagement" class={viewportType}>
   <div class="title-wrapper">
-    <div class="title">Engagement</div>
+    <div class="title"><TranslationText fallback="Engagement" text={translations?.engagement} /></div>
     <div class="dropdown">
       <DropDownInput checkIcon={true} {options} bind:value={selectedOption} />
     </div>
@@ -136,12 +138,12 @@
       align-self: stretch;
     }
     &:not(.mobile) {
-       min-width: 0;
+      min-width: 0;
       :global(.metric-chart-1) {
         flex: 1 1 0;
         min-width: 0;
       }
-      .metrics-wrappers{
+      .metrics-wrappers {
         justify-content: flex-start;
       }
     }
