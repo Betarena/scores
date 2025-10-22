@@ -28,6 +28,7 @@
   import DepositIcon from "$lib/components/ui/assets/DepositIcon.svelte";
   import PencilLineIcon from "$lib/components/ui/assets/PencilLineIcon.svelte";
   import Button from "$lib/components/ui/Button.svelte";
+  import session from "$lib/store/session";
   import userSettings from "$lib/store/user-settings";
   import type { IProfileTrs } from "@betarena/scores-lib/types/types.profile";
   import { showDepositModal } from "../deposit/showDeposit";
@@ -47,6 +48,7 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
   $: ({ lang } = $userSettings);
+  $: ({ viewportType } = $session);
   $: translations = ($page.data.RESPONSE_PROFILE_DATA as IProfileTrs).profile;
   $: actions = [
     { icon: DepositIcon, id: "deposit", label: translations?.addFunds || "Add Funds" },
@@ -101,7 +103,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div id="dashboard-quick-actions">
+<div id="dashboard-quick-actions" class="viewportType">
   <div class="title"><TranslationText fallback="Actions" text={translations?.actions} /></div>
   <div class="actions">
     {#each actions as action}
@@ -183,6 +185,12 @@
           width: 20px;
           height: 20px;
         }
+      }
+    }
+    &:not(.mobile) {
+      .action-label {
+        width: 105px; 
+        max-width: 105px;        
       }
     }
   }
