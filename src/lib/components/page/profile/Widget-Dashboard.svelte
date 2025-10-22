@@ -44,30 +44,56 @@
 
   $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
   $: ({ viewportType } = $session);
+  let timer: ReturnType<typeof setInterval>;
 
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
-  
+
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'logic' that should run            │
   // │ immediately and as part of the 'lifecycle' of svelteJs,                │
   // │ as soon as 'this' .svelte file is ran.                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  
+
   onMount(() => {
-	BetarenaUserHelper.getBtaTokenPriceQuote({
+    getRates();
+    return () => {
+      timer && clearInterval(timer);
+    };
+  });
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // #region ➤ 🛠️ METHODS
+  
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+  
+  async function getRates() {
+    const res = await BetarenaUserHelper.getBtaTokenPriceQuote({
       query: { strAmount: "1", strCurrency: "USD" },
       body: {},
-    }).then(res => {
-		if (res.success) {
-			$session.btaUsdRate = res.success.data.intBtaEstimate;
-		}
-	})
-  })
+    });
+    if (res.success) {
+      $session.btaUsdRate = res.success.data.intBtaEstimate;
+      return;
+    }
+
+    timer = setTimeout(() => {
+      getRates();
+    }, 60000);
+  }
   
-  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
+  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--
@@ -165,7 +191,6 @@
           flex-direction: column;
           gap: var(--spacing-2xl, 20px);
         }
-        
       }
     }
   }
