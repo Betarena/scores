@@ -429,7 +429,7 @@ export function toDecimalFix
   const mult = Math.pow(10, dPlaces);
   if (noRoundUp) {
     const resultNum = num >= 0 ? Math.floor(num * mult) / mult : Math.ceil(num * mult) / mult;
-    let out = removeDot00 ? stripDotZeros(resultNum.toFixed(dPlaces)) : resultNum.toFixed(dPlaces);
+    const out = removeDot00 ? stripDotZeros(resultNum.toFixed(dPlaces)) : resultNum.toFixed(dPlaces);
     return out;
   } else {
     const out = stripDotZeros(num.toFixed(dPlaces));
