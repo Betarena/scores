@@ -46,9 +46,9 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   $: translations = ($page.data.RESPONSE_PROFILE_DATA as IProfileTrs).profile;
   $: ({ viewportType } = $session);
-  const options = [
-    { id: 1, label: "All" },
-    { id: 2, label: "Not All" },
+  $: options = [
+    { id: 1, label: translations?.all || "All" },
+    // { id: 2, label: "Not All" },
   ];
 
   $: engagements = [
@@ -56,7 +56,7 @@
     { label: translations?.views || "Views", count: 0, change: 0 },
   ];
 
-  let selectedOption = options[0];
+  $: selectedOption = options[0];
   // #endregion ➤ 📌 VARIABLES
 </script>
 
