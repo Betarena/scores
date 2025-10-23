@@ -62,10 +62,12 @@ export function getFirstImageWithSize(
 function isInternalLink(node: HTMLAnchorElement) {
   const href = node.getAttribute("href") || "";
   if (!href) return false;
-  const domain = "betarena.com"
+  const domain =
+    typeof window !== "undefined" && window.location
+      ? window.location.hostname
+      : "";
   const isInternal =
     href.startsWith('/') ||
-    href.includes(`://${domain}`) ||
     href.includes(`//${domain}`);
   return isInternal;
 }
