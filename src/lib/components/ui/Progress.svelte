@@ -8,9 +8,70 @@
 -->
 
 <script lang="ts">
-  export let size: "sm" | "md" | "lg" | "xl" = "md";
-  export let color: "brand" | "gray" | "error" | "warning" | "sucess" = "brand";
-  export let type: "modern" | "light" = "light";
+  import { onMount } from "svelte";
+  import { cubicOut } from "svelte/easing";
+  import { tweened } from "svelte/motion";
+
+  // #region ➤ 📌 VARIABLES
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  export let value = 10; // value between 0 and 100
+  export let animation = true;
+
+  const progress = tweened(0, {
+    duration: animation ? 800 : 0,
+    easing: cubicOut,
+  });
+
+  // element binding for intersection observer
+  let container: HTMLElement | null = null;
+  let inView = false;
+  // store latest value while out of view
+  let pendingValue = value;
+
+  // when component mounts, observe visibility
+  let io: IntersectionObserver | null = null;
+  onMount(() => {
+    io = new IntersectionObserver(
+      (entries) => {
+        const e = entries[0];
+        if (!e) return;
+        if (e.isIntersecting) {
+          inView = true;
+          // animate to the latest known value when entering view
+          progress.set(pendingValue);
+        } else {
+          inView = false;
+        }
+      },
+      { threshold: 0.15 }
+    );
+
+    if (container) io.observe(container);
+    return () => {
+      container && io?.unobserve(container);
+      io = null;
+    };
+  });
+
+
+  // react to external value changes: if in view animate immediately, otherwise store
+  $: if (value !== undefined) {
+    pendingValue = value;
+    if (inView) progress.set(value);
+  }
+  // #endregion ➤ 📌 VARIABLES
 </script>
 
 <!--
@@ -24,8 +85,8 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="featured-icon {size} {color} {type}">
-  <slot />
+<div class="progress-bar" bind:this={container}>
+  <div class="progress" style="width: {$progress}%" />
 </div>
 
 <!--
@@ -39,115 +100,20 @@
 -->
 
 <style lang="scss">
-  .featured-icon {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-shrink: 0;
+  .progress-bar {
     border-radius: var(--radius-full, 9999px);
+    background: var(--colors-background-bg-quaternary, #ededed);
+    height: 8px;
+    width: 100%;
+    position: relative;
 
-    &.sm {
-      width: 32px;
-      height: 32px;
-      padding: 8px;
-      :global(svg) {
-        width: 16px;
-        height: 16px;
-      }
-    }
-
-    &.md {
-      width: 40px;
-      height: 40px;
-      padding: 10px;
-      :global(svg) {
-        width: 20px;
-        height: 20px;
-      }
-    }
-    &.lg {
-      width: 48px;
-      height: 48px;
-      padding: 12px;
-      :global(svg) {
-        width: 24px;
-        height: 24px;
-      }
-    }
-    &.xl {
-      width: 56px;
-      height: 56px;
-      padding: 14px;
-      :global(svg) {
-        width: 28px;
-        height: 28px;
-      }
-    }
-
-    &.brand {
-      background: var(--colors-background-bg-brand-secondary, #feece2);
-      :global(path) {
-        stroke: var(
-          --component-colors-components-icons-featured-icons-light-featured-icon-light-fg-brand
-        ) !important;
-      }
-    }
-
-    &.gray {
-      background: var(--colors-background-bg-tertiary, #f7f7f7);
-      :global(path) {
-        stroke: var(
-          --component-colors-components-icons-featured-icons-light-featured-icon-light-fg-gray
-        ) !important;
-      }
-
-      &.modern {
-        border-radius: var(--radius-md, 8px);
-        border: 1px solid var(--colors-border-border-primary, #d2d2d2);
-        background: var(--colors-background-bg-primary, #fff);
-        color: var(--colors-foreground-fg-secondary-700);
-        /* Shadows/shadow-xs-skeuomorphic */
-        box-shadow: 0 0 0 1px
-            var(
-              --colors-effects-shadows-shadow-skeumorphic-inner-border,
-              rgba(10, 13, 18, 0.18)
-            )
-            inset,
-          0 -2px 0 0 var(
-              --colors-effects-shadows-shadow-skeumorphic-inner,
-              rgba(10, 13, 18, 0.05)
-            ) inset,
-          0 1px 2px 0
-            var(--colors-effects-shadows-shadow-xs, rgba(10, 13, 18, 0.05));
-        :global(path) {
-          stroke: var(--colors-foreground-fg-secondary-700) !important;
-        }
-      }
-    }
-
-    &.error {
-      background: var(--colors-background-bg-error-secondary, #fee4e2);
-      :global(path) {
-        stroke: var(
-          --component-colors-components-icons-featured-icons-light-featured-icon-light-fg-error
-        ) !important;
-      }
-    }
-    &.warning {
-      background: var(--colors-background-bg-warning-secondary, #fef0c7);
-      :global(path) {
-        stroke: var(
-          --component-colors-components-icons-featured-icons-light-featured-icon-light-fg-warning
-        ) !important;
-      }
-    }
-    &.sucess {
-      background: var(--colors-background-bg-success-secondary, #dcfae6);
-      :global(path) {
-        stroke: var(
-          --component-colors-components-icons-featured-icons-light-featured-icon-light-fg-success
-        ) !important;
-      }
+    .progress {
+      border-radius: var(--radius-full, 9999px);
+      background: var(--colors-foreground-fg-brand-primary-600, #f5620f);
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
     }
   }
 </style>

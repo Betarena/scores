@@ -8,9 +8,8 @@
 -->
 
 <script lang="ts">
-
   // #region ➤ 📦 Package Imports
-
+  
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'imports' that are required        │
@@ -23,14 +22,12 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  import Save from "$lib/components/ui/assets/save.svelte";
-  import Button from "$lib/components/ui/Button.svelte";
-  import FeaturedIcon from "$lib/components/ui/FeaturedIcon.svelte";
-  import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
-  import ModalWrapper from "./ModalWrapper.svelte";
+  import { page } from "$app/stores";
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
+  import type { IProfileTrs } from "@betarena/scores-lib/types/types.profile";
+  import ActivityFeedItem from "./ActivityFeedItem.svelte";
 
   // #endregion ➤ 📦 Package Imports
-
   // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -44,12 +41,15 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
-  export let id = "";
-  export let cb;
-  export let translations:
-    | TranslationSportstacksSectionDataJSONSchema
-    | undefined;
+  $: translations = ($page.data.RESPONSE_PROFILE_DATA as IProfileTrs).profile;
+  const users = [
+    // { avatar: null, name: "User Name", amount: 10 },
+    // { avatar: null, name: "User Name", amount: 10 },
+    // { avatar: null, name: "User Name", amount: 10 },
+    // { avatar: null, name: "User Name", amount: 10 },
+    // { avatar: null, name: "User Name", amount: 10 },
+    // { avatar: null, name: "User Name", amount: 10 },
+  ];
 
   // #endregion ➤ 📌 VARIABLES
 </script>
@@ -64,21 +64,36 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
-
-<ModalWrapper
-  title={translations?.unbublish_confirmation || "Are you sure you want to unpublish?"}
-  actionButton={translations?.unpublish  || "Unpublish"}
-  cancel={translations?.cancel || "Cancel"}
->
-  <div slot="header-icon">
-    <FeaturedIcon size="lg" color="brand"><Save /></FeaturedIcon>
+<div id="dashboard-activity">
+  <div class="title"><TranslationText fallback="Activity" text={translations?.activity} /></div>
+  <div class="activity-list">
+    {#each users as user, index}
+      <ActivityFeedItem
+        avatar={user.avatar}
+        name={user.name}
+        connector={index !== users.length - 1}
+      >
+        <div class="shared" slot="text">
+          <TranslationText fallback="Shared" text={translations?.shared} />
+          Shared
+          <span class="amount">
+            {user.amount}
+            BTA
+          </span>
+        </div>
+      </ActivityFeedItem>
+    {/each}
+    <div class="empty-state">
+      <div class="empty-text-wrapper">
+        <div class="empty-title"><TranslationText fallback="No activity" text={translations?.noActivity} /></div>
+        <div class="empty-text">
+          <TranslationText fallback="When users give your content an award, you'll find it right here!" text={translations?.noActivityText} />
+          
+        </div>
+      </div>
+    </div>
   </div>
-  <div slot="action-button" class=" action-button">
-    <Button full={true} on:click={cb}>{translations?.unpublish || "Unpublish"} </Button>
-  </div>
-</ModalWrapper>
-
+</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -91,7 +106,96 @@
 -->
 
 <style lang="scss">
-  .action-button {
-    width: 100%;
+  #dashboard-activity {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    min-width: 0;
+    flex-shrink: 0;
+    align-self: stretch;
+
+    .title {
+      color: var(--colors-text-text-secondary-700, #fbfbfb);
+
+      /* Text lg/Semibold */
+      font-family: var(--font-family-font-family-body, Roboto);
+      font-size: var(--font-size-text-lg, 18px);
+      font-style: normal;
+      font-weight: 600;
+      line-height: var(--line-height-text-lg, 28px); /* 155.556% */
+    }
+    .activity-list {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+
+      .shared {
+        display: flex;
+        gap: 5px;
+        color: var(--colors-text-text-tertiary-600, #8c8c8c);
+
+        /* Text sm/Regular */
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-sm, 14px);
+        font-style: normal;
+        font-weight: 400;
+        line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+
+        .amount {
+          color: var(--colors-text-text-brand-secondary-700, #d2d2d2);
+
+          /* Text sm/Medium */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-sm, 14px);
+          font-style: normal;
+          font-weight: 500;
+          line-height: var(--line-height-text-sm, 20px);
+        }
+      }
+
+      :global(.activity-feed-item:last-child .body-wrapper) {
+        padding-bottom: 0;
+      }
+    }
+
+    .empty-state {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      align-self: stretch;
+      width: 100%;
+      .empty-text-wrapper {
+        display: flex;
+        max-width: 352px;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--spacing-xs, 4px);
+        align-self: stretch;
+
+        .empty-title {
+          color: var(--colors-text-text-primary-900, #fff);
+          text-align: center;
+
+          /* Text md/Semibold */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-md, 16px);
+          font-style: normal;
+          font-weight: 600;
+          line-height: var(--line-height-text-md, 24px); /* 150% */
+        }
+        .empty-text {
+          color: var(--colors-text-text-tertiary-600, #8c8c8c);
+          text-align: center;
+
+          /* Text sm/Regular */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-sm, 14px);
+          font-style: normal;
+          font-weight: 400;
+          line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+        }
+      }
+    }
   }
 </style>

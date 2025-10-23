@@ -3,12 +3,12 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+	import VisaIcon from './../../../ui/assets/VisaIcon.svelte';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <script lang="ts">
-
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -23,11 +23,10 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  import Save from "$lib/components/ui/assets/save.svelte";
-  import Button from "$lib/components/ui/Button.svelte";
-  import FeaturedIcon from "$lib/components/ui/FeaturedIcon.svelte";
-  import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
-  import ModalWrapper from "./ModalWrapper.svelte";
+  import { page } from "$app/stores";
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
+  import VisaIcon from "$lib/components/ui/assets/VisaIcon.svelte";
+  import RadioGroupItem from "$lib/components/ui/RadioGroupItem.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -44,12 +43,14 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
+  export let buttonDisabled;
 
-  export let id = "";
-  export let cb;
-  export let translations:
-    | TranslationSportstacksSectionDataJSONSchema
-    | undefined;
+  let checked = true;
+  $: buttonDisabled = !checked;
+  $: if (!checked) {
+    checked = true;
+  }
+  $: ({ deposit_translations = {} } = $page.data);
 
   // #endregion ➤ 📌 VARIABLES
 </script>
@@ -65,20 +66,48 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-
-<ModalWrapper
-  title={translations?.unbublish_confirmation || "Are you sure you want to unpublish?"}
-  actionButton={translations?.unpublish  || "Unpublish"}
-  cancel={translations?.cancel || "Cancel"}
->
-  <div slot="header-icon">
-    <FeaturedIcon size="lg" color="brand"><Save /></FeaturedIcon>
+<div class="deposit-options-wrapper">
+  <div class="header">
+    <div class="title">
+      <TranslationText
+        fallback="Add Funds to Your Spending Wallet"
+        text={deposit_translations.add_funds_to_spending_wallet}
+      />
+    </div>
+    <div class="description">
+      <TranslationText
+        fallback="Choose how you want to buy BTA"
+        text={deposit_translations.choose_how}
+      />
+    </div>
   </div>
-  <div slot="action-button" class=" action-button">
-    <Button full={true} on:click={cb}>{translations?.unpublish || "Unpublish"} </Button>
+  <div class="options">
+    <RadioGroupItem bind:selected={checked}>
+      <div slot="icon"><VisaIcon /></div>
+      <div slot="content" class="option-content">
+        <div class="option-title">
+          <TranslationText
+            fallback="Credit Card (Revolut)"
+            text={deposit_translations.credit_card_revolut}
+          />
+        </div>
+        <div class="option-description">
+          <TranslationText
+            fallback="Instant purchase with Visa/Master"
+            text={deposit_translations.instant_purchase_visa_master}
+          />
+        </div>
+      </div>
+    </RadioGroupItem>
+    <!-- <RadioGroupItem disabled={true}>
+      <div slot="icon"><BitcoinCardIcon /></div>
+      <div slot="content" class="option-content">
+        <div class="option-title">Crypto Transfer</div>
+        <div class="option-description">Send USDT, USDC, or POL</div>
+      </div>
+    </RadioGroupItem> -->
   </div>
-</ModalWrapper>
-
+</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -91,7 +120,81 @@
 -->
 
 <style lang="scss">
-  .action-button {
+  .deposit-options-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-lg, 12px);
+    align-self: stretch;
     width: 100%;
+
+    .header {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      align-self: stretch;
+
+      .title {
+        color: var(--colors-text-text-primary-900, #fff);
+
+        /* Text xl/Semibold */
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-xl, 20px);
+        font-style: normal;
+        font-weight: 600;
+        line-height: var(--line-height-text-xl, 30px); /* 150% */
+      }
+
+      .description {
+        color: var(--colors-text-text-tertiary-600, #8c8c8c);
+
+        /* Text md/Regular */
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-md, 16px);
+        font-style: normal;
+        font-weight: 400;
+        line-height: var(--line-height-text-md, 24px); /* 150% */
+      }
+    }
+    .options {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--spacing-lg, 12px);
+      align-self: stretch;
+      width: 100%;
+
+      :global(.radio-group-item) {
+        max-width: 100%;
+      }
+      .option-content {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        align-self: stretch;
+
+        .option-title {
+          color: var(--colors-text-text-secondary-700, #fbfbfb);
+
+          /* Text sm/Medium */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-sm, 14px);
+          font-style: normal;
+          font-weight: 500;
+          line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+        }
+
+        .option-description {
+          color: var(--colors-text-text-tertiary-600, #8c8c8c);
+
+          /* Text sm/Regular */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-sm, 14px);
+          font-style: normal;
+          font-weight: 400;
+          line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+        }
+      }
+    }
   }
 </style>

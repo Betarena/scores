@@ -14,8 +14,8 @@ COMPONENT JS (w/ TS)
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { daysInMonth, targetDate, toISOMod } from '$lib/utils/dates.js';
 	import { dlog } from '$lib/utils/debug.js';
+	import { get_v1 } from '$lib/utils/fetch.js';
 	import { viewport_change } from '$lib/utils/platform-functions.js';
-  import { get_v1 } from '$lib/utils/fetch.js';
 
 	import WidgetCalendar from './Widget-Calendar.svelte';
 	import WidgetTxHistLoader from './Widget-Tx-Hist-Loader.svelte';
@@ -25,9 +25,9 @@ COMPONENT JS (w/ TS)
 	import icon_calendar from '../assets/menu-opt/calendar.svg';
 	import icon_tx_hist from '../assets/menu-opt/tx-hist-selected.svg';
 
+	import type { IScoresEndpointProfileMain } from '$lib/types/endpoint.js';
 	import type { B_H_TH } from '@betarena/scores-lib/types/_HASURA_.js';
 	import type { B_PROF_D, B_PROF_T } from '@betarena/scores-lib/types/profile.js';
-  import type { IScoresEndpointProfileMain } from '$lib/types/endpoint.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -736,7 +736,7 @@ MAIN DEPOST WIDGET
             CALENDAR POP-UP
             -->
             {#if $sessionStore.userTxShowCalendar}
-              <WidgetCalendar />
+              <WidgetCalendar bind:show={$sessionStore.userTxShowCalendar} bind:dateRange={$sessionStore.userTxHistFilterDateRange} bind:dateSelect={$sessionStore.userTxHistDateSelect} />
             {/if}
 
           </div>

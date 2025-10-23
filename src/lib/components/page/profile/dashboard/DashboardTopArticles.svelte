@@ -8,7 +8,6 @@
 -->
 
 <script lang="ts">
-
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -23,14 +22,11 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  import Save from "$lib/components/ui/assets/save.svelte";
-  import Button from "$lib/components/ui/Button.svelte";
-  import FeaturedIcon from "$lib/components/ui/FeaturedIcon.svelte";
-  import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
-  import ModalWrapper from "./ModalWrapper.svelte";
+  import { page } from "$app/stores";
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
+  import type { IProfileTrs } from "@betarena/scores-lib/types/types.profile";
 
   // #endregion ➤ 📦 Package Imports
-
   // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -45,12 +41,12 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  export let id = "";
-  export let cb;
-  export let translations:
-    | TranslationSportstacksSectionDataJSONSchema
-    | undefined;
-
+  $: translations = ($page.data.RESPONSE_PROFILE_DATA as IProfileTrs).profile;
+  const articles = [
+    // {title: "The Outermost House", tips: 123},
+    // {title: "Northern Farm", tips: 86},
+    // {title: "Northern Farm", tips: 86},
+  ];
   // #endregion ➤ 📌 VARIABLES
 </script>
 
@@ -64,21 +60,41 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
-
-<ModalWrapper
-  title={translations?.unbublish_confirmation || "Are you sure you want to unpublish?"}
-  actionButton={translations?.unpublish  || "Unpublish"}
-  cancel={translations?.cancel || "Cancel"}
->
-  <div slot="header-icon">
-    <FeaturedIcon size="lg" color="brand"><Save /></FeaturedIcon>
+<div id="dashboard-top-articles">
+  <div class="title">
+    <TranslationText
+      fallback="Top Articles by Tips"
+      text={translations?.topArticlesByTips}
+    />
   </div>
-  <div slot="action-button" class=" action-button">
-    <Button full={true} on:click={cb}>{translations?.unpublish || "Unpublish"} </Button>
+  <div class="articles-wrapper">
+    {#each articles as article}
+      <div class="article">
+        <div class="title">{article.title}</div>
+        <div class="tips">
+          {article.tips}
+          <TranslationText fallback="Tips" text={translations?.tips} />
+        </div>
+      </div>
+    {/each}
+    <div class="empty-state">
+      <div class="empty-text-wrapper">
+        <div class="empty-title">
+          <TranslationText
+            fallback="No articles found"
+            text={translations?.noArticles}
+          />
+        </div>
+        <div class="empty-text">
+          <TranslationText
+            fallback="This section exclusively features award-winning articles."
+            text={translations?.noArticlesText}
+          />
+        </div>
+      </div>
+    </div>
   </div>
-</ModalWrapper>
-
+</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -91,7 +107,105 @@
 -->
 
 <style lang="scss">
-  .action-button {
+  #dashboard-top-articles {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    flex-shrink: 0;
     width: 100%;
+    align-self: stretch;
+
+    .title {
+      color: var(--colors-text-text-secondary-700, #fbfbfb);
+
+      /* Text lg/Semibold */
+      font-family: var(--font-family-font-family-body, Roboto);
+      font-size: var(--font-size-text-lg, 18px);
+      font-style: normal;
+      font-weight: 600;
+      line-height: var(--line-height-text-lg, 28px); /* 155.556% */
+    }
+    .articles-wrapper {
+      display: flex;
+      padding: 0 var(--spacing-none, 0);
+      flex-direction: column;
+      align-items: flex-start;
+      flex-shrink: 0;
+      width: 100%;
+      align-self: stretch;
+
+      .article {
+        padding-block: var(--spacing-lg, 12px);
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+        align-self: stretch;
+        border-top: 1px dashed var(--colors-border-border-primary, #525252);
+        &:last-child {
+          border-bottom: 1px dashed var(--colors-border-border-primary, #525252);
+        }
+
+        .title {
+          color: var(--colors-text-text-secondary-700, #fbfbfb);
+
+          /* Text sm/Semibold */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-sm, 14px);
+          font-style: normal;
+          font-weight: 600;
+          line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+        }
+        .tips {
+          color: var(--colors-text-text-tertiary-600, #8c8c8c);
+
+          /* Text sm/Regular */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-sm, 14px);
+          font-style: normal;
+          font-weight: 400;
+          line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+        }
+      }
+    }
+    .empty-state {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      align-self: stretch;
+      width: 100%;
+      .empty-text-wrapper {
+        display: flex;
+        max-width: 352px;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--spacing-xs, 4px);
+        align-self: stretch;
+
+        .empty-title {
+          color: var(--colors-text-text-primary-900, #fff);
+          text-align: center;
+
+          /* Text md/Semibold */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-md, 16px);
+          font-style: normal;
+          font-weight: 600;
+          line-height: var(--line-height-text-md, 24px); /* 150% */
+        }
+        .empty-text {
+          color: var(--colors-text-text-tertiary-600, #8c8c8c);
+          text-align: center;
+
+          /* Text sm/Regular */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-sm, 14px);
+          font-style: normal;
+          font-weight: 400;
+          line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+        }
+      }
+    }
   }
 </style>

@@ -3,12 +3,12 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+	
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <script lang="ts">
-
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -23,12 +23,12 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  import Save from "$lib/components/ui/assets/save.svelte";
-  import Button from "$lib/components/ui/Button.svelte";
-  import FeaturedIcon from "$lib/components/ui/FeaturedIcon.svelte";
-  import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
-  import ModalWrapper from "./ModalWrapper.svelte";
-
+  import { page } from "$app/stores";
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
+  import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
+  import MetricChart from "$lib/components/ui/metrics/MetricChart.svelte";
+  import session from "$lib/store/session";
+  import type { IProfileTrs } from "@betarena/scores-lib/types/types.profile";
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -44,13 +44,19 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
+  $: translations = ($page.data.RESPONSE_PROFILE_DATA as IProfileTrs).profile;
+  $: ({ viewportType } = $session);
+  $: options = [
+    { id: 1, label: translations?.all_sportstacks || "All" },
+    // { id: 2, label: "Not All" },
+  ];
 
-  export let id = "";
-  export let cb;
-  export let translations:
-    | TranslationSportstacksSectionDataJSONSchema
-    | undefined;
+  $: engagements = [
+    { label: translations?.subscribers || "Subscribers", count: 0, change: 0 },
+    { label: translations?.views || "Views", count: 0, change: 0 },
+  ];
 
+  $: selectedOption = options[0];
   // #endregion ➤ 📌 VARIABLES
 </script>
 
@@ -64,21 +70,19 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
-
-<ModalWrapper
-  title={translations?.unbublish_confirmation || "Are you sure you want to unpublish?"}
-  actionButton={translations?.unpublish  || "Unpublish"}
-  cancel={translations?.cancel || "Cancel"}
->
-  <div slot="header-icon">
-    <FeaturedIcon size="lg" color="brand"><Save /></FeaturedIcon>
+<div id="dashboard-engagement" class={viewportType}>
+  <div class="title-wrapper">
+    <div class="title"><TranslationText fallback="Engagement" text={translations?.engagement} /></div>
+    <div class="dropdown">
+      <DropDownInput checkIcon={true} {options} bind:value={selectedOption} />
+    </div>
   </div>
-  <div slot="action-button" class=" action-button">
-    <Button full={true} on:click={cb}>{translations?.unpublish || "Unpublish"} </Button>
+  <div class="metrics-wrappers">
+    {#each engagements as { label, count, change }}
+      <MetricChart text={label} number={count} animation={true} {change} />
+    {/each}
   </div>
-</ModalWrapper>
-
+</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -91,7 +95,57 @@
 -->
 
 <style lang="scss">
-  .action-button {
-    width: 100%;
+  #dashboard-engagement {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    flex-shrink: 0;
+    align-self: stretch;
+    .title-wrapper {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-none, 0);
+      flex-shrink: 0;
+      align-self: stretch;
+      flex-direction: column;
+      gap: 12px;
+      align-items: start;
+      height: fit-content;
+      .title {
+        color: var(--colors-text-text-secondary-700, #fbfbfb);
+        flex: 1 0 0;
+        /* Text lg/Semibold */
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-lg, 18px);
+        font-style: normal;
+        font-weight: 600;
+        line-height: var(--line-height-text-lg, 28px); /* 155.556% */
+      }
+
+      .dropdown {
+        flex: 1 0 0;
+        width: 100%;
+      }
+    }
+
+    .metrics-wrappers {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 20px;
+      min-width: 0;
+      align-self: stretch;
+    }
+    &:not(.mobile) {
+      min-width: 0;
+      :global(.metric-chart-1) {
+        flex: 1 1 0;
+        min-width: 0;
+      }
+      .metrics-wrappers {
+        justify-content: flex-start;
+      }
+    }
   }
 </style>

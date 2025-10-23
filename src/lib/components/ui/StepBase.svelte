@@ -46,8 +46,9 @@
   export let step: number = 1;
   export let checked = false;
   export let active = false;
-  export let isLastStep = false;
+  export let includeConnector = false;
   export let color: "success" | "brand" = "success";
+  export let type: "step" | "circle" = "step"
   export let available = false;
 
   const dispatch = createEventDispatcher()
@@ -67,7 +68,7 @@
 
 <div class="step-base {size}" class:active={active || checked} class:available on:click={() => dispatch("click")}>
   <div class="connecter-wrapper">
-    <div class="check {color}">
+    <div class="check {color} {type}">
       {#if checked && !active}
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -84,12 +85,14 @@
             stroke-linejoin="round"
           />
         </svg>
-      {:else}
+      {:else if type === "step"}
         <div class="number">{step}</div>
+      {:else}
+          <div class="dot"></div>
       {/if}
     </div>
     <div class="connecter">
-      {#if !isLastStep}
+      {#if !includeConnector}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="2"
@@ -131,6 +134,7 @@
     align-items: flex-start;
     opacity: 0.6;
     cursor: default;
+    overflow: hidden;
     
 
     .connecter-wrapper {
@@ -139,6 +143,7 @@
       align-items: center;
       align-self: stretch;
       stroke: var(--colors-border-border-primary, #d2d2d2);
+      flex-shrink: 0;
 
       .check {
         display: flex;
@@ -149,6 +154,13 @@
         align-items: center;
         border-radius: 9999px;
         border: 1.5px solid var(--colors-border-border-brand_alt, #525252);
+
+        &.circle {
+          flex-shrink: 0;
+          height: 32px;
+          width: 32px ;
+          background: var(--colors-background-bg-primary, #1F1F1F);
+        }
         .number {
           color: var(--colors-text-text-disabled, #727171);
           text-align: center;
@@ -159,6 +171,12 @@
           font-style: normal;
           font-weight: 600;
           line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+        }
+        .dot {
+          width: 10px;
+          height: 10px;
+          border-radius: 999px;
+          background-color: var(--colors-foreground-fg-disabled_subtle, #6A6A6A);
         }
       }
     }

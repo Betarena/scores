@@ -184,6 +184,8 @@
       padding: 10px calc(14px + var(--spacing-xxs, 2px));
       &.icon_leading {
         padding: 10px;
+        height: 40px;
+        width: 40px;
       }
     }
 
@@ -329,38 +331,28 @@
 
     &.destructive {
       border-radius: var(--radius-md, 8px);
-      border: 1px solid
-        var(
-          --component-colors-components-buttons-secondary-error-button-secondary-error-border,
-          #fda29b
-        );
-      background: var(
-        --component-colors-components-buttons-secondary-error-button-secondary-error-bg,
-        #fff
-      );
+      border: 1px solid var(--colors-border-border-error_subtle, #FDA29B) !important;
+      background: var(--colors-background-bg-primary, #FFF);
       /* Shadows/shadow-xs */
-      box-shadow: 0px 1px 2px 0px
-        var(--colors-rffects-shadows-shadow-xs, rgba(31, 31, 31, 0.05));
+      box-shadow: 0 0 0 1px var(--colors-effects-shadows-shadow-skeumorphic-inner-border, rgba(10, 13, 18, 0.18)) inset, 0 -2px 0 0 var(--colors-effects-shadows-shadow-skeumorphic-inner, rgba(10, 13, 18, 0.05)) inset, 0 1px 2px 0 var(--colors-effects-shadows-shadow-xs, rgba(10, 13, 18, 0.05));
 
-      color: var(
-        --component-colors-components-buttons-secondary-error-button-secondary-error-fg,
-        #ff3c3c
-      );
+      color: var(--colors-text-text-error-primary-600, #D92D20);
 
       &.hover {
-        border: 1px solid
-          var(
-            --component-colors-components-buttons-secondary-error-button-secondary-error-border_hover,
-            #fda29b
-          );
-        background: var(
-          --component-colors-components-buttons-secondary-error-button-secondary-error-bg_hover,
-          #fef3f2
-        );
-        color: var(
-          --component-colors-components-buttons-secondary-error-button-secondary-error-fg_hover,
-          #ea2b2b
-        );
+        border-radius: var(--radius-md, 8px);
+        border: 1px solid var(--colors-border-border-error_subtle, #FDA29B) !important;
+        background: var(--colors-background-bg-error-primary, #FEF3F2);
+
+        color: var(--colors-text-text-error-primary_hover, #B42318);
+      }
+
+      &:focus, &:focus-within {
+        border-radius: var(--radius-md, 8px);
+        border: 1px solid var(--colors-border-border-error_subtle, #FDA29B) !important;
+        background: var(--colors-background-bg-primary, #FFF);
+
+        /* Focus rings/focus-ring-error-shadow-xs-skeuomorphic */
+        box-shadow: 0 0 0 1px var(--colors-effects-shadows-shadow-skeumorphic-inner-border, rgba(10, 13, 18, 0.18)) inset, 0 -2px 0 0 var(--colors-effects-shadows-shadow-skeumorphic-inner, rgba(10, 13, 18, 0.05)) inset, 0 1px 2px 0 var(--colors-effects-shadows-shadow-xs, rgba(10, 13, 18, 0.05)), 0 0 0 2px var(--colors-background-bg-primary, #FFF), 0 0 0 4px var(--colors-effects-focus-rings-focus-ring-error, #F04438);
       }
     }
 
@@ -375,6 +367,10 @@
 
 
       color: var(--colors-foreground-fg-disabled, #8C8C8C);
+    }
+
+    &:focus, &:focus-within {
+      box-shadow: 0 0 0 1px var(--colors-effects-shadows-shadow-skeumorphic-inner-border, rgba(12, 14, 18, 0.18)) inset, 0 -2px 0 0 var(--colors-effects-shadows-shadow-skeumorphic-inner, rgba(12, 14, 18, 0.05)) inset, 0 1px 2px 0 var(--colors-effects-shadows-shadow-xs, rgba(255, 255, 255, 0.00)), 0 0 0 2px var(--colors-background-bg-primary, #1F1F1F), 0 0 0 4px var(--colors-effects-focus-rings-focus-ring, #F5620F)
     }
   }
   .secondary-gray {

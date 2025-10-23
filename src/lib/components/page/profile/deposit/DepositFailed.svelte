@@ -3,12 +3,12 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+	import VisaIcon from './../../../ui/assets/VisaIcon.svelte';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <script lang="ts">
-
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -23,12 +23,12 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  import Save from "$lib/components/ui/assets/save.svelte";
-  import Button from "$lib/components/ui/Button.svelte";
-  import FeaturedIcon from "$lib/components/ui/FeaturedIcon.svelte";
-  import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
-  import ModalWrapper from "./ModalWrapper.svelte";
-
+  import { page } from "$app/stores";
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
+  import session from "$lib/store/session";
+  import { DotLottieSvelte } from "@lottiefiles/dotlottie-svelte";
+  import { onDestroy } from "svelte";
+  import { depositStore } from "./deposit-store";
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -44,14 +44,24 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
-  export let id = "";
-  export let cb;
-  export let translations:
-    | TranslationSportstacksSectionDataJSONSchema
-    | undefined;
-
+  $: ({ deposit_translations = {}} = $page.data);
+  $: ({ viewportType } = $session);
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+  
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+  
+  onDestroy(() => {
+    $depositStore.revolut = {};
+  })
+  
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 
 <!--
@@ -65,20 +75,25 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-
-<ModalWrapper
-  title={translations?.unbublish_confirmation || "Are you sure you want to unpublish?"}
-  actionButton={translations?.unpublish  || "Unpublish"}
-  cancel={translations?.cancel || "Cancel"}
->
-  <div slot="header-icon">
-    <FeaturedIcon size="lg" color="brand"><Save /></FeaturedIcon>
+<div class="deposit-confirmation-wrapper {viewportType}">
+  <div class="header">
+    <div class="animation">
+      <DotLottieSvelte src="/assets/lottie/Failed.lottie" loop autoplay />
+    </div>
+    <div class="title">
+      <TranslationText
+        fallback="Transaction Failed"
+        text={deposit_translations.transaction_failed}
+      />
+    </div>
   </div>
-  <div slot="action-button" class=" action-button">
-    <Button full={true} on:click={cb}>{translations?.unpublish || "Unpublish"} </Button>
+  <div class="text">
+    <TranslationText
+      fallback="We couldn't process your payment. Please try again or use another method."
+      text={deposit_translations.payment_failed}
+    />
   </div>
-</ModalWrapper>
-
+</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -91,7 +106,56 @@
 -->
 
 <style lang="scss">
-  .action-button {
+  .deposit-confirmation-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-lg, 12px);
+    align-self: stretch;
     width: 100%;
+
+    .header {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 16px;
+      .animation {
+        width: 137px;
+        height: 137px;
+        aspect-ratio: 1/1;
+      }
+
+      .title {
+        color: var(--colors-text-text-primary-900, #fff);
+
+        /* Text xl/Semibold */
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-xl, 20px);
+        font-style: normal;
+        font-weight: 600;
+        line-height: var(--line-height-text-xl, 30px); /* 150% */
+      }
+    }
+    .text {
+      color: var(--colors-text-text-tertiary-600, #8c8c8c);
+      text-align: center;
+
+      /* Text md/Semibold */
+      font-family: var(--font-family-font-family-body, Roboto);
+      font-size: var(--font-size-text-md, 16px);
+      font-style: normal;
+      font-weight: 600;
+      line-height: var(--line-height-text-md, 24px); /* 150% */
+    }
+
+    &:not(.mobile) {
+      align-items: center;
+      .text {
+        width: 343px;
+      }
+    }
   }
 </style>

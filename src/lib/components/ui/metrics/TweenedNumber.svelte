@@ -3,11 +3,13 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+	import { toDecimalFix } from '$lib/utils/string.js';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <script lang="ts">
+
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -23,18 +25,12 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { browser } from "$app/environment";
-  import { page } from "$app/stores";
-  import { get } from "$lib/api/utils.js";
-  import { showDepositModal } from "$lib/components/page/profile/deposit/showDeposit";
-  import Button from "$lib/components/ui/Button.svelte";
-  import sessionStore from "$lib/store/session.js";
-  import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
-  import { createEventDispatcher } from "svelte";
-  import buyOptionsTranslations from "./store";
+  import { toDecimalFix } from "$lib/utils/string";
+  import { onMount } from "svelte";
+  import { cubicOut } from "svelte/easing";
+  import { tweened } from "svelte/motion";
 
   // #endregion ➤ 📦 Package Imports
-
   // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -48,19 +44,55 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
+  export let number: number = 0;
+  export let fixNumber = 0;
+  export let needsToFormat: boolean = true;
+  const tweenedNumber = tweened(0, {
+    duration: 800,
+    easing: cubicOut,
+  });
 
-  export let popup = true;
+  // element binding for intersection observer
+  let container: HTMLElement | null = null;
+  let inView = false;
+  // store latest value while out of view
+  let pendingValue: number = 0;
 
-  const dispatch = createEventDispatcher();
+  // when component mounts, observe visibility
+  let io: IntersectionObserver | null = null;
+  onMount(() => {
+    io = new IntersectionObserver(
+      (entries) => {
+        const e = entries[0];
+        if (!e) return;
+        if (e.isIntersecting) {
+          inView = true;
+          // animate to the latest known value when entering view
+          tweenedNumber.set(pendingValue);
+        } else {
+          inView = false;
+        }
+      },
+      { threshold: 0.15 }
+    );
 
-  let prevLang = "";
+    if (container) io.observe(container);
+    return () => {
+      container && io?.unobserve(container);
+      io = null;
+    };
+  });
 
-  $: trsanslationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
-  $: if (browser) fetchOptions($sessionStore.serverLang)
+  // react to external value changes: if in view animate immediately, otherwise store
+  $: if (number !== undefined) {
+    pendingValue = number;
+    if (inView) tweenedNumber.set(number);
+  }
+
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
-
+  
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'methods' that are to be           │
@@ -70,23 +102,26 @@
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
-  function click() {
-    dispatch("click");
-    showDepositModal();
+  
+  function format(num) {
+    if (!needsToFormat) return num.toFixed(fixNumber);
+    return toDecimalFix(num, fixNumber, true, true, true)
   }
-
-  async function fetchOptions(lang?: string) {
-    if (prevLang === lang || !lang) return;
-    prevLang = lang;
-    const res = await get(`/api/data/main/userguide?userguideId=3&lang=${lang}`) as any;
-    if (res?.content) {
-      $buyOptionsTranslations = res.content as any;
-    }
-  }
-
+  
+  // #endregion ➤ 🛠️ METHODS
+  
 </script>
 
-<Button type="primary" on:click={click}>
-  {trsanslationData?.scores_header_translations?.data?.cta_buy ?? "Buy BTA"}
-</Button>
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 💠 Svelte Component HTML                                                         │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<span bind:this={container}>{format($tweenedNumber)}</span>
+
