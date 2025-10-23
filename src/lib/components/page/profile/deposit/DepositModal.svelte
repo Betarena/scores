@@ -71,7 +71,7 @@
   $: failed = ["failed", "declined"].includes(status || "");
   $: currentStep = $depositStore.revolut.checkoutUrl
     ? steps.findIndex((step) => step.id === "confirmation")
-    : 0;
+    : currentStep || 0;
   $: steps = [
     {
       id: "options",
