@@ -65,7 +65,6 @@ function isInternalLink(node: HTMLAnchorElement) {
   const domain = "betarena.com"
   const isInternal =
     href.startsWith('/') ||
-    href.includes(`://${domain}`) ||
     href.includes(`//${domain}`);
   return isInternal;
 }
