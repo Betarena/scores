@@ -230,6 +230,7 @@
         flex-direction: column-reverse;
         align-items: start;
       }
+      padding-bottom: var(--spacing-3xl, 24px);
     }
   }
 </style>
