@@ -22,10 +22,8 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  import userBetarenaSettings from "$lib/store/user-settings.js";
-  import { walletStore } from "$lib/store/wallets";
-  import { spliceBalanceDoubleZero, toDecimalFix } from "$lib/utils/string.js";
-  import Walleticon from "./assets/walleticon.svelte";
+
+  import Avatar from "$lib/components/ui/Avatar.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -43,30 +41,56 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  $: ({primary, spending} = $walletStore)
+  export let avatar: string;
+  export let name = "";
+  export let text = "";
+  export let connector = true;
 
+  const dotHeight = 3;
+  const dotGap = 3;
+  let dotsCount = 0;
+  let connectorDiv: HTMLDivElement;
+  let contentDiv: HTMLDivElement;
   // #endregion ➤ 📌 VARIABLES
+
+  $: if (connectorDiv && contentDiv && connector) {
+    const contentHeight = contentDiv.clientHeight;
+    const dotsHeight = contentHeight - connectorDiv.clientHeight;
+    dotsCount = Math.floor(dotsHeight / (dotHeight + dotGap));
+  }
 </script>
 
-<a
-  href="/u/transaction-history/{$userBetarenaSettings.lang}"
-  title="View Transactions History"
->
-  <div class="balance">
-    <div class="icon">
-      <Walleticon />
-      <!-- <img src="/assets/images/icons/wallet.svg" alt="wallet" /> -->
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 💠 Svelte Component HTML                                                         │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+<div class="activity-feed-item">
+  <div class="activity-avatar-wrapper" >
+    <div bind:this={connectorDiv}>
+      <Avatar size="lg" src={null} />
     </div>
-    <div class="info">
-      <span class="amount">
-        {spliceBalanceDoubleZero(toDecimalFix(primary.available + spending.available)) ?? "0.00"}
-      </span>
-      <span class="amount"
-        >BTA</span
-      >
+    <div class="timeline-connector-wrapper">
+      {#each Array(dotsCount) as _item}
+        <div class="timeline-connector" />
+      {/each}
     </div>
   </div>
-</a>
+  <div class="body-wrapper" bind:this={contentDiv}>
+    <div class="data-wrapper">
+      <div class="name">{name}</div>
+      <div class="text">
+        <slot name="text">{text}</slot>
+      </div>
+    </div>
+    <slot name="footer" />
+  </div>
+</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -79,44 +103,82 @@
 -->
 
 <style lang="scss">
-  .balance {
+  .activity-feed-item {
     display: flex;
-    gap: 12px;
-    align-items: center;
-    cursor: pointer;
-    &:hover > .info .amount {
-      color: var(--primary);
-    }
+    width: 100%;
+    max-width: 360px;
+    align-items: stretch;
+    gap: var(--spacing-lg, 12px);
+    min-height: fit-content;
 
-    .icon {
-      border-radius: 8px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 40px;
-      width: 40px;
-      background-color: var(--bg-color-second);
-    }
-
-    .info {
+    .activity-avatar-wrapper {
+      flex: 0 0 auto;
       display: flex;
       flex-direction: column;
-      height: 34px;
-      justify-content: space-between;
-
-      .amount {
-        font-size: 16px;
-        font-weight: 700;
-        text-transform: uppercase;
-        color: var(--text-color);
-        line-height: 20px;
+      align-items: stretch;
+      height: 100%;
+      min-height: 100%;
+      gap: var(--spacing-xxs, 6px);
+      :global(.avatar-wrapper) {
+        flex-shrink: 0;
       }
+      .timeline-connector-wrapper {
+        flex-grow: 1;
+        flex-shrink: 1;
+        height: 100%;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        align-items: center;
+        gap: 3px;
 
-      .currency {
-        line-height: 12px;
-        font-size: 12px;
-        font-weight: 400;
-        color: var(--text-color-second-dark);
+        .timeline-connector {
+          flex-shrink: 0;
+          width: 3px;
+          height: 3px;
+          border-radius: 999px;
+          background-color: var(--colors-border-border-primary, #d2d2d2);
+        }
+      }
+    }
+    .body-wrapper {
+      display: flex;
+      padding-bottom: var(--spacing-4xl, 32px);
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--spacing-lg, 12px);
+      flex: 1 0 0;
+
+      .data-wrapper {
+        display: flex;
+        flex-direction: column;
+
+        .name {
+          display: flex;
+          align-items: center;
+          gap: var(--spacing-md, 8px);
+          align-self: stretch;
+
+          color: var(--colors-text-text-secondary-700, #525252);
+
+          /* Text sm/Medium */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-sm, 14px);
+          font-style: normal;
+          font-weight: 500;
+          line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+        }
+        .text {
+          color: var(--colors-text-text-tertiary-600, #6a6a6a);
+
+          /* Text sm/Regular */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-sm, 14px);
+          font-style: normal;
+          font-weight: 400;
+          line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+        }
       }
     }
   }

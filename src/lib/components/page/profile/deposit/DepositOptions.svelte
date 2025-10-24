@@ -3,13 +3,14 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+	import VisaIcon from './../../../ui/assets/VisaIcon.svelte';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <script lang="ts">
   // #region ➤ 📦 Package Imports
-  
+
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'imports' that are required        │
@@ -22,8 +23,11 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  import { createEventDispatcher } from "svelte";
-  
+  import { page } from "$app/stores";
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
+  import VisaIcon from "$lib/components/ui/assets/VisaIcon.svelte";
+  import RadioGroupItem from "$lib/components/ui/RadioGroupItem.svelte";
+
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -39,19 +43,15 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
+  export let buttonDisabled;
 
-  export let size: "sm" | "md" = "md";
-  export let title = "";
-  export let description = "";
-  export let step: number = 1;
-  export let checked = false;
-  export let active = false;
-  export let includeConnector = false;
-  export let color: "success" | "brand" = "success";
-  export let type: "step" | "circle" = "step"
-  export let available = false;
+  let checked = true;
+  $: buttonDisabled = !checked;
+  $: if (!checked) {
+    checked = true;
+  }
+  $: ({ deposit_translations = {} } = $page.data);
 
-  const dispatch = createEventDispatcher()
   // #endregion ➤ 📌 VARIABLES
 </script>
 
@@ -66,54 +66,46 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="step-base {size}" class:active={active || checked} class:available on:click={() => dispatch("click")}>
-  <div class="connecter-wrapper">
-    <div class="check {color} {type}">
-      {#if checked && !active}
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="10"
-          height="8"
-          viewBox="0 0 10 8"
-          fill="none"
-        >
-          <path
-            d="M9 1L3.5 6.5L1 4"
-            stroke="white"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
-      {:else if type === "step"}
-        <div class="number">{step}</div>
-      {:else}
-          <div class="dot"></div>
-      {/if}
+<div class="deposit-options-wrapper">
+  <div class="header">
+    <div class="title">
+      <TranslationText
+        fallback="Add Funds to Your Spending Wallet"
+        text={deposit_translations.add_funds_to_spending_wallet}
+      />
     </div>
-    <div class="connecter">
-      {#if !includeConnector}
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="2"
-          height="38"
-          viewBox="0 0 2 38"
-          fill="none"
-        >
-          <path
-            d="M1 1L1 37"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-dasharray="0.1 6"
-          />
-        </svg>
-      {/if}
+    <div class="description">
+      <TranslationText
+        fallback="Choose how you want to buy BTA"
+        text={deposit_translations.choose_how}
+      />
     </div>
   </div>
-  <div class="text-wrapper">
-    <div class="title">{title}</div>
-    <div class="description">{description}</div>
+  <div class="options">
+    <RadioGroupItem bind:selected={checked}>
+      <div slot="icon"><VisaIcon /></div>
+      <div slot="content" class="option-content">
+        <div class="option-title">
+          <TranslationText
+            fallback="Credit Card (Revolut)"
+            text={deposit_translations.credit_card_revolut}
+          />
+        </div>
+        <div class="option-description">
+          <TranslationText
+            fallback="Instant purchase with Visa/Master"
+            text={deposit_translations.instant_purchase_visa_master}
+          />
+        </div>
+      </div>
+    </RadioGroupItem>
+    <!-- <RadioGroupItem disabled={true}>
+      <div slot="icon"><BitcoinCardIcon /></div>
+      <div slot="content" class="option-content">
+        <div class="option-title">Crypto Transfer</div>
+        <div class="option-description">Send USDT, USDC, or POL</div>
+      </div>
+    </RadioGroupItem> -->
   </div>
 </div>
 
@@ -128,78 +120,33 @@
 -->
 
 <style lang="scss">
-  .step-base {
+  .deposit-options-wrapper {
     display: flex;
-    width: 344px;
+    flex-direction: column;
     align-items: flex-start;
-    opacity: 0.6;
-    cursor: default;
-    overflow: hidden;
-    
+    gap: var(--spacing-lg, 12px);
+    align-self: stretch;
+    width: 100%;
 
-    .connecter-wrapper {
+    .header {
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      align-self: stretch;
-      stroke: var(--colors-border-border-primary, #d2d2d2);
-      flex-shrink: 0;
-
-      .check {
-        display: flex;
-        width: 24px;
-        height: 24px;
-        padding: 6px;
-        justify-content: center;
-        align-items: center;
-        border-radius: 9999px;
-        border: 1.5px solid var(--colors-border-border-brand_alt, #525252);
-
-        &.circle {
-          flex-shrink: 0;
-          height: 32px;
-          width: 32px ;
-          background: var(--colors-background-bg-primary, #1F1F1F);
-        }
-        .number {
-          color: var(--colors-text-text-disabled, #727171);
-          text-align: center;
-
-          /* Text sm/Semibold */
-          font-family: var(--font-family-font-family-body, Roboto);
-          font-size: var(--font-size-text-sm, 14px);
-          font-style: normal;
-          font-weight: 600;
-          line-height: var(--line-height-text-sm, 20px); /* 142.857% */
-        }
-        .dot {
-          width: 10px;
-          height: 10px;
-          border-radius: 999px;
-          background-color: var(--colors-foreground-fg-disabled_subtle, #6A6A6A);
-        }
-      }
-    }
-
-    .text-wrapper {
-      display: flex;
-      padding-top: var(--spacing-xxs, 2px);
       flex-direction: column;
       align-items: flex-start;
-      flex: 1 0 0;
+      align-self: stretch;
 
       .title {
-        color: var(--colors-text-text-secondary-700, #525252);
+        color: var(--colors-text-text-primary-900, #fff);
 
-        /* Text md/Semibold */
+        /* Text xl/Semibold */
         font-family: var(--font-family-font-family-body, Roboto);
-        font-size: var(--font-size-text-md, 16px);
+        font-size: var(--font-size-text-xl, 20px);
         font-style: normal;
         font-weight: 600;
-        line-height: var(--line-height-text-md, 24px); /* 150% */
+        line-height: var(--line-height-text-xl, 30px); /* 150% */
       }
+
       .description {
-        color: var(--colors-text-text-tertiary-600, #6a6a6a);
+        color: var(--colors-text-text-tertiary-600, #8c8c8c);
 
         /* Text md/Regular */
         font-family: var(--font-family-font-family-body, Roboto);
@@ -209,116 +156,42 @@
         line-height: var(--line-height-text-md, 24px); /* 150% */
       }
     }
-
-    &.available {
-      opacity: 1;
-      cursor: pointer;
-        .check {
-          border: 1px solid  var(--colors-text-text-tertiary-600, #6a6a6a);
-          .number {
-            color: var(--colors-text-text-tertiary-600, #6a6a6a);
-          }
-        }
-        .text-wrapper {
-          .title {
-            color: var(--colors-text-text-secondary-700, #525252);
-          }
-          .description {
-            color: var(--colors-text-text-tertiary-600, #6a6a6a);
-          }
-        }
-    }
-
-    &.active {
-      // opacity: 1;
-        .check {
-          background: var(--bg);
-          border: none;
-          &.brand {
-            background: var(--colors-background-bg-brand-solid, #f5620f);
-          }
-          &.success {
-            background-color: var(--colors-background-bg-success-solid, #079455);
-          }
-          .number {
-            color: var(--colors-text-text-white, #fff);
-          }
-        }
-        .text-wrapper {
-          .title {
-            color: var(--colors-text-text-secondary-700, #525252);
-          }
-          .description {
-            color: var(--colors-text-text-tertiary-600, #6a6a6a);
-          }
-        }
-    }
-
-    &.md {
-      gap: var(--spacing-xl, 16px);
-      .connecter-wrapper {
-        padding-bottom: var(--spacing-md, 8px);
-        gap: var(--spacing-md, 8px);
-
-        .check {
-          width: 32px;
-          height: 32px;
-          padding: 8px;
-
-          svg {
-            width: 16px;
-            height: 16px;
-            flex-shrink: 0;
-            aspect-ratio: 1/1;
-          }
-        }
-      }
-      .text-wrapper {
-        padding-top: var(--spacing-xs, 4px);
-
-        .title {
-          font-size: var(--font-size-text-md, 16px);
-          line-height: var(--line-height-text-md, 24px); /* 150% */
-        }
-        .description {
-          font-size: var(--font-size-text-md, 16px);
-          line-height: var(--line-height-text-md, 24px); /* 150% */
-        }
-      }
-    }
-
-    &.sm {
+    .options {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
       gap: var(--spacing-lg, 12px);
+      align-self: stretch;
+      width: 100%;
 
-      .connecter-wrapper {
-        padding-bottom: var(--spacing-sm, 6px);
-        gap: var(--spacing-sm, 6px);
-
-        .check {
-          width: 24px;
-          height: 24px;
-          padding: 6px;
-
-          svg {
-            width: 8px;
-            height: 5.5px;
-            flex-shrink: 0;
-          }
-        }
+      :global(.radio-group-item) {
+        max-width: 100%;
       }
+      .option-content {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        align-self: stretch;
 
-      .text-wrapper {
-        padding-top: var(--spacing-xxs, 2px);
+        .option-title {
+          color: var(--colors-text-text-secondary-700, #fbfbfb);
 
-        .title {
-          /* Text sm/Semibold */
+          /* Text sm/Medium */
+          font-family: var(--font-family-font-family-body, Roboto);
           font-size: var(--font-size-text-sm, 14px);
+          font-style: normal;
+          font-weight: 500;
           line-height: var(--line-height-text-sm, 20px); /* 142.857% */
         }
 
-        .description {
+        .option-description {
+          color: var(--colors-text-text-tertiary-600, #8c8c8c);
+
           /* Text sm/Regular */
+          font-family: var(--font-family-font-family-body, Roboto);
           font-size: var(--font-size-text-sm, 14px);
+          font-style: normal;
+          font-weight: 400;
           line-height: var(--line-height-text-sm, 20px); /* 142.857% */
         }
       }

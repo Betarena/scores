@@ -3,8 +3,7 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
-	
-	import { modalStore } from './../../../store/modal.ts';
+	import VisaIcon from './../../../ui/assets/VisaIcon.svelte';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
@@ -24,50 +23,53 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
   import { page } from "$app/stores";
-
-  import { BetarenaUserHelper } from "$lib/firebase/common";
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
   import session from "$lib/store/session";
-  import type { IProfileTrs } from "@betarena/scores-lib/types/types.profile.js";
-  import { onMount } from "svelte";
-  import DashboardActivity from "./dashboard/DashboardActivity.svelte";
-  import DashboardEarnings from "./dashboard/DashboardEarnings.svelte";
-  import DashboardEngagement from "./dashboard/DashboardEngagement.svelte";
-  import DashboardQuickActions from "./dashboard/DashboardQuickActions.svelte";
-  import DashboardTopArticles from "./dashboard/DashboardTopArticles.svelte";
-  import DashboardWallets from "./dashboard/DashboardWallets.svelte";
+  import { DotLottieSvelte } from "@lottiefiles/dotlottie-svelte";
+  import { depositStore } from "./deposit-store";
 
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
 
-  $: translations = ($page.data.RESPONSE_PROFILE_DATA as IProfileTrs).profile;
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+  export let buttonDisabled;
+
   $: ({ viewportType } = $session);
-  let timer: ReturnType<typeof setInterval>;
+  $: ({ deposit_translations = {} } = $page.data);
 
   // #endregion ➤ 📌 VARIABLES
 
-  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'logic' that should run            │
-  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
-  // │ as soon as 'this' .svelte file is ran.                                 │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  onMount(() => {
-    getRates();
-    return () => {
-      timer && clearInterval(timer);
-    };
-  });
+  buttonDisabled = false;
 
-  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🛠️ METHODS
-  
+
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'methods' that are to be           │
@@ -77,22 +79,7 @@
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  
-  async function getRates() {
-    const res = await BetarenaUserHelper.getBtaTokenPriceQuote({
-      query: { strAmount: "1", strCurrency: "USD" },
-      body: {},
-    });
-    if (res.success) {
-      $session.btaUsdRate = res.success.data.intBtaEstimate;
-      return;
-    }
 
-    timer = setTimeout(() => {
-      getRates();
-    }, 60000);
-  }
-  
   // #endregion ➤ 🛠️ METHODS
 </script>
 
@@ -107,30 +94,21 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div id="dashboard-widget-container" class={viewportType}>
-  {#if viewportType !== "mobile"}
-    <div class="title">{translations?.dashboard || "Dashboard"}</div>
-
-    <div class="sections-wrapper">
-      <div class="section-left">
-        <DashboardWallets />
-        <DashboardEarnings />
-        <DashboardTopArticles />
-      </div>
-      <div class="section-right">
-        <DashboardEngagement />
-        <DashboardActivity />
-        <DashboardQuickActions />
-      </div>
+<div class="deposit-confirmation-wrapper {viewportType}">
+  <div class="header">
+    <div class="animation">
+      <DotLottieSvelte src="/assets/lottie/Success.lottie" loop autoplay />
     </div>
-  {:else}
-    <DashboardWallets />
-    <DashboardEngagement />
-    <DashboardEarnings />
-    <DashboardTopArticles />
-    <DashboardActivity />
-    <DashboardQuickActions />
-  {/if}
+    <div class="title"><TranslationText fallback="Funds Added Successfully!" text={deposit_translations.funds_added_successfully} /></div>
+  </div>
+  <div class="text">
+    <TranslationText fallback="You added" text={deposit_translations.you_added_amount} /> {$depositStore.amount}
+    {$depositStore.rate
+      ? `(≈${(Number($depositStore.amount) * $depositStore.rate).toFixed(
+          2
+        )} BTA)`
+      : ""} . <TranslationText fallback="After approval your funds will be available to your Spending Wallet." text={deposit_translations.after_approval_funds_available} />
+  </div>
 </div>
 
 <!--
@@ -144,20 +122,28 @@
 -->
 
 <style lang="scss">
-  #dashboard-widget-container {
-    height: 100%;
-    min-height: 500px;
-    width: 100%;
-
+  .deposit-confirmation-wrapper {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-3xl, 24px);
+    align-items: flex-start;
+    gap: var(--spacing-lg, 12px);
+    align-self: stretch;
+    width: 100%;
 
-    &:not(.mobile) {
-      border-radius: 12px;
-      background: var(--colors-background-bg-secondary, #232323);
-      padding: var(--spacing-2xl, 20px);
-      gap: var(--spacing-2xl, 20px);
+    .header {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 16px;
+      .animation {
+        width: 137px;
+        height: 137px;
+        aspect-ratio: 1/1;
+      }
+
       .title {
         color: var(--colors-text-text-primary-900, #fff);
 
@@ -168,29 +154,23 @@
         font-weight: 600;
         line-height: var(--line-height-text-xl, 30px); /* 150% */
       }
+    }
+    .text {
+      color: var(--colors-text-text-tertiary-600, #8c8c8c);
+      text-align: center;
 
-      .sections-wrapper {
-        display: flex;
-        gap: var(--spacing-2xl, 20px);
-        flex-wrap: wrap;
+      /* Text md/Semibold */
+      font-family: var(--font-family-font-family-body, Roboto);
+      font-size: var(--font-size-text-md, 16px);
+      font-style: normal;
+      font-weight: 600;
+      line-height: var(--line-height-text-md, 24px); /* 150% */
+    }
 
-        .section-left {
-          flex: 4 1 450px;
-          // max-width: 637px;
-          min-width: 450px;
-          display: flex;
-          flex-direction: column;
-          gap: var(--spacing-2xl, 20px);
-        }
-        .section-right {
-          max-width: 100%;
-          flex-grow: 1;
-          flex-shrink: 1;
-          min-width: 265px;
-          display: flex;
-          flex-direction: column;
-          gap: var(--spacing-2xl, 20px);
-        }
+    &:not(.mobile) {
+      align-items: center;
+      .text {
+        width: 343px;
       }
     }
   }

@@ -3,6 +3,7 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+	import VisaIcon from './../../../ui/assets/VisaIcon.svelte';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
@@ -22,11 +23,12 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  import userBetarenaSettings from "$lib/store/user-settings.js";
-  import { walletStore } from "$lib/store/wallets";
-  import { spliceBalanceDoubleZero, toDecimalFix } from "$lib/utils/string.js";
-  import Walleticon from "./assets/walleticon.svelte";
-
+  import { page } from "$app/stores";
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
+  import session from "$lib/store/session";
+  import { DotLottieSvelte } from "@lottiefiles/dotlottie-svelte";
+  import { onDestroy } from "svelte";
+  import { depositStore } from "./deposit-store";
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -42,31 +44,56 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
-  $: ({primary, spending} = $walletStore)
-
+  $: ({ deposit_translations = {}} = $page.data);
+  $: ({ viewportType } = $session);
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+  
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+  
+  onDestroy(() => {
+    $depositStore.revolut = {};
+  })
+  
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 
-<a
-  href="/u/transaction-history/{$userBetarenaSettings.lang}"
-  title="View Transactions History"
->
-  <div class="balance">
-    <div class="icon">
-      <Walleticon />
-      <!-- <img src="/assets/images/icons/wallet.svg" alt="wallet" /> -->
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 💠 Svelte Component HTML                                                         │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<div class="deposit-confirmation-wrapper {viewportType}">
+  <div class="header">
+    <div class="animation">
+      <DotLottieSvelte src="/assets/lottie/Failed.lottie" loop autoplay />
     </div>
-    <div class="info">
-      <span class="amount">
-        {spliceBalanceDoubleZero(toDecimalFix(primary.available + spending.available)) ?? "0.00"}
-      </span>
-      <span class="amount"
-        >BTA</span
-      >
+    <div class="title">
+      <TranslationText
+        fallback="Transaction Failed"
+        text={deposit_translations.transaction_failed}
+      />
     </div>
   </div>
-</a>
+  <div class="text">
+    <TranslationText
+      fallback="We couldn't process your payment. Please try again or use another method."
+      text={deposit_translations.payment_failed}
+    />
+  </div>
+</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -79,44 +106,55 @@
 -->
 
 <style lang="scss">
-  .balance {
+  .deposit-confirmation-wrapper {
     display: flex;
-    gap: 12px;
-    align-items: center;
-    cursor: pointer;
-    &:hover > .info .amount {
-      color: var(--primary);
-    }
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-lg, 12px);
+    align-self: stretch;
+    width: 100%;
 
-    .icon {
-      border-radius: 8px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 40px;
-      width: 40px;
-      background-color: var(--bg-color-second);
-    }
-
-    .info {
+    .header {
+      width: 100%;
       display: flex;
       flex-direction: column;
-      height: 34px;
-      justify-content: space-between;
-
-      .amount {
-        font-size: 16px;
-        font-weight: 700;
-        text-transform: uppercase;
-        color: var(--text-color);
-        line-height: 20px;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 16px;
+      .animation {
+        width: 137px;
+        height: 137px;
+        aspect-ratio: 1/1;
       }
 
-      .currency {
-        line-height: 12px;
-        font-size: 12px;
-        font-weight: 400;
-        color: var(--text-color-second-dark);
+      .title {
+        color: var(--colors-text-text-primary-900, #fff);
+
+        /* Text xl/Semibold */
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-xl, 20px);
+        font-style: normal;
+        font-weight: 600;
+        line-height: var(--line-height-text-xl, 30px); /* 150% */
+      }
+    }
+    .text {
+      color: var(--colors-text-text-tertiary-600, #8c8c8c);
+      text-align: center;
+
+      /* Text md/Semibold */
+      font-family: var(--font-family-font-family-body, Roboto);
+      font-size: var(--font-size-text-md, 16px);
+      font-style: normal;
+      font-weight: 600;
+      line-height: var(--line-height-text-md, 24px); /* 150% */
+    }
+
+    &:not(.mobile) {
+      align-items: center;
+      .text {
+        width: 343px;
       }
     }
   }

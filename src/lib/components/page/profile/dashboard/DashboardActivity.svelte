@@ -22,10 +22,12 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  import { createEventDispatcher } from "svelte";
-  
-  // #endregion ➤ 📦 Package Imports
+  import { page } from "$app/stores";
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
+  import type { IProfileTrs } from "@betarena/scores-lib/types/types.profile";
+  import ActivityFeedItem from "./ActivityFeedItem.svelte";
 
+  // #endregion ➤ 📦 Package Imports
   // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -39,19 +41,16 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
+  $: translations = ($page.data.RESPONSE_PROFILE_DATA as IProfileTrs).profile;
+  const users = [
+    // { avatar: null, name: "User Name", amount: 10 },
+    // { avatar: null, name: "User Name", amount: 10 },
+    // { avatar: null, name: "User Name", amount: 10 },
+    // { avatar: null, name: "User Name", amount: 10 },
+    // { avatar: null, name: "User Name", amount: 10 },
+    // { avatar: null, name: "User Name", amount: 10 },
+  ];
 
-  export let size: "sm" | "md" = "md";
-  export let title = "";
-  export let description = "";
-  export let step: number = 1;
-  export let checked = false;
-  export let active = false;
-  export let includeConnector = false;
-  export let color: "success" | "brand" = "success";
-  export let type: "step" | "circle" = "step"
-  export let available = false;
-
-  const dispatch = createEventDispatcher()
   // #endregion ➤ 📌 VARIABLES
 </script>
 
@@ -65,55 +64,34 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
-<div class="step-base {size}" class:active={active || checked} class:available on:click={() => dispatch("click")}>
-  <div class="connecter-wrapper">
-    <div class="check {color} {type}">
-      {#if checked && !active}
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="10"
-          height="8"
-          viewBox="0 0 10 8"
-          fill="none"
-        >
-          <path
-            d="M9 1L3.5 6.5L1 4"
-            stroke="white"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
-      {:else if type === "step"}
-        <div class="number">{step}</div>
-      {:else}
-          <div class="dot"></div>
-      {/if}
+<div id="dashboard-activity">
+  <div class="title"><TranslationText fallback="Activity" text={translations?.activity} /></div>
+  <div class="activity-list">
+    {#each users as user, index}
+      <ActivityFeedItem
+        avatar={user.avatar}
+        name={user.name}
+        connector={index !== users.length - 1}
+      >
+        <div class="shared" slot="text">
+          <TranslationText fallback="Shared" text={translations?.shared} />
+          Shared
+          <span class="amount">
+            {user.amount}
+            BTA
+          </span>
+        </div>
+      </ActivityFeedItem>
+    {/each}
+    <div class="empty-state">
+      <div class="empty-text-wrapper">
+        <div class="empty-title"><TranslationText fallback="No activity" text={translations?.noActivity} /></div>
+        <div class="empty-text">
+          <TranslationText fallback="When users give your content an award, you'll find it right here!" text={translations?.noActivityText} />
+          
+        </div>
+      </div>
     </div>
-    <div class="connecter">
-      {#if !includeConnector}
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="2"
-          height="38"
-          viewBox="0 0 2 38"
-          fill="none"
-        >
-          <path
-            d="M1 1L1 37"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-dasharray="0.1 6"
-          />
-        </svg>
-      {/if}
-    </div>
-  </div>
-  <div class="text-wrapper">
-    <div class="title">{title}</div>
-    <div class="description">{description}</div>
   </div>
 </div>
 
@@ -128,197 +106,93 @@
 -->
 
 <style lang="scss">
-  .step-base {
+  #dashboard-activity {
     display: flex;
-    width: 344px;
+    flex-direction: column;
     align-items: flex-start;
-    opacity: 0.6;
-    cursor: default;
-    overflow: hidden;
-    
+    gap: 12px;
+    min-width: 0;
+    flex-shrink: 0;
+    align-self: stretch;
 
-    .connecter-wrapper {
+    .title {
+      color: var(--colors-text-text-secondary-700, #fbfbfb);
+
+      /* Text lg/Semibold */
+      font-family: var(--font-family-font-family-body, Roboto);
+      font-size: var(--font-size-text-lg, 18px);
+      font-style: normal;
+      font-weight: 600;
+      line-height: var(--line-height-text-lg, 28px); /* 155.556% */
+    }
+    .activity-list {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      align-self: stretch;
-      stroke: var(--colors-border-border-primary, #d2d2d2);
-      flex-shrink: 0;
+      width: 100%;
 
-      .check {
+      .shared {
         display: flex;
-        width: 24px;
-        height: 24px;
-        padding: 6px;
-        justify-content: center;
-        align-items: center;
-        border-radius: 9999px;
-        border: 1.5px solid var(--colors-border-border-brand_alt, #525252);
+        gap: 5px;
+        color: var(--colors-text-text-tertiary-600, #8c8c8c);
 
-        &.circle {
-          flex-shrink: 0;
-          height: 32px;
-          width: 32px ;
-          background: var(--colors-background-bg-primary, #1F1F1F);
-        }
-        .number {
-          color: var(--colors-text-text-disabled, #727171);
-          text-align: center;
+        /* Text sm/Regular */
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-sm, 14px);
+        font-style: normal;
+        font-weight: 400;
+        line-height: var(--line-height-text-sm, 20px); /* 142.857% */
 
-          /* Text sm/Semibold */
+        .amount {
+          color: var(--colors-text-text-brand-secondary-700, #d2d2d2);
+
+          /* Text sm/Medium */
           font-family: var(--font-family-font-family-body, Roboto);
           font-size: var(--font-size-text-sm, 14px);
           font-style: normal;
-          font-weight: 600;
-          line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+          font-weight: 500;
+          line-height: var(--line-height-text-sm, 20px);
         }
-        .dot {
-          width: 10px;
-          height: 10px;
-          border-radius: 999px;
-          background-color: var(--colors-foreground-fg-disabled_subtle, #6A6A6A);
-        }
+      }
+
+      :global(.activity-feed-item:last-child .body-wrapper) {
+        padding-bottom: 0;
       }
     }
 
-    .text-wrapper {
+    .empty-state {
       display: flex;
-      padding-top: var(--spacing-xxs, 2px);
-      flex-direction: column;
-      align-items: flex-start;
-      flex: 1 0 0;
+      justify-content: center;
+      align-items: center;
+      align-self: stretch;
+      width: 100%;
+      .empty-text-wrapper {
+        display: flex;
+        max-width: 352px;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--spacing-xs, 4px);
+        align-self: stretch;
 
-      .title {
-        color: var(--colors-text-text-secondary-700, #525252);
+        .empty-title {
+          color: var(--colors-text-text-primary-900, #fff);
+          text-align: center;
 
-        /* Text md/Semibold */
-        font-family: var(--font-family-font-family-body, Roboto);
-        font-size: var(--font-size-text-md, 16px);
-        font-style: normal;
-        font-weight: 600;
-        line-height: var(--line-height-text-md, 24px); /* 150% */
-      }
-      .description {
-        color: var(--colors-text-text-tertiary-600, #6a6a6a);
-
-        /* Text md/Regular */
-        font-family: var(--font-family-font-family-body, Roboto);
-        font-size: var(--font-size-text-md, 16px);
-        font-style: normal;
-        font-weight: 400;
-        line-height: var(--line-height-text-md, 24px); /* 150% */
-      }
-    }
-
-    &.available {
-      opacity: 1;
-      cursor: pointer;
-        .check {
-          border: 1px solid  var(--colors-text-text-tertiary-600, #6a6a6a);
-          .number {
-            color: var(--colors-text-text-tertiary-600, #6a6a6a);
-          }
-        }
-        .text-wrapper {
-          .title {
-            color: var(--colors-text-text-secondary-700, #525252);
-          }
-          .description {
-            color: var(--colors-text-text-tertiary-600, #6a6a6a);
-          }
-        }
-    }
-
-    &.active {
-      // opacity: 1;
-        .check {
-          background: var(--bg);
-          border: none;
-          &.brand {
-            background: var(--colors-background-bg-brand-solid, #f5620f);
-          }
-          &.success {
-            background-color: var(--colors-background-bg-success-solid, #079455);
-          }
-          .number {
-            color: var(--colors-text-text-white, #fff);
-          }
-        }
-        .text-wrapper {
-          .title {
-            color: var(--colors-text-text-secondary-700, #525252);
-          }
-          .description {
-            color: var(--colors-text-text-tertiary-600, #6a6a6a);
-          }
-        }
-    }
-
-    &.md {
-      gap: var(--spacing-xl, 16px);
-      .connecter-wrapper {
-        padding-bottom: var(--spacing-md, 8px);
-        gap: var(--spacing-md, 8px);
-
-        .check {
-          width: 32px;
-          height: 32px;
-          padding: 8px;
-
-          svg {
-            width: 16px;
-            height: 16px;
-            flex-shrink: 0;
-            aspect-ratio: 1/1;
-          }
-        }
-      }
-      .text-wrapper {
-        padding-top: var(--spacing-xs, 4px);
-
-        .title {
+          /* Text md/Semibold */
+          font-family: var(--font-family-font-family-body, Roboto);
           font-size: var(--font-size-text-md, 16px);
+          font-style: normal;
+          font-weight: 600;
           line-height: var(--line-height-text-md, 24px); /* 150% */
         }
-        .description {
-          font-size: var(--font-size-text-md, 16px);
-          line-height: var(--line-height-text-md, 24px); /* 150% */
-        }
-      }
-    }
+        .empty-text {
+          color: var(--colors-text-text-tertiary-600, #8c8c8c);
+          text-align: center;
 
-    &.sm {
-      gap: var(--spacing-lg, 12px);
-
-      .connecter-wrapper {
-        padding-bottom: var(--spacing-sm, 6px);
-        gap: var(--spacing-sm, 6px);
-
-        .check {
-          width: 24px;
-          height: 24px;
-          padding: 6px;
-
-          svg {
-            width: 8px;
-            height: 5.5px;
-            flex-shrink: 0;
-          }
-        }
-      }
-
-      .text-wrapper {
-        padding-top: var(--spacing-xxs, 2px);
-
-        .title {
-          /* Text sm/Semibold */
-          font-size: var(--font-size-text-sm, 14px);
-          line-height: var(--line-height-text-sm, 20px); /* 142.857% */
-        }
-
-        .description {
           /* Text sm/Regular */
+          font-family: var(--font-family-font-family-body, Roboto);
           font-size: var(--font-size-text-sm, 14px);
+          font-style: normal;
+          font-weight: 400;
           line-height: var(--line-height-text-sm, 20px); /* 142.857% */
         }
       }

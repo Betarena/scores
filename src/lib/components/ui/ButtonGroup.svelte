@@ -3,71 +3,31 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
-	
-	import { modalStore } from './../../../store/modal.ts';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
 <script lang="ts">
-  // #region ➤ 📦 Package Imports
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'imports' that are required        │
-  // │ by 'this' .svelte file is ran.                                         │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. svelte/sveltekit imports                                            │
-  // │ 2. project-internal files and logic                                    │
-  // │ 3. component import(s)                                                 │
-  // │ 4. assets import(s)                                                    │
-  // │ 5. type(s) imports(s)                                                  │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  import { page } from "$app/stores";
-
-  import { BetarenaUserHelper } from "$lib/firebase/common";
-  import session from "$lib/store/session";
-  import type { IProfileTrs } from "@betarena/scores-lib/types/types.profile.js";
-  import { onMount } from "svelte";
-  import DashboardActivity from "./dashboard/DashboardActivity.svelte";
-  import DashboardEarnings from "./dashboard/DashboardEarnings.svelte";
-  import DashboardEngagement from "./dashboard/DashboardEngagement.svelte";
-  import DashboardQuickActions from "./dashboard/DashboardQuickActions.svelte";
-  import DashboardTopArticles from "./dashboard/DashboardTopArticles.svelte";
-  import DashboardWallets from "./dashboard/DashboardWallets.svelte";
-
-  // #endregion ➤ 📦 Package Imports
-
   // #region ➤ 📌 VARIABLES
 
-  $: translations = ($page.data.RESPONSE_PROFILE_DATA as IProfileTrs).profile;
-  $: ({ viewportType } = $session);
-  let timer: ReturnType<typeof setInterval>;
-
-  // #endregion ➤ 📌 VARIABLES
-
-  // #region ➤ 🔄 LIFECYCLE [SVELTE]
-
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'logic' that should run            │
-  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
-  // │ as soon as 'this' .svelte file is ran.                                 │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  onMount(() => {
-    getRates();
-    return () => {
-      timer && clearInterval(timer);
-    };
-  });
-
-  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
+  export let group: { id: string; label: string }[] = [];
+  export let selected;
+  // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
-  
+
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'methods' that are to be           │
@@ -77,22 +37,11 @@
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  
-  async function getRates() {
-    const res = await BetarenaUserHelper.getBtaTokenPriceQuote({
-      query: { strAmount: "1", strCurrency: "USD" },
-      body: {},
-    });
-    if (res.success) {
-      $session.btaUsdRate = res.success.data.intBtaEstimate;
-      return;
-    }
 
-    timer = setTimeout(() => {
-      getRates();
-    }, 60000);
+  function click(item) {
+    selected = item;
   }
-  
+
   // #endregion ➤ 🛠️ METHODS
 </script>
 
@@ -107,30 +56,16 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div id="dashboard-widget-container" class={viewportType}>
-  {#if viewportType !== "mobile"}
-    <div class="title">{translations?.dashboard || "Dashboard"}</div>
-
-    <div class="sections-wrapper">
-      <div class="section-left">
-        <DashboardWallets />
-        <DashboardEarnings />
-        <DashboardTopArticles />
-      </div>
-      <div class="section-right">
-        <DashboardEngagement />
-        <DashboardActivity />
-        <DashboardQuickActions />
-      </div>
+<div class="button-group">
+  {#each group as button}
+    <div
+      class="base-button"
+      class:current={selected?.id === button.id}
+      on:click={() => click(button)}
+    >
+      {button.label}
     </div>
-  {:else}
-    <DashboardWallets />
-    <DashboardEngagement />
-    <DashboardEarnings />
-    <DashboardTopArticles />
-    <DashboardActivity />
-    <DashboardQuickActions />
-  {/if}
+  {/each}
 </div>
 
 <!--
@@ -144,53 +79,83 @@
 -->
 
 <style lang="scss">
-  #dashboard-widget-container {
-    height: 100%;
-    min-height: 500px;
-    width: 100%;
+  .button-group {
+    display: inline-flex;
+    align-items: flex-start;
+    border: 1px solid var(--colors-border-border-primary, #d2d2d2);
+    border-radius: var(--radius-md, 8px);
+    /* Shadows/shadow-xs-skeuomorphic */
+    box-shadow: 0 0 0 1px
+        var(
+          --colors-effects-shadows-shadow-skeumorphic-inner-border,
+          rgba(10, 13, 18, 0.18)
+        )
+        inset,
+      0 -2px 0 0 var(
+          --colors-effects-shadows-shadow-skeumorphic-inner,
+          rgba(10, 13, 18, 0.05)
+        ) inset,
+      0 1px 2px 0
+        var(--colors-effects-shadows-shadow-xs, rgba(10, 13, 18, 0.05));
 
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-3xl, 24px);
+    .base-button {
+      display: inline-flex;
+      min-height: 40px;
+      cursor: pointer;
+      padding: var(--spacing-md, 8px) var(--spacing-xl, 16px);
+      justify-content: center;
+      align-items: center;
+      gap: var(--spacing-sm, 6px);
 
-    &:not(.mobile) {
-      border-radius: 12px;
-      background: var(--colors-background-bg-secondary, #232323);
-      padding: var(--spacing-2xl, 20px);
-      gap: var(--spacing-2xl, 20px);
-      .title {
-        color: var(--colors-text-text-primary-900, #fff);
+      border-right: 1px solid var(--colors-border-border-primary, #d2d2d2);
+      background: var(--colors-background-bg-primary, #fff);
 
-        /* Text xl/Semibold */
-        font-family: var(--font-family-font-family-body, Roboto);
-        font-size: var(--font-size-text-xl, 20px);
-        font-style: normal;
-        font-weight: 600;
-        line-height: var(--line-height-text-xl, 30px); /* 150% */
+      color: var(--colors-text-text-secondary-700, #525252);
+
+      /* Text sm/Semibold */
+      font-family: var(--font-family-font-family-body, Roboto);
+      font-size: var(--font-size-text-sm, 14px);
+      font-style: normal;
+      font-weight: 600;
+      line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+
+      &:hover {
+        background: var(--colors-background-bg-primary_hover, #fbfbfb);
+        color: var(--colors-text-text-secondary_hover, #3b3b3b);
+      }
+      &:focus,
+      &:focus-within {
+        box-shadow: 0 0 0 2px var(--colors-background-bg-primary, #fff),
+          0 0 0 4px var(--colors-effects-focus-rings-focus-ring, #f5620f);
       }
 
-      .sections-wrapper {
-        display: flex;
-        gap: var(--spacing-2xl, 20px);
-        flex-wrap: wrap;
+      &.disabled {
+        color: var(--colors-text-text-disabled, #727171);
+      }
 
-        .section-left {
-          flex: 4 1 450px;
-          // max-width: 637px;
-          min-width: 450px;
-          display: flex;
-          flex-direction: column;
-          gap: var(--spacing-2xl, 20px);
+      &.current {
+        background: var(--colors-background-bg-active, #fbfbfb);
+        &:focus,
+        &:focus-within {
+          background: var(--colors-background-bg-active, #fbfbfb);
+          color: var(--colors-text-text-secondary_hover, #3b3b3b);
+          box-shadow: 0 0 0 2px var(--colors-background-bg-primary, #fff),
+            0 0 0 4px var(--colors-effects-focus-rings-focus-ring, #f5620f);
         }
-        .section-right {
-          max-width: 100%;
-          flex-grow: 1;
-          flex-shrink: 1;
-          min-width: 265px;
-          display: flex;
-          flex-direction: column;
-          gap: var(--spacing-2xl, 20px);
+
+        &.disabled {
+          background: var(--colors-background-bg-disabled_subtle, #fbfbfb);
         }
+      }
+
+      &:last-child {
+        border-right: none;
+        border-top-right-radius: var(--radius-md, 8px);
+        border-bottom-right-radius: var(--radius-md, 8px);
+      }
+      &:first-child {
+        border-top-left-radius: var(--radius-md, 8px);
+        border-bottom-left-radius: var(--radius-md, 8px);
       }
     }
   }

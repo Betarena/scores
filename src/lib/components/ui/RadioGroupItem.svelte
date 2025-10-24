@@ -8,28 +8,9 @@
 -->
 
 <script lang="ts">
-  // #region ➤ 📦 Package Imports
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'imports' that are required        │
-  // │ by 'this' .svelte file is ran.                                         │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. svelte/sveltekit imports                                            │
-  // │ 2. project-internal files and logic                                    │
-  // │ 3. component import(s)                                                 │
-  // │ 4. assets import(s)                                                    │
-  // │ 5. type(s) imports(s)                                                  │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-  import userBetarenaSettings from "$lib/store/user-settings.js";
-  import { walletStore } from "$lib/store/wallets";
-  import { spliceBalanceDoubleZero, toDecimalFix } from "$lib/utils/string.js";
-  import Walleticon from "./assets/walleticon.svelte";
-
-  // #endregion ➤ 📦 Package Imports
-
   // #region ➤ 📌 VARIABLES
+
+  import Checkbox from "./Checkbox.svelte";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -42,31 +23,32 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
-  $: ({primary, spending} = $walletStore)
+  export let selected = false;
+  export let disabled = false;
+  export let size: "sm" = "sm";
 
   // #endregion ➤ 📌 VARIABLES
 </script>
 
-<a
-  href="/u/transaction-history/{$userBetarenaSettings.lang}"
-  title="View Transactions History"
->
-  <div class="balance">
-    <div class="icon">
-      <Walleticon />
-      <!-- <img src="/assets/images/icons/wallet.svg" alt="wallet" /> -->
-    </div>
-    <div class="info">
-      <span class="amount">
-        {spliceBalanceDoubleZero(toDecimalFix(primary.available + spending.available)) ?? "0.00"}
-      </span>
-      <span class="amount"
-        >BTA</span
-      >
-    </div>
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 💠 Svelte Component HTML                                                         │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+<div class="radio-group-item {size}" class:selected class:disabled on:click={() => (selected = !selected)} tabindex="0">
+  <div class="content">
+    <slot>
+        <slot name="icon"></slot>
+        <slot name="content"></slot>
+    </slot>
   </div>
-</a>
+  <Checkbox bind:checked={selected} />
+</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -79,45 +61,45 @@
 -->
 
 <style lang="scss">
-  .balance {
+  .radio-group-item {
+    border-radius: var(--radius-xl, 12px);
+    border: 1px solid var(--colors-border-border-secondary, #ededed);
+    background: var(--colors-background-bg-primary, #fff);
+
     display: flex;
-    gap: 12px;
-    align-items: center;
-    cursor: pointer;
-    &:hover > .info .amount {
-      color: var(--primary);
+    align-items: flex-start;
+    &.selected {
+      border: 2px solid var(--colors-border-border-brand, #f5620f);
+    }
+    &.disabled {
+      border: 1px solid var(--colors-border-border-disabled_subtle, #ededed);
+      background: var(--colors-background-bg-disabled_subtle, #fbfbfb);
+      pointer-events: none;
     }
 
-    .icon {
-      border-radius: 8px;
+    &:hover {
+      background: var(--colors-background-bg-primary, #fff);
+    }
+    &:focus,
+    &:focus-within {
+      box-shadow: 0 0 0 2px var(--colors-background-bg-primary, #fff),
+        0 0 0 4px var(--colors-effects-focus-rings-focus-ring, #f5620f);
+    }
+
+    .content {
       display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 40px;
-      width: 40px;
-      background-color: var(--bg-color-second);
+      align-items: flex-start;
+      gap: var(--spacing-lg, 12px);
+      flex: 1 0 0;
     }
 
-    .info {
-      display: flex;
-      flex-direction: column;
-      height: 34px;
-      justify-content: space-between;
-
-      .amount {
-        font-size: 16px;
-        font-weight: 700;
-        text-transform: uppercase;
-        color: var(--text-color);
-        line-height: 20px;
-      }
-
-      .currency {
-        line-height: 12px;
-        font-size: 12px;
-        font-weight: 400;
-        color: var(--text-color-second-dark);
-      }
+    &.sm {
+      gap: var(--spacing-xs, 4px);
+      max-width: 343px;
+      width: 100%;
+      padding: var(--spacing-xl, 16px);
     }
+
+    
   }
 </style>

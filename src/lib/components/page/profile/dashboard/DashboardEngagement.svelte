@@ -3,6 +3,7 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+	
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
@@ -22,11 +23,12 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  import userBetarenaSettings from "$lib/store/user-settings.js";
-  import { walletStore } from "$lib/store/wallets";
-  import { spliceBalanceDoubleZero, toDecimalFix } from "$lib/utils/string.js";
-  import Walleticon from "./assets/walleticon.svelte";
-
+  import { page } from "$app/stores";
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
+  import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
+  import MetricChart from "$lib/components/ui/metrics/MetricChart.svelte";
+  import session from "$lib/store/session";
+  import type { IProfileTrs } from "@betarena/scores-lib/types/types.profile";
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -42,31 +44,45 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
+  $: translations = ($page.data.RESPONSE_PROFILE_DATA as IProfileTrs).profile;
+  $: ({ viewportType } = $session);
+  $: options = [
+    { id: 1, label: translations?.all_sportstacks || "All" },
+    // { id: 2, label: "Not All" },
+  ];
 
-  $: ({primary, spending} = $walletStore)
+  $: engagements = [
+    { label: translations?.subscribers || "Subscribers", count: 0, change: 0 },
+    { label: translations?.views || "Views", count: 0, change: 0 },
+  ];
 
+  $: selectedOption = options[0];
   // #endregion ➤ 📌 VARIABLES
 </script>
 
-<a
-  href="/u/transaction-history/{$userBetarenaSettings.lang}"
-  title="View Transactions History"
->
-  <div class="balance">
-    <div class="icon">
-      <Walleticon />
-      <!-- <img src="/assets/images/icons/wallet.svg" alt="wallet" /> -->
-    </div>
-    <div class="info">
-      <span class="amount">
-        {spliceBalanceDoubleZero(toDecimalFix(primary.available + spending.available)) ?? "0.00"}
-      </span>
-      <span class="amount"
-        >BTA</span
-      >
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 💠 Svelte Component HTML                                                         │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+<div id="dashboard-engagement" class={viewportType}>
+  <div class="title-wrapper">
+    <div class="title"><TranslationText fallback="Engagement" text={translations?.engagement} /></div>
+    <div class="dropdown">
+      <DropDownInput checkIcon={true} {options} bind:value={selectedOption} />
     </div>
   </div>
-</a>
+  <div class="metrics-wrappers">
+    {#each engagements as { label, count, change }}
+      <MetricChart text={label} number={count} animation={true} {change} />
+    {/each}
+  </div>
+</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -79,44 +95,56 @@
 -->
 
 <style lang="scss">
-  .balance {
+  #dashboard-engagement {
     display: flex;
+    flex-direction: column;
+    align-items: flex-start;
     gap: 12px;
-    align-items: center;
-    cursor: pointer;
-    &:hover > .info .amount {
-      color: var(--primary);
-    }
-
-    .icon {
-      border-radius: 8px;
+    flex-shrink: 0;
+    align-self: stretch;
+    .title-wrapper {
       display: flex;
-      justify-content: center;
       align-items: center;
-      height: 40px;
-      width: 40px;
-      background-color: var(--bg-color-second);
-    }
-
-    .info {
-      display: flex;
+      gap: var(--spacing-none, 0);
+      flex-shrink: 0;
+      align-self: stretch;
       flex-direction: column;
-      height: 34px;
-      justify-content: space-between;
-
-      .amount {
-        font-size: 16px;
-        font-weight: 700;
-        text-transform: uppercase;
-        color: var(--text-color);
-        line-height: 20px;
+      gap: 12px;
+      align-items: start;
+      height: fit-content;
+      .title {
+        color: var(--colors-text-text-secondary-700, #fbfbfb);
+        flex: 1 0 0;
+        /* Text lg/Semibold */
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-lg, 18px);
+        font-style: normal;
+        font-weight: 600;
+        line-height: var(--line-height-text-lg, 28px); /* 155.556% */
       }
 
-      .currency {
-        line-height: 12px;
-        font-size: 12px;
-        font-weight: 400;
-        color: var(--text-color-second-dark);
+      .dropdown {
+        flex: 1 0 0;
+        width: 100%;
+      }
+    }
+
+    .metrics-wrappers {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 20px;
+      min-width: 0;
+      align-self: stretch;
+    }
+    &:not(.mobile) {
+      min-width: 0;
+      :global(.metric-chart-1) {
+        flex: 1 1 0;
+        min-width: 0;
+      }
+      .metrics-wrappers {
+        justify-content: flex-start;
       }
     }
   }

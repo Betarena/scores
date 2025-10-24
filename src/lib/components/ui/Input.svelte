@@ -30,7 +30,7 @@
   export let error = false;
   export let placeholder = "";
   export let type: "input" | "leading-text" = "input";
-  export let value = "";
+  export let value: string | number = "";
   export let name = "";
   export let label = "";
   export let height = inputType === "textarea" ? "100px" : "44px";
@@ -83,7 +83,6 @@
   }
 
   // #endregion ➤ 🛠️ METHODS
-
 </script>
 
 <!--
@@ -146,6 +145,11 @@
         />
       {/if}
     </div>
+    {#if $$slots["extra"]}
+      <div class="extra">
+        <slot  name="extra"><!-- optional fallback --></slot>
+      </div>
+    {/if}
   </div>
   {#if $$slots.error || $$slots.info}
     <div class="field-info">
@@ -238,8 +242,8 @@
           height: 100%;
 
           /* Text md/Regular */
-          font-family: var(--Font-family-font-family-body, Roboto);
-          font-size: var(--Font-size-text-md, 16px);
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-md, 16px);
           font-style: normal;
           font-weight: 400;
           line-height: var(--line-height-text-md, 24px); /* 150% */
@@ -275,11 +279,26 @@
         color: var(--colors-foreground-fg-tertiary-600);
 
         /* Text md/Regular */
-        font-family: var(--Font-family-font-family-body, Roboto);
-        font-size: var(--Font-size-text-md, 16px);
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-md, 16px);
         font-style: normal;
         font-weight: 400;
-        line-height: var(--Line-height-text-md, 24px); /* 150% */
+        line-height: var(--line-height-text-md, 24px); /* 150% */
+      }
+
+      .extra {
+        display: flex;
+        padding: var(--spacing-md, 8px) var(--spacing-lg, 12px);
+        align-items: center;
+        gap: var(--spacing-xxs, 2px);
+        color: var(--colors-text-text-tertiary-600, #6A6A6A);
+
+        /* Text md/Regular */
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-md, 16px);
+        font-style: normal;
+        font-weight: 400;
+        line-height: var(--line-height-text-md, 24px); /* 150% */
       }
       &.focus {
         border-color: var(--colors-border-border-brand);
@@ -294,22 +313,22 @@
         color: var(--colors-text-text-tertiary-600, #8c8c8c);
 
         /* Text sm/Regular */
-        font-family: var(--Font-family-font-family-body, Roboto);
-        font-size: var(--Font-size-text-sm, 14px);
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-sm, 14px);
         font-style: normal;
         font-weight: 400;
-        line-height: var(--Line-height-text-sm, 20px); /* 142.857% */
+        line-height: var(--line-height-text-sm, 20px); /* 142.857% */
       }
 
       .error {
         color: var(--colors-text-text-error-primary-600, #f97066);
 
         /* Text sm/Regular */
-        font-family: var(--Font-family-font-family-body, Roboto);
-        font-size: var(--Font-size-text-sm, 14px);
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-sm, 14px);
         font-style: normal;
         font-weight: 400;
-        line-height: var(--Line-height-text-sm, 20px); /* 142.857% */
+        line-height: var(--line-height-text-sm, 20px); /* 142.857% */
       }
     }
   }

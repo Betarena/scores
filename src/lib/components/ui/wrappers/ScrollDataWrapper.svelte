@@ -280,6 +280,7 @@ $: if(htmlElementScrollBox)  {
       top: 0;
       margin: auto;
       cursor: pointer;
+      color: var(--text-color);
 
       &#tagScrollPrev {
         /* 🎨 style */

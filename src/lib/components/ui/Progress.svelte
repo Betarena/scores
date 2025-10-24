@@ -8,26 +8,9 @@
 -->
 
 <script lang="ts">
-  // #region ➤ 📦 Package Imports
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'imports' that are required        │
-  // │ by 'this' .svelte file is ran.                                         │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. svelte/sveltekit imports                                            │
-  // │ 2. project-internal files and logic                                    │
-  // │ 3. component import(s)                                                 │
-  // │ 4. assets import(s)                                                    │
-  // │ 5. type(s) imports(s)                                                  │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-  import userBetarenaSettings from "$lib/store/user-settings.js";
-  import { walletStore } from "$lib/store/wallets";
-  import { spliceBalanceDoubleZero, toDecimalFix } from "$lib/utils/string.js";
-  import Walleticon from "./assets/walleticon.svelte";
-
-  // #endregion ➤ 📦 Package Imports
+  import { onMount } from "svelte";
+  import { cubicOut } from "svelte/easing";
+  import { tweened } from "svelte/motion";
 
   // #region ➤ 📌 VARIABLES
 
@@ -43,30 +26,68 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  $: ({primary, spending} = $walletStore)
+  export let value = 10; // value between 0 and 100
+  export let animation = true;
 
+  const progress = tweened(0, {
+    duration: animation ? 800 : 0,
+    easing: cubicOut,
+  });
+
+  // element binding for intersection observer
+  let container: HTMLElement | null = null;
+  let inView = false;
+  // store latest value while out of view
+  let pendingValue = value;
+
+  // when component mounts, observe visibility
+  let io: IntersectionObserver | null = null;
+  onMount(() => {
+    io = new IntersectionObserver(
+      (entries) => {
+        const e = entries[0];
+        if (!e) return;
+        if (e.isIntersecting) {
+          inView = true;
+          // animate to the latest known value when entering view
+          progress.set(pendingValue);
+        } else {
+          inView = false;
+        }
+      },
+      { threshold: 0.15 }
+    );
+
+    if (container) io.observe(container);
+    return () => {
+      container && io?.unobserve(container);
+      io = null;
+    };
+  });
+
+
+  // react to external value changes: if in view animate immediately, otherwise store
+  $: if (value !== undefined) {
+    pendingValue = value;
+    if (inView) progress.set(value);
+  }
   // #endregion ➤ 📌 VARIABLES
 </script>
 
-<a
-  href="/u/transaction-history/{$userBetarenaSettings.lang}"
-  title="View Transactions History"
->
-  <div class="balance">
-    <div class="icon">
-      <Walleticon />
-      <!-- <img src="/assets/images/icons/wallet.svg" alt="wallet" /> -->
-    </div>
-    <div class="info">
-      <span class="amount">
-        {spliceBalanceDoubleZero(toDecimalFix(primary.available + spending.available)) ?? "0.00"}
-      </span>
-      <span class="amount"
-        >BTA</span
-      >
-    </div>
-  </div>
-</a>
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 💠 Svelte Component HTML                                                         │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<div class="progress-bar" bind:this={container}>
+  <div class="progress" style="width: {$progress}%" />
+</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -79,45 +100,20 @@
 -->
 
 <style lang="scss">
-  .balance {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    cursor: pointer;
-    &:hover > .info .amount {
-      color: var(--primary);
-    }
+  .progress-bar {
+    border-radius: var(--radius-full, 9999px);
+    background: var(--colors-background-bg-quaternary, #ededed);
+    height: 8px;
+    width: 100%;
+    position: relative;
 
-    .icon {
-      border-radius: 8px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 40px;
-      width: 40px;
-      background-color: var(--bg-color-second);
-    }
-
-    .info {
-      display: flex;
-      flex-direction: column;
-      height: 34px;
-      justify-content: space-between;
-
-      .amount {
-        font-size: 16px;
-        font-weight: 700;
-        text-transform: uppercase;
-        color: var(--text-color);
-        line-height: 20px;
-      }
-
-      .currency {
-        line-height: 12px;
-        font-size: 12px;
-        font-weight: 400;
-        color: var(--text-color-second-dark);
-      }
+    .progress {
+      border-radius: var(--radius-full, 9999px);
+      background: var(--colors-foreground-fg-brand-primary-600, #f5620f);
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
     }
   }
 </style>
