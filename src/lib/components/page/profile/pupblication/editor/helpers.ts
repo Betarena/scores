@@ -122,14 +122,9 @@ export async function upsert({
       let rel = anchor_node.getAttribute('rel') || '';
 
       if (isInternal) {
-        rel = rel
-          .split(' ')
-          .filter((val) => val.toLowerCase() !== 'nofollow')
-          .join(' ')
-          .trim();
+         anchor_node.removeAttribute('rel');
+         anchor_node.removeAttribute('target');
 
-        if (rel) anchor_node.setAttribute('rel', rel);
-        else anchor_node.removeAttribute('rel');
       } else {
         if (!rel.includes('nofollow')) {
           rel = `${rel} nofollow`.trim();
