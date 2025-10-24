@@ -10,7 +10,7 @@
 <script lang="ts">
   export let size: "sm" | "md" | "lg" | "xl" = "md";
   export let color: "brand" | "gray" | "error" | "warning" | "sucess" = "brand";
-  export let type: "light" | "gradient" = "light";
+  export let type: "light" | "gradient" | "modern" = "light";
 </script>
 
 <!--
@@ -71,6 +71,7 @@
     .bg {
       position: absolute;
       z-index: 0;
+      display: none;
     }
     .icon-wrapper {
       z-index: 1;
@@ -133,6 +134,7 @@
         mask-size: 100% 100%;
         -webkit-mask-repeat: no-repeat;
         mask-repeat: no-repeat;
+        display: block;
       }
       .mask {
         position: absolute;
@@ -230,7 +232,7 @@
         }
       }
 
-      &.modern {
+      &.modern .icon-wrapper {
         border-radius: var(--radius-md, 8px);
         border: 1px solid var(--colors-border-border-primary, #d2d2d2);
         background: var(--colors-background-bg-primary, #fff);
