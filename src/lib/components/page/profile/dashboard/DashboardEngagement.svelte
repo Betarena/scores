@@ -87,7 +87,7 @@
   </div>
   <div class="metrics-wrappers">
     {#each engagements as { label, count, change }}
-      <MetricChart text={label} number={count} animation={true} {change} />
+      <MetricChart text={label} number={count} animation={false} {change} />
     {/each}
   </div>
 </div>
