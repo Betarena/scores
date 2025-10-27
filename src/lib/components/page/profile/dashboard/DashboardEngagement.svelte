@@ -3,7 +3,7 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
-	
+
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
@@ -45,18 +45,26 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
   $: translations = ($page.data.RESPONSE_PROFILE_DATA as IProfileTrs).profile;
+  $: ([snapshot, current] = $page.data.profile_main_data.engagementMetrics || []);
   $: ({ viewportType } = $session);
+  $: subscribersTotal = current?.subscribers_total || 0;
+  $: viewsTotal = current?.views_total || 0;
+  $: subscribersSnapShot = snapshot?.subscribers_total || 0;
+  $: viewsSnapShot = snapshot?.views_total || 0;
+  $: subscribersChangeInPercent = ((subscribersTotal - subscribersSnapShot) * 100 / subscribersSnapShot) || 0
+  $: viewsChangeInPercent = ((viewsTotal - viewsSnapShot) * 100 / viewsSnapShot) || 0
   $: options = [
     { id: 1, label: translations?.all_sportstacks || "All" },
     // { id: 2, label: "Not All" },
   ];
 
   $: engagements = [
-    { label: translations?.subscribers || "Subscribers", count: 0, change: 0 },
-    { label: translations?.views || "Views", count: 0, change: 0 },
+    { label: translations?.subscribers || "Subscribers", count: subscribersTotal, change: subscribersChangeInPercent},
+    { label: translations?.views || "Views", count: viewsTotal, change: viewsChangeInPercent },
   ];
 
   $: selectedOption = options[0];
+
   // #endregion ➤ 📌 VARIABLES
 </script>
 

@@ -59,7 +59,7 @@
 	},
 	"dependencies": {
 		"@betarena/ad-engine": "0.0.72",
-		"@betarena/scores-lib": "4.8.8",
+		"@betarena/scores-lib": "4.8.9",
 		"@lottiefiles/dotlottie-svelte": "0.8.4",
 		"@lukeed/uuid": "2.0.1",
 		"@metamask/sdk": "0.1.0",
