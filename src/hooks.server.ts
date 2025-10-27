@@ -359,7 +359,7 @@ export const handle: Handle = sequence
           // │ > event.error does not exist in a hook
           // ╰─────
           event.error,
-          event.locals.user.lang,
+          event.params.lang,
         ),
       /**
        * @description
@@ -382,8 +382,7 @@ export const handle: Handle = sequence
                 .replace
                 (
                   '%lang%',
-                  mapLangToLocaleAuthor.get(event.locals.strLocaleOverride ?? methodRes0) ?? 'en'
-
+                  (event.locals.strLocaleOverride ?? mapLangToLocaleAuthor.get(methodRes0) ?? 'en-US')
                 )
               ;
             }
