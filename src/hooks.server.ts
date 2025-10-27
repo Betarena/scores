@@ -359,7 +359,7 @@ export const handle: Handle = sequence
           // │ > event.error does not exist in a hook
           // ╰─────
           event.error,
-          event.params.lang,
+          event.locals.user.lang,
         ),
       /**
        * @description
