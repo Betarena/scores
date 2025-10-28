@@ -32,6 +32,7 @@ import { IProfileMutation0Out, profileMutation0, type IProfileMutation0Var } fro
 import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
 
 import type { IScoresEndpointProfileMain } from '$lib/types/endpoint.js';
+import type { IPageAuthorSportstackData } from '@betarena/scores-lib/types/v8/preload.authors.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -107,7 +108,8 @@ export async function main
       if (queryParamUid && method === 'GET')
         dataRes0 = await helperDataGenerate_0
         (
-          queryParamUid
+          queryParamUid,
+          request.fetch
         );
       ;
 
@@ -174,7 +176,8 @@ export async function main
  */
 async function helperDataGenerate_0
 (
-  uid: string
+  uid: string,
+  fetch: typeof globalThis.fetch
 ): Promise < IScoresEndpointProfileMain['response'] >
 {
   const
@@ -185,20 +188,21 @@ async function helperDataGenerate_0
     objResponse: IScoresEndpointProfileMain['response']
       = {
         status: 'success',
-        success: { data: {} }
+        success: { data: { sportstacks: [] } }
       },
     /**
      * @description
      * 📝 Data Response.
      */
-    dataRes0
-      = await UPROF_UP_ENTRY_0
-      (
-        uid
-      )
-  ;
+    [dataRes0, dataRes1]
+      = await Promise.all([
+        UPROF_UP_ENTRY_0 (uid),
+        fetch(`/api/data/author/sportstack?user=${uid}`).then(res => res.json())
+      ])
+    ;
 
-  objResponse.success.data = dataRes0[0];
+
+  objResponse.success.data = {...dataRes0[0], sportstacks: dataRes1.sportstacks as IPageAuthorSportstackData[]};
 
   if (dataRes0[0] == null)
   {
@@ -206,7 +210,7 @@ async function helperDataGenerate_0
     objResponse.error = { cause: 'No data found', log: [] };
   }
 
-  return objResponse;
+  return {...objResponse };
 }
 
 /**

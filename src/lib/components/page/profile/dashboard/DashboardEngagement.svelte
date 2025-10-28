@@ -45,27 +45,56 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
   $: translations = ($page.data.RESPONSE_PROFILE_DATA as IProfileTrs).profile;
-  $: ([snapshot, current] = $page.data.profile_main_data.engagementMetrics || []);
+  $: ({engagementMetrics = [], sportstacks = []} = $page.data.profile_main_data);
+  $: sportstacksMap = new Map(sportstacks.map(sportstack => [sportstack.id, sportstack]));
   $: ({ viewportType } = $session);
-  $: subscribersTotal = current?.subscribers_total || 0;
-  $: viewsTotal = current?.views_total || 0;
-  $: subscribersSnapShot = snapshot?.subscribers_total || 0;
-  $: viewsSnapShot = snapshot?.views_total || 0;
-  $: subscribersChangeInPercent = ((subscribersTotal - subscribersSnapShot) * 100 / subscribersSnapShot) || 0
-  $: viewsChangeInPercent = ((viewsTotal - viewsSnapShot) * 100 / viewsSnapShot) || 0
-  $: options = [
-    { id: 1, label: translations?.all_sportstacks || "All" },
-    // { id: 2, label: "Not All" },
-  ];
+
+  $: options = engagementMetrics.sort((a, b) => a.author_id - b.author_id).map(engagement => {
+    const {author_id: id} = engagement;
+    return {
+      ...engagement,
+      id: id < 0 ? 0 : id,
+      label: id < 0 ? (translations?.all_sportstacks || "All") : sportstacksMap.get(id).data.username
+    };
+  });
 
   $: engagements = [
-    { label: translations?.subscribers || "Subscribers", count: subscribersTotal, change: subscribersChangeInPercent},
-    { label: translations?.views || "Views", count: viewsTotal, change: viewsChangeInPercent },
+    { field: "subscribers", label: translations?.subscribers || "Subscribers"},
+    { field: "views", label: translations?.views || "Views" },
   ];
 
-  $: selectedOption = options[0];
+  $: selectedOption = options.find(option => !option.id);
+
 
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  function handleOptionChange(e) {
+    selectedOption = e.detail;
+  }
+
+  function getEngagementTrend(snapshot: number, field: string): number {
+    const total_now = snapshot[`${field}_total`];
+    const day = snapshot[`${field}_24h`];
+    if (snapshot === 0) return 0;
+    const total_before = total_now - day;
+    if (total_before === 0) return 100;
+    return (day * 100) / (total_before);
+  }
+
+  // #endregion ➤ 🛠️ METHODS
+
 </script>
 
 <!--
@@ -82,12 +111,12 @@
   <div class="title-wrapper">
     <div class="title"><TranslationText fallback="Engagement" text={translations?.engagement} /></div>
     <div class="dropdown">
-      <DropDownInput checkIcon={true} {options} bind:value={selectedOption} />
+      <DropDownInput checkIcon={true} {options} value={selectedOption} on:change={handleOptionChange} />
     </div>
   </div>
   <div class="metrics-wrappers">
-    {#each engagements as { label, count, change }}
-      <MetricChart text={label} number={count} animation={false} {change} />
+    {#each engagements as { label, field }}
+      <MetricChart text={label} number={selectedOption[`${field}_total`]} animation={false} change={getEngagementTrend(selectedOption, field)} />
     {/each}
   </div>
 </div>

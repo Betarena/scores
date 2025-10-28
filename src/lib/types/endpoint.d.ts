@@ -16,6 +16,7 @@
 // #region ➤ 📦 Package Imports
 
 import { B_H_PROF_Q, IProfileData, IProfileTrs } from "@betarena/scores-lib/types/types.profile.js";
+import { IPageAuthorSportstackData } from "@betarena/scores-lib/types/v8/preload.authors.js";
 
 // #endregion ➤ 📦 Package Imports
 
@@ -57,7 +58,7 @@ export interface IScoresEndpointProfileMain
    * 📝 Endpoint - Response
    */
   response: IScoresEndpointStandardResponse <
-    IProfileData
+    IProfileData & {sportstacks: IPageAuthorSportstackData[]}
     | IProfileTrs
     | B_H_PROF_Q,
     {}
