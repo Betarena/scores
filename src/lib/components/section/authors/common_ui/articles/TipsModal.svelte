@@ -381,6 +381,7 @@
 
     &.mobile {
       bottom: 0;
+      top: unset;
       transform: none;
       left: 0;
       width: 100%;
