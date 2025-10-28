@@ -26,9 +26,14 @@
   import Button from "$lib/components/ui/Button.svelte";
   import Checkbox from "$lib/components/ui/Checkbox.svelte";
   import FeaturedIcon from "$lib/components/ui/FeaturedIcon.svelte";
+  import SportstackAvatar from "$lib/components/ui/SportstackAvatar.svelte";
   import session from "$lib/store/session";
   import { cubicIn, cubicOut } from "svelte/easing";
   import { fly, scale } from "svelte/transition";
+  import bta_icon from "$lib/components/ui/assets/bta_icon.png"
+  import Avatar from "$lib/components/ui/Avatar.svelte";
+  import userSettings from "$lib/store/user-settings.js";
+  import type { IPageAuthorAuthorData } from "@betarena/scores-lib/types/v8/preload.authors.js";
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -44,8 +49,9 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
+  export let sportstack = {} as IPageAuthorAuthorData;
   $: ({ viewportType } = $session);
+  $: user = $userSettings.user?.scores_user_data;
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -107,22 +113,64 @@
     </div>
     <div class="text-wrapper">
       <div class="title">SHARE 1 BTA</div>
-      <div class="text">
-        <p>Each award sends 1 BTA:</p>
-        <ul>
-          <li>0.5 BTA goes to the author</li>
-          <li>0.5 BTA returns to your Rewards wallet</li>
-        </ul>
-        <p>Awards cant be reversed.</p>
+      <div class="awards-flow">
+          <div class="sportstack-wrapper award-item">
+            <div class="avatar-wrapper">
+
+              <SportstackAvatar size="lg" src={sportstack.data?.avatar}/>
+              <div class="connector-wrapper">
+                <svg xmlns="http://www.w3.org/2000/svg" width="2" height="67" viewBox="0 0 2 67" fill="none">
+                  <path d="M1 1L1 65.0115" stroke="#525252" stroke-width="2" stroke-linecap="round" stroke-dasharray="0.1 6"/>
+                </svg>
+              </div>
+            </div>
+            <div class="award-content">
+              <div class="award-candidate">
+                <div class="name">{sportstack.data?.username}</div>
+                <div class="type">Sportstack</div>
+              </div>
+              <div class="amount">
+                <div class="bta-icon">
+                  <img src={bta_icon} alt="BTA Icon" width="40" height="40"/>
+                </div>
+                <div class="description">
+                  <div class="numbers">0.5 BTA <span class="usd">0.5$</span></div>
+                  <div class="text-secondary">
+                    goes to the publication
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="award-item">
+            <Avatar size="lg" src={user?.profile_photo}/>
+            <div class="award-content">
+              <div class="award-candidate">
+                <div class="name">{user?.name}</div>
+                <div class="type">User</div>
+              </div>
+              <div class="amount">
+                <div class="bta-icon">
+                  <img src={bta_icon} alt="BTA Icon" width="40" height="40"/>
+                </div>
+                <div class="description">
+                  <div class="numbers">0.5 BTA <span class="usd">0.5$</span></div>
+                  <div class="text-secondary">
+                    returns to your Rewards wallet
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
       </div>
     </div>
   </div>
   <div class="footer">
+    <Button type="primary" full={true} size="lg">Confirm</Button>
+    <Button type="secondary" full={true} size="lg">Cancel</Button>
     <div class="checkbox-wrapp">
       <Checkbox title="Don't show again" />
     </div>
-    <Button type="secondary" full={viewportType === "mobile"} size="lg">Cancel</Button>
-    <Button type="primary" full={viewportType === "mobile"} size="lg">Confirm</Button>
   </div>
 </div>
 
@@ -184,16 +232,132 @@
           line-height: var(--line-height-text-xl, 30px); /* 150% */
         }
 
-        .text {
+        .awards-flow {
           width: 100%;
           color: var(--colors-text-text-secondary-700, #fbfbfb) !important;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: var(--spacing-none, 0);
 
-          /* Text sm/Regular */
-          font-family: var(--font-family-font-family-body, Roboto);
-          font-size: var(--font-size-text-sm, 14px);
-          font-style: normal;
-          font-weight: 400;
-          line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+          .award-item {
+            display: flex;
+            width: 100%;
+            padding: 0 var(--spacing-xl, 16px);
+            align-items: flex-start;
+            gap: var(--spacing-lg, 12px);
+
+            .avatar-wrapper {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              min-height: 0;
+
+              .connector-wrapper{
+                flex-grow: 1;
+                width: 100%;
+                flex-shrink: 0;
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 1px;
+
+                transform: translateY(5px);
+              }
+            }
+
+            .award-content {
+              display: flex;
+              flex-direction: column;
+              align-items: flex-start;
+              gap: var(--spacing-lg, 12px);
+              flex: 1 0 0;
+
+              .award-candidate {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                align-self: stretch;
+
+                .name {
+                  color: var(--colors-text-text-secondary-700, #FBFBFB);
+
+                  /* Text sm/Medium */
+                  font-family: var(--font-family-font-family-body, Roboto);
+                  font-size: var(--font-size-text-sm, 14px);
+                  font-style: normal;
+                  font-weight: 500;
+                  line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+                }
+                .type {
+                  color: var(--colors-text-text-tertiary-600, #8C8C8C);
+
+                  /* Text sm/Regular */
+                  font-family: var(--font-family-font-family-body, Roboto);
+                  font-size: var(--font-size-text-sm, 14px);
+                  font-style: normal;
+                  font-weight: 400;
+                  line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+                }
+              }
+              .amount {
+                display: flex;
+                align-items: flex-start;
+                gap: var(--spacing-lg, 12px);
+                align-self: stretch;
+
+                .bta-icon {
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                }
+
+                .description {
+                  display: flex;
+                  flex-direction: column;
+                  align-items: flex-start;
+                  flex: 1 0 0;
+                  align-self: stretch;
+
+                  .numbers {
+                    color: var(--colors-text-text-secondary-700, #FBFBFB);
+
+                    /* Text sm/Medium */
+                    font-family: var(--font-family-font-family-body, Roboto);
+                    font-size: var(--font-size-text-sm, 14px);
+                    font-style: normal;
+                    font-weight: 500;
+                    line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+
+                    .usd {
+                      color: var(--colors-text-text-tertiary-600, #8C8C8C);
+
+                      /* Text xs/Semibold */
+                      font-family: var(--font-family-font-family-body, Roboto);
+                      font-size: var(--font-size-text-xs, 12px);
+                      font-style: normal;
+                      font-weight: 600;
+                      line-height: var(--line-height-text-xs, 18px);
+                    }
+                  }
+                  .text-secondary {
+                    color: var(--colors-text-text-tertiary-600, #8C8C8C);
+
+                    /* Text sm/Regular */
+                    font-family: var(--font-family-font-family-body, Roboto);
+                    font-size: var(--font-size-text-sm, 14px);
+                    font-style: normal;
+                    font-weight: 400;
+                    line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+                  }
+                }
+              }
+            }
+            &.sportstack-wrapper .award-content  {
+              padding-bottom: var(--spacing-4xl, 32px);
+            }
+          }
           p {
             color: var(--colors-text-text-secondary-700, #fbfbfb) !important;
           }
@@ -204,6 +368,8 @@
       display: flex;
       padding: var(--spacing-3xl, 24px);
       align-items: center;
+      flex-direction: column;
+      align-items: start;
       justify-content: space-between;
       gap: var(--spacing-lg, 12px);
       align-self: stretch;
@@ -218,6 +384,7 @@
       transform: none;
       left: 0;
       width: 100%;
+      max-width: 100%;
       border-bottom-right-radius: 0;
       border-bottom-left-radius: 0;
       .header {
@@ -227,7 +394,7 @@
       .footer {
         padding: var(--spacing-xl, 16px);
         padding-top: var(--spacing-3xl, 24px);
-        flex-direction: column-reverse;
+        flex-direction: column;
         align-items: start;
       }
       padding-bottom: var(--spacing-3xl, 24px);
