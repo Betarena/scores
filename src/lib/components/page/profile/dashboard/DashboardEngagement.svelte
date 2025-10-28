@@ -28,7 +28,7 @@
   import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
   import MetricChart from "$lib/components/ui/metrics/MetricChart.svelte";
   import session from "$lib/store/session";
-  import type { IProfileTrs } from "@betarena/scores-lib/types/types.profile";
+  import type { IProfileData, IProfileTrs } from "@betarena/scores-lib/types/types.profile";
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -45,25 +45,29 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
   $: translations = ($page.data.RESPONSE_PROFILE_DATA as IProfileTrs).profile;
-  $: ({engagementMetrics = [], sportstacks = []} = $page.data.profile_main_data);
-  $: sportstacksMap = new Map(sportstacks.map(sportstack => [sportstack.id, sportstack]));
+  $: ({engagementMetrics = []} = $page.data.profile_main_data as IProfileData);
   $: ({ viewportType } = $session);
+  $: ([ all, ...sportstacks] = engagementMetrics.reverse())
 
-  $: options = engagementMetrics.sort((a, b) => a.author_id - b.author_id).map(engagement => {
-    const {author_id: id} = engagement;
-    return {
-      ...engagement,
-      id: id < 0 ? 0 : id,
-      label: id < 0 ? (translations?.all_sportstacks || "All") : sportstacksMap.get(id).data.username
-    };
-  });
+  $: options = [
+    {...all, id: -1, label: (translations?.all_sportstacks || "All")},
+    ...(sportstacks as IProfileData["engagementMetrics"]).map(metric => {
+      const { id, engagement, data } = metric;
+      debugger
+      return {
+        ...engagement,
+        id,
+        label: data?.username || ""
+      };
+    })
+  ]
 
   $: engagements = [
     { field: "subscribers", label: translations?.subscribers || "Subscribers"},
     { field: "views", label: translations?.views || "Views" },
   ];
 
-  $: selectedOption = options.find(option => !option.id);
+  $: selectedOption = options.find(option => option.id < 0);
 
 
   // #endregion ➤ 📌 VARIABLES
@@ -89,7 +93,8 @@
     const day = snapshot[`${field}_24h`];
     if (snapshot === 0) return 0;
     const total_before = total_now - day;
-    if (total_before === 0) return 100;
+    if (!total_before && !day) return 0;
+    if (!total_before) return 100;
     return (day * 100) / (total_before);
   }
 
