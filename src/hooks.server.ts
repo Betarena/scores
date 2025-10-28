@@ -382,8 +382,7 @@ export const handle: Handle = sequence
                 .replace
                 (
                   '%lang%',
-                  mapLangToLocaleAuthor.get(event.locals.strLocaleOverride ?? methodRes0) ?? 'en'
-
+                  (event.locals.strLocaleOverride ?? mapLangToLocaleAuthor.get(methodRes0) ?? 'en-US')
                 )
               ;
             }
