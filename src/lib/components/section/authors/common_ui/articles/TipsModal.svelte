@@ -36,6 +36,7 @@
   import type { IPageAuthorAuthorData } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import { onMount } from "svelte";
   import { getRates } from "$lib/utils/web3.js";
+  import { DotLottieSvelte } from "@lottiefiles/dotlottie-svelte";
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -172,7 +173,7 @@
             <div class="award-content">
               <div class="award-candidate">
                 <div class="name">{user?.name}</div>
-                <div class="type">User</div>
+                <div class="type">@{user?.username}</div>
               </div>
               <div class="amount">
                 <div class="bta-icon">
@@ -195,6 +196,9 @@
     </div>
   </div>
   <div class="footer">
+    <div class="confetti">
+      <DotLottieSvelte  src="/assets/lottie/Confetti.lottie"   />
+    </div>
     <Button type="primary" full={true} size="lg">Confirm</Button>
     <Button type="secondary" full={true} size="lg">Cancel</Button>
     <div class="checkbox-wrapp">
@@ -402,9 +406,16 @@
       justify-content: space-between;
       gap: var(--spacing-lg, 12px);
       align-self: stretch;
+      position: relative;
 
       .checkbox-wrapp {
         flex-shrink: 0;
+      }
+
+      .confetti {
+        width: 100%;
+        position: absolute;
+        transform: translate(-5%, -40%);
       }
     }
 
