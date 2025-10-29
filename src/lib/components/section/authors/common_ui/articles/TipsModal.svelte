@@ -34,6 +34,8 @@
   import Avatar from "$lib/components/ui/Avatar.svelte";
   import userSettings from "$lib/store/user-settings.js";
   import type { IPageAuthorAuthorData } from "@betarena/scores-lib/types/v8/preload.authors.js";
+  import { onMount } from "svelte";
+  import { getRates } from "$lib/utils/web3.js";
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -73,7 +75,26 @@
     return scale(node, { duration: out ? 400 : 700, easing });
   }
 
+  function convertToUsd(amount: number) {
+    return (amount / $session.btaUsdRate).toFixed(2)
+  }
+
   // #endregion ➤ 🛠️ METHODS
+
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  onMount(() => {
+    getRates(session);
+  })
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 
 <!--
@@ -134,7 +155,11 @@
                   <img src={bta_icon} alt="BTA Icon" width="40" height="40"/>
                 </div>
                 <div class="description">
-                  <div class="numbers">0.5 BTA <span class="usd">0.5$</span></div>
+                  <div class="numbers">0.5 BTA
+                    {#if $session.btaUsdRate}
+                    <span class="usd">{convertToUsd(0.5)}$</span>
+                    {/if}
+                  </div>
                   <div class="text-secondary">
                     goes to the publication
                   </div>
@@ -154,7 +179,11 @@
                   <img src={bta_icon} alt="BTA Icon" width="40" height="40"/>
                 </div>
                 <div class="description">
-                  <div class="numbers">0.5 BTA <span class="usd">0.5$</span></div>
+                  <div class="numbers">0.5 BTA
+                    {#if $session.btaUsdRate}
+                       <span class="usd">{convertToUsd(0.5)}$</span>
+                      {/if}
+                  </div>
                   <div class="text-secondary">
                     returns to your Rewards wallet
                   </div>

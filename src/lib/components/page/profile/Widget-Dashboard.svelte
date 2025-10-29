@@ -3,7 +3,7 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
-	
+
 	import { modalStore } from './../../../store/modal.ts';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
@@ -27,7 +27,6 @@
 
   import { page } from "$app/stores";
 
-  import { BetarenaUserHelper } from "$lib/firebase/common";
   import session from "$lib/store/session";
   import type { IProfileTrs } from "@betarena/scores-lib/types/types.profile.js";
   import { onMount } from "svelte";
@@ -37,6 +36,7 @@
   import DashboardQuickActions from "./dashboard/DashboardQuickActions.svelte";
   import DashboardTopArticles from "./dashboard/DashboardTopArticles.svelte";
   import DashboardWallets from "./dashboard/DashboardWallets.svelte";
+  import { getRates } from "$lib/utils/web3.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -44,7 +44,6 @@
 
   $: translations = ($page.data.RESPONSE_PROFILE_DATA as IProfileTrs).profile;
   $: ({ viewportType } = $session);
-  let timer: ReturnType<typeof setInterval>;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -58,16 +57,13 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   onMount(() => {
-    getRates();
-    return () => {
-      timer && clearInterval(timer);
-    };
+    getRates(session);
   });
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
   // #region ➤ 🛠️ METHODS
-  
+
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'methods' that are to be           │
@@ -77,22 +73,8 @@
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  
-  async function getRates() {
-    const res = await BetarenaUserHelper.getBtaTokenPriceQuote({
-      query: { strAmount: "1", strCurrency: "USD" },
-      body: {},
-    });
-    if (res.success) {
-      $session.btaUsdRate = res.success.data.intBtaEstimate;
-      return;
-    }
 
-    timer = setTimeout(() => {
-      getRates();
-    }, 60000);
-  }
-  
+
   // #endregion ➤ 🛠️ METHODS
 </script>
 
