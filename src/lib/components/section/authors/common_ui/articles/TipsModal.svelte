@@ -36,6 +36,8 @@
   import type { IPageAuthorAuthorData } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import { onMount } from "svelte";
   import { getRates } from "$lib/utils/web3.js";
+  import { type DotLottie, DotLottieSvelte } from "@lottiefiles/dotlottie-svelte";
+  import { modalStore } from "$lib/store/modal.js";
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -52,6 +54,8 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
   export let sportstack = {} as IPageAuthorAuthorData;
+  let dotLottie: DotLottie;
+
   $: ({ viewportType } = $session);
   $: user = $userSettings.user?.scores_user_data;
   // #endregion ➤ 📌 VARIABLES
@@ -79,6 +83,12 @@
     return (amount / $session.btaUsdRate).toFixed(2)
   }
 
+  function confirm() {
+    if(dotLottie) dotLottie.play();
+    setTimeout(() => {
+      $modalStore.show = false;
+    }, 700)
+  }
   // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
@@ -133,7 +143,7 @@
       </FeaturedIcon>
     </div>
     <div class="text-wrapper">
-      <div class="title">SHARE 1 BTA</div>
+      <div class="title">Give an Award</div>
       <div class="awards-flow">
           <div class="sportstack-wrapper award-item">
             <div class="avatar-wrapper">
@@ -172,7 +182,7 @@
             <div class="award-content">
               <div class="award-candidate">
                 <div class="name">{user?.name}</div>
-                <div class="type">User</div>
+                <div class="type">@{user?.username}</div>
               </div>
               <div class="amount">
                 <div class="bta-icon">
@@ -195,8 +205,15 @@
     </div>
   </div>
   <div class="footer">
-    <Button type="primary" full={true} size="lg">Confirm</Button>
-    <Button type="secondary" full={true} size="lg">Cancel</Button>
+    <div class="confetti">
+      <DotLottieSvelte  dotLottieRefCallback={(ref) => dotLottie = ref } src="/assets/lottie/Confetti.lottie"   />
+    </div>
+    <Button type="primary" full={true} size="lg" on:click={confirm}>Share 1BTA
+      {#if $session.btaUsdRate}
+         <span class="button-usd">({convertToUsd(1)}$)</span>
+      {/if}
+    </Button>
+    <Button type="secondary" full={true} size="lg" on:click={() => $modalStore.show = false}>Cancel</Button>
     <div class="checkbox-wrapp">
       <Checkbox title="Don't show again" />
     </div>
@@ -402,9 +419,28 @@
       justify-content: space-between;
       gap: var(--spacing-lg, 12px);
       align-self: stretch;
+      position: relative;
 
       .checkbox-wrapp {
         flex-shrink: 0;
+      }
+
+      .confetti {
+        width: 100%;
+        position: absolute;
+        transform: translate(-5%, -40%);
+        pointer-events: none;
+      }
+
+      .button-usd {
+        color: var(--colors-Text-text-white, #FFF);
+
+        /* Text xs/Semibold */
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-xs, 12px);
+        font-style: normal;
+        font-weight: 600;
+        line-height: var(--line-height-text-xs, 18px);
       }
     }
 
