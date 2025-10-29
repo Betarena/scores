@@ -50,8 +50,7 @@
   let loading = false;
   $: ({ viewportType } = $session);
   $: ({ translations } = $loginStore);
-  $: selectedTopics = scores_user_data?.following?.tags || [];
-
+  $: selectedTopics = scores_user_data?.following?.tags?.map(Number) || [];
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -81,11 +80,15 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function toggleTopic(topic: number) {
+  async function toggleTopic(topic: number) {
     const follow = !selectedTopics.includes(topic);
     userBetarenaSettings.updateData([
       ["user-following", { target: "tags", id: topic, follow }],
     ]);
+    await post("/api/data/author/tags", {
+      tagId: topic,
+      follow: follow,
+    });
   }
 
   async function fetchSuggestedTags() {
