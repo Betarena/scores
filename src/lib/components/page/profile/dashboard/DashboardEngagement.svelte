@@ -53,7 +53,6 @@
     {...all, id: -1, label: (translations?.all_sportstacks || "All")},
     ...(sportstacks as IProfileData["engagementMetrics"]).map(metric => {
       const { id, engagement, data } = metric;
-      debugger
       return {
         ...engagement,
         id,
