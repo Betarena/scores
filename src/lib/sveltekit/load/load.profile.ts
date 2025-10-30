@@ -17,7 +17,7 @@ import { preloadRedirect, promiseUrlsPreload } from '$lib/utils/navigation.js';
 
 import type { B_SAP_D2, B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
 import type { B_USRG_D } from '@betarena/scores-lib/types/types.misc.userguide.js';
-import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
+import type { IProfileData, IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
 import type { ServerLoadEvent } from '@sveltejs/kit';
 
 // #endregion ➤ 📦 Package Imports
@@ -35,6 +35,7 @@ type IPreloadData0 =
   IProfileTrs | undefined,
   B_SAP_D3 | undefined,
   B_SAP_D2 | undefined,
+  IProfileData | undefined,
   B_USRG_D | undefined
 ];
 
@@ -78,7 +79,7 @@ export async function main
      *  📣 `Data` object for target `route`.
      */
     response: any = {}
-  ;
+    ;
 
   if (loggedInCookie == undefined)
   {
@@ -98,11 +99,13 @@ export async function main
     response.B_SAP_D2,
     response.B_SAP_D3_SP_M,
     response.RESPONSE_PROFILE_DATA,
+    response.profile_main_data,
     response.B_USRG_D
   ] = await fetchData
   (
     event.fetch,
     parentData.langParam,
+    event.locals.uid || ""
   );
 
   // [🐞]
@@ -138,7 +141,8 @@ export async function main
 async function fetchData
 (
   fetch: any,
-  _lang: string
+  _lang: string,
+  uid: string
 ): Promise < IPreloadData0 >
 {
   const
@@ -150,7 +154,8 @@ async function fetchData
       = [
         `/api/data/main/seo-pages?months=true&lang=${_lang}&decompress`,
         '/api/data/main/seo-pages?term=football&decompress',
-        `/api/data/profile.main?lang=${_lang}`,
+        `/api/data/profile.main?lang=${_lang}&uid=${uid}`,
+        `/api/data/profile.main?uid=${uid}`,
         `/api/data/main/userguide?userguideId=2&lang=${_lang}`,
       ],
     /**

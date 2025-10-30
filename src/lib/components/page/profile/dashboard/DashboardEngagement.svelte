@@ -3,7 +3,7 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
-	
+
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
@@ -28,7 +28,7 @@
   import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
   import MetricChart from "$lib/components/ui/metrics/MetricChart.svelte";
   import session from "$lib/store/session";
-  import type { IProfileTrs } from "@betarena/scores-lib/types/types.profile";
+  import type { IProfileData, IProfileTrs } from "@betarena/scores-lib/types/types.profile";
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -45,19 +45,60 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
   $: translations = ($page.data.RESPONSE_PROFILE_DATA as IProfileTrs).profile;
+  $: ({engagementMetrics = []} = $page.data.profile_main_data as IProfileData);
   $: ({ viewportType } = $session);
+  $: ([ all, ...sportstacks] = engagementMetrics.reverse())
+
   $: options = [
-    { id: 1, label: translations?.all_sportstacks || "All" },
-    // { id: 2, label: "Not All" },
-  ];
+    {...all, id: -1, label: (translations?.all_sportstacks || "All")},
+    ...(sportstacks as IProfileData["engagementMetrics"]).map(metric => {
+      const { id, engagement, data } = metric;
+      return {
+        ...engagement,
+        id,
+        label: data?.username || ""
+      };
+    })
+  ]
 
   $: engagements = [
-    { label: translations?.subscribers || "Subscribers", count: 0, change: 0 },
-    { label: translations?.views || "Views", count: 0, change: 0 },
+    { field: "subscribers", label: translations?.subscribers || "Subscribers"},
+    { field: "views", label: translations?.views || "Views" },
   ];
 
-  $: selectedOption = options[0];
+  $: selectedOption = options.find(option => option.id < 0);
+
+
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  function handleOptionChange(e) {
+    selectedOption = e.detail;
+  }
+
+  function getEngagementTrend(snapshot: number, field: string): number {
+    const total_now = snapshot[`${field}_total`];
+    const day = snapshot[`${field}_24h`];
+    if (snapshot === 0) return 0;
+    const total_before = total_now - day;
+    if (!total_before && !day) return 0;
+    if (!total_before) return 100;
+    return (day * 100) / (total_before);
+  }
+
+  // #endregion ➤ 🛠️ METHODS
+
 </script>
 
 <!--
@@ -74,12 +115,12 @@
   <div class="title-wrapper">
     <div class="title"><TranslationText fallback="Engagement" text={translations?.engagement} /></div>
     <div class="dropdown">
-      <DropDownInput checkIcon={true} {options} bind:value={selectedOption} />
+      <DropDownInput checkIcon={true} {options} value={selectedOption} on:change={handleOptionChange} />
     </div>
   </div>
   <div class="metrics-wrappers">
-    {#each engagements as { label, count, change }}
-      <MetricChart text={label} number={count} animation={true} {change} />
+    {#each engagements as { label, field }}
+      <MetricChart text={label} number={selectedOption[`${field}_total`]} animation={false} change={getEngagementTrend(selectedOption, field)} />
     {/each}
   </div>
 </div>

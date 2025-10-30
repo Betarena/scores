@@ -172,9 +172,9 @@
   </div>
   {#if $depositStore.rate}
     <div class="rate">
-      ≈ {$depositStore.rate * (Number($depositStore.amount) || 0)} BTA ${(
+      ≈ {($depositStore.rate * (Number($depositStore.amount) || 0)).toFixed(2)} BTA ${(
         1 / $depositStore.rate
-      ).toFixed(4)}/BTA : <TranslationText
+      ).toFixed(2)}/BTA : <TranslationText
         fallback="Live rate from Uniswap"
         text={deposit_translations.live_rate}
       />
