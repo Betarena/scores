@@ -77,9 +77,9 @@
 
   function chooseTransition(node, { easing, out = false }) {
     if (viewportType === "mobile") {
-      return fly(node, { y: 600, duration: out ? 900 : 700, easing });
+      return fly(node, { y: 600, duration: out ? 500 : 300, easing });
     }
-    return scale(node, { duration: out ? 400 : 700, easing });
+    return scale(node, { duration: out ? 200 : 400, easing });
   }
 
   function convertToUsd(amount: number) {
@@ -235,7 +235,7 @@
         </div>
     {:else}
        <div class="confetti">
-         <DotLottieSvelte  dotLottieRefCallback={(ref) => dotLottie = ref } src="/assets/lottie/Confetti.lottie"   />
+         <DotLottieSvelte  dotLottieRefCallback={(ref) => dotLottie = ref } src="/assets/lottie/Confetti.lottie" autoplay loop   />
        </div>
        <Button type="primary" full={true} size="lg" on:click={confirm}>Share 1BTA
          {#if $session.btaUsdRate}
@@ -484,8 +484,9 @@
 
       .confetti {
         width: 100%;
+
         position: absolute;
-        transform: translate(-5%, -40%);
+        transform: translate(-5%, -45%) scale(1.5);
         pointer-events: none;
       }
 
