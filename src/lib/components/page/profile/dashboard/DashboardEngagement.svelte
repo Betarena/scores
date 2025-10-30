@@ -47,7 +47,7 @@
   $: translations = ($page.data.RESPONSE_PROFILE_DATA as IProfileTrs).profile;
   $: ({engagementMetrics = []} = $page.data.profile_main_data as IProfileData);
   $: ({ viewportType } = $session);
-  $: ([ all, ...sportstacks] = engagementMetrics.reverse())
+  $: ([ all, ...sportstacks] = [...engagementMetrics].reverse())
 
   $: options = [
     {...all, id: -1, label: (translations?.all_sportstacks || "All")},
