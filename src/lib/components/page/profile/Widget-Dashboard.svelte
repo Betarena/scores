@@ -3,7 +3,7 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
-	
+
 	import { modalStore } from './../../../store/modal.ts';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
@@ -27,7 +27,6 @@
 
   import { page } from "$app/stores";
 
-  import { BetarenaUserHelper } from "$lib/firebase/common";
   import session from "$lib/store/session";
   import type { IProfileTrs } from "@betarena/scores-lib/types/types.profile.js";
   import { onMount } from "svelte";
@@ -37,6 +36,7 @@
   import DashboardQuickActions from "./dashboard/DashboardQuickActions.svelte";
   import DashboardTopArticles from "./dashboard/DashboardTopArticles.svelte";
   import DashboardWallets from "./dashboard/DashboardWallets.svelte";
+  import { get } from "$lib/api/utils.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -67,7 +67,7 @@
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
   // #region ➤ 🛠️ METHODS
-  
+
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'methods' that are to be           │
@@ -77,22 +77,23 @@
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  
-  async function getRates() {
-    const res = await BetarenaUserHelper.getBtaTokenPriceQuote({
-      query: { strAmount: "1", strCurrency: "USD" },
-      body: {},
-    });
-    if (res.success) {
-      $session.btaUsdRate = res.success.data.intBtaEstimate;
-      return;
-    }
 
+  async function getRates() {
+    const res = await get("/api/data/bta-rates") as {
+      data?:      { [key: string]: any };
+      symbol?:    string;
+      timestamp?: string;
+      [property: string]: any;
+    }
+    if(res) {
+      $session.btaUsdRate = res.bta_rates?.data.price_in.usd || 0
+      return
+    }
     timer = setTimeout(() => {
       getRates();
     }, 60000);
   }
-  
+
   // #endregion ➤ 🛠️ METHODS
 </script>
 

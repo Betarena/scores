@@ -112,7 +112,7 @@
             <span class="usd"
               >$<TweenedNumber
                 fixNumber={1}
-                number={primary.available / $session.btaUsdRate}
+                number={primary.available * $session.btaUsdRate}
                 needsToFormat={true}
               /></span
             >
@@ -159,7 +159,7 @@
             <span class="usd"
               >$<TweenedNumber
                 fixNumber={1}
-                number={spending.available / $session.btaUsdRate}
+                number={spending.available * $session.btaUsdRate}
                 needsToFormat={true}
               /></span
             >
@@ -202,7 +202,7 @@
             <div class="usd">
               $<TweenedNumber
                 fixNumber={1}
-                number={rewards.available / $session.btaUsdRate}
+                number={rewards.available * $session.btaUsdRate}
               />
             </div>
           {/if}
@@ -217,7 +217,7 @@
             <div class="supporting-text">
               $<TweenedNumber
                 fixNumber={1}
-                number={rewards.available / $session.btaUsdRate || 0}
+                number={rewards.available * $session.btaUsdRate || 0}
               />/$500
             </div>
           </div>
@@ -227,7 +227,7 @@
           <div class="supporting-text">
             $<TweenedNumber
               fixNumber={1}
-              number={rewards.available / $session.btaUsdRate || 0}
+              number={rewards.available * $session.btaUsdRate || 0}
             />/$500
           </div>
         {/if}

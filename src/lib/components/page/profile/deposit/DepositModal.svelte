@@ -41,6 +41,7 @@
   import DepositOptions from "./DepositOptions.svelte";
   import DepositRevolut from "./DepositRevolut.svelte";
   import DepositSuccess from "./DepositSuccess.svelte";
+  import { get } from "$lib/api/utils.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -67,7 +68,7 @@
   $: ({ viewportType } = $session);
   $: lastStep = currentStep === steps.length - 1;
   $: progress = ((currentStep + 1) / steps.length) * 100;
-  $: ({ rate, amount, revolut, status } = $depositStore);
+  $: ({ amount, revolut, status } = $depositStore);
   $: failed = ["failed", "declined"].includes(status || "");
   $: currentStep = $depositStore.revolut.checkoutUrl
     ? steps.findIndex((step) => step.id === "confirmation")
@@ -238,13 +239,14 @@
   }
 
   async function getRates() {
-    if (rate) return;
-    const res = await BetarenaUserHelper.getBtaTokenPriceQuote({
-      query: { strAmount: "1", strCurrency: "USD" },
-      body: {},
-    });
-    if (res?.success) {
-      $depositStore.rate = res.success.data.intBtaEstimate;
+      const res = await get("/api/data/bta-rates") as {
+      data?:      { [key: string]: any };
+      symbol?:    string;
+      timestamp?: string;
+      [property: string]: any;
+    }
+    if( res) {
+      $session.btaUsdRate = res.bta_rates?.data.price_in.usd || 0
     }
   }
   // #endregion ➤ 🛠️ METHODS
