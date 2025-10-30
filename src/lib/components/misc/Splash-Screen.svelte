@@ -16,6 +16,7 @@
 -->
 
 <script lang="ts">
+  import session from '$lib/store/session.js';
 
   // #region ➤ 📦 Package Imports
 
@@ -57,12 +58,35 @@
      */ // eslint-disable-next-line no-unused-vars
     CNAME: string = 'global⮕w⮕splash-screen⮕main'
   ;
+  $:({viewportType} = $session)
 
   let
     show: boolean = true
   ;
 
+  let timer: ReturnType<typeof setTimeout> | null = null;
+
   // #endregion ➤ 📌 VARIABLES
+
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  $: if (viewportType && !timer) {
+    show = false;
+  }
+
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
@@ -78,12 +102,10 @@
     async (
     ) =>
     {
-      setTimeout
+    timer =  setTimeout
       (
-        async (
-        ) =>
-        {
-          show = false;
+        () => {
+          timer = null;
         },
         250
       );
