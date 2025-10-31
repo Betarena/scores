@@ -11,10 +11,17 @@
   import { infoMessages } from "./infomessages.js";
   import checkCircle from "./check-circle.svg";
   import alertCircle from "./alert-circle.svg";
+  import awardsIcon from "./awards.svg";
   import { fly, scale } from "svelte/transition";
   import { flip } from "svelte/animate";
   import XClose from "./x-close.svelte";
   import session from "$lib/store/session.js";
+
+  const iconsMap = {
+    success: checkCircle,
+    error: alertCircle,
+    awards: awardsIcon,
+  };
 </script>
 
 <!--
@@ -48,13 +55,13 @@
       out:fly={{ x: 200 }}
       animate:flip={{ duration: 500 }}
     >
-      {#if ["success", "error"].includes(item.type)}
+      {#if ["success", "error", "awards"].includes(item.type)}
         <div
-          class="body"
+          class="body {item.type} {$session.viewportType}"
           on:click={() => infoMessages.remove(item.id)}
           style="z-index: {1000 + $infoMessages.length - index}"
         >
-          <div class="header" >
+          <div class="header">
             <div class="icon">
               <div
                 class="inner {item.type}"
@@ -66,7 +73,7 @@
               />
               <img
                 id=""
-                src={item.type === "success" ? checkCircle : alertCircle}
+                src={iconsMap[item.type]}
                 alt=""
                 title=""
                 loading="lazy"
@@ -76,14 +83,19 @@
               <XClose />
             </i>
           </div>
-          <span class="text">{item.text}</span>
+          <div class="text-wrapper">
+            <span class="title">{item.title}</span>
+            {#if item.text}
+               <span class="text">{item.text}</span>
+            {/if}
+          </div>
         </div>
       {:else if item.type === "loading"}
         <div class="body">
           <div class="saving-animation">
-            {item.text || "Loading"}<span class="dot">.</span><span class="dot">.</span><span
-              class="dot">.</span
-            >
+            {item.title || "Loading"}<span class="dot">.</span><span class="dot"
+              >.</span
+            ><span class="dot">.</span>
           </div>
         </div>
       {/if}
@@ -136,7 +148,8 @@
         background: var(--colors-background-bg-primary_alt, #313131);
 
         /* Shadows/shadow-lg */
-        box-shadow: 0px 12px 16px -4px var(--colors-effects-shadows-shadow-lg_01, rgba(31, 31, 31, 0.08)), 0px 4px 6px -2px var(--colors-effects-shadows-shadow-lg_02, rgba(31, 31, 31, 0.03));
+        box-shadow: 0px 12px 16px -4px var(--colors-effects-shadows-shadow-lg_01, rgba(31, 31, 31, 0.08)),
+          0px 4px 6px -2px var(--colors-effects-shadows-shadow-lg_02, rgba(31, 31, 31, 0.03));
 
         .header {
           display: flex;
@@ -158,14 +171,17 @@
 
               &.success {
                 border: 2px solid
-                  var(--Colors-Foreground-fg-success-primary, #17b26a);
+                  var(--colors-foreground-fg-success-primary, #17b26a);
               }
               &.error {
                 border: 2px solid
-                  var(--Colors-Foreground-fg-error-primary, #ff3c3c);
+                  var(--colors-foreground-fg-error-primary, #ff3c3c);
+              }
+              &.awards {
+                border: 2px solid
+                  var(--colors-foreground-fg-brand-primary-600, #f5a524);
               }
             }
-
             .inner {
               opacity: 0.3;
               width: 28px;
@@ -185,8 +201,12 @@
             }
           }
         }
-
-        .text {
+        .text-wrapper {
+          display: flex;
+          flex-direction: column;
+          gap: var(--spacing-xs, 4px);
+        }
+        .title {
           color: var(--colors-foreground-fg-primary-900, #fff);
 
           /* Text sm/Semibold */
@@ -194,6 +214,16 @@
           font-size: var(--font-size-text-sm, 14px);
           font-style: normal;
           font-weight: 600;
+          line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+        }
+        .text {
+          color: var(--colors-foreground-fg-secondary-700, #525252);
+
+          /* Text sm/Regular */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-sm, 14px);
+          font-style: normal;
+          font-weight: 400;
           line-height: var(--line-height-text-sm, 20px); /* 142.857% */
         }
       }

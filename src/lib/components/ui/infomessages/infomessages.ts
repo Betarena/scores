@@ -1,12 +1,14 @@
 import { writable } from "svelte/store";
 
-interface IInfoMessage
-{
-  type: "success" | "error" | "loading", text: string, id?: number, autoHide?: boolean
+interface IInfoMessage {
+  type: "success" | "error" | "loading" | "awards";
+  title: string;
+  text?: string;
+  id?: number;
+  autoHide?: boolean;
 }
 
-function messageInfo()
-{
+function messageInfo() {
   const { subscribe, update } = writable<IInfoMessage[]>([
     // {
     //   type: "success",
@@ -15,29 +17,26 @@ function messageInfo()
     // }
   ]);
 
-  function add(message: IInfoMessage)
-  {
+  function add(message: IInfoMessage) {
     const id = new Date().getTime();
     update((old) => [{ ...message, id }, ...old]);
     const { autoHide } = message;
-    if (autoHide === undefined || autoHide)
-    {
+    if (autoHide === undefined || autoHide) {
       setTimeout(() => remove(id), 5000);
     }
-    return id
+    return id;
   }
 
-  function remove(id?: number)
-  {
+  function remove(id?: number) {
     if (!id) return;
-    update(old => old.filter(i => i.id !== id));
+    update((old) => old.filter((i) => i.id !== id));
   }
 
   return {
     subscribe,
     add,
-    remove
-  }
+    remove,
+  };
 }
 
 export const infoMessages = messageInfo();
