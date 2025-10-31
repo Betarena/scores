@@ -32,7 +32,7 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { createEventDispatcher, type EventDispatcher } from 'svelte';
+  import { createEventDispatcher, onMount, type EventDispatcher } from 'svelte';
   import { fade } from 'svelte/transition';
 
   // #endregion ➤ 📦 Package Imports
@@ -74,7 +74,10 @@
   // │ as soon as 'this' .svelte file is ran.                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-
+  onMount(() => {
+    document.body.classList.add("disable-scroll");
+    return () => document.body.classList.remove("disable-scroll");
+  })
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 

@@ -36,7 +36,7 @@
   import DashboardQuickActions from "./dashboard/DashboardQuickActions.svelte";
   import DashboardTopArticles from "./dashboard/DashboardTopArticles.svelte";
   import DashboardWallets from "./dashboard/DashboardWallets.svelte";
-  import { get } from "$lib/api/utils.js";
+  import { getRates } from "$lib/utils/web3.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -44,7 +44,6 @@
 
   $: translations = ($page.data.RESPONSE_PROFILE_DATA as IProfileTrs).profile;
   $: ({ viewportType } = $session);
-  let timer: ReturnType<typeof setInterval>;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -58,10 +57,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   onMount(() => {
-    getRates();
-    return () => {
-      timer && clearInterval(timer);
-    };
+    getRates(session);
   });
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
@@ -78,21 +74,6 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  async function getRates() {
-    const res = await get("/api/data/bta-rates") as {
-      data?:      { [key: string]: any };
-      symbol?:    string;
-      timestamp?: string;
-      [property: string]: any;
-    }
-    if(res) {
-      $session.btaUsdRate = res.bta_rates?.data.price_in.usd || 0
-      return
-    }
-    timer = setTimeout(() => {
-      getRates();
-    }, 60000);
-  }
 
   // #endregion ➤ 🛠️ METHODS
 </script>
