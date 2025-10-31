@@ -3,7 +3,7 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
-	
+
 	import { modalStore } from './../../../store/modal.ts';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
@@ -67,7 +67,7 @@
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
   // #region ➤ 🛠️ METHODS
-  
+
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'methods' that are to be           │
@@ -77,7 +77,7 @@
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  
+
   async function getRates() {
     const res = await BetarenaUserHelper.getBtaTokenPriceQuote({
       query: { strAmount: "1", strCurrency: "USD" },
@@ -92,7 +92,7 @@
       getRates();
     }, 60000);
   }
-  
+
   // #endregion ➤ 🛠️ METHODS
 </script>
 

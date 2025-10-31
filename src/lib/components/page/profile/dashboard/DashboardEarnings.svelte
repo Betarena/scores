@@ -21,6 +21,8 @@
   import Chart from "chart.js/auto";
   import { onDestroy, onMount, tick } from "svelte";
   import WidgetCalendar from "../tx-history/Widget-Calendar.svelte";
+  import Calendar from "$lib/components/ui/Calendar/Calendar.svelte";
+  import Popup from "$lib/components/ui/Popup.svelte";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -398,45 +400,50 @@
 -->
 <svelte:window on:resize={handleResize} />
 <div id="dashboard-earnings" class={viewportType}>
-  <div class="title"><TranslationText fallback="Earnings" text={translations?.earnings} /></div>
+  <div class="title">
+    <TranslationText fallback="Earnings" text={translations?.earnings} />
+  </div>
   <div class="buttons-text-wrapper">
     <div class="buttons-wrapper">
       <ButtonGroup group={options} bind:selected={selectedOption} />
-      <Button
-        size="md"
-        type="secondary"
-        icon_leading={true}
-        on:click={() => {
-          showDatepicker = !showDatepicker;
-          selectedOption = { id: "custom", label: "custom" };
-        }}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
-          viewBox="0 0 20 20"
-          fill="none"
-        >
-          <path
-            d="M5 10H15M2.5 5H17.5M7.5 15H12.5"
-            stroke="#6A6A6A"
-            stroke-width="1.66667"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
-      </Button>
-      {#if showDatepicker}
-        <WidgetCalendar
-          bind:show={showDatepicker}
-          bind:dateSelect={selectedDate}
-          bind:dateRange
-        />
-      {/if}
+      <Popup closeOnOutsideClick={false} bind:isOpen={showDatepicker} >
+        <svelte:fragment slot="trigger" >
+          <Button
+            size="md"
+            type="secondary"
+            icon_leading={true}
+            on:click={() => {
+              showDatepicker = !showDatepicker;
+              selectedOption = { id: "custom", label: "custom" };
+            }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 20 20"
+              fill="none"
+            >
+              <path
+                d="M5 10H15M2.5 5H17.5M7.5 15H12.5"
+                stroke="#6A6A6A"
+                stroke-width="1.66667"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </Button>
+        </svelte:fragment>
+        <svelte:fragment slot="content" >
+          <Calendar onApply={() => showDatepicker = false} onCancel={() => showDatepicker = false} />
+        </svelte:fragment>
+      </Popup>
+
     </div>
     <div class="chart-text">
-      <div class="mrr"><TranslationText fallback="MRR" text={translations?.mrr} /></div>
+      <div class="mrr">
+        <TranslationText fallback="MRR" text={translations?.mrr} />
+      </div>
       <div class="number-badge-wrapper">
         <div class="numbers-data">
           <span class="bta">BTA</span>
