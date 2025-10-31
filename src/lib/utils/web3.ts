@@ -12,7 +12,7 @@
 
 // #region ➤ 📦 Package Imports
 
-import { BetarenaUserHelper } from '$lib/firebase/common.js';
+import { get } from '$lib/api/utils.js';
 import type { Chain } from '@web3modal/scaffold-utils/dist/types/src/EthersTypesUtil.js';
 import type { Writable } from 'svelte/store';
 
@@ -101,18 +101,20 @@ export const chainObjectWalletConnect: Record < 'ethereum' | 'polygon_mumbai' | 
 let timer: ReturnType<typeof setInterval>;
 export async function getRates(store: Writable<any>)
 {
-const res = await BetarenaUserHelper.getBtaTokenPriceQuote({
-      query: { strAmount: "1", strCurrency: "USD" },
-      body: {},
-    });
-    if (res.success) {
+
+   const res = await get("/api/data/bta-rates") as {
+      data?:      { [key: string]: any };
+      symbol?:    string;
+      timestamp?: string;
+      [property: string]: any;
+    }
+    if(res) {
       store.update((state) => {
         state.btaUsdRate = res.success.data.intBtaEstimate;
         return state;
       });
-      return;
+      return
     }
-
     timer = setTimeout(() => {
       getRates(store);
     }, 10000);

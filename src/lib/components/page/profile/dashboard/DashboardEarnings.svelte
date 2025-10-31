@@ -446,7 +446,7 @@
               <div class="usd">
                 $<TweenedNumber
                   fixNumber={1}
-                  number={0 / $session.btaUsdRate}
+                  number={0 * $session.btaUsdRate}
                 />
               </div>
             {/if}

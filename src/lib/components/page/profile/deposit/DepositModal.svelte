@@ -41,6 +41,7 @@
   import DepositOptions from "./DepositOptions.svelte";
   import DepositRevolut from "./DepositRevolut.svelte";
   import DepositSuccess from "./DepositSuccess.svelte";
+  import { getRates } from "$lib/utils/web3.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -67,7 +68,7 @@
   $: ({ viewportType } = $session);
   $: lastStep = currentStep === steps.length - 1;
   $: progress = ((currentStep + 1) / steps.length) * 100;
-  $: ({ rate, amount, revolut, status } = $depositStore);
+  $: ({ amount, revolut, status } = $depositStore);
   $: failed = ["failed", "declined"].includes(status || "");
   $: currentStep = $depositStore.revolut.checkoutUrl
     ? steps.findIndex((step) => step.id === "confirmation")
@@ -236,17 +237,6 @@
     $depositStore.revolut = {};
     buttonDisabled = false;
   }
-
-  async function getRates() {
-    if (rate) return;
-    const res = await BetarenaUserHelper.getBtaTokenPriceQuote({
-      query: { strAmount: "1", strCurrency: "USD" },
-      body: {},
-    });
-    if (res?.success) {
-      $depositStore.rate = res.success.data.intBtaEstimate;
-    }
-  }
   // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
@@ -269,7 +259,7 @@
       )[0] as unknown as HTMLElement;
     const prevIntercomState = instanceIntercom?.style.display;
     if (instanceIntercom) instanceIntercom.style.display = "none";
-    getRates();
+    getRates(session);
     const { orderId } = $depositStore.revolut || {};
     if (orderId && !unsubscribe) {
       unsubscribe = subscribeRevolutTransactionListen(

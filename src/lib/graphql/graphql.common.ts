@@ -419,7 +419,6 @@ export  function subscribeRevolutTransactionListen
     revolutId: string,
     depositStore: Writable<{
       amount: number | string,
-      rate: number | null,
       failed?: boolean,
       status?: string,
     }>

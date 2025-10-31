@@ -10,24 +10,23 @@
 <script lang="ts">
   // #region ➤ 📦 Package Imports
 
+  import { browser } from "$app/environment";
+  import { page } from "$app/stores";
+  import { post } from "$lib/api/utils.js";
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import SelectButton from "$lib/components/ui/SelectButton.svelte";
+  import { subscribeTagFollowersListen } from "$lib/graphql/graphql.common.js";
   import sessionStore from "$lib/store/session.js";
-  import userBetarenaSettings from "$lib/store/user-settings.js";
-  import { createEventDispatcher, onMount } from "svelte";
-  import ArrowDown from "./assets/arrow-down.svelte";
+  import { default as userBetarenaSettings, default as userSettings } from "$lib/store/user-settings.js";
   import type {
     IPageAuthorTagData,
     IPageAuthorTranslationDataFinal,
   } from "@betarena/scores-lib/types/v8/preload.authors.js";
-  import { page } from "$app/stores";
-  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
-  import { post } from "$lib/api/utils.js";
+  import { createEventDispatcher, onMount } from "svelte";
   import { writable, type Writable } from "svelte/store";
-  import { subscribeTagFollowersListen } from "$lib/graphql/graphql.common.js";
   import { fade } from "svelte/transition";
-  import { browser } from "$app/environment";
-  import userSettings from "$lib/store/user-settings.js";
+  import ArrowDown from "./assets/arrow-down.svelte";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -117,10 +116,10 @@
 
   $: ({user} = $userBetarenaSettings);
   $: isAuth = !!user;
-  $: showDescription = !mobile && tag.description;
-  $: followedTags = (($userBetarenaSettings.user?.scores_user_data as any)
-    ?.following?.tags || []) as (string | number)[];
-  $: isFollowed = followedTags.includes(tag?.id);
+  $: showDescription = Boolean(!mobile && tag.description);
+  $: followedTags = ($userBetarenaSettings.user?.scores_user_data)
+    ?.following?.tags?.map(Number) || [];
+  $: isFollowed = followedTags.includes(Number(tag?.id));
 
   /**
    * @summary

@@ -46,7 +46,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   export let buttonDisabled;
 
-  $: ({ viewportType } = $session);
+  $: ({ viewportType, btaUsdRate } = $session);
   $: ({ deposit_translations = {} } = $page.data);
 
   // #endregion ➤ 📌 VARIABLES
@@ -103,8 +103,8 @@
   </div>
   <div class="text">
     <TranslationText fallback="You added" text={deposit_translations.you_added_amount} /> {$depositStore.amount}
-    {$depositStore.rate
-      ? `(≈${(Number($depositStore.amount) * $depositStore.rate).toFixed(
+    {btaUsdRate
+      ? `(≈${(Number($depositStore.amount) / btaUsdRate).toFixed(
           2
         )} BTA)`
       : ""} . <TranslationText fallback="After approval your funds will be available to your Spending Wallet." text={deposit_translations.after_approval_funds_available} />
