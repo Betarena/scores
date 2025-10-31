@@ -45,7 +45,7 @@
   export let buttonDisabled;
 
   $: ({ deposit_translations = {} } = $page.data);
-  $: ({ viewportType } = $session);
+  $: ({ viewportType, btaUsdRate } = $session);
 
   buttonDisabled = false;
 
@@ -83,7 +83,7 @@
         </div>
         <div class="data-value">${$depositStore.amount}</div>
       </div>
-      {#if $depositStore.rate}
+      {#if btaUsdRate}
         <div class="data-field">
           <div class="label">
             <TranslationText
@@ -93,8 +93,8 @@
           </div>
           <div class="data-value">
             {(
-              Number($depositStore.amount) * Number($depositStore.rate)
-            ).toFixed(6)}
+              Number($depositStore.amount) / Number(btaUsdRate)
+            ).toFixed(2)}
           </div>
         </div>
       {/if}

@@ -29,6 +29,7 @@
   import Input from "$lib/components/ui/Input.svelte";
   import { onMount } from "svelte";
   import { depositStore } from "./deposit-store";
+  import session from "$lib/store/session.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -55,7 +56,7 @@
     { label: deposit_translations.custom || "Custom", value: "" },
   ] as { label: string; value: string | number }[];
   $: activeButton = buttons[0];
-
+  $: ({btaUsdRate}= $session);
   let inputNode: HTMLInputElement;
   // #endregion ➤ 📌 VARIABLES
 
@@ -170,10 +171,10 @@
       </div>
     {/each}
   </div>
-  {#if $depositStore.rate}
+  {#if btaUsdRate}
     <div class="rate">
-      ≈ {($depositStore.rate * (Number($depositStore.amount) || 0)).toFixed(2)} BTA ${(
-        1 / $depositStore.rate
+      ≈ {((Number($depositStore.amount) || 0) / btaUsdRate  ).toFixed(2)} BTA ${(
+        btaUsdRate
       ).toFixed(2)}/BTA : <TranslationText
         fallback="Live rate from Uniswap"
         text={deposit_translations.live_rate}
