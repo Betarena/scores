@@ -40,6 +40,7 @@
   import { modalStore } from "$lib/store/modal.js";
   import { walletStore } from "$lib/store/wallets.js";
   import { showDepositModal } from "$lib/components/page/profile/deposit/showDeposit.js";
+  import { infoMessages } from "$lib/components/ui/infomessages/infomessages.js";
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -90,6 +91,11 @@
     if(dotLottie) dotLottie.play();
     setTimeout(() => {
       $modalStore.show = false;
+      infoMessages.add({
+        type: "awards",
+        title: "You shared 1 BTA!",
+        text: "+0.5 BTA to your Rewards / +0.5 BTA to the author"
+      })
     }, 700)
   }
 

@@ -159,7 +159,7 @@ export async function upsert({
     showLoaders &&
     infoMessages.add({
       type: "loading",
-      text: translations?.saving || "Saving article...",
+      title: translations?.saving || "Saving article...",
     });
   const res = (await postv2("/api/data/author/article", {
     content: sanitizedValue,
@@ -180,7 +180,7 @@ export async function upsert({
   if (res.success) {
     infoMessages.add({
       type: "success",
-      text: translations?.article_saved || "Article saved!",
+      title: translations?.article_saved || "Article saved!",
     });
     if (reload) {
       setTimeout(() => {
@@ -195,7 +195,7 @@ export async function upsert({
   } else {
     infoMessages.add({
       type: "error",
-      text: translations?.failed_save || "Failed to save article",
+      title: translations?.failed_save || "Failed to save article",
     });
   }
   return res;
@@ -208,7 +208,7 @@ export async function deleteArticle(
   modalStore.update((state) => ({ ...state, show: false }));
   const loadingId = infoMessages.add({
     type: "loading",
-    text: translations?.deleting || "Deleting article...",
+    title: translations?.deleting || "Deleting article...",
   });
 
   const res = await fetch(`/api/data/author/article`, {
@@ -220,12 +220,12 @@ export async function deleteArticle(
   if (data.success) {
     infoMessages.add({
       type: "success",
-      text: translations?.article_deleted || "Article deleted!",
+      title: translations?.article_deleted || "Article deleted!",
     });
   } else {
     infoMessages.add({
       type: "error",
-      text: translations?.failed_delete || "Failed to delete article",
+      title: translations?.failed_delete || "Failed to delete article",
     });
   }
   return data;
@@ -247,7 +247,7 @@ export async function publish({
   modalStore.update((state) => ({ ...state, show: false }));
   const loadingId = infoMessages.add({
     type: "loading",
-    text: translations?.saving || `${status} article...`,
+    title: translations?.saving || `${status} article...`,
     autoHide: false,
   });
   const res = await fetch(`/api/data/author/article`, {
@@ -260,7 +260,7 @@ export async function publish({
     infoMessages.remove(loadingId);
     infoMessages.add({
       type: "success",
-      text:
+      title:
         status === "publish"
           ? translations?.article_published || "Article published!"
           : translations?.article_unpublished || "Article unpublished!",
@@ -278,7 +278,7 @@ export async function publish({
     infoMessages.remove(loadingId);
     infoMessages.add({
       type: "error",
-      text: translations?.failed_save || `Failed to ${status} article`,
+      title: translations?.failed_save || `Failed to ${status} article`,
     });
   }
   return data;

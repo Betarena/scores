@@ -76,7 +76,7 @@ export function submitWrapper({ successMessage = "Success!", errorMessage = "An 
 {
   const loadingId = infoMessages.add({
     type: "loading",
-    text: "",
+    title: "",
   });
   return async (e) =>
   {
@@ -86,12 +86,12 @@ export function submitWrapper({ successMessage = "Success!", errorMessage = "An 
       if (e.result.type === "success") {
         infoMessages.add({
           type: "success",
-          text: successMessage,
+          title: successMessage,
         });
       } else {
         infoMessages.add({
           type: "error",
-          text: errorMessage,
+          title: errorMessage,
         });
       }
       // Set invalidateAll to false if you don't want to reload page data when submitting
@@ -99,14 +99,14 @@ export function submitWrapper({ successMessage = "Success!", errorMessage = "An 
         await cbAfter(e);
       }
       e.update({ invalidateAll: false, reset });
-    } catch (e) {      
+    } catch (e) {
       log_v3({
         strGroupName: "Fetch error",
         msgs: [e.message]
       })
       infoMessages.add({
         type: "error",
-        text: errorMessage
+        title: errorMessage
       })
     }
   };

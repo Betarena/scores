@@ -142,7 +142,7 @@
       }
         infoMessages.add({
           type: res?.ok ? "success" : "error",
-          text: res?.ok ? profile?.success || "Success!" : profile?.error || "Error",
+          title: res?.ok ? profile?.success || "Success!" : profile?.error || "Error",
         });
 
       $modalStore.show = !res?.ok;
