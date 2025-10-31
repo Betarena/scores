@@ -235,7 +235,7 @@
         </div>
     {:else}
        <div class="confetti">
-         <DotLottieSvelte  dotLottieRefCallback={(ref) => dotLottie = ref } src="/assets/lottie/Confetti.lottie" autoplay loop   />
+         <DotLottieSvelte  dotLottieRefCallback={(ref) => dotLottie = ref } src="/assets/lottie/Confetti.lottie"  />
        </div>
        <Button type="primary" full={true} size="lg" on:click={confirm}>Share 1BTA
          {#if $session.btaUsdRate}
