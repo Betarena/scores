@@ -30,17 +30,23 @@
   import session from "$lib/store/session";
   import { cubicIn, cubicOut } from "svelte/easing";
   import { fly, scale } from "svelte/transition";
-  import bta_icon from "$lib/components/ui/assets/bta_icon.png"
+  import bta_icon from "$lib/components/ui/assets/bta_icon.png";
   import Avatar from "$lib/components/ui/Avatar.svelte";
   import userSettings from "$lib/store/user-settings.js";
   import type { IPageAuthorAuthorData } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import { onMount } from "svelte";
   import { getRates } from "$lib/utils/web3.js";
-  import { type DotLottie, DotLottieSvelte } from "@lottiefiles/dotlottie-svelte";
+  import {
+    type DotLottie,
+    DotLottieSvelte,
+  } from "@lottiefiles/dotlottie-svelte";
   import { modalStore } from "$lib/store/modal.js";
   import { walletStore } from "$lib/store/wallets.js";
   import { showDepositModal } from "$lib/components/page/profile/deposit/showDeposit.js";
   import { infoMessages } from "$lib/components/ui/infomessages/infomessages.js";
+  import { page } from "$app/stores";
+  import type { TranslationAwardsDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -59,6 +65,9 @@
   export let sportstack = {} as IPageAuthorAuthorData;
   let dotLottie: DotLottie;
 
+  $: ({ awards_translations } = $page.data as {
+    awards_translations: TranslationAwardsDataJSONSchema;
+  });
   $: ({ viewportType } = $session);
   $: user = $userSettings.user?.scores_user_data;
   $: insufficientAmount = $walletStore.spending.available < 1;
@@ -84,19 +93,19 @@
   }
 
   function convertToUsd(amount: number) {
-    return (amount / $session.btaUsdRate).toFixed(2)
+    return (amount / $session.btaUsdRate).toFixed(2);
   }
 
   function confirm() {
-    if(dotLottie) dotLottie.play();
+    if (dotLottie) dotLottie.play();
     setTimeout(() => {
       $modalStore.show = false;
       infoMessages.add({
         type: "awards",
-        title: "You shared 1 BTA!",
-        text: "+0.5 BTA to your Rewards / +0.5 BTA to the author"
-      })
-    }, 700)
+        title: awards_translations.notification_title?.replace("{amount}", "1") || "You shared 1 BTA!",
+        text: awards_translations.notification_text?.replaceAll("{amount}", "+0,5") || "+0.5 BTA to your Rewards / +0.5 BTA to the author",
+      });
+    }, 700);
   }
 
   function cancel() {
@@ -115,7 +124,7 @@
 
   onMount(() => {
     getRates(session);
-  })
+  });
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
@@ -159,99 +168,165 @@
     {/if}
     <div class="text-wrapper">
       <div class="title">
-      {#if insufficientAmount}
-        Insufficient Balance
-      {:else}
-         Give an Award
-      {/if}
-
+        {#if insufficientAmount}
+          <TranslationText
+            text={awards_translations.insufficient}
+            fallback="Insufficient Balance"
+          />
+        {:else}
+          <TranslationText
+            text={awards_translations.share}
+            fallback="Give an Award"
+          />
+        {/if}
       </div>
       {#if insufficientAmount}
         <div class="warning-text">
-          <p class="warning-main">You need at least 1 BTA in your Balance wallet to award this post. </p>
-          <p class="warning-support">You always receive half of the award back to your Rewards wallet.</p>
+          <p class="warning-main">
+            <TranslationText
+              text={awards_translations.insufficient_main_text?.replace(
+                "{amount}",
+                "1"
+              )}
+              fallback="You need at least 1 BTA in your Balance wallet to award this post."
+            />
+          </p>
+          <p class="warning-support">
+            <TranslationText
+              text={awards_translations.insufficient_support_text}
+              fallback="You always receive half of the award back to your Rewards wallet."
+            />
+          </p>
         </div>
       {:else}
-         <div class="awards-flow">
-             <div class="sportstack-wrapper award-item">
-               <div class="avatar-wrapper">
-
-                 <SportstackAvatar size="lg" src={sportstack.data?.avatar}/>
-                 <div class="connector-wrapper">
-                   <svg xmlns="http://www.w3.org/2000/svg" width="2" height="67" viewBox="0 0 2 67" fill="none">
-                     <path d="M1 1L1 65.0115" stroke="#525252" stroke-width="2" stroke-linecap="round" stroke-dasharray="0.1 6"/>
-                   </svg>
-                 </div>
-               </div>
-               <div class="award-content">
-                 <div class="award-candidate">
-                   <div class="name">{sportstack.data?.username}</div>
-                   <div class="type">Sportstack</div>
-                 </div>
-                 <div class="amount">
-                   <div class="bta-icon">
-                     <img src={bta_icon} alt="BTA Icon" width="40" height="40"/>
-                   </div>
-                   <div class="description">
-                     <div class="numbers">0.5 BTA
-                       {#if $session.btaUsdRate}
-                       <span class="usd">{convertToUsd(0.5)}$</span>
-                       {/if}
-                     </div>
-                     <div class="text-secondary">
-                       goes to the publication
-                     </div>
-                   </div>
-                 </div>
-               </div>
-             </div>
-             <div class="award-item">
-               <Avatar size="lg" src={user?.profile_photo}/>
-               <div class="award-content">
-                 <div class="award-candidate">
-                   <div class="name">{user?.name}</div>
-                   <div class="type">@{user?.username}</div>
-                 </div>
-                 <div class="amount">
-                   <div class="bta-icon">
-                     <img src={bta_icon} alt="BTA Icon" width="40" height="40"/>
-                   </div>
-                   <div class="description">
-                     <div class="numbers">0.5 BTA
-                       {#if $session.btaUsdRate}
-                          <span class="usd">{convertToUsd(0.5)}$</span>
-                         {/if}
-                     </div>
-                     <div class="text-secondary">
-                       returns to your Rewards wallet
-                     </div>
-                   </div>
-                 </div>
-               </div>
-             </div>
-         </div>
+        <div class="awards-flow">
+          <div class="sportstack-wrapper award-item">
+            <div class="avatar-wrapper">
+              <SportstackAvatar size="lg" src={sportstack.data?.avatar} />
+              <div class="connector-wrapper">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="2"
+                  height="67"
+                  viewBox="0 0 2 67"
+                  fill="none"
+                >
+                  <path
+                    d="M1 1L1 65.0115"
+                    stroke="#525252"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-dasharray="0.1 6"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div class="award-content">
+              <div class="award-candidate">
+                <div class="name">{sportstack.data?.username}</div>
+                <div class="type">
+                  <TranslationText
+                    text={awards_translations.sportstack}
+                    fallback="Sportstack"
+                  />
+                </div>
+              </div>
+              <div class="amount">
+                <div class="bta-icon">
+                  <img src={bta_icon} alt="BTA Icon" width="40" height="40" />
+                </div>
+                <div class="description">
+                  <div class="numbers">
+                    0.5 BTA
+                    {#if $session.btaUsdRate}
+                      <span class="usd">{convertToUsd(0.5)}$</span>
+                    {/if}
+                  </div>
+                  <div class="text-secondary">
+                    <TranslationText
+                      text={awards_translations.goes_to_the_publication}
+                      fallback="goes to the publication"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="award-item">
+            <Avatar size="lg" src={user?.profile_photo} />
+            <div class="award-content">
+              <div class="award-candidate">
+                <div class="name">{user?.name}</div>
+                <div class="type">@{user?.username}</div>
+              </div>
+              <div class="amount">
+                <div class="bta-icon">
+                  <img src={bta_icon} alt="BTA Icon" width="40" height="40" />
+                </div>
+                <div class="description">
+                  <div class="numbers">
+                    0.5 BTA
+                    {#if $session.btaUsdRate}
+                      <span class="usd">{convertToUsd(0.5)}$</span>
+                    {/if}
+                  </div>
+                  <div class="text-secondary">
+                    <TranslationText
+                      text={awards_translations.returns_to_wallet}
+                      fallback="returns to your Rewards wallet"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       {/if}
     </div>
   </div>
   <div class="footer">
     {#if insufficientAmount}
-        <div class="insufficient-buttons">
-          <Button type="secondary" on:click={cancel} full={true}>Cancel</Button>
-          <Button full={true} on:click={showDepositModal}>Buy BTA </Button>
-        </div>
+      <div class="insufficient-buttons">
+        <Button type="secondary" on:click={cancel} full={true}>
+          <TranslationText
+            text={awards_translations.cancel}
+            fallback="Cancel"
+          />
+        </Button>
+        <Button full={true} on:click={showDepositModal}>
+          <TranslationText
+            text={awards_translations.buy_bta}
+            fallback="Buy BTA"
+          />
+        </Button>
+      </div>
     {:else}
-       <div class="confetti">
-         <DotLottieSvelte  dotLottieRefCallback={(ref) => dotLottie = ref } src="/assets/lottie/Confetti.lottie"  />
-       </div>
-       <Button type="primary" full={true} size="lg" on:click={confirm}>Share 1BTA
-         {#if $session.btaUsdRate}
-            <span class="button-usd">({convertToUsd(1)}$)</span>
-         {/if}
-       </Button>
-       <Button type="secondary" full={true} size="lg" on:click={cancel}>Cancel</Button>
-       <div class="checkbox-wrapp">
-         <Checkbox title="Don't show again" />
-       </div>
+      <div class="confetti">
+        <DotLottieSvelte
+          dotLottieRefCallback={(ref) => (dotLottie = ref)}
+          src="/assets/lottie/Confetti.lottie"
+        />
+      </div>
+      <Button type="primary" full={true} size="lg" on:click={confirm}
+        >
+        <TranslationText
+          text={awards_translations.share_bta?.replace("{amount}", "1")}
+          fallback="Share 1BTA"
+        />
+
+        {#if $session.btaUsdRate}
+          <span class="button-usd">({convertToUsd(1)}$)</span>
+        {/if}
+      </Button>
+      <Button type="secondary" full={true} size="lg" on:click={cancel}
+        ><TranslationText
+          text={awards_translations.cancel}
+          fallback="Cancel"
+        /></Button
+      >
+      <div class="checkbox-wrapp">
+        <Checkbox title="Don't show again" />
+      </div>
     {/if}
   </div>
 </div>
@@ -335,7 +410,7 @@
               align-items: center;
               min-height: 0;
 
-              .connector-wrapper{
+              .connector-wrapper {
                 flex-grow: 1;
                 width: 100%;
                 flex-shrink: 0;
@@ -363,7 +438,7 @@
                 align-self: stretch;
 
                 .name {
-                  color: var(--colors-text-text-secondary-700, #FBFBFB);
+                  color: var(--colors-text-text-secondary-700, #fbfbfb);
 
                   /* Text sm/Medium */
                   font-family: var(--font-family-font-family-body, Roboto);
@@ -373,7 +448,7 @@
                   line-height: var(--line-height-text-sm, 20px); /* 142.857% */
                 }
                 .type {
-                  color: var(--colors-text-text-tertiary-600, #8C8C8C);
+                  color: var(--colors-text-text-tertiary-600, #8c8c8c);
 
                   /* Text sm/Regular */
                   font-family: var(--font-family-font-family-body, Roboto);
@@ -403,17 +478,20 @@
                   align-self: stretch;
 
                   .numbers {
-                    color: var(--colors-text-text-secondary-700, #FBFBFB);
+                    color: var(--colors-text-text-secondary-700, #fbfbfb);
 
                     /* Text sm/Medium */
                     font-family: var(--font-family-font-family-body, Roboto);
                     font-size: var(--font-size-text-sm, 14px);
                     font-style: normal;
                     font-weight: 500;
-                    line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+                    line-height: var(
+                      --line-height-text-sm,
+                      20px
+                    ); /* 142.857% */
 
                     .usd {
-                      color: var(--colors-text-text-tertiary-600, #8C8C8C);
+                      color: var(--colors-text-text-tertiary-600, #8c8c8c);
 
                       /* Text xs/Semibold */
                       font-family: var(--font-family-font-family-body, Roboto);
@@ -424,19 +502,22 @@
                     }
                   }
                   .text-secondary {
-                    color: var(--colors-text-text-tertiary-600, #8C8C8C);
+                    color: var(--colors-text-text-tertiary-600, #8c8c8c);
 
                     /* Text sm/Regular */
                     font-family: var(--font-family-font-family-body, Roboto);
                     font-size: var(--font-size-text-sm, 14px);
                     font-style: normal;
                     font-weight: 400;
-                    line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+                    line-height: var(
+                      --line-height-text-sm,
+                      20px
+                    ); /* 142.857% */
                   }
                 }
               }
             }
-            &.sportstack-wrapper .award-content  {
+            &.sportstack-wrapper .award-content {
               padding-bottom: var(--spacing-4xl, 32px);
             }
           }
@@ -451,7 +532,7 @@
           gap: var(--spacing-lg, 12px);
 
           .warning-main {
-            color: var(--colors-text-text-secondary-700, #FBFBFB);
+            color: var(--colors-text-text-secondary-700, #fbfbfb);
 
             /* Text sm/Regular */
             font-family: var(--font-family-font-family-body, Roboto);
@@ -461,7 +542,7 @@
             line-height: var(--line-height-text-sm, 20px); /* 142.857% */
           }
           .warning-support {
-            color: var(--colors-text-text-tertiary-600, #8C8C8C);
+            color: var(--colors-text-text-tertiary-600, #8c8c8c);
 
             /* Text sm/Regular */
             font-family: var(--font-family-font-family-body, Roboto);
@@ -497,7 +578,7 @@
       }
 
       .button-usd {
-        color: var(--colors-Text-text-white, #FFF);
+        color: var(--colors-Text-text-white, #fff);
 
         /* Text xs/Semibold */
         font-family: var(--font-family-font-family-body, Roboto);

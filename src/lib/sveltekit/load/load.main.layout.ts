@@ -26,7 +26,7 @@ import { parseObject } from '$lib/utils/string.2.js';
 import type { IAuthTrs } from '@betarena/scores-lib/types/auth.js';
 import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
 import type { B_FOT_T } from '@betarena/scores-lib/types/types.main.footer.js';
-import type { TranslationAppInstallDataJSONSchema, TranslationDepositDataJSONSchema, TranslationSearchDataJSONSchema } from '@betarena/scores-lib/types/v8/_HASURA-0.js';
+import type { TranslationAppInstallDataJSONSchema, TranslationAwardsDataJSONSchema, TranslationDepositDataJSONSchema, TranslationSearchDataJSONSchema } from '@betarena/scores-lib/types/v8/_HASURA-0.js';
 import type { ServerLoadEvent } from '@sveltejs/kit';
 
 // #endregion ➤ 📦 Package Imports
@@ -60,7 +60,8 @@ type IPreloadData0 =
   IAuthTrs | undefined,
   TranslationSearchDataJSONSchema | undefined,
   TranslationAppInstallDataJSONSchema | undefined,
-  TranslationDepositDataJSONSchema | undefined
+  TranslationDepositDataJSONSchema | undefined,
+  TranslationAwardsDataJSONSchema | undefined
 ];
 
 /**
@@ -129,6 +130,7 @@ interface IPreloadResponse
   search_translations?: TranslationSearchDataJSONSchema;
   app_install_translations?: TranslationAppInstallDataJSONSchema;
   deposit_translations?: TranslationDepositDataJSONSchema;
+  awards_translations?: TranslationAwardsDataJSONSchema;
 }
 
 // #endregion ➤ ⛩️ TYPES
@@ -267,7 +269,8 @@ export async function main
     objResponse.authTrs,
     objResponse.search_translations,
     objResponse.app_install_translations,
-    objResponse.deposit_translations
+    objResponse.deposit_translations,
+    objResponse.awards_translations
 
   ] = await fetchData
   (
@@ -387,7 +390,8 @@ async function fetchData
         `/api/hasura/_main_/auth?lang=${lang}`,
         `/api/data/translations?lang=${lang}&table=search`,
         `/api/data/translations?lang=${lang}&table=app_install`,
-        `/api/data/translations?lang=${lang}&table=deposit&lang_type=String`
+        `/api/data/translations?lang=${lang}&table=deposit&lang_type=String`,
+        `/api/data/translations?lang=${lang}&table=awards`
       ],
     /**
      * @description

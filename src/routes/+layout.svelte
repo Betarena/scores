@@ -606,15 +606,16 @@
     const effectiveHeight = vv.height + vv.offsetTop;
     const isKeyboardOpen = window.innerHeight - effectiveHeight > 100; // ← ключевой фикс
 
-    
+
     const height = isKeyboardOpen
       ? vv.height + vv.offsetTop
       : window.innerHeight;
-    
+
 
     document.body.style.setProperty("--vh", `${height * 0.01}px`);
   }
 
+$: console.log("PAGE DATA: ", $page.data)
 </script>
 
 <!--
