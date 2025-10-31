@@ -325,7 +325,7 @@
         /></Button
       >
       <div class="checkbox-wrapp">
-        <Checkbox title="Don't show again" />
+        <Checkbox title={awards_translations.dont_show_again || "Don't show again"} />
       </div>
     {/if}
   </div>

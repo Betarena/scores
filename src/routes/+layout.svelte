@@ -615,7 +615,6 @@
     document.body.style.setProperty("--vh", `${height * 0.01}px`);
   }
 
-$: console.log("PAGE DATA: ", $page.data)
 </script>
 
 <!--
