@@ -38,7 +38,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { page } from "$app/stores";
-  import { tick } from "svelte";
+  import { onDestroy, tick } from "svelte";
 
   import { getUserById } from "$lib/firebase/common.js";
   import sessionStore from "$lib/store/session.js";
@@ -58,6 +58,7 @@
   import userSettings from "$lib/store/user-settings.js";
   import type { IPageAuhtorArticleDataFinal } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import type { IPageArticleTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.articles.js";
+  import LockedWidget from "$lib/components/widgets/LockedWidget.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -116,7 +117,9 @@
      *  📣 Target `HTMLELement` for **Content*.
      */
     contentContainer: HTMLElement,
-    author;
+    blurContentNode: HTMLElement,
+    author,
+    unlockComponent: LockedWidget;
 
   const widgetsMap = {
     1: AiPredictorWidget,
@@ -132,12 +135,13 @@
     | IPageArticleTranslationDataFinal
     | null
     | undefined;
-  $: ({ author: sportstack } = widgetData);
-  
+  $: ({ author: sportstack, article } = widgetData);
+  $: ({ paid = true } = article);
+
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
-  
+
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'logic' that should run            │
@@ -148,10 +152,13 @@
   // │ Please keep very close attention to these methods and                  │
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  
+
   $: getAuthor(sportstack?.uid);
-  $: insertWidgets(contentContainer);
-  
+  $: if (contentContainer) {
+    resizeObserver.observe(contentContainer);
+    insertWidgets(contentContainer);
+  }
+
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🛠️ METHODS
@@ -165,9 +172,46 @@
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
+  const resizeObserver = new ResizeObserver(() => {
+    if (!paid || !contentContainer) return;
+    const paragraphs =
+      contentContainer.querySelectorAll<HTMLParagraphElement>("p");
+    const p_node = document.createElement("p");
+    p_node.style.width = "100%";
+    const containerRect = contentContainer.getBoundingClientRect();
+    const p_nodeRect = p_node.getBoundingClientRect();
+
+
+    const blurStartTop =
+      p_nodeRect.bottom - containerRect.top + contentContainer.scrollTop;
+
+    blurContentNode.style.top = `${blurStartTop}px`;
+  });
+
 
   function insertWidgets(container: HTMLElement) {
     if (!contentContainer) return;
+
+    if (paid) {
+      const paragraphs = container.querySelectorAll<HTMLParagraphElement>("p");
+      const second_p = paragraphs.length >= 2 ? paragraphs[1] : null;
+      if (second_p && blurContentNode) {
+        const p_node = document.createElement("p");
+        p_node.style.width = "100%";
+        container.insertBefore(p_node, second_p);
+        unlockComponent = new LockedWidget({
+          target: p_node,
+          props: {
+            sportstack,
+          },
+        });
+        setTimeout(() => {
+          blurContentNode.style.top = `${second_p.offsetTop}px`;
+        }, 200);
+      }
+      return;
+    }
+
     const widget_targets = container.querySelectorAll("[data-widget-id]");
 
     widget_targets.forEach((target) => {
@@ -184,11 +228,11 @@
           props[propName] = attr.value;
         }
       });
-       const prevElement = target.previousElementSibling as HTMLElement;
-        if (prevElement) {
-          prevElement.style.marginBottom = "0";
-        }
-    
+      const prevElement = target.previousElementSibling as HTMLElement;
+      if (prevElement) {
+        prevElement.style.marginBottom = "0";
+      }
+
       new widget({
         target: target as HTMLElement,
         props,
@@ -264,6 +308,22 @@
   }
 
   // #endregion ➤ 🛠️ METHODS
+
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  onDestroy(() => {
+    resizeObserver.disconnect();
+    if (unlockComponent) unlockComponent.$destroy();
+  });
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 
 <!--
@@ -357,6 +417,9 @@
           );
         }
       )}
+      {#if paid}
+        <div class="blur-content" bind:this={blurContentNode} />
+      {/if}
     </div>
   {/key}
 </div>
@@ -450,6 +513,7 @@
     }
 
     #content {
+      position: relative;
       // ▓ IMPORTANT
       :global {
         color: var(--colors-text-text-primary-900, #fff);
@@ -551,16 +615,16 @@
         [data-widget-id] {
           margin-top: 48px;
           margin-bottom: 32px;
-      
+
           + * {
             margin-top: 0 !important;
           }
-          
+
           * + & {
             margin-bottom: 0 !important;
           }
         }
-       
+
         h2 {
           /* 🎨 style */
           @include header;
@@ -596,6 +660,20 @@
             all: unset;
           }
         }
+      }
+
+      .blur-content {
+        position: absolute;
+        bottom: 0;
+        left: -10px;
+        right: -10px;
+        top: 0;
+        z-index: 1;
+        background: var(
+          --component-colors-alpha-alpha-white-10,
+          rgba(12, 14, 18, 0.1)
+        );
+        backdrop-filter: blur(5px);
       }
     }
 
