@@ -324,9 +324,6 @@
           fallback="Cancel"
         /></Button
       >
-      <div class="checkbox-wrapp">
-        <Checkbox title={awards_translations.dont_show_again || "Don't show again"} />
-      </div>
     {/if}
   </div>
 </div>
