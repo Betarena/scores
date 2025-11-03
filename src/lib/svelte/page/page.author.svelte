@@ -42,15 +42,15 @@
   import { onDestroy, onMount } from 'svelte';
 
   import SvelteSeo from 'svelte-seo';
-  import AuthorWidget from './content/Author-Widget.svelte';
+  import AuthorWidget from '../../components/section/authors/page/author/content/Author-Widget.svelte';
 
   import { isUserAgentBot } from '$lib/utils/device.js';
   import { tryCatch } from '@betarena/scores-lib/dist/util/common.js';
-  import { startArticleViewIncrement } from './_helpers.js';
+  import { startArticleViewIncrement } from '../../components/section/authors/page/author/_helpers.js';
+  import { helperExpectedCanonicalUrl } from '$lib/utils/string.js';
+  import session from '$lib/store/session.js';
 
   import type { IPageAuhtorArticleDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
-  import session from '$lib/store/session.js';
-  import { helperExpectedCanonicalUrl } from '$lib/utils/string.js';
 
   // #endregion ➤ 📦 Package Imports
 
