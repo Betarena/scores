@@ -60,6 +60,7 @@
   import type { IPageArticleTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.articles.js";
   import LockedWidget from "$lib/components/widgets/LockedWidget.svelte";
   import CheckCircle from "$lib/components/ui/assets/check-circle.svelte";
+  import Trophy from "$lib/components/ui/assets/trophy.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -197,32 +198,30 @@
   function insertWidgets(container: HTMLElement) {
     if (!contentContainer) return;
 
-    if (paid) {
+    if (paid && !accessGranted) {
       const directChildren = Array.from(container.children) as HTMLElement[];
-
-      let firstPWithImageIndex = -1;
-      for (let i = 0; i < directChildren.length; i++) {
-        const child = directChildren[i];
-        if (child.tagName === "P" && child.querySelector("img")) {
-          firstPWithImageIndex = i;
-          break;
-        }
-      }
-
-      let insertBeforeElement: HTMLElement | null = null;
-      if (firstPWithImageIndex !== -1) {
-        insertBeforeElement = directChildren[firstPWithImageIndex + 2] || null;
-      } else {
-        insertBeforeElement = directChildren[2] || null;
-      }
-
-      if (insertBeforeElement && blurContentNode) {
+      let isFirst = true;
+      let targetIndex = 0;
+      const target = directChildren.find(
+        (child, index) =>{
+          const isP = (child.tagName?.toLowerCase() === "p") && !child.querySelector("img");
+          if (isP && !isFirst) {
+            targetIndex = index;
+            return true
+          }
+          if (isP) {
+            isFirst = false;
+          }
+          return false
+          }
+        );
+      if (blurContentNode && target) {
         try {
           const p_node = document.createElement("p");
           p_node.setAttribute("data-widget", "locked-widget");
           p_node.style.width = "100%";
 
-          container.insertBefore(p_node, insertBeforeElement);
+          container.insertBefore(p_node, target);
 
           unlockComponent = new LockedWidget({
             target: p_node,
@@ -233,6 +232,15 @@
               },
             },
           });
+
+          const contentToRemove = directChildren.slice(targetIndex + 1);
+          const userAgent = navigator.userAgent.toLowerCase();
+           const isBot = /googlebot|bingbot|slurp|duckduckbot|baiduspider|yandexbot|mj12bot|semrushbot|ahrefsbot|rogerbot|dotbot/.test(userAgent);
+          if (!isBot) {
+            contentToRemove.forEach(child => {
+              child.textContent = "";
+            })
+          }
 
           setTimeout(() => {
             blurContent();
@@ -423,7 +431,7 @@
         </a>
         {#if accessGranted}
           <div class="rewards-info">
-            <CheckCircle />
+            <Trophy />
             <div class="rewards-text">
               <span class="amount">245 BTA</span>
               earned from 490 unlocks
@@ -451,6 +459,7 @@
   -->
   {#key $userSettings.theme}
     <div id="content" data-betarena-zone-id="2,3" bind:this={contentContainer}>
+      {#key accessGranted}
       {@html widgetData.article.data?.content.replaceAll(
         /<img[^>]+src=["']([^"'>]+)["']/g,
         (match, src) => {
@@ -464,6 +473,7 @@
           );
         }
       )}
+      {/key}
       {#if paid && !accessGranted}
         <div class="blur-content" bind:this={blurContentNode} />
       {/if}
@@ -547,9 +557,7 @@
             display: flex;
             align-items: center;
             gap: var(--spacing-1);
-           color: var(--colors-text-text-tertiary_on-brand, #8C8C8C);
-
-
+            color: var(--colors-text-text-tertiary_on-brand, #8c8c8c);
 
             /* Text sm/Medium */
             font-family: var(--font-family-font-family-body, Roboto);

@@ -17,23 +17,44 @@
 
   export let sportstack = {} as IPageAuthorAuthorData;
   export let grantAccess = () => {};
+  const SCROLL_OFFSET = 50;
+  let lockNode;
 
   onMount(() => {
+   handleScroll();
+  });
+
+  onDestroy(() => {
+    $modalStore.show = false;
+  });
+
+  function handleScroll() {
+    if ($modalStore.show || !lockNode) return;
+
+    const scrollY = window.scrollY || window.pageYOffset;
+    const lockNodeTop = lockNode.offsetTop;
+
+    if (scrollY > lockNodeTop + SCROLL_OFFSET) {
+      showModal();
+    }
+  }
+
+  function showModal() {
+    if ($modalStore.show) return;
+
     modalStore.set({
       component: TipsModal,
       props: {
         type: "unlock",
         sportstack,
-        grantAccess
+        grantAccess,
       },
       modal: false,
-      show: true
+      show: true,
     });
-  });
 
-  onDestroy(() => {
-    $modalStore.show = false;
-  })
+    window.removeEventListener("scroll", handleScroll);
+  }
 </script>
 
 <!--
@@ -47,7 +68,9 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="lock-widget-wrapper">
+<svelte:window on:scroll={handleScroll} />
+
+<div class="lock-widget-wrapper" bind:this={lockNode}>
   <FeaturedIcon size="md" color="gray" type="modern"
     ><svg
       xmlns="http://www.w3.org/2000/svg"
@@ -115,5 +138,4 @@
       line-height: var(--line-height-text-md, 24px); /* 150% */
     }
   }
-
 </style>
