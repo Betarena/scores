@@ -59,6 +59,7 @@
   import type { IPageAuhtorArticleDataFinal } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import type { IPageArticleTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.articles.js";
   import LockedWidget from "$lib/components/widgets/LockedWidget.svelte";
+  import CheckCircle from "$lib/components/ui/assets/check-circle.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -137,6 +138,7 @@
     | undefined;
   $: ({ author: sportstack, article } = widgetData);
   $: ({ paid = true } = article);
+  let accessGranted = false;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -159,6 +161,10 @@
     insertWidgets(contentContainer);
   }
 
+  $: if (paid && accessGranted && unlockComponent) {
+    unlockComponent.$destroy();
+  }
+
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🛠️ METHODS
@@ -174,40 +180,66 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   const resizeObserver = new ResizeObserver(() => {
     if (!paid || !contentContainer) return;
-    const paragraphs =
-      contentContainer.querySelectorAll<HTMLParagraphElement>("p");
-    const p_node = document.createElement("p");
-    p_node.style.width = "100%";
-    const containerRect = contentContainer.getBoundingClientRect();
-    const p_nodeRect = p_node.getBoundingClientRect();
-
-
-    const blurStartTop =
-      p_nodeRect.bottom - containerRect.top + contentContainer.scrollTop;
-
-    blurContentNode.style.top = `${blurStartTop}px`;
+    blurContent();
   });
 
+  function blurContent() {
+    const widget = contentContainer.querySelector<HTMLParagraphElement>(
+      "[data-widget='locked-widget']"
+    );
+    if (!widget) return;
+
+    const blurStartTop = widget.offsetTop + widget.offsetHeight;
+
+    blurContentNode.style.top = `${blurStartTop}px`;
+  }
 
   function insertWidgets(container: HTMLElement) {
     if (!contentContainer) return;
 
     if (paid) {
-      const paragraphs = container.querySelectorAll<HTMLParagraphElement>("p");
-      const second_p = paragraphs.length >= 2 ? paragraphs[1] : null;
-      if (second_p && blurContentNode) {
-        const p_node = document.createElement("p");
-        p_node.style.width = "100%";
-        container.insertBefore(p_node, second_p);
-        unlockComponent = new LockedWidget({
-          target: p_node,
-          props: {
-            sportstack,
-          },
-        });
-        setTimeout(() => {
-          blurContentNode.style.top = `${second_p.offsetTop}px`;
-        }, 200);
+      const directChildren = Array.from(container.children) as HTMLElement[];
+
+      let firstPWithImageIndex = -1;
+      for (let i = 0; i < directChildren.length; i++) {
+        const child = directChildren[i];
+        if (child.tagName === "P" && child.querySelector("img")) {
+          firstPWithImageIndex = i;
+          break;
+        }
+      }
+
+      let insertBeforeElement: HTMLElement | null = null;
+      if (firstPWithImageIndex !== -1) {
+        insertBeforeElement = directChildren[firstPWithImageIndex + 2] || null;
+      } else {
+        insertBeforeElement = directChildren[2] || null;
+      }
+
+      if (insertBeforeElement && blurContentNode) {
+        try {
+          const p_node = document.createElement("p");
+          p_node.setAttribute("data-widget", "locked-widget");
+          p_node.style.width = "100%";
+
+          container.insertBefore(p_node, insertBeforeElement);
+
+          unlockComponent = new LockedWidget({
+            target: p_node,
+            props: {
+              sportstack,
+              grantAccess: () => {
+                accessGranted = true;
+              },
+            },
+          });
+
+          setTimeout(() => {
+            blurContent();
+          }, 200);
+        } catch (error) {
+          console.error("Error inserting locked widget:", error);
+        }
       }
       return;
     }
@@ -338,6 +370,15 @@
 -->
 
 <div id={CNAME} data-betarena-zone-id="4" class={viewportType}>
+  <div class="sportstack-box">
+    <ListSportsTackItem
+      translations={$page.data.translations}
+      includeAbout={true}
+      user={widgetData.author}
+      size="lg"
+      action_button={true}
+    />
+  </div>
   <div class="article-header">
     <!--
     ╭─────
@@ -348,33 +389,49 @@
       <h1 class="title">
         {widgetData.article.data?.title ?? ""}
       </h1>
-
-      <a
-        href="/a/user/{author?.usernamePermalink}"
-        class="user-box"
-        class:animate={executeAnimation}
-      >
-        <AvatarLabel
-          size="lg"
-          avatar={author?.profile_photo ?? ""}
-          name={author?.name ?? author?.username ?? ""}
+      <div class="user-box-wrapper">
+        {#if accessGranted}
+          <Badge size="sm" color="orange">
+            <CheckCircle />
+            Rewarded Access
+          </Badge>
+        {/if}
+        <a
+          href="/a/user/{author?.usernamePermalink}"
+          class="user-box"
+          class:animate={executeAnimation}
         >
-          <div slot="label">
-            {timeAgo(
-              widgetData?.article?.published_date,
-              $page.data.translations.time_ago
-            )}
-            •
-            {readingTime(widgetData.article.data?.content)}
-            <TranslationText
-              key={"uknown"}
-              text={widgetDataTranslation?.translation?.reading_time}
-              fallback={"mins"}
-            />
+          <AvatarLabel
+            size="lg"
+            avatar={author?.profile_photo ?? ""}
+            name={author?.name ?? author?.username ?? ""}
+          >
+            <div slot="label">
+              {timeAgo(
+                widgetData?.article?.published_date,
+                $page.data.translations.time_ago
+              )}
+              •
+              {readingTime(widgetData.article.data?.content)}
+              <TranslationText
+                key={"uknown"}
+                text={widgetDataTranslation?.translation?.reading_time}
+                fallback={"mins"}
+              />
+            </div>
+          </AvatarLabel>
+        </a>
+        {#if accessGranted}
+          <div class="rewards-info">
+            <CheckCircle />
+            <div class="rewards-text">
+              <span class="amount">245 BTA</span>
+              earned from 490 unlocks
+            </div>
           </div>
-        </AvatarLabel>
-      </a>
-
+          <!-- content here -->
+        {/if}
+      </div>
       {#if widgetData.article.tags?.length}
         <div class="tags-wrapper">
           <ScrollDataWrapper data={Array.from(tagMap)} let:item>
@@ -385,16 +442,6 @@
         </div>
       {/if}
     </div>
-  </div>
-
-  <div class="sportstack-box">
-    <ListSportsTackItem
-      translations={$page.data.translations}
-      includeAbout={true}
-      user={widgetData.author}
-      size="lg"
-      action_button={true}
-    />
   </div>
 
   <!--
@@ -417,7 +464,7 @@
           );
         }
       )}
-      {#if paid}
+      {#if paid && !accessGranted}
         <div class="blur-content" bind:this={blurContentNode} />
       {/if}
     </div>
@@ -476,6 +523,47 @@
           letter-spacing: -0.96px;
         }
       }
+      .user-box-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+        align-self: stretch;
+        :global(.badge svg) {
+          width: 12px;
+          height: 12px;
+          transform: translateY(-1px);
+        }
+
+        .rewards-info {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: var(--spacing-md, 8px);
+          align-self: stretch;
+          color: var(--colors-foreground-fg-brand-primary-600, #fcd5c0);
+
+          .rewards-text {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-1);
+           color: var(--colors-text-text-tertiary_on-brand, #8C8C8C);
+
+
+
+            /* Text sm/Medium */
+            font-family: var(--font-family-font-family-body, Roboto);
+            font-size: var(--font-size-text-sm, 14px);
+            font-style: normal;
+            font-weight: 500;
+            line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+
+            .amount {
+              color: var(--colors-text-text-primary_on-brand, #f5620f);
+            }
+          }
+        }
+      }
       .user-box {
         :global(.avatar-wrapper) {
           transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
@@ -504,11 +592,24 @@
       width: 100%;
       display: flex;
       justify-content: space-between;
+      align-items: center;
+      border-radius: 12px;
+      border: 1px solid var(--colors-border-border-secondary, #3b3b3b);
+      background: var(--colors-background-bg-primary_alt, #232323);
+      height: 80px;
 
       :global(.list-item) {
-        padding: 0;
+        display: flex;
+        height: 52px;
+        padding: 16px var(--spacing-lg, 12px);
+        justify-content: center;
+        align-items: center;
+        gap: 29px;
         border: none;
-        width: 100%;
+        flex: 1 0 0;
+      }
+      :global(.list-item .user-info) {
+        align-items: center;
       }
     }
 

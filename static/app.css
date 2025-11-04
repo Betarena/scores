@@ -4277,7 +4277,7 @@ body {
 /* 1. Color modes - Dark mode */
 .dark-mode {
   --colors-text-text-primary-900: var(--colors-base-white);
-  --colors-text-text-primary_on-brand: var(--colors-gray-dark-mode-50);
+  --colors-text-text-primary_on-brand: var(--colors-brand-500);
   --colors-text-text-secondary-700: var(--colors-gray-dark-mode-50);
   --colors-text-text-secondary_hover: var(--colors-gray-dark-mode-300);
   --colors-text-text-secondary_on-brand: var(--colors-gray-dark-mode-200);
@@ -4580,7 +4580,6 @@ body {
   --component-colors-utility-yellow-utility-yellow-700: var(--colors-yellow-300);
   --colors-background-black-white: #000000FF;
   --colors-text-text-primary: var(--colors-gray-50);
-  --colors-text-text-primary_on-brand: var(--colors-gray-50);
   --colors-text-text-secondary: var(--colors-gray-300);
   --colors-text-text-secondary_hover: var(--colors-gray-200);
   --colors-text-text-secondary_on-brand: var(--colors-gray-300);
@@ -5021,7 +5020,6 @@ body {
 /* 1. Color modes - Light mode */
 .light-mode {
   --colors-text-text-primary-900: var(--colors-base-black);
-  --colors-text-text-primary_on-brand: var(--colors-base-white);
   --colors-text-text-secondary-700: var(--colors-gray-light-mode-700);
   --colors-text-text-secondary_hover: var(--colors-gray-light-mode-800);
   --colors-text-text-secondary_on-brand: var(--colors-brand-200);
@@ -5324,7 +5322,7 @@ body {
   --component-colors-utility-yellow-utility-yellow-700: var(--colors-yellow-700);
   --colors-background-black-white: #FFFFFFFF;
   --colors-text-text-primary: var(--colors-gray-900);
-  --colors-text-text-primary_on-brand: var(--colors-base-white);
+  --colors-text-text-primary_on-brand: var(--colors-brand-500);
   --colors-text-text-secondary: var(--colors-gray-700);
   --colors-text-text-secondary_hover: var(--colors-gray-800);
   --colors-text-text-secondary_on-brand: var(--colors-brand-200);

@@ -63,6 +63,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   export let sportstack = {} as IPageAuthorAuthorData;
   export let type: "tip" | "unlock" = "tip";
+  export let grantAccess = () => {};
   let dotLottie: DotLottie;
 
   $: ({ awards_translations } = $page.data as {
@@ -109,6 +110,9 @@
       if (dotLottie) dotLottie.play();
       setTimeout(() => {
         $modalStore.show = false;
+        if (!isRewards) {
+          grantAccess();
+        }
         infoMessages.add({
           type: "awards",
           title:

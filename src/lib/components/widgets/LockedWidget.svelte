@@ -16,13 +16,15 @@
   import type { IPageAuthorAuthorData } from "@betarena/scores-lib/types/v8/preload.authors.js";
 
   export let sportstack = {} as IPageAuthorAuthorData;
+  export let grantAccess = () => {};
 
   onMount(() => {
     modalStore.set({
       component: TipsModal,
       props: {
         type: "unlock",
-        sportstack
+        sportstack,
+        grantAccess
       },
       modal: false,
       show: true
