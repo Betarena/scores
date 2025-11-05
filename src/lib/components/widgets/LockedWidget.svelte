@@ -21,7 +21,7 @@
   let lockNode;
 
   onMount(() => {
-   handleScroll();
+    handleScroll();
   });
 
   onDestroy(() => {
@@ -33,8 +33,13 @@
 
     const scrollY = window.scrollY || window.pageYOffset;
     const lockNodeTop = lockNode.offsetTop;
+    const windowHeight = window.innerHeight;
+    const documentHeight = document.documentElement.scrollHeight;
 
     if (scrollY > lockNodeTop + SCROLL_OFFSET) {
+      showModal();
+    }
+    if (scrollY + windowHeight >= documentHeight - SCROLL_OFFSET) {
       showModal();
     }
   }
