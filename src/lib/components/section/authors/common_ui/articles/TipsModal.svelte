@@ -469,7 +469,7 @@
     align-items: center;
 
     border-radius: var(--radius-2xl, 16px);
-    background: var(--colors-background-bg-primary, #1f1f1f);
+    background: var(--colors-background-bg-secondary_alt, #1f1f1f);
 
     /* Shadows/shadow-xl */
     box-shadow: 0 20px 24px -4px var(--colors-effects-shadows-shadow-xl_01, rgba(255, 255, 255, 0)),
@@ -785,7 +785,7 @@
       max-width: 100vw;
       border-radius: var(--radius-2xl, 16px) var(--radius-2xl, 16px)
         var(--radius-none, 0) var(--radius-none, 0);
-      background: var(--colors-background-bg-primary_alt, #232323);
+      background: var(--colors-background-bg-secondary_alt, #1f1f1f);
 
       /* Shadows/shadow-xl */
       box-shadow: 0 20px 24px -4px var(--colors-effects-shadows-shadow-xl_01, rgba(255, 255, 255, 0)),

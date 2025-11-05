@@ -4792,7 +4792,6 @@ body {
   --colors-foreground-fg-warning-secondary: var(--colors-warning-400);
   --colors-foreground-fg-success-primary: var(--colors-success-500);
   --colors-foreground-fg-success-secondary: var(--colors-success-400);
-  --colors-background-bg-primary: var(--colors-gray-950);
   --colors-effects-focus-rings-focus-ring: var(--colors-brand-500);
   --colors-effects-focus-rings-focus-ring-error: var(--colors-error-500);
   --colors-effects-shadows-shadow-xs: var(--colors-base-transparent);
@@ -5286,7 +5285,6 @@ body {
   --colors-background-bg-primary_hover: var(--colors-gray-light-mode-50);
   --colors-background-bg-primary-solid: var(--colors-gray-light-mode-950);
   --colors-background-bg-secondary: var(--colors-gray-light-mode-50);
-  --colors-background-bg-secondary_alt: var(--colors-gray-light-mode-50);
   --colors-background-bg-secondary_hover: var(--colors-gray-light-mode-100);
   --colors-background-bg-secondary_subtle: var(--colors-gray-light-mode-25);
   --colors-background-bg-secondary-solid: var(--colors-gray-light-mode-600);
@@ -5559,7 +5557,7 @@ body {
   --colors-background-bg-primary_hover: var(--colors-gray-50);
   --colors-background-bg-primary-solid: var(--colors-gray-950);
   --colors-background-bg-secondary: var(--colors-gray-light-mode-50);
-  --colors-background-bg-secondary_alt: var(--colors-gray-50);
+  --colors-background-bg-secondary_alt: var(--colors-gray-light-mode-50);
   --colors-background-bg-secondary_hover: var(--colors-gray-100);
   --colors-background-bg-secondary_subtle: var(--colors-gray-25);
   --colors-background-bg-secondary-solid: var(--colors-gray-600);
