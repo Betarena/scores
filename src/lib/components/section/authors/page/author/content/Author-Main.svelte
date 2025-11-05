@@ -202,19 +202,18 @@
       const directChildren = Array.from(container.children) as HTMLElement[];
       let isFirst = true;
       let targetIndex = 0;
-      const target = directChildren.find(
-        (child, index) =>{
-          const isP = (child.tagName?.toLowerCase() === "p") && !child.querySelector("img");
-          if (isP && !isFirst) {
-            targetIndex = index;
-            return true
-          }
-          if (isP) {
-            isFirst = false;
-          }
-          return false
-          }
-        );
+      const target = directChildren.find((child, index) => {
+        const isP =
+          child.tagName?.toLowerCase() === "p" && !child.querySelector("img");
+        if (isP && !isFirst) {
+          targetIndex = index;
+          return true;
+        }
+        if (isP) {
+          isFirst = false;
+        }
+        return false;
+      });
       if (blurContentNode && target) {
         try {
           const p_node = document.createElement("p");
@@ -235,11 +234,14 @@
 
           const contentToRemove = directChildren.slice(targetIndex + 1);
           const userAgent = navigator.userAgent.toLowerCase();
-           const isBot = /googlebot|bingbot|slurp|duckduckbot|baiduspider|yandexbot|mj12bot|semrushbot|ahrefsbot|rogerbot|dotbot/.test(userAgent);
+          const isBot =
+            /googlebot|bingbot|slurp|duckduckbot|baiduspider|yandexbot|mj12bot|semrushbot|ahrefsbot|rogerbot|dotbot/.test(
+              userAgent
+            );
           if (!isBot) {
-            contentToRemove.forEach(child => {
+            contentToRemove.forEach((child) => {
               child.textContent = "";
-            })
+            });
           }
 
           setTimeout(() => {
@@ -378,15 +380,6 @@
 -->
 
 <div id={CNAME} data-betarena-zone-id="4" class={viewportType}>
-  <div class="sportstack-box">
-    <ListSportsTackItem
-      translations={$page.data.translations}
-      includeAbout={true}
-      user={widgetData.author}
-      size="lg"
-      action_button={true}
-    />
-  </div>
   <div class="article-header">
     <!--
     ╭─────
@@ -394,6 +387,15 @@
     ╰─────
     -->
     <div class="article-title">
+      <div class="sportstack-box">
+        <ListSportsTackItem
+          translations={$page.data.translations}
+          includeAbout={true}
+          user={widgetData.author}
+          size="lg"
+          action_button={true}
+        />
+      </div>
       <h1 class="title">
         {widgetData.article.data?.title ?? ""}
       </h1>
@@ -460,19 +462,19 @@
   {#key $userSettings.theme}
     <div id="content" data-betarena-zone-id="2,3" bind:this={contentContainer}>
       {#key accessGranted}
-      {@html widgetData.article.data?.content.replaceAll(
-        /<img[^>]+src=["']([^"'>]+)["']/g,
-        (match, src) => {
-          return match.replace(
-            src,
-            getOptimizedImageUrl({
-              strImageUrl: src,
-              intQuality: 90,
-              intWidth: 1500,
-            })
-          );
-        }
-      )}
+        {@html widgetData.article.data?.content.replaceAll(
+          /<img[^>]+src=["']([^"'>]+)["']/g,
+          (match, src) => {
+            return match.replace(
+              src,
+              getOptimizedImageUrl({
+                strImageUrl: src,
+                intQuality: 90,
+                intWidth: 1500,
+              })
+            );
+          }
+        )}
       {/key}
       {#if paid && !accessGranted}
         <div class="blur-content" bind:this={blurContentNode} />

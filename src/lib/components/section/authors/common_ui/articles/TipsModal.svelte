@@ -494,7 +494,7 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: var(--spacing-lg, 12px);
+        gap: var(--spacing-xl, 16px);
         align-self: stretch;
 
         .title {
@@ -800,6 +800,16 @@
       .tips-body {
         width: 375px;
         // max-width: 400px;
+
+        .header {
+          .text-wrapper {
+            gap: var(--spacing-3xl, 24px);
+
+            .title {
+               white-space: nowrap;
+            }
+          }
+        }
       }
     }
   }
