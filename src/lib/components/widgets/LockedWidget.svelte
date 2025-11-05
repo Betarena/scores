@@ -8,57 +8,55 @@
 -->
 
 <script lang="ts">
-  import { onDestroy, onMount } from "svelte";
   import TipsModal from "../section/authors/common_ui/articles/TipsModal.svelte";
   import Button from "../ui/Button.svelte";
   import FeaturedIcon from "../ui/FeaturedIcon.svelte";
-  import { modalStore } from "$lib/store/modal.js";
   import type { IPageAuthorAuthorData } from "@betarena/scores-lib/types/v8/preload.authors.js";
 
   export let sportstack = {} as IPageAuthorAuthorData;
   export let grantAccess = () => {};
-  const SCROLL_OFFSET = 50;
+
+  let MODAL_HEIGHT = 500;
+  const HEADER_VISIBLE = 20 + 32 + 16; // icon + cta + padding
+
   let lockNode;
-
-  onMount(() => {
-    handleScroll();
-  });
-
-  onDestroy(() => {
-    $modalStore.show = false;
-  });
-
-  function handleScroll() {
-    if ($modalStore.show || !lockNode) return;
-
-    const scrollY = window.scrollY || window.pageYOffset;
-    const lockNodeTop = lockNode.offsetTop;
-    const windowHeight = window.innerHeight;
-    const documentHeight = document.documentElement.scrollHeight;
-
-    if (scrollY > lockNodeTop + SCROLL_OFFSET) {
-      showModal();
-    }
-    if (scrollY + windowHeight >= documentHeight - SCROLL_OFFSET) {
-      showModal();
-    }
+  let modalNode;
+  let modalBottom = (MODAL_HEIGHT - HEADER_VISIBLE) * -1;
+  let mobileMenuPos;
+  $: if (modalNode) {
+    const rect = modalNode.getBoundingClientRect();
+    MODAL_HEIGHT = rect.height;
+    modalBottom = (MODAL_HEIGHT - HEADER_VISIBLE) * -1;
   }
 
-  function showModal() {
-    if ($modalStore.show) return;
+  function handleScroll() {
+    if (!lockNode) return;
+    const lockRect = lockNode.getBoundingClientRect();
+    const windowHeight = window.innerHeight;
+    const SCROLL_OFFSET = 50;
 
-    modalStore.set({
-      component: TipsModal,
-      props: {
-        type: "unlock",
-        sportstack,
-        grantAccess,
-      },
-      modal: false,
-      show: true,
-    });
+    const threshold = windowHeight - SCROLL_OFFSET - HEADER_VISIBLE;
+ const mobileMenuNode = document.querySelector(
+        ".mobile-menu"
+      ) as HTMLDivElement;
+    if (lockRect.bottom < threshold) {
+      const progress = threshold - lockRect.bottom;
+      modalBottom = Math.min(
+        0,
+        (MODAL_HEIGHT - HEADER_VISIBLE) * -1 + progress
+      );
 
-    window.removeEventListener("scroll", handleScroll);
+      if (!mobileMenuPos && mobileMenuNode) {
+        mobileMenuPos = mobileMenuNode.style.bottom;
+        mobileMenuNode.style.bottom = "-100px";
+      }
+    } else {
+      modalBottom = (MODAL_HEIGHT - HEADER_VISIBLE) * -1;
+      if(mobileMenuPos && mobileMenuNode) {
+        mobileMenuNode.style.bottom = mobileMenuPos;
+        mobileMenuPos = null;
+      }
+    }
   }
 </script>
 
@@ -96,6 +94,14 @@
   <div class="cta">Locked content</div>
 
   <Button type="secondary-gray" size="sm">Unlock (1 BTA)</Button>
+</div>
+
+<div
+  bind:this={modalNode}
+  class="locked-tips-modal-wrapper"
+  style="--modal-bottom: {modalBottom}px"
+>
+  <TipsModal type="unlock" {sportstack} {grantAccess} />
 </div>
 
 <!--
@@ -141,6 +147,17 @@
       font-style: normal;
       font-weight: 600;
       line-height: var(--line-height-text-md, 24px); /* 150% */
+    }
+  }
+
+  .locked-tips-modal-wrapper {
+    position: fixed;
+    z-index: 5000;
+    left: 0px;
+    right: 0px;
+    bottom: var(--modal-bottom, -320px);
+    :global(.tips-modal-wrapper) {
+      position: static;
     }
   }
 </style>
