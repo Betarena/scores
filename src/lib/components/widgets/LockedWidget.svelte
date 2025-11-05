@@ -8,6 +8,7 @@
 -->
 
 <script lang="ts">
+  import { tick } from "svelte";
   import TipsModal from "../section/authors/common_ui/articles/TipsModal.svelte";
   import Button from "../ui/Button.svelte";
   import FeaturedIcon from "../ui/FeaturedIcon.svelte";
@@ -17,16 +18,21 @@
   export let grantAccess = () => {};
 
   let MODAL_HEIGHT = 500;
-  const HEADER_VISIBLE = 20 + 32 + 16; // icon + cta + padding
+  const HEADER_VISIBLE = 20 + 32 + 16; // icon + gap + padding
 
   let lockNode;
   let modalNode;
-  let modalBottom = (MODAL_HEIGHT - HEADER_VISIBLE) * -1;
-  let mobileMenuPos;
-  $: if (modalNode) {
-    const rect = modalNode.getBoundingClientRect();
-    MODAL_HEIGHT = rect.height;
-    modalBottom = (MODAL_HEIGHT - HEADER_VISIBLE) * -1;
+  let modalBottom = -700;
+  let firstRender = true;
+  let zIndex = 4000;
+
+  $: if (modalNode && firstRender) {
+    setTimeout(() => {
+      firstRender = false;
+      const root = document.getElementById("app-root-layout");
+      root?.appendChild(modalNode);
+      handleScroll();
+    }, 200);
   }
 
   function handleScroll() {
@@ -34,28 +40,22 @@
     const lockRect = lockNode.getBoundingClientRect();
     const windowHeight = window.innerHeight;
     const SCROLL_OFFSET = 50;
+    const rect = modalNode.getBoundingClientRect();
+    MODAL_HEIGHT = rect.height;
+    modalBottom = (MODAL_HEIGHT - HEADER_VISIBLE) * -1;
 
     const threshold = windowHeight - SCROLL_OFFSET - HEADER_VISIBLE;
- const mobileMenuNode = document.querySelector(
-        ".mobile-menu"
-      ) as HTMLDivElement;
+
     if (lockRect.bottom < threshold) {
       const progress = threshold - lockRect.bottom;
       modalBottom = Math.min(
         0,
         (MODAL_HEIGHT - HEADER_VISIBLE) * -1 + progress
       );
-
-      if (!mobileMenuPos && mobileMenuNode) {
-        mobileMenuPos = mobileMenuNode.style.bottom;
-        mobileMenuNode.style.bottom = "-100px";
-      }
+      zIndex = 4100;
     } else {
       modalBottom = (MODAL_HEIGHT - HEADER_VISIBLE) * -1;
-      if(mobileMenuPos && mobileMenuNode) {
-        mobileMenuNode.style.bottom = mobileMenuPos;
-        mobileMenuPos = null;
-      }
+      zIndex = 4000;
     }
   }
 </script>
@@ -99,7 +99,7 @@
 <div
   bind:this={modalNode}
   class="locked-tips-modal-wrapper"
-  style="--modal-bottom: {modalBottom}px"
+  style="--modal-bottom: {modalBottom}px; z-index: {zIndex};"
 >
   <TipsModal type="unlock" {sportstack} {grantAccess} />
 </div>
@@ -152,7 +152,7 @@
 
   .locked-tips-modal-wrapper {
     position: fixed;
-    z-index: 5000;
+    z-index: 4000;
     left: 0px;
     right: 0px;
     bottom: var(--modal-bottom, -320px);
