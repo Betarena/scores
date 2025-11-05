@@ -8,7 +8,6 @@
 -->
 
 <script lang="ts">
-  import { tick } from "svelte";
   import TipsModal from "../section/authors/common_ui/articles/TipsModal.svelte";
   import Button from "../ui/Button.svelte";
   import FeaturedIcon from "../ui/FeaturedIcon.svelte";
@@ -41,12 +40,17 @@
     const windowHeight = window.innerHeight;
     const SCROLL_OFFSET = 50;
     const rect = modalNode.getBoundingClientRect();
+    const documentHeight = document.documentElement.scrollHeight;
     MODAL_HEIGHT = rect.height;
     modalBottom = (MODAL_HEIGHT - HEADER_VISIBLE) * -1;
 
     const threshold = windowHeight - SCROLL_OFFSET - HEADER_VISIBLE;
+    const isAtBottom = scrollY + windowHeight >= documentHeight - 10;
 
-    if (lockRect.bottom < threshold) {
+    if (isAtBottom) {
+      modalBottom = 0;
+      zIndex = 4100;
+    } else if (lockRect.bottom < threshold) {
       const progress = threshold - lockRect.bottom;
       modalBottom = Math.min(
         0,
