@@ -24,7 +24,7 @@
   let modalNode;
   let modalBottom = -700;
   let firstRender = true;
-  let zIndex = 4000;
+  let zIndex = 3000;
 
   $: if (modalNode && firstRender) {
     setTimeout(() => {
@@ -55,7 +55,7 @@
       zIndex = 4100;
     } else {
       modalBottom = (MODAL_HEIGHT - HEADER_VISIBLE) * -1;
-      zIndex = 4000;
+      zIndex = 3000;
     }
   }
 </script>
