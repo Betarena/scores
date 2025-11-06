@@ -46,20 +46,22 @@
 
     const threshold = windowHeight - SCROLL_OFFSET - HEADER_VISIBLE;
     const isAtBottom = scrollY + windowHeight >= documentHeight - 10;
-
-    if (isAtBottom) {
-      modalBottom = 0;
-      zIndex = 4100;
-    } else if (lockRect.bottom < threshold) {
+    const maxBottom = windowHeight - MODAL_HEIGHT;
+    if (lockRect.bottom < threshold) {
       const progress = threshold - lockRect.bottom;
-      modalBottom = Math.min(
-        0,
-        (MODAL_HEIGHT - HEADER_VISIBLE) * -1 + progress
-      );
+      modalBottom = (MODAL_HEIGHT - HEADER_VISIBLE) * -1 + progress
       zIndex = 4100;
     } else {
       modalBottom = (MODAL_HEIGHT - HEADER_VISIBLE) * -1;
       zIndex = 3000;
+    }
+
+    if (isAtBottom && modalBottom < 0) {
+      modalBottom = 0;
+      zIndex = 4100;
+    }
+    if (maxBottom < modalBottom) {
+      modalBottom = maxBottom;
     }
   }
 </script>

@@ -758,9 +758,16 @@
         padding: var(--spacing-2xl, 20px) var(--spacing-xl, 16px) 0
           var(--spacing-xl, 16px);
 
-        .text-wrapper .title .title-support {
-          white-space: initial;
-          text-align: start;
+        .text-wrapper {
+          .title {
+            white-space: initial !important;
+
+            .title-support {
+              white-space: initial;
+              text-align: start;
+            }
+          }
+
         }
       }
       .footer {
@@ -806,7 +813,7 @@
             gap: var(--spacing-3xl, 24px);
 
             .title {
-               white-space: nowrap;
+              white-space: nowrap;
             }
           }
         }
