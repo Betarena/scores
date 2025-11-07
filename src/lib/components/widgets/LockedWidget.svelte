@@ -175,7 +175,7 @@
     z-index: 4000;
     left: 0px;
     right: 0px;
-    bottom: -600px;
+    bottom: -100vh;
     will-change: bottom;
     transition: bottom 0.01s ease-out;
 
