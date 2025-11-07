@@ -15,6 +15,7 @@
   import FeaturedIcon from "../ui/FeaturedIcon.svelte";
   import type { IPageAuthorAuthorData } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import TranslationText from "../misc/Translation-Text.svelte";
+  import session from "$lib/store/session.js";
 
   export let sportstack = {} as IPageAuthorAuthorData;
   export let grantAccess = () => {};
@@ -22,6 +23,7 @@
   $: ({ awards_translations } = $page.data as {
     awards_translations: TranslationAwardsDataJSONSchema;
   });
+  $: ({viewportType} = $session)
 
   let MODAL_HEIGHT = 500;
   const HEADER_VISIBLE = 20 + 32 + 16; // icon + gap + padding
@@ -31,7 +33,7 @@
   let firstRender = true;
   let zIndex = 3000;
 
-  $: if (modalNode && firstRender) {
+  $: if (modalNode && firstRender && viewportType) {
     setTimeout(() => {
       firstRender = false;
       const root = document.getElementById("app-root-layout");
@@ -175,6 +177,7 @@
     right: 0px;
     bottom: -600px;
     will-change: bottom;
+    transition: bottom 0.01s ease-out;
 
     :global(.tips-modal-wrapper) {
       position: static;
