@@ -174,6 +174,7 @@
     left: 0px;
     right: 0px;
     bottom: -600px;
+    will-change: bottom;
 
     :global(.tips-modal-wrapper) {
       position: static;
