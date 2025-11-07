@@ -767,7 +767,6 @@
               text-align: start;
             }
           }
-
         }
       }
       .footer {
@@ -815,6 +814,14 @@
               white-space: nowrap;
             }
           }
+        }
+      }
+
+      &.mobile {
+        max-width: 100%;
+        width: 100%;
+        .tips-body{
+          width: 100%;
         }
       }
     }

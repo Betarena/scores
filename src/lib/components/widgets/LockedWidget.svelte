@@ -15,6 +15,7 @@
   import FeaturedIcon from "../ui/FeaturedIcon.svelte";
   import type { IPageAuthorAuthorData } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import TranslationText from "../misc/Translation-Text.svelte";
+  import session from "$lib/store/session.js";
 
   export let sportstack = {} as IPageAuthorAuthorData;
   export let grantAccess = () => {};
@@ -22,63 +23,21 @@
   $: ({ awards_translations } = $page.data as {
     awards_translations: TranslationAwardsDataJSONSchema;
   });
+  $: ({ viewportType } = $session);
 
-  let MODAL_HEIGHT = 500;
-  const HEADER_VISIBLE = 20 + 32 + 16; // icon + gap + padding
 
   let lockNode: HTMLDivElement;
   let modalNode;
-  let firstRender = true;
-  let zIndex = 3000;
 
-  $: if (modalNode && firstRender) {
-    setTimeout(() => {
-      firstRender = false;
-      const root = document.getElementById("app-root-layout");
-      root?.appendChild(modalNode);
-      handleScroll();
-    }, 200);
+  $: if (modalNode && viewportType) {
+    updatePos();
   }
 
-  function handleScroll() {
-    if (!lockNode || !modalNode) return;
-
-    const scrollY = window.scrollY || window.pageYOffset;
-    const lockRect = lockNode.getBoundingClientRect();
-    const windowHeight = window.innerHeight;
-    const SCROLL_OFFSET = 50;
-    const rect = modalNode.getBoundingClientRect();
-    const documentHeight = document.documentElement.scrollHeight;
-
-    MODAL_HEIGHT = rect.height;
-
-    const threshold = windowHeight - SCROLL_OFFSET - HEADER_VISIBLE;
-    const isAtBottom = scrollY + windowHeight >= documentHeight - 10;
-    const maxBottom = windowHeight - MODAL_HEIGHT;
-
-    let newModalBottom = (MODAL_HEIGHT - HEADER_VISIBLE) * -1;
-    let newZIndex = 3000;
-
-    if (lockRect.bottom < threshold) {
-      const progress = threshold - lockRect.bottom;
-      newModalBottom = (MODAL_HEIGHT - HEADER_VISIBLE) * -1 + progress;
-      newZIndex = 4100;
-    }
-
-    if (isAtBottom && newModalBottom < 0) {
-      newModalBottom = 0;
-      newZIndex = 4100;
-    }
-
-    if (maxBottom < newModalBottom) {
-      newModalBottom = maxBottom;
-    }
-
-    modalNode.style.bottom = `${newModalBottom}px`;
-    if (zIndex !== newZIndex) {
-      modalNode.style.zIndex = `${newZIndex}`;
-      zIndex = newZIndex;
-    }
+  function updatePos() {
+   if (!lockNode || !modalNode) return;
+   const lockRect = lockNode.getBoundingClientRect();
+   modalNode.style.left=`-${lockRect.left}px`;
+   modalNode.style.display = "block";
   }
 </script>
 
@@ -93,7 +52,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<svelte:window on:scroll|passive={handleScroll} />
+<svelte:window on:resize={updatePos} />
 
 <div class="lock-widget-wrapper" bind:this={lockNode}>
   <FeaturedIcon size="md" color="gray" type="modern"
@@ -116,8 +75,8 @@
   <div class="cta"><TranslationText text={awards_translations.locked_content} fallback="Locked content"  /></div>
 
   <Button type="secondary-gray" size="sm"><TranslationText text={awards_translations.unlock}  fallback="Unlock " /> (1 BTA)</Button>
-</div>
 
+</div>
 <div bind:this={modalNode} class="locked-tips-modal-wrapper">
   <TipsModal type="unlock" {sportstack} {grantAccess} />
 </div>
@@ -140,6 +99,8 @@
     align-items: center;
     gap: 12px;
     align-self: stretch;
+    position: relative;
+    z-index: 90;
 
     border-radius: var(--radius-xl, 12px);
     border: 1px solid var(--colors-border-border-secondary, #3b3b3b);
@@ -169,12 +130,13 @@
   }
 
   .locked-tips-modal-wrapper {
-    position: fixed;
+    display: none;
+    position: absolute;
     z-index: 4000;
     left: 0px;
-    right: 0px;
-    bottom: -600px;
-
+    bottom: 0;
+    transform: translateY(80%);
+    width: 100vw;
     :global(.tips-modal-wrapper) {
       position: static;
     }
