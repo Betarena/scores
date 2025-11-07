@@ -8,20 +8,26 @@
 -->
 
 <script lang="ts">
+  import { page } from "$app/stores";
+  import type { TranslationAwardsDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import TipsModal from "../section/authors/common_ui/articles/TipsModal.svelte";
   import Button from "../ui/Button.svelte";
   import FeaturedIcon from "../ui/FeaturedIcon.svelte";
   import type { IPageAuthorAuthorData } from "@betarena/scores-lib/types/v8/preload.authors.js";
+  import TranslationText from "../misc/Translation-Text.svelte";
 
   export let sportstack = {} as IPageAuthorAuthorData;
   export let grantAccess = () => {};
 
+  $: ({ awards_translations } = $page.data as {
+    awards_translations: TranslationAwardsDataJSONSchema;
+  });
+
   let MODAL_HEIGHT = 500;
   const HEADER_VISIBLE = 20 + 32 + 16; // icon + gap + padding
 
-  let lockNode;
+  let lockNode: HTMLDivElement;
   let modalNode;
-  let modalBottom = -700;
   let firstRender = true;
   let zIndex = 3000;
 
@@ -35,33 +41,43 @@
   }
 
   function handleScroll() {
-    if (!lockNode) return;
+    if (!lockNode || !modalNode) return;
+
+    const scrollY = window.scrollY || window.pageYOffset;
     const lockRect = lockNode.getBoundingClientRect();
     const windowHeight = window.innerHeight;
     const SCROLL_OFFSET = 50;
     const rect = modalNode.getBoundingClientRect();
     const documentHeight = document.documentElement.scrollHeight;
+
     MODAL_HEIGHT = rect.height;
-    modalBottom = (MODAL_HEIGHT - HEADER_VISIBLE) * -1;
 
     const threshold = windowHeight - SCROLL_OFFSET - HEADER_VISIBLE;
     const isAtBottom = scrollY + windowHeight >= documentHeight - 10;
     const maxBottom = windowHeight - MODAL_HEIGHT;
+
+    let newModalBottom = (MODAL_HEIGHT - HEADER_VISIBLE) * -1;
+    let newZIndex = 3000;
+
     if (lockRect.bottom < threshold) {
       const progress = threshold - lockRect.bottom;
-      modalBottom = (MODAL_HEIGHT - HEADER_VISIBLE) * -1 + progress
-      zIndex = 4100;
-    } else {
-      modalBottom = (MODAL_HEIGHT - HEADER_VISIBLE) * -1;
-      zIndex = 3000;
+      newModalBottom = (MODAL_HEIGHT - HEADER_VISIBLE) * -1 + progress;
+      newZIndex = 4100;
     }
 
-    if (isAtBottom && modalBottom < 0) {
-      modalBottom = 0;
-      zIndex = 4100;
+    if (isAtBottom && newModalBottom < 0) {
+      newModalBottom = 0;
+      newZIndex = 4100;
     }
-    if (maxBottom < modalBottom) {
-      modalBottom = maxBottom;
+
+    if (maxBottom < newModalBottom) {
+      newModalBottom = maxBottom;
+    }
+
+    modalNode.style.bottom = `${newModalBottom}px`;
+    if (zIndex !== newZIndex) {
+      modalNode.style.zIndex = `${newZIndex}`;
+      zIndex = newZIndex;
     }
   }
 </script>
@@ -77,7 +93,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<svelte:window on:scroll={handleScroll} />
+<svelte:window on:scroll|passive={handleScroll} />
 
 <div class="lock-widget-wrapper" bind:this={lockNode}>
   <FeaturedIcon size="md" color="gray" type="modern"
@@ -97,16 +113,12 @@
       />
     </svg>
   </FeaturedIcon>
-  <div class="cta">Locked content</div>
+  <div class="cta"><TranslationText text={awards_translations.locked_content} fallback="Locked content"  /></div>
 
-  <Button type="secondary-gray" size="sm">Unlock (1 BTA)</Button>
+  <Button type="secondary-gray" size="sm"><TranslationText text={awards_translations.unlock}  fallback="Unlock " /> (1 BTA)</Button>
 </div>
 
-<div
-  bind:this={modalNode}
-  class="locked-tips-modal-wrapper"
-  style="--modal-bottom: {modalBottom}px; z-index: {zIndex};"
->
+<div bind:this={modalNode} class="locked-tips-modal-wrapper">
   <TipsModal type="unlock" {sportstack} {grantAccess} />
 </div>
 
@@ -161,7 +173,8 @@
     z-index: 4000;
     left: 0px;
     right: 0px;
-    bottom: var(--modal-bottom, -320px);
+    bottom: -600px;
+
     :global(.tips-modal-wrapper) {
       position: static;
     }
