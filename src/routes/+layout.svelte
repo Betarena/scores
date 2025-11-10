@@ -803,6 +803,7 @@
     flex-direction: column;
     min-height: 100dvh;
     overflow: auto;
+    overflow-x: hidden;
     max-height: 100vh;
     &.page-content {
       background-color: var(--colors-background-bg-primary);
@@ -904,7 +905,7 @@
   @media screen and (min-width: 1024px) {
     main {
       /* 🎨 style */
-      // overflow: hidden;
+      overflow: hidden;
 
       &.standard {
         &::before {
