@@ -18,6 +18,7 @@
   import session from "$lib/store/session.js";
   import { onDestroy } from "svelte";
 
+  export let blurHeight = 0;
   export let sportstack = {} as IPageAuthorAuthorData;
   export let grantAccess = () => {};
 
@@ -27,79 +28,36 @@
   $: ({ viewportType } = $session);
 
   let MODAL_HEIGHT = 500;
+
   const HEADER_VISIBLE = 20 + 32 + 16; // icon + gap + padding
 
+  let section: HTMLElement | null;
   let lockNode: HTMLDivElement;
   let modalNode;
-  let firstRender = true;
-  let zIndex = 3000;
-  let scrollRAFId: number | null = null;
 
-  $: if (modalNode && firstRender && viewportType) {
+
+  $: if (modalNode && viewportType) {
     setTimeout(() => {
-      firstRender = false;
       const root = document.getElementById("app-root-layout");
-      root?.appendChild(modalNode);
-      handleScroll();
+      const beforeEl = document.getElementById("lock-widget-portal");
+      const rect = modalNode.getBoundingClientRect();
+      const blurNode = document.getElementById("content-blur");
+      const blurHeight = blurNode?.getBoundingClientRect().height
+      section = document.getElementById("section⮕g⮕authors⮕main");
+      section?.style.setProperty("--mt", `-${blurHeight ? blurHeight / 2 : 50}px`);
+      MODAL_HEIGHT = rect.height;
+      root?.insertBefore(modalNode, beforeEl);
+      section?.classList.add("paid-no-padding");
     }, 200);
   }
 
-  function handleScroll() {
-    if (scrollRAFId !== null) {
-      cancelAnimationFrame(scrollRAFId);
-    }
-
-    scrollRAFId = requestAnimationFrame(() => {
-      if (!lockNode || !modalNode) return;
-
-      const scrollY = window.scrollY || window.pageYOffset;
-      const lockRect = lockNode.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
-      const SCROLL_OFFSET = 50;
-      const rect = modalNode.getBoundingClientRect();
-      const documentHeight = document.documentElement.scrollHeight;
-
-      MODAL_HEIGHT = rect.height;
-
-      const threshold = windowHeight - SCROLL_OFFSET - HEADER_VISIBLE;
-      const isAtBottom = scrollY + windowHeight >= documentHeight - 10;
-      const maxBottom = windowHeight - MODAL_HEIGHT;
-
-      let newModalBottom = (MODAL_HEIGHT - HEADER_VISIBLE) * -1;
-      let newZIndex = 3000;
-
-      if (lockRect.bottom < threshold) {
-        const progress = threshold - lockRect.bottom;
-        newModalBottom = (MODAL_HEIGHT - HEADER_VISIBLE) * -1 + progress;
-        newZIndex = 4100;
-      }
-
-      if (isAtBottom && newModalBottom < 0) {
-        newModalBottom = 0;
-        newZIndex = 4100;
-      }
-
-      if (maxBottom < newModalBottom) {
-        newModalBottom = maxBottom;
-      }
-
-      const translateY = -newModalBottom;
-      modalNode.style.transform = `translateY(${translateY}px)`;
-
-      if (zIndex !== newZIndex) {
-        modalNode.style.zIndex = `${newZIndex}`;
-        zIndex = newZIndex;
-      }
-
-      scrollRAFId = null;
-    });
-  }
-
   onDestroy(() => {
-    if (scrollRAFId !== null) {
-      cancelAnimationFrame(scrollRAFId);
+    if (section) {
+      section.classList.remove("paid-no-padding");
     }
   });
+
+
 </script>
 
 <!--
@@ -113,7 +71,6 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<svelte:window on:scroll|passive={handleScroll} />
 
 <div class="lock-widget-wrapper" bind:this={lockNode}>
   <FeaturedIcon size="md" color="gray" type="modern"
@@ -146,7 +103,11 @@
   >
 </div>
 
-<div bind:this={modalNode} class="locked-tips-modal-wrapper">
+<div
+  bind:this={modalNode}
+  class="locked-tips-modal-wrapper"
+  style="bottom: {HEADER_VISIBLE - MODAL_HEIGHT}px;"
+>
   <TipsModal type="unlock" {sportstack} {grantAccess} />
 </div>
 
@@ -197,13 +158,16 @@
   }
 
   .locked-tips-modal-wrapper {
-    position: fixed;
+    position: sticky;
     z-index: 3000;
-    left: 0px;
-    right: 0px;
-    bottom: 0px;
-    will-change: transform;
-    transform: translateY(100vh);
+    top: 0px;
+    // height: 0px;
+    left: 0;
+    bottom: 0;
+    overflow: visible;
+    // bottom: 0px;
+    // will-change: transform;
+    // transform: translateY(100vh);
 
     :global(.tips-modal-wrapper) {
       position: static;

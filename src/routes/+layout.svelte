@@ -25,7 +25,6 @@
 -->
 
 <script lang="ts">
-
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -41,52 +40,53 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { browser } from '$app/environment';
-  import { afterNavigate, beforeNavigate } from '$app/navigation';
-  import { page } from '$app/stores';
-  import * as Sentry from '@sentry/sveltekit';
-  import { onDestroy, onMount } from 'svelte';
+  import { browser } from "$app/environment";
+  import { afterNavigate, beforeNavigate } from "$app/navigation";
+  import { page } from "$app/stores";
+  import * as Sentry from "@sentry/sveltekit";
+  import { onDestroy, onMount } from "svelte";
 
   import {
     routeIdContent,
     routeIdLogin,
+    routeIdPageAuthors,
     routeIdPageProfile,
     routeIdPageProfileArticleCreation,
     routeIdPageProfileEditArticle,
     routeIdPageProfilePublication,
     routeIdRegister,
-    routeIdSearch
-  } from '$lib/constants/paths.js';
-  import { scoresAdminStore } from '$lib/store/admin.js';
-  import { delCookie } from '$lib/store/cookie.js';
-  import sessionStore from '$lib/store/session.js';
-  import { initiateSubscribtions } from '$lib/store/subscribtions.js';
-  import userBetarenaSettings from '$lib/store/user-settings.js';
-  import { dlogv2 } from '$lib/utils/debug';
-  import { mainDeepLinkCheck } from '$lib/utils/deeplink.js';
-  import { isPWA, viewportChangeV2 } from '$lib/utils/device.js';
-  import { setUserGeoLocation } from '$lib/utils/geo.js';
-  import { parseObject } from '$lib/utils/string.2.js';
-  import { initializeTopLevelConsoleController } from '$lib/utils/subscribtion.js';
+    routeIdSearch,
+  } from "$lib/constants/paths.js";
+  import { scoresAdminStore } from "$lib/store/admin.js";
+  import { delCookie } from "$lib/store/cookie.js";
+  import sessionStore from "$lib/store/session.js";
+  import { initiateSubscribtions } from "$lib/store/subscribtions.js";
+  import userBetarenaSettings from "$lib/store/user-settings.js";
+  import { dlogv2 } from "$lib/utils/debug";
+  import { mainDeepLinkCheck } from "$lib/utils/deeplink.js";
+  import { isPWA, viewportChangeV2 } from "$lib/utils/device.js";
+  import { setUserGeoLocation } from "$lib/utils/geo.js";
+  import { parseObject } from "$lib/utils/string.2.js";
+  import { initializeTopLevelConsoleController } from "$lib/utils/subscribtion.js";
 
-  import FooterWidget from '$lib/components/_main_/footer/v2/Footer.Widget.svelte';
-  import HeaderRedesigned from '$lib/components/_main_/header_redisigned/HeaderRedesigned.svelte';
-  import MobileMenu from '$lib/components/_main_/mobile-menu/MobileMenu.svelte';
-  import SplashScreen from '$lib/components/misc/Splash-Screen.svelte';
-  import DevInfoBox from '$lib/components/misc/admin/Dev-Info-Box.svelte';
-  import ModalError from '$lib/components/misc/modal/Modal-Error.svelte';
-  import ModalMain from '$lib/components/misc/modal/ModalMain.svelte';
-  import ToastAuth from '$lib/components/misc/toast/Toast-Auth/Toast-Auth.svelte';
-  import InfoMessages from '$lib/components/ui/infomessages/InfoMessages.svelte';
-  import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
-// import '@betarena/ad-engine';
+  import FooterWidget from "$lib/components/_main_/footer/v2/Footer.Widget.svelte";
+  import HeaderRedesigned from "$lib/components/_main_/header_redisigned/HeaderRedesigned.svelte";
+  import MobileMenu from "$lib/components/_main_/mobile-menu/MobileMenu.svelte";
+  import SplashScreen from "$lib/components/misc/Splash-Screen.svelte";
+  import DevInfoBox from "$lib/components/misc/admin/Dev-Info-Box.svelte";
+  import ModalError from "$lib/components/misc/modal/Modal-Error.svelte";
+  import ModalMain from "$lib/components/misc/modal/ModalMain.svelte";
+  import ToastAuth from "$lib/components/misc/toast/Toast-Auth/Toast-Auth.svelte";
+  import InfoMessages from "$lib/components/ui/infomessages/InfoMessages.svelte";
+  import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
+  // import '@betarena/ad-engine';
   // import WidgetAdEngine from '@betarena/ad-engine/src/lib/Widget-AdEngine.svelte';
-  import AndroidPwaBanner from '$lib/components/AndroidPWABanner.svelte';
-  import { loginStore } from '$lib/components/section/login/login-store';
-  import history_store from '$lib/store/history.js';
-  import { initWalletStore } from '$lib/store/wallets';
-  import { gotoSW } from '$lib/utils/sveltekitWrapper';
-  import WidgetAdEngine from '@betarena/ad-engine';
+  import AndroidPwaBanner from "$lib/components/AndroidPWABanner.svelte";
+  import { loginStore } from "$lib/components/section/login/login-store";
+  import history_store from "$lib/store/history.js";
+  import { initWalletStore } from "$lib/store/wallets";
+  import { gotoSW } from "$lib/utils/sveltekitWrapper";
+  import WidgetAdEngine from "@betarena/ad-engine";
 
   // ╭─────
   // │ WARNING:
@@ -110,11 +110,10 @@
    * @description
    *  📣 Component `Type`.
    */
-   type IDynamicComponentMap =
-    | 'OfflineAlertDynamic'
-    | 'PlatformAlertDynamic'
-    | 'EmailSubscribeDynamic'
-  ;
+  type IDynamicComponentMap =
+    | "OfflineAlertDynamic"
+    | "PlatformAlertDynamic"
+    | "EmailSubscribeDynamic";
 
   // #endregion ➤ 📌 TYPES
 
@@ -132,75 +131,77 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  const
-    /**
+  const /**
      * @description
      * 📝 (required) component state object
      */
-    objComponentStandardState
-      = {
-        /**
-         * @description
-         * 📝 Holds target `component(s)` of viewport configuration.
-         */
-        viewport:
-          {
-            mobile:
-            {
-              threshold: 575,
-              state: true,
-            },
-            tablet:
-            {
-              threshold: 1160,
-              state: true,
-            }
-          },
-        /**
-         * @description
-         * 📝 Holds target `component(s)` of dynamic nature.
-         */
-        mapStrDebugPreifix: new Map
-          <
-            'beforeNavigate' | 'afterNavigate',
-            string
-          >
-          (
-            [
-              [ 'beforeNavigate', '🚏 checkpoint ➤ src/routes/+layout.svelte beforeNavigate(..)' ],
-              [ 'afterNavigate', '🚏 checkpoint ➤ src/routes/+layout.svelte afterNavigate(..)' ]
-            ]
-          ),
-        /**
-         * @description
-         * 📝 Holds target `component(s)` of dynamic nature.
-         */
-        isDynamicImport: true,
-        /**
-         * @description
-         *  📝 Holds target `component(s)` of dynamic nature.
-         */
-        mapComponentDynamicLoading: new Map < IDynamicComponentMap, any >()
-      }
-  ;
+    objComponentStandardState = {
+      /**
+       * @description
+       * 📝 Holds target `component(s)` of viewport configuration.
+       */
+      viewport: {
+        mobile: {
+          threshold: 575,
+          state: true,
+        },
+        tablet: {
+          threshold: 1160,
+          state: true,
+        },
+      },
+      /**
+       * @description
+       * 📝 Holds target `component(s)` of dynamic nature.
+       */
+      mapStrDebugPreifix: new Map<"beforeNavigate" | "afterNavigate", string>([
+        [
+          "beforeNavigate",
+          "🚏 checkpoint ➤ src/routes/+layout.svelte beforeNavigate(..)",
+        ],
+        [
+          "afterNavigate",
+          "🚏 checkpoint ➤ src/routes/+layout.svelte afterNavigate(..)",
+        ],
+      ]),
+      /**
+       * @description
+       * 📝 Holds target `component(s)` of dynamic nature.
+       */
+      isDynamicImport: true,
+      /**
+       * @description
+       *  📝 Holds target `component(s)` of dynamic nature.
+       */
+      mapComponentDynamicLoading: new Map<IDynamicComponentMap, any>(),
+    };
   /**
    * @description
    *  📝 Page unsubscribe to remove inside onDestroy.
    */
   let page_unsub: () => void;
 
-  $: ({ currentPageRouteId, currentActiveModal, currentActiveToast, globalState, serverLang } = { ...$sessionStore });
+  $: ({
+    currentPageRouteId,
+    currentActiveModal,
+    currentActiveToast,
+    globalState,
+    serverLang,
+  } = { ...$sessionStore });
   $: ({ theme } = { ...$userBetarenaSettings });
-  $: ({ username, lang, competition_number, verified } = { ...$userBetarenaSettings.user?.scores_user_data });
+  $: ({ username, lang, competition_number, verified } = {
+    ...$userBetarenaSettings.user?.scores_user_data,
+  });
   $: ({ uid, email } = { ...$userBetarenaSettings.user?.firebase_user_data });
-  $: ({ route: { id: pageRouteId } } = $page);
+  $: ({
+    route: { id: pageRouteId },
+  } = $page);
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   $: navbarTranslationData = ($page.data.B_NAV_T ?? {}) as
     | B_NAV_T
     | null
-    | undefined
-  ;
+    | undefined;
   $: deepReactListenStore1 = parseObject($sessionStore);
   $: deepReactListenStore2 = parseObject($userBetarenaSettings);
 
@@ -209,17 +210,21 @@
   $: isInitliazed = false;
   $: isInitializationFinished = false;
 
-  $: [ objComponentStandardState.viewport.mobile.state, objComponentStandardState.viewport.tablet.state]
-    = viewportChangeV2
-    (
-      $sessionStore.windowWidth,
-      objComponentStandardState.viewport.mobile.threshold,
-      objComponentStandardState.viewport.tablet.threshold
-    )
-  ;
+  $: [
+    objComponentStandardState.viewport.mobile.state,
+    objComponentStandardState.viewport.tablet.state,
+  ] = viewportChangeV2(
+    $sessionStore.windowWidth,
+    objComponentStandardState.viewport.mobile.threshold,
+    objComponentStandardState.viewport.tablet.threshold
+  );
 
-  $sessionStore.deviceType = $page.data.deviceType as 'mobile' | 'tablet' | 'desktop';
-  $sessionStore.userAgent  = $page.data.userAgent as string ?? navigator.userAgent;
+  $sessionStore.deviceType = $page.data.deviceType as
+    | "mobile"
+    | "tablet"
+    | "desktop";
+  $sessionStore.userAgent =
+    ($page.data.userAgent as string) ?? navigator.userAgent;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -228,26 +233,23 @@
   /**
    * @description
    */
-  async function herlperPreMountInitialize
-  (
-  ): Promise < void >
-  {
+  async function herlperPreMountInitialize(): Promise<void> {
     isInitliazed = true;
     userBetarenaSettings.useLocalStorage(serverLang);
     scoresAdminStore.useLocalStorage();
     await mainDeepLinkCheck();
-    isInitializationFinished= true
+    isInitializationFinished = true;
     return;
   }
 
   async function redirectToOnBoard(register = true) {
-    const lang = $userBetarenaSettings.lang || $page.params.lang ;
+    const lang = $userBetarenaSettings.lang || $page.params.lang;
     let path = "";
-    if(lang && lang !== "en") {
-      path += `/${lang}`
+    if (lang && lang !== "en") {
+      path += `/${lang}`;
     }
     path += register ? "/register" : "/login";
-    if(register && uid) {
+    if (register && uid) {
       $loginStore.isExistedUser = true;
     }
     await gotoSW(path);
@@ -272,109 +274,91 @@
   // │ │: [instant] [once]
   // │ │: Instant critical data initialization.
   // ╰─────
-  $: if (browser && !isInitliazed)
-    herlperPreMountInitialize();
-  ;
-
+  $: if (browser && !isInitliazed) herlperPreMountInitialize();
   // ╭─────
   // │ NOTE: IMPORTANT CRITICAL
   // │ │: Hijack the 'console' object.
   // ╰─────
-  $: if (browser && document)
-    initializeTopLevelConsoleController();
-  ;
-
+  $: if (browser && document) initializeTopLevelConsoleController();
   // ╭─────
   // │ NOTE: IMPORTANT CRITICAL
   // │ |: [3rd-party] Intercom Logic [show/hide]
   // ╰─────
-  $: if (browser && pageRouteId == routeIdPageProfile)
-  {
-    const
-      /**
+  $: if (browser && pageRouteId == routeIdPageProfile) {
+    const /**
        * @description
        */
-      intercom: HTMLElement = document.getElementsByClassName('intercom-lightweight-app')[0] as unknown as HTMLElement
-    ;
-
-    if (intercom != undefined)
-      intercom.style.display = 'unset';
-    ;
-  }
-  else if (browser)
-  {
-    const
-      /**
+      intercom: HTMLElement = document.getElementsByClassName(
+        "intercom-lightweight-app"
+      )[0] as unknown as HTMLElement;
+    if (intercom != undefined) intercom.style.display = "unset";
+  } else if (browser) {
+    const /**
        * @description
        * 📝 HTLMElement instance of 'Intercom'
        */
-      instanceIntercom = document.getElementsByClassName('intercom-lightweight-app')[0] as unknown as HTMLElement
-    ;
-
-    if (instanceIntercom)
-      instanceIntercom.style.display = 'none';
-    ;
+      instanceIntercom = document.getElementsByClassName(
+        "intercom-lightweight-app"
+      )[0] as unknown as HTMLElement;
+    if (instanceIntercom) instanceIntercom.style.display = "none";
   }
 
   // ╭─────
   // │ NOTE: IMPORTANT CRITICAL
   // │ |: [3rd-party] Intercom Data Persistance
   // ╰─────
-  $: if (browser && (deepReactListenStore1 || deepReactListenStore2))
-  {
-    const intercomSettings
-      = {
-        api_base: 'https://api-iam.intercom.io',
-        app_id: 'yz9qn6p3',
-        name: username ?? '',
-        email: email ?? `${uid}-unkown@gmail.com`,
-        uid,
-        lang: lang ?? 'en',
-        competition_number: competition_number ?? 0,
-      }
-    ;
-    window.intercomSettings = intercomSettings
+  $: if (browser && (deepReactListenStore1 || deepReactListenStore2)) {
+    const intercomSettings = {
+      api_base: "https://api-iam.intercom.io",
+      app_id: "yz9qn6p3",
+      name: username ?? "",
+      email: email ?? `${uid}-unkown@gmail.com`,
+      uid,
+      lang: lang ?? "en",
+      competition_number: competition_number ?? 0,
+    };
+    window.intercomSettings = intercomSettings;
     window.Intercom?.("boot", {
       ...intercomSettings,
-      hide_default_launcher: true
+      hide_default_launcher: true,
     });
 
     page_unsub = page.subscribe(() => {
-      window.Intercom?.('update', {
-        hide_default_launcher: $sessionStore.currentPageRouteId !== "ProfilePage",
-        last_request_at: Math.floor(Date.now() / 1000)
-      })
-    })
+      window.Intercom?.("update", {
+        hide_default_launcher:
+          $sessionStore.currentPageRouteId !== "ProfilePage",
+        last_request_at: Math.floor(Date.now() / 1000),
+      });
+    });
     // [🐞]
-    Sentry.setContext
-    (
-      '📸 Data',
-      {
-        ...userBetarenaSettings.extractUserDataSnapshot(),
-      }
-    );
+    Sentry.setContext("📸 Data", {
+      ...userBetarenaSettings.extractUserDataSnapshot(),
+    });
   }
 
-  $: if (currentActiveModal === "Auth_Modal"&& ![routeIdLogin, routeIdRegister].includes(pageRouteId|| "")) {
+  $: if (
+    currentActiveModal === "Auth_Modal" &&
+    ![routeIdLogin, routeIdRegister].includes(pageRouteId || "")
+  ) {
     redirectToOnBoard(false);
   }
 
-
-  $: if(![routeIdLogin, routeIdRegister].includes(pageRouteId|| "") && uid && !verified && isInitializationFinished) {
+  $: if (
+    ![routeIdLogin, routeIdRegister].includes(pageRouteId || "") &&
+    uid &&
+    !verified &&
+    isInitializationFinished
+  ) {
     redirectToOnBoard();
   }
 
-  $: if (browser){
+  $: if (browser) {
     // eslint-disable-next-line new-cap
-    window.Intercom
-    (
-      'update',
-      {
-        hide_default_launcher: currentPageRouteId != 'ProfilePage',
-      }
-    );
+    window.Intercom("update", {
+      hide_default_launcher: currentPageRouteId != "ProfilePage",
+    });
     updateVh();
-    window?.visualViewport?.addEventListener('resize', updateVh);
+    window?.visualViewport?.addEventListener("resize", updateVh);
   }
 
   $: if (browser && uid) {
@@ -393,209 +377,135 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   onDestroy(() => {
-    if (!browser) return
-    window?.visualViewport?.removeEventListener('resize', updateVh);
+    if (!browser) return;
+    window?.visualViewport?.removeEventListener("resize", updateVh);
     page_unsub?.();
-  })
+  });
 
-  onMount
-  (
-    async (
-    ): Promise < void > =>
-    {
+  onMount(async (): Promise<void> => {
+    // ╭─────
+    // │ IMPORTANT CRITICAL
+    // ╰─────
+    initiateSubscribtions();
 
-      // ╭─────
-      // │ IMPORTANT CRITICAL
-      // ╰─────
-      initiateSubscribtions();
-
-      if ('serviceWorker' in navigator)
-        navigator.serviceWorker
-          .register
-          (
-            '/progressier.js'
-          )
-          .then
-          (
-            (
-              registration
-            ) =>
-            {
-              // [🐞]
-              // eslint-disable-next-line no-console
-              console.log
-              (
-                'Service Worker registered with scope:',
-                registration.scope
-              );
-            }
-          )
-          .catch
-          (
-            (
-              error
-            ) =>
-            {
-              // [🐞]
-              // eslint-disable-next-line no-console
-              console.error
-              (
-                'Service Worker registration failed:',
-                error
-              );
-            }
-          )
-        ;
-      ;
-
-      // ╭─────
-      // │ NOTE:
-      // │ |: Dynamic Import Logic
-      // ╰─────
-      if (objComponentStandardState.isDynamicImport)
-      {
-        objComponentStandardState.mapComponentDynamicLoading.set
+    if ("serviceWorker" in navigator)
+      navigator.serviceWorker
+        .register("/progressier.js")
+        .then((registration) => {
+          // [🐞]
+          // eslint-disable-next-line no-console
+          console.log(
+            "Service Worker registered with scope:",
+            registration.scope
+          );
+        })
+        .catch((error) => {
+          // [🐞]
+          // eslint-disable-next-line no-console
+          console.error("Service Worker registration failed:", error);
+        });
+    // ╭─────
+    // │ NOTE:
+    // │ |: Dynamic Import Logic
+    // ╰─────
+    if (objComponentStandardState.isDynamicImport) {
+      objComponentStandardState.mapComponentDynamicLoading.set(
+        "OfflineAlertDynamic",
         (
-          'OfflineAlertDynamic',
-          (
-            await import
-            (
-              '$lib/components/misc/banner/Banner-Offline-Alert.svelte'
-            )
-          ).default
-        );
-
-        objComponentStandardState.mapComponentDynamicLoading.set
-        (
-          'PlatformAlertDynamic',
-          (
-            await import
-            (
-              '$lib/components/misc/banner/Banner-Platform-Alert.svelte'
-            )
-          ).default
-        );
-
-        objComponentStandardState.mapComponentDynamicLoading.set
-        (
-          'EmailSubscribeDynamic',
-          (
-            await import
-            (
-              '$lib/components/misc/modal/Modal-Email-Subscribe.svelte'
-            )
-          ).default
-        );
-      }
-
-      // ╭─────
-      // │ NOTE: IMPORTANT
-      // │ |: Set initial values of 'windowWidth'.
-      // ╰─────
-      sessionStore.updateData
-      (
-        [
-          ['windowWidth', document.documentElement.clientWidth]
-        ]
+          await import(
+            "$lib/components/misc/banner/Banner-Offline-Alert.svelte"
+          )
+        ).default
       );
 
-      // ╭─────
-      // │ NOTE: IMPORTANT
-      // │ |: Check if the current device is a PWA.
-      // ╰─────
-      if (isPWA())
-        $sessionStore.globalState.add('IsPWA');
-      else
-        $sessionStore.globalState.delete('IsPWA');
-      ;
+      objComponentStandardState.mapComponentDynamicLoading.set(
+        "PlatformAlertDynamic",
+        (
+          await import(
+            "$lib/components/misc/banner/Banner-Platform-Alert.svelte"
+          )
+        ).default
+      );
 
-      setUserGeoLocation(navbarTranslationData!);
-
-      const
-        /**
-         * @description
-         */
-        adminSet = $page.url.searchParams.get('admin')
-      ;
-
-      if (adminSet)
-        scoresAdminStore.toggleAdminState(adminSet == 'true' ? true : false);
-      ;
-
-      return;
+      objComponentStandardState.mapComponentDynamicLoading.set(
+        "EmailSubscribeDynamic",
+        (
+          await import(
+            "$lib/components/misc/modal/Modal-Email-Subscribe.svelte"
+          )
+        ).default
+      );
     }
-  );
 
-  beforeNavigate
-  (
-    async (
-      _event
-    ): Promise < void > =>
-    {
-      if (!browser) return;
+    // ╭─────
+    // │ NOTE: IMPORTANT
+    // │ |: Set initial values of 'windowWidth'.
+    // ╰─────
+    sessionStore.updateData([
+      ["windowWidth", document.documentElement.clientWidth],
+    ]);
 
+    // ╭─────
+    // │ NOTE: IMPORTANT
+    // │ |: Check if the current device is a PWA.
+    // ╰─────
+    if (isPWA()) $sessionStore.globalState.add("IsPWA");
+    else $sessionStore.globalState.delete("IsPWA");
+    setUserGeoLocation(navbarTranslationData!);
+
+    const /**
+       * @description
+       */
+      adminSet = $page.url.searchParams.get("admin");
+    if (adminSet)
+      scoresAdminStore.toggleAdminState(adminSet == "true" ? true : false);
+    return;
+  });
+
+  beforeNavigate(async (_event): Promise<void> => {
+    if (!browser) return;
+
+    // [🐞]
+    dlogv2(
+      `${objComponentStandardState.mapStrDebugPreifix.get(
+        "beforeNavigate"
+      )} // START`,
+      [`🔹 [var] ➤ _event :: ${JSON.stringify(_event)}`]
+    );
+
+    if ($page.data.setState?.has("IsAnonymousNewBurner")) {
       // [🐞]
-      dlogv2
-      (
-        `${objComponentStandardState.mapStrDebugPreifix.get('beforeNavigate')} // START`,
-        [
-          `🔹 [var] ➤ _event :: ${JSON.stringify(_event)}`
-        ]
+      dlogv2(
+        `${objComponentStandardState.mapStrDebugPreifix.get(
+          "beforeNavigate"
+        )} // IsAnonymousNewBurner`,
+        []
       );
 
-      if ($page.data.setState?.has('IsAnonymousNewBurner'))
-      {
-        // [🐞]
-        dlogv2
-        (
-          `${objComponentStandardState.mapStrDebugPreifix.get('beforeNavigate')} // IsAnonymousNewBurner`,
-          []
-        );
-
-        delCookie
-        (
-          'betarenaScoresCookie'
-        );
-      }
-
-      return;
+      delCookie("betarenaScoresCookie");
     }
-  );
 
+    return;
+  });
 
-  beforeNavigate(({from}) => {
+  beforeNavigate(({ from }) => {
     if (!from) return;
-    const {url} = from;
+    const { url } = from;
     $history_store.push(url.pathname);
-  })
+  });
 
-  afterNavigate
-  (
-    async (
-      e
-    ): Promise < void > =>
-    {
-      if (!browser) return;
+  afterNavigate(async (e): Promise<void> => {
+    if (!browser) return;
 
-      sessionStore.updateData
-      (
-        [
-          ['routeId', pageRouteId]
-        ]
-      );
+    sessionStore.updateData([["routeId", pageRouteId]]);
 
-      // [🐞]
-      dlogv2
-      (
-        '🚏 checkpoint ➤ src/routes/+layout.svelte afterNavigate(..)',
-        [
-          `🔹 [var] ➤ e.from :|: ${JSON.stringify(e)}`
-        ]
-      );
+    // [🐞]
+    dlogv2("🚏 checkpoint ➤ src/routes/+layout.svelte afterNavigate(..)", [
+      `🔹 [var] ➤ e.from :|: ${JSON.stringify(e)}`,
+    ]);
 
-      return;
-    }
-  );
+    return;
+  });
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
@@ -606,15 +516,12 @@
     const effectiveHeight = vv.height + vv.offsetTop;
     const isKeyboardOpen = window.innerHeight - effectiveHeight > 100; // ← ключевой фикс
 
-
     const height = isKeyboardOpen
       ? vv.height + vv.offsetTop
       : window.innerHeight;
 
-
     document.body.style.setProperty("--vh", `${height * 0.01}px`);
   }
-
 </script>
 
 <!--
@@ -625,98 +532,75 @@
 
 <svelte:head>
   {#if theme === "Dark"}
-  <meta
-    name="theme-color"
-    content="#1f1f1f"
-    />
+    <meta name="theme-color" content="#1f1f1f" />
   {:else}
-    <meta
-      name="theme-color"
-      content="#ffffff" />
+    <meta name="theme-color" content="#ffffff" />
   {/if}
 
-  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+  <script
+    async
+    src="https://platform.twitter.com/widgets.js"
+    charset="utf-8"
+  ></script>
   <script>
     // We pre-filled your app ID in the widget URL: 'https://widget.intercom.io/widget/yz9qn6p3'
-    (
-      function ()
-      {
-        var w = window;
-        var ic = w.Intercom;
-        if (typeof ic === "function")
-        {
-          ic("reattach_activator");
-          ic("update", w.intercomSettings);
-        }
-        else
-        {
-          var d = document;
-          var i = function () {
-            i.c(arguments);
-          };
-          i.q = [];
-          i.c = function (args) {
-            i.q.push(args);
-          };
-          w.Intercom = i;
-          var l = function () {
-            var s = d.createElement("script");
-            s.type = "text/javascript";
-            s.async = true;
-            s.src = "https://widget.intercom.io/widget/yz9qn6p3";
-            var x = d.getElementsByTagName("script")[0];
-            x.parentNode.insertBefore(s, x);
-          };
-          if (document.readyState === "complete") {
-            l();
-          } else if (w.attachEvent) {
-            w.attachEvent("onload", l);
-          } else {
-            w.addEventListener("load", l, false);
-          }
+    (function () {
+      var w = window;
+      var ic = w.Intercom;
+      if (typeof ic === "function") {
+        ic("reattach_activator");
+        ic("update", w.intercomSettings);
+      } else {
+        var d = document;
+        var i = function () {
+          i.c(arguments);
+        };
+        i.q = [];
+        i.c = function (args) {
+          i.q.push(args);
+        };
+        w.Intercom = i;
+        var l = function () {
+          var s = d.createElement("script");
+          s.type = "text/javascript";
+          s.async = true;
+          s.src = "https://widget.intercom.io/widget/yz9qn6p3";
+          var x = d.getElementsByTagName("script")[0];
+          x.parentNode.insertBefore(s, x);
+        };
+        if (document.readyState === "complete") {
+          l();
+        } else if (w.attachEvent) {
+          w.attachEvent("onload", l);
+        } else {
+          w.addEventListener("load", l, false);
         }
       }
-    )();
+    })();
   </script>
 </svelte:head>
 
 <svelte:document
-  on:visibilitychange=
-  {
-    () =>
-    {
-      if (!document.hidden)
-      {
-        $sessionStore.isUserActive = true;
-        return;
-      }
-      $sessionStore.isUserActive = false;
+  on:visibilitychange={() => {
+    if (!document.hidden) {
+      $sessionStore.isUserActive = true;
       return;
     }
-  }
+    $sessionStore.isUserActive = false;
+    return;
+  }}
 />
 
 <svelte:window
-  on:resize=
-  {
-    () =>
-    {
-      sessionStore.updateData
-      (
-        [
-          ['windowWidth', document.documentElement.clientWidth],
-        ]
-      );
+  on:resize={() => {
+    sessionStore.updateData([
+      ["windowWidth", document.documentElement.clientWidth],
+    ]);
 
-      if (isPWA())
-        $sessionStore.globalState.add('IsPWA');
-      else
-        $sessionStore.globalState.delete('IsPWA');
-      ;
-
-      return;
-    }
-  }
+    if (isPWA()) $sessionStore.globalState.add("IsPWA");
+    else $sessionStore.globalState.delete("IsPWA");
+    return;
+  }}
 />
 
 <!--
@@ -733,23 +617,25 @@
 <div
   class="app-wrapper"
   id="app-root-layout"
-  class:dark-mode={theme == 'Dark'}
-  class:light-mode={theme == 'Light'}
-  class:page-content={[routeIdContent, routeIdSearch].includes(pageRouteId || "")}
+  class:dark-mode={theme == "Dark"}
+  class:light-mode={theme == "Light"}
+  class:page-content={[routeIdContent, routeIdSearch].includes(
+    pageRouteId || ""
+  )}
   data-page-id={currentPageRouteId}
-  data-mode={globalState.has('IsPWA') ? 'pwa' : 'web'}
+  data-mode={globalState.has("IsPWA") ? "pwa" : "web"}
 >
   {#key pageRouteId}
     <WidgetAdEngine
       authorId={$page.data.dataArticle?.author?.id}
       authorArticleTagIds={$page.data.dataArticle?.article?.tags}
-      isDarkTheme={theme == 'Dark'}
-      strTranslationTarget={lang ?? 'en'}
+      isDarkTheme={theme == "Dark"}
+      strTranslationTarget={lang ?? "en"}
     />
   {/key}
 
   <SplashScreen />
-<!--
+  <!--
   {#if currentActiveModal == 'Auth_Modal'}
     <AuthMain />
   {/if} -->
@@ -762,13 +648,15 @@
     <DevInfoBox />
   {/if}
 
-  {#if currentActiveModal == 'GeneralPlatform_Error'}
+  {#if currentActiveModal == "GeneralPlatform_Error"}
     <ModalError />
   {/if}
 
   {#if objComponentStandardState.isDynamicImport}
     <svelte:component
-      this={objComponentStandardState.mapComponentDynamicLoading.get('OfflineAlertDynamic')}
+      this={objComponentStandardState.mapComponentDynamicLoading.get(
+        "OfflineAlertDynamic"
+      )}
     />
   {:else}
     <!-- <OfflineAlert /> -->
@@ -776,7 +664,9 @@
 
   {#if objComponentStandardState.isDynamicImport}
     <svelte:component
-      this={objComponentStandardState.mapComponentDynamicLoading.get('PlatformAlertDynamic')}
+      this={objComponentStandardState.mapComponentDynamicLoading.get(
+        "PlatformAlertDynamic"
+      )}
     />
   {:else}
     <!-- <PlatformAlert /> -->
@@ -784,56 +674,109 @@
 
   {#if objComponentStandardState.isDynamicImport}
     <svelte:component
-      this={objComponentStandardState.mapComponentDynamicLoading.get('EmailSubscribeDynamic')}
+      this={objComponentStandardState.mapComponentDynamicLoading.get(
+        "EmailSubscribeDynamic"
+      )}
     />
   {:else}
     <!-- <EmailSubscribe /> -->
   {/if}
 
-  {#if ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle, routeIdSearch, routeIdLogin, routeIdRegister].includes(pageRouteId || "" ) || (pageRouteId === routeIdSearch && $sessionStore.viewportType !== "mobile") }
+  {#if ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle, routeIdSearch, routeIdLogin, routeIdRegister].includes(pageRouteId || "") || (pageRouteId === routeIdSearch && $sessionStore.viewportType !== "mobile")}
     <HeaderRedesigned />
   {/if}
 
   <main
-    class:dark-mode={theme == 'Dark'}
-    class:light-mode={theme == 'Light'}
-    class:standard={currentPageRouteId == null }
-    class:page-profile={currentPageRouteId == 'ProfilePage'}
-    class:page-authors={currentPageRouteId == 'AuthorsPage' || currentPageRouteId == 'Standard' || pageRouteId === routeIdSearch }
-    class:page-content={[routeIdContent, routeIdSearch].includes(pageRouteId || "")}
+    class:dark-mode={theme == "Dark"}
+    class:light-mode={theme == "Light"}
+    class:standard={currentPageRouteId == null}
+    class:page-profile={currentPageRouteId == "ProfilePage"}
+    class:page-authors={currentPageRouteId == "AuthorsPage" ||
+      currentPageRouteId == "Standard" ||
+      pageRouteId === routeIdSearch}
+    class:page-content={[routeIdContent, routeIdSearch].includes(
+      pageRouteId || ""
+    )}
     class:mobile={objComponentStandardState.viewport.mobile.state}
     class:tablet={objComponentStandardState.viewport.tablet.state}
   >
     <slot />
 
-    {#if
-      (
-        !globalState.has('IsPWA')
-        && ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle, routeIdLogin, routeIdRegister].includes(pageRouteId || '')
-      )
-      || [routeIdPageProfile, routeIdPageProfilePublication].includes(pageRouteId || '')
-    }
+    {#if routeIdPageAuthors === pageRouteId}{/if}
+    {#if (!globalState.has("IsPWA") && ![routeIdPageProfileArticleCreation, routeIdPageAuthors, routeIdPageProfileEditArticle, routeIdLogin, routeIdRegister].includes(pageRouteId || "")) || [routeIdPageProfile, routeIdPageProfilePublication].includes(pageRouteId || "")}
       <FooterWidget />
     {/if}
-
   </main>
+  {#if !globalState.has("IsPWA") && routeIdPageAuthors === pageRouteId}
+    <div id="lock-widget-portal" />
+    <div class="test-text">
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis
+      quibusdam rerum eum, maxime quaerat dolores labore harum et temporibus
+      omnis adipisci eveniet nostrum corporis doloribus eos ipsa saepe! Id, cum!
+      Lorem ipsum dolor sit, amet consectetur adipisicing elit. Expedita
+      reprehenderit magnam est aperiam sequi assumenda illo aut perferendis,
+      eligendi nobis nesciunt ab facere doloremque fuga odio architecto optio,
+      dicta consectetur! Reiciendis facere nam nostrum dolorem, ab beatae
+      incidunt, et nisi quam ex quas placeat similique animi asperiores cum
+      perspiciatis facilis quae accusamus dicta expedita aliquam commodi rem
+      non. Quas, voluptatibus? Voluptate nisi nemo vero asperiores totam
+      accusamus sequi expedita porro dolor aliquid, illo quae quia rem in
+      accusantium. Sunt nobis veniam dolorem excepturi, sed suscipit impedit
+      ipsam voluptas repudiandae optio. Illo soluta fuga voluptas eos eveniet
+      nesciunt iure reprehenderit tempora tempore quis. Nisi magnam deserunt
+      debitis? Aliquam, suscipit enim maxime libero perferendis, maiores nulla
+      officia possimus ut magnam sint neque. Laudantium numquam possimus rerum
+      natus fugiat beatae nisi facilis voluptatem, iure unde quae atque. Commodi
+      iure totam quaerat expedita ipsam, earum porro illo? Vitae, aperiam
+      consequatur mollitia praesentium a dicta! Lorem ipsum dolor sit amet
+      consectetur adipisicing elit. Deleniti aperiam sint fugiat quaerat, quam,
+      illum placeat ipsum quibusdam itaque quas labore modi molestiae iusto
+      eveniet consequuntur a! Provident, nulla commodi. A aut amet ratione
+      molestiae! Quo consectetur quasi eum dolore hic modi minima iure! Ipsa
+      possimus quaerat quasi consectetur ex ratione sapiente soluta saepe
+      aliquid, totam nemo adipisci earum eos. Sed, dicta itaque illum magnam
+      corporis tenetur soluta, perspiciatis consectetur odio facilis officia.
+      Explicabo nesciunt ipsum in deserunt quia quas quo possimus! Numquam in
+      quibusdam, unde eius illum harum magnam. Natus voluptate quod deserunt
+      quis, animi molestiae laudantium deleniti quae! Vel deserunt voluptate ad
+      exercitationem neque nisi consequatur omnis praesentium saepe esse est
+      dolorum ratione, a fugiat libero rem? Rerum. Velit non veniam quia nobis
+      aspernatur saepe omnis enim error? Quidem aspernatur laboriosam nisi
+      aliquid impedit sint dicta non, inventore doloremque maiores fugit aut
+      cupiditate reiciendis commodi eligendi, alias distinctio. Corrupti vitae
+      quam eveniet nisi sapiente. Sed incidunt ullam libero optio accusantium
+      amet reiciendis molestias atque sit corrupti officia doloremque autem ab
+      eligendi doloribus porro odit totam, ducimus perspiciatis distinctio.
+      Delectus repellendus consequatur rerum aperiam, ad voluptate illo, eaque
+      culpa maxime accusantium fuga ab quasi est quam, corrupti omnis!
+      Distinctio consequatur provident laborum fugiat. Cumque sapiente provident
+      vel quibusdam quos? Consequuntur impedit quam dolores sed quaerat
+      laboriosam atque nesciunt alias. Doloremque illo accusamus similique,
+      veritatis temporibus suscipit omnis odit, sint, veniam saepe aspernatur
+      molestiae aperiam non aut. Aliquam, excepturi tempore. Veritatis eum amet
+      optio consequatur placeat quaerat commodi assumenda quos magnam ullam
+      voluptate eveniet aperiam, provident at culpa corporis dolorem voluptatum
+      quisquam molestiae fugiat laboriosam ipsum? Pariatur ab facilis quo!
+      Praesentium temporibus rerum placeat! Ut accusantium quibusdam fuga amet
+      dolorum beatae doloremque quam iste assumenda. Perferendis, et incidunt
+      laudantium libero dolorem dolore delectus beatae facere. Soluta et facilis
+      ipsa eius.
+    </div>
+    <FooterWidget />
+  {/if}
   <InfoMessages />
   <ModalMain />
 
-  {#if
-    (objComponentStandardState.viewport.mobile.state || objComponentStandardState.viewport.tablet.state)
-    && ![routeIdSearch, routeIdPageProfile, routeIdPageProfileEditArticle, routeIdPageProfileArticleCreation, routeIdLogin, routeIdRegister].includes(pageRouteId || '')
-  }
+  {#if (objComponentStandardState.viewport.mobile.state || objComponentStandardState.viewport.tablet.state) && ![routeIdSearch, routeIdPageProfile, routeIdPageProfileEditArticle, routeIdPageProfileArticleCreation, routeIdLogin, routeIdRegister].includes(pageRouteId || "")}
     <MobileMenu
       mobile={objComponentStandardState.viewport.mobile.state}
       tablet={objComponentStandardState.viewport.tablet.state}
     />
   {/if}
-
-
 </div>
 
 <AndroidPwaBanner />
+
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ 🌊 Svelte Component CSS/SCSS                                                     │
@@ -845,7 +788,6 @@
 -->
 
 <style lang="scss">
-
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
   │ 📲 MOBILE-FIRST                                                              │
@@ -860,6 +802,8 @@
     display: flex;
     flex-direction: column;
     min-height: 100dvh;
+    overflow: auto;
+    max-height: 100vh;
     &.page-content {
       background-color: var(--colors-background-bg-primary);
     }
@@ -960,7 +904,7 @@
   @media screen and (min-width: 1024px) {
     main {
       /* 🎨 style */
-      overflow: hidden;
+      // overflow: hidden;
 
       &.standard {
         &::before {
@@ -985,5 +929,4 @@
       }
     }
   }
-
 </style>

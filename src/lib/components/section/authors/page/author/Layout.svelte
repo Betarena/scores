@@ -191,6 +191,11 @@
       padding: 0px var(--container-padding-mobile, 16px);
       padding-top: var(--container-padding-mobile, 16px);
     }
+
+  }
+  :global(section.paid-no-padding) {
+    padding-bottom: var(--mt) !important;
+    margin-bottom: -40px;
   }
 
 </style>

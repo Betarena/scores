@@ -11,6 +11,8 @@ html
   margin: 0 !important;
   background-color: var(--white);
   scroll-behavior: smooth !important;
+  max-height: 100vh;
+  overflow: hidden;
 }
 
 body
