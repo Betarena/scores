@@ -223,6 +223,7 @@
           const p_node = document.createElement("p");
           p_node.setAttribute("data-widget", "locked-widget");
           p_node.style.width = "100%";
+          target.style.minHeight = "500px";
 
           container.insertBefore(p_node, target);
 
@@ -383,7 +384,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div id={CNAME} data-betarena-zone-id="4" class={viewportType}>
+<div id={CNAME}  class={viewportType}>
   <div class="article-header">
     <!--
     ╭─────

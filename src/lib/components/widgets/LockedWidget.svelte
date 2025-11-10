@@ -24,76 +24,14 @@
   $: ({ awards_translations } = $page.data as {
     awards_translations: TranslationAwardsDataJSONSchema;
   });
-  $: ({ viewportType } = $session);
 
-  let MODAL_HEIGHT = 500;
-  const HEADER_VISIBLE = 20 + 32 + 16; // icon + gap + padding
 
   let lockNode: HTMLDivElement;
   let modalNode;
-  let firstRender = true;
-  let zIndex = 3000;
   let scrollRAFId: number | null = null;
 
-  $: if (modalNode && firstRender && viewportType) {
-    setTimeout(() => {
-      firstRender = false;
-      const root = document.getElementById("app-root-layout");
-      root?.appendChild(modalNode);
-      handleScroll();
-    }, 200);
-  }
 
-  function handleScroll() {
-    if (scrollRAFId !== null) {
-      cancelAnimationFrame(scrollRAFId);
-    }
 
-    scrollRAFId = requestAnimationFrame(() => {
-      if (!lockNode || !modalNode) return;
-
-      const scrollY = window.scrollY || window.pageYOffset;
-      const lockRect = lockNode.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
-      const SCROLL_OFFSET = 50;
-      const rect = modalNode.getBoundingClientRect();
-      const documentHeight = document.documentElement.scrollHeight;
-
-      MODAL_HEIGHT = rect.height;
-
-      const threshold = windowHeight - SCROLL_OFFSET - HEADER_VISIBLE;
-      const isAtBottom = scrollY + windowHeight >= documentHeight - 10;
-      const maxBottom = windowHeight - MODAL_HEIGHT;
-
-      let newModalBottom = (MODAL_HEIGHT - HEADER_VISIBLE) * -1;
-      let newZIndex = 3000;
-
-      if (lockRect.bottom < threshold) {
-        const progress = threshold - lockRect.bottom;
-        newModalBottom = (MODAL_HEIGHT - HEADER_VISIBLE) * -1 + progress;
-        newZIndex = 4100;
-      }
-
-      if (isAtBottom && newModalBottom < 0) {
-        newModalBottom = 0;
-        newZIndex = 4100;
-      }
-
-      if (maxBottom < newModalBottom) {
-        newModalBottom = maxBottom;
-      }
-
-      const translateY = -newModalBottom;
-      modalNode.style.transform = `translateY(${translateY}px)`;
-
-      if (zIndex !== newZIndex) {
-        modalNode.style.zIndex = `${newZIndex}`;
-        zIndex = newZIndex;
-      }
-
-      scrollRAFId = null;
-    });
-  }
 
   onDestroy(() => {
     if (scrollRAFId !== null) {
@@ -113,7 +51,6 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<svelte:window on:scroll|passive={handleScroll} />
 
 <div class="lock-widget-wrapper" bind:this={lockNode}>
   <FeaturedIcon size="md" color="gray" type="modern"
@@ -144,11 +81,11 @@
     ><TranslationText text={awards_translations.unlock} fallback="Unlock " /> (1
     BTA)</Button
   >
+  <div bind:this={modalNode} class="locked-tips-modal-wrapper">
+    <TipsModal type="unlock" {sportstack} {grantAccess} />
+  </div>
 </div>
 
-<div bind:this={modalNode} class="locked-tips-modal-wrapper">
-  <TipsModal type="unlock" {sportstack} {grantAccess} />
-</div>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -163,11 +100,13 @@
 <style lang="scss">
   .lock-widget-wrapper {
     display: flex;
+    position: relative;
     width: 100%;
     padding: 16px;
     align-items: center;
     gap: 12px;
     align-self: stretch;
+    z-index: 9999;
 
     border-radius: var(--radius-xl, 12px);
     border: 1px solid var(--colors-border-border-secondary, #3b3b3b);
@@ -197,13 +136,12 @@
   }
 
   .locked-tips-modal-wrapper {
-    position: fixed;
+    position: absolute;
+    bottom: -50px;
     z-index: 3000;
-    left: 0px;
-    right: 0px;
-    bottom: 0px;
-    will-change: transform;
-    transform: translateY(100vh);
+    left: -5px;
+    right: -5px;
+    transform: translateY(100%);
 
     :global(.tips-modal-wrapper) {
       position: static;
