@@ -707,7 +707,7 @@
       <FooterWidget />
     {/if}
   </main>
-  {#if !globalState.has("IsPWA") && routeIdPageAuthors === pageRouteId}
+  {#if routeIdPageAuthors === pageRouteId}
     <div id="lock-widget-portal" />
     <div class="test-text">
       Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis
@@ -762,6 +762,8 @@
       laudantium libero dolorem dolore delectus beatae facere. Soluta et facilis
       ipsa eius.
     </div>
+  {/if}
+  {#if !globalState.has("IsPWA") && routeIdPageAuthors === pageRouteId}
     <FooterWidget />
   {/if}
   <InfoMessages />
