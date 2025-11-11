@@ -20,9 +20,18 @@ import fs from 'fs-extra';
 import { table } from 'table';
 import { loadEnv } from 'vite';
 import { defineConfig } from 'vitest/config';
+
+import { visualizer } from 'rollup-plugin-visualizer';
 import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js';
 
+import { isSSR } from './.vite/env.ts';
+import { sveltekitCssPurge } from './.vite/sveltekit-build-css-unused.2.ts';
+import { sveltekitSsrOrCsrBuild } from './.vite/sveltekit-build-env.ts';
+import { buildSizePlugin } from './.vite/sveltekit-build-size.ts';
+
 import { dependencies, version } from './package.json';
+
+import type { TemplateType } from 'rollup-plugin-visualizer/dist/plugin/template-types';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -35,6 +44,10 @@ const
    */
   objViteConfigOptions =
   {
+    /**
+     * @description
+     * 📝 Plugin configuration options
+     */
     objPluginConfig:
     {
       cssInjectedByJsPlugin:
@@ -42,7 +55,31 @@ const
         isEnabled: false,
         outputPath: './static/css/one-css-chunk.css',
       },
-  },
+      visualizer:
+      {
+        isEnabled: true,
+        objConfig:
+        {
+          type: 'treemap' // options: 'sunburst' | 'treemap' | 'network' | 'raw-data' | 'list' | 'flamegraph'
+        } as { type: TemplateType },
+      },
+      _customBuildSizePlugin:
+      {
+        isEnabled: false,
+      },
+      _customSveltekitSsrOrCsrPlugin:
+      {
+        isEnabled: false,
+      },
+      _customSveltekitPurgeCssPlugin:
+      {
+        isEnabled: false,
+      }
+    },
+    /**
+     * @description
+     * 📝 Meta configuration options
+     */
     objMetaConfig:
     {
       outputMetricsPath: './.output/metrics',
@@ -176,6 +213,22 @@ export default defineConfig
         ]
       )
     );
+
+    // ╭─────
+    // │ CHECK:
+    // │ |: for, metrics output directory exists.
+    // ╰─────
+    if (command === 'build')
+      await fs.ensureDir(`${objViteConfigOptions.objMetaConfig.outputMetricsPath}/${dateCurrent}`);
+    ;
+
+    const
+      /**
+       * @description
+       * 📝 Flag indicating if building for SSR
+       */
+      strGlobalCssFileContent = await fs.readFile('./static/app.css', 'utf8')
+    ;
 
     return {
 
@@ -342,10 +395,57 @@ export default defineConfig
 
                 // return `try{if(typeof document != 'undefined'){var elementStyle = document.createElement('style');elementStyle.appendChild(document.createTextNode(${cssCode}));document.head.appendChild(elementStyle);}}catch(e){console.error('vite-plugin-css-injected-by-js', e);}`
               }
-
+          }
+        ),
+        // ╭─────
+        // │ NOTE:
+        // │ │: using 'rollup-plugin-visualizer'
+        // │ │: @description: helper for visualizing bundled code output.
+        // ╰─────
+        objViteConfigOptions.objPluginConfig.visualizer.isEnabled && visualizer
+        (
+          {
+            // emitFile: true,
+            // brotliSize: true,
+            // gzipSize: true,
+            filename: `${objViteConfigOptions.objMetaConfig.outputMetricsPath}/${dateCurrent}/${isSSR ? 'ssr' : 'csr'}.visualizer.stats.${mode}.${objViteConfigOptions.objPluginConfig.visualizer.objConfig.type}.html`,
+            title: '[metrics] scores - vite.visualizer',
+            template: objViteConfigOptions.objPluginConfig.visualizer.objConfig.type,
             }
           ),
-        */
+        // ╭─────
+        // │ NOTE:
+        // │ |: custom 'vite' plugin.
+        // │ |: @description: detect 'SSR' or 'CSR' build phase.
+        // ╰─────
+        objViteConfigOptions.objPluginConfig._customSveltekitSsrOrCsrPlugin && sveltekitSsrOrCsrBuild(),
+        // ╭─────
+        // │ NOTE:
+        // │ |: custom 'vite' plugin.
+        // │ |: @description: build size output reporting plugin
+        // ╰─────
+        objViteConfigOptions.objPluginConfig._customBuildSizePlugin && buildSizePlugin
+        (
+          'build',
+        ),
+        // ╭─────
+        // │ NOTE:
+        // │ |: custom 'vite' plugin.
+        // │ |:  @description: (1) analyze 'CSS' variable usage, (2) report unused 'CSS' vars & purge unused 'CSS' vars.
+        // ╰─────
+        objViteConfigOptions.objPluginConfig._customSveltekitPurgeCssPlugin && sveltekitCssPurge
+        (
+          {
+            strGlobalCssFileContent,
+            strOutputFilePathPrefix: `${objViteConfigOptions.objMetaConfig.outputMetricsPath}/${dateCurrent}`,
+            _strDebugLevel: 'info',
+          }
+        ),
+        // ╭─────
+        // │ NOTE:
+        // │ │: [CUSTOM] :: lightweight progress indicator plugin.
+        // ╰─────
+        // progressLite(),
       ],
 
       build:
