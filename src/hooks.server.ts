@@ -24,6 +24,10 @@ import { sequence } from '@sveltejs/kit/hooks';
 import parserAccLang from 'accept-language-parser';
 import chalk from 'chalk';
 import cookie from 'cookie';
+import fs from 'fs-extra';
+import LZString from 'lz-string';
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
 
 import { config } from '$lib/constants/config.js';
 import { dlog, errlog, ERROR_CODE_INVALID, log_v3, PAGE_INVALID_MSG } from '$lib/utils/debug';
@@ -42,6 +46,28 @@ dlog
 (
   '🚏 checkpoint [H] ➤ src/hooks.server.ts'
 );
+
+const
+  /**
+   * @description
+   * 📣 __filename constant.
+   */
+  __filename = fileURLToPath(import.meta.url),
+  /**
+   * @description
+   * 📣 __dirname constant.
+   */
+  __dirname = dirname(__filename),
+  // ╭─────
+  // │ NOTE:
+  // │ |:
+  // ╰─────
+  [
+    cssCache,
+  ] = [
+    new Map(),
+  ]
+;
 
 // #endregion ➤ 💠 MISCELLANEOUS
 
@@ -134,6 +160,18 @@ export const handle: Handle = sequence
         ],
       }
     );
+
+    const
+      // ╭─────
+      // │ NOTE:
+      // │ |: destructing assignments
+      // ╰─────
+      [
+        mapConfigModule,
+      ] = [
+        config.objApp.listLazyLoadComponents.get('src/hooks.server.ts')
+      ]
+    ;
 
     // if (event.url.pathname == '/api/misc/debug')
     //   return await resolve(event);
@@ -307,58 +345,6 @@ export const handle: Handle = sequence
     /**
      * @author
      *  @migbash
-     * @summary
-     *  🔹 HELPER
-     * @description
-     *  📝 Helper to transform page chunk.
-     * @param { object } _
-     *  ❗️ **REQUIRED**
-     * @param { string } _.html
-     *  ❗️ **REQUIRED**
-     * @param { boolean } _.done
-     *  ❗️ **REQUIRED**
-     * @return { string }
-     */
-    function _helperTransformPageChunk
-    (
-      {
-        html,
-        done,
-      }: { html: string; done: boolean; }
-    ): string
-    {
-      // [🐞]
-      log_v3
-      (
-        {
-          strGroupName: `🚏 checkpoint ➤ Hooks | src/hooks.server.ts handle(..) // transformPageChunk INSIGHT`,
-          msgs:
-          [
-            // `🔹 [var] ➤ html :: ${html}`,
-            `🔹 [var] ➤ html.length :: ${html.length}`,
-            `🔹 [var] ➤ done :: ${done}`,
-          ],
-        }
-      );
-
-      // ╭─────
-      // │ NOTE: IMPORTANT
-      // │ |: set correct 'lang' attribute in <html lang="...">
-      // ╰─────
-      html = html
-        .replace
-        (
-          '%lang%',
-          (event.locals.strLocaleOverride ?? mapLangToLocaleAuthor.get(methodRes0) ?? 'en-US')
-        )
-      ;
-
-      return html;
-    }
-
-    /**
-     * @author
-     *  @migbash
      * @description
      *  📝 Helper set response headers.
      * @global dataRes0
@@ -437,8 +423,263 @@ export const handle: Handle = sequence
           ],
         }
       );
+    }
 
-      return;
+    /**
+     * @author
+     *  @migbash
+     * @description
+     *  📝 Helper to transform page chunk.
+     * @param param0
+     * @param param0.html
+     * @param param0.done
+     * @return { string }
+     */
+    function _helperTransformPageChunk
+    (
+      {
+        html,
+        done,
+      }:
+      {
+        html: string;
+        done: boolean;
+      }
+    ): string
+    {
+      // [🐞]
+      log_v3
+      (
+        {
+          strGroupName: `🚏 checkpoint ➤ Hooks | src/hooks.server.ts handle(..) // transformPageChunk INSIGHT`,
+          msgs:
+          [
+            // `🔹 [var] ➤ html :: ${html}`,
+            `🔹 [var] ➤ html.length :: ${html.length}`,
+            `🔹 [var] ➤ done :: ${done}`,
+          ],
+        }
+      );
+
+      // ╭─────
+      // │ NOTE: IMPORTANT
+      // │ |: inline CSS/JS to reduce number of HTTP requests
+      // ╰─────
+      if (!event.locals.isPrerenderingRequest && mapConfigModule?.isHtmlHeadLinksInlineInjection)
+        html = html
+          .replaceAll
+          (
+            /<link\b[^>]*?\bhref\s*=\s*["']([^"']+)["'][^>]*>/g,
+            // /<link\b[^>]*\bhref\s*=\s*["']([^"']+)["'][^>]*>/g, # ➤ ❌ does not capture the '.js' link tags
+            // /<link\b(?=[^>]*\bhref="[^"]*")[^>]*>/g, # ➤ ❌ does not capture href value
+            // /<link.*href=\"(.*?)\".*>$/g, # ➤ ???
+            (
+              _substring: string,
+              href: string,
+            ) =>
+            {
+              let
+                // ╭─────
+                // │ NOTE:
+                // │ |: validate href path
+                // ╰─────
+                [
+                  hrefValid,
+                  injectionType,
+                ] = [
+                  href,
+                  'style',
+                ]
+              ;
+
+              // ╭─────
+              // │ NOTE:
+              // │ |: determine if 'script' or 'style' injection
+              // ╰─────
+
+              if (_substring.includes('as="script"'))
+                injectionType = 'script'
+              else if (_substring.includes('rel="stylesheet"'))
+                injectionType = 'style';
+              else
+                return _substring;
+              ;
+
+              // ╭─────
+              // │ NOTE:
+              // │ |: fix pathing for hrefs that point to '_app' folder
+              // ╰─────
+
+              if (hrefValid.includes('../../_app'))
+                hrefValid = hrefValid.replace('../../', '../../client/');
+              else if (hrefValid.includes('/_app'))
+                hrefValid = hrefValid
+                  .replace('/_app', '../../client/_app')
+                  .replace('...', '..')
+                ;
+              else if (!hrefValid.includes('/_app'))
+                hrefValid = `../../client/${hrefValid}`;
+              ;
+
+              // ╭─────
+              // │ CHECK:
+              // │ |: for, injectable-override presence in local memory-cache
+              // ╰─────
+              if (!cssCache.has(href))
+                cssCache.set
+                (
+                  href,
+                  fs.readFileSync
+                  (
+                    `${__dirname}/${hrefValid}`,
+                    'utf8'
+                  )
+                );
+              ;
+
+              const
+                // ╭─────
+                // │ NOTE:
+                // │ |: determine if inlining of CSS should be compressed or not
+                // ╰─────
+                [
+                  isCondition1,
+                  isCondition2,
+                  isCondition3,
+                ] = [
+                  // ╭─────
+                  // │ NOTE:
+                  // │ |: (1) inline and (2) compress certain hrefs
+                  // ╰─────
+                  (
+                    mapConfigModule?.isHtmlHeadInlineCompressed
+                    && ![...mapConfigModule.isHtmlHeadInlineCompressedExclude]
+                      .some(v => href.includes(v))
+                  ),
+                  // ╭─────
+                  // │ NOTE:
+                  // │ |: skip inlining of certain hrefs
+                  // ╰─────
+                  (
+                    [...mapConfigModule.isHtmlHeadLinkHrefExclude]
+                      .some(v => href.includes(v))
+                    || (
+                        href.includes('html.head.fonts.css')
+                        && mapConfigModule?.isHtmlHeadFontInjection != 'local'
+                      )
+                    || (
+                        href.includes('html.head.google-cdn.html')
+                        && mapConfigModule?.isHtmlHeadFontInjection != 'google-cdn'
+                      )
+                  ),
+                  // ╭─────
+                  // │ NOTE:
+                  // │ |: handle 'google-cdn' font injection option
+                  // ╰─────
+                  (
+                    (
+                      href.includes('html.head.google-cdn.html')
+                      && mapConfigModule?.isHtmlHeadFontInjection === 'google-cdn'
+                    )
+                  )
+                ]
+              ;
+
+              // [🐞]
+              log_v3
+              (
+                {
+                  strGroupName: `🚏 checkpoint ➤ Hooks | src/hooks.server.ts // INSIGTH`,
+                  msgs:
+                  [
+                    `🔹 [var] ➤ href :: ${href}`,
+                    `🔹 [var] ➤ hrefValid :: ${hrefValid}`,
+                    `🔹 [var] ➤ cssCache.size :: ${cssCache.size}`,
+                    // `🔹 [var] ➤ _substring :: ${_substring}`,
+                    `🔹 [var] ➤ __dirname :: ${__dirname}`,
+                    `🔹 [var] ➤ isCondition1 (inline & compress) :: ${isCondition1}`,
+                    `🔹 [var] ➤ isCondition2 (skip inline) :: ${isCondition2}`,
+                  ]
+                }
+              );
+
+              // ╭─────
+              // │ CHECK:
+              // │ |: for desired inlining injection
+              // ╰─────
+
+              if (isCondition1)
+                return `
+                  <!-- inlined COMPRESSED ${injectionType} for ${href} -->
+                  <script>
+                    (
+                      () =>
+                      {
+                        const compressed = ${LZString.compress(cssCache.get(href))};
+                        const decompressed = LZString.decompress(compressed);
+                        const style = document.createElement('style');
+                        style.textContent = decompressed;
+                        document.head.appendChild(style);
+                      }
+                    )();
+                  </script>
+                `;
+              else if (isCondition2)
+                return ``;
+              else if (isCondition3)
+                return `
+                  <!-- inlined HTML-TEMPLATE for ${href} -->
+                  ${cssCache.get(href)}
+                `;
+              else
+                return `
+                  <!-- inlined ${injectionType} for ${href} -->
+                  <${injectionType}>
+                    ${cssCache.get(href)}
+                  </${injectionType}>
+                `;
+              ;
+            }
+          )
+        ;
+      ;
+
+      // ╭─────
+      // │ NOTE: IMPORTANT
+      // │ |: loop over all <img src="..."> tags to inject 'preload' links
+      // ╰─────
+      if (mapConfigModule?.isHtmlHeadInjectImagePreload)
+        for (const element of html?.matchAll(/\\u003Cimg[^>]+src=\\["']([^\\"'>]+)[\\"']/g))
+        {
+          // [🐞]
+          console.log('isHtmlHeadInjectImagePreload', element[1]);
+
+          html = html
+            .replace
+            (
+              `</head>`,
+              `
+                <link rel="preload" as="image" href="${element[1]}" fetchpriority="high">
+                </head>
+              `
+            )
+          ;
+        }
+      ;
+
+      // ╭─────
+      // │ NOTE: IMPORTANT
+      // │ |: set correct 'lang' attribute in <html lang="...">
+      // ╰─────
+      html = html
+        .replace
+        (
+          '%lang%',
+          (event.locals.strLocaleOverride ?? mapLangToLocaleAuthor.get(methodRes0) ?? 'en-US')
+        )
+      ;
+
+      return html;
     }
 
     // #endregion ➤ 🛠️ METHODS
@@ -530,7 +771,30 @@ export const handle: Handle = sequence
                 }
               );
             },
+            preload:
+            (
+              {
+                type,
+                path
+              }
+            ): boolean =>
+            {
+              // [🐞]
+              log_v3
+              (
+                {
+                  strGroupName: `🚏 checkpoint ➤ Hooks | src/hooks.server.ts handle(..) // preload INSIGHT`,
+                  msgs:
+                  [
+                    `🔹 [var] ➤ type :: ${type}`,
+                    `🔹 [var] ➤ path :: ${path}`,
+                  ],
+                }
+              );
+
+              return config.objApp.listLazyLoadComponents.get('src/hooks.server.ts')?.isPreload ?? true;
             }
+          }
         )
     ;
 
