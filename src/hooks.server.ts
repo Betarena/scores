@@ -25,7 +25,8 @@ import parserAccLang from 'accept-language-parser';
 import chalk from 'chalk';
 import cookie from 'cookie';
 
-import { ERROR_CODE_INVALID, PAGE_INVALID_MSG, dlog, errlog, log_v3 } from '$lib/utils/debug';
+import { config } from '$lib/constants/config.js';
+import { dlog, errlog, ERROR_CODE_INVALID, log_v3, PAGE_INVALID_MSG } from '$lib/utils/debug';
 import { platfrom_lang_ssr } from '$lib/utils/platform-functions';
 import { parseObject, stringToObject } from '$lib/utils/string.2.js';
 
@@ -128,80 +129,93 @@ export const handle: Handle = sequence
         msgs:
         [
           `🔹 [var] ➤ event.url :: ${event.url}`,
-          `${parseObject(event.locals) != '{}' ? `🔹 [var] ➤ event.locals :: ${parseObject(event.locals)}` : '[EMPTY]'}`
+          `${parseObject(event.locals) != '{}' ? `🔹 [var] ➤ event.locals :: ${parseObject(event.locals)}` : '[EMPTY]'}`,
+          `${parseObject(event.request.headers) != '{}' ? `🔹 [var] ➤ event.request.headers :: ${parseObject(event.request.headers)}` : '[EMPTY]'}`,
         ],
       }
     );
 
-    // ╭─────
-    // │ NOTE:
-    // │ |: debug server endpoint
-    // ╰─────
-    if (event.url.pathname == '/api/misc/debug')
-      return await resolve(event);
-    else if (event.url.pathname == '/api/data/main.config' && event.url.searchParams.has('type') && event.url.searchParams.get('type') === 'hooks.server')
-      return await resolve(event);
-    ;
+    // if (event.url.pathname == '/api/misc/debug')
+    //   return await resolve(event);
+    // else if (event.url.pathname == '/api/data/main.config' && event.url.searchParams.has('type') && event.url.searchParams.get('type') === 'hooks.server')
+    //   return await resolve(event);
+    // ;
 
-    // ╭──────────────────────────────────────────────────────────────────────────────────╮
-    // │ 🔄 LIFECYCLE - [1]                                                               │
-    // ┣──────────────────────────────────────────────────────────────────────────────────┫
-    // │ |: - Executes before calling 'endpoint'                                          │
-    // │ |: - Executes after 'layout.server.ts'                                           │
-    // ╰──────────────────────────────────────────────────────────────────────────────────╯
+    // #region ➤ 🛠️ METHODS
 
-    const
+    /**
+     * @author
+     *  @migbash
+     * @summary
+     *  🔹 HELPER
+     * @description
+     *  📝 Helper to validate visitor cookie.
+     * @global mapHeaders
+     * @global cookies
+     * @global event
+     * @global objUserDefaultCookie
+     * @global dataRes20
+     * @returns { void }
+     */
+    function _helperValidateVisitor
+    (
+    ): void
+    {
+      const
+        /**
+         * @description
+         * 📝 obtaining 'accept-language' from request headers.
+         */
+        listLanguages
+          = parserAccLang.parse(mapHeaders.get('accept-language') ?? '')
+      ;
+
       // [🐞]
-      t0 = performance.now(),
-      // ╭─────
-      // │ NOTE:
-      // │ |: Destruct `object`.
-      // ╰─────
-      {
-        request:
+      log_v3
+      (
         {
-          headers: mapHeaders
+          strGroupName: '🚏 checkpoint ➤ Hooks | src/hooks.server.ts handle(..) :: _helperValidateVisitor(..) // INSIGHT',
+          msgs:
+          [
+            `🔹 [var] ➤ listLanguages :: ${parseObject(listLanguages)}`,
+            `🔹 [var] ➤ cookies :: ${parseObject(cookies)}`,
+            // `🔹 [var] ➤ dataRes20 :: ${parseObject(dataRes20)}`,
+          ],
         }
-      } = event,
-      /**
-       * @description
-       * 📣 obtaining 'accept-language' from request headers.
-       */
-      listLanguages
-        = parserAccLang.parse(mapHeaders.get('accept-language') ?? ''),
-      /**
-       * @description
-       *  📣 obtaining cookies from request headers.
-       */
-      cookies
-        = getCookie
+      );
+
+      // ╭─────
+      // │ CHECK:
+      // │ |: [0] for EXISTING visitor, RE-SET cookie values.
+      // ╰─────
+      if (cookies.betarenaScoresCookie)
+      {
+        // @ts-expect-error :: <?>
+        event.locals.user = stringToObject<IBetarenaUserCookie>(cookies.betarenaScoresCookie);
+        event.locals.user.state = 'IsAnonymousReturning';
+        event.locals.setState.add('IsAnonymousReturning');
+      }
+      // ╭─────
+      // │ CHECK:
+      // │ |: [1] for NEW visitor, set default values.
+      // ╰─────
+      else
+      {
+        // [🐞]
+        log_v3
         (
-          mapHeaders.get('cookie')
-        ),
-      /**
-       * @description
-       * 📣 fetch 'main.config' data.
-       */
-      dataRes2 = await event.fetch
-        (
-          `/api/data/main.config?type=hooks.server`
-        ),
-      /**
-       * @description
-       * 📣 fetch 'main.config' data (v2).
-       */
-      dataRes20 = (await dataRes2.json()),
-      /**
-       * @description
-       *  📣 assign 'locals' context from 'cookie' or, load defaults.
-       */
-      objUserDefaultCookie: IBetarenaUserCookie
-        = {
+          {
+            strGroupName: '🚏 checkpoint ➤ Hooks | src/hooks.server.ts handle(..) // [1] - user cookie not found, setting cookie',
+            msgs: [],
+          }
+        );
+
+        event.locals.user = {
           uid: null,
           lang: 'en',
           theme: 'Dark',
           // ╭─────
-          // │ NOTE:
+          // │ NOTE: WIP
           // │ |: attempt to identify user IP from 'request',
           // │ |: to preload data from 'server'.
           // ╰─────
@@ -216,91 +230,255 @@ export const handle: Handle = sequence
                 ? (await getUserLocationFromIP(clientAddress))
                 : '',
           */
-        }
-    ;
+        };
 
-    // [🐞]
-    log_v3
+        // ╭─────
+        // │ CHECK:
+        // │ |: [1] for root page (/) access request, set 'lang' from 'accept-language' header,
+        // ╰─────
+        if (event.url.pathname === '/' && event.route.id === '/(scores)/[[lang=lang]]')
+        {
+          event.locals.user.state = 'IsAnonymousNew';
+          event.locals.setState.add('IsAnonymousNew');
+          if (listLanguages.length > 0 && listLanguages[0].code && listLanguages[0].region)
+            event.locals.user.lang = convertLocaleToLang(`${listLanguages[0].code}-${listLanguages[0].region}`);
+          else
+            event.locals.user.lang = 'en';
+          ;
+        }
+        // ╭─────
+        // │ CHECK:
+        // │ |: [2] for other page access request, set 'lang' from URL param or default to 'en'.
+        // ╰─────
+        else
+        {
+          event.locals.user.state = 'IsAnonymousNewBurner';
+          event.locals.setState.add('IsAnonymousNewBurner');
+          event.locals.user.lang = event.params.lang ?? 'en';
+
+          // if (event.url.searchParams.get('lang'))
+          event.locals.user.lang = 'en';
+          // ;
+        }
+      }
+
+      // ╭─────
+      // │ CHECK:
+      // │ |: [0] for AUTHENTICATED user, update 'locals' values.
+      // ╰─────
+      if (cookies.betarenaCookieLoggedIn)
+      {
+        event.locals.uid = event.locals.user.uid;
+        event.locals.user.state = 'IsBetarenaUser';
+        event.locals.setState.add('IsBetarenaUser');
+      }
+
+      return;
+    }
+
+    /**
+     * @author
+     *  @migbash
+     * @description
+     *  📝 Helper inject metadata into 'locals'.
+     * @returns { Promise<void> }
+     */
+    async function _helperInjectMetaData
+    (
+    ): Promise < void >
+    {
+      const
+        /**
+         * @description
+         * 📝 fetch 'main.config' data.
+         */
+        dataRes2 = await event.fetch
+          (
+            `/api/data/main.config?type=hooks.server`
+          ),
+        /**
+         * @description
+         * 📝 fetch 'main.config' data (v2).
+         */
+        dataRes20 = (await dataRes2.json())
+      ;
+    }
+
+    /**
+     * @author
+     *  @migbash
+     * @summary
+     *  🔹 HELPER
+     * @description
+     *  📝 Helper to transform page chunk.
+     * @param { object } _
+     *  ❗️ **REQUIRED**
+     * @param { string } _.html
+     *  ❗️ **REQUIRED**
+     * @param { boolean } _.done
+     *  ❗️ **REQUIRED**
+     * @return { string }
+     */
+    function _helperTransformPageChunk
     (
       {
-        strGroupName: '🚏 checkpoint ➤ Hooks | src/hooks.server.ts handle(..) // INSIGHT',
-        msgs:
-        [
-          `🔹 [var] ➤ listLanguages :: ${parseObject(listLanguages)}`,
-          `🔹 [var] ➤ cookies :: ${parseObject(cookies)}`,
-          `🔹 [var] ➤ dataRes20 :: ${parseObject(dataRes20)}`,
-        ],
-      }
-    );
-
-    event.locals.setState = new Set();
-    event.locals.metadata ??= { domain: dataRes20.url };
-
-    // ╭─────
-    // │ CHECK:
-    // │ |: [0] for existing visitor, re-set cookie values.
-    // ╰─────
-    if (cookies.betarenaScoresCookie)
-    {
-      // @ts-expect-error :: <?>
-      event.locals.user = stringToObject<IBetarenaUserCookie>(cookies.betarenaScoresCookie);
-      event.locals.setState.add('IsAnonymousReturning');
-    }
-    // ╭─────
-    // │ NOTE:
-    // │ |: [1] for new visitor, set default values.
-    // ╰─────
-    else
+        html,
+        done,
+      }: { html: string; done: boolean; }
+    ): string
     {
       // [🐞]
       log_v3
       (
         {
-          strGroupName: '🚏 checkpoint ➤ Hooks | src/hooks.server.ts handle(..) // [1] - user cookie not found, setting cookie',
-          msgs: [],
+          strGroupName: `🚏 checkpoint ➤ Hooks | src/hooks.server.ts handle(..) // transformPageChunk INSIGHT`,
+          msgs:
+          [
+            // `🔹 [var] ➤ html :: ${html}`,
+            `🔹 [var] ➤ html.length :: ${html.length}`,
+            `🔹 [var] ➤ done :: ${done}`,
+          ],
         }
       );
 
-      event.locals.user = objUserDefaultCookie;
+      // ╭─────
+      // │ NOTE: IMPORTANT
+      // │ |: set correct 'lang' attribute in <html lang="...">
+      // ╰─────
+      html = html
+        .replace
+        (
+          '%lang%',
+          (event.locals.strLocaleOverride ?? mapLangToLocaleAuthor.get(methodRes0) ?? 'en-US')
+        )
+      ;
 
-      if (event.url.pathname === '/' && event.route.id === '/(scores)/[[lang=lang]]')
-      {
-        event.locals.setState.add('IsAnonymousNew');
-        if (listLanguages.length > 0 && listLanguages[0].code && listLanguages[0].region)
-          event.locals.user.lang = convertLocaleToLang(`${listLanguages[0].code}-${listLanguages[0].region}`);
-        else
-          event.locals.user.lang = 'en';
-        ;
-      }
-      else
-      {
-        event.locals.setState.add('IsAnonymousNewBurner');
-        event.locals.user.lang = event.params.lang ?? 'en';
-
-        if (event.url.searchParams.get('lang'))
-          event.locals.user.lang = event.url.searchParams.get('lang') ?? 'en';
-        ;
-      }
+      return html;
     }
 
-    // ╭─────
-    // │ CHECK:
-    // │ |: [0] for authenticated user, update 'locals' values.
-    // ╰─────
-    if (cookies.betarenaCookieLoggedIn)
+    /**
+     * @author
+     *  @migbash
+     * @description
+     *  📝 Helper set response headers.
+     * @global dataRes0
+     * @global event
+     * @returns { void }
+     */
+    function _helperSetHeaders
+    (
+    ): void
     {
-      event.locals.uid = event.locals.user.uid;
-      event.locals.setState.add('IsBetarenaUser');
+      // ╭─────
+      // │ NOTE:
+      // │ |: (re)set cookie.
+      // ╰─────
+      dataRes0.headers.set
+      (
+        'Set-Cookie',
+        cookie.serialize
+        (
+          'betarenaScoresCookie',
+          parseObject(event.locals.user),
+          {
+            path: '/',
+            // httpOnly: true,
+            /* ─── 1 week ─── */
+            maxAge: 60 * 60 * 24 * 7
+          }
+        )
+      );
+
+      return;
     }
 
-    // ╭─────
-    // │ NOTE:
-    // │ 🔗 read-more :|: https://github.com/sveltejs/kit/issues/1046
-    // ╰─────
-    // if (event.url.searchParams.has('_method'))
-    // {
-    // 	event.method = event.url.searchParams.get('_method').toUpperCase();
-    // }
+    /**
+     * @author
+     *  @migbash
+     * @summary
+     *  🔹 HELPER
+     * @description
+     *  📝 Helper log metrics.
+     * @returns { void }
+     */
+    function _helperHooksPerformanceMetrics
+    (
+    ): void
+    {
+      let
+        /**
+         * @description
+         * 📝 Execution time.
+         */
+        strExecutionTime = ((performance.now() - t0) / 1000).toFixed(5)
+      ;
+
+      if (parseFloat(strExecutionTime) > 1)
+        strExecutionTime = chalk.bgRed(`⚠️ ${strExecutionTime} sec`);
+      else
+        strExecutionTime = `${strExecutionTime} sec`;
+      ;
+
+      // [🐞]
+      log_v3
+      (
+        {
+          strGroupName: `🚏 checkpoint ➤ Hooks | src/hooks.server.ts handle(..) // END (${strExecutionTime})`,
+          msgs:
+          [
+            `🔹 [var] ➤ event.url :: ${event.url}`,
+            `${parseObject(event.locals) != '{}' ? `🔹 [var] ➤ event.locals :: ${parseObject(event.locals)}` : '[EMPTY]'}`,
+            // ╭─────
+            // │ NOTE:
+            // │ |: additional helpful logging.
+            // ╰─────
+            // `🔹 [var] ➤ event.route.id :: ${event.route.id}`,
+            // `🔹 [var] ➤ event :: ${event.request.headers.get('accept-language')}`,
+          ],
+        }
+      );
+
+      return;
+    }
+
+    // #endregion ➤ 🛠️ METHODS
+
+    // ╭──────────────────────────────────────────────────────────────────────────────────╮
+    // │ 🔄 LIFECYCLE - [1]                                                               │
+    // ┣──────────────────────────────────────────────────────────────────────────────────┫
+    // │ |: - Executes before calling 'endpoint'                                          │
+    // │ |: - Executes after 'layout.server.ts'                                           │
+    // ╰──────────────────────────────────────────────────────────────────────────────────╯
+
+    const
+      // [🐞]
+      t0 = performance.now(),
+      // ╭─────
+      // │ NOTE:
+      // │ |: destruct object
+      // ╰─────
+      {
+        request:
+        {
+          headers: mapHeaders
+        }
+      } = event,
+      /**
+       * @description
+       *  📝 obtaining cookies from request headers.
+       */
+      cookies
+        = getCookie
+        (
+          mapHeaders.get('cookie')
+        )
+    ;
+
+    event.locals.setState = new Set();
+    event.locals.metadata ??= { domain: 'betarena.com' };
+
+    _helperValidateVisitor();
+    // await _helperInjectMetaData();
 
     // ╭──────────────────────────────────────────────────────────────────────────────────╮
     // │ 🔄 LIFECYCLE - [2]                                                               │
@@ -309,16 +487,10 @@ export const handle: Handle = sequence
     // │ |: - Executes after 'layout.server.ts'                                           │
     // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-    // ╭─────
-    // │ NOTE:
-    // │ |: [archive] past use with cookies-template
-    // ╰─────
-    // const response = await resolve(event);
-
     const
       /**
        * @description
-       * 📣 Method Response (0)
+       * 📝 Method Response (0)
        */
       methodRes0
         = platfrom_lang_ssr
@@ -334,7 +506,7 @@ export const handle: Handle = sequence
         ),
       /**
        * @description
-       *  📣 new with response of <html lang...>
+       *  📝 new with response of <html lang...>
        * @see https://github.com/sveltejs/kit/issues/3091
        */
       dataRes0
@@ -345,19 +517,20 @@ export const handle: Handle = sequence
             transformPageChunk:
             (
               {
-                html
+                html,
+                done,
               }
             ): string =>
             {
-              return html
-                .replace
-                (
-                  '%lang%',
-                  (event.locals.strLocaleOverride ?? mapLangToLocaleAuthor.get(methodRes0) ?? 'en-US')
-                )
-              ;
+              return _helperTransformPageChunk
+              (
+                {
+                  html,
+                  done,
+                }
+              );
+            },
             }
-          }
         )
     ;
 
@@ -367,62 +540,8 @@ export const handle: Handle = sequence
     // │ |: - Executes 'endpoint'                                                         │
     // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-    // ╭─────
-    // │ NOTE:
-    // │ |: (re)set cookie.
-    // ╰─────
-    dataRes0.headers.set
-    (
-      'Set-Cookie',
-      cookie.serialize
-      (
-        'betarenaScoresCookie',
-        parseObject(event.locals.user),
-        {
-          path: '/',
-          // httpOnly: true,
-          /* ─── 1 week ─── */
-          maxAge: 60 * 60 * 24 * 7
-        }
-      )
-    );
-
-    let
-      /**
-       * @description
-       * 📝 Execution time.
-       */
-      strExecutionTime = ((performance.now() - t0) / 1000).toFixed(5)
-    ;
-
-    // ╭─────
-    // │ NOTE:
-    // │ |: metrics for performance.
-    // ╰─────
-    if (parseFloat(strExecutionTime) > 1)
-      strExecutionTime = chalk.bgRed(`⚠️ ${strExecutionTime} sec`);
-    else
-      strExecutionTime = `${strExecutionTime} sec`;
-    ;
-
-    // [🐞]
-    log_v3
-    (
-      {
-        strGroupName: `🚏 checkpoint ➤ Hooks | src/hooks.server.ts handle(..) // END (${strExecutionTime})`,
-        msgs:
-        [
-          `🔹 [var] ➤ event.url :: ${event.url}`,
-          `${parseObject(event.locals) != '{}' ? `🔹 [var] ➤ event.locals :: ${parseObject(event.locals)}` : '[EMPTY]'}`,
-          // ╭─────
-          // │ NOTE:
-          // │ |: additional helpful logging.
-          // ╰─────
-          // `🔹 [var] ➤ event.route.id :: ${event.route.id}`,
-          // `🔹 [var] ➤ event :: ${event.request.headers.get('accept-language')}`,
-        ],
-      }
-    );
+    _helperSetHeaders();
+    _helperHooksPerformanceMetrics();
 
     return dataRes0;
   }
