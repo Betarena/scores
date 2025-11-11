@@ -15,7 +15,6 @@
 
 // #region ➤ 📦 Package Imports
 
-import { sentrySvelteKit } from "@sentry/sveltekit";
 import { sveltekit } from '@sveltejs/kit/vite';
 import { table } from 'table';
 import { loadEnv } from "vite";
@@ -174,12 +173,24 @@ export default defineConfig
         // progress(),
 
         // ╭─────
-        // │ NOTE: WARNING:
-        // │ ➤ imported from 'vite-plugin-compress'.
-        // │ ➤ DOES NOT WORK AS ADVERTISED!
+        // │ NOTE: IMPORTANT
+        // │ │: imported from '@sentry/sveltekit' NPM package.
+        // ┣─────
+        // │ │: needs to be placed 'BEFORE' sveltekit compilation.
         // ╰─────
-        // c.compress(),
-
+        // sentrySvelteKit
+        // (
+        //   {
+        //     sourceMapsUploadOptions:
+        //     {
+        //       org: "betarena",
+        //       project: "scores-platform",
+        //       release: process.env?.npm_package_version ?? version ?? 'v.0.0.0',
+        //       uploadSourceMaps: process.env?.VITE_SENTRY_UPLOAD_SOURCEMAPS as unknown as string == 'true' ? true : false
+        //     },
+        //     autoUploadSourceMaps: process.env?.VITE_SENTRY_UPLOAD_SOURCEMAPS as unknown as string == 'true' ? true : false
+        //   }
+        // ),
         // ╭─────
         // │ NOTE: WARNING:
         // │ ➤ imported from 'vite-plugin-preload'.

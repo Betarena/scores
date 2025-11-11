@@ -20,7 +20,6 @@
 
 import { convertLocaleToLang, mapLangToLocaleAuthor } from '$lib/constants/instance.js';
 import { getCookie } from '$lib/store/cookie.js';
-import * as Sentry from '@sentry/sveltekit';
 import { sequence } from '@sveltejs/kit/hooks';
 import parserAccLang from 'accept-language-parser';
 import chalk from 'chalk';
@@ -36,31 +35,6 @@ import type { Handle, HandleServerError } from '@sveltejs/kit';
 // #endregion ➤ 📦 Package Imports
 
 // #region ➤ 💠 MISCELLANEOUS
-
-// ╭─────
-// │ CHECK:
-// │ |: disabling of Sentry on localhost
-// ╰─────
-if (process.env.VITE_SENTRY_ENVIRONMENT != 'local')
-{
-  // [🐞]
-  Sentry.init
-  (
-    {
-      dsn: process.env.VITE_SENTRY_URL,
-      tracesSampleRate: 1,
-      release: `v.${process.env.npm_package_version}`,
-      environment: process.env.SENTRY_ENVIRONMENT,
-    }
-  );
-  // [🐞]
-  Sentry.setTags
-  (
-    {
-      location: 'server'
-    }
-  );
-}
 
 // [🐞]
 dlog
@@ -139,9 +113,6 @@ const customErrorHandler: HandleServerError = async (
 
 export const handle: Handle = sequence
 (
-  /* ─── Step [1] ─── */
-  Sentry.sentryHandle(),
-  /* ─── Step [2] ─── */
   async (
     {
       event,
@@ -461,11 +432,6 @@ export const handle: Handle = sequence
 // │ NOTE:
 // │ │: using Sentry with Custom Error Handler.
 // ╰─────
-export const handleError: HandleServerError = Sentry.handleErrorWithSentry(customErrorHandler);
-// ╭─────
-// │ NOTE:
-// │ │: or, alternatively:
-// ╰─────
-// export const handleError: HandleServerError = Sentry.handleErrorWithSentry();
+export const handleError: HandleServerError = customErrorHandler;
 
 // #endregion ➤ 🔄 LIFECYCLE - [HOOKS]
