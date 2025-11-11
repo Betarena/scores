@@ -15,8 +15,7 @@
   import FeaturedIcon from "../ui/FeaturedIcon.svelte";
   import type { IPageAuthorAuthorData } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import TranslationText from "../misc/Translation-Text.svelte";
-  import session from "$lib/store/session.js";
-  import { onDestroy } from "svelte";
+  import { onMount } from "svelte";
 
   export let sportstack = {} as IPageAuthorAuthorData;
   export let grantAccess = () => {};
@@ -26,18 +25,23 @@
   });
 
 
+
   let lockNode: HTMLDivElement;
-  let modalNode;
-  let scrollRAFId: number | null = null;
+  let modalNode: HTMLDivElement;
 
+  onMount(() => {
+    const observer = new ResizeObserver(() => {
+      const rect = lockNode.getBoundingClientRect();
+      if (!modalNode) return;
+      modalNode.style.left = `-${rect.left}px`;
+    })
+    observer.observe(document.body);
 
-
-
-  onDestroy(() => {
-    if (scrollRAFId !== null) {
-      cancelAnimationFrame(scrollRAFId);
+    return () => {
+      observer.disconnect();
     }
-  });
+  })
+
 </script>
 
 <!--
@@ -106,7 +110,7 @@
     align-items: center;
     gap: 12px;
     align-self: stretch;
-    z-index: 9999;
+    z-index: 10000001;
 
     border-radius: var(--radius-xl, 12px);
     border: 1px solid var(--colors-border-border-secondary, #3b3b3b);
@@ -139,8 +143,8 @@
     position: absolute;
     bottom: -50px;
     z-index: 3000;
-    left: -5px;
-    right: -5px;
+    left: 0;
+    width: 100vw;
     transform: translateY(100%);
 
     :global(.tips-modal-wrapper) {

@@ -384,7 +384,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div id={CNAME}  class={viewportType}>
+<div id={CNAME} data-betarena-zone-id="4" class={viewportType}>
   <div class="article-header">
     <!--
     ╭─────
