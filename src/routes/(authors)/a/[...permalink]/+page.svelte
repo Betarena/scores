@@ -23,9 +23,43 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  import { onMount } from 'svelte';
+
+  import { config } from '$lib/constants/config.js';
   import Page from '$lib/svelte/page/page.author.svelte';
 
   // #endregion ➤ 📦 Package Imports
+
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  let _PageDynamic;
+
+  onMount
+  (
+    async (
+    ) =>
+    {
+      if (config.objApp.listLazyLoadComponents.get('src/routes/(authors)/a/[...permalink]/+page.svelte')?.isDynamicImport)
+        _PageDynamic
+          = (
+            await import
+            (
+              '$lib/svelte/page/page.author.svelte'
+            )
+          ).default
+        ;
+      ;
+    }
+  );
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
 </script>
 
@@ -38,4 +72,14 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<Page />
+{#if !config.objApp.listLazyLoadComponents.get('src/routes/(authors)/a/[...permalink]/+page.svelte')?.isHidden}
+
+  {#if config.objApp.listLazyLoadComponents.get('src/routes/(authors)/a/[...permalink]/+page.svelte')?.isDynamicImport}
+    <svelte:component
+      this={_PageDynamic}
+    />
+  {:else}
+    <Page />
+  {/if}
+
+{/if}

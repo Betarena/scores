@@ -23,9 +23,43 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  import { onMount } from 'svelte';
+
+  import { config } from '$lib/constants/config.js';
   import Layout from '$lib/svelte/page/layout.root.svelte';
 
   // #endregion ➤ 📦 Package Imports
+
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  let _LayoutDynamic;
+
+  onMount
+  (
+    async (
+    ) =>
+    {
+      if (config.objApp.listLazyLoadComponents.get('src/routes/+layout.svelte')?.isDynamicImport)
+        _LayoutDynamic
+          = (
+            await import
+            (
+              '$lib/svelte/page/layout.root.svelte'
+            )
+          ).default
+        ;
+      ;
+    }
+  );
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
 </script>
 
@@ -38,6 +72,18 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<Layout>
-  <slot />
-</Layout>
+{#if !config.objApp.listLazyLoadComponents.get('src/routes/+layout.svelte')?.isHidden}
+
+  {#if config.objApp.listLazyLoadComponents.get('src/routes/+layout.svelte')?.isDynamicImport}
+    <svelte:component
+      this={_LayoutDynamic}
+    >
+      <slot />
+    </svelte:component>
+  {:else}
+    <Layout>
+      <slot />
+    </Layout>
+  {/if}
+
+{/if}
